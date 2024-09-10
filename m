@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-323164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB95E9738C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1489737CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F361C24A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:38:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB34285FD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF00192D6D;
-	Tue, 10 Sep 2024 13:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D761917F0;
+	Tue, 10 Sep 2024 12:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VFfij3TG"
-Received: from mail-m49231.qiye.163.com (mail-m49231.qiye.163.com [45.254.49.231])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ECJdj/Br"
+Received: from mail-m3296.qiye.163.com (mail-m3296.qiye.163.com [220.197.32.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD861922F4;
-	Tue, 10 Sep 2024 13:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5B518EFD4;
+	Tue, 10 Sep 2024 12:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975487; cv=none; b=AY/iY11j0qYHkqtwHrihw0dw6PqU/I00EEISntSw06uSnJ7oRt31xQ2eGHzU9+evyp4LiK7nuHmB5AZAUd3nsFmHCaygjVxjJGcdpjzWhxil8PKaq9AFWpGcodaLwxd7rMCf78NiSFZybcmZ0M68Pn+559K70Fcu/t8emuPJ4ds=
+	t=1725972149; cv=none; b=nK+6hShvlyubuFW8pJBIWK+5LntO31UY8jMQ4WZhMp0H/++Ys4eT0GJZqHj7HBaJboOAKwUCmVC3orz923vhbgAMhZ50bLFd8A79yVw0GpGaROwWGc6i/rzCfinlaC2d7mIW1bkDRoQ7ixDmGBR3nciQnpEjAGE5vqI+10W+yxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975487; c=relaxed/simple;
-	bh=md8t5r8gdIz40wEhMc2xDmlHmJCtUDk17sdcKwNicV8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Te47TSoL+Dyovge/tXQ3cS+5K2YYIkQDTj/AzvtlrgElok0svpEFWnHv22OCekg89c7JURRD5swHgEuWtfzuMxVUpJCliGcYGj1Q0YGvMnPf/5PSEOgfn0fEZlDur6rXKXR3XmtCpVEEU5TtiooahlwQc/OZb6bCsrJml7ibhq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VFfij3TG; arc=none smtp.client-ip=45.254.49.231
+	s=arc-20240116; t=1725972149; c=relaxed/simple;
+	bh=iR3ouod5aJYvcKZR9ZDk009PDoqjNJ2iGTiSNVSo2G8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UyXacSSyWeKgH5/qu7yhl2S6LpIR7T1TQvvcsGY9gNrRwl9YwfsDRP7TJeWXO3lhg0+OR2RDpvbj9msDaPuv+ta0WmoOoe6m9PULALwShaYqhUiKsyx6txXL66iPu+fswA1HdT9KQYmz1xqaBqjVYVHZPzwfsw4NssRyvCNc9gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ECJdj/Br; arc=none smtp.client-ip=220.197.32.96
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 DKIM-Signature: a=rsa-sha256;
-	b=VFfij3TGLugganLz/y/qfWk1pUC+6zZWktXLpiI7T8w+msGZXbpkE4RcHmYNd3IJo52poyf/Pn+b9gZ9Jqw5tV/zXrgKqzXPpDr0oux3vuMXxw/6Iw3rRrdWHYVn3bSwvNlaOEeJ0Lh074DaaVl0GqinAnFdIV/pyPSH35tgvT0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=mYQizcJx/MGPhOjacPPnt923D1r3RyCgFm6Psd2WnlI=;
+	b=ECJdj/Br97xXwGwqJhcOeUb48oYKMRI1BhrUyguN4lwlcXIf9iM1/LWpn29gu/A2af3eCGKW34VYHaeUwDDFUGmxmaAWgQZFYyK/RxWIAXpKg7n/9GRq2D1wRS+zAY4XAGIH4Qu5aRXk46O1cVG5OE3O+fmD5dtoYOI8/xN3AkQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=iD1gN182oxprUaNdyDfYIXEVbwMZ8+lfcYcnulZdptU=;
 	h=date:mime-version:subject:message-id:from;
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 8875910093F;
-	Tue, 10 Sep 2024 20:41:28 +0800 (CST)
+	by smtp.qiye.163.com (Hmail) with ESMTPA id D7CD3100934;
+	Tue, 10 Sep 2024 20:41:31 +0800 (CST)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: heiko@sntech.de
 Cc: robh@kernel.org,
@@ -58,10 +59,12 @@ Cc: robh@kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2 0/2] Add support for RK3588S Evaluation board
-Date: Tue, 10 Sep 2024 20:40:53 +0800
-Message-Id: <20240910124055.3981648-1-damon.ding@rock-chips.com>
+Subject: [PATCH v2 1/2] dt-bindings: arm: rockchip: Add rk3588s evb1 board
+Date: Tue, 10 Sep 2024 20:40:54 +0800
+Message-Id: <20240910124055.3981648-2-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240910124055.3981648-1-damon.ding@rock-chips.com>
+References: <20240910124055.3981648-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,44 +73,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1MS1ZNTU5KTB5KTxodShhWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlJH1YeQkpNQ0gZThgfTU1WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91dbf40af703a7kunm8875910093f
+X-HM-Tid: 0a91dbf417f303a7kunmd7cd3100934
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhQ6Ngw4ITIzFSsjKwMCHApR
-	KB8aFDlVSlVKTElOQkxJS0JLSk9NVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTkJKNwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAg6Exw*KDI6ESs8DQJDHBBN
+	LhVPCS9VSlVKTElOQkxJS0JISEJJVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTEtONwY+
 
-Specification:
-- Rockchip RK3588S
-- RK806-2x2pcs + DiscretePower
-- eMMC5.1 + SPI Flash
-- Micro SD Card3.0
-- 1 x Typec3.0 + 2 x USB2 HOST
-- 1 x 1Lane PCIE2.0 Connector(RC Mode)
-- Headphone output
-- Array Key(MENU/VOL+/VOL-/ESC), Reset, Power on/off Key
-- 6 x SARADC
+Rockchip rk3588s evaluation board.
 
-Damon Ding (2):
-  dt-bindings: arm: rockchip: Add rk3588s evb1 board
-  arm64: dts: rockchip: Add support for rk3588s evb1 board
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+---
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes in v2:
-- rename amplifier nodes to amplifier-headphone and amplifier-speaker
-- sort audio and backlight nodes by node name
-- format names of regulator nodes to regulator-*
-- add CPU/memory regulator coupling
-- fix "VOP-" to "VOL-" in commit message
-- remove bootargs property in chosen node
-
- .../devicetree/bindings/arm/rockchip.yaml     |    5 +
- arch/arm64/boot/dts/rockchip/Makefile         |    1 +
- .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 1131 +++++++++++++++++
- 3 files changed, 1137 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 1ef09fbfdfaf..4f6e24fcc765 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -942,6 +942,11 @@ properties:
+           - const: rockchip,rk3588-evb1-v10
+           - const: rockchip,rk3588
+ 
++      - description: Rockchip RK3588S Evaluation board
++        items:
++          - const: rockchip,rk3588s-evb1-v10
++          - const: rockchip,rk3588s
++
+       - description: Rockchip RV1108 Evaluation board
+         items:
+           - const: rockchip,rv1108-evb
 -- 
 2.34.1
 
