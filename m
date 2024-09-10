@@ -1,242 +1,116 @@
-Return-Path: <linux-kernel+bounces-322755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D5D972D4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E18972D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF191C2195C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:20:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB11F2614C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72691188A0C;
-	Tue, 10 Sep 2024 09:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C99188A09;
+	Tue, 10 Sep 2024 09:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sz/n1MBa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DandZEhc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E20188000;
-	Tue, 10 Sep 2024 09:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1C186289;
+	Tue, 10 Sep 2024 09:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725960006; cv=none; b=k2uDqjDIaWqzbPPGjHyX6Zdbm18ts2EEcrCU6PaJgUob3EPgHAWG7GNytuvl+BuX99l5fqCOFMCcVTMmobhNqZSJLonHiy99ZfdXgpnpzPmiILWTx68iM4QHGqAlE+2xuWm7NO+AEvXVMwgxQ0mU8IQrK0LgJRnM61p4MwGKNCM=
+	t=1725960031; cv=none; b=p1OA5UdNTBOv5/WTeKza5NCrYC2DBFW93mQZInEJ+GeEhMxDw0KxCMZKMS0stPlqHUqLayyu93oVsKH00VFWdZWDnG+YW6B/pEXWMLYFlIdQEbOQGnFGx5n+hubKoZYdRydDyElmnvJ6FjQemvwRQJglBfKGw+8+Hpc4niXKFyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725960006; c=relaxed/simple;
-	bh=uWl48R8ff+pv/4REvISIbQgoAX1QsXJSsRp5hLHUmqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/tJM/v70yrRvp+CTevVygpyxadI3ib3Yvrps6vSLKZJvAbagiuTUadwCrKUpSIQsI4KxdwEd5QvGB3DOug+o1eMhrhWb7DbxH8TE2gOzh2dqZUGuTB14Q0C8/OK2U5TdBc9K3TUy9GFMXnnLOMHBY2rDo3mxILBjoqDSuGnwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sz/n1MBa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 53E06C8A;
-	Tue, 10 Sep 2024 11:18:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725959924;
-	bh=uWl48R8ff+pv/4REvISIbQgoAX1QsXJSsRp5hLHUmqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sz/n1MBazVOmv1d/pouy/rRn6isDcArxQOFvTwxZRout1a+5OR1+Rn24SrrrAiqDx
-	 T+itHotH23y38uC6PRnY8b6KMkX3Aa1DthE7PNVbXfrLgvkBA4cEMClj00mJT08h7n
-	 J/+TdXh9fx4CyL5iP2bvHzea+fI75R5jHhVy3hto=
-Date: Tue, 10 Sep 2024 11:19:57 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, Naushir Patuck <naush@raspberrypi.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
-Message-ID: <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
-References: <20240904-rp1-cfe-v4-3-f1b5b3d69c81@ideasonboard.com>
- <202409051822.ZzUGw3XQ-lkp@intel.com>
- <20240905111120.GK16183@pendragon.ideasonboard.com>
- <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
- <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
- <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
- <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
- <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
- <20240909134516.GA9448@pendragon.ideasonboard.com>
- <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+	s=arc-20240116; t=1725960031; c=relaxed/simple;
+	bh=rnuCrS753BduIzY9Zaq6w0W8UNk9xrU+v2yRFq64zj4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=qbOmiOgx1wjmAdeFEb80ksSnGwewyrMLf68kc7ut49kBTjKFtjCEmLK3Ip5Yi3GGLrJypCkljPScGFletASb/r+cHT6BHHCvwm8hBmQ94x75Ao+5UPytZlVa4H41+iCAKCei5qp95IhSytx+akTSrPcUh9ONJaw8bbMCMKKkSQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DandZEhc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329D9C4CEC6;
+	Tue, 10 Sep 2024 09:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725960030;
+	bh=rnuCrS753BduIzY9Zaq6w0W8UNk9xrU+v2yRFq64zj4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DandZEhcH8Nei9cSSd2BZCCTlwu2Z3mjmAZGVzw6RbILGE18lZbBNgXJcn0Kr3vJO
+	 YnWcVkTeDdaFf9QoekStBwJZixH5NVqqzAmUgAtTvsevGwrfBDXSzcnyd9Aeo6VgdH
+	 CwI76ee2l8g130Z8YG5N2jYMD1FU60eo9qI/IeaYVcgAD855HtK8kuNz8ocGUEewa1
+	 3gOZj5stf/sdZUjHbn2PeipU/rEkVK3Lj/dm1v+o4Cb0ETf3CHDlsxAnkgJXUom0Hn
+	 mHohAdLFCH8lkW3jVHRnJxywPw6sZVXmxj81AS1wGiqCenI1o3Ftab0lcRCCLEISr/
+	 FJNf64x5rrVvg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7142E3806654;
+	Tue, 10 Sep 2024 09:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+Subject: Re: [PATCH net-next 00/12] net: lan966x: use the newly introduced FDMA
+ library
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172596003126.183148.4876801824053155515.git-patchwork-notify@kernel.org>
+Date: Tue, 10 Sep 2024 09:20:31 +0000
+References: <20240905-fdma-lan966x-v1-0-e083f8620165@microchip.com>
+In-Reply-To: <20240905-fdma-lan966x-v1-0-e083f8620165@microchip.com>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
-Hi Sakari, Tomi
+Hello:
 
-On Mon, Sep 09, 2024 at 03:52:42PM GMT, Sakari Ailus wrote:
-> Hi Laurent,
->
-> On Mon, Sep 09, 2024 at 04:45:16PM +0300, Laurent Pinchart wrote:
-> > On Mon, Sep 09, 2024 at 03:29:30PM +0200, Jacopo Mondi wrote:
-> > > On Mon, Sep 09, 2024 at 01:04:35PM GMT, Tomi Valkeinen wrote:
-> > > > On 09/09/2024 12:13, Jacopo Mondi wrote:
-> > > > > On Mon, Sep 09, 2024 at 08:22:59AM GMT, Tomi Valkeinen wrote:
-> > > > > > On 09/09/2024 08:08, Tomi Valkeinen wrote:
-> > > > > > > On 05/09/2024 14:11, Laurent Pinchart wrote:
-> > > > > > > > On Thu, Sep 05, 2024 at 06:50:48PM +0800, kernel test robot wrote:
-> > > > > > > > > Hi Tomi,
-> > > > > > > > >
-> > > > > > > > > kernel test robot noticed the following build warnings:
-> > > > > > > > >
-> > > > > > > > > [auto build test WARNING on 431c1646e1f86b949fa3685efc50b660a364c2b6]
-> > > > > > > > >
-> > > > > > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-
-> > > > > > > > > Valkeinen/media-uapi-Add-meta-formats-for-PiSP-FE-config-and-
-> > > > > > > > > stats/20240904-192729
-> > > > > > > > > base:   431c1646e1f86b949fa3685efc50b660a364c2b6
-> > > > > > > > > patch link:    https://lore.kernel.org/r/20240904-rp1-cfe-v4-3-
-> > > > > > > > > f1b5b3d69c81%40ideasonboard.com
-> > > > > > > > > patch subject: [PATCH v4 3/4] media: raspberrypi: Add support
-> > > > > > > > > for RP1-CFE
-> > > > > > > > > config: m68k-allmodconfig (https://download.01.org/0day-ci/
-> > > > > > > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/config)
-> > > > > > > > > compiler: m68k-linux-gcc (GCC) 14.1.0
-> > > > > > > > > reproduce (this is a W=1 build):
-> > > > > > > > > (https://download.01.org/0day-ci/
-> > > > > > > > > archive/20240905/202409051822.ZzUGw3XQ-lkp@intel.com/reproduce)
-> > > > > > > > >
-> > > > > > > > > If you fix the issue in a separate patch/commit (i.e. not just a
-> > > > > > > > > new version of
-> > > > > > > > > the same patch/commit), kindly add following tags
-> > > > > > > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > > > > | Closes: https://lore.kernel.org/oe-kbuild-
-> > > > > > > > > all/202409051822.ZzUGw3XQ-lkp@intel.com/
-> > > > > > > > >
-> > > > > > > > > All warnings (new ones prefixed by >>):
-> > > > > > > > >
-> > > > > > > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2445:12:
-> > > > > > > > > > > warning: 'cfe_runtime_resume' defined but not used
-> > > > > > > > > > > [-Wunused-function]
-> > > > > > > > >       2445 | static int cfe_runtime_resume(struct device *dev)
-> > > > > > > > >            |            ^~~~~~~~~~~~~~~~~~
-> > > > > > > > > > > drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2435:12:
-> > > > > > > > > > > warning: 'cfe_runtime_suspend' defined but not used
-> > > > > > > > > > > [-Wunused-function]
-> > > > > > > > >       2435 | static int cfe_runtime_suspend(struct device *dev)
-> > > > > > > > >            |            ^~~~~~~~~~~~~~~~~~~
-> > > > > > > > > vim +/cfe_runtime_resume +2445
-> > > > > > > > > drivers/media/platform/raspberrypi/ rp1-cfe/cfe.c
-> > > > > > > >
-> > > > > > > > The recommended way to fix this is to switch from SET_RUNTIME_PM_OPS()
-> > > > > > > > to RUNTIME_PM_OPS() and use pm_ptr() to set .driver.pm. This being said,
-> > > > > > > > the driver won't work on a kernel with !CONFIG_PM given how you
-> > > > > > > > implemented probe() and remove().
-> > > > > > > >
-> > > > > > > > The pisp-be driver suffered from the same issue and Jacopo fixed it in
-> > > > > > > > the last version. You can have a look at implement something similar.
-> > > > > > >
-> > > > > > > I can't right away think of any reason to not just depend on CONFIG_PM
-> > > > > > > and be done with it without any tricks. Do you know if there's a reason?
-> > > > >
-> > > > > We had the same discussion, and even if I would be fine depending on
-> > > > > CONFIG_PM, supporting !CONFIG_PM is not that much work, I kept it as
-> > > > > an optional dependency (it was suggested during the review as well)
-> > > > >
-> > > > > >
-> > > > > > Also, I don't think pisp-be is correct. It just calls
-> > > > > > pispbe_runtime_resume() in probe() to wake the IP up (which only enables
-> > > > > > pisp clock), without telling the runtime PM about it. This means the parent
-> > > > > > device and the suppliers may not be powered up.
-> > > > >
-> > > > > Are you referring to the code currently in the tree or to this patch ?
-> > > > > https://patchwork.linuxtv.org/project/linux-media/patch/20240904095836.344833-5-jacopo.mondi@ideasonboard.com/
-> > > >
-> > > > Ah, I missed that one.
-> > > >
-> > > > I don't think it fixes the issue I mentioned. If we have PM enabled, and the
-> > > > parent device requires powering up for the child device (BE) to be
-> > > > accessible, the driver will crash when calling pispbe_hw_init(). I think you
-> > > > should call pm_runtime_set_active() before calling pispbe_runtime_resume().
-> > >
-> > > As discussed, this is not a problem currently for BE, but indeed you
-> > > have a point.
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-I admit the runtime_pm intrinsics are obscure to me, but Laurent just
-made me notice something.
+On Thu, 5 Sep 2024 10:06:28 +0200 you wrote:
+> This patch series is the second of a 2-part series [1], that adds a new
+> common FDMA library for Microchip switch chips Sparx5 and lan966x. These
+> chips share the same FDMA engine, and as such will benefit from a common
+> library with a common implementation.  This also has the benefit of
+> removing a lot of open-coded bookkeeping and duplicate code for the two
+> drivers.
+> 
+> [...]
 
-Consider the following scenario
+Here is the summary with links:
+  - [net-next,01/12] net: lan966x: select FDMA library
+    https://git.kernel.org/netdev/net-next/c/63acda75801f
+  - [net-next,02/12] net: lan966x: use FDMA library symbols
+    https://git.kernel.org/netdev/net-next/c/1dfe4ca8cb4a
+  - [net-next,03/12] net: lan966x: replace a few variables with new equivalent ones
+    https://git.kernel.org/netdev/net-next/c/8274d40eafa3
+  - [net-next,04/12] net: lan966x: use the FDMA library for allocation of rx buffers
+    https://git.kernel.org/netdev/net-next/c/01a70754327b
+  - [net-next,05/12] net: lan966x: use FDMA library for adding DCB's in the rx path
+    https://git.kernel.org/netdev/net-next/c/2b5a09e67b72
+  - [net-next,06/12] net: lan966x: use library helper for freeing rx buffers
+    https://git.kernel.org/netdev/net-next/c/f51293b3ea89
+  - [net-next,07/12] net: lan966x: use the FDMA library for allocation of tx buffers
+    https://git.kernel.org/netdev/net-next/c/df2ddc1458c3
+  - [net-next,08/12] net: lan966x: use FDMA library for adding DCB's in the tx path
+    https://git.kernel.org/netdev/net-next/c/29cc3a66a81d
+  - [net-next,09/12] net: lan966x: use library helper for freeing tx buffers
+    https://git.kernel.org/netdev/net-next/c/8cdd0bd02283
+  - [net-next,10/12] net: lan966x: ditch tx->last_in_use variable
+    https://git.kernel.org/netdev/net-next/c/c06fef96c7d5
+  - [net-next,11/12] net: lan966x: use a few FDMA helpers throughout
+    https://git.kernel.org/netdev/net-next/c/9fbc5719f6aa
+  - [net-next,12/12] net: lan966x: refactor buffer reload function
+    https://git.kernel.org/netdev/net-next/c/89ba464fcf54
 
-*) Kernel compiled with CONFIG_PM
-*) i2c sensor driver that supports both CONFIG_PM and !CONFIG_PM by:
-  *) Manually power up the sensor during probe
-  *) Call pm_runtime_enable() and pm_runtime_set_active() at the end
-     of the probe routine after having accessed the chip over i2c
-     (like most, if not all the i2c drivers in mainline do including
-     ccs)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-All these drivers work, and during the probe routine before accessing
-the HW, they don't need to power up the parent i2c controller.
 
-Might it be that during probe() the parent is guaranteed to be enabled ?
-
-I add a look in the driver-core and pm Documentation/ but found
-nothing.
-
-A quick stroll in driver/base/ got me to __device_attach() and it
-seems parents are powered up before attaching a driver to a device
-(which in my understanding should be what ends up calling probe()).
-Clearly I've no real understanding of what I'm talking about when it
-comes to driver-core, so take this with a grain of salt.
-
-> > >
-> > > Sad note: most of all the occurrences of "grep set_active" in
-> > > drivers/media/platform/ show that set_active() is used as I've done in
-> > > my patch
-> > >
-> > > > However, you said above that "supporting !CONFIG_PM is not that much work".
-> > > > Maybe not. But how much work is it to get it right (for both PM and !PM),
-> > > > and make sure it stays right? =).
-> > > >
-> > > > Just my opinion, but if there are zero use cases for the !PM, I would just
-> > > > go with "depends on PM" to keep the driver simpler, less bug-prone, and
-> > > > easier to maintain.
-> >
-> > I'm fine with that, and for platform drivers, that's my preferred
-> > option. Sakari ?
->
-> I'm concerned with your (?) recent finding that many architectures don't
-> have support for CONFIG_PM. In this case the device is very unlikely to be
-> used outside ARM(64) so I guess it's fine.
->
-
-Also, this IP is RPi specific, and the !CONFIG_PM case is not used or
-tested on Pi.
-
-However, I think this current patch is correct (assuming the above
-reasoning on i2c sensor drivers is correct) and doesn't require
-CONFIG_PM, so I would be tempted to keep this version.
-
-> >
-> > > I don't see a use case for !PM and we confirmed with RPi they don't
-> > > need to support it. During the review of a previous version of the BE
-> > > driver iirc I've been asked to support !PM but I'm not sure I recall
-> > > the reasons.
-> >
-> > I hope it wasn't me :-)
->
-> Me neither. Although it'd be nice: CONFIG_PM isn't a hardware specific
-> option as such. As one part of the kernel requires !CONFIG_PM and another
-> CONFIG_PM, we can expect problems, at least in principle.
->
-> Ideally all architectures would support it so CONFIG_PM could be removed
-> and we could say the problem has been solved. :-)
->
-> --
-> Regards,
->
-> Sakari Ailus
 
