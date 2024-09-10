@@ -1,167 +1,136 @@
-Return-Path: <linux-kernel+bounces-323519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110A9973E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:09:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7062973E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACD81C254B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0AB1F26EA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80FA1AB501;
-	Tue, 10 Sep 2024 17:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FDD1A4F06;
+	Tue, 10 Sep 2024 17:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKnYfYO/"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lv+sN86g"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632F61AAE06;
-	Tue, 10 Sep 2024 17:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BE01A42A4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987995; cv=none; b=s8wItHS1CxyTtOWTy7fUYfQOmgbdntZCRpbJ7DtDvJY5w6wxtfp2A8McvV7pditLgR5TXCq+p00T1UywlkO7x5/x0tEqjR2x4VjtNWnxsphJE+o+rSD1m/izlsfSK3qJzEcSYn8A2qIzDPzgO2KTdBqua9pya6rh9zdDD6pPxPc=
+	t=1725987987; cv=none; b=ZC/0kr5OxwjlUMDWVA5IVFOqpSJvrF0WGs4ElYyr6TZjHiWDhwpd1JedQs6N+ppqWkKjbuB9AIX2Yhqcj8TqsZoK/KPPYx2Tw6ZrhObb/nFsXbjGAMB0DAq3vk5ScwXKb93fFh7poiIM8r5AufG0PLwkZXxbVpGortZ9vVp9l5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987995; c=relaxed/simple;
-	bh=jRrPVVAvrp3Vll+FUIssss1zRjuem5ArSwL4fJny5qA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E78Ymc0iUg1CdMHHEhQjZ2LqousqGorDTGrKszEN4aihVhElKks9i7xtTTBvrDnu4LY4fZ1rbKwjCLz9BYfRXwkMh/JekHY/69/9tIDvedDqlqVbFHXaACC0XUnV5yFnqEqgXL5m+sZRBZG1reOPQb9N0W1NDSyHOgd/WHfa4is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKnYfYO/; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb2191107so23560375e9.1;
-        Tue, 10 Sep 2024 10:06:33 -0700 (PDT)
+	s=arc-20240116; t=1725987987; c=relaxed/simple;
+	bh=K1zMb74fLs/3b55dFPaW8pZ6BoPzNIUNMZnJvQ2/+yk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WIWkU/lvE3alCauQwdy2lZc/eKHPcrB7xm5wjuSwG437Ge8BdAigM92+dVdQ1A0xCO8l4RXV/Yo5GOa2p9QFk73Q78QC4z+6mFjef1w9JBn6HMOOsATBF4qbE1fVoN89/jr5+4woe3y1Mu1qm/RBhVPUbI0fvJRIHlcBqv9zy6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lv+sN86g; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c42e3so69986777b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725987992; x=1726592792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQMHTCEpp4IX3yk3G5kxDgRhnrTtnfOFN8NLqXpo8sE=;
-        b=gKnYfYO/MG+ZQp6nehF1BZpxRQNJUOuw70QVcNarRSkm9z+Jx0pamak4K5S0VEEwkQ
-         X23Vt/laRFUoQQIcXudo3/2E/AL9/V7aKNUt61NtRHRVMgxrp1WmuH/4RyIDQHb4M50k
-         lcZWH8GBgS9ymsUlXViRKk0sFqHsa0aEuvPi47p7QEKQr/nqOTSih3889OCZ0AEuN/t4
-         HDb7yOWhJsgfEDXxE+n2hvf26bf+W3D9/IJploCaJNhYqRZiSJsxfIb9aORdQezF8wHa
-         AaOLQq6WA3RGf8/2uQoiD+pMJUTVUlm8u91KoZVdUzeuwhz3QYBmNYmrZ/CXZ7rY7fGH
-         8Mdw==
+        d=google.com; s=20230601; t=1725987985; x=1726592785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bO8RJUCEv3T+MW3ZwzmCcUtuhGy0JOcrONU3LjeHDvk=;
+        b=lv+sN86gDiTEFvuC4QMNZ05yijGfMBX00czh5+weyS1Tl/o0doWV3iTVXkIgUyBVLh
+         dJcZVD9Va+FggUBJGL9D4QXT5Ps+N6F8f/V6fJ5/dHziqLFxHuYzOqaAJ2BAnf3eOc0v
+         VyeMNwkPcyxCxqcpyJIlL9OokaKAYmXaNHyjnNmbVUx9Q2HPDWDDylBmsB/ajCtRoyqo
+         doBYZzkqXmNpdQR440Ijeml+usc6W0nendmnVtSAdHt5UUR9RASExLPyC/l8tqPe9i9v
+         Ph2eBrzyG5w8Wge7RhcbyWokbtrtH1N6IDXy3Nt+0gam7vcLTjP3U7x7DLMBxJdY0LDC
+         w5UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987992; x=1726592792;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BQMHTCEpp4IX3yk3G5kxDgRhnrTtnfOFN8NLqXpo8sE=;
-        b=C38POWei5fVPLzIDyKbB5XzZzYQynROghI+yIGBDvY/sx2hdqxmk0eNwFVfGWULZy4
-         CkbboUXqiQ8BdH0iardN8xkdN2JpxGdEXWUDZdDNlM7oWUSgyTrTMo3rmWMWyE/wcUl2
-         GmNmS++CtfjfBfUmDKDtUIFiFiN+30jTJdo0enrTGoVhwSUcprozWCmRjoDoM3jsU6qE
-         fQMNOKJIh//ckac9oDNzo/gf/pgDbJuo8eTpemRP0grnAz0xgY3lYSlIeDCl8k5jRGJX
-         Cszg4EUHKJ2EkwB+rKA90vqjGULTcgyc5k9b94AIS8/qr4N0e9rlqCy2sL+O63WA/snM
-         h2qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBWp7mWPzKpsKTHoHBO25HBUQZFG41kmX/dVIv2QNOBDot+Mi9TPwSHe35B2Dww1g/wwuv/6KuukZL2b7BNwAujko=@vger.kernel.org, AJvYcCXiM5kWAT4ROVA8DWJapNsjPh8jnzFNNm61Q23euf0U7COW62+TA5fkAe0E+FUjWlIZQdSUQChvI5fIEvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmeN921co0NlmPd0GGb5T8nswc+o9BCC2n6hA1APfjoFWehzZm
-	cQ1SneCiKinMKlNPfVwAU2tda1qB+ZDu8sD64mjFkr23cLpfSVlp
-X-Google-Smtp-Source: AGHT+IHCIAWbw+eAm5SROvYzPz1sWj9QkYeDiWGz2IuG8TYLQTwbpr1D/Zpp4M/M+FsBjtFTiU82Ng==
-X-Received: by 2002:adf:fc91:0:b0:374:c432:4971 with SMTP id ffacd0b85a97d-3789268e9a0mr7381931f8f.16.1725987991762;
-        Tue, 10 Sep 2024 10:06:31 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:94a6:1e64:e5a2:2b2a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de4b9sm9438925f8f.111.2024.09.10.10.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 10:06:31 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame descriptors
-Date: Tue, 10 Sep 2024 18:06:10 +0100
-Message-Id: <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1725987985; x=1726592785;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bO8RJUCEv3T+MW3ZwzmCcUtuhGy0JOcrONU3LjeHDvk=;
+        b=XASvTL1bsoWH+DhbjqZddzXzbTa7hL9ClZFXZLNokZbw861ho3bwp4WClc88ib2xFR
+         Ezbbb1GxpDQsQMi5utLgc1MJdFN8AmMbuoiYJ0pQkzZ2o1egj/Y30UFOgoN00a+dsAqG
+         IBHjo2XG+DM8a/Wg5Bwh7f8f8zcI+lzpyzeldaJi4eD4y0XaJaKTLeQQa30FPRTm8pBx
+         +GObA8X3EHPLsv3YqTm4AQjHhYvkANRL22ZW9wZ/vraILp5bt3ZJg2OSRShrS3M/9ifa
+         ApPNAZMECudpqisbuTba4iJsi+dkkh3yqQk4YUMTL1BUHwWeYqjM1WeTlpHPVgUYWcf5
+         3/ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNKTGRyHErkm1KKc8ddR00AOvxaRKaGRPIc7ThwQGSILl2sStVBqChgCPGXIHv5UvCe+PD5qE8H7KQZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+4V+9wMLDH6VCaZLWz7ooKTZaJlmWRDq8ksf3wz4cUi7ffSju
+	yiiw0lcyG61drlVaQTNLXa8AwnHkm5VxIMCteA08rsNRr1XNkIz1TeOBPw1qNnM3QTB+lG74qJe
+	d1A==
+X-Google-Smtp-Source: AGHT+IEyaU7HwD8P1kj9fZKH///TZKTxYleYQe9/4U+rzcNrsW+wdQjOiMgd4p7gsiXUIRaKzhvpQ4gUL4g=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2c11:b0:690:8ad7:55f9 with SMTP id
+ 00721157ae682-6db44d6c217mr1835277b3.2.1725987984610; Tue, 10 Sep 2024
+ 10:06:24 -0700 (PDT)
+Date: Tue, 10 Sep 2024 10:06:23 -0700
+In-Reply-To: <1cd7516391a4c51890c5b0c60a6f149b00cae3af.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240626073719.5246-1-amit@kernel.org> <Zn7gK9KZKxBwgVc_@google.com>
+ <CALMp9eSfZsGTngMSaWbFrdvMoWHyVK_SWf9W1Ps4BFdwAzae_g@mail.gmail.com>
+ <52d965101127167388565ed1520e1f06d8492d3b.camel@kernel.org>
+ <DS7PR12MB57665C3E8A7F0AF59E034B3C94D32@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <Zow3IddrQoCTgzVS@google.com> <ZpTeuJHgwz9u8d_k@t470s.drde.home.arpa>
+ <ZpbFvTUeB3gMIKiU@google.com> <1cd7516391a4c51890c5b0c60a6f149b00cae3af.camel@kernel.org>
+Message-ID: <ZuB8j02laOrxq-ji@google.com>
+Subject: Re: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB
+ filling is required
+From: Sean Christopherson <seanjc@google.com>
+To: Amit Shah <amit@kernel.org>
+Cc: David Kaplan <David.Kaplan@amd.com>, Jim Mattson <jmattson@google.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	Kim Phillips <kim.phillips@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Jul 22, 2024, Amit Shah wrote:
+> On Tue, 2024-07-16 at 12:10 -0700, Sean Christopherson wrote:
+> > FWIW, I feel the same way about all the other post-VM-Exit mitigations,
+> > they just don't stand out in the same way because the entire mitigation
+> > sequence is absent on one vendor the other, i.e. they don't look wrong =
+at
+> > first glance.=C2=A0 But if KVM could have a mostly unified VM-Enter =3D=
+> VM-Exit
+> > assembly code, I would happliy eat a dead NOP/JMP or three.=C2=A0 Now t=
+hat I
+> > look at it, that actually seems very doable...
+>=20
+> Sure.  I think some of the fallacy there is also to treat VMX and SVM
+> as similar (while not treating the Arm side as similar).
 
-Implement the .get_frame_desc() subdev operation to report information
-about streams to the connected CSI-2 receiver. This is required to let
-the CSI-2 receiver driver know about virtual channels and data types for
-each stream.
+Bringing ARM into the picture is little more than whataboutism.  KVM x86 an=
+d KVM
+arm64 _can't_ share assembly.  They _can't_ share things like MSR intercept=
+ion
+tracking because MSRs are 100% an x86-only concept.  The fact that sharing =
+code
+across x86 and ARM is challenging doesn't have any bearing on whether or no=
+t
+VMX and SVM can/should share code.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> They are different implementations, with several overlapping details - bu=
+t
+> it's perilous to think everything maps the same across vendors.
 
-diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index 7f1133292ffc..c24eb6e7a7b5 100644
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-+#include <media/mipi-csi2.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-event.h>
- #include <media/v4l2-fwnode.h>
-@@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
- 	.s_ctrl = ov5645_s_ctrl,
- };
- 
-+static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				 struct v4l2_mbus_frame_desc *fd)
-+{
-+	const struct v4l2_mbus_framefmt *fmt;
-+	struct v4l2_subdev_state *state;
-+
-+	if (pad != OV5645_PAD_SOURCE)
-+		return -EINVAL;
-+
-+	state = v4l2_subdev_lock_and_get_active_state(sd);
-+	fmt = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0);
-+	v4l2_subdev_unlock_state(state);
-+
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+	fd->num_entries = 1;
-+
-+	memset(fd->entry, 0, sizeof(fd->entry));
-+
-+	fd->entry[0].pixelcode = fmt->code;
-+	fd->entry[0].stream = 0;
-+	fd->entry[0].bus.csi2.vc = 0;
-+	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
-+
-+	return 0;
-+}
-+
- static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_state *sd_state,
- 				 struct v4l2_subdev_mbus_code_enum *code)
-@@ -1062,6 +1089,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
- };
- 
- static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-+	.get_frame_desc = ov5645_get_frame_desc,
- 	.enum_mbus_code = ov5645_enum_mbus_code,
- 	.enum_frame_size = ov5645_enum_frame_size,
- 	.get_fmt = v4l2_subdev_get_fmt,
--- 
-2.34.1
-
+I never said everything maps the same.  The point I am trying to make is th=
+at
+there is significant value _for KVM_ in having common code between architec=
+tures,
+and between vendors within an architecture.  I can provide numerous example=
+s
+where something was implemented/fixed in vendor/arch code, and then later i=
+t was
+discovered that the feature/fix was also wanted/needed in other vendor/arch=
+ code.
 
