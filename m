@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-323696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544849741F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1129741EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C0AB24028
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2930D286392
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668A41A4B7A;
-	Tue, 10 Sep 2024 18:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DDB1A4E7B;
+	Tue, 10 Sep 2024 18:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="soILf2rC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VajOz9ri"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B5119ABCE;
-	Tue, 10 Sep 2024 18:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E7119FA93;
+	Tue, 10 Sep 2024 18:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725992482; cv=none; b=CHelmSF13EeOSQV6quSSBuoZ60/EPseJwOOMqUbu3/kNtDH54dGC9Qo89qcTY6DLr9H6QlCZOGXgzk5dDD09JFUBPalt20Y7r8EKVpfTTVNyNho/E/EwovI20CGFW9+amOSWWXcg34bq7wnIGBM33th4mj6LTuclHkq860sV2jg=
+	t=1725992361; cv=none; b=VRgi+GjZmUX1GqfluS+Dh4OpUOYlmR3LpPlNAuHsIF3otx0Hk6swbwUOQ5ajl87873oll3Oh7XleOdTRysa9kEcZIDGLiP6k77wNoH8G6Sl0wFog3uE3B0wQfAypMocYBo/JYV9Ejqmd4XUuOsq14CbPTzusTpE09f6EyjfLGNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725992482; c=relaxed/simple;
-	bh=XGVjzIwXx/MBKVS4XKg2/d1fcKV0d41Na2ukA57BKQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9K44Je/WRac+aa+Vtoa6rMhUeyM79YaccGhLkfuxlmvRpbKAGQ2I0qM/4WtwhbkWHRzqr1d1rUHtHMkBNcj3LxBk+6Cuo8PlAgK6Dy+1N4JvlIapL3Ulz1iXtSe15rvrScY0KpexO/XygPJbmgmXwFE0H3RTS27crb8kx61tyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=soILf2rC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB0CC4CEC3;
-	Tue, 10 Sep 2024 18:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725992482;
-	bh=XGVjzIwXx/MBKVS4XKg2/d1fcKV0d41Na2ukA57BKQU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=soILf2rCLJC2h2Q4ntxwMhL54XEYmZ/cmc9z9wLKZ1i2mfKtqT1NOBQHIMgqAwY/N
-	 5LbJS1MAAq1KA6VR7U3M3PNUCv1OkzvF5LQHSXuAK4fsQvdxdVoygVlQWK1MvUX6ri
-	 ixJP7KddkW58S+w47n+6cwFd35FskXDTUIs1McL1/M+wz71zixma3zqCcdaVV45fQM
-	 Cz3lLy8FtLdg+4cxBIA2adJRR6VTIC1Xe/ZdiEu2fQFTwU+Ew77vINPgNOVqUihXI8
-	 wqlYRe6zAKgf/5urrgfsPCF+JWhuDcwrBYyyJOzeI1D2ZYnrH/LFJYtPGinr1xNrmC
-	 RHLYbjJGpHGiA==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5d5c7f24372so3507771eaf.0;
-        Tue, 10 Sep 2024 11:21:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXAR3oYEcfr8C0JoTJgYzpxBI/XNEVskl9IRBvrOJVWLwUCu5jiJMAdgK3lkb+MRM1us4Wyykr59KYm9TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2m4ib6XAdw3OCBVpwJdBw3ipDCatJBs83Y8PVfS8EANzPWao+
-	x7EPYHRt+oPhy4eE847qwOdenO1qjNOybPlWkLbbfWJW5qEraGWwvWi00OIHrIkxw1U06K72it4
-	QrPKHPZ02N2ViIa+1fFAkskWsVS8=
-X-Google-Smtp-Source: AGHT+IEyhUtg2FFEJz7J6hwQ+scQiYyh2ECDWz2vcQf8fjkqrHoXwi4n7Nbv4ToE33FuL1PzzeSd33ZhsTwC7QhyUF8=
-X-Received: by 2002:a05:6870:3509:b0:278:234e:6e42 with SMTP id
- 586e51a60fabf-27b9daece08mr6612853fac.36.1725992481598; Tue, 10 Sep 2024
- 11:21:21 -0700 (PDT)
+	s=arc-20240116; t=1725992361; c=relaxed/simple;
+	bh=0XNRgHlRh33jgSKTjnC9hP7ja6J8WlVCPnTjoKAAMEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PwM5H7WK8TAoK/5d7X4SR74FKLERDYO9ZjpyoioTWKirKJe0SLUZDjHb/i6fk5xsgjHjc3OlR2zognjofF7MP0F6r67i42c2ttHMNxz+BL987pnHPPb6ycVoqidWPyIM1+epAkM/ZACLEdAMXpbmzQ7fiYHWoT5/cYlXRvAhl4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VajOz9ri; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XzlU8P8QZFu0BOwrWasNz2nIoiPFhgq1B8KDiec2fJQ=; b=VajOz9ri3kbGwukRMWUsfs9mFA
+	SIo+WBOTiiOl9pUr+PeXDH0XkQ66A/H3hEovxgjFfvWC743jlS1VIVXhlcgE36BlhTbEQDS9dWO6z
+	U+dzKR28KrLHqYkRdH0z0rvRWWqPhQfrD5BsT9mVEpPXJ2tj9amTi8pYrZBTXmI9D7KAQXydAWU08
+	4+uZJrvN0DXoGUB+0ceCOEEYyyegluOjlGplApmTwYP8p/NmZvo61lPjuDj1DM2PWGJ7hS4x6RIYO
+	ufFcqYbIp9xNjhIOmaP3+TzpJMxmGwV/sllsO78GngDiFlcYDY+uIDHfyfU8RdwklNIidMm8m6SWj
+	uhDWB6ZQ==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1so5SE-0007Ih-Ch; Tue, 10 Sep 2024 20:19:06 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+ =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject:
+ Re: [PATCH v1 1/6] pmdomain: rockchip: forward
+ rockchip_do_pmu_set_power_domain errors
+Date: Tue, 10 Sep 2024 20:21:34 +0200
+Message-ID: <4131747.ReJHH8Nr61@diego>
+In-Reply-To: <20240910180530.47194-2-sebastian.reichel@collabora.com>
+References:
+ <20240910180530.47194-1-sebastian.reichel@collabora.com>
+ <20240910180530.47194-2-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908053607.4213-1-luke@ljones.dev>
-In-Reply-To: <20240908053607.4213-1-luke@ljones.dev>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Sep 2024 20:21:10 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ii=P6mW2DFz0wNw2_nRYEe=ts+T=_pZvnV9aLoMAp-DA@mail.gmail.com>
-Message-ID: <CAJZ5v0ii=P6mW2DFz0wNw2_nRYEe=ts+T=_pZvnV9aLoMAp-DA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: PM: Quirk ASUS ROG M16 to default to S3 sleep
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org, 
-	rafael@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, Sep 8, 2024 at 7:36=E2=80=AFAM Luke D. Jones <luke@ljones.dev> wrot=
-e:
->
-> The 2023 ASUS ROG Zephyrus M16 can suffer from quite a variety of events
-> causing wakeup from s2idle sleep. The events may come from the EC being
-> noisey, from the MMC reader, from the AniMe matrix display on some models
-> or from AC events.
->
-> Defaulting to S3 sleep prevents all these wakeup issues.
->
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->  drivers/acpi/sleep.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-> index 889f1c1a1fa9..c8ee8e42b0f6 100644
-> --- a/drivers/acpi/sleep.c
-> +++ b/drivers/acpi/sleep.c
-> @@ -351,6 +351,20 @@ static const struct dmi_system_id acpisleep_dmi_tabl=
-e[] __initconst =3D {
->                 DMI_MATCH(DMI_PRODUCT_NAME, "1025C"),
->                 },
->         },
-> +       /*
-> +        * The ASUS ROG M16 from 2023 has many events which wake it from =
-s2idle
-> +        * resulting in excessive battery drain and risk of laptop overhe=
-ating,
-> +        * these events can be caused by the MMC or  y AniMe display if i=
-nstalled.
-> +        * The match is valid for all of the GU604V<x> range.
-> +        */
-> +       {
-> +       .callback =3D init_default_s3,
-> +       .ident =3D "ASUS ROG Zephyrus M16 (2023)",
-> +       .matches =3D {
-> +               DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +               DMI_MATCH(DMI_PRODUCT_NAME, "ROG Zephyrus M16 GU604V"),
-> +               },
-> +       },
->         /*
->          * https://bugzilla.kernel.org/show_bug.cgi?id=3D189431
->          * Lenovo G50-45 is a platform later than 2012, but needs nvs mem=
-ory
-> --
+Am Dienstag, 10. September 2024, 19:57:10 CEST schrieb Sebastian Reichel:
+> Currently rockchip_do_pmu_set_power_domain prints a warning if there
+> have been errors turning on the power domain, but it does not return
+> any errors and rockchip_pd_power() tries to continue setting up the
+> QOS registers. This usually results in accessing unpowered registers,
+> which triggers an SError and a full system hang.
+> 
+> This improves the error handling by forwarding the error to avoid
+> kernel panics.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Applied as 6.12 material, thanks!
+more error handling is always better :-)
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
 
