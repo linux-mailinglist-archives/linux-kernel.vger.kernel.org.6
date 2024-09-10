@@ -1,107 +1,101 @@
-Return-Path: <linux-kernel+bounces-322798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0270B972E40
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FEB972E46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A174B20D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BCB287222
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E265318C320;
-	Tue, 10 Sep 2024 09:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E4818C015;
+	Tue, 10 Sep 2024 09:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="lq8SE9Dd"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YCt+lu5u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F0718A6B9;
-	Tue, 10 Sep 2024 09:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4EB1885A6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961237; cv=none; b=gBot04W/l4w+AHn8ZOUdXhYam4VzVOf7nebUNUXXcKbL5tIWB/RV1ieDnYxTQc/Z3r8tf+kns0wS3lcDuLBJtuhgxXWEBBRRhkxBqhF28WUXj+vXTkifQdcr6J+X1EUt8MhN2KZIwFAdIFFKrLtZ3ew6f9vVXsgCZLEw8hktTUQ=
+	t=1725961251; cv=none; b=bvNrL4cfuI/CXWTFo2LHDwCqX0TEKoFkpU11HNuAAGKSx4tssfkoUy7DyDj4jGB6EST5nbtuLJpzLLHuvbQ2NzQETQOSA5vrP8eykJbHXNh288ModesYOIUuS6P5I3SlC9NXKofB93fl1Vh3bbMTTXj0k0r2KUs3Q49QUzqmGA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961237; c=relaxed/simple;
-	bh=crezw4h71heh+p8ncPI3zFzjIxOJh0s8BsfBF+Ved/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QSGAguTcDRNehgUcjLiX/wck0rtIzCG5q2HOrhB4Fj7u2RZ5vTW4YxD2YmN87YzEMIRGpYxoCw6w6Tvbvm1D6CBLmjNclxstVVNISFjMA0CAcw8Pd5bKnQD0/Wz+zJMkN1Iun0xsjOEhpsSMRU8b+1ISdyQzMPPvyaMu36+0IgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=lq8SE9Dd; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse.fritz.box (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id DE1102FC005F;
-	Tue, 10 Sep 2024 11:40:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1725961226;
+	s=arc-20240116; t=1725961251; c=relaxed/simple;
+	bh=pDQz+l8apuQA9xKefB7YZY8tvNvC4eo7EmVtLISQ4GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7KMy5+3NU6fCpo8dR5NUUpLDyi2MJgKdaXq9ajVjj2NOy1WChtoQo+QDORi/9HM0MrMzdU5LUPqlKmSlrBp9KVNSCLoGX0yx7XCVF0UKoUezNpb8agnC8A4kxBc1JmLhWvCaVuhXGJP+nregoIcRsKMAFn5e4yoNA3dmYw6fC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YCt+lu5u; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725961248;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9X+QPGcawN36AipqlCrfunapFunKHrtEp6MtUJUbvqw=;
-	b=lq8SE9Dd4RtgRDrTXalmydiv3Jb1+IdqbsA/oe3hs3ztG6L3bwDcWYYBtP9+3PP4kt/7rO
-	Sqxlk+SGZt5uClP5bAnKWnZ3fLJIC7N/T1nP/R6mGplG3d/d7RmKL5erjVKbAWH73ksMLx
-	A8Wq3GcwCjAcOBimpYZ19f09a/77CiQ=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] Input: i8042 - add TUXEDO Stellaris 15 Slim Gen6 AMD to i8042 quirk table
-Date: Tue, 10 Sep 2024 11:40:08 +0200
-Message-Id: <20240910094008.1601230-3-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910094008.1601230-1-wse@tuxedocomputers.com>
-References: <20240910094008.1601230-1-wse@tuxedocomputers.com>
+	bh=UFE0gTOSvJ22bbsZXLn7Kw50Px9Uq2WJzebFyV8nzxY=;
+	b=YCt+lu5ulSGTYLOcKeMitg2NvFiTA1APuo3mOb8IzbPBL9b9sTbx3qavmOCQzdSaDHieND
+	V2Js+yP63CYJxfwLLFfwgVbdLn4Efpoi33w5EbL2+VBQKIXf5JIw1PsMIMzPQh83ifXbF3
+	zoEkvOy8N2fXwucKMmSepp0OvfLfN9w=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-srpyLGbuNGu7w9mpKxLywQ-1; Tue,
+ 10 Sep 2024 05:40:44 -0400
+X-MC-Unique: srpyLGbuNGu7w9mpKxLywQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53FDE1954B16;
+	Tue, 10 Sep 2024 09:40:43 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.58])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE4F1195605A;
+	Tue, 10 Sep 2024 09:40:41 +0000 (UTC)
+Date: Tue, 10 Sep 2024 17:40:37 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, dyoung@redhat.com,
+	daniel.kiper@oracle.com, noodles@fb.com, lijiang@redhat.com,
+	kexec@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] x86/mm/sme: fix the kdump kernel breakage on SME
+ system when CONFIG_IMA_KEXEC=y
+Message-ID: <ZuAUFTgK5G2xzSya@MiWiFi-R3L-srv>
+References: <20240829104016.84139-1-bhe@redhat.com>
+ <20240829104016.84139-3-bhe@redhat.com>
+ <43291018-098f-291a-629b-6e02ef00f8e5@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43291018-098f-291a-629b-6e02ef00f8e5@amd.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The Gen6 devices have the same problem and the same Solution as the Gen5
-ones.
+On 09/09/24 at 09:53am, Tom Lendacky wrote:
+> On 8/29/24 05:40, Baoquan He wrote:
+......snip.. 
+> > Here fix the code bug to make kexec/kdump kernel boot up successfully.
+> > 
+> > And also fix the similar buggy code in memremap_is_setup_data() which
+> > are found out during code reviewing.
+> 
+> I think you should add something along the lines that the "len" variable
+> in struct setup_data is the length of the "data" field and does not
+> include the size of the struct, which is the reason for the miscalculation.
 
-Some TongFang barebones have touchpad and/or keyboard issues after
-suspend, fixable with nomux + reset + noloop + nopnp. Luckily, none of
-them have an external PS/2 port so this can safely be set for all of
-them.
+Fair enough. I will send v3 to add the reason of miscalculation.
 
-I'm not entirely sure if every device listed really needs all four quirks,
-but after testing and production use, no negative effects could be
-observed when setting all four.
+> 
+> Otherwise:
+> 
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
----
- drivers/input/serio/i8042-acpipnpio.h | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/input/serio/i8042-acpipnpio.h b/drivers/input/serio/i8042-acpipnpio.h
-index d16072b82d957..34d1f07ea4c30 100644
---- a/drivers/input/serio/i8042-acpipnpio.h
-+++ b/drivers/input/serio/i8042-acpipnpio.h
-@@ -1150,6 +1150,13 @@ static const struct dmi_system_id i8042_dmi_quirk_table[] __initconst = {
- 		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
- 					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
- 	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GMxHGxx"),
-+		},
-+		.driver_data = (void *)(SERIO_QUIRK_NOMUX | SERIO_QUIRK_RESET_ALWAYS |
-+					SERIO_QUIRK_NOLOOP | SERIO_QUIRK_NOPNP)
-+	},
- 	/*
- 	 * A lot of modern Clevo barebones have touchpad and/or keyboard issues
- 	 * after suspend fixable with nomux + reset + noloop + nopnp. Luckily,
--- 
-2.34.1
+Thanks a lot for careful checking.
 
 
