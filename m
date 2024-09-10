@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-323121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31CFE973839
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:04:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A17297383C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09B528649C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F94F1F26A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C1191F9F;
-	Tue, 10 Sep 2024 13:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A71191F93;
+	Tue, 10 Sep 2024 13:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iFudpvHW"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IcEKE5VX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64643C0C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E45518C00D;
+	Tue, 10 Sep 2024 13:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973441; cv=none; b=He93jzgltIJoopKAqAd7TgZprr/tXkwdCqY+wKJMB/3oG+7N0JthsBpOP09qxJzw5p6lh3lNKdXy2FyqFjLGQXH7OJjFP5we9iIT5PbinvFSiYOHwQf2vnr5JjcYeUhG71PPFDZmFiCU4VEMGhLa2Eo32gSAkSltaQVYAGK7MnE=
+	t=1725973518; cv=none; b=gjtJ7Ju9B/KURaixNrUEjamHlloy2pH53Er0CMiFP8kDWUQKOtaXPOja38wOOLszXZSwqq15OJB+U8Sn+3h5jGFS24npaw5CfEPeSbzq8IiMnmo3NjWr476ServDOyoCb00qT86ZHC/rRuysyLz+69JFz/JJo0/WHG4k+5fxX1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973441; c=relaxed/simple;
-	bh=x1o0G2D/DnKp2GiG1HSvTPWfErDt/cPj5ZiIWZe9ToM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DuaqRadmTbGiHjxXVvaiUx6WbCYfGY9j38GXlqdcKhJTN2X3J1iIPeqYaWuG1qBglLFLa+9HiatAjLHJc5dsXF+wWVaf254bVMXP6D5VpskhYq3tU5L6SwSh/lIh2jpLAOwEsMQQXMdxjaI3ApyG7ZttDzLrnmRsE3ITbZhhzRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iFudpvHW; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=hw457d576rdmvabsgqk6my4jny.protonmail; t=1725973436; x=1726232636;
-	bh=QL/xny+7YZ+HuSdSBDWfILutCZ1cQLnIIC+OF84XN2U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=iFudpvHWDUScSVTix+YcNVhOyw09PRzCHdSiyV7hMLU1erXMdLwPZvxTT2YVSB7Ox
-	 GJ9cR68zOWbmrJLfx4CgpcDnxBoe2TAmAMAt+TgKAj2aUD0oDrAZtr2eiZ/BJP4ezh
-	 7x49q374LYEY820SLi80fvRDKUw0Ze/PP8NoH86SzWqWMTfQwV/WeJFlMj0D5jWyWS
-	 jNIqRmblXxHBZ5wRfRc95xrIQESyitdZpiNpRak9wbOSLxwJUBS/8il6RACtjZ0MyR
-	 29DC9rE4D3pY45jGuV5SRFq1B2uAbIcZ9Q/UwtUcEuUGrUDhlsh9TfR9NorO/PJp0l
-	 ownJjUGQNCAMg==
-Date: Tue, 10 Sep 2024 13:03:48 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
-Message-ID: <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
-In-Reply-To: <Ztb5arBBX2LsrFKo@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-2-dakr@kernel.org> <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me> <ZtDuf0QGfhiy5X_I@pollux.localdomain> <44b80095-8b03-4558-967e-138ea712f780@proton.me> <Ztb5arBBX2LsrFKo@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 529a7b2793b9f2585f48e36eb06cf94ffed7918e
+	s=arc-20240116; t=1725973518; c=relaxed/simple;
+	bh=e5dl7rhTvT8U88gO91GvPckWYrls1EUDpHm65XSFRHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=egzm0FwTdlnoeiPN8RTKOTVAesYQaw0M36UNH8/HNphWFTHs7qI4TDVYSYTmP8I+vsAJLaCCh22dG1ofAtBjfPIUJYu4Nz6321aUwtPUzT4TElICsLgIKnvLHKL4Pd+wqKmbn7rtqj/VMEZOSaU7Ucrl0VesZWIsdNroJ1URzsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IcEKE5VX; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725973517; x=1757509517;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=e5dl7rhTvT8U88gO91GvPckWYrls1EUDpHm65XSFRHE=;
+  b=IcEKE5VXoaBEM/WkdB2eiRNbOcObHP8pyqOC4ipb1nvWZi9uq+xpnMcS
+   /gP/UybXnvVl5LsGPnkmNFpTeE6zH02UOsHM3N+gZ3o/bvdYEWrXlBVRY
+   2imMr/AbnGzXgpe+j6q9YrNBnkNOXNLsBE3utFcbDYg1AEZ+JU9c0P/Dm
+   T0An+6cqlsgSp97hYv160avfhQsGQseAjDayod4PQlRU9B56ZSHkAA26l
+   4xkxUi31mFIS5VqHnuPyLEw036FcVr44B9z5gJ8zouciPhnt73SvMFLI7
+   ITQxy+eyGQzZ9o8Sf/0cZ3hFFRc7VXseSF/NcBFvvdQp10tU1E4mvjB5x
+   g==;
+X-CSE-ConnectionGUID: dQW+EnE6RROQxrIjUquE0w==
+X-CSE-MsgGUID: cQyzFr4oRKekVzwDr2pcZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="42191318"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="42191318"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:05:16 -0700
+X-CSE-ConnectionGUID: Xd9L7Gp2RNCKe72KRzKOpA==
+X-CSE-MsgGUID: 5TgIvzSPQWua0RSpn/N0xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="67547864"
+Received: from maurocar-mobl2.ger.corp.intel.com (HELO [10.245.245.155]) ([10.245.245.155])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:05:13 -0700
+Message-ID: <568137f5-4e4f-4df7-8054-011977077098@linux.intel.com>
+Date: Tue, 10 Sep 2024 16:05:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] soundwire: stream: Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, stable@vger.kernel.org
+References: <20240909164746.136629-1-krzysztof.kozlowski@linaro.org>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <20240909164746.136629-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 03.09.24 13:56, Danilo Krummrich wrote:
-> On Fri, Aug 30, 2024 at 01:06:00PM +0000, Benno Lossin wrote:
->> On 29.08.24 23:56, Danilo Krummrich wrote:
->>> On Thu, Aug 29, 2024 at 06:19:09PM +0000, Benno Lossin wrote:
->>>> On 16.08.24 02:10, Danilo Krummrich wrote:
->>>>> Add a kernel specific `Allocator` trait, that in contrast to the one =
-in
->>>>> Rust's core library doesn't require unstable features and supports GF=
-P
->>>>> flags.
->>>>>
->>>>> Subsequent patches add the following trait implementors: `Kmalloc`,
->>>>> `Vmalloc` and `KVmalloc`.
->>>>>
->>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->>>>
->>>> We discussed this in our weekly meeting (I think ~one week ago?). If y=
-ou
->>>> give me a draft version of the comment that you plan to add regarding
->>>> the `old_layout` parameter, I can see if I am happy with it. If I am, =
-I
->>>> would give you my RB.
->>>
->>> May I propose you let me know what you would like to see covered, rathe=
-r than
->>> me trying to guess it. :-)
->>
->> I was hoping that we put that in our meeting notes, but I failed to find
->> them... I would put this in a normal comment, so it doesn't show up in t=
-he
->> documentation. Preface it like implementation decision/detail:
->> - Why do `Allocator::{realloc,free}` not have an `old_layout` parameter
->>   like in the stdlib? (the reasons you had for that decision, like we
->>   don't need it etc.)
->=20
-> Ok.
->=20
->> - Then something along the lines of "Note that no technical reason is
->>   listed above, so if you need/want to implement an allocator taking
->>   advantage of that, you can change it"
->=20
-> I don't really want to set the conditions for this to change in the
-> documentation. It really depends on whether it's actually needed or the
-> advantage of having it is huge enough to leave the core kernel allocators=
- with
-> unused arguments.
->=20
-> This can really only be properly evaluated case by case in a discussion.
 
-Agreed, but I don't want people to think that we have a reason against
-doing it in the future. Do you have an idea how to convey this?
 
----
-Cheers,
-Benno
+On 09/09/2024 19:47, Krzysztof Kozlowski wrote:
+> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
+> breaks codecs using non-continuous masks in source and sink ports.  The
+> commit missed the point that port numbers are not used as indices for
+> iterating over prop.sink_ports or prop.source_ports.
+> 
+> Soundwire core and existing codecs expect that the array passed as
+> prop.sink_ports and prop.source_ports is continuous.  The port mask still
+> might be non-continuous, but that's unrelated.
+> 
+> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
+> Acked-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Tested-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+
+> 
+> ---
+> 
+> Resending with Ack/Rb tags and missing Cc-stable.
+> ---
+>  drivers/soundwire/stream.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+> index f275143d7b18..7aa4900dcf31 100644
+> --- a/drivers/soundwire/stream.c
+> +++ b/drivers/soundwire/stream.c
+> @@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
+>  					    unsigned int port_num)
+>  {
+>  	struct sdw_dpn_prop *dpn_prop;
+> -	unsigned long mask;
+> +	u8 num_ports;
+>  	int i;
+>  
+>  	if (direction == SDW_DATA_DIR_TX) {
+> -		mask = slave->prop.source_ports;
+> +		num_ports = hweight32(slave->prop.source_ports);
+>  		dpn_prop = slave->prop.src_dpn_prop;
+>  	} else {
+> -		mask = slave->prop.sink_ports;
+> +		num_ports = hweight32(slave->prop.sink_ports);
+>  		dpn_prop = slave->prop.sink_dpn_prop;
+>  	}
+>  
+> -	for_each_set_bit(i, &mask, 32) {
+> +	for (i = 0; i < num_ports; i++) {
+>  		if (dpn_prop[i].num == port_num)
+>  			return &dpn_prop[i];
+>  	}
+
+-- 
+Péter
 
