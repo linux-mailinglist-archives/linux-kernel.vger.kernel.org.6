@@ -1,167 +1,91 @@
-Return-Path: <linux-kernel+bounces-322244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989B597263C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFCD97263F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFB6E1C2274A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9210B285348
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE3C2BAE8;
-	Tue, 10 Sep 2024 00:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FE938FA5;
+	Tue, 10 Sep 2024 00:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZKwT+fr4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gy3NgntA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B87DF4EB;
-	Tue, 10 Sep 2024 00:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA04C36134;
+	Tue, 10 Sep 2024 00:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725928677; cv=none; b=roBtr6YVMxxBHugMO7V01Nj0qpD8GIGjcynrr7zTEnPomHlqCJawXU7+dFPxc+dWJa6MzNykBa9CAnjxlH0Hua4ZS/XKv4hCpGFV+rHT1Zh/zxpRL0Zy579gKQWxkL7Fdf1lasqRNA2RnfG0Abj54G7j/CMkbdCt3osTyV71WEM=
+	t=1725928827; cv=none; b=DVKEWDnsm8zS5aWyRBmQz29dtbIhnTP9blVJai+7DAuieq9faJt9LQ8B11ZXB552azEptOD6vO0N1as2UUmbo4hZCyuqdqXe4knrjRBq96K4mnMIkC06IiGLlf8988zn8zYhPuanaKmt3NucO194/IFm7DurpIpuwDmEPk3vSwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725928677; c=relaxed/simple;
-	bh=jr5zVGRGboL5XtozuVLN38ByT/dg4+14+mi3ttijOhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IynONVi+VOwrI3/gTULrbtV3ITfxXPKwt8SH9fjxBcCU9wekCYDu8OFfhQdxn4sqzNTd6wnWuZcyKegnqQkwXm8wDG+IQhmVuqIgJzXiv2N0FFUD6Qo6RYjMARTMErkgADVWFpAys88AA4J3W+hHrlScP790oCFP2qgAx9Qnam0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ZKwT+fr4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51DC3C4CEC5;
-	Tue, 10 Sep 2024 00:37:50 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZKwT+fr4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725928668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OQLtanPdpI6IiO92yLD4QK+WpMduqZbfYjfvTA4Wjlg=;
-	b=ZKwT+fr48l6iq8LtejYrRYTAB9HVjSoYl2w9SIS8taTr8eJGaMN+UnDXFn2Y+3WPqB/R/F
-	rRaSffSolaALbBnXYJobLzN3VpV4Ezx51BMaa/1NhCLY3oqj42i7Mx1nH5OoYZ9G42zSuF
-	N4doRAUS+Xs6qZlnbpNizLgjSg5FNi8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9dac766c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 10 Sep 2024 00:37:47 +0000 (UTC)
-Date: Tue, 10 Sep 2024 02:37:38 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Hannes Reinecke <hare@suse.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH RESEND v2 00/19] random: Resolve circular include
- dependency and include <linux/percpu.h>
-Message-ID: <Zt-U0opo2EW8LSRJ@zx2c4.com>
-References: <20240909075641.258968-1-ubizjak@gmail.com>
- <Zt8a6_RwLG2pEnZ6@zx2c4.com>
- <CAFULd4ak3n1x0tGrqiNoxvDBRw6AWgchfBO_k4aKps34DomPvA@mail.gmail.com>
+	s=arc-20240116; t=1725928827; c=relaxed/simple;
+	bh=cWlpEWfw/A0iuBMaJp3jtpvIseMQ8n1c7QwkVVtppjo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pG2X3tGGeVzI9CjB4Ie+4PaL9O5B+bGQJn/qKhzZdZogMqB+FjRijRKW/DE0vD+D7Uueo+MT/yafCOkhtmCtGmGgilpArIfJqd6M7l1IVzTL+RC+Jpqn5oqUzVHMpvZnPK10RsnsFrtPkGEMdSB9DT8BSwpXQs8wiMjNOiEVD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gy3NgntA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3ACDC4CEC5;
+	Tue, 10 Sep 2024 00:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725928827;
+	bh=cWlpEWfw/A0iuBMaJp3jtpvIseMQ8n1c7QwkVVtppjo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gy3NgntAKEJiPEgyXGdozU+OoO3luonUzb7of1osiPd1HmC4M+wd/nKl8cuP7ydey
+	 Ti5NaLOhloqoPK+bwCtJf0RzXt6KYa01hBAntcZRye+wEJC9um0ncpSNHKrZ5q06hg
+	 9kDMTwDXVaZ64Z85/BY0KLylW5ox7JOGRqbeGe0jB4UWt0bjGba5EQWYXR1Nl7qGqK
+	 uak+aM0+5CuF01QYVQ5PyPr/gfFbnO0HXtOgVxvQVDXU0jGNTrOrmvMfLygEbUDQUY
+	 qKGaL1qKzb1gA0txS+yrLI/PW+TbcBKIrGrcu0PA9P3x4QYOOmJiux8gwV0TTPy47B
+	 t5mW988b31/VA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD433806654;
+	Tue, 10 Sep 2024 00:40:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFULd4ak3n1x0tGrqiNoxvDBRw6AWgchfBO_k4aKps34DomPvA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] fou: fix initialization of grc
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172592882877.3968469.15818018121459375059.git-patchwork-notify@kernel.org>
+Date: Tue, 10 Sep 2024 00:40:28 +0000
+References: <20240906102839.202798-1-usama.anjum@collabora.com>
+In-Reply-To: <20240906102839.202798-1-usama.anjum@collabora.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, kuniyu@amazon.com, kernel@collabora.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Uros,
+Hello:
 
-On Mon, Sep 09, 2024 at 09:30:06PM +0200, Uros Bizjak wrote:
-> Besides GCC, clang can define various named address space via
-> address_space attribute:
-> 
-> --cut here--
-> #define __as(N) __attribute__((address_space(N)))
-> 
-> void *foo(void __as(1) *x) { return x; }         // error
-> 
-> void *bar(void __as(1) *x) { return (void *)x; } // fine
-> --cut here--
-> 
-> When compiling this, the compiler returns:
-> 
-> clang-as.c:3:37: error: returning '__as(1) void *' from a function
-> with result type 'void *' changes address space of pointer
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Super cool. Looking forward to having it all wired up and the bugs we'll
-find with it. 
-
-> I think that the best approach is to target this patchset for linux
-> 6.13 via random.git tree. I will prepare a v3 after 6.12rc1, so when
-> committed to random.git, the patchset will be able to spend some time
-> in linux-next. This way, there will be plenty of time for CI robots to
-> do additional checks also for some less popular targets (although
-> individual patches are dead simple, removing these kinds of "legacy"
-> includes can be tricky), and I will also be able to collect Acked-by:s
-> in the meantime.
+On Fri,  6 Sep 2024 15:28:39 +0500 you wrote:
+> The grc must be initialize first. There can be a condition where if
+> fou is NULL, goto out will be executed and grc would be used
+> uninitialized.
 > 
-> While the patchset is an improvement by itself, its inclusion is not
-> time sensitive. The follow up percpu named address checking
-> functionality requires a very recent feature (__typeof_unqual__
-> keyword), which is only supported in recent compilers (gcc-14 and
-> clang-20). Besides compiler support, sparse doesn't know about
-> __typeof_unqual__, resulting in broken type tracing and hundreds of
-> sparse errors with C=1 due to unknown keyword.
+> Fixes: 7e4196935069 ("fou: Fix null-ptr-deref in GRO.")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > 
-> So, I think we are not in a hurry and can take the slow and safe path.
+> [...]
 
-Okay, sure, that sounds good to me. I'll keep my eyes open for v3
-in a few weeks then.
+Here is the summary with links:
+  - fou: fix initialization of grc
+    https://git.kernel.org/netdev/net/c/4c8002277167
 
-Jason
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
