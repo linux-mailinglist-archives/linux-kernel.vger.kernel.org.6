@@ -1,223 +1,207 @@
-Return-Path: <linux-kernel+bounces-323056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664D4973712
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:21:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030E4973714
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2513282C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866331F26206
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5631219066E;
-	Tue, 10 Sep 2024 12:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B45618E77F;
+	Tue, 10 Sep 2024 12:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Oiy9wM+Z"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bhm/f4kQ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD5118FDDC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650518C347
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970835; cv=none; b=RiuLKlhUCd1J9VjT7aIIxk9eWBrn574WqWMMChYWA7O2XBz/5m1/YGpZodbLyvtfGF5EgcKKphyNB9s0A10aTyviBCj5v+5PH5LBRNK4LsfZO4KVXYojTbHcLsoM9NNCqNS37A5O7QgeC/XMTzPfsf3hBmNahiVf0AseGEcXCoA=
+	t=1725970896; cv=none; b=CBNVuTnJlUXy3ljbTnnyqHYi/1YnswJ6dwvUJXWHy7XPDrB4liQo7IpFeBcaufy1FQMsaiZl/xfmmxQSsMycIl86auJ5jrocM114NETvymWUL3AISMEh2Jeea6JnZpIzzkb7CoRx6E1TmgZph2XtIrsn3dRZIicH0/EOLC4se24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970835; c=relaxed/simple;
-	bh=xlXsNgN7LpF85EIsovJzENAopW8zdfYDE3tfah8OZOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aGbKxSPiicLCyE0AoO1Y+jSNtByMpF+YUaLqxcUuQMzLx8BoRiP6Gq+9R4cXsI+DuP20ivx8vHzX+k64ZCgtca/Vp+U1eh5/lyYVoEQzgfjGkhweHdcIAW0S317N10CvupPU57YUj+pjQ+nHVJckhqAg9IwF5SYEq9JQstfc3+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Oiy9wM+Z; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53654e2ed93so5945653e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725970832; x=1726575632; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AtSpe0lCtmwK6MnyQ7SkjGQd/XQjdP4l5Uo5Sa5Bjm8=;
-        b=Oiy9wM+ZUAiAlIXL6KYgcT4nEFnZPJqIBVzmXE7vW88KiA8uPn+452lTP6XUfxKh49
-         a1HDyP48beY7Eo5QAxK4yDp6J/kb1msCwo/80KmmFIUoThmIyDSKpkqkPg0ypHJBLyYM
-         UgEXWxixJjrNa1c60+3AOD2JzQHlCq+30kbJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725970832; x=1726575632;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AtSpe0lCtmwK6MnyQ7SkjGQd/XQjdP4l5Uo5Sa5Bjm8=;
-        b=cIazOYbILiEGzguVzR6YHgbFUpWqMYbBBBFw6KnUdHdgKbRfovZYPlKqJQLakVg4K3
-         5yEZRwM3IBpR9cihMKzi7mQnmZyEqjsNUef6ipCDkt8X39DKrxxDEk5cY0mGJxljIpGB
-         1Nk+Z1jV0SwwznInJHqOTQJKw6ZEWvLBCOTTp3Qs7FM9twwumfT6uJ0mIVwhLREIuY25
-         oVyuSq2b7K6TW1rw6szMsopMaK6bkIuOBHF7lOec/7c1B9e7EJVCd7qpDJHAn2yRwq9c
-         ErGPzxYito0wmYUd3BHiFlVjDIzibjY7ZUabUEQwdZS38iZ7oGEb4U/Zj6znIaNw/Akj
-         pgGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7eJvvON/wY7ioIL0bLtKvQ06rdNbVF4KZFw0+aAhM6J9TZpNrRR/Xw/WNRnQYNiGceMOtZVE8NBJsWFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLkYhYhckdxwfAjJg0CDExoTKR3JCo8TAvwMmeic6nWgPqNR9M
-	ccBE4rcr+jFh97LMwrCEA4e4jly4la/MBaxuwDf0+GPyPP3aRR4tS4sUK97LD2abakvQQORHKvj
-	eKv3HPFQ1++E1vpe+ube4wAFLQojoRhQd6DaY
-X-Google-Smtp-Source: AGHT+IFOhcJDEeAuoCVEk+2x7EaaNyOntXSXrIRJF/Ykd/jDkmND7EM1c7af0RQn+qmcaX8TUoRgdf2ZOJiAAf7Z0Rg=
-X-Received: by 2002:a05:6512:224f:b0:535:6ba7:7725 with SMTP id
- 2adb3069b0e04-536587aa4d4mr8659704e87.3.1725970831388; Tue, 10 Sep 2024
- 05:20:31 -0700 (PDT)
+	s=arc-20240116; t=1725970896; c=relaxed/simple;
+	bh=Yy/uCsgfxv2hexTxawH3Q4aYphAXTQfogySLSH71qMU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=ViTci5aOmsOJNmed9/j7i9QyGHcMgdNjtbMb+Ws+YSVN3kmUOwqUD23UrdtJzK8cQ6sl2mfVfgxNcehiHdxNZ4VupLUBwX/Q//FcV+bTz0kT/e819zARKj3ascQYFRZ0Fnodsixug9VBCs5AFwaS/XJHoifubiOQfDPJNhcHMDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bhm/f4kQ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A8Qeti015231;
+	Tue, 10 Sep 2024 12:21:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:content-type:mime-version; s=pp1; bh=XUaUVVkb0XT/u8nvJR30AODfRM
+	PZC9UijDR/tN6vjhI=; b=bhm/f4kQRPy2EBcrezzK8DWSgcPvy6bbKJF5Q8iZoV
+	rA0M/FQUJqXsAzSuDwakXOD1kkEGOdWfUTkMttgYipDGZL2a56EJDUrH7fbowv7E
+	FdhmChLi/9NuReDB6z/hO2rfASZCFd1ts53RMDxlTal4n45EbmMmkKpvahHgSP4C
+	Ohay5M5vsYgnRX4prwF0GJ0qBUo+M4CQLzRtae372WO0Jn0+A4cJiAAKzQz5AX3Y
+	YmWcldmyXfLnSxVqitcFMbPJk+T3sjRK7qJ0rHxfYrSjYhPxez4GNi41gh6Z23xf
+	9u2mW86RvDcMQi3ujOWlsrBKL6uFiuqmnU2n0Ua9X+4A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwqdst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 12:21:10 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48ACL9iZ015473;
+	Tue, 10 Sep 2024 12:21:09 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwqdse-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 12:21:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48A8xsbb032073;
+	Tue, 10 Sep 2024 12:21:08 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nmkajw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 12:21:07 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ACL69657016666
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Sep 2024 12:21:06 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 059DC20049;
+	Tue, 10 Sep 2024 12:21:06 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9FCD20040;
+	Tue, 10 Sep 2024 12:21:05 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 10 Sep 2024 12:21:05 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+        kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+        youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 00/24] Complete EEVDF
+In-Reply-To: <yt9d4j6nenps.fsf@linux.ibm.com> (Sven Schnelle's message of
+	"Tue, 10 Sep 2024 13:45:51 +0200")
+References: <20240727102732.960974693@infradead.org>
+	<yt9d4j6nenps.fsf@linux.ibm.com>
+Date: Tue, 10 Sep 2024 14:21:05 +0200
+Message-ID: <yt9dzfofd7im.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1QRsJDksr0op8YJGE9wgQeDfHOUoVhSK
+X-Proofpoint-ORIG-GUID: kuivBLcV3g54KqYQiJ-UlCysj0JqXnKY
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910075942.1270054-1-shaojijie@huawei.com>
- <20240910075942.1270054-6-shaojijie@huawei.com> <CAH-L+nMPOyhkjt530-L9EvAAQ87nBJ7RdShgHJ+VOC4fpvLXoA@mail.gmail.com>
- <a8cf886d-415b-4211-8c70-e8427cc67921@lunn.ch>
-In-Reply-To: <a8cf886d-415b-4211-8c70-e8427cc67921@lunn.ch>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Tue, 10 Sep 2024 17:50:18 +0530
-Message-ID: <CAH-L+nN7k-AuzRsQijp1wtMnz0Mmko2ZhsdBV3cQb4JzP3YkmQ@mail.gmail.com>
-Subject: Re: [PATCH V9 net-next 05/11] net: hibmcge: Implement some .ndo functions
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, shenjian15@huawei.com, 
-	wangpeiyang1@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com, 
-	sudongming1@huawei.com, xujunsheng@huawei.com, shiyongbang@huawei.com, 
-	libaihan@huawei.com, jdamato@fastly.com, horms@kernel.org, 
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com, 
-	salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005d80f30621c2e6ab"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100089
 
---0000000000005d80f30621c2e6ab
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Sven Schnelle <svens@linux.ibm.com> writes:
 
-On Tue, Sep 10, 2024 at 5:44=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+> Peter Zijlstra <peterz@infradead.org> writes:
 >
-> > > +static void hbg_change_mtu(struct hbg_priv *priv, int new_mtu)
-> > > +{
-> > > +       u32 frame_len;
-> > > +
-> > > +       frame_len =3D new_mtu + VLAN_HLEN * priv->dev_specs.vlan_laye=
-rs +
-> > > +                   ETH_HLEN + ETH_FCS_LEN;
-> > > +       hbg_hw_set_mtu(priv, frame_len);
-> > > +}
-> > > +
-> > > +static int hbg_net_change_mtu(struct net_device *netdev, int new_mtu=
-)
-> > > +{
-> > > +       struct hbg_priv *priv =3D netdev_priv(netdev);
-> > > +       bool is_running =3D netif_running(netdev);
-> > > +
-> > > +       if (is_running)
-> > > +               hbg_net_stop(netdev);
-> > > +
-> > > +       hbg_change_mtu(priv, new_mtu);
-> > > +       WRITE_ONCE(netdev->mtu, new_mtu);
-> > [Kalesh] IMO the setting of "netdev->mtu" should be moved to the core
-> > layer so that not all drivers have to do this.
-> > __dev_set_mtu() can be modified to incorporate this. Just a thought.
+>> Hi all,
+>>
+>> So after much delay this is hopefully the final version of the EEVDF patches.
+>> They've been sitting in my git tree for ever it seems, and people have been
+>> testing it and sending fixes.
+>>
+>> I've spend the last two days testing and fixing cfs-bandwidth, and as far
+>> as I know that was the very last issue holding it back.
+>>
+>> These patches apply on top of queue.git sched/dl-server, which I plan on merging
+>> in tip/sched/core once -rc1 drops.
+>>
+>> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
+>>
+>>
+>> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
+>>
+>>  - split up the huge delay-dequeue patch
+>>  - tested/fixed cfs-bandwidth
+>>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
+>>  - SCHED_BATCH is equivalent to RESPECT_SLICE
+>>  - propagate min_slice up cgroups
+>>  - CLOCK_THREAD_DVFS_ID
 >
-> Hi Kalesh
+> I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
 >
-> If you look at git history, the core has left the driver to set
-> dev->mtu since the beginning of the code being in git, and probably
-> longer. It seems a bit unfair to ask a developer to go modify over 200
-> drivers. Please feel free to submit 200 patches yourself.
-
-Hi Andrew,
-
-I did not ask Jijie to make this change. In fact, I had added my RB
-tag and added this as a comment saying this comment has nothing to do
-with his changes.
-Sorry for the confusion.
+> Sometimes the system doesn't manage to print a oops, this one is the best i got:
 >
->          Andrew
+> [..]
+> This happens when running the strace test suite. The system normaly has
+> 128 CPUs. With this configuration the crash doesn't happen, but when
+> disabling all but four CPUs and running 'make check -j16' in the strace
+> test suite the crash is almost always reproducable.
 
+I failed to add the log from git bisect. Unfortunately i had to skip
+some commit because the kernel didn't compile:
 
-
---=20
-Regards,
-Kalesh A P
-
---0000000000005d80f30621c2e6ab
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIHSaWt71Z59yg8zVKTj1m4CXiAiFVMjcGyp09xkNulaUMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkxMDEyMjAzMlowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAgFnxzEIee
-DnozjnYuLAxlz1Aw1OfeyLqfcBiZnPz45i1KWXelprAaUjE+ivyuAvbzc6HsPNDQaXuVjGtt9ppv
-6PhOsdaejtes/JrNvFd0Xlwa4Dd8+UKLZbZO9tPct1S64QCD4T6JAOTI1SsyByZB1yDAIuxpoYMl
-sUmP7jghbD/BvulGzgieY5Aaai1ucJxPR+f2diLSqdcqqAQ5l/QVRHKA9KH5lkKp+FCgkf6YmZMa
-Bag/EbhfJ77Nh39aECA5AAJ/Yb+iNDfErXhQVVJd7HN1E84dOciW4x8nX1Llr3d8Jeu2SOgancAG
-wPwGaN1MkgvoML5Gom/ev1lgxuDP
---0000000000005d80f30621c2e6ab--
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [100cc857359b5d731407d1038f7e76cd0e871d94] Add linux-next specific files for 20240909
+git bisect bad 100cc857359b5d731407d1038f7e76cd0e871d94
+# status: waiting for good commit(s), bad commit known
+# good: [da3ea35007d0af457a0afc87e84fddaebc4e0b63] Linux 6.11-rc7
+git bisect good da3ea35007d0af457a0afc87e84fddaebc4e0b63
+# good: [df20078b9706977cc3308740b56993cf27665f90] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect good df20078b9706977cc3308740b56993cf27665f90
+# good: [609f9e1b6242e7158ce96f9124372601997ce56c] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
+git bisect good 609f9e1b6242e7158ce96f9124372601997ce56c
+# skip: [664c3413e9a6c345a6c926841358314be9da8309] Merge branch 'usb-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+git bisect skip 664c3413e9a6c345a6c926841358314be9da8309
+# good: [16531118ba63dd9bcd65203d04a9c9d6f6800547] iio: bmi323: peripheral in lowest power state on suspend
+git bisect good 16531118ba63dd9bcd65203d04a9c9d6f6800547
+# bad: [d9c7ac7f8bfb16f431daa7c77bdfe2b163361ead] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git
+git bisect bad d9c7ac7f8bfb16f431daa7c77bdfe2b163361ead
+# bad: [05536babd768b38d84ad168450f48634a013603d] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+git bisect bad 05536babd768b38d84ad168450f48634a013603d
+# good: [dabef94a179957db117db344b924e5d5c4074e5f] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+git bisect good dabef94a179957db117db344b924e5d5c4074e5f
+# bad: [d4886a325947ecae6867fc858657062211aae3b9] Merge branch into tip/master: 'locking/core'
+git bisect bad d4886a325947ecae6867fc858657062211aae3b9
+# bad: [51c095bee5c77590d43519f03179342e910d333c] Merge branch into tip/master: 'core/core'
+git bisect bad 51c095bee5c77590d43519f03179342e910d333c
+# bad: [fc1892becd5672f52329a75c73117b60ac7841b7] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
+git bisect bad fc1892becd5672f52329a75c73117b60ac7841b7
+# good: [ae04f69de0bef93c7086cf2983dbc8e8fd624ebe] sched/rt: Rename realtime_{prio, task}() to rt_or_dl_{prio, task}()
+git bisect good ae04f69de0bef93c7086cf2983dbc8e8fd624ebe
+# good: [abc158c82ae555078aa5dd2d8407c3df0f868904] sched: Prepare generic code for delayed dequeue
+git bisect good abc158c82ae555078aa5dd2d8407c3df0f868904
+# skip: [781773e3b68031bd001c0c18aa72e8470c225ebd] sched/fair: Implement ENQUEUE_DELAYED
+git bisect skip 781773e3b68031bd001c0c18aa72e8470c225ebd
+# skip: [e1459a50ba31831efdfc35278023d959e4ba775b] sched: Teach dequeue_task() about special task states
+git bisect skip e1459a50ba31831efdfc35278023d959e4ba775b
+# skip: [a1c446611e31ca5363d4db51e398271da1dce0af] sched,freezer: Mark TASK_FROZEN special
+git bisect skip a1c446611e31ca5363d4db51e398271da1dce0af
+# good: [e28b5f8bda01720b5ce8456b48cf4b963f9a80a1] sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
+git bisect good e28b5f8bda01720b5ce8456b48cf4b963f9a80a1
+# skip: [f12e148892ede8d9ee82bcd3e469e6d01fc077ac] sched/fair: Prepare pick_next_task() for delayed dequeue
+git bisect skip f12e148892ede8d9ee82bcd3e469e6d01fc077ac
+# skip: [152e11f6df293e816a6a37c69757033cdc72667d] sched/fair: Implement delayed dequeue
+git bisect skip 152e11f6df293e816a6a37c69757033cdc72667d
+# skip: [2e0199df252a536a03f4cb0810324dff523d1e79] sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+git bisect skip 2e0199df252a536a03f4cb0810324dff523d1e79
+# bad: [54a58a78779169f9c92a51facf6de7ce94962328] sched/fair: Implement DELAY_ZERO
+git bisect bad 54a58a78779169f9c92a51facf6de7ce94962328
+# only skipped commits left to test
+# possible first bad commit: [54a58a78779169f9c92a51facf6de7ce94962328] sched/fair: Implement DELAY_ZERO
+# possible first bad commit: [152e11f6df293e816a6a37c69757033cdc72667d] sched/fair: Implement delayed dequeue
+# possible first bad commit: [e1459a50ba31831efdfc35278023d959e4ba775b] sched: Teach dequeue_task() about special task states
+# possible first bad commit: [a1c446611e31ca5363d4db51e398271da1dce0af] sched,freezer: Mark TASK_FROZEN special
+# possible first bad commit: [781773e3b68031bd001c0c18aa72e8470c225ebd] sched/fair: Implement ENQUEUE_DELAYED
+# possible first bad commit: [f12e148892ede8d9ee82bcd3e469e6d01fc077ac] sched/fair: Prepare pick_next_task() for delayed dequeue
+# possible first bad commit: [2e0199df252a536a03f4cb0810324dff523d1e79] sched/fair: Prepare exit/cleanup paths for delayed_dequeue
 
