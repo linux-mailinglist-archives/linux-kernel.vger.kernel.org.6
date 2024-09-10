@@ -1,230 +1,105 @@
-Return-Path: <linux-kernel+bounces-323271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23A2973A71
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3DB973A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020FC1C2379B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:48:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5217DB25401
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232501A3BB6;
-	Tue, 10 Sep 2024 14:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3EA198840;
+	Tue, 10 Sep 2024 14:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1a24Ert"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uyImq1Pg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE371A38F9;
-	Tue, 10 Sep 2024 14:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BD6142E70;
+	Tue, 10 Sep 2024 14:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979454; cv=none; b=qb3lleWqEeSihxYgvx3ocQlOKGEVuwWIO58yDdurvEF1juVeeNoGGGFlNgUIB63DtzKaTduhj+6JweAyK+pX8KIAbiKYT/3N62tAWI5TaFF+Mj5ccp4EH7Iz7fH6NZ8uMV0PW1tsh/VClbduSBk9jEcur+LqOUUb0+yVPdvVawo=
+	t=1725979522; cv=none; b=ByVCFyfME0ExQdTgwhWs8YIVM97VcHEy++4ECX1ctla2y6/YvHwMer9FqaqQRgKWpHhhyXojjO4ftBG9yLoHKKYe+WPdD8xYwO7yHZ/QeoWV5woGDL0ajFbNUQ8czBnBCaqKCf/etKKHBpuFW/PH2usmaUdSaQx5npjKs0tBToQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979454; c=relaxed/simple;
-	bh=LmBG5BHGYdWXIOucMdHZKe5DqBhFcqK07cXblfY/l0Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rGPjdzdkS3RXHs3L3wc36SQsbeWpb5oY/ptTnwa6NO5ABskypcqMF8oarKUHaW8OfVjDEiQCp8ehWp+ibNY8+XHCHjLPdzV7wJ8VTpwmf34hO8DTvvPtfOPqO9FyixTjFaiwNdLHekxSaqmkw3HkgZwy8RUHs4d1x7MfNU8LqXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1a24Ert; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A45C4CECE;
-	Tue, 10 Sep 2024 14:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725979453;
-	bh=LmBG5BHGYdWXIOucMdHZKe5DqBhFcqK07cXblfY/l0Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=d1a24ErtDm70VPJ1/SWrFe5tAMR7WPpUaynaU3xdzRJTFV6sMH/ZMS2vVQVQ5ybcm
-	 XKSbbcnmgj7TU6/AKRlHMD2reEwlnm35yz5Hoo78ogb05GU+YWQZYO4O6pw8uIfkqj
-	 3CpU2eVxPebHErmS4Wr79PocLsi3ugvrBl7mKq0u8U4wzQpc3cclViAhEcypGaydvp
-	 MbI7w+7erasZTqeKKwRJ0Bq1DpUF9QhqtWKa9Bgu5bDki1q6jIsIXa/NHtN+ervRu/
-	 B21zyh92Tlv+1p4aMJiRmo1eNfDuTQkH882m7B8bfE1tcM8jYdc/nCE5q81cwYojM5
-	 klx6jykHzcasg==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Tue, 10 Sep 2024 23:43:47 +0900
-Subject: [PATCH HID v2 11/11] selftests/hid: add test to disable hid-input
+	s=arc-20240116; t=1725979522; c=relaxed/simple;
+	bh=SoHs5W4jG0QBsJpEf2UuyNkEsNYUVtdflTM9GeeY0No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Or0AuXG+MVpBPEYjvPPeHmYLBrxNnaHnPCtinXH8PQjzFPZxYEJJhgQLuXdPaZNdVu7NXDVSAV9TP9oEjKpKZ5eOybnXyslVYRV9r9Di5b5W2C9X88mMsdxRevj5aVgveGtvScw+3KYiagP4t2LGnda34GBJnqlCcBE//gTr9IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uyImq1Pg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0+0XKm74x/FnmbMOW0GDYbTw+dPuzExiHBKxi0oQE+o=; b=uyImq1PgKS+XW6+G1OFdZIUSaT
+	b1htsbU4p/gljy5HGIs03JfccItGL8frXjjdlFtNUPvSKZRvB4Blwc3J9TNHTtMd21VqQ/lVbYr6H
+	tpLnl1x/TR+ezICSe5nMgXnuRoILme9XnlG7xJaNgPVQwQ0uzu2t7fLZjuoU+Hm0khGw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1so26y-0077Gq-Ah; Tue, 10 Sep 2024 16:44:56 +0200
+Date: Tue, 10 Sep 2024 16:44:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: yoshihiro.shimoda.uh@renesas.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, wojciech.drewek@intel.com,
+	niklas.soderlund+renesas@ragnatech.se, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: rswitch: Fix a possible memory leak in
+ rswitch_phy_device_init()
+Message-ID: <b1f33b6e-1054-476d-8cd4-6a0d1e02d31b@lunn.ch>
+References: <20240909092825.1117058-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-hid-bpf-hid-generic-v2-11-083dfc189e97@kernel.org>
-References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
-In-Reply-To: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725979428; l=5547;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=LmBG5BHGYdWXIOucMdHZKe5DqBhFcqK07cXblfY/l0Y=;
- b=0EYf1JyMDXPcGWcDKNKveACXh9M/f/oJ1DKRuDRxRsjir8szlhhgA+1DLiD8hRQ+kSHCgpOMe
- 56E2fUVaOkdAO24gPrhGHVcCacPQRl0wHVtYn6ZvXktAWdBnt9hJer/
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909092825.1117058-1-ruanjinjie@huawei.com>
 
-Add a test for the newly enabled feature to control the connect_mask
-of hid-generic.
+On Mon, Sep 09, 2024 at 05:28:25PM +0800, Jinjie Ruan wrote:
+> of_phy_find_device() calls bus_find_device(), which calls get_device()
+> on the returned struct device * to increment the refcount. The current
+> implementation does not decrement the refcount, which causes memory leak.
+> 
+> So add the missing phy_device_free() call to decrement the
+> refcount via put_device() to balance the refcount.
+> 
+> Fixes: 0df024d0f1d3 ("net: renesas: rswitch: Add host_interfaces setting")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/net/ethernet/renesas/rswitch.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+> index ff50e20856ec..69a67bd75f33 100644
+> --- a/drivers/net/ethernet/renesas/rswitch.c
+> +++ b/drivers/net/ethernet/renesas/rswitch.c
+> @@ -1404,6 +1404,7 @@ static int rswitch_phy_device_init(struct rswitch_device *rdev)
+>  		goto out;
+>  	__set_bit(rdev->etha->phy_interface, phydev->host_interfaces);
+>  	phydev->mac_managed_pm = true;
+> +	phy_device_free(phydev);
+>  
+>  	phydev = of_phy_connect(rdev->ndev, phy, rswitch_adjust_link, 0,
+>  				rdev->etha->phy_interface);
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+This has the same problem as discussed in
+
+net: ethernet: nxp: Fix a possible memory leak in lpc_mii_probe()
+
+I've not looked to see if there are more of these 'fixes'. If there
+are, it would be good to self NACK them so they don't get accidentally
+merged.
+
+    Andrew
 
 ---
-
-changes in v2:
-- amended for the new API
----
- tools/testing/selftests/hid/hid_bpf.c              | 60 +++++++++++++++++++++-
- tools/testing/selftests/hid/progs/hid.c            |  1 +
- .../testing/selftests/hid/progs/hid_bpf_helpers.h  |  1 +
- 3 files changed, 61 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/hid/hid_bpf.c b/tools/testing/selftests/hid/hid_bpf.c
-index edc061b38528..41cacc30ef8b 100644
---- a/tools/testing/selftests/hid/hid_bpf.c
-+++ b/tools/testing/selftests/hid/hid_bpf.c
-@@ -4,6 +4,38 @@
- #include "hid_common.h"
- #include <bpf/bpf.h>
- 
-+static const __u8 mouse_rdesc[] = {
-+	0x05, 0x01,  /* .Usage Page (Generic Desktop)        0  */
-+	0x09, 0x02,  /* .Usage (Mouse)                       2  */
-+	0xa1, 0x01,  /* .Collection (Application)            4  */
-+	0x09, 0x02,  /* ..Usage (Mouse)                      6  */
-+	0xa1, 0x02,  /* ..Collection (Logical)               8  */
-+	0x09, 0x01,  /* ...Usage (Pointer)                   10 */
-+	0xa1, 0x00,  /* ...Collection (Physical)             12 */
-+	0x05, 0x09,  /* ....Usage Page (Button)              14 */
-+	0x19, 0x01,  /* ....Usage Minimum (1)                16 */
-+	0x29, 0x03,  /* ....Usage Maximum (3)                18 */
-+	0x15, 0x00,  /* ....Logical Minimum (0)              20 */
-+	0x25, 0x01,  /* ....Logical Maximum (1)              22 */
-+	0x75, 0x01,  /* ....Report Size (1)                  24 */
-+	0x95, 0x03,  /* ....Report Count (3)                 26 */
-+	0x81, 0x02,  /* ....Input (Data,Var,Abs)             28 */
-+	0x75, 0x05,  /* ....Report Size (5)                  30 */
-+	0x95, 0x01,  /* ....Report Count (1)                 32 */
-+	0x81, 0x03,  /* ....Input (Cnst,Var,Abs)             34 */
-+	0x05, 0x01,  /* ....Usage Page (Generic Desktop)     36 */
-+	0x09, 0x30,  /* ....Usage (X)                        38 */
-+	0x09, 0x31,  /* ....Usage (Y)                        40 */
-+	0x15, 0x81,  /* ....Logical Minimum (-127)           42 */
-+	0x25, 0x7f,  /* ....Logical Maximum (127)            44 */
-+	0x75, 0x08,  /* ....Report Size (8)                  46 */
-+	0x95, 0x02,  /* ....Report Count (2)                 48 */
-+	0x81, 0x06,  /* ....Input (Data,Var,Rel)             50 */
-+	0xc0,        /* ...End Collection                    52 */
-+	0xc0,        /* ..End Collection                     53 */
-+	0xc0,        /* .End Collection                      54 */
-+};
-+
- struct hid_hw_request_syscall_args {
- 	__u8 data[10];
- 	unsigned int hid;
-@@ -59,6 +91,8 @@ struct specific_device {
- 	__u16 bus;
- 	__u32 vid;
- 	__u32 pid;
-+	const __u8 *rdesc;
-+	const size_t rdesc_size;
- };
- 
- FIXTURE_SETUP(hid_bpf)
-@@ -72,11 +106,15 @@ FIXTURE_SETUP(hid_bpf)
- 		.bus = BUS_BLUETOOTH,
- 		.vid = 0x05ac,  /* USB_VENDOR_ID_APPLE */
- 		.pid = 0x022c,  /* USB_DEVICE_ID_APPLE_ALU_WIRELESS_ANSI */
-+		.rdesc = mouse_rdesc,
-+		.rdesc_size = sizeof(mouse_rdesc),
- 	}, {
- 		.test_name = "*",
- 		.bus = BUS_USB,
- 		.vid = 0x0001,
- 		.pid = 0x0a36,
-+		.rdesc = rdesc,
-+		.rdesc_size = sizeof(rdesc),
- 	}};
- 
- 	for (int i = 0; i < ARRAY_SIZE(devices); i++) {
-@@ -88,7 +126,7 @@ FIXTURE_SETUP(hid_bpf)
- 	ASSERT_OK_PTR(match);
- 
- 	err = setup_uhid(_metadata, &self->hid, match->bus, match->vid, match->pid,
--			 rdesc, sizeof(rdesc));
-+			 match->rdesc, match->rdesc_size);
- 	ASSERT_OK(err);
- }
- 
-@@ -914,6 +952,24 @@ static bool is_using_driver(struct __test_metadata *_metadata, struct uhid_devic
- 	return found;
- }
- 
-+static bool has_hid_input(struct uhid_device *hid)
-+{
-+	char input[1024];
-+	DIR *d;
-+
-+	sprintf(input, "/sys/bus/hid/devices/%04X:%04X:%04X.%04X/input",
-+		hid->bus, hid->vid, hid->pid, hid->hid_id);
-+
-+	d = opendir(input);
-+	if (d) {
-+		closedir(d);
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * Attach hid_driver_probe to the given uhid device,
-  * check that the device is now using hid-generic.
-@@ -927,10 +983,12 @@ TEST_F(hid_bpf, test_hid_driver_probe)
- 	};
- 
- 	ASSERT_TRUE(is_using_driver(_metadata, &self->hid, "apple"));
-+	ASSERT_TRUE(has_hid_input(&self->hid)) TH_LOG("input node not found");
- 
- 	LOAD_PROGRAMS(progs);
- 
- 	ASSERT_TRUE(is_using_driver(_metadata, &self->hid, "hid-generic"));
-+	ASSERT_FALSE(has_hid_input(&self->hid)) TH_LOG("input node unexpectly found");
- }
- 
- /*
-diff --git a/tools/testing/selftests/hid/progs/hid.c b/tools/testing/selftests/hid/progs/hid.c
-index 9b22e9a0e658..7e24bec8ef43 100644
---- a/tools/testing/selftests/hid/progs/hid.c
-+++ b/tools/testing/selftests/hid/progs/hid.c
-@@ -603,6 +603,7 @@ SEC("?struct_ops.s/hid_rdesc_fixup")
- int BPF_PROG(hid_test_driver_probe, struct hid_bpf_ctx *hid_ctx)
- {
- 	hid_ctx->hid->quirks |= HID_QUIRK_IGNORE_SPECIAL_DRIVER;
-+	hid_ctx->hid->quirks |= HID_QUIRK_IGNORE_HIDINPUT;
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-index 1a645684a117..9c3cfd61d992 100644
---- a/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-+++ b/tools/testing/selftests/hid/progs/hid_bpf_helpers.h
-@@ -91,6 +91,7 @@ struct hid_bpf_ops {
- #endif
- 
- #define HID_QUIRK_IGNORE_SPECIAL_DRIVER		BIT(22)
-+#define HID_QUIRK_IGNORE_HIDINPUT		BIT(23)
- 
- /* following are kfuncs exported by HID for HID-BPF */
- extern __u8 *hid_bpf_get_data(struct hid_bpf_ctx *ctx,
-
--- 
-2.46.0
-
+pw-bot: cr
 
