@@ -1,185 +1,139 @@
-Return-Path: <linux-kernel+bounces-322959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1F39735E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E112C9735E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8EF1C23CF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F4841C242B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6552218C32F;
-	Tue, 10 Sep 2024 11:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A479714D431;
+	Tue, 10 Sep 2024 11:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="SXgnrroI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A/qQsz6F"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWb9Z+kK"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B7714D431;
-	Tue, 10 Sep 2024 11:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E4D188A28
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725966316; cv=none; b=jXR/i5OHtT5TP/hzpp2J2raZH3l0NJDEwv/VbGC/JcMCXhC1tJZNLLIah1/5WPYjTmrldqu73r/IyeGo+MdAQyguAopBrHpn805TKBa+Y+Pz8wZ4LOEZczNX3F7B/DbPPzzYhHsWUc4/Rt+E+T54YGRmWmTvjh7R+MxZCdJbAj4=
+	t=1725966410; cv=none; b=ftAcHJoiFJ5DSwqHpWdB8TT7UB68vCA/UNENoLFstWSVoeAMDfW8cfWstT/JZO9kJomSgoFuxHcFp2Thx5VZM8YAg+QIrX+56mOLKHOIIR9BWK2Fqc+e8iEObmB7xc2Rblu7gVMye+92yIs0oiVeCYR6uKzxC3c6Zwcq4cRVITw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725966316; c=relaxed/simple;
-	bh=1yx9TcnUJgtqcP8mBslj5zwznPpDMjo3LS5Ve+dFVqg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GgkMpgiBOTS8kd1cdNlOiJeFI0N03CUn84hUFplZinGGeJtBUmZ7Dpr4mg8+YZJBXoG2R4h2Yv91lIfiD1alIWbmwRGg36/wS3a+GW/Yi7YrsJijyFzSLtKvsBf46EZLkmAVGs6QgH3jDT403EiU/RqtEBNwyoTNLSeOFFuftgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=SXgnrroI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A/qQsz6F; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 197AC114032F;
-	Tue, 10 Sep 2024 07:05:12 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Tue, 10 Sep 2024 07:05:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1725966312;
-	 x=1726052712; bh=F072JG3GoQyszrW17lcvI6A0vuenqv3vV3Xu5Ss4cp8=; b=
-	SXgnrroI/JuFScOGm0wrFjF7DBHvy9NINaZX3mMaprYkt2N/cNJB15bIoD7t/FIK
-	1hhuuShPGBOYggkF05rj0Qi5hKJTrYezZJtE5Z95iyFdGdbpE9a9wLXFrIAJ0jJU
-	WAH6BSCAvXRNhuGQiDIBOS9sLAuhloVr0EIEAy8SCxudtDSpESTqYbF4aHsCxM/j
-	oHYDMaVk5/QGegDiQJe07zJi28edJ7//aEengwr3x+OMnXhO1VP1CHA/z5GhE3Na
-	5E+VaJpSYFEMAEWPtd5CsQsOufpaEmprXU17rWFOGVHnIWz5eB+pUDnpdURqcREz
-	1aJnPopFIDCrUMsPgXppSQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725966312; x=
-	1726052712; bh=F072JG3GoQyszrW17lcvI6A0vuenqv3vV3Xu5Ss4cp8=; b=A
-	/qQsz6FRmhB94gvjUHHkB95HhEue6VgPZtVdoSDC7JyjhfzjYsm/nyt9kHBJmgWG
-	UlwF6DmzSmnd8RZdCocN/AzR5BGeIVQ2KBS8SU0xADdUUb1qyOaA6IWbd8k7HKJ+
-	nWb+X5gEu7+7lL0mCxXQmTFHiA0cusjpFdfzN1U5vmYNVQOdOhcpH5Uy4lftwSzp
-	ws1qQvOvK6vWLjiy3npKLxUx2VxUqe1p+L2dkpn6C0+Qyyi6FetEigfrIAp4SFym
-	rR/N+EIHL1GipfXqOrE65Iamo2j6v/XZPfeajtWPhLhWVXQTNcnG1SUbnmypKJVW
-	K3xQpBWsmSzr19GxnCicw==
-X-ME-Sender: <xms:5yfgZgNSmD-FAhCM-VxtL2jK13hh9clmOq5UlqripO6TOXubzkRDvg>
-    <xme:5yfgZm-5Q2qWjMfcwiY6uV1ah6Ti4ixxvFa_JPtuFRvfMB0smrQjygrZm8qRzejVu
-    hgc7o2pvmMxWcsjTGo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgfeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeehtedugfelgeeltdevvedtleffhfetgfdtjefhkefg
-    udejfeeuueefvdejuddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtohhrvghnthhinhdrtghhrghrhi
-    esghhmrghilhdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhn
-    uhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:5yfgZnQGJEMFrHXqinlabJr9E5c9q5RcrOBMK9yXWiTWyaJFknX11A>
-    <xmx:5yfgZotj9sOcn-gjYg14JUj-SkVxzAQH354FXTDV4O4MeNb5Ng4SDg>
-    <xmx:5yfgZocIv1cluDlm_k_3NFNSM97K8ZsnmVcJWyheO36YmK9-HvD_Fg>
-    <xmx:5yfgZs2HWm1RBz5M0oey85nwtEE_EXJFJ8IPHcE54ABS8wfj96sMLQ>
-    <xmx:6CfgZg46TSwS2ewn9NEvfmdneItGG1b5w1fSs1kGIGBh1kgFdSJn-gNb>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8A99B3360077; Tue, 10 Sep 2024 07:05:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725966410; c=relaxed/simple;
+	bh=1maY1cX453DMHlJm2agu5A1XDvFqpwWseCzYI4mcRfA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T4I7yqOiv/hh7xX4nxi/9eVgYD0SOurcDFsataz78TBfBIzUjmcimNRUXpA7PcQuCXU/JvMnXLKisj3Yq7ZGu5ySzWX+14cx2ohchjGf8DgnxF9BCmknLOXNJL2Um/G6EcExOZLz2B0DMFqr/mJtflBJR7NmUonH4kIHDd5TIDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWb9Z+kK; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6daf46ee332so50284417b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725966407; x=1726571207; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UCCbavyEihwNVBphJesiHire7f9BtBrqKcNAqBxfKK8=;
+        b=nWb9Z+kKgldO/yQSZDo2F7iYYb5oRS7ZOCx5hkTJGmzHRZi7xUm+QAB6zCIUOsvLDz
+         4LW5MfKES1mfP+Qznbgrprvy03WNIcaPPbdhcNe9p/l9mUeErWGtgJLWFAibQ3vopTwy
+         fzydIdFCA0YxwNeDcSlEM0Ub5FCxv1hJUwdZiL1Wkgmh0KKXwIwf2PLlbE+JMAVPgvle
+         k9yCvn43oAXsFr2/vQqz4MiHdt9OwlrBy88kf2HZVtEvTDaQ2O63zn5Se8JShMHvh9RC
+         xBAILkCjHVeBZPGQncaHrcAczNy0aK5mHdlEgYNcfxGmeV1IPePJJGq1cl3k2ewpNjhO
+         ykNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725966407; x=1726571207;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UCCbavyEihwNVBphJesiHire7f9BtBrqKcNAqBxfKK8=;
+        b=JpOq64NXs0dEzVSL7yV4PbwaboHVGfCvgC5TqBLlrs38nArcTQYjh+xT62XM64f4OM
+         pu9ZxAbvoO6lHJgf+CEgdohBHmEJqBshDoV19Fr5KFExGEr5hLxO9cd8tToHWIbKg8cA
+         5S0M8DXP08JDtiA2NnEUs24T/qCDlCduMSMV40l7xDe/xP6AmsOJ0E19Tp460wCZbhLc
+         8dX46qg81qPPsNg7wyxz3obWdD52BQV5QBMJIdy0ScsmLjbu970ZFo7RBW/5hV4PIZz7
+         eELE1oVZjVLlnSveQjqioZTQf1YaJneBJcZAmG9TjFV2itiWHdQtgId6e6yf4YBl4TqS
+         1vKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEtXeu7GKtxYzQEmOzRmi5PMYMERA0oOTkVSABqm+QR7K4zx2T0atPlk79UY1vUZ7EMNrju50TUFNSxJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSx4OvScWJiToMHK/zXNTKyOe7KhvXbF8oJ/ilb4CcwB0AHpqf
+	LROvPYaBsXcRQutSj1ow1FgoKSlgqFoWWjQGgNk0xwveDMm/I17iDTqgDcMDHX4XDDwsJI+Lfjg
+	qO+G5NJx6woEHB9O1PTfnc4L+hYjKs6Fb+bWpog==
+X-Google-Smtp-Source: AGHT+IGaUD3Kl9sgFWBanJ/jqdGQUVaWn5REmu+dNclgfsVVSH0XeaP/G9sv4hdqxWANQMRS7ZxrjRu0+pPPXkl0zsA=
+X-Received: by 2002:a05:690c:6e0a:b0:630:f7c9:80d6 with SMTP id
+ 00721157ae682-6db44f4228emr153561027b3.27.1725966407251; Tue, 10 Sep 2024
+ 04:06:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 23:04:50 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com
-Message-Id: <34d15b62-42f2-4be3-9e0d-69f77fb52e90@app.fastmail.com>
-In-Reply-To: <baebdb06-0ada-cab0-b9c3-154346be4e72@linux.intel.com>
-References: <20240910045443.678145-1-luke@ljones.dev>
- <baebdb06-0ada-cab0-b9c3-154346be4e72@linux.intel.com>
-Subject: Re: [PATCH] platform/x86: asus-wmi: don't fail if platform_profile already
- registered
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
+ <20240909-tzmem-null-ptr-v1-2-96526c421bac@linaro.org> <20240909131842193-0700.eberman@hu-eberman-lv.qualcomm.com>
+In-Reply-To: <20240909131842193-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 10 Sep 2024 14:06:36 +0300
+Message-ID: <CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] firmware: qcom: scm: fall back to kcalloc() for no
+ SCM device bound
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Andrew Halaney <ahalaney@redhat.com>, 
+	Rudraksha Gupta <guptarud@gmail.com>, 
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 10 Sep 2024, at 9:39 PM, Ilpo J=C3=A4rvinen wrote:
-> On Tue, 10 Sep 2024, Luke D. Jones wrote:
->=20
-> > On some newer laptops ASUS laptops SPS support is advertised but not
-> > actually used, causing the AMD driver to register as a platform_prof=
-ile
-> > handler.
-> >=20
-> > If this happens then the asus_wmi driver would error with -EEXIST wh=
-en
-> > trying to register its own handler leaving the user with a possibly
-> > unusable system. This is especially true for laptops with an MCU tha=
-t emit
-> > a stream of HID packets, some of which can be misinterpreted as shut=
-down
-> > signals.
-> >=20
-> > We can safely continue loading the driver instead of bombing out.
-> >=20
-> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+On Tue, 10 Sept 2024 at 00:04, Elliot Berman <quic_eberman@quicinc.com> wrote:
+>
+> On Mon, Sep 09, 2024 at 08:38:45PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Older platforms don't have an actual SCM device tied into the driver
+> > model and so there's no struct device which to use with the TZ Mem API.
+> > We need to fall-back to kcalloc() when allocating the buffer for
+> > additional SMC arguments on such platforms which don't even probe the SCM
+> > driver and never create the TZMem pool.
+> >
+> > Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> > Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+> > Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/<S-Del>
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > > ---
-> >  drivers/platform/x86/asus-wmi.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/=
-asus-wmi.c
-> > index fbb3345cc65a..d53c4aff519f 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -3876,8 +3876,13 @@ static int platform_profile_setup(struct asus=
-_wmi *asus)
-> >  asus->platform_profile_handler.choices);
-> > =20
-> >  err =3D platform_profile_register(&asus->platform_profile_handler);
-> > - if (err)
-> > + if (err =3D=3D -EEXIST) {
-> > + pr_warn("%s, a platform_profile handler is already registered\n", =
-__func__);
-> > + return 0;
-> > + } else if (err) {
-> > + pr_err("%s, failed at platform_profile_register: %d\n", __func__, =
-err);
->=20
-> Don't print __func__ in user visible warn/error/info messages but use=20
-> plain English please.
+> >  drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
+> >  1 file changed, 24 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/firmware/qcom/qcom_scm-smc.c b/drivers/firmware/qcom/qcom_scm-smc.c
+> > index 2b4c2826f572..13f72541033c 100644
+> > --- a/drivers/firmware/qcom/qcom_scm-smc.c
+> > +++ b/drivers/firmware/qcom/qcom_scm-smc.c
+> > @@ -147,6 +147,15 @@ static int __scm_smc_do(struct device *dev, struct arm_smccc_args *smc,
+> >       return 0;
+> >  }
+> >
+> > +static void smc_args_free(void *ptr)
+> > +{
+> > +     if (qcom_scm_get_tzmem_pool())
+>
+> I'm a little concerned about this check. I didn't think making SCM calls
+> without the SCM device probed was possible until this report. We do
+> worry about that in the downstream kernel. So, I'm not sure if this
+> scenario is currently possible in the upstream kernel.
 
-Ack. I've done this a few times now. Sorry I missed this one.
+MSM8960 and MSM8660 don't have SCM devices. For MSM8960 it should be
+trivial to get it, c&p from apq8064 should. For MSM8660 it might be a
+bit harder. But even if we add such nodes, we shouldn't break existing
+DT files.
 
->=20
-> >  return err;
-> > + }
-> > =20
-> >  asus->platform_profile_support =3D true;
-> >  return 0;
-> > @@ -4752,7 +4757,7 @@ static int asus_wmi_add(struct platform_device=
- *pdev)
-> >  goto fail_fan_boost_mode;
-> > =20
-> >  err =3D platform_profile_setup(asus);
-> > - if (err)
-> > + if (err && err !=3D -EEXIST)
->=20
-> Hi Luke,
->=20
-> Hans had a comment about this line against the previous version.
->=20
-> Also, this patch has entirely lost the version information. It's v3 no=
-w I=20
-> think.
+> It's possible that some driver makes SCM call in parallel to SCM device
+> probing. Then, it might be possible for qcom_scm_get_tzmem_pool() to
+> return NULL at beginning of function and then a valid pointer by the
+> time we're freeing the ptr.
 
-Uh.... sorry, I seem to have lost it in the depths of my inbox even with=
- filters and searching. I'll look it up on lore and ensure everything is=
- correct next go round.
 
-Cheers,
-Luke.
+-- 
+With best wishes
+Dmitry
 
