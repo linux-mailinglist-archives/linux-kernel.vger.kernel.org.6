@@ -1,189 +1,132 @@
-Return-Path: <linux-kernel+bounces-322980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C14973633
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:27:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04CD97362C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11966B25A70
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742E51F262C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDB018EFD4;
-	Tue, 10 Sep 2024 11:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6391552FD;
+	Tue, 10 Sep 2024 11:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NF7QdL9N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="m/cWkn4Q"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFDD18DF97;
-	Tue, 10 Sep 2024 11:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C20F18CBE6;
+	Tue, 10 Sep 2024 11:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967665; cv=none; b=Ps6jqvBSmWmVlXCtlFf93WRTw26vCC2v6oUy88pUycK/UO5pBwDnMeRjz8YLgRZF/x/oBhpTVuMUCKciqYU/+UsJYjMPleJ3WES+BMQDsFK5US8F1ZxW2eWt9wCpkd05OLBl52qod+TBuGxpUpm8duYBdGb0FFrm8xl3Kk+oEIA=
+	t=1725967563; cv=none; b=noevJV3dbMVck+IqQzUu4meqCwBgZnGklccCugW5Jl1I6SVnpMdrS98byhu+SoAKFA4PHr21GNXdci3UY+e2aHdZpa2NqUKFsjakElOesjXkIzvIb3/EQhjL9pdl0WKQwuUV1AnUpR8ANzLIJdDCKPXZvqJ8oDPVfkFdkROwPNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967665; c=relaxed/simple;
-	bh=zoWAYfYuiHpToo3ye253Nx+yprXvfGi+CtDBNL0ZanI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwRPkf+G6/PaOqb3R55Khg+HRwisTApfWFk05HtnaUDsQTNr89zLfrXeddb7PblV9DJW5E1f1jtzVl5I3z03Z4qHeRuByBdMpv9l4WUlQ9Ty92QnomuxixmnXMDkcpJvwmj0uhLC1Jrk3N6NnATyMlnBBR1KHlaA16ROXS9CaUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NF7QdL9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FB9C4CEC3;
-	Tue, 10 Sep 2024 11:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725967665;
-	bh=zoWAYfYuiHpToo3ye253Nx+yprXvfGi+CtDBNL0ZanI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NF7QdL9Nh2QrbblMq0kLrWF2KyVEwpjUebRzu/qJUZARPuPRdj6VqZXE60AqqIbBO
-	 +5IX7FqhgBULER+B0STSWkFC5qU4RvzxI3vW9OSwXKkbVpdik235eskgVWXNu7rTHZ
-	 oQNqD6mcqMLVMbZx1WRKM+isdBAgf7+pPUTxyhBfz2KUDTb9ij50NVXfEetVmeMSjE
-	 SEnhrG3uztDxa/PLQ1chwnrRu0zcpouxbLyhrw1PAPH2b2qnZYv3CVDLuIVrufh24E
-	 LIfD/xBWAXAGqmYcDgOzvHMew81NXbqDNEtotiK5srd8nGOrDBQNB7WV3ebz8Y4o6N
-	 8txRk+n0RUZzQ==
-Date: Tue, 10 Sep 2024 13:27:40 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: yangxingui <yangxingui@huawei.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, axboe@kernel.dk,
-	John Garry <john.g.garry@oracle.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, James.Bottomley@hansenpartnership.com,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	damien.lemoal@opensource.wdc.com
-Subject: Re: [bug report] block: Non-NCQ commands will never be executed
- while fio is continuously running
-Message-ID: <ZuAtLK5jIPEjhXmU@ryzen.lan>
-References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
- <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
- <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
- <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
- <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
+	s=arc-20240116; t=1725967563; c=relaxed/simple;
+	bh=hFdk9WHZKkb7brrYOpROvJMjjtWhnOk6pCybUleva7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XvUnBxIt08JUfcdDKob1v3lVGAFmJBLCnA4ujjLVumD1NDq64nGXCRDOKqoUgHwBR0RJ4fwGPPgfA287oskrfeY3HT927qeQe5flpYI1G5WPbVHkZ1Hc4M7T5pvpTWWS0VyInE5LlR59C25SPTUhzPvV1l9mH9gh/EgRNRvbG94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=m/cWkn4Q; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5MZ5qUsrQbYBTuxNJH396q5UDPw8fUqYp6k8thzROZU=; b=m/cWkn4QRKnpq56MnnOY90KttL
+	Ue+C5SdcJp7eKa2lBJhuTyNorlc9n8sNRbr7sp5OJnHEfktxlqVO+ehAfQugjFrVz40AsujOwRjAG
+	r2mWiLy1PYkaFDAl88e5hPu/ZI0aa0Tf7hTCSP6ELqoxbC9Pt+pu4M2LgK9GiOrh90RiCkChZasPA
+	089JWzbIPHN4ouf+GfJs/iUkK/d7hM2STFwHrNzEeRVTeoKytZnGiMIE4YlgU4t2vugI9WHp/Voya
+	bJSEgOgrvKFTo2VChdWbfuX2Yfyl2D34IqmAksSsOiEg7rCmTg5E0UTwpC+q54uy5lgT4o3QxYhkW
+	AVCd7vOQ==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1snyzw-0003qW-Hw; Tue, 10 Sep 2024 13:25:28 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+Date: Tue, 10 Sep 2024 13:27:52 +0200
+Message-ID: <2241188.nHSHbJBgIm@diego>
+In-Reply-To:
+ <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+References:
+ <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 10, 2024 at 02:34:06PM +0800, yangxingui wrote:
+Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
+> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+> Samsung IP block.
 > 
+> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+> without audio, CEC or any of the HDMI 2.1 specific features.
 > 
-> On 2024/9/10 12:45, Damien Le Moal wrote:
-> > On 9/10/24 10:09 AM, yangxingui wrote:
-> > > 
-> > > 
-> > > On 2024/9/9 21:21, Damien Le Moal wrote:
-> > > > On 9/9/24 22:10, yangxingui wrote:
-> > > > > Hello axboe & John,
-> > > > > 
-> > > > > After the driver exposes all HW queues to the block layer, non-NCQ
-> > > > > commands will never be executed while fio is continuously running, such
-> > > > > as a smartctl command.
-> > > > > 
-> > > > > The cause of the problem is that other hctx used by the NCQ command is
-> > > > > still active and can continue to issue NCQ commands to the sata disk.
-> > > > > And the pio command keeps retrying in its corresponding hctx because
-> > > > > qc_defer() always returns true.
-> > > > > 
-> > > > > hctx0: ncq, pio, ncq
-> > > > > hctx1：ncq, ncq, ...
-> > > > > ...
-> > > > > hctxn: ncq, ncq, ...
-> > > > > 
-> > > > > Is there any good solution for this?
-> > > > 
-> > > > SATA devices are single queue so how can you have multiple queues ?
-> > > > What adapter are you using ?
-> > > 
-> > > In the following patch, we expose the host's 16 hardware queues to the block
-> > > layer. And when connecting to a sata disk, 16 hctx are used.
-> > > 
-> > > 8d98416a55eb ("scsi: hisi_sas: Switch v3 hw to MQ")
-> > 
-> > OK, so the HBA is a hisi one, using libsas...
-> > What is the device ? An SSD ? and HDD ?
-> Both SATA SSD and SATA HDD have this problem.
+> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/rockchip/Kconfig               |   8 +
+>  drivers/gpu/drm/rockchip/Makefile              |   1 +
+>  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 437 +++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c    |   2 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h    |   1 +
+>  5 files changed, 449 insertions(+)
 > 
-> > 
-> > Do you set a block I/O scheduler for the drive, e.g. mq-deadline. If not, does
-> > setting a scheduler resolve the issue ?
-> Currently, the default configuration mq-deadline is used, and the same
-> phenomenon occurs when I try setting it to none. It seems to have nothing to
-> do with the scheduling strategy.
-> 
-> > 
-> > I do not have any hisi HBA. I use a lot of mpt3sas and mpi3mr HBAs which also
-> > have multiple queues with a shared tagset. Never seen the issue you are
-> > reporting though using HDDs with mq-deadline or bfq as the scheduler.
-> Unlike libsas, as these hosts don't use qc_defer()?
+> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+> index 7df875e38517..4da7cef24f57 100644
+> --- a/drivers/gpu/drm/rockchip/Kconfig
+> +++ b/drivers/gpu/drm/rockchip/Kconfig
+> @@ -8,6 +8,7 @@ config DRM_ROCKCHIP
+>  	select VIDEOMODE_HELPERS
+>  	select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
+>  	select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
+> +	select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
+>  	select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
+>  	select GENERIC_PHY if ROCKCHIP_DW_MIPI_DSI
+>  	select GENERIC_PHY_MIPI_DPHY if ROCKCHIP_DW_MIPI_DSI
+> @@ -63,6 +64,13 @@ config ROCKCHIP_DW_HDMI
+>  	  enable HDMI on RK3288 or RK3399 based SoC, you should select
+>  	  this option.
+>  
+> +config ROCKCHIP_DW_HDMI_QP
+> +	bool "Rockchip specific extensions for Synopsys DW HDMI QP"
 
-mpt3sas and mpi3mr do not use any libata code at all, the SCSI to ATA
-Translation (SAT) is done completely by the HBA, so from a Linux
-perspective, we are issuing SCSI commands to the HBA.
+this needs a
++       select DRM_BRIDGE_CONNECTOR
 
-We can see that libsas uses ata_std_qc_defer() as its .qc_defer callback:
-https://github.com/torvalds/linux/blob/v6.11-rc7/drivers/scsi/libsas/sas_ata.c#L566
-
-
-If you look at SATA 3.a Gold specification,
-"13.6.3 Intermixing Non-NCQ commands and NCQ commands"
-
-"The host shall not issue a non-NCQ command while an NCQ command is outstanding."
-
-
-In AHCI 1.3.1 specification,
-"1.7 Theory of Operation"
-
-"System software is responsible to ensure that queued and non-queued commands
-are not mixed in the command list for the same device with the exception of
-the NCQ Unload command."
-
-
-Usually, tools like smartctl submit SCSI commands of type "ATA-16 passthrough",
-which is a specific SCSI command that just contains a regular ATA command as
-payload:
-https://www.smartmontools.org/browser/trunk/smartmontools/scsiata.cpp?desc=1&order=date#L346
-
-For a "ATA-16 passthrough" SCSI command, libata will simply copy the fields
-from the "ATA-16 passthrough" SCSI command to the appropriate field in a newly
-created ATA command, see the SAT specification and:
-https://github.com/torvalds/linux/blob/v6.11-rc7/drivers/ata/libata-scsi.c#L2878-L2887
-
-
-See also the SAT-6 specification,
-"6.2.4 Mechanism for processing some commands as NCQ commands"
-
-"The ACS-5 standard defines a mechanism for NCQ encapsulation of some commands.
-Use of this mechanism allows these commands to be processed without quiescing
-the ATA device."
-
-Without considering if it is a good idea or not, it should be possible to
-translate some commands to instead use the "NCQ encapsulated" variant of
-the ATA command that was used in the "ATA-16 passthrough" SCSI command.
-
-However looking at e.g.:
-https://www.smartmontools.org/browser/trunk/smartmontools/scsiata.cpp?desc=1&order=date#L566
-smartctl is sending a IDENTIFY DEVICE (ECh) ATA command,
-and this command has no NCQ encapsulated variant.
-
-(Had the application instead used a READ LOG DMA EXT command to read the
-IDENTIFY DEVICE data log, where log page 01h is a copy of IDENTIFY DEVICE data,
-we would have been able to convert the command to an NCQ encapsulated variant.)
+now, otherwise it can't link the drm_bridge_connector_init function
 
 
 
-TL;DR: I do not see easy generic solution to this problem.
 
-To be able to send a non-queued command, there has to be no NCQ commands queued
-on the device. I guess you could implement a scheduler that would be quiescing
-the queue, processes the non-queued command, and then thaw the queue, but that
-would essentially make non-queued commands high priority commands, and could
-thus be used to seriously limit throughput by just sending some non-queued
-commands every now and then :)
-
-
-Kind regards,
-Niklas
 
