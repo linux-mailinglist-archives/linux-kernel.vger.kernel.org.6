@@ -1,133 +1,403 @@
-Return-Path: <linux-kernel+bounces-323669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A517A974169
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:59:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D5A974182
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63752287AEF
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1795B26565
 	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7C11A4F0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0561A4B88;
 	Tue, 10 Sep 2024 17:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="shMg9m6/"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LlRV4REP"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A3C16DED5;
-	Tue, 10 Sep 2024 17:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBFA1A3BA0
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725991074; cv=none; b=r2rEzVfUdRrMTNOsKG0n1N/HI3/6mSwq48hyli4KvGpQuLwEuIpOrIYZpXrbK65KQ65Cj2uGfVt8OeC14GuC2fBZZm+DgXPWaadsmy+3ylZcysxBIC1ECWqJT9Pou+yEzYgmAg5m1O5t3u0wlrrrGCoJkI6168EV7g+oNGU3UxM=
+	t=1725991073; cv=none; b=jEXDizW3ZBjhrEIbfMTXiXNASx69b6jH8I7CBPMadmEgRjNG3Szdls96F03tVieCgYX34XoiBgG9gmk3RNU7dyDfcayjl/slaQ5rMa7SG9QLoQtyrS+nQbavYJ+BbWfm4PqFA8aRYIKo6xwDtLxqF4sKXrRrJr3EuxVKPIdrgSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725991074; c=relaxed/simple;
-	bh=rdRAE/ICr34khZmo66LD3I/QSBaBHEaIbem+AJltasQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AzYjGjO8+Vf+Bw9B9xM5YG7tz1GYzzSrVJocNY1ScqqukvFQbMVAVzd2Gp2OlV0cs5zjlvhErCe73xxySHzV1q2Q0KyNE3KTfWV6njpf4V1TzVt6mLckAKBCBgNg0E2o/434wIS8NIRJ6+5IBPmk5dyWdhz/q6iSKKan3YBtmDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=shMg9m6/; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1725991073; c=relaxed/simple;
+	bh=JJZZB/X30QZDdKidFd5uFcb4V3/vG1UgCQ1the0PQ60=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R3u6pJ84da3rLu69x/smjRQk2IzmsCU6xE8kDQy1OnDw07uXXw1VlNNRlD884GJ9Tm9U6VrhnmSUd+VClx2081bBdPLMCtz6IpYUpmR2vPMmNYYUCU5diDXzojbdQAadgEFLY0+yrtMC4VIuGqOxwVyIUTkHhpQF8uSY3RDnWTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LlRV4REP; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49bf3b4d07bso923869137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1725991072; x=1757527072;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Y29GAMmX7rSiYp8XFiaq/GS0tAhPK0+7Ska+Uh/bulY=;
-  b=shMg9m6/Nu3L/SJE6jCwcCUgOLacmvDbcKOZO9OS851tBkitE44OxqbA
-   hajnUCjhMv6VcwhO+9CIOt1VMr+BeaaP+cucDep5o6sUZ6FmpvsVKtsk6
-   yX49pecSRsKE6DqGe04GrQrRIMzlcQcCnbxRzQus06tSE0z2J7r2s2LSC
-   U=;
-X-IronPort-AV: E=Sophos;i="6.10,217,1719878400"; 
-   d="scan'208";a="124650064"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:57:48 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:62191]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.54.75:2525] with esmtp (Farcaster)
- id 3fe5cdd4-7827-4c44-aca2-9f2c9349c46b; Tue, 10 Sep 2024 17:57:48 +0000 (UTC)
-X-Farcaster-Flow-ID: 3fe5cdd4-7827-4c44-aca2-9f2c9349c46b
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 10 Sep 2024 17:57:48 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 10 Sep 2024 17:57:45 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <rao.shoaib@oracle.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
-Date: Tue, 10 Sep 2024 10:57:37 -0700
-Message-ID: <20240910175737.78567-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <943f2045-a89e-4d00-958d-e27c22918820@oracle.com>
-References: <943f2045-a89e-4d00-958d-e27c22918820@oracle.com>
+        d=chromium.org; s=google; t=1725991070; x=1726595870; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=STGVj6vl6LpAjZBaoJO/AHJ0YBKmV2BfQaPxcPnlFp4=;
+        b=LlRV4REPaT2SuSTFRcBWiZ2EUJRNBjSVFF/qc2b0WMhDaC/qtfA+mKedFuB++5wjbt
+         gkyRX/SF8daXWKSW66HCojnqieT7gtr2uITMdT5+rD6eQXYuexAHEEKAjhklnsY8GeQx
+         EzSor/bbza5cSWeZBRPd7DnC7w7zvGHIaSnG8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725991070; x=1726595870;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=STGVj6vl6LpAjZBaoJO/AHJ0YBKmV2BfQaPxcPnlFp4=;
+        b=efT8sWe5UFrUkD4PtkbTwJt+4oarJGEEleWSiHZfgaMbiDgxC3tJ+ibeDNmV7ORXK8
+         3Fmw824eEQdA4dFMxBX3E6ALZ5WazTyxRiOQOaWGt5E6gI7eQjujG6fiD+upZtx8Z/4n
+         BzKYDUjVc/cKVht9Q/JzCybH92oI4gxXJmnWkw5YOXMfUu7iGTU7TYUKGkjpvM9z2KXa
+         nF0riREfA6N6ElsOINR6izXlgRixMcQhtTL0Jx3eVOeC/wBQ9s5yVPiits/S3xW7lifP
+         gd+QGUHNSFCDPIdlXm5Abr84vgQikjplJpTRSo6ZqC0ta0ge3zCMySu3lHOzgZ/zG1gp
+         g+iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqRFUWt2t3BXPcynKaatfJQJbMUw9US6bvPXfBqPLRNfFqyK90uEXwwXJvz9heeZHDMx21bMidUFwUPp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybS8QQ3xKhZLcgoTl7wkeEhlkZsL3RS/zNPfgQoxzCEVD9lUSr
+	wLPAaGDf6SLnDN6WDAfja6qDV4jwWuxkdmTd+djqCMSVomE6cGRxjSId6m+BLg==
+X-Google-Smtp-Source: AGHT+IGne/IKFNr9YFpyRr2ls9xEmzWsfOMV71gkVSWIpAyGIP2uO/EP6hAwPlHys0aPcgD5J5pTpg==
+X-Received: by 2002:a05:6102:510b:b0:492:abbe:8923 with SMTP id ada2fe7eead31-49bde14671dmr15106234137.6.1725991070196;
+        Tue, 10 Sep 2024 10:57:50 -0700 (PDT)
+Received: from spinny.c.googlers.com (78.206.23.34.bc.googleusercontent.com. [34.23.206.78])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8489ac10b36sm746045241.8.2024.09.10.10.57.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 10:57:49 -0700 (PDT)
+From: Esther Shimanovich <eshimanovich@chromium.org>
+Date: Tue, 10 Sep 2024 17:57:45 +0000
+Subject: [PATCH v5] PCI: Detect and trust built-in Thunderbolt chips
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWB003.ant.amazon.com (10.13.139.168) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Message-Id: <20240910-trust-tbt-fix-v5-1-7a7a42a5f496@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAJiI4GYC/3XMSw6CMBSF4a2Qjq3pG3DkPoyD0t5CB4hpC9EY9
+ u7VESE6/E9yvhfJkCJkcqpeJMESc5xuGPpQETfYWw80emwimFCsYYaWNOdCS1doiA+qg5R18C2
+ 4xhL83BPg/PUuV+wh5jKl55df+Gf9Jy2cclpLCzooZby2ZzekaYzzeJxSTz7YIrZAswcEAgKks
+ kzbljfmByA3ANd7QCJgOsvwq71W7gegNoCQe0Ah4EzgIDvv2w52wLqubxcwYuVwAQAA
+To: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ iommu@lists.linux.dev, Lukas Wunner <lukas@wunner.de>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Esther Shimanovich <eshimanovich@chromium.org>
+X-Mailer: b4 0.13.0
 
-From: Shoaib Rao <rao.shoaib@oracle.com>
-Date: Tue, 10 Sep 2024 09:55:03 -0700
-> On 9/9/2024 5:48 PM, Kuniyuki Iwashima wrote:
-> > From: Shoaib Rao <rao.shoaib@oracle.com>
-> > Date: Mon, 9 Sep 2024 17:29:04 -0700
-> >> I have some more time investigating the issue. The sequence of packet
-> >> arrival and consumption definitely points to an issue with OOB handling
-> >> and I will be submitting a patch for that.
-> > 
-> > It seems a bit late.
-> > My patches were applied few minutes before this mail was sent.
-> > https://urldefense.com/v3/__https://lore.kernel.org/netdev/172592764315.3964840.16480083161244716649.git-patchwork-notify@kernel.org/__;!!ACWV5N9M2RV99hQ!M806VrqNEGFgGXEoWG85msKAdFPXup7RzHy9Kt4q_HOfpPWsjNHn75KyFK3a3jWvOb9EEQuFGOjpqgk$
-> > 
-> 
-> That is a subpar fix. I am not sure why the maintainers accepted the fix 
-> when it was clear that I was still looking into the issue.
+Some computers with CPUs that lack Thunderbolt features use discrete
+Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
+chips are located within the chassis; between the root port labeled
+ExternalFacingPort and the USB-C port.
 
-Just because it's not a subpar fix and you were slow and wrong,
-clining to triggering the KASAN splat without thinking much.
+These Thunderbolt PCIe devices should be labeled as fixed and trusted,
+as they are built into the computer. Otherwise, security policies that
+rely on those flags may have unintended results, such as preventing
+USB-C ports from enumerating.
 
+Detect the above scenario through the process of elimination.
 
-> Plus the 
-> claim that it fixes the panic is absolutely wrong.
+1) Integrated Thunderbolt host controllers already have Thunderbolt
+   implemented, so anything outside their external facing root port is
+   removable and untrusted.
 
-The _root_ cause of the splat is mishandling of OOB in manage_oob()
-which causes UAF later in another recvmsg().
+   Detect them using the following properties:
 
-Honestly your patch is rather a subpar fix to me, few points:
+     - Most integrated host controllers have the usb4-host-interface
+       ACPI property, as described here:
+Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
 
-  1. The change conflicts with net-next as we have already removed
-     the additional unnecessary refcnt for OOB skb that has caused
-     so many issue reported by syzkaller
+     - Integrated Thunderbolt PCIe root ports before Alder Lake do not
+       have the usb4-host-interface ACPI property. Identify those with
+       their PCI IDs instead.
 
-  2. Removing OOB skb in queue_oob() relies on the unneeded refcnt
-     but it's not mentioned; if merge was done wrongly, another UAF
-     will be introduced in recvmsg()
+2) If a root port does not have integrated Thunderbolt capabilities, but
+   has the ExternalFacingPort ACPI property, that means the manufacturer
+   has opted to use a discrete Thunderbolt host controller that is
+   built into the computer.
 
-  3. Even the removing logic is completely unnecessary if manage_oob()
-     is changed
+   This host controller can be identified by virtue of being located
+   directly below an external-facing root port that lacks integrated
+   Thunderbolt. Label it as trusted and fixed.
 
-  4. The scan_again: label is misplaced; two consecutive empty OOB skbs
-     never exist at the head of recvq
+   Everything downstream from it is untrusted and removable.
 
-  5. ioctl() is not fixed
+The ExternalFacingPort ACPI property is described here:
+Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
 
-  6. No test added
+Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
+Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Tested-by: Mario Limonciello <mario.limonciello@amd.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+While working with devices that have discrete Thunderbolt chips, I
+noticed that their internal TBT chips are inaccurately labeled as
+untrusted and removable.
 
-  7. Fixes: tag is bogus
+I've observed that this issue impacts all computers with internal,
+discrete Intel JHL Thunderbolt chips, such as JHL6240, JHL6340, JHL6540,
+and JHL7540, across multiple device manufacturers such as Lenovo, Dell,
+and HP.
 
-  8. Subject lacks target tree and af_unix prefix
+This affects the execution of any downstream security policy that
+relies on the "untrusted" or "removable" flags.
+
+I initially submitted a quirk to resolve this, which was too small in
+scope, and after some discussion, Mika proposed a more thorough fix:
+https://lore.kernel.org/lkml/20240510052616.GC4162345@black.fi.intel.com
+I refactored it and am submitting as a new patch.
+---
+Changes in v5:
+- Applied the following edits suggested by Lukas Wunner:
+  - Applied ifdefs edits to ensure code is only compiled on x86 systems
+  with ACPI
+  - Added returns to avoid unecessary checks
+  - Renamed pcie_is_tunneled to arch_pci_dev_is_removable
+- Link to v4: https://lore.kernel.org/r/20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org
+
+Changes in v4:
+- Applied edits on logic-flow clarity and formatting suggested by Ilpo
+  Järvinen
+- Mario Limonciello tested patch and confirmed works as intended.
+- Link to v3: https://lore.kernel.org/r/20240815-trust-tbt-fix-v3-1-6ba01865d54c@chromium.org
+
+Changes in v3:
+- Incorporated minor edits suggested by Mika Westerberg.
+- Mika Westerberg tested patch (more details in v2 link)
+- Added "reviewed-by" and "tested-by" lines
+- Link to v2: https://lore.kernel.org/r/20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org
+
+Changes in v2:
+- I clarified some comments, and made minor fixins
+- I also added a more detailed description of implementation into the
+  commit message
+- Added Cc recipients Mike recommended
+- Link to v1: https://lore.kernel.org/r/20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org
+---
+ arch/x86/pci/acpi.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/pci/probe.c |  30 +++++++++----
+ include/linux/pci.h |   6 +++
+ 3 files changed, 148 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
+index 55c4b07ec1f6..62271668c3b1 100644
+--- a/arch/x86/pci/acpi.c
++++ b/arch/x86/pci/acpi.c
+@@ -250,6 +250,125 @@ void __init pci_acpi_crs_quirks(void)
+ 		pr_info("Please notify linux-pci@vger.kernel.org so future kernels can do this automatically\n");
+ }
+ 
++/*
++ * Checks if pdev is part of a PCIe switch that is directly below the
++ * specified bridge.
++ */
++static bool pcie_switch_directly_under(struct pci_dev *bridge,
++				       struct pci_dev *pdev)
++{
++	struct pci_dev *parent = pci_upstream_bridge(pdev);
++
++	/* If the device doesn't have a parent, it's not under anything. */
++	if (!parent)
++		return false;
++
++	/*
++	 * If the device has a PCIe type, check if it is below the
++	 * corresponding PCIe switch components (if applicable). Then check
++	 * if its upstream port is directly beneath the specified bridge.
++	 */
++	switch (pci_pcie_type(pdev)) {
++	case PCI_EXP_TYPE_UPSTREAM:
++		return parent == bridge;
++
++	case PCI_EXP_TYPE_DOWNSTREAM:
++		if (pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
++			return false;
++		parent = pci_upstream_bridge(parent);
++		return parent == bridge;
++
++	case PCI_EXP_TYPE_ENDPOINT:
++		if (pci_pcie_type(parent) != PCI_EXP_TYPE_DOWNSTREAM)
++			return false;
++		parent = pci_upstream_bridge(parent);
++		if (!parent || pci_pcie_type(parent) != PCI_EXP_TYPE_UPSTREAM)
++			return false;
++		parent = pci_upstream_bridge(parent);
++		return parent == bridge;
++	}
++
++	return false;
++}
++
++static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
++{
++	struct fwnode_handle *fwnode;
++
++	/*
++	 * For USB4, the tunneled PCIe root or downstream ports are marked
++	 * with the "usb4-host-interface" ACPI property, so we look for
++	 * that first. This should cover most cases.
++	 */
++	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
++				       "usb4-host-interface", 0);
++	if (!IS_ERR(fwnode)) {
++		fwnode_handle_put(fwnode);
++		return true;
++	}
++
++	/*
++	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
++	 * before Alder Lake do not have the "usb4-host-interface"
++	 * property so we use their PCI IDs instead. All these are
++	 * tunneled. This list is not expected to grow.
++	 */
++	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
++		switch (pdev->device) {
++		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
++		case 0x8a1d:
++		case 0x8a1f:
++		case 0x8a21:
++		case 0x8a23:
++		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
++		case 0x9a23:
++		case 0x9a25:
++		case 0x9a27:
++		case 0x9a29:
++		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
++		case 0x9a2b:
++		case 0x9a2d:
++		case 0x9a2f:
++		case 0x9a31:
++			return true;
++		}
++	}
++
++	return false;
++}
++
++bool arch_pci_dev_is_removable(struct pci_dev *pdev)
++{
++	struct pci_dev *parent, *root;
++
++	/* pdev without a parent or Root Port is never tunneled. */
++	parent = pci_upstream_bridge(pdev);
++	if (!parent)
++		return false;
++	root = pcie_find_root_port(pdev);
++	if (!root)
++		return false;
++
++	/* Internal PCIe devices are not tunneled. */
++	if (!root->external_facing)
++		return false;
++
++	/* Anything directly behind a "usb4-host-interface" is tunneled. */
++	if (pcie_has_usb4_host_interface(parent))
++		return true;
++
++	/*
++	 * Check if this is a discrete Thunderbolt/USB4 controller that is
++	 * directly behind the non-USB4 PCIe Root Port marked as
++	 * "ExternalFacingPort". Those are not behind a PCIe tunnel.
++	 */
++	if (pcie_switch_directly_under(root, pdev))
++		return false;
++
++	/* PCIe devices after the discrete chip are tunneled. */
++	return true;
++}
++
+ #ifdef	CONFIG_PCI_MMCONFIG
+ static int check_segment(u16 seg, struct device *dev, char *estr)
+ {
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..7e0d6a1e151b 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1631,23 +1631,33 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+ 
+ static void set_pcie_untrusted(struct pci_dev *dev)
+ {
+-	struct pci_dev *parent;
++	struct pci_dev *parent = pci_upstream_bridge(dev);
+ 
++	if (!parent)
++		return;
+ 	/*
+-	 * If the upstream bridge is untrusted we treat this device
++	 * If the upstream bridge is untrusted we treat this device as
+ 	 * untrusted as well.
+ 	 */
+-	parent = pci_upstream_bridge(dev);
+-	if (parent && (parent->untrusted || parent->external_facing))
++	if (parent->untrusted) {
++		dev->untrusted = true;
++		return;
++	}
++
++	if (arch_pci_dev_is_removable(dev)) {
++		pci_dbg(dev, "marking as untrusted\n");
+ 		dev->untrusted = true;
++	}
+ }
+ 
+ static void pci_set_removable(struct pci_dev *dev)
+ {
+ 	struct pci_dev *parent = pci_upstream_bridge(dev);
+ 
++	if (!parent)
++		return;
+ 	/*
+-	 * We (only) consider everything downstream from an external_facing
++	 * We (only) consider everything tunneled below an external_facing
+ 	 * device to be removable by the user. We're mainly concerned with
+ 	 * consumer platforms with user accessible thunderbolt ports that are
+ 	 * vulnerable to DMA attacks, and we expect those ports to be marked by
+@@ -1657,9 +1667,15 @@ static void pci_set_removable(struct pci_dev *dev)
+ 	 * accessible to user / may not be removed by end user, and thus not
+ 	 * exposed as "removable" to userspace.
+ 	 */
+-	if (parent &&
+-	    (parent->external_facing || dev_is_removable(&parent->dev)))
++	if (dev_is_removable(&parent->dev)) {
++		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
++		return;
++	}
++
++	if (arch_pci_dev_is_removable(dev)) {
++		pci_dbg(dev, "marking as removable\n");
+ 		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
++	}
+ }
+ 
+ /**
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 9e36b6c1810e..dca19203bc7c 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2604,6 +2604,12 @@ pci_host_bridge_acpi_msi_domain(struct pci_bus *bus) { return NULL; }
+ static inline bool pci_pr3_present(struct pci_dev *pdev) { return false; }
+ #endif
+ 
++#if defined(CONFIG_X86) && defined(CONFIG_ACPI)
++bool arch_pci_dev_is_removable(struct pci_dev *pdev);
++#else
++static inline bool arch_pci_dev_is_removable(struct pci_dev *pdev) { return false; }
++#endif
++
+ #ifdef CONFIG_EEH
+ static inline struct eeh_dev *pci_dev_to_eeh_dev(struct pci_dev *pdev)
+ {
+
+---
+base-commit: 3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
+change-id: 20240806-trust-tbt-fix-5f337fd9ec8a
+
+Best regards,
+-- 
+Esther Shimanovich <eshimanovich@chromium.org>
+
 
