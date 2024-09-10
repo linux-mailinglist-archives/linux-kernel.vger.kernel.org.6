@@ -1,169 +1,340 @@
-Return-Path: <linux-kernel+bounces-322239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1415F97262A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5450897262E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D7D1C23586
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7081C1C2335D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6651E535;
-	Tue, 10 Sep 2024 00:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160EE29413;
+	Tue, 10 Sep 2024 00:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CGy0r8XB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l7022Qmw"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16821CD29;
-	Tue, 10 Sep 2024 00:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6921E53A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725927820; cv=none; b=RBdYNoyeAcE4O4QOYPckhytTNCXWmwO08p7zqyRq9LC6/OCqBvSDgJA2WFcQY8reApav11cdPpWS7upOZjed+ObQ0PI1p0ImVGz6sAqsmjidA3rPYhZgpcEKYXqVhyc4eTH1vJ3s1K7AmMDd3Tu/iy8P7dIKdH7iq3AHcfD63TA=
+	t=1725928178; cv=none; b=tYQALn5ihKjfYN4TtiF3TQ0bIDlVRMyj9ngV/S5Qlk+9l836Tn1dZ9dfyU36khjL/nsf1MLqLAURusz9hUmhJwIpvcDZDRVlRPHDrmI6hnRyRuuzC7Vc1AV0aUl17Rv6bkv5iE9xkY7+t5M32strvL0KfzhZGi7Sy6/+txlhIB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725927820; c=relaxed/simple;
-	bh=eY/Rl7lD1XWTnxw/u8a1BM6K08VMNjQ+Z0x45r6cM+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dvWc+XD8KJN53hkjV1itHq0jA+cksWyzllbVMSGibRDdK5cMLEWhHkrkXuPPr/lWBFI5OsPcclbdhEkaLE0z7lDRPROQg+W0dRNnOWf0uXvyFyRhIyzPGYQ4svoSqM4mMC4EeWTP3iC1Ce1IyZ8vF/dt2JC0QbMXsi/fkb/Vngc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CGy0r8XB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1725927813;
-	bh=nBX7GHBzCZ2qhNL60MASnfeZbJIth3IjhvxOSqVuh1A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CGy0r8XBeDS3fjxOS6fC9tLAM/a/tLPkPNgWrRMybus8Q+xo4YWvhkjUv6GPrD7Zt
-	 LjtC37aE6KbRs1fqsmGAlTA5fPnTIK/ccn8oU6FfofvasYQl8ul7mM8/ox1hG0f4z5
-	 nRnWjjORgIiuRdyiQzfFOO2wYaMzoX5tQnzYrjBTxR1K+uPjXYZs8qYTE5b1A6fnG0
-	 ArspvSzx082q1mXElYnbGwPUlGE1fVDQV3MbgE6TsXKvCJ1UbcUAqQq1DxxIaBMSjh
-	 Qx/adBDyq8LO9uTUK+p2wh0Nq6aD3+jkb4z62Mk2OTMSaPziy/FbZNs9Qd43WVkcGk
-	 7UNWsTqcBnmag==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X2kvS6xwlz4wc3;
-	Tue, 10 Sep 2024 10:23:32 +1000 (AEST)
-Date: Tue, 10 Sep 2024 10:23:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Aleksa Sarai <cyphar@cyphar.com>, Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240910102332.4f171bde@canb.auug.org.au>
-In-Reply-To: <20240905105809.6585eec2@canb.auug.org.au>
-References: <20240903092745.370fc0c6@canb.auug.org.au>
-	<20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
-	<20240905105809.6585eec2@canb.auug.org.au>
+	s=arc-20240116; t=1725928178; c=relaxed/simple;
+	bh=+LGdamhgZ8ZUsQHy5r6cV9WL04chr5Tu66fgTRgJXgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jp9kAIUDHkjxo3FLhkZvaFh6QvS/sYzWup+XzvYJUYwAOQktfNuDcmbp77fz2TgifwjQF7s1aCFbrIex6jppDmYBMEXDl2WYaP1wKicmtzTS4W586MYCmt3w4O61Ici33X3u7yLtXqdvFu8llTp9bnj653sdxctlb4MaEKHd/YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l7022Qmw; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6d44b6e1aebso942717b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 17:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725928175; x=1726532975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VHM2I1sQ9+0AOyF9datK6mfjd6+l7ZePwvm96Pc4Mt8=;
+        b=l7022Qmw8+Jr7VPBBopfTTvIDG4gJIRApPCjvOlrlCqjJ3xkV2YHwYoFYZEWkwCJ+g
+         LMHvrPQKbu4oIdNzxY0rL0JAJBgMK2Rb8YhkBY9ME6NswDhQfZ3XBcgSVYHhQ5WdHOcu
+         PNS9VfFYqYlhBgOhHYaXOD+bYCZ3/j/Jv9RQkTUaTL1kfKl7wBxc1MBRTswNUysYK0dZ
+         91hguX4oMzk4OTUF7dzeF2YGjqxl7RBBzeGfmzf3IDXJGDPsdmf25lxTac0MeFUYdfFt
+         RWX3yv1AUH7FE9whQO9c6g6R4pc/9HpTa8N0qAFLm4FV6WUkzBpdwIkN8OZNbC+qOncs
+         7c0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725928175; x=1726532975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VHM2I1sQ9+0AOyF9datK6mfjd6+l7ZePwvm96Pc4Mt8=;
+        b=rXzPW8L6E5OQPaBFjhoEDQ8HP1lTineSad4WKS5NC1uktfJa2kUatBM9NqG++uijoq
+         fvPpkxP8bgzI6dST8aDRqSIL3H7fgl3YypoZV7axpcNRzJ33bzCDjX3wetitBwk/Pq3F
+         o62kaB7TlqNfHneNU9bo47Hz5pm4NLAGls+NYWs2VEducBWY00EHbLWkS8FD5exTBA+M
+         O9Aij6GfP3xW1RQpfA8aGFmkW7OCygVw1t7fXKbvhuA7yko/ss91JUytT6yEzxKK7xoX
+         Eb8P98twH9A3EPirjoqlR+ndNosnixGukPO3A3gIX9aNTvZOnNN+5bTazU6PrW2wfCPO
+         dbzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG2iUD9nycckmTlksAHM5jlfsthZ64eMDyvW1/n1QZytZfrN3z7n65iRYZN1UkpWnmGZc1OUZ6XnhFQdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHn1UVCpogoA4655DH5UpES3nohKYn1olvhdPBeWjHHh3SE8eD
+	DwpxR8AmfkuPK1X4DlH+wN9FwlkTrbvomiDHlycHKXtq3MwMU2pF422wP4ohw7zr6hdcEWRmfEV
+	t8Bq6OQ7/0d8bxZXCstCXqeccug0BiwudGwq0
+X-Google-Smtp-Source: AGHT+IHRi8kepffMG3E1kWbCyPzV5UjUrCfVTSaQwbWTluDdzIPywbZETPWbA3vOLXNhxogYciZkEb8yleqLxMDAJ6A=
+X-Received: by 2002:a05:690c:399:b0:6af:a6aa:2b3a with SMTP id
+ 00721157ae682-6db44d62bb3mr143076897b3.1.1725928175049; Mon, 09 Sep 2024
+ 17:29:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dXms8KSbUWNEEYhyoFVNzC4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/dXms8KSbUWNEEYhyoFVNzC4
-Content-Type: text/plain; charset=US-ASCII
+References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
+ <CADrL8HWACwbzraG=MbDoORJ8ramDxb-h9yb0p4nx9-wq4o3c6A@mail.gmail.com>
+ <Zt9UT74XkezVpTuK@google.com> <CADrL8HW-mOAyF0Gcw7UbkvEvEfcHDxEir0AiStkqYzD5x8ZGpg@mail.gmail.com>
+ <Zt9wg6h_bPp8BKtd@google.com>
+In-Reply-To: <Zt9wg6h_bPp8BKtd@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 9 Sep 2024 17:28:58 -0700
+Message-ID: <CADrL8HWbNjv-w-ZJOxkLK78S5RePd2QXDuXV-=4iFVV29uHKyg@mail.gmail.com>
+Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
+ rmaps outside of mmu_lock
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Thu, 5 Sep 2024 10:58:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, Sep 9, 2024 at 3:02=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
 >
-> On Tue, 3 Sep 2024 12:41:08 +1000 Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On Mon, Sep 09, 2024, James Houghton wrote:
+> > On Mon, Sep 9, 2024 at 1:02=E2=80=AFPM Sean Christopherson <seanjc@goog=
+le.com> wrote:
+> > >
+> > > On Mon, Sep 09, 2024, James Houghton wrote:
+> > > > On Fri, Aug 9, 2024 at 12:44=E2=80=AFPM Sean Christopherson <seanjc=
+@google.com> wrote:
+> > > > > + */
+> > > > > +#define KVM_RMAP_LOCKED        BIT(1)
+> > > > > +
+> > > > > +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_he=
+ad)
+> > > > > +{
+> > > > > +       unsigned long old_val, new_val;
+> > > > > +
+> > > > > +       old_val =3D READ_ONCE(rmap_head->val);
+> > > > > +       if (!old_val)
+> > > > > +               return 0;
+> > > > > +
+> > > > > +       do {
+> > > > > +               /*
+> > > > > +                * If the rmap is locked, wait for it to be unloc=
+ked before
+> > > > > +                * trying acquire the lock, e.g. to bounce the ca=
+che line.
+> > > > > +                */
+> > > > > +               while (old_val & KVM_RMAP_LOCKED) {
+> > > > > +                       old_val =3D READ_ONCE(rmap_head->val);
+> > > > > +                       cpu_relax();
+> > > > > +               }
+> > > > > +
+> > > > > +               /*
+> > > > > +                * Recheck for an empty rmap, it may have been pu=
+rged by the
+> > > > > +                * task that held the lock.
+> > > > > +                */
+> > > > > +               if (!old_val)
+> > > > > +                       return 0;
+> > > > > +
+> > > > > +               new_val =3D old_val | KVM_RMAP_LOCKED;
+> > > > > +       } while (!try_cmpxchg(&rmap_head->val, &old_val, new_val)=
+);
+> > > >
+> > > > I think we (technically) need an smp_rmb() here. I think cmpxchg
+> > > > implicitly has that on x86 (and this code is x86-only), but should =
+we
+> > > > nonetheless document that we need smp_rmb() (if it indeed required)=
+?
+> > > > Perhaps we could/should condition the smp_rmb() on `if (old_val)`.
+> > >
+> > > Hmm, no, not smp_rmb().  If anything, the appropriate barrier here wo=
+uld be
+> > > smp_mb__after_spinlock(), but I'm pretty sure even that is misleading=
+, and arguably
+> > > even wrong.
 > >
-> > On 2024-09-03, Stephen Rothwell <sfr@canb.auug.org.au> wrote: =20
-> > > Hi all,
-> > >=20
-> > > After merging the vfs-brauner tree, today's linux-next build (native =
-perf)
-> > > failed like this:
-> > >=20
-> > > In file included from trace/beauty/fs_at_flags.c:21:
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: error: initial=
-ized field overwritten [-Werror=3Doverride-init]
-> > >    10 |         [ilog2(0x0001) + 1] =3D "RENAME_NOREPLACE",
-> > >       |                               ^~~~~~~~~~~~~~~~~~
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: note: (near in=
-itialization for 'fs_at_flags[1]')
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: error: initial=
-ized field overwritten [-Werror=3Doverride-init]
-> > >    14 |         [ilog2(0x200) + 1] =3D "HANDLE_FID",
-> > >       |                              ^~~~~~~~~~~~
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: note: (near in=
-itialization for 'fs_at_flags[10]')
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: error: initial=
-ized field overwritten [-Werror=3Doverride-init]
-> > >    15 |         [ilog2(0x001) + 1] =3D "HANDLE_MNT_ID_UNIQUE",
-> > >       |                              ^~~~~~~~~~~~~~~~~~~~~~
-> > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: note: (near in=
-itialization for 'fs_at_flags[1]')
-> > >=20
-> > > Caused by commit
-> > >=20
-> > >   34cf40849654 ("uapi: explain how per-syscall AT_* flags should be a=
-llocated")
-> > >=20
-> > > I have used the vfs-brauner tree from next-20240902 for today.   =20
-> >=20
-> > Ah okay, the overlapping flag definitions in the copied over fcntl.h are
-> > causing issues. We could just drop that part of the patch, or (since the
-> > new flags aren't handled by perf/trace/beauty) we could just do
-> > something simple like:
-> >=20
-> > diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/=
-beauty/fs_at_flags.sh
-> > index 456f59addf74..930384029599 100755
-> > --- a/tools/perf/trace/beauty/fs_at_flags.sh
-> > +++ b/tools/perf/trace/beauty/fs_at_flags.sh
-> > @@ -13,9 +13,13 @@ printf "static const char *fs_at_flags[] =3D {\n"
-> >  regex=3D'^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum=
-:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
-> >  # AT_EACCESS is only meaningful to faccessat, so we will special case =
-it there...
-> >  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT=
-, AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
-> > +# AT_RENAME_* flags are just aliases of RENAME_* flags and we don't ne=
-ed to include them.
-> > +# AT_HANDLE_* flags are only meaningful for name_to_handle_at, which w=
-e don't support.
-> >  grep -E $regex ${linux_fcntl} | \
-> >         grep -v AT_EACCESS | \
-> >         grep -v AT_STATX_SYNC_TYPE | \
-> > +       grep -Ev "AT_RENAME_(NOREPLACE|EXCHANGE|WHITEOUT)" | \
-> > +       grep -Ev "AT_HANDLE_(FID|MNT_ID_UNIQUE)" | \
-> >         sed -r "s/$regex/\2 \1/g"       | \
-> >         xargs printf "\t[ilog2(%s) + 1] =3D \"%s\",\n"
-> >  printf "};\n" =20
->=20
-> I have applied that by hand for today.  Please submit it and get it
-> applied.
+> > I don't think smp_mb__after_spinlock() is right either. This seems to
+> > be used following the acquisition of a spinlock to promote the memory
+> > ordering from an acquire barrier (that is implicit with the lock
+> > acquisition, e.g. [1]) to a full barrier. IIUC, we have no need for a
+> > stronger-than-usual barrier. But I guess I'm not really sure.
+> >
+> > In this case, I'm complaining that we don't have the usual memory
+> > ordering restrictions that come with a spinlock.
+>
+> What makes you think that?
 
-I am still applying this build fix patch.
---=20
-Cheers,
-Stephen Rothwell
+Ok I was under the impression that try_cmpxchg() did not carry memory
+ordering guarantees (i.e., I thought it was try_cmpxchg_relaxed()).
+Sorry....
 
---Sig_/dXms8KSbUWNEEYhyoFVNzC4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+So the way I would write this is with try_cmpxchg_relaxed() in the
+loop and then smp_rmb() after we break out of the loop, at least for
+the `old_val !=3D 0` case. Kinda like this [4].
 
------BEGIN PGP SIGNATURE-----
+Did you really want try_cmpxchg(), not try_cmpxchg_relaxed()?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbfkYQACgkQAVBC80lX
-0Gxlsgf9Gw3EUBLGQppIzdGj6oYlHBmKmHk5no6zA28uiaeCi7NxfBT3Fa9iu+On
-5cZ0G+cpWONk8aWObYoJpq8PAOWEg1EkkolCZyRCPxMATxkMCuDoPwurGQgZW5oz
-cWmaEuGgIZYcM7Xxm11DILIRRtdiX+q0PIJuV0R03yk5XCXFYMIS50lZK1PY2i6D
-OYRGtTlVlvj91znonT1Sf5E6vhEmTxJbpKNV56Ni+y3pdc/wqZfGkqKkYrXON4sq
-w55ghRB9Dv1bT3taWHo6rtHujtWhW4SlbWeT2HFis0vDV0o2G7yt4vitvV1voltm
-jBz2OPijVQCaeDGNW6LP1/6VjufKzg==
-=uW9f
------END PGP SIGNATURE-----
+Just comparing against bit_spin_lock, test_and_set_bit_lock()
+documents the requirement for acquire barrier semantics[5].
 
---Sig_/dXms8KSbUWNEEYhyoFVNzC4--
+[4]: https://elixir.bootlin.com/linux/v6.10.9/source/kernel/locking/rtmutex=
+.c#L253
+[5]: https://elixir.bootlin.com/linux/v6.10.9/source/include/asm-generic/bi=
+tops/instrumented-lock.h#L51
+
+>
+> > > For the !old_val case, there is a address/data dependency that can't =
+be broken by
+> > > the CPU without violating the x86 memory model (all future actions wi=
+th relevant
+> > > memory loads depend on rmap_head->val being non-zero).  And AIUI, in =
+the Linux
+> > > kernel memory model, READ_ONCE() is responsible for ensuring that the=
+ address
+> > > dependency can't be morphed into a control dependency by the compiler=
+ and
+> > > subsequently reordered by the CPU.
+> > >
+> > > I.e. even if this were arm64, ignoring the LOCK CMPXCHG path for the =
+moment, I
+> > > don't _think_ an smp_{r,w}mb() pair would be needed, as arm64's defin=
+ition of
+> > > __READ_ONCE() promotes the operation to an acquire.
+> > >
+> > > Back to the LOCK CMPXCHG path, KVM_RMAP_LOCKED implements a rudimenta=
+ry spinlock,
+> > > hence my smp_mb__after_spinlock() suggestion.  Though _because_ it's =
+a spinlock,
+> > > the rmaps are fully protected by the critical section.
+> >
+> > I feel like a spinlock must include the appropriate barriers for it to
+> > correctly function as a spinlock, so I'm not sure I fully understand
+> > what you mean here.
+>
+> On TSO architectures, the atomic _is_ the barrier.  E.g. atomic_try_cmpxc=
+hg_acquire()
+> eventually resolves to atomic_try_cmpxchg() on x86.
+
+Yeah I'm with you here.
+
+> And jumping back to the
+> "we don't have the usual memory ordering restrictions that come with a sp=
+inlock",
+> x86's virt_spin_lock() uses atomic_try_cmpxchg().  So while using the acq=
+uire
+> variant here is obviously not wrong, it also feels somewhat weird.
+
+Yeah that's fine. atomic_try_cmpxchg() is at least as strong as
+atomic_try_cmpxchg_acquire(), so there is no issue.
+
+But if virt_spin_lock() were written to use
+atomic_try_cmpxchg_relaxed() (and nothing else) instead, then you'd
+complain right? It would work on x86 (I think?), but it's not written
+properly! That's basically what I'm saying in this thread.
+
+> Though some
+> of that is undoubtedly due to explicit "acquire" semantics being rather r=
+are in
+> x86.
+>
+> > > And for the SPTEs, there is no required ordering.  The reader (aging
+> > > thread) can observe a !PRESENT or a PRESENT SPTE, and must be prepare=
+d for
+> > > either.  I.e. there is no requirement that the reader observe a PRESE=
+NT
+> > > SPTE if there is a valid rmap.
+> >
+> > This makes sense.
+> >
+> > > So, unless I'm missing something, I would prefer to not add a smp_mb_=
+_after_spinlock(),
+> > > even though it's a nop on x86 (unless KCSAN_WEAK_MEMORY=3Dy), because=
+ it suggests
+> > > an ordering requirement that doesn't exist.
+> >
+> > So we have: the general kvm_rmap_lock() and the read-only
+> > kvm_rmap_lock_readonly(), as introduced by the next patch[2]. I'll use
+> > those names (sorry if it's confusing).
+> >
+> > For kvm_rmap_lock(), we are always holding mmu_lock for writing. So
+> > any changes we make to the rmap will be properly published to other
+> > threads that subsequently grab kvm_rmap_lock() because we had to
+> > properly release and then re-acquire mmu_lock, which comes with the
+> > barriers I'm saying we need.
+> >
+> > For kvm_rmap_lock_readonly(), we don't hold mmu_lock, so there is no
+> > smp_rmb() or equivalent. Without an smp_rmb() somewhere, I claim that
+> > it is possible that there may observe external changes to the
+> > pte_list_desc while we are in this critical section (for a
+> > sufficiently weak architecture). The changes that the kvm_rmap_lock()
+> > (mmu_lock) side made were half-published with an smp_wmb() (really
+> > [3]), but the read side didn't use a load-acquire or smp_rmb(), so it
+> > hasn't held up its end of the deal.
+> >
+> > I don't think READ_ONCE() has the guarantees we need to be a
+> > sufficient replacement for smp_rmb() or a load-acquire that a real
+> > lock would use, although I agree with you that, on arm64, it
+> > apparently *is* a sufficient replacement.
+> >
+> > Now this isn't a problem if the kvm_rmap_lock_readonly() side can
+> > tolerate changes to pte_list_desc while in the critical section. I
+> > don't think this is true (given for_each_rmap_spte_lockless),
+> > therefore an smp_rmb() or equivalent is (technically) needed.
+> >
+> > Am I confused?
+>
+> Yes, I think so.  kvm_rmap_lock_readonly() creates a critical section tha=
+t prevents
+> any pte_list_desc changes.  rmap_head->val, and every pte_list_desc that =
+is pointed
+> at by rmap_head->val in the KVM_RMAP_MULTI case, is protected and cannot =
+change.
+
+I take back what I said about this working on x86. I think it's
+possible for there to be a race.
+
+Say...
+
+1. T1 modifies pte_list_desc then unlocks kvm_rmap_unlock().
+2. T2 then locks kvm_rmap_lock_readonly().
+
+The modifications that T1 has made are not guaranteed to be visible to
+T2 unless T1 has an smp_wmb() (or equivalent) after the modfication
+and T2 has an smp_rmb() before reading the data.
+
+Now the way you had it, T2, because it uses try_cmpxchg() with full
+ordering, will effectively do a smp_rmb(). But T1 only does an
+smp_wmb() *after dropping the mmu_lock*, so there is a race. While T1
+still holds the mmu_lock but after releasing the kvm_rmap_lock(), T2
+may enter its critical section and then *later* observe the changes
+that T1 made.
+
+Now this is impossible on x86 (IIUC) if, in the compiled list of
+instructions, T1's writes occur in the same order that we have written
+them in C. I'm not sure if WRITE_ONCE guarantees that this reordering
+at compile time is forbidden.
+
+So what I'm saying is:
+
+1. kvm_rmap_unlock() must have an smp_wmb().
+2. If you change kvm_rmap_lock() to use try_cmpxchg_relaxed() (which
+is what I think you want), then you must also have an smp_rmb()
+following a successful cmpxchg/acquisition (at least for the case
+where we then follow the pte_list_desc pointer).
+
+> The SPTE _value_ that is pointed at by rmap_head->val or pte_list_desc.sp=
+tes[]
+> can change, but the pointers themselves cannot.  And with aging, the code=
+ is
+> completely tolerant of an instable SPTE _value_ because test-only doesn't=
+ care
+> about false negatives/positives, and test-and-clear is itself an atomic a=
+ccess
+> i.e. won't corrupt a SPTE (and is also tolerant of false positives/negati=
+ves).
+
+I think we're on the same page for the rest of this.
+
+>
+> >
+> > (Though all of this works just fine as written on x86.)
+> >
+> > [1]: https://elixir.bootlin.com/linux/v6.11-rc7/source/kernel/locking/r=
+wbase_rt.c#L62
+> > [2]: https://lore.kernel.org/kvm/20240809194335.1726916-21-seanjc@googl=
+e.com/
+> > [3]: https://elixir.bootlin.com/linux/v6.11-rc7/source/kernel/locking/r=
+wbase_rt.c#L190
 
