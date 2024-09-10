@@ -1,158 +1,222 @@
-Return-Path: <linux-kernel+bounces-322324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E0E972755
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A79972753
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4C41C21702
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47EC1C21579
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262961422CA;
-	Tue, 10 Sep 2024 02:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED5814D280;
+	Tue, 10 Sep 2024 02:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GiFah3pC"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9Yu4TIz"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182E113B28D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED65114D431;
+	Tue, 10 Sep 2024 02:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725936617; cv=none; b=QSxuuwpbaC5ck2htiefEZ9Q11+MWyR9Y1ZoACIIrttxR8SI4W/ZitIHi64GYqoQ8ssqNGpUAsWONTCRDa3jBYwKZ5uVX61qPcn+716LnUs+et5L+pImJbtsQ4DgI1loZ+zUxSMuWQvlvStIU9ID+qmJkWDfYJuJuxiGuHFCpUcw=
+	t=1725936604; cv=none; b=ToPQXVqr7WWPCYzx+AxQ11Tby9wT+A8XhFEGCyArqr6IJwuGBru/xW01fC5g7o5FAevtIDdEecxnKw3fyj34SORptP3+fUGQgujVD1+m9Ttr4smL3wGscaGbOt/A6b08DeNSPnhrsRKQkjc432TYjHV6SCYhcZuldmkPWu2zrp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725936617; c=relaxed/simple;
-	bh=MO1+TYt1fooyuHeWj4ED+l72iQRQtHitJtZNEgDT8Ds=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=tnseCer/6bbbOIffLod6yUXiqrz3Z0SJownR0Cqxsjtg5XxCewIYule8bU+/oF6YUaS1gjvpUkyMfreLAdQnfWmcQ1vvpVzKV7yOZTVV9fzR/MjIerkYsluMDnmjN15wx+VhKpJiMk3hGD54DHGUsrLf+tarPVuas0DXzpXgB+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GiFah3pC; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725936613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wHDUbdcPstyqiYRBW25kFRFq01/4AzGKKxPsu7QkdtM=;
-	b=GiFah3pC4S6ld4TTzU1y+OYysYTH0wsMIauHK+TRCXK2VLpaUcv8Oi8LIWOA3SSRCLoPpN
-	qqo8zTLY2z/x8XNxB9DULxLPRe/THr8pad/UoXcp4gDn9KRlViJolkQWIIDjJ3MyRvNUS/
-	Gzy88T3pufPqkC3U1DZborYIxbIYMUk=
+	s=arc-20240116; t=1725936604; c=relaxed/simple;
+	bh=yYS7drh5IFtRVXz5crISX4kQJ1RdBmbN7F0Na7fF3JM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nC7W18c0L2GhneQJxdrDUa+bEHwb4H++cJAUbn6ai4IdOlQ2ujkjkGyOkAkiV0oRHaR/jHJNyfv5nhOBXv/KyOTe2g76zhvaDZFYcxWq7yIH1AyE1ku5ucKsGgw7aHkXhg0+ggwAtX2ClOiVhDcpjhsQWpcRH0GwNpuo6vXJSj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9Yu4TIz; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718d8d6af8fso3086196b3a.3;
+        Mon, 09 Sep 2024 19:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725936601; x=1726541401; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdUcKCk2ZxjBk417GmsddeyQ7LIi7ijN2tAsbtpM67Y=;
+        b=Y9Yu4TIznf4D3I+/ZIX2yfX5JHKJXHP0ZM0SOeXd0xMHeJpegSs8CqENcf2asheUg/
+         YYq8/muBCkLgSFhf3gOLhn+IK3PlQbjdlevshUxJmlZ5iagQcMTXp14qVkZ7I4HJspXh
+         S3DBXQIDsm4nvZiKU92RpHzmsNsyYNOANPOOqnzDvZddLyf+OYtpAsPSP+MBgoujW6H5
+         zQKx7/wQfA1OUIy1zB648BtonPLOT0chOZHnei1UM2N/v6nyf68Lj+vtQ9+0PixCu7oY
+         wxgM+AXMYOEl/40Y7p5MNZwl1JvrkIaGzZW2xr7j7TM1zZkDvFHkXbIqT1iZ3j0Wraop
+         xaYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725936601; x=1726541401;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fdUcKCk2ZxjBk417GmsddeyQ7LIi7ijN2tAsbtpM67Y=;
+        b=Q2hbMcggTxZ8gSAHK8Wd6KEfgBOFdPFCEwh5id5au6K8ZGycyzOkT1BPrPVjZ+OPMt
+         PXybeL6RdRc/bIAt1yka595n2alflM7Jrqxgk8pBqto5EaKuGS9pdH5vitOYqrKJyVmJ
+         LbF/nICzH2eIsLwv9p23rSk87uNLadROYHusF/Wgnefrik8G1jPoAyF0rmjkIe5fKLaC
+         /3uPX6eJEY2AGpgT11vScFqiSMHljLdfcxtmrbjQ78SaT+WY/1Fp8Uh1qC5tF5kw8DaP
+         KUBnbe6XQ6x/IePq+GOWaOUat+K+pN6NU9Kyu2ZjJuZJ3eIYyacpwGOtFnNKNIscUKt5
+         pJaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKCYwWY+JIDCXMJc7XYXK07ORH9hfXcNFPAgOZoi8oPP5m8CfWvH8lJR/PKMn14YLI3gUjKa3jJAHtO8rC7tI=@vger.kernel.org, AJvYcCXFpB4U61utrtJWMxl2VjQNKMpU4lcLOCoftVdPeEgedcLul7rRDVpPSagDGxQ631y7Tf74Pgk7badiUWLV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY+qaGEsK0ORzYCKe/sZeSZDDU6BLYCKH3kR7P/ELqAPCpB1kg
+	iO81+hZEhDX+h/fXX90ia3fmowfVqKmxOgdJkvrccfW5xuLfIuOC
+X-Google-Smtp-Source: AGHT+IGQz8oL0l9MtcKB7+TxrRlPBC6NdrjyqLV+l1HSO3zAii6LniF9RMVuWbwCtYSGE5Gz8Y+wkA==
+X-Received: by 2002:a05:6a00:1745:b0:718:d5e5:2661 with SMTP id d2e1a72fcca58-718e3e97bd1mr16107368b3a.0.1725936601064;
+        Mon, 09 Sep 2024 19:50:01 -0700 (PDT)
+Received: from XH22050090-L.ad.ts.tri-ad.global ([103.175.111.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fc8f79sm405258b3a.25.2024.09.09.19.49.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 19:50:00 -0700 (PDT)
+Sender: Vincent Mailhol <vincent.mailhol@gmail.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Kees Cook <kees@kernel.org>,
+	David Laight <David.Laight@ACULAB.COM>
+Cc: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH v2] overflow: optimize struct_size() calculation
+Date: Tue, 10 Sep 2024 11:49:52 +0900
+Message-Id: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 0/3] Fix some starvation problems in block layer
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20240903081653.65613-1-songmuchun@bytedance.com>
-Date: Tue, 10 Sep 2024 10:49:32 +0800
-Cc: Jens Axboe <axboe@kernel.dk>,
- Ming Lei <ming.lei@redhat.com>,
- Yu Kuai <yukuai1@huaweicloud.com>,
- linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1FCC991B-1D0A-4127-B95A-8021ABAF2FA8@linux.dev>
-References: <20240903081653.65613-1-songmuchun@bytedance.com>
-To: Muchun Song <songmuchun@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If the offsetof() of a given flexible array member (fam) is smaller
+than the sizeof() of the containing struct, then the struct_size()
+macro reports a size which is too big.
+
+This occurs when the two conditions below are met:
+
+  - there are padding bytes after the penultimate member (the member
+    preceding the fam)
+  - the alignment of the fam is less than or equal to the penultimate
+    member's alignment
+
+In that case, the fam overlaps with the padding bytes of the
+penultimate member. This behaviour is not captured in the current
+struct_size() macro, potentially resulting in an overestimated size.
+
+Below example illustrates the issue:
+
+  struct s {
+  	u64 foo;
+  	u32 count;
+  	u8 fam[] __counted_by(count);
+  };
+
+Assuming a 64 bits architecture:
+
+  - there are 4 bytes of padding after s.count (the penultimate
+    member)
+  - sizeof(struct s) is 16 bytes
+  - the offset of s.fam is 12 bytes
+  - the alignment of s.fam is 1 byte
+
+The sizes are as below:
+
+   s.count	current struct_size()	actual size
+  -----------------------------------------------------------------------
+   0		16			16
+   1		17			16
+   2		18			16
+   3		19			16
+   4		20			16
+   5		21			17
+   .		.			.
+   .		.			.
+   .		.			.
+   n		sizeof(struct s) + n	max(sizeof(struct s),
+					    offsetof(struct s, fam) + n)
+
+Change struct_size() from this pseudo code logic:
+
+  sizeof(struct s) + sizeof(*s.fam) * s.count
+
+to that pseudo code logic:
+
+  max(sizeof(struct s), offsetof(struct s, fam) + sizeof(*s.fam) * s.count)
+
+Here, the lowercase max*() macros can cause struct_size() to return a
+non constant integer expression which would break the DEFINE_FLEX()
+macro by making it declare a variable length array. Because of that,
+use the unsafe MAX() macro only if the expression is constant and use
+the safer max() otherwise.
+
+Reference: ISO/IEC 9899:2018 §6.7.2.1 "Structure and union specifiers" ¶18
+
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+
+I also tried to think of whether the current struct_size() macro could
+be a security issue.
+
+The only example I can think of is if someone manually allocates the
+exact size but then use the current struct_size() macro.
+
+For example (reusing the struct s from above):
+
+  u32 count = 5;
+  struct s *s = kalloc(offsetof(typeof(*s), fam) + count);
+  s->count = count;
+  memset(s, 0, struct_size(s, fam, count)); /* 4 bytes buffer overflow */
+
+If we have concerns that above pattern may actually exist, then this
+patch should also go to stable. I personally think that the above is a
+bit convoluted and, as such, I only suggest this patch to go to next.
 
 
+Changelog:
 
-> On Sep 3, 2024, at 16:16, Muchun Song <songmuchun@bytedance.com> =
-wrote:
->=20
-> We encounter a problem on our servers where hundreds of UNINTERRUPTED
-> processes are all waiting in the WBT wait queue. And the IO hung =
-detector
-> logged so many messages about "blocked for more than 122 seconds". The
-> call trace is as follows:
->=20
->    Call Trace:
->        __schedule+0x959/0xee0
->        schedule+0x40/0xb0
->        io_schedule+0x12/0x40
->        rq_qos_wait+0xaf/0x140
->        wbt_wait+0x92/0xc0
->        __rq_qos_throttle+0x20/0x30
->        blk_mq_make_request+0x12a/0x5c0
->        generic_make_request_nocheck+0x172/0x3f0
->        submit_bio+0x42/0x1c0
->        ...
->=20
-> The WBT module is used to throttle buffered writeback, which will =
-block
-> any buffered writeback IO request until the previous inflight IOs have
-> been completed. So I checked the inflight IO counter. That was one =
-meaning
-> one IO request was submitted to the downstream interface like block =
-core
-> layer or device driver (virtio_blk driver in our case). We need to =
-figure
-> out why the inflight IO is not completed in time. I confirmed that all
-> the virtio ring buffers of virtio_blk are empty and the hardware =
-dispatch
-> list had one IO request, so the root cause is not related to the block
-> device or the virtio_blk driver since the driver has never received =
-that
-> IO request.
->=20
-> We know that block core layer could submit IO requests to the driver =
-through
-> kworker (the callback function is blk_mq_run_work_fn). I thought maybe =
-the
-> kworker was blocked by some other resources causing the callback to =
-not be
-> evoked in time. So I checked all the kworkers and workqueues and =
-confirmed
-> there was no pending work on any kworker or workqueue.
->=20
-> Integrate all the investigation information, the problem should be in =
-the
-> block core layer missing a chance to submit that IO request. After
-> some investigation of code, I found some scenarios which could cause =
-the
-> problem.
+  * v1 -> v2:
 
-Hi Jens Axboe,
+    - replace max_t() with max()
+    - change description:
 
-May I ask if you have any suggestions for those fixes? Or if they could
-be merged?
+        the alignment of the fam is less than the penultimate member's
+        alignment
 
-Muchun,
-Thanks.
+      into:
 
->=20
-> Changes in v2:
->  - Collect RB tag from Ming Lei.
->  - Use barrier-less approach to fix QUEUE_FLAG_QUIESCED ordering =
-problem
->    suggested by Ming Lei.
->  - Apply new approach to fix BLK_MQ_S_STOPPED ordering for easier =
-maintenance.
->  - Add Fixes tag to each patch.
->=20
-> Muchun Song (3):
->  block: fix missing dispatching request when queue is started or
->    unquiesced
->  block: fix ordering between checking QUEUE_FLAG_QUIESCED and adding
->    requests
->  block: fix ordering between checking BLK_MQ_S_STOPPED and adding
->    requests
->=20
-> block/blk-mq.c | 55 ++++++++++++++++++++++++++++++++++++++------------
-> block/blk-mq.h | 13 ++++++++++++
-> 2 files changed, 55 insertions(+), 13 deletions(-)
->=20
-> --=20
-> 2.20.1
->=20
+        the alignment of the fam is less than or equal to the
+        penultimate member's alignment
+
+    Link: https://lore.kernel.org/linux-hardening/20240909115221.1298010-1-mailhol.vincent@wanadoo.fr/
+---
+ include/linux/overflow.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 0c7e3dcfe867..fc6ea220bf17 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -5,6 +5,7 @@
+ #include <linux/compiler.h>
+ #include <linux/limits.h>
+ #include <linux/const.h>
++#include <linux/minmax.h>
+ 
+ /*
+  * We need to compute the minimum and maximum values representable in a given
+@@ -369,8 +370,12 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  */
+ #define struct_size(p, member, count)					\
+ 	__builtin_choose_expr(__is_constexpr(count),			\
+-		sizeof(*(p)) + flex_array_size(p, member, count),	\
+-		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
++		MAX(sizeof(*(p)),					\
++		    offsetof(typeof(*(p)), member) +			\
++			flex_array_size(p, member, count)),		\
++		max(sizeof(*(p)),					\
++		    size_add(offsetof(typeof(*(p)), member),		\
++			     flex_array_size(p, member, count))))
+ 
+ /**
+  * struct_size_t() - Calculate size of structure with trailing flexible array
+-- 
+2.25.1
 
 
