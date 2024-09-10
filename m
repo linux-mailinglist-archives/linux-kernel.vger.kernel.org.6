@@ -1,263 +1,522 @@
-Return-Path: <linux-kernel+bounces-323166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774069738CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:39:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC529738D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3455C2828A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68575B21B51
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0194819259E;
-	Tue, 10 Sep 2024 13:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4575D191F97;
+	Tue, 10 Sep 2024 13:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e2Adhg2M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJccBpHG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873C955E58
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975577; cv=fail; b=jwLdxIWpA/TckdE/wxtpxwPlAkHQUqKQDaAPKRhT0in9k55hzjpTUorg4ixnJm/380aPY3eaczaAw/5hbB5ukFHRQ599lvDRpKPsmo8owpAc9OgON72Nyq3pR0dufp6tPxY+j9mXJ3uKsJCbR3rqKHXcfTc/ZCNPF2/BSq/8TB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975577; c=relaxed/simple;
-	bh=Ebs/4Ij/Ca3N0ulEqjbPdlBajxyJZA+OKcpHlWvWmko=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ce7hZ8rWMaol9alYQTd4CPZqGEMqwgKy+BkNqO8QBgcF5j3ZzQjcsac5RJzW2NegFyqkk8nPVPhEdnsjQCDDu5NzkZWgODv2RF/6Qf+LSMsnxCtOwKC/3HFk9P/siol3VOfK6YAwp372+w+oCNL00gxMLEmViFZQFMflnlZF0Hc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e2Adhg2M; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725975576; x=1757511576;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Ebs/4Ij/Ca3N0ulEqjbPdlBajxyJZA+OKcpHlWvWmko=;
-  b=e2Adhg2MYd939gGSQkWRS7jqRJMfwR8wIEh8HU4V9qcjc8oKMjCZONpX
-   FcMNY1/1wJWNXGX3G7DUGn43moN2eSa1N0xCc9qUXZ0JRStsR3VtpZKlI
-   Rg0N0L2BHiRz9iuxY65ERfAaZ20ZhQb/NkIf3eMY8Z2JHGeRTzvL0CBq8
-   xUPq8qI0AFNF/+02asPeTA2K3NrN9ZZ3ixhhoE+ZPbOzrGdx07ZDQDQ2X
-   ewZ7T94KGqSNomZYL3NZ98SFLtqyhdVtmi4BWQIUYgbZ9+LDH+HOuIJA8
-   8Pv4+6axs0b1kblDt1mbR+GhAEr2vKKHGknpPeacKRlN8MmtxN2V/vdej
-   g==;
-X-CSE-ConnectionGUID: yR6UMOP/SjWC3Tiyr00JTA==
-X-CSE-MsgGUID: SluWKf/dTSSyZ7tni3h+fA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="28501478"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="28501478"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:39:35 -0700
-X-CSE-ConnectionGUID: zrEPw1DhQYaZ/E1CilZ1ag==
-X-CSE-MsgGUID: 0ZHA38yPTAWHLZIUBJjuAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="66837684"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 06:39:35 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 10 Sep 2024 06:39:34 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 06:39:33 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 10 Sep 2024 06:39:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U+hCLMt0RJVBjAmcSuqU0t86WY24jhiVUi0Zz5w+jAzRR1do191WhzslhLz2L33PU1Ry4Nf1+DgJhyNqWDKL/V9Kc5Vle8smXlMUz/c/X+3not/mt/0lJs6B5QVsAMaYCc6MMMo6tq14pJxF0CmcWJLwhelmRKCxOeunbVvUc8La37WCkjrxjzeXDkdcn5pxiFVSg1pHgEGhVO62RrwGd23oKMFynySDETJXp7x4hjJEDdKThwHtTP7bJ4vlrZo61yqwFIDtihJMCrA9N8IYW3PqlCpOc7g5Un06z3iti1Qy7YLhpgqjxPlq1tJvhUjQNPTpskLokS8WWWbeRa1lWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5IIexV1R8VvTA0G/0gAd2gmU5GOsTWXSpE0pmJN/uZ0=;
- b=UoRJ7ujh948UZinL25kn4ARMBJV78iC3jgpRii4WlLj1IOMMJ/7Z5ZFTlqqlIp96xdYQIKG+jruyK3HcEJkXM2+a/o9kWSenvbI2S07buYCgV3zUW1xxTKSZL557yv9JT4kWYfpAuCHGOwZqLYG0GmSSNHY5g/c1ear1vy6Cd3hUCIVR/dZrIN9JN9wuhARpqC3wZHNtRX06cHCl29jw53Mr/C9VClqAMAepZVUwNJdjCqDy00hIZ25b3MD4KXIuXUXzKVaiq/nqgm1Uq2D+yS15rae1vGMPQfTNqk5l/7VKmz9s1Dit1jCRYSug8NlgpJubVaQ9yiRW/nG96P+9iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
- by DM4PR11MB8129.namprd11.prod.outlook.com (2603:10b6:8:183::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Tue, 10 Sep
- 2024 13:39:30 +0000
-Received: from MN0PR11MB6304.namprd11.prod.outlook.com
- ([fe80::7f88:f3b1:22ec:f508]) by MN0PR11MB6304.namprd11.prod.outlook.com
- ([fe80::7f88:f3b1:22ec:f508%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
- 13:39:29 +0000
-Date: Tue, 10 Sep 2024 21:39:17 +0800
-From: Feng Tang <feng.tang@intel.com>
-To: Danilo Krummrich <dakr@kernel.org>
-CC: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton
-	<akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg
-	<penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim
-	<iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Marco Elver <elver@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
-	"David Gow" <davidgow@google.com>, <linux-mm@kvack.org>,
-	<kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] mm/slub: Improve redzone check and zeroing for
- krealloc()
-Message-ID: <ZuBMBcOkaKU39wnI@feng-clx.sh.intel.com>
-References: <20240909012958.913438-1-feng.tang@intel.com>
- <20240909012958.913438-4-feng.tang@intel.com>
- <ZuAaDbSMtpLVJPrY@pollux>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZuAaDbSMtpLVJPrY@pollux>
-X-ClientProxiedBy: SI2PR01CA0025.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::10) To MN0PR11MB6304.namprd11.prod.outlook.com
- (2603:10b6:208:3c0::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047BC1922F6;
+	Tue, 10 Sep 2024 13:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725975628; cv=none; b=m8QBstXQga9dJ32u6naRuozAaoSFNVypo8ZQzZr7Zr7A9JpdrA28fWssg0zwtJrl6GvxTdfRWl2aJyaI2tL9vB4niKbLmQrZgEy+k8rxQuL8LZxpLPnv1JGJev75bYligJ5iP/L1hTG36gWrDtWy8/qWr/vINil+EaaMkLKv9Jc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725975628; c=relaxed/simple;
+	bh=lZ/p4Gtu2UFYN+QsBtw203IXyBmnmfGsSBWPNSX/uc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nt1D9LbWNQrLrBQfWGtVPW0E03J4pINFJBBnk/y3a/Tzi9UzKAmCf7rqn4GZqw7evR8ThUUymhiapMPHweqwKAJ4SZG3Sq45SzX5IomQ50i8sqLfvS2tr5WpJ/ZIL5H2LdW3de275EI/zpE75IHuAQN5SgD/CSdNYHancrh6OQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJccBpHG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506CEC4CEC3;
+	Tue, 10 Sep 2024 13:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725975627;
+	bh=lZ/p4Gtu2UFYN+QsBtw203IXyBmnmfGsSBWPNSX/uc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJccBpHGeQixfcX5p7Ys1Ja4tdgpPqMPPcdf/pK45ZgTME3/YAgGAC1aN/lWOMHbJ
+	 GuPIdn0kuu+DAJQhZs+NiBxNtV3W+0IYJXkeeabQfF6ryLAAyBlCOhi5Ji6pWT9Vdf
+	 E7dwn1ruZs9HPVdm3bf8QsQaWmk3l7Ez4fU180M7jbLoShyTlwVTgfnJsojnLb1IAZ
+	 nV24XljM4bG1tSI+0WubebobRjiYgErgGP2JoLFrRoOzAZSAusYHOY3/DKwBcVQi6H
+	 KNf+bC0wZmmz4pQf9x1y5A2y5r0JyGYZeVN9QQb1EUO+x0vmswsbDI7mus8HY8pNoz
+	 AamOpKk+ADlhQ==
+Date: Tue, 10 Sep 2024 10:40:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>,
+	Alan Maguire <alan.maguire@oracle.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1] perf trace: Support collecting 'union's with the BPF
+ augmenter
+Message-ID: <ZuBMSfSka_VxebBu@x1>
+References: <ZuBJQp1lf5uAjpo1@x1>
+ <ZuBLat8cbadILNLA@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|DM4PR11MB8129:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b13e323-7a75-4493-42e9-08dcd19dfed1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pkBxprhMYqgGmxz/sfDcrKe5izcclVWmbbn9k08XmBUpbVGuvSv0lBnPct2J?=
- =?us-ascii?Q?XVtKeSMBN0eAdYGUfS4dKEYgJJRNRzAZGegsWkMHSgqXzdSiyolxm9ufAEOz?=
- =?us-ascii?Q?42Z9y549b2mnequOwZUl4Yyur65i4K6E35cdN1NBOXdkTRR8qTRXZew3DeJJ?=
- =?us-ascii?Q?2nICii33mgVoGoIhRmBdNYo6HhDugHiVuLjakCM77mbRhGCkquKt6AVqXjT1?=
- =?us-ascii?Q?C4cNjGhKbuD+CiNMkSFN9gbwPLLKRKCSQtbCTbDvmJuxaml1FRerMJpr627J?=
- =?us-ascii?Q?GIYaT+Nb750fonlyFTVaiwuzAEXP7aiBB25zTnFix2xsLN6PHMxN1r/5JlWs?=
- =?us-ascii?Q?BxP9pv4CxcX7TRJUpNZ7BFHZpZXmz54R/kz5p6MNsvg2GVZJuTcP8FG+bimq?=
- =?us-ascii?Q?qsF9avP9Q8JlvINcCMG0z7gJeaSqHDAfplp3lakPK0IbZVfJr1VzXLR4sLFk?=
- =?us-ascii?Q?HgeTWnknih0svSvCfM+z2bInFUXlE7/lbqUtLJbjDEJsDBCZDTW23OY7nHam?=
- =?us-ascii?Q?EC5CTAjRlahhO1G2qcxziI+aJEQIzRbGm4to9WLniHn+OfdpNvE0uv9o8BT9?=
- =?us-ascii?Q?JI0WVYWcXf0OBQzVZ849XTHODHv+QQwlqZknibo+rr9VWevN0eAOPkuHIijD?=
- =?us-ascii?Q?UnnEaoq4/OsSSCf1k01Kt5BYF0eHwK27v7oo3uashYypsHgpERFQgqdUtcs4?=
- =?us-ascii?Q?hd/bipNaqIn24PZwRDXL1NqX97//XQgGsVIALK+gec113gkIb7HtOjFll816?=
- =?us-ascii?Q?3MceTqVocHON9lSYkOr2cTQGTJUnv6gt58gX7UHYICFIlUUHP1WXKCxN2TIw?=
- =?us-ascii?Q?tO0/fgOb5ITFKxRRlJwG+GMxWtgF4tkJkJzfTlxccK5sKElbNRI3EwLZyN5y?=
- =?us-ascii?Q?JRsiClrX4uDtvgxWqQ8G0DHXBoXEGPRSN5+P4H/3WQpWJBB46Dji4jQLEadY?=
- =?us-ascii?Q?PvbwAgXZAHKu4F0PgoonbxlM75mo6y/k3UNY0ZRh5EDBuyOhZHsbZArxRecE?=
- =?us-ascii?Q?xEb44ndOQKfrlFce03fCC1xoG8zU9BvgCLfKh3kMyXE/y+eqtCz+6DCJhSlp?=
- =?us-ascii?Q?gT3jTdX3V9dFwnzPvOXXl0p3l2lV8JSmLH5kRHcVZRtMkKsbkWziLbvKytAU?=
- =?us-ascii?Q?uUez58oRONAopauPQ+h2t6eCYGYD5S+e4rO94CqRjiFey3fXhEatrUYhH4az?=
- =?us-ascii?Q?L1Y0ujrFqYit4d7DHA2ZoerOFT/oEkH25D+IQHWPGuSM4WYopJXDl2lsjXBt?=
- =?us-ascii?Q?3G6zOFo7oePK/Hm2i88rM8E3PyeaCU8+WkbwZH00cjAMyxNtMCDKCd6BqAd8?=
- =?us-ascii?Q?cDUAIIAD/xdgAbDHSDTgNXZpAhjEVXiVBWuXleqNVlUyZA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rC4b8madIUxaTIAHBLILIZcG+FZb8kdDyGPtzhA8Df9bwdrBRDd0iY7duyH8?=
- =?us-ascii?Q?qJQIztQdkdTPdGLAGhFmhf2mUa+/XI/aQthp5Y+xNntW0GVC9NwHQvIRlo4B?=
- =?us-ascii?Q?h8MoO5Bd+uU4dOX7mhtdIYfBSQ3kgSkMGPGhdLoxJmwFZNZxbgq8VJYz7cS4?=
- =?us-ascii?Q?3JV9F8UCjRka6EUAPlduKaNKq3HkCU4Mm0Jv8QFqT/hnfdPFBtXSoVuIewi1?=
- =?us-ascii?Q?UzFpfiSshBlhXYuY6dc6d/yt1iYjJY+kVnCcTt3TZwz9Er9bKlPjNIqIP6dH?=
- =?us-ascii?Q?0DpWg4uiFYT8nck9TR7ebE3d5/D9KG9OIfcz5hhKiPmlSa0qkqLewF33+RZy?=
- =?us-ascii?Q?ycJeyTBGxd+whi31bbKhph8zp+Y6YBVXfq1PRaDtb5ujXIJur3eRSREZeCp2?=
- =?us-ascii?Q?GoGsAzcWsBnUTt8X4ivczlk+Pz0hyLHIEzs4gL5dNctza83FwZgg/xuEVARR?=
- =?us-ascii?Q?3WR378TurvTRKNIwn9tTjt6Tz/IpUDLBmeyhDiKpO2joKJBHq7oUv1UME9lm?=
- =?us-ascii?Q?BVmVgHgzBr8hJlxDnUcKYnd5XuUl5dHCVwmfcIPOs33rYfg2WO9DmqWK36Ey?=
- =?us-ascii?Q?Y+tQCBg8LhuiCSmvycFtcWIJoXMt2xOpq5t0xRTUSegJo6EATtKqvrT9Q6hN?=
- =?us-ascii?Q?ns8r60zvq6Lp9MmoQ/Z/p45Vi6VGOgPN4v30dMuW2X+OezESmzJxQAeVPoWa?=
- =?us-ascii?Q?7LVfgqZbVOYEZiVgxgboGQtTC2IJ89yty62GQQCS1f+WP6rCaUr2V+jiIfzq?=
- =?us-ascii?Q?WC+brUqoEkm2Ak3Ns72klxlLvcxojE9R5mzEVr0LbyE5/Z/otSO9JmBisqxG?=
- =?us-ascii?Q?oZ1jCZamVGljVUnHOxG0X/f2zXyRBBR7Sf5rgUuLTJGA0ntgt0slHm8TtRFO?=
- =?us-ascii?Q?qVkaMAGcqq2HF7tm9D8ov4FpNJge6oKhRv/PXaBLL2g7OaQsNvXV6JrMYDbZ?=
- =?us-ascii?Q?Dzl5bPZ3YeApeT3tV8sPpSHaJM8sSYMo4qvC1F+fOJMSGZWXpJcjSWy7ZEVI?=
- =?us-ascii?Q?wtax1T/2WvI8dfBBtney2O/tx14VMRdrhsI5GbwedA1OxQQlnFgGXB4hAOB9?=
- =?us-ascii?Q?gyvkio+7bo9EmNrQogYsGHR3fN9ZN29wFqUboEJPpEoE/1jh+nxyvFrCEyF/?=
- =?us-ascii?Q?r9WAjrKrP7PBhgOHYoKCW+MEwra+exQui0MfB4B7wjPwO0y3jXQd7zAeuE7g?=
- =?us-ascii?Q?TtWDuxLig1rdegQxjLKpdNKNmoujAaTfVcLKSM/RAckFHf9QmcwdJk+Csr1O?=
- =?us-ascii?Q?TzIRrbjgQjJ70mVCd6vGK2E45bRv4hftSrJms/MJRgZ21jlmi7s24DtHTlGx?=
- =?us-ascii?Q?4R0/BvweB91Nm27wYfKrRG4S9guaSQUTnO0HWA+qoKzqVs9EW5Aj38tsugnP?=
- =?us-ascii?Q?5H4nxl7CXyM84ov45SkU2mYdQUxV7AzMGD62cgVxL57HRve050iz0d/w/Knk?=
- =?us-ascii?Q?NydnnzwkbInJ8pjanDJlFl2fW1yQpOjfpvoI2NshgWW4ZUC5sjzBWCqHBaAT?=
- =?us-ascii?Q?TfctZcXWSpOPp6Pdy4BhcUNyM1wLmQdhgbclqOxGR9o2H6v+k6gQqgTLuBXr?=
- =?us-ascii?Q?c9NE1dU/6m/cIALs0fBlafLyEbipZizCtxOmacta?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b13e323-7a75-4493-42e9-08dcd19dfed1
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 13:39:29.5885
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XKd8XhgDasNaIoGq+xwullwMtrNfzsidLjXjDkXFZ+0OptX4zgqkiP/0EvbOJaS7HeGBccO3+5CHJUw5M+dP1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8129
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZuBLat8cbadILNLA@x1>
 
-Hi Danilo,
+On Tue, Sep 10, 2024 at 10:36:46AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Sep 10, 2024 at 10:27:34AM -0300, Arnaldo Carvalho de Melo wrote:
+> > And reuse the BTF based struct pretty printer, with that we can offer
+> > initial support for the 'bpf' syscall's second argument, a 'union
+> > bpf_attr' pointer.
+> >=20
+> > But this is not that satisfactory as the libbpf btf dumper will pretty
+> > print _all_ the union, we need to have a way to say that the first arg
+> > selects the type for the union member to be pretty printed, something
+> > like what pahole does translating the PERF_RECORD_ selector into a name,
+> > and using that name to find a matching struct.
 
-Thanks for the review!
+Description of the above technique in the pahole man page:
 
-On Tue, Sep 10, 2024 at 12:06:05PM +0200, Danilo Krummrich wrote:
-> On Mon, Sep 09, 2024 at 09:29:56AM +0800, Feng Tang wrote:
-> > For current krealloc(), one problem is its caller doesn't know what's
-> > the actual request size, say the object is 64 bytes kmalloc one, but
-> > the original caller may only requested 48 bytes. And when krealloc()
-> > shrinks or grows in the same object, or allocate a new bigger object,
-> > it lacks this 'original size' information to do accurate data preserving
-> > or zeroing (when __GFP_ZERO is set).
-> > 
-> > And when some slub debug option is enabled, kmalloc caches do have this
-> > 'orig_size' feature. So utilize it to do more accurate data handling,
-> > as well as enforce the kmalloc-redzone sanity check.
-> > 
-> > The krealloc() related code is moved from slab_common.c to slub.c for
-> > more efficient function calling.
-> 
-> I think it would be good to do this in a separate commit, for a better diff and
-> history.
+https://git.kernel.org/pub/scm/devel/pahole/pahole.git/tree/man-pages/pahol=
+e.1#n785
 
-Agreed. will do.
+https://git.kernel.org/pub/scm/devel/pahole/pahole.git/tree/man-pages/pahol=
+e.1#n961
 
-> > 
-> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > Signed-off-by: Feng Tang <feng.tang@intel.com>
+- Arnaldo
+=20
+> Forgot to add Alan to the CC list, perhaps he has ideas about how to
+> improve the union BTF dumper.
+>=20
+> How to somehow map the 'cmd' in the BPF syscall to the right union
+> member.
+>=20
+> Maybe we should have a table with 'cmd' and name of union struct member,
+> in the cases there is a name, and to the name of one of the members,
+> when that is unambiguous. At start time, when the BPF syscall is in
+> wanted, we may do all these lookups and build a table mapping things,
+> then tell the libbpf BTF dumper which of tne entries in the struct,
+> well, that member type id to use to pretty print, seems doable, wdyt?
+>=20
+> - Arnaldo
+> =20
+> > In the case of 'union bpf_attr' it would map PROG_LOAD to one of the
+> > union members, but unfortunately there is no such mapping:
+> >=20
+> >   root@number:~# pahole bpf_attr
+> >   union bpf_attr {
+> >   	struct {
+> >   		__u32              map_type;           /*     0     4 */
+> >   		__u32              key_size;           /*     4     4 */
+> >   		__u32              value_size;         /*     8     4 */
+> >   		__u32              max_entries;        /*    12     4 */
+> >   		__u32              map_flags;          /*    16     4 */
+> >   		__u32              inner_map_fd;       /*    20     4 */
+> >   		__u32              numa_node;          /*    24     4 */
+> >   		char               map_name[16];       /*    28    16 */
+> >   		__u32              map_ifindex;        /*    44     4 */
+> >   		__u32              btf_fd;             /*    48     4 */
+> >   		__u32              btf_key_type_id;    /*    52     4 */
+> >   		__u32              btf_value_type_id;  /*    56     4 */
+> >   		__u32              btf_vmlinux_value_type_id; /*    60     4 */
+> >   		/* --- cacheline 1 boundary (64 bytes) --- */
+> >   		__u64              map_extra;          /*    64     8 */
+> >   		__s32              value_type_btf_obj_fd; /*    72     4 */
+> >   		__s32              map_token_fd;       /*    76     4 */
+> >   	};                                             /*     0    80 */
+> >   	struct {
+> >   		__u32              map_fd;             /*     0     4 */
+> >=20
+> >   		/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   		__u64              key;                /*     8     8 */
+> >   		union {
+> >   			__u64      value;              /*    16     8 */
+> >   			__u64      next_key;           /*    16     8 */
+> >   		};                                     /*    16     8 */
+> >   		__u64              flags;              /*    24     8 */
+> >   	};                                             /*     0    32 */
+> >   	struct {
+> >   		__u64              in_batch;           /*     0     8 */
+> >   		__u64              out_batch;          /*     8     8 */
+> >   		__u64              keys;               /*    16     8 */
+> >   		__u64              values;             /*    24     8 */
+> >   		__u32              count;              /*    32     4 */
+> >   		__u32              map_fd;             /*    36     4 */
+> >   		__u64              elem_flags;         /*    40     8 */
+> >   		__u64              flags;              /*    48     8 */
+> >   	} batch;                                       /*     0    56 */
+> >   	struct {
+> >   		__u32              prog_type;          /*     0     4 */
+> >   		__u32              insn_cnt;           /*     4     4 */
+> >   		__u64              insns;              /*     8     8 */
+> >   		__u64              license;            /*    16     8 */
+> >   		__u32              log_level;          /*    24     4 */
+> >   		__u32              log_size;           /*    28     4 */
+> >   		__u64              log_buf;            /*    32     8 */
+> >   		__u32              kern_version;       /*    40     4 */
+> >   		__u32              prog_flags;         /*    44     4 */
+> >   		char               prog_name[16];      /*    48    16 */
+> >   		/* --- cacheline 1 boundary (64 bytes) --- */
+> >   		__u32              prog_ifindex;       /*    64     4 */
+> >   		__u32              expected_attach_type; /*    68     4 */
+> >   		__u32              prog_btf_fd;        /*    72     4 */
+> >   		__u32              func_info_rec_size; /*    76     4 */
+> >   		__u64              func_info;          /*    80     8 */
+> >   		__u32              func_info_cnt;      /*    88     4 */
+> >   		__u32              line_info_rec_size; /*    92     4 */
+> >   		__u64              line_info;          /*    96     8 */
+> >   		__u32              line_info_cnt;      /*   104     4 */
+> >   		__u32              attach_btf_id;      /*   108     4 */
+> >   		union {
+> >   			__u32      attach_prog_fd;     /*   112     4 */
+> >   			__u32      attach_btf_obj_fd;  /*   112     4 */
+> >   		};                                     /*   112     4 */
+> >   		__u32              core_relo_cnt;      /*   116     4 */
+> >   		__u64              fd_array;           /*   120     8 */
+> >   		/* --- cacheline 2 boundary (128 bytes) --- */
+> >   		__u64              core_relos;         /*   128     8 */
+> >   		__u32              core_relo_rec_size; /*   136     4 */
+> >   		__u32              log_true_size;      /*   140     4 */
+> >   		__s32              prog_token_fd;      /*   144     4 */
+> >   	};                                             /*     0   152 */
+> >   	struct {
+> >   		__u64              pathname;           /*     0     8 */
+> >   		__u32              bpf_fd;             /*     8     4 */
+> >   		__u32              file_flags;         /*    12     4 */
+> >   		__s32              path_fd;            /*    16     4 */
+> >   	};                                             /*     0    24 */
+> >   	struct {
+> >   		union {
+> >   			__u32      target_fd;          /*     0     4 */
+> >   			__u32      target_ifindex;     /*     0     4 */
+> >   		};                                     /*     0     4 */
+> >   		__u32              attach_bpf_fd;      /*     4     4 */
+> >   		__u32              attach_type;        /*     8     4 */
+> >   		__u32              attach_flags;       /*    12     4 */
+> >   		__u32              replace_bpf_fd;     /*    16     4 */
+> >   		union {
+> >   			__u32      relative_fd;        /*    20     4 */
+> >   			__u32      relative_id;        /*    20     4 */
+> >   		};                                     /*    20     4 */
+> >   		__u64              expected_revision;  /*    24     8 */
+> >   	};                                             /*     0    32 */
+> >   	struct {
+> >   		__u32              prog_fd;            /*     0     4 */
+> >   		__u32              retval;             /*     4     4 */
+> >   		__u32              data_size_in;       /*     8     4 */
+> >   		__u32              data_size_out;      /*    12     4 */
+> >   		__u64              data_in;            /*    16     8 */
+> >   		__u64              data_out;           /*    24     8 */
+> >   		__u32              repeat;             /*    32     4 */
+> >   		__u32              duration;           /*    36     4 */
+> >   		__u32              ctx_size_in;        /*    40     4 */
+> >   		__u32              ctx_size_out;       /*    44     4 */
+> >   		__u64              ctx_in;             /*    48     8 */
+> >   		__u64              ctx_out;            /*    56     8 */
+> >   		/* --- cacheline 1 boundary (64 bytes) --- */
+> >   		__u32              flags;              /*    64     4 */
+> >   		__u32              cpu;                /*    68     4 */
+> >   		__u32              batch_size;         /*    72     4 */
+> >   	} test;                                        /*     0    80 */
+> >   	struct {
+> >   		union {
+> >   			__u32      start_id;           /*     0     4 */
+> >   			__u32      prog_id;            /*     0     4 */
+> >   			__u32      map_id;             /*     0     4 */
+> >   			__u32      btf_id;             /*     0     4 */
+> >   			__u32      link_id;            /*     0     4 */
+> >   		};                                     /*     0     4 */
+> >   		__u32              next_id;            /*     4     4 */
+> >   		__u32              open_flags;         /*     8     4 */
+> >   	};                                             /*     0    12 */
+> >   	struct {
+> >   		__u32              bpf_fd;             /*     0     4 */
+> >   		__u32              info_len;           /*     4     4 */
+> >   		__u64              info;               /*     8     8 */
+> >   	} info;                                        /*     0    16 */
+> >   	struct {
+> >   		union {
+> >   			__u32      target_fd;          /*     0     4 */
+> >   			__u32      target_ifindex;     /*     0     4 */
+> >   		};                                     /*     0     4 */
+> >   		__u32              attach_type;        /*     4     4 */
+> >   		__u32              query_flags;        /*     8     4 */
+> >   		__u32              attach_flags;       /*    12     4 */
+> >   		__u64              prog_ids;           /*    16     8 */
+> >   		union {
+> >   			__u32      prog_cnt;           /*    24     4 */
+> >   			__u32      count;              /*    24     4 */
+> >   		};                                     /*    24     4 */
+> >=20
+> >   		/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   		__u64              prog_attach_flags;  /*    32     8 */
+> >   		__u64              link_ids;           /*    40     8 */
+> >   		__u64              link_attach_flags;  /*    48     8 */
+> >   		__u64              revision;           /*    56     8 */
+> >   	} query;                                       /*     0    64 */
+> >   	struct {
+> >   		__u64              name;               /*     0     8 */
+> >   		__u32              prog_fd;            /*     8     4 */
+> >=20
+> >   		/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   		__u64              cookie;             /*    16     8 */
+> >   	} raw_tracepoint;                              /*     0    24 */
+> >   	struct {
+> >   		__u64              btf;                /*     0     8 */
+> >   		__u64              btf_log_buf;        /*     8     8 */
+> >   		__u32              btf_size;           /*    16     4 */
+> >   		__u32              btf_log_size;       /*    20     4 */
+> >   		__u32              btf_log_level;      /*    24     4 */
+> >   		__u32              btf_log_true_size;  /*    28     4 */
+> >   		__u32              btf_flags;          /*    32     4 */
+> >   		__s32              btf_token_fd;       /*    36     4 */
+> >   	};                                             /*     0    40 */
+> >   	struct {
+> >   		__u32              pid;                /*     0     4 */
+> >   		__u32              fd;                 /*     4     4 */
+> >   		__u32              flags;              /*     8     4 */
+> >   		__u32              buf_len;            /*    12     4 */
+> >   		__u64              buf;                /*    16     8 */
+> >   		__u32              prog_id;            /*    24     4 */
+> >   		__u32              fd_type;            /*    28     4 */
+> >   		__u64              probe_offset;       /*    32     8 */
+> >   		__u64              probe_addr;         /*    40     8 */
+> >   	} task_fd_query;                               /*     0    48 */
+> >   	struct {
+> >   		union {
+> >   			__u32      prog_fd;            /*     0     4 */
+> >   			__u32      map_fd;             /*     0     4 */
+> >   		};                                     /*     0     4 */
+> >   		union {
+> >   			__u32      target_fd;          /*     4     4 */
+> >   			__u32      target_ifindex;     /*     4     4 */
+> >   		};                                     /*     4     4 */
+> >   		__u32              attach_type;        /*     8     4 */
+> >   		__u32              flags;              /*    12     4 */
+> >   		union {
+> >   			__u32      target_btf_id;      /*    16     4 */
+> >   			struct {
+> >   				__u64 iter_info;       /*    16     8 */
+> >   				__u32 iter_info_len;   /*    24     4 */
+> >   			};                             /*    16    16 */
+> >   			struct {
+> >   				__u64 bpf_cookie;      /*    16     8 */
+> >   			} perf_event;                  /*    16     8 */
+> >   			struct {
+> >   				__u32 flags;           /*    16     4 */
+> >   				__u32 cnt;             /*    20     4 */
+> >   				__u64 syms;            /*    24     8 */
+> >   				__u64 addrs;           /*    32     8 */
+> >   				__u64 cookies;         /*    40     8 */
+> >   			} kprobe_multi;                /*    16    32 */
+> >   			struct {
+> >   				__u32 target_btf_id;   /*    16     4 */
+> >=20
+> >   				/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   				__u64 cookie;          /*    24     8 */
+> >   			} tracing;                     /*    16    16 */
+> >   			struct {
+> >   				__u32 pf;              /*    16     4 */
+> >   				__u32 hooknum;         /*    20     4 */
+> >   				__s32 priority;        /*    24     4 */
+> >   				__u32 flags;           /*    28     4 */
+> >   			} netfilter;                   /*    16    16 */
+> >   			struct {
+> >   				union {
+> >   					__u32  relative_fd; /*    16     4 */
+> >   					__u32  relative_id; /*    16     4 */
+> >   				};                     /*    16     4 */
+> >=20
+> >   				/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   				__u64 expected_revision; /*    24     8 */
+> >   			} tcx;                         /*    16    16 */
+> >   			struct {
+> >   				__u64 path;            /*    16     8 */
+> >   				__u64 offsets;         /*    24     8 */
+> >   				__u64 ref_ctr_offsets; /*    32     8 */
+> >   				__u64 cookies;         /*    40     8 */
+> >   				__u32 cnt;             /*    48     4 */
+> >   				__u32 flags;           /*    52     4 */
+> >   				__u32 pid;             /*    56     4 */
+> >   			} uprobe_multi;                /*    16    48 */
+> >   			struct {
+> >   				union {
+> >   					__u32  relative_fd; /*    16     4 */
+> >   					__u32  relative_id; /*    16     4 */
+> >   				};                     /*    16     4 */
+> >=20
+> >   				/* XXX 4 bytes hole, try to pack */
+> >=20
+> >   				__u64 expected_revision; /*    24     8 */
+> >   			} netkit;                      /*    16    16 */
+> >   		};                                     /*    16    48 */
+> >   	} link_create;                                 /*     0    64 */
+> >   	struct {
+> >   		__u32              link_fd;            /*     0     4 */
+> >   		union {
+> >   			__u32      new_prog_fd;        /*     4     4 */
+> >   			__u32      new_map_fd;         /*     4     4 */
+> >   		};                                     /*     4     4 */
+> >   		__u32              flags;              /*     8     4 */
+> >   		union {
+> >   			__u32      old_prog_fd;        /*    12     4 */
+> >   			__u32      old_map_fd;         /*    12     4 */
+> >   		};                                     /*    12     4 */
+> >   	} link_update;                                 /*     0    16 */
+> >   	struct {
+> >   		__u32              link_fd;            /*     0     4 */
+> >   	} link_detach;                                 /*     0     4 */
+> >   	struct {
+> >   		__u32              type;               /*     0     4 */
+> >   	} enable_stats;                                /*     0     4 */
+> >   	struct {
+> >   		__u32              link_fd;            /*     0     4 */
+> >   		__u32              flags;              /*     4     4 */
+> >   	} iter_create;                                 /*     0     8 */
+> >   	struct {
+> >   		__u32              prog_fd;            /*     0     4 */
+> >   		__u32              map_fd;             /*     4     4 */
+> >   		__u32              flags;              /*     8     4 */
+> >   	} prog_bind_map;                               /*     0    12 */
+> >   	struct {
+> >   		__u32              flags;              /*     0     4 */
+> >   		__u32              bpffs_fd;           /*     4     4 */
+> >   	} token_create;                                /*     0     8 */
+> >   };
+> >=20
+> >   root@number:~#
+> >=20
+> > So this is one case where BTF gets us only that far, not getting all
+> > the way to automate the pretty printing of unions designed like 'union
+> > bpf_attr', we will need a custom pretty printer for this union, as using
+> > the libbpf union BTF dumper is way too verbose:
+> >=20
+> >   root@number:~# perf trace --max-events 1 -e bpf bpftool map
+> >        0.000 ( 0.054 ms): bpftool/3409073 bpf(cmd: PROG_LOAD, uattr: (u=
+nion bpf_attr){(struct){.map_type =3D (__u32)1,.key_size =3D (__u32)2,.valu=
+e_size =3D (__u32)2755142048,.max_entries =3D (__u32)32764,.map_flags =3D (=
+__u32)150263906,.inner_map_fd =3D (__u32)21920,},(struct){.map_fd =3D (__u3=
+2)1,.key =3D (__u64)140723063628192,(union){.value =3D (__u64)9414583339222=
+6,.next_key =3D (__u64)94145833392226,},},.batch =3D (struct){.in_batch =3D=
+ (__u64)8589934593,.out_batch =3D (__u64)140723063628192,.keys =3D (__u64)9=
+4145833392226,},(struct){.prog_type =3D (__u32)1,.insn_cnt =3D (__u32)2,.in=
+sns =3D (__u64)140723063628192,.license =3D (__u64)94145833392226,},(struct=
+){.pathname =3D (__u64)8589934593,.bpf_fd =3D (__u32)2755142048,.file_flags=
+ =3D (__u32)32764,.path_fd =3D (__s32)150263906,},(struct){(union){.target_=
+fd =3D (__u32)1,.target_ifindex =3D (__u32)1,},.attach_bpf_fd =3D (__u32)2,=
+=2Eattach_type =3D (__u32)2755142048,.attach_flags =3D (__u32)32764,.replac=
+e_bpf_fd =3D (__u32)150263906,(union){.relative_fd =3D (__u32)21920,.relati=
+ve_id =3D (__u32)21920,},},.test =3D (struct){.prog_fd =3D (__u32)1,.retval=
+ =3D (__u32)2,.data_size_in =3D (__u32)2755142048,.data_size_out =3D (__u32=
+)32764,.data_in =3D (__u64)94145833392226,},(struct){(union){.start_id =3D =
+(__u32)1,.prog_id =3D (__u32)1,.map_id =3D (__u32)1,.btf_id =3D (__u32)1,.l=
+ink_id =3D (__u32)1,},.next_id =3D (__u32)2,.open_flags =3D (__u32)27551420=
+48,},.info =3D (struct){.bpf_fd =3D (__u32)1,.info_len =3D (__u32)2,.info =
+=3D (__u64)140723063628192,},.query =3D (struct){(union){.target_fd =3D (__=
+u32)1,.target_ifindex =3D (__u32)1,},.attach_type =3D (__u32)2,.query_flags=
+ =3D (__u32)2755142048,.attach_flags =3D (__u32)32764,.prog_ids =3D (__u64)=
+94145833392226,},.raw_tracepoint =3D (struct){.name =3D (__u64)8589934593,.=
+prog_fd =3D (__u32)2755142048,.cookie =3D (__u64)94145833392226,},(struct){=
+=2Ebtf =3D (__u64)8589934593,.btf_log_buf =3D (__u64)140723063628192,.btf_s=
+ize =3D (__u32)150263906,.btf_log_size =3D (__u32)21920,},.task_fd_query =
+=3D (struct){.pid =3D (__u32)1,.fd =3D (__u32)2,.flags =3D (__u32)275514204=
+8,.buf_len =3D (__u32)32764,.buf =3D (__u64)94145833392226,},.link_create =
+=3D (struct){(union){.prog_fd =3D (__u32)1,.map_fd =3D (__u32)1,},(u) =3D 3
+> >   root@number:~# 2: prog_array  name hid_jmp_table  flags 0x0
+> >   	key 4B  value 4B  max_entries 1024  memlock 8440B
+> >   	owner_prog_type tracing  owner jited
+> >   13: hash_of_maps  name cgroup_hash  flags 0x0
+> >   	key 8B  value 4B  max_entries 2048  memlock 167584B
+> >   	pids systemd(1)
+> >   960: array  name libbpf_global  flags 0x0
+> >   	key 4B  value 32B  max_entries 1  memlock 280B
+> >   961: array  name pid_iter.rodata  flags 0x480
+> >   	key 4B  value 4B  max_entries 1  memlock 8192B
+> >   	btf_id 1846  frozen
+> >   	pids bpftool(3409073)
+> >   962: array  name libbpf_det_bind  flags 0x0
+> >   	key 4B  value 32B  max_entries 1  memlock 280B
+> >=20
+> >   root@number:~#
+> >=20
+> > For simpler unions this may be better than not seeing any payload, so
+> > keep it there.
+> >=20
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Howard Chu <howardchu95@gmail.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > > ---
-> >  mm/slab_common.c |  84 -------------------------------------
-> >  mm/slub.c        | 106 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 106 insertions(+), 84 deletions(-)
-[...]
+> >  tools/perf/builtin-trace.c | 17 ++++++++++-------
+> >  1 file changed, 10 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index c47fde936c33a2e6..d28a56cc171b2b2e 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1075,7 +1075,7 @@ static size_t trace__btf_scnprintf(struct trace *=
+trace, struct syscall_arg *arg,
+> > =20
+> >  	if (btf_is_enum(arg_fmt->type))
+> >  		return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
+> > -	else if (btf_is_struct(arg_fmt->type))
+> > +	else if (btf_is_struct(arg_fmt->type) || btf_is_union(arg_fmt->type))
+> >  		return btf_struct_scnprintf(arg_fmt->type, trace->btf, bf, size, arg=
+);
+> > =20
+> >  	return 0;
+> > @@ -2365,8 +2365,7 @@ static size_t syscall__scnprintf_args(struct sysc=
+all *sc, char *bf, size_t size,
+> >  			default_scnprintf =3D sc->arg_fmt[arg.idx].scnprintf;
+> > =20
+> >  			if (trace->force_btf ||
+> > -			    (default_scnprintf =3D=3D NULL ||
+> > -			     (default_scnprintf =3D=3D SCA_PTR && strstr(field->type, "stru=
+ct")))) {
+> > +			    (default_scnprintf =3D=3D NULL || (default_scnprintf =3D=3D SCA=
+_PTR))) {
+> >  				btf_printed =3D trace__btf_scnprintf(trace, &arg, bf + printed,
+> >  								   size - printed, val, field->type);
+> >  				if (btf_printed) {
+> > @@ -3663,14 +3662,18 @@ static int trace__bpf_sys_enter_beauty_map(stru=
+ct trace *trace, int key, unsigne
+> >  		return -1;
+> > =20
+> >  	for (i =3D 0, field =3D sc->args; field; ++i, field =3D field->next) {
+> > -		struct_offset =3D strstr(field->type, "struct ");
+> > -
+> >  		// XXX We're only collecting pointer payloads _from_ user space
+> >  		if (!sc->arg_fmt[i].from_user)
+> >  			continue;
+> > =20
+> > -		if (field->flags & TEP_FIELD_IS_POINTER && struct_offset) { /* struc=
+t */
+> > -			struct_offset +=3D 7;
+> > +		struct_offset =3D strstr(field->type, "struct ");
+> > +		if (struct_offset =3D=3D NULL)
+> > +			struct_offset =3D strstr(field->type, "union ");
+> > +		else
+> > +			struct_offset++; // "union" is shorter
 > > +
-> > +/**
-> > + * krealloc - reallocate memory. The contents will remain unchanged.
-> > + * @p: object to reallocate memory for.
-> > + * @new_size: how many bytes of memory are required.
-> > + * @flags: the type of memory to allocate.
-> > + *
-> > + * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
-> > + * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
-> > + *
-> > + * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
-> > + * initial memory allocation, every subsequent call to this API for the same
-> > + * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
-> > + * __GFP_ZERO is not fully honored by this API.
-> > + *
-> > + * When slub_debug_orig_size() is off,  since krealloc() only knows about the
-> 
-> I think you want to remove ' since ' here.
-
-Yes! :)
-
-> > + * bucket size of an allocation (but not the exact size it was allocated with)
-> > + * and hence implements the following semantics for shrinking and growing
-> > + * buffers with __GFP_ZERO.
-> > + *
-> > + *         new             bucket
-> > + * 0       size             size
-> > + * |--------|----------------|
-> > + * |  keep  |      zero      |
-> > + *
-> > + * Otherwize, the original allocation size 'orig_size' could be used to
-> 
-> Typo in 'otherwise'.
-
-Will fix.
-
-Thanks,
-Feng
+> > +		if (field->flags & TEP_FIELD_IS_POINTER && struct_offset) { /* struc=
+t or union (think BPF's attr arg) */
+> > +			struct_offset +=3D 6;
+> > =20
+> >  			/* for 'struct foo *', we only want 'foo' */
+> >  			for (tmp =3D struct_offset, cnt =3D 0; *tmp !=3D ' ' && *tmp !=3D '=
+\0'; ++tmp, ++cnt) {
+> > --=20
+> > 2.46.0
+> >=20
 
