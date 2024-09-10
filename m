@@ -1,305 +1,295 @@
-Return-Path: <linux-kernel+bounces-323163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788329738C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE799738BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F61C24299
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838B41F2526F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8A192D8C;
-	Tue, 10 Sep 2024 13:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D481E493;
+	Tue, 10 Sep 2024 13:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L4gy/aaJ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP/EsPIS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA3F1922F4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4392E191F7A;
+	Tue, 10 Sep 2024 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975474; cv=none; b=k0xuPW26b2UtiRpARh6PgchBRNTlFsPfrUGah4Ih+XY7JWvoaZAt9LiWYTpAIX5VNsJrws2HNrCR/BoUlsbsxqISHiskHxwmnI/5MY6KDlZ7Y4LR0DhvtmBDwUFCo74u9V72DNBQ9+EOxNOq+d2eCngI07NgHAifVhMqIOLUYEc=
+	t=1725975459; cv=none; b=L5kZFHeSWG3LlLOp9QpZA4c/ep4awUQnUoerGkjJr1XN8HasH38UgibJCSurPWYgXNTpGjeoqjPMVLyrdrfwv3wuuxI/KQ9VoblWlj006dyXo2oLhoMNCyIhsXG2xgOjIPnUGblIYEcRMY/cOetJhNpJeBUAg4xlwFjg1yx58PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975474; c=relaxed/simple;
-	bh=F1nnKjw5JWKrv0UivfX+cMJ6hkeW1uOfmktdZO120YA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
-	 Content-Type:References; b=BKK0HRCfPGhmiWcz/gqWjOfJ1Vxz/Booo8BDCHc3Zv205nw9/9j9J42Xozf79SL8f6xLH31RVvwAwbkEgmsAJ18PsDvf/7puZ656HbIWHAxKGQlan4mUJPturmTY6emRbgObP8+OBdwO++MM+y1oKETF5Dzaa6mwwTvPYyO3gys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L4gy/aaJ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240910133749epoutp023fb7c733ad1bf9683ae3b3d0192387ec~z5YtwUEh40993009930epoutp02U
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:37:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240910133749epoutp023fb7c733ad1bf9683ae3b3d0192387ec~z5YtwUEh40993009930epoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725975469;
-	bh=V2jX6S5jxmXGwvz9YAgIq6JEb5TjbdLJEKL1WqTvCT8=;
-	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-	b=L4gy/aaJ0d3HetKmHB9RCzrje4iWYVVgneWIHs5kwSGn+dUcrco0HMaTnbeWA65rn
-	 djdPnoGTTE684PWKwtsSjYy/NxIyefex2oVb0vkozaAICPPwBGjmqdT6rSM9NRgGJ/
-	 qMmG/UhQ4kGvmuQRQnParfJta2URUO/zuuZUeb4I=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240910133748epcas5p30b7e5807bba43052efbaa462255ff814~z5YtYnTHs1397213972epcas5p3j;
-	Tue, 10 Sep 2024 13:37:48 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4X34Wv4ppnz4x9Px; Tue, 10 Sep
-	2024 13:37:47 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6D.9F.08855.BAB40E66; Tue, 10 Sep 2024 22:37:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240910133747epcas5p3d74fd2fcf2efe0507b27c12bcc5f062c~z5YrsZ3Vr0055100551epcas5p3X;
-	Tue, 10 Sep 2024 13:37:47 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240910133747epsmtrp2e4c3a2107d0836ce9fc4270346cf9bc6~z5YrrqQlk1375313753epsmtrp2S;
-	Tue, 10 Sep 2024 13:37:47 +0000 (GMT)
-X-AuditID: b6c32a44-107ff70000002297-48-66e04babc447
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	39.6C.07567.AAB40E66; Tue, 10 Sep 2024 22:37:46 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910133744epsmtip27f2e324b6766ae6c65b461f624cbeea6~z5YpMZHrI2586125861epsmtip2V;
-	Tue, 10 Sep 2024 13:37:44 +0000 (GMT)
-Message-ID: <dff83c7d-56b8-481f-af69-8d4262bd54e4@samsung.com>
-Date: Tue, 10 Sep 2024 19:07:28 +0530
+	s=arc-20240116; t=1725975459; c=relaxed/simple;
+	bh=Se+W8OcRyLSrvG4BhUjXy8p/mtKVHPYpyHMz8zbIRu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNzTxTg0CnBZC+sQakXkJlEfdaqB6pPy57DPVvb2mNfQsH/7cYpe5kyE6rKHGNRKIP8IDm92U1GVmgA8fcdgEmOnS6zRkEmQmA93gGcnyHHdI0BWws/D/rkwAhAjzYMlaLCG6GnFJ8YZEEmsu8PzoJ6cYD0bOpvuEDvzZinDrFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP/EsPIS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C83FC4CEC3;
+	Tue, 10 Sep 2024 13:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725975458;
+	bh=Se+W8OcRyLSrvG4BhUjXy8p/mtKVHPYpyHMz8zbIRu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VP/EsPISBklzTFrhM0yz3nCyD4ILK+N8tLa7h/lMCe6M48kvfbA+L8hjWoTXWiW7q
+	 8qM9QBMTa2BLaay2FbFV751C1EI9S6l4oh9y2bs7+23iFodYLdA2pWLk1vaGLxEepq
+	 QIWoKJv7tT4eFiXJJOt1MjgjK+S4rSllTKc8Q7c6PPxhDGosfSfGsWPWjxyJN4NFrf
+	 MlOmJgrK574xhJoPK58UgTAWkocwGtn0Fa0jbAgxL/Ja5scJTz095zNcwckvOkpC+5
+	 m7r1YoNX7P1Eai2BKuOttp+rDZavotmYNv6PoLMfeWtEhf5C+hwll5/flwLDBkxUo8
+	 5eZ/9zxOLCFQw==
+Date: Tue, 10 Sep 2024 15:37:31 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <ZuBLmwpwurxFwYG_@cassiopeiae>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-5-dakr@kernel.org>
+ <2dd02834-b2b6-4ff6-9e29-43c9d77b69e2@proton.me>
+ <ZtDwduKjIEZ3RQtk@pollux.localdomain>
+ <962b7014-4f8b-4abe-8774-636b612a051c@proton.me>
+ <Ztb3eOoiHs2rLCoH@pollux>
+ <c1b5a3bf-b11c-4c33-9519-c93649860a9a@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Subject: Re: [PATCH] usb: dwc3: Potential fix of possible dwc3 interrupt
- storm
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
-	<dh10.jung@samsung.com>, "naushad@samsung.com" <naushad@samsung.com>,
-	"akash.m5@samsung.com" <akash.m5@samsung.com>, "rc93.raju@samsung.com"
-	<rc93.raju@samsung.com>, "taehyun.cho@samsung.com"
-	<taehyun.cho@samsung.com>, "hongpooh.kim@samsung.com"
-	<hongpooh.kim@samsung.com>, "eomji.oh@samsung.com" <eomji.oh@samsung.com>,
-	"shijie.cai@samsung.com" <shijie.cai@samsung.com>
-Content-Language: en-US
-In-Reply-To: <20240907003946.qn6t3xw65qwl2cn7@synopsys.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xbVRz29N6+FmvuOiqHzrl6zWJKgLVY6mUrzCmabiMGnU4l0VroHSX0
-	tdvicBIda4cTpWBjllqogOtA20UIslILpLNInHWOCIzwGKCzUQZDA+g2t9nZ9qLy33e+3/f9
-	noeD8LtZQk65wUJSBrUOZ21A/YNicaZv348HJQNjm4lrl7xM4nLrSQYR6WhjENZTnSzC0X8W
-	JWZ+uokSo8FmFvFJ+3GEWBm6yyS87zbHuRtfIoTjKwHhbT3HfpynDLnPsJX2Hi9Q9oRWgXK1
-	+8EitLhCoSXVGpISkYZSo6bcUJaH79uvelKVI5dIM6W5xGO4yKDWk3l4QWFR5tPlunh7uOh1
-	ta4yThWpzWZ8e76CMlZaSJHWaLbk4aRJozPJTFlmtd5caSjLMpCWHVKJJDsnLnytQtu97AEm
-	b3bVUuwO+ygIpNcBLgdiMhj0d7DqwAYOH+sD0FnvQhMBPrYC4LHgK3TgOoBNFx3MOsBJOrrD
-	z9D8AIAjXV5AP5YAtM1Z2Qk3D8uHo8MzjARGsW3QP+UGNL8RfvtRNFlBgG2Fc1NOdiIpC5PC
-	X84rEvQmrAiOeZxJeQqWAc+dH2Yk8iPYCSZsfa82mRPBUuFUtCWJudhOONS2AGh+K7SebUIS
-	BogFODD0Theg5yyAtX+NsGm8CS5807OGhXD1twEWjd+EvsvLLNpsA3Awen1NtAv+PHQFSXSK
-	YGLYGdxOF7sP1t+OMuit8OCJWj6t3gYjNaNrKTfDWc/42uKU8NZpHr2raRTO/9nOagQi17q1
-	uNaN5lo3juv/wq0A9YI00mTWl5GlOSapgTz8371LjfpukPy86QUBMNESywoDBgeEAeQgeAqv
-	IX/2IJ+nUb9xhKSMKqpSR5rDICd+nw8QoaDUGP/9BotKKsuVyORyuSz3UbkUT+UtHndr+FiZ
-	2kJWkKSJpP71MThc4VGGJ+WhtMKuPlfEx63pTLvX4XNbx6r3Tro7ovlzDvvwYkj8of/7GNmn
-	QIeXmyeLD1xkKh6ozzj5vioV/0zfH2t8pIgquXJg/ojHfv/v8o7nD/umq97Ori6heucbXm7s
-	UxXXUJqpYt3Ve9prHdeWL4z/8GsTdleBBp596lRaKHCprdAza9vv/Lz/2JJwlbd79+2Z7JW/
-	b9h6N7Z4V9noCzclYxjSu0U7ffrjqy/eQqwTKYcavhaEszrDFxYGdzxRNbkyseDYZW97iVs4
-	bh0arAuybL5IlX3PcyV/ZPBGoJh49WHFWzvZ2kZVNe/TM4tb/LE7TtWhLwQRv4GasIx9VzM3
-	jaNmrVqajlBm9T9gxDpRRQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJXneV94M0g5ZGI4s3V1exWtxZMI3J
-	4tTyhUwWzYvXs1lM2rOVxeLuwx8sFpd3zWGzWLSsldni09H/rBarOucAxb7vZLaYdFDUYtWC
-	A+wOvB77565h9+jbsorRY8v+z4wenzfJBbBEcdmkpOZklqUW6dslcGVs+riEsWCVUcXbf3/Y
-	Gxh3aHUxcnBICJhIbDrk18XIxSEksJtRoqvrIXsXIydQXFri9awuRghbWGLlv+fsEEWvGSXW
-	3t7MApLgFbCTuHz+LhOIzSKgKrHt1lxGiLigxMmZT8BqRAXkJe7fmsEOsoxNwFDi2QkbkLCw
-	gJ/E9DcnwMpFBHQkDpw4zwQyn1mgh1Xiy9ePLBDLbrNIHPi4hhmkillAXOLWk/lgyzgFrCWO
-	LnzFCBE3k+ja2gVly0s0b53NPIFRaBaSO2YhaZ+FpGUWkpYFjCyrGCVTC4pz03OTDQsM81LL
-	9YoTc4tL89L1kvNzNzGC40xLYwfjvfn/9A4xMnEwHmKU4GBWEuHtt7uXJsSbklhZlVqUH19U
-	mpNafIhRmoNFSZzXcMbsFCGB9MSS1OzU1ILUIpgsEwenVAOTpb7thbJT10/aloswvbr0/uNH
-	hebemSufsd1SdxeJWmXv9jbvV4XdUpv9Aao1p9gLovqPrCzboSCYrqDyRyq2fi7zpROcgbsE
-	LG4umrU3hSk8q5aPT/Clvmzzks9Hb803S/oi90ONa//5FUu3nL4xdbHlhINcbn+c750NP/Eg
-	ktGk5vGaVhXL5hu7n16/3cdxwr9Becvmzxptsx0PzPJmPrhml73Q1xuf+L9Fc7UEi7Z0rGwu
-	mPVJv2hNUu6/pLPzb/y/p2W8Q/bKu0fhV197fE47/O7JXovc6xvmP2CeVfWgLnLbD5G3covW
-	JYZ8+vGb/3STlM2EU54qXwLe7fh6Kr3gbnZjrXPOCf6Jwk475yixFGckGmoxFxUnAgDHfr62
-	IgMAAA==
-X-CMS-MailID: 20240910133747epcas5p3d74fd2fcf2efe0507b27c12bcc5f062c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240905002630epcas5p4532c1e66864e39990376b696aa1f53d7
-References: <11535d95-c972-4dbe-afb5-de3a44bc4a21@samsung.com>
-	<CGME20240905002630epcas5p4532c1e66864e39990376b696aa1f53d7@epcas5p4.samsung.com>
-	<20240905002611.rxlv66zsker2h5w2@synopsys.com>
-	<d5552437-119c-4a0f-9d71-6959727b6364@samsung.com>
-	<20240905211338.omst6jr3okbxkqdh@synopsys.com>
-	<f9561f03-5f83-4270-b7f3-17b880cfabfe@samsung.com>
-	<20240905231825.6r2sp2bapxidur7a@synopsys.com>
-	<64d049cc-d55d-4376-b6b9-402eb6f170c0@samsung.com>
-	<20240906005935.caugoe3mqqdqwqao@synopsys.com>
-	<30ca8527-419b-4e44-a21b-18e494b39076@samsung.com>
-	<20240907003946.qn6t3xw65qwl2cn7@synopsys.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1b5a3bf-b11c-4c33-9519-c93649860a9a@proton.me>
 
+On Tue, Sep 10, 2024 at 01:11:35PM +0000, Benno Lossin wrote:
+> On 03.09.24 13:48, Danilo Krummrich wrote:
+> > On Fri, Aug 30, 2024 at 02:45:35PM +0000, Benno Lossin wrote:
+> >> On 30.08.24 00:04, Danilo Krummrich wrote:
+> >>> On Thu, Aug 29, 2024 at 06:32:42PM +0000, Benno Lossin wrote:
+> >>>> On 16.08.24 02:10, Danilo Krummrich wrote:
+> >>>>> +///
+> >>>>> +/// For more details see [self].
+> >>>>> +pub struct Kmalloc;
+> >>>>>
+> >>>>>  /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
+> >>>>>  fn aligned_size(new_layout: Layout) -> usize {
+> >>>>> @@ -36,6 +52,60 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
+> >>>>>      unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, size, flags.0) as *mut u8 }
+> >>>>>  }
+> >>>>>
+> >>>>> +/// # Invariants
+> >>>>> +///
+> >>>>> +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
+> >>>>> +struct ReallocFunc(
+> >>>>> +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
+> >>>>> +);
+> >>>>> +
+> >>>>> +impl ReallocFunc {
+> >>>>> +    // INVARIANT: `krealloc` satisfies the type invariants.
+> >>>>> +    const KREALLOC: Self = Self(bindings::krealloc);
+> >>>>> +
+> >>>>> +    /// # Safety
+> >>>>> +    ///
+> >>>>> +    /// This method has the same safety requirements as [`Allocator::realloc`].
+> >>>>> +    unsafe fn call(
+> >>>>> +        &self,
+> >>>>> +        ptr: Option<NonNull<u8>>,
+> >>>>> +        layout: Layout,
+> >>>>> +        flags: Flags,
+> >>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+> >>>>> +        let size = aligned_size(layout);
+> >>>>> +        let ptr = match ptr {
+> >>>>> +            Some(ptr) => ptr.as_ptr(),
+> >>>>> +            None => ptr::null(),
+> >>>>> +        };
+> >>>>> +
+> >>>>> +        // SAFETY: `ptr` is either NULL or valid by the safety requirements of this function.
+> >>>>
+> >>>> You need some justification as to why calling the three allowed
+> >>>> functions here.
+> >>>
+> >>> What kind of justification do I need? Can you please share some more details on
+> >>> what you think is missing here?
+> >>
+> >> So, you are calling a function pointer to an `unsafe` function. This
+> >> means that through some invariant you have to know what the safety
+> >> requirements are (otherwise how can you guarantee that this is OK?). You
+> >> have the invariant that the pointer points at one of the three functions
+> >> mentioned above. What are the safety requirements of those functions? I
+> >> would assume that the only one is that `ptr` is valid. So you can use:
+> >>
+> >>     // SAFETY:
+> >>     // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` and thus only requires that `ptr` is
+> >>     //   NULL or valid.
+> > 
+> > I'm fine adding it, but I'd like to understand why you think it's required in
+> > the safety comment here? Isn't this implicit by being the type invariant?
+> 
+> You are calling a function pointer to an `unsafe` function that takes a
+> raw pointer. Without this comment it is not clear what the function
+> pointer's safety requirements are for the raw pointer parameter.
 
-On 9/7/2024 6:09 AM, Thinh Nguyen wrote:
-> On Sat, Sep 07, 2024, Selvarasu Ganesan wrote:
->> Hi Thinh,
->>
->> I ran the code you recommended on our testing environment and was able
->> to reproduce the issue one time.
->>
->> When evt->flags contains DWC3_EVENT_PENDING, I've included the following
->> debugging information: I added this debug message at the start of
->> dwc3_event_buffers_cleanup and dwc3_event_buffers_setup functions in
->> during suspend and resume.
->>
->> The results were quite interesting . I'm curious to understand how
->> evt->flags is set to DWC3_EVENT_PENDING, and along with DWC3_GEVNTSIZ is
->> equal to 0x1000 during the suspend.
-> That is indeed strange.
->
->> Its means that the previous bottom-half handler prior to suspend might
->> still be executing in the middle of the process.
->>
->> Could you please give your suggestions here? And let me know if anything
->> want to test or additional details are required.
->>
->>
->> ##DBG: dwc3_event_buffers_cleanup:
->>    evt->length    :0x1000
->>    evt->lpos      :0x20c
->>    evt->count     :0x0
->>    evt->flags     :0x1 // This is Unexpected if DWC3_GEVNTSIZ(0)(0xc408):
->> 0x00001000. Its means that previous bottom-half handler may be still
->> running in middle
-> Perhaps.
->
-> But I doubt that's the case since it shouldn't take that long for the
-> bottom-half to be completed before the next resume yet the flag is still
-> set.
->
->>    DWC3_GEVNTSIZ(0)(0xc408)       : 0x00001000
->>    DWC3_GEVNTCOUNT(0)(0xc40c)     : 0x00000000
->>    DWC3_DCFG(0xc700)              : 0x00e008a8
->>    DWC3_DCTL(0xc704)              : 0x0cf00a00
->>    DWC3_DEVTEN(0xc708)            : 0x00000000
->>    DWC3_DSTS(0xc70c)              : 0x00d20cd1
->>
-> The controller status is halted. So there's no problem with
-> soft-disconnect. For the interrupt mask in GEVNTSIZ to be cleared,
-> that likely means that the bottom-half had probably completed.
+That's my point, isn't this implicitly clear by the type invariant? If needed,
+shouldn't it be:
 
-Agree, But I am worrying on If the bottom-half is completed, then 
-DWC3_EVENT_PENDING must be cleared in evt->flags.
-Is there any possibility of a CPU reordering issue when updating 
-evt->flags in the bottom-half handler?.
-Should I try with wmb() when writing to evt->flags?
->
->> ##DBG: dwc3_event_buffers_setup:
->>    evt->length    :0x1000
->>    evt->lpos      :0x20c
-> They fact that evt->lpos did not get updated tells me that there's
-> something wrong with memory access to your platform during suspend and
-> resume.
+// INVARIANT:
+// - `self.0` is one of [...]
+//
+// SAFETY:
+// - `ptr` is either NULL or [...]
 
-Are you expecting the evt->lpos value to be zero here? If so, this is 
-expected in our test setup because we avoid writing zero to evt->lpos as 
-part of dwc3_event_buffers_cleanup if evt->flags have a value of 1. This 
-is simply to track the status of evt->lpos during suspend to resume when 
-evt->flags have a value of DWC3_EVENT_PENDING. The following test codes 
-for the reference.
+> 
+> >>     // - `ptr` is either NULL or valid by the safety requirements of this function.
+> > 
+> > This is the part I already have.
+> 
+> I kept it to ensure that you also keep it.
+> 
+> >>>>> +        let raw_ptr = unsafe {
+> >>>>> +            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
+> >>>>> +            self.0(ptr.cast(), size, flags.0).cast()
+> >>>>> +        };
+> >>>>> +
+> >>>>> +        let ptr = if size == 0 {
+> >>>>> +            NonNull::dangling()
+> >>>>> +        } else {
+> >>>>> +            NonNull::new(raw_ptr).ok_or(AllocError)?
+> >>>>> +        };
+> >>>>> +
+> >>>>> +        Ok(NonNull::slice_from_raw_parts(ptr, size))
+> >>>>> +    }
+> >>>>> +}
+> >>>>> +
+> >>>>> +unsafe impl Allocator for Kmalloc {
+> >>>>
+> >>>> Missing SAFETY comment.
+> >>>
+> >>> Yeah, I think we came across this in an earlier version of the series. I asked
+> >>> you about the content and usefulness of a comment here, since I'd just end up
+> >>> re-iterating what the `Allocator` trait documentation says.
+> >>>
+> >>> IIRC, you replied that you want to think of something that'd make sense to add
+> >>> here.
+> >>
+> >> Oh yeah, sorry I forgot about that.
+> >>
+> >>> What do you think should be written here?
+> >>
+> >> I think the best way to do it, would be to push this question down into
+> >> `ReallocFunc::call`. So we would put this on the trait:
+> >>
+> >>     // SAFETY: `realloc` delegates to `ReallocFunc::call`, which guarantees that
+> >>     // - memory remains valid until it is explicitly freed,
+> >>     // - passing a pointer to a vaild memory allocation is OK,
+> >>     // - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
+> > 
+> > So, we'd also need the same for:
+> >   - `unsafe impl Allocator for Vmalloc`
+> >   - `unsafe impl Allocator for KVmalloc`
+> 
+> Yes.
+> 
+> >> We then need to put this on `ReallocFunc::call`:
+> >>
+> >>     /// # Guarantees
+> >>     ///
+> >>     /// This method has the same guarantees as `Allocator::realloc`. Additionally
+> >>     /// - it accepts any pointer to a valid memory allocation allocated by this function.
+> > 
+> > You propose this, since for `Allocator::realloc` memory allocated with
+> > `Allocator::alloc` would be fine too I guess.
+> > 
+> > But if e.g. `Kmalloc` wouldn't use the default `Allocator::alloc`, this would be
+> > valid too.
+> 
+> So if `Kmalloc` were to implement `alloc` by not calling
+> `ReallocFun::call`, then we couldn't use this comment. Do you think that
+> such a change might be required at some point?
 
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -505,8 +505,20 @@ static int dwc3_alloc_event_buffers(struct dwc3 
-*dwc, unsigned int length)
-  int dwc3_event_buffers_setup(struct dwc3 *dwc)
-  {
-         struct dwc3_event_buffer        *evt;
-+       u32                             reg;
+I don't think so, this was purely hypothetical. Let's stick to your proposal.
 
-         evt = dwc->ev_buf;
-+
-+       if (evt->flags & DWC3_EVENT_PENDING) {
-+               pr_info("evt->length :%x\n", evt->length);
-+               pr_info("evt->lpos :%x\n", evt->lpos);
-+               pr_info("evt->count :%x\n", evt->count);
-+               pr_info("evt->flags :%x\n", evt->flags);
-+
-+               dwc3_exynos_reg_dump(dwc);
-+
-+       }
-+
-         evt->lpos = 0;
-         dwc3_writel(dwc->regs, DWC3_GEVNTADRLO(0),
-                         lower_32_bits(evt->dma));
-@@ -514,8 +526,10 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
-                         upper_32_bits(evt->dma));
-         dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
-                         DWC3_GEVNTSIZ_SIZE(evt->length));
--       dwc3_writel(dwc->regs, DWC3_GEVNTCOUNT(0), 0);
+> 
+> > We could instead write something like:
+> > 
+> > "it accepts any pointer to a valid memory allocation allocated with the same
+> > kernel allocator."
+> 
+> It would be better, if we can keep it simpler (ie only `realloc` is
+> implemented).
+> 
+> >>     /// - memory allocated by this function remains valid until it is passed to this function.
+> > 
+> > Same here, `Kmalloc` could implement its own `Allocator::free`.
+> > 
+> > Maybe just "...until it is explicitly freed.".
+> 
+> I don't really like that, since by that any other function could be
+> meant. Do you need to override the `free` function? If not then it would
+> be better.
+> 
+> > Anyway, I'm fine with both, since non of the kernel allocators uses anything
+> > else than `ReallocFunc::call` to allocate and free memory.
+> > 
+> >>
+> >> Finally, we need a `GUARANTEE` comment (just above the return [^1]
+> >> value) that establishes these guarantees:
+> >>
+> >>     // GUARANTEE: Since we called `self.0` with `size` above and by the type invariants of `Self`,
+> >>     // `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`. Those functions provide the guarantees of
+> >>     // this function.
+> >>
+> >> I am not really happy with the last sentence, but I also don't think
+> >> that there is value in listing out all the guarantees, only to then say
+> >> "all of this is guaranteed by us calling one of these three functions.
+> >>
+> >>
+> >> [^1]: I am not sure that there is the right place. If you have any
+> >>       suggestions, feel free to share them.
+> > 
+> > Either way, I'm fine with this proposal.
+> > 
+> >>
+> >>
+> >>>>> +    #[inline]
+> >>>>> +    unsafe fn realloc(
+> >>>>> +        ptr: Option<NonNull<u8>>,
+> >>>>> +        layout: Layout,
+> >>>>> +        flags: Flags,
+> >>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+> >>>>> +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
+> >>>>> +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
+> >>>>> +    }
+> >>>>> +}
+> >>
+> >> Oh one more thing, I know that you already have a lot of patches in this
+> >> series, but could you split this one into two? So the first one should
+> >> introduce `ReallocFunc` and the second one add the impl for `Kmalloc`?
+> >> I managed to confuse me twice because of that :)
+> > 
+> > Generally, I'm fine with that, but I'm not sure if I can avoid an intermediate
+> > compiler warning about unused code doing that.
+> 
+> You can just use `#[expect(dead_code)]` for that in the intermediate
+> patches.
 
-+       /* Clear any stale event */
-+       reg = dwc3_readl(dwc->regs, DWC3_GEVNTCOUNT(0));
-+       dwc3_writel(dwc->regs, DWC3_GEVNTCOUNT(0), reg);
-         return 0;
-  }
+I usually try to avoid that, because it can be misleading when bisecting things.
 
-@@ -525,7 +539,16 @@ void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
+If the temporarily unused code contains a bug, your bisection doesn't end up at
+this patch, but some other patch that starts using it.
 
-         evt = dwc->ev_buf;
-
--       evt->lpos = 0;
-+       if (evt->flags & DWC3_EVENT_PENDING) {
-+               pr_info("evt->length :%x\n", evt->length);
-+               pr_info("evt->lpos :%x\n", evt->lpos);
-+               pr_info("evt->count :%x\n", evt->count);
-+               pr_info("evt->flags :%x\n", evt->flags);
-+
-+               dwc3_exynos_reg_dump(dwc);
-+       } else {
-+               evt->lpos = 0;
-+       }
-
->
->>    evt->count     :0x0
->>    evt->flags     :0x1 // Still It's not clearing in during resume.
->>
->>    DWC3_GEVNTSIZ(0)(0xc408)       : 0x00000000
->>    DWC3_GEVNTCOUNT(0)(0xc40c)     : 0x00000000
->>    DWC3_DCFG(0xc700)              : 0x00080800
->>    DWC3_DCTL(0xc704)              : 0x00f00000
->>    DWC3_DEVTEN(0xc708)            : 0x00000000
->>    DWC3_DSTS(0xc70c)              : 0x00d20001
->>
-> Please help look into your platform to see what condition triggers this
-> memory access issue. If this is a hardware quirk, we can properly update
-> the change and note it to be so.
-
-Sure I will try to figure it out. However, we are facing challenges in 
-reproducing the issue. There could be a delay in understanding the 
-conditions that trigger the memory issue if it is related to a memory issue.
-
->
-> Thanks,
-> Thinh
->
-> (If possible, for future tests, please dump the dwc3 tracepoints. Many
-> thanks for the tests.)
-
-I tried to get dwc3 traces in the failure case, but so far no instances 
-have been reported. Our testing is still in progress with enable dwc3 
-traces.
-
-I will keep posting once I get the dwc3 traces in the failure scenario.
-
-
-Thanks,
-Selva
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
