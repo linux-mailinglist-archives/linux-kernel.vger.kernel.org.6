@@ -1,191 +1,127 @@
-Return-Path: <linux-kernel+bounces-322511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C579729EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FE19729F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F3F1C240D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A2B1C240C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B795117B506;
-	Tue, 10 Sep 2024 06:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lw82vDcB"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30C417BB1A;
+	Tue, 10 Sep 2024 07:01:02 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2EC179953;
-	Tue, 10 Sep 2024 06:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB15D17B506;
+	Tue, 10 Sep 2024 07:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725951532; cv=none; b=N3wKcSWoU/IKIyl4Yy7gNEIY1upE3UP1xJZn8Yy4ZC4FBVEYUH7tBLaTcEDoGBaj5+3ZsaQyL1OF4tT4pwkZ3ZUCntT9Wjim85XTGjWRDxFWqojNfIid/gbDkUi9CsWP2tsns9Ek/Ve/hxITV16tv3qLgAJwV180c4zBHlCoVf4=
+	t=1725951662; cv=none; b=TD9oaIL9aMt6ogIqDeP/a3KY7Q8jMM07eni0xNyq5I9T0GfA6fsH2fcuGRFxSL95kzG7nAdaOK25FkNs/L6uqyrfZbQ/8YdXiGMt3yYs+BMh3+8QP42KoVib+qwtm6Rnix20OiWPI4ZwdULHtZ3+4/HlhH8OhNJaoMIbmeed/mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725951532; c=relaxed/simple;
-	bh=05Tv8UOCMGRDMccsu1glZcTbfxJC/JElJ8sJ8fPG2bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=opKCyHg8ggWAqyHJkjeDFUtWXlOSwkJlNIRBli2hnq0yAv2lXuE/PcTESciJ/JM4pWwvAqrYYnuvS/ZQ9PhuV8RVQ5h7CFqT3HS9d9XEgbD/1BpbmLOpoo7TjDk/jJv9UXtg1Sx0atc2rQm2lI6/oqVVPK/TCI1aI+1sBX+hebA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lw82vDcB; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725951526; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=e3VwNfPCaby+IpRpexkevHcjDCWz3s1auCvpsGTLIow=;
-	b=lw82vDcB41kyYoJx/3g4VgdzG8Rkg1hanIcul/uy/zD78i13novd5inJxR3OkI63dWlY/e93qV+Wfi+EZZz5dG752x0y9mW3B6FAp3nioKJTF8BqmyAgPyfhC1P3wUe/57f0f+B/hcNiJnn5NJBO6KS45J91r0t8RpUSiu0/xPo=
-Received: from 30.221.149.60(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WEjFqbu_1725951524)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Sep 2024 14:58:45 +0800
-Message-ID: <e0c2b581-87a4-48d2-bede-1eaab2430c7d@linux.alibaba.com>
-Date: Tue, 10 Sep 2024 14:58:44 +0800
+	s=arc-20240116; t=1725951662; c=relaxed/simple;
+	bh=OQrZI+jQ0wIZJiunn9L2ldEBbCDnEmcZEOeTVCcPijI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tOKDZfKVhWBoA8LjlapIm2XNmfec+NhJBKvQDeRg3ZktLlyG7pi/TGyVBJK462DU6ejDZz9sOHiNuOUdAZO2pwAx7vWS+Rlp/KJzAVsiQm3Y2WHvm/C/2gONv6Oeng9y1QtYzRJ4F3woAb8dLV1f9D4HybPDJlNk+6mpOEelRVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5f4b7e706f4211efa216b1d71e6e1362-20240910
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED, SA_EXISTED
+	SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-CID-CACHE: Type:Local,Time:202409101457+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7c4f4666-ef47-4aba-916b-d81418a0b8c2,IP:5,U
+	RL:0,TC:0,Content:-5,EDM:-30,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-35
+X-CID-INFO: VERSION:1.1.38,REQID:7c4f4666-ef47-4aba-916b-d81418a0b8c2,IP:5,URL
+	:0,TC:0,Content:-5,EDM:-30,RT:0,SF:-5,FILE:0,BULK:0,RULE:EDM_GN8D19FE,ACTI
+	ON:release,TS:-35
+X-CID-META: VersionHash:82c5f88,CLOUDID:d55b189e65b8e9df4f94f80e2aab265b,BulkI
+	D:240910145742MXI17UF7,BulkQuantity:0,Recheck:0,SF:66|25|17|19|45|102,TC:n
+	il,Content:0,EDM:2,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL
+	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 5f4b7e706f4211efa216b1d71e6e1362-20240910
+X-User: yaolu@kylinos.cn
+Received: from localhost.localdomain [(111.48.58.10)] by mailgw.kylinos.cn
+	(envelope-from <yaolu@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1416523776; Tue, 10 Sep 2024 15:00:32 +0800
+From: Lu Yao <yaolu@kylinos.cn>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Lu Yao <yaolu@kylinos.cn>
+Subject: [PATCH] tracing/timerlat: Move mutex interface_lock declaration outside CONFIG_TIMERLAT_TRACER
+Date: Tue, 10 Sep 2024 15:00:25 +0800
+Message-Id: <20240910070025.132633-1-yaolu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-To: Eric Dumazet <edumazet@google.com>
-Cc: Wenjia Zhang <wenjia@linux.ibm.com>,
- syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>,
- Dust Li <dust.li@linux.alibaba.com>, davem@davemloft.net, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com
-References: <0000000000000311430620013217@google.com>
- <0000000000005d1b320621973380@google.com>
- <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
- <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com>
- <02634384-2468-4598-b64a-0f558730c925@linux.alibaba.com>
- <CANn89iKcWmufo83xy-SwSrXYt6UpL2Pb+5pWuzyYjMva5F8bBQ@mail.gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <CANn89iKcWmufo83xy-SwSrXYt6UpL2Pb+5pWuzyYjMva5F8bBQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Fix compile error without CONFIG_TIMERLAT_TRACER:
 
+../kernel/trace/trace_osnoise.c: In function ‘osnoise_sleep’:
+../kernel/trace/trace_osnoise.c:1631:14: error: ‘interface_lock’ undeclared (first use in this function); did you mean ‘trace_clock’?
+ 1631 |  mutex_lock(&interface_lock);
+      |              ^~~~~~~~~~~~~~
+      |              trace_clock
 
-On 9/10/24 2:36 PM, Eric Dumazet wrote:
-> On Tue, Sep 10, 2024 at 7:55 AM D. Wythe <alibuda@linux.alibaba.com> wrote:
->>
->>
->> On 9/9/24 7:44 PM, Wenjia Zhang wrote:
->>>
->>> On 09.09.24 10:02, Eric Dumazet wrote:
->>>> On Sun, Sep 8, 2024 at 10:12 AM syzbot
->>>> <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
->>>>> syzbot has found a reproducer for the following issue on:
->>>>>
->>>>> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into
->>>>> for-kernelci
->>>>> git tree:
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
->>>>> for-kernelci
->>>>> console output:
->>>>> https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
->>>>> kernel config:
->>>>> https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
->>>>> dashboard link:
->>>>> https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
->>>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils
->>>>> for Debian) 2.40
->>>>> userspace arch: arm64
->>>>> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
->>>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
->>>>>
->>>>> Downloadable assets:
->>>>> disk image:
->>>>> https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
->>>>> vmlinux:
->>>>> https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
->>>>> kernel image:
->>>>> https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
->>>>>
->>>>> IMPORTANT: if you fix the issue, please add the following tag to the
->>>>> commit:
->>>>> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
->>>>>
->>>>> ======================================================
->>>>> WARNING: possible circular locking dependency detected
->>>>> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
->>>>> ------------------------------------------------------
->>>>> syz-executor272/6388 is trying to acquire lock:
->>>>> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c
->>>>> net/core/rtnetlink.c:79
->>>>>
->>>>> but task is already holding lock:
->>>>> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at:
->>>>> smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
->>>>>
->>>>> which lock already depends on the new lock.
->>>>>
->> I have noticed this issue for a while, but I question the possibility of
->> it. If I understand correctly, a deadlock issue following is reported here:
->>
->> #2
->> lock_sock_smc
->> {
->>       clcsock_release_lock            --- deadlock
->>       {
->>
->>       }
->> }
->>
->> #1
->> rtnl_mutex
->> {
->>       lock_sock_smc
->>       {
->>
->>       }
->> }
->>
->> #0
->> clcsock_release_lock
->> {
->>       rtnl_mutex                      --deadlock
->>       {
->>
->>       }
->> }
->>
->> This is of course a deadlock, but #1 is suspicious.
->>
->> How would this happen to a smc sock?
->>
->> #1 ->
->>          lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
->>          lock_sock include/net/sock.h:1607 [inline]
->>          sockopt_lock_sock net/core/sock.c:1061 [inline]
->>          sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
->>          do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
->>          ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
->>          raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
->>          sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
->>          do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
->>
->> As a comparison, the correct calling chain should be:
->>
->>          sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
->>          smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
->>          do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
->>
->>
->> That's to say,  any setting on SOL_IP options of smc_sock will
->> go with smc_setsockopt, which will try lock clcsock_release_lock at first.
->>
->> Anyway, if anyone can explain #1, then we can see how to solve this problem,
->> otherwise I think this problem doesn't exist. (Just my opinion)
-> Then SMC lacks some lockdep annotations.
->
-> Please take a look at sock_lock_init_class_and_name() callers.
+Fixes: e6a53481da29 ("tracing/timerlat: Only clear timer if a kthread exists")
+Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+---
+ kernel/trace/trace_osnoise.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-It seems so, which also explains why it wasn't reported with AF_SMC sock.
-I'll try to fix it ASAP.
-
-D. Wythe
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index bbe47781617e..7e75c1214b36 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -228,6 +228,11 @@ static inline struct osnoise_variables *this_cpu_osn_var(void)
+ 	return this_cpu_ptr(&per_cpu_osnoise_var);
+ }
+ 
++/*
++ * Protect the interface.
++ */
++static struct mutex interface_lock;
++
+ #ifdef CONFIG_TIMERLAT_TRACER
+ /*
+  * Runtime information for the timer mode.
+@@ -252,11 +257,6 @@ static inline struct timerlat_variables *this_cpu_tmr_var(void)
+ 	return this_cpu_ptr(&per_cpu_timerlat_var);
+ }
+ 
+-/*
+- * Protect the interface.
+- */
+-static struct mutex interface_lock;
+-
+ /*
+  * tlat_var_reset - Reset the values of the given timerlat_variables
+  */
+-- 
+2.25.1
 
 
