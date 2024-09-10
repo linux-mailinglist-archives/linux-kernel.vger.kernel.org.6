@@ -1,153 +1,104 @@
-Return-Path: <linux-kernel+bounces-322404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D889728A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2C39728A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E43B1C23DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F97A286287
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87297153800;
-	Tue, 10 Sep 2024 04:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2F167265;
+	Tue, 10 Sep 2024 04:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="fz44neLz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YvcHljlp"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UM1YMoIy"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ACF13E02D;
-	Tue, 10 Sep 2024 04:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92131514E4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725944095; cv=none; b=uKWSBjZNqyrtBPIOlm1Z/dAy1P4S+89MygcgenVdfxGPBT/axNUHLwzIctupHuV54gz4PWtYJYicYU2mwu2+0fbjzWTsakzPHSOYKwwjZ1NTekZdw2NTN9TCyrg9oT5b15wOVXJdUYv0yjCKELaUlgGjneg2Jx7rz5GsZQ0Bhgg=
+	t=1725944211; cv=none; b=ReSciDsCBfsf4q5lDUg0mYLDBXTQnJAI/GKXdV+C4KzL6cMEUYeelWcGizRsbIJmUwsDQaThgQ28sZQ7GDj8AB2adKU2e961f5uCJpmC8iDxypK2ytmFoCJyk4YgK2XrZHLx/MJmWkOoISrzkLv1+nvDfAdtbCOMXTmKDmyEXrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725944095; c=relaxed/simple;
-	bh=fnqmtqs3Q42EGzjO2tDxIkAyYbiDeraUlBYEEcvIkgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SMJGhfTuUx3b05pZF9QK3tbYM/Ty5MGxeu/6VN8wiJSvt4NPZaTsxU+epGEUqgPcDFh5i7w5wQ8Z/mHiuJ+sTIbXXFrxZYvyr1y6yYUFNbMiiYKT2c4eSP8JGkBriSSxLjjQAmiwPEYvPt/TwgSe79wzwk1684HbtLIBRMK1xt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=fz44neLz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YvcHljlp; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.phl.internal (Postfix) with ESMTP id 177A21380225;
-	Tue, 10 Sep 2024 00:54:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Tue, 10 Sep 2024 00:54:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1725944092; x=1726030492; bh=iM8dQZ5RWFE0qerYBgfJG
-	VCWSMqHffJNm2ProEISIYo=; b=fz44neLzlBa7cgxGK21n3i+gsNwN3UtOrTRpl
-	6DqCZ6MFg+yscReMsQCaYDVNeVj8cjOYcQDKDaHSvhFvkScfxFDtZJOqwOkjtuaT
-	wc+H5tKz7dFS2c1FEhrfDPuQPAwDlHP/1pzUJLSnn2IHB+KH5wk2yONT6nVNgjrx
-	8Pes6kuY6Jfn/qgGS+aBwynWwb2LfsHrF75fvlvIueg5NUVSlkat+bpCUFGNBBNP
-	ilMf6SeV6zTNcESQZhpHuO1s2uhQL/nWBlAdQdaTy1FSQN6QRT5/OyyWcgb+8aB2
-	OWMMMk7pPwClPGxEXDBcNnmdRq8jageSGzATSl7b0jRH2pvBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1725944092; x=1726030492; bh=iM8dQZ5RWFE0qerYBgfJGVCWSMqH
-	ffJNm2ProEISIYo=; b=YvcHljlpSHdkZE+F2w+nuO6Hp8bVjJN4B1ZRMiWXn+ka
-	eRupMIeSORSzFOiNsK6DRWjOEJTRbICCLW0i9G7Sg/J2jRIIZwSG5YXKynT7YWcV
-	NOiP7b9shpaKhpoC4trfIEjOj52KTXOsEnJSTbCmmHV8XAZ3zHJsCw0JIWEVk+vv
-	6JYSWjyvsTj0iIqlb6gSoanG+O8IgwL1I47fS5E0iFgLwMrE7P2YljMike/Kl3Dt
-	52vw261d/JQ7WnewaI4vtzrsrzXD9rE0FV02XKmXNQsfOKmX4A9eKTsI+l4ufxS3
-	HP5Jx42QsFQGXTLipfkMoD+IStR3rLMmoSi3rc7obw==
-X-ME-Sender: <xms:G9HfZu0uLjEb_sgDR9VUJZaisiPQ4xwg6MFMfyoLIe_ZjmsHRy6KaA>
-    <xme:G9HfZhEFRX8uAaZbccLT2aqoFMM9NAb12YUiCeucT6hn-FUj99LfiTHWdzLlsxJFo
-    T7jv9fBVfn2ur3CRpU>
-X-ME-Received: <xmr:G9HfZm7G_JNMRgD9K0G_h2IJbxSwcxoz4O6Ofgh96s2ZvxoaGpazgBZMtUdb5A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeikedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdf
-    uceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthf
-    duudekffefkeeiffdttddvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvsh
-    druggvvhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpth
-    htohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgt
-    phhtthhopegtohhrvghnthhinhdrtghhrghrhiesghhmrghilhdrtghomhdprhgtphhtth
-    hopehluhhkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:G9HfZv28MrNMdiTCrUJFr-XngyvSmGFutcddmENSdUkKaXLrywNWwQ>
-    <xmx:G9HfZhGK5b15IHMWT02MT31U9uvl07WokH4aIjMDlmSZF3-IB5WJ9Q>
-    <xmx:G9HfZo-rWZtuUXgZAg-3Mx04WVu3KybsfOQ0aoS9he_vdY0-QTBfyQ>
-    <xmx:G9HfZmkXwlHW80l8mOIYQ-4Sn4UMhRthtEJGQUM57krzwtbuVt7TpQ>
-    <xmx:HNHfZqMtMy9e9sxtLsdDnHq5Q_0bLjbUB-PBgModRFsVTut3-nZuB-F7>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Sep 2024 00:54:48 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	corentin.chary@gmail.com,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH] platform/x86: asus-wmi: don't fail if platform_profile already registered
-Date: Tue, 10 Sep 2024 16:54:43 +1200
-Message-ID: <20240910045443.678145-1-luke@ljones.dev>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725944211; c=relaxed/simple;
+	bh=juCf2R0p1ORyD3x1UAE2XxSlfmLi96DIvVEcl9Evl/I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gtpYF2kuAHSRNqum+vF/K574Zjym9QG71E6Jljmju95jxjXxQ5dRMkNVDeGKQpJiFqWbVnOlW5OnyClH9INPWYbAujj3aI57gzJneB2G5X3I0NEpI1ZHlI/V8fTGlFf7ABQ7Xh+k9Yt7ehedZr87VhiLVMyWoKRGGVwtjQ6KzSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UM1YMoIy; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d5fccc3548so106767147b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 21:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725944209; x=1726549009; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/XYg61hIXxY5ogTBVcq32zREuSNxjhSfJ6hVBl71PI=;
+        b=UM1YMoIy9rKo0FN6lS1Ves5s40KHHNjL1wrNRCweYuZuwHVeuckPWjnEqY78GFqMXO
+         l/QJEbiYuG9UJyj/sdcrQEsEerMfYqGy37cfHe/5LWjdr8g/RIOsqujVU3+k2ibHSmBN
+         MtB2zjIB8T/Q0J8YN8jTVU5qPi57aeuFgH5fp0e9wMso1Pqd/jY/1MIZXF7xT2+wjss9
+         D14UyvGT10e9Ze0Howohl8BkLrv2+k2NzIwPazrW4NRaTa+F6O7kW2ty3g84j0u5waVK
+         xrOH1uqi4mRfiybQKLgO2GEr3N6qPDSzZaXFonHIFHhA9Q+dK8hb/dKGhBXuS/GHzPbT
+         BKGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725944209; x=1726549009;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/XYg61hIXxY5ogTBVcq32zREuSNxjhSfJ6hVBl71PI=;
+        b=Q2k2o4BCmGUPJERLSf0rE+Nke5L9xP5JjSYLTFJ8qq3i8TjJ8tiakn9leYON4iz8A0
+         Vr4lrNKbL+xe4jK78itzkaMaNmTXQRd7DhfnzZvgCyFSsG3ZsazWwk4OI3kuW57/ZOVA
+         DJLvww50d5ak6POmXc/JAIgqNtHTMC+bEJp1fSzQKAdkaC6DzvRdEJurI+I8aooL9+cO
+         QH2QFma+FZ+xneUmPygVRZe2PUEu066FgvVERm7bcFEkX1nt6aCiUFFpc8jTMwXZHkV6
+         NYmc8HcUoFNL3JiczgduD1+CVyiuZSpWgfmW3oMWEumOcixnSrY0ADLLzAB3GoRlLyQW
+         Sr/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdZG9j8cd9SZUH6rXRWwG/jzNTsP5MVJbhWKatDNVxNYROz8xZMHrsFrCokPgckvazuYDE+NtL/e9ENDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw16+mTo3wVq56bLXLNQgwgeYoA68ssHJBSQZApNL1SPOQjexq7
+	ZIVprhmNOgKRtfHrVGq8gHwBlNvQRFBFBzSX+nDie6Y+rpR/FTbVI5HLRBh7sGNDQXMyvi9dg55
+	jqw==
+X-Google-Smtp-Source: AGHT+IEcHnWZ0cNYb9EfF6L3Bvf7Uqo3vEevZaQ0b6wgm6HG4/KKQpFGaY1BOWy6fF6vdUVdsAbTY0BbcKs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:e907:0:b0:6d9:d865:46c7 with SMTP id
+ 00721157ae682-6db95342e65mr521627b3.2.1725944208756; Mon, 09 Sep 2024
+ 21:56:48 -0700 (PDT)
+Date: Mon,  9 Sep 2024 21:56:26 -0700
+In-Reply-To: <20240829191413.900740-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240829191413.900740-1-seanjc@google.com>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Message-ID: <172594248786.1552336.13895527580291152046.b4-ty@google.com>
+Subject: Re: [PATCH 0/2] KVM: Fix a lurking bug in kvm_clear_guest()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, zyr_ms@outlook.com
+Content-Type: text/plain; charset="utf-8"
 
-On some newer laptops ASUS laptops SPS support is advertised but not
-actually used, causing the AMD driver to register as a platform_profile
-handler.
+On Thu, 29 Aug 2024 12:14:11 -0700, Sean Christopherson wrote:
+> Fix a bug in kvm_clear_guest() where it would write beyond the target
+> page _if_ handed a gpa+len that would span multiple pages.  Luckily, the
+> bug is unhittable in the current code base as all users ensure the
+> gpa+len is bound to a single page.
+> 
+> Patch 2 hardens the underlying single page APIs to guard against a bad
+> offset+len, e.g. so that bugs like the one in kvm_clear_guest() are noisy
+> and don't escalate to an out-of-bounds access.
+> 
+> [...]
 
-If this happens then the asus_wmi driver would error with -EEXIST when
-trying to register its own handler leaving the user with a possibly
-unusable system. This is especially true for laptops with an MCU that emit
-a stream of HID packets, some of which can be misinterpreted as shutdown
-signals.
+Applied to kvm-x86 generic, thanks!
 
-We can safely continue loading the driver instead of bombing out.
+[1/2] KVM: Write the per-page "segment" when clearing (part of) a guest page
+      https://github.com/kvm-x86/linux/commit/ec495f2ab122
+[2/2] KVM: Harden guest memory APIs against out-of-bounds accesses
+      https://github.com/kvm-x86/linux/commit/025dde582bbf
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/platform/x86/asus-wmi.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index fbb3345cc65a..d53c4aff519f 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -3876,8 +3876,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
- 		asus->platform_profile_handler.choices);
- 
- 	err = platform_profile_register(&asus->platform_profile_handler);
--	if (err)
-+	if (err == -EEXIST) {
-+		pr_warn("%s, a platform_profile handler is already registered\n", __func__);
-+		return 0;
-+	} else if (err) {
-+		pr_err("%s, failed at platform_profile_register: %d\n", __func__, err);
- 		return err;
-+	}
- 
- 	asus->platform_profile_support = true;
- 	return 0;
-@@ -4752,7 +4757,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		goto fail_fan_boost_mode;
- 
- 	err = platform_profile_setup(asus);
--	if (err)
-+	if (err && err != -EEXIST)
- 		goto fail_platform_profile_setup;
- 
- 	err = asus_wmi_sysfs_init(asus->platform_device);
--- 
-2.46.0
-
+--
+https://github.com/kvm-x86/linux/tree/next
 
