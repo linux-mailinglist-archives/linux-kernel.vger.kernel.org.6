@@ -1,212 +1,152 @@
-Return-Path: <linux-kernel+bounces-323648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AFF974127
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:53:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A88E974134
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7741C253B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:53:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F5B27BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D901A38FA;
-	Tue, 10 Sep 2024 17:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7068A1A38F4;
+	Tue, 10 Sep 2024 17:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fawsAuK0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxxVjaA1"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C112519E7E0;
-	Tue, 10 Sep 2024 17:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD1516DED5;
+	Tue, 10 Sep 2024 17:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990793; cv=none; b=QuGbFcgc9D2Hnb37Iy9CjqlT0L8CpNR9pnUYubdBizijjUKbUbeYYkybraLHE5ZwAsQfjGbOX3kUOTI10hU/6TT3rSeEm0Y5LRFF4yAxG/AGob6KgpMzolheJWvk9dr8gdFiHsjogYTr/f3YxssAoCkEcYWcjtnEzQU/HOhUmhs=
+	t=1725990862; cv=none; b=jUXxe3MqBpjH2aCJVr6ed9mF13sf6kt/n4XCG+FLxDm3zuXqmasquxj54zf+hUCsf1wBKtOaTkOAkwyuI8JPeHGLvE8FgWa/fkZh2xtzxWtA/vPQWsxXD9W+xd8KaTTo9gmNQRd1qOBWUXlFJjDoDJluACFRwGm6CwiVedvqCsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990793; c=relaxed/simple;
-	bh=xcGMCjT9L0LXvB6LSjSyZQwneMDNyUgjtm/f5hb51PM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=l7chixS34I5PLQ7pJK4fUTqO6yXhO/QptSKRAFfv6pBt5S2JcTtk1ro8+J2US4IN4SpT9GTFoCXSUKK7Rrs3QMfdTa4gsZHcmA1982w8QkWsbtXfMIf9wHiXpG0pdMGh3UgIoj37dIOZU4w8fnvVHoNrJQdDUg+niRpxwrlOMUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fawsAuK0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7951AC4CECC;
-	Tue, 10 Sep 2024 17:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725990793;
-	bh=xcGMCjT9L0LXvB6LSjSyZQwneMDNyUgjtm/f5hb51PM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=fawsAuK0QW0oCMWiYeQKWL2RWOuhAGbthLsbEI3eL+y2Xo7GD26Jb6mqtC2V1ZXur
-	 srMCEewlD4JP00ZCqbAwCITVjlPmMtHuDqVEHnCgO6YQE1RJvjMBSdD6hVIGx90swu
-	 2l+uGsDfhUQ19FlxAlrnGlY5xPGMEBNU/+oLRZV1rASA1cPsrrpbEPXSP1gh2aaiTW
-	 9Qp3JeEryDB7Ogdxy9fpOVFlt3wc6K9AWC6jWqp29W54s+pacaEG8VMJtE4d0XRjB7
-	 bVYbnnr7Q7qsMqUHRIVML42zuPMa52dnWDwUO9+LUHZ6L8LiufQAzyKjCEISDhnI0m
-	 gQko5fgLrfLsA==
-Message-ID: <7fedb8c2-931f-406b-b46e-83bf3f452136@kernel.org>
-Date: Tue, 10 Sep 2024 19:53:08 +0200
+	s=arc-20240116; t=1725990862; c=relaxed/simple;
+	bh=NlSjka77y+J8o4ScRfds9q3Fu4ziU17R6W9K0mJQg5c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vEKwHLEO8DtWvSkpopLvCbVH0+QYPeOGkKJXSHfktvGGob1gBlsBcrVj9rh+qEPxOfu2wQ5xAti9DlqpSEkVqW5olTIwko/7mzpMXu7txtDQCMpahdIT3/V8Gk8YaNtF8oFUjkaJKes/FdGRHN4mpmSe4xbjKinHKdXOKDpBqpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxxVjaA1; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-375e5c12042so573260f8f.3;
+        Tue, 10 Sep 2024 10:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725990859; x=1726595659; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lnrn0tVafziV/wQlzrgAUX9MZJP0JQ/xVWaaouixC1k=;
+        b=VxxVjaA1caXvor5nBBYaRP+ttJmV+5BJ5JGyaPO8ZwpREWTxdxpFu6X9AU77CwuCxY
+         qZi7uaNlySR/iWVIN4MxzqRSLGJiwh8+SNEMtbwlzkBpC/uCMzO8i7NfNriapmvOEPKM
+         dtU8p9HwdDa2AB24gNl+yp4jzcs0TqzR9SSeQu8qGO353DWe6qTarZQpfnlGVNDUUwYt
+         jofLDhBa+h/psRptk9kfWK/XW2tekPxd1ko8INVNYZpH7RBRdjUNBeEHp4WWf2A9X9Q/
+         FdnO1D+gHy7p8Z+oAJ0EDyZmv7FurAsh8tNblctMyjItSR7yCxUCQMR0qkJjabKDw02u
+         atCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725990859; x=1726595659;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lnrn0tVafziV/wQlzrgAUX9MZJP0JQ/xVWaaouixC1k=;
+        b=Uufq6YDHUoXj+Sk23WYTdYQ5ajWxNjmdJrGRZ3qt9qI3B/k6sRMzQnxBSlN/yGynzA
+         PKwPlqyOAFZ582/5pF1wPRwerp+S6w2o9sXjnTEUdyI0fHhocw8/Ass0pRVBeBywQGCa
+         el18NffvUapV/bPLPEdPSphaXt9QU9699qSs49Ng6nhN/QolLNKVKM99thozyHzuh+nn
+         yTxoxrBkS89OBIF4pN3SSmWpVl0ZDrJGhe6Nh0WpkLREJEE8s+2uJFZHX2bKmV/aegeT
+         uavH6ETKqhvQO27U2oZTpnYNtV4QxXh1jlZFHbwPPYPVubtT1nR90av9BUN9StiXs2HI
+         0TIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVYcW+/SR/COdVR+G5b0labb1n/IlEbZSd34mEdL2rrYnO/k6uikz/BN84QzgRwRSNkhsJ4F/IajLeNnK9ze6eHaw=@vger.kernel.org, AJvYcCUZrtCvxFbzTv3IjtVViSf9bWVDWJ2DaD6t75m4gPHX4jXxuancSHqhR/JImo9gp+MRGgznwdvM2jXE5hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDCCo5nnAhbHYr0RsvDfqId0kxK4Fliv3bOF6bgeKsP6Nj4+2u
+	bhg5DmO09yM2+Pt4VOEOtuOccY73sRZDyN0XS8QrxeWgs+PZrbQV
+X-Google-Smtp-Source: AGHT+IELlOZrbpDDmQmCbRbG0vRIkhFYJaViGyYnBLu4bKmd6e+VWjqkUKFL2ARZcYylZS9VGP+oBw==
+X-Received: by 2002:adf:e5c4:0:b0:371:8e0d:c1d9 with SMTP id ffacd0b85a97d-378b07ad2dbmr332439f8f.19.1725990859385;
+        Tue, 10 Sep 2024 10:54:19 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:94a6:1e64:e5a2:2b2a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c40sm9516562f8f.51.2024.09.10.10.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 10:54:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 00/16] media: platform: rzg2l-cru: CSI-2 and CRU enhancements
+Date: Tue, 10 Sep 2024 18:53:41 +0100
+Message-Id: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression v6.11 booting cannot mount harddisks (xfs)
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
-Cc: Netdev <netdev@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
- linux-ide@vger.kernel.org, cassel@kernel.org, handan.babu@oracle.com,
- djwong@kernel.org, Linux-XFS <linux-xfs@vger.kernel.org>,
- hdegoede@redhat.com, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, kernel-team <kernel-team@cloudflare.com>
-References: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
- <d2c82922-675e-470f-a4d3-d24c4aecf2e8@kernel.org>
- <ee565fda-b230-4fb3-8122-e0a9248ef1d1@kernel.org>
-Content-Language: en-US
-In-Reply-To: <ee565fda-b230-4fb3-8122-e0a9248ef1d1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Hellwig,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I bisected my boot problem down to this commit:
+Hi All,
 
-$ git bisect good
-af2814149883e2c1851866ea2afcd8eadc040f79 is the first bad commit
-commit af2814149883e2c1851866ea2afcd8eadc040f79
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Mon Jun 17 08:04:38 2024 +0200
+This patch series aims to add the below:
+- Retrieve virtual channel from remote subdev
+- Support to capture 8bit Bayer formats.
 
-     block: freeze the queue in queue_attr_store
+v1->v2
+- Fixed retrieving VC from subdev
+- Fixed review comments pointed by Laurent
+  * Refactored supported CRU formats
+  * Added MUST_CONNECT flag wherever required
+  * Dropped `channel` member from `struct
 
-     queue_attr_store updates attributes used to control generating I/O, and
-     can cause malformed bios if changed with I/O in flight.  Freeze the 
-queue
-     in common code instead of adding it to almost every attribute.
+v1:
+Link: https://lore.kernel.org/all/20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-     Signed-off-by: Christoph Hellwig <hch@lst.de>
-     Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-     Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-     Reviewed-by: Hannes Reinecke <hare@suse.de>
-     Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-     Link: https://lore.kernel.org/r/20240617060532.127975-12-hch@lst.de
-     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cheers,
+Prabhakar
 
-  block/blk-mq.c    | 5 +++--
-  block/blk-sysfs.c | 9 ++-------
-  2 files changed, 5 insertions(+), 9 deletions(-)
+Lad Prabhakar (16):
+  media: platform: rzg2l-cru: rzg2l-ip: Use the RZG2L_CRU_IP_SINK/SOURCE
+    enum entries
+  media: platform: rzg2l-cru: Mark sink pads with MUST_CONNECT flag
+  media: platform: rzg2l-cru: rzg2l-csi2: Mark sink and source pad with
+    MUST_CONNECT flag
+  media: platform: rzg2l-cru: rzg2l-csi2: Make use of
+    NR_OF_RZG2L_CSI2_PAD
+  media: platform: rzg2l-cru: rzg2l-csi2: Implement .get_frame_desc()
+  media: platform: rzg2l-cru: rzg2l-video: Retrieve virtual channel
+    information
+  media: platform: rzg2l-cru: Remove `channel` member from `struct
+    rzg2l_cru_csi`
+  media: platform: rzg2l-cru: rzg2l-video: Use MIPI CSI-2 data types for
+    ICnMC_INF definitions
+  media: platform: rzg2l-cru: Remove unused fields from
+    rzg2l_cru_ip_format struct
+  media: platform: rzg2l-cru: Simplify handling of supported formats
+  media: platform: rzg2l-cru: rzg2l-ip: Use `rzg2l_cru_ip_formats` array
+    in enum_frame_size callback
+  media: platform: rzg2l-cru: rzg2l-csi2: Remove unused datatype field
+    from rzg2l_csi2_format
+  media: platform: rzg2l-cru: rzg2l-video: Use
+    rzg2l_cru_ip_code_to_fmt() to validate format
+  media: platform: rzg2l-cru: rzg2l-csi2: Make use of rzg2l_csi2_formats
+    array in rzg2l_csi2_enum_frame_size()
+  media: renesas: rzg2l-cru: Refactor ICnDMR register configuration
+  media: platform: rzg2l-cru: Add support to capture 8bit raw sRGB
 
-git describe --contains af2814149883e2c1851866ea2afcd8eadc040f79
-v6.11-rc1~80^2~66^2~15
+ .../platform/renesas/rzg2l-cru/rzg2l-core.c   |   3 +-
+ .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  31 +++-
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  39 ++++-
+ .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  91 +++++++++---
+ .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 133 ++++++++++--------
+ 5 files changed, 207 insertions(+), 90 deletions(-)
 
+-- 
+2.34.1
 
-On 10/09/2024 16.49, Jesper Dangaard Brouer wrote:
-> 
-> 
-> On 10/09/2024 15.06, Damien Le Moal wrote:
->> On 2024/09/10 21:19, Jesper Dangaard Brouer wrote:
->>> Hi Linus,
->>>
->>> My testlab kernel devel server isn't booting correctly on v6.11 branches
->>> (e.g. net-next at 6.11.0-rc5)
->>> I just confirmed this also happens on your tree tag: v6.11-rc7.
->>>
->>> The symptom/issue is that harddisk dev names (e.g /dev/sda, /dev/sdb,
->>> /dev/sdc) gets reordered.  I switched /etc/fstab to use UUID's instead
->>> (which boots on v6.10) but on 6.11 it still cannot mount harddisks and
->>> doesn't fully boot.
->>
->> Parallel SCSI device scanning has been around for a long time... This is
->> controlled with CONFIG_SCSI_SCAN_ASYNC. And yes, that can cause disk 
->> names to
->> change, which is why it is never a good idea to rely on them but 
->> instead use
->> /dev/disk/by-* names. Disabling CONFIG_SCSI_SCAN_ASYNC will likely not 
->> guarantee
->> that disk names will be constant, given that you seem to have 2 AHCI 
->> adapters on
->> your host and PCI device scanning is done in parallel.
->>
->>> E.g. errors:
->>>     systemd[1]: Expecting device
->>> dev-disk-by\x2duuid-0c2b348d\x2de013\x2d482b\x2da91c\x2d029640ec427a.device
->>> - /dev/disk/by-uuid/0c2b348d-e013-482b-a91c-029640ec42
->>> 7a...
->>>     [DEPEND] Dependency failed for var-lib.mount - /var/lib.
->>>     [...]
->>>     [ TIME ] Timed out waiting for device
->>> dev-d…499e46-b40d-4067-afd4-5f6ad09fcff2.
->>>     [DEPEND] Dependency failed for boot.mount - /boot.
->>>
->>> That corresponds to fstab's:
->>>    - UUID=8b499e46-b40d-4067-afd4-5f6ad09fcff2 /boot     xfs defaults 
->>> 0 0
->>>    - UUID=0c2b348d-e013-482b-a91c-029640ec427a /var/lib/ xfs defaults 
->>> 0 0
->>>
->>> It looks like disk controller initialization happens in *parallel* on
->>> these newer kernels as dmesg shows init printk's overlapping:
->>>
->>>    [    5.683393] scsi 5:0:0:0: Direct-Access     ATA      SAMSUNG
->>> MZ7KM120 003Q PQ: 0 ANSI: 5
->>>    [    5.683641] scsi 7:0:0:0: Direct-Access     ATA      SAMSUNG
->>> MZ7KM120 003Q PQ: 0 ANSI: 5
->>>    [    5.683797] scsi 8:0:0:0: Direct-Access     ATA      Samsung SSD
->>> 840  BB0Q PQ: 0 ANSI: 5
->>>    [...]
->>>    [    7.057376] sd 5:0:0:0: [sda] 234441648 512-byte logical blocks:
->>> (120 GB/112 GiB)
->>>    [    7.062279] sd 7:0:0:0: [sdb] 234441648 512-byte logical blocks:
->>> (120 GB/112 GiB)
->>>    [    7.070628] sd 5:0:0:0: [sda] Write Protect is off
->>>    [    7.070701] sd 8:0:0:0: [sdc] 488397168 512-byte logical blocks:
->>> (250 GB/233 GiB)
->>>
->>> Perhaps this could be a hint to what changed?
->>
->> See above. The disk /dev/sdX names not being reliable is rather normal.
->> Are you sure you have the correct UUIDs of your FSes on the disks ? 
->> You can
->> check them with "blkid /dev/sdX[n]"
->>
-> 
-> I have checked that I use the correct UUIDs.
-> 
-> I checked my /etc/fstab have the UUID entries under /dev/disk/by-uuid/
-> via this oneliner, which needs to have a /etc/fstab entry under each
-> UUID. We can see I have one partition that I'm not using
-> (0fd3bc38-6496-401f-87f2-87e09532de53), which is expected.
-> 
-> $ for UUID in $(ls /dev/disk/by-uuid/); do echo $UUID; grep -H $UUID 
-> /etc/fstab; done
-> 09e8c15f-80d2-47e3-8e73-d3fdfcf33eef
-> /etc/fstab:UUID=09e8c15f-80d2-47e3-8e73-d3fdfcf33eef /     xfs     
-> defaults        0 0
-> 0c2b348d-e013-482b-a91c-029640ec427a
-> /etc/fstab:UUID=0c2b348d-e013-482b-a91c-029640ec427a    /var/lib/        
-> xfs defaults 0 0
-> 0fd3bc38-6496-401f-87f2-87e09532de53
-> 581920da-1ccb-4b25-856c-036310032a74
-> /etc/fstab:UUID=581920da-1ccb-4b25-856c-036310032a74    /nix            
-> xfs    defaults 0 0
-> 8b499e46-b40d-4067-afd4-5f6ad09fcff2
-> /etc/fstab:UUID=8b499e46-b40d-4067-afd4-5f6ad09fcff2 /boot     xfs     
-> defaults        0 0
-> cd409a50-0371-47ca-9213-49a2bc7b9317
-> /etc/fstab:UUID=cd409a50-0371-47ca-9213-49a2bc7b9317 swap     swap    
-> defaults        0 0
-> 
-> 
->>> Any hints what commit I should try to test revert?
->>> Or good starting point for bisecting?
->>
->> You said that 6.10 works, so maybe start from there ?
-> 
-> I tested I could boot tag v6.10, and have started bisection.
-> 
-> I've not tried to deselect CONFIG_SCSI_SCAN_ASYNC as the kernel that
-> worked on tag v6.10 also had this CONFIG_SCSI_SCAN_ASYNC enabled. So, it
-> is likely not related to the async controller init.
-> 
-> --Jesper
 
