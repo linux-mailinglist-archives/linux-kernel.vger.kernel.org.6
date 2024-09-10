@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-322841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2937497304D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BF5973053
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9B91C20AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D62285F26
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE6F18A6D2;
-	Tue, 10 Sep 2024 09:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E2818DF99;
+	Tue, 10 Sep 2024 09:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yj9Os7nZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HUmtc4Yr"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pXG/PObm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dn2ca2kE"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CCC17C22F;
-	Tue, 10 Sep 2024 09:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F07A18C037;
+	Tue, 10 Sep 2024 09:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962347; cv=none; b=l+pVSTMpAPhRCW9oR5C5dB5jjMMt1al0vm9iv6nYoF4z6+4nZGW81uqyPEnDTsZM5wrgNkyb1hza0fkv37zmRIz81X41NHVyQgvNGOX5P5wJklqHZduqyrd9VdwJHLqNG7EZQ+IZlSK+PE69tBIKbp5ybQRA+s5+gyqIWAGsVp8=
+	t=1725962348; cv=none; b=abC8kDewYhnZj2bcmCpLwRB6zSPXuhBrUpJ+oMN9GyPs6O6AoCMLzd3uGpvmfiJuZsLhxrc4nNwNoA9x37WC/9ZrgeFs2YiGf+0rLJVJwVtuFq7YjHbFDd66y6tpuiuIKvwS35k9m/OAq4r0hSlNs4yIc/WLdZJXja1Q9FO9zyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962347; c=relaxed/simple;
-	bh=kAdJDtz9hbwZPp13FWlLOOqhZAHeTqyPBQkROLeDJ60=;
+	s=arc-20240116; t=1725962348; c=relaxed/simple;
+	bh=yImSSsjWEpu5lMqsGgt6ir9RDTFyT/c4iYIpBdH4AXk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nZaIqa1TgfNFopU6hmD9nPOHoANKGXsw21v/+3OmMe1sW7yn7lFxlZbJfEElZeqZEN/2XR+8ffJZ/IAGTTFsjjzf9mUZu++SIRIaK7KmJZh3gHE9fTYRK5aEA4iJ9ml1e6PktIspQjSaZluE0NBAAK/e0Q5fRs0Rn7fu7nRltrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yj9Os7nZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HUmtc4Yr; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=kSPalUG76uJOWTvGLMWIkfhAypufzLAuKBR3olWvocXnds7swn/Sa99WAyzTOQoLXNEgGUn/Wp4e4O8DmCDgIoaiKzT5OpdqtoFzQsaAPhglH4F05WfQqag0XQyPEJxdco8HdTkLaxIW/D5AN+fBRIOsyK3CKPbvMr2bp7uGPwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pXG/PObm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dn2ca2kE; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Sep 2024 09:59:03 -0000
+Date: Tue, 10 Sep 2024 09:59:04 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725962343;
+	s=2020; t=1725962344;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gkIrqcn0UDLrQzHvU4Y2/JzwNSMK8Cvc5EbW5aqcXVc=;
-	b=yj9Os7nZyIAp1ZhEcR8KiIBsg8aJZIc212j2AXtvJ+3dPW0UZ8eSBBKRCnj8beI2cEcw9c
-	ohM+eCpqJwfW4r2vq66lOBoshzf677KiGo2AfW7lA9D0IiFfiyXejpZif0w3lhZv3lfrAi
-	dXxMa3eoJBijV8z8Pd7Ws6UlO/5jNvVbDEuSEwjfk+97/sfdMYiX+6dGpWggwj9vlEq67y
-	hgP90DRm77JzyFK8notkn4YTubdSF0iQJrjTGR5ImLs5hfKF9hGB2oF4YuRlfZwqnWKb/k
-	YgDfeGOZodEWoHO5xdXWCNfTyDg0iPhp02d0WuuZXZUQUZr0IEfLpL7d3p1QPA==
+	bh=mWLT7p1bOyO0LdCiqMlpfSNekkHySItaNimj5jQLvwY=;
+	b=pXG/PObmdn7Ty2emUOiW1gBooAtHVnFr6ZKhSpehN/U4zkrcwr9H3iGlxVIXTX/nvgD/Ez
+	TFFpqvDcAylNKBXxwWyGuz0rGBG84EYkhcpa/pOEaXc12O2yPAsXirAKIGNko8/IOffn4c
+	J5umpjBRZtYYPpVPjrVCKJElBC2OQPN2LLcNVNKRa9nYO275chdjjxnoXhL9tyiKyDfhn5
+	7qu9PJXmI4F5oCXum/oF1cITNorQ9gj8yWK6+/uGc9baKpLlkbRim+TT5Iwq9dbrFS2wXF
+	peDh0qXfW/+affuzMqqzNVecCvSxKeqjVpP4CrMhcOsWDMeaBMlxzFOuQcjkZA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725962343;
+	s=2020e; t=1725962344;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gkIrqcn0UDLrQzHvU4Y2/JzwNSMK8Cvc5EbW5aqcXVc=;
-	b=HUmtc4YrB21BZ0QSBqhwdjMARQRLk/JbBtw2x27lMWtt1FGHKOvAQSvkn8JOt5mLw4tai4
-	tYdNkVV8JGJlm9Bw==
+	bh=mWLT7p1bOyO0LdCiqMlpfSNekkHySItaNimj5jQLvwY=;
+	b=dn2ca2kEtgP6u8xOmAClO7gAbbKk4qqR1cwRjlrVkHKqZYGPgoUgCrzFh/eiWnCTttslZl
+	gvFz+ocOks89o5DA==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] iommu/vt-d: Clean up cpumask and hotplug for perfmon
+Subject: [tip: perf/core] perf/x86/intel/cstate: Clean up cpumask and hotplug
 Cc: Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Lu Baolu <baolu.lu@linux.intel.com>, x86@kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240802151643.1691631-5-kan.liang@linux.intel.com>
-References: <20240802151643.1691631-5-kan.liang@linux.intel.com>
+In-Reply-To: <20240802151643.1691631-4-kan.liang@linux.intel.com>
+References: <20240802151643.1691631-4-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172596234350.2215.17086032772842846168.tip-bot2@tip-bot2>
+Message-ID: <172596234404.2215.16456839389297464641.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,198 +81,300 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     a8c73b82f7792400555143773d0152d5bc3ac068
-Gitweb:        https://git.kernel.org/tip/a8c73b82f7792400555143773d0152d5bc3ac068
+Commit-ID:     08155c7f2a2cc6ff99886ea5743da274be24ebe4
+Gitweb:        https://git.kernel.org/tip/08155c7f2a2cc6ff99886ea5743da274be24ebe4
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Fri, 02 Aug 2024 08:16:40 -07:00
+AuthorDate:    Fri, 02 Aug 2024 08:16:39 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 10 Sep 2024 11:44:13 +02:00
 
-iommu/vt-d: Clean up cpumask and hotplug for perfmon
+perf/x86/intel/cstate: Clean up cpumask and hotplug
 
-The iommu PMU is system-wide scope, which is supported by the generic
-perf_event subsystem now.
+There are three cstate PMUs with different scopes, core, die and module.
+The scopes are supported by the generic perf_event subsystem now.
 
-Set the scope for the iommu PMU and remove all the cpumask and hotplug
-codes.
+Set the scope for each PMU and remove all the cpumask and hotplug codes.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Link: https://lore.kernel.org/r/20240802151643.1691631-5-kan.liang@linux.intel.com
+Link: https://lore.kernel.org/r/20240802151643.1691631-4-kan.liang@linux.intel.com
 ---
- drivers/iommu/intel/iommu.h   |   2 +-
- drivers/iommu/intel/perfmon.c | 111 +---------------------------------
- 2 files changed, 2 insertions(+), 111 deletions(-)
+ arch/x86/events/intel/cstate.c | 142 +-------------------------------
+ include/linux/cpuhotplug.h     |   2 +-
+ 2 files changed, 5 insertions(+), 139 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index b67c14d..bd2c5a4 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -687,8 +687,6 @@ struct iommu_pmu {
- 	DECLARE_BITMAP(used_mask, IOMMU_PMU_IDX_MAX);
- 	struct perf_event	*event_list[IOMMU_PMU_IDX_MAX];
- 	unsigned char		irq_name[16];
--	struct hlist_node	cpuhp_node;
--	int			cpu;
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index 9f116df..ae4ec16 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -128,10 +128,6 @@ static ssize_t __cstate_##_var##_show(struct device *dev,	\
+ static struct device_attribute format_attr_##_var =		\
+ 	__ATTR(_name, 0444, __cstate_##_var##_show, NULL)
+ 
+-static ssize_t cstate_get_attr_cpumask(struct device *dev,
+-				       struct device_attribute *attr,
+-				       char *buf);
+-
+ /* Model -> events mapping */
+ struct cstate_model {
+ 	unsigned long		core_events;
+@@ -206,22 +202,9 @@ static struct attribute_group cstate_format_attr_group = {
+ 	.attrs = cstate_format_attrs,
  };
  
- #define IOMMU_IRQ_ID_OFFSET_PRQ		(DMAR_UNITS_SUPPORTED)
-diff --git a/drivers/iommu/intel/perfmon.c b/drivers/iommu/intel/perfmon.c
-index 44083d0..75f493b 100644
---- a/drivers/iommu/intel/perfmon.c
-+++ b/drivers/iommu/intel/perfmon.c
-@@ -34,28 +34,9 @@ static struct attribute_group iommu_pmu_events_attr_group = {
- 	.attrs = attrs_empty,
- };
- 
--static cpumask_t iommu_pmu_cpu_mask;
+-static cpumask_t cstate_core_cpu_mask;
+-static DEVICE_ATTR(cpumask, S_IRUGO, cstate_get_attr_cpumask, NULL);
 -
--static ssize_t
--cpumask_show(struct device *dev, struct device_attribute *attr, char *buf)
--{
--	return cpumap_print_to_pagebuf(true, buf, &iommu_pmu_cpu_mask);
--}
--static DEVICE_ATTR_RO(cpumask);
--
--static struct attribute *iommu_pmu_cpumask_attrs[] = {
+-static struct attribute *cstate_cpumask_attrs[] = {
 -	&dev_attr_cpumask.attr,
--	NULL
+-	NULL,
 -};
 -
--static struct attribute_group iommu_pmu_cpumask_attr_group = {
--	.attrs = iommu_pmu_cpumask_attrs,
+-static struct attribute_group cpumask_attr_group = {
+-	.attrs = cstate_cpumask_attrs,
 -};
 -
- static const struct attribute_group *iommu_pmu_attr_groups[] = {
- 	&iommu_pmu_format_attr_group,
- 	&iommu_pmu_events_attr_group,
--	&iommu_pmu_cpumask_attr_group,
- 	NULL
+ static const struct attribute_group *cstate_attr_groups[] = {
+ 	&cstate_events_attr_group,
+ 	&cstate_format_attr_group,
+-	&cpumask_attr_group,
+ 	NULL,
  };
  
-@@ -565,6 +546,7 @@ static int __iommu_pmu_register(struct intel_iommu *iommu)
- 	iommu_pmu->pmu.attr_groups	= iommu_pmu_attr_groups;
- 	iommu_pmu->pmu.attr_update	= iommu_pmu_attr_update;
- 	iommu_pmu->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
-+	iommu_pmu->pmu.scope		= PERF_PMU_SCOPE_SYS_WIDE;
- 	iommu_pmu->pmu.module		= THIS_MODULE;
+@@ -269,8 +252,6 @@ static struct perf_msr pkg_msr[] = {
+ 	[PERF_CSTATE_PKG_C10_RES] = { MSR_PKG_C10_RESIDENCY,	&group_cstate_pkg_c10,	test_msr },
+ };
  
- 	return perf_pmu_register(&iommu_pmu->pmu, iommu_pmu->pmu.name, -1);
-@@ -773,89 +755,6 @@ static void iommu_pmu_unset_interrupt(struct intel_iommu *iommu)
- 	iommu->perf_irq = 0;
- }
+-static cpumask_t cstate_pkg_cpu_mask;
+-
+ /* cstate_module PMU */
+ static struct pmu cstate_module_pmu;
+ static bool has_cstate_module;
+@@ -291,28 +272,9 @@ static struct perf_msr module_msr[] = {
+ 	[PERF_CSTATE_MODULE_C6_RES]  = { MSR_MODULE_C6_RES_MS,	&group_cstate_module_c6,	test_msr },
+ };
  
--static int iommu_pmu_cpu_online(unsigned int cpu, struct hlist_node *node)
+-static cpumask_t cstate_module_cpu_mask;
+-
+-static ssize_t cstate_get_attr_cpumask(struct device *dev,
+-				       struct device_attribute *attr,
+-				       char *buf)
 -{
--	struct iommu_pmu *iommu_pmu = hlist_entry_safe(node, typeof(*iommu_pmu), cpuhp_node);
+-	struct pmu *pmu = dev_get_drvdata(dev);
 -
--	if (cpumask_empty(&iommu_pmu_cpu_mask))
--		cpumask_set_cpu(cpu, &iommu_pmu_cpu_mask);
--
--	if (cpumask_test_cpu(cpu, &iommu_pmu_cpu_mask))
--		iommu_pmu->cpu = cpu;
--
--	return 0;
--}
--
--static int iommu_pmu_cpu_offline(unsigned int cpu, struct hlist_node *node)
--{
--	struct iommu_pmu *iommu_pmu = hlist_entry_safe(node, typeof(*iommu_pmu), cpuhp_node);
--	int target = cpumask_first(&iommu_pmu_cpu_mask);
--
--	/*
--	 * The iommu_pmu_cpu_mask has been updated when offline the CPU
--	 * for the first iommu_pmu. Migrate the other iommu_pmu to the
--	 * new target.
--	 */
--	if (target < nr_cpu_ids && target != iommu_pmu->cpu) {
--		perf_pmu_migrate_context(&iommu_pmu->pmu, cpu, target);
--		iommu_pmu->cpu = target;
--		return 0;
--	}
--
--	if (!cpumask_test_and_clear_cpu(cpu, &iommu_pmu_cpu_mask))
--		return 0;
--
--	target = cpumask_any_but(cpu_online_mask, cpu);
--
--	if (target < nr_cpu_ids)
--		cpumask_set_cpu(target, &iommu_pmu_cpu_mask);
+-	if (pmu == &cstate_core_pmu)
+-		return cpumap_print_to_pagebuf(true, buf, &cstate_core_cpu_mask);
+-	else if (pmu == &cstate_pkg_pmu)
+-		return cpumap_print_to_pagebuf(true, buf, &cstate_pkg_cpu_mask);
+-	else if (pmu == &cstate_module_pmu)
+-		return cpumap_print_to_pagebuf(true, buf, &cstate_module_cpu_mask);
 -	else
 -		return 0;
--
--	perf_pmu_migrate_context(&iommu_pmu->pmu, cpu, target);
--	iommu_pmu->cpu = target;
--
--	return 0;
 -}
 -
--static int nr_iommu_pmu;
--static enum cpuhp_state iommu_cpuhp_slot;
--
--static int iommu_pmu_cpuhp_setup(struct iommu_pmu *iommu_pmu)
--{
--	int ret;
--
--	if (!nr_iommu_pmu) {
--		ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
--					      "driver/iommu/intel/perfmon:online",
--					      iommu_pmu_cpu_online,
--					      iommu_pmu_cpu_offline);
--		if (ret < 0)
--			return ret;
--		iommu_cpuhp_slot = ret;
--	}
--
--	ret = cpuhp_state_add_instance(iommu_cpuhp_slot, &iommu_pmu->cpuhp_node);
--	if (ret) {
--		if (!nr_iommu_pmu)
--			cpuhp_remove_multi_state(iommu_cpuhp_slot);
--		return ret;
--	}
--	nr_iommu_pmu++;
--
--	return 0;
--}
--
--static void iommu_pmu_cpuhp_free(struct iommu_pmu *iommu_pmu)
--{
--	cpuhp_state_remove_instance(iommu_cpuhp_slot, &iommu_pmu->cpuhp_node);
--
--	if (--nr_iommu_pmu)
--		return;
--
--	cpuhp_remove_multi_state(iommu_cpuhp_slot);
--}
--
- void iommu_pmu_register(struct intel_iommu *iommu)
+ static int cstate_pmu_event_init(struct perf_event *event)
  {
- 	struct iommu_pmu *iommu_pmu = iommu->pmu;
-@@ -866,17 +765,12 @@ void iommu_pmu_register(struct intel_iommu *iommu)
- 	if (__iommu_pmu_register(iommu))
- 		goto err;
+ 	u64 cfg = event->attr.config;
+-	int cpu;
  
--	if (iommu_pmu_cpuhp_setup(iommu_pmu))
--		goto unregister;
+ 	if (event->attr.type != event->pmu->type)
+ 		return -ENOENT;
+@@ -331,20 +293,13 @@ static int cstate_pmu_event_init(struct perf_event *event)
+ 		if (!(core_msr_mask & (1 << cfg)))
+ 			return -EINVAL;
+ 		event->hw.event_base = core_msr[cfg].msr;
+-		cpu = cpumask_any_and(&cstate_core_cpu_mask,
+-				      topology_sibling_cpumask(event->cpu));
+ 	} else if (event->pmu == &cstate_pkg_pmu) {
+ 		if (cfg >= PERF_CSTATE_PKG_EVENT_MAX)
+ 			return -EINVAL;
+ 		cfg = array_index_nospec((unsigned long)cfg, PERF_CSTATE_PKG_EVENT_MAX);
+ 		if (!(pkg_msr_mask & (1 << cfg)))
+ 			return -EINVAL;
 -
- 	/* Set interrupt for overflow */
- 	if (iommu_pmu_set_interrupt(iommu))
--		goto cpuhp_free;
-+		goto unregister;
+-		event->event_caps |= PERF_EV_CAP_READ_ACTIVE_PKG;
+-
+ 		event->hw.event_base = pkg_msr[cfg].msr;
+-		cpu = cpumask_any_and(&cstate_pkg_cpu_mask,
+-				      topology_die_cpumask(event->cpu));
+ 	} else if (event->pmu == &cstate_module_pmu) {
+ 		if (cfg >= PERF_CSTATE_MODULE_EVENT_MAX)
+ 			return -EINVAL;
+@@ -352,16 +307,10 @@ static int cstate_pmu_event_init(struct perf_event *event)
+ 		if (!(module_msr_mask & (1 << cfg)))
+ 			return -EINVAL;
+ 		event->hw.event_base = module_msr[cfg].msr;
+-		cpu = cpumask_any_and(&cstate_module_cpu_mask,
+-				      topology_cluster_cpumask(event->cpu));
+ 	} else {
+ 		return -ENOENT;
+ 	}
  
- 	return;
- 
--cpuhp_free:
--	iommu_pmu_cpuhp_free(iommu_pmu);
- unregister:
- 	perf_pmu_unregister(&iommu_pmu->pmu);
- err:
-@@ -892,6 +786,5 @@ void iommu_pmu_unregister(struct intel_iommu *iommu)
- 		return;
- 
- 	iommu_pmu_unset_interrupt(iommu);
--	iommu_pmu_cpuhp_free(iommu_pmu);
- 	perf_pmu_unregister(&iommu_pmu->pmu);
+-	if (cpu >= nr_cpu_ids)
+-		return -ENODEV;
+-
+-	event->cpu = cpu;
+ 	event->hw.config = cfg;
+ 	event->hw.idx = -1;
+ 	return 0;
+@@ -412,84 +361,6 @@ static int cstate_pmu_event_add(struct perf_event *event, int mode)
+ 	return 0;
  }
+ 
+-/*
+- * Check if exiting cpu is the designated reader. If so migrate the
+- * events when there is a valid target available
+- */
+-static int cstate_cpu_exit(unsigned int cpu)
+-{
+-	unsigned int target;
+-
+-	if (has_cstate_core &&
+-	    cpumask_test_and_clear_cpu(cpu, &cstate_core_cpu_mask)) {
+-
+-		target = cpumask_any_but(topology_sibling_cpumask(cpu), cpu);
+-		/* Migrate events if there is a valid target */
+-		if (target < nr_cpu_ids) {
+-			cpumask_set_cpu(target, &cstate_core_cpu_mask);
+-			perf_pmu_migrate_context(&cstate_core_pmu, cpu, target);
+-		}
+-	}
+-
+-	if (has_cstate_pkg &&
+-	    cpumask_test_and_clear_cpu(cpu, &cstate_pkg_cpu_mask)) {
+-
+-		target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
+-		/* Migrate events if there is a valid target */
+-		if (target < nr_cpu_ids) {
+-			cpumask_set_cpu(target, &cstate_pkg_cpu_mask);
+-			perf_pmu_migrate_context(&cstate_pkg_pmu, cpu, target);
+-		}
+-	}
+-
+-	if (has_cstate_module &&
+-	    cpumask_test_and_clear_cpu(cpu, &cstate_module_cpu_mask)) {
+-
+-		target = cpumask_any_but(topology_cluster_cpumask(cpu), cpu);
+-		/* Migrate events if there is a valid target */
+-		if (target < nr_cpu_ids) {
+-			cpumask_set_cpu(target, &cstate_module_cpu_mask);
+-			perf_pmu_migrate_context(&cstate_module_pmu, cpu, target);
+-		}
+-	}
+-	return 0;
+-}
+-
+-static int cstate_cpu_init(unsigned int cpu)
+-{
+-	unsigned int target;
+-
+-	/*
+-	 * If this is the first online thread of that core, set it in
+-	 * the core cpu mask as the designated reader.
+-	 */
+-	target = cpumask_any_and(&cstate_core_cpu_mask,
+-				 topology_sibling_cpumask(cpu));
+-
+-	if (has_cstate_core && target >= nr_cpu_ids)
+-		cpumask_set_cpu(cpu, &cstate_core_cpu_mask);
+-
+-	/*
+-	 * If this is the first online thread of that package, set it
+-	 * in the package cpu mask as the designated reader.
+-	 */
+-	target = cpumask_any_and(&cstate_pkg_cpu_mask,
+-				 topology_die_cpumask(cpu));
+-	if (has_cstate_pkg && target >= nr_cpu_ids)
+-		cpumask_set_cpu(cpu, &cstate_pkg_cpu_mask);
+-
+-	/*
+-	 * If this is the first online thread of that cluster, set it
+-	 * in the cluster cpu mask as the designated reader.
+-	 */
+-	target = cpumask_any_and(&cstate_module_cpu_mask,
+-				 topology_cluster_cpumask(cpu));
+-	if (has_cstate_module && target >= nr_cpu_ids)
+-		cpumask_set_cpu(cpu, &cstate_module_cpu_mask);
+-
+-	return 0;
+-}
+-
+ static const struct attribute_group *core_attr_update[] = {
+ 	&group_cstate_core_c1,
+ 	&group_cstate_core_c3,
+@@ -526,6 +397,7 @@ static struct pmu cstate_core_pmu = {
+ 	.stop		= cstate_pmu_event_stop,
+ 	.read		= cstate_pmu_event_update,
+ 	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT | PERF_PMU_CAP_NO_EXCLUDE,
++	.scope		= PERF_PMU_SCOPE_CORE,
+ 	.module		= THIS_MODULE,
+ };
+ 
+@@ -541,6 +413,7 @@ static struct pmu cstate_pkg_pmu = {
+ 	.stop		= cstate_pmu_event_stop,
+ 	.read		= cstate_pmu_event_update,
+ 	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT | PERF_PMU_CAP_NO_EXCLUDE,
++	.scope		= PERF_PMU_SCOPE_PKG,
+ 	.module		= THIS_MODULE,
+ };
+ 
+@@ -556,6 +429,7 @@ static struct pmu cstate_module_pmu = {
+ 	.stop		= cstate_pmu_event_stop,
+ 	.read		= cstate_pmu_event_update,
+ 	.capabilities	= PERF_PMU_CAP_NO_INTERRUPT | PERF_PMU_CAP_NO_EXCLUDE,
++	.scope		= PERF_PMU_SCOPE_CLUSTER,
+ 	.module		= THIS_MODULE,
+ };
+ 
+@@ -810,9 +684,6 @@ static int __init cstate_probe(const struct cstate_model *cm)
+ 
+ static inline void cstate_cleanup(void)
+ {
+-	cpuhp_remove_state_nocalls(CPUHP_AP_PERF_X86_CSTATE_ONLINE);
+-	cpuhp_remove_state_nocalls(CPUHP_AP_PERF_X86_CSTATE_STARTING);
+-
+ 	if (has_cstate_core)
+ 		perf_pmu_unregister(&cstate_core_pmu);
+ 
+@@ -827,11 +698,6 @@ static int __init cstate_init(void)
+ {
+ 	int err;
+ 
+-	cpuhp_setup_state(CPUHP_AP_PERF_X86_CSTATE_STARTING,
+-			  "perf/x86/cstate:starting", cstate_cpu_init, NULL);
+-	cpuhp_setup_state(CPUHP_AP_PERF_X86_CSTATE_ONLINE,
+-			  "perf/x86/cstate:online", NULL, cstate_cpu_exit);
+-
+ 	if (has_cstate_core) {
+ 		err = perf_pmu_register(&cstate_core_pmu, cstate_core_pmu.name, -1);
+ 		if (err) {
+@@ -844,6 +710,8 @@ static int __init cstate_init(void)
+ 
+ 	if (has_cstate_pkg) {
+ 		if (topology_max_dies_per_package() > 1) {
++			/* CLX-AP is multi-die and the cstate is die-scope */
++			cstate_pkg_pmu.scope = PERF_PMU_SCOPE_DIE;
+ 			err = perf_pmu_register(&cstate_pkg_pmu,
+ 						"cstate_die", -1);
+ 		} else {
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index 9316c39..2101ae2 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -152,7 +152,6 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
+ 	CPUHP_AP_PERF_X86_STARTING,
+ 	CPUHP_AP_PERF_X86_AMD_IBS_STARTING,
+-	CPUHP_AP_PERF_X86_CSTATE_STARTING,
+ 	CPUHP_AP_PERF_XTENSA_STARTING,
+ 	CPUHP_AP_ARM_VFP_STARTING,
+ 	CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
+@@ -209,7 +208,6 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_X86_AMD_UNCORE_ONLINE,
+ 	CPUHP_AP_PERF_X86_AMD_POWER_ONLINE,
+ 	CPUHP_AP_PERF_X86_RAPL_ONLINE,
+-	CPUHP_AP_PERF_X86_CSTATE_ONLINE,
+ 	CPUHP_AP_PERF_S390_CF_ONLINE,
+ 	CPUHP_AP_PERF_S390_SF_ONLINE,
+ 	CPUHP_AP_PERF_ARM_CCI_ONLINE,
 
