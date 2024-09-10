@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-323754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33849742F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C89974324
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A826728B2A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D00F288FAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F15F1A705E;
-	Tue, 10 Sep 2024 19:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TVPqYnYt"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E861AB52A;
+	Tue, 10 Sep 2024 19:09:05 +0000 (UTC)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3191A08A6;
-	Tue, 10 Sep 2024 19:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905AB1A76CD;
+	Tue, 10 Sep 2024 19:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995195; cv=none; b=hT+wTe7PDWAGlKUhyDYduAHvpeywYJTIUwscr6OVfJ2yV1N1U/8VMwYwnHRh1GOECpqWy0tE43wkcR6OlZdSI3HhGRo7v9RJZ9ARWvYsQMbxPMhLT0e9SfCwJCIbTyZ+Zwko+UL4HZwKncN2SPTXZVRLalZ5CtuJKHGEBnXZjaE=
+	t=1725995345; cv=none; b=Ez8elz/zYZIGTqX2DnTLmmOZP5FRPMMSu6Anf6HTB0F4y6TaJZGib2vUYJn/UM767orvvo7N5tWaYDqEBEgH+RsgsUJnZ+SNrIodWdbEee5aUXQEB+kdOn4giX60f+if6uQKQIaxN96K+woph6DkjuF0eQN/kgO/MRlvpblJrEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995195; c=relaxed/simple;
-	bh=N1mGjLqDGutWemkHf9Z3LwVK5s7YVZi9Tn9xqvgiQXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hg7aNwQqVTNbSnjYMOjvOROBtbgS6YS/7EDO/tWnKR/KQhQ1BSGoSTazh1o5GgjhPGH2+I7kfbGwAqxWQiE3gP9afhEanw1vXOiDEPvXzg10hbxK2lRlHraEToUropV0VRdHXXDClxqIwNMUvkSWjBNVk1395LvNw1HUbLBseSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TVPqYnYt; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ChL/YEahALI4OeYSLmEr7fBrkTltEQI0iMrMHT81QuU=; b=TVPqYnYthS2I29wCxwNXXM0YdA
-	U1NvRPJPMQcaART58a7jWuA+lDhRIwnQe3C7R1Lwj9Vjo2FVA667DBIx902lcf40SnfF3OvWf629j
-	+VFFytIrLhw2VxbkDoPoq0EF5ySWnV/x4V3thix2tixCliiQfhVFGyNT7thCwypi6AjkQ2mfG7AJC
-	uOIA3yyQ1S9dRyXxbyjmApbcJHVwdF73Iy45QsSHaeUtP/31HJye/lWhxrmcQVL6DFIEot0SaJFSW
-	As9ZP4Rhy6mNAs9eTQUuqBs2boAb+vMqbsoKRD+D0yndIAUVPBNhWYJxYUz25dz3pGTMZ772MW4pZ
-	l8JWwkHw==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1so6Ba-0007jv-So; Tue, 10 Sep 2024 21:05:58 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Date: Tue, 10 Sep 2024 21:08:26 +0200
-Message-ID: <2376712.1SvkZsmPdQ@diego>
-In-Reply-To:
- <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
-References:
- <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
- <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+	s=arc-20240116; t=1725995345; c=relaxed/simple;
+	bh=W8wTMnQuqBGPgvSwNT0DrlwXeeQbppq+ym/XG4dBfDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k1rebYBqH2hbxHGU3s0tTXZQll7knl+AWdnz0iHl4KDD3UF6qvVNlv0/vETZjYGa9fO+/VDo+DDsOZnzskSLoMlpH+UnFN3fRXx2v+E3uUj+i+RmbGvgKi2UtnuGn/TKL9a1nS1TZcI2ui7Ey7jgOAun4LWAzzOSBhbRDjmLQB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-717911ef035so4597073b3a.3;
+        Tue, 10 Sep 2024 12:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725995343; x=1726600143;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C0B13YwRmlaW1LgbTA4G5pfYntFaiIOALZ9EjPmoFa0=;
+        b=HWfzrmI49wnDqD682abrJFC0EwHIbS9we7kkQqNqGOVaLsdkaEopWt60GgjFLZtKrc
+         sJYcFyo4fCV3wz4NzxHPq+8NeG2A6RorQGA8NNJTBrYenHGJodPmvm9ZsPyxUYlgJOSc
+         /wQFZvhhFoBC7gAOfV7QW2Iw79ozce6AvS/5+9uMLkjdkkOHc6hxXH6uAa6SH4IV0IsO
+         PqpoRwM2a4po9DUqk27VIq+F+wWLgcwdSehWV6NIYn1S3JbK9wgrquzyznzqh//g2vGD
+         x/rxrFC7fNRkScqau1lvYNtgttlYDWBoYfzfDJvvdJA+2VF2CaE51jLv8EwIYON32dP3
+         EvFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFgB6X30/cBbQbg02pA5C+S9Ps+V5JyFg3/1BdNC4lN4QTMNmWnzBGRi1gkHZ0yA4m1ZuzshXbGHiw/gM=@vger.kernel.org, AJvYcCXeVazDq+1LFMRYoMqdfte/wavzIljdmwCm9A8vDDflQ4xozoUjijvkcv0o/UZKdjb0osL1nmCbFCFg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9B33K/3eHLuJYnJO7tWJrMGr0vaCTEYiO1hd11mqypLGMoYim
+	ow6nwHv0KqkKH0h3+SsUlp9EW0NMAXt9lbgXYXIMqZ9QOa7seT2U
+X-Google-Smtp-Source: AGHT+IF6UIsMNPzFHnX46S5WXa+yxR5K0nzIys4ygvC5KZV8gpp1njil3a8k5+ugHRobMNspiaFXhA==
+X-Received: by 2002:a05:6a00:189a:b0:710:6f54:bcac with SMTP id d2e1a72fcca58-718d5decd4fmr16303738b3a.1.1725995342688;
+        Tue, 10 Sep 2024 12:09:02 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823cf3e5dsm5983903a12.35.2024.09.10.12.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 12:09:01 -0700 (PDT)
+Date: Wed, 11 Sep 2024 04:08:59 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+Message-ID: <20240910190859.GA2136712@rocinante>
+References: <CA+-6iNxfmeBhHK57pUGtJEbBCuhEi8TQCVFPxPbAutkpJVwksA@mail.gmail.com>
+ <20240910175927.GA590299@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910175927.GA590299@bhelgaas>
 
-Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
-> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
-> Samsung IP block.
-> 
-> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
-> without audio, CEC or any of the HDMI 2.1 specific features.
-> 
-> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Hello,
 
 [...]
+> > > Will do.
+> > 
+> > It is not clear to me if you want a new series -- which would be V7 --
+> > or you are okay with the current series V6.  If the latter, someone
+> > sent in a fixup commit which must be included.
+> > Please advise.
 
-> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
-> index 3ff7b21c0414..3eab662a5a1d 100644
-> --- a/drivers/gpu/drm/rockchip/Makefile
-> +++ b/drivers/gpu/drm/rockchip/Makefile
-> @@ -11,6 +11,7 @@ rockchipdrm-$(CONFIG_ROCKCHIP_VOP) += rockchip_drm_vop.o rockchip_vop_reg.o
+Apologies for the confusion.  I though it was obvious that I will go ahead
+and fix the code on the branch directly.
 
-> +static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
-> +				    void *data)
-> +{
-> +	static const char * const clk_names[] = {
-> +		"pclk", "earc", "aud", "hdp", "hclk_vo1",
-> +		"ref" /* keep "ref" last */
-> +	};
+> Krzysztof amended this on the branch.  Take a look here and verify
+> that it makes sense to you:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-brcmstb.c?h=controller/brcmstb#n752
+> 
+> If that looks right to you, no need to post a new v7.
+> 
+> I think Krzysztof also integrated an "int num_inbound_wins" fix; is
+> that the one you mean?  If I'm thinking of the right one, you can
+> check that at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-brcmstb.c?h=controller/brcmstb#n1034
 
-[...]
+Let me know if anything else needs doing.  But, if anything, then we need
+to be quick about it.
 
-> +	for (i = 0; i < ARRAY_SIZE(clk_names); i++) {
-> +		clk = devm_clk_get_enabled(hdmi->dev, clk_names[i]);
-> +
-> +		if (IS_ERR(clk)) {
-> +			ret = PTR_ERR(clk);
-> +			if (ret != -EPROBE_DEFER)
-> +				drm_err(hdmi, "Failed to get %s clock: %d\n",
-> +					clk_names[i], ret);
-> +			return ret;
-> +		}
-> +	}
-> +	hdmi->ref_clk = clk;
-
-How about using devm_clk_bulk_get_all_enable() for everything except the
-refclk and a separate call to devm_clk_get_enabled() for that refclk .
-
-That hdmi->ref_clk just accidentially falls out of that loop at the end
-looks somewhat strange, so getting and keeping that refclk
-separately would make this look cleaner.
-
-
+	Krzysztof
 
