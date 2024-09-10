@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-322988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DAE97364E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9153973651
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE39B2268C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600521F2644D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708A18F2D5;
-	Tue, 10 Sep 2024 11:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7B918C02E;
+	Tue, 10 Sep 2024 11:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Jtgfdaod"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKZsUSVr"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01117BB08;
-	Tue, 10 Sep 2024 11:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EA017BB08;
+	Tue, 10 Sep 2024 11:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725968088; cv=none; b=pdYV9mYC0//7EIxEz5iAykdwgmCWYBwEenbUpBwGBzIlRkqxzzofgVXmVtExlfp+cN6R3HaS5P/DDhxQeVdUKuTZshZLIQjflJKtqknoLJAdA/W0//X14Z/b8JaWKawHh5+O5lgewWjE/uUWjNey2lplt3xzQXiKeki8IBqtc1k=
+	t=1725968105; cv=none; b=JE+hNzgQpjCQyjYj1UNvJi9wQWo63xm0RGowuO8STrevDoM8ljuTWW8WBDX80pg+pv1WGOVKsyiGebkp+R0XWNJAxXgZYfsLUtNKCIIC73EJc/9cOXVpWtqpDbU2xL41pymXl8RrJrsz+UxhAJOjieL0C5mQgFp2AQyWZqcaBls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725968088; c=relaxed/simple;
-	bh=ERbXx5RE7KlaJmidB1eLisLhUg5Fqi/VT3Ka6Cft4/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YCMAVYWF/R+yO1VoLUVVtSHwtMhtidlWXgbXzItmks+XNLT1LDgi0Vs9bv3HxzfX4JaYN3+TSuxtLz8eY3T70gl4cAWJDo83quViiYhZ/hM2KdMDFD4q2PgQPX+r/+Epb/3gGI7x7PeWUGQGjYixYw2acrpr0f02q45evtBOEU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Jtgfdaod; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A0Dndr015345;
-	Tue, 10 Sep 2024 11:34:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=ozd2VjT3Z9e2d1FwRYWjU0FvXx
-	kv2UHK8MoAOAsjsqw=; b=JtgfdaodQYbrMH8eaCp6chU+4VNoEaJdbvV4vBtN1V
-	1oGGH6FGBuPLWOL8sQ0FR/Wz8GWb0FFRSMEdGOCx/SH9hqbvcpyUBeheu0b9biAN
-	yW913xanH1/BmbnjcZ2oN71z/ORWsd/Wx4kLlamnD3/Wd9KezuCUbIG1R6pl+Lih
-	9dqFQI9g9E7K2WfJorod0gtcqpWfPasEJ7rZvyu0u6dLYRSlYEI8ZpYytfznVcdY
-	yAVDFtYYWVCGLXZDDTGHVVHVdclAmRCnoVX0laIVGTzJD4TxXvhqI7JqhxQIjAjs
-	Uh3AcbwSgSgcBIjIezf+nUtvppvaX+Hg5feNeBn013nA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyf28x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 11:34:44 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48A7q6AL032504;
-	Tue, 10 Sep 2024 11:34:43 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h1j0kbyr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 11:34:43 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ABYgqZ22217246
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 11:34:42 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CA3458053;
-	Tue, 10 Sep 2024 11:34:42 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 07A2D58043;
-	Tue, 10 Sep 2024 11:34:41 +0000 (GMT)
-Received: from jason-laptop.home.arpa (unknown [9.61.6.233])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Sep 2024 11:34:40 +0000 (GMT)
-From: "Jason J. Herne" <jjherne@linux.ibm.com>
-To: linux-s390@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, fiuczy@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        hca@linux.ibm.com, "Jason J. Herne" <jjherne@linux.ibm.com>
-Subject: [PATCH v2] s390/vfio-ap: Driver feature advertisement
-Date: Tue, 10 Sep 2024 07:34:40 -0400
-Message-ID: <20240910113440.8107-1-jjherne@linux.ibm.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725968105; c=relaxed/simple;
+	bh=Rg5PN2PkV2Um3WGF1tS0FkDKm4Jao3qaAGmi5tBMgY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jQgZHx3i80Gvvuhiz4dcfJNnzNdiN8DCrwgtrMDkaY1CNE78iLTANLRpR2u4Z+jnxG0Nz88/XcCKC9dvY3cEgY8IqG4CxBSeAH+m3clWDhSnXDCrVvA21t34nvRj9E7Y1Lw39UBTlIjkpAoeelP2KT5aPtDn65LA+qx/Wg39+tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKZsUSVr; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45832b2784bso5973201cf.3;
+        Tue, 10 Sep 2024 04:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725968103; x=1726572903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m4SZ8rld03euXTwsLUYIcEQpPdlukkUlkqr7Bv4R1+s=;
+        b=fKZsUSVr9i1uLAwuxne4EvRX49jPt3ZAe/ckca/Q07YKfZgQb0dHnqpGwoHQgBGcq6
+         A8cqGgmBCSPbxjVD99mTX4htZk/A8tA3bbkRSxghcdacPsyDeyLJeG/6xIngUuYrBSFj
+         /ex/8oVONFkn0Ot2JHJz2RJOMTAUguxzyatStBKR4Mis7IVwcCPYu19DYU1pgmCzF/5s
+         WOEp/KWPGBM24TkrgDha2xR/wgp/JckF8koH1GpjZq55kYb3dnKvBnVE5KcXZuI1i7Qk
+         VfnEO9UZq45HJrE9QyMe/27et6eGosd3HGp9drUrxfm9nIo9RSyuJSb1n+w4pp51M7ZA
+         1P1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725968103; x=1726572903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m4SZ8rld03euXTwsLUYIcEQpPdlukkUlkqr7Bv4R1+s=;
+        b=IR0CRGdGdfFpvJJdRSj09nEYKs3llBoDxmzJtCi7J3xnHYc4Kh621rRdOXmjCsSdG+
+         UjuUBlRtUIaXO/E6n+rkrN5mpCcYY4Fhk075/b2Uwn3YmXBKVixKDSHjg8/lTts5nsLm
+         XtAQqInY3dEatxX2I0rkfyo1bnP18UFZorwbMv5KhJ/NUvDI2CkLvMPhpD4D85YYNHYw
+         FxdRAKeIIEBh/qDfn6/jSOE9g8e/p7UZofiDkGHhx457ipxbKNI+pxr+HCAdFVFUWfWA
+         hAU9ksNSKsmBKrf1YTdlKa5hNi+kG5DTuIO0msDNE6nZekRcTSfHUTcnN6Vk3ekO0TT4
+         9P6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW57SMWc7xHzMpgyFRtpy8/v+apEzOLHx8Qtq8Nktbu9CTQ1Lyy6iNJbanoIYyHG4a9ImU62mlsAJFXN2k=@vger.kernel.org, AJvYcCWGZ9eTrAzuUzvd0tDsdyQUwXclLNeelFOsMbQxZhHp6sLQVew/DBakPkWSqi2TJsGvvkv6lIYt2lL3@vger.kernel.org, AJvYcCWgbgToYBHAlcR30vzDcChSES0QYCAOarfbHMeS6eJtUgRQAh96cddglnOJ/s8o1Q0cfrxpJcfIaocdFDnb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3lreQimU/9tjrS3TyH7RaetMMSYCEJL+gVrUJMYDi8WinAXTw
+	PTA6uC8GsQnb+pyIHFV5hvZkuVopEpGdSLq+0YPpibZlvpLcohqBk4OqFhDKDBLct6Z8uXm3lUj
+	4eC/TrT1Ldr6g+URViWte1hZ5IJY=
+X-Google-Smtp-Source: AGHT+IHWVIW11vGept4eUOpnLCpX6Ts6tf++sRjP2wV6wU9eTwvRnbvwKXwKawRbLo4KHZrBWFC0ZynTgBiV1Om/KXU=
+X-Received: by 2002:a05:622a:6f0f:b0:458:23e5:1342 with SMTP id
+ d75a77b69052e-45823e5172bmr110385861cf.56.1725968102360; Tue, 10 Sep 2024
+ 04:35:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zx5hysJqgOt-weBxhkNFyEdwnIPAWjQH
-X-Proofpoint-ORIG-GUID: zx5hysJqgOt-weBxhkNFyEdwnIPAWjQH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=602 priorityscore=1501
- adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100086
+References: <20240908113027.69471-1-kuzhylol@gmail.com> <dcbpkytpp56vqewjjqagdj7zful7l4kprhc5bjnu656pwgy4bn@3op2dcj6o3e3>
+In-Reply-To: <dcbpkytpp56vqewjjqagdj7zful7l4kprhc5bjnu656pwgy4bn@3op2dcj6o3e3>
+From: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+Date: Tue, 10 Sep 2024 13:34:52 +0200
+Message-ID: <CA+4v9GtB9_fnLXFcSUmpPdiSZOYfZB3OXq=ai6nUuwqmgw3FzA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: input: touchscreen: add Hynitron CST816X
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, igor.opaniuk@gmail.com, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jeff LaBundy <jeff@labundy.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Advertise features of the driver for the benefit of automated tooling
-like Libvirt and mdevctl.
-
-Signed-off-by: Jason J. Herne <jjherne@linux.ibm.com>
-Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Boris Fiuczynski <fiuczy@linux.ibm.com>
----
- Documentation/arch/s390/vfio-ap.rst | 34 +++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_drv.c   | 13 +++++++++++
- 2 files changed, 47 insertions(+)
-
-diff --git a/Documentation/arch/s390/vfio-ap.rst b/Documentation/arch/s390/vfio-ap.rst
-index ea744cbc8687..22f1965af500 100644
---- a/Documentation/arch/s390/vfio-ap.rst
-+++ b/Documentation/arch/s390/vfio-ap.rst
-@@ -999,6 +999,40 @@ the vfio_ap mediated device to which it is assigned as long as each new APQN
- resulting from plugging it in references a queue device bound to the vfio_ap
- device driver.
- 
-+Driver Features
-+===============
-+The vfio_ap driver exposes a sysfs file containing supported features.
-+This exists so third party tools (like Libvirt and mdevctl) can query the
-+availability of specific features.
-+
-+The features list can be found here: /sys/bus/matrix/devices/matrix/features
-+
-+Entries are \n delimited. Each entry contains a key value pair. The key is made
-+up of a combination of alphanumeric and underscore characters. The separator
-+consists of a space, a colon and then another space. The value consists of
-+alphanumeric, space, and underscore characters.
-+
-+Example:
-+cat /sys/bus/matrix/devices/matrix/features
-+flags : guest_matrix dyn ap_config
-+
-+Presently only a single field named flags is defined. It is meant to advertise a
-+list of features the driver provides. The flags fields advertises the following
-+features:
-+
-+---------------+---------------------------------------------------------------+
-+| Flag         | Description                                                   |
-++==============+===============================================================+
-+| guest_matrix | guest_matrix attribute exists. It reports the matrix of       |
-+|              | adapters and domains that are or will be passed through to a  |
-+|              | guest when the mdev is attached to it.                        |
-++--------------+---------------------------------------------------------------+
-+| hotplug      | Indicates hot plug/unplug of AP adapters, domains and control |
-+|              | domains for a guest to which the mdev is attached.            |
-++------------+-----------------------------------------------------------------+
-+| ap_config    | ap_config interface for one-shot modifications to mdev config |
-++--------------+---------------------------------------------------------------+
-+
- Limitations
- ===========
- Live guest migration is not supported for guests using AP devices without
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index 4aeb3e1213c7..e3fc444ff404 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -26,6 +26,18 @@ MODULE_LICENSE("GPL v2");
- struct ap_matrix_dev *matrix_dev;
- debug_info_t *vfio_ap_dbf_info;
- 
-+static ssize_t features_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "flags : guest_matrix hotplug ap_config\n");
-+}
-+static DEVICE_ATTR_RO(features);
-+
-+static struct attribute *matrix_dev_attrs[] = {
-+	&dev_attr_features.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(matrix_dev);
-+
- /* Only type 10 adapters (CEX4 and later) are supported
-  * by the AP matrix device driver
-  */
-@@ -68,6 +80,7 @@ static struct device_driver matrix_driver = {
- 	.name = "vfio_ap",
- 	.bus = &matrix_bus,
- 	.suppress_bind_attrs = true,
-+	.dev_groups = matrix_dev_groups,
- };
- 
- static int vfio_ap_matrix_dev_create(void)
--- 
-2.46.0
-
+On Mon, Sep 9, 2024 at 8:25=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Sun, Sep 08, 2024 at 01:30:26PM +0200, Oleh Kuzhylnyi wrote:
+> > Add documentation for the Hynitron CST816X touchscreen bindings.
+> >
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > Signed-off-by: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+> > ---
+> >  .../input/touchscreen/hynitron,cst816s.yaml   | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/input/touchscreen=
+/hynitron,cst816s.yaml
+> >
+>
+> I asked to do some minor tweak if new version was going to be send...
+> eh...
+Wow, I just saw that. Thank you for bringing it to my attention.
+>
+> Best regards,
+> Krzysztof
+>
 
