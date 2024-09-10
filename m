@@ -1,301 +1,198 @@
-Return-Path: <linux-kernel+bounces-323031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1449736C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 567AA973669
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1862528E999
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9B9287503
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D488E19A281;
-	Tue, 10 Sep 2024 12:02:47 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0760199FBE;
-	Tue, 10 Sep 2024 12:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB48918C003;
+	Tue, 10 Sep 2024 11:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o2Xp9no5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163A1188CDF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725969767; cv=none; b=QxCRudpC9R0u6+3HWBtqExXkL6pdp8xwqSIWBf77vuqGKFypy6HfkpfDb8gGIhGURAMaG97qHT9Fijs4JSoFeI9b56YTTBtL/pAm+Q4RukQsiqZLFcvhXaHNcmgI5TrhDMwMuWdzXr62NO50VLHnKmjZmFjnsZbhBcQ+ijq/b9A=
+	t=1725968793; cv=none; b=Fg9IPh0ixliS3eJAn5uMc/n0wt7ygxwvY/HshpIRA3b/KmuQNKjQvCpSAAvBFslKpBVivt3wb8ovgtc+ggxPGMCMBlhA2e1lSx9Pp/+ZSKr250ztX1yNzie35/3PLkFiGz+wP6IRqcmiiMf+Dae1/hdyAP5N6HInoEmcsGUiqQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725969767; c=relaxed/simple;
-	bh=0sGCuxGAGG2RC7q/gsCHk89YH++xo72bXbcBO10obUY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W//S4EDvfZje9I82wpz+MuFVgN+ZfWRs4XqVBE7jJZSED2geCiPjWBcC8ddJ8RTxsmkNijc0tbvVnEAl2Dtg9QDbr5/1unfan3b+LxmgLsvu64ceYqjtMpalQXtg5iqbbmpO7IfpKJVslyyqddxodwKfub2VxUch4HqSJeqBnVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.185])
-	by gateway (Coremail) with SMTP id _____8CxyuldNeBms68DAA--.8591S3;
-	Tue, 10 Sep 2024 20:02:37 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.185])
-	by front2 (Coremail) with SMTP id qciowMDx_OVVNeBmE2MDAA--.16225S7;
-	Tue, 10 Sep 2024 20:02:35 +0800 (CST)
-From: Xianglai Li <lixianglai@loongson.cn>
-To: linux-kernel@vger.kernel.org
-Cc: Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xianglai li <lixianglai@loongson.cn>
-Subject: [PATCH V3 11/11] LoongArch: KVM: Add irqfd support
-Date: Tue, 10 Sep 2024 19:45:01 +0800
-Message-Id: <20240910114501.4062476-6-lixianglai@loongson.cn>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240910114501.4062476-1-lixianglai@loongson.cn>
-References: <20240910114501.4062476-1-lixianglai@loongson.cn>
+	s=arc-20240116; t=1725968793; c=relaxed/simple;
+	bh=jKQrRwUJXvL2TXd07fChTc4rDKbe/39gfG26qL6VJiE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ERwNxqmBhBLXim/DXuw5I4/itYSeQSjp+9hpgkkXB9H7VgCo85Q1KodziSdeQZK6UWv8I1RUiHCghQA9XkKIeAoiM+sE+pS5x9XAMidIQ5u3Pa/bkZn+lPVepb7zlJfpsk4S1XHarBN5HvA9xDslmntFerCHLYUPBQ4CkegyHp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o2Xp9no5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A7Bfh8006300;
+	Tue, 10 Sep 2024 11:45:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:mime-version:content-type; s=pp1; bh=B3iYgtEZ/V1YOM0UYZtS07sYxt
+	EeCMiv99aARL4Nl/o=; b=o2Xp9no50b6NtV0/7SVxaWU4+3NwA6xScAxP2CdY6k
+	twG2UeYDsztY2JdLvj5lQWLaL3pLmD7irJM8lSu3dEHRBHHebWpiLjck7QZ0ZC7M
+	aM95a2/0SgcZ+UcO63hTW8D7zDQhr5Z09JIthFO+I3vtmFOK1aJWTK4u7c5ZOMwD
+	CieNMVC7HAaE6vuYT54HyL5UPRiWvjKCdeiaxS+6pznKeyQ9jQiwjBkBGMukmnqF
+	ZRYBojgb7FTBQL+2TFTZH6U0Ky6flLUh0Yn4vRKNz2Is3pE41N89N8DMPjrcsKOD
+	dcH3u+B+YW+XOLqObM8Ye3vsmBvDIwSNSW8wUJv0vE5g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejaf8u6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 11:45:55 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48ABjtFL018334;
+	Tue, 10 Sep 2024 11:45:55 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejaf8u1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 11:45:55 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48ABYNFr003155;
+	Tue, 10 Sep 2024 11:45:54 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15tuf6t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 11:45:53 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ABjqb755902576
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Sep 2024 11:45:52 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4860A20043;
+	Tue, 10 Sep 2024 11:45:52 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB68920040;
+	Tue, 10 Sep 2024 11:45:51 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 10 Sep 2024 11:45:51 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+        kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+        youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 00/24] Complete EEVDF
+In-Reply-To: <20240727102732.960974693@infradead.org> (Peter Zijlstra's
+	message of "Sat, 27 Jul 2024 12:27:32 +0200")
+References: <20240727102732.960974693@infradead.org>
+Date: Tue, 10 Sep 2024 13:45:51 +0200
+Message-ID: <yt9d4j6nenps.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qciowMDx_OVVNeBmE2MDAA--.16225S7
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: rC8LU-g9AFx_aZKuWpaBkEHbAX0-TTM8
+X-Proofpoint-GUID: IdZUMOph1JKdKEY_KeNjeIsa0LFZOpYC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409100086
 
-Enable the KVM_IRQ_ROUTING KVM_IRQCHIP KVM_MSI configuration item,
-increase the KVM_CAP_IRQCHIP capability, and implement the query
-interface of the kernel irqchip.
+Peter Zijlstra <peterz@infradead.org> writes:
 
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
----
-Cc: Bibo Mao <maobibo@loongson.cn> 
-Cc: Huacai Chen <chenhuacai@kernel.org> 
-Cc: kvm@vger.kernel.org 
-Cc: loongarch@lists.linux.dev 
-Cc: Paolo Bonzini <pbonzini@redhat.com> 
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn> 
-Cc: WANG Xuerui <kernel@xen0n.name> 
-Cc: Xianglai li <lixianglai@loongson.cn> 
+> Hi all,
+>
+> So after much delay this is hopefully the final version of the EEVDF patches.
+> They've been sitting in my git tree for ever it seems, and people have been
+> testing it and sending fixes.
+>
+> I've spend the last two days testing and fixing cfs-bandwidth, and as far
+> as I know that was the very last issue holding it back.
+>
+> These patches apply on top of queue.git sched/dl-server, which I plan on merging
+> in tip/sched/core once -rc1 drops.
+>
+> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
+>
+>
+> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
+>
+>  - split up the huge delay-dequeue patch
+>  - tested/fixed cfs-bandwidth
+>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
+>  - SCHED_BATCH is equivalent to RESPECT_SLICE
+>  - propagate min_slice up cgroups
+>  - CLOCK_THREAD_DVFS_ID
 
- arch/loongarch/kvm/Kconfig        |  3 ++
- arch/loongarch/kvm/Makefile       |  1 +
- arch/loongarch/kvm/intc/pch_pic.c | 27 ++++++++++
- arch/loongarch/kvm/irqfd.c        | 87 +++++++++++++++++++++++++++++++
- arch/loongarch/kvm/vm.c           | 19 ++++++-
- 5 files changed, 136 insertions(+), 1 deletion(-)
- create mode 100644 arch/loongarch/kvm/irqfd.c
+I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
 
-diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
-index 248744b4d086..2947f93efb34 100644
---- a/arch/loongarch/kvm/Kconfig
-+++ b/arch/loongarch/kvm/Kconfig
-@@ -30,6 +30,9 @@ config KVM
- 	select HAVE_KVM_READONLY_MEM
- 	select KVM_XFER_TO_GUEST_WORK
- 	select SCHED_INFO
-+	select HAVE_KVM_IRQ_ROUTING
-+	select HAVE_KVM_IRQCHIP
-+	select HAVE_KVM_MSI
- 	help
- 	  Support hosting virtualized guest machines using
- 	  hardware virtualization extensions. You will need
-diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
-index 97b2adf08206..3a01292f71cc 100644
---- a/arch/loongarch/kvm/Makefile
-+++ b/arch/loongarch/kvm/Makefile
-@@ -21,5 +21,6 @@ kvm-y += vm.o
- kvm-y += intc/ipi.o
- kvm-y += intc/eiointc.o
- kvm-y += intc/pch_pic.o
-+kvm-y += irqfd.o
- 
- CFLAGS_exit.o	+= $(call cc-option,-Wno-override-init,)
-diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/intc/pch_pic.c
-index 94e964a617e0..41469a426cca 100644
---- a/arch/loongarch/kvm/intc/pch_pic.c
-+++ b/arch/loongarch/kvm/intc/pch_pic.c
-@@ -447,6 +447,28 @@ static int kvm_pch_pic_set_attr(struct kvm_device *dev,
- 	return ret;
- }
- 
-+static int kvm_setup_default_irq_routing(struct kvm *kvm)
-+{
-+	struct kvm_irq_routing_entry *entries;
-+
-+	u32 nr = KVM_IRQCHIP_NUM_PINS;
-+	int i, ret;
-+
-+	entries = kcalloc(nr, sizeof(*entries), GFP_KERNEL);
-+	if (!entries)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nr; i++) {
-+		entries[i].gsi = i;
-+		entries[i].type = KVM_IRQ_ROUTING_IRQCHIP;
-+		entries[i].u.irqchip.irqchip = 0;
-+		entries[i].u.irqchip.pin = i;
-+	}
-+	ret = kvm_set_irq_routing(kvm, entries, nr, 0);
-+	kfree(entries);
-+	return 0;
-+}
-+
- static void kvm_pch_pic_destroy(struct kvm_device *dev)
- {
- 	struct kvm *kvm;
-@@ -463,6 +485,7 @@ static void kvm_pch_pic_destroy(struct kvm_device *dev)
- 
- static int kvm_pch_pic_create(struct kvm_device *dev, u32 type)
- {
-+	int ret;
- 	struct loongarch_pch_pic *s;
- 	struct kvm *kvm = dev->kvm;
- 
-@@ -470,6 +493,10 @@ static int kvm_pch_pic_create(struct kvm_device *dev, u32 type)
- 	if (kvm->arch.pch_pic)
- 		return -EINVAL;
- 
-+	ret = kvm_setup_default_irq_routing(kvm);
-+	if (ret)
-+		return -ENOMEM;
-+
- 	s = kzalloc(sizeof(struct loongarch_pch_pic), GFP_KERNEL);
- 	if (!s)
- 		return -ENOMEM;
-diff --git a/arch/loongarch/kvm/irqfd.c b/arch/loongarch/kvm/irqfd.c
-new file mode 100644
-index 000000000000..bf67f329ebc9
---- /dev/null
-+++ b/arch/loongarch/kvm/irqfd.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#include <linux/kvm_host.h>
-+#include <trace/events/kvm.h>
-+#include <asm/kvm_pch_pic.h>
-+
-+static int kvm_set_ioapic_irq(struct kvm_kernel_irq_routing_entry *e,
-+					struct kvm *kvm, int irq_source_id,
-+					int level, bool line_status)
-+{
-+	/* ioapic pin (0 ~ 64) <---> gsi(0 ~ 64) */
-+	pch_pic_set_irq(kvm->arch.pch_pic, e->irqchip.pin, level);
-+
-+	return 0;
-+}
-+
-+/*
-+ * kvm_set_routing_entry: populate a kvm routing entry
-+ * from a user routing entry
-+ *
-+ * @kvm: the VM this entry is applied to
-+ * @e: kvm kernel routing entry handle
-+ * @ue: user api routing entry handle
-+ * return 0 on success, -EINVAL on errors.
-+ */
-+int kvm_set_routing_entry(struct kvm *kvm,
-+			struct kvm_kernel_irq_routing_entry *e,
-+			const struct kvm_irq_routing_entry *ue)
-+{
-+	int r = -EINVAL;
-+
-+	switch (ue->type) {
-+	case KVM_IRQ_ROUTING_IRQCHIP:
-+		e->set = kvm_set_ioapic_irq;
-+
-+		e->irqchip.irqchip = ue->u.irqchip.irqchip;
-+		e->irqchip.pin = ue->u.irqchip.pin;
-+
-+		if (e->irqchip.pin >= KVM_IRQCHIP_NUM_PINS)
-+			goto out;
-+		break;
-+	case KVM_IRQ_ROUTING_MSI:
-+		e->set = kvm_set_msi;
-+		e->msi.address_lo = ue->u.msi.address_lo;
-+		e->msi.address_hi = ue->u.msi.address_hi;
-+		e->msi.data = ue->u.msi.data;
-+		break;
-+	default:
-+		goto out;
-+	}
-+	r = 0;
-+out:
-+	return r;
-+}
-+
-+int kvm_arch_set_irq_inatomic(struct kvm_kernel_irq_routing_entry *e,
-+		struct kvm *kvm, int irq_source_id,
-+		int level, bool line_status)
-+{
-+	if (e->type == KVM_IRQ_ROUTING_MSI) {
-+		pch_msi_set_irq(kvm, e->msi.data, 1);
-+		return 0;
-+	}
-+
-+	return -EWOULDBLOCK;
-+}
-+
-+/**
-+ * kvm_set_msi: inject the MSI corresponding to the
-+ * MSI routing entry
-+ *
-+ * This is the entry point for irqfd MSI injection
-+ * and userspace MSI injection.
-+ */
-+int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
-+		struct kvm *kvm, int irq_source_id,
-+		int level, bool line_status)
-+{
-+	if (!level)
-+		return -1;
-+
-+	pch_msi_set_irq(kvm, e->msi.data, level);
-+	return 0;
-+}
-diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-index 5a60474bb933..2cb3288f4e85 100644
---- a/arch/loongarch/kvm/vm.c
-+++ b/arch/loongarch/kvm/vm.c
-@@ -71,6 +71,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	int r;
- 
- 	switch (ext) {
-+	case KVM_CAP_IRQCHIP:
- 	case KVM_CAP_ONE_REG:
- 	case KVM_CAP_ENABLE_CAP:
- 	case KVM_CAP_READONLY_MEM:
-@@ -103,7 +104,18 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 
- int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
- {
--	return -ENOIOCTLCMD;
-+	int r;
-+
-+	switch (ioctl) {
-+	case KVM_CREATE_IRQCHIP: {
-+		r = 1;
-+		break;
-+	}
-+	default:
-+		r = -ENOIOCTLCMD;
-+	}
-+
-+	return r;
- }
- 
- int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *data,
-@@ -137,3 +149,8 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *data,
- 
- 	return ret;
- }
-+
-+bool kvm_arch_irqchip_in_kernel(struct kvm *kvm)
-+{
-+	return (bool)((!!kvm->arch.eiointc) && (!!kvm->arch.pch_pic));
-+}
--- 
-2.39.1
+Sometimes the system doesn't manage to print a oops, this one is the best i got:
 
+[  596.146142] ------------[ cut here ]------------
+[  596.146161] se->sched_delayed
+[  596.146166] WARNING: CPU: 1 PID: 0 at kernel/sched/fair.c:13131 __set_next_task_fair.part.0+0x350/0x400
+[  596.146179] Modules linked in: [..]
+[  596.146288] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.11.0-rc7-next-20240909 #18
+[  596.146294] Hardware name: IBM 3931 A01 704 (LPAR)
+[  596.146298] Krnl PSW : 0404e00180000000 001a9c2b5eea4ea4 (__set_next_task_fair.part.0+0x354/0x400)
+[  596.146307]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+[  596.146314] Krnl GPRS: 001c000300000027 001c000300000023 0000000000000011 0000000000000004
+[  596.146319]            0000000000000001 001a9c2b5f1fb118 000000036ef94dd5 0000001b77ca6ea8
+[  596.146323]            001c000000000000 001a9c2b5eec6fc0 0000001b77ca6000 00000000b7334800
+[  596.146328]            0000000000000000 001a9c2b5eefad70 001a9c2b5eea4ea0 001a9bab5ee8f9f8
+[  596.146340] Krnl Code: 001a9c2b5eea4e94: c0200121bbe6        larl    %r2,001a9c2b612dc660
+[  596.146340]            001a9c2b5eea4e9a: c0e5fff9e9d3        brasl   %r14,001a9c2b5ede2240
+[  596.146340]           #001a9c2b5eea4ea0: af000000            mc      0,0
+[  596.146340]           >001a9c2b5eea4ea4: a7f4fe83            brc     15,001a9c2b5eea4baa
+[  596.146340]            001a9c2b5eea4ea8: c0e50038ba2c        brasl   %r14,001a9c2b5f5bc300
+
+[  596.146558] CPU: 1 UID: 0 PID: 18582 Comm: prctl-sched-cor Tainted: G        W          6.11.0-rc7-next-20240909 #18
+[  596.146564] Tainted: [W]=WARN
+[  596.146567] Hardware name: IBM 3931 A01 704 (LPAR)
+[  596.146570] Krnl PSW : 0404e00180000000 001a9c2b5eec2de4 (dequeue_entity+0xe64/0x11f0)
+[  596.146578]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+[  596.146584] Krnl GPRS: 001c000300000027 001c000300000023 000000000000001a 0000000000000004
+[  596.146589]            0000000000000001 001a9c2b5f1fb118 001a9c2b61be7144 0000000016e6692a
+[  596.146593]            0000000000000001 00000000b7334951 0000000158494800 00000000b7334900
+[  596.146597]            000000000000489e 0000000000000009 001a9c2b5eec2de0 001a9bab75dff760
+[  596.146607] Krnl Code: 001a9c2b5eec2dd4: c0200120cdf6        larl    %r2,001a9c2b612dc9c0
+[  596.146607]            001a9c2b5eec2dda: c0e5fff8fa33        brasl   %r14,001a9c2b5ede2240
+[  596.146607]           #001a9c2b5eec2de0: af000000            mc      0,0
+[  596.146607]           >001a9c2b5eec2de4: c004fffff90a        brcl    0,001a9c2b5eec1ff8
+[  596.146607]            001a9c2b5eec2dea: a7f4fbbe            brc     15,001a9c2b5eec2566
+[  596.146607]            001a9c2b5eec2dee: a7d10001            tmll    %r13,1
+[  596.146607]            001a9c2b5eec2df2: a774fb1c            brc     7,001a9c2b5eec242a
+[  596.146607]            001a9c2b5eec2df6: a7f4f95f            brc     15,001a9c2b5eec20b4
+[  596.146637] Call Trace:
+[  596.146640]  [<001a9c2b5eec2de4>] dequeue_entity+0xe64/0x11f0 
+[  596.146645] ([<001a9c2b5eec2de0>] dequeue_entity+0xe60/0x11f0)
+[  596.146650]  [<001a9c2b5eec34b0>] dequeue_entities+0x340/0xe10 
+[  596.146655]  [<001a9c2b5eec4208>] dequeue_task_fair+0xb8/0x5a0 
+[  596.146660]  [<001a9c2b6115ab68>] __schedule+0xb58/0x14f0 
+[  596.146666]  [<001a9c2b6115b59c>] schedule+0x9c/0x240 
+[  596.146670]  [<001a9c2b5edf5190>] do_wait+0x160/0x440 
+[  596.146676]  [<001a9c2b5edf5936>] kernel_waitid+0xd6/0x110 
+[  596.146680]  [<001a9c2b5edf5b4e>] __do_sys_waitid+0x1de/0x1f0 
+[  596.146685]  [<001a9c2b5edf5c36>] __s390x_sys_waitid+0xd6/0x120 
+[  596.146690]  [<001a9c2b5ed0cbd6>] do_syscall+0x2f6/0x430 
+[  596.146695]  [<001a9c2b611543a4>] __do_syscall+0xa4/0x170 
+[  596.146700]  [<001a9c2b6117046c>] system_call+0x74/0x98 
+[  596.146705] Last Breaking-Event-Address:
+[  596.146707]  [<001a9c2b5ede2418>] __warn_printk+0x1d8/0x1e0
+
+This happens when running the strace test suite. The system normaly has
+128 CPUs. With this configuration the crash doesn't happen, but when
+disabling all but four CPUs and running 'make check -j16' in the strace
+test suite the crash is almost always reproducable.
+
+Regards
+Sven
 
