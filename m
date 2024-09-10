@@ -1,134 +1,128 @@
-Return-Path: <linux-kernel+bounces-322498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF1C9729BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:44:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E979729C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B05C285DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F4C5B24674
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32FB17B402;
-	Tue, 10 Sep 2024 06:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2265117A58F;
+	Tue, 10 Sep 2024 06:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQ550xSO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7Lw8K/4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB41208A5;
-	Tue, 10 Sep 2024 06:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357081B85FC;
+	Tue, 10 Sep 2024 06:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725950686; cv=none; b=cuP6wniRIgG2fQBl5cbs0kbz0Q9KkRwj7ligkxtqzIPi1yycT5RVpratG5GMWZnK5O3rTiYjnS2rhvauvhTC2OdzCCJ0HpnmfSh7UwoHO2Hp62VHZ+BWVHba+xBoMfhBP+npm7O6SG3NlRH8bWEC+KCBmjxqYeDjrjYh90HEQrc=
+	t=1725950748; cv=none; b=kzLNlLik/SoLJIPZPGGo2F+Ybkkh2+ijlwCO0WKNlfmFwwuwaVCGQlYpE/FI6g14n1fK39JV0tSAnB62Hn1iMFz1uv8/E4//dKpN2TqFssb/PXGcT4ldrbeXEaYZifnFsTAu8FhCixt6Qn9LJRVaJ3RVL+FG3cTFogXLL4Y7R2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725950686; c=relaxed/simple;
-	bh=nHnXaPv3ZxJwVaKNgDaBMtI7zm71hl2BFvIrhZbkT7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jn/xwnqVD6ncFhoZtf4zVrExN2huxfAIimhx9sQ4aOBHyB/VpbXdbf0Xu0Wz6Fy/jhxHFOfYMG2R0wVCBeMtrtxjZjkMwiP7TL9etILo9KG0rqaTIm1yLPiKk9HoGF17IzS1v4SEfDNiIIHZG7btSF0zzO4UFJRi7W/w63yrRGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQ550xSO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4502C4CEC3;
-	Tue, 10 Sep 2024 06:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725950685;
-	bh=nHnXaPv3ZxJwVaKNgDaBMtI7zm71hl2BFvIrhZbkT7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQ550xSOyqkguE3g7zqkKxcXjiL6kyO50tXKBIo+lT0IkCW31FxCp3NIZE/DcHMfs
-	 wqWOywomj5V5CTXTQgznTcf+emiyhsZ4MAQoBqvSSfYIPX3hPapbA0JrLt8X14s/Qw
-	 nkDSkCSQvQ8qFihe3GdGVvCITn7XwJADRiQcLDk0m0mTkMwTCFLzSrjXyGVPlDwyT1
-	 +L02NO500DF0t9uS6fiJD/+aibOK0HpmE+jlTPW8JSJisrmfbLW6wUC9vJJGM6Y364
-	 vADoue/sk482kXsIRyLJ3kg3N0UQ8rLgtzs35kdYqWOSl/M+/Y/pYhPT0txy4cP2v9
-	 i+wACgrmyCl0Q==
-Date: Tue, 10 Sep 2024 07:44:41 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com,
-	mail@david-bauer.net
-Subject: Re: [PATCH net-next] net: gianfar: fix NVMEM mac address
-Message-ID: <20240910064441.GH2097826@kernel.org>
-References: <20240908213554.11979-1-rosenp@gmail.com>
- <20240909085542.GV2097826@kernel.org>
- <CAKxU2N_1t5osUc53p=G2tRLRctwbxQr3p3fScR-N1kgoNxc80Q@mail.gmail.com>
- <CAKxU2N9kgnqAgo2mHxExjgZos+MvhZw40LWCr4pYOL5DUcJJWg@mail.gmail.com>
- <20240909184850.GG2097826@kernel.org>
- <CAKxU2N_y9CM=P3ki2XGDV+9nZ9SCQwC3y2qWRHbiEZzKK_t62Q@mail.gmail.com>
+	s=arc-20240116; t=1725950748; c=relaxed/simple;
+	bh=3y6PFLxQCiMh8y5Rd/T3LR9oGtnGRH/rs4QNzBUtlHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EHLqy+pNg402sZWLYn5WBGx6UuiJ1om0CD8SbtduwswtIA+2qe+djQQA1CGrbBNzzWSLMVohixKb+KQblWQsNh2gVOHgva4KTeeznpbdenXEcF8mybkYh18/gGwgH6sSl5iNK5TbRfbFrTPbxJBTFym120OfP2meizgNrwixV2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7Lw8K/4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2053616fa36so4810695ad.0;
+        Mon, 09 Sep 2024 23:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725950746; x=1726555546; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3m4F4dxC1HJvN3/9jEjH9B7BekK3OOSMWjP7By/DQCM=;
+        b=L7Lw8K/40SrCa8E7dc4TqhE/KhMPPsn9ER33LcC/4Z0/Qxm8XDCJLcbL4TqmERVgs2
+         0Npl5NPXit4WzYje3FmMzBOUqb/fMFQdxQYoZ2qxMo8fcN+yx4f91JWCSMhK88ORe8EU
+         BDn8YZIgTqDlYCyr+kXUJqkff4I89CNfBRdKIvuEoY9e30A2Lzej7gK+0X/PjtkWXMBM
+         /9N39xhDOlSwjqink5/478OZ3jwwPj8bX3gBBf1KeRNRf/jkakYtRicAgmWbzQ5pS1LB
+         vrWpV36VpRjp5KkfawHVfmIEd7jW1KtPIDc5JcPZ9/+XYFDLLOXixSsCwcgK4e1CC2y8
+         +EMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725950746; x=1726555546;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3m4F4dxC1HJvN3/9jEjH9B7BekK3OOSMWjP7By/DQCM=;
+        b=tQH9dDQ3HK8CXGazDdJC4tXcM/kAaKFi3WHum1VgRTPrG/aZZN8Ibo9Rhewh84NdRR
+         z4moO3Sbl4RJtMPQn/TcoUTSThAPoTnPThu48Kb9ggfHRhhHRph5oXUL7YAOXkQaGCQV
+         ohCWXbeGrTxoiWZPSksOnYHDQl64zqV+nTnkioalebGoL6AU5Dn94iLIVJLXq5Pg4HVq
+         +LyXnhxdo9bO/AylcCAVrJ6kC19o9RPuI5M50fyUgn25a0BnCAMwNGZJyxrximcfn3FP
+         P+0RYTYd68KWhTFmHa4+Mi6aCOXe69EDMGjxoeI3vH4Bk04CTfvUHxWEpHsHze++2dln
+         TGFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWqD0ZKuVCtXcwvJ1EF8mbLRnugM1bdMjD4GizWPk+qu6cj0VM4VP/aL6o4I66JdfR55mtezqECAZ1so=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjhjVsbzDOJfxI7OoHmggwJHgxt8TYCdnXRaOiEA67wEzXopQg
+	TLMnMpJEmRIrIibf8eWp/avGrjM34gIE9bEYAoFuEXIC2N0vpdWY
+X-Google-Smtp-Source: AGHT+IExFNCAJz2GjXDBGK7MOe0SAcUbYIWIMdwuLceG6XPIq2/hYewNjQD8UNzuvll2X89hRhmCJg==
+X-Received: by 2002:a17:902:d2c1:b0:202:35e0:deab with SMTP id d9443c01a7336-2070a553dbcmr104430295ad.32.1725950746249;
+        Mon, 09 Sep 2024 23:45:46 -0700 (PDT)
+Received: from ?IPV6:2601:644:8502:9460:d6be:d9ff:fe52:7e82? ([2601:644:8502:9460:d6be:d9ff:fe52:7e82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1c5easm42637245ad.182.2024.09.09.23.45.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Sep 2024 23:45:45 -0700 (PDT)
+Message-ID: <3ef933cf-af58-4d0e-8e81-69ec5d0bd65a@gmail.com>
+Date: Mon, 9 Sep 2024 23:45:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKxU2N_y9CM=P3ki2XGDV+9nZ9SCQwC3y2qWRHbiEZzKK_t62Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] firmware: qcom: scm: fix a NULL-pointer dereference
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andrew Halaney
+ <ahalaney@redhat.com>, Elliot Berman <quic_eberman@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
+ <20240909-tzmem-null-ptr-v1-1-96526c421bac@linaro.org>
+Content-Language: en-US
+From: Rudraksha Gupta <guptarud@gmail.com>
+In-Reply-To: <20240909-tzmem-null-ptr-v1-1-96526c421bac@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 12:14:38PM -0700, Rosen Penev wrote:
-> On Mon, Sep 9, 2024 at 11:48 AM Simon Horman <horms@kernel.org> wrote:
-> >
-> > On Mon, Sep 09, 2024 at 11:20:20AM -0700, Rosen Penev wrote:
-> > > On Mon, Sep 9, 2024 at 11:11 AM Rosen Penev <rosenp@gmail.com> wrote:
-> > > >
-> > > > On Mon, Sep 9, 2024 at 1:55 AM Simon Horman <horms@kernel.org> wrote:
-> > > > >
-> > > > > On Sun, Sep 08, 2024 at 02:35:54PM -0700, Rosen Penev wrote:
-> > > > > > If nvmem loads after the ethernet driver, mac address assignments will
-> > > > > > not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
-> > > > > > case so we need to handle that to avoid eth_hw_addr_random.
-> > > > > >
-> > > > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/net/ethernet/freescale/gianfar.c | 2 ++
-> > > > > >  1 file changed, 2 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-> > > > > > index 634049c83ebe..9755ec947029 100644
-> > > > > > --- a/drivers/net/ethernet/freescale/gianfar.c
-> > > > > > +++ b/drivers/net/ethernet/freescale/gianfar.c
-> > > > > > @@ -716,6 +716,8 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
-> > > > > >               priv->device_flags |= FSL_GIANFAR_DEV_HAS_BUF_STASHING;
-> > > > > >
-> > > > > >       err = of_get_ethdev_address(np, dev);
-> > > > > > +     if (err == -EPROBE_DEFER)
-> > > > > > +             return err;
-> > > > >
-> > > > > To avoid leaking resources, I think this should be:
-> > > > >
-> > > > >                 goto err_grp_init;
-> > > > will do in v2. Unfortunately net-next closes today AFAIK.
-> > > On second thought, where did you find this?
-> > >
-> > > git grep err_grp_init
-> > >
-> > > returns nothing.
-> > >
-> > > Not only that, this function has no goto.
-> >
-> > Maybe we are looking at different things for some reason.
-> Well that's embarrassing. Locally I seem to have a commit that adds a
-> bunch of devm and as a result these gotos. Unfortunately I don't have
-> the hardware to test those changes. I'll be doing a v2 for when
-> net-next opens.
 
-No problem. TBH it is a relief, as I was beginning to doubt my own sanity.
+On 9/9/24 11:38, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Some SCM calls can be invoked with __scm being NULL (the driver may not
+> have been and will not be probed as there's no SCM entry in device-tree).
+> Make sure we don't dereference a NULL pointer.
+>
+> Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+> Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/firmware/qcom/qcom_scm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 10986cb11ec0..8bac4915c211 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -216,7 +216,7 @@ static DEFINE_SPINLOCK(scm_query_lock);
+>   
+>   struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void)
+>   {
+> -	return __scm->mempool;
+> +	return __scm ? __scm->mempool : NULL;
+>   }
+>   
+>   static enum qcom_scm_convention __get_convention(void)
 
-> >
-> > I'm looking at this:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/ethernet/freescale/gianfar.c?id=bfba7bc8b7c2c100b76edb3a646fdce256392129#n814
-> >
-> > > > >
-> > > > > Flagged by Smatch.
-> > > > >
-> > > > > >       if (err) {
-> > > > > >               eth_hw_addr_random(dev);
-> > > > > >               dev_info(&ofdev->dev, "Using random MAC address: %pM\n", dev->dev_addr);
-> > > > >
-> > > > > --
-> > > > > pw-bot: cr
-> > >
-> 
+
+Tested-by: Rudraksha Gupta <guptarud@gmail.com>
+
 
