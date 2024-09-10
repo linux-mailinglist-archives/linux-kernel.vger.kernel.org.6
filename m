@@ -1,146 +1,184 @@
-Return-Path: <linux-kernel+bounces-322485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B1C97298A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:29:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B1D97298D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC41B23C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049BF1F25335
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB459178CE4;
-	Tue, 10 Sep 2024 06:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9491171088;
+	Tue, 10 Sep 2024 06:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEnfnFN9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAmVfXXt"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6013E02D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FF81CD2A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725949771; cv=none; b=i/xlp2Dblv/DR8p1LH6ddTk8JGlxkXD2aGN61p5A84Hm51ZMZjG0rIWtmcfTyG1PsMxJKtXaqooAPy2dyOkzZjIG3hOktMU9b4vnAstesjlu3zTCO3RcXMAqLTRBBnr4QxRpXOCxbjqhIpqSNldYtoe+kaxG4x2j1BUmDqpKnag=
+	t=1725949852; cv=none; b=ecRK8xJKh7FhA5F4XepLaQrTNA/qRJUQh+DCroZioYO28vbRU3ndUu6LGpius9HtjFgZV7oOiL/xVCgBM67R70jHmBLyYBq8EFjdUJV3bARvn8GmSNvxpEzKsbB7eC2MA7Ib/1OzTJhtPlJ0nMwE073jitti1uasx9/ANQTH0Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725949771; c=relaxed/simple;
-	bh=xYE2j6hsQhcBJCANyatZ9d21NJz+/bdQZjeik81Edl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JErtA1EMFhqedu5orJn2jUUvV6Z65ky7891JkaYvp34sOtbgchPP9+fat4UUeDaxeXqIAXWH1TJ0DU4J2x3xdgdkl1GnOMPdJU0ujNHrsxq+xk/lMzzgK9GffhXKhaCwmi6Xa3jtH9Tuj3YqqXPKQly8WXY8BYikHjKVfK7Q0JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEnfnFN9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725949768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slRCTHzCCcQBwX+pPISbs1hQFnemuMhepgFBpAq56NA=;
-	b=bEnfnFN9qZ+vHcCw1hf62xrw43EmQTnjDHGjBCGBDl0Wy4AEUQlgivFhNHPl0rVnAXJXDr
-	8jKIMB6m98ei9knpDtRaF9/YRRNI5N3Ua8g9uDvUWyk39YWqICuDJEfBr4sJGU0Niir5Oo
-	2XW5iZ9nca2Shyvs4Yg6KdWsS5IHNBg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-1px0sapiOGSLqt_nmORvbA-1; Tue, 10 Sep 2024 02:29:26 -0400
-X-MC-Unique: 1px0sapiOGSLqt_nmORvbA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb9e14ab6so9037335e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:29:26 -0700 (PDT)
+	s=arc-20240116; t=1725949852; c=relaxed/simple;
+	bh=8TUhyosW1mn6dhs0vzSHjHcv5R7Ozezk7pxxBzixU3I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=q7LZVEo0Jp8g1zD++7tx8Xdkie1qHaFXJyYektjPzn54zcPHaB7WFCbKFR1n0mBNfuQw7QqW9zvfAoZh5v1LIndY4x84ER+zcu+UK+aD4/J1UxfLTITfEf+OBXnnHfHVg9yWuMPgU2tcuq23+iHPzr7AQu+PlWkl7wm6MVCPaEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAmVfXXt; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-502aeeb791eso2122876e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725949849; x=1726554649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D29wqIU/MqdK42Hyv0CohOkSOr39XuSIDBy4dPZxDgM=;
+        b=YAmVfXXtnMJ5zJwcH0vFeFtgcYRfm52h6Uu7LYJ1zKL1bUpK+fpJWq1EIsbihghjto
+         ZecUw5GFnvsP3RUCmU7TeEVMRTjrSpOt2QAD1rcSfcfPv1QFaBI7DcOpwdE2FJUzePPB
+         nE5PO5iNv1nrdX1LSeHVCRrui+MAOC1MtwFHKa+x+11lSIZaxl0QDZfPk7CNBNm3Vdun
+         6wTtxNad4SDx7gfIrQ+kzALJF0JR3u9uZp8KaegxpUrUrRnJhjDgGTQaV+R2azNlJ828
+         Cz6dFMGL6d/nk5jKVjdG7QQCtsxYVfUnyQ3sJ4QAkIQbKmvwt0vgChRYvYExrtoKcOqv
+         OzFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725949765; x=1726554565;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=slRCTHzCCcQBwX+pPISbs1hQFnemuMhepgFBpAq56NA=;
-        b=WbazxafqtAyZ1cr9PxNGoB8xCbHrx+VsmIthSy/Wq76fM0o1yyHe7Kkni9yAiVy7L6
-         mlyWrbZXCM87c720OR6b6V1JRLyfzV37CBx/lUX2IOG91CxPrW/6LFb3djaiTp5JDBFN
-         jS2OpeOcq+A5frZm9XPcLjmPHua/KQ3TauA3qSlr93+VHrhv/yoB9qWzpNugjXCqP3mQ
-         qYVYk+zBsDX85MrE9ThV/bpc6XIiPi/lbeejCUBvaCViPzUF6PePWpil8daZAflAQXE4
-         E9p1ZiG/ICud2vAVvYW4sk/izv90VtwJsrrlJHv1wwW/Gx/zvVELrXJS7uLL/3SPWJHL
-         wRYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWn44LNObheN9G0YE3M9p/pske8+I3Ok0dvNRL/8q65Uw4tqS+1ZYrGvlHNX+OykEdF+mq3h6tc3I57MM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn5Uh7vshy8LEpn0XB4yZabvqygbYd1eFVD2qlme/i7OsHLtvG
-	+cNc4JThSwRleysKgoEudMfOyBivv8PMg0x9TsxBeoVSbnD4b8OMCt/U2QTiAx+ciZnZeGQfchS
-	6REtiWsk13gX0N0+HD1IgZobgLbBIAcyRvXiRflPp9MDXBzPX8XYCfq59lmrLYA==
-X-Received: by 2002:a05:600c:1c10:b0:42c:bdb0:c61e with SMTP id 5b1f17b1804b1-42cbdb0c782mr14797385e9.13.1725949765342;
-        Mon, 09 Sep 2024 23:29:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6kk2YzMvA4RngNvuADaIpUJvCPpWuMQGvfkxNqLt6NjTpt10YtpZLMbS8AlyZJ/UVPyyijQ==
-X-Received: by 2002:a05:600c:1c10:b0:42c:bdb0:c61e with SMTP id 5b1f17b1804b1-42cbdb0c782mr14797045e9.13.1725949764207;
-        Mon, 09 Sep 2024 23:29:24 -0700 (PDT)
-Received: from redhat.com ([31.187.78.173])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb323f4sm99266095e9.12.2024.09.09.23.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 23:29:23 -0700 (PDT)
-Date: Tue, 10 Sep 2024 02:29:19 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Cc: dtatulea@nvidia.com, jasowang@redhat.com, shannon.nelson@amd.com,
-	sashal@kernel.org, alvaro.karsz@solid-run.com,
-	christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com,
-	bilbao@vt.edu, xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com,
-	eperezma@redhat.com, cratiu@nvidia.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Carlos Bilbao <cbilbao@digitalocean.com>
-Subject: Re: [PATCH v3 0/2] Properly initialize speed/duplex and remove vDPA
- config updates
-Message-ID: <20240910022843-mutt-send-email-mst@kernel.org>
-References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
+        d=1e100.net; s=20230601; t=1725949849; x=1726554649;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D29wqIU/MqdK42Hyv0CohOkSOr39XuSIDBy4dPZxDgM=;
+        b=dIol489tR2JCELh+fc8Y/BcOHjEMK2OF4Z+Kt9Jo9rOTLuwrYygeyQQkueOmk8lsoI
+         K3OqRR3Uun+HHfnNlWYKXsA9O5VUNPmoewN0JB55GkBo93qy1tyE3pvicPsESQ4X/Z/H
+         8tflIPKgjDdlT/f+2P6tXZaDqN5azm3irZ+dlL5MjF2NwMLnsoqZoM9znORSwY29vjRl
+         VTwwfQoZt+TmlENPpk4ElXL06Jd79K4+d1X7Gx+tKheQT3cLaboIR12OM3fLZrtDWlLN
+         e9aOov6V6x/Xl2gyC58MDZEg0c67p+J2oA/yfUL2kaXztuBh0uVx4hSuuj4RkXOKzVde
+         9hUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+4UP7dQulrtq1aMqc+q+CWSjpRbDFI3UGo4t2Ct9Zsjo0MhDnS+JcKh0D6Gv5UQ7k92eCCtu9fH8u08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75Syc47PJpGlD8dtn9CQ3vOHiv3mc8cro1qaXRYaykQqSU6Ks
+	lyt/CGEXAWBgidsQOzyEn/lWdlo7gpumiTo/qcdJH1kEmqO/c0hnZLzgUzK9Jx4ko992JaVbBpA
+	anv2LfJcPFW57qVd1t7zu5sNK/xpo/liK97u3/g==
+X-Google-Smtp-Source: AGHT+IHcoWPZAPvlRorBhaWeYrWRcW8qT1wMakYMB+0xfz8JrsHlT0IMluZivW9XBmwtLaDIWY+MTbQx0inPfUk4M6c=
+X-Received: by 2002:a05:6122:31a6:b0:501:1aec:d2c4 with SMTP id
+ 71dfb90a1353d-502f72e194amr1582561e0c.2.1725949849112; Mon, 09 Sep 2024
+ 23:30:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 10 Sep 2024 12:00:37 +0530
+Message-ID: <CA+G9fYvarKEPN3u1Ogw2pcw4h6r3OMzg+5qJpYkAXRunAEF_0Q@mail.gmail.com>
+Subject: next-20240905: WARNING: at arch/arm64/include/asm/pkeys.h:40 do_mmap
+To: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, LTP List <ltp@lists.linux.it>, 
+	lkft-triage@lists.linaro.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, joey.gouly@arm.com, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Aishwarya TCV <aishwarya.tcv@arm.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 04, 2024 at 10:11:13AM -0500, Carlos Bilbao wrote:
-> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> 
-> Initialize speed and duplex for virtio_net_config to UNKNOWN (mlx5_vdpa
-> vDPA devices currently do not support VIRTIO_NET_F_SPEED_DUPLEX). Remove
-> ioctl VHOST_VDPA_SET_CONFIG and its related logic as it is not supported;
-> see: https://docs.oasis-open.org/virtio/virtio/v1.3/virtio-v1.3.html
-> 
-> Carlos:
->   vdpa/mlx5: Set speed and duplex of vDPA devices to UNKNOWN
->   vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
+The following kernel warning noticed while running the LTP test case
+LTP syscalls mlock03 ( mmap03 ) on
+  - Arm DUT Juno-r2
+  - Qcomm DUT Dragonboard-410c
 
-This will need a rebase. Will apply once you post one.
-Thanks!
+running Linux next-20240905, next-20240906 and next-20240909 kernel.
 
-> ---
-> 
-> Changes since v1:
->  Link: https://lkml.org/lkml/2024/8/29/1368
->  - Fix prefix of the first commit and add Reviewed-By tag.
->  - Redo second commit completely: instead of attempting to add support to
->    set configuration fields, remove ioctl and support entirely from vDPA
->    implementations -- because it's not allowed by spec.
-> 
-> Changes since v2:
->  Link: https://lkml.org/lkml/2024/9/3/1407
->  - Fix first commit by changing 4 spaces for a tab.
->  - In second commit, ENI is legacy and should keep set_config(). Change it
->    to set_config_legacy() to avoid future confusion and erroneous
->    implementations.
-> 
-> ---
->  drivers/vdpa/alibaba/eni_vdpa.c    |  2 +-
->  drivers/vdpa/ifcvf/ifcvf_main.c    | 10 ----------
->  drivers/vdpa/mlx5/net/mlx5_vnet.c  | 19 ++++++++++++-------
->  drivers/vdpa/pds/vdpa_dev.c        | 16 ----------------
->  drivers/vdpa/solidrun/snet_main.c  | 18 ------------------
->  drivers/vdpa/vdpa.c                | 16 ----------------
->  drivers/vdpa/vdpa_sim/vdpa_sim.c   | 16 ----------------
->  drivers/vdpa/vdpa_sim/vdpa_sim.h   |  1 -
->  drivers/vdpa/vdpa_user/vduse_dev.c |  7 -------
->  drivers/vdpa/virtio_pci/vp_vdpa.c  | 14 --------------
->  drivers/vhost/vdpa.c               | 26 --------------------------
->  drivers/virtio/virtio_vdpa.c       |  9 ---------
->  include/linux/vdpa.h               |  7 ++++---
->  include/uapi/linux/vhost.h         |  8 ++++----
->  14 files changed, 21 insertions(+), 148 deletions(-)
+First seen on next-20240905
+  Good: next-20240904
+  BAD:  next-20240905..next-20240909
 
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Warning log:
+----------
+[    0.000000] Linux version 6.11.0-rc6-next-20240905
+(tuxmake@tuxmake) (aarch64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0, GNU
+ld (GNU Binutils for Debian) 2.43) #1 SMP PREEMPT @1725536306
+[    0.000000] KASLR disabled due to lack of seed
+[    0.000000] Machine model: ARM Juno development board (r2)
+..
+mlock03.c:58: TINFO: mlock [aaaaddae1000,aaaaddafd000]
+mlock03.c:62: TINFO: munlock [aaaaddae1000,aaaaddafd000]
+[  795.850426] ------------[ cut here ]------------
+[  795.857261] WARNING: CPU: 5 PID: 101577 at
+arch/arm64/include/asm/pkeys.h:40 do_mmap
+(arch/arm64/include/asm/pkeys.h:40 (discriminator 1) mm/mmap.c:338
+(discriminator 1))
+[  795.868833] Modules linked in: tun overlay btrfs blake2b_generic
+libcrc32c xor xor_neon raid6_pq zstd_compress panfrost tda998x
+onboard_usb_dev drm_shmem_helper hdlcd crct10dif_ce cec gpu_sched
+drm_dma_helper drm_kms_helper fuse drm backlight dm_mod ip_tables
+x_tables
+[  795.895379] CPU: 5 UID: 0 PID: 101577 Comm: mmap03 Not tainted
+6.11.0-rc6-next-20240905 #1
+[  795.906430] Hardware name: ARM Juno development board (r2) (DT)
+[  795.915135] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[  795.924881] pc : do_mmap (arch/arm64/include/asm/pkeys.h:40
+(discriminator 1) mm/mmap.c:338 (discriminator 1))
+[  795.931236] lr : vm_mmap_pgoff (mm/util.c:588)
+[  795.938113] sp : ffff80008ba0bc90
+[  795.944206] x29: ffff80008ba0bc90 x28: 0000000000000001 x27: ffff0008329cf800
+[  795.954128] x26: ffff0008329cf800 x25: ffff000822140cc0 x24: 0000000000000000
+[  795.964050] x23: ffff80008ba0bd20 x22: 0000000000000004 x21: 0000000000000000
+[  795.973972] x20: 0000000000000001 x19: 0000000000001000 x18: 0000000000000000
+[  795.983895] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[  795.993817] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+[  796.003739] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff80008032e2c4
+[  796.013661] x8 : ffff000827e64c00 x7 : ffff80008ba0bd20 x6 : 0000000000000000
+[  796.023583] x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000004
+[  796.033505] x2 : 0000000000001000 x1 : 0000000000000011 x0 : 000000000000fffa
+[  796.043428] Call trace:
+[  796.048651] do_mmap (arch/arm64/include/asm/pkeys.h:40
+(discriminator 1) mm/mmap.c:338 (discriminator 1))
+[  796.054658] vm_mmap_pgoff (mm/util.c:588)
+[  796.061187] ksys_mmap_pgoff (mm/mmap.c:542)
+[  796.067980] __arm64_sys_mmap (arch/arm64/kernel/sys.c:21)
+[  796.074597] invoke_syscall (arch/arm64/include/asm/current.h:19
+arch/arm64/kernel/syscall.c:54)
+[  796.081213] el0_svc_common.constprop.0
+(include/linux/thread_info.h:127 (discriminator 2)
+arch/arm64/kernel/syscall.c:140 (discriminator 2))
+[  796.088699] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+[  796.094879] el0_svc (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+arch/arm64/kernel/entry-common.c:165 (discriminator 1)
+arch/arm64/kernel/entry-common.c:178 (discriminator 1)
+arch/arm64/kernel/entry-common.c:713 (discriminator 1))
+[  796.100799] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:731)
+[  796.108024] el0t_64_sync (arch/arm64/kernel/entry.S:598)
+[  796.114467] ---[ end trace 0000000000000000 ]---
+
+boot Log links,
+--------
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240905/testrun/25069344/suite/log-parser-test/test/check-kernel-exception-warning-cpu-pid-at-archarmincludeasmpkeysh-do_mmap/log
+  - https://lkft.validation.linaro.org/scheduler/job/7842087#L21916
+  - https://lkft.validation.linaro.org/scheduler/job/7847924#L23191
+
+Test results history:
+----------
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240909/testrun/25081195/suite/log-parser-test/test/check-kernel-exception-warning-cpu-pid-at-archarmincludeasmpkeysh-do_mmap/history/
+
+metadata:
+----
+  git describe: next-20240905
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git sha: ad40aff1edffeccc412cde93894196dca7bc739e
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2leMFe4WompPEOUNN7ODxtTMCxf/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2leMFe4WompPEOUNN7ODxtTMCxf/
+  toolchain: gcc-13
+
+Steps to reproduce:
+---------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2leMISlsoJqQdTCCzBmuVwKHq9m/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2leMISlsoJqQdTCCzBmuVwKHq9m/tux_plan
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
