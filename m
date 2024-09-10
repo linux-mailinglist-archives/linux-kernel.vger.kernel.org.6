@@ -1,170 +1,152 @@
-Return-Path: <linux-kernel+bounces-323683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9D09741B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA3C9741BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655641F270AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120AC1C25471
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531851A4B74;
-	Tue, 10 Sep 2024 18:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C11A3026;
+	Tue, 10 Sep 2024 18:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bixBHskS"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="IfACzZsg"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554B61990D7;
-	Tue, 10 Sep 2024 18:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627EC194C6A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725991762; cv=none; b=tFZcFNjOIsr0KrAul+uLJnRsH6WErMB9IQpyg888QQWu20OxnCZHjgDxTi8zI4nqBVXvh/gGq6Tte5tFiyoUK8Re2h2pSELFF7yRRJl/ekXdm8qElT5NfSRwvq1eK0LZJPTkCWSwCwkZ114buEHjSVL6wbXmJRz4DcGGVfCeXUE=
+	t=1725991850; cv=none; b=uirEeZKcG/5i7CljWmLZKFIh5W+u+DlQOeGOWGVj1TGgXSDLCjKbpG01IFANUJyZxFG7dARWsnvApQAob03ol3jL0KLQt/3TLJolSrwgS7NzKFKxKarq5sljb9rKOOP720ca27CRZ4ZaWBRqjIFOTpFcL17F/6n46MenpkvNW5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725991762; c=relaxed/simple;
-	bh=2N8/D1ihjU6aMGhqrHGl3VqZHWCEUcRQ7LCRsQXs7YE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bw4SZm5tv5vXjPmBYuNus7JCu0DuSCX6YURSgF08QG8tkUInc45BPqsM9B4yuqZWpNuIyqYqc+Tqm3I6DnZyWOYIP5uVoXDMFhl1+mhs1041ShpDsR7+lWBi2Gjueq4MfHD2hBWRzEHQCxrePQUvIZm4BTBAeLQepInnNsiNDCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bixBHskS; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso4044072a91.3;
-        Tue, 10 Sep 2024 11:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725991760; x=1726596560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=keS3UcLB/RNrCfylnLbsmtnQNe6Qyfi2aduCceDFWdk=;
-        b=bixBHskSKFM3iyIdxq/WFT5BMhySTUmeyubyAaURAC3zfcU29/ZmJn1kUEwnqFzchD
-         sL5hvtXmvoykASk3ILAxBKL5yZKayKmecViRhj9+igg5PRseY8zeHKMk5W4gvZssJeq6
-         zlEhk1JwsQnRDAWi7Yn2kT16JbSM6YEqoVKQ7Qj8LHUfVb6NM6i93to41x53dWxPp8Gi
-         U1mBNzKzZMZVLJGeTzvwVA/DbFC11KN4c9uEuhYS4FLoGkHIyd0i4nPmgUwGO6rQdPmj
-         AfA+HpOVT5cThIl86uCaEhitep9zbpU74DPEqO3E9kGVSg9b1aolmWVBMtFgtnNKRfqL
-         uBBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725991760; x=1726596560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=keS3UcLB/RNrCfylnLbsmtnQNe6Qyfi2aduCceDFWdk=;
-        b=gSYZgZDM9pFQM2vhT6+2S81QHp8whpW7TYOgJvtN5Mk/GE/xpWOsfR93YOxsZcgb/s
-         HM3y+kxPsJC7SMRZQ83GtDB/8bXG/7TGNvE/6LUn0xs343glcyPQv7N50Y0OMTH4lrql
-         JJsvKvljbFmJSdJVRBe53+KRi4TjluOGf4PIWnLiHZfNp+1FDdp5Vg5OY5Evw5RkHx36
-         jFK10LDMX/F0iS8HF6Hc32nf47Fj/LOEiYQn+3nf77sACgWEQrStFnlWROfGXMqQ185F
-         d3fJt9+uFb0pH0dghmAyrzV1rBxyymlO2vE+15HByPOLMmZ4f7BFscQ0CfNI8gqZXNvB
-         NSiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH0hFt+MZiqbuSHQyNm7KFqH864leFQ9P7rTo1y2HNirs37KF781OfJIjFxdv5SgWkOhhXrzOhnaaOovO6CB6nKxRs@vger.kernel.org, AJvYcCXgA9r7DuXfFHDfvViJeI1XD2G8qwviJIOuF5Si8eMGlpXDqjPG31FYa9n1Tt4M9s+0A3g=@vger.kernel.org, AJvYcCXyPmlKW6oYa/7vmIBV/ohZX79nRtfAAAky2bM6uh6BANd9//azwlUYJxD1LzahsEOYSFwRdcejyZ7Ohbpa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymuc2od1w5qmX7zS2BenCQZr0K/hX2SHjLnacptR28mdg7zb0H
-	Dgx26V2H3EtobpV94TvSMndnoehnkPxWBBM325TMtGtvWGHQV9bSptp2dEG9nuzHaS7o/slwiHu
-	t4JOpaTCvqo8ZS/bA2KdB2vKEAdo=
-X-Google-Smtp-Source: AGHT+IFfxI5/uWeMY+TBei8CnO15BojmFlKAAp1PNFk4TgZBhiS9LTFwdr5mC0MfHuwNgWKu60Xieb6B1yaiMQBR1fc=
-X-Received: by 2002:a17:90b:438d:b0:2cd:1e60:9c31 with SMTP id
- 98e67ed59e1d1-2dad5181c35mr15620037a91.30.1725991760259; Tue, 10 Sep 2024
- 11:09:20 -0700 (PDT)
+	s=arc-20240116; t=1725991850; c=relaxed/simple;
+	bh=X/usYFDHIZN6RRCaRHWNcJUemLIZWI8rzvZchONFm1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZuCWbnUVNr/yff0EyTf9oyng2lTwN35SC5UBDei9ksARlfVo6lyCQHnly4eGz8K1eRLnqO1+iIeIPswDgVGDVOZ6ZZpaSNltR3xAEXaon+kqaVTFGE9zitms7U2w1yxq99rHPPPz63ZH6JOyX+R7wAnDUiHyEiOaB9FRHfoJGH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=IfACzZsg; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1725991833;
+	bh=X/usYFDHIZN6RRCaRHWNcJUemLIZWI8rzvZchONFm1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IfACzZsgVTrZtjHrmqaxPFUgeyEGzYP6QP3FTEz6qNLouUoS5VK8HFoj3ebtWmDIs
+	 ydVxfGusYUdgtKyiRCxd+D7mD6mJLoNYryfK751fiQZHeTomRyH0coc5gZIUPPvKEn
+	 EXcZuEUvElzcnPi+z3gFCRTXVR3URfKNo5w7pwHI=
+Date: Tue, 10 Sep 2024 20:10:33 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Kees Cook <kees@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] x86: vdso: Remove redundant ifdeffery around
+ in_ia32_syscall()
+Message-ID: <5f32ff04-5e3a-49b2-8d97-c95c149d001f@t-8ch.de>
+References: <20240910-x86-vdso-ifdef-v1-0-877c9df9b081@linutronix.de>
+ <20240910-x86-vdso-ifdef-v1-2-877c9df9b081@linutronix.de>
+ <8734m7d1bt.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909074554.2339984-1-jolsa@kernel.org> <20240909074554.2339984-3-jolsa@kernel.org>
- <CAEf4BzZ0+4Hd1xESWgE2WhSsNEuNuxtTju+OQeGiY0_iZsZbXQ@mail.gmail.com> <Zt_ygFPEdX53rqaW@krava>
-In-Reply-To: <Zt_ygFPEdX53rqaW@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 10 Sep 2024 11:09:07 -0700
-Message-ID: <CAEf4BzZbLWKJkykHDu_Az5h8HYT-h31ELY2KPE5=VOymRBbCCg@mail.gmail.com>
-Subject: Re: [PATCHv3 2/7] bpf: Add support for uprobe multi session attach
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8734m7d1bt.fsf@email.froward.int.ebiederm.org>
 
-On Tue, Sep 10, 2024 at 12:17=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wro=
-te:
->
-> On Mon, Sep 09, 2024 at 04:44:29PM -0700, Andrii Nakryiko wrote:
-> > On Mon, Sep 9, 2024 at 12:46=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wr=
-ote:
-> > >
-> > > Adding support to attach bpf program for entry and return probe
-> > > of the same function. This is common use case which at the moment
-> > > requires to create two uprobe multi links.
-> > >
-> > > Adding new BPF_TRACE_UPROBE_SESSION attach type that instructs
-> > > kernel to attach single link program to both entry and exit probe.
-> > >
-> > > It's possible to control execution of the bpf program on return
-> > > probe simply by returning zero or non zero from the entry bpf
-> > > program execution to execute or not the bpf program on return
-> > > probe respectively.
-> > >
-> >
-> > pedantic nit: bpf -> BPF
->
-> ok
->
-> >
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  include/uapi/linux/bpf.h       |  1 +
-> > >  kernel/bpf/syscall.c           |  9 +++++++--
-> > >  kernel/trace/bpf_trace.c       | 32 ++++++++++++++++++++++++--------
-> > >  tools/include/uapi/linux/bpf.h |  1 +
-> > >  tools/lib/bpf/libbpf.c         |  1 +
-> > >  5 files changed, 34 insertions(+), 10 deletions(-)
-> > >
-> >
-> > LGTM
-> >
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> > [...]
-> >
-> > > @@ -3336,9 +3347,13 @@ uprobe_multi_link_handler(struct uprobe_consum=
-er *con, struct pt_regs *regs,
-> > >                           __u64 *data)
-> > >  {
-> > >         struct bpf_uprobe *uprobe;
-> > > +       int ret;
-> > >
-> > >         uprobe =3D container_of(con, struct bpf_uprobe, consumer);
-> > > -       return uprobe_prog_run(uprobe, instruction_pointer(regs), reg=
-s);
-> > > +       ret =3D uprobe_prog_run(uprobe, instruction_pointer(regs), re=
-gs);
-> > > +       if (uprobe->consumer.session)
-> > > +               return ret ? UPROBE_HANDLER_IGNORE : 0;
-> >
-> > Should we restrict the return range to [0, 1] for UPROBE_SESSION
-> > programs on the verifier side (given it's a new program type and we
-> > can do that)?
->
-> yes, I think we can do that.. we have BPF_TRACE_UPROBE_SESSION as
-> expected_attach_type so we can do that during the load
->
-> hum, is it too late to do that for kprobe session as well?
+Hi Eric,
 
-I'd say let's do it, unlikely we'll break anyone. I'd expect everyone
-doing explicit return 0 or return 1 anyways.
+On 2024-09-10 09:34:46+0000, Eric W. Biederman wrote:
+> Thomas Weißschuh <thomas.weissschuh@linutronix.de> writes:
+> 
+> > The ifdefs only guard code that is also guarded by in_ia32_syscall(),
+> > which already contains the same ifdefs itself.
+> >
+> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  arch/x86/entry/vdso/vma.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> >
+> > diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+> > index 9059b9d96393..ab2b011471e0 100644
+> > --- a/arch/x86/entry/vdso/vma.c
+> > +++ b/arch/x86/entry/vdso/vma.c
+> > @@ -75,7 +75,6 @@ static vm_fault_t vdso_fault(const struct vm_special_mapping *sm,
+> >  static void vdso_fix_landing(const struct vdso_image *image,
+> >  		struct vm_area_struct *new_vma)
+> >  {
+> > -#if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
+> >  	if (in_ia32_syscall() && image == &vdso_image_32) {
+> >  		struct pt_regs *regs = current_pt_regs();
+> >  		unsigned long vdso_land = image->sym_int80_landing_pad;
+> > @@ -86,7 +85,6 @@ static void vdso_fix_landing(const struct vdso_image *image,
+> >  		if (regs->ip == old_land_addr)
+> >  			regs->ip = new_vma->vm_start + vdso_land;
+> >  	}
+> > -#endif
+> >  }
+> >  
+> >  static int vdso_mremap(const struct vm_special_mapping *sm,
+> > @@ -339,7 +337,6 @@ int compat_arch_setup_additional_pages(struct linux_binprm *bprm,
+> >  
+> >  bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
+> >  {
+> > -#if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
+> >  	const struct vdso_image *image = current->mm->context.vdso_image;
+> >  	unsigned long vdso = (unsigned long) current->mm->context.vdso;
+> >  
+> > @@ -348,7 +345,6 @@ bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
+> >  		    regs->ip == vdso + image->sym_vdso32_rt_sigreturn_landing_pad)
+> >  			return true;
+> >  	}
+> > -#endif
+> >  	return false;
+> >  }
+> 
+> Have you tested to verify that after this change
+> arch_syscall_is_vdso_signature compiles out the "image" and "vdso"
+> variables?
 
->
-> thanks,
-> jirka
->
-> >
-> > > +       return ret;
-> > >  }
-> > >
-> >
-> > [...]
+Yes, I did:
+
+$ objdump --disassemble=arch_syscall_is_vdso_sigreturn arch/x86/entry/vdso/vma.o
+arch/x86/entry/vdso/vma.o:     file format elf64-x86-64
+
+Disassembly of section .text:
+
+00000000000007f0 <arch_syscall_is_vdso_sigreturn>:
+ 7f0:	f3 0f 1e fa          	endbr64
+ 7f4:	e8 00 00 00 00       	call   7f9 <arch_syscall_is_vdso_sigreturn+0x9>
+ 7f9:	31 c0                	xor    %eax,%eax
+ 7fb:	e9 00 00 00 00       	jmp    800 <arch_syscall_is_vdso_sigreturn+0x10>
+
+
+> 
+> If the compilers don't it might be worth it rearrange the code as:
+> 	if (in_ia32_syscall()) {
+> 		const struct vdso_image *image = current->mm->context.vdso_image;
+> 		unsigned long vdso = (unsigned long) current->mm->context.vdso;
+> 
+> 		if (image == &vdso_image_32) {
+>                 	....
+>                         return true;
+>                 }
+> 	}
+>         return false.
+> 
+> Making the variables depend upon in_ia32_syscall() so you can be certain
+> they are compiles out.
+
+If that structure is preferred I can send a v2.
+
+
+Thomas
 
