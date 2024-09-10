@@ -1,66 +1,57 @@
-Return-Path: <linux-kernel+bounces-323148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572B197388B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:24:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C86697388D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A331F256F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:24:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF5851C2499B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A781922E1;
-	Tue, 10 Sep 2024 13:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2A3191F8C;
+	Tue, 10 Sep 2024 13:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Fd0LAx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pW/ek4/f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEC673459;
-	Tue, 10 Sep 2024 13:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9556137772;
+	Tue, 10 Sep 2024 13:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725974634; cv=none; b=lyMMJOGs60+hqSJmx2PVEnOWz/G9p+27cTVnkxRfy5C66yWC/TLP37E6skP9ypfGW3YaUPNqPBY1gHDAY1EmTjHiQJeqma6qO9Dbl5qOUvUCkMk7YvuWYF9r3ePs4ct+S5w7ITGJywDtsQHHsUPMcekrhAxt1uV+w5Dfq+BT41U=
+	t=1725974690; cv=none; b=SHucpV64kEEBMAkHiC1EKwJt4NNhZd1P1BS62jbDdVeEDPLsoudclvlmgfLBU7i7o6qv6YWr/PGjuofLZ70jzAybtvnDldGoEg+u13XU/Cxh4OY0mWGbOFlZa0WsxoKvWMsR8GXjFqcu47KlXO+8H/lc/SC5jalOB7SfWjeLQ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725974634; c=relaxed/simple;
-	bh=LFb2YHlrS3wGYB3pz6ZfwEjzOnQjkSzgEc19Fpysuh8=;
+	s=arc-20240116; t=1725974690; c=relaxed/simple;
+	bh=7CMlGVnnxLN2+kBnRR70VGSZMdJx4h17GVQDJYYv86g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJjX7DaJemHVDbQoH24bO/1lRp2gcTKXgIrs3HYaEL7608dIs+OEEYS2q/0bECvSkElwhH15EDoNXg5aQWec3ZhcIqC2xGLqtake/GK1aCu2i1L5WJ71lmMTQTroBQn5k9A7b5DSCNWw2JXpK3rUHJSCevSaHva2q+/6tRM3pfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4Fd0LAx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A94C4CEC4;
-	Tue, 10 Sep 2024 13:23:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBQYZzVnYQKp1FqTZFgd0LnPG2f0aykAzezDVC+sZIvvRUpKrl4dzpBiPUlsc5AwKAadSk9oa1Sj825TycFXDCa3qPKRZjCb1lqM52WB4/crwSDqL7iHXjRPoZcWjICdzyz0tqYk5cjrE/krt1ZuZd3NfxZPUqK03O+4gIobKWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pW/ek4/f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADACC4CEC3;
+	Tue, 10 Sep 2024 13:24:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725974633;
-	bh=LFb2YHlrS3wGYB3pz6ZfwEjzOnQjkSzgEc19Fpysuh8=;
+	s=k20201202; t=1725974689;
+	bh=7CMlGVnnxLN2+kBnRR70VGSZMdJx4h17GVQDJYYv86g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A4Fd0LAxzkz4uP/JKACsrqfRhozSxFHdSAR2K2VqcpDdLpscgVmpjnh8mrF50pPfR
-	 ZRc4EMILUQOpoWe3Uc+QONeXCYucqsH5qxro6u/+q9D2qMC/dPRANDh5TV/BoKqko2
-	 8Tq0z3nGIP6fkMD3o86PC3pX50izL8XVeoDdHxdfGc2bAMtEES8qx73L0UZS/KZhaw
-	 dLKozQiDluu31rpkY8fN3bIqToeZeKj6xjgCDJE/K3+aw7/uG9Qf1hv2vtkQ087cop
-	 jgya0xuSEAtxOO7t3A3/nHATv3iUOg5qmC93Ss/do8k0/FwpSc05HQY3puU1YqtIR+
-	 OQNcQsnSvzv9Q==
-Date: Tue, 10 Sep 2024 15:23:44 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
-Message-ID: <ZuBIYNrwIiGXx8Uw@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-2-dakr@kernel.org>
- <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me>
- <ZtDuf0QGfhiy5X_I@pollux.localdomain>
- <44b80095-8b03-4558-967e-138ea712f780@proton.me>
- <Ztb5arBBX2LsrFKo@pollux>
- <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
+	b=pW/ek4/fqnv3tw2TohBzpckvPpu6WwG0VUh1wmzf5ImtLHiHjkoXmFu8ZKnwPcMjm
+	 DNPlgBKVtTakO1pB5vqaIdSQjb8hB6F4mmNlO/YD8YtVvAEaJugBMK5UuFhnM/jQc3
+	 g1wULD7XGy/4tcMml/YYPH4/i0YbCCixjLs39RLBGSr+sZ6IKU8hxQJ/JwxlJE49dR
+	 LMsIYlao3eD1njTWzEn4EFckeNoePz1aRiH1GsOJ/nMdHZOind/Ut88azKRtBEAb6R
+	 6RcOtoChqHGoUFehf0vgAAv7Okr4hjUrSMN1nXE7dfZd5+ryEhvqsYYimXVqBN+ktj
+	 nk/xNb+XeudJw==
+Date: Tue, 10 Sep 2024 15:24:46 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+Cc: git@amd.com, linux-arm-kernel@lists.infradead.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, michal.simek@amd.com, 
+	radhey.shyam.pandey@amd.com, srinivas.goud@amd.com, shubhrajyoti.datta@amd.com, 
+	manion05gk@gmail.com
+Subject: Re: [PATCH 1/3] i2c: cadence: Relocate cdns_i2c_runtime_suspend and
+ cdns_i2c_runtime_resume to facilitate atomic mode
+Message-ID: <tdajuroqqqaijoonexauhudqku2kpusumigcongkxbknmjse4t@xmi64zz4j37s>
+References: <20240801094408.2004460-1-manikanta.guntupalli@amd.com>
+ <20240801094408.2004460-2-manikanta.guntupalli@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,68 +60,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
+In-Reply-To: <20240801094408.2004460-2-manikanta.guntupalli@amd.com>
 
-On Tue, Sep 10, 2024 at 01:03:48PM +0000, Benno Lossin wrote:
-> On 03.09.24 13:56, Danilo Krummrich wrote:
-> > On Fri, Aug 30, 2024 at 01:06:00PM +0000, Benno Lossin wrote:
-> >> On 29.08.24 23:56, Danilo Krummrich wrote:
-> >>> On Thu, Aug 29, 2024 at 06:19:09PM +0000, Benno Lossin wrote:
-> >>>> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>>>> Add a kernel specific `Allocator` trait, that in contrast to the one in
-> >>>>> Rust's core library doesn't require unstable features and supports GFP
-> >>>>> flags.
-> >>>>>
-> >>>>> Subsequent patches add the following trait implementors: `Kmalloc`,
-> >>>>> `Vmalloc` and `KVmalloc`.
-> >>>>>
-> >>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> >>>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> >>>>
-> >>>> We discussed this in our weekly meeting (I think ~one week ago?). If you
-> >>>> give me a draft version of the comment that you plan to add regarding
-> >>>> the `old_layout` parameter, I can see if I am happy with it. If I am, I
-> >>>> would give you my RB.
-> >>>
-> >>> May I propose you let me know what you would like to see covered, rather than
-> >>> me trying to guess it. :-)
-> >>
-> >> I was hoping that we put that in our meeting notes, but I failed to find
-> >> them... I would put this in a normal comment, so it doesn't show up in the
-> >> documentation. Preface it like implementation decision/detail:
-> >> - Why do `Allocator::{realloc,free}` not have an `old_layout` parameter
-> >>   like in the stdlib? (the reasons you had for that decision, like we
-> >>   don't need it etc.)
-> > 
-> > Ok.
-> > 
-> >> - Then something along the lines of "Note that no technical reason is
-> >>   listed above, so if you need/want to implement an allocator taking
-> >>   advantage of that, you can change it"
-> > 
-> > I don't really want to set the conditions for this to change in the
-> > documentation. It really depends on whether it's actually needed or the
-> > advantage of having it is huge enough to leave the core kernel allocators with
-> > unused arguments.
-> > 
-> > This can really only be properly evaluated case by case in a discussion.
+Hi Manikanta,
+
+On Thu, Aug 01, 2024 at 03:14:06PM GMT, Manikanta Guntupalli wrote:
+> Relocate cdns_i2c_runtime_suspend, cdns_i2c_runtime_resume and
+> cdns_i2c_init functions to avoid prototype statement in atomic
+> mode changes.
 > 
-> Agreed, but I don't want people to think that we have a reason against
-> doing it in the future. Do you have an idea how to convey this?
+> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
 
-I understand (and agree with) your intention. But I don't think it's necessary
-to document, because, ideally, this is already true for the whole kernel.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-Generally, I think it's valid to assume that people are willing to change the
-code if the advantages outweigh the disadvantages.
-
-So, we could write something like "This may be changed if the advantages
-outweigh the disadvantages.", but it'd be a bit random, since we could probably
-sprinkle this everywhere.
-
-> 
-> ---
-> Cheers,
-> Benno
-> 
+Thanks,
+Andi
 
