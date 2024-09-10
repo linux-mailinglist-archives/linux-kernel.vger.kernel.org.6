@@ -1,108 +1,74 @@
-Return-Path: <linux-kernel+bounces-322237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15F4972622
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:20:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F34972626
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA73B1C23218
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA8EB284CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C063B24B4A;
-	Tue, 10 Sep 2024 00:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyCGMV8C"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8301E89C;
+	Tue, 10 Sep 2024 00:22:20 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAF01F956;
-	Tue, 10 Sep 2024 00:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4502FB6;
+	Tue, 10 Sep 2024 00:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725927644; cv=none; b=av2l8rhhl9RMnm9EUxu+BSBPw5U7V/THWKKVipIa8pOSMwCa4oIG+acYq4o8mfmLSLYM4Kj7GmVijCCCBmOVMZgvp+bJDPcXbkx6uNJQYKJAtp3DaKjFFeEbrHTmfp22oUA/KQFjWwJM3cwELJfd7vOmZqSmyM4oZ5xeNg/5ArA=
+	t=1725927740; cv=none; b=d/yS0G3yEOV45Ibhg3wpHbqEctq0XS86CMuloo+HDyVJDmLlrF7LSrIQIswf+O3jayFpMkoz3G+DfU+HMdH2s++JjmzUY8g+Vqvm1voJdGhq41Px21+9L2W4W4jkpL1WErGNTC6dOvJNT4wndSiDlOu23T/mu1hsKwmVnyurQHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725927644; c=relaxed/simple;
-	bh=wM4DTXTczWncO9UOsaVjM6cDnXHniF5HLOavcoBGxJQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oVCsUGls5LHZUp7sm3ZxoRB136/9ZP/+5UPvVB/3Ktv8VxswDX2hBnuWhT+YrCzlvNGyt2TqXHcsYRWh7rzn3E2jBQzGw+SzX1kxXc4cKstdx7lmtNPBYLtb6WMCq0Mye7FGLxpgmUHwsHHzQM+xqfdCv9ywOLl3ZGLSp5cteQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IyCGMV8C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFFFC4CEC5;
-	Tue, 10 Sep 2024 00:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725927643;
-	bh=wM4DTXTczWncO9UOsaVjM6cDnXHniF5HLOavcoBGxJQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IyCGMV8CQbMXZlZhY+bHCMG4PrA7E9tsBaHg2NFzQuWGj3nOAEdi9i2S6jxoqq54m
-	 DdDKrJuW4AzSKnLFtzsjK0weHzyP5LxjFUCT8rAoCZujkyVCJzdhuqd6v4NxROLDLP
-	 nc1IpNQXgjEinE4fKTwOJ/ldVRc/cjBwUPKGkrGxBxan5MWx1iMUKrWdzdC+IuIywt
-	 w8XpcK48e0ZVz/W9dWBZ8nJQjehzzV56pEKyZcSTSV9PVVO01OK3lABaRQmy5IDwAK
-	 ethPgfiNQ0ionBe+POEeIDVJ4pSr5qn2aba/jWxyt8cN+rx1AZxAPYIRbmMEbbVidz
-	 D9Wm9dMOsrY0w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEDE3806654;
-	Tue, 10 Sep 2024 00:20:45 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725927740; c=relaxed/simple;
+	bh=fhFX+DOHOqvL8dcXEVkQv1gYzdBPaSCIh9OdMv6ptfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OtqkH64U4ndqkEhgziTVICdhUES8nZobgttMf9f3/Z1o7x6Y/g/zNIxKxyEEEnwnzdn9mxYbu8flq+MPKELms44+rJ/qafR82V7hqorbRrae/vGBqoYYO4c0sYN+XcBspGTa2XLe56teoSK6Cbs27rSYv95UiUEeyaTnifN2w+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 753E5C4CEC6;
+	Tue, 10 Sep 2024 00:22:19 +0000 (UTC)
+Date: Mon, 9 Sep 2024 20:22:18 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: syzbot <syzbot+list692d096cfc0c03673c30@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org
+Subject: Re: [syzbot] Monthly trace report (Sep 2024)
+Message-ID: <20240909202218.6edb3d4a@gandalf.local.home>
+In-Reply-To: <20240910001512.f604fd970f2be1ef6e7f9189@kernel.org>
+References: <000000000000e69f460621ab50f4@google.com>
+	<20240910001512.f604fd970f2be1ef6e7f9189@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv2 net-next 0/7] various cleanups
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172592764474.3964840.11886218788875824850.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Sep 2024 00:20:44 +0000
-References: <20240905194938.8453-1-rosenp@gmail.com>
-In-Reply-To: <20240905194938.8453-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, o.rempel@pengutronix.de, p.zabel@pengutronix.de
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, 10 Sep 2024 00:15:12 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  5 Sep 2024 12:49:31 -0700 you wrote:
-> Allow CI to build. Also a bugfix for dual GMAC devices.
+> > <3> 31      Yes   INFO: task hung in blk_trace_ioctl (4)
+> >                   https://syzkaller.appspot.com/bug?extid=ed812ed461471ab17a0c  
 > 
-> v2: add MODULE_DESCRIPTION and move variable for mdio_reset.
+> This is a bug in blk_trace.
+
+[..]
+
 > 
-> Rosen Penev (6):
->   net: ag71xx: add COMPILE_TEST to test compilation
->   net: ag71xx: add MODULE_DESCRIPTION
->   net: ag71xx: update FIFO bits and descriptions
->   net: ag71xx: use ethtool_puts
->   net: ag71xx: get reset control using devm api
->   net: ag71xx: remove always true branch
+> > <5> 11      Yes   WARNING in get_probe_ref
+> >                   https://syzkaller.appspot.com/bug?extid=8672dcb9d10011c0a160  
 > 
-> [...]
+> This is a bug in blk_trace.
+> 
+> It seems blk_trace does not check input parameters of ioctl correctly.
 
-Here is the summary with links:
-  - [PATCHv2,net-next,1/7] net: ag71xx: add COMPILE_TEST to test compilation
-    https://git.kernel.org/netdev/net-next/c/969431d2b0df
-  - [PATCHv2,net-next,2/7] net: ag71xx: add MODULE_DESCRIPTION
-    https://git.kernel.org/netdev/net-next/c/7c3736a12938
-  - [PATCHv2,net-next,3/7] net: ag71xx: update FIFO bits and descriptions
-    https://git.kernel.org/netdev/net-next/c/28540850577b
-  - [PATCHv2,net-next,4/7] net: ag71xx: use ethtool_puts
-    https://git.kernel.org/netdev/net-next/c/441a2798623c
-  - [PATCHv2,net-next,5/7] net: ag71xx: get reset control using devm api
-    https://git.kernel.org/netdev/net-next/c/bfff5d8e2111
-  - [PATCHv2,net-next,6/7] net: ag71xx: remove always true branch
-    https://git.kernel.org/netdev/net-next/c/40f111cc6e1b
-  - [PATCHv2,net-next,7/7] net: ag71xx: disable napi interrupts during probe
-    https://git.kernel.org/netdev/net-next/c/8410adf2e38a
+Added blk_trace maintainer and list to the Cc.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+-- Steve
 
