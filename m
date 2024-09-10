@@ -1,55 +1,75 @@
-Return-Path: <linux-kernel+bounces-322825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CE5972F5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC365972F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21AF1F222A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF7B1C2429A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C52918C002;
-	Tue, 10 Sep 2024 09:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EDD18B465;
+	Tue, 10 Sep 2024 09:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HSb2h/AV";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="i9VsMEaQ"
-Received: from a7-29.smtp-out.eu-west-1.amazonses.com (a7-29.smtp-out.eu-west-1.amazonses.com [54.240.7.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BM3CD/YK"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54361188CAD;
-	Tue, 10 Sep 2024 09:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F5D13AD09
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961843; cv=none; b=oelsD6qKDVpXMrC1tr+clnYwOKDmyl+VHs4nmb2rALcIfzGdF7PneaLghAoLLgAwgBslj34zuMufRBq8eVNKDEdI+G0y4BrD8xPNrGOq3+2O2iWE4SXR8NQA4O6td71XtR6W9/KBgAiXfxTbaiOiFy4r9OUgonc8iwqDvkbfa8U=
+	t=1725961967; cv=none; b=jDrBuOUqEAMChF00EolUQr8kLQewfQKMbNqu4oYJoot0vAJWrg7wVq2/L8oUlcc1lgE4i9vFe6irITGZ/55MZz1e2epzNjZ8vGm7gU0nRqEaarREwxvrVgRe9MEU0C08LCln0tynxwJdidUf4JMyEzJORQOO5gEVyv76jWEEBrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961843; c=relaxed/simple;
-	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsPAWdJTyHsF2POcTAGPT0WI0kVPYuSLH/mBKEB+aoRrIgZyMXyIIU3yyrrYLBQyXAXsCpLoCXOgktsTghJxVQsR205Crj5UUwdIYykPHYEiPkSS2UYxO3Ssuo5FQ8TZkZ0oxRcHSzbUVpwLp1vOK6v8kDy0lobtdqF90mYbKIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HSb2h/AV; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=i9VsMEaQ; arc=none smtp.client-ip=54.240.7.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725961839;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
-	b=HSb2h/AVHeQAcHmJm4OK62xZYmZJZChE2aYmlF6G/GWKwT0gDioOifMvuULsVaU/
-	fO5Kdkpa5CXJJaIkDkLPjasjtPaK848Ohm+Td9tsDwdm4mT3DsgOHKpArLAHMv3Ki+L
-	McI2e+sYx8FdDvLuy8vw5k52mqEqNGE30y/XYmbzhsmf5/PD/OrzMz8Y8ZGSCX8uHns
-	2okTJQaj5AZzV2YHDh3fgdd7/G9gQHyuNnuAJlwaZVUT2oe0gnAH2vatURNNV+rNvj4
-	jjr9QdhNv0/4+AlGFD1GQqotiGnnsiXc9yDxcbnx0e5nIx5rCleGjHhKlB2b6hfRFdr
-	RgRM/DeWcw==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725961839;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=0IVPpNyAsgXKj+Ov1MV+Lz4gLR4qqxyGnN+wU1Hih9E=;
-	b=i9VsMEaQ23fk8Q2EUnzb3AmX3KwSemtRQDqxJS1cTRSgS60L2mwhLUNBjko8Jfoq
-	qAmPnA9AHCQvO8q3xwUo/EaGHUM04bGEZFiyFEKxqpPTRkhbRBHLcUMe31lLP0qgCHD
-	1WkwhHpdval2O8ZQiveExfkxCgY4SQLY+4Jij564=
-Message-ID: <01020191db57a3d1-2c076978-c7c0-4685-9621-10ecdc3c5e99-000000@eu-west-1.amazonses.com>
-Date: Tue, 10 Sep 2024 09:50:39 +0000
+	s=arc-20240116; t=1725961967; c=relaxed/simple;
+	bh=j4NKCK4tfvmG7e6KDzPg428c5ABg6cR6FUuX9QrByJA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ANv1IjMpvHCWekyBXPXWvfo8PQDoB83rBnFOu3LZ5olpdMxa6GBmhcrMkrtsIlMp+Tyxpejkqm8Ggu/h7Ug6yJHL93o6L0HvcW9RMWr02rmx/NQEYuUIs2Lv/OPxKH9EiCrhGKH82YtV4XyqizgRhhOxVdTYhy7EoYdUYhPRVT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BM3CD/YK; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c1120a32so387650f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725961963; x=1726566763; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GWV7f44BZF87ElCZ6bcjCdMpF39SsfwinbKIs9L/OnI=;
+        b=BM3CD/YKRJV9yzt+9+9k5OGKnRQfNcvS/QF6mybc6votJJYC07ZtgwIQXHW1TyK03Z
+         ZGSsum3jFhmsmZe0NwjiH4Wn1r5J8ZeLFDGfQecBcK59CU2TUrSzcyHFTPAcx5XI4YFR
+         SNbBl+oi6umhX2x+w/o+xBBGLKuQl3BXrSQxUUhEQuKWVng1V7FJUpDAVMc8Ns7dmf1K
+         FmBUaq8x7j/ewzvmBXrrYAo0+PUIfg9UgRj7io8WGUtzgiIcUmenarAGV+U7DhOcJ3WC
+         ZfU6B+XYnWtvOFdFy7VgsZ9nM1KkU2wCEykPrZ3WGd5NORxiKHwywF8GIJaNV6rc3hNG
+         IZ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725961963; x=1726566763;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GWV7f44BZF87ElCZ6bcjCdMpF39SsfwinbKIs9L/OnI=;
+        b=KQNqCK1cmtjPnDALCbOKEXPHcHVVZU6ruTRBqRD1vp/e7CYa0kSYOeoGy6Z8p7pfTS
+         8cz8x0c8IVqDIBPrKfj1tuqkMyTXltRF1tJnKEJVJaD1eOo8OGrKBuAEek9sMmLKesq2
+         7VEk3Tzk7pHY7qSDezmIdcg1/MGn8iE9uyB0hAwHaQGjW3rZ+HBP4+/SHTsq9unr4DyV
+         xBbcs3Ox+a9q/YKUNUrTLD/7yuysBKyJgqra3opO8yYpr2YJElDJU6vIxgyVRvhyoG9M
+         CJ7ZSwNsHxoSAle+8xpXohd3WXbAfEtn9iWF0VQC0S3bfxY0Ym2DBSHHal+Sudae41jr
+         GfsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIg8VmcR2Nso7NcydwIrjFluXhlfpvSIOH+VcRSQbASrNBbPzlGlP+WX1qPSq1/uhloENI7rtEi7AmtaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFLu+aFqmKLvjVtK+mmAd4+oTUTbwVAdDraB8zyCze75ZnvZKl
+	Sde4Y4SwF7uR7nccdSJt0CG5WHGDr6EtPovBjXjkq2CoLGqgf16J9P0yLngdJkk=
+X-Google-Smtp-Source: AGHT+IEcOkFGWuqfJN/l7xiWJMNPUxRQqUeqjzQ8ZQ3UP0KZlVQXoCTqcOwigy+JhoJfM3GOcGt+xA==
+X-Received: by 2002:adf:ab1b:0:b0:367:96a8:d94b with SMTP id ffacd0b85a97d-378896ac4b2mr8730764f8f.57.1725961962462;
+        Tue, 10 Sep 2024 02:52:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:44b1:5873:83f4:c201? ([2a01:e0a:982:cbb0:44b1:5873:83f4:c201])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665517sm8573245f8f.36.2024.09.10.02.52.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 02:52:41 -0700 (PDT)
+Message-ID: <ed0c3d9c-82d8-47db-938c-4e60e8ebed77@linaro.org>
+Date: Tue, 10 Sep 2024 11:52:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,185 +77,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/3] drm/mediatek: Add support for OF graphs
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: chunkuang.hu@kernel.org, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
-	yu-chang.lee@mediatek.com, ck.hu@mediatek.com, 
-	jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	sui.jingfeng@linux.dev, michael@walle.cc, sjoerd@collabora.com
-References: <01020191db2ac439-4e2dc95a-6323-4f0f-b9fc-c482948018a8-000000@eu-west-1.amazonses.com>
- <CAGXv+5Ff4+HS5_DSTX2U7SaCnZhWMWTN44wr+4_vYNrQQm_mDA@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5Ff4+HS5_DSTX2U7SaCnZhWMWTN44wr+4_vYNrQQm_mDA@mail.gmail.com>
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+ vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+ Frank.Li@nxp.com, konradybcio@kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+ <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
+ <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
+ <3bd27b6d-74b8-4f7b-b3eb-64682442bbda@quicinc.com>
+ <3dddd226-c726-434e-8828-c12f76a71752@linaro.org>
+ <687db538-1a41-4353-89fd-d1869d960a12@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <687db538-1a41-4353-89fd-d1869d960a12@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.10-54.240.7.29
 
-Il 10/09/24 11:39, Chen-Yu Tsai ha scritto:
-> On Tue, Sep 10, 2024 at 5:01 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Changes in v9:
->>   - Rebased on next-20240910
->>   - Removed redundant assignment and changed a print to dev_err()
->>   - Dropped if branch to switch conversion as requested; this will
->>     be sent as a separate commit out of this series.
->>
->> Changes in v8:
->>   - Rebased on next-20240617
->>   - Changed to allow probing a VDO with no available display outputs
->>
->> Changes in v7:
->>   - Fix typo in patch 3/3
->>
->> Changes in v6:
->>   - Added EPROBE_DEFER check to fix dsi/dpi false positive DT fallback case
->>   - Dropped refcount of ep_out in mtk_drm_of_get_ddp_ep_cid()
->>   - Fixed double refcount drop during path building
->>   - Removed failure upon finding a DT-disabled path as requested
->>   - Tested again on MT8195, MT8395 boards
->>
->> Changes in v5:
->>   - Fixed commit [2/3], changed allOf -> anyOf to get the
->>     intended allowance in the binding
->>
->> Changes in v4:
->>   - Fixed a typo that caused pure OF graphs pipelines multiple
->>     concurrent outputs to not get correctly parsed (port->id);
->>   - Added OVL_ADAPTOR support for OF graph specified pipelines;
->>   - Now tested with fully OF Graph specified pipelines on MT8195
->>     Chromebooks and MT8395 boards;
->>   - Rebased on next-20240516
->>
->> Changes in v3:
->>   - Rebased on next-20240502 because of renames in mediatek-drm
->>
->> Changes in v2:
->>   - Fixed wrong `required` block indentation in commit [2/3]
->>
->>
->> The display IPs in MediaTek SoCs are *VERY* flexible and those support
->> being interconnected with different instances of DDP IPs (for example,
->> merge0 or merge1) and/or with different DDP IPs (for example, rdma can
->> be connected with either color, dpi, dsi, merge, etc), forming a full
->> Display Data Path that ends with an actual display.
->>
->> This series was born because of an issue that I've found while enabling
->> support for MT8195/MT8395 boards with DSI output as main display: the
->> current mtk_drm_route variations would not work as currently, the driver
->> hardcodes a display path for Chromebooks, which have a DisplayPort panel
->> with DSC support, instead of a DSI panel without DSC support.
->>
->> There are other reasons for which I wrote this series, and I find that
->> hardcoding those paths - when a HW path is clearly board-specific - is
->> highly suboptimal. Also, let's not forget about keeping this driver from
->> becoming a huge list of paths for each combination of SoC->board->disp
->> and... this and that.
->>
->> For more information, please look at the commit description for each of
->> the commits included in this series.
->>
->> This series is essential to enable support for the MT8195/MT8395 EVK,
->> Kontron i1200, Radxa NIO-12L and, mainly, for non-Chromebook boards
->> and Chromebooks to co-exist without conflicts.
->>
->> Besides, this is also a valid option for MT8188 Chromebooks which might
->> have different DSI-or-eDP displays depending on the model (as far as I
->> can see from the mtk_drm_route attempt for this SoC that is already
->> present in this driver).
->>
->> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
->> NIO-12L with both hardcoded paths, OF graph support and partially
->> hardcoded paths, and pure OF graph support including pipelines that
->> require OVL_ADAPTOR support.
->>
->> AngeloGioacchino Del Regno (3):
->>    dt-bindings: display: mediatek: Add OF graph support for board path
->>    dt-bindings: arm: mediatek: mmsys: Add OF graph support for board path
->>    drm/mediatek: Implement OF graphs support for display paths
->>
->>   .../bindings/arm/mediatek/mediatek,mmsys.yaml |  28 ++
->>   .../arm/mediatek/mediatek,mmsys.yaml.orig     | 140 ++++++++++
->>   .../display/mediatek/mediatek,aal.yaml        |  40 +++
->>   .../display/mediatek/mediatek,aal.yaml.orig   |  93 +++++++
->>   .../display/mediatek/mediatek,ccorr.yaml      |  21 ++
->>   .../display/mediatek/mediatek,ccorr.yaml.orig |  88 ++++++
->>   .../display/mediatek/mediatek,color.yaml      |  22 ++
->>   .../display/mediatek/mediatek,color.yaml.orig |  96 +++++++
->>   .../display/mediatek/mediatek,dither.yaml     |  22 ++
->>   .../mediatek/mediatek,dither.yaml.orig        |  87 ++++++
->>   .../display/mediatek/mediatek,dpi.yaml        |  25 +-
->>   .../display/mediatek/mediatek,dpi.yaml.orig   | 122 +++++++++
->>   .../display/mediatek/mediatek,dsc.yaml        |  24 ++
->>   .../display/mediatek/mediatek,dsi.yaml        |  27 +-
->>   .../display/mediatek/mediatek,dsi.yaml.orig   | 126 +++++++++
->>   .../display/mediatek/mediatek,ethdr.yaml      |  22 ++
->>   .../display/mediatek/mediatek,gamma.yaml      |  19 ++
->>   .../display/mediatek/mediatek,gamma.yaml.orig |  96 +++++++
->>   .../display/mediatek/mediatek,merge.yaml      |  23 ++
->>   .../display/mediatek/mediatek,merge.yaml.orig | 110 ++++++++
->>   .../display/mediatek/mediatek,od.yaml         |  22 ++
->>   .../display/mediatek/mediatek,ovl-2l.yaml     |  22 ++
->>   .../mediatek/mediatek,ovl-2l.yaml.orig        |  78 ++++++
->>   .../display/mediatek/mediatek,ovl.yaml        |  22 ++
->>   .../display/mediatek/mediatek,ovl.yaml.orig   | 109 ++++++++
->>   .../display/mediatek/mediatek,postmask.yaml   |  21 ++
->>   .../display/mediatek/mediatek,rdma.yaml       |  22 ++
->>   .../display/mediatek/mediatek,rdma.yaml.orig  | 122 +++++++++
->>   .../display/mediatek/mediatek,ufoe.yaml       |  21 ++
->>   .../display/mediatek/mediatek,wdma.yaml.orig  |  76 ++++++
->>   .../bindings/gpu/arm,mali-bifrost.yaml.orig   | 250 +++++++++++++++++
->>   .../bindings/leds/leds-mt6323.txt.orig        |  60 +++++
->>   .../bindings/ufs/mediatek,ufs.yaml.orig       |  71 +++++
->>   drivers/gpu/drm/mediatek/mtk_disp_drv.h       |   1 +
->>   .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  40 ++-
->>   drivers/gpu/drm/mediatek/mtk_dpi.c            |  21 +-
->>   drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 253 +++++++++++++++++-
->>   drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
->>   drivers/gpu/drm/mediatek/mtk_dsi.c            |  14 +-
->>   39 files changed, 2433 insertions(+), 25 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ccorr.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,color.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dither.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,gamma.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,merge.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,ovl.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,rdma.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,wdma.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml.orig
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-mt6323.txt.orig
->>   create mode 100644 Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml.orig
+On 10/09/2024 11:15, Mukesh Kumar Savaliya wrote:
+> Hi Neil,
 > 
-> It looks like you accidentally imported a bunch of files from Git.
-> 
-
-Ouch. Yeah, looks like I did.
-
-Will send a v10 soon, I apparently need some coffee :-P
-
-Thanks,
-Angelo
-
-> ChenYu
-> 
+> On 9/9/2024 6:34 PM, neil.armstrong@linaro.org wrote:
+>> On 09/09/2024 11:18, Mukesh Kumar Savaliya wrote:
+>>> Hi Neil,
+>>>
+>>> On 9/9/2024 2:24 PM, neil.armstrong@linaro.org wrote:
+>>>> Hi,
+>>>>
+>>>> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
+>>>>> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
+>>>>> Use  "qcom,shared-se" flag in a particular i2c instance node if the
+>>>>> usecase requires i2c controller to be shared.
+>>>>>
+>>>>> I2C driver just need to mark first_msg and last_msg flag to help indicate
+>>>>> GPI driver to  take lock and unlock TRE there by protecting from concurrent
+>>>>> access from other EE or Subsystem.
+>>>>>
+>>>>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+>>>>> Unlock TRE for the respective transfer operations.
+>>>>>
+>>>>> Since the GPIOs are also shared for the i2c bus between two SS, do not
+>>>>> touch GPIO configuration during runtime suspend and only turn off the
+>>>>> clocks. This will allow other SS to continue to transfer the data
+>>>>> without any disturbance over the IO lines.
+>>>>
+>>>> This doesn't answer my question about what would be the behavior if one
+>>>> use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE DMA ?
+>>>>
+>>> Shared usecase is not supported for non GSI mode (FIFO and DMA), it should be static usecase. Dynamic sharing from two clients of two subsystems is only for GSI mode. Hope this helps ?
 >>
->> --
->> 2.46.0
+>> Sure, this is why I proposed on v1 cover letter reply to add:
+> Sure, i will add in cover letter and code check combining with fifo_disable check.
+>> ==============><=====================================================================
+>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+>> index ee2e431601a6..a15825ea56de 100644
+>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>> @@ -885,7 +885,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>>           else
+>>                   fifo_disable = readl_relaxed(gi2c->se.base + GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
 >>
+>> -       if (fifo_disable) {
+>> +       if (gi2c->is_shared || fifo_disable) {
+>   Should be ANDING logically, as we need to combine both check. Shared
+>   usecase possible only for fifo_disable.
 
+Could you elaborate on that ? GPI DMA is totally usable even if FIFO is enabled,
+it's a decision took in the driver to _not_ use GPI when FIFO is enabled.
+
+Neil
+
+> 
+>   if(gi2c->is_shared && fifo_disable) {
+>>                   /* FIFO is disabled, so we can only use GPI DMA */
+>>                   gi2c->gpi_mode = true;
+>>                   ret = setup_gpi_dma(gi2c);
+>> ==============><=====================================================================
+>>
+>> Thanks,
+>> Neil
+>>
+>>>> Because it seems to "fix" only the GPI DMA shared case.
+>>>>
+>>>> Neil
+>>>>
+>>>>>
+>>>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>>> ---
+>>>>>   drivers/i2c/busses/i2c-qcom-geni.c | 29 ++++++++++++++++++++++-------
+>>>>>   1 file changed, 22 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+>>>>> index eebb0cbb6ca4..ee2e431601a6 100644
+>>>>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>>>>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>>>>> @@ -1,5 +1,6 @@
+>>>>>   // SPDX-License-Identifier: GPL-2.0
+>>>>>   // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>>>>> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>>   #include <linux/acpi.h>
+>>>>>   #include <linux/clk.h>
+>>>>> @@ -99,6 +100,7 @@ struct geni_i2c_dev {
+>>>>>       struct dma_chan *rx_c;
+>>>>>       bool gpi_mode;
+>>>>>       bool abort_done;
+>>>>> +    bool is_shared;
+>>>>>   };
+>>>>>   struct geni_i2c_desc {
+>>>>> @@ -602,6 +604,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>>>>>       peripheral.clk_div = itr->clk_div;
+>>>>>       peripheral.set_config = 1;
+>>>>>       peripheral.multi_msg = false;
+>>>>> +    peripheral.shared_se = gi2c->is_shared;
+>>>>>       for (i = 0; i < num; i++) {
+>>>>>           gi2c->cur = &msgs[i];
+>>>>> @@ -612,6 +615,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>>>>>           if (i < num - 1)
+>>>>>               peripheral.stretch = 1;
+>>>>> +        peripheral.first_msg = (i == 0);
+>>>>> +        peripheral.last_msg = (i == num - 1);
+>>>>>           peripheral.addr = msgs[i].addr;
+>>>>>           ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
+>>>>> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>>>>>           dma_async_issue_pending(gi2c->tx_c);
+>>>>>           time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+>>>>> -        if (!time_left)
+>>>>> +        if (!time_left) {
+>>>>> +            dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
+>>>>> +                        gi2c->cur->flags, gi2c->cur->addr);
+>>>>>               gi2c->err = -ETIMEDOUT;
+>>>>> +        }
+>>>>>           if (gi2c->err) {
+>>>>>               ret = gi2c->err;
+>>>>> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>>>>>           gi2c->clk_freq_out = KHZ(100);
+>>>>>       }
+>>>>> +    if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
+>>>>> +        gi2c->is_shared = true;
+>>>>> +        dev_dbg(&pdev->dev, "Shared SE Usecase\n");
+>>>>> +    }
+>>>>> +
+>>>>>       if (has_acpi_companion(dev))
+>>>>>           ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
+>>>>> @@ -962,14 +975,16 @@ static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
+>>>>>       struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
+>>>>>       disable_irq(gi2c->irq);
+>>>>> -    ret = geni_se_resources_off(&gi2c->se);
+>>>>> -    if (ret) {
+>>>>> -        enable_irq(gi2c->irq);
+>>>>> -        return ret;
+>>>>> -
+>>>>> +    if (gi2c->is_shared) {
+>>>>> +        geni_se_clks_off(&gi2c->se);
+>>>>>       } else {
+>>>>> -        gi2c->suspended = 1;
+>>>>> +        ret = geni_se_resources_off(&gi2c->se);
+>>>>> +        if (ret) {
+>>>>> +            enable_irq(gi2c->irq);
+>>>>> +            return ret;
+>>>>> +        }
+>>>>>       }
+>>>>> +    gi2c->suspended = 1;
+>>>>>       clk_disable_unprepare(gi2c->core_clk);
+>>>>
+>>>>
+>>
+>>
 
 
