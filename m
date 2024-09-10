@@ -1,115 +1,154 @@
-Return-Path: <linux-kernel+bounces-322970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B02F973613
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285BD9735FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0610D1F21D8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA701F26B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81F718CBF1;
-	Tue, 10 Sep 2024 11:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CC1F956;
+	Tue, 10 Sep 2024 11:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b="dMxUQfWq"
-Received: from mail.rothwell.id.au (gimli.rothwell.id.au [103.230.158.156])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XUjRwzyz"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7217D341;
-	Tue, 10 Sep 2024 11:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.230.158.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9FF1862B8;
+	Tue, 10 Sep 2024 11:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967174; cv=none; b=R9sHTp6LQYWe/TAYx7e5fZFHsW1kBcqmMmnvK6eLSNM8ZVU11RTs784wgWbiR7JkHlA0TPHkzFQ0PdIIWQny0p1gdHxYjKDjNjP7BJ+aI4TNKDsMAY9Mk9Zt7RpEgmrnFm3+F3DP99dt28vP3yeDyVIORFysELI4YD55MssTVf4=
+	t=1725966836; cv=none; b=UOaNe8gE/8Qcj/H1p9UZ5K7TVQtVlRLvVt/fLvEPxTSuNrb3PA3Agvac1VbGAaiOJhpHnIb0AefIc1+j0pu8qn79PLOjTbFH0yLX1nQ2QE3N9YhgQCV6Lk7VwPQ54Qg2uwblSU2b8tGKLQAUc0v2hcaBNof0fDkrgqt6PFnAJOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967174; c=relaxed/simple;
-	bh=gvYbGN5m9KyGDNIgLldowFMfOGC1YzezrFwnf7wx4tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VuclvAGYpgPdAHomn+pGfWgp6PSsb6dawJd+IuBO2fiTFjcEmFUVhWjwrUtjhk+Qq7vzY2uNIcS965TTRuTBp5cy28E1FLAJXvdoaXkA5D10JEgRrZomTHowDa4Csz5oECP8DUzSxqYHtcQNEB0JggEcXj2lOdK9O2/DgLkvVmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au; spf=pass smtp.mailfrom=rothwell.id.au; dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b=dMxUQfWq; arc=none smtp.client-ip=103.230.158.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rothwell.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rothwell.id.au;
-	s=201702; t=1725966759;
-	bh=1YSX8ly098Vz8AdfJ2rvkzXzPY1mICGapU9qpEKznOs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dMxUQfWqHHtS0WV0W+a2bjFE+CpVUpAkVzchnqi6HBwfXAfrEV3JtA2ObAuqfIvwH
-	 BLVZaC6bQOchcefpzIPoT3c4N+5cnW6ANiW7ZkPFEmf7fBIeqX453DA3/w4C6V07dC
-	 OdM709zSsFFMuJ2jwoXzw9waMfMB9fCbW48M0Al/+2INl2CpPGohAEF+w6wPQ1yw4/
-	 J2fWHXF1UlZPeAgw43iRoEzBfsV0nu493WzdD8XsSP/VhaC7r2iH43wwMny+OTpDmz
-	 kOmIC3m84090Db8L2HXBtmVVO3Rf1KWt36kLt2nF0zy9945aRS0uvq6AcErB7+rX+d
-	 drJu16sAQLZUQ==
-Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.rothwell.id.au (Postfix) with ESMTPSA id 4X31JP5W12z6k;
-	Tue, 10 Sep 2024 21:12:37 +1000 (AEST)
-Date: Tue, 10 Sep 2024 21:12:36 +1000
-From: Stephen Rothwell <sfr@rothwell.id.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240910211236.3110457a@oak>
-In-Reply-To: <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
-References: <20240903092745.370fc0c6@canb.auug.org.au>
-	<20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
-	<20240905105809.6585eec2@canb.auug.org.au>
-	<20240910102332.4f171bde@canb.auug.org.au>
-	<20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1725966836; c=relaxed/simple;
+	bh=ss8YI24+bwtpoeauo+RapxXHfzwXYRLVuejgUIR7Ams=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CS9lKyf89GAuH7VlvUm8nv59NRVHs/betytEdvds0dHIcFlSbNgvN9H9k8S6hF+ZtgX8rGpszAy0Y/aTEkkxlmA8f8vlpNG35Whskujcr5IdgeLm4KewZiCDMcQl/4swQBP279xtaAKPhws2HwPNb6bVhHLVSV5k6CEDB+NX2qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XUjRwzyz; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725966825; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	bh=KBIey+3aqcnDOe1MADYXNZUTujmQY9SdJ4Gt4wOtH2E=;
+	b=XUjRwzyzSj1xyqmYyHk785tw/FjkjvRU4+dS5Obn/YlYjD8j1PuTAIrZtS0uJ8gPNk5Ec1NGoB1ME6KGBwOIQw2Eq6gX7flpQpUFh8BghcCS18seBWBtnZagTIysEtkiEAlcsX3c6Oyt+H3KV6ypRDs5M4/B7KADTOwJjNTLfGY=
+Received: from smtpclient.apple(mailfrom:liusong@linux.alibaba.com fp:SMTPD_---0WEkHz5h_1725966823)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Sep 2024 19:13:44 +0800
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//aPvin6071cTgRQpRjvxsbv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_//aPvin6071cTgRQpRjvxsbv
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [RFC PATCH] sched, cgroup: cgroup1 can also take the
+ non-RUNTIME_INF min
+From: =?utf-8?B?5YiY5bWp?= <liusong@linux.alibaba.com>
+In-Reply-To: <20240910104949.GA318990@pauld.westford.csb>
+Date: Tue, 10 Sep 2024 19:13:32 +0800
+Cc: tj@kernel.org,
+ lizefan.x@bytedance.com,
+ hannes@cmpxchg.org,
+ =?utf-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <0339F628-43F2-40D1-B199-5E641C238CAC@linux.alibaba.com>
+References: <20240910074832.62536-1-liusong@linux.alibaba.com>
+ <20240910104949.GA318990@pauld.westford.csb>
+To: Phil Auld <pauld@redhat.com>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-Hi Christian,
 
-On Tue, 10 Sep 2024 10:50:39 +0200 Christian Brauner <brauner@kernel.org> w=
-rote:
->
-> That's weird as I removed everything that touches tools/ from that
-> commit as the tools/ repository is updated after uapi changes
-> separately. That's what I've been told multiple times. I can add this
-> change but it feels odd.
 
-I did not notice the removal, sorry.
+> 2024=E5=B9=B49=E6=9C=8810=E6=97=A5 18:49=EF=BC=8CPhil Auld =
+<pauld@redhat.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+>=20
+> Hi,
+>=20
+> On Tue, Sep 10, 2024 at 03:48:32PM +0800 Liu Song wrote:
+>> For the handling logic of child_quota, there is no need to =
+distinguish
+>> between cgroup1 and cgroup2, so unify the handling logic here.
+>>=20
+>> Signed-off-by: Liu Song <liusong@linux.alibaba.com>
+>> ---
+>> kernel/sched/core.c | 21 +++++----------------
+>> 1 file changed, 5 insertions(+), 16 deletions(-)
+>>=20
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index e752146e59a4..8418c67faa69 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -9501,23 +9501,12 @@ static int tg_cfs_schedulable_down(struct =
+task_group *tg, void *data)
+>> parent_quota =3D parent_b->hierarchical_quota;
+>>=20
+>> /*
+>> - * Ensure max(child_quota) <=3D parent_quota.  On cgroup2,
+>> - * always take the non-RUNTIME_INF min.  On cgroup1, only
+>> - * inherit when no limit is set. In both cases this is used
+>> - * by the scheduler to determine if a given CFS task has a
+>> - * bandwidth constraint at some higher level.
+>=20
+> This comment is here for a reason. Please don't remove it.
 
-Tomorrow I will try without the patch.  I guess my fix patch will
-apply correctly even without the actual commits that caused the build
-failure.
+Hi
 
---=20
-Cheers,
-Stephen Rothwell
+I don=E2=80=99t see why cgroup1 needs to impose this restriction while =
+cgroup2
+can directly take the non-RUNTIME_INF minimum value. What is the
+necessity of this?=20
 
---Sig_//aPvin6071cTgRQpRjvxsbv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+It seems more reasonable to unify the handling logic. Even if the child
+group quota exceeds the parent group quota, it would not actually take
+effect.=20
 
------BEGIN PGP SIGNATURE-----
+However, if the parent group quota is reset to a larger value, then the
+child group quota would have actual significance. Therefore, the =
+handling
+logic should be consistent between cgroup1 and cgroup2.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbgKaQACgkQAVBC80lX
-0GyWygf/fbe6YsSxhsp+dEdwIj7t3+6ito6HMnxL09WS1WGm2tr/wxr3CAb3UKYV
-h+mdvoYtUs3WcV1EfnbfdzHbO9ZxzrNlrCsxqVlkL6tWyjDe/ohqefPBw1wrdfCz
-tF+aYE/6nFDFsh8O0NEZyVD5dVhEAb4Y6vo6nFhsjAJ1vTf6ejuXcVDbpXqDq5nj
-x9s+FVn5JGZ7OBt9RRr2syhXTsdyrwE6WKIt1R4XRD/xFDhd91BOts8EEwD5xoa2
-vzpuvrQCJMZWXStL+ytqMO/ylXqZesIQp/FYJAhlkiSvk09+MjEU7Hr+mdgn8Zkn
-D+1QOCAeyZ768BedgnkW2bgwPoyhNw==
-=5zHy
------END PGP SIGNATURE-----
+Thanks
 
---Sig_//aPvin6071cTgRQpRjvxsbv--
+
+>=20
+>> + * Ensure max(child_quota) <=3D parent_quota.
+>> */
+>> - if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
+>> - if (quota =3D=3D RUNTIME_INF)
+>> - quota =3D parent_quota;
+>> - else if (parent_quota !=3D RUNTIME_INF)
+>> - quota =3D min(quota, parent_quota);
+>> - } else {
+>> - if (quota =3D=3D RUNTIME_INF)
+>> - quota =3D parent_quota;
+>> - else if (parent_quota !=3D RUNTIME_INF && quota > parent_quota)
+>> - return -EINVAL;
+>> - }
+>> + if (quota =3D=3D RUNTIME_INF)
+>> + quota =3D parent_quota;
+>> + else if (parent_quota !=3D RUNTIME_INF)
+>> + quota =3D min(quota, parent_quota);
+>> }
+>> cfs_b->hierarchical_quota =3D quota;
+>>=20
+>=20
+> I don't think there is a need to optimize this slow path
+> to allow setting invalid values which have to be handled in
+> fast paths.   And this will change expected behavior.
+>=20
+> So NAK.
+>=20
+> Cheers,
+> Phil
+>=20
+> --
+
 
