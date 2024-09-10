@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-323132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE94973858
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D630397385E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F8C1C246DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A8A1F26208
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295FE192D66;
-	Tue, 10 Sep 2024 13:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B517C19259F;
+	Tue, 10 Sep 2024 13:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muTlFuvS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSLyMo1o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855A5191F9F;
-	Tue, 10 Sep 2024 13:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86A524B4;
+	Tue, 10 Sep 2024 13:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973931; cv=none; b=IddMIc4BiJq7Qsn5q7ZQi1aM0GovEL7tPpxyh/n+NGocKjZIUeaMbA0qxI7OgXILoIoDq5ynYjFfUdqurhwzzgHHGj4oqSFvWWHYdExc5eqbfuxd64VhqVwuNKsBQNTevOablX1G7sZVqwgg+S4B6H9wpwEjdie7KKYypIumZbw=
+	t=1725974018; cv=none; b=OIfAFxfezzEeqYSEkEdIdImAe8iIXrk03YhJ0zLDZSoV4KFhn3FjZsb3TAklMrUxSEEAz2yuQS0vZbFAvdq9bADbv6q6Mwxg8VDNbKgMmygTIqHD0M6f3KSofEs1PbLLCQ0ffYi9tDyxCG2iIOXCysk1EAOV6o+5FOeB2ENpFjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973931; c=relaxed/simple;
-	bh=IiXPGmsHEiLsBuGb98RBBtINtggf+1ffEWkoTXYgLNQ=;
+	s=arc-20240116; t=1725974018; c=relaxed/simple;
+	bh=uGo6k4OAIYTYxKEoxQ9GjKss84Fepmbx9YP42wZQ/iA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9o02/hRqy6j8F1YHkO9L24juGZ3qc4nVW+odiuNjWlrWG7G9a8rUXXsgNuasHRLK/wtzgc3G53u8UobZ5a91yMZfCViRmom8ER49d60GT3AR4Kt28rGjtUt4KjxWtYiQRxOly50YkLCoGxQd/JwfJTufCEv8a4yQWy4ELUc8nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muTlFuvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735D8C4CEC6;
-	Tue, 10 Sep 2024 13:12:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QmXUXDCgs20kpH5bl2+Oq8aFgqLZwDwaFdVJRroa5YU3PU/KlIQNUjyCfaOkddKs8pCC8P69oH1voHGCqWvYNBEz4RGHDzFf2PgPi3bt2fiS5kaTjFcgC8NPkGfHwNsnMHR/1mhiipOAAyKS728a9wv6I1ncyS3fRf928qb3NWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSLyMo1o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226C0C4CEC3;
+	Tue, 10 Sep 2024 13:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725973930;
-	bh=IiXPGmsHEiLsBuGb98RBBtINtggf+1ffEWkoTXYgLNQ=;
+	s=k20201202; t=1725974017;
+	bh=uGo6k4OAIYTYxKEoxQ9GjKss84Fepmbx9YP42wZQ/iA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=muTlFuvSiVz1ka3apXUfDTIjMwlbJcQNJ5R4Ew6ehJn7Lpw3M4ynAp+v65RWMN9FB
-	 QFHn1a9I1QmfyIEdNqm5n9AKCPb+lMcXOobG34L/5GPAzkX9qg48Nw07OPnJccHyyx
-	 ZAup8WSBOjxwNaXYGRR5ijiex/D5yCyZsW0yMXaqBOh2Z/r5fCG4HTDvOzFoAnenx/
-	 IErRAHuxQf0xmJf5CQu/44JG3IpLaqs7oGzkaqSkKoIp04kYqV1wIM+mktjbajsKz9
-	 NIXWvqj5tT9QYSWGZOSXRz3HLGs+gzNdgZYBpB8nxKzG4TIlQb0tOe0aMb3cmVb7/n
-	 04+Cntwcw+JvQ==
-Date: Tue, 10 Sep 2024 16:12:05 +0300
+	b=nSLyMo1olyHvzG3qBu/mDwA2auj63+ZdRRopp5xKlLKpOXlxYvPN7nTLNjRmz1aRt
+	 iUSoSve5lZzybSpAoL0f0Y8JWyi2GO3a0tyypXmVOvurSo/BAGbJY1gFsMmPROs+wn
+	 92P4qMTqsAogcZKjBkjuSrMRXKi7iGiQyI/7+I/PZMC8PiK+2iwPnuwuQvUJWOiubP
+	 y1Bw+LMEn9DefXfMH7PEMUbr35/JAD+OgaxdoSk6ipNQpqlB5EDVZ6x1oty8CCc4iq
+	 eVTI45Ds1rfZpcoZE22u9vDtfCOs3DmS/foVoTyG2ItsyndYZBhmtfkVVRyUQ+pJUm
+	 g839GAGj9pzng==
+Date: Tue, 10 Sep 2024 16:13:33 +0300
 From: Leon Romanovsky <leon@kernel.org>
 To: Junxian Huang <huangjunxian6@hisilicon.com>
 Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-next 9/9] RDMA/hns: Fix different dgids mapping to
- the same dip_idx
-Message-ID: <20240910131205.GB4026@unreal>
+Subject: Re: [PATCH for-next 0/9] RDMA/hns: Bugfixes and one improvement
+Message-ID: <20240910131333.GC4026@unreal>
 References: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
- <20240906093444.3571619-10-huangjunxian6@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,41 +56,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906093444.3571619-10-huangjunxian6@hisilicon.com>
+In-Reply-To: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
 
-On Fri, Sep 06, 2024 at 05:34:44PM +0800, Junxian Huang wrote:
-> From: Feng Fang <fangfeng4@huawei.com>
+On Fri, Sep 06, 2024 at 05:34:35PM +0800, Junxian Huang wrote:
+> This is a series of hns patches. Patch #8 is an improvement for
+> hem allocation performance, and the others are some fixes.
 > 
-> DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
-> Currently a queue 'spare_idx' is used to store QPN of QPs that use
-> DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
-> This method lacks a mechanism for deduplicating QPN, which may result
-> in different dgids sharing the same dip_idx and break the one-to-one
-> mapping requirement.
-> 
-> This patch replaces spare_idx with two new bitmaps: qpn_bitmap to record
-> QPN that is not being used as dip_idx, and dip_idx_map to record QPN
-> that is being used. Besides, introduce a reference count of a dip_idx
-> to indicate the number of QPs that using this dip_idx. When creating
-> a DIP QP, if it has a new dgid, set the corresponding bit in dip_idx_map,
-> otherwise add 1 to the reference count of the reused dip_idx and set bit
-> in qpn_bitmap. When destroying a DIP QP, decrement the reference count
-> by 1. If it becomes 0, set bit in qpn_bitmap and clear bit in dip_idx_map.
-> 
-> Fixes: eb653eda1e91 ("RDMA/hns: Bugfix for incorrect association between dip_idx and dgid")
-> Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
-> Signed-off-by: Feng Fang <fangfeng4@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_device.h |  6 +--
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 58 ++++++++++++++++++---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  1 +
->  drivers/infiniband/hw/hns/hns_roce_qp.c     | 16 ++++--
->  4 files changed, 67 insertions(+), 14 deletions(-)
+>   RDMA/hns: Fix spin_unlock_irqrestore() called with IRQs enabled
+>   RDMA/hns: Fix 1bit-ECC recovery address in non-4K OS
+>   RDMA/hns: Don't modify rq next block addr in HIP09 QPC
+>   RDMA/hns: Fix VF triggering PF reset in abnormal interrupt handler
+>   RDMA/hns: Optimize hem allocation performance
+>   RDMA/hns: Fix Use-After-Free of rsv_qp on HIP08
+>   RDMA/hns: Fix the overflow risk of hem_list_calc_ba_range()
 
-It is strange implementation, double bitmap and refcount looks like
-open-coding of some basic coding patterns. Let's wait with applying it
-for now.
+Applied
+
+>   RDMA/hns: Fix cpu stuck caused by printings during reset
+>   RDMA/hns: Fix different dgids mapping to the same dip_idx
+
+Need some discussion.
 
 Thanks
 
