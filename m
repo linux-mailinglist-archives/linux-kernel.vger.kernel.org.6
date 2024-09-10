@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-322517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F20972A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D619D972A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9562855D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F642863A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8D117BECA;
-	Tue, 10 Sep 2024 07:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fIRuZs94"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6A17BEAE;
+	Tue, 10 Sep 2024 07:08:03 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F517BB1A;
-	Tue, 10 Sep 2024 07:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B4E17BB1A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952071; cv=none; b=XeVCBjuu8LVi3cKpPFWMSZeseTpkxyglYCWxalyDOm01B4kCVOwQcNHDQ6WhxVKOe7vcUfJYPr6G/v+c0+f1ppSTEkJ7eXttilll2NqRgf2f54vOtGSZFeflyOv0xDvHfEADnruttd6vVQz31LXFw2NSTzoXHmC4EWusxfpw9ig=
+	t=1725952082; cv=none; b=aH7pTv0icZAVmhhWJ4iXZKK8NoQpcGjT230GGS4CgtwvV5EGlhvSXuCzHdol+vu5e7n5haiqSwYoe0bLvwGBep0oNpnT8vOq18Q8oCbf2jyy9RochtXuU/ZabxK3eqir6NhQdQuvHUtWwgfGHi3+hubbrxxngozDfk2xKr42ItE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952071; c=relaxed/simple;
-	bh=Tzupit/7jNP49QkdU+n8i+au8MHleKVz7I8yNFSGpyQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IHrpDZo1t1eZvJ+QAG+Y33QjhEGj+1hu6GooHhw+hXcuCWcbwvhJlLc1chhUF1uPu5H1DcLc3ROCKHhERtF5afR/DyAhugqZDQPixy0ufAt5bSemA3UrZQKehUy6IJgQybdGwtQLg9f/6Im+6FEbx3ellUMQSoSbNxzYtBzOQN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fIRuZs94; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725952067; x=1726211267;
-	bh=Tzupit/7jNP49QkdU+n8i+au8MHleKVz7I8yNFSGpyQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=fIRuZs947rgsw2YJdY1DkPsT+rjYra71BQiefVgwdAx9RWaTfNdx0Z/DDJRJX9B/p
-	 hDBx0rO+nsmSQ0gmsF5uD07hbnMjK7HoR8EqCQnq3jVM5DMC4GxXsqGMpcpH4vy89c
-	 YPH9FcGFB65HovM52HgdP/v+x5EKhBAuJZ6Nuni+v1aV/P07WmTkhIQo8rNXtDfaHA
-	 sCfSjVFtebGEvryfAC3bZPWqe8ykB6Po6zSCWuxSjt7xKTasqikMp+bMX/wjzvvw3C
-	 aFwVEG1YlvKRAI7x97PUmwiAJzqtFQwDMdcHkSvlj+A4AcZbLziT/AYeKDzKhYdaY7
-	 9+wTnDJZgM2JQ==
-Date: Tue, 10 Sep 2024 07:07:42 +0000
-To: levymitchell0@gmail.com, Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] rust: lockdep: Use Pin for all LockClassKey usages
-Message-ID: <f56dcef9-5dce-45e7-9de8-b12e2e723ef3@proton.me>
-In-Reply-To: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
-References: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ba27d37648ef86cf0db6638ab469fea20779d898
+	s=arc-20240116; t=1725952082; c=relaxed/simple;
+	bh=8zjQeVCfrTPZKwwO8GSTiXQW85/s++Wt3Tt9flh40Jk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MVGT4q0YMmXeDzsQQjbbrrrDJAgJN5TVNK1H/0Q3RJvGOSpWCcekmLkCayBfMk3VVQk084GPvU90OgeWS2br06QMHtuRMYloPPoHfFd/dTDnamiHKveyDAmYkRralJ5PCyg8jaFWa/8Ptg0yCDZ/8hzenFZKCGVTT1JNEPED57s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a05009b331so70379955ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:08:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725952080; x=1726556880;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=afiqXbDSiTRXSblLykc4woSl7krp7R5bsa3kEeHWFkQ=;
+        b=mmugCIfBpbmoIC6ZXw8c6qPCpRteHDWTK/zqR/N5e8OH7y5w8zkbferbPH9NcePoMS
+         xCNz8o2m6b6XWW7RU7OXHSoOOzsreLXYR85anYjbf1XV4dVmAG0OpHb2FvFCaJvprzDy
+         zZuKFgpT6T7c707PLYUNg5taz1NgeRpqwrSnV+T0hcyt9BB5D1lwOWeWQe2TLd7ifiVl
+         hbXqmpUd5BWNWYtJ3TVpP0EDAYkSamNs69XDrHynaT76vEn0/cyJTlk1yn5I8rz/ys/a
+         rxFJulHZ1V3KFoZuBbxzKS/14MKO56akhxFlrI4yAbfk7E0K6KdxnyWmBEOOPxxq+Ka/
+         nrSA==
+X-Gm-Message-State: AOJu0YzNJiZWU0WYUIVFKH/wVTuvQg/onks+ZxSmWgXddwv1kGvdiWvC
+	CQIIhjOyAV1kWJ6FM+XXi+9HD+AobjHU5Nt89EtCLS727tRDp4b8uGk3tO4FJ0/oFC6oqu2knOw
+	/5HSswz7B5HHeotNg/04hYUyTjDs6XBOCEFB3FYqzeSxIpiMqtWgKdKM=
+X-Google-Smtp-Source: AGHT+IGfyabXXmQu1HFpns1tYylgtQuG34c/56GnCjofJnBI7HsrUt+AapDYFhxCWHwNFBuYXZafgXKFre4Y/juh6/HbUHWiYV7W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1a6e:b0:3a0:480c:6ac4 with SMTP id
+ e9e14a558f8ab-3a0568a3bb6mr115129615ab.22.1725952080618; Tue, 10 Sep 2024
+ 00:08:00 -0700 (PDT)
+Date: Tue, 10 Sep 2024 00:08:00 -0700
+In-Reply-To: <000000000000acfa76061fcca330@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aa39df0621be8870@google.com>
+Subject: Re: [syzbot] possible fix (linux-ntfs3)
+From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 06.09.24 01:13, Mitchell Levy via B4 Relay wrote:
-> From: Mitchell Levy <levymitchell0@gmail.com>
->=20
-> The current LockClassKey API has soundness issues related to the use of
-> dynamically allocated LockClassKeys. In particular, these keys can be
-> used without being registered and don't have address stability.
->=20
-> This fixes the issue by using Pin<&LockClassKey> and properly
-> registering/deregistering the keys on init/drop.
->=20
-> Link: https://lore.kernel.org/rust-for-linux/20240815074519.2684107-1-nmi=
-@metaspace.dk/
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
-> ---
-> This change is based on applying the linked patch to the top of
-> rust-next.
->=20
-> I'm sending this as an RFC because I'm not sure that using
-> Pin<&'static LockClassKey> is appropriate as the parameter for, e.g.,
-> Work::new. This should preclude using dynamically allocated
-> LockClassKeys here, which might not be desirable. Unfortunately, using
-> Pin<&'a LockClassKey> creates other headaches as the compiler then
-> requires that T and PinImpl<Self> be bounded by 'a, which also seems
-> undesirable. I would be especially interested in feedback/ideas along
-> these lines.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I don't think that we can make this sound without also adding a lifetime
-to `Lock`. Because with only the changes you have outlined above, the
-key is at least valid for lifetime of the initializer, but might not be
-afterwards (while the lock still exists).
-So I think we should leave it as is now.
+***
 
----
-Cheers,
-Benno
+Subject: possible fix (linux-ntfs3)
+Author: almaz.alexandrovich@paragon-software.com
 
+#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 128d49512f5d..4a2062e481a4 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -124,10 +124,15 @@ void ntfs_inode_printk(struct inode *inode, const char *fmt, ...)
+ 		struct dentry *de = d_find_alias(inode);
+ 
+ 		if (de) {
++			int len;
+ 			spin_lock(&de->d_lock);
+-			snprintf(name, sizeof(s_name_buf), " \"%s\"",
+-				 de->d_name.name);
++			len = snprintf(name, sizeof(s_name_buf), " \"%s\"",
++				       de->d_name.name);
+ 			spin_unlock(&de->d_lock);
++			if (len <= 0)
++				name[0] = 0;
++			else if (len >= sizeof(s_name_buf))
++				name[sizeof(s_name_buf) - 1] = 0;
+ 		} else {
+ 			name[0] = 0;
+ 		}
 
