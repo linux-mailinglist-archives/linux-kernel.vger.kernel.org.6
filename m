@@ -1,147 +1,206 @@
-Return-Path: <linux-kernel+bounces-322699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFB3972C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:49:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39F5972C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424A7B24CD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D76528439E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA5018755F;
-	Tue, 10 Sep 2024 08:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YyoHb1Gt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6442118757F;
+	Tue, 10 Sep 2024 08:51:48 +0000 (UTC)
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFD416F27E;
-	Tue, 10 Sep 2024 08:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2213E17624C;
+	Tue, 10 Sep 2024 08:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958147; cv=none; b=DPVhV6QkN4uH+c0IrZCp2Wxj4/sE2fwhBljIvFC5JNMHPpU9MNfVAXJUTtTT4sPeArJYyAcsn+JqrZc6el6v1wHgu+lmLA2FXixPl/wkREkXgw2cL2+gvecO/vQznKJILKZMDhMheus43HCP3vbcT7Z66lJw/fgH6Yc7w+Z6l/A=
+	t=1725958307; cv=none; b=pTw16oDpze/TJTxhyhkHl8NMK2PrMk1vol7ou59iqtrXrS8Kqp8iPpZ1RCoAJo1q6Pki/LLuVmC8aLLdZrsrnSuwrdh2o9F/RWXGYAmA3gMfqy7B4muDFoMkavzBz/qbi8GxretUW4eWPoK6jLD1J4F1kaqQj5NUp9ON1RsNWzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958147; c=relaxed/simple;
-	bh=VUEzpoId+rSNfTQWbZ3INdjjRMEg1Y+yWOtO4ecrN60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKufLAFSeLGyVuxH1U9rakrhxCjEcja+dyKJoxhYB1w3vwOdgNdPJ0qC2W6tpSI7XpgC41ouVaTTBBjr18kbYmmNx80NMQqbQ5r0c1ESy4XWzxTXkXBiZvDqof2TefoqQyrLdznapgI7axz2xnsBIUrGqcMW9zUROZ2gR6CfgyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YyoHb1Gt; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725958146; x=1757494146;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VUEzpoId+rSNfTQWbZ3INdjjRMEg1Y+yWOtO4ecrN60=;
-  b=YyoHb1GtO59uonoJ3xAvxHAb99DOCBG4pSLhWs7waar5i3ZMpKaomBSD
-   YgGbshAlkq85sbpZZG6ko2AIyOb/rcDEOWpPOQCzmmEFplX/LpmQ7WHDD
-   JCn4VMxdQFNcGjVjpL7avjVCjfF9pfvPgOYaRpahzNjBRa8Z1MMZgHiHl
-   vl8iE73atdGbwKbJBdyzl9pTYfkjT4vVU6B3WV+WWDpnpNCGON1X5hFjy
-   M7sQV1Qu3+XXO/jll2P0TmomZYoHITyUcl+Ru7K+M5/DmFm4Ao1dgom26
-   3gGT+PTlVyOSwjNBwXv9tH1VPB6BSB8PMYLJeXStrUyAm1eIZpE/dt/aB
-   w==;
-X-CSE-ConnectionGUID: bPtd5ip4TdyQOdNsdL6OeA==
-X-CSE-MsgGUID: Nl48Xg9NTPemBakiM34Hiw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="50104042"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="50104042"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:49:05 -0700
-X-CSE-ConnectionGUID: wZLhhrpcRrS2g/S4xn6koA==
-X-CSE-MsgGUID: //rgL5seQ5GUTfP19ehAzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="71924973"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Sep 2024 01:49:01 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snwYU-0000Ig-1d;
-	Tue, 10 Sep 2024 08:48:58 +0000
-Date: Tue, 10 Sep 2024 16:48:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
-	LeoLiu-oc@zhaoxin.com, Lyle Li <LyleLi@zhaoxin.com>
-Subject: Re: [PATCH v1 2/3] x86/mce: Add zhaoxin.c to support Zhaoxin MCA
-Message-ID: <202409101604.VYS2JlHA-lkp@intel.com>
-References: <20240909104349.3349-3-TonyWWang-oc@zhaoxin.com>
+	s=arc-20240116; t=1725958307; c=relaxed/simple;
+	bh=XVGXGzADbsLu3p+a2MUO3UozEei62Ba2NCZZ3KNQTWM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=H7IiOhEO2DdcPczIEvMtC3WZhkr2dWolWDz0emhlsPk06AQhfKVK8pCHeQ6CzM61Olwx+uqVVjLMXKAqIhuANVmKN+wedczWnvwVxndfjNX9436wfpZETT151IqzqgpSNyaBJHEgMANWp0nvVToqp7ZiKjQzFM0pl/C+iXAF8eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.111] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <abelova@astralinux.ru>)
+	id 1snwZS-00BYd3-TK; Tue, 10 Sep 2024 11:49:58 +0300
+Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.20.58])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X2y983ntBz1c0mR;
+	Tue, 10 Sep 2024 11:51:08 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] arm64: KVM: define ESR_ELx_EC_* constants as UL
+Date: Tue, 10 Sep 2024 11:50:16 +0300
+Message-Id: <20240910085016.32120-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <865xr5856r.wl-maz@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909104349.3349-3-TonyWWang-oc@zhaoxin.com>
+Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetnhgrshhtrghsihgruceuvghlohhvrgcuoegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeevhfduuefhueektdefkedvgfekgfekffegvdetffehfefhffejhfehveevudeigfenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudejjedrvddtrdehkeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdquddtiedtiedvrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrddujeejrddvtddrheekmeegleehjeekpdhmrghilhhfrhhomheprggsvghlohhvrgesrghsthhrrghlihhnuhigrdhruhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepmhgriieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprggsvghlohhvrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopeholhhivhgvrhdruhhpthhonheslhhinhhugidruggvvhdprhgtphhtthhopehjrghmvghsrdhmohhrshgvsegrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhoshgvsegrrhhmrd
+ gtohhmpdhrtghpthhtohephihuiigvnhhghhhuiheshhhurgifvghirdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepkhhvmhgrrhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuffhrrdghvggsucetnhhtihhsphgrmhemucenucfvrghgshem
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1725912977#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12167075, Updated: 2024-Sep-10 07:11:52 UTC]
 
-Hi Tony,
+Add explicit casting to prevent expantion of 32th bit of
+u32 into highest half of u64 in several places.
 
-kernel test robot noticed the following build errors:
+For example, in inject_abt64:
+ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT = 0x24 << 26.
+This operation's result is int with 1 in 32th bit.
+While casting this value into u64 (esr is u64) 1
+fills 32 highest bits.
 
-[auto build test ERROR on tip/x86/core]
-[also build test ERROR on tip/master linus/master v6.11-rc7 next-20240909]
-[cannot apply to tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tony-W-Wang-oc/x86-mce-Add-centaur-vendor-to-support-Zhaoxin-MCA/20240909-192507
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20240909104349.3349-3-TonyWWang-oc%40zhaoxin.com
-patch subject: [PATCH v1 2/3] x86/mce: Add zhaoxin.c to support Zhaoxin MCA
-config: x86_64-randconfig-123-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101604.VYS2JlHA-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101604.VYS2JlHA-lkp@intel.com/reproduce)
+Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+v2: move casting from usage to definition
+ arch/arm64/include/asm/esr.h | 88 ++++++++++++++++++------------------
+ 1 file changed, 44 insertions(+), 44 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409101604.VYS2JlHA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_init':
->> arch/x86/kernel/cpu/mce/internal.h:341: multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:341: first defined here
-   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_clear':
->> arch/x86/kernel/cpu/mce/internal.h:342: multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:342: first defined here
-   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_init':
->> arch/x86/kernel/cpu/mce/internal.h:341: multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:341: first defined here
-   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_clear':
->> arch/x86/kernel/cpu/mce/internal.h:342: multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:342: first defined here
-   ld: arch/x86/kernel/cpu/mce/intel.o: in function `mce_zhaoxin_feature_init':
->> arch/x86/kernel/cpu/mce/internal.h:341: multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:341: first defined here
-   ld: arch/x86/kernel/cpu/mce/intel.o: in function `mce_zhaoxin_feature_clear':
->> arch/x86/kernel/cpu/mce/internal.h:342: multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:342: first defined here
-   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_init':
->> arch/x86/kernel/cpu/mce/internal.h:341: multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:341: first defined here
-   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_clear':
->> arch/x86/kernel/cpu/mce/internal.h:342: multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:342: first defined here
-   ld: arch/x86/kernel/cpu/mce/dev-mcelog.o: in function `mce_zhaoxin_feature_init':
->> arch/x86/kernel/cpu/mce/internal.h:341: multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:341: first defined here
-   ld: arch/x86/kernel/cpu/mce/dev-mcelog.o: in function `mce_zhaoxin_feature_clear':
->> arch/x86/kernel/cpu/mce/internal.h:342: multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:arch/x86/kernel/cpu/mce/internal.h:342: first defined here
-
-
-vim +341 arch/x86/kernel/cpu/mce/internal.h
-
-   335	
-   336	extern void (*mc_poll_banks)(void);
-   337	#ifdef CONFIG_X86_MCE_ZHAOXIN
-   338	void mce_zhaoxin_feature_init(struct cpuinfo_x86 *c);
-   339	void mce_zhaoxin_feature_clear(struct cpuinfo_x86 *c);
-   340	#else
- > 341	void mce_zhaoxin_feature_init(struct cpuinfo_x86 *c) {}
- > 342	void mce_zhaoxin_feature_clear(struct cpuinfo_x86 *c) {}
-
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index 56c148890daf..2f3d56857a97 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -10,63 +10,63 @@
+ #include <asm/memory.h>
+ #include <asm/sysreg.h>
+ 
+-#define ESR_ELx_EC_UNKNOWN	(0x00)
+-#define ESR_ELx_EC_WFx		(0x01)
++#define ESR_ELx_EC_UNKNOWN	UL(0x00)
++#define ESR_ELx_EC_WFx		UL(0x01)
+ /* Unallocated EC: 0x02 */
+-#define ESR_ELx_EC_CP15_32	(0x03)
+-#define ESR_ELx_EC_CP15_64	(0x04)
+-#define ESR_ELx_EC_CP14_MR	(0x05)
+-#define ESR_ELx_EC_CP14_LS	(0x06)
+-#define ESR_ELx_EC_FP_ASIMD	(0x07)
+-#define ESR_ELx_EC_CP10_ID	(0x08)	/* EL2 only */
+-#define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
++#define ESR_ELx_EC_CP15_32	UL(0x03)
++#define ESR_ELx_EC_CP15_64	UL(0x04)
++#define ESR_ELx_EC_CP14_MR	UL(0x05)
++#define ESR_ELx_EC_CP14_LS	UL(0x06)
++#define ESR_ELx_EC_FP_ASIMD	UL(0x07)
++#define ESR_ELx_EC_CP10_ID	UL(0x08)	/* EL2 only */
++#define ESR_ELx_EC_PAC		UL(0x09)	/* EL2 and above */
+ /* Unallocated EC: 0x0A - 0x0B */
+-#define ESR_ELx_EC_CP14_64	(0x0C)
+-#define ESR_ELx_EC_BTI		(0x0D)
+-#define ESR_ELx_EC_ILL		(0x0E)
++#define ESR_ELx_EC_CP14_64	UL(0x0C)
++#define ESR_ELx_EC_BTI		UL(0x0D)
++#define ESR_ELx_EC_ILL		UL(0x0E)
+ /* Unallocated EC: 0x0F - 0x10 */
+-#define ESR_ELx_EC_SVC32	(0x11)
+-#define ESR_ELx_EC_HVC32	(0x12)	/* EL2 only */
+-#define ESR_ELx_EC_SMC32	(0x13)	/* EL2 and above */
++#define ESR_ELx_EC_SVC32	UL(0x11)
++#define ESR_ELx_EC_HVC32	UL(0x12)	/* EL2 only */
++#define ESR_ELx_EC_SMC32	UL(0x13)	/* EL2 and above */
+ /* Unallocated EC: 0x14 */
+-#define ESR_ELx_EC_SVC64	(0x15)
+-#define ESR_ELx_EC_HVC64	(0x16)	/* EL2 and above */
+-#define ESR_ELx_EC_SMC64	(0x17)	/* EL2 and above */
+-#define ESR_ELx_EC_SYS64	(0x18)
+-#define ESR_ELx_EC_SVE		(0x19)
+-#define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
++#define ESR_ELx_EC_SVC64	UL(0x15)
++#define ESR_ELx_EC_HVC64	UL(0x16)	/* EL2 and above */
++#define ESR_ELx_EC_SMC64	UL(0x17)	/* EL2 and above */
++#define ESR_ELx_EC_SYS64	UL(0x18)
++#define ESR_ELx_EC_SVE		UL(0x19)
++#define ESR_ELx_EC_ERET		UL(0x1a)	/* EL2 only */
+ /* Unallocated EC: 0x1B */
+-#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
+-#define ESR_ELx_EC_SME		(0x1D)
++#define ESR_ELx_EC_FPAC		UL(0x1C)	/* EL1 and above */
++#define ESR_ELx_EC_SME		UL(0x1D)
+ /* Unallocated EC: 0x1E */
+-#define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
+-#define ESR_ELx_EC_IABT_LOW	(0x20)
+-#define ESR_ELx_EC_IABT_CUR	(0x21)
+-#define ESR_ELx_EC_PC_ALIGN	(0x22)
++#define ESR_ELx_EC_IMP_DEF	UL(0x1f)	/* EL3 only */
++#define ESR_ELx_EC_IABT_LOW	UL(0x20)
++#define ESR_ELx_EC_IABT_CUR	UL(0x21)
++#define ESR_ELx_EC_PC_ALIGN	UL(0x22)
+ /* Unallocated EC: 0x23 */
+-#define ESR_ELx_EC_DABT_LOW	(0x24)
+-#define ESR_ELx_EC_DABT_CUR	(0x25)
+-#define ESR_ELx_EC_SP_ALIGN	(0x26)
+-#define ESR_ELx_EC_MOPS		(0x27)
+-#define ESR_ELx_EC_FP_EXC32	(0x28)
++#define ESR_ELx_EC_DABT_LOW	UL(0x24)
++#define ESR_ELx_EC_DABT_CUR	UL(0x25)
++#define ESR_ELx_EC_SP_ALIGN	UL(0x26)
++#define ESR_ELx_EC_MOPS		UL(0x27)
++#define ESR_ELx_EC_FP_EXC32	UL(0x28)
+ /* Unallocated EC: 0x29 - 0x2B */
+-#define ESR_ELx_EC_FP_EXC64	(0x2C)
++#define ESR_ELx_EC_FP_EXC64	UL(0x2C)
+ /* Unallocated EC: 0x2D - 0x2E */
+-#define ESR_ELx_EC_SERROR	(0x2F)
+-#define ESR_ELx_EC_BREAKPT_LOW	(0x30)
+-#define ESR_ELx_EC_BREAKPT_CUR	(0x31)
+-#define ESR_ELx_EC_SOFTSTP_LOW	(0x32)
+-#define ESR_ELx_EC_SOFTSTP_CUR	(0x33)
+-#define ESR_ELx_EC_WATCHPT_LOW	(0x34)
+-#define ESR_ELx_EC_WATCHPT_CUR	(0x35)
++#define ESR_ELx_EC_SERROR	UL(0x2F)
++#define ESR_ELx_EC_BREAKPT_LOW	UL(0x30)
++#define ESR_ELx_EC_BREAKPT_CUR	UL(0x31)
++#define ESR_ELx_EC_SOFTSTP_LOW	UL(0x32)
++#define ESR_ELx_EC_SOFTSTP_CUR	UL(0x33)
++#define ESR_ELx_EC_WATCHPT_LOW	UL(0x34)
++#define ESR_ELx_EC_WATCHPT_CUR	UL(0x35)
+ /* Unallocated EC: 0x36 - 0x37 */
+-#define ESR_ELx_EC_BKPT32	(0x38)
++#define ESR_ELx_EC_BKPT32	UL(0x38)
+ /* Unallocated EC: 0x39 */
+-#define ESR_ELx_EC_VECTOR32	(0x3A)	/* EL2 only */
++#define ESR_ELx_EC_VECTOR32	UL(0x3A)	/* EL2 only */
+ /* Unallocated EC: 0x3B */
+-#define ESR_ELx_EC_BRK64	(0x3C)
++#define ESR_ELx_EC_BRK64	UL(0x3C)
+ /* Unallocated EC: 0x3D - 0x3F */
+-#define ESR_ELx_EC_MAX		(0x3F)
++#define ESR_ELx_EC_MAX		UL(0x3F)
+ 
+ #define ESR_ELx_EC_SHIFT	(26)
+ #define ESR_ELx_EC_WIDTH	(6)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.30.2
+
 
