@@ -1,332 +1,229 @@
-Return-Path: <linux-kernel+bounces-322300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A54E972700
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DE9972701
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084741F24B4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B8B2808EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9662136643;
-	Tue, 10 Sep 2024 02:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43E213CFAB;
+	Tue, 10 Sep 2024 02:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqZLXeuB"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="Arxc9MVa"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2129.outbound.protection.outlook.com [40.107.117.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACD273467;
-	Tue, 10 Sep 2024 02:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725934115; cv=none; b=p97mwVBrN68Yx0jdFCRK78WBjlmk47QVl3V1gcVRNP87FYFSEPnpRtJIciSQ3wqK7mIR0AuMoRJCkVDkTEYjkYC72J2tc2rOmpS2o1d0YIlJfgmVzJI3yuMwaeEEOugWsIFEeldNxtj5UPBpVjMSy65+5gsBXNQW8l+UXTh9L28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725934115; c=relaxed/simple;
-	bh=xuI2m8ZDcTZYOE6qtsEutp9iwcGt9nE8d2UQVgQGwXc=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IrH6VPW6RsMr65SLuOoTU0IKNGAw4NXSrxFc71xBFLUNa9m3KVszBxEiGJ02BcorMB2ZJR2kYGwC+3UL38p2Bb/UuhaAMkZp+DY0qQ6LP6xx2XC1Qd75vSqbpfBGkAMObT0QEjHFU9cvv1PXwqnDx+cuKpp4dTt4mBRtLBNRcEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqZLXeuB; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-710d77380cdso1701579a34.0;
-        Mon, 09 Sep 2024 19:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725934112; x=1726538912; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=61LOB963c0reRM1b7i4Xf550C2dkifjVL8GXx7YaxlE=;
-        b=JqZLXeuB+m0d2aEjhvFw0dC0GvP34TqP/Yzv4lwLDaMsa2GwSsfBZbIdYmcLJTqHG5
-         S6X9++S2/+oyFmwjuYweVzmP8DZm2kY5lJey1Ngt6tuzCRemCdy8Uac7R5z79NXfC9fu
-         NC4ySZlhzU2ehhiPqB2tTdakuRd6UaQdawA6tMnhKg7B4GM1dU5LpKPDBV2pSMP7mkVc
-         TwUSGS14nmHj+g1e5LilSBJLN+5RGr+JD8yeHVSrT1fFOwEKGu/gGvahdbBNkQ56r8wQ
-         aJNbKUtcpfTfaiHC7IUu9m3gplR6qJt99lmlLvRhd0a6Hy4pucBTD24IvU0k1sKX0bXv
-         Ufjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725934112; x=1726538912;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=61LOB963c0reRM1b7i4Xf550C2dkifjVL8GXx7YaxlE=;
-        b=afQWDw/d9Va71DE/POvNm5fFnkmHLfi5fKVYjEnqyPschk2/MtWjdL51VnyUIm/EPm
-         iTkbSMw9WbE10xbYrgKHBhKnMaaA/7+p57o2a34Yud1tCIlQogQqEcMGGUIj44uZ7PD9
-         3+BBjoJNu9PTu9yWICT+jo7jvPlLcfW+9gt7vE3ucx4Lv4Viht2SaIR7CItBO1G8P755
-         96tXZLNC1HSZeyVh2HXgGEMvlDzX83szuXEshHomt/6PBRpIU5c3q9X566+nO8qEQsCh
-         ZXDxBAo77/IjgTUZQEjmBSRplk15Tm2PRa6GFQoVRrvP7Pi+kQnP2nb2zcFy+IlpP0XA
-         Fq7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUA6mv0XVs9MXrcNi0E3Xd6doDM5PWokB6sKubirj3CmJs3gYsC3PQgw9raRIcp6Wt7pDSovg5BN9HS@vger.kernel.org, AJvYcCVskcMaBvFFa2jZ6eXUxYM9u+pCbBQpVTmdQ6BaQskUvrSbOVokg9TlLfXFDBvmd20Nz0cE+AifDRS+nvr5@vger.kernel.org, AJvYcCXwPeGXW1Xr4z1ONLh6Q/m7EUCpfDIXkO6nBWPoCkWQI7Gp4vV5Tn82G/t2hPGLaPRU7vHKdsoyPPSL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVcHdpItvWkycKJ9lKMdh5JQPHOgbwyzcsVUzEBvJW9tzSravj
-	TwG4v4q76uryFFiV4LhBnRVMs6qwm1dW+cyN1WydhORnniQaCrgZAwLGziF8QFk=
-X-Google-Smtp-Source: AGHT+IE2vPR/qjcTLgGYGRs2+UIdrx4oMV7VBm305dj7Y/944NVKU1/5y8dc06G7sdVzql2mhGsNwA==
-X-Received: by 2002:a05:6830:4993:b0:710:f536:a840 with SMTP id 46e09a7af769-710f536a9damr1161072a34.31.1725934112186;
-        Mon, 09 Sep 2024 19:08:32 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9db3280sm1693616a34.61.2024.09.09.19.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 19:08:31 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: ukleinek@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	chunzhi.lin@sophgo.com
-Subject: [PATCH v2 2/2] pwm: sophgo: add driver for Sophgo SG2042 PWM
-Date: Tue, 10 Sep 2024 10:08:25 +0800
-Message-Id: <0f7568620c2ad3d21885e83182c51f4fe9202367.1725931796.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1725931796.git.unicorn_wang@outlook.com>
-References: <cover.1725931796.git.unicorn_wang@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CD41DFD1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725934146; cv=fail; b=NMMxmmVL+si6fk2BF/Fiil+vH7z1aYEt0cOLTS8xbuEpoZnQO15f8obqcVq//BnVwxQ5DL5vdyPhsheLv23Hoe58lD7v5vVk156jcdebBcR/dhdphIW5ummVav+XGFj3hhRBN/dWiB1LLZOcnUZI3PbgLyKockzLgsi50e29jws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725934146; c=relaxed/simple;
+	bh=OXU3Px31E6GR1VOJxKTMJzSVl+jQPSumaGM86oun7IA=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tHoVloV6NsTpzeFSAauvP8XpeTpCukhAj5Ih9+eRabIMKQvDT4kC+BYE9voAbUR/sB0xCeBxm6BfstEMz+pbGZROq7aS0up66CxtmfnphLUTW5flS/QYPGt9Fjc74Z6T20lFShXm95GhAEaPwuDWpHfLQvEnqoUECwCYTu6PKVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=Arxc9MVa; arc=fail smtp.client-ip=40.107.117.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ptA3zcQOVAAqyhS46RpnZprDJALFL5+f3MhJ+Ub1GYYkU9G/D2oV4iFvJ7uX+T584W7aZw5K/8Cfglb2FA9UPwk+tFa7r5qh9xFtMOEhTaMR08BhiqGOWhiPJmL/VX+glVuVinHDQqKo1tNkhZOJMXxdLlDgnQsAbSPdUWA+DqRw7E1IRn1iE6MwuoHUnw90K1A4PnuQEIyCMXMRjUeQEQmLrESP7PozJiSha0JmtA2y+qRvWbPd0RtuyfiXHLfOamBkHitnu97B9G6M+0IP1xi8mBDALPOTyI1vZ7l+71VNTNUdTdL4OGa7wz0tdULhJe8Ce7V85DXkQ1FTwm3ujg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OXU3Px31E6GR1VOJxKTMJzSVl+jQPSumaGM86oun7IA=;
+ b=B/Q7dXPeotchY2AE3wLtSP0c2znWszZ0iUkrrP7dt+eZ5iZWjJyL81ku+/x/fzIM/Xpe19rzxWMHDmwUlFgoOVmMJXpHwWEx+5VlnpRSeHQK90goBJBlN8DprtNysC0R2A4fI0Xr2Eeh4v3vy97a1GZ6uG0uJtqzgT6Gw81C1ltwiqD91iaquUBhxFbf5MxPdjO3VXpYZRFZmRcOObP/fYXii872jGt/Mu4ekq6VlKACq7eAY/7upMpUEt9QO4jI5wr2f4DsXNusR9MGdAAM1Y/+btRPgIt1WeaGf3cW5EnguCXbcjy/JwbtgfCGMxE9o+PzyChzVZaQw36iy43FAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OXU3Px31E6GR1VOJxKTMJzSVl+jQPSumaGM86oun7IA=;
+ b=Arxc9MVax7dDL0NkV2U+B/FIWXtFT/yLQkFTLhRE+GKJdSWJ16UObNUQdVPDZ2z7F8BoZAKecNtFTPRr8HsnBJnWoaJU5Wqc5exnv0sYKbidzVTXb42ormRPVQHuIIr1fvYP4wnPCQMekRs5/TUKwqcESRP4xmW4LjMJjLotDloPRjfY4zOrb9vQrt4iCa1u11HHxcYOyb40KxvllxC2dum0iVi7F8rWmEnWkhY4sv0A9snUV+Wn32PP1x2WmRXv5l3PJHshdN4E3EDS1FnSvy8uvYTN0ow3jzqoqyG86I9VRxbaKgKDSH/Q7aZhJsr0E3Y7TCLLk8trjMRpNEFIaA==
+Received: from TYZPR06MB3933.apcprd06.prod.outlook.com (2603:1096:400:29::9)
+ by TYZPR06MB5123.apcprd06.prod.outlook.com (2603:1096:400:1c1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 02:08:54 +0000
+Received: from TYZPR06MB3933.apcprd06.prod.outlook.com
+ ([fe80::9b60:a415:f5ed:a367]) by TYZPR06MB3933.apcprd06.prod.outlook.com
+ ([fe80::9b60:a415:f5ed:a367%7]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 02:08:54 +0000
+From: shawn.shao <shawn.shao@jaguarmicro.com>
+To: Jacob Keller <jacob.e.keller@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject:
+ =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjJdIGxpYjogRXhwb3J0IHRoZSBwYXJzaW5nIGZ1?=
+ =?utf-8?B?bmN0aW9ucyBhbmQgcmVsYXRlZCBkYXRhIHN0cnVjdHVyZXMgb2YgdGhlIFBM?=
+ =?utf-8?Q?DM_library?=
+Thread-Topic: [PATCH v2] lib: Export the parsing functions and related data
+ structures of the PLDM library
+Thread-Index: AQHbAohSmN9TQFweakyG1C2txKh+VbJP6uyAgABbU4A=
+Date: Tue, 10 Sep 2024 02:08:54 +0000
+Message-ID:
+ <TYZPR06MB3933635596B06AB3E2D438AD9D9A2@TYZPR06MB3933.apcprd06.prod.outlook.com>
+References: <20240909071721.1768-1-shawn.shao@jaguarmicro.com>
+ <a97f1b6e-66a1-4d52-9cfc-ac424263dbf8@intel.com>
+In-Reply-To: <a97f1b6e-66a1-4d52-9cfc-ac424263dbf8@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR06MB3933:EE_|TYZPR06MB5123:EE_
+x-ms-office365-filtering-correlation-id: 255f279f-ce1f-481c-a7f1-08dcd13d8570
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?STFKckV0emZnMURnSndOcWMvZDZ6NzMxeHBWYlpWLzhXVkFmWHM4VjdaVW5p?=
+ =?utf-8?B?MHgzL3dCV25LZ2pUUndUVDhZdHh6OU9BOHNYZGtJbnRnSFk1N2JiUmwycXU4?=
+ =?utf-8?B?bjZORTYzOWNFOFI0TSttZm82WDBRcXhkbWFFTU1CT0dLaVRWZ0R0OHZ0KzQx?=
+ =?utf-8?B?bEJzSXlrV2ptNVlXRkNoUmJMdjRGQlJMRlNIWmdzbFg0MlBSMjFZVnFQNDNR?=
+ =?utf-8?B?dS8wcENKU0FMNmxoNEhmWnJEc1NFRk5RU1JrUDQ1bW1OY1FHbWpWSWVDNVpm?=
+ =?utf-8?B?RlN0TldjMGw5Vk1PMGVoT2piSzN0S1E2anQyK1BmS1BrOWhpN1hwTmUyL3Iw?=
+ =?utf-8?B?T1ZsVWlTZ042ZFVLZHErQy93RTNJa1Y5UTQ1UkV1L2RjbmlZeEgzSjFZeGdI?=
+ =?utf-8?B?K3FLMjR6SDdXbzA1dVdIc1lHcE1KbHozbXdYSGVXYVBoOVFmK2Jxckx5ZW1v?=
+ =?utf-8?B?MjY0VGpqMkZmSFRVS1lSTDVJMjBkdnBvQUZyclRIV29iV1ZVdFVxU1huaUhQ?=
+ =?utf-8?B?ZFZFeHZjTGdVQ3ZnbjdNU2w1TklxNUhJbmxXNXE5NUlIMTd1Kyt1cWMxMzJp?=
+ =?utf-8?B?anNhWE8rcXU1Sk9KNzVlc2FvSlljb1FvRVlLMGIxQjJuSk16d2tkZ2E1SjBX?=
+ =?utf-8?B?SHlGdG1lTFhoczRSNWQ5ZXRyUkZLRDI5dXdkOGg3M2p3NThzOFJWOUlHU2Ro?=
+ =?utf-8?B?eXgyMVkzQVp5SzdCNGdESkpWYW5ZY0x4dElKTWJJUU1HL3QvektRSVJZTVNP?=
+ =?utf-8?B?WngrQmh4VmNpSm5sOEw0cnFlNi9NaG9oTEwxajFRRERuOUZhOXErY3Z1dHJz?=
+ =?utf-8?B?SVEwd2hiTGt1cDJ4VWFXWEZVdStSNEIvSVpGSVNHdDkzUVNVSW1qd1RGbEZY?=
+ =?utf-8?B?akZGc1JlYUdHZlg3M1BMME1acmhERWNCZVo2WkgzN3pJMEZpemo3ZWNXY0NM?=
+ =?utf-8?B?K3Ywb3NOOVEzdU1yNUF3bmZ6bzlZbldLZHkwVE9VWk5IVUpSYmlmM0g4eVRU?=
+ =?utf-8?B?ZEhWaHhZS20zMVd1ZC9BTUZob2dPc1lyMll5aTZhcks2Ui9MalJNczNnV29L?=
+ =?utf-8?B?N2pVU08weGMvWlZNQmhQc0NpL1llMHJCOWFScm1QY0xzc0dFSkVFQTdXenNa?=
+ =?utf-8?B?dHhmQ0p3Z0NYWEtIRlJURmdDZjhBM3lXK1hrRGJMTUN4Q21CZEJCcmo1T29M?=
+ =?utf-8?B?bFJtT3NBM2p0MmU0WjVvdUxGTVQrU2s0MkRaeTJVVDJmaEo1YU02aC8wNmNr?=
+ =?utf-8?B?czVTdk0vNlRYQ3FUSzlzNGRYcVV0QkxhSlZlalkzNEpyM1FLejBmRFBad25W?=
+ =?utf-8?B?SjFTU0U3TEJwZUFFRVVLNmpHN3UvYTM3dHhEU1pRUkd1U28zTXk4ZlpMOU93?=
+ =?utf-8?B?eWxDd1AzSXNqT0hQa2RQV2pQSno1TzJSQkJpWHZWOGl6RlFVN2xHWXZKbENT?=
+ =?utf-8?B?enBsS0Zma1FVdjdhemlIWHhBeGllQXhoSUtlaCsxN2l3YmdPQ3lKS2ZTUnZK?=
+ =?utf-8?B?cEFWZmxmWVMrZGFaUWxrNmR1NjZZL0NNczJtdnFNOUtUYStpR21sRTZKbXV5?=
+ =?utf-8?B?Z0Q5Mzd4OUF6dXFXUG1TYkhMOXFXYmk3ZllFeUdoYWhEcUpUTVpBQUdERXRp?=
+ =?utf-8?B?ejF2WTUwTExyK2dmMWNKZW1Rak1iR1V4MnpiNTJ1aVVWK0EyWVhCdGZEa1cx?=
+ =?utf-8?B?clE4UDVaMk1mOFNubGRDQW5UMzNZMHowNWU5VWJoRE9QTUpMb0pFeU1hYUdv?=
+ =?utf-8?B?YWNENm5FL3BsVXR3OWJqVEprQXVNSW5xRkJwUE10ZlYwS1FkV3dWdkloeVNu?=
+ =?utf-8?B?bHBkSWs4VXR1T3B4aGpuWXN0ZERQWVFIVFFRU05nbm51MndCUDhLRzBGK2FW?=
+ =?utf-8?B?M0E4M2ZNdjlGU2daMjV5aDlTU1E4YzdmeEFZbzIzWkxtVmc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB3933.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MWJ3RHQ0L05JOVhxVVl1aHBQZjdvb29ER1g2MWRlV1RmQTh3VWRkeFdnMVNl?=
+ =?utf-8?B?Yk5mTVpMNkJKMWVRRXJ6MTRpM3VQdVJjSHMxVE1ITHVkeEs5NVcreGZ3aGho?=
+ =?utf-8?B?ZWk2ZHhaWm0ycVhtUDB0SnBPYWI5UTlldjAxRHZyTmVqQzZEbXkwdnNaemcz?=
+ =?utf-8?B?ZU5wMEQ5bUIyNTd2bGhJa28rWUxmQlFPdW9MR3NHNEhCekFtTERNL0VMZEow?=
+ =?utf-8?B?Yk5lN0tkeXlFSnEzQ2JnSUNONWFaWDFvQm15SURNVEdDTkRxRGYzU1JYWmZS?=
+ =?utf-8?B?NGluUWVMZlEweElRVGZyUkxldldTTStCUllsSDZkZXBjMUQ5Qk5ZSjUreEht?=
+ =?utf-8?B?a0loYmk0ZkMrVlBkZnZBRHROMG1NSDd5bXRTbU5EbVQ5Wis5SVZtSjlSWnlj?=
+ =?utf-8?B?WFpxMis3bXd5anZ4aWQyQWl2NnByOW1CUDlJaU5GSCtaL2tnYm9lbjcxRDF1?=
+ =?utf-8?B?Zk1uMkNSeTN4RitmcFRSOWhTWXVBSitpeDdwU1hMZXl6MmZqcFF6VnltbVRY?=
+ =?utf-8?B?MVFoRzAwbEVEdkRBM2N6U0tRUjJVMHZiWHVWK0dZcDFBNFJ3clo2ZDQ1cHJv?=
+ =?utf-8?B?TEhrQUdSMTdmanpYMkw0aGZWL1JkcVQvc2R4Rm5BWmJRTklPMUVQWWlGWjFJ?=
+ =?utf-8?B?bmhueDg3QTV5bjR4cXRhN1NXa3Nrdy9sQTgyM05VTXRMZ3VzSHlhbERWYVZB?=
+ =?utf-8?B?V05odWl4OHQvSlZ4SGlHYS9pbG1oMG9FcjlybUp2OUJwQ013ei9zQXI1TGQ0?=
+ =?utf-8?B?clV3UUM5UnQrcnhGQ3VBdHpaaXpYTSszTDZBYWtUczJGOGM0UUduNGVrMUl3?=
+ =?utf-8?B?N3UwWFEwNEpacTBwdE9TWnBCVytYR1ovbGtTT1RvUkJJeUtQakExUWtNQ3pV?=
+ =?utf-8?B?dTBQaFh0VWt5OEVNWTlSejhoZlV4bEJOc3pVMExENmJwc0F6dVJDdjNkcWRL?=
+ =?utf-8?B?eEt5eENSbVZKYWFSMkl2SnBEQnBzTGo1aUg1cWxSL3g0cTNodHdwaGI5VUpt?=
+ =?utf-8?B?ZUhwTjF2T1BuZ21HeVZsa1NTaFFTa1EwbFFGN3RvSGlUQm5IRXN5aFdpZkJj?=
+ =?utf-8?B?N0t1S1d2VUluRUI3YklkTHNUNWRDUjdRZHhaTzI2M3ZRUGxka3JkTkExbjlH?=
+ =?utf-8?B?aGhWRTBEZlNaaWt2ZDZONUlXUzl0WnNYSlpPYTdoOFZ6c25vd3hSU2hGZ1gw?=
+ =?utf-8?B?L016R21KOWF0VW1HSkdwUU8xRThpeFI3VjZZRHdaSWVhL2pzSjNwTmUvNXdY?=
+ =?utf-8?B?VTBTS2l3THI3L09kMFJXZHU1dDVNRUVXeW1waE5uVm8zTkVLMDNDMGlIUUZP?=
+ =?utf-8?B?c1hQa2RkcTZqMDZxeXZoenFpbW9uTnVGdENzVno5TDg3VGlwMGhFeUN1SnNw?=
+ =?utf-8?B?SnI1ZEdXV0dzSGpEbEhUZlVUVGlBbkF2bityT0VkMm9pcm8xWGthU25mT2dn?=
+ =?utf-8?B?NU9hdGVFSjZVYmpSVlpHSGszSE8xOTNIZytYRWFDTUlPOS8wb3lpeWdYMHBF?=
+ =?utf-8?B?U1JlbWFJRTBnWnFXREpFZlZGS25US3JRcmZaQ1VkaVRiekdNd3lydHBPL2Qz?=
+ =?utf-8?B?Q1M1ME02bkVqYnlBQmNPcnNtY1h4ZjFBNDVPS0l2LzV3a3RqZ1duR3FPR2Jr?=
+ =?utf-8?B?ZkhSR2xuZkg5RG1yOEN4THV3Nzh5RnNmM1BDejA1d1R4cU96bWxlRFdJb0NL?=
+ =?utf-8?B?cnJ5M0k1djYvMDZnZFJEd1diSDh4ZVgwY1pRUUVaSHE0N1V1VG9WbEhHZDJQ?=
+ =?utf-8?B?aGczVkdpR3plRmVEcklBVE8xVDZrZndnS1FiZGQrWHJMT1ZjV2NtOEt1UUVa?=
+ =?utf-8?B?ZWFZaGdEV044ZUpVcTVaWTZDREhNUnhCUEVjSmtrWElleHpJcGt4U0JyVEhP?=
+ =?utf-8?B?MFBsYWkxQmptNkN0UnBQZzkvVnY0dXVIbFdTc2drZ2gwSDZRVitGZktQVHpB?=
+ =?utf-8?B?Qjk1MEcwcmZlZ2tlME1JZDg3WlJXSmpmNkxKUGpMQkZpcy85UVROUU1lTjNL?=
+ =?utf-8?B?SEluUHNBQTQ0ZVhJcGtKTWxXS1N5TGdacTNGMGdBUU5VcGlmKzcraHhSbU41?=
+ =?utf-8?B?ZDlBMlN4WGM1MHZ0ZWh6VDZaSTdiNU8zYzNpVTVDUkp3d3BTYUFCNXRYZG84?=
+ =?utf-8?B?NExCWFZ2SUd1SDdVNzd4SlI1cWt3UHhNQ3NVM3dNUjYvQWdYWm4xSFkza2c0?=
+ =?utf-8?B?MGc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB3933.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 255f279f-ce1f-481c-a7f1-08dcd13d8570
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 02:08:54.1163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9XNJ0p545hOwBVnFCpqlYURalGMogzYT3VghPKrsEp3BKQ6mkBFbxZd8I1z0W9ihb3tA1SnJPmMig4V4nhpApURpkPuNxrHk6OY8+bdZ//c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5123
 
-From: Chen Wang <unicorn_wang@outlook.com>
-
-Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
-
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- drivers/pwm/Kconfig             |  10 ++
- drivers/pwm/Makefile            |   1 +
- drivers/pwm/pwm-sophgo-sg2042.c | 180 ++++++++++++++++++++++++++++++++
- 3 files changed, 191 insertions(+)
- create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 3e53838990f5..de8a36ecabbb 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -577,6 +577,16 @@ config PWM_SL28CPLD
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-sl28cpld.
- 
-+config PWM_SOPHGO_SG2042
-+	tristate "Sophgo SG2042 PWM support"
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	help
-+	  PWM driver for the PWM controller on Sophgo SG2042 SoC. The PWM
-+	  controller supports outputing 4 channels of PWM waveforms.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm_sophgo_sg2042.
-+
- config PWM_SPEAR
- 	tristate "STMicroelectronics SPEAr PWM support"
- 	depends on PLAT_SPEAR || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 0be4f3e6dd43..ef2555e83183 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_PWM_RZ_MTU3)	+= pwm-rz-mtu3.o
- obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
- obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
- obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
-+obj-$(CONFIG_PWM_SOPHGO_SG2042)	+= pwm-sophgo-sg2042.o
- obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
- obj-$(CONFIG_PWM_SPRD)		+= pwm-sprd.o
- obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
-diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
-new file mode 100644
-index 000000000000..198019b751ad
---- /dev/null
-+++ b/drivers/pwm/pwm-sophgo-sg2042.c
-@@ -0,0 +1,180 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Sophgo SG2042 PWM Controller Driver
-+ *
-+ * Copyright (C) 2024 Sophgo Technology Inc.
-+ * Copyright (C) 2024 Chen Wang <unicorn_wang@outlook.com>
-+ *
-+ * Limitations:
-+ * - After reset, the output of the PWM channel is always high.
-+ *   The value of HLPERIOD/PERIOD is 0.
-+ * - When HLPERIOD or PERIOD is reconfigured, PWM will start to
-+ *   output waveforms with the new configuration after completing
-+ *   the running period.
-+ * - When PERIOD and HLPERIOD is set to 0, the PWM wave output will
-+ *   be stopped and the output is pulled to high.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pwm.h>
-+
-+#include <asm/div64.h>
-+
-+/*
-+ * Offset RegisterName
-+ * 0x0000 HLPERIOD0
-+ * 0x0004 PERIOD0
-+ * 0x0008 HLPERIOD1
-+ * 0x000C PERIOD1
-+ * 0x0010 HLPERIOD2
-+ * 0x0014 PERIOD2
-+ * 0x0018 HLPERIOD3
-+ * 0x001C PERIOD3
-+ * Four groups and every group is composed of HLPERIOD & PERIOD
-+ */
-+#define SG2042_HLPERIOD(chan) ((chan) * 8 + 0)
-+#define SG2042_PERIOD(chan) ((chan) * 8 + 4)
-+
-+#define SG2042_PWM_CHANNELNUM	4
-+
-+/**
-+ * struct sg2042_pwm_ddata - private driver data
-+ * @base:		base address of mapped PWM registers
-+ * @clk_rate_hz:	rate of base clock in HZ
-+ */
-+struct sg2042_pwm_ddata {
-+	void __iomem *base;
-+	unsigned long clk_rate_hz;
-+};
-+
-+static void pwm_sg2042_config(void __iomem *base, unsigned int chan, u32 period, u32 hlperiod)
-+{
-+	writel(period, base + SG2042_PERIOD(chan));
-+	writel(hlperiod, base + SG2042_HLPERIOD(chan));
-+}
-+
-+static int pwm_sg2042_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			    const struct pwm_state *state)
-+{
-+	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
-+	u32 hlperiod;
-+	u32 period;
-+
-+	if (state->polarity == PWM_POLARITY_INVERSED)
-+		return -EINVAL;
-+
-+	if (!state->enabled) {
-+		pwm_sg2042_config(ddata->base, pwm->hwpwm, 0, 0);
-+		return 0;
-+	}
-+
-+	/*
-+	 * Period of High level (duty_cycle) = HLPERIOD x Period_clk
-+	 * Period of One Cycle (period) = PERIOD x Period_clk
-+	 */
-+	period = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->period, NSEC_PER_SEC), U32_MAX);
-+	hlperiod = min(mul_u64_u64_div_u64(ddata->clk_rate_hz, state->duty_cycle, NSEC_PER_SEC), U32_MAX);
-+
-+	if (hlperiod > period) {
-+		dev_err(pwmchip_parent(chip), "period < hlperiod, failed to apply current setting\n");
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(pwmchip_parent(chip), "chan[%u]: period=%u, hlperiod=%u\n",
-+		pwm->hwpwm, period, hlperiod);
-+
-+	pwm_sg2042_config(ddata->base, pwm->hwpwm, period, hlperiod);
-+
-+	return 0;
-+}
-+
-+static int pwm_sg2042_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
-+				struct pwm_state *state)
-+{
-+	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
-+	unsigned int chan = pwm->hwpwm;
-+	u32 hlperiod;
-+	u32 period;
-+
-+	period = readl(ddata->base + SG2042_PERIOD(chan));
-+	hlperiod = readl(ddata->base + SG2042_HLPERIOD(chan));
-+
-+	if (!period && !hlperiod)
-+		state->enabled = false;
-+	else
-+		state->enabled = true;
-+
-+	state->period = DIV_ROUND_UP_ULL((u64)period * NSEC_PER_SEC, ddata->clk_rate_hz);
-+	state->duty_cycle = DIV_ROUND_UP_ULL((u64)hlperiod * NSEC_PER_SEC, ddata->clk_rate_hz);
-+
-+	state->polarity = PWM_POLARITY_NORMAL;
-+
-+	return 0;
-+}
-+
-+static const struct pwm_ops pwm_sg2042_ops = {
-+	.apply = pwm_sg2042_apply,
-+	.get_state = pwm_sg2042_get_state,
-+};
-+
-+static const struct of_device_id sg2042_pwm_ids[] = {
-+	{ .compatible = "sophgo,sg2042-pwm" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sg2042_pwm_ids);
-+
-+static int pwm_sg2042_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sg2042_pwm_ddata *ddata;
-+	struct pwm_chip *chip;
-+	struct clk *clk;
-+	int ret;
-+
-+	chip = devm_pwmchip_alloc(dev, SG2042_PWM_CHANNELNUM, sizeof(*ddata));
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
-+	ddata = pwmchip_get_drvdata(chip);
-+
-+	ddata->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(ddata->base))
-+		return PTR_ERR(ddata->base);
-+
-+	clk = devm_clk_get_enabled(dev, "apb");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk), "failed to get base clk\n");
-+
-+	ret = devm_clk_rate_exclusive_get(dev, clk);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
-+
-+	ddata->clk_rate_hz = clk_get_rate(clk);
-+	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
-+
-+	chip->ops = &pwm_sg2042_ops;
-+
-+	ret = devm_pwmchip_add(dev, chip);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to register PWM chip\n");
-+
-+	return 0;
-+}
-+
-+static struct platform_driver pwm_sg2042_driver = {
-+	.driver	= {
-+		.name = "sg2042-pwm",
-+		.of_match_table = sg2042_pwm_ids,
-+	},
-+	.probe = pwm_sg2042_probe,
-+};
-+module_platform_driver(pwm_sg2042_driver);
-+
-+MODULE_AUTHOR("Chen Wang");
-+MODULE_DESCRIPTION("Sophgo SG2042 PWM driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
-
+PiA+IE9uIDkvOS8yMDI0IDEyOjE3IEFNLCBTaGF3bi5TaGFvIHdyb3RlOg0KPiA+IEZyb206IFNo
+YXduIFNoYW8gPHNoYXduLnNoYW9AamFndWFybWljcm8uY29tPg0KPiA+DQo+ID4gdjEgLT4gdjI6
+IFVwZGF0ZWQgdGhlIGNvbW1pdCBtZXNzYWdlLCBhZGRlZCBhIGRlc2NyaXB0aW9uDQo+ID4gICAg
+ICAgb2YgdGhlIGNoYW5nZXMgcmVsYXRlZCB0byBgRGV2aWNlVXBkYXRlT3B0aW9uRmxhZ3NgLCBl
+dGMuDQo+ID4NCj4gPiBUaGUgUExETSBsaWJyYXJ5IGlzIHVzZWQgdG8gaW1wbGVtZW50IGZpcm13
+YXJlIHVwZ3JhZGVzLA0KPiA+IGJ1dCB0aGUgY3VycmVudCBsaWJyYXJ5IGZ1bmN0aW9ucyBvbmx5
+IHN1cHBvcnQgdGhlDQo+ID4gYHBsZG1md19mbGFzaF9pbWFnZWAgZnVuY3Rpb24gdG8gY29tcGxl
+dGUgYSBmaXhlZA0KPiA+IHByb2Nlc3Mgb2YgcGFyc2luZywgc2VuZGluZyBkYXRhIHRvIHRoZSBi
+YWNrZW5kLA0KPiA+IGFuZCBmbGFzaGluZyAoYWxsb3dpbmcgdXNlcnMgdG8gaW1wbGVtZW50IGN1
+c3RvbQ0KPiA+IGxvZ2ljIHVzaW5nIGBwbGRtZndfb3BzYCkuIEhvd2V2ZXIsIHRoaXMgcG9zZXMN
+Cj4gPiBzaWduaWZpY2FudCBjaGFsbGVuZ2VzIGZvciBkZXZpY2UgdmVuZG9ycyB1c2luZw0KPiA+
+IFBMRE0gZm9yIGZpcm13YXJlIHVwZ3JhZGVzLg0KPiA+IFRoZSBmb2xsb3dpbmcgc2NlbmFyaW9z
+IGFyZSBub3Qgc3VwcG9ydGVkOg0KPiA+IDEuIE9ubHkgdXNpbmcgdGhlIFBMRE0gcGFyc2luZyBm
+dW5jdGlvbnMsIGFzIHRoZQ0KPiA+ICAgIGN1cnJlbnQgbGlicmFyeSBkb2VzIG5vdCBzdXBwb3J0
+IHRoaXMgb3BlcmF0aW9uLg0KPiA+IDIuIFRoZSBmaXJtd2FyZSB1cGdyYWRlIHByb2Nlc3MgZGlm
+ZmVycyBmcm9tIHRoaXMNCj4gPiAgICBmaXhlZCBmbG93ICh0aGUgZmlybXdhcmUgdXBncmFkZSBw
+cm9jZXNzIG1heQ0KPiA+ICAgIHZhcnkgYWNyb3NzIGRpZmZlcmVudCB2ZW5kb3JzKS4NCj4gPiAg
+ICAgICB8LT4gcGxkbWZ3X2ZsYXNoX2ltYWdlDQo+ID4gICAgICAgICAgICAgICB8LT4gcGxkbV9w
+YXJzZV9pbWFnZQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICB8LT4gcGxkbV9wYXJzZV9oZWFk
+ZXINCj4gPiAgICAgICAgICAgICAgICAgICAgICAgfC0+IHBsZG1fcGFyc2VfcmVjb3Jkcw0KPiA+
+ICAgICAgICAgICAgICAgICAgICAgICB8LT4gcGxkbV9wYXJzZV9jb21wb25lbnRzDQo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgIC0+IHBsZG1fdmVyaWZ5X2hlYWRlcl9jcmMNCj4gPiAgICAgICAg
+ICAgICAgIHwtPiBwbGRtX2ZpbmRfbWF0Y2hpbmdfcmVjb3JkICh4eHhfbWF0Y2hfcmVjb3JkKQ0K
+PiA+ICAgICAgICAgICAgICAgfC0+IHBsZG1fc2VuZF9wYWNrYWdlX2RhdGEgKHh4eF9zZW5kX3Bh
+Y2thZ2VfZGF0YSkNCj4gPiAgICAgICAgICAgICAgIHwtPiBwbGRtX3NlbmRfY29tcG9uZW50X3Rh
+Ymxlcw0KPiAoeHh4X3NlbmRfcGFja2FnZV9kYXRhKQ0KPiA+ICAgICAgICAgICAgICAgfC0+IHBs
+ZG1fZmxhc2hfY29tcG9uZW50cyAoeHh4X2ZsYXNoX2NvbXBvbmVudCkNCj4gPiAgICAgICAgICAg
+ICAgIHwtPiBwbGRtX2ZpbmFsaXplX3VwZGF0ZSAoeHh4X2ZpbmFsaXplX3VwZGF0ZSkNCj4gPiAz
+LiBUaGUgY3VycmVudCBQTERNIGxpYnJhcnkgZG9lcyBub3Qgc3VwcG9ydCBwYXJzaW5nIHRoZQ0K
+PiA+ICAgIERldmljZVVwZGF0ZU9wdGlvbkZsYWdzIHBhcmFtZXRlciwgd2hpY2ggaXMgZGVmaW5l
+ZCBpbiB0aGUgUExETQ0KPiA+ICAgIHNwZWNpZmljYXRpb24gdG8gZmFjaWxpdGF0ZSB0aGUgdHJh
+bnNmZXIgb2YgY29udHJvbCBpbmZvcm1hdGlvbg0KPiA+ICAgIGJldHdlZW4gdGhlIFVBIChVcGRh
+dGUgQWdlbnQpIGFuZCB0aGUgZmlybXdhcmUuUGxlYXNlIHJlZmVyIHRvOg0KPiA+ICAgIGh0dHBz
+Oi8vd3d3LmRtdGYub3JnL3NpdGVzL2RlZmF1bHQvZmlsZXMvc3RhbmRhcmRzL2RvY3VtZW50cw0K
+PiA+ICAgIC9EU1AwMjY3XzEuMy4wLnBkZiBQMzcuDQo+ID4NCj4gDQo+IFRoYW5rcyEgSSdkIHBy
+ZWZlciB0aGUgRGV2aWNlVXBkYXRlT3B0aW9uRmxhZ3MgdG8gYmUgc2VwYXJhdGUsIGJ1dCBJDQo+
+IHRoaW5rIHRoZSBjaGFuZ2VzIGFyZSBnb29kLg0KPiANCj4gUmV2aWV3ZWQtYnk6IEphY29iIEtl
+bGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPg0KDQpGaXJzdGx5LCB0aGFua3MgZm9yIHlv
+dXIgcmVwbHkgYW5kIGd1aWRhbmNlIHNvIHF1aWNrbHkuDQoNCjEuIEkgd2lsbCBzZXBhcmF0ZSB0
+aGUgZGV2aWNlX3VwZGF0ZV9mbGFncyBpbnRvIGFub3RoZXIgcGF0Y2ggZm9yIHN1Ym1pc3Npb24s
+IGFzIHlvdSBzdWdnZXN0ZWQuDQoyLiBJIGhhdmUgYW5vdGhlciBxdWVzdGlvbiBJ4oCZZCBsaWtl
+IHRvIGFzayB5b3UuIEZvciBzdXBwb3J0IG9mIGhpZ2hlciB2ZXJzaW9ucyBvZiB0aGUgUExETSBs
+aWJyYXJ5LCB2ZXJzaW9uIDIuMC9WZXJzaW9uIDMuMCBzdXBwb3J0cyBDb21wb25lbnRPcGFxdWVE
+YXRhL0NvbXBvbmVudE9wYXF1ZURhdGFMZW5ndGhgLCBhbmQgcmVxdWlyZXMgYWRqdXN0bWVudHMg
+dG8gdGhlIGBfX3BsZG1md19jb21wb25lbnRfaW5mb2Agc3RydWN0dXJlLiBJIHdvdWxkIGxpa2Ug
+dG8gY29udGludWUgc3VwcGxlbWVudGluZyB0aGlzIGFkanVzdG1lbnQoc3VibWl0IG90aGVyIHBh
+dGNoZXMpLiBJ4oCZbSBub3Qgc3VyZSBpZiB5b3UgYWdyZWUgd2l0aCB0aGlzLCB0aGFuayB5b3Uu
+DQoNClBsZWFzZSByZWZlciB0b++8mg0KaHR0cHM6Ly93d3cuZG10Zi5vcmcvc2l0ZXMvZGVmYXVs
+dC9maWxlcy9zdGFuZGFyZHMvZG9jdW1lbnRzL0RTUDAyNjdfMS4yLjAucGRmIFA0Mg0KDQpUaGFu
+ayB5b3UgdmVyeSBtdWNo77yBDQo=
 
