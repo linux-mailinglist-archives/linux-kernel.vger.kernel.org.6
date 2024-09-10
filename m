@@ -1,112 +1,208 @@
-Return-Path: <linux-kernel+bounces-323977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0520F97465A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:25:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0E697465C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85E63B213C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03B41F274FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E801ABEC0;
-	Tue, 10 Sep 2024 23:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32CF1AC885;
+	Tue, 10 Sep 2024 23:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1xzeT84"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c56a4Lah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEFF198A21
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6D81AB535;
+	Tue, 10 Sep 2024 23:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726010734; cv=none; b=PbZj7ddneeqqfUu5s45wYtkEeala+Y76ZCyLZ6LEKPxJaZsjSxEn3d2nXI4N1mp2TSRkD4tSKY2A7oaaj3Cy0PiwWEUx3n4bLOzRYokCIFOHDMNq8qXSmlCkIxpdIuTAAX6phGs5sVx5bu0lTAiQvYaW9cdBvn/UswE/h1+TCLM=
+	t=1726010754; cv=none; b=cD+b3OEKwkaRYrZz2ptRl4fVfspamtW8JwNvkgcaHOzHi65k1Jhi4Z+WuzfbjJRd2Czbrq6b3p8S2JxogphDWH/m03MOwgPYKZJLhxjCBtYi/MWjrVwGDMDT6H5OVQRRG/TDEIXd602PGK+5eOKjQjrRswAiTuSuHR2Q9LHZnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726010734; c=relaxed/simple;
-	bh=zNOMdv7LrqR/hFdNynu5UlEvalMyhiauTkLRtnuGag0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aWmxdykd7NqbKhF0gpLrru7Ozvu0EU0dOSgE96K9z3kAeXfcdsRpnBU0sxUIutNcB+/iReIpkkL/LrrsF3j5/qz06jPmCElsKxJRFrLX7+XbVRhvVFnWpb2ekDJHUDgZMdiSxFqR+hJeWOKxx6BnMichkfaa6E3l4xnrtXN9KFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1xzeT84; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so216014b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:25:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726010733; x=1726615533; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/pYRykvIh23RQKfBCMGlDAqwUb25jIRziDiDqhbei4=;
-        b=N1xzeT84IfKhH9cbC4CVm0dj/otOEB/eWLB8EE3TNr3zs8JMLyVAmCj70vPaSzVHJC
-         vZbSP2c4wR1aW4gdMhuFnyopf1cUCackxfenstxkPegwTxZ4caufRYsUW3mFxPYUcOvn
-         L5IK7Toq6KKSHYB+FQNVWgOCci7a54F74DnZzj+Oj3FrH+B6qSTrlVBIx2XoGB4UHuAB
-         9uQHpq2QMVSXALPhDTNLPDy71G/KjmVeKLK/iWRbskoYCi1JarLyhv8WStU7v8JVGdMW
-         1xzbS2BOJSbBtdEynDt1DtL5A5HRWkiquPmkNVOVJPPUZ1g15vX3vnBo11yMLqxlKhH5
-         9ZLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726010733; x=1726615533;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d/pYRykvIh23RQKfBCMGlDAqwUb25jIRziDiDqhbei4=;
-        b=hQwW/x0SPBp8KWwYvbPJjIciwJTkuY4WtHeJx6qUhj1qcOteyM/0jKQfB4PpL0gz7c
-         wYm+YrrfbtCaU1LPBMP1WGfIV1bhWxzmH4hAhnDRDlaLldI7L0LBYhU2D0GQW3rIwmmQ
-         wIVR+ht6inkqKj3Huc8Phkzi8o9pSvCw973soKm2D0z3XNlA4+TAQiHt63CuAlHbODWn
-         HhL1wEMhrLTlk27CTR4xkKyzaNhFyBOovWNU9vHV8inEAGusVhfQ0vBU0WTcj3CUbNfc
-         2PLZzxMXxsxIaK+Y7C8STN4JFKzF+MCabubwvaV3cY1dvkp2ZTFO8Zmc798cYL7k2GHd
-         Te0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWBA3vzYvTuhz4bQU1qDC9E/9MJWAVEpD+sh/H4wssoovfk32Pff6pqyG5t4n9ESUK/jQQCLSZx/hD7GlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3CW9y4ZTPVUfI6gtGxjTyWzi8PiJsR9JOxCmo2MyYBnHdsFqG
-	xCl24CKoe5C53Vy2F3U69YDxrsAktRlEQ6+uQF9coN3KEX6eKXOw
-X-Google-Smtp-Source: AGHT+IGkXrUax0+/Bsd/fPRqBZE4MnDANmYCqJlz3FnSf8UUOIJJv+DwiwP/gHhDl5RqzL0fWM1fXw==
-X-Received: by 2002:a17:902:f908:b0:206:9818:5431 with SMTP id d9443c01a7336-2074cbac86fmr27434925ad.20.1726010732416;
-        Tue, 10 Sep 2024 16:25:32 -0700 (PDT)
-Received: from localhost.localdomain (111-240-106-94.dynamic-ip.hinet.net. [111.240.106.94])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1f614sm53199675ad.211.2024.09.10.16.25.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 16:25:32 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: hibernate: Fix warning for cast from restricted gfp_t
-Date: Wed, 11 Sep 2024 07:25:05 +0800
-Message-ID: <20240910232507.313555-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726010754; c=relaxed/simple;
+	bh=jWbTVGJQQJ9or0giI5ucycy3BO0lPAlGG7IxUJVCoG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUZj+unyZ80KkdKtLQkX35ClQ5Z1GvuXZHGluiWXgoTEY0/H0VnPTABZTH8pu0HXDuzk45+NPuBvukm9fbgecFlZMeJL0AVUvWdtoVZJWPUXmh1x+gLTdBzOZYpcgSs/ZgaRuV9eGLrdBBkIzbznLCwHAL6xEFA200WOdkjOhFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c56a4Lah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5FDC4CEC3;
+	Tue, 10 Sep 2024 23:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726010753;
+	bh=jWbTVGJQQJ9or0giI5ucycy3BO0lPAlGG7IxUJVCoG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c56a4LahYMixLImso+PUxaJI0z2WGqSqY+LG6P6j9Fk0X/bMfxBHugfQbq6LLPri9
+	 Vjn0TzBdxtHVoqgZsWEcND1v4XDSYZb0G2+VB0T0Sqxs9dxBbQ1rq1qZUdXu1I+q3m
+	 mBqlsWOAuteFOW/Dff3mK3meyhnAuh0y1oygcsQkv3cQgDIJ4R8Ck8JQ83PdDZsVon
+	 leFPMLjiiFYPAdtErLaNSrrYOBq2mwh1k01N+czjsCiK1cGxVYt3aRGPPw923OdbJx
+	 Uee5SdbZHGtyz+Dz4PVFdFQqud8Y/KGgWzddDKva4Nj0MUbS0qELl4qNXQfHez4jDd
+	 kHmI4tMUkrsTA==
+Date: Wed, 11 Sep 2024 01:25:46 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
+Message-ID: <ZuDVekRzfeBkWmKz@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-10-dakr@kernel.org>
+ <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
+ <ZuCEneJeXcRo5qs8@pollux>
+ <19d81a27-9600-4990-867c-624104e3ad83@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19d81a27-9600-4990-867c-624104e3ad83@proton.me>
 
-This patch fixes the following warning by adding __force
-to the cast:
-arch/arm64/kernel/hibernate.c:410:44: sparse: warning: cast from restricted gfp_t
+On Tue, Sep 10, 2024 at 07:49:42PM +0000, Benno Lossin wrote:
+> On 10.09.24 19:40, Danilo Krummrich wrote:
+> > On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
+> >> On 16.08.24 02:10, Danilo Krummrich wrote:
+> >>> +/// # Examples
+> >>> +///
+> >>> +/// ```
+> >>> +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
+> >>> +///
+> >>> +/// assert_eq!(*b, 24_u64);
+> >>> +/// # Ok::<(), Error>(())
+> >>> +/// ```
+> >>> +///
+> >>> +/// ```
+> >>> +/// # use kernel::bindings;
+> >>> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> >>> +/// struct Huge([u8; SIZE]);
+> >>> +///
+> >>> +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
+> >>> +/// ```
+> >>
+> >> It would be nice if you could add something like "KBox can't handle big
+> >> allocations:" above this example, so that people aren't confused why
+> >> this example expects an error.
+> > 
+> > I don't think that's needed, it's implied by
+> > `SIZE == bindings::KMALLOC_MAX_SIZE + 1`.
+> > 
+> > Surely, we could add it nevertheless, but it's not very precise to just say "big
+> > allocations". And I think this isn't the place for lengthy explanations of
+> > `Kmalloc` behavior.
+> 
+> Fair point, nevertheless I find examples a bit more useful, when the
+> intention behind them is not only given as code.
+> 
+> >>> +///
+> >>> +/// ```
+> >>> +/// # use kernel::bindings;
+> >>> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> >>> +/// struct Huge([u8; SIZE]);
+> >>> +///
+> >>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
+> >>> +/// ```
+> >>
+> >> Similarly, you could then say above this one "Instead use either `VBox`
+> >> or `KVBox`:"
+> >>
+> >>> +///
+> >>> +/// # Invariants
+> >>> +///
+> >>> +/// The [`Box`]' pointer is always properly aligned and either points to memory allocated with `A`
+> >>
+> >> Please use `self.0` instead of "[`Box`]'".
+> >>
+> >>> +/// or, for zero-sized types, is a dangling pointer.
+> >>
+> >> Probably "dangling, well aligned pointer.".
+> > 
+> > Does this add any value? For ZSTs everything is "well aligned", isn't it?
+> 
+> ZSTs can have alignment and then unaligned pointers do exist for them
+> (and dereferencing them is UB!):
 
-No functional change intended.
+Where is this documented? The documentation says:
 
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
----
- arch/arm64/kernel/hibernate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+"For operations of size zero, *every* pointer is valid, including the null
+pointer. The following points are only concerned with non-zero-sized accesses."
+[1]
 
-diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-index 02870beb271e..7b11d84f533c 100644
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -407,7 +407,7 @@ int swsusp_arch_resume(void)
- 					  void *, phys_addr_t, phys_addr_t);
- 	struct trans_pgd_info trans_info = {
- 		.trans_alloc_page	= hibernate_page_alloc,
--		.trans_alloc_arg	= (void *)GFP_ATOMIC,
-+		.trans_alloc_arg	= (__force void *)GFP_ATOMIC,
- 	};
- 
- 	/*
--- 
-2.43.0
+[1] https://doc.rust-lang.org/std/ptr/index.html
 
+> 
+>     #[repr(align(64))]
+>     struct Token;
+> 
+>     fn main() {
+>         let t = 64 as *mut Token;
+>         let t = unsafe { t.read() }; // this is fine.
+>         let t = 4 as *mut Token;
+>         let t = unsafe { t.read() }; // this is UB, see below for miri's output
+>     }
+> 
+> Miri complains:
+> 
+>     error: Undefined Behavior: accessing memory based on pointer with alignment 4, but alignment 64 is required
+>      --> src/main.rs:8:22
+>       |
+>     8 |     let t = unsafe { t.read() }; // this is UB, see below for miri's output
+>       |                      ^^^^^^^^ accessing memory based on pointer with alignment 4, but alignment 64 is required
+>       |
+>       = help: this indicates a bug in the program: it performed an invalid operation, and caused Undefined Behavior
+>       = help: see https://doc.rust-lang.org/nightly/reference/behavior-considered-undefined.html for further information
+>       = note: BACKTRACE:
+>       = note: inside `main` at src/main.rs:8:22: 8:30
+
+`read` explicitly asks for non-null and properly aligned even if `T` has size
+zero.
+
+> 
+> >>> +#[repr(transparent)]
+> >>> +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
+> 
+> 
+> >>> +impl<T, A> Box<T, A>
+> >>> +where
+> >>> +    T: ?Sized,
+> >>> +    A: Allocator,
+> >>> +{
+> >>> +    /// Creates a new `Box<T, A>` from a raw pointer.
+> >>> +    ///
+> >>> +    /// # Safety
+> >>> +    ///
+> >>> +    /// For non-ZSTs, `raw` must point at an allocation allocated with `A`that is sufficiently
+> >>> +    /// aligned for and holds a valid `T`. The caller passes ownership of the allocation to the
+> >>> +    /// `Box`.
+> >>
+> >> You don't say what must happen for ZSTs.
+> > 
+> > Because we don't require anything for a ZST, do we?
+> 
+> We require a non-null, well aligned pointer (see above).
+
+We indeed do, gonna add it.
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> >>> +    #[inline]
+> >>> +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
+> >>> +        // INVARIANT: Validity of `raw` is guaranteed by the safety preconditions of this function.
+> >>> +        // SAFETY: By the safety preconditions of this function, `raw` is not a NULL pointer.
+> >>> +        Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData::<A>)
+> >>> +    }
+> 
 
