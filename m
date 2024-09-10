@@ -1,119 +1,224 @@
-Return-Path: <linux-kernel+bounces-323180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAEA09738F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAD2973900
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCDB1C25033
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3A71F25C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62C197A7D;
-	Tue, 10 Sep 2024 13:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3775D1953BD;
+	Tue, 10 Sep 2024 13:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csI4qfwP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b+d1icVl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A38A193431;
-	Tue, 10 Sep 2024 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A321118E11;
+	Tue, 10 Sep 2024 13:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975878; cv=none; b=YFp04NBQgqwwcsrNG4n7Aks4fi8FNx8vsZc9Rg6qiI1QANgFzmguBB+apVN11sfebLhL2coaQhqwW8LPD6/Io3btV/Xi40P8VGJl5cnMepNtzOS0Q+1gxPSRtgj2tzcT+voLJj+vzZ6t0qIc+Ux0dCZCrT2awmNth3bBa2mHGsk=
+	t=1725975910; cv=none; b=H5xaqmy7EZerwFn56hJZF08etqXmSB6dGXcKYdh7hpkepGLnoJ6joSQUJo/9x8edsmtlJlfcYZT5ID9t9ruWn4PCdlYWpgMbm/gMLiTB11yrkYKyukEGpN/Nf32/Md+jc0mk4J2QhuYgW3tq9g43xDj+BqdIftxtjCHRoE14bi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975878; c=relaxed/simple;
-	bh=KtonDYOXEpp/PwTCf4FJoCSaK6mTCHpUsP0I3lZBfnE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n3K2mODy1r4fXr/eX0NzkbSM6PSZ7IGFiBKRsMzHn+XND3DF9qoSDW7TYu/s7f4cuEE9PnEV6Sbvwu1UBLLj71cqv/CV+X2ExT7i4lkL0HOqStGkwmq3BFuVIIhUPo/07iDxoHp902wI9q5N789lRdtRXbe/4r2swk6syV1SEc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csI4qfwP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so448316666b.0;
-        Tue, 10 Sep 2024 06:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725975875; x=1726580675; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pVE5qf5oEoMqz9tJclveN6/57bRQsuIxIFvelwF+vF0=;
-        b=csI4qfwPu5ZF+U3ersI6daZehJQ4h8iB8LhCmSbgrJia/pLgdOOX/soc6n+jsCT9rT
-         QaDNMs24Iy+r4fjUJkS874qM+0M6ajbQCDWgjDYR1TOjHsGocmi7eTr23VvQuMj9JOAy
-         MzPGDN7S9+5VIlH0NQPnbL7+EgSHfTj8D11/RfS7jBy1Lf4TXl0iJ7R8Rmb0vGmBYUYp
-         GYaYXsgmmRQnplSoLu/upFw4L6zP/PpZ5O4qHL+Ov6iY9nSz6JOlKJnbnb0c3ETIOF35
-         wCa34AhyKI/CFvhxtYG3FqyS9KQU+zpmDZEnkk4dw0Krj1mdS/bGQzIBWMCkXvviGw2c
-         Ic0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725975875; x=1726580675;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pVE5qf5oEoMqz9tJclveN6/57bRQsuIxIFvelwF+vF0=;
-        b=W3wMuizCoy4KFJ0GrutcpTzzxbubNaN3z5owSveIkH7xy7cmPEDF4hzG/tMjLM+ZX7
-         FEWeQGixmvuaM9qS0A9bc5a6/IaDNmdQsgarzJeEBBJx6ZUc4aRk2N2huySUm1gMkqjA
-         hqz9M06BvEyXcP5YhQfww2Y+m6//dafffW6FEulv1zjPFj9ONAoEBp2QGTdrEt9+5F9z
-         acCyuiP6YwAfv4zhlwRo5+aCpBzFuSDUeva3Wq/o2/tuicMCXfZ17yjHwTtQ3fdTBBnT
-         6984w2IWlNZ8VS+M6jxDmxpLO/tgAn0zPrl5zzPH4oXkuWt+BwWXK25UsReT5f6+u2rI
-         5M9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWotGN7GF5U88uUztvPiNAQiTcdgtXiMQlBa70B58I8WKxfoCqPqIwFKWlsj1NaeVK7D0Kjl3VJxNe1F9c=@vger.kernel.org, AJvYcCWsKJqL1G1mNWpPiMAFVMjGjl/l2Yb+jGoT9hBZxp6ABRSFuIuCgd+nYJA595DuYSMV5D6GUq+WbYehnIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJbifDSR5df8jYGVgRWVsK8PFzmgFaDt6C1jutLfbFB/bThuSD
-	1vrZ4RiylQ2JNRBTDZUlKYeLkLQPHVTLEZqMwc8NoyfQn0bXLtxd
-X-Google-Smtp-Source: AGHT+IGgmBNn9n7Zz+dl7We6MKzVkjD+lV6mVgqAHaivbtrqUXkPMSc8BfhJpB/KTLPdx8RFDHAEJA==
-X-Received: by 2002:a17:907:3e21:b0:a8d:439d:5c3c with SMTP id a640c23a62f3a-a8ffaaad23dmr89543166b.8.1725975874420;
-        Tue, 10 Sep 2024 06:44:34 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation.station (net-188-217-48-58.cust.vodafonedsl.it. [188.217.48.58])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d65cf6sm481182966b.222.2024.09.10.06.44.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 06:44:34 -0700 (PDT)
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: 
-Cc: linuxfancy@googlegroups.com,
-	sakari.ailus@linux.intel.com,
-	laurent.pinchart@ideasonboard.com,
-	tomm.merciai@gmail.com,
-	julien.massot@collabora.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] media: i2c: max96717: add HAS_EVENTS subdev flag
-Date: Tue, 10 Sep 2024 15:44:28 +0200
-Message-Id: <20240910134428.795273-3-tomm.merciai@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910134428.795273-1-tomm.merciai@gmail.com>
-References: <20240910134428.795273-1-tomm.merciai@gmail.com>
+	s=arc-20240116; t=1725975910; c=relaxed/simple;
+	bh=KJo3SHcB/JwI8XPTyZK5sX97uZlDx18H5V9wO6Eg61A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H0vaDkSdcM3aYSFgHCqTIYwqCwT91L66X0/enmExPGyN/J0JoxPXU/OkaePhnqXrtbxZA4VCdzW1yiaiC4W3hVXDukedkxbOE+8znKXrSdCOSrzLBOZtrkWL+rM8Dr0cBoW5S7V95oRIZWml5ELLIRDtosG9UDgDsTyoNe54pSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b+d1icVl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3LTjN019858;
+	Tue, 10 Sep 2024 13:44:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6fHP3hn5ddtDR1x6bqZmZhDSfhty386BUBD7qVrE4us=; b=b+d1icVlMwst0jkS
+	4CXuf8KctYXFuxz9WKYfGoeSHC87DhX7rgEIlXHWezIY3kZjY6ersa5LciG9QJPr
+	TzS8h/Bk9xjI0/DDXGAEl9Mu9L0SJB/DsoKO0OO2jo5MZPXYxrXSOUtxkQinFz+e
+	yTq2IaicHpnnBh7lU1JnP/vVPzr3pmuxgv6N6d+ClTr/4dwV/F02+xi60HCShsG4
+	GfkPOvGPoC2+Dmt1Z/H7B7u6PQZzimvettm0I/XGRSiYWxCg8d/0dbuMo9j4NKQ8
+	VpZJ1kAJSyXm7Ne+g8r6zgbDGexMhldlwva2+5jLw6gQhRLwb1d0ezjvEghkV3hL
+	pHQHfw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy59x3yn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 13:44:59 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48ADiwM5017321
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 13:44:58 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Sep
+ 2024 06:44:53 -0700
+Message-ID: <96eb669b-a6bb-497d-ad57-19abda17f704@quicinc.com>
+Date: Tue, 10 Sep 2024 19:14:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+To: Krzysztof Kozlowski <krzk@kernel.org>, <konrad.dybcio@linaro.org>,
+        <andersson@kernel.org>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <conor+dt@kernel.org>, <agross@kernel.org>,
+        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
+        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
+        <konradybcio@kernel.org>
+CC: <quic_vdadhani@quicinc.com>
+References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
+ <20240906191438.4104329-2-quic_msavaliy@quicinc.com>
+ <6a6fc102-a18c-4ae3-9104-59eb3172f407@kernel.org>
+ <9cc7d427-34c6-45c2-a747-f71112833773@quicinc.com>
+ <bb9e6ba2-4aeb-40ee-b123-9c59a0efa098@kernel.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <bb9e6ba2-4aeb-40ee-b123-9c59a0efa098@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QWbNuQqFRCRtlN2lFRIoKIcvZnh2jnQ5
+X-Proofpoint-ORIG-GUID: QWbNuQqFRCRtlN2lFRIoKIcvZnh2jnQ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1015 adultscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100102
 
-Controls can be exposed to userspace via a v4l-subdevX device, and
-userspace has to be able to subscribe to control events so that it is
-notified when the control changes value. Add missing HAS_EVENTS flag.
+Thanks For your reviews,
 
-Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
----
- drivers/media/i2c/max96717.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 9/10/2024 3:24 PM, Krzysztof Kozlowski wrote:
+> On 10/09/2024 11:09, Mukesh Kumar Savaliya wrote:
+>> Thanks Krzysztof.
+>>
+>> On 9/7/2024 2:34 PM, Krzysztof Kozlowski wrote:
+>>> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
+>>>> Adds qcom,shared-se flag usage. Use this when particular I2C serial
+>>>> controller needs to be shared between two subsystems.
+>>>
+>>> <form letter>
+>>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>>> and lists to CC (and consider --no-git-fallback argument). It might
+>>> happen, that command when run on an older kernel, gives you outdated
+>>> entries. Therefore please be sure you base your patches on recent Linux
+>>> kernel.
+>>>
+>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>>> people, so fix your workflow. Tools might also fail if you work on some
+>>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>>> (don't, instead use mainline). Just use b4 and everything should be
+>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+>>> patches to the patchset.
+>>> </form letter>
+>>>
+>>> You already got this comment, so how many times it has to be repeated?
+>>> Your process is just wrong if you do not use the tools for this.
+>>>
+>> Sorry, I was already using scripts/get_maintainer.pl but i kept everyone
+>> into To list (That's my mistake here). I shall keep maintainers in TO
+>> list and rest in CC list.
+> 
+> No, To or Cc does not matter. Your list is just incomplete.
+> 
+Got it, sorry for the trouble. It seems i missed below 3 names adding 
+into reviewers by copy paste mistake. I hope this makes it complete now 
+and will add them in V3.
 
-diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
-index 4e85b8eb1e77..da534999e1ff 100644
---- a/drivers/media/i2c/max96717.c
-+++ b/drivers/media/i2c/max96717.c
-@@ -689,7 +689,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
- 		goto err_free_ctrl;
- 	}
- 
--	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
-+	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
- 	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
- 	priv->sd.entity.ops = &max96717_entity_ops;
- 
--- 
-2.34.1
+Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Krzysztof Kozlowski <krzk+dt@kernel.org>
+Rob Herring <robh@kernel.org>
+>>
+>> Question: With <Form Letter> , are you asking to add letter in this
+>> first patch ? I have cover letter, but it will get removed when patch
+>> gets merged. Please help suggest and clarify.
+> 
+> No, it's just template. Form letter... I am just bored to repeat the
+> same comment.
+> 
+Sorry for that. I hope i could catch now as per above missing list.
+>>>
+>>>>
+>>>> SE = Serial Engine, meant for I2C controller here.
+>>>> TRE = Transfer Ring Element, refers to Queued Descriptor.
+>>>>
+>>>> Example :
+>>>> Two clients from different SS can share an I2C SE for same slave device
+>>>
+>>> What is SS?
+>>>
+>> SS = Subsystem (EE - Execution Environment, can be Apps
+>> processor/TZ/Modem/ADSP etc). Let me add this too in next patch.
+> 
+> Yes, please explain in the binding itself.
+> 
+ok, Sure.
+>>>> OR their owned slave devices.
+>>>> Assume I2C Slave EEPROM device connected with I2C controller.
+>>>> Each client from ADSP SS and APPS Linux SS can perform i2c transactions.
+>>>> This gets serialized by lock TRE + DMA Transfers + Unlock TRE at HW level.
+>>>>
+>>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>>>> index 9f66a3bb1f80..ae423127f736 100644
+>>>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>>>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>>>> @@ -60,6 +60,10 @@ properties:
+>>>>      power-domains:
+>>>>        maxItems: 1
+>>>>    
+>>>> +  qcom,shared-se:
+>>>> +    description: True if I2C needs to be shared between two or more subsystems.
+>>>
+>>> What is a subsystem? With commit msg I still do not understand this.
+>> SS = Subsystem (EE - Execution Environment, can be Apps
+>> processor/TZ/Modem/ADSP etc). Let me add EE too with full form.
+>>> Maybe presence of hwlock defines it anyway, so this is redundant?
+>> No, this flag is required. As hwlock comes into picture if this flag is
+> 
+> Flag is required? By what? Sorry, you push your downstream solution to us.
+> 
+Let me explain, Using this flag to take hwlock via TRE @ [PATCH v2 2/4]
+We need this to lock SE protecting from other SS transfers until 
+unlocked. Hence shared-se flag becomes a decision marker.
+drivers/dma/qcom/gpi.c => gpi_create_i2c_tre()
++	/* create lock tre for first tranfser */
++	if (i2c->shared_se && i2c->first_msg) {
 
+Question: what exactly you mean "Maybe presence of hwlock defines it 
+anyway" ?
+I am open to consider all upstream solutions, trying to understand your 
+suggestions and comments.
+>> defined. So flag is acting as a condition to take hwlock TRE
+>> descriptor(transfer ring element). Hope i could answer your query.
+> 
+> Hm, not sure, maybe indeed hwlock would not be enough. However I think
+> existing binding misses hwlock property.
+> 
+Let me clarify, you may help suggest further.
+hwlock is a descriptor bit(TRE_I2C_LOCK).
+"However I think  existing binding misses hwlock property"
+Where shall i keep this hwlock property? what's the usage ?
+
+> Best regards,
+> Krzysztof
+> 
 
