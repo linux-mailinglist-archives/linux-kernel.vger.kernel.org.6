@@ -1,340 +1,208 @@
-Return-Path: <linux-kernel+bounces-322806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A646E972E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:43:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC46A972DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A0D1F24CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0BE1C24485
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C53190047;
-	Tue, 10 Sep 2024 09:42:09 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F42318A6DF;
+	Tue, 10 Sep 2024 09:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAIFUnbk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3644E18FDB0;
-	Tue, 10 Sep 2024 09:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EAD188CB3;
+	Tue, 10 Sep 2024 09:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961329; cv=none; b=PjOo5gH7gnFTpDbnOQ+LnZ+CK6oiTw8oiQnzL4X9YKoOisBM5mg8khbxRBZtMogrkNJjYXMGf9/4030O50uf04PKtqnH1l/1rz3mNU7mEwUiJy1z6rVwWZV64e4j7E3Exv3fOIjr6dm1QCXRteb0HJRv1LlbKZUtlqSA5rSdmf0=
+	t=1725960945; cv=none; b=rMpLiTimLmC27XYZC/7yZQfh3MvAU6lWQ7eRzMncxhBQ5T5vQjuZTi29Qwpa6bxXstm09azv8FKgj+SVdVlq1NTdFRoERglQbXFBGI6qQ8UXeoTUH/E9fNflLTYWsh/6pnrcYDRkYhRdCTASQpaeAn7FxZsiUqTEUl8wQ3N/IUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961329; c=relaxed/simple;
-	bh=5LFaB4QeRF7sCvthexbWNV7eT6PsLxn6wE3VOrnStQ0=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 MIME-Version:Date; b=kXWvomHHTEBFm6BmiOuGH0JO2nK8b3IT4v2r7QCYRnDUPot9QWxhiJ+dtl3DZZVVQD/D8KVTPw5XNPXOFLCpv5+75Ty1Y6VgpFSwdgFgEmBpy+HVVAY2BOaAClPQy490y/U4RXnuzF97f4CbSJ8s7yUBMpuR2vtvG13En9E6MpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ed559bae6f5811efa216b1d71e6e1362-20240910
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:02d759ef-adcf-455e-b22e-f2e8c51e2021,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:17
-X-CID-INFO: VERSION:1.1.38,REQID:02d759ef-adcf-455e-b22e-f2e8c51e2021,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:17
-X-CID-META: VersionHash:82c5f88,CLOUDID:ff1660af7caec84c3caa890c8847219c,BulkI
-	D:2409062205428B690IWE,BulkQuantity:2,Recheck:0,SF:64|66|24|72|19|45|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
-	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: ed559bae6f5811efa216b1d71e6e1362-20240910
-X-User: duanchenghao@kylinos.cn
-Received: from [192.168.27.151] [(223.70.160.255)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 945606735; Tue, 10 Sep 2024 17:42:00 +0800
-Message-ID: <0fc8bc99eb3e5ff8434359677f112bde21c446aa.camel@kylinos.cn>
-Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
- USB status when S4 wakes up
-From: duanchenghao <duanchenghao@kylinos.cn>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, pavel@ucw.cz, linux-pm@vger.kernel.org, 
-	niko.mauno@vaisala.com, stanley_chang@realtek.com, tj@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-In-Reply-To: <1725931490447646.3.seg@mailgw.kylinos.cn>
-References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
-	 <1725931490447646.3.seg@mailgw.kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1725960945; c=relaxed/simple;
+	bh=TBCYlvMv+CXUZRevJVyM0lQA/IZ4ZH4AmMprMHtYvlw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CE/zUfMdhbvyJbO4z1aam/++cpBpVnOSixAaDyxdwcxsi6peIR3IzHQBNgK54UK0pYRvnqDghDSdx4kIJl6kbUIxhIvAUmFOR0B8KQ9c/GwMJBTaaXbWt2AvIrM86zgcKEAIbunU7icrt6OjtyflsnasGi3+9jNT0JWYhg7Xiv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAIFUnbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25545C4CECF;
+	Tue, 10 Sep 2024 09:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725960945;
+	bh=TBCYlvMv+CXUZRevJVyM0lQA/IZ4ZH4AmMprMHtYvlw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AAIFUnbkEFTcQpSLieFiYjCtb2IxBMyXzOXGIdn9U2FRcJ8A+jQnl9/HvcZopeLrR
+	 DYMRztJ3Gagf/QFSeAEGf1H6ytJhBqy8Cc+w8ioxpjas2VLD6v6a6StyiUQN6+ymaU
+	 gACQTT5dM2T+6ejfsvw8ock+PQ4FueCsXFekx8kvxEN5ckO6VNrkYK4v4jT9PwQuYu
+	 zAlwi4uBBYFi21BYgVSAkWFJQdhfgWpcvsL0/yYcfD0lGpru8VgYIplUM6mAFnB/Nu
+	 CJPV2gtm35Uf3GxiJ2bNnSURUzKjpxH42jrbsmwLKTbjXx5qM4RPMebcz7djbUvYEu
+	 FmjohxuyEBxjg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53653ff0251so6283157e87.0;
+        Tue, 10 Sep 2024 02:35:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpFodMlvYbrkbjCsJEwE7uImN746D4JfWAC3Hvempel1nPXnHEoJMuL+ae/O9190InGuQvImZ6pKlbvg==@vger.kernel.org, AJvYcCVuQP/FjPkOXPUi7bL2PEO0AYfKcTayy8+ZIKJa/2DpFgNlBeop4k+Bqg0F/RR2wAm+/9t5nJDq0OYW22aKskY=@vger.kernel.org, AJvYcCVwOrrvSXV2WgJ1qmrJtpAaXMNxKkejKMAVI2V8+4U9tJE/0Z+HiTLozLcs2+1RpA2sdN85NUROaRJx7w==@vger.kernel.org, AJvYcCVx+j71HJyeo5+E11gVBsCTG5h4JQWYopvl0IoxjkZWZcbnyYDp8EI6lIeBiOSpPSNXLvKX0g+0/nIGGqr8@vger.kernel.org, AJvYcCXtVeZWB1XCUuOLjoY5Egvmyf2JBL6n1AQCUGNF/jrpuVum0fVGVO1Z68OrH04TvMgVRn207iLAIIum@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6unjGZm4smkjzkkkWFr0bSRpx84Oa2aVcqTbXlhluxSc5I7NQ
+	T4GtzaBimwUrcGuTzeWdA+I+CoiKjt+mFENldjOijLEdPmXjCIAL3brzEqabMjvs0ytMdCvi22r
+	seWFLPv3DVO8aq9RZPEP9t40vThY=
+X-Google-Smtp-Source: AGHT+IENtsmQg68T2Ng35CvFqHD8v1uFN5MIvWFG7psrbL/gymy/jagJsarSBmqhnENe7SHnrN02zL4FzfCwY+63Hyw=
+X-Received: by 2002:a05:6512:2514:b0:536:5827:8778 with SMTP id
+ 2adb3069b0e04-536588130d9mr9715058e87.53.1725960943742; Tue, 10 Sep 2024
+ 02:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 17:34:52 +0800
-User-Agent: Evolution 3.44.4-0ubuntu2 
+References: <20240904234803.698424-1-masahiroy@kernel.org> <20240904234803.698424-5-masahiroy@kernel.org>
+ <20240905141723.GC1517132-robh@kernel.org>
+In-Reply-To: <20240905141723.GC1517132-robh@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 10 Sep 2024 18:35:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQnMn5fUbREnDx4XKVy9ssxVEaaZQsMtCb2a2KPZP=y=g@mail.gmail.com>
+Message-ID: <CAK7LNAQnMn5fUbREnDx4XKVy9ssxVEaaZQsMtCb2a2KPZP=y=g@mail.gmail.com>
+Subject: Re: [PATCH 04/15] kbuild: add generic support for built-in boot DTBs
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-> [Please make sure that the lines in your email message don't extend=20
-> beyond 76 columns or so.]
->=20
-
-OK. Later, I will modify the patch format. V2 patch will be released
-later
-
-> Lots of things here seem to be wrong.
->=20
-> On Fri, Sep 06, 2024 at 11:05:48AM +0800, Duan Chenghao wrote:
-> > When a device is inserted into the USB port and an S4 wakeup is
-> > initiated,
->=20
-> There is no such thing as an S4 wakeup.=C2=A0 Do you mean wakeup from an
-> S4=20
-> suspend state?
-
-Yes, waking up from the S4 suspend state.
-
->=20
-> > after the USB-hub initialization is completed, it will
-> > automatically enter suspend mode.
->=20
-> What will enter suspend mode?=C2=A0 The hub that the device was plugged
-> into?
-> That should not happen.=C2=A0 The hub initialization code should detect
-> that=20
-> a new device was plugged in and prevent the hub from suspending.
->=20
-
-Yes, the current issue is that the hub detects a new device during the
-resuming process. However, the S4 wakeup is attempting to put the hub
-into suspend mode, and during the suspend process, it detects that the
-HCD_FLAG_WAKEUP_PENDING flag has already been set, resulting in the
-return of an EBUSY status.
-
-> > Upon detecting a device on the USB port, it will proceed with
-> > resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state.
->=20
-> HCD_FLAG_WAKEUP_PENDING is not a state.=C2=A0 It is a flag.
->=20
-> > During the S4 wakeup process, peripherals are put into suspend
-> > mode, followed by task recovery.
->=20
-> What do you mean by "task recovery"?=C2=A0 We don't need to recover any=
-=20
-> tasks.
->=20
-
-S4 wakeup restores the image that was saved before the system entered
-the S4 sleep state.
-
-=C2=A0=C2=A0=C2=A0 S4 waking up from hibernation
-=C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=C2=A0=C2=A0=C2=A0 kernel initialization
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 freeze user task and kernel thread
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 load saved image
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-=C2=A0=C2=A0=C2=A0 freeze the peripheral device and controller
-=C2=A0=C2=A0=C2=A0 (Check the HCD_FLAG_WAKEUP_ PENDING flag of the USB. If =
-it is set,
-=C2=A0=C2=A0=C2=A0=C2=A0 return to EBUSY and do not perform the following r=
-estore image.)
-=C2=A0=C2=A0=C2=A0 |
-=C2=A0=C2=A0=C2=A0 v
-=C2=A0=C2=A0=C2=A0 restore image(task recovery)
-
-
-> What do you mean by "peripherals are put into suspend mode"?=C2=A0 That's
-> not=20
-> what happens.=C2=A0 Peripherals are set back to full power.
->=20
-> > However, upon detecting that the hcd is in the
-> > HCD_FLAG_WAKEUP_PENDING state,
-> > it will return an EBUSY status, causing the S4 suspend to fail and
-> > subsequent task recovery to not proceed.
->=20
-> What will return an EBUSY status?
-
-if HCD_FLAG_WAKEUP_PENDING flag is set_bit, will return EBUSY.
-
->=20
-> Why do you say that S4 suspend will fail?=C2=A0 Aren't you talking about
-> S4=20
-> wakeup?
-
-After returning EBUSY, the subsequent restore image operation will not
-be executed.
-
->=20
-> Can you provide a kernel log that explains these points and shows
-> what=20
-> problem you are trying to solve?
-
-[=C2=A0=C2=A0=C2=A0 9.009166][ 2] [=C2=A0 T403] PM: Image signature found, =
-resuming
-[=C2=A0=C2=A0=C2=A0 9.009167][ 2] [=C2=A0 T403] PM: resume from hibernation
-[=C2=A0=C2=A0=C2=A0 9.009243][ 2] [=C2=A0 T403] inno-codec inno-codec.16.au=
-to:
-[inno_vpu][vpu_notifier:1540]vpu_notifier: untested action 5...
-[=C2=A0=C2=A0=C2=A0 9.009244][ 2] [=C2=A0 T403] Freezing user space process=
-es ... (elapsed
-0.001 seconds) done.
-[=C2=A0=C2=A0=C2=A0 9.010355][ 2] [=C2=A0 T403] OOM killer disabled.
-[=C2=A0=C2=A0=C2=A0 9.010355][ 2] [=C2=A0 T403] Freezing remaining freezabl=
-e tasks ...
-(elapsed 0.000 seconds) done.
-[=C2=A0=C2=A0=C2=A0 9.012152][ 2] [=C2=A0 T403] PM: Basic memory bitmaps cr=
-eated
-[=C2=A0=C2=A0=C2=A0 9.073333][ 2] [=C2=A0 T403] PM: Using 3 thread(s) for d=
-ecompression
-[=C2=A0=C2=A0=C2=A0 9.073334][ 2] [=C2=A0 T403] PM: Loading and decompressi=
-ng image data
-(486874 pages)...
-[=C2=A0=C2=A0=C2=A0 9.073335][ 2] [=C2=A0 T403] hibernate: Hibernated on CP=
-U 0 [mpidr:0x0]
-[=C2=A0=C2=A0=C2=A0 9.095928][ 2] [=C2=A0 T403] PM: Image loading progress:=
-=C2=A0=C2=A0 0%
-[=C2=A0=C2=A0=C2=A0 9.664803][ 2] [=C2=A0 T403] PM: Image loading progress:=
-=C2=A0 10%
-[=C2=A0=C2=A0=C2=A0 9.794156][ 2] [=C2=A0 T403] PM: Image loading progress:=
-=C2=A0 20%
-[=C2=A0=C2=A0=C2=A0 9.913001][ 2] [=C2=A0 T403] PM: Image loading progress:=
-=C2=A0 30%
-[=C2=A0=C2=A0 10.034331][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 40%
-[=C2=A0=C2=A0 10.154070][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 50%
-[=C2=A0=C2=A0 10.277096][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 60%
-[=C2=A0=C2=A0 10.398860][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 70%
-[=C2=A0=C2=A0 10.533760][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 80%
-[=C2=A0=C2=A0 10.659874][ 2] [=C2=A0 T403] PM: Image loading progress:=C2=
-=A0 90%
-[=C2=A0=C2=A0 10.760681][ 2] [=C2=A0 T403] PM: Image loading progress: 100%
-[=C2=A0=C2=A0 10.760693][ 2] [=C2=A0 T403] PM: Image loading done
-[=C2=A0=C2=A0 10.760718][ 2] [=C2=A0 T403] PM: Read 1947496 kbytes in 1.68 =
-seconds
-(1159.22 MB/s)
-[=C2=A0=C2=A0 10.761982][ 2] [=C2=A0 T403] PM: Image successfully loaded
-[=C2=A0=C2=A0 10.761988][ 2] [=C2=A0 T403] printk: Suspending console(s) (u=
-se
-no_console_suspend to debug)
-[=C2=A0=C2=A0 10.864973][ 2] [=C2=A0 T403] innovpu_freeze:1782
-[=C2=A0=C2=A0 10.864974][ 2] [=C2=A0 T403] innovpu_suspend:1759
-[=C2=A0=C2=A0 11.168871][ 2] [=C2=A0 T189] PM: pci_pm_freeze():
-hcd_pci_suspend+0x0/0x38 returns -16
-[=C2=A0=C2=A0 11.168875][ 2] [=C2=A0 T189] PM: dpm_run_callback():
-pci_pm_freeze+0x0/0x108 returns -16
-[=C2=A0=C2=A0 11.168876][ 2] [=C2=A0 T189] PM: Device 0000:05:00.0 failed t=
-o quiesce
-async: error -16
-[=C2=A0=C2=A0 12.270452][ 2] [=C2=A0 T403] innovpu_thaw:1792
-[=C2=A0=C2=A0 12.405296][ 2] [=C2=A0 T403] PM: Failed to load hibernation i=
-mage,
-recovering.
-[=C2=A0=C2=A0 12.486859][ 2] [=C2=A0 T403] PM: Basic memory bitmaps freed
-[=C2=A0=C2=A0 12.486860][ 2] [=C2=A0 T403] OOM killer enabled.
-[=C2=A0=C2=A0 12.486861][ 2] [=C2=A0 T403] Restarting tasks ...=20
-
->=20
-> > This patch makes two modifications in total:
-> > 1. The set_bit and clean_bit operations for the
-> > HCD_FLAG_WAKEUP_PENDING flag of Hcd,
-> > which were previously split between the top half and bottom half of
-> > the interrupt,
-> > are now unified and executed solely in the bottom half of the
-> > interrupt.
-> > This prevents the bottom half tasks from being frozen during the S4
-> > process,
-> > ensuring that the clean_bit process can proceed without
-> > interruption.
->=20
-> The name is "clear_bit" (with an 'r'), not "clean_bit".
->=20
-> > 2. Add a condition to the set_bit operation for the hcd status
-> > HCD_FLAG_WAKEUP_PENDING.
-> > When the hcd status is HC_STATE_SUSPENDED, perform the setting of
-> > the aforementioned status bit.
-> > This prevents a subsequent set_bit from occurring after the
-> > clean_bit if the hcd is in the resuming process.
->=20
-> hcd_bus_resume() clears that HCD_FLAG_WAKEUP_PENDING bit after
-> calling=20
-> hcd->driver->bus_resume().=C2=A0 After that point,
-> usb_hcd_resume_root_hub()=20
-> won't be called, so how can HCD_FLAG_WAKEUP_PENDING get set again?
->=20
-> Alan Stern
->=20
-> > Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
+On Thu, Sep 5, 2024 at 11:17=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Thu, Sep 05, 2024 at 08:47:40AM +0900, Masahiro Yamada wrote:
+> > Some architectures embed boot DTBs in vmlinux. A potential issue for
+> > these architectures is a race condition during parallel builds because
+> > Kbuild descends into arch/*/boot/dts/ twice.
+> >
+> > One build thread is initiated by the 'dtbs' target, which is a
+> > prerequisite of the 'all' target in the top-level Makefile:
+> >
+> >   ifdef CONFIG_OF_EARLY_FLATTREE
+> >   all: dtbs
+> >   endif
+> >
+> > For architectures that support the embedded boot dtb, arch/*/boot/dts/
+> > is visited also during the ordinary directory traversal in order to
+> > build obj-y objects that wrap DTBs.
+> >
+> > Since these build threads are unaware of each other, they can run
+> > simultaneously during parallel builds.
+> >
+> > This commit introduces a generic build rule to scripts/Makefile.vmlinux
+> > to support embedded boot DTBs in a race-free way. Architectures that
+> > want to use this rule need to select CONFIG_GENERIC_BUILTIN_DTB.
+> >
+> > After the migration, Makefiles under arch/*/boot/dts/ will be visited
+> > only once to build only *.dtb files.
+> >
+> > This change also aims to unify the CONFIG options used for embedded DTB=
+s
+> > support. Currently, different architectures use different CONFIG option=
+s
+> > for the same purposes.
+> >
+> > The CONFIG options are unified as follows:
+> >
+> >  - CONFIG_GENERIC_BUILTIN_DTB
+> >
+> >    This enables the generic rule for embedded boot DTBs. This will be
+> >    renamed to CONFIG_BUILTIN_DTB after all architectures migrate to the
+> >    generic rule.
+> >
+> >  - CONFIG_BUILTIN_DTB_NAME
+> >
+> >    This specifies the path to the embedded DTB.
+> >    (relative to arch/*/boot/dts/)
+> >
+> >  - CONFIG_BUILTIN_DTB_ALL
+> >
+> >    If this is enabled, all DTB files compiled under arch/*/boot/dts/ ar=
+e
+> >    embedded into vmlinux. Only used by MIPS.
+>
+> I started to do this a long time ago, but then decided we didn't want to
+> encourage this feature. IMO it should only be for legacy bootloaders or
+> development/debug. And really, appended DTB is more flexible for the
+> legacy bootloader case.
+>
+> In hindsight, a common config would have been easier to limit new
+> arches...
+>
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > > ---
-> > =C2=A0drivers/usb/core/hcd.c | 1 -
-> > =C2=A0drivers/usb/core/hub.c | 3 +++
-> > =C2=A02 files changed, 3 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> > index 1ff7d901fede..a6bd0fbd82f4 100644
-> > --- a/drivers/usb/core/hcd.c
-> > +++ b/drivers/usb/core/hcd.c
-> > @@ -2389,7 +2389,6 @@ void usb_hcd_resume_root_hub (struct usb_hcd
-> > *hcd)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_lock_irqsave (&hcd=
-_root_hub_lock, flags);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (hcd->rh_registered)=
- {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0pm_wakeup_event(&hcd->self.root_hub->dev, 0);
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0set_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0queue_work(pm_wq, &hcd->wakeup_work);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_unlock_irqrestore =
-(&hcd_root_hub_lock, flags);
-> > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> > index 4b93c0bd1d4b..7f847c4afc0d 100644
-> > --- a/drivers/usb/core/hub.c
-> > +++ b/drivers/usb/core/hub.c
-> > @@ -3835,11 +3835,14 @@ int usb_port_resume(struct usb_device
-> > *udev, pm_message_t msg)
-> > =C2=A0
-> > =C2=A0int usb_remote_wakeup(struct usb_device *udev)
-> > =C2=A0{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct usb_hcd=C2=A0 *hcd =
-=3D bus_to_hcd(udev->bus);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0status =3D 0;
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0usb_lock_device(udev);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (udev->state =3D=3D =
-USB_STATE_SUSPENDED) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_dbg(&udev->dev, "usb %sresume\n", "wakeup-")=
-;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (hcd->state =3D=3D HC_STATE_SUSPENDED)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0set_bi=
-t(HCD_FLAG_WAKEUP_PENDING, &hcd-
-> > > flags);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D usb_autoresume_device(udev);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (status =3D=3D 0) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-/* Let the drivers do their thing, then...
-> > */
-> > --=20
-> > 2.34.1
-> >=20
-> >=20
+> >
+> >  Makefile                 |  7 ++++++-
+> >  drivers/of/Kconfig       |  6 ++++++
+> >  scripts/Makefile.vmlinux | 44 ++++++++++++++++++++++++++++++++++++++++
+> >  scripts/link-vmlinux.sh  |  4 ++++
+> >  4 files changed, 60 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 145112bf281a..1c765c12ab9e 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1417,6 +1417,10 @@ ifdef CONFIG_OF_EARLY_FLATTREE
+> >  all: dtbs
+> >  endif
+> >
+> > +ifdef CONFIG_GENERIC_BUILTIN_DTB
+> > +vmlinux: dtbs
+> > +endif
+> > +
+> >  endif
+> >
+> >  PHONY +=3D scripts_dtc
+> > @@ -1483,7 +1487,8 @@ endif # CONFIG_MODULES
+> >  CLEAN_FILES +=3D vmlinux.symvers modules-only.symvers \
+> >              modules.builtin modules.builtin.modinfo modules.nsdeps \
+> >              compile_commands.json rust/test \
+> > -            rust-project.json .vmlinux.objs .vmlinux.export.c
+> > +            rust-project.json .vmlinux.objs .vmlinux.export.c \
+> > +               .builtin-dtbs-list .builtin-dtb.S
+> >
+> >  # Directories & files removed with 'make mrproper'
+> >  MRPROPER_FILES +=3D include/config include/generated          \
+> > diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> > index dd726c7056bf..5142e7d7fef8 100644
+> > --- a/drivers/of/Kconfig
+> > +++ b/drivers/of/Kconfig
+> > @@ -2,6 +2,12 @@
+> >  config DTC
+> >       bool
+> >
+> > +config GENERIC_BUILTIN_DTB
+> > +     bool
+>
+> So that we don't add new architectures to this, I would like something
+> like:
+>
+> # Do not add new architectures to this list
+> depends on MIPS || RISCV || MICROBLAZE ...
+
+
+This will not work after 14/15 is applied.
+
+
+For example, if arch/arm/Kconfig has
+
+
+config BUILTIN_DTB
+      bool "enable BUILTIN_DTB"
+
+
+No warning is displayed.
 
 
 
 
+--=20
+Best Regards
+Masahiro Yamada
 
