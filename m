@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-323958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755E1974618
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:42:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AE197461D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A46D1F221A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764C51C25080
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165B91AC425;
-	Tue, 10 Sep 2024 22:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81331AC452;
+	Tue, 10 Sep 2024 22:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Upi1Q7Nj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMkvoXNS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733FD1A76BE;
-	Tue, 10 Sep 2024 22:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA701F951;
+	Tue, 10 Sep 2024 22:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726008113; cv=none; b=Yv/p0OZZjqfRyUVNoPOc+M48qHyEJ1qPHpk72DSKsHcX/cJ96rgPrtPplpuKnXlpbqyRRjCgNU9OxVghHtXkdqNJdN/B1xcoEpFYrfFFN0uojWN3edRVLXKV691pXCqIiRj4k4Z/cabgwaiDZzo3T5z9Fj70g2Hvc23b3EI7KE4=
+	t=1726008247; cv=none; b=Y0jEKJ2QBXrryAHoqJOXRnxoRutUyFN9pNRxmrfVc30f95TCXAeWwFlitqrQQpk85R8CleqfuqrTk6higzQ2oD7EkxySNPTIVmIDUgMdLl/EtNDWNF6gCakGeU6kO/RS7S/yYhj/PGiHXyXybJ/JaGakkX2iQ15HUN2zhUM0x80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726008113; c=relaxed/simple;
-	bh=B1Kb/1rBdk2gLp8tm/lvvMzs9HyFUXE3S9g6+iuVpc4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YAd1i6hwVoZyqW4/g1DOto6/m6pteRuM09Q4pEEVji8OGpmbtFwdOQTOTfHMW1EwVThQcK3wA8/KNzlems2LuxEnoBIvuQepFeVTxG2kVTFeHUnW5kRMztRG+DW8rNmFevaTXQ8uMJJnyQuiuLhCIuf4a6RwgsNft8AMmt75tkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Upi1Q7Nj; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726008112; x=1757544112;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=B1Kb/1rBdk2gLp8tm/lvvMzs9HyFUXE3S9g6+iuVpc4=;
-  b=Upi1Q7NjAvcDvZDEwXoequTnuZTv86PhsGoMHZFVf3oU27jNpkhHIzv7
-   XpRHkh6phlOMAJ2P3GPJVpO9aXtyeti82gHEEmPoRf3GI0is9ixoPdKPv
-   J3S2JvYN0VMOAlowWQyfBkGex76e0MayNeajw5v1uYlf/UjRWQdJcjHrb
-   o/sqZDI+a6oLhnpkVQ179Woowm5hdG6lI2mD6F3dcsv0AOMJvg81mAP8e
-   R6iKTgj5YgPpg4Kibkyq/RcJVcciyeEocBnflUdnZoXLMEJTHuoIc0Ag2
-   t0MRY612/Fs6vE/e053XPgXSSA76uw3TjOF0gyx+3l4FuBj8mVf1/4Lzu
-   g==;
-X-CSE-ConnectionGUID: Bh31K0V+THCUn3qnpYXo/w==
-X-CSE-MsgGUID: AWb8FvRJQ0CRWeAcooxxlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24605089"
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208,217";a="24605089"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 15:41:48 -0700
-X-CSE-ConnectionGUID: ZrEyXTNUSMer2wLf5e1QYg==
-X-CSE-MsgGUID: 8JhJUdHuTuKEJwaXVZ+bWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208,217";a="67409985"
-Received: from ehanks-mobl1.amr.corp.intel.com ([10.124.223.166])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 15:41:47 -0700
-Message-ID: <031a8e46189d4f32812ada587cf7432c80fdf664.camel@linux.intel.com>
-Subject: Re: [PATCH] PM: tools: sleepgraph: Correct the home link
-From: Todd Brandt <todd.e.brandt@linux.intel.com>
-Reply-To: todd.e.brandt@linux.intel.com
-To: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net, 
-	skhan@linuxfoundation.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 10 Sep 2024 15:41:46 -0700
-In-Reply-To: <20240908095722.7683-1-0xff07@gmail.com>
-References: <20240908095722.7683-1-0xff07@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1726008247; c=relaxed/simple;
+	bh=2C22c+h3eJ6IwjxO28xiElPTv1O/OAwDF5xufoz0r2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KPAuoqksgGME3HoeqKkqVpwnyL7Ila6NxzOt/jyHisjk+7IPOeHq18MG5px4aiisfSyhwyyfOZ/gtJNSAHrYgXBYwhjRQeELXIJoCB1UZUpNUXGn4cDMwhUxPJb+lfzxjppCxpG+8ZR3MOhlSKibphNBFBGDtXNceEGnVoFh7h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMkvoXNS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5367FC4CEC3;
+	Tue, 10 Sep 2024 22:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726008246;
+	bh=2C22c+h3eJ6IwjxO28xiElPTv1O/OAwDF5xufoz0r2I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SMkvoXNSTbr8zEcMXXgY3dAwrDQARPJJP78rND4Pp5fyuvHTMvQn55SM8J3oOdpvZ
+	 TRVPytn0uI7WfKuxMj58J4L8A7Ijt/UYBbMWhpUIElAa/9sDzMyDEjaoiomExZfO2e
+	 FcJxkoIKxx6NP3Oo7+8XyEE2rPPeRgdbuVzApJWgqGUR+G1pPIh6gEKoBeWqc8E3AH
+	 dJ1DdxVlFcUUtiVkFnPPzZF/xS7fCg9B8nllx7ann7AaRF3T5JGdVS0eWoNFdWw065
+	 UvdPvFG5G0acvcISL9WwECbjHQcBEgANtwNorKb99opDqTRJ3G6fYc86vxX1NZv4ea
+	 C9HTUsIEFR68A==
+Date: Tue, 10 Sep 2024 15:44:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCHv2 net] usbnet: fix cyclical race on disconnect with work
+ queue
+Message-ID: <20240910154405.641a459f@kernel.org>
+In-Reply-To: <20240905134811.35963-1-oneukum@suse.com>
+References: <20240905134811.35963-1-oneukum@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-T24gU3VuLCAyMDI0LTA5LTA4IGF0IDE3OjU3ICswODAwLCBZby1KdW5nIChMZW8pIExpbiB3cm90
-ZToKPiBUaGUgMDEub3JnL3BtLWdyYXBoIGxpbmsgaW4gdGhlIHNsZWVwZ3JhcGgucHkgbm8gbG9u
-Z2VyIHBvaW50IHRvIHRoZQo+IHBtLWdyYXBoIGhvbWUgcGFnZS4gUmVwbGFjZSBpdCB3aXRoIHRo
-ZSBob21lIHBhZ2UgbGluayBpbiB0aGUgUkVBRE1FLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFlvLUp1
-bmcgKExlbykgTGluIDwweGZmMDdAZ21haWwuY29tPgo+IC0tLQo+IMKgdG9vbHMvcG93ZXIvcG0t
-Z3JhcGgvc2xlZXBncmFwaC5weSB8IDcgKysrKy0tLQo+IMKgMSBmaWxlIGNoYW5nZWQsIDQgaW5z
-ZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvdG9vbHMvcG93ZXIv
-cG0tZ3JhcGgvc2xlZXBncmFwaC5weSBiL3Rvb2xzL3Bvd2VyL3BtLQo+IGdyYXBoL3NsZWVwZ3Jh
-cGgucHkKPiBpbmRleCBlZjg3ZTYzYzA1YzcuLmY5NTA2MWQ2MDY5ZiAxMDA3NTUKPiAtLS0gYS90
-b29scy9wb3dlci9wbS1ncmFwaC9zbGVlcGdyYXBoLnB5Cj4gKysrIGIvdG9vbHMvcG93ZXIvcG0t
-Z3JhcGgvc2xlZXBncmFwaC5weQo+IEBAIC0xOCw3ICsxOCw3IEBACj4gwqAjCj4gwqAjIExpbmtz
-Ogo+IMKgI8KgwqDCoMKgwqDCoCBIb21lIFBhZ2UKPiAtI8KgwqDCoMKgwqDCoMKgwqAgaHR0cHM6
-Ly8wMS5vcmcvcG0tZ3JhcGgKPiArI8KgwqDCoMKgwqDCoMKgwqAKPiBodHRwczovL3d3dy5pbnRl
-bC5jb20vY29udGVudC93d3cvdXMvZW4vZGV2ZWxvcGVyL3RvcGljLXRlY2hub2xvZ3kvb3Blbi9w
-bS1ncmFwaC9vdmVydmlldy5odG1sCj4gwqAjwqDCoMKgwqDCoMKgIFNvdXJjZSByZXBvCj4gwqAj
-wqDCoMKgwqDCoMKgwqDCoCBnaXRAZ2l0aHViLmNvbTppbnRlbC9wbS1ncmFwaAo+IMKgIwo+IEBA
-IC0yNzUzLDggKzI3NTMsOSBAQCBjbGFzcyBUaW1lbGluZToKPiDCoMKgwqDCoMKgwqDCoMKgZGVm
-IGNyZWF0ZUhlYWRlcihzZWxmLCBzdiwgc3RhbXApOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgaWYobm90IHN0YW1wWyd0aW1lJ10pOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybgo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBzZWxmLmh0bWwgKz0gJzxkaXYgY2xhc3M9InZlcnNpb24iPjxhCj4gaHJlZj0iaHR0
-cHM6Ly8wMS5vcmcvcG0tZ3JhcGgiPiVzIHYlczwvYT48L2Rpdj4nIFwKPiAtwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCUgKHN2LnRpdGxlLCBzdi52ZXJzaW9u
-KQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzZWxmLmh0bWwgKz0gJzxkaXYgY2xh
-c3M9InZlcnNpb24iPjxhCj4gaHJlZj0iaHR0cHM6Ly93d3cuaW50ZWwuY29tL2NvbnRlbnQnK1wK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICcvd3d3L3VzL2VuL2RldmVsb3Blci90
-b3BpYy10ZWNobm9sb2d5L29wZW4vcG0tCj4gZ3JhcGgvb3ZlcnZpZXcuaHRtbCI+JXMgdiVzPC9h
-PjwvZGl2PicgXAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJSAoc3YudGl0bGUs
-IHN2LnZlcnNpb24pCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiBzdi5sb2dt
-c2cgYW5kIHN2LnRlc3Rsb2c6Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgc2VsZi5odG1sICs9ICc8YnV0dG9uIGlkPSJzaG93dGVzdCIKPiBjbGFzcz0i
-bG9nYnRuIGJ0bmZtdCI+bG9nPC9idXR0b24+Jwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgaWYgc3YuZG1lc2dsb2c6CkhpLCB5ZWEgSSBtYWRlIHRoaXMgY2hhbmdlIGluIHRoZSBn
-aXRodWIgc291cmNlIGFmdGVyIHRoZSByZWxlYXNlIG9mCnZlcnNpb24gNS4xMiBhbmQgaGF2ZW4n
-dCBwdXNoZWQgaXQgb3ZlciB0byB0aGUga2VybmVsIHNvdXJjZQp5ZXQuwqBUaGFua3MgZm9yIHRo
-ZSBoZWFkcyB1cC4KCkdpdmUgbWUgYSBkYXkgb3IgdHdvIGFuZCBJJ2xsIHN1Ym1pdCBhbiB1cGRh
-dGVkIHZlcnNpb24gb2YgdGhpcyBwYXRjaAp3aGljaCBpbmNsdWRlcyBhbGwgdGhlIG90aGVyIGNo
-YW5nZXMgc2luY2UgNS4xMiBzbyB0aGV5IGNhbiBiZSBmdWxseSBpbgpzeW5jLgoK
+On Thu,  5 Sep 2024 15:46:50 +0200 Oliver Neukum wrote:
+> +static inline bool usbnet_going_away(struct usbnet *ubn)
+> +{
+> +	smp_mb__before_atomic(); /* against usbnet_mark_going_away() */
+> +	return test_bit(EVENT_UNPLUG, &ubn->flags);
+> +}
+> +
+> +static inline void usbnet_mark_going_away(struct usbnet *ubn)
+> +{
+> +	set_bit(EVENT_UNPLUG, &ubn->flags);
+> +	smp_mb__after_atomic(); /* against usbnet_going_away() */
+> +}
 
+I have sort of an inverse question to what Paolo asked :)
+AFAIU we need the double-cancel because checking the flag and
+scheduling are not atomic. But if we do that why the memory
+barriers? They make it seem like we're doing something clever
+with memory ordering, while really we're just depending on normal
+properties of the tasklet/timer/work APIs.
+
+FTR disable_work_sync() would work nicely here but it'd be
+a PITA for backports.
+
+Also - is this based on some report or syzbot? I'm a bit tempted
+to put this in net-next given how unlikely the race is vs how
+commonly used the driver is.
+-- 
+pw-bot: cr
 
