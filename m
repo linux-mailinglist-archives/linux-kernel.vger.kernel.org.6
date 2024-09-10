@@ -1,90 +1,109 @@
-Return-Path: <linux-kernel+bounces-323233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5939739D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:28:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5239739D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A8F2837A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC111F26609
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599721946DF;
-	Tue, 10 Sep 2024 14:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA8C194C88;
+	Tue, 10 Sep 2024 14:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="L0ownQDG"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NisEID3z"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415818FDBD;
-	Tue, 10 Sep 2024 14:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E4188CB1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978484; cv=none; b=ePwIQPB8bRc6uoeJHHoh+CMgCUW5hKEFOlcbtwYoDNSQAUu7EZgYEoSEn9XYsdDz1fHVu4ItMOPcU25bVxyVUJ6xFTQwbLSie+rhVCejGziEIbgDdXulgHXQlTapB2D2e4vtwrNAYhyVCaUrGmvmUGL71Rf7FJq1hGM1tnE2Ess=
+	t=1725978581; cv=none; b=gYlSBWsqGnYXWjxAq+FhXDhLsQyiH+gDt2xeovcvmZ1WMuwTWLAHg7vEGcos/0yVDn5LeqMdDZrngRM2/UOcn5xXCy1IEGX+FRlkmqMVPWHyDBPtzsKQgpr32FO5H//FrAPYBsXyqBcyEzfBMzaSJuoIU6Oyph4ah79FLOBiUCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978484; c=relaxed/simple;
-	bh=qHkpMV3mLwk0oKfwpkYJ7InrvxkPQlAZpvhOXxJwTko=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eAYdF8SEV3ZMbIH99BKHDNSpJLBL3yFxjoOqx1OoreF5SyKLbEP1tr0auOuxKEvPsnokoPDxnQ0hexrndJZjRSkT6kPcxW/QpaheyFY6AKO2WuWWYe0bEq/0x4xWXwuU0vxxqaPSKCeKgtiVkWhS9b5KhjJlJvyZUWvNAGlJU3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=L0ownQDG; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=kpc4lnod5vhgfipuedzauo6rx4.protonmail; t=1725978479; x=1726237679;
-	bh=qHkpMV3mLwk0oKfwpkYJ7InrvxkPQlAZpvhOXxJwTko=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=L0ownQDG9vwUTrlXtMaaLGKMyi99WfTN8kd6kFo7PaXe0i+L2ED9urXmCvtKr2/i1
-	 LvCtHIz864httSus4+wLrQNoYsFTIy8Ch+xM6B6D0fG7uZE1s7V+BvqTa1t4s2knJa
-	 XPPNn9MXkpGHFypJU8FsFdxCcix7+XYw1/bGwDKsoj/4TigTH+wh4/G7ls+twZGs8N
-	 MdrgY9FHWoSEx2ZJK7ngQ1luAZyonxU368/1B/QP0VmY2gAHcyhYpAJXYScRiUolv8
-	 vtynzgdmhMTu167iZY08AkYPv/aYjrUtJ/vJxHRvpMVjJ6GOe5BYlSYBMvcpCwhZXP
-	 BECdI6b01+GXQ==
-Date: Tue, 10 Sep 2024 14:27:52 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc` module
-Message-ID: <3b2f4a89-4a41-4bd5-b07c-733b70241686@proton.me>
-In-Reply-To: <ZuBMuHk-_DmGRQad@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-27-dakr@kernel.org> <20240831135712.0d7366b6.gary@garyguo.net> <Ztb6_XW3ccnHQDmw@pollux> <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com> <f99d8d3a-5b56-4555-a1fc-bd7685dcea40@proton.me> <CANiq72=MD8jmWb9EGA8yW6eMT6Prj8fYEiJM81-HTq3p4dKmGg@mail.gmail.com> <05abcf53-4997-4bdc-953b-30bbb5118639@proton.me> <ZuBMuHk-_DmGRQad@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 65bc68060d4607b3c0e640286473b7551089d2c8
+	s=arc-20240116; t=1725978581; c=relaxed/simple;
+	bh=NMNHk5SuzzFYllyXQY6O/Oq1dqoBby9n380xslSuvkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQbw40FgmtxvwDgnPild4vhMvM2ghBR5YrOna+dHpqNGu/ntMGXZ2lft1D9ystl2hU2Ttn/1TTTCYBh+vOu6t0WYvgUGs0KGVT7Dj9rEmj0ug59rqMcRlj4twE7AFTBjxP5X+md0GQJXqm8VSV+9KUY4Ue4WaQLN3hECzCvQwm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NisEID3z; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6d5ca057-87a3-4ec2-a733-8f0c1fb11158@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725978577;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U9IMq2lfBFo2EcY7C0mxiXEzI9/sn8PzYmV9lkBASBM=;
+	b=NisEID3zLSvP5G84+Lss+BMuBVscZSObxXPqsbWRJJeoTPNiBzyU7zNC6eB61nO+1f2XNQ
+	Z/MYCI2r4Cl5e1ecIhlmTJHnFEZi8WD185vEszGWdRnFbX9eibZp9GYkGZOpNp19wfBPGN
+	CvttbhTKgqMvcT4YxJXTM3dDplyDPcE=
+Date: Tue, 10 Sep 2024 10:29:33 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
+ non-zero padding
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, "David S . Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+ linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+References: <20240906210743.627413-1-sean.anderson@linux.dev>
+ <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
+ <9d5bf385-2ef0-435d-b6f9-1de55533653b@linux.dev>
+ <CANn89iJaXgR6c+moGB5kX6ATbLX6fMP0mUBQN=SAsZfdz5ywNw@mail.gmail.com>
+ <66df2fd2d6595_3bff929459@willemb.c.googlers.com.notmuch>
+ <20240909165116.1bdb4757@kernel.org>
+ <66df9a6d42871_81fd3294e8@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <66df9a6d42871_81fd3294e8@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10.09.24 15:42, Danilo Krummrich wrote:
-> On Tue, Sep 10, 2024 at 01:26:34PM +0000, Benno Lossin wrote:
->> On 04.09.24 14:57, Miguel Ojeda wrote:
->>> On Wed, Sep 4, 2024 at 2:51=E2=80=AFPM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>>>
->>>> I forgot the reason for not using it, does anyone remember?
->>>
->>> One of the reasons argued was that `mod.rs` is the same name
->>> everywhere, and thus it is hard to notice the difference in some
->>> editors and may be harder to "jump into" in history/tabs/etc.
->>
->> I don't usually open more than 2-4 files anyways, so it's not an issue
->> for me. But of course people's workflow is different, does anyone have a
->> problem with switching to `mod.rs`?
->=20
-> I'm also not against it. I'd appreciate if a potential change doesn't int=
-erfere
-> with this series too much though. :-)
+On 9/9/24 21:01, Willem de Bruijn wrote:
+> Jakub Kicinski wrote:
+>> On Mon, 09 Sep 2024 13:26:42 -0400 Willem de Bruijn wrote:
+>> > > This seems to be a bug in the driver.
+>> > > 
+>> > > A call to skb_put_padto(skb, ETH_ZLEN) should be added.  
+>> > 
+>> > In which case this test detecting it may be nice to have, for lack of
+>> > a more targeted test.
+>> 
+>> IIUC we're basically saying that we don't need to trim because pad
+>> should be 0? In that case maybe let's keep the patch but add a check 
+>> on top which scans the pad for non-zero bytes, and print an informative
+>> warning?
+> 
+> Data arriving with padding probably deserves a separate test.
+> 
+> We can use this csum test as stand-in, I suppose.
+> 
+> Is it safe to assume that all padding is wrong on ingress, not just
+> non-zero padding. The ip stack itself treats it as benign and trims
+> the trailing bytes silently.
+> 
+> I do know of legitimate cases of trailer data lifting along.
 
-Sure, we can do it after the series.
+Ideally we would test that
 
----
-Cheers,
-Benno
+- Ingress padding is ignored.
+- Egress padding does not leak past the buffer. The easiest way to
+  handle this would be to check that it is constant (e.g. all the
+  padding uses the same value), but this could have false-positives for
+  e.g. timestamps.
 
+--Sean
 
