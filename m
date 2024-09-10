@@ -1,500 +1,192 @@
-Return-Path: <linux-kernel+bounces-323319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9C8973B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BD0973B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 236C8B2488E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C971F2546A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE1A19DFAC;
-	Tue, 10 Sep 2024 15:17:37 +0000 (UTC)
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451AF190684;
+	Tue, 10 Sep 2024 15:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FSkSmBKb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46F51990D7;
-	Tue, 10 Sep 2024 15:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ACD6F307
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725981456; cv=none; b=qA53VDyvxxogNRyo9JAVqtqG7qGKkC2FlGLpsTEeM+vXDjT6RLUlMWuQPG+LLN6Mke6b8/6DB8mZwoCvAHibfRqZ6/BM0MY1N2AvZs1DFKR3GnnM0Nkpg2AMIq8DzedmHpJTuUxn46bnei/dqHPwuZgR/Np7p6+lxl/WHvjBBn4=
+	t=1725981391; cv=none; b=CnYwj8bkODm7d0q+CXV9o2rmSUjxPeEvjUexKIoe+RbiuUdavUoxabNZhX2Aph9HOgs8OjaMnUi1H/FOPA91/g8sn6ewpSpMWFtkeUYRCNK1AGTw1kk+lvuhcc2jvOEnP/Ru0044WvKM44jsa2Xlxyg753Wlb8WYUl0bR1UCwXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725981456; c=relaxed/simple;
-	bh=d/RQ5sNLcYkvF4CdWxzVY2TXrgcPiorhfwWLLF79imo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EvbN49UPp7sLJY/UsRauy9SmoyRtTMRs7yPZa2kMrPAln3s7VbyPqd05+mfqXQAzwd3Gs/eEZ7Ngum1BRd8jzAY1NBhNT7hGzvt1dYqbm0ZmELkNXhXio9ZxvHs7jTn2kX8wOkC2B4Tlx0oL4DY/u+njilPMJ0H41VsNl9FLn3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <abelova@astralinux.ru>)
-	id 1so2aq-00Bgn3-7F; Tue, 10 Sep 2024 18:15:48 +0300
-Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.14.240])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4X36kL0dQ5z1gxcZ;
-	Tue, 10 Sep 2024 18:16:58 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/meson: switch to a managed drm device
-Date: Tue, 10 Sep 2024 18:16:00 +0300
-Message-Id: <20240910151600.18659-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <bd0b8d63-f543-480e-85b4-2b8cec178c38@linaro.org>
-References: 
+	s=arc-20240116; t=1725981391; c=relaxed/simple;
+	bh=wF4vyctgMM9SgS/++eIxgGDt7759BR/w2WtM6AANn9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jrwmYE9PXIyRql2Hcrweas9lkrHBEZoo8EoIdWYEK02d12m1URCMyyOE3vptDzRZPv2MIIvGMKeWf/1l+Sdas0nWb0MJNzqi3KVSg4KFvlzQ3iqG4hNK3oyHf+qZjr9vYG0pc/AhppN9FIdlaP50IxbmzxyCdqHPioqc9SKExfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FSkSmBKb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725981389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mklp9pGql4hBvPJCZKxHS9qvQI+U2JzUn2xs9sIn9F8=;
+	b=FSkSmBKbczjV3Cxm2Wh9Tq4Ta8r9P2Ilcgw3Ye6pfWX9Opw7uk62hHh6vQKaJe9nW2NLNo
+	4E8C8kNQn+P15fYnYLMwKzFmtnU7isB4uoAAWLWGz/14WUU8Ewt6nSeBh70tvW2+su7/tD
+	4jAIzJMy76QHlVOKwZ7chwVFfRS3HTg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312--14nONgCOUmHrDMHakSVLQ-1; Tue, 10 Sep 2024 11:16:28 -0400
+X-MC-Unique: -14nONgCOUmHrDMHakSVLQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c434b952so2664668f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:16:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725981387; x=1726586187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mklp9pGql4hBvPJCZKxHS9qvQI+U2JzUn2xs9sIn9F8=;
+        b=lV1ruY4S5rrNS+L3CXjYqeXqFa52Pr3mXchocmI28j5YNaK5I3s42dFG6yL9/gQE2D
+         6g8REiqNg03iLDpC1a3+tu0HOdjirt1VO+caTBa6td59d0C+vDug1bznAyRzHEWi4l2b
+         KAMqQepHo9yMkb9W/ZGMe3BAOt6MtJfT+c4HnpTyqPIgFYK9/OMeaOJO0cBrT6ibla4Y
+         /EHmwATGp4l1/OBVSD+obOBIdbuR8eNlW2LrdDxCUCLLO6sQ/ZUBOgn19m6Z2OYoH/J9
+         BHZvtBnq0jkG9OKfwNIbz9zRF3rOwRL+hfmAdL9QdWVwCFYxzN1vatXtSekj062UlwUt
+         1Fkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxlVt2kV+dWWp4k+9rIwEemCraEN/HBHokJ3QJa+JyLGrTf8SEKkr2rYY2/66tZkXJ/aLYteVluEFekpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvuskbpYazUs05z3o1rhT/+lN42gnWMTWxOWwAmZ/oKSw0Dq4t
+	unKx/KXdu9OnitmXp33FEX5ltYN/IslFj47WAUCeqTmjDuKLH+hJuRNPGdqq31BWS73rK12zDKe
+	e5VTLk8JrMt+Bb9Ds8XC9ePVQSgqKqWj/DnK44NHN9dfD36c031bdI1cCAWItlPfij/is/spSTQ
+	vDVY1sHCbUddfnEi9WtASI7Ouxl9bbC+6VgYOV
+X-Received: by 2002:a05:6000:25a:b0:371:9360:c4a8 with SMTP id ffacd0b85a97d-378895b7966mr7280898f8f.6.1725981386630;
+        Tue, 10 Sep 2024 08:16:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsSzLiEhAelNJyVR1wTIGazM0zcD0n/USsPoj/yAvsiXdOzgl8RO4389o43ivD4GAxxvJLiTxbyTWw8eZg/sc=
+X-Received: by 2002:a05:6000:25a:b0:371:9360:c4a8 with SMTP id
+ ffacd0b85a97d-378895b7966mr7280877f8f.6.1725981386122; Tue, 10 Sep 2024
+ 08:16:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetnhgrshhtrghsihgruceuvghlohhvrgcuoegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpefhudejgfetgfeftdeitdegffduhefftdduieeludeutdffgeeugfdvgedutddtvdenucfkphepuddtrddujeejrddugedrvdegtdenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdquddtiedtiedvrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrddujeejrddugedrvdegtdemfeekvddtiedpmhgrihhlfhhrohhmpegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprggsvghlohhvrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprh
- gtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrnhhivghlsehffhiflhhlrdgthhdprhgtphhtthhopehkhhhilhhmrghnsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehjsghruhhnvghtsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehmrghrthhinhdrsghluhhmvghnshhtihhnghhlsehgohhoghhlvghmrghilhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheplhhinhhugidqrghmlhhoghhitgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1725964328#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12168076, Updated: 2024-Sep-10 13:36:53 UTC]
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
+ <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
+ <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
+ <ZuBQYvY6Ib4ZYBgx@google.com>
+In-Reply-To: <ZuBQYvY6Ib4ZYBgx@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 10 Sep 2024 17:16:13 +0200
+Message-ID: <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Switch to a managed drm device to cleanup some error handling
-and make future work easier.
+On Tue, Sep 10, 2024 at 3:58=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> On Tue, Sep 10, 2024, Paolo Bonzini wrote:
+> No, because that defeates the purpose of having mmu_lock be a rwlock.
 
-Fix dereference of NULL in meson_drv_bind_master by removing
-drm_dev_put(drm) before meson_encoder_*_remove and
-component_unbind_all where drm is dereferenced.
+But if this part of the TDX module is wrapped in a single big
+try_lock, there's no difference in spinning around busy seamcalls, or
+doing spin_lock(&kvm->arch.seamcall_lock). All of them hit contention
+in the same way.  With respect to FROZEN_SPTE...
 
-Co-developed by Linux Verification Center (linuxtesting.org).
+> > This way we know that "busy" errors must come from the guest and have s=
+et
+> > HOST_PRIORITY.
+>
+> We should be able to achieve that without a VM-wide spinlock.  My thought=
+ (from
+> v11?) was to effectively use the FROZEN_SPTE bit as a per-SPTE spinlock, =
+i.e. keep
+> it set until the SEAMCALL completes.
 
-Cc: stable@vger.kernel.org # 6.5
-Fixes: 6a044642988b ("drm/meson: fix unbind path if HDMI fails to bind")
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
----
-v2: fix commit message and add Cc: stable@vger.kernel.org
- drivers/gpu/drm/meson/meson_crtc.c         | 10 +--
- drivers/gpu/drm/meson/meson_drv.c          | 71 ++++++++++------------
- drivers/gpu/drm/meson/meson_drv.h          |  2 +-
- drivers/gpu/drm/meson/meson_encoder_cvbs.c |  8 +--
- drivers/gpu/drm/meson/meson_overlay.c      |  8 +--
- drivers/gpu/drm/meson/meson_plane.c        | 10 +--
- 6 files changed, 51 insertions(+), 58 deletions(-)
+Only if the TDX module returns BUSY per-SPTE (as suggested by 18.1.3,
+which documents that the TDX module returns TDX_OPERAND_BUSY on a
+CMPXCHG failure). If it returns BUSY per-VM, FROZEN_SPTE is not enough
+to prevent contention in the TDX module.
 
-diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
-index d70616da8ce2..e1c0bf3baeea 100644
---- a/drivers/gpu/drm/meson/meson_crtc.c
-+++ b/drivers/gpu/drm/meson/meson_crtc.c
-@@ -662,13 +662,13 @@ void meson_crtc_irq(struct meson_drm *priv)
- 
- 	drm_crtc_handle_vblank(priv->crtc);
- 
--	spin_lock_irqsave(&priv->drm->event_lock, flags);
-+	spin_lock_irqsave(&priv->drm.event_lock, flags);
- 	if (meson_crtc->event) {
- 		drm_crtc_send_vblank_event(priv->crtc, meson_crtc->event);
- 		drm_crtc_vblank_put(priv->crtc);
- 		meson_crtc->event = NULL;
- 	}
--	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
-+	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
- }
- 
- int meson_crtc_create(struct meson_drm *priv)
-@@ -677,18 +677,18 @@ int meson_crtc_create(struct meson_drm *priv)
- 	struct drm_crtc *crtc;
- 	int ret;
- 
--	meson_crtc = devm_kzalloc(priv->drm->dev, sizeof(*meson_crtc),
-+	meson_crtc = devm_kzalloc(priv->drm.dev, sizeof(*meson_crtc),
- 				  GFP_KERNEL);
- 	if (!meson_crtc)
- 		return -ENOMEM;
- 
- 	meson_crtc->priv = priv;
- 	crtc = &meson_crtc->base;
--	ret = drm_crtc_init_with_planes(priv->drm, crtc,
-+	ret = drm_crtc_init_with_planes(&priv->drm, crtc,
- 					priv->primary_plane, NULL,
- 					&meson_crtc_funcs, "meson_crtc");
- 	if (ret) {
--		dev_err(priv->drm->dev, "Failed to init CRTC\n");
-+		dev_err(priv->drm.dev, "Failed to init CRTC\n");
- 		return ret;
- 	}
- 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index 4bd0baa2a4f5..2e7c2e7c7b82 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -182,7 +182,6 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	const struct meson_drm_match_data *match;
- 	struct meson_drm *priv;
--	struct drm_device *drm;
- 	struct resource *res;
- 	void __iomem *regs;
- 	int ret, i;
-@@ -197,17 +196,13 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (!match)
- 		return -ENODEV;
- 
--	drm = drm_dev_alloc(&meson_driver, dev);
--	if (IS_ERR(drm))
--		return PTR_ERR(drm);
-+	priv = devm_drm_dev_alloc(dev, &meson_driver,
-+				 struct meson_drm, drm);
- 
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		ret = -ENOMEM;
--		goto free_drm;
--	}
--	drm->dev_private = priv;
--	priv->drm = drm;
-+	if (IS_ERR(priv))
-+		return PTR_ERR(priv);
-+
-+	priv->drm.dev_private = priv;
- 	priv->dev = dev;
- 	priv->compat = match->compat;
- 	priv->afbcd.ops = match->afbcd_ops;
-@@ -215,7 +210,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	regs = devm_platform_ioremap_resource_byname(pdev, "vpu");
- 	if (IS_ERR(regs)) {
- 		ret = PTR_ERR(regs);
--		goto free_drm;
-+		goto remove_encoders;
- 	}
- 
- 	priv->io_base = regs;
-@@ -223,13 +218,13 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
- 	if (!res) {
- 		ret = -EINVAL;
--		goto free_drm;
-+		goto remove_encoders;
- 	}
- 	/* Simply ioremap since it may be a shared register zone */
- 	regs = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!regs) {
- 		ret = -EADDRNOTAVAIL;
--		goto free_drm;
-+		goto remove_encoders;
- 	}
- 
- 	priv->hhi = devm_regmap_init_mmio(dev, regs,
-@@ -237,18 +232,18 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (IS_ERR(priv->hhi)) {
- 		dev_err(&pdev->dev, "Couldn't create the HHI regmap\n");
- 		ret = PTR_ERR(priv->hhi);
--		goto free_drm;
-+		goto remove_encoders;
- 	}
- 
- 	priv->canvas = meson_canvas_get(dev);
- 	if (IS_ERR(priv->canvas)) {
- 		ret = PTR_ERR(priv->canvas);
--		goto free_drm;
-+		goto remove_encoders;
- 	}
- 
- 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_osd1);
- 	if (ret)
--		goto free_drm;
-+		goto remove_encoders;
- 	ret = meson_canvas_alloc(priv->canvas, &priv->canvas_id_vd1_0);
- 	if (ret)
- 		goto free_canvas_osd1;
-@@ -261,7 +256,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 
- 	priv->vsync_irq = platform_get_irq(pdev, 0);
- 
--	ret = drm_vblank_init(drm, 1);
-+	ret = drm_vblank_init(&priv->drm, 1);
- 	if (ret)
- 		goto free_canvas_vd1_2;
- 
-@@ -284,10 +279,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	ret = drmm_mode_config_init(drm);
- 	if (ret)
- 		goto free_canvas_vd1_2;
--	drm->mode_config.max_width = 3840;
--	drm->mode_config.max_height = 2160;
--	drm->mode_config.funcs = &meson_mode_config_funcs;
--	drm->mode_config.helper_private	= &meson_mode_config_helpers;
-+	priv->drm.mode_config.max_width = 3840;
-+	priv->drm.mode_config.max_height = 2160;
-+	priv->drm.mode_config.funcs = &meson_mode_config_funcs;
-+	priv->drm.mode_config.helper_private = &meson_mode_config_helpers;
- 
- 	/* Hardware Initialization */
- 
-@@ -308,9 +303,9 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 		goto exit_afbcd;
- 
- 	if (has_components) {
--		ret = component_bind_all(dev, drm);
-+		ret = component_bind_all(dev, &priv->drm);
- 		if (ret) {
--			dev_err(drm->dev, "Couldn't bind all components\n");
-+			dev_err(priv->drm.dev, "Couldn't bind all components\n");
- 			/* Do not try to unbind */
- 			has_components = false;
- 			goto exit_afbcd;
-@@ -339,26 +334,26 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	if (ret)
- 		goto exit_afbcd;
- 
--	ret = request_irq(priv->vsync_irq, meson_irq, 0, drm->driver->name, drm);
-+	ret = request_irq(priv->vsync_irq, meson_irq, 0, priv->drm.driver->name, &priv->drm);
- 	if (ret)
- 		goto exit_afbcd;
- 
--	drm_mode_config_reset(drm);
-+	drm_mode_config_reset(&priv->drm);
- 
--	drm_kms_helper_poll_init(drm);
-+	drm_kms_helper_poll_init(&priv->drm);
- 
- 	platform_set_drvdata(pdev, priv);
- 
--	ret = drm_dev_register(drm, 0);
-+	ret = drm_dev_register(&priv->drm, 0);
- 	if (ret)
- 		goto uninstall_irq;
- 
--	drm_fbdev_dma_setup(drm, 32);
-+	drm_fbdev_dma_setup(&priv->drm, 32);
- 
- 	return 0;
- 
- uninstall_irq:
--	free_irq(priv->vsync_irq, drm);
-+	free_irq(priv->vsync_irq, &priv->drm);
- exit_afbcd:
- 	if (priv->afbcd.ops)
- 		priv->afbcd.ops->exit(priv);
-@@ -370,15 +365,14 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 	meson_canvas_free(priv->canvas, priv->canvas_id_vd1_0);
- free_canvas_osd1:
- 	meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
--free_drm:
--	drm_dev_put(drm);
-+remove_encoders:
- 
- 	meson_encoder_dsi_remove(priv);
- 	meson_encoder_hdmi_remove(priv);
- 	meson_encoder_cvbs_remove(priv);
- 
- 	if (has_components)
--		component_unbind_all(dev, drm);
-+		component_unbind_all(dev, &priv->drm);
- 
- 	return ret;
- }
-@@ -391,7 +385,7 @@ static int meson_drv_bind(struct device *dev)
- static void meson_drv_unbind(struct device *dev)
- {
- 	struct meson_drm *priv = dev_get_drvdata(dev);
--	struct drm_device *drm = priv->drm;
-+	struct drm_device *drm = &priv->drm;
- 
- 	if (priv->canvas) {
- 		meson_canvas_free(priv->canvas, priv->canvas_id_osd1);
-@@ -404,7 +398,6 @@ static void meson_drv_unbind(struct device *dev)
- 	drm_kms_helper_poll_fini(drm);
- 	drm_atomic_helper_shutdown(drm);
- 	free_irq(priv->vsync_irq, drm);
--	drm_dev_put(drm);
- 
- 	meson_encoder_dsi_remove(priv);
- 	meson_encoder_hdmi_remove(priv);
-@@ -428,7 +421,7 @@ static int __maybe_unused meson_drv_pm_suspend(struct device *dev)
- 	if (!priv)
- 		return 0;
- 
--	return drm_mode_config_helper_suspend(priv->drm);
-+	return drm_mode_config_helper_suspend(&priv->drm);
- }
- 
- static int __maybe_unused meson_drv_pm_resume(struct device *dev)
-@@ -445,7 +438,7 @@ static int __maybe_unused meson_drv_pm_resume(struct device *dev)
- 	if (priv->afbcd.ops)
- 		priv->afbcd.ops->init(priv);
- 
--	return drm_mode_config_helper_resume(priv->drm);
-+	return drm_mode_config_helper_resume(&priv->drm);
- }
- 
- static void meson_drv_shutdown(struct platform_device *pdev)
-@@ -455,8 +448,8 @@ static void meson_drv_shutdown(struct platform_device *pdev)
- 	if (!priv)
- 		return;
- 
--	drm_kms_helper_poll_fini(priv->drm);
--	drm_atomic_helper_shutdown(priv->drm);
-+	drm_kms_helper_poll_fini(&priv->drm);
-+	drm_atomic_helper_shutdown(&priv->drm);
- }
- 
- /*
-diff --git a/drivers/gpu/drm/meson/meson_drv.h b/drivers/gpu/drm/meson/meson_drv.h
-index 3f9345c14f31..c4c6c810cb20 100644
---- a/drivers/gpu/drm/meson/meson_drv.h
-+++ b/drivers/gpu/drm/meson/meson_drv.h
-@@ -53,7 +53,7 @@ struct meson_drm {
- 	u8 canvas_id_vd1_1;
- 	u8 canvas_id_vd1_2;
- 
--	struct drm_device *drm;
-+	struct drm_device drm;
- 	struct drm_crtc *crtc;
- 	struct drm_plane *primary_plane;
- 	struct drm_plane *overlay_plane;
-diff --git a/drivers/gpu/drm/meson/meson_encoder_cvbs.c b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-index d1191de855d9..ddca22c8c1ff 100644
---- a/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-+++ b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
-@@ -104,7 +104,7 @@ static int meson_encoder_cvbs_get_modes(struct drm_bridge *bridge,
- 	for (i = 0; i < MESON_CVBS_MODES_COUNT; ++i) {
- 		struct meson_cvbs_mode *meson_mode = &meson_cvbs_modes[i];
- 
--		mode = drm_mode_duplicate(priv->drm, &meson_mode->mode);
-+		mode = drm_mode_duplicate(&priv->drm, &meson_mode->mode);
- 		if (!mode) {
- 			dev_err(priv->dev, "Failed to create a new display mode\n");
- 			return 0;
-@@ -221,7 +221,7 @@ static const struct drm_bridge_funcs meson_encoder_cvbs_bridge_funcs = {
- 
- int meson_encoder_cvbs_probe(struct meson_drm *priv)
- {
--	struct drm_device *drm = priv->drm;
-+	struct drm_device *drm = &priv->drm;
- 	struct meson_encoder_cvbs *meson_encoder_cvbs;
- 	struct drm_connector *connector;
- 	struct device_node *remote;
-@@ -256,7 +256,7 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
- 	meson_encoder_cvbs->priv = priv;
- 
- 	/* Encoder */
--	ret = drm_simple_encoder_init(priv->drm, &meson_encoder_cvbs->encoder,
-+	ret = drm_simple_encoder_init(&priv->drm, &meson_encoder_cvbs->encoder,
- 				      DRM_MODE_ENCODER_TVDAC);
- 	if (ret)
- 		return dev_err_probe(priv->dev, ret,
-@@ -273,7 +273,7 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
- 	}
- 
- 	/* Initialize & attach Bridge Connector */
--	connector = drm_bridge_connector_init(priv->drm, &meson_encoder_cvbs->encoder);
-+	connector = drm_bridge_connector_init(&priv->drm, &meson_encoder_cvbs->encoder);
- 	if (IS_ERR(connector))
- 		return dev_err_probe(priv->dev, PTR_ERR(connector),
- 				     "Unable to create CVBS bridge connector\n");
-diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
-index 7f98de38842b..60ee7f758723 100644
---- a/drivers/gpu/drm/meson/meson_overlay.c
-+++ b/drivers/gpu/drm/meson/meson_overlay.c
-@@ -484,7 +484,7 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 
- 	interlace_mode = new_state->crtc->mode.flags & DRM_MODE_FLAG_INTERLACE;
- 
--	spin_lock_irqsave(&priv->drm->event_lock, flags);
-+	spin_lock_irqsave(&priv->drm.event_lock, flags);
- 
- 	if ((fb->modifier & DRM_FORMAT_MOD_AMLOGIC_FBC(0, 0)) ==
- 			    DRM_FORMAT_MOD_AMLOGIC_FBC(0, 0)) {
-@@ -717,7 +717,7 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
- 
- 	priv->viu.vd1_enabled = true;
- 
--	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
-+	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
- 
- 	DRM_DEBUG_DRIVER("\n");
- }
-@@ -838,7 +838,7 @@ int meson_overlay_create(struct meson_drm *priv)
- 
- 	DRM_DEBUG_DRIVER("\n");
- 
--	meson_overlay = devm_kzalloc(priv->drm->dev, sizeof(*meson_overlay),
-+	meson_overlay = devm_kzalloc(priv->drm.dev, sizeof(*meson_overlay),
- 				   GFP_KERNEL);
- 	if (!meson_overlay)
- 		return -ENOMEM;
-@@ -846,7 +846,7 @@ int meson_overlay_create(struct meson_drm *priv)
- 	meson_overlay->priv = priv;
- 	plane = &meson_overlay->base;
- 
--	drm_universal_plane_init(priv->drm, plane, 0xFF,
-+	drm_universal_plane_init(&priv->drm, plane, 0xFF,
- 				 &meson_overlay_funcs,
- 				 supported_drm_formats,
- 				 ARRAY_SIZE(supported_drm_formats),
-diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
-index b43ac61201f3..13be94309bf4 100644
---- a/drivers/gpu/drm/meson/meson_plane.c
-+++ b/drivers/gpu/drm/meson/meson_plane.c
-@@ -157,7 +157,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- 	 * Update Buffer
- 	 * Enable Plane
- 	 */
--	spin_lock_irqsave(&priv->drm->event_lock, flags);
-+	spin_lock_irqsave(&priv->drm.event_lock, flags);
- 
- 	/* Check if AFBC decoder is required for this buffer */
- 	if ((meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM) ||
-@@ -393,7 +393,7 @@ static void meson_plane_atomic_update(struct drm_plane *plane,
- 
- 	priv->viu.osd1_enabled = true;
- 
--	spin_unlock_irqrestore(&priv->drm->event_lock, flags);
-+	spin_unlock_irqrestore(&priv->drm.event_lock, flags);
- }
- 
- static void meson_plane_atomic_disable(struct drm_plane *plane,
-@@ -536,7 +536,7 @@ int meson_plane_create(struct meson_drm *priv)
- 	const uint64_t *format_modifiers = format_modifiers_default;
- 	int ret;
- 
--	meson_plane = devm_kzalloc(priv->drm->dev, sizeof(*meson_plane),
-+	meson_plane = devm_kzalloc(priv->drm.dev, sizeof(*meson_plane),
- 				   GFP_KERNEL);
- 	if (!meson_plane)
- 		return -ENOMEM;
-@@ -549,14 +549,14 @@ int meson_plane_create(struct meson_drm *priv)
- 	else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A))
- 		format_modifiers = format_modifiers_afbc_g12a;
- 
--	ret = drm_universal_plane_init(priv->drm, plane, 0xFF,
-+	ret = drm_universal_plane_init(&priv->drm, plane, 0xFF,
- 					&meson_plane_funcs,
- 					supported_drm_formats,
- 					ARRAY_SIZE(supported_drm_formats),
- 					format_modifiers,
- 					DRM_PLANE_TYPE_PRIMARY, "meson_primary_plane");
- 	if (ret) {
--		devm_kfree(priv->drm->dev, meson_plane);
-+		devm_kfree(priv->drm.dev, meson_plane);
- 		return ret;
- 	}
- 
--- 
-2.30.2
+If we want to be a bit more optimistic, let's do something more
+sophisticated, like only take the lock after the first busy reply. But
+the spinlock is the easiest way to completely remove host-induced
+TDX_OPERAND_BUSY, and only have to deal with guest-induced ones.
+
+> > It is still kinda bad that guests can force the VMM to loop, but the VM=
+M can
+> > always say enough is enough.  In other words, let's assume that a limit=
+ of
+> > 16 is probably appropriate but we can also increase the limit and crash=
+ the
+> > VM if things become ridiculous.
+>
+> 2 :-)
+>
+> One try that guarantees no other host task is accessing the S-EPT entry, =
+and a
+> second try after blasting IPI to kick vCPUs to ensure no guest-side task =
+has
+> locked the S-EPT entry.
+
+Fair enough. Though in principle it is possible to race and have the
+vCPU re-run and re-issue a TDG call before KVM re-issues the TDH call.
+So I would make it 5 or so just to be safe.
+
+> My concern with an arbitrary retry loop is that we'll essentially propaga=
+te the
+> TDX module issues to the broader kernel.  Each of those SEAMCALLs is sloo=
+ow, so
+> retrying even ~20 times could exceed the system's tolerances for scheduli=
+ng, RCU,
+> etc...
+
+How slow are the failed ones? The number of retries is essentially the
+cost of successful seamcall / cost of busy seamcall.
+
+If HOST_PRIORITY works, even a not-small-but-not-huge number of
+retries would be better than the IPIs. IPIs are not cheap either.
+
+> > For zero step detection, my reading is that it's TDH.VP.ENTER that fail=
+s;
+> > not any of the MEM seamcalls.  For that one to be resolved, it should b=
+e
+> > enough to do take and release the mmu_lock back to back, which ensures =
+that
+> > all pending critical sections have completed (that is,
+> > "write_lock(&kvm->mmu_lock); write_unlock(&kvm->mmu_lock);").  And then
+> > loop.  Adding a vCPU stat for that one is a good idea, too.
+>
+> As above and in my discussion with Rick, I would prefer to kick vCPUs to =
+force
+> forward progress, especially for the zero-step case.  If KVM gets to the =
+point
+> where it has retried TDH.VP.ENTER on the same fault so many times that ze=
+ro-step
+> kicks in, then it's time to kick and wait, not keep retrying blindly.
+
+Wait, zero-step detection should _not_ affect TDH.MEM latency. Only
+TDH.VP.ENTER is delayed. If it is delayed to the point of failing, we
+can do write_lock/write_unlock() in the vCPU entry path.
+
+My issue is that, even if we could make it a bit better by looking at
+the TDX module source code, we don't have enough information to make a
+good choice.  For now we should start with something _easy_, even if
+it may not be the greatest.
+
+Paolo
 
 
