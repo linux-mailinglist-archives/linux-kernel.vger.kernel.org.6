@@ -1,149 +1,239 @@
-Return-Path: <linux-kernel+bounces-323881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7042A97449D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3B597449C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AAAAB23A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA591C24B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0346619412D;
-	Tue, 10 Sep 2024 21:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC361AAE24;
+	Tue, 10 Sep 2024 21:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QRG7aq1i"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CFFE+uJq"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2063.outbound.protection.outlook.com [40.107.96.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE01AB506
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002715; cv=none; b=fnyeqsl/80VwVnDSwyreZFiPKa7onqxsME4cpkqwSZMEBjRtXymdHEudHmKwbuGqW7F6eyuirS+mVo4gd3KBi47fwQlucjod5cDeukfAFDxpf8HL12HOOkYgerRaryQKGAqDmz9UCoNaTBEIltRUMWrQqO8SLj0hZk3VaI61Hg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002715; c=relaxed/simple;
-	bh=vQ19Neos0DyR2KeY0ecAmyspXyYZOWY65Booqku3A+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tLxSNbzmh69wT8d6W18OM91qdTEONRQoDSkNHjjDK+GQ6GdXM+XC0vk3sT8lWcThuL/kgU0nEjgSJ3JYHz3KYp0uuwSm1sTz+pDBqX2im48li0G8XZIHMYGwNAzEmXZUbnIFmHv/PO7f+9hl4kPrM1DZE7cbuXext6oDA2BoHZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QRG7aq1i; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-846d536254fso1794535241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726002712; x=1726607512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9mL456C9bf2/NmawuOM2i75QU0ioWJIK8fenw90OA60=;
-        b=QRG7aq1i6d891jb5kRmAOpiq6j6e0jEU+k+GF8Xio9Jdj2w4JUahuOOKXoqYM2rqUk
-         paSTgEuDbKHXvg+0zucLYk3e5lQXyyBrETl2pE/XzggNAody0L7XoypUvWtG+Sqc3tLy
-         KtdNtPWdDbgKM70V51npsIUbFdNo3EFDBfHIyd93Dv+vzOn/HeZt50p9q/qVjnTBWPel
-         WXMU/e5geV9REQBtfpy17FkksY8C5nD3IT09kKM0iklIhUJSvL5m4v1caaQRmZ25mESa
-         ufJVJ3v0YVU66JwY9DABoV62V2hY4+SXB5P9gBQK9s1QwhZntfxKkpSHPxgaIrjEBAon
-         xgJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002712; x=1726607512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9mL456C9bf2/NmawuOM2i75QU0ioWJIK8fenw90OA60=;
-        b=WSoVz2D09F7OtyuB8N7EpYhpgNmXaWyQpSvA7ZlQs38kfp6NJJWefrOkcV0db2gSDV
-         iHFxgqMc37KQCghB0ZJ7q/tvHhivEp1GNUwZfqk5x5j27MavkAGkrPCbCro7RspkVXBV
-         HXfcerKu6iRt/0vg8NmMpkUwJwXSfwdMqzjfqPtbhq/Nf9+SwgBsRTCnhTwLn0GFx2q2
-         H15ACbvx2TvPchVszucrQBwv7BQHa7aJEh3qFBvQMwArcWx64QHTYR4rKz5TWOA003lv
-         7SiaW9uvunez5jlL9Pst5DyNJOsDoWqjx9aoP14Uk3DxzNseN1uS/NB+08mKaumImFkC
-         z7jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVt5iNqMulrTkc5KWhd89S4+pbcplesCxPPu/hv0qTkYWDxiB2XYlMgarDsJKxCWUzrbJuoT8LFCgI4gvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4jphmZKFA/XCIzYTLH97TVDGjN2AXaSJ3Ftz/6385LWkw2DtW
-	ZFI6KUuGoe4KUzG7zxXBcIYrPOP3tpJfbAUhP7okC7H5fiGxWk+iG5ptcLJqpSrygEw4TKLibwc
-	JTV64PoInXRbaWLIDvWSZmSMINXoosaR+m2JB
-X-Google-Smtp-Source: AGHT+IGNmBkL+R7xBhZDsZOCgpmdSTcN3mnBPXPvha5B1FEl7C+EEP8dxL5+KIrRnUpFi2Hpj2/2XWpfjHaq+rdxtm4=
-X-Received: by 2002:a05:6122:2808:b0:501:2960:7595 with SMTP id
- 71dfb90a1353d-502143a9979mr12814010e0c.11.1726002712536; Tue, 10 Sep 2024
- 14:11:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3515119412D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726002710; cv=fail; b=Z4VeH2ypFILEPvlH0yEWjSfphAiS3dwinnpO8k+YmNGaAOVEuO8u/8dC9PfZdrpKmuMQe+R2uG8WILn7X2Tkr6jNyGLa9HvplVqwRXaS1Vkku67diPOtSAFvRbrS24jNNbkwZxPFTVA+VVCsW9t01VhKCTixknX31noE1YYEAng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726002710; c=relaxed/simple;
+	bh=+F+R6WsywQsxwiU60aE0I0A3/hwM1HTfzt1Ld3JeQIo=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ys89MYBqOjKyyLUhVpUv75dDX8lcKETx4Qv/4F22XeRxRhVzdraddY1g22uybojw1K7mla4NSgouvWq+JeqZ2cOFBfyU5o9m9H1zv8Uc64Bm4W5KoGimEshEzsk0EwKTIFd1rYkNJmcdUFsnGj+xEo4PwTFckNSJBYC/YHRGTY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CFFE+uJq; arc=fail smtp.client-ip=40.107.96.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H2ljKMusdwtdIbDAfICZxY3gougJd4SV6YDKeD9jakEpoLN17NVaswjUpBRkhBYX2A1pzeDzkqx9f+qeE9SMWls4XK6pGTu1fQjm/0u3pgCPdEx/gQMSNOQkBefbRDoPG/4caP5hPj91hoSmz5s1oSBd/ZE1E3Kagbp25oW46CEZCy9+T+U/Xh6+1aqQkKRYfrTB1rXFSSkQgKRxOCgTtpkHC5dwIDC61isRFlcrK7EXBzBWLliGF03wqHUcU/y0aAIBG711dvPfB8cWOVVNMf1XDv5Y2FDMABlhDbNS0ZH8w6mZ7xs0CAjSe4QaQc3SVagnxTneusbnkotqprTA7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tSU21KnsWofBjK5DC/7rQs1et6CvyKR8gUXExFHInnM=;
+ b=vS70FpyHzpg6BmaP1u7FWxxj8TYZHs4AD4hKOaHYkgaTuYWdTA/348c6E6lD0IwR//efFk36DwcqPm4WLoclZSusYSv7wdgYyYmqZ+NN7l0DD+cdnJttGFBnuol3x9okUcuh+jmcD9pP1MRy2XT80l6MeTQiar56HbDygwthAercCRLR+PMzeJstgKCp2DFOkYTBvjUmSEUSev7LDIaAfhls0fKYZ97hWY+R+gY0dcySrVnYn4hNNRAL2qK4RRbpzmnfypulHiIm21LOIZ1+8QbkDYIwcdB+/C58PkEUK9wKfYHg2uQAqdM/TjYM/iqhr7Aiuoo+A1lIoxBiFGwlZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tSU21KnsWofBjK5DC/7rQs1et6CvyKR8gUXExFHInnM=;
+ b=CFFE+uJqUzjSCuAcwgNPrYxkRPJwdkrbSQN7lNaaMo3ugdO5muWTvLy8txpB8id7Z61tpcp9A25dYm0CaPZG26z9PAKMK59gwLAmqj4QPyUaMAu0huaFYU9qdyoxf/Yq06xODmBfcm/xFd+urZfpUIIGm8XpwVVxiyRPp++z4RE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH0PR12MB5300.namprd12.prod.outlook.com (2603:10b6:610:d7::22)
+ by SA1PR12MB8700.namprd12.prod.outlook.com (2603:10b6:806:388::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 21:11:46 +0000
+Received: from CH0PR12MB5300.namprd12.prod.outlook.com
+ ([fe80::5313:a4b0:89d7:7b76]) by CH0PR12MB5300.namprd12.prod.outlook.com
+ ([fe80::5313:a4b0:89d7:7b76%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 21:11:46 +0000
+Message-ID: <6db472e4-cd90-4ba6-8368-725b10ba5b4a@amd.com>
+Date: Tue, 10 Sep 2024 17:11:42 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
+ some RenPy games causes computer hang
+From: Leo Li <sunpeng.li@amd.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com,
+ pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
+ <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
+ <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
+ <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com>
+ <CABXGCsOoL5vD0+FRALFQFr3ZBpb2z5mpGKzAD5RHoW9_sb5yaQ@mail.gmail.com>
+ <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com>
+ <CABXGCsMSTsBFW=OirDszPFVOiNgyOBSh3qyzAw-Coi-McnicAQ@mail.gmail.com>
+ <04d3755d-f295-46d7-b35d-008b888b39ae@amd.com>
+ <CABXGCsMDk59-P0Nr1v7KajKsoQh2966mykLPWQxajPtq=OGgXg@mail.gmail.com>
+ <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com>
+Content-Language: en-US
+In-Reply-To: <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0049.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:88::13) To CH0PR12MB5300.namprd12.prod.outlook.com
+ (2603:10b6:610:d7::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
- <CADrL8HWACwbzraG=MbDoORJ8ramDxb-h9yb0p4nx9-wq4o3c6A@mail.gmail.com>
- <Zt9UT74XkezVpTuK@google.com> <CADrL8HW-mOAyF0Gcw7UbkvEvEfcHDxEir0AiStkqYzD5x8ZGpg@mail.gmail.com>
- <Zt9wg6h_bPp8BKtd@google.com> <CADrL8HWbNjv-w-ZJOxkLK78S5RePd2QXDuXV-=4iFVV29uHKyg@mail.gmail.com>
- <Zt-kHjtTVrONMU1V@google.com>
-In-Reply-To: <Zt-kHjtTVrONMU1V@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Tue, 10 Sep 2024 14:11:15 -0700
-Message-ID: <CADrL8HV1Erpg-D4LzuRHUk7dg6mvex8oQz5pBzwO7A3OjB8Uvw@mail.gmail.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR12MB5300:EE_|SA1PR12MB8700:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59fe02e7-c64a-4110-c800-08dcd1dd2d19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TlJ3a1dwTDhEVmRmbDV5RnNEV3EvcHkvMWdlT0pSNjFHS3huMFRHZTNFS0RF?=
+ =?utf-8?B?M0hFZVVGT2VONWVFaUZqcWtlYkNYQXE1RzF4ODgrNVdDd3hsNWtMUVVmZ3JJ?=
+ =?utf-8?B?RW5BWEhoNzBjeWxIcysvbU4rZUNIQ01tWmNYa0JQTGNVZ2VvSHJWMnBCL2pM?=
+ =?utf-8?B?Rkp5WTQ5L1lXdjNvRjFEZWVnakdPWDhiY29TYTRZcTVpMkZ1U3dNMnEyT1FR?=
+ =?utf-8?B?dzQ4MWRzSGRwdHV4NzF2RjAxc0wrMlRzUjRWZ2lsTnhOaS9QTWczQS9WR2pB?=
+ =?utf-8?B?MVRiMklSbHhxSGFYVUVVcTg2Um9mZEU1ZUVKeVl2MTg0U0sxTXRWUEQ2OGwy?=
+ =?utf-8?B?bm9XUXI3UEVpT2FTMXJMekJKV2Yxa09XV0I4TGdqY09rNnVjRy9ZR3c1U05l?=
+ =?utf-8?B?LzVEdHgvdVNtUXJxQm96MnFKVWQvWUpHRDhBVmxEUE9qU29QcHNJZDd4LzVz?=
+ =?utf-8?B?VzRwcnFkRXRqNDgxNFh2K05UbEhVWmNKNmpzTHRCbjRpWGxUak9OSEV1OFlv?=
+ =?utf-8?B?aThuVzU1ZkVnQkNNQ0hCS1hBZ1pCSFV1Um5qT0JzSVN2NTlLUzJYV09YT1Jh?=
+ =?utf-8?B?aTR4akJRVEZHdytGZUFNVVpBdkNmODZyeE9nNU1CYm96Myt3ckVlQmsyaHB0?=
+ =?utf-8?B?dzJWMTJvcStkTktBZVV1aXBWdnNmbTNDWnJUbXlhT24zM1RGZ3dDQjFFd1Yx?=
+ =?utf-8?B?UVJmdEgxcnRXWG8ydnRUcVdPNWZjbUpBVGl2MWZGelE4T0YyTlBBcE1tM3ZF?=
+ =?utf-8?B?cmdFM3hLeWFqMVAvYWdyNGlsbWN2alRrQ056MWlyTC9UNElnM3RCZnkzb3Zz?=
+ =?utf-8?B?YWhNL1ppV3Irc1JKcVVYZzBpRkwzdnVySnlmdXc4d2c0ZEVTdlZrOU15ZUhQ?=
+ =?utf-8?B?VGZSdXUvbkhYMVJRVXpMYnFvWCtUZjdJU2lzNVFDUkFWRGhHekR0T2dtOE5U?=
+ =?utf-8?B?R0ZPM0swZVJETVRNVVRpQ3M2WUJlWUwrN0M0MmpteUh0ZVVmSG1LV2RCZGor?=
+ =?utf-8?B?U2RlRm16YjA5dklidVMyQzVGQjlKL1FMRzJlaTJCeDB0WURwd1N2aFZ2STVP?=
+ =?utf-8?B?bDNZekZlcVQzaGZSZzNPUDVPM1c0YXB6Q2FhWDVoVzVMc3FQZVBoOGRSZngv?=
+ =?utf-8?B?YUlUbU94M21KMU84ZnVOVHY2VzBwKzdONzJhVDdPa0FYZGNqU1BXZzRHVG1W?=
+ =?utf-8?B?ckw3SDJNL1hiN0JJY2tvUTErMW9nb3hUSDRvdEgvYm00ZWJuQVZCK2FMTGpl?=
+ =?utf-8?B?Y09JNkxmU0w5ZWMvVUZPaXdGaGdHbnUwMHpZSG1uZW84OWpsZHZOWTd1Q3Nt?=
+ =?utf-8?B?cjVVUkNmVUQ1OHZBcVZSNXNIb1V6dzlUTUxGTmtSd09sK1NQSE5vRTBlVGcy?=
+ =?utf-8?B?NTRzNTlGUlE2WU5Mb1ZwTTlqRXJhZFhMYUdtaU1xbjAzRG55VHoxeGs5MDMr?=
+ =?utf-8?B?ZGZhT0lvRmhEWE8zeHZhUlZjcUI0Z1M5K3hhL0k3RUx2RENZeGdUU2s5akxI?=
+ =?utf-8?B?cmM4ait1a0tDSVo3Z0RsUlQ1Mko2R3ozUzYwRzlZMUcreE4zaFdwMHpsUnVh?=
+ =?utf-8?B?cWUzT2crRTJsa2dzT2RBVEcwQW0vcGdldG1mUzlwckJnVEVmRGZwdTMrbzNJ?=
+ =?utf-8?B?dFVkZlo3b3FnaWlML1FKb21abGJzREFad1JQUEorTUxuMU9xWjFOemRQLzc4?=
+ =?utf-8?B?UnJIQkFMYWNkQUt0WnJqZ1FrWkZua2RhV3orRFpTNjdUa2VXMEcwWE8xaFhu?=
+ =?utf-8?Q?cQrLjDVU8e9fSRXlfI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5300.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eUhNaWFERDduMVQzc0t1eW9LbEs4Yzh0MlQyQ1laSzZ6US9SRmMrcnNhcFZK?=
+ =?utf-8?B?b1VzV04zVEVmMkpaTVZlam94Z3FFV1FOL3lCZlVuM0oyNGRBd3daM2tRNGcy?=
+ =?utf-8?B?UHpNMHFIRk9NKzFJU2ZnNGY4ZVZmbW1qTS9hRnJkUllOWGkzcUpmR0J0V29O?=
+ =?utf-8?B?UlIxQ3RTbyttOTFmUjk5QlRITmpnRENqek5tYU9jVjIwMlQ1Wjk5Z1FUSnk4?=
+ =?utf-8?B?LzE1WnBYbS9BTnY3bnVhaCtaYlhkekR3N2RiZXE0bkZ4R1BzL0k1b1lWZkJ3?=
+ =?utf-8?B?MWxCaFFseTFPcmFyNk11VlJQS0I1WUhaRW5JU3V2Y3FacWhQd1lzQVl4a3dY?=
+ =?utf-8?B?L28wc2UraURTTFVYc0JVelhpa203SWxBdU9Ec0JURmpZOU5CM2Z3cDVPV09H?=
+ =?utf-8?B?RGxnYnBYTVkzelhRVGxtcklvU2dWektmQmN4eFFzUkVyVEh6VmtZTWtzZnZ4?=
+ =?utf-8?B?czBuK1FlTDIvdjhQWFhDNkg0dzcyZjFlV1ZZak1MeG9QYitUeGQxUDRGQmo3?=
+ =?utf-8?B?MkVCaDVjZ21sMGM5VVJPV3A4SXNmUmFLQ3lHbEVwQlhIc09jL0oyOW9GTGlr?=
+ =?utf-8?B?R1VEa2pxQzVoZU5HS1IvdWs5U2ZSenpma01pZktCVjBCWFcwQTR5WldVYm1k?=
+ =?utf-8?B?aC85R2wrcFRaQ1VvUEtmZkRrZ1Jjc0xHQmQ1aTBETFMrY3RSQnU2N3E0dHVS?=
+ =?utf-8?B?WGhQak1sdnoyclltRy92Q2JacWRBRVIrR251bGJSMXBPa2tueWdEb29qWEZq?=
+ =?utf-8?B?cnViSHUzTXlNQWVGcUJlTHd3djlDOXpYcXZmRWVraWJSbGFpUGdnWWN3Ry9B?=
+ =?utf-8?B?cXEyVWh6aWQ5dkxKNVRsR2FxM0E2Y3I4WjdvVW1Kb1ViVXN3RjFpOGpna0FL?=
+ =?utf-8?B?UjdYSUhNVTl4eWtVVDNHK1h0Q0NXRGlGbUxDZmxvVnJBdnViOTZUS1ljS0Rt?=
+ =?utf-8?B?WndqeWZJK0FrOENVVlAyZXNhNTBGVHpzcXRReStScExkaE9KVUxpZVZYYVVW?=
+ =?utf-8?B?TEYwT05QRXg3MkFtRXdhQ1J6K1pXaGM5N2F5QlFEM1h1a1poVk1CMUlxc1c5?=
+ =?utf-8?B?eVNCUkhwNGZvK01mQndRNXg1bzhhdUwxT3RMMmppRU5XUDNhM2Y0MkdHN2cv?=
+ =?utf-8?B?Wk9vU3FLS0V6UElKTHlkdDFsc0pCODBaT0JheDRuU242RXhyTnhXYlI0ZWVk?=
+ =?utf-8?B?a08xckwzTHV0b0Z1SUtHRmYycUJ6WWVkd1RPUnVLaHlxbEZXL0NkTm5ZTURJ?=
+ =?utf-8?B?UkJ6QW1rNmFHVjFHODRzRnhmdVk0OThIVFltV1JFREFabXpJNDQwWExVQTdj?=
+ =?utf-8?B?VWo3MnBSYllQMEkzWXdmNTZmajdrWW5EZTJ0YktXQWZTZnYrVkJtMlRXU2Jk?=
+ =?utf-8?B?Q0o1L0JDRXdSSUNsMS9rcWtaN0JIZWtvRTlKNndoZW10K2FUY0RGMU53bks4?=
+ =?utf-8?B?amlmVDhkejd5bDUwYmQ3VGFSMXltK2ZCRDRIQ2Jkc0dFR2puT0NuS0lHZk44?=
+ =?utf-8?B?NitLQ2ExNjRVRjN2UHBPSmJHbjAyc01KTU5iWk96djU1TWYxWFRSdGxKSStr?=
+ =?utf-8?B?YnFhaUkxb3NwWThuZ0FtdndST2hVMXdzRk5tcWNhdWxtVzMxd1J5c0dSZ0xL?=
+ =?utf-8?B?blRNb2FjRnlZcEhZUmpQV3FkdzAvTC9UZDVGZ3EzMkN0akNRYk4wOHdDZWhx?=
+ =?utf-8?B?eUZXSnpFOTc0bFdtK3hzMm9Vb3ZMcGdRU2o3aVVLTGl2ajA2bkNNWEt2ZllC?=
+ =?utf-8?B?U3Q2Umx3ck1iaU1YL2c2MEJGTXhxSkU5OEFVME5SaDBLZDYvSG1WZDNEdzJx?=
+ =?utf-8?B?ZkxQNi9rQ1RTYXB2cklUMXdLWEliR3J2OU5QallSdVFueTNrQ1ROeUNKci9i?=
+ =?utf-8?B?aWFubEIyM01IZ2VKYnZGVG5uZEtpM05vV0lMeW04UHorTnkzY05BeHU0WUZ4?=
+ =?utf-8?B?MTZKZG92UXhwNFI1RXQ1NkNRNnduOXo1N1FHT3pQZmMyNXlGYi8yYVZPdXpT?=
+ =?utf-8?B?b3F5VkdmVVBuaElxbDZHOTlHQUpZejByOEM5OTdGKzF6cHArQ09KR3VwL0Iy?=
+ =?utf-8?B?ZDlreTNtbWp3RTQxZjI1b0lxY0J6VzBCM0R1ZlJhTXhpd3NDM3M2SXdqOHk1?=
+ =?utf-8?Q?d1ZG7xarVKQ2QKpzfSPgAjGCe?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59fe02e7-c64a-4110-c800-08dcd1dd2d19
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5300.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 21:11:46.0080
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t+LZVRexnu+0t5cY1MzHPlcFvOaKTyAqjxwWihQ53RZFeipI97oiOzVXn8txacxz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8700
 
-On Mon, Sep 9, 2024 at 6:42=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Mon, Sep 09, 2024, James Houghton wrote:
-> > I take back what I said about this working on x86. I think it's
-> > possible for there to be a race.
-> >
-> > Say...
-> >
-> > 1. T1 modifies pte_list_desc then unlocks kvm_rmap_unlock().
-> > 2. T2 then locks kvm_rmap_lock_readonly().
-> >
-> > The modifications that T1 has made are not guaranteed to be visible to
-> > T2 unless T1 has an smp_wmb() (or equivalent) after the modfication
-> > and T2 has an smp_rmb() before reading the data.
-> >
-> > Now the way you had it, T2, because it uses try_cmpxchg() with full
-> > ordering, will effectively do a smp_rmb(). But T1 only does an
-> > smp_wmb() *after dropping the mmu_lock*, so there is a race. While T1
-> > still holds the mmu_lock but after releasing the kvm_rmap_lock(), T2
-> > may enter its critical section and then *later* observe the changes
-> > that T1 made.
-> >
-> > Now this is impossible on x86 (IIUC) if, in the compiled list of
-> > instructions, T1's writes occur in the same order that we have written
-> > them in C. I'm not sure if WRITE_ONCE guarantees that this reordering
-> > at compile time is forbidden.
-> >
-> > So what I'm saying is:
-> >
-> > 1. kvm_rmap_unlock() must have an smp_wmb().
->
-> No, because beating a dead horse, this is not generic code, this is x86.
+Hi Mikhail,
 
-What prevents the compiler from reordering (non-atomic, non-volatile)
-stores that happen before WRITE_ONCE() in kvm_rmap_unlock() to after
-the WRITE_ONCE()?
+Can you give this patch a try to see if it helps?
+https://gist.github.com/leeonadoh/3271e90ec95d768424c572c970ada743
 
-IMV, such a reordering is currently permitted[1] (i.e., a barrier() is
-missing), and should the compiler choose to do this, the lock will not
-function correctly.
+Thanks,
+Leo
 
-> If kvm_rmap_head.val were an int, i.e. could be unionized with an atomic_=
-t, then
-> I wouldn't be opposed to doing this in the locking code to document thing=
-s:
->
->  s/READ_ONCE/atomic_read_acquire
->  s/WRITE_ONCE/atomic_set_release
->  s/try_cmpxchg/atomic_cmpxchg_acquire
-
-I think we can use atomic_long_t.
-
-It would be really great if we did a substitution like this. That
-would address my above concern about barrier() (atomic_set_release,
-for example, implies a barrier() that we otherwise need to include).
-
-[1]: https://www.kernel.org/doc/Documentation/memory-barriers.txt
-(GUARANTEES + COMPILER BARRIER)
+On 2024-09-10 11:47, Leo Li wrote:
+> 
+> 
+> On 2024-09-08 19:30, Mikhail Gavrilov wrote:
+>> I have done additional tests:
+>> 1. The computer does not hang with 6900XT instead the screen flickers
+>> when moving the cursor.
+>> 2. The computer does not hang with 7900XTX if I turn off VRR. But the
+>> screen flickers when moving the cursor, as on 6900XT.
+>> To enable VRR, please set 'variable-refresh-rate' in
+>> experimental-features, and in the Display setting, enable Variable
+>> Refresh Rate.
+>> $ gsettings set org.gnome.mutter experimental-features
+>> "['variable-refresh-rate', 'scale-monitor-framebuffer']"
+>> https://postimg.cc/PvXYdvGR
+> 
+> Thanks Mikhail, I think I know what's going on now.
+> 
+> The `scale-monitor-framebuffer` experimental setting is what puts us down the
+> bad code path. It seems VRR has nothing to do with this issue, just setting
+> `scale-monitor-framebuffer` is enough to reproduce.
+> 
+> It seems that mutter with this setting is opting for HW scaling rather than GPU
+> scaling. I see that "Find the Orange Narwhal" sends out a 1080p buffer,
+> which with this setting, gets directly scanned out and scaled by DCN HW to 4k in
+> full screen.
+> 
+> An oddity with current gen DCN hardware is that the cursor inherits the scaling
+> of the HW plane underneath. So if mutter requests a hw cursor with a different
+> scaling than the game's plane, amdgpu will reject that, and likely force mutter
+> into SW cursor.
+> 
+> My offending patch changed this behavior by rerouting DCN HW pipes to
+> accommodate such a configuration. It essentially takes a full-fledged DCN
+> overlay plane, and uses that just for the cursor, and thereby freeing it from
+> inheriting things from the underlying hw plane.
+> 
+> My guess is this causes flickering due to how DC (display core driver) handles
+> updates; it needs all enabled planes in it's update state. However, a KMS cursor
+> update will only include the cursor plane. It's likely that amdgpu_dm only adds
+> the dedicated cursor plane to DC's update state, leaving the game's plane out.
+> 
+> The fix isn't exactly trivial. If I don't get anywhere before the fixes window,
+> I'll send out a revert.
+> 
+> Cheers,
+> Leo
 
