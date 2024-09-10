@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-322421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE599728C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:13:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296BB9728CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F3728604E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCBA1C23D34
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC1152178;
-	Tue, 10 Sep 2024 05:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724151684A6;
+	Tue, 10 Sep 2024 05:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DE9ypckK"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QvGdvPYN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9F12E48
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92EE12E48
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945177; cv=none; b=uQ1l1M5pEDlTOV1i0osJdlRfZwlwE1bg/jj4kTrGNBcByMuxMI0pbrdMKpAgRYXFPzI+96+Kzei9rZpoKyBLMiqdeMgf3MHc0Szgh/s46V8bv45Gozjqlxnnstnee7wtYcWZBR/njUn0r2EYz2z2x/Kt9sG11wxxEVNSLh+SHHU=
+	t=1725945213; cv=none; b=ptokFflKLKwyx2Xc8daU8v+283PuSZdVzXPlRsZRLRD8i5BeM6nKIZEB3HsfrU/0k3XxKjPyF6nADR1lQjViYdl/lW3XxDAz9ONWZ82qEcocRCBiij8gL1EX0r0cn6JsE1BKJ+4QctGg0sMKdysReACWF7yBoBgfvxKu50Gf3HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945177; c=relaxed/simple;
-	bh=SRCKJ1TrkK26NnYDeLp7tM028WOKA5Wx4S7iWKHzP3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HOP/7pVqBWqk64XYFbwPCgj307DRMwyOsw7wNbWF92ZEICjVbhm/sFpe45qA6xw/HpWY55jL+TwyvCRvMGLd1xq3holQl9OzZwKHGZQPjoipOzwzWgOW0sTx1a/GPaWoMvcHrr1BJ5HqlkMcBaVi8XgJwNFu8Pt7wZGlwqJ1IkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DE9ypckK; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-846cc83c3c4so1434591241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725945174; x=1726549974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FftjutXCeiXVd5sNpriJUhOjNiXDvzsDr14ccTGO5ro=;
-        b=DE9ypckK9zUcgSrj41oV8vFqS1IYzAcyUX1Md1DIJ1oUoI449dyRSYoK8IS5vm8wDx
-         8VphXL0QZ0G4JgE/q0H28KrSXFhct3Qs6dCRYdtkyDAi5J2akfb9UdLqn7uJoSA6VTiU
-         IntcXfbfV2SquMF8GLxH0Q8S/nrqTQil5lv6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725945174; x=1726549974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FftjutXCeiXVd5sNpriJUhOjNiXDvzsDr14ccTGO5ro=;
-        b=cLyp13WMQN/+du+Y2s2zCmgEbkMO9YR1rJp8mjadszNa9deDUpyjjizndI3WVr8GK1
-         1z7EdxJfM3a+aoSLf0QP9eyxlLsed2sFvVTq/QvsvU62vriOGBEK3MJrIk2NydvmaAGj
-         xJ4ylkliHkTjdhdLY4lbh/1BoPYRRZK+uXwbaMKkxesioOFRNLKy241fJByi2Ql9wmuo
-         nozYLdnQLZhScC2me0C6EKO8UvYtuLUPRBCgWbB2l+MPTa5G2CrioShSREajmYHqlekf
-         lzkq2/ROtn6CW7aCU/EqFcZ4sCrd9F6GBC+0eVbEhFbLCHrXzsJgXA1Nwe2QtmcNUSEz
-         QK1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX8tMXSPoXVCpnySdaQfSj83RzVzVNqZ/glN7uyGH+w57S6TEqB3N50ZUP2jbc/FrbgdgDVQ5G3SvZnEfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9ofuf5q6+rReuCln9j1CSz50ANnklB5MtbDk9OAj9C8u5IODp
-	reXojhPlDG9yENTdk26wl5cyg0X9FyW2iUIP7lezu0e+LMqyK/zoST62eBooTd6d+awJ/1hsLUl
-	Rdw==
-X-Google-Smtp-Source: AGHT+IFnRXh65XKo8dO87JaaZ4N+CHWD7QpwAAJilCC25YbRjkc+twgmCzZtMp0boCMTi6lQJ5gJ/g==
-X-Received: by 2002:a05:6102:3750:b0:493:d325:4d71 with SMTP id ada2fe7eead31-49bde195c4emr15882875137.9.1725945173645;
-        Mon, 09 Sep 2024 22:12:53 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-49c16ced6e5sm147382137.20.2024.09.09.22.12.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 22:12:52 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-846bc787b3dso1476456241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:12:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVxkuT87GpVycqB1GRFeJYjnUW9xT2BzinR5Di03WcZPvvd3OO+PRkGSz0+dEtuw7tvPbVzahca4FKl+48=@vger.kernel.org
-X-Received: by 2002:a05:6102:304d:b0:494:4fdb:f42a with SMTP id
- ada2fe7eead31-49bde2e784amr16042770137.26.1725945172144; Mon, 09 Sep 2024
- 22:12:52 -0700 (PDT)
+	s=arc-20240116; t=1725945213; c=relaxed/simple;
+	bh=SuuZllRm35ADvfaTLAuyMG97Is+OLQc+Q2WWo5c4Rp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RS3yW4SLEYTVGO5B46IrdXb2sNfBA6rgla36gAIhz60/c1ZLo0fREMZr86a4lbMahi4wvIX6PPlnuT0GNlX0jYI6yJ7oAc/BfSxyamf9Zz5usTVnOKhIftZpdZDMsO/xeejrur6TL28z3riKMc/tTYakoYZ0BFSWB1MuoTjAq8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QvGdvPYN; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725945212; x=1757481212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SuuZllRm35ADvfaTLAuyMG97Is+OLQc+Q2WWo5c4Rp0=;
+  b=QvGdvPYNET9Q2avK1JduI7L+GgE0EvsfHoXgtjP6vIV7IY3c8cu/T0QH
+   SNKRXnqS18qYFacRimfCDYt5Ady1niE4RbiiO+cyBtCN5i2RuL7JootrL
+   JNS6hfFFRMvHQrfCcRw8RR7zSm/5OmSVIr0DT9pzDjdPGHVvqc3I1NzSf
+   TS2OAdXQ7K2WaQiO3Rlh3Xim+JFdhycNU8RM8uTO3yF4eXyvBsRKkfRvx
+   v55Kq86GCKddfvCLUs2gWnFQ7t8raysu+L1/hFwXLnr3eI6qAD+iwT1+X
+   j3T+zjbPjCgWHGeTUrSiTNRCKp9XwJqHIvT/UWGvWxDwQUvKtqi8MkqOY
+   g==;
+X-CSE-ConnectionGUID: ForRtqDfTGmdLqUqSreyGw==
+X-CSE-MsgGUID: Z9hRDAJBQs+ezJKFqsAr3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24814209"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="24814209"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 22:13:31 -0700
+X-CSE-ConnectionGUID: tHw762XeQ7qFiwBUe0zozA==
+X-CSE-MsgGUID: R0NOdDYlSSy3Go/mTses5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="66924553"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 09 Sep 2024 22:13:29 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sntBu-00006B-2k;
+	Tue, 10 Sep 2024 05:13:26 +0000
+Date: Tue, 10 Sep 2024 13:12:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com, mst@redhat.com,
+	michael.christie@oracle.com, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [RESEND PATCH v1 1/7] vhost: Add a new module_param for enable
+ kthread
+Message-ID: <202409101256.eWKWH1mw-lkp@intel.com>
+References: <20240909020138.1245873-2-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909111535.528624-1-fshao@chromium.org> <20240909111535.528624-7-fshao@chromium.org>
- <11bc2522-bc10-4dcf-8142-708b57d181cf@kernel.org>
-In-Reply-To: <11bc2522-bc10-4dcf-8142-708b57d181cf@kernel.org>
-From: Fei Shao <fshao@chromium.org>
-Date: Tue, 10 Sep 2024 13:12:15 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nhiJ=7yAucJsaYKUUBrwrxOVBMB2CF=bFwyLa2o-5RmWw@mail.gmail.com>
-Message-ID: <CAC=S1nhiJ=7yAucJsaYKUUBrwrxOVBMB2CF=bFwyLa2o-5RmWw@mail.gmail.com>
-Subject: Re: [PATCH 06/13] arm64: dts: mediatek: mt8188: Update VPPSYS node
- name and compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909020138.1245873-2-lulu@redhat.com>
 
-On Mon, Sep 9, 2024 at 7:41=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 09/09/2024 13:14, Fei Shao wrote:
-> > Use and add "syscon" in VPPSYS node names and compatible to fix errors
-> > from `make CHECK_DTBS=3Dy mediatek/mt8188-evb.dtb`.
-> >
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
-> > ---
-> >
-> >  arch/arm64/boot/dts/mediatek/mt8188.dtsi | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot=
-/dts/mediatek/mt8188.dtsi
-> > index 2900d78b7ceb..14e51a11f688 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> > @@ -1799,8 +1799,8 @@ mfgcfg: clock-controller@13fbf000 {
-> >                       #clock-cells =3D <1>;
-> >               };
-> >
-> > -             vppsys0: clock-controller@14000000 {
-> > -                     compatible =3D "mediatek,mt8188-vppsys0";
-> > +             vppsys0: syscon@14000000 {
-> > +                     compatible =3D "mediatek,mt8188-vppsys0", "syscon=
-";
->
-> If this was working before, it looks like this is not a syscon and
-> bindings need to be fixed.
+Hi Cindy,
 
-I guess it's because the binding was later updated in commit
-26bcd8a53098 ("dt-bindings: arm: mediatek: mmsys: Add VPPSYS
-compatible for MT8188"), and the corresponding DT update was unnoticed
-at the time.
-If that makes sense then this should be a valid fix.
+kernel test robot noticed the following build warnings:
 
-Regards,
-Fei
+[auto build test WARNING on mst-vhost/linux-next]
+[also build test WARNING on linus/master v6.11-rc7 next-20240909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> Best regards,
-> Krzysztof
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Cindy-Lu/vhost-Add-kthread-support-in-function-vhost_worker_queue/20240909-110046
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
+patch link:    https://lore.kernel.org/r/20240909020138.1245873-2-lulu%40redhat.com
+patch subject: [RESEND PATCH v1 1/7] vhost: Add a new module_param for enable kthread
+config: x86_64-randconfig-123-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101256.eWKWH1mw-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101256.eWKWH1mw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409101256.eWKWH1mw-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/vhost/vhost.c:44:6: sparse: sparse: symbol 'enforce_kthread' was not declared. Should it be static?
+   drivers/vhost/vhost.c:1898:54: sparse: sparse: self-comparison always evaluates to false
+   drivers/vhost/vhost.c:1899:54: sparse: sparse: self-comparison always evaluates to false
+   drivers/vhost/vhost.c:1900:55: sparse: sparse: self-comparison always evaluates to false
+   drivers/vhost/vhost.c:2155:46: sparse: sparse: self-comparison always evaluates to false
+   drivers/vhost/vhost.c:2235:48: sparse: sparse: self-comparison always evaluates to false
+
+vim +/enforce_kthread +44 drivers/vhost/vhost.c
+
+    35	
+    36	static ushort max_mem_regions = 64;
+    37	module_param(max_mem_regions, ushort, 0444);
+    38	MODULE_PARM_DESC(max_mem_regions,
+    39		"Maximum number of memory regions in memory map. (default: 64)");
+    40	static int max_iotlb_entries = 2048;
+    41	module_param(max_iotlb_entries, int, 0444);
+    42	MODULE_PARM_DESC(max_iotlb_entries,
+    43		"Maximum number of iotlb entries. (default: 2048)");
+  > 44	bool enforce_kthread = true;
+    45	module_param(enforce_kthread, bool, 0444);
+    46	MODULE_PARM_DESC(enforce_kthread, "enable vhost to use kthread (default: Y)");
+    47	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
