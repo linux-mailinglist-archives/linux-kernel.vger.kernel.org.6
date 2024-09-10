@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-323406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85EB973CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:03:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7302973CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB2891C20A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:03:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61244B21F2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD08D19EEB4;
-	Tue, 10 Sep 2024 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VAI8YcTS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7436F2FD;
-	Tue, 10 Sep 2024 16:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277CB1A01BD;
+	Tue, 10 Sep 2024 16:03:45 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD4F198824;
+	Tue, 10 Sep 2024 16:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725984197; cv=none; b=u6nvWC/sR59wmOcz+iIKsAOIJahmWwZgo8SgD8+sCpKY0L/KfpyiZmZlDL2XbLJm4E8jGq3SsZo48v/+/uvnoWa1jGF53tMJu/hg1Id8dDv1UNzxQRjWAI2zqyitsHHx+h67yeXI8unSMcqgUSoDTaL9blzm9seTO97MjQpkCXw=
+	t=1725984224; cv=none; b=WuyvIIh4JAYF7y/O4h6lDYZ6OB8u/B9uhzEiAWhVekkRajAa1LnHgZsTUM8dmur72dTjts5ZwJj8usUh/kZEw71xVBr5oGg1xNbVDAHFCRhtHzjrenvlbbs8NE9wPwJFyz3Xv+3221Zg/QiNjMUgcnoHLJkaEUj0QzbRv/KVwmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725984197; c=relaxed/simple;
-	bh=ieYNhYz0yKPjWMz8M4s8GFWFw6Ub6QVglsTA9qPpy70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxNrUic+cA2fNFpLR+b23+3AuXBie1blUJ2F6iuEu6vshlRa9/PrQtrd/YxnXDWLI/M8ndZMdH4o+fvik2k2J02I7xWhjvQLFIV8XEtpFdoUfjlFEzUGGhp/0ElHkqkJUwgvcSNpgSgMF+aTTRHdTg4zTbv9+lPyK8oaSE6RlGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VAI8YcTS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XlwiXBt6Jc3xA5G0PJppWnKE6FFg6I2kRwNbfwdTC7Q=; b=VAI8YcTS4yY1OaiY9mlPUC4hIy
-	w7SMCD+pMk8EOW5isDA+3Kx6yTr/dzg6jJEk/NRx9ShzT9VOCfZzUPRGxmEeW/5kI3lEhHQQ+LV4p
-	0L0Sn61LQihFA+dlFC4ploV7ZK5Hu8DNKOCfX5e0QQqNRsXPIB3bgNN4U1jsEBie9RX4sUn72J4Yw
-	xI3osYzITouFrPo0N+R6qunHYSfiLveOK8sL0/xu+yON8Hx8AB4q7dzbTf6Q5LpcmMhyVc+8WkSuB
-	3i27uZD+SXcWGSItYx2vbD+o902M3rTwzQ48ZW5fgqK5aLL5LE49LFSwFM7pvBxtLQpdC2IMGpKs7
-	XZB8QKCg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1so3Kf-0000000CcRG-2QyT;
-	Tue, 10 Sep 2024 16:03:09 +0000
-Date: Tue, 10 Sep 2024 17:03:09 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH] mm: remove redundant if overhead
-Message-ID: <ZuBtvW9TWCnHte4V@casper.infradead.org>
-References: <20240910143945.1123-1-justinjiang@vivo.com>
+	s=arc-20240116; t=1725984224; c=relaxed/simple;
+	bh=Cdiv22D2XE0zZV2f8MCtiT3Ss4BAr6XjTBSKLUi7loE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eQedEVEujSoS7PLqjhDOz+yJE010wvxOqwVwyFqtnSV++kgqmbjyJ1XRuYaCUP25AU5Cpr5FydBpLuR1Wq9fiViDNGBJjwyIk0jey4PmmwkK4whucCYRC6rmE0qzfl3MP7PqXwd+cow1wU8onZaEWvQYCzZ1Ega2MHkrQriyAEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id A5A2792009C; Tue, 10 Sep 2024 18:03:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id A14D492009B;
+	Tue, 10 Sep 2024 17:03:39 +0100 (BST)
+Date: Tue, 10 Sep 2024 17:03:39 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Masahiro Yamada <masahiroy@kernel.org>, 
+    Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+    Richard Weinberger <richard@nod.at>, 
+    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+    Johannes Berg <johannes@sipsolutions.net>, 
+    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+    Wedson Almeida Filho <wedsonaf@gmail.com>, 
+    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+    =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+    Benno Lossin <benno.lossin@proton.me>, 
+    Andreas Hindborg <a.hindborg@samsung.com>, 
+    Alice Ryhl <aliceryhl@google.com>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Steven Rostedt <rostedt@goodmis.org>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, 
+    Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
+    Nick Desaulniers <ndesaulniers@google.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-um@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+    llvm@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] rust: Enable for MIPS
+In-Reply-To: <035ccfe5-c368-4cd9-8e0d-34e0e355cb05@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2409101643210.60835@angie.orcam.me.uk>
+References: <20240905-mips-rust-v2-0-409d66819418@flygoat.com> <20240905-mips-rust-v2-3-409d66819418@flygoat.com> <alpine.DEB.2.21.2409082138160.60835@angie.orcam.me.uk> <035ccfe5-c368-4cd9-8e0d-34e0e355cb05@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910143945.1123-1-justinjiang@vivo.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Sep 10, 2024 at 10:39:45PM +0800, Zhiguo Jiang wrote:
-> Remove redundant if judgment overhead.
+On Mon, 9 Sep 2024, Jiaxun Yang wrote:
 
-It's not redundant; it avoids dirtying the cacheline if the folio
-is already marked as dirty.
+> >> diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
+> >> index 863720777313..bbdf8a4dd169 100644
+> >> --- a/scripts/generate_rust_target.rs
+> >> +++ b/scripts/generate_rust_target.rs
+> > [...]
+> >> +        } else {
+> >> +            ts.push("arch", "mips");
+> >> +            cfg.get("TARGET_ISA_REV").map(|isa_rev| {
+> >> +                let feature = match isa_rev.as_str() {
+> >> +                    "1" => ",+mips32",
+> >> +                    "2" => ",+mips32r2",
+> >> +                    "5" => ",+mips32r5",
+> >> +                    "6" => ",+mips32r6",
+> >> +                    _ => ",+mips2",
+> >
+> >  What's the consequence of using `mips2' rather than `mips1' here?  How 
+> > about other ISA revisions, e.g. `mips4' (that also applies to the 64BIT 
+> > leg)?
+> 
+> LLVM's mips1 backend is a little bit broken beyond repair, so I tried to use mips2
+> as a baseline. I should probably let HAVE_RUST depend on !CPU_R3000 to get it covered.
 
->  bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
->  {
-> -	if (!folio_test_dirty(folio))
-> -		return !folio_test_set_dirty(folio);
-> -	return false;
-> +	return !folio_test_set_dirty(folio);
->  }
+ GCC works just fine I suppose, just as with the other language frontends, 
+doesn't it?
+
+> We have no good way to tell ISA reversion prior to R1 just from Kconfig TARGET_ISA_REV,
+> valid numbers for TARGET_ISA_REV are only 1, 2, 5, 6 from Kconfig.
+
+ This approach doesn't work for some MIPS architecture processor configs 
+anyway, e.g. what ISA revision will CPU_P5600 imply here?
+
+ However if there's a need (and previously there wasn't), then I think it 
+can be sorted in a straightforward way.  We have just a bunch of CPU_* 
+settings and we can define corresponding ISA_* settings to select, e.g. 
+ISA_MIPS1, ISA_MIPS3, ISA_MIPS32_R1, ISA_MIPS64_R6, and so on, based on 
+information extracted from per-CPU_* `-march=' compilation flags from 
+arch/mips/Makefile (possibly combined with ISA data obtained from 
+GCC/binutils for said flags).
+
+ It could be a bit tedious to write, but not a big challenge really, just 
+mechanical work.
+
+> Given that mips 2 and 3 binaries (Rust object files) can link run flawlessly on all pre-R6
+> (despite R3000) hardware with matching bitness, they were chosen as fallback here.
+
+ I'm fine with having a MIPS1/R3000 exception for broken LLVM, but I see 
+no reason to disable it for GCC.
+
+  Maciej
 
