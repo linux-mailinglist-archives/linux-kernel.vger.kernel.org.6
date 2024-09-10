@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-322756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E18972D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229FA972D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB11F2614C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FB41C24345
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C99188A09;
-	Tue, 10 Sep 2024 09:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DandZEhc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA39188A3C;
+	Tue, 10 Sep 2024 09:21:00 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1C186289;
-	Tue, 10 Sep 2024 09:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56B7187871;
+	Tue, 10 Sep 2024 09:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725960031; cv=none; b=p1OA5UdNTBOv5/WTeKza5NCrYC2DBFW93mQZInEJ+GeEhMxDw0KxCMZKMS0stPlqHUqLayyu93oVsKH00VFWdZWDnG+YW6B/pEXWMLYFlIdQEbOQGnFGx5n+hubKoZYdRydDyElmnvJ6FjQemvwRQJglBfKGw+8+Hpc4niXKFyE=
+	t=1725960059; cv=none; b=fCokRSuwXi/adYvJpW8/6OFvNct1YjFfJVuQbocGWXYzDR76zNHNcc9j9hXssIulucYzXR+Aa9hpU/nAQI3ySGk4porkjCkKNRrogbkcseFBZIeol1jnOvnDumQbwjZZTd5P5loTQa2O2jZuBDW7UZAIkgygU3riyMTstxv8wYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725960031; c=relaxed/simple;
-	bh=rnuCrS753BduIzY9Zaq6w0W8UNk9xrU+v2yRFq64zj4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qbOmiOgx1wjmAdeFEb80ksSnGwewyrMLf68kc7ut49kBTjKFtjCEmLK3Ip5Yi3GGLrJypCkljPScGFletASb/r+cHT6BHHCvwm8hBmQ94x75Ao+5UPytZlVa4H41+iCAKCei5qp95IhSytx+akTSrPcUh9ONJaw8bbMCMKKkSQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DandZEhc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329D9C4CEC6;
-	Tue, 10 Sep 2024 09:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725960030;
-	bh=rnuCrS753BduIzY9Zaq6w0W8UNk9xrU+v2yRFq64zj4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DandZEhcH8Nei9cSSd2BZCCTlwu2Z3mjmAZGVzw6RbILGE18lZbBNgXJcn0Kr3vJO
-	 YnWcVkTeDdaFf9QoekStBwJZixH5NVqqzAmUgAtTvsevGwrfBDXSzcnyd9Aeo6VgdH
-	 CwI76ee2l8g130Z8YG5N2jYMD1FU60eo9qI/IeaYVcgAD855HtK8kuNz8ocGUEewa1
-	 3gOZj5stf/sdZUjHbn2PeipU/rEkVK3Lj/dm1v+o4Cb0ETf3CHDlsxAnkgJXUom0Hn
-	 mHohAdLFCH8lkW3jVHRnJxywPw6sZVXmxj81AS1wGiqCenI1o3Ftab0lcRCCLEISr/
-	 FJNf64x5rrVvg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7142E3806654;
-	Tue, 10 Sep 2024 09:20:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725960059; c=relaxed/simple;
+	bh=t7RstencTxbPCax7NqKjh0Q/O//hJkQzy/Uio3Lz6vE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uztTpVahGqDLJv4BAlSZusuVR8iqCVAIft8K6ayxPOop6PQ/jlOdPvplX54N4Xu03qWhn+Vzpt5H0+C2R+ocoO3WZigov/LMf6YVuu57VnrHB9iyevLZZkh/QltKxJJwv8kEnxUR+gPaW80715WoVhJssp3ATuFjgjrWj7OluCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X2yqV65wcz9sSY;
+	Tue, 10 Sep 2024 11:20:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id IH7tHx1tf7FV; Tue, 10 Sep 2024 11:20:54 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X2yqM6SKKz9sRr;
+	Tue, 10 Sep 2024 11:20:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CAC578B770;
+	Tue, 10 Sep 2024 11:20:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 2EIwfKNuyIWc; Tue, 10 Sep 2024 11:20:47 +0200 (CEST)
+Received: from [192.168.232.177] (unknown [192.168.232.177])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 089D78B766;
+	Tue, 10 Sep 2024 11:20:44 +0200 (CEST)
+Message-ID: <1aca8e4c-1c12-4624-a689-147ff60b75d6@csgroup.eu>
+Date: Tue, 10 Sep 2024 11:20:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 00/12] net: lan966x: use the newly introduced FDMA
- library
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172596003126.183148.4876801824053155515.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Sep 2024 09:20:31 +0000
-References: <20240905-fdma-lan966x-v1-0-e083f8620165@microchip.com>
-In-Reply-To: <20240905-fdma-lan966x-v1-0-e083f8620165@microchip.com>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+To: Charlie Jenkins <charlie@rivosinc.com>,
+ Michael Ellerman <mpe@ellerman.id.au>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shuah Khan <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+ Michal Hocko <mhocko@suse.com>, "Kirill A. Shutemov" <kirill@shutemov.name>,
+ Chris Torek <chris.torek@gmail.com>, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <87zfol468z.fsf@mail.lhotse> <Zt9HboH/PmPlRPmH@ghost>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zt9HboH/PmPlRPmH@ghost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 5 Sep 2024 10:06:28 +0200 you wrote:
-> This patch series is the second of a 2-part series [1], that adds a new
-> common FDMA library for Microchip switch chips Sparx5 and lan966x. These
-> chips share the same FDMA engine, and as such will benefit from a common
-> library with a common implementation.  This also has the benefit of
-> removing a lot of open-coded bookkeeping and duplicate code for the two
-> drivers.
+>>> diff --git a/include/uapi/linux/personality.h b/include/uapi/linux/personality.h
+>>> index 49796b7756af..cd3b8c154d9b 100644
+>>> --- a/include/uapi/linux/personality.h
+>>> +++ b/include/uapi/linux/personality.h
+>>> @@ -22,6 +22,7 @@ enum {
+>>>   	WHOLE_SECONDS =		0x2000000,
+>>>   	STICKY_TIMEOUTS	=	0x4000000,
+>>>   	ADDR_LIMIT_3GB = 	0x8000000,
+>>> +	ADDR_LIMIT_47BIT = 	0x10000000,
+>>>   };
+>>
+>> I wonder if ADDR_LIMIT_128T would be clearer?
+>>
 > 
-> [...]
+> I don't follow, what does 128T represent?
+> 
 
-Here is the summary with links:
-  - [net-next,01/12] net: lan966x: select FDMA library
-    https://git.kernel.org/netdev/net-next/c/63acda75801f
-  - [net-next,02/12] net: lan966x: use FDMA library symbols
-    https://git.kernel.org/netdev/net-next/c/1dfe4ca8cb4a
-  - [net-next,03/12] net: lan966x: replace a few variables with new equivalent ones
-    https://git.kernel.org/netdev/net-next/c/8274d40eafa3
-  - [net-next,04/12] net: lan966x: use the FDMA library for allocation of rx buffers
-    https://git.kernel.org/netdev/net-next/c/01a70754327b
-  - [net-next,05/12] net: lan966x: use FDMA library for adding DCB's in the rx path
-    https://git.kernel.org/netdev/net-next/c/2b5a09e67b72
-  - [net-next,06/12] net: lan966x: use library helper for freeing rx buffers
-    https://git.kernel.org/netdev/net-next/c/f51293b3ea89
-  - [net-next,07/12] net: lan966x: use the FDMA library for allocation of tx buffers
-    https://git.kernel.org/netdev/net-next/c/df2ddc1458c3
-  - [net-next,08/12] net: lan966x: use FDMA library for adding DCB's in the tx path
-    https://git.kernel.org/netdev/net-next/c/29cc3a66a81d
-  - [net-next,09/12] net: lan966x: use library helper for freeing tx buffers
-    https://git.kernel.org/netdev/net-next/c/8cdd0bd02283
-  - [net-next,10/12] net: lan966x: ditch tx->last_in_use variable
-    https://git.kernel.org/netdev/net-next/c/c06fef96c7d5
-  - [net-next,11/12] net: lan966x: use a few FDMA helpers throughout
-    https://git.kernel.org/netdev/net-next/c/9fbc5719f6aa
-  - [net-next,12/12] net: lan966x: refactor buffer reload function
-    https://git.kernel.org/netdev/net-next/c/89ba464fcf54
+128T is 128 Terabytes, that's the maximum size achievable with a 47BIT 
+address, that naming would be more consistant with the ADDR_LIMIT_3GB 
+just above that means a 3 Gigabytes limit.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Christophe
 
