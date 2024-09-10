@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-322516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C39B972A2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F20972A35
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1DF1F25585
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9562855D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489B717BEAD;
-	Tue, 10 Sep 2024 07:06:31 +0000 (UTC)
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8D117BECA;
+	Tue, 10 Sep 2024 07:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fIRuZs94"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC317BB1A;
-	Tue, 10 Sep 2024 07:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F517BB1A;
+	Tue, 10 Sep 2024 07:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725951990; cv=none; b=jWCPMmgXoeOEnRYK+8tcpRp6TYCcMl6lQLRcFTm17+/dTKWTz5HFfNRQSZML8nFA8eFED0RcdUwthxT+1QJdvIsfWhomGhLwDwXsiAUre6QZ5hh0OSwNjtErRxtnEVvKjiFSNKse/0j3EM0tgt6JHCvmSUUWcxTlv0VpZSnws5M=
+	t=1725952071; cv=none; b=XeVCBjuu8LVi3cKpPFWMSZeseTpkxyglYCWxalyDOm01B4kCVOwQcNHDQ6WhxVKOe7vcUfJYPr6G/v+c0+f1ppSTEkJ7eXttilll2NqRgf2f54vOtGSZFeflyOv0xDvHfEADnruttd6vVQz31LXFw2NSTzoXHmC4EWusxfpw9ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725951990; c=relaxed/simple;
-	bh=rCVoa3pX0ioAuE269RmGy2npE9BnrIt4dNjtAYPYgIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1GRQct3hjNfne/ABNF+bzrO7tq70kQTUAMP6XmX7GZgbpMZwvB02KoU/tofKaYIBg3/b1E6DZEHPJ8dZmgeHofnT5BClDfptInGPdr2Vr/eVd6VXGAiXvS2oolqtUoSae1OXP+/H+yVOlZHtbpUTUSMAp/4AL5/QWxQ5O2NVuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-	by gardel.0pointer.net (Postfix) with ESMTP id 4287CE80261;
-	Tue, 10 Sep 2024 09:06:25 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 0000C160143; Tue, 10 Sep 2024 09:06:23 +0200 (CEST)
-Date: Tue, 10 Sep 2024 09:06:23 +0200
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: Pingfan Liu <piliu@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>,
-	Philipp Rudo <prudo@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>, Baoquan He <bhe@redhat.com>,
-	Dave Young <dyoung@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFCv2 0/9] UEFI emulator for kexec
-Message-ID: <Zt_v7zRSsmanW89Z@gardel-login>
-References: <20240819145417.23367-1-piliu@redhat.com>
- <ZsX5QNie3pzocSfT@gardel-login>
- <CAF+s44S2Ph1_nFcZYy3j0Jr4yuHayb5zdNu1YXg8ce_Lf3TOgQ@mail.gmail.com>
- <Zsb1isJ2cYRp2jpj@gardel-login>
- <CAF+s44SQtRxZz=2eSJ-xP44ORLqvq0doEQ8qrw+1RaKFhoje8w@mail.gmail.com>
- <ZsyFr8V6yizMiBTw@gardel-login>
- <CAF+s44TkqcpA9oQPy5BxV7mAx6qS+=XZ-hG86ttR8ZxFxeTzLw@mail.gmail.com>
+	s=arc-20240116; t=1725952071; c=relaxed/simple;
+	bh=Tzupit/7jNP49QkdU+n8i+au8MHleKVz7I8yNFSGpyQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHrpDZo1t1eZvJ+QAG+Y33QjhEGj+1hu6GooHhw+hXcuCWcbwvhJlLc1chhUF1uPu5H1DcLc3ROCKHhERtF5afR/DyAhugqZDQPixy0ufAt5bSemA3UrZQKehUy6IJgQybdGwtQLg9f/6Im+6FEbx3ellUMQSoSbNxzYtBzOQN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fIRuZs94; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725952067; x=1726211267;
+	bh=Tzupit/7jNP49QkdU+n8i+au8MHleKVz7I8yNFSGpyQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fIRuZs947rgsw2YJdY1DkPsT+rjYra71BQiefVgwdAx9RWaTfNdx0Z/DDJRJX9B/p
+	 hDBx0rO+nsmSQ0gmsF5uD07hbnMjK7HoR8EqCQnq3jVM5DMC4GxXsqGMpcpH4vy89c
+	 YPH9FcGFB65HovM52HgdP/v+x5EKhBAuJZ6Nuni+v1aV/P07WmTkhIQo8rNXtDfaHA
+	 sCfSjVFtebGEvryfAC3bZPWqe8ykB6Po6zSCWuxSjt7xKTasqikMp+bMX/wjzvvw3C
+	 aFwVEG1YlvKRAI7x97PUmwiAJzqtFQwDMdcHkSvlj+A4AcZbLziT/AYeKDzKhYdaY7
+	 9+wTnDJZgM2JQ==
+Date: Tue, 10 Sep 2024 07:07:42 +0000
+To: levymitchell0@gmail.com, Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] rust: lockdep: Use Pin for all LockClassKey usages
+Message-ID: <f56dcef9-5dce-45e7-9de8-b12e2e723ef3@proton.me>
+In-Reply-To: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+References: <20240905-rust-lockdep-v1-1-d2c9c21aa8b2@gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: ba27d37648ef86cf0db6638ab469fea20779d898
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,79 +59,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF+s44TkqcpA9oQPy5BxV7mAx6qS+=XZ-hG86ttR8ZxFxeTzLw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mo, 09.09.24 21:38, Pingfan Liu (piliu@redhat.com) wrote:
+On 06.09.24 01:13, Mitchell Levy via B4 Relay wrote:
+> From: Mitchell Levy <levymitchell0@gmail.com>
+>=20
+> The current LockClassKey API has soundness issues related to the use of
+> dynamically allocated LockClassKeys. In particular, these keys can be
+> used without being registered and don't have address stability.
+>=20
+> This fixes the issue by using Pin<&LockClassKey> and properly
+> registering/deregistering the keys on init/drop.
+>=20
+> Link: https://lore.kernel.org/rust-for-linux/20240815074519.2684107-1-nmi=
+@metaspace.dk/
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> ---
+> This change is based on applying the linked patch to the top of
+> rust-next.
+>=20
+> I'm sending this as an RFC because I'm not sure that using
+> Pin<&'static LockClassKey> is appropriate as the parameter for, e.g.,
+> Work::new. This should preclude using dynamically allocated
+> LockClassKeys here, which might not be desirable. Unfortunately, using
+> Pin<&'a LockClassKey> creates other headaches as the compiler then
+> requires that T and PinImpl<Self> be bounded by 'a, which also seems
+> undesirable. I would be especially interested in feedback/ideas along
+> these lines.
 
-> Hi Lennart,
->
-> I spent some time understanding the systemd-pcrlock and TPM stuff, and
-> got some idea about it. Could you correct me if I'm wrong? Please see
-> the following comments inlined.
->
-> On Mon, Aug 26, 2024 at 9:40 PM Lennart Poettering <mzxreary@0pointer.de> wrote:
-> >
-> > On Do, 22.08.24 22:29, Pingfan Liu (piliu@redhat.com) wrote:
-> >
-> > > > Hmm, I'd really think about this with some priority. The measurement
-> > > > stuff should not be an afterthought, it typically has major
-> > > > implications on how you design your transitions, because measurements
-> > > > of some component always need to happen *before* you pass control to
-> > > > it, otherwise they are pointless.
-> > > >
-> > >
-> > > At present, my emulator returns false to is_efi_secure_boot(), so
-> > > systemd-stub does not care about the measurement, and moves on.
-> > >
-> > > Could you enlighten me about how systemd utilizes the measurement? I
-> > > grepped 'TPM2_PCR_KERNEL_CONFIG', and saw the systemd-stub asks to
-> > > extend PCR. But where is the value checked? I guess the systemd will
-> > > hang if the check fails.
-> >
-> > systemd's "systemd-pcrlock" tool will look for measurements like that
-> > and generate disk encryption TPM policies from that.
-> >
->
-> Before kexec reboots to the new kernel
-> systemd-pcrlock can predict the expected PCR value and store it in the
-> file system.
+I don't think that we can make this sound without also adding a lifetime
+to `Lock`. Because with only the changes you have outlined above, the
+key is at least valid for lifetime of the initializer, but might not be
+afterwards (while the lock still exists).
+So I think we should leave it as is now.
 
-I's a set of PCR values pcrlock predicts, one or more for each PCR. It
-then compiles a TPM "policy" from that, which is identified by a hash,
-and that hash is then stored in a TPM "nvindex" (which is a bit of
-memory a tpm provides).
+---
+Cheers,
+Benno
 
-> One thing should be noticed is that PCR value can not be affected.
 
-Well, a kexec *should* affect some PCRs. Replacement of the kernel
-*must* be visible in the measurement logs somehow, in a predictable
-fashion.
-
-> And kexec rebooting happens. systemd-stub extends the PCR value. When
-> the system is up, systemd checks the real PCR value against the
-> expected value rendered by systemd-pcrlock? If matching, all related
-> policies succeed.
-
-Well, it's not systemd that checks that, but the TPM. i.e. not the
-untrusted OS but the the suppedly more trusted TPM.
-
-So, key is that we want that measurements take place, the kexec
-operation *must* be made visible in the measurement logs. But it must
-be in a well-defined way, and ideally as an extension of the
-measurements sd-stub currently makes.
-
-(BTW, I personally don't think emulating EFI is really that
-important. As long as we get the key functionality that sd-stub
-provides also when doing kexec I am happy. i.e. whether it is sd-stub
-that does this or some other piece of code doesn't really matter to
-me. What I do care about is that we can parameterize the invoked
-kernel in a similar fashion as we can parameterize sd-stub, and that
-the measurements applied are also equivalent.)
-
-Lennart
-
---
-Lennart Poettering, Berlin
 
