@@ -1,273 +1,212 @@
-Return-Path: <linux-kernel+bounces-323630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409E49740E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3EA9740E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63721F22DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23D128702E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738A91A2C38;
-	Tue, 10 Sep 2024 17:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A67E1A4B6F;
+	Tue, 10 Sep 2024 17:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XP/8b/gd"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0pD0tq1L"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB31A192D98
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3595B16DED5
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990096; cv=none; b=C3Lm6JJriSwTPDbyqzQecAPmu5HURQ6cC5/xQr2/6MQMHMzEuVyh6uaEgsLv6xaH90a31xCtuNW6z+pvpCc6y6GyfsDNdiS8SnRWzfeBV4qqwARmnGe1oP13RUXaBRRGg7IGC8bGuMwwVGxQjSxE7IdLtBWspvis6pumpw5/aU4=
+	t=1725990105; cv=none; b=DtWOKvJNsL1RUZO3ibCb3ruGPojeiAMzd+8laAfKTO79M2dhJ0k1C5AK3gdw9LiMkTXRayiKCkNcycYFSDy9bRTXJknY8oABb0UfWX8DgAbkXAlWISEEVuHieGBSs/eB3P9sV82uUaC9XDP+DH0MF9JisCEPFgYhyfD94qjn05c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990096; c=relaxed/simple;
-	bh=dEHostxgrUQTfxhASbmMT98RPp6Eme+25p7K7TP/C9M=;
+	s=arc-20240116; t=1725990105; c=relaxed/simple;
+	bh=fAUv7M3pJwZVW1Q8kVS8zK7PUHK0l1kPBi3Cq/kPzuc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oFA5MeSytry94ohuA88i8Pg7jY3Q1bLe2l2EaUR5yvGYFxDcuf8JlfgE4/HXLnyI98n8G4/l0+FaV/E0KxfGDOXn8ROw3Phrn1iXjEz11SWXAYmBnToXaqb2Wc52BDtazicJcHivCKV/eoGQcGowTuiyBHMh0eBPTFnr42Xgz3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XP/8b/gd; arc=none smtp.client-ip=209.85.167.46
+	 To:Cc:Content-Type; b=giBswhWGtKThF8i6kmpyqpXrqz/W3RYInUyCX0ScqN6V00dp0BQzigDKoQi2UO9x1r8KXHLODCJeTKZ0TYG5/8cgzutkgiyLYwZZHBAEXIAbZQBaXVjtIz2mFBAcSlN4G8dAKoOYDIUkMS25L9FDK6IAilLofO3qZcZ6mA2mHYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0pD0tq1L; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53661d95508so30367e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:41:34 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso283145ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725990093; x=1726594893; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725990103; x=1726594903; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qRvd6+FNEyRgwBjwqh7XCajCi24Jftv3RTG3UBcZB0o=;
-        b=XP/8b/gdr9qyo119ZJd7yZQOxAJT1E6z9FItz4twBeIUGLqO68bMMc21dL3ASCpeVy
-         WkZyVoFABON0GfrgU1ZI9rNq72Pb/Cn/Rm511gPQQhPbHnhCyNYfocwJfJU3SvNsn13C
-         sGprounW+ls1TeBXa5pWi41oB+9zpGpKdASGaaQ14R6b2IW27gulGVlMJCuKb4JGqLxA
-         pvRfCEpa4B48Bx9ctEmPk6TMnpmfTrnmzE2MwPtCCb0Y+aPmhRWnRodDJrnmnfasK6Jl
-         Mwt5ytXYNGtPQ5HNKwRqgKdkN/8YdF4w9JWivzrc73xnjtYRYFjQv++rrgvp/wyqZONA
-         WwQw==
+        bh=PYw7Yq3bzNnAatLT1BVowVs3XyP1qscSohILgAm3AAA=;
+        b=0pD0tq1LWOx0GwwgVqCf3QQSFuT4DAAtNwxFzFiTX7E9jvkEYzcd45CLLaUX1UpMdO
+         gPcVNufuLFcbtdr0xSuCGCnY3+Tf9toS8+YpIOlkUTvQvwgcMiK1WHSYyrx8758QdMvs
+         6r2oTvlV2R1pOruTd1z3qHtIlFQS24bmTzZxZ3S3tVsMquL/BJRK0wgZeiAAEumul1c2
+         XsDnPmdgGqusGgGZpxQC0PRgYfKP24BNxRRpd8tOj2Rn77ggaZaFLrhyCa4ZKlgr48uM
+         yxypkcjDDGvQcoA0qgiVlN2pZCn3L0iZRosGeTLLN/sEhecnsa9wc8RpK+x9CpHA/W7H
+         8fNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990093; x=1726594893;
+        d=1e100.net; s=20230601; t=1725990103; x=1726594903;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qRvd6+FNEyRgwBjwqh7XCajCi24Jftv3RTG3UBcZB0o=;
-        b=n+5jpkfLw6oQP4Gijmd1p+Cun3Dj988FZMgVhjnvU7GD+illRyvYdY+Tsb15KXnpZy
-         aKmmYFrFybjNwA7/cQiFHCPIleVrycW6V7FVMgE9iDs+fZtkugn/yZupDoQbdpyecvBK
-         48PHdA4u5maXgSS+k83YfBwGVrMv5hay1kzvz2e1eoSUb0CovwVAuuY2O9njPAZiAjxZ
-         oJ9CmxHMgYtjnFNnDar3n7DI+4J2DMU21SkjZjGv7ehIb8cV55Zri3YUhLxE30hdzMN3
-         O+RL15NoYtvtXYibaMQ5T/OEMal0iIZ+qlG6BtsC5EfyTY9IUP8MT4XVjk2K8W/F/k97
-         kVAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm2W6cT6eJW42o+vZnhe4zHN7uozrJ40s1V9OJHd4GK3sqwFWbaWGV+0PVKOyer2pQB+EnZc1+1kJtz74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Dg2EOELOQ+ItH1NSgNmF0AZvaxyLRkmm2MzXQoO0aLw0fhFw
-	fjRTvUS59FT2DSjzcqasLvR/JBbLGVrOkstk+DCmBF7BF983C4T41Zqi6P/sHO+I3R0aLJDaFkA
-	Ig7BW8ITlRqE3m2MEi3BaoUXxWTgDlzvEPPGY
-X-Google-Smtp-Source: AGHT+IGmqjEsD+ZSK7Kq99lDy9iP1P9BexIFvYcppz62nH2Sql+mSbRPQjG2dYpHE6+f8ABvXv/fJnLDamZfLogRKw8=
-X-Received: by 2002:a05:6512:b85:b0:535:68b2:9589 with SMTP id
- 2adb3069b0e04-5367431fdeemr16812e87.2.1725990092431; Tue, 10 Sep 2024
- 10:41:32 -0700 (PDT)
+        bh=PYw7Yq3bzNnAatLT1BVowVs3XyP1qscSohILgAm3AAA=;
+        b=lSXwnVwy81+FIseGCaJAmK6ZiqXJz0DrjUS503HuJ2MBfoLkeYcYLDXSZqIUonCTOS
+         7B3Tsce4w2zYT3w8bERnvrp3GvaW+CcYFKzL3uolK0r3JAm20d/ei6BcSw8if8ELkRzN
+         Le8eKAmgiovFtAv6z7vBZBs6819EivXUASIGRMgIuHt6NJ0ClbzV5VHUlLugRFRfdcE3
+         7x+CFLJqP2h8bBkLdAY4wUJkA3cNEVhorbmqqdLuXZopWDvUnQWbe7gS/hkllhL+XcMf
+         bJr5/rohgQ3YwsEnS0teAb+wRJDDcJQ0zNGrrQLKgjpV6wOjRSwc0StOY+25x+kVxsPS
+         osjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYO2ToS07QzbWlHOUmY5Ci28FyzV8sxq6QfH3VtvDYc9gPOTe3vKx+AIbLqxFMCJvea3hpNWV7qvXNrb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcucm9JKvMWJN/hfT0hGElqNd/sE9gu1f4qgtwKCE7Re7z2oN2
+	xrcTQSW+2JFpVu8m8HMT/ocJucZ2tP2S/r5uxXUOZtDx+lb0hgbmWfQF099Y5n9Jr4pk5iyRfQe
+	iaGj3fl3UQNC7AW8HtY2K0Z2HlNelaNswiScvrQ22lmvq1rdmrQ==
+X-Google-Smtp-Source: AGHT+IE3Ojd6hPkIRzLEh2MMX2BlT4wzTXRZs5kxZ3gebnmMifTmj+qzAlTv8y7e3vUMMbMuM/eagRff0AZIoeJiHJw=
+X-Received: by 2002:a92:c549:0:b0:39f:709d:72b3 with SMTP id
+ e9e14a558f8ab-3a07508b96emr100395ab.12.1725990103047; Tue, 10 Sep 2024
+ 10:41:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828181011.1591242-1-namangulati@google.com>
- <ZtBQLqqMrpCLBMw1@LQ3V64L9R2> <CAMP57yW99Y+CS+h_bayj_hBfoGQE+bdfVHuwfHZ3q+KueTS+iw@mail.gmail.com>
- <30ddb66a-aeea-480d-bf79-38fc06ea45b0@uwaterloo.ca>
-In-Reply-To: <30ddb66a-aeea-480d-bf79-38fc06ea45b0@uwaterloo.ca>
-From: Naman Gulati <namangulati@google.com>
-Date: Tue, 10 Sep 2024 10:41:21 -0700
-Message-ID: <CAMP57yWQGKnHcn3gkPvz1bvPO=+VTvyMJ5OHZpp=WYX=CBhZvA@mail.gmail.com>
-Subject: Re: [PATCH] Add provision to busyloop for events in ep_poll.
-To: Martin Karsten <mkarsten@uwaterloo.ca>
-Cc: Joe Damato <jdamato@fastly.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org, 
-	Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org, skhawaja@google.com, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+References: <ZuB8Q3NQej-gB6Tz@x1>
+In-Reply-To: <ZuB8Q3NQej-gB6Tz@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 10 Sep 2024 10:41:31 -0700
+Message-ID: <CAP-5=fWnuQrrBoTn6Rrn6vM_xQ2fCoc9i-AitD7abTcNi-4o1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf trace: If a syscall arg is marked as 'const',
+ assume it is coming _from_ userspace
+To: arnaldo.melo@gmail.com
+Cc: Alan Maguire <alan.maguire@oracle.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Howard Chu <howardchu95@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 4, 2024 at 5:46=E2=80=AFAM Martin Karsten <mkarsten@uwaterloo.c=
-a> wrote:
+On Tue, Sep 10, 2024 at 10:05=E2=80=AFAM <arnaldo.melo@gmail.com> wrote:
 >
-> On 2024-09-04 01:52, Naman Gulati wrote:
-> > Thanks all for the comments and apologies for the delay in replying.
-> > Stan and Joe I=E2=80=99ve addressed some of the common concerns below.
-> >
-> > On Thu, Aug 29, 2024 at 3:40=E2=80=AFAM Joe Damato <jdamato@fastly.com>=
- wrote:
-> >>
-> >> On Wed, Aug 28, 2024 at 06:10:11PM +0000, Naman Gulati wrote:
-> >>> NAPI busypolling in ep_busy_loop loops on napi_poll and checks for ne=
-w
-> >>> epoll events after every napi poll. Checking just for epoll events in=
- a
-> >>> tight loop in the kernel context delivers latency gains to applicatio=
-ns
-> >>> that are not interested in napi busypolling with epoll.
-> >>>
-> >>> This patch adds an option to loop just for new events inside
-> >>> ep_busy_loop, guarded by the EPIOCSPARAMS ioctl that controls epoll n=
-api
-> >>> busypolling.
-> >>
-> >> This makes an API change, so I think that linux-api@vger.kernel.org
-> >> needs to be CC'd ?
-> >>
-> >>> A comparison with neper tcp_rr shows that busylooping for events in
-> >>> epoll_wait boosted throughput by ~3-7% and reduced median latency by
-> >>> ~10%.
-> >>>
-> >>> To demonstrate the latency and throughput improvements, a comparison =
-was
-> >>> made of neper tcp_rr running with:
-> >>>      1. (baseline) No busylooping
-> >>
-> >> Is there NAPI-based steering to threads via SO_INCOMING_NAPI_ID in
-> >> this case? More details, please, on locality. If there is no
-> >> NAPI-based flow steering in this case, perhaps the improvements you
-> >> are seeing are a result of both syscall overhead avoidance and data
-> >> locality?
-> >>
-> >
-> > The benchmarks were run with no NAPI steering.
-> >
-> > Regarding syscall overhead, I reproduced the above experiment with
-> > mitigations=3Doff
-> > and found similar results as above. Pointing to the fact that the
-> > above gains are
-> > materialized from more than just avoiding syscall overhead.
+> We need to decide where to copy syscall arg contents, if at the
+> syscalls:sys_entry hook, meaning is something that is coming from
+> user to kernel space, or if it is a response, i.e. if it is something
+> the _kernel_ is filling in and thus going to userspace.
 >
-> I suppose the natural follow-up questions are:
+> Since we have 'const' used in those syscalls, and unsure about this
+> being consistent, doing:
 >
-> 1) Where do the gains come from? and
+>   root@number:~# echo $(grep const /sys/kernel/tracing/events/syscalls/sy=
+s_enter_*/format  | grep struct | cut -c47- | cut -d'/' -f1)
+>   clock_nanosleep clock_settime epoll_pwait2 futex io_pgetevents landlock=
+_create_ruleset listmount mq_getsetattr mq_notify mq_timedreceive mq_timeds=
+end preadv2 preadv prlimit64 process_madvise process_vm_readv process_vm_re=
+adv process_vm_writev process_vm_writev pwritev2 pwritev readv rt_sigaction=
+ rt_sigtimedwait semtimedop statmount timerfd_settime timer_settime vmsplic=
+e writev
+>   root@number:~#
 >
-> 2) Would they materialize with a realistic application?
+> Seems to indicate that we can use that for the ones that have the
+> 'const' to mark it as coming from user space, do it.
 >
-> System calls have some overhead even with mitigations=3Doff. In fact I
-> understand on modern CPUs security mitigations are not that expensive to
-> begin with? In a micro-benchmark that does nothing else but bouncing
-> packets back and forth, this overhead might look more significant than
-> in a realistic application?
+> Most notable/frequent syscall that now gets BTF pretty printed in a
+> system wide 'perf trace' session is:
 >
-> It seems your change does not eliminate any processing from each
-> packet's path, but instead eliminates processing in between packet
-> arrivals? This might lead to a small latency improvement, which might
-> turn into a small throughput improvement in these micro-benchmarks, but
-> that might quickly evaporate when an application has actual work to do
-> in between packet arrivals.
-
-This is a good point, and I was able to confirm this. I profiled the
-changes in the
-patch by fixing the number of threads and flows but scaling message sizes w=
-ith
-tcp_rr, using the notion that creating and processing large messages in tcp=
-_rr
-would take more time. As the message size increases from 1 B to MSS (4KB
-in my setup), I found that the difference in latency and throughput diminis=
-hes
-between looping inside epoll vs looping on nonblocking epoll_wait in usersp=
-ace.
-
-Understandably, as the message sizes increase the application becomes the
-bottleneck and the syscall overhead becomes marginal to the whole cost of t=
-he
-operation.
-
-I also found that looping inside epoll yields latency and throughput
-improvements again when message sizes increase past MSS. I believe this can
-be rationalized as the cost of processing the packet in the application is =
-then
-amortized over the multiple transmitted segments and the system call overhe=
-ad
-becomes more prominent again.
-
-This is some rough data showing the above
-Setup: 5 threads on both client and server, 30 flows, mitigations=3Doff,
-both server
-and client using the same request/response size
-
-Looping inside epoll:
-Message Size  Throughput  Latency P50  Latency P90  Latency P99  Latency P9=
-9.9
- 1 B                   543971         57                 76
-      93                  106
- 250 B               501245         60                 77
-    97                  109
- 500 B               494467         60                 77
-    93                  111
- 1 KB                 486412         60                 77
-     97                  114
- 2 KB                 385125         77                 96
-     114                123
- 4 KB                 378612         78                 97
-     119                129
- 8 KB                 349214         83                109
-    125                137
- 16 KB               379276         156               202
-  243                274
-Looping in userspace:
-Message Size  Throughput  Latency P50  Latency P90  Latency P99  Latency P9=
-9.9
- 1 B                   496296         59                 76
-      95                   109
- 250 B               468840         67                 77
-    97                   111
- 500 B               476804         61                 78
-    97                   110
- 1 KB                 464273         65                 79
-    100                  115
- 2 KB                 388334         76                 97
-    114                  122
- 4 KB                 377851         79                 98
-    118                  124
- 8 KB                 333718         91                115
-   128                  141
- 16 KB               354708         157               253
- 307                  343
-
-I also examined the perf traces for both looping setups and compared the
-overhead delta between the invocation of epoll_wait in glibc and the invoca=
-tion
-of do_epoll_wait in the kernel to measure just the overhead of calling the
-system call. With 1 B messages, looping in userspace had a higher overhead
-in CPU cycles for invoking the syscall compared to looping inside epoll, ho=
-wever
-the overhead gap also shrinks as the message sizes increase and the syscall
-overhead becomes increasingly marginal.
-
-I believe testing with a benchmark like memcached and using napi steering
-would confirm the same results, and I recognize now that most regular workl=
-oads
-won=E2=80=99t benefit from this patch.
-
+>   root@number:~# perf trace
+>      21.160 (         ): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e1dfe9=
+64, op: WAIT_BITSET|PRIVATE_FLAG, utime: (struct __kernel_timespec){.tv_sec=
+ =3D (__kernel_time64_t)50290,.tv_nsec =3D (long long int)810362837,}, val3=
+: MATCH_ANY) ...
+>       21.166 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, o=
+p: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+>       21.169 ( 0.001 ms): RemVidChild/6995 sendmsg(fd: 25<socket:[78915]>=
+, msg: 0x7f49e9af9da0, flags: DONTWAIT) =3D 280
+>       21.172 ( 0.289 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa58, o=
+p: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) =3D 0
+>       21.463 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, o=
+p: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+>       21.467 ( 0.001 ms): RemVidChild/6995 futex(uaddr: 0x7f49e28bb964, o=
+p: WAKE|PRIVATE_FLAG, val: 1)           =3D 1
+>       21.160 ( 0.314 ms): MediaSu~isor #/1028597  ... [continued]: futex(=
+))                                            =3D 0
+>       21.469 (         ): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa5c, o=
+p: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) ...
+>       21.475 ( 0.000 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49d0223=
+040, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+>       21.478 ( 0.001 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e26ac=
+964, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 1
+>   ^Croot@number:~#
+>   root@number:~# cat /sys/kernel/tracing/events/syscalls/sys_enter_futex/=
+format
+>   name: sys_enter_futex
+>   ID: 454
+>   format:
+>         field:unsigned short common_type;       offset:0;       size:2; s=
+igned:0;
+>         field:unsigned char common_flags;       offset:2;       size:1; s=
+igned:0;
+>         field:unsigned char common_preempt_count;       offset:3;       s=
+ize:1; signed:0;
+>         field:int common_pid;   offset:4;       size:4; signed:1;
 >
-> It would be good to know a little more about your experiments. You are
-> referring to 5 threads, but does that mean 5 cores were busy on both
-> client and server during the experiment? Which of client or server is
-> the bottleneck? In your baseline experiment, are all 5 server cores
-> busy? How many RX queues are in play and how is interrupt routing
-> configured?
-
-Apologies, should have been clearer in the description. The server and clie=
-nt
-were both using 5 threads to handle the connections without any CPU pinning=
-.
-I did however confirm that all threads used distinct cores from
-scheduling traces
-and there was no contention.
-Both hosts had 32 queues with a napi instance per queue.
-
+>         field:int __syscall_nr; offset:8;       size:4; signed:1;
+>         field:u32 * uaddr;      offset:16;      size:8; signed:0;
+>         field:int op;   offset:24;      size:8; signed:0;
+>         field:u32 val;  offset:32;      size:8; signed:0;
+>         field:const struct __kernel_timespec * utime;   offset:40;      s=
+ize:8; signed:0;
+>         field:u32 * uaddr2;     offset:48;      size:8; signed:0;
+>         field:u32 val3; offset:56;      size:8; signed:0;
 >
-> Thanks,
-> Martin
+>   print fmt: "uaddr: 0x%08lx, op: 0x%08lx, val: 0x%08lx, utime: 0x%08lx, =
+uaddr2: 0x%08lx, val3: 0x%08lx", ((unsigned long)(REC->uaddr)), ((unsigned =
+long)(REC->op)), ((unsigned long)(REC->val)), ((unsigned long)(REC->utime))=
+, ((unsigned long)(REC->uaddr2)), ((unsigned long)(REC->val3))
+>   root@number:~#
 >
->
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alan Maguire <alan.maguire@oracle.com>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Given the above analysis it doesn=E2=80=99t make sense adding the extra kno=
-bs to the
-epoll interface for an optimization that's not widely applicable, therefore=
- this
-patch can be considered as not needed.
-Nonetheless, appreciate the feedback Joe and Martin.
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
+> ---
+>  tools/perf/builtin-trace.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 83eb15b72333edd9..e26baf1256d5bb56 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2001,11 +2001,14 @@ syscall_arg_fmt__init_array(struct syscall_arg_fm=
+t *arg, struct tep_format_field
+>
+>                 len =3D strlen(field->name);
+>
+> +               // As far as heuristics (or intention) goes this seems to=
+ hold true, and makes sense!
+> +               if ((field->flags & TEP_FIELD_IS_POINTER) && strstarts(fi=
+eld->type, "const "))
+> +                       arg->from_user =3D true;
+> +
+>                 if (strcmp(field->type, "const char *") =3D=3D 0 &&
+>                     ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
+ =3D=3D 0) ||
+>                      strstr(field->name, "path") !=3D NULL)) {
+>                         arg->scnprintf =3D SCA_FILENAME;
+> -                       arg->from_user =3D true;
+>                 } else if ((field->flags & TEP_FIELD_IS_POINTER) || strst=
+r(field->name, "addr"))
+>                         arg->scnprintf =3D SCA_PTR;
+>                 else if (strcmp(field->type, "pid_t") =3D=3D 0)
+> --
+> 2.46.0
+>
 
