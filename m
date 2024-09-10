@@ -1,192 +1,116 @@
-Return-Path: <linux-kernel+bounces-322470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788C4972952
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CEF972953
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70F11F2364D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F521C20F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A49175D39;
-	Tue, 10 Sep 2024 06:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="liThnj3C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFED172773;
+	Tue, 10 Sep 2024 06:13:47 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82B91CD1F;
-	Tue, 10 Sep 2024 06:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9730170A15
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948806; cv=none; b=A3lW/2KqaST98xNXn5xKeClUoJFPC3W2l2l/0vD73NtzOOBAzhfsESgVwJUOMga+w4RRuboW8mam5R3az4r+2rjC3kBcf62yOh3aNqTq8Ct6T+yOo1xv28WXuKfhtl+ZLqE0ieNYKeXOWpEJH+fVLJUtDh3phXWHt6Q3O1bvCmM=
+	t=1725948827; cv=none; b=PGSVP2+ACKbAkBgz3Q/MQIYi1XgNfhIkxkqFq5Rzg7iSks6cBAJ2Gi2ZMw0oL8x8q89gGx9FJUK7SPx9/DWdi8XhPbc9Cu/QuPPY89mNN/EqFloymsLA6Driwh8AenewdEk1BcGFhkCXdXHVQuPc9rAzy2KyqyzkZNk3Nub0Z2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948806; c=relaxed/simple;
-	bh=nP3dbTmnW9Jo6LEMnVuvysQouJEbu7BMzkCTla3SEwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQD2yXz5qr9XACK9TXRJtha0C8l3ZprpE4vu98Vob13/BByF4peQvWpKqSlbcKwYrsmbPjtudlIX2JpsLdVMrTok0G16mbWnr+HPNvEVX9S7PFdbWyF/2Vwqc9P1qFwJY0NxIznevko8ers4lFd0FsEGekv6BHc4Ojj7de1ZuBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=liThnj3C; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725948805; x=1757484805;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nP3dbTmnW9Jo6LEMnVuvysQouJEbu7BMzkCTla3SEwI=;
-  b=liThnj3CKO1fkwsn4mjU+0buMsB5WUKqjYJB+yt8PeS4IvOX8kX9+KGT
-   mHqaQI+Z0WRjsdPmcD1GvrGoVlUEDEq2s1Zl4p3iHXXuPa49D3WwkCzCq
-   KFn4sKqKCzlFaPaH3PW2FFNM4JIWBgvDvBd9adiDynieNUw4u7mgEwMbF
-   ETpYDWXLLy0/6O32Cy6lBnWWVWPXLLMRDxiBvK6UgyR0w/CWCbci2QI67
-   avjXwEEcaarntcci4zvaZhPJf3upVf+zY0IvhSjMR9Fhev5zY9BKp49wC
-   G8S+kRh9sLUYzNPZqXTpKZ6fSvhuar/NBUxUNGLWp+99ca7Tr9qlxvLe9
-   Q==;
-X-CSE-ConnectionGUID: G1y3zHakTGqWWEJOFdCyWw==
-X-CSE-MsgGUID: ohNcfbgISaK7IXoWVniJYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24177058"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="24177058"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 23:13:24 -0700
-X-CSE-ConnectionGUID: 6QGfVu/6SPqrHGcD0SFmag==
-X-CSE-MsgGUID: oLfrut1BSaKLrNGDsdP8bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="104378886"
-Received: from yjiang5-mobl.amr.corp.intel.com (HELO localhost) ([10.124.87.56])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 23:13:22 -0700
-Date: Mon, 9 Sep 2024 23:13:21 -0700
-From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
-	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
- mailbox
-Message-ID: <20240910061227.GA76@yjiang5-mobl.amr.corp.intel.com>
-References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
- <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
- <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
- <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
+	s=arc-20240116; t=1725948827; c=relaxed/simple;
+	bh=YfAHwumSZldbqrMyckqoVZpv4fbP7RwrMiUlejXY+hU=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LCMuunv1veXlS1csCkPPm1mBLAxU/vvNpExwRij4QC18O0Jd0Keok2Z5MWcNwTvMomvS7G4tzpyAkrJRVJzycrEpm7iLyt+T4L7lSvsC03xMeUPuRHamcFXNTRGJwPRRsbqFL+tgaiwnrLelXKsrQPnr0wEHlRzxlktykhZ/6fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X2tf66GWYz1P9M9;
+	Tue, 10 Sep 2024 14:12:30 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id E366B180AE7;
+	Tue, 10 Sep 2024 14:13:35 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 14:13:35 +0800
+Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
+ remaining nodes locally
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
+ <20240904133944.2124-5-thunder.leizhen@huawei.com>
+ <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
+ <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
+ <87bk0xc9iy.ffs@tglx> <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
+ <87wmjkc2te.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <8ab2df64-9d78-f60d-e4f1-a13b4065b01a@huawei.com>
+Date: Tue, 10 Sep 2024 14:13:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827204549.GA4545@yjiang5-mobl.amr.corp.intel.com>
+In-Reply-To: <87wmjkc2te.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Tue, Aug 27, 2024 at 01:45:49PM -0700, Yunhong Jiang wrote:
-> On Sun, Aug 25, 2024 at 09:10:01AM +0200, Krzysztof Kozlowski wrote:
-> > On Fri, Aug 23, 2024 at 04:23:20PM -0700, Yunhong Jiang wrote:
-> > > Add the binding to use mailbox wakeup mechanism to bringup APs.
-> > > 
-> > > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > > ---
-> > >  .../devicetree/bindings/x86/wakeup.yaml       | 64 +++++++++++++++++++
-> > >  1 file changed, 64 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> > > new file mode 100644
-> > > index 000000000000..cb84e2756bca
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> > > @@ -0,0 +1,64 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +# Copyright (C) 2024 Intel Corporation
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: x86 mailbox wakeup
-> > > +maintainers:
-> > > +  - Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > > +
-> > > +description: |
-> > > +  The x86 mailbox wakeup mechanism defines a mechanism to let the bootstrap
-> > > +  processor (BSP) to wake up application processors (APs) through a wakeup
-> > > +  mailbox.
-> > > +
-> > > +  The "wakeup-mailbox-addr" property specifies the wakeup mailbox address. The
-> > > +  wakeup mailbox is a 4K-aligned 4K-size memory block allocated in the reserved
-> > > +  memory.
-> > > +
-> > > +  The wakeup mailbox structure is defined as follows.
-> > > +
-> > > +    uint16_t command;
-> > > +    uint16_t reserved;
-> > > +    uint32_t apic_id;
-> > > +    uint64_t wakeup_vector;
-> > > +    uint8_t  reservedForOs[2032];
-> > > +
-> > > +  The memory after reservedForOs field is reserved and OS should not touch it.
-> > > +
-> > > +  To wakes up a AP, the BSP prepares the wakeup routine, fills the wakeup
-> > > +  routine's address into the wakeup_vector field, fill the apic_id field with
-> > > +  the target AP's APIC_ID, and write 1 to the command field. After receiving the
-> > > +  wakeup command, the target AP will jump to the wakeup routine.
-> > > +
-> > > +  For each AP, the mailbox can be used only once for the wakeup command. After
-> > > +  the AP jumps to the wakeup routine, the mailbox will no longer be checked by
-> > > +  this AP.
-> > > +
-> > > +  The wakeup mailbox structure and the wakeup process is the same as
-> > > +  the Multiprocessor Wakeup Mailbox Structure defined in ACPI spec version 6.5,
-> > > +  section 5.2.12.19 [1].
-> > > +
-> > > +  References:
-> > > +
-> > > +  [1] https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
-> > > +
-> > > +select: false
-> > 
-> > This schema is still a no-op because of this false.
-> > 
-> > What is the point of defining one property if it is not placed anywhere?
-> > Every device node can have it? Seems wrong...
-> > 
-> > You need to come with proper schema. Lack of an example is another thing
-> > - this cannot be even validated by the tools. 
-> > 
-> > Best regards,
-> > Krzysztof
 
-Hi, Krzysztof, I'm working to address your comments and have some questions.
-Hope to get help/guide from your side.
 
-For the select, the writing-schema.rst describes it as "A json-schema used to
-match nodes for applying the schema" but I'm a bit confused. In my case, should
-it be "cpus" node? Is there any code/tools that uses this property, so that I
-can have a better understanding?
+On 2024/9/9 22:35, Thomas Gleixner wrote:
+> On Mon, Sep 09 2024 at 21:51, Leizhen wrote:
+>> On 2024/9/9 20:10, Thomas Gleixner wrote:
+>>> So something like the uncompiled below should reduce lock contention
+>>> significantly with a reasonable safety net.
+>>
+>> It looks very good. Especially flexible use of 'state' and 'cpus_allocating'.
+>> In this way, there is almost no conflict of lock 'pool_lock', and the more
+>> cores, the less possible conflict.
+>>
+>> Hi Thomas Gleixner:
+>>   Do you plan to post this patch? But this patch will conflict with my patch 5/6.
+>> If you're going to merge my patch 5/6, hopefully yours will be applied
+>> after mine.
+> 
+> I'm short of cycles, so the best way is when you pick it up and
+> integrate it instead of 4/6 and post a v3.
 
-For your "validated by the tools", can you please share the tools you used to
-validate the schema? I used "make dt_binding_check" per the
-submitting-patches.rst but I think your comments is about another tool.
-
-Sorry for the bothering. I read the DT spec and the
-Documentation/devicetree/bindings documents and still not sure.
-
-Than you
---jyh
+OK
 
 > 
-> Thank you for the feedback. Will update the schema file on next round
-> submission.
+>>   By the way, Do you have time to review the patches in the link below?
+>>   https://lkml.org/lkml/2024/9/4/1094
 > 
-> Thanks
-> --jyh
+> Please use lore.kernel.org links. I've seen it but did not come around
+
+OK
+
+> to it yet because I was staring at this one. I'm single threaded :)
+
+Mostly you big shot are too busy.
+
 > 
-> > 
+> Thanks,
 > 
+>         tglx
+> 
+> 
+> 
+> .
+> 
+
+-- 
+Regards,
+  Zhen Lei
 
