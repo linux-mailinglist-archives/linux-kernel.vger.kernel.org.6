@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-323393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FEC973CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B94973C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960731C213D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FEE11F212B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDEF19FA93;
-	Tue, 10 Sep 2024 15:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2/hUACql";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5ZanlrMa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2120B1A0AE6;
+	Tue, 10 Sep 2024 15:39:03 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE9A190046;
-	Tue, 10 Sep 2024 15:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EE191476;
+	Tue, 10 Sep 2024 15:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725983285; cv=none; b=TfXjlH9VnxbgfrWV9q+TrEzFmqiHRalaDH4IrUOKW6jPMEi/eMmG1B/6YHnXHF77VMqYnxOtx+Y8rhfmm0UYKSJrjHei7nN/xv+Nn3f/btEemjYE510aR8EqaEV84wtvddiZLUzwc/JOaYyqbwTE3QWsJ1scUDyxHVtD7mSrM0E=
+	t=1725982742; cv=none; b=Yedn149ZAo7+KmYZjHz7jNwlaVsmAR3kMCtqJXTufDySAw5pw/iRjgvBnCvEmqK0kCg8cEWj5Bo4Wayu2M/ljloz5VwYngCra4NxGjevkrvlb87NTPA4VSvub2EczUGbDeCrdb68rfEbEphrmsBHEXorDlouDIhxRTP4fKusANk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725983285; c=relaxed/simple;
-	bh=ShuX06qSymKQunBMk30eNESrrW3YZ/yxxr9pbVRfEYo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a6aUW5U+9g0aUC30wqNt2vKJrukAr4b6PT9Tsi68tH273HebSNbrgHxqpntDSm9UGNTnGsedfMUfpgAOQpDn7J+6Flg/d5/Pwws4LNW71C/6oSPBQxU3EjzceRdrKX6HgXOUg/oXuoGB0kOpJlgATh4UgzXIh5/SrfaA/wyTVI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2/hUACql; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5ZanlrMa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725983282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SpAW1KO7SPjGxiD5ZFFTluIX7AWVdKtbH+RQpSycHwg=;
-	b=2/hUACqlNzUe2wkoG8sjKAuZbwsOzFw+6kEmlP6SzgBOEOSZh4LejWpw7S1VrpLeOf4gVd
-	nj8pnv42tEFtC53xNbAks7cs/aEtIeuAbmYtQTjMGMDWs+81s/ddAkXl2AWXJV/p8lJp7/
-	GsDGhoxknnFaSiM9WU5YufZ8XO72CDRxBFAumZmbIwOs8+qLbg5BcDjIINr7Qycxw4ahW2
-	XnRQ6XvkZkcR4QW0xoOmnOBozVkswKs3z0ibbzxyPl39Yn5c6llHIFSyQgppkUTM8kzyud
-	UDctPPn5Yd9w2cx9PoTtWqBjgbMFjH07+eqhGiFPh/Jy/MzaNniTbHIdKoT7KQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725983282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SpAW1KO7SPjGxiD5ZFFTluIX7AWVdKtbH+RQpSycHwg=;
-	b=5ZanlrMabloM0VSftqTeiAtQRaYdDEo61S6iNhba3dQXZPpAx6lDJdMOjhE/rmyJLiyXvG
-	1XKA3ItEnmtMX+Ag==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Richard Cochran
- <richardcochran@gmail.com>
-Cc: bryan.whitehead@microchip.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, anna-maria@linutronix.de,
- frederic@kernel.org, UNGLinuxDriver@microchip.com, mbenes@suse.cz,
- jstultz@google.com, andrew@lunn.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
- clock_set()
-In-Reply-To: <1cae2765-65cc-7dc5-8321-76c8b7ef1b8c@huawei.com>
-References: <20240909074124.964907-1-ruanjinjie@huawei.com>
- <20240909074124.964907-2-ruanjinjie@huawei.com>
- <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
- <f2c219c8-0765-6942-8495-b5acf3756fb1@huawei.com> <875xr3btou.ffs@tglx>
- <1cae2765-65cc-7dc5-8321-76c8b7ef1b8c@huawei.com>
-Date: Tue, 10 Sep 2024 17:48:02 +0200
-Message-ID: <87r09ra4st.ffs@tglx>
+	s=arc-20240116; t=1725982742; c=relaxed/simple;
+	bh=YRf1kntM3OQ/bV0snIFQ6PnuTop0YlcgFHTlaiqRqaA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sUByT7vvosuxa+0FbxXJTaB0S5KYV7GlOqP1aoFn5R0XucPkVVFvT7YI9CKa5s82+/9VDaXr6t8pQ0GENumMKQxBS77zaULUBlgPUhKuyca1Hsij4R0zcj2LRtDlHbW1m95ruf/dxi7TyokYq/t2rzHoLwQLaVY7eY/CtZgeMps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X37Cc55Xjz69SX;
+	Tue, 10 Sep 2024 23:38:52 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06BD0180AE6;
+	Tue, 10 Sep 2024 23:38:58 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
+ (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 10 Sep
+ 2024 23:38:57 +0800
+From: Li Zetao <lizetao1@huawei.com>
+To: <hverkuil-cisco@xs4all.nl>, <mchehab@kernel.org>,
+	<gregkh@linuxfoundation.org>, <ricardo@marliere.net>, <ruanjinjie@huawei.com>
+CC: <lizetao1@huawei.com>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next v3 1/2] media: cec: remove redundant null pointer checks in cec_devnode_init()
+Date: Tue, 10 Sep 2024 23:48:02 +0800
+Message-ID: <20240910154803.736951-1-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-On Tue, Sep 10 2024 at 20:30, Jinjie Ruan wrote:
-> On 2024/9/10 20:05, Thomas Gleixner wrote:
->> Can you please stop this handwaving and provide proper technical
->> arguments?
->> 
->> Why would PTP have less strict requirements than settimeofday()?
->
-> I checked all the PTP driver, most of them use timespec64_to_ns()
-> convert them to ns which already have a check, but the others not check
-> them, and lan743x_ptp check them differently and more, so i think this
-> is a minimum check.
+Since the debugfs_create_dir() never returns a null pointer, checking
+the return value for a null pointer is redundant. Remove this check
+since debugfs_create_file can handle IS_ERR pointers. At the same time,
+debugfs_create_dir returns ERR_PTR (-ENODEV) by default when
+CONFIG_DEBUG_FS=N, so there is no need for CONFIG_DEBUG_FS macro
+isolation.
 
-It does not matter at all what the PTP drivers do. What matters is what
-is correct and what not.
+Signed-off-by: Li Zetao <lizetao1@huawei.com>
+---
+v2 -> v3: Drop the null pointer check for top_cec_dir
+v2: https://lore.kernel.org/all/20240907034400.3693797-1-lizetao1@huawei.com/
+v1 -> v2: Remove this check since debugfs_create_file can handle IS_ERR
+pointers. And drop the ifdef CONFIG_DEBUG_FS statement.
+v1: https://lore.kernel.org/all/20240903143607.2004802-1-lizetao1@huawei.com/
 
-What they do is actually wrong as they simply cut off an overly large
-value instead of rejecting it in the first place. That's not a check at
-all.
+ drivers/media/cec/core/cec-core.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-The cutoff in timespec64_to_ns() is there to saturate the result instead
-of running into a multiplication overflow. That's correct for some use
-cases, but not a replacement for an actual useful range check.
+diff --git a/drivers/media/cec/core/cec-core.c b/drivers/media/cec/core/cec-core.c
+index e0756826d629..2897283ebe72 100644
+--- a/drivers/media/cec/core/cec-core.c
++++ b/drivers/media/cec/core/cec-core.c
+@@ -374,10 +374,6 @@ int cec_register_adapter(struct cec_adapter *adap,
+ 	}
+ 
+ 	dev_set_drvdata(&adap->devnode.dev, adap);
+-#ifdef CONFIG_DEBUG_FS
+-	if (!top_cec_dir)
+-		return 0;
+-
+ 	adap->cec_dir = debugfs_create_dir(dev_name(&adap->devnode.dev),
+ 					   top_cec_dir);
+ 
+@@ -388,7 +384,6 @@ int cec_register_adapter(struct cec_adapter *adap,
+ 		return 0;
+ 	debugfs_create_file("error-inj", 0644, adap->cec_dir, adap,
+ 			    &cec_error_inj_fops);
+-#endif
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(cec_register_adapter);
+@@ -439,13 +434,7 @@ static int __init cec_devnode_init(void)
+ 		return ret;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_FS
+ 	top_cec_dir = debugfs_create_dir("cec", NULL);
+-	if (IS_ERR_OR_NULL(top_cec_dir)) {
+-		pr_warn("cec: Failed to create debugfs cec dir\n");
+-		top_cec_dir = NULL;
+-	}
+-#endif
+ 
+ 	ret = bus_register(&cec_bus_type);
+ 	if (ret < 0) {
+-- 
+2.34.1
 
-This is about correctness and correctness is not defined by what a bunch
-of drivers implement which are all a big copy & pasta orgy.
-
-Thanks,
-
-        tglx
 
