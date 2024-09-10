@@ -1,150 +1,82 @@
-Return-Path: <linux-kernel+bounces-323059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0559973719
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8D973716
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4BF287F71
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7AEE1F2488B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A9318E77F;
-	Tue, 10 Sep 2024 12:21:55 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35C919004B;
+	Tue, 10 Sep 2024 12:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="t5UBKj3k"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7F18C002;
-	Tue, 10 Sep 2024 12:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38318C002;
+	Tue, 10 Sep 2024 12:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970914; cv=none; b=Fgiwmg1LpDq2www6NdOGDWsGFBhPrPAUPDXoqo9+RaBxy0KEVgaVgPgUbnKu5J3tmD3qEJNCuHowT5P70LHmcn3xCvKFSqXim4KzrKm3R3GTQ+QlJW0CWwy7HiUMLDyxUUOQ8lLItU1C1ES3UPl6um06T4nvIP6YfOTIfST4Vo4=
+	t=1725970907; cv=none; b=kbdGjQ3lRCYRMFa60RExXbsZJxcTrRmLV+v55D+pdg5NsPfcHVolGwr6HeAVHiK5CvSHRM4huLdLNO/v2dV/G3v9RPauAmFuUHuo6LZgcj/qf0jAOQNnwLPZUGCT3UnKoeHiuvvha54yxluZox5dMDDHWpruNqqSc9yVemTvIKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970914; c=relaxed/simple;
-	bh=aWfFAIjnFqxFCQIzG6XpLXOSvr2sHf9fixe7SOEw2m0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6FoGkT/RSSU+uWAVzddQOsvfsvVuMo8GlYE5whGDS7nBs9XAo+Yyv8p6JGEs0los4VSa1cauAS2Lj1HN4hhB0TOXjo4N81tJ/7htsn4giqb4Bo5Jt7zbaxY2PBIfIIK0fgEOliMsj8n/4ujhp4e7stiDzjfHeF33sgjvCFaF3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so9948864a12.1;
-        Tue, 10 Sep 2024 05:21:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725970910; x=1726575710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jtL/PblOPvTiBziYi45g/5MNCyZDNQrsbh2MH421pI8=;
-        b=mSev5XNOkZFtOE8PumjMyAvzFR2FGNN1pzYb7miQ/ORB+tHJBFAYfss3h2IFZUt3zl
-         HXJiBVfdIhfR3RJr56S1ALiAYR7ms3EUOKYaOK7P2Tz0LQkWxrk2XdOFvjI6pXtbCWFX
-         tlTDrQg3gpTYqu0mjC1cVEmPu3OWY5KBAAhTm1AmwvsKN0M9szlPkz+Zk+ZaFeRAHl2+
-         VbqiUBXxKBSLw2GH2a4uChcxgit6VrPxr3dIGWsOPOVj2x+N7CMK9DBxWTfLJdg7Uo/O
-         Lj/FHQ8BJqwIvKiBmSSdRO0bvDh8Sl/s9tqhaUERnnz7qrSN0awQiPlz9mjzwiOlPDF2
-         4YUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY8gUMuznyUKWsbiU64PK+DUUQkCxqGefGuLNnza2P8iTfD8PFQRnLcqSwAuOZ7xXm6hf6i5dEBEbDOCPd/G4Y4t8=@vger.kernel.org, AJvYcCW3vaVcGP7PF9z+90poImNutcmWIM35mZZeQFDTeYQ6BpLGGdpmGq7xbVXzujTdj0Lbq2t83BamRfhg6lL5@vger.kernel.org, AJvYcCWkUO9pUtR4smvN8Fzye1l8xHwKXIi9oOLU7/1d1klim+p6Map/sQHMHmvx93XyLWx+HIAgbMXH9OaIaZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN+0h9hM/lTMLV4HN0dIyxtN/9pZtoIPf4nerqLIHCUwW1eIQj
-	5ASMlyv8P9QYret8SiXNdocYW1PJDNKEyWWVGJYHt7/VH72oLa96EfOHOor15DMYkg==
-X-Google-Smtp-Source: AGHT+IG2KRchwIJb1k65PNrQ1fNQ1P6NkfMRQPHMulrwsY/a+R/7o2D/sfV0vVhVrSfdwU5foT8Zzw==
-X-Received: by 2002:a17:907:72d1:b0:a8d:6372:2d38 with SMTP id a640c23a62f3a-a8ffabc1d72mr65833266b.18.1725970910095;
-        Tue, 10 Sep 2024 05:21:50 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25950a7fsm478208566b.57.2024.09.10.05.21.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3d8d3ebbdso1524395a12.0;
-        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMeESwmvwUBsMWSRREvwuZWBOsYN8FKW6DBXzmW9Ri1NW7E2+s3AfRMO5O8yASzMBKoBmPMYF9RhBusfg=@vger.kernel.org, AJvYcCX+e+vmcsQ5g2RqDyQjk6IdlCbeBoSqMci3Yq1JGnBwad+mRfl9rlwVo8oB5FczwueDHJX2YGdFbLoOwSBeljB+iVI=@vger.kernel.org, AJvYcCXze1M1aRNRLpqW3Ny2UlDmJ/1NI058taU25F+RghQGAH/lUMRubyByJDUBLsQKHp6EHZUJw/GCSL3/XMhU@vger.kernel.org
-X-Received: by 2002:a05:6402:84b:b0:5c3:ce35:d165 with SMTP id
- 4fb4d7f45d1cf-5c4015e753dmr3713449a12.12.1725970909356; Tue, 10 Sep 2024
- 05:21:49 -0700 (PDT)
+	s=arc-20240116; t=1725970907; c=relaxed/simple;
+	bh=R4bRpoZQTJGLcsSUeZLA0bqlhVZtr6NJZtd15TdSQlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1a7uVW55MmLDzPeQIwBCaEAU1odnVGd2CkNGxa2XHzd64hlG+FB/bHPYBjo9i7iD+R6HazeL5N2KK/kMrjH/BQV3jnxoagh2naqMWRY8CtVKIQ5qfL/OKRSGandUUuIEt0aiIjo+erEN9dD1a/QmnO22BGSG9GLVKUnrtnrd10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=t5UBKj3k; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Pa3y25XPS34dk9RjXuAf0B+L/pu80i0HG9hqHjOhkb8=; b=t5UBKj3kTPpIqbBl6/qD+SKh9Y
+	fswhWjaxQxTwTOEF01Hqs8pp4N2aoUDojf11IzKp7eXF/WuNE1sGsGTr/OOjQ94Ch4va3QfygpzMA
+	q5q8NmmSyiTHF47XsgoMrKPAh1/zQdU96deHAg9QrzxSAQ9qdpiT+rJGD1GdJYyamfyc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1snzsF-0076az-S2; Tue, 10 Sep 2024 14:21:35 +0200
+Date: Tue, 10 Sep 2024 14:21:35 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, jdamato@fastly.com,
+	horms@kernel.org, kalesh-anakkur.purayil@broadcom.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 net-next 03/11] net: hibmcge: Add mdio and hardware
+ configuration supported in this module
+Message-ID: <5a6f372d-31c3-482d-8925-d2a039643256@lunn.ch>
+References: <20240910075942.1270054-1-shaojijie@huawei.com>
+ <20240910075942.1270054-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909084222.3209-1-towinchenmi@gmail.com>
-In-Reply-To: <20240909084222.3209-1-towinchenmi@gmail.com>
-From: Neal Gompa <neal@gompa.dev>
-Date: Tue, 10 Sep 2024 14:21:13 +0200
-X-Gmail-Original-Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
-Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple
- A7-A11 SoCs
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	asahi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910075942.1270054-4-shaojijie@huawei.com>
 
-On Mon, Sep 9, 2024 at 10:42=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> w=
-rote:
->
-> Hi,
->
-> This series fixes issues with serial on A7-A11 SoCs. The changes do not
-> seem to affect existing M1 and up users so they can be applied
-> unconditionally.
->
-> Firstly, these SoCs require 32-bit writes on the serial port. This only
-> manifested in earlycon as reg-io-width in device tree is consulted for
-> normal serial writes.
->
-> Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
-> enable. Accessing these bits in addition to the original RXTO and RXTO
-> enable bits will allow serial rx to work correctly on those SoCs.
->
-> Changes in v4:
->   - Removed fake Reviewed-by tag added by accident... need to stop
->     making stupid mistakes that wastes everyone's time. The remaining
->     Reviewed-by is real as far as I am aware.
->
-> Changes in v3:
->   - v2 did not declare itself as v2 in subject line... resend as v3.
->
-> Changes in v2:
->   - Mention A7-A11 in the comment about changing register accesses to
->     MMIO32.
->
->   - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
->     entries for consistency.
->
-> v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towin=
-chenmi@gmail.com
-> v2: https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towi=
-nchenmi@gmail.com
-> v3: https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towin=
-chenmi@gmail.com
->
-> Nick Chan
-> ---
->
-> Nick Chan (3):
->   tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
->   tty: serial: samsung: Fix A7-A11 serial earlycon SError
->   tty: serial: samsung: Fix serial rx on Apple A7-A9
->
->  drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
->  include/linux/serial_s3c.h       | 24 ++++++++++++++----------
->  2 files changed, 30 insertions(+), 16 deletions(-)
->
->
-> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
-> --
-> 2.46.0
->
->
+On Tue, Sep 10, 2024 at 03:59:34PM +0800, Jijie Shao wrote:
+> this driver using phy through genphy device.
 
-Whole series LGTM.
+As far as i can see, there is nothing here which limits you to
+genphy. The hardware could use any PHY driver which phylib has. In
+general, we don't recommend genphy, it is just a fallback driver which
+might work, but given the complexity of modern PHYs, also might not.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+What PHY do you actually have on the board?
 
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+	Andrew
 
