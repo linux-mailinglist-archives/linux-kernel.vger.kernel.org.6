@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-322531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED58972A5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F3F972A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8EBDB237DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E3DB220CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EC717C7B1;
-	Tue, 10 Sep 2024 07:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A3C17BEAD;
+	Tue, 10 Sep 2024 07:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qhJ4Wfg3"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ao5r80kN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF261531E8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011EE13A242
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952533; cv=none; b=pkfTSYFeqFXZEm2URvz2ordeRaIw4kCTMeTg5o+sOVMb/B211GAQa9ZrqP0133WHJup4Lc9nHL7dJjSe7PNHuUoJcBk0NQirFj3Ru6Yk47JyqeO+s35j/Tlly1/6gd9pEHiaya4NBSllrVPoaHV6NQsuq1vo+aRHc4JvNQADLeI=
+	t=1725952243; cv=none; b=WgxHtxTb0EEzeipwXTHKv/i8pYsBHE68XKqh8giWVbpYwxaYgz/WBm3drYV9vjbLG9gZx6G/iDKkmzwCv2YMfGotMN0bRlv2ue8bjyuv0yEuhdRB4jxlU1ridFjpMb8a+HCNR729qA/mAHL5tFTV9LJGXH7IolDRHM4eJvvWQC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952533; c=relaxed/simple;
-	bh=kxYJb5V/LhW01DJtfOeC4SwOtPiANTCMuR0iVHpXIBI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RoNsZdYY2pAchsdN84BjjLubx9uVwdRtTcqfEdlpt1Ctzv/mFD5zfSoZchmgNaMqvMjZ3t477uPtEou8+DWcrz9R7xipn7yNaKGmW51S2EV37U0I1oMusOaih5GU/bWQcgBv3hpcegaw2XNe2P/SM7mRnxD4jofEDD1J/MAQwG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qhJ4Wfg3; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725952221; bh=s3PIMvCxMbaL2HtFJGosc8Wzz+rPn3DLimSK1Cwyaps=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=qhJ4Wfg3D4qpp+NLSoUvYtAiniVrZJcLtVDasbf0mXy8J35Qwq9hbHa0g1Rfp0oys
-	 l6krxhJki5g8KGty+x3ueajq6GKWwuK0DxNxaKatTcKy0Z3xbEhjp9AmcU9T2T8SWD
-	 JAakDRACbEk5Tlrocdc+g7Hgf6h5Ogb/8t38qHqA=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 2941C42F; Tue, 10 Sep 2024 15:10:20 +0800
-X-QQ-mid: xmsmtpt1725952220tvp1pscse
-Message-ID: <tencent_B068E96703AA4446F774176E66C1B3778305@qq.com>
-X-QQ-XMAILINFO: NhpLzBn2I3XwRIhnVD2AWmolOp+dbw01P9tkuHpZT6ENfeTNLsBV5TS6CWHdii
-	 zha/g/K9jNTvpzTksLSSvpHHO6SxQ92Nb3DoAyuwWvOmtiXjqgVQyEWY4Coe4yT9Kx6OrHWwM0zx
-	 pQ7YQMDoGqc+BtbdIGOFayrPHq7etxDRZJxdQ8ql/RvKFGu1q+uml6M8I/8QZm7SnWnXoeLOvDJI
-	 IK0Nwoko1Kvbx2gQ04JniiAnMe1RrCgwLbDIHNNavKdiyyOFi/64pevlioOInsPG/AVYI9ws81Bs
-	 A3MGi7C8Ak8YGqzNwVBNswWfCfFOykUJqDoh3MOpmtmJXLU8nub2XRUaVz4jCF5bSyN06jE6qvmN
-	 ZApwL+arYhRiZkFq4fvzxBNTvwLlDq4wqRd9cp7Mm0K7YhrMysV0R/0U4JEPhPTxWm1cyOWImiKo
-	 w0ZY0CZJU+SvRvZjHhbBJghARaeJN/4t3PBJQKyh/K7DIjfsnmRRqNsAyW3y6pH6+/MRhbISzfq/
-	 FKbsyOrqb5szyVV+39Y9k+1LsJiNCgsvZU3ZGpEkOu1tzIhoa/xZHPqmljbMcBX4PbYKgd3LR+Da
-	 iI84v8kyUGeN+k/Na8mDoee0SbOTZelY7Fctdz6J0RjWMTrTYJgBo6bLEeGcBvDPeUaoZH+6Bzrv
-	 mY/HYD7G+VihbwZfOVS2b5JYZepsCmlSOZbDi6X6ZvPLFgyMbh9HMmEhh0g+f1nwC8cPkXsc+VTO
-	 FX4qZManXrLJLJysZhHw/Rrz4N8gdGVL2MUWB0zhBGzebfPgupeIA31cCg+/j1D4NPvcYPamRRjN
-	 dsy8MjBEcoY3gYUvfFWjyFr5lM38Z9Zj4Pk1LC1zM5iEG5j9Nd9yoKrypJyk1xFl+2byjJDWxpYJ
-	 PNVPRrcn48XAW0X185S/8PO8KIsCsrbJMoGezVuTeG/BNFwM6bMaEh+iyMpPYlmD1rPQLHcqEM
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
-Date: Tue, 10 Sep 2024 15:10:20 +0800
-X-OQ-MSGID: <20240910071019.2465755-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <000000000000b341bb062136d2d9@google.com>
-References: <000000000000b341bb062136d2d9@google.com>
+	s=arc-20240116; t=1725952243; c=relaxed/simple;
+	bh=MkOtBOQnMs1e06jSuyL968m4mS9FLeaQjXti00ia8mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujhMS53nNqRIX8t33CnvTN7rZVIv0xNRBUx3QKirpw14jqlCO/mDctmq7sOsLm0VGROojC7HfcOULvot1hD5y6sYAYfmdTSTwnhb9dlsx4XD36XrV16QyDzXw8Et1maOf/qpIFTIeO+b31V0fkMNXvUUAPQFT8JtzHGxFwWy0os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ao5r80kN; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725952242; x=1757488242;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MkOtBOQnMs1e06jSuyL968m4mS9FLeaQjXti00ia8mc=;
+  b=Ao5r80kNTZMtChzKwpn3RANaC4KuaLDIlG0Dq5UvCSxqoVAHhgsdtUCD
+   efXzSCKy17s4mTYybtX8eZZHvCbIY4SnqYFB/E/AdmpBZZq3hahL0Z7TR
+   22a0GEEcOLg6uMa1S1KQt8uuk0QBwr2AQwC/G5pPZW6Olqqn/V4M3rYmr
+   JVtqT1F3J3J+2Wu1j0GGeeLnmnNUCOomJeuIUuBZ1cc07Rya5rJajXhaD
+   7InnsT7vRj8VWKOuzrBblZ+l2+hoocayopctAvkL2cHQqoiGbeBO0HG0V
+   YGaAgGvW6dR1X6Q8u+CpcSIMuGVtSWkwP+HU6TdmvP+HLC0b2xCKkEGRT
+   A==;
+X-CSE-ConnectionGUID: H3Q1dABtQzmzSovlZa2xig==
+X-CSE-MsgGUID: MSUKNIRkRvOv4Q/QWdP50w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28572351"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="28572351"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:10:40 -0700
+X-CSE-ConnectionGUID: y2e6k847SWixdZsMvmlBag==
+X-CSE-MsgGUID: MXD+wGr2SbeA0OPYWxBb1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="97639144"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.15])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:10:38 -0700
+Date: Tue, 10 Sep 2024 10:10:31 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Yu Liao <liaoyu15@huawei.com>, liwei391@huawei.com, rostedt@goodmis.org,
+	john.ogness@linutronix.de, senozhatsky@chromium.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] printk: Export
+ match_devname_and_update_preferred_console()
+Message-ID: <Zt_w5x4Z-jSillvr@tlindgre-MOBL1>
+References: <20240909075652.747370-1-liaoyu15@huawei.com>
+ <Zt6xFlLyBgLhIlDU@tlindgre-MOBL1>
+ <Zt7UXNZC1UR2t1OJ@tlindgre-MOBL1>
+ <Zt_qIssr_jukJ4ey@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt_qIssr_jukJ4ey@pathway.suse.cz>
 
-entry need to be protected by pm.lock.
+On Tue, Sep 10, 2024 at 08:41:38AM +0200, Petr Mladek wrote:
+> On Mon 2024-09-09 13:56:28, Tony Lindgren wrote:
+> > On Mon, Sep 09, 2024 at 11:25:58AM +0300, Tony Lindgren wrote:
+> > > On Mon, Sep 09, 2024 at 03:56:52PM +0800, Yu Liao wrote:
+> > > > When building serial_base as a module, modpost fails with the following
+> > > > error message:
+> > > > 
+> > > >   ERROR: modpost: "match_devname_and_update_preferred_console"
+> > > >   [drivers/tty/serial/serial_base.ko] undefined!
+> > > > 
+> > > > Export the symbol to allow using it from modules.
+> > > 
+> > > I think the issue is with CONFIG_PRINTK is no set, and serial drivers
+> > > select SERIAL_CORE_CONSOLE? And when serial_base is a module, there is
+> > > no kernel console.
+> > > 
+> > > I replied earlier today to the lkp error report along those lines, but
+> > > please let me know if there is more to the issue than that.
+> > 
+> > Sorry I gave wrong information above. The issue can be hit also with
+> > CONFIG_PRINTK=y and serial_base as a loadable module.
+> 
+> Yes, this is my understanding. The problem has happened when serial_base
+> was built as a module. So exporting the symbol looks like the right fix.
 
-#syz test
+Yes agreed.
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 3e4ad801786f..b09268fc7fc9 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -329,17 +329,28 @@ struct mptcp_pm_add_entry *
- mptcp_pm_del_add_timer(struct mptcp_sock *msk,
- 		       const struct mptcp_addr_info *addr, bool check_id)
- {
--	struct mptcp_pm_add_entry *entry;
- 	struct sock *sk = (struct sock *)msk;
-+	struct timer_list *add_timer = NULL;
-+	struct mptcp_pm_add_entry *entry;
- 
- 	spin_lock_bh(&msk->pm.lock);
- 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
--	if (entry && (!check_id || entry->addr.id == addr->id))
-+	if (entry && (!check_id || entry->addr.id == addr->id)) {
- 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
-+		add_timer = &entry->add_timer;
-+	}
- 	spin_unlock_bh(&msk->pm.lock);
- 
--	if (entry && (!check_id || entry->addr.id == addr->id))
--		sk_stop_timer_sync(sk, &entry->add_timer);
-+	/* no lock, because sk_stop_timer_sync() is calling del_timer_sync() */
-+	if (add_timer)
-+		sk_stop_timer_sync(sk, add_timer);
-+
-+	spin_lock_bh(&msk->pm.lock);
-+	if (!check_id) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+	}
-+	spin_unlock_bh(&msk->pm.lock);
- 
- 	return entry;
- }
-@@ -1426,16 +1437,7 @@ int mptcp_pm_nl_get_flags_and_ifindex_by_id(struct mptcp_sock *msk, unsigned int
- static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
- 				      const struct mptcp_addr_info *addr)
- {
--	struct mptcp_pm_add_entry *entry;
--
--	entry = mptcp_pm_del_add_timer(msk, addr, false);
--	if (entry) {
--		list_del(&entry->list);
--		kfree(entry);
--		return true;
--	}
--
--	return false;
-+	return mptcp_pm_del_add_timer(msk, addr, false) != NULL;
- }
- 
- static bool mptcp_pm_remove_anno_addr(struct mptcp_sock *msk,
--- 
-2.43.0
+And, Yu, thanks for fixing the issue!
 
+Regards,
+
+Tony
 
