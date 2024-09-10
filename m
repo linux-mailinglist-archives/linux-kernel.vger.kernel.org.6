@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-323596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85082973FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BB0973FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310E41F2AC21
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7FF41C2167A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846D41BFDE7;
-	Tue, 10 Sep 2024 17:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EznWeSZr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE7C1BF80D;
-	Tue, 10 Sep 2024 17:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725989028; cv=none; b=V6j1bq0JucQ+XX/phVZsUSkWwyURpky02rt89sKZAaa7N0p06z9YIqPruSlv/di1hropJibTv5gO6N/0ukeJa0Enhsr+tC8Zz0h9cEgOGcg+JGVeTaFWSAfrhUOJDgsb8MMCTS/2g6hon/AT/JQykjow+iEgg3neCYEYfqi47N4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725989028; c=relaxed/simple;
-	bh=2HpttHegFA1bFFguN7zA8hJD4HBGeNlLW2d3dWxNu3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eDF/rxsUs7mNlCHHdH6aJRbazRfqcbxayGxCkHm605GZ6ZSZ7zRi9ci/UA8bEB75DM1Mjb937iVu45ogUBh2nM3kPHNj33K+r/PDOqaZF0vOursF1wOglWz7GvjEA+rgY8YiOBytx5PfP/Paufuc5Dvra9W/t4hq9aKiVXcQov0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EznWeSZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B616BC4CECE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB551BF338;
 	Tue, 10 Sep 2024 17:23:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725989028;
-	bh=2HpttHegFA1bFFguN7zA8hJD4HBGeNlLW2d3dWxNu3Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EznWeSZrAG8me+2EPEvTxrjmF88CL0JWmuenYOV7TtVFf4SH8DHPusMnn5tr5jIkS
-	 0bHKrYQ8CypL6ywxZwvAjFq/6+4RFB+4JhhOaxw46Qh0IhFxxQEkg5jEMBr8oALMo+
-	 uh/wQdc8ijo+B6a1MyvWRH73bkKp5fOKk38G/dGxhZWZCtXCrhxWDQKVeZODcOfA2u
-	 hMJZ4KWI9HM2XCLxpuKLWIqlgK76XO0lSbKj/FJgs3ytYR9zdBlTydgmr8n1Oq2eqR
-	 VBPfT68iJP/kVn6QNqQxRh+YUdqD0wCg6GUsIG3TXlZuSUoqGVtEkfPJsmlyO26Gj0
-	 UsIIiaXVbWCKA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Paulo Alcantara <pc@manguebit.com>,
-	Rickard Andersson <rickaran@axis.com>,
-	Steve French <stfrench@microsoft.com>,
-	Sasha Levin <sashal@kernel.org>,
-	sfrench@samba.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 6.1 8/8] smb: client: fix hang in wait_for_response() for negproto
-Date: Tue, 10 Sep 2024 13:23:28 -0400
-Message-ID: <20240910172332.2416254-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240910172332.2416254-1-sashal@kernel.org>
-References: <20240910172332.2416254-1-sashal@kernel.org>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c3XADfnQ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456091BF304
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725989027; cv=none; b=YuAPmfUD9WE3y/zAgxBopq/OkLTX/JApLE1cFQxLUSJuPqCaQwA9wg7kmsX3lD3eOHEWXbzJQaPL+2YZPpR5PDeqLB7rH7OolDegLTqmgqmBCR1DL16Jmk4V1KKU8KvhO7dl3ExRdnOenxyWmDa/ZC/cDPXBJW9xaD4RwjLArEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725989027; c=relaxed/simple;
+	bh=cwljm74luVO5e4l1ekmKrtc1UWVIFq8KDx2FNieUIok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=toLxkTa7fEfbrv+cRtkFs3q2OL0hN2oB/U2YcfU4rFKMebeBHu+8PWvD2vof5zip1mQJAwVVa8pM0YKrIe/Wj+DrmNkftKJPw/Uo+D64ldbQ86P8OjSfvmuVEbdqapj7AUPTvPeO9Ufq62WARSdCIvHE+MbHKaoNYqbvk0n4hg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c3XADfnQ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d4093722bso18734266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725989024; x=1726593824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tGgqOlCUn95hobX0YX6rcgMk2qcy9JjHjUpxhldUGPk=;
+        b=c3XADfnQGvSLwsprzznkGCXYJVISVgL24gVDqnjgJ2kb15sStA27N6zbEFqqzM6WsM
+         7MNn36Llykj0Jci2MqgOr6ddvDsmrgjjcvDlCkAPpFQ3LoX6VmLIUmGgWrRR5hQMvRKU
+         kxxDA2fqe5CekdCrcjWLj6MXF3lJVtLu157twmRLQNpAL4gq+22yOSF0ju1ZuurVmlaF
+         D2e6OhIggZPiiB7A5e7FVfbT/bKR+LHzr34NJlaqUSrGr2ZgVWzSMz2YWNW4kQYRoRx9
+         nACMLcgZLOFF84cXcGR3+VeXOBr0noWQ5aM9IDSJbPaxMjLHtEa5TcC6lt6e9e5Lln+V
+         wJNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725989024; x=1726593824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tGgqOlCUn95hobX0YX6rcgMk2qcy9JjHjUpxhldUGPk=;
+        b=VnfRQpNSbdCMsg7vmITOLf6ziFs7xGF5VkPTlj3jBux4inw4tid3Eyfti2UdeyGRon
+         Sx1nKLshyEFwKphmkWWMuatqSZ/jkCzKQhra3kpp2ZrfsXzZNIEWBWKzNH7ZVtyH3dOh
+         8oI4UG+gp99l7Pi/IuS9EgaG9j2FT8+fX0M0TNIVgi85CZ9mLc2anWb/LCIMGx16HQu8
+         RHhr+erlpGUseAgKikhuu1rYVEzFxkVzNx09eZGUAbve9GBKovwNGRbxiU0qKh69rOBS
+         QGlIekdjxZRJuFSJyipawDy/KnMMDiygrBrhDkj5HpFcNdpx2jXKp3qfinu1wE8beCtm
+         Am4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXy19UMcVTGhEwhra67/NTegw065Zcg+bayg39is54msKhqsG1tzkDuXnga0hK6hjRiYPbMJRRpZt7tI7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjZOZoVN5dqvyHLcY1xFKLBiL9Su1vmdMQlh4UYpP5KhaQSDdH
+	Rbmf7BqvPisBNKnlCs6Qp1mFgkQac+a72PTap/2p0wxQx0G6ov2CUIlW7firnhjylGWKXGEM1f8
+	SiV1pYsqgKt9FqRjLwckrz9D0nyaJjKSuctQJ3aJzdkDzkqKiTg==
+X-Google-Smtp-Source: AGHT+IF8UdrAEx9jcrmShfHoP/xocZ4z2EyxKqrKVfdtU5YG9dM3CP7WcLiNIc7Had7soIp+4AkGJwiZsoN6njgJlbM=
+X-Received: by 2002:a17:907:3682:b0:a86:a866:9e26 with SMTP id
+ a640c23a62f3a-a8ffaaa4c30mr215958766b.3.1725989022916; Tue, 10 Sep 2024
+ 10:23:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.109
-Content-Transfer-Encoding: 8bit
+References: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
+ <20240821151009.1681151-8-maxime.chevallier@bootlin.com> <CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
+ <20240910192020.5ab9cd16@fedora.home>
+In-Reply-To: <20240910192020.5ab9cd16@fedora.home>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Sep 2024 19:23:30 +0200
+Message-ID: <CANn89iKRW0WpGAh1tKqY345D8WkYCPm3Y9ym--Si42JZrQAu1g@mail.gmail.com>
+Subject: Re: [PATCH net-next v18 07/13] net: ethtool: Introduce a command to
+ list PHYs on an interface
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>, 
+	Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+	=?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>, 
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, 
+	Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Romain Gantois <romain.gantois@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Paulo Alcantara <pc@manguebit.com>
+On Tue, Sep 10, 2024 at 7:20=E2=80=AFPM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> Hello Eric,
+>
+> On Tue, 10 Sep 2024 18:41:03 +0200
+> Eric Dumazet <edumazet@google.com> wrote:
+>
+> > > +int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
+> > > +{
+> > > +       struct phy_req_info req_info =3D {};
+> > > +       struct nlattr **tb =3D info->attrs;
+> > > +       struct sk_buff *rskb;
+> > > +       void *reply_payload;
+> > > +       int reply_len;
+> > > +       int ret;
+> > > +
+> > > +       ret =3D ethnl_parse_header_dev_get(&req_info.base,
+> > > +                                        tb[ETHTOOL_A_PHY_HEADER],
+> > > +                                        genl_info_net(info), info->e=
+xtack,
+> > > +                                        true);
+> > > +       if (ret < 0)
+> > > +               return ret;
+> > > +
+> > > +       rtnl_lock();
+> > > +
+> > > +       ret =3D ethnl_phy_parse_request(&req_info.base, tb, info->ext=
+ack);
+> > > +       if (ret < 0)
+> > > +               goto err_unlock_rtnl;
+> > > +
+> > > +       /* No PHY, return early */
+> >
+> > I got a syzbot report here.
+>
+> I seem to have missed the report, sorry about that.
+>
+> >
+> > Should we fix this with :
+> >
+> > diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+> > index 560dd039c6625ac0925a0f28c14ce77cf768b6a5..4ef7c6e32d1087dc71acb46=
+7f9cd2ab8faf4dc39
+> > 100644
+> > --- a/net/ethtool/phy.c
+> > +++ b/net/ethtool/phy.c
+> > @@ -164,7 +164,7 @@ int ethnl_phy_doit(struct sk_buff *skb, struct
+> > genl_info *info)
+> >                 goto err_unlock_rtnl;
+> >
+> >         /* No PHY, return early */
+> > -       if (!req_info.pdn->phy)
+> > +       if (!req_info.pdn)
+> >                 goto err_unlock_rtnl;
+> >
+> >         ret =3D ethnl_phy_reply_size(&req_info.base, info->extack);
+> >
+> >
+>
+> Indeed that's the correct fix. Should I send it ? ( including
+> suggested-by/reported-by )
 
-[ Upstream commit 7ccc1465465d78e6411b7bd730d06e7435802b5c ]
+Yes please, go ahead.
 
-Call cifs_reconnect() to wake up processes waiting on negotiate
-protocol to handle the case where server abruptly shut down and had no
-chance to properly close the socket.
-
-Simple reproducer:
-
-  ssh 192.168.2.100 pkill -STOP smbd
-  mount.cifs //192.168.2.100/test /mnt -o ... [never returns]
-
-Cc: Rickard Andersson <rickaran@axis.com>
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/smb/client/connect.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index 21b344762d0f..87ce71b39b77 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -673,6 +673,19 @@ allocate_buffers(struct TCP_Server_Info *server)
- static bool
- server_unresponsive(struct TCP_Server_Info *server)
- {
-+	/*
-+	 * If we're in the process of mounting a share or reconnecting a session
-+	 * and the server abruptly shut down (e.g. socket wasn't closed, packet
-+	 * had been ACK'ed but no SMB response), don't wait longer than 20s to
-+	 * negotiate protocol.
-+	 */
-+	spin_lock(&server->srv_lock);
-+	if (server->tcpStatus == CifsInNegotiate &&
-+	    time_after(jiffies, server->lstrp + 20 * HZ)) {
-+		spin_unlock(&server->srv_lock);
-+		cifs_reconnect(server, false);
-+		return true;
-+	}
- 	/*
- 	 * We need to wait 3 echo intervals to make sure we handle such
- 	 * situations right:
-@@ -684,7 +697,6 @@ server_unresponsive(struct TCP_Server_Info *server)
- 	 * 65s kernel_recvmsg times out, and we see that we haven't gotten
- 	 *     a response in >60s.
- 	 */
--	spin_lock(&server->srv_lock);
- 	if ((server->tcpStatus == CifsGood ||
- 	    server->tcpStatus == CifsNeedNegotiate) &&
- 	    (!server->ops->can_echo || server->ops->can_echo(server)) &&
--- 
-2.43.0
-
+>
+> Thanks,
+>
+> Maxime
 
