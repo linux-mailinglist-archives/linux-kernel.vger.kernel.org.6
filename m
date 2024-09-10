@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-323120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3CF97382F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CFE973839
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E6DCB2133D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09B528649C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4080018FDBD;
-	Tue, 10 Sep 2024 13:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19C1191F9F;
+	Tue, 10 Sep 2024 13:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m2jWVQz3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iFudpvHW"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FD7524B4;
-	Tue, 10 Sep 2024 13:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64643C0C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973356; cv=none; b=QG0AY5ZFXN65UDfUNfshxO+b7YtOkLclS1wvuAbQLM9Ofi26Tt0bVDYrFry1Rgpfshn1yjpNLYW5T8ysHabEhwhdmicE4GucYPTxP8q4pzKEd48Q9B/aSmE1kIJgo5y74cu7vxxKj39ugvBnKE2rGP8tNowqzBCR47ucw/Nhsw0=
+	t=1725973441; cv=none; b=He93jzgltIJoopKAqAd7TgZprr/tXkwdCqY+wKJMB/3oG+7N0JthsBpOP09qxJzw5p6lh3lNKdXy2FyqFjLGQXH7OJjFP5we9iIT5PbinvFSiYOHwQf2vnr5JjcYeUhG71PPFDZmFiCU4VEMGhLa2Eo32gSAkSltaQVYAGK7MnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973356; c=relaxed/simple;
-	bh=nOKLnXy/12xJXPE117m27o4YsYnM7APsdPBMXFqYyfc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BuszK4t9Abadcn5wWhzA2Vr+/eSrb4V7IWymMq5GaysTeJqbA1kOnNuIYmnoYQbrpOUiAx/EhPdQZxHGIk4MdaANzShnge9Y6W87WkwNlzH4Dq/XorYZMWuuFI9n2WK+DHDvz/3efzRKN8yRpzmjxbLHU7eaOOP+STeodAwejRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m2jWVQz3; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725973355; x=1757509355;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=nOKLnXy/12xJXPE117m27o4YsYnM7APsdPBMXFqYyfc=;
-  b=m2jWVQz3NyWdfyzH9cirxDTnk7jGVyDGPYzwnNx4dJ+m2qaDCsEQfr9Q
-   cDHAWsbScH9G0XZ8DYfdFSEYzDRSphiANRV50ZLcATKgV1IpuAJnCXwfy
-   5RAn9qMsDW4eokFp4Dfv9ev0mMobtuoHhGh+P7mluheadVY0xip2jjWSM
-   Hv2Z6VufYWDfpBnf8h6VgD1T6sj1ju95/gQk3QIBcd1pCguKi1TJareN4
-   s6zXZvzEX96kiJIUn5hCNwfBr0D+FuHgGWXARQn2PUVrnCHPw0gtjNBr7
-   MwGU0F1XrBA5jtJABE85Vo606AsDCTwlEEsFQy4Tw7gkETiuGTWE5al4E
-   g==;
-X-CSE-ConnectionGUID: ey/9bT8ITzmtfQ63Nnj7FA==
-X-CSE-MsgGUID: qQJYC2TKSLCFzDDdM6jIoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24875798"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="24875798"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:02:34 -0700
-X-CSE-ConnectionGUID: p6uZ63ssRYC6RLYXfUtKeA==
-X-CSE-MsgGUID: TCV1IGEEQ7KFYH0evY94gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="67070218"
-Received: from maurocar-mobl2.ger.corp.intel.com (HELO [10.245.245.155]) ([10.245.245.155])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:02:32 -0700
-Message-ID: <febaa630-7bf4-4bb8-8bcf-a185f1b2ed65@linux.intel.com>
-Date: Tue, 10 Sep 2024 16:02:29 +0300
+	s=arc-20240116; t=1725973441; c=relaxed/simple;
+	bh=x1o0G2D/DnKp2GiG1HSvTPWfErDt/cPj5ZiIWZe9ToM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DuaqRadmTbGiHjxXVvaiUx6WbCYfGY9j38GXlqdcKhJTN2X3J1iIPeqYaWuG1qBglLFLa+9HiatAjLHJc5dsXF+wWVaf254bVMXP6D5VpskhYq3tU5L6SwSh/lIh2jpLAOwEsMQQXMdxjaI3ApyG7ZttDzLrnmRsE3ITbZhhzRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iFudpvHW; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=hw457d576rdmvabsgqk6my4jny.protonmail; t=1725973436; x=1726232636;
+	bh=QL/xny+7YZ+HuSdSBDWfILutCZ1cQLnIIC+OF84XN2U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=iFudpvHWDUScSVTix+YcNVhOyw09PRzCHdSiyV7hMLU1erXMdLwPZvxTT2YVSB7Ox
+	 GJ9cR68zOWbmrJLfx4CgpcDnxBoe2TAmAMAt+TgKAj2aUD0oDrAZtr2eiZ/BJP4ezh
+	 7x49q374LYEY820SLi80fvRDKUw0Ze/PP8NoH86SzWqWMTfQwV/WeJFlMj0D5jWyWS
+	 jNIqRmblXxHBZ5wRfRc95xrIQESyitdZpiNpRak9wbOSLxwJUBS/8il6RACtjZ0MyR
+	 29DC9rE4D3pY45jGuV5SRFq1B2uAbIcZ9Q/UwtUcEuUGrUDhlsh9TfR9NorO/PJp0l
+	 ownJjUGQNCAMg==
+Date: Tue, 10 Sep 2024 13:03:48 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
+Message-ID: <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
+In-Reply-To: <Ztb5arBBX2LsrFKo@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-2-dakr@kernel.org> <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me> <ZtDuf0QGfhiy5X_I@pollux.localdomain> <44b80095-8b03-4558-967e-138ea712f780@proton.me> <Ztb5arBBX2LsrFKo@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 529a7b2793b9f2585f48e36eb06cf94ffed7918e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH stable-6.10 regression] Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-To: vkoul@kernel.org, yung-chuan.liao@linux.intel.com,
- pierre-louis.bossart@linux.intel.com, krzysztof.kozlowski@linaro.org
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, gregkh@linuxfoundation.org
-References: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 03.09.24 13:56, Danilo Krummrich wrote:
+> On Fri, Aug 30, 2024 at 01:06:00PM +0000, Benno Lossin wrote:
+>> On 29.08.24 23:56, Danilo Krummrich wrote:
+>>> On Thu, Aug 29, 2024 at 06:19:09PM +0000, Benno Lossin wrote:
+>>>> On 16.08.24 02:10, Danilo Krummrich wrote:
+>>>>> Add a kernel specific `Allocator` trait, that in contrast to the one =
+in
+>>>>> Rust's core library doesn't require unstable features and supports GF=
+P
+>>>>> flags.
+>>>>>
+>>>>> Subsequent patches add the following trait implementors: `Kmalloc`,
+>>>>> `Vmalloc` and `KVmalloc`.
+>>>>>
+>>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>>>>
+>>>> We discussed this in our weekly meeting (I think ~one week ago?). If y=
+ou
+>>>> give me a draft version of the comment that you plan to add regarding
+>>>> the `old_layout` parameter, I can see if I am happy with it. If I am, =
+I
+>>>> would give you my RB.
+>>>
+>>> May I propose you let me know what you would like to see covered, rathe=
+r than
+>>> me trying to guess it. :-)
+>>
+>> I was hoping that we put that in our meeting notes, but I failed to find
+>> them... I would put this in a normal comment, so it doesn't show up in t=
+he
+>> documentation. Preface it like implementation decision/detail:
+>> - Why do `Allocator::{realloc,free}` not have an `old_layout` parameter
+>>   like in the stdlib? (the reasons you had for that decision, like we
+>>   don't need it etc.)
+>=20
+> Ok.
+>=20
+>> - Then something along the lines of "Note that no technical reason is
+>>   listed above, so if you need/want to implement an allocator taking
+>>   advantage of that, you can change it"
+>=20
+> I don't really want to set the conditions for this to change in the
+> documentation. It really depends on whether it's actually needed or the
+> advantage of having it is huge enough to leave the core kernel allocators=
+ with
+> unused arguments.
+>=20
+> This can really only be properly evaluated case by case in a discussion.
 
-On 10/09/2024 15:40, Peter Ujfalusi wrote:
-> The prop->src_dpn_prop and prop.sink_dpn_prop is allocated for the _number_
-> of ports and it is forced as 0 index based.
-> 
-> The original code was correct while the change to walk the bits and use
-> their position as index into the arrays is not correct.
-> 
-> For exmple we can have the prop.source_ports=0x2, which means we have one
-> port, but the prop.src_dpn_prop[1] is accessing outside of the allocated
-> memory.
-> 
-> This reverts commit 6fa78e9c41471fe43052cd6feba6eae1b0277ae3.
+Agreed, but I don't want people to think that we have a reason against
+doing it in the future. Do you have an idea how to convey this?
 
-I just noticed that Krzysztof already sent the revert patch but it is
-not picked up for stable-6.10.y
+---
+Cheers,
+Benno
 
-https://lore.kernel.org/lkml/20240909164746.136629-1-krzysztof.kozlowski@linaro.org/
-
-> 
-> Cc: stable@vger.kernel.org # 6.10.y
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-> ---
-> Hi,
-> 
-> The reverted patch causes major regression on soundwire causing all audio
-> to fail.
-> Interestingly the patch is only in 6.10.8 and 6.10.9, not in mainline or linux-next.
-> 
-> soundwire sdw-master-0-1: Program transport params failed: -22
-> soundwire sdw-master-0-1: Program params failed: -22
-> SDW1-Playback: ASoC: error at snd_soc_link_prepare on SDW1-Playback: -22
-> 
-> Regards,
-> Peter 
-> 
->  drivers/soundwire/stream.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> index 00191b1d2260..4e9e7d2a942d 100644
-> --- a/drivers/soundwire/stream.c
-> +++ b/drivers/soundwire/stream.c
-> @@ -1286,18 +1286,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
->  					    unsigned int port_num)
->  {
->  	struct sdw_dpn_prop *dpn_prop;
-> -	unsigned long mask;
-> +	u8 num_ports;
->  	int i;
->  
->  	if (direction == SDW_DATA_DIR_TX) {
-> -		mask = slave->prop.source_ports;
-> +		num_ports = hweight32(slave->prop.source_ports);
->  		dpn_prop = slave->prop.src_dpn_prop;
->  	} else {
-> -		mask = slave->prop.sink_ports;
-> +		num_ports = hweight32(slave->prop.sink_ports);
->  		dpn_prop = slave->prop.sink_dpn_prop;
->  	}
->  
-> -	for_each_set_bit(i, &mask, 32) {
-> +	for (i = 0; i < num_ports; i++) {
->  		if (dpn_prop[i].num == port_num)
->  			return &dpn_prop[i];
->  	}
-
--- 
-Péter
 
