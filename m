@@ -1,155 +1,177 @@
-Return-Path: <linux-kernel+bounces-322836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B0F973018
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE334973040
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863D9284F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:57:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B191C24222
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F5418C02F;
-	Tue, 10 Sep 2024 09:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A7318C000;
+	Tue, 10 Sep 2024 09:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoF37BDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dwWsWYAW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BAE14D431;
-	Tue, 10 Sep 2024 09:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6A8188CB3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962246; cv=none; b=ocUNv3kw3WSEsalvSMFhl+7XBsv+pRq0DxG6G6q6zAHAT6trrAE/JlQC1zLoTAlJ3ukUEMCqtecc8yRkfy5s3SGt7Rhb6des08DNIC15dzTuRXMKdfEefWPVNi6yf7JcqtqssMCo1+BwhMAtoB66Z8S9tN7u7vIfw34HVGQfoM8=
+	t=1725962345; cv=none; b=he3Dy1THtd4jSJ5QiG6ujZTqMSOzEL451ruSnFDSEwVnxd4oaqIT/8QapjkJzNYJmjtK82bhL4KjmxauxVlg8CKkmZiUFxHcgRhO/Zio9eLqty6EA6K54gvXTxKiS3WBwyAaSLnIW2JruC9REC6ZbHKghhKSt5dErksvREoWlPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962246; c=relaxed/simple;
-	bh=/uYJCno5GCPMxaVDq+V1GmZ4Wfep91o4OGTMPJMCNn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6c2+/bqJfKtM5sZnOc1Ef8CgcablIJaKTiKz6Ly1tHGR7rlyCW8LzVZClw9kKHgzOWdYml7mqFeNAkz2RBaFTbmnWdwXq6WnTCtct0WdGVt4Jo+RvYMpgjicCDHZylHjRJZ+xiIidb3ecWobszpgjEu23j0wUbYMvvyeFGSQnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoF37BDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA6EC4CEC3;
-	Tue, 10 Sep 2024 09:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725962245;
-	bh=/uYJCno5GCPMxaVDq+V1GmZ4Wfep91o4OGTMPJMCNn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZoF37BDNzQ1PsB5Du4gHWsC9KkLecyxnxdXyAsith81gwqWSldgkYVP1W5RlLLPVS
-	 EYkcgglhgw1Z375zWGCwJUfLfiPnNUY9XpXhoaXpBjvuCxV+Qs8qGffgQGTemTxeEz
-	 LVBnwHO1XQH5YKc2ai/NI+nAeQDaoGPXtg6oR9gzgCoucx2F7AAPh2/EHkcWvmpVMc
-	 VTrfTIMMMUD0x2fwG56t1JgQckBFYWcZHAPWw6loORtePusr0Dvv5mPoKq4oImeoFi
-	 sAYacWVutcP3w9bdxofeN7BIZq55QWIhmAL/sFcr7NDpXojDbxZ9c1mQSlFppD/xUE
-	 WhQT/ayYPY+rA==
-Date: Tue, 10 Sep 2024 10:57:18 +0100
-From: Will Deacon <will@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com,
-	shahuang@redhat.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v10 2/5] arm64: ptdump: Expose the attribute parsing
- functionality
-Message-ID: <20240910095718.GB20813@willie-the-truck>
-References: <20240909124721.1672199-1-sebastianene@google.com>
- <20240909124721.1672199-3-sebastianene@google.com>
+	s=arc-20240116; t=1725962345; c=relaxed/simple;
+	bh=bQLe2pUIEEyUZE+/EAglMsUr+F12sN/BLUBijDrXSac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Edm8PuLhPW51UhCtboq1nSTm9bvkuZoUVhcA5QVQ8mfieJZt/y+aYpa8hWXrOXXbwVpisCxPhFgafFgdQaGNmY5jQk2JPuoaeIat1auWIlb4X9kQiEbf5Po2PcsmqpxBwkkWDr9DIVxHxZog1+zurs2mnI2rDLTgBaJki8H7qXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dwWsWYAW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725962342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jiUkwL8jiwz5bb5LLszsrQRqvrS9SIKe3P1nTjcI9RU=;
+	b=dwWsWYAWI/uWKosgUnEVQj3alAgbhDX8IzmuB/v7r4TuiF9tZaQXwUkrlfOfL1C6N1t5H4
+	GsCHCa/o7ldPtApcIbMHzwyooOO6OrXSOCux99ZTDSvuF46vwsb9i+zYKNqYpobLGGWX6f
+	1b9JMEO7mjwZk8jle4DOmYdhLFk8VPQ=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-169-w56vGDLjNeisjoNAllrTrQ-1; Tue, 10 Sep 2024 05:59:01 -0400
+X-MC-Unique: w56vGDLjNeisjoNAllrTrQ-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a877c1d22so253861866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:59:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725962340; x=1726567140;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiUkwL8jiwz5bb5LLszsrQRqvrS9SIKe3P1nTjcI9RU=;
+        b=EVcWLMur00zefPcWs28cI/E4sa3mMK44uWRVqm8rZWrDSroSpyCPViijccbpizqTA8
+         DJz8bqN8py4t2TKSlmvAgspo2+BA7nBCkjJnctwqVjuRwmgQDxPMcrDPZmjMdITJTiM5
+         PKJoZEa06fPYFdddo2TLr7204JsyZSG6ihZqEUfiQy71kA4NcaenBj7UlcjxVCrtkWee
+         rKHdcOHxQyTNpnTdd5ZHRPdna9m6J1uoAFThXH1jfiDjQ36+WSc2rYn6XgN/NsZZ6RaU
+         CQOyVTWA+BF+k6/Gu4BjZTKJuLXMjrtCOBFbblkT5tokzX4oesQfYg89arTfAdAMEj2E
+         OGTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaQ+2VfiOsH3/iN1ZokX8Pi1UKaKV/zfatvE2/ZIp3sw7Uruu02XTS0W81aM4rH/bhZfLA2RjZ6Smofqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZGdzO8f9dIQIoki/rMjzgAKEOv/E126NPKfc1gIJxTJEEsPyX
+	hIxTjRzexT9McUKJVvLZgqUnUfn9owejLcdG6DzSzWeHKG90nPlfF9nEGqcapkqCJXQpxhioSCD
+	3BezwcQBu2RfdfWeZsTfjQ6V7taxii6eQTqCEmXS7jPjcecZzcOgKi2x720Jl2Q==
+X-Received: by 2002:a17:907:268e:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a8ffadf3c37mr21982766b.47.1725962339866;
+        Tue, 10 Sep 2024 02:58:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IERbuGqTbebYxtwPp+Ofxmyy5JzHR+T4dmVYSq8mepeZfuhvqFtrdMXLyJgC2KYWCtRG3tCIA==
+X-Received: by 2002:a17:907:268e:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a8ffadf3c37mr21979466b.47.1725962339290;
+        Tue, 10 Sep 2024 02:58:59 -0700 (PDT)
+Received: from [192.168.88.27] (146-241-69-130.dyn.eolo.it. [146.241.69.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25830efdsm459314066b.41.2024.09.10.02.58.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 02:58:58 -0700 (PDT)
+Message-ID: <ff23bcb5-d2e8-4b1b-a669-feab4a97994a@redhat.com>
+Date: Tue, 10 Sep 2024 11:58:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909124721.1672199-3-sebastianene@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 net] usbnet: fix cyclical race on disconnect with work
+ queue
+To: Oliver Neukum <oneukum@suse.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240905134811.35963-1-oneukum@suse.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240905134811.35963-1-oneukum@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 09, 2024 at 12:47:18PM +0000, Sebastian Ene wrote:
-> Reuse the descriptor parsing functionality to keep the same output format
-> as the original ptdump code. In order for this to happen, move the state
-> tracking objects into a common header.
+
+
+On 9/5/24 15:46, Oliver Neukum wrote:
+> The work can submit URBs and the URBs can schedule the work.
+> This cycle needs to be broken, when a device is to be stopped.
+> Use a flag to do so.
+> This is a design issue as old as the driver.
 > 
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> Signed-off-by: Oliver Neukum <oneukum@suse.com>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> CC: stable@vger.kernel.org
 > ---
->  arch/arm64/include/asm/ptdump.h | 41 +++++++++++++++++++++++-
->  arch/arm64/mm/ptdump.c          | 55 +++++++--------------------------
->  2 files changed, 51 insertions(+), 45 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-> index 5b1701c76d1c..bd5d3ee3e8dc 100644
-> --- a/arch/arm64/include/asm/ptdump.h
-> +++ b/arch/arm64/include/asm/ptdump.h
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/mm_types.h>
->  #include <linux/seq_file.h>
-> +#include <linux/ptdump.h>
->  
->  struct addr_marker {
->  	unsigned long start_address;
-> @@ -21,14 +22,52 @@ struct ptdump_info {
->  	unsigned long			base_addr;
->  };
->  
-> +struct ptdump_prot_bits {
-> +	u64		mask;
-> +	u64		val;
-> +	const char	*set;
-> +	const char	*clear;
-> +};
+> v2: fix PM reference issue
+> 
+>   drivers/net/usb/usbnet.c   | 37 ++++++++++++++++++++++++++++---------
+>   include/linux/usb/usbnet.h | 17 +++++++++++++++++
+>   2 files changed, 45 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+> index 18eb5ba436df..2506aa8c603e 100644
+> --- a/drivers/net/usb/usbnet.c
+> +++ b/drivers/net/usb/usbnet.c
+> @@ -464,10 +464,15 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
+>   void usbnet_defer_kevent (struct usbnet *dev, int work)
+>   {
+>   	set_bit (work, &dev->flags);
+> -	if (!schedule_work (&dev->kevent))
+> -		netdev_dbg(dev->net, "kevent %s may have been dropped\n", usbnet_event_names[work]);
+> -	else
+> -		netdev_dbg(dev->net, "kevent %s scheduled\n", usbnet_event_names[work]);
+> +	if (!usbnet_going_away(dev)) {
+> +		if (!schedule_work(&dev->kevent))
+> +			netdev_dbg(dev->net,
+> +				   "kevent %s may have been dropped\n",
+> +				   usbnet_event_names[work]);
+> +		else
+> +			netdev_dbg(dev->net,
+> +				   "kevent %s scheduled\n", usbnet_event_names[work]);
+> +	}
+>   }
+>   EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
+>   
+> @@ -535,7 +540,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
+>   			tasklet_schedule (&dev->bh);
+>   			break;
+>   		case 0:
+> -			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+> +			if (!usbnet_going_away(dev))
+> +				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+>   		}
+>   	} else {
+>   		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
+> @@ -843,9 +849,18 @@ int usbnet_stop (struct net_device *net)
+>   
+>   	/* deferred work (timer, softirq, task) must also stop */
+>   	dev->flags = 0;
+> -	del_timer_sync (&dev->delay);
+> -	tasklet_kill (&dev->bh);
+> +	del_timer_sync(&dev->delay);
+> +	tasklet_kill(&dev->bh);
+>   	cancel_work_sync(&dev->kevent);
 > +
-> +struct ptdump_pg_level {
-> +	const struct ptdump_prot_bits *bits;
-> +	char name[4];
-> +	int num;
-> +	u64 mask;
-> +};
-> +
-> +/*
-> + * The page dumper groups page table entries of the same type into a single
-> + * description. It uses pg_state to track the range information while
-> + * iterating over the pte entries. When the continuity is broken it then
-> + * dumps out a description of the range.
-> + */
-> +struct ptdump_pg_state {
-> +	struct ptdump_state ptdump;
-> +	struct seq_file *seq;
-> +	const struct addr_marker *marker;
-> +	const struct mm_struct *mm;
-> +	unsigned long start_address;
-> +	int level;
-> +	u64 current_prot;
-> +	bool check_wx;
-> +	unsigned long wx_pages;
-> +	unsigned long uxn_pages;
-> +};
-> +
->  void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
-> +void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
-> +	       u64 val);
->  #ifdef CONFIG_PTDUMP_DEBUGFS
->  #define EFI_RUNTIME_MAP_END	DEFAULT_MAP_WINDOW_64
->  void __init ptdump_debugfs_register(struct ptdump_info *info, const char *name);
->  #else
->  static inline void ptdump_debugfs_register(struct ptdump_info *info,
->  					   const char *name) { }
-> -#endif
-> +#endif /* CONFIG_PTDUMP_DEBUGFS */
-> +#else
-> +static inline void note_page(void *pt_st, unsigned long addr,
-> +			     int level, u64 val) { }
+> +	/* We have cyclic dependencies. Those calls are needed
+> +	 * to break a cycle. We cannot fall into the gaps because
+> +	 * we have a flag
+> +	 */
+> +	tasklet_kill(&dev->bh);
+> +	del_timer_sync(&dev->delay);
+> +	cancel_work_sync(&dev->kevent);
 
-nit: but why isn't 'pt_st' a pointer to 'struct ptdump_state'?
+I guess you do the shutdown twice because a running tasklet or timer 
+could re-schedule the others? If so, what prevent the rescheduling to 
+happen in the 2nd iteration? why can't you add usbnet_going_away() 
+checks on tasklet and timer reschedule point?
 
-Perhaps you should #include <linux/ptdump.h> before the #ifdef
-CONFIG_PTDUMP_CORE ?
+Thanks,
 
-In any case, the meat of the patch is fine:
+Paolo
 
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
 
