@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-323479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE38973DB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA5E973DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25C41C2518F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271831F2967D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D6B1A0B1A;
-	Tue, 10 Sep 2024 16:50:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1979E1A254C;
+	Tue, 10 Sep 2024 16:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1hJ1xie"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E83B1755C;
-	Tue, 10 Sep 2024 16:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE462156F2B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987033; cv=none; b=pRp/zPnV8ryJc3UUchjZ11xWilwoOicSxjRrRvGlp56bo+U/jXjEv1OKxPiKBwI5FmD8RENLtbrarzxKYZgr25/7Kft1VbxMfSjdxwQCsfezWXaaE5XS6z+KObvS/oeGoLdcS/y6nhvVURkxVeFqrAr9zQyjLubTWwzulsIM9Dw=
+	t=1725987176; cv=none; b=IK35sFdzKt1ED7dMIKyn/w03rGtd5OCP0WPu1/1r3b8FjsgSPi/FYsqVwWNSkPt1q9TfSlR6c99L3DvIBsO59wWm1dcnHfsfvrSBDBqeXNZAxY4w5zZafxNYEUQ6pov31Z7fK+5BcTrMuQkNWasG3O5nhlCp9V+7DgFx3DY8Q+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987033; c=relaxed/simple;
-	bh=wnsExEAv9F4rU9Jsc1b+G6uequLRWbDtooFkhbI7Ous=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ptBNDPkgflErDfKBxGMg4CUcCJCICsq3JiEi5x8L/vId7PwXVpK2EgXg9nWsnPQ7918CcTCVnfdXCFHfUYFPj8ZCDzrZGPK+DxoLTDgQDjvdlp+DcO+y6yL13Ck9Uk5f2NT/zmzImm574sc9Pu+DR0cECFgcgNJ0k3jcPwq8UC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3614FC4CEC3;
-	Tue, 10 Sep 2024 16:50:32 +0000 (UTC)
-Date: Tue, 10 Sep 2024 12:50:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
- function return address
-Message-ID: <20240910125033.0a3986fa@gandalf.local.home>
-In-Reply-To: <CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
-References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
-	<20240909110415.33cb5f22@gandalf.local.home>
-	<CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725987176; c=relaxed/simple;
+	bh=pmkiV0ROweHRR1xx9Sy4aOWEKgFXZ9v/XWZ9gvfmcLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0uFuF13N2UjE7Iw5ly4OfdPsqtU/sHVAyVNuvSWROuU4ncCC8I6xWG4B+CY+hhlmixvi6HOio8cqiAi6KnATpqqSmb3IAWHRXVdyl8Lwm23tr6NeMEbg5vYIwT7IU30XA+Cbl0ur4na5lToSguTwC0nJUkl/qAiFJiSjQHleIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1hJ1xie; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718d606726cso3188684b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725987174; x=1726591974; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g25Ru7xbbTB3wDSvtSavAzlRmQz6Xvdop91thyf32UM=;
+        b=d1hJ1xie6fxtkA2YLfgL/ICM3wz8RjPudW8E1QFN8k0B+RlUpZUUsyWw/u8127gKXI
+         pNxntAnDI+tCd1b22V5Sz72a9fCmbA7tB53dfACQ4uGU0uYLEMlXRHls5b6Y2mjPYzVR
+         hwGu7NP3yGqxvSUT3GYfrPj1aW7NHKfQORERA5ZT4YylW0hed8tv/xh3wNCiA1yKZj9y
+         xJs5J02zUxKH0DH9P74yIsM7EaUl6SSFkNSGW+FdpjZYmVdEZrwREMblxwYqTruSc3Ti
+         3YB/WNSIlZAA1IDR5+8UJTPHCtSOocn9y6eMETASQ9UcmExxNYcYZ/fQidYcxM5uq/91
+         SLBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725987174; x=1726591974;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g25Ru7xbbTB3wDSvtSavAzlRmQz6Xvdop91thyf32UM=;
+        b=Vqq5RUqczBx/ZaDw50eCl5v3JPvLUFSdq9K1Vw4CwGCtkah9BisxL1cQmvVarPBgGq
+         lyLV14VytUbD2Ex2MMYqV5hLaBDiRCRCCf3oG/fENDtYXS5jXPzflWEKr15Z8MEIc+gr
+         EvbfO7EbR19VDXuHWXYsdhuS414VcjkuASXvQmOdxpqE2dEG9Z0kmKcoQo4tvmE9N6Iu
+         73/6CChcBN/o+DgHHDXopX7AG+HT1LqlJ0A2AtYM7EloCB/arYVbgXsYT0GWg2TZFy8z
+         9CE+uJ1jdj82hto6S1ckXBfN8f0BkLqX9Ja85d2DFsnScbnTlEqbyn922sr8NxNcW1aA
+         C/KA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ4Y9WApGGxvXSA1T8KlM/Rdi5IIITnPRJ1izZdqmVEsJxdXNBPsAHdpGLoI5hvfwoCFqk3X7GekZFVcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVv2TrBKIV+02McxGzWkEEq1FIBhqwGvjWwItIF0adxI0OY2TW
+	x1nWwIhwYFj1LtWYe4XYMvDkwV5aWUFEy9PailfM8HmtsRbwQ/7Sk8NCC2q6lg==
+X-Google-Smtp-Source: AGHT+IGT8gCwyZvdGRQRZlzo82GU5AwgsS0cQ+zQt7rE2+MgonPozA5gcDhFM9k5t3u/0UbEHmZSnQ==
+X-Received: by 2002:a05:6a21:1707:b0:1cf:2aaa:9199 with SMTP id adf61e73a8af0-1cf5e075815mr1579531637.15.1725987173970;
+        Tue, 10 Sep 2024 09:52:53 -0700 (PDT)
+Received: from thinkpad ([120.60.128.228])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc03f5aesm8775980a91.28.2024.09.10.09.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 09:52:53 -0700 (PDT)
+Date: Tue, 10 Sep 2024 22:22:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-actions@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: actions: prevent overflow in owl_pll_recalc_rate
+Message-ID: <20240910165242.v6jcirmtbahxqggx@thinkpad>
+References: <20240910130640.20631-1-abelova@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240910130640.20631-1-abelova@astralinux.ru>
 
-On Tue, 10 Sep 2024 14:15:39 +0800
-Donglin Peng <dolinux.peng@gmail.com> wrote:
-> > >
-> > > See below logs with both funcgraph-retval and funcgraph-retaddr enabled.
-> > >
-> > > 4)               |  load_elf_binary() { /* A=bprm_execve+0x249/0x600 */  
-> >
-> > I wonder if we should make this look more like the function tracer when it
-> > shows the parent. That is:
-> >
-> >   4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x600 */  
+On Tue, Sep 10, 2024 at 04:06:40PM +0300, Anastasia Belova wrote:
+> In case of OWL S900 SoC clock driver there are cases
+> where bfreq = 24000000, shift = 0. If value read from
+> CMU_COREPLL or CMU_DDRPLL to val is big enough, an
+> overflow may occur.
 > 
-> Nice, Is it necessary to add a prefix letter for the return value? For
-> example, when
->  both funcgraph-retval and funcgraph-retaddr are enabled, like this:
+> Add explicit casting to prevent it.
 > 
->          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 V=0x0 */
-
-How about:
-
->          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 ret=0x0 */
-
-As "ret" is more obvious than "V".
-
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> >  
-> > > 4)               |    load_elf_phdrs() { /* A=load_elf_binary+0x84/0x1730 */
-> > > 4)               |      __kmalloc_noprof() { /* A=load_elf_phdrs+0x4a/0xb0 */
-> > > 4) + 47.910 us   |        __cond_resched(); /* V=0x0 A=__kmalloc_noprof+0x28c/0x390 */
-> > > 4) ! 204.142 us  |      } /* __kmalloc_noprof V=0xffff888201e32c00 */
-> > > 4)               |      kernel_read() { /* A=load_elf_phdrs+0x6c/0xb0 */
-> > > 4)               |        rw_verify_area() { /* A=kernel_read+0x2b/0x50 */
-> > > 4)               |          security_file_permission() {
-> > > 4)               |            selinux_file_permission() { /* A=security_file_permission+0x26/0x40 */
-> > > 4)               |              __inode_security_revalidate() { /* A=selinux_file_permission+0x6d/0x140 */
-> > > 4)   1.182 us    |                __cond_resched(); /* V=0x0 A=__inode_security_revalidate+0x5f/0x80 */
-> > > 4)   4.138 us    |              } /* __inode_security_revalidate V=0x0 */
-> > > 4)   1.513 us    |              avc_policy_seqno(); /* V=0x0 A=selinux_file_permission+0x107/0x140 */
-> > > 4) + 12.133 us   |            } /* selinux_file_permission V=0x0 */
-> > > 4) + 39.834 us   |          } /* security_file_permission V=0x0 */
-> > > 4) + 42.710 us   |        } /* rw_verify_area V=0x0 */
-> > >
+> Fixes: 2792c37e94c8 ("clk: actions: Add pll clock support")
+> Cc: <stable@vger.kernel.org> 
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
 
-> > > +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> > >  /* Function call entry */
-> > >  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> > >
-> > > @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> > >       F_STRUCT(
-> > >               __field_struct( struct ftrace_graph_ent,        graph_ent       )
-> > >               __field_packed( unsigned long,  graph_ent,      func            )
-> > > +             __field_packed( unsigned long,  graph_ent,      retaddr         )
-> > >               __field_packed( int,            graph_ent,      depth           )
-> > >       ),
-> > >  
-> >
-> > Let's make this a new event, so that when this option is not enabled, we
-> > don't waste the ring buffer. For function tracing, every element added to
-> > the event will add megabytes extra to the ring buffer.
-> >
-> > It should be possible to switch what event gets created at the time of the
-> > trace. Even calling different functions to do it.  
+Currently, val is limited to 8 bits max on the supported SoCs. So there won't be
+any overflow. But for the sake of correctness, I'm OK with this patch.
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/clk/actions/owl-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Sounds good, we may create a new event as follows:
+> diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+> index 155f313986b4..fa17567665ec 100644
+> --- a/drivers/clk/actions/owl-pll.c
+> +++ b/drivers/clk/actions/owl-pll.c
+> @@ -104,7 +104,7 @@ static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
+>  	val = val >> pll_hw->shift;
+>  	val &= mul_mask(pll_hw);
+>  
+> -	return pll_hw->bfreq * val;
+> +	return (unsigned long)pll_hw->bfreq * val;
+>  }
+>  
+>  static int owl_pll_is_enabled(struct clk_hw *hw)
+> -- 
+> 2.30.2
 > 
-> struct ftrace_graph_ent {
-> unsigned long func; /* Current function */
-> unsigned long retaddr;
-> int depth;
-> } __packed;
-> 
-> FTRACE_ENTRY_PACKED(funcgraph_retaddr_entry, ftrace_graph_ent_readdr_entry,
-> 
-> TRACE_GRAPH_RETADDR_ENT,
-> 
-> F_STRUCT(
-> __field_struct( struct ftrace_graph_retaddr_ent, graph_retaddr_ent )
-> __field_packed( unsigned long, graph_retaddr_ent, func )
-> __field_packed( unsigned long, graph_retaddr_ent, retaddr )
-> __field_packed( int, graph_retaddr_ent, depth )
-> ),
-> 
-> F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
 
-Why not add the ret in the printk?
-
-  F_printk("--> %ps (%d) <-%ps", (void *)__entry->func, __entry->depth, (void *)__entry->retaddr)
-
-Then user space parsing tools could use this by default, when it doesn't
-know how to parse it.
-
-> );
-> 
-> If we were to introduce another new feature such as funcgraph-args which
-> adds a `ftrace_regs` to the `ftrace_graph_ent`, would it be necessary to
-> create yet another new event?
-
-Probably yes.
-
-> 
->  In the scenario where both funcgrah-retaddr and funcgraph-args are enabled,
-> it is possible that an additional new event may also be required.
-
-Yes, that would likely be another event.
-
--- Steve
+-- 
+மணிவண்ணன் சதாசிவம்
 
