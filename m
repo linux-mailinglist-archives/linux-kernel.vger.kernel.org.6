@@ -1,241 +1,131 @@
-Return-Path: <linux-kernel+bounces-322676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9065972C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E87972C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38630B2362C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B96AA1F25061
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721A1186285;
-	Tue, 10 Sep 2024 08:31:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B401318593C;
+	Tue, 10 Sep 2024 08:32:02 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB516175D22
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C8F149E00
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725957099; cv=none; b=XYSjVqNzBHorupA9nBmXu4DT4eTxL8MEb87uG30hu3APFNQF6um3qym7zS/qA2ccmMdMVh9BQsgccMWNsONDJ3GTdFWgHGSeHqMicitp8CiQh7PjfbkFD8nKdtcs/V4FMJJNilIxFKeAUMlJ0dx59VabCJjaUxefFC3MtwYcK/4=
+	t=1725957122; cv=none; b=FXynggdIHRvN2Po3mtEH6LMpB8rrFqYDCjtyPdMVYM+w/2B2/IdTPOj+hAfanBDMDDrwtwJiBHp4pTpzaxsUm76aH9uqFivLtaj0lCuTID3PlMXwvI+GBgfDo37WHEkIaxlXhoxYy59BK9gqhtLeUGzH8TDik5JdZWAIqmYY/Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725957099; c=relaxed/simple;
-	bh=DwV2m+UVX+/4uCR9wGnXZWYetO13I6dvNsIEeR/zeZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JH9KHtH8CKyQ55aho66DN3M7lcGOwZvEnYmK7AJqHw98XMi18ri82yklleotadymKZUK8/O7ee+kh8Ej2k5roszH18TbrpWVYAbj/UhGC+71rUlo9ZOniXokhFK2y8/lw1y8i49/CTSgs1XQGjxiSvV1FgoKomp9JXO+JCXuaKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snwHe-0008GL-1X; Tue, 10 Sep 2024 10:31:34 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snwHd-006qtv-5j; Tue, 10 Sep 2024 10:31:33 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1snwHd-00HYBe-0G;
-	Tue, 10 Sep 2024 10:31:33 +0200
-Date: Tue, 10 Sep 2024 10:31:33 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Message-ID: <ZuAD5fKyKgHPFN8s@pengutronix.de>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <Zt9jFpyptX_ftH-p@pengutronix.de>
- <PA4PR04MB9638EA984DB5F2FDAEA3B873D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_8gwj6GnV_yZ1Z@pengutronix.de>
- <PA4PR04MB963850587C41FF78F4244E3AD19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1725957122; c=relaxed/simple;
+	bh=0ZC1EPimLiLr7+22kVOFzwzAt7yCsqx3Rezztt0tXQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UQnhdZS/7xWADmoYCOEhBXAcki2kvWv4F6ocy83QkAxOYNzcF3cG9z6hhk9k4cV8P4VJaqCGDOijMOpTzdJRFZd3GNKIQDkPdWquuCQdcVsZIwhzYbu1jMGzTGLJQaHpLqgmljz3UHl+nET4C+4NV50Ju0lCgaVK7yAEiCK/yJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X2xl203YTz9sPd;
+	Tue, 10 Sep 2024 10:31:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WECQOnNEitDQ; Tue, 10 Sep 2024 10:31:57 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X2xl16Dtlz9rvV;
+	Tue, 10 Sep 2024 10:31:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C2E588B770;
+	Tue, 10 Sep 2024 10:31:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WK6MAQwnSTyr; Tue, 10 Sep 2024 10:31:57 +0200 (CEST)
+Received: from [192.168.232.177] (unknown [192.168.232.177])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 574848B766;
+	Tue, 10 Sep 2024 10:31:57 +0200 (CEST)
+Message-ID: <125adbe2-453e-4b02-a7c5-25f655b431a7@csgroup.eu>
+Date: Tue, 10 Sep 2024 10:31:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB963850587C41FF78F4244E3AD19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: No rule to make target 'arch/powerpc/boot/dtbImage.ps3', needed
+ by 'arch/powerpc/boot/zImage'.
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Arnd Bergmann <arnd@arndb.de>,
+ Anders Roxell <anders.roxell@linaro.org>, naveen@kernel.org
+References: <CA+G9fYvG3Tv-Gk6f6oSTuY4=sJWMcF5oRc9Qe1otFvetysm4zw@mail.gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <CA+G9fYvG3Tv-Gk6f6oSTuY4=sJWMcF5oRc9Qe1otFvetysm4zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 08:19:59AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Tuesday, September 10, 2024 4:00 PM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> > Hsieh <tsung-hsien.hsieh@nxp.com>
-> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
-> > different channel
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Tue, Sep 10, 2024 at 01:52:02AM +0000, David Lin wrote:
-> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Sent: Tuesday, September 10, 2024 5:05 AM
-> > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
-> > > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-> > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > > running on different channel
-> > > >
-> > > > Caution: This is an external email. Please take care when clicking
-> > > > links or opening attachments. When in doubt, report the message
-> > > > using the 'Report this email' button
-> > > >
-> > > >
-> > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
-> > > > > Current firmware doesn't support AP and STA running on different
-> > > > > channels simultaneously.
-> > > > > FW crash would occur in such case.
-> > > > > This patch avoids the issue by disabling AP and STA to run on
-> > > > > different channels.
-> > > > >
-> > > > > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> > > > > ---
-> > > > >
-> > > > > v2:
-> > > > >    - clean up code.
-> > > > >
-> > > > > ---
-> > > > >  .../net/wireless/marvell/mwifiex/cfg80211.c   | 17 ++++---
-> > > > >  drivers/net/wireless/marvell/mwifiex/util.c   | 44
-> > +++++++++++++++++++
-> > > > >  drivers/net/wireless/marvell/mwifiex/util.h   | 13 ++++++
-> > > > >  3 files changed, 69 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > > b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > > index 722ead51e912..3dbcab463445 100644
-> > > > > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > > > > @@ -781,11 +781,9 @@ mwifiex_cfg80211_set_wiphy_params(struct
-> > > > > wiphy
-> > > > *wiphy, u32 changed)
-> > > > >               break;
-> > > > >
-> > > > >       case MWIFIEX_BSS_ROLE_STA:
-> > > > > -             if (priv->media_connected) {
-> > > > > -                     mwifiex_dbg(adapter, ERROR,
-> > > > > -                                 "cannot change wiphy params
-> > > > when connected");
-> > > > > -                     return -EINVAL;
-> > > > > -             }
-> > > > > +             if (priv->media_connected)
-> > > > > +                     break;
-> > > >
-> > > > This hunk seems unrelated to this patch. If this is needed then it
-> > > > deserves an extra patch along with an explanation why this is necessary.
-> > > >
-> > > > Sascha
-> > > >
-> > >
-> > > Without this hunk, AP and STA can't run on the same channel if some
-> > > wiphy parameters are setting.
-> > 
-> > Ok, I now see where you are aiming at. Here's the problematic function:
-> > 
-> > > static int
-> > > mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed) {
-> > >       ...
-> > >
-> > >       priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
-> > >
-> > >       switch (priv->bss_role) {
-> > >       case MWIFIEX_BSS_ROLE_UAP:
-> > >               if (priv->bss_started) {
-> > >                       mwifiex_dbg(adapter, ERROR,
-> > >                                   "cannot change wiphy params
-> > when bss started");
-> > >                       return -EINVAL;
-> > >               }
-> > >
-> > >               ...
-> > >               mwifiex_send_cmd(priv,
-> > HostCmd_CMD_UAP_SYS_CONFIG, ...);
-> > >
-> > >               break;
-> > >       case MWIFIEX_BSS_ROLE_STA:
-> > >               if (priv->media_connected) {
-> > >                       mwifiex_dbg(adapter, ERROR,
-> > >                                   "cannot change wiphy params
-> > when connected");
-> > >                       return -EINVAL;
-> > >               }
-> > >
-> > >               ...
-> > >               mwifiex_send_cmd(priv,
-> > HostCmd_CMD_802_11_SNMP_MIB,
-> > > ...);
-> > >
-> > >               break;
-> > >       }
-> > >
-> > >       return 0;
-> > > }
-> > 
-> > This function is for setting wiphy params like rts_threshold and others.
-> > 
-> > mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY) returns the first priv
-> > which by default is in station mode. Now if you start priv0 in station mode,
-> > then afterwards start priv1 in AP mode *and* have rts_threshold = xy in your
-> > config, then you run into the "cannot change wiphy params when connected"
-> > case.
-> > 
-> > I really wonder if the settings done in this function are per priv or per adapter.
-> > Is there one rts_threshold setting in a mwifiex chip or are there multiple (per
-> > vif/priv)?
-> > 
-> > If it's a global setting, then why are we interested in the media_connected
-> > state of one specific priv? Shouldn't we check all privs?
-> > 
-> > If it's a setting per priv, then why do we choose the same priv everytime in this
-> > function?
-> > 
-> > Either way, this function looks fishy and changing it should be done with an
-> > explanation, just dropping the error message and returning success is not
-> > enough.
-> > 
-> > Sascha
-> > 
-> > --
+
+
+Le 09/09/2024 à 21:25, Naresh Kamboju a écrit :
+> The Powerpc cell_defconfig and mpc83xx_defconfig builds failed on the
+> Linux next-20240909 due to following build warnings / errors with gcc-13 and
+> clang-19.
 > 
-> O.K. I will add comment in patch v3.
+> First seen on next-20240909
+>    Good: next-20240906
+>    BAD:  next-20240909
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> build log:
+> --------
+> make[3]: *** No rule to make target 'arch/powerpc/boot/dtbImage.ps3',
+> needed by 'arch/powerpc/boot/zImage'.
+> make[3]: Target 'arch/powerpc/boot/zImage' not remade because of errors.
+> 
 
-Really I hoped that you could clarify a bit how this function works and
-answer some of the questions I raised above. That could help us to get
-a better driver over time. The same code is in the nxpwifi driver as
-well, so it's not only a matter of which driver we decide to maintain
-in the future.
+See 
+https://lore.kernel.org/linuxppc-dev/b154ab25-70f6-46cd-99db-ccfbe3e13fb7@csgroup.eu/T/#m7cc489243ce5a17af97ff8ec7cc15c663565b6fd
 
-Sascha
+Christophe
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+> 
+> Build Log links,
+> --------
+>   - https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fqa-reports.linaro.org%2Flkft%2Flinux-next-master%2Fbuild%2Fnext-20240909%2Ftestrun%2F25078675%2Fsuite%2Fbuild%2Ftest%2Fclang-19-cell_defconfig%2Flog&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152486474122%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=k4QsFvSrqrtJkwe5i8qvTetu941J%2FiokAMEDIy1hgO4%3D&reserved=0
+> 
+> Build failed comparison:
+>   - https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fqa-reports.linaro.org%2Flkft%2Flinux-next-master%2Fbuild%2Fnext-20240909%2Ftestrun%2F25078675%2Fsuite%2Fbuild%2Ftest%2Fclang-19-cell_defconfig%2Fhistory%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152486482765%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=hZJF6oi09QQnOcjWlPkn5YQw3L33uG5vobqZX%2FJzW%2Fc%3D&reserved=0
+> 
+> metadata:
+> ----
+>    git describe: next-20240909
+>    git repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgitlab.com%2FLinaro%2Flkft%2Fmirrors%2Fnext%2Flinux-next&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152486487967%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=FIZK7ic0Dwbnt8zclmji5w2mTS0konX%2Bh6izCQ2QoqQ%3D&reserved=0
+>    git sha: 100cc857359b5d731407d1038f7e76cd0e871d94
+>    kernel config:
+> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fstorage.tuxsuite.com%2Fpublic%2Flinaro%2Flkft%2Fbuilds%2F2lpXzh3wwbuC6nYpMV2nPNA0IpF%2Fconfig&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152487540129%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=KPpD9d%2FM2gxLqjaVIsN26jwolSkzetd%2B0VGVMaV4Mwo%3D&reserved=0
+>    build url: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fstorage.tuxsuite.com%2Fpublic%2Flinaro%2Flkft%2Fbuilds%2F2lpXzh3wwbuC6nYpMV2nPNA0IpF%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152487548564%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=dS0BYsDDrcnW7fF2KeUZFBvFKnMKLz36nLWt%2BmeqIIQ%3D&reserved=0
+>    toolchain: gcc-13, clang-19 and clang-nightly
+>    config: cell_defconfig and mpc83xx_defconfig
+> 
+> Steps to reproduce:
+> ---------
+>   - # tuxmake --runtime podman --target-arch powerpc --toolchain
+> clang-19 --kconfig cell_defconfig LLVM_IAS=0
+>   - # tuxmake --runtime podman --target-arch powerpc --toolchain gcc-13
+> --kconfig mpc83xx_defconfig
+> 
+> 
+> --
+> Linaro LKFT
+> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkft.linaro.org%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cbea1fddc11ef4588817208dcd118fdb1%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638615152487553541%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=Pzu3tW7FdI%2F7FYj%2BUSz%2FTfENPPGRZUEf%2FsXcaSpPXB8%3D&reserved=0
+> 
 
