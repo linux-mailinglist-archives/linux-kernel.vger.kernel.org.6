@@ -1,98 +1,80 @@
-Return-Path: <linux-kernel+bounces-322561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3304F972ADD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:33:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2253972AE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660B21C21E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7861B2864EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FF517E012;
-	Tue, 10 Sep 2024 07:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B717DFE3;
+	Tue, 10 Sep 2024 07:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f8eRsMDi"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NYpjFeAj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CAF17D36A;
-	Tue, 10 Sep 2024 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E523282E2;
+	Tue, 10 Sep 2024 07:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953586; cv=none; b=Ui78YaEQhVmNHftazQbjDxhAmiH7abnDF/AVCNAlvYq8G4fheUJgL5U+P4FG/SvB3soSqLj59L189cEQb0SEg4bC3gWRrSkLdUfM1GZrwd6INzZ+w67pgUxCR4hF0kyeyIXoyNwv/q6NDrWoAiRva3pGZcJdQXVnL6geXt2PrZA=
+	t=1725953726; cv=none; b=nSRG4+NqWoXDdqZxcKMrzjFUV3S9PKgmDgNLIYzZBy7E83q42WAVlq6zco8RMasUcHFenUpCIX43TWOq/qSiOO8WFUPogw+VnC0An7K0Opw3twQDxk+2qIL3NGAsaM3O60Edn5AhpFS+PgHeez1iMj5zdKPuiWD6hVGYBfVycoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953586; c=relaxed/simple;
-	bh=nxWRbMPcPT8DxZ6rLJCDCedHg5P5qBOshhja50/iaqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TdfOGXuWkzrMlF/bv2X78+7mfEeK13BwCYCHOWRn17gt9jmPwjBoM46/wWzUMA8UL4g6AK0KCTS9Y0LPKsPnEsTnP3Q3R2hSG2w9DYJuhd8f7b5GnFKg2w99fzFRp8r2c4SolfRxy6N5s+ul+7fCVfNCt/YZGVKDQWPq/+kJVYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f8eRsMDi; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 24A621C0003;
-	Tue, 10 Sep 2024 07:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725953581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nxWRbMPcPT8DxZ6rLJCDCedHg5P5qBOshhja50/iaqM=;
-	b=f8eRsMDi3Xe49ZZwYx8gG1NtFsh6+O/22ApWQbL8NWdeX3tLXgwETdKiXt2rysY4RQi4lD
-	C13r7LSjg+9dQNQWFHWcdGsF8sSw4p0K52qyIp0e0M0sQ5WP2QPeoc+FigcYAM48u3ILdF
-	tYaF3zIoxOUOKXjo9sJ5arT5d8mdhW0ENBmmbDugA7eYYVCSivO4tL8X8R3cNxN7GNc9fF
-	AZ44I2znp1F9tcmYCnmKWfHFvRsK9ru5/ufu0SKC4HJZzLGauRcOU4/tnW0b7pXODzxEBo
-	z68W6zJvIbYwO9wU9EQ4B+EUN6kGL3fyt7SB5/LEk0JOh1F2u+GJKloNxriDvQ==
-Date: Tue, 10 Sep 2024 09:32:58 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
- <pabeni@redhat.com>, <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>,
- <louis.peens@corigine.com>, <stefan@datenfreihafen.org>,
- <alex.aring@gmail.com>, <chunkeey@googlemail.com>, <kvalo@kernel.org>,
- <briannorris@chromium.org>, <francesco@dolcini.it>,
- <set_pte_at@outlook.com>, <damien.lemoal@opensource.wdc.com>,
- <mpe@ellerman.id.au>, <horms@kernel.org>, <yinjun.zhang@corigine.com>,
- <fei.qin@corigine.com>, <johannes.berg@intel.com>,
- <ryno.swart@corigine.com>, <krzysztof.kozlowski@linaro.org>,
- <leitao@debian.org>, <liuxuenetmail@gmail.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <oss-drivers@corigine.com>,
- <linux-wpan@vger.kernel.org>, <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH 4/7] net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in
- request_irq()
-Message-ID: <20240910093258.358a6d85@xps-13>
-In-Reply-To: <20240909133034.1296930-5-ruanjinjie@huawei.com>
-References: <20240909133034.1296930-1-ruanjinjie@huawei.com>
-	<20240909133034.1296930-5-ruanjinjie@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725953726; c=relaxed/simple;
+	bh=jmuPBBDko1ACFWgPbOy808BcO+FQdwdlAD0birFTW8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCWKG0YMuwmwlltk18LRTWlXnhaWGelBI5l9y6Pi8CfMb+Ny+Iwbt9e9kpJiuCNtLViMz6S38Hcraz9v1k1oUNtp0BjqCaZooJJ25B+o/sZOhEzlHJ5JF6l1yvBZg8pGEw+6XUl9/T5L3v04Uwp3X9jYlHswfOyOcW+yOZDdk+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NYpjFeAj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B270CC4CEC3;
+	Tue, 10 Sep 2024 07:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725953726;
+	bh=jmuPBBDko1ACFWgPbOy808BcO+FQdwdlAD0birFTW8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NYpjFeAjrPCkwZGbEKuSxbFLY2tgvWIv7H9pYXAEXz/cSDZD4V3Enj+396B4IAc0x
+	 UO7N8DRT5qG3IwgZJv/gI4fNvwRzZT8SXunbM/apNNoiyXtATGKOqJtY88XdfJSbQt
+	 8RJj04XaTDMTEGengK4W24Xpn1QV+wiDEtiVq/mA=
+Date: Tue, 10 Sep 2024 09:35:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jamie Heilman <jamie@audible.transient.net>,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	stable@vger.kernel.org
+Subject: Re: regression in 6.6.46; arch/x86/mm/pti.c
+Message-ID: <2024091014-crawling-copied-8034@gregkh>
+References: <Zt6Bh2J5xMcCETbb@audible.transient.net>
+ <87h6apcp9x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6apcp9x.ffs@tglx>
 
-Hi Jinjie,
+On Mon, Sep 09, 2024 at 08:30:34AM +0200, Thomas Gleixner wrote:
+> On Mon, Sep 09 2024 at 05:03, Jamie Heilman wrote:
+> > 3db03fb4995e ("x86/mm: Fix pti_clone_entry_text() for i386") which got
+> > landed in 6.6.46, has introduced two back to back warnings on boot on
+> > my 32bit system (found on 6.6.50):
+> 
+> Right.
+> 
+> > Reverting that commit removes the warnings (tested against 6.6.50).
+> > The follow-on commit of c48b5a4cf312 ("x86/mm: Fix PTI for i386 some
+> > more") doesn't apply cleanly to 6.6.50, but I did try out a build of
+> > 6.11-rc7 and that works fine too with no warnings on boot.
+> 
+> See backport below.
+> 
+> Thanks,
 
-ruanjinjie@huawei.com wrote on Mon, 9 Sep 2024 21:30:31 +0800:
+Now queued up, thanks!
 
-> disable_irq() after request_irq() still has a time gap in which
-> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-> disable IRQ auto-enable when request IRQ.
->=20
-> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceive=
-r driver")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-
-This one could go through wpan(-next), but otherwise:
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
+greg k-h
 
