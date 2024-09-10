@@ -1,188 +1,127 @@
-Return-Path: <linux-kernel+bounces-323856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DCC97444B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B8097444F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D3B1F26A04
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FB4289DED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9DF1A7AF5;
-	Tue, 10 Sep 2024 20:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1A91A7058;
+	Tue, 10 Sep 2024 20:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="xlVM01KE"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CqAmCP5O"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBCA1A3BAC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AE21A7076
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001330; cv=none; b=SLJIwTaWptGL5gF++3fhbJuAgVCZB+F63jPlyPUYI+eqU/hq517QEBnmKJmywJNE9WS/GbZmKTTG4BLpGm9AztnUgBY9NqbfRJfzVq0HKFfNipOnyvcJC6VohbdmcI1Oxm9alnuZ25TzO1wLqYWEQsgnTJTyLvOTlbt8iXrzGF4=
+	t=1726001357; cv=none; b=O0euA9VoT+Z0r+CCyjrJjbhB/oMr6ua/IFcOMnIu1L7WuIx9J7gHoATfXoAu/HcxhzPotLxeGi/mQ4veG0zP1MzpeHNsxiC3ZVy1dIni2jYeoW1PKMmhqjVYHFSbGd0YxOrvkVz9boAaCdvEr+a/UkIP0E09U8aSVRuLD5+bnCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001330; c=relaxed/simple;
-	bh=YURRXtuiegh8uv6meZyub27sJV4yJDfMCrsCkDc3eR4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cC/U6GV8czcOCiH+aVQuNQyeJ++d+dFfbHM7ZEwFMeuVTdTKo+s9OPjaLrQdI2BGKBbRy/11gAZh/WWMyyP7DPv2jwG8V4NDfBMXzYJXbrfVdnQIrk8QhXRSsKU/1y7DifiLOfLDzfpZYK+il+EYySGlWpBNgMlfV+UqnBVAST8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=xlVM01KE; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id DB9BD2C02D1;
-	Wed, 11 Sep 2024 08:48:44 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1726001324;
-	bh=EMKKZV86j5ufyd38DQrH2gKBadCOZTutNczIGvDuUkA=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=xlVM01KEPB0XdpbElf6QWER/k9GiGY7pNC2r/6ZSDFwULjKYFBV8ZEl8vRqZuzg8l
-	 qT2BXJVzvtEDAmjZl5gVis8kXS6yihn9pyfhcC/te8l6di5u3J66hJRDH2f8WBsBSq
-	 3HcKSL0d9xhO80LOqnidL79SfJtGVR9Zeu0RLFRpONaAqBX2LwZ+qPM5GKm0DAFA1W
-	 HYkW2QMnV4rmKMte4wXuH3l3t0FxxN3+VNIOylnTDVu8VG0n0DL/ZZ13vtytyMkdlY
-	 HYdG5DeN7usB9yNTDzoylxZF87G3Qig+kauMPvnc5Unis4qkV63IP69O5615v0WLyf
-	 msUrCquodpJDg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66e0b0ac0000>; Wed, 11 Sep 2024 08:48:44 +1200
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id C4B2F13ED8D;
-	Wed, 11 Sep 2024 08:48:44 +1200 (NZST)
-Message-ID: <c7d4f87b-f3d4-4853-9960-e7faa560ce34@alliedtelesis.co.nz>
-Date: Wed, 11 Sep 2024 08:48:44 +1200
+	s=arc-20240116; t=1726001357; c=relaxed/simple;
+	bh=/sSLbtfrwVeABiJUeQBSaBwJb8hKBmomjLIUb1dAvvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bj/2EpUduDLJU7y2Cb64n6s4BBWBrffOq7fVp8e/CyNeYJ8NkQ+XOnT29apf6QEi2rwUBMPIKxhC1Q07r2t1lCfE6ldRv3lu4xivCL1vnpUzJz9vbttC8U41E1zhO9BO9EwILrXgm5HjLUlCY+vTciMQGy+ukg/+q0YLB9o51PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CqAmCP5O; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6d4f1d9951fso9790967b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726001354; x=1726606154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WYjARXF5iHHpTlh5hyqO8bTT4ZmLx2A0R6UF7JUY+9c=;
+        b=CqAmCP5OsuNHVeCyEiNDPnaM3R1UIekUKFiV0fw2r0x+b8m+NI86LznKcvmxzV8r+J
+         t0mMfjtHbcha1skBFiKcguBvUdZ9nK4dp3TKW2i/70zcGq0nGtexGiPjOefjpkRkjR3E
+         MgJp1PwWjZulVI32knqh73bgE4dOFjkaG5eVNhcQJNdNMWLHN89BWv5evIvK0MFWSmgL
+         us0Z4beuHS5f9IC3VhveN0M1O2qhTGAZArXErutGwzun8D+or8uWLGOzGivsWo4XGqAM
+         QecjxeqYCyqk3NXJAnrbtNRQbLDk2X+fd1GAmLwamKyAZVpH9O7UiSsw2BUGHx8/ygvW
+         2ExQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726001354; x=1726606154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WYjARXF5iHHpTlh5hyqO8bTT4ZmLx2A0R6UF7JUY+9c=;
+        b=lABh36mBNB/eZWe3BHoJ+ZjS79WCJ5iy/5SbhOrwpr3CMWwNJSIYwIV9vrjlilfdHf
+         30da/M6wyx9LRfuEBgYS1BJmaxiLmMQXwO/G9x0baY8rluLrEPpWsksq1J+H6tGcHnMG
+         YcI8u3r/sf8EqlRTC1/6CpvKa83ZNx6toFD0fRdWgavIqivBJ6PlHuuAZUUEdePYM0G3
+         WPL5Uk2dhpFtAkd5ErpRpn9+IZn799UkFEt+08Gu4RlNQRd/7bda9OjbU99XAUW5Z+Fp
+         7MG1apThMZ5VAB0RgYWkS1OqIj+ewMcIn9OPDEhYAkGl8azC0Sn3XEmrmZkAxHn6NhRJ
+         1xrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXl20q5tqNf4Sb1vc7swb90gpoYvsl6HNvKQDCuAjdyGlP5rL5l5FXgvp2NKf8vNlIaD8pLl40+Kmh6oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydOVMlpleAjCMAZJyrJRZMZwNCZGT/oLSt6wDx/9noyUcUMXHW
+	9+n7PtirwsZSrsREwEafDo4VLLSh+NyfcsHYaEDHtbyqVUbTnVrChhFjX/IavOoQ0Xgr8XopQ9D
+	7pTjq9g42AnE8DTbAlzddkygq+hE8FQpl+Qzc
+X-Google-Smtp-Source: AGHT+IFgMK6PeTDRSiV3IUUm82K2jugYC/SvYQbL/2kIQWJ6vCR0av/sG1KukB6SNfhmqpD5QEYFAa0dGswS6AalsdQ=
+X-Received: by 2002:a05:690c:6812:b0:6c9:9341:1c45 with SMTP id
+ 00721157ae682-6dba6d98f5fmr12360207b3.14.1726001354371; Tue, 10 Sep 2024
+ 13:49:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: Add Realtek switch
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20240909014707.2003091-1-chris.packham@alliedtelesis.co.nz>
- <20240909014707.2003091-2-chris.packham@alliedtelesis.co.nz>
- <63sbuzij27crjxv6d6qjblv55al5zk4ivsah4ji2kvddhbua57@xo4vt2tqs5cn>
- <01656780-0a90-4c7b-bedf-2e45992cd16c@alliedtelesis.co.nz>
- <469efcd0-148c-4a71-b315-043ac59df838@kernel.org>
-Content-Language: en-US
-In-Reply-To: <469efcd0-148c-4a71-b315-043ac59df838@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=KIj5D0Fo c=1 sm=1 tr=0 ts=66e0b0ac a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=62ntRvTiAAAA:8 a=gEfo2CItAAAA:8 a=ZXfZcMmdroSEQ_jOwVoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+ <2494949.1723751188@warthog.procyon.org.uk> <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+In-Reply-To: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 10 Sep 2024 16:49:03 -0400
+Message-ID: <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com>
+Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
+ [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
+To: Jann Horn <jannh@google.com>, David Howells <dhowells@redhat.com>
+Cc: Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	John Johansen <john.johansen@canonical.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
-(sorry, re-sending as plain text)
-
-On 10/09/24 19:26, Krzysztof Kozlowski wrote:
-> On 09/09/2024 22:36, Chris Packham wrote:
->> Hi Krzysztof,
->>
->> On 9/09/24 18:38, Krzysztof Kozlowski wrote:
->>> On Mon, Sep 09, 2024 at 01:47:06PM +1200, Chris Packham wrote:
->>>> Add device tree schema for the Realtek switch. Currently the only
->>>> supported feature is the syscon-reboot which is needed to be able to
->>>> reboot the board.
->>>>
->>>> Signed-off-by: Chris Packham<chris.packham@alliedtelesis.co.nz>
->>>> ---
->>>>    .../bindings/mfd/realtek,switch.yaml          | 50 +++++++++++++++++++
->>>>    1 file changed, 50 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->>> Use compatible as filename.
->> My hope was eventually that this would support multiple Realtek
->> switches. But sure for now at least I can name it after the one in front
->> of me.
-> This might never happen, so unless you document more models now, I
-> strongly suggest using compatible as filename.
-Agreed.
->>>> diff --git a/Documentation/devicetree/bindings/mfd/realtek,switch.yaml b/Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->>>> new file mode 100644
->>>> index 000000000000..84b57f87bd3a
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/mfd/realtek,switch.yaml
->>>> @@ -0,0 +1,50 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id:http://scanmail.trustwave.com/?c=20988&d=s_Tf5n4B2HBkm1hFlKUTA3UKwK2Jg2EPHeQMRCQHXQ&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fmfd%2frealtek%2cswitch%2eyaml%23
->>>> +$schema:http://scanmail.trustwave.com/?c=20988&d=s_Tf5n4B2HBkm1hFlKUTA3UKwK2Jg2EPHbEEFSRQXw&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
->>>> +
->>>> +title: Realtek Switch with Internal CPU
->>> What sort of Switch? Like network switch? Then this should be placed in
->>> respective net (or deeper, e.g. net/dsa/) directory.
->> Yes network switch. But this is one of those all in one chips that has a
->> CPU, network switch and various peripherals. MFD seemed appropriate.
-> There is no such device as MFD. MFD is a Linux framework.
-
-What I meant was the RTL9302 is a similar class of device to the 
-mscc,ocelot which has a binding in 
-Documentation/devicetree/bindings/mfd/mscc,ocelot.yaml. If it's a case 
-of that being historical baggage then 
-Documentation/devicetree/bindings/mips/ might be appropriate for the SoC 
-type properties and Documentation/devicetree/bindings/net/ for the 
-switch portion.
-
->>> Maintainers go here. See example-schema.
->> Ack.
->>
->>>> +
->>>> +description:
->>>> +  The RTL9302 ethernet switch has an internal CPU. The switch is a multi-port
->>>> +  networking switch that supports many interfaces. Additionally, the device can
->>>> +  support MDIO, SPI and I2C busses.
->>> I don't get why syscon node is called switch. This looks incomplete or
->>> you used description from some other device.
->> Yes I did take a lot of inspiration from the mscc,ocelot. I am working
->> on more support for the switch and some of the other peripherals so I
->> figured I'd word it towards that end goal. If you prefer I could word
->> this more towards the one function (reboot) that is supported right now.
-> Your commit msg is not explaining here much. And "Currently the only
-> supported" feels like a driver description. We expect bindings to be
-> complete. It's fine to bring partial description of hardware, but this
-> should be explained in the commit msg and entire binding should be still
-> created to accommodate that full description.
+On Thu, Aug 15, 2024 at 4:00=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.co=
+m> wrote:
+> > Jann Horn <jannh@google.com> wrote:
+> >
+> > > Rewrite keyctl_session_to_parent() to run task work on the parent
+> > > synchronously, so that any errors that happen in the task work can be
+> > > plumbed back into the syscall return value in the child.
+> >
+> > The main thing I worry about is if there's a way to deadlock the child =
+and the
+> > parent against each other.  vfork() for example.
 >
-> However such complex devices like Ocelot should be described fully so we
-> can easily see how you organize entire binding.
-
-I can definitely do a better job of explaining myself in the commit 
-message. Right now I just want to have a working reboot.
-
-I'm not really using the "realtek,rtl9302c-switch" compatible for 
-anything but I gather using a "syscon" node without a more specific 
-compatible is frowned upon (please tell me if I'm wrong). In terms of 
-the binding should I just make the description something terse like "The 
-RTL9302 ethernet switch has an internal CPU. Some peripherals are 
-accessed via a common register block".
-
->>> But if this is DSA, then you miss dsa ref and dsa-related properties.
->> So far I'm resisting DSA. The usage of the RTL9300 as a SoC+Switch
->> doesn't really lend itself to the DSA architecture (there is a external
->> CPU mode that would). I think eventually we'd end up with something like
->> the mscc,oscelot where both switchdev and DSA usage is supported. There
->> would be some properties (e.g. port/phy arrangement) that apply to both
->> uses.
-> This feels ok, although you really should create complete binding here.
-
-This is a bit of a chicken and egg thing. I don't want to commit to a 
-binding until I have more code to back it up, but of course I don't want 
-to spend a bunch of time writing code for a binding that then needs to 
-change when that binding is reviewed.
-
->> I have got a (kind of) working proof of concept switchdev driver which
->> has some of the support you've mentioned. It's not really ready so I
->> didn't include the dt-binding for that stuff in this patch.
-> Best regards,
-> Krzysztof
+> Yes - I think it would work fine for scenarios like using
+> KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
+> launched the helper (which I think is the intended usecase?), but
+> there could theoretically be constellations where it would cause an
+> (interruptible) hang if the parent is stuck in
+> uninterruptible/killable sleep.
 >
+> I think vfork() is rather special in that it does a killable wait for
+> the child to exit or execute; and based on my understanding of the
+> intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
+> KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
+> through execve?
+
+Where did we land on all of this?  Unless I missed a thread somewhere,
+it looks like the discussion trailed off without any resolution on if
+we are okay with a potentially (interruptible) deadlock?
+
+--=20
+paul-moore.com
 
