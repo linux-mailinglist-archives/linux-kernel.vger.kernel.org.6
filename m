@@ -1,162 +1,130 @@
-Return-Path: <linux-kernel+bounces-323283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D65973A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:53:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51D0973A9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D7DFB25A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46D61B255C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF61991B5;
-	Tue, 10 Sep 2024 14:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2801192D71;
+	Tue, 10 Sep 2024 14:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MVVETQWD"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pfHKzftx"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C2E194C79
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A209D19580F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979989; cv=none; b=l9z/bbzw05ukknj3iakJqHZwAfpjX7JBDjzR9ZOtOzOxW30tfSQDAGmUJoSyPGTJJ9JNgXHK9g4yfMJn3zF9xdHxKKmcVtuNzVf1DonP3JAtwrafH5vL2WnjhE8Z+81qucaL/GDnhGGS/6c4hkk11tguJ7dpHs5aQvI9tPv6njE=
+	t=1725979986; cv=none; b=EtjDkrozfy07QQYEvDf3mL9C3cWvW8OLjBOLA2WW7rzZKe6vUbQSWl72BT9KX2BGXxKLtA4BIH1f9FPLT+S/IPL9c7A8bADrhPvn//PsVeISq+kPjlZdtXlSVSWPofEFGnu/v4msS9dGiIWFPR1TWiwX/RBcNQI9GIDS+JLvrWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979989; c=relaxed/simple;
-	bh=tvjswnYQRETrDstdxlEHNA2dDefUhi8F1TgOcFUjMug=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sMFSZF8f+QXuIqi18/Ub2sMpP1G3BcCBPpJPRv7QN286mr2V1FEjq6zvE6a5b4Hn1JYOTI37XHBru9V+YKDrRYX8PxM3TsssjSkP7iRc3bPzsZGN+e6RsjNH63acYHj+Xh4Jv2wyUv8MYSbmQAi4Ej86qN3zmXdqJEfaz1cxgMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MVVETQWD; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A7Kx5J030619;
-	Tue, 10 Sep 2024 14:52:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type; s=pp1; bh=qonQDgonH1ULePGnhyMk5XETZg
-	UQ0UnVcq97JaC45JY=; b=MVVETQWDxcpnwvBBwl0fKJLA45nSCKBoIM9t2nvtu6
-	wycGSNas3q78QgJ3iiILQMQHSuBzgxKkwRKYHY9rGP6aSzdYg8nXZqr5ZuJKaKGz
-	lvuISDd/yq5Onb4qJH2EphKWuUQl/4aS3mm71fa9guU/ODcoWOVuPmdZPGRcWtHc
-	jw1qldHYfApQk4oYe7xcWaVbZzZZK4+WbP/qyERbq3SINOSfzc9VAfdQeuFcy7Eh
-	uGQUV1GKeir3ZGzxIxal2C+72J7eT7v1b9OTgaUN8cloNdhR9xv4zfgI7wy1vvJX
-	PjYFdk9MCy0q75oje0Er1ymaPYX39aRmqGjabmXPnBjQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwr7k8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 14:52:37 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48AEkIxg009677;
-	Tue, 10 Sep 2024 14:52:36 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwr7k3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 14:52:36 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48ADqJVQ013476;
-	Tue, 10 Sep 2024 14:52:35 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3cm3rcs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 14:52:35 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48AEqXFI26542840
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 14:52:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A397C2004D;
-	Tue, 10 Sep 2024 14:52:33 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 715AC20043;
-	Tue, 10 Sep 2024 14:52:33 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 10 Sep 2024 14:52:33 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-        kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-        youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 00/24] Complete EEVDF
-In-Reply-To: <20240910140739.GI4723@noisy.programming.kicks-ass.net> (Peter
-	Zijlstra's message of "Tue, 10 Sep 2024 16:07:39 +0200")
-References: <20240727102732.960974693@infradead.org>
-	<yt9d4j6nenps.fsf@linux.ibm.com> <yt9dzfofd7im.fsf@linux.ibm.com>
-	<20240910140739.GI4723@noisy.programming.kicks-ass.net>
-Date: Tue, 10 Sep 2024 16:52:33 +0200
-Message-ID: <yt9dttend0i6.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725979986; c=relaxed/simple;
+	bh=3OPROinPYG66BAUMLz0K2W90EqZSjrxBstxfOOMxzAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yo4KS+pRG6sp54yVrTo1IEdLbnqKezFiD9HeCj8nUasi1nK6a8sEHzaUtt3ePC1x+tRZMgAoMo7ow1kLYh6P+o570kle7C748MvbclOKVA4rSKhNPiTAUmjFW9z5NEPRYM31ln1KWYyLB8eRhXuaVKme2dniFeXfocj8+t6/lLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pfHKzftx; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82cdc21b5d8so148468539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725979984; x=1726584784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E5Fc70nClVNFClBK/d7N6FBEhsUoSgP+e799qj2/mYg=;
+        b=pfHKzftxq5+KkWdeMti08Ynm9mD9AnulORPkphYudQZmHp12KHYdoENMmOmBKKgC7F
+         dG4gQVskAG8VIbgovpWx/qOTT2BwzBrU0R3Y6FmgDy+FDp+zx2Xn+vt8iRpT4h2MMSA7
+         eGkZ7eSSIgLMQi/+vPp23hblkZ59UcDPxpbP8KmyyloRtwOEfO4Iia2ovrvCoA1Tehpz
+         ycPiEjCV36CypGlNpRjmrm/Ew/A/6I3hGZN2aIoiDYXtyw44SBZxUZWbGunapDzSe6AM
+         IQ696Jh8kB4g6MuN0p2CmGJCVMKtgBMyJy22uUHDG5Un6EpTGmkJMfzYTwOuZoYMtNHB
+         HuuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725979984; x=1726584784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5Fc70nClVNFClBK/d7N6FBEhsUoSgP+e799qj2/mYg=;
+        b=EKSjmHJKOJxLK30gUo+JhSF5YjA2sZKlfArTPGX0zkaVYI/5uT3Akjh5qSO8mgS5R9
+         CqVnNOs+OQc1oUCoiGDTQDj9R0YF9VK9mowj3B/GBby8S2n8JJ8Ym+KJIJW/nmfB0olU
+         UHrZ/8Q46btjAcf83WIpw0BT+2x6QWa7lnEE6lLs89Sz0aY4mHSHauuWbGRa4Dbij6km
+         RyJXAPLgzRcgiy0FiDXa59KfjJ65tYHLHJb81YDCuxMqMHvRkcZZQurhGNkq+GtskVhq
+         DhDBR3SYsns1SaOckoek4G7M+QiRtwd+goOPbBYTQqY+YiKYIAj2hsS9NAQSbmrIV4pO
+         /J3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjhThTGK8GymeWz8k2zEBTCdBOdyq4s2MFXnqD0AYmt5P8SYrHuUfcdPMOvrDo6qKVIiz9T6JcgwLjGT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqQIskLFMohITFbrCkv4IHCNhfl0Tl8xEMCT7ESadApTewkgp2
+	lAR08KKQSKzvIA6w+pnxv66sv778aAfNRUuY/0hn9L2YKXku8SQgLZJaFBQSptI=
+X-Google-Smtp-Source: AGHT+IHaKWfN4cqnAqZaqt8tfammQulEh3IZTlHKZSFgjb5rfigxJT43Fj1kclLEAXBReBPQ+dXhqg==
+X-Received: by 2002:a05:6e02:160c:b0:39b:3894:9298 with SMTP id e9e14a558f8ab-3a0521a7f5cmr146307485ab.0.1725979983722;
+        Tue, 10 Sep 2024 07:53:03 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a058fe556fsm20400425ab.36.2024.09.10.07.53.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 07:53:03 -0700 (PDT)
+Message-ID: <ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk>
+Date: Tue, 10 Sep 2024 08:53:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fWuxmchL7DU2wHoTA5het7EBu-3dsKmw
-X-Proofpoint-ORIG-GUID: e5LvltAbiSEmLv3iLuL-2dCL5UAC_NtM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100108
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] io_uring/io-wq: respect cgroup cpusets
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
+ longman@redhat.com, adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com
+References: <20240910143320.123234-1-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240910143320.123234-1-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Peter Zijlstra <peterz@infradead.org> writes:
+On 9/10/24 8:33 AM, Felix Moessbauer wrote:
+> Hi,
+> 
+> this series continues the affinity cleanup work started in
+> io_uring/sqpoll. It has been tested against the liburing testsuite
+> (make runtests), whereby the read-mshot test always fails:
+> 
+>   Running test read-mshot.t
+>   Buffer ring register failed -22
+>   test_inc 0 0 failed                                                                                                                          
+>   Test read-mshot.t failed with ret 1     
+> 
+> However, this test also fails on a non-patched linux-next @ 
+> bc83b4d1f086.
 
-> On Tue, Sep 10, 2024 at 02:21:05PM +0200, Sven Schnelle wrote:
->> Sven Schnelle <svens@linux.ibm.com> writes:
->> 
->> > Peter Zijlstra <peterz@infradead.org> writes:
->> >
->> >> Hi all,
->> >>
->> >> So after much delay this is hopefully the final version of the EEVDF patches.
->> >> They've been sitting in my git tree for ever it seems, and people have been
->> >> testing it and sending fixes.
->> >>
->> >> I've spend the last two days testing and fixing cfs-bandwidth, and as far
->> >> as I know that was the very last issue holding it back.
->> >>
->> >> These patches apply on top of queue.git sched/dl-server, which I plan on merging
->> >> in tip/sched/core once -rc1 drops.
->> >>
->> >> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
->> >>
->> >>
->> >> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
->> >>
->> >>  - split up the huge delay-dequeue patch
->> >>  - tested/fixed cfs-bandwidth
->> >>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
->> >>  - SCHED_BATCH is equivalent to RESPECT_SLICE
->> >>  - propagate min_slice up cgroups
->> >>  - CLOCK_THREAD_DVFS_ID
->> >
->> > I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
->> >
->> > Sometimes the system doesn't manage to print a oops, this one is the best i got:
->> >
->> > [..]
->> > This happens when running the strace test suite. The system normaly has
->> > 128 CPUs. With this configuration the crash doesn't happen, but when
->> > disabling all but four CPUs and running 'make check -j16' in the strace
->> > test suite the crash is almost always reproducable.
->
-> I noted: Comm: prctl-sched-cor, which is testing core scheduling, right?
->
-> Only today I;ve merged a fix for that:
->
->   c662e2b1e8cf ("sched: Fix sched_delayed vs sched_core")
->
-> Could you double check if merging tip/sched/core into your next tree
-> helps anything at all?
+That sounds very odd... What liburing are you using? On old kernels
+where provided buffer rings aren't available the test should just skip,
+new ones it should pass. Only thing I can think of is that your liburing
+repo isn't current?
 
-Yes, that fixes the issue. Thanks!
+> The test wq-aff.t succeeds if at least cpu 0,1 are in the set and
+> fails otherwise. This is expected, as the test wants to pin on these
+> cpus. I'll send a patch for liburing to skip that test in case this
+> pre-condition is not met.
+> 
+> Regarding backporting: I would like to backport these patches to 6.1 as
+> well, as they affect our realtime applications. However, in-between 6.1
+> and next there is a major change da64d6db3bd3 ("io_uring: One wqe per
+> wq"), which makes the backport tricky. While I don't think we want to
+> backport this change, would a dedicated backport of the two pinning
+> patches for the old multi-queue implementation have a chance to be accepted?
+
+Let's not backport that patch, just because it's pretty invasive. It's
+fine to have a separate backport patch of them for -stable, in this case
+we'll have one version for stable kernels new enough to have that
+change, and one for older versions. Thankfully not that many to care
+about.
+
+-- 
+Jens Axboe
 
