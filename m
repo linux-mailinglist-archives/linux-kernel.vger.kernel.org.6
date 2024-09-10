@@ -1,181 +1,300 @@
-Return-Path: <linux-kernel+bounces-322326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FD797275A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:52:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D8A972795
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85177285A06
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE4BB22A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC8014F12C;
-	Tue, 10 Sep 2024 02:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DEA16DEB4;
+	Tue, 10 Sep 2024 03:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxMb8dV9"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/+hfiNi"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAD13B28D;
-	Tue, 10 Sep 2024 02:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135E215FA74;
+	Tue, 10 Sep 2024 03:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725936728; cv=none; b=hv4jT7b68Cu0IFgouFXWAj3WGXGr5DomskXJUHFd9hE8AFtysPwl9vtQ2YzzYrfWnY0nTe9lbJiD5UaYm30ACbpL36nQvZoVKkSbdpmvAVmk/BY2lNMbw0VjeD0b/va1XRw1DMMJWGXYJ2OjlZ3ZPWNezy2OuyHuHJdhdxPk+Mw=
+	t=1725938199; cv=none; b=RjZi1yp/jdYkU0cxFrmEErr38AYe9NkmPC2eyn++nQjQYPfpVle3oajgP+mzfvt+vqV/Ifq9ZgLpDjHu51Huripw+N7Ev6oA+pgioe4aG6q0am5v1QRv/Dn290q7FQLbl7scnGFOMgrCFaryoIInrz1kiquu5V9PsP9YG45fJnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725936728; c=relaxed/simple;
-	bh=WpMA1kEs9Y7I7e4gxgXkW3C671npPx44YdItCYUBqJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6ReZYDC14cbZDClGyRJrnubSvTZASLVcKwB9+7KhJQl23vdMxJ5qPeDkTrEcZm3Fy3bXF6E0EugvcXmYwnVwTL7kCdVLW+w1MSI7XEbPYydbRW3gKrbMNp0ROODO8md8GDxa7DCjeUVHm8nH12qHhqHkpxyTtYnCHgK5lGK9tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxMb8dV9; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1725938199; c=relaxed/simple;
+	bh=RI7vaofvvvg8pKNCcQiGiuheIucLz0wnhFCtQ0t4ff4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=dcnrMfvSqKqHHXiIgXYbksv3GWBkrcThWmBcMpLles+JrIFmBSerXR3AvKfBQdKjgiErzrVDK133utHkR0nrLKU2hiIdP6S7RLwbL/qErtBUv/xTN229ETq8iD7XDaKFk11tDg0L8/nN30GQ3UiufcOJhCjDFN7WMOvS/fgw+Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/+hfiNi; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c4d4f219so135856f8f.1;
-        Mon, 09 Sep 2024 19:52:06 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2068bee21d8so49566495ad.2;
+        Mon, 09 Sep 2024 20:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725936725; x=1726541525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQttAVB45yzTKj++0cYWkihAYzlOnNEiTmI1J5Prwyg=;
-        b=mxMb8dV9oRH1Ex8ix81NRV8dorTy5q++qsAy6xIsnn2VK7N1lXj7dijK9LeFZTQbuI
-         1skGncGteRDBk+h+JbcOEtUi6YbmmI+c+bKcHwYfDfrTfnu13GqbI6hdxcgnLrfgo81o
-         AaF0zZFyNBw00gtLzHEJk7bRTe6E27NHf3yrDuuk31VsS3XGENsoUqP3311IlPxr8v3q
-         bst/gxbexgFcIbk+Dtb+n7I6Yk6QiPtcvey3a3sLR4yGrM1T3KzlQWAesu8JX6BNQzbN
-         idEa83OLv1lG7z41SVgsvKkos4i8ufG42/Ni111kKDgompv80tud0uDx/8s51UCz2Ywm
-         D5xw==
+        d=gmail.com; s=20230601; t=1725938197; x=1726542997; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+Xriae1tNLH7ACZvKSa9eB14DPc11SseH7yztypTP8I=;
+        b=Z/+hfiNiNbjIfj6BuYhhSgX92E6OL/6xXumy2BFJ2EK8so0dh5/5dQfALQ3yHUUQLt
+         w8RoMmkeEG6g7dB3aHVtN20ytsCglGLl/BUICHZzUUrQWGv1frYJ8vIn1FdQgJ1uHVja
+         KhxnY4AfHMnuSfapiIr1dSQruDI88V5ojbQB20bGijGzhhTZxXyATj76a/WxxQL2pKSi
+         Tp+VpDFnBXVjXi0An6L5o8PcRa/1izODLQJGD7QpyXJVAuGBBYtWHmkQBBLDSArVLPGP
+         tewLtNTAlwcdhS67uQjH8s1H1pQ87JgFC3m16JAgQV19+3CvTgOdR/tY7UjYTNUQZwH9
+         7T4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725936725; x=1726541525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eQttAVB45yzTKj++0cYWkihAYzlOnNEiTmI1J5Prwyg=;
-        b=Sby+iZ+fPplgX9SsyFVcJs6eG1mPeROi0FtRo303kqlucetyV1yZvsyFqUZNwZ/3TS
-         L592nAaH9lZBoer6wVESEr5PG0p0nVFLMAIshLOpKPf3ADldisn6Jpxfril2L2V3eoOa
-         JCx8ze6fEXZ+8rVDuSScpdY9+U1+jhA51A2E35ED1/nB8+hh0fDefVs8ZeVD7F7Y3+hA
-         cHsVK9y77X06RuzZ8g7dD8q85OkZK4f07Omybm9A9axYCHPTYqR/bFGDK0/czHcHTEQG
-         LAxw54KyGMSWPnaz5oZDNTTB2pw+OeyLsR7jareHHCtCTC2B/6+YR+BQKbAzZZcHIQoC
-         9kJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5juLvRE9DALUoWH7/AdTFBuQ7oekzAVe0nR44knMqYOI5CFY9OcxxK2nNNr0Vx57LDUdjW88qwJMqJxjH@vger.kernel.org, AJvYcCXOZUIvsg5WUmg/A77PmmbVEKmzaoFxoi/rDLgdcAVu7dt44ibn2KDTBBYp15fkzixJ5OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2mz0ZnQTFD8teK1BjxMZOjz70Z1MCoM7HGBLTVQ4efj4jBVLV
-	tZmrO7YV/qldZ+lF53f+CxuuYg/FRTHClnpaV1tccjCqzljQPtUBkQWXmXZhHaecTzHOnLWJzz5
-	G0ISyx4RKwKNlh5M0OkoQzbOgGOw=
-X-Google-Smtp-Source: AGHT+IEPh9ScgrXAKldrieTgqRzsP4QbioBjV/CKb84XXP+ccZWvtBKZhTSspJrQZLTBQWY5KwWzVjo4FgDdHs6ZTf4=
-X-Received: by 2002:adf:f792:0:b0:378:7de9:3716 with SMTP id
- ffacd0b85a97d-378895c4aa9mr7523902f8f.8.1725936724600; Mon, 09 Sep 2024
- 19:52:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725938197; x=1726542997;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Xriae1tNLH7ACZvKSa9eB14DPc11SseH7yztypTP8I=;
+        b=BQZRX4pWAcfMFGgbivtahz33Xm4RGBWg+dFYpIKWnY/MD2HxxEBMrOlztgGSIGu9PD
+         uNladeclaMDhep3nFfXdU3LIkEkkWZpwQSTkwuLwRRM3eZ4DbEQwxyvokNCwfZXZx/Kk
+         Ye9I3Sj8NKqYHZWfBFos8gx+I9n+v2hcg9bPV4htU2jFVO4ADVLBijg7QdunULGzY+Ae
+         Wqb6I9J8BxBRvbzOK2jFtBsNadYZy03sR2n/KSdb+FKHqals/ecZzatMK3+RexwP7QN3
+         f0b9sBaacfAtUEp23FSfabVBuNE7EMj1AQ2X70xNqwX6jwukn1pWwnsYwDPaceCizf+h
+         5SDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDqQEovVehW0CjKtOr+LBXgzKH55QFpJGsS9jEnMfRL28PHPjDlJeQvvBBheOSW/yqQg2bfc+0rtQaK327@vger.kernel.org, AJvYcCW21REGCdSfZ1kl1drF/S7dSwAaMJlXbwTkN8L5RmTIs3ilSTGHmdoMxTeXhpNzrg+vW5RClteQhV2w@vger.kernel.org, AJvYcCWw3NaIwoZxSiRv+d1NJhJFbAr9YrtahsVRJUSGWz3jI5QghvrBG64HCN2UGHBatoEFqicr365E00IgM32e@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdbISlmpvx/9tS7x8VZ8KuOpiFi4TR7tir647oZvGBWxxtkTnd
+	O4y9VKuDc1BPDl/Tqtm12MLzupo+xz0KLSPShPllLSZHaBrJZKri
+X-Google-Smtp-Source: AGHT+IGvb6xXL3VBFMKGimtbpm8nNpUqoPcGgEmsTaD6ZrtVPkudnvh0GC9uLlmFgrICJntK2YSkQA==
+X-Received: by 2002:a17:902:e552:b0:207:17f6:9efc with SMTP id d9443c01a7336-20717f69f77mr147502105ad.25.1725938196944;
+        Mon, 09 Sep 2024 20:16:36 -0700 (PDT)
+Received: from dw-tp ([171.76.84.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e123d1sm40139775ad.53.2024.09.09.20.16.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 20:16:36 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+In-Reply-To: <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
+Date: Tue, 10 Sep 2024 08:21:55 +0530
+Message-ID: <877cbkgr04.fsf@gmail.com>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com> <87frqf2smy.fsf@gmail.com> <ZtjrUI+oqqABJL2j@dread.disaster.area> <877cbq3g9i.fsf@gmail.com> <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
-In-Reply-To: <20240909224903.3498207-2-andrii@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Sep 2024 19:51:53 -0700
-Message-ID: <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
- softirq context
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org> =
-wrote:
->
-> Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
-> makes it unsuitable to be called from more restricted context like softir=
-q.
->
-> Let's make put_uprobe() agnostic to the context in which it is called,
-> and use work queue to defer the mutex-protected clean up steps.
->
-> To avoid unnecessarily increasing the size of struct uprobe, we colocate
-> work_struct in parallel with rb_node and rcu, both of which are unused
-> by the time we get to schedule clean up work.
->
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
->  1 file changed, 27 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index a2e6a57f79f2..377bd524bc8b 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -27,6 +27,7 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/khugepaged.h>
->  #include <linux/rcupdate_trace.h>
-> +#include <linux/workqueue.h>
->
->  #include <linux/uprobes.h>
->
-> @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
->  #define UPROBE_COPY_INSN       0
->
->  struct uprobe {
-> -       struct rb_node          rb_node;        /* node in the rb tree */
-> +       union {
-> +               struct {
-> +                       struct rb_node          rb_node;        /* node i=
-n the rb tree */
-> +                       struct rcu_head         rcu;
-> +               };
-> +               /* work is used only during freeing, rcu and rb_node are =
-unused at that point */
-> +               struct work_struct work;
-> +       };
->         refcount_t              ref;
->         struct rw_semaphore     register_rwsem;
->         struct rw_semaphore     consumer_rwsem;
->         struct list_head        pending_list;
->         struct list_head        consumers;
->         struct inode            *inode;         /* Also hold a ref to ino=
-de */
-> -       struct rcu_head         rcu;
->         loff_t                  offset;
->         loff_t                  ref_ctr_offset;
->         unsigned long           flags;
-> @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct uprobe *=
-uprobe)
->         return !RB_EMPTY_NODE(&uprobe->rb_node);
->  }
->
-> +static void uprobe_free_deferred(struct work_struct *work)
-> +{
-> +       struct uprobe *uprobe =3D container_of(work, struct uprobe, work)=
-;
-> +
-> +       /*
-> +        * If application munmap(exec_vma) before uprobe_unregister()
-> +        * gets called, we don't get a chance to remove uprobe from
-> +        * delayed_uprobe_list from remove_breakpoint(). Do it here.
-> +        */
-> +       mutex_lock(&delayed_uprobe_lock);
-> +       delayed_uprobe_remove(uprobe, NULL);
-> +       mutex_unlock(&delayed_uprobe_lock);
-> +
-> +       kfree(uprobe);
-> +}
-> +
->  static void uprobe_free_rcu(struct rcu_head *rcu)
->  {
->         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu);
->
-> -       kfree(uprobe);
-> +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
-> +       schedule_work(&uprobe->work);
->  }
->
->  static void put_uprobe(struct uprobe *uprobe)
+Dave Chinner <david@fromorbit.com> writes:
 
-It seems put_uprobe hunk was lost, since the patch is not doing
-what commit log describes.
+> On Thu, Sep 05, 2024 at 09:26:25AM +0530, Ritesh Harjani wrote:
+>> Dave Chinner <david@fromorbit.com> writes:
+>> > On Wed, Sep 04, 2024 at 11:44:29PM +0530, Ritesh Harjani wrote:
+>> >> 3. It is the FORCEALIGN feature which _mandates_ both allocation
+>> >> (by using extsize hint) and de-allocation to happen _only_ in
+>> >> extsize chunks.
+>> >>
+>> >>    i.e. forcealign mandates -
+>> >>    - the logical and physical start offset should be aligned as
+>> >>    per args->alignment
+>> >>    - extent length be aligned as per args->prod/mod.
+>> >>      If above two cannot be satisfied then return -ENOSPC.
+>> >
+>> > Yes.
+>> >
+>> >> 
+>> >>    - Does the unmapping of extents also only happens in extsize
+>> >>    chunks (with forcealign)?
+>> >
+>> > Yes, via use of xfs_inode_alloc_unitsize() in the high level code
+>> > aligning the fsbno ranges to be unmapped.
+>> >
+>> > Remember, force align requires both logical file offset and
+>> > physical block number to be correctly aligned,
+>> 
+>> This is where I would like to double confirm it again. Even the
+>> extsize hint feature (w/o FORCEALIGN) will try to allocate aligned
+>> physical start and logical start file offset and length right?
+>
+> No.
+>
+>> (Or does extsize hint only restricts alignment to logical start file
+>> offset + length and not the physical start?)
+>
+> Neither.
+>
+
+Yes, thanks for the correction. Indeed extsize hint does not take care
+of the physical start alignment at all.
+
+> extsize hint by itself (i.e. existing behaviour) has no alignment
+> effect at all. All it affects is -size- of the extent. i.e. once
+> the extent start is chosen, extent size hints will trim the length
+> of the extent to a multiple of the extent size hint. Alignment is
+> not considered at all.
+>
+
+Please correct me I wrong here... but XFS considers aligning the logical
+start and the length of the allocated extent (for extsize) as per below
+code right? 
+
+i.e.
+1) xfs_direct_write_iomap_begin()
+{
+    <...>
+    if (offset + length > XFS_ISIZE(ip))
+		end_fsb = xfs_iomap_eof_align_last_fsb(ip, end_fsb);
+                  => xfs_fileoff_t aligned_end_fsb = roundup_64(end_fsb, align);
+                     return aligned_end_fsb
+}
+
+2) xfs_bmap_compute_alignments()
+{
+    <...>
+    	else if (ap->datatype & XFS_ALLOC_USERDATA)
+		     align = xfs_get_extsz_hint(ap->ip);
+
+        if (align) {
+            if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
+                        ap->eof, 0, ap->conv, &ap->offset,
+                        &ap->length))
+                ASSERT(0);
+            ASSERT(ap->length);
+
+            args->prod = align;
+            div_u64_rem(ap->offset, args->prod, &args->mod);
+            if (args->mod)
+                args->mod = args->prod - args->mod;
+        }
+        <...>
+}
+
+So args->prod and args->mod... aren't they use to align the logical
+start and the length of the extent?
+
+
+However, I do notice that when the file is closed XFS trims the length
+allocated beyond EOF boundary (for extsize but not for forcealign from
+the new forcealign series) i.e.
+
+xfs_file_release() -> xfs_release() -> xfs_free_eofblocks()
+
+I guess that is because xfs_can_free_eofblocks() does not consider
+alignment for extsize in this function 
+
+xfs_can_free_eofblocks()
+{
+<...>
+	end_fsb = xfs_inode_roundup_alloc_unit(ip,
+			XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip)));
+<...>
+}
+
+
+
+
+>> Also it looks like there is no difference with ATOMIC_WRITE AND
+>> FORCEALIGN feature with XFS, correct? (except that ATOMIC_WRITE is
+>> adding additional natural alignment restrictions on pos and len). 
+>
+> Atomic write requires additional hardware support, and it restricts
+> the valid sizes of extent size hints that can be set. Only atomic
+> writes can be done on files marked as configured for atomic writes;
+> force alignment can be done on any file...
+>
+>> So why maintain 2 separate on disk inode flags for FORCEALIGN AND
+>> ATOMIC_WRITE?
+>
+> the atomic write flag indicates that a file has been set up
+> correctly for atomic writes to be able to issues reliably. force
+> alignment doesn't guarantee that - it's just a mechanism that tells
+> the allocator to behave a specific way.
+>
+>> - Do you foresee FORCEALIGN to be also used at other places w/o
+>> ATOMIC_WRITE where feature differentiation between the two on an
+>> inode is required?
+>
+> The already exist. For example, reliably allocating huge page
+> mappings on DAX filesystems requires 2MB forced alignment. 
+>
+>> - Does the same reasoning will hold for XFS_SB_FEAT_RO_COMPAT_FORCEALIGN
+>> & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES too?
+>
+> Same as above.
+>
+>> - But why ro_compact for ATOMICWRITES? There aren't any on disk metadata
+>> changes within XFS filesystem to support atomic writes, right? 
+>
+> Because if you downgrade the kernel to something that doesn't
+> support atomic writes, then non-atomic sized/aligned data can be
+> written to the file and/or torn writes can occur.
+>
+> Worse, extent size hints that don't match the underlying hardware
+> support could be set up for inodes, and when the kernel is upgraded
+> again then atomic writes will fail on inodes that have atomic write
+> flags set on them....
+>
+>> Is it something to just prevent users from destroying their own data
+>> by not allowing a rw mount from an older kernel where users could do
+>> unaligned writes to files marked for atomic writes?
+>> Or is there any other reasoning to prevent XFS filesystem from becoming
+>> inconsistent if an older kernel does a rw mount here.
+>
+> The older kernel does not know what the unknown inode flag means
+> (i.e. atomic writes) and so, by definition, we cannot allow it to
+> modify metadata or file data because it may not modify it in the
+> correct way for that flag being set on the inode.
+>
+> Kernels that don't understand feature flags need to treat the
+> filesystem as read-only, no matter how trivial the feature addition
+> might seem.
+>
+>> > so unmap alignment
+>> > has to be set up correctly at file offset level before we even know
+>> > what extents underly the file range we need to unmap....
+>> >
+>> >>      If the start or end of the extent which needs unmapping is
+>> >>      unaligned then we convert that extent to unwritten and skip,
+>> >>      is it? (__xfs_bunmapi())
+>> >
+>> > The high level code should be aligning the start and end of the
+>> > file range to be removed via xfs_inode_alloc_unitsize(). Hence 
+>> > the low level __xfs_bunmapi() code shouldn't ever be encountering
+>> > unaligned unmaps on force-aligned inodes.
+>> >
+>> 
+>> Yes, but isn't this code snippet trying to handle a case when it finds an
+>> unaligned extent during unmap?
+>
+> It does exactly that.
+>
+>> And what we are essentially trying to 
+>> do here is leave the unwritten extent as is and if the found extent is
+>> written then convert to unwritten and skip it (goto nodelete). This
+>> means with forcealign if we encounter an unaligned extent then the file
+>> will have this space reserved as is with extent marked unwritten. 
+>> 
+>> Is this understanding correct?
+>
+> Yes, except for the fact that this code is not triggered by force
+> alignment.
+>
+> This code is preexisting realtime file functionality. It is used
+> when the rtextent size is larger than a single filesytem block.
+>
+> In these configurations, we do allocation in rtextsize units, but we
+> track written/unwritten extents in the BMBT on filesystem block
+> granularity. Hence we can have unaligned written/unwritten extent
+> boundaries, and if we aren't unmapping a whole rtextent then we
+> simply mark the unused portion of it as unwritten in the BMBT to
+> indicate it contains zeroes.
+>
+> IOWs, existing RT files have different IO alignment and
+> written/unwritten extent conversion behaviour to the new forced
+> alignment feature. The implementation code is shared in many places,
+> but the higher level forced alignment functionality ensures there
+> are never unaligned unwritten extents created or unaligned
+> unmappings asked for. Hence this code does not trigger for the
+> forced alignment cases.
+>
+> i.e. we have multiple seperate allocation alignment behaviours that
+> share an implementation, but they do not all behave exactly the same
+> way or provide the same alignment guarantees....
+>
+
+Thanks for taking time and explaining this. 
+
+-ritesh
 
