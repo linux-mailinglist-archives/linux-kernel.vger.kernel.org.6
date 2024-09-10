@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-323938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8728197457E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E58797458A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AD01F26B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD6F28BEB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C79B1917E3;
-	Tue, 10 Sep 2024 22:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E71AC8BE;
+	Tue, 10 Sep 2024 22:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaUfMo+m"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3V39Y7X"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C6E1AB518
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 22:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628861AC421;
+	Tue, 10 Sep 2024 22:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006579; cv=none; b=WaoGbSL6Zn7YLX2BhhDR7Pxw5Iyc+y1r4DHZhEWHqqbsyjwNIWe4GbdXQZjAESHiBOM77/A8NJjd7zn/qVDQGdrTx/wvp5ASw1msoXZsTRKZtEZmHKl0NG3pgXzW+HiLO1OGGr9mhbKBY+kmBKPcbOQNtJmZ2zfiHu7vX7jRxNQ=
+	t=1726006589; cv=none; b=Yn98ULtLpn7bGqf0yjCU9JKRBq2QQGjEHQhATdUFTNgdY4ZTEKHrY8OvRQLtoK9ApwNwjz2VXl1m0RfsxGeWDF/0/148Qv1scgOf5xrBoAVweBmlVEXr0Dgoso0psLObNszEVJkHRXi4uM5msv92GwdrCVkgETUdPl3jRQhnPCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006579; c=relaxed/simple;
-	bh=hHIg8i0gS3Bf6sinh0WN3XoEPUmj8P+7fJP2LdbCtG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFyXtatTiNp/LLpnVOo8qWnnoDYRaIbUSpwQpAXuAbEkvxnkqx5D/mkAsOkQw6x6YnMaxAo4bKIjmd4orYU/zPFCItHaHfqYqdA0I2LNormO8WomrT7GegSK3VP0ON5e5LJaVD+yF8vKGtx3QHLf++4cUyvvr5GugZQ/8aXikk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OaUfMo+m; arc=none smtp.client-ip=209.85.219.41
+	s=arc-20240116; t=1726006589; c=relaxed/simple;
+	bh=QSttr2JhMVXlGbE1Qo9deB59dtCrXed0BMMThrUfqGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEqBHhh4YAh9sUFQCRDJKwI54vYVPXf/Xs/go467WPC7PgBe4bs7/6Dfs6Q9MLVQIUL3w7ZqvjeWmhHIS9ti4hWYarT9zxwAOYuzoSuV54PZEwAwizx6U2tlkIspuhA18QEb5u8doU5nHw5U5u/MoYKSsSdFViCghTlQjy6pDgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3V39Y7X; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c354091616so36948816d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:16:17 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365c512b00so1674166e87.3;
+        Tue, 10 Sep 2024 15:16:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726006576; x=1726611376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hHIg8i0gS3Bf6sinh0WN3XoEPUmj8P+7fJP2LdbCtG0=;
-        b=OaUfMo+mLyS2Pweu7wjMjlD+ZmF6j4JGTQWox8QvbfHCLZPEDUPVJU0dTLSzdHDvUD
-         gvGDp1BU/TusZbQ9xNZpKN9xtsg4UU6/QltT6bVmrCZv7cf4hgtF+IRg48VWIoCAr+Hp
-         ni4jklH67bv6HF7ed1282OaXd1xdeG/6aNdxfSNKOa2a3MHAggvBws9kWLOoPCz/zudl
-         dK2UsCWTG0EWnXbwpq4IqF4E3MN/x491lZFTGb4csnFd7K8p4zQGESp4hHrC7SPQKud3
-         L1c5lHK+2PG0urT8nH4oqb4WDrVY02gG62WDeyfA2eYw/GcmXw14+f+q5Zgf4t4PmFtX
-         Y/AA==
+        d=gmail.com; s=20230601; t=1726006586; x=1726611386; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pdYjqVV7NoPt38X5VJbQiOeKKRdU/zmfKbbwAgjGMD4=;
+        b=i3V39Y7Xlb6vVqHaR3TiMtTT3WLmhzbwFQisYNwtTbyvPFdErUaLgsGAwgKhXzasKk
+         3/KBLLmtxSDUHU0i7wRKnlchB5CZ6TwFU8n4ySXH0bKncksWvvS/OWAa7MgBtgMSM4+h
+         zCm6PekK4WKEH0bwjsoNBdul2bGJriMwVn9MPeZoRK/voYkH70Y2NTC0D/+W9VBi94cU
+         DglN9NwxDZ9DukXzM1BpG9o9UOpkCfF/BFcfAcFQlH0NK5kr27kucADh+SG42Uae22ll
+         Uvl+0kj3tpVq9SwWWpzYdblYtKqSFrZXuHI2B0uCsE3SdByhfh/r5VjZOATO7ST1Orjz
+         9MCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726006576; x=1726611376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hHIg8i0gS3Bf6sinh0WN3XoEPUmj8P+7fJP2LdbCtG0=;
-        b=Exq9GnPoENgdNk761qF/F5NiNpi8670717xpZTxR4thea4AsROLHxIANv5bL5xs9uB
-         +sV1LLRCwqKhkPcrETpY8xx2jRIeug4OSlqwRS25B8phqQmhzISVtbUHvfFoo4/mIXzo
-         wx5pJCVE11CeBFU7+q1uLImHkXlaWTgXA0WWiO18TjZbuPsDe/bZO4oJJ1f2YUjfvdB4
-         hLBapwCbnjiqhUME3zTiDX0ZczzZb+7B5Die2MTuXWilOhLY0mhvIaaVqjhrNgenFC40
-         QBcLL2T+/NKBvrLLqNaInggqnl0+RVx0oV8MN2Qrqg1sh+1zpj8zgz+1DRRKo56+Aikr
-         OoFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRSE6nT5I+FLDXY7O+DTP4oMBorBWZLlkPXBrTOuxN+YWKyV9+pfo8d9MqNelmm1md5c5DaKkZsgXIyFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygiohed2Ip+CsNi+JnwV9fI0GrU4cQYKXGoOWoFmZoSUMcfqoO
-	FqTER+H+8lv7mkMdRkUIu+JJa/5AM1ChOscQc4nmDMndwlJCqzIBGXi1DOGZmfxDUcRg9uAnUfs
-	du7FMOKxuO4zeBBWtgDMfdaiB3syGmxqjq9EMTdn2
-X-Google-Smtp-Source: AGHT+IH6j1CjcbCzXOH1/LDwJczOXPOc2Hu+rc7nUbxX9+q+uyt7yEQs7pN/cUoLVtxP6duCgszTtKHpKX9DYMGhazM=
-X-Received: by 2002:a05:6214:3d08:b0:6c1:6b4c:6ba4 with SMTP id
- 6a1803df08f44-6c5282fd494mr199592026d6.8.1726006576325; Tue, 10 Sep 2024
- 15:16:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726006586; x=1726611386;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pdYjqVV7NoPt38X5VJbQiOeKKRdU/zmfKbbwAgjGMD4=;
+        b=IOZMDp/Wc7gIzw6C7dmHfn4+D6oznFeN4PcUufSN06QqNz7Mo/9mNmiw/GAdcGSJ54
+         EaiTFJv+dih8NWhItdMQgaToT2UJtpfzT3SZGD2n23JMNJq8wEOmzP5Nh7i51AEdLw8T
+         oo2nNm3rxwrJ8qOZLI3G6FIHjg9uduZFfiAXWQagUxBDGnZayVJS6+VpRT6fUQDc7XKk
+         R2FuLsg7gMbMZksQPxSS1gAk7pPtCWKUgoBUD5COY+vcTc5PXUscsq0BJnOGlqvN/hv9
+         uEecwbzafpbOn1qvKc2bTBqHFyyzJrpfSdjUj5ZeI6ps+ZiBFpHj3TtCgKuA6mwOkdQx
+         iYqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfQN4o4h5k8wK+VW9FioGd2L/zVLsQV+JSVMYwuVOgTVUbAo4Wf3qFLP33KghWpDbrGrMxNEb76jud+g==@vger.kernel.org, AJvYcCUuQewCOWh0xUIzO/6+tBxeY1lNX1LpDlqR+ed21SdQEw+qjOJWWE3fRyck55pJtTS7PHCXG70bG0mU@vger.kernel.org, AJvYcCXi5bCLG9PCDfmCw1MXOUNeX5tTDW2/nMMW8q5GTZEpbH9pBsld+yZPwBL9VzNKN6umJ6AjgSYCfGN+3JRK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmEz5yoahsxSe6PFfclXGbhHOr7R+yDIvMshkeZnegsdvomqSH
+	vZ+PtGK/U8GvJw3kZa3OZoUTqzOd1gkeaLwWeeGsF+p1EtZPCd6uFEpvhg==
+X-Google-Smtp-Source: AGHT+IFi8j9h2IbdF01Mf3JPAdHvgT6Od37WiOHHGnHsZL6o612hM2YVY1L0w1nCJu/s9yHUJTuYBQ==
+X-Received: by 2002:a05:6512:ba8:b0:52f:cffd:39f9 with SMTP id 2adb3069b0e04-53673b5f86bmr663836e87.24.1726006585737;
+        Tue, 10 Sep 2024 15:16:25 -0700 (PDT)
+Received: from mobilestation ([95.79.225.241])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f870ae3sm1371572e87.106.2024.09.10.15.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 15:16:25 -0700 (PDT)
+Date: Wed, 11 Sep 2024 01:16:23 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"paulburton@kernel.org" <paulburton@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] MIPS: cm: Probe GCR address from DeviceTree
+Message-ID: <6oouxspgntbmn5upinbp63x5x52wluk4vg4s3oe3m7wgtk3le5@ua7dup5lkeaa>
+References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+ <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
+ <ekvyyq3vzdbyi5suf4irfixyprvtko7rpkffwpc267kiex4ex2@lpu3ctysuviw>
+ <79acb1b1-9c1c-4a58-91a5-5dbb286717ec@app.fastmail.com>
+ <7j6cc5i4z4nwg73fowjz756eblnesglqm72jveygqfxngw26mc@sdy6xxomo3qe>
+ <b4d57581-bad7-4f6f-8d6f-733f1a5d33ba@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
- <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
- <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
- <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com> <CABXGCsOoL5vD0+FRALFQFr3ZBpb2z5mpGKzAD5RHoW9_sb5yaQ@mail.gmail.com>
- <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com> <CABXGCsMSTsBFW=OirDszPFVOiNgyOBSh3qyzAw-Coi-McnicAQ@mail.gmail.com>
- <04d3755d-f295-46d7-b35d-008b888b39ae@amd.com> <CABXGCsMDk59-P0Nr1v7KajKsoQh2966mykLPWQxajPtq=OGgXg@mail.gmail.com>
- <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com> <6db472e4-cd90-4ba6-8368-725b10ba5b4a@amd.com>
-In-Reply-To: <6db472e4-cd90-4ba6-8368-725b10ba5b4a@amd.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Wed, 11 Sep 2024 03:16:05 +0500
-Message-ID: <CABXGCsMaXUjHyySQqw7fPmoyDHSJ0yc0f6NPfOU2BRd_Hvj8TA@mail.gmail.com>
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-To: Leo Li <sunpeng.li@amd.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com, 
-	pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b4d57581-bad7-4f6f-8d6f-733f1a5d33ba@app.fastmail.com>
 
-On Tue, Sep 10, 2024 at 8:47=E2=80=AFPM Leo Li <sunpeng.li@amd.com> wrote:
->
-> Thanks Mikhail, I think I know what's going on now.
->
-> The `scale-monitor-framebuffer` experimental setting is what puts us down=
- the
-> bad code path. It seems VRR has nothing to do with this issue, just setti=
-ng
-> `scale-monitor-framebuffer` is enough to reproduce.
+On Tue, Sep 10, 2024 at 09:48:10PM +0100, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年9月10日九月 下午9:07，Serge Semin写道：
+> [...]
+> > Both MIPS P5600 and P6600 databooks define the GCR_BASE field as
+> > optionally R/W:
+> >
+> > GCR_BASE 31:15 This field sets the base address of the 32KB          R or R/W
+> >                GCR block of the P5600 MPS.                           (IP Config-
+> >                This register has a fixed value after reset if         uration)
+> >                configured as Read-Only (an IP Configuration Option).
+> >
+> 
 
-I ran some additional tests:
+> Thanks for the pointer, I traced code history and it seems like MIPS decided
+> to not expose this functionality at some point, but documents were not updated.
 
-1)
-$ gsettings set org.gnome.mutter experimental-features
-"['variable-refresh-rate']"
-Symptoms: No
+Got it. Thanks for clarification.
 
-2)
-$ gsettings set org.gnome.mutter experimental-features
-"['scale-monitor-framebuffer']"
-Symptoms: Screen flickers happening when moving cursor.
+> 
+> Maybe I should add a read back check here.
 
-3)
-$ gsettings set org.gnome.mutter experimental-features
-"['variable-refresh-rate', 'scale-monitor-framebuffer']"
-But Variable Refresh Rate is disabled in the display settings.
-Symptoms: As previous - Screen flickers happening when moving cursor.
+The check is already implemented in the mips_cm_probe() method. Just
+10 lines below the mips_cm_phys_base() method call.
 
-4)
-$ gsettings set org.gnome.mutter experimental-features
-"['variable-refresh-rate', 'scale-monitor-framebuffer']"
-And Variable Refresh Rate is enabled in the display settings.
-Symptoms: On Radeon 7900XTX hardware computer completely hangs without
-any messages in kernel logs.
+-Serge(y)
 
-On Wed, Sep 11, 2024 at 2:11=E2=80=AFAM Leo Li <sunpeng.li@amd.com> wrote:
->
-> Hi Mikhail,
->
-> Can you give this patch a try to see if it helps?
-> https://gist.github.com/leeonadoh/3271e90ec95d768424c572c970ada743
->
-
-Thanks, with this patch, the issue is not reproduced anymore.
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-
-The only thing that worries me is the thought that the problem with
-hang is now hidden.
-It's one thing when the GPU hangs but the system continues to work,
-another thing when the system hangs completely and even
-Alt+SysRq+REISUB does not help to reboot the system. It shouldn't be
-like this...
-
---=20
-Best Regards,
-Mike Gavrilov.
+> 
+> Thanks
+> -- 
+> - Jiaxun
 
