@@ -1,80 +1,45 @@
-Return-Path: <linux-kernel+bounces-322939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD06973537
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:46:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0235597354F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B55E28386C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351C41C2496B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082281917E2;
-	Tue, 10 Sep 2024 10:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bwqtp6Tx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1435718F2FF;
+	Tue, 10 Sep 2024 10:46:14 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55A7144D1A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B414D431;
+	Tue, 10 Sep 2024 10:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965114; cv=none; b=BCqSQTmDsey/aCn6SjyvI6kbJi3EPYZ3s7Ysrg78BniZELPOcgItUCWh3tmkah0pPrPaijlySs3h6Z1Eup1hUoKa7Go3Sq+3EJjSyaoDVzYEpLRrtcTgDK3weBOl2Mh4+WX9z7itPa5Gqt9xZfhDnd0Yqe/G4lTHn5JfpJo8sy0=
+	t=1725965173; cv=none; b=kQkNqeX6U8dTOa3XxiM7okUF6c4KIQHLYsOyAzB3FyjPSn4gZM8/Tw2scvCL1/eH/qBq2TfAhgZk55nghMMk8vO7odpmgxblY6is6HAakVFIewpriyhP9tHqNYm1oGJo32rMCz+T5fR5zYYdvHv+couOtjEs8n0YzBsgPLXGIRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725965114; c=relaxed/simple;
-	bh=jYlCh8yNeYIkjiBpQOKOkIMz2OZvTJRJ/aETlxPhMrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nARY/uqrnNoYHmDR6qAxEktNJgOzHmtkmvZFuomZOsofIEMqchGzKo1bJXjmu2gy6zN+UVwyNJzrY+MR5YljULqRTSAwU/16urTQSpHXoBY/IOMJS7+xGNJ7OH3cFrVg2vJBdM5ySEPWMv16jTt0WtYFq8Ckt435KWtszF6jW18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bwqtp6Tx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725965111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jyPpBrEHkd08T4IqqfOrRciboN+U1FHHDgcUpFHe6pE=;
-	b=bwqtp6Tx6WC0DlOaPINpDo5PDPysKZsCYveHHnfz2r1vIehfegoOVYFA9feJ5hrpa2bREF
-	ACLu0MSSz5K2yi5S6RzEgY99C/HFayALLpoW0GaFBer6Qo1Em9jvkgqvPSfejFefM3nBQC
-	kZU7SZ+YNVa2116prW8Xac3n59IOrQQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-HNUSQrjeMECwa8M15wnCoQ-1; Tue, 10 Sep 2024 06:45:10 -0400
-X-MC-Unique: HNUSQrjeMECwa8M15wnCoQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb080ab53so19859155e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:45:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725965109; x=1726569909;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jyPpBrEHkd08T4IqqfOrRciboN+U1FHHDgcUpFHe6pE=;
-        b=XawX8IftzJfH5C3Oj96rBO/eXpFZyp1xUzeGgqsdF8DuI35fOMjzoFPkj+7r+72HJC
-         UgRkaXMXbhtfOYqZUyNIA06yHb8bUfuYjyx4FX/oZU8k99/oUL7z5u26QfHf7HMLhOyX
-         ARpXNLqRmKjwzx8PG1W/lGFpaegsCZmIYhLSaao87DWsPaggdq7xbIhlx8vUZfVWaLQG
-         uKpP05HPKUyZJW4+J3+oOfx7cZXCmTvxEiv1X3wf0kEQPXzpwi5IVwxM5uPjC6zETBvr
-         wUs7ptw6QlkoG1zwNcJoQeN0Gx7uye1e/bHxsUWaJFqu/r+qNSTnLGW6MbRZV0jtbLYi
-         8U3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/tD7UVZYCusGXCMmc0lssKoIUuvoq9Fpy5N/ljmTXw4EM5mMTN9+ThzZrVXQlFByZ5HvytA17eh+WhFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgjHYPvJDU10ZepVUweIKJjteIdgT2ha2Z+5RLW8R5oPed8NJt
-	117vgNqikx5Al8UcDeh72aAQe3R3bAiDNmu97+grdXaKRizJTkEYWEQyYl7pvB998EyOoKwo9kh
-	hmqvNkkulcAlLkCVJsqnDVd1UStpx19exIadzg8k/DQgdvGz08d+8iYSmP1E5Vg==
-X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr68287655e9.28.1725965109335;
-        Tue, 10 Sep 2024 03:45:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfmE2OcdsT+5uBbdXW+uePHJTdUw7zg7QfpVhNTyVckW+6q4fb0qb3B5MMthaJdYsgSv77Gg==
-X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr68287355e9.28.1725965108879;
-        Tue, 10 Sep 2024 03:45:08 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3789564a18asm8495403f8f.15.2024.09.10.03.45.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 03:45:08 -0700 (PDT)
-Message-ID: <7fab7177-078e-4921-a07e-87c81303a71d@redhat.com>
-Date: Tue, 10 Sep 2024 12:45:07 +0200
+	s=arc-20240116; t=1725965173; c=relaxed/simple;
+	bh=4+n+yhtKq/1EmKfGojZXbzM1JsjV8W6GtUOG1tc04HI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YjM0l8BVTWuSa1q9GSJtnKSNTO5v7tve5Zeo5q//DdKRwqGKk9or2D2ExpAwc/vbIG1Ctcv/6pFr+V/G23oHbwB4hvAPWo8amYCNbIdcE8xwdC7P7qeJHwblZrLTAZIVcLK9fIezaObrNP45PUAonCilidaXgYTvDGyVvTVZhwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X30jK1L8lz2DbkM;
+	Tue, 10 Sep 2024 18:45:41 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F8F11A0188;
+	Tue, 10 Sep 2024 18:46:09 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 18:46:08 +0800
+Message-ID: <b438256d-a233-4708-9a82-e4f5f4b86a63@huawei.com>
+Date: Tue, 10 Sep 2024 18:46:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,72 +47,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/21] KVM: TDX: Handle vCPU dissociation
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- kvm@vger.kernel.org
-Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
- yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-22-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH net-next] page_pool: add a test module for page_pool
+To: Mina Almasry <almasrymina@google.com>
+CC: <hawk@kernel.org>, <ilias.apalodimas@linaro.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <20240909091913.987826-1-linyunsheng@huawei.com>
+ <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240904030751.117579-22-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 9/4/24 05:07, Rick Edgecombe wrote:
-> +/*
-> + * A per-CPU list of TD vCPUs associated with a given CPU.  Used when a CPU
-> + * is brought down to invoke TDH_VP_FLUSH on the appropriate TD vCPUS.
+On 2024/9/10 1:28, Mina Almasry wrote:
+> On Mon, Sep 9, 2024 at 2:25 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> The testing is done by ensuring that the page allocated from
+>> the page_pool instance is pushed into a ptr_ring instance in
+>> a kthread/napi binded to a specified cpu, and a kthread/napi
+>> binded to a specified cpu will pop the page from the ptr_ring
+>> and free it back to the page_pool.
+>>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> 
+> It seems this test is has a correctness part and a performance part.
+> For the performance test, Jesper has out of tree tests for the
+> page_pool:
+> https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/bench_page_pool_simple.c
+> 
+> I have these rebased on top of net-next and use them to verify devmem
+> & memory-provider performance:
+> https://github.com/mina/linux/commit/07fd1c04591395d15d83c07298b4d37f6b56157f
 
-... or when a vCPU is migrated.
+Yes, I used that testing ko too when adding frag API support for
+page_pool.
 
-> + * Protected by interrupt mask.  This list is manipulated in process context
-> + * of vCPU and IPI callback.  See tdx_flush_vp_on_cpu().
-> + */
-> +static DEFINE_PER_CPU(struct list_head, associated_tdvcpus);
+The main issue I remembered was that it only support x86:(
 
-It may be a bit more modern, or cleaner, to use a local_lock here 
-instead of just relying on local_irq_disable/enable.
+> 
+> My preference here (for the performance part) is to upstream the
+> out-of-tree tests that Jesper (and probably others) are using, rather
+> than adding a new performance test that is not as battle-hardened.
 
-Another more organizational question is whether to put this in the 
-VM/vCPU series but I might be missing something obvious.
+I looked through the out-of-tree tests again, it seems we can take the
+best of them.
+For Jesper' ko:
+It seems we can do prefill as something that pp_fill_ptr_ring() does
+in bench_page_pool_simple.c to avoid the noise from the page allocator.
 
-Paolo
 
+For the ko in this patch:
+It uses NAPI instead of tasklet mimicking the NAPI context, support
+PP_FLAG_DMA_MAP flag testing, and return '-EAGAIN' in module_init()
+to use perf stat for collecting and calculating performance data.
+
+Is there other testcase or better practicing that we can learn from
+Jesper' out of tree ko?
+
+> 
+> --
+> Thanks,
+> Mina
+> 
 
