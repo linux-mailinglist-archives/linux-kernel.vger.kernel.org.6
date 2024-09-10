@@ -1,111 +1,214 @@
-Return-Path: <linux-kernel+bounces-322773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEBF972DA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8796972DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D311F26247
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0F31F25D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A73C188CBD;
-	Tue, 10 Sep 2024 09:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930B188A3A;
+	Tue, 10 Sep 2024 09:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="DuF+t3xd"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZVFUfUYg";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="GjOT2vS+"
+Received: from a7-42.smtp-out.eu-west-1.amazonses.com (a7-42.smtp-out.eu-west-1.amazonses.com [54.240.7.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E649216C854;
-	Tue, 10 Sep 2024 09:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CE316C854
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725960643; cv=none; b=mpRtg8obUlT7yoryXI1jAPUTFpmot4LtcC0Lh4A73NnvFFldg32Zrr9G7XfoasuC2Q5e0oQRNlwjMyFuOXtjuf4t8aHCUZsKDsAP3o5Dm3VhozW7wLni2L/TPKn22/X2X4m1ACoAB+N2zMmtHMFVidyiF2voBc1Sjo08q+slhW8=
+	t=1725960658; cv=none; b=lRLnQMb99VdXC9iJZfVLsn+UrnNHfgGwmqdaMrElPqmzYahX4BYRHsqVEe51R58Cm9kQ/v9z9pVS0ESEVmiXFlkcFSHj52tAGIiF7b2IQIlHxz3ZKnus8xi2w48gATzHPEXVbiOJkScmCvuoCPhitA2nYO6jVZ14ELLq5aDyGnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725960643; c=relaxed/simple;
-	bh=P22qfW3/nowovXkhFrt2C3XOu/zwhHSpH61Vp/lcy5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ok9EouKP6dUC8CGb5dvczfaii5bzJv7W7qPBMW/yohpp8VJX56FG8I1cNiO7gTkNyXtmu0HWhWB5U/LGDpYVqSmegaf0rND+CHU+cQ0I4kv45vRNSERluk4Rjg1g3DbKCAVbi+tjsHazLKShkA9XIz2rQH6hH0JUZCNvuldSfiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=DuF+t3xd; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7vTWtWLYV3y3lWPAmfSRMP2q53xf73IcQM16aSUWQ5w=; b=DuF+t3xdILUKaI4/h4AjD4rLaH
-	N7VzbRg3QcFMDJrd2QsTc6ShZU/2CexWQAzfNZfB/1m+9OOTjQFwisRLZFtyH/TR0h9KKAKJQpxyX
-	t/UBz/I3QHtUNHkEvDuh+2kTaaejgTUamOnmTDFBndZ/qCOg5lmDwZG95cG5EnD2eqkhmYxWTJUO5
-	Bj66gRkSkW2zlIyC6xt1cevazFJpc2e2i2F0OBPSxixZA9ftcQ8zo9jjfXH4mrHEc/QryOwlbc8ox
-	jTFiK36ulK4M58cvcRq08RX2SKI8NmaXL4hk5N9XvA5t5VqyY//n4k8iCHPhtqHJsbTxzdbSWtOIR
-	xuXtPqzw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1snx2g-001Oow-1x;
-	Tue, 10 Sep 2024 17:30:25 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Sep 2024 17:30:24 +0800
-Date: Tue, 10 Sep 2024 17:30:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [PATCH] crypto: n2 - Set err to EINVAL if snprintf fails for hmac
-Message-ID: <ZuARsOuhqFvIZkc0@gondor.apana.org.au>
-References: <ae2cfe53-7d2a-408b-8b18-af880d1974cc@stanley.mountain>
+	s=arc-20240116; t=1725960658; c=relaxed/simple;
+	bh=f1VEHlFlmCeLFmqgFruvrVklSfh+GU0nyzOSNnOJfig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B3HvtRyOrX6QopgqXrQF55Go0nmLqUUJluPP7rauO6pLpPawxl64/bORhFZP0H+BWCFHM8MOe3UDi4Olnaot8dEjEhV+NWMIw3GjFKntWylkpwzvpVKIRBIIWaLNsWrkiNrQBea8mE8pqs3f6bm0gHen5jdavkPNGaOx31eP/Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZVFUfUYg; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=GjOT2vS+; arc=none smtp.client-ip=54.240.7.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725960655;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=f1VEHlFlmCeLFmqgFruvrVklSfh+GU0nyzOSNnOJfig=;
+	b=ZVFUfUYgj1wJmA1P3gUlc18tT+rYh5UOioOt8HIDDNtuU49woyor7OaXQOwGm0pq
+	xfI3hWv+4JpGSrnuuq4lU6sQFN10cNPnK+gw5OQi0bEz1t6/2Luu8DZtUFzYjXAb6/N
+	bYoM3DIvMISQqwD86Om1nt+AjdO+hviUBvhLtUNz42/hbvAGQ0d3tt/MfbojhnyauCr
+	d5Q5THtJ3yBSAPWquIZ74T26h+9BlwLIUUxU0w1eb3GwJ7i3YiGxvewlw/13gPPrME7
+	JxNJIatLr+WbS4xobWDqrgoR3puv59oxNI2/w1g3/cTN38flf/o1LaqGKpjMnZcZj+f
+	RiTHrck1WQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725960655;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=f1VEHlFlmCeLFmqgFruvrVklSfh+GU0nyzOSNnOJfig=;
+	b=GjOT2vS+KrNPn0WrkVByfdmmPv2HsKvGywOUQfldmcipYC/k+skpZs6VL+GJ8CDH
+	wFoPDVrtG4gplIyhywfMJpzZITG3mtioh+utqGx9HBNorLtYHlHIq0RW7srTaUt2C61
+	G12VXzDOLfKCES3cY6h7+/XX+aA18glST8sq6iew=
+Message-ID: <01020191db45928b-bcb6d066-e490-41ff-aefd-f274d03da21e-000000@eu-west-1.amazonses.com>
+Date: Tue, 10 Sep 2024 09:30:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae2cfe53-7d2a-408b-8b18-af880d1974cc@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org, 
+	p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch, 
+	matthias.bgg@gmail.com, ck.hu@mediatek.com, shuijing.li@mediatek.com, 
+	jitao.shi@mediatek.com, mac.shen@mediatek.com, peng.liu@mediatek.com
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240905124041.3658-1-liankun.yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240905124041.3658-1-liankun.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.10-54.240.7.42
 
-On Tue, Sep 10, 2024 at 12:17:45PM +0300, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   89f5e14d05b4852db5ecdf222dc6a13edc633658
-> commit: 8c20982caca4b10ca79aea8134a16ea98989ca03 crypto: n2 - Silence gcc format-truncation false positive warnings
-> config: sparc-randconfig-r071-20240908 (https://download.01.org/0day-ci/archive/20240909/202409090726.TP0WfY7p-lkp@intel.com/config)
-> compiler: sparc64-linux-gcc (GCC) 14.1.0
+Il 05/09/24 14:40, Liankun Yang ha scritto:
+> Update efuse data for MT8188 displayport.
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202409090726.TP0WfY7p-lkp@intel.com/
+> The DP monitor can not display when DUT connected to USB-c to DP dongle.
+> Analysis view is invalid DP efuse data.
 > 
-> smatch warnings:
-> drivers/crypto/n2_core.c:1406 __n2_register_one_hmac() error: uninitialized symbol 'err'.
+> Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp function")
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
 
----8<---
-Return EINVAL if the snprintf check fails when constructing the
-algorithm names.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Fixes: 8c20982caca4 ("crypto: n2 - Silence gcc format-truncation false positive warnings")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202409090726.TP0WfY7p-lkp@intel.com/
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+> Changes in V4:
+> - Remove excess newlines.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240903121028.20689-1-liankun.yang@mediatek.com/
+> 
+> Changes in V3
+> - Update change log position in commit message.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240902133736.16461-1-liankun.yang@mediatek.com/
+> 
+> Changes in V2
+> - Add Fixes tag.
+> - Update the commit title.
+> - Update the commit description.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240510061716.31103-1-liankun.yang@mediatek.com/
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+>   1 file changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+> index d8796a904eca..f2bee617f063 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -145,6 +145,89 @@ struct mtk_dp_data {
+>   	u16 audio_m_div2_bit;
+>   };
+>   
+> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
+> +	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+> +		.idx = 0,
+> +		.shift = 10,
+> +		.mask = 0x1f,
+> +		.min_val = 1,
+> +		.max_val = 0x1e,
+> +		.default_val = 0xf,
+> +	},
+> +	[MTK_DP_CAL_CLKTX_IMPSE] = {
+> +		.idx = 0,
+> +		.shift = 15,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 0,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 8,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 16,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 24,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 4,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 12,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 20,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 28,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +};
+> +
+>   static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
+>   	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+>   		.idx = 3,
+> @@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
+>   static const struct mtk_dp_data mt8188_dp_data = {
+>   	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
+>   	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+> -	.efuse_fmt = mt8195_dp_efuse_fmt,
+> +	.efuse_fmt = mt8188_dp_efuse_fmt,
+>   	.audio_supported = true,
+>   	.audio_pkt_in_hblank_area = true,
+>   	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
 
-diff --git a/drivers/crypto/n2_core.c b/drivers/crypto/n2_core.c
-index f4022d845393..eeef285277ed 100644
---- a/drivers/crypto/n2_core.c
-+++ b/drivers/crypto/n2_core.c
-@@ -1375,6 +1375,7 @@ static int __n2_register_one_hmac(struct n2_ahash_alg *n2ahash)
- 	ahash->setkey = n2_hmac_async_setkey;
- 
- 	base = &ahash->halg.base;
-+	err = -EINVAL;
- 	if (snprintf(base->cra_name, CRYPTO_MAX_ALG_NAME, "hmac(%s)",
- 		     p->child_alg) >= CRYPTO_MAX_ALG_NAME)
- 		goto out_free_p;
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
