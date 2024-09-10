@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-323225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE3D9739BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6569739B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C89AB22C01
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8791F22524
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26751922DC;
-	Tue, 10 Sep 2024 14:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A3A19413F;
+	Tue, 10 Sep 2024 14:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pBoESgvX"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTkS7gM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A310918FDBD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A24618FDDF;
+	Tue, 10 Sep 2024 14:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978002; cv=none; b=hf4d2H1JrZq4DuffHTyM4bBiRm+GKhB24iLJCGDlgC35BczlkTNTCePBgohPOusjTTlzbiXJ4+SrD9NXgOiTDMEwUFEUs3PacugQW1yiwxUpHqKGy80FSp95xsBR8rhXoNNFwKPmSC9M++dmPqztzKvLdJNe7nEbAoBjxbFPorc=
+	t=1725977966; cv=none; b=qEOdP3MAtSXqq4L65xXPeR777R7finEL/bRmcPeyzTjkzUGFjHBGRE3wk6jmLAyDYTYCgksiOQcsL9dpB1h6Yb3BzMkR407vLr51NUUz2n53kaqohhnGxqXoXwubnLv3v9OH5AhsQERGBx6Rd/OB9x6WogxxvvSAhz0B5Gthvkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978002; c=relaxed/simple;
-	bh=Jx0Skg+LeZzo5wW4Rr/X6Np29gcXKRlYjoaHnTmyULQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iq0hWaBZFVoF6ShgjhElsOSsyIJEBee/sGCk2dHCplu2emAjalrPKLgjxfqtEBoepo198vzF8PCFcYnBn5OQ346IxP4HR9AKrYqusl0TsUTqLSX1iTLTk4WtLoji+0W8e/JycUPVF7nBGztadQzi7K8noFFcPvQYrnsSLo/eXik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pBoESgvX; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6c354091616so33559076d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:20:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725977999; x=1726582799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jx0Skg+LeZzo5wW4Rr/X6Np29gcXKRlYjoaHnTmyULQ=;
-        b=pBoESgvXp43pYGmmyd7sJhRm80uwhPsOdHmglYOlE9/dXNeTE2YiagxeK6HqEC0Dwz
-         I0LSEcE/0OyIXpF0nMOQ3Y3almFc4YqtdYtUMfUYF0ygy9T2mFh3RBEvxFJEneaMM3+r
-         2LiECtQo4uWh0Nr2PcfrSDtm8uHeZoyIywO1Ls9NMJ6oRSlfv7YVQCPnxewB1Aae3ee2
-         udj+NawDyJfep/NrwGnET26snooS9CCgE2PDsCLIp4v3CDfsHHthU3NWDmeHnpDrQFyj
-         NdcbEonEMo9qhDdbv669GEQB6sEP9JXw5f4tn63MfQhCd/qDPI2aqSEt6UckLlf3JqNO
-         5fgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725977999; x=1726582799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jx0Skg+LeZzo5wW4Rr/X6Np29gcXKRlYjoaHnTmyULQ=;
-        b=CyWfFWcv7GOBuvaC5qI4+oBlbzVLSKbNROOr4splB9Gi8oE+ylhEnjv1e5U05K2JMy
-         hIZzzhbHsKex8aJHOkvUxhca8zpiE0ngot+vU4apl/PCk/zrPVGgRl05EJv0DiTQE0L7
-         lqO7WYuk2kw4CPr9HOtQcAK/938FEPDdj0XNn2L/E9Fho+FDSeQ+93awR9qqKIc0h4Z+
-         xtkS8T7/7+W1pY1laiogkjNXJgLGSs0/gfIOzPCcsofqRLwbF96Cmy0cchlV5pMP07rU
-         mgpC4lTXOsraHjSb1pX7k64+kLkJZr9K66Wf2fHcCPoqV1Vkpi+JxHYkko7oXAqMYfVe
-         U+XA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0z+4wee2NmorB/IqUiqZjk84Y5Kjbq/fpcJttzYU5Yja63p7+s7E+LbJlLet6WPfWerCVx9FKp2aoBws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdMZGcZ8IAXXAeWNjRs7+/fBtsMrI0SgbLhh+kItvGAZcEoxW2
-	u79fCxKIx9Jcu+mDITU+y8yhV4v9hthdamjXHgtmK0lt2chvocqAEVjeeYBr/syALgxsIJ8z9M4
-	FgLhfHF+EDYjWNM/elnH3ub+o4FY8uwf/1tzR
-X-Google-Smtp-Source: AGHT+IEFPlMt5kT5UTCLOf0JwDS+yAZDFrJv1Y62btlwDn2VXfwiZA5HOr49XasWew8S7WJWF530fCjb+v9YXOAF6aA=
-X-Received: by 2002:a05:6214:390e:b0:6bf:7d3c:a64d with SMTP id
- 6a1803df08f44-6c52850ddcdmr172364426d6.32.1725977999107; Tue, 10 Sep 2024
- 07:19:59 -0700 (PDT)
+	s=arc-20240116; t=1725977966; c=relaxed/simple;
+	bh=ZES5LO9BASmSUM5s+UjAld5zKXpcF8iy4zrbeykzqts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzfLwFpmUaJK6k9cybEZ/XvGg8nlAPOG7Z7dN0dziYP7VoTgD2yDd8d3E/GPYL7kj4ivf+n+ooT92dX3iMIwgPbVXz8vNxzRUweXIocOM0MJaCoCwesgheMLGD2WTsc9rq4Sdel8P7G4lcNs+eawxjzBHXiiE8CiyNT8BEcDj20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTkS7gM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F175C4CEC3;
+	Tue, 10 Sep 2024 14:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725977965;
+	bh=ZES5LO9BASmSUM5s+UjAld5zKXpcF8iy4zrbeykzqts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTkS7gM5vhmA/K1h0i2dTchicnTU/Bcv9AoxDvAndUQhdMg83lL8q4tMnVujlmMvu
+	 tfWQEaTc2FfyOJhB+ZMBBtTi4WHGdzSadvumPjf4TtQfnVVSiITDOP+HkZT1byuxCC
+	 1sHA7PMfkfjaOKzcxZyW/KEhtwws39/VXP+ix32r1fRtimxYuGkm0qXOJn1j9eVnny
+	 ZfOvJ2nve4pfQOJnFfAaKuqVIuM9nTLmAgJe5t4pVn49vDsfk3L17ZrlweFGc520+4
+	 XGWmzTf3XmGJUC820G5XoG1Ss/UuMbWV7xbscxm51RLePXvR3EskkSSMfzKzyDu98N
+	 +nnKuXBgDH3dg==
+Date: Tue, 10 Sep 2024 15:19:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Fuad Tabba <tabba@google.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 0/4] KVM: arm64: Fix underallocation of storage for
+ SVE state
+Message-ID: <0d18dda8-347a-4cd5-b17f-40c646fc3fab@sirena.org.uk>
+References: <20240704-kvm-arm64-fix-pkvm-sve-vl-v4-0-b6898ab23dc4@kernel.org>
+ <86a5iw3ri2.wl-maz@kernel.org>
+ <fec60c7f-0cc3-44e2-8be1-09c120e8523e@sirena.org.uk>
+ <ZowGFl/1AEuevh96@e133380.arm.com>
+ <a3f2f13e-be22-4a09-a8a6-5faef818defe@sirena.org.uk>
+ <CA+EHjTyCvG2KL=LPhbAf+Wo66QoC_EMk1xn+R9X-yKunHQ-JhA@mail.gmail.com>
+ <Ztspjf0SHx7nz2lV@finisterre.sirena.org.uk>
+ <CA+EHjTyjVMw5CtEiLoZzvnnano94UGx_URhFBd7BRYm89K+XmQ@mail.gmail.com>
+ <ZttDmNTX0vuddRrZ@finisterre.sirena.org.uk>
+ <CA+EHjTww9OjB3OH85x_2Hs_yiaFxQwYXLZKn7o5MqUALkFyKMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909012958.913438-1-feng.tang@intel.com> <20240909012958.913438-5-feng.tang@intel.com>
- <4b7670e1-072a-46e6-bfd7-0937cdc7d329@suse.cz> <ZuBURfScdtDbSBeo@feng-clx.sh.intel.com>
-In-Reply-To: <ZuBURfScdtDbSBeo@feng-clx.sh.intel.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 10 Sep 2024 16:19:19 +0200
-Message-ID: <CAG_fn=U=tkh-mLThLsupNRsKRHkxPL__U_eFSCCbmeHTdoA6Hg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] kunit: kfence: Make KFENCE_TEST_REQUIRES macro
- available for all kunit case
-To: Feng Tang <feng.tang@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Marco Elver <elver@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>, linux-mm@kvack.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dI15yW6hBRPlcadE"
+Content-Disposition: inline
+In-Reply-To: <CA+EHjTww9OjB3OH85x_2Hs_yiaFxQwYXLZKn7o5MqUALkFyKMg@mail.gmail.com>
+X-Cookie: You're not Dave.  Who are you?
 
-On Tue, Sep 10, 2024 at 4:14=E2=80=AFPM Feng Tang <feng.tang@intel.com> wro=
-te:
->
-> On Tue, Sep 10, 2024 at 03:17:10PM +0200, Vlastimil Babka wrote:
-> > On 9/9/24 03:29, Feng Tang wrote:
-> > > KFENCE_TEST_REQUIRES macro is convenient for judging if a prerequisit=
-e of a
-> > > test case exists. Lift it into kunit/test.h so that all kunit test ca=
-ses
-> > > can benefit from it.
-> > >
-> > > Signed-off-by: Feng Tang <feng.tang@intel.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
 
-(assuming KUNIT maintainers are fine with the change)
+--dI15yW6hBRPlcadE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Sep 10, 2024 at 01:49:37PM +0100, Fuad Tabba wrote:
+> On Fri, 6 Sept 2024 at 19:03, Mark Brown <broonie@kernel.org> wrote:
+
+> > My general feeling is that it would have been perfectly fine for pKVM to
+> > enforce what the host kernel wants to do anyway, if we ever do add
+> > support for using asymmetric VLs and care about doing so on a system
+> > running pKVM then dealing with pKVM imposed limits at that time seems
+> > more than reasonable.  It probably wouldn't be the largest part of the
+> > work.  Equally we now have the code so we may as well use it?  It's not
+> > imposing huge overheads.
+
+> From pKVM, this would work and other than the potential for future
+> support for using asymmetric VLs, I don't really see a problem. Much
+> of the complexity was an attempt not to make pKVM more restrictive
+> than other modes.
+
+Right, so it's just a question of if we want to use the code that
+doesn't impose the limit given that we have it already.  I'm throwing a
+patch that limits the host VL into CI, should be out today.
+
+--dI15yW6hBRPlcadE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgVWcACgkQJNaLcl1U
+h9ARqAf+M1h9wtjrbe8SCruTA7Y9+imhZLonUGVJXlWQ+UOgZqt6jc7PffvFMz1z
+rgYnYSvf1Au9n95OMLOPor0FFMEGX3mBhauC3jxpT4Pur0j+QuDiIlgRZqEE54jA
+mRWugKbt/KqVah9QOTTuiLPzFCMga3u910cfAt7v6CGBqXsa7DmW64ue3YRV5/Ja
+V3TWjTWJ0VnTBBi+8O4TK/B5QzjJgK260OaIltJPbuY7x5GHwgXLY9UqFl+aeWRy
+++MZCRUvYIGbAZ9TMX+lVu/hmJDczSDqcMfc7QirfTkRlPQuLvrmw5i0XAtBEhNc
+Acm13DwSaVDZoLmJ2ykrOKHGEiYKfA==
+=Yand
+-----END PGP SIGNATURE-----
+
+--dI15yW6hBRPlcadE--
 
