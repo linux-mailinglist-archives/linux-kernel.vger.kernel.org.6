@@ -1,127 +1,207 @@
-Return-Path: <linux-kernel+bounces-323857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B8097444F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:49:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEED0974443
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FB4289DED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60AF91F26831
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1A91A7058;
-	Tue, 10 Sep 2024 20:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162331A7076;
+	Tue, 10 Sep 2024 20:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CqAmCP5O"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zZBH1J/t"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AE21A7076
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E89117622D;
+	Tue, 10 Sep 2024 20:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001357; cv=none; b=O0euA9VoT+Z0r+CCyjrJjbhB/oMr6ua/IFcOMnIu1L7WuIx9J7gHoATfXoAu/HcxhzPotLxeGi/mQ4veG0zP1MzpeHNsxiC3ZVy1dIni2jYeoW1PKMmhqjVYHFSbGd0YxOrvkVz9boAaCdvEr+a/UkIP0E09U8aSVRuLD5+bnCw=
+	t=1726001233; cv=none; b=NVwQ4z/zX/e4/dZaXo61lnY3vDvJj62lbmht6q2KXRb/prD5qX259ygCNcil4zOKgPOUQMk3u46zKbO2fcxawkT6VHjdYItYM8jQPmHIol1+NqsDPvf/6HE+zAi060RffvmUFMYRPQ6s2sgye5I+xGnWlbgP0qLPBi1ynZhsHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001357; c=relaxed/simple;
-	bh=/sSLbtfrwVeABiJUeQBSaBwJb8hKBmomjLIUb1dAvvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bj/2EpUduDLJU7y2Cb64n6s4BBWBrffOq7fVp8e/CyNeYJ8NkQ+XOnT29apf6QEi2rwUBMPIKxhC1Q07r2t1lCfE6ldRv3lu4xivCL1vnpUzJz9vbttC8U41E1zhO9BO9EwILrXgm5HjLUlCY+vTciMQGy+ukg/+q0YLB9o51PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CqAmCP5O; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6d4f1d9951fso9790967b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726001354; x=1726606154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WYjARXF5iHHpTlh5hyqO8bTT4ZmLx2A0R6UF7JUY+9c=;
-        b=CqAmCP5OsuNHVeCyEiNDPnaM3R1UIekUKFiV0fw2r0x+b8m+NI86LznKcvmxzV8r+J
-         t0mMfjtHbcha1skBFiKcguBvUdZ9nK4dp3TKW2i/70zcGq0nGtexGiPjOefjpkRkjR3E
-         MgJp1PwWjZulVI32knqh73bgE4dOFjkaG5eVNhcQJNdNMWLHN89BWv5evIvK0MFWSmgL
-         us0Z4beuHS5f9IC3VhveN0M1O2qhTGAZArXErutGwzun8D+or8uWLGOzGivsWo4XGqAM
-         QecjxeqYCyqk3NXJAnrbtNRQbLDk2X+fd1GAmLwamKyAZVpH9O7UiSsw2BUGHx8/ygvW
-         2ExQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726001354; x=1726606154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WYjARXF5iHHpTlh5hyqO8bTT4ZmLx2A0R6UF7JUY+9c=;
-        b=lABh36mBNB/eZWe3BHoJ+ZjS79WCJ5iy/5SbhOrwpr3CMWwNJSIYwIV9vrjlilfdHf
-         30da/M6wyx9LRfuEBgYS1BJmaxiLmMQXwO/G9x0baY8rluLrEPpWsksq1J+H6tGcHnMG
-         YcI8u3r/sf8EqlRTC1/6CpvKa83ZNx6toFD0fRdWgavIqivBJ6PlHuuAZUUEdePYM0G3
-         WPL5Uk2dhpFtAkd5ErpRpn9+IZn799UkFEt+08Gu4RlNQRd/7bda9OjbU99XAUW5Z+Fp
-         7MG1apThMZ5VAB0RgYWkS1OqIj+ewMcIn9OPDEhYAkGl8azC0Sn3XEmrmZkAxHn6NhRJ
-         1xrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXl20q5tqNf4Sb1vc7swb90gpoYvsl6HNvKQDCuAjdyGlP5rL5l5FXgvp2NKf8vNlIaD8pLl40+Kmh6oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydOVMlpleAjCMAZJyrJRZMZwNCZGT/oLSt6wDx/9noyUcUMXHW
-	9+n7PtirwsZSrsREwEafDo4VLLSh+NyfcsHYaEDHtbyqVUbTnVrChhFjX/IavOoQ0Xgr8XopQ9D
-	7pTjq9g42AnE8DTbAlzddkygq+hE8FQpl+Qzc
-X-Google-Smtp-Source: AGHT+IFgMK6PeTDRSiV3IUUm82K2jugYC/SvYQbL/2kIQWJ6vCR0av/sG1KukB6SNfhmqpD5QEYFAa0dGswS6AalsdQ=
-X-Received: by 2002:a05:690c:6812:b0:6c9:9341:1c45 with SMTP id
- 00721157ae682-6dba6d98f5fmr12360207b3.14.1726001354371; Tue, 10 Sep 2024
- 13:49:14 -0700 (PDT)
+	s=arc-20240116; t=1726001233; c=relaxed/simple;
+	bh=dy8jTnTM+SvAJ0Z/QrreJvOE7m/ODddATQSKqABlB9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S2JXiI2MSWLMfaKkT+UPvbLmmH5vXBiov+UotcNB89DtW5JXeiTM4CJ+Ke9kYqjsDYFlNGKCFfybnzA8hUFK8DgpHbSLtZmtICDwDopUVVEa3EiOKK9kHu0nrG518tk1NRaY3uvRkE/flFbOlrfopbp25F4MXRf4AMW80AtR1wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zZBH1J/t; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4IUESHg9VSQTyLHvh/dHsE6E0uVA9BycG+I/FS++rd0=; b=zZBH1J/tBMuY5ZXPwORRtkAvGr
+	oEbkSD6neigw9qAJRHSWNx/gYavOcn28UNrJb5EJy+Q8dpa8fnNnzgf3kxXkeDQ/IfbCNYMZi/vdE
+	xzh25TRX73SmY0HCpeGD7DB5vKR/Mvt83tSVAlDgXBA52GoiV3wBujXUPyD4Sjo3ig0kX6cOXuqKt
+	y8RqBU8AOMInhEnR8CouEfpEK0HLKUqGRQzS/5Ph7kIiFAJjy9mzg0E8IvzxIyteMshV6k+t4Il/K
+	NuW9cdGDI4VLkuKRbgrqKmRC59HqnrjI4w22IxaIcRWaIg0wNNB37mkN0a6Vpyz16BRaKVvxC/3sB
+	75HiS6gA==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1so7ky-00009S-MO; Tue, 10 Sep 2024 22:46:36 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+Date: Tue, 10 Sep 2024 22:49:05 +0200
+Message-ID: <26154114.p16igRAIYV@diego>
+In-Reply-To: <1796743.esFFXGZ24q@diego>
+References:
+ <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <324b12ea-805a-499c-909d-3723f0bca7cb@collabora.com>
+ <1796743.esFFXGZ24q@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
- <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
- <2494949.1723751188@warthog.procyon.org.uk> <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
-In-Reply-To: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 10 Sep 2024 16:49:03 -0400
-Message-ID: <CAHC9VhSPcy-xZ=X_CF8PRsAFMSeP8-VppxKr3Sz3EqMWTEs-Cw@mail.gmail.com>
-Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
- [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
-To: Jann Horn <jannh@google.com>, David Howells <dhowells@redhat.com>
-Cc: Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	John Johansen <john.johansen@canonical.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Thu, Aug 15, 2024 at 4:00=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.co=
-m> wrote:
-> > Jann Horn <jannh@google.com> wrote:
-> >
-> > > Rewrite keyctl_session_to_parent() to run task work on the parent
-> > > synchronously, so that any errors that happen in the task work can be
-> > > plumbed back into the syscall return value in the child.
-> >
-> > The main thing I worry about is if there's a way to deadlock the child =
-and the
-> > parent against each other.  vfork() for example.
->
-> Yes - I think it would work fine for scenarios like using
-> KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
-> launched the helper (which I think is the intended usecase?), but
-> there could theoretically be constellations where it would cause an
-> (interruptible) hang if the parent is stuck in
-> uninterruptible/killable sleep.
->
-> I think vfork() is rather special in that it does a killable wait for
-> the child to exit or execute; and based on my understanding of the
-> intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
-> KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
-> through execve?
+Am Dienstag, 10. September 2024, 18:39:54 CEST schrieb Heiko St=FCbner:
+> Am Dienstag, 10. September 2024, 17:41:42 CEST schrieb Cristian Ciocaltea:
+> > On 9/10/24 6:21 PM, Heiko St=FCbner wrote:
+> > > Am Dienstag, 10. September 2024, 17:07:57 CEST schrieb Heiko St=FCbne=
+r:
+> > >> Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocal=
+tea:
+> > >>> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI=
+ 2.1
+> > >>> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based =
+on a
+> > >>> Samsung IP block.
+> > >>>
+> > >>> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+> > >>> without audio, CEC or any of the HDMI 2.1 specific features.
+> > >>>
+> > >>> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> > >>> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> > >>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > >>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > >>
+> > >> I had switched from the v3 to this v6 in my playground-kernel today,
+> > >> with v3 I've never seen those, but now with v6 I have gotten multiple
+> > >> times:
+> > >>
+> > >> [  805.730608] Internal error: synchronous external abort: 000000009=
+6000010 [#1] PREEMPT SMP
+> > >> [  805.739764] Modules linked in: snd_soc_simple_card crct10dif_ce s=
+nd_soc_simple_card_utils panthor drm_gpuvm drm_exec fuse
+> > >> [  805.752031] CPU: 3 UID: 0 PID: 775 Comm: Xorg Not tainted 6.11.0-=
+rc7-00099-g459302f1f908-dirty #934
+> > >> [  805.762143] Hardware name: Theobroma Systems RK3588-Q7 SoM on Hai=
+kou devkit (DT)
+> > >> [  805.770407] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS=
+ BTYPE=3D--)
+> > >> [  805.778186] pc : regmap_mmio_read32le+0x8/0x20
+> > >> [  805.783155] lr : regmap_mmio_read+0x44/0x70
+> > >> [  805.787828] sp : ffff80008293b830
+> > >> [  805.791516] x29: ffff80008293b830 x28: ffff80008293bce8 x27: ffff=
+0001f20ab080
+> > >> [  805.799495] x26: ffff800081139500 x25: 0000000000000000 x24: 0000=
+000000000010
+> > >> [  805.807472] x23: 0000000000000000 x22: ffff0001f5a4b400 x21: ffff=
+80008293b8c4
+> > >> [  805.815450] x20: 0000000000000968 x19: ffff0001f5a27a80 x18: 0000=
+000000000070
+> > >> [  805.823428] x17: 0002441400000005 x16: 000004650441043c x15: 0438=
+000008980804
+> > >> [  805.831406] x14: 07d8089807800780 x13: 0438000008980804 x12: ffff=
+800081133630
+> > >> [  805.839384] x11: 0002441400000005 x10: 000004650441043c x9 : ffff=
+800081a59000
+> > >> [  805.847361] x8 : 07d8089807800780 x7 : 0000000000000000 x6 : ffff=
+0001f5b453c0
+> > >> [  805.855339] x5 : ffff800080750dc0 x4 : 0000000000000968 x3 : 0000=
+000000000968
+> > >> [  805.863316] x2 : ffff800080751520 x1 : 0000000000000968 x0 : ffff=
+800083b20968
+> > >> [  805.871294] Call trace:
+> > >> [  805.874012]  regmap_mmio_read32le+0x8/0x20
+> > >> [  805.878588]  _regmap_bus_reg_read+0x6c/0xac
+> > >> [  805.883262]  _regmap_read+0x60/0xd8
+> > >> [  805.887159]  _regmap_update_bits+0xf4/0x140
+> > >> [  805.891832]  regmap_update_bits_base+0x64/0xa0
+> > >> [  805.896797]  dw_hdmi_qp_bridge_atomic_enable+0x134/0x220
+> > >> [  805.902734]  drm_atomic_bridge_chain_enable+0x54/0xc8
+> > >> [  805.908380]  drm_atomic_helper_commit_modeset_enables+0x194/0x280
+> > >> [  805.915190]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+> > >> [  805.921125]  commit_tail+0xa0/0x1a0
+> > >> [  805.925021]  drm_atomic_helper_commit+0x17c/0x1b0
+> > >> [  805.930276]  drm_atomic_commit+0xb8/0x100
+> > >> [  805.934754]  drm_atomic_connector_commit_dpms+0xe0/0x110
+> > >> [  805.940690]  drm_mode_obj_set_property_ioctl+0x1c0/0x420
+> > >> [  805.946626]  drm_connector_property_set_ioctl+0x3c/0x68
+> > >> [  805.952465]  drm_ioctl_kernel+0xc0/0x130
+> > >> [  805.956846]  drm_ioctl+0x214/0x4a0
+> > >> [  805.960643]  __arm64_sys_ioctl+0xac/0xf8
+> > >> [  805.965025]  invoke_syscall+0x48/0x104
+> > >> [  805.969214]  el0_svc_common.constprop.0+0x40/0xe0
+> > >> [  805.974470]  do_el0_svc+0x1c/0x28
+> > >> [  805.978171]  el0_svc+0x34/0xe0
+> > >> [  805.981582]  el0t_64_sync_handler+0x120/0x12c
+> > >> [  805.986449]  el0t_64_sync+0x190/0x194
+> > >> [  805.990540] Code: d503201f d503201f f9400000 8b214000 (b9400000)
+> > >>
+> > >> I guess that might be some clocking issue?
+> > >=20
+> > > Forgot to add, this happens when the display has blanked and then is
+> > > supposed to unblank again.
+> >=20
+> > Hmm, I've never encountered this while testing with my v6.11-rc1 based
+> > tree.  What is your current kernel base?  Did you change it while
+> > switching from v3 to v6?
+> >=20
+> > I'll rebase my tree onto latest linux-next and see if I can reproduce.
+>=20
+> The setup is 6.11-rc7 with your hdmi series + my wip dsi + X11 running
+> on top.
+>=20
+> At some point after being idle a while this blanks the display, which will
+> probably turn off clocks and such. After moving the mouse or just
+> doing anything else that unblanks the display, that splat happens.
+>=20
+> Apart from updating mesa from 24.2.0 to 24.2.2 I haven't changed
+> anything in my test-setup so far.
 
-Where did we land on all of this?  Unless I missed a thread somewhere,
-it looks like the discussion trailed off without any resolution on if
-we are okay with a potentially (interruptible) deadlock?
+So now I've re-tested all :-) ... test scenario was that I reverted the v6
+patches and then applied the older versions (and fixed up the dts if
+needed wrt the vo{1}-grf thing). So now really only the hdmi driver
+changed. So I booted, waited for the display to blank and hit reboot
+on the serial console:
 
---=20
-paul-moore.com
+=2D v3 console output turned back on and rebooted fine
+=2D v4 console output turned back on and rebooted fine
+=2D v5 hit the error from above
+=2D v6 hit the error from above
+
+So something between v4 and v5 seems to cause the hickup.
+
+
+
+
 
