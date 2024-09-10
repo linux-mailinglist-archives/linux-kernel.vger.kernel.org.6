@@ -1,205 +1,213 @@
-Return-Path: <linux-kernel+bounces-322658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AAD972BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:18:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5AC972BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BCE1C2454D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 079A7284A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1420E187854;
-	Tue, 10 Sep 2024 08:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZFoCjuDg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3107F187555;
+	Tue, 10 Sep 2024 08:16:35 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A35418755F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC348187325
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725956195; cv=none; b=qwG6vlhcIxaX2QXCWdsA+ioy1JZkU/wD1De/FQSHNVeMbokBWVBoVf4nQgLJo9OkWFEiUdXVZSHFXph0RWUXa005eowKKaLUM4cO2kLi8+qaJDIOfFLNc7b/5J24Gbfzz5huS36woFR5nxOFVAN3Ns/sPupq4dq/SeSf8u9Mw/k=
+	t=1725956194; cv=none; b=apSK2Wb6GP127rRT5MNSEp2U7TrdNyJEUYv2iWj2kqQwXL4ANvLZwfcWX04n1TqXNf1z2EmuI96tn7Qaj08IrXDXP3CHBwqld+9ncWl8s0WF/Fisnby8VIijftMi63MtYsIzVcb+e9LmBVxjGijQMkTMUKuBqq3Oxh0lztxoqck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725956195; c=relaxed/simple;
-	bh=1cP/A0KxfoX+tNfZ/0kldrN3vRzU0dU83KFJQJkaPVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Poxdro3LLKzGpyLrW66Dyg73VN17VIzYncKfXB3ozVRh0WrfRci+oIzT/SZ93bV6bih7lZexny3+2p3S1jcK94FIzXKKcrLlaGd10litVdxNma5tatj8Y4YQNxR9eifeIChQBkQB1zgnXCNnXX3BrRCtveSrpEGq1jmyeJhfazE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZFoCjuDg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725956192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7T8hGkEiRUE85g8dfge0UQzCTu3abH89aAk2D2zpZ1U=;
-	b=ZFoCjuDgrKqWgBmmyOOO1j+T4ioIkDGhe3DHGQNVyoihaDN6Ap5nOAkOT5+z9q9UWAAnvE
-	efLUQEwC692mCcb394J2pYrnZQ7Pc4l0YBGdxIwJV2jkQZjqRfHQkkateDMmdhr74Qe7/s
-	FkJypBge9GZWpG9pWVXjzrzhcrHxMZs=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-266-Nu7_aWiLOUWQFBbqNt5J7w-1; Tue, 10 Sep 2024 04:16:31 -0400
-X-MC-Unique: Nu7_aWiLOUWQFBbqNt5J7w-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2f760dce28bso17862021fa.2
+	s=arc-20240116; t=1725956194; c=relaxed/simple;
+	bh=S+2vmGXXAfms0JaxmCBVi5cfCz+mlyLnvVFi7ZnCy8s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gQmfMZlF6Pn2pOiqg22+LXmS0gT4kvgscoo/r2JlabIcQ4DNy6kmBCWEtn1Iklvry+11pWdByodkqIdTyKuPMo26slFkxnqP+Ye5uND+5URlboFzKjiskvijnNPHno/AXZ/GGj/SJFwCj73Ck39Lhy9rnAaDXr+whoXEARSLFfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a04c88a379so103483785ab.1
         for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:16:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725956189; x=1726560989;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7T8hGkEiRUE85g8dfge0UQzCTu3abH89aAk2D2zpZ1U=;
-        b=tTbubw2ZA1r5AuLZftLwo29HVfWkrNvzGTEagwi+tgog7exRCgcSKLXDjOI9bKrvT2
-         cTORMhsH3Ezn8bsAkHSdFe6FlVCzg17OmZQIVFv9wb9Z/G9K+FM9hoZdQ/n3XfR3IZbj
-         7WOFcv8/cIN+B8p7KOjdlaRqWIo/VG9DtWlKXKUDbmc69d42Xg+XvVEVhWk4j/B7HHTb
-         LBx8SAm0LewbhkbiNQxqZZ5lQpJE6CPZCrEP83mfV7BZihKhIOj/+Y+QRc+EWEQBoBbX
-         EUBwz2u3i4rZxcVPZ+pmAdGSkC1WhTK+NgqGw6L3XQ4XY6vMEMiN/aXpPf4FYhKyA30c
-         1SKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSTFIboj0UFypVLWbTZ7jWckUWncrtW8tS0+AAuNfUv4JhTQpG5Qa9pdOxFdhOb84lOMJ3rajoTQwWZ8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNn1OodB9JgOBh5QO2wPDWCvLWAMxSDZJTtGKWyxDgGwsY5ufq
-	xhp8kATg+Z1la2N90QK6BkyeAqAeyHllUWrcS9fZohYd2UwlAbsRrzSPx+OONF7+1nU3p4vyWkp
-	ZZcAM1nrHJydujnrLv3BBdpRITyYj3lIeOWHxp6szX069FcyNlrQ4O5ilcOBCGQ==
-X-Received: by 2002:a05:6512:1110:b0:535:6400:1da8 with SMTP id 2adb3069b0e04-536587b42afmr8638115e87.28.1725956189330;
-        Tue, 10 Sep 2024 01:16:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaFrhtSp+vFrYDT5bW+iywaJuoR8w00Hzs3YVtpOauRLTZdYj6Kg9VYOY8Z4r+qFTWIvmWsA==
-X-Received: by 2002:a05:6512:1110:b0:535:6400:1da8 with SMTP id 2adb3069b0e04-536587b42afmr8638085e87.28.1725956188780;
-        Tue, 10 Sep 2024 01:16:28 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3789564a52csm8190834f8f.11.2024.09.10.01.16.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 01:16:28 -0700 (PDT)
-Message-ID: <e4ebdfca-fcb8-43fb-a15b-591d083b286f@redhat.com>
-Date: Tue, 10 Sep 2024 10:16:27 +0200
+        d=1e100.net; s=20230601; t=1725956190; x=1726560990;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=42JD5WziOuN7ikzRHJ+dZmdv0PNBwn1E6k2F/qptTlE=;
+        b=qbrIUvvw6P8uiXpHojintbT9liImbkhAHysIISbLJijjko95WBGL5QsWbJ0R1wSpoW
+         Fkrvz9oZ0auhJjcqgxEuJ1AxeVd/nfG4+76Z/jcjilXFhnSwNPbTVK7RNlccx1sakCMB
+         lwDuZAEdS+IyzhbvznJNjuJCz/SpKRxSDJG6lLuPG1VFxhAEU5CaiPjqbnDsHWwBpfOA
+         kiT0vB7rPB3wcgGGWg693KGh1x36U6IgkMlKODxVxkkYHjax6UeXsEeQBCdxwqVI1u3w
+         vkLb4K9pBpjFyJcmzovRmY3RXIdVgbXOErLF93AtSNp/19+XmCmOzz4CPho+SsOBqUEC
+         uxWA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3iW1SV2Prw9oIySe6hK84jySSkRyiFujFp52iFOMnz3KAQAzzjwyKHo041x4UCw/AlWXSwfKUettp7LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDi5krPmn6V6OAghjQMbidrwgrVRO5JpEiw/vMHgzEp1lHh6AY
+	tw2yPCYL1Ghdn+gg2FZwEHgovUck2FLt6w3iQKmsC7DEBaYPuVvC+SnHjOdpw5f1XWvnN/+wWtT
+	M0XGqiTsBlhHCP2F8KTSaKCB5kqK5K7ToVAnqQxGux8+YznL5VFJ0jQI=
+X-Google-Smtp-Source: AGHT+IHE00dUQrBqSQo9MJT/KKretnYrbZJLHU0jhOEEtBhCF277xt08FlleXDY87fIxln15YN5OmyNn5CcDoKDMYgVxtt3dK3g5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/21] KVM: TDX: Handle TLB tracking for TDX
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- kvm@vger.kernel.org
-Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
- yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-14-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240904030751.117579-14-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:20c9:b0:39b:20d8:601e with SMTP id
+ e9e14a558f8ab-3a04f0671d8mr171097025ab.3.1725956190320; Tue, 10 Sep 2024
+ 01:16:30 -0700 (PDT)
+Date: Tue, 10 Sep 2024 01:16:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009f43cd0621bf7de4@google.com>
+Subject: [syzbot] [jfs?] BUG: spinlock bad magic in release_metapage
+From: syzbot <syzbot+e380443eaa59bfb75a84@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/4/24 05:07, Rick Edgecombe wrote:
-> +static void vt_flush_tlb_all(struct kvm_vcpu *vcpu)
-> +{
-> +	/*
-> +	 * TDX calls tdx_track() in tdx_sept_remove_private_spte() to ensure
-> +	 * private EPT will be flushed on the next TD enter.
-> +	 * No need to call tdx_track() here again even when this callback is as
-> +	 * a result of zapping private EPT.
-> +	 * Just invoke invept() directly here to work for both shared EPT and
-> +	 * private EPT.
-> +	 */
-> +	if (is_td_vcpu(vcpu)) {
-> +		ept_sync_global();
-> +		return;
-> +	}
-> +
-> +	vmx_flush_tlb_all(vcpu);
-> +}
-> +
-> +static void vt_flush_tlb_current(struct kvm_vcpu *vcpu)
-> +{
-> +	if (is_td_vcpu(vcpu)) {
-> +		tdx_flush_tlb_current(vcpu);
-> +		return;
-> +	}
-> +
-> +	vmx_flush_tlb_current(vcpu);
-> +}
-> +
+Hello,
 
-I'd do it slightly different:
+syzbot found the following issue on:
 
-static void vt_flush_tlb_all(struct kvm_vcpu *vcpu)
-{
-	if (is_td_vcpu(vcpu)) {
-		tdx_flush_tlb_all(vcpu);
-		return;
-	}
+HEAD commit:    da3ea35007d0 Linux 6.11-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e3e877980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=e380443eaa59bfb75a84
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17681420580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e3e877980000
 
-	vmx_flush_tlb_all(vcpu);
-}
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-da3ea350.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ab780d224f6/vmlinux-da3ea350.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/834dde85c1c2/bzImage-da3ea350.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8ca1335c6a53/mount_0.gz
 
-static void vt_flush_tlb_current(struct kvm_vcpu *vcpu)
-{
-	if (is_td_vcpu(vcpu)) {
-		/*
-		 * flush_tlb_current() is used only the first time for
-		 * the vcpu runs, since TDX supports neither shadow
-		 * nested paging nor SMM.  Keep this function simple.
-		 */
-		tdx_flush_tlb_all(vcpu);
-		return;
-	}
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e380443eaa59bfb75a84@syzkaller.appspotmail.com
 
-	vmx_flush_tlb_current(vcpu);
-}
+BUG: spinlock bad magic on CPU#0, jfsCommit/101
+==================================================================
+BUG: KASAN: slab-out-of-bounds in string_nocheck lib/vsprintf.c:646 [inline]
+BUG: KASAN: slab-out-of-bounds in string+0x218/0x2b0 lib/vsprintf.c:728
+Read of size 1 at addr ffff8880412849f0 by task jfsCommit/101
 
-and put the implementation details close to tdx_track:
+CPU: 0 UID: 0 PID: 101 Comm: jfsCommit Not tainted 6.11.0-rc7-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ string_nocheck lib/vsprintf.c:646 [inline]
+ string+0x218/0x2b0 lib/vsprintf.c:728
+ vsnprintf+0x1101/0x1da0 lib/vsprintf.c:2824
+ vprintk_store+0x480/0x1160 kernel/printk/printk.c:2228
+ vprintk_emit+0x1e0/0x7c0 kernel/printk/printk.c:2329
+ _printk+0xd5/0x120 kernel/printk/printk.c:2373
+ spin_dump kernel/locking/spinlock_debug.c:64 [inline]
+ spin_bug+0x13b/0x1d0 kernel/locking/spinlock_debug.c:78
+ debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
+ do_raw_spin_lock+0x209/0x370 kernel/locking/spinlock_debug.c:115
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:111 [inline]
+ _raw_spin_lock_irqsave+0xe1/0x120 kernel/locking/spinlock.c:162
+ __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
+ unlock_metapage fs/jfs/jfs_metapage.c:39 [inline]
+ release_metapage+0xb2/0x960 fs/jfs/jfs_metapage.c:763
+ xtTruncate+0x1006/0x3270
+ jfs_free_zero_link+0x46e/0x6e0 fs/jfs/namei.c:759
+ jfs_evict_inode+0x35f/0x440 fs/jfs/inode.c:153
+ evict+0x532/0x950 fs/inode.c:704
+ txUpdateMap+0x931/0xb10 fs/jfs/jfs_txnmgr.c:2367
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+ jfs_lazycommit+0x49a/0xb80 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-void tdx_flush_tlb_all(struct kvm_vcpu *vcpu)
-{
-	/*
-	 * TDX calls tdx_track() in tdx_sept_remove_private_spte() to
-	 * ensure private EPT will be flushed on the next TD enter.
-	 * No need to call tdx_track() here again, even when this
-	 * callback is a result of zapping private EPT.  Just
-	 * invoke invept() directly here, which works for both shared
-	 * EPT and private EPT.
-	 */
-	ept_sync_global();
-}
+The buggy address belongs to the object at ffff8880412849c0
+ which belongs to the cache jfs_ip of size 2232
+The buggy address is located 48 bytes inside of
+ allocated 2232-byte region [ffff8880412849c0, ffff888041285278)
 
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x41280
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 04fff00000000040 ffff88801f594280 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000800d000d 00000001fdffffff 0000000000000000
+head: 04fff00000000040 ffff88801f594280 dead000000000122 0000000000000000
+head: 0000000000000000 00000000800d000d 00000001fdffffff 0000000000000000
+head: 04fff00000000003 ffffea000104a001 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 5111, tgid 5111 (syz-executor352), ts 80788950583, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1500
+ prep_new_page mm/page_alloc.c:1508 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3446
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2325
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2488
+ new_slab mm/slub.c:2541 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3727
+ __slab_alloc+0x58/0xa0 mm/slub.c:3817
+ __slab_alloc_node mm/slub.c:3870 [inline]
+ slab_alloc_node mm/slub.c:4029 [inline]
+ kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4060
+ jfs_alloc_inode+0x28/0x70 fs/jfs/super.c:105
+ alloc_inode fs/inode.c:263 [inline]
+ new_inode_pseudo fs/inode.c:1073 [inline]
+ new_inode+0x6e/0x310 fs/inode.c:1092
+ jfs_fill_super+0x408/0xc50 fs/jfs/super.c:544
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff888041284880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888041284900: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>ffff888041284980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                             ^
+ ffff888041284a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888041284a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
