@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-323555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23F3973F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EE7973F42
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74D7228B5E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3B61F26AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6DA1A4F32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925921A7043;
 	Tue, 10 Sep 2024 17:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lUKkbX3r"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bV4a3vfz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284AF1A38DE;
-	Tue, 10 Sep 2024 17:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D091A4F36
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725988829; cv=none; b=tWTcOoxgOyNnzHrAqyvALfswedPWvh6qLxj5XlYWnls63JQ19yNbzD8xbKg1UPHcZRn9d1PbPo3vBqy22uvAVgkeQykPxvbmJ86ghCIPzZQrLMV5n6m93xYIXWg6JNdPn+9nEsp/TxW5XGUGgR2AaFcdWsJDr9iNtwS/v+XDs1A=
+	t=1725988829; cv=none; b=FQJHp+YDx40D5HuEwK4Kt+4VHlsEp/lrrDGSjusCotaSXJlKIOmTTd+E0RgwJKjVfg6Qi5LMKVguVGpI31OLRia4v9HxSxtcrfYyUqXGzuj1LY3LsFOxM2JcUGEMkWjMR3dykncJqvEZfOBg5vC5WirEpUisJpyevsv5XrdTiw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725988829; c=relaxed/simple;
-	bh=vcyFLnkvkzznCnm5LV7YtX/JXny9Ysa/px35H5yc/ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s5dabkpzgDD5ar69w+FB52/KFOBq7DnDeKcZjYuoshZSiHc6ctt/LYemSCxLfDVGhtPJbOC0CxrdteuuXbp+21q4JOuHX4tbwOQmbx2FaMmxVopV+stWHqFjQIWbiMt2GZgRtQDVr85MOidKzY4xRtvldIlVnjL6m6mWt9THG20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lUKkbX3r; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 58A31C0006;
-	Tue, 10 Sep 2024 17:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725988824;
+	bh=k891haVZcn7CF/MR/qFD2k0hZo7ZiXLPafAOvRbZ5eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEhxsxhjwpUpxPJAvM6e9fkG3fMtIa/RqFpjBRGlxxl1nsmOSj0ZLT2XO4I7UvOEVcLPV+RfRTmiDWz1Y3mZEC+La1LBhFFj+wCwubZEduOLKQCd9sUGF4lUxQkydxeybGwc3kIbQO3MHdKeTPBAN2BRN3kDglcxshnhtuIBYJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bV4a3vfz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725988826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0Ch6z1tjobzI++fJXbYA525eKQI+H40wH6oOlBG7IOc=;
-	b=lUKkbX3rbHq1e4tO1l0fOwoRZXIt/PkRz0pR5KPautsjwVgzUwmxgKIhykoNZVTg4GCGkf
-	uvBZZ/E2vfQNih9denOi5GN3XL/bHcdUjK9k5QVUscTl/t3G7IyrT++rvxZh092ZsYAaa+
-	SVnjd/MynHtbdqNhXn9IXRWfM/zNuLg2vOWpipNXKT23Pfy32l4by+xIyYCI4GLncHhVkR
-	rjrR5LwOBUsTJ7iq/nCOCRMkby3uVUQVITJ7zCdpYeP/r6X6o92aciYBzOClvnoNFuiwJm
-	zDmy4WZ7nw9NSI/sx9m5TuAlvJJvVx7lcdKQ8XC8aVuLJyvhO/v7o8yOGaN5Mg==
-Date: Tue, 10 Sep 2024 19:20:20 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
- <dan.carpenter@linaro.org>, Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v18 07/13] net: ethtool: Introduce a command to
- list PHYs on an interface
-Message-ID: <20240910192020.5ab9cd16@fedora.home>
-In-Reply-To: <CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
-References: <20240821151009.1681151-1-maxime.chevallier@bootlin.com>
-	<20240821151009.1681151-8-maxime.chevallier@bootlin.com>
-	<CANn89iLQYsyADrdW04PpuxEdAEhBkVQm+uVV8=CDmX_Fswdvrw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=MsrrXb0hYxp5zmbUPXkc3Gp76e4Ob7oJUblbSGBMXR8=;
+	b=bV4a3vfz3cX0Oz0pUwFCtZcCUcPicVhVXSlVPyKOZA0K9wxUDb7TaZcQxp38ujPdHEUA87
+	mlwNRX3/hoRXeFHlDi9HM6TX6jnGLvq3rLd6bvhdZAZsXk7RXjP6mKG7KsecW6vTE3FIfh
+	pjHOWhECPdlTbqCLVAqemjJ0+jkpYOc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-520-DGeCr0fBPd2Ic0P_pm7bxw-1; Tue, 10 Sep 2024 13:20:25 -0400
+X-MC-Unique: DGeCr0fBPd2Ic0P_pm7bxw-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a9b6181a13so761866785a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:20:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725988825; x=1726593625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MsrrXb0hYxp5zmbUPXkc3Gp76e4Ob7oJUblbSGBMXR8=;
+        b=sclACa+kinBMWjBKXhYOo8S2GctSMvQH45K1gVNBFo1zLGwqoGmxn7w13xDYFXHPPG
+         Qwcv1QNcqIknmMsMcWd7Y4VV2s+EGH8bcxYlY7IWjxnXUTFNd48uT+k4AhAzc4lac805
+         x84u5tpud918WgsJh4qyFEnW2F/bLcghiq71nI9DGeqnYpMqvMxTnzK+2zADbmKPk1bP
+         tz8vNrwwQerH4vhetIXWAhhmjxbbQxTjJHV58pFIFhHq2AjG/5PdZ3IJkbTX02qJKSv7
+         UcG40g0AsLlxymiDXCJ539WXie7IItQHswPo/0YrkjcphizXYMIacEmWMvG+O1eQI+4f
+         5/eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtzb+LKMtK4r8cjUX/6EwHhEe3VadOYW+dBih/ref7V32iEYBvdvrDvnIYhrc9KSOApCBy4eFH+g37tAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxltYg6ism3YJvN1MSttvXHtdR6ppxmC9uHiCrQpJuQ0zPIdU2E
+	qWun3k8sL/gsPGt48FGMgK1eG3QXAfkzSb7X66H/rRruSBriaRDRRX1bFnnSAvcjA7Jc93H+Sd9
+	oFNuX6VPEutq5oqsyXDlhFWJCE4V7mDpT1sIm3GCVHfCtoby3I7QnQOv48RoP0g==
+X-Received: by 2002:a05:620a:31a0:b0:7a9:c064:379a with SMTP id af79cd13be357-7a9c0643985mr669591985a.64.1725988824663;
+        Tue, 10 Sep 2024 10:20:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8sVB82hSRZb2Cg605sM2t/TlZA5qJ8UInluJZ1KI7WGHhfTO5q3C+QksD8At4mKz4Mt7K/w==
+X-Received: by 2002:a05:620a:31a0:b0:7a9:c064:379a with SMTP id af79cd13be357-7a9c0643985mr669588485a.64.1725988824254;
+        Tue, 10 Sep 2024 10:20:24 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a796ae09sm324260885a.49.2024.09.10.10.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 10:20:23 -0700 (PDT)
+Date: Tue, 10 Sep 2024 12:20:21 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Keerthy <j-keerthy@ti.com>, 
+	Neha Malcom Francis <n-francis@ti.com>, Eric Chanudet <echanude@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: Re: [PATCH RFC/RFT 1/2] arm64: dts: ti: k3-j784s4-evm: Mark
+ tps659413 and children as bootph-all
+Message-ID: <4h4wm5jja4wadh6bmbouuxjvoai6cokqqgxsl4kmhurvqnd7tu@y65y5pakijpq>
+References: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
+ <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
+ <bd188c0d-9fa1-4350-8787-36af319c7930@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd188c0d-9fa1-4350-8787-36af319c7930@ti.com>
 
-Hello Eric,
-
-On Tue, 10 Sep 2024 18:41:03 +0200
-Eric Dumazet <edumazet@google.com> wrote:
-
-> > +int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
-> > +{
-> > +       struct phy_req_info req_info = {};
-> > +       struct nlattr **tb = info->attrs;
-> > +       struct sk_buff *rskb;
-> > +       void *reply_payload;
-> > +       int reply_len;
-> > +       int ret;
+On Sat, Sep 07, 2024 at 11:04:50AM GMT, Kumar, Udit wrote:
+> Thanks for your patch Andrew
+> 
+> 
+> On 9/7/2024 2:51 AM, Andrew Halaney wrote:
+> > In order for the MCU domain to access this PMIC and its children in
+> > u-boot SPL, the nodes need to be marked appropriately otherwise they
+> > are not seen by SPL.
+> > 
+> > This is necessary if the MCU domain is to program the TPS6594 MCU ESM
+> > state machine, which is required to wire up the watchdog in a manner
+> > that will reset the board.
+> > 
+> > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> > ---
+> >   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > index 6695ebbcb4d0..044a428136df 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
+> > @@ -642,6 +642,7 @@ eeprom@50 {
+> >   	};
+> >   	tps659413: pmic@48 {
+> > +		bootph-all;
+> >   		compatible = "ti,tps6594-q1";
+> >   		reg = <0x48>;
+> >   		system-power-controller;
+> > @@ -662,7 +663,10 @@ tps659413: pmic@48 {
+> >   		ldo4-supply = <&vsys_3v3>;
+> >   		regulators {
+> > +			bootph-all;
 > > +
-> > +       ret = ethnl_parse_header_dev_get(&req_info.base,
-> > +                                        tb[ETHTOOL_A_PHY_HEADER],
-> > +                                        genl_info_net(info), info->extack,
-> > +                                        true);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       rtnl_lock();
-> > +
-> > +       ret = ethnl_phy_parse_request(&req_info.base, tb, info->extack);
-> > +       if (ret < 0)
-> > +               goto err_unlock_rtnl;
-> > +
-> > +       /* No PHY, return early */  
+> >   			bucka12: buck12 {
+> > +				bootph-all;
 > 
-> I got a syzbot report here.
+> 
+> Add bootph in on regulator node should be enough,
+> 
+> As I see SPL/u-boot does not need all nodes.
 
-I seem to have missed the report, sorry about that.
+Ahhh, I finally see now, all parents of a bootph-* node get that
+property. Makes sense.
 
-> 
-> Should we fix this with :
-> 
-> diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
-> index 560dd039c6625ac0925a0f28c14ce77cf768b6a5..4ef7c6e32d1087dc71acb467f9cd2ab8faf4dc39
-> 100644
-> --- a/net/ethtool/phy.c
-> +++ b/net/ethtool/phy.c
-> @@ -164,7 +164,7 @@ int ethnl_phy_doit(struct sk_buff *skb, struct
-> genl_info *info)
->                 goto err_unlock_rtnl;
-> 
->         /* No PHY, return early */
-> -       if (!req_info.pdn->phy)
-> +       if (!req_info.pdn)
->                 goto err_unlock_rtnl;
-> 
->         ret = ethnl_phy_reply_size(&req_info.base, info->extack);
-> 
-> 
+Would you rather see it in the regulators node, or all of the actual
+regulators (bucka12, buacka3... etc)?
 
-Indeed that's the correct fix. Should I send it ? ( including
-suggested-by/reported-by )
+The former is all that's *needed* to get the PMIC ESM probing and
+programmed. The latter makes sense to me if we want to actual use the
+regulators in the future in that context... Doing just *one* of the
+regulators seems odd to me though, someone may want a different one,
+so if we describe one to SPL we may as well describe all.
 
-Thanks,
+What are your thoughts?
 
-Maxime
 
