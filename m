@@ -1,95 +1,143 @@
-Return-Path: <linux-kernel+bounces-323694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1129741EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD33974201
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2930D286392
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CBC1F27387
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DDB1A4E7B;
-	Tue, 10 Sep 2024 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715D31A4E7B;
+	Tue, 10 Sep 2024 18:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="VajOz9ri"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9mFQrO0"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E7119FA93;
-	Tue, 10 Sep 2024 18:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729B216EB42;
+	Tue, 10 Sep 2024 18:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725992361; cv=none; b=VRgi+GjZmUX1GqfluS+Dh4OpUOYlmR3LpPlNAuHsIF3otx0Hk6swbwUOQ5ajl87873oll3Oh7XleOdTRysa9kEcZIDGLiP6k77wNoH8G6Sl0wFog3uE3B0wQfAypMocYBo/JYV9Ejqmd4XUuOsq14CbPTzusTpE09f6EyjfLGNQ=
+	t=1725992566; cv=none; b=jrk2t2LSeBHDAF/0oTkbJYzW1dKr9P2seiGOfH2bhkOEsme4O72CkACLoenEnEP8o2C4aVooOtd2qXFycILjQbokJU5QwfM0OURfIK5vIH9oKMXqpQqSPrjxhY1euSXNscNetixTAggyt6v9b+9oSz7WWwB3Jf7oEZUHQtyDsXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725992361; c=relaxed/simple;
-	bh=0XNRgHlRh33jgSKTjnC9hP7ja6J8WlVCPnTjoKAAMEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PwM5H7WK8TAoK/5d7X4SR74FKLERDYO9ZjpyoioTWKirKJe0SLUZDjHb/i6fk5xsgjHjc3OlR2zognjofF7MP0F6r67i42c2ttHMNxz+BL987pnHPPb6ycVoqidWPyIM1+epAkM/ZACLEdAMXpbmzQ7fiYHWoT5/cYlXRvAhl4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=VajOz9ri; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XzlU8P8QZFu0BOwrWasNz2nIoiPFhgq1B8KDiec2fJQ=; b=VajOz9ri3kbGwukRMWUsfs9mFA
-	SIo+WBOTiiOl9pUr+PeXDH0XkQ66A/H3hEovxgjFfvWC743jlS1VIVXhlcgE36BlhTbEQDS9dWO6z
-	U+dzKR28KrLHqYkRdH0z0rvRWWqPhQfrD5BsT9mVEpPXJ2tj9amTi8pYrZBTXmI9D7KAQXydAWU08
-	4+uZJrvN0DXoGUB+0ceCOEEYyyegluOjlGplApmTwYP8p/NmZvo61lPjuDj1DM2PWGJ7hS4x6RIYO
-	ufFcqYbIp9xNjhIOmaP3+TzpJMxmGwV/sllsO78GngDiFlcYDY+uIDHfyfU8RdwklNIidMm8m6SWj
-	uhDWB6ZQ==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1so5SE-0007Ih-Ch; Tue, 10 Sep 2024 20:19:06 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject:
- Re: [PATCH v1 1/6] pmdomain: rockchip: forward
- rockchip_do_pmu_set_power_domain errors
-Date: Tue, 10 Sep 2024 20:21:34 +0200
-Message-ID: <4131747.ReJHH8Nr61@diego>
-In-Reply-To: <20240910180530.47194-2-sebastian.reichel@collabora.com>
-References:
- <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <20240910180530.47194-2-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1725992566; c=relaxed/simple;
+	bh=xR5NTaSMbYj4ZehRGp1/cl6e1HcoqhLmP7LUPF2RmLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifHd3yNXm1mPfWwcVklIZhrNSPoFICYjxmD4+9+yxiCm+1nq2LL9CjFH+45DCJFUtrNtG6mx+avdK8IBekFSfZGvpcVpI6AYMYtfK7LrMteWU9iZBCGlznHX5FzM9wuTVsQEBNap0WyIb9B4unrFDurw77O8C2YbPloVTJDlQ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9mFQrO0; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6b5b65b1b9fso8453207b3.2;
+        Tue, 10 Sep 2024 11:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725992564; x=1726597364; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xbeMAeN0RAbJbXbFRhOX2bNfTFBkVjN7xMef6UeUJ94=;
+        b=H9mFQrO0kje4o3RFnXGCS+14lm6d5d+grG361cqMR6x69x2bOVwA8ILe7bAxwwnBCT
+         CA4R0vS33JtGLE452zbvmK8pcuuC+tb7iNzDCZ4+LnWbjdxnZKAuRLet8AOxCLO6IpOb
+         NB4lTlX6RK4VH2GsdZrZygUH8xbSg9bQNfQldzsR8mnbmHrAYHdRT5sfZE4MY6iccIst
+         H8GyNDIInkVAi7ZLeXd4Fdu1A9gN2CakFTW4stbm0WpD+i0FHf5YvlJ5OnVW9V5LJohT
+         UUmxNNlHBiEygCSDKvH0dM2Rb2Pf1qb5UOIRjRkyXrq/OgfXUaTvM4lIWguha5FjPGGt
+         +HtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725992564; x=1726597364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xbeMAeN0RAbJbXbFRhOX2bNfTFBkVjN7xMef6UeUJ94=;
+        b=fXzkpsEEt+q7ycul1RTRt30Y8Egz8RVHHazAgxkbayGCeTjAL7jVEW01ZJxiMCV3Lr
+         y62s/3pDu1wk+q5/3l4zCaaWzjBsWBKnkbkGLCkpNX6T5JMn4w9XZ8oNDeYNmYZNwnXj
+         4hLGlTxuGMbU96j7WmRq+1kYxup3F2KPZteElyBsUd1ZT9pU5E4ckuFOtvIiuNiCG4sp
+         otobDb97rXfwXpOcKoTD7UcN2DLYXW0icElsfwbk+V0+WTfF9pYDt/fq8abw/fYh0glB
+         kd+xSunp7oIZPWFriWFAx3f/vrq+87gB+HOApr99oe+ybt3nChhTEPy6r2VngDcN0Iu9
+         +kmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwDCM0jgu+rQVTtLmGRvIVVZfXfwJb1yHysyl4SDkQZuD34BNruldLn6HABHNRwe3vRE5fcg4zh8mQdVY=@vger.kernel.org, AJvYcCWVSj7DBCSWFW+zlpLxzFGKfZTRk22J2EgKRBaHTevF4eoBRiOpaNJHUgqhccl927ghExOcjoBU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvFzN73LEiIghSkmDqiQIG14aYhaz72D/zWiiTroT23ajmYE+1
+	ntSR+OYEDhyEyPJQriSWE0jhBCLYgiw8b7mp2TK7Qnr74JZuhgVFRpaudKVU56qHRLWYMVBqtyJ
+	qJtmdqCTu64bYVkmw39SgG3Ny/a/eFng5
+X-Google-Smtp-Source: AGHT+IEnHPvAdaRqE5rS/F8CivZTzc7aS/kKCnvmwbW0RHuJSnS+D9vNolNxYrn+nXgEyHkas05vs+wFx+E20Xnn9yI=
+X-Received: by 2002:a05:690c:fd2:b0:6cf:8d6f:2bef with SMTP id
+ 00721157ae682-6dba6d780f1mr7008587b3.7.1725992564452; Tue, 10 Sep 2024
+ 11:22:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20240910152254.21238-1-qianqiang.liu@163.com>
+In-Reply-To: <20240910152254.21238-1-qianqiang.liu@163.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 10 Sep 2024 11:22:32 -0700
+Message-ID: <CAKxU2N-nLMn-VnR62xfuoJR2-1mtNTYQyLAiazpdmp89JSNndw@mail.gmail.com>
+Subject: Re: [PATCH] net: ag71xx: remove dead code path
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: chris.snook@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, 10. September 2024, 19:57:10 CEST schrieb Sebastian Reichel:
-> Currently rockchip_do_pmu_set_power_domain prints a warning if there
-> have been errors turning on the power domain, but it does not return
-> any errors and rockchip_pd_power() tries to continue setting up the
-> QOS registers. This usually results in accessing unpowered registers,
-> which triggers an SError and a full system hang.
-> 
-> This improves the error handling by forwarding the error to avoid
-> kernel panics.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Tue, Sep 10, 2024 at 8:30=E2=80=AFAM Qianqiang Liu <qianqiang.liu@163.co=
+m> wrote:
+>
+> The 'err' is always zero, so the following branch can never be executed:
+> if (err) {
+>         ndev->stats.rx_dropped++;
+>         kfree_skb(skb);
+> }
+> Therefore, the 'if' statement can be removed.
+>
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+Reviewed-by: Rosen Penev <rosenp@gmail.com>
 
-more error handling is always better :-)
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
+err was used downstream in OpenWrt when platform data was used. In the
+transition to OF, the function was removed. Which was back in 2019 at
+this point.
+> ---
+>  drivers/net/ethernet/atheros/ag71xx.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet=
+/atheros/ag71xx.c
+> index 96a6189cc31e..5477f3f87e10 100644
+> --- a/drivers/net/ethernet/atheros/ag71xx.c
+> +++ b/drivers/net/ethernet/atheros/ag71xx.c
+> @@ -1616,7 +1616,6 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int=
+ limit)
+>                 unsigned int i =3D ring->curr & ring_mask;
+>                 struct ag71xx_desc *desc =3D ag71xx_ring_desc(ring, i);
+>                 int pktlen;
+> -               int err =3D 0;
+>
+>                 if (ag71xx_desc_empty(desc))
+>                         break;
+> @@ -1646,14 +1645,9 @@ static int ag71xx_rx_packets(struct ag71xx *ag, in=
+t limit)
+>                 skb_reserve(skb, offset);
+>                 skb_put(skb, pktlen);
+>
+> -               if (err) {
+> -                       ndev->stats.rx_dropped++;
+> -                       kfree_skb(skb);
+> -               } else {
+> -                       skb->dev =3D ndev;
+> -                       skb->ip_summed =3D CHECKSUM_NONE;
+> -                       list_add_tail(&skb->list, &rx_list);
+> -               }
+> +               skb->dev =3D ndev;
+> +               skb->ip_summed =3D CHECKSUM_NONE;
+> +               list_add_tail(&skb->list, &rx_list);
+>
+>  next:
+>                 ring->buf[i].rx.rx_buf =3D NULL;
+> --
+> 2.39.2
+>
+>
 
