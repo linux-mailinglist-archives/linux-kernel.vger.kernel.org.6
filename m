@@ -1,207 +1,150 @@
-Return-Path: <linux-kernel+bounces-323057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030E4973714
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:21:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0559973719
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866331F26206
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4BF287F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B45618E77F;
-	Tue, 10 Sep 2024 12:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bhm/f4kQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A9318E77F;
+	Tue, 10 Sep 2024 12:21:55 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4650518C347
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7F18C002;
+	Tue, 10 Sep 2024 12:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970896; cv=none; b=CBNVuTnJlUXy3ljbTnnyqHYi/1YnswJ6dwvUJXWHy7XPDrB4liQo7IpFeBcaufy1FQMsaiZl/xfmmxQSsMycIl86auJ5jrocM114NETvymWUL3AISMEh2Jeea6JnZpIzzkb7CoRx6E1TmgZph2XtIrsn3dRZIicH0/EOLC4se24=
+	t=1725970914; cv=none; b=Fgiwmg1LpDq2www6NdOGDWsGFBhPrPAUPDXoqo9+RaBxy0KEVgaVgPgUbnKu5J3tmD3qEJNCuHowT5P70LHmcn3xCvKFSqXim4KzrKm3R3GTQ+QlJW0CWwy7HiUMLDyxUUOQ8lLItU1C1ES3UPl6um06T4nvIP6YfOTIfST4Vo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970896; c=relaxed/simple;
-	bh=Yy/uCsgfxv2hexTxawH3Q4aYphAXTQfogySLSH71qMU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=ViTci5aOmsOJNmed9/j7i9QyGHcMgdNjtbMb+Ws+YSVN3kmUOwqUD23UrdtJzK8cQ6sl2mfVfgxNcehiHdxNZ4VupLUBwX/Q//FcV+bTz0kT/e819zARKj3ascQYFRZ0Fnodsixug9VBCs5AFwaS/XJHoifubiOQfDPJNhcHMDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bhm/f4kQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A8Qeti015231;
-	Tue, 10 Sep 2024 12:21:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=pp1; bh=XUaUVVkb0XT/u8nvJR30AODfRM
-	PZC9UijDR/tN6vjhI=; b=bhm/f4kQRPy2EBcrezzK8DWSgcPvy6bbKJF5Q8iZoV
-	rA0M/FQUJqXsAzSuDwakXOD1kkEGOdWfUTkMttgYipDGZL2a56EJDUrH7fbowv7E
-	FdhmChLi/9NuReDB6z/hO2rfASZCFd1ts53RMDxlTal4n45EbmMmkKpvahHgSP4C
-	Ohay5M5vsYgnRX4prwF0GJ0qBUo+M4CQLzRtae372WO0Jn0+A4cJiAAKzQz5AX3Y
-	YmWcldmyXfLnSxVqitcFMbPJk+T3sjRK7qJ0rHxfYrSjYhPxez4GNi41gh6Z23xf
-	9u2mW86RvDcMQi3ujOWlsrBKL6uFiuqmnU2n0Ua9X+4A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwqdst-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 12:21:10 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48ACL9iZ015473;
-	Tue, 10 Sep 2024 12:21:09 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwqdse-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 12:21:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48A8xsbb032073;
-	Tue, 10 Sep 2024 12:21:08 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nmkajw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 12:21:07 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ACL69657016666
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 12:21:06 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 059DC20049;
-	Tue, 10 Sep 2024 12:21:06 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9FCD20040;
-	Tue, 10 Sep 2024 12:21:05 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 10 Sep 2024 12:21:05 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-        kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-        youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 00/24] Complete EEVDF
-In-Reply-To: <yt9d4j6nenps.fsf@linux.ibm.com> (Sven Schnelle's message of
-	"Tue, 10 Sep 2024 13:45:51 +0200")
-References: <20240727102732.960974693@infradead.org>
-	<yt9d4j6nenps.fsf@linux.ibm.com>
-Date: Tue, 10 Sep 2024 14:21:05 +0200
-Message-ID: <yt9dzfofd7im.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 1QRsJDksr0op8YJGE9wgQeDfHOUoVhSK
-X-Proofpoint-ORIG-GUID: kuivBLcV3g54KqYQiJ-UlCysj0JqXnKY
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1725970914; c=relaxed/simple;
+	bh=aWfFAIjnFqxFCQIzG6XpLXOSvr2sHf9fixe7SOEw2m0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6FoGkT/RSSU+uWAVzddQOsvfsvVuMo8GlYE5whGDS7nBs9XAo+Yyv8p6JGEs0los4VSa1cauAS2Lj1HN4hhB0TOXjo4N81tJ/7htsn4giqb4Bo5Jt7zbaxY2PBIfIIK0fgEOliMsj8n/4ujhp4e7stiDzjfHeF33sgjvCFaF3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so9948864a12.1;
+        Tue, 10 Sep 2024 05:21:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725970910; x=1726575710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jtL/PblOPvTiBziYi45g/5MNCyZDNQrsbh2MH421pI8=;
+        b=mSev5XNOkZFtOE8PumjMyAvzFR2FGNN1pzYb7miQ/ORB+tHJBFAYfss3h2IFZUt3zl
+         HXJiBVfdIhfR3RJr56S1ALiAYR7ms3EUOKYaOK7P2Tz0LQkWxrk2XdOFvjI6pXtbCWFX
+         tlTDrQg3gpTYqu0mjC1cVEmPu3OWY5KBAAhTm1AmwvsKN0M9szlPkz+Zk+ZaFeRAHl2+
+         VbqiUBXxKBSLw2GH2a4uChcxgit6VrPxr3dIGWsOPOVj2x+N7CMK9DBxWTfLJdg7Uo/O
+         Lj/FHQ8BJqwIvKiBmSSdRO0bvDh8Sl/s9tqhaUERnnz7qrSN0awQiPlz9mjzwiOlPDF2
+         4YUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY8gUMuznyUKWsbiU64PK+DUUQkCxqGefGuLNnza2P8iTfD8PFQRnLcqSwAuOZ7xXm6hf6i5dEBEbDOCPd/G4Y4t8=@vger.kernel.org, AJvYcCW3vaVcGP7PF9z+90poImNutcmWIM35mZZeQFDTeYQ6BpLGGdpmGq7xbVXzujTdj0Lbq2t83BamRfhg6lL5@vger.kernel.org, AJvYcCWkUO9pUtR4smvN8Fzye1l8xHwKXIi9oOLU7/1d1klim+p6Map/sQHMHmvx93XyLWx+HIAgbMXH9OaIaZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN+0h9hM/lTMLV4HN0dIyxtN/9pZtoIPf4nerqLIHCUwW1eIQj
+	5ASMlyv8P9QYret8SiXNdocYW1PJDNKEyWWVGJYHt7/VH72oLa96EfOHOor15DMYkg==
+X-Google-Smtp-Source: AGHT+IG2KRchwIJb1k65PNrQ1fNQ1P6NkfMRQPHMulrwsY/a+R/7o2D/sfV0vVhVrSfdwU5foT8Zzw==
+X-Received: by 2002:a17:907:72d1:b0:a8d:6372:2d38 with SMTP id a640c23a62f3a-a8ffabc1d72mr65833266b.18.1725970910095;
+        Tue, 10 Sep 2024 05:21:50 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25950a7fsm478208566b.57.2024.09.10.05.21.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3d8d3ebbdso1524395a12.0;
+        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMeESwmvwUBsMWSRREvwuZWBOsYN8FKW6DBXzmW9Ri1NW7E2+s3AfRMO5O8yASzMBKoBmPMYF9RhBusfg=@vger.kernel.org, AJvYcCX+e+vmcsQ5g2RqDyQjk6IdlCbeBoSqMci3Yq1JGnBwad+mRfl9rlwVo8oB5FczwueDHJX2YGdFbLoOwSBeljB+iVI=@vger.kernel.org, AJvYcCXze1M1aRNRLpqW3Ny2UlDmJ/1NI058taU25F+RghQGAH/lUMRubyByJDUBLsQKHp6EHZUJw/GCSL3/XMhU@vger.kernel.org
+X-Received: by 2002:a05:6402:84b:b0:5c3:ce35:d165 with SMTP id
+ 4fb4d7f45d1cf-5c4015e753dmr3713449a12.12.1725970909356; Tue, 10 Sep 2024
+ 05:21:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100089
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+In-Reply-To: <20240909084222.3209-1-towinchenmi@gmail.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Tue, 10 Sep 2024 14:21:13 +0200
+X-Gmail-Original-Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
+Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple
+ A7-A11 SoCs
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sven Schnelle <svens@linux.ibm.com> writes:
+On Mon, Sep 9, 2024 at 10:42=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> w=
+rote:
+>
+> Hi,
+>
+> This series fixes issues with serial on A7-A11 SoCs. The changes do not
+> seem to affect existing M1 and up users so they can be applied
+> unconditionally.
+>
+> Firstly, these SoCs require 32-bit writes on the serial port. This only
+> manifested in earlycon as reg-io-width in device tree is consulted for
+> normal serial writes.
+>
+> Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+> enable. Accessing these bits in addition to the original RXTO and RXTO
+> enable bits will allow serial rx to work correctly on those SoCs.
+>
+> Changes in v4:
+>   - Removed fake Reviewed-by tag added by accident... need to stop
+>     making stupid mistakes that wastes everyone's time. The remaining
+>     Reviewed-by is real as far as I am aware.
+>
+> Changes in v3:
+>   - v2 did not declare itself as v2 in subject line... resend as v3.
+>
+> Changes in v2:
+>   - Mention A7-A11 in the comment about changing register accesses to
+>     MMIO32.
+>
+>   - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+>     entries for consistency.
+>
+> v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towin=
+chenmi@gmail.com
+> v2: https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towi=
+nchenmi@gmail.com
+> v3: https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towin=
+chenmi@gmail.com
+>
+> Nick Chan
+> ---
+>
+> Nick Chan (3):
+>   tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+>   tty: serial: samsung: Fix A7-A11 serial earlycon SError
+>   tty: serial: samsung: Fix serial rx on Apple A7-A9
+>
+>  drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+>  include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+>  2 files changed, 30 insertions(+), 16 deletions(-)
+>
+>
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> --
+> 2.46.0
+>
+>
 
-> Peter Zijlstra <peterz@infradead.org> writes:
->
->> Hi all,
->>
->> So after much delay this is hopefully the final version of the EEVDF patches.
->> They've been sitting in my git tree for ever it seems, and people have been
->> testing it and sending fixes.
->>
->> I've spend the last two days testing and fixing cfs-bandwidth, and as far
->> as I know that was the very last issue holding it back.
->>
->> These patches apply on top of queue.git sched/dl-server, which I plan on merging
->> in tip/sched/core once -rc1 drops.
->>
->> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
->>
->>
->> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
->>
->>  - split up the huge delay-dequeue patch
->>  - tested/fixed cfs-bandwidth
->>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
->>  - SCHED_BATCH is equivalent to RESPECT_SLICE
->>  - propagate min_slice up cgroups
->>  - CLOCK_THREAD_DVFS_ID
->
-> I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
->
-> Sometimes the system doesn't manage to print a oops, this one is the best i got:
->
-> [..]
-> This happens when running the strace test suite. The system normaly has
-> 128 CPUs. With this configuration the crash doesn't happen, but when
-> disabling all but four CPUs and running 'make check -j16' in the strace
-> test suite the crash is almost always reproducable.
+Whole series LGTM.
 
-I failed to add the log from git bisect. Unfortunately i had to skip
-some commit because the kernel didn't compile:
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-git bisect start
-# status: waiting for both good and bad commits
-# bad: [100cc857359b5d731407d1038f7e76cd0e871d94] Add linux-next specific files for 20240909
-git bisect bad 100cc857359b5d731407d1038f7e76cd0e871d94
-# status: waiting for good commit(s), bad commit known
-# good: [da3ea35007d0af457a0afc87e84fddaebc4e0b63] Linux 6.11-rc7
-git bisect good da3ea35007d0af457a0afc87e84fddaebc4e0b63
-# good: [df20078b9706977cc3308740b56993cf27665f90] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-git bisect good df20078b9706977cc3308740b56993cf27665f90
-# good: [609f9e1b6242e7158ce96f9124372601997ce56c] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
-git bisect good 609f9e1b6242e7158ce96f9124372601997ce56c
-# skip: [664c3413e9a6c345a6c926841358314be9da8309] Merge branch 'usb-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-git bisect skip 664c3413e9a6c345a6c926841358314be9da8309
-# good: [16531118ba63dd9bcd65203d04a9c9d6f6800547] iio: bmi323: peripheral in lowest power state on suspend
-git bisect good 16531118ba63dd9bcd65203d04a9c9d6f6800547
-# bad: [d9c7ac7f8bfb16f431daa7c77bdfe2b163361ead] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git
-git bisect bad d9c7ac7f8bfb16f431daa7c77bdfe2b163361ead
-# bad: [05536babd768b38d84ad168450f48634a013603d] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-git bisect bad 05536babd768b38d84ad168450f48634a013603d
-# good: [dabef94a179957db117db344b924e5d5c4074e5f] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
-git bisect good dabef94a179957db117db344b924e5d5c4074e5f
-# bad: [d4886a325947ecae6867fc858657062211aae3b9] Merge branch into tip/master: 'locking/core'
-git bisect bad d4886a325947ecae6867fc858657062211aae3b9
-# bad: [51c095bee5c77590d43519f03179342e910d333c] Merge branch into tip/master: 'core/core'
-git bisect bad 51c095bee5c77590d43519f03179342e910d333c
-# bad: [fc1892becd5672f52329a75c73117b60ac7841b7] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
-git bisect bad fc1892becd5672f52329a75c73117b60ac7841b7
-# good: [ae04f69de0bef93c7086cf2983dbc8e8fd624ebe] sched/rt: Rename realtime_{prio, task}() to rt_or_dl_{prio, task}()
-git bisect good ae04f69de0bef93c7086cf2983dbc8e8fd624ebe
-# good: [abc158c82ae555078aa5dd2d8407c3df0f868904] sched: Prepare generic code for delayed dequeue
-git bisect good abc158c82ae555078aa5dd2d8407c3df0f868904
-# skip: [781773e3b68031bd001c0c18aa72e8470c225ebd] sched/fair: Implement ENQUEUE_DELAYED
-git bisect skip 781773e3b68031bd001c0c18aa72e8470c225ebd
-# skip: [e1459a50ba31831efdfc35278023d959e4ba775b] sched: Teach dequeue_task() about special task states
-git bisect skip e1459a50ba31831efdfc35278023d959e4ba775b
-# skip: [a1c446611e31ca5363d4db51e398271da1dce0af] sched,freezer: Mark TASK_FROZEN special
-git bisect skip a1c446611e31ca5363d4db51e398271da1dce0af
-# good: [e28b5f8bda01720b5ce8456b48cf4b963f9a80a1] sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-git bisect good e28b5f8bda01720b5ce8456b48cf4b963f9a80a1
-# skip: [f12e148892ede8d9ee82bcd3e469e6d01fc077ac] sched/fair: Prepare pick_next_task() for delayed dequeue
-git bisect skip f12e148892ede8d9ee82bcd3e469e6d01fc077ac
-# skip: [152e11f6df293e816a6a37c69757033cdc72667d] sched/fair: Implement delayed dequeue
-git bisect skip 152e11f6df293e816a6a37c69757033cdc72667d
-# skip: [2e0199df252a536a03f4cb0810324dff523d1e79] sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-git bisect skip 2e0199df252a536a03f4cb0810324dff523d1e79
-# bad: [54a58a78779169f9c92a51facf6de7ce94962328] sched/fair: Implement DELAY_ZERO
-git bisect bad 54a58a78779169f9c92a51facf6de7ce94962328
-# only skipped commits left to test
-# possible first bad commit: [54a58a78779169f9c92a51facf6de7ce94962328] sched/fair: Implement DELAY_ZERO
-# possible first bad commit: [152e11f6df293e816a6a37c69757033cdc72667d] sched/fair: Implement delayed dequeue
-# possible first bad commit: [e1459a50ba31831efdfc35278023d959e4ba775b] sched: Teach dequeue_task() about special task states
-# possible first bad commit: [a1c446611e31ca5363d4db51e398271da1dce0af] sched,freezer: Mark TASK_FROZEN special
-# possible first bad commit: [781773e3b68031bd001c0c18aa72e8470c225ebd] sched/fair: Implement ENQUEUE_DELAYED
-# possible first bad commit: [f12e148892ede8d9ee82bcd3e469e6d01fc077ac] sched/fair: Prepare pick_next_task() for delayed dequeue
-# possible first bad commit: [2e0199df252a536a03f4cb0810324dff523d1e79] sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
