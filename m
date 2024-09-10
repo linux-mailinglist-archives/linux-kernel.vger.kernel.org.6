@@ -1,255 +1,88 @@
-Return-Path: <linux-kernel+bounces-322526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D855972A47
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F53972A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F8C1F2267D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3BF1F249A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57B617BEB3;
-	Tue, 10 Sep 2024 07:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ns2jW4FT"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC4717C220;
+	Tue, 10 Sep 2024 07:09:47 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799E913A242
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1417BB28
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952145; cv=none; b=H7KgAlpRlXwyB1sOIvo/I+P5F7Kx5ypY1XyDzICKh2ksoHffl2XUdviV2kefmuvIoV4k050H52OOPVwj1DG2v+nzJm3eoSL4tXXrUXPPQKr3YM7vdMMt5GpXBXNIa7CIqrYN6rCMvF4THUA66laJjokP7sD+xDNzPgEdj1qYJo4=
+	t=1725952187; cv=none; b=kWkyaJf8aTFlTjBjV8pvtkDtCaBYm5NKZjkBPYxdRIn8hSPjggBBaWbFRJxJA4v8m+m0pWXDxb2k42czgCCpcS8opy1yJ6vAkrXCqaBtdz5qVHb47SiJczlZ9KiylJF2NKfUOWI+DUMC/yISYRmCv+1Wewl7BVx7RrPT9ijhqes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952145; c=relaxed/simple;
-	bh=Fm76LKJzY3dy54K30JUyiFP+rq/lVDxt0hop++523Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ORgEHGQRjrKbiJ675Gl94eQ25NqdgVWhlUxhQh1LB5dIJToENlgBu1IYL0GRTo3MZi87R4XSCe52Hux7xgAwUvudNn5l/9wvSpcusFGMv7HKyaYn0mfPH+8gpbgbjp6MOeDwNV5ZW67hvopmgUN9BQ0bMZV0aJIQp+InGF8zp+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ns2jW4FT; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725952133; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=E2CocgZnZvJRWS5izeSHjTwYb+PIF/HSTj1Q9lZ/QI0=;
-	b=ns2jW4FTOiyCJZnTn+BBsSC7rHONQZMtu3NZyrf1cQ9uw/KkQ0E3dUwL9VqOMynQZH96oKkmMbPR3dltxOpI9zYa1fL5vDS25/HQufuQb2ESMQ9udDY8ct2G6RWi2Ai/yMPjrHHMsWVjEdvvN0Sr5WW+Y96/fIO7LsqyEhh1efY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEjLqPD_1725952127)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Sep 2024 15:08:52 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com,
-	syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com,
-	syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com
-Subject: [PATCH v2] erofs: handle overlapped pclusters out of crafted images properly
-Date: Tue, 10 Sep 2024 15:08:47 +0800
-Message-ID: <20240910070847.3356592-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240904111334.995920-1-hsiangkao@linux.alibaba.com>
-References: <20240904111334.995920-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1725952187; c=relaxed/simple;
+	bh=7x2cPYDAWoFuWThlDmRXtgIJdha17zt5R25t3YfY2xU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hUL9/7A7UU02sAMT0EbsRb+NZ7BJnRa4hYTKZWayZzB9kK9MN1q0PxYn++9EnxGrSCDrlu/CPSyIydWgkR+gAFz3ZxOPlPM1yxaX1KqoHBd8xmdFUi94oQmh/7qfC0S8WrBT43wHOEWtymDXT+3D6pq7zQ3OpLVL4Z/m5CUE4fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7D1AFE0005;
+	Tue, 10 Sep 2024 07:09:40 +0000 (UTC)
+Message-ID: <f6915c21-1dbd-44f6-a118-7e3a5c442e64@ghiti.fr>
+Date: Tue, 10 Sep 2024 09:09:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: remove useless pc check in stacktrace handling
+Content-Language: en-US
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240830084934.3690037-1-cleger@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240830084934.3690037-1-cleger@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-syzbot reported a task hang issue due to a deadlock case where it is
-waiting for the folio lock of a cached folio that will be used for
-cache I/Os.
+Hi Clément,
 
-After looking into the crafted fuzzed image, I found it's formed with
-several overlapped big pclusters as below:
+On 30/08/2024 10:49, Clément Léger wrote:
+> Checking for pc to be a kernel text address at this location is useless
+> since pc == handle_exception. Remove this check.
+>
+> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>
+> ---
+>   arch/riscv/kernel/stacktrace.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+> index c6d5de22463f..f934c573c087 100644
+> --- a/arch/riscv/kernel/stacktrace.c
+> +++ b/arch/riscv/kernel/stacktrace.c
+> @@ -72,7 +72,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
+>   			pc = ftrace_graph_ret_addr(current, &graph_idx, frame->ra,
+>   						   &frame->ra);
+>   			if (pc == (unsigned long)handle_exception) {
+> -				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> +				if (unlikely(!fn(arg, pc)))
+>   					break;
+>   
+>   				pc = ((struct pt_regs *)sp)->epc;
 
- Ext:   logical offset   |  length :     physical offset    |  length
-   0:        0..   16384 |   16384 :     151552..    167936 |   16384
-   1:    16384..   32768 |   16384 :     155648..    172032 |   16384
-   2:    32768..   49152 |   16384 :  537223168.. 537239552 |   16384
-...
 
-Here, extent 0/1 are physically overlapped although it's entirely
-_impossible_ for normal filesystem images generated by mkfs.
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-First, managed folios containing compressed data will be marked as
-up-to-date and then unlocked immediately (unlike in-place folios) when
-compressed I/Os are complete.  If physical blocks are not submitted in
-the incremental order, there should be separate BIOs to avoid dependency
-issues.  However, the current code mis-arranges z_erofs_fill_bio_vec()
-and BIO submission which causes unexpected BIO waits.
+Thanks,
 
-Second, managed folios will be connected to their own pclusters for
-efficient inter-queries.  However, this is somewhat hard to implement
-easily if overlapped big pclusters exist.  Again, these only appear in
-fuzzed images so let's simply fall back to temporary short-lived pages
-for correctness.
-
-Additionally, it justifies that referenced managed folios cannot be
-truncated for now and reverts part of commit 2080ca1ed3e4 ("erofs: tidy
-up `struct z_erofs_bvec`") for simplicity although it shouldn't be any
-difference.
-
-Reported-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
-Reported-by: syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com
-Reported-by: syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com
-Tested-by: syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/r/0000000000002fda01061e334873@google.com
-Fixes: 8e6c8fa9f2e9 ("erofs: enable big pcluster feature")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-changes since v1:
- - Avoid re-entering z_erofs_fill_bio_vec() if bio_add_page() fails;
-
- fs/erofs/zdata.c | 71 ++++++++++++++++++++++++++----------------------
- 1 file changed, 38 insertions(+), 33 deletions(-)
-
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 2271cb74ae3a..dca11ab0ab75 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1392,6 +1392,7 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	struct z_erofs_bvec zbv;
- 	struct address_space *mapping;
- 	struct folio *folio;
-+	struct page *page;
- 	int bs = i_blocksize(f->inode);
- 
- 	/* Except for inplace folios, the entire folio can be used for I/Os */
-@@ -1414,7 +1415,6 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	 * file-backed folios will be used instead.
- 	 */
- 	if (folio->private == (void *)Z_EROFS_PREALLOCATED_PAGE) {
--		folio->private = 0;
- 		tocache = true;
- 		goto out_tocache;
- 	}
-@@ -1432,7 +1432,7 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 	}
- 
- 	folio_lock(folio);
--	if (folio->mapping == mc) {
-+	if (likely(folio->mapping == mc)) {
- 		/*
- 		 * The cached folio is still in managed cache but without
- 		 * a valid `->private` pcluster hint.  Let's reconnect them.
-@@ -1442,41 +1442,44 @@ static void z_erofs_fill_bio_vec(struct bio_vec *bvec,
- 			/* compressed_bvecs[] already takes a ref before */
- 			folio_put(folio);
- 		}
--
--		/* no need to submit if it is already up-to-date */
--		if (folio_test_uptodate(folio)) {
--			folio_unlock(folio);
--			bvec->bv_page = NULL;
-+		if (likely(folio->private == pcl))  {
-+			/* don't submit cache I/Os again if already uptodate */
-+			if (folio_test_uptodate(folio)) {
-+				folio_unlock(folio);
-+				bvec->bv_page = NULL;
-+			}
-+			return;
- 		}
--		return;
-+		/*
-+		 * Already linked with another pcluster, which only appears in
-+		 * crafted images by fuzzers for now.  But handle this anyway.
-+		 */
-+		tocache = false;	/* use temporary short-lived pages */
-+	} else {
-+		DBG_BUGON(1); /* referenced managed folios can't be truncated */
-+		tocache = true;
- 	}
--
--	/*
--	 * It has been truncated, so it's unsafe to reuse this one. Let's
--	 * allocate a new page for compressed data.
--	 */
--	DBG_BUGON(folio->mapping);
--	tocache = true;
- 	folio_unlock(folio);
- 	folio_put(folio);
- out_allocfolio:
--	zbv.page = erofs_allocpage(&f->pagepool, gfp | __GFP_NOFAIL);
-+	page = erofs_allocpage(&f->pagepool, gfp | __GFP_NOFAIL);
- 	spin_lock(&pcl->obj.lockref.lock);
--	if (pcl->compressed_bvecs[nr].page) {
--		erofs_pagepool_add(&f->pagepool, zbv.page);
-+	if (unlikely(pcl->compressed_bvecs[nr].page != zbv.page)) {
-+		erofs_pagepool_add(&f->pagepool, page);
- 		spin_unlock(&pcl->obj.lockref.lock);
- 		cond_resched();
- 		goto repeat;
- 	}
--	bvec->bv_page = pcl->compressed_bvecs[nr].page = zbv.page;
--	folio = page_folio(zbv.page);
--	/* first mark it as a temporary shortlived folio (now 1 ref) */
--	folio->private = (void *)Z_EROFS_SHORTLIVED_PAGE;
-+	bvec->bv_page = pcl->compressed_bvecs[nr].page = page;
-+	folio = page_folio(page);
- 	spin_unlock(&pcl->obj.lockref.lock);
- out_tocache:
- 	if (!tocache || bs != PAGE_SIZE ||
--	    filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp))
-+	    filemap_add_folio(mc, folio, pcl->obj.index + nr, gfp)) {
-+		/* turn into a temporary shortlived folio (1 ref) */
-+		folio->private = (void *)Z_EROFS_SHORTLIVED_PAGE;
- 		return;
-+	}
- 	folio_attach_private(folio, pcl);
- 	/* drop a refcount added by allocpage (then 2 refs in total here) */
- 	folio_put(folio);
-@@ -1611,13 +1614,10 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 		cur = mdev.m_pa;
- 		end = cur + pcl->pclustersize;
- 		do {
--			z_erofs_fill_bio_vec(&bvec, f, pcl, i++, mc);
--			if (!bvec.bv_page)
--				continue;
--
-+			bvec.bv_page = NULL;
- 			if (bio && (cur != last_pa ||
- 				    bio->bi_bdev != mdev.m_bdev)) {
--io_retry:
-+drain_io:
- 				if (erofs_is_fileio_mode(EROFS_SB(sb)))
- 					erofs_fileio_submit_bio(bio);
- 				else if (erofs_is_fscache_mode(sb))
-@@ -1632,6 +1632,15 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 				bio = NULL;
- 			}
- 
-+			if (!bvec.bv_page) {
-+				z_erofs_fill_bio_vec(&bvec, f, pcl, i++, mc);
-+				if (!bvec.bv_page)
-+					continue;
-+				if (cur + bvec.bv_len > end)
-+					bvec.bv_len = end - cur;
-+				DBG_BUGON(bvec.bv_len < sb->s_blocksize);
-+			}
-+
- 			if (unlikely(PageWorkingset(bvec.bv_page)) &&
- 			    !memstall) {
- 				psi_memstall_enter(&pflags);
-@@ -1654,13 +1663,9 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
- 				++nr_bios;
- 			}
- 
--			if (cur + bvec.bv_len > end)
--				bvec.bv_len = end - cur;
--			DBG_BUGON(bvec.bv_len < sb->s_blocksize);
- 			if (!bio_add_page(bio, bvec.bv_page, bvec.bv_len,
- 					  bvec.bv_offset))
--				goto io_retry;
--
-+				goto drain_io;
- 			last_pa = cur + bvec.bv_len;
- 			bypass = false;
- 		} while ((cur += bvec.bv_len) < end);
--- 
-2.43.5
+Alex
 
 
