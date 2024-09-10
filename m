@@ -1,415 +1,152 @@
-Return-Path: <linux-kernel+bounces-322844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EAA973055
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BA8973066
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A23F1F22549
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6ABF1C24390
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B57190477;
-	Tue, 10 Sep 2024 09:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDC218C928;
+	Tue, 10 Sep 2024 09:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JXVyFFZI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rtYXfYd3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gDEaBBBa"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D39618DF97;
-	Tue, 10 Sep 2024 09:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229DE18C357
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962350; cv=none; b=qec0ZV4BhZqDqC6HyYRumh2y0ChyjwUT/0wvpZUDAqOwFmkt3f9V1LjNlkgQs1PRasP8O+LHsQPiNGfYNu8GMKP45+8WevjIXOYAA6La7ySrQOIT4mKMuPdKKyW1+H2vBYiUaNPnDVcCqNaqqTOJavBG3i2V2pUMkC8AnBqPSW4=
+	t=1725962379; cv=none; b=QE9YYIGjufDk+9ffV+v6ma2ESZIuDWiVTx4A0CSdCqWcxzvaZBxEM6voynkrG4ktCi0skVNFfn9VzCC5Ga3oKwfNu4T94mehiA/3sFtCtYsFXOyy2jQwszjYRBNS5+Q7IQ8pSWmDxqY8oq+VNHCcX3ZrkK/l7AwGG6LjoSZ7Ucw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962350; c=relaxed/simple;
-	bh=J5dZt4vVKoSbPQzibQmXF/lGyKBS1x3McEdK3wBrIpU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Vb21jFsmRQ155Zotz9qmHup4ob3F6be0aw/Jpo95mAjApxPQhtFRYABwLZezDCeAhrwd6Oo4B/ksAhiJS+3nmBJvHuIUYzcUTG2mZ0KTKzBGXLTCwuPnrUkTrQydVf+wUjMQjzkrZXNBq5ixEXrddnM5Pxv934UX0ovYZX3l+KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JXVyFFZI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rtYXfYd3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Sep 2024 09:59:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725962345;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJ/Oas0p/D3+9NVQXhWkcCD8XzealJPeLngBwbp8ftQ=;
-	b=JXVyFFZIITPoCMCoVLHgjUyCJgg3CHhhgwMu9Vv5XjLnT+oSH8c97P5W/+vsmfuT6wE4Sy
-	XYxpr3hNo4VjC4Dzzg/7n3GLLPwszeR1KxBABJMgC9MmVqP1FiZTvYM8ro2Rd4ZY9OrSbh
-	nb4Cfyu/aH3Wjw7jQC2UZd7Mjxv9n6s4UMEp3IVahvOpFvBaeBGoVqJjAwVVTV2SbOUQlA
-	Pwu8dLtcau0twOzUXBEIfESwHRKwxMb4pVHi/j1+QZHROs96XpOdoWQPEHsuux2JrlPSpn
-	PGzJs1wEmzVOjlXvRdF8ZJ1JJd/ki3x/5duXcrF15a7lKd7WoNx2SUoe5DpKyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725962345;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJ/Oas0p/D3+9NVQXhWkcCD8XzealJPeLngBwbp8ftQ=;
-	b=rtYXfYd37P7FlWBW+HvsO2Ujrc39uYnPY/g3TGvRS0MJS89Fo4C3SP7kKMqKTR9jO10ePL
-	YxM3iHq3Z3T9SrAg==
-From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf: Generic hotplug support for a PMU with a scope
-Cc: Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240802151643.1691631-2-kan.liang@linux.intel.com>
-References: <20240802151643.1691631-2-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1725962379; c=relaxed/simple;
+	bh=cPN+c5d1qbghZwAgbLbBKbGa0droBLNlCAHDEF+wklI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSeB/glcGf7DxWZ3YlzferxeU2qBARByXCGn0JSndGC002h1TQ/nzamjR8bdWWcxziFheJqyO/RBNQQtFIt41zC2Eu18xKPOCRzCDsx/JGibtaBOZye1CQoEROEPtd+OrOqa7pQVMHBubH/Lt3fXGsmgdcj+oAxqixqCrFVCqDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gDEaBBBa; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-374bfc395a5so3148706f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725962375; x=1726567175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
+        b=gDEaBBBaUoUF56F+rRo9PuyFWwCDXHMu9g8K4zUwzDGwMpXycdSh6VN8oSHKoKmQDX
+         CBycD7ciOZ1IR/0FyHTBJwSQFgwXanXz3ol8xbl5RK83QGEK0N3oWqobPdcp8bRdgAsN
+         zJRHd79Wx0r0r8VkECdsWZb8CG0MTWwIVMwwCsEcAmeXjwPTxuTluhZM7GsBiOTSBwrj
+         GicQeuUF2tjHfHAcuM2wfkPOGx4ZbqH0giOqp7i7zEgqh4hK1Pa1zjBQx5YIUhcLJEEI
+         cCWTNWPXEUubsUXMUR3rMj8TS/LnZJsaKYVFX+QI/MiP7LRzRAcFnOJ6btWsJUUwXo6H
+         JbkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725962375; x=1726567175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
+        b=Xg3z2u/ijryPHNJTpYekZJ8FFhIx2jMMdmXkeo1NRqk+8Jzv64Xjw9doz+mESNvt/z
+         0WtaIFCYgua98u96jph9CXH5MbAi67DXLEnBQTOLnEodckcQHmNWqCRsklDmBAxPR20w
+         /+TFtg1JT4Slr6IHCXa0QwmZFxqV6VYkdViOKXdB7+PBomjrUKJmPOdaI5G6cUGC3brh
+         VfQzF6dAapAp6IkGpwwMbkk3bgZk91pfzzDESEux5kyCuVUEqQ750B4n5dBVrgpRTFZq
+         HHlvjTRqU4bxMg3VyFgZifnz5bnrHvycg1mnJ24+9sPlQl0vSA0RpY0H54JFDgBnBj6T
+         dTrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJqOeBvN0z5ocx+ghyotq2bJYWyo7J0j6MXVP2LxG4DsKaOPVw9m1pLoCQY4KtLh2gb8TV66/jOGIjQY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiFwP4Nb0AlHTulPXF+mAfOCdjNyqwHON8iXyLWPRmO4D4XS3d
+	zDeI306zPG+l5c63poHYaVQRLC6Yo/QCYZ/kd63QDK7+GFrguzTsR7oPmEggFDA=
+X-Google-Smtp-Source: AGHT+IEtmAPvqyyaWuRoKy32eCJyGneGNTbPJN2tRd224P8AECPcesi7ike/qTX7P5GRwYiq+pSdJw==
+X-Received: by 2002:a5d:46ca:0:b0:374:c3e4:d6e3 with SMTP id ffacd0b85a97d-378a89fd45fmr1331874f8f.5.1725962375253;
+        Tue, 10 Sep 2024 02:59:35 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm8465192f8f.2.2024.09.10.02.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 02:59:34 -0700 (PDT)
+Date: Tue, 10 Sep 2024 11:59:33 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: dmitry.baryshkov@linaro.org, Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 27/28] gcc-sdm845: Add general purpose clock ops
+Message-ID: <uevafpb6r7rfutiqrm5asfvv7zfxcb3acrlxqpispele5er52x@eegonpzqlm7j>
+References: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
+ <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172596234514.2215.6662153156633974477.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d2rlzxmgwshy2k4w"
+Content-Disposition: inline
+In-Reply-To: <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
 
-The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     4ba4f1afb6a9fed8ef896c2363076e36572f71da
-Gitweb:        https://git.kernel.org/tip/4ba4f1afb6a9fed8ef896c2363076e36572f71da
-Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Fri, 02 Aug 2024 08:16:37 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 10 Sep 2024 11:44:12 +02:00
+--d2rlzxmgwshy2k4w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-perf: Generic hotplug support for a PMU with a scope
+Hello,
 
-The perf subsystem assumes that the counters of a PMU are per-CPU. So
-the user space tool reads a counter from each CPU in the system wide
-mode. However, many PMUs don't have a per-CPU counter. The counter is
-effective for a scope, e.g., a die or a socket. To address this, a
-cpumask is exposed by the kernel driver to restrict to one CPU to stand
-for a specific scope. In case the given CPU is removed,
-the hotplug support has to be implemented for each such driver.
+On Fri, Jul 19, 2024 at 03:55:04PM +0300, Dzmitry Sankouski wrote:
+> SDM845 has "General Purpose" clocks that can be muxed to
+> SoC pins to clock various external devices.
+> Those clocks may be used as e.g. PWM sources for external peripherals.
+>=20
+> GPCLK can in theory have arbitrary value depending on the use case, so
+> the concept of frequency tables, used in rcg2 clock driver, is not
+> efficient, because it allows only defined frequencies.
+>=20
+> Introduce clk_rcg2_gp_ops, which automatically calculate clock
+> mnd values for arbitrary clock rate.
+>=20
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  drivers/clk/qcom/clk-rcg.h    |   1 +
+>  drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++++++=
+++++--
+>  drivers/clk/qcom/gcc-sdm845.c |  19 ++---
+>  drivers/pwm/pwm-clk.c         |   5 ++
 
-The codes to support the cpumask and hotplug are very similar.
-- Expose a cpumask into sysfs
-- Pickup another CPU in the same scope if the given CPU is removed.
-- Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
-- In event init, always set the CPU in the cpumask to event->cpu
+I don't understand why a change to some qcom clk implementation detail
+needs a change to drivers/pwm/pwm-clk.c in the same commit. I guess if
+the change to drivers/pwm/pwm-clk.c is needed it should better go into a
+separate patch with an appropriate commit log?!
 
-Similar duplicated codes are implemented for each such PMU driver. It
-would be good to introduce a generic infrastructure to avoid such
-duplication.
+Best regards
+Uwe
 
-5 popular scopes are implemented here, core, die, cluster, pkg, and
-the system-wide. The scope can be set when a PMU is registered. If so, a
-"cpumask" is automatically exposed for the PMU.
+--d2rlzxmgwshy2k4w
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The "cpumask" is from the perf_online_<scope>_mask, which is to track
-the active CPU for each scope. They are set when the first CPU of the
-scope is online via the generic perf hotplug support. When a
-corresponding CPU is removed, the perf_online_<scope>_mask is updated
-accordingly and the PMU will be moved to a new CPU from the same scope
-if possible.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240802151643.1691631-2-kan.liang@linux.intel.com
----
- include/linux/perf_event.h |  18 ++++-
- kernel/events/core.c       | 164 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 180 insertions(+), 2 deletions(-)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbgGIIACgkQj4D7WH0S
+/k7x2AgAluuv/f/FtpsMhu/tAKjHUOr1Y+1vUefo+pFCKzhUDjMyHMtIz8by9GsE
+1pZ9fiw/to0h6iyEctQmMN3sqoMqkEwL4aKMYb9WOopkDgY36I7oAWjXs4mio6Ed
+DPguLwTovw/p+OJMmgb/ndu5GNyQCb9AsmjekXGIx4ZVDJPX3pc8v/DX5HQj2y3x
+sCi8NmmXABsckLz42oxrky2ZGcNmFddqBJxJdgjVcXfa5BEetdtLnUhmtmhiKyJy
+g1rWCprL53Lj1ZWKLdQgu6yiNCQK9LS45ETRzHX8idzAODnagfx6by+X58QljgMg
+i72ZlH212j1K035K3UHJar7Lo0D7FQ==
+=xssr
+-----END PGP SIGNATURE-----
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 7015499..a3cbcd7 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -295,6 +295,19 @@ struct perf_event_pmu_context;
- #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
- #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
- 
-+/**
-+ * pmu::scope
-+ */
-+enum perf_pmu_scope {
-+	PERF_PMU_SCOPE_NONE	= 0,
-+	PERF_PMU_SCOPE_CORE,
-+	PERF_PMU_SCOPE_DIE,
-+	PERF_PMU_SCOPE_CLUSTER,
-+	PERF_PMU_SCOPE_PKG,
-+	PERF_PMU_SCOPE_SYS_WIDE,
-+	PERF_PMU_MAX_SCOPE,
-+};
-+
- struct perf_output_handle;
- 
- #define PMU_NULL_DEV	((void *)(~0UL))
-@@ -318,6 +331,11 @@ struct pmu {
- 	 */
- 	int				capabilities;
- 
-+	/*
-+	 * PMU scope
-+	 */
-+	unsigned int			scope;
-+
- 	int __percpu			*pmu_disable_count;
- 	struct perf_cpu_pmu_context __percpu *cpu_pmu_context;
- 	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67e115d..5ff9735 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -436,6 +436,11 @@ static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
- static struct srcu_struct pmus_srcu;
- static cpumask_var_t perf_online_mask;
-+static cpumask_var_t perf_online_core_mask;
-+static cpumask_var_t perf_online_die_mask;
-+static cpumask_var_t perf_online_cluster_mask;
-+static cpumask_var_t perf_online_pkg_mask;
-+static cpumask_var_t perf_online_sys_mask;
- static struct kmem_cache *perf_event_cache;
- 
- /*
-@@ -11578,10 +11583,60 @@ perf_event_mux_interval_ms_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(perf_event_mux_interval_ms);
- 
-+static inline const struct cpumask *perf_scope_cpu_topology_cpumask(unsigned int scope, int cpu)
-+{
-+	switch (scope) {
-+	case PERF_PMU_SCOPE_CORE:
-+		return topology_sibling_cpumask(cpu);
-+	case PERF_PMU_SCOPE_DIE:
-+		return topology_die_cpumask(cpu);
-+	case PERF_PMU_SCOPE_CLUSTER:
-+		return topology_cluster_cpumask(cpu);
-+	case PERF_PMU_SCOPE_PKG:
-+		return topology_core_cpumask(cpu);
-+	case PERF_PMU_SCOPE_SYS_WIDE:
-+		return cpu_online_mask;
-+	}
-+
-+	return NULL;
-+}
-+
-+static inline struct cpumask *perf_scope_cpumask(unsigned int scope)
-+{
-+	switch (scope) {
-+	case PERF_PMU_SCOPE_CORE:
-+		return perf_online_core_mask;
-+	case PERF_PMU_SCOPE_DIE:
-+		return perf_online_die_mask;
-+	case PERF_PMU_SCOPE_CLUSTER:
-+		return perf_online_cluster_mask;
-+	case PERF_PMU_SCOPE_PKG:
-+		return perf_online_pkg_mask;
-+	case PERF_PMU_SCOPE_SYS_WIDE:
-+		return perf_online_sys_mask;
-+	}
-+
-+	return NULL;
-+}
-+
-+static ssize_t cpumask_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	struct pmu *pmu = dev_get_drvdata(dev);
-+	struct cpumask *mask = perf_scope_cpumask(pmu->scope);
-+
-+	if (mask)
-+		return cpumap_print_to_pagebuf(true, buf, mask);
-+	return 0;
-+}
-+
-+static DEVICE_ATTR_RO(cpumask);
-+
- static struct attribute *pmu_dev_attrs[] = {
- 	&dev_attr_type.attr,
- 	&dev_attr_perf_event_mux_interval_ms.attr,
- 	&dev_attr_nr_addr_filters.attr,
-+	&dev_attr_cpumask.attr,
- 	NULL,
- };
- 
-@@ -11593,6 +11648,10 @@ static umode_t pmu_dev_is_visible(struct kobject *kobj, struct attribute *a, int
- 	if (n == 2 && !pmu->nr_addr_filters)
- 		return 0;
- 
-+	/* cpumask */
-+	if (n == 3 && pmu->scope == PERF_PMU_SCOPE_NONE)
-+		return 0;
-+
- 	return a->mode;
- }
- 
-@@ -11677,6 +11736,11 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 		goto free_pdc;
- 	}
- 
-+	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
-+		ret = -EINVAL;
-+		goto free_pdc;
-+	}
-+
- 	pmu->name = name;
- 
- 	if (type >= 0)
-@@ -11831,6 +11895,22 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 		    event_has_any_exclude_flag(event))
- 			ret = -EINVAL;
- 
-+		if (pmu->scope != PERF_PMU_SCOPE_NONE && event->cpu >= 0) {
-+			const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(pmu->scope, event->cpu);
-+			struct cpumask *pmu_cpumask = perf_scope_cpumask(pmu->scope);
-+			int cpu;
-+
-+			if (pmu_cpumask && cpumask) {
-+				cpu = cpumask_any_and(pmu_cpumask, cpumask);
-+				if (cpu >= nr_cpu_ids)
-+					ret = -ENODEV;
-+				else
-+					event->cpu = cpu;
-+			} else {
-+				ret = -ENODEV;
-+			}
-+		}
-+
- 		if (ret && event->destroy)
- 			event->destroy(event);
- 	}
-@@ -13784,6 +13864,12 @@ static void __init perf_event_init_all_cpus(void)
- 	int cpu;
- 
- 	zalloc_cpumask_var(&perf_online_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_core_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_die_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_cluster_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_pkg_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_sys_mask, GFP_KERNEL);
-+
- 
- 	for_each_possible_cpu(cpu) {
- 		swhash = &per_cpu(swevent_htable, cpu);
-@@ -13833,6 +13919,40 @@ static void __perf_event_exit_context(void *__info)
- 	raw_spin_unlock(&ctx->lock);
- }
- 
-+static void perf_event_clear_cpumask(unsigned int cpu)
-+{
-+	int target[PERF_PMU_MAX_SCOPE];
-+	unsigned int scope;
-+	struct pmu *pmu;
-+
-+	cpumask_clear_cpu(cpu, perf_online_mask);
-+
-+	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(scope, cpu);
-+		struct cpumask *pmu_cpumask = perf_scope_cpumask(scope);
-+
-+		target[scope] = -1;
-+		if (WARN_ON_ONCE(!pmu_cpumask || !cpumask))
-+			continue;
-+
-+		if (!cpumask_test_and_clear_cpu(cpu, pmu_cpumask))
-+			continue;
-+		target[scope] = cpumask_any_but(cpumask, cpu);
-+		if (target[scope] < nr_cpu_ids)
-+			cpumask_set_cpu(target[scope], pmu_cpumask);
-+	}
-+
-+	/* migrate */
-+	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-+		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
-+		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
-+			continue;
-+
-+		if (target[pmu->scope] >= 0 && target[pmu->scope] < nr_cpu_ids)
-+			perf_pmu_migrate_context(pmu, cpu, target[pmu->scope]);
-+	}
-+}
-+
- static void perf_event_exit_cpu_context(int cpu)
- {
- 	struct perf_cpu_context *cpuctx;
-@@ -13840,6 +13960,11 @@ static void perf_event_exit_cpu_context(int cpu)
- 
- 	// XXX simplify cpuctx->online
- 	mutex_lock(&pmus_lock);
-+	/*
-+	 * Clear the cpumasks, and migrate to other CPUs if possible.
-+	 * Must be invoked before the __perf_event_exit_context.
-+	 */
-+	perf_event_clear_cpumask(cpu);
- 	cpuctx = per_cpu_ptr(&perf_cpu_context, cpu);
- 	ctx = &cpuctx->ctx;
- 
-@@ -13847,7 +13972,6 @@ static void perf_event_exit_cpu_context(int cpu)
- 	smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
- 	cpuctx->online = 0;
- 	mutex_unlock(&ctx->mutex);
--	cpumask_clear_cpu(cpu, perf_online_mask);
- 	mutex_unlock(&pmus_lock);
- }
- #else
-@@ -13856,6 +13980,42 @@ static void perf_event_exit_cpu_context(int cpu) { }
- 
- #endif
- 
-+static void perf_event_setup_cpumask(unsigned int cpu)
-+{
-+	struct cpumask *pmu_cpumask;
-+	unsigned int scope;
-+
-+	cpumask_set_cpu(cpu, perf_online_mask);
-+
-+	/*
-+	 * Early boot stage, the cpumask hasn't been set yet.
-+	 * The perf_online_<domain>_masks includes the first CPU of each domain.
-+	 * Always uncondifionally set the boot CPU for the perf_online_<domain>_masks.
-+	 */
-+	if (!topology_sibling_cpumask(cpu)) {
-+		for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+			pmu_cpumask = perf_scope_cpumask(scope);
-+			if (WARN_ON_ONCE(!pmu_cpumask))
-+				continue;
-+			cpumask_set_cpu(cpu, pmu_cpumask);
-+		}
-+		return;
-+	}
-+
-+	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(scope, cpu);
-+
-+		pmu_cpumask = perf_scope_cpumask(scope);
-+
-+		if (WARN_ON_ONCE(!pmu_cpumask || !cpumask))
-+			continue;
-+
-+		if (!cpumask_empty(cpumask) &&
-+		    cpumask_any_and(pmu_cpumask, cpumask) >= nr_cpu_ids)
-+			cpumask_set_cpu(cpu, pmu_cpumask);
-+	}
-+}
-+
- int perf_event_init_cpu(unsigned int cpu)
- {
- 	struct perf_cpu_context *cpuctx;
-@@ -13864,7 +14024,7 @@ int perf_event_init_cpu(unsigned int cpu)
- 	perf_swevent_init_cpu(cpu);
- 
- 	mutex_lock(&pmus_lock);
--	cpumask_set_cpu(cpu, perf_online_mask);
-+	perf_event_setup_cpumask(cpu);
- 	cpuctx = per_cpu_ptr(&perf_cpu_context, cpu);
- 	ctx = &cpuctx->ctx;
- 
+--d2rlzxmgwshy2k4w--
 
