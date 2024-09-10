@@ -1,198 +1,243 @@
-Return-Path: <linux-kernel+bounces-322997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567AA973669
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:46:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E914B97366B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9B9287503
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:46:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 657AFB24703
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB48918C003;
-	Tue, 10 Sep 2024 11:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B5118FC93;
+	Tue, 10 Sep 2024 11:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o2Xp9no5"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="G4BQ5oWh"
+Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163A1188CDF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B18188CDF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725968793; cv=none; b=Fg9IPh0ixliS3eJAn5uMc/n0wt7ygxwvY/HshpIRA3b/KmuQNKjQvCpSAAvBFslKpBVivt3wb8ovgtc+ggxPGMCMBlhA2e1lSx9Pp/+ZSKr250ztX1yNzie35/3PLkFiGz+wP6IRqcmiiMf+Dae1/hdyAP5N6HInoEmcsGUiqQQ=
+	t=1725968799; cv=none; b=b8Ll0wqBLo9bK3xACpi5oDYy3vsx9gG+qUxRxSBu2c9+2OBiG0cBbbCEn/zDqCHBjaPeNkepPEc8x50ZBpftJygId2lJSSxLwCRVsG5tJiZ66f2k8ZlH0gHQsNhK6Mgqoii0qK5kx8+fiNDpjmw+peSIe4e7U3FaBQVXU6sORbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725968793; c=relaxed/simple;
-	bh=jKQrRwUJXvL2TXd07fChTc4rDKbe/39gfG26qL6VJiE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ERwNxqmBhBLXim/DXuw5I4/itYSeQSjp+9hpgkkXB9H7VgCo85Q1KodziSdeQZK6UWv8I1RUiHCghQA9XkKIeAoiM+sE+pS5x9XAMidIQ5u3Pa/bkZn+lPVepb7zlJfpsk4S1XHarBN5HvA9xDslmntFerCHLYUPBQ4CkegyHp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o2Xp9no5; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A7Bfh8006300;
-	Tue, 10 Sep 2024 11:45:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type; s=pp1; bh=B3iYgtEZ/V1YOM0UYZtS07sYxt
-	EeCMiv99aARL4Nl/o=; b=o2Xp9no50b6NtV0/7SVxaWU4+3NwA6xScAxP2CdY6k
-	twG2UeYDsztY2JdLvj5lQWLaL3pLmD7irJM8lSu3dEHRBHHebWpiLjck7QZ0ZC7M
-	aM95a2/0SgcZ+UcO63hTW8D7zDQhr5Z09JIthFO+I3vtmFOK1aJWTK4u7c5ZOMwD
-	CieNMVC7HAaE6vuYT54HyL5UPRiWvjKCdeiaxS+6pznKeyQ9jQiwjBkBGMukmnqF
-	ZRYBojgb7FTBQL+2TFTZH6U0Ky6flLUh0Yn4vRKNz2Is3pE41N89N8DMPjrcsKOD
-	dcH3u+B+YW+XOLqObM8Ye3vsmBvDIwSNSW8wUJv0vE5g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejaf8u6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 11:45:55 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48ABjtFL018334;
-	Tue, 10 Sep 2024 11:45:55 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejaf8u1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 11:45:55 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48ABYNFr003155;
-	Tue, 10 Sep 2024 11:45:54 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15tuf6t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 11:45:53 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ABjqb755902576
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 11:45:52 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4860A20043;
-	Tue, 10 Sep 2024 11:45:52 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB68920040;
-	Tue, 10 Sep 2024 11:45:51 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 10 Sep 2024 11:45:51 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-        kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-        youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 00/24] Complete EEVDF
-In-Reply-To: <20240727102732.960974693@infradead.org> (Peter Zijlstra's
-	message of "Sat, 27 Jul 2024 12:27:32 +0200")
-References: <20240727102732.960974693@infradead.org>
-Date: Tue, 10 Sep 2024 13:45:51 +0200
-Message-ID: <yt9d4j6nenps.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1725968799; c=relaxed/simple;
+	bh=lCuEX1B7G8V6W9Z6q+uGVeU5AA5ec3oX68AitYTYla4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dSQPEmnp7a6xniuSqXHMjSh1JayUfW+5WjscOhk9iprlIX174lPdmvZlic0oh4FQs8Lsxd6dXV2al1MiBLhPfaN1/PIJRweTIdNGPpNFGNbxElAXDPW2ZUNiTXvWUFeIBjWZbTtiUXVZgjTct9npeL1VxiQO6WLrj+MMfCB4HNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=G4BQ5oWh; arc=none smtp.client-ip=17.58.6.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1725968797;
+	bh=tmrBWDvF0iFyeIEX7Tyi7+YVVfmUxWfr5OWVJk8yh0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=G4BQ5oWhVYcRKTfdXQ4pIgR2PiqxXbB9NFXGNnQhcHs5IXSC/hd4q/B4FuiU4q12p
+	 QvEYZukH3U+0sPeyayEBY/S0f/S76q+YFZTWrzABe9wqmRksIeAcaqL8L+vw7/9x4V
+	 2qOxFXixhIy4w1BtiGqVxbFKO/aEqyXA3cW5efE/ERmKoBZ9v0fPZJqHQQUhr9dRf6
+	 tBAHb5bm4DpJiACBGAp/3iswfuL7qcDMUS5RpL/a6Bvqcs/ywuGUOqd1htm37BSqKO
+	 kp0IJQSpKMNOFA9z0zVhYrpDS4tiriV6ycXk8jmRSBtAD/qEoHM+yxHl1SXn2sKo76
+	 zYlsYcUm4x9Vw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id CE6C8D000DB;
+	Tue, 10 Sep 2024 11:46:28 +0000 (UTC)
+Message-ID: <e7e6ea66-bcfe-4af4-9f82-ae39fef1a976@icloud.com>
+Date: Tue, 10 Sep 2024 19:46:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rC8LU-g9AFx_aZKuWpaBkEHbAX0-TTM8
-X-Proofpoint-GUID: IdZUMOph1JKdKEY_KeNjeIsa0LFZOpYC
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
+ device_for_each_child()
+To: Dan Williams <dan.j.williams@intel.com>,
+ quic_zijuhu <quic_zijuhu@quicinc.com>, Ira Weiny <ira.weiny@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
+ <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
+ <2024090531-mustang-scheming-3066@gregkh>
+ <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
+ <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
+ <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: u82aMDuBd8roHSdBbqsymyDqICNgNuyL
+X-Proofpoint-ORIG-GUID: u82aMDuBd8roHSdBbqsymyDqICNgNuyL
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- phishscore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409100086
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 phishscore=0 suspectscore=0 spamscore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409100087
 
-Peter Zijlstra <peterz@infradead.org> writes:
+On 2024/9/10 12:15, Dan Williams wrote:
+> quic_zijuhu wrote:
+>> On 9/10/2024 8:45 AM, Dan Williams wrote:
+>>> Ira Weiny wrote:
+>>> [..]
+>>>>> This still feels more complex that I think it should be.  Why not just
+>>>>> modify the needed device information after the device is found?  What
+>>>>> exactly is being changed in the match_free_decoder that needs to keep
+>>>>> "state"?  This feels odd.
+>>>>
+>>>> Agreed it is odd.
+>>>>
+>>>> How about adding?
+>>>
+>>> I would prefer just dropping usage of device_find_ or device_for_each_
+>>> with storing an array decoders in the port directly. The port already
+>>> has arrays for dports , endpoints, and regions. Using the "device" APIs
+>>> to iterate children was a bit lazy, and if the id is used as the array
+>>> key then a direct lookup makes some cases simpler.
+>>
+>> it seems Ira and Dan have corrected original logic to ensure
+>> that all child decoders are sorted by ID in ascending order as shown
+>> by below link.
+>>
+>> https://lore.kernel.org/all/66df666ded3f7_3c80f229439@iweiny-mobl.notmuch/
+>>
+>> based on above correction, as shown by my another exclusive fix
+>> https://lore.kernel.org/all/20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com/
+>> there are a very simple change to solve the remaining original concern
+>> that device_find_child() modifies caller's match data.
+>>
+>> here is the simple change.
+>>
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -797,23 +797,13 @@ static size_t show_targetN(struct cxl_region
+>> *cxlr, char *buf, int pos)
+>>  static int match_free_decoder(struct device *dev, void *data)
+>>  {
+>>         struct cxl_decoder *cxld;
+>> -       int *id = data;
+>>
+>>         if (!is_switch_decoder(dev))
+>>                 return 0;
+>>
+>>         cxld = to_cxl_decoder(dev);
+>>
+>> -       /* enforce ordered allocation */
+>> -       if (cxld->id != *id)
+>> -               return 0;
+>> -
+>> -       if (!cxld->region)
+>> -               return 1;
+>> -
+>> -       (*id)++;
+>> -
+>> -       return 0;
+>> +       return cxld->region ? 0 : 1;
+> 
+> So I wanted to write a comment here to stop the next person from
+> tripping over this dependency on decoder 'add' order, but there is a
+> problem. For this simple version to work it needs 3 things:
+> 
+> 1/ decoders are added in hardware id order: done,
+> devm_cxl_enumerate_decoders() handles that
+> 
 
-> Hi all,
+do not known how you achieve it, perhaps, it is not simpler than
+my below solution:
+
+finding a free switch cxl decoder with minimal ID
+https://lore.kernel.org/all/20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com/
+
+which has simple logic and also does not have any limitation related
+to add/allocate/de-allocate a decoder.
+
+i am curious why not to consider this solution ?
+
+> 2/ search for decoders in their added order: done, device_find_child()
+> guarantees this, although it is not obvious without reading the internals
+> of device_add().
+> 
+> 3/ regions are de-allocated from decoders in reverse decoder id order.
+> This is not enforced, in fact it is impossible to enforce. Consider that
+> any memory device can be removed at any time and may not be removed in
+> the order in which the device allocated switch decoders in the topology.
 >
-> So after much delay this is hopefully the final version of the EEVDF patches.
-> They've been sitting in my git tree for ever it seems, and people have been
-> testing it and sending fixes.
->
-> I've spend the last two days testing and fixing cfs-bandwidth, and as far
-> as I know that was the very last issue holding it back.
->
-> These patches apply on top of queue.git sched/dl-server, which I plan on merging
-> in tip/sched/core once -rc1 drops.
->
-> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
->
->
-> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
->
->  - split up the huge delay-dequeue patch
->  - tested/fixed cfs-bandwidth
->  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
->  - SCHED_BATCH is equivalent to RESPECT_SLICE
->  - propagate min_slice up cgroups
->  - CLOCK_THREAD_DVFS_ID
 
-I'm seeing crashes/warnings like the following on s390 with linux-next 20240909:
+sorry, don't understand, could you take a example ?
 
-Sometimes the system doesn't manage to print a oops, this one is the best i got:
+IMO, the simple change in question will always get a free decoder with
+the minimal ID once 1/ is ensured regardless of de-allocation approach.
 
-[  596.146142] ------------[ cut here ]------------
-[  596.146161] se->sched_delayed
-[  596.146166] WARNING: CPU: 1 PID: 0 at kernel/sched/fair.c:13131 __set_next_task_fair.part.0+0x350/0x400
-[  596.146179] Modules linked in: [..]
-[  596.146288] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.11.0-rc7-next-20240909 #18
-[  596.146294] Hardware name: IBM 3931 A01 704 (LPAR)
-[  596.146298] Krnl PSW : 0404e00180000000 001a9c2b5eea4ea4 (__set_next_task_fair.part.0+0x354/0x400)
-[  596.146307]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-[  596.146314] Krnl GPRS: 001c000300000027 001c000300000023 0000000000000011 0000000000000004
-[  596.146319]            0000000000000001 001a9c2b5f1fb118 000000036ef94dd5 0000001b77ca6ea8
-[  596.146323]            001c000000000000 001a9c2b5eec6fc0 0000001b77ca6000 00000000b7334800
-[  596.146328]            0000000000000000 001a9c2b5eefad70 001a9c2b5eea4ea0 001a9bab5ee8f9f8
-[  596.146340] Krnl Code: 001a9c2b5eea4e94: c0200121bbe6        larl    %r2,001a9c2b612dc660
-[  596.146340]            001a9c2b5eea4e9a: c0e5fff9e9d3        brasl   %r14,001a9c2b5ede2240
-[  596.146340]           #001a9c2b5eea4ea0: af000000            mc      0,0
-[  596.146340]           >001a9c2b5eea4ea4: a7f4fe83            brc     15,001a9c2b5eea4baa
-[  596.146340]            001a9c2b5eea4ea8: c0e50038ba2c        brasl   %r14,001a9c2b5f5bc300
+> So, that existing comment of needing to enforce ordered allocation is
+> still relevant even though the implementation fails to handle the
+> out-of-order region deallocation problem.
+> 
+> I alluded to the need for a "tear down the world" implementation back in
+> 2022 [1], but never got around to finishing that.
+> 
+> Now, the cxl_port.hdm_end attribute tracks the "last" decoder to be
+> allocated for endpoint ports. That same tracking needs to be added for
+> switch ports, then this routine could check for ordering constraints by:
+> 
+>     /* enforce hardware ordered allocation */
+>     if (!cxld->region && port->hdm_end + 1 == cxld->id)
+>         return 1;
+>     return 0;
+> 
+> As it stands now @hdm_end is never updated for switch ports.
+> 
+> [1]: 176baefb2eb5 cxl/hdm: Commit decoder state to hardware
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> Yes, that looks simple enough for now, although lets not use a ternary
+> condition and lets leave a comment for the next person:
+> 
+> /* decoders are added in hardware id order
+>  * (devm_cxl_enumerate_decoders), allocated to regions in id order
+>  * (device_find_child() walks children in 'add' order)
+>  */
+>>  }
+>>
+>>  static int match_auto_decoder(struct device *dev, void *data)
+>> @@ -840,7 +830,6 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>                         struct cxl_region *cxlr)
+>>  {
+>>         struct device *dev;
+>> -       int id = 0;
+>>
+>>         if (port == cxled_to_port(cxled))
+>>                 return &cxled->cxld;
+>> @@ -849,7 +838,7 @@ cxl_region_find_decoder(struct cxl_port *port,
+>>                 dev = device_find_child(&port->dev, &cxlr->params,
+>>                                         match_auto_decoder);
+>>         else
+>> -               dev = device_find_child(&port->dev, &id,
+>> match_free_decoder);
+>> +               dev = device_find_child(&port->dev, NULL,
+>> match_free_decoder);
+>>         if (!dev)
+>>                 return NULL;
+>>
+>>
+> 
+> 
 
-[  596.146558] CPU: 1 UID: 0 PID: 18582 Comm: prctl-sched-cor Tainted: G        W          6.11.0-rc7-next-20240909 #18
-[  596.146564] Tainted: [W]=WARN
-[  596.146567] Hardware name: IBM 3931 A01 704 (LPAR)
-[  596.146570] Krnl PSW : 0404e00180000000 001a9c2b5eec2de4 (dequeue_entity+0xe64/0x11f0)
-[  596.146578]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-[  596.146584] Krnl GPRS: 001c000300000027 001c000300000023 000000000000001a 0000000000000004
-[  596.146589]            0000000000000001 001a9c2b5f1fb118 001a9c2b61be7144 0000000016e6692a
-[  596.146593]            0000000000000001 00000000b7334951 0000000158494800 00000000b7334900
-[  596.146597]            000000000000489e 0000000000000009 001a9c2b5eec2de0 001a9bab75dff760
-[  596.146607] Krnl Code: 001a9c2b5eec2dd4: c0200120cdf6        larl    %r2,001a9c2b612dc9c0
-[  596.146607]            001a9c2b5eec2dda: c0e5fff8fa33        brasl   %r14,001a9c2b5ede2240
-[  596.146607]           #001a9c2b5eec2de0: af000000            mc      0,0
-[  596.146607]           >001a9c2b5eec2de4: c004fffff90a        brcl    0,001a9c2b5eec1ff8
-[  596.146607]            001a9c2b5eec2dea: a7f4fbbe            brc     15,001a9c2b5eec2566
-[  596.146607]            001a9c2b5eec2dee: a7d10001            tmll    %r13,1
-[  596.146607]            001a9c2b5eec2df2: a774fb1c            brc     7,001a9c2b5eec242a
-[  596.146607]            001a9c2b5eec2df6: a7f4f95f            brc     15,001a9c2b5eec20b4
-[  596.146637] Call Trace:
-[  596.146640]  [<001a9c2b5eec2de4>] dequeue_entity+0xe64/0x11f0 
-[  596.146645] ([<001a9c2b5eec2de0>] dequeue_entity+0xe60/0x11f0)
-[  596.146650]  [<001a9c2b5eec34b0>] dequeue_entities+0x340/0xe10 
-[  596.146655]  [<001a9c2b5eec4208>] dequeue_task_fair+0xb8/0x5a0 
-[  596.146660]  [<001a9c2b6115ab68>] __schedule+0xb58/0x14f0 
-[  596.146666]  [<001a9c2b6115b59c>] schedule+0x9c/0x240 
-[  596.146670]  [<001a9c2b5edf5190>] do_wait+0x160/0x440 
-[  596.146676]  [<001a9c2b5edf5936>] kernel_waitid+0xd6/0x110 
-[  596.146680]  [<001a9c2b5edf5b4e>] __do_sys_waitid+0x1de/0x1f0 
-[  596.146685]  [<001a9c2b5edf5c36>] __s390x_sys_waitid+0xd6/0x120 
-[  596.146690]  [<001a9c2b5ed0cbd6>] do_syscall+0x2f6/0x430 
-[  596.146695]  [<001a9c2b611543a4>] __do_syscall+0xa4/0x170 
-[  596.146700]  [<001a9c2b6117046c>] system_call+0x74/0x98 
-[  596.146705] Last Breaking-Event-Address:
-[  596.146707]  [<001a9c2b5ede2418>] __warn_printk+0x1d8/0x1e0
-
-This happens when running the strace test suite. The system normaly has
-128 CPUs. With this configuration the crash doesn't happen, but when
-disabling all but four CPUs and running 'make check -j16' in the strace
-test suite the crash is almost always reproducable.
-
-Regards
-Sven
 
