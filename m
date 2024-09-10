@@ -1,112 +1,97 @@
-Return-Path: <linux-kernel+bounces-322549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D2E972AB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:27:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8453F972AB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4138286B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B630F1C24232
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C5117D35C;
-	Tue, 10 Sep 2024 07:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVLO75QW"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8077D17C7C2;
+	Tue, 10 Sep 2024 07:28:28 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5626717C232
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85259171671
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953255; cv=none; b=GtFz8iuPWyocnuPXU/nCfaGtxrsFm3wo+3TL0ntxnRmwKOzleOmvjqkfXPIPrKwwjVoTyMEv8lffCIFJdwDzOKtpLm5WVOws9KysV/zk2QDatiQr7IaJpS2lKWwoqsX4wsqunEI4rMTolfFK0tXdNjhekQa+01s40dMsky+oqqU=
+	t=1725953308; cv=none; b=ok8a4kUD699AkUj5O9HOyH5TOI3Rbt3XRlKhqt2KjhvWKv44x14J1rMzOUbNih1v57avkxbIIhLcHFBMABCIuBkNZ6OktecqRmV39Py3BBcof/+M/73Qjvw2dW2iUDpcnU8eP4ZGiGDx2MmPC5mdzPJ8VfPYFMq9w1boJDzKSGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953255; c=relaxed/simple;
-	bh=xHp27Dl5rFoaVGhUHo6nRu+Kc8ifNyYXpBdJfUc/Yn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Un/wj87UYhMeTBTLYRwebhN7oCFLhM8P/JpV2GQB9N4B2dc2xu+4leLh1yee94+35WQLxq+pELjdwHLm9JacvXIZT+fHv9s3MnAz17edpYyM9c+8K79fBD0vLa2EIwGkowlpMUXB2Ruqu5ilYW6myRkmDNfYA1aLX1wt/nXLBv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QVLO75QW; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so11871745e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725953251; x=1726558051; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=imHMW4srmvxlkZw05ahiPZKsauky+pygFs/tY2Ct9A8=;
-        b=QVLO75QWp8YlQT+WrG7A0qWJSXfQ2G+9QsE8CaKan3SHnLqnDwuryXiQQ4LXfevEPe
-         yYCPKvUB1HD7ELWrmGWQR0hqabC71SsfwIHTmIHNJOxq0zyVpt/6c+0qZnC25Z14z9Nz
-         +IVjVV4+5ZzylscAXX14QJqwIjz0NWbybzNRXqQRdVM3l50L64Dn4GED/50hVquJTrNt
-         Vwc9x7mnod+52WreiVCzrmjazsZnuPHkPvJNvnsP6MIrLYpkh5n1bXwZpd8WsxXZMWdE
-         KPYR3bpzLL/ljHnMMtEiR9DSxlZZk87I14mdF/p3fEyKhfYSwD90j32a0NCIf2wc82FF
-         Xgzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725953251; x=1726558051;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=imHMW4srmvxlkZw05ahiPZKsauky+pygFs/tY2Ct9A8=;
-        b=n4xJmnWFjnBhAUO0AyxcJtm0cWEnK5qoUiX57l+sVKHFuN446mpW2ZFQrOW0KKMhz4
-         r6npYNnIsQxKfe2c5zQNTEB9gnMSf9BnHJH8BGd2q/X+9hn1NtndU0uKjaeRtPL4sn3c
-         Yi4EGQTg/ejskXcfZcv1A3E8btQpZwNhjdHbu4wsfqFYGg2/5kEn+wc0mveO747dlyP/
-         +E+eOvJStxfY7HOMcTcGBl7Ugp9QCOtxHLCoLJASeP2/fJ+rqr/qMz1AJA3CQNo7BVJa
-         rj7U+ZyUnQWooHJaUzk8yFSwNJGRmP0ZN42U8U5VLdi/IAmtAtkmTnbzK+W9AOXZUcYW
-         zlxw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3eBXV97vZ+78I4F0jBGXo50diTiQmxwd1lDOD6EEJ+Gh5qvVVnVjR0BRs0GLqmCt8vGI6jl/Ny3OUv6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ9Ro9kOJKKrXgRZAn7hXD23MBSlMnV5kPFIxwV5gpClTgNexE
-	jk4aGNjx+SolbM0Mzww4ul9OMW9iUXA2GfA+cpRCm3K1hljzxcZ40uRr7FWRZYw=
-X-Google-Smtp-Source: AGHT+IGoJxhSFCZbyl7tqtAC8eWbUuCuNeiK6sk/bYCSGEBjaxZfva9+5Us1debP3cR6vVuVBeMXzw==
-X-Received: by 2002:a05:600c:1f09:b0:42c:b8cc:205a with SMTP id 5b1f17b1804b1-42cb8cc232emr37553905e9.32.1725953251538;
-        Tue, 10 Sep 2024 00:27:31 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb1cf939asm86495265e9.19.2024.09.10.00.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 00:27:30 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:27:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	lei lu <llfamsec@gmail.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/ntfs3: remove duplicate check on "asize"
-Message-ID: <15fc9478-cf00-42b6-820a-87a2d62f2766@stanley.mountain>
+	s=arc-20240116; t=1725953308; c=relaxed/simple;
+	bh=MFqXUSqMnWd5kb/XHHgGfobm/9JFGuanOt7xNLiORDU=;
+	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To; b=TGzcxT92NliYB24hzQpu+8iOQarzqLGb7yzIfin9cJsYSTjYhyCnnqz9GsHCylv6ArmyTGEtz/yCfFpEnY6eC/gcMC8W6EuEYydWwA6NoHA9iiY/5hiS2IlzvL+9ZOPzCtStTFNeCQz7NkAyEsuNJ8PemwHlfVrdQXDBqBmCiHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3fbdeeb86f4611efa216b1d71e6e1362-20240910
+X-QC-Scan-Result: 0
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:dd4a77c7-3700-44f3-9f6e-ca79e80dd828,IP:10,
+	URL:0,TC:0,Content:5,EDM:0,RT:0,SF:-5,FILE:5,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:dd4a77c7-3700-44f3-9f6e-ca79e80dd828,IP:10,UR
+	L:0,TC:0,Content:5,EDM:0,RT:0,SF:-5,FILE:5,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:016b2c20e0ac158f5f43d1fc851f963c,BulkI
+	D:240910152819U9USM7Y9,BulkQuantity:0,Recheck:0,SF:19|43|74|66|23|17|102,T
+	C:nil,Content:4|-5,EDM:-3,IP:-2,URL:0,File:2,RT:nil,Bulk:nil,QS:0,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 3fbdeeb86f4611efa216b1d71e6e1362-20240910
+X-User: zhaomengmeng@kylinos.cn
+Received: from [192.168.109.86] [(123.149.251.227)] by mailgw.kylinos.cn
+	(envelope-from <zhaomengmeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1185552756; Tue, 10 Sep 2024 15:28:17 +0800
+Content-Type: multipart/mixed; boundary="------------Tdcq1JiFtJ0apQYUwmJ0WCr2"
+Message-ID: <bab2637d-45a0-4f45-8488-6a56b4feaf4e@kylinos.cn>
+Date: Tue, 10 Sep 2024 15:28:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
+Cc: jack@suse.com, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <0000000000005093590621340ecf@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: slab-out-of-bounds Read in
+ udf_get_filelongad (2)
+From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+In-Reply-To: <0000000000005093590621340ecf@google.com>
 
-Commit 556bdf27c2dd ("ntfs3: Add bounds checking to mi_enum_attr()")
-added a new check directly after "asize" is assigned so this check
-is duplicative.
+This is a multi-part message in MIME format.
+--------------Tdcq1JiFtJ0apQYUwmJ0WCr2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/ntfs3/record.c | 4 ----
- 1 file changed, 4 deletions(-)
+#syz test
+--------------Tdcq1JiFtJ0apQYUwmJ0WCr2
+Content-Type: text/x-patch; charset=UTF-8; name="test.patch"
+Content-Disposition: attachment; filename="test.patch"
+Content-Transfer-Encoding: base64
 
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index 427c71be0f08..0f400366231d 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -268,10 +268,6 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
- 
- 	/* Check size of attribute. */
- 	if (!attr->non_res) {
--		/* Check resident fields. */
--		if (asize < SIZEOF_RESIDENT)
--			return NULL;
--
- 		t16 = le16_to_cpu(attr->res.data_off);
- 		if (t16 > asize)
- 			return NULL;
--- 
-2.45.2
+ZGlmZiAtLWdpdCBhL2ZzL3VkZi9pbm9kZS5jIGIvZnMvdWRmL2lub2RlLmMKaW5kZXggNDcy
+NmE0ZDAxNGI2Li4zNTA5NjJiZmM3MWYgMTAwNjQ0Ci0tLSBhL2ZzL3VkZi9pbm9kZS5jCisr
+KyBiL2ZzL3VkZi9pbm9kZS5jCkBAIC02NjYsNyArNjY2LDcgQEAgc3RhdGljIGludCB1ZGZf
+ZXh0ZW5kX2ZpbGUoc3RydWN0IGlub2RlICppbm9kZSwgbG9mZl90IG5ld3NpemUpCiAJCSAg
+ICAgZWxlbiA+ICgobG9mZl90KW9mZnNldCArIDEpIDw8IGlub2RlLT5pX2Jsa2JpdHMpOwog
+CiAJaWYgKCghZXBvcy5iaCAmJiBlcG9zLm9mZnNldCA9PSB1ZGZfZmlsZV9lbnRyeV9hbGxv
+Y19vZmZzZXQoaW5vZGUpKSB8fAotCSAgICAoZXBvcy5iaCAmJiBlcG9zLm9mZnNldCA9PSBz
+aXplb2Yoc3RydWN0IGFsbG9jRXh0RGVzYykpKSB7CisJICAgIChlcG9zLm9mZnNldCA9PSBz
+aXplb2Yoc3RydWN0IGFsbG9jRXh0RGVzYykpKSB7CiAJCS8qIEZpbGUgaGFzIG5vIGV4dGVu
+dHMgYXQgYWxsIG9yIGhhcyBlbXB0eSBsYXN0CiAJCSAqIGluZGlyZWN0IGV4dGVudCEgQ3Jl
+YXRlIGEgZmFrZSBleHRlbnQuLi4gKi8KIAkJZXh0ZW50LmV4dExvY2F0aW9uLmxvZ2ljYWxC
+bG9ja051bSA9IDA7Cg==
 
+--------------Tdcq1JiFtJ0apQYUwmJ0WCr2--
 
