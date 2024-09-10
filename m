@@ -1,279 +1,140 @@
-Return-Path: <linux-kernel+bounces-323834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DBC97440D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:24:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A709097440F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D669BB24192
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD0F288E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1E61A4F2F;
-	Tue, 10 Sep 2024 20:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE41A76BB;
+	Tue, 10 Sep 2024 20:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJbsDur/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A33fyGBi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D48BA45;
-	Tue, 10 Sep 2024 20:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FED17C7C9;
+	Tue, 10 Sep 2024 20:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999885; cv=none; b=hqJxB0SaXpWylLKSYlWNz1gweVktnOjR8CK5ciwD4KyogEzmINAoYJpCjI5UnOujUXfN9/HTNIh2FoS5OemjJwZ+TSvH2G3R++JcYMjF3SNYGQeMTMfzldGr9mW+mco9FRVzBYQoATykLh/K7FzYYdlFKlWuaUtRtTeBg0Pl/7s=
+	t=1726000070; cv=none; b=hIxLpeY6UKPrxqP6QTAVAUg8xIRsHNiaeTRYfV076T2pBjh2yscyMTc2iLeeRXucY+khSyrxuqy/t17bw3AFKyXI8Zm+sR5aFEtY0surs3SOBl+v/7d/hxeYdYb4uZAAEwIdwXXYLEaol7oRRi7iXqUkZUOexGtAFWPolA9ieLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999885; c=relaxed/simple;
-	bh=H/452oiqSmDz8a2IpeILUC/AnUUnSvtrWbH1Rskmm3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kt3s7X6qvqNqwt2EKtDvDrIZcR78No85ezu3kFDT67Y98i8XVqy2f4MCSSbnwnuhFH85nzmWMW8mdDk97SC0/difS3l0CPhrgpFbraWUpW3y1n0xlGiQM/2+K9f2fuf2Dk0FNfGK++BuXUcbu2XTm3rhDVPnnD7VGEB76dqJVuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJbsDur/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697BAC4CEC3;
-	Tue, 10 Sep 2024 20:24:44 +0000 (UTC)
+	s=arc-20240116; t=1726000070; c=relaxed/simple;
+	bh=F1/9VLarbTJ9VCxON6d1CtL/BQZZi7nOBEwpu4FUHaA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sy52HVe2ZVET8iPLl81U3tycZDlQCcOazXtQz6qIZAKMjBNybPTYsYCkZCt1hK2s6DBMG4haEIEBFHpLnhNPNABCLDS06R7B+bLAIJzKaRtskqndCrI7kuQnoT7M8b1iy1k8CID8LrpUkUb1nZBNECfQg87pqx/jma6cKDFBokc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A33fyGBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87540C4CEC3;
+	Tue, 10 Sep 2024 20:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725999884;
-	bh=H/452oiqSmDz8a2IpeILUC/AnUUnSvtrWbH1Rskmm3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJbsDur/hR3fmPyaD8IMYtQHD10aCIshAuDCVJGFmeyTgH/KCqZxrnlDdd+VDBy7j
-	 yqTtuW5kR0dV63XGwx3TurmU/FUgTUir892B1tz8auisAKaz1RlMRJoiEUcexcoFNf
-	 MfFXzXWqVmCT/W5MIIr0bVe8yK4zJWu4qMKv8vWg4zad9ytmmVqI7TdxE0iaumdHcx
-	 e4qkjmvI9wBu8JWxXrllQURXI9m8ZWL87IoS/vq/O9xMLQ/Hr+ASTIeUXFUIG8CWnS
-	 vdtlV4u1dVv07SyE7/cqZJqf7/koM+zkMvhA8dL3ZxRWgnhckA+HhKTgHlIfNUPM+u
-	 E20NFYROekQUA==
-Date: Tue, 10 Sep 2024 17:24:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: Linux next breaks s390 test cases perf test vfs_getname
-Message-ID: <ZuCrCRfUi6QiRV_3@x1>
-References: <3f5eeb1b-6679-4ff5-8046-0cbe1b6e4ba8@linux.ibm.com>
+	s=k20201202; t=1726000070;
+	bh=F1/9VLarbTJ9VCxON6d1CtL/BQZZi7nOBEwpu4FUHaA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A33fyGBijBMkVnizFcOT9RMyk3X4W5JkxFmasSOR/p0mBtCxuWRSvb6DvtBdETrGm
+	 pvBoFWjtYWd23vigu96nDocpSRQDf4tAkALbcIzMCLh3Gep1c6ZDQLquA4kbNrhYdQ
+	 Vy2iJyj125yym7qJ/UDZl+iViuRuAfLnJW3vTseIKaD+9hqQLbcYD/tARb5wYzVsCY
+	 VU/GBqakb7x3YFe3kxguXRH1jUq23zYIPY6Qp4tu5AUI8UUX+ZxOxQlWegxbZwS51C
+	 tljaJjvhbk5RnSnNDMRMUh9KVNLdDtZNPub4pTLmaagHqIJDJyO1Ep4Ja6Q/52BK6+
+	 1oaxqUo2UPZpg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1so7Sm-00BsCg-Am;
+	Tue, 10 Sep 2024 21:27:48 +0100
+Date: Tue, 10 Sep 2024 21:27:47 +0100
+Message-ID: <86plpb6ypo.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v10 5/5] KVM: arm64: Register ptdump with debugfs on guest creation
+In-Reply-To: <20240909124721.1672199-6-sebastianene@google.com>
+References: <20240909124721.1672199-1-sebastianene@google.com>
+	<20240909124721.1672199-6-sebastianene@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f5eeb1b-6679-4ff5-8046-0cbe1b6e4ba8@linux.ibm.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Sep 10, 2024 at 02:05:42PM +0200, Thomas Richter wrote:
-> Arnaldo,
+On Mon, 09 Sep 2024 13:47:21 +0100,
+Sebastian Ene <sebastianene@google.com> wrote:
 > 
-> On linux-next
-> commit a68080e1a21b ("perf test vfs_getname: Look for alternative line where to collect the pathname")
-> breaks the following tests on s390:
+> While arch/*/mem/ptdump handles the kernel pagetable dumping code,
+> introduce KVM/ptdump to show the guest stage-2 pagetables. The
+> separation is necessary because most of the definitions from the
+> stage-2 pagetable reside in the KVM path and we will be invoking
+> functionality specific to KVM. Introduce the PTDUMP_STAGE2_DEBUGFS config.
 > 
->  # perf test vfs_getname
->  85: Add vfs_getname probe to get syscall args filenames             : FAILED!
->  87: Use vfs_getname probe to get syscall args filenames             : FAILED!
-> 120: Check open filename arg using perf trace + vfs_getname          : FAILED!
+> When a guest is created, register a new file entry under the guest
+> debugfs dir which allows userspace to show the contents of the guest
+> stage-2 pagetables when accessed.
 > 
-> I used the linux next kernel from yesterdays build on s390 and the corresponding
-> perf tools also built from that kernel repository:
->  # uname -a
->  Linux a35lp62.lnxne.boe 6.11.0-20240909.rc7.git205.100cc857359b.300.fc40.s390x+next #1 SMP Mon Sep  9 20:05:44 CEST 2024 s390x GNU/Linux
->  # perf -v
->  perf version 6.11.0-20240909.rc7.git205.100cc857359b.300.fc40.s390x+next
->  #
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> Reviewed-by: Vincent Donnefort <vdonnefort@google.com>
+> ---
+>  arch/arm64/include/asm/kvm_host.h |   6 +
+>  arch/arm64/kvm/Kconfig            |  17 ++
+>  arch/arm64/kvm/Makefile           |   1 +
+>  arch/arm64/kvm/arm.c              |   1 +
+>  arch/arm64/kvm/ptdump.c           | 268 ++++++++++++++++++++++++++++++
+>  5 files changed, 293 insertions(+)
+>  create mode 100644 arch/arm64/kvm/ptdump.c
 > 
-> The root cause is a changed regular expression. Before the change the command
-> extracts this line and strips everything after the line number:
->  # perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
->  79     result->uptr = filename;
->  # perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;' | \
->          sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/'
->  79
->  # perf probe -q "vfs_getname=getname_flags:79 pathname=result->name:string"
->  # echo $?
->  0
->  # perf probe -l
->   probe:vfs_getname    (on getname_flags:79@fs/namei.c with pathname)
->  # perf probe -d '*'
->  Removed event: probe:vfs_getname
->  #
-> 
-> With your changes the result is slightly different. The first part still matches the
-> same line:
->  #perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*='
->  79     result->uptr = filename;
-> but the sed command does not return the proper line number:
->  # perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*=' | \
->         sed -r "s/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*=/\1/"
->  79 filename;
->  #
-> The filename; is not stripped and the perf probe command looks like
->  # perf probe -q "vfs_getname=getname_flags:79 filename; pathname=result->name:string"
->  # echo $?
->  254
->  # perf probe -l
->  # perf probe  "vfs_getname=getname_flags:79 filename; pathname=result->name:string"
->  Failed to find the location of the 'filename;' variable at this address.
->  Perhaps it has been optimized out.
->  Use -V with the --range option to show 'filename;' location range.
->   Error: Failed to add events.
->  # 
-> 
-> 
-> The issue is that trailing equal sign (=) in the regular expression:
->  + result_filename_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*"
->  + line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re=" | \
->                  sed -r "s/$result_filename_re=/\1/")
->                                               ^--------here-----
-> which prevents word filename; from being stripped away.
-> I wonder if this works on x86_64 platforms and if we need a archtecture specific
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index a33f5996ca9f..4acd589f086b 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1473,4 +1473,10 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
+>  		(pa + pi + pa3) == 1;					\
+>  	})
+>  
+> +#ifdef CONFIG_PTDUMP_STAGE2_DEBUGFS
+> +void kvm_s2_ptdump_create_debugfs(struct kvm *kvm);
+> +#else
+> +static inline void kvm_s2_ptdump_create_debugfs(struct kvm *kvm) {}
+> +#endif /* CONFIG_PTDUMP_STAGE2_DEBUGFS */
+> +
 
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~#
-root@x1:~# uname -a
-Linux x1 6.10.8-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Sep  4 21:41:11 UTC 2024 x86_64 GNU/Linux
-root@x1:~#
+I made the executive decision to move this to kvm_mmu.h, as this is
+slightly more logical.
 
-I forgot to mention the kernel version wher I did that a68080e1a21b
-patch, but IIRC it was a recent, locally built kernel (not a distro
-kernel, but with the fedora, probably 39, config):
+Thanks,
 
-kernel="/boot/vmlinuz-6.11.0-rc5+"
+	M.
 
-But even with the distro kernel I'm getting the same results:
-
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~# perf test getname
- 91: Add vfs_getname probe to get syscall args filenames             : Ok
- 93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-126: Check open filename arg using perf trace + vfs_getname          : Ok
-root@x1:~# 
-
-With my changes, i.e. what is in perf-tools-next now:
-
-root@x1:~# perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
-         	result->uptr = filename;
-root@x1:~#
-
-So no line number to be found:
-
-root@x1:~# perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
-perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/'
-         	result->uptr = filename;
-root@x1:~#
-
-Then, with the change in place:
-
-The first part continues not to find the info:
-
-root@x1:~# perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*='
-root@x1:~#
-
-Then it falls back to the new way of finding where to put the probe:
-
-root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re=" 
-root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" 
-     73  	result->aname = NULL;
-root@x1:~#
-
-Yeah, that = shouldn't be there
-
-root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/"
-73
-root@x1:~# line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
-root@x1:~# echo $line
-73
-root@x1:~#
-
-Can you try with the patch below, that ending '=' is noise :-\
-
-- Arnaldo
-
-From 9ccaf9a0ebcff9b4c45c34d92ca97be9926da636 Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Tue, 10 Sep 2024 17:18:26 -0300
-Subject: [PATCH 1/1] perf test shell probe_vfs_getname: Remove extraneous '='
- from probe line number regex
-
-Thomas reported the vfs_getname perf tests failing on s/390, it seems it
-was just to some extraneous '=' somehow getting into the regexp, remove
-it, now:
-
-  root@x1:~# perf test getname
-   91: Add vfs_getname probe to get syscall args filenames             : Ok
-   93: Use vfs_getname probe to get syscall args filenames             : FAILED!
-  126: Check open filename arg using perf trace + vfs_getname          : Ok
-  root@x1:~#
-
-Second one remains a mistery, have to take some time to nail it down.
-
-Testing it:
-  
-  root@x1:~# uname -a
-  Linux x1 6.10.8-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Sep  4 21:41:11 UTC 2024 x86_64 GNU/Linux
-  root@x1:~# result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
-  root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/"
-  73
-  root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re"
-       73       result->aname = NULL;
-  root@x1:~# line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
-  eroot@x1:~#
-  root@x1:~# echo $line
-  73
-  root@x1:~#
-
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 0606e693eb59c5e9..5c33ec7a5a63bdb3 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -14,10 +14,10 @@ add_probe_vfs_getname() {
- 	add_probe_verbose=$1
- 	if [ $had_vfs_getname -eq 1 ] ; then
- 		result_filename_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*"
--		line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re=" | sed -r "s/$result_filename_re=/\1/")
-+		line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re" | sed -r "s/$result_filename_re/\1/")
- 		if [ -z "$line" ] ; then
- 			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
--			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re=" | sed -r "s/$result_aname_re=/\1/")
-+			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
- 		fi
- 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
- 		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
 -- 
-2.46.0
-
+Without deviation from the norm, progress is not possible.
 
