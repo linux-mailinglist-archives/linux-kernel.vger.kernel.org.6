@@ -1,83 +1,113 @@
-Return-Path: <linux-kernel+bounces-322570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2635972AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9972972B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 509D5B22215
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DA41F2523A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990E417E47A;
-	Tue, 10 Sep 2024 07:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32923183061;
+	Tue, 10 Sep 2024 07:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5VqmMrW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KXVpYS7Z"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F236B17DFEF;
-	Tue, 10 Sep 2024 07:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B7C17E8EA;
+	Tue, 10 Sep 2024 07:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954073; cv=none; b=iLZXHP6NJgCJxhRqVC6+CMq76V3nE2x7nIsiK8cpD8yYrnScEjgGXPhpB5upb7sWKU5oPcHH9eXfKQwaPbf9YnXVKyRrhqqZXunpxeFar1h69/D2pkb/13ap5Kywv8v36Oky9E0MvK0eU4umcU9wklFm4Hbn88NO6wAngeN1c+M=
+	t=1725954089; cv=none; b=kpP8LNkWOPOr55BKHE7RJlDjqo45SZGBp/Sbbx4f39SP+KTu+33Ktsn13iaLdbjjR6O3gBFZcsXquxFrDdqM5nBEDIR28FdejZB8egtc2jbUZ5V+uxhFtbPRIKspXiXaNyJJw/m/5MKogapOTMTKjgvpLPbT+a/qWm+6nRl+ULo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954073; c=relaxed/simple;
-	bh=snAB2tdXCnqKC6Qfh4W9stiXFqOoO8KWhEKAuOrN4UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuxhDpfwQYEvW9FsjhRzqXt8QecirHpMf+J14FohD0n8iJ4bx5mq2yetvIRvooNxWDJvQPfNZyGXjufpu/9ccgi+7CgyUXzFCUgBP7vEc5TTmOn1n7+sxmU6wO3Jkm8RtZjahLFwD/LQwyFrTRo3Xsfg3w7JspR6kZqG9g9HIco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5VqmMrW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D690C4CEC3;
-	Tue, 10 Sep 2024 07:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725954072;
-	bh=snAB2tdXCnqKC6Qfh4W9stiXFqOoO8KWhEKAuOrN4UM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5VqmMrWsbd6uECOztim29wGz414g5qg2DEABQl1yTEwZXgSGWOnM8CSQ+yWR1Xfg
-	 T3IZGyR/ySFDS5s8RS25TBTlAP1znCAaCW14XrPIgYIIrCoBtMJmlCvjdOhhY8ZgAU
-	 qAlblk7drRkqScptp5TnwwTChdtfPbar4JvV/iE/pKLb4IMuV86798cIDdN9PRYpiG
-	 H5b+mBmhxWo69OzcnCgDVB0VVN16R05g8oF2Soev2MohY64RLvVHRZLCZtWg0L43Cx
-	 WrTpWvjpHJHEAs95EnfBt8sHBNLHU6znbQy2kPRHTlrW5JnJEt2zWe34LFtP1O6YgX
-	 /O6OE44c2ao7g==
-Date: Tue, 10 Sep 2024 09:41:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, chao.wei@sophgo.com, haijiao.liu@sophgo.com, 
-	xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: sophgo: add PWM controller for
- SG2042
-Message-ID: <33wi6plp5ebovfzl64cndw532ob75bwlpn74ldnqd2ggktrp6z@tooe3usdh3cl>
-References: <cover.1725931796.git.unicorn_wang@outlook.com>
- <c2b237b5b2430b0715c9c3dee043d30fe5216e2e.1725931796.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1725954089; c=relaxed/simple;
+	bh=0I1CyWm23D97I4eXjHRqIKBJl40TlwGc17YBFqRaG4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nosG3/k/jDL5j7w1HqDmy1aVyFC9gTaRoADzw2a+DASHacwe+Vut9lcXzmLlKKIsbwERz7gS2GTLClSxNi+t/GmZH/JhZyq+ntatYwJfmohhRPJtYO0f4nVMyrR1Ss9AWegkZ+b5UXeEfCB3gwMwPY1Os6OLO9FzYou8SfLKiUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KXVpYS7Z; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2E6D9FF80C;
+	Tue, 10 Sep 2024 07:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725954083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=af5m1sT62PlbZm1pnjn+q6UsEmjHIWOgLofQJKFpyhE=;
+	b=KXVpYS7ZX2ePDbG+y3lo9eckSGGfA548IHJNPUXZGhUOZb2sgUBHTeHO4+5uTbB1AuXwHY
+	Xr9/3WnHY6310FIbWrgpVZ/fBUeL5rj71mvsXN08h0VGmVP5JVr09PnunH0SGwhPsLw31P
+	OOiOgOLi+r1l02asILsOSoeOKMFVXmLOqrAzxBXYpsDP0Tk9AdEb8wsATx4Xd/+2FoKCDi
+	zpyxa78EdvVQSG/ILI8y6m6hJnPJdxnkJQPudLjaxnlN6mlIyerOgVe7ovKpGzwC8pgfb5
+	IW09mctNs2rYqw2tD/JjuFKJ8xszlIR6/ZKcKQTLt3UcO4nWm+WvCJuGisR8yg==
+Date: Tue, 10 Sep 2024 09:41:20 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
+ <richard@nod.at>, <vigneshr@ti.com>, <manivannan.sadhasivam@linaro.org>,
+ <esben@geanix.com>, <linux-arm-msm@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
+Message-ID: <20240910094120.19348fea@xps-13>
+In-Reply-To: <bb1397c3-2327-e211-f7eb-cac4b126424e@quicinc.com>
+References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+	<5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+	<20240903150826.749b8560@xps-13>
+	<bb1397c3-2327-e211-f7eb-cac4b126424e@quicinc.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c2b237b5b2430b0715c9c3dee043d30fe5216e2e.1725931796.git.unicorn_wang@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Sep 10, 2024 at 10:08:10AM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Sophgo SG2042 contains a PWM controller, which has 4 channels and
-> can generate PWM waveforms output.
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+Hi,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>    >>       I have addressed your comments to v6 and further posted t=
+ill v8. =20
+> >>       Could you please let me know if this is fine.
+> >>       and how to get this merged ? =20
+> >=20
+> > There are still kernel test robot reports, so this means there are
+> > issues in your code that I don't need to point out explicitly, but I am
+> > actively waiting for them to be fixed. =20
+>=20
+> I have fixed most of the sparse warnings after converting __le32 to u32.
+> However am not able to address the following sparse warnings
+>=20
+> 	drivers/mtd/nand/raw/qcom_nandc.c:1401:29: sparse: warning: cast to rest=
+ricted __le32
+> 	drivers/mtd/nand/raw/qcom_nandc.c:1587:30: sparse: warning: cast to rest=
+ricted __le32
+> 	drivers/mtd/nand/raw/qcom_nandc.c:1588:31: sparse: warning: cast to rest=
+ricted __le32
+> 	drivers/mtd/nand/raw/qcom_nandc.c:1589:34: sparse: warning: cast to rest=
+ricted __le32
+> 	drivers/mtd/nand/raw/qcom_nandc.c:2479:47: sparse:    got restricted __l=
+e32 [usertype]
+> 	drivers/mtd/nand/raw/qcom_nandc.c:2480:47: sparse:    got restricted __l=
+e32 [usertype]
+> 	drivers/mtd/nand/raw/qcom_nandc.c:2616:25: sparse: warning: cast to rest=
+ricted __le32
+> 	drivers/mtd/nand/raw/qcom_nandc.c:2672:32: sparse: warning: cast to rest=
+ricted __le32
 
-Best regards,
-Krzysztof
+The rule is: you cannot add new warnings.
 
+For existing warnings in the driver, I'd anyway advise to solve them.
+Without the actual code I cannot help.
+
+Thanks,
+Miqu=C3=A8l
 
