@@ -1,260 +1,259 @@
-Return-Path: <linux-kernel+bounces-322646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FB3972BD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF52972BD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2F61F21DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:14:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A481028292B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAFD1974EA;
-	Tue, 10 Sep 2024 08:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C9A17E8F7;
+	Tue, 10 Sep 2024 08:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gbE+oOWt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zohA1lSv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GXJKtFvb"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A57D193085;
-	Tue, 10 Sep 2024 08:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C75D175D2D;
+	Tue, 10 Sep 2024 08:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955776; cv=none; b=JVSWX72q3z2LFyhfUsb0hzaXpOLoHJrZ/Mlu4+18VYcPgtXk3+gITYs8wKLeD2KFCfO/9QRvycqsz1yCy+N0u6LGgZYqnqMrI9dqJxDyFhE6936dras4IBV8FsPt1UmrnRfLrS7QKnHb9yx07fI1Oa8ag/1E46SVi4fRubIfkgY=
+	t=1725955803; cv=none; b=XdI7LCYgqM7sSRC/4A8jjUFhbAiZIdTCZ5Z84ppkpaSSUlMJWKO8Wja6tcqOlSDU+vOpZ0gt60kOVqJKOHQsJEtlaNI+eCSCPQ3k1e9dUaf3iGD0DONPRSFJlBjbZWzHkeUmH+agwKtMNLbuUIc2tzb0BtvHVEEslTvn8ukSzug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955776; c=relaxed/simple;
-	bh=XNv4hzJqyiDnUDestUXSJvbu2pxXkBeimo/OqaSEGww=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gu9/A+fV3smk64T+7rqipM/32MQxQTJUSpnufq5eZgZYWzo8iyNwYeH5L6NKf/erikoYHeiQtK+2qgwlnlF4lZ9lnOVeE4JeDzbs/Tn2lCovh+jZE7yawvqu4EHou03FMw7fnDfHSpfntiNf3y5ctZ/DrEiW0SRCC9ywGRvm7yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gbE+oOWt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zohA1lSv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Sep 2024 08:09:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1725955765;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=93fjoai9BPs/0H+fmR/E5OGZlTIkiS+SCvr82z/xshQ=;
-	b=gbE+oOWtKAisywuNi3a3UJOeR3/14It9nTRb8sivdbHQtkZE1qSatotIfj671jlvwyMSEm
-	1B0RIBPEAaCH4xtY0E0h6uJrNm+aBQaebyMgvACvv679bvIVEaVLW/lUoLR2j9PetuN/eh
-	Ot+5J90+dS6XYipW8XyN7N69cE4+p205I4SHCBJwmrtklVJEjG6+Cmpp6ABvHMZ9fzcFOV
-	ZAu6oeMEYpmo11MwUburZ1uyyLGvzzm+dbZhQDfNa1LjungWeQGAx6XDnlWLPNlRfmbLaB
-	IeBtGTQK8rAYXe4+k50v0uUH2CWUrXVvEN/C5tA/F7guClOGrMRsypijom1unQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1725955765;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=93fjoai9BPs/0H+fmR/E5OGZlTIkiS+SCvr82z/xshQ=;
-	b=zohA1lSvbZ5SDIU3DY2cSCdhmDq0pSUQlAynKfD/QsJCSXJdhEadmi2jIiy5OBIBRpqFk6
-	l7+q95FqCkq9yJBw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/core: Introduce SM_IDLE and an idle re-entry
- fast-path in __schedule()
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240809092240.6921-1-kprateek.nayak@amd.com>
-References: <20240809092240.6921-1-kprateek.nayak@amd.com>
+	s=arc-20240116; t=1725955803; c=relaxed/simple;
+	bh=Uup9o4mP0opF2/S8Bgd71oRxM4Msxjr45y53Cz219xM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=j1ADy/kmXnE8PyQ9eIF5w9Ijw9DpJ7x4movsUTFyAvoBcUjTUmj0+WaEWKfz1KOnqpzD7cosNS+UJ9qiPb+nPY6xa1c7gR0NTMJffFIEt/SdBU8GcgxHhty3rWcV34qv7/ntPfd8+vucM/7jYCM/aqveA2rg9nOmxUAPea1+Q0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GXJKtFvb; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718d985b6bbso3459888b3a.2;
+        Tue, 10 Sep 2024 01:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725955801; x=1726560601; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fPG57gosX9k+xMxkP0xDLO+h+Jd1eOEeC6Vw8eeTQuY=;
+        b=GXJKtFvb0Yrc/EiOcvr5hVI0Hxn5Uv0nc6vqbs/rvle9Uj1aEAsOMPSl2rfRGASvvS
+         irbqFHOdZrKe0CTEzFzkyeiMhhzH0ccr6xEPsoyhvUElgD7dFnrUFDgHngNwvCIxL4LQ
+         7iZgUr728k2kEx3Hofzrg5D+fM2HayWy3X5PcDMTRwFIj37+B/izSra5lSK7KR/N/OSQ
+         5jhSqWJURZc5LKSbnPKUbwskuXGQEgSycVA+vYe6UZeSwbhJoYRkrolJ8Ry6XAxmKWj6
+         FdcFDBwZFfNuTmYJYz7HzEBrUbb0vBj6lRyXHT6puS3FpnkGDL06foasynLob2ih+SW4
+         lWgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725955801; x=1726560601;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fPG57gosX9k+xMxkP0xDLO+h+Jd1eOEeC6Vw8eeTQuY=;
+        b=eLnhTNCec0Df0AfLZwqRn1WYrFt9DAR4Q/CXjCKv/4LTP/UBJKxsMowkBT/3/F5yPG
+         b3rXLF1xRJ5oOGRZZPCMU4cybOyl9HbQn3mdbYRsBYjp6Y6OCc7doNxYxstxVCu/WW4i
+         6C3CNFMGWlFFTDaKYkJvKu8e6wJTwqcFB2XFJeKPqmJiU7j5nP0koUGL89qHegXktNAi
+         SoBqMRBlJQpJFCmmSnJ2FnwGQneGL8FSM6yUMx5xCetq29KNAW045WBS8gLDsv8YpaJ9
+         EVsOLgA2NDcSu39NmWvjDyJQwDoFjZTiX7lhgoDgMh1Gy8wcufPz0tV5sqSDOkc4FTEM
+         LQRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjivVj3Sn5DpmR1mQg1vuhcKFtsv5/U7a+qdDtDRyuUFwNMVa7rHtf+roIwlDfeWfqMuBpPwL2v1gBvgnDCQ==@vger.kernel.org, AJvYcCXRe/2v7k6we7MigSfafIDMWyk/z+tWS4403j7l05C60Xu7JkBx0Zh8xqAHpYrQ3HSwm0VWuy+aizoW0Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVK9U8QNMpxL3sHOKtMV/RSs8d0fIwMtRr9iKb/0n3VYteWlpm
+	kEk2VMw88FMaQCvgMTFguUR9xLuQG7hAR5r5/LxB9TyJTHEzhtIr
+X-Google-Smtp-Source: AGHT+IFYxdCfxP30R0kF9qQZXB2CJzl+758rCe9PYrjfZ7MBe4RwCVaiuS+HW3NLL1M7rGK69UNMVw==
+X-Received: by 2002:a05:6a00:919c:b0:718:532f:5a3 with SMTP id d2e1a72fcca58-718d5e17b17mr16434372b3a.7.1725955801340;
+        Tue, 10 Sep 2024 01:10:01 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d823cf2f1fsm4362564a12.25.2024.09.10.01.09.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2024 01:10:00 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172595576493.2215.15007017667071346050.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <Zt_86rOMJN4UFEk-@pathway.suse.cz>
+Date: Tue, 10 Sep 2024 16:09:46 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <35E63D8A-6C19-4EAC-94A3-0A5F74AE679F@gmail.com>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
+ <ZtsqLiJPy5e70Ows@pathway.suse.cz>
+ <B250EB77-AFB0-4D32-BA4E-3B96976F8A82@gmail.com>
+ <Zt_86rOMJN4UFEk-@pathway.suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-The following commit has been merged into the sched/core branch of tip:
+Hi, Petr
 
-Commit-ID:     3dcac251b066b60dba6d44c97d76faeb00bf19c5
-Gitweb:        https://git.kernel.org/tip/3dcac251b066b60dba6d44c97d76faeb00bf19c5
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 09 Aug 2024 09:22:40 
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 10 Sep 2024 09:51:14 +02:00
+> On Sep 10, 2024, at 16:01, Petr Mladek <pmladek@suse.com> wrote:
+>=20
+> On Sun 2024-09-08 10:51:14, zhang warden wrote:
+>>=20
+>> Hi, Petr
+>>>=20
+>>> The 1st patch adds the pointer to struct klp_ops into struct
+>>> klp_func. We might check the state a similar way as =
+klp_ftrace_handler().
+>>>=20
+>>> I had something like this in mind when I suggested to move the =
+pointer:
+>>>=20
+>>> static ssize_t using_show(struct kobject *kobj,
+>>> struct kobj_attribute *attr, char *buf)
+>>> {
+>>> struct klp_func *func, *using_func;
+>>> struct klp_ops *ops;
+>>> int using;
+>>>=20
+>>> func =3D container_of(kobj, struct klp_func, kobj);
+>>>=20
+>>> rcu_read_lock();
+>>>=20
+>>> if (func->transition) {
+>>> using =3D -1;
+>>> goto out;
+>>> }
+>>>=20
+>>> # FIXME: This requires releasing struct klp_ops via call_rcu()
+>=20
+> This would require adding "struct rcu_head" into "struct klp_ops",
+> like:
+>=20
+> struct klp_ops {
+> struct list_head func_stack;
+> struct ftrace_ops fops;
+> struct rcu_head rcu;
+> };
+>=20
+> and then freeing the structure using kfree_rcu():
+>=20
+> diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+> index 90408500e5a3..f096dd9390d2 100644
+> --- a/kernel/livepatch/patch.c
+> +++ b/kernel/livepatch/patch.c
+> @@ -149,7 +149,7 @@ static void klp_unpatch_func(struct klp_func =
+*func)
+>=20
+> list_del_rcu(&func->stack_node);
+> list_del(&ops->node);
+> - kfree(ops);
+> + kfree_rcu(ops, rcu);
+> } else {
+> list_del_rcu(&func->stack_node);
+> }
+> @@ -223,7 +223,7 @@ static int klp_patch_func(struct klp_func *func)
+> err:
+> list_del_rcu(&func->stack_node);
+> list_del(&ops->node);
+> - kfree(ops);
+> + kfree_rcu(ops, rcu);
+> return ret;
+> }
+>=20
+> With this the function should be safe against accessing an invalid
+> pointer.
+>=20
+>>> ops =3D func->ops;
+>>> if (!ops) {
+>>> using =3D 0;
+>>> goto out;
+>>> }
+>>>=20
+>>> using_func =3D list_first_or_null_rcu(&ops->func_stack,
+>>> struct klp_func, stack_node);
+>>> if (func =3D=3D using_func)
+>>> using =3D 1;
+>>> else
+>>> using =3D 0;
+>>>=20
+>>> out:
+>>> rcu_read_unlock();
+>>>=20
+>>> return sysfs_emit(buf, "%d\n", func->using);
+>>> }
+>=20
+> But the function is still not correct according the order of reading.
+> A more correct solution would be something like:
+>=20
+> static ssize_t using_show(struct kobject *kobj,
+> struct kobj_attribute *attr, char *buf)
+> {
+> struct klp_func *func, *using_func;
+> struct klp_ops *ops;
+> int using;
+>=20
+> func =3D container_of(kobj, struct klp_func, kobj);
+>=20
+> rcu_read_lock();
+>=20
+> /* This livepatch is used when the function is on top of the stack. */
+> ops =3D func->ops;
+> if (ops) {
+> using_func =3D list_first_or_null_rcu(&ops->func_stack,
+> struct klp_func, stack_node);
+> if (func =3D=3D using_func)
+> using =3D 1;
+> else
+> using =3D 0;
+> }
+>=20
+> /*
+>  * The function stack gives the right information only when there
+>  * is no transition in progress.
+>  *
+>  * Make sure that we see the updated ops->func_stack when
+>  * func->transition is cleared. This matches with:
+>  *
+>  * The write barrier in  __klp_enable_patch() between
+>  * klp_init_transition() and klp_patch_object().
+>  *
+>  * The write barrier in  __klp_disable_patch() between
+>  * klp_init_transition() and klp_start_transition().
+>  *
+>  * The write barrier in klp_complete_transition()
+>  * between klp_unpatch_objects() and func->transition =3D false.
+>  */
+> smp_rmb();
+>=20
+> if (func->transition)
+> using =3D -1;
+>=20
+> rcu_read_unlock();
+>=20
+> return sysfs_emit(buf, "%d\n", func->using);
+> }
+>=20
+> Now, the question is whether we want to maintain such a barrier. Any
+> lockless access and barrier adds a maintenance burden.
+>=20
+> You might try to put the above into a patch see what others tell
+> about it.
+>=20
+> Best Regards,
+> Petr
 
-sched/core: Introduce SM_IDLE and an idle re-entry fast-path in __schedule()
+After the previous discussion, it seems that patch-level "order" feature
+ is the more acceptable way to fulfill the patch order information.
 
-Since commit b2a02fc43a1f ("smp: Optimize
-send_call_function_single_ipi()") an idle CPU in TIF_POLLING_NRFLAG mode
-can be pulled out of idle by setting TIF_NEED_RESCHED flag to service an
-IPI without actually sending an interrupt. Even in cases where the IPI
-handler does not queue a task on the idle CPU, do_idle() will call
-__schedule() since need_resched() returns true in these cases.
+Therefore, I am trying to go that way instead of adding "using" into =
+klp_func.
 
-Introduce and use SM_IDLE to identify call to __schedule() from
-schedule_idle() and shorten the idle re-entry time by skipping
-pick_next_task() when nr_running is 0 and the previous task is the idle
-task.
+Maybe patch-level interface will bring less maintenance burden.
 
-With the SM_IDLE fast-path, the time taken to complete a fixed set of
-IPIs using ipistorm improves noticeably. Following are the numbers
-from a dual socket Intel Ice Lake Xeon server (2 x 32C/64T) and
-3rd Generation AMD EPYC system (2 x 64C/128T) (boost on, C2 disabled)
-running ipistorm between CPU8 and CPU16:
+Regards,
+Wardenjohn.
 
-cmdline: insmod ipistorm.ko numipi=100000 single=1 offset=8 cpulist=8 wait=1
-
-   ==================================================================
-   Test          : ipistorm (modified)
-   Units         : Normalized runtime
-   Interpretation: Lower is better
-   Statistic     : AMean
-   ======================= Intel Ice Lake Xeon ======================
-   kernel:				time [pct imp]
-   tip:sched/core			1.00 [baseline]
-   tip:sched/core + SM_IDLE		0.80 [20.51%]
-   ==================== 3rd Generation AMD EPYC =====================
-   kernel:				time [pct imp]
-   tip:sched/core			1.00 [baseline]
-   tip:sched/core + SM_IDLE		0.90 [10.17%]
-   ==================================================================
-
-[ kprateek: Commit message, SM_RTLOCK_WAIT fix ]
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lore.kernel.org/r/20240809092240.6921-1-kprateek.nayak@amd.com
----
- kernel/sched/core.c | 45 +++++++++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 19 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ffcd637..2922fac 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6410,19 +6410,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-  * Constants for the sched_mode argument of __schedule().
-  *
-  * The mode argument allows RT enabled kernels to differentiate a
-- * preemption from blocking on an 'sleeping' spin/rwlock. Note that
-- * SM_MASK_PREEMPT for !RT has all bits set, which allows the compiler to
-- * optimize the AND operation out and just check for zero.
-+ * preemption from blocking on an 'sleeping' spin/rwlock.
-  */
--#define SM_NONE			0x0
--#define SM_PREEMPT		0x1
--#define SM_RTLOCK_WAIT		0x2
--
--#ifndef CONFIG_PREEMPT_RT
--# define SM_MASK_PREEMPT	(~0U)
--#else
--# define SM_MASK_PREEMPT	SM_PREEMPT
--#endif
-+#define SM_IDLE			(-1)
-+#define SM_NONE			0
-+#define SM_PREEMPT		1
-+#define SM_RTLOCK_WAIT		2
- 
- /*
-  * __schedule() is the main scheduler function.
-@@ -6463,9 +6456,14 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-  *
-  * WARNING: must be called with preemption disabled!
-  */
--static void __sched notrace __schedule(unsigned int sched_mode)
-+static void __sched notrace __schedule(int sched_mode)
- {
- 	struct task_struct *prev, *next;
-+	/*
-+	 * On PREEMPT_RT kernel, SM_RTLOCK_WAIT is noted
-+	 * as a preemption by schedule_debug() and RCU.
-+	 */
-+	bool preempt = sched_mode > SM_NONE;
- 	unsigned long *switch_count;
- 	unsigned long prev_state;
- 	struct rq_flags rf;
-@@ -6476,13 +6474,13 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 	rq = cpu_rq(cpu);
- 	prev = rq->curr;
- 
--	schedule_debug(prev, !!sched_mode);
-+	schedule_debug(prev, preempt);
- 
- 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
- 		hrtick_clear(rq);
- 
- 	local_irq_disable();
--	rcu_note_context_switch(!!sched_mode);
-+	rcu_note_context_switch(preempt);
- 
- 	/*
- 	 * Make sure that signal_pending_state()->signal_pending() below
-@@ -6511,12 +6509,20 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 
- 	switch_count = &prev->nivcsw;
- 
-+	/* Task state changes only considers SM_PREEMPT as preemption */
-+	preempt = sched_mode == SM_PREEMPT;
-+
- 	/*
- 	 * We must load prev->state once (task_struct::state is volatile), such
- 	 * that we form a control dependency vs deactivate_task() below.
- 	 */
- 	prev_state = READ_ONCE(prev->__state);
--	if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
-+	if (sched_mode == SM_IDLE) {
-+		if (!rq->nr_running) {
-+			next = prev;
-+			goto picked;
-+		}
-+	} else if (!preempt && prev_state) {
- 		if (signal_pending_state(prev_state, prev)) {
- 			WRITE_ONCE(prev->__state, TASK_RUNNING);
- 		} else {
-@@ -6547,6 +6553,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 	}
- 
- 	next = pick_next_task(rq, prev, &rf);
-+picked:
- 	clear_tsk_need_resched(prev);
- 	clear_preempt_need_resched();
- #ifdef CONFIG_SCHED_DEBUG
-@@ -6588,7 +6595,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 		psi_account_irqtime(rq, prev, next);
- 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
- 
--		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
-+		trace_sched_switch(preempt, prev, next, prev_state);
- 
- 		/* Also unlocks the rq: */
- 		rq = context_switch(rq, prev, next, &rf);
-@@ -6664,7 +6671,7 @@ static void sched_update_worker(struct task_struct *tsk)
- 	}
- }
- 
--static __always_inline void __schedule_loop(unsigned int sched_mode)
-+static __always_inline void __schedule_loop(int sched_mode)
- {
- 	do {
- 		preempt_disable();
-@@ -6709,7 +6716,7 @@ void __sched schedule_idle(void)
- 	 */
- 	WARN_ON_ONCE(current->__state);
- 	do {
--		__schedule(SM_NONE);
-+		__schedule(SM_IDLE);
- 	} while (need_resched());
- }
- 
 
