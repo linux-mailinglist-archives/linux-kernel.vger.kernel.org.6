@@ -1,102 +1,117 @@
-Return-Path: <linux-kernel+bounces-322736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8D7972CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:09:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B07972CFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE5D8B255CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271661C247A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF08188004;
-	Tue, 10 Sep 2024 09:08:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A4B1891A1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6E0188935;
+	Tue, 10 Sep 2024 09:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cObyiDRb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239C01885AA;
+	Tue, 10 Sep 2024 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725959295; cv=none; b=CT8o/oFp12GrnGZpQmXMpvqnzRHDpuHx9QCfTtlvVHhAfQ12LsU4SyOmVwA8y+aQObxFISVQ819mPiwowqo3n/OmLSZ3WJ/DkXJ4iEc0t7aM1EsDEghFCiyoyHjqWC4HUgiDEMrIa8EHprY1qYjGGVOp+aTSUdTU9x+C0y41DbY=
+	t=1725959333; cv=none; b=SA1aGra1zb4I/iT/VeqA+PsrVxmI9Wr847hkj/0xGMaRYhcmBZZWQIuVH1eMAq2XRyhMj9UULvxzdGUdZ8p1tOY6oLKlc1d7tme8M9+K5EWiWKB45O+qPp0SPaYELQpDQoqghVFsBNeoA+VV+bX1aHyS1auGXlwdJUuKIUFs/uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725959295; c=relaxed/simple;
-	bh=01FRvvTi5m/r+REJN0RtRssXNTLAPSFP4bvJC8tZuHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tjz9Rzg2nXALy5qOiRS46A8Px4M5S64HcL5fWnvXE3LJfITtpTdUTJTZufQhCM4u+TVlegtgsqd6lMsmC7g71PL2cqGPSIOoBcrK8aha3OWxoTFCetJejBFehi1fxC86PO9f3FN6JQ8tT/RHLhXB11diyo85GBz0XPGI9O357BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31B2A113E;
-	Tue, 10 Sep 2024 02:08:42 -0700 (PDT)
-Received: from [10.1.35.188] (XHFQ2J9959.cambridge.arm.com [10.1.35.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DC613F66E;
-	Tue, 10 Sep 2024 02:08:12 -0700 (PDT)
-Message-ID: <cae9c32d-c96e-463e-9375-91d9a7ad196a@arm.com>
-Date: Tue, 10 Sep 2024 10:08:10 +0100
+	s=arc-20240116; t=1725959333; c=relaxed/simple;
+	bh=T/HKp5JbA0TTvWWFoCQ/ayf2yy3UYyJBk7cb6yAQ8wc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TbWj7kMOgoqC62fvHST4NP5QAe9cJPQJKH86nMXxmS9/MQJ1jEvUsxWjdkTeUy0ZSXjAPEmwWHRSY0V7CO0hirS8aj7KBecy45nYDzcUntIb1Sf35sJW/97+/IWAtqLwAp3npEDq8xTUG6LIh0gE+63u2JXZ8RyyPxzXHQyRlIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cObyiDRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A11C4CEC3;
+	Tue, 10 Sep 2024 09:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725959332;
+	bh=T/HKp5JbA0TTvWWFoCQ/ayf2yy3UYyJBk7cb6yAQ8wc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cObyiDRb4NHLiFz1ocLk8sYrWXRftoejhpEa3/CbdSGHkE0LKfV8ZVaFQNFhBy+mj
+	 brdOsuvmmnRGhoYH94/GPx1anwbKmSTb1EwhDB2Cy5fHnY8DDjw2HAsllCb+F6i20+
+	 syTH/VCqrz6QAgMMe943ipoGOxxWoUj1cUJcmJgoStvi942uKFuP/s4udIIipWgm+y
+	 X3Pvy+Nz8boAV5pD2RhGudxwvK8hFqhGNqB9KsWl1XyGAJr/nS4GB5uK989VRYAUFb
+	 p33/CLtx6MNqiLk9blYcNlewQi9jaKKYPCSY5BUtvU/ssPn5f3jFLlLQAhQ9f+WDP9
+	 Hxcs+r5JFxPMg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1snwri-00Bfjh-3y;
+	Tue, 10 Sep 2024 10:08:50 +0100
+Date: Tue, 10 Sep 2024 10:08:49 +0100
+Message-ID: <86v7z37u5a.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: 	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Anastasia Belova <abelova@astralinux.ru>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: KVM: define ESR_ELx_EC_* constants as UL
+In-Reply-To: <20240910085016.32120-1-abelova@astralinux.ru>
+References: <865xr5856r.wl-maz@kernel.org>
+	<20240910085016.32120-1-abelova@astralinux.ru>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Drop unused set_pte_safe()
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240910090409.374424-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240910090409.374424-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, will@kernel.org, abelova@astralinux.ru, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 10/09/2024 10:04, Anshuman Khandual wrote:
-> All set_pte_safe() usage have been dropped after the commit eccd906484d1
-> ("x86/mm: Do not use set_{pud, pmd}_safe() when splitting a large page")
-> This just drops now unused helper set_pte_safe().
+On Tue, 10 Sep 2024 09:50:16 +0100,
+Anastasia Belova <abelova@astralinux.ru> wrote:
+> 
+> Add explicit casting to prevent expantion of 32th bit of
+> u32 into highest half of u64 in several places.
+> 
+> For example, in inject_abt64:
+> ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT = 0x24 << 26.
+> This operation's result is int with 1 in 32th bit.
+> While casting this value into u64 (esr is u64) 1
+> fills 32 highest bits.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
 
-It would be good to add some comment here to mention that the macro was buggy
-due to doing direct dereferencing of the pte, and that if it were to be kept, it
-should have been updated to use a single call to ptep_get().
+nit: the subject line is misleading, as this doesn't only affect KVM,
+but the whole of the arm64 port (the exception classes form a generic
+architectural construct).
 
-With that:
+This also probably deserve a Cc stable.
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Will, Catalin: I'm happy to queue this in the KVM tree, but if you are
+taking it directly:
+
+Acked-by: Marc Zyngier <maz@kernel.org>
 
 Thanks,
-Ryan
 
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  include/linux/pgtable.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 2a6a3cccfc36..aeabbf0db7c8 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1058,12 +1058,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->   * same value. Otherwise, use the typical "set" helpers and flush the
->   * TLB.
->   */
-> -#define set_pte_safe(ptep, pte) \
-> -({ \
-> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
-> -	set_pte(ptep, pte); \
-> -})
-> -
->  #define set_pmd_safe(pmdp, pmd) \
->  ({ \
->  	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
