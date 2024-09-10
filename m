@@ -1,50 +1,73 @@
-Return-Path: <linux-kernel+bounces-323049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C1C9736F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:17:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2E59736FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3075CB21464
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8793DB21D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1F318C34D;
-	Tue, 10 Sep 2024 12:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B1118C002;
+	Tue, 10 Sep 2024 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="rMwrteU8"
-Received: from pv50p00im-zteg10021401.me.com (pv50p00im-zteg10021401.me.com [17.58.6.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G/VUMWZS"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C00184535
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A9E18A6AA
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970632; cv=none; b=GJl3cTJi45Sq4yCiuA/pwOby9+oB8PELrRLMABVhyJl19/FMnkPsMhvLmX1fKiqFI+OtyhfXaeFjIhmt2Feq4pfFXLmTM56YZbfdMNbNYBaDGwtSwVWAKvLruBtIP+PhNjlOqsaWH2zuYy0Jyt3RV2i3PD2deDHWc4PechDd5Oc=
+	t=1725970687; cv=none; b=QswK/Sjf+YYDDYEiGsSjfkkHy8r87ScY91g/tvSjanVYBRjU9WbPRvoZ0G0U8HjQ4IEe3gumVnFIax+muBr/F3Z5cnlfwy7aLjT8WULeaym+im+fbZMublGCUAcVUvuY2fSh2r5LeHaTNtaXeJUgEgtrSTXHoaBqtn1j4Ac+1fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970632; c=relaxed/simple;
-	bh=n8ccMPdrqjWagb7Gnusd0ZEmZYWOHUlDblW9jJvz3XM=;
+	s=arc-20240116; t=1725970687; c=relaxed/simple;
+	bh=e/7SCmw/IQTvH00i0LdVNshdQUB7GrO2RZ/889o7L5Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvhdqCUDWXN9eC//MyEm9Jhk1LTG53VA9z2SKdYIy7rGbxy2VuMepo0w4F2Y8E6FvlI+LPYf76edxftnCgmhyltJDx22+GSKIn5F0zAyYTlshsLyev70qMFArDAWo4kqbzcn+7FhJZlu28C2sKey7b68vjAeV8/7RFtRD6C6o3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=rMwrteU8; arc=none smtp.client-ip=17.58.6.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1725970630;
-	bh=VdbQWCifCXTK345XinwfONjo5u30zhHADcq684HbxNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=rMwrteU8nFvpBMjkRyCGZ4zqtVZDPLtZ1N9MZ7XqAdf3RIaKhu5gOVYMehAAWjXdX
-	 dgdrpImlXHybFpLSYzy8zgLDhjV58mr5dXjHcSFHrLKp/f091bErujHYPQOe05tagm
-	 p+tozQF13vsKachWc9pFTpAszKz8FZxsAfnfzENCnoyQoRkBf9L83AfbZKjgU4yNph
-	 dD3oGpRAWDFs/JfbJ24giUuOM64zY9kX0FPAxjS7bJTjg2X4m1jcTGSLi+JeiqsCWQ
-	 qF2U4hQruYlihzNl90b5aMuo9DhKo7HAxR6nY9TYlDDVYin/Roxp+YjTefuYaoIBNp
-	 u3719KzkJm9LA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021401.me.com (Postfix) with ESMTPSA id 1AF548E05E8;
-	Tue, 10 Sep 2024 12:17:05 +0000 (UTC)
-Message-ID: <a4cf15fb-bbaa-4ed0-a1d5-c362b7a5c6e2@icloud.com>
-Date: Tue, 10 Sep 2024 20:17:00 +0800
+	 In-Reply-To:Content-Type; b=ASWsyQ+0PtmFkf550SaArf2rmHtFWe5zVOo0p3SaX2x8dGHWdAcnfsS1VZ39yYXg39UG32V/ms3yRMftjxlGv358GdS8az1Q4b2goSXqdr7UvvzbWvl/fciEcXfX7RtohNwnlG0iyCnde9LIjweaYTDtmcEWE536dZYKYHAPbEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G/VUMWZS; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso27745825e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:18:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725970683; x=1726575483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KugkAEyeLdA+Lr1FiytQVKVDKBMQyV+Baae1SliohwY=;
+        b=G/VUMWZSyzG6LWJ601gYEKnvMeHcdlo34L1zF5iORmVuemuvbIj+lZiasaJTf2Bc9X
+         40n4ASpJQb2UfD/aDABx0FYIpCqqXXuWT76B0ictBK/hnhaTe4UCbTrMR2xvnRig520v
+         OjznLuPhHUIhjNGTuq3NufT0xotZ9mU+PGgavk1W1jGe/oBeqWS5Quu6oUbyCgdKnzyN
+         kF7O91tvZDwTfJ/jEgd1bEGui1rRZXzJ+/UKRwWPzyR4epDxEGBqtizsTRcfpbAPtmZ1
+         HUCRAp9s+WHci1+fzqm5mLir6KKFo2vCwdpgCUSMpg1vxJg4Rdu3Oeg9Dru9BbK4SSnH
+         IFQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725970683; x=1726575483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KugkAEyeLdA+Lr1FiytQVKVDKBMQyV+Baae1SliohwY=;
+        b=C0GtG62DeaiMoRHAM796tgMrkwWqPrN/fxFklEQMwTzjkPKbaC0Km1boxR9d5BpYcM
+         DfppzCkcMxYzdsownA52FYB1wyKqxq03AXiHULZqzQE1Ma5gPHqEgyXuk7EN6UdlOABT
+         iguGn/2d5ZsoJMrmSX2e23YZGYG+7kfBG30m9D3DquMjU+h5LeNrrCox1KMyQnO8dcj/
+         ZssEA7jd4o/zVQdd40uLnBu3X/4lWmI6z2UgECJ9OdRY4u9q/pIQclewHJgdIUJTQzi0
+         RJUiKlPM2VVCesLXNNOQT2aBQ8O3tCP+RQWYeAlkyzS3UUNKzeMJZAg6KShm9dmbuKso
+         lMWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsBEx8k4/4oEkFrDJO4mrBL9fSPCw/6P8bMt7/jJ0rpsOtNGgJbLSDOCLLRmveL/AaSIySNpOUPhlgNvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtxDi5UIyjX+bDe+7UWw9f6F8IXjtxDe0b5iBpjbpWBItm0bBb
+	tRJpuQwPifms+8yZPA2/NLk3FA+qz4Cg0qD1aSwOFTAPqWO7BsdXB2DQOgsDbg0=
+X-Google-Smtp-Source: AGHT+IGQ7ot/qzITjqZiQ2yQTX8cSP8X6UTUmEUAWXrgqDhtwyevHVwQierW9aUdbXKZ+T5z1cacOw==
+X-Received: by 2002:adf:f701:0:b0:374:c1de:5511 with SMTP id ffacd0b85a97d-3789229d6a0mr8698626f8f.3.1725970683283;
+        Tue, 10 Sep 2024 05:18:03 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3789564b02asm8865508f8f.4.2024.09.10.05.18.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 05:18:02 -0700 (PDT)
+Message-ID: <60b71135-c4c8-47a8-ba67-e9365fa64c43@linaro.org>
+Date: Tue, 10 Sep 2024 13:18:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,107 +75,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
- amba_match() to amba_probe()
-To: Saravana Kannan <saravanak@google.com>
-Cc: Russell King <linux@armlinux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Isaac Manjarres <isaacmanjarres@google.com>,
- Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
- <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
+Subject: Re: [PATCH v3] misc: fastrpc: Add support for multiple PD from one
+ process
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>, linux-arm-msm@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
+ linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
+ dri-devel@lists.freedesktop.org, arnd@arndb.de
+References: <20240808104228.839629-1-quic_ekangupt@quicinc.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: lwr0WyOi-HHk38bBnKuWCMo9Hvp5I_Fo
-X-Proofpoint-ORIG-GUID: lwr0WyOi-HHk38bBnKuWCMo9Hvp5I_Fo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_04,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 adultscore=0 clxscore=1015
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409100091
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240808104228.839629-1-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/9/9 15:24, Saravana Kannan wrote:
-> On Sun, Sep 8, 2024 at 4:38 PM Zijun Hu <zijun_hu@icloud.com> wrote:
->>
->> This patch series is to make amba_match(), as bus_type @amba_bustype's
->> match(), also follow below ideal rule:
->>
->> bus_type's match() should only return bool type compatible integer 0 or
->> 1 ideally since its main operations are lookup and comparison normally.
->>
->> Which has been followed by match() of all other bus_types in current
->> kernel tree.
+Thanks Ekansh for the patch,
+
+On 08/08/2024 11:42, Ekansh Gupta wrote:
+> Memory intensive applications(which requires more tha 4GB) that wants
+> to offload tasks to DSP might have to split the tasks to multiple
+> user PD to make the resources available.
 > 
-> The intent or need for this patch series is completely unclear. The
-> code you are moving around was also pretty delicate and hard to get
-> right.
+> For every call to DSP, fastrpc driver passes the process tgid which
+> works as an identifier for the DSP to enqueue the tasks to specific PD.
+> With current design, if any process opens device node more than once
+> and makes PD init request, same tgid will be passed to DSP which will
+> be considered a bad request and this will result in failure as the same
+> identifier cannot be used for multiple DSP PD.
 > 
-> Without a much better description for why we need this, I'd like to
-> give this a NACK.
+> Assign and pass a client ID to DSP which would be assigned during device
+> open and will be dependent on the index of session allocated for the PD.
+> This will allow the same process to open the device more than once and
+> spawn multiple dynamic PD for ease of processing.
 > 
-> Also, patch 3/3 is not at all easy to understand and seems to be doing
-> way more than what the commit message is trying to do.
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> ---
+> Changes in v2:
+>    - Reformatted commit text.
+>    - Moved from ida to idr.
+>    - Changed dsp_pgid data type.
+>    - Resolved memory leak.
+> Changes in v3:
+>    - Modified commit text.
+>    - Removed idr implementation.
+>    - Using session index for client id.
 > 
-
-thanks for your code review.
-
-let me explain the issue here firstly to go on with discussion, will
-correct it by next revision.
-
-amba_match(), as bus_type @amba_bustype's match(), operate hardware to
-read id, may return -EPROBE_DEFER consequently.
-
-this design is not very good and has several disadvantages shown below:
-
-1) it is not good time to operate hardware in a bus_type's match().
-   hardware is not ready to operate normally in a bus_type's match()
-   as driver_probe_device() shown, there are still many preparations
-   to make hardware to operate after a bus_type's match(), for example,
-   resuming device and its ancestors, ensuring all its suppliers have
-   drivers bound, activating its power domain, ...
-
-2) it should not operate hardware in a bus_type's match().
-   a bus_type's match() will obviously be triggered frequently, and
-hardware operation is slow normally, it will reduce efficiency for
-device attaching driver if operate hardware in a bus_type's match().
-
-   a bus_type's match() will become not reentry for a device and driver
-   if operating hardware is failed but can't recover initial hardware state.
-
-3) for driver_attach(), a bus_type's match() are called without
-   device_lock(dev) firstly, it often causes concurrent issue when
-operate hardware within a bus_type's match(), look at below AMBA related
-fix:
-   Commit: 25af7406df59 ("ARM: 9229/1: amba: Fix use-after-free in
-amba_read_periphid()")
-   which introduce an extra @periphid_lock to fix this issue.
-
-4) it may not be proper for a bus_type's match() to return -EPROBE_DEFER
-which will stop driver API bus_rescan_devices() from scanning other
-remaining devices, that is not expected as discussed by below thread:
-
-https://lore.kernel.org/all/20240904-bus_match_unlikely-v1-3-122318285261@quicinc.com/
-
-5) amba_match() is the only bus_type's match which breaks below ideal
-rule in current kernel tree:
-   bus_type's match() should only return bool type compatible integer 0
-or 1 ideally since its main operations are lookup and comparison normally.
-
-
-Our purpose is to solve this issue then enforce the ideal rule mentioned
-in 5).
-
-so we send this patch series to start a topic about how to solve this
-issue (^^).
-
-> -Saravana
+>   drivers/misc/fastrpc.c | 30 ++++++++++++++++--------------
+>   1 file changed, 16 insertions(+), 14 deletions(-)
 > 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index a7a2bcedb37e..0ce1eedcb2c3 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -38,6 +38,7 @@
+>   #define FASTRPC_INIT_HANDLE	1
+>   #define FASTRPC_DSP_UTILITIES_HANDLE	2
+>   #define FASTRPC_CTXID_MASK (0xFF0)
+> +#define FASTRPC_CLIENTID_MASK (16)
+
+MASK normally is a hex mask rather than integer.
+
+Looking at the actual code changes this looks like a flag rather than a 
+mask. This is setting up bit 5 of the process group id in struct 
+fastrpc_msg and other structs.
+
+This really needs some documentation of how the group id is partitioned 
+to have these various fields.
+
+Something like:
+
+/* FastRPC Group ID fields*/
+#define FASTRPC_GID_SESSION_ID_MASK GENMASK(3, 0)
+#define FASTRPC_GID_CLIENT_ID_MASK GENMASK(4, 4)
 
 
+>   #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>   #define INIT_FILE_NAMELEN_MAX (128)
+>   #define FASTRPC_DEVICE_NAME	"fastrpc"
+> @@ -298,7 +299,7 @@ struct fastrpc_user {
+>   	struct fastrpc_session_ctx *sctx;
+>   	struct fastrpc_buf *init_mem;
+>   
+> -	int tgid;
+> +	int client_id;
+
+Can you we rename this as groupid, this clearly reflects the facts that 
+group id has multiple things as described above.
+
+If group id is not the correct name instead it should be client_id, then 
+this should also be reflected in various sturcts that have group id as 
+tgid, pid, pgid an so.. that is another cleanup which should go as new 
+patch.
+
+
+
+--srini
+
+>   	int pd;
+>   	bool is_secure_dev;
+>   	/* Lock for lists */
+> @@ -613,7 +614,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
+>   	ctx->sc = sc;
+>   	ctx->retval = -1;
+>   	ctx->pid = current->pid;
+> -	ctx->tgid = user->tgid;
+> +	ctx->tgid = user->client_id;
+>   	ctx->cctx = cctx;
+>   	init_completion(&ctx->work);
+>   	INIT_WORK(&ctx->put_work, fastrpc_context_put_wq);
+> @@ -1111,7 +1112,7 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
+>   	int ret;
+>   
+>   	cctx = fl->cctx;
+> -	msg->pid = fl->tgid;
+> +	msg->pid = fl->client_id;
+>   	msg->tid = current->pid;
+>   
+>   	if (kernel)
+> @@ -1294,7 +1295,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
+>   		}
+>   	}
+>   
+> -	inbuf.pgid = fl->tgid;
+> +	inbuf.pgid = fl->client_id;
+>   	inbuf.namelen = init.namelen;
+>   	inbuf.pageslen = 0;
+>   	fl->pd = USER_PD;
+> @@ -1396,7 +1397,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>   		goto err;
+>   	}
+>   
+> -	inbuf.pgid = fl->tgid;
+> +	inbuf.pgid = fl->client_id;
+>   	inbuf.namelen = strlen(current->comm) + 1;
+>   	inbuf.filelen = init.filelen;
+>   	inbuf.pageslen = 1;
+> @@ -1470,8 +1471,9 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>   }
+>   
+>   static struct fastrpc_session_ctx *fastrpc_session_alloc(
+> -					struct fastrpc_channel_ctx *cctx)
+> +					struct fastrpc_user *fl)
+>   {
+> +	struct fastrpc_channel_ctx *cctx = fl->cctx;
+>   	struct fastrpc_session_ctx *session = NULL;
+>   	unsigned long flags;
+>   	int i;
+> @@ -1481,6 +1483,7 @@ static struct fastrpc_session_ctx *fastrpc_session_alloc(
+>   		if (!cctx->session[i].used && cctx->session[i].valid) {
+>   			cctx->session[i].used = true;
+>   			session = &cctx->session[i];
+> +			fl->client_id = FASTRPC_CLIENTID_MASK | i;
+>   			break;
+>   		}
+>   	}
+> @@ -1505,7 +1508,7 @@ static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
+>   	int tgid = 0;
+>   	u32 sc;
+>   
+> -	tgid = fl->tgid;
+> +	tgid = fl->client_id;
+>   	args[0].ptr = (u64)(uintptr_t) &tgid;
+>   	args[0].length = sizeof(tgid);
+>   	args[0].fd = -1;
+> @@ -1580,11 +1583,10 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+>   	INIT_LIST_HEAD(&fl->maps);
+>   	INIT_LIST_HEAD(&fl->mmaps);
+>   	INIT_LIST_HEAD(&fl->user);
+> -	fl->tgid = current->tgid;
+>   	fl->cctx = cctx;
+>   	fl->is_secure_dev = fdevice->secure;
+>   
+> -	fl->sctx = fastrpc_session_alloc(cctx);
+> +	fl->sctx = fastrpc_session_alloc(fl);
+>   	if (!fl->sctx) {
+>   		dev_err(&cctx->rpdev->dev, "No session available\n");
+>   		mutex_destroy(&fl->mutex);
+> @@ -1648,7 +1650,7 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
+>   static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+>   {
+>   	struct fastrpc_invoke_args args[1];
+> -	int tgid = fl->tgid;
+> +	int tgid = fl->client_id;
+>   	u32 sc;
+>   
+>   	args[0].ptr = (u64)(uintptr_t) &tgid;
+> @@ -1804,7 +1806,7 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
+>   	int err;
+>   	u32 sc;
+>   
+> -	req_msg.pgid = fl->tgid;
+> +	req_msg.pgid = fl->client_id;
+>   	req_msg.size = buf->size;
+>   	req_msg.vaddr = buf->raddr;
+>   
+> @@ -1890,7 +1892,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
+>   		return err;
+>   	}
+>   
+> -	req_msg.pgid = fl->tgid;
+> +	req_msg.pgid = fl->client_id;
+>   	req_msg.flags = req.flags;
+>   	req_msg.vaddr = req.vaddrin;
+>   	req_msg.num = sizeof(pages);
+> @@ -1980,7 +1982,7 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
+>   		return -EINVAL;
+>   	}
+>   
+> -	req_msg.pgid = fl->tgid;
+> +	req_msg.pgid = fl->client_id;
+>   	req_msg.len = map->len;
+>   	req_msg.vaddrin = map->raddr;
+>   	req_msg.fd = map->fd;
+> @@ -2033,7 +2035,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+>   		return err;
+>   	}
+>   
+> -	req_msg.pgid = fl->tgid;
+> +	req_msg.pgid = fl->client_id;
+>   	req_msg.fd = req.fd;
+>   	req_msg.offset = req.offset;
+>   	req_msg.vaddrin = req.vaddrin;
 
