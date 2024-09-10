@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-322898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEA79732AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:25:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C359732E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FDBB1C248EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386E01C249C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671F01A08A0;
-	Tue, 10 Sep 2024 10:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA25D191F63;
+	Tue, 10 Sep 2024 10:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsaTnXvg"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ANtSZ2qx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB58192581;
-	Tue, 10 Sep 2024 10:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E4418C00C;
+	Tue, 10 Sep 2024 10:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963566; cv=none; b=hFcg2poDhCteQ0k1QNOLNWOl4VLDwCTSu/aj6CfL66Z3mc7upHSM0WKisO6tJyc5vOkTvDumVXAl3iUJOYfA5zx75pAEbUz6Mzf6/+k6QyN/FT9t7x3UZOCIpPdk+hBjcABg2QMwOocmL4CGHmH6rDMFeSaUmolmLoYJfPuR8mA=
+	t=1725963724; cv=none; b=P29LycxBEx18PwVi1L7gCLyX6F554kpCnH4UXXyKPwMlktvoYPOyq1FTDXmVnW7D2jfboUY8Vgs+4h7H3ZFVbB0CHiMl/CwqKk3C3scmviu60Nz9XXrTJGMVZQ8ZbaYfBDGG0+OFIZ25mMOXSK/A56jvEulu8B37HJ2H3aRPbZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963566; c=relaxed/simple;
-	bh=C95Ej2aQN/c62kFPmyAGaW0daCgItfMqNofPsPiXkUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nEoW3D1Yk7N8vysUCD18TvEhHW2zeNHbXvFddeM5CzOXhFWr3feRmydbcSwheDmSTHMh9oISdkeWP4EJb/2l/BlIG/l4gOJ7nUUMR0HhWe2bHZdD0fwyrp4DcAq7WQCozAXTQORe0xQPziaYppz5kLuEQgf0zt6/lMNjuQ5Ji14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OsaTnXvg; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-82cd93a6617so105659739f.3;
-        Tue, 10 Sep 2024 03:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725963564; x=1726568364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uCP0tRBOIy+wsaDTLfRdgyza+J/0n87KT7hpkg3zkHY=;
-        b=OsaTnXvg/swFvcRGs4EW3Vt9Srv0e0leIeTQGS6+NovXD3PBwMnUntHo3U6vA15Jc2
-         12BSnp6ugGfa8dorOqImNsz1v8QqeCObjbQRc3bUTZoLUZXoD6B0KvFwINJjhePcM1rZ
-         2HDWnWpw1iSjhqh4JbDivdBQGK34BapSuKRrHMtSwvqwhEY/T7AtXMfB6D11a1pT4BzV
-         Ta2dbk3cTcTGujor2IU2JlV84fo+S95oFi5C6G9QBir11rtB9R9+wmTo7nWVS3PDeosi
-         XFIMmjaYAYCE9CYdFfHSPERSPbxSf9/V8eykMRW8l+yZPgoJV8jJW324qQiCSJEkB4Oh
-         yJBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725963564; x=1726568364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCP0tRBOIy+wsaDTLfRdgyza+J/0n87KT7hpkg3zkHY=;
-        b=dlhoLARY808VzqBnsqWg2iHgiqr+2P/yRy6BvMpIw6XJ3G/VBv76qJSiHupWunLpm6
-         J3bRMrfbBD1NGpgcOXV0CnNOlMnx5ZzSCpSO7pch57NBS978HlpUuLz1D7dFaOupoETy
-         bjyKq5Y3Qv3XQHaWisv3Sq81JjJ0DiO/5WcCWfQcXYDVOclRdy/qYs3PRgaSSQkvSSs0
-         dIB6ya9Ge7ZXusG79ThjdHZd0NkKSP5prsVOrP609iYqgq2j9aqE1F2OPGFa7wLGkE6R
-         HGtjKuMTa+LTCiiR9XkRXTwC8CB7liY3z1Dv+KKvcNfxReNtlUdNfR/c1tS4o7Pwecr+
-         2mTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCRCj5Ol4Ydve9rAVS+lG//BVlY0myxWVDK+1Lp5OTda7QFdReum7GStGWE63pQBOC/Zg6WwtnG1s=@vger.kernel.org, AJvYcCUW/zKluJ3wlA3YYgJqFf4/jDUxSg50AkXe/dxVU/BJdD2nUHnwqeqi0fKFCdLZ1XxTue+O0KZDU00A9T2L@vger.kernel.org, AJvYcCXTgdaL6OGGBrLCDR64nGuH0Hgvp/Jbi3ad3cASiICjX6rcjnGCYnJ5RErdv30dVhLveOdhkHOYZ/E2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMj7QZ6Tb5q/g7Zc837HikHUiHpKJ02RA/H8hqOI8QxYfIyxUs
-	pf77RISwttPWU+v6LG6087sd8tIdWODMrt8NkvNKEBu2uOrfoBfS
-X-Google-Smtp-Source: AGHT+IFi1zaBeOZjTw7d0VSukZgvKaIGbeZUF6nMC8+GShKRqhjV0ugGd0V2/z6AnmzzjrVOyAAYnw==
-X-Received: by 2002:a05:6602:1693:b0:824:d5d2:2c8f with SMTP id ca18e2360f4ac-82a96171bf6mr1274984839f.1.1725963564155;
-        Tue, 10 Sep 2024 03:19:24 -0700 (PDT)
-Received: from ?IPV6:2600:6c56:7d00:582f::64e? ([2600:6c56:7d00:582f::64e])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-82aa733a317sm200522139f.4.2024.09.10.03.19.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 03:19:23 -0700 (PDT)
-Message-ID: <53f402cb-1a0d-4b48-b92a-e968ea77a138@gmail.com>
-Date: Tue, 10 Sep 2024 05:19:20 -0500
+	s=arc-20240116; t=1725963724; c=relaxed/simple;
+	bh=UrcW67GFtZitZSckWZ2pJka2BxV3vmkG5mbEl6ujStw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgHOtlEcjS3285yK/UJYZP4FDyzNSyEZXSr2jLcBkwWYERnkBnv8IHAEIbH09ELuteGUYz/8M5gX7Lw6Y4/aU9oQoRv9kwIb5q2+/96ACPeh/miPG8ITTym+67xOe9MIW+2vsfm/oe0cX8G8wHZfsEpsj+mpZmtGuDrGio+DwxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ANtSZ2qx; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725963722; x=1757499722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UrcW67GFtZitZSckWZ2pJka2BxV3vmkG5mbEl6ujStw=;
+  b=ANtSZ2qxImfcQbmAkATG+s2Q+778fQCSPF+oAbmPcGVS3ouCDsl5ClR6
+   MXdgJlooDKULV31UQKcur+ZBZFlYUFFLNCFNTZqvqWD3IqwVK9ErNWRLc
+   Ms/Aqf/mxTTRpjOpc8037XB/6mkyU1LR3h3css99KQLY499CWgVO26FCq
+   GuWzslejsXHz+0DnDSl4M+Hx/66JWW5PxHLiT5TFYMi+2iFvCEzkB20jM
+   4gszIqmGkrQdkxiJ0U/kVBa4ZBxFtNrP3q649xzkPuyV30FGfbvK3kpD/
+   Tisr6RiIqSvjoekYzt3f45/Vrk5j979DG0KFe3e0AxYxKCXymBNFO4+Ld
+   g==;
+X-CSE-ConnectionGUID: DN43Cd8jSbWBTNg+o5zF8w==
+X-CSE-MsgGUID: qD3UCKyQSX6JJrQDZrLIGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="50115035"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="50115035"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 03:22:02 -0700
+X-CSE-ConnectionGUID: 6btEr7/7TtGJVjsOVFXSrQ==
+X-CSE-MsgGUID: g83Bpbn9QcSDxmE+uNa4qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="66785837"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 03:21:57 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 9D70611F83C;
+	Tue, 10 Sep 2024 13:21:54 +0300 (EEST)
+Date: Tue, 10 Sep 2024 10:21:54 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <ZuAdwpUHQn4fdDjc@kekkonen.localdomain>
+References: <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
+ <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+ <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
+ <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
+ <20240909134516.GA9448@pendragon.ideasonboard.com>
+ <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+ <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
+ <49e375a3-d8e4-4b58-9456-1e6395b02a07@ideasonboard.com>
+ <20240910101137.GD6996@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/11] cpufreq: amd-pstate: Add documentation for
- `amd_pstate_hw_prefcore`
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20240905163007.1350840-1-superm1@kernel.org>
- <20240905163007.1350840-11-superm1@kernel.org>
-Content-Language: en-US
-From: Russell Haley <yumpusamongus@gmail.com>
-In-Reply-To: <20240905163007.1350840-11-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240910101137.GD6996@pendragon.ideasonboard.com>
 
-On 9/5/24 11:30 AM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> Explain that the sysfs file represents both preferred core being
-> enabled by the user and supported by the hardware.
-> 
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v2->v3:
->  * Add tag
-> ---
->  Documentation/admin-guide/pm/amd-pstate.rst | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
-> index e13915c540648..d5c050ea390dc 100644
-> --- a/Documentation/admin-guide/pm/amd-pstate.rst
-> +++ b/Documentation/admin-guide/pm/amd-pstate.rst
-> @@ -263,6 +263,11 @@ lowest non-linear performance in `AMD CPPC Performance Capability
->  <perf_cap_>`_.)
->  This attribute is read-only.
->  
-> +``amd_pstate_hw_prefcore``
-> +
-> +Whether the platform supports the preferred core feature and it has been
-> +enabled. This attribute is read-only.
-> +
->  ``energy_performance_available_preferences``
->  
->  A list of all the supported EPP preferences that could be used for
+Hi Laurent,
 
-I notice I am confused. If the attribute is read only, how can it be
-enabled by the user?
+On Tue, Sep 10, 2024 at 01:11:37PM +0300, Laurent Pinchart wrote:
+> On Tue, Sep 10, 2024 at 12:56:38PM +0300, Tomi Valkeinen wrote:
+> > On 10/09/2024 12:19, Jacopo Mondi wrote:
+> > 
+> > > However, I think this current patch is correct (assuming the above
+> > > reasoning on i2c sensor drivers is correct) and doesn't require
+> > > CONFIG_PM, so I would be tempted to keep this version.
+> > 
+> > I think the existence of this discussion alone proves my point that we 
+> > should only support PM-case, unless !PM is a requirement =).
+> 
+> For me it proves there's a dire need to document the runtime PM API in a
+> way that a human could understand :-)
+> 
+> > But if you do want to keep !PM:
+> > 
+> > Is there a reason why not mark the device as active with 
+> > pm_runtime_set_active() after calling pispbe_runtime_resume and before 
+> > accessing the device? That feels like the most logical way to use the 
+> > function, and it would be right regardless whether the core will enable 
+> > the parents before probe() or not.
+> 
+> Does pm_runtime_set_active() resume the parent ?
+
+No, it simply sets the device's runtime PM status.
+
+> 
+> > And not related to the BE or CFE drivers, but it strikes me odd that to 
+> > support PM and !PM we need to play with these tricks. I think the core 
+> > should just do the right thing if the driver does pm_runtime_get_sync() 
+> > even with !PM (although maybe the time has passed to be able to do that).
+> 
+> The runtime PM concepts are nice, but the API is wrong in my opinion.
+> Instead of being designed to expose the internals of runtime PM, it
+> should focus on usability from a driver point of view first.
+
+It's been moving a little bit to that direction, largely with new helper
+functions.
+
+I²C devices have been powered on for probe since commit a76e9bd89ae70 .
+Relation to runtime PM wasn't considered at the time, apparently.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
