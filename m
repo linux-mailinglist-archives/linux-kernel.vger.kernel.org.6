@@ -1,78 +1,90 @@
-Return-Path: <linux-kernel+bounces-323896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44F89744CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:29:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBD99744CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A888C287B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B0B1C24C0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9911A1AB510;
-	Tue, 10 Sep 2024 21:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935E1AB522;
+	Tue, 10 Sep 2024 21:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ev1clNQT"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="o+iCojLz"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B61AB50F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E641AB50E;
+	Tue, 10 Sep 2024 21:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726003742; cv=none; b=UafEJk0QlUoq/0llpg8/mlUQNC6jpnRgTAKluKzAqcnigI2jhkIwy0HEDlT3RHiR3WFocG9xB5V4t6tNqrf3WGEALplQCqz9AQET0/V4YelDyGv0Bb/nBxEpv2snnQTFTzZs3PDIL4SYtrDGycfhJYMR9SGRJYvCnHpY+3jDCTs=
+	t=1726003780; cv=none; b=XOuMXwPfW87Ou0roG37RrDB8hsvwWlp2R3cqZXkGaX0V8w8Ve/PX4FvN85NyfFSIdkCVilpY06C0Y3NvfIJgAKWCEigbxtONATWC+bY3p0bH1gqoL8Cemi5AL1owxkt5nTfikS/s1F5Zzus3WWBQqk8+mZmCUE3KXjo9Gese4Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726003742; c=relaxed/simple;
-	bh=JB8QPYV6wZvd+8554qqYMyfYwk/jZ3Z7SuNwc5aQ1ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xjn1zWeo7uUOg6+wxFSewVO/PBr98RujR/EyMy44HwJVNUWL21cHs6wYDrXiIeVaK8oqFXaPmHpp28GJsOPaPO2s/Y/g4irQ1yZ5ef5AEA/b+JiUPjZvrmBbzw3wMdc63cw8NBM/bSkRNyw+CVh0QVHg8yhGpu5/tgadslnczEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ev1clNQT; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 10 Sep 2024 17:28:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726003738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQdZ/Xk3IZq0P/QkpkVbrTV28jX3yXisSZN66Q35tXE=;
-	b=ev1clNQTafKiThScdYgVP+exBlsxPUvoo+prJZsHvrEkVD6+JVBTM+EeH5gHJcByAN88X4
-	gmCvaTzjJ4C4WtWZJCHWAa/FlS67eOuFORW0XZ5wfZ4fUh2hqmxPUbnz8qP9JoTK6gIfbW
-	o2FDmCJ+yyV2LLyEuL2ryzE1QETJX/M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Diogo Jahchan Koike <djahchankoike@gmail.com>
-Cc: syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: return err ptr instead of null in read sb clean
-Message-ID: <hz3mj5qtutvjddnfhhbeu74hoxu67qzzgwmpxzcldbslsj7fed@53sfkbbxpriq>
-References: <20240910211912.96356-1-djahchankoike@gmail.com>
+	s=arc-20240116; t=1726003780; c=relaxed/simple;
+	bh=Ynqn4nAJCQb3K91P/VTtiGu0x1IN7vkR3zg8XkgCzF4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eqWuvY2COe+HwI4RB0wwg59T8FRJRSjRneIsv0M0uKMNw7dgPNj1bletEuDi0TinJ7U94PgzKTn9k7tAuLE9KYqNMfwrvm6ZGUxaQynadheKJOowfS/yxOjU1ePiW+2pUwbNm64iLqv49/ekPikCP+z9369kF21YToKcgAd6Nxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=o+iCojLz; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 093BF4188E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1726003777; bh=zp8fJpAfCbl72Th6GiF5qBWF4ZzlCNk5ypC8iY8soVM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=o+iCojLzgGJmKlIWeAfHi54FvVQk4yWSIqP6dI/9GOVgPRc007xVEPhTUsxqFNNQR
+	 U9PmqGLY3+tWrQL7tDQtCklcNTLGTLeUwnGOAI4c76VrtyBC7fZlPAz2+Cpc+prkID
+	 2WiTxRmXPUIktt2cwfaegWIFizznC+Ym3pmW5B5/QKQdYPpqV1qVhVWBtd0/gmi4Tg
+	 iXqPy9T3oE9kuEijdU1W06g+WM5yf9b9B63dgcpGlTxVFzN4SAjKQdvpXwHBHbC4TS
+	 mUOuJKo2WPOxWwkaoMMMyk/YBHCXfFhaHGN0ITozQvcIZJmwNHJEVOrDKgPHSwoSsT
+	 SxbPge4UaDF9Q==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 093BF4188E;
+	Tue, 10 Sep 2024 21:29:36 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
+ Si <siyanteng@loongson.cn>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.cm, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3] docs/zh_CN: add the translation of
+ kbuild/gcc-plugins.rst
+In-Reply-To: <20240907070244.206808-1-dzm91@hust.edu.cn>
+References: <20240907070244.206808-1-dzm91@hust.edu.cn>
+Date: Tue, 10 Sep 2024 15:29:36 -0600
+Message-ID: <87ed5r6vun.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910211912.96356-1-djahchankoike@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On Tue, Sep 10, 2024 at 06:18:34PM GMT, Diogo Jahchan Koike wrote:
-> syzbot reported a null-ptr-deref in bch2_fs_start. [0]
-> 
-> When a sb is marked clear but doesn't have a clean section
-> bch2_read_superblock_clean returns NULL which PTR_ERR_OR_ZERO
-> lets through, eventually leading to a null ptr dereference down
-> the line. Adjust read sb clean to return an ERR_PTR indicating the
-> invalid clean section.
-> 
-> [0] https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
-> 
-> Reported-by: syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
-> Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-Thanks, applied
+> Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
+> from TODO to the main body.
+>
+> Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
+> for GCC plugins")
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+> v2->v3: fix sign incorrect pointed by Alex
+> v1->v2: fix comments from yanteng
+>  .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
+>  .../translations/zh_CN/kbuild/index.rst       |   2 +-
+>  2 files changed, 127 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+
+Applied, thanks.
+
+jon
 
