@@ -1,175 +1,85 @@
-Return-Path: <linux-kernel+bounces-323813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC539743CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CDE9743D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7221AB23496
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CA91F26FD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F381A7AE2;
-	Tue, 10 Sep 2024 19:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859AF1A4F1C;
+	Tue, 10 Sep 2024 20:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xRPH8BL/"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCrrW5HD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8EB1A3BB8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD842176252;
+	Tue, 10 Sep 2024 20:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725998368; cv=none; b=nA3YO19GYukvngfBpOQQ/X4n91D2/JM3foh8g0nsTV37vcjnzthjs/NPzgyGGPi8kUZhdznr3KgJVkm/eaqk4Uwh/KlL319UX2HE1y8F+ntMFqvRY1PWe9qsi04ThpmWuDg0QtlwosM6HmA4gEvNqRX0DzVJetPs+KnV10431Js=
+	t=1725998567; cv=none; b=Lzoz9eSpkeIVxcuMO/PcD+RBIf0R+SR1VMMd2HIRX974YORDQ/Fbf5YO+ArSnvMfGQB1K0VqHYoG7fNdwYAduYkFutcpEejE8QjoLP9vx2jVi2L4TSX5AwUtkzE8pO5xqHqu4p+Gr4yvnuUoy+T3/gm+NaaZ3oK8rdBKPcdVRMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725998368; c=relaxed/simple;
-	bh=JsFgjG7RzN9cW564KrDmIlGbzKdzMWvwxWy1OkvvXKs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DWD7C0i9WjtRRHDkpIdx+Iz2ysg0brxBNjTP0NyDaSiTWniU+bshSjpGVkPID5dJRVaqco0HZudFkDsNJxIDwG1Kcn/2Q0kvApcWnLLNTmV+3KgOst9fxFqlmnjrzt4SJHr8ypR2z6jl6oiaAl1AWHY9qtFWrvMk76rlgRNb+sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xRPH8BL/; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c41daso83850237b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725998366; x=1726603166; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/I5yu5GXZLZbi8Yezk0wN06GpM5EScQUnSnfcKR680=;
-        b=xRPH8BL/FokU1vcU2fw3YYuYLv7KrGrqL+CqrU+PdI30GYd7d0hIc0ElDAvqT8agd3
-         wmjpAUurthPQZDdswIqOOemE6/4wUjUG0Hv/8kQ6xfilG5KhglEkdU8uwCcJ2l8goVPX
-         DL6aC0bMnhSQwLi7Lpvg6Sc9ZlKuDJV3ksR0LdNYVXmoZmbLNKMFbgk/D+YA7/Ot5Eyc
-         IBkUNG+VX9L975M15X32p9DKuCfSMbw8CN/089W5murXVnlH7TGHApvBlbOEvqlvMXnr
-         LROJ+2wJFlXDsqK49X5eVunLQoQT2tsX9ZGxKVbIHl4rHFgcvvAXUUX/DtKDvyH5vdVm
-         BOew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725998366; x=1726603166;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/I5yu5GXZLZbi8Yezk0wN06GpM5EScQUnSnfcKR680=;
-        b=nTQ+FSL/zFWjVSnG9ekNi5BmvqsEx9CfTpH9tnXPwSdUvj+WxQgoJf2LNPnJFkAr/o
-         EsGnczabAgZtkbbo70FXpPUys6UkgScTy4oGEI7STplk/IlnbLyNtLo/Vcp1NijuAauh
-         x7VLgwtT3iJ3kDoRJk43HTouhslJTbFQl04zfYfPlnEzWRQoTwMJ+VrPg1q0oq/8bKDj
-         Ebb2HNkNCGK/0Y50alqp5MyXRgz7Zdvrd0V6GGsS+I5MmaDBNnax5ZNDSj0QGxnbUIMM
-         fZwhn4Xuc4HRUGdX/gqChyAR3jIofmoOAxRmu/SoLIl41RCXkCnw0DdT2Ce07NYCbUs4
-         QCTg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Ie6BF3wJ/jqqD0p6TTTl0d+xHiIwASsnCfNEEZSu/48S8laIaE9n9pkTArK44tXqD1yBNy0JoOeaKQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygYMW4EE/bVaGRG78MOJFcq8mombGhwfCwedXGhPCtjBSW57ez
-	fBkZMh6MjNNsgVTIzqD2hGSoLcwASxACb4gzZkTdKQPR7rDmPOiiIWBev7hPJ+SKcafNQhTZSlM
-	wag==
-X-Google-Smtp-Source: AGHT+IG3eA252S/hkQDQt3UF35eC4bseSdWlEpPLcwdC9CQyLSErJtQ3fXwKL14p5eudAjUWJUQUgzKZPd8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:38c:b0:6af:623c:7694 with SMTP id
- 00721157ae682-6db44a5d200mr10392687b3.0.1725998366004; Tue, 10 Sep 2024
- 12:59:26 -0700 (PDT)
-Date: Tue, 10 Sep 2024 12:59:24 -0700
-In-Reply-To: <20240807123531.69677-1-amit@kernel.org>
+	s=arc-20240116; t=1725998567; c=relaxed/simple;
+	bh=dp2BYi02YNW2K4ppjPhhoQskIQuheiFsgBa6IjkUdgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ikf+A0pGH74NxLme1vAbCRdakogI+AXE+ngiily+UbO5j4X9VLGj2xuA2Pvm9g11g4EzN0verfzwh5svqKpyi4JKo3zUu6JQ1WJ/8dcbE64STcovxHXkF06IRQomDx0Bnxx0lCE1piz34UKWnZePQxDXzlW/WU82YJbmnNcZShA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCrrW5HD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AD8C4CEC3;
+	Tue, 10 Sep 2024 20:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725998566;
+	bh=dp2BYi02YNW2K4ppjPhhoQskIQuheiFsgBa6IjkUdgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CCrrW5HDLWDTCJpkMca0FuyQ2ykh64DrNfXbg09aIbFbjBa5u/n9/CXA3+ABSeVM+
+	 kN2Y3zqwk7ULyotnjkr38RYdT8VdoH85OHtMPWrr7D6XiwERy4rvRgAFh/71udauq+
+	 HbG9qkbZ1MBA3paBnbfY3L/beuWLLsBk+4kAaODBMQkaLxp2Y4S6wVxHdqzfZBf2Nr
+	 jl3VQCrhXszie4rtnxEJPAkklqTwSd6tZyPqEhpFGFf0p59dqcjnAgEluTldHWRJME
+	 CMNYVtcDBHTBzRC7klzVRs17RBKz+7i+1Cru659WDFymsWzKI2RoiCK2rJavuWHhpg
+	 sTYmC5Y8LMnWw==
+Date: Tue, 10 Sep 2024 10:02:45 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chen Ridong <chenridong@huawei.com>
+Subject: Re: [PATCH 2/4] cgroup/cpuset: Expose cpuset filesystem with cpuset
+ v1 only
+Message-ID: <ZuCl5ZwuV9zaYXRd@slm.duckdns.org>
+References: <20240909163223.3693529-1-mkoutny@suse.com>
+ <20240909163223.3693529-3-mkoutny@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240807123531.69677-1-amit@kernel.org>
-Message-ID: <ZuClHCQJf6JY5gMe@google.com>
-Subject: Re: [PATCH v4] KVM: SVM: let alternatives handle the cases when RSB
- filling is required
-From: Sean Christopherson <seanjc@google.com>
-To: Amit Shah <amit@kernel.org>
-Cc: pbonzini@redhat.com, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, amit.shah@amd.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kim.phillips@amd.com, david.kaplan@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240909163223.3693529-3-mkoutny@suse.com>
 
-On Wed, Aug 07, 2024, Amit Shah wrote:
-> From: Amit Shah <amit.shah@amd.com>
+On Mon, Sep 09, 2024 at 06:32:21PM +0200, Michal Koutný wrote:
+> The cpuset filesystem is a legacy interface to cpuset controller with
+> (pre-)v1 features. It makes little sense to co-mount it on systems
+> without cpuset v1, so do no build it when cpuset v1 is not built
+> neither.
 > 
-> Remove superfluous RSB filling after a VMEXIT when the CPU already has
-> flushed the RSB after a VMEXIT when AutoIBRS is enabled.
-> 
-> The initial implementation for adding RETPOLINES added an ALTERNATIVES
-> implementation for filling the RSB after a VMEXIT in
-> 
-> commit 117cc7a908c836 ("x86/retpoline: Fill return stack buffer on vmexit")
+> Signed-off-by: Michal Koutný <mkoutny@suse.com>
 
-Nit, no need for 14 digits, 12 is still the "official" recommendation.  To make
-this flow better, I would also prefer to not have each commit reference be on
-its own line.
+Applied to cgroup/for-6.12 w/ a typo fix and Waiman's reviewed-by added.
 
-> Later, X86_FEATURE_RSB_VMEXIT was added in
-> 
-> commit 2b129932201673 ("x86/speculation: Add RSB VM Exit protections")
+Thanks.
 
-Oh, the irony.  That commit didn't add RSB_VMEXIT, it added RSB_VMEXIT_LITE.
-Commit 9756bba28470 ("x86/speculation: Fill RSB on vmexit for IBRS") added the
-"heavy" version.  This is also a good opportunity to call out with RSB_VMEXIT
-actually does.
-
-> The AutoIBRS (on AMD CPUs) feature implementation added in
-> 
-> commit e7862eda309ecf ("x86/cpu: Support AMD Automatic IBRS")
-> 
-> used the already-implemented logic for EIBRS in
-> spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not update the
-> code at VMEXIT to act on the mode selected in that function -- resulting
-> in VMEXITs continuing to clear the RSB when RETPOLINES are enabled,
-> despite the presence of AutoIBRS.
-> 
-> Signed-off-by: Amit Shah <amit.shah@amd.com>
-> 
-> ---
-> diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
-> index a0c8eb37d3e1..69d9825ebdd9 100644
-> --- a/arch/x86/kvm/svm/vmenter.S
-> +++ b/arch/x86/kvm/svm/vmenter.S
-> @@ -209,10 +209,14 @@ SYM_FUNC_START(__svm_vcpu_run)
->  7:	vmload %_ASM_AX
->  8:
->  
-> -#ifdef CONFIG_MITIGATION_RETPOLINE
-> -	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
-> -	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
-> -#endif
-> +	/*
-> +	 * IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET!
-> +	 *
-> +	 * Unlike VMX, AMD does not have the hardware bug that necessitates
-> +	 * RSB_VMEXIT_LITE
-> +	 */
-
-I would rather do nothing than carry these comments.  Long term, I would still
-prefer to have RSB_VMEXIT_LITE, but that's not a hill worth dying on, and I am
-a-ok waiting to deal with that if/when I (or someone else) takes on the task
-of unifying the VM-Enter/VM-Exit flows.
-
-So, with the comment changes dropped and the changelog massaged to this:
-
-    Remove superfluous RSB filling after a VMEXIT when the CPU already has
-    flushed the RSB after a VMEXIT when AutoIBRS is enabled.
-    
-    The initial implementation for adding RETPOLINES added an ALTERNATIVES
-    implementation for filling the RSB after a VMEXIT in commit 117cc7a908c8
-    ("x86/retpoline: Fill return stack buffer on vmexit").
-    
-    Later, X86_FEATURE_RSB_VMEXIT was added in commit 9756bba28470
-    ("x86/speculation: Fill RSB on vmexit for IBRS") to handle stuffing the
-    RSB if RETPOLINE=y *or* KERNEL_IBRS=y, i.e. to also stuff the RSB if the
-    kernel is configured to do IBRS mitigations on entry/exit.
-    
-    The AutoIBRS (on AMD) feature implementation added in commit e7862eda309e
-    ("x86/cpu: Support AMD Automatic IBRS") used the already-implemented logic
-    for EIBRS in spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not
-    update the code at VMEXIT to act on the mode selected in that function --
-    resulting in VMEXITs continuing to clear the RSB when RETPOLINES are
-    enabled, despite the presence of AutoIBRS.
-
-Applied to kvm-x86 svm.
-
-[1/1] KVM: SVM: let alternatives handle the cases when RSB filling is required
-      https://github.com/kvm-x86/linux/commit/4440337af4d4
-
---
-https://github.com/kvm-x86/linux/tree/next
+-- 
+tejun
 
