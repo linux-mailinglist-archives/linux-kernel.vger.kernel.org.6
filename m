@@ -1,53 +1,82 @@
-Return-Path: <linux-kernel+bounces-322696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE7F972C76
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:47:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE999972C6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9385D1C244CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C41F2314B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD25B186E4B;
-	Tue, 10 Sep 2024 08:47:44 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.103])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693AE339AC;
-	Tue, 10 Sep 2024 08:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEDB1862B8;
+	Tue, 10 Sep 2024 08:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LffjfOAa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872C614A4C3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958064; cv=none; b=ofN8RJPayNVpO00//R9tLlxpsYtvrqhpx3bRd4aVhr1994RtJgoSs/bEhx7DzirWTdvZyVmd3jk3jD+STWPPo7tsp9rpmIEvQHJis6rPJlQZzLUxHiNeejusjhWyW9WJe2LEUAEW2ksX6WhRbBr6skQ/QNt0NO0O7b4/x3NmwPk=
+	t=1725957845; cv=none; b=u80XHyd1G8csyHPev+agESMFppNI0UyXZcAXEO0UX/F+shXP3x+Md3m65KxPqIVH3143qm/A4MgkBjhvGuoNuPRaSC4tjTQP+/V4IanV/9iXZRhfhpsWD13SxwyouH53YhDQznkdF7pSUEqrx33f3VdW5upovTpCGdDnNzBgznM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958064; c=relaxed/simple;
-	bh=1DaEvN+kL6q16ZIm6Z8fBX/5uac/UzkFsTq+CcEGgMY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rSrbuChi08z0C74/naiB6TUIb+nCOi2Tm7Jd9e9fLMjc8Lw75HgrMzxvC7jdyvpnK0whutLIgG6rJoDLD8UkRYXF+y1c4BZl35ehEOA2jdhgIQrujsItTY5xkZ8antSUysGm3jsE1IxaEojqoo1BAwhJP9Qkw8tl+hxHBjNe8us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.242.145:3112.620420812
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.242.145])
-	by 189.cn (HERMES) with SMTP id 5D15D1002BE;
-	Tue, 10 Sep 2024 16:42:41 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-68cfdf7599-zbmfg with ESMTP id d207631d2c03443aad32dabe2cbe8b5d for axboe@kernel.dk;
-	Tue, 10 Sep 2024 16:42:42 CST
-X-Transaction-ID: d207631d2c03443aad32dabe2cbe8b5d
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: chensong_2000@189.cn
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
+	s=arc-20240116; t=1725957845; c=relaxed/simple;
+	bh=qqlizFQaM14OE2fhleEMqA9GnZPbB0rWThRND9fodLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FiYq0Pwb3z/d5RCtwv+IVbPWbojFNshlaRKpOYsf/VwahIDmJDm3G5IDcidIlzTDzvhuQ766vUXmghkFcaqFtjZmh1dZ7g9rDrvsrUJC2oHDOoHgqlq+g3xBByxorYI73TnkJ81KjhwgvREi8bcc8KzsIbRLOBSKXvRNrK4Mykc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LffjfOAa; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725957844; x=1757493844;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qqlizFQaM14OE2fhleEMqA9GnZPbB0rWThRND9fodLg=;
+  b=LffjfOAaAJ6Ehc1QCARPI6HGVruii+4BCB8n40cIXqNHv3nxa6aZEFON
+   ZLusXtiXpnmxma9KaMSTvmat2x9Gs9+bPVnZQ8e3qjwPI7GU8SRE6Oznq
+   xQFFrBvLHAio+w60Qi1By859LO+0/lVqcktrtY23xZnODqPACurplvVZH
+   0bgXIVPrIC6+oMnj0IzqgWhNhC/bqO7XFKo2Q6ymgNgiD2LtX1Vdo7aou
+   HkIToiWTgd0ycMp25s4WzDrcCDEAcmZuemc8kFI3oPbIs5Hi720Qr1ry7
+   403+SlBoy2IUBH0fzPDw5L+J8eAWNoDbdLfZKiTMXXGOkB4vTe29VGxRR
+   w==;
+X-CSE-ConnectionGUID: kdkE5by3QqCZZB5HjHPTnw==
+X-CSE-MsgGUID: a4DleFGETHm7RZpfQSV1nw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24565909"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="24565909"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:44:02 -0700
+X-CSE-ConnectionGUID: 9kN+kNqCQ3aNTCFWPFjFfg==
+X-CSE-MsgGUID: IBZPnqfzRXSfgoJq+aAamA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="67252448"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 10 Sep 2024 01:43:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A1BF3408; Tue, 10 Sep 2024 11:43:57 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH] block/blk-rq-qos: introduce macro RQ_QOS_FN for common behaviors in rq_qos*
-Date: Tue, 10 Sep 2024 16:42:38 +0800
-Message-Id: <20240910084238.3543971-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.34.1
+	llvm@lists.linux.dev
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH v3 1/1] x86/cpu: Make sure flag_is_changeable_p() is always being used
+Date: Tue, 10 Sep 2024 11:42:42 +0300
+Message-ID: <20240910084356.1518209-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,254 +85,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Song Chen <chensong_2000@189.cn>
+When flag_is_changeable_p() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-Below functions in blk-rq.qos.c have similar behaviors:
-	__rq_qos_cleanup
-	__rq_qos_done
-	__rq_qos_issue
-	__rq_qos_requeue
-	__rq_qos_throttle
-	__rq_qos_track
-	__rq_qos_merge
-	__rq_qos_done_bio
-	__rq_qos_queue_depth_changed
+arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
+  351 | static inline int flag_is_changeable_p(u32 flag)
+      |                   ^~~~~~~~~~~~~~~~~~~~
 
-Those functions traverse rq_qos in request_queue and call callback function
-in rq_qos_ops if it exists.
+Fix this by moving core around to make sure flag_is_changeable_p() is
+always being used.
 
-This patch removes those duplicated code and abstract it in a helper macro
-RQ_QOS_FN.
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
 
-Signed-off-by: Song Chen <chensong_2000@189.cn>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- block/blk-rq-qos.c | 88 ++--------------------------------------------
- block/blk-rq-qos.h | 39 ++++++++++----------
- 2 files changed, 23 insertions(+), 104 deletions(-)
 
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index dd7310c94713..c41f314ab024 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -23,87 +23,6 @@ bool rq_wait_inc_below(struct rq_wait *rq_wait, unsigned int limit)
- 	return atomic_inc_below(&rq_wait->inflight, limit);
+v3: rewritten as suggested (Dave)
+v2: marked both 32- and 64-bit cases
+
+ arch/x86/kernel/cpu/common.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index d4e539d4e158..5525afa6e888 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -275,22 +275,14 @@ static int __init x86_noinvpcid_setup(char *s)
  }
+ early_param("noinvpcid", x86_noinvpcid_setup);
  
--void __rq_qos_cleanup(struct rq_qos *rqos, struct bio *bio)
--{
--	do {
--		if (rqos->ops->cleanup)
--			rqos->ops->cleanup(rqos, bio);
--		rqos = rqos->next;
--	} while (rqos);
--}
+-#ifdef CONFIG_X86_32
+-static int cachesize_override = -1;
+-static int disable_x86_serial_nr = 1;
 -
--void __rq_qos_done(struct rq_qos *rqos, struct request *rq)
+-static int __init cachesize_setup(char *str)
 -{
--	do {
--		if (rqos->ops->done)
--			rqos->ops->done(rqos, rq);
--		rqos = rqos->next;
--	} while (rqos);
+-	get_option(&str, &cachesize_override);
+-	return 1;
 -}
+-__setup("cachesize=", cachesize_setup);
 -
--void __rq_qos_issue(struct rq_qos *rqos, struct request *rq)
--{
--	do {
--		if (rqos->ops->issue)
--			rqos->ops->issue(rqos, rq);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_requeue(struct rq_qos *rqos, struct request *rq)
--{
--	do {
--		if (rqos->ops->requeue)
--			rqos->ops->requeue(rqos, rq);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_throttle(struct rq_qos *rqos, struct bio *bio)
--{
--	do {
--		if (rqos->ops->throttle)
--			rqos->ops->throttle(rqos, bio);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_track(struct rq_qos *rqos, struct request *rq, struct bio *bio)
--{
--	do {
--		if (rqos->ops->track)
--			rqos->ops->track(rqos, rq, bio);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_merge(struct rq_qos *rqos, struct request *rq, struct bio *bio)
--{
--	do {
--		if (rqos->ops->merge)
--			rqos->ops->merge(rqos, rq, bio);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_done_bio(struct rq_qos *rqos, struct bio *bio)
--{
--	do {
--		if (rqos->ops->done_bio)
--			rqos->ops->done_bio(rqos, bio);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
--void __rq_qos_queue_depth_changed(struct rq_qos *rqos)
--{
--	do {
--		if (rqos->ops->queue_depth_changed)
--			rqos->ops->queue_depth_changed(rqos);
--		rqos = rqos->next;
--	} while (rqos);
--}
--
- /*
-  * Return true, if we can't increase the depth further by scaling
-  */
-@@ -288,12 +207,11 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
- 
- void rq_qos_exit(struct request_queue *q)
+ /* Standard macro to see if a specific flag is changeable */
+ static inline int flag_is_changeable_p(u32 flag)
  {
-+	struct rq_qos *rqos;
+ 	u32 f1, f2;
+ 
++	if (!IS_ENABLED(CONFIG_X86_32))
++		return 1;
 +
- 	mutex_lock(&q->rq_qos_mutex);
--	while (q->rq_qos) {
--		struct rq_qos *rqos = q->rq_qos;
--		q->rq_qos = rqos->next;
-+	for_each_rqos(rqos, q)
- 		rqos->ops->exit(rqos);
--	}
- 	mutex_unlock(&q->rq_qos_mutex);
+ 	/*
+ 	 * Cyrix and IDT cpus allow disabling of CPUID
+ 	 * so the code below may return different results
+@@ -315,6 +307,17 @@ static inline int flag_is_changeable_p(u32 flag)
+ 	return ((f1^f2) & flag) != 0;
  }
  
-diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index 37245c97ee61..0f22669dce68 100644
---- a/block/blk-rq-qos.h
-+++ b/block/blk-rq-qos.h
-@@ -58,11 +58,14 @@ struct rq_depth {
- 	unsigned int default_depth;
- };
- 
-+#define for_each_rqos(rqos, q)	\
-+	for (rqos = q->rq_qos; rqos; rqos = rqos->next)
++#ifdef CONFIG_X86_32
++static int cachesize_override = -1;
++static int disable_x86_serial_nr = 1;
 +
- static inline struct rq_qos *rq_qos_id(struct request_queue *q,
- 				       enum rq_qos_id id)
++static int __init cachesize_setup(char *str)
++{
++	get_option(&str, &cachesize_override);
++	return 1;
++}
++__setup("cachesize=", cachesize_setup);
++
+ /* Probe for the CPUID instruction */
+ int have_cpuid_p(void)
  {
- 	struct rq_qos *rqos;
--	for (rqos = q->rq_qos; rqos; rqos = rqos->next) {
-+	for_each_rqos(rqos, q) {
- 		if (rqos->id == id)
- 			break;
- 	}
-@@ -100,38 +103,36 @@ bool rq_depth_scale_up(struct rq_depth *rqd);
- bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle);
- bool rq_depth_calc_max_depth(struct rq_depth *rqd);
- 
--void __rq_qos_cleanup(struct rq_qos *rqos, struct bio *bio);
--void __rq_qos_done(struct rq_qos *rqos, struct request *rq);
--void __rq_qos_issue(struct rq_qos *rqos, struct request *rq);
--void __rq_qos_requeue(struct rq_qos *rqos, struct request *rq);
--void __rq_qos_throttle(struct rq_qos *rqos, struct bio *bio);
--void __rq_qos_track(struct rq_qos *rqos, struct request *rq, struct bio *bio);
--void __rq_qos_merge(struct rq_qos *rqos, struct request *rq, struct bio *bio);
--void __rq_qos_done_bio(struct rq_qos *rqos, struct bio *bio);
--void __rq_qos_queue_depth_changed(struct rq_qos *rqos);
-+#define RQ_QOS_FN(q, fn, ...)	\
-+	do {	\
-+		struct rq_qos *rqos;	\
-+		for_each_rqos(rqos, q)	\
-+			if (rqos->ops->fn)	\
-+				rqos->ops->fn(rqos, ##__VA_ARGS__);	\
-+	} while (0)
- 
- static inline void rq_qos_cleanup(struct request_queue *q, struct bio *bio)
+@@ -348,10 +351,6 @@ static int __init x86_serial_nr_setup(char *s)
+ }
+ __setup("serialnumber", x86_serial_nr_setup);
+ #else
+-static inline int flag_is_changeable_p(u32 flag)
+-{
+-	return 1;
+-}
+ static inline void squash_the_stupid_serial_number(struct cpuinfo_x86 *c)
  {
- 	if (q->rq_qos)
--		__rq_qos_cleanup(q->rq_qos, bio);
-+		RQ_QOS_FN(q, cleanup, bio);
+ }
+@@ -1087,7 +1086,6 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
+ 
+ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ {
+-#ifdef CONFIG_X86_32
+ 	int i;
+ 
+ 	/*
+@@ -1108,7 +1106,6 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ 				break;
+ 			}
+ 		}
+-#endif
  }
  
- static inline void rq_qos_done(struct request_queue *q, struct request *rq)
- {
- 	if (q->rq_qos && !blk_rq_is_passthrough(rq))
--		__rq_qos_done(q->rq_qos, rq);
-+		RQ_QOS_FN(q, done, rq);
- }
- 
- static inline void rq_qos_issue(struct request_queue *q, struct request *rq)
- {
- 	if (q->rq_qos)
--		__rq_qos_issue(q->rq_qos, rq);
-+		RQ_QOS_FN(q, issue, rq);
- }
- 
- static inline void rq_qos_requeue(struct request_queue *q, struct request *rq)
- {
- 	if (q->rq_qos)
--		__rq_qos_requeue(q->rq_qos, rq);
-+		RQ_QOS_FN(q, requeue, rq);
- }
- 
- static inline void rq_qos_done_bio(struct bio *bio)
-@@ -140,7 +141,7 @@ static inline void rq_qos_done_bio(struct bio *bio)
- 			     bio_flagged(bio, BIO_QOS_MERGED))) {
- 		struct request_queue *q = bdev_get_queue(bio->bi_bdev);
- 		if (q->rq_qos)
--			__rq_qos_done_bio(q->rq_qos, bio);
-+			RQ_QOS_FN(q, done_bio, bio);
- 	}
- }
- 
-@@ -148,7 +149,7 @@ static inline void rq_qos_throttle(struct request_queue *q, struct bio *bio)
- {
- 	if (q->rq_qos) {
- 		bio_set_flag(bio, BIO_QOS_THROTTLED);
--		__rq_qos_throttle(q->rq_qos, bio);
-+		RQ_QOS_FN(q, throttle, bio);
- 	}
- }
- 
-@@ -156,7 +157,7 @@ static inline void rq_qos_track(struct request_queue *q, struct request *rq,
- 				struct bio *bio)
- {
- 	if (q->rq_qos)
--		__rq_qos_track(q->rq_qos, rq, bio);
-+		RQ_QOS_FN(q, track, rq, bio);
- }
- 
- static inline void rq_qos_merge(struct request_queue *q, struct request *rq,
-@@ -164,14 +165,14 @@ static inline void rq_qos_merge(struct request_queue *q, struct request *rq,
- {
- 	if (q->rq_qos) {
- 		bio_set_flag(bio, BIO_QOS_MERGED);
--		__rq_qos_merge(q->rq_qos, rq, bio);
-+		RQ_QOS_FN(q, merge, rq, bio);
- 	}
- }
- 
- static inline void rq_qos_queue_depth_changed(struct request_queue *q)
- {
- 	if (q->rq_qos)
--		__rq_qos_queue_depth_changed(q->rq_qos);
-+		RQ_QOS_FN(q, queue_depth_changed);
- }
- 
- void rq_qos_exit(struct request_queue *);
+ #define NO_SPECULATION		BIT(0)
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
