@@ -1,540 +1,498 @@
-Return-Path: <linux-kernel+bounces-322920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495A197358B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1FB97356D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0477BB27436
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81EA31C24C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DCA194120;
-	Tue, 10 Sep 2024 10:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3F18E75B;
+	Tue, 10 Sep 2024 10:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ifRnyhV+"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iBHOp4Kq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECE7193439;
-	Tue, 10 Sep 2024 10:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E806414D431;
+	Tue, 10 Sep 2024 10:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725964543; cv=none; b=TxBfKugHrgjVLlR2uOH2L8R4C4j4gFqOsjZv4mszMPGAmGEal59DoXeCddxvr6H76E2Mdo3VR+xrc/OS7YULHr9R63WpYy2ODAcvwfozY08DDWa4Llxk601jAh1XWEZv7+xVOcSHfWte4yVAp8QLn+rLhcZJ5tAeqJe7RiD3fGU=
+	t=1725965273; cv=none; b=aR+x+Nq/thGnEpSTD/4wnFJy4KV7KJRWRu2J9ODYlnG9gk5ehuSdZhyzVjR0i52oQoBT+e1Q46ayYszF54gb5xOUYJcnkRxnJblFXjA8jEbsiL1GuJdS0Xa45yzq2IXpJ98ol8rY0JBkYgWndTzbObY/Ysd1rrxCdnWL9gL3JvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725964543; c=relaxed/simple;
-	bh=u/7UB3Q5cuqzEscCukI5NdFR2SsbxTFB4sY1UpEhUAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ONpzIRXtCNGVlkHY7E81Kl0TRANrPn262UwA0xJQjqus8+WDzhcU9XhryNntk4xUYwSlxrq5UZngDpozUM1Ia8r7wcyqmBe4i8I2p0SxUxOBxeRjCYEtMIZ9yiZAPHyvlo+j+GpNSNl14sr8honSAomQ8JJGaI+zxURfN9cEY/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ifRnyhV+; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 113eee69d23d6f90; Tue, 10 Sep 2024 11:35:38 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6D3C46B836C;
-	Tue, 10 Sep 2024 11:35:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1725960938;
-	bh=u/7UB3Q5cuqzEscCukI5NdFR2SsbxTFB4sY1UpEhUAM=;
-	h=From:Subject:Date;
-	b=ifRnyhV+yIjoHdrIahCzt6HEJxoSqk+B7P84qoPHeKZOSrwi7c1K4ByDPqnHDygso
-	 2wj2Frh7FqzXGIUwwKYwAncQcqgP8x2/yBMmkknV1EVM2DVKoX6OcXikPgavQmGMja
-	 tXpg4JuqeTGA8x9bQqifQHy8YVF/W8VmlOkJPwJDXPn+HJqiplD6FM4J2OaeJab+0v
-	 gX41Wq5O7kI1IRkbnw7q9eK/DfKAT1i4jBb574ofOTIXhjQ930u1XjJK2y+AkcZGwz
-	 VQgsiSlJPrUOX7PFZc4gC35PHHaGtIX1W5ax6Q4y2Jxmo408JT8L+4iqeEQ75ioHBa
-	 RGOJXHqDbIeoQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH for 6.13 v1 8/8] thermal: core: Add and use thermal zone guard
-Date: Tue, 10 Sep 2024 11:35:20 +0200
-Message-ID: <3241904.5fSG56mABF@rjwysocki.net>
-In-Reply-To: <4920970.GXAFRqVoOG@rjwysocki.net>
-References: <4920970.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1725965273; c=relaxed/simple;
+	bh=9gIz7YgfmwamzTgdEf51z5u3I6jterGzY+nz1SdHkTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mtWQwAfrn8WyO8rgBUGHdNReE2E6X1KgtxkA9pVOgXj/X+C6sKAoaOjilGaDQrAoWRP3viGxr/NQSVhyDRvNGGBp5OxZBtdmVn2j7XGwY1Rg1wJ5Bu4QI8twpWavo5bX0xDdlItwXoxrE5M3QgWvJrQs1xHcj32R7yJTLpj9Q4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iBHOp4Kq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12001C4CEC3;
+	Tue, 10 Sep 2024 10:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725965272;
+	bh=9gIz7YgfmwamzTgdEf51z5u3I6jterGzY+nz1SdHkTY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iBHOp4KqdfZdhJf2WIF/xwiJNXa2P1YS91xMz566+GYoj1HxqUuX1SQa45CNfQqCp
+	 XFh+tg39Ge0iJbJ45IW2my1Fx9iQiwt3bQE1TM5W7icW09P+7kjWOvbWSg33GGobv2
+	 WZ00C8UMYqQ/3JfjcjydbxwybwAvrONmDEzhMJUA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 4.19 00/95] 4.19.322-rc2 review
+Date: Tue, 10 Sep 2024 11:43:06 +0200
+Message-ID: <20240910094253.246228054@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
- tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc2.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.19.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.19.322-rc2
+X-KernelTest-Deadline: 2024-09-12T09:42+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This is the start of the stable review cycle for the 4.19.322 release.
+There are 95 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Add and use a special guard for thermal zones.
+Responses should be made by Thu, 12 Sep 2024 09:42:36 +0000.
+Anything received after that time might be too late.
 
-This allows quite a few error code paths to be simplified among
-other things and brings in a noticeable code size reduction for
-a good measure.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc2.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+and the diffstat can be found below.
 
-No intentional functional impact.
+thanks,
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c    |   67 +++++++++++++------------------
- drivers/thermal/thermal_core.h    |    4 +
- drivers/thermal/thermal_helpers.c |   17 ++-----
- drivers/thermal/thermal_sysfs.c   |   81 ++++++++++++++++----------------------
- drivers/thermal/thermal_trip.c    |    8 ---
- 5 files changed, 76 insertions(+), 101 deletions(-)
+greg k-h
 
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -9,6 +9,7 @@
- #ifndef __THERMAL_CORE_H__
- #define __THERMAL_CORE_H__
- 
-+#include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/thermal.h>
- 
-@@ -146,6 +147,9 @@ struct thermal_zone_device {
- 	struct thermal_trip_desc trips[] __counted_by(num_trips);
- };
- 
-+DEFINE_GUARD(thermal_zone, struct thermal_zone_device *, mutex_lock(&_T->lock),
-+	     mutex_unlock(&_T->lock))
-+
- /* Initial thermal zone temperature. */
- #define THERMAL_TEMP_INIT	INT_MIN
- 
-Index: linux-pm/drivers/thermal/thermal_sysfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-+++ linux-pm/drivers/thermal/thermal_sysfs.c
-@@ -50,13 +50,13 @@ static ssize_t
- mode_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
--	int enabled;
- 
--	mutex_lock(&tz->lock);
--	enabled = tz->mode == THERMAL_DEVICE_ENABLED;
--	mutex_unlock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
--	return sprintf(buf, "%s\n", enabled ? "enabled" : "disabled");
-+	if (tz->mode == THERMAL_DEVICE_ENABLED)
-+		return sprintf(buf, "enabled\n");
-+
-+	return sprintf(buf, "disabled\n");
- }
- 
- static ssize_t
-@@ -103,38 +103,34 @@ trip_point_temp_store(struct device *dev
- {
- 	struct thermal_trip *trip = thermal_trip_of_attr(attr, temp);
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
--	int ret, temp;
-+	int temp;
- 
--	ret = kstrtoint(buf, 10, &temp);
--	if (ret)
-+	if (kstrtoint(buf, 10, &temp))
- 		return -EINVAL;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	if (temp == trip->temperature)
--		goto unlock;
-+		return count;
- 
- 	/* Arrange the condition to avoid integer overflows. */
- 	if (temp != THERMAL_TEMP_INVALID &&
--	    temp <= trip->hysteresis + THERMAL_TEMP_INVALID) {
--		ret = -EINVAL;
--		goto unlock;
--	}
-+	    temp <= trip->hysteresis + THERMAL_TEMP_INVALID)
-+		return -EINVAL;
- 
- 	if (tz->ops.set_trip_temp) {
-+		int ret;
-+
- 		ret = tz->ops.set_trip_temp(tz, trip, temp);
- 		if (ret)
--			goto unlock;
-+			return ret;
- 	}
- 
- 	thermal_zone_set_trip_temp(tz, trip, temp);
- 
- 	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
- 
--unlock:
--	mutex_unlock(&tz->lock);
--
--	return ret ? ret : count;
-+	return count;
- }
- 
- static ssize_t
-@@ -152,16 +148,15 @@ trip_point_hyst_store(struct device *dev
- {
- 	struct thermal_trip *trip = thermal_trip_of_attr(attr, hyst);
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
--	int ret, hyst;
-+	int hyst;
- 
--	ret = kstrtoint(buf, 10, &hyst);
--	if (ret || hyst < 0)
-+	if (kstrtoint(buf, 10, &hyst) || hyst < 0)
- 		return -EINVAL;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	if (hyst == trip->hysteresis)
--		goto unlock;
-+		return count;
- 
- 	/*
- 	 * Allow the hysteresis to be updated when the temperature is invalid
-@@ -171,22 +166,17 @@ trip_point_hyst_store(struct device *dev
- 	 */
- 	if (trip->temperature == THERMAL_TEMP_INVALID) {
- 		WRITE_ONCE(trip->hysteresis, hyst);
--		goto unlock;
-+		return count;
- 	}
- 
--	if (trip->temperature - hyst <= THERMAL_TEMP_INVALID) {
--		ret = -EINVAL;
--		goto unlock;
--	}
-+	if (trip->temperature - hyst <= THERMAL_TEMP_INVALID)
-+		return -EINVAL;
- 
- 	thermal_zone_set_trip_hyst(tz, trip, hyst);
- 
- 	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
- 
--unlock:
--	mutex_unlock(&tz->lock);
--
--	return ret ? ret : count;
-+	return count;
- }
- 
- static ssize_t
-@@ -236,25 +226,26 @@ emul_temp_store(struct device *dev, stru
- 		const char *buf, size_t count)
- {
- 	struct thermal_zone_device *tz = to_thermal_zone(dev);
--	int ret = 0;
- 	int temperature;
- 
- 	if (kstrtoint(buf, 10, &temperature))
- 		return -EINVAL;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
--	if (!tz->ops.set_emul_temp)
--		tz->emul_temperature = temperature;
--	else
--		ret = tz->ops.set_emul_temp(tz, temperature);
-+	if (tz->ops.set_emul_temp) {
-+		int ret;
- 
--	if (!ret)
--		__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-+		ret = tz->ops.set_emul_temp(tz, temperature);
-+		if (ret)
-+			return ret;
-+	} else {
-+		tz->emul_temperature = temperature;
-+	}
- 
--	mutex_unlock(&tz->lock);
-+	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
- 
--	return ret ? ret : count;
-+	return count;
- }
- static DEVICE_ATTR_WO(emul_temp);
- #endif
-@@ -894,13 +885,11 @@ ssize_t weight_store(struct device *dev,
- 	instance = container_of(attr, struct thermal_instance, weight_attr);
- 
- 	/* Don't race with governors using the 'weight' value */
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	instance->weight = weight;
- 
- 	thermal_governor_update_tz(tz, THERMAL_INSTANCE_WEIGHT_CHANGED);
- 
--	mutex_unlock(&tz->lock);
--
- 	return count;
- }
-Index: linux-pm/drivers/thermal/thermal_trip.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_trip.c
-+++ linux-pm/drivers/thermal/thermal_trip.c
-@@ -45,13 +45,9 @@ int thermal_zone_for_each_trip(struct th
- 			       int (*cb)(struct thermal_trip *, void *),
- 			       void *data)
- {
--	int ret;
-+	guard(thermal_zone)(tz);
- 
--	mutex_lock(&tz->lock);
--	ret = for_each_thermal_trip(tz, cb, data);
--	mutex_unlock(&tz->lock);
--
--	return ret;
-+	return for_each_thermal_trip(tz, cb, data);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_for_each_trip);
- 
-Index: linux-pm/drivers/thermal/thermal_helpers.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_helpers.c
-+++ linux-pm/drivers/thermal/thermal_helpers.c
-@@ -60,13 +60,13 @@ bool thermal_trip_is_bound_to_cdev(struc
- {
- 	bool ret;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
-+
- 	mutex_lock(&cdev->lock);
- 
- 	ret = thermal_instance_present(tz, cdev, trip);
- 
- 	mutex_unlock(&cdev->lock);
--	mutex_unlock(&tz->lock);
- 
- 	return ret;
- }
-@@ -138,19 +138,14 @@ int thermal_zone_get_temp(struct thermal
- 	if (IS_ERR_OR_NULL(tz))
- 		return -EINVAL;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
--	if (!tz->ops.get_temp) {
--		ret = -EINVAL;
--		goto unlock;
--	}
-+	if (!tz->ops.get_temp)
-+		return -EINVAL;
- 
- 	ret = __thermal_zone_get_temp(tz, temp);
- 	if (!ret && *temp <= THERMAL_TEMP_INVALID)
--		ret = -ENODATA;
--
--unlock:
--	mutex_unlock(&tz->lock);
-+		return -ENODATA;
- 
- 	return ret;
- }
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -199,16 +199,13 @@ int thermal_zone_device_set_policy(struc
- 	int ret = -EINVAL;
- 
- 	mutex_lock(&thermal_governor_lock);
--	mutex_lock(&tz->lock);
- 
--	gov = __find_governor(strim(policy));
--	if (!gov)
--		goto exit;
-+	guard(thermal_zone)(tz);
- 
--	ret = thermal_set_governor(tz, gov);
-+	gov = __find_governor(strim(policy));
-+	if (gov)
-+		ret = thermal_set_governor(tz, gov);
- 
--exit:
--	mutex_unlock(&tz->lock);
- 	mutex_unlock(&thermal_governor_lock);
- 
- 	thermal_notify_tz_gov_change(tz, policy);
-@@ -608,26 +605,18 @@ static int thermal_zone_device_set_mode(
- {
- 	int ret;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	/* do nothing if mode isn't changing */
--	if (mode == tz->mode) {
--		mutex_unlock(&tz->lock);
--
-+	if (mode == tz->mode)
- 		return 0;
--	}
- 
- 	ret = __thermal_zone_device_set_mode(tz, mode);
--	if (ret) {
--		mutex_unlock(&tz->lock);
--
-+	if (ret)
- 		return ret;
--	}
- 
- 	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
- 
--	mutex_unlock(&tz->lock);
--
- 	if (mode == THERMAL_DEVICE_ENABLED)
- 		thermal_notify_tz_enable(tz);
- 	else
-@@ -656,10 +645,10 @@ static bool thermal_zone_is_present(stru
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
-+
- 	if (thermal_zone_is_present(tz))
- 		__thermal_zone_device_update(tz, event);
--	mutex_unlock(&tz->lock);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_update);
- 
-@@ -936,7 +925,7 @@ static void thermal_zone_cdev_bind(struc
- 	if (!tz->ops.should_bind)
- 		return;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	for_each_trip_desc(tz, td) {
- 		struct cooling_spec c = {
-@@ -953,8 +942,6 @@ static void thermal_zone_cdev_bind(struc
- 		if (ret)
- 			print_bind_err_msg(tz, td, cdev, ret);
- 	}
--
--	mutex_unlock(&tz->lock);
- }
- 
- /**
-@@ -1259,12 +1246,10 @@ static void thermal_zone_cdev_unbind(str
- {
- 	struct thermal_trip_desc *td;
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	for_each_trip_desc(tz, td)
- 		thermal_unbind_cdev_from_trip(tz, td, cdev);
--
--	mutex_unlock(&tz->lock);
- }
- 
- /**
-@@ -1310,7 +1295,7 @@ int thermal_zone_get_crit_temp(struct th
- 	if (tz->ops.get_crit_temp)
- 		return tz->ops.get_crit_temp(tz, temp);
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	for_each_trip_desc(tz, td) {
- 		const struct thermal_trip *trip = &td->trip;
-@@ -1322,12 +1307,17 @@ int thermal_zone_get_crit_temp(struct th
- 		}
- 	}
- 
--	mutex_unlock(&tz->lock);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
- 
-+static void thermal_zone_add_to_list(struct thermal_zone_device *tz)
-+{
-+	guard(thermal_zone)(tz);
-+
-+	list_add_tail(&tz->node, &thermal_tz_list);
-+}
-+
- /**
-  * thermal_zone_device_register_with_trips() - register a new thermal zone device
-  * @type:	the thermal zone device type
-@@ -1488,9 +1478,7 @@ thermal_zone_device_register_with_trips(
- 
- 	mutex_lock(&thermal_list_lock);
- 
--	mutex_lock(&tz->lock);
--	list_add_tail(&tz->node, &thermal_tz_list);
--	mutex_unlock(&tz->lock);
-+	thermal_zone_add_to_list(tz);
- 
- 	/* Bind cooling devices for this zone */
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
-@@ -1557,6 +1545,13 @@ struct device *thermal_zone_device(struc
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device);
- 
-+static void thermal_zone_del_from_list(struct thermal_zone_device *tz)
-+{
-+	guard(thermal_zone)(tz);
-+
-+	list_del(&tz->node);
-+}
-+
- /**
-  * thermal_zone_device_unregister - removes the registered thermal zone device
-  * @tz: the thermal zone device to remove
-@@ -1581,9 +1576,7 @@ void thermal_zone_device_unregister(stru
- 		return;
- 	}
- 
--	mutex_lock(&tz->lock);
--	list_del(&tz->node);
--	mutex_unlock(&tz->lock);
-+	thermal_zone_del_from_list(tz);
- 
- 	/* Unbind all cdevs associated with 'this' thermal zone */
- 	list_for_each_entry(cdev, &thermal_cdev_list, node)
-@@ -1656,7 +1649,7 @@ static void thermal_zone_device_resume(s
- 
- 	tz = container_of(work, struct thermal_zone_device, poll_queue.work);
- 
--	mutex_lock(&tz->lock);
-+	guard(thermal_zone)(tz);
- 
- 	tz->suspended = false;
- 
-@@ -1667,8 +1660,6 @@ static void thermal_zone_device_resume(s
- 
- 	complete(&tz->resume);
- 	tz->resuming = false;
--
--	mutex_unlock(&tz->lock);
- }
- 
- static int thermal_pm_notify(struct notifier_block *nb,
+-------------
+Pseudo-Shortlog of commits:
 
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.19.322-rc2
+
+Li RongQing <lirongqing@baidu.com>
+    netns: restore ops before calling ops_exit_list
+
+Zhang Changzhong <zhangchangzhong@huawei.com>
+    cx82310_eth: fix error return code in cx82310_bind()
+
+Daniel Borkmann <daniel@iogearbox.net>
+    net, sunrpc: Remap EPERM in case of connection failure in xs_tcp_setup_socket
+
+Roland Xu <mu001999@outlook.com>
+    rtmutex: Drop rt_mutex::wait_lock before scheduling
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    drm/i915/fence: Mark debug_fence_free() with __maybe_unused
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    drm/i915/fence: Mark debug_fence_init_onstack() with __maybe_unused
+
+Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    ACPI: processor: Fix memory leaks in error paths of processor_add()
+
+Jonathan Cameron <Jonathan.Cameron@huawei.com>
+    ACPI: processor: Return an error if acpi_processor_get_info() fails in processor_add()
+
+Eric Dumazet <edumazet@google.com>
+    ila: call nf_unregister_net_hooks() sooner
+
+Eric Dumazet <edumazet@google.com>
+    netns: add pre_exit method to struct pernet_operations
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: protect references to superblock parameters exposed in sysfs
+
+Qing Wang <wangqing@vivo.com>
+    nilfs2: replace snprintf in show functions with sysfs_emit
+
+Zheng Yejian <zhengyejian@huaweicloud.com>
+    tracing: Avoid possible softlockup in tracing_iter_reset()
+
+Steven Rostedt (VMware) <rostedt@goodmis.org>
+    ring-buffer: Rename ring_buffer_read() to read_buffer_iter_advance()
+
+Sven Schnelle <svens@linux.ibm.com>
+    uprobes: Use kzalloc to allocate xol area
+
+Jacky Bai <ping.bai@nxp.com>
+    clocksource/drivers/imx-tpm: Fix next event not taking effect sometime
+
+Jacky Bai <ping.bai@nxp.com>
+    clocksource/drivers/imx-tpm: Fix return -ETIME when delta exceeds INT_MAX
+
+David Fernandez Gonzalez <david.fernandez.gonzalez@oracle.com>
+    VMCI: Fix use-after-free when removing resource in vmci_resource_remove()
+
+Naman Jain <namjain@linux.microsoft.com>
+    Drivers: hv: vmbus: Fix rescind handling in uio_hv_generic
+
+Saurabh Sengar <ssengar@linux.microsoft.com>
+    uio_hv_generic: Fix kernel NULL pointer dereference in hv_uio_rescind
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    nvmem: Fix return type of devm_nvmem_device_get() in kerneldoc
+
+Matteo Martelli <matteomartelli3@gmail.com>
+    iio: fix scale application in iio_convert_raw_to_processed_unlocked
+
+David Lechner <dlechner@baylibre.com>
+    iio: buffer-dmaengine: fix releasing dma channel on error
+
+Michael Ellerman <mpe@ellerman.id.au>
+    ata: pata_macio: Use WARN instead of BUG
+
+Stefan Wiehler <stefan.wiehler@nokia.com>
+    of/irq: Prevent device address out-of-bounds read in interrupt map walk
+
+Phillip Lougher <phillip@squashfs.org.uk>
+    Squashfs: sanity check symbolic link size
+
+Oliver Neukum <oneukum@suse.com>
+    usbnet: ipheth: race between ipheth_close and error handling
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: uinput - reject requests with unreasonable number of slots
+
+Camila Alvarez <cam.alvarez.i@gmail.com>
+    HID: cougar: fix slab-out-of-bounds Read in cougar_report_fixup
+
+David Sterba <dsterba@suse.com>
+    btrfs: initialize location to fix -Wmaybe-uninitialized in btrfs_lookup_dentry()
+
+Dan Williams <dan.j.williams@intel.com>
+    PCI: Add missing bridge lock to pci_bus_lock()
+
+Josef Bacik <josef@toxicpanda.com>
+    btrfs: clean up our handling of refs == 0 in snapshot delete
+
+Josef Bacik <josef@toxicpanda.com>
+    btrfs: replace BUG_ON with ASSERT in walk_down_proc()
+
+Zqiang <qiang.zhang1211@gmail.com>
+    smp: Add missing destroy_work_on_stack() call in smp_call_on_cpu()
+
+Sascha Hauer <s.hauer@pengutronix.de>
+    wifi: mwifiex: Do not return unused priv in mwifiex_get_priv_by_id()
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (w83627ehf) Fix underflows seen when writing limit attributes
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (nct6775-core) Fix underflows seen when writing limit attributes
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (lm95234) Fix underflows seen when writing limit attributes
+
+Guenter Roeck <linux@roeck-us.net>
+    hwmon: (adc128d818) Fix underflows seen when writing limit attributes
+
+Krishna Kumar <krishnak@linux.ibm.com>
+    pci/hotplug/pnv_php: Fix hotplug driver crash on Powernv
+
+Zijun Hu <quic_zijuhu@quicinc.com>
+    devres: Initialize an uninitialized struct member
+
+Johannes Berg <johannes.berg@intel.com>
+    um: line: always fill *error_out in setup_one_line()
+
+Waiman Long <longman@redhat.com>
+    cgroup: Protect css->cgroup write under css_set_lock
+
+Jacob Pan <jacob.jun.pan@linux.intel.com>
+    iommu/vt-d: Handle volatile descriptor status read
+
+Pawel Dembicki <paweldembicki@gmail.com>
+    net: dsa: vsc73xx: fix possible subblocks range of CAPT block
+
+Jonas Gorski <jonas.gorski@bisdn.de>
+    net: bridge: br_fdb_external_learn_add(): always set EXT_LEARN
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: fdb: convert added_by_external_learn to use bitops
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: fdb: convert added_by_user to bitops
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: fdb: convert is_sticky to bitops
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: fdb: convert is_static to bitops
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: fdb: convert is_local to bitops
+
+Ido Schimmel <idosch@mellanox.com>
+    bridge: switchdev: Allow clearing FDB entry offload indication
+
+Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+    net: bridge: add support for sticky fdb entries
+
+Richard Guy Briggs <rgb@redhat.com>
+    rfkill: fix spelling mistake contidion to condition
+
+Oliver Neukum <oneukum@suse.com>
+    usbnet: modern method to get random MAC
+
+Jakub Kicinski <kuba@kernel.org>
+    net: usb: don't write directly to netdev->dev_addr
+
+Len Baker <len.baker@gmx.com>
+    drivers/net/usb: Remove all strcpy() uses
+
+Ondrej Zary <linux@zary.sk>
+    cx82310_eth: re-enable ethernet mode after router reboot
+
+Aleksandr Mishin <amishin@t-argos.ru>
+    platform/x86: dell-smbios: Fix error path in dell_smbios_init()
+
+Daiwei Li <daiweili@google.com>
+    igb: Fix not clearing TimeSync interrupts for 82580
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    can: bcm: Remove proc entry when dev is unregistered.
+
+Jules Irenge <jbi.octave@gmail.com>
+    pcmcia: Use resource_size function on resource object
+
+Chen Ni <nichen@iscas.ac.cn>
+    media: qcom: camss: Add check for v4l2_fwnode_endpoint_parse
+
+Arend van Spriel <arend.vanspriel@broadcom.com>
+    wifi: brcmsmac: advertise MFP_CAPABLE to enable WPA3
+
+Jan Kara <jack@suse.cz>
+    udf: Avoid excessive partition lengths
+
+Yunjian Wang <wangyunjian@huawei.com>
+    netfilter: nf_conncount: fix wrong variable type
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    af_unix: Remove put_pid()/put_cred() in copy_peercred().
+
+Pali Rohár <pali@kernel.org>
+    irqchip/armada-370-xp: Do not allow mapping IRQ 0 and 1
+
+Konstantin Andreev <andreev@swemel.ru>
+    smack: unix sockets: fix accept()ed socket label
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: Add input value sanity checks to HDMI channel map controls
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: fix state management in error path of log writing function
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: fix missing cleanup on rollforward recovery error
+
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+    clk: qcom: clk-alpha-pll: Fix the pll post div mask
+
+Jann Horn <jannh@google.com>
+    fuse: use unsigned type for getxattr/listxattr size truncation
+
+Sam Protsenko <semen.protsenko@linaro.org>
+    mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K
+
+Zheng Qixing <zhengqixing@huawei.com>
+    ata: libata: Fix memory leak for error path in ata_host_alloc()
+
+Christoffer Sandberg <cs@tuxedo.de>
+    ALSA: hda/conexant: Add pincfg quirk to enable top speakers on Sirius devices
+
+Stephen Hemminger <stephen@networkplumber.org>
+    sch/netem: fix use after free in netem_dequeue
+
+Hillf Danton <hdanton@sina.com>
+    ALSA: usb-audio: Fix gpf in snd_usb_pipe_sanity_check
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Sanity checks for each pipe and EP types
+
+Jan Kara <jack@suse.cz>
+    udf: Limit file size to 4TB
+
+Breno Leitao <leitao@debian.org>
+    virtio_net: Fix napi_skb_cache_put warning
+
+Christoph Hellwig <hch@lst.de>
+    block: initialize integrity buffer to zero before writing it to media
+
+Ricardo Ribalda <ribalda@chromium.org>
+    media: uvcvideo: Enforce alignment of frame and interval
+
+Casey Schaufler <casey@schaufler-ca.com>
+    smack: tcp: ipv4, fix incorrect labeling
+
+Simon Holesch <simon@holesch.de>
+    usbip: Don't submit special requests twice
+
+Leesoo Ahn <lsahn@ooseel.net>
+    apparmor: fix possible NULL pointer dereference
+
+Michael Chen <michael.chen@amd.com>
+    drm/amdkfd: Reconcile the definition and use of oem_id in struct kfd_topology_device
+
+Tim Huang <Tim.Huang@amd.com>
+    drm/amdgpu: fix mc_data out-of-bounds read warning
+
+Tim Huang <Tim.Huang@amd.com>
+    drm/amdgpu: fix ucode out-of-bounds read warning
+
+Tim Huang <Tim.Huang@amd.com>
+    drm/amdgpu: fix overflowed array index read warning
+
+Ma Jun <Jun.Ma2@amd.com>
+    drm/amdgpu: Fix uninitialized variable warning in amdgpu_afmt_acr
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    usb: dwc3: st: add missing depopulate in probe error path
+
+Nishka Dasgupta <nishkadg.linux@gmail.com>
+    usb: dwc3: st: Add of_node_put() before return in probe function
+
+ZHANG Yuntian <yt@radxa.com>
+    net: usb: qmi_wwan: add MeiG Smart SRM825L
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/um/drivers/line.c                             |   2 +
+ block/bio-integrity.c                              |  11 +-
+ drivers/acpi/acpi_processor.c                      |  15 +--
+ drivers/ata/libata-core.c                          |   4 +-
+ drivers/ata/pata_macio.c                           |   7 +-
+ drivers/base/devres.c                              |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   2 +-
+ drivers/clocksource/timer-imx-tpm.c                |  16 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_afmt.c           |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c       |   2 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c            |   3 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |   3 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_crat.h              |   2 -
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c          |   3 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.h          |   5 +-
+ drivers/gpu/drm/i915/i915_sw_fence.c               |   8 +-
+ drivers/hid/hid-cougar.c                           |   2 +-
+ drivers/hv/vmbus_drv.c                             |   1 +
+ drivers/hwmon/adc128d818.c                         |   4 +-
+ drivers/hwmon/lm95234.c                            |   9 +-
+ drivers/hwmon/nct6775.c                            |   2 +-
+ drivers/hwmon/w83627ehf.c                          |   4 +-
+ drivers/iio/buffer/industrialio-buffer-dmaengine.c |   4 +-
+ drivers/iio/inkern.c                               |   8 +-
+ drivers/input/misc/uinput.c                        |  14 +++
+ drivers/iommu/dmar.c                               |   2 +-
+ drivers/irqchip/irq-armada-370-xp.c                |   4 +
+ drivers/media/platform/qcom/camss/camss.c          |   5 +-
+ drivers/media/usb/uvc/uvc_driver.c                 |  18 ++-
+ drivers/misc/vmw_vmci/vmci_resource.c              |   3 +-
+ drivers/mmc/host/dw_mmc.c                          |   4 +-
+ drivers/net/dsa/vitesse-vsc73xx.c                  |  10 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          |  10 ++
+ .../ethernet/mellanox/mlxsw/spectrum_switchdev.c   |   9 +-
+ drivers/net/ethernet/rocker/rocker_main.c          |   1 +
+ drivers/net/usb/ch9200.c                           |   4 +-
+ drivers/net/usb/cx82310_eth.c                      |  56 +++++++--
+ drivers/net/usb/ipheth.c                           |   4 +-
+ drivers/net/usb/kaweth.c                           |   3 +-
+ drivers/net/usb/mcs7830.c                          |   4 +-
+ drivers/net/usb/qmi_wwan.c                         |   1 +
+ drivers/net/usb/sierra_net.c                       |   6 +-
+ drivers/net/usb/sr9700.c                           |   4 +-
+ drivers/net/usb/sr9800.c                           |   5 +-
+ drivers/net/usb/usbnet.c                           |  23 ++--
+ drivers/net/virtio_net.c                           |   8 +-
+ .../broadcom/brcm80211/brcmsmac/mac80211_if.c      |   1 +
+ drivers/net/wireless/marvell/mwifiex/main.h        |   3 +
+ drivers/nvmem/core.c                               |   6 +-
+ drivers/of/irq.c                                   |  15 ++-
+ drivers/pci/hotplug/pnv_php.c                      |   3 +-
+ drivers/pci/pci.c                                  |  35 +++---
+ drivers/pcmcia/yenta_socket.c                      |   6 +-
+ drivers/platform/x86/dell-smbios-base.c            |   5 +-
+ drivers/uio/uio_hv_generic.c                       |  11 +-
+ drivers/usb/dwc3/dwc3-st.c                         |  12 +-
+ drivers/usb/usbip/stub_rx.c                        |  77 ++++++++-----
+ fs/btrfs/extent-tree.c                             |  32 ++++--
+ fs/btrfs/inode.c                                   |   2 +-
+ fs/fuse/xattr.c                                    |   4 +-
+ fs/nilfs2/recovery.c                               |  35 +++++-
+ fs/nilfs2/segment.c                                |  10 +-
+ fs/nilfs2/sysfs.c                                  | 117 +++++++++++--------
+ fs/squashfs/inode.c                                |   7 +-
+ fs/udf/super.c                                     |  24 +++-
+ include/linux/ring_buffer.h                        |   3 +-
+ include/net/net_namespace.h                        |   5 +
+ include/net/switchdev.h                            |   3 +-
+ include/uapi/linux/neighbour.h                     |   1 +
+ kernel/cgroup/cgroup.c                             |   2 +-
+ kernel/events/uprobes.c                            |   3 +-
+ kernel/locking/rtmutex.c                           |   4 +-
+ kernel/smp.c                                       |   1 +
+ kernel/trace/ring_buffer.c                         |  23 +---
+ kernel/trace/trace.c                               |   6 +-
+ kernel/trace/trace_functions_graph.c               |   2 +-
+ net/bridge/br.c                                    |   4 +-
+ net/bridge/br_fdb.c                                | 128 ++++++++++++---------
+ net/bridge/br_input.c                              |   2 +-
+ net/bridge/br_private.h                            |  18 ++-
+ net/bridge/br_switchdev.c                          |  11 +-
+ net/can/bcm.c                                      |   4 +
+ net/core/net_namespace.c                           |  28 +++++
+ net/dsa/slave.c                                    |   1 +
+ net/ipv6/ila/ila.h                                 |   1 +
+ net/ipv6/ila/ila_main.c                            |   6 +
+ net/ipv6/ila/ila_xlat.c                            |  13 ++-
+ net/netfilter/nf_conncount.c                       |   8 +-
+ net/rfkill/core.c                                  |   4 +-
+ net/sched/sch_netem.c                              |   9 +-
+ net/sunrpc/xprtsock.c                              |   7 ++
+ net/unix/af_unix.c                                 |   9 +-
+ security/apparmor/apparmorfs.c                     |   4 +
+ security/smack/smack_lsm.c                         |  14 ++-
+ sound/hda/hdmi_chmap.c                             |  18 +++
+ sound/pci/hda/patch_conexant.c                     |  11 ++
+ sound/usb/helper.c                                 |  17 +++
+ sound/usb/helper.h                                 |   1 +
+ sound/usb/quirks.c                                 |  14 ++-
+ 100 files changed, 767 insertions(+), 344 deletions(-)
 
 
 
