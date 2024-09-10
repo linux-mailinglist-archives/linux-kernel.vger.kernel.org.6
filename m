@@ -1,322 +1,443 @@
-Return-Path: <linux-kernel+bounces-323768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56F897432F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B3D974322
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8C31B27C82
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FADE283C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF091A76BB;
-	Tue, 10 Sep 2024 19:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6D31AB51A;
+	Tue, 10 Sep 2024 19:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mLePeWy8";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ll24WDh3"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="KPIfs/x4"
+Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DBE194C77;
-	Tue, 10 Sep 2024 19:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995430; cv=fail; b=gOtvydKvuALRBdnTFkuqBYWGf60nAnPct3ZmEL0ggcUixH7WO8kYm1+Oe6CZ48MCsxkDv4kJ0VygPKrBA6fBs6v+qoqCjHRIrq1TkdpGuiou7T6vQ8aUPjZgJsXaAKsOQ7bLuRkm5yYWgG+XT3IaBC8zJ5oBBswif0CJf7TRKnI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995430; c=relaxed/simple;
-	bh=0zE6XJ5G2HgDbbO/6LEP2jT/Wnk+NLyP4kee7tyO03A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Npqla3iGb5j71vEeT+ijFDPl3/pCTKl/mkn+BWqHeodtb1CQRcQdUrjn4DD0+CzAcgT5qNJLySFeEeswPY9czv8nobfMKoCjnlkPMCi9rlfPKeSmozo7qVZrJuNTboHcDsaH11k3keGisDXbM6pTKZdETMoD3uhgxWOri87HCs4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mLePeWy8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ll24WDh3; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AHNY5H005825;
-	Tue, 10 Sep 2024 19:08:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=0zE6XJ5G2HgDbbO/6LEP2jT/Wnk+NLyP4kee7tyO03A=; b=
-	mLePeWy82gl86cVB0blfoFTXLpH7l1xGCkeRf4niBb7+bpL2f/qJvmr7RVtLAI7B
-	kMnNNNOjxv7dMkCu9ruzrLGOpWnb2gSv/sfrh5S8MdhGV1vVR+UshdKWCFNP11aw
-	Vgv7J7oGPFqmUqx3sbr/pHMT5zOfxiRvOqkNp3ZeiuJQxQpnH0cMtbRxgAhvyJXC
-	3mzYExdjrCl6S89dZpMKP2FtnvlCZpBBWbF5YDwn1GHP2V0AwzObslhXNdHvdVwd
-	MP00stCLvbU23mNGyjmHjT4yMFG2cBO1rkAkTQD7IUE/yzdweKe44b1SJzKabHdp
-	Xlkq5Hdu6NCHRqrwYZYIUA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gjbup7fb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 19:08:23 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48AHa6OE033545;
-	Tue, 10 Sep 2024 19:08:22 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2173.outbound.protection.outlook.com [104.47.59.173])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd991kb6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Sep 2024 19:08:22 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IVbc7uSxhmpWPgY7hh0IVhHXfUlifRjgGbR5ijVASPyfHscEms5IoQxWr96q8t5mNeBgtHDrz55KAvQ9Rzp8LdrsBBYgGIOTdb1gj5pG7nuoiCS9S9EPpv2Zaa7KATLqCMjf5iPs3bIa1CE5hFUvXeB7Nbcbb+4diybUcIU/7G3rSn5Co3Fj6Hxkvzo9cyDLkKA6pv56nFmlzKVubQbwvAmF2JQCdGiWsXn7GGxxB4z7Rf3VnNk4KOn/op4v+tExjDbJNtusxM6yto1+djinIc1Q7m7pNmnh0eTnrqjFsh9jLc325h4wmG0fZMDj0U5UQ8pF1046GzVhBRQwxN20bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0zE6XJ5G2HgDbbO/6LEP2jT/Wnk+NLyP4kee7tyO03A=;
- b=W+8LpRvB1a1dsWinU+ScUliK4cqfMFJDfwhsWnNlEaCc17Tmx753/23I9uRYRGaL4Nx2hJoJzL73fTCcMpC1+QksYYPzHnCk+rB2r4mCJMWo8QyB2NaHqPLRaBdbvHuF3UkWE73QXR6PA6yW+mMdQK49apMUmH/K60Y84HVq6LJkPvIdjdsmUKWgehrTavfNecEmM1htTKlHC8s6ktuer+xwFmmlu93JfK6z54tEGuvDcbANLDeuv+YXb85Jdtw0uD8LyG+6YhLGYWzSZbFbsRLUE8wE0Bw5f8wMXEcBt9C/yHkKaPRC10JFeXcqwxiIYgr3AWj9kpP/Gw8LJkbiPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0zE6XJ5G2HgDbbO/6LEP2jT/Wnk+NLyP4kee7tyO03A=;
- b=ll24WDh30IWFb+Q8udpja3FLfixaLjlhp/M1AT65Kg9raItAopjBrm+ICfNDnl1mx8ju4w4Xt/2qJfo9w1iCSVhDn1q/qcwvQImwZZBTxnlXwfHfX7/+rxzOutswxEdvLPDFYos9geu09K/SY4FfYCqlGS++/D5zkVTcJVCcEJ0=
-Received: from LV8PR10MB7943.namprd10.prod.outlook.com (2603:10b6:408:1f9::22)
- by CY8PR10MB6706.namprd10.prod.outlook.com (2603:10b6:930:92::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.14; Tue, 10 Sep
- 2024 19:08:18 +0000
-Received: from LV8PR10MB7943.namprd10.prod.outlook.com
- ([fe80::a8ec:6b6b:e1a:782d]) by LV8PR10MB7943.namprd10.prod.outlook.com
- ([fe80::a8ec:6b6b:e1a:782d%7]) with mapi id 15.20.7918.020; Tue, 10 Sep 2024
- 19:08:18 +0000
-Date: Tue, 10 Sep 2024 15:08:14 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
-        Charlie Jenkins <charlie@rivosinc.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, shuah <shuah@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Chris Torek <chris.torek@gmail.com>,
-        Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
- 47 bits
-Message-ID: <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
-	Michal Hocko <mhocko@suse.com>, "Kirill A. Shutemov" <kirill@shutemov.name>, 
-	Chris Torek <chris.torek@gmail.com>, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-abi-devel@lists.sourceforge.net
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
- <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
- <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
- <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
- <Ztrq8PBLJ3QuFJz7@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Ztrq8PBLJ3QuFJz7@arm.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4P288CA0046.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d3::28) To LV8PR10MB7943.namprd10.prod.outlook.com
- (2603:10b6:408:1f9::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0EE1A4F25;
+	Tue, 10 Sep 2024 19:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725995330; cv=none; b=lC72LqMlksXKm2M+qoIEEEhod8b1rMZkkLHD1ZRgDF7DfwExwJ5ixpkqyhlZLAG/teXfUGQjJadH/6AStr9E2qEvrRBjVX+6bB+A56kSZwz/VpZ1kLkKtPkmzuqMww9mWxyAu5pvqWiQ4F84eicdi6SkTATQSC7/oME4nBMywcY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725995330; c=relaxed/simple;
+	bh=7Hmd2kbo3zLGxn4npWQwl3s0Ur9rKKaVCCI4CYOGivA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MnbJiZdi2lixQzM4SWJYowxnGL4SK3ornm0qzuj+LwQV1fzwSvZ33KTL0LmMd52034qS+PaNWMQLaZT4rN4YW5I069i71BCXEiV0/DCGewTPrA9LtoL1UUaQNrfRi9l+P/zxlCylfGrI1j8n4Py7xP45mmOhpSTXxelJqm+zcJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=KPIfs/x4; arc=none smtp.client-ip=67.231.157.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
+	by m0050102.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 48AG6QjZ024882;
+	Tue, 10 Sep 2024 20:08:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=jan2016.eng; bh=QHT4wqSQaHpGweXBqNWo
+	QHlKyJ5uCpuoyW35R1hzUV0=; b=KPIfs/x4rrRcMqufoey1Bw67cp+/c/L3C3Bi
+	cggH0zFfiH7YIh5MWPKr7vHJqr0KGLtx71QiuoiZSmS3JZulr3hpv38iMDHce2n4
+	xvXmM4mu+FWq49J+YWNeYCG5/uYLMDlJNKUx4bpkQFCo9EG0Lcgs/MIeB4HtEOUc
+	54k+HQrFfQ/aOf0t8MWOyubo2pIefXZw8PHMDjUW8NvnSB2Qx3Vb6z7pJkaGFrra
+	+zGuw1souiXLl/45HF1tqcNv1DH2UwoXL3GSD+iGXrXORkcB720cx7WkjCK+BOD7
+	BbrG1XJ2LqQw8ywMbR3V0DKqoTob4snO6VtXCV50HoP/81ziXw==
+Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
+	by m0050102.ppops.net-00190b01. (PPS) with ESMTPS id 41gydcq3qb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 20:08:25 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
+	by prod-mail-ppoint5.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 48AHTePL006182;
+	Tue, 10 Sep 2024 12:08:24 -0700
+Received: from email.msg.corp.akamai.com ([172.27.91.23])
+	by prod-mail-ppoint5.akamai.com (PPS) with ESMTPS id 41gmtbs9vf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 12:08:24 -0700
+Received: from usma1ex-dag4mb5.msg.corp.akamai.com (172.27.91.24) by
+ usma1ex-dag4mb4.msg.corp.akamai.com (172.27.91.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 15:08:24 -0400
+Received: from bos-lhvx56.bos01.corp.akamai.com (172.28.41.223) by
+ usma1ex-dag4mb5.msg.corp.akamai.com (172.27.91.24) with Microsoft SMTP Server
+ id 15.2.1544.11 via Frontend Transport; Tue, 10 Sep 2024 15:08:24 -0400
+Received: by bos-lhvx56.bos01.corp.akamai.com (Postfix, from userid 30754)
+	id 3E45915F5D3; Tue, 10 Sep 2024 15:08:24 -0400 (EDT)
+From: Josh Hunt <johunt@akamai.com>
+To: <edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <ncardwell@google.com>
+CC: <linux-kernel@vger.kernel.org>, <johunt@akamai.com>
+Subject: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
+Date: Tue, 10 Sep 2024 15:08:22 -0400
+Message-ID: <20240910190822.2407606-1-johunt@akamai.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR10MB7943:EE_|CY8PR10MB6706:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5714aaf5-8cc6-44ba-0e75-08dcd1cbee1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzMyR2x5Z1NiSmI1aVJWRGhsUThDWkszZW10NW5tc080ejQ1eHQrUDQ5KzNH?=
- =?utf-8?B?bnA3bFkrSmJCMjFGRTliUmE0Q2sxaEh0QmR3dXBBYkdSczM3Mm0rYk1OT1ZG?=
- =?utf-8?B?YlIvWjNJeFlOakhidUpXL1d3cTQrUFNBVTZBSFVxY2hhZDEzNVhHRHpqaW00?=
- =?utf-8?B?eHJLN3hzNTdBa1RhOUYwV0EvSS9nWjBNNkhGZUp5NjZLdWVIQ0NHRkVEOEVu?=
- =?utf-8?B?OE1hQ1BSV3dHa1ZLNExCQUFFRGR6aGZ0TDFhQ25RWk5JS0VIWkFscUYvaWhv?=
- =?utf-8?B?WEEwYlBXTHl0a3ZYK2ljallxdnphTHdNYTZwZEpmTzRlQ2s0YlpSUnZzdytM?=
- =?utf-8?B?b1c2bGplSVFCSE05RnZaYzdUYlVCZnk5YnZSZHFVeFVob0pXUkRTcjBRMDBz?=
- =?utf-8?B?Y1Iydk5EMUg4QWMrNTF1RU55UGVHT1MxcUpQTExGOUptYk9EaGdjZzZGTzlU?=
- =?utf-8?B?R0NDbzdNRWFpMjBXZmU1bW1oZHg0YVdQeDNKTEdhaEp2N0IrTzZyalczWDUy?=
- =?utf-8?B?RkpBbkxHZ3BPckFnS0lrdFhhcmdyUEJXTXhzNGNaVHRhckovalZjcGd5MEho?=
- =?utf-8?B?NnRBV2xyVFlNbUVreW1JenpEanRCeVY5b2hQSGNCS2F1cHpXTVNDQXg0dy93?=
- =?utf-8?B?cUsvZENLS2poVmdaZTJzYWNUdXVlaG0yNWMrR3JrZVAyZnRPdFhxT1BscGtG?=
- =?utf-8?B?Z2M1VEZHWXVLcXREb3pjMFovVSs2LzJUc1lmemlEVVF3WXNXdEpCNzZRdkJo?=
- =?utf-8?B?QlVVSVNzYkFJYnN5SFVsWlN5LzZQVmFJRktBSU9ROWtOSzBaNkVwVC9vZU9z?=
- =?utf-8?B?SlVTQ0NGcEJUdHlWWGltM0o5cmxrcGFkc3V5ZHR3K3VHUmJCc09mSE5oa1RK?=
- =?utf-8?B?RjFhOXdZUmZlbmJJZ3NkWHdISzFPbUh0ODlsdGFvK0V3dTUzSnE3VzlpMy9w?=
- =?utf-8?B?TVorY2JTcEtpTHRhdjV1dGl2QWhxN2RYcjk2Tzcvd3N4MVhadi9lT0ZkQXlD?=
- =?utf-8?B?ZER6bzNldS9Rdjg1dXlzMHdIM0FSK1dQaGZmSEx0RXFuWHNDeFlzME5lV3Ri?=
- =?utf-8?B?WnRpYWpxeldoWWhzSERxOEd3d1FsYUVkUmpRbnlRSmU0RzN4bEdweVBSOFBW?=
- =?utf-8?B?blhncEpERmFWQ0JEMkVhVytyQXlmRXdzQVpLU1JJWnFSckQyMTVEazJZZGRl?=
- =?utf-8?B?eGdGa2NSblVzMEdZUThLY01lSmQyNzlpeTdpeHZtbHdaQkVTN3ZNZzNyTnBp?=
- =?utf-8?B?anRQQTd3bUhvVTJTUnlybFF4WFB3ZUY1R2ZNNHhzQ2NnZXJpakZhWkszcFdF?=
- =?utf-8?B?SW0ydWwzNDJnbkNvR2JDUUR5UHgrK0VKeVJMSFpySnBiRlk4REZxbDlNWVdm?=
- =?utf-8?B?alZJcjdEKzZCR3JvT2xZSFdqbUNsczVkSlUyM25GelNVbit0UElGN1UxNE9o?=
- =?utf-8?B?b2JuemNqYzZJcVBIbVNObEhaWUJ2Rk5lRUthUW5zdnlGVDVMTXUvNmxxOWtM?=
- =?utf-8?B?eGZVU015ZFpCMTZLdFoxdzBTenZQK2VReVAxVkRRNVU2R2dTVEFiaHFKYUQ2?=
- =?utf-8?B?Zm1Ub0lkdUZZcjJoL2lPWklCRHNGZmNOcWpDZk1BUXhkNlladmR5dFozUnVQ?=
- =?utf-8?B?YVk1MHNhT21IRTdtbnhCOHErTUQ3QThqUXRGbmViemNoVm5PUVBzTnNadTA1?=
- =?utf-8?B?dW1BUFRGNDF1ZnE4Rk9DSEtYRVU5QkE5WHprYS90T1A4Q3ZYSlZxeGV6TDFu?=
- =?utf-8?B?WlVTS3Y1alovU09PQ3hqMEtTdUpjaHovVk9HTEtKWWR5U2dIVHFvL3VQRTgw?=
- =?utf-8?B?R0dpQVp5LzRhVG5ZOWlIZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR10MB7943.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M28wUFU4TU5ndzlxS0ttUFVzTjU0QXU3N3ZEMzN4YWc3WHZkVWorR3ZoYitK?=
- =?utf-8?B?a1Y3dUYrVzZVYlpKL0h3ak9udVN1SUh6NmhyYkYvWEJ2QlNOZUlKcE9VZmFH?=
- =?utf-8?B?MnhRL0FVUDVWS096S3BZSmZRc1lCSUpoOFVkd0txcTVBTVBweEFUQlpMRkcx?=
- =?utf-8?B?Rkd6TDJUeUI4S1ZVS251RUQxWWFkNkI2d1FiSnVLelhrTzdBYXZDbEc4UkF0?=
- =?utf-8?B?eUdCRlhwdTFSQVYwS055MVBzcWZWQjByNDZrS2FKdlkramN5ZjlCUHQrOUhX?=
- =?utf-8?B?eVR6Q3Z5NllLRm8yNjBDUlEyMFNlQ3dDYmZzOVFzMU9NbnF2K2xGN09MUmQr?=
- =?utf-8?B?aUlya1BtRVNlQ1lkalFzTmpRTXg5aWRMMmZlMTlWT3RpcENuaTFZMWt3aDl3?=
- =?utf-8?B?L1FSYkVQbjZHeTB6eEh0YlFFQ2NkVTJkeUFhYU1zaVhOeFUrbzhnVXExNmtQ?=
- =?utf-8?B?Rm4vcG9TcWZ1VUt5MnJ4alg4VUZQaTZlTForWlppZjdqNVlnMUNjYXJlWEx5?=
- =?utf-8?B?OEFmaWZkRUFIajV1UlZxbjB0aE5IUkVQY2JwbWgyQlJ4d0ZzQkJ5STFJbFBZ?=
- =?utf-8?B?bXRuQmlTS3ZJNjczU2IxQnFxU0J2UlJGOUt0ZVFQNDRPS3preHJsWjZHOEtD?=
- =?utf-8?B?RnRHK1dXT21RWlY4dGlKeXUzR1YyZ2pYOWRHNXJzOWUwSU9EYkxMdWUvNml4?=
- =?utf-8?B?RHlJL1FsdE0xa09aMXYxTzBwb0t0SWZ1TDdBMmZaamsyUENRSExDeDJzeDN0?=
- =?utf-8?B?ZUkySGo4R0E2QUkzOG82U2t4M0ZaRGJzUTBidXZGQ21wc01hMm84NUd4MjNS?=
- =?utf-8?B?OFpBaUhPTE5xVVhmcFBLbUloejJYTkxKK2FIdU9DUXBSV3J4R1NHSkFtaGcx?=
- =?utf-8?B?MmVRZXUzcVBhb3VPS0daVThRcmx6MDBCbjdKS3NMU0poMWIxSFBJOHhMc3JI?=
- =?utf-8?B?K2RpRm9tU3M4UDNoekpNcjFMWEJ5MnhZSG5iSWRlRENQNGJhMnNsdFA1b2c3?=
- =?utf-8?B?L3pJbHRLQ1M2d1VzKzNodUJ4UmFBSWhoVk9YZXBxT0cvMnpHRUEzVENQbzhQ?=
- =?utf-8?B?WlpxdWNFU1ZMZnNqM3pjVWsyU3IzZTNhNUROc3ZCcWtkUE84ZmhMWC9ZYjhO?=
- =?utf-8?B?cGppdHlTcHUwc1pwUnpQaVBzZ3IzaGp5N0NmRkJ5Z2tzQjVzbmx6dXVIKzd3?=
- =?utf-8?B?T3U0NCtFbVhMUTd4dDEzbzVhMmE3STJodGFORCs0cGFzeFB3NVQxUW1qazgr?=
- =?utf-8?B?ak9rdkNMNWZ4RFpDaE1VQ0wvUG50Yi9GNDU1cDRZczgyVnl6QndTRFpLUXph?=
- =?utf-8?B?TFUwSGRFR1lrTDJPcmtHaHFYTHJ3SXEvSUNmUzREa0l6Y0RnZVI0N3pjVllN?=
- =?utf-8?B?R1pPSFAwRkZEa3VJS1kxbTdXVzJ6b1FNS1gyVUFVMzgrZE1Qd3JmQXE1cEYz?=
- =?utf-8?B?S1ZYSHk3aWpuU3FFZkFNK3R3aWpzNExrQ3ZpYzhNcmhaSlFSY2VMWFZOaFNz?=
- =?utf-8?B?Z3plaFhXaWx3T0JpMDJib1dsdzNpaklpZmIwS25YRysvVE00Wlhxa1pUVzRJ?=
- =?utf-8?B?WGJhZ1ZiSkYvRXN5ZWp0WXZ6MU51eXNRZmVMRmFpQmlpd2pFeUFTY0ZyUGQ0?=
- =?utf-8?B?d2xEQXR6V0FlVXJETTc5T1FLZzN0WWdZK1Byc0tmemw0TUxaYllZOS9OZlIr?=
- =?utf-8?B?NEVnUXMxSWJ4bXJIYW8xcy9naFFDaUJnOXU2YnViUHA0UGMwOTV1aUN6K3pH?=
- =?utf-8?B?U09XM1BwOFNKbVN6SmN0T0plck1NWi9jajdLRStzNytxaXlvWGRFOGk2MVYr?=
- =?utf-8?B?Ny8xZElnRndTbWwrVGgxMkZlVVhxYkZ3UWlldWcyNGJ5aENPZnpMNmhkeFBt?=
- =?utf-8?B?cjQvczZqc0FCei9nNjU2amVkUmQvOGxVNi80VEUvWk40VWhSWmdOa1FZTkFD?=
- =?utf-8?B?aU5uSnRrNFd1ZkVSSmlTKzRXZWkzSDVKcWRMYmdMUXpJZDd1aUd2UHZrRlMw?=
- =?utf-8?B?UmFMYjVvQzJQS2phbnFlMGd0QlF6RmJTZHJuc1FOU0wzRURNZTZ3UmtSaWlH?=
- =?utf-8?B?S0hOaGlpU3dBVjBwM251RlRqYVBiQmsxVnFlRjhMZW1Pb3VKQ3ZCNm9zOXE5?=
- =?utf-8?Q?0oEKy1t8y7Fd+TlTDFn+YrqpM?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	oxwMGhdRZVKdybHTaNCBD8LRDhy/rI0aYNVJF9PRSldPWnU5rwA7kZMx+WAz/8humzhM5JvfFyKc4JPCs4BRMCJe1yfUsQYQbI6vv5AGhXfpXDD1RttRNzPKSGssVID1Cx/rR+T/al3Qt5XVBVnmCgfmcDnz9I/6cPAngC5bp5O22EL8aqenv7G9+nCH3qBNIYgOxI1VtWRLhe8WEfxrEJOX3sF2lNzOaGyqhfojdoUB/qrAqp9yv8HM2yVu/e/NJPlMiYdB2Leumk/V7i+XJFvgWxXgS3O8C8TssMoQclTMZwS1Yn8DiCntQdaC7ABzmTkBnuWV97i/x052t4U8jfznxuuOg5QZFcwYGw0+3vSIZRJ7hCPYNObkFeszfGHJ23vDw7JEyIdSbX1LYLnNMOwA2fbuyUp5wa4lb5JY1/aPkYIdr0O8QvfH68QVLC8HhH4Hv7fFjfqH6IXysPrMdY04lwzUJ4Pb/mdtV8gzES7qtyZGepDra7gDynpLsDk5JPMQ47kixZ34IZ22DWaUEK8+5lyr2XjaQ6arSwc+dUDEJ14meNZ5L12xC8iisz8HMkBneZTQpp3LX80zMN5eXxAOiB2jBvz5oMJ0V1NbiPY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5714aaf5-8cc6-44ba-0e75-08dcd1cbee1b
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR10MB7943.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 19:08:18.5124
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5flw2MUoYRqDWRlg8rzfX4pv5JCRY/drXo7k+IM0bEbGSgkplXGPaim57i+6JqJiDxvUYFuxeYUHwo1zRkKOcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6706
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-10_06,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 phishscore=0
- spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=897
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409100142
-X-Proofpoint-GUID: hyb9fM_VkBAwT7pgXbXBzXO-kOv_X7to
-X-Proofpoint-ORIG-GUID: hyb9fM_VkBAwT7pgXbXBzXO-kOv_X7to
+ definitions=main-2409100141
+X-Proofpoint-ORIG-GUID: RezMjjin9VcHYxDnTPpB0ZAsFlkFAwR8
+X-Proofpoint-GUID: RezMjjin9VcHYxDnTPpB0ZAsFlkFAwR8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100141
 
-* Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
-> On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
-> > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
-> > > On Fri, Sep 6, 2024 at 3:18=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
-> > >> It's also unclear to me how we want this flag to interact with
-> > >> the existing logic in arch_get_mmap_end(), which attempts to
-> > >> limit the default mapping to a 47-bit address space already.
-> > >
-> > > To optimize RISC-V progress, I recommend:
-> > >
-> > > Step 1: Approve the patch.
-> > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
-> > > Step 3: Wait approximately several iterations for Go & OpenJDK
-> > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
-> >=20
-> > I really want to first see a plausible explanation about why
-> > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
-> > like all the other major architectures (x86, arm64, powerpc64),
->=20
-> FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
-> configuration. We end up with a 47-bit with 16K pages but for a
-> different reason that has to do with LPA2 support (I doubt we need this
-> for the user mapping but we need to untangle some of the macros there;
-> that's for a separate discussion).
->=20
-> That said, we haven't encountered any user space problems with a 48-bit
-> DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
-> approach (47 or 48 bit default limit). Better to have some ABI
-> consistency between architectures. One can still ask for addresses above
-> this default limit via mmap().
+We have some machines running stock Ubuntu 20.04.6 which is their 5.4.0-174-generic
+kernel that are running ceph and recently hit a null ptr dereference in
+tcp_rearm_rto(). Initially hitting it from the TLP path, but then later we also
+saw it getting hit from the RACK case as well. Here are examples of the oops
+messages we saw in each of those cases:
 
-I think that is best as well.
+Jul 26 15:05:02 rx [11061395.780353] BUG: kernel NULL pointer dereference, address: 0000000000000020
+Jul 26 15:05:02 rx [11061395.787572] #PF: supervisor read access in kernel mode
+Jul 26 15:05:02 rx [11061395.792971] #PF: error_code(0x0000) - not-present page
+Jul 26 15:05:02 rx [11061395.798362] PGD 0 P4D 0
+Jul 26 15:05:02 rx [11061395.801164] Oops: 0000 [#1] SMP NOPTI
+Jul 26 15:05:02 rx [11061395.805091] CPU: 0 PID: 9180 Comm: msgr-worker-1 Tainted: G W 5.4.0-174-generic #193-Ubuntu
+Jul 26 15:05:02 rx [11061395.814996] Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
+Jul 26 15:05:02 rx [11061395.825952] RIP: 0010:tcp_rearm_rto+0xe4/0x160
+Jul 26 15:05:02 rx [11061395.830656] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
+Jul 26 15:05:02 rx [11061395.849665] RSP: 0018:ffffb75d40003e08 EFLAGS: 00010246
+Jul 26 15:05:02 rx [11061395.855149] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
+Jul 26 15:05:02 rx [11061395.862542] RDX: 0000000062177c30 RSI: 000000000000231c RDI: ffff9874ad283a60
+Jul 26 15:05:02 rx [11061395.869933] RBP: ffffb75d40003e20 R08: 0000000000000000 R09: ffff987605e20aa8
+Jul 26 15:05:02 rx [11061395.877318] R10: ffffb75d40003f00 R11: ffffb75d4460f740 R12: ffff9874ad283900
+Jul 26 15:05:02 rx [11061395.884710] R13: ffff9874ad283a60 R14: ffff9874ad283980 R15: ffff9874ad283d30
+Jul 26 15:05:02 rx [11061395.892095] FS: 00007f1ef4a2e700(0000) GS:ffff987605e00000(0000) knlGS:0000000000000000
+Jul 26 15:05:02 rx [11061395.900438] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Jul 26 15:05:02 rx [11061395.906435] CR2: 0000000000000020 CR3: 0000003e450ba003 CR4: 0000000000760ef0
+Jul 26 15:05:02 rx [11061395.913822] PKRU: 55555554
+Jul 26 15:05:02 rx [11061395.916786] Call Trace:
+Jul 26 15:05:02 rx [11061395.919488]
+Jul 26 15:05:02 rx [11061395.921765] ? show_regs.cold+0x1a/0x1f
+Jul 26 15:05:02 rx [11061395.925859] ? __die+0x90/0xd9
+Jul 26 15:05:02 rx [11061395.929169] ? no_context+0x196/0x380
+Jul 26 15:05:02 rx [11061395.933088] ? ip6_protocol_deliver_rcu+0x4e0/0x4e0
+Jul 26 15:05:02 rx [11061395.938216] ? ip6_sublist_rcv_finish+0x3d/0x50
+Jul 26 15:05:02 rx [11061395.943000] ? __bad_area_nosemaphore+0x50/0x1a0
+Jul 26 15:05:02 rx [11061395.947873] ? bad_area_nosemaphore+0x16/0x20
+Jul 26 15:05:02 rx [11061395.952486] ? do_user_addr_fault+0x267/0x450
+Jul 26 15:05:02 rx [11061395.957104] ? ipv6_list_rcv+0x112/0x140
+Jul 26 15:05:02 rx [11061395.961279] ? __do_page_fault+0x58/0x90
+Jul 26 15:05:02 rx [11061395.965458] ? do_page_fault+0x2c/0xe0
+Jul 26 15:05:02 rx [11061395.969465] ? page_fault+0x34/0x40
+Jul 26 15:05:02 rx [11061395.973217] ? tcp_rearm_rto+0xe4/0x160
+Jul 26 15:05:02 rx [11061395.977313] ? tcp_rearm_rto+0xe4/0x160
+Jul 26 15:05:02 rx [11061395.981408] tcp_send_loss_probe+0x10b/0x220
+Jul 26 15:05:02 rx [11061395.985937] tcp_write_timer_handler+0x1b4/0x240
+Jul 26 15:05:02 rx [11061395.990809] tcp_write_timer+0x9e/0xe0
+Jul 26 15:05:02 rx [11061395.994814] ? tcp_write_timer_handler+0x240/0x240
+Jul 26 15:05:02 rx [11061395.999866] call_timer_fn+0x32/0x130
+Jul 26 15:05:02 rx [11061396.003782] __run_timers.part.0+0x180/0x280
+Jul 26 15:05:02 rx [11061396.008309] ? recalibrate_cpu_khz+0x10/0x10
+Jul 26 15:05:02 rx [11061396.012841] ? native_x2apic_icr_write+0x30/0x30
+Jul 26 15:05:02 rx [11061396.017718] ? lapic_next_event+0x21/0x30
+Jul 26 15:05:02 rx [11061396.021984] ? clockevents_program_event+0x8f/0xe0
+Jul 26 15:05:02 rx [11061396.027035] run_timer_softirq+0x2a/0x50
+Jul 26 15:05:02 rx [11061396.031212] __do_softirq+0xd1/0x2c1
+Jul 26 15:05:02 rx [11061396.035044] do_softirq_own_stack+0x2a/0x40
+Jul 26 15:05:02 rx [11061396.039480]
+Jul 26 15:05:02 rx [11061396.041840] do_softirq.part.0+0x46/0x50
+Jul 26 15:05:02 rx [11061396.046022] __local_bh_enable_ip+0x50/0x60
+Jul 26 15:05:02 rx [11061396.050460] _raw_spin_unlock_bh+0x1e/0x20
+Jul 26 15:05:02 rx [11061396.054817] nf_conntrack_tcp_packet+0x29e/0xbe0 [nf_conntrack]
+Jul 26 15:05:02 rx [11061396.060994] ? get_l4proto+0xe7/0x190 [nf_conntrack]
+Jul 26 15:05:02 rx [11061396.066220] nf_conntrack_in+0xe9/0x670 [nf_conntrack]
+Jul 26 15:05:02 rx [11061396.071618] ipv6_conntrack_local+0x14/0x20 [nf_conntrack]
+Jul 26 15:05:02 rx [11061396.077356] nf_hook_slow+0x45/0xb0
+Jul 26 15:05:02 rx [11061396.081098] ip6_xmit+0x3f0/0x5d0
+Jul 26 15:05:02 rx [11061396.084670] ? ipv6_anycast_cleanup+0x50/0x50
+Jul 26 15:05:02 rx [11061396.089282] ? __sk_dst_check+0x38/0x70
+Jul 26 15:05:02 rx [11061396.093381] ? inet6_csk_route_socket+0x13b/0x200
+Jul 26 15:05:02 rx [11061396.098346] inet6_csk_xmit+0xa7/0xf0
+Jul 26 15:05:02 rx [11061396.102263] __tcp_transmit_skb+0x550/0xb30
+Jul 26 15:05:02 rx [11061396.106701] tcp_write_xmit+0x3c6/0xc20
+Jul 26 15:05:02 rx [11061396.110792] ? __alloc_skb+0x98/0x1d0
+Jul 26 15:05:02 rx [11061396.114708] __tcp_push_pending_frames+0x37/0x100
+Jul 26 15:05:02 rx [11061396.119667] tcp_push+0xfd/0x100
+Jul 26 15:05:02 rx [11061396.123150] tcp_sendmsg_locked+0xc70/0xdd0
+Jul 26 15:05:02 rx [11061396.127588] tcp_sendmsg+0x2d/0x50
+Jul 26 15:05:02 rx [11061396.131245] inet6_sendmsg+0x43/0x70
+Jul 26 15:05:02 rx [11061396.135075] __sock_sendmsg+0x48/0x70
+Jul 26 15:05:02 rx [11061396.138994] ____sys_sendmsg+0x212/0x280
+Jul 26 15:05:02 rx [11061396.143172] ___sys_sendmsg+0x88/0xd0
+Jul 26 15:05:02 rx [11061396.147098] ? __seccomp_filter+0x7e/0x6b0
+Jul 26 15:05:02 rx [11061396.151446] ? __switch_to+0x39c/0x460
+Jul 26 15:05:02 rx [11061396.155453] ? __switch_to_asm+0x42/0x80
+Jul 26 15:05:02 rx [11061396.159636] ? __switch_to_asm+0x5a/0x80
+Jul 26 15:05:02 rx [11061396.163816] __sys_sendmsg+0x5c/0xa0
+Jul 26 15:05:02 rx [11061396.167647] __x64_sys_sendmsg+0x1f/0x30
+Jul 26 15:05:02 rx [11061396.171832] do_syscall_64+0x57/0x190
+Jul 26 15:05:02 rx [11061396.175748] entry_SYSCALL_64_after_hwframe+0x5c/0xc1
+Jul 26 15:05:02 rx [11061396.181055] RIP: 0033:0x7f1ef692618d
+Jul 26 15:05:02 rx [11061396.184893] Code: 28 89 54 24 1c 48 89 74 24 10 89 7c 24 08 e8 ca ee ff ff 8b 54 24 1c 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 2f 44 89 c7 48 89 44 24 08 e8 fe ee ff ff 48
+Jul 26 15:05:02 rx [11061396.203889] RSP: 002b:00007f1ef4a26aa0 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
+Jul 26 15:05:02 rx [11061396.211708] RAX: ffffffffffffffda RBX: 000000000000084b RCX: 00007f1ef692618d
+Jul 26 15:05:02 rx [11061396.219091] RDX: 0000000000004000 RSI: 00007f1ef4a26b10 RDI: 0000000000000275
+Jul 26 15:05:02 rx [11061396.226475] RBP: 0000000000004000 R08: 0000000000000000 R09: 0000000000000020
+Jul 26 15:05:02 rx [11061396.233859] R10: 0000000000000000 R11: 0000000000000293 R12: 000000000000084b
+Jul 26 15:05:02 rx [11061396.241243] R13: 00007f1ef4a26b10 R14: 0000000000000275 R15: 000055592030f1e8
+Jul 26 15:05:02 rx [11061396.248628] Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif input_leds joydev rndis_host cdc_ether usbnet mii ast drm_vram_helper ttm drm_kms_helper i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt ccp mac_hid ipmi_si ipmi_devintf ipmi_msghandler nft_ct sch_fq_codel nf_tables_set nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ramoops reed_solomon efi_pstore drm ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid0 multipath linear mlx5_ib ib_uverbs ib_core raid1 mlx5_core hid_generic pci_hyperv_intf crc32_pclmul tls usbhid ahci mlxfw bnxt_en libahci hid nvme i2c_piix4 nvme_core wmi
+Jul 26 15:05:02 rx [11061396.324334] CR2: 0000000000000020
+Jul 26 15:05:02 rx [11061396.327944] ---[ end trace 68a2b679d1cfb4f1 ]---
+Jul 26 15:05:02 rx [11061396.433435] RIP: 0010:tcp_rearm_rto+0xe4/0x160
+Jul 26 15:05:02 rx [11061396.438137] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
+Jul 26 15:05:02 rx [11061396.457144] RSP: 0018:ffffb75d40003e08 EFLAGS: 00010246
+Jul 26 15:05:02 rx [11061396.462629] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
+Jul 26 15:05:02 rx [11061396.470012] RDX: 0000000062177c30 RSI: 000000000000231c RDI: ffff9874ad283a60
+Jul 26 15:05:02 rx [11061396.477396] RBP: ffffb75d40003e20 R08: 0000000000000000 R09: ffff987605e20aa8
+Jul 26 15:05:02 rx [11061396.484779] R10: ffffb75d40003f00 R11: ffffb75d4460f740 R12: ffff9874ad283900
+Jul 26 15:05:02 rx [11061396.492164] R13: ffff9874ad283a60 R14: ffff9874ad283980 R15: ffff9874ad283d30
+Jul 26 15:05:02 rx [11061396.499547] FS: 00007f1ef4a2e700(0000) GS:ffff987605e00000(0000) knlGS:0000000000000000
+Jul 26 15:05:02 rx [11061396.507886] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Jul 26 15:05:02 rx [11061396.513884] CR2: 0000000000000020 CR3: 0000003e450ba003 CR4: 0000000000760ef0
+Jul 26 15:05:02 rx [11061396.521267] PKRU: 55555554
+Jul 26 15:05:02 rx [11061396.524230] Kernel panic - not syncing: Fatal exception in interrupt
+Jul 26 15:05:02 rx [11061396.530885] Kernel Offset: 0x1b200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+Jul 26 15:05:03 rx [11061396.660181] ---[ end Kernel panic - not syncing: Fatal
+ exception in interrupt ]---
 
-Can we please just do what x86 and arm64 does?
+After we hit this we disabled TLP by setting tcp_early_retrans to 0 and then hit the crash in the RACK case:
 
-Thanks,
-Liam
+Aug 7 07:26:16 rx [1006006.265582] BUG: kernel NULL pointer dereference, address: 0000000000000020
+Aug 7 07:26:16 rx [1006006.272719] #PF: supervisor read access in kernel mode
+Aug 7 07:26:16 rx [1006006.278030] #PF: error_code(0x0000) - not-present page
+Aug 7 07:26:16 rx [1006006.283343] PGD 0 P4D 0
+Aug 7 07:26:16 rx [1006006.286057] Oops: 0000 [#1] SMP NOPTI
+Aug 7 07:26:16 rx [1006006.289896] CPU: 5 PID: 0 Comm: swapper/5 Tainted: G W 5.4.0-174-generic #193-Ubuntu
+Aug 7 07:26:16 rx [1006006.299107] Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
+Aug 7 07:26:16 rx [1006006.309970] RIP: 0010:tcp_rearm_rto+0xe4/0x160
+Aug 7 07:26:16 rx [1006006.314584] Code: 87 ca 04 00 00 00 5b 41 5c 41 5d 5d c3 c3 49 8b bc 24 40 06 00 00 eb 8d 48 bb cf f7 53 e3 a5 9b c4 20 4c 89 ef e8 0c fe 0e 00 <48> 8b 78 20 48 c1 ef 03 48 89 f8 41 8b bc 24 80 04 00 00 48 f7 e3
+Aug 7 07:26:16 rx [1006006.333499] RSP: 0018:ffffb42600a50960 EFLAGS: 00010246
+Aug 7 07:26:16 rx [1006006.338895] RAX: 0000000000000000 RBX: 20c49ba5e353f7cf RCX: 0000000000000000
+Aug 7 07:26:16 rx [1006006.346193] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff92d687ed8160
+Aug 7 07:26:16 rx [1006006.353489] RBP: ffffb42600a50978 R08: 0000000000000000 R09: 00000000cd896dcc
+Aug 7 07:26:16 rx [1006006.360786] R10: ffff92dc3404f400 R11: 0000000000000001 R12: ffff92d687ed8000
+Aug 7 07:26:16 rx [1006006.368084] R13: ffff92d687ed8160 R14: 00000000cd896dcc R15: 00000000cd8fca81
+Aug 7 07:26:16 rx [1006006.375381] FS: 0000000000000000(0000) GS:ffff93158ad40000(0000) knlGS:0000000000000000
+Aug 7 07:26:16 rx [1006006.383632] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Aug 7 07:26:16 rx [1006006.389544] CR2: 0000000000000020 CR3: 0000003e775ce006 CR4: 0000000000760ee0
+Aug 7 07:26:16 rx [1006006.396839] PKRU: 55555554
+Aug 7 07:26:16 rx [1006006.399717] Call Trace:
+Aug 7 07:26:16 rx [1006006.402335]
+Aug 7 07:26:16 rx [1006006.404525] ? show_regs.cold+0x1a/0x1f
+Aug 7 07:26:16 rx [1006006.408532] ? __die+0x90/0xd9
+Aug 7 07:26:16 rx [1006006.411760] ? no_context+0x196/0x380
+Aug 7 07:26:16 rx [1006006.415599] ? __bad_area_nosemaphore+0x50/0x1a0
+Aug 7 07:26:16 rx [1006006.420392] ? _raw_spin_lock+0x1e/0x30
+Aug 7 07:26:16 rx [1006006.424401] ? bad_area_nosemaphore+0x16/0x20
+Aug 7 07:26:16 rx [1006006.428927] ? do_user_addr_fault+0x267/0x450
+Aug 7 07:26:16 rx [1006006.433450] ? __do_page_fault+0x58/0x90
+Aug 7 07:26:16 rx [1006006.437542] ? do_page_fault+0x2c/0xe0
+Aug 7 07:26:16 rx [1006006.441470] ? page_fault+0x34/0x40
+Aug 7 07:26:16 rx [1006006.445134] ? tcp_rearm_rto+0xe4/0x160
+Aug 7 07:26:16 rx [1006006.449145] tcp_ack+0xa32/0xb30
+Aug 7 07:26:16 rx [1006006.452542] tcp_rcv_established+0x13c/0x670
+Aug 7 07:26:16 rx [1006006.456981] ? sk_filter_trim_cap+0x48/0x220
+Aug 7 07:26:16 rx [1006006.461419] tcp_v6_do_rcv+0xdb/0x450
+Aug 7 07:26:16 rx [1006006.465257] tcp_v6_rcv+0xc2b/0xd10
+Aug 7 07:26:16 rx [1006006.468918] ip6_protocol_deliver_rcu+0xd3/0x4e0
+Aug 7 07:26:16 rx [1006006.473706] ip6_input_finish+0x15/0x20
+Aug 7 07:26:16 rx [1006006.477710] ip6_input+0xa2/0xb0
+Aug 7 07:26:16 rx [1006006.481109] ? ip6_protocol_deliver_rcu+0x4e0/0x4e0
+Aug 7 07:26:16 rx [1006006.486151] ip6_sublist_rcv_finish+0x3d/0x50
+Aug 7 07:26:16 rx [1006006.490679] ip6_sublist_rcv+0x1aa/0x250
+Aug 7 07:26:16 rx [1006006.494779] ? ip6_rcv_finish_core.isra.0+0xa0/0xa0
+Aug 7 07:26:16 rx [1006006.499828] ipv6_list_rcv+0x112/0x140
+Aug 7 07:26:16 rx [1006006.503748] __netif_receive_skb_list_core+0x1a4/0x250
+Aug 7 07:26:16 rx [1006006.509057] netif_receive_skb_list_internal+0x1a1/0x2b0
+Aug 7 07:26:16 rx [1006006.514538] gro_normal_list.part.0+0x1e/0x40
+Aug 7 07:26:16 rx [1006006.519068] napi_complete_done+0x91/0x130
+Aug 7 07:26:16 rx [1006006.523352] mlx5e_napi_poll+0x18e/0x610 [mlx5_core]
+Aug 7 07:26:16 rx [1006006.528481] net_rx_action+0x142/0x390
+Aug 7 07:26:16 rx [1006006.532398] __do_softirq+0xd1/0x2c1
+Aug 7 07:26:16 rx [1006006.536142] irq_exit+0xae/0xb0
+Aug 7 07:26:16 rx [1006006.539452] do_IRQ+0x5a/0xf0
+Aug 7 07:26:16 rx [1006006.542590] common_interrupt+0xf/0xf
+Aug 7 07:26:16 rx [1006006.546421]
+Aug 7 07:26:16 rx [1006006.548695] RIP: 0010:native_safe_halt+0xe/0x10
+Aug 7 07:26:16 rx [1006006.553399] Code: 7b ff ff ff eb bd 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d 36 2c 50 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 26 2c 50 00 fb f4 90 0f 1f 44 00 00 55 48 89 e5 41 55 41 54 53 e8 dd 5e 61 ff 65
+Aug 7 07:26:16 rx [1006006.572309] RSP: 0018:ffffb42600177e70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffffc2
+Aug 7 07:26:16 rx [1006006.580040] RAX: ffffffff8ed08b20 RBX: 0000000000000005 RCX: 0000000000000001
+Aug 7 07:26:16 rx [1006006.587337] RDX: 00000000f48eeca2 RSI: 0000000000000082 RDI: 0000000000000082
+Aug 7 07:26:16 rx [1006006.594635] RBP: ffffb42600177e90 R08: 0000000000000000 R09: 000000000000020f
+Aug 7 07:26:16 rx [1006006.601931] R10: 0000000000100000 R11: 0000000000000000 R12: 0000000000000005
+Aug 7 07:26:16 rx [1006006.609229] R13: ffff93157deb5f00 R14: 0000000000000000 R15: 0000000000000000
+Aug 7 07:26:16 rx [1006006.616530] ? __cpuidle_text_start+0x8/0x8
+Aug 7 07:26:16 rx [1006006.620886] ? default_idle+0x20/0x140
+Aug 7 07:26:16 rx [1006006.624804] arch_cpu_idle+0x15/0x20
+Aug 7 07:26:16 rx [1006006.628545] default_idle_call+0x23/0x30
+Aug 7 07:26:16 rx [1006006.632640] do_idle+0x1fb/0x270
+Aug 7 07:26:16 rx [1006006.636035] cpu_startup_entry+0x20/0x30
+Aug 7 07:26:16 rx [1006006.640126] start_secondary+0x178/0x1d0
+Aug 7 07:26:16 rx [1006006.644218] secondary_startup_64+0xa4/0xb0
+Aug 7 07:26:17 rx [1006006.648568] Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 nft_ct amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif input_leds joydev rndis_host cdc_ether usbnet ast mii drm_vram_helper ttm drm_kms_helper i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt ccp mac_hid ipmi_si ipmi_devintf ipmi_msghandler sch_fq_codel nf_tables_set nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ramoops reed_solomon efi_pstore drm ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid0 multipath linear mlx5_ib ib_uverbs ib_core raid1 hid_generic mlx5_core pci_hyperv_intf crc32_pclmul usbhid ahci tls mlxfw bnxt_en hid libahci nvme i2c_piix4 nvme_core wmi [last unloaded: cpuid]
+Aug 7 07:26:17 rx [1006006.726180] CR2: 0000000000000020
+Aug 7 07:26:17 rx [1006006.729718] ---[ end trace e0e2e37e4e612984 ]---
+
+Prior to seeing the first crash and on other machines we also see the warning in
+tcp_send_loss_probe() where packets_out is non-zero, but both transmit and retrans
+queues are empty so we know the box is seeing some accounting issue in this area:
+
+Jul 26 09:15:27 kernel: ------------[ cut here ]------------
+Jul 26 09:15:27 kernel: invalid inflight: 2 state 1 cwnd 68 mss 8988
+Jul 26 09:15:27 kernel: WARNING: CPU: 16 PID: 0 at net/ipv4/tcp_output.c:2605 tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: Modules linked in: vrf bridge stp llc vxlan ip6_udp_tunnel udp_tunnel nls_iso8859_1 nft_ct amd64_edac_mod edac_mce_amd kvm_amd kvm crct10dif_pclmul ghash_clmulni_intel aesni_intel crypto_simd cryptd glue_helper wmi_bmof ipmi_ssif joydev input_leds rndis_host cdc_ether usbnet mii ast drm_vram_helper ttm drm_kms_he>
+Jul 26 09:15:27 kernel: CPU: 16 PID: 0 Comm: swapper/16 Not tainted 5.4.0-174-generic #193-Ubuntu
+Jul 26 09:15:27 kernel: Hardware name: Supermicro SMC 2x26 os-gen8 64C NVME-Y 256G/H12SSW-NTR, BIOS 2.5.V1.2U.NVMe.UEFI 05/09/2023
+Jul 26 09:15:27 kernel: RIP: 0010:tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: Code: 08 26 01 00 75 e2 41 0f b6 54 24 12 41 8b 8c 24 c0 06 00 00 45 89 f0 48 c7 c7 e0 b4 20 a7 c6 05 8d 08 26 01 01 e8 4a c0 0f 00 <0f> 0b eb ba 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41
+Jul 26 09:15:27 kernel: RSP: 0018:ffffb7838088ce00 EFLAGS: 00010286
+Jul 26 09:15:27 kernel: RAX: 0000000000000000 RBX: ffff9b84b5630430 RCX: 0000000000000006
+Jul 26 09:15:27 kernel: RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff9b8e4621c8c0
+Jul 26 09:15:27 kernel: RBP: ffffb7838088ce18 R08: 0000000000000927 R09: 0000000000000004
+Jul 26 09:15:27 kernel: R10: 0000000000000000 R11: 0000000000000001 R12: ffff9b84b5630000
+Jul 26 09:15:27 kernel: R13: 0000000000000000 R14: 000000000000231c R15: ffff9b84b5630430
+Jul 26 09:15:27 kernel: FS: 0000000000000000(0000) GS:ffff9b8e46200000(0000) knlGS:0000000000000000
+Jul 26 09:15:27 kernel: CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Jul 26 09:15:27 kernel: CR2: 000056238cec2380 CR3: 0000003e49ede005 CR4: 0000000000760ee0
+Jul 26 09:15:27 kernel: PKRU: 55555554
+Jul 26 09:15:27 kernel: Call Trace:
+Jul 26 09:15:27 kernel: <IRQ>
+Jul 26 09:15:27 kernel: ? show_regs.cold+0x1a/0x1f
+Jul 26 09:15:27 kernel: ? __warn+0x98/0xe0
+Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: ? report_bug+0xd1/0x100
+Jul 26 09:15:27 kernel: ? do_error_trap+0x9b/0xc0
+Jul 26 09:15:27 kernel: ? do_invalid_op+0x3c/0x50
+Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: ? invalid_op+0x1e/0x30
+Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: tcp_write_timer_handler+0x1b4/0x240
+Jul 26 09:15:27 kernel: tcp_write_timer+0x9e/0xe0
+Jul 26 09:15:27 kernel: ? tcp_write_timer_handler+0x240/0x240
+Jul 26 09:15:27 kernel: call_timer_fn+0x32/0x130
+Jul 26 09:15:27 kernel: __run_timers.part.0+0x180/0x280
+Jul 26 09:15:27 kernel: ? timerqueue_add+0x9b/0xb0
+Jul 26 09:15:27 kernel: ? enqueue_hrtimer+0x3d/0x90
+Jul 26 09:15:27 kernel: ? do_error_trap+0x9b/0xc0
+Jul 26 09:15:27 kernel: ? do_invalid_op+0x3c/0x50
+Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: ? invalid_op+0x1e/0x30
+Jul 26 09:15:27 kernel: ? tcp_send_loss_probe+0x214/0x220
+Jul 26 09:15:27 kernel: tcp_write_timer_handler+0x1b4/0x240
+Jul 26 09:15:27 kernel: tcp_write_timer+0x9e/0xe0
+Jul 26 09:15:27 kernel: ? tcp_write_timer_handler+0x240/0x240
+Jul 26 09:15:27 kernel: call_timer_fn+0x32/0x130
+Jul 26 09:15:27 kernel: __run_timers.part.0+0x180/0x280
+Jul 26 09:15:27 kernel: ? timerqueue_add+0x9b/0xb0
+Jul 26 09:15:27 kernel: ? enqueue_hrtimer+0x3d/0x90
+Jul 26 09:15:27 kernel: ? recalibrate_cpu_khz+0x10/0x10
+Jul 26 09:15:27 kernel: ? ktime_get+0x3e/0xa0
+Jul 26 09:15:27 kernel: ? native_x2apic_icr_write+0x30/0x30
+Jul 26 09:15:27 kernel: run_timer_softirq+0x2a/0x50
+Jul 26 09:15:27 kernel: __do_softirq+0xd1/0x2c1
+Jul 26 09:15:27 kernel: irq_exit+0xae/0xb0
+Jul 26 09:15:27 kernel: smp_apic_timer_interrupt+0x7b/0x140
+Jul 26 09:15:27 kernel: apic_timer_interrupt+0xf/0x20
+Jul 26 09:15:27 kernel: </IRQ>
+Jul 26 09:15:27 kernel: RIP: 0010:native_safe_halt+0xe/0x10
+Jul 26 09:15:27 kernel: Code: 7b ff ff ff eb bd 90 90 90 90 90 90 e9 07 00 00 00 0f 00 2d 36 2c 50 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d 26 2c 50 00 fb f4 <c3> 90 0f 1f 44 00 00 55 48 89 e5 41 55 41 54 53 e8 dd 5e 61 ff 65
+Jul 26 09:15:27 kernel: RSP: 0018:ffffb783801cfe70 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+Jul 26 09:15:27 kernel: RAX: ffffffffa6908b20 RBX: 0000000000000010 RCX: 0000000000000001
+Jul 26 09:15:27 kernel: RDX: 000000006fc0c97e RSI: 0000000000000082 RDI: 0000000000000082
+Jul 26 09:15:27 kernel: RBP: ffffb783801cfe90 R08: 0000000000000000 R09: 0000000000000225
+Jul 26 09:15:27 kernel: R10: 0000000000100000 R11: 0000000000000000 R12: 0000000000000010
+Jul 26 09:15:27 kernel: R13: ffff9b8e390b0000 R14: 0000000000000000 R15: 0000000000000000
+Jul 26 09:15:27 kernel: ? __cpuidle_text_start+0x8/0x8
+Jul 26 09:15:27 kernel: ? default_idle+0x20/0x140
+Jul 26 09:15:27 kernel: arch_cpu_idle+0x15/0x20
+Jul 26 09:15:27 kernel: default_idle_call+0x23/0x30
+Jul 26 09:15:27 kernel: do_idle+0x1fb/0x270
+Jul 26 09:15:27 kernel: cpu_startup_entry+0x20/0x30
+Jul 26 09:15:27 kernel: start_secondary+0x178/0x1d0
+Jul 26 09:15:27 kernel: secondary_startup_64+0xa4/0xb0
+Jul 26 09:15:27 kernel: ---[ end trace e7ac822987e33be1 ]---
+
+The NULL ptr deref is coming from tcp_rto_delta_us() attempting to pull an skb
+off the head of the retransmit queue and then dereferencing that skb to get the
+skb_mstamp_ns value via tcp_skb_timestamp_us(skb).
+
+The crash is the same one that was reported a # of years ago here:
+https://lore.kernel.org/netdev/86c0f836-9a7c-438b-d81a-839be45f1f58@gmail.com/T/#t
+
+and the kernel we're running has the fix which was added to resolve this issue.
+
+Unfortunately we've been unsuccessful so far in reproducing this problem in the
+lab and do not have the luxury of pushing out a new kernel to try and test if
+newer kernels resolve this issue at the moment. I realize this is a report
+against both an Ubuntu kernel and also an older 5.4 kernel. I have reported this
+issue to Ubuntu here: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2077657
+however I feel like since this issue has possibly cropped up again it makes
+sense to build in some protection in this path (even on the latest kernel
+versions) since the code in question just blindly assumes there's a valid skb
+without testing if it's NULL b/f it looks at the timestamp.
+
+Given we have seen crashes in this path before and now this case it seems like
+we should protect ourselves for when packets_out accounting is incorrect.
+While we should fix that root cause we should also just make sure the skb
+is not NULL before dereferencing it. Also add a warn once here to capture
+some information if/when the problem case is hit again.
+
+Fixes: e1a10ef7fa87 ("tcp: introduce tcp_rto_delta_us() helper for xmit timer fix")
+Signed-off-by: Josh Hunt <johunt@akamai.com>
+---
+
+v3: Added fixes tag and more packet accounting info as requested by Neal Cardwell.
+    Also updated rto calcs to reflect original code.
+v2: Removed cover letter and added context from original cover letter to
+    commit msg.
+
+ include/net/tcp.h | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 2aac11e7e1cc..196c148fce8a 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct sock *sk)
+ {
+ 	const struct sk_buff *skb = tcp_rtx_queue_head(sk);
+ 	u32 rto = inet_csk(sk)->icsk_rto;
+-	u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
+ 
+-	return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
++	if (likely(skb)) {
++		u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
++
++		return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
++	} else {
++		WARN_ONCE(1,
++			"rtx queue emtpy: "
++			"out:%u sacked:%u lost:%u retrans:%u "
++			"tlp_high_seq:%u sk_state:%u ca_state:%u "
++			"advmss:%u mss_cache:%u pmtu:%u\n",
++			tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
++			tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
++			tcp_sk(sk)->tlp_high_seq, sk->sk_state,
++			inet_csk(sk)->icsk_ca_state,
++			tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
++			inet_csk(sk)->icsk_pmtu_cookie);
++		return jiffies_to_usecs(rto);
++	}
++
+ }
+ 
+ /*
+-- 
+2.34.1
+
 
