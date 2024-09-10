@@ -1,244 +1,131 @@
-Return-Path: <linux-kernel+bounces-322713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7E1972CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514E0972CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58449287056
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B62E1C23E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291BE15FA74;
-	Tue, 10 Sep 2024 08:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C1F18787C;
+	Tue, 10 Sep 2024 09:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8LM8sO0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mP9LecOs"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7802339AC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90DC16A957;
+	Tue, 10 Sep 2024 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958719; cv=none; b=Qaw1TGXNI4kDdj/BnxyBo8+weANandER9keLRf38BxNl9M6IBoS4SVLxOA5iwW8PS2ZAdmWRmteZPtADF4OLkXkvA/NzD4fcbaU6UK2gfBjveMW1v44sUGK6jW/WWKAJ7M3htskIdZxCZsrZyRbxX29iL8ZefyC/q0x3h7BjbYo=
+	t=1725958837; cv=none; b=Muxrz07phiiyFjmVp4O10sRxynHwBYM2KKl668t5VXNxQfVobIKV0Mb6vEG4aiW6n9sjcQU+M84vnvk2dInLtzDnbUP/eb26cX2BM8evDzZWL1+2LBeC6Tgo9OCMHF8ptNiNidLSXszabQnZj7k2lnsCLumx2QYhpBmfYobnjcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958719; c=relaxed/simple;
-	bh=wj10f5L5Wns2vhKnqNbO9AbzsGu/jBhFA2sX1CYqkPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fh861F3LQSErbY2xm858aQOznP75TwIzjBc5ANb53yaYv6mrZNwCPKR4jn9JU5d2mPwzEbGxe74eB0U2nfyQgtM/ZxkOTWpLezZWTnw/sbA7YG6wfV6byP3oZVN0iwuXzi4poTuHMRLjiZd1qTAXVPxPbqw3nUQO2iv3wcp8v0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8LM8sO0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725958716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ly3LxhkuPW+RkMjeSwFB2spg7yLSAYV4L7yhhC7D1n0=;
-	b=U8LM8sO0DYjGsVwCi9r7XrWwTj3aoGsti7+0evdAJVuVUkWF+iGckFSNiPn0w6DLtd20rU
-	fIa79HtMbT7wchyoSwqIo8sZ/daRcx2fqEwlt2f1Sx8BkNjxfIsRUTUtlwXSqZjkVwdXmO
-	U7Xx9j6PIRa9WAe8fbnayC6YzlNtxaw=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-0GxQDk7MOLq98zb7zdgUkA-1; Tue, 10 Sep 2024 04:58:35 -0400
-X-MC-Unique: 0GxQDk7MOLq98zb7zdgUkA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8d3085ab6fso145828266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:58:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725958714; x=1726563514;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ly3LxhkuPW+RkMjeSwFB2spg7yLSAYV4L7yhhC7D1n0=;
-        b=UHQNqtNTRnNF6OGy58LjjcAGGS9sxqwsboy+8Po0jEChXDDoQonALFg0flpIMq+S4e
-         D8XxEeAgIEQr2mHs4otIl3BZgvPxToKDBeTxsVdSoyViRkFU15FnVtqmM6dk2Avbm899
-         29EOacod9+fyG2fSN0ViGpQLtc0UksqdxPV2nMxNwrNdGE4QZokkN2z4+3UWjTK6Cpph
-         i9and6HEFvalUzey/LQl2c32LnzwO/3Ev7sQbQ7wrurc/Re3aZuZeSyGvUqyMbTJpzN6
-         fxFecKdJv1ZnOUkPCVPEiSZzvyF0meGrUnCk889jF5MvFDYstOEDgPFHT6RAUjGv8Mbb
-         kLwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ7LjKCWA9RYYEDQcSha34BwTZEolintZhLLuQ1mexlrAs2ynP8u+LMz1Wbo9VNVavKDWMjz03VXbhgPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB4N+je77ToaPcbfnOf4svHsHwWGPs85fM74ZiuC7jgvg6z4Ct
-	G1b12MzYGiEBxnR4TCNDztHBQ6RS/EHnkeDf3G+pVzKxpXC5NvYBML86ZNZPaUyLQz7gz3CyhQ3
-	CP2ze3OtahG3o79fajkA+kkEw7gSQyqcmQmRydXSqX1Ue26lsAv45j4tsupRPUw==
-X-Received: by 2002:a17:907:3682:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a8ffa837442mr11324366b.0.1725958713977;
-        Tue, 10 Sep 2024 01:58:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOATzVlVe9TSjQp3hFYFYav34Qj0CrLgfC0JraVHH3EpXlFAH0T1vBiZAHXvImfhs2CW7iZQ==
-X-Received: by 2002:a17:907:3682:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a8ffa837442mr11321666b.0.1725958713398;
-        Tue, 10 Sep 2024 01:58:33 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce96d9sm446948066b.157.2024.09.10.01.58.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 01:58:32 -0700 (PDT)
-Message-ID: <303e4691-dc06-400f-8b74-6f9386ffe216@redhat.com>
-Date: Tue, 10 Sep 2024 10:58:31 +0200
+	s=arc-20240116; t=1725958837; c=relaxed/simple;
+	bh=gKIOXWk8XFw+NBoYrB/b5DFLbg0bA9+VpNV/DgItObs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+mz3Yvna1mVOMZfI2tz5cHtaTARRUdfTnAiy3GAUzDZ0LST+MJ174xQ6ujzuqqFRtH0JD3aa5LmEoM4EvQ68v+U1KsQlwmzfnemjP2iNyEIBQEGif4hzeMg8Q608OOwDXckh35WbK9tk7Gsdtb6uGhmGLPu62pVJVqG1tChde8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mP9LecOs; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725958834; x=1757494834;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gKIOXWk8XFw+NBoYrB/b5DFLbg0bA9+VpNV/DgItObs=;
+  b=mP9LecOsaphvb6SIrBRFITBOU96t0eGhSsFJCcFNXEGRHJpsKxUw5bDT
+   Ua5IJHe2il2iW/Rdv1cA0elreP0SeZ9ieNd1suSqC9rkEZ43VX50PucDx
+   MPE+5UQwldLVQKJFR+4MWj33YZYM0k5jLOhVdutuaSNZbjiXoIO9fGeHY
+   cHpASw9WcZhbu2QyohE1nZwAB26S8LzXdeFx2LzPjHCjFpYiteacjzfia
+   vrK31tMWH00iysQf+nb0wP6W5Y2bFveqjpfF2nd9UGE4l6vXLGn/U27tf
+   jvyUKKEnpE9KBbRX/WeUjrJdJlowO9yFNf4QacNTL8TjaPQ479DBFNEuF
+   A==;
+X-CSE-ConnectionGUID: Hr8gDLTiSAu2y7wQ9bR3sA==
+X-CSE-MsgGUID: lkbXYb+CRoWQUYO7YRv/qw==
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="34688000"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Sep 2024 02:00:32 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 10 Sep 2024 01:59:55 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 10 Sep 2024 01:59:53 -0700
+Date: Tue, 10 Sep 2024 08:59:52 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 8/9] dt-bindings: phy: sparx5: document lan969x
+Message-ID: <20240910085952.azwmrvuntyvuc3nb@DEN-DL-M70577>
+References: <20240909-sparx5-lan969x-serdes-driver-v2-0-d695bcb57b84@microchip.com>
+ <20240909-sparx5-lan969x-serdes-driver-v2-8-d695bcb57b84@microchip.com>
+ <wd3gzn3lpmw64qor3xslif6rnp7htycfhu33pa2xpxvv6mrwqe@nv6pcwkstywe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86:intel/pmc: Ignore all LTRs during suspend
-To: Xi Pardee <xi.pardee@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-pm@vger.kernel.org
-References: <20240906184016.268153-1-xi.pardee@linux.intel.com>
- <15d08ff3-6787-7042-8afc-3a64f1ebc756@linux.intel.com>
- <2d8249a2-22a0-4785-9eea-a2d59c1d9b1a@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <2d8249a2-22a0-4785-9eea-a2d59c1d9b1a@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <wd3gzn3lpmw64qor3xslif6rnp7htycfhu33pa2xpxvv6mrwqe@nv6pcwkstywe>
 
-Hi Xi,
-
-On 9/10/24 2:43 AM, Xi Pardee wrote:
-> Hi,
+> >  maintainers:
+> >    - Steen Hegelund <steen.hegelund@microchip.com>
+> > +  - Daniel Machon <daniel.machon@microchip.com>
+> >
+> >  description: |
+> >    The Sparx5 SERDES interfaces share the same basic functionality, but
+> > @@ -62,12 +63,26 @@ description: |
+> >    * 10.3125 Gbps (10GBASE-R/10GBASE-KR/USXGMII)
+> >    * 25.78125 Gbps (25GBASE-KR/25GBASE-CR/25GBASE-SR/25GBASE-LR/25GBASE-ER)
+> >
+> > +  lan969x has ten SERDES10G interfaces that share the same features, operating
+> > +  modes and data rates as the equivalent Sparx5 SERDES10G interfaces.
+> > +
+> >  properties:
+> >    $nodename:
+> >      pattern: "^serdes@[0-9a-f]+$"
+> >
+> >    compatible:
+> > -    const: microchip,sparx5-serdes
+> > +    oneOf:
+> > +      - enum:
+> > +          - microchip,sparx5-serdes
+> > +          - microchip,lan9691-serdes
+> > +      - items:
+> > +          - enum:
+> > +              - microchip,lan9698-serdes
+> > +              - microchip,lan9696-serdes
+> > +              - microchip,lan9694-serdes
+> > +              - microchip,lan9693-serdes
+> > +              - microchip,lan9692-serdes
 > 
-> On 9/9/2024 1:07 AM, Ilpo Järvinen wrote:
->> On Fri, 6 Sep 2024, Xi Pardee wrote:
->>
->>> From: Xi Pardee <xi.pardee@intel.com>
->>>
->>> Add support to ignore all LTRs before suspend and restore the previous
->>> LTR values after suspend. This feature could be turned off with module
->>> parameter ltr_ignore_all_suspend.
->>>
->>> LTR value is a mechanism for a device to indicate tolerance to access
->>> the corresponding resource. When system suspends, the resource is not
->>> available and therefore the LTR value could be ignored. Ignoring all
->>> LTR values prevents problematic device from blocking the system to get
->>> to the deepest package state during suspend.
->>>
->>> Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> Signed-off-by: Xi Pardee <xi.pardee@intel.com>
->>>
->>> v2:
->>> - Add more details to commit message
->>> - Fix format: ltr->LTR, S0IX->S0ix, space between name and email
->>>
->>> ---
->>>   drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
->>>   drivers/platform/x86/intel/pmc/core.h |  2 +
->>>   2 files changed, 55 insertions(+)
->>>
->>> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
->>> index 01ae71c6df59..0ec703af16a4 100644
->>> --- a/drivers/platform/x86/intel/pmc/core.c
->>> +++ b/drivers/platform/x86/intel/pmc/core.c
->>> @@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
->>>   }
->>>   DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
->>>   +static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
->>> +        struct pmc *pmc;
->>> +        u32 ltr_ign;
->>> +
->>> +        pmc = pmcdev->pmcs[i];
->>> +        if (!pmc)
->>> +            continue;
->>> +
->>> +        guard(mutex)(&pmcdev->lock);
->>> +        pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
->>> +
->>> +        /* ltr_ignore_max is the max index value for LTR ignore register */
->>> +        ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
->>> +        pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
->>> +    }
->>> +
->>> +    /*
->>> +     * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
->>> +     * deeper S0ix substate.
->>> +     */
->>> +    pmc_core_send_ltr_ignore(pmcdev, 6, 0);
->>> +}
->>> +
->>> +static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
->>> +{
->>> +    unsigned int i;
->>> +
->>> +    for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
->>> +        struct pmc *pmc;
->>> +
->>> +        pmc = pmcdev->pmcs[i];
->>> +        if (!pmc)
->>> +            continue;
->>> +
->>> +        guard(mutex)(&pmcdev->lock);
->>> +        pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
->>> +    }
->>> +}
->>> +
->>>   static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
->>>                          const int lpm_adj_x2)
->>>   {
->>> @@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
->>>   module_param(warn_on_s0ix_failures, bool, 0644);
->>>   MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
->>>   +static bool ltr_ignore_all_suspend = true;
->>> +module_param(ltr_ignore_all_suspend, bool, 0644);
->>> +MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
->>> +
->>>   static __maybe_unused int pmc_core_suspend(struct device *dev)
->>>   {
->>>       struct pmc_dev *pmcdev = dev_get_drvdata(dev);
->>> @@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
->>>       if (pmcdev->suspend)
->>>           pmcdev->suspend(pmcdev);
->>>   +    if (ltr_ignore_all_suspend)
->>> +        pmc_core_ltr_ignore_all(pmcdev);
->>> +
->>>       /* Check if the syspend will actually use S0ix */
->>>       if (pm_suspend_via_firmware())
->>>           return 0;
->>> @@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
->>>   {
->>>       struct pmc_dev *pmcdev = dev_get_drvdata(dev);
->>>   +    if (ltr_ignore_all_suspend)
->>> +        pmc_core_ltr_restore_all(pmcdev);
->>> +
->>>       if (pmcdev->resume)
->>>           return pmcdev->resume(pmcdev);
->>>   diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
->>> index ea04de7eb9e8..e862ea88b816 100644
->>> --- a/drivers/platform/x86/intel/pmc/core.h
->>> +++ b/drivers/platform/x86/intel/pmc/core.h
->>> @@ -372,6 +372,7 @@ struct pmc_info {
->>>    * @map:        pointer to pmc_reg_map struct that contains platform
->>>    *            specific attributes
->>>    * @lpm_req_regs:    List of substate requirements
->>> + * @ltr_ign:        Holds LTR ignore data while suspended
->>>    *
->>>    * pmc contains info about one power management controller device.
->>>    */
->>> @@ -380,6 +381,7 @@ struct pmc {
->>>       void __iomem *regbase;
->>>       const struct pmc_reg_map *map;
->>>       u32 *lpm_req_regs;
->>> +    u32 ltr_ign;
->>>   };
->>>     /**
->>>
->> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> If there is going to be a new version, keep rather increasing/growing
+> alphanumerical order, but no need to resend just for this.
+
+Ack.
+
 > 
-> Thanks for the Reviewed-by tag! I wonder if I need to send another version with the Reviewed-by tag for this patch to be accepted.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Best regards,
+> Krzysztof
+>
 
-There is no need for a v3. I'll merge this patch into
-my review-hans branch (and from there on it will move
-to for-next) soon.
+Thanks for reviewing!
 
-Regards,
-
-Hans
-
-
+/Daniel
 
