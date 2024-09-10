@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-323910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CC397450D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EC097451B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3325BB24601
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A8E1F26CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32A31A7040;
-	Tue, 10 Sep 2024 21:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057EF1AB539;
+	Tue, 10 Sep 2024 21:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rb7Jvjob"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ZzdoGB/S"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5019B1AB524
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD7B1F951;
+	Tue, 10 Sep 2024 21:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726005147; cv=none; b=nTeDCuQYQSuAW6iDP0+FtO0XvsaKNcMfdNEAE15obOex2Zzxooenu+BA748TUcrIq84UUaGtlYmtetaGg0LjAQh9tYAN7ok0DSwrgbGTXgl2D3wRXYAs6djUAi1dxtBNSGEmg9x+488hdFiO333AAvtzVs00LE0h+vShkK6T3Pw=
+	t=1726005247; cv=none; b=pZBpBb3NaFb0/rSssgMcDqOdjGXH3QcliljU2N76/OVc/LMPb017ssko3AhU+e8icp0IA22WnXk5+qHClKcm+pA/FaQ4omTBLxLWb+I3RbSwL+FoTLwIc22LW3AvIR1n7IsBd7GQUtxwR0sZpWc5d3I+M+Xta1LoMCi2XiVgaAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726005147; c=relaxed/simple;
-	bh=o7Tu9mYqHRDbgYmvkBxNamIkhzplwWFRVT9ee/GSxxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LrbdKWMCuGMmz7Uu5FlCx2Cij+o+euWrxbrVXR6L5azBSXoA4i2h6jCLPWKf/QqGrne1Gkuf31xO4ruVc8IHK6a2GM0tyK5KnlUhQbf/BsI8dP9gkV5/MYjIjij2lO5siqjgi5MrHAZWkX3+O68gcBes2dK1+9fm3pIJblFgcyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rb7Jvjob; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-829f7911eecso359541139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:52:25 -0700 (PDT)
+	s=arc-20240116; t=1726005247; c=relaxed/simple;
+	bh=20efcwGrCmmRUCRbM85q/ah5UCDGq6RVeXY4OoatUg0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gIfrFZaupxqFv2TQGvlMn5CWv7pz2fsuqrX4UuqSAFu1mLLrl/1D0aWjfYXgdCmD/o3ZfOzHOhNOEq0ZfEnKHRhpBHP6TY/crS+uiSn9dTE/lIv21MQtt+OFTFLzTVorGT2inrTV17UlsCyqniNt26cZY0zRO3wM+T+EzZEt4pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ZzdoGB/S; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726005144; x=1726609944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=biEgRbHRVhw3nwgyZGGNW3o+GtO6iD/wAg+Ct4J9y1w=;
-        b=Rb7JvjobDLEKqNEKDnM9DCCpkAnonV9hYnHRaxKnjTg+P3oXUxrOVakijO5fTzwt5B
-         WL7oUmCSTq0gBLiklEaxOMsZuFA0J/eNhjbMsZOA7gXMFq3Rto1tGUQPs5b9WjdXOWoE
-         6dTvTdf+sa8/ShYizFrQnp74S7rAy4LmVcTW4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726005144; x=1726609944;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=biEgRbHRVhw3nwgyZGGNW3o+GtO6iD/wAg+Ct4J9y1w=;
-        b=Owfx09GiEgK7ajVtzG/dlgSMk9AXoD9Uz4XK0iLi1iz+9TqnaLuNm3zF4/YF+3JC31
-         NW6C24unA2RVuKYYIHZIofMN25B/uX8ns6NyRBT8el96XmOJNqVOGTmKiUY5rJ97NEUd
-         R6f+mKfWC6a747YP5lqqWAUvV2KoLHrxdSWzAZlyZvlNSj+OHcVkXQm7qUDR8uF9yd2C
-         Wh+vNP1A3caQAw4j0QMVMWsoGB0gxup+6dY99mjPvDTpR2wEENJdvkkUDOOtOxmKEjNL
-         rnXBAp6Amn66rMeveGyfraxg3YhCoDkYfA36OEGIzp8Et+Nk8nb6zYj1cjnW1a3uq8S3
-         /aPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGZoqiG+xK3zxM0ZycxocYpkYJBt8pmYNdk8Vqj7iDSjgTgPwO9gI+wAzI2DiuWmR4dAPemzlTJRGGkFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzueMzMHALzcV1E8dkxB5/kIdojb7qEBfxXPhutdmdsYH5Ye/9J
-	me8k2z4USG1VtNnvsguFonPFuSajvF5+cP9IRAAR3Rg0NNqBKjoWVSbcfoCCeXg=
-X-Google-Smtp-Source: AGHT+IGJ5zHUhuJP1QGNcsOVIZgc07CdIrjuzckmsmXc99S/dy+ed6BTmnTwBL9Ks7USOrCpKnsE9g==
-X-Received: by 2002:a05:6e02:198b:b0:3a0:468c:8e2c with SMTP id e9e14a558f8ab-3a0524a1ca8mr163016615ab.24.1726005144238;
-        Tue, 10 Sep 2024 14:52:24 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d09464b955sm1807894173.135.2024.09.10.14.52.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 14:52:23 -0700 (PDT)
-Message-ID: <ac0c439f-86fe-467d-95c4-b4e9e294010f@linuxfoundation.org>
-Date: Tue, 10 Sep 2024 15:52:22 -0600
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726005246; x=1757541246;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=/Feo/MLsAUMck2QZbgkKCdlqtAUYqNpsrAyJkLJflz8=;
+  b=ZzdoGB/SucvJp/PKFJq4Rg+mUMGvO+JdiOLTSt6ZEVpVADj9ygU3/VkC
+   m7lDJjJzzx3AOr2JbOZOn5NiKPQkDRSWEjoQOfbnT1UMkk2zz6vegKJV3
+   gwh8aj8DWySV0xGuVxZzWatlu9PTfH3DEZPaw04+1N4EoQcJM2/DQ/SDe
+   E=;
+X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
+   d="scan'208";a="329689760"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 21:54:04 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:64865]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.23.84:2525] with esmtp (Farcaster)
+ id d3a87479-7f0b-41b8-8fc4-b89a51cc6a20; Tue, 10 Sep 2024 21:54:03 +0000 (UTC)
+X-Farcaster-Flow-ID: d3a87479-7f0b-41b8-8fc4-b89a51cc6a20
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 10 Sep 2024 21:54:01 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 10 Sep 2024 21:53:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Tue, 10 Sep 2024 14:53:51 -0700
+Message-ID: <20240910215351.4898-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <58a5f9c2-b179-49d9-b420-67caeff69f8b@oracle.com>
+References: <58a5f9c2-b179-49d9-b420-67caeff69f8b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/186] 5.10.226-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240910092554.645718780@linuxfoundation.org>
- <39d69408-b8aa-4829-b85d-ecae4fa8f97e@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <39d69408-b8aa-4829-b85d-ecae4fa8f97e@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 9/10/24 15:26, Shuah Khan wrote:
-> On 9/10/24 03:31, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 5.10.226 release.
->> There are 186 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>     https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.226-rc1.gz
->> or in the git tree and branch at:
->>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
->>
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Tue, 10 Sep 2024 13:57:04 -0700
+> The commit Message:
 > 
->>
->> Guillaume Stols <gstols@baylibre.com>
->>      iio: adc: ad7606: remove frstdata check for serial mode
->>
+> syzbot reported use-after-free in unix_stream_recv_urg(). [0]
 > 
+> The scenario is
 > 
-> Kernel: arch/x86/boot/bzImage is ready  (#210)
-> ERROR: modpost: module ad7606_par uses symbol ad7606_reset from namespace IIO_AD7606, but does not import it.
-> make[1]: *** [scripts/Makefile.modpost:123: modules-only.symvers] Error 1
-> make[1]: *** Deleting file 'modules-only.symvers'
-> make: *** [Makefile:1759: modules] Error 2
-> 
-> Same problem. I am building with this commit now and I will
-> update you what happens.
-> 
+>    1. send(MSG_OOB)
+>    2. recv(MSG_OOB)
+>       -> The consumed OOB remains in recv queue
+>    3. send(MSG_OOB)
+>    4. recv()
+>       -> manage_oob() returns the next skb of the consumed OOB
+>       -> This is also OOB, but unix_sk(sk)->oob_skb is not cleared
+>    5. recv(MSG_OOB)
+>       -> unix_sk(sk)->oob_skb is used but already freed
 
-Not so easy. Removing this commit gives me the following error.
-  
-drivers/iio/adc/ad7606_par.c: In function ‘ad7606_par16_read_block’:
-drivers/iio/adc/ad7606_par.c:40:25: error: implicit declaration of function ‘ad7606_reset’; did you mean ‘ad7606_probe’? [-Werror=implicit-function-declaration]
-    40 |                         ad7606_reset(st);
-       |                         ^~~~~~~~~~~~
+How did you miss this ?
 
-thanks,
--- Shuah
+Again, please read my patch and mails **carefully**.
+
+unix_sk(sk)->oob_sk wasn't cleared properly and illegal access happens
+in unix_stream_recv_urg(), where ->oob_skb is dereferenced.
+
+Here's _technical_ thing that you want.
+
+---8<---
+# ./oob
+executing program
+[   25.773750] queued OOB: ff1100000947ba40
+[   25.774110] reading OOB: ff1100000947ba40
+[   25.774401] queued OOB: ff1100000947bb80
+[   25.774669] free skb: ff1100000947bb80
+[   25.774919] reading OOB: ff1100000947bb80
+[   25.775172] ==================================================================
+[   25.775654] BUG: KASAN: slab-use-after-free in unix_stream_read_actor+0x86/0xb0
+---8<---
+
+---8<---
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index a1894019ebd5..ccd9c47160a5 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -2230,6 +2230,7 @@ static int queue_oob(struct socket *sock, struct msghdr *msg, struct sock *other
+ 	__skb_queue_tail(&other->sk_receive_queue, skb);
+ 	spin_unlock(&other->sk_receive_queue.lock);
+ 
++	printk(KERN_ERR "queued OOB: %px\n", skb);
+ 	sk_send_sigurg(other);
+ 	unix_state_unlock(other);
+ 	other->sk_data_ready(other);
+@@ -2637,6 +2638,7 @@ static int unix_stream_recv_urg(struct unix_stream_read_state *state)
+ 	spin_unlock(&sk->sk_receive_queue.lock);
+ 	unix_state_unlock(sk);
+ 
++	printk(KERN_ERR "reading OOB: %px\n", oob_skb);
+ 	chunk = state->recv_actor(oob_skb, 0, chunk, state);
+ 
+ 	if (!(state->flags & MSG_PEEK))
+@@ -2915,7 +2917,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
+ 
+ 			skb_unlink(skb, &sk->sk_receive_queue);
+ 			consume_skb(skb);
+-
++			printk(KERN_ERR "free skb: %px\n", skb);
+ 			if (scm.fp)
+ 				break;
+ 		} else {
+---8<---
+
+[...]
+> None of this points to where the skb is "dereferenced" The test case 
+> added will never panic the kernel.
+> 
+> In the organizations that I have worked with, just because a change 
+> stops a panic does not mean the issue is fixed. You have to explicitly 
+> show where and how. That is what i am asking, Yes there is a bug, but it 
+> will not cause the panic, so if you are just high and might engiineer, 
+> show where and how?
+> > 
+> > This will be the last mail from me in this thread.  I don't want to
+> > waste time on someone who doesn't read mails.
+> Yes please don't if you do not have anything technical to say, all your 
+> comments are "smart comments". This email thread would end if you could 
+> just say, here is line XXXX where the skb is de referenced, but you have 
+> not because you have no idea.
+> 
+> BTTW Your comment about holding the extra refcnt without any reason just 
+> shows that you DO NOT understand the code. And the confusion to refcnts 
+> has been caused by your changes, I am concerned your changes have broken 
+> the code.
+> 
+> I am willing to accept that I may be wrong but only if I am shown the 
+> location of de-reference. Please do not respond if you can not point to 
+> the exact location.
+
+Please do not respond if you just ask without thinking.
 
