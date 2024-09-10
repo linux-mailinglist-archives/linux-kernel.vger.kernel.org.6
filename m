@@ -1,64 +1,76 @@
-Return-Path: <linux-kernel+bounces-322442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B3397290F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:56:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5FB972910
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A2E2855B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC12B23E78
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E0717332B;
-	Tue, 10 Sep 2024 05:55:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFA2170A01;
+	Tue, 10 Sep 2024 05:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JH0UHGeh"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F8B16BE23
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B3213E02C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725947755; cv=none; b=E/jwvyrJg6IB09HOJGdOpQcwUhcrekglSwpfq/HvKLqLSGjjEc/i3pAAMpVLYA5gv/aAc31NxZCUHLdrZ/4KmG5AqAzd+PAWWa1b9T5Bopez6zWDLjDdJk8HayTGG9VG+oiahRxK3ioPCJFCXX7fTGA4vrgAMzuihefI1ZuZOXA=
+	t=1725947781; cv=none; b=DSI9gw7WFHvt9GAYjXzBaPgk1GQ4wfGu5QTpz4VEXjcy0uuOGfk8H0TAZh0ZY1p7a/B8rIsRyjKUlTDOa/fHiL94Y+p8oanNNzx+j4TlGqMzykoAQ114ev06+DO7zXczWqJzm+7+GIHjlgomwYh1D1bYNYJxGG8g0OhE3N23ZvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725947755; c=relaxed/simple;
-	bh=Ho4ZzCdLVym7iH2NjL0Cr3mj1YvTC1wvKFr2o0rQ0Y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQDQv4WcAqijXeACqK5B81xzI31jc/chMp9R+Hb6AYw+6fpyvoE1Br1GbFScVdxcMddMpzdz/Z1b2jeIp5Yo6aYzeo/PGNrDalxUy44pmPgTdhoNARo9xZw0Z6gvWa+pdGjcd9MADu3nfcF5UeshBLaB9ov9OxicxOHF6PulGOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sntqv-0007am-IB; Tue, 10 Sep 2024 07:55:49 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sntqu-006pDf-Gj; Tue, 10 Sep 2024 07:55:48 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sntqu-00HW9M-1L;
-	Tue, 10 Sep 2024 07:55:48 +0200
-Date: Tue, 10 Sep 2024 07:55:48 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Message-ID: <Zt_fZEJyiCyanf7X@pengutronix.de>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <ZtWHhSQlPVMekW1I@pengutronix.de>
- <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt9blTxk88Opujsk@pengutronix.de>
- <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1725947781; c=relaxed/simple;
+	bh=UiEfix7QB4glLlvDKOR5CGUKiUCSA474Yl0Jn5b76Ns=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UUWDJlN4Y37iYbDDgZwQKJf8yJ26MwBAKl1X/GExPxzavqAtcedoXCaaqgLaxrLQ6FuiEcfU5FCzvdfyMttjjmU12Ulq0P3tLn41LuyfeerE3aOEHwYcLHPkOU8SaYY/ac4wCIqgxYdlqxfcTQwrR71Y1l8BH9t12yM+7OMSixA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JH0UHGeh; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d56155f51so33821366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725947778; x=1726552578; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/5BO52+KJ68/Ix4XqJ5qAm5TxRd6ZPYkPcL1mWHiM8g=;
+        b=JH0UHGehNhBOAdvCbBk3YQw5YiUJc/OfzOu4i3wZsuRi3S1tIDXC0z4rbKaVg8kHNm
+         rmXEqCT6FeV6mgRjj8GTNGx8x3x3g6xLbZYYqWvMGZVHPjIGw5uWVf84tNklSxwdEJj0
+         XkZ+57r9JglHAqrhjn3FESoevpjyL+ZDE9ID1z0s9YFMTGGe69OtzRx77u3ALoMsZWxi
+         hJkv7Ngh3ie7SH3QF003MwknvUf4OvGM51X3+ogUQOFv5TfMfMAJyHck2+AjbkYoRJey
+         7XP6pclmlqalg83b0g/IABT9Dx5lkBpYLT6TwPregIMfUxaVOGur4YzXB2dJqsQhOwZX
+         qkLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725947778; x=1726552578;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5BO52+KJ68/Ix4XqJ5qAm5TxRd6ZPYkPcL1mWHiM8g=;
+        b=fdq2lsQw3dqqEPz1Y8j2+p3F8lQ5KGgmthvm2XjiXN0MlmxGIyvc/ePFW2/UXPthgw
+         dMqaz/5JHLo/a2ijZWO9nZsCWCu+cBrTDfkcYBA8X4eZZuby6ppDrD3oCJy7kdrhIbxa
+         9vbROhXrSxBs1yx8N/QBZv2I9npAbVUDfvKhdebmLkPJ4sJ3y511w08AXlSu8oUHQrE6
+         2E2lgdj2KlfGgtFswySMvhk6mK5ZzLaWjixmCRtS0xSI9fn8yH1Z08sy69IySYg/8ZsI
+         FkY+VgeYkALPB1lOxLhSrhuXmayoKTfylJ4/jZp4/rATNmv6YJEBK34I+vI7XnsB+juw
+         ecrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgOBn8UV0Aggh8VsoCjfm2wyj7pEppGUk3OYRZY/n0eqQL5vD24U5i7AP1C+aHyTGoray6TjmQJrs2YjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2GXcV9K38uFircrfxCKLmHfvAo1SGqzv7mleDs6/b8e/EpMAv
+	YPHelCHXFBs9AZT9KD/mOzPKBRSl9isoraO9xM3WVob9YaEEZ5WHvkFeDHLf
+X-Google-Smtp-Source: AGHT+IGPcg4NsRThfAQEC9mdQMOjTLlR5bm9MR3qaVW22hNI37G+Pd2WccWByjAiQ86qYvfy4QjTHg==
+X-Received: by 2002:a17:907:d08:b0:a8a:794b:9888 with SMTP id a640c23a62f3a-a8a88668371mr1043210466b.36.1725947778177;
+        Mon, 09 Sep 2024 22:56:18 -0700 (PDT)
+Received: from matrix-ESPRIMO-P710 (p200300c78f2a8598b80c2d4e9a813f29.dip0.t-ipconnect.de. [2003:c7:8f2a:8598:b80c:2d4e:9a81:3f29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c72e71sm428893566b.139.2024.09.09.22.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 22:56:17 -0700 (PDT)
+Date: Tue, 10 Sep 2024 07:56:16 +0200
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] staging: rtl8723bs: Remove unused functions starting
+ with RTW_DISABLE_FUNC
+Message-ID: <cover.1725826273.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,100 +79,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2024 at 01:55:14AM +0000, David Lin wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Tuesday, September 10, 2024 4:33 AM
-> > To: David Lin <yu-hao.lin@nxp.com>
-> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> > Hsieh <tsung-hsien.hsieh@nxp.com>
-> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
-> > different channel
-> > 
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
-> > 
-> > 
-> > On Mon, Sep 02, 2024 at 10:35:01AM +0000, David Lin wrote:
-> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > Sent: Monday, September 2, 2024 5:38 PM
-> > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
-> > > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-> > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > > running on different channel
-> > > >
-> > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
-> > > > > Current firmware doesn't support AP and STA running on different
-> > > > > channels simultaneously.
-> > > >
-> > > > As mentioned here:
-> > > >
-> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flo
-> > > >
-> > re.kern%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C7712df39ac37414fd
-> > a7
-> > > >
-> > e08dcd10eac35%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
-> > 15108
-> > > >
-> > 157502805%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> > 2luMz
-> > > >
-> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=URNJPJE17iRY
-> > Tu4i
-> > > > rx7eQAC97tE5OE6a4kUfjUwuaVU%3D&reserved=0
-> > > >
-> > el.org%2Fall%2FZtGnWC7SPHt7Vbbp%40pengutronix.de%2F&data=05%7C02%
-> > > >
-> > 7Cyu-hao.lin%40nxp.com%7Cce9b7d4e417c41113c7d08dccb32fc49%7C686ea
-> > > >
-> > 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638608667089710854%7CUnkn
-> > > >
-> > own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1h
-> > > >
-> > aWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=nMZO565xCUO%2BwxD4tIfi
-> > > > w6cGyYrinaEsi7XLfqyxgXg%3D&reserved=0
-> > > >
-> > > > AP and STA can indeed have different channels when DRCS is enabled,
-> > > > so I think you have to check this in your patch.
-> > > >
-> > > > Maybe the same question here again: Wouldn't it make sense to enable
-> > > > DRCS by default?
-> > > >
-> > > > Sascha
-> > > >
-> > >
-> > > I will look into DRCS support later after current tasks on hand.
-> > > This patch is a quick fix to avoid firmware crash in the specific scenario.
-> > 
-> > With DRCS support enabled AP and STA actually can run on different channels
-> > with the current code. You are breaking this scenario with this patch.
-> > 
-> > Sascha
-> > 
-> 
-> DRCS will be checked in the future.
+Remove unused functions.
 
-By future you mean v3 of this patch?
+There are some debug functions in between. I assume that those can be
+removed as well as due to missing information how to use them and
+what the output is those are not useable for developers without
+further documentation.
 
-Sascha
+Tested with rtl8723bs in ODYS Trendbook Next 14
+
+MAINTAINERS File does not need to be updated.
+
+Philipp Hortmann (11):
+  staging: rtl8723bs: Remove unused function RTW_DISABLE_FUNC
+  staging: rtl8723bs: Remove unused function rxmem_to_recvframe
+  staging: rtl8723bs: Remove unused function rtw_hal_get_odm_var
+  staging: rtl8723bs: Remove unused function rf_reg_dump
+  staging: rtl8723bs: Remove unused function dump_4_rf_regs
+  staging: rtl8723bs: Remove unused function bb_reg_dump
+  staging: rtl8723bs: Remove unused function mac_reg_dump
+  staging: rtl8723bs: Remove unused function dump_4_regs
+  staging: rtl8723bs: Remove unused files rtw_debug.c and rtw_debug.h
+  staging: rtl8723bs: Remove unused function rtw_ch2freq
+  staging: rtl8723bs: Remove unused file rtw_rf.c
+
+ drivers/staging/rtl8723bs/Makefile            |  2 -
+ drivers/staging/rtl8723bs/core/rtw_ap.c       |  1 -
+ drivers/staging/rtl8723bs/core/rtw_btcoex.c   |  1 -
+ drivers/staging/rtl8723bs/core/rtw_cmd.c      |  4 --
+ drivers/staging/rtl8723bs/core/rtw_debug.c    | 68 -------------------
+ drivers/staging/rtl8723bs/core/rtw_efuse.c    |  1 -
+ .../staging/rtl8723bs/core/rtw_ieee80211.c    |  1 -
+ drivers/staging/rtl8723bs/core/rtw_io.c       |  1 -
+ .../staging/rtl8723bs/core/rtw_ioctl_set.c    |  1 -
+ drivers/staging/rtl8723bs/core/rtw_mlme.c     |  1 -
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  1 -
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  |  1 -
+ drivers/staging/rtl8723bs/core/rtw_recv.c     |  1 -
+ drivers/staging/rtl8723bs/core/rtw_rf.c       | 34 ----------
+ drivers/staging/rtl8723bs/core/rtw_security.c |  1 -
+ drivers/staging/rtl8723bs/core/rtw_sta_mgt.c  |  1 -
+ .../staging/rtl8723bs/core/rtw_wlan_util.c    |  1 -
+ drivers/staging/rtl8723bs/core/rtw_xmit.c     |  1 -
+ .../staging/rtl8723bs/hal/HalPhyRf_8723B.c    |  1 -
+ drivers/staging/rtl8723bs/hal/HalPwrSeqCmd.c  |  1 -
+ drivers/staging/rtl8723bs/hal/hal_btcoex.c    |  1 -
+ drivers/staging/rtl8723bs/hal/hal_com.c       |  1 -
+ .../staging/rtl8723bs/hal/hal_com_phycfg.c    |  1 -
+ drivers/staging/rtl8723bs/hal/hal_intf.c      |  7 --
+ drivers/staging/rtl8723bs/hal/hal_sdio.c      |  1 -
+ drivers/staging/rtl8723bs/hal/rtl8723b_cmd.c  |  1 -
+ drivers/staging/rtl8723bs/hal/rtl8723b_dm.c   |  1 -
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c |  1 -
+ .../staging/rtl8723bs/hal/rtl8723b_phycfg.c   |  1 -
+ .../staging/rtl8723bs/hal/rtl8723bs_recv.c    |  1 -
+ .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    |  1 -
+ drivers/staging/rtl8723bs/hal/sdio_halinit.c  |  1 -
+ drivers/staging/rtl8723bs/hal/sdio_ops.c      |  1 -
+ drivers/staging/rtl8723bs/include/drv_types.h |  7 --
+ drivers/staging/rtl8723bs/include/hal_intf.h  |  1 -
+ drivers/staging/rtl8723bs/include/rtw_debug.h | 14 ----
+ drivers/staging/rtl8723bs/include/rtw_recv.h  | 10 ---
+ drivers/staging/rtl8723bs/include/rtw_rf.h    |  2 -
+ .../staging/rtl8723bs/os_dep/ioctl_cfg80211.c |  1 -
+ .../staging/rtl8723bs/os_dep/ioctl_linux.c    |  1 -
+ drivers/staging/rtl8723bs/os_dep/mlme_linux.c |  1 -
+ drivers/staging/rtl8723bs/os_dep/os_intfs.c   |  1 -
+ .../staging/rtl8723bs/os_dep/osdep_service.c  |  1 -
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c |  1 -
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c  |  1 -
+ .../staging/rtl8723bs/os_dep/sdio_ops_linux.c |  1 -
+ drivers/staging/rtl8723bs/os_dep/wifi_regd.c  |  1 -
+ drivers/staging/rtl8723bs/os_dep/xmit_linux.c |  1 -
+ 48 files changed, 187 deletions(-)
+ delete mode 100644 drivers/staging/rtl8723bs/core/rtw_debug.c
+ delete mode 100644 drivers/staging/rtl8723bs/core/rtw_rf.c
+ delete mode 100644 drivers/staging/rtl8723bs/include/rtw_debug.h
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.46.0
+
 
