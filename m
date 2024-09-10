@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-323122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A17297383C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:05:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4750F973841
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F94F1F26A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4B628513C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A71191F93;
-	Tue, 10 Sep 2024 13:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E881922F5;
+	Tue, 10 Sep 2024 13:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IcEKE5VX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaCbEsBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E45518C00D;
-	Tue, 10 Sep 2024 13:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65CA17799F;
+	Tue, 10 Sep 2024 13:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973518; cv=none; b=gjtJ7Ju9B/KURaixNrUEjamHlloy2pH53Er0CMiFP8kDWUQKOtaXPOja38wOOLszXZSwqq15OJB+U8Sn+3h5jGFS24npaw5CfEPeSbzq8IiMnmo3NjWr476ServDOyoCb00qT86ZHC/rRuysyLz+69JFz/JJo0/WHG4k+5fxX1U=
+	t=1725973587; cv=none; b=H/BTqMB1zxIBa0t/tX1Ck5TqbdQTJTVeln6tPPaGEDIr10MfS53mLo8m9+6s52T9ZIrzWwBYqP4O+Imhj/clXqKLAjvYxlwiOLZlTmInMWVzbs5qpgGOfVbpey/MSxDQTQDDvTsUbyjjX+PIl+v6FA3Um5+V5f3E3kLR2LxyruY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973518; c=relaxed/simple;
-	bh=e5dl7rhTvT8U88gO91GvPckWYrls1EUDpHm65XSFRHE=;
+	s=arc-20240116; t=1725973587; c=relaxed/simple;
+	bh=8qv/qbqX+FSLrTmUR9r1kfR0lpNJmlhQgGQUTSQPCIk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=egzm0FwTdlnoeiPN8RTKOTVAesYQaw0M36UNH8/HNphWFTHs7qI4TDVYSYTmP8I+vsAJLaCCh22dG1ofAtBjfPIUJYu4Nz6321aUwtPUzT4TElICsLgIKnvLHKL4Pd+wqKmbn7rtqj/VMEZOSaU7Ucrl0VesZWIsdNroJ1URzsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IcEKE5VX; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725973517; x=1757509517;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=e5dl7rhTvT8U88gO91GvPckWYrls1EUDpHm65XSFRHE=;
-  b=IcEKE5VXoaBEM/WkdB2eiRNbOcObHP8pyqOC4ipb1nvWZi9uq+xpnMcS
-   /gP/UybXnvVl5LsGPnkmNFpTeE6zH02UOsHM3N+gZ3o/bvdYEWrXlBVRY
-   2imMr/AbnGzXgpe+j6q9YrNBnkNOXNLsBE3utFcbDYg1AEZ+JU9c0P/Dm
-   T0An+6cqlsgSp97hYv160avfhQsGQseAjDayod4PQlRU9B56ZSHkAA26l
-   4xkxUi31mFIS5VqHnuPyLEw036FcVr44B9z5gJ8zouciPhnt73SvMFLI7
-   ITQxy+eyGQzZ9o8Sf/0cZ3hFFRc7VXseSF/NcBFvvdQp10tU1E4mvjB5x
-   g==;
-X-CSE-ConnectionGUID: dQW+EnE6RROQxrIjUquE0w==
-X-CSE-MsgGUID: cQyzFr4oRKekVzwDr2pcZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="42191318"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="42191318"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:05:16 -0700
-X-CSE-ConnectionGUID: Xd9L7Gp2RNCKe72KRzKOpA==
-X-CSE-MsgGUID: 5TgIvzSPQWua0RSpn/N0xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="67547864"
-Received: from maurocar-mobl2.ger.corp.intel.com (HELO [10.245.245.155]) ([10.245.245.155])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:05:13 -0700
-Message-ID: <568137f5-4e4f-4df7-8054-011977077098@linux.intel.com>
-Date: Tue, 10 Sep 2024 16:05:20 +0300
+	 In-Reply-To:Content-Type; b=fsABB+B3khoZXxKaLdOzbI/E9tzL+XuwhqPtZ76dgYHpMBxfXe6+WZP/i7tsVfXhYs6cNV7PXpwQgZ3y4uqckiU7c/9w5klJ6tMnYmeIPhckj/S/kOime2VistGMDCtXpgKWlmFZBZw4fuWS3Ezu3DeQxyFrNKZf+IViA3MmWRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaCbEsBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313F4C4CEC3;
+	Tue, 10 Sep 2024 13:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725973587;
+	bh=8qv/qbqX+FSLrTmUR9r1kfR0lpNJmlhQgGQUTSQPCIk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SaCbEsBaV4XAF8x7PTcwuWqQQ50nPLUyZ2udbfoAzXkwgV46S6sLaLilNmudW1DnV
+	 BSjJWPkUtcjzjIlsbWmswDkVllVTlIsdsMGce790rfVa/vq1sWbVWB2AAfyACUA2LA
+	 Ng/bM047MJLCa7NyX2rXOM823ettXxCrQ7trR20Fg5Y79oiWu9S+Z42DV2j1z4zqOh
+	 iV5S7m/y8N/wXXEk5ZzY7gvhImaJY3zaHjdIXoz4/VpCjufcYIKqi3tPiMtf2hBCRY
+	 jSNS34ix6mXdzHnLOLnaV2mf46gqXvNoDVALmgH2CMGG+7c/eA2UjyPT6Tz0WcoVIR
+	 LsuvSAc6jrMZA==
+Message-ID: <d2c82922-675e-470f-a4d3-d24c4aecf2e8@kernel.org>
+Date: Tue, 10 Sep 2024 22:06:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,79 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] soundwire: stream: Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, stable@vger.kernel.org
-References: <20240909164746.136629-1-krzysztof.kozlowski@linaro.org>
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Subject: Re: Regression v6.11 booting cannot mount harddisks (xfs)
+To: Jesper Dangaard Brouer <hawk@kernel.org>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Netdev <netdev@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-ide@vger.kernel.org, cassel@kernel.org, handan.babu@oracle.com,
+ djwong@kernel.org, Linux-XFS <linux-xfs@vger.kernel.org>,
+ hdegoede@redhat.com, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, kernel-team <kernel-team@cloudflare.com>
+References: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20240909164746.136629-1-krzysztof.kozlowski@linaro.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+On 2024/09/10 21:19, Jesper Dangaard Brouer wrote:
+> Hi Linus,
+> 
+> My testlab kernel devel server isn't booting correctly on v6.11 branches 
+> (e.g. net-next at 6.11.0-rc5)
+> I just confirmed this also happens on your tree tag: v6.11-rc7.
+> 
+> The symptom/issue is that harddisk dev names (e.g /dev/sda, /dev/sdb, 
+> /dev/sdc) gets reordered.  I switched /etc/fstab to use UUID's instead 
+> (which boots on v6.10) but on 6.11 it still cannot mount harddisks and 
+> doesn't fully boot.
 
+Parallel SCSI device scanning has been around for a long time... This is
+controlled with CONFIG_SCSI_SCAN_ASYNC. And yes, that can cause disk names to
+change, which is why it is never a good idea to rely on them but instead use
+/dev/disk/by-* names. Disabling CONFIG_SCSI_SCAN_ASYNC will likely not guarantee
+that disk names will be constant, given that you seem to have 2 AHCI adapters on
+your host and PCI device scanning is done in parallel.
 
-On 09/09/2024 19:47, Krzysztof Kozlowski wrote:
-> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
-> breaks codecs using non-continuous masks in source and sink ports.  The
-> commit missed the point that port numbers are not used as indices for
-> iterating over prop.sink_ports or prop.source_ports.
+> E.g. errors:
+>    systemd[1]: Expecting device 
+> dev-disk-by\x2duuid-0c2b348d\x2de013\x2d482b\x2da91c\x2d029640ec427a.device 
+> - /dev/disk/by-uuid/0c2b348d-e013-482b-a91c-029640ec42
+> 7a...
+>    [DEPEND] Dependency failed for var-lib.mount - /var/lib.
+>    [...]
+>    [ TIME ] Timed out waiting for device 
+> dev-d…499e46-b40d-4067-afd4-5f6ad09fcff2.
+>    [DEPEND] Dependency failed for boot.mount - /boot.
 > 
-> Soundwire core and existing codecs expect that the array passed as
-> prop.sink_ports and prop.source_ports is continuous.  The port mask still
-> might be non-continuous, but that's unrelated.
+> That corresponds to fstab's:
+>   - UUID=8b499e46-b40d-4067-afd4-5f6ad09fcff2 /boot     xfs defaults 0 0
+>   - UUID=0c2b348d-e013-482b-a91c-029640ec427a /var/lib/ xfs defaults 0 0
 > 
-> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
-> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
-> Acked-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> It looks like disk controller initialization happens in *parallel* on
+> these newer kernels as dmesg shows init printk's overlapping:
+> 
+>   [    5.683393] scsi 5:0:0:0: Direct-Access     ATA      SAMSUNG 
+> MZ7KM120 003Q PQ: 0 ANSI: 5
+>   [    5.683641] scsi 7:0:0:0: Direct-Access     ATA      SAMSUNG 
+> MZ7KM120 003Q PQ: 0 ANSI: 5
+>   [    5.683797] scsi 8:0:0:0: Direct-Access     ATA      Samsung SSD 
+> 840  BB0Q PQ: 0 ANSI: 5
+>   [...]
+>   [    7.057376] sd 5:0:0:0: [sda] 234441648 512-byte logical blocks: 
+> (120 GB/112 GiB)
+>   [    7.062279] sd 7:0:0:0: [sdb] 234441648 512-byte logical blocks: 
+> (120 GB/112 GiB)
+>   [    7.070628] sd 5:0:0:0: [sda] Write Protect is off
+>   [    7.070701] sd 8:0:0:0: [sdc] 488397168 512-byte logical blocks: 
+> (250 GB/233 GiB)
+> 
+> Perhaps this could be a hint to what changed?
 
-Tested-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+See above. The disk /dev/sdX names not being reliable is rather normal.
+Are you sure you have the correct UUIDs of your FSes on the disks ? You can
+check them with "blkid /dev/sdX[n]"
 
-> 
-> ---
-> 
-> Resending with Ack/Rb tags and missing Cc-stable.
-> ---
->  drivers/soundwire/stream.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> index f275143d7b18..7aa4900dcf31 100644
-> --- a/drivers/soundwire/stream.c
-> +++ b/drivers/soundwire/stream.c
-> @@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
->  					    unsigned int port_num)
->  {
->  	struct sdw_dpn_prop *dpn_prop;
-> -	unsigned long mask;
-> +	u8 num_ports;
->  	int i;
->  
->  	if (direction == SDW_DATA_DIR_TX) {
-> -		mask = slave->prop.source_ports;
-> +		num_ports = hweight32(slave->prop.source_ports);
->  		dpn_prop = slave->prop.src_dpn_prop;
->  	} else {
-> -		mask = slave->prop.sink_ports;
-> +		num_ports = hweight32(slave->prop.sink_ports);
->  		dpn_prop = slave->prop.sink_dpn_prop;
->  	}
->  
-> -	for_each_set_bit(i, &mask, 32) {
-> +	for (i = 0; i < num_ports; i++) {
->  		if (dpn_prop[i].num == port_num)
->  			return &dpn_prop[i];
->  	}
+> Any hints what commit I should try to test revert?
+> Or good starting point for bisecting?
+
+You said that 6.10 works, so maybe start from there ?
 
 -- 
-Péter
+Damien Le Moal
+Western Digital Research
+
 
