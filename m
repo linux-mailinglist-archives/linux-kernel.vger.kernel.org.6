@@ -1,131 +1,159 @@
-Return-Path: <linux-kernel+bounces-323035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26509736D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245799736D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC0E1F27C57
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DED21F27A60
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB81A19004E;
-	Tue, 10 Sep 2024 12:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3363118E77F;
+	Tue, 10 Sep 2024 12:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2/jyXDR"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mVkGBIdI"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B587F13E02D;
-	Tue, 10 Sep 2024 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213B613E02D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970002; cv=none; b=mTo/4QcVdqFtxPwkT4UU2dl1KGpBvA1cnMRAwSE/aut3vuqyGxZiIsTyeaG8YZmp5472NJf/0wcrr9OtPetHJc11clA+Eba628oHyTD6pYGvbdCBiHysQjqzorxwg0N+04pCd8LyP8JweDwVyJHqSybfg/FgGgBeI6GxZurCAFc=
+	t=1725970106; cv=none; b=u0ub4ubUfc5VeMmeD8DWtwyHuljJAzdeH3Fls33TiLvymgrrHd3QTaGI8D56CFUfmJ3r5afIsBYPyF+BBFpUiibBNKhVQnisgPgX0sfH6EjOq+x3eGFpXcYmpegkIAynONO/dCQXG/mTbJS4/JK0+zMJNxcdJNPMVr898OK9weI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970002; c=relaxed/simple;
-	bh=0uHqGyWQTKBICcZgWP5SFyBnuC7UuUXsU/vLXQ0WYN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uMizCusGUl+X7jxDtkxe6svgguYrjZno7kPKOv2d1EzA8jvgmvlnevtNkeTMIsPc4YsyKQnvlmdPGu9FXt9pk32vN9P81bU2Mpv23yogKn5cCzdgz9UF7qtohgJ+wiSknBiZuDtt95O6zTvxOFrFrH+bIDwdwOOLHETDeV9sauk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2/jyXDR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c3400367so4704078f8f.2;
-        Tue, 10 Sep 2024 05:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725969999; x=1726574799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3O0+X2UyQ0gOuFyiHB5oW6tIQsBBcRW3/8B2cCf8EM=;
-        b=l2/jyXDR3leqH8NzQlvlQ2hG0tK6qLY3S1VcW1ygpaTvuBNu+h3xKcGjRUPFWq8Sb8
-         slz1sRWElKKLd81nGA4kI0Km08Ngo/G2nBbF/9eylXQvpOlA+6FCw8RV/322xBbLeqnK
-         38KH+Pbj437fN+KAetjSwQXsBwY1xJpnlVoLQWYlUDMCRC64vArmlh7AsDdBodRdLtt3
-         XWwEBn/ZmOZq/sRnn75fRJDh6CfQbwKa+feWHIuxKTN36eZ4DAh/IaCQmhLrDIByZ8Ls
-         /2nAEbDh8K8capeyvX7TJsQb+/fESx2Xji27AOTI+5LL2a1bNqJOPrEt65iQNWBw5P2g
-         i2xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725969999; x=1726574799;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3O0+X2UyQ0gOuFyiHB5oW6tIQsBBcRW3/8B2cCf8EM=;
-        b=gys38Q5YSoIWNOqSE4z71ST1XiV13R31NSEjLAWL0gacQiEpiXGgJCPPK1y8AIIVGL
-         dbbR0iveIL74FbShX190HRF9EjTIEdutEIoyLMBzqK1awz8abjtXkJUlg5POZmhTCs73
-         RVIBbw+0NeKfKuURuO/Bbd8bkkhw6zetuEggxTM1FQFd3OueEKfk3tQnCL1cmxcK99Oj
-         oVQr59pbrps+EIHNXUNFrUv6UrkeVb45cOhEWO/yYmh2v6IbLGzmitF+VD+snh0fzVMc
-         uK5TwhlSAItkDmFKWtxyTnsanh5cTuSzfAQBeFwBf4LH10eYplDBrOAy8fQLYS4LqaXr
-         6Wrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMkQVNU/l3zVGyx5TjFSasRfT+I7E3LxKi+CTsYbFLIiziFo63YRmvxCoY9YUnL9yTcLKPAAhi@vger.kernel.org, AJvYcCUzsYbSeCgWHj/xUmbsIALZT/PQKR8x+rjTH3k3hY1Co2vY0Wpl1Z+BP/cSY7zJjJylmbDRiYsP7FGc43M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWq/cT+mxX9iznuAN/t3VyYlBvH7HIC7XQKkcfkWI1E7YWA1dX
-	G3DGot5stvsUReDJjzpW8SCKcsI+QkiOFmnsdaEeu5M0eywnCzagqaP9AC1s
-X-Google-Smtp-Source: AGHT+IHQn/8VjDWddQEtqhPD6spb3CN4HWurt39gX0dd8Pllpw2ltiFpG//CzBeUnit4t0a3ce2WTw==
-X-Received: by 2002:a05:6000:544:b0:374:b30b:9ae7 with SMTP id ffacd0b85a97d-3789243fb20mr8658299f8f.49.1725969998573;
-        Tue, 10 Sep 2024 05:06:38 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a340sm8714115f8f.24.2024.09.10.05.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:06:37 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shahed Shaikh <shshaikh@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] qlcnic: make read-only const array key static
-Date: Tue, 10 Sep 2024 13:06:35 +0100
-Message-Id: <20240910120635.115266-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725970106; c=relaxed/simple;
+	bh=t+WeGmpmfUC1iHYFNyU4I8lqZvOG7A4ZbvY10Nw7F2I=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=G3wPEH19O+eIH+nrtNJCYqeXBU/klWrv70t4YSHNMsj1mKY1Czknut+wsX4lG308pEfaXAfTkOi8IJx8vpJYcfWHJCHpEwxv7QKQMjplN8DipP/mn0UDY4lWFX2ZvW1zm3QQ0KZV46MsF5nUxdEisUuUZHcqg9C3Jx/kfJSKwPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mVkGBIdI; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240910120820euoutp01b725d0ce3a39eb993ddce9042b8da2af~z4Kl-nibf1654916549euoutp01m
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240910120820euoutp01b725d0ce3a39eb993ddce9042b8da2af~z4Kl-nibf1654916549euoutp01m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725970100;
+	bh=pyaoVhs/4U8W+zYxoeTwH0/3CWGjP6XdFRI7IuTH0BA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=mVkGBIdIA4XmiYVRcTWRrJ4CwuHb6TdDks52CX9LQI52BlfP8dJcGLXadqT7Xc23F
+	 QA+WvjO9t+Y6k4j1tLZavJgZlNAgtKoMBjrozSUuH32CE8QkGyGMVB/uVLUY5crbzP
+	 Su29FWCcAnZZY7IT5JL2jhuF8EZDjpOVviG8Qkkw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240910120820eucas1p1cb22099eb498d527babe17b21ec6b775~z4Kl1F8kn2580925809eucas1p1t;
+	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 75.8C.09624.4B630E66; Tue, 10
+	Sep 2024 13:08:20 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240910120820eucas1p2f477a72fc9b02e7038487cea82b8fc28~z4KlVpASb0745507455eucas1p2i;
+	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240910120820eusmtrp1fa13b8608e9d68d9ed02d386fb4fd2bc~z4KlVAXwv0384103841eusmtrp1Y;
+	Tue, 10 Sep 2024 12:08:20 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-1f-66e036b4f6f5
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.38.19096.3B630E66; Tue, 10
+	Sep 2024 13:08:19 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240910120819eusmtip2fd65d761c5c2b01054fd8e8d4c632ef2~z4KlHadKc2614426144eusmtip2M;
+	Tue, 10 Sep 2024 12:08:19 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 10 Sep 2024 13:08:19 +0100
+Date: Tue, 10 Sep 2024 13:52:31 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Wen Yang <wen.yang@linux.dev>
+CC: "Eric W . Biederman" <ebiederm@xmission.com>, Luis Chamberlain
+	<mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, Christian Brauner
+	<brauner@kernel.org>, Dave Young <dyoung@redhat.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
+Message-ID: <20240910115231.xnjgwyiwfvdvqgud@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240905134818.4104-1-wen.yang@linux.dev>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djPc7pbzB6kGZyeJmfx+vAnRouGiQ0s
+	Fv+3tbBbnOnOtbi8aw6bxY0JTxkt3q+5z+rA7jG74SKLx6ZVnWweCxumMnu833eVzePzJjmP
+	KYfaWQLYorhsUlJzMstSi/TtErgyPj5TL7jMWfH+6U3WBsZ+ji5GTg4JAROJIxNfsnUxcnEI
+	CaxglLh+9jGU84VRovPNAxaQKiGBz4wSRy8KwHScPHqPFaJoOaPEyyczoDqAit5cvgflbGaU
+	ePH1E3MXIwcHi4CqxLklFSDdbAI6Euff3GEGsUUEFCXm7l3EBFLPLPCcUeLtto2MIPXCAl4S
+	B79XgdTwCjhIdK89xAxhC0qcnPkE7CJmoDkLdn9iAylnFpCWWP4P7B1OAXOJ9T0fmSAOVZT4
+	uvgeC4RdK3Fqyy2wVRICLzgk7i36AlXkInHi21qoImGJV8e3sEPYMhKnJ/ewQDRMZpTY/+8D
+	O4SzmlFiWeNXqG5riZYrT6A6HCWu9RxmB7lIQoBP4sZbQYhD+SQmbZvODBHmlehoE4KoVpNY
+	fe8NywRG5VlIXpuF5LVZCK8tYGRexSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJEZhyTv87
+	/mkH49xXH/UOMTJxMB5ilOBgVhLh7be7lybEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVI
+	ID2xJDU7NbUgtQgmy8TBKdXAZJ1t/JK7Y28i+4XP/1bb3FO3ulx34IzdnpO3u2YlTurj3NDw
+	8Lz+ZoGXM7/brf9gUjhhSVCPRufuDYxPbYUilP55/3jdUPNE8PSl9ZHbHA/f/Vt4al7SOY0c
+	tQenPCVffDVKLBTi7piw4UJLhq/eGg+x2EkW9mE9x78stRIq6XaIWzR1rn6/BcPjTUwv5Eur
+	rzQXGWYZ7vs6+YXe1KMCZoyFd7I8/VvlBHzdI08on99+h81jS4pLcIf6EfN0ltvzDkXzLvDQ
+	95TP2szeIjGzo3JRyxrFxvhz4eeciizO8c6/zf6vRGqZMY/40pmite1xMifXfS7qX/Ug+W38
+	A3FD1iAe7Q5JBQ7/41+ONdxWYinOSDTUYi4qTgQAyXoGCagDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsVy+t/xe7qbzR6kGXx4ZGPx+vAnRouGiQ0s
+	Fv+3tbBbnOnOtbi8aw6bxY0JTxkt3q+5z+rA7jG74SKLx6ZVnWweCxumMnu833eVzePzJjmP
+	KYfaWQLYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/Tt
+	EvQyPj5TL7jMWfH+6U3WBsZ+ji5GTg4JAROJk0fvsXYxcnEICSxllPi4vpUZIiEjsfHLVVYI
+	W1jiz7UuNoiij4wSDd3vmSGczUDO670sXYwcHCwCqhLnllSANLAJ6Eicf3MHbJCIgKLE3L2L
+	mEDqmQWeM0q83baREaReWMBL4uD3KpAaXgEHie61h6BmdjFKfNq5iBkiIShxcuYTFhCbGWjo
+	gt2f2EB6mQWkJZb/A/uAU8BcYn3PRyaIQxUlvi6+xwJh10p8/vuMcQKj8Cwkk2YhmTQLYdIC
+	RuZVjCKppcW56bnFRnrFibnFpXnpesn5uZsYgZG37djPLTsYV776qHeIkYmD8RCjBAezkghv
+	v929NCHelMTKqtSi/Pii0pzU4kOMpsCQmMgsJZqcD4z9vJJ4QzMDU0MTM0sDU0szYyVxXrYr
+	59OEBNITS1KzU1MLUotg+pg4OKUamHRz3hUdu7Jkh6nl3SMLa2PC9vfutZ8tUs1YvfNjzpyk
+	tDpZvbggMdWkjVycbhYcqZurhbbL/n/ZsrX8SN2Zei0+k3lmwTw7bp6tsbM5qcdWwrA3nSVq
+	0n77jUFXFnbnHC/8/+vMhDfChtu2NJ+3i7z01eOev0yHI8OpObNf3nh//Z3YmshXx+YpnHCp
+	sNzz9e+1vsVLdrcw/FqWpCDl4xn9eU2WxoQZAgoMfJrvXxabnd1ltKJ3u0hXzJHimPMidUtE
+	2aRmsO7Yx5zBGlHZlMpnwfT4+Vs2DtNfO1rO69WuOlF13vclO//6nWW/Ned+/CVe4FE6odhx
+	1+m5XJZsEUI36w5oHXHeFdnqqmKZr8RSnJFoqMVcVJwIAOaQTVpFAwAA
+X-CMS-MailID: 20240910120820eucas1p2f477a72fc9b02e7038487cea82b8fc28
+X-Msg-Generator: CA
+X-RootMTR: 20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee
+References: <CGME20240905134850eucas1p1bf3a6a630f795a6a708db302afa1a3ee@eucas1p1.samsung.com>
+	<20240905134818.4104-1-wen.yang@linux.dev>
 
-Don't populate the const read-only array key on the stack at
-run time, instead make it static.
+On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
+> The do_proc_dointvec_minmax_conv_param structure provides the minimum and
+> maximum values for doing range checking for the proc_dointvec_minmax()
+> handler, while the do_proc_douintvec_minmax_conv_param structure also
+> provides these min/max values for doing range checking for the
+> proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
+> 
+> To avoid duplicate code, a new proc_minmax_conv_param structure has been
+> introduced to replace both do_proc_dointvec_minmax_conv_param and
+> do_proc_douintvec_minmax_conv_param mentioned above.
+> 
+> This also prepares for the removal of sysctl_vals and sysctl_long_vals.
+> 
+> Signed-off-by: Wen Yang <wen.yang@linux.dev>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Joel Granados <j.granados@samsung.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: linux-kernel@vger.kernel.org
+Thx for the remind. Its a bit to late to include this for 6.12. Will put it in
+sysctl-testing setting it up for 6.13 (or whatever the next version will be).
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Best
 
----
-
-V2: re-order declarations for reverse christmas tree layout
-
----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index bcef8ab715bf..d7cdea8f604d 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -2042,12 +2042,14 @@ int qlcnic_83xx_config_hw_lro(struct qlcnic_adapter *adapter, int mode)
- 
- int qlcnic_83xx_config_rss(struct qlcnic_adapter *adapter, int enable)
- {
--	int err;
--	u32 word;
- 	struct qlcnic_cmd_args cmd;
--	const u64 key[] = { 0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
--			    0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
--			    0x255b0ec26d5a56daULL };
-+	static const u64 key[] = {
-+		0xbeac01fa6a42b73bULL, 0x8030f20c77cb2da3ULL,
-+		0xae7b30b4d0ca2bcbULL, 0x43a38fb04167253dULL,
-+		0x255b0ec26d5a56daULL
-+	};
-+	u32 word;
-+	int err;
- 
- 	err = qlcnic_alloc_mbx_args(&cmd, adapter, QLCNIC_CMD_CONFIGURE_RSS);
- 	if (err)
 -- 
-2.39.2
 
+Joel Granados
 
