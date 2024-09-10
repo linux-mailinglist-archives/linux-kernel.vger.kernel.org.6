@@ -1,152 +1,455 @@
-Return-Path: <linux-kernel+bounces-323773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18AA97433D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE2797433F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6603A1F26454
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47681F25D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E768208A5;
-	Tue, 10 Sep 2024 19:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9511A38C1;
+	Tue, 10 Sep 2024 19:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qb7fgPIZ"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="UI0wDOhk"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA3E1A38F4;
-	Tue, 10 Sep 2024 19:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45454190047
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995556; cv=none; b=M3nVNgh2sBZhqGqepfN8WbDFADr86c6dkJoCbxToZNuNxZaMlSBb3WHpmhjli4rmhQAvj+JBYlGBitOb5Lmcs1R1Q6G001O5Y7biOm7I7jBywlS45yxCkO+9SePlpih6By4Kasi2w144rBYJwS4Sor3OBBm0ks7AzOBoqh6N/wU=
+	t=1725995601; cv=none; b=eE6Bd0YJLRP94w0NjJ/MqT9xt9b6gG0l8KMOepMfFXKXxdSgU0ZcvwKnPRmWA9svtFnDzE7N5VclszQwkDOSSpkzwSaM2lRrssfwcJNK0RI5S3x+vFYFuQSupXsyL8XqUC6VpjwdKHUr8epaUZu2xzio48yCUB7CQuqD9HCE5ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995556; c=relaxed/simple;
-	bh=E7sQELG/DqH4TEFnKF+5HyZFS9kyX6Dy90iQg252XHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qGA/iWeDVr7VK1c/kYSnGTwn/eIgba2GDGJRsK+FYlvyEfZwiH0CsIIkEs5o3K29uyB/3r58VfS3Fl+lFulYP1+vdPdd6v3OFZX2pRa5HKoCg1ythJlhYv0EsRvAw6eQN7EClY9bq5jg+xP4vzoZY+EPPn1GBjwv5pQtzZftRAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qb7fgPIZ; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6c36ff6e981so7896346d6.1;
-        Tue, 10 Sep 2024 12:12:35 -0700 (PDT)
+	s=arc-20240116; t=1725995601; c=relaxed/simple;
+	bh=dVm/MtM4DeGN9D0ksD/oaZ//nM7Mb+G2fXaU4w6nSl0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iaP12p+ScIvEfPTF7EISryDPmCB7Lo2ExtpwH3gBvjRU7K4IWklXYqXLInljDQHIIZ2tADNMcPKkGTIOArmdJGyAvH6XVvJD7q/0oA9WPyrKdnYpdsaCHEUqxLXnIv9K9in+ts4kCkUPUroEy6EWySccuSLRtiz4yAmWcrpBrLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=UI0wDOhk; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so6678828a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725995554; x=1726600354; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYnMa9YqRjDvXqpS04Sv/3+qAyshAPeJgOoGoXWDFo4=;
-        b=Qb7fgPIZNAaY5S0HqTtf4gTKduiICMmYTiEYQtlG/6UkLQsr3JlKw2283FK76naQCK
-         Uise97DMkPWDz2CeQXiXS734swGhNJ7Yux6NNiT5w96uRlJpQIFCGA58IsjPuSEqY5c9
-         b7pAQ6G8hZ9xIQnWi26ikRRcuYmh6Gtzj4DyZGhYC11HFqIOvjpXwOZ7z8xlIBUdxiBT
-         eTloN3Ps/s5q8qa6up1yRgE8Gt7nL1GTUQFAXnJRjje0//Ag9FCTTWW9lhFj97JPAsX5
-         xbPSyhJ3Zns54Yy9GYyzDprWe84ouYyFO9DyTLXq4br01FXCOqD1iLIOuy8Xp7lDLvDj
-         Ff7w==
+        d=rasmusvillemoes.dk; s=google; t=1725995597; x=1726600397; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5N5clxnPVZLfbfPFv0q9nXZKj3xRXB2rcmbPWMFm5pw=;
+        b=UI0wDOhk6RIBfOWd+nbqXMK3Xdz98kTVlNtZYQ+e3HeP6KRRjOAMos8vJST+56LxHR
+         tNII1gWY2M7bVry1/XqN33DO64SEEJRxYZziyRGx2hZhPUO+ADD65Kj0zjd+arc03+A5
+         T8WDxmc9czmw9iHkuMWhwUazGixY0lo6KltLs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725995554; x=1726600354;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1725995597; x=1726600397;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UYnMa9YqRjDvXqpS04Sv/3+qAyshAPeJgOoGoXWDFo4=;
-        b=j/OVph4C3v3yjMUxKgU8PnpkS5HAeVk+sfUGWrhp2vbuf3LuI+RNmONfViwKyfvOsM
-         j/nWh92rsm514eNx6NJFxltEKGJHXUnRPuqcJvGQHB2Wupb22z/6SFb90tz9Zfxq5VmZ
-         WcgwiSytf8/xnZduXT8S5Jj7TJLYy7KZVu5qGPfe6LE4fS5dIjEe3Pekr3Qm2+VDS9Sb
-         loccWnSLahnoyOp5U+BWeD5zclzt9iaiIBOjvKiOHGQHa9xGAlxG4huDvhA+96NhOMhy
-         YGkoASWunyxMMqN2lVvnGJsDYvY6MEFYQz5U2XqGC8G4WUYrruvWuHDcH9Fd5cx9pzmP
-         jEzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOQwNNQVQ2r+RjLxivrmTyKGI4vm5lBCPdjECGgsoDwzvIiz/LrnqNCUz10MWBdwzwgcO0x+nn1AiMIr8=@vger.kernel.org, AJvYcCXrvhybiDe4VGxjGq+RSYzcrUkJKzp8drE7eJlMuEQrBmWfWOg7FjiCeLVNFQrBg7SIiJwI2qLt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL0JZDKdRBZYbp2k68CY2c8ESzZt8iz/A7KM+0YmSXZ93moNek
-	PhjTBBjkXJoK0YNX2MqqZ2GRoMnFciIlbuMvHiYncJyDXB88nC0t
-X-Google-Smtp-Source: AGHT+IFNYAlN1XWSFmtLQZrHfLg4cSVmI2tSKCmp51Zo/R+T8ERPDdDVSvma/I6Xv+3wZF02eTk1XA==
-X-Received: by 2002:a05:6214:320d:b0:6c5:12aa:6dd2 with SMTP id 6a1803df08f44-6c55fb8876emr4374396d6.51.1725995552655;
-        Tue, 10 Sep 2024 12:12:32 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53432e0efsm32864606d6.11.2024.09.10.12.12.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 12:12:31 -0700 (PDT)
-Message-ID: <b165a811-ccae-4c93-940f-22ccfb5e3eb0@gmail.com>
-Date: Tue, 10 Sep 2024 12:12:28 -0700
+        bh=5N5clxnPVZLfbfPFv0q9nXZKj3xRXB2rcmbPWMFm5pw=;
+        b=GLf5y352vjNSMRX59YcCl5HfWSnaczKg4JuaQXM8KizIORVmA1iqx/v+kT16fRbW5s
+         /MlKplMIC29Go5i2FTA56+EVlUv8RJAdU7IQHjlkR1+UUBSDSti9tq+W9jEe6qhQzPNJ
+         orkt7iSffoRBVFGsXOKFnIiL7OSizeHZgDFtCCX2nH8xKOpNLxaq3DUaD8oRixLIF/+R
+         bXSAOC7oLE0og9dhe/1f9OfFI5Nh6Aljq53XS40I8j1yNaHLz13XOSzlcGj3klzP5Dqt
+         PKHZsy8VhrCuZBIfKFxGsgyaa4CFHaxJ9BWl37JF1s5yZCW/NfPFAn2Zq/roA+tCNfHj
+         GaNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiCSMg3huWXeXYAqIK3mwLLGCtH8TmNZh9KwhK7sgMyqF5mmVe/X3fPtMk+FgEnZDZnJMI7qlzc4hQhs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYCs7p+D5hbdLiyVnzOWx0VApUZY2DpXgddVw9s3WrbHG3vx0e
+	Y0ul0oHgVpVOyaeZ49JblL9dTNfL5TGuKJWFbDS2CG7luGgU67L58V5WTNqaTJ8=
+X-Google-Smtp-Source: AGHT+IH1WxpjKC0S+1H9SLotkqHenKyT//XTgx64iwcNKOBhwtNuMr3VWrLFPBrH7xyjE8/mvW5YAA==
+X-Received: by 2002:a17:907:7294:b0:a86:96d1:d1f with SMTP id a640c23a62f3a-a8ffaadafdbmr167712266b.26.1725995596499;
+        Tue, 10 Sep 2024 12:13:16 -0700 (PDT)
+Received: from localhost (77.33.185.121.dhcp.fibianet.dk. [77.33.185.121])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce9277sm525790666b.149.2024.09.10.12.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 12:13:15 -0700 (PDT)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,  Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>,  linux-rtc@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+In-Reply-To: <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+	(Esben Haabendal's message of "Tue, 10 Sep 2024 12:27:11 +0200")
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+Date: Tue, 10 Sep 2024 21:13:17 +0200
+Message-ID: <875xr3iape.fsf@prevas.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/269] 6.6.51-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240910092608.225137854@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240910092608.225137854@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 9/10/24 02:29, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.51 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.51-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Esben Haabendal <esben@geanix.com> writes:
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+> The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
+> interrupt when frequency output is not enabled.
+>
+> The device-tree bindings should ensure that interrupt and clock output is
+> not enabled at the same time.
+>
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
+> ---
+>  drivers/rtc/rtc-isl12022.c | 244 ++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 241 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-isl12022.c b/drivers/rtc/rtc-isl12022.c
+> index d82278fdc29b..682b1bf10160 100644
+> --- a/drivers/rtc/rtc-isl12022.c
+> +++ b/drivers/rtc/rtc-isl12022.c
+> @@ -21,7 +21,7 @@
+>  
+>  #include <asm/byteorder.h>
+>  
+> -/* ISL register offsets */
+> +/* RTC - Real time clock registers */
+>  #define ISL12022_REG_SC		0x00
+>  #define ISL12022_REG_MN		0x01
+>  #define ISL12022_REG_HR		0x02
+> @@ -30,21 +30,36 @@
+>  #define ISL12022_REG_YR		0x05
+>  #define ISL12022_REG_DW		0x06
+>  
+> +/* CSR - Control and status registers */
+>  #define ISL12022_REG_SR		0x07
+>  #define ISL12022_REG_INT	0x08
+> -
+>  #define ISL12022_REG_PWR_VBAT	0x0a
+> -
+>  #define ISL12022_REG_BETA	0x0d
+> +
+> +/* ALARM - Alarm registers */
+> +#define ISL12022_REG_SCA0	0x10
+> +#define ISL12022_REG_MNA0	0x11
+> +#define ISL12022_REG_HRA0	0x12
+> +#define ISL12022_REG_DTA0	0x13
+> +#define ISL12022_REG_MOA0	0x14
+> +#define ISL12022_REG_DWA0	0x15
+> +#define ISL12022_ALARM_SECTION		ISL12022_REG_SCA0
+> +#define ISL12022_ALARM_SECTION_LEN	(ISL12022_REG_DWA0 - ISL12022_REG_SCA0 + 1)
+> +
+> +/* TEMP - Temperature sensor registers */
+>  #define ISL12022_REG_TEMP_L	0x28
+>  
+>  /* ISL register bits */
+>  #define ISL12022_HR_MIL		(1 << 7)	/* military or 24 hour time */
+>  
+> +#define ISL12022_SR_ALM		(1 << 4)
+>  #define ISL12022_SR_LBAT85	(1 << 2)
+>  #define ISL12022_SR_LBAT75	(1 << 1)
+>  
+> +#define ISL12022_INT_ARST	(1 << 7)
+>  #define ISL12022_INT_WRTC	(1 << 6)
+> +#define ISL12022_INT_IM		(1 << 5)
+> +#define ISL12022_INT_FOBATB	(1 << 4)
+>  #define ISL12022_INT_FO_MASK	GENMASK(3, 0)
+>  #define ISL12022_INT_FO_OFF	0x0
+>  #define ISL12022_INT_FO_32K	0x1
+> @@ -52,10 +67,18 @@
+>  #define ISL12022_REG_VB85_MASK	GENMASK(5, 3)
+>  #define ISL12022_REG_VB75_MASK	GENMASK(2, 0)
+>  
+> +#define ISL12022_ALARM_ENABLE	(1 << 7)	/* for all ALARM registers  */
+> +
+>  #define ISL12022_BETA_TSE	(1 << 7)
+>  
+> +static struct i2c_driver isl12022_driver;
+> +
+>  struct isl12022 {
+> +	struct i2c_client *i2c;
+> +	struct rtc_device *rtc;
+>  	struct regmap *regmap;
+> +	int irq;
+> +	bool irq_enabled;
+>  };
+>  
+>  static umode_t isl12022_hwmon_is_visible(const void *data,
+> @@ -215,6 +238,208 @@ static int isl12022_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	return regmap_bulk_write(regmap, ISL12022_REG_SC, buf, sizeof(buf));
+>  }
+>  
+> +static int isl12022_rtc_read_alarm(struct device *dev,
+> +				   struct rtc_wkalrm *alarm)
+> +{
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Style nit, but I think it's easier to read and grep for if the prototype
+is on one line, and it wouldn't go significantly over 80 chars. The file
+already has a few lines > 80 chars, and the 80 char limit doesn't really
+exist anymore.
+
+> 
+> +	struct rtc_time *const tm = &alarm->time;
+
+Hm, declaring auto variables const is quite unusual. I see that a few
+other rtc drivers have done this, but I don't it's an example to copy.
+
+> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> +	struct regmap *regmap = isl12022->regmap;
+> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+
+The kernel normally says u8 (and you do as well in _set_alarm()).
+
+> +	int ret, yr, i;
+> +
+> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+> +			       buf, sizeof(buf));
+> +	if (ret) {
+> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+> +			__func__);
+> +		return ret;
+> +	}
+> +
+> +	dev_dbg(dev,
+> +		"%s: sc=%02x, mn=%02x, hr=%02x, dt=%02x, mo=%02x, dw=%02x\n",
+> +		__func__, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+> +
+> +	tm->tm_sec = bcd2bin(buf[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION]
+> +			     & 0x7F);
+> +	tm->tm_min = bcd2bin(buf[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION]
+> +			     & 0x7F);
+> +	tm->tm_hour = bcd2bin(buf[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION]
+> +			      & 0x3F);
+> +	tm->tm_mday = bcd2bin(buf[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION]
+> +			      & 0x3F);
+> +	tm->tm_mon = bcd2bin(buf[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION]
+> +			     & 0x1F) - 1;
+> +	tm->tm_wday = buf[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] & 0x07;
+> +
+
+Here I'd also suggest keeping each assignment on one line, it's rather
+hard to read this way.
+
+> 
+> +	/* The alarm doesn't store the year so get it from the rtc section */
+> +	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
+> +	if (ret) {
+> +		dev_err(dev, "%s: reading YR register failed\n", __func__);
+> +		return yr;
+
+return ret, presumably.
+
+regmap_read() takes an 'unsigned int *', but yr is int. If the compiler
+doesn't warn I suppose it doesn't matter.
+
+I suggest moving the reading of the yr register up to right after the
+other regmap_read, then you could also include it in the dev_dbg output,
+and all the bcd2bin() conversions are done next to each other.
+
+> +	}
+> +	tm->tm_year = bcd2bin(yr) + 100;
+> +
+> +	for (i = 0 ; i < ISL12022_ALARM_SECTION_LEN ; i++) {
+
+Nit: no spaces before the semicolons.
+
+> +		if (buf[i] & ISL12022_ALARM_ENABLE) {
+> +			alarm->enabled = 1;
+> +			break;
+> +		}
+> +	}
+> +
+> +	dev_dbg(dev, "%s: %ptR\n", __func__, tm);
+> +
+> +	return 0;
+> +}
+> +
+> +static int isl12022_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+> +{
+> +	struct rtc_time *alarm_tm = &alarm->time;
+> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> +	struct regmap *regmap = isl12022->regmap;
+> +	u8 regs[ISL12022_ALARM_SECTION_LEN] = { 0, };
+> +	struct rtc_time rtc_tm;
+> +	int ret = 0, enable, dw;
+> +
+
+Nit: No need to initialize ret when the very first thing you do is
+assigning to it.
+
+> +	ret = isl12022_rtc_read_time(dev, &rtc_tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If the alarm time is before the current time disable the alarm */
+> +	if (!alarm->enabled || rtc_tm_sub(alarm_tm, &rtc_tm) <= 0)
+> +		enable = 0;
+> +	else
+> +		enable = ISL12022_ALARM_ENABLE;
+> +
+> +	/* Set non-matching tm_wday to safeguard against early false matching
+> +	 * while setting all the alarm registers (this rtc lacks a general
+> +	 * alarm/irq enable/disable bit).
+> +	 */
+
+Nit: Don't use network comment style.
+
+> +	if (enable) {
+> +		ret = regmap_read(regmap, ISL12022_REG_DW, &dw);
+> +		if (ret) {
+> +			dev_err(dev, "%s: reading DW failed\n", __func__);
+> +			return ret;
+> +		}
+> +		/* ~4 days into the future should be enough to avoid match */
+> +		dw = ((dw + 4) % 7) | ISL12022_ALARM_ENABLE;
+> +		ret = regmap_write(regmap, ISL12022_REG_DWA0, dw);
+> +		if (ret) {
+> +			dev_err(dev, "%s: writing DWA0 failed\n", __func__);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* Program the alarm and enable it for each setting */
+> +	regs[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_sec) | enable;
+> +	regs[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_min) | enable;
+> +	regs[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_hour) | enable;
+> +	regs[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_mday) | enable;
+> +	regs[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_mon + 1) | enable;
+> +	regs[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] =
+> +		bin2bcd(alarm_tm->tm_wday & 7) | enable;
+> +
+
+The dwa0 handling is a nice trick for avoiding triggering a false
+alarm. But I do wonder if you might need to do it also for the !enable
+case. That is, suppose we've had the alarm set for 01:02:15. The alarm
+fires, we do stuff, and then we want to turn it off. So this gets called
+with some 00:00:00 value in alarm_tm and enable==0. Then when we start
+writing the new register values, as soon as REG_SCA0 has been written
+to, the alarm condition for 01:02:xx is automatically satisfied.
+
+If you unconditionally write a "four days in the future, with alarm bit
+set" value to DWA0, that should prevent this and the DWA0 does get its
+!enable value set via the bulk_write.
+
+
+> +	/* write ALARM registers */
+> +	ret = regmap_bulk_write(regmap, ISL12022_REG_SCA0,
+> +				&regs, sizeof(regs));
+
+Nit: Fits in one line (I think), and you probably want to use the
+ISL12022_ALARM_SECTION name here, even if they're of course the same.
+
+> +	if (ret) {
+> +		dev_err(dev, "%s: writing ALARM registers failed\n", __func__);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t isl12022_rtc_interrupt(int irq, void *data)
+> +{
+> +	struct isl12022 *isl12022 = data;
+> +	struct rtc_device *rtc = isl12022->rtc;
+> +	struct device *dev = &rtc->dev;
+> +	struct regmap *regmap = isl12022->regmap;
+> +	u32 val = 0;
+> +	unsigned long events = 0;
+> +	int ret;
+> +
+> +	ret = regmap_read(regmap, ISL12022_REG_SR, &val);
+> +	if (ret) {
+> +		dev_err(dev, "%s: reading SR failed\n", __func__);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	if (val & ISL12022_SR_ALM)
+> +		events |= RTC_IRQF | RTC_AF;
+> +
+> +	if (events & RTC_AF)
+> +		dev_dbg(dev, "alarm!\n");
+> +
+> +	if (!events)
+> +		return IRQ_NONE;
+> +
+> +	rtc_update_irq(rtc, 1, events);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int isl12022_rtc_alarm_irq_enable(struct device *dev,
+> +					 unsigned int enabled)
+> +{
+> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> +
+> +	if (!isl12022->irq_enabled == !enabled)
+> +		return 0;
+> +
+> +	if (enabled)
+> +		enable_irq(isl12022->irq);
+> +	else
+> +		disable_irq(isl12022->irq);
+> +
+> +	isl12022->irq_enabled = !!enabled;
+> +
+
+I see why you do the ! and !! dances to canonicalize boolean values for
+comparison, but it's not very pretty. But ->alarm_irq_enable has the
+signature it has (that should probably get changed), so to be safe I
+guess you do need them. That said, I don't think it's unreasonable to
+assume that ->alarm_irq_enable is only ever invoked with the values 0
+and 1 for the enabled argument, and e.g. rtc-cpcap.c gets away with that
+assumption.
+
+
+> +	return 0;
+> +}
+> +
+> +static int isl12022_setup_irq(struct isl12022 *isl12022, int irq)
+> +{
+> +	struct device *dev = &isl12022->i2c->dev;
+
+I was wondering why you needed to stash the i2c_client, but I see it
+here. The other initialization helpers (_set_trip_levels and
+_hwmon_register) are passed &client->dev so they have this dev directly,
+and they then get the regmap (or, with patch 1, the struct isl12022)
+from that with dev_get_drvdata(). For consistency I think you should do
+the same, and then you can drop the i2c field in struct isl12022.
+
+> +	struct regmap *regmap = isl12022->regmap;
+> +	unsigned int reg_mask, reg_val;
+> +	u8 buf[ISL12022_ALARM_SECTION_LEN] = { 0, };
+> +	int ret;
+> +
+> +	/* Clear and disable all alarm registers */
+> +	ret = regmap_bulk_write(regmap, ISL12022_ALARM_SECTION,
+> +				buf, sizeof(buf));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable automatic reset of ALM bit, enable single event interrupt
+> +	 * mode, and disable IRQ/fOUT pin during battery-backup mode.
+> +	 */
+
+Network-style.
+
+> +	reg_mask = ISL12022_INT_ARST | ISL12022_INT_IM
+> +		| ISL12022_INT_FOBATB | ISL12022_INT_FO_MASK;
+> +	reg_val = ISL12022_INT_ARST | ISL12022_INT_FOBATB | ISL12022_INT_FO_OFF;
+> +	ret = regmap_write_bits(regmap, ISL12022_REG_INT,
+> +				reg_mask, reg_val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_request_threaded_irq(dev, irq, NULL,
+> +					isl12022_rtc_interrupt,
+> +					IRQF_SHARED | IRQF_ONESHOT,
+> +					isl12022_driver.driver.name,
+> +					isl12022);
+> +	if (ret) {
+> +		dev_err(dev, "Unable to request irq %d\n", irq);
+> +		return ret;
+
+This should probably be "return dev_err_probe(...);" - the irq could in
+theory be routed to some gpio expander which is not yet probed, so we
+could get -EPROBE_DEFER. And regardless, dev_err_probe has the advantage
+of printing what the err code actually is.
+
+Rasmus
 
