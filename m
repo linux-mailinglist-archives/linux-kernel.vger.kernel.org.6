@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-322585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909C6972B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:50:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FA4972B36
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F18FDB23124
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A35281812
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97967181317;
-	Tue, 10 Sep 2024 07:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521B452F71;
+	Tue, 10 Sep 2024 07:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNM2M95T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SOzFUMSp"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A815588B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D196B17C9B9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954634; cv=none; b=P5rpLeDW6xXwSqetozk0+fM7mOXEOsqvxEVDCunho1wSYAhgJAH3T7a0aNxqFbki6/aM7al1VEbl83rSU/Uy7pfa8Ls4pO/jd4nADKT3UdxYkMmgdPgog57rY1b6x7yK7gJ8sIpWDv0oG7txO9YNA2+BnG3oEWL3WWpLdb8J0LA=
+	t=1725954816; cv=none; b=cIHGrmsiT/T9WTfprDe4MgU22ypaKNIqVbPthDEehbC0WQO7BRawZZ4UG9GVU/QBdz8s55mblrMCH+5Bl/vYD9J+hKk2IUR8Z8efDv61jvWmk/yPl/a5qDB0Vpm4ooOVb1/hBwx3E8XIk5Gr74xVFjp0yjUaY54NjPydzGcDqY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954634; c=relaxed/simple;
-	bh=vswE4xEmJQOfA6+wzXWKCkfpVFKdHaZzmFjzfjPBSrM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YQaee4+4BFkbSyE/Ei9cXRtXFWusBwdV0CrHfwpaqKFu01LiHUGMwbxYyeJ+aiOQljzVC0dhG3wlZkbXxh59c5kUUKntO34AQfZ0I/bgZRbZO7sz+lRiPLvRVJmdCVvOfJxOc7gXQadYdKuZpBIh8HDZOi1+5OSO9U3s3veMOtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNM2M95T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80F3C4CEC6;
-	Tue, 10 Sep 2024 07:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725954633;
-	bh=vswE4xEmJQOfA6+wzXWKCkfpVFKdHaZzmFjzfjPBSrM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iNM2M95TL/Sk6Qzjc5rDyQk6v/WTCQWeHB89NpvjAnD21uEyIwBiycKtIYkOx6gbY
-	 AWEZzrr3yqUBJXCVYA/jdVJcEu02SpMaYYgvZku8jIBaTcNDKIm/45SjlwFMblB+RP
-	 qQ7FoLiJYkpQoSCIkp1+H0JvBab/sYW2Jb/mceh79EBAUkoA8QJYQuM7aJYmPJ92Fa
-	 R9840lZ5yjie/4gT1lYpK50dMEqjU1Y9jOtNnwZR/yQ2Xeqgr5EuRB6q5Uh/KE4hNH
-	 o7qFoC/Zb6FLQAOX/C3KCUz2arCN9/p0I6jWiplZNhnJDPhBiAbxwBTdbt/2XvUzLa
-	 Eb61E0bN8gIEA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1snvdv-00BeUN-T9;
-	Tue, 10 Sep 2024 08:50:32 +0100
-Date: Tue, 10 Sep 2024 08:50:30 +0100
-Message-ID: <86y1406j7d.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in gic_ipi_send_mask()
-In-Reply-To: <d1c2f362-da11-b17a-40ff-daecb5abf909@omp.ru>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
-	<87cyli5zj7.ffs@tglx>
-	<d1c2f362-da11-b17a-40ff-daecb5abf909@omp.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725954816; c=relaxed/simple;
+	bh=3kOckCJ3zJfAps2h/AwmdsA7upGrvE/ZTS/+vHfJdls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtRHyH/ZYmN4cUmHG9uHsT2M3wm21DU2KEuzRHhr1AuJdSlTkLTximKeQUmV7elHNSBaVUw1fZA+MQoUF1DQJWfxCk3GXmQhScn6iRKnuV8nuQjU/YvwuMx4W1Yv/GzMcnDRCI4mVWKmXB1Qquxa0K76avqFH7lmrmqUFI2HKP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SOzFUMSp; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374ca65cafdso3252530f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725954813; x=1726559613; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=shoX2ARTnjAfwts3W5+XviwrSe8VQj1wXkGxD3NKmZs=;
+        b=SOzFUMSp0vGrh4caHExLXYWsqhjUhLwcJansJqf6cXSrFcFBPafqdylgWjYX5CqleE
+         /3OJOU0wcne3MFObIrin/Vrm7/OkhBQmcCf7FB/iZGG0s43weFusnzEPnRS0RqJ+J2Nc
+         FYsmUYfQomL+UrgvZTdjcVhGMsi9oVvajbMewJVc4vjozEXEFM8fGcWT28Vey1xTBZ02
+         21P0bFkgnlrekMbyXzJziJezybHl6/aLb8mkcNHSOQLpPyn1pw6UrpPPnyjZM3kIgtU1
+         vEDdvlzYyOnr0btuQI2D9WY/3SKamxdjPsNkSSlZRs7cjsEj2V67kRr1KClf6zHfUTRE
+         ZuLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725954813; x=1726559613;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=shoX2ARTnjAfwts3W5+XviwrSe8VQj1wXkGxD3NKmZs=;
+        b=kd6GieYxSG/DCjZ4BvKahSWSMaC7Q2jhd0Cf8rXRj/BTeCF/AcpMMcknkc+7JBDMYD
+         unjFSvzxzeVN11y6J7TIn14A18xCjaGGCYmpWE7kswURjq7XIXkUvhOlbolkvqfzBC9g
+         kwT9kjNY+ltQVp/B+OhQV7aoI80z9gp8Euv5xZciEYAV+I1QLb/Cf+Gowu+iXCNE/+no
+         yoK61BXk/U96SqNI5VySzo976MsatWvTEF4qgSc6nONoiEzBi+coPxcd9gnP7Dg9O+Ar
+         h8VhzRnD1MR25FR2/g9YrzQxDxC3lWQA9bzV9OWF6Tu8mClDusXvBKzEG04vQg3E5wHl
+         gKhg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/kmsa6etq/OTSBwRbET8UNmKluPN7N71D/p6BuR2eeTD2UUhH667Tbe8mmcLxhDsUV7keNh2JCDIvr9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVdwZiXybIzDr12N1B2QsOcJzEKn7B8qV+mlNm+oynJOqbr6l1
+	92TWapSU+rDGqo0yFtby2R6Ykmo3E0DUBkOc9Y6KJOb5uPK2yw0S3SUzlGGDQGs=
+X-Google-Smtp-Source: AGHT+IENMdK/5AhA0KPXv0+AeOKMK0xU54Nn7FZkq6MEXkPuzfuPWq4a9kCnG4gHdakaS6NMNLo7Ng==
+X-Received: by 2002:a05:6000:cc:b0:374:c269:df79 with SMTP id ffacd0b85a97d-378949f7e28mr5958326f8f.22.1725954812902;
+        Tue, 10 Sep 2024 00:53:32 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789566550asm8072849f8f.35.2024.09.10.00.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 00:53:32 -0700 (PDT)
+Date: Tue, 10 Sep 2024 09:53:31 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Marek Vasut <marex@denx.de>
+Cc: Frank Li <Frank.Li@nxp.com>, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, festevam@gmail.com, francesco@dolcini.it, imx@lists.linux.dev, 
+	jun.li@nxp.com, kernel@pengutronix.de, krzk+dt@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	p.zabel@pengutronix.de, pratikmanvar09@gmail.com, robh@kernel.org, 
+	s.hauer@pengutronix.de, shawnguo@kernel.org, xiaoning.wang@nxp.com
+Subject: Re: [PATCH v4 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+Message-ID: <clldpp6n5qsbrfjwpkz6cwidmvf6ujezlg3qim5dtiahte4dch@2ccocj2y3lql>
+References: <20240909193855.2394830-1-Frank.Li@nxp.com>
+ <cceb5ece-3aba-45d1-a5e3-3419245f345b@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: s.shtylyov@omp.ru, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rpeo6evaheq2e44v"
+Content-Disposition: inline
+In-Reply-To: <cceb5ece-3aba-45d1-a5e3-3419245f345b@denx.de>
 
-On Mon, 09 Sep 2024 20:23:21 +0100,
-Sergey Shtylyov <s.shtylyov@omp.ru> wrote:
-> 
-> On 9/5/24 10:29 AM, Thomas Gleixner wrote:
+
+--rpeo6evaheq2e44v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 09, 2024 at 10:19:59PM +0200, Marek Vasut wrote:
+> On 9/9/24 9:38 PM, Frank Li wrote:
+>=20
 > [...]
-> 
-> >> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
-> >> looking at the GIC driver's irq_set_affinity() method, it seems that the
-> >> passed CPU mask may contain the logical CPU #s beyond 8, and that method
-> 
->    s/8/7/, of course... :-<
-> 
-> >> filters them out before reading gic_cpu_map[], bailing out with
-> >> -EINVAL.
-> > 
-> > The reasoning is correct in theory, but in reality it's a non problem.
-> 
->    Frankly, before finalizing this patch I had tried to ascertain whether
-> cpumask could contain CPUs with the logical #s higher than 8 but that was
-> taking way too much time and I gave up... :-)
+>=20
+> > +	 * Use __raw_writel() to minimize the interval between two writes to
+> > +	 * the SAR register to increase the fastest pwm frequency supported.
+> > +	 *
+> > +	 * When the PWM period is longer than 2us(or <500KHz), this workaround
+> > +	 * can solve this problem. No software workaround is available If PMW
+>=20
+> PWM , typo
 
-You can't really work it out form the source code. The trick is that
-the integration requirements prevent you from doing so. It is as
-simple as that. People have built GICv2-like interrupt controllers
-with more than 8 CPUs, but it is a different beast (see the hip04
-driver for a good laugh).
+Also s/If/if/
 
-Another possible hack is to have 2 GICs side by side, and connect up
-to 8 CPUs to each. But then you cannot IPI one cluster from another,
-and you end-up with the hilarious situation that plagued the Axxia
-SoC, which Linux never really supported, because this is utter
-nonsense.
+Best regards
+Uwe
 
-> 
-> > Simply because processors which use this GIC version cannot have more
-> > than 8 cores.
-> 
->    And big.LITTLE not involved?
+--rpeo6evaheq2e44v
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In what sense? Asymmetric configurations don't impact the number of
-CPU interfaces that can be connected to a single GIC.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> > That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
-> > bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
-> 
->    Perhaps adding WARN_ON() would make some sense though? :-)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbf+vgACgkQj4D7WH0S
+/k48Mgf/ej11u9TqWoVQMnxHQnd+sK3E4TxjbvJ49leMpYo65cIequfyssgC5AU2
+q8HPIPPGlohEk5qoTrFcCaTERiJMycBwkC+UZZ8cZFSXY1UCKLkTq6gmJLo0S73g
+0aiNCTbJEYi+ERu3cX4RdOD3c7pjMuKRLuGcqZxqAgs1omiZIty4SkNzyrDKzYIO
+pV+jP644liIs2kiwTZoYv5IpOVYUH2gtyt/GrthBdeHUpRCw6F6zh38Ercx8isj5
+eXhYt/8lGVMuvI2HKpqt6iaFdQUh/smjBsv61PfuRMUr/yrSGtnc0VRE4WQhyZse
+DwxLj2CPzFp91Ns2HHmEZDKYA5nldw==
+=lYwG
+-----END PGP SIGNATURE-----
 
-But why? If someone builds something that cannot work, they have
-bigger problems than an extra bit in a bitmap, and the kernel is not a
-validation suite for idiotic integration (though I wonder at times).
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+--rpeo6evaheq2e44v--
 
