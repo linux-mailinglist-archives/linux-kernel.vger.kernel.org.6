@@ -1,321 +1,178 @@
-Return-Path: <linux-kernel+bounces-322475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BC797295C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:15:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF7C97295F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EC51F23D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD85628319C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243B0170A1B;
-	Tue, 10 Sep 2024 06:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0973136643;
+	Tue, 10 Sep 2024 06:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zx05BgOM"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tz28vgUA"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7429112E48;
-	Tue, 10 Sep 2024 06:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35ED8144D0C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948956; cv=none; b=QPrbfoyHPkRBp3GpBGtURHhLC2bMFkDUUmrMI5bGQj6wWyhvTAgtezfSeoJNv2+vI3cv4a+J56mHM8/Y6fjZwQzI3+zsfwLQZpQ82J1gdq5+huK2hI/CbszfIdgzJtpnFWjhSTi0WtOXkuzEP8mG+QKwRA8ESx1JZhjac/tosBU=
+	t=1725948973; cv=none; b=fQGA8C2ktTd+JgMezafjzls7+5/zoF8LhAKWN6wEz72VgaoYPa9aCBp9Om35iQnNc9Wh6Om/NW+fCzT+7seg9/EJM2rxPrSOjbbCeea1nYu7dLb4zArWvlzOG7bELan0xLZIczEER6beDF/L5PVvb3Yml9UnnZfzrjtRLypLYo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948956; c=relaxed/simple;
-	bh=O9Fjr/NdnkZ6L2A92vilkJZ2RrVg4nmEu7IwS8hKB2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PxC14QdBEcmCRsSkf25WTrVFDP0doIm84xe3ZuUYpPrBG6hffnO4MWETsPYoloz4ZlRMMtGJxl+P1m7aU55BEsPcuJ+KdqkDDiD1Ezype53HZLjakw4axPr81jLvqUJoWXYmUcskuyNTgvrtIGXKUafd9W+Mh/drNXn9Qds1ijA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zx05BgOM; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c26a52cf82so2363497a12.2;
-        Mon, 09 Sep 2024 23:15:54 -0700 (PDT)
+	s=arc-20240116; t=1725948973; c=relaxed/simple;
+	bh=fS+d5wsY061jH8ZI60Sc5NNKF+kYjSYtjRqsQAYPBew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPQqUed4GxmjPmCVFExTSQ95b23JbB1BycM0hwmy/qy6mnJluzOElKjn4H9r5rF8S3dLwhK80+5RPwcMiL2DVX/mbk53IrE0DvOj3RGIl+vtjmOeAFmyvri8EWK/2SlKyB4M0ZqwJGYZirRrkAIFgvghf3M7ZJ6HTmf8jdrlVSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tz28vgUA; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso11759178a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725948953; x=1726553753; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BdT7dMC/o3p9lUJ163/gFFKSEgLc+DjHXP9xt/udZig=;
-        b=Zx05BgOMVbrxJQpf8QmkOj0NL3wHdxY/Jy3zSbUjF5dfTSAQq4zgzCaHSxZabNr52D
-         5eahOgrPJag2XVdk7B+jpc/IdKGn8pzDN2kFCZUKz3L8GARbsaQRBkjL8o/MfMYbGloe
-         /cLIxQ/tdcY67eDNmgaKuOHNcxcMPn20nFei1P+Em1PBOvg8Zy7Ak/ntFWkwSPawPF8q
-         ZoTkRXK5xtLVuIsO/ipEnECfor9WlAn6ndJgFlGmiz57cxt2oP6iJl5osj6DG14ydBwB
-         wdZywGAeuyLBJCiewPYYuuvJAuQ+f/u/Fnbp7mGyCRQGnBd4jBbGFAWoipqfjhMkbb0A
-         5IcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725948953; x=1726553753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1725948968; x=1726553768; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BdT7dMC/o3p9lUJ163/gFFKSEgLc+DjHXP9xt/udZig=;
-        b=IwO+CF0Txqo5YEFUWKP4pGYd3chbwyqd+qY5ys2Wuy3ONMbx4c8vElLxVgDvM0MfLQ
-         mo0JatHRWy0nN7ZEDsvr7H5VhJCZexNvP4ZtQ5ndezY3U4pE++6JRt5CgRPEWcM6W3lC
-         oQ2oAyr+vJHV+VrH0Xl1fyIy5Ng2vXzHSGH6Up3RU8tX+UxAxm4/e/tO1qRfxjjzW74B
-         EC8mve8Y3DvJn8zgVYCW0dWdrK3wYiviAenpNJTchkzd3tcXoygWc6myn7J9zjxR3E5g
-         fYVsJ+++SVOL8ZMY1NSR/lQfj2H1BJDRvtfQE/ArClyxV4YkuezMVvGMkU0HyN1myI/P
-         x+4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8mxAyAXYfqxT3laARg58VXxy9WlOio/lRE6LN2G4RjVr+80FlLuqVnA4ukcTYHppT2BfrdStTISg7Kxw=@vger.kernel.org, AJvYcCWVTZLwBhwi3nOnmoYciu1gtOEVKal6gDUD4+I2RXzuzhiatKF/n4qQeaNjeDX0l0XjjCg9VbB7bY1WTces/nx9XnsB@vger.kernel.org
-X-Gm-Message-State: AOJu0YydfJXdy41xaCQL4MTIgvGWdasRsQjbgUyb1MzpkNzwFNsx/HWr
-	hGdCn4r0zzAbcjviN74RA6bb9EJNl8QkJ2vlMNTb97KhedJ1Gl9g8mzclprQpKAx6CxFT/PV+5L
-	vI+Qr/87KjqNUudLgh+EV7b+X/60=
-X-Google-Smtp-Source: AGHT+IExFH6YmvnjVUKe2/8vjiXm9aRhAyU/uSIIy5dkpGXJag/GUGhZ929URqHV5/LXlmTmtetgmL5xisEU04a5VzA=
-X-Received: by 2002:a05:6402:4402:b0:5c2:6e61:fa87 with SMTP id
- 4fb4d7f45d1cf-5c3dc7b7ed2mr13103043a12.23.1725948951693; Mon, 09 Sep 2024
- 23:15:51 -0700 (PDT)
+        bh=AmAJsURwK+DW3m7B8gIUcePAXx8kg8IYRNC4SJLU320=;
+        b=tz28vgUAVE/F1gJXar1CAMOjMC8NoOconw2qquROTB2JL+QeAPNW2qMlAgWoimWz9o
+         dhxGOK21LSusWNs9XuPi0krfaG4OVjLHmmiEXq0MUjCvKiplMTcAHe+OSXCDroQaiyok
+         kE8LNvh16SELKJaw52PQXzrrWyy7tQUtG/CwI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725948968; x=1726553768;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmAJsURwK+DW3m7B8gIUcePAXx8kg8IYRNC4SJLU320=;
+        b=GzeC17BN2/ZStDCG2F9bJ81OhMkL4j0wfnhDFhw4tKEBujOp2o6T3lLBt+Yl7M5Bwq
+         SOHPy7uPQog1g2qhks7hbjyFQk0lPckKEqb+OQuCMtSCVlxrOge+aiuLRTWO57njBRp7
+         gSCIy0IIACg3/eetfRP9kZR8BW2GuFPqUoiFP1pJVyWbftN8Fr61RMTf3epNUJMYWRT2
+         huURyZW7B+/1T6WAvAQFsYAOsvhb7ZareWAk1dtLzK0wTWAy9SAoI9rr/Nlz+HSn3du9
+         dXICOYvoXNhcxnUK7IYgmbUTS2cOhCRWMbo5ILnQinUQTnJhxjD9B9+GaHxM4SB0B3OX
+         1UIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/33G97F1DewgN8WktpIx2ksN3ATE9C14U9QstuccYVDMPxf6saLbSkoBwfcOxgf7K1+BIcsjQ/9J3JwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfX0wG063ed1wGwFaZY0WswpaMso6g54Brpk4m0eCtV3yuc03x
+	xL2jKBOt0FjAY80K+3yydt6RCbG2c7Ld3gVTEvWivF+iA/mfTMdzCC6YPlUiuaI=
+X-Google-Smtp-Source: AGHT+IGCdY6kRLZrhsdxNiLuOef48H30NNJ7sic/8YXeJN8qXza4dE7+l4JboW3AjfrZC7fMmWNQkw==
+X-Received: by 2002:a17:907:7216:b0:a8d:4e69:4030 with SMTP id a640c23a62f3a-a8d72e670bbmr212380666b.19.1725948967720;
+        Mon, 09 Sep 2024 23:16:07 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ced201sm430117266b.168.2024.09.09.23.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 23:16:07 -0700 (PDT)
+Date: Tue, 10 Sep 2024 08:16:05 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, kuba@kernel.org,
+	skhawaja@google.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 1/9] net: napi: Add napi_storage
+Message-ID: <Zt_kJT9jCy1rLLCr@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240908160702.56618-1-jdamato@fastly.com>
+ <20240908160702.56618-2-jdamato@fastly.com>
+ <Zt4N1RoplScF2Dbw@LQ3V64L9R2.homenet.telecomitalia.it>
+ <Zt94tXG_lzGLWo1w@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908142544.1409032-1-dolinux.peng@gmail.com> <20240909110415.33cb5f22@gandalf.local.home>
-In-Reply-To: <20240909110415.33cb5f22@gandalf.local.home>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Tue, 10 Sep 2024 14:15:39 +0800
-Message-ID: <CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
-Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
- function return address
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt94tXG_lzGLWo1w@mini-arch>
 
-On Mon, Sep 9, 2024 at 11:04=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Sun,  8 Sep 2024 07:25:44 -0700
-> Donglin Peng <dolinux.peng@gmail.com> wrote:
->
-> Hi Donglin!
->
-> > When using function_graph tracer to analyze the flow of kernel function
-> > execution, it is often necessary to quickly locate the exact line of co=
-de
-> > where the call occurs. While this may be easy at times, it can be more
-> > time-consuming when some functions are inlined or the flow is too long.
-> >
-> > This feature aims to simplify the process by recording the return addre=
-ss
-> > of traced funcions and printing it when outputing trace logs.
-> >
-> > To distinguish the return value, 'V=3D' is used as the prefix for the k=
-ernel
-> > return value, and 'A=3D' is used as the prefix for the return address i=
-n trace
-> > logs. A new trace option named 'funcgraph-retaddr' has been added, and =
-the
-> > option 'sym-addr' can control the format of the return address.
-> >
-> > See below logs with both funcgraph-retval and funcgraph-retaddr enabled=
-.
-> >
-> > 4)               |  load_elf_binary() { /* A=3Dbprm_execve+0x249/0x600 =
-*/
->
-> I wonder if we should make this look more like the function tracer when i=
-t
-> shows the parent. That is:
->
->   4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x600 */
+On Mon, Sep 09, 2024 at 03:37:41PM -0700, Stanislav Fomichev wrote:
+> On 09/08, Joe Damato wrote:
+> > On Sun, Sep 08, 2024 at 04:06:35PM +0000, Joe Damato wrote:
+> > > Add a persistent NAPI storage area for NAPI configuration to the core.
+> > > Drivers opt-in to setting the storage for a NAPI by passing an index
+> > > when calling netif_napi_add_storage.
+> > > 
+> > > napi_storage is allocated in alloc_netdev_mqs, freed in free_netdev
+> > > (after the NAPIs are deleted), and set to 0 when napi_enable is called.
+> > > 
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > ---
+> > >  .../networking/net_cachelines/net_device.rst  |  1 +
+> > >  include/linux/netdevice.h                     | 34 +++++++++++++++++++
+> > >  net/core/dev.c                                | 18 +++++++++-
+> > >  3 files changed, 52 insertions(+), 1 deletion(-)
+> > > 
+> > 
+> > [...]
+> > 
+> > > --- a/net/core/dev.c
+> > > +++ b/net/core/dev.c
+> > > @@ -6719,6 +6719,9 @@ void napi_enable(struct napi_struct *n)
+> > >  		if (n->dev->threaded && n->thread)
+> > >  			new |= NAPIF_STATE_THREADED;
+> > >  	} while (!try_cmpxchg(&n->state, &val, new));
+> > > +
+> > > +	if (n->napi_storage)
+> > > +		memset(n->napi_storage, 0, sizeof(*n->napi_storage));
+> > 
+> > This part is very obviously wrong ;)
+> > 
+> > I think when I was reading the other thread about resetting on
+> > channel change [1] I got a bit confused.
+> > 
+> > Maybe what was intended was on napi_enable, do nothing / remove the
+> > above code (which I suppose would give the persistence desired?).
+> > 
+> > But modify net/ethtool/channels.c to reset NAPIs to the global
+> > (sysfs) settings? Not sure how to balance both persistence with
+> > queue count changes in a way that makes sense for users of the API.
+> > 
+> > And, I didn't quite follow the bits about:
+> >   1. The proposed ring to NAPI mapping
+> 
+> [..]
+> 
+> >   2. The two step "takeover" which seemed to imply that we might
+> >      pull napi_id into napi_storage? Or maybe I just read that part
+> >      wrong?
+> 
+> Yes, the suggestion here is to drop patch #2 from your series and
+> keep napi_id as a user facing 'id' for the persistent storage. But,
+> obviously, this requires persistent napi_id(s) that survive device
+> resets.
+> 
+> The function that allocates new napi_id is napi_hash_add
+> from netif_napi_add_weight. So we can do either of the following:
+> 1. Keep everything as is, but add the napi_rehash somewhere
+>    around napi_enable to 'takeover' previously allocated napi_id.
+> 2. (preferred) Separate napi_hash_add out of netif_napi_add_weight.
+>    And have some new napi_hash_with_id(previous_napi_id) to expose it to the
+>    userspace. Then convert mlx5 to this new interface.
 
-Nice, Is it necessary to add a prefix letter for the return value? For
-example, when
- both funcgraph-retval and funcgraph-retaddr are enabled, like this:
+Jakub is this what you were thinking too?
 
-         avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 V=3D0=
-x0 */
+If this is the case, then the netlink code needs to be tweaked to
+operate on NAPI IDs again (since they are persistent) instead of
+ifindex + napi_storage index?
 
->
-> > 4)               |    load_elf_phdrs() { /* A=3Dload_elf_binary+0x84/0x=
-1730 */
-> > 4)               |      __kmalloc_noprof() { /* A=3Dload_elf_phdrs+0x4a=
-/0xb0 */
-> > 4) + 47.910 us   |        __cond_resched(); /* V=3D0x0 A=3D__kmalloc_no=
-prof+0x28c/0x390 */
-> > 4) ! 204.142 us  |      } /* __kmalloc_noprof V=3D0xffff888201e32c00 */
-> > 4)               |      kernel_read() { /* A=3Dload_elf_phdrs+0x6c/0xb0=
- */
-> > 4)               |        rw_verify_area() { /* A=3Dkernel_read+0x2b/0x=
-50 */
-> > 4)               |          security_file_permission() {
-> > 4)               |            selinux_file_permission() { /* A=3Dsecuri=
-ty_file_permission+0x26/0x40 */
-> > 4)               |              __inode_security_revalidate() { /* A=3D=
-selinux_file_permission+0x6d/0x140 */
-> > 4)   1.182 us    |                __cond_resched(); /* V=3D0x0 A=3D__in=
-ode_security_revalidate+0x5f/0x80 */
-> > 4)   4.138 us    |              } /* __inode_security_revalidate V=3D0x=
-0 */
-> > 4)   1.513 us    |              avc_policy_seqno(); /* V=3D0x0 A=3Dseli=
-nux_file_permission+0x107/0x140 */
-> > 4) + 12.133 us   |            } /* selinux_file_permission V=3D0x0 */
-> > 4) + 39.834 us   |          } /* security_file_permission V=3D0x0 */
-> > 4) + 42.710 us   |        } /* rw_verify_area V=3D0x0 */
-> >
-> > Then, we can use the faddr2line to locate the source code, for example:
-> >
-> > $ ./scripts/faddr2line ./vmlinux load_elf_phdrs+0x6c/0xb0
-> > load_elf_phdrs+0x6c/0xb0:
-> > elf_read at fs/binfmt_elf.c:471
-> > (inlined by) load_elf_phdrs at fs/binfmt_elf.c:531
-> >
-> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > ---
-> >  include/linux/ftrace.h               |   1 +
-> >  kernel/trace/fgraph.c                |   1 +
-> >  kernel/trace/trace.h                 |   1 +
-> >  kernel/trace/trace_entries.h         |  19 ++++-
-> >  kernel/trace/trace_functions_graph.c | 105 ++++++++++++++++++---------
-> >  5 files changed, 92 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > index fd5e84d0ec47..bdf51163b3b8 100644
-> > --- a/include/linux/ftrace.h
-> > +++ b/include/linux/ftrace.h
-> > @@ -1011,6 +1011,7 @@ static inline void ftrace_init(void) { }
-> >   */
-> >  struct ftrace_graph_ent {
-> >       unsigned long func; /* Current function */
-> > +     unsigned long retaddr;  /* Return address */
-> >       int depth;
-> >  } __packed;
-> >
-> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> > index d7d4fb403f6f..fcc4162c10f6 100644
-> > --- a/kernel/trace/fgraph.c
-> > +++ b/kernel/trace/fgraph.c
-> > @@ -622,6 +622,7 @@ int function_graph_enter(unsigned long ret, unsigne=
-d long func,
-> >
-> >       trace.func =3D func;
-> >       trace.depth =3D ++current->curr_ret_depth;
-> > +     trace.retaddr =3D ret;
-> >
-> >       offset =3D ftrace_push_return_trace(ret, func, frame_pointer, ret=
-p, 0);
-> >       if (offset < 0)
-> > diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> > index bd3e3069300e..87e02815b030 100644
-> > --- a/kernel/trace/trace.h
-> > +++ b/kernel/trace/trace.h
-> > @@ -870,6 +870,7 @@ static __always_inline bool ftrace_hash_empty(struc=
-t ftrace_hash *hash)
-> >  #define TRACE_GRAPH_GRAPH_TIME          0x400
-> >  #define TRACE_GRAPH_PRINT_RETVAL        0x800
-> >  #define TRACE_GRAPH_PRINT_RETVAL_HEX    0x1000
-> > +#define TRACE_GRAPH_PRINT_RETADDR       0x2000
-> >  #define TRACE_GRAPH_PRINT_FILL_SHIFT 28
-> >  #define TRACE_GRAPH_PRINT_FILL_MASK  (0x3 << TRACE_GRAPH_PRINT_FILL_SH=
-IFT)
-> >
-> > diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.=
-h
-> > index c47422b20908..8b8753319dd3 100644
-> > --- a/kernel/trace/trace_entries.h
-> > +++ b/kernel/trace/trace_entries.h
-> > @@ -71,6 +71,7 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
-> >       perf_ftrace_event_register
-> >  );
-> >
-> > +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> >  /* Function call entry */
-> >  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> >
-> > @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent=
-_entry,
-> >       F_STRUCT(
-> >               __field_struct( struct ftrace_graph_ent,        graph_ent=
-       )
-> >               __field_packed( unsigned long,  graph_ent,      func     =
-       )
-> > +             __field_packed( unsigned long,  graph_ent,      retaddr  =
-       )
-> >               __field_packed( int,            graph_ent,      depth    =
-       )
-> >       ),
-> >
->
-> Let's make this a new event, so that when this option is not enabled, we
-> don't waste the ring buffer. For function tracing, every element added to
-> the event will add megabytes extra to the ring buffer.
->
-> It should be possible to switch what event gets created at the time of th=
-e
-> trace. Even calling different functions to do it.
-
-Sounds good, we may create a new event as follows:
-
-struct ftrace_graph_ent {
-unsigned long func; /* Current function */
-unsigned long retaddr;
-int depth;
-} __packed;
-
-FTRACE_ENTRY_PACKED(funcgraph_retaddr_entry, ftrace_graph_ent_readdr_entry,
-
-TRACE_GRAPH_RETADDR_ENT,
-
-F_STRUCT(
-__field_struct( struct ftrace_graph_retaddr_ent, graph_retaddr_ent )
-__field_packed( unsigned long, graph_retaddr_ent, func )
-__field_packed( unsigned long, graph_retaddr_ent, retaddr )
-__field_packed( int, graph_retaddr_ent, depth )
-),
-
-F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
-);
-
-If we were to introduce another new feature such as funcgraph-args which
-adds a `ftrace_regs` to the `ftrace_graph_ent`, would it be necessary to
-create yet another new event?
-
- In the scenario where both funcgrah-retaddr and funcgraph-args are enabled=
-,
-it is possible that an additional new event may also be required.
-
->
-> Thanks,
->
-> -- Steve
->
->
-> > @@ -86,8 +88,6 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent=
-_entry,
-> >  );
-> >
-> >  /* Function return entry */
-> > -#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> > -
-> >  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
-> >
-> >       TRACE_GRAPH_RET,
-> > @@ -110,6 +110,21 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_r=
-et_entry,
-> >
-> >  #else
-> >
-> > +/* Function call entry */
-> > +FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> > +
-> > +     TRACE_GRAPH_ENT,
-> > +
-> > +     F_STRUCT(
-> > +             __field_struct( struct ftrace_graph_ent,        graph_ent=
-       )
-> > +             __field_packed( unsigned long,  graph_ent,      func     =
-       )
-> > +             __field_packed( int,            graph_ent,      depth    =
-       )
-> > +     ),
-> > +
-> > +     F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
-> > +);
-> > +
-> > +/* Function return entry */
-> >  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
-> >
-> >       TRACE_GRAPH_RET,
+LMK.
 
