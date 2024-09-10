@@ -1,121 +1,226 @@
-Return-Path: <linux-kernel+bounces-322291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773FB9726DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF629726DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244001F24729
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385C01F24A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D093B14389F;
-	Tue, 10 Sep 2024 01:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665491411E9;
+	Tue, 10 Sep 2024 01:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4/ZBQtc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IiFH/Sb8"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7FF26ADD;
-	Tue, 10 Sep 2024 01:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDBD13E02D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725933472; cv=none; b=kXL2SR1Azn2HTkiQeJ/b/qvdgt5AQT09nQ0g9KdjaZ8E9Nzc2bPjJZQC2v7AAH5+buTorM/rHnlWAtW61ZbugQZYvRspjfv6OyfGgbTnO3IxjydQevd97A85tU4qpwGrGm/+1LzRJRU9JkStZSp8mbd15ylwLdYkLo5vmaHZO58=
+	t=1725933568; cv=none; b=pdRTF2xbRMHtL/DpJb72vPaBle6mG88RunM0oqV+YpJ6NcyxbwjeM90GyqSMh/wG1jBU/c6uKxU//2nRrvmD14UFcRoa9v6GfFo3HZAN0i15Gsn4NULVWtpfF691M4uTsqYYE360MXSYfsUOF6essgf5+kUtN3cyeORQ7bnJs3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725933472; c=relaxed/simple;
-	bh=Mpc367Qq2KgjGSWneG8t1t7ylvaiUYfcTC1evuPCSo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TRXlptImRrVVmeceyp7ilBwK9KCrN29Je/fakWzQpMimUZGCL6adUx/uK+NTxcyybbhobic+dh7uA6PX1l/8AybD8ae7bOZBID9ITBJ37k3cZGVD41Qy1ZmXbp7B+nL8x90UZqj6Occuo48x9QJEDR8IqywQUtv+GxLSv8nZ8Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4/ZBQtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F36CC4CEC5;
-	Tue, 10 Sep 2024 01:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725933471;
-	bh=Mpc367Qq2KgjGSWneG8t1t7ylvaiUYfcTC1evuPCSo0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=A4/ZBQtcLIVb6iJZdngcey0BUW2zuO3KEn6O5mQs+NSHCdaQh93+fSfs+dgmnhku8
-	 w5t+tKZKrGWg4mG1LanrIl+K/MzOHj1TaUy02KZpXCIv2VcTQWCjZp/THeUSS+BriL
-	 Chv4kikV2OgmKAFg8mkArn+YqHk2DUbnMrQ5AacoQXJzNZma9akXcs16C7z9hxlJEZ
-	 5Srv0B7MY5lD3KerRnih5ibEHCZtSXAQVJJIVEOewhIq32CUfjES6fhrQTG5rWjVyE
-	 bncyE1+MM6CNLsmeO51LG0Ng53/ZcyW+bA113+7RFtBT0ry4kFbQ5QTmr3qm3SAMBe
-	 n1+sOElpSPkQw==
-Date: Mon, 9 Sep 2024 18:57:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, "=?UTF-8?B?QmrDtnJuIFTDtnBl?=
- =?UTF-8?B?bA==?=" <bjorn@kernel.org>, Magnus Karlsson
- <magnus.karlsson@intel.com>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Pavel Begunkov <asml.silence@gmail.com>, David
- Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, Willem de Bruijn <willemb@google.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v25 08/13] net: add support for skbs with
- unreadable frags
-Message-ID: <20240909185748.0ac082fd@kernel.org>
-In-Reply-To: <20240909054318.1809580-9-almasrymina@google.com>
-References: <20240909054318.1809580-1-almasrymina@google.com>
-	<20240909054318.1809580-9-almasrymina@google.com>
+	s=arc-20240116; t=1725933568; c=relaxed/simple;
+	bh=+vgXJu3DmQSYac25zzMvTnwAxbBwm0mx6zHzINC8nYs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=u5htJ3g3MHPPVzLfjl7UlRHOx+Fm7r1ov8NR3BUoPJnR91Vz8dvx432yBLvhDxyYpBwHSCShCc8e1cCK5ZLqDurW37Z5tvwqDnlc1sjXGB2fYmibd7QNMtpMwIJ4mLZ4OmjcapdrVF0IGKvwUx4F9V8Mt0MRLLIATwHzwmx5jUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IiFH/Sb8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240910015917epoutp04dce5aeca4b41a8538be55aa4e9264f38~zv20khWhP1233912339epoutp04Y
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:59:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240910015917epoutp04dce5aeca4b41a8538be55aa4e9264f38~zv20khWhP1233912339epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725933557;
+	bh=luxmpxMeSG3l4LijUSMrKLkxeqIHwXkHJoseFVInBHY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=IiFH/Sb82AIjKC4JWidTvWfGTZfAGi6IeH/4VNprXPQZ+EQdL32L4PBrTdqhknAnZ
+	 bG+pBlpy8dl9JV/fugexDTko7sDbv+44qJ9aqepcnMADl9D4x3fYmNFev2GAYIrLR1
+	 m9EOtw3IpcP+VNiHCoB0LhAjbd3OlfV4YAZ6RaVk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240910015917epcas1p416862ecee5c7bff57d2a7df499e86220~zv20JtS2R2930729307epcas1p4P;
+	Tue, 10 Sep 2024 01:59:17 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.136]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4X2n1v4lY1z4x9Q9; Tue, 10 Sep
+	2024 01:59:15 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	13.15.09734.3F7AFD66; Tue, 10 Sep 2024 10:59:15 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240910015915epcas1p1c33f805f78ae16985460f322ca0c0e51~zv2yTJ2AO2438624386epcas1p1Z;
+	Tue, 10 Sep 2024 01:59:15 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240910015915epsmtrp1c40bc184785f5908c85feaa8bd142c29~zv2ySYfhW3125331253epsmtrp1I;
+	Tue, 10 Sep 2024 01:59:15 +0000 (GMT)
+X-AuditID: b6c32a35-babff70000002606-c7-66dfa7f3db1e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	44.75.19367.3F7AFD66; Tue, 10 Sep 2024 10:59:15 +0900 (KST)
+Received: from [10.113.111.204] (unknown [10.113.111.204]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240910015914epsmtip2f7dd3e9bb73c1292d6009a8b9514345a~zv2x7lGGw1601816018epsmtip2m;
+	Tue, 10 Sep 2024 01:59:14 +0000 (GMT)
+Message-ID: <36a7a634b001bf23ef41daa1b8d7644c6aab133f.camel@samsung.com>
+Subject: Re: [PATCH v4 3/3] tty: serial: samsung: Fix serial rx on Apple
+ A7-A9
+From: Kwanghoon Son <k.son@samsung.com>
+To: Nick Chan <towinchenmi@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+Date: Tue, 10 Sep 2024 10:59:14 +0900
+In-Reply-To: <1a318d4f-8883-490f-a537-d641cf845a7c@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmru7n5ffTDNZcVbR4MG8bm8XPq3wW
+	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
+	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzA
+	UNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6DglhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFK
+	ToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGy6frWQuuS1Ycbm1lbWB8INLFyMkhIWAi8WLr
+	I9YuRi4OIYEdjBJf385nhnA+MUr0df5kh3N2Pt3LDtPyp2chG0RiJ6PEy2kNjBDOe0aJf7dB
+	MpwcvAIeEvOWvGIBsYUFAiQOdv1jBbHZBNQllrStBZskInCTSWL1YxsQm1lAUmLmtNVg9SwC
+	qhJXZ64Eq+EUsJVYs7efDaJGW2LZwtfMILaogLxEw8MTzBC7BCVOznzCAnKEhMBEDonPk/8C
+	JTiAHBeJn9sMIK4Wlnh1fAvUB1ISL/vboOxsiaMf97JB2CUS12ctYoWwjSX2L53MBDKGWUBT
+	Yv0ufYgT+CTefe1hhZjOK9HRJgRhykvc6iyHaBSVOPP0I9RAD4m/Oz9BA3Q9k8SD7wfZJjDK
+	z0LyzCwkD8xCWLaAkXkVo1hqQXFuemqxYYEhPFKT83M3MYLTp5bpDsaJbz/oHWJk4mA8xCjB
+	wawkwttvdy9NiDclsbIqtSg/vqg0J7X4EKMpMEgnMkuJJucDE3heSbyhiaWBiZmRsYmFoZmh
+	kjjvmStlqUIC6YklqdmpqQWpRTB9TBycUg1MB0JXMnt53gjRqFZqOuoae9THW6k83rHK4C6L
+	0E1OYXu2B0cCCufOvaCjppoRM2lhRYXorNLsHdJa71iUa1c4PObb184R78kW9PWZSq/gRhdx
+	kWLBS6tYVNnL+OZ9ib1ov0DlBwvzuy9BAZZhc8JZl9ntP8w/gctpj+jsqaVs1SHC0S5zxP7v
+	vbZcWm/j/t0hCbOTazgKv05+4vfnyB2ZDKbNibZ3KzLctfmLl79sDbd7Ljzlsl/Bt48HlGNN
+	NVqeNK3ZuzDgrfnLK9xWnOvtNLzeK9l4xrUH7xPju2r89sdMvTfPd/2/uLdJ85xiaO/uz9uv
+	/LPqO+JyZcWjdhXT+9H6sxlc9BxSrs8v+6jEUpyRaKjFXFScCACucYA7KAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7n5ffTDJ7+YbV4MG8bm8XPq3wW
+	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
+	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+P/xBdMBc2SFVta77A3
+	MPaIdDFyckgImEj86VnI1sXIxSEksJ1R4sWNiYwQCVGJjsuNQDYHkC0scfhwMUTNW0aJr+2T
+	wGp4BTwk5i15xQJiCwsESBzs+scKYrMJqEssaVvLDmKLCNxkknhyyhvEZhaQlJg5bTVYPYuA
+	qsTVmSvBajgFbCXW7O2HOmIzk8Sn7VPZIRo0JVq3/4aytSWWLXzNDGKLCshLNDw8wQxxhKDE
+	yZlPWCYwCs5C0jILScssJGULGJlXMYqmFhTnpucmFxjqFSfmFpfmpesl5+duYgTHilbQDsZl
+	6//qHWJk4mA8xCjBwawkwttvdy9NiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9yTmeKkEB6Yklq
+	dmpqQWoRTJaJg1OqgUkrQSGd5WvPursi26pSdXtk1xde08lK+HN4c7nIXZXXj5niLwZGib1P
+	CqlJ9DDenMpnYDFrl3/emRVTdj7awZGXvMZOUvxeYNjPM9zXLf2NilVUi7XkWebOYdt6a5uM
+	bPw6r4shjw81WymwczpFlKlvjJzqKMI/91uNblqu17Jv3ks9dTwCD7n05ASu6FA8YdoyTcvV
+	ctGeOsPZOueY73GrJL2853w2xW/DwajQ9a2S69+oO099ZLg+fOckhVluVuFMnOUNCs3isgFt
+	PSU/77ZFhxftsjmoH9TCnPNyNjubcIf+lMWufuFR1R2qNzm3m63S+zXh7lQTNv2qwrIWA4c6
+	K86400Fzznnuz1ViKc5INNRiLipOBADpwRBZBAMAAA==
+X-CMS-MailID: 20240910015915epcas1p1c33f805f78ae16985460f322ca0c0e51
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240909094327epcas1p4bd962fc01182a76c07888e9222572917
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+	<20240909084222.3209-4-towinchenmi@gmail.com>
+	<CGME20240909094327epcas1p4bd962fc01182a76c07888e9222572917@epcas1p4.samsung.com>
+	<c73a59634ed8eeb099f4d5cb746f3b3e770391f5.camel@samsung.com>
+	<1a318d4f-8883-490f-a537-d641cf845a7c@gmail.com>
 
-On Mon,  9 Sep 2024 05:43:13 +0000 Mina Almasry wrote:
-> For device memory TCP, we expect the skb headers to be available in host
-> memory for access, and we expect the skb frags to be in device memory
-> and unaccessible to the host. We expect there to be no mixing and
-> matching of device memory frags (unaccessible) with host memory frags
-> (accessible) in the same skb.
-> 
-> Add a skb->devmem flag which indicates whether the frags in this skb
-> are device memory frags or not.
-> 
-> __skb_fill_netmem_desc() now checks frags added to skbs for net_iov,
-> and marks the skb as skb->devmem accordingly.
-> 
-> Add checks through the network stack to avoid accessing the frags of
-> devmem skbs and avoid coalescing devmem skbs with non devmem skbs.
-> 
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Eric Dumazet <edumazet@google.com>
+On Mon, 2024-09-09 at 17:51 +0800, Nick Chan wrote:
+>=20
+> On 9/9/2024 17:43, Kwanghoon Son wrote:
+> > On Mon, 2024-09-09 at 16:37 +0800, Nick Chan wrote:
+> > > Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which=
+ is
+> > > enabled by bit 11 in UCON.
+> > >=20
+> > > Access these bits in addition to the original RXTO and RXTO enable bi=
+ts,
+> > > to allow serial rx to function on A7-A9 SoCs. This change does not
+> > > appear to affect the A10 SoC and up.
+> > >=20
+> > > Signed-off-by: Nick Chan <towinchenmi=40gmail.com>
+> > >=20
+> >=20
+> > =5Bsnip=5D
+> >=20
+> > > diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
+> > > index 1e8686695487..964a4fbf2626 100644
+> > > --- a/include/linux/serial_s3c.h
+> > > +++ b/include/linux/serial_s3c.h
+> > > =40=40 -246,24 +246,28 =40=40
+> > >  				 S5PV210_UFCON_TXTRIG4 =7C	=5C
+> > >  				 S5PV210_UFCON_RXTRIG4)
+> > > =20
+> > > -=23define APPLE_S5L_UCON_RXTO_ENA		9
+> > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA	12
+> > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA	13
+> > > -=23define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
+> > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRES=
+H_ENA)
+> > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRES=
+H_ENA)
+> > > +=23define APPLE_S5L_UCON_RXTO_ENA			9
+> > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
+> > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA		12
+> > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA		13
+> > > +=23define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
+> > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO=
+_LEGACY_ENA)
+> > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRE=
+SH_ENA)
+> > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRE=
+SH_ENA)
+> >=20
+> > Small thing, but other diff is not needed except
+> > APPLE_S5L_UCON_RXTO_LEGACY_ENA.
+> >=20
+> > Kwang.
+> The other diffs are there to keep everything aligned, it looks like a
+> jumbled mess here in the email, but in an editor like nano it is all
+> aligned, before or after this series.
 
-I'm sure we'll find more cases which need a check but I can't think 
-of any now, so:
+I know why you did. But still there is way keep aligned and only one
+line added.=20
 
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
+you just added one more tab to other lines.
+If one tab with APPLE_S5L_UCON_RXTO_LEGACY_ENA, then everything will
+fine.
+
+I think less changes better when see git show or blame.
+
+Best regards,
+Kwang.
+
+>=20
+> >=20
+> > > =20
+> > >  =23define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE =7C =5C
+> > >  					 S3C2410_UCON_RXIRQMODE =7C =5C
+> > >  					 S3C2410_UCON_RXFIFO_TOI)
+> > >  =23define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK =7C =5C
+> > > +					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK =7C =5C
+> > >  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK =7C =5C
+> > >  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
+> > > =20
+> > > +=23define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
+> > >  =23define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
+> > >  =23define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
+> > >  =23define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
+> > > -=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
+> > > +=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
+> > > =20
+> > >  =23ifndef __ASSEMBLY__
+> > > =20
+> >=20
+>=20
+> Nick Chan
+
 
