@@ -1,143 +1,111 @@
-Return-Path: <linux-kernel+bounces-323747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAC49742DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:57:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7319D9742DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0D31F250F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37206286E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7371A4F3A;
-	Tue, 10 Sep 2024 18:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625FD1A7051;
+	Tue, 10 Sep 2024 18:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="RidbVF29"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s4/P31pr"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95397A945
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76B1A0708;
+	Tue, 10 Sep 2024 18:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994649; cv=none; b=SXzv//gEpmemC5vzGtFQpnVS7aZFRdPkwsjleh0GIAtETOOvlLSaOHwETi/GLvOqQUCP3NzZp/xq/G08IBkDvoVcsBWDkRZja4L/zE3FSklsv7YFa+P5lEC/OnRwo7KgRg92R5LuejT5HbVvvniD5omaytjqnGuYqe9ONKn5dEk=
+	t=1725994757; cv=none; b=lYGCzaUNL0hlWNvymdQmGYfohqU8xw6/3+p0ceWIo+qCFNJQAQZJVw0q4jiQySoZepsfpejVTeu8Odl/4fj5m2+DqhuMkm2sScvI/tA9x/renxuJZSGEFTOXXtJ3x2y4YAD+JDTZNQ+O/TuL+iGUF10Spg04TBa58Mp4c1mh/U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994649; c=relaxed/simple;
-	bh=bZeq4Z0ebYhUDCoVLKa5FdvS8mzxM7LPMAKj+72Khq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwo8gogmodPElnB7Y4hopo6iQD13gQLoFHj1RolCn5HAtoY2I7GYGrsRV0iZiWDnEmB24MXw3RQQl3AGVakA331+JzGU0ZDu1bDQIZcBx55Zu1d6q0/a7A0zAIiu1/h7/Yc7kwDwSUvkIpzjVd/IRwhxN/Xu0OdescL4zFkiedQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=RidbVF29; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4X3Ccc3Cd2zDqQb;
-	Tue, 10 Sep 2024 18:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1725994640; bh=bZeq4Z0ebYhUDCoVLKa5FdvS8mzxM7LPMAKj+72Khq8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RidbVF29rcddgvB1cUw8jtrfsKRJiSaaNnJf2ZwdwcaGShZfJUlSOpLs2OYkdHBSS
-	 Y83L/a3wzynlNa1STRtO9KjLDRK8WNgdMEzhN4+ANvnC2RS1rEmiW7h0q/djNva5iX
-	 7RG/yMG6DLH85BDbta5GLVPmEDbPSdPQqYt73V0g=
-X-Riseup-User-ID: 16F9D23D34EC5F58F723AA569FAF8A047F08E4FE3B91D97D89884668576CD256
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4X3CcX1n6HzJtyM;
-	Tue, 10 Sep 2024 18:57:16 +0000 (UTC)
-Message-ID: <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
-Date: Tue, 10 Sep 2024 15:57:13 -0300
+	s=arc-20240116; t=1725994757; c=relaxed/simple;
+	bh=f2gKhhCaAZOrRih/26d2mAxc09wPg7jwSjHQwbCur1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyyGYomdZL7cPTtay+q+K+dRO/3r8REOo42RQyITa3eTm42A+SbNpdqkEibNF27b83bx8+AEMyHrPHdKI092eDqI2HxMf+Ik3jbeJ8mYOynAbVO5yyvzNOMwAyYo3NyTA4TpyzxUz9ul3i8Hcbx4wB/kR4MYp2O6melIcU6i3gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s4/P31pr; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=faIiyJTdeUZNcnYDzrYg0JikXUSOkAxYS32UaSWmdlE=; b=s4/P31prm7EKsDTXjw1Y8d1/aM
+	5f5OUfyiksMzg9/VMCYuTkfiTPc+MB0QV2VCs5X+rH83DbXlVDKkfKc/9lbm0QXT0GBxjceDDJm6w
+	UBJVuBOOJ4R2thDbVP+2eOuES8x4isrTOIz9NiiXRWZv/axiEh5YNpTElyoaxgl3wjqE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1so64s-0078Yb-Mc; Tue, 10 Sep 2024 20:59:02 +0200
+Date: Tue, 10 Sep 2024 20:59:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandra Diupina <adiupina@astralinux.ru>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
+References: <884103b1-e373-4446-b9fd-1cb06cd75360@lunn.ch>
+ <20240910173110.31944-1-adiupina@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] MAINTAINERS: Add myself as VKMS Maintainer
-To: Louis Chauvet <louis.chauvet@bootlin.com>, rodrigosiqueiramelo@gmail.com,
- melissa.srw@gmail.com, hamohammed.sa@gmail.com, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run
-Cc: thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
- seanpaul@google.com
-References: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
-Content-Language: en-US
-From: Maira Canal <mairacanal@riseup.net>
-In-Reply-To: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910173110.31944-1-adiupina@astralinux.ru>
 
-On 9/10/24 12:10, Louis Chauvet wrote:
-> I've been actively working on VKMS to provide new features and
-> participated in reviews and testing. To help Maìra with her work, add
-> myself as co-maintainer of VKMS.
+On Tue, Sep 10, 2024 at 08:31:10PM +0300, Alexandra Diupina wrote:
+> get_div() may return zero, so it is necessary to check
+> before calling DIV_ROUND_UP_ULL().
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-Acked-by: Maíra Canal <mairacanal@riseup.net>
-
-Please, check the procedures to apply for commit rights in drm-misc and
-apply it. This way you will be able to commit your patches.
-
-Thanks for volunteering!
-
-Best Regards,
-- Maíra
-
+> Return value of get_div() depends on reg1, reg2, shift1, shift2
+> fields of clk_double_div structure which are filled using the
+> PERIPH_DOUBLEDIV macro. This macro is called from the
+> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+> 
+> It is not known exactly what values can be contained in the registers
+> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
+> div can be zero. Print an error message and return 0 in this case.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
+> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
 > ---
-> Hi everyone,
+> v2: added explanations to the commit message and printing 
+> of an error message when div==0
+>  drivers/clk/mvebu/armada-37xx-periph.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> This series [1] has been waiting for a while now, it was proposed first in
-> February. The first iterations had few reactions (thanks to Arthur, Pekka,
-> Maìra, ...), but since v8 (in May) no major issues were reported, Maìra
-> seemed satisfied, and only minor cosmetic changes were reported. Two other
-> series ([2] and [3]), that I submitted first in May, did not have receive
-> any reactions.
-> 
-> In addition, there is also some significant addition to VKMS being
-> proposed, such as ConfigFS support, and without a clear maintainer having
-> the time to review and approve these changes, these changes have very
-> little changes to get in.
-> 
-> VKMS is not a fundamental driver for "normal" Linux users, but I had some
-> feedback from userspace developpers that VKMS could be a very good testing
-> tool if only it had more features (I think P0xx formats were asked to
-> test HDR for example). This could also help to detect issues in DRM core
-> by emulating a wide range of configurations.
-> 
-> I believe the only active maintainer is Maìra, but as she's mentioned before,
-> she doesn't have much time to work on VKMS. So, I'd like to volunteer as a
-> maintainer. I have plenty of time to dedicate to VKMS.
-> 
-> I hope I've gained enough understanding of VKMS to be helful with this role.
-> I am eager to move forward and improve this subsystem. I've also talked to Sean
-> about this, and he agrees that it would be good if I could commit code to
-> drm-misc.
-> 
-> [1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/
-> [2]: https://lore.kernel.org/all/20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com/
-> [3]: https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 10430778c998b57944c1a6c5f07d676127e47faa..62f10356e11ab7fa9c8f79ba63b335eb6580d0a8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7340,6 +7340,7 @@ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
->   M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
->   M:	Melissa Wen <melissa.srw@gmail.com>
->   M:	Maíra Canal <mairacanal@riseup.net>
-> +M:	Louis Chauvet <louis.chauvet@bootlin.com>
->   R:	Haneen Mohammed <hamohammed.sa@gmail.com>
->   R:	Daniel Vetter <daniel@ffwll.ch>
->   L:	dri-devel@lists.freedesktop.org
-> 
-> ---
-> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-> change-id: 20240910-vkms-maintainer-7b3d2210cc1b
-> 
-> Best regards,
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 8701a58a5804..8e749a354ffc 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -343,7 +343,13 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
+>  	div = get_div(double_div->reg1, double_div->shift1);
+>  	div *= get_div(double_div->reg2, double_div->shift2);
+>  
+> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> +	if (!div) {
+> +		pr_err("Can't recalculate the rate of clock %s\n",
+> +										hw->init->name);
+
+Rather odd indentation!
+
+It is too late for this merge window. Please fix this and repost on
+top of 6.12-rc1.
+
+Thanks
+	Andrew
 
