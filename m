@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-323231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FC79739D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABE59739D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E315283BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85DA91F26638
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3A194ADB;
-	Tue, 10 Sep 2024 14:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734AF194C77;
+	Tue, 10 Sep 2024 14:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gv973UAU"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl6fWYgy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0953194151;
-	Tue, 10 Sep 2024 14:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F272AEF1;
+	Tue, 10 Sep 2024 14:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978410; cv=none; b=TwPVcjd3t16wi5E1FDCcGDIKRMJ/WJ/lruJWXfJyNDj3MgfEbS/Saw0sGwPbnvFRlvKfFaZ/SpgoDkTsVDR9J75ZZs90MRyqfShtWKz3TV3JHCxPBXJekuS0bjIP4XeDvp4RQ05ctIfGXPMuM/2c+q3RdXRuUekSdQaKE3hK7io=
+	t=1725978447; cv=none; b=b2aGUuH9eZKggqP9AXmqky27e8yqAif11GZKS0ZHKUlf4gUHmuU6l0MbS5SsXYgHarBmhbNntTKYRChxexlhM5yp4TkDeH9f0VGKd6xFGrOSelG5IXsz4O8gbOurdtpryyoogy+95FWfNTmaiP0VTXh7MeLKtIIHxXII1WsDtW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978410; c=relaxed/simple;
-	bh=hc7NyxgpJ6DbiRHsgdcnzwepguGDZlHND0w3d7+mHNs=;
+	s=arc-20240116; t=1725978447; c=relaxed/simple;
+	bh=ZxDk5Fk89zH/bioeL3XOgTPjQDch7841H+ZV7fVipHQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c4ZX7TSi5ACi17gNvb9lH52AjUasVKx3dmnPCYPk2HlJyNS+I/5O/Qf8YSj7pVBwIcTcZrKIddxkQrP9leC6ODD2b+y9DZdTYeoW1KROsDQF4I5Kx9E281tLp8F75r5FhPtDaIQosq92kNfzvUM4bbG7rRw28t7/Nu2mU9XuXks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gv973UAU; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71788bfe60eso655952b3a.1;
-        Tue, 10 Sep 2024 07:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725978408; x=1726583208; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+t6DdrK5yndZ10uTnmpmlxoTF20sSnH2lNklBwPw3IE=;
-        b=gv973UAUJ0EWjv5/TmuVQr7iiuH+SxXY/hw1amL8NOelZLS1e3W150YAvLRFJQMofl
-         mDU2w/myyo2vRwAGQg3kwodNrMgowU6o1yv6y9LBWzZjg6a/BgSJU0LVbyGO5q6QDNPA
-         K1VWPiiJBrbtV8fPZ/+2T6curZbLcUq/zq/E0aOvfif2DnB8A3vl7iybK1Y+H4vuPaRb
-         ZTEfgmoFmzqbQbcCHTLk3V14E+8Yjwd7v/Y8otcsHfeh8dIDruWXyWovBywxVlNKOF1H
-         rxTRQLiLRLXFPGZ3tBPUSe8utyAa3FqcRXwUxb17TVD6acAURBiQNN38VO5Rj3TsMGrl
-         Hhbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725978408; x=1726583208;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+t6DdrK5yndZ10uTnmpmlxoTF20sSnH2lNklBwPw3IE=;
-        b=mszN4tCayGWv3C+6t7ICDwaSWPfAC4sGI7JX82FUY42op4fr8eE3bO0MV5gsHCkEoK
-         e0u6QT5Jm8//NoOJ5rPdBIGEh2LyOfU/HcOYEbA/MJXUSpXTPxO6PKpWMzoQWkx9BzUc
-         mMVhAxmQi6DUkdunif0ptu9xuGrZVpCDFuWRVk/VeRd68YN0JGeiqOI0HN7ng2GDlyHf
-         Ta+ZblYIAaFeJfNrY2Mkq0AKAyuqzfKr8NgJ+99KVCXKj7Ul5vPW8NDqEQbKPQ2TEI42
-         8r9+FBX2Bm+nxk0e2RyyJVlw6bZWhA87WN+8QQfWgTb7NVb8DXVmq8gHlEFRLRo1sssf
-         pmvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0LcXH1SRsK0jDaZKIR1njVJZ6zyKfyt8nLIpF7O14nsKVH4PlpUoOVY+098eCfO5Ry2yE1Mc0UDew3kQ=@vger.kernel.org, AJvYcCVMxDevHCCrNQMvPay+APQmk6GK1reaNQsHq1rS3R/iqLD3OY2wMtS1uM2Q74xRID+MS4hGB/mN2oDegeC8i9vbDig=@vger.kernel.org, AJvYcCVj6r5ILSBXoaKWQNGHIyHdMpW4mdsuAIXiv4WpM79StRr7pGr3A2+xHMvveazg7ujEbfU0OIBHEwoMRf0A@vger.kernel.org
-X-Gm-Message-State: AOJu0YziycpFtGtS7gP3MfMfhI7PjTO6TXfYQrdbmgySPjDqqPI95Ss8
-	MJnylJfmwCR8weU3p1A0AC0e9Ls1E6nBJKB+ATO/y4v6nfqfBDDkePmFj/Eoyqc=
-X-Google-Smtp-Source: AGHT+IEf3wHNP6yf1vdBPZkHwAbshOdAEbtculahpnCqwG6Zq2HSxCVLlv0APhg8CaZYX2Sbty2Kew==
-X-Received: by 2002:a05:6a20:e609:b0:1cc:bb1f:1d4 with SMTP id adf61e73a8af0-1cf5dc246c8mr1477157637.0.1725978407681;
-        Tue, 10 Sep 2024 07:26:47 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e3271csm49416375ad.78.2024.09.10.07.26.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 07:26:47 -0700 (PDT)
-Message-ID: <a7f7ccb0-1dd2-4df5-a2ad-1fe4c98d67e0@gmail.com>
-Date: Tue, 10 Sep 2024 22:26:44 +0800
+	 In-Reply-To:Content-Type; b=Ny4ahOSQvWerCXWeRzQgfKTX7XNhfY0SFPrD4eSiczcyW7PBK8VUcaQfBDhnIHi25DL6FsaapdJz2HGGXsRGW0DaR+l2vIdot55b6w/Itkn6CxFtXXu1Qdn19g8uUt9uLqklhzpZZNFbsik+7Uc/EDGRcuwIYrTCetkW8paDiNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl6fWYgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CB6C4CEC3;
+	Tue, 10 Sep 2024 14:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725978447;
+	bh=ZxDk5Fk89zH/bioeL3XOgTPjQDch7841H+ZV7fVipHQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yl6fWYgyG+mAfxEu/dFwAgv8LUpgM0zqF/rnitmNqa0iTXaZDx+Da0Vu9a0+B3RAR
+	 51HgqNIUoMeo/HIq8f/FTCDU3UEb8IgM6eeS1pArECU/1TiOsXiuWDVsk6TE04ngpq
+	 1DXHUzq9FEC6rBI4auR2z+SEpLjRuPTJCXm8O2N/ba6QPHCe0qG3NuuQS86aHu+6sp
+	 Kx6IIMMgGL2Ij8T7KjZe1vv2bX9Iwhogy7zFibXOlX+6j30Dbx/AXZ7cubhwUZgC2N
+	 daOIRekkXOv5mZ3ZXYDNR5XXhUMJDZRiLEaQk9LTYf5kUuo2xLmDwGseXUmQrkw3Z2
+	 +yT5jFlwh+wyw==
+Message-ID: <b2e813c4-be89-457d-8c38-38849177ec93@kernel.org>
+Date: Tue, 10 Sep 2024 15:27:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,84 +49,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] tty: serial: samsung: Use BIT() macro for
- APPLE_S5L_*
-Content-Language: en-MW
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, asahi@lists.linux.dev
-References: <20240909084222.3209-1-towinchenmi@gmail.com>
- <20240909084222.3209-2-towinchenmi@gmail.com>
- <lbyvuozxjywyt46w2imk2jvwfas3p43wooj2ioyhufwkyg72da@d6stk7xk4rx4>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <lbyvuozxjywyt46w2imk2jvwfas3p43wooj2ioyhufwkyg72da@d6stk7xk4rx4>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/2] perf build: Autodetect minimum required llvm-dev
+ version
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ sesse@google.com, acme@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Changbin Du <changbin.du@huawei.com>, Guilherme Amadio <amadio@gentoo.org>,
+ Leo Yan <leo.yan@arm.com>, Manu Bretelle <chantr4@gmail.com>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev
+References: <20240910140405.568791-1-james.clark@linaro.org>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20240910140405.568791-1-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 10/9/2024 20:48, Andi Shyti wrote:
-> Hi Nick,
+2024-09-10 15:04 UTC+0100 ~ James Clark <james.clark@linaro.org>
+> The new LLVM addr2line feature requires a minimum version of 13 to
+> compile. Add a feature check for the version so that NO_LLVM=1 doesn't
+> need to be explicitly added. Leave the existing llvm feature check
+> intact because it's used by tools other than Perf.
 > 
-> On Mon, Sep 09, 2024 at 04:37:25PM GMT, Nick Chan wrote:
->> New entries using BIT() will be added soon, so change the existing ones
->> for consistency.
->>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> This fixes the following compilation error when the llvm-dev version
+> doesn't match:
 > 
-> I think this is:
+>    util/llvm-c-helpers.cpp: In function 'char* llvm_name_for_code(dso*, const char*, u64)':
+>    util/llvm-c-helpers.cpp:178:21: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
+>      178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
 > 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-We will see... Got a bit paranoid after bad things happened with v2 and v3.
-
+> Fixes: c3f8644c21df ("perf report: Support LLVM for addr2line()")
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   tools/build/Makefile.feature           |  2 +-
+>   tools/build/feature/Makefile           |  9 +++++++++
+>   tools/build/feature/test-llvm-perf.cpp | 14 ++++++++++++++
+>   tools/perf/Makefile.config             |  6 +++---
+>   4 files changed, 27 insertions(+), 4 deletions(-)
+>   create mode 100644 tools/build/feature/test-llvm-perf.cpp
 > 
->> ---
->>  include/linux/serial_s3c.h | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
->> index 1672cf0810ef..1e8686695487 100644
->> --- a/include/linux/serial_s3c.h
->> +++ b/include/linux/serial_s3c.h
->> @@ -249,9 +249,9 @@
->>  #define APPLE_S5L_UCON_RXTO_ENA		9
->>  #define APPLE_S5L_UCON_RXTHRESH_ENA	12
->>  #define APPLE_S5L_UCON_TXTHRESH_ENA	13
->> -#define APPLE_S5L_UCON_RXTO_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_ENA)
->> -#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
->> -#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
->> +#define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
->> +#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
->> +#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
->>  
->>  #define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE | \
->>  					 S3C2410_UCON_RXIRQMODE | \
->> @@ -260,9 +260,9 @@
->>  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
->>  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
->>  
->> -#define APPLE_S5L_UTRSTAT_RXTHRESH	(1<<4)
->> -#define APPLE_S5L_UTRSTAT_TXTHRESH	(1<<5)
->> -#define APPLE_S5L_UTRSTAT_RXTO		(1<<9)
->> +#define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
->> +#define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
->> +#define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
->>  #define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
-> 
-> You could make this GENMASK(0x3f, 4)
-Good idea, given the above context I think I may add
+> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+> index 0717e96d6a0e..427a9389e26c 100644
+> --- a/tools/build/Makefile.feature
+> +++ b/tools/build/Makefile.feature
+> @@ -136,7 +136,7 @@ FEATURE_DISPLAY ?=              \
+>            libunwind              \
+>            libdw-dwarf-unwind     \
+>            libcapstone            \
+> -         llvm                   \
+> +         llvm-perf              \
 
-Suggested-by: Andi Shyti <andi.shyti@kernel.org>
+Hi! Just a quick question, why remove "llvm" from the list, here?
 
-too. And actually it should be GENMASK(9, 3)
-
-> 
-> Andi
-
-Nick Chan
-
+Quentin
 
