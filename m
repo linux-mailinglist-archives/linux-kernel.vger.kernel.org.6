@@ -1,455 +1,357 @@
-Return-Path: <linux-kernel+bounces-322680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25745972C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01458972C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CF11F21D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2627A1C24328
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07278186E4B;
-	Tue, 10 Sep 2024 08:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020151865E1;
+	Tue, 10 Sep 2024 08:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TfdKXhKj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hwbckTnF"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011023.outbound.protection.outlook.com [52.101.65.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1037717BB24
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725957281; cv=none; b=gbVyapuY2Y+ATARpk0ioU0QmZNK6Les0lWnaJ4oPEvO88mUM5n/bjzGI8qMGY8RW84JUo/oN39+VvVynIK999dLGgXbi6FaOVTXzSF4UfctytVQCR5il5GWkN3NwgXdRNhm16GyjutDEKCWYELIg174UhDKo7QSHgf+BL8/REvM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725957281; c=relaxed/simple;
-	bh=dlk4YBozOg2tMtUlyXa5BdmebhAbduVWruAiq/v+mTE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uqgEOyhSy4m/uuAWdAVf9UsePpWx7pDvrHHVewBZiZ+08hkDLrREKK+DezJXec2cIfCzZ3lVre0xqIaJv7WasOrsYB9wqY0JeKPVp8yoUl9dJTI3bUsOmMg4S4xIm6i+9m1Ade03xdL+aqgk0c9LIizOxdFC9W+O9Gu7T7hXC7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TfdKXhKj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725957277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fPYNzrJXKT6Kf3pTlS4+RlP9ivHOL9p8abtIufwok5s=;
-	b=TfdKXhKj0NjsFtNuYzdR3DsEBoodnJMSm+HvBiMu3UPGApSI1N9UDOzy1AsdBiUNIfwCcI
-	x8SNDUp80+aBwF3mnB6GWo9BV2A6rZNhmeloNA3ypVNNJp91d+U2artIe9rlVAETOGtrOo
-	5qwdf8/jNcOsfTEZ6WjTYDE+DkAMXqg=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-jAi7-QKxMOWPnq9SPPmDqA-1; Tue, 10 Sep 2024 04:34:35 -0400
-X-MC-Unique: jAi7-QKxMOWPnq9SPPmDqA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a8d13a9cc7aso238174866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725957274; x=1726562074;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPYNzrJXKT6Kf3pTlS4+RlP9ivHOL9p8abtIufwok5s=;
-        b=gaF4CbcBDR/JZDjErujFFZfqP3Z/Ci2doRycDvuSYbf0IUwU+nYmj2sajguskN1HSk
-         SHdDIno2d4G5B8DQwQhy7CFe3N+YYJJMbxU+I+ELTZwUXcBj0SSRoMKuLKdAhbYJzGUo
-         7piI7Yy03QuVihzVFcNq58H2wf78s3fQ506LuXHe8HBt4bZ6jVUspM3CLZExPSBC9CGU
-         1S9CHt3SSPuHsVbb1tFezSLW1uMn0pir1oF1Bd4VIZHBkxKzNhlCu9y3Ap9Spz56IMSA
-         fDr04aRsxREtCXQm4AEGrVXj39WkjiWc4lkiKdssbttxRdGno1N+4A0zsdRlhcZsLZ6u
-         fECw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHTgVvi0b3RR5+qr8hsor9SjZKPk7vMnkvmSqmnR3NWujnlM4iHRM4+qvu0nstcMbApqQma551Sc2ihM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwglD4O3EV3aapKsOtRaWFbjJP2GzLnR651ivmFvVwNjYWqzdK8
-	o67ogKR+BpVACGLRC1vedMiH5W+HnI/eC+gx+OLlvzwP6RZA5yWK8Dllnjh+hXG/XUsO/Lbr8Wf
-	N9UW5zRsxudPTSSinBzBAsCUsUAtGr60B2oDw5iU8gqy+PrRIQ/5Ji6avG5e1zQ==
-X-Received: by 2002:a17:907:9606:b0:a86:9ba1:639e with SMTP id a640c23a62f3a-a8a885fb742mr1368555466b.26.1725957273979;
-        Tue, 10 Sep 2024 01:34:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEUNgellNHBmpptv3zgRsuLzJKA6icHROlhYgaWOH/Aqa9HUJUiOvkEGLfvSN7nWhgwauO1Q==
-X-Received: by 2002:a17:907:9606:b0:a86:9ba1:639e with SMTP id a640c23a62f3a-a8a885fb742mr1368547466b.26.1725957272656;
-        Tue, 10 Sep 2024 01:34:32 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25833955sm449555866b.32.2024.09.10.01.34.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:34:32 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 42A6F152C377; Tue, 10 Sep 2024 10:34:31 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Florian Kauer <florian.kauer@linutronix.de>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard
- Brouer <hawk@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- xdp-newbies@vger.kernel.org, Florian Kauer <florian.kauer@linutronix.de>
-Subject: Re: [PATCH] bpf: devmap: allow for repeated redirect
-In-Reply-To: <20240909-devel-koalo-fix-redirect-v1-1-2dd90771146c@linutronix.de>
-References: <20240909-devel-koalo-fix-redirect-v1-1-2dd90771146c@linutronix.de>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 10 Sep 2024 10:34:31 +0200
-Message-ID: <87o74vewko.fsf@toke.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75B9183CB0;
+	Tue, 10 Sep 2024 08:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725957327; cv=fail; b=bc+/KECRPEOuQnyGeuhGzzq8wYWuLJ3fooxe1LSDkK5Q9SODmnYxF9m2Y9da09X+u04jsUwaYks5pp9EmQWrZgUWkw2ESJKZcjqP8Z8tneOoEmcx9abFSG203jS9HrYiy4JKxwdjv2sPilzJ4YGEGVVGsmqrYfv9F7+Pd0WSR2E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725957327; c=relaxed/simple;
+	bh=ziJpgGyADQjUzWCUetQO4447zV+vPf2C0D8Zg+jvqmU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ci7Go1GbeB8wemrZU5Y8oq5kdRtI3XP/mlRu4LUixuTOJ665flKVY0zqDjHO7fQF16C/OuiS+OlSmTLkAvjn5bP47J9FMuyC/CBoaK0PKDpR4rRqy6IsGLLvDtQhcyoQz9u3iEIx0VSherBF9Hcl6oWuJGbPXV5WYa8d5JSwxuQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hwbckTnF; arc=fail smtp.client-ip=52.101.65.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LD2W5OqyCpx3otuO3QDzaqJYes509id0a1kOLbHVR9kfwx1KRzlpHtthuT8zivcdUpEGcOXi1fj98kBMEr0o9a9l8NyKBDN+qC8qBapOW0pNtHk01K6IT0lFHBgcCxYjmrAOV4vm6mBA6VKtaOcLoKWae4MC0lOA41VsqBmeiXtJCJ3Vb7v/AWM/ruVdy8wWTPLUewVMrlLERWICbszLZE7NEe977gXkrspB5NKlHF0bjl67kphpKPN2DcV0PA97kNql5nL1hheSRtXYvTKqN39WegHp+Oe3UCPpOomDxhqz8Jht07LB0tslU0gaUjcpxNmPr2YoAUnFMGWlbsWOfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+3s1czm+TbUNOCiLK/BwhgD9F9pCjzj+QFmY9LhaTRk=;
+ b=ddxLrVX2d8Emu5Q4mKDbPKLoUdhq7Wf/IzvIjoowH1r0abdrQgb0pHAVTwQhbWLZBKCd3i2oCZdTyE+LnZokBlTB8Wb5jWxGdK7dmL/+ULUWTSPIOTrNNxYQ9BpT3SRKpUrEZ8MYpkp2MhjR85Vn2P62XkdkdgCa3F5IDx0zQzM4nWnrJ1mK0FTEyjmjg6/Tgb+/p8Do37AvuPJfhgdLdbQamzLI7n5MDYMs1DPwp1KaBIJRoWTsWD8lLMSjjoM7v1h9JCgnG11SAs/FVQzvQolHTBWmbCCNqzP3rpIJRdfkIY6RPkDOISzGjWleuisCEJ4sg4MvIu/zO6oC4dms1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+3s1czm+TbUNOCiLK/BwhgD9F9pCjzj+QFmY9LhaTRk=;
+ b=hwbckTnF9j6B5QU7/8Wc9miqbzUF6UZncc47TPYL0GnONIi5pfQMpjcrQqhFHCWTUkZ+xVmdm2DR1hPlm6ji8F2IIRBrk/TXsdMFjsNtl91G5TySMooIC5sVpbcwrx0nfStRWra2qqkXqwoRJHLve4Rf/naQ1GtrZXWab+cd4TxPlkLyo8zCQ2hbP5slRzG26kud5nrTVmRHglzzfS0XlTz1jyX+e7yTaA/mAVighX2ee68CAoLQjYusjBkC/RlfXbxQECPGEgy+TIKnFnFByHVjN/+AmxEFF3D60gmuBun9+1S2S+RXgjzRj5U4XriydIDJfy1pX95qq2xAxxmSsQ==
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by GVXPR04MB10899.eurprd04.prod.outlook.com (2603:10a6:150:225::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 08:35:22 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%3]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 08:35:22 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
+	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
+	<tsung-hsien.hsieh@nxp.com>
+Subject: RE: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+ different channel
+Thread-Topic: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+ different channel
+Thread-Index:
+ AQHa/RQwZkxE7S8BN0ebi7x6fu8g/rJP/dMAgABP2xCAAGcLgIAABVmggAADdICAAADY8A==
+Date: Tue, 10 Sep 2024 08:35:22 +0000
+Message-ID:
+ <PA4PR04MB96382A98C3CCA608663FB655D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
+ <Zt9jFpyptX_ftH-p@pengutronix.de>
+ <PA4PR04MB9638EA984DB5F2FDAEA3B873D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt_8gwj6GnV_yZ1Z@pengutronix.de>
+ <PA4PR04MB963850587C41FF78F4244E3AD19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <ZuAD5fKyKgHPFN8s@pengutronix.de>
+In-Reply-To: <ZuAD5fKyKgHPFN8s@pengutronix.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|GVXPR04MB10899:EE_
+x-ms-office365-filtering-correlation-id: 2fc22a34-7c3c-4819-9483-08dcd1738293
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Alq2MnVMusptE6FgzYi6dNRAIz1MvIa2yJxqX9vb7Hxrp0r0ZGi5q12uNI8B?=
+ =?us-ascii?Q?Fx6MgyrLQeoKvRbOtRY+o0fuPXNxeAabgAV1yRlSgX0XzvQbg4luQp+1+8Ru?=
+ =?us-ascii?Q?A8X3ZYfa1gZ7PBBJEtQmTVK0AB+dfvNg94VqqBGWREW/Wl1BXWEvzgd7RrDC?=
+ =?us-ascii?Q?6FRJtFEshGO2Y5n7Hh2rxQWi5t7+e/Pe6fU/HwS09JxFX/h79a3iZpE79QZR?=
+ =?us-ascii?Q?owuBvaKKqcqNyD82s1Oldhzx2r2JX+ij/+sly9qdKi4zNxbwrgXxfEC5U3Pb?=
+ =?us-ascii?Q?ff7yhYk2OA79ZOA1HgrO5rEnpuhpMei7PO1gK7YGwR58Gs8VBc2BZp+m7lls?=
+ =?us-ascii?Q?pkyXTEitaVhbscGNIWiB7Rka87/7MSLeS4ztm4l3zZKLhwDtrFYaUBJkbE4l?=
+ =?us-ascii?Q?8wjfmOGvkPqUN2uJgJURK9S5mD+G7UFIfGx4T7ho5fEAg9DmhnzDMp7nGqUx?=
+ =?us-ascii?Q?ErOTeXFlUDgWhgKJx4CU4QRcB4i59166UfszMF3ff6c57guRR9m377jmBmGa?=
+ =?us-ascii?Q?p3CKQyPQBMSRwuh79WwRYvb+mwivWGqGqE+aPT68cMdbb8H+bh9EvPuHWJiM?=
+ =?us-ascii?Q?WtZMfIZ+Mce2LCfS8YTcq8PiHwfTrvl0sjsa2giMz/1ZrtYI4Cj2MyfwaBkV?=
+ =?us-ascii?Q?75W3yc2RXvvzGwO99CGgNV7drC8ZfOM5ynOZ74rcvD5Kh4vN/kR6cN6yFIRe?=
+ =?us-ascii?Q?b5Ae0cwJllI+b21Lixd6/8H3t1rn07wnX1o3mh+aAz2W65Nc3eU0kVpFuwaB?=
+ =?us-ascii?Q?4q9wNzu0mjbI1MjFch5SkUG14JzF3p87NCLRPWPTeP7IYwkBN6hFvQpDMP3o?=
+ =?us-ascii?Q?pnWvvj1iI5AH2CKxxQct8wDdKuuxgYKtVUwecBPE+PKmoV8GivQ+92G9zdah?=
+ =?us-ascii?Q?VybvKsv4qZ/Zubmen7FR//yM+RA16bUDB51aVh8DtPs/AkPTpxXpcQvswpgQ?=
+ =?us-ascii?Q?JifNBRHux7HIWOJ4/2TlmunioQW/n4Nq7aHk+7cw0B7kSdPnjwgYpxtVZ6bm?=
+ =?us-ascii?Q?ZaPpR4T3daej4jYE0Bnu+aYW5ET0DBGeecTsj0hhLUOmYR7LP/VbrdVY38J1?=
+ =?us-ascii?Q?JvLtFYvqrhuiZ+ocjNqNN4nAIb42HP4nDCHPlCNVCLPQsSxSa/EnXyq0i5l2?=
+ =?us-ascii?Q?2rM49SSp7F77DLoNo6QbfAHyAhV6KicdDdZf2zYOabSVZ9W7leYrla6+dIvy?=
+ =?us-ascii?Q?8QgmOj4dj5YeX5F1+6njpxpqgRTcvRLYgivYgcmMLiih2gVp3Mv/RA0ArsxE?=
+ =?us-ascii?Q?K8fOrk9vB/hEGO6L5FlQRHnfSfxsHDoIPh7tO7nF2LcQpG93+BsczXi1NEQo?=
+ =?us-ascii?Q?gsqdQwbGqXrDK6fHa6Hli84otAbh9aPiFf4c0u746TnCRZiO+QJQ/lUr0PBy?=
+ =?us-ascii?Q?F/1CChOwC/WISxVt/US+fH2FZwZJSqcI7bpH/fh9WxRYE9dQOA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8zNEYVpM9JmrIbJ6JRtMXaEsm+7gKhYM0k9pBTP/Xo9+8pDvE5nqE6pxCsCO?=
+ =?us-ascii?Q?bpdWlbBBRPTTUidm7lHjQLtnDxup1/zczTHpHiqsXbEVyVZ6NmmOIptbwPcU?=
+ =?us-ascii?Q?c6Gcne0DGkEl3shppsXwfmMvvMicTI5/D9gOpK6tlYAiYHZGYeAnn8lmV+JN?=
+ =?us-ascii?Q?fYwHmhXIUebXYXeiCC352q/Yg3eWFqcjmOv4HJvmUpsQ46cTq+UUdtO7Y3bT?=
+ =?us-ascii?Q?qSFAaOlKFkNy3mA/kaZzGVKI2WI1NGiXbxCIr0mpR36NTShVSWE7LQWceXFZ?=
+ =?us-ascii?Q?4oP9YE0VAykRjEOMjmmFZt/GHudjse3Hi8a//IQRrac5gKjPkdjZqY6pLFaZ?=
+ =?us-ascii?Q?VX6a6AyQXtx6LqgT8Z+TKXfKxtMSeXR1NXeMDxfvunUOZx43ChlLp8SsIJKP?=
+ =?us-ascii?Q?GZIsHT4t2eUnS348Y9k7VdhAq+hqv69CX8TbxmhpGhALBdhXFxV1fEH+TEBP?=
+ =?us-ascii?Q?fr5rlu5pfU162gZpkWehn1qzohAw8xYhA31KnRj0TyPG5JLwmouQitfwUBh6?=
+ =?us-ascii?Q?7TVWJHF9LcRjtmFoXWrGIc6J1A1gtJTIBk/mnrL65G5hLJcdzwnFYBTRU5Us?=
+ =?us-ascii?Q?IoE2Gh8O08jHLBRZAjzBMR1DqwxU3eyWFzbxxPb5UpncJBYFyS9M2rqvjbZu?=
+ =?us-ascii?Q?R+LDIY+KwIAjZc8mlrhmxZkIkQ4CftoKSkoUyexh6QHVxQx4ERqmUnh2IkYw?=
+ =?us-ascii?Q?GQ2hr7ZtiyZmSA2PBv01qOmosslPJwUIug3YFdqoE2L2PmEY8sFrXQA/+H1f?=
+ =?us-ascii?Q?8pwQl+fxXmEdi2zYesR6Oz/3vmGBQnnbr7j86byLfv8M+EeImyk4yXgJ0V5R?=
+ =?us-ascii?Q?lmkVai00Hy9eROzEFL6o7u6CxP+e7dQYnAdDB33Mm5KBML0wcWvJxfTPDMGr?=
+ =?us-ascii?Q?0BtR8LFlYZHT/cNOgqjSE+CaHJjbLT+iTd432Qo2F9g5EKAPqmCnHKaGLdcN?=
+ =?us-ascii?Q?hb8AlbmYHdctJg/2i3I0ArjXXOT5sdAk9AP9E8ex0EJFoYH33RZpb42miX1n?=
+ =?us-ascii?Q?wccpkeFC+G5/T9xLirYXKzS2nxyljdf/LPgf9upvuvPAbr6UizntVDtKjygB?=
+ =?us-ascii?Q?5vjM53VmGkQYJ6Fekk0Vw8SpaHpTZ9Enn4vSql8GlWX9YiwMoV8RKwPeXYZU?=
+ =?us-ascii?Q?/qGdz84uDzEQN1JWIvjMeBxu+d3uQgjGkGkAiM1E0LT/BctSaCwQX8+xc2z3?=
+ =?us-ascii?Q?hbnrCRtV+wP6anoVhX6DzT11GuIcJ9YW8A8+HQGWCDCU/9jg7cgkMIShlGpX?=
+ =?us-ascii?Q?i0ELNR+sI704W1e3xqE+kSBqoiqOLMG3hlMJzdXy4T6Hd29SpLmw8cpFEoFd?=
+ =?us-ascii?Q?aKF2UPxPngkzhtSFq/hHw8b5O+vwBF2jswAjT1Ye683ffNBk+/ENveEUnjDY?=
+ =?us-ascii?Q?Pc39OjJnUkVNqTifcKZDcgbQs764IFsn94uEoebd2D6ZI2nGEyKzFHu4TN4m?=
+ =?us-ascii?Q?3WapAmcJDHtKQNAM8uOdi/8v8zObrIxnAQ2kmczrkAtX4UpvVybvYaT4wcs5?=
+ =?us-ascii?Q?ZSp8pusbvCf+f1DNv8sf/QsF3tEp5vzUA5MGaQj7ZrTioe23HPmJuWuNE3o+?=
+ =?us-ascii?Q?Do07BCkiwfOs6N2wxU7aqQ1ipQgG9OD8VfkQGwQi?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fc22a34-7c3c-4819-9483-08dcd1738293
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 08:35:22.1370
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mycsY3TuzfPXkteGQxw7BurJn7q7mxU7EzSvbWa+V+aArRLq3CITScAdY7b7bDWM90V8FsSMD9yHx9gcWZau4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10899
 
-Florian Kauer <florian.kauer@linutronix.de> writes:
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Sent: Tuesday, September 10, 2024 4:32 PM
+> To: David Lin <yu-hao.lin@nxp.com>
+> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
+> Hsieh <tsung-hsien.hsieh@nxp.com>
+> Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running=
+ on
+> different channel
+>=20
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>=20
+>=20
+> On Tue, Sep 10, 2024 at 08:19:59AM +0000, David Lin wrote:
+> > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > Sent: Tuesday, September 10, 2024 4:00 PM
+> > > To: David Lin <yu-hao.lin@nxp.com>
+> > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
+> > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+> > > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
+> > > running on different channel
+> > >
+> > > Caution: This is an external email. Please take care when clicking
+> > > links or opening attachments. When in doubt, report the message
+> > > using the 'Report this email' button
+> > >
+> > >
+> > > On Tue, Sep 10, 2024 at 01:52:02AM +0000, David Lin wrote:
+> > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > > Sent: Tuesday, September 10, 2024 5:05 AM
+> > > > > To: David Lin <yu-hao.lin@nxp.com>
+> > > > > Cc: linux-wireless@vger.kernel.org;
+> > > > > linux-kernel@vger.kernel.org; briannorris@chromium.org;
+> > > > > kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
+> > > > > <tsung-hsien.hsieh@nxp.com>
+> > > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
+> > > > > running on different channel
+> > > > >
+> > > > > Caution: This is an external email. Please take care when
+> > > > > clicking links or opening attachments. When in doubt, report the
+> > > > > message using the 'Report this email' button
+> > > > >
+> > > > >
+> > > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
+> > > > > > Current firmware doesn't support AP and STA running on
+> > > > > > different channels simultaneously.
+> > > > > > FW crash would occur in such case.
+> > > > > > This patch avoids the issue by disabling AP and STA to run on
+> > > > > > different channels.
+> > > > > >
+> > > > > > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
+> > > > > > ---
+> > > > > >
+> > > > > > v2:
+> > > > > >    - clean up code.
+> > > > > >
+> > > > > > ---
+> > > > > >  .../net/wireless/marvell/mwifiex/cfg80211.c   | 17 ++++---
+> > > > > >  drivers/net/wireless/marvell/mwifiex/util.c   | 44
+> > > +++++++++++++++++++
+> > > > > >  drivers/net/wireless/marvell/mwifiex/util.h   | 13 ++++++
+> > > > > >  3 files changed, 69 insertions(+), 5 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> > > > > > b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> > > > > > index 722ead51e912..3dbcab463445 100644
+> > > > > > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> > > > > > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+> > > > > > @@ -781,11 +781,9 @@
+> mwifiex_cfg80211_set_wiphy_params(struct
+> > > > > > wiphy
+> > > > > *wiphy, u32 changed)
+> > > > > >               break;
+> > > > > >
+> > > > > >       case MWIFIEX_BSS_ROLE_STA:
+> > > > > > -             if (priv->media_connected) {
+> > > > > > -                     mwifiex_dbg(adapter, ERROR,
+> > > > > > -                                 "cannot change wiphy
+> params
+> > > > > when connected");
+> > > > > > -                     return -EINVAL;
+> > > > > > -             }
+> > > > > > +             if (priv->media_connected)
+> > > > > > +                     break;
+> > > > >
+> > > > > This hunk seems unrelated to this patch. If this is needed then
+> > > > > it deserves an extra patch along with an explanation why this is
+> necessary.
+> > > > >
+> > > > > Sascha
+> > > > >
+> > > >
+> > > > Without this hunk, AP and STA can't run on the same channel if
+> > > > some wiphy parameters are setting.
+> > >
+> > > Ok, I now see where you are aiming at. Here's the problematic functio=
+n:
+> > >
+> > > > static int
+> > > > mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
+> {
+> > > >       ...
+> > > >
+> > > >       priv =3D mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+> > > >
+> > > >       switch (priv->bss_role) {
+> > > >       case MWIFIEX_BSS_ROLE_UAP:
+> > > >               if (priv->bss_started) {
+> > > >                       mwifiex_dbg(adapter, ERROR,
+> > > >                                   "cannot change wiphy params
+> > > when bss started");
+> > > >                       return -EINVAL;
+> > > >               }
+> > > >
+> > > >               ...
+> > > >               mwifiex_send_cmd(priv,
+> > > HostCmd_CMD_UAP_SYS_CONFIG, ...);
+> > > >
+> > > >               break;
+> > > >       case MWIFIEX_BSS_ROLE_STA:
+> > > >               if (priv->media_connected) {
+> > > >                       mwifiex_dbg(adapter, ERROR,
+> > > >                                   "cannot change wiphy params
+> > > when connected");
+> > > >                       return -EINVAL;
+> > > >               }
+> > > >
+> > > >               ...
+> > > >               mwifiex_send_cmd(priv,
+> > > HostCmd_CMD_802_11_SNMP_MIB,
+> > > > ...);
+> > > >
+> > > >               break;
+> > > >       }
+> > > >
+> > > >       return 0;
+> > > > }
+> > >
+> > > This function is for setting wiphy params like rts_threshold and othe=
+rs.
+> > >
+> > > mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY) returns the first
+> > > priv which by default is in station mode. Now if you start priv0 in
+> > > station mode, then afterwards start priv1 in AP mode *and* have
+> > > rts_threshold =3D xy in your config, then you run into the "cannot ch=
+ange
+> wiphy params when connected"
+> > > case.
+> > >
+> > > I really wonder if the settings done in this function are per priv or=
+ per
+> adapter.
+> > > Is there one rts_threshold setting in a mwifiex chip or are there
+> > > multiple (per vif/priv)?
+> > >
+> > > If it's a global setting, then why are we interested in the
+> > > media_connected state of one specific priv? Shouldn't we check all pr=
+ivs?
+> > >
+> > > If it's a setting per priv, then why do we choose the same priv
+> > > everytime in this function?
+> > >
+> > > Either way, this function looks fishy and changing it should be done
+> > > with an explanation, just dropping the error message and returning
+> > > success is not enough.
+> > >
+> > > Sascha
+> > >
+> > > --
+> >
+> > O.K. I will add comment in patch v3.
+>=20
+> Really I hoped that you could clarify a bit how this function works and a=
+nswer
+> some of the questions I raised above. That could help us to get a better =
+driver
+> over time. The same code is in the nxpwifi driver as well, so it's not on=
+ly a
+> matter of which driver we decide to maintain in the future.
+>=20
+> Sascha
+>=20
 
-> Currently, returning XDP_REDIRECT from a xdp/devmap program
-> is considered as invalid action and an exception is traced.
->
-> While it might seem counterintuitive to redirect in a xdp/devmap
-> program (why not just redirect to the correct interface in the
-> first program?), we faced several use cases where supporting
-> this would be very useful.
->
-> Most importantly, they occur when the first redirect is used
-> with the BPF_F_BROADCAST flag. Using this together with xdp/devmap
-> programs, enables to perform different actions on clones of
-> the same incoming frame. In that case, it is often useful
-> to redirect either to a different CPU or device AFTER the cloning.
->
-> For example:
-> - Replicate the frame (for redundancy according to IEEE 802.1CB FRER)
->   and then use the second redirect with a cpumap to select
->   the path-specific egress queue.
->
-> - Also, one of the paths might need an encapsulation that
->   exceeds the MTU. So a second redirect can be used back
->   to the ingress interface to send an ICMP FRAG_NEEDED packet.
->
-> - For OAM purposes, you might want to send one frame with
->   OAM information back, while the original frame in passed forward.
->
-> To enable these use cases, add the XDP_REDIRECT case to
-> dev_map_bpf_prog_run. Also, when this is called from inside
-> xdp_do_flush, the redirect might add further entries to the
-> flush lists that are currently processed. Therefore, loop inside
-> xdp_do_flush until no more additional redirects were added.
->
-> Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+I will add the comment in patch v3. I am busy on other stuffs.
 
-This is an interesting use case! However, your implementation makes it
-way to easy to end up in a situation that loops forever, so I think we
-should add some protection against that. Some details below:
-
-> ---
->  include/linux/bpf.h        |  4 ++--
->  include/trace/events/xdp.h | 10 ++++++----
->  kernel/bpf/devmap.c        | 37 +++++++++++++++++++++++++++--------
->  net/core/filter.c          | 48 +++++++++++++++++++++++++++-------------------
->  4 files changed, 65 insertions(+), 34 deletions(-)
->
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 3b94ec161e8c..1b57cbabf199 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2498,7 +2498,7 @@ struct sk_buff;
->  struct bpf_dtab_netdev;
->  struct bpf_cpu_map_entry;
->  
-> -void __dev_flush(struct list_head *flush_list);
-> +void __dev_flush(struct list_head *flush_list, int *redirects);
->  int dev_xdp_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
->  		    struct net_device *dev_rx);
->  int dev_map_enqueue(struct bpf_dtab_netdev *dst, struct xdp_frame *xdpf,
-> @@ -2740,7 +2740,7 @@ static inline struct bpf_token *bpf_token_get_from_fd(u32 ufd)
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
->  
-> -static inline void __dev_flush(struct list_head *flush_list)
-> +static inline void __dev_flush(struct list_head *flush_list, int *redirects)
->  {
->  }
->  
-> diff --git a/include/trace/events/xdp.h b/include/trace/events/xdp.h
-> index a7e5452b5d21..fba2c457e727 100644
-> --- a/include/trace/events/xdp.h
-> +++ b/include/trace/events/xdp.h
-> @@ -269,9 +269,9 @@ TRACE_EVENT(xdp_devmap_xmit,
->  
->  	TP_PROTO(const struct net_device *from_dev,
->  		 const struct net_device *to_dev,
-> -		 int sent, int drops, int err),
-> +		 int sent, int drops, int redirects, int err),
->  
-> -	TP_ARGS(from_dev, to_dev, sent, drops, err),
-> +	TP_ARGS(from_dev, to_dev, sent, drops, redirects, err),
->  
->  	TP_STRUCT__entry(
->  		__field(int, from_ifindex)
-> @@ -279,6 +279,7 @@ TRACE_EVENT(xdp_devmap_xmit,
->  		__field(int, to_ifindex)
->  		__field(int, drops)
->  		__field(int, sent)
-> +		__field(int, redirects)
->  		__field(int, err)
->  	),
->  
-> @@ -288,16 +289,17 @@ TRACE_EVENT(xdp_devmap_xmit,
->  		__entry->to_ifindex	= to_dev->ifindex;
->  		__entry->drops		= drops;
->  		__entry->sent		= sent;
-> +		__entry->redirects	= redirects;
->  		__entry->err		= err;
->  	),
->  
->  	TP_printk("ndo_xdp_xmit"
->  		  " from_ifindex=%d to_ifindex=%d action=%s"
-> -		  " sent=%d drops=%d"
-> +		  " sent=%d drops=%d redirects=%d"
->  		  " err=%d",
->  		  __entry->from_ifindex, __entry->to_ifindex,
->  		  __print_symbolic(__entry->act, __XDP_ACT_SYM_TAB),
-> -		  __entry->sent, __entry->drops,
-> +		  __entry->sent, __entry->drops, __entry->redirects,
->  		  __entry->err)
->  );
->  
-> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-> index 7878be18e9d2..89bdec49ea40 100644
-> --- a/kernel/bpf/devmap.c
-> +++ b/kernel/bpf/devmap.c
-> @@ -334,7 +334,8 @@ static int dev_map_hash_get_next_key(struct bpf_map *map, void *key,
->  static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
->  				struct xdp_frame **frames, int n,
->  				struct net_device *tx_dev,
-> -				struct net_device *rx_dev)
-> +				struct net_device *rx_dev,
-> +				int *redirects)
->  {
->  	struct xdp_txq_info txq = { .dev = tx_dev };
->  	struct xdp_rxq_info rxq = { .dev = rx_dev };
-> @@ -359,6 +360,13 @@ static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
->  			else
->  				frames[nframes++] = xdpf;
->  			break;
-> +		case XDP_REDIRECT:
-> +			err = xdp_do_redirect(rx_dev, &xdp, xdp_prog);
-> +			if (unlikely(err))
-> +				xdp_return_frame_rx_napi(xdpf);
-> +			else
-> +				*redirects += 1;
-> +			break;
-
-It's a bit subtle, but dev_map_bpf_prog_run() also filters the list of
-frames in the queue in-place (the frames[nframes++] = xdpf; line above),
-which only works under the assumption that the array in bq->q is not
-modified while this loop is being run. But now you're adding a call in
-the middle that may result in the packet being put back on the same
-queue in the middle, which means that this assumption no longer holds.
-
-So you need to clear the bq->q queue first for this to work.
-Specifically, at the start of bq_xmit_all(), you'll need to first copy
-all the packet pointer onto an on-stack array, then run the rest of the
-function on that array. There's already an initial loop that goes
-through all the frames, so you can just do it there.
-
-So the loop at the start of bq_xmit_all() goes from the current:
-
-	for (i = 0; i < cnt; i++) {
-		struct xdp_frame *xdpf = bq->q[i];
-
-		prefetch(xdpf);
-	}
-
-
-to something like:
-
-        struct xdp_frame *frames[DEV_MAP_BULK_SIZE];
-
-	for (i = 0; i < cnt; i++) {
-		struct xdp_frame *xdpf = bq->q[i];
-
-		prefetch(xdpf);
-                frames[i] = xdpf;
-	}
-
-        bq->count = 0; /* bq is now empty, use the 'frames' and 'cnt'
-                          stack variables for the rest of the function */
-
-
-
->  		default:
->  			bpf_warn_invalid_xdp_action(NULL, xdp_prog, act);
->  			fallthrough;
-> @@ -373,7 +381,7 @@ static int dev_map_bpf_prog_run(struct bpf_prog *xdp_prog,
->  	return nframes; /* sent frames count */
->  }
->  
-> -static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
-> +static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags, int *redirects)
->  {
->  	struct net_device *dev = bq->dev;
->  	unsigned int cnt = bq->count;
-> @@ -390,8 +398,10 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
->  		prefetch(xdpf);
->  	}
->  
-> +	int new_redirects = 0;
->  	if (bq->xdp_prog) {
-> -		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev, bq->dev_rx);
-> +		to_send = dev_map_bpf_prog_run(bq->xdp_prog, bq->q, cnt, dev, bq->dev_rx,
-> +				&new_redirects);
->  		if (!to_send)
->  			goto out;
->  	}
-> @@ -413,19 +423,21 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
->  
->  out:
->  	bq->count = 0;
-> -	trace_xdp_devmap_xmit(bq->dev_rx, dev, sent, cnt - sent, err);
-> +	*redirects += new_redirects;
-> +	trace_xdp_devmap_xmit(bq->dev_rx, dev, sent, cnt - sent - new_redirects,
-> +			new_redirects, err);
->  }
->  
->  /* __dev_flush is called from xdp_do_flush() which _must_ be signalled from the
->   * driver before returning from its napi->poll() routine. See the comment above
->   * xdp_do_flush() in filter.c.
->   */
-> -void __dev_flush(struct list_head *flush_list)
-> +void __dev_flush(struct list_head *flush_list, int *redirects)
->  {
->  	struct xdp_dev_bulk_queue *bq, *tmp;
->  
->  	list_for_each_entry_safe(bq, tmp, flush_list, flush_node) {
-> -		bq_xmit_all(bq, XDP_XMIT_FLUSH);
-> +		bq_xmit_all(bq, XDP_XMIT_FLUSH, redirects);
->  		bq->dev_rx = NULL;
->  		bq->xdp_prog = NULL;
->  		__list_del_clearprev(&bq->flush_node);
-> @@ -458,8 +470,17 @@ static void bq_enqueue(struct net_device *dev, struct xdp_frame *xdpf,
->  {
->  	struct xdp_dev_bulk_queue *bq = this_cpu_ptr(dev->xdp_bulkq);
->  
-> -	if (unlikely(bq->count == DEV_MAP_BULK_SIZE))
-> -		bq_xmit_all(bq, 0);
-> +	if (unlikely(bq->count == DEV_MAP_BULK_SIZE)) {
-> +		int redirects = 0;
-> +
-> +		bq_xmit_all(bq, 0, &redirects);
-> +
-> +		/* according to comment above xdp_do_flush() in
-> +		 * filter.c, xdp_do_flush is always called at
-> +		 * the end of the NAPI anyway, so no need to act
-> +		 * on the redirects here
-> +		 */
-
-While it's true that it will be called again in NAPI, the purpose of
-calling bq_xmit_all() here is to make room space for the packet on the
-bulk queue that we're about to enqueue, and if bq_xmit_all() can just
-put the packet back on the queue, there is no guarantee that this will
-succeed. So you will have to handle that case here.
-
-Since there's also a potential infinite recursion issue in the
-do_flush() functions below, I think it may be better to handle this
-looping issue inside bq_xmit_all().
-
-I.e., structure the code so that bq_xmit_all() guarantees that when it
-returns it has actually done its job; that is, that bq->q is empty.
-
-Given the above "move all frames out of bq->q at the start" change, this
-is not all that hard. Simply add a check after the out: label (in
-bq_xmit_all()) to check if bq->count is actually 0, and if it isn't,
-start over from the beginning of that function. This also makes it
-straight forward to add a recursion limit; after looping a set number of
-times (say, XMIT_RECURSION_LIMIT), simply turn XDP_REDIRECT into drops.
-
-There will need to be some additional protection against looping forever
-in __dev_flush(), to handle the case where a packet is looped between
-two interfaces. This one is a bit trickier, but a similar recursion
-counter could be used, I think.
-
-In any case, this needs extensive selftests, including ones with devmap
-programs that loop packets (both redirect from a->a, and from
-a->b->a->b) to make sure the limits work correctly.
-
-> +	}
->  
->  	/* Ingress dev_rx will be the same for all xdp_frame's in
->  	 * bulk_queue, because bq stored per-CPU and must be flushed
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index 8569cd2482ee..b33fc0b1444a 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -4287,14 +4287,18 @@ static const struct bpf_func_proto bpf_xdp_adjust_meta_proto = {
->  void xdp_do_flush(void)
->  {
->  	struct list_head *lh_map, *lh_dev, *lh_xsk;
-> +	int redirect;
->  
-> -	bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
-> -	if (lh_dev)
-> -		__dev_flush(lh_dev);
-> -	if (lh_map)
-> -		__cpu_map_flush(lh_map);
-> -	if (lh_xsk)
-> -		__xsk_map_flush(lh_xsk);
-> +	do {
-> +		redirect = 0;
-> +		bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
-> +		if (lh_dev)
-> +			__dev_flush(lh_dev, &redirect);
-> +		if (lh_map)
-> +			__cpu_map_flush(lh_map);
-> +		if (lh_xsk)
-> +			__xsk_map_flush(lh_xsk);
-> +	} while (redirect > 0);
->  }
->  EXPORT_SYMBOL_GPL(xdp_do_flush);
->  
-> @@ -4303,20 +4307,24 @@ void xdp_do_check_flushed(struct napi_struct *napi)
->  {
->  	struct list_head *lh_map, *lh_dev, *lh_xsk;
->  	bool missed = false;
-> +	int redirect;
->  
-> -	bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
-> -	if (lh_dev) {
-> -		__dev_flush(lh_dev);
-> -		missed = true;
-> -	}
-> -	if (lh_map) {
-> -		__cpu_map_flush(lh_map);
-> -		missed = true;
-> -	}
-> -	if (lh_xsk) {
-> -		__xsk_map_flush(lh_xsk);
-> -		missed = true;
-> -	}
-> +	do {
-> +		redirect = 0;
-> +		bpf_net_ctx_get_all_used_flush_lists(&lh_map, &lh_dev, &lh_xsk);
-> +		if (lh_dev) {
-> +			__dev_flush(lh_dev, &redirect);
-> +			missed = true;
-> +		}
-> +		if (lh_map) {
-> +			__cpu_map_flush(lh_map);
-> +			missed = true;
-> +		}
-> +		if (lh_xsk) {
-> +			__xsk_map_flush(lh_xsk);
-> +			missed = true;
-> +		}
-> +	} while (redirect > 0);
-
-With the change suggested above (so that bq_xmit_all() guarantees the
-flush is completely done), this looping is not needed anymore. However,
-it becomes important in which *order* the flushing is done
-(__dev_flush() should always happen first), so adding a comment to note
-this would be good.
-
--Toke
-
+David
 
