@@ -1,149 +1,137 @@
-Return-Path: <linux-kernel+bounces-323053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECD997370C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E0497370F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A682D1C212E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE5CA1F220D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756B218FC93;
-	Tue, 10 Sep 2024 12:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D4C191476;
+	Tue, 10 Sep 2024 12:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/nJLTmd"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIQcaa87"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC85184535;
-	Tue, 10 Sep 2024 12:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848BD190492;
+	Tue, 10 Sep 2024 12:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970817; cv=none; b=IhatMXT5U6SV3+OMoj1VDxRGuiV12EPKWqFaPy53+Thef81IGbEmHigH2x8mNnxqih1jdjJIUtJDA4LBmSjN2gWxy1xTLieWFS0Ldk+Rxcz0/astbk9C4ijNfiw/Ukp1FVeeYiQwra6uJ26Cm+Qzu1mmMr/MqcPsK34hHRpRPms=
+	t=1725970819; cv=none; b=bfa0JVM2AKiaxqm1xdZPHwrB8tilG/iXb5Cr7nMiUNtf2opYzjTZb7/4wYn/XK5LM2Ylz90uLnMOq/xCVHb9YbHRrEz1EnzD5dzPaXwdyNmLOPIKhqb4zqwEoDm3ODJ9JmmFSQGEOV4St58bVsZZTnhST3BHt0epxeq3Hc7+m1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970817; c=relaxed/simple;
-	bh=d3MXfy+BOQM4BCa9TNpqSL2C0Be4VpIVPtQN0jtPsrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rXaT6/sd6oV4ntEn15e0kgGgd0pvt3VPNCZmt6zVuuSMXqdk8GQ0XdKcN8TX6dZPDsQ5WtKZZxEkfBE9R/cJGqjO5CHSerY8ipXHXJDb5FP8/+9h3nK5cGpwmjxEZJtaPTNqAaj1vgk1QmmIHEAm3NjzP6PJOy0IsgMkdD7OJ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/nJLTmd; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso7322221fa.1;
-        Tue, 10 Sep 2024 05:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725970814; x=1726575614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fI6hy/4mGAcVa6DnoUMOTFVkwV/NISt2fFlodh6pZ+M=;
-        b=b/nJLTmdQPmO1geRlCsUBv+WNg9Y3GYQbo1izpZa+Massrtb0cPF6iTKNz7bHjOMun
-         9bNMgYYjzcxl0NPFa/wrWy1zag141aSuXkO/jqIjTUWe1WGm+DF2fZoZeCEYwZ41YRX9
-         p90shNCYMGIQRSjftbetO2YPrDjH/mB3krC8T80ggSFRB9GQc1auaVPF856GPzENc18g
-         w/zpBZ47vArrXj3FwNtH4yAPdyGBMW6nkyr8TjwrJCGhTs28Naiw2r9oGVLq2gsH/cdd
-         rEXp7kZ9Jvsfa05PpCWK/kIL5cQWinOCA06tXZDqOyBd9p2tTdkZsnYh0Mfc24JbxFHc
-         2J4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725970814; x=1726575614;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fI6hy/4mGAcVa6DnoUMOTFVkwV/NISt2fFlodh6pZ+M=;
-        b=fo/lS2rBbmiiSqbMr5Bn3UR2v1sjJkDq5ympBnnIno5qFc6LU0iHa/xLbEWdKLEF/B
-         nQ7nhdAouc+di/HYI63nGgKkmwFDo0rMxa6gQy3ugRQILimxEouIl/QiBmtLTkQijflj
-         LEq9PKnEuzPtxvmeYWvGzavN6e5PHlG9u0Yko6wy7o/ftwZ9PW0RIkOr6iaOVsK3mTxI
-         /KsO5I3LzIL7WpUPNdrCaYVS06mcPBRMzovP8H99TDysDkLM5C9myPSbKGH/e75hIwG8
-         fIYqTxZvblsoajPi6/vcnbzJ//08MNP3wHrFR9o6MCFU1ym0IwXnDk7/TXZ0smqt12zf
-         n+rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiQYWV2SsL88mGQ8Kd1gWCMuWhoJ7kRZFtmPdrbhWFIJW0kmAZyP7VMvLSpksDhg4+ThxjDFtox/TAVw==@vger.kernel.org, AJvYcCVHVaCn9/gZ5ErdqP8QMW8YbFBXhs2WQK9fFGI8E6id7Zj1ejz2JpXaG2kX4QheKvBRV/61CdSnkATR@vger.kernel.org, AJvYcCWvsgD1CRN4fnDcXVGxpjebzQNyydjzqs+Ox5lCxNrEDRjdGNzcLAtfvMBDtdxuEM4ZMca+sOP+8neTGMhw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUujhiayxuT7DWUoOh+4PGdzK6ge4F82jd4ckClSZnshjpnsmx
-	BNFL7ixDlr+BNRSH/LK7yxqB87n4WWA5uUm+Qwlzel9TqMznXWPy
-X-Google-Smtp-Source: AGHT+IE2puuqpTB2oD3dUeKerqjHKH4/QqUP+8pRASUn6j+PQbjYfsyW971oT9pLqAnjQf+VZLF+RA==
-X-Received: by 2002:a05:6512:3d07:b0:536:553f:3ef9 with SMTP id 2adb3069b0e04-536587b3364mr9403116e87.27.1725970813905;
-        Tue, 10 Sep 2024 05:20:13 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d4desm1141570e87.269.2024.09.10.05.20.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 05:20:13 -0700 (PDT)
-Date: Tue, 10 Sep 2024 15:20:10 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Paul Burton <paulburton@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] MIPS: cm: Probe GCR address from devicetree
-Message-ID: <2xkut5pyzk4b4ugl4ku72y4rfqrfsoxj4aww2jwlgkc3lmd464@zwf773fr7fpq>
-References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
- <3wemwdkev7pafyfu3yxhpvvpqaplhlejbzxtmahcarrnoeelzr@747sgyl63kwj>
- <Zt745ZtuZmVH61uA@alpha.franken.de>
- <tyjojeubipma56cnldy3yabbiakca7bnt4efei7i4r5xme7gpq@ecz5rqwwyg5n>
+	s=arc-20240116; t=1725970819; c=relaxed/simple;
+	bh=OUBlup+5e9RE6/kJGTunFrmwMNYnhS6O7GXvfiuUjrU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=he6wRBAp3AHGTc7LKt1cn/k0Nt4cbYC5TzwBZ5zSX3Kl4sl3lm0bv9g4WE7IZmqxqoHsEOGVStZydkh6CFmKK1ss4edKoIA87oeAL4AzdwUwXI6fQtxLNG2myNi1w+psUzSVmpFEFcy0AAJewwX7/O9rONaAvC3Pli8eq730mCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIQcaa87; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F5CC4CECD;
+	Tue, 10 Sep 2024 12:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725970819;
+	bh=OUBlup+5e9RE6/kJGTunFrmwMNYnhS6O7GXvfiuUjrU=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=kIQcaa87CzWIEC6oOcvYoZoNjBOq3EA/Gpv+tEfkmmAUV4GCSghXz4za4WfardBmp
+	 cQYjKOYFO0978EvJXcyYR90bxpiCsSRUt3E/ng2/07VAF0WxKYZxlPk1cpAfe51BcF
+	 pZgDCiwA/aDbwVyWagFi+JU5qPKJtJ08EFq2tf236nkoQzpSW68fXKCK5F6dip0JMP
+	 y1DfqZzNCk9YQMzpMViNxjmupxOsHWsMZfz3pS9wEZK4/+Q2/ADWpThzQB1JWrtews
+	 uhZhIT0SVrKFCy3r8qii/zqnDl3L3e1Xb0NXTfM2LpALj131l/Uy33fVgGOmRvm27i
+	 pWVVFXuku/Qgw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tyjojeubipma56cnldy3yabbiakca7bnt4efei7i4r5xme7gpq@ecz5rqwwyg5n>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 10 Sep 2024 15:20:15 +0300
+Message-Id: <D42LLAG1FKOD.2YY4RR8WXSDXO@kernel.org>
+To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
+ <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Zaborowski" <andrew.zaborowski@intel.com>
+Cc: "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+ "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240315103320.18754-1-r.smirnov@omp.ru>
+ <CZX9T3TU6YU0.3JE9M7M3ENUE0@kernel.org>
+ <b5f21d1175c142efb52e68a24bc4165a@omp.ru>
+ <CZY02YNBTGYQ.3KG8NLH8X3RQE@kernel.org>
+ <7fd0f2a8252d4a6aa295adc1e76bc0e2@omp.ru>
+ <CZZK77BY3FK4.2WMP1X5H9GTL1@kernel.org>
+ <2ba02cfc-b866-bda4-4996-f7f95148832c@omp.ru>
+In-Reply-To: <2ba02cfc-b866-bda4-4996-f7f95148832c@omp.ru>
 
-On Tue, Sep 10, 2024 at 11:06:56AM +0300, Serge Semin wrote:
-> Hi Thomas
-> 
-> On Mon, Sep 09, 2024 at 03:32:21PM +0200, Thomas Bogendoerfer wrote:
-> > On Tue, Aug 06, 2024 at 10:49:52PM +0300, Serge Semin wrote:
-> > > Hi Jiaxun
-> > > 
-> > > On Wed, Jun 12, 2024 at 11:08:52AM +0100, Jiaxun Yang wrote:
-> > > > Hi all,
-> > > > 
-> > > > This series enabled mips-cm code to probe GCR address from devicetree.
-> > > > 
-> > > > This feature has been implemented in MIPS's out-of-tree kernel for
-> > > > a while, and MIPS's u-boot fork on boston will generate required
-> > > > "mti,mips-cm" node as well.
-> > > > 
-> > > > Please review.
-> > > > Thanks
-> > > 
-> > > Got this tested on my P5600-based SoC implemented as non-generic
-> > > platform. Alas the system hangs up on the early boot-up stage with no
-> > > even a single char printed to the console. I'll be able to get back to
-> > > the problem debugging on the next week.
-> > 
-> > any news about that ?
-> 
-> Oops. This patch set has absolutely slipped out of my mind. I am
-> getting back to it immediately and will submit the debug status
-> shortly after I dig out the reason of the hanging up. Sorry for the
-> inconvenience.
+On Mon Sep 9, 2024 at 9:25 PM EEST, Sergey Shtylyov wrote:
+> Hello!
+>
+>    Sorry for (so long!) delay -- we're trying to finalize the status
+> of our yet unmerged patches...
+>
+> On 3/21/24 7:12 PM, Jarkko Sakkinen wrote:
+> [...]
+>
+> >>>>>> Found by Linux Verification Center (linuxtesting.org) with Svace.
+> >>>>>
+> >>>>> I'm not sure if this should be part of the commit message.
+> >>>>
+> >>>> I have already submitted patches with this line, some have been
+> >>>> accepted. It is important for the Linux Verification Center to mark
+> >>>> patches as closing issues found with Svace.
+> >>>>
+> >>>>>>
+> >>>>>> Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without=
+ AKID")
+> >>>>>> Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> >>>>>
+> >>>>> Should be reported-by.
+> >>>>
+> >>>> The suggested-by tag belongs to Sergey because he suggested the fix,
+> >>>> subject/description of the patch. The tag reported-by belongs to
+> >>>> Svace tool.
+> >>>
+> >>> 1. I did not see any reported-by tags in this which is requirement.
+> >>> 2. Who did find the issue using that tool? I don't put reported-by to
+> >>>    GDB even if I use that find the bug.
+> >>
+> >> Svace is an automated bug finding tool. This error was found during
+> >> source code analysis by the program, so the tag reported-by does not
+q >> belong to any person. I don't know what to do in such a situation,
+> >> but write something like:
+> >>
+> >>     Reported-by: Svace
+> >>
+> >> would be weird. I think that the line "Found by Linux ... with Svace"
+> >> could be a substitute for the tag.
+> >=20
+> > I'd prefer a person here that used the tool as it is not korg hosted
+> > automated tool.
+>
+>    It's a long ago established practice with the Linux Verification Cente=
+r (http://linuxtesting.org): you can find 700+ merged patches with a simila=
+r
+> line (mentioning the LVC's website) and without the Reported-by tag:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?q=
+t=3Dgrep&q=3Dlinuxtesting.org
 
-Found the reason of the problem on my platform. It was due to the too
-early change_gcs_control() invocation. Since mips_cm_probe() is now
-called after the prom_init() method the later function can't access
-any CM-register. So for the system to boot up I had to move the GCR
-controler register update to the plat_mem_setup() method in my
-platform code. After that the system booted up successfully. Double
-checked the rest of the platforms in the vanilla kernel repo for having
-the similar issue. It seems to me there is no platform left in the
-kernel with such potential problem presented.
+I see examples alike of=20
 
-But then I decided to test out the actual GCR-base address setup
-procedure implemented in this patch set, and found another problem
-unrelated to my platform. I'll submit the problem summary in reply to
-the respective patch in this series.
+"Found by Linux Verification Center (linuxtesting.org) with Syzkaller."
 
--Serge(y)
+It neither has an email address, meaning that reported-by tag even has
+incorrect format.
 
-> 
-> -Serge(y)
-> 
-> > 
-> > Thomas.
-> > 
-> > -- 
-> > Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-> > good idea.                                                [ RFC1925, 2.3 ]
+NAK, because "Svace" means nothing to me as it is in the tag.
+
+BR, Jarkko
 
