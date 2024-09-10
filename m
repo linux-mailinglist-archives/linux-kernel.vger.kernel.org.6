@@ -1,120 +1,141 @@
-Return-Path: <linux-kernel+bounces-323090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070E59737A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA469737AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3993E1C2450A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:39:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D94441C23F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6811917E2;
-	Tue, 10 Sep 2024 12:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1666B1917D7;
+	Tue, 10 Sep 2024 12:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzmYGBwR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B7MlcYJy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF588184522;
-	Tue, 10 Sep 2024 12:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE70184522;
+	Tue, 10 Sep 2024 12:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971950; cv=none; b=fX+w9WdmjaADVOqcjamZSJpZOX9BQNh4GxS2axFcpxjmuqC+5SLS5F98dHm5ndlQ7ftWVwaolLIidjhbHAokB7AR3RaphiR/Pw1EiMZC41ZH5j9vTXNW6nnL3IMiX5e/cb+LG3o8tbVA8Jl4+rZVjYi0nSw5FoQVCxz0OzVU4k4=
+	t=1725972007; cv=none; b=gZnpMKb/V2s/9jgyN+/ZYcjkzRLeFWmE4N2KJ/Mu7TxPDrQrGsNRPgGXnPXwnBTETbC0qQfpmM5NymbIhml2HgJHTOdNt36nnlF2gHECAxrLhJMUS3eljqW6+rmv64/u91bxCm6KHi+lcrI6nhXddrDii3ODIN0DU28vXe1Z72c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971950; c=relaxed/simple;
-	bh=4pA6APXmYoJFw+7ItjSMDOPbrsRxS0JVM6V7ix/HD9o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=eAqDRexbHbbzSwhCLbk0yDtC024iQ/jwYHJKdo14w3SJXx2Spxf3NvIMi2IPNNF0aRCpEfUbS90HnIKPgIyXIo4zalkmLr2ErOcQOyE8/e6Ib+tZW4yNpAg695As9au5cg1NImcSM9+VATkCRCAfWMtRc7TBux7UkPo/T8x7aP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzmYGBwR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF547C4CED6;
-	Tue, 10 Sep 2024 12:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725971949;
-	bh=4pA6APXmYoJFw+7ItjSMDOPbrsRxS0JVM6V7ix/HD9o=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=KzmYGBwR2ZRY/TggMH6KHqHagLhTq4ea6pDxURyf2jDtYFVkXehvPyNd1ZeEUjeJg
-	 WloFnmtLS07DBgLUUxwjSz+W0ObxXYCeTk75ZiUmkaRKrX+ZMRDVIqQrf9eVCNxAuD
-	 ZyOf5AB95UbGasBB9vsFCl7ZLjQ1Aum68MaOWfyjWfI853pSOvLcIVk3NCEatVz4Hv
-	 a+7zOx19vqH+pOG+hc+g7Lm9ZoqVZkTY9oNjpRVOBhg5T4sIxq9bMb/0752zyUQzZY
-	 A/jZUkF0TBwnPHUUxzGVLBnMJwKPY/vX/sUIVu25GSAdvppn4QlPrKVm3OckKEJrEf
-	 00I1dNUEWikXA==
+	s=arc-20240116; t=1725972007; c=relaxed/simple;
+	bh=7o36PvgCdrSW8nk+DV+ultIJNeDQiKY0NK8w0v6rQOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sEbVzfFOh4elyREP29hPy2YaG5Kv36jsYblDj7VKOhHC6/zjQxtULaJcTBdRVXq8GP4Hb0M2WKdNv7hY/hkCwUfHk5niy4kw94eeov/8KaINgxv97r3r303nJRWB2++uhJ/6TPZip37TkEes7NmcYwiGRpjww3vpuZV7onqoNuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B7MlcYJy; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725972006; x=1757508006;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7o36PvgCdrSW8nk+DV+ultIJNeDQiKY0NK8w0v6rQOM=;
+  b=B7MlcYJyu/CafkIedw5EvSiYOloN1f02JpLO950Dm00EagW/fJ1ellJ7
+   9miFVa2Zelzau323r8Pp5MXkAzPW5O59zGgg8e5ROyTQF3ptj0LF7DuWN
+   zDjWDOpaVQXVDIh4AhZXTk91Sv1VZC+5ARfcM3Q3G9QqYfUFA4D3xpKcE
+   UET0QMwiF9VcPjaW1l4bwwpmFhqGQ+hqw5Li1j2PJQdmZYDMNwnRu90y5
+   MiiT648qi4a0tmaq6HS5qHg1pCZoLXsYGF+26sAV3GJQb8AkVZod+0qjT
+   mr2uUCqSJG+0z4jhKswbxNmTJ0kv7XWev3bn69ZxgewFZOaf5jb6Qq6Y3
+   w==;
+X-CSE-ConnectionGUID: vaxrBaUxQDmF00uzab6KpA==
+X-CSE-MsgGUID: qpQMghIKTxeRKnxZFolfWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28605854"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="28605854"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 05:40:05 -0700
+X-CSE-ConnectionGUID: 2jmppOX+Ty+/TnGLgBojPA==
+X-CSE-MsgGUID: jsKw4KNuR/yTnGgG0wVynQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="67260782"
+Received: from maurocar-mobl2.ger.corp.intel.com (HELO pujfalus-desk.intel.com) ([10.245.245.155])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 05:40:01 -0700
+From: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+To: vkoul@kernel.org,
+	yung-chuan.liao@linux.intel.com,
+	pierre-louis.bossart@linux.intel.com,
+	krzysztof.kozlowski@linaro.org
+Cc: alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Subject: [PATCH stable-6.10 regression] Revert "soundwire: stream: fix programming slave ports for non-continous port maps"
+Date: Tue, 10 Sep 2024 15:40:09 +0300
+Message-ID: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 10 Sep 2024 15:39:05 +0300
-Message-Id: <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, "Linux regressions
- mailing list" <regressions@lists.linux.dev>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
-In-Reply-To: <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Sep 10, 2024 at 12:05 PM EEST, Roberto Sassu wrote:
-> On Tue, 2024-09-10 at 11:01 +0200, Linux regression tracking (Thorsten
-> Leemhuis) wrote:
-> > Hi, Thorsten here, the Linux kernel's regression tracker.
-> >=20
-> > James, Jarkoo, I noticed a report about a regression in
-> > bugzilla.kernel.org that appears to be caused by this change of yours:
-> >=20
-> > 6519fea6fd372b ("tpm: add hmac checks to tpm2_pcr_extend()") [v6.10-rc1=
-]
-> >=20
-> > As many (most?) kernel developers don't keep an eye on the bug tracker,
-> > I decided to forward it by mail. To quote from
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229 :
-> >=20
-> > > When secureboot is enabled,
-> > > the kernel boot time is ~20 seconds after 6.10 kernel.
-> > > it's ~7 seconds on 6.8 kernel version.
-> > >=20
-> > > When secureboot is disabled,
-> > > the boot time is ~7 seconds too.
-> > >=20
-> > > Reproduced on both AMD and Intel platform on ThinkPad X1 and T14.
-> > >=20
-> > > It probably caused autologin failure and micmute led not loaded on AM=
-D platform.
-> >=20
-> > It was later bisected to the change mentioned above. See the ticket for
-> > more details.
->
-> Hi
->
-> I suspect I encountered the same problem:
->
-> https://lore.kernel.org/linux-integrity/b8a7b3566e6014ba102ab98e10ede0d57=
-4d8930e.camel@huaweicloud.com/
->
-> Going to provide more info there.
+The prop->src_dpn_prop and prop.sink_dpn_prop is allocated for the _number_
+of ports and it is forced as 0 index based.
 
-I suppose you are going try to acquire the tracing data I asked?
-That would be awesome, thanks for taking the troube.  Let's look
-at the data and draw conclusions based on that.
+The original code was correct while the change to walk the bits and use
+their position as index into the arrays is not correct.
 
-Workaround is pretty simple: CONFIG_TCG_TPM2_HMAC=3Dn to the kernel
-configuration disables the feature.
+For exmple we can have the prop.source_ports=0x2, which means we have one
+port, but the prop.src_dpn_prop[1] is accessing outside of the allocated
+memory.
 
-For making decisions what to do with the  we are talking about ~2
-week window estimated, given the Vienna conference slows things
-down, so I hope my workaround is good enough before that.
+This reverts commit 6fa78e9c41471fe43052cd6feba6eae1b0277ae3.
 
-> Roberto
+Cc: stable@vger.kernel.org # 6.10.y
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+---
+Hi,
 
-BR, Jarkko
+The reverted patch causes major regression on soundwire causing all audio
+to fail.
+Interestingly the patch is only in 6.10.8 and 6.10.9, not in mainline or linux-next.
+
+soundwire sdw-master-0-1: Program transport params failed: -22
+soundwire sdw-master-0-1: Program params failed: -22
+SDW1-Playback: ASoC: error at snd_soc_link_prepare on SDW1-Playback: -22
+
+Regards,
+Peter 
+
+ drivers/soundwire/stream.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index 00191b1d2260..4e9e7d2a942d 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -1286,18 +1286,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
+ 					    unsigned int port_num)
+ {
+ 	struct sdw_dpn_prop *dpn_prop;
+-	unsigned long mask;
++	u8 num_ports;
+ 	int i;
+ 
+ 	if (direction == SDW_DATA_DIR_TX) {
+-		mask = slave->prop.source_ports;
++		num_ports = hweight32(slave->prop.source_ports);
+ 		dpn_prop = slave->prop.src_dpn_prop;
+ 	} else {
+-		mask = slave->prop.sink_ports;
++		num_ports = hweight32(slave->prop.sink_ports);
+ 		dpn_prop = slave->prop.sink_dpn_prop;
+ 	}
+ 
+-	for_each_set_bit(i, &mask, 32) {
++	for (i = 0; i < num_ports; i++) {
+ 		if (dpn_prop[i].num == port_num)
+ 			return &dpn_prop[i];
+ 	}
+-- 
+2.46.0
+
 
