@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-322983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3203397363E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC60973642
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B56BEB23E5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8B21C246E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B0D18C025;
-	Tue, 10 Sep 2024 11:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="hhtl2JL7"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C4A18E77B;
+	Tue, 10 Sep 2024 11:31:16 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5842918C02E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909511DFE8;
+	Tue, 10 Sep 2024 11:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967827; cv=none; b=q55qgQUSaQ/+qgnWUY3F75fPSXaESIH4v3kckldJer4VXmi+pOR/vztK1xinHswROywLOVul8lm4HHDmDfALFPK6pioxvtmzduSBeKohTbsT58zjsRs1xhirPHR8gXWzDqWL1nFgs2XgcDmBtpJjG3nrgrBS+fugWlEnpAZGiXY=
+	t=1725967876; cv=none; b=Yc0GB3XMifHgxEGZ47UHRBtG84MGlQpALhK7dMp+fUk6GOAKhTSdLM3D8jR41ranB+QQn8enLuIeyMmiJpovTSoZCBzs1reqmZSkIyu8GxBeVViprBW5QO4lbBL5liQtsm8538oyt3g8l8FOw2aNJM6n+YpV/MNMz76y7U6KRdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967827; c=relaxed/simple;
-	bh=OL8L8Me1zC15k939eEhgv7Aaj5qBTBEeGHgYyXDzbCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FNdHsIe4YuBydX1JStVmOAAasFQbTQZIOjjfXzUHDcdtYefgBQqPT9iN6UUrg2KL8jKRvRl1By/NCJk4IcQ4BzqrU21StsIz/boQS2JUCbEu8ZyWsyjBdTciex/JP7Qe4pSCXrP8uu6NAKd5es2M9W9TKitUZhKzg04xKQCtv1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=hhtl2JL7; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso9372116e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1725967823; x=1726572623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qUjD1qXlr7sDXF6Pz2mpEF9dvaXJD/VmLWCG9uZrJWA=;
-        b=hhtl2JL7fzkbaVrp5UB9GVL3j3zeT5AVtzleiBg4hjuWnPfeSrRSBCP6b3ZOIETxQr
-         YV6gF+dZdtGe1J8/dPqW0zirhNZ7I2yz2QiRRcw1c+Bj3nrh1pk2WoxoSQV2Bsy/KUm2
-         EY+JJa7XvAUenl22ExrPLE212XmplmQPzslLAUcp+/Dk+/WKPAFkwBvIAXQwGoz/S0m1
-         u2iXxeCLwOwlROITj24F+7k6guI/YNcf4JpSnaFrIhqU+xe63UHsyXufVYkvTcvMtMj0
-         CY8aInESuh9jHd23NHSL8SYlrYQgtVUroO96XU8Fsr09VWY74q5iyutYEr0Y7T62joQj
-         FIAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725967823; x=1726572623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qUjD1qXlr7sDXF6Pz2mpEF9dvaXJD/VmLWCG9uZrJWA=;
-        b=uoBQw2iksbNiIRUR/aVL1D2YrBimJuhiOXgV6zOUF8XIDsXb9w0XdyXovAIsESiuyJ
-         eCNygZtQKb1EpY17jky2sKtw76cupVrV7IlHnnV+MAQtbAtvgx0+ovzRBijd3T6zeivy
-         kyi4EK0/54OfKlhT3xCDk64IJvhMbEmFV9XlQV2V3BzgFqiSwYeJy9wnQgKZUSppI7pR
-         6uSljS5K4Jq+EwBRYfYhfJ0/561AaUh9wcpU7bvgYfSQvFptPuxRknLNqz29Odx2A0D8
-         XPaE29CU3U7cm9JzRieDr5gzY4/9Ke/Yx7BbyS1vuZsc0PamYwE4BULG1kaNgvzaJ9qW
-         j++w==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1ZXZlXkEM/X1ElBSly9/n/WZj2K20t/UIpdlmiUeIaTfSGFcx7mV8HkEMJZj0A+c1oqr1F1LlKRhxeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ7+gklpAaJiFFIeULLfzZfXp44+7qwFWmOqbEzh35E5KR3d9C
-	N1/0gcokUeuWL678PzyOprL9+8AsDqf15BH5AynU0penTleFM+xO9ZLtJfOqelprsjGf4/SgZFt
-	dwnd35AMceWSpAMfN9k3Gkw2exgfOD/Y9FZQLzBsNeWCo3xtI1bM=
-X-Google-Smtp-Source: AGHT+IHrlni+UNeiultZRq3v9U0+1z0gggaQueGwXZzkBD3HHF8mRaNy0AyLPtkFaiR/t3CDGpdPiVEjlEkJArOyyQc=
-X-Received: by 2002:a05:6512:3d89:b0:52e:933f:f1fa with SMTP id
- 2adb3069b0e04-53658818d02mr9921240e87.61.1725967822511; Tue, 10 Sep 2024
- 04:30:22 -0700 (PDT)
+	s=arc-20240116; t=1725967876; c=relaxed/simple;
+	bh=umTf7L04+EULSCtHP+OsTzwZGys+FKvlYJE6T9XSSWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JA9uaJjX3Ltr3AyhPVUIpe4j346/Xm8qkoQwQQhkEvCtmLPq6PBCYA4k8ZbkT7M/UAslKcAOl0LSfvGwJFauH2qvUpFNeD2SFCV2UicyaU99wJUXBY4br+bU6wHljB0VW9bFbr291rbOac2RLUPO8ZuqwmsLUtOUqj8iWG6KMqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FC604000B;
+	Tue, 10 Sep 2024 11:31:04 +0000 (UTC)
+Message-ID: <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
+Date: Tue, 10 Sep 2024 13:31:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816065458.117986-1-iivanov@suse.de> <ZsU9SRlQgzQn8bDs@mail.minyard.net>
- <20240910102531.grjtn2rdmagcgphb@localhost.localdomain>
-In-Reply-To: <20240910102531.grjtn2rdmagcgphb@localhost.localdomain>
-From: Corey Minyard <corey@minyard.net>
-Date: Tue, 10 Sep 2024 06:30:11 -0500
-Message-ID: <CAB9gMfqnpu9hpS8U=umGFV6k+KSoG+Luw80KL10_Qdqo3mLU8g@mail.gmail.com>
-Subject: Re: [PATCH] ipmi:ssif: Improve detecting during probing
-To: "Ivan T. Ivanov" <iivanov@suse.de>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
+ switch_mm()
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>, WangYuli <wangyuli@uniontech.com>
+Cc: stable@vger.kernel.org, sashal@kernel.org, parri.andrea@gmail.com,
+ mathieu.desnoyers@efficios.com, palmer@rivosinc.com,
+ linux-kernel@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, nathan@kernel.org, ndesaulniers@google.com,
+ trix@redhat.com, linux-riscv@lists.infradead.org, llvm@lists.linux.dev,
+ paulmck@kernel.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ bristot@redhat.com, vschneid@redhat.com, brauner@kernel.org, arnd@arndb.de
+References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
+ <2024091002-caution-tinderbox-a847@gregkh>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <2024091002-caution-tinderbox-a847@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Sep 10, 2024 at 5:19=E2=80=AFAM Ivan T. Ivanov <iivanov@suse.de> wr=
-ote:
->
-> Hi Corey,
->
-> On 08-20 20:05, Corey Minyard wrote:
-> >
-> > If an IPMI SSIF device is probed and there is something there, but
-> > probably not an actual BMC, the code would just issue a lot of errors
-> > before it failed.  We kind of need these errors to help with certain
-> > issues, and some of the failure reports are non-fatal.
-> >
-> > However, a get device id command should alway work.  If that fails,
-> > nothing else is going to work and it's a pretty good indication that
-> > there's no valid BMC there.  So issue and check that command and bail
-> > if it fails.
-> >
-> > Reported-by: Ivan T. Ivanov <iivanov@suse.de>
-> > Signed-off-by: Corey Minyard <corey@minyard.net>
-> > ---
-> >  drivers/char/ipmi/ipmi_ssif.c | 24 +++++++++++++++++++++++-
-> >  1 file changed, 23 insertions(+), 1 deletion(-)
->
-> Do you plan to merge this fix?
+Hi Greg,
 
-Yes, it's queued for the next release window.  I should have responded
-with that.
+On 10/09/2024 09:32, Greg KH wrote:
+> On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
+>> From: Andrea Parri <parri.andrea@gmail.com>
+>>
+>> [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
+>>
+>> The membarrier system call requires a full memory barrier after storing
+>> to rq->curr, before going back to user-space.  The barrier is only
+>> needed when switching between processes: the barrier is implied by
+>> mmdrop() when switching from kernel to userspace, and it's not needed
+>> when switching from userspace to kernel.
+>>
+>> Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
+>> primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
+>> architecture, to insert the required barrier.
+>>
+>> Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
+>> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
+>> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+>> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+>> ---
+>>   MAINTAINERS                         |  2 +-
+>>   arch/riscv/Kconfig                  |  1 +
+>>   arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
+>>   arch/riscv/mm/context.c             |  2 ++
+>>   kernel/sched/core.c                 |  5 +++--
+>>   5 files changed, 38 insertions(+), 3 deletions(-)
+>>   create mode 100644 arch/riscv/include/asm/membarrier.h
+> Now queued up, thanks.
 
--corey
+
+The original patch was merged in 6.9 and the Fixes tag points to a 
+commit introduced in v4.15. So IIUC, this patch should have been 
+backported "automatically" to the releases < 6.9 right? As stated in the 
+documentation (process/stable-kernel-rules.html):
+
+"Note, such tagging is unnecessary if the stable team can derive the 
+appropriate versions from Fixes: tags."
+
+Or did we miss something?
+
+Thanks,
+
+Alex
+
 
 >
-> Regards,
-> Ivan
+> greg k-h
 >
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
