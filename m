@@ -1,226 +1,199 @@
-Return-Path: <linux-kernel+bounces-322292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF629726DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:59:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289499726E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385C01F24A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DD032854D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665491411E9;
-	Tue, 10 Sep 2024 01:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C9B1422CA;
+	Tue, 10 Sep 2024 02:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IiFH/Sb8"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cIepPNDb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDBD13E02D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA921538A;
+	Tue, 10 Sep 2024 02:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725933568; cv=none; b=pdRTF2xbRMHtL/DpJb72vPaBle6mG88RunM0oqV+YpJ6NcyxbwjeM90GyqSMh/wG1jBU/c6uKxU//2nRrvmD14UFcRoa9v6GfFo3HZAN0i15Gsn4NULVWtpfF691M4uTsqYYE360MXSYfsUOF6essgf5+kUtN3cyeORQ7bnJs3U=
+	t=1725933727; cv=none; b=OHG7vm+dnGCrJ+g42ef7ZeJD4vHIreWHnB3PzbnnwnWocgUYK8/9SU0Xn1mRrwLeHI/Kpmnq55VJ1RLePGJsMSQZH5jJbjhAQ+3FpXti4FAud4Y+kj7pQVrKjF4hzihOdlKIO6KVW8o+kmEmVgMww9C0mA67ZtKrv5/30hz9euA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725933568; c=relaxed/simple;
-	bh=+vgXJu3DmQSYac25zzMvTnwAxbBwm0mx6zHzINC8nYs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=u5htJ3g3MHPPVzLfjl7UlRHOx+Fm7r1ov8NR3BUoPJnR91Vz8dvx432yBLvhDxyYpBwHSCShCc8e1cCK5ZLqDurW37Z5tvwqDnlc1sjXGB2fYmibd7QNMtpMwIJ4mLZ4OmjcapdrVF0IGKvwUx4F9V8Mt0MRLLIATwHzwmx5jUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IiFH/Sb8; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240910015917epoutp04dce5aeca4b41a8538be55aa4e9264f38~zv20khWhP1233912339epoutp04Y
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:59:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240910015917epoutp04dce5aeca4b41a8538be55aa4e9264f38~zv20khWhP1233912339epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725933557;
-	bh=luxmpxMeSG3l4LijUSMrKLkxeqIHwXkHJoseFVInBHY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=IiFH/Sb82AIjKC4JWidTvWfGTZfAGi6IeH/4VNprXPQZ+EQdL32L4PBrTdqhknAnZ
-	 bG+pBlpy8dl9JV/fugexDTko7sDbv+44qJ9aqepcnMADl9D4x3fYmNFev2GAYIrLR1
-	 m9EOtw3IpcP+VNiHCoB0LhAjbd3OlfV4YAZ6RaVk=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240910015917epcas1p416862ecee5c7bff57d2a7df499e86220~zv20JtS2R2930729307epcas1p4P;
-	Tue, 10 Sep 2024 01:59:17 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.36.136]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4X2n1v4lY1z4x9Q9; Tue, 10 Sep
-	2024 01:59:15 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	13.15.09734.3F7AFD66; Tue, 10 Sep 2024 10:59:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240910015915epcas1p1c33f805f78ae16985460f322ca0c0e51~zv2yTJ2AO2438624386epcas1p1Z;
-	Tue, 10 Sep 2024 01:59:15 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240910015915epsmtrp1c40bc184785f5908c85feaa8bd142c29~zv2ySYfhW3125331253epsmtrp1I;
-	Tue, 10 Sep 2024 01:59:15 +0000 (GMT)
-X-AuditID: b6c32a35-babff70000002606-c7-66dfa7f3db1e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	44.75.19367.3F7AFD66; Tue, 10 Sep 2024 10:59:15 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240910015914epsmtip2f7dd3e9bb73c1292d6009a8b9514345a~zv2x7lGGw1601816018epsmtip2m;
-	Tue, 10 Sep 2024 01:59:14 +0000 (GMT)
-Message-ID: <36a7a634b001bf23ef41daa1b8d7644c6aab133f.camel@samsung.com>
-Subject: Re: [PATCH v4 3/3] tty: serial: samsung: Fix serial rx on Apple
- A7-A9
-From: Kwanghoon Son <k.son@samsung.com>
-To: Nick Chan <towinchenmi@gmail.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
-	Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Cc: asahi@lists.linux.dev
-Date: Tue, 10 Sep 2024 10:59:14 +0900
-In-Reply-To: <1a318d4f-8883-490f-a537-d641cf845a7c@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1725933727; c=relaxed/simple;
+	bh=U+uufWjSRpTa3OT5NOCQdDsTdOAdkomdyUI5AprDGIw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTJxQk5Fvk4r4TnNqn+U2YjzalLoSQlYj4rBkKaodeMEOtaUCBaELHij0jeJoESHBAMbDsUZf1M/r5eO78qi6dPYvh+seuOfjFdA3AfER0jFHCY2fIQD6lMoBw6tBYMkS/W6840bVbOOpgD+nyEHDRdOeBoRIxO/NCguUVS5fxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cIepPNDb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRSEP020319;
+	Tue, 10 Sep 2024 02:02:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=jbOeq+6X1/4MAP644ULCEDj5
+	PCIgL+8MAXcB5WCKTL0=; b=cIepPNDbfQh+8h2jqOUf3iJGFk671yM0MqdDly8B
+	tLI9sk0qMOk/DayzGjucm0eqsfx/THdftyWeIm7F+D0BX/FrJZKDGJCTayOwQg9O
+	pYWKNmuiDt+Lx6+VT/RTw0e7qXG/Wru6R9/cd0oxoxtghr3rV0lN7duxdNm5r1Xy
+	0AWOUYsd1EL6gCl37+JJ2AIB8zc72p87hyMM7z+XzINXhR61mffUPH8nKFYVV5NO
+	vGo2f8BsZ1g5IylrHsSbBeFDbBo5YE9XoLuB/ZqZn7ykrENkLMt6KSkdLOhIiFaC
+	wI5xhA3BbAkY05FSgwGyyFKku4/UfRpcHqawFsyW9BGvjQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41he5dun3w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 02:02:02 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A221FD000818
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 02:02:01 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Sep 2024 19:01:57 -0700
+Date: Tue, 10 Sep 2024 10:01:53 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH v3 1/1] arm64: dts: qcom: Add coresight nodes for x1e80100
+Message-ID: <Zt+okXSkE63O/PYk@jiegan-gv.ap.qualcomm.com>
+References: <20240905103825.2154633-1-quic_jiegan@quicinc.com>
+ <20240905103825.2154633-2-quic_jiegan@quicinc.com>
+ <734452da-6a3e-4063-ab42-607ac8dd10ac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmru7n5ffTDNZcVbR4MG8bm8XPq3wW
-	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
-	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzA
-	UNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6DglhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFK
-	ToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGy6frWQuuS1Ycbm1lbWB8INLFyMkhIWAi8WLr
-	I9YuRi4OIYEdjBJf385nhnA+MUr0df5kh3N2Pt3LDtPyp2chG0RiJ6PEy2kNjBDOe0aJf7dB
-	MpwcvAIeEvOWvGIBsYUFAiQOdv1jBbHZBNQllrStBZskInCTSWL1YxsQm1lAUmLmtNVg9SwC
-	qhJXZ64Eq+EUsJVYs7efDaJGW2LZwtfMILaogLxEw8MTzBC7BCVOznzCAnKEhMBEDonPk/8C
-	JTiAHBeJn9sMIK4Wlnh1fAvUB1ISL/vboOxsiaMf97JB2CUS12ctYoWwjSX2L53MBDKGWUBT
-	Yv0ufYgT+CTefe1hhZjOK9HRJgRhykvc6iyHaBSVOPP0I9RAD4m/Oz9BA3Q9k8SD7wfZJjDK
-	z0LyzCwkD8xCWLaAkXkVo1hqQXFuemqxYYEhPFKT83M3MYLTp5bpDsaJbz/oHWJk4mA8xCjB
-	wawkwttvdy9NiDclsbIqtSg/vqg0J7X4EKMpMEgnMkuJJucDE3heSbyhiaWBiZmRsYmFoZmh
-	kjjvmStlqUIC6YklqdmpqQWpRTB9TBycUg1MB0JXMnt53gjRqFZqOuoae9THW6k83rHK4C6L
-	0E1OYXu2B0cCCufOvaCjppoRM2lhRYXorNLsHdJa71iUa1c4PObb184R78kW9PWZSq/gRhdx
-	kWLBS6tYVNnL+OZ9ib1ov0DlBwvzuy9BAZZhc8JZl9ntP8w/gctpj+jsqaVs1SHC0S5zxP7v
-	vbZcWm/j/t0hCbOTazgKv05+4vfnyB2ZDKbNibZ3KzLctfmLl79sDbd7Ljzlsl/Bt48HlGNN
-	NVqeNK3ZuzDgrfnLK9xWnOvtNLzeK9l4xrUH7xPju2r89sdMvTfPd/2/uLdJ85xiaO/uz9uv
-	/LPqO+JyZcWjdhXT+9H6sxlc9BxSrs8v+6jEUpyRaKjFXFScCACucYA7KAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSvO7n5ffTDJ7+YbV4MG8bm8XPq3wW
-	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
-	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+P/xBdMBc2SFVta77A3
-	MPaIdDFyckgImEj86VnI1sXIxSEksJ1R4sWNiYwQCVGJjsuNQDYHkC0scfhwMUTNW0aJr+2T
-	wGp4BTwk5i15xQJiCwsESBzs+scKYrMJqEssaVvLDmKLCNxkknhyyhvEZhaQlJg5bTVYPYuA
-	qsTVmSvBajgFbCXW7O2HOmIzk8Sn7VPZIRo0JVq3/4aytSWWLXzNDGKLCshLNDw8wQxxhKDE
-	yZlPWCYwCs5C0jILScssJGULGJlXMYqmFhTnpucmFxjqFSfmFpfmpesl5+duYgTHilbQDsZl
-	6//qHWJk4mA8xCjBwawkwttvdy9NiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9yTmeKkEB6Yklq
-	dmpqQWoRTJaJg1OqgUkrQSGd5WvPursi26pSdXtk1xde08lK+HN4c7nIXZXXj5niLwZGib1P
-	CqlJ9DDenMpnYDFrl3/emRVTdj7awZGXvMZOUvxeYNjPM9zXLf2NilVUi7XkWebOYdt6a5uM
-	bPw6r4shjw81WymwczpFlKlvjJzqKMI/91uNblqu17Jv3ks9dTwCD7n05ASu6FA8YdoyTcvV
-	ctGeOsPZOueY73GrJL2853w2xW/DwajQ9a2S69+oO099ZLg+fOckhVluVuFMnOUNCs3isgFt
-	PSU/77ZFhxftsjmoH9TCnPNyNjubcIf+lMWufuFR1R2qNzm3m63S+zXh7lQTNv2qwrIWA4c6
-	K86400Fzznnuz1ViKc5INNRiLipOBADpwRBZBAMAAA==
-X-CMS-MailID: 20240910015915epcas1p1c33f805f78ae16985460f322ca0c0e51
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240909094327epcas1p4bd962fc01182a76c07888e9222572917
-References: <20240909084222.3209-1-towinchenmi@gmail.com>
-	<20240909084222.3209-4-towinchenmi@gmail.com>
-	<CGME20240909094327epcas1p4bd962fc01182a76c07888e9222572917@epcas1p4.samsung.com>
-	<c73a59634ed8eeb099f4d5cb746f3b3e770391f5.camel@samsung.com>
-	<1a318d4f-8883-490f-a537-d641cf845a7c@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <734452da-6a3e-4063-ab42-607ac8dd10ac@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _u4yqcohsHPVvv9wbKit1bHhFF32KtQS
+X-Proofpoint-GUID: _u4yqcohsHPVvv9wbKit1bHhFF32KtQS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100013
 
-On Mon, 2024-09-09 at 17:51 +0800, Nick Chan wrote:
->=20
-> On 9/9/2024 17:43, Kwanghoon Son wrote:
-> > On Mon, 2024-09-09 at 16:37 +0800, Nick Chan wrote:
-> > > Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, which=
- is
-> > > enabled by bit 11 in UCON.
-> > >=20
-> > > Access these bits in addition to the original RXTO and RXTO enable bi=
-ts,
-> > > to allow serial rx to function on A7-A9 SoCs. This change does not
-> > > appear to affect the A10 SoC and up.
-> > >=20
-> > > Signed-off-by: Nick Chan <towinchenmi=40gmail.com>
-> > >=20
-> >=20
-> > =5Bsnip=5D
-> >=20
-> > > diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-> > > index 1e8686695487..964a4fbf2626 100644
-> > > --- a/include/linux/serial_s3c.h
-> > > +++ b/include/linux/serial_s3c.h
-> > > =40=40 -246,24 +246,28 =40=40
-> > >  				 S5PV210_UFCON_TXTRIG4 =7C	=5C
-> > >  				 S5PV210_UFCON_RXTRIG4)
-> > > =20
-> > > -=23define APPLE_S5L_UCON_RXTO_ENA		9
-> > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA	12
-> > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA	13
-> > > -=23define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
-> > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRES=
-H_ENA)
-> > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRES=
-H_ENA)
-> > > +=23define APPLE_S5L_UCON_RXTO_ENA			9
-> > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
-> > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA		12
-> > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA		13
-> > > +=23define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
-> > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO=
-_LEGACY_ENA)
-> > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRE=
-SH_ENA)
-> > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRE=
-SH_ENA)
-> >=20
-> > Small thing, but other diff is not needed except
-> > APPLE_S5L_UCON_RXTO_LEGACY_ENA.
-> >=20
-> > Kwang.
-> The other diffs are there to keep everything aligned, it looks like a
-> jumbled mess here in the email, but in an editor like nano it is all
-> aligned, before or after this series.
+On Mon, Sep 09, 2024 at 10:05:08PM +0200, Konrad Dybcio wrote:
+> On 5.09.2024 12:38 PM, Jie Gan wrote:
+> > Add following coresight components for x1e80100 platform.
+> > It includes CTI, dummy sink, dynamic Funnel, Replicator, STM,
+> > TPDM, TPDA and TMC ETF.
+> > 
+> > Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> > Tested-by: Yushan Li <quic_yushli@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1516 ++++++++++++++++++++++++
+> >  1 file changed, 1516 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > index 74b694e74705..9d6f3098e144 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > @@ -305,6 +305,19 @@ CLUSTER_CL5: cluster-sleep-1 {
+> >  		};
+> >  	};
+> >  
+> > +	dummy-sink {
+> > +		compatible = "arm,coresight-dummy-sink";
+> > +
+> > +		in-ports {
+> > +			port {
+> > +				eud_in: endpoint {
+> > +					remote-endpoint =
+> > +					<&swao_rep_out1>;
+> 
+> Don't be scared to keep the lines 100-long, easier to read that way
+>
+sure, will fix in next version.
+ 
+> [...]
+> 
+> > +		tpda@10004000 {
+> > +			compatible = "qcom,coresight-tpda", "arm,primecell";
+> > +			reg = <0x0 0x10004000 0x0 0x1000>;
+> > +
+> > +			clocks = <&aoss_qmp>;
+> > +			clock-names = "apb_pclk";
+> > +
+> > +			out-ports {
+> > +				port {
+> > +					qdss_tpda_out: endpoint {
+> > +						remote-endpoint =
+> > +						<&funnel0_in6>;
+> > +					};
+> > +				};
+> > +			};
+> > +
+> > +			in-ports {
+> 
+> 'i' < 'o', please sort things alphabetically if there's no other sorting key
+> as per Documentation/devicetree/bindings/dts-coding-style.rst
+> 
+Will sort with alphabet order for "in-ports" and "out-ports" property.
 
-I know why you did. But still there is way keep aligned and only one
-line added.=20
+> [...]
+> 
+> > +		tpda@10c2b000 {
+> > +			compatible = "qcom,coresight-tpda", "arm,primecell";
+> > +			reg = <0x0 0x10c2b000 0x0 0x1000>;
+> > +
+> > +			clocks = <&aoss_qmp>;
+> > +			clock-names = "apb_pclk";
+> > +
+> > +			out-ports {
+> > +				port {
+> > +					dlct1_tpda_out: endpoint {
+> > +						remote-endpoint =
+> > +						<&dlct1_funnel_in0>;
+> > +					};
+> > +				};
+> > +			};
+> > +
+> > +			in-ports {
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +
+> > +				port@4 {
+> > +					reg = <4>;
+> > +					dlct1_tpda_in4: endpoint {
+> 
+> Please keep a new line between the last property (reg here) and the
+> following subnode
+> 
+Will fix in next version.
 
-you just added one more tab to other lines.
-If one tab with APPLE_S5L_UCON_RXTO_LEGACY_ENA, then everything will
-fine.
+> I was able to confirm that this patch doesn't break booting on the
+> Surface laptop anymore.
+> 
+> Konrad
 
-I think less changes better when see git show or blame.
+Thanks for testing!
 
-Best regards,
-Kwang.
-
->=20
-> >=20
-> > > =20
-> > >  =23define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE =7C =5C
-> > >  					 S3C2410_UCON_RXIRQMODE =7C =5C
-> > >  					 S3C2410_UCON_RXFIFO_TOI)
-> > >  =23define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK =7C =5C
-> > > +					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK =7C =5C
-> > >  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK =7C =5C
-> > >  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
-> > > =20
-> > > +=23define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
-> > >  =23define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
-> > >  =23define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
-> > >  =23define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
-> > > -=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
-> > > +=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
-> > > =20
-> > >  =23ifndef __ASSEMBLY__
-> > > =20
-> >=20
->=20
-> Nick Chan
+Thanks,
+Jie
 
 
