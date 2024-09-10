@@ -1,131 +1,376 @@
-Return-Path: <linux-kernel+bounces-323628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5D79740D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:42:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A649740E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7911C25289
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623111F22BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BB41A2C3C;
-	Tue, 10 Sep 2024 17:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FF91A7AD0;
+	Tue, 10 Sep 2024 17:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1/WsbYn"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJpvi9On"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B23418EFCE;
-	Tue, 10 Sep 2024 17:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C328F1A38D4;
+	Tue, 10 Sep 2024 17:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990007; cv=none; b=Rnz5T4KEHTO3/xUnF2BvhRIdonoouZOqWcVx9N8HVbEcpG3zyEqOuVWDtbzVlXKphEJbCSBSgaL66a+YHO/7im+WdxFIumcTrx2wvN3izqh9wskvz335vUi8t2jotBo3Hjcgw4GZ4jHunXMUTlpChYfogRKTMti+fg2T9V979qY=
+	t=1725990053; cv=none; b=LwBdUv+0DHnJuoiPKL7v3gFfzjcOCfZVDFz82zgDPjQA3muvLjP9keq3kSwECCGjxqJtaWA/1X5Egkv8yuMgJxjJWpPZF3mC+ZE7/Aem3LLwQY3/N3VEo0SqCong64IF5SzGXxK2wPzl6V7syNWuMB8DtcrwKa4XlG59oeFmvvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990007; c=relaxed/simple;
-	bh=fAdgRQqpGF7RrnEDWmOd1mWZuXS+ow/1DruDV+THMfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZKfIGDtFTM7RquHA0vD41GMIKFqdC9T5NsZpEVA5J9N9kxX/svxYLGG+kEBycaIKt7BNahyy6htKMH9ZOiu6bNaq29fsrc4y+LDzzJjMumax5IBehSVXHAlgkjelVeJl4B2MPYlgzqkEPDuEPMjkBbdnCp00kxIPyXXU8U6pD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1/WsbYn; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso788390a91.0;
-        Tue, 10 Sep 2024 10:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725990006; x=1726594806; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6MGMSWaKWiTq5sp3rVspTPEpv9ZUFzlH0jxiAqGXIZA=;
-        b=F1/WsbYnXVj7p+rR44oIzkynACN07XQWQl0xxZpGg+Zt70F2vDY+YrPOnieK7LR8sr
-         aYLXZmlngqq1EayDFLqyC6mpYSPwDYfYw2+L9QmwkYm/FJrl3ONxZ8JIVuYRIzmykC6Y
-         D1LY0t4NNYv0W0ysDk2KiZ+NASM0HneqqiJKbrGCDL7+FqLyZkp3ynlp0Ey+IJleDQMw
-         zSyWs9VBXI7Hr1C86adIpaYYv+oqGpHRdmF+67Xca4UPjTxKZY5s7b+nE5babZaeXOdL
-         82IrvC0DN2xjSD9nxExI8l0wpMj///FcPCkjPHGw1cYb5i1dGs2seP6rjbOFbOdxWgIV
-         LfUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990006; x=1726594806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6MGMSWaKWiTq5sp3rVspTPEpv9ZUFzlH0jxiAqGXIZA=;
-        b=Xi+guyFcoJqiCf1X9nJuU3uXJHoUCehZSZbJf020kY7+T/26kMVH2DHuCA/ff+4IJg
-         36t+SxrjFhOY6pRp8hGbTM64Lfr5mta0F0YsDGTAf2kmE6TrisuuNTXkzlCQjCZpeL9D
-         MCrf26FsyxHstdBpTKiqW5jIUrDq2L+5kgkZ+y83PXxVniMbTxtsVlHTO7ecznN6jOtP
-         iBhMt7Ul1kPcH4KDLfTwtQQ9dxMeW8kO4QcAs8Y5/WclZmMBAst2389tT7wXir3JvWaG
-         hajAubZrXv19rEJrXiDoIFuyyVVfq90OlegRaSy6Mpot6OfwHZZeC7TUBXntXVI9o5he
-         MuMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ4A/KP8n+tD8ruogqNf0MOjZv6gJ9q3FrephD9a+FP1gpFoaTmTbGmreMLqe7JyIeacVW77ysXOQYPguT@vger.kernel.org, AJvYcCVAjK/CXJShrg/v4XPaC7PZVWSS4qqMIWERQ+WM1kkAf2wVxqK0cPt1ha4yqozaDqMEp2QDUZaIkOzCFmKXmcGtKQI=@vger.kernel.org, AJvYcCW/+cz1IzCDxyixCHHaPv3rLrXxlsI9jLUGwBNbUYonLwvD+IphfngiqiBETV5oCdv/0uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3PYzcqt2cx5TyH9JhWfbIJN7lMe/UxqsOQY74UhnEyz3rfMlB
-	8EQmhIPVdnPD857ksBoT8mK9OFf4qXvbaBS0XZf+sQVw0k+PJhfXT0uoBEADHRIIp6Nj+CX0xjd
-	GHVXj3F8Pw/7WONwoqj73FUxxbKwUXg==
-X-Google-Smtp-Source: AGHT+IFwC9/bCAtbu3BnylH0CaBZ+SRVRLEkQ5XJ/W+s4bXXcz8vdJqdDoPjvCD04EyRJE9iF2bP4Zao7wQxr2ZufXs=
-X-Received: by 2002:a17:90a:66c6:b0:2d8:8252:f675 with SMTP id
- 98e67ed59e1d1-2db83087f69mr355236a91.39.1725990005526; Tue, 10 Sep 2024
- 10:40:05 -0700 (PDT)
+	s=arc-20240116; t=1725990053; c=relaxed/simple;
+	bh=sMaXYdfbLEdc5LCVMNz0SSbctxSq28mn5Ng5vutS7JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHtdS0/MJCPd7FaSyIXEGVorYg2NKMWzldK4edUyhZrhJ5GIVXyuASGgU4hITt91X+SoR8w0z4NhqgQIlfqooGcUqrNJN20qLwL1++w+0oAsz+bMFePT8+5t9ncfBVaYc9LoC9jbAeQnwISEbkh12qx8qCwUuH1jE4uJefTBVkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJpvi9On; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8338BC4CECC;
+	Tue, 10 Sep 2024 17:40:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725990053;
+	bh=sMaXYdfbLEdc5LCVMNz0SSbctxSq28mn5Ng5vutS7JY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UJpvi9OnRBgXfwxDXjYXMxDeXhGTfNaQYfGeoQHfQZj5gPQa20Yxoo04D9gQDMSym
+	 B1AJavkFZDFmYMZLzEQhOiJMnjAYqvlCQBqjZ91mydn84SJ9OY/YNsPdzamo7YY6cE
+	 YCH7HHcDXrcr9AW40s3EPCS421gjZEM2Vbt93BGfnqUz164miq0zv46UI0ESjkqY1f
+	 ilPucW/cuVTKFHqB3VYJ4wSTelHOH3Brt+WXJXSsYDEGJd8uLKtZvtVHLxHc6g+dm9
+	 5ZS+bP9UIbOHptxEJ3iuO0Fi7KlpcvkclBXqYlQYerYpZLZnE+7DLgxx4BE0vWSkQm
+	 plGjsUXByXDrA==
+Date: Tue, 10 Sep 2024 19:40:45 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
+Message-ID: <ZuCEneJeXcRo5qs8@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-10-dakr@kernel.org>
+ <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903174603.3554182-9-andrii@kernel.org> <172554860322.2215.10385397228202759078.tip-bot2@tip-bot2>
- <CAEf4BzbytuSpro9wT7cZY2Qf98zpDz+V0hTwwKP3ZDa866s1tA@mail.gmail.com> <ZuAhUHqAA-ejpN3X@gmail.com>
-In-Reply-To: <ZuAhUHqAA-ejpN3X@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 10 Sep 2024 10:39:53 -0700
-Message-ID: <CAEf4BzZihPPiReE3anhrVOzjoZW5v4vFVouK_Arm8vJexCTT4g@mail.gmail.com>
-Subject: Re: [tip: perf/core] uprobes: switch to RCU Tasks Trace flavor for
- better performance
-To: Ingo Molnar <mingo@kernel.org>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, linux-tip-commits@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
 
-On Tue, Sep 10, 2024 at 3:37=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
-e:
->
->
-> * Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
->
-> > On Thu, Sep 5, 2024 at 8:03=E2=80=AFAM tip-bot2 for Andrii Nakryiko
-> > <tip-bot2@linutronix.de> wrote:
-> > >
-> > > The following commit has been merged into the perf/core branch of tip=
-:
-> > >
-> > > Commit-ID:     c4d4569c41f9cda745cfd1d8089ea3d3526bafe5
-> > > Gitweb:        https://git.kernel.org/tip/c4d4569c41f9cda745cfd1d8089=
-ea3d3526bafe5
-> > > Author:        Andrii Nakryiko <andrii@kernel.org>
-> > > AuthorDate:    Tue, 03 Sep 2024 10:46:03 -07:00
-> > > Committer:     Peter Zijlstra <peterz@infradead.org>
-> > > CommitterDate: Thu, 05 Sep 2024 16:56:15 +02:00
-> > >
-> >
-> > Hm... This commit landed in perf/core, but is gone now (the rest of
-> > patches is still there). Any idea what happened?
->
-> Yeah, I'm getting this build failure:
->
->      kernel/events/uprobes.c:1158:9: error: implicit declaration of funct=
-ion =E2=80=98synchronize_rcu_tasks_trace=E2=80=99; did you mean =E2=80=98sy=
-nchronize_rcu_tasks=E2=80=99? [-Werror=3Dimplicit-function-declaration]
->
-> on x86-64 defconfig, when applied to today's perf/core.
->
+On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
+> On 16.08.24 02:10, Danilo Krummrich wrote:
+> > diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> > new file mode 100644
+> > index 000000000000..93b1ab9de6e8
+> > --- /dev/null
+> > +++ b/rust/kernel/alloc/kbox.rs
+> > @@ -0,0 +1,480 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Implementation of [`Box`].
+> > +
+> > +#[allow(unused_imports)] // Used in doc comments.
+> > +use super::allocator::{KVmalloc, Kmalloc, Vmalloc};
+> > +use super::{AllocError, Allocator, Flags};
+> > +use core::fmt;
+> > +use core::marker::PhantomData;
+> > +use core::mem::ManuallyDrop;
+> > +use core::mem::MaybeUninit;
+> > +use core::ops::{Deref, DerefMut};
+> > +use core::pin::Pin;
+> > +use core::ptr::NonNull;
+> > +use core::result::Result;
+> > +
+> > +use crate::init::{InPlaceInit, InPlaceWrite, Init, PinInit};
+> > +use crate::types::ForeignOwnable;
+> > +
+> > +/// The kernel's [`Box`] type - a heap allocation for a single value of type `T`.
+> 
+> A single `-` doesn't really render nicely in markdown, instead use a
+> double or triple dash (`--` or `---`).
+> 
+> > +///
+> > +/// This is the kernel's version of the Rust stdlib's `Box`. There are several of differences,
+> > +/// for example no `noalias` attribute is emitted and partially moving out of a `Box` is not
+> > +/// supported. There are also several API differences, e.g. `Box` always requires an [`Allocator`]
+> > +/// implementation to be passed as generic, page [`Flags`] when allocating memory and all functions
+> > +/// that may allocate memory are failable.
+> 
+> Do you mean fallible?
+> 
+> > +///
+> > +/// `Box` works with any of the kernel's allocators, e.g. [`Kmalloc`], [`Vmalloc`] or [`KVmalloc`].
+> > +/// There are aliases for `Box` with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
+> > +///
+> > +/// When dropping a [`Box`], the value is also dropped and the heap memory is automatically freed.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +///
+> > +/// ```
+> > +/// # use kernel::bindings;
+> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> > +/// struct Huge([u8; SIZE]);
+> > +///
+> > +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
+> > +/// ```
+> 
+> It would be nice if you could add something like "KBox can't handle big
+> allocations:" above this example, so that people aren't confused why
+> this example expects an error.
 
-I see, I need to add `select TASKS_TRACE_RCU` to UPROBES kconfig, I'll
-fix it up and send this patch separately.
+I don't think that's needed, it's implied by
+`SIZE == bindings::KMALLOC_MAX_SIZE + 1`.
 
-Next time please let me know ASAP about issues with my patches so I
-can fix stuff like this quickly.
+Surely, we could add it nevertheless, but it's not very precise to just say "big
+allocations". And I think this isn't the place for lengthy explanations of
+`Kmalloc` behavior.
 
-> Thanks,
->
->         Ingo
+> 
+> > +///
+> > +/// ```
+> > +/// # use kernel::bindings;
+> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> > +/// struct Huge([u8; SIZE]);
+> > +///
+> > +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
+> > +/// ```
+> 
+> Similarly, you could then say above this one "Instead use either `VBox`
+> or `KVBox`:"
+> 
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// The [`Box`]' pointer is always properly aligned and either points to memory allocated with `A`
+> 
+> Please use `self.0` instead of "[`Box`]'".
+> 
+> > +/// or, for zero-sized types, is a dangling pointer.
+> 
+> Probably "dangling, well aligned pointer.".
+
+Does this add any value? For ZSTs everything is "well aligned", isn't it?
+
+> 
+> > +#[repr(transparent)]
+> > +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
+> > +
+> > +/// Type alias for `Box` with a [`Kmalloc`] allocator.
+> 
+> Can you make these `Box` references links?
+> 
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
+> > +
+> > +/// Type alias for `Box` with a [`Vmalloc`] allocator.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = VBox::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +pub type VBox<T> = Box<T, super::allocator::Vmalloc>;
+> > +
+> > +/// Type alias for `Box` with a [`KVmalloc`] allocator.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = KVBox::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +pub type KVBox<T> = Box<T, super::allocator::KVmalloc>;
+> > +
+> > +// SAFETY: `Box` is `Send` if `T` is `Send` because the `Box` owns a `T`.
+> > +unsafe impl<T, A> Send for Box<T, A>
+> > +where
+> > +    T: Send + ?Sized,
+> > +    A: Allocator,
+> > +{
+> > +}
+> > +
+> > +// SAFETY: `Box` is `Sync` if `T` is `Sync` because the `Box` owns a `T`.
+> > +unsafe impl<T, A> Sync for Box<T, A>
+> > +where
+> > +    T: Sync + ?Sized,
+> > +    A: Allocator,
+> > +{
+> > +}
+> > +
+> > +impl<T, A> Box<T, A>
+> > +where
+> > +    T: ?Sized,
+> > +    A: Allocator,
+> > +{
+> > +    /// Creates a new `Box<T, A>` from a raw pointer.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// For non-ZSTs, `raw` must point at an allocation allocated with `A`that is sufficiently
+> > +    /// aligned for and holds a valid `T`. The caller passes ownership of the allocation to the
+> > +    /// `Box`.
+> 
+> You don't say what must happen for ZSTs.
+
+Because we don't require anything for a ZST, do we?
+
+> 
+> > +    #[inline]
+> > +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
+> > +        // INVARIANT: Validity of `raw` is guaranteed by the safety preconditions of this function.
+> > +        // SAFETY: By the safety preconditions of this function, `raw` is not a NULL pointer.
+> > +        Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData::<A>)
+> > +    }
+> > +
+> > +    /// Consumes the `Box<T, A>` and returns a raw pointer.
+> > +    ///
+> > +    /// This will not run the destructor of `T` and for non-ZSTs the allocation will stay alive
+> > +    /// indefinitely. Use [`Box::from_raw`] to recover the [`Box`], drop the value and free the
+> > +    /// allocation, if any.
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// let x = KBox::new(24, GFP_KERNEL)?;
+> > +    /// let ptr = KBox::into_raw(x);
+> > +    /// let x = unsafe { KBox::from_raw(ptr) };
+> > +    ///
+> > +    /// assert_eq!(*x, 24);
+> > +    /// # Ok::<(), Error>(())
+> > +    /// ```
+> > +    #[inline]
+> > +    pub fn into_raw(b: Self) -> *mut T {
+> > +        let b = ManuallyDrop::new(b);
+> > +
+> > +        b.0.as_ptr()
+> > +    }
+> > +
+> > +    /// Consumes and leaks the `Box<T, A>` and returns a mutable reference.
+> > +    ///
+> > +    /// See [Box::into_raw] for more details.
+> > +    #[inline]
+> > +    pub fn leak<'a>(b: Self) -> &'a mut T {
+> > +        // SAFETY: `Box::into_raw` always returns a properly aligned and dereferenceable pointer
+> > +        // which points to an initialized instance of `T`.
+> > +        unsafe { &mut *Box::into_raw(b) }
+> > +    }
+> > +}
+> > +
+> > +impl<T, A> Box<MaybeUninit<T>, A>
+> > +where
+> > +    A: Allocator,
+> > +{
+> > +    /// Converts a `Box<MaybeUninit<T>, A>` to a `Box<T, A>`.
+> > +    ///
+> > +    /// It is undefined behavior to call this function while the value inside of `b` is not yet
+> > +    /// fully initialized.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// Callers must ensure that the value inside of `b` is in an initialized state.
+> > +    pub unsafe fn assume_init(b: Self) -> Box<T, A> {
+> > +        let raw = Self::into_raw(b);
+> > +
+> > +        // SAFETY: `raw` comes from a previous call to `Box::into_raw`. By the safety requirements
+> > +        // of this function, the value inside the `Box` is in an initialized state. Hence, it is
+> > +        // safe to reconstruct the `Box` as `Box<T, A>`.
+> > +        unsafe { Box::from_raw(raw as *mut T) }
+> 
+> You should be able to use `.cast()` instead.
+> 
+> > +    }
+> > +
+> > +    /// Writes the value and converts to `Box<T, A>`.
+> > +    pub fn write(mut b: Self, value: T) -> Box<T, A> {
+> > +        (*b).write(value);
+> > +        // SAFETY: We've just initialized `boxed`'s value.
+> 
+> The variable is called `b`.
+> 
+> > +        unsafe { Self::assume_init(b) }
+> > +    }
+> > +}
+> 
+> [...]
+> 
+> > +impl<T, A> Drop for Box<T, A>
+> > +where
+> > +    T: ?Sized,
+> > +    A: Allocator,
+> > +{
+> > +    fn drop(&mut self) {
+> > +        let size = core::mem::size_of_val::<T>(self);
+> > +
+> > +        // SAFETY: We need to drop `self.0` in place, before we free the backing memory.
+> 
+> This is the reason you are calling this function, not the justification
+> why it is OK to do so. (the pointer is valid)
+> 
+> > +        unsafe { core::ptr::drop_in_place(self.0.as_ptr()) };
+> 
+> Instead of using the raw pointer directly, you can also just use
+> `deref_mut`.
+> 
+> > +
+> > +        if size != 0 {
+> > +            // SAFETY: `ptr` was previously allocated with `A`.
+> 
+> There is no variable `ptr`, this is guaranteed by the type invariant of
+> `Self`.
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +            unsafe { A::free(self.0.cast()) };
+> > +        }
+> > +    }
+> > +}
+> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> > index 4571daec0961..a9210634a8c3 100644
+> > --- a/rust/kernel/prelude.rs
+> > +++ b/rust/kernel/prelude.rs
+> > @@ -14,7 +14,7 @@
+> >  #[doc(no_inline)]
+> >  pub use core::pin::Pin;
+> > 
+> > -pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt};
+> > +pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
+> > 
+> >  #[doc(no_inline)]
+> >  pub use alloc::{boxed::Box, vec::Vec};
+> > --
+> > 2.46.0
+> > 
+> 
 
