@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-322692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7FD972C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:41:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE7F972C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77D31F25DAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9385D1C244CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CB9186E21;
-	Tue, 10 Sep 2024 08:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="TeykFZUH"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2052.outbound.protection.outlook.com [40.107.215.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8074514A4C3;
-	Tue, 10 Sep 2024 08:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725957680; cv=fail; b=jOdgCAdsHVTbMP17zC2+xHZvy7ehZ83I3W68Cb7DHSxz+/rL2dbqcipkRAb3Q6Up012hiO1Ea+OsB3i/zQy2PySC2zrklWaZ7Bv+s+bjoZtx6h4/mR9hjOLCyZ/3I4zse9lS105TFmNPfMrtvNHwgpLdleq8vssqbo4zyAkx1nY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725957680; c=relaxed/simple;
-	bh=GCm9PrtosBiGPC8B3WGTcnyeJ+2oRvFD9J9NpUbVMWE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mN6ZiTApR3PSOyAKQCKTT5CT6Mmx0DNFIPubweFunV4tKskCA2v21ARG1715oHUZ4QPKIyg6u4qTfwxioAy8o0GkIkk6tpSF08Zo+zfJKl8ib9m00a2IFkRtQBfUHd4/UF5XdgQLutxtRZP69M1bRiqxAE55Yknd8v2LE6R7VS0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=TeykFZUH; arc=fail smtp.client-ip=40.107.215.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hd8jaIHX7/6oretVxZKt4K3+TJ/1koqEm62gDiD4iGybSUw/NbNVvG4+9Douffav1mfv2acRrAOxocNN9QXTi5EiS+pJTsXkguiWeAgeoVGq6VZFxbwSc0pES/9SWfTrEbpNYJ7/tvy3suaEkVAYlxq7XPO+kqH6UIvZo96Epq1notL1dSAinSkWvl6HE1fTmr1dWsI8bOVOTK0+JKtmHuVuWNJU85XwDHAUFoMylCC4LRh+JRHf7Q1zNNMSuOY59x0xliOB0QfKhRLpe8DKjo+pqGrq6lHsFhCGhm624Yjvg1oi8B2bkMqOC4iQ0KUKGE4Hmv7yADRfEYz56FKSsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NZ2MMSRPMIp7S0T5v6dauvcCf9kw2fsivDjeJnxpNI4=;
- b=uSFNzE/+U8ZjVuooX+DLhDRc3rHu46jzosL6WmdGZ/pf3GzKMXsNjYLfMbYCFQFHsBC9opxgCwSvrnq55j/0QurG4Gal7aOp95nU6W7rAVxAQZttrxcCY+UhGMGAI3h/B8v4h7ChLPhLEQno3b/OUEF1/m86fuWsVTTuYpP75X/TcQlL5HxdphGDql2vKLS9i8sA4DO0sclAw8VJ9SR9GbmL57fgbl/zrjp5Ke3lU5FLEGjGzQpPA+QvV9jD9A/864zVFySjVia0GcTP1Sy7vl1lIMFf+NuZoznBor6zdaQgZTughm9Mc67TZsAm9MVAgr/fnN8mFcfThlL01JwSVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NZ2MMSRPMIp7S0T5v6dauvcCf9kw2fsivDjeJnxpNI4=;
- b=TeykFZUHe4X8vHQCNynSwxYZVNRUZcAeiF1OR60mjK8udPYdszrSzB4ILsAbWgcuvFufZtJjz+fKxd09JyCOsiQv+KpmcbuJMkd+Wmvw8X70psfs483qvBzxTtZCxcaoHIL8ofvhG2OGkPIoG+skpu4mFaKULc6/tlCcs8UOTJ64BdI+L5HeFMnKE1jOpRvSnorVuHoSjtvP+4CYyTjLhSOp994IpFaZ9M8VuUdHq3P+dTVrOKh6TECdKuuAihAXNIY484nN0Wt5sMUovQZxK4zlgrWVoUWv0k2/tHy8tzIJLCrhA7Y+UwhYydABtrJrV6w2RFjSfqiPO+voGyudFw==
-Received: from PU1PR01CA0010.apcprd01.prod.exchangelabs.com
- (2603:1096:803:15::22) by TYUPR04MB6763.apcprd04.prod.outlook.com
- (2603:1096:400:350::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 08:41:12 +0000
-Received: from HK3PEPF0000021F.apcprd03.prod.outlook.com
- (2603:1096:803:15:cafe::33) by PU1PR01CA0010.outlook.office365.com
- (2603:1096:803:15::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
- Transport; Tue, 10 Sep 2024 08:41:12 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- HK3PEPF0000021F.mail.protection.outlook.com (10.167.8.41) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Tue, 10 Sep 2024 08:41:11
- +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: Change eeprom for Medusa Board
-Date: Tue, 10 Sep 2024 16:41:09 +0800
-Message-Id: <20240910084109.3585923-1-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD25B186E4B;
+	Tue, 10 Sep 2024 08:47:44 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693AE339AC;
+	Tue, 10 Sep 2024 08:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725958064; cv=none; b=ofN8RJPayNVpO00//R9tLlxpsYtvrqhpx3bRd4aVhr1994RtJgoSs/bEhx7DzirWTdvZyVmd3jk3jD+STWPPo7tsp9rpmIEvQHJis6rPJlQZzLUxHiNeejusjhWyW9WJe2LEUAEW2ksX6WhRbBr6skQ/QNt0NO0O7b4/x3NmwPk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725958064; c=relaxed/simple;
+	bh=1DaEvN+kL6q16ZIm6Z8fBX/5uac/UzkFsTq+CcEGgMY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rSrbuChi08z0C74/naiB6TUIb+nCOi2Tm7Jd9e9fLMjc8Lw75HgrMzxvC7jdyvpnK0whutLIgG6rJoDLD8UkRYXF+y1c4BZl35ehEOA2jdhgIQrujsItTY5xkZ8antSUysGm3jsE1IxaEojqoo1BAwhJP9Qkw8tl+hxHBjNe8us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:3112.620420812
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.242.145])
+	by 189.cn (HERMES) with SMTP id 5D15D1002BE;
+	Tue, 10 Sep 2024 16:42:41 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-68cfdf7599-zbmfg with ESMTP id d207631d2c03443aad32dabe2cbe8b5d for axboe@kernel.dk;
+	Tue, 10 Sep 2024 16:42:42 CST
+X-Transaction-ID: d207631d2c03443aad32dabe2cbe8b5d
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: chensong_2000@189.cn
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] block/blk-rq-qos: introduce macro RQ_QOS_FN for common behaviors in rq_qos*
+Date: Tue, 10 Sep 2024 16:42:38 +0800
+Message-Id: <20240910084238.3543971-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,79 +55,255 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021F:EE_|TYUPR04MB6763:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 66952d2c-12a6-44b2-0c0f-08dcd17452c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bz8ix8r0ELABTMVtHC5ZRVv8RX/weueCHfwawWupsjcmZI8IoJoWlrcWUD0P?=
- =?us-ascii?Q?qzNhPAOgpSFCjf3qJNN/tUht1vS/IBkFYMjYqL7EVnm3c3eaJspj4d2z2WZh?=
- =?us-ascii?Q?MAcWqkNpsnHQ6t8AbS6sJ8y3mJ7KhCQcAtvbExYTS2pB2iWcUhKlvfVQSBt4?=
- =?us-ascii?Q?GiOgZA1LBb1AszfG6W6IswlYbFp2xpi1rbJIpzO2smkQz+z5Tg560zXtfghY?=
- =?us-ascii?Q?ld+NG4HT9jiCY73c5jCoZ7NfXEGL6B8dAvAKUwzBuDhsySbQiJ3vwIZQWxgB?=
- =?us-ascii?Q?fGZSmSsbYC62Ss0c16tQ9XSx+5lb9AjEVKydui9zdXqx0VnkMMdBmyTP3zuG?=
- =?us-ascii?Q?aXpnlRrqYYFUUvk9Bit0LAwI7kErk8eLG5CVcDPMQ/B44xbkd83l3upObfFm?=
- =?us-ascii?Q?2kLD1FccE3tTWMF5+d8/Q190TlzZ5vovSXRcWPVSpkHoubyyE07fRp5FNidH?=
- =?us-ascii?Q?jiuxglQAgEPcFTkdwCVoJpVfBDB9GooSrdBuxHl63QifsjPhTLQ0PaVZhIuF?=
- =?us-ascii?Q?4+jSKcQuD1LE7oc9oDb/XnyjFoO3VsHnFDtX+qPKi/mq6Ku9nwaQJCZFyUV1?=
- =?us-ascii?Q?WzZYUcIm5VEnp0W+HkjtQMV7WhtqYNlp6NH62i4yRyBJR9Tr8Qy9bIlDOHTL?=
- =?us-ascii?Q?n6l3NyA/IFjGbN6oGaLI06enYsQkfEHXVa+w8qAOSCaTumNt9DyAhJHdmcnk?=
- =?us-ascii?Q?c5zQIWwONCoZhLZuEQ90QtY/OXH0a7DG6Z5qy714UuVgGidLNaPfn7piRrZ8?=
- =?us-ascii?Q?tG34aewVfbJBV2CKXwth8nzww8d60NYO2UR4w06Qpx9wyBEQ4H/N5so6BbjQ?=
- =?us-ascii?Q?v+YRzsUbG+mD8RSsVj7E01mgP8W6JQsEVYa4oAVcalNeP4E2Sxx5aTE9QHly?=
- =?us-ascii?Q?1z9FyN1q46JE8I0a6tRpHN6NG319RUrvJSkgRIRRZo3JgF8og5D9ROAZza3M?=
- =?us-ascii?Q?yV87u6/vayg8bykaXnPIrX14axbSDe4Ao003Rgrj/KahcHyy08Yd+EmvhjFS?=
- =?us-ascii?Q?Qou3PlefIfx89cWhQVW8NL3CHrVeoff37jJcMTG9FKrf/SbYoJMc+evMR9jB?=
- =?us-ascii?Q?OvwZtJGN/MxlAf3WmCCjGtbcSaLlPksWtgNZrpYY+Og+Q2WmxJwSJTPNrC2m?=
- =?us-ascii?Q?b6jm4B3HyxBAhGPGZWJpAge3TgYr+XLDkbdyNfTRhaM/VJ456H3HrqcH6AYK?=
- =?us-ascii?Q?5ptqQ4Mnux5PP4ID6dt1gOWNK3Ku5RyMqfV2WZViwMJvyaYgYFZenP0vnN1h?=
- =?us-ascii?Q?roAYKpIx3gWSvZ+VvGqDkcqk4HoPfM0VFzQxKKtRySh5r6o3IGZOSXPtVnTi?=
- =?us-ascii?Q?sGa8wmLeV6a+YJZWWCx6qy8wsrMMGwxk+1VLXi932umLLt/6NYyIqguYcnVq?=
- =?us-ascii?Q?r5UGSM/rv1Btl1ifqs+O7ULPZkdh3e3cOCZ2605JOGRwdQEX3i2RImWfXxYU?=
- =?us-ascii?Q?rQ+iKDstRNbGytsjBhCtzOPMsatz4Uwp?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 08:41:11.2480
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66952d2c-12a6-44b2-0c0f-08dcd17452c5
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021F.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR04MB6763
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+From: Song Chen <chensong_2000@189.cn>
 
-Change eeprom on Medusa Board to AT24C128 according to hardware change.
+Below functions in blk-rq.qos.c have similar behaviors:
+	__rq_qos_cleanup
+	__rq_qos_done
+	__rq_qos_issue
+	__rq_qos_requeue
+	__rq_qos_throttle
+	__rq_qos_track
+	__rq_qos_merge
+	__rq_qos_done_bio
+	__rq_qos_queue_depth_changed
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Those functions traverse rq_qos in request_queue and call callback function
+in rq_qos_ops if it exists.
+
+This patch removes those duplicated code and abstract it in a helper macro
+RQ_QOS_FN.
+
+Signed-off-by: Song Chen <chensong_2000@189.cn>
 ---
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-rq-qos.c | 88 ++--------------------------------------------
+ block/blk-rq-qos.h | 39 ++++++++++----------
+ 2 files changed, 23 insertions(+), 104 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 98477792aa00..398ffca58135 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -342,7 +342,7 @@ temperature-sensor@4b {
- 	};
+diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+index dd7310c94713..c41f314ab024 100644
+--- a/block/blk-rq-qos.c
++++ b/block/blk-rq-qos.c
+@@ -23,87 +23,6 @@ bool rq_wait_inc_below(struct rq_wait *rq_wait, unsigned int limit)
+ 	return atomic_inc_below(&rq_wait->inflight, limit);
+ }
  
- 	eeprom@54 {
--		compatible = "atmel,24c256";
-+		compatible = "atmel,24c128";
- 		reg = <0x54>;
- 	};
+-void __rq_qos_cleanup(struct rq_qos *rqos, struct bio *bio)
+-{
+-	do {
+-		if (rqos->ops->cleanup)
+-			rqos->ops->cleanup(rqos, bio);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_done(struct rq_qos *rqos, struct request *rq)
+-{
+-	do {
+-		if (rqos->ops->done)
+-			rqos->ops->done(rqos, rq);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_issue(struct rq_qos *rqos, struct request *rq)
+-{
+-	do {
+-		if (rqos->ops->issue)
+-			rqos->ops->issue(rqos, rq);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_requeue(struct rq_qos *rqos, struct request *rq)
+-{
+-	do {
+-		if (rqos->ops->requeue)
+-			rqos->ops->requeue(rqos, rq);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_throttle(struct rq_qos *rqos, struct bio *bio)
+-{
+-	do {
+-		if (rqos->ops->throttle)
+-			rqos->ops->throttle(rqos, bio);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_track(struct rq_qos *rqos, struct request *rq, struct bio *bio)
+-{
+-	do {
+-		if (rqos->ops->track)
+-			rqos->ops->track(rqos, rq, bio);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_merge(struct rq_qos *rqos, struct request *rq, struct bio *bio)
+-{
+-	do {
+-		if (rqos->ops->merge)
+-			rqos->ops->merge(rqos, rq, bio);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_done_bio(struct rq_qos *rqos, struct bio *bio)
+-{
+-	do {
+-		if (rqos->ops->done_bio)
+-			rqos->ops->done_bio(rqos, bio);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+-void __rq_qos_queue_depth_changed(struct rq_qos *rqos)
+-{
+-	do {
+-		if (rqos->ops->queue_depth_changed)
+-			rqos->ops->queue_depth_changed(rqos);
+-		rqos = rqos->next;
+-	} while (rqos);
+-}
+-
+ /*
+  * Return true, if we can't increase the depth further by scaling
+  */
+@@ -288,12 +207,11 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+ 
+ void rq_qos_exit(struct request_queue *q)
+ {
++	struct rq_qos *rqos;
++
+ 	mutex_lock(&q->rq_qos_mutex);
+-	while (q->rq_qos) {
+-		struct rq_qos *rqos = q->rq_qos;
+-		q->rq_qos = rqos->next;
++	for_each_rqos(rqos, q)
+ 		rqos->ops->exit(rqos);
+-	}
+ 	mutex_unlock(&q->rq_qos_mutex);
+ }
+ 
+diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
+index 37245c97ee61..0f22669dce68 100644
+--- a/block/blk-rq-qos.h
++++ b/block/blk-rq-qos.h
+@@ -58,11 +58,14 @@ struct rq_depth {
+ 	unsigned int default_depth;
  };
+ 
++#define for_each_rqos(rqos, q)	\
++	for (rqos = q->rq_qos; rqos; rqos = rqos->next)
++
+ static inline struct rq_qos *rq_qos_id(struct request_queue *q,
+ 				       enum rq_qos_id id)
+ {
+ 	struct rq_qos *rqos;
+-	for (rqos = q->rq_qos; rqos; rqos = rqos->next) {
++	for_each_rqos(rqos, q) {
+ 		if (rqos->id == id)
+ 			break;
+ 	}
+@@ -100,38 +103,36 @@ bool rq_depth_scale_up(struct rq_depth *rqd);
+ bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle);
+ bool rq_depth_calc_max_depth(struct rq_depth *rqd);
+ 
+-void __rq_qos_cleanup(struct rq_qos *rqos, struct bio *bio);
+-void __rq_qos_done(struct rq_qos *rqos, struct request *rq);
+-void __rq_qos_issue(struct rq_qos *rqos, struct request *rq);
+-void __rq_qos_requeue(struct rq_qos *rqos, struct request *rq);
+-void __rq_qos_throttle(struct rq_qos *rqos, struct bio *bio);
+-void __rq_qos_track(struct rq_qos *rqos, struct request *rq, struct bio *bio);
+-void __rq_qos_merge(struct rq_qos *rqos, struct request *rq, struct bio *bio);
+-void __rq_qos_done_bio(struct rq_qos *rqos, struct bio *bio);
+-void __rq_qos_queue_depth_changed(struct rq_qos *rqos);
++#define RQ_QOS_FN(q, fn, ...)	\
++	do {	\
++		struct rq_qos *rqos;	\
++		for_each_rqos(rqos, q)	\
++			if (rqos->ops->fn)	\
++				rqos->ops->fn(rqos, ##__VA_ARGS__);	\
++	} while (0)
+ 
+ static inline void rq_qos_cleanup(struct request_queue *q, struct bio *bio)
+ {
+ 	if (q->rq_qos)
+-		__rq_qos_cleanup(q->rq_qos, bio);
++		RQ_QOS_FN(q, cleanup, bio);
+ }
+ 
+ static inline void rq_qos_done(struct request_queue *q, struct request *rq)
+ {
+ 	if (q->rq_qos && !blk_rq_is_passthrough(rq))
+-		__rq_qos_done(q->rq_qos, rq);
++		RQ_QOS_FN(q, done, rq);
+ }
+ 
+ static inline void rq_qos_issue(struct request_queue *q, struct request *rq)
+ {
+ 	if (q->rq_qos)
+-		__rq_qos_issue(q->rq_qos, rq);
++		RQ_QOS_FN(q, issue, rq);
+ }
+ 
+ static inline void rq_qos_requeue(struct request_queue *q, struct request *rq)
+ {
+ 	if (q->rq_qos)
+-		__rq_qos_requeue(q->rq_qos, rq);
++		RQ_QOS_FN(q, requeue, rq);
+ }
+ 
+ static inline void rq_qos_done_bio(struct bio *bio)
+@@ -140,7 +141,7 @@ static inline void rq_qos_done_bio(struct bio *bio)
+ 			     bio_flagged(bio, BIO_QOS_MERGED))) {
+ 		struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+ 		if (q->rq_qos)
+-			__rq_qos_done_bio(q->rq_qos, bio);
++			RQ_QOS_FN(q, done_bio, bio);
+ 	}
+ }
+ 
+@@ -148,7 +149,7 @@ static inline void rq_qos_throttle(struct request_queue *q, struct bio *bio)
+ {
+ 	if (q->rq_qos) {
+ 		bio_set_flag(bio, BIO_QOS_THROTTLED);
+-		__rq_qos_throttle(q->rq_qos, bio);
++		RQ_QOS_FN(q, throttle, bio);
+ 	}
+ }
+ 
+@@ -156,7 +157,7 @@ static inline void rq_qos_track(struct request_queue *q, struct request *rq,
+ 				struct bio *bio)
+ {
+ 	if (q->rq_qos)
+-		__rq_qos_track(q->rq_qos, rq, bio);
++		RQ_QOS_FN(q, track, rq, bio);
+ }
+ 
+ static inline void rq_qos_merge(struct request_queue *q, struct request *rq,
+@@ -164,14 +165,14 @@ static inline void rq_qos_merge(struct request_queue *q, struct request *rq,
+ {
+ 	if (q->rq_qos) {
+ 		bio_set_flag(bio, BIO_QOS_MERGED);
+-		__rq_qos_merge(q->rq_qos, rq, bio);
++		RQ_QOS_FN(q, merge, rq, bio);
+ 	}
+ }
+ 
+ static inline void rq_qos_queue_depth_changed(struct request_queue *q)
+ {
+ 	if (q->rq_qos)
+-		__rq_qos_queue_depth_changed(q->rq_qos);
++		RQ_QOS_FN(q, queue_depth_changed);
+ }
+ 
+ void rq_qos_exit(struct request_queue *);
 -- 
-2.25.1
+2.34.1
 
 
