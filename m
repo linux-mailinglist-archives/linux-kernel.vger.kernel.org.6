@@ -1,212 +1,192 @@
-Return-Path: <linux-kernel+bounces-323631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3EA9740E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA479740E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23D128702E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E6B28587F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A67E1A4B6F;
-	Tue, 10 Sep 2024 17:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2869D1A42A4;
+	Tue, 10 Sep 2024 17:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0pD0tq1L"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="irA5/AfL"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3595B16DED5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086E019D8A4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990105; cv=none; b=DtWOKvJNsL1RUZO3ibCb3ruGPojeiAMzd+8laAfKTO79M2dhJ0k1C5AK3gdw9LiMkTXRayiKCkNcycYFSDy9bRTXJknY8oABb0UfWX8DgAbkXAlWISEEVuHieGBSs/eB3P9sV82uUaC9XDP+DH0MF9JisCEPFgYhyfD94qjn05c=
+	t=1725990144; cv=none; b=mZcO1r+Z+kITFLjsaOS2bSDGZ3EsndDjg0xoqNCqU7KxxEBHHRUfftOMjKCvr3VNQeDkmCW5OPIYgNtzLhpglgLdyOnchxmzHU9a/d0EJ4cs6eQxBQLxEMhxtI50bVN0+4/XkwG2ZFJa6xN294Gg3U8StZVjwWth2vnZGFfuKSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990105; c=relaxed/simple;
-	bh=fAUv7M3pJwZVW1Q8kVS8zK7PUHK0l1kPBi3Cq/kPzuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=giBswhWGtKThF8i6kmpyqpXrqz/W3RYInUyCX0ScqN6V00dp0BQzigDKoQi2UO9x1r8KXHLODCJeTKZ0TYG5/8cgzutkgiyLYwZZHBAEXIAbZQBaXVjtIz2mFBAcSlN4G8dAKoOYDIUkMS25L9FDK6IAilLofO3qZcZ6mA2mHYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0pD0tq1L; arc=none smtp.client-ip=209.85.166.175
+	s=arc-20240116; t=1725990144; c=relaxed/simple;
+	bh=u25THlA+Z7bzJGAEhSU19gr82UmAL417zQhjoh7buU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PaNVPH5ZlvGyknA0FkZPAQb5ar2zRQ/r60SCajMkux+aahMNioYye2UL6bD3oc+nqLK3KucNy//xc6vIo+8Vl4k5lJeTuUc5RwStRyFLWUK6RXluBdbmS/u0kuxWNPaKbjJhm76VmA/Wop/qhkM6Yyg3gdd2+qoKlYkKT9WEo88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=irA5/AfL; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso283145ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:41:44 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7174c6cbdbaso7579968b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725990103; x=1726594903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PYw7Yq3bzNnAatLT1BVowVs3XyP1qscSohILgAm3AAA=;
-        b=0pD0tq1LWOx0GwwgVqCf3QQSFuT4DAAtNwxFzFiTX7E9jvkEYzcd45CLLaUX1UpMdO
-         gPcVNufuLFcbtdr0xSuCGCnY3+Tf9toS8+YpIOlkUTvQvwgcMiK1WHSYyrx8758QdMvs
-         6r2oTvlV2R1pOruTd1z3qHtIlFQS24bmTzZxZ3S3tVsMquL/BJRK0wgZeiAAEumul1c2
-         XsDnPmdgGqusGgGZpxQC0PRgYfKP24BNxRRpd8tOj2Rn77ggaZaFLrhyCa4ZKlgr48uM
-         yxypkcjDDGvQcoA0qgiVlN2pZCn3L0iZRosGeTLLN/sEhecnsa9wc8RpK+x9CpHA/W7H
-         8fNA==
+        d=google.com; s=20230601; t=1725990142; x=1726594942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gg6skOg0GP1/0D73Nu093tI0yLfhQmox3hveal8dqPA=;
+        b=irA5/AfLBypu8MgsAKfmqwHlY+Othsn7MZE2kKqwSUlQNzTOJwtl0biaMgL5yaJo7K
+         JVg0bCxikMSQ+ik5VFazU4uyEFkWr5cyYgO4Mi4xjcSqncHWdzRnbDSGo0OHEwzItKNG
+         n3SfVsbSu/hHpdQSNswXEWSeT1wpx6BFYh9d40FbHAHQbD/7YPsJ5nfbpNgMd32bsBmg
+         OtoYnWauRMBBYgfHGTKZalbwhxXnF/kUqkL+/qw8YdwYN/4f700e3KkdqYcl4TZJi361
+         HCY6TfuAKUqVHFSMaoBLsLfaWWsWnEcT5/Wr/3NS2ToIMkm6eEcJChezGLQFbU/kZ7Fi
+         v9cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990103; x=1726594903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PYw7Yq3bzNnAatLT1BVowVs3XyP1qscSohILgAm3AAA=;
-        b=lSXwnVwy81+FIseGCaJAmK6ZiqXJz0DrjUS503HuJ2MBfoLkeYcYLDXSZqIUonCTOS
-         7B3Tsce4w2zYT3w8bERnvrp3GvaW+CcYFKzL3uolK0r3JAm20d/ei6BcSw8if8ELkRzN
-         Le8eKAmgiovFtAv6z7vBZBs6819EivXUASIGRMgIuHt6NJ0ClbzV5VHUlLugRFRfdcE3
-         7x+CFLJqP2h8bBkLdAY4wUJkA3cNEVhorbmqqdLuXZopWDvUnQWbe7gS/hkllhL+XcMf
-         bJr5/rohgQ3YwsEnS0teAb+wRJDDcJQ0zNGrrQLKgjpV6wOjRSwc0StOY+25x+kVxsPS
-         osjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYO2ToS07QzbWlHOUmY5Ci28FyzV8sxq6QfH3VtvDYc9gPOTe3vKx+AIbLqxFMCJvea3hpNWV7qvXNrb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzcucm9JKvMWJN/hfT0hGElqNd/sE9gu1f4qgtwKCE7Re7z2oN2
-	xrcTQSW+2JFpVu8m8HMT/ocJucZ2tP2S/r5uxXUOZtDx+lb0hgbmWfQF099Y5n9Jr4pk5iyRfQe
-	iaGj3fl3UQNC7AW8HtY2K0Z2HlNelaNswiScvrQ22lmvq1rdmrQ==
-X-Google-Smtp-Source: AGHT+IE3Ojd6hPkIRzLEh2MMX2BlT4wzTXRZs5kxZ3gebnmMifTmj+qzAlTv8y7e3vUMMbMuM/eagRff0AZIoeJiHJw=
-X-Received: by 2002:a92:c549:0:b0:39f:709d:72b3 with SMTP id
- e9e14a558f8ab-3a07508b96emr100395ab.12.1725990103047; Tue, 10 Sep 2024
- 10:41:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725990142; x=1726594942;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gg6skOg0GP1/0D73Nu093tI0yLfhQmox3hveal8dqPA=;
+        b=ka4/CHbjAn5EGEMiSMRRTTevjSzHTu0zqk0KyiUo8UahzKSzOQy4WTtJtcpk5fip7V
+         o/4k8DXHkXG9a4P0WtQhAgiVH7Lz5wDyyNZhDDDqiopjv+YPgrow+8VhpZ7YQbmt/sEn
+         wsuQQnrfglCit7DYIv9FssECD92hZBcKPbAwb/w0TgqPQdybu6ylGe2lLNIBp7gv+u0G
+         wyFMt1/a+6ppstYsrwC+b2zjJQCZJ5UY6qXJCn1z3HdmlalYIzf2QKX2EAdhHJbNYQqZ
+         9YaZhWH4XbzbjycYXPRfndumHHnsvAQ2D5umi+RJf/vw+zOHS1f/afvJ44Ki5FiahdAX
+         PtGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTrC49D67afuwIV9QGhVyUAZc5Zd7tYi7EamTQUsrwnvRnGNHSJtck0bIICRy6NbeYN1Rc1+Y0r/kZEzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3m7wJnZHpuTnYAYDJTovM1xdakucgfAxBsFwPyG0q4bebjJSv
+	EoJC2bDfwvju0PyXCvek04w4qnyGhhUURgW3xaUdXmrtejPhr2mU28KCGgBXaydjCwj7YgWLB66
+	gdA==
+X-Google-Smtp-Source: AGHT+IE8OvwIv/WWjiojX1BJ9/jZfPx7CjqCmsLFPOIiZ8H3mbzDo/1m95EORYptPvhzt4+2cVR8hRJXts0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:aa7:9182:0:b0:710:4d6c:a504 with SMTP id
+ d2e1a72fcca58-718d5f45b47mr57116b3a.4.1725990142098; Tue, 10 Sep 2024
+ 10:42:22 -0700 (PDT)
+Date: Tue, 10 Sep 2024 10:42:20 -0700
+In-Reply-To: <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZuB8Q3NQej-gB6Tz@x1>
-In-Reply-To: <ZuB8Q3NQej-gB6Tz@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 10 Sep 2024 10:41:31 -0700
-Message-ID: <CAP-5=fWnuQrrBoTn6Rrn6vM_xQ2fCoc9i-AitD7abTcNi-4o1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf trace: If a syscall arg is marked as 'const',
- assume it is coming _from_ userspace
-To: arnaldo.melo@gmail.com
-Cc: Alan Maguire <alan.maguire@oracle.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Howard Chu <howardchu95@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
+ <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
+ <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
+ <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
+ <ZuBsTlbrlD6NHyv1@google.com> <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
+Message-ID: <ZuCE_KtmXNi0qePb@google.com>
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Yuan Yao <yuan.yao@intel.com>, 
+	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 10:05=E2=80=AFAM <arnaldo.melo@gmail.com> wrote:
->
-> We need to decide where to copy syscall arg contents, if at the
-> syscalls:sys_entry hook, meaning is something that is coming from
-> user to kernel space, or if it is a response, i.e. if it is something
-> the _kernel_ is filling in and thus going to userspace.
->
-> Since we have 'const' used in those syscalls, and unsure about this
-> being consistent, doing:
->
->   root@number:~# echo $(grep const /sys/kernel/tracing/events/syscalls/sy=
-s_enter_*/format  | grep struct | cut -c47- | cut -d'/' -f1)
->   clock_nanosleep clock_settime epoll_pwait2 futex io_pgetevents landlock=
-_create_ruleset listmount mq_getsetattr mq_notify mq_timedreceive mq_timeds=
-end preadv2 preadv prlimit64 process_madvise process_vm_readv process_vm_re=
-adv process_vm_writev process_vm_writev pwritev2 pwritev readv rt_sigaction=
- rt_sigtimedwait semtimedop statmount timerfd_settime timer_settime vmsplic=
-e writev
->   root@number:~#
->
-> Seems to indicate that we can use that for the ones that have the
-> 'const' to mark it as coming from user space, do it.
->
-> Most notable/frequent syscall that now gets BTF pretty printed in a
-> system wide 'perf trace' session is:
->
->   root@number:~# perf trace
->      21.160 (         ): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e1dfe9=
-64, op: WAIT_BITSET|PRIVATE_FLAG, utime: (struct __kernel_timespec){.tv_sec=
- =3D (__kernel_time64_t)50290,.tv_nsec =3D (long long int)810362837,}, val3=
-: MATCH_ANY) ...
->       21.166 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, o=
-p: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
->       21.169 ( 0.001 ms): RemVidChild/6995 sendmsg(fd: 25<socket:[78915]>=
-, msg: 0x7f49e9af9da0, flags: DONTWAIT) =3D 280
->       21.172 ( 0.289 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa58, o=
-p: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) =3D 0
->       21.463 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, o=
-p: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
->       21.467 ( 0.001 ms): RemVidChild/6995 futex(uaddr: 0x7f49e28bb964, o=
-p: WAKE|PRIVATE_FLAG, val: 1)           =3D 1
->       21.160 ( 0.314 ms): MediaSu~isor #/1028597  ... [continued]: futex(=
-))                                            =3D 0
->       21.469 (         ): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa5c, o=
-p: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) ...
->       21.475 ( 0.000 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49d0223=
-040, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
->       21.478 ( 0.001 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e26ac=
-964, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 1
->   ^Croot@number:~#
->   root@number:~# cat /sys/kernel/tracing/events/syscalls/sys_enter_futex/=
-format
->   name: sys_enter_futex
->   ID: 454
->   format:
->         field:unsigned short common_type;       offset:0;       size:2; s=
-igned:0;
->         field:unsigned char common_flags;       offset:2;       size:1; s=
-igned:0;
->         field:unsigned char common_preempt_count;       offset:3;       s=
-ize:1; signed:0;
->         field:int common_pid;   offset:4;       size:4; signed:1;
->
->         field:int __syscall_nr; offset:8;       size:4; signed:1;
->         field:u32 * uaddr;      offset:16;      size:8; signed:0;
->         field:int op;   offset:24;      size:8; signed:0;
->         field:u32 val;  offset:32;      size:8; signed:0;
->         field:const struct __kernel_timespec * utime;   offset:40;      s=
-ize:8; signed:0;
->         field:u32 * uaddr2;     offset:48;      size:8; signed:0;
->         field:u32 val3; offset:56;      size:8; signed:0;
->
->   print fmt: "uaddr: 0x%08lx, op: 0x%08lx, val: 0x%08lx, utime: 0x%08lx, =
-uaddr2: 0x%08lx, val3: 0x%08lx", ((unsigned long)(REC->uaddr)), ((unsigned =
-long)(REC->op)), ((unsigned long)(REC->val)), ((unsigned long)(REC->utime))=
-, ((unsigned long)(REC->uaddr2)), ((unsigned long)(REC->val3))
->   root@number:~#
->
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Cc: Howard Chu <howardchu95@gmail.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Tue, Sep 10, 2024, Rick P Edgecombe wrote:
+> On Tue, 2024-09-10 at 08:57 -0700, Sean Christopherson wrote:
+> > > Only if the TDX module returns BUSY per-SPTE (as suggested by 18.1.3,
+> > > which documents that the TDX module returns TDX_OPERAND_BUSY on a
+> > > CMPXCHG failure). If it returns BUSY per-VM, FROZEN_SPTE is not enoug=
+h
+> > > to prevent contention in the TDX module.
+> >=20
+> > Looking at the TDX module code, things like (UN)BLOCK and REMOVE take a=
+ per-VM
+> > lock in write mode, but ADD, AUG, and PROMOTE/DEMOTE take the lock in r=
+ead
+> > mode.
+>=20
+> AUG does take other locks as exclusive:
+> https://github.com/intel/tdx-module/blob/tdx_1.5/src/vmm_dispatcher/api_c=
+alls/tdh_mem_page_aug.c
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+Only a lock on the underlying physical page.  guest_memfd should prevent ma=
+pping
+the same HPA into multiple GPAs, and FROZEN_SPTE should prevent two vCPUs f=
+rom
+concurrently AUGing the same GPA+HPA.
 
-Thanks,
-Ian
+> I count 5 locks in total as well. I think trying to mirror the locking in=
+ KVM
+> will be an uphill battle.
 
-> ---
->  tools/perf/builtin-trace.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 83eb15b72333edd9..e26baf1256d5bb56 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -2001,11 +2001,14 @@ syscall_arg_fmt__init_array(struct syscall_arg_fm=
-t *arg, struct tep_format_field
->
->                 len =3D strlen(field->name);
->
-> +               // As far as heuristics (or intention) goes this seems to=
- hold true, and makes sense!
-> +               if ((field->flags & TEP_FIELD_IS_POINTER) && strstarts(fi=
-eld->type, "const "))
-> +                       arg->from_user =3D true;
-> +
->                 if (strcmp(field->type, "const char *") =3D=3D 0 &&
->                     ((len >=3D 4 && strcmp(field->name + len - 4, "name")=
- =3D=3D 0) ||
->                      strstr(field->name, "path") !=3D NULL)) {
->                         arg->scnprintf =3D SCA_FILENAME;
-> -                       arg->from_user =3D true;
->                 } else if ((field->flags & TEP_FIELD_IS_POINTER) || strst=
-r(field->name, "addr"))
->                         arg->scnprintf =3D SCA_PTR;
->                 else if (strcmp(field->type, "pid_t") =3D=3D 0)
-> --
-> 2.46.0
->
+I don't want to mirror the locking, I want to understand and document the
+expectations and rules.  "Throw 16 noodles and hope one sticks" is not a re=
+cipe
+for success.
+
+> > So for the operations that KVM can do in parallel, the locking should
+> > effectively
+> > be per-entry.=C2=A0 Because KVM will never throw away an entire S-EPT r=
+oot, zapping
+> > SPTEs will need to be done while holding mmu_lock for write, i.e. KVM
+> > shouldn't
+> > have problems with host tasks competing for the TDX module's VM-wide lo=
+ck.
+> >=20
+> > > If we want to be a bit more optimistic, let's do something more
+> > > sophisticated, like only take the lock after the first busy reply. Bu=
+t
+> > > the spinlock is the easiest way to completely remove host-induced
+> > > TDX_OPERAND_BUSY, and only have to deal with guest-induced ones.
+> >=20
+> > I am not convinced that's necessary or a good idea.=C2=A0 I worry that =
+doing so
+> > would
+> > just kick the can down the road, and potentially make the problems hard=
+er to
+> > solve,
+> > e.g. because we'd have to worry about regressing existing setups.
+> >=20
+> > > > > It is still kinda bad that guests can force the VMM to loop, but =
+the VMM
+> > > > > can
+> > > > > always say enough is enough.=C2=A0 In other words, let's assume t=
+hat a limit
+> > > > > of
+> > > > > 16 is probably appropriate but we can also increase the limit and=
+ crash
+> > > > > the
+> > > > > VM if things become ridiculous.
+> > > >=20
+> > > > 2 :-)
+> > > >=20
+> > > > One try that guarantees no other host task is accessing the S-EPT e=
+ntry,
+> > > > and a
+> > > > second try after blasting IPI to kick vCPUs to ensure no guest-side=
+ task
+> > > > has
+> > > > locked the S-EPT entry.
+> > >=20
+> > > Fair enough. Though in principle it is possible to race and have the
+> > > vCPU re-run and re-issue a TDG call before KVM re-issues the TDH call=
+.
+> >=20
+> > My limit of '2' is predicated on the lock being a "host priority" lock,
+> > i.e.  that kicking vCPUs would ensure the lock has been dropped and can=
+'t
+> > be re-acquired by the guest.
+>=20
+> So kicking would be to try to break loose any deadlock we encountered? It=
+ sounds
+> like the kind of kludge that could be hard to remove.
+
+No, the intent of the kick would be to wait for vCPUs to exit, which in tur=
+n
+guarantees that any locks held by vCPUs have been dropped.  Again, this ide=
+a is
+predicated on the lock being "host priority", i.e. that vCPUs can't re-take=
+ the
+lock before KVM.
 
