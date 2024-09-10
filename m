@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-323273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F25973A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:49:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8A3973A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F00FB23B0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A29B2597B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB13199FC6;
-	Tue, 10 Sep 2024 14:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B803199929;
+	Tue, 10 Sep 2024 14:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m9cba+8P"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKbJ3Q5g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F337F194C8B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0CA19992A;
+	Tue, 10 Sep 2024 14:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979585; cv=none; b=s4k00cLSmmQC0+6vmRDuBuVTu1VmyWCSyaPW2PBzkWT5uvsAp9p5yTBMzaW7KwZamZhlIbISL06kHKm1wG5abx4RRPZGQPpoE4GfY2xbf9M7ZhmBdxZMamntvDYV2Je44xF6IHnAgPwBr2HiXn8HsuY9UX0DeKaXM9ovLEeMWAA=
+	t=1725979660; cv=none; b=VBq1nonHd+zLZBubEN30uDLMCn4alPR+sRvPN53W26e4KCe9kSfyzo6V1YdUrb+6yMARRm/Aqcz8IrOdB9XuAAV/auLOgB5/SvkDR6gLOlMIgLFAXazgKUNZ9YwauQTIrc+mxMh38DnFBDBTRWkRa1VPZ/vVlwpgf9OsSjjkUcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979585; c=relaxed/simple;
-	bh=eZA0INVIaxysifRtQ/js+f8NGdZZ6GaHJWhtEVUb9e0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SCueRMVuCbOONeOYD4D8OMGdZv8awt5G/Gb3+sHjpDaMcOhJ2H08ubS3q1EMUDRYDLL46JyXw7csMDy1d9IazFyycxheLMp9KDaVUusQvHwHqpzb2RdtZVXmWwe25/XMFDZYXO8Ptid2PiPQIvc3eu/4AwZ+Ijbwekb5Z9pjWwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m9cba+8P; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371941bbfb0so3464020f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725979582; x=1726584382; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ie2tWWuG2E+Q7aPM8G4eDhGSZkXYMPi5r/t8cU74EXs=;
-        b=m9cba+8PBk0B5PSgFI9bBe8fTaDXYqzTC4B9vcNx7zEI8AchBIVlgYFFdsM4cwltqj
-         2/H652FUjwWEPHYnq9t8CESZF16scWTevaA64v5ZHnkxPmOUkc8kZWL9HYShUqspVyvP
-         uRIK1JBZzwAYL2tK8nvZF4mXoXXo4jo346uVwA1UV8pWYafOtTNg/U5g9HiMVHiWyPVW
-         2lWBRH1z07G8QGC+XLwj+HfqCKGoTSd+kU8RC6FM6SqhwA/87lHWOT7LlIESludoE31+
-         S8mNWtMKXjHWWD0idlFZOZzsyLVBbFxCpW18/bpDJz5BsDneCiBetTcO+nVWwmyqTfuG
-         V9XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725979582; x=1726584382;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ie2tWWuG2E+Q7aPM8G4eDhGSZkXYMPi5r/t8cU74EXs=;
-        b=T7kXiL/qKy+L73WZ0iEq5wtcx/eTAixipfKrJy+cGooI6YNu+fQZz5bes/mJUm5XPr
-         6N5xDYJYuSgTDYPCZh1jR0PNLEzLxudDe/Bqfr7ErIRad11pLVx9zwAh6TQuTwo/4x09
-         86X/pLl43N1v9xROdMb00npeHb84QGXTTNJHfBD+pfjD2lkuIKVznmGNQ6IYrI/VmxQl
-         9CqUm9FMbzS/kiL3OWmG/YxGXtPVds65W9ddfAgZJVT9qp7C0qrsh85Tb14pC4VJd20R
-         WYHDHWSi4NMWEqnZtCj0+ne3Al7C1oj1Bq93knCoJN+6O1gjs2gyQjdiWKakloosz4zL
-         Q16A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEbDNU8UVHHYE9tj9mJ1xBu26zeo2CQAIH2NG6/D4Y+bSgRXrgxzI52TRG5NYrlZN79ZBxqQzS+CbNG1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj7Gd0WcoqOt832fnTYALYmGNYdsPmSgnvs8yLyok9mm08ZN77
-	xFY3TByNt4Wxm2jnPh60SO3/GQyP6FKPbOxt5TkMdWKbSbfNltw7SGWUyXm0vCJ05sAwWOBSxIp
-	/fehIXTpP0F32MP7mcKTouf5P616o940vg6uZ
-X-Google-Smtp-Source: AGHT+IFDo0mvgDytpH5FIgETsS5NS0VkC0LwE1ceohat1+4L8zu+UXVBY7Bz+bza4xIrhxdf5+XOjHx5ZC12LMqc5VE=
-X-Received: by 2002:adf:f64f:0:b0:374:c977:363 with SMTP id
- ffacd0b85a97d-3789268f0a6mr6431494f8f.24.1725979581832; Tue, 10 Sep 2024
- 07:46:21 -0700 (PDT)
+	s=arc-20240116; t=1725979660; c=relaxed/simple;
+	bh=8aGhRDd28YHNWYtdIHgqzl4BLz13MpLBeZUqJSWKbRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SOZsl1NeyXzwR8ji3sZk1YbcAdYnegNIlhEHBMvAJLG1bpY+MMtBnmJA7WuvfwHWFkH4Z2t0G6PDC+R0u5v3w87DmmCp6+XnWiPjo4HCCEzdlrFa4HxOwbapWJXCO26FnY2rOKMnOFBxcWF9MlR/3JP3g7xXkpZxopHzVmYTymA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKbJ3Q5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F23BC4CEC4;
+	Tue, 10 Sep 2024 14:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725979660;
+	bh=8aGhRDd28YHNWYtdIHgqzl4BLz13MpLBeZUqJSWKbRg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aKbJ3Q5g2NF1noT8deAAdAyfuwIpSYF15RvNse+uyy6ccyiZZoujAUBywkvktZEtn
+	 9q6qEusqC4dSDl+suD1cNEhsr9kjFSKdGKMhkdYiw1zQB+yy7D6obAI0yzbrPQP42S
+	 xUhuXmHh69QaJTIdKNDfXORPssgGQS2HP/T/xHxOrvERN23iqSNGCru3Kv/Oa4c1Z0
+	 hshoKCzgpjrIxLspKw6hqSJ7ALNSA2q2sfIs1kY+J2z2sqTtcswDuboXnVktct6iaz
+	 e+TYYl/eFD9D5Kz6dbwklOCd54wvSdR2i4+Q3jOEFUxwZ3+55bsehEFK+VEgopmvQ4
+	 xIcrL/t/6GPAw==
+Message-ID: <c18fefbb-b22f-475f-9912-63162bf84765@kernel.org>
+Date: Tue, 10 Sep 2024 15:47:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910143144.1439910-1-sean.anderson@linux.dev>
-In-Reply-To: <20240910143144.1439910-1-sean.anderson@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 10 Sep 2024 16:46:09 +0200
-Message-ID: <CANn89iJoA5XNOGr6-esswau8VymFHrrpT62+CT=nf4KLuDU-Ag@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: dpaa: Pad packets to ETH_ZLEN
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
-	"David S . Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpftool: Fix undefined behavior in qsort(NULL, 0, ...)
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw
+References: <20240910125826.3172950-1-visitorckw@gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20240910125826.3172950-1-visitorckw@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 4:32=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
-dev> wrote:
->
-> When sending packets under 60 bytes, up to three bytes of the buffer
-> following the data may be leaked. Avoid this by extending all packets to
-> ETH_ZLEN, ensuring nothing is leaked in the padding. This bug can be
-> reproduced by running
->
->         $ ping -s 11 destination
->
-> Fixes: 9ad1a3749333 ("dpaa_eth: add support for DPAA Ethernet")
-> Suggested-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+2024-09-10 20:58 UTC+0800 ~ Kuan-Wei Chiu <visitorckw@gmail.com>
+> When netfilter has no entry to display, qsort is called with
+> qsort(NULL, 0, ...). This results in undefined behavior, as UBSan
+> reports:
+> 
+> net.c:827:2: runtime error: null pointer passed as argument 1, which is declared to never be null
+> 
+> Although the C standard does not explicitly state whether calling qsort
+> with a NULL pointer when the size is 0 constitutes undefined behavior,
+> Section 7.1.4 of the C standard (Use of library functions) mentions:
+> 
+> "Each of the following statements applies unless explicitly stated
+> otherwise in the detailed descriptions that follow: If an argument to a
+> function has an invalid value (such as a value outside the domain of
+> the function, or a pointer outside the address space of the program, or
+> a null pointer, or a pointer to non-modifiable storage when the
+> corresponding parameter is not const-qualified) or a type (after
+> promotion) not expected by a function with variable number of
+> arguments, the behavior is undefined."
+> 
+> To avoid this, add an early return when nf_link_count is 0 to prevent
+> calling qsort with a NULL pointer.
+> 
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> ---
+>   tools/bpf/bpftool/net.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+> index 968714b4c3d4..13e098fa295a 100644
+> --- a/tools/bpf/bpftool/net.c
+> +++ b/tools/bpf/bpftool/net.c
+> @@ -824,6 +824,9 @@ static void show_link_netfilter(void)
+>   		nf_link_count++;
+>   	}
+>   
+> +	if (!nf_link_count)
+> +		return;
+> +
+>   	qsort(nf_link_info, nf_link_count, sizeof(*nf_link_info), netfilter_link_compar);
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Thanks! As the issue is calling qsort() with a NULL pointer, could you 
+please make the check on nf_link_info rather than nf_link_count? I'd 
+find it easier to follow.
 
-Thanks !
+Quentin
 
