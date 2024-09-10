@@ -1,66 +1,80 @@
-Return-Path: <linux-kernel+bounces-323161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE799738BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9299738C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838B41F2526F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3E11C24358
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D481E493;
-	Tue, 10 Sep 2024 13:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C39F192B87;
+	Tue, 10 Sep 2024 13:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP/EsPIS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cFJp6dvy"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4392E191F7A;
-	Tue, 10 Sep 2024 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB7C55E58
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725975459; cv=none; b=L5kZFHeSWG3LlLOp9QpZA4c/ep4awUQnUoerGkjJr1XN8HasH38UgibJCSurPWYgXNTpGjeoqjPMVLyrdrfwv3wuuxI/KQ9VoblWlj006dyXo2oLhoMNCyIhsXG2xgOjIPnUGblIYEcRMY/cOetJhNpJeBUAg4xlwFjg1yx58PI=
+	t=1725975473; cv=none; b=cFlMXUkJ15psTvlByZBruv+bMAxJuhOJZ8EBmWg2Puwwg9GGrNJtKcDcWaEwxQ2WOxwYvlMymkCmaybr+hiujUWFnrJ+33D1VtXxnGjY8QXbDeFjY31UC3S/pPlBQScwWz0OryeFif3H+UHd7Zrim+USNiE3PfBEnnrW+GO9yy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725975459; c=relaxed/simple;
-	bh=Se+W8OcRyLSrvG4BhUjXy8p/mtKVHPYpyHMz8zbIRu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNzTxTg0CnBZC+sQakXkJlEfdaqB6pPy57DPVvb2mNfQsH/7cYpe5kyE6rKHGNRKIP8IDm92U1GVmgA8fcdgEmOnS6zRkEmQmA93gGcnyHHdI0BWws/D/rkwAhAjzYMlaLCG6GnFJ8YZEEmsu8PzoJ6cYD0bOpvuEDvzZinDrFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP/EsPIS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C83FC4CEC3;
-	Tue, 10 Sep 2024 13:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725975458;
-	bh=Se+W8OcRyLSrvG4BhUjXy8p/mtKVHPYpyHMz8zbIRu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VP/EsPISBklzTFrhM0yz3nCyD4ILK+N8tLa7h/lMCe6M48kvfbA+L8hjWoTXWiW7q
-	 8qM9QBMTa2BLaay2FbFV751C1EI9S6l4oh9y2bs7+23iFodYLdA2pWLk1vaGLxEepq
-	 QIWoKJv7tT4eFiXJJOt1MjgjK+S4rSllTKc8Q7c6PPxhDGosfSfGsWPWjxyJN4NFrf
-	 MlOmJgrK574xhJoPK58UgTAWkocwGtn0Fa0jbAgxL/Ja5scJTz095zNcwckvOkpC+5
-	 m7r1YoNX7P1Eai2BKuOttp+rDZavotmYNv6PoLMfeWtEhf5C+hwll5/flwLDBkxUo8
-	 5eZ/9zxOLCFQw==
-Date: Tue, 10 Sep 2024 15:37:31 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <ZuBLmwpwurxFwYG_@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-5-dakr@kernel.org>
- <2dd02834-b2b6-4ff6-9e29-43c9d77b69e2@proton.me>
- <ZtDwduKjIEZ3RQtk@pollux.localdomain>
- <962b7014-4f8b-4abe-8774-636b612a051c@proton.me>
- <Ztb3eOoiHs2rLCoH@pollux>
- <c1b5a3bf-b11c-4c33-9519-c93649860a9a@proton.me>
+	s=arc-20240116; t=1725975473; c=relaxed/simple;
+	bh=dVVYOtj4fttbsGjPYsxHLaRcb/hBWApKBh0TJ7WLCXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=t7h4l2nrIP8ZhKkBmVx45p1fJXvLIK3rAdJuUTtzFkkllKeQ+tdFxECqQGtMHvQwf6698lnpqHbkorZETJO19OsvZKSeGbcgNqfaKFoL7NpiCUtKLWcQiDG0tiYu4AovsYwHjLY1ZH2emqmwpF1AbgYUsTUKHnTMBomL2Z26upA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cFJp6dvy; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374c4d4f219so457765f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725975469; x=1726580269; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUAIO1FnoRnlWsjWCbOgSlRKjX5GupFyFtflTy016is=;
+        b=cFJp6dvyjaDnKPzwnLLj1AIJC9PzRJG1wpGONCPewphe+GgfB4JvKjeAG9/NeSPjkG
+         KLmEba7ZmVgrXKAtY3wpNioGtiJupqtFYGpwhWdhcQB5fl+0QhPexrq98+FA4YeCz1XT
+         QpSngObnEKju0h4pChQcTSX5jZpOKN3NUES4gcal9Q1K5oRCmXV9M2hmle5x+9cKebj6
+         y/nJnFf3VoD9bWeaIc/YORrdTA+12knY8LkiXuEnym0Oj/Y+ApzKKU1+Thj1/nulxPZp
+         HciGeu961yPYEvAz8Wn/2yZCJI7PT1Enmt7/G8AeKYZSthNJPOV1cwE5W1I1MppdUuPT
+         o7Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725975469; x=1726580269;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YUAIO1FnoRnlWsjWCbOgSlRKjX5GupFyFtflTy016is=;
+        b=KggDxKYEAGLxtVTt61mhiu2y1LgkStm53KFsJN1GaVyLwi+n5sf3q5xnBpsubDbdVr
+         Btm2ZLOF5SYVgpGNd+JhV5n1y8qG+CzAROsd3EjFOdbH06AQ6tvM35a0/M+03TMVr/mO
+         fuVGseBIG45a7i1qKQvY5E1gbTwyhCi1rKd/1goTq0TEcbk7YJRxiPXhf6wXGDSjBoIk
+         mn0BWw7+jNOEEeHKQZGYnOhfgjw/2an/vBx+/3xnAn7vNvwoX9Meru7e4kfLBQuQ5P5Y
+         hBV/qPPnzw3iNfBo8bw5USS2R916LS1KEwp7aa1zin+2zx8nei63D2MXL/e4SP3Gf8+V
+         nGQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlYfuijiIyTcA6cz9qT7SdNGUSGyYFTHvZuuidfUuLkxiK4FWn+6Kr9MuJJ++77D04I949iJ4+PTPEEdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8RAi5cJyeAWJPeja729qIf5MbhplTjBFaGW+knzW5ltatO980
+	a5ORWcXjiqpgh6OHlSj2yxGyKhjQdXkcyrNLoKlvRd3bVDV5Zih1flS1k35CrS8=
+X-Google-Smtp-Source: AGHT+IFZAurGcP7RS6kRlVX+Yh54BI3rcFSZZWKcCEf3Ou7t9Byx38yLJvJtBuSMd3ajD1wKab+Z9Q==
+X-Received: by 2002:a05:6000:a84:b0:35f:122e:bd8c with SMTP id ffacd0b85a97d-378895ca7fbmr9340223f8f.17.1725975469141;
+        Tue, 10 Sep 2024 06:37:49 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a242sm8943756f8f.22.2024.09.10.06.37.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 06:37:48 -0700 (PDT)
+Date: Tue, 10 Sep 2024 16:37:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Xiao Yang <ice_yangxiao@163.com>,
+	Liam.Howlett@oracle.com, linux-mm@kvack.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ltp@lists.linux.it,
+	oliver.sang@intel.com, Xiao Yang <ice_yangxiao@163.com>
+Subject: Re: [PATCH] mm/vma: Return the exact errno for __split_vma() and
+ mas_store_gfp()
+Message-ID: <d30bf8ee-6edc-4bea-adba-8d54ba520b6c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,227 +83,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c1b5a3bf-b11c-4c33-9519-c93649860a9a@proton.me>
+In-Reply-To: <20240909050226.2053-1-ice_yangxiao@163.com>
 
-On Tue, Sep 10, 2024 at 01:11:35PM +0000, Benno Lossin wrote:
-> On 03.09.24 13:48, Danilo Krummrich wrote:
-> > On Fri, Aug 30, 2024 at 02:45:35PM +0000, Benno Lossin wrote:
-> >> On 30.08.24 00:04, Danilo Krummrich wrote:
-> >>> On Thu, Aug 29, 2024 at 06:32:42PM +0000, Benno Lossin wrote:
-> >>>> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>>>> +///
-> >>>>> +/// For more details see [self].
-> >>>>> +pub struct Kmalloc;
-> >>>>>
-> >>>>>  /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
-> >>>>>  fn aligned_size(new_layout: Layout) -> usize {
-> >>>>> @@ -36,6 +52,60 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
-> >>>>>      unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, size, flags.0) as *mut u8 }
-> >>>>>  }
-> >>>>>
-> >>>>> +/// # Invariants
-> >>>>> +///
-> >>>>> +/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
-> >>>>> +struct ReallocFunc(
-> >>>>> +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
-> >>>>> +);
-> >>>>> +
-> >>>>> +impl ReallocFunc {
-> >>>>> +    // INVARIANT: `krealloc` satisfies the type invariants.
-> >>>>> +    const KREALLOC: Self = Self(bindings::krealloc);
-> >>>>> +
-> >>>>> +    /// # Safety
-> >>>>> +    ///
-> >>>>> +    /// This method has the same safety requirements as [`Allocator::realloc`].
-> >>>>> +    unsafe fn call(
-> >>>>> +        &self,
-> >>>>> +        ptr: Option<NonNull<u8>>,
-> >>>>> +        layout: Layout,
-> >>>>> +        flags: Flags,
-> >>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> >>>>> +        let size = aligned_size(layout);
-> >>>>> +        let ptr = match ptr {
-> >>>>> +            Some(ptr) => ptr.as_ptr(),
-> >>>>> +            None => ptr::null(),
-> >>>>> +        };
-> >>>>> +
-> >>>>> +        // SAFETY: `ptr` is either NULL or valid by the safety requirements of this function.
-> >>>>
-> >>>> You need some justification as to why calling the three allowed
-> >>>> functions here.
-> >>>
-> >>> What kind of justification do I need? Can you please share some more details on
-> >>> what you think is missing here?
-> >>
-> >> So, you are calling a function pointer to an `unsafe` function. This
-> >> means that through some invariant you have to know what the safety
-> >> requirements are (otherwise how can you guarantee that this is OK?). You
-> >> have the invariant that the pointer points at one of the three functions
-> >> mentioned above. What are the safety requirements of those functions? I
-> >> would assume that the only one is that `ptr` is valid. So you can use:
-> >>
-> >>     // SAFETY:
-> >>     // - `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc` and thus only requires that `ptr` is
-> >>     //   NULL or valid.
-> > 
-> > I'm fine adding it, but I'd like to understand why you think it's required in
-> > the safety comment here? Isn't this implicit by being the type invariant?
-> 
-> You are calling a function pointer to an `unsafe` function that takes a
-> raw pointer. Without this comment it is not clear what the function
-> pointer's safety requirements are for the raw pointer parameter.
+Hi Xiao,
 
-That's my point, isn't this implicitly clear by the type invariant? If needed,
-shouldn't it be:
+kernel test robot noticed the following build warnings:
 
-// INVARIANT:
-// - `self.0` is one of [...]
-//
-// SAFETY:
-// - `ptr` is either NULL or [...]
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiao-Yang/mm-vma-Return-the-exact-errno-for-__split_vma-and-mas_store_gfp/20240909-130325
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240909050226.2053-1-ice_yangxiao%40163.com
+patch subject: [PATCH] mm/vma: Return the exact errno for __split_vma() and mas_store_gfp()
+config: x86_64-randconfig-161-20240910 (https://download.01.org/0day-ci/archive/20240910/202409102026.LOh8J1Lh-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-> 
-> >>     // - `ptr` is either NULL or valid by the safety requirements of this function.
-> > 
-> > This is the part I already have.
-> 
-> I kept it to ensure that you also keep it.
-> 
-> >>>>> +        let raw_ptr = unsafe {
-> >>>>> +            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
-> >>>>> +            self.0(ptr.cast(), size, flags.0).cast()
-> >>>>> +        };
-> >>>>> +
-> >>>>> +        let ptr = if size == 0 {
-> >>>>> +            NonNull::dangling()
-> >>>>> +        } else {
-> >>>>> +            NonNull::new(raw_ptr).ok_or(AllocError)?
-> >>>>> +        };
-> >>>>> +
-> >>>>> +        Ok(NonNull::slice_from_raw_parts(ptr, size))
-> >>>>> +    }
-> >>>>> +}
-> >>>>> +
-> >>>>> +unsafe impl Allocator for Kmalloc {
-> >>>>
-> >>>> Missing SAFETY comment.
-> >>>
-> >>> Yeah, I think we came across this in an earlier version of the series. I asked
-> >>> you about the content and usefulness of a comment here, since I'd just end up
-> >>> re-iterating what the `Allocator` trait documentation says.
-> >>>
-> >>> IIRC, you replied that you want to think of something that'd make sense to add
-> >>> here.
-> >>
-> >> Oh yeah, sorry I forgot about that.
-> >>
-> >>> What do you think should be written here?
-> >>
-> >> I think the best way to do it, would be to push this question down into
-> >> `ReallocFunc::call`. So we would put this on the trait:
-> >>
-> >>     // SAFETY: `realloc` delegates to `ReallocFunc::call`, which guarantees that
-> >>     // - memory remains valid until it is explicitly freed,
-> >>     // - passing a pointer to a vaild memory allocation is OK,
-> >>     // - `realloc` satisfies the guarantees, since `ReallocFunc::call` has the same.
-> > 
-> > So, we'd also need the same for:
-> >   - `unsafe impl Allocator for Vmalloc`
-> >   - `unsafe impl Allocator for KVmalloc`
-> 
-> Yes.
-> 
-> >> We then need to put this on `ReallocFunc::call`:
-> >>
-> >>     /// # Guarantees
-> >>     ///
-> >>     /// This method has the same guarantees as `Allocator::realloc`. Additionally
-> >>     /// - it accepts any pointer to a valid memory allocation allocated by this function.
-> > 
-> > You propose this, since for `Allocator::realloc` memory allocated with
-> > `Allocator::alloc` would be fine too I guess.
-> > 
-> > But if e.g. `Kmalloc` wouldn't use the default `Allocator::alloc`, this would be
-> > valid too.
-> 
-> So if `Kmalloc` were to implement `alloc` by not calling
-> `ReallocFun::call`, then we couldn't use this comment. Do you think that
-> such a change might be required at some point?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202409102026.LOh8J1Lh-lkp@intel.com/
 
-I don't think so, this was purely hypothetical. Let's stick to your proposal.
+smatch warnings:
+mm/vma.c:1263 vms_gather_munmap_vmas() warn: missing error code 'error'
 
-> 
-> > We could instead write something like:
-> > 
-> > "it accepts any pointer to a valid memory allocation allocated with the same
-> > kernel allocator."
-> 
-> It would be better, if we can keep it simpler (ie only `realloc` is
-> implemented).
-> 
-> >>     /// - memory allocated by this function remains valid until it is passed to this function.
-> > 
-> > Same here, `Kmalloc` could implement its own `Allocator::free`.
-> > 
-> > Maybe just "...until it is explicitly freed.".
-> 
-> I don't really like that, since by that any other function could be
-> meant. Do you need to override the `free` function? If not then it would
-> be better.
-> 
-> > Anyway, I'm fine with both, since non of the kernel allocators uses anything
-> > else than `ReallocFunc::call` to allocate and free memory.
-> > 
-> >>
-> >> Finally, we need a `GUARANTEE` comment (just above the return [^1]
-> >> value) that establishes these guarantees:
-> >>
-> >>     // GUARANTEE: Since we called `self.0` with `size` above and by the type invariants of `Self`,
-> >>     // `self.0` is one of `krealloc`, `vrealloc`, `kvrealloc`. Those functions provide the guarantees of
-> >>     // this function.
-> >>
-> >> I am not really happy with the last sentence, but I also don't think
-> >> that there is value in listing out all the guarantees, only to then say
-> >> "all of this is guaranteed by us calling one of these three functions.
-> >>
-> >>
-> >> [^1]: I am not sure that there is the right place. If you have any
-> >>       suggestions, feel free to share them.
-> > 
-> > Either way, I'm fine with this proposal.
-> > 
-> >>
-> >>
-> >>>>> +    #[inline]
-> >>>>> +    unsafe fn realloc(
-> >>>>> +        ptr: Option<NonNull<u8>>,
-> >>>>> +        layout: Layout,
-> >>>>> +        flags: Flags,
-> >>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> >>>>> +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
-> >>>>> +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
-> >>>>> +    }
-> >>>>> +}
-> >>
-> >> Oh one more thing, I know that you already have a lot of patches in this
-> >> series, but could you split this one into two? So the first one should
-> >> introduce `ReallocFunc` and the second one add the impl for `Kmalloc`?
-> >> I managed to confuse me twice because of that :)
-> > 
-> > Generally, I'm fine with that, but I'm not sure if I can avoid an intermediate
-> > compiler warning about unused code doing that.
-> 
-> You can just use `#[expect(dead_code)]` for that in the intermediate
-> patches.
+vim +/error +1263 mm/vma.c
 
-I usually try to avoid that, because it can be misleading when bisecting things.
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1166  /*
+dba14840905f9e Liam R. Howlett 2024-08-30  1167   * vms_gather_munmap_vmas() - Put all VMAs within a range into a maple tree
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1168   * for removal at a later date.  Handles splitting first and last if necessary
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1169   * and marking the vmas as isolated.
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1170   *
+dba14840905f9e Liam R. Howlett 2024-08-30  1171   * @vms: The vma munmap struct
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1172   * @mas_detach: The maple state tracking the detached tree
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1173   *
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1174   * Return: 0 on success, -EPERM on mseal vmas, -ENOMEM otherwise
 
-If the temporarily unused code contains a bug, your bisection doesn't end up at
-this patch, but some other patch that starts using it.
+This comment needs to be updated.
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1175   */
+9014b230d88d7f Liam R. Howlett 2024-08-30  1176  int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
+dba14840905f9e Liam R. Howlett 2024-08-30  1177  		struct ma_state *mas_detach)
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1178  {
+01cf21e9e11957 Liam R. Howlett 2024-08-30  1179  	struct vm_area_struct *next = NULL;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1180  	int error = -ENOMEM;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1181  
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1182  	/*
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1183  	 * If we need to split any vma, do it now to save pain later.
+20831cd6f814ea Liam R. Howlett 2024-08-30  1184  	 * Does it split the first one?
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1185  	 */
+dba14840905f9e Liam R. Howlett 2024-08-30  1186  	if (vms->start > vms->vma->vm_start) {
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1187  
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1188  		/*
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1189  		 * Make sure that map_count on return from munmap() will
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1190  		 * not exceed its limit; but let map_count go just above
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1191  		 * its limit temporarily, to help free resources as expected.
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1192  		 */
+dba14840905f9e Liam R. Howlett 2024-08-30  1193  		if (vms->end < vms->vma->vm_end &&
+63fc66f5b6b18f Liam R. Howlett 2024-08-30  1194  		    vms->vma->vm_mm->map_count >= sysctl_max_map_count)
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1195  			goto map_count_exceeded;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1196  
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1197  		/* Don't bother splitting the VMA if we can't unmap it anyway */
+dba14840905f9e Liam R. Howlett 2024-08-30  1198  		if (!can_modify_vma(vms->vma)) {
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1199  			error = -EPERM;
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1200  			goto start_split_failed;
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1201  		}
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1202  
+013545e1b9bca0 Xiao Yang       2024-09-09  1203  		error = __split_vma(vms->vmi, vms->vma, vms->start, 1);
+013545e1b9bca0 Xiao Yang       2024-09-09  1204  		if (error)
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1205  			goto start_split_failed;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1206  	}
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1207  	vms->prev = vma_prev(vms->vmi);
+9c3ebeda8fb5a8 Liam R. Howlett 2024-08-30  1208  	if (vms->prev)
+9c3ebeda8fb5a8 Liam R. Howlett 2024-08-30  1209  		vms->unmap_start = vms->prev->vm_end;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1210  
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1211  	/*
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1212  	 * Detach a range of VMAs from the mm. Using next as a temp variable as
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1213  	 * it is always overwritten.
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1214  	 */
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1215  	for_each_vma_range(*(vms->vmi), next, vms->end) {
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1216  		long nrpages;
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1217  
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1218  		if (!can_modify_vma(next)) {
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1219  			error = -EPERM;
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1220  			goto modify_vma_failed;
+df2a7df9a9aa32 Pedro Falcato   2024-08-17  1221  		}
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1222  		/* Does it split the end? */
+dba14840905f9e Liam R. Howlett 2024-08-30  1223  		if (next->vm_end > vms->end) {
+013545e1b9bca0 Xiao Yang       2024-09-09  1224  			error = __split_vma(vms->vmi, next, vms->end, 0);
+013545e1b9bca0 Xiao Yang       2024-09-09  1225  			if (error)
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1226  				goto end_split_failed;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1227  		}
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1228  		vma_start_write(next);
+dba14840905f9e Liam R. Howlett 2024-08-30  1229  		mas_set(mas_detach, vms->vma_count++);
+013545e1b9bca0 Xiao Yang       2024-09-09  1230  		error = mas_store_gfp(mas_detach, next, GFP_KERNEL);
+013545e1b9bca0 Xiao Yang       2024-09-09  1231  		if (error)
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1232  			goto munmap_gather_failed;
+6898c9039bc8e3 Liam R. Howlett 2024-08-30  1233  
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1234  		vma_mark_detached(next, true);
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1235  		nrpages = vma_pages(next);
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1236  
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1237  		vms->nr_pages += nrpages;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1238  		if (next->vm_flags & VM_LOCKED)
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1239  			vms->locked_vm += nrpages;
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1240  
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1241  		if (next->vm_flags & VM_ACCOUNT)
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1242  			vms->nr_accounted += nrpages;
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1243  
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1244  		if (is_exec_mapping(next->vm_flags))
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1245  			vms->exec_vm += nrpages;
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1246  		else if (is_stack_mapping(next->vm_flags))
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1247  			vms->stack_vm += nrpages;
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1248  		else if (is_data_mapping(next->vm_flags))
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1249  			vms->data_vm += nrpages;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1250  
+dba14840905f9e Liam R. Howlett 2024-08-30  1251  		if (unlikely(vms->uf)) {
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1252  			/*
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1253  			 * If userfaultfd_unmap_prep returns an error the vmas
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1254  			 * will remain split, but userland will get a
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1255  			 * highly unexpected error anyway. This is no
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1256  			 * different than the case where the first of the two
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1257  			 * __split_vma fails, but we don't undo the first
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1258  			 * split, despite we could. This is unlikely enough
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1259  			 * failure that it's not worth optimizing it for.
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1260  			 */
+dba14840905f9e Liam R. Howlett 2024-08-30  1261  			if (userfaultfd_unmap_prep(next, vms->start, vms->end,
+dba14840905f9e Liam R. Howlett 2024-08-30  1262  						   vms->uf))
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29 @1263  				goto userfaultfd_error;
+
+Needs an "error = -ENOMEM;" here.  I haven't reviewed this function outside of
+what the zero day bot puts into this email.
+
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1264  		}
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1265  #ifdef CONFIG_DEBUG_VM_MAPLE_TREE
+dba14840905f9e Liam R. Howlett 2024-08-30  1266  		BUG_ON(next->vm_start < vms->start);
+dba14840905f9e Liam R. Howlett 2024-08-30  1267  		BUG_ON(next->vm_start > vms->end);
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1268  #endif
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1269  	}
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1270  
+17f1ae9b40c6b0 Liam R. Howlett 2024-08-30  1271  	vms->next = vma_next(vms->vmi);
+9c3ebeda8fb5a8 Liam R. Howlett 2024-08-30  1272  	if (vms->next)
+9c3ebeda8fb5a8 Liam R. Howlett 2024-08-30  1273  		vms->unmap_end = vms->next->vm_start;
+49b1b8d6f68310 Lorenzo Stoakes 2024-07-29  1274  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
