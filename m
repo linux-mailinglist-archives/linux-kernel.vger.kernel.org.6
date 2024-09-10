@@ -1,131 +1,232 @@
-Return-Path: <linux-kernel+bounces-323246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C721973A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:36:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC52A973A0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC35B1F25455
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 221D8B229DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55798194C8B;
-	Tue, 10 Sep 2024 14:36:42 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0F719597F;
+	Tue, 10 Sep 2024 14:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+UaYLZU"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E1418C928;
-	Tue, 10 Sep 2024 14:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10B2193078;
+	Tue, 10 Sep 2024 14:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725979002; cv=none; b=pMqb5CodPEpA3JyyqpzGjKYdFbA6jR5sWNbSxPCgVVKwfJ2xefYxBJ41lUU+35z6KgXwo2YExVUgUdGsYDyg/e/ziNOnyuJuSJs4SQKmvLf8xsgQERh/+H/MHn9UIm0a0WrswOTbXxEJpXa09xh2nT40UAiI9uUlfMLw4uoNUoY=
+	t=1725979034; cv=none; b=OP0ekHNib1g5JLyKgleAUvbAkyzDUyd3xtNZXiGzRPU2DW+p9sQguyg2cQhD3o7CojGjX1cUxH5ZicqIZLz9ky0cpfyqFYduoEDZPleoJAMjjpiJgOMuiumHA2xEskMYbhrgXn+B7RsgDepSOQb4sch0fr++pTUiw69h5EpnIv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725979002; c=relaxed/simple;
-	bh=wOLpU1b/pM0DovA9W+IpisxUVNxMO82yHVCaODl2umk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BzBDXl5WLUk9IGwdYPP2H+rCB5DF7rEN+tO2Kh53UqlAmivxMSj6WiNJ0U+eoE2xV7aSioXM6RtW+J8Jp6l2vNx0AMAkjzloEs5N7stDMPVNCp7BbduJ3UKAL8heKwpk7z/9ocVb0tgZrHj1OPlJW3UDVvkFhk+MLCtDGaqeCHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X35Gh1rqnz9v7Jf;
-	Tue, 10 Sep 2024 22:11:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 24186140133;
-	Tue, 10 Sep 2024 22:36:34 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDndy9oWeBmAWqmAA--.53179S2;
-	Tue, 10 Sep 2024 15:36:33 +0100 (CET)
-Message-ID: <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
- davem@davemloft.net, linux-kernel@vger.kernel.org,
- keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
- zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,  adrian@suse.de, ro@suse.de
-Date: Tue, 10 Sep 2024 16:36:21 +0200
-In-Reply-To: <ZsSkTs4TFfx2pK8r@earth.li>
-References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
-	 <ZsNf1VdfkHqD8R4Q@earth.li>
-	 <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
-	 <ZsSkTs4TFfx2pK8r@earth.li>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1725979034; c=relaxed/simple;
+	bh=UkpEjcVnV1c3yZo6STeTEZ1UskKk1O/pKERDH/fZHlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NWTISt7jdEy8aiBoVcFNMikRkDnsFet1VWs+d85jRg+219FZbqM7S9HysRevE4CYGtIR2zO7X8312r3b0uMlc4EbvjpyLnXlYXsT2Rw3tLaVPFsNvaYmE0QcD1ho625S4cPCvyyJvSLIOGdHuTwvvGG4cNoKJml+7VAKNSgzhsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+UaYLZU; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7163489149eso4583566a12.1;
+        Tue, 10 Sep 2024 07:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725979032; x=1726583832; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7wxEWPWCpurTRGWlhmSAUwm6pvFdDON4ZVSHeESZ+AY=;
+        b=E+UaYLZU70HgrWl9akYf1H4befroRswVMnU0Ao3CnBsqFnaXOvfPekL0oqPnWhFCRa
+         Ihrxa8Cqbq4MSbgjQmlB5XNE/kZtgu/jaPVn5UAB6Ekl5umwhgRkdTqIgP0r+fGo84qi
+         pJjzrK2s7fFyEJy60txzViNLJZKFwhD729Vfeh5+bl1ntLC1Zefdk4dqnDqcUdgAzV4B
+         5TWFSWg3YFAgXtIRGUdtVnPIszrI/eDb93u4AkXzniDMbYHYnksBnJXcdA0mD1rAh04o
+         XYfRoEDV2VzduNOo7kwKglJa7kZ4qSaXoMgsVqDNG7tBcZ06NMFgWnox2IdOHfTP6+Hu
+         y+7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725979032; x=1726583832;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7wxEWPWCpurTRGWlhmSAUwm6pvFdDON4ZVSHeESZ+AY=;
+        b=GRi9U2OyrcnQd1gBv5p0PeTvMi89O3UKPjRmQpzVuuwfl2oLYVvSSorhtiCgo79dWG
+         xenTwtF3dwvhDMYQGmhnyYrOy1wJ+cgCzWVE3XppP0m/FV9Yt5QFcIMttOIuB64Cdo+L
+         iBlVaFFF+0nTmLrnchIQnTSqODz3eU5nRoPXRUMhlgwCJDSbUNKdp+jHJfF0pBxfLAFm
+         omN7WCWQE4j/KQuBmNb607lDL5AbI17U/WL7lmKBbN1KxFVmdvKEInC9g8+bcu5DXLCH
+         psnZ4NBF3TukUPr81TVuVZKNIWMuk5ah5bN4T65FERDLP09YRs7G+T3oaXo2NZO9BlMa
+         sqXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjhBTvjH5wmZSrxtj/CgP5MhemYigmfQXOVhyOml/s0y8KMC+xCPqqRdCEUYp9bUvIpeZ8b0UcG1wy8B0=@vger.kernel.org, AJvYcCUms7ULJCC6DeqF9w0yjR6xNiSt8wDgYF6yHUx/6Co3mTN77/SEiFpeS/vv03iIA0VhEK0RAyWPPepl@vger.kernel.org, AJvYcCVPkMzz/Qt3W1fWaXf07b/RXslpYqTcrUOPvo90ZVcgwg/uytdRbawrIVVVb3+7kIllc9njxLkQ3m2Pm/J/@vger.kernel.org, AJvYcCWbM86hG4sWqQ6hCCZ5rx8CB9yMnAfsh9bhgnYnS0eQO6g6tfQmmD46Y+LLaBzucN851w1b7RHerlJU@vger.kernel.org, AJvYcCXQP2fB4RuvAZQd+FuyQov7kvqHiB9APTsrcjuv1dtvNYeIAmZErxglr/qZL+18B9IDZtQxjfqIwM5V@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuZgSwBHX4Ff98XTZrUZ1VwZ1LiwqbarhhzX5hK6OZ6xar9PE1
+	zmVg4FwhncOOQYl0aILf6BeKgwqyDFDUOZZLP6GgjuefB/40UP51
+X-Google-Smtp-Source: AGHT+IEHnslxU/kP3WqplqUKzYOZiiVO4SaK1nWy2kQgIqC7IrGUX0lv9ml1DhEp/SJdvYtq55rVZA==
+X-Received: by 2002:a17:903:230c:b0:202:38d8:173 with SMTP id d9443c01a7336-2074c612f58mr15293745ad.29.1725979032013;
+        Tue, 10 Sep 2024 07:37:12 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e34f73sm49669315ad.86.2024.09.10.07.37.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 07:37:11 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <08b6d9af-51b7-4eda-a4f6-62b688665fd9@roeck-us.net>
+Date: Tue, 10 Sep 2024 07:37:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDndy9oWeBmAWqmAA--.53179S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1kJFWfWr1DWr17AFyUtrb_yoW8CFW3pa
-	yrWF1ayFWkJw1SkFnav3WUGFWjy39rJF15JwnxXrykCwn0qFya9F1xKa15u3s8WFn3Cw1q
-	vrW3Ja17G398AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBGbfq3sLqwACsP
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] hwmon: (pmbus/core) add POWER_GOOD signal limits
+ support
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
+ <20240909-tps25990-v1-2-39b37e43e795@baylibre.com>
+ <d76290e0-f5e7-4192-92b8-94f260270fe3@roeck-us.net>
+ <1j8qw0t3ej.fsf@starbuckisacylon.baylibre.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <1j8qw0t3ej.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
-> On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
-> > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
-> > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > Support for PGP keys and signatures was proposed by David long time=
- ago,
-> > > > before the decision of using PKCS#7 for kernel modules signatures
-> > > > verification was made. After that, there has been not enough intere=
-st to
-> > > > support PGP too.
-> > >=20
-> > > You might want to update the RFC/bis references to RFC9580, which was
-> > > published last month and updates things.
-> >=20
-> > Yes, makes sense (but probably isn't too much hassle to support more
-> > things for our purposes?)
->=20
-> I'm mostly suggesting that the comments/docs point to the latest
-> standard rather than the draft version, not changing to support the new
-> v6 keys.
->=20
-> > > Also, I see support for v2 + v3 keys, and this doesn't seem like a go=
-od
-> > > idea. There are cryptographic issues with fingerprints etc there and =
-I
-> > > can't think of a good reason you'd want the kernel to support them. T=
-he
-> > > same could probably be said of DSA key support too.
-> >=20
-> > Uhm, if I remember correctly I encountered some old PGP keys used to
-> > verify RPM packages (need to check). DSA keys are not supported, since
-> > the algorithm is not in the kernel.
->=20
-> I would question the benefit gained from using obsolete key/signature
-> types for verification (I was involved in the process of Debian dropping
-> them back in *2010* which was later than it should have been). Dropping
-> the code for that path means a smaller attack surface/maintenance
-> overhead for something that isn't giving a benefit.
+On 9/9/24 23:43, Jerome Brunet wrote:
+> On Mon 09 Sep 2024 at 11:16, Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+>> On 9/9/24 08:39, Jerome Brunet wrote:
+>>> Add support for POWER_GOOD_ON and POWER_GOOD_OFF standard PMBus commands.
+>>> For PMBus devices that offer a POWER_GOOD signal, these commands are used
+>>> for setting the output voltage at which a power good signal should be
+>>> asserted and negated.
+>>> Power Good signals are device and manufacturer specific. Many factors
+>>> other
+>>> than output voltage may be used to determine whether or not the POWER_GOOD
+>>> signal is to be asserted. PMBus device users are instructed to consult the
+>>> device manufacturer’s product literature for the specifics of the device
+>>> they are using.
+>>> Note that depending on the choice of the device manufacturer that a
+>>> device
+>>> may drive a POWER_GOOD signal high or low to indicate that the signal is
+>>> asserted.
+>>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>>> ---
+>>>    drivers/hwmon/pmbus/pmbus.h      | 3 +++
+>>>    drivers/hwmon/pmbus/pmbus_core.c | 6 ++++++
+>>>    2 files changed, 9 insertions(+)
+>>> diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
+>>> index 5d5dc774187b..e322d2dd9fb7 100644
+>>> --- a/drivers/hwmon/pmbus/pmbus.h
+>>> +++ b/drivers/hwmon/pmbus/pmbus.h
+>>> @@ -78,6 +78,9 @@ enum pmbus_regs {
+>>>    	PMBUS_IIN_OC_FAULT_LIMIT	= 0x5B,
+>>>    	PMBUS_IIN_OC_WARN_LIMIT		= 0x5D,
+>>>    +	PMBUS_POWER_GOOD_ON		= 0x5E,
+>>> +	PMBUS_POWER_GOOD_OFF		= 0x5F,
+>>> +
+>>>    	PMBUS_POUT_OP_FAULT_LIMIT	= 0x68,
+>>>    	PMBUS_POUT_OP_WARN_LIMIT	= 0x6A,
+>>>    	PMBUS_PIN_OP_WARN_LIMIT		= 0x6B,
+>>> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+>>> index 0ea6fe7eb17c..94ddf0166770 100644
+>>> --- a/drivers/hwmon/pmbus/pmbus_core.c
+>>> +++ b/drivers/hwmon/pmbus/pmbus_core.c
+>>> @@ -1768,6 +1768,12 @@ static const struct pmbus_limit_attr vout_limit_attrs[] = {
+>>>    		.attr = "crit",
+>>>    		.alarm = "crit_alarm",
+>>>    		.sbit = PB_VOLTAGE_OV_FAULT,
+>>> +	}, {
+>>> +		.reg = PMBUS_POWER_GOOD_ON,
+>>> +		.attr = "good_on",
+>>> +	}, {
+>>> +		.reg = PMBUS_POWER_GOOD_OFF,
+>>> +		.attr = "good_off",
+>>>    	}, {
+>>>    		.reg = PMBUS_VIRT_READ_VOUT_AVG,
+>>>    		.update = true,
+>>>
+>>
+>> Those attributes are not hardware monitoring attributes and therefore not
+>> acceptable. In general I am not sure if they should be configurable in the
+>> first place, but definitely not from the hardware monitoring subsystem.
+>> Maybe the regulator subsystem callbacks set_over_voltage_protection and
+>> set_under_voltage_protection would be appropriate (with severity
+>> REGULATOR_SEVERITY_PROT), but that should be discussed with regulator
+>> subsystem maintainers.
+> 
+> According to PMBUS spec, there is no protection associated with that
+> command. It just tells when the output voltage is considered good, when
+> it is not. What it does after that really depends the device, it may
+> drive a pin for example (or an LED indicator in my case).
+> 
 
-Removed support for v3 PGP signatures... but that broke openSUSE
-Tumbleweed.
+It is much more likely that it connects to the reset signal on the board,
+or it enables/disables power to parts of the board.
 
-[  295.837602] PGPL: Signature packet with unhandled version 3
+> It is very similar to 'crit' or other limits in that sense,
+> I think. I don't really get why such property is not OK in hwmon then
+> and why it should not be configurable, if the other limits are ?
+> 
 
-Roberto
+Its use is for hardware control, not monitoring, even if it may be connected
+to a status LED. MAX15301, for example, groups the command under "Voltage
+Sequencing Commands".
+
+On top of that, the voltages are value/hysteresis values. The "off" voltage
+is lower than the "on" voltage.
+
+TPS25990 doesn't even support the command according to its datasheet, so I am
+at loss about your use case in the context of this patch series (the PGOOD pin
+on this chip signals to the downstream load that it is ok to draw power).
+
+Guenter
 
 
