@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-323889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31CB9744B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D635C9744B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122C61C24DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D701C2161D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6F31AB50D;
-	Tue, 10 Sep 2024 21:18:08 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499C31AB50D;
+	Tue, 10 Sep 2024 21:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMKQ4ivp"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631491A7AEE;
-	Tue, 10 Sep 2024 21:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8481A7AF1;
+	Tue, 10 Sep 2024 21:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726003088; cv=none; b=I1139Askn0MCgTI5BjJIDpGlsFdLtpbxbMdgAe7smwr6P6cvPV5VhMsAVcMocjZadi+U4R0Z3B2sl8txRsdqhNM7vQnc0oHOvqCFdPsWagoOP/ILDrAV3+T7oI/2AWQL31ADkTAhRfhlKvAW3vvaJXip5kfWML+kR8cMZup64+0=
+	t=1726003185; cv=none; b=KaHijv9ymeEUBJzf6iqfO7thHuYTwn8oqDvE2O9rFWZfwV8BjoVk6yu9y3rnP9gwTyh7/FeQYmeB6tOAN3vYT3YLZB13+JsNXUMocRyBmajFFTEkifVxKBHMwXZizxsngPhmSYJEcu0bkno1V5MYtJ7N3S3iVDjIFjRV7IyxdsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726003088; c=relaxed/simple;
-	bh=8g9TV2/suphqrvT2OhTPAA8wYMJFZCJAWkQHFG1+mIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+BHvubeaewzt6etJyLKnrcWw7kuQFxkp4fdUGC+IirpEf/zAggWoA/Q+C/GhP3a6eIFLh9RmQL2wPJkNzQ+DGNBPKPuU3iVWzQc3DOTeKyv5ZW3YbQyiCIwE1MaEsaw87IXx+MMwHRkUPuj2wh/VhBip88MQLdoQglnvVjlf8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id EA30B1C00A9; Tue, 10 Sep 2024 23:18:03 +0200 (CEST)
-Date: Tue, 10 Sep 2024 23:18:03 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pavel Machek <pavel@denx.de>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
-Message-ID: <ZuC3i1IvbeglFlUs@duo.ucw.cz>
-References: <20240910092557.876094467@linuxfoundation.org>
- <ZuAhCgJ3LUBROwBR@duo.ucw.cz>
- <2024091051-blooper-comply-47d3@gregkh>
+	s=arc-20240116; t=1726003185; c=relaxed/simple;
+	bh=E+xdl0TthoZACrhXIPsd5jvQdHV9M4f37aX3XmmA+3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=suPofsG8hGbgVUC/K2wPHlggwmGeD5s3BWq+PzPTxkDHWSECeJnarFl50Hl15L976XFwVYiwP9DpvHYm5Mdf8YLrhgWaV5Jot/4aoVf0B7lXQjR+IZpOgvXoH8AqO4A+CKUCtLga/dt74VteWqSPivmUVzN3UmECKewyAXIIxHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMKQ4ivp; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-717849c0dcaso5563994b3a.3;
+        Tue, 10 Sep 2024 14:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726003183; x=1726607983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZrHbrbavD4EX4WQfLkuORJ8Fd32mNBv/SCJAPE1O1J0=;
+        b=mMKQ4ivpoDo0G/EPkJnYSdFJHAJCi9Px24gPi3ryiNCfELmseq3646OQJ0hcbW+oMb
+         9Jy7E7x/HU5HzXW/Z9Q6xf3ndgyzjWVhO/LwtOXLcendA9/gGOiUfw6wo1CnSS2DPA50
+         3+J60eBLbEFimrUuJI7RlQh9Bdl6bvG7J66QC5fAYw3SUX+AJiMXTbDrMN+WhULvozUc
+         vhDalSGUjvVSS874Xxc1/MtWu6qJi1yG0G1C9YSJsH4bbRj53UB0Q6o8mQqRI2H69DTB
+         eZpGWnZXWXP3Gc1sA7MNHre2ifSncYYXWuAkfsnWAY9RKuhnEizv9meqmcGWcrZupYaX
+         2M5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726003183; x=1726607983;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZrHbrbavD4EX4WQfLkuORJ8Fd32mNBv/SCJAPE1O1J0=;
+        b=DmpL1+GEOwl5AvLFbwvMjT3x3v2Wfb0y3nV4XJwjFodt+3eJWKo2RWvGT4O6783OHQ
+         MJEgD5aAH9R22YWJhhwyES/bw6POqCt7/xHfHv7QFDB6Ww/72OGtQXAjBE9gJMhGNzfS
+         aMw2bctMuAKpL8M092Rl4tMTgQ3tiOf8FWD+pOKYiL9wtYcjtlIZJJCU3BDZc2TCYPmk
+         ASg8fbFjIOOOUQrhFDUFbLVMV8hukXHWwKY+RECyjdU/HZgyS3UeGLvxrMOko2wYNGqg
+         mJKz8SjSLSHmJs2VYdH9Kst+7lqIXjxRsNkFoaswp1GKHDolxBt1iZD/47qEzXOZYA06
+         xIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJpG1fptvyViXT3rFQTGmhWxUGVO8z+HGwy7xexwcsKPyK5qBCQz1qmRzMnAtK5pQK+f9SHMm4R0d/gydX@vger.kernel.org, AJvYcCX3YXAChrDEwPj0VNym+B89Fd0Jx4C2+Dh8Y3VeGJcMGlifB2FVm+4d1wTos/Moz+JTEsxFEsi5fG//I2J0gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybwoL1j6YIczFH7k0MSm7NCp9Qvd14qOhrgCfdBuFbJGYz0oFn
+	PpYRRNtGHSX9s1y6s/Da92ctovhnCtD5aKdgXKZpOVb28q1fGVQO
+X-Google-Smtp-Source: AGHT+IFuWqS6MHNrO9qAdx2DtxmyoU8z+Ui8i42PVeM5z86pkhLPu48dpbgS281r9Om+G0v3dy0qsg==
+X-Received: by 2002:a05:6a00:3e1a:b0:717:e01d:312f with SMTP id d2e1a72fcca58-718d5f67bf4mr14839114b3a.27.1726003183240;
+        Tue, 10 Sep 2024 14:19:43 -0700 (PDT)
+Received: from diogo-jahchan-ASUS-TUF-Gaming-A15-FA507RM-FA507RM.. ([200.4.98.1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090cbca6sm1774431b3a.197.2024.09.10.14.19.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 14:19:42 -0700 (PDT)
+From: Diogo Jahchan Koike <djahchankoike@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
+	syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] bcachefs: return err ptr instead of null in read sb clean
+Date: Tue, 10 Sep 2024 18:18:34 -0300
+Message-ID: <20240910211912.96356-1-djahchankoike@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0nag7RDMpWKqiaR6"
-Content-Disposition: inline
-In-Reply-To: <2024091051-blooper-comply-47d3@gregkh>
+Content-Transfer-Encoding: 8bit
 
+syzbot reported a null-ptr-deref in bch2_fs_start. [0]
 
---0nag7RDMpWKqiaR6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When a sb is marked clear but doesn't have a clean section
+bch2_read_superblock_clean returns NULL which PTR_ERR_OR_ZERO
+lets through, eventually leading to a null ptr dereference down
+the line. Adjust read sb clean to return an ERR_PTR indicating the
+invalid clean section.
 
-On Tue 2024-09-10 12:44:36, Greg Kroah-Hartman wrote:
-> On Tue, Sep 10, 2024 at 12:35:54PM +0200, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > This is the start of the stable review cycle for the 6.1.110 release.
-> > > There are 192 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> >=20
-> > Can you quote git hash of the 6.1.110-rc1?
->=20
-> Nope!  We create the git trees for those that want throw-away trees,
-> once I create them I automatically delete them so I don't even know the
-> hash anymore.
+[0] https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
 
-Modify your scripts so that you can quote hash in the announcement?
+Reported-by: syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1cecc37d87c4286e5543
+Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+---
+ fs/bcachefs/sb-clean.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Avoid using "-rc1" tag for things that are... well... not released as -rc1?
+diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
+index c57d42bb8d1b..025848a9c4c0 100644
+--- a/fs/bcachefs/sb-clean.c
++++ b/fs/bcachefs/sb-clean.c
+@@ -155,7 +155,7 @@ struct bch_sb_field_clean *bch2_read_superblock_clean(struct bch_fs *c)
+ 		SET_BCH_SB_CLEAN(c->disk_sb.sb, false);
+ 		c->sb.clean = false;
+ 		mutex_unlock(&c->sb_lock);
+-		return NULL;
++		return ERR_PTR(-BCH_ERR_invalid_sb_clean);
+ 	}
+ 
+ 	clean = kmemdup(sb_clean, vstruct_bytes(&sb_clean->field),
+-- 
+2.43.0
 
-> > We do have
-> >=20
-> > Linux 6.1.110-rc1 (244a97bb85be)
-> > Greg Kroah-Hartman authored 1 day ago
-> >=20
-> > passing tests
-> >=20
-> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/li=
-nux-6.1.y
-> >=20
-> > . But that's 1 day old.
->=20
-> Lots have changed since then, please use the latest.
-
-I will, but matching releases and tests based on timestamps is just
-not right.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---0nag7RDMpWKqiaR6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZuC3iwAKCRAw5/Bqldv6
-8tl4AJ9PuFMfhI3x0R2NJmJzMoP/fSWLvQCgkVwg9780H4X06uPb293ll+Wtwd0=
-=b1LH
------END PGP SIGNATURE-----
-
---0nag7RDMpWKqiaR6--
 
