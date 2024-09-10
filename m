@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-324017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0B99746D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B409746DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5871C25BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:54:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CAD1F26D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093B51C1741;
-	Tue, 10 Sep 2024 23:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC55A1C1AAA;
+	Tue, 10 Sep 2024 23:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TWnEg+ha"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y6yv1uUZ"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FC71C0DD7
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70421AED39
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011921; cv=none; b=T3m2LNgXWe/neFRU0RBJyqLJw9xLP2t6pdayAf6251QCR04t7MKFXhPiY58L+eULVdRcbU4RbmxdV6+p6QQYUllGi44RaXuW49jhHYrXfCh+bxQTCuo9XGF4m/gg3OJy9bQu/NEMxJbE8d5BlFnGYsWy6BzbNUtc4+HpPlQwtSk=
+	t=1726011923; cv=none; b=bxBRNVHb69MQnyhdk3dmfWpioV1JBJCgwcbZrXa33Kyc2jFFBLvo8VQnN9jqWyEUkblFX9yNrYqg0ldKUbwA0ksojtKpU66KHfNTZeKBABrdjUAL1JvPls3Br7Bg7jY8xCJEIiJ51SwXc5iw/os1Krv9Av4LQB+O3EoiAjLC8hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011921; c=relaxed/simple;
-	bh=OYgGvX0hYL3mGQHZcgbKQoTaViWJ4HoiAFWlcJhpcoQ=;
+	s=arc-20240116; t=1726011923; c=relaxed/simple;
+	bh=HDEODfs0sW9DcivdVbXGJVJf24chSDZ1+b7TBU5QrCE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QW+zkw8ei5Lxvj1yURREzSeza3pdUJMlgCG6IxhLCfRDkut2mfuxEGqwlCWxlVbZa92uRIzDDMYRabaTkBdtqlEzwZXEICNXgJuuafrx34kGIwY4mWEo4Tvn2jPEtoibg8zLFFseetAz6F0cHNanu10+QZHWmQ8KRShKbxQgKFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TWnEg+ha; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=qaGxUimlw0tTydLo5DHsL/U3u8FuNd2Aq77wJL6W/hkdlh26h7lRMPm21j2Z2Rgi7l+GEwsDyNEwy+ZWBLNloaOSeChulUCwz2F0C7H11Zo+gKfhD8V5oqngZ+P3+EFGemT4bSJPV4xaZ6N2spWXO0rD2rG4sJxMdO8aPAtDCto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y6yv1uUZ; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6db70bf67faso99451367b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:19 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7cbe272efa6so7146255a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726011918; x=1726616718; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726011920; x=1726616720; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJq0MqYSe34io4UmOdJbczSi4Mtmt5uxlF7QPZDIEdU=;
-        b=TWnEg+haf1eLvMdkzMcC9xC5gy3LKA7p5jQVamv+1lxQIaPHUFJ3d0TPTGcfXH0j03
-         1oMejKuzzl4EEhNrKgtdWc87G84fxHtXG7ALfU219YXtn7Q+uMHodcwCOIqdiR8jAYFu
-         Gif3VgoEX5yVrIafdddBIIKYxglFaDR7XGAQYK6bsWeqtNQ5M3BZTTSa86tzJMGrJHAk
-         5dHr5KpAHlTUX/TNvXzJEneKk2Va6gvKAMCoRNidyqeTO7XxO3cc0wg5rRtpX/6g2dGx
-         ikf/Idfa5VgDUf+KxX0vR9hdinqV5rSITVsHGoYrRIytWv+2IC2QreMLaYoO4gn+OYpo
-         sPyw==
+        bh=34wlcJFkfGNQzzb1hZdL7ujzeulibiS7N8dJMuUgV78=;
+        b=Y6yv1uUZ1BTUTpadaccGK0CgdnG5qo6Av8UwKc8ujmKUD7nJFE6qIWjXAcGmH0hmWR
+         bUEw2N56bXAOEA8K9zhtlFt1RuPbnGedMGnf1UHKK3oHo43947wBzPO1LxkNvjJvdVRL
+         e3mOsdYBQvTSbkcIS4wN70mI2CEQyjNBueeO98xAL0CF6V7j2wi5j+wIEY7XrjLrKFJI
+         uhOa1awuYB0bWnb2wlQ43QeBIPq5lOCyj7O8dUTlN9RBa2DMV986aKAlrgION4pXpgZs
+         iL3cPHqf3kqay+PAzaaHM9X9WVemDidoCZ6jomBhTUVmG5bQyEhaozACxFTPzJm3ktN/
+         AAzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726011918; x=1726616718;
+        d=1e100.net; s=20230601; t=1726011920; x=1726616720;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJq0MqYSe34io4UmOdJbczSi4Mtmt5uxlF7QPZDIEdU=;
-        b=RiMSibRRyFOVwiRvBuheZ4dj+ycII/4ni7lCkBQupHwbA3MHrD+EfQBLgrRrPlMA5U
-         X442j5ntW7KDbzl1yc9ulC1xCocJ+AftmVB+I+e8TMUftVDpssRFaunPdiZxUqVu3yvG
-         BPVqKWY+r+Oj07YHgmuJjGWBFDJM9P8GuEAu3yVb4Wr+wvN+aXhlekq2bmqkD33D1tqI
-         lG2YqTWmNoBt7zfs/Vtkpk4bDet4x1ZIrGq1azoOUHb2Ro1RQcNqmtgP22a6x4MUl6Sx
-         gFf9DhDroZYWuc9KyOdYn0zcj0V9shqbhBgLEToRKZkBcwBF82raTx8aBl5y92kniMN9
-         OPLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwc+q3zEOqPGr0A2d9oBA6u+j8ob7AV/jG24LI1BAz6zLSD0b/eiSqkJaAl1bsudOzmeaPxRlWfc839ZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLMmNRWHHxKqPlK26j4sLhnBgnFMi2ZhD0pW2Izddn0koAog2n
-	rPECxsXpmQ6YE4Mr5MXTCiINKVqX6Bmf3JJukSFKTiJcQVH2I3FXXCqD1PAuUDNpj8In5AJgnJ2
-	Xl7CKz3SrJTn5eFkfVqUvCA==
-X-Google-Smtp-Source: AGHT+IGSLUm8oBiaMD+q3wklbXJeQqiWR8FYu/x3IcQqY2JhzZy9eAY0OzQzZWTZkFFReNAsglf+owucD34Qou3lfw==
+        bh=34wlcJFkfGNQzzb1hZdL7ujzeulibiS7N8dJMuUgV78=;
+        b=rU1ytLEQeLrtERtxIohY4KjlJ/hceO4D4dgN8IUhMJ3+qU8IJ8XHGlNVuvYxOzbaoE
+         T1mIdtw3TubqDYUT/Shp5lb9HJMJjEckHvxqvZzFIe/GVtMddDdPcnA3SvSsV3XS5QOl
+         aPphujmsNAz+vdBama6EPlLrO3CnoaD7+1UQBH7k9+LmU+Ak5N9YB0x7A5rhjcoIAkDf
+         mTnHvN1yInvk8SWYAWKM5uF5mRZGhrxI+CAxqzTK5vPxD1hY1qn1dpJYrrR5kh5JWoMW
+         RYXeJAzNmvl+dGAAeSq6STHC7BA+FEk4wbhk1TssD5e46hqDD6PftmKsLAp0Yvv1+HAD
+         D4jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGvV/ZDUDhKnwgfBl2bKXJ1rFb6MDcajKhGd2mxIuLhZhI/ktaLtGCixRAKgb200E9TyzWjw+//zWFVQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoFJJublIoOVE4IEmaqjaPEhJt/l9/FpSy7F60U75QUYfRxI/Y
+	skrtwnbH1Z1+BX+prhhw9pvsJgLdmn+cEd0llGfhCsZTRSESn3kGDzuzHzn5b9L0Bf2obdrho8c
+	QQUwyZ6JgUyGCoQ14SjDX+g==
+X-Google-Smtp-Source: AGHT+IHhJHaKR4KPnPlGSVYGkBp4x4+Xb5fuhdBUkXuBYQ8usu5fhaV07d9H987RUToHw3cMQAZNLNO7RWO0YnhXdQ==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a05:690c:38c:b0:6af:623c:7694 with
- SMTP id 00721157ae682-6db44a5d200mr10772047b3.0.1726011918533; Tue, 10 Sep
- 2024 16:45:18 -0700 (PDT)
-Date: Tue, 10 Sep 2024 23:43:57 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a65:41c6:0:b0:785:e3e:38db with SMTP
+ id 41be03b00d2f7-7db08543c58mr8464a12.8.1726011919943; Tue, 10 Sep 2024
+ 16:45:19 -0700 (PDT)
+Date: Tue, 10 Sep 2024 23:43:58 +0000
 In-Reply-To: <cover.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1726009989.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
-Subject: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
+Message-ID: <5a05eb947cf7aa21f00b94171ca818cc3d5bdfee.1726009989.git.ackerleytng@google.com>
+Subject: [RFC PATCH 27/39] KVM: guest_memfd: Allow mmapping guest_memfd files
 From: Ackerley Tng <ackerleytng@google.com>
 To: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
 	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
@@ -94,227 +93,100 @@ Cc: erdemaktas@google.com, vannapurve@google.com, ackerleytng@google.com,
 	linux-fsdevel@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-The faultability xarray is stored on the inode since faultability is a
-property of the guest_memfd's memory contents.
-
-In this RFC, presence of an entry in the xarray indicates faultable,
-but this could be flipped so that presence indicates unfaultable. For
-flexibility, a special value "FAULT" is used instead of a simple
-boolean.
-
-However, at some stages of a VM's lifecycle there could be more
-private pages, and at other stages there could be more shared pages.
-
-This is likely to be replaced by a better data structure in a future
-revision to better support ranges.
-
-Also store struct kvm_gmem_hugetlb in struct kvm_gmem_hugetlb as a
-pointer. inode->i_mapping->i_private_data.
+guest_memfd files can always be mmap()ed to userspace, but
+faultability is controlled by an attribute on the inode.
 
 Co-developed-by: Fuad Tabba <tabba@google.com>
 Signed-off-by: Fuad Tabba <tabba@google.com>
 Co-developed-by: Ackerley Tng <ackerleytng@google.com>
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Co-developed-by: Vishal Annapurve <vannapurve@google.com>
-Signed-off-by: Vishal Annapurve <vannapurve@google.com>
 
 ---
- virt/kvm/guest_memfd.c | 105 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 94 insertions(+), 11 deletions(-)
+ virt/kvm/guest_memfd.c | 46 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
 diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 8151df2c03e5..b603518f7b62 100644
+index b603518f7b62..fc2483e35876 100644
 --- a/virt/kvm/guest_memfd.c
 +++ b/virt/kvm/guest_memfd.c
-@@ -26,11 +26,21 @@ struct kvm_gmem_hugetlb {
- 	struct hugepage_subpool *spool;
- };
- 
--static struct kvm_gmem_hugetlb *kvm_gmem_hgmem(struct inode *inode)
-+struct kvm_gmem_inode_private {
-+	struct xarray faultability;
-+	struct kvm_gmem_hugetlb *hgmem;
-+};
-+
-+static struct kvm_gmem_inode_private *kvm_gmem_private(struct inode *inode)
+@@ -781,7 +781,8 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
  {
- 	return inode->i_mapping->i_private_data;
+ 	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+ 	pgoff_t start = offset >> PAGE_SHIFT;
+-	pgoff_t end = (offset + len) >> PAGE_SHIFT;
++	pgoff_t nr = len >> PAGE_SHIFT;
++	pgoff_t end = start + nr;
+ 	struct kvm_gmem *gmem;
+ 
+ 	/*
+@@ -790,6 +791,9 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	 */
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
++	/* TODO: Check if even_cows should be 0 or 1 */
++	unmap_mapping_range(inode->i_mapping, start, len, 0);
++
+ 	list_for_each_entry(gmem, gmem_list, entry)
+ 		kvm_gmem_invalidate_begin(gmem, start, end);
+ 
+@@ -946,6 +950,9 @@ static void kvm_gmem_hugetlb_teardown(struct inode *inode)
+ {
+ 	struct kvm_gmem_hugetlb *hgmem;
+ 
++	/* TODO: Check if even_cows should be 0 or 1 */
++	unmap_mapping_range(inode->i_mapping, 0, LLONG_MAX, 0);
++
+ 	truncate_inode_pages_final_prepare(inode->i_mapping);
+ 	kvm_gmem_hugetlb_truncate_folios_range(inode, 0, LLONG_MAX);
+ 
+@@ -1003,11 +1010,46 @@ static void kvm_gmem_init_mount(void)
+ 	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
+ 	BUG_ON(IS_ERR(kvm_gmem_mnt));
+ 
+-	/* For giggles. Userspace can never map this anyways. */
+ 	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
  }
  
-+static struct kvm_gmem_hugetlb *kvm_gmem_hgmem(struct inode *inode)
++static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
 +{
-+	return kvm_gmem_private(inode)->hgmem;
++	struct inode *inode;
++	struct folio *folio;
++
++	inode = file_inode(vmf->vma->vm_file);
++	if (!kvm_gmem_is_faultable(inode, vmf->pgoff))
++		return VM_FAULT_SIGBUS;
++
++	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
++	if (!folio)
++		return VM_FAULT_SIGBUS;
++
++	vmf->page = folio_file_page(folio, vmf->pgoff);
++	return VM_FAULT_LOCKED;
 +}
 +
- static bool is_kvm_gmem_hugetlb(struct inode *inode)
- {
- 	u64 flags = (u64)inode->i_private;
-@@ -38,6 +48,57 @@ static bool is_kvm_gmem_hugetlb(struct inode *inode)
- 	return flags & KVM_GUEST_MEMFD_HUGETLB;
- }
- 
-+#define KVM_GMEM_FAULTABILITY_VALUE 0x4641554c54  /* FAULT */
++static const struct vm_operations_struct kvm_gmem_vm_ops = {
++	.fault = kvm_gmem_fault,
++};
 +
-+/**
-+ * Set faultability of given range of inode indices [@start, @end) to
-+ * @faultable. Return 0 if attributes were successfully updated or negative
-+ * errno on error.
-+ */
-+static int kvm_gmem_set_faultable(struct inode *inode, pgoff_t start, pgoff_t end,
-+				  bool faultable)
++static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
 +{
-+	struct xarray *faultability;
-+	void *val;
-+	pgoff_t i;
-+
-+	/*
-+	 * The expectation is that fewer pages are faultable, hence save memory
-+	 * entries are created for faultable pages as opposed to creating
-+	 * entries for non-faultable pages.
-+	 */
-+	val = faultable ? xa_mk_value(KVM_GMEM_FAULTABILITY_VALUE) : NULL;
-+	faultability = &kvm_gmem_private(inode)->faultability;
-+
-+	/*
-+	 * TODO replace this with something else (maybe interval
-+	 * tree?). store_range doesn't quite do what we expect if overlapping
-+	 * ranges are specified: if we store_range(5, 10, val) and then
-+	 * store_range(7, 12, NULL), the entire range [5, 12] will be NULL.  For
-+	 * now, use the slower xa_store() to store individual entries on indices
-+	 * to avoid this.
-+	 */
-+	for (i = start; i < end; i++) {
-+		int r;
-+
-+		r = xa_err(xa_store(faultability, i, val, GFP_KERNEL_ACCOUNT));
-+		if (r)
-+			return r;
++	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) !=
++	    (VM_SHARED | VM_MAYSHARE)) {
++		return -EINVAL;
 +	}
++
++	file_accessed(file);
++	vm_flags_set(vma, VM_DONTDUMP);
++	vma->vm_ops = &kvm_gmem_vm_ops;
 +
 +	return 0;
 +}
 +
-+/**
-+ * Return true if the page at @index is allowed to be faulted in.
-+ */
-+static bool kvm_gmem_is_faultable(struct inode *inode, pgoff_t index)
-+{
-+	struct xarray *faultability = &kvm_gmem_private(inode)->faultability;
-+
-+	return xa_to_value(xa_load(faultability, index)) == KVM_GMEM_FAULTABILITY_VALUE;
-+}
-+
- /**
-  * folio_file_pfn - like folio_file_page, but return a pfn.
-  * @folio: The folio which contains this index.
-@@ -895,11 +956,21 @@ static void kvm_gmem_hugetlb_teardown(struct inode *inode)
- 
- static void kvm_gmem_evict_inode(struct inode *inode)
- {
-+	struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-+
-+	/*
-+	 * .evict_inode can be called before faultability is set up if there are
-+	 * issues during inode creation.
-+	 */
-+	if (private)
-+		xa_destroy(&private->faultability);
-+
- 	if (is_kvm_gmem_hugetlb(inode))
- 		kvm_gmem_hugetlb_teardown(inode);
- 	else
- 		truncate_inode_pages_final(inode->i_mapping);
- 
-+	kfree(private);
- 	clear_inode(inode);
- }
- 
-@@ -1028,7 +1099,9 @@ static const struct inode_operations kvm_gmem_iops = {
- 	.setattr	= kvm_gmem_setattr,
- };
- 
--static int kvm_gmem_hugetlb_setup(struct inode *inode, loff_t size, u64 flags)
-+static int kvm_gmem_hugetlb_setup(struct inode *inode,
-+				  struct kvm_gmem_inode_private *private,
-+				  loff_t size, u64 flags)
- {
- 	struct kvm_gmem_hugetlb *hgmem;
- 	struct hugepage_subpool *spool;
-@@ -1036,6 +1109,10 @@ static int kvm_gmem_hugetlb_setup(struct inode *inode, loff_t size, u64 flags)
- 	struct hstate *h;
- 	long hpages;
- 
-+	hgmem = kzalloc(sizeof(*hgmem), GFP_KERNEL);
-+	if (!hgmem)
-+		return -ENOMEM;
-+
- 	page_size_log = (flags >> KVM_GUEST_MEMFD_HUGE_SHIFT) & KVM_GUEST_MEMFD_HUGE_MASK;
- 	h = hstate_sizelog(page_size_log);
- 
-@@ -1046,21 +1123,16 @@ static int kvm_gmem_hugetlb_setup(struct inode *inode, loff_t size, u64 flags)
- 	if (!spool)
- 		goto err;
- 
--	hgmem = kzalloc(sizeof(*hgmem), GFP_KERNEL);
--	if (!hgmem)
--		goto err_subpool;
--
- 	inode->i_blkbits = huge_page_shift(h);
- 
- 	hgmem->h = h;
- 	hgmem->spool = spool;
--	inode->i_mapping->i_private_data = hgmem;
- 
-+	private->hgmem = hgmem;
- 	return 0;
- 
--err_subpool:
--	kfree(spool);
- err:
-+	kfree(hgmem);
- 	return -ENOMEM;
- }
- 
-@@ -1068,6 +1140,7 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
- 						      loff_t size, u64 flags)
- {
- 	const struct qstr qname = QSTR_INIT(name, strlen(name));
-+	struct kvm_gmem_inode_private *private;
- 	struct inode *inode;
- 	int err;
- 
-@@ -1079,12 +1152,20 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
- 	if (err)
- 		goto out;
- 
-+	err = -ENOMEM;
-+	private = kzalloc(sizeof(*private), GFP_KERNEL);
-+	if (!private)
-+		goto out;
-+
- 	if (flags & KVM_GUEST_MEMFD_HUGETLB) {
--		err = kvm_gmem_hugetlb_setup(inode, size, flags);
-+		err = kvm_gmem_hugetlb_setup(inode, private, size, flags);
- 		if (err)
--			goto out;
-+			goto free_private;
- 	}
- 
-+	xa_init(&private->faultability);
-+	inode->i_mapping->i_private_data = private;
-+
- 	inode->i_private = (void *)(unsigned long)flags;
- 	inode->i_op = &kvm_gmem_iops;
- 	inode->i_mapping->a_ops = &kvm_gmem_aops;
-@@ -1097,6 +1178,8 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
- 
- 	return inode;
- 
-+free_private:
-+	kfree(private);
- out:
- 	iput(inode);
- 
+ static struct file_operations kvm_gmem_fops = {
++	.mmap		= kvm_gmem_mmap,
+ 	.open		= generic_file_open,
+ 	.release	= kvm_gmem_release,
+ 	.fallocate	= kvm_gmem_fallocate,
 -- 
 2.46.0.598.g6f2099f65c-goog
 
