@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-322574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA4B972B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:42:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BBC972A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFA9B1F252A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226431F22856
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148BA186E2A;
-	Tue, 10 Sep 2024 07:41:19 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE1617C9FB;
+	Tue, 10 Sep 2024 07:22:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38754184545;
-	Tue, 10 Sep 2024 07:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579AF17C21B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954078; cv=none; b=QBW7KP2JzdhPs20wInaK/IX8x5Bewun//X6t1hd+zy1j0IQ/5s51l6/edHXB0tiF3FvwGhBYyTX4PjYfjL1boNh2f3rB+Y55zlJfQmL3ym79v1Enh9sR1n8naQkOWGuGvYyLNI0HABPhhEGLDewJMiNf2l0fLJU/tkhOPyNXzvY=
+	t=1725952920; cv=none; b=WZo5l7GtGtJQbyMKWLOMO+v0fwbkPUCkmGAG2Th5/7QO7RzlZdrbf8hfBACndi0tCJgXckFu4jLynIu5gl3mcbkyu2APl7lh2bEeqSNkLKYReuWSQmnmb0A9yw1HlbXzWxMuBYIOtAlYySrJm6D+ymhATMJZ1zTKFBWqAOL4u6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954078; c=relaxed/simple;
-	bh=8uO+euh4dZ2JsdT0ibbqmLE0P4Hx3ZTvP4vIhWtm14Y=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=WYtLeeghPuzCXgHOkL0OyB7BjC3oBLlIpIEdwvsg8cCP1GISwwQf3XUgpOuu1k9pZ6wGe8f+PLxiDa3WybGiLU56fBXKbL5AH3Eds/T0NAPd5JlDfWb8hXxHMjIhg41lOo7/bK2FMCe+t08Am081DqMukQouWhVVmLzFen1GHgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A90F200633;
-	Tue, 10 Sep 2024 09:41:10 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 202E7200649;
-	Tue, 10 Sep 2024 09:41:10 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7F089180031E;
-	Tue, 10 Sep 2024 15:41:08 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH 3/3] arm64: dts: imx93-9x9-qsb: Add PDM microphone sound card support
-Date: Tue, 10 Sep 2024 15:19:32 +0800
-Message-Id: <1725952772-30357-4-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1725952772-30357-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1725952772-30357-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1725952920; c=relaxed/simple;
+	bh=17DHh29SsA69a1qIaeiNMQW6bO89LXYqE99pBAZHW6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iyp1Ymcfmi2v2xLKWwiUoKUHZTGebO8ndXeeYY7es82M+6KZD9+ZhF8Kg520Wdk3FOkP/rQGyjOmlhlOtS61pxnjM9Ubxd3fX9mQiZn7JpKo8bPhTMaN6W2ap95tMndy6KFSBe1+f7SLEZBqqOEiuhzYJRjV1BUGV2pjh05ILIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snvCG-0005TO-MW; Tue, 10 Sep 2024 09:21:56 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snvCF-006qDs-LD; Tue, 10 Sep 2024 09:21:55 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snvCF-00HXL3-1l;
+	Tue, 10 Sep 2024 09:21:55 +0200
+Date: Tue, 10 Sep 2024 09:21:55 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"francesco@dolcini.it" <francesco@dolcini.it>,
+	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+ different channel
+Message-ID: <Zt_zkxGsY2X-8-4z@pengutronix.de>
+References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
+ <ZtWHhSQlPVMekW1I@pengutronix.de>
+ <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt9blTxk88Opujsk@pengutronix.de>
+ <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt_fZEJyiCyanf7X@pengutronix.de>
+ <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt_h_mW4nFWKu2SI@pengutronix.de>
+ <PA4PR04MB96389B2CC16060957878D0D3D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB96389B2CC16060957878D0D3D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add PDM micphone sound card support, configure the pinmux.
+On Tue, Sep 10, 2024 at 06:18:57AM +0000, David Lin wrote:
+> > > > > > With DRCS support enabled AP and STA actually can run on
+> > > > > > different channels with the current code. You are breaking this
+> > > > > > scenario with this
+> > > > patch.
+> > > > > >
+> > > > > > Sascha
+> > > > > >
+> > > > >
+> > > > > DRCS will be checked in the future.
+> > > >
+> > > > By future you mean v3 of this patch?
+> > > >
+> > > > Sascha
+> > > >
+> > >
+> > > No schedule now.
+> > 
+> > I am getting confused now. You want us to abandon my patch in favour of yours,
+> > but you have no plans to update your patch to avoid a regression that you
+> > introduce with your patch?
+> > 
+> > Sascha
+> > 
+> 
+> My patch resolves the same issue as your patch. But your patch can't
+> let AP and STA run on the same channel if some wiphy parameters are
+> set.
+> 
+> I wonder did you test your patch?
 
-This sound card supports recording sound from PDM microphone
-and convert the PDM format data to PCM data.
+I finally see what you mean with "some wiphy parameters are set".
+I did test my patch and I didn't run into this issue, because I haven't
+set anything like rts_threshold in my config.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- .../boot/dts/freescale/imx93-9x9-qsb.dts      | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Nevertheless what I am trying to tell you in this thread is: Your patch
+introduces a regression and needs an update.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-index d213a5343803..1340f5462d11 100644
---- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-@@ -122,6 +122,18 @@ simple-audio-card,codec {
- 		};
- 	};
- 
-+	sound-micfil {
-+		compatible = "fsl,imx-audio-card";
-+		model = "micfil-audio";
-+		pri-dai-link {
-+			link-name = "micfil hifi";
-+			format = "i2s";
-+			cpu {
-+				sound-dai = <&micfil>;
-+			};
-+		};
-+	};
-+
- 	sound-wm8962 {
- 		compatible = "fsl,imx-audio-wm8962";
- 		model = "wm8962-audio";
-@@ -266,6 +278,12 @@ pcal6524: gpio@22 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_pcal6524>;
- 
-+		mic-can-sel-hog {
-+			gpio-hog;
-+			gpios = <17 GPIO_ACTIVE_HIGH>;
-+			output-low;
-+		};
-+
- 		exp-sel-hog {
- 			gpio-hog;
- 			gpios = <22 GPIO_ACTIVE_HIGH>;
-@@ -355,6 +373,15 @@ &lpuart1 { /* console */
- 	status = "okay";
- };
- 
-+&micfil {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pdm>;
-+	assigned-clocks = <&clk IMX93_CLK_PDM>;
-+	assigned-clock-parents = <&clk IMX93_CLK_AUDIO_PLL>;
-+	assigned-clock-rates = <49152000>;
-+	status = "okay";
-+};
-+
- &mu1 {
- 	status = "okay";
- };
-@@ -535,6 +562,14 @@ MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x15fe
- 		>;
- 	};
- 
-+	pinctrl_pdm: pdmgrp {
-+		fsl,pins = <
-+			MX93_PAD_PDM_CLK__PDM_CLK			0x31e
-+			MX93_PAD_PDM_BIT_STREAM0__PDM_BIT_STREAM00	0x31e
-+			MX93_PAD_PDM_BIT_STREAM1__PDM_BIT_STREAM01	0x31e
-+		>;
-+	};
-+
- 	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
- 		fsl,pins = <
- 			MX93_PAD_SD2_RESET_B__GPIO3_IO07	0x31e
+It's not about my patch or your patch, both are currently not suitable
+for inclusion and the question is: will you update your patch?
+
+Sascha
+
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
