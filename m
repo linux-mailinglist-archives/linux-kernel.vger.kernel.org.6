@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-323644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1D397410E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49F3974107
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 730571C257AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0142A1C25362
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225581A3026;
-	Tue, 10 Sep 2024 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905F1A2C25;
+	Tue, 10 Sep 2024 17:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="nw3NQwii"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l61a+BAc"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD74161FE1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83AC1A2853
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990583; cv=none; b=rj4ZCuLbPknr/TGtv74CdL255tKYCCqbzc781qAbdSFJn1fc/3TxTLCTWbIpzpNptcP2WyOM55FxBf8v6JbI+3fI9QljIucRMPj7s8SlM+iLMWaWaDqyIsPFUOJoGT7lXMjQE66AoOx7RKWNVCWt09QQA0byaEtmZQ4YiKhCzdQ=
+	t=1725990552; cv=none; b=GPcJIRrFElR+FKrLzjHU4PBpek+V5p5LPEEUia7mPNQgsQXiPYWlXMEdmJFm/Mo/dgVDjRiMf0m5YhYS6R7YqiJpXvg+jIybzCncwOF1lcM5e3UE1yE1AgZqeMjPnRwDwYMjz+9vMUktPsQBdvPmdpMSqlHIC1jCy/vMGtup2dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990583; c=relaxed/simple;
-	bh=AXwpFuaMqL8AmfzXJ7qg4wzkx1fpxc97BQ6WENMs9eQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UADOmRFf8Q8IJw1ocBDnjm7D1yt0ynrmvs1pJn4g+bl9fu5Mc/4nrEh/psGP/7UNFVgRNE4Z+y9Nx+o0A3nU3gfdrKRO1+oYtZFaUKcb5Gx1yyhQtg+2lij4iNHUFXsfp9o30qizy3zlT1EwbTNQZmc35LxEoNGqRNwUuLdEOaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=nw3NQwii; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42ca5447142so6673775e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:49:40 -0700 (PDT)
+	s=arc-20240116; t=1725990552; c=relaxed/simple;
+	bh=8r6/Z7cYCZt0C2pPNRt5red4H6C/cN0pEDVkXGwQVxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPweYGxC9ndp/ReaN8E5RwdM5feq/ym/tibbynqwzfrrhGZtq5Uj4ZRheUB9EAHIRxz5n6jmW7bHMSEGT9mr4JREd+5HxEioAJMCI9YfmV13kWQVX+v61ZX0PJzR+xro7o9ceSUzzKtPHoq7TBFqHMj75LIW7Ojy4vaS6+wuvWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l61a+BAc; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-717934728adso4230848b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1725990579; x=1726595379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gEMKhoKz265xTr0h6063lsKQJW8lu4nWZPLj+dKg/ak=;
-        b=nw3NQwiik5dKfY1UJuTkEIsiTQcVAPS8LbiFrZjIwVMAHQtVLH2YQceQSrpl5M7inD
-         jgdmyURelX+igy/+vGWlVfBp1hX/MVja/XI5+H5c8VEBeruCJm+/qwLVEAIMioeniZzj
-         y76MdEtJEwIXUxZZM+gkHp81YopEa6+o9Rgjz8dz10JEIr5CvU7CipgMFuDqcgRB5XNS
-         xbg+aq64mM7lX+Tfjnv/HIcxQ/cVNMaKFWMuwIfN+LnHnqCzdrBejLfsvvnk3LC2tSGZ
-         GwdS2Lwi2dY3P4+S46aUX3VS2ewIGiFObfwO/68iEXu4eaemvuOYDZ1HjHFY2bs7C+Q0
-         4QFQ==
+        d=chromium.org; s=google; t=1725990549; x=1726595349; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XjTGqVxL/lXZ4Xq5oA9wMyb/w66vC8I8vd+hq2N9dLc=;
+        b=l61a+BAcMfl0ZI8RYMQZQ215fOi2LNlR9Zt0CXTonGtcLzgEhaLy4alvQa/3dLAmfp
+         IKM1QFkrT4W8igkhrMb0dc4vx6z84RJu17nMk6qbNKIX1O27yVbaEBklvQwQrj9T6u45
+         ins597PHcm3sldWKMslfHbU+1xR+0oZuMuzZ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990579; x=1726595379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gEMKhoKz265xTr0h6063lsKQJW8lu4nWZPLj+dKg/ak=;
-        b=GbZG2NWJ7Ss8K2e/ShOdS6Zp8cye6CqZa966D2wEXD+SjiOYRJ0kKYNACh8gO2Rv9s
-         e6aoO1hltmGJhDox63I+9sfwPi293X4Q8ff5BZijvYyURJ/SUHegxE86xPS3N2bleO5Y
-         3IFgmqNpYONv//Jj7DXxTpVDlFK6dAb/WDjko44dyvJ291NUJlUNY6UKh+wjOLoZeFPj
-         un/G4kxTn/G3NPxdLannFw4vJeu8juFV/X2dpfN7n2rU34PJ+SrJbZwz067chRFOZHF4
-         mTxotEuXg1UWK3rYUWchuVIb6ctkW5mCMPp1+CojuhCir0dX4nG7BjdS01SM+2/nEAPO
-         RM7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUN8XUGVJxnyL3aWZ+xAZ9pamNyz131HxJ+ztwJ1rrd3Z5kD4QiSVMxFzolwhbaayyzT1goZiS9L0F1mw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKWUHljxjYAT+7OUMGFWVzQdyySbLdPse2Kq8L9rA1ZvsCM3IX
-	piqnfNnKvhN7ajP+BeEZq/Wycaxr7wGSDDdYcJ24wzMDWiBG1BFqNp8IDk/CN/k=
-X-Google-Smtp-Source: AGHT+IHelw/uYw52OYmIixy02tvwb5mK2pkTzmGN8qQjLqO8V8gMqDEZAl0lSTYgOrrjILVgYICXyg==
-X-Received: by 2002:a05:600c:4506:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-42c9fa0c6fbmr55373495e9.4.1725990578992;
-        Tue, 10 Sep 2024 10:49:38 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-91.dynamic.mnet-online.de. [62.216.208.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956dddacsm9399741f8f.107.2024.09.10.10.49.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 10:49:38 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] apparmor: Remove unnecessary NULL check before kvfree()
-Date: Tue, 10 Sep 2024 19:48:37 +0200
-Message-ID: <20240910174836.8966-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1725990549; x=1726595349;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XjTGqVxL/lXZ4Xq5oA9wMyb/w66vC8I8vd+hq2N9dLc=;
+        b=bB60G3yNmvelDNvONYbQ2UkInzi7m49GeApjeht0SXF8yQcV+t3J6siwLvRUiabYP2
+         wrCfzlpC8A071UAUmo+C5Upgkqyo0WhK9mlsqjrmr68qLuR/DCX+Bj1YYUIxuXy0tfx1
+         YLetf/9vby04yYMr4hjhB69olv+LwLYBB/L6D3vsHZ9iLC1kT2EpLaORYJ4Q37TtooJK
+         g7et2r+zCe+FwHFGmt/AVzIWU/10x1SDFyRbQGQKIKJpeDlvYBehKI3xKmO7UvJsAT5m
+         TAHT9avlMDjeOiTADcLtUYJEj9oNDyQLJh2IUUCCNKdNgJ/OiHhPNm7028jy3NNCRBxv
+         l53w==
+X-Forwarded-Encrypted: i=1; AJvYcCWpRpHcEFu7d9noHdmdsp+1pJ4iAmuRBEQjbx6t68oDChT2w2FEYrTsWcWaPibjcZbf2yIMhh/ippkKtxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC8YMgZnxVENDOjRz0a4IvKioXeSF+BmEAP02NSpFRY0PaBdqw
+	ImRwjLby4xnU2AQxqEtQu2orlPSqouPi+h4FQXqjTRe/7RXmOHN+tiPgLwVVew==
+X-Google-Smtp-Source: AGHT+IH7ewLbjt6vpK16Q9MSvs4t2UHHLsqVCiuJv68f8tihw1AECgjvOqgbtRKJbxklGND7j0FnJg==
+X-Received: by 2002:a05:6a21:6481:b0:1cf:37bd:b553 with SMTP id adf61e73a8af0-1cf5e1ab920mr1717836637.46.1725990549167;
+        Tue, 10 Sep 2024 10:49:09 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:a9f8:b780:a61c:6acb])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-20710f3229esm51179035ad.268.2024.09.10.10.49.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 10:49:08 -0700 (PDT)
+Date: Tue, 10 Sep 2024 10:49:06 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Tony Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Julius Werner <jwerner@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate device
+ name "simple-framebuffer.0"
+Message-ID: <ZuCGkjoxKxpnhEh6@google.com>
+References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+ <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
 
-Since kvfree() already checks if its argument is NULL, an additional
-check before calling kvfree() is unnecessary and can be removed.
+(Tweaking subject; this indeed isn't related to the regression at all)
 
-Remove it and the following Coccinelle/coccicheck warning reported by
-ifnullfree.cocci:
+Hi,
 
-  WARNING: NULL check before some freeing functions is not needed
+On Mon, Sep 09, 2024 at 10:02:00AM +0200, Borislav Petkov wrote:
+> Looking at your log, the first warn is in framebuffer_coreboot. Some mess in
+> the sysfs platform devices registration.
+> 
+> Adding the relevant people for that:
+> 
+> Aug 20 20:29:36 luna kernel: sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
+> Aug 20 20:29:36 luna kernel: CPU: 5 PID: 571 Comm: (udev-worker) Tainted: G           OE      6.10.6-arch1-1 #1 703d152c24f1971e36f16e505405e456fc9e23f8
+> Aug 20 20:29:36 luna kernel: Hardware name: Purism Librem 14/Librem 14, BIOS 4.14-Purism-1 06/18/2021
+> Aug 20 20:29:36 luna kernel: Call Trace:
+> Aug 20 20:29:36 luna kernel:  <TASK>
+> Aug 20 20:29:36 luna kernel:  dump_stack_lvl+0x5d/0x80
+> Aug 20 20:29:36 luna kernel:  sysfs_warn_dup.cold+0x17/0x23
+> Aug 20 20:29:36 luna kernel:  sysfs_do_create_link_sd+0xcf/0xe0
+> Aug 20 20:29:36 luna kernel:  bus_add_device+0x6b/0x130
+> Aug 20 20:29:36 luna kernel:  device_add+0x3b3/0x870
+> Aug 20 20:29:36 luna kernel:  platform_device_add+0xed/0x250
+> Aug 20 20:29:36 luna kernel:  platform_device_register_full+0xbb/0x140
+> Aug 20 20:29:36 luna kernel:  platform_device_register_resndata.constprop.0+0x54/0x80 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+> Aug 20 20:29:36 luna kernel:  framebuffer_probe+0x165/0x1b0 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+> Aug 20 20:29:36 luna kernel:  really_probe+0xdb/0x340
+> Aug 20 20:29:36 luna kernel:  ? pm_runtime_barrier+0x54/0x90
+> Aug 20 20:29:36 luna kernel:  ? __pfx___driver_attach+0x10/0x10
+> Aug 20 20:29:36 luna kernel:  __driver_probe_device+0x78/0x110
+> Aug 20 20:29:36 luna kernel:  driver_probe_device+0x1f/0xa0
+> Aug 20 20:29:36 luna kernel:  __driver_attach+0xba/0x1c0
+> Aug 20 20:29:36 luna kernel:  bus_for_each_dev+0x8c/0xe0
+> Aug 20 20:29:36 luna kernel:  bus_add_driver+0x112/0x1f0
+> Aug 20 20:29:36 luna kernel:  driver_register+0x72/0xd0
+> Aug 20 20:29:36 luna kernel:  ? __pfx_framebuffer_driver_init+0x10/0x10 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+> Aug 20 20:29:36 luna kernel:  do_one_initcall+0x58/0x310
+> Aug 20 20:29:36 luna kernel:  do_init_module+0x60/0x220
+> Aug 20 20:29:36 luna kernel:  init_module_from_file+0x89/0xe0
+> Aug 20 20:29:36 luna kernel:  idempotent_init_module+0x121/0x320
+> Aug 20 20:29:36 luna kernel:  __x64_sys_finit_module+0x5e/0xb0
+> Aug 20 20:29:36 luna kernel:  do_syscall_64+0x82/0x190
+> Aug 20 20:29:36 luna kernel:  ? __do_sys_newfstatat+0x3c/0x80
+> Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
+> Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
+> Aug 20 20:29:36 luna kernel:  ? do_sys_openat2+0x9c/0xe0
+> Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
+> Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
+> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+> Aug 20 20:29:36 luna kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> Aug 20 20:29:36 luna kernel: RIP: 0033:0x7b1bee2f81fd
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- security/apparmor/policy.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Looks like it might be a conflict with
+drivers/firmware/sysfb_simplefb.c, which also uses the
+"simple-framebuffer" name with a constant ID of 0. It's possible both
+drivers should be switched to use PLATFORM_DEVID_AUTO? Or at least one
+of them. Or they should use different base names.
 
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 14df15e35695..ce1c96cb2aed 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -103,8 +103,7 @@ static void aa_free_pdb(struct aa_policydb *pdb)
- {
- 	if (pdb) {
- 		aa_put_dfa(pdb->dfa);
--		if (pdb->perms)
--			kvfree(pdb->perms);
-+		kvfree(pdb->perms);
- 		aa_free_str_table(&pdb->trans);
- 		kfree(pdb);
- 	}
--- 
-2.46.0
+I'm not really sure what the best option is (does anyone rely on or care
+about the device naming?), and I don't actually use this driver. But
+here's an untested diff to try if you'd really like. If you test it,
+feel free to submit as a proper patch with my:
 
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+
+diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
+index daadd71d8ddd..3f1b8f664c3f 100644
+--- a/drivers/firmware/google/framebuffer-coreboot.c
++++ b/drivers/firmware/google/framebuffer-coreboot.c
+@@ -62,7 +62,8 @@ static int framebuffer_probe(struct coreboot_device *dev)
+ 		return -EINVAL;
+ 
+ 	pdev = platform_device_register_resndata(&dev->dev,
+-						 "simple-framebuffer", 0,
++						 "simple-framebuffer",
++						 PLATFORM_DEVID_AUTO,
+ 						 &res, 1, &pdata,
+ 						 sizeof(pdata));
+ 	if (IS_ERR(pdev))
 
