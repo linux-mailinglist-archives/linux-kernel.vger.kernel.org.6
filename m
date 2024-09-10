@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-323924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB53974559
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548C797455D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E671F25F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8151C1C25819
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142E51AB53B;
-	Tue, 10 Sep 2024 22:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB7E1AB52E;
+	Tue, 10 Sep 2024 22:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUrgChVg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfpDMTbz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DAB1A255E;
-	Tue, 10 Sep 2024 22:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078617BB3D;
+	Tue, 10 Sep 2024 22:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726005863; cv=none; b=EHTP6pKXmVpxbWT7ozOphJB4oaZ09boxULqW8LraqRWXv+92PjEUXKPyWmKFwXFcsLT1mkc3UuAdk0wNFLi5phv9IyW1oD12zvpi3SlNAsC6hs/p2D/5EO57VjVwKsACAO7tuG+YAaOljKmGiZw9POk7piEToUB3w8hC3v0Vucs=
+	t=1726005915; cv=none; b=O0n+AqwVGZ3l5gRU14Ipoc3AL+ct43bbmjDhedjf1jw0ytTTjssi37wgnzJXFETcSiax1nFO2ko71peCjLCFNeGHitp4X0fPmgK5ZsP/Hi4K9xyYc8xV/y5Oz9pK2jV/Ttzlm9DcZYlR00rm4v+WINdJg7pyClNbLu2LKv4lnz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726005863; c=relaxed/simple;
-	bh=hLOkIDP9KYiXmTJhuJmCCi0JcGlEwZxLupciGBbydjg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LULYiKOd2rask3MnP2DzeExQn78RaVeyttW0nJvdYUK/axIicK0VAX9W/JNZEXJjKKKVN/QwbDleKv1ZdmGMDxDS+CP49FlwrAJA0TllaZ1SBhHz5M2Hsn8qmETl9LmQzi7FJo7pL1QuiRAg/PqFIeQKLUP7H2iql+aahgKoL4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUrgChVg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE97C4CEC3;
-	Tue, 10 Sep 2024 22:04:21 +0000 (UTC)
+	s=arc-20240116; t=1726005915; c=relaxed/simple;
+	bh=NRLEHkoUp4iA1+zIm4JewpKZibG28aKp1yzvDTqM6F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wbv6rzLAxJnHH7RNsEQwu7XKcqv9P4IL/UQ4Bivy5wOGfrB6NEEC3uQ42p/Fcj+9LKGHPig77BSbf1cHuwIDRk0f7qgdyJ4lgNlr2STgOdRraEz0BT3781eewl0Y8wB4tFNBiBuMoh8D6RiVR7J8KoCyRbyeg50bsY+Q2cF59fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfpDMTbz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC21C4CEC3;
+	Tue, 10 Sep 2024 22:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726005863;
-	bh=hLOkIDP9KYiXmTJhuJmCCi0JcGlEwZxLupciGBbydjg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SUrgChVgLL05Qe6sWYoSddZPtCtXvZnueyGP/xTCl7FgZLTMqme6tYwDt4ZFYcSTH
-	 cooVEnhrtcUwopM8EfuDbMuUSACds8JVVfqzKSICl2EQmGgUcie624EnZqZZVENzMj
-	 C4GAf7fMRnOk8nYtgaW/uN7UDbYJhKQOansuOaft/rVyZBS1OycpvDmu5B7IWCJ1kV
-	 8KuDG7VfqrvWE+QzNqJ8w5rShZD+rr7prkF3d6dDaYsSDYXMchQqnzhmQRQIc05J++
-	 KzOyEk26qDVZ8+U8PXath17VysNT0pu/xL6cHWvFUvUWidsWHf3TERge3ke6RpkVIH
-	 qLtHq4NgbyTTA==
+	s=k20201202; t=1726005915;
+	bh=NRLEHkoUp4iA1+zIm4JewpKZibG28aKp1yzvDTqM6F0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QfpDMTbzaIFpaCUfJciulQOrsSBF78SGRfK2Cxmt0YGdI4vpyzJftvvrKD3v4vS1E
+	 xoiHPaerNZVdaBfFzS+QVJjePMvaESihhtP5EWnhOQ1+B8F0qOdePDwlM9txshaJSh
+	 XdhlEpgVg8ghClMj1Jh44vVneN/T/Pexqx1TpoqnjOHj6FSaMwavfe13aUAnkbFWMS
+	 OiXiRMTyaqhGj8Wz2xo12o94/qypYiOIi5YTtHAINI/5K0FOmD4vjpIibWHgcScR9F
+	 wHM5pGBihAvuf7aoF/2VpmfJxq2z37jkwtJ1wVohHdCQdUnZVcE90OQoZbzfP4dse/
+	 /EES3xDlZhomA==
+Date: Tue, 10 Sep 2024 23:05:07 +0100
 From: Mark Brown <broonie@kernel.org>
-To: tiwai@suse.de, vkoul@kernel.org, 
- Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
-In-Reply-To: <20240910143021.261261-1-yung-chuan.liao@linux.intel.com>
-References: <20240910143021.261261-1-yung-chuan.liao@linux.intel.com>
-Subject: Re: [PATCH] MAINTAINERS: update Pierre Bossart's email and role
-Message-Id: <172600586137.1200152.17081565908869197523.b4-ty@kernel.org>
-Date: Tue, 10 Sep 2024 23:04:21 +0100
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
+Message-ID: <ea450041-b282-4667-b29d-22e633e2f034@sirena.org.uk>
+References: <20240910092557.876094467@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RhBarRI6VwanoEjX"
+Content-Disposition: inline
+In-Reply-To: <20240910092557.876094467@linuxfoundation.org>
+X-Cookie: You're not Dave.  Who are you?
 
-On Tue, 10 Sep 2024 22:30:21 +0800, Bard Liao wrote:
-> Update to permanent address and Reviewer role.
-> 
-> 
 
-Applied to
+--RhBarRI6VwanoEjX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Tue, Sep 10, 2024 at 11:30:24AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.110 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Thanks!
+Tested-by: Mark Brown <broonie@kernel.org>
 
-[1/1] MAINTAINERS: update Pierre Bossart's email and role
-      commit: c6b9a92225d1365197effcb3afc56ddd62fc36aa
+--RhBarRI6VwanoEjX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+-----BEGIN PGP SIGNATURE-----
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgwpMACgkQJNaLcl1U
+h9CLswf/SxTNjChCzJGQauDu4Yy+LP1470itfUPiXzilyZpn9fY2qrb5Fy+VjNSO
+UdeCMgdUdXLJgSpysdmo3x2L6fPUGE0pY2Aqd/AZ6Tp1tUYXV2FC6PSF0GTUgmf1
+gh1t1qFKLePZ2qKAbq4Nk+NChWHNB+ELYxs0SmEJGoa3sXiYVK9dEtI8yHTN4Sox
+3a+6kVgJJu3dqSXOUS+eo4Olbrw1eY7+L6v7h94WG5/LA7RHvnThp+3bpEz4nuNI
+zBI42PtYEGS83gtDkBis2g6ZqplvZv98EmivjVFWx5Nl50UckaqCvVlVHPVatHqK
+3NI8nkQZRnxEkQNX8hZ0OCGQD86Ymw==
+=R0/4
+-----END PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--RhBarRI6VwanoEjX--
 
