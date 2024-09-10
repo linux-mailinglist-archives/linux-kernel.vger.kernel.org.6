@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-322814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100DB972EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B74972EBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A4B1C24A1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:45:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F761C24A09
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9020A18DF9C;
-	Tue, 10 Sep 2024 09:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0JpD3e7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A92F18EFFA;
+	Tue, 10 Sep 2024 09:44:49 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E5E18A6B9;
-	Tue, 10 Sep 2024 09:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F6F18EFCB;
+	Tue, 10 Sep 2024 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961455; cv=none; b=gIFAGXIOPF0NVQGkd31vSElNXJHorOSDUoUvbEwUr5moa1qDNqxRKa+HEJIDZOj9nY2lRKoR8TA3zumsxXiDg4FRH5nKFIsgrJGqqkMVOk/y9OzWiYBmWh4dv4KT+ZIyupd4lt3HDca5DPAeaGfn3xJWexRQlBH4TAGq+6n8zsU=
+	t=1725961488; cv=none; b=bzKumNJI1N421vAu9bupX24R/4pe9FX/d9LN+evPgzHoGNHD66yw8s9R1hM/jdMMKFZfOjQxReu8F+S6kIse/h1YIjnVFMImykPZthcwn7gy/RlMmkZTgWkjFrSvvcO8Kun1Zx7QXuJISShnPL910umeDfQKBZqMXstVeWyKZ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961455; c=relaxed/simple;
-	bh=D3N04FmIzvqggt9C4bVYVfpcu/iBmJ0tG8QKUZ/Wex4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y21Cv+LYEVxByj7AUUO8O5g2rY3H42Y2c46mEPXLNyKgwQlorWpGWa/MbE0xWNtaTmKks37kVlNL+m8eP8tGxLoBPLVf+FdJD61WanquqjJp5WVAA4DMvm6JD6a9MOK5JKzjzOTTXDV6gVKVhhSHQdafTE7bZ9jjiK4JauwXDX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0JpD3e7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C6FC4CECC;
-	Tue, 10 Sep 2024 09:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725961454;
-	bh=D3N04FmIzvqggt9C4bVYVfpcu/iBmJ0tG8QKUZ/Wex4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V0JpD3e7sKruPeep6Cxyq2dpx6qjdL0MIrRHp5Yy29lynGweoxEznoPIH4IkTuXjZ
-	 p6YtutpNth7tSupJtqjbJ5I55XrfUiAn+/Ou6IAaYynWlmub14PpBZynEnOQ4VpSrU
-	 8x7WrCqIIRZIsecKpg5WILTWBtyowS6vulX3djzTkkF7KMCY0qqytTGQHwIGioYbAY
-	 ZnQ0tjEcEQYZm7eYeXkrTtSIhmLiOiukzLA+ou9YHVkOJBQEewhhJLw9C2LhqojNxY
-	 ttiZW1TvZZVf7EvQIbAHAYhvhZ3ySIZdPfcQ4XrlGYyPyr8OwcGMiS0Fuk+GdHx3p+
-	 lQdhAqe53HHMg==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso53433041fa.1;
-        Tue, 10 Sep 2024 02:44:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5Rae+h2LeHvTrk+v9CnT6V/3ie3Rr3WJz2muI+qHWOs+jbUPWUQhnOVvoEknzDFkIv4Yg0k74rntoMozK@vger.kernel.org, AJvYcCVcbpzoDp0lAZY5sjtL8rzLn/b7NvQ+XuAXof956CNdIzcnsOZg0AQkt03m/+6VNwn1O3J2yq7D3fdz+aOv6sI=@vger.kernel.org, AJvYcCW9Yk0ySK7ovmbKmwAs5m/idN+nYXmBV06i3rrGyfpdEM5PIREmJVuO8ym6iFl0Zaws7HQcIO+kQNxkxsKvYg==@vger.kernel.org, AJvYcCWvEsBojM/dkcf5n9643/4MI/PxL7lU8Yp32JaYJ9JkW9kZ22M8oJzSmlhDrkpqmpsAxMkgV9I0M7YH5jk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ2fHgzMYSCSBSgfnthvjgKfI/MWXTuIsjrzGMsvL//3EZur07
-	aVcuWriWRN0LGIhrAiycWil5awupod5AOIvhfz8nsfTRJtQGGCF1ywRWCy/pI0YMY3QQM1ogJyX
-	yVhNY47fV0qlDfBfzSqy7gRfka6I=
-X-Google-Smtp-Source: AGHT+IHdShnxBBjUPptQ41/ldZfk223s5R8ozEYJtzbMZjFzw1UM2NBN4Nfeh9oGsEZBQBVytVHnTCzwafdOaAGxUc8=
-X-Received: by 2002:a2e:bea5:0:b0:2f7:54fb:e68c with SMTP id
- 38308e7fff4ca-2f772603a20mr9852201fa.4.1725961453356; Tue, 10 Sep 2024
- 02:44:13 -0700 (PDT)
+	s=arc-20240116; t=1725961488; c=relaxed/simple;
+	bh=B/Hnf7fYM7HOeWShPDrC5NP0EgrLS05vitkWoMbwaiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFBWqrX5EG5PR0D9wqFZLqic1cBygqBQaZTalo6HkUGsxMCVlPWw5cC1vaXbXpITUbCRzqVeXA3T9pT8OtCBmP8KBFsKWR4tDBcF6K3HMmQozKOqaY4Yg5YPpFUADp7hChSnbPWyzF/x//gWS2aH8Cc86Lz4CV+BjkzfeLyvrHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d43657255so320229066b.0;
+        Tue, 10 Sep 2024 02:44:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725961485; x=1726566285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZEiLqRfxf7lBPb/a2NUaZRXiI2UrOttr4l6z8YhNi4Q=;
+        b=XxTxUrSjZ+x6DjEsFPtt+FDbh++QVilUXoX2hXpDo0B2RDJI7NLr5Al8JmCXxvnOum
+         LD0viONA0LuosXfLYWKudED5PukvQhQLJnqK0u4ljg/GYyFFfHQFEydEq6fPlLUcbuxa
+         gidwz5wSz4kr4pOTuazDXBHJMMnltGmepkogZmL886d073OOfYps289yAXQ2hUlN81Fu
+         Jgbe0vrE4X/OOFvZRELq1ZSi86RzONPSTJ5EPQWt/O4Ooi7txoegSa/xmiZW/IISjnr4
+         cTgZGwUDt6SzMb9PAJe29pOJj1ih/BI9clYiB32KMCpojM3q6nG4D1kJiXn4xT7Brg+8
+         MZ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMf53QenMFbK6HHsVb/1/5CYl5ZiNA4sRLQMRNIrngpcbHbcrCjuS6EdbDgwcXHzRgUfAwgZc9BMKUawI=@vger.kernel.org, AJvYcCVZIb/5obvRddZD4hqeApuXXIQJ9CZ4RBQKEJaj2L/k0PvCBrEWqGbbmsLboC1PM3v6NAJJtJr5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc3rM4U5sS7eHhZ5l70DAKItHgedLaSmyezkdKGiqPuMlzhCk1
+	YV8ilfnXCu1RzrkndeyumYnzApFTVRA/mlrjGr3ZyuBfJn7ArXxv
+X-Google-Smtp-Source: AGHT+IFj3shL6QuYetQtig1F0qQ+MlhLBZvhKZZ4LCvSersDof8GynDsZxIfAXp8ReLBROX8xYBaPw==
+X-Received: by 2002:a17:906:f5a9:b0:a7d:a00a:a9fe with SMTP id a640c23a62f3a-a8ffaac09dfmr15128966b.17.1725961484500;
+        Tue, 10 Sep 2024 02:44:44 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d2583fc73sm455114466b.34.2024.09.10.02.44.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 02:44:44 -0700 (PDT)
+Date: Tue, 10 Sep 2024 02:44:41 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Simon Horman <horms@kernel.org>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
+	vlad.wing@gmail.com, max@kutsevol.com
+Subject: Re: [PATCH net-next v2 08/10] net: netconsole: do not pass userdata
+ up to the tail
+Message-ID: <20240910-certain-weasel-of-bliss-1cf769@devvm32600>
+References: <20240909130756.2722126-1-leitao@debian.org>
+ <20240909130756.2722126-9-leitao@debian.org>
+ <20240909160528.GD2097826@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-22-samitolvanen@google.com> <CAK7LNAQdutCiBkWtA6MbVLpfhB-MQXnszQm8eEiBZpeX++5eLA@mail.gmail.com>
- <CABCJKucott2g8mZyJ0uaG+PdPTMsniR7eNCR9GwHpT_kQ+GFvg@mail.gmail.com>
-In-Reply-To: <CABCJKucott2g8mZyJ0uaG+PdPTMsniR7eNCR9GwHpT_kQ+GFvg@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 10 Sep 2024 18:43:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
-Message-ID: <CAK7LNATyv+zfSwyykKQrSjxR84ST0xTyEarnAudF2VuLPVxqnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909160528.GD2097826@kernel.org>
 
-On Fri, Sep 6, 2024 at 5:53=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
-om> wrote:
->
-> Hi,
->
-> On Thu, Sep 5, 2024 at 2:30=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@goo=
-gle.com> wrote:
-> > >
-> > > +++ b/scripts/gendwarfksyms/gendwarfksyms.h
-> > > @@ -0,0 +1,78 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > > +/*
-> > > + * Copyright (C) 2024 Google LLC
-> > > + */
-> > > +
-> > > +#include <dwarf.h>
-> > > +#include <elfutils/libdw.h>
-> > > +#include <elfutils/libdwfl.h>
-> > > +#include <linux/hashtable.h>
-> > > +#include <inttypes.h>
-> > > +#include <stdlib.h>
-> > > +#include <stdio.h>
-> >
-> >
-> > Could you include external headers first,
-> > then in-tree headers?
-> > (and one blank line in-between).
->
-> Sure, I'll reorder this.
->
-> > Also, please consider using scripts/include/hashtable.h
-> >
-> >
-> >
-> > How about this?
-> >
-> >
-> > #include <dwarf.h>
-> > #include <elfutils/libdw.h>
-> > #include <elfutils/libdwfl.h>
-> > #include <inttypes.h>
-> > #include <stdlib.h>
-> > #include <stdio.h>
-> >
-> > #include <hashtable.h>
-> >
-> >
-> >
-> >
-> >
-> >
-> > If necessary, you can use this patch too:
-> > https://lore.kernel.org/linux-kbuild/20240904235500.700432-1-masahiroy@=
-kernel.org/T/#u
->
-> Thanks for the patch! I think this would otherwise work, but I also
-> need jhash (or a similar hash function), and I can't combine the
-> tools/include version with this, because it ends up pulling in a
-> duplicate definition of struct list_head. Would you consider adding a
-> hash function as well?
+On Mon, Sep 09, 2024 at 05:05:28PM +0100, Simon Horman wrote:
+> On Mon, Sep 09, 2024 at 06:07:49AM -0700, Breno Leitao wrote:
+> > Do not pass userdata to send_msg_fragmented, since we can get it later.
+> > 
+> > This will be more useful in the next patch, where send_msg_fragmented()
+> > will be split even more, and userdata is only necessary in the last
+> > function.
+> > 
+> > Suggested-by: Simon Horman <horms@kernel.org>
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> ...
+> 
+> > @@ -1094,7 +1098,6 @@ static void append_release(char *buf)
+> >  
+> >  static void send_msg_fragmented(struct netconsole_target *nt,
+> >  				const char *msg,
+> > -				const char *userdata,
+> >  				int msg_len,
+> >  				int release_len)
+> >  {
+> > @@ -1103,8 +1106,10 @@ static void send_msg_fragmented(struct netconsole_target *nt,
+> >  	int offset = 0, userdata_len = 0;
+> >  	const char *header, *msgbody;
+> >  
+> > -	if (userdata)
+> > -		userdata_len = nt->userdata_length;
+> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
+> > +	userdata = nt->userdata_complete;
+> > +	userdata_len = nt->userdata_length;
+> > +#endif
+> 
+> userdata does not appear to be declared in this scope :(
+> 
+> .../netconsole.c:1110:9: error: 'userdata' undeclared (first use in this function)
+>  1110 |         userdata = nt->userdata_complete;
 
+Oh, during my rebase, I moved the declaration to a patch forward, and I
+didn't catch this because I was just compiling and testing with the
+whole patchset applied.
 
-I did it as a part of my kconfig works.
-
-Check scripts/include/hash.h added by the following patches.
-
-https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@ker=
-nel.org/T/#mea41ff4c5b6c77aaaae1ed9dac6723bc2f705107
-https://lore.kernel.org/linux-kbuild/20240908124352.1828890-1-masahiroy@ker=
-nel.org/T/#m9050a270fedb7df9a54e843674bc9ad8fd068f57
-
-
-I think simple helpers are enough for name_hash and addr_hash,
-but please let me know if you encounter a problem.
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks for catching it. I will send an updated version.
+--breno
 
