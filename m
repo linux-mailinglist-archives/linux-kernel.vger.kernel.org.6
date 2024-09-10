@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-322953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F02973591
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:52:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563469735D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815E228D548
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D72B25884
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6531817A589;
-	Tue, 10 Sep 2024 10:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE761552FD;
+	Tue, 10 Sep 2024 10:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GdbIfRJP"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ExTRiCKS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F823A6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52823A6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965562; cv=none; b=fa4PUO3iJDhxHdErXQFPazpJGKScDIbokQulE0wg28Xq3IW8h78cHu9KrlffGzBaaNmBhZJeGWRFp5qjfz26gDBIZ8fDhEsD2RwkiekQF67Pcn+Onhj1AMj2e7UCcwVRLhteAW2YT35Bn7y9HxhpnLsOQHLFsJMub8qZ5oSRPKc=
+	t=1725965372; cv=none; b=QC64hC/FleFExIxVBUUicjaSi9NVcn7xaWU8yp6CP+V4ENtev4hPsKKdMsqMNqm35IRuf9/cq4d65dWZ4pSJSDlblUhIkrOxR28iCn+s1N7u9MOtItWnTpd4CQVAONNwDLFd0AL8pipNxij1+cd7lc1q07zTj6ojqufyrQC03bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725965562; c=relaxed/simple;
-	bh=9fDYlOBo4qUXXriC0FMPmGXQQMsWaT5qn/s1hFOxxE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JTCqMzV9I2NodGQP8xQ/XAVaUiKRJ4ygGHX8aILNnHVKBxk5lgxVDlgjkaA9THPEBZtjGbNzMPqJPAIME8aZAN/Ub2JbG+V52KCZgqWw7WpaN6V20G4wA+C9glEOKsS+ugkaX6gJrrFvofq3EbD4FjjzX+EPxajC7qxHQbswoMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GdbIfRJP; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A7dsqE017268;
-	Tue, 10 Sep 2024 12:51:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	GTXIqttQsTFPl8RhA+OuEhkVjdhqa/BUezdHeMsd0Wg=; b=GdbIfRJPuU8F36gC
-	WGXi8Xtn39pr/LMPeX7E6Ge5LKWfgz6967HXE86UFD5HPiKUase7aUfuViEyK63V
-	URMFwQ5iLjSxL65ebj+ZUeVHTjeLxJe3Cn1oRJ1GD9LDeY4NS0Q3inWSL/jn3OZA
-	MduPLVb20pTW6bn062RasuZG9WDJT19dN6/WZ5OWihAUxTxqzz4tO4sZKaLXTuk+
-	sbNmQBHB1Emzcsc5Qa51KSUZ0VMZooa0WHwQgS3z+1p87pKPCs5NOHjB4vr/k2cA
-	vNJTMQT1rQ4uhA+YcOHZKiMe5/7zkmA29idhQK/m/TjcoXgE6Saw3emsTbT6uZ4K
-	87DIwA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gy7s9g89-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 12:51:55 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0E8E440047;
-	Tue, 10 Sep 2024 12:50:32 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 194A7260266;
-	Tue, 10 Sep 2024 12:48:50 +0200 (CEST)
-Received: from [10.129.178.17] (10.129.178.17) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 10 Sep
- 2024 12:48:49 +0200
-Message-ID: <0e9018d0-c49f-4dac-aa0f-b05504f9c6f6@foss.st.com>
-Date: Tue, 10 Sep 2024 12:48:49 +0200
+	s=arc-20240116; t=1725965372; c=relaxed/simple;
+	bh=h2I4l+F4I3vf8PFeFEB+/ZN6u70oYt1viZx4df4lcOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBHGDLix0YJ6dhrdqXPb/u841653eF6zuAPBLMQTjh0APbc2AxBzjQPAlQVw0uqpBYyG/+sB7IpiMKnjCLH5uMM6SyyYxjvLyOOw4hNmOXi0V8MyXreIO8VUuT28p6ucUl5tbXCoCw0i5Lhz7E7mEj9XWQiel6FHHUeuy+XAe3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ExTRiCKS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725965369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LOmcBxv9dCrK96rLts0gHO5lvQM5BwbFhTJhXF46Ga0=;
+	b=ExTRiCKSTZCociRsr/Hm1a4ivdG5P4I6H6dIPG3b9fYY7lDuDAnOLNsN8eDBl0s4hrQLJm
+	QHwLJT2jgyfNV7BsCC54ZTAAH9llYOQalZ/SM922H3JEqXpsEI3cjXvL4mRg2HG0VbpZQq
+	/0CI2HiAlL6DeetiJmo4qwVzXO4m8X4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-fjT73uXxMbSrf_Oth5R7iQ-1; Tue, 10 Sep 2024 06:49:28 -0400
+X-MC-Unique: fjT73uXxMbSrf_Oth5R7iQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb22d396cso22111335e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:49:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725965367; x=1726570167;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LOmcBxv9dCrK96rLts0gHO5lvQM5BwbFhTJhXF46Ga0=;
+        b=HpSZ7Vwh417JrwnKgwWgjQCZw3rVuumErW+FLAm94EXPgZmP6ZkuetonEJYQpSl9VE
+         h7vTuNc7FX2VOZw4q+WTLGjdWvUcSlmuqOxR1ZPpjHOoOEJct7G/uOaoLJP/WWoJAFxE
+         uDAmpHtZSpwzvfYpyJECu5Tcc4221+IzLdgDNsfMgsOIS6ZqhmuUViB+Prri69bsjN7g
+         ElzaIz1g7QAIxLHfOO5WfdLZqPLGeY6yEzZ2E9yT5Hw/PuRLZX8mdDFHn0jgmdYs2swp
+         rgZsY1h4oBDo5AC36+UtxQLS+c/sp66jlEnn1fTX8u6aonRJ9a49AE0COAJ63fMZ++Ni
+         Hc3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXCIdB55Zo/93HElqxjiXCqtI0vqrC/X5TtzWIvL/UIBmRKpYXqUl3LQFg/3Et64O9XSJKP9VVAt/KxUsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRjode04HOBNamnpoHJf7Wo2IdCjb2f1sFM2ThoO1uz/JNilpq
+	kBczSlZcU9h+NNxddOBHTi2gMCakFdye+qg6a/R0vLFsC4m0Jkeyj72Lfgd0h8LavwzgRXpLIab
+	ZbMJBKdAPjqbJ1BTaStL3/xmB3JdT8vRYGMV2GyOrxsMpw5qWOhliKhrel3Y96A==
+X-Received: by 2002:a05:600c:3ca7:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-42c9f97caa0mr112636275e9.13.1725965367240;
+        Tue, 10 Sep 2024 03:49:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3TF6YkVmUetJXRdL2vleI3SxkX6kg071NsA6CgMW58eqsqFgskcQSrZBYjV9Ty+GkWXBGUA==
+X-Received: by 2002:a05:600c:3ca7:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-42c9f97caa0mr112636015e9.13.1725965366668;
+        Tue, 10 Sep 2024 03:49:26 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42caeb32678sm107181275e9.16.2024.09.10.03.49.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:49:25 -0700 (PDT)
+Message-ID: <09df9848-b425-4f8b-8fb5-dcd6929478de@redhat.com>
+Date: Tue, 10 Sep 2024 12:49:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,88 +82,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: dw_mipi_dsi-stm.c:(.text+0x8db9a3): undefined reference to
- `clk_hw_unregister'
-To: Borislav Petkov <bp@alien8.de>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        Yannick Fertre
-	<yannick.fertre@foss.st.com>,
-        Philippe Cornu <philippe.cornu@foss.st.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240905081902.GAZtlpdlQp5XOm5XtO@fat_crate.local>
- <544a633e-de53-493d-9c29-de8ff52630da@foss.st.com>
- <20240909084506.GBZt61kqqGVUTqjKc4@fat_crate.local>
+Subject: Re: [PATCH 16/21] KVM: TDX: Premap initial guest memory
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-17-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <20240909084506.GBZt61kqqGVUTqjKc4@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240904030751.117579-17-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/4/24 05:07, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Update TDX's hook of set_external_spte() to record pre-mapping cnt instead
+> of doing nothing and returning when TD is not finalized.
+> 
+> TDX uses ioctl KVM_TDX_INIT_MEM_REGION to initialize its initial guest
+> memory. This ioctl calls kvm_gmem_populate() to get guest pages and in
+> tdx_gmem_post_populate(), it will
+> (1) Map page table pages into KVM mirror page table and private EPT.
+> (2) Map guest pages into KVM mirror page table. In the propagation hook,
+>      just record pre-mapping cnt without mapping the guest page into private
+>      EPT.
+> (3) Map guest pages into private EPT and decrease pre-mapping cnt.
+> 
+> Do not map guest pages into private EPT directly in step (2), because TDX
+> requires TDH.MEM.PAGE.ADD() to add a guest page before TD is finalized,
+> which copies page content from a source page from user to target guest page
+> to be added. However, source page is not available via common interface
+> kvm_tdp_map_page() in step (2).
+> 
+> Therefore, just pre-map the guest page into KVM mirror page table and
+> record the pre-mapping cnt in TDX's propagation hook. The pre-mapping cnt
+> would be decreased in ioctl KVM_TDX_INIT_MEM_REGION when the guest page is
+> mapped into private EPT.
 
-On 9/9/24 10:45, Borislav Petkov wrote:
-> On Mon, Sep 09, 2024 at 08:57:57AM +0200, Raphael Gallais-Pou wrote:
->> Arnd Bergmann sent a patch regarding this issue on x86 that I merged several
->> weeks ago.
->>
->> https://lore.kernel.org/lkml/20240719075454.3595358-1-arnd@kernel.org/
->> https://lore.kernel.org/all/c3d0757a-07c0-4f83-9f06-c3ad205aa1e9@foss.st.com/
-> Thanks.
->
->> Now, I'm not familiar with PowerPC architecture and toolchains, but I think
->> this patch should fix your problem.  Do you have the above fixup in your
->> tree ? If not please try it.
-> Not PowerPC - it is an x86 build. I do random config builds as part of build
-> testing and when a driver depends on COMPILE_TEST, it does gets built in some
-> .configs. So some may fail, as in this case.
+Stale commit message; squashing all of it into patch 20 is an easy cop 
+out...
 
-Unless I am mistaken, the link you provided refers to a PowerPC linker error:
+Paolo
 
-[...]
+> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU part 2 v1:
+>   - Update the code comment and patch log according to latest gmem update.
+>     https://lore.kernel.org/kvm/CABgObfa=a3cKcKJHQRrCs-3Ty8ppSRou=dhi6Q+KdZnom0Zegw@mail.gmail.com/
+>   - Rename tdx_mem_page_add() to tdx_mem_page_record_premap_cnt() to avoid
+>     confusion.
+>   - Change the patch title to "KVM: TDX: Premap initial guest memory".
+>   - Rename KVM_MEMORY_MAPPING => KVM_MAP_MEMORY (Sean)
+>   - Drop issueing TDH.MEM.PAGE.ADD() on KVM_MAP_MEMORY(), defer it to
+>     KVM_TDX_INIT_MEM_REGION. (Sean)
+>   - Added nr_premapped to track the number of premapped pages
+>   - Drop tdx_post_mmu_map_page().
+> 
+> v19:
+>   - Switched to use KVM_MEMORY_MAPPING
+>   - Dropped measurement extension
+>   - updated commit message. private_page_add() => set_private_spte()
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 40 +++++++++++++++++++++++++++++++++-------
+>   arch/x86/kvm/vmx/tdx.h |  2 +-
+>   2 files changed, 34 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 59b627b45475..435112562954 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -488,6 +488,34 @@ static int tdx_mem_page_aug(struct kvm *kvm, gfn_t gfn,
+>   	return 0;
+>   }
+>   
+> +/*
+> + * KVM_TDX_INIT_MEM_REGION calls kvm_gmem_populate() to get guest pages and
+> + * tdx_gmem_post_populate() to premap page table pages into private EPT.
+> + * Mapping guest pages into private EPT before TD is finalized should use a
+> + * seamcall TDH.MEM.PAGE.ADD(), which copies page content from a source page
+> + * from user to target guest pages to be added. This source page is not
+> + * available via common interface kvm_tdp_map_page(). So, currently,
+> + * kvm_tdp_map_page() only premaps guest pages into KVM mirrored root.
+> + * A counter nr_premapped is increased here to record status. The counter will
+> + * be decreased after TDH.MEM.PAGE.ADD() is called after the kvm_tdp_map_page()
+> + * in tdx_gmem_post_populate().
+> + */
+> +static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, gfn_t gfn,
+> +					  enum pg_level level, kvm_pfn_t pfn)
+> +{
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> +
+> +	/* Returning error here to let TDP MMU bail out early. */
+> +	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm)) {
+> +		tdx_unpin(kvm, pfn);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* nr_premapped will be decreased when tdh_mem_page_add() is called. */
+> +	atomic64_inc(&kvm_tdx->nr_premapped);
+> +	return 0;
+> +}
+> +
+>   int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+>   			      enum pg_level level, kvm_pfn_t pfn)
+>   {
+> @@ -510,11 +538,7 @@ int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	if (likely(is_td_finalized(kvm_tdx)))
+>   		return tdx_mem_page_aug(kvm, gfn, level, pfn);
+>   
+> -	/*
+> -	 * TODO: KVM_MAP_MEMORY support to populate before finalize comes
+> -	 * here for the initial memory.
+> -	 */
+> -	return 0;
+> +	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
+>   }
+>   
+>   static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+> @@ -546,10 +570,12 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	if (unlikely(!is_td_finalized(kvm_tdx) &&
+>   		     err == (TDX_EPT_WALK_FAILED | TDX_OPERAND_ID_RCX))) {
+>   		/*
+> -		 * This page was mapped with KVM_MAP_MEMORY, but
+> -		 * KVM_TDX_INIT_MEM_REGION is not issued yet.
+> +		 * Page is mapped by KVM_TDX_INIT_MEM_REGION, but hasn't called
+> +		 * tdh_mem_page_add().
+>   		 */
+>   		if (!is_last_spte(entry, level) || !(entry & VMX_EPT_RWX_MASK)) {
+> +			WARN_ON_ONCE(!atomic64_read(&kvm_tdx->nr_premapped));
+> +			atomic64_dec(&kvm_tdx->nr_premapped);
+>   			tdx_unpin(kvm, pfn);
+>   			return 0;
+>   		}
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index 66540c57ed61..25a4aaede2ba 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -26,7 +26,7 @@ struct kvm_tdx {
+>   
+>   	u64 tsc_offset;
+>   
+> -	/* For KVM_MAP_MEMORY and KVM_TDX_INIT_MEM_REGION. */
+> +	/* For KVM_TDX_INIT_MEM_REGION. */
+>   	atomic64_t nr_premapped;
+>   
+>   	struct kvm_cpuid2 *cpuid;
 
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-
-[...]
-   powerpc-linux-ld: drivers/gpu/drm/stm/dw_mipi_dsi-stm.o: in function `dw_mipi_dsi_stm_remove':
-   dw_mipi_dsi-stm.c:(.text+0x664): undefined reference to `of_clk_del_provider'
->> powerpc-linux-ld: dw_mipi_dsi-stm.c:(.text+0x66c): undefined reference to `clk_hw_unregister'    powerpc-linux-ld: drivers/gpu/drm/stm/dw_mipi_dsi-stm.o: in function `dw_mipi_dsi_stm_probe':
-   dw_mipi_dsi-stm.c:(.text+0x98c): undefined reference to `clk_hw_register'
-
->
-> So I think you should send that patch to Linus now so that such randconfig
-> builds do not fail anymore.
-
-What do you mean by 'sending it to Linus' ? If you meant to do a pull request,
-then no. This patch is already in the drm-misc tree, which means it will keep
-its usual pace of merging with the rest of the drm-misc tree.
-
-For more information about drm-misc tree:
-https://drm.pages.freedesktop.org/maintainer-tools/repositories/drm-misc.html#merge-timeline
-
->
-> Unfortunately, I cannot test it right now because I've removed the triggering
-> randconfigs but when I hit it again, I'll make sure to apply yours.
-Thank you for this. Do not hesitate to reach if you encounter any problems with
-this patch.
-
-Regards,
-Raphaël
-
->
-> Thx.
->
 
