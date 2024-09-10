@@ -1,87 +1,155 @@
-Return-Path: <linux-kernel+bounces-322835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521CC97300F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:57:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B0F973018
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1597E28862D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863D9284F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5388518A6D2;
-	Tue, 10 Sep 2024 09:57:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F5418C02F;
+	Tue, 10 Sep 2024 09:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoF37BDN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638FFEEC9
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BAE14D431;
+	Tue, 10 Sep 2024 09:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962227; cv=none; b=pthhO73YIaQLfUKxpnvZbthdaeFrGA4to+sWoTj5FfGB80MlAh30VNHVK4xqaDOnDPkTIeEZX30s/PnxF3f6LIP5ebJhRCkvE88srv8xHb7hcvs9ogsPxT+JVGTZs4KIHidmv4TznhBMhAVRg8JYNSj71T/mw1oDemXIQNk+KxU=
+	t=1725962246; cv=none; b=ocUNv3kw3WSEsalvSMFhl+7XBsv+pRq0DxG6G6q6zAHAT6trrAE/JlQC1zLoTAlJ3ukUEMCqtecc8yRkfy5s3SGt7Rhb6des08DNIC15dzTuRXMKdfEefWPVNi6yf7JcqtqssMCo1+BwhMAtoB66Z8S9tN7u7vIfw34HVGQfoM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962227; c=relaxed/simple;
-	bh=Z7p7cYr0P94jl+/CBtnvjdmcnpTdI6ldYgL/Ei6ZtPQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QGvQJJS6KIoIJzW2yyCXPgLI1iWnBIUV4gWscxG2RfkG0f3Q0cTrUGjKNyjehO2W+NdPQiECZYl3XXgEzCO9r5rWsfOLj8ka08A+HzX1/0JBqX89jvybIa/lKIOkmYlwMu9ZOyDk34w3GnrA6hD7Gs13ugDIhH3NdMpLlRHIup4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cdd759b8cso395497139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:57:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725962225; x=1726567025;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOLj+wpV9tOv481WB1hGzb1GDAh4NnOtpedgaJw3Um0=;
-        b=xPVy12+o63bhlByGtVG021dn9dABhkifAwQGO1/ROEE+pAi8jNdsUu/cZ1ftTUOTB4
-         OwBnEuuI7n7UaqWZAkoz41kzNnm56spAkvaH/NOVmN0uBgqAEv/bOCK0XM/GnTLvZfsH
-         T9H31ar+jEUO/vr7WNErBQcSwOyoEoj2TprIWQc20eVGuw6/B6Zp904VitcDVx9W4lSA
-         Y+mRxdGqzdJk54qL7OF96/Mw+2OKLQxkl0Y/LpCj3p14LjDOrN1vl73QtEmGZfGiiATc
-         WNDSTTyyfDaY8Lqp4OqQ9n6we2LqhNdroZluuYoejBtFGHA4tsBL/mYNC5yf3+Rl8Fym
-         eeOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKlihxGJ7yBVUpH9eqP3parM6Aka9/+j6/4SJYh164bbKC9QVq4aIjn2KlJ10js80NA/CRifBOvwNEBqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbcFtFd5fOIOPxatC01ve8ZuQgGXbR7qLRGFscyqUMtURcnWEo
-	uL1GTn+fAJN0kAmdljFEJ/tx2jSEWNgqjkewWfI150c4snihbq3ouFkIL0a+tVvKJCdzIeGkvWQ
-	OlvlqA8WVW5zHC2x6ecpnIAtaTDC/yknnuaT36+tOZl6GfG5wW69E13s=
-X-Google-Smtp-Source: AGHT+IGoG9iPn34RpVW+UCBDPxK9g6hgaDkM9O1vW86HEd0ZbJyDW/QG4TCKPLEhqCMGb8nxdlc5+q6UCE/HKBW+Zn9qks+x1Ns6
+	s=arc-20240116; t=1725962246; c=relaxed/simple;
+	bh=/uYJCno5GCPMxaVDq+V1GmZ4Wfep91o4OGTMPJMCNn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6c2+/bqJfKtM5sZnOc1Ef8CgcablIJaKTiKz6Ly1tHGR7rlyCW8LzVZClw9kKHgzOWdYml7mqFeNAkz2RBaFTbmnWdwXq6WnTCtct0WdGVt4Jo+RvYMpgjicCDHZylHjRJZ+xiIidb3ecWobszpgjEu23j0wUbYMvvyeFGSQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoF37BDN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA6EC4CEC3;
+	Tue, 10 Sep 2024 09:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725962245;
+	bh=/uYJCno5GCPMxaVDq+V1GmZ4Wfep91o4OGTMPJMCNn0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZoF37BDNzQ1PsB5Du4gHWsC9KkLecyxnxdXyAsith81gwqWSldgkYVP1W5RlLLPVS
+	 EYkcgglhgw1Z375zWGCwJUfLfiPnNUY9XpXhoaXpBjvuCxV+Qs8qGffgQGTemTxeEz
+	 LVBnwHO1XQH5YKc2ai/NI+nAeQDaoGPXtg6oR9gzgCoucx2F7AAPh2/EHkcWvmpVMc
+	 VTrfTIMMMUD0x2fwG56t1JgQckBFYWcZHAPWw6loORtePusr0Dvv5mPoKq4oImeoFi
+	 sAYacWVutcP3w9bdxofeN7BIZq55QWIhmAL/sFcr7NDpXojDbxZ9c1mQSlFppD/xUE
+	 WhQT/ayYPY+rA==
+Date: Tue, 10 Sep 2024 10:57:18 +0100
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com,
+	shahuang@redhat.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v10 2/5] arm64: ptdump: Expose the attribute parsing
+ functionality
+Message-ID: <20240910095718.GB20813@willie-the-truck>
+References: <20240909124721.1672199-1-sebastianene@google.com>
+ <20240909124721.1672199-3-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15cd:b0:7f3:d85e:476f with SMTP id
- ca18e2360f4ac-82cfb055bc5mr216512239f.6.1725962225405; Tue, 10 Sep 2024
- 02:57:05 -0700 (PDT)
-Date: Tue, 10 Sep 2024 02:57:05 -0700
-In-Reply-To: <tencent_39E577CF66F23C93361697B036464B627409@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057689f0621c0e5d9@google.com>
-Subject: Re: [syzbot] [mptcp?] KASAN: slab-use-after-free Read in __timer_delete_sync
-From: syzbot <syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909124721.1672199-3-sebastianene@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello,
+On Mon, Sep 09, 2024 at 12:47:18PM +0000, Sebastian Ene wrote:
+> Reuse the descriptor parsing functionality to keep the same output format
+> as the original ptdump code. In order for this to happen, move the state
+> tracking objects into a common header.
+> 
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/include/asm/ptdump.h | 41 +++++++++++++++++++++++-
+>  arch/arm64/mm/ptdump.c          | 55 +++++++--------------------------
+>  2 files changed, 51 insertions(+), 45 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> index 5b1701c76d1c..bd5d3ee3e8dc 100644
+> --- a/arch/arm64/include/asm/ptdump.h
+> +++ b/arch/arm64/include/asm/ptdump.h
+> @@ -9,6 +9,7 @@
+>  
+>  #include <linux/mm_types.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/ptdump.h>
+>  
+>  struct addr_marker {
+>  	unsigned long start_address;
+> @@ -21,14 +22,52 @@ struct ptdump_info {
+>  	unsigned long			base_addr;
+>  };
+>  
+> +struct ptdump_prot_bits {
+> +	u64		mask;
+> +	u64		val;
+> +	const char	*set;
+> +	const char	*clear;
+> +};
+> +
+> +struct ptdump_pg_level {
+> +	const struct ptdump_prot_bits *bits;
+> +	char name[4];
+> +	int num;
+> +	u64 mask;
+> +};
+> +
+> +/*
+> + * The page dumper groups page table entries of the same type into a single
+> + * description. It uses pg_state to track the range information while
+> + * iterating over the pte entries. When the continuity is broken it then
+> + * dumps out a description of the range.
+> + */
+> +struct ptdump_pg_state {
+> +	struct ptdump_state ptdump;
+> +	struct seq_file *seq;
+> +	const struct addr_marker *marker;
+> +	const struct mm_struct *mm;
+> +	unsigned long start_address;
+> +	int level;
+> +	u64 current_prot;
+> +	bool check_wx;
+> +	unsigned long wx_pages;
+> +	unsigned long uxn_pages;
+> +};
+> +
+>  void ptdump_walk(struct seq_file *s, struct ptdump_info *info);
+> +void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+> +	       u64 val);
+>  #ifdef CONFIG_PTDUMP_DEBUGFS
+>  #define EFI_RUNTIME_MAP_END	DEFAULT_MAP_WINDOW_64
+>  void __init ptdump_debugfs_register(struct ptdump_info *info, const char *name);
+>  #else
+>  static inline void ptdump_debugfs_register(struct ptdump_info *info,
+>  					   const char *name) { }
+> -#endif
+> +#endif /* CONFIG_PTDUMP_DEBUGFS */
+> +#else
+> +static inline void note_page(void *pt_st, unsigned long addr,
+> +			     int level, u64 val) { }
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+nit: but why isn't 'pt_st' a pointer to 'struct ptdump_state'?
 
-Reported-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
+Perhaps you should #include <linux/ptdump.h> before the #ifdef
+CONFIG_PTDUMP_CORE ?
 
-Tested on:
+In any case, the meat of the patch is fine:
 
-commit:         bc83b4d1 Merge tag 'bcachefs-2024-09-09' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a27bc7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
-dashboard link: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=173c6797980000
+Acked-by: Will Deacon <will@kernel.org>
 
-Note: testing is done by a robot and is best-effort only.
+Will
 
