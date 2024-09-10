@@ -1,185 +1,142 @@
-Return-Path: <linux-kernel+bounces-323833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D299743FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:19:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA59897440E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A04287490
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7802D1F26AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA1D1A0B05;
-	Tue, 10 Sep 2024 20:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044BD1A4F2F;
+	Tue, 10 Sep 2024 20:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAnOMtGg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVpLwP3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B116E17CA03
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C502BA45;
+	Tue, 10 Sep 2024 20:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999574; cv=none; b=LQS7CFg5Yn3pVbcxBUU+Qnu+mVCAYnFwQ5jf8cBxjDFcaRzNKZQ3w2mFNiHBXYhTqE+A2k/nq7ROTBPgwL4ANXkjm3272DysnpCuKT9D/QRZwvf2RsMNlRQxeOrxbB7PGq3ofzKvy12mez3+3hsU/bl6CISKgkk70tqmQdpg3Eg=
+	t=1725999972; cv=none; b=EvsjLOI2g28MPvD/RLjLzSg/wXRHmel1aPLQqIWhEIZ5SdexBjgGpCo73+MW5WBPPvqaZgB8UltOERBHhunTAxTzzOqDsZsb0hXO49GJx0CZgrd2HUxw5L1kj6NBBeike/A18KzcVpFbQGVqfCrS94VsAQyEB44XoHgUzhuP2jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999574; c=relaxed/simple;
-	bh=8CCuLYWdWTSFpLwKxbqHrDLHqq2DH1fE8m6jNkhdCNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2XTy55gzg5l1NwgwimQItHVAibxdbW2skSlkP/6bIsxoqDWewhEf1kLh87NJ6eMC5Q6wejL11JmUMCSAxWv0RTnqviOOsDuKAVs2kxXdzYh/fNHYDECsO2excMxfJWogAjtJI4F9KxWLaXsPnvH7moVC01ByC9ZMF4qv175ijw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAnOMtGg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725999570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/Ek58qaXc13SAy2fWa0xfKNbuHUlKabbBtKkvuJifU=;
-	b=fAnOMtGg/vKj8V5YBuo9kuAU+OPPZ4RGrSp+3DRy823hdp3gigiPWOHQJ4GCj4JhdL6N+8
-	NHRAq46f1DZ3+1Nx8gbkziZpZoGMHn03mI0Al2ySBUoTNp7+2kqZCFXY4mZLYO5+ho5jh+
-	b0fcqrn9xQNTxuTwrZSwQIiUnQwp1mY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-C30tjIN2OjOOpucIMNgQ_w-1; Tue, 10 Sep 2024 16:19:29 -0400
-X-MC-Unique: C30tjIN2OjOOpucIMNgQ_w-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8d2f475416so202210566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:19:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725999568; x=1726604368;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/Ek58qaXc13SAy2fWa0xfKNbuHUlKabbBtKkvuJifU=;
-        b=OvNRsSuRZJCuSCi06lB5bMnJEqa8gV6Aye7L/wVUcrT8i8AnP7VjtmJg4JwKuKj85s
-         Wk9Wf6VIDtsdjMRe1ZgVGdkZElkvEEs3xrz1Y0sodXVjD0MGOvrScMiSFOQTNX76yU8y
-         6Coz5BoejV9PVeG+fj1xZG0EMEyw/m5bQgnbq/UKYQ1ILyLIEz4JfFaQl4SylHNgcWNj
-         THXkvOALiBBDbnFIftcfA1gdEoHILewz9LHDa47bPQJ72e/YFvDZm3B6kIyFvCrS5yds
-         TD5xZvTNhmp+QNbEX5LuQQyzVy74r5tZZ7E9eseAERbTE3j2mYocANOD+DqVnlegMfPT
-         4ZSA==
-X-Gm-Message-State: AOJu0YwCNxaosta3QljRueCDV30BTlphXI4AsQmpOYXijPftAWTMZK7K
-	JD4JToVeQNkACKGozQmmAGB3Z4shDQrc2BMYRVIk31x2BTNO1H9hQsv5DEXb7N9CxHfau6bq5fz
-	CMmuiKkEUoBDAOwbFcu8F+52y1B6tjKlZye0ZM0i4GHPQ2IXzQo17zLhACoJujQ==
-X-Received: by 2002:a17:907:9812:b0:a88:b90b:bd5e with SMTP id a640c23a62f3a-a8ffaaacfa1mr185691266b.3.1725999568236;
-        Tue, 10 Sep 2024 13:19:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIpn+zlExuTE3yAX+xjiMRNjjie27yYDse9XLe2ciVUQSSxwhcmURZ5WywfpEvPrJPhC6Cgg==
-X-Received: by 2002:a17:907:9812:b0:a88:b90b:bd5e with SMTP id a640c23a62f3a-a8ffaaacfa1mr185687666b.3.1725999567396;
-        Tue, 10 Sep 2024 13:19:27 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:176:f5ce:2d9:5bfa:9916:aa0a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c62485sm519926966b.104.2024.09.10.13.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 13:19:26 -0700 (PDT)
-Date: Tue, 10 Sep 2024 16:19:19 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 0/5] virtio-mem: s390x support
-Message-ID: <20240910161847-mutt-send-email-mst@kernel.org>
-References: <20240910191541.2179655-1-david@redhat.com>
+	s=arc-20240116; t=1725999972; c=relaxed/simple;
+	bh=/vRC6UW5TKpXSnzoNSBj6lJfT63gnYyuAM0O5g3j+7U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fl2eRjHiutPckTw2p1jqmTx4GGpwIraiUEHlWTUpybdnO7PMK0XzI30yf6oMhtIrQLye9mkovYt2zAOO2O3mCjvNlvu3ZHxyq1wyghdolt/al1kTITY5/icNviM2Vs/Y8bbrpoZXvo3TjMKeoGyvfVvdJRgI3Mhl2c/9yMnTVy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVpLwP3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9B3C4CEC3;
+	Tue, 10 Sep 2024 20:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725999971;
+	bh=/vRC6UW5TKpXSnzoNSBj6lJfT63gnYyuAM0O5g3j+7U=;
+	h=From:Date:Subject:To:Cc:From;
+	b=IVpLwP3PN5TyPmbrRqw1W0DMCfJhFrKyDJadAo4MTiFrd+NEaiaeyOu9wmWUkEbQs
+	 NvtNVo4V9yXvAfmT1Eq8kpdfG2Z+F4+TFFZpDpMDnGSCsob0RJc6Zsc6kkGcciIlll
+	 LlZ7pxUTP6R/4PX3mrSNDpviRRPv/9p5VcaMy7CtYu934yFVt2izSkqzAKsVWg9WLn
+	 4P02gs7VIZN63MeZl3FcdE3psz+nnWPEHKfyx/59Q/19n/4HlURh/Cw7di6CwDeYHd
+	 qqr4RcOc1ZCgiDoir1vlwK/PbvGDE+GLtPtznQVmJ4rXcktL0Yd6j8dcUSXv8aT9b+
+	 lM5aZgWGbdv4Q==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 10 Sep 2024 21:21:17 +0100
+Subject: [PATCH] KVM: arm64: Constrain the host to the maximum shared SVE
+ VL with pKVM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240910191541.2179655-1-david@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADyq4GYC/x3MQQ5AMBBA0avIrE1SgoariEXVqAlF2mok4u4ay
+ 7f4/wFPjslDlz3gKLLnY08o8gz0onZDyFMylKKsRFsIXKNF5WxT4caWA5qLfMC44VTPoxJaai1
+ HSPnpaOb7X/fD+370TlaQagAAAA==
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org, 
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2951; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=/vRC6UW5TKpXSnzoNSBj6lJfT63gnYyuAM0O5g3j+7U=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm4KtgcGbqP1jiMA0U/QcL+yIVnZS3mIQtN3BHVkLk
+ 4xEBMuaJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZuCrYAAKCRAk1otyXVSH0NRNB/
+ 9XT/BOpsS6KyJqP7dJyHRnbt2jwFRAsoob01rk9CYemGuCAfn1bn6pN+6N0RA9ES9oYMzOPiZEIVp4
+ BOtvReHeQdsP6UgU2oNuJJJtH1GhZwySs/fZuqtUc8f1a8wTQwNxFp0s1Vmei0l9AC9NGQIDSKm2SQ
+ ATsU+dJMFccAbu2Oj38S669xLUhrEg3C8UbXRPu1PoonmI3bVeI1CVx5QKD4XyiQ2BHAsEvC76jPCt
+ p63n7FvwLJx2OudS9fLMc5waRvjv059MECo7nAIWU2MKSVIdQVAZYaFBATL4iHylY7TuIOPLgh5emD
+ reohv4tECOV66tjrhaOjFAxuvYnFwu
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Sep 10, 2024 at 09:15:34PM +0200, David Hildenbrand wrote:
-> Let's finally add s390x support for virtio-mem; my last RFC was sent
-> 4 years ago, and a lot changed in the meantime.
-> 
-> This is based on mm/stable.
-> 
-> I sent out the QEMU part earlier today [1], that contains some more details
-> and a usage example on s390x (last patch).
-> 
-> There is not too much in here: The biggest part is querying a new diag(500)
-> STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end". Once this
-> and the QEMU part will go upstream, it will get documented in [2]
-> 
-> The last two patches are not strictly required but certainly nice-to-have.
-> 
-> Note that -- in contrast to standby memory -- virtio-mem memory must be
-> configured to be automatically onlined as soon as hotplugged. The easiest
-> approach is using the "memhp_default_state=" kernel parameter or by using
-> proper udev rules. More details can be found at [3].
-> 
-> I have reviving+upstreaming a systemd service to handle configuring
-> that on my todo list, but for some reason I keep getting distracted ...
-> 
-> I tested various things, including:
->  * Various memory hotplug/hotunplug combinations
->  * Device hotplug/hotunplug
->  * /proc/iomem output
->  * reboot
->  * kexec
->  * kdump: make sure we don't hotplug memory
-> 
-> One remaining work item is kdump support for virtio-mem memory. I
-> am working on a prototype that will be fairly straight forward,
-> because the virtio-mem driver already supports a special kdump mode and
-> dracut will already include it in the initrd as default. With
-> holiday and conferences coming up I rather sent this out now.
-> 
-> [1] https://lkml.kernel.org/r/20240910175809.2135596-1-david@redhat.com
-> [2] https://gitlab.com/davidhildenbrand/s390x-os-virt-spec
-> [3] https://virtio-mem.gitlab.io/user-guide/user-guide-linux.html
-> 
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Thomas Huth <thuth@redhat.com>
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: Janosch Frank <frankja@linux.ibm.com>
-> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Cc: "Eugenio Pérez" <eperezma@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+When pKVM saves and restores the host floating point state on a SVE system
+it programs the vector length in ZCR_EL2.LEN to be whatever the maximum VL
+for the PE is but uses a buffer allocated with kvm_host_sve_max_vl, the
+maximum VL shared by all PEs in the system. This means that if we run on a
+system where the maximum VLs are not consistent we will overflow the buffer
+on PEs which support larger VLs.
 
+Since the host will not currently attempt to make use of non-shared VLs fix
+this by explicitly setting the EL2 VL to be the maximum shared VL when we
+save and restore. This will enforce the limit on host VL usage. Should we
+wish to support asymmetric VLs this code will need to be updated along with
+the required changes for the host, patches have previously been posted:
 
-It's mostly s390 changes, so should be merged through that tree.
-I acked the only virtio specific patch.
+  https://lore.kernel.org/r/20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org
 
-> David Hildenbrand (5):
->   s390/kdump: implement is_kdump_kernel()
->   s390/physmem_info: query diag500(STORAGE_LIMIT) to support QEMU/KVM
->     memory devices
->   virtio-mem: s390x support
->   lib/Kconfig.debug: default STRICT_DEVMEM to "y" on s390x
->   s390/sparsemem: reduce section size to 128 MiB
-> 
->  arch/s390/boot/physmem_info.c        | 46 ++++++++++++++++++++++++++--
->  arch/s390/include/asm/kexec.h        |  4 +++
->  arch/s390/include/asm/physmem_info.h |  3 ++
->  arch/s390/include/asm/sparsemem.h    |  2 +-
->  arch/s390/kernel/crash_dump.c        |  6 ++++
->  drivers/virtio/Kconfig               | 12 ++++----
->  lib/Kconfig.debug                    |  2 +-
->  7 files changed, 64 insertions(+), 11 deletions(-)
-> 
-> -- 
-> 2.46.0
+Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/arm64/kvm/hyp/include/hyp/switch.h | 2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+index f59ccfe11ab9..ab1425baf0e9 100644
+--- a/arch/arm64/kvm/hyp/include/hyp/switch.h
++++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+@@ -339,7 +339,7 @@ static inline void __hyp_sve_save_host(void)
+ 	struct cpu_sve_state *sve_state = *host_data_ptr(sve_state);
+ 
+ 	sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
+-	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl), SYS_ZCR_EL2);
+ 	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+ 			 &sve_state->fpsr,
+ 			 true);
+diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+index f43d845f3c4e..90ff79950912 100644
+--- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
++++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+@@ -45,10 +45,11 @@ static void __hyp_sve_restore_host(void)
+ 	 * the host. The layout of the data when saving the sve state depends
+ 	 * on the VL, so use a consistent (i.e., the maximum) host VL.
+ 	 *
+-	 * Setting ZCR_EL2 to ZCR_ELx_LEN_MASK sets the effective length
+-	 * supported by the system (or limited at EL3).
++	 * Note that this constrains the PE to the maximum shared VL
++	 * that was discovered, if we wish to use larger VLs this will
++	 * need to be revisited.
+ 	 */
+-	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl), SYS_ZCR_EL2);
+ 	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+ 			    &sve_state->fpsr,
+ 			    true);
+
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240910-kvm-arm64-limit-guest-vl-d5fba0c7cc7b
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
