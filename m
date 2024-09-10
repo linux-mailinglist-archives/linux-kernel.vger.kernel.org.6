@@ -1,94 +1,73 @@
-Return-Path: <linux-kernel+bounces-322547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80017972AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:27:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF10972AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16B631F25130
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BCE1C23E04
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EE717D358;
-	Tue, 10 Sep 2024 07:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4A117E012;
+	Tue, 10 Sep 2024 07:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zUWLy9Ov";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="td/M7CLG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zUWLy9Ov";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="td/M7CLG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="p5AmSKrt"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD317BB3F;
-	Tue, 10 Sep 2024 07:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4A317CA1B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953213; cv=none; b=gDyUtxlH4oMLPj/3d6LhgW206YeWIY8g67jV+ebCXM1r/5zp7r7Hk4yK1YWq84OeNdP1G6KSjiTvuSmgA/qSr0vjmOS1UgwiSCYeUiP+WemrmrbmX1m4QAIjstAwXrNAum92Q3fn5AXKasHQPA4lA+K7Vh6M/cxNFUkPYTjEVo8=
+	t=1725953215; cv=none; b=aS177Ks+n2wUZBlr2O1v+dOpMZoE8PeWmahXkg1jX/oHtiEdHfzu5/ewfi4coYcixQhC8ZKaymYP6cIFcLXOklAfmbTLSI7khnKGKvbsQr67BSz57Saqx3nUkaLYDaNpBDykzg/6FDr0Vrcte2QPm8oHOo9bLuOfsIU6eyz3lrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953213; c=relaxed/simple;
-	bh=xw60bUIRo7WKTtSnWsEqgbl4rhYeBzdN89V46KJZgqg=;
+	s=arc-20240116; t=1725953215; c=relaxed/simple;
+	bh=Gj5V2Egk4EGbaKkPeTjpfC7Xya042ySnvCaQqI4xPns=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpx4QmVA5bI8+Q83m1YO6IPuigrOYLqKXzsE539+JBZkfDZJEjJcJFvY7fkcfKE7+6f8CGcMFh69rYqmF/DvFoZsNxZdwDbX/UUilrEHcIY9LOLd3PhsSco3VhJdNYqb0bHA9xy6VQhVNfVPusWglNBQ+sm6B/F730QewNyZuG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zUWLy9Ov; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=td/M7CLG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zUWLy9Ov; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=td/M7CLG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BEF00219FB;
-	Tue, 10 Sep 2024 07:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725953203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
-	b=zUWLy9OvAO7XrxoS6/UoJhkJSrj0WB+6fVF6nDh1pZmKtFVCfEXqJNKgFj18SsmLMBmMy5
-	VHyBv1nUd3A0tiOCUZ6C6MsMedok/C/qhTHobr9SPz/p2kTCp2IsTPeCrdejqpqnpHxL1H
-	QrxtOlzVSKrZ2v+uZr2jEgR+e14sHOs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725953203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
-	b=td/M7CLG23zworLW4Ao5DjziNtE2XM3TIOp3+791DBeDDuhtff3nXK8o1URUxeLVkjcKBr
-	yepoUyf+F6YU43BA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725953203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
-	b=zUWLy9OvAO7XrxoS6/UoJhkJSrj0WB+6fVF6nDh1pZmKtFVCfEXqJNKgFj18SsmLMBmMy5
-	VHyBv1nUd3A0tiOCUZ6C6MsMedok/C/qhTHobr9SPz/p2kTCp2IsTPeCrdejqpqnpHxL1H
-	QrxtOlzVSKrZ2v+uZr2jEgR+e14sHOs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725953203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m7fVBlL4PNu24Is+8HspZt8gB7mcRXk5r+0veAHr0/w=;
-	b=td/M7CLG23zworLW4Ao5DjziNtE2XM3TIOp3+791DBeDDuhtff3nXK8o1URUxeLVkjcKBr
-	yepoUyf+F6YU43BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7729713A3A;
-	Tue, 10 Sep 2024 07:26:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EapyG7P032YTJgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 10 Sep 2024 07:26:43 +0000
-Message-ID: <0cbcaa64-2cbe-4c8e-86a0-e12da60a42ab@suse.de>
-Date: Tue, 10 Sep 2024 09:26:42 +0200
+	 In-Reply-To:Content-Type; b=b4GSPQuvYGVtdgB8i1Ksoa75FimZ9OTlpnp758AYvzKuEtSU7mvGm9XtXUlOQIsDDihoKkUYfWaKI1hmJb5nAYVTmIzFc+bXJIWxCTflPAMy/B99pgseEPgSMT1HnzE/j/W3fACqnbh/rRjDCftYyKWYr+b9Nk6I+cl14Brk2g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=p5AmSKrt; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c3eef39eso2914075f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1725953212; x=1726558012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PxMzW8bRkSWH7N3FT2nOWV85gkTf+9ZwqbV1H9/D7u0=;
+        b=p5AmSKrtbLdv7meTVTf5hyBISVIAbYsSeIruRy/t5Lkkk7R8o+bHIYIPWo8sVnHO+c
+         bsUlhmgpmziGZm/u/DaopeGcZxW6hvExzm0ZROpJ7AsYd+wPJXdi1W0K8nTguq6IebWm
+         I4fP9ePDkDZGT8QDwLdAnpjRxJRUPDVPZmn1x/15oHfa7Ef9mfx22NBDycOowmUHL8k9
+         pB2DBLy14Nfv6VqPqbzvrD9oboVypmG9Zka8aRW6+CVpa3ElTyQ9h5KmXhy2YrzpAcv7
+         ZxtxHym/a07wrBVlCNzcpf2o7FBv95jan7WCcabtcTokuIZnkl1f9UF+qoPjnC4SfVvP
+         v8Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725953212; x=1726558012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxMzW8bRkSWH7N3FT2nOWV85gkTf+9ZwqbV1H9/D7u0=;
+        b=w4e5gZ8xGLXq4gVRKB89Au0vpe+XCRGWtQqas1hoWv9Y9cteOHTnwKMs66UCJ31huy
+         7nIXze0Rp6Za0zryz/I0XK+Umevn8Sl38Qr9C6113MoJ6A7qoEoMzvliU7Ox5rkIHu8J
+         FGqU5A8bfpeALmq1C5sbOTi4Psd2XiavQjc5h0XbFIwZNpG3IhZcQd1K5UlbYf1BOlhU
+         bMjdAk5Of036CvsjAGOvJZou46LTJBlsEVrPEAZVdZTLYbET2bAukabMz02qRZIDV/Ir
+         ct2L0t4PgVG6Jb6+dhnG63nXAimvAoUHRK58DtjeeJvDnVqoyMF43ZvJbf34LAKzY7Aa
+         eWaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAH7YyFfuACJoATdE/MfMlNKSBEeetBQxTdiBM6TKGTMDwNlEgGcRJBiB11Btt3u5ig+ComtLvmApjZec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCn+nVeC2CwMtD5+LNwgEJKoDnkGYa6PMUffdS4/cllyBM4WW6
+	/imUNBwZzV+FlXuLDgcIqmbMf/f5ZjAXye9XpgxR/RzypBdKbANpEBt8toNasWM=
+X-Google-Smtp-Source: AGHT+IGESuTP3eLnl+EJI3vciZdTv1kUP9QMFpZOxqQKA5bFwEZ0VHvpLLczzXOyCMDvE2xlo0xZ8w==
+X-Received: by 2002:a05:6000:a8c:b0:371:7dda:d7d9 with SMTP id ffacd0b85a97d-378895c3004mr8487755f8f.9.1725953211362;
+        Tue, 10 Sep 2024 00:26:51 -0700 (PDT)
+Received: from [192.168.0.101] ([90.241.98.187])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956655fcsm8006471f8f.38.2024.09.10.00.26.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 00:26:51 -0700 (PDT)
+Message-ID: <c970dfb2-078c-4bf1-8b50-6e535cf4adf7@ursulin.net>
+Date: Tue, 10 Sep 2024 08:26:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,119 +75,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/xen-fbfront: Assign fb_info->device
-To: Jason Andryuk <jandryuk@gmail.com>, Helge Deller <deller@gmx.de>,
- Arnd Bergmann <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>
-Cc: xen-devel@lists.xenproject.org, Jason Andryuk <jason.andryuk@amd.com>,
- Arthur Borsboom <arthurborsboom@gmail.com>, stable@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+Subject: Re: [PATCH] drm/syncobj: Fix syncobj leak in
+ drm_syncobj_eventfd_ioctl
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simon Ser <contact@emersion.fr>,
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+Cc: Xingyu Jin <xingyuj@google.com>, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
-References: <20240910020919.5757-1-jandryuk@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240910020919.5757-1-jandryuk@gmail.com>
+References: <20240909205400.3498337-1-tjmercier@google.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20240909205400.3498337-1-tjmercier@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,gmx.de,arndb.de,ravnborg.org];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[lists.xenproject.org,amd.com,gmail.com,vger.kernel.org,lists.freedesktop.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
 
-
-Am 10.09.24 um 04:09 schrieb Jason Andryuk:
-> From: Jason Andryuk <jason.andryuk@amd.com>
->
-> Probing xen-fbfront faults in video_is_primary_device().  The passed-in
-> struct device is NULL since xen-fbfront doesn't assign it and the
-> memory is kzalloc()-ed.  Assign fb_info->device to avoid this.
->
-> This was exposed by the conversion of fb_is_primary_device() to
-> video_is_primary_device() which dropped a NULL check for struct device.
->
-> Fixes: f178e96de7f0 ("arch: Remove struct fb_info from video helpers")
-> Reported-by: Arthur Borsboom <arthurborsboom@gmail.com>
-> Closes: https://lore.kernel.org/xen-devel/CALUcmUncX=LkXWeiSiTKsDY-cOe8QksWhFvcCneOKfrKd0ZajA@mail.gmail.com/
-> Tested-by: Arthur Borsboom <arthurborsboom@gmail.com>
-> CC: stable@vger.kernel.org
-> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Thanks a lot.
-
+On 09/09/2024 21:53, T.J. Mercier wrote:
+> A syncobj reference is taken in drm_syncobj_find, but not released if
+> eventfd_ctx_fdget or kzalloc fails. Put the reference in these error
+> paths.
+> 
+> Reported-by: Xingyu Jin <xingyuj@google.com>
+> Fixes: c7a472297169 ("drm/syncobj: add IOCTL to register an eventfd")
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
 > ---
-> The other option would be to re-instate the NULL check in
-> video_is_primary_device()
-> ---
->   drivers/video/fbdev/xen-fbfront.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/video/fbdev/xen-fbfront.c b/drivers/video/fbdev/xen-fbfront.c
-> index 66d4628a96ae..c90f48ebb15e 100644
-> --- a/drivers/video/fbdev/xen-fbfront.c
-> +++ b/drivers/video/fbdev/xen-fbfront.c
-> @@ -407,6 +407,7 @@ static int xenfb_probe(struct xenbus_device *dev,
->   	/* complete the abuse: */
->   	fb_info->pseudo_palette = fb_info->par;
->   	fb_info->par = info;
-> +	fb_info->device = &dev->dev;
+>   drivers/gpu/drm/drm_syncobj.c | 17 +++++++++++++----
+>   1 file changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+> index a0e94217b511..4fcfc0b9b386 100644
+> --- a/drivers/gpu/drm/drm_syncobj.c
+> +++ b/drivers/gpu/drm/drm_syncobj.c
+> @@ -1464,6 +1464,7 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
+>   	struct drm_syncobj *syncobj;
+>   	struct eventfd_ctx *ev_fd_ctx;
+>   	struct syncobj_eventfd_entry *entry;
+> +	int ret;
 >   
->   	fb_info->screen_buffer = info->fb;
+>   	if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ_TIMELINE))
+>   		return -EOPNOTSUPP;
+> @@ -1479,13 +1480,15 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
+>   		return -ENOENT;
 >   
+>   	ev_fd_ctx = eventfd_ctx_fdget(args->fd);
+> -	if (IS_ERR(ev_fd_ctx))
+> -		return PTR_ERR(ev_fd_ctx);
+> +	if (IS_ERR(ev_fd_ctx)) {
+> +		ret = PTR_ERR(ev_fd_ctx);
+> +		goto err_fdget;
+> +	}
+>   
+>   	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+>   	if (!entry) {
+> -		eventfd_ctx_put(ev_fd_ctx);
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto err_kzalloc;
+>   	}
+>   	entry->syncobj = syncobj;
+>   	entry->ev_fd_ctx = ev_fd_ctx;
+> @@ -1496,6 +1499,12 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
+>   	drm_syncobj_put(syncobj);
+>   
+>   	return 0;
+> +
+> +err_kzalloc:
+> +	eventfd_ctx_put(ev_fd_ctx);
+> +err_fdget:
+> +	drm_syncobj_put(syncobj);
+> +	return ret;
+>   }
+>   
+>   int
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Easy enough to review while browsing the list:
 
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+
+Regards,
+
+Tvrtko
 
