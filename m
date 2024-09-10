@@ -1,219 +1,139 @@
-Return-Path: <linux-kernel+bounces-322287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF979726BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:54:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D129726C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A51C22214
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1EC1F24542
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6897B13C3CD;
-	Tue, 10 Sep 2024 01:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D8813AA46;
+	Tue, 10 Sep 2024 01:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OByMDnsA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QRR4ZCo6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9581042AA4;
-	Tue, 10 Sep 2024 01:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725933269; cv=fail; b=B5aqkW6dAtd30nuEnzXV8npQW4QG0TMa+iUld0SW43nHcHUhSwWZmR5dekUW8jRwLatNLUh2p4JlB7uIooFr/j/FO4u9Utng7X5C+sy5lvlMvAaDvvVvSZn7/yFtn9GK5JboFCYkOHjP6H/8va3p5pmryLHKKguApBvo/nlem1c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725933269; c=relaxed/simple;
-	bh=DaBNEUSmt2HQsbdrerlV1NMPcUxtMxRCI9ZU0HlfI6E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=O9QxwUCvr7iNia2JPvTWoBnFd91jdTg7JxUbAzvsMs59hBg5OIZcR2lROPOMSmG9epDOFeiRLj5WNG/PxA4mQfuIbvo27nSNjq8sRdcDieisOcJIF0peKjXFckz1lbnxWPZ8SB7vx+34svmYdihsRwaPx5CRmTZFijaixa2lhpo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OByMDnsA; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F14139D15;
+	Tue, 10 Sep 2024 01:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725933343; cv=none; b=RoBynX33l/CP6p+Bp9FY/f9hrp3BeGpbS6k3Bbq2IprrBXiAncSxTrzDKZLuF9c2dt4PjY/57aEP/5l6d/GwDcftRJKXwCoeXl6xDYyjflgt0S3qF8ZB2vdxhH51TVYEc97gc73oBxN52WztyN9eLLCyXp4hliG+KZyApEGAkb0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725933343; c=relaxed/simple;
+	bh=WXIYwvgCCcY15YOPnK6S4GVJJNWqZ9kOmG05udu4AcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qInFIVwEKdZziCWcFAbFDDcT0xLdx1igxZCvUDSaW3YY2tK+MZvL7vZ4ndOcUhCkGhMgwlfQezpTbM1wqsRs57lM/pURW2vfC4ZxaJWE5by727EfnX8MgMAidFqPl/vW8YqNfO9z2PJt/K0vgYCmy/ifeDOk5rEtPITdX0v7/sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QRR4ZCo6; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725933268; x=1757469268;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=DaBNEUSmt2HQsbdrerlV1NMPcUxtMxRCI9ZU0HlfI6E=;
-  b=OByMDnsAVs/aL/bUpWEbjkcXbaeqVH5XDVxQoEsFCroKUuay/sPEh/VQ
-   SLDTF4B1sAuLMBGc0DhqTiXOeHZmIoHiSp8UZqmpikRDYFT0nTidMsC2q
-   73D2x67buXZkh2VqsMZCSvmzr0BF+Nh/ZQLWAjX5KU7Cu69h57CH1oYIy
-   +ecwvx5pDqdi3JZCQR8Im6AtuX5ClFdYZeyYV1YgthA+eSTkb1TeysTNZ
-   l/T/onlETViI4w7zKiQgvTaXJE1SPsGLtOoFjkIyxn3NRVJZoOQywx+GD
-   AvSKgzXb8dzBrHA3aGCRjVvT7N/al+baSJrVi3+lUlG03kchHYsUS/QRm
+  t=1725933342; x=1757469342;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WXIYwvgCCcY15YOPnK6S4GVJJNWqZ9kOmG05udu4AcI=;
+  b=QRR4ZCo6xIRc2utOZC/GTNuyrsKCuFMDjTrGA80MZ4cXMQmYAt4k4EqQ
+   GdRivITuS9XXdEe0pIYYj/qo5bOb7btysW+7Py81wahJ9j1XVhgcKTstO
+   Vtdbyq4PmaYGzby/nHxg8YzGKE1xrUkefFeYYD1S9HKuS/1oav2VsPl9r
+   LY9la0ANgVJnNTp3m59puJK9vqV3WEDUXGGXlUiwB1oZNwHIoAEcC4zcg
+   uzGyHgzVgDUeA6w9an2CN2DzX7wGCt8TEC6MbnuWkXs01h4Dc/VYf/8HW
+   26eX9U0HV1zLL5tlU8dWwmPppjaVSKWyl0WJasEkzJTVhfJRlF51ZodbB
    w==;
-X-CSE-ConnectionGUID: BYM3DfnZRjiATJ2ruBVDsA==
-X-CSE-MsgGUID: 6Fmn7lAJSIu0QkGyYZp0xA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24160096"
+X-CSE-ConnectionGUID: 1duy5YunS8GLbu0+39NWIQ==
+X-CSE-MsgGUID: Xbu0PlMzQ7eetFrmi1WgUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24851648"
 X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="24160096"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 18:54:26 -0700
-X-CSE-ConnectionGUID: 8SU2Mws2SGeKF+Bt6+3+ww==
-X-CSE-MsgGUID: I38xrkt3RCOuWvwTRtIF7Q==
+   d="scan'208";a="24851648"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 18:55:41 -0700
+X-CSE-ConnectionGUID: cf0cPxM3QJ6R/2dkNPzv5A==
+X-CSE-MsgGUID: OfslnRUBRv+oEfKRhDFFqw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="67115658"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 18:54:25 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Sep 2024 18:54:25 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 18:54:25 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Sep 2024 18:54:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lPfenq1pxuQxFXmD9yttrnnYLVBH67Lo0qczI0blQfdWAwQHRpmhbtM/hxohPW7aW2vJ05LUYC+yBi6Std+1MhWEs6Y4tHUPgGjiJOvIf2MTjByT6UQgJEZ4Ukd/v5oG2Jc2QSXF9YcbwyYVxQpzg4aZHWxCHCXoxTCkKfDPKE5SAuwgvmnkYW88YdoMjx95vKfQJiq8y2fWs6ZaDvS3oFeCSSWVyZowRMVYAFsebZbA4BNoU4xjIcVYpserr6piPqmC62deCUsjL+QTu44LCRU1M4otldoSp6g2LQZufhEMhQhHMFrEtpK1boAHVK8ZC2S9BnndJrN6/0Ufdb5PgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rt+B97+/HigvrkgMHkqEs8ILEW8pPcrUCFingJuYJLs=;
- b=UG9mFbNuBKfqOm6sCWVO/E7Xv6vkMCh9RPZ4hUdK6mNumF1k6W8jX3q6YqJy5eix+TP2nYRSvto+sQVl781Oz61JSCHjjil1ToNJ3c1ZI2zAZwmOtBfAkBQft6/aeHpzTpNm0u7v/Iaq/z/AavZqc1N26S8DpARA9MVoMufg9Lj1+bSpPEkKJgaytE9EMwDJqf2Kx2ksrc57j0lQaG8N05NvpFaTt1GJPSR77Kes0WQemB8YuQLhQ4RxnljKhZ+YQj02wPbFZtDL1KNJoElwSQwrnPFU3YgVxQnIIyC/QzcqWaVohMKtRfiNIGynzd8xcy5ndijgLKV+VBQ7FsVhxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SJ2PR11MB8452.namprd11.prod.outlook.com (2603:10b6:a03:574::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.20; Tue, 10 Sep
- 2024 01:54:17 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
- 01:54:16 +0000
-Date: Tue, 10 Sep 2024 09:52:20 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
-	<kai.huang@intel.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>,
-	"dmatlack@google.com" <dmatlack@google.com>, "isaku.yamahata@gmail.com"
-	<isaku.yamahata@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/21] KVM: TDX: Implement hooks to propagate changes of
- TDP MMU mirror page table
-Message-ID: <Zt+mVAn1bnv/CxlK@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-15-rick.p.edgecombe@intel.com>
- <5303616b-5001-43f4-a4d7-2dc7579f2d0d@intel.com>
- <a675c5f0696118f5d7d1f3c22e188051f14485ce.camel@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a675c5f0696118f5d7d1f3c22e188051f14485ce.camel@intel.com>
-X-ClientProxiedBy: SG2PR02CA0075.apcprd02.prod.outlook.com
- (2603:1096:4:90::15) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+   d="scan'208";a="71471852"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 09 Sep 2024 18:55:37 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snq6R-000FTc-0k;
+	Tue, 10 Sep 2024 01:55:35 +0000
+Date: Tue, 10 Sep 2024 09:54:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
+	LeoLiu-oc@zhaoxin.com, Lyle Li <LyleLi@zhaoxin.com>
+Subject: Re: [PATCH v1 2/3] x86/mce: Add zhaoxin.c to support Zhaoxin MCA
+Message-ID: <202409100925.oZtxKGQi-lkp@intel.com>
+References: <20240909104349.3349-3-TonyWWang-oc@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ2PR11MB8452:EE_
-X-MS-Office365-Filtering-Correlation-Id: a54639bd-0535-410e-8044-08dcd13b7a4c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?7k8I8YT5czBHNYT+Y9EhK6rUUnqm+7b9pkbcKFrYx7fpIHvXmqg864OUOX?=
- =?iso-8859-1?Q?tRAgWDRT+h7S8R6Oy3KAHnSSISRFjoLJnEN/kv1Mevk6MxyQq1VgoVO2az?=
- =?iso-8859-1?Q?SpCucnrLK72OkYwfCkWE4+OeKYLBXui5XnsUqgosfDMa4f7KvIRlQXnH3B?=
- =?iso-8859-1?Q?FRewevH2O2HXWi+nx0sj8RQWE6c4+LecRXKQ7ZGxcPDi2GVfz8iI4ZYhbC?=
- =?iso-8859-1?Q?RqK6xP4+6rzFbheXWKCJxuBTSn4O5Vu/S1kgh2QQlP3nnh+kCZV2XnHvpG?=
- =?iso-8859-1?Q?uRIV7hviowio/6D2NPeK7BuUEHBoKMd1LSSivoCl1y8fney547F+uiHLWz?=
- =?iso-8859-1?Q?CIf0Mb0DxCL4rcq7PoImGnMxBH/ax6wUXH3Yrd0BQUqYWxwrlGP6drx49/?=
- =?iso-8859-1?Q?jPrl70nmURMI0u6e0xMRbVWtLwmWjY88NHkXaAgJB/+tp4u59vxYh0M02i?=
- =?iso-8859-1?Q?WO34lS5YBNU8IhmaY8EcTouXvk54WsS1okZT0K3Dpq3tXlMdioTmKBL/FA?=
- =?iso-8859-1?Q?qmazf1jBulj/g0XDU8NfDdt/N1Eke44jJqsKfLM2ZmaeAfD9iETI52wuDE?=
- =?iso-8859-1?Q?k6PbTeMtHShL7+nYZZYY2gBP+j0o8tgI6lqmTqm/gUOLbHd7NeiOcGtzvV?=
- =?iso-8859-1?Q?Mwsrkp50XNVu5hsa7qdOL5gdgXUKFwJpM9nfTxYqsvz8K9JA0vvpIl0Rc2?=
- =?iso-8859-1?Q?vjrML66FtA6JJRByZVGLEOCzJnJtT8e35trzJN20/vHO3BNS1cEnJYCap/?=
- =?iso-8859-1?Q?VRC7YN/lZnqhvhE/itiooutznyCyqdntL0aj3L7/O0tgmu8luwQ9nZdOt3?=
- =?iso-8859-1?Q?rWyxz/nfVNzfKaFLNsk32XDLbO7QN1R9YOBedUOslnOWWUok6NIkBVQ4WU?=
- =?iso-8859-1?Q?H+bowTtql4ngplkg+hfwnOsuVyQpdc76JIrGW0OL325nqSWX97s20nGPvm?=
- =?iso-8859-1?Q?v72ZNjt6Ao4HBUMBwc/rWG8icYINT9TAJYFMh/BKGGvMHZj8PW42x+mw86?=
- =?iso-8859-1?Q?65+d/t8CLoANcjAa8oJbFA2lzLUNZGBo1NUuGFnEEpO9sMX3kE1DbK4I48?=
- =?iso-8859-1?Q?EKOrH0Ovpyd2ozxIO02Tij+LcrFlzPpo1BEmcnMJl647etH9b3JuuQ+iCI?=
- =?iso-8859-1?Q?4JYXC96MWvXh9KBAhAz321/YES1vxRHtsb+W1BT5Ub5p9jfoCGc2V/JX26?=
- =?iso-8859-1?Q?k7kZHke7+hhSYbedXl9R9mr5mtVQAZzrtYQ7mzcTwM5MfxPuoLjM6DwyUG?=
- =?iso-8859-1?Q?nLfFp+QoLlklupdrYPHvkMMNNcvRJGzfOKSLk18mY7MpZOG7TQPot7cOCN?=
- =?iso-8859-1?Q?/dIcJ4Jsai/fczLgTbmpoUIIyx4XZ4Y/OpGG4EQGm0BQZJ2gORNjY322nU?=
- =?iso-8859-1?Q?ZX6aygmUqLuD9gFO3flLJqJxD6kWmHTA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?4ZfaycIpXnGf70JNak2nsh080qfA7uqu957O+69ehY7Wg8AoA21/KvwPwI?=
- =?iso-8859-1?Q?O4nV66KEpo0RdCWooR4/LG2VlYTQ1bEgamq3RmrU91GmLr18exizdvJBij?=
- =?iso-8859-1?Q?VLHIz6P8xZa/+gctCQK8HTxXWUZpc2cN8bnmeOT2GfcY//11N7D3QN7T+6?=
- =?iso-8859-1?Q?ymjh4BepdV+FvxOMtlv2wyiHTMHkJjSY9UzezdToIvesPAtZ2Sc4qJ7cec?=
- =?iso-8859-1?Q?OyHio/U3U4lfKTeO0MUJ8I16JEAROnvLE5PwQFMR612hMOZiAvuBeLtO57?=
- =?iso-8859-1?Q?mSwQGA7kjrwrJwq41VOIi4/9LGn139OUXJwln40rM+dRPEc4zE7rAB60L5?=
- =?iso-8859-1?Q?lo42Zi+g+FXuD0UurfZKhUjcgIQNWPjA4wM1EvGiqbnDIeTpVDZ5OzMQef?=
- =?iso-8859-1?Q?1VIn6SkMxo/X6pf1P0O8pyE/b/tkBrxGvr3Vdjub/ekg2P/QoNcF0Odxuh?=
- =?iso-8859-1?Q?fJZzHEEMjc+XxtyMVSoZOyb6FSfcfb8qaiUka8Qqatg6HUnnXfHBhc8mN7?=
- =?iso-8859-1?Q?W06Ic6pSDY32r/O7PZX3Fu00GqebXxZzDdWL2sl/00whfeeRN+/mg0qU7u?=
- =?iso-8859-1?Q?vngpfwRgaaIwCovmnIlLArbUoPoohzAzfSd3A8JSFgz+0gqfjR1mo4KV2Y?=
- =?iso-8859-1?Q?Lpmulk2xj62h+YtNBJuKtcXhfwKbbSSdkET6H8IgEkKtHltoAaXoxYBxoV?=
- =?iso-8859-1?Q?5hr4ykrt99RUka2jYbOziwz/ydGCj8K5pqQ9DMY1Ihac49CRkks/TTq+wK?=
- =?iso-8859-1?Q?z8Hd5bTQvkW7Jd0DHyxVCfNsHWvyFTwJDQmPAN0OAS7QvoxxtbKg8YIOUa?=
- =?iso-8859-1?Q?eAMctTE+N/xZVQGRRC4TufKmHKSb3ac7ykZ1O+O0KvwmiFz6F1BIBadZcP?=
- =?iso-8859-1?Q?K0/imEMazs+1HB55GfQ/KwDAdwQfIjjmXA0d99sZufdYCkg238fvffrvtE?=
- =?iso-8859-1?Q?3r6HEAOkkUaikw2kRa1Ixd6FT+IOzIZca5vcTbm/3Zdc2v7Kd2OAWDD/rL?=
- =?iso-8859-1?Q?tdMtgZd8B0YNsEo0QC935VTkJF1gRhhGo1VXANkXe1Ts41hRm6OF9e7P7W?=
- =?iso-8859-1?Q?gTLobZjqjY36raMaQSByZDg9uC9qSq2FsvMlcbouJ5x7LpWlpdFvFxc2Od?=
- =?iso-8859-1?Q?SgCtP3qc0EcC6iFGLAO+K9G8qTmNXiBwFb9SNXCRdlGZ7/+qk4nNuWcFAZ?=
- =?iso-8859-1?Q?zfw4ljdwHqRFEFd98j9hFwMu3+yrymXysORU3hWjrmOJk0oUSiPJnJBhKk?=
- =?iso-8859-1?Q?Q9te9aoWoVoZkGeAR2ob1FyZs0wJSHUudDIEsk0Nvlpg3Zvr5D10MMPM+z?=
- =?iso-8859-1?Q?La8/HGZEpgrqxN3/2dgkK8uoBq+wO2ZIfmNiJAumVlamtSoY6icXw5tewe?=
- =?iso-8859-1?Q?FBQcYISI6V30QR/D7Tu1EK5BidY1d5GE17BvpRtzrW68R83SpF4P0eWgAq?=
- =?iso-8859-1?Q?l/aI7JpNCoU3wnPbX7OI3IrppoJSsIkLybUU8oEVcP4hkILaJKaRqL6Rir?=
- =?iso-8859-1?Q?+FQA4WlQggeSReJr0cwkIcinm+PB3R3IiIkoz5vIqo2ejZslfGPy+IvcLN?=
- =?iso-8859-1?Q?rA0CHBLHCHsBfsP6XlZSKBvBi5/eQ7gKEjPaPXnWJjiHuUht0l9SEvaeHG?=
- =?iso-8859-1?Q?SOnDnCx2op2QdPPyQUVw+2Navt2NeN1CWG?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a54639bd-0535-410e-8044-08dcd13b7a4c
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 01:54:16.5891
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TmZg/juyn4WZKx1ctCXFcEQb12XvqN1+ucY+b7caIvV8XbB/tayVBMJHHrrc2hWC62wTwlUWC0f01p9JmEHaSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8452
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909104349.3349-3-TonyWWang-oc@zhaoxin.com>
 
-On Tue, Sep 10, 2024 at 05:03:57AM +0800, Edgecombe, Rick P wrote:
-> On Fri, 2024-09-06 at 14:10 +1200, Huang, Kai wrote:
-...
-> > > +        * which causes gmem invalidation to zap all spte.
-> > > +        * Population is only allowed after KVM_TDX_INIT_VM.
-> > > +        */
-> > 
-> > What does the second sentence ("Population ...")  meaning?  Why is it 
-> > relevant here?
-> > 
-> How about:
-> /*
->  * HKID is released after all private pages have been removed,
->  * and set before any might be populated. Warn if zapping is
->  * attempted when there can't be anything populated in the private
->  * EPT.
->  */
-> 
-> But actually, I wonder if we need to remove the KVM_BUG_ON(). I think if you did
-> a KVM_PRE_FAULT_MEMORY and then deleted the memslot you could hit it?
-If we disallow vCPU creation before TD initialization, as discussed in [1],
-the BUG_ON should not be hit.
+Hi Tony,
 
-[1] https://lore.kernel.org/all/ZtAU7FIV2Xkw+L3O@yzhao56-desk.sh.intel.com/
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/master linus/master v6.11-rc7 next-20240909]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tony-W-Wang-oc/x86-mce-Add-centaur-vendor-to-support-Zhaoxin-MCA/20240909-192507
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20240909104349.3349-3-TonyWWang-oc%40zhaoxin.com
+patch subject: [PATCH v1 2/3] x86/mce: Add zhaoxin.c to support Zhaoxin MCA
+config: x86_64-buildonly-randconfig-001-20240910 (https://download.01.org/0day-ci/archive/20240910/202409100925.oZtxKGQi-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409100925.oZtxKGQi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409100925.oZtxKGQi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_init':
+>> severity.c:(.text+0x2c0): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/severity.o: in function `mce_zhaoxin_feature_clear':
+>> severity.c:(.text+0x2f0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_init':
+   genpool.c:(.text+0x10): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/genpool.o: in function `mce_zhaoxin_feature_clear':
+   genpool.c:(.text+0x40): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/amd.o: in function `mce_zhaoxin_feature_init':
+   amd.c:(.text+0x1730): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/amd.o: in function `mce_zhaoxin_feature_clear':
+   amd.c:(.text+0x1760): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_init':
+   threshold.c:(.text+0x70): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/threshold.o: in function `mce_zhaoxin_feature_clear':
+   threshold.c:(.text+0xa0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/inject.o: in function `mce_zhaoxin_feature_init':
+   inject.c:(.text+0xd80): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/inject.o: in function `mce_zhaoxin_feature_clear':
+   inject.c:(.text+0xdb0): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+   ld: arch/x86/kernel/cpu/mce/apei.o: in function `mce_zhaoxin_feature_init':
+   apei.c:(.text+0xf0): multiple definition of `mce_zhaoxin_feature_init'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1950): first defined here
+   ld: arch/x86/kernel/cpu/mce/apei.o: in function `mce_zhaoxin_feature_clear':
+   apei.c:(.text+0x120): multiple definition of `mce_zhaoxin_feature_clear'; arch/x86/kernel/cpu/mce/core.o:core.c:(.text+0x1980): first defined here
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
