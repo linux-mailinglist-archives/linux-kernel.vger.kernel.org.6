@@ -1,456 +1,137 @@
-Return-Path: <linux-kernel+bounces-323227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE76F9739C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:23:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FDE9739CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4C81F25F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7DADB23093
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F72B1946A1;
-	Tue, 10 Sep 2024 14:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3400142659;
+	Tue, 10 Sep 2024 14:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FEljLz4k"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXpV8isa"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1775192B61
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED81940B3;
+	Tue, 10 Sep 2024 14:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978223; cv=none; b=fEkHW5mcmDbuf5bT/ol+naPTWFGt1Rps05L/5pQEZJkqZLen+P+TXv7/MHzFInX954GxkibUvvd+qIJ5rqv1MJLHRaqEmkkOMe1RzKucnmnWGPlkF/qzdOSXCopIK29kY9kucDn3+ltrfFFpJznHByYehl6SFf80hcewszoJZjQ=
+	t=1725978298; cv=none; b=cf0HF4mXqp0S3Jhk9430L1UGCEqRVl7tmWOkAySv+uwO1uLmfBOPpgPQpvQLjTSQ7djgOL+kHCzdnXKCPEjM6gN9yhVOHjmYxGWuWi67aIlNaaC5jNG2c725FwlmFc7HTRQgnAfQ7F2jc4LYsWegzg0bg2gMGWsWS1rdojq2bCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978223; c=relaxed/simple;
-	bh=+1YqaLbIO1CjRIJVaIUWgdhsDBcc9eaeXoXrcHJEiNI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qLxESWWLHsLdnoCbUdsnrdyMroZgqeTP7eRYq5tlltilfOUn4Z4FX/3sdnuviKTuR40AzCYvd6Ychom9+m7g206lfWcuGwQ7LXh6GCiVmw2GVxUnHF0ljYKeTthhrZqv1ZbvkXCe4bPg202xZNIZpXV0Pn9rh3YL/KOanOPN/r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FEljLz4k; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1a892d8438so12684254276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:23:40 -0700 (PDT)
+	s=arc-20240116; t=1725978298; c=relaxed/simple;
+	bh=iblGsesf+qatfMugpTsnZooHEzQube0q6SuU9idT9dw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LStdODB06CXwcVj9z72Pfe8h0C7Jh4XXZsFJGlDT+aPthX66esnKJAhqavbckuEoL/HseJhQ80G3I4zGvf047ldTkFQdXTskr02sI0GxVNA+Hy9Z4iP+ChitSzxqU44qfrVsgykUShhd0HCqyPa8dL1MtTQCCRg5O11Ap6VTnfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mXpV8isa; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so10156021a12.1;
+        Tue, 10 Sep 2024 07:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725978220; x=1726583020; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Olug6AQaTJGMOFMC9Y5gNODWVqmmf2I8DQqECAprRYI=;
-        b=FEljLz4kZUtsumb2XDnLMrwN8NU4sSMIUX2N4pkWycB7oenQlkcLycL4Th2MsGQY5J
-         suDc6ShBRyHtfduO8ywmtChehNlld4Lw3uHEii4SbOBTAxxHZI3dZRWszdX4BEhOQDMt
-         3kXDCIfG7MPExbknrEislLl40i+8PtH5o0FxV6yeHrvC5MO7+4BUAfoXSh/oo9Z4ePZu
-         BHKgOFdHCBIq42kW1M0CSLnJkjMw003Uv4QytgyKzm99/dJmPOMphPKRtQALUcrb+RJY
-         I9f518088uknYYjZN2lgSZPHzNcx9BsSkQYH4WiF3osyUIzfX9FozlL24WunMWCHrLnp
-         tlfw==
+        d=gmail.com; s=20230601; t=1725978295; x=1726583095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4vmBAKC5QXfQz0rRIf9Z2p4jESxpl6Ko8ovtsj9BxU4=;
+        b=mXpV8isaRb4K3b7uyDEoBlS/7ODxGPQjH2vMbwjS9yVXyQ1PxxJMTtos3evcOz15H3
+         9AKXmTk9rIMOWYQNmsSTa58ORCGM9a/5jhkJf/P+hvKNwOQAonUHl98H4DNj9D4ArFsi
+         GhY9Z9LYYH46uzVCbeujlYQM5KiaVoWFUFBa9iZPmD/C7YxeUj7db9cWYF7JV1e3teBj
+         WcDSSFFRtxy3wIxw+S+Fqs6EZq2fz3tijL0qi4vP+8XyBs1zYOf3iyA0sf0A8G2+WHy8
+         2SvLuPvS105Cz52BhlmAaYfRuWWhgRmk33wey40xuXkOGyo2JmNp2eoLqHKXGckiWqRL
+         ngOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725978220; x=1726583020;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Olug6AQaTJGMOFMC9Y5gNODWVqmmf2I8DQqECAprRYI=;
-        b=FDB86HC+Cyg+AvRFpu2IvEJzZuxVuXafU+2BbFvrkip0zYlY1B7C5J7ZYt0MzB5coa
-         y8N7t0jd50/FY3/IfTkPuti42GUGcQduJGdwc40qbgWiccB3XqgYIQN6AuZEai7dBEFM
-         wRqbTQPLBG9hcseP4pgH7P2LHGDMqJ/t9dprms+BQYQRJbiROOUz2KbQXgl0/a8Ij8Ey
-         ioOl3aO15/8YEGQAkkUkSH8KfPpk9IbkwhfNFa+MBNal/nZYo+VZndmZMV/oBt6BtHnz
-         CJ2v7W2HoUr5JMN1BxLnCsO0hzhTrGTIW4aiv3gGtqPhrhWLT6NelWsOB9H/vIk0NQcC
-         MIUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNhVy9arx270wHEtA8xlO/+WN4o/ig7Lt8OSkPZdh7I3+oppQKjZNFCsCneIWvaB6AjbBxuLEEP5kbdmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPF3nzvAPy4GBrbMEcDKwBNYFVDL+QQGFXCuU7abs1mM4k7CEo
-	CGTeRcmZC6edzLYw3zqNBLOj3MJb2b7CpvqAZTQ9Dd4qQpQlXxFoEA4WyWxdkkusPh6E453hYVw
-	prqSPRaetJbv9Lw==
-X-Google-Smtp-Source: AGHT+IG7QvC40hbkPA/X6AH0RBFhgbcVbClixvfL0T+gKW4X8da6e4P+cBWJXngYaFcbI1VPdvu+puiRaEQJpAQ=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a25:5f08:0:b0:e0b:f1fd:1375 with SMTP id
- 3f1490d57ef6-e1d34a1fb19mr22364276.10.1725978219872; Tue, 10 Sep 2024
- 07:23:39 -0700 (PDT)
-Date: Tue, 10 Sep 2024 14:23:34 +0000
+        d=1e100.net; s=20230601; t=1725978295; x=1726583095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4vmBAKC5QXfQz0rRIf9Z2p4jESxpl6Ko8ovtsj9BxU4=;
+        b=sWDwumrOrTfkY60tQ9YV43r+upGlr19eH37Q9R9R0Yvu9ayCfuKllzp5B1boGuxWND
+         a2sUwf3LKI1jqghw9zmyL2VI9GX0k9DCnsAG+G6oidUzYx9m+YcR4KbWzqrdXTXLLD2J
+         uBMGFsSidY19irTw7QcnpMNkdgmedgeZv/oabzJvlqALrm+q+S5QcvgxSzUACBYOxVkp
+         6clUKzzA0Z8qfi8Z9wh0RYYf/5ZFvHV1Rp5pCjYgkaRU70/VKti75ATPXWBJxLBKy8s0
+         cCcGnA13yRi6horkSgFi0BU87b4JGfFmksHypHtRDZRawm82ExlEQVp8SYHo6jVKxJuY
+         iRlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnWOUnq/NObr9kzCQlVmraASTBpki1DcBhRJ8bUhXlgNEutyfaOJn22TZT+fLSStVNifW2f8xMyrxC@vger.kernel.org, AJvYcCWcl8PBo9LZG+/V8TNS4PyniBYwFBHrAzP1iS5Do1YJu+jADWmpj7rVrmuEdOS8btNpuNSDMCxkSfsHxHuL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKahrpgT+LOj9lzAGX2LWHFe4CJyKzTLcYQGrJflczXUyxsMPw
+	wDhrPekB4yj94F0eFtcmECWNOtp8xnH4K15cLGd6ShHzSstQsSKz
+X-Google-Smtp-Source: AGHT+IE324M2oz7wNOu0HvJ0/xO0r1nHr257GxZAcmeyxJSKjssmUPoRJvcXfRI024UG/6LuqMFwuQ==
+X-Received: by 2002:a05:6402:51d3:b0:5c2:1014:295a with SMTP id 4fb4d7f45d1cf-5c4015cc7b8mr3899021a12.2.1725978294468;
+        Tue, 10 Sep 2024 07:24:54 -0700 (PDT)
+Received: from localhost.localdomain ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd466dcsm4332012a12.24.2024.09.10.07.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 07:24:54 -0700 (PDT)
+From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
+To: robh@kernel.org
+Cc: saravanak@google.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
+Subject: [PATCH] drivers/of: Improve documentation on match string
+Date: Tue, 10 Sep 2024 16:24:22 +0200
+Message-ID: <20240910142422.341672-1-mikisabate@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAGVW4GYC/3XMQQ6CMBCF4auQWVvTThGIK+9hXJQ6wCRiTVsbD
- OHuFlZq4vK95PtnCOSZAhyLGTwlDuzueehdAXYw954EX/MGlFjKBisRoolsxfiMNAlTtogNSaq
- MgUwenjqettz5kvfAITr/2upJre+fUFJCCaNKolodKtXpU+9cf6O9dSOspYSfuv7RmLWqO6uxR ak1fullWd4H66rw5wAAAA==
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13002; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=+1YqaLbIO1CjRIJVaIUWgdhsDBcc9eaeXoXrcHJEiNI=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm4FZoStRz0LGMrtqo3i9tpXUHFYZ1DC31hn9oN
- dMTlFyPZpKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZuBWaAAKCRAEWL7uWMY5
- Rkr5D/9mFGkOY2c0itwL8zHPQwJ3I1vHmtwOvY7D1zzrOojkq0zQVWwjBkQ4KsEX3IQeWyZR3H/
- Jp3OIIxXnO2XE0cLVzGuOqbPxkBRFq5h7FG8s7DCGRQLVOb6/NCucFG2LE3pzJNLbt1FSKxj/4k
- YqVWWhPAzaRjiDLN2KjRLyyUPsGbxOdGoVEzKFFgkr0L+ADhOuhCWgWIptJL4uhTALoHjDqlWue
- ViNkayabbL8oTv/uK6u1SfGSn81Cl+aWX03klSGzQiVR+cv67kkfdA+8OZmsHshz8OmerNqy2mT
- Ty/OyNosuWdEM9sgS3lcWF+9+m9FPrDxW44MumCYoLSjpUdTZ+0B4CU0ayZl3r6QN10h1bR6ihC
- 87BmiiPSdjZTdL5OtZma6jRvmGPkE1PxKby7Nj/eZHxc6IRzTiCLy0zEG0R4TvyUGYsLXMlqjxL
- evvwae3kOKXp7LvpuchKOzqlKqHcMEYJHkaV+F+uQ1mYt+vQonMgS/ijdpy9oG/XWCkBjhatL89
- tt+sgIYwX6D7eezjy0K95BN5ddLJbt5eNopmB3B/69nijPGRhasGo6bp7fNW2lRSBZ0gFTgznA1
- rfQXro+COF4HocuSSe9hVt/pfKPYJesBXqM9jVE6B96TLq0WENm/5xsbzWez8x3AP3YuYVdtAHV LmoUxsLsW4Z/BCw==
-X-Mailer: b4 0.13.0
-Message-ID: <20240910-static-mutex-v3-1-5bebd11bdf3b@google.com>
-Subject: [PATCH v3] rust: add global lock support
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add support for creating global variables that are wrapped in a mutex or
-spinlock. Optionally, the macro can generate a special LockedBy type
-that does not require a runtime check.
+The description of the function now explicitly states that it's
+an *exact* match for the given string (i.e. not a submatch). It also
+better states all the possible return values.
 
-The implementation here is intended to replace the global mutex
-workaround found in the Rust Binder RFC [1]. In both cases, the global
-lock must be initialized before first use. The macro is unsafe to use
-for the same reason.
+Moreover, this commit also makes sure that -ENODATA is returned if
+prop->length is zero, just like it's done in other functions such as
+'of_property_read_string'.
 
-The separate initialization step is required because bindgen refuses to
-expose __ARCH_SPIN_LOCK_UNLOCKED to Rust as a compile-time constant. It
-just generates an `extern "C"` global reference instead. In the future,
-we could expose the value of __ARCH_SPIN_LOCK_UNLOCKED to Rust in a way
-that Rust can understand. This would remove the need for a separate
-initialization step.
-
-Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08ba9197f637@google.com/#Z31drivers:android:context.rs [1]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
 ---
-I've been having some trouble with the kunit tests. The import of
-__static_lock_ty_$name fails when I try with kunit, but copying the same
-code into a sample does not reproduce the error. Suggestions would be
-appreciated.
----
-Changes in v3:
-- Rewrite to provide a macro instead.
-- Link to v2: https://lore.kernel.org/r/20240827-static-mutex-v2-1-17fc32b20332@google.com
+ drivers/of/property.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-Changes in v2:
-- Require `self: Pin<&Self>` and recommend `Pin::static_ref`.
-- Other doc improvements including new example.
-- Link to v1: https://lore.kernel.org/r/20240826-static-mutex-v1-1-a14ee71561f3@google.com
----
- rust/kernel/sync.rs             |   1 +
- rust/kernel/sync/lock.rs        |  31 +++++-
- rust/kernel/sync/lock/global.rs | 237 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 268 insertions(+), 1 deletion(-)
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 164d77cb9445..1ff51d93178f 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -452,12 +452,17 @@ EXPORT_SYMBOL_GPL(of_property_read_string);
 
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5..2e97e22715db 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -14,6 +14,7 @@
- 
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
-+pub use lock::global::global_lock;
- pub use lock::mutex::{new_mutex, Mutex};
- pub use lock::spinlock::{new_spinlock, SpinLock};
- pub use locked_by::LockedBy;
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index f6c34ca4d819..3ae7a278016d 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -7,12 +7,14 @@
- 
- use super::LockClassKey;
- use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
--use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
-+use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned, pin::Pin};
- use macros::pin_data;
- 
- pub mod mutex;
- pub mod spinlock;
- 
-+pub(super) mod global;
-+
- /// The "backend" of a lock.
- ///
- /// It is the actual implementation of the lock, without the need to repeat patterns used in all
-@@ -117,6 +119,33 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
-             }),
-         })
-     }
-+
-+    /// # Safety
-+    ///
-+    /// Before any other method on this lock is called, `global_lock_helper_init` must be called.
-+    #[doc(hidden)]
-+    pub const unsafe fn global_lock_helper_new(state: Opaque<B::State>, data: T) -> Self {
-+        Self {
-+            state,
-+            data: UnsafeCell::new(data),
-+            _pin: PhantomPinned,
-+        }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// * This lock must have been created using `global_lock_helper_new`.
-+    /// * Must only be called once for each lock.
-+    #[doc(hidden)]
-+    pub unsafe fn global_lock_helper_init(
-+        self: Pin<&Self>,
-+        name: &'static CStr,
-+        key: &'static LockClassKey,
-+    ) {
-+        // SAFETY: The pointer to `state` is valid for the duration of this call, and both `name`
-+        // and `key` are valid indefinitely.
-+        unsafe { B::init(self.state.get(), name.as_char_ptr(), key.as_ptr()) }
-+    }
- }
- 
- impl<T: ?Sized, B: Backend> Lock<T, B> {
-diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
-new file mode 100644
-index 000000000000..c1eb25d37abd
---- /dev/null
-+++ b/rust/kernel/sync/lock/global.rs
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2024 Google LLC.
-+
-+//! Support for defining statics containing locks.
-+
-+/// Defines a global lock.
-+///
-+/// Supports the following options:
-+///
-+/// * `value` specifies the initial value in the global lock.
-+/// * `wrapper` specifies the name of the wrapper struct.
-+/// * `guard` specifies the name of the guard type.
-+/// * `locked_by` specifies the name of the `LockedBy` type.
-+///
-+/// # Examples
-+///
-+/// A global counter.
-+///
-+/// ```
-+/// kernel::sync::global_lock! {
-+///     // SAFETY: Initialized in module initializer before first use.
-+///     static MY_COUNTER: Mutex<u32> = unsafe { uninit };
-+///     value: 0;
-+/// }
-+///
-+/// fn increment_counter() -> u32 {
-+///     let mut guard = MY_COUNTER.lock();
-+///     *guard += 1;
-+///     *guard
-+/// }
-+///
-+/// impl kernel::Module for MyModule {
-+///     fn init(_module: &'static ThisModule) -> Result<Self> {
-+///         // SAFETY: called exactly once
-+///         unsafe { MY_COUNTER.init() };
-+///
-+///         Ok(MyModule {})
-+///     }
-+/// }
-+/// # struct MyModule {}
-+/// ```
-+///
-+/// A global mutex used to protect all instances of a given struct.
-+///
-+/// ```
-+/// kernel::sync::global_lock! {
-+///     // SAFETY: Initialized in module initializer before first use.
-+///     static MY_MUTEX: Mutex<()> = unsafe { uninit };
-+///     value: ();
-+///     guard: MyGuard;
-+///     locked_by: LockedByMyMutex;
-+/// }
-+///
-+/// /// All instances of this struct are protected by `MY_MUTEX`.
-+/// struct MyStruct {
-+///     my_counter: LockedByMyMutex<u32>,
-+/// }
-+///
-+/// impl MyStruct {
-+///     /// Increment the counter in this instance.
-+///     ///
-+///     /// The caller must hold the `MY_MUTEX` mutex.
-+///     fn increment(&self, guard: &mut MyGuard) -> u32 {
-+///         let my_counter = self.my_counter.as_mut(guard);
-+///         *my_counter += 1;
-+///         *my_counter
-+///     }
-+/// }
-+///
-+/// impl kernel::Module for MyModule {
-+///     fn init(_module: &'static ThisModule) -> Result<Self> {
-+///         // SAFETY: called exactly once
-+///         unsafe { MY_MUTEX.init() };
-+///
-+///         Ok(MyModule {})
-+///     }
-+/// }
-+/// # struct MyModule {}
-+/// ```
-+#[macro_export]
-+macro_rules! global_lock {
-+    {
-+        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valuety:ty> = unsafe { uninit };
-+        value: $value:expr;
-+        wrapper: $wrapper:ident;
-+        $( name: $lname:literal; )?
-+        $(
-+            guard: $guard:ident;
-+            locked_by: $locked_by:ident;
-+        )?
-+    } => {
-+        $crate::macros::paste! {
-+            type [< __static_lock_ty_ $name >] = $valuety;
-+
-+            #[allow(unused_pub)]
-+            mod [< __static_lock_mod_ $name >] {
-+                use super::[< __static_lock_ty_ $name >] as Val;
-+                type Backend = $crate::global_lock_inner!(backend $kind);
-+                type GuardTyp = $crate::global_lock_inner!(guard $kind, Val $(, $guard)?);
-+
-+                /// # Safety
-+                ///
-+                /// Must be used to initialize `super::$name`.
-+                pub(super) const unsafe fn new() -> $wrapper {
-+                    let state = $crate::types::Opaque::uninit();
-+                    $wrapper {
-+                        // SAFETY: The user of this macro promises to call `init` before calling
-+                        // `lock`.
-+                        inner: unsafe {
-+                            $crate::sync::lock::Lock::global_lock_helper_new(state, $value)
-+                        }
-+                    }
-+                }
-+
-+                /// Wrapper type for a global lock.
-+                pub struct $wrapper {
-+                    inner: $crate::sync::lock::Lock<Val, Backend>,
-+                }
-+
-+                impl $wrapper {
-+                    /// Initialize the global lock.
-+                    ///
-+                    /// # Safety
-+                    ///
-+                    /// This method must not be called more than once.
-+                    pub unsafe fn init(&'static self) {
-+                        // SAFETY:
-+                        // * This type can only be created by `new`.
-+                        // * Caller promises to not call this method more than once.
-+                        unsafe {
-+                            $crate::sync::lock::Lock::global_lock_helper_init(
-+                                ::core::pin::Pin::static_ref(&self.inner),
-+                                $crate::optional_name!($($lname)?),
-+                                $crate::static_lock_class!(),
-+                            );
-+                        }
-+                    }
-+
-+                    /// Lock this global lock.
-+                    pub fn lock(&'static self) -> GuardTyp {
-+                        $crate::global_lock_inner!(new_guard $($guard)? {
-+                            self.inner.lock()
-+                        })
-+                    }
-+                }
-+
-+                $(
-+                pub struct $guard($crate::sync::lock::Guard<'static, Val, Backend>);
-+
-+                impl ::core::ops::Deref for $guard {
-+                    type Target = Val;
-+                    fn deref(&self) -> &Val {
-+                        &self.0
-+                    }
-+                }
-+
-+                impl ::core::ops::DerefMut for $guard {
-+                    fn deref_mut(&mut self) -> &mut Val {
-+                        &mut self.0
-+                    }
-+                }
-+
-+                pub struct $locked_by<T: ?Sized>(::core::cell::UnsafeCell<T>);
-+
-+                impl<T> $locked_by<T> {
-+                    pub fn new(val: T) -> Self {
-+                        Self(::core::cell::UnsafeCell::new(val))
-+                    }
-+                }
-+
-+                impl<T: ?Sized> $locked_by<T> {
-+                    pub fn as_ref<'a>(&'a self, _guard: &'a $guard) -> &'a T {
-+                        // SAFETY: The lock is globally unique, so there can only be one guard.
-+                        unsafe { &*self.0.get() }
-+                    }
-+
-+                    pub fn as_mut<'a>(&'a self, _guard: &'a mut $guard) -> &'a mut T {
-+                        // SAFETY: The lock is globally unique, so there can only be one guard.
-+                        unsafe { &mut *self.0.get() }
-+                    }
-+
-+                    pub fn get_mut(&mut self) -> &mut T {
-+                        self.0.get_mut()
-+                    }
-+                }
-+                )?
-+            }
-+
-+            use [< __static_lock_mod_ $name >]::$wrapper;
-+            $( use [< __static_lock_mod_ $name >]::{$guard, $locked_by}; )?
-+
-+            $(#[$meta])*
-+            $pub static $name: $wrapper = {
-+                // SAFETY: We are using this to initialize $name.
-+                unsafe { [< __static_lock_mod_ $name >]::new() }
-+            };
-+        }
-+    };
-+
-+    {
-+        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valuety:ty> = unsafe { uninit };
-+        value: $value:expr;
-+        $( name: $lname:literal; )?
-+        $(
-+            guard: $guard:ident;
-+            locked_by: $locked_by:ident;
-+        )?
-+    } => {
-+        $crate::macros::paste! {
-+            $crate::global_lock! {
-+                $(#[$meta])* $pub static $name: $kind<$valuety> = unsafe { uninit };
-+                value: $value;
-+                wrapper: [< __static_lock_wrapper_ $name >];
-+                $( name: $lname; )?
-+                $( guard: $guard; locked_by: $locked_by; )?
-+            }
-+        }
-+    }
-+}
-+pub use global_lock;
-+
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! global_lock_inner {
-+    (backend Mutex) => { $crate::sync::lock::mutex::MutexBackend };
-+    (backend SpinLock) => { $crate::sync::lock::spinlock::SpinLockBackend };
-+    (guard Mutex, $val:ty) => {
-+        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::mutex::MutexBackend>
-+    };
-+    (guard SpinLock, $val:ty) => {
-+        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::spinlock::SpinLockBackend>
-+    };
-+    (guard $kind:ident, $val:ty, $name:ident) => { $name };
-+    (new_guard { $val:expr }) => { $val };
-+    (new_guard $name:ident { $val:expr }) => { $name($val) };
-+}
+ /**
+  * of_property_match_string() - Find string in a list and return index
+- * @np: pointer to node containing string list property
++ * @np: pointer to the node containing the string list property
+  * @propname: string list property name
+- * @string: pointer to string to search for in string list
++ * @string: pointer to the string to search for in the string list
+  *
+- * This function searches a string list property and returns the index
+- * of a specific string value.
++ * Search for an exact match of string in a device node property which is a
++ * list of strings.
++ *
++ * Return: the index of the first occurrence of the string on success, -EINVAL
++ * if the property does not exist, -ENODATA if the property does not have a
++ * value, and -EILSEQ if the string is not null-terminated within the length of
++ * the property data.
+  */
+ int of_property_match_string(const struct device_node *np, const char *propname,
+ 			     const char *string)
+@@ -469,7 +474,7 @@ int of_property_match_string(const struct device_node *np, const char *propname,
 
----
-base-commit: 93dc3be19450447a3a7090bd1dfb9f3daac3e8d2
-change-id: 20240826-static-mutex-a4b228e0e6aa
+ 	if (!prop)
+ 		return -EINVAL;
+-	if (!prop->value)
++	if (!prop->value || !prop->length)
+ 		return -ENODATA;
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+ 	p = prop->value;
+--
+2.46.0
 
 
