@@ -1,243 +1,278 @@
-Return-Path: <linux-kernel+bounces-323380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53EB973C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:42:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED123973C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BAB1C23C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8112880B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C51E19D084;
-	Tue, 10 Sep 2024 15:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C44119CCED;
+	Tue, 10 Sep 2024 15:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bv+5rqep"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011004.outbound.protection.outlook.com [52.101.70.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0S8baMJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D28143C4C;
-	Tue, 10 Sep 2024 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725982969; cv=fail; b=kSTn5ScOQbSRgU25UAK/ul3ZG1zaaVe/6MUj9CfklE+H2vcI6To3AoL9EbbACRoaD3fhqckW8u3OfHm+84ut94juYXIF6iI/KPfpfDgM7ceXv/JJwvhg5nL877FAS9gzSSXhILEgg887/VllSEPeHqOo/ox83luRv/JbfJ3LuGQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725982969; c=relaxed/simple;
-	bh=IBZUKSgLgav2L+fSTtWQvngF47CV73aUF0T9Qq25B9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Tyia2YTFyN7H+sd6xyItFL3uQlZ3++ospqsZo3rRy2/+oQZXiZYuvw8AsvHak9f7pdQx0chhFs3YH2VICRBsbRKJxXuPVr60Bdswf/k+gEoZ5jIaYABRtoZXs4rflCUKSruPMkFJNr9J/xgRNUGVorbDLkwp2NsSByZB0NofebU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bv+5rqep; arc=fail smtp.client-ip=52.101.70.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mviFu+uwer3YpEesRkC+p6db3ttuRNWekhHQWJlRoVdulsrGBpQtFdkRqathMj0E1J9NEDUdVdppUHdBsJyK+fPd1R1NviyDoTvNLYJZXgIwJQVNv6zwZbJ+s5Tmm5b66aHWz01xnUl6pgsQodxU98YG8vXOHyLxuVBFdrZoWN9BsTZ7mdjmZPb95xNhFyfm5mlLaQCSSpUxlW34DzGAHEZ0DifqNVj2PYcgoRaCEJA68xv12gDZY67r0dXa10I+2CFL7/cYaLVBDoLjtcSGEdtLlnNHUvtCDEc9EgkE9rQuipFEAByIerH3eM86Jp14vE8E3tkNiBaUZEr8AXeeBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PVd15gwzMmbX4IDq0LM7jcTcnroH7sFB5JbUnPRPzZE=;
- b=jgdmcvVMYlzF/+5cJ20GL9mkft1p90q14n0FdurK/MGkZ2yWtFxxXBBRrY1B+RptCeyR+/k96GUSCIC1GiPV4Wdory53wGtkja6yaJiKJz0JIQF1nhHjR7ZUF1+EyYjx5n2xXn81RHOCJPEXm06h/biUHQUdyLgJB6LlYeLL9AkTX8Scz4srIa0gJXchL/ZYDj2HNPjSEWZHz740eT0m3nxogSTVOkcyftjmJmQshrR0OD9apvrMPpAeW1szXSC7y9SsZePkAe9UD7TBqHHWOATAeQZyWOUprR6SIwaWZq66cmrE63VypTpcImOP+I2j1LHBBOPCXe/T3pXvC/3jrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PVd15gwzMmbX4IDq0LM7jcTcnroH7sFB5JbUnPRPzZE=;
- b=bv+5rqepjo3sZ1avZqmG8GRdCISPfbgCRsrH5gAGFYr3Ng8jcQn6RXTnjSoGCCV4hf1oJA/vPaFieD7oZ6OHxxlRwR9rRsOzbMBo+PUxITd2iAa55ejRu/5EwoygP4mEb8+cPj7l+4wHkoJCFE4UO1EVZ8gLziG3OeYr4m4F3U0jgxlDGssRXSyg5nb8nFsly0m3prqw9TkpNq5Gr0jYmtUjBiVcU94Og9M0pYVvzAmRtTqJBV59EykdGDqPl5csPckcKcwbYdy1Ny/qLJNtSNbuTC5+60wgZvhepGC5ShH/JBmbCvh2lhnCcsFwNbdqN/MnnWJAQWkSajMHcsJveA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB8061.eurprd04.prod.outlook.com (2603:10a6:102:bb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
- 2024 15:42:44 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 15:42:44 +0000
-Date: Tue, 10 Sep 2024 11:42:35 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: Re: [PATCH 2/3] arm64: dts: imx93-9x9-qsb: add bt-sco sound card
- support
-Message-ID: <ZuBo6zNQcWTTNrzA@lizhi-Precision-Tower-5810>
-References: <1725952772-30357-1-git-send-email-shengjiu.wang@nxp.com>
- <1725952772-30357-3-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1725952772-30357-3-git-send-email-shengjiu.wang@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0109.namprd05.prod.outlook.com
- (2603:10b6:a03:334::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B3143C4C;
+	Tue, 10 Sep 2024 15:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725982977; cv=none; b=llMfEudBRbI/fAMjgB7h1aPxxqoH9MiNsc19uHt5AoSmaAIMCHFP8w6szwcNaI1P4Ft9V1qg52O0457l5RVLiFYaJHYdCOaXfbNQp0FYPseXnEtwG/cS7meTlnyVaZVNkxARqu9NkGyzqAuTP9B8UFPyA8Acte0MFIkGuiXcH70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725982977; c=relaxed/simple;
+	bh=F2jD/aq4O+fKOQIFiKw6rTaEHPdF59QOy1JHPUqettI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chozIKRmY2ZK85vtKLPj/XCQ8CDAjABzRW72xIDo7bKjsYR3DX/wYpviieuvzhzFQoNNyVHiOtQw4SCaJhgfa2NkZwyYKVqwq41EVp4cXfLbk1UCrkExyCyq/xnExsx+dotGm91sTbuI4W32qynIaR1E2HX26LJF3l7i5Mwcl6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0S8baMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A672C4CEC3;
+	Tue, 10 Sep 2024 15:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725982976;
+	bh=F2jD/aq4O+fKOQIFiKw6rTaEHPdF59QOy1JHPUqettI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=F0S8baMJdYwz3aCr0jm3BZ3N4gv9Ma394t9al21f7PIPpZSCfYWnB8IHkBn7oa9f1
+	 WCsZR3vb/rBb8maesPf17L+SDWV7Yz5gJ7i3St1XgmvUdJJBd3HJrj/SCuNNfTQlkr
+	 8csRopfm6SGE+HXvrefs1eqORbRFAvTXZVNNtTsgdL0UuLGeFg5s1Dd7AK1GDiQaC4
+	 s92C2pjBCGjq3PI7VyKR5sFbVDnAsQh4URUnI8gj3NTpvpEleSCYPBgu/n4LN9wPal
+	 i2tqTZmQAttbY+CrHrgZlyo87lUL9NXdjSRKSw42Zu4vMjf4vtiJtC9Z9z5ZOUORf4
+	 cl+3Dm8ZN4CVw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4D6BBCE13D4; Tue, 10 Sep 2024 08:42:54 -0700 (PDT)
+Date: Tue, 10 Sep 2024 08:42:54 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240820155935.1167988-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB8061:EE_
-X-MS-Office365-Filtering-Correlation-Id: c39f8a99-8a85-4971-9771-08dcd1af3694
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?p4d3Q0gFsnrRiVMQC3C4meAJW94hBhixsPnSARjKsQ82SZOI6lC7KERCaQpx?=
- =?us-ascii?Q?QBnWPiOFFJTRQP/ZxsUUbjISOJnKh+5QjlBMT22Qnz5PN0/H9NNI5PBVQnRD?=
- =?us-ascii?Q?rhb27zLxYb0Ynq/V1vFsy6DMIslXsaELi58foaxNztWT36J7rqdLh8+eQZN7?=
- =?us-ascii?Q?qa6EtWF4mbabVLIvpm95i56zfIOF8hfiD+vcSBgr6QBCJ+YhPLxu4jhBH4zL?=
- =?us-ascii?Q?EWoCPEPink4sSW/uqk5S+36CTb+NZjzbqmzmV+EAJFingKnxzdHihcJWd9ro?=
- =?us-ascii?Q?CvrBk+YRTv+ztyuDSXqyWQMimdsULPen4KQurWNY7yU9OIKRFsZTsk1B50SC?=
- =?us-ascii?Q?2ikaCEONgWIbngK0VZRkMX0mbMTIcTVZyy5deVVR7jNBken/GFyO7T3zIVC4?=
- =?us-ascii?Q?bXKiZSZdRHWSKBprbWJzGaGEFiKth6sBnOhEXcizLLy8B2e8fJSUQ0nk2UrU?=
- =?us-ascii?Q?+NYmwwcEC0dtwLFC5unp6sPcEZZbyMQ04qqGgPtiorf2bbLEZiM3ufKqeTqW?=
- =?us-ascii?Q?KFWjjILx2OpvqBKENnWJhSuwT5lTZb5tz5zyZh/vl4/tKuThKljsIcJI3Cd3?=
- =?us-ascii?Q?ZIbqLELo9IFLMdPdtLCJ4XW9J6IUFNWdYc5ca2NjGKO7t4np8OJlgCZv0AxG?=
- =?us-ascii?Q?mnSjM+CVRau75rlOo937yX9o1akXi2ZmjZno/wWnx1hGZCUYmJ6GFu993dul?=
- =?us-ascii?Q?QOxcu9fNFbwTAnH/m4m5doi1agumuioqNeN6UNDG4wFIK4UbnfLIdZrn0A1p?=
- =?us-ascii?Q?huVC8Lk2fu/huU+9gZ48rDDvsdG2ygQlMnvV+jpIL+V64RBJPpTn+Mhf/2hO?=
- =?us-ascii?Q?D05LGQlkPpzOEumEgwyzmeJ6H8sR6tC4K3Ts/lwLHHmpQ2TAtA91d7CW6Bax?=
- =?us-ascii?Q?N8KUC/IRAf3mhrqMaJESlOMRZg63Mg4QV3BOP21U/2UFvBUzkDMq8TOXrlCh?=
- =?us-ascii?Q?54EtVn2wSTNAK+BeXoej/7m13ewGmJqtzJhvdIa6OTWRs4msCc3Y92En7Oto?=
- =?us-ascii?Q?ebX8JW529Tvn6uLV2Wp0tOqVRVRl2elaSZ+lZrD7jpiKcDzF1eF8YlNCjcA7?=
- =?us-ascii?Q?VYGZ/ORKDQZpCHSybZfTqZ0XOYgpEWBJelU8vNG0TweKMe+I6+qlSqxBbM0z?=
- =?us-ascii?Q?11x3wQvvOaFcET4Uiz7plvt/pMpsjwsZ9GNgPzqXcQ9o2ycSxAafHx+RJGz4?=
- =?us-ascii?Q?NHPw5iM+3ygtMcEM5r1g6Sr5Pu1gOH3HCDozz3uKUrLZY8xuACKAoQM4hDJf?=
- =?us-ascii?Q?n0Jilp5X+KzbLt4Z/y7nzArk5ppKKBQ/LYpZmlXXZ8n99u12eDVjaDii0IF2?=
- =?us-ascii?Q?LNsSRMOhe9iZPxAi8kJvxtsyZLkTWz5YKw4OyjJfQmFRt//WkyacEgczuD4M?=
- =?us-ascii?Q?i71cCfv/6wjcYiQlJImaEx/jF6bBfkU2uZ0MFUnfoFMbKh46sw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zSDVx1vqTnZcs+tRHzJKOGusfkWf+UvSKFyc5peWGhPTjI0B3N3cucm6qutZ?=
- =?us-ascii?Q?pedMMfqFT2VFahT5uHrjQK3fZjiA/P3UPBgl712Exy+sGksNv4BbrGVPbzCT?=
- =?us-ascii?Q?MXllds3qopSBvWYs8DY8iUQ9rdLaKxkgIYe/lwdTEKy6kSlruNHgh4eHnTYj?=
- =?us-ascii?Q?jUXOZHY3ARhN9WHgMdH85RGijXAt/Zs9Sr+b8m2Oj1/u9nES3TK0bvw8GLI4?=
- =?us-ascii?Q?31/dFexZ2UfrkUfFwsNUet9SknEim/ClEHREDtadmR6UtrESJh5nrkj8tJIz?=
- =?us-ascii?Q?lbD1hZ8j2IOXQQdDWgSkJ4Lh2ynU5CYNOMPwvygAG0LruTBApG0gxMeJNEeQ?=
- =?us-ascii?Q?hyjztV8vZPp0eVjgzR+eXnvvVdwLB66as+Uep1Z4fn65HTOb4iM8vWMLIHcq?=
- =?us-ascii?Q?hB/hlVup4bBb+JIyEbHT2+cO6A60Tsr+BnNRR0EJwPwtxa/YlBVLBHmkjDEm?=
- =?us-ascii?Q?glBhFiCwfh7E2J3/3qjaEAZTQpHh4VPbct+lKRnEXhN/nzEjKupEqDvmcFOH?=
- =?us-ascii?Q?FeRvYOl1APJfJ/r+7q1yGEG9nYfK42iGq02/W77jIvcRwrP+QANqeHaziY65?=
- =?us-ascii?Q?er2XHrUA0c2HuzfHod7G01VtneIz5ZUWjPqv32Y4PiX4rKnWKu+tsbEU8gLt?=
- =?us-ascii?Q?c0vvE5Koig445hpbQxj8KCFDTBkFNHA3THconeio7LDWu1378nhtEbKJhhZ3?=
- =?us-ascii?Q?mZJT2Wl0jq9bgFSQulzBDj466ACCueq8atUjSKazqzLphwoN+P1wCwRMH2s/?=
- =?us-ascii?Q?UpC6Jfbfs2bQIjYUjOTfylk978bojF5iOfn902SiJFN2NvU9Kb14UYrAXJj5?=
- =?us-ascii?Q?WhqVa0MTUY6OWgsHXkXmJk1dm2gBrAlX7t0VuwYrfZklTaiVnQJtqdVeGXvO?=
- =?us-ascii?Q?8+3/GOK7RkdIRTS9licHGIV4XNEuuiR9FSEVkPo4i5IyNwx79iIiukN8X28W?=
- =?us-ascii?Q?Sf2OXiL7QnXUVJgnVy+RgVt4AC/sBCtY37qKGH3MEoRkzhde6R82xF5lCpyy?=
- =?us-ascii?Q?0WtW4YsG5gWyTzagiL30SQ67r7g6zvwJ9AU5KewqE7XLwu1VcfZIaH3Jsjpi?=
- =?us-ascii?Q?M+RR2vifqdNjwETzV41EJ2yRTIy9ezphOvGF5ITukLWTbDuicqxTg0ff7+J+?=
- =?us-ascii?Q?guVEIV7HXNruBzUIiyBatjUdBUjLlpCySCRgZsc1CoRSy/HgFc+cR676JmtB?=
- =?us-ascii?Q?lbCyYihUg9D1xhFehM7B71oLcmvcSvUlMLzpHEicrLD0D3RaQZoG/a0/tiVf?=
- =?us-ascii?Q?L0eSAmT3Jmqs4BCoJO+gSbaZp/sRAXxoVIFIrptricxv9H4zRuOpIWn2CUd4?=
- =?us-ascii?Q?guQabdYrQHfSmavcmg4UvJU7QaFRu048cw9WH5z2B/MuuyuKAdFWuuhiamFN?=
- =?us-ascii?Q?fEYnHMRDqovrbvu3sSiv/5u2gsPlmPyt+iopK9djuPx65biQK+pDqfdkbmP/?=
- =?us-ascii?Q?WkAepBlElrXg1XVCVoHKKAbzYlRQ/lpn1qkqcnErY24tUSithScq16w8zOuQ?=
- =?us-ascii?Q?0gwoS1WmKNjLdxfQL8TEjSbVygov3fne8GGWHFXIAKqvloG/jPyJQUOsyavz?=
- =?us-ascii?Q?t0gTOzjWse60H6WZpKqqkFu1mTzRZoXmy5kEUuIg?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c39f8a99-8a85-4971-9771-08dcd1af3694
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 15:42:44.6324
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 830sNhT7AySqUfEeA5h2/IL5pHuamaC2uVF8RAERUZTEP64kDF7qPV6hVkO8c1PPJ8qQdyWn9Y30q1+EM2iHyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB8061
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820155935.1167988-1-urezki@gmail.com>
 
-On Tue, Sep 10, 2024 at 03:19:31PM +0800, Shengjiu Wang wrote:
-> Add bt-sco sound card, which is used by BT HFP case.
-> It supports wb profile as default
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Tue, Aug 20, 2024 at 05:59:35PM +0200, Uladzislau Rezki (Sony) wrote:
+> Add a kvfree_rcu_barrier() function. It waits until all
+> in-flight pointers are freed over RCU machinery. It does
+> not wait any GP completion and it is within its right to
+> return immediately if there are no outstanding pointers.
+> 
+> This function is useful when there is a need to guarantee
+> that a memory is fully freed before destroying memory caches.
+> For example, during unloading a kernel module.
+> 
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+
+As a follow-on patch, once kvfree_rcu_barrier() is accepted into
+mainline, should we add a call to kvfree_rcu_barrier() to the
+rcu_barrier_throttled() function in kernel/rcu/tree.c?
+
+This would allow the do_rcu_barrier module parameter to be used to clear
+out kfree_rcu() as well as call_rcu() work.  This would be useful to
+people running userspace benchmarks that cause the kernel to do a lot
+of kfree_rcu() calls.  Always good to avoid messing up the results from
+the current run due to deferred work from the previous run.  Even better
+would be to actually account for the deferred work, but do_rcu_barrier
+can help with that as well.  ;-)
+
+Thoughts?
+
+							Thanx, Paul
+
 > ---
->  .../boot/dts/freescale/imx93-9x9-qsb.dts      | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-> index 336333919a74..d213a5343803 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-> @@ -98,6 +98,30 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
->  		off-on-delay-us = <12000>;
->  	};
->
-> +	bt_sco_codec: bt_sco_codec {
-
-nodename use -
-order node name.
-
-Frank
-> +		#sound-dai-cells = <1>;
-> +		compatible = "linux,bt-sco";
-> +	};
+>  include/linux/rcutiny.h |   5 ++
+>  include/linux/rcutree.h |   1 +
+>  kernel/rcu/tree.c       | 109 +++++++++++++++++++++++++++++++++++++---
+>  3 files changed, 107 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+> index d9ac7b136aea..522123050ff8 100644
+> --- a/include/linux/rcutiny.h
+> +++ b/include/linux/rcutiny.h
+> @@ -111,6 +111,11 @@ static inline void __kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  	kvfree(ptr);
+>  }
+>  
+> +static inline void kvfree_rcu_barrier(void)
+> +{
+> +	rcu_barrier();
+> +}
 > +
-> +	sound-bt-sco {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "bt-sco-audio";
-> +		simple-audio-card,format = "dsp_a";
-> +		simple-audio-card,bitclock-inversion;
-> +		simple-audio-card,frame-master = <&btcpu>;
-> +		simple-audio-card,bitclock-master = <&btcpu>;
+>  #ifdef CONFIG_KASAN_GENERIC
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+>  #else
+> diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+> index 254244202ea9..58e7db80f3a8 100644
+> --- a/include/linux/rcutree.h
+> +++ b/include/linux/rcutree.h
+> @@ -35,6 +35,7 @@ static inline void rcu_virt_note_context_switch(void)
+>  
+>  void synchronize_rcu_expedited(void);
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+> +void kvfree_rcu_barrier(void);
+>  
+>  void rcu_barrier(void);
+>  void rcu_momentary_dyntick_idle(void);
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index e641cc681901..be00aac5f4e7 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3584,18 +3584,15 @@ kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
+>  }
+>  
+>  /*
+> - * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + * Return: %true if a work is queued, %false otherwise.
+>   */
+> -static void kfree_rcu_monitor(struct work_struct *work)
+> +static bool
+> +kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+>  {
+> -	struct kfree_rcu_cpu *krcp = container_of(work,
+> -		struct kfree_rcu_cpu, monitor_work.work);
+>  	unsigned long flags;
+> +	bool queued = false;
+>  	int i, j;
+>  
+> -	// Drain ready for reclaim.
+> -	kvfree_rcu_drain_ready(krcp);
+> -
+>  	raw_spin_lock_irqsave(&krcp->lock, flags);
+>  
+>  	// Attempt to start a new batch.
+> @@ -3634,11 +3631,27 @@ static void kfree_rcu_monitor(struct work_struct *work)
+>  			// be that the work is in the pending state when
+>  			// channels have been detached following by each
+>  			// other.
+> -			queue_rcu_work(system_wq, &krwp->rcu_work);
+> +			queued = queue_rcu_work(system_wq, &krwp->rcu_work);
+>  		}
+>  	}
+>  
+>  	raw_spin_unlock_irqrestore(&krcp->lock, flags);
+> +	return queued;
+> +}
 > +
-> +		btcpu: simple-audio-card,cpu {
-> +			sound-dai = <&sai1>;
-> +			dai-tdm-slot-num = <2>;
-> +			dai-tdm-slot-width = <16>;
-> +		};
+> +/*
+> + * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + */
+> +static void kfree_rcu_monitor(struct work_struct *work)
+> +{
+> +	struct kfree_rcu_cpu *krcp = container_of(work,
+> +		struct kfree_rcu_cpu, monitor_work.work);
 > +
-> +		simple-audio-card,codec {
-> +			sound-dai = <&bt_sco_codec 1>;
-> +		};
-> +	};
+> +	// Drain ready for reclaim.
+> +	kvfree_rcu_drain_ready(krcp);
 > +
->  	sound-wm8962 {
->  		compatible = "fsl,imx-audio-wm8962";
->  		model = "wm8962-audio";
-> @@ -339,6 +363,16 @@ &mu2 {
->  	status = "okay";
->  };
->
-> +&sai1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_sai1>;
-> +	assigned-clocks = <&clk IMX93_CLK_SAI1>;
-> +	assigned-clock-parents = <&clk IMX93_CLK_AUDIO_PLL>;
-> +	assigned-clock-rates = <12288000>;
-> +	fsl,sai-mclk-direction-output;
-> +	status = "okay";
-> +};
+> +	// Queue a batch for a rest.
+> +	kvfree_rcu_queue_batch(krcp);
+>  
+>  	// If there is nothing to detach, it means that our job is
+>  	// successfully done here. In case of having at least one
+> @@ -3859,6 +3872,86 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  }
+>  EXPORT_SYMBOL_GPL(kvfree_call_rcu);
+>  
+> +/**
+> + * kvfree_rcu_barrier - Wait until all in-flight kvfree_rcu() complete.
+> + *
+> + * Note that a single argument of kvfree_rcu() call has a slow path that
+> + * triggers synchronize_rcu() following by freeing a pointer. It is done
+> + * before the return from the function. Therefore for any single-argument
+> + * call that will result in a kfree() to a cache that is to be destroyed
+> + * during module exit, it is developer's responsibility to ensure that all
+> + * such calls have returned before the call to kmem_cache_destroy().
+> + */
+> +void kvfree_rcu_barrier(void)
+> +{
+> +	struct kfree_rcu_cpu_work *krwp;
+> +	struct kfree_rcu_cpu *krcp;
+> +	bool queued;
+> +	int i, cpu;
 > +
->  &sai3 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_sai3>;
-> @@ -507,6 +541,15 @@ MX93_PAD_SD2_RESET_B__GPIO3_IO07	0x31e
->  		>;
->  	};
->
-> +	pinctrl_sai1: sai1grp {
-> +		fsl,pins = <
-> +			MX93_PAD_SAI1_TXC__SAI1_TX_BCLK			0x31e
-> +			MX93_PAD_SAI1_TXFS__SAI1_TX_SYNC		0x31e
-> +			MX93_PAD_SAI1_TXD0__SAI1_TX_DATA00		0x31e
-> +			MX93_PAD_SAI1_RXD0__SAI1_RX_DATA00		0x31e
-> +		>;
-> +	};
+> +	/*
+> +	 * Firstly we detach objects and queue them over an RCU-batch
+> +	 * for all CPUs. Finally queued works are flushed for each CPU.
+> +	 *
+> +	 * Please note. If there are outstanding batches for a particular
+> +	 * CPU, those have to be finished first following by queuing a new.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
 > +
->  	pinctrl_sai3: sai3grp {
->  		fsl,pins = <
->  			MX93_PAD_GPIO_IO12__SAI3_RX_SYNC		0x31e
-> --
-> 2.34.1
->
+> +		/*
+> +		 * Check if this CPU has any objects which have been queued for a
+> +		 * new GP completion. If not(means nothing to detach), we are done
+> +		 * with it. If any batch is pending/running for this "krcp", below
+> +		 * per-cpu flush_rcu_work() waits its completion(see last step).
+> +		 */
+> +		if (!need_offload_krc(krcp))
+> +			continue;
+> +
+> +		while (1) {
+> +			/*
+> +			 * If we are not able to queue a new RCU work it means:
+> +			 * - batches for this CPU are still in flight which should
+> +			 *   be flushed first and then repeat;
+> +			 * - no objects to detach, because of concurrency.
+> +			 */
+> +			queued = kvfree_rcu_queue_batch(krcp);
+> +
+> +			/*
+> +			 * Bail out, if there is no need to offload this "krcp"
+> +			 * anymore. As noted earlier it can run concurrently.
+> +			 */
+> +			if (queued || !need_offload_krc(krcp))
+> +				break;
+> +
+> +			/* There are ongoing batches. */
+> +			for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +				krwp = &(krcp->krw_arr[i]);
+> +				flush_rcu_work(&krwp->rcu_work);
+> +			}
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Now we guarantee that all objects are flushed.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
+> +
+> +		/*
+> +		 * A monitor work can drain ready to reclaim objects
+> +		 * directly. Wait its completion if running or pending.
+> +		 */
+> +		cancel_delayed_work_sync(&krcp->monitor_work);
+> +
+> +		for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +			krwp = &(krcp->krw_arr[i]);
+> +			flush_rcu_work(&krwp->rcu_work);
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(kvfree_rcu_barrier);
+> +
+>  static unsigned long
+>  kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+>  {
+> -- 
+> 2.39.2
+> 
 
