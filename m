@@ -1,237 +1,240 @@
-Return-Path: <linux-kernel+bounces-323803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF5F9743AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EC99743AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09388B22BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80DC6286E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AB61AAE13;
-	Tue, 10 Sep 2024 19:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9121A1A38F4;
+	Tue, 10 Sep 2024 19:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NXdlQAau"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WD2HTelg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DD81A76DA;
-	Tue, 10 Sep 2024 19:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA46A17B4FC;
+	Tue, 10 Sep 2024 19:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725997777; cv=none; b=gFrSXObNrmy1qHQ2vlhGEd634IQxhKY/EJg5ODabJAfRs+uh3mh0pQM9hDau0fmgxRy860uNdFFnviNrOtOez+tYQybFUWhDm1mUzMNmNltrY+QV52ouhzVv5KdJZyPYUWHeiQwRAybEq32ifvaY5sssTRYYEFwRftVMDAz61GI=
+	t=1725997772; cv=none; b=p+SGoR3Crd746z7KxDmayVvbKlGUT3Vc8WpKBxuqYIyDxcbuyjE+4G7svTaR77LGNoRAjtI169BfD2OE175ew1OCM5LrxIKURXs/d8oWltUneNWXhRL+lKfWZZu/q34qLKB1GBs+QmprbxiFA2gDT3VsyDnWlvRXMgg+nnKHRAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725997777; c=relaxed/simple;
-	bh=ccBxcpeuPZm8pVyeOUPxWoSYyMWp++34eVaxy+VEapU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iHD7hQHAt60MdADS5IDmdR2lPp5VPFoe2ppD1A6lbP9H7WmxUKMQIde96r17IWO4Pah9zN4XXAa+SJ/I11OPk7Q2mBZx/1xI9Hv6bFfna9+zHwZLp5XQpu2lBrwmji9u+lujy9NvI0A9zpk0wN/ATFGswTl8ESpqdIkTvGRr6sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=NXdlQAau; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1725997776; x=1757533776;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dACRD1j+be5FMEDwQZty04itxFHodGQg6PPtuiZvQ0E=;
-  b=NXdlQAau3mNS3QTfoekhqyykwI5wiaRRe6RXbWkHdV2sTEqM+BWF7u3x
-   kx9+r+4SfLbxRHDc+uRwMlXCKRcsjVtcsvAmCt/zEGu7//Kg7MFC63ABW
-   DyFUQgGOt6eVIceWdcwnGoU0YxHfvMmpnH7QWWPqJFFDmUr5uULk0k+EN
-   s=;
-X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
-   d="scan'208";a="758581941"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 19:49:24 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:47074]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.23.84:2525] with esmtp (Farcaster)
- id e06452b5-6f92-4c8a-8440-4455041c59de; Tue, 10 Sep 2024 19:49:22 +0000 (UTC)
-X-Farcaster-Flow-ID: e06452b5-6f92-4c8a-8440-4455041c59de
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 10 Sep 2024 19:49:21 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 10 Sep 2024 19:49:18 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <rao.shoaib@oracle.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
-Date: Tue, 10 Sep 2024 12:49:10 -0700
-Message-ID: <20240910194910.90514-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <1cca9939-fe04-4e19-bc14-5e6a9323babd@oracle.com>
-References: <1cca9939-fe04-4e19-bc14-5e6a9323babd@oracle.com>
+	s=arc-20240116; t=1725997772; c=relaxed/simple;
+	bh=WeJYGSqNPinOi/i72aoMwHeFytB58XDIlbPCMg7IpcI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LjUIu7P4V/mUmvnXw/1W/ojrbq88x8eZFl+IPK/8c+eampcX8yTTv8ksWZ9BshsUTISWOapr5BZZ6dUvb1DNPDcPk4/Wz7gsY7G7k0+GHvqtB5C4cEfNr5WlB7/XzI98tXN0uJ4Y4dBfoN7YAsE84YI9jJNdojsd8GwQGPgwabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WD2HTelg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1966DC4CEC3;
+	Tue, 10 Sep 2024 19:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725997771;
+	bh=WeJYGSqNPinOi/i72aoMwHeFytB58XDIlbPCMg7IpcI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WD2HTelgMn18myn/iTh5fxPpWrVOUt9wCDMMBP+BuTkRo7LMkPYCbSZF4FVhydHze
+	 QHFZIfBw8BmPK6+0Ica+jH0v+cy5mjol5+ubhAmoUWgajB2R9aaLcNAb8iKKWFsyfi
+	 jcdbNvKJIZ2DK0eUeLa8rHaklU5icysta40CmHgqNsoyJcOhfoB5Xy6OBaAioi8c4Q
+	 9AtTCYK7BnOJz7R1ai7u3fqiH9XPIIVZ0eviMrvAFHS0lflpwoaqI8DnI9K3fR7vaQ
+	 cVZbPSMc7e46LzJSP3LrRs1cfWcGwfrEwYm0wBkWPtsILXrul2MSUr2RRctcHASEQA
+	 4WAlliLJxEymQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1so6rg-00Brkl-QO;
+	Tue, 10 Sep 2024 20:49:28 +0100
+Date: Tue, 10 Sep 2024 20:49:28 +0100
+Message-ID: <86r09r70hj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
+	Snehal Koukuntla <snehalreddy@google.com>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
+In-Reply-To: <ZuCNge74gVpJi2Sf@linux.dev>
+References: <20240909180154.3267939-1-snehalreddy@google.com>
+	<rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
+	<ZuCNge74gVpJi2Sf@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA004.ant.amazon.com (10.13.139.109) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, r09922117@csie.ntu.edu.tw, snehalreddy@google.com, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, sebastianene@google.com, vdonnefort@google.com, jean-philippe@linaro.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Shoaib Rao <rao.shoaib@oracle.com>
-Date: Tue, 10 Sep 2024 11:49:20 -0700
-> On 9/10/2024 11:33 AM, Kuniyuki Iwashima wrote:
-> > From: Shoaib Rao <rao.shoaib@oracle.com>
-> > Date: Tue, 10 Sep 2024 11:16:59 -0700
-> >> On 9/10/2024 10:57 AM, Kuniyuki Iwashima wrote:
-> >>> From: Shoaib Rao <rao.shoaib@oracle.com>
-> >>> Date: Tue, 10 Sep 2024 09:55:03 -0700
-> >>>> On 9/9/2024 5:48 PM, Kuniyuki Iwashima wrote:
-> >>>>> From: Shoaib Rao <rao.shoaib@oracle.com>
-> >>>>> Date: Mon, 9 Sep 2024 17:29:04 -0700
-> >>>>>> I have some more time investigating the issue. The sequence of packet
-> >>>>>> arrival and consumption definitely points to an issue with OOB handling
-> >>>>>> and I will be submitting a patch for that.
-> >>>>>
-> >>>>> It seems a bit late.
-> >>>>> My patches were applied few minutes before this mail was sent.
-> >>>>> https://urldefense.com/v3/__https://lore.kernel.org/netdev/172592764315.3964840.16480083161244716649.git-patchwork-notify@kernel.org/__;!!ACWV5N9M2RV99hQ!M806VrqNEGFgGXEoWG85msKAdFPXup7RzHy9Kt4q_HOfpPWsjNHn75KyFK3a3jWvOb9EEQuFGOjpqgk$
-> >>>>>
-> >>>>
-> >>>> That is a subpar fix. I am not sure why the maintainers accepted the fix
-> >>>> when it was clear that I was still looking into the issue.
-> >>>
-> >>> Just because it's not a subpar fix and you were slow and wrong,
-> >>> clining to triggering the KASAN splat without thinking much.
-> >>>
-> >>>
-> >>>> Plus the
-> >>>> claim that it fixes the panic is absolutely wrong.
-> >>>
-> >>> The _root_ cause of the splat is mishandling of OOB in manage_oob()
-> >>> which causes UAF later in another recvmsg().
-> >>>
-> >>> Honestly your patch is rather a subpar fix to me, few points:
-> >>>
-> >>>     1. The change conflicts with net-next as we have already removed
-> >>>        the additional unnecessary refcnt for OOB skb that has caused
-> >>>        so many issue reported by syzkaller
-> >>>
-> >>>     2. Removing OOB skb in queue_oob() relies on the unneeded refcnt
-> >>>        but it's not mentioned; if merge was done wrongly, another UAF
-> >>>        will be introduced in recvmsg()
-> >>>
-> >>>     3. Even the removing logic is completely unnecessary if manage_oob()
-> >>>        is changed
-> >>>
-> >>>     4. The scan_again: label is misplaced; two consecutive empty OOB skbs
-> >>>        never exist at the head of recvq
-> >>>
-> >>>     5. ioctl() is not fixed
-> >>>
-> >>>     6. No test added
-> >>>
-> >>>     7. Fixes: tag is bogus
-> >>>
-> >>>     8. Subject lacks target tree and af_unix prefix
-> >>
-> >> If you want to nit pick, nit pick away, Just because the patch email
-> >> lacks proper formatting does not make the patch technically inferior.
-> > 
-> > Ironically you just nit picked 8.
-> > 
-> > 
+On Tue, 10 Sep 2024 19:18:41 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
-> I have no idea what you mean. I am more worried about technical 
-> correctness than formatting -- That does not mean formatting is not 
-> necessary.
-
-I started pointing out technical stuff and ended with nit-pick because
-"I am more worried about technical correctness", but you started nit
-picking from the last point.  That's unfortunate.
-
-
+> On Wed, Sep 11, 2024 at 12:32:29AM +0800, Wei-Lin Chang wrote:
+> > Hi everyone,
+> > 
+> > On Mon, Sep 09, 2024 at 06:01:54PM GMT, Snehal Koukuntla wrote:
+> > > When we share memory through FF-A and the description of the buffers
+> > > exceeds the size of the mapped buffer, the fragmentation API is used.
+> > > The fragmentation API allows specifying chunks of descriptors in subsequent
+> > > FF-A fragment calls and no upper limit has been established for this.
+> > > The entire memory region transferred is identified by a handle which can be
+> > > used to reclaim the transferred memory.
+> > > To be able to reclaim the memory, the description of the buffers has to fit
+> > > in the ffa_desc_buf.
+> > > Add a bounds check on the FF-A sharing path to prevent the memory reclaim
+> > > from failing.
+> > > 
+> > > Also do_ffa_mem_xfer() does not need __always_inline
+> > > 
+> > > Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
+> > > Cc: stable@vger.kernel.org
+> > > Reviewed-by: Sebastian Ene <sebastianene@google.com>
+> > > Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
+> > > ---
+> > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > index e715c157c2c4..637425f63fd1 100644
+> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > > @@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+> > >  	return;
+> > >  }
+> > >  
+> > > -static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+> > > +static void do_ffa_mem_xfer(const u64 func_id,
+> > 
+> > I am seeing a compilation error because of this.
 > 
-> >> My
-> >> fix is a proper fix not a hack. The change in queue_oob is sufficient to
-> >> fix all issues including SIOCATMARK. The fix in manage_oob is just for
-> >> correctness.
-> > 
-> > Then, it should be WARN_ON_ONCE() not to confuse future readers.
-> > 
-> > 
-> >> In your fix I specifically did not like the change made to
-> >> fix SIOCATMARK.
-> > 
-> > I don't like that part too, but it's needed to avoid the additional refcnt
-> > that is much worse as syzbot has been demonstrating.
-> > 
+> Thanks for reporting this. Looks like the __always_inline was slightly
+> more load bearing...
 > 
-> syzbot has nothing to do with doing a proper fix.
-
-You don't understand my point.  syzbot has been finding many real issues
-that were caused by poor handling of the additional refcount.
-
-Also, removing it discovered another bug in manage_oob().  That's a enough
-reason to explain why we should remove the unnecessary refcnt.
-
-
-> One has to understand 
-> the code though to do the fix at the proper location.
-
-I'm not saying that the patch is correct if it silences syzbot.
-
-Actually, I said KASAN is handy but you need not rely on it.
-
-Rather it's you who argued the splat was needed even without trying
-to understand the code.
-
-I really don't understand why you are saying this to me now.
-
-
+> Marc, can you put something like this on top?
 > 
-> > 
-> >>
-> >> What is most worrying is claim to fixing a panic when it can not even
-> >> happen with the bug.
-> > 
-> > It's only on your setup.  syzbot and I were able to trigger that with
-> > the bug.
-> > 
 > 
-> Really, what is so special about my setup that kasan does not like? Can 
-> you point me to the exact location where the access is made?
-
-I don't know, it's your job.
-
+> From c2712eaa94989ae6457baad3ec459cf363ec5119 Mon Sep 17 00:00:00 2001
+> From: Oliver Upton <oliver.upton@linux.dev>
+> Date: Tue, 10 Sep 2024 16:45:30 +0000
+> Subject: [PATCH] KVM: arm64: Drop BUILD_BUG_ON() from do_ffa_mem_xfer()
 > 
-> I am at least glad that you have backed off your assertion that my 
-> change does not fix the ioctl.
-
-Okay, I was wrong about that, and what about other points, fragile
-refcnt, non-WARN_ON_ONCE(), misplaced label, no test, bogus tag ?
-
-
-> I am sure if I keep pressing you, you 
-> will back off the panic claim as well.
-
-I also don't understand what you are saying and why you still can't
-correlate the splat and the sequences of syscalls in the repro.
-
-
-> You yourself admitted you did not 
-> know why kasan was not panicing, Has anyone else hit the same panic?
+> __always_inline was recently discarded from do_ffa_mem_xfer() since it
+> appeared to be unnecessary. Of course, this was ~immediately proven
+> wrong, as the compile-time check against @func_id depends on inlining
+> for the value to be known.
 > 
-> If you can pin point the exact location where the illegal access is 
-> made, please do so and I will accept that I am wrong, other than that I 
-> am not interested in this constant back and forth with no technical 
-> details just fluff.
+> Just downgrade to a WARN_ON() instead of putting the old mess back in
+> place. Fix the wrapping/indentation of the function parameters while at
+> it.
+>
+> Fixes: 39dacbeeee70 ("KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer")
+> Reported-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 637425f63fd1..316d269341f3 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -426,9 +426,8 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+>  	return;
+>  }
+>  
+> -static void do_ffa_mem_xfer(const u64 func_id,
+> -					    struct arm_smccc_res *res,
+> -					    struct kvm_cpu_context *ctxt)
+> +static void do_ffa_mem_xfer(const u64 func_id, struct arm_smccc_res *res,
+> +			    struct kvm_cpu_context *ctxt)
+>  {
+>  	DECLARE_REG(u32, len, ctxt, 1);
+>  	DECLARE_REG(u32, fraglen, ctxt, 2);
+> @@ -440,8 +439,10 @@ static void do_ffa_mem_xfer(const u64 func_id,
+>  	u32 offset, nr_ranges;
+>  	int ret = 0;
+>  
+> -	BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
+> -		     func_id != FFA_FN64_MEM_LEND);
+> +	if (WARN_ON(func_id != FFA_FN64_MEM_SHARE && func_id != FFA_FN64_MEM_LEND)) {
+> +		ret = SMCCC_RET_NOT_SUPPORTED;
+> +		goto out;
+> +	}
 
-Please read my changelog (and mails) carefully that pin-point the
-exact location and reason where/why the illegal access happens.
 
-This will be the last mail from me in this thread.  I don't want to
-waste time on someone who doesn't read mails.
+I'm not overly on the WARN_ON(), as it has pretty fatal effects on
+pKVM (it simply panics). What do you think of this instead, which
+compiles with my prehistoric version of clang (14.0.6):
+
+diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+index 637425f63fd1b..e433dfab882aa 100644
+--- a/arch/arm64/kvm/hyp/nvhe/ffa.c
++++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+@@ -426,9 +426,9 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+ 	return;
+ }
+ 
+-static void do_ffa_mem_xfer(const u64 func_id,
+-					    struct arm_smccc_res *res,
+-					    struct kvm_cpu_context *ctxt)
++static void __do_ffa_mem_xfer(const u64 func_id,
++			      struct arm_smccc_res *res,
++			      struct kvm_cpu_context *ctxt)
+ {
+ 	DECLARE_REG(u32, len, ctxt, 1);
+ 	DECLARE_REG(u32, fraglen, ctxt, 2);
+@@ -440,9 +440,6 @@ static void do_ffa_mem_xfer(const u64 func_id,
+ 	u32 offset, nr_ranges;
+ 	int ret = 0;
+ 
+-	BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
+-		     func_id != FFA_FN64_MEM_LEND);
+-
+ 	if (addr_mbz || npages_mbz || fraglen > len ||
+ 	    fraglen > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+ 		ret = FFA_RET_INVALID_PARAMETERS;
+@@ -517,6 +514,13 @@ static void do_ffa_mem_xfer(const u64 func_id,
+ 	goto out_unlock;
+ }
+ 
++#define do_ffa_mem_xfer(fid, res, ctxt)				\
++	do {							\
++		BUILD_BUG_ON((fid) != FFA_FN64_MEM_SHARE &&	\
++			     (fid) != FFA_FN64_MEM_LEND);	\
++		__do_ffa_mem_xfer((fid), (res), (ctxt));	\
++	} while (0);
++
+ static void do_ffa_mem_reclaim(struct arm_smccc_res *res,
+ 			       struct kvm_cpu_context *ctxt)
+ {
+
+It preserves the build-time assertion, which was the intention of the
+original author.
+
+I can easily squash that in the original commit, avoiding the headache
+of backporting both patch to stable.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
