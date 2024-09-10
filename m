@@ -1,181 +1,97 @@
-Return-Path: <linux-kernel+bounces-323418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8B7973D11
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9339973D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE6DFB22E31
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BBD42876EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6921A08AF;
-	Tue, 10 Sep 2024 16:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BBD191F96;
+	Tue, 10 Sep 2024 16:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Srf7ztS+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRkHSmZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E902AE69;
-	Tue, 10 Sep 2024 16:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F408B2AE69;
+	Tue, 10 Sep 2024 16:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725985176; cv=none; b=BUptg55aJrhdVJv/PRuMcSOJeb2daHx4l/0njzkBUamynWoYbKEZNrD9VnXS23YEjgjS2FTujR48WYWrJPlhljqgKPkeItNyqwW/JJT0Q9EUU85Qe+XQ9I5OwtNMVRsg/EJF6F94893Frz6Yub3EHhsyTHZ9rm+/Ib5unFDPl5o=
+	t=1725985264; cv=none; b=b4JqlWHx/i4joWmJLM3oHv0ve3cFP+mzLlZkdYTSnuJxPOKkVb0bCoxSjpC1A7LMBXUe7/EnYAMyFnKf1YlcEqgsT4ZebW5BBx+q0F9RoxQRwrukaILhHB7bF2TRMsNwERThgL74310ZduB4Bd2eh4SktZgxnsIGsQsyWchTqOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725985176; c=relaxed/simple;
-	bh=8cyHUd99dHnbLKGD//21nviYrE6ra9Tqo3z6HzABt8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B1DiTdGq6WJMtRWs9nmO+qrhaM87VTYUj76u5UqxBfiGe/SI8z/aPNBS7BQAsL/mfUJyPWKP2ek0WqwlmV1WpeQSYkQhOE5Kdsi1+b28rcynI+NaAR+wp4zkrb45nlq4OiAEkuX76jDqzgbRGlN/FqQUbDOyHuxwwnNElvpo8A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Srf7ztS+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725985174; x=1757521174;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8cyHUd99dHnbLKGD//21nviYrE6ra9Tqo3z6HzABt8E=;
-  b=Srf7ztS+Bnw89RCv/f9yUwXDfNW6YIlrkGpEr7bw8KfIqSoq43JKX9CS
-   BIlI6uBZ8QJEEW/M4Ym0//Tuyxdy7I82g6NlF3XFaUi8abpn9ii4Zr+mM
-   dnrmlgTmmNxwZb1TDr4cPs5fF4MpP8WQDZCId+QvARTU2aq5Ln9IHjkj5
-   7BBpGdOrauVMFatgQOuiRcklk7xnuHzP8EMJ7bMZzkWkDoEAO5P2JrC+I
-   QvYQcx86mPYFSTrukJRFZFeROHc8JCg2c/9wX8vllLYwDEHRGmeOlpbQw
-   zDAyTzZVf+1Zpm5IIouY58jjfZJeXqRWD5HVDSdsICu94mLr5akX2P/Mp
-   w==;
-X-CSE-ConnectionGUID: O5Fil8+pSEibJ2sscU0f9w==
-X-CSE-MsgGUID: WubCZzPAS0i/UFBMMPoR9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35412913"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="35412913"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 09:19:32 -0700
-X-CSE-ConnectionGUID: fWmWG3v0QOGJ5rwjEtVgoQ==
-X-CSE-MsgGUID: hoOCppemQ4Sr+nxYiV/suA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="67100537"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 09:19:31 -0700
-Received: from [10.212.67.246] (kliang2-mobl1.ccr.corp.intel.com [10.212.67.246])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id E8D3820CFED7;
-	Tue, 10 Sep 2024 09:19:27 -0700 (PDT)
-Message-ID: <b9441341-42ed-41e5-be38-ac63a9cd88f6@linux.intel.com>
-Date: Tue, 10 Sep 2024 12:19:26 -0400
+	s=arc-20240116; t=1725985264; c=relaxed/simple;
+	bh=n2/Gy+qHm8w2K7V0ozom/cyardgewtVWUCqsx5HiEHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYEidk+6SKcmnoNTrqn3cUeoYUsGdFvfxX2olw6Z8GMH528vj4crXTlvCcz9CqiIoe8BKZAF02PsdYXnZ2xqXfJ9qO7j/RJhkgQpxR5Lk6diwZnrbNMdAF0RiUxcZT9GYUfLcrWg9tfRgSeysKqTNmLneDLhgLchUBHyWiXWUpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRkHSmZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09867C4CEC3;
+	Tue, 10 Sep 2024 16:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725985263;
+	bh=n2/Gy+qHm8w2K7V0ozom/cyardgewtVWUCqsx5HiEHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nRkHSmZWRQoptxGP5UzyxO2ywgBGzeRqewWWgE5Sm9H6G9Tdq9wXds0mAS8OTLM0x
+	 LWt3Vap2Nt61Xk/Iy2VVvcQK0XiBUh4atVvhlSGkWZXZzq/h7zi4ggfca7FnLdT/3G
+	 CEZrLStoujkUbWA+h8pwg2yhDq7o5ZMrk+4l3hOX+V8NFx1GLEj5PtbvFrAmTcRCnV
+	 eq6/tYIpbxQALUyLkxGezXIgt0S/f4ipRC2fy+sUe7UZEMyMqnc+pENDaT0astLfig
+	 JmhJjvpkWnz2mCLsSbb+HDAmHYKAPnHrcoS/Wg8J5FFLml8ezQ0oBt6S8T99riaE4H
+	 QyPj5ce6lGGWw==
+Date: Tue, 10 Sep 2024 17:20:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/214] 5.15.167-rc1 review
+Message-ID: <a7d6949c-fd1a-42e2-bf5b-9cca34a680a2@sirena.org.uk>
+References: <20240910092558.714365667@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/7] Event parsing fixes
-To: James Clark <james.clark@linaro.org>, irogers@google.com,
- linux-perf-users@vger.kernel.org, ak@linux.intel.com, namhyung@kernel.org
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Weilin Wang <weilin.wang@intel.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Colin Ian King <colin.i.king@gmail.com>,
- Yang Jihong <yangjihong@bytedance.com>, Howard Chu <howardchu95@gmail.com>,
- Ze Gao <zegao2021@gmail.com>, Jing Zhang <renyu.zj@linux.alibaba.com>,
- Sun Haiyong <sunhaiyong@loongson.cn>, Yicong Yang
- <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240910151640.907359-1-james.clark@linaro.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240910151640.907359-1-james.clark@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o+joFcAd0/MUrjNu"
+Content-Disposition: inline
+In-Reply-To: <20240910092558.714365667@linuxfoundation.org>
+X-Cookie: You're not Dave.  Who are you?
 
 
+--o+joFcAd0/MUrjNu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024-09-10 11:16 a.m., James Clark wrote:
-> I rebased this one and made some other fixes so that I could test it,
-> so I thought I'd repost it here in case it's helpful. I also added a
-> new test.
-> 
-> But for the testing it all looks ok.
-> 
-> There is one small difference where it now hides _all_ default
-> <not supported> events, when previously it would only hide some
-> selected subset of events like "stalled-cycles-frontend". I think
-> this is now more consistent across platforms because, for example,
-> Apple M only has cycles and instructions, and the rest of the
-> default events would always show as <not supported> there.
-> 
-> Tested on Raptor Lake, Kaby Lake, Juno, N1, Ampere (with the DSU
-> cycles PMU) and I also faked an Apple M on Juno. 
-> > Changes since v6:
->   * Fix empty PMU name in perf report
->   * Rebase onto perf-tools-next 003265bb6f02
-> 
-> Changes since v5:
->   * Test on x86 non hybrid
->   * Assume 1 PMU in the test when no PMUs expose /cpus file
-> 
-> Changes since v4:
-> 
->   * Hide all <not supported> default events when not verbose
->   * Remove previous note about <not supported> behavior from the cover
->     letter and replace it with a new note about the new behavior
->  
-> Changes since v3:
-> 
->   * Rebase onto perf-tools-next 6236ebe07
->   * Fix Intel TPEBS counting mode test
->   * Fix arm-spe build
->   * Add support for DT devices in stat test
->   * Add a new test for hybrid perf stat default arguments
-> 
-> Ian Rogers (5):
->   perf evsel: Add alternate_hw_config and use in evsel__match
->   perf stat: Uniquify event name improvements
->   perf stat: Remove evlist__add_default_attrs use strings
->   perf evsel x86: Make evsel__has_perf_metrics work for legacy events
->   perf evsel: Remove pmu_name
-> 
-> James Clark (2):
->   perf test: Make stat test work on DT devices
->   perf test: Add a test for default perf stat command
-> 
+On Tue, Sep 10, 2024 at 11:30:22AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.167 release.
+> There are 214 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Acked-by: Kan Liang <kan.liang@linux.intel.com>
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Thanks,
-Kan
+--o+joFcAd0/MUrjNu
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  tools/perf/arch/arm64/util/arm-spe.c          |   4 +-
->  tools/perf/arch/x86/util/evlist.c             |  74 +----
->  tools/perf/arch/x86/util/evsel.c              |  35 ++-
->  tools/perf/builtin-diff.c                     |   6 +-
->  tools/perf/builtin-stat.c                     | 291 +++++++-----------
->  tools/perf/tests/parse-events.c               |   2 +-
->  tools/perf/tests/shell/stat.sh                |  37 ++-
->  .../perf/tests/shell/test_stat_intel_tpebs.sh |  11 +-
->  tools/perf/util/evlist.c                      |  46 +--
->  tools/perf/util/evlist.h                      |  12 -
->  tools/perf/util/evsel.c                       |  28 +-
->  tools/perf/util/evsel.h                       |  22 +-
->  tools/perf/util/metricgroup.c                 |   4 +-
->  tools/perf/util/parse-events.c                |  57 ++--
->  tools/perf/util/parse-events.h                |   8 +-
->  tools/perf/util/parse-events.y                |   2 +-
->  tools/perf/util/pmu.c                         |   6 +-
->  tools/perf/util/pmu.h                         |   2 +-
->  tools/perf/util/stat-display.c                | 109 +++++--
->  tools/perf/util/stat-shadow.c                 |  14 +-
->  tools/perf/util/stat.c                        |   2 +-
->  21 files changed, 359 insertions(+), 413 deletions(-)
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgcegACgkQJNaLcl1U
+h9CYzQf9Fznt5eM8GrbiC9QBSNUf5uhyHpERn2Yh1+h3CngZP9/jQ3lrjQuDEhy3
+Am4rgiBoU+m66sWEIvC2zoQv+PBpdozEGDKgtdJc/O1ifG3bXrxPrZQXXjRj6JLV
+YW9SjTekrD+kPKm1Is7dtWIHsg4gKs5Z4Sv0Y5rS2NSlTIIUGM2q9NdwMwSt4QI7
+TvCIB7qSN07foV1K5FQbPzxLO5i8qAJ+uAr09ruLBQm/e5CC4+5qfWGc6yuYWHT4
+LrRYDlfwku5O3+OUw/Phpfo9U1N5sgXpCRdMK3hHdytucAc3wV/WG5XjMn45gMAq
+A4mME1BNBKCbt8urHUoPuNuJc4TyPA==
+=owi7
+-----END PGP SIGNATURE-----
+
+--o+joFcAd0/MUrjNu--
 
