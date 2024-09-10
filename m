@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-322397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF582972890
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D774972898
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A759A2857F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F39E1F2507B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CC816A92E;
-	Tue, 10 Sep 2024 04:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AC5152E1C;
+	Tue, 10 Sep 2024 04:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCK1EnCF"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFPcV3l/"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A4013AA32;
-	Tue, 10 Sep 2024 04:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B023C2F;
+	Tue, 10 Sep 2024 04:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943694; cv=none; b=Gly0Lan2Srj+DPVFpfO5pqZ+GChzy42o9M3eQP4VRtB09m+MXKjlAWKDqGK3Jw0ZB/zPYS6DOL4NuRPImBMVdB6d9anY9YhHXGd/fUcVE7xv1zfdJtfYR9GVHilRtNBrwGlQDCBduODBFnjZZn6sf0O7Ig5Ay8KniTpOHvvIT5U=
+	t=1725943897; cv=none; b=WsIuqJbPtKpSi/YPz05sZJ9X7o8xC8SeDCbIUEHjL39l+GQEeDDHkCHIZfROuQGYWLX/ez5fOMhVNonfvDKDrcG/CCNPs15YZO/jilKMyc/mmkkdA7DtQIEQ9IClYFdn9nVQkLdnuUO12fe4wpNGdhQmVHs4gOcX3w9MJiw/qm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943694; c=relaxed/simple;
-	bh=Lqpkkyp7wuRuCbghjDbuUpHEMw+hIua6js1Gbi52msE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8z8RxJ4bfRoZ6VhRwDhid8O6ECsTJgpJ1UYbkyiqioUixukqNrsx7o/5M3Qpn5wojDP83+AFQ393cRJzzQeKurwe6cSj2YnHAU1wyGc4TX7pk7IfYLurfBJOIPGqBk9YkduneZCs03Fd0BBNpNGj1kEbzOeeGk/2uX4i5RNjYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LCK1EnCF; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=c0/KMxGI62d39aIfqydXbjcfGL/DQ5/n5haroblqj80=; b=LCK1EnCFN8sE7ipvGAc8UQ2cYA
-	x0qquDQQJXVrrzzdKi4N4M+3xPY367t9udRzgrjwbuaaV/t/EOPA18CtPCtGpeg5g2S6mq9UPTVMY
-	qOorwFK7L+qbEqWzmGd/ADQLtdWzdM2yuTGiVya3mW7Rp1LoTyT26SLecZAa3jYEcBVscKOsE6wjS
-	3fh454fYf5iaCmgBbCxWSvcTMiKeJDd3OLFSSuDCieAc/LX0nhmzj4323V7hPCPHpQUcm57lRkjir
-	ysN1fMLF0KDjVx20FCu9CZ7wGsfxPB18U67jSno24eKa7XBE1NVWnSD08C0xQoywBYznZ7D5X/VkY
-	OG0n4GAQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1snsmy-000000050uo-2esU;
-	Tue, 10 Sep 2024 04:47:40 +0000
-Date: Tue, 10 Sep 2024 05:47:40 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com, djwong@kernel.org,
-	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
-	peterx@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Message-ID: <Zt_PbIADa4baLEBw@casper.infradead.org>
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1725943897; c=relaxed/simple;
+	bh=TsS82rlpqmzGX421x1xpzqOXEpKqPWiI6F6cnPqdhbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sT8lvQV7Oh+VMQ4//QHC8ft16sBpru8GPeY/F67Ugug/bduGP5n0wn5mI0GXyQwPzbBKJIBePtwUKS0lLiCjYhPErPsW9KDHSrcjTPOA4gDDBFe86lcChPMloT+JObkLUcI+5omk7XVPkEL+jAcPE3GyqugjISTKgfavV8mOUuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFPcV3l/; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20570b42f24so3461685ad.1;
+        Mon, 09 Sep 2024 21:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725943894; x=1726548694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7OIOFYUXdV0WhosYJRDfjMThGwiC2VKXv2im3pjeTWE=;
+        b=IFPcV3l/1WFnG10Igu1PxR0F22afwDPaRVXmD1Kc3QZ6lZZwpJ3dkJ74bx4WOyuSiL
+         s6fYoRLxT1YBWl79h3mVbV31c0qx3k4IRHj62Vd31DKsX3WVQTvRTH55tDQR3FKs3I7S
+         +buqA417rfUfYIZxKwI948E3b5avTOAy4Y5eDxRPNv88LUI/BkmDGDWuCAPRiGjMdebL
+         bJqTybQ2jh1tAhbMlId4P47vWQpZIwlqt8MI6whS8Ifs/j6yE04Y+GYgkN7o1drM/lFl
+         BX25nHV+y6ykpeTYsOo3hwWLbc7VqSboMHpbbOkTdtO/v+TNYBQrxQHRnENFFJBzdokB
+         UtAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725943894; x=1726548694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7OIOFYUXdV0WhosYJRDfjMThGwiC2VKXv2im3pjeTWE=;
+        b=WeiOo5WfK/PMSqc4/UxJAFKylFklnzGZBPNdD4nnNv52rnXuYFFUz3fTsw4qIsPYS0
+         f//brfCUPXZXK8oFbBnlXjLOc6ayowlsnjpDgDCzwmncw5uRuvjCKquFJIRTjkouef5J
+         T0JIz3b1270V20GAwYng7sG+Wv8X/XS8CVtA7S7gGBy+Vmc+JXUJ3/tpNsWhscJwHyB3
+         i2aZyXuPZdr7fGaPKOpAhMuLiZ4hQzWJe1mwf/G/L3WfBEwV3MUXorj8UI2G9KPIHKvL
+         wznerHuC6dfH1dECrQsekiHErhq8sna/U5WaQ6tU7jOvHZJ2urrpZFgOWkYhpl9juDk5
+         lSdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXg+igFaV2+KcnLRnnQJLmuKi7raeNpFyyoyyT/XUgaaVRGynaA/nGSvu+QLMM6Nl8SRQrKWuoYcpOy2qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxolYxg3Y4ihqN64gh3w2ODjDzLYwt788wsNlQNwl0gXMi7dL7Q
+	E+Cko0TI+GLe0MNJ0i8jQAbjJjNtd6f7T3sdhOKulGEmHTqpq55TCm7FEhymiC8=
+X-Google-Smtp-Source: AGHT+IESuJBuBZ+CrmXR26aG67o7i/qlfXw0b+StpnXg1uoC63TW5Z7TQC4m+a0dyz4Dowo53ihl6A==
+X-Received: by 2002:a17:903:41c9:b0:202:2cd5:2095 with SMTP id d9443c01a7336-206f04f6845mr129643015ad.18.1725943893956;
+        Mon, 09 Sep 2024 21:51:33 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20710ee70a1sm40882965ad.121.2024.09.09.21.51.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 21:51:33 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: anshulusr@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v2 0/4] Threshold event and Sampling freq support for LTR390
+Date: Tue, 10 Sep 2024 10:20:25 +0530
+Message-ID: <20240910045030.266946-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
-> @@ -337,6 +341,7 @@ struct folio {
->  	/* private: */
->  				};
->  	/* public: */
-> +			struct dev_pagemap *pgmap;
+Hello,
 
-Shouldn't that be indented by one more tab stop?
+The first patch adds support for configuring the Sampling frequency of
+the sensor. The available values for the sampling freqeuncy are provided
+by the `read_avail` callback and they are in miliHertz.
 
-And for ease of reading, perhaps it should be placed either immediately
-before or after 'struct list_head lru;'?
+Then the second patch adds support for suspending and resuming
+the sensor by providing the necessary callbacks. And registering
+the ops with the driver.
 
-> +++ b/include/linux/mmzone.h
-> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
->  	return page_zonenum(page) == ZONE_DEVICE;
->  }
->  
-> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
-> +{
-> +	WARN_ON(!is_zone_device_page(page));
-> +	return page_folio(page)->pgmap;
-> +}
+The third patch in the series adds support for Threshold events and interrupts.
+Exposed rising and falling threshold events for both the channels. The events
+can be configured via the write_event_config callback. The desired rising or falling
+threshold value can be written to from userspace.
 
-I haven't read to the end yet, but presumably we'll eventually want:
+The fourth patch adds support for threshold interrupt persistance.
+It triggers when the UVS/ALS data is out of thresholds for a specific number
+of consecutive measurements.
+Exposed the IIO_EV_INFO_PERIOD attribute by which userspace can set the persistance
+value in miliseconds. The persistance period should be greater than or equal
+to the sampling period.
 
-static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
-{
-	WARN_ON(!folio_is_zone_device(folio))
-	return folio->pgmap;
-}
+Changes in v2:
+- Added "linux/irq.h" include to fix `-Wimplicit-function-declaration`.
+- The above error was pointed during testing by kernel-test-robot
 
-and since we'll want it eventually, maybe now is the time to add it,
-and make page_dev_pagemap() simply call it?
+Thanks,
+Abhash
+
+
+Abhash Jha (4):
+  iio: light: ltr390: Added configurable sampling frequency support
+  iio: light: ltr390: Suspend and Resume support
+  iio: light: ltr390: Interrupts and threshold event support
+  iio: light: ltr390: Add interrupt persistance support
+
+ drivers/iio/light/ltr390.c | 363 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 361 insertions(+), 2 deletions(-)
+
+-- 
+2.43.0
 
 
