@@ -1,920 +1,250 @@
-Return-Path: <linux-kernel+bounces-322384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F09E972840
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:21:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3896972842
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56000282CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07CF11F24F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6443D16D33F;
-	Tue, 10 Sep 2024 04:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5FA1684AE;
+	Tue, 10 Sep 2024 04:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etEjPGSq"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RT0nMBP7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1739D14EC44;
-	Tue, 10 Sep 2024 04:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941915; cv=none; b=Hn3rwdqcF0ACNp0SNOip7Z+wEiAcEHLqfZPdRt/gTpRZ8uNZpXrjQdYcopApOyRUxo5oy/nnpCIhdayV6v/NKbuVzJH49ptBDqRRXBD/BYalZfa2G0agrG0QFHqjJ0S2sSUh4Q3VyxrE00LKLa1yD9wzbDb18N9YdYc7NmhwCO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941915; c=relaxed/simple;
-	bh=QO+bGIu/OvWbyERSlGE6OBNFM/K+DiqfqPPKrZdSj0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YOD9bMF758IHoG9M3gyM6p35QEJoPmEWpvWU6/UAl/viFPBb0R2BVOSYdaQZSsuMgvIGhfN1s9bbk5ykc3DdmUprb1O1j58ty8KFwmFolWj4Rg1DLw/8GjQIPAMOuHLWPv4I1BIIvAxY+XM6MHRSdYI7WdrIqgbyENWmfJ2SCyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etEjPGSq; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-49bd27b3507so1415859137.2;
-        Mon, 09 Sep 2024 21:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725941912; x=1726546712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQjyuD/v2psDQHuHQBZqQUb8QqpveuVzmeWiCMPuERE=;
-        b=etEjPGSq5eLu3hKwX59FP4Y5E4mqQqhKm9UNNC2EI2dVIfXP2YpPyAx/XIcutiCfly
-         vSpBca32ygthK0zy68xyHEaxc8gKGJEEX2IaxCYFYBpCN2nAWFkH6xwPUklJ5ST8S1GL
-         pt+KJyOG/IgdUcJWl9i550foFlE4YSh76YAGrzpscbBP4KpLMkQ+z6MjXiowfcRdxI9V
-         Yp41m+Bz/WwQ6PelndnT458f1I2dAClIlkEg1azYhHvFiqJjnakS2iXhyaWHq9ENWrFs
-         3+IMKUM43x+O1ebvZVdYMfzjvOnVWhjAV8kWmUpR8iQ9cGFq9t70FS8Ozc+hL5XY5d2i
-         h1ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725941912; x=1726546712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQjyuD/v2psDQHuHQBZqQUb8QqpveuVzmeWiCMPuERE=;
-        b=ulIi3Sh2W1G4XOzA3aHTe053an/IPrhMaREAROKxa04Yg1VJmdLoOwRg7ymCc8Gzch
-         ASnTvE3u0zxOH46Jur5oha43sxSjqswWWwsCluJURhnZCgNLwJo0Y60eh3Wt7p/QZ1tH
-         pwy1s38tkzyfL3Tice88nQZRzZcoqoK8FoZ4nDwrkWMLYKlduEC5SsWROp96iC/KkSMZ
-         mWHF4VZcNhtSG6RZZwa7Uv2x6Et6mzqVCYdUClJz4K3CNUnYNoZdhJq2jlPWeqyRpQHP
-         uPQdJgCk9Sxofr+SoYoXnYzGajwyGvEWr2v4kFmo+DKib0u4EuuoBqv+h5HEbvwL5fXr
-         9eJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWN7sh1c1asc3DjYr80ocssSbRPfZfJ1v3QCfIKPUiOWT8BDTpHU2lvJgbI6YOXNvhloka5nrYX5xt+UXXY@vger.kernel.org, AJvYcCX+9nkQ1GXMWoEczQNO/zdpqaODZRI4UgIWHNVC1stADL91q5lpyDVmcO1EiW20pYGG5sLI2DhP@vger.kernel.org, AJvYcCX1WNr4n7OFCs7sooWO1HcEKm1i/NSEIavCXoRQWZx0KNbXmDczSJ2VdS2XpVs3F6U6Y2ZhByJfraJkFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+5/mJpYpUdakM11gj8HvSuOJaW/b7FCQlC92VGyW+5ZPOcD3W
-	5xSPSnxwPkyhXCY+p3fgI11kq0AOuZ4iqIgI1PtzcpFy5qz2qIblOxz8phZHfHABn24nXhLgbJl
-	WdRFhMULMKciESCYVga7+h+/HAaE=
-X-Google-Smtp-Source: AGHT+IFOdF22/OaB7Srd0pBSxPzO/WiXbNqZLbTeGHHR2WuP+ABK/RmAKnjuSelxJjG74BtM6ty79xtvcfYDFn8oURI=
-X-Received: by 2002:a05:6102:e13:b0:497:1b98:1f82 with SMTP id
- ada2fe7eead31-49c1527c59amr2135580137.6.1725941911650; Mon, 09 Sep 2024
- 21:18:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB9D1448E2;
+	Tue, 10 Sep 2024 04:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725942017; cv=fail; b=g++XWGuNC/8fe576Y6Mev/j/Cety9BmEQ+rI/hcb1IiN261Rexx2ycV3K/lFSfVInnsJnPQ6AJtCzVgZaIUUzGWmQVJHB4ZVjA+9vEQOe+x1/6hcr+tzzpr3Dmr9coD9xzO/nTQOxT+DPf3rVEXLxpmZ7yR+mzzB/JzNQXXoinM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725942017; c=relaxed/simple;
+	bh=XZAldZhgx3uFqWoLUfHTouUjLCWGraoX5kWiN/zQbXM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nN2xGRxzNFne/nfM0l5qQ+XGyFFvAQYFThXVfUdOnhjhuPAxnFBRPYQexyM3lzmiVpdBjOM0mNun0KeMT0zVZK1zs8YwOI2wGP8clDcuj2yWBgZVaw0tN9Ve/DjUAIJkKNO5H1PEQ+Uu7RYorXVRlxUKR+92A8ysPny3kom11xE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RT0nMBP7; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725942015; x=1757478015;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=XZAldZhgx3uFqWoLUfHTouUjLCWGraoX5kWiN/zQbXM=;
+  b=RT0nMBP7OlwVjYjqxmAVsAFLFZ//cnPbYnkfAdF/hZG3WfxDK4GoFVeB
+   AI1g6egod6XaKHqVmr32XgwNP7y/Wz6n03wq1Ftut/8OYiWW0GWNA1UlC
+   I6j/NQBWeaeh27Lz+PCfIAyUGuwxMOrEvYjfkz0YlbjkN9OT5bw8/MoVU
+   0OtQ9sGuLFfv4eE7H1dC9a/4VpQ4dxxn7u1VpEqsrG2oBf6VFi0eGSxrR
+   +ZdV6WLD+H+dJbAarCWEYl2hg2QnoIW08Y84evCm9lG15IZ9lSFrhSTcZ
+   grEzXoNpU3njOR/Zm2BKQ8r3mYtMkPk/Fn6tge3/QEMYwIdsY8VtQwb/Z
+   w==;
+X-CSE-ConnectionGUID: ggnGjgYPTDKqYzbU7MCkMA==
+X-CSE-MsgGUID: hOlo0eilRdGRupJqnopiJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24213383"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="24213383"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 21:20:14 -0700
+X-CSE-ConnectionGUID: LdisceHKSIeRYkYoi8rQRg==
+X-CSE-MsgGUID: pFtY01JZTZal8jWLLzCcAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="71856941"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Sep 2024 21:20:15 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 9 Sep 2024 21:20:14 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 9 Sep 2024 21:20:14 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.41) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 9 Sep 2024 21:20:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QxUQ+lPOZa4GR/zdP+mzf58BrE9ciShL4OeBuxBhZG+wiu3ecaMJkzF8g0WqOaxYhyPrvmKosGeJBLgUMaVirbbXk+WyCrtPytZPwZrTVnD4xyO85ioXYSEW9OgdxchvkzSeRTcvFSD4amM1KY1l9ATTUMJ0bYlAxy0el1SHtCmemGDzYIeFji55Csd+UW7vfEefl75sR5ThtuJWHm5Xj7jj+uM/X2vuAwut2Vdg3y7Yfaf1rWs/DY29XiUk0/Jqqmh8pax9Z4mg7kcvxcpn72a04mKx2qgNRM2Fe94T24w3tF5tBmFttYFonpEMtVHaJ2xwME5A2logCq6cIprKYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J3Yw5Pyn83Q7E1tLQYMmWvLhHpXKO7dpd1+YVwwKl4A=;
+ b=sY8A511u3P/utnOea+bqrhKRdmr/Q6KsR6qpsgSOR6MeoVjuXvtlBnTYipEPqnoJmcoS0+o2pxsKuoCX2khN6e7g/vrHkgXCNxT15SeXFPerO2YvuXvO0o25ehBVqn12rhLmTjWiBpIgINyYjkOBsOwjM8CA6EanGvh3I7ULgFWM0p6oIiVnubLLSYUWesev/1pos7+Gr68c/O1E03AyCGMJBDiKm96LP9Zn7TRUl3z15PdDPC3kFFe36G1M2KfmAP9tyZ+uDzhSe7oujdokEcM0aswCL2x1QcYnFfVSUTnmFA05Cav0srNBB2C9CoMwjr8eFEdasuqq9O1Ru7JjDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by PH7PR11MB6428.namprd11.prod.outlook.com (2603:10b6:510:1f4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Tue, 10 Sep
+ 2024 04:20:11 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
+ 04:20:11 +0000
+Date: Mon, 9 Sep 2024 21:20:08 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, quic_zijuhu
+	<quic_zijuhu@quicinc.com>, Ira Weiny <ira.weiny@intel.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Zijun Hu <zijun_hu@icloud.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Timur Tabi <timur@kernel.org>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
+ device_for_each_child()
+Message-ID: <66dfc8f83414d_3264629429@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
+ <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
+ <2024090531-mustang-scheming-3066@gregkh>
+ <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
+ <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
+ <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
+X-ClientProxiedBy: MW4PR03CA0351.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::26) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805153639.1057-1-justinjiang@vivo.com> <20240805153639.1057-3-justinjiang@vivo.com>
- <CAGsJ_4zXtJvBdgpDs+yyEwfdJ0gy+_dgrWLF1zxMgBbaLBeiYA@mail.gmail.com>
- <400918d7-aaaf-4ccc-af8e-ab48576746d1@vivo.com> <CAGsJ_4yAeuEFbmOoAqW4FRv3x9WNtfu3TZcuXOqb7sf3Jsgd9g@mail.gmail.com>
- <1e7e24a7-e602-4654-ba3f-d3e4d1a2a65e@vivo.com>
-In-Reply-To: <1e7e24a7-e602-4654-ba3f-d3e4d1a2a65e@vivo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 10 Sep 2024 16:18:15 +1200
-Message-ID: <CAGsJ_4yhSVggqh-v7AjV1v3oTpVaQkMxyY4YYT1vRd5na_tpTQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mm: tlb: add tlb swap entries batch async release
-To: zhiguojiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH7PR11MB6428:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1660e58-43d5-4845-30f2-08dcd14fdc94
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+ehX1XTAv7ab1xXq8lpuaugyEZlduB1pMr42MTp0+OJkQ39GJBzLlgPAqJ+b?=
+ =?us-ascii?Q?zHegj7ln0Xi37evXQ7vrLFujKCLJ39cOYKj4z8CtkobbwP/JjbyGUMhwSl+6?=
+ =?us-ascii?Q?r1wHmgbD51AEtCxzxY652jwFzVms+9VIkoCJ9y30few9MC5H5ib4fpjuGPo6?=
+ =?us-ascii?Q?zlADJdhqj/lsg3g6tU3tCZ9jQYdCSW+5NbZymaplFWYBXgDF9bw/Jz61gJij?=
+ =?us-ascii?Q?pCfltuT53jlO3mKtzH9MSYNcUQr38HJfs60Qf89Bojasz1LLscR5OUqSmTnW?=
+ =?us-ascii?Q?PPx/AJhTYIlMja9BwssRsZd01DmHHB4nfU/wmVilwDKU2KiLXZ4zNLHe/LPg?=
+ =?us-ascii?Q?QKL5GKn9Y7+2SPz4k6Q0aqRtHcr7n4mOY+kcdwiMjDyO9xcNjfSrCpf63954?=
+ =?us-ascii?Q?I8CKe+uFy/B+lD8+SOW8uuOGZ4EPWEcUT5V+7L7/oeq/4CrwhN32Zv4UbhKB?=
+ =?us-ascii?Q?MLT+waeerQwGo9hRhQc28HrHnLYv51JpEVzfJwDo1YOK5Cz15hVETiVwc9QC?=
+ =?us-ascii?Q?0pT27TXllgS1D6mY2QKFo/+TVvlmrSUwmsN/GivGTnAggbnDpBm+OWK3oiTD?=
+ =?us-ascii?Q?vm5Qr100IxFG5V7HkcAm/3vRuycwhu4iIhjKYKqu3RZoYaf0PTRx7Un4u+3W?=
+ =?us-ascii?Q?V5oDR6AqAYEogyQCdCPvj6bUt0c4TmUaZbH9TojpAeo3ka4g8E6EG5ApeITc?=
+ =?us-ascii?Q?8r86lTkMcGKZzFEXjhw63e5dC9FCGspzc1Tzs3e521EXMhjzaFkcEFCvDvud?=
+ =?us-ascii?Q?lnSiYqtFANtRW654rylGJHtJ1ze6ypccqNJbjGsCyd5psnk9HsJRapf6pSdk?=
+ =?us-ascii?Q?lk3EATHYGq0biHJIUjBiaDPK8J0cNzBhbcP/j0M1Xl3yXuftPhMVtrDDdDMF?=
+ =?us-ascii?Q?8fKdyvJxZ0DhMf7TIoMfdjgJp6OdZVSY/KY+1cGYZkcnJktEQdQxh3XwTspF?=
+ =?us-ascii?Q?7rJ4MKUdCjUhXMvZqVEhK3k6ZkhSt2uKYZx/4xTMJgi7vrSPj4adOZu26QEe?=
+ =?us-ascii?Q?Z28DC6auSEtL0x087KHpI/tgtOEXQxS5wwEHUuD768xw3w+10lGAexK5i+cw?=
+ =?us-ascii?Q?Qb0r9EqCV40PFVV2ae1u3CIC1f94lgbUn7Kd7XhwlvVi4Zz616oFO5kDOYxM?=
+ =?us-ascii?Q?XJicC6FSJ3xB22kS1c8MDCe9ynMn4SVudg8DVe4lYSejEwHA8nS2QRnQcPdb?=
+ =?us-ascii?Q?4JCTCSZLwQ6bFB5EUG61ZMUAMzg4ES//HFxh6+UcRI7zK8PRX865nd8ONXTY?=
+ =?us-ascii?Q?ISyDabhw8+/25Iukbyph3Uy44Sm2qSooHdJr8Kyeyv0f8MnAn/hyRuzG258Z?=
+ =?us-ascii?Q?zBGwmi84w9/SKfP9BhP5HJ55BKuOS8OsrQJ3lnQEdZk+9w=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?o2YCAdGizNF+rWUn1I/ZMd3liZidZQVWoXuQEfifyaGDAds1m/vmRdo6KPz8?=
+ =?us-ascii?Q?rjMNfOkw4O7SgvSbpWUuRI/kgAe8RJXg+JVqdlMlM/OtSy4I8KrFWXl8tJWX?=
+ =?us-ascii?Q?zDI56tGIFjgOrjeEhyQjKzlJM4qgDeb+OTzPIPHACBwpXwQmX+7aHUupGyB8?=
+ =?us-ascii?Q?UbOHjevL7INiMZPn76x7C4kon7hbF0DbcIxAaKCIrT0TYafw/q2Eat91Vq+G?=
+ =?us-ascii?Q?YKNpzj+95bSFvIG0SPcN+xziFDbQxvgfHvQWAhxJbIzqyU9qgAIYQitxW1di?=
+ =?us-ascii?Q?yGcacEXK/JFS+s+UthLW0Wd0G+XCGJL3lJgrgai6u3FSjATujQboIWNxuZ6q?=
+ =?us-ascii?Q?7SeapLxHNc+qQUSRbvKNtBpCgGvHnknI1/NUKiXM/8Z996Ygz1QM9nAMJBm7?=
+ =?us-ascii?Q?iPAmQS5vj7jGHR7Mt8dAfI2mWvP5IDHWxHcLWqSlkK9ze6nmVYnnRhFXxOHB?=
+ =?us-ascii?Q?FlOiOb70UcStNpdBV85+0N4xiZjfYZ44wggMmSRz5AEwlb/VV3qB8mqBMR7c?=
+ =?us-ascii?Q?YDUaZzP0LMKo76wKs2v7LgdQ5ic4Zl03qSANu2EWnMrBl2Ns9nTxJ+xmYro/?=
+ =?us-ascii?Q?87uZ4mkoz/g+QLIaFvq2KqOs/dx5/0PEiHrI/dzmii3zwkzH6WcJSQ/Mr1CB?=
+ =?us-ascii?Q?9XN9/quZ9MAEndLr5bSSxfA0VQaXbGwEHXZG6qcghDTPAg50M2sZkr6OjzxF?=
+ =?us-ascii?Q?oZi3XIkejwGzUYXzFOF0PcLCRmpzyaltdRyE0xmIT20nm5eby/6EWGrNBF8A?=
+ =?us-ascii?Q?QYWmfZ6UCsW77KgDx2Hj9Vl3FG85yJRy/lUoW4ZvI9MGw7TvYL+/0dCaxm6I?=
+ =?us-ascii?Q?WG5jutbK3nqlVEbJrE3hzg1A8BvgPbXDgSRnB3dYOCTkk+yObjfcXl66AYFl?=
+ =?us-ascii?Q?RJcsUXV6/5X88MBNfh9WWwgyp6C5IJD1+0kfUJGZhDrYdP8lmHHRXcOZamf3?=
+ =?us-ascii?Q?ViJdZ1ryQuloctvUm3dW21cP4D6zX+yvtF+GSlgR2oSf9TOqhQxM9R1s9qtH?=
+ =?us-ascii?Q?L3YZZpATEHzWykJUTjuT5MeQBlKiTlUAvlE17V4iHg+GLYC3ID1YB1GIABVx?=
+ =?us-ascii?Q?LJ5/pBIr05PfqmBKRF8HNMnxRJshQ14eDOXhLO/BgsJqH1mzqlXbBuMpcVCk?=
+ =?us-ascii?Q?6DPpRv2TcrhfNWUYemIlx9tPsygL1u5a8PRiBsgYtTXpekU74V7GYqk2bpOh?=
+ =?us-ascii?Q?E5zvN7RuRmf2YHUuY7zGAfWQCUZr609GjKXC+qxM2HvBukX7cRNWJmo209Zf?=
+ =?us-ascii?Q?HJ9pjvij7D0EA1jWgEbbktb/gjFvRqIAcpKIZ2+DJHRcONxZGvWGmLBP9Y4o?=
+ =?us-ascii?Q?Xu3xYMyk4+LO42JB2S9jtlwbcTG2qp6IpxmupkVHRw/JFw6aAy7/i5RB4lof?=
+ =?us-ascii?Q?cRhCTMO3fhVbKEOXsWWYWDZhFuKoDdgpY1dgzmjgY9y+CFmtrF0OSQUfAnjv?=
+ =?us-ascii?Q?ecX3Tl1HOL+3qy1rRtZQkVwHl39qS8lXK9uh9JlaD1CVS3C5LezcRLYXQnpC?=
+ =?us-ascii?Q?gFRFnngk0FjVQNpi1qblFOIvVkjoeoloK4UDLoB/9XnG9Z9TNMsdw2sicxzG?=
+ =?us-ascii?Q?UcEN49TfAgHZVP8JtNGmp+clBLpNKXhKvPL76p2+73uUNrZFati8wA0mrUba?=
+ =?us-ascii?Q?3Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1660e58-43d5-4845-30f2-08dcd14fdc94
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 04:20:11.4349
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ybeMY8QARvCGZ98XIoFRLaunPbLTW+mT0CC4TUlsqaY4LgDMlCydkYUOaCFn/3St24DKWuxsDzaHrVsc6scHKr76VAKyqAHahlGy9CmnrH8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6428
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 10, 2024 at 2:39=E2=80=AFAM zhiguojiang <justinjiang@vivo.com> =
-wrote:
->
->
->
-> =E5=9C=A8 2024/9/9 9:59, Barry Song =E5=86=99=E9=81=93:
-> > On Wed, Sep 4, 2024 at 11:26=E2=80=AFPM zhiguojiang <justinjiang@vivo.c=
-om> wrote:
-> >>
-> >>
-> >> =E5=9C=A8 2024/9/4 17:16, Barry Song =E5=86=99=E9=81=93:
-> >>> On Tue, Aug 6, 2024 at 3:36=E2=80=AFAM Zhiguo Jiang <justinjiang@vivo=
-.com> wrote:
-> >>>> One of the main reasons for the prolonged exit of the process with
-> >>>> independent mm is the time-consuming release of its swap entries.
-> >>>> The proportion of swap memory occupied by the process increases over
-> >>>> time due to high memory pressure triggering to reclaim anonymous fol=
-io
-> >>>> into swapspace, e.g., in Android devices, we found this proportion c=
-an
-> >>>> reach 60% or more after a period of time. Additionally, the relative=
-ly
-> >>>> lengthy path for releasing swap entries further contributes to the
-> >>>> longer time required to release swap entries.
-> >>>>
-> >>>> Testing Platform: 8GB RAM
-> >>>> Testing procedure:
-> >>>> After booting up, start 15 processes first, and then observe the
-> >>>> physical memory size occupied by the last launched process at differ=
-ent
-> >>>> time points.
-> >>>> Example: The process launched last: com.qiyi.video
-> >>>> |  memory type  |  0min  |  1min  |   5min  |   10min  |   15min  |
-> >>>> -------------------------------------------------------------------
-> >>>> |     VmRSS(KB) | 453832 | 252300 |  204364 |   199944 |  199748  |
-> >>>> |   RssAnon(KB) | 247348 |  99296 |   71268 |    67808 |   67660  |
-> >>>> |   RssFile(KB) | 205536 | 152020 |  132144 |   131184 |  131136  |
-> >>>> |  RssShmem(KB) |   1048 |    984 |     952 |     952  |     952  |
-> >>>> |    VmSwap(KB) | 202692 | 334852 |  362880 |   366340 |  366488  |
-> >>>> | Swap ratio(%) | 30.87% | 57.03% |  63.97% |   64.69% |  64.72%  |
-> >>>> Note: min - minute.
-> >>>>
-> >>>> When there are multiple processes with independent mm and the high
-> >>>> memory pressure in system, if the large memory required process is
-> >>>> launched at this time, system will is likely to trigger the instanta=
-neous
-> >>>> killing of many processes with independent mm. Due to multiple exiti=
-ng
-> >>>> processes occupying multiple CPU core resources for concurrent execu=
-tion,
-> >>>> leading to some issues such as the current non-exiting and important
-> >>>> processes lagging.
-> >>>>
-> >>>> To solve this problem, we have introduced the multiple exiting proce=
-ss
-> >>>> asynchronous swap entries release mechanism, which isolates and cach=
-es
-> >>>> swap entries occupied by multiple exiting processes, and hands them =
-over
-> >>>> to an asynchronous kworker to complete the release. This allows the
-> >>>> exiting processes to complete quickly and release CPU resources. We =
-have
-> >>>> validated this modification on the Android products and achieved the
-> >>>> expected benefits.
-> >>>>
-> >>>> Testing Platform: 8GB RAM
-> >>>> Testing procedure:
-> >>>> After restarting the machine, start 15 app processes first, and then
-> >>>> start the camera app processes, we monitor the cold start and previe=
-w
-> >>>> time datas of the camera app processes.
-> >>>>
-> >>>> Test datas of camera processes cold start time (unit: millisecond):
-> >>>> |  seq   |   1  |   2  |   3  |   4  |   5  |   6  | average |
-> >>>> | before | 1498 | 1476 | 1741 | 1337 | 1367 | 1655 |   1512  |
-> >>>> | after  | 1396 | 1107 | 1136 | 1178 | 1071 | 1339 |   1204  |
-> >>>>
-> >>>> Test datas of camera processes preview time (unit: millisecond):
-> >>>> |  seq   |   1  |   2  |   3  |   4  |   5  |   6  | average |
-> >>>> | before |  267 |  402 |  504 |  513 |  161 |  265 |   352   |
-> >>>> | after  |  188 |  223 |  301 |  203 |  162 |  154 |   205   |
-> >>>>
-> >>>> Base on the average of the six sets of test datas above, we can see =
-that
-> >>>> the benefit datas of the modified patch:
-> >>>> 1. The cold start time of camera app processes has reduced by about =
-20%.
-> >>>> 2. The preview time of camera app processes has reduced by about 42%=
-.
-> >>>>
-> >>>> It offers several benefits:
-> >>>> 1. Alleviate the high system cpu loading caused by multiple exiting
-> >>>>      processes running simultaneously.
-> >>>> 2. Reduce lock competition in swap entry free path by an asynchronou=
-s
-> >>>>      kworker instead of multiple exiting processes parallel executio=
-n.
-> >>>> 3. Release pte_present memory occupied by exiting processes more
-> >>>>      efficiently.
-> >>>>
-> >>>> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> >>>> ---
-> >>>>    arch/s390/include/asm/tlb.h |   8 +
-> >>>>    include/asm-generic/tlb.h   |  44 ++++++
-> >>>>    include/linux/mm_types.h    |  58 +++++++
-> >>>>    mm/memory.c                 |   3 +-
-> >>>>    mm/mmu_gather.c             | 296 +++++++++++++++++++++++++++++++=
-+++++
-> >>>>    5 files changed, 408 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb=
-.h
-> >>>> index e95b2c8081eb..3f681f63390f
-> >>>> --- a/arch/s390/include/asm/tlb.h
-> >>>> +++ b/arch/s390/include/asm/tlb.h
-> >>>> @@ -28,6 +28,8 @@ static inline bool __tlb_remove_page_size(struct m=
-mu_gather *tlb,
-> >>>>                   struct page *page, bool delay_rmap, int page_size)=
-;
-> >>>>    static inline bool __tlb_remove_folio_pages(struct mmu_gather *tl=
-b,
-> >>>>                   struct page *page, unsigned int nr_pages, bool del=
-ay_rmap);
-> >>>> +static inline bool __tlb_remove_swap_entries(struct mmu_gather *tlb=
-,
-> >>>> +               swp_entry_t entry, int nr);
-> >>>>
-> >>>>    #define tlb_flush tlb_flush
-> >>>>    #define pte_free_tlb pte_free_tlb
-> >>>> @@ -69,6 +71,12 @@ static inline bool __tlb_remove_folio_pages(struc=
-t mmu_gather *tlb,
-> >>>>           return false;
-> >>>>    }
-> >>>>
-> >>>> +static inline bool __tlb_remove_swap_entries(struct mmu_gather *tlb=
-,
-> >>>> +               swp_entry_t entry, int nr)
-> >>>> +{
-> >>>> +       return false;
-> >>>> +}
-> >>>> +
-> >>>>    static inline void tlb_flush(struct mmu_gather *tlb)
-> >>>>    {
-> >>>>           __tlb_flush_mm_lazy(tlb->mm);
-> >>>> diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-> >>>> index 709830274b75..8b4d516b35b8
-> >>>> --- a/include/asm-generic/tlb.h
-> >>>> +++ b/include/asm-generic/tlb.h
-> >>>> @@ -294,6 +294,37 @@ extern void tlb_flush_rmaps(struct mmu_gather *=
-tlb, struct vm_area_struct *vma);
-> >>>>    static inline void tlb_flush_rmaps(struct mmu_gather *tlb, struct=
- vm_area_struct *vma) { }
-> >>>>    #endif
-> >>>>
-> >>>> +#ifndef CONFIG_MMU_GATHER_NO_GATHER
-> >>>> +struct mmu_swap_batch {
-> >>>> +       struct mmu_swap_batch *next;
-> >>>> +       unsigned int nr;
-> >>>> +       unsigned int max;
-> >>>> +       encoded_swpentry_t encoded_entrys[];
-> >>>> +};
-> >>>> +
-> >>>> +#define MAX_SWAP_GATHER_BATCH  \
-> >>>> +       ((PAGE_SIZE - sizeof(struct mmu_swap_batch)) / sizeof(void *=
-))
-> >>>> +
-> >>>> +#define MAX_SWAP_GATHER_BATCH_COUNT    (10000UL / MAX_SWAP_GATHER_B=
-ATCH)
-> >>>> +
-> >>>> +struct mmu_swap_gather {
-> >>>> +       /*
-> >>>> +        * the asynchronous kworker to batch
-> >>>> +        * release swap entries
-> >>>> +        */
-> >>>> +       struct work_struct free_work;
-> >>>> +
-> >>>> +       /* batch cache swap entries */
-> >>>> +       unsigned int batch_count;
-> >>>> +       struct mmu_swap_batch *active;
-> >>>> +       struct mmu_swap_batch local;
-> >>>> +       encoded_swpentry_t __encoded_entrys[MMU_GATHER_BUNDLE];
-> >>>> +};
-> >>>> +
-> >>>> +bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
-> >>>> +               swp_entry_t entry, int nr);
-> >>>> +#endif
-> >>>> +
-> >>>>    /*
-> >>>>     * struct mmu_gather is an opaque type used by the mm code for pa=
-ssing around
-> >>>>     * any data needed by arch specific code for tlb_remove_page.
-> >>>> @@ -343,6 +374,18 @@ struct mmu_gather {
-> >>>>           unsigned int            vma_exec : 1;
-> >>>>           unsigned int            vma_huge : 1;
-> >>>>           unsigned int            vma_pfn  : 1;
-> >>>> +#ifndef CONFIG_MMU_GATHER_NO_GATHER
-> >>>> +       /*
-> >>>> +        * Two states of releasing swap entries
-> >>>> +        * asynchronously:
-> >>>> +        * swp_freeable - have opportunity to
-> >>>> +        * release asynchronously future
-> >>>> +        * swp_freeing - be releasing asynchronously.
-> >>>> +        */
-> >>>> +       unsigned int            swp_freeable : 1;
-> >>>> +       unsigned int            swp_freeing : 1;
-> >>>> +       unsigned int            swp_disable : 1;
-> >>>> +#endif
-> >>>>
-> >>>>           unsigned int            batch_count;
-> >>>>
-> >>>> @@ -354,6 +397,7 @@ struct mmu_gather {
-> >>>>    #ifdef CONFIG_MMU_GATHER_PAGE_SIZE
-> >>>>           unsigned int page_size;
-> >>>>    #endif
-> >>>> +       struct mmu_swap_gather *swp;
-> >>>>    #endif
-> >>>>    };
-> >>>>
-> >>>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> >>>> index 165c58b12ccc..2f66303f1519
-> >>>> --- a/include/linux/mm_types.h
-> >>>> +++ b/include/linux/mm_types.h
-> >>>> @@ -283,6 +283,64 @@ typedef struct {
-> >>>>           unsigned long val;
-> >>>>    } swp_entry_t;
-> >>>>
-> >>>> +/*
-> >>>> + * encoded_swpentry_t - a type marking the encoded swp_entry_t.
-> >>>> + *
-> >>>> + * An 'encoded_swpentry_t' represents a 'swp_enrty_t' with its the =
-highest
-> >>>> + * bit indicating extra context-dependent information. Only used in=
- swp_entry
-> >>>> + * asynchronous release path by mmu_swap_gather.
-> >>>> + */
-> >>>> +typedef struct {
-> >>>> +       unsigned long val;
-> >>>> +} encoded_swpentry_t;
-> >>>> +
-> >>>> +/*
-> >>>> + * The next item in an encoded_swpentry_t array is the "nr" argumen=
-t, specifying the
-> >>>> + * total number of consecutive swap entries associated with the sam=
-e folio. If this
-> >>>> + * bit is not set, "nr" is implicitly 1.
-> >>>> + *
-> >>>> + * Refer to include\asm\pgtable.h, swp_offset bits: 0 ~ 57, swp_typ=
-e bits: 58 ~ 62.
-> >>>> + * Bit63 can be used here.
-> >>>> + */
-> >>>> +#define ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT (1UL << (BITS_PER_LONG =
-- 1))
-> >>>> +
-> >>>> +static __always_inline encoded_swpentry_t
-> >>>> +encode_swpentry(swp_entry_t entry, unsigned long flags)
-> >>>> +{
-> >>>> +       encoded_swpentry_t ret;
-> >>>> +
-> >>>> +       VM_WARN_ON_ONCE(flags & ~ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT=
-);
-> >>>> +       ret.val =3D flags | entry.val;
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static inline unsigned long encoded_swpentry_flags(encoded_swpentry=
-_t entry)
-> >>>> +{
-> >>>> +       return ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT & entry.val;
-> >>>> +}
-> >>>> +
-> >>>> +static inline swp_entry_t encoded_swpentry_data(encoded_swpentry_t =
-entry)
-> >>>> +{
-> >>>> +       swp_entry_t ret;
-> >>>> +
-> >>>> +       ret.val =3D ~ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT & entry.val=
-;
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static __always_inline encoded_swpentry_t encode_nr_swpentrys(unsig=
-ned long nr)
-> >>>> +{
-> >>>> +       encoded_swpentry_t ret;
-> >>>> +
-> >>>> +       VM_WARN_ON_ONCE(nr & ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT);
-> >>>> +       ret.val =3D nr;
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static __always_inline unsigned long encoded_nr_swpentrys(encoded_s=
-wpentry_t entry)
-> >>>> +{
-> >>>> +       return ((~ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT) & entry.val);
-> >>>> +}
-> >>>> +
-> >>>>    /**
-> >>>>     * struct folio - Represents a contiguous set of bytes.
-> >>>>     * @flags: Identical to the page flags.
-> >>>> diff --git a/mm/memory.c b/mm/memory.c
-> >>>> index d6a9dcddaca4..023a8adcb67c
-> >>>> --- a/mm/memory.c
-> >>>> +++ b/mm/memory.c
-> >>>> @@ -1650,7 +1650,8 @@ static unsigned long zap_pte_range(struct mmu_=
-gather *tlb,
-> >>>>                           if (!should_zap_cows(details))
-> >>>>                                   continue;
-> >>>>                           rss[MM_SWAPENTS] -=3D nr;
-> >>>> -                       free_swap_and_cache_nr(entry, nr);
-> >>>> +                       if (!__tlb_remove_swap_entries(tlb, entry, n=
-r))
-> >>>> +                               free_swap_and_cache_nr(entry, nr);
-> >>>>                   } else if (is_migration_entry(entry)) {
-> >>>>                           folio =3D pfn_swap_entry_folio(entry);
-> >>>>                           if (!should_zap_folio(details, folio))
-> >>>> diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-> >>>> index 99b3e9408aa0..33dc9d1faff9
-> >>>> --- a/mm/mmu_gather.c
-> >>>> +++ b/mm/mmu_gather.c
-> >>>> @@ -9,11 +9,303 @@
-> >>>>    #include <linux/smp.h>
-> >>>>    #include <linux/swap.h>
-> >>>>    #include <linux/rmap.h>
-> >>>> +#include <linux/oom.h>
-> >>>>
-> >>>>    #include <asm/pgalloc.h>
-> >>>>    #include <asm/tlb.h>
-> >>>>
-> >>>>    #ifndef CONFIG_MMU_GATHER_NO_GATHER
-> >>>> +/*
-> >>>> + * The swp_entry asynchronous release mechanism for multiple proces=
-ses with
-> >>>> + * independent mm exiting simultaneously.
-> >>>> + *
-> >>>> + * During the multiple exiting processes releasing their own mm sim=
-ultaneously,
-> >>>> + * the swap entries in the exiting processes are handled by isolati=
-ng, caching
-> >>>> + * and handing over to an asynchronous kworker to complete the rele=
-ase.
-> >>>> + *
-> >>>> + * The conditions for the exiting process entering the swp_entry as=
-ynchronous
-> >>>> + * release path:
-> >>>> + * 1. The exiting process's MM_SWAPENTS count is >=3D SWAP_CLUSTER_=
-MAX, avoiding
-> >>>> + *    to alloc struct mmu_swap_gather frequently.
-> >>>> + * 2. The number of exiting processes is >=3D NR_MIN_EXITING_PROCES=
-SES.
-> >>> Hi Zhiguo,
-> >>>
-> >>> I'm curious about the significance of NR_MIN_EXITING_PROCESSES. It se=
-ems that
-> >>> batched swap entry freeing, even with one process, could be a
-> >>> bottleneck for a single
-> >>> process based on the data from this patch:
-> >>>
-> >>> mm: attempt to batch free swap entries for zap_pte_range()
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=
-=3Dmm-stable&id=3Dbea67dcc5ee
-> >>> "munmap bandwidth becomes 3X faster."
-> >>>
-> >>> So what would happen if you simply set NR_MIN_EXITING_PROCESSES to 1?
-> >> Hi Barry,
-> >>
-> >> Thanks for your comments.
-> >>
-> >> The reason for NR_MIN_EXITING_PROCESSES =3D 2 is that previously we
-> >> conducted the multiple android apps continuous startup performance
-> >> test on the case of NR_MIN_EXITING_PROCESSES =3D 1, and the results
-> >> showed that the startup time had deteriorated slightly. However,
-> >> the patch's logic in this test was different from the one I submitted
-> >> to the community, and it may be due to some other issues with the
-> >> previous old patch.
-> >>
-> >> However, we have conducted relevant memory performance tests on this
-> >> patches submitted to the community (NR_MIN_EXITING_PROCESSES=3D2), and
-> >> the results are better than before the modification. The patches have
-> >> been used on multiple projects.
-> >> For example:
-> >> Test the time consumption and subjective fluency experience of
-> >> launching 30 android apps continuously for two rounds.
-> >> Test machine: RAM 16GB
-> >> |        | time(s) | Frame-droped rate(%) |
-> >> | before | 230.76  |         0.54         |
-> >> | after  | 225.23  |         0.74         |
-> >> We can see that the patch has been optimized 5.53s for startup time an=
-d
-> >> 0.2% frame-droped rate and better subjective smoothness experience.
-> >>
-> >> Perhaps the patches submitted to the community has also improved the
-> >> multiple android apps continuous startup performance in the case
-> >> of NR_MIN_EXITING_PROCESSES=3D1. If necessary, I will conduct relevant
-> >> tests to verify this situation in the future.
-> Thanks Barry for your valuable suggestions.
-> > Using a fixed value like 2 feels more like a workaround than a solid so=
-lution.
-> > It would be better if we could eliminate this hack.
-> Ok, I will conduct more tests for tring to solve this parameter issue.
-> >
-> > Additionally, this type of asynchronous reclamation might struggle to s=
-cale
-> > effectively, particularly on NUMA systems with many CPU cores.
-> >
-> > Many kernel threads are per-node, like kswapd. For instance, if we have=
- 100
-> > threads running on 100 CPUs executing zap_pte_range(), your approach, w=
-hich
-> > relies on a single async thread to reclaim swap entries, might lead to
-> > performance
-> > regressions.
-> >
-> > We might need to consider a more adaptable approach that can evaluate
-> > the machine's
-> > topology and dynamically determine the appropriate number of async
-> > threads, rather
-> > than hard-coding it to just one. Otherwise, there could be ongoing
-> > concerns about
-> > whether this solution is truly applicable to all systems.
-> Can we dynamically determine the number of asynchronous kworkers to be
-> created based on the number of exiting processes at a certain moment,
-> for example, every 8 exiting processes corresponds to one asynchronous
-> kworker?
->
-> | The number of exiting processes | The number of asynchronous kworkers |
-> |          [1, 8]                 | 1                    |
-> |          [9, 16]                | 2                    |
-> |          ...                    | ...                   |
-> |      [8*N+1, 8*(N+1)]           | N+1                   |
-> N >=3D 0
+Dan Williams wrote:
+[..]
+> So I wanted to write a comment here to stop the next person from
+> tripping over this dependency on decoder 'add' order, but there is a
+> problem. For this simple version to work it needs 3 things:
+> 
+> 1/ decoders are added in hardware id order: done,
+> devm_cxl_enumerate_decoders() handles that
+> 
+> 2/ search for decoders in their added order: done, device_find_child()
+> guarantees this, although it is not obvious without reading the internals
+> of device_add().
+> 
+> 3/ regions are de-allocated from decoders in reverse decoder id order.
+> This is not enforced, in fact it is impossible to enforce. Consider that
+> any memory device can be removed at any time and may not be removed in
+> the order in which the device allocated switch decoders in the topology.
+> 
+> So, that existing comment of needing to enforce ordered allocation is
+> still relevant even though the implementation fails to handle the
+> out-of-order region deallocation problem.
+> 
+> I alluded to the need for a "tear down the world" implementation back in
+> 2022 [1], but never got around to finishing that.
+> 
+> Now, the cxl_port.hdm_end attribute tracks the "last" decoder to be
+> allocated for endpoint ports. That same tracking needs to be added for
+> switch ports, then this routine could check for ordering constraints by:
+> 
+>     /* enforce hardware ordered allocation */
+>     if (!cxld->region && port->hdm_end + 1 == cxld->id)
+>         return 1;
+>     return 0;
+> 
+> As it stands now @hdm_end is never updated for switch ports.
+> 
+> [1]: 176baefb2eb5 cxl/hdm: Commit decoder state to hardware
 
-I'm not entirely sure. Another potential approach could be to use a
-dedicated thread
-for each NUMA node, but we would need data to confirm if this is the
-right solution.
+--- cut the reply here ---
 
-> > Alternatively, we might be able to develop a method to speed up
-> > batched freeing in a
-> > synchronous manner after collecting the mmu_swap_batch. mmu_gather isn'=
-t
-> > async, but it can still speed up tlb flush, right?
-> The synchronous manner may have some optimization effect, but it seems
-> that the optimization effect on the CPUs load occupied by multiple
-> exiting processes is not significant. In addition, David stated in the
-> latest comment that swap entry seems unrelated to tlb.
-> > For phones with just 8 CPU cores, I definitely like your patch.
-> > However, since we're
-> > aiming for something which can affect all systems, the situation might =
-be more
-> > complex.
-> Yes, this pacth still needs further improvement to adapt to all systems.
+> Yes, that looks simple enough for now, although lets not use a ternary
+> condition and lets leave a comment for the next person:
+> 
+> /* decoders are added in hardware id order
+>  * (devm_cxl_enumerate_decoders), allocated to regions in id order
+>  * (device_find_child() walks children in 'add' order)
+>  */
 
-If we want to keep things simple, another approach might be to profile the
-hotspots within swap_free_nr(), identifying the most time-consuming parts,
-and then optimize them based on the data we collect from your
-mmu_swap_batch. Then we don't have to make things async. Have you ever
-profiled the hotspots?
-
-> >>>> + *
-> >>>> + * Since the time for determining the number of exiting processes i=
-s dynamic,
-> >>>> + * the exiting process may start to enter the swp_entry asynchronou=
-s release
-> >>>> + * at the beginning or middle stage of the exiting process's swp_en=
-try release
-> >>>> + * path.
-> >>>> + *
-> >>>> + * Once an exiting process enters the swp_entry asynchronous releas=
-e, all remaining
-> >>>> + * swap entries in this exiting process need to be fully released b=
-y asynchronous
-> >>>> + * kworker theoretically.
-> >>> Freeing a slot can indeed release memory from `zRAM`, potentially ret=
-urning
-> >>> it to the system for allocation. Your patch frees swap slots asynchro=
-nously;
-> >>> I assume this doesn=E2=80=99t slow down the memory freeing process fo=
-r `zRAM`, or
-> >>> could it even slow down the freeing of `zRAM` memory? Freeing compres=
-sed
-> >>> memory might not be as crucial compared to freeing uncompressed memor=
-y with
-> >>> present PTEs?
-> >> Yes, freeing uncompressed memory with present PTEs is more important
-> >> compared to freeing compressed 'zRAM' memory.
-> >>
-> >> I guess that the multiple exiting processes releasing swap entries
-> >> simultaneously may result in the swap_info->lock competition pressure
-> >> in swapcache_free_entries(), affecting the efficiency of releasing swa=
-p
-> >> entries. However, if the asynchronous kworker is used, this issue can
-> >> be avoided, and perhaps the improvement is minor.
-> >>
-> >> The freeing of zRAM memory does not slow down. We have observed traces
-> >> in the camera startup scene and found that the asynchronous kworker
-> >> can release all swap entries before entering the camera preview.
-> >> Compared to not using the asynchronous kworker, the exiting processes
-> >> completed after entering the camera preview.
-> >>>> + *
-> >>>> + * The function of the swp_entry asynchronous release:
-> >>>> + * 1. Alleviate the high system cpu load caused by multiple exiting=
- processes
-> >>>> + *    running simultaneously.
-> >>>> + * 2. Reduce lock competition in swap entry free path by an asynchr=
-onous kworker
-> >>>> + *    instead of multiple exiting processes parallel execution.
-> >>>> + * 3. Release pte_present memory occupied by exiting processes more=
- efficiently.
-> >>>> + */
-> >>>> +
-> >>>> +/*
-> >>>> + * The min number of exiting processes required for swp_entry async=
-hronous release
-> >>>> + */
-> >>>> +#define NR_MIN_EXITING_PROCESSES 2
-> >>>> +
-> >>>> +static atomic_t nr_exiting_processes =3D ATOMIC_INIT(0);
-> >>>> +static struct kmem_cache *swap_gather_cachep;
-> >>>> +static struct workqueue_struct *swapfree_wq;
-> >>>> +static DEFINE_STATIC_KEY_TRUE(tlb_swap_asyncfree_disabled);
-> >>>> +
-> >>>> +static int __init tlb_swap_async_free_setup(void)
-> >>>> +{
-> >>>> +       swapfree_wq =3D alloc_workqueue("smfree_wq", WQ_UNBOUND |
-> >>>> +               WQ_HIGHPRI | WQ_MEM_RECLAIM, 1);
-> >>>> +       if (!swapfree_wq)
-> >>>> +               goto fail;
-> >>>> +
-> >>>> +       swap_gather_cachep =3D kmem_cache_create("swap_gather",
-> >>>> +               sizeof(struct mmu_swap_gather),
-> >>>> +               0, SLAB_TYPESAFE_BY_RCU | SLAB_PANIC | SLAB_ACCOUNT,
-> >>>> +               NULL);
-> >>>> +       if (!swap_gather_cachep)
-> >>>> +               goto kcache_fail;
-> >>>> +
-> >>>> +       static_branch_disable(&tlb_swap_asyncfree_disabled);
-> >>>> +       return 0;
-> >>>> +
-> >>>> +kcache_fail:
-> >>>> +       destroy_workqueue(swapfree_wq);
-> >>>> +fail:
-> >>>> +       return -ENOMEM;
-> >>>> +}
-> >>>> +postcore_initcall(tlb_swap_async_free_setup);
-> >>>> +
-> >>>> +static void __tlb_swap_gather_free(struct mmu_swap_gather *swap_gat=
-her)
-> >>>> +{
-> >>>> +       struct mmu_swap_batch *swap_batch, *next;
-> >>>> +
-> >>>> +       for (swap_batch =3D swap_gather->local.next; swap_batch; swa=
-p_batch =3D next) {
-> >>>> +               next =3D swap_batch->next;
-> >>>> +               free_page((unsigned long)swap_batch);
-> >>>> +       }
-> >>>> +       swap_gather->local.next =3D NULL;
-> >>>> +       kmem_cache_free(swap_gather_cachep, swap_gather);
-> >>>> +}
-> >>>> +
-> >>>> +static void tlb_swap_async_free_work(struct work_struct *w)
-> >>>> +{
-> >>>> +       int i, nr_multi, nr_free;
-> >>>> +       swp_entry_t start_entry;
-> >>>> +       struct mmu_swap_batch *swap_batch;
-> >>>> +       struct mmu_swap_gather *swap_gather =3D container_of(w,
-> >>>> +               struct mmu_swap_gather, free_work);
-> >>>> +
-> >>>> +       /* Release swap entries cached in mmu_swap_batch. */
-> >>>> +       for (swap_batch =3D &swap_gather->local; swap_batch && swap_=
-batch->nr;
-> >>>> +           swap_batch =3D swap_batch->next) {
-> >>>> +               nr_free =3D 0;
-> >>>> +               for (i =3D 0; i < swap_batch->nr; i++) {
-> >>>> +                       if (unlikely(encoded_swpentry_flags(swap_bat=
-ch->encoded_entrys[i]) &
-> >>>> +                           ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT)) {
-> >>>> +                               start_entry =3D encoded_swpentry_dat=
-a(swap_batch->encoded_entrys[i]);
-> >>>> +                               nr_multi =3D encoded_nr_swpentrys(sw=
-ap_batch->encoded_entrys[++i]);
-> >>>> +                               free_swap_and_cache_nr(start_entry, =
-nr_multi);
-> >>>> +                               nr_free +=3D 2;
-> >>>> +                       } else {
-> >>>> +                               start_entry =3D encoded_swpentry_dat=
-a(swap_batch->encoded_entrys[i]);
-> >>>> +                               free_swap_and_cache_nr(start_entry, =
-1);
-> >>>> +                               nr_free++;
-> >>>> +                       }
-> >>>> +               }
-> >>>> +               swap_batch->nr -=3D nr_free;
-> >>>> +               VM_BUG_ON(swap_batch->nr);
-> >>>> +       }
-> >>>> +       __tlb_swap_gather_free(swap_gather);
-> >>>> +}
-> >>>> +
-> >>>> +static bool __tlb_swap_gather_mmu_check(struct mmu_gather *tlb)
-> >>>> +{
-> >>>> +       /*
-> >>>> +        * Only the exiting processes with the MM_SWAPENTS counter >=
-=3D
-> >>>> +        * SWAP_CLUSTER_MAX have the opportunity to release their sw=
-ap
-> >>>> +        * entries by asynchronous kworker.
-> >>>> +        */
-> >>>> +       if (!task_is_dying() ||
-> >>>> +           get_mm_counter(tlb->mm, MM_SWAPENTS) < SWAP_CLUSTER_MAX)
-> >>>> +               return true;
-> >>>> +
-> >>>> +       atomic_inc(&nr_exiting_processes);
-> >>>> +       if (atomic_read(&nr_exiting_processes) < NR_MIN_EXITING_PROC=
-ESSES)
-> >>>> +               tlb->swp_freeable =3D 1;
-> >>>> +       else
-> >>>> +               tlb->swp_freeing =3D 1;
-> >>>> +
-> >>>> +       return false;
-> >>>> +}
-> >>>> +
-> >>>> +/**
-> >>>> + * __tlb_swap_gather_init - Initialize an mmu_swap_gather structure
-> >>>> + * for swp_entry tear-down.
-> >>>> + * @tlb: the mmu_swap_gather structure belongs to tlb
-> >>>> + */
-> >>>> +static bool __tlb_swap_gather_init(struct mmu_gather *tlb)
-> >>>> +{
-> >>>> +       tlb->swp =3D kmem_cache_alloc(swap_gather_cachep, GFP_ATOMIC=
- | GFP_NOWAIT);
-> >>>> +       if (unlikely(!tlb->swp))
-> >>>> +               return false;
-> >>>> +
-> >>>> +       tlb->swp->local.next  =3D NULL;
-> >>>> +       tlb->swp->local.nr    =3D 0;
-> >>>> +       tlb->swp->local.max   =3D ARRAY_SIZE(tlb->swp->__encoded_ent=
-rys);
-> >>>> +
-> >>>> +       tlb->swp->active      =3D &tlb->swp->local;
-> >>>> +       tlb->swp->batch_count =3D 0;
-> >>>> +
-> >>>> +       INIT_WORK(&tlb->swp->free_work, tlb_swap_async_free_work);
-> >>>> +       return true;
-> >>>> +}
-> >>>> +
-> >>>> +static void __tlb_swap_gather_mmu(struct mmu_gather *tlb)
-> >>>> +{
-> >>>> +       if (static_branch_unlikely(&tlb_swap_asyncfree_disabled))
-> >>>> +               return;
-> >>>> +
-> >>>> +       tlb->swp =3D NULL;
-> >>>> +       tlb->swp_freeable =3D 0;
-> >>>> +       tlb->swp_freeing =3D 0;
-> >>>> +       tlb->swp_disable =3D 0;
-> >>>> +
-> >>>> +       if (__tlb_swap_gather_mmu_check(tlb))
-> >>>> +               return;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * If the exiting process meets the conditions of
-> >>>> +        * swp_entry asynchronous release, an mmu_swap_gather
-> >>>> +        * structure will be initialized.
-> >>>> +        */
-> >>>> +       if (tlb->swp_freeing)
-> >>>> +               __tlb_swap_gather_init(tlb);
-> >>>> +}
-> >>>> +
-> >>>> +static void __tlb_swap_gather_queuework(struct mmu_gather *tlb, boo=
-l finish)
-> >>>> +{
-> >>>> +       queue_work(swapfree_wq, &tlb->swp->free_work);
-> >>>> +       tlb->swp =3D NULL;
-> >>>> +       if (!finish)
-> >>>> +               __tlb_swap_gather_init(tlb);
-> >>>> +}
-> >>>> +
-> >>>> +static bool __tlb_swap_next_batch(struct mmu_gather *tlb)
-> >>>> +{
-> >>>> +       struct mmu_swap_batch *swap_batch;
-> >>>> +
-> >>>> +       if (tlb->swp->batch_count =3D=3D MAX_SWAP_GATHER_BATCH_COUNT=
-)
-> >>>> +               goto free;
-> >>>> +
-> >>>> +       swap_batch =3D (void *)__get_free_page(GFP_ATOMIC | GFP_NOWA=
-IT);
-> >>>> +       if (unlikely(!swap_batch))
-> >>>> +               goto free;
-> >>>> +
-> >>>> +       swap_batch->next =3D NULL;
-> >>>> +       swap_batch->nr   =3D 0;
-> >>>> +       swap_batch->max  =3D MAX_SWAP_GATHER_BATCH;
-> >>>> +
-> >>>> +       tlb->swp->active->next =3D swap_batch;
-> >>>> +       tlb->swp->active =3D swap_batch;
-> >>>> +       tlb->swp->batch_count++;
-> >>>> +       return true;
-> >>>> +free:
-> >>>> +       /* batch move to wq */
-> >>>> +       __tlb_swap_gather_queuework(tlb, false);
-> >>>> +       return false;
-> >>>> +}
-> >>>> +
-> >>>> +/**
-> >>>> + * __tlb_remove_swap_entries - the swap entries in exiting process =
-are
-> >>>> + * isolated, batch cached in struct mmu_swap_batch.
-> >>>> + * @tlb: the current mmu_gather
-> >>>> + * @entry: swp_entry to be isolated and cached
-> >>>> + * @nr: the number of consecutive entries starting from entry param=
-eter.
-> >>>> + */
-> >>>> +bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
-> >>>> +                            swp_entry_t entry, int nr)
-> >>>> +{
-> >>>> +       struct mmu_swap_batch *swap_batch;
-> >>>> +       unsigned long flags =3D 0;
-> >>>> +       bool ret =3D false;
-> >>>> +
-> >>>> +       if (tlb->swp_disable)
-> >>>> +               return ret;
-> >>>> +
-> >>>> +       if (!tlb->swp_freeable && !tlb->swp_freeing)
-> >>>> +               return ret;
-> >>>> +
-> >>>> +       if (tlb->swp_freeable) {
-> >>>> +               if (atomic_read(&nr_exiting_processes) <
-> >>>> +                   NR_MIN_EXITING_PROCESSES)
-> >>>> +                       return ret;
-> >>>> +               /*
-> >>>> +                * If the current number of exiting processes
-> >>>> +                * is >=3D NR_MIN_EXITING_PROCESSES, the exiting
-> >>>> +                * process with swp_freeable state will enter
-> >>>> +                * swp_freeing state to start releasing its
-> >>>> +                * remaining swap entries by the asynchronous
-> >>>> +                * kworker.
-> >>>> +                */
-> >>>> +               tlb->swp_freeable =3D 0;
-> >>>> +               tlb->swp_freeing =3D 1;
-> >>>> +       }
-> >>>> +
-> >>>> +       VM_BUG_ON(tlb->swp_freeable || !tlb->swp_freeing);
-> >>>> +       if (!tlb->swp && !__tlb_swap_gather_init(tlb))
-> >>>> +               return ret;
-> >>>> +
-> >>>> +       swap_batch =3D tlb->swp->active;
-> >>>> +       if (unlikely(swap_batch->nr >=3D swap_batch->max - 1)) {
-> >>>> +               __tlb_swap_gather_queuework(tlb, false);
-> >>>> +               return ret;
-> >>>> +       }
-> >>>> +
-> >>>> +       if (likely(nr =3D=3D 1)) {
-> >>>> +               swap_batch->encoded_entrys[swap_batch->nr++] =3D enc=
-ode_swpentry(entry, flags);
-> >>>> +       } else {
-> >>>> +               flags |=3D ENCODED_SWPENTRY_BIT_NR_ENTRYS_NEXT;
-> >>>> +               swap_batch->encoded_entrys[swap_batch->nr++] =3D enc=
-ode_swpentry(entry, flags);
-> >>>> +               swap_batch->encoded_entrys[swap_batch->nr++] =3D enc=
-ode_nr_swpentrys(nr);
-> >>>> +       }
-> >>>> +       ret =3D true;
-> >>>> +
-> >>>> +       if (swap_batch->nr >=3D swap_batch->max - 1) {
-> >>>> +               if (!__tlb_swap_next_batch(tlb))
-> >>>> +                       goto exit;
-> >>>> +               swap_batch =3D tlb->swp->active;
-> >>>> +       }
-> >>>> +       VM_BUG_ON(swap_batch->nr > swap_batch->max - 1);
-> >>>> +exit:
-> >>>> +       return ret;
-> >>>> +}
-> >>>> +
-> >>>> +static void __tlb_batch_swap_finish(struct mmu_gather *tlb)
-> >>>> +{
-> >>>> +       if (tlb->swp_disable)
-> >>>> +               return;
-> >>>> +
-> >>>> +       if (!tlb->swp_freeable && !tlb->swp_freeing)
-> >>>> +               return;
-> >>>> +
-> >>>> +       if (tlb->swp_freeable) {
-> >>>> +               tlb->swp_freeable =3D 0;
-> >>>> +               VM_BUG_ON(tlb->swp_freeing);
-> >>>> +               goto exit;
-> >>>> +       }
-> >>>> +       tlb->swp_freeing =3D 0;
-> >>>> +       if (unlikely(!tlb->swp))
-> >>>> +               goto exit;
-> >>>> +
-> >>>> +       __tlb_swap_gather_queuework(tlb, true);
-> >>>> +exit:
-> >>>> +       atomic_dec(&nr_exiting_processes);
-> >>>> +}
-> >>>>
-> >>>>    static bool tlb_next_batch(struct mmu_gather *tlb)
-> >>>>    {
-> >>>> @@ -386,6 +678,9 @@ static void __tlb_gather_mmu(struct mmu_gather *=
-tlb, struct mm_struct *mm,
-> >>>>           tlb->local.max  =3D ARRAY_SIZE(tlb->__pages);
-> >>>>           tlb->active     =3D &tlb->local;
-> >>>>           tlb->batch_count =3D 0;
-> >>>> +
-> >>>> +       tlb->swp_disable =3D 1;
-> >>>> +       __tlb_swap_gather_mmu(tlb);
-> >>>>    #endif
-> >>>>           tlb->delayed_rmap =3D 0;
-> >>>>
-> >>>> @@ -466,6 +761,7 @@ void tlb_finish_mmu(struct mmu_gather *tlb)
-> >>>>
-> >>>>    #ifndef CONFIG_MMU_GATHER_NO_GATHER
-> >>>>           tlb_batch_list_free(tlb);
-> >>>> +       __tlb_batch_swap_finish(tlb);
-> >>>>    #endif
-> >>>>           dec_tlb_flush_pending(tlb->mm);
-> >>>>    }
-> >>>> --
-> >>>> 2.39.0
-> >>>>
-> > Thanks
-> > Barry
-> Thanks
-> Zhiguo
->
-
-Thanks
-Barry
+This is garbage I forgot to delete after realizing there was missing
+logic to make this simple proposal work in practice.
 
