@@ -1,192 +1,148 @@
-Return-Path: <linux-kernel+bounces-323632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA479740E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:43:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76F19740EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E6B28587F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA56E1C2537E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2869D1A42A4;
-	Tue, 10 Sep 2024 17:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D71A4F03;
+	Tue, 10 Sep 2024 17:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="irA5/AfL"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpKlzFRo"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086E019D8A4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832981A4AC6;
+	Tue, 10 Sep 2024 17:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990144; cv=none; b=mZcO1r+Z+kITFLjsaOS2bSDGZ3EsndDjg0xoqNCqU7KxxEBHHRUfftOMjKCvr3VNQeDkmCW5OPIYgNtzLhpglgLdyOnchxmzHU9a/d0EJ4cs6eQxBQLxEMhxtI50bVN0+4/XkwG2ZFJa6xN294Gg3U8StZVjwWth2vnZGFfuKSs=
+	t=1725990147; cv=none; b=fqEITgoy9JJGXkV/EkxGpRrTMLf63EH4QYSpJncYzxunde2rwlKXRYxgDu1cXiszG4oVahkulFJ6fUd3vnhcZ8knZhIgz3guYLv50qx6gSkb1BKJ5nN7K28JxJdL32jBvJvryfcdCO+ceE/4NfANLTbiNg986hCnSm8uTl494Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990144; c=relaxed/simple;
-	bh=u25THlA+Z7bzJGAEhSU19gr82UmAL417zQhjoh7buU8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PaNVPH5ZlvGyknA0FkZPAQb5ar2zRQ/r60SCajMkux+aahMNioYye2UL6bD3oc+nqLK3KucNy//xc6vIo+8Vl4k5lJeTuUc5RwStRyFLWUK6RXluBdbmS/u0kuxWNPaKbjJhm76VmA/Wop/qhkM6Yyg3gdd2+qoKlYkKT9WEo88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=irA5/AfL; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7174c6cbdbaso7579968b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:42:22 -0700 (PDT)
+	s=arc-20240116; t=1725990147; c=relaxed/simple;
+	bh=bV/cCPgQmMGPZOQ6cElFw5TE2AzczFXZAlM9b/E8Fug=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=UPztstZDmRpLDNytyCa62UypwHTXXudhK+RHq7UxkS7ElPX6uktRQUDUDWslV5meFsu/sWjsvxVosTayaljNj2H7aQF2a0ThHpGQ42KWw3ttQ+UQb+bfzVJhdnLCbLcvrcJWBf3YU+zhDhYYHGBpuIWi41yE7PuTWATd9ShYLxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpKlzFRo; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a9ae8fc076so254417285a.2;
+        Tue, 10 Sep 2024 10:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725990142; x=1726594942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gg6skOg0GP1/0D73Nu093tI0yLfhQmox3hveal8dqPA=;
-        b=irA5/AfLBypu8MgsAKfmqwHlY+Othsn7MZE2kKqwSUlQNzTOJwtl0biaMgL5yaJo7K
-         JVg0bCxikMSQ+ik5VFazU4uyEFkWr5cyYgO4Mi4xjcSqncHWdzRnbDSGo0OHEwzItKNG
-         n3SfVsbSu/hHpdQSNswXEWSeT1wpx6BFYh9d40FbHAHQbD/7YPsJ5nfbpNgMd32bsBmg
-         OtoYnWauRMBBYgfHGTKZalbwhxXnF/kUqkL+/qw8YdwYN/4f700e3KkdqYcl4TZJi361
-         HCY6TfuAKUqVHFSMaoBLsLfaWWsWnEcT5/Wr/3NS2ToIMkm6eEcJChezGLQFbU/kZ7Fi
-         v9cg==
+        d=gmail.com; s=20230601; t=1725990144; x=1726594944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=osrSmdlRRbXgWjiWwZC0FQoUmfxKFrAIzTPo9tEegGU=;
+        b=MpKlzFRoClVoF96LXi8EunQL6Ypuq2Fu/80cfMmrdzbC5CR0ntB5zOVDGoyq7/cj16
+         lCOOfTbbxsCyNG+BCZ+Mk4mvkFNzDYZezFnuejZ2JVMyduyDscMoCXcKkR50+j7tlKaz
+         9glK9oJNshKOmHK4Qcxf5TtMDDBVRAzm0T1YmnB7/T3D+en3H9UtCHwVZEVbuTiRoVoj
+         7MxpWyKoKVhQnwnu5Dq1Ev9TflWyfR60etJC22bVXC4L/CUy8JspPWNRISwvBRu2S+Oq
+         ZUD8L2t0lN9fiaQhYzwhQGGhdK16sQmPv+RNH/93szvUo5NkKcIKKNF7VU1eHWNzbyK3
+         CjkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990142; x=1726594942;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gg6skOg0GP1/0D73Nu093tI0yLfhQmox3hveal8dqPA=;
-        b=ka4/CHbjAn5EGEMiSMRRTTevjSzHTu0zqk0KyiUo8UahzKSzOQy4WTtJtcpk5fip7V
-         o/4k8DXHkXG9a4P0WtQhAgiVH7Lz5wDyyNZhDDDqiopjv+YPgrow+8VhpZ7YQbmt/sEn
-         wsuQQnrfglCit7DYIv9FssECD92hZBcKPbAwb/w0TgqPQdybu6ylGe2lLNIBp7gv+u0G
-         wyFMt1/a+6ppstYsrwC+b2zjJQCZJ5UY6qXJCn1z3HdmlalYIzf2QKX2EAdhHJbNYQqZ
-         9YaZhWH4XbzbjycYXPRfndumHHnsvAQ2D5umi+RJf/vw+zOHS1f/afvJ44Ki5FiahdAX
-         PtGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTrC49D67afuwIV9QGhVyUAZc5Zd7tYi7EamTQUsrwnvRnGNHSJtck0bIICRy6NbeYN1Rc1+Y0r/kZEzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3m7wJnZHpuTnYAYDJTovM1xdakucgfAxBsFwPyG0q4bebjJSv
-	EoJC2bDfwvju0PyXCvek04w4qnyGhhUURgW3xaUdXmrtejPhr2mU28KCGgBXaydjCwj7YgWLB66
-	gdA==
-X-Google-Smtp-Source: AGHT+IE8OvwIv/WWjiojX1BJ9/jZfPx7CjqCmsLFPOIiZ8H3mbzDo/1m95EORYptPvhzt4+2cVR8hRJXts0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:9182:0:b0:710:4d6c:a504 with SMTP id
- d2e1a72fcca58-718d5f45b47mr57116b3a.4.1725990142098; Tue, 10 Sep 2024
- 10:42:22 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:42:20 -0700
-In-Reply-To: <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
+        d=1e100.net; s=20230601; t=1725990144; x=1726594944;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=osrSmdlRRbXgWjiWwZC0FQoUmfxKFrAIzTPo9tEegGU=;
+        b=Uz5u/CjAWntKF8Hnj2iMOiiIuZYLWfKoultmh5KneyA0t56rIzLqBIcckxPNg6jCNt
+         0wxWyWAqV/oH6qV46osmX4dZALQgV16EJy1UwcMUOJ5CqtS2dpwTOAi30T1GQ5hodfUw
+         O8G8eyMFwmSNoBlPuuMjP7salMmwvflTs6i9t9rVhJkGHARwLGQwn9ChPMm4OEClWNRL
+         kG0cP/TA5PetQQbMvlPyvKYjUoKhYJ26jMD7RIH1TiWiPkIZWzxEGU/C3429WM+E1X/y
+         glEnGeJ5kjwSC1y3nQ0a39SNJtUBC7GuUfLdlnNNGXPIdWTEr0/pI7j5lsS2HjO52y3R
+         DqIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmk/EqoytxzjjxiLHbbGFhs6AnwtIZFinqcFnmt4cs9sfh0wI/59gNYtlCzmuyfYufDfC+DPmK0q6nfxvvULVS@vger.kernel.org, AJvYcCV/+x9MxqVwI3pxoZ7ltFjwwW+S6oFDrFdHmD0qNUJG5SD5QxRNYnByG4288WaJbIr6JYT3ZjlNtWUz0kg=@vger.kernel.org, AJvYcCWhx1JaeI+lWXxLZSAmKu6HnNevqI0WhTGkdxsc73RbmqZhIHsRYvNvlME0I1CNbikpWI364ZaV@vger.kernel.org
+X-Gm-Message-State: AOJu0YykUyzO0AZ21rBKHSfSgoSWyCk9GwrjuxmXCPCsgNcl0D3iKfZG
+	AKzLT9YALPgdBV1k8cPZ9pOZW0q2lLjVaW3Tc1PjxVYqzYENmeDa
+X-Google-Smtp-Source: AGHT+IHvwbLEki8g7DoGbzuEAVprt0WWYMJSyX1CbpAViPsW6cMv0Yc1UKcT8kk8wS5Y/sF9i5dOig==
+X-Received: by 2002:a05:620a:4629:b0:7a9:b3a1:94ca with SMTP id af79cd13be357-7a9b3a197c4mr1254397985a.35.1725990144340;
+        Tue, 10 Sep 2024 10:42:24 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a796ad15sm328004285a.30.2024.09.10.10.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 10:42:23 -0700 (PDT)
+Date: Tue, 10 Sep 2024 13:42:23 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Sean Anderson <sean.anderson@linux.dev>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ Willem de Bruijn <willemb@google.com>, 
+ linux-kernel@vger.kernel.org, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-kselftest@vger.kernel.org
+Message-ID: <66e084ff8f8aa_c435329483@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6d5ca057-87a3-4ec2-a733-8f0c1fb11158@linux.dev>
+References: <20240906210743.627413-1-sean.anderson@linux.dev>
+ <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
+ <9d5bf385-2ef0-435d-b6f9-1de55533653b@linux.dev>
+ <CANn89iJaXgR6c+moGB5kX6ATbLX6fMP0mUBQN=SAsZfdz5ywNw@mail.gmail.com>
+ <66df2fd2d6595_3bff929459@willemb.c.googlers.com.notmuch>
+ <20240909165116.1bdb4757@kernel.org>
+ <66df9a6d42871_81fd3294e8@willemb.c.googlers.com.notmuch>
+ <6d5ca057-87a3-4ec2-a733-8f0c1fb11158@linux.dev>
+Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
+ non-zero padding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-10-rick.p.edgecombe@intel.com> <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
- <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
- <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
- <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
- <ZuBsTlbrlD6NHyv1@google.com> <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
-Message-ID: <ZuCE_KtmXNi0qePb@google.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, Yuan Yao <yuan.yao@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024, Rick P Edgecombe wrote:
-> On Tue, 2024-09-10 at 08:57 -0700, Sean Christopherson wrote:
-> > > Only if the TDX module returns BUSY per-SPTE (as suggested by 18.1.3,
-> > > which documents that the TDX module returns TDX_OPERAND_BUSY on a
-> > > CMPXCHG failure). If it returns BUSY per-VM, FROZEN_SPTE is not enoug=
-h
-> > > to prevent contention in the TDX module.
-> >=20
-> > Looking at the TDX module code, things like (UN)BLOCK and REMOVE take a=
- per-VM
-> > lock in write mode, but ADD, AUG, and PROMOTE/DEMOTE take the lock in r=
-ead
-> > mode.
->=20
-> AUG does take other locks as exclusive:
-> https://github.com/intel/tdx-module/blob/tdx_1.5/src/vmm_dispatcher/api_c=
-alls/tdh_mem_page_aug.c
+Sean Anderson wrote:
+> On 9/9/24 21:01, Willem de Bruijn wrote:
+> > Jakub Kicinski wrote:
+> >> On Mon, 09 Sep 2024 13:26:42 -0400 Willem de Bruijn wrote:
+> >> > > This seems to be a bug in the driver.
+> >> > > 
+> >> > > A call to skb_put_padto(skb, ETH_ZLEN) should be added.  
+> >> > 
+> >> > In which case this test detecting it may be nice to have, for lack of
+> >> > a more targeted test.
+> >> 
+> >> IIUC we're basically saying that we don't need to trim because pad
+> >> should be 0? In that case maybe let's keep the patch but add a check 
+> >> on top which scans the pad for non-zero bytes, and print an informative
+> >> warning?
+> > 
+> > Data arriving with padding probably deserves a separate test.
+> > 
+> > We can use this csum test as stand-in, I suppose.
+> > 
+> > Is it safe to assume that all padding is wrong on ingress, not just
+> > non-zero padding. The ip stack itself treats it as benign and trims
+> > the trailing bytes silently.
+> > 
+> > I do know of legitimate cases of trailer data lifting along.
+> 
+> Ideally we would test that
+> 
+> - Ingress padding is ignored.
 
-Only a lock on the underlying physical page.  guest_memfd should prevent ma=
-pping
-the same HPA into multiple GPAs, and FROZEN_SPTE should prevent two vCPUs f=
-rom
-concurrently AUGing the same GPA+HPA.
+I think the goal of a hardware padding test is to detect when padding
+leaks onto the wire.
 
-> I count 5 locks in total as well. I think trying to mirror the locking in=
- KVM
-> will be an uphill battle.
+If not adding a new test, detect in csum and fail anytime padding is
+detected (i.e., not only non-zero)?
 
-I don't want to mirror the locking, I want to understand and document the
-expectations and rules.  "Throw 16 noodles and hope one sticks" is not a re=
-cipe
-for success.
+> - Egress padding does not leak past the buffer. The easiest way to
+>   handle this would be to check that it is constant (e.g. all the
+>   padding uses the same value), but this could have false-positives for
+>   e.g. timestamps.
+> 
+> --Sean
 
-> > So for the operations that KVM can do in parallel, the locking should
-> > effectively
-> > be per-entry.=C2=A0 Because KVM will never throw away an entire S-EPT r=
-oot, zapping
-> > SPTEs will need to be done while holding mmu_lock for write, i.e. KVM
-> > shouldn't
-> > have problems with host tasks competing for the TDX module's VM-wide lo=
-ck.
-> >=20
-> > > If we want to be a bit more optimistic, let's do something more
-> > > sophisticated, like only take the lock after the first busy reply. Bu=
-t
-> > > the spinlock is the easiest way to completely remove host-induced
-> > > TDX_OPERAND_BUSY, and only have to deal with guest-induced ones.
-> >=20
-> > I am not convinced that's necessary or a good idea.=C2=A0 I worry that =
-doing so
-> > would
-> > just kick the can down the road, and potentially make the problems hard=
-er to
-> > solve,
-> > e.g. because we'd have to worry about regressing existing setups.
-> >=20
-> > > > > It is still kinda bad that guests can force the VMM to loop, but =
-the VMM
-> > > > > can
-> > > > > always say enough is enough.=C2=A0 In other words, let's assume t=
-hat a limit
-> > > > > of
-> > > > > 16 is probably appropriate but we can also increase the limit and=
- crash
-> > > > > the
-> > > > > VM if things become ridiculous.
-> > > >=20
-> > > > 2 :-)
-> > > >=20
-> > > > One try that guarantees no other host task is accessing the S-EPT e=
-ntry,
-> > > > and a
-> > > > second try after blasting IPI to kick vCPUs to ensure no guest-side=
- task
-> > > > has
-> > > > locked the S-EPT entry.
-> > >=20
-> > > Fair enough. Though in principle it is possible to race and have the
-> > > vCPU re-run and re-issue a TDG call before KVM re-issues the TDH call=
-.
-> >=20
-> > My limit of '2' is predicated on the lock being a "host priority" lock,
-> > i.e.  that kicking vCPUs would ensure the lock has been dropped and can=
-'t
-> > be re-acquired by the guest.
->=20
-> So kicking would be to try to break loose any deadlock we encountered? It=
- sounds
-> like the kind of kludge that could be hard to remove.
 
-No, the intent of the kick would be to wait for vCPUs to exit, which in tur=
-n
-guarantees that any locks held by vCPUs have been dropped.  Again, this ide=
-a is
-predicated on the lock being "host priority", i.e. that vCPUs can't re-take=
- the
-lock before KVM.
 
