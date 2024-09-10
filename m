@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-322977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04CD97362C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:26:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19150973634
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742E51F262C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6871C24670
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6391552FD;
-	Tue, 10 Sep 2024 11:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E1318EFCE;
+	Tue, 10 Sep 2024 11:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="m/cWkn4Q"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EOW3a0+S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C20F18CBE6;
-	Tue, 10 Sep 2024 11:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874D718C324
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967563; cv=none; b=noevJV3dbMVck+IqQzUu4meqCwBgZnGklccCugW5Jl1I6SVnpMdrS98byhu+SoAKFA4PHr21GNXdci3UY+e2aHdZpa2NqUKFsjakElOesjXkIzvIb3/EQhjL9pdl0WKQwuUV1AnUpR8ANzLIJdDCKPXZvqJ8oDPVfkFdkROwPNo=
+	t=1725967713; cv=none; b=Mgwmfb7Fml+A76ZD21Yiim+Z5gnQQs0bRP+g9EjMpLS1pHmx94LsHu8AZmQpBcDmcYtVShSCvo1JNtvIc/zIQBnpebx1gupZRWMiNTmslKX2bXmDZtVYVCwDSSBUfZNjw+bChkHTudM7wu+LwefW0QzR7WESUhx084ygjkT2log=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967563; c=relaxed/simple;
-	bh=hFdk9WHZKkb7brrYOpROvJMjjtWhnOk6pCybUleva7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XvUnBxIt08JUfcdDKob1v3lVGAFmJBLCnA4ujjLVumD1NDq64nGXCRDOKqoUgHwBR0RJ4fwGPPgfA287oskrfeY3HT927qeQe5flpYI1G5WPbVHkZ1Hc4M7T5pvpTWWS0VyInE5LlR59C25SPTUhzPvV1l9mH9gh/EgRNRvbG94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=m/cWkn4Q; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5MZ5qUsrQbYBTuxNJH396q5UDPw8fUqYp6k8thzROZU=; b=m/cWkn4QRKnpq56MnnOY90KttL
-	Ue+C5SdcJp7eKa2lBJhuTyNorlc9n8sNRbr7sp5OJnHEfktxlqVO+ehAfQugjFrVz40AsujOwRjAG
-	r2mWiLy1PYkaFDAl88e5hPu/ZI0aa0Tf7hTCSP6ELqoxbC9Pt+pu4M2LgK9GiOrh90RiCkChZasPA
-	089JWzbIPHN4ouf+GfJs/iUkK/d7hM2STFwHrNzEeRVTeoKytZnGiMIE4YlgU4t2vugI9WHp/Voya
-	bJSEgOgrvKFTo2VChdWbfuX2Yfyl2D34IqmAksSsOiEg7rCmTg5E0UTwpC+q54uy5lgT4o3QxYhkW
-	AVCd7vOQ==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1snyzw-0003qW-Hw; Tue, 10 Sep 2024 13:25:28 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Date: Tue, 10 Sep 2024 13:27:52 +0200
-Message-ID: <2241188.nHSHbJBgIm@diego>
-In-Reply-To:
- <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
-References:
- <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
- <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+	s=arc-20240116; t=1725967713; c=relaxed/simple;
+	bh=ihzr/dKTEiOvtdAx59gGXhJ6LK4K8/vxDFMP9iJmL7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WzBne4iT8zpIGrSsPWyGYk7hugqA8+uE8GDI3nQGccv170z7uJicTldeRTngNj50SAHaXMir2jWdAcY5YZX81kokemSrDPO0sVf+Hp2NsnUUrFZ6CvVDKWWZvdDtB77xhzsTeMHfaXefSAbO7rSwp7S9QyU/K6T0GCB5If8gKsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EOW3a0+S; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725967710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LhDj/wdgiKUWj65H3XSt3JjbWG0dFV5DRvQZaBbQCLs=;
+	b=EOW3a0+S6UkCBcpUZhLdw/Em//iOI3Xip/DM0EFgQBDYr2CP5ytdexYjvX8PXqZHtBWDoI
+	NnT0dIbZxjPCVRn6Hfy93L9oDwjaTcrprLjB6kVIW4FE1en2z4NI+F/D+hQcfoFsMMQ/mf
+	kVH36CvO2FnzrEmB47jcEZeyuqPC0mk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-385-06CVn7omOe6ydG3k-sZprA-1; Tue, 10 Sep 2024 07:28:29 -0400
+X-MC-Unique: 06CVn7omOe6ydG3k-sZprA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374bfc57e2aso3315045f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:28:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725967708; x=1726572508;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LhDj/wdgiKUWj65H3XSt3JjbWG0dFV5DRvQZaBbQCLs=;
+        b=LvOranqUKmiIsvzUeyGlzn+vt75ZwfB/cvRv7txtZ3tf/NFBRkmxMe5gwSYV9AR1DH
+         gn5UJhlp9FnczawGukGh9FMq4C6Orh2T3tp++AZ6PTEZTSH6UwXDZ7IKmL7tOq8LTTl5
+         /kyeZuoOQqjk6QgQsjxOEuHDWUzXwTDsyncq/XQ6ot9Qj+GPD2UoSEEfF2b0WTovihZx
+         xFGh56odrbZ+KMpkjQobT9VmcnPiLEG7wXQgB4ym/HAk3JtSw4PX9p3cQU1W2YVfVUND
+         exVpDVyMNEOIVwX2XGOMGh92aEBue3nBtQD+k/1QytfBCXr6wx2bdFKW+yJxirX5In/C
+         3BUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLZ658OnqbhFUaYEyT89mONOh2CnAih4GgVHM1Eo42GZYWrV8gDlM41aZxcOHYntJvAvAR2lUSupbKPXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUqG/eOad/yp0Y4lxgsE6ugTpLDzbzQpeRZsE90O1Yr6s2E+Ni
+	IjcbOYcMU5f7ogQLWO1Tll2KNRlfkRG9AOpuqalQh4dYS54pbmi9EknA+ee7KaGIDx89G9yHCOh
+	Omg5wRIRmJ0qkcCWrlPmUtbzKgWb+eEAo1HIlysJv3AoBdsW+fmCboIGCdNUpGA==
+X-Received: by 2002:adf:fe8e:0:b0:374:c69b:5a21 with SMTP id ffacd0b85a97d-378896740f7mr8495351f8f.36.1725967708200;
+        Tue, 10 Sep 2024 04:28:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHg9aCVV6p1CXARyE/cPWyf3M5L43KSho1SDHGBxh/KZUcXjudwEXYRFBahqmbRNO4nwx2qyg==
+X-Received: by 2002:adf:fe8e:0:b0:374:c69b:5a21 with SMTP id ffacd0b85a97d-378896740f7mr8495337f8f.36.1725967707684;
+        Tue, 10 Sep 2024 04:28:27 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956d374fsm8652380f8f.86.2024.09.10.04.28.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 04:28:27 -0700 (PDT)
+Message-ID: <0c256e7d-e453-44ce-bb78-d1926b98376e@redhat.com>
+Date: Tue, 10 Sep 2024 13:28:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 20/21] KVM: TDX: Finalize VM initialization
+To: Adrian Hunter <adrian.hunter@intel.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-21-rick.p.edgecombe@intel.com>
+ <58a801d7-72e2-4a6d-8d0b-6d7f37adaf88@intel.com>
+ <5b2fa2b3-ca77-4d6e-a474-75c196b8fefc@redhat.com>
+ <e58349f3-fa36-4635-9b2b-9ff8f2d88038@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <e58349f3-fa36-4635-9b2b-9ff8f2d88038@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
-> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
-> Samsung IP block.
-> 
-> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
-> without audio, CEC or any of the HDMI 2.1 specific features.
-> 
-> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/rockchip/Kconfig               |   8 +
->  drivers/gpu/drm/rockchip/Makefile              |   1 +
->  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 437 +++++++++++++++++++++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c    |   2 +
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.h    |   1 +
->  5 files changed, 449 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-> index 7df875e38517..4da7cef24f57 100644
-> --- a/drivers/gpu/drm/rockchip/Kconfig
-> +++ b/drivers/gpu/drm/rockchip/Kconfig
-> @@ -8,6 +8,7 @@ config DRM_ROCKCHIP
->  	select VIDEOMODE_HELPERS
->  	select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
->  	select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
-> +	select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
->  	select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
->  	select GENERIC_PHY if ROCKCHIP_DW_MIPI_DSI
->  	select GENERIC_PHY_MIPI_DPHY if ROCKCHIP_DW_MIPI_DSI
-> @@ -63,6 +64,13 @@ config ROCKCHIP_DW_HDMI
->  	  enable HDMI on RK3288 or RK3399 based SoC, you should select
->  	  this option.
->  
-> +config ROCKCHIP_DW_HDMI_QP
-> +	bool "Rockchip specific extensions for Synopsys DW HDMI QP"
+On 9/10/24 13:15, Adrian Hunter wrote:
+>> kvm->slots_lock is better.  In tdx_vcpu_init_mem_region() you can
+>> take it before the is_td_finalized() so that there is a lock that
+>> is clearly protecting kvm_tdx->finalized between the two.  (I also
+>> suggest switching to guard() in tdx_vcpu_init_mem_region()).
+>
+> Doesn't KVM_PRE_FAULT_MEMORY also need to be protected?
 
-this needs a
-+       select DRM_BRIDGE_CONNECTOR
+KVM_PRE_FAULT_MEMORY is forbidden until kvm->arch.pre_fault_allowed is set.
 
-now, otherwise it can't link the drm_bridge_connector_init function
-
-
-
+Paolo
 
 
