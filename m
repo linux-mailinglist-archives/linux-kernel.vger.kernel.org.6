@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-323735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAA19742AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:50:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0E79742A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F098E1C2606F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:50:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E748EB258B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F901A4F32;
-	Tue, 10 Sep 2024 18:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26AE1A4F0A;
+	Tue, 10 Sep 2024 18:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C79i468K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="d5doWuWc"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201BD1A707C;
-	Tue, 10 Sep 2024 18:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D071A4B9A;
+	Tue, 10 Sep 2024 18:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994233; cv=none; b=TC9G5b5uRMjTXXbQpHxxJMi57IvjumBZGYf1qwmT++VNJ08Rbmx8Wq4zBlfbSletd+7x6etRhQ4MpxwINn0NsHVzOrAHp3ta9CPyU7EhcMgAAndCzwc3EaQ0Z2FgSARO+GxTkuUXp+PJ8H6rDBEWaQosBZix6/54QmFgRKEBmHI=
+	t=1725994228; cv=none; b=HOsrJb9E2ZIaDIh9GhpJVXMrX5AJP9HDfaaf7IjgF2CtfVH2uPl1EDMU5Z38FDK7tShkKWl6Hi2rTDFMzWJbLnlfwmQTccU/DAcU2bbKRVhwhh5G50A9wMdA59uAozx2cog7UxB00CsfdjR+WnWFCO1CgeDV0kDacKPCY56+6ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994233; c=relaxed/simple;
-	bh=Cjghdq6FbDIt8qDjfgcZE4weKxH6C44xMrytOZ79Rno=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hxZvTx8NGmjJa+mDPCWoHle5Y0SDs+aNDLIEmU7+rKWVxRExo3oImCidBLp7YkfWfC5IyIn0DMAAjQLmtToGgA8HNx/rnNXCaQ2wUVoflE8Iah9R2tGHB/MC1tqfY0M6Q7EkXe7eMEDyRTxx6tt6/kw4bvXaapUy3h4kx5eQChA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C79i468K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE132C4CEC3;
-	Tue, 10 Sep 2024 18:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725994231;
-	bh=Cjghdq6FbDIt8qDjfgcZE4weKxH6C44xMrytOZ79Rno=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C79i468Kn/Lo5aqvmWB0f/8mYLXowJvyotApbIy+IHUNSN5Z0v6UX7c73rIt5JS5I
-	 xE6yKvzxcKoa2zuAO+ubgj9WGZHVioVIRO42e563siPmLy2OF9AX5s+a8jVXSOElAS
-	 C+3VSpEnPHF0xUv9vSUV0ZlE1vvmgNicmVvyNqgbGcZDP7dnn8CbnC/KcsV+fEJO/j
-	 wvolgFINvWROXR24kPpfnmdepYuVbLpTjW6iyGq4rsj0euEvGC4ZBFHVayqFrLGJSm
-	 L9PRuP8/nFoF5kmreeqh7A2gB3HtCPdX17y2zffHO4wsd2DriLh48M6Kibslbn965i
-	 ia9A1oXKvFwyw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEC63804CAB;
-	Tue, 10 Sep 2024 18:50:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725994228; c=relaxed/simple;
+	bh=M05YHNvqt/iWPjL5zCqYW5mTrv4K3HGohGCRvgAHV8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tj6alS44KNdPMK7kYrKnZ8/CKivLlxf7ukA/ohDLxgs0Sfhp94SUVqPtoTA5fFFWnyIg7qEJuqsi00hHIAQVnS6zsgIjayQvoKpm7Cv9VjRwJNOFDUWWDqy/DEJrOygcjV/WQthD1mdLy/QFYBNj8b6XzDyFGjyZY27hyJuzYx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=d5doWuWc; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Sx4FZQB8RHe3sA0KWr5nSPb/p5+LM+1JV9H4EShfOOM=; b=d5doWuWcHSbAkOJjGwQvsnD3Vo
+	OTFpvF7F97FHE9ve8FsxD0zuUG2fFhSBoxbpiY6lhFxGAoBqaednIKatNYK91XEVgxHiX8POPvNBZ
+	0WjIsH1aqvpa8D9rOO4qA50qKwCyUrHaMvwwPj9CyCbNLDum8x5Z0mMUFRkV1XhdEadZD9Hn6bF+o
+	iJk9dyr1xM7dBIE/069+/jT3IjSCeXT/bxIK64Q925tLlT3q6PB67xSr6hsDhCL3gaT2kmdohVQJ8
+	BTumjEAukRuoKEb0afjJ2XEpNSDH9/DeuJh8kYaGNe97cNWsOksqRX6spTSxchzXxW9zD6Zvg/fj5
+	bA1n7VbA==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1so5wQ-0007c9-Pq; Tue, 10 Sep 2024 20:50:18 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+ =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject:
+ Re: [PATCH v1 4/6] dt-bindings: power: rockchip: add regulator support
+Date: Tue, 10 Sep 2024 20:52:47 +0200
+Message-ID: <2373450.IPqQCg1nHW@diego>
+In-Reply-To: <20240910180530.47194-5-sebastian.reichel@collabora.com>
+References:
+ <20240910180530.47194-1-sebastian.reichel@collabora.com>
+ <20240910180530.47194-5-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] bpftool: Fix undefined behavior in qsort(NULL, 0, ...)
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172599423251.358597.13079333302470383178.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Sep 2024 18:50:32 +0000
-References: <20240910150207.3179306-1-visitorckw@gmail.com>
-In-Reply-To: <20240910150207.3179306-1-visitorckw@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, jserv@ccns.ncku.edu.tw,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Tue, 10 Sep 2024 23:02:07 +0800 you wrote:
-> When netfilter has no entry to display, qsort is called with
-> qsort(NULL, 0, ...). This results in undefined behavior, as UBSan
-> reports:
+Am Dienstag, 10. September 2024, 19:57:13 CEST schrieb Sebastian Reichel:
+> Add optional support for a voltage supply required to enable a
+> power domain. The binding follows the way it is handled by the
+> Mediatek binding to keep things consistent.
 > 
-> net.c:827:2: runtime error: null pointer passed as argument 1, which is declared to never be null
+> This will initially be used by the RK3588 GPU power domain, which
+> fails to be enabled when the GPU regulator is not enabled.
 > 
-> Although the C standard does not explicitly state whether calling qsort
-> with a NULL pointer when the size is 0 constitutes undefined behavior,
-> Section 7.1.4 of the C standard (Use of library functions) mentions:
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+That we have regulators supplying internal components in the soc
+is the case for all Rockchip SoCs, though it looks like thankfully this
+hadn't bitten us before.
+
+So having the ability to define those supplies makes a lot of sense
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+> ---
+>  .../devicetree/bindings/power/rockchip,power-controller.yaml   | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> [...]
+> diff --git a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> index 0d5e999a58f1..0b4c5b174812 100644
+> --- a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> +++ b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> @@ -131,6 +131,9 @@ $defs:
+>            A number of phandles to clocks that need to be enabled
+>            while power domain switches state.
+>  
+> +      domain-supply:
+> +        description: domain regulator supply.
+> +
+>        pm_qos:
+>          $ref: /schemas/types.yaml#/definitions/phandle-array
+>          items:
+> 
 
-Here is the summary with links:
-  - [v2] bpftool: Fix undefined behavior in qsort(NULL, 0, ...)
-    https://git.kernel.org/bpf/bpf-next/c/f04e2ad394e2
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
