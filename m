@@ -1,82 +1,123 @@
-Return-Path: <linux-kernel+bounces-323058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC8D973716
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:21:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB62097371C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7AEE1F2488B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5E01C241B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35C919004B;
-	Tue, 10 Sep 2024 12:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808719004B;
+	Tue, 10 Sep 2024 12:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="t5UBKj3k"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="U1xPKDnU";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="U1xPKDnU"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38318C002;
-	Tue, 10 Sep 2024 12:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72AD18FC93;
+	Tue, 10 Sep 2024 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970907; cv=none; b=kbdGjQ3lRCYRMFa60RExXbsZJxcTrRmLV+v55D+pdg5NsPfcHVolGwr6HeAVHiK5CvSHRM4huLdLNO/v2dV/G3v9RPauAmFuUHuo6LZgcj/qf0jAOQNnwLPZUGCT3UnKoeHiuvvha54yxluZox5dMDDHWpruNqqSc9yVemTvIKU=
+	t=1725970926; cv=none; b=Ae4aKT1jKk0ApT2gpXuS+3SDWVpsVbeSXaLl2hAMAbce0PT8hyd74ug9wMb0CVrZStgPR09G4F8R2l0IE/SmxA31a3oK8VBbDebxeOjsevcJgYR3Fke/zvami8PM4Q1o0HLa6Tw9GkV+Ze30l6MRugRUcahkM9sdgaW/jEwvx9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970907; c=relaxed/simple;
-	bh=R4bRpoZQTJGLcsSUeZLA0bqlhVZtr6NJZtd15TdSQlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1a7uVW55MmLDzPeQIwBCaEAU1odnVGd2CkNGxa2XHzd64hlG+FB/bHPYBjo9i7iD+R6HazeL5N2KK/kMrjH/BQV3jnxoagh2naqMWRY8CtVKIQ5qfL/OKRSGandUUuIEt0aiIjo+erEN9dD1a/QmnO22BGSG9GLVKUnrtnrd10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=t5UBKj3k; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Pa3y25XPS34dk9RjXuAf0B+L/pu80i0HG9hqHjOhkb8=; b=t5UBKj3kTPpIqbBl6/qD+SKh9Y
-	fswhWjaxQxTwTOEF01Hqs8pp4N2aoUDojf11IzKp7eXF/WuNE1sGsGTr/OOjQ94Ch4va3QfygpzMA
-	q5q8NmmSyiTHF47XsgoMrKPAh1/zQdU96deHAg9QrzxSAQ9qdpiT+rJGD1GdJYyamfyc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1snzsF-0076az-S2; Tue, 10 Sep 2024 14:21:35 +0200
-Date: Tue, 10 Sep 2024 14:21:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com, jdamato@fastly.com,
-	horms@kernel.org, kalesh-anakkur.purayil@broadcom.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 net-next 03/11] net: hibmcge: Add mdio and hardware
- configuration supported in this module
-Message-ID: <5a6f372d-31c3-482d-8925-d2a039643256@lunn.ch>
-References: <20240910075942.1270054-1-shaojijie@huawei.com>
- <20240910075942.1270054-4-shaojijie@huawei.com>
+	s=arc-20240116; t=1725970926; c=relaxed/simple;
+	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o0h3xop7Iyy4D5FqOg/XZWfturefmeDAo1GY7RPDwGz1yO6PxwgogGwEcw0Rhy7va4p/K7C9mGczxuNSJCMW7LROcKpICOXM8WZBJxMxPhbFyVTBIfYmipB0a7Ke6xYJWmEfWi9hFVoTzPvv4z1JpqHmkvvUEv35gMYb0Z5PXtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=U1xPKDnU; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=U1xPKDnU; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1725970923;
+	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=U1xPKDnUlTfuns15BHiTbf+jieehV24DELi68PDG7aNklsA06iZsJVtkqSE7z78xR
+	 ixpyokwfzWzLBbjaEWAMFowV984kwChWG7kRTe5tqkpdg7B//lp4FBGt3hIW7x8qZF
+	 pJMD0Rv7CuFvs858mX6LtwdrccXwaW0nQU7RE1aI=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id CE32C128739B;
+	Tue, 10 Sep 2024 08:22:03 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id hQhBGdRparfz; Tue, 10 Sep 2024 08:22:03 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1725970923;
+	bh=t8W/jmPNnZNV0/iZgLBsYsClFsS4Tymq4Z557UQtzxQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=U1xPKDnUlTfuns15BHiTbf+jieehV24DELi68PDG7aNklsA06iZsJVtkqSE7z78xR
+	 ixpyokwfzWzLBbjaEWAMFowV984kwChWG7kRTe5tqkpdg7B//lp4FBGt3hIW7x8qZF
+	 pJMD0Rv7CuFvs858mX6LtwdrccXwaW0nQU7RE1aI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0F1CF128627B;
+	Tue, 10 Sep 2024 08:22:02 -0400 (EDT)
+Message-ID: <db275ab4fb73fc089c66738ffbcab23557e53055.camel@HansenPartnership.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>, Jarkko
+	Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Pengyu Ma <mapengyu@gmail.com>
+Date: Tue, 10 Sep 2024 08:22:00 -0400
+In-Reply-To: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910075942.1270054-4-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 03:59:34PM +0800, Jijie Shao wrote:
-> this driver using phy through genphy device.
+On Tue, 2024-09-10 at 11:01 +0200, Linux regression tracking (Thorsten
+Leemhuis) wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+> 
+> James, Jarkoo, I noticed a report about a regression in
+> bugzilla.kernel.org that appears to be caused by this change of
+> yours:
+> 
+> 6519fea6fd372b ("tpm: add hmac checks to tpm2_pcr_extend()") [v6.10-
+> rc1]
+> 
+> As many (most?) kernel developers don't keep an eye on the bug
+> tracker, I decided to forward it by mail. To quote from
+> https://bugzilla.kernel.org/show_bug.cgi?id=219229 :
+> 
+> > When secureboot is enabled,
+> > the kernel boot time is ~20 seconds after 6.10 kernel.
+> > it's ~7 seconds on 6.8 kernel version.
+> > 
+> > When secureboot is disabled,
+> > the boot time is ~7 seconds too.
+> > 
+> > Reproduced on both AMD and Intel platform on ThinkPad X1 and T14.
+> > 
+> > It probably caused autologin failure and micmute led not loaded on
+> > AMD platform.
+> 
+> It was later bisected to the change mentioned above. See the ticket
+> for more details.
 
-As far as i can see, there is nothing here which limits you to
-genphy. The hardware could use any PHY driver which phylib has. In
-general, we don't recommend genphy, it is just a fallback driver which
-might work, but given the complexity of modern PHYs, also might not.
+We always suspected encryption and hmac would add overheads which is
+why it's gated by a config option.  The way to fix this is to set
 
-What PHY do you actually have on the board?
+CONFIG_TCG_TPM_HMAC to N
 
-	Andrew
+of course, TPM transactions are then insecure, but it's the same state
+as you were in before.
+
+James
+
+
 
