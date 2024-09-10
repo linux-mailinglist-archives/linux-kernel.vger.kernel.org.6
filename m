@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-323877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F953974494
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:10:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7042A97449D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB4B1C25347
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:10:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AAAAB23A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141941AAE3E;
-	Tue, 10 Sep 2024 21:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0346619412D;
+	Tue, 10 Sep 2024 21:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYh0yjiW"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QRG7aq1i"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4541F951;
-	Tue, 10 Sep 2024 21:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FE01AB506
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002617; cv=none; b=RBUZUDVLuZiZ5WTgrIJvHFTlLBDumr2XH/5kKRYFbNtsSNY4P3fdwhLJw56+Q89hXGGd8tyRLNdWNG7+Pja0vbP0AEwKbRiUl0wKYX7pi3RFeWJPR3bBPXuVR2RBys1uTLMgDbS+YE5B6yqZzLaZG73xllRdM9L9gmIQBK1BTU8=
+	t=1726002715; cv=none; b=fnyeqsl/80VwVnDSwyreZFiPKa7onqxsME4cpkqwSZMEBjRtXymdHEudHmKwbuGqW7F6eyuirS+mVo4gd3KBi47fwQlucjod5cDeukfAFDxpf8HL12HOOkYgerRaryQKGAqDmz9UCoNaTBEIltRUMWrQqO8SLj0hZk3VaI61Hg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002617; c=relaxed/simple;
-	bh=RnYiSNi48onRY1d57mi9g9ODgXMQaczSLfQujFR20PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLipIuOvjPzUWusG7WynwP4kZxO9AJzAKXZ+RiqO8V+KkQYNHylnTnJRQ0BOh9MOnbP5EmooiSeH3aVaXJq6HtfutUXuL/8S4LdV9+pqlXvVlD4OY7X7aNEhk2WRS+zmsyWYKnTxMjYq2eVR1T4CxfVHhy6FtgTW58+UYkQSHRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYh0yjiW; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d29b7edc2so499853366b.1;
-        Tue, 10 Sep 2024 14:10:15 -0700 (PDT)
+	s=arc-20240116; t=1726002715; c=relaxed/simple;
+	bh=vQ19Neos0DyR2KeY0ecAmyspXyYZOWY65Booqku3A+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tLxSNbzmh69wT8d6W18OM91qdTEONRQoDSkNHjjDK+GQ6GdXM+XC0vk3sT8lWcThuL/kgU0nEjgSJ3JYHz3KYp0uuwSm1sTz+pDBqX2im48li0G8XZIHMYGwNAzEmXZUbnIFmHv/PO7f+9hl4kPrM1DZE7cbuXext6oDA2BoHZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QRG7aq1i; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-846d536254fso1794535241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726002614; x=1726607414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sUV8lPvIGwQMATrl/uVvnHpcqJh+pYJIVIWAS/5H65E=;
-        b=jYh0yjiWkoQPTaW3m1TnjycBsPt1LKlePLuEexg8+fRlt03lRByDJ5Xk/AzjUVW6vS
-         e6OXhyUdLXDK+oystLSUHim66OpwdcCtj2ccLAuPxAXUrvT66vJwSVPHqQRzU8ZrgcLv
-         rd9gSCgMoX3jPtK9hr0W4ZHCKIX0zT6cil+/ZMAVackAE0YSPB9I0z26w3hRKurPTQf1
-         zj6YFc/wtom8wBVthnn191Jhi8Zv9waTnoJjHiqVJW3/lkyWNgAUIgWNGEL0AJQqxUzy
-         Hbsoctd/Zb0PtG35Ld0spQqh0tMzw3QdOfBlyU+v+YATKESfMfnZ5X8a9LlngtZEdTQq
-         b3Xw==
+        d=google.com; s=20230601; t=1726002712; x=1726607512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9mL456C9bf2/NmawuOM2i75QU0ioWJIK8fenw90OA60=;
+        b=QRG7aq1i6d891jb5kRmAOpiq6j6e0jEU+k+GF8Xio9Jdj2w4JUahuOOKXoqYM2rqUk
+         paSTgEuDbKHXvg+0zucLYk3e5lQXyyBrETl2pE/XzggNAody0L7XoypUvWtG+Sqc3tLy
+         KtdNtPWdDbgKM70V51npsIUbFdNo3EFDBfHIyd93Dv+vzOn/HeZt50p9q/qVjnTBWPel
+         WXMU/e5geV9REQBtfpy17FkksY8C5nD3IT09kKM0iklIhUJSvL5m4v1caaQRmZ25mESa
+         ufJVJ3v0YVU66JwY9DABoV62V2hY4+SXB5P9gBQK9s1QwhZntfxKkpSHPxgaIrjEBAon
+         xgJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002614; x=1726607414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUV8lPvIGwQMATrl/uVvnHpcqJh+pYJIVIWAS/5H65E=;
-        b=Si2mXTUBn3aOdk541pZwICHEo1nVZESJ6fpSN4EVZHthHLTU3ZVoa5PoAdjV7MjXIz
-         ZK5OC6LaLqMODDg7TxPwzWF8Aa5zfutaSqnRfDQfESxj0bIRWUf6Jn31ktWN9NPXs8Gy
-         tDEE0K0Yg/qa237j5hI01cyu8IGRGnDwAjrZ+18xB4twm5P8FPAKkyHeVlONtO1P4oTG
-         yuGswuf+iR/kZZ8cHypfCv9trm53IcsjP82bzWlnZC63ovJtzWa8gHwUKFr12cjgPZrP
-         vHidA64XBhUF/iMCNFcikYhociWhQemccmYpjA1SY1x22B+jTOJLtE/a9KVsdi8ongdQ
-         Ihmg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ge4aKIqA/X5JJDznsPvl8lX5ZYrkW5AhCKmq1w+IHdNQrd0Pj0qVljpkHHdhef8Xm+fJNrFusUc6hGpD@vger.kernel.org, AJvYcCWWU6bKHb2MNNaWCc50nQooiGoIQ1DD+Ycfm+NzpoaAbmWw+7Dmt3dKdLxHBxsFMfC6NJte+q00SQf/@vger.kernel.org, AJvYcCX30bShjNBWZZpqyZAB3+JJLXldmfBKqXf8MK0bRCN2pjx2BbpCLh1lpmtoeeOgoF+2niBwMLFl+ynUJym/aQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz19sCogC5QseRrrljX5+vImhkafVeoNTKJce3ALQXBK348fTlp
-	ONMyYNYv16ujO/3PAHhrLKr9mg2p93ZYT6e4EtsfpBOVX0HcVj/FqdLkgw==
-X-Google-Smtp-Source: AGHT+IEXe5RCMC0ZBnUd+NpnXEOztMAqqrv+pM6W0ALhbBb90RpBZ6M8Tq6/4vexqUdjagYG2s5LOA==
-X-Received: by 2002:a17:907:7f29:b0:a7a:ba59:3164 with SMTP id a640c23a62f3a-a8ffae0b899mr192539366b.53.1726002613666;
-        Tue, 10 Sep 2024 14:10:13 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d258317e1sm529386666b.37.2024.09.10.14.10.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 14:10:13 -0700 (PDT)
-Message-ID: <85eae93c-3533-4494-9277-43fd836112ce@gmail.com>
-Date: Tue, 10 Sep 2024 23:10:11 +0200
+        d=1e100.net; s=20230601; t=1726002712; x=1726607512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9mL456C9bf2/NmawuOM2i75QU0ioWJIK8fenw90OA60=;
+        b=WSoVz2D09F7OtyuB8N7EpYhpgNmXaWyQpSvA7ZlQs38kfp6NJJWefrOkcV0db2gSDV
+         iHFxgqMc37KQCghB0ZJ7q/tvHhivEp1GNUwZfqk5x5j27MavkAGkrPCbCro7RspkVXBV
+         HXfcerKu6iRt/0vg8NmMpkUwJwXSfwdMqzjfqPtbhq/Nf9+SwgBsRTCnhTwLn0GFx2q2
+         H15ACbvx2TvPchVszucrQBwv7BQHa7aJEh3qFBvQMwArcWx64QHTYR4rKz5TWOA003lv
+         7SiaW9uvunez5jlL9Pst5DyNJOsDoWqjx9aoP14Uk3DxzNseN1uS/NB+08mKaumImFkC
+         z7jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVt5iNqMulrTkc5KWhd89S4+pbcplesCxPPu/hv0qTkYWDxiB2XYlMgarDsJKxCWUzrbJuoT8LFCgI4gvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4jphmZKFA/XCIzYTLH97TVDGjN2AXaSJ3Ftz/6385LWkw2DtW
+	ZFI6KUuGoe4KUzG7zxXBcIYrPOP3tpJfbAUhP7okC7H5fiGxWk+iG5ptcLJqpSrygEw4TKLibwc
+	JTV64PoInXRbaWLIDvWSZmSMINXoosaR+m2JB
+X-Google-Smtp-Source: AGHT+IGNmBkL+R7xBhZDsZOCgpmdSTcN3mnBPXPvha5B1FEl7C+EEP8dxL5+KIrRnUpFi2Hpj2/2XWpfjHaq+rdxtm4=
+X-Received: by 2002:a05:6122:2808:b0:501:2960:7595 with SMTP id
+ 71dfb90a1353d-502143a9979mr12814010e0c.11.1726002712536; Tue, 10 Sep 2024
+ 14:11:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] firmware: qcom: scm: Allow QSEECOM on Microsoft
- Surface Pro 9 5G
-To: =?UTF-8?Q?J=C3=A9r=C3=B4me_de_Bretagne?= <jerome.debretagne@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240908223505.21011-1-jerome.debretagne@gmail.com>
- <20240908223505.21011-3-jerome.debretagne@gmail.com>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <20240908223505.21011-3-jerome.debretagne@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
+ <CADrL8HWACwbzraG=MbDoORJ8ramDxb-h9yb0p4nx9-wq4o3c6A@mail.gmail.com>
+ <Zt9UT74XkezVpTuK@google.com> <CADrL8HW-mOAyF0Gcw7UbkvEvEfcHDxEir0AiStkqYzD5x8ZGpg@mail.gmail.com>
+ <Zt9wg6h_bPp8BKtd@google.com> <CADrL8HWbNjv-w-ZJOxkLK78S5RePd2QXDuXV-=4iFVV29uHKyg@mail.gmail.com>
+ <Zt-kHjtTVrONMU1V@google.com>
+In-Reply-To: <Zt-kHjtTVrONMU1V@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Tue, 10 Sep 2024 14:11:15 -0700
+Message-ID: <CADrL8HV1Erpg-D4LzuRHUk7dg6mvex8oQz5pBzwO7A3OjB8Uvw@mail.gmail.com>
+Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
+ rmaps outside of mmu_lock
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/9/24 12:35 AM, Jérôme de Bretagne wrote:
-> Add the SC8280XP-based Microsoft Surface Pro 9 5G to the allowlist.
-> 
-> Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
-> Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> ---
->   drivers/firmware/qcom/qcom_scm.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 00c379a3cceb..5c8d8d75fb0a 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -1725,6 +1725,7 @@ EXPORT_SYMBOL_GPL(qcom_scm_qseecom_app_send);
->   static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
->   	{ .compatible = "lenovo,flex-5g" },
->   	{ .compatible = "lenovo,thinkpad-x13s", },
-> +	{ .compatible = "microsoft,arcata", },
->   	{ .compatible = "qcom,sc8180x-primus" },
->   	{ .compatible = "qcom,x1e80100-crd" },
->   	{ .compatible = "qcom,x1e80100-qcp" },
+On Mon, Sep 9, 2024 at 6:42=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> On Mon, Sep 09, 2024, James Houghton wrote:
+> > I take back what I said about this working on x86. I think it's
+> > possible for there to be a race.
+> >
+> > Say...
+> >
+> > 1. T1 modifies pte_list_desc then unlocks kvm_rmap_unlock().
+> > 2. T2 then locks kvm_rmap_lock_readonly().
+> >
+> > The modifications that T1 has made are not guaranteed to be visible to
+> > T2 unless T1 has an smp_wmb() (or equivalent) after the modfication
+> > and T2 has an smp_rmb() before reading the data.
+> >
+> > Now the way you had it, T2, because it uses try_cmpxchg() with full
+> > ordering, will effectively do a smp_rmb(). But T1 only does an
+> > smp_wmb() *after dropping the mmu_lock*, so there is a race. While T1
+> > still holds the mmu_lock but after releasing the kvm_rmap_lock(), T2
+> > may enter its critical section and then *later* observe the changes
+> > that T1 made.
+> >
+> > Now this is impossible on x86 (IIUC) if, in the compiled list of
+> > instructions, T1's writes occur in the same order that we have written
+> > them in C. I'm not sure if WRITE_ONCE guarantees that this reordering
+> > at compile time is forbidden.
+> >
+> > So what I'm saying is:
+> >
+> > 1. kvm_rmap_unlock() must have an smp_wmb().
+>
+> No, because beating a dead horse, this is not generic code, this is x86.
 
-Looks good to me.
+What prevents the compiler from reordering (non-atomic, non-volatile)
+stores that happen before WRITE_ONCE() in kvm_rmap_unlock() to after
+the WRITE_ONCE()?
 
-Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
+IMV, such a reordering is currently permitted[1] (i.e., a barrier() is
+missing), and should the compiler choose to do this, the lock will not
+function correctly.
+
+> If kvm_rmap_head.val were an int, i.e. could be unionized with an atomic_=
+t, then
+> I wouldn't be opposed to doing this in the locking code to document thing=
+s:
+>
+>  s/READ_ONCE/atomic_read_acquire
+>  s/WRITE_ONCE/atomic_set_release
+>  s/try_cmpxchg/atomic_cmpxchg_acquire
+
+I think we can use atomic_long_t.
+
+It would be really great if we did a substitution like this. That
+would address my above concern about barrier() (atomic_set_release,
+for example, implies a barrier() that we otherwise need to include).
+
+[1]: https://www.kernel.org/doc/Documentation/memory-barriers.txt
+(GUARANTEES + COMPILER BARRIER)
 
