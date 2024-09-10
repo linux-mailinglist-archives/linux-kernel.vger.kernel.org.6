@@ -1,110 +1,406 @@
-Return-Path: <linux-kernel+bounces-322432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536849728EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5725E9728F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEC5285B11
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E897A285A41
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF863170A18;
-	Tue, 10 Sep 2024 05:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4066166F00;
+	Tue, 10 Sep 2024 05:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kke2/a9L"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dxng1gsp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA547167265
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED659BA42;
+	Tue, 10 Sep 2024 05:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725946563; cv=none; b=PBeA36BcYJlUvDUk2kW7Fhd/Ox1eWSgAsuVhTIGNNI+VAu4Y0YblcWxYG+YUWJzX+wUcxklK+hlL+OsOEBipJ85sJcVANvw/WhxUZJce8JSK1nRKr0w0OvkqP4+vV6QNXhwegcVIpWPJKJ3mUVziYUMuYB+CIFxqD11hEdTZVBY=
+	t=1725947241; cv=none; b=jZgoRTVgMU1YN7lY/YpInxywukZUlbsM3Kus4Y718nsdF2HcOIMQrEng8ShsewMJSBGCHAqqOOdVtynF8e55Fc3zm+5C7fTkbZGd7QjKDE+DjqiHBaus59vsFXW1hUtlo/aeMvbN0BpNHv83ibkIoxy6EZP6kD3/Vx2rbn3QgqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725946563; c=relaxed/simple;
-	bh=/qC3d5HW+DGJD/g6O+fEv4NuAihwErpe5X6U3mHLd7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWNQgvdSywKPJBTAOfAqIV7kuwHuftEmaN2xur3t0+Ke7phf3QHwguzI3z4vclvS31C/Abz/7VQEkqG0bwdw1tGlNFN3XMqCj5l1vb8Za16MPBzXEVvBI7zY3RKeUkFCoIdteEeR2hEtolxbyh8s8dOhHnIhxFO57gZ0wU9Y9NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kke2/a9L; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so460574566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725946560; x=1726551360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rob6GRXtYDNA7DhHsgmiePqlSPWTvJEWrfOPcbfODMo=;
-        b=Kke2/a9LLb0PFUB0EjsqBInoZzXOyectCael/0TRVj2fHkncPPS3HNBcGLf7q5ZJRz
-         Hbonz8u67YkoOvgZrPJCDRwepBeGH9sE9aQrPAl/rP16MKPcmQjCbJ2wpQM9NbvsZXqQ
-         ISpWUZ8KiNRLd1S/tpbF90fS6zvqOQa0Rp1VxpKysK/np4OLNyM77lgNwMs+eEYCr4xp
-         vGJ8r9KelBDeK/pSBm7mrxgoKl0Ord/SqmpjiZhRpJwaEBgZcpiJp1obCc17/Ilea1PQ
-         iYUXrA9dFHHX1sVpHsx1d/QY9HGEtCmrxTvLY+1i4e+usd2ZX4fMfhWp72VQTGV064u2
-         G7yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725946560; x=1726551360;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rob6GRXtYDNA7DhHsgmiePqlSPWTvJEWrfOPcbfODMo=;
-        b=RrWkPBBBcSY+YCafRiP0t9SzS+V8bkh+dBaNSYczNE+yFIfi2M5Ypr/wYZ+9Wo9gUO
-         zIDeThHvjW6OuQh4spFolu215kOGE2yKT0E/gFoqzxbqQ3YG7AjTHIQ2g7u2Xf8QFolU
-         8n4OzvMXSAN5LYfwYWiylad1M0PS1uednX4Vc+W/EJyFyr84Xz3Br5uFJHx4GQPWEm3a
-         b5KH14JUsRgI4JNQe81oHk8WiSjNUBfdgrpnJscWSkBHc5EV2FDAbZMRPUFVZ2OUJFg6
-         CIZSeZs3xwTyXllBDKIua3p4cHfT5SuWKopDNKrK4SJb3EnQ9InQ4I7mxPwiqxLU/kP2
-         A2pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqQLQJLSJbnnDV6z+B/zb5BsjGNtPMGhEisvWpzaxvAgxNljPjVn/O4jPnVOIX01V9y0KgGj0j6QFvw4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjgxMo6G/k8Eo3FlFqcdJ/jy2iS2tKokdRRazeckXE2LYr0D98
-	hfa1X91BMVZCHfmcWk51Eu+nw4V8X9qB1lP+ahZ2Ye2Bb6asuGBg
-X-Google-Smtp-Source: AGHT+IEe9Pz6RHgUxmA7q53brln0aZhwJ16V895i0+mEtPsa6gF0H0ro6Xl/FUkvGVPIUAnf1uGN9g==
-X-Received: by 2002:a17:906:dc8c:b0:a77:d52c:c42d with SMTP id a640c23a62f3a-a8a885bdfccmr1189339166b.13.1725946559741;
-        Mon, 09 Sep 2024 22:35:59 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8598:b80c:2d4e:9a81:3f29? (p200300c78f2a8598b80c2d4e9a813f29.dip0.t-ipconnect.de. [2003:c7:8f2a:8598:b80c:2d4e:9a81:3f29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dc97sm430359466b.212.2024.09.09.22.35.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 22:35:59 -0700 (PDT)
-Message-ID: <6e2d4e6f-1587-474c-8730-482e702f1dbe@gmail.com>
-Date: Tue, 10 Sep 2024 07:35:58 +0200
+	s=arc-20240116; t=1725947241; c=relaxed/simple;
+	bh=WRoumuQphCwlzHiG/u+VlRe/ifboAmcKcC1BlbfpaYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=td1dQPDRNWxj06XKpZaI3PGE0R05kiemY9lvGfK+yAHHSfw8T+UEOIF65bZR6l7n/crmCKqVPQTDhc+nFZ2Evq7YI4lqOswb3QJRLqnX39dIVra0DUMUXsG8pUbwi32Y7mkbXjO3zOQ9/1BNsujWRHku+SGtNQA/rvmHhgBrn+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dxng1gsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0997DC4CEC3;
+	Tue, 10 Sep 2024 05:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725947240;
+	bh=WRoumuQphCwlzHiG/u+VlRe/ifboAmcKcC1BlbfpaYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dxng1gspAs86MBcW9KdNdE6a2jmTcHbYz8TmsHvGK+Cbhh+nvoqDsso9/2WszDLzF
+	 I+tzHVgrtFsxQg9DANcPh5aJdOHyMrLho/fbe/40N/iIXyoHK9WHqsG3LgSugxyKzl
+	 ty2q8R6ydJJ2q4QIAJ3g2qkE50wBBzYq37JJC/MA5utkhLzqio6W02UC9rvTG4uSC9
+	 HQ/FpOb2H1wyb6sayhU3Mi/x9zZ/wGpNqZbfGndNHfaH7bwCVf7n6UE6FXveen3pKT
+	 ZUx5hoWq7ZQLOPYLyT3MwHNoyUmZuhc2jNgMWYvqoAY9eVaJa1+jHPDcC3LaYDvvRw
+	 I/nqdZWl/HCnA==
+Date: Mon, 9 Sep 2024 22:47:17 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Junhao He <hejunhao3@huawei.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 12/15] perf tool_pmu: Switch to standard pmu functions
+ and json descriptions
+Message-ID: <Zt_dZdGCWwTtHRT1@google.com>
+References: <20240907050830.6752-1-irogers@google.com>
+ <20240907050830.6752-13-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] staging: rtl8723bs: Fix spelling mistakes
-To: Roshan Khatri <topofeverest8848@gmail.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <cover.1725933169.git.topofeverest8848@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <cover.1725933169.git.topofeverest8848@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240907050830.6752-13-irogers@google.com>
 
-On 9/10/24 06:03, Roshan Khatri wrote:
-> This patch series fixes various spelling mistakes in the
-> rtl8723bs/include/rtw_xmit.h, rtl8723bs/include/rtw_io.h,
-> rtl8723bs/include/rtw_mlme.h and rtl8723bs/core/rtw_xmit.h files.
-> This patch series is created after receiving feedback on
-> individual patches.
+On Fri, Sep 06, 2024 at 10:08:27PM -0700, Ian Rogers wrote:
+> Use the regular PMU approaches with tool json events to reduce the
+> amount of special tool_pmu code - tool_pmu__config_terms and
+> tool_pmu__for_each_event_cb are removed. Some functions remain, like
+> tool_pmu__str_to_event, as conveniences to metricgroups. Add
+> tool_pmu__skip_event/tool_pmu__num_skip_events to handle the case that
+> tool json events shouldn't appear on certain architectures. This isn't
+> done in jevents.py due to complexity in the empty-pmu-events.c and
+> when all vendor json is built into the tool.
 > 
-> Roshan Khatri (4):
->    staging: rtl8723bs: include: Fix spelling mistake in rtw_xmit.h
->    staging: rtl8723bs: include: Fix spelling mistake in rtw_io.h
->    staging: rtl8723bs: include: Fix spelling mistake in rtw_mlme.h
->    staging: rtl8723bs: core: Fix spelling mistake in rtw_xmit.c
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/pmu.c      |  26 ++++-----
+>  tools/perf/util/pmus.c     |   4 +-
+>  tools/perf/util/tool_pmu.c | 111 ++++++++++++-------------------------
+>  tools/perf/util/tool_pmu.h |  12 +---
+>  4 files changed, 48 insertions(+), 105 deletions(-)
 > 
->   drivers/staging/rtl8723bs/core/rtw_xmit.c    | 2 +-
->   drivers/staging/rtl8723bs/include/rtw_io.h   | 2 +-
->   drivers/staging/rtl8723bs/include/rtw_mlme.h | 2 +-
->   drivers/staging/rtl8723bs/include/rtw_xmit.h | 2 +-
->   4 files changed, 4 insertions(+), 4 deletions(-)
-> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index a412c9c62f9c..5ff6556292fd 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1549,9 +1549,6 @@ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
+>  {
+>  	bool zero = !!pmu->perf_event_attr_init_default;
+>  
+> -	if (perf_pmu__is_tool(pmu))
+> -		return tool_pmu__config_terms(attr, head_terms, err);
+> -
+>  	/* Fake PMU doesn't have proper terms so nothing to configure in attr. */
+>  	if (perf_pmu__is_fake(pmu))
+>  		return 0;
+> @@ -1664,8 +1661,8 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
+>  	info->scale    = 0.0;
+>  	info->snapshot = false;
+>  
+> -	/* Tool/fake PMU doesn't rewrite terms. */
+> -	if (perf_pmu__is_tool(pmu) || perf_pmu__is_fake(pmu))
+> +	/* Fake PMU doesn't rewrite terms. */
+> +	if (perf_pmu__is_fake(pmu))
+>  		goto out;
+>  
+>  	list_for_each_entry_safe(term, h, &head_terms->terms, list) {
+> @@ -1831,8 +1828,8 @@ bool perf_pmu__have_event(struct perf_pmu *pmu, const char *name)
+>  {
+>  	if (!name)
+>  		return false;
+> -	if (perf_pmu__is_tool(pmu))
+> -		return tool_pmu__str_to_event(name) != TOOL_PMU__EVENT_NONE;
+> +	if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name))
+> +		return false;
+>  	if (perf_pmu__find_alias(pmu, name, /*load=*/ true) != NULL)
+>  		return true;
+>  	if (pmu->cpu_aliases_added || !pmu->events_table)
+> @@ -1844,9 +1841,6 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+>  {
+>  	size_t nr;
+>  
+> -	if (perf_pmu__is_tool(pmu))
+> -		return tool_pmu__num_events();
+> -
+>  	pmu_aliases_parse(pmu);
+>  	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
+>  
+> @@ -1857,6 +1851,9 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+>  	else
+>  		assert(pmu->cpu_json_aliases == 0);
+>  
+> +	if (perf_pmu__is_tool(pmu))
+> +		nr -= tool_pmu__num_skip_events();
+> +
+>  	return pmu->selectable ? nr + 1 : nr;
+>  }
+>  
+> @@ -1907,15 +1904,15 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
+>  	int ret = 0;
+>  	struct strbuf sb;
+>  
+> -	if (perf_pmu__is_tool(pmu))
+> -		return tool_pmu__for_each_event_cb(pmu, state, cb);
+> -
+>  	strbuf_init(&sb, /*hint=*/ 0);
+>  	pmu_aliases_parse(pmu);
+>  	pmu_add_cpu_aliases(pmu);
+>  	list_for_each_entry(event, &pmu->aliases, list) {
+>  		size_t buf_used, pmu_name_len;
+>  
+> +		if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(event->name))
+> +			continue;
+> +
+>  		info.pmu_name = event->pmu_name ?: pmu->name;
+>  		pmu_name_len = pmu_deduped_name_len(pmu, info.pmu_name,
+>  						    skip_duplicate_pmus);
+> @@ -2321,9 +2318,6 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
+>  	if (!pmu)
+>  		return NULL;
+>  
+> -	if (perf_pmu__is_tool(pmu))
+> -		return tool_pmu__event_to_str(config);
+> -
+>  	pmu_aliases_parse(pmu);
+>  	pmu_add_cpu_aliases(pmu);
+>  	list_for_each_entry(event, &pmu->aliases, list) {
+> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> index 36329bc77316..19673b9991c6 100644
+> --- a/tools/perf/util/pmus.c
+> +++ b/tools/perf/util/pmus.c
+> @@ -440,6 +440,7 @@ static int perf_pmus__print_pmu_events__callback(void *vstate,
+>  		pr_err("Unexpected event %s/%s/\n", info->pmu->name, info->name);
+>  		return 1;
+>  	}
+> +	assert(info->pmu != NULL || info->name != NULL);
+>  	s = &state->aliases[state->index];
+>  	s->pmu = info->pmu;
+>  #define COPY_STR(str) s->str = info->str ? strdup(info->str) : NULL
+> @@ -590,9 +591,6 @@ void perf_pmus__print_raw_pmu_events(const struct print_callbacks *print_cb, voi
+>  		int len = pmu_name_len_no_suffix(pmu->name);
+>  		const char *desc = "(see 'man perf-list' or 'man perf-record' on how to encode it)";
+>  
+> -		if (perf_pmu__is_tool(pmu))
+> -			continue;
+> -
+>  		if (!pmu->is_core)
+>  			desc = NULL;
+>  
+> diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
+> index 3dc7cc7b8d32..f2d26e9e51f5 100644
+> --- a/tools/perf/util/tool_pmu.c
+> +++ b/tools/perf/util/tool_pmu.c
+> @@ -33,101 +33,54 @@ static const char *const tool_pmu__event_names[TOOL_PMU__EVENT_MAX] = {
+>  	"system_tsc_freq",
+>  };
+>  
+> -
+> -const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
+> -{
+> -	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
+> -		return tool_pmu__event_names[ev];
+> -
+> -	return NULL;
+> -}
+> -
+> -enum tool_pmu_event tool_pmu__str_to_event(const char *str)
+> +bool tool_pmu__skip_event(const char *name)
+
+I think you need __maybe_unused.
 
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+>  {
+> -	int i;
+> -
+> -	tool_pmu__for_each_event(i) {
+> -		if (!strcasecmp(str, tool_pmu__event_names[i])) {
+>  #if !defined(__aarch64__)
+> -			/* The slots event should only appear on arm64. */
+> -			if (i == TOOL_PMU__EVENT_SLOTS)
+> -				return TOOL_PMU__EVENT_NONE;
+> +	/* The slots event should only appear on arm64. */
+> +	if (strcasecmp(name, "slots") == 0)
+> +		return true;
+>  #endif
+> -			return i;
+> -		}
+> -	}
+> -	return TOOL_PMU__EVENT_NONE;
+> +#if !defined(__i386__) && !defined(__x86_64__)
+> +	/* The system_tsc_freq event should only appear on x86. */
+> +	if (strcasecmp(name, "system_tsc_freq") == 0)
+> +		return true;
+> +#endif
+> +	return false;
+>  }
+>  
+> -static int tool_pmu__config_term(struct perf_event_attr *attr,
+> -				 struct parse_events_term *term,
+> -				 struct parse_events_error *err)
+> +int tool_pmu__num_skip_events(void)
+>  {
+> -	if (term->type_term == PARSE_EVENTS__TERM_TYPE_USER) {
+> -		enum tool_pmu_event ev = tool_pmu__str_to_event(term->config);
+> +	int num = 0;
+>  
+> -		if (ev == TOOL_PMU__EVENT_NONE)
+> -			goto err_out;
+> -
+> -		attr->config = ev;
+> -		return 0;
+> -	}
+> -err_out:
+> -	if (err) {
+> -		char *err_str;
+> -
+> -		parse_events_error__handle(err, term->err_val,
+> -					asprintf(&err_str,
+> -						"unexpected tool event term (%s) %s",
+> -						parse_events__term_type_str(term->type_term),
+> -						term->config) < 0
+> -					? strdup("unexpected tool event term")
+> -					: err_str,
+> -					NULL);
+> -	}
+> -	return -EINVAL;
+> +#if !defined(__aarch64__)
+> +	num++;
+> +#endif
+> +#if !defined(__i386__) && !defined(__x86_64__)
+> +	num++;
+> +#endif
+> +	return num;
+>  }
+>  
+> -int tool_pmu__config_terms(struct perf_event_attr *attr,
+> -			   struct parse_events_terms *terms,
+> -			   struct parse_events_error *err)
+> +const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
+>  {
+> -	struct parse_events_term *term;
+> -
+> -	list_for_each_entry(term, &terms->terms, list) {
+> -		if (tool_pmu__config_term(attr, term, err))
+> -			return -EINVAL;
+> -	}
+> -
+> -	return 0;
+> +	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
+> +		return tool_pmu__event_names[ev];
+>  
+> +	return NULL;
+>  }
+>  
+> -int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb)
+> +enum tool_pmu_event tool_pmu__str_to_event(const char *str)
+>  {
+> -	struct pmu_event_info info = {
+> -		.pmu = pmu,
+> -		.event_type_desc = "Tool event",
+> -	};
+>  	int i;
+>  
+> +	if (tool_pmu__skip_event(str))
+> +		return TOOL_PMU__EVENT_NONE;
+> +
+>  	tool_pmu__for_each_event(i) {
+> -		int ret;
+> -
+> -		info.name = tool_pmu__event_to_str(i);
+> -		info.alias = NULL;
+> -		info.scale_unit = NULL;
+> -		info.desc = NULL;
+> -		info.long_desc = NULL;
+> -		info.encoding_desc = NULL;
+> -		info.topic = NULL;
+> -		info.pmu_name = pmu->name;
+> -		info.deprecated = false;
+> -		ret = cb(state, &info);
+> -		if (ret)
+> -			return ret;
+> +		if (!strcasecmp(str, tool_pmu__event_names[i]))
+> +			return i;
+>  	}
+> -	return 0;
+> +	return TOOL_PMU__EVENT_NONE;
+>  }
+>  
+>  bool perf_pmu__is_tool(const struct perf_pmu *pmu)
+> @@ -544,8 +497,12 @@ struct perf_pmu *perf_pmus__tool_pmu(void)
+>  	static struct perf_pmu tool = {
+>  		.name = "tool",
+>  		.type = PERF_PMU_TYPE_TOOL,
+> +		.aliases = LIST_HEAD_INIT(tool.aliases),
+> +		.caps = LIST_HEAD_INIT(tool.caps),
+
+This can be moved to the previous patch.
+
+Thanks,
+Namhyung
+
+
+>  		.format = LIST_HEAD_INIT(tool.format),
+>  	};
+> +	if (!tool.events_table)
+> +		tool.events_table = find_core_events_table("common", "common");
+>  
+>  	return &tool;
+>  }
+> diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
+> index ecdf316525bb..a60184859080 100644
+> --- a/tools/perf/util/tool_pmu.h
+> +++ b/tools/perf/util/tool_pmu.h
+> @@ -29,17 +29,11 @@ enum tool_pmu_event {
+>  #define tool_pmu__for_each_event(ev)					\
+>  	for ((ev) = TOOL_PMU__EVENT_DURATION_TIME; (ev) < TOOL_PMU__EVENT_MAX; ev++)
+>  
+> -static inline size_t tool_pmu__num_events(void)
+> -{
+> -	return TOOL_PMU__EVENT_MAX - 1;
+> -}
+> -
+>  const char *tool_pmu__event_to_str(enum tool_pmu_event ev);
+>  enum tool_pmu_event tool_pmu__str_to_event(const char *str);
+> -int tool_pmu__config_terms(struct perf_event_attr *attr,
+> -			   struct parse_events_terms *terms,
+> -			   struct parse_events_error *err);
+> -int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb);
+> +bool tool_pmu__skip_event(const char *name);
+> +int tool_pmu__num_skip_events(void);
+> +
+>  bool tool_pmu__read_event(enum tool_pmu_event ev, u64 *result);
+>  
+>  u64 tool_pmu__cpu_slots_per_cycle(void);
+> -- 
+> 2.46.0.469.g59c65b2a67-goog
+> 
 
