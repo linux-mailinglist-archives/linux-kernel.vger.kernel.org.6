@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-323999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF35A9746A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:48:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D2C9746A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C1A1F26C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A95E1C21FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BB41BAEEA;
-	Tue, 10 Sep 2024 23:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1731BB6A0;
+	Tue, 10 Sep 2024 23:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vHt0X+YR"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dw+mGHtC"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF41B5331
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30651BA87B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011888; cv=none; b=HPdVeNevyx57lUUY3Zz31wdrWhuXF5pvMiFescoHe2oWKO2QJ7qF8GXkF+0JiDOTSnG8/eZUELNGugQ06qIvEx6k2qn38pELJ/Nn5qbAgx3AiiUDtlPmKUhUKGU9Rf0zIWJ9pBaLXZZxOcNanC5KuiMcnXMMx4gtNuv+BKzlOuM=
+	t=1726011890; cv=none; b=p79K5mgvTrsM/iPr+nnIopa1P7MmZZ/yfSVkpGDoE9buGm/78BgYb9gO8xI62f5In64R+tryeBUop/Vr1LyK3QCflogx6nl+Sv6nnJIr46MojCJVsoujQwtzk2ZIaFG2Kk+1pf1qECL3IxReYNv9uRmXUcavlAtLB645RJPRnOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011888; c=relaxed/simple;
-	bh=P/1nrx2IuQ6u/tRlLat3CEqnsSzaylehYsr5F1KL3bU=;
+	s=arc-20240116; t=1726011890; c=relaxed/simple;
+	bh=vKn6pjIRFyRt8Opg+2dj1UETcidGMMZpXY2Tm+1+Wnk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Kqyp+djC9v1CbuJRwZcfrRoqw6ZLNCRRapRgAPtQNGVwIp0yNK5gZd0OxM0dhtaOeVZ1Bbnq4FgT9MgHS8rfKp/SR34ncLJEz/dKGNIgP74p9xYVnl3bHIPjbD8ksxK3/CuxzYGSKWY62DzUHnRuLqchu1C6gfCa0A8Pz8f4nw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vHt0X+YR; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=ux7qo+YNPn/NxzPY1cbPaihI34Tv1H+9ghlCTqyDathissR4Qv3rtAk2IRpsyUOk9MYBLd03uA8HxWx+BBWVartkqlpDsg+juwxJiyRpbt0c/HzAay9jzfZnqKDnluUwUKf12h8CVZasPC3sw9N732op9R4HkmpshcqU63+iNxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dw+mGHtC; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2056364914eso79415555ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:44:47 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1d46cee0b0so7046988276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:44:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726011886; x=1726616686; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726011888; x=1726616688; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wCQtr3LYUTrh92YO/TM3BLSTa63Bn54Ak3CYVuDQSOE=;
-        b=vHt0X+YRa0IQq9jff12LFWszMiRmTu81WRf95qZCHH2FBFUHpH3OwFaOVCXEKoGMwP
-         eMxv1VWr2rKqOz+YKdr4jqT0avOy9isYIwsd2fbrWA3CzjCYYV+lmtLuk0PzgdP7akFX
-         Ek4uF0STXC/7BaEF3Eq4GGTc26AZMh/U4GRo1UstG0GfjVCfU4CPCBHc7YZe36soVp+b
-         oz2MIUONVw3/0DRYNAnue1KkJbWu5PDcD/nS/fZrudA3tdV16DX6TZTd6H0PB8L4VTSU
-         RILZ1f89ZweoYEzrmeymJzi9RL07tHEb34uBq5ta9ImJNjo4vul0b2DgzCZ8hXogLLk+
-         I+1Q==
+        bh=wON4ebge/JtWXTatH36Oz8RnYdWXk0aZ0I0s+pE884Y=;
+        b=dw+mGHtCedFwjPpV2akhGZwfEIzo4Q+I/jMx0YlaJ94gpmUFT4uSefXAEesPERKn2w
+         yB1GdmTrvwkbEiReBiwyVjmWhWGmWJbn0RggjTfVJEczO95G/vBJF/EmZEp0OoKvwQeW
+         J0NKem+YA19uMgUWNiz4AiekLupwvfGMVCNCj8ZMgP2+sfXteu5JofGJCGl3+eNA5cwz
+         G6CByNX3QNzKBwsB0rcf11MW5eg4YGRBgcw2NRWFRn9VIqUDTo4aTraEGr8ySvrXUfsh
+         amdnmlrpkoBhbwWVtZ7KU4ytNIAHJav0NY6+vzyGad+gO+/LiuD1znHVvZCTIfIwuX15
+         esfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726011886; x=1726616686;
+        d=1e100.net; s=20230601; t=1726011888; x=1726616688;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wCQtr3LYUTrh92YO/TM3BLSTa63Bn54Ak3CYVuDQSOE=;
-        b=GCZEdFI3jPV4HqDIgIom0vPt5CAA4nFqpxhktPM1Kz2ao5abD2q/f8X2LtSfgez7Ui
-         sVkH1LVB/XSDKkxRvo9EPrubWHNy2fm0Tb/ElFPTOqk5joEwtb11r9tarapC0CwhtXFf
-         +tUSIZIvW0tyOLIzJfF7nHolTGnp+Na5scLDbWJBaN7O5bws54t1Bxs90HRpYDSBczgB
-         bc1931D7HV4GmzcWLMhlRAMLP1QrtouL8VM/iwjaMG8Sl5XcGWSIxOelrCjhRLuzBici
-         LBFFkFC5pujrGCZaCeVx9kR+C0YvV87Z/1EwaSjbfnxal52AT9lKx3dCda6x1AmlTCMF
-         o+dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXi6x3l+hULpGsHrtKdRpSlff0Zqk4g8vZt7A0AwgCnWbbc1+AxPH3/kw+yl1xWoZlhZLphnFI9BKrDjIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg8O4aBOpf7XCsUO+lYkF9CK8QyQtLg+cNJMTgcPjUfNMiyehh
-	eNMlwEoc+UtW23UYBVIYAskpLIECQBR0UECkb+ZHBVX4TTtvfQOufzmT52ySs/GsOOjy64EaQX+
-	eSXbb0A9JLpix4R9In4m3DA==
-X-Google-Smtp-Source: AGHT+IH5Nj5kPHNo6rBfhQxFH2WNjr8MfjXL+h+toY4sJe8PVOOMsYFK1lr+WyYqGBk0WvcoCe7tmQGhI2Eo6rySgw==
+        bh=wON4ebge/JtWXTatH36Oz8RnYdWXk0aZ0I0s+pE884Y=;
+        b=tUtcBbbzsLA0tLator6UHAAO1Cki3mUrcBkzeFbTtKkwP1IaD5ZFR4zY4FxmtNssW5
+         G72qA51NImFq46RnIdmK3tKNtL7qboEiSS1goOxJMIDpMCIS0sFBIJLSYC9n1UeHnZ+o
+         SmWk62wEtB8yPtSeU+41fC4gCLG73t6y3Ln335rEkPrGg5Ug4uhU8D3MlWpTduJqqhgi
+         urVoxoKoSw/IcVYNG34gjknth/kLdAd5eZY54qcqJ/hE3r1yQquZ1H+myaaCJMM+QhpF
+         wTkh/e6xedayqcRygjQdWsZO9tx68noG1X5ghj9xmN6/DCZwylywTCU247jvbNGM87ku
+         Gn2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxOrwYz5YOOuWfHPWJkX3kYv6+icJZj1FCNRDDvxfyIV0bo3E9WaFT3DUHyLvH8a6GkAD03PWLoYNgKm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWiHlGdzcvorYnQTHJie6bCGFYvyir1OLSdwt52q+usoMGFr7Q
+	llX35/0WoxyYB7r5t3MDgeBtPLRbDBKyuNPxYSWxO/a1TC9jjemepY29UdhKwq5NCkK1McktHow
+	xE32YLrrLar0K+LRt7/1O5A==
+X-Google-Smtp-Source: AGHT+IGifFJzomPV42kuvxwSOW6D8KRl1ZUZcLgu/9vMTp3RDdNsVY265K9HmTBfWg/leXDMNAyCn73aN71Ukp8ufA==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a17:902:b686:b0:205:5db4:44b8 with
- SMTP id d9443c01a7336-2074c63a9cemr948735ad.5.1726011886284; Tue, 10 Sep 2024
- 16:44:46 -0700 (PDT)
-Date: Tue, 10 Sep 2024 23:43:39 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a25:d347:0:b0:e16:51f9:59da with SMTP
+ id 3f1490d57ef6-e1d349e2dd5mr43068276.6.1726011887733; Tue, 10 Sep 2024
+ 16:44:47 -0700 (PDT)
+Date: Tue, 10 Sep 2024 23:43:40 +0000
 In-Reply-To: <cover.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1726009989.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <9f287e19cb80258b406800c8758fc58eff449d56.1726009989.git.ackerleytng@google.com>
-Subject: [RFC PATCH 08/39] mm: truncate: Expose preparation steps for truncate_inode_pages_final
+Message-ID: <f8dd00f4bcc4328d440b77bc2ea2c1b75370dd58.1726009989.git.ackerleytng@google.com>
+Subject: [RFC PATCH 09/39] mm: hugetlb: Expose hugetlb_subpool_{get,put}_pages()
 From: Ackerley Tng <ackerleytng@google.com>
 To: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
 	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
@@ -93,70 +93,52 @@ Cc: erdemaktas@google.com, vannapurve@google.com, ackerleytng@google.com,
 	linux-fsdevel@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-This will allow preparation steps to be shared
+This will allow hugetlb subpools to be used by guest_memfd.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- include/linux/mm.h |  1 +
- mm/truncate.c      | 26 ++++++++++++++++----------
- 2 files changed, 17 insertions(+), 10 deletions(-)
+ include/linux/hugetlb.h | 3 +++
+ mm/hugetlb.c            | 6 ++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c4b238a20b76..ffb4788295b4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3442,6 +3442,7 @@ extern unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info);
- extern void truncate_inode_pages(struct address_space *, loff_t);
- extern void truncate_inode_pages_range(struct address_space *,
- 				       loff_t lstart, loff_t lend);
-+extern void truncate_inode_pages_final_prepare(struct address_space *);
- extern void truncate_inode_pages_final(struct address_space *);
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index e4a05a421623..907cfbbd9e24 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -119,6 +119,9 @@ struct hugepage_subpool *hugepage_new_subpool(struct hstate *h, long max_hpages,
+ 						long min_hpages);
+ void hugepage_put_subpool(struct hugepage_subpool *spool);
  
- /* generic vm_area_ops exported for stackable file systems */
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 4d61fbdd4b2f..28cca86424f8 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -424,16 +424,7 @@ void truncate_inode_pages(struct address_space *mapping, loff_t lstart)
- }
- EXPORT_SYMBOL(truncate_inode_pages);
- 
--/**
-- * truncate_inode_pages_final - truncate *all* pages before inode dies
-- * @mapping: mapping to truncate
-- *
-- * Called under (and serialized by) inode->i_rwsem.
-- *
-- * Filesystems have to use this in the .evict_inode path to inform the
-- * VM that this is the final truncate and the inode is going away.
-- */
--void truncate_inode_pages_final(struct address_space *mapping)
-+void truncate_inode_pages_final_prepare(struct address_space *mapping)
- {
- 	/*
- 	 * Page reclaim can not participate in regular inode lifetime
-@@ -454,6 +445,21 @@ void truncate_inode_pages_final(struct address_space *mapping)
- 		xa_lock_irq(&mapping->i_pages);
- 		xa_unlock_irq(&mapping->i_pages);
- 	}
-+}
-+EXPORT_SYMBOL(truncate_inode_pages_final_prepare);
++long hugepage_subpool_get_pages(struct hugepage_subpool *spool, long delta);
++long hugepage_subpool_put_pages(struct hugepage_subpool *spool, long delta);
 +
-+/**
-+ * truncate_inode_pages_final - truncate *all* pages before inode dies
-+ * @mapping: mapping to truncate
-+ *
-+ * Called under (and serialized by) inode->i_rwsem.
-+ *
-+ * Filesystems have to use this in the .evict_inode path to inform the
-+ * VM that this is the final truncate and the inode is going away.
-+ */
-+void truncate_inode_pages_final(struct address_space *mapping)
-+{
-+	truncate_inode_pages_final_prepare(mapping);
+ void hugetlb_dup_vma_private(struct vm_area_struct *vma);
+ void clear_vma_resv_huge_pages(struct vm_area_struct *vma);
+ int move_hugetlb_page_tables(struct vm_area_struct *vma,
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 7e73ebcc0f26..808915108126 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -170,8 +170,7 @@ void hugepage_put_subpool(struct hugepage_subpool *spool)
+  * only be different than the passed value (delta) in the case where
+  * a subpool minimum size must be maintained.
+  */
+-static long hugepage_subpool_get_pages(struct hugepage_subpool *spool,
+-				      long delta)
++long hugepage_subpool_get_pages(struct hugepage_subpool *spool, long delta)
+ {
+ 	long ret = delta;
  
- 	truncate_inode_pages(mapping, 0);
- }
+@@ -215,8 +214,7 @@ static long hugepage_subpool_get_pages(struct hugepage_subpool *spool,
+  * The return value may only be different than the passed value (delta)
+  * in the case where a subpool minimum size must be maintained.
+  */
+-static long hugepage_subpool_put_pages(struct hugepage_subpool *spool,
+-				       long delta)
++long hugepage_subpool_put_pages(struct hugepage_subpool *spool, long delta)
+ {
+ 	long ret = delta;
+ 	unsigned long flags;
 -- 
 2.46.0.598.g6f2099f65c-goog
 
