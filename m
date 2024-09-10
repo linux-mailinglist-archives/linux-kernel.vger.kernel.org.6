@@ -1,45 +1,80 @@
-Return-Path: <linux-kernel+bounces-322941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0235597354F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DA5973570
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351C41C2496B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:47:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665FD2831DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1435718F2FF;
-	Tue, 10 Sep 2024 10:46:14 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA5917C220;
+	Tue, 10 Sep 2024 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ET3uqHoX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B414D431;
-	Tue, 10 Sep 2024 10:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29C723A6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965173; cv=none; b=kQkNqeX6U8dTOa3XxiM7okUF6c4KIQHLYsOyAzB3FyjPSn4gZM8/Tw2scvCL1/eH/qBq2TfAhgZk55nghMMk8vO7odpmgxblY6is6HAakVFIewpriyhP9tHqNYm1oGJo32rMCz+T5fR5zYYdvHv+couOtjEs8n0YzBsgPLXGIRM=
+	t=1725965331; cv=none; b=ZRiUBSGXrSRDGQJUjbygLwcWHLQdieVqkcDWUvTQsEcZcYC25kcxUMXW+sJNtynwZPLKCUhIw6Aw/iTrUlVpIiXdxTAUl3sw/1kw+qp2KhVELj7BR5izonI4PHPSSATBRoBG1fspQ4dSxekXlSwDFosOYRzozw8ANsPfWweASRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725965173; c=relaxed/simple;
-	bh=4+n+yhtKq/1EmKfGojZXbzM1JsjV8W6GtUOG1tc04HI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YjM0l8BVTWuSa1q9GSJtnKSNTO5v7tve5Zeo5q//DdKRwqGKk9or2D2ExpAwc/vbIG1Ctcv/6pFr+V/G23oHbwB4hvAPWo8amYCNbIdcE8xwdC7P7qeJHwblZrLTAZIVcLK9fIezaObrNP45PUAonCilidaXgYTvDGyVvTVZhwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X30jK1L8lz2DbkM;
-	Tue, 10 Sep 2024 18:45:41 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F8F11A0188;
-	Tue, 10 Sep 2024 18:46:09 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 10 Sep 2024 18:46:08 +0800
-Message-ID: <b438256d-a233-4708-9a82-e4f5f4b86a63@huawei.com>
-Date: Tue, 10 Sep 2024 18:46:08 +0800
+	s=arc-20240116; t=1725965331; c=relaxed/simple;
+	bh=Yry6yn1otmrO433bv7L6l95zS3P3tvOdRr0ia+1ysdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hiimkknzYEZKIH5J8Oq8aUomCMXnUg7VPax8gZ9FSkX9bIsRyb83FYfl4duKFG2GPBj8pllaiLCqWp5t2GFuOJvL7JtNxToY+T1R6IfZAKjJwheUNO3hIIKSb0PZYIJV28N5XqpFr5HGsw6q44NDbn8UFfFZ3q/fv6b9yfR9oSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ET3uqHoX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725965328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=B2ieYUxbbHHGGo0E6WELXjXJIeasVfrRq3zIDQk/VQo=;
+	b=ET3uqHoXTLwLPJ9PyXO0cGna/BEM+QETZovKCI96QFjho1aaukjfhzXGT9EiQ6AYveB3EE
+	eX1Gf0EnzyAxYwSW9AxtwjOXuF8rckU+MczmpA0EvDaVtfVAGEi3FypNGApHDn6ZhDBk+0
+	JigWp4Czrd4CpcEaORkKJxhh9T/62Pw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-yFS3PKwCP_Cu_48SBkRifA-1; Tue, 10 Sep 2024 06:48:47 -0400
+X-MC-Unique: yFS3PKwCP_Cu_48SBkRifA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb808e9fcso13970065e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:48:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725965326; x=1726570126;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B2ieYUxbbHHGGo0E6WELXjXJIeasVfrRq3zIDQk/VQo=;
+        b=ujpabocjvtLswRpNpBmMHcahba8nTaMWhhw1Tl3R3N4QLPogu8Us/W6VJJbKh6p8/Q
+         7xsuyZiXPfFuM9EIFPXu8L1vtt954QJMiy/V0k+93D8VlwR1VKCOaoxJd0h0hNJcCNIq
+         WVEEWsEpQsjclwCsYmvSV0Vi3AJ2ihv//MocELbeLiGoiYRvLQ+LdT5JLbOCB7nFhQUq
+         4CBbD8UzncN5Aqv2HV26mZuV32kUjs+POk6wj/5cX1dYWThGDgBVp4Gbz32ezGoK0OFJ
+         TpB+vJfyYGG6P+06qxqDoirMuvF20Jv0QF43alOVZRQoYB43xadsKTNeKUxQHbLsrmnj
+         0PxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjvvjKgEUQvvQgR2PanOBHxrnMruTjl5gzeWLPmzjrMH43m4QaMh0gsgd15WA3cQegIoLYdLK0+j6zhZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdLVn2UaBLk3m2VZbXk9IulvtMypEcx1H29lluvDV7pQBRuQis
+	xIkAxEm0TRqdxl7ShXGBXIfhC/+58xM34fSD24Hf9yC3A/u27M/NHdbjpyfjYkqInv4Mrmcr9mj
+	OzrZi5zN5nQ5XowZZHnswKuIpiJsN/ws17Qyscy0JwIbMQ+sA2feasoubeIocoA==
+X-Received: by 2002:a05:600c:3555:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42cae70f2c4mr86924845e9.10.1725965326431;
+        Tue, 10 Sep 2024 03:48:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE20Ebh6b/agKccFilSQknl7HrcvujOdpkCfv2DU9dT0Q2NhUpep/t2EMMM9InGNCQWzUuMFQ==
+X-Received: by 2002:a05:600c:3555:b0:429:a05:32fb with SMTP id 5b1f17b1804b1-42cae70f2c4mr86924605e9.10.1725965325922;
+        Tue, 10 Sep 2024 03:48:45 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42cb2f86488sm88949275e9.15.2024.09.10.03.48.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:48:45 -0700 (PDT)
+Message-ID: <92b86a71-3bbb-40a7-ae45-ab32215cce90@redhat.com>
+Date: Tue, 10 Sep 2024 12:48:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,71 +82,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] page_pool: add a test module for page_pool
-To: Mina Almasry <almasrymina@google.com>
-CC: <hawk@kernel.org>, <ilias.apalodimas@linaro.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
-	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <20240909091913.987826-1-linyunsheng@huawei.com>
- <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
+Subject: Re: [PATCH 06/21] KVM: TDX: Add accessors VMX VMCS helpers
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "seanjc@google.com" <seanjc@google.com>
+Cc: "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "dmatlack@google.com" <dmatlack@google.com>, "Huang, Kai"
+ <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
+ <isaku.yamahata@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-7-rick.p.edgecombe@intel.com>
+ <bd423b07-3cb4-434f-b245-381cd0ba4e58@redhat.com>
+ <38b2a97bd60e55505bd77e92a9257d5504c22b8b.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <38b2a97bd60e55505bd77e92a9257d5504c22b8b.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/9/10 1:28, Mina Almasry wrote:
-> On Mon, Sep 9, 2024 at 2:25 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+On 9/9/24 23:29, Edgecombe, Rick P wrote:
+>> Maybe a bit large when inlined?  Maybe
 >>
->> The testing is done by ensuring that the page allocated from
->> the page_pool instance is pushed into a ptr_ring instance in
->> a kthread/napi binded to a specified cpu, and a kthread/napi
->> binded to a specified cpu will pop the page from the ptr_ring
->> and free it back to the page_pool.
+>>          if (unlikely(err))
+>>                  tdh_vp_wr_failed(tdx, field, bit, err);
 >>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>> and add tdh_vp_wr_failed to tdx.c.
+> There is a tiny bit of difference between the messages:
+> pr_err("TDH_VP_WR["#uclass".0x%x] = 0x%llx failed: 0x%llx\n", ...
+> pr_err("TDH_VP_WR["#uclass".0x%x] |= 0x%llx failed: 0x%llx\n", ...
+> pr_err("TDH_VP_WR["#uclass".0x%x] &= ~0x%llx failed: 0x%llx\n", ...
 > 
-> It seems this test is has a correctness part and a performance part.
-> For the performance test, Jesper has out of tree tests for the
-> page_pool:
-> https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/bench_page_pool_simple.c
-> 
-> I have these rebased on top of net-next and use them to verify devmem
-> & memory-provider performance:
-> https://github.com/mina/linux/commit/07fd1c04591395d15d83c07298b4d37f6b56157f
+> We can parameterize that part of the message, but it gets a bit tortured. Or
+> just lose that bit of detail. We can take a look. Thanks.
 
-Yes, I used that testing ko too when adding frag API support for
-page_pool.
+Yes, you can:
 
-The main issue I remembered was that it only support x86:(
+1) have three different functions for the failure
 
-> 
-> My preference here (for the performance part) is to upstream the
-> out-of-tree tests that Jesper (and probably others) are using, rather
-> than adding a new performance test that is not as battle-hardened.
+2) leave out the value part
 
-I looked through the out-of-tree tests again, it seems we can take the
-best of them.
-For Jesper' ko:
-It seems we can do prefill as something that pp_fill_ptr_ring() does
-in bench_page_pool_simple.c to avoid the noise from the page allocator.
+3) pass the mask as well to tdh_vp_wr_failed() and use it to deduce the 
+=/|=/&= part, like
 
+	if (!~mask)
+		op = "=";
+	else if (!value)
+		op = "&= ~", value = mask;
+	else if (value == mask)
+		op = "|=";
+	else
+		op = "??, value = ";
 
-For the ko in this patch:
-It uses NAPI instead of tasklet mimicking the NAPI context, support
-PP_FLAG_DMA_MAP flag testing, and return '-EAGAIN' in module_init()
-to use perf stat for collecting and calculating performance data.
+Paolo
 
-Is there other testcase or better practicing that we can learn from
-Jesper' out of tree ko?
-
-> 
-> --
-> Thanks,
-> Mina
-> 
 
