@@ -1,208 +1,229 @@
-Return-Path: <linux-kernel+bounces-322831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80418972FC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E79972FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDA0284F26
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D7D428697B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D099F18EFF8;
-	Tue, 10 Sep 2024 09:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0AF18C325;
+	Tue, 10 Sep 2024 09:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6vvpYv6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INiOw5yI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4418C914;
-	Tue, 10 Sep 2024 09:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5576B13AD09;
+	Tue, 10 Sep 2024 09:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962051; cv=none; b=hSCjQl+yPa7vzuA9EVJcbEmB5wENa71MUeLIj3XogKaFDpkFhOO0ASefcw4Nrlk4+HKlXolP2BwyKFQSUQig5+V9klHQyCEwcJLxPSn3aeyOs+zusTzjb+YrEaEz9CtIGVdTdUEy7aGf7x8rIcblOYwJb404MXsEZa7JghCdZ4E=
+	t=1725962130; cv=none; b=QiDSXGb97nRFuLRceMmwv5hPY/CloOvc8YVpYf3StMXRXJhRTq66qmkf2c1v/NqrlbFNk+Jhh4YHZvtkdBg8DzE5bYApeWJK7xobBKsR/W4NwvoKXO3VPkQXOrwgX6Lx3wb2oM3o8aooktxtfReSpaxHKkXmLFSChEsp+Qk16M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962051; c=relaxed/simple;
-	bh=o+cNj60wCCmzXHOvj60mxWGaujKjMQ2WA9gXXGiMS+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AbeQb2b9FlIEMeGaDCykssmKykt8sGbPSFkDAbr/taG83DPZVDqp/iVZ55BwsCE4MPCMEiArdV8cvqRvI+qG0eqtU5npj4NMAT/N9kWq4grPLLrD3cZZ4PsCx4mol63yxllDAlcyxQJOiuxq10DfGG4Lpqnu5uWMvt0lu++2hMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6vvpYv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73577C4CEC3;
-	Tue, 10 Sep 2024 09:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725962050;
-	bh=o+cNj60wCCmzXHOvj60mxWGaujKjMQ2WA9gXXGiMS+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i6vvpYv63/nCh3R/WgxCyMoFhuQAK9/EE7ZzzcWwlsc0wK1qK24QRfcMl9dVez1iB
-	 SwoTNuMo+nEQ94cdBGulT7RM5diKd4pWH9rdqwMGiHOGJ3QbtYx/AY5l/93zRhMG5y
-	 KR93IVgUz3mDRRFfL5q2uV/nk7S0kxNUx5OSYcgSr5snlSN4YK9jbdc7yEw3Pear0+
-	 aFgiJD5zknWKI+EMj25nakIMvlwGyBIRv0iqvGPvDVLtMMajnkuc6uuhbMcDJb61bZ
-	 zPudzFWX91qFcXlC0udLKRfshdRJHvg0kP7n6KZzDTRYJUmo8bg93GdVoBpMTPMg2d
-	 ADFJTM1Udt4Fw==
-Message-ID: <bb9e6ba2-4aeb-40ee-b123-9c59a0efa098@kernel.org>
-Date: Tue, 10 Sep 2024 11:54:01 +0200
+	s=arc-20240116; t=1725962130; c=relaxed/simple;
+	bh=FNaFQjCMOZPAZpGBC/QDYZQGjGeLuPkU+Tp/UfCEFCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5HrNJuKdZt0HzxGYMqGSm/++sHMoIRAl4MqWOvo1fWbnZ9uABhjADqmZeh0xs3t0F/ic+GehY4UmMf6vynfMexmGFV5OypAjY4Br2rdmTvOoIjGCTHPPjNksLYTK1B4ymFuMGnPCPT0++5OAZ3r1vOZghLMuZayOHZKrP81D/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INiOw5yI; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725962128; x=1757498128;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=FNaFQjCMOZPAZpGBC/QDYZQGjGeLuPkU+Tp/UfCEFCE=;
+  b=INiOw5yIO929oJxJsOo2+6q50tORJwMErFNnA3JF7mxdpTdUlhlZgKWT
+   YQ5jyzkYg7DKLB93PK1QRbLpFv1UDDnUaPY4Qy8wQJPBLcl03Y6XbZGUU
+   nOCApFa+ryhcttpCuJOjWwJOzxqdOJ41HbaDNwcOx2idPg+nhTJ0a9A9q
+   nk2eleCSPfXKxqJNoMBISvmpdVLmkHQW1HBjG3kICUAH7NU2lAfgABnov
+   Qt88uJxJm2WpyWP8lCGjbVidIhZhPUXgzhjktxNFgGX2TNtxp2PTNg8DI
+   LATYq1EY79F9iZp6QCXJjBDr2KyPYChCg3+fxOX56yUMqlWG0+lrBgpMv
+   Q==;
+X-CSE-ConnectionGUID: NOPBexnYQiOy6AYh59q/GQ==
+X-CSE-MsgGUID: wnalBR4CRoeTNTpVzA7Ujw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35269406"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="35269406"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 02:55:28 -0700
+X-CSE-ConnectionGUID: LbPBTunoSJqIxIuMdjNgyw==
+X-CSE-MsgGUID: yb+GqAbJQqyeG/Y+XlHwCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="90262719"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 02:55:24 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id E8E9311F83C;
+	Tue, 10 Sep 2024 12:55:20 +0300 (EEST)
+Date: Tue, 10 Sep 2024 09:55:20 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <ZuAXiKjdgMUY1jcV@kekkonen.localdomain>
+References: <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
+ <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+ <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
+ <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
+ <20240909134516.GA9448@pendragon.ideasonboard.com>
+ <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+ <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
+ <ZuAQpITcee2SSYKk@kekkonen.localdomain>
+ <6u2g4v4ktt543sy5jlp3vonemhzhrwyz2liikg6jb2kx3h7jao@z6s233clqwqk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
- vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
- Frank.Li@nxp.com, konradybcio@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-2-quic_msavaliy@quicinc.com>
- <6a6fc102-a18c-4ae3-9104-59eb3172f407@kernel.org>
- <9cc7d427-34c6-45c2-a747-f71112833773@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9cc7d427-34c6-45c2-a747-f71112833773@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6u2g4v4ktt543sy5jlp3vonemhzhrwyz2liikg6jb2kx3h7jao@z6s233clqwqk>
 
-On 10/09/2024 11:09, Mukesh Kumar Savaliya wrote:
-> Thanks Krzysztof.
+Hi Jacopo,
+
+On Tue, Sep 10, 2024 at 11:42:06AM +0200, Jacopo Mondi wrote:
+> > > > > > > Ah, I missed that one.
+> > > > > > >
+> > > > > > > I don't think it fixes the issue I mentioned. If we have PM enabled, and the
+> > > > > > > parent device requires powering up for the child device (BE) to be
+> > > > > > > accessible, the driver will crash when calling pispbe_hw_init(). I think you
+> > > > > > > should call pm_runtime_set_active() before calling pispbe_runtime_resume().
+> > > > > >
+> > > > > > As discussed, this is not a problem currently for BE, but indeed you
+> > > > > > have a point.
+> > >
+> > > I admit the runtime_pm intrinsics are obscure to me, but Laurent just
+> > > made me notice something.
+> > >
+> > > Consider the following scenario
+> > >
+> > > *) Kernel compiled with CONFIG_PM
+> > > *) i2c sensor driver that supports both CONFIG_PM and !CONFIG_PM by:
+> > >   *) Manually power up the sensor during probe
+> > >   *) Call pm_runtime_enable() and pm_runtime_set_active() at the end
+> > >      of the probe routine after having accessed the chip over i2c
+> > >      (like most, if not all the i2c drivers in mainline do including
+> > >      ccs)
+> > >
+> > > All these drivers work, and during the probe routine before accessing
+> > > the HW, they don't need to power up the parent i2c controller.
+> >
+> > This isn't done explicitly by the I²C drivers, indeed but...
+> >
+> > >
+> > > Might it be that during probe() the parent is guaranteed to be enabled ?
+> >
+> > ...yes.
+> >
 > 
-> On 9/7/2024 2:34 PM, Krzysztof Kozlowski wrote:
->> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
->>> Adds qcom,shared-se flag usage. Use this when particular I2C serial
->>> controller needs to be shared between two subsystems.
->>
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC (and consider --no-git-fallback argument). It might
->> happen, that command when run on an older kernel, gives you outdated
->> entries. Therefore please be sure you base your patches on recent Linux
->> kernel.
->>
->> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->> people, so fix your workflow. Tools might also fail if you work on some
->> ancient tree (don't, instead use mainline) or work on fork of kernel
->> (don't, instead use mainline). Just use b4 and everything should be
->> fine, although remember about `b4 prep --auto-to-cc` if you added new
->> patches to the patchset.
->> </form letter>
->>
->> You already got this comment, so how many times it has to be repeated?
->> Your process is just wrong if you do not use the tools for this.
->>
-> Sorry, I was already using scripts/get_maintainer.pl but i kept everyone 
-> into To list (That's my mistake here). I shall keep maintainers in TO 
-> list and rest in CC list.
+> Unrelated, but I am wrong the driver core calls pm_request_idle() on
+> the just probed device ? Does this mean drivers doesn't have to do
+> that by themseleves ? (it's not a big deal, as request_idle() doesn't
+> change the usage counter)
 
-No, To or Cc does not matter. Your list is just incomplete.
+Seems like that. This could be omitted from drivers then.
 
 > 
-> Question: With <Form Letter> , are you asking to add letter in this 
-> first patch ? I have cover letter, but it will get removed when patch 
-> gets merged. Please help suggest and clarify.
+> > >
+> > > I add a look in the driver-core and pm Documentation/ but found
+> > > nothing.
+> > >
+> > > A quick stroll in driver/base/ got me to __device_attach() and it
+> > > seems parents are powered up before attaching a driver to a device
+> > > (which in my understanding should be what ends up calling probe()).
+> > > Clearly I've no real understanding of what I'm talking about when it
+> > > comes to driver-core, so take this with a grain of salt.
+> >
+> > This only works with runtime PM enabled.
+> >
+> 
+> It's the CONFIG_PM case that was worrying for Tomi
+> 
+> > >
+> > > > > >
+> > > > > > Sad note: most of all the occurrences of "grep set_active" in
+> > > > > > drivers/media/platform/ show that set_active() is used as I've done in
+> > > > > > my patch
+> > > > > >
+> > > > > > > However, you said above that "supporting !CONFIG_PM is not that much work".
+> > > > > > > Maybe not. But how much work is it to get it right (for both PM and !PM),
+> > > > > > > and make sure it stays right? =).
+> > > > > > >
+> > > > > > > Just my opinion, but if there are zero use cases for the !PM, I would just
+> > > > > > > go with "depends on PM" to keep the driver simpler, less bug-prone, and
+> > > > > > > easier to maintain.
+> > > > >
+> > > > > I'm fine with that, and for platform drivers, that's my preferred
+> > > > > option. Sakari ?
+> > > >
+> > > > I'm concerned with your (?) recent finding that many architectures don't
+> > > > have support for CONFIG_PM. In this case the device is very unlikely to be
+> > > > used outside ARM(64) so I guess it's fine.
+> > > >
+> > >
+> > > Also, this IP is RPi specific, and the !CONFIG_PM case is not used or
+> > > tested on Pi.
+> > >
+> > > However, I think this current patch is correct (assuming the above
+> > > reasoning on i2c sensor drivers is correct) and doesn't require
+> > > CONFIG_PM, so I would be tempted to keep this version.
+> >
+> > I understand the current patch does depend on CONFIG_PM: it requires
+> > runtime PM to be operational to start the clock, for instance.
+> >
+> 
+> Where do you see that ?
+> 
+> This version still calls pispbe_runtime_resume() to power up the IP,
+> it doesn't go through runtime_pm:
+> https://patchwork.linuxtv.org/project/linux-media/patch/20240904095836.344833-5-jacopo.mondi@ideasonboard.com/
 
-No, it's just template. Form letter... I am just bored to repeat the
-same comment.
+cfe_runtime_resume() is only called via runtime PM.
 
->>
->>>
->>> SE = Serial Engine, meant for I2C controller here.
->>> TRE = Transfer Ring Element, refers to Queued Descriptor.
->>>
->>> Example :
->>> Two clients from different SS can share an I2C SE for same slave device
->>
->> What is SS?
->>
-> SS = Subsystem (EE - Execution Environment, can be Apps 
-> processor/TZ/Modem/ADSP etc). Let me add this too in next patch.
+> 
+> Thanks!
+> 
+> > >
+> > > > >
+> > > > > > I don't see a use case for !PM and we confirmed with RPi they don't
+> > > > > > need to support it. During the review of a previous version of the BE
+> > > > > > driver iirc I've been asked to support !PM but I'm not sure I recall
+> > > > > > the reasons.
+> > > > >
+> > > > > I hope it wasn't me :-)
+> > > >
+> > > > Me neither. Although it'd be nice: CONFIG_PM isn't a hardware specific
+> > > > option as such. As one part of the kernel requires !CONFIG_PM and another
+> > > > CONFIG_PM, we can expect problems, at least in principle.
+> > > >
+> > > > Ideally all architectures would support it so CONFIG_PM could be removed
+> > > > and we could say the problem has been solved. :-)
 
-Yes, please explain in the binding itself.
+-- 
+Kind regards,
 
->>> OR their owned slave devices.
->>> Assume I2C Slave EEPROM device connected with I2C controller.
->>> Each client from ADSP SS and APPS Linux SS can perform i2c transactions.
->>> This gets serialized by lock TRE + DMA Transfers + Unlock TRE at HW level.
->>>
->>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>> ---
->>>   Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> index 9f66a3bb1f80..ae423127f736 100644
->>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->>> @@ -60,6 +60,10 @@ properties:
->>>     power-domains:
->>>       maxItems: 1
->>>   
->>> +  qcom,shared-se:
->>> +    description: True if I2C needs to be shared between two or more subsystems.
->>
->> What is a subsystem? With commit msg I still do not understand this.
-> SS = Subsystem (EE - Execution Environment, can be Apps 
-> processor/TZ/Modem/ADSP etc). Let me add EE too with full form.
->> Maybe presence of hwlock defines it anyway, so this is redundant?
-> No, this flag is required. As hwlock comes into picture if this flag is 
-
-Flag is required? By what? Sorry, you push your downstream solution to us.
-
-> defined. So flag is acting as a condition to take hwlock TRE 
-> descriptor(transfer ring element). Hope i could answer your query.
-
-Hm, not sure, maybe indeed hwlock would not be enough. However I think
-existing binding misses hwlock property.
-
-Best regards,
-Krzysztof
-
+Sakari Ailus
 
