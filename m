@@ -1,128 +1,121 @@
-Return-Path: <linux-kernel+bounces-323407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7302973CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D055C973CEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61244B21F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84E71C2409B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277CB1A01BD;
-	Tue, 10 Sep 2024 16:03:45 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD4F198824;
-	Tue, 10 Sep 2024 16:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C041A0706;
+	Tue, 10 Sep 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zukOn88a"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A812198824;
+	Tue, 10 Sep 2024 16:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725984224; cv=none; b=WuyvIIh4JAYF7y/O4h6lDYZ6OB8u/B9uhzEiAWhVekkRajAa1LnHgZsTUM8dmur72dTjts5ZwJj8usUh/kZEw71xVBr5oGg1xNbVDAHFCRhtHzjrenvlbbs8NE9wPwJFyz3Xv+3221Zg/QiNjMUgcnoHLJkaEUj0QzbRv/KVwmU=
+	t=1725984263; cv=none; b=SGh4wSjx460wDXpjmv50JdrVyJq/ldytcjpRy7aCtxXVJMtR41cwIV+x/OGG6AUiYKLeOx/qXwIYHgqscgGXvNpAhMAas+MWwGfVpTnbgLJJeVqxkBUVj9xY0byPJs0831urQzRDaoq+9C3yZBbvxsbZAd+DDPCcgs5v/wUY/Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725984224; c=relaxed/simple;
-	bh=Cdiv22D2XE0zZV2f8MCtiT3Ss4BAr6XjTBSKLUi7loE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eQedEVEujSoS7PLqjhDOz+yJE010wvxOqwVwyFqtnSV++kgqmbjyJ1XRuYaCUP25AU5Cpr5FydBpLuR1Wq9fiViDNGBJjwyIk0jey4PmmwkK4whucCYRC6rmE0qzfl3MP7PqXwd+cow1wU8onZaEWvQYCzZ1Ega2MHkrQriyAEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id A5A2792009C; Tue, 10 Sep 2024 18:03:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id A14D492009B;
-	Tue, 10 Sep 2024 17:03:39 +0100 (BST)
-Date: Tue, 10 Sep 2024 17:03:39 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Masahiro Yamada <masahiroy@kernel.org>, 
-    Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-    Richard Weinberger <richard@nod.at>, 
-    Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-    Johannes Berg <johannes@sipsolutions.net>, 
-    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Wedson Almeida Filho <wedsonaf@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Benno Lossin <benno.lossin@proton.me>, 
-    Andreas Hindborg <a.hindborg@samsung.com>, 
-    Alice Ryhl <aliceryhl@google.com>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Steven Rostedt <rostedt@goodmis.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-um@lists.infradead.org, rust-for-linux@vger.kernel.org, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-    llvm@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] rust: Enable for MIPS
-In-Reply-To: <035ccfe5-c368-4cd9-8e0d-34e0e355cb05@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2409101643210.60835@angie.orcam.me.uk>
-References: <20240905-mips-rust-v2-0-409d66819418@flygoat.com> <20240905-mips-rust-v2-3-409d66819418@flygoat.com> <alpine.DEB.2.21.2409082138160.60835@angie.orcam.me.uk> <035ccfe5-c368-4cd9-8e0d-34e0e355cb05@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1725984263; c=relaxed/simple;
+	bh=lyEi07OYy0HDwQcI/tVSb6icCUDckoGveROhmrvlc/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNQshbJpOrJgKKUJ8IOfiLPmTOKLrMDzC2m5U/nd4kck35FL47/e1rJYfRUsIjE98lFztNm87w56D86EwW983MVNw6x4ft1DmUEEEMY5bOmOrYXXrfetGEmWlOI08dD0L/7yWhNQ5g3Xj3MSq95kFf3nGhGtYDtScSHE/qn6nac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zukOn88a; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0q5V/HDrRh41vRS9Fz5fpK96NnFQDgfsGbq54/gK0tY=; b=zukOn88ac0n/yjjixjNa40s1sv
+	llWM2qRl4mMc7Pt+CvyOs+4A69pme6vbBNYLQIwmPi6z30w7pltfk3vgXyypj59QFxu/A1OPmheEI
+	36XfzYEZitalx1+rI9X5TDGBB6Bkj1NjOPFfWvmcIo+G9qYrMBcT3oj3k2MQsRPxMnGw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1so3LY-0077mS-Af; Tue, 10 Sep 2024 18:04:04 +0200
+Date: Tue, 10 Sep 2024 18:04:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Suraj Jaiswal <jsuraj@qti.qualcomm.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>,
+	"Suraj Jaiswal (QUIC)" <quic_jsuraj@quicinc.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	"bhupesh.sharma@linaro.org" <bhupesh.sharma@linaro.org>,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Rob Herring <robh@kernel.org>, kernel <kernel@quicinc.com>
+Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for
+ multiple descriptors
+Message-ID: <417420b8-3010-4223-a683-55a0daf3b962@lunn.ch>
+References: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+ <yy2prsz3tjqwjwxgsrumt3qt2d62gdvjwqsti3favtfmf7m5qs@eychxx5qz25f>
+ <CYYPR02MB9788D9D0D2424B4F8361A736E79A2@CYYPR02MB9788.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CYYPR02MB9788D9D0D2424B4F8361A736E79A2@CYYPR02MB9788.namprd02.prod.outlook.com>
 
-On Mon, 9 Sep 2024, Jiaxun Yang wrote:
-
-> >> diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-> >> index 863720777313..bbdf8a4dd169 100644
-> >> --- a/scripts/generate_rust_target.rs
-> >> +++ b/scripts/generate_rust_target.rs
-> > [...]
-> >> +        } else {
-> >> +            ts.push("arch", "mips");
-> >> +            cfg.get("TARGET_ISA_REV").map(|isa_rev| {
-> >> +                let feature = match isa_rev.as_str() {
-> >> +                    "1" => ",+mips32",
-> >> +                    "2" => ",+mips32r2",
-> >> +                    "5" => ",+mips32r5",
-> >> +                    "6" => ",+mips32r6",
-> >> +                    _ => ",+mips2",
-> >
-> >  What's the consequence of using `mips2' rather than `mips1' here?  How 
-> > about other ISA revisions, e.g. `mips4' (that also applies to the 64BIT 
-> > leg)?
+> On Mon, Sep 02, 2024 at 03:24:36PM GMT, Suraj Jaiswal wrote:
+> > Currently same page address is shared
+> > between multiple buffer addresses and causing smmu fault for other 
+> > descriptor if address hold by one descriptor got cleaned.
+> > Allocate separate buffer address for each descriptor for TSO path so 
+> > that if one descriptor cleared it should not clean other descriptor 
+> > address.
 > 
-> LLVM's mips1 backend is a little bit broken beyond repair, so I tried to use mips2
-> as a baseline. I should probably let HAVE_RUST depend on !CPU_R3000 to get it covered.
+> I think maybe you mean something like:
+> 
+>     Currently in the TSO case a page is mapped with dma_map_single(), and then
+>     the resulting dma address is referenced (and offset) by multiple
+>     descriptors until the whole region is programmed into the descriptors.
+> 
+>     This makes it possible for stmmac_tx_clean() to dma_unmap() the first of the
+>     already processed descriptors, while the rest are still being processed
+>     by the DMA engine. This leads to an iommu fault due to the DMA engine using
+>     unmapped memory as seen below:
+> 
+>     <insert splat>
+> 
+>     You can reproduce this easily by <reproduction steps>.
+> 
+>     To fix this, let's map each descriptor's memory reference individually.
+>     This way there's no risk of unmapping a region that's still being
+>     referenced by the DMA engine in a later descriptor.
+> 
+> That's a bit nitpicky wording wise, but your first sentence is hard for me to follow (buffer addresses seems to mean descriptor?). I think showing a splat and mentioning how to reproduce is always a bonus as well.
 
- GCC works just fine I suppose, just as with the other language frontends, 
-doesn't it?
+What might also be interesting is some benchmark
+numbers. dma_map_single() is not always cheap, since it has to flush
+the cache. I've no idea if only the first call is expensive, and all
+the subsequent calls are cheap? Depending on how expensive it is, some
+sort of refcounting might be cheaper?
 
-> We have no good way to tell ISA reversion prior to R1 just from Kconfig TARGET_ISA_REV,
-> valid numbers for TARGET_ISA_REV are only 1, 2, 5, 6 from Kconfig.
-
- This approach doesn't work for some MIPS architecture processor configs 
-anyway, e.g. what ISA revision will CPU_P5600 imply here?
-
- However if there's a need (and previously there wasn't), then I think it 
-can be sorted in a straightforward way.  We have just a bunch of CPU_* 
-settings and we can define corresponding ISA_* settings to select, e.g. 
-ISA_MIPS1, ISA_MIPS3, ISA_MIPS32_R1, ISA_MIPS64_R6, and so on, based on 
-information extracted from per-CPU_* `-march=' compilation flags from 
-arch/mips/Makefile (possibly combined with ISA data obtained from 
-GCC/binutils for said flags).
-
- It could be a bit tedious to write, but not a big challenge really, just 
-mechanical work.
-
-> Given that mips 2 and 3 binaries (Rust object files) can link run flawlessly on all pre-R6
-> (despite R3000) hardware with matching bitness, they were chosen as fallback here.
-
- I'm fine with having a MIPS1/R3000 exception for broken LLVM, but I see 
-no reason to disable it for GCC.
-
-  Maciej
+     Andrew
 
