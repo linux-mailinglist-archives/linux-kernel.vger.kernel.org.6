@@ -1,152 +1,285 @@
-Return-Path: <linux-kernel+bounces-322380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85F897282D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC3C972835
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D8D1C214DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8CB1C210D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BD317F4F7;
-	Tue, 10 Sep 2024 04:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB8012AAFD;
+	Tue, 10 Sep 2024 04:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqWdq0/S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XajzF1Ij"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568B119067C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB038192D69
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941756; cv=none; b=DYJdtGpquevUZBGq7qlBVDqFLnGpqLE+ivJpYIO63xawOMYx6/hPCQBVr7aU2wupz+AdFltxXm6wsE7HVJFCWNu+pgnS0RX1ibhSjXDIPrZ1EZj9kCE5TTKjnRXfGMB1QyY0PGGTHG1yDuXC0HKM9AkVvxyUJ5CfuPNT2O+Cw6Y=
+	t=1725941763; cv=none; b=JsGtbSzChbPGi55iwt5Y8zmm/dATHtNAK00kILLxECIfJI/P621oikyDtcI2VwmeNfS0DWrZ5lGXuFvrFRTUjZy0y61E2dGGO+ybOfcvRiZpl9WLiRCXDk3xaa6/x4F2cNMrTzX4cvu+jXwbWLXA6dp0WXi1EaA85fT1MxBdGlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941756; c=relaxed/simple;
-	bh=gkZzcVeOY1zKE6Oa+cxE4jiLx/E16ZR2j2sfe3+e4vI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THK3C5hKdyOEt2jtNE8dJe26LuEYByDXOhY8FaZGEcnwrlEKJD0sdtv0x4xTtlJ0DOOqynMT/HfvlA5nZ6RmgX83c7gT7U2vTYJC3dfTE4c9r9idiqKRkAWYMfacSAtj4WggJ9VUE6x6nFd1PMA1efmdzSo+Svikj07ubBOwe+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqWdq0/S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725941752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u/+FRQQ8Ru8+M5tm0CToElnSS7luR16tiIP4Dg8B3y8=;
-	b=dqWdq0/SMJnTpdZNVVG3YYLM2yKiE4Uujv0Lx7TJsxW/Fj+Gx0FVNPzeKjZ39nGzzRt8WT
-	Fr5S/rO9ITSDEzjFAPYaDFTlpMPUfFdw50rP12VtlE79Pocor+PBug2qT1R8IqwQHqye9W
-	W5PdGKvODRrTM7YCml59ZwQvg8tl9ug=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-zuihsF1gOSO-F53_nGSmQQ-1; Tue, 10 Sep 2024 00:15:50 -0400
-X-MC-Unique: zuihsF1gOSO-F53_nGSmQQ-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2056364914eso66461395ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 21:15:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725941749; x=1726546549;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/+FRQQ8Ru8+M5tm0CToElnSS7luR16tiIP4Dg8B3y8=;
-        b=kRUs5V/y4o4Hf9YNC6TivZxxeSF3b4eiCy5F8atNXzhJcH3fJq88glDxS2q0epMjcL
-         rWqfqGAIOzAjXjU8RAIExN4XMR43AGibOE4Vv8By+F7YT3GnMEpUGGvRSEa0zk9CmKy9
-         uRlJRqaTVrKAGZmqdsOaJ4aID5vZU31cu+MxNiav569kd6AQvvxGQTTkajYA4RMMY27Q
-         cndFtLElJVnWJwtBiC1JNuHmGTNj0m5wrNeO5Lc1//zlMvijsCkVJ1erfAsds0TyAiTT
-         z/SooUOHQmUlzAN0NOQxH3xzP4BhcJaQBGSepW1Ofdc7aWtE6EluZimKiMdGlyFL/HIz
-         C2yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzNwihfhm/1AvW9QtmWmNXaIaaL4A3N/f9Vw6PFszyCRBAF3yDk3ckTL/31v3Rh2W9I/BjdrT5sF4XqKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYcq5b9MNlpjRWoiC5ba7BPBK/+s5GmAxErC1tFQcn53er0mLq
-	0nMc8ySah0EuB7KlOzrrlAgCe8ptSEufcsJRQ6869pUMobpfXLuFDSOtNxMFSS+jRzG1DnVZd7w
-	iP9DHCfTHK73hvwfVT3t3PgeKJF22r8AyCejRXWBB3F3xyQv34Kbr0pOvXNtS3Q==
-X-Received: by 2002:a17:902:f549:b0:202:5af:47fc with SMTP id d9443c01a7336-206f0511f66mr213103645ad.13.1725941749239;
-        Mon, 09 Sep 2024 21:15:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESpzFJPvUaYPPTKHz8T4YHLbc03zqgmBJU6sgzN1/EtRPQmV6cfuytRj9V1iBRvh9wsUVF0g==
-X-Received: by 2002:a17:902:f549:b0:202:5af:47fc with SMTP id d9443c01a7336-206f0511f66mr213103255ad.13.1725941748534;
-        Mon, 09 Sep 2024 21:15:48 -0700 (PDT)
-Received: from [192.168.68.54] ([103.210.27.31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e0efbesm40682855ad.40.2024.09.09.21.15.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Sep 2024 21:15:48 -0700 (PDT)
-Message-ID: <29016e56-e632-422d-a4d2-1891fad2c565@redhat.com>
-Date: Tue, 10 Sep 2024 14:15:39 +1000
+	s=arc-20240116; t=1725941763; c=relaxed/simple;
+	bh=tcxBgkcCaXUcDBC4KrHxwVcyFaoBS1riB2Kf1/7ImYM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=r5kAU0JRgMuKLfJTEI+z5SWCjo0yBbW3/aT/J9gWqq6rmLIvWF6zFbg1m/18hJJ3ejd6BoqxJhiSy0hEfanYHueOTUWcYqVqq2HJvdE8iVhjwkz1TEUaFlOQumqKLCSka3VijZzaJi3IxNAgyEVGH/Hzdt+w16BpvqMM+pY4Mrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XajzF1Ij; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240910041556epoutp02a53f5b956e84c1598d685eba29168a65~zxuIYIXwh2210722107epoutp02S
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 04:15:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240910041556epoutp02a53f5b956e84c1598d685eba29168a65~zxuIYIXwh2210722107epoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725941756;
+	bh=Eh8dnpLhwVBM/rSsgZrH8h1HoL7FGTJHcy8qgVipwW8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=XajzF1IjhVk5VrsslYrHobsMadAVKnrgWsJj0xc8KPu6Dn4pH0WGIP1hukrD0zyab
+	 Lh65uLMKOxS4gZPirEVXWsRPAtoCeF12Ki4xvwNFZH9yjM404FyMeaLKdTMzIWj298
+	 KKIdKhXxvhBRzv08374CE4a3dwX6ZpYD0B2AkJkY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240910041556epcas1p32fd43bc48a96c75e171b1036ff396990~zxuH-0PtN0154601546epcas1p3M;
+	Tue, 10 Sep 2024 04:15:56 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.232]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4X2r3Z58msz4x9QJ; Tue, 10 Sep
+	2024 04:15:54 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EA.09.08992.AF7CFD66; Tue, 10 Sep 2024 13:15:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240910041554epcas1p28b549d1a3d6696b19cdc3c6e4201bf99~zxuGGSlSO2158221582epcas1p2x;
+	Tue, 10 Sep 2024 04:15:54 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240910041554epsmtrp2b5e32118bb68f5e7770275a3d29955a5~zxuGFhmTN0681406814epsmtrp2N;
+	Tue, 10 Sep 2024 04:15:54 +0000 (GMT)
+X-AuditID: b6c32a33-96dfa70000002320-8c-66dfc7fa0170
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CB.D1.19367.9F7CFD66; Tue, 10 Sep 2024 13:15:54 +0900 (KST)
+Received: from [10.113.111.204] (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240910041553epsmtip102da6529d0d1ca065e67cb589c29be12~zxuF3ukmU0608006080epsmtip1F;
+	Tue, 10 Sep 2024 04:15:53 +0000 (GMT)
+Message-ID: <fcfdef6d00e1f5084c85191ffa43e9756ddc0325.camel@samsung.com>
+Subject: Re: [PATCH v4 3/3] tty: serial: samsung: Fix serial rx on Apple
+ A7-A9
+From: Kwanghoon Son <k.son@samsung.com>
+To: Nick Chan <towinchenmi@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+Date: Tue, 10 Sep 2024 13:15:52 +0900
+In-Reply-To: <866d51a6-1eae-4dc6-8298-df2d608d2507@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/19] efi: arm64: Map Device with Prot Shared
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-13-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20240819131924.372366-13-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmnu6v4/fTDA4+VLV4MG8bm8XPq3wW
+	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
+	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD0q2yYjNTEltUghNS85PyUzL91WyTs43jne1MzA
+	UNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6DglhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFK
+	ToFpgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbGrfPn2AsOalbs3TqbqYFxp2IXIyeHhICJxNrp
+	W5i6GLk4hAR2MEq0T/3NCuF8YpT4tOYiI5xz+8sVRpiW0+sXskEkdjJK7H/dC9X/nlHiw5Ye
+	oH4ODl4BD4n1yzNAGoQFAiQOdv1jBbHZBNQllrStZQexRQRuMkmsfmwDYjMLSErMnLaaBcRm
+	EVCV+DhzHhuIzSlgK/H48GImiBptiWULXzOD2KIC8hIND0+A2bwCghInZz5hAblBQmAmh8TL
+	n1fYIC51kTi/8SwrhC0s8er4FnYIW0ri87u9UDXZEkc/wtglEtdnLYKqN5bYv3QyE8gvzAKa
+	Eut36UPcwCfx7ivEixICvBIdbUIQprzErc5yiEZRiTNPP0IN9JD4u/MTMyR0FjJLbJt1l2UC
+	o/wsJN/MQvLBLIRlCxiZVzGKpRYU56anJhsWGMIjNTk/dxMjOH1qGe9gvDz/n94hRiYOxkOM
+	EhzMSiK8/Xb30oR4UxIrq1KL8uOLSnNSiw8xmgLDdCKzlGhyPjCB55XEG5pYGpiYGRmbWBia
+	GSqJ8565UpYqJJCeWJKanZpakFoE08fEwSnVwKQmIXhrciT/ulSXQqmzqhm82rvuVRTem7Fc
+	NODaccUCq4//5O+05Mg/f7bl/96ct+mNKwQ/+QkKKQvVbNwzXcH44eoE1YzI0ByLhkOOgpw/
+	eeccvu03czmb55UDnm/vpU69wmu/98KZFKvZp+POKr0Qv8hx/G79pysX5k85/3rL3lnnN108
+	HH3qEeerWzL6fY9+2PGIr9jguPvLiqDl+9Xk7isqqtzZydPv3iA9N1Jcp/vr9K2Lrir/SFhf
+	obt80pw9E112n5NjUk1/bCiqGV/S9GTRgU/u2rckfOQSit5t6eu/w5AY+VX4GnfwHy278xUT
+	3sYoHHrzcGpUWf6VNceP50w7dH1hyRaBR8IWpnt/KLEUZyQaajEXFScCAKLqFnooBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSnO6v4/fTDC5fY7R4MG8bm8XPq3wW
+	zYvXs1m8mytjcf78BnaLTY+vsVpc3jWHzWLG+X1MFmcW97Jb7F/ay+jA5bFz1l12j02rOtk8
+	9s9dw+6xeUm9x4vNMxk9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+PHir+MBes0KiZu82xg
+	3KLQxcjJISFgInF6/UK2LkYuDiGB7YwS3w+uZYZIiEp0XG5k7GLkALKFJQ4fLoaoecso8Xvj
+	HhaQOK+Ah8T65Rkg5cICARIHu/6xgthsAuoSS9rWsoPYIgI3mSSenPIGsZkFJCVmTlvNAmKz
+	CKhKfJw5jw3E5hSwlXh8eDETxPzlzBIzd09nhmjQlGjd/psdwtaWWLbwNVhcVEBeouHhCTCb
+	V0BQ4uTMJywTGAVnIWmZhaRlFpKyBYzMqxhFUwuKc9NzkwsM9YoTc4tL89L1kvNzNzGC40Qr
+	aAfjsvV/9Q4xMnEwHmKU4GBWEuHtt7uXJsSbklhZlVqUH19UmpNafIhRmoNFSZxXOaczRUgg
+	PbEkNTs1tSC1CCbLxMEp1cDEpb1+8ds7a713/Er+1L9oRfCdadV/OabsWNn2XzJTjbdSmeNx
+	t+nq0rLa1ctNWYsdjl6s/rb87o3LL31mf1+4/Um1202/I9vP262MiTn3uDE+y3nDdolYL/6N
+	PfM0FttEXTPtk+J4VC1z3eD2F8aTadlt27/oPVn7e5nVvSeyu1OOhT5fuqiqdzXbmm8XXcvW
+	31D8enFp5pJ3f61kyrh7LdPfCzCkiHsuyGRb6yuYvfn+vKBz3OsdJwuFiSrI7Z+Zc6o6XZLh
+	179PYk27Jsnc94wunyaxISlhS0Xyhz3vn02ass35S0lKxoaPzi/PKeXPvrKlLvhQyvQ8uRiX
+	S3cf2RXViM88ekqWT4x7z6HHGUosxRmJhlrMRcWJAI+LKeICAwAA
+X-CMS-MailID: 20240910041554epcas1p28b549d1a3d6696b19cdc3c6e4201bf99
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240909094327epcas1p4bd962fc01182a76c07888e9222572917
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+	<20240909084222.3209-4-towinchenmi@gmail.com>
+	<CGME20240909094327epcas1p4bd962fc01182a76c07888e9222572917@epcas1p4.samsung.com>
+	<c73a59634ed8eeb099f4d5cb746f3b3e770391f5.camel@samsung.com>
+	<1a318d4f-8883-490f-a537-d641cf845a7c@gmail.com>
+	<36a7a634b001bf23ef41daa1b8d7644c6aab133f.camel@samsung.com>
+	<866d51a6-1eae-4dc6-8298-df2d608d2507@gmail.com>
 
-On 8/19/24 11:19 PM, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Device mappings need to be emualted by the VMM so must be mapped shared
-> with the host.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->   * Reworked to use arm64_is_iomem_private() to decide whether the memory
->     needs to be decrypted or not.
-> ---
->   arch/arm64/kernel/efi.c | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-> index 712718aed5dd..95f8e8bf07f8 100644
-> --- a/arch/arm64/kernel/efi.c
-> +++ b/arch/arm64/kernel/efi.c
-> @@ -34,8 +34,16 @@ static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
->   	u64 attr = md->attribute;
->   	u32 type = md->type;
->   
-> -	if (type == EFI_MEMORY_MAPPED_IO)
-> -		return PROT_DEVICE_nGnRE;
-> +	if (type == EFI_MEMORY_MAPPED_IO) {
-> +		pgprot_t prot = __pgprot(PROT_DEVICE_nGnRE);
-> +
-> +		if (arm64_is_iomem_private(md->phys_addr,
-> +					   md->num_pages << EFI_PAGE_SHIFT))
-> +			prot = pgprot_encrypted(prot);
-> +		else
-> +			prot = pgprot_decrypted(prot);
-> +		return pgprot_val(prot);
-> +	}
->   
+On Tue, 2024-09-10 at 10:59 +0800, Nick Chan wrote:
+>=20
+> On 10/9/2024 09:59, Kwanghoon Son wrote:
+> > On Mon, 2024-09-09 at 17:51 +0800, Nick Chan wrote:
+> > >=20
+> > > On 9/9/2024 17:43, Kwanghoon Son wrote:
+> > > > On Mon, 2024-09-09 at 16:37 +0800, Nick Chan wrote:
+> > > > > Apple's older A7-A9 SoCs seems to use bit 3 in UTRSTAT as RXTO, w=
+hich is
+> > > > > enabled by bit 11 in UCON.
+> > > > >=20
+> > > > > Access these bits in addition to the original RXTO and RXTO enabl=
+e bits,
+> > > > > to allow serial rx to function on A7-A9 SoCs. This change does no=
+t
+> > > > > appear to affect the A10 SoC and up.
+> > > > >=20
+> > > > > Signed-off-by: Nick Chan <towinchenmi=40gmail.com>
+> > > > >=20
+> > > >=20
+> > > > =5Bsnip=5D
+> > > >=20
+> > > > > diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3=
+c.h
+> > > > > index 1e8686695487..964a4fbf2626 100644
+> > > > > --- a/include/linux/serial_s3c.h
+> > > > > +++ b/include/linux/serial_s3c.h
+> > > > > =40=40 -246,24 +246,28 =40=40
+> > > > >  				 S5PV210_UFCON_TXTRIG4 =7C	=5C
+> > > > >  				 S5PV210_UFCON_RXTRIG4)
+> > > > > =20
+> > > > > -=23define APPLE_S5L_UCON_RXTO_ENA		9
+> > > > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA	12
+> > > > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA	13
+> > > > > -=23define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_EN=
+A)
+> > > > > -=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXT=
+HRESH_ENA)
+> > > > > -=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXT=
+HRESH_ENA)
+> > > > > +=23define APPLE_S5L_UCON_RXTO_ENA			9
+> > > > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
+> > > > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA		12
+> > > > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA		13
+> > > > > +=23define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_E=
+NA)
+> > > > > +=23define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_=
+RXTO_LEGACY_ENA)
+> > > > > +=23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RX=
+THRESH_ENA)
+> > > > > +=23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TX=
+THRESH_ENA)
+> > > >=20
+> > > > Small thing, but other diff is not needed except
+> > > > APPLE_S5L_UCON_RXTO_LEGACY_ENA.
+> > > >=20
+> > > > Kwang.
+> > > The other diffs are there to keep everything aligned, it looks like a
+> > > jumbled mess here in the email, but in an editor like nano it is all
+> > > aligned, before or after this series.
+> >=20
+> > I know why you did. But still there is way keep aligned and only one
+> > line added.=20
+> >=20
+> > you just added one more tab to other lines.
+> > If one tab with APPLE_S5L_UCON_RXTO_LEGACY_ENA, then everything will
+> > fine.
+> >=20
+> > I think less changes better when see git show or blame.
+> While as you said, APPLE_S5L_UCON_RXTO_LEGACY_ENA would be fine,
+> APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK is too long for that to be aligned, se=
+e
+> below without +, - or > distorting everything.
+>=20
+> Before:
+> =23define APPLE_S5L_UCON_RXTO_ENA		9
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA	12
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA	13
+> =23define APPLE_S5L_UCON_RXTO_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_ENA)
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_RXTHRESH_E=
+NA)
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_TXTHRESH_E=
+NA)
+>=20
+> Patch 1:
+> =23define APPLE_S5L_UCON_RXTO_ENA		9
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA	12
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA	13
+> =23define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRESH_ENA=
+)
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRESH_ENA=
+)
+>=20
+> After:
+> =23define APPLE_S5L_UCON_RXTO_ENA			9
+> =23define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA		12
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA		13
+> =23define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
+> =23define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK
+> BIT(APPLE_S5L_UCON_RXTO_LEGACY_ENA)
+> =23define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRESH_EN=
+A)
+> =23define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRESH_EN=
+A)
+>=20
 
-Question: the second parameter (@size) passed to arm64_is_iomem_private() covers the
-whole region. In [PATCH v5 10/19] arm64: Override set_fixmap_io, the size has been
-truncated to the granule size (4KB). They look inconsistent and I don't understand
-the reason.
+Okay I got it.
+Thanks for check=21
 
-Thanks,
-Gavin
+Kwang.
+
+> >=20
+> > Best regards,
+> > Kwang.
+> >=20
+> > >=20
+> > > >=20
+> > > > > =20
+> > > > >  =23define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE =7C =
+=5C
+> > > > >  					 S3C2410_UCON_RXIRQMODE =7C =5C
+> > > > >  					 S3C2410_UCON_RXFIFO_TOI)
+> > > > >  =23define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK =7C =
+=5C
+> > > > > +					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK =7C =5C
+> > > > >  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK =7C =5C
+> > > > >  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
+> > > > > =20
+> > > > > +=23define APPLE_S5L_UTRSTAT_RXTO_LEGACY	BIT(3)
+> > > > >  =23define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
+> > > > >  =23define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
+> > > > >  =23define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
+> > > > > -=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
+> > > > > +=23define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f8)
+> > > > > =20
+> > > > >  =23ifndef __ASSEMBLY__
+> > > > > =20
+> > > >=20
+> > >=20
+> > > Nick Chan
+> >=20
+>=20
+> Nick Chan
+>=20
 
 
