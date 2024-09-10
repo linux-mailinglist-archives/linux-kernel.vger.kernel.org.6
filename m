@@ -1,108 +1,110 @@
-Return-Path: <linux-kernel+bounces-323369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3229B973C5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC7B973CBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600F21C25C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975AA1F251A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263E91A01CA;
-	Tue, 10 Sep 2024 15:39:02 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7F319EEAF;
+	Tue, 10 Sep 2024 15:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5N2uiM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614E519F10E;
-	Tue, 10 Sep 2024 15:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ED26A022;
+	Tue, 10 Sep 2024 15:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725982741; cv=none; b=TVYo8zMOAq1wK5NjMneGnGGb+hBZQmVspVV0VwbNtMZACoNygHRfRi67kufdKX9haselZtcbYoiSqAehOjZHkG/yvqUxrmtGIsnxiLd+p6czhOHobiXJuJbfzCJYb/neDE3VoS/gLvNmyKLelZhmE9uD+lWptVcxNAOp0y0ouFQ=
+	t=1725983502; cv=none; b=HTcsxJOi12+dK0DUgfHi/WgecoU29wkndXheSOZ4JXiw7bjaiSSItwMhGnUfJ+LOAMt9FTJfZAywXEMTgA+O+L5MT8HUhgz4Rn7H8fViTeWvVxRvbr1WWPV185ZNPg+Z8UPgeLAsOOqn7AeH6evdJdxPVfg2aAN7L4doHMJ7vJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725982741; c=relaxed/simple;
-	bh=Sru+Jm0Xua9EUuTZkWOgv2SKgkvzlCenJwKsV0GpANQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nGekJ0RvMXfkwSM89cf+onSJvPek8120tjLs/nerRmuowTKzd1enjE3eqjMPhde/PxUlulkdEDgLxCarht1zOIbPgfVkbJDJ6d09gWL5Y8g5VfgceBOgxhyx3H1mAA9hAPnXZKX2CV5hir+B0gDYvkoIsePE2cnJ08UPgerMNBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X377c0YSwz1HJQL;
-	Tue, 10 Sep 2024 23:35:24 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 57AA51402E0;
-	Tue, 10 Sep 2024 23:38:58 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
- (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 10 Sep
- 2024 23:38:57 +0800
-From: Li Zetao <lizetao1@huawei.com>
-To: <hverkuil-cisco@xs4all.nl>, <mchehab@kernel.org>,
-	<gregkh@linuxfoundation.org>, <ricardo@marliere.net>, <ruanjinjie@huawei.com>
-CC: <lizetao1@huawei.com>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next v3 2/2] media: siano: remove redundant null pointer checks in cec_devnode_init()
-Date: Tue, 10 Sep 2024 23:48:03 +0800
-Message-ID: <20240910154803.736951-2-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910154803.736951-1-lizetao1@huawei.com>
-References: <20240910154803.736951-1-lizetao1@huawei.com>
+	s=arc-20240116; t=1725983502; c=relaxed/simple;
+	bh=u+LUaZcmfiXGrPUKUlRbyxCTBqnb4HavaO+FbiBlV+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=beOlJ+twIdPS2KHmz62wyPhrB+Hj4dSN0eDa5+t22ypzwAiBClvkUtBuJ2Yr81Jn6TPFvQj126osevvYsUnWi2C4G65a11D2Rx0zavcw1wamCWtpu6AzvEUeNSE31QRapealWwToTjjGfyfjEOiJDkeIiR8g3goeulG+4m5de44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5N2uiM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8C4C4CEC3;
+	Tue, 10 Sep 2024 15:51:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725983501;
+	bh=u+LUaZcmfiXGrPUKUlRbyxCTBqnb4HavaO+FbiBlV+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5N2uiM1pWLNmDd5h0HKWfwfCVjfWQp+9QJG27mYdbRGl83FJ1gt6jlIzDbIyXQt/
+	 3DbT41hD7Axa7J4+BrsTqSQSK3vzw4Fb+1WdX+qvLwi0ASBpwsaBQVYOJ3o4nEAaJp
+	 EepiZmcfW9AW5CWMQqep36htQQrZiO4vE10Q1QgvyzTLpVSock/X8mdypIc9Dsc7BE
+	 1E2/wKRGg3pQqfY87+ge3T24b9BEvcNnyjBCynzBhQdYl7L0kQ+g+f7CMoKOR/7N5h
+	 dUkuebKd302kzNgTIs86SGrDrmKLMbZqLmBPZBR/nsKYa94FqEpSZACsrzIfkfaWfG
+	 5OZ/TodFS0MEg==
+Date: Tue, 10 Sep 2024 16:51:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: d-gole@ti.com, lorforlinux@beagleboard.org, jkridner@beagleboard.org,
+	robertcnelson@beagleboard.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	greybus-dev@lists.linaro.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 3/3] greybus: gb-beagleplay: Add firmware upload API
+Message-ID: <20240910155136.GH572255@kernel.org>
+References: <20240903-beagleplay_fw_upgrade-v4-0-526fc62204a7@beagleboard.org>
+ <20240903-beagleplay_fw_upgrade-v4-3-526fc62204a7@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903-beagleplay_fw_upgrade-v4-3-526fc62204a7@beagleboard.org>
 
-Since the debugfs_create_dir() never returns a null pointer, checking
-the return value for a null pointer is redundant, Remove this check
-since debugfs_create_file can handle IS_ERR pointers.
+On Tue, Sep 03, 2024 at 03:02:20PM +0530, Ayush Singh wrote:
+> Register with firmware upload API to allow updating firmware on cc1352p7
+> without resorting to overlay for using the userspace flasher.
+> 
+> Communication with the bootloader can be moved out of gb-beagleplay
+> driver if required, but I am keeping it here since there are no
+> immediate plans to use the on-board cc1352p7 for anything other than
+> greybus (BeagleConnect Technology). Additionally, there do not seem to
+> any other devices using cc1352p7 or it's cousins as a co-processor.
+> 
+> Boot and Reset GPIOs are used to enable cc1352p7 bootloader backdoor for
+> flashing. The delays while starting bootloader are taken from the
+> userspace flasher since the technical specification does not provide
+> sufficient information regarding it.
+> 
+> Flashing is skipped in case we are trying to flash the same
+> image as the one that is currently present. This is determined by CRC32
+> calculation of the supplied firmware and Flash data.
+> 
+> We also do a CRC32 check after flashing to ensure that the firmware was
+> flashed properly.
+> 
+> Firmware size should be 704 KB.
+> 
+> Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
-v2 -> v3: Drop the redundant variable d and assign it directly
-v2: https://lore.kernel.org/all/20240907034400.3693797-2-lizetao1@huawei.com/
-v1 -> v2: Remove this check since debugfs_create_file can
-handle IS_ERR pointers.
-v1: https://lore.kernel.org/all/20240903143607.2004802-2-lizetao1@huawei.com/
+nit: If you need to post a v5 for some other reason,
+     please consider updating the spelling of Technical
 
- drivers/media/common/siano/smsdvb-debugfs.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+> Link: https://openbeagle.org/beagleconnect/cc1352-flasher Userspace
+> Flasher
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 
-diff --git a/drivers/media/common/siano/smsdvb-debugfs.c b/drivers/media/common/siano/smsdvb-debugfs.c
-index 73990e469df9..d14ba271db50 100644
---- a/drivers/media/common/siano/smsdvb-debugfs.c
-+++ b/drivers/media/common/siano/smsdvb-debugfs.c
-@@ -398,8 +398,6 @@ void smsdvb_debugfs_release(struct smsdvb_client_t *client)
- 
- void smsdvb_debugfs_register(void)
- {
--	struct dentry *d;
--
- 	/*
- 	 * FIXME: This was written to debug Siano USB devices. So, it creates
- 	 * the debugfs node under <debugfs>/usb.
-@@ -410,12 +408,7 @@ void smsdvb_debugfs_register(void)
- 	 * node for sdio-based boards, but this may need some logic at sdio
- 	 * subsystem.
- 	 */
--	d = debugfs_create_dir("smsdvb", usb_debug_root);
--	if (IS_ERR_OR_NULL(d)) {
--		pr_err("Couldn't create sysfs node for smsdvb\n");
--		return;
--	}
--	smsdvb_debugfs_usb_root = d;
-+	smsdvb_debugfs_usb_root = debugfs_create_dir("smsdvb", usb_debug_root);
- }
- 
- void smsdvb_debugfs_unregister(void)
--- 
-2.34.1
-
+...
 
