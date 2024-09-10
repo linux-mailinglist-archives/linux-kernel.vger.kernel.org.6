@@ -1,192 +1,180 @@
-Return-Path: <linux-kernel+bounces-322347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A7B972797
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AC197279D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742D71F24E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC251F24A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95315382E;
-	Tue, 10 Sep 2024 03:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C01553A2;
+	Tue, 10 Sep 2024 03:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XhQcwLfs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKtP3pIq"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E2B22638;
-	Tue, 10 Sep 2024 03:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED9A13634A;
+	Tue, 10 Sep 2024 03:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725938276; cv=none; b=o4fvVObv8xBUXz8s/J8GIxtinuge5AGL8KaMUEz0JFkHoypLmncIjXqS/j6a0blDEN4VZitMQjvrkDujPlKdiA+qfGRbk/N6nVaKhdlb/lqLiuYJ3ozjSzJ+AhykR64wfFge+/KV0OMh5ctoIdhOPlTrYxgMUlN0boR2RFZfVd4=
+	t=1725938527; cv=none; b=td8oXwxOAZRlSxpreRuP/5IJD5CHFdFd5DLjUKWnvXk7kMlH6WKMa8qSh97IbDy24ZjYBVilavim/wb4RbxBvGdxyD8YsfiboRwTF7LsykLdAbBaOtj5vOS8836dkWU48VYp08EyAhnV9621pMq5QQUjw8yZcdMXoqV7owEXPDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725938276; c=relaxed/simple;
-	bh=iUTxCdx07s5iDrT2eQFjApU0gtJkyIlv9BZ8+8ZZoN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X0ZJ5PG81SDd4TcHbY9EzkvaVj31K0QyOn1lmHr/DhO8AUvzW1uVGiCqo2ORZqYh6AIIjdPTzMQFmpfoMMLqu1aUI0zXJe7N1MW5L68nbg2B9kTXgT75IGziL9VPZCQQcCsH83QWaA3jLQZWvgY3wvlWXERYbspPuyAXLTgb4Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XhQcwLfs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 489DRPkc019858;
-	Tue, 10 Sep 2024 03:17:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AOTX1QFiEHYqHWitSH/dUa3C50p/+sMoor2mkiDwUqw=; b=XhQcwLfszd7fhrJ5
-	rLiyDLagvkiwyJSJIN9zVHdXIXcrAwYA9mX0YL6wRa8hVbrf3JQZvdpIeV50OeI+
-	A5Oz7e5pwlzi6IGjFatXLkTyzCEDn94B2URLm0/OX4HsOvaYD9eSiM8hJ71Lv/Di
-	oZxpmzBEYz8JhRKg0v/LVkV05qGJpBZ442gMRPPV8OJk5+5SGvGSCIB0BFf4k/9H
-	Afs7sg9q6IAlPoHn7uNygb7zHLE73fjIDAtsgsFvMMoljSdhIENJWpOPpQz2OAVY
-	y5LrLsOH2FzFIS3nSipxaytS+wXBh1zuJyWEft6AfkXvTdaHroqLhUGDXn3kSVgj
-	/1LU6g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy59vnnv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 03:17:30 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A3HT5Q029954
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 03:17:29 GMT
-Received: from [10.253.72.41] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
- 20:17:25 -0700
-Message-ID: <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
-Date: Tue, 10 Sep 2024 11:17:22 +0800
+	s=arc-20240116; t=1725938527; c=relaxed/simple;
+	bh=8cxRyHSeBpjU1pXWRi18M5b41/aLzXrHgO1SZO7hLwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXqAqV3iTZQh5F0cvf+r+Qz2aj2vlmjGDYwfh+aHGwmzX8vsJkv5Bmjm1yvWpe/NfkfiJgOCQojXiCuE4yaXgj1+D4Ticjg46txLQ/bVbkqo9zWsEgjIISZFzbzt/mkaUvMMLDLYihb21dSypViY7pKOn2lNksPdk4eC162qI5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKtP3pIq; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a99fd0535bso235664385a.3;
+        Mon, 09 Sep 2024 20:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725938525; x=1726543325; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I8bdJGOdx2d1IizNCB9ViMz9g0V5IvdFfVu8Im0IDPA=;
+        b=YKtP3pIq3kgUmLHPsql9IWW1iFX+uDczJthccz7dZHTLhKYfJqUnNAOiRno4UUC1lV
+         eOqCTnurmHC5CccwCMROI8AgsBhw6bReqYM4aIKsk7eH4VRTubPRs7oO6G4NsrAyaU2y
+         F0aZdBe2cKiMYuxZi4FVXx6dEsT9zzdyNdbNUL3orbQT1e41FAEv1J2SD1GP2js+q71Z
+         Po1FyUPRQh1BAtVRR1nMjDSfvyWpX2zW1Ekfpkem/m3sLLQFQxTPRwdx13O2jhMgRvHH
+         uWgwARclQHD99Rb3XkBcWRv+VWwV1yxfKWyWs7UNHW+qWACe0YFTP2TC2xvChd8C7qJg
+         ly7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725938525; x=1726543325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I8bdJGOdx2d1IizNCB9ViMz9g0V5IvdFfVu8Im0IDPA=;
+        b=WrmEv98Px7DJY8q7J8RebEJQMoHZy6Hw4lrEZMWc5S/iU92RbQG8bRFTpZSasECuOh
+         mEWNB7KFGBTqmQflbrj/8jyMh3p5o2EBSylHNqNMrJr2K9AmBzQIB3j3Vern44lQKjgD
+         mrOmXngIuTijyuTkqDLXQJgEUIvCXC2gTWogYbr80YD7aK2uqpwBdPgAZ5MVP3D3XQEk
+         ZpL4S2zD7Q+VTMcCXyDzbtn3w07/hamv+6RiByymv5iTgv9q77UNWYyJo/Srmjs3Ng4F
+         o3iY9nPgjaEfE6L0j8C6r2xDtgroPrUuxp57hbVwGr/bOb+qlPZxq5+ueZdIGngjrlrc
+         1WMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVh9cAZhzkaONbfV3EHC3xRY2/lWnduhkgBvVby8qx5DtbCCnVt0Js5Yayfpp1qWHzNNpzCZG76wsUc@vger.kernel.org, AJvYcCW6ohAKeKlGYboyrbekPjAWsAWmv0sdJg5P2G5Ct+7J/9F5PE9WHPXQwO+mPFHGXy0OILS/N9FUvfm6apNS@vger.kernel.org, AJvYcCWHiT7JZvSPE76dEmgER+vlBzfAXTc22BZ37WHCQ5S0MdpXYXMNQtIVoljqj+w7dyjQfzgiiM2658gB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhmHnV6YDBdGEKyfE4X97TOWqAf8fbAODVcpER2LpsoRxsLLcQ
+	wW51OWmDWWp4y1aj1rE6dIeeNGQ1HX4wfm7IVrAzvzn9vFnT94FW
+X-Google-Smtp-Source: AGHT+IGoym0OdCqi+QXcbZia8VxoxQUUvP6XMZdznCQMrLzyxpiZjWOxh5VQEvZ/SkJ3Lz/m2dUQfQ==
+X-Received: by 2002:a05:620a:430c:b0:7a2:32e:3c47 with SMTP id af79cd13be357-7a997340133mr1697968185a.34.1725938524890;
+        Mon, 09 Sep 2024 20:22:04 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a1e3a8sm272236385a.117.2024.09.09.20.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 20:21:55 -0700 (PDT)
+Date: Mon, 9 Sep 2024 23:21:52 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jagath Jog J <jagathjog1996@gmail.com>, Ramona Gradinariu <ramona.bolboaca13@gmail.com>, 
+	Nuno Sa <nuno.sa@analog.com>, oe-kbuild-all@lists.linux.dev, skhan@linuxfoundation.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
+Message-ID: <f5zruqfmohoaohr2qwqug33dsar5q3fubhspbwuisxxblni6h4@paioiqyjzeg5>
+References: <20240909043254.611589-3-lanzano.alex@gmail.com>
+ <202409100026.17N3K11W-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
- device_for_each_child()
-To: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zijun Hu
-	<zijun_hu@icloud.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>,
-        Jonathan Cameron
-	<jonathan.cameron@huawei.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alison
- Schofield <alison.schofield@intel.com>,
-        Vishal Verma
-	<vishal.l.verma@intel.com>,
-        Timur Tabi <timur@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <linux-cxl@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
- <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
- <2024090531-mustang-scheming-3066@gregkh>
- <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
- <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: S4z4BPUg50j9G3eZ9MM6lx9cgVZrn11V
-X-Proofpoint-ORIG-GUID: S4z4BPUg50j9G3eZ9MM6lx9cgVZrn11V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 mlxlogscore=825 phishscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 clxscore=1015 adultscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202409100026.17N3K11W-lkp@intel.com>
 
-On 9/10/2024 8:45 AM, Dan Williams wrote:
-> Ira Weiny wrote:
-> [..]
->>> This still feels more complex that I think it should be.  Why not just
->>> modify the needed device information after the device is found?  What
->>> exactly is being changed in the match_free_decoder that needs to keep
->>> "state"?  This feels odd.
->>
->> Agreed it is odd.
->>
->> How about adding?
+On Tue, Sep 10, 2024 at 01:03:04AM GMT, kernel test robot wrote:
+> Hi Alex,
 > 
-> I would prefer just dropping usage of device_find_ or device_for_each_
-> with storing an array decoders in the port directly. The port already
-> has arrays for dports , endpoints, and regions. Using the "device" APIs
-> to iterate children was a bit lazy, and if the id is used as the array
-> key then a direct lookup makes some cases simpler.
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on jic23-iio/togreg]
+> [also build test ERROR on robh/for-next linus/master v6.11-rc7 next-20240909]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Lanzano/dt-bindings-iio-imu-add-bmi270-bindings/20240909-123509
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+> patch link:    https://lore.kernel.org/r/20240909043254.611589-3-lanzano.alex%40gmail.com
+> patch subject: [PATCH v3 2/2] iio: imu: Add i2c driver for bmi270 imu
+> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409100026.17N3K11W-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409100026.17N3K11W-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/iio/imu/bmi270/bmi270_core.c: In function 'bmi270_configure_imu':
+> >> drivers/iio/imu/bmi270/bmi270_core.c:180:31: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+>      180 |                               FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
+>          |                               ^~~~~~~~~~
+> 
+> 
+> vim +/FIELD_PREP +180 drivers/iio/imu/bmi270/bmi270_core.c
+> 
+>    165	
+>    166	static int bmi270_configure_imu(struct bmi270_data *bmi270_device)
+>    167	{
+>    168		int ret;
+>    169		struct device *dev = bmi270_device->dev;
+>    170		struct regmap *regmap = bmi270_device->regmap;
+>    171	
+>    172		ret = regmap_set_bits(regmap, BMI270_PWR_CTRL_REG,
+>    173				      BMI270_PWR_CTRL_AUX_EN_MSK |
+>    174				      BMI270_PWR_CTRL_GYR_EN_MSK |
+>    175				      BMI270_PWR_CTRL_ACCEL_EN_MSK);
+>    176		if (ret)
+>    177			return dev_err_probe(dev, ret, "Failed to enable accelerometer and gyroscope");
+>    178	
+>    179		ret = regmap_set_bits(regmap, BMI270_ACC_CONF_REG,
+>  > 180				      FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
+>    181						 BMI270_ACC_CONF_ODR_100HZ) |
+>    182				      FIELD_PREP(BMI270_ACC_CONF_BWP_MSK,
+>    183						 BMI270_ACC_CONF_BWP_NORMAL_MODE) |
+>    184				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+>    185		if (ret)
+>    186			return dev_err_probe(dev, ret, "Failed to configure accelerometer");
+>    187	
+>    188		ret = regmap_set_bits(regmap, BMI270_GYR_CONF_REG,
+>    189				      FIELD_PREP(BMI270_GYR_CONF_ODR_MSK,
+>    190						 BMI270_GYR_CONF_ODR_200HZ) |
+>    191				      FIELD_PREP(BMI270_GYR_CONF_BWP_MSK,
+>    192						 BMI270_GYR_CONF_BWP_NORMAL_MODE) |
+>    193				      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
+>    194		if (ret)
+>    195			return dev_err_probe(dev, ret, "Failed to configure gyroscope");
+>    196	
+>    197		/* Enable FIFO_WKUP, Disable ADV_PWR_SAVE and FUP_EN */
+>    198		ret = regmap_write(regmap, BMI270_PWR_CONF_REG,
+>    199				   BMI270_PWR_CONF_FIFO_WKUP_MSK);
+>    200		if (ret)
+>    201			return dev_err_probe(dev, ret, "Failed to set power configuration");
+>    202	
+>    203		return 0;
+>    204	}
+>    205	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-it seems Ira and Dan have corrected original logic to ensure
-that all child decoders are sorted by ID in ascending order as shown
-by below link.
+I am having trouble reproducing this build error on both jic23-iio/togreg and
+linus/master v6.11.rc7 on an aarch64 box with the same compiler version.
+Maybe a config option is causing this?
 
-https://lore.kernel.org/all/66df666ded3f7_3c80f229439@iweiny-mobl.notmuch/
+However, I will add #include <linux/bitfield.h> to remedy this issue if
+some edge case is being hit.
 
-based on above correction, as shown by my another exclusive fix
-https://lore.kernel.org/all/20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com/
-there are a very simple change to solve the remaining original concern
-that device_find_child() modifies caller's match data.
-
-here is the simple change.
-
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -797,23 +797,13 @@ static size_t show_targetN(struct cxl_region
-*cxlr, char *buf, int pos)
- static int match_free_decoder(struct device *dev, void *data)
- {
-        struct cxl_decoder *cxld;
--       int *id = data;
-
-        if (!is_switch_decoder(dev))
-                return 0;
-
-        cxld = to_cxl_decoder(dev);
-
--       /* enforce ordered allocation */
--       if (cxld->id != *id)
--               return 0;
--
--       if (!cxld->region)
--               return 1;
--
--       (*id)++;
--
--       return 0;
-+       return cxld->region ? 0 : 1;
- }
-
- static int match_auto_decoder(struct device *dev, void *data)
-@@ -840,7 +830,6 @@ cxl_region_find_decoder(struct cxl_port *port,
-                        struct cxl_region *cxlr)
- {
-        struct device *dev;
--       int id = 0;
-
-        if (port == cxled_to_port(cxled))
-                return &cxled->cxld;
-@@ -849,7 +838,7 @@ cxl_region_find_decoder(struct cxl_port *port,
-                dev = device_find_child(&port->dev, &cxlr->params,
-                                        match_auto_decoder);
-        else
--               dev = device_find_child(&port->dev, &id,
-match_free_decoder);
-+               dev = device_find_child(&port->dev, NULL,
-match_free_decoder);
-        if (!dev)
-                return NULL;
-
-
+Best regards,
+Alex
 
