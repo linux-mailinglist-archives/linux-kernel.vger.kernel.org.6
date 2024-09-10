@@ -1,86 +1,80 @@
-Return-Path: <linux-kernel+bounces-323883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE4F9744A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:13:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CEB9744A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B455D1F27046
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB64288C02
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325471AB500;
-	Tue, 10 Sep 2024 21:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613791A76A3;
+	Tue, 10 Sep 2024 21:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdqZIi1c"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OIfpKAzH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174BC1F951;
-	Tue, 10 Sep 2024 21:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91F176FCF;
+	Tue, 10 Sep 2024 21:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002793; cv=none; b=IGHBE2EB9j5BknUVi4siTNpe34emqvpb4XJK8ZpDURMGqAGx2gPW3XaVUcaKV1CqJOexxKzlPLMi9Z2xStLgVT+f6FRUuY8CKScrW7C5M113D9nFDqw7yzL6hEQ1u4Gj1b1lSxfACz51jUsaz2PZ1/rRmVi/C2KFPltb2EiKFeU=
+	t=1726002941; cv=none; b=On3gUVb5vq6wkAQiq6I7LE19EB5L23JZMq6fm8CBuUi8eHIAiPpWRYYjsDEv3T/tihv8MBQ+z6pj+BKXsODtRlRZiImjGxxjWhpIRfJUyIGWIoJPFbVxKjLbyV3JhTqeXaQym4pPjJw5l2UB3WMz0LAg7JBdDNn63dgw84XtOXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002793; c=relaxed/simple;
-	bh=vDgjIBjhHTJrGIyXLK3F1O9eH8ttQJqEQh1v0D44fkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r/mXnLgXxsBMXkXQwDhv6BVmBVp0pKz6QVLhznf5oc5G1k2VYqdv2Z7stKAl0nHeslPBYS/q4RiDyeeP9BELpuQE4K7CIks2S4/hu6Ck5HBGaxcGJH33g0K5hGThrsvt/3/c1jw00I0i9ardeA2AJ4kYmJcU6FtilFTwaiGC3jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdqZIi1c; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37747c1d928so3774669f8f.1;
-        Tue, 10 Sep 2024 14:13:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726002790; x=1726607590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mShm0KIU0OZ83/t9phYF8kP86kSg8BrKV+H1Ffpa/nc=;
-        b=KdqZIi1cHKGNj8OdeyCeoofuDUKgGQREHww1bby3ui17q2k9IDs6TUcrghNik0AoCs
-         vQ8eiXBikvikn0I9Kglntqlt0y3+1v2f+SGZVA5B9S0WojEj//UfPDsvdINZtT2Hd/8L
-         YD26XPeTt9X87TGUe9Kbss1W5Pih9BTsLHA2BWAtgz8CRU6l6QdpinZ+6bYrfkj0LjbF
-         xISlXm43ImSbzHtByHpFL5hetpFA9PAneAaj0A7dxl/oHkJyoV6PAlVyKzKS3ILVSZ/u
-         ABQ/82dEOt7nlDTKTtLdDYwAfgzcnKzFdriqwzyOfJgm6cY92V/iVoTbSginf67FhJMl
-         x8LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002790; x=1726607590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mShm0KIU0OZ83/t9phYF8kP86kSg8BrKV+H1Ffpa/nc=;
-        b=q0CMwzgx4KLTED5k36l+iRXZ9r7ze3e1X8QBRDm+UpC9m8u2S2o4D5tcrG82lX2COg
-         AK82bSi4laOfT0OakfioCfEDw0A9yeHMJAMb/BJvw2rqOJELgGCi1XLu6/lafxUQjXcs
-         D9GOsRlBLe9i62rXjU7L3xaiF+9vlwe268X6Q/fOHIiMwHphnQeQDWeXUKLXk48Z6Z5X
-         P0ylcsx26DI/uQWeuFVm0OWfXm2S+mKLYJ5goFfOerZYlTqBW2DgoFO7gd95v5eSOX/S
-         0/m9ePkmPV96j+gwptpJ18MadS4E+p799vO/eNzbAQ/1U793JNdVpLz4QFp6az9tB6Dz
-         Zz0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+MuJv5/F/4WhJzABsHQZyRsP3L46Tf+QFOkL+amBxZ8eegRoZDMFKym51usmyUylccbwL13IxonGpraOMBgQ=@vger.kernel.org, AJvYcCVQsJpBnfugb++Oio+AwkRX/CQiDWWLbJKdZIAx08cT8OSRvibRSMJsALn+oJ6h3HIbpUSVfOX/voe2xgZw@vger.kernel.org, AJvYcCXZQPODkPORY0Q25CsvRjLvSjVWSpHeMhniqlTNvESZ8QErPXVtWj0AkN6PqE+InZ6aL9mIJ53XFMOiOns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLw6tgi8VypSmsdKOXUQYV33DgvD13sxol81W/hB0smy01DyAU
-	hfdB2rXUAXFH7BGOOW4MBC+tXe1RFHACG1B1OXkcFcuRYRfiK2rr
-X-Google-Smtp-Source: AGHT+IFwmCNPL5aE3FgmJvUfyIwFUQvYFcinWghCIonakDEYeycDzAajn6O7VZPeDDDMSpsKOoIGHw==
-X-Received: by 2002:a5d:6aca:0:b0:371:8688:1660 with SMTP id ffacd0b85a97d-378896c800cmr11271977f8f.51.1726002789527;
-        Tue, 10 Sep 2024 14:13:09 -0700 (PDT)
-Received: from void.void ([188.120.129.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a279sm9879024f8f.9.2024.09.10.14.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 14:13:09 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] ASoC: tlv320aic31xx: Fix typos
-Date: Wed, 11 Sep 2024 00:12:41 +0300
-Message-ID: <20240910211302.8909-1-algonell@gmail.com>
+	s=arc-20240116; t=1726002941; c=relaxed/simple;
+	bh=Fh0U+pSTwGimFfvklPVKJACUpUFnD0QxSyZiD5dwI+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=okC3ZGdAgOZubBqWD2veRiTaBx7ANZru8ueqRaRXdbGqmxMK5VIXLlX/0ZGcEpuqwm0mB+/qngbE3CReWEgP+VEjlUxds3mM0G7KP3Jm96eUdhQ5ZF2WGWlby3l/btaUJo5PiXStEA5wbS/SoYr9KsK2yeeKx4Ok54nGadWwW8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OIfpKAzH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48ADACaA002900;
+	Tue, 10 Sep 2024 21:15:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=YboOhgCfgBs89KiTnDPVxVE2Yz
+	sIU18gVzvQuu26dDI=; b=OIfpKAzH09u0RZZcfWxtKu9H1IORUrDPd5/9HpAGHS
+	5OjKlQZNh6PyBw9wZ+OIC4COtIwz2PqrEJ9g5hTFsQdeVUEQH32UNqUZaVYqkZYc
+	1QzSw5je+WrAo7jUGBFlogNL5rb9MdW6kHlG82oYZqa4a8X/13Qu4GFZTxCPODgl
+	QZyjpM0ng40tDsCbdkqW759snyAhOEUR7i7ye0I/BEV5kcI7QN4jtdgTqa5TqcTz
+	Uwbeur8/mkba09Qpb+6e+mtlIQXU8pvADlstt9fUxnWR3Sfpie95sCuTylf10pLw
+	lIYcPOK2cvuHX7W+e4U0I3oPcSPYzsiPvSLb2x8Nw2YA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyhsnw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 21:15:22 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48AK5OJa013468;
+	Tue, 10 Sep 2024 21:15:21 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3cm5bk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 21:15:21 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48ALFJE527525844
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Sep 2024 21:15:19 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 76A3058055;
+	Tue, 10 Sep 2024 21:15:19 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B50865804B;
+	Tue, 10 Sep 2024 21:15:17 +0000 (GMT)
+Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.185.100])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 10 Sep 2024 21:15:17 +0000 (GMT)
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+        gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: jgg@ziepe.ca, baolu.lu@linux.intel.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com, svens@linux.ibm.com,
+        jroedel@suse.de, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH v4] iommu/s390: Implement blocking domain
+Date: Tue, 10 Sep 2024 17:15:16 -0400
+Message-ID: <20240910211516.137933-1-mjrosato@linux.ibm.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -89,28 +83,272 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: otH8z5dxvysCfInhUp3PcQkQaE2iK6F_
+X-Proofpoint-ORIG-GUID: otH8z5dxvysCfInhUp3PcQkQaE2iK6F_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_08,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=779 priorityscore=1501
+ adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100157
 
-Fix typos in comments.
+This fixes a crash when surprise hot-unplugging a PCI device. This crash
+happens because during hot-unplug __iommu_group_set_domain_nofail()
+attaching the default domain fails when the platform no longer
+recognizes the device as it has already been removed and we end up with
+a NULL domain pointer and UAF. This is exactly the case referred to in
+the second comment in __iommu_device_set_domain() and just as stated
+there if we can instead attach the blocking domain the UAF is prevented
+as this can handle the already removed device. Implement the blocking
+domain to use this handling.  With this change, the crash is fixed but
+we still hit a warning attempting to change DMA ownership on a blocked
+device.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
+Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
 ---
- sound/soc/codecs/tlv320aic31xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes for v4:
+- fix lockdep assert
+Changes for v3:
+- make blocking_domain type iommu_domain
+- change zdev->s390_domain to type iommu_domain and remove most uses
+- remove s390_iommu_detach_device, use blocking domain attach
+- add spinlock to serialize zdev->s390_domain change / access to counters
+---
+ arch/s390/include/asm/pci.h |  4 +-
+ arch/s390/pci/pci.c         |  3 ++
+ arch/s390/pci/pci_debug.c   | 10 ++++-
+ drivers/iommu/s390-iommu.c  | 73 +++++++++++++++++++++++--------------
+ 4 files changed, 59 insertions(+), 31 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-index 7e624c4b77b6..187d68e8688c 100644
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -895,7 +895,7 @@ static int aic31xx_setup_pll(struct snd_soc_component *component,
- 		dev_err(component->dev,
- 			"%s: Sample rate (%u) and format not supported\n",
- 			__func__, params_rate(params));
--		/* See bellow for details how fix this. */
-+		/* See below for details on how to fix this. */
- 		return -EINVAL;
+diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+index 30820a649e6e..a60a291fbd58 100644
+--- a/arch/s390/include/asm/pci.h
++++ b/arch/s390/include/asm/pci.h
+@@ -96,7 +96,6 @@ struct zpci_bar_struct {
+ 	u8		size;		/* order 2 exponent */
+ };
+ 
+-struct s390_domain;
+ struct kvm_zdev;
+ 
+ #define ZPCI_FUNCTIONS_PER_BUS 256
+@@ -181,9 +180,10 @@ struct zpci_dev {
+ 	struct dentry	*debugfs_dev;
+ 
+ 	/* IOMMU and passthrough */
+-	struct s390_domain *s390_domain; /* s390 IOMMU domain data */
++	struct iommu_domain *s390_domain; /* attached IOMMU domain */
+ 	struct kvm_zdev *kzdev;
+ 	struct mutex kzdev_lock;
++	spinlock_t dom_lock;		/* protect s390_domain change */
+ };
+ 
+ static inline bool zdev_enabled(struct zpci_dev *zdev)
+diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+index cff4838fad21..759983d0e63e 100644
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -160,6 +160,7 @@ int zpci_fmb_enable_device(struct zpci_dev *zdev)
+ 	u64 req = ZPCI_CREATE_REQ(zdev->fh, 0, ZPCI_MOD_FC_SET_MEASURE);
+ 	struct zpci_iommu_ctrs *ctrs;
+ 	struct zpci_fib fib = {0};
++	unsigned long flags;
+ 	u8 cc, status;
+ 
+ 	if (zdev->fmb || sizeof(*zdev->fmb) < zdev->fmb_length)
+@@ -171,6 +172,7 @@ int zpci_fmb_enable_device(struct zpci_dev *zdev)
+ 	WARN_ON((u64) zdev->fmb & 0xf);
+ 
+ 	/* reset software counters */
++	spin_lock_irqsave(&zdev->dom_lock, flags);
+ 	ctrs = zpci_get_iommu_ctrs(zdev);
+ 	if (ctrs) {
+ 		atomic64_set(&ctrs->mapped_pages, 0);
+@@ -179,6 +181,7 @@ int zpci_fmb_enable_device(struct zpci_dev *zdev)
+ 		atomic64_set(&ctrs->sync_map_rpcits, 0);
+ 		atomic64_set(&ctrs->sync_rpcits, 0);
  	}
- 	if (bclk_score != 0) {
++	spin_unlock_irqrestore(&zdev->dom_lock, flags);
+ 
+ 
+ 	fib.fmb_addr = virt_to_phys(zdev->fmb);
+diff --git a/arch/s390/pci/pci_debug.c b/arch/s390/pci/pci_debug.c
+index 2cb5043a997d..38014206c16b 100644
+--- a/arch/s390/pci/pci_debug.c
++++ b/arch/s390/pci/pci_debug.c
+@@ -71,17 +71,23 @@ static void pci_fmb_show(struct seq_file *m, char *name[], int length,
+ 
+ static void pci_sw_counter_show(struct seq_file *m)
+ {
+-	struct zpci_iommu_ctrs  *ctrs = zpci_get_iommu_ctrs(m->private);
++	struct zpci_dev *zdev = m->private;
++	struct zpci_iommu_ctrs *ctrs;
+ 	atomic64_t *counter;
++	unsigned long flags;
+ 	int i;
+ 
++	spin_lock_irqsave(&zdev->dom_lock, flags);
++	ctrs = zpci_get_iommu_ctrs(m->private);
+ 	if (!ctrs)
+-		return;
++		goto unlock;
+ 
+ 	counter = &ctrs->mapped_pages;
+ 	for (i = 0; i < ARRAY_SIZE(pci_sw_names); i++, counter++)
+ 		seq_printf(m, "%26s:\t%llu\n", pci_sw_names[i],
+ 			   atomic64_read(counter));
++unlock:
++	spin_unlock_irqrestore(&zdev->dom_lock, flags);
+ }
+ 
+ static int pci_perf_show(struct seq_file *m, void *v)
+diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
+index d8eaa7ea380b..fbdeded3d48b 100644
+--- a/drivers/iommu/s390-iommu.c
++++ b/drivers/iommu/s390-iommu.c
+@@ -33,6 +33,8 @@ struct s390_domain {
+ 	struct rcu_head		rcu;
+ };
+ 
++static struct iommu_domain blocking_domain;
++
+ static inline unsigned int calc_rtx(dma_addr_t ptr)
+ {
+ 	return ((unsigned long)ptr >> ZPCI_RT_SHIFT) & ZPCI_INDEX_MASK;
+@@ -369,20 +371,36 @@ static void s390_domain_free(struct iommu_domain *domain)
+ 	call_rcu(&s390_domain->rcu, s390_iommu_rcu_free_domain);
+ }
+ 
+-static void s390_iommu_detach_device(struct iommu_domain *domain,
+-				     struct device *dev)
++static void zdev_s390_domain_update(struct zpci_dev *zdev,
++				    struct iommu_domain *domain)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&zdev->dom_lock, flags);
++	zdev->s390_domain = domain;
++	spin_unlock_irqrestore(&zdev->dom_lock, flags);
++}
++
++static int blocking_domain_attach_device(struct iommu_domain *domain,
++					 struct device *dev)
+ {
+-	struct s390_domain *s390_domain = to_s390_domain(domain);
+ 	struct zpci_dev *zdev = to_zpci_dev(dev);
++	struct s390_domain *s390_domain;
+ 	unsigned long flags;
+ 
++	if (zdev->s390_domain->type == IOMMU_DOMAIN_BLOCKED)
++		return 0;
++
++	s390_domain = to_s390_domain(zdev->s390_domain);
+ 	spin_lock_irqsave(&s390_domain->list_lock, flags);
+ 	list_del_rcu(&zdev->iommu_list);
+ 	spin_unlock_irqrestore(&s390_domain->list_lock, flags);
+ 
+ 	zpci_unregister_ioat(zdev, 0);
+-	zdev->s390_domain = NULL;
+ 	zdev->dma_table = NULL;
++	zdev_s390_domain_update(zdev, domain);
++
++	return 0;
+ }
+ 
+ static int s390_iommu_attach_device(struct iommu_domain *domain,
+@@ -401,20 +419,15 @@ static int s390_iommu_attach_device(struct iommu_domain *domain,
+ 		domain->geometry.aperture_end < zdev->start_dma))
+ 		return -EINVAL;
+ 
+-	if (zdev->s390_domain)
+-		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
++	blocking_domain_attach_device(&blocking_domain, dev);
+ 
++	/* If we fail now DMA remains blocked via blocking domain */
+ 	cc = zpci_register_ioat(zdev, 0, zdev->start_dma, zdev->end_dma,
+ 				virt_to_phys(s390_domain->dma_table), &status);
+-	/*
+-	 * If the device is undergoing error recovery the reset code
+-	 * will re-establish the new domain.
+-	 */
+ 	if (cc && status != ZPCI_PCI_ST_FUNC_NOT_AVAIL)
+ 		return -EIO;
+-
+ 	zdev->dma_table = s390_domain->dma_table;
+-	zdev->s390_domain = s390_domain;
++	zdev_s390_domain_update(zdev, domain);
+ 
+ 	spin_lock_irqsave(&s390_domain->list_lock, flags);
+ 	list_add_rcu(&zdev->iommu_list, &s390_domain->devices);
+@@ -466,19 +479,11 @@ static struct iommu_device *s390_iommu_probe_device(struct device *dev)
+ 	if (zdev->tlb_refresh)
+ 		dev->iommu->shadow_on_flush = 1;
+ 
+-	return &zdev->iommu_dev;
+-}
++	/* Start with DMA blocked */
++	spin_lock_init(&zdev->dom_lock);
++	zdev_s390_domain_update(zdev, &blocking_domain);
+ 
+-static void s390_iommu_release_device(struct device *dev)
+-{
+-	struct zpci_dev *zdev = to_zpci_dev(dev);
+-
+-	/*
+-	 * release_device is expected to detach any domain currently attached
+-	 * to the device, but keep it attached to other devices in the group.
+-	 */
+-	if (zdev)
+-		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
++	return &zdev->iommu_dev;
+ }
+ 
+ static int zpci_refresh_all(struct zpci_dev *zdev)
+@@ -697,9 +702,15 @@ static size_t s390_iommu_unmap_pages(struct iommu_domain *domain,
+ 
+ struct zpci_iommu_ctrs *zpci_get_iommu_ctrs(struct zpci_dev *zdev)
+ {
+-	if (!zdev || !zdev->s390_domain)
++	struct s390_domain *s390_domain;
++
++	lockdep_assert_held(&zdev->dom_lock);
++
++	if (zdev->s390_domain->type == IOMMU_DOMAIN_BLOCKED)
+ 		return NULL;
+-	return &zdev->s390_domain->ctrs;
++
++	s390_domain = to_s390_domain(zdev->s390_domain);
++	return &s390_domain->ctrs;
+ }
+ 
+ int zpci_init_iommu(struct zpci_dev *zdev)
+@@ -776,11 +787,19 @@ static int __init s390_iommu_init(void)
+ }
+ subsys_initcall(s390_iommu_init);
+ 
++static struct iommu_domain blocking_domain = {
++	.type = IOMMU_DOMAIN_BLOCKED,
++	.ops = &(const struct iommu_domain_ops) {
++		.attach_dev	= blocking_domain_attach_device,
++	}
++};
++
+ static const struct iommu_ops s390_iommu_ops = {
++	.blocked_domain		= &blocking_domain,
++	.release_domain		= &blocking_domain,
+ 	.capable = s390_iommu_capable,
+ 	.domain_alloc_paging = s390_domain_alloc_paging,
+ 	.probe_device = s390_iommu_probe_device,
+-	.release_device = s390_iommu_release_device,
+ 	.device_group = generic_device_group,
+ 	.pgsize_bitmap = SZ_4K,
+ 	.get_resv_regions = s390_iommu_get_resv_regions,
 -- 
 2.46.0
 
