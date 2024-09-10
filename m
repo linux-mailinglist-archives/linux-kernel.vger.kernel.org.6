@@ -1,283 +1,150 @@
-Return-Path: <linux-kernel+bounces-323236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D799739DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:30:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305379739E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC4C1F269EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC67289A84
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D177193096;
-	Tue, 10 Sep 2024 14:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92183193096;
+	Tue, 10 Sep 2024 14:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uVt8KKIr"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bc8Qu74Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44A22AE69;
-	Tue, 10 Sep 2024 14:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE3F183094;
+	Tue, 10 Sep 2024 14:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978613; cv=none; b=R2yXaOu9IqlDZMHnXZ1POF0YpKj7b0Y5tly54YWyzT5/Y/oWtl8hrF4n6hKuqODLPWAXxIsdrR00OG010rEMzOuaglQANRcYaR3mOskHwe+5WdDK0tje5sAE0R3pcZIFTwhO0POAXRG9GHmFugtpmIyPasG/dtaUTpIGebQSou8=
+	t=1725978636; cv=none; b=hM/qNmzJpo6Yb9SXKGSgm/rrTi//qaCXhXmGlecyFT+iGQdP9Umjfn4mrYi4oUyte3cWanF/D5rb2SpQ0HYUCl8pnj6u8u3ZpJK/G0U+n8nPj9AOgefJ0ZO5PB/BkBjI1Akdnf+041WHsTn7JjDGar6X3aiYX33SnLvL0rNeqaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978613; c=relaxed/simple;
-	bh=nyP8gGIqz1HNCKQ43YMfbuFv0X2uU9OB/eHjvDX9cNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UZR+j4hV/mupQgKwl70UCHIqdVwFFhLFKmixlMmsKaeemk9xxwaXuDpUxQ5qpdWixce5ZJaA9cJ+qLl7PTsPBM6TY07zjVv0GbRzB4HACLgGb6JHYLhbkWVRqnG0n7E+5WWg1ti/5aKaA6g9woX5xR1K3XIt6H2QmMAcquatHs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uVt8KKIr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48AEU7Cs045589;
-	Tue, 10 Sep 2024 09:30:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725978607;
-	bh=61eYwKRhuRqQS3ULiocJSrEz/fWsMwjqarfdzK+H2aM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uVt8KKIrgReB1VvmcksWAXNsY82w42Wbr7S6Zq1MeoRTiks53Q+Vab+SdNaGoPqCr
-	 KXK4JeyTkBDG8xGCXGoN5LhVDPKZhHmff6l6j/xMX87Oiuuaa/ZwOJDZwgkR3TWvq+
-	 gOu8rJlyEBe3oiShYYrf0KXm2MIt5BaDjftkOgJQ=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48AEU7cn125891;
-	Tue, 10 Sep 2024 09:30:07 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Sep 2024 09:30:07 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Sep 2024 09:30:07 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48AEU7Xm052787;
-	Tue, 10 Sep 2024 09:30:07 -0500
-Message-ID: <cce6ec2f-3293-4f08-a965-76dece0ddfab@ti.com>
-Date: Tue, 10 Sep 2024 09:30:07 -0500
+	s=arc-20240116; t=1725978636; c=relaxed/simple;
+	bh=37dA2/8Lo9EhECpZNUmgs9Cpix+RL76xxtBnhKKmQZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=agCPSLtEN+o8wcMKaCChElaWPTCGqviRqqB8Drt3mcUObYPVnnUaxYS/yYwhKVE06j70Wy6v/fwGio3Hgc2I1lUchQdgmvhWkZkJIMn95tDQ5ERQaxsz2bl+3mo/nhNxBCCvoLMC8ZZaoIebuAm9g8rVqvuT2qkogqfZ6W1Zg/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bc8Qu74Z; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725978635; x=1757514635;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=37dA2/8Lo9EhECpZNUmgs9Cpix+RL76xxtBnhKKmQZ4=;
+  b=bc8Qu74ZZSOG6E8J47a5+uo77GchuSiEfapyAZlRNTZW5yTq6lfwtB26
+   zSBhzuja8L2Xf2cOmcBPyt1ZJBWRJyOmk8UFP2TT9xsrgQJHJ84SZoSF/
+   lzdqV+NjseqPYoONdki2ZPfMajThLV6yeXXoa1SgAIAXfkKlpbK5JS5Ll
+   8T2Z1Jg7nLAYqA/S5+Zv45WqHSspS2DJeaFM9z50eagBJI0fVhT1sqyw7
+   fOPjQDAiPS6iBwEiwT45X6Ai2N0Uv6GL5KGp7rg8mcjDNQBYtgiWWcVbA
+   OHtLYsuglAz2ZMrWP+s5STXVmeLxTO+jVPzIq0nBdmNUR0z3zrxVPNGPz
+   w==;
+X-CSE-ConnectionGUID: nIl77YtkQG+MkKVmY7/xJw==
+X-CSE-MsgGUID: v0a7TTM8SeOt9j5V9xY4rA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="47248518"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="47248518"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 07:30:34 -0700
+X-CSE-ConnectionGUID: /x6KIXWGR/6Fn6YjK6hZPw==
+X-CSE-MsgGUID: u/gKSHp1TgmQ9jHq7UVplw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="67288474"
+Received: from cvapit-mobl1.ger.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.236])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 07:30:31 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: broonie@kernel.org,
+	tiwai@suse.de,
+	vkoul@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	pierre-louis.bossart@linux.intel.com,
+	bard.liao@intel.com
+Subject: [PATCH] MAINTAINERS: update Pierre Bossart's email and role
+Date: Tue, 10 Sep 2024 22:30:21 +0800
+Message-ID: <20240910143021.261261-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
- sdhci_am654_start_signal_voltage_switch
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240906175032.1580281-1-jm@ti.com>
- <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Adrian,
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-On 9/9/24 1:26 AM, Adrian Hunter wrote:
-> On 6/09/24 20:50, Judith Mendez wrote:
->> The sdhci_start_signal_voltage_switch function sets
->> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
->> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
->> edge or pos edge of clock.
->>
->> Due to some eMMC and SD failures seen across am62x platform,
->> do not set V1P8_SIGNAL_ENA by default, only enable the bit
->> for devices that require this bit in order to switch to 1v8
->> voltage for uhs modes.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->>   drivers/mmc/host/sdhci_am654.c | 86 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 86 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->> index 0aa3c40ea6ed8..fb6232e56606b 100644
->> --- a/drivers/mmc/host/sdhci_am654.c
->> +++ b/drivers/mmc/host/sdhci_am654.c
->> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
->>   	u32 tuning_loop;
->>   
->>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->> +#define SDHCI_AM654_QUIRK_SET_V1P8_ENA BIT(1)
-> 
-> It would be better for the quirk to represent the deviation
-> from normal i.e.
-> 
-> #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
-> 
->>   };
->>   
->>   struct window {
->> @@ -356,6 +357,79 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
->>   	sdhci_set_clock(host, clock);
->>   }
->>   
->> +int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
->> +					    struct mmc_ios *ios)
-> 
-> Simpler to call sdhci_start_signal_voltage_switch() for the normal
-> case e.g.
+Update to permanent address and Reviewer role.
 
-This is simpler, so sure will use thanks.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+---
+ .mailmap    | 1 +
+ MAINTAINERS | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-> 
-> static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-> {
-> 	struct sdhci_host *host = mmc_priv(mmc);
-> 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> 	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> 
-> 
-> 	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-> 	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-> 		ret = mmc_regulator_set_vqmmc(mmc, ios);
-> 		if (ret < 0) {
-> 			pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
-> 				mmc_hostname(mmc));
-> 			return -EIO;
-> 		}
-> 		return 0;
-> 	}
-> 
-> 	return sdhci_start_signal_voltage_switch(mmc, ios);
-> }
-> 
->> +{
->> +	struct sdhci_host *host = mmc_priv(mmc);
->> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->> +	u16 ctrl;
->> +	int ret;
->> +
->> +	if (host->version < SDHCI_SPEC_300)
->> +		return 0;
->> +
->> +	switch (ios->signal_voltage) {
->> +	case MMC_SIGNAL_VOLTAGE_330:
->> +		if (!(host->flags & SDHCI_SIGNALING_330))
->> +			return -EINVAL;
->> +
->> +		ctrl &= ~SDHCI_CTRL_VDD_180;
->> +		sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->> +
->> +		if (!IS_ERR(mmc->supply.vqmmc)) {
->> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
->> +			if (ret < 0) {
->> +				pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
->> +					mmc_hostname(mmc));
->> +				return -EIO;
->> +			}
->> +		}
->> +
->> +		usleep_range(5000, 5500);
->> +
->> +		ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->> +		if (!(ctrl & SDHCI_CTRL_VDD_180))
->> +			return 0;
->> +
->> +		pr_warn("%s: 3.3V regulator output did not become stable\n",
->> +			mmc_hostname(mmc));
->> +
->> +		return -EAGAIN;
->> +
->> +	case MMC_SIGNAL_VOLTAGE_180:
->> +		if (!(host->flags & SDHCI_SIGNALING_180))
->> +			return -EINVAL;
->> +
->> +		if (!IS_ERR(mmc->supply.vqmmc)) {
->> +			ret = mmc_regulator_set_vqmmc(mmc, ios);
->> +			if (ret < 0) {
->> +				pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->> +					mmc_hostname(mmc));
->> +				return -EIO;
->> +			}
->> +		}
->> +
->> +		if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
->> +			ctrl |= SDHCI_CTRL_VDD_180;
->> +			sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->> +
->> +			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->> +			if (ctrl & SDHCI_CTRL_VDD_180)
->> +				return 0;
->> +
->> +			pr_warn("%s: 1.8V regulator output did not become stable\n",
->> +				mmc_hostname(mmc));
->> +
->> +			return -EAGAIN;
->> +		}
->> +		return 0;
->> +
->> +	default:
->> +		return 0;
->> +	}
->> +}
->> +
->>   static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
->>   {
->>   	writeb(val, host->ioaddr + reg);
->> @@ -801,6 +875,8 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->>   					struct sdhci_am654_data *sdhci_am654)
->>   {
->>   	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *node;
->>   	int drv_strength;
->>   	int ret;
->>   
->> @@ -844,6 +920,15 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
->>   	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
->>   		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
->>   
->> +	node = of_parse_phandle(np, "vmmc-supply", 0);
->> +
->> +	if (node) {
->> +		node = of_parse_phandle(np, "vqmmc-supply", 0);
->> +
->> +		if (!node)
->> +			sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SET_V1P8_ENA;
->> +	}
-> 
-> It would be simpler without 'np' and 'node'.  Not sure
-> what the rule is meant to be, but it could be something like:
-> 
-> 	if (of_parse_phandle(dev->of_node, "vmmc-supply", 0) &&
-> 	    of_parse_phandle(dev->of_node, "vqmmc-supply", 0)
-> 		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
-
-My issue with this is that I also need the quirk 
-(SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) for eMMC. DT node for eMMC does
-not include vmmc and vqmmc supplies. That is why I had the quirk logic
-inverted.
-
-This patch fixes timing issues with both eMMC and SD. (:
-
-~ Judith
-
-
-> 
->> +
->>   	sdhci_get_of_property(pdev);
->>   
->>   	return 0;
->> @@ -940,6 +1025,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->>   		goto err_pltfm_free;
->>   	}
->>   
->> +	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
->>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->>   
->>   	pm_runtime_get_noresume(dev);
->>
->> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
-> 
-> 
+diff --git a/.mailmap b/.mailmap
+index caf46a652f15..34a003e2ee10 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -527,6 +527,7 @@ Pavankumar Kondeti <quic_pkondeti@quicinc.com> <pkondeti@codeaurora.org>
+ Peter A Jonsson <pj@ludd.ltu.se>
+ Peter Oruba <peter.oruba@amd.com>
+ Peter Oruba <peter@oruba.de>
++Pierre-Louis Bossart <pierre-louis.bossart@linux.dev> <pierre-louis.bossart@linux.intel.com>
+ Pratyush Anand <pratyush.anand@gmail.com> <pratyush.anand@st.com>
+ Praveen BP <praveenbp@ti.com>
+ Pradeep Kumar Chitrapu <quic_pradeepc@quicinc.com> <pradeepc@codeaurora.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38f9f8d1eedc..b56ceb3fcb16 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11146,12 +11146,12 @@ F:	drivers/gpio/gpio-i8255.h
+ 
+ INTEL ASoC DRIVERS
+ M:	Cezary Rojewski <cezary.rojewski@intel.com>
+-M:	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+ M:	Liam Girdwood <liam.r.girdwood@linux.intel.com>
+ M:	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+ M:	Bard Liao <yung-chuan.liao@linux.intel.com>
+ M:	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+ M:	Kai Vehmanen <kai.vehmanen@linux.intel.com>
++R:	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ F:	sound/soc/intel/
+@@ -21378,13 +21378,13 @@ S:	Maintained
+ F:	tools/sound/dapm-graph
+ 
+ SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS
+-M:	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+ M:	Liam Girdwood <lgirdwood@gmail.com>
+ M:	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+ M:	Bard Liao <yung-chuan.liao@linux.intel.com>
+ M:	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+ M:	Daniel Baluta <daniel.baluta@nxp.com>
+ R:	Kai Vehmanen <kai.vehmanen@linux.intel.com>
++R:	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+ L:	sound-open-firmware@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+ W:	https://github.com/thesofproject/linux/
+@@ -21393,7 +21393,7 @@ F:	sound/soc/sof/
+ SOUNDWIRE SUBSYSTEM
+ M:	Vinod Koul <vkoul@kernel.org>
+ M:	Bard Liao <yung-chuan.liao@linux.intel.com>
+-R:	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
++R:	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+ R:	Sanyog Kale <sanyog.r.kale@intel.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Supported
+-- 
+2.43.0
 
 
