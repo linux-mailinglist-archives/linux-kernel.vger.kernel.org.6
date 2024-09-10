@@ -1,161 +1,278 @@
-Return-Path: <linux-kernel+bounces-323471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F616973D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:42:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CD0973D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DB71F287CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:42:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F831B25368
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6FB19A298;
-	Tue, 10 Sep 2024 16:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D221A0734;
+	Tue, 10 Sep 2024 16:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iNVeOQpC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B6z6aOk2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915BB13A3E8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BD618132A;
+	Tue, 10 Sep 2024 16:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725986531; cv=none; b=DC0OdGPpj6MGVN5w5VG0foGzzU25FUdksYRACiVYTe4+SkSIesEWx8R+aZuLSgd9K7TurBgmuywAiOYZvMJ8JZESVkNYI62Wfw2FuiEiKVdqV2Yx8AzGGqXIG/pNd3gpGWJigjus4u1aFD8sZRT9iOtAkQdmcpZFSKExw/ovfW0=
+	t=1725986580; cv=none; b=Dov7A4sglJAArACfUs6549T17D6lD5qVFf64nLWmJhwiUATJM38tf5ci5wY20kSIz1qlANdi//Et9HyxzPM8dRT+TvDac4ro80UbeemJ2/9Iu5kS0yKg+rxz1iBFx9SsZhm+HXiAzijH1DghjSaLSn1tauv5nL9i157BETaI2ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725986531; c=relaxed/simple;
-	bh=q09SknjQVdFpkrE3yq9C68KlMoqAspF5lEqpJV8ImuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OLNdB8UvKhXQB3RSYFdZ68xEOBfvCan+A1q291l0Z0TYXiLrQrkJdzxdV4di1v8uawKbj1Yd1wvqisIPXeixH4x3eV3oQE+AlaUTWYPXLREHO08V/xeuaHXYRZ+oPJ4fH2yH9lWTQXu6hCCFOL2SIyU3vnvEywiCq38vvMkoauI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iNVeOQpC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725986528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gSCliin7kZlAB/1vvsAa5dIXyMklenlQRdOikBm/ZMY=;
-	b=iNVeOQpClPa5qPvrbOV+WX53Eph0vy7yOhFLR4cwNgZ7NVt1KZ8wlhRFY96UJeEG6ix46n
-	VfuhGhhYnRYSMosp0lP2Y0S11/G1n1s/9ETMynetylbqNQ4DhhizfsU98In3kFZI1cUJMd
-	F4KFUrXIg7X9mcHeB512sbYZe43DyaQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-170-aI-2uDIoNg2v8UdQQQzibA-1; Tue, 10 Sep 2024 12:42:07 -0400
-X-MC-Unique: aI-2uDIoNg2v8UdQQQzibA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb635b108so7860035e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:42:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725986526; x=1726591326;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gSCliin7kZlAB/1vvsAa5dIXyMklenlQRdOikBm/ZMY=;
-        b=v7fsCnahUGSj1KLMWr009wmx+l/Yyco5UuAP6TbMTycg1PBVF6yKtNF6GOEhj3qqZ4
-         8dwGbMLAF6B6IKrcFTfcOncjcMzhw4XMgLfyPihXDJe927wrzM8LYmPoEH/rbgRXnEst
-         O/ojOs9Nng9VKuXxexABaHWZYz8F8PZ1cNsdNwWZzMDjdKrEH4Gaz64PMTBBlg7X3CBg
-         5JwbM/8nfKZatLSXx2XsF3lKFi9sq51Nf4j3WzsqYMwTK+gsM5+Db/aCzfPeiJaFzZHe
-         rCymjy+kNIqTsbT2YydXMz3uSbnG+FfsjWmrH/GZpsetBS0mvzV+l1AZPHPppZYzCPOJ
-         t5Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjGDJsEDcYu67uuEXKTxWWh5zDWIC4JXwT/aL6cuEt6ennH58mKn03DEDXoYHAUjOaYvoWUqsvGEhjuOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYTIkrR7grKE3SYWxMEP+xpFXKgDmiPSbz0sFJAYAQ+gj+J5/s
-	673CFqSfQBO48JNe1+CmIYDU5BQqmOA8MvE6IkB/zc/HXScVO8pwPW9RPKw3IeW3x9Ua5fIdlNS
-	VJN9MgZRuydQNAYajkq9Q7KxysU5jBIkFYnUDp2M+F/+jof0Z00cYOcyOXrifzw==
-X-Received: by 2002:adf:e6c1:0:b0:374:ccb0:66c7 with SMTP id ffacd0b85a97d-378b07ac8e3mr204782f8f.16.1725986526107;
-        Tue, 10 Sep 2024 09:42:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTUTrXm7HJoIzhHQqxGzM9BogPova2ShDIqPagrR1d28d+Ilsp9eix1trTmUCkdp1aA/u6bg==
-X-Received: by 2002:adf:e6c1:0:b0:374:ccb0:66c7 with SMTP id ffacd0b85a97d-378b07ac8e3mr204759f8f.16.1725986525552;
-        Tue, 10 Sep 2024 09:42:05 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3789564b02asm9507268f8f.4.2024.09.10.09.42.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 09:42:04 -0700 (PDT)
-Message-ID: <99b3b6f1-f70a-4fa7-9ebf-0532bd0c8002@redhat.com>
-Date: Tue, 10 Sep 2024 18:42:02 +0200
+	s=arc-20240116; t=1725986580; c=relaxed/simple;
+	bh=LjsXT6LIhygj/TwleDUnGDeoGP4p0mHvwmvUHaoM33Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oCLPMVaVATyxus+3m21w12GgCQj1M4sEJm6dwaw7oqFVW/UDtTL/+Kfr4Mywv7hiAcgVNp0Lx+iFRtHs/5qI+oXaESR3TOc0LiqvOJSODJV/OC2G88ikpW6AoPXVLYMn0mQBjnX3FSE45zdP8oIoAunEQCR10MSV7bsRZ0GnB6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B6z6aOk2; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725986579; x=1757522579;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LjsXT6LIhygj/TwleDUnGDeoGP4p0mHvwmvUHaoM33Q=;
+  b=B6z6aOk2rB9ItsO1gFdt3m75VbdF0dnAZfMcsoFE32wYt6t6HEleC9dB
+   7iONKEk1v2XS0ah2SjQk4XZ/AqJ1WHD8S1ZI/K++scCaysVehpLhrIIJ3
+   +FC6hhRsRTZnE1TN4mF1OTzr77TK7+Ii/afdpvx1tyPNtMoG/gJSIHEty
+   d7Ed+DakRPqmcNbM4/ObL1IfOMlcDRpDt+8m0s6Un3OaI1KW8FB/OxWWl
+   GsVLP0fqLsNKJpUg0IOIElXhGaJOGdSwk5Z4eVubtprr6TKtylEOv+9yH
+   2NKLkhPylQN/MTbk+7cb9sF9AltucIxOBo9r8zFPztus4RIVYMvMFM77t
+   A==;
+X-CSE-ConnectionGUID: jJ+N+4I5QCuywIOFQyapfw==
+X-CSE-MsgGUID: cZQmv9l3SSSAdUxAHhW0DQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24290331"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24290331"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 09:42:57 -0700
+X-CSE-ConnectionGUID: P/oB79SeSb+aHUxrJofGzA==
+X-CSE-MsgGUID: IQPaY4lXSauZow6hlEhZ1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="66921826"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 10 Sep 2024 09:42:54 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1so3x5-0002OK-32;
+	Tue, 10 Sep 2024 16:42:51 +0000
+Date: Wed, 11 Sep 2024 00:42:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jeongjun Park <aha310510@gmail.com>, davem@davemloft.net,
+	dsahern@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	kafai@fb.com, weiwan@google.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeongjun Park <aha310510@gmail.com>
+Subject: Re: [PATCH net] net: prevent NULL pointer dereference in
+ rt_fibinfo_free() and rt_fibinfo_free_cpus()
+Message-ID: <202409110000.E9IVjdB7-lkp@intel.com>
+References: <20240909184827.123071-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/25] KVM: TDX: Add helper functions to allocate/free TDX
- private host key id
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "seanjc@google.com" <seanjc@google.com>
-Cc: "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "Huang, Kai" <kai.huang@intel.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-8-rick.p.edgecombe@intel.com>
- <661e790f-7ed8-46ce-9f7c-9776de7127a8@redhat.com>
- <e5dd31c924e8be70d817fe71e69d40053ae7f15a.camel@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <e5dd31c924e8be70d817fe71e69d40053ae7f15a.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909184827.123071-1-aha310510@gmail.com>
 
-On 9/10/24 18:39, Edgecombe, Rick P wrote:
->>> Use this range of HKIDs reserved for guest use with the kernel's IDA
->>> allocator library helper to create a mini TDX HKID allocator that can be
->>> called when setting up a TD. This way it can have an exclusive HKID, as is
->>> required. This allocator will be used in future changes.
->> This is basically what Dave was asking for, isn't it?
-> This patch has the allocator in KVM code, and the keyid ranges exported from
-> arch/x86. Per the discussion with Dave we will export the allocator functions
-> and keep the keyid ranges in arch/x86 code.
+Hi Jeongjun,
 
-Yes, I meant this is the code and it just has to be moved to arch/x86. 
-The only other function that is needed is a wrapper for ida_is_empty(), 
-which is used in tdx_offline_cpu():
+kernel test robot noticed the following build warnings:
 
-         /* No TD is running.  Allow any cpu to be offline. */
-         if (ida_is_empty(&tdx_guest_keyid_pool))
-                 return 0;
+[auto build test WARNING on net/main]
 
-Paolo
+url:    https://github.com/intel-lab-lkp/linux/commits/Jeongjun-Park/net-prevent-NULL-pointer-dereference-in-rt_fibinfo_free-and-rt_fibinfo_free_cpus/20240910-025008
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240909184827.123071-1-aha310510%40gmail.com
+patch subject: [PATCH net] net: prevent NULL pointer dereference in rt_fibinfo_free() and rt_fibinfo_free_cpus()
+config: arm-randconfig-001-20240910 (https://download.01.org/0day-ci/archive/20240911/202409110000.E9IVjdB7-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 05f5a91d00b02f4369f46d076411c700755ae041)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409110000.E9IVjdB7-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409110000.E9IVjdB7-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from net/ipv4/fib_semantics.c:17:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> net/ipv4/fib_semantics.c:156:12: warning: address of 'rt->dst' will always evaluate to 'true' [-Wpointer-bool-conversion]
+     156 |         if (!&rt->dst)
+         |             ~ ~~~~^~~
+   net/ipv4/fib_semantics.c:209:13: warning: address of 'rt->dst' will always evaluate to 'true' [-Wpointer-bool-conversion]
+     209 |                 if (!&rt->dst)
+         |                     ~ ~~~~^~~
+   3 warnings generated.
+
+
+vim +156 net/ipv4/fib_semantics.c
+
+  > 17	#include <linux/mm.h>
+    18	#include <linux/string.h>
+    19	#include <linux/socket.h>
+    20	#include <linux/sockios.h>
+    21	#include <linux/errno.h>
+    22	#include <linux/in.h>
+    23	#include <linux/inet.h>
+    24	#include <linux/inetdevice.h>
+    25	#include <linux/netdevice.h>
+    26	#include <linux/if_arp.h>
+    27	#include <linux/proc_fs.h>
+    28	#include <linux/skbuff.h>
+    29	#include <linux/init.h>
+    30	#include <linux/slab.h>
+    31	#include <linux/netlink.h>
+    32	#include <linux/hash.h>
+    33	#include <linux/nospec.h>
+    34	
+    35	#include <net/arp.h>
+    36	#include <net/inet_dscp.h>
+    37	#include <net/ip.h>
+    38	#include <net/protocol.h>
+    39	#include <net/route.h>
+    40	#include <net/tcp.h>
+    41	#include <net/sock.h>
+    42	#include <net/ip_fib.h>
+    43	#include <net/ip6_fib.h>
+    44	#include <net/nexthop.h>
+    45	#include <net/netlink.h>
+    46	#include <net/rtnh.h>
+    47	#include <net/lwtunnel.h>
+    48	#include <net/fib_notifier.h>
+    49	#include <net/addrconf.h>
+    50	
+    51	#include "fib_lookup.h"
+    52	
+    53	static DEFINE_SPINLOCK(fib_info_lock);
+    54	static struct hlist_head *fib_info_hash;
+    55	static struct hlist_head *fib_info_laddrhash;
+    56	static unsigned int fib_info_hash_size;
+    57	static unsigned int fib_info_hash_bits;
+    58	static unsigned int fib_info_cnt;
+    59	
+    60	#define DEVINDEX_HASHBITS 8
+    61	#define DEVINDEX_HASHSIZE (1U << DEVINDEX_HASHBITS)
+    62	static struct hlist_head fib_info_devhash[DEVINDEX_HASHSIZE];
+    63	
+    64	/* for_nexthops and change_nexthops only used when nexthop object
+    65	 * is not set in a fib_info. The logic within can reference fib_nh.
+    66	 */
+    67	#ifdef CONFIG_IP_ROUTE_MULTIPATH
+    68	
+    69	#define for_nexthops(fi) {						\
+    70		int nhsel; const struct fib_nh *nh;				\
+    71		for (nhsel = 0, nh = (fi)->fib_nh;				\
+    72		     nhsel < fib_info_num_path((fi));				\
+    73		     nh++, nhsel++)
+    74	
+    75	#define change_nexthops(fi) {						\
+    76		int nhsel; struct fib_nh *nexthop_nh;				\
+    77		for (nhsel = 0,	nexthop_nh = (struct fib_nh *)((fi)->fib_nh);	\
+    78		     nhsel < fib_info_num_path((fi));				\
+    79		     nexthop_nh++, nhsel++)
+    80	
+    81	#else /* CONFIG_IP_ROUTE_MULTIPATH */
+    82	
+    83	/* Hope, that gcc will optimize it to get rid of dummy loop */
+    84	
+    85	#define for_nexthops(fi) {						\
+    86		int nhsel; const struct fib_nh *nh = (fi)->fib_nh;		\
+    87		for (nhsel = 0; nhsel < 1; nhsel++)
+    88	
+    89	#define change_nexthops(fi) {						\
+    90		int nhsel;							\
+    91		struct fib_nh *nexthop_nh = (struct fib_nh *)((fi)->fib_nh);	\
+    92		for (nhsel = 0; nhsel < 1; nhsel++)
+    93	
+    94	#endif /* CONFIG_IP_ROUTE_MULTIPATH */
+    95	
+    96	#define endfor_nexthops(fi) }
+    97	
+    98	
+    99	const struct fib_prop fib_props[RTN_MAX + 1] = {
+   100		[RTN_UNSPEC] = {
+   101			.error	= 0,
+   102			.scope	= RT_SCOPE_NOWHERE,
+   103		},
+   104		[RTN_UNICAST] = {
+   105			.error	= 0,
+   106			.scope	= RT_SCOPE_UNIVERSE,
+   107		},
+   108		[RTN_LOCAL] = {
+   109			.error	= 0,
+   110			.scope	= RT_SCOPE_HOST,
+   111		},
+   112		[RTN_BROADCAST] = {
+   113			.error	= 0,
+   114			.scope	= RT_SCOPE_LINK,
+   115		},
+   116		[RTN_ANYCAST] = {
+   117			.error	= 0,
+   118			.scope	= RT_SCOPE_LINK,
+   119		},
+   120		[RTN_MULTICAST] = {
+   121			.error	= 0,
+   122			.scope	= RT_SCOPE_UNIVERSE,
+   123		},
+   124		[RTN_BLACKHOLE] = {
+   125			.error	= -EINVAL,
+   126			.scope	= RT_SCOPE_UNIVERSE,
+   127		},
+   128		[RTN_UNREACHABLE] = {
+   129			.error	= -EHOSTUNREACH,
+   130			.scope	= RT_SCOPE_UNIVERSE,
+   131		},
+   132		[RTN_PROHIBIT] = {
+   133			.error	= -EACCES,
+   134			.scope	= RT_SCOPE_UNIVERSE,
+   135		},
+   136		[RTN_THROW] = {
+   137			.error	= -EAGAIN,
+   138			.scope	= RT_SCOPE_UNIVERSE,
+   139		},
+   140		[RTN_NAT] = {
+   141			.error	= -EINVAL,
+   142			.scope	= RT_SCOPE_NOWHERE,
+   143		},
+   144		[RTN_XRESOLVE] = {
+   145			.error	= -EINVAL,
+   146			.scope	= RT_SCOPE_NOWHERE,
+   147		},
+   148	};
+   149	
+   150	static void rt_fibinfo_free(struct rtable __rcu **rtp)
+   151	{
+   152		struct rtable *rt = rcu_dereference_protected(*rtp, 1);
+   153	
+   154		if (!rt)
+   155			return;
+ > 156		if (!&rt->dst)
+   157			return;
+   158	
+   159		/* Not even needed : RCU_INIT_POINTER(*rtp, NULL);
+   160		 * because we waited an RCU grace period before calling
+   161		 * free_fib_info_rcu()
+   162		 */
+   163	
+   164		dst_dev_put(&rt->dst);
+   165		dst_release_immediate(&rt->dst);
+   166	}
+   167	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
