@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-322396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C97C97288B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:47:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF582972890
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274231F24B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A759A2857F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB001531E5;
-	Tue, 10 Sep 2024 04:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CC816A92E;
+	Tue, 10 Sep 2024 04:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="o/Ap0gf/"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCK1EnCF"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357E224D2;
-	Tue, 10 Sep 2024 04:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A4013AA32;
+	Tue, 10 Sep 2024 04:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725943667; cv=none; b=XGowVT2HnRM3uFoGjLEqtn7DC9VvmZ/rZH6UzDF2ukYHqOoGlDGtGXVay+T28FslxJ/HuvOx45zQ10NfUJpf+on+27xhyZCCql5i3wFrbXyY78tBZX3o6RhAj1XpcGNvtC+mNf/O1j8V2i5Knu1MHmBR00aeB/WFxerOiB9SqbY=
+	t=1725943694; cv=none; b=Gly0Lan2Srj+DPVFpfO5pqZ+GChzy42o9M3eQP4VRtB09m+MXKjlAWKDqGK3Jw0ZB/zPYS6DOL4NuRPImBMVdB6d9anY9YhHXGd/fUcVE7xv1zfdJtfYR9GVHilRtNBrwGlQDCBduODBFnjZZn6sf0O7Ig5Ay8KniTpOHvvIT5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725943667; c=relaxed/simple;
-	bh=3MYYxEigIIINVZRxEIuA2JyCRof2AI/wOpPHCQvchBo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t/+x8769ZzcB0Phj//dWhOnRmad47zjj+JG+axWf5nqtCb1/FGYjqKTLsyQIGhbMGEGhho4ItNRHlv+x/P9PuI2pYI41zdZdlT9bAx3lwCN/uKQUilOe7NwXnaPE/frv0VHAGF5tXmpwDPcKnN6tiGUOjYs49Kv6LYDBSkHWqPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=o/Ap0gf/; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1725943665; x=1757479665;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3MYYxEigIIINVZRxEIuA2JyCRof2AI/wOpPHCQvchBo=;
-  b=o/Ap0gf/lxHDyJm6zlyQH2Au6kdAYFUCcaJUEFRPnu6wfxnicLzzXaAP
-   nlNwd9MMp9CnoiF57fzRO6HRNBi8XjmobYEDEWo26WSWXZV1eHw4idDh3
-   GQ1GA6SZYIv/MFSgKs/x7IlPs8EwCplTk+uy+YUvlM7eGh0U5IHLuaDdT
-   hrhfUTM2MSRJ940TrtB73H6VgXy465daDoOEDK3QdgU60lUHU7w7sxUuW
-   uKhizRRZLiA1SIZ6k0xliJr5Nc9IzbjXbtuKglxr4yCBMoJrnP+dvQdNY
-   okKnPNMbzw4ONiA13LZ/FtTZF+kX9U6RaCX7kQKYwF9Sh/PavuHXXQ2dJ
-   A==;
-X-CSE-ConnectionGUID: tBoeNfnSRw+2QtNGWf8kUA==
-X-CSE-MsgGUID: qCqvyR2KRSCEN0EqyH5jHw==
-X-IronPort-AV: E=Sophos;i="6.10,216,1719849600"; 
-   d="scan'208";a="27323046"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2024 12:47:37 +0800
-IronPort-SDR: 66dfc28c_tXdo7fRQzBUJqUx19pQ9dmCbaKrAsZTiiNcXPdGptbWXQ9d
- B7OtLE3KPg9bcN0Ux5JqKNSOy5FshpwTOZA3G/Q==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 20:52:44 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 21:47:36 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] scsi: ufs: Use pre-calculated offsets in ufshcd_init_lrb
-Date: Tue, 10 Sep 2024 07:45:43 +0300
-Message-Id: <20240910044543.3812642-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725943694; c=relaxed/simple;
+	bh=Lqpkkyp7wuRuCbghjDbuUpHEMw+hIua6js1Gbi52msE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8z8RxJ4bfRoZ6VhRwDhid8O6ECsTJgpJ1UYbkyiqioUixukqNrsx7o/5M3Qpn5wojDP83+AFQ393cRJzzQeKurwe6cSj2YnHAU1wyGc4TX7pk7IfYLurfBJOIPGqBk9YkduneZCs03Fd0BBNpNGj1kEbzOeeGk/2uX4i5RNjYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LCK1EnCF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=c0/KMxGI62d39aIfqydXbjcfGL/DQ5/n5haroblqj80=; b=LCK1EnCFN8sE7ipvGAc8UQ2cYA
+	x0qquDQQJXVrrzzdKi4N4M+3xPY367t9udRzgrjwbuaaV/t/EOPA18CtPCtGpeg5g2S6mq9UPTVMY
+	qOorwFK7L+qbEqWzmGd/ADQLtdWzdM2yuTGiVya3mW7Rp1LoTyT26SLecZAa3jYEcBVscKOsE6wjS
+	3fh454fYf5iaCmgBbCxWSvcTMiKeJDd3OLFSSuDCieAc/LX0nhmzj4323V7hPCPHpQUcm57lRkjir
+	ysN1fMLF0KDjVx20FCu9CZ7wGsfxPB18U67jSno24eKa7XBE1NVWnSD08C0xQoywBYznZ7D5X/VkY
+	OG0n4GAQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1snsmy-000000050uo-2esU;
+	Tue, 10 Sep 2024 04:47:40 +0000
+Date: Tue, 10 Sep 2024 05:47:40 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com, djwong@kernel.org,
+	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
+	peterx@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
+Message-ID: <Zt_PbIADa4baLEBw@casper.infradead.org>
+References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
+ <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
 
-Replace manual offset calculations for response_upiu and prd_table in
-ufshcd_init_lrb() with pre-calculated offsets already stored in the
-utp_transfer_req_desc structure. The pre-calculated offsets are set
-differently in ufshcd_host_memory_configure() based on the
-UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
-access.
+On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
+> @@ -337,6 +341,7 @@ struct folio {
+>  	/* private: */
+>  				};
+>  	/* public: */
+> +			struct dev_pagemap *pgmap;
 
-Fixes: 26f968d7de82 ("scsi: ufs: Introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk")
-Cc: stable@vger.kernel.org
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Shouldn't that be indented by one more tab stop?
 
----
-Changes in v2:
- - add Fixes: and Cc: stable tags
- - fix kernel test robot warning about type mismatch by using le16_to_cpu
----
- drivers/ufs/core/ufshcd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+And for ease of reading, perhaps it should be placed either immediately
+before or after 'struct list_head lru;'?
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 8ea5a82503a9..85251c176ef7 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -2919,9 +2919,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
- 	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
- 	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
- 		i * ufshcd_get_ucd_size(hba);
--	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
--				       response_upiu);
--	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
-+	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
-+	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
- 
- 	lrb->utr_descriptor_ptr = utrdlp + i;
- 	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
--- 
-2.25.1
+> +++ b/include/linux/mmzone.h
+> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
+>  	return page_zonenum(page) == ZONE_DEVICE;
+>  }
+>  
+> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
+> +{
+> +	WARN_ON(!is_zone_device_page(page));
+> +	return page_folio(page)->pgmap;
+> +}
+
+I haven't read to the end yet, but presumably we'll eventually want:
+
+static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
+{
+	WARN_ON(!folio_is_zone_device(folio))
+	return folio->pgmap;
+}
+
+and since we'll want it eventually, maybe now is the time to add it,
+and make page_dev_pagemap() simply call it?
 
 
