@@ -1,239 +1,129 @@
-Return-Path: <linux-kernel+bounces-323880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3B597449C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F7E9744A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA591C24B93
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A8B1C24C13
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC361AAE24;
-	Tue, 10 Sep 2024 21:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB61AAE08;
+	Tue, 10 Sep 2024 21:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CFFE+uJq"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2063.outbound.protection.outlook.com [40.107.96.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gc6Ucx6s"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3515119412D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002710; cv=fail; b=Z4VeH2ypFILEPvlH0yEWjSfphAiS3dwinnpO8k+YmNGaAOVEuO8u/8dC9PfZdrpKmuMQe+R2uG8WILn7X2Tkr6jNyGLa9HvplVqwRXaS1Vkku67diPOtSAFvRbrS24jNNbkwZxPFTVA+VVCsW9t01VhKCTixknX31noE1YYEAng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002710; c=relaxed/simple;
-	bh=+F+R6WsywQsxwiU60aE0I0A3/hwM1HTfzt1Ld3JeQIo=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ys89MYBqOjKyyLUhVpUv75dDX8lcKETx4Qv/4F22XeRxRhVzdraddY1g22uybojw1K7mla4NSgouvWq+JeqZ2cOFBfyU5o9m9H1zv8Uc64Bm4W5KoGimEshEzsk0EwKTIFd1rYkNJmcdUFsnGj+xEo4PwTFckNSJBYC/YHRGTY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CFFE+uJq; arc=fail smtp.client-ip=40.107.96.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H2ljKMusdwtdIbDAfICZxY3gougJd4SV6YDKeD9jakEpoLN17NVaswjUpBRkhBYX2A1pzeDzkqx9f+qeE9SMWls4XK6pGTu1fQjm/0u3pgCPdEx/gQMSNOQkBefbRDoPG/4caP5hPj91hoSmz5s1oSBd/ZE1E3Kagbp25oW46CEZCy9+T+U/Xh6+1aqQkKRYfrTB1rXFSSkQgKRxOCgTtpkHC5dwIDC61isRFlcrK7EXBzBWLliGF03wqHUcU/y0aAIBG711dvPfB8cWOVVNMf1XDv5Y2FDMABlhDbNS0ZH8w6mZ7xs0CAjSe4QaQc3SVagnxTneusbnkotqprTA7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tSU21KnsWofBjK5DC/7rQs1et6CvyKR8gUXExFHInnM=;
- b=vS70FpyHzpg6BmaP1u7FWxxj8TYZHs4AD4hKOaHYkgaTuYWdTA/348c6E6lD0IwR//efFk36DwcqPm4WLoclZSusYSv7wdgYyYmqZ+NN7l0DD+cdnJttGFBnuol3x9okUcuh+jmcD9pP1MRy2XT80l6MeTQiar56HbDygwthAercCRLR+PMzeJstgKCp2DFOkYTBvjUmSEUSev7LDIaAfhls0fKYZ97hWY+R+gY0dcySrVnYn4hNNRAL2qK4RRbpzmnfypulHiIm21LOIZ1+8QbkDYIwcdB+/C58PkEUK9wKfYHg2uQAqdM/TjYM/iqhr7Aiuoo+A1lIoxBiFGwlZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tSU21KnsWofBjK5DC/7rQs1et6CvyKR8gUXExFHInnM=;
- b=CFFE+uJqUzjSCuAcwgNPrYxkRPJwdkrbSQN7lNaaMo3ugdO5muWTvLy8txpB8id7Z61tpcp9A25dYm0CaPZG26z9PAKMK59gwLAmqj4QPyUaMAu0huaFYU9qdyoxf/Yq06xODmBfcm/xFd+urZfpUIIGm8XpwVVxiyRPp++z4RE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5300.namprd12.prod.outlook.com (2603:10b6:610:d7::22)
- by SA1PR12MB8700.namprd12.prod.outlook.com (2603:10b6:806:388::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 21:11:46 +0000
-Received: from CH0PR12MB5300.namprd12.prod.outlook.com
- ([fe80::5313:a4b0:89d7:7b76]) by CH0PR12MB5300.namprd12.prod.outlook.com
- ([fe80::5313:a4b0:89d7:7b76%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 21:11:46 +0000
-Message-ID: <6db472e4-cd90-4ba6-8368-725b10ba5b4a@amd.com>
-Date: Tue, 10 Sep 2024 17:11:42 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-From: Leo Li <sunpeng.li@amd.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com,
- pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>,
- "Deucher, Alexander" <alexander.deucher@amd.com>,
- amd-gfx list <amd-gfx@lists.freedesktop.org>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
- <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
- <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
- <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com>
- <CABXGCsOoL5vD0+FRALFQFr3ZBpb2z5mpGKzAD5RHoW9_sb5yaQ@mail.gmail.com>
- <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com>
- <CABXGCsMSTsBFW=OirDszPFVOiNgyOBSh3qyzAw-Coi-McnicAQ@mail.gmail.com>
- <04d3755d-f295-46d7-b35d-008b888b39ae@amd.com>
- <CABXGCsMDk59-P0Nr1v7KajKsoQh2966mykLPWQxajPtq=OGgXg@mail.gmail.com>
- <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com>
-Content-Language: en-US
-In-Reply-To: <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0049.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:88::13) To CH0PR12MB5300.namprd12.prod.outlook.com
- (2603:10b6:610:d7::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C031F951
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726002741; cv=none; b=r2WpD++iMrmh9cPDdYe4Iad799z6SaG//SxqHBQIJ4r8eKw3P0eF3/xSiAlWSTKjn0ONzbrihOXSHiAKwG7C76zu5Ediy1yKwFoY3NiJkG7LSuAUmXFPUb4gfW5DmZ0vJoO6gqfGRrtpZyI33kT3nUEAKMkHu/tyfcmSTR12uXw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726002741; c=relaxed/simple;
+	bh=ik3UKsltknlff9FD/NaLT46PtwDaXCHPQhKMj6WoIpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RbMSfoL7HyBNspcmvxuzOSkMr7hsDYD9fRJ8WkDF9wNIOMNwh6pGWXG8hj6+9hMrptyRKOVYHgSyAwwBR44xHQM9xsmpAgZ3IVgJbJuL18xoPb5fo4A1MA0f0+u3KyHg6ccR7eAwvuJ1vROoM6inzBDsRSq3V3Y24y7+cyYMtUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gc6Ucx6s; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82aa7c3b3dbso206358739f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:12:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726002739; x=1726607539; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7rPGjGCzv+oasSI6pVCkPDSWf7w4QJh8MFoceYLzhS4=;
+        b=gc6Ucx6sw+nXlHdj5XKtTZRxbWiiCgEpQJZKirbbIho8/gEDgg7K7jaVd34cJ+/NjB
+         tb2Le5jJDLYbL2WegJcQwxSLEW3BotGYFVdYzrJYk34qF3lnQvE3maNAhBDmS9P89/iB
+         7gasOlN/b+pic1ddr7Fy5KZ8dc0srEyXkkYsk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726002739; x=1726607539;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rPGjGCzv+oasSI6pVCkPDSWf7w4QJh8MFoceYLzhS4=;
+        b=Z4OP2mkBK5yj1Gl1bUJsp3tYBXjZWkIytYt1ZvBYlX/37itEy4VLFuvBtSjW5bGAD4
+         G+Z+R9ffkV72gsn5pnEcT6ah0xhAUoAOCI/se9i0yjAarqIcUqehuH1BD65QGhPLth8L
+         qlxbJyPhG+/g2cobkiFpt6wJH2iFDUecMfYiaDyIuUX+TdOyugCWaaq/Csd8afNh6mhs
+         +2ZlO0AnRFvx2PHZCFeYWchfLmhXHSyuSVbLPEVzDi7TV+BZVz0cmoSzgilkCSCgvQ6e
+         b0yoBeR7yOwAlISGANPVK+p8QfNJjCa8Hjzl9ugerySRWlD9MNenkkJGmR4nF+IZuhs0
+         IAbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD1COuwqA3PZHCY8eUJVKxmUfbBYYUdyRbJFadqYoGss/l72dBT4czfNeoeFEKpZtlZKeG9MMXIwO+UX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz180JIFzAseXDhku14u98qlPZopOADScfCwpt6iz51ObJedHGU
+	S5PYZEa8+8ZBH9prYPlhsNyPN7cj4hrpkvtdRLxDSWNOEzu0lUlreYgfMSSmeYA=
+X-Google-Smtp-Source: AGHT+IEBXCGJfpx6uQrNCJWbyWaXdkVnusVExeZjTk7LweFyaAVp0ZTqw7/koXWoG3nviMKixvHXGQ==
+X-Received: by 2002:a05:6602:1583:b0:82a:ab20:f4bf with SMTP id ca18e2360f4ac-82aab20f590mr1225176939f.1.1726002739074;
+        Tue, 10 Sep 2024 14:12:19 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82aa77b5ed4sm220908339f.53.2024.09.10.14.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 14:12:18 -0700 (PDT)
+Message-ID: <cb8e0e51-a934-4aaa-91dc-c4530ece99c7@linuxfoundation.org>
+Date: Tue, 10 Sep 2024 15:12:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5300:EE_|SA1PR12MB8700:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59fe02e7-c64a-4110-c800-08dcd1dd2d19
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlJ3a1dwTDhEVmRmbDV5RnNEV3EvcHkvMWdlT0pSNjFHS3huMFRHZTNFS0RF?=
- =?utf-8?B?M0hFZVVGT2VONWVFaUZqcWtlYkNYQXE1RzF4ODgrNVdDd3hsNWtMUVVmZ3JJ?=
- =?utf-8?B?RW5BWEhoNzBjeWxIcysvbU4rZUNIQ01tWmNYa0JQTGNVZ2VvSHJWMnBCL2pM?=
- =?utf-8?B?Rkp5WTQ5L1lXdjNvRjFEZWVnakdPWDhiY29TYTRZcTVpMkZ1U3dNMnEyT1FR?=
- =?utf-8?B?dzQ4MWRzSGRwdHV4NzF2RjAxc0wrMlRzUjRWZ2lsTnhOaS9QTWczQS9WR2pB?=
- =?utf-8?B?MVRiMklSbHhxSGFYVUVVcTg2Um9mZEU1ZUVKeVl2MTg0U0sxTXRWUEQ2OGwy?=
- =?utf-8?B?bm9XUXI3UEVpT2FTMXJMekJKV2Yxa09XV0I4TGdqY09rNnVjRy9ZR3c1U05l?=
- =?utf-8?B?LzVEdHgvdVNtUXJxQm96MnFKVWQvWUpHRDhBVmxEUE9qU29QcHNJZDd4LzVz?=
- =?utf-8?B?VzRwcnFkRXRqNDgxNFh2K05UbEhVWmNKNmpzTHRCbjRpWGxUak9OSEV1OFlv?=
- =?utf-8?B?aThuVzU1ZkVnQkNNQ0hCS1hBZ1pCSFV1Um5qT0JzSVN2NTlLUzJYV09YT1Jh?=
- =?utf-8?B?aTR4akJRVEZHdytGZUFNVVpBdkNmODZyeE9nNU1CYm96Myt3ckVlQmsyaHB0?=
- =?utf-8?B?dzJWMTJvcStkTktBZVV1aXBWdnNmbTNDWnJUbXlhT24zM1RGZ3dDQjFFd1Yx?=
- =?utf-8?B?UVJmdEgxcnRXWG8ydnRUcVdPNWZjbUpBVGl2MWZGelE4T0YyTlBBcE1tM3ZF?=
- =?utf-8?B?cmdFM3hLeWFqMVAvYWdyNGlsbWN2alRrQ056MWlyTC9UNElnM3RCZnkzb3Zz?=
- =?utf-8?B?YWhNL1ppV3Irc1JKcVVYZzBpRkwzdnVySnlmdXc4d2c0ZEVTdlZrOU15ZUhQ?=
- =?utf-8?B?VGZSdXUvbkhYMVJRVXpMYnFvWCtUZjdJU2lzNVFDUkFWRGhHekR0T2dtOE5U?=
- =?utf-8?B?R0ZPM0swZVJETVRNVVRpQ3M2WUJlWUwrN0M0MmpteUh0ZVVmSG1LV2RCZGor?=
- =?utf-8?B?U2RlRm16YjA5dklidVMyQzVGQjlKL1FMRzJlaTJCeDB0WURwd1N2aFZ2STVP?=
- =?utf-8?B?bDNZekZlcVQzaGZSZzNPUDVPM1c0YXB6Q2FhWDVoVzVMc3FQZVBoOGRSZngv?=
- =?utf-8?B?YUlUbU94M21KMU84ZnVOVHY2VzBwKzdONzJhVDdPa0FYZGNqU1BXZzRHVG1W?=
- =?utf-8?B?ckw3SDJNL1hiN0JJY2tvUTErMW9nb3hUSDRvdEgvYm00ZWJuQVZCK2FMTGpl?=
- =?utf-8?B?Y09JNkxmU0w5ZWMvVUZPaXdGaGdHbnUwMHpZSG1uZW84OWpsZHZOWTd1Q3Nt?=
- =?utf-8?B?cjVVUkNmVUQ1OHZBcVZSNXNIb1V6dzlUTUxGTmtSd09sK1NQSE5vRTBlVGcy?=
- =?utf-8?B?NTRzNTlGUlE2WU5Mb1ZwTTlqRXJhZFhMYUdtaU1xbjAzRG55VHoxeGs5MDMr?=
- =?utf-8?B?ZGZhT0lvRmhEWE8zeHZhUlZjcUI0Z1M5K3hhL0k3RUx2RENZeGdUU2s5akxI?=
- =?utf-8?B?cmM4ait1a0tDSVo3Z0RsUlQ1Mko2R3ozUzYwRzlZMUcreE4zaFdwMHpsUnVh?=
- =?utf-8?B?cWUzT2crRTJsa2dzT2RBVEcwQW0vcGdldG1mUzlwckJnVEVmRGZwdTMrbzNJ?=
- =?utf-8?B?dFVkZlo3b3FnaWlML1FKb21abGJzREFad1JQUEorTUxuMU9xWjFOemRQLzc4?=
- =?utf-8?B?UnJIQkFMYWNkQUt0WnJqZ1FrWkZua2RhV3orRFpTNjdUa2VXMEcwWE8xaFhu?=
- =?utf-8?Q?cQrLjDVU8e9fSRXlfI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5300.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eUhNaWFERDduMVQzc0t1eW9LbEs4Yzh0MlQyQ1laSzZ6US9SRmMrcnNhcFZK?=
- =?utf-8?B?b1VzV04zVEVmMkpaTVZlam94Z3FFV1FOL3lCZlVuM0oyNGRBd3daM2tRNGcy?=
- =?utf-8?B?UHpNMHFIRk9NKzFJU2ZnNGY4ZVZmbW1qTS9hRnJkUllOWGkzcUpmR0J0V29O?=
- =?utf-8?B?UlIxQ3RTbyttOTFmUjk5QlRITmpnRENqek5tYU9jVjIwMlQ1Wjk5Z1FUSnk4?=
- =?utf-8?B?LzE1WnBYbS9BTnY3bnVhaCtaYlhkekR3N2RiZXE0bkZ4R1BzL0k1b1lWZkJ3?=
- =?utf-8?B?MWxCaFFseTFPcmFyNk11VlJQS0I1WUhaRW5JU3V2Y3FacWhQd1lzQVl4a3dY?=
- =?utf-8?B?L28wc2UraURTTFVYc0JVelhpa203SWxBdU9Ec0JURmpZOU5CM2Z3cDVPV09H?=
- =?utf-8?B?RGxnYnBYTVkzelhRVGxtcklvU2dWektmQmN4eFFzUkVyVEh6VmtZTWtzZnZ4?=
- =?utf-8?B?czBuK1FlTDIvdjhQWFhDNkg0dzcyZjFlV1ZZak1MeG9QYitUeGQxUDRGQmo3?=
- =?utf-8?B?MkVCaDVjZ21sMGM5VVJPV3A4SXNmUmFLQ3lHbEVwQlhIc09jL0oyOW9GTGlr?=
- =?utf-8?B?R1VEa2pxQzVoZU5HS1IvdWs5U2ZSenpma01pZktCVjBCWFcwQTR5WldVYm1k?=
- =?utf-8?B?aC85R2wrcFRaQ1VvUEtmZkRrZ1Jjc0xHQmQ1aTBETFMrY3RSQnU2N3E0dHVS?=
- =?utf-8?B?WGhQak1sdnoyclltRy92Q2JacWRBRVIrR251bGJSMXBPa2tueWdEb29qWEZq?=
- =?utf-8?B?cnViSHUzTXlNQWVGcUJlTHd3djlDOXpYcXZmRWVraWJSbGFpUGdnWWN3Ry9B?=
- =?utf-8?B?cXEyVWh6aWQ5dkxKNVRsR2FxM0E2Y3I4WjdvVW1Kb1ViVXN3RjFpOGpna0FL?=
- =?utf-8?B?UjdYSUhNVTl4eWtVVDNHK1h0Q0NXRGlGbUxDZmxvVnJBdnViOTZUS1ljS0Rt?=
- =?utf-8?B?WndqeWZJK0FrOENVVlAyZXNhNTBGVHpzcXRReStScExkaE9KVUxpZVZYYVVW?=
- =?utf-8?B?TEYwT05QRXg3MkFtRXdhQ1J6K1pXaGM5N2F5QlFEM1h1a1poVk1CMUlxc1c5?=
- =?utf-8?B?eVNCUkhwNGZvK01mQndRNXg1bzhhdUwxT3RMMmppRU5XUDNhM2Y0MkdHN2cv?=
- =?utf-8?B?Wk9vU3FLS0V6UElKTHlkdDFsc0pCODBaT0JheDRuU242RXhyTnhXYlI0ZWVk?=
- =?utf-8?B?a08xckwzTHV0b0Z1SUtHRmYycUJ6WWVkd1RPUnVLaHlxbEZXL0NkTm5ZTURJ?=
- =?utf-8?B?UkJ6QW1rNmFHVjFHODRzRnhmdVk0OThIVFltV1JFREFabXpJNDQwWExVQTdj?=
- =?utf-8?B?VWo3MnBSYllQMEkzWXdmNTZmajdrWW5EZTJ0YktXQWZTZnYrVkJtMlRXU2Jk?=
- =?utf-8?B?Q0o1L0JDRXdSSUNsMS9rcWtaN0JIZWtvRTlKNndoZW10K2FUY0RGMU53bks4?=
- =?utf-8?B?amlmVDhkejd5bDUwYmQ3VGFSMXltK2ZCRDRIQ2Jkc0dFR2puT0NuS0lHZk44?=
- =?utf-8?B?NitLQ2ExNjRVRjN2UHBPSmJHbjAyc01KTU5iWk96djU1TWYxWFRSdGxKSStr?=
- =?utf-8?B?YnFhaUkxb3NwWThuZ0FtdndST2hVMXdzRk5tcWNhdWxtVzMxd1J5c0dSZ0xL?=
- =?utf-8?B?blRNb2FjRnlZcEhZUmpQV3FkdzAvTC9UZDVGZ3EzMkN0akNRYk4wOHdDZWhx?=
- =?utf-8?B?eUZXSnpFOTc0bFdtK3hzMm9Vb3ZMcGdRU2o3aVVLTGl2ajA2bkNNWEt2ZllC?=
- =?utf-8?B?U3Q2Umx3ck1iaU1YL2c2MEJGTXhxSkU5OEFVME5SaDBLZDYvSG1WZDNEdzJx?=
- =?utf-8?B?ZkxQNi9rQ1RTYXB2cklUMXdLWEliR3J2OU5QallSdVFueTNrQ1ROeUNKci9i?=
- =?utf-8?B?aWFubEIyM01IZ2VKYnZGVG5uZEtpM05vV0lMeW04UHorTnkzY05BeHU0WUZ4?=
- =?utf-8?B?MTZKZG92UXhwNFI1RXQ1NkNRNnduOXo1N1FHT3pQZmMyNXlGYi8yYVZPdXpT?=
- =?utf-8?B?b3F5VkdmVVBuaElxbDZHOTlHQUpZejByOEM5OTdGKzF6cHArQ09KR3VwL0Iy?=
- =?utf-8?B?ZDlreTNtbWp3RTQxZjI1b0lxY0J6VzBCM0R1ZlJhTXhpd3NDM3M2SXdqOHk1?=
- =?utf-8?Q?d1ZG7xarVKQ2QKpzfSPgAjGCe?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59fe02e7-c64a-4110-c800-08dcd1dd2d19
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5300.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 21:11:46.0080
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t+LZVRexnu+0t5cY1MzHPlcFvOaKTyAqjxwWihQ53RZFeipI97oiOzVXn8txacxz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/214] 5.15.167-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240910092558.714365667@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240910092558.714365667@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mikhail,
+On 9/10/24 03:30, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.167 release.
+> There are 214 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.167-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Can you give this patch a try to see if it helps?
-https://gist.github.com/leeonadoh/3271e90ec95d768424c572c970ada743
+I am seeing a modpost error when I install the kernel. Looks
+ERROR: modpost: module ad7606_par uses symbol ad7606_reset from namespace IIO_AD7606, but does not import it.
+make[1]: *** [scripts/Makefile.modpost:133: modules-only.symvers] Error 1
+make[1]: *** Deleting file 'modules-only.symvers'
+make: *** [Makefile:1825: modules] Error 2
 
-Thanks,
-Leo
+I am seeing a modpost error when I install the kernel. Looks
+like thge following commit is the problem.
 
-On 2024-09-10 11:47, Leo Li wrote:
 > 
+> Guillaume Stols <gstols@baylibre.com>
+>      iio: adc: ad7606: remove frstdata check for serial mode
 > 
-> On 2024-09-08 19:30, Mikhail Gavrilov wrote:
->> I have done additional tests:
->> 1. The computer does not hang with 6900XT instead the screen flickers
->> when moving the cursor.
->> 2. The computer does not hang with 7900XTX if I turn off VRR. But the
->> screen flickers when moving the cursor, as on 6900XT.
->> To enable VRR, please set 'variable-refresh-rate' in
->> experimental-features, and in the Display setting, enable Variable
->> Refresh Rate.
->> $ gsettings set org.gnome.mutter experimental-features
->> "['variable-refresh-rate', 'scale-monitor-framebuffer']"
->> https://postimg.cc/PvXYdvGR
-> 
-> Thanks Mikhail, I think I know what's going on now.
-> 
-> The `scale-monitor-framebuffer` experimental setting is what puts us down the
-> bad code path. It seems VRR has nothing to do with this issue, just setting
-> `scale-monitor-framebuffer` is enough to reproduce.
-> 
-> It seems that mutter with this setting is opting for HW scaling rather than GPU
-> scaling. I see that "Find the Orange Narwhal" sends out a 1080p buffer,
-> which with this setting, gets directly scanned out and scaled by DCN HW to 4k in
-> full screen.
-> 
-> An oddity with current gen DCN hardware is that the cursor inherits the scaling
-> of the HW plane underneath. So if mutter requests a hw cursor with a different
-> scaling than the game's plane, amdgpu will reject that, and likely force mutter
-> into SW cursor.
-> 
-> My offending patch changed this behavior by rerouting DCN HW pipes to
-> accommodate such a configuration. It essentially takes a full-fledged DCN
-> overlay plane, and uses that just for the cursor, and thereby freeing it from
-> inheriting things from the underlying hw plane.
-> 
-> My guess is this causes flickering due to how DC (display core driver) handles
-> updates; it needs all enabled planes in it's update state. However, a KMS cursor
-> update will only include the cursor plane. It's likely that amdgpu_dm only adds
-> the dedicated cursor plane to DC's update state, leaving the game's plane out.
-> 
-> The fix isn't exactly trivial. If I don't get anywhere before the fixes window,
-> I'll send out a revert.
-> 
-> Cheers,
-> Leo
+
+thanks,
+-- Shuah
+
+
 
