@@ -1,71 +1,75 @@
-Return-Path: <linux-kernel+bounces-322926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEFD97349F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:41:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3B59734A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 350BE28E128
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B073C28E20A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1884192B8F;
-	Tue, 10 Sep 2024 10:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCCE192D94;
+	Tue, 10 Sep 2024 10:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MJdwSxhI";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MJdwSxhI"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SvGXu/OM";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SvGXu/OM"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A3317A589;
-	Tue, 10 Sep 2024 10:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E68192D8E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725964779; cv=none; b=D3riLJ1jy8wktq7nXCKk+2H4e5EKGQoR+6vTWhzLRybpRMZN1XVv4E/0KlkpHUJvQgmX6f2xgfz7RS8FIIgeuzC1UqiWf1YVwAokjK24kQe5cGqFx9JSvKOnsoKFDN+jfeBIY1SKbvEDjgPd61IrwYJTMSxd2IZjd7PtQJM60PI=
+	t=1725964785; cv=none; b=kGiII8f1XhSCVuIV/M+4JrGhKv1vm2uTkwoYG2+hPdXIpyanS/w509xfG2cazaPhIXbVCdoLXttDICTspviwUvHB1J3Z3ckviIyUQ2nguiEkSpheloDZCFbFKBZuxrQXa94m8TQn61G4q/SgwkC08TEMotjuOoimBZHuB3ztPRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725964779; c=relaxed/simple;
-	bh=7zrIfLoxboUnHnBP4p3GjEhg7cf+0nKde0qJeENKL+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cE2EcxYQmElp0/vPccd8eyifXQYyNiVBtVjRSl0bOCH1fRPPgdh+ZeopRKLfhVkbHQythaP+glP2TmioKVGi2yeEexoFKLQOOeI/MU/MEU1h2AoQVFGIH04apqajKJdKAZYfxHpMMwRCqBJGZALfw4pve2rDDtQKH+KZvHDUIIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MJdwSxhI; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MJdwSxhI; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1725964785; c=relaxed/simple;
+	bh=95alIqRf+KhfIFvRr8uxg8eQjalDg4iRR39iZ6MXPd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NxD74EdyEU9yD3fxRoWt2Jcqed0KOCkrQqUnqOSsX7mcLF9D0qlBGdFvSZakbu82RiDjF0M/oD/A1uQnPOZ3fctJFdhPR3rJm8/baHpdLOUP4Hr93Z7D3ieAKrnKAekkVfuj23M5kuCzKIybXNlpFXwVHe+WNta6+B275GrnJkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SvGXu/OM; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SvGXu/OM; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B16621A32;
-	Tue, 10 Sep 2024 10:39:35 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 46E5E1F80F;
+	Tue, 10 Sep 2024 10:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=6w0KKKScpSdCGyQyfm+U/zq2K600ZMP+OJ4gtPNgbdg=;
-	b=MJdwSxhILRkVOHveQo3EG9CabNyFBPmNnYuol2KN561p/EN6CTSFVg+zKoiXf8Vl5jm/c0
-	yOqD1KxjD8zXBuZT/nq14WXl3q7oSxOwgbx3erwpDPCiDBhiWVhNScvSLVkrMtTwi0K578
-	wnU7rBz/M/JPuILZ1Sia6JGEhoJW/Qc=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=MJdwSxhI
+	t=1725964781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sbWgNcdAbQ/JNYr7pX5nA+rDDFiU+j1zOmO/QUARGmM=;
+	b=SvGXu/OMEvYy1Vw1/3uWmlV8GV6SXNf1SRcEu+k4qs03+tfTLj31Pxskpdrn/fXe8CfvnE
+	DT+RPFQVa+VLgYFeOU4AIE5/GeBka3uqHRUA3B+fxFeb92xnA0fgJ2ZVBD++KlF0qUBUtJ
+	F0/oboyRupOAPfCz9JIc5vhSkedpMTI=
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964775; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=6w0KKKScpSdCGyQyfm+U/zq2K600ZMP+OJ4gtPNgbdg=;
-	b=MJdwSxhILRkVOHveQo3EG9CabNyFBPmNnYuol2KN561p/EN6CTSFVg+zKoiXf8Vl5jm/c0
-	yOqD1KxjD8zXBuZT/nq14WXl3q7oSxOwgbx3erwpDPCiDBhiWVhNScvSLVkrMtTwi0K578
-	wnU7rBz/M/JPuILZ1Sia6JGEhoJW/Qc=
+	t=1725964781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sbWgNcdAbQ/JNYr7pX5nA+rDDFiU+j1zOmO/QUARGmM=;
+	b=SvGXu/OMEvYy1Vw1/3uWmlV8GV6SXNf1SRcEu+k4qs03+tfTLj31Pxskpdrn/fXe8CfvnE
+	DT+RPFQVa+VLgYFeOU4AIE5/GeBka3uqHRUA3B+fxFeb92xnA0fgJ2ZVBD++KlF0qUBUtJ
+	F0/oboyRupOAPfCz9JIc5vhSkedpMTI=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CA81132CB;
-	Tue, 10 Sep 2024 10:39:35 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E0D58132CB;
+	Tue, 10 Sep 2024 10:39:40 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +R6KBech4GahYwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 10:39:35 +0000
+	id hx5nNewh4Ga3YwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 10:39:40 +0000
 From: Juergen Gross <jgross@suse.com>
 To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	linux-acpi@vger.kernel.org
+	x86@kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -74,85 +78,79 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	xen-devel@lists.xenproject.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Subject: [PATCH v3 0/7]  xen: fix dom0 PV boot on some AMD machines
-Date: Tue, 10 Sep 2024 12:39:25 +0200
-Message-ID: <20240910103932.7634-1-jgross@suse.com>
+	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
+	Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH v3 1/7] xen: use correct end address of kernel for conflict checking
+Date: Tue, 10 Sep 2024 12:39:26 +0200
+Message-ID: <20240910103932.7634-2-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240910103932.7634-1-jgross@suse.com>
+References: <20240910103932.7634-1-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 7B16621A32
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.01
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:email]
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-There have been reports of failed boots with Xen due to an overlap of
-the kernel's memory with ACPI NVS reported in the E820 map of the host.
+When running as a Xen PV dom0 the kernel is loaded by the hypervisor
+using a different memory map than that of the host. In order to
+minimize the required changes in the kernel, the kernel adapts its
+memory map to that of the host. In order to do that it is checking
+for conflicts of its load address with the host memory map.
 
-This series fixes this issue by moving the NVS area in dom0 to some
-higher address.
+Unfortunately the tested memory range does not include the .brk
+area, which might result in crashes or memory corruption when this
+area does conflict with the memory map of the host.
 
-Changes in V2:
-- split of v1 patch 5
-- new patch 6
+Fix the test by using the _end label instead of __bss_stop.
 
-Changes in V3:
-- addressed comments
+Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
 
-Juergen Gross (7):
-  xen: use correct end address of kernel for conflict checking
-  xen: introduce generic helper checking for memory map conflicts
-  xen: move checks for e820 conflicts further up
-  xen: move max_pfn in xen_memory_setup() out of function scope
-  xen: add capability to remap non-RAM pages to different PFNs
-  xen: allow mapping ACPI data using a different physical address
-  xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+---
+ arch/x86/xen/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/x86/include/asm/acpi.h        |   8 ++
- arch/x86/kernel/acpi/boot.c        |  10 ++
- arch/x86/kernel/mmconf-fam10h_64.c |   2 +-
- arch/x86/kernel/x86_init.c         |   2 +-
- arch/x86/xen/mmu_pv.c              |   5 +-
- arch/x86/xen/p2m.c                 |  99 ++++++++++++++
- arch/x86/xen/setup.c               | 202 ++++++++++++++++++++++-------
- arch/x86/xen/xen-ops.h             |   6 +-
- 8 files changed, 282 insertions(+), 52 deletions(-)
-
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index 806ddb2391d9..4bcc70a71b7d 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -825,7 +825,7 @@ char * __init xen_memory_setup(void)
+ 	 * to relocating (and even reusing) pages with kernel text or data.
+ 	 */
+ 	if (xen_is_e820_reserved(__pa_symbol(_text),
+-			__pa_symbol(__bss_stop) - __pa_symbol(_text))) {
++				 __pa_symbol(_end) - __pa_symbol(_text))) {
+ 		xen_raw_console_write("Xen hypervisor allocated kernel memory conflicts with E820 map\n");
+ 		BUG();
+ 	}
 -- 
 2.43.0
 
