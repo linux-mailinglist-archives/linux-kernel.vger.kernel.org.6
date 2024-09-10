@@ -1,204 +1,191 @@
-Return-Path: <linux-kernel+bounces-322512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA589729F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C579729EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A491C24057
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F3F1C240D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20B017BEAB;
-	Tue, 10 Sep 2024 07:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B795117B506;
+	Tue, 10 Sep 2024 06:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lv0MtpW0"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lw82vDcB"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3017965E;
-	Tue, 10 Sep 2024 07:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725951627; cv=fail; b=qtr0M9FAxRLl43ioK4Gm8GDnAV7XtU2GE58eVfwJNjPK34MZLQWSc1cMyRKqVzlVWvXcj7rSI39qDnpF+CVKZuPwgFqHkQBFQqnxSeOx6C1ZLwzWgKq+tFGUYWR4Nnt4Jc7T+pRiasj1/mJjEkpNmQoyvnU7fIuMmHUQw3/XHX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725951627; c=relaxed/simple;
-	bh=gWaCYFTaYv+hLmWv98YDYJAWvIbMYWxNF+56kRCafQw=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=WYPfC/CuTmglKpybw8Qs/FjPhJqmHPkmLao3o5a83UHob/0ZTUzb02L/bTdLn/OPb5JBGXqThmOBuUHDxnIqU0DvNvHPJhYr2wGGIoM9LowZ2OGFOk4bkh2LOaGcqqqAe52Id+E8JKTkccF9EjGgF5CMjNalOFb1mefDwbhw19c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lv0MtpW0; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FjIv1atPgOuN9JYRsv4j76hlG6XDePUm/5ceMuc2CZ6cTm1iU/gPh9PlRZFRvGnP/V2+bo6tiIxeUlNox3d++ven6COehRRP6DE3hnduugPm1lJun63imkEX09n5GSuEpRr3uF0buUomTCTuTCyhR8IzRmPcnFp6jiTKtlq/JWUesl7XIBL+gT4gE/vsmAHP0GNO3RJAs4FI+DRMmYVJN3jXcPE/cOlLmPjUcIN98f9J2W598zoicq4kIp9iOf9mpRaXo1Od4h6sR8AonVEWyc5IpRhfrymwSeqKA5KDPZai/9Unr9aw1WMUcPCG6Iljxw9jldEofQmDsmM3pQDUNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YhlJWPR7PWN5B2QXCvghlpEJMYvBsVDyvQ2GEk5tto8=;
- b=TPwfWtTEkBw4G9rr0DtnA5aBo722xrycBcdGOFQrT0iYhAC3IhR+uUBWFAYQevRpIjh7h/2IeGeFcvq1vStYxDK5UzN05fw9KrPwKlJ3bryUIQwUwA/EiJPQrd9vM6j814QypraFgMkzmLytj/PPPIo7tN62rahiUNaPk6DxEjIhxGajGT43F4fBg0z9NgU972huiheUI1K34kFxU+RVOeB7kMrqx3ZA+X7inZoNGqL/af3n/fGPXNN00uu3mz4/jKalDdVHHb80RLIlTQ8N0U4EptnV6H2dj9uBIzpwQwkDBrS3fF8ti/6P1i7ATyVb9owfa4iF00CjmM0KSUr7HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YhlJWPR7PWN5B2QXCvghlpEJMYvBsVDyvQ2GEk5tto8=;
- b=lv0MtpW0ViICxzHddjyL6zIXgpvexMg12Haks8pLVjQ+RWGMzhDv4JGcDlDiBncnoqnpMHzM0fvi0V18WKjWhF141dYs4PaHSScANWZOEe0CSDpC5ScrqEFKw9kGtj/Bjr3naAe6qCc4fFJ0q12RhgyJcf5DKqGe4cW6odPvVe6hjZsJ7exS5gUXbtjG9MkXQ1LSKatulYFN6b+AUqE6U5/uyXRa2T2w/Nq+TJ013MsezjuhfDwqDHVFKmbUCl8RGIE0ZelhoecCtko8e+Dpf79h9f9pGWh0kl+KyfhBpDDc1AoztXXppYfU8g+clzwimGwCuNAHmHa+PFRPnyuGVA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SA1PR12MB8723.namprd12.prod.outlook.com (2603:10b6:806:385::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Tue, 10 Sep
- 2024 07:00:21 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
- 07:00:21 +0000
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <c7026449473790e2844bb82012216c57047c7639.1725941415.git-series.apopple@nvidia.com>
- <Zt_PbIADa4baLEBw@casper.infradead.org>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, djwong@kernel.org, tytso@mit.edu,
- linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 04/12] mm: Allow compound zone device pages
-Date: Tue, 10 Sep 2024 16:57:41 +1000
-In-reply-to: <Zt_PbIADa4baLEBw@casper.infradead.org>
-Message-ID: <87v7z4gfi7.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0041.ausprd01.prod.outlook.com
- (2603:10c6:10:1f8::16) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2EC179953;
+	Tue, 10 Sep 2024 06:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725951532; cv=none; b=N3wKcSWoU/IKIyl4Yy7gNEIY1upE3UP1xJZn8Yy4ZC4FBVEYUH7tBLaTcEDoGBaj5+3ZsaQyL1OF4tT4pwkZ3ZUCntT9Wjim85XTGjWRDxFWqojNfIid/gbDkUi9CsWP2tsns9Ek/Ve/hxITV16tv3qLgAJwV180c4zBHlCoVf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725951532; c=relaxed/simple;
+	bh=05Tv8UOCMGRDMccsu1glZcTbfxJC/JElJ8sJ8fPG2bY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=opKCyHg8ggWAqyHJkjeDFUtWXlOSwkJlNIRBli2hnq0yAv2lXuE/PcTESciJ/JM4pWwvAqrYYnuvS/ZQ9PhuV8RVQ5h7CFqT3HS9d9XEgbD/1BpbmLOpoo7TjDk/jJv9UXtg1Sx0atc2rQm2lI6/oqVVPK/TCI1aI+1sBX+hebA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lw82vDcB; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725951526; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=e3VwNfPCaby+IpRpexkevHcjDCWz3s1auCvpsGTLIow=;
+	b=lw82vDcB41kyYoJx/3g4VgdzG8Rkg1hanIcul/uy/zD78i13novd5inJxR3OkI63dWlY/e93qV+Wfi+EZZz5dG752x0y9mW3B6FAp3nioKJTF8BqmyAgPyfhC1P3wUe/57f0f+B/hcNiJnn5NJBO6KS45J91r0t8RpUSiu0/xPo=
+Received: from 30.221.149.60(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WEjFqbu_1725951524)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Sep 2024 14:58:45 +0800
+Message-ID: <e0c2b581-87a4-48d2-bede-1eaab2430c7d@linux.alibaba.com>
+Date: Tue, 10 Sep 2024 14:58:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA1PR12MB8723:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e2866d1-f5bf-4764-5d3e-08dcd1663c4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GK3S6c05WdXWcC6vpSt1gGdnJxX/SUz5pFuf36qtkMd9f9xhSSdkcEDn2nyF?=
- =?us-ascii?Q?vXUGCzARlNMCFortE+ZvrurravPQp4R+GNKpwXFfZsE/Mklvf5UTHZcwHoKZ?=
- =?us-ascii?Q?zRJf7NOxSFt25S5j+YlR+xG/+H4ablKz23YEt0+d0cRYiD1r8LLbLDkss6Gb?=
- =?us-ascii?Q?K7P3ujQ+4s8D3S1hY590dymRMCKJyQHIR+gcjaXVtBBfxsKJqLvUkEy9IfXs?=
- =?us-ascii?Q?kqA4VgcgICSgopEJ6y5e9iWdRCSCElQoPdRvV4a9IGgC3dWmXx5i2KcRMmBa?=
- =?us-ascii?Q?AQIY5ktfxV1MZmKpVU4+Dev7tf06MmPbrpZkKIm02CG5ayHlxmCVUaWvJTue?=
- =?us-ascii?Q?LD/V+1UVikeHv6Am3ZxaWxzxoXmXBXIS8Xj0XIUV5Xtbw8Kk2rxS1ylORDqF?=
- =?us-ascii?Q?igSR3GiWBagXfKoSDiMVYPtvo0ejFWVBL/js3n+vBjIFk0lwsAOKvhFwEo/Q?=
- =?us-ascii?Q?21qMFjJ1JyBE2mx/skYWkiczobgKR8IKC7SAiXclo4hvhAq5MCYTTDdl2DKj?=
- =?us-ascii?Q?T5MzXJ6rOD7/wGgLyuTbXMc5ZapBa2mVSygMYxU2OkjzDl3iqb/jDED+ZYdR?=
- =?us-ascii?Q?ldY8vfWs5zNL9FbvGAGZg5Mq3YLeDsnHto1Cf0MPHZuzKUFYJDB8EXVtmbfj?=
- =?us-ascii?Q?52NixDoOBBlVyqfxk4G5qusCrFDB6vn5oOy0dRCFFifewCuaB/+YQht20MIt?=
- =?us-ascii?Q?B1KSQvY74q6i1NvfrWGFHJeZRkARb5Sb14ZuU4uqXf/RsG73Pmx1eLPQ63c0?=
- =?us-ascii?Q?ucUzht4qzjbHPm4+HOU1c5rmqGBJbqJvG0FYKUBWYhbh6Qx76CFMOA6CNgvV?=
- =?us-ascii?Q?QTzRbPqQcjL2I2Ai+xiIm4QgYEmj6AY7Tqmz7V6oia9hZz9JZwfT8avDQU+i?=
- =?us-ascii?Q?iJuPN21G27wSWWOvj3e0PNRuwvXKczthd3dKpWFi1WGNHEG9Qo8iYvYhr5VL?=
- =?us-ascii?Q?vMCshLkGdEW1VgjWgPNmptiHnNmBXyJ95PG/N8pHovsuG30zfU+v1gAZAZsP?=
- =?us-ascii?Q?2aUWSgpUbFAYDr9SpAPRHyBkkwxizysfS1QGstbeugxt6UVHo34KMc71okC6?=
- =?us-ascii?Q?F5yQTrAX9e3VKfSO16j+RxrBc+hPRZ5nQh/JWdkEZw5bQEnHN9zzjibWoIp/?=
- =?us-ascii?Q?tuq5DWvao8MLK2awHqtot30W6WBgWkQvVlxEg2BpBI1r/Fbq1pITba8WSxPY?=
- =?us-ascii?Q?px6hGezYHLhn8m5vLFOedIMPo0+9cfA7prB+pRhiAm8rcOI/kREuEfOIaKKK?=
- =?us-ascii?Q?+kR9uhDsY17TOyYcHMox9arHzvSXyjWyT4KLs7Nf0nGubj6AUEWsBDPOOzoO?=
- =?us-ascii?Q?T09L4o8Mtem5Ekl4KDAy1glotXByBnBIFMfZNF4+xv6d4Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RbzMwQ4fgX9zbEUp5p3cIi8lDRuQVjGhIapR/PCHBl9oCEYkr4FSlRP1Cnno?=
- =?us-ascii?Q?u4JWu+qhYLs++t1kjYEjpL3zXQ3a6t5/nGjtm1LQ97qIIFi8QJA0ImiWeuQV?=
- =?us-ascii?Q?vL3ZTYENjNaYxpcZyUNnLB9MNVpEcKzT2R8f9cWkSCwAuSBcBpgRbJwu+2FW?=
- =?us-ascii?Q?33LzKp/qT3CoKxgal3Dh4RqRjDs8PlZgwrE6HC8Kd1ZIDbhAQbA+uLLZdUq0?=
- =?us-ascii?Q?Ct725HVGpzsj/zKMb2tto5kmZWqEEQPbEvP/BT7uQj07fu8E3oHE3Vl80HFw?=
- =?us-ascii?Q?uugt1kgAiAmedJ3pgVTByWXjXzVBZAajj+UVN7FjssdEM8cN0k9vc5YX0YM1?=
- =?us-ascii?Q?PyN8Fckokf8FIDQIh1gs378o7hg3L+9+QNbyv3PRMg+zrVvqfuMvafwspIGr?=
- =?us-ascii?Q?SQNCSPUI3D/trIHHjVIrItlG49f0jZF6SmwkMyRMvVFVXeqXqtwiOH9O3HAT?=
- =?us-ascii?Q?LWHelp0T/jXN9VnidiMgBgv/2Lp0ES8un6d3EBLg7HAnfySXD5IjIQCD72eg?=
- =?us-ascii?Q?IWil9+NM/STCRxyKcdupEGyiiw9AOFShYj9ufsYMFrJ5wWlmb5F+HjLXPFHU?=
- =?us-ascii?Q?9dF1uV6U52dx1mZJCQlFrNlxuTS0nkH/nuzPd7DBePHzxcCoQ9VOI+BVfcv3?=
- =?us-ascii?Q?RZHe2jliHE1FzVGZ+mO9BCf66e8tzbcKmGZToDfC6aHOn0141+nDkWb5Lo3z?=
- =?us-ascii?Q?ltsiHf52y3a+QB8yoG3PS9LRuO9nBnVpGCHv4CAz2nvDaADO/VIqwMYz1MFU?=
- =?us-ascii?Q?8na102TJ9UHyC/CQoabt8y6StmHCUt4iZvfogcWpRoI3+rO2DMINLQO6ZICd?=
- =?us-ascii?Q?qv3jiMp7aFb7P2hgaC8H6g9ITB5pKiWoBNZK01CT3JhgCMIgT5rH/1oC1N5q?=
- =?us-ascii?Q?0wkAm3A0NOZkD9WBORoJt27Mv9946A5tQVMIOwA3iEMJxnDzUKYSPZQogIDX?=
- =?us-ascii?Q?8VMCvzV/PTkPhvVVc7dB1EjJYqFWsuIrFx2S+ZFi5rQfs7oAV/SVO78VXoEv?=
- =?us-ascii?Q?3Rnclt7fd3+WibvH5igOqFW/EaycVcmUY2m/Arn+Ju7acXjczfv0m+INLtzW?=
- =?us-ascii?Q?stANuW0GFgCRNH0WAtSHqBaSsh1CIzygu58wjwIbf6B1gUeK61fBUD4beC59?=
- =?us-ascii?Q?50xydIEXG9oC66tbn37NrcsJTp8ObqxTbIdPsjFKcHBFkaNjqpiDXYRuYTF1?=
- =?us-ascii?Q?V4WEoFaj1qcOUdjt+jS1awi2Y3R39eBXv74vkREmw4sZTsc0oBszYxI1s9o7?=
- =?us-ascii?Q?Qt75HSRe4+MEeqYhnysYEZx5Ba9PBnb9M/hkfvGRThOraJOo6Fk14QgDDVtN?=
- =?us-ascii?Q?650ITHkS31Ue/P/pb7HWHcP1B17Xs/CGBH0kz46+JnDB22v0chYS8onHPVZk?=
- =?us-ascii?Q?kAaQlUk534xJYbTQZ/iy+yUJAOSj1PN+tBJ8FxKAktXf5gpoD8yBMhUW6EEa?=
- =?us-ascii?Q?s4Uv/3xsGbokpat7q8+mPTxP0BLjcqUTv2P715sadONJRschqz4mCd4CQXcu?=
- =?us-ascii?Q?BMBbJTulsLQgLUta0Ku1VjumkXd6ktF5325T+K3tVdm7yCwR8rSQYTkhQPk6?=
- =?us-ascii?Q?Q08D/3eZF7Vr3ogPPmMLQYC8/G4e8jplGVa7OJBu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e2866d1-f5bf-4764-5d3e-08dcd1663c4d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 07:00:20.9873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j/V7JC0kXdhvLbnZ31MFqxANYOifBRrKxvNvYUPjq7brt1zDmkGe1XdXFrmKY733eZAVjWmvq8WQm5F/T2KROQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8723
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+To: Eric Dumazet <edumazet@google.com>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>,
+ syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>,
+ Dust Li <dust.li@linux.alibaba.com>, davem@davemloft.net, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com
+References: <0000000000000311430620013217@google.com>
+ <0000000000005d1b320621973380@google.com>
+ <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
+ <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com>
+ <02634384-2468-4598-b64a-0f558730c925@linux.alibaba.com>
+ <CANn89iKcWmufo83xy-SwSrXYt6UpL2Pb+5pWuzyYjMva5F8bBQ@mail.gmail.com>
+Content-Language: en-US
+From: "D. Wythe" <alibuda@linux.alibaba.com>
+In-Reply-To: <CANn89iKcWmufo83xy-SwSrXYt6UpL2Pb+5pWuzyYjMva5F8bBQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Matthew Wilcox <willy@infradead.org> writes:
 
-> On Tue, Sep 10, 2024 at 02:14:29PM +1000, Alistair Popple wrote:
->> @@ -337,6 +341,7 @@ struct folio {
->>  	/* private: */
->>  				};
->>  	/* public: */
->> +			struct dev_pagemap *pgmap;
+On 9/10/24 2:36 PM, Eric Dumazet wrote:
+> On Tue, Sep 10, 2024 at 7:55 AM D. Wythe <alibuda@linux.alibaba.com> wrote:
+>>
+>>
+>> On 9/9/24 7:44 PM, Wenjia Zhang wrote:
+>>>
+>>> On 09.09.24 10:02, Eric Dumazet wrote:
+>>>> On Sun, Sep 8, 2024 at 10:12 AM syzbot
+>>>> <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
+>>>>> syzbot has found a reproducer for the following issue on:
+>>>>>
+>>>>> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into
+>>>>> for-kernelci
+>>>>> git tree:
+>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+>>>>> for-kernelci
+>>>>> console output:
+>>>>> https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
+>>>>> kernel config:
+>>>>> https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
+>>>>> dashboard link:
+>>>>> https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
+>>>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils
+>>>>> for Debian) 2.40
+>>>>> userspace arch: arm64
+>>>>> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
+>>>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
+>>>>>
+>>>>> Downloadable assets:
+>>>>> disk image:
+>>>>> https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
+>>>>> vmlinux:
+>>>>> https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
+>>>>> kernel image:
+>>>>> https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
+>>>>>
+>>>>> IMPORTANT: if you fix the issue, please add the following tag to the
+>>>>> commit:
+>>>>> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+>>>>>
+>>>>> ======================================================
+>>>>> WARNING: possible circular locking dependency detected
+>>>>> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
+>>>>> ------------------------------------------------------
+>>>>> syz-executor272/6388 is trying to acquire lock:
+>>>>> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c
+>>>>> net/core/rtnetlink.c:79
+>>>>>
+>>>>> but task is already holding lock:
+>>>>> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at:
+>>>>> smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+>>>>>
+>>>>> which lock already depends on the new lock.
+>>>>>
+>> I have noticed this issue for a while, but I question the possibility of
+>> it. If I understand correctly, a deadlock issue following is reported here:
+>>
+>> #2
+>> lock_sock_smc
+>> {
+>>       clcsock_release_lock            --- deadlock
+>>       {
+>>
+>>       }
+>> }
+>>
+>> #1
+>> rtnl_mutex
+>> {
+>>       lock_sock_smc
+>>       {
+>>
+>>       }
+>> }
+>>
+>> #0
+>> clcsock_release_lock
+>> {
+>>       rtnl_mutex                      --deadlock
+>>       {
+>>
+>>       }
+>> }
+>>
+>> This is of course a deadlock, but #1 is suspicious.
+>>
+>> How would this happen to a smc sock?
+>>
+>> #1 ->
+>>          lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
+>>          lock_sock include/net/sock.h:1607 [inline]
+>>          sockopt_lock_sock net/core/sock.c:1061 [inline]
+>>          sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
+>>          do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
+>>          ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
+>>          raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
+>>          sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
+>>          do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
+>>
+>> As a comparison, the correct calling chain should be:
+>>
+>>          sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
+>>          smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
+>>          do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
+>>
+>>
+>> That's to say,  any setting on SOL_IP options of smc_sock will
+>> go with smc_setsockopt, which will try lock clcsock_release_lock at first.
+>>
+>> Anyway, if anyone can explain #1, then we can see how to solve this problem,
+>> otherwise I think this problem doesn't exist. (Just my opinion)
+> Then SMC lacks some lockdep annotations.
 >
-> Shouldn't that be indented by one more tab stop?
->
-> And for ease of reading, perhaps it should be placed either immediately
-> before or after 'struct list_head lru;'?
->
->> +++ b/include/linux/mmzone.h
->> @@ -1134,6 +1134,12 @@ static inline bool is_zone_device_page(const struct page *page)
->>  	return page_zonenum(page) == ZONE_DEVICE;
->>  }
->>  
->> +static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
->> +{
->> +	WARN_ON(!is_zone_device_page(page));
->> +	return page_folio(page)->pgmap;
->> +}
->
-> I haven't read to the end yet, but presumably we'll eventually want:
->
-> static inline struct dev_pagemap *folio_dev_pagemap(const struct folio *folio)
-> {
-> 	WARN_ON(!folio_is_zone_device(folio))
-> 	return folio->pgmap;
-> }
->
-> and since we'll want it eventually, maybe now is the time to add it,
-> and make page_dev_pagemap() simply call it?
+> Please take a look at sock_lock_init_class_and_name() callers.
 
-Sounds reasonable. I had open-coded folio->pgmap where it's needed
-because at those points it's "obviously" a ZONE_DEVICE folio. Will add
-it.
+It seems so, which also explains why it wasn't reported with AF_SMC sock.
+I'll try to fix it ASAP.
+
+D. Wythe
+
 
