@@ -1,186 +1,186 @@
-Return-Path: <linux-kernel+bounces-323076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5421973755
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:29:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDD7973750
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9FFC1C24E81
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051701F261A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D1B1917FE;
-	Tue, 10 Sep 2024 12:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="pMQ4ThON"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010042.outbound.protection.outlook.com [52.101.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B571917FD;
+	Tue, 10 Sep 2024 12:28:58 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45E9191484;
-	Tue, 10 Sep 2024 12:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971353; cv=fail; b=LOuUJw5HtJ/0BGNi9mwYmUSaTscZPEpFBnhcZsh7HlotuPchVQuwLeoFdWPQdy4I/aLTJHBm5wj2UE9UqTGFa1iFNgEfQRveSasOqJQSOmHOyFy942GDrmWxp1ox5E1sUmwOsveNPkDv7CI+Ue2B8T6dG7aX3u5prknf0xHu2rE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971353; c=relaxed/simple;
-	bh=iJ4VBeovxXiQyhYRvFx/CNhnJg9oSMvDuGSSh1aoPKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CLhPsLyHzDt5Fy6N+UJe5wGooUUMtABReZlxAwYM74ogyLN4nVdRHunfPx4yTxi6Icsr7jUD5XFM4O4j/gcnXKurtWQQebZEy2XPiMwfbF2TB8/EJUrS/WaspNYD05rrPpskqh/Rs41Xus0EUBvWK/4x5uMEH7XTl65IBVo8rlQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=pMQ4ThON; arc=fail smtp.client-ip=52.101.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i6+IOkVeRfT84wkKAV15RpyPFO/RkOVtM+VR3nHM+OaumveiezhSQzmnyfb9/TYgXniQOrNs2/Bw8/Qq1UyuX2DK6Ekjsm5rMKvMxJnV2TEQv8g7j7lyF3koZ0Q7MOlPFmmuT3gyczbYm0nz6jsxF1SfNWJdUlvK6iU5ddt7nfmYL9uH23oZVR6M95vW6CZEmKx5BrVVoqUZzf3+VzNdHKi76Oy0mpXOpzO7kxGwscUdsywjH/vF/BHrTNIZh4uxhifb66ghmngb2mDfrWmjZLdftREyTNVEvj7X3rtpCWOqoHJ/fCVEp2qIlufelrAxwMbTLq7N8dUOBPXUdQ+J+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A1ro3QwgJGjf+5vk49ssAoHTTxZsuukUSZTP9tf/wUk=;
- b=CKMGcojKgo64pO5/lg7dM5AweokIpK1hj+dZvuN/i2zqb16xQzwc7722ScCHmYnWJvExfTDGfH3ZYEQlxjLxRmnIdqh1ogofWISOMNB56ysQvoO1lxRAxgkMBB4ev+WnsK2H4f6c/hj4xEWZwNrbnAD5nMzVrMdtVYfl20xY0D7pEZ2t99OodfjzqUv21q3c2OLqy6Rl98eI2Haj3BnF/YPzeTmfbvebW/AI3JPiVpM/YBmko68FhKSvLIAiW6qA3PzE6f40BsoZoSJmDT4LOe1kgwwVe/N/rNNH5TG7EiR5cjlI4j02X6Jz4lvdXmRISbphI7VPiteKzX09qdKxZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A1ro3QwgJGjf+5vk49ssAoHTTxZsuukUSZTP9tf/wUk=;
- b=pMQ4ThON1f11eeI263oHjGyQJqJkCKtYIwpM1VqgsDK5XeUhgzVlrySn1VMo8pFToncQK6JUwCUMdPknNc4GpHUuRt8U3nuXvhVsEXneIlhJkNS2j+/WMsaOr01o5Jh/LZQq4rb1zwSzc2I+qrs4kpnVXB45Y+uQ2l3xB0zMLrxXIXLVOiPoqEbzgW3phUyY5b2eDnNZfRYt7V5KuDvdlTtszvpIXmvmS+E1Cci2U+WmHrUmuICiyds1hCGLt+X4k+U2ko8zf1K7kseRR/yZ5PqVab4UcOpRMNKsBK9Y7ZMrCTyb83fXt9wHuu6E9T6TpnAw/ikxtRa0+5bja7n/oQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by PUZPR06MB5553.apcprd06.prod.outlook.com (2603:1096:301:ed::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 12:29:06 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 12:29:05 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: chandan.babu@oracle.com
-Cc: djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v1] xfs: scrub: convert comma to semicolon
-Date: Tue, 10 Sep 2024 20:28:42 +0800
-Message-Id: <20240910122842.3269966-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0080.jpnprd01.prod.outlook.com
- (2603:1096:404:2c::20) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF401917DD;
+	Tue, 10 Sep 2024 12:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725971338; cv=none; b=BLrbkM4FzQzfKx95UPXjz/8i+x+qLvrFBuIV3xoqVekTLXRb9E0GbtlESlPGArztLuoZED7l/09Ia8LBpn+lpxdM7QUNgQch3zj6f7gWTxUwb+Iq0kYnX7K/pOw4k16Se60tWPgf59ELpfj9eNNnfZcaaNNkmBNB7GPrabCDBOA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725971338; c=relaxed/simple;
+	bh=n34LZR4/qpKiZct0K9lqzEzS5dlXP8p0VQpr2dubN1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hXU/gLYvZAk85RaTBknyFXEQ4hZvcRgsF6Ib0zTKqgVV96lFVoxRIT/5GgTs7bfYkYrRLWZBGUocIAhSpNoNCssU7DZlfXxIT8DpfBiFxh3s03gMtZdlP4EU6g9j4003MHEhxWWFQTtVGioCYO0pYt6sVFkjOVD4+FvMzZbtbmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X330Q0FPrz9sPd;
+	Tue, 10 Sep 2024 14:28:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id g4B1QPtPZwoU; Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X330P6NX8z9rvV;
+	Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C726F8B770;
+	Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id r9qBl1ofIMM4; Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
+Received: from [192.168.232.177] (unknown [192.168.232.177])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EBF1B8B766;
+	Tue, 10 Sep 2024 14:28:52 +0200 (CEST)
+Message-ID: <2234a5e1-5926-4b2d-a8f2-c780bf374a27@csgroup.eu>
+Date: Tue, 10 Sep 2024 14:28:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|PUZPR06MB5553:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7a5cb6b-0673-4b91-ff8a-08dcd19428ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YSDs5MrGUVYYFE497G0JcQGBwH+7j+C9DDpM6icYW7Q2cH7nZruOxKVOf1Jh?=
- =?us-ascii?Q?frpRgvH2TDcvkFp/wCrJWWlJ/77uQcqX6rDHtH3ebyivz3rAnuPwDmp6UGnA?=
- =?us-ascii?Q?i8zZO8/tvSpNyuQBICBb6fLof1hK1NaN1rrrdq/CE3lrkwdqcXJjlJjXaE6h?=
- =?us-ascii?Q?SM2o3TXa/A8Q8Q+SML2igsI77dL55Ocp2qtCexhFoNhOU41IGMtaW8T4u96J?=
- =?us-ascii?Q?jBhqL/50gp+BmgYU5kUtkh9pivtQBtr3GtZExTUUtN6Su9LigwXUwmhmQEYH?=
- =?us-ascii?Q?veu+my37x4/xsQ480K0vG7dDD7SLBMhfoSrwONvH0GPVhxxuTFnhk3XjS/XH?=
- =?us-ascii?Q?+DPAuIjoCa9UrkFQMZ9OY2iZyC+JBJHPPpLM4IaLrvRb9uFbLauFohBwDPJ+?=
- =?us-ascii?Q?6Ry9WSvazzhqLRXIuYHdJShY7PKOX9IShtdc+3kHLa6nt2YgDNO3H1e6EW7i?=
- =?us-ascii?Q?MZWwZz/MJY150QB09KpyUpQ506GGIhrdd06cLMYRK18Lr+6WuIszGg9p+WYT?=
- =?us-ascii?Q?Bi6T+BDh/byzzzenI41jGrpaj3FDAjgzRDZL41IScRqa0tz/uVFpt5epat0V?=
- =?us-ascii?Q?JYjGrOasz7xYixtAY4GaxctM7qGO3Y1Vq58eoQaDhKPeT313g265izsTNdJD?=
- =?us-ascii?Q?Xtv0z5uH6qE6mbEM4O3yU8WRwxsZYFVgsVOtw/bsuMKtXFzcTetI7LYl7/aT?=
- =?us-ascii?Q?q534WvZI7ymCcv5aNXlT2Jst1QVbXG2Qzyv+kD70+bD3HxMka/g5emM0TyLJ?=
- =?us-ascii?Q?QLqFYn8+Te0YJpYy3Nf6wvtq1adzTsqhREiqXGKVOv3S4KZ9bBwigzNtg5Kd?=
- =?us-ascii?Q?wzoam4ZAf7k1aq3XOSTwk08nOimuLFo/HBSitnzy8/Va5qct6In5bQQqFvPH?=
- =?us-ascii?Q?4VLOHdsia/hW9RymoZOjP5+WfF8gebbTY/hDmBdMYX3Gnw22x/gsa8XH+h4U?=
- =?us-ascii?Q?P6pW2i27NrCYx8+0UlmqV3YY2SRH9OPB5I5bRBOvDPviC6tTMKHZBORkJTMh?=
- =?us-ascii?Q?7vUy2Ke+schWojqbDgGtz6x3KNKoWICS/3urYxqkFtVFTvmnViS2UEugbXZk?=
- =?us-ascii?Q?jMkRkiZ/QQ/7OnZe+sUzanO21Jqo7PjI+/C+j9muREiyZgogtSJ4KWP0/YtY?=
- =?us-ascii?Q?GHpsdtmf6JuZfvEJskgugiVdZBoKUYfv20PrAqt0dpteSkwMy8cFdl5W3jSF?=
- =?us-ascii?Q?Wd1hJ7AKKFgAqPNEEIeagQcrWJQ3688e8A08fvZeFbgVn1b/NZJ5lIrAdM/x?=
- =?us-ascii?Q?jaDB/Dx5yLassL5K9tnYDLITGMdmH6GwMaRHvgluZsVq79OCy1F6SFaUjcvw?=
- =?us-ascii?Q?wWV1K5LcA/r3teTEboJl/tBkZ3KJodhwTgA4TM0nG2nBH8oRfhsuXCeNuZtX?=
- =?us-ascii?Q?X8i/96ZYr2H5OP7cWXf+C22cRR3oS5sKKgzblsJ3eMw0r8c8yw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fvVaqK8eqSXpg39LIKYiCQsO4g+6lO9s28uyK0w4ybbE7TihAjdU+9XM/mcH?=
- =?us-ascii?Q?KFjqzBHrIRHZnzRIu5SXvzkVJidwnuWLEKTupS16bWeRH9S4NhirNuIWanri?=
- =?us-ascii?Q?bLN4yPdl4/TS+14X9vcAnsrD+DHAtZFkfJBAkuYQRq4EIf0kgaG6w9m6L7wP?=
- =?us-ascii?Q?Nm+MJqC69YNqa6gvp5TGopu85avhyapOyLTlLN07lUV9vZc4NYTvdgvbSEyd?=
- =?us-ascii?Q?H9Rc/yaqgXcXAFJb3aOQPxK+woGDHo48kd6+woo1OB+Z2jzIxTQnTx+lELPu?=
- =?us-ascii?Q?mHlp0Q9Qs43iKse7bMNNepWYg7dxPc/TdePZGeT/yqaEbaULcd6bUYEjbsw/?=
- =?us-ascii?Q?AxWdbgERQD848bMxBYcIO3M6qNSZqb1YW6nQOpmHVVg7tVKJF1bWv7Gq3/6c?=
- =?us-ascii?Q?BRMVKszD8Qu5WwJliTC5++pf+ceJ85LYExOwvTiIWl1NIW4O2Bt8FYdvXl6O?=
- =?us-ascii?Q?nWjtvWWiWnznGmfVxCBx8I3+uW9EwtIKJdu560iEg39XHWPuz3Eiv3K+JFXE?=
- =?us-ascii?Q?wDSHFqZoEVdQbOJgvZBgmiZCmRik3gB/7FcceKLqbHL6ivoOzUjWNQvUesF/?=
- =?us-ascii?Q?QoiByBQIaCmTQGQ2fXGZT371d0pLfnSVOfoBfqfAt53NWdtM9k02LasMR5vS?=
- =?us-ascii?Q?wW5WuypdJIPlkIgRe93QsV2obhuI2pRCNs4TZdM8GYuEgGflg85aUjgBLkN9?=
- =?us-ascii?Q?Uzp3E3e/Q+1Vpv9GZD8vBgfLMx4flyNGjea0eTb9pZRqV6M3lKTp7ZjA7cLz?=
- =?us-ascii?Q?25hEWkBvelmNO90xneDEV5lFPaiAE3OEYFPCkoJIo0ZkYX24N8MVDs0Nm3HP?=
- =?us-ascii?Q?9AypslOvh1CnmNuVornHe2nNWt+DftHpI0+G/Thw4+imM5CsXnDK3L8CSNVz?=
- =?us-ascii?Q?T6bOIbQJqboQCYOBnk/mpG2RhMZOKtoB2HddSshbSFUh3y410as+0NISbGD4?=
- =?us-ascii?Q?fn0ltB0pWr698KG4hsvd9Dq/fJnkGdQtAOUYEnS67FvPvxIlrmk9G6WG8xOK?=
- =?us-ascii?Q?lq6sIXLGaeYYGO3n+2sAsIwX0vAmiVpO8RDXq8b76m+BavAr4L5s4wiPEaFt?=
- =?us-ascii?Q?ZKy5rglXeYPARtwlYsSN0qlpi/qIslgXTvRXXPoPaE6OJ4IBGty1t14eo8Fv?=
- =?us-ascii?Q?ogumb6/Ra8+SlE5wahix4PGFXa5XNNf+wzh01tY/93tj1iAewVfpNiL+V0yY?=
- =?us-ascii?Q?tLnmnZpchh5xlC+GvtOdGEmvGVZ+qtnOharc8nrNp/uwUxha1GSguofxrOuF?=
- =?us-ascii?Q?4M5mLnIWzIZmT9jX5Pd6ROiSJHLxwDB/H8zgWN8SB+GwrIT8mGGsLz2i9ENV?=
- =?us-ascii?Q?m/oJ3zrXSBK0vl9qntbQSdDjHi7Kpwua5zj9UupxCc/FDCjX5f7lCObDrXKw?=
- =?us-ascii?Q?kdGXaI2zZZ3msLPG9fagYuJXMkgcnuoM0ma2Urou/b3q3qDKyEYNvrXk0Y77?=
- =?us-ascii?Q?MI0QSiTQ+5FzYTYn2kjV95L9init1ir6ZjQbBfPItTbRKgghCojN8NnWm1Om?=
- =?us-ascii?Q?oAO3BwE7QgP376RmYIx3hp9eyznFri4turVUvV80PXzg+2mJrYqSyIimABMo?=
- =?us-ascii?Q?Pd7cQ5/syGzdTWB857bpSoCPN3+1+fDxA3nVrJnN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7a5cb6b-0673-4b91-ff8a-08dcd19428ef
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 12:29:05.5157
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jzWLaKrh1F067/XjTA1vInzD3h8IsjVBpJOxNveizGGBU2Rr3twfR06HSbKjiz0wXbrq+DGn7pExX64Zv8YfHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5553
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
+To: Arnd Bergmann <arnd@arndb.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
+ <20240903151437.1002990-4-vincenzo.frascino@arm.com>
+ <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
+ <e28e1974-cced-462c-8f57-ca1474272e73@arm.com>
+ <11527a80-7453-4624-b406-e88c5692b015@app.fastmail.com>
+ <ccaac82f-0c43-491e-ab8a-1da8bf8c7477@csgroup.eu>
+ <8868ef2c-6bfb-4ab7-ac5e-640e05658ee1@app.fastmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <8868ef2c-6bfb-4ab7-ac5e-640e05658ee1@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Replace a comma between expression statements by a semicolon.
 
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
- fs/xfs/scrub/ialloc_repair.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/scrub/ialloc_repair.c b/fs/xfs/scrub/ialloc_repair.c
-index a00ec7ae1..c8d2196a0 100644
---- a/fs/xfs/scrub/ialloc_repair.c
-+++ b/fs/xfs/scrub/ialloc_repair.c
-@@ -657,7 +657,7 @@ xrep_ibt_build_new_trees(
- 	 * Start by setting up the inobt staging cursor.
- 	 */
- 	fsbno = XFS_AGB_TO_FSB(sc->mp, sc->sa.pag->pag_agno,
--			XFS_IBT_BLOCK(sc->mp)),
-+			XFS_IBT_BLOCK(sc->mp));
- 	xrep_newbt_init_ag(&ri->new_inobt, sc, &XFS_RMAP_OINFO_INOBT, fsbno,
- 			XFS_AG_RESV_NONE);
- 	ri->new_inobt.bload.claim_block = xrep_ibt_claim_block;
-@@ -678,7 +678,7 @@ xrep_ibt_build_new_trees(
- 			resv = XFS_AG_RESV_NONE;
- 
- 		fsbno = XFS_AGB_TO_FSB(sc->mp, sc->sa.pag->pag_agno,
--				XFS_FIBT_BLOCK(sc->mp)),
-+				XFS_FIBT_BLOCK(sc->mp));
- 		xrep_newbt_init_ag(&ri->new_finobt, sc, &XFS_RMAP_OINFO_INOBT,
- 				fsbno, resv);
- 		ri->new_finobt.bload.claim_block = xrep_fibt_claim_block;
--- 
-2.34.1
+Le 08/09/2024 à 22:48, Arnd Bergmann a écrit :
+> On Fri, Sep 6, 2024, at 18:40, Christophe Leroy wrote:
+>> Le 06/09/2024 à 21:19, Arnd Bergmann a écrit :
+>>> On Fri, Sep 6, 2024, at 11:20, Vincenzo Frascino wrote:
+> 
+>>>> Looking at the definition of PAGE_SIZE and PAGE_MASK for each architecture they
+>>>> all depend on CONFIG_PAGE_SHIFT but they are slightly different, e.g.:
+>>>>
+>>>> x86:
+>>>> #define PAGE_SIZE        (_AC(1,UL) << PAGE_SHIFT)
+>>>>
+>>>> powerpc:
+>>>> #define PAGE_SIZE        (ASM_CONST(1) << PAGE_SHIFT)
+>>>>
+>>>> hence I left to the architecture the responsibility of redefining the constants
+>>>> for the VSDO.
+>>>
+>>> ASM_CONST() is a powerpc-specific macro that is defined the
+>>> same way as _AC(). We could probably just replace all ASM_CONST()
+>>> as a cleanup, but for this purpose, just remove the custom PAGE_SIZE
+>>> and PAGE_SHIFT macros. This can be a single patch fro all
+>>> architectures.
+>>>
+>>
+>> I'm not worried about _AC versus ASM_CONST, but I am by the 1UL versus 1.
+>>
+>>
+>> This can be a problem on 32 bits platforms with 64 bits phys_addr_t
+> 
+> But that would already be a bug if anything used this, however
+> none of them do. The only instance of an open-coded
+> 
+> #define PAGE_SIZE       (1 << PAGE_SHIFT)
+> 
+> is from openrisc, but that is only used inside of __ASSEMBLY__, for
+> the same effect as _AC().
 
+Maybe I was not clear enough. The problem is not with PAGE_SHIFT but 
+with PAGE_MASK, and that's what I show with my exemple.
+
+If take the definition from ARM64 (which is the same as several other 
+artchitectures):
+
+#define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
+#define PAGE_MASK		(~(PAGE_SIZE-1))
+
+PAGE_SHIFT is 12
+PAGE_SIZE is then 4096 UL
+PAGE_MASK is then 0xfffff000 UL
+
+So if I take the probe() in drivers/uio/uio_pci_generic.c, it has:
+
+	uiomem->addr = r->start & PAGE_MASK;
+
+uiomem->addr is a phys_addr_t
+r->start is a ressource_size_t hence a phys_addr_t
+
+And phys_addr_t is defined as:
+
+	#ifdef CONFIG_PHYS_ADDR_T_64BIT
+	typedef u64 phys_addr_t;
+	#else
+	typedef u32 phys_addr_t;
+	#endif
+
+On a 32 bits platform, UL is unsigned 32 bits, so the r->start & 
+PAGE_MASK will and r->start with 0x00000000fffff000
+
+That is wrong.
+
+
+That's the reason why powerpc does not define PAGE_MASK like ARM64 but 
+defines PAGE_MASK as:
+
+	(~((1 << PAGE_SHIFT) - 1))
+
+When using 1 instead of 1UL, PAGE_MASK is still 0xfffff000 but it is a 
+signed constant, so when it is anded with an u64, it gets 
+signed-extended to 0xfffffffffffff000 which gives the expected result.
+
+That's what I wanted to illustrate with the exemple in my previous 
+message. The function f() was using the signed PAGE_MASK while function 
+g() was using the unsigned PAGE_MASK:
+
+00000000 <f>:
+    0:    54 84 00 26     clrrwi  r4,r4,12
+    4:    4e 80 00 20     blr
+
+00000008 <g>:
+    8:    54 84 00 26     clrrwi  r4,r4,12
+    c:    38 60 00 00     li      r3,0
+   10:    4e 80 00 20     blr
+
+Function f() returns the given u64 value with the 12 lowest bits cleared
+Function g() returns the given u64 value with the 12 lowest bits cleared 
+and the 32 highest bits cleared as well, which is unexpected.
+
+Christophe
 
