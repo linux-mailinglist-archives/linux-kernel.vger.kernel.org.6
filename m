@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-322928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824969734AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22169734B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C28328E223
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855D328E191
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8FC19341A;
-	Tue, 10 Sep 2024 10:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146B0194145;
+	Tue, 10 Sep 2024 10:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Qait014S";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Qait014S"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SM+jyS0r";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OnQ7KAf6"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D416192D8E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B782F19066C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725964790; cv=none; b=SYTJORfKL2Mx6Qwi/GkFBYVFZpi2O50itHBZtaxXf8dAbDrp8WrxiFbPvX+7CHn1Vlfshjx+gJb/9VZELiC5JQ50uROO1E0/uo4cIygmFvXoVyp9EIzVNd9v2XOy3nQkvWxnlSYxCwZHfG7XIB5PWy0OPhc1bM4yohbXmILNKZw=
+	t=1725964796; cv=none; b=R6Byhoy6fFYzGBowpvBfzKBbzvOxXqW+JjTmddbcGXMy3wpjN62Hilu9O0rboTk2WmCewsAFGCey3RI6TXSr1k2iNdT4SvDd0wrAWVvfZ8XfMj6FHmZm/DLDgO8VO/4GXgn599eRBgOscDF7c4UiGLQjvuL5C/0q1KxfhJ0d4PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725964790; c=relaxed/simple;
-	bh=mv9FYTya/O9fdhC/WxSu1acM0NTt5psfdBXI5BpJxG0=;
+	s=arc-20240116; t=1725964796; c=relaxed/simple;
+	bh=ZVNTVzloPPoY9pyApH76j9KeeFfm6hJbNOT4XsmabrY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wz65AfnV2/GuevKw+i5M3f+mgs+x2AyI9wf/V8KevaQ+oGfHzsSFF73l7Z08TiSvzAA7gN6YOlI98IvxNuBtlt9G2vwEXRMKJomZlgYkT07PMUTe3EusDf38GPo70rJXGsGXr/DjRwBXsmVxC0CcMlVB8300wTJsD4WHkcv26y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Qait014S; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Qait014S; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version:Content-Type; b=hO5aJSAl32Dsc7OyKr73SY/3WsksaJ2xR2dMApTtmB67azupz/k3n7lxg1GHkU6zODadN1HWo25ayKwirbTJf03KqxcA8cOhbPnZBjzLbL+ETzlcV+jjl2fXl7X3Zs4EHLMMl3fC0aL5ipjzYnhZ0vJCvIHiJGLU1pj0Mlu/u5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SM+jyS0r; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OnQ7KAf6; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0D1941F7D7;
-	Tue, 10 Sep 2024 10:39:47 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DA63C1FCA1;
+	Tue, 10 Sep 2024 10:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725964793; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ry9BWk+IW/6AFLvNsRzqaQCzI4wycP3mrtgkxl2hqoA=;
-	b=Qait014Slg/TTZ28ScHpNuI/xv15RZJzrmDszRks2uzA1kBn3GJepdd1TVxb1B0u8C5FhS
-	3SpxFvHEkiPvfSlUkpZRPTk0teFi7oWTElR9+x8JOei7zL6aebD2mosCl27jIQv3+MWluW
-	gsWChrf/o/fh3lq9u89q5UwxHU331B4=
+	bh=nD76pP5OZNhOX+ZnUlyw6DmjbuKodav8xGalTcxgqKM=;
+	b=SM+jyS0rolXNCenAVbEf9zVuoZZxbNyExJsCF0Sk6KbrseIi48t29NKyAE5GrKe89xbNAd
+	4Y6DBmhqFVpmw6Us79A2sIAV90eX7K9Oebdcr3YKAhsN82CmadaULAvK+l5qlChYj4hQNm
+	8kpsDm54SD+YgJWQPivJ4GIC1tSQz28=
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=Qait014S
+	dkim=pass header.d=suse.com header.s=susede1 header.b=OnQ7KAf6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1725964792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ry9BWk+IW/6AFLvNsRzqaQCzI4wycP3mrtgkxl2hqoA=;
-	b=Qait014Slg/TTZ28ScHpNuI/xv15RZJzrmDszRks2uzA1kBn3GJepdd1TVxb1B0u8C5FhS
-	3SpxFvHEkiPvfSlUkpZRPTk0teFi7oWTElR9+x8JOei7zL6aebD2mosCl27jIQv3+MWluW
-	gsWChrf/o/fh3lq9u89q5UwxHU331B4=
+	bh=nD76pP5OZNhOX+ZnUlyw6DmjbuKodav8xGalTcxgqKM=;
+	b=OnQ7KAf6lPli0e/Nv4bP2CW87T5oyG+Dlf2NXlkvim17/Daz2GgP1oUIb0HOLv5WECZUEF
+	6NWApPG8M/pY+y+ehSEMb8QaKQM3DaShqT42bcWDMpjpM3nGNlHgvSQezPvVD5HP2sfv5u
+	CdB9+E34AXVYtnmFvD6vAjq/XMQ1IRg=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A2705132CB;
-	Tue, 10 Sep 2024 10:39:46 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A6E5132CB;
+	Tue, 10 Sep 2024 10:39:52 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2BE7JvIh4Ga/YwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 10:39:46 +0000
+	id stCLGPgh4GbKYwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 10:39:52 +0000
 From: Juergen Gross <jgross@suse.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -80,9 +80,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	xen-devel@lists.xenproject.org,
 	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
 	Jan Beulich <jbeulich@suse.com>
-Subject: [PATCH v3 2/7] xen: introduce generic helper checking for memory map conflicts
-Date: Tue, 10 Sep 2024 12:39:27 +0200
-Message-ID: <20240910103932.7634-3-jgross@suse.com>
+Subject: [PATCH v3 3/7] xen: move checks for e820 conflicts further up
+Date: Tue, 10 Sep 2024 12:39:28 +0200
+Message-ID: <20240910103932.7634-4-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240910103932.7634-1-jgross@suse.com>
 References: <20240910103932.7634-1-jgross@suse.com>
@@ -94,7 +94,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 0D1941F7D7
+X-Rspamd-Queue-Id: DA63C1FCA1
 X-Spam-Score: -5.51
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-5.51 / 50.00];
@@ -106,120 +106,53 @@ X-Spamd-Result: default: False [-5.51 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
 	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
 	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email]
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-When booting as a Xen PV dom0 the memory layout of the dom0 is
-modified to match that of the host, as this requires less changes in
-the kernel for supporting Xen.
-
-There are some cases, though, which are problematic, as it is the Xen
-hypervisor selecting the kernel's load address plus some other data,
-which might conflict with the host's memory map.
-
-These conflicts are detected at boot time and result in a boot error.
-In order to support handling at least some of these conflicts in
-future, introduce a generic helper function which will later gain the
-ability to adapt the memory layout when possible.
-
-Add the missing check for the xen_start_info area.
-
-Note that possible p2m map and initrd memory conflicts are handled
-already by copying the data to memory areas not conflicting with the
-memory map. The initial stack allocated by Xen doesn't need to be
-checked, as early boot code is switching to the statically allocated
-initial kernel stack. Initial page tables and the kernel itself will
-be handled later.
+Move the checks for e820 memory map conflicts using the
+xen_chk_is_e820_usable() helper further up in order to prepare
+resolving some of the possible conflicts by doing some e820 map
+modifications, which must happen before evaluating the RAM layout.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 Reviewed-by: Jan Beulich <jbeulich@suse.com>
 ---
- arch/x86/xen/mmu_pv.c  |  5 +----
- arch/x86/xen/setup.c   | 34 ++++++++++++++++++++++++++++------
- arch/x86/xen/xen-ops.h |  3 ++-
- 3 files changed, 31 insertions(+), 11 deletions(-)
+ arch/x86/xen/setup.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index f1ce39d6d32c..839e6613753d 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2018,10 +2018,7 @@ void __init xen_reserve_special_pages(void)
- 
- void __init xen_pt_check_e820(void)
- {
--	if (xen_is_e820_reserved(xen_pt_base, xen_pt_size)) {
--		xen_raw_console_write("Xen hypervisor allocated page table memory conflicts with E820 map\n");
--		BUG();
--	}
-+	xen_chk_is_e820_usable(xen_pt_base, xen_pt_size, "page table");
- }
- 
- static unsigned char dummy_mapping[PAGE_SIZE] __page_aligned_bss;
 diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index 4bcc70a71b7d..96765180514b 100644
+index 96765180514b..dba68951ed6b 100644
 --- a/arch/x86/xen/setup.c
 +++ b/arch/x86/xen/setup.c
-@@ -567,7 +567,7 @@ static void __init xen_ignore_unusable(void)
- 	}
- }
+@@ -764,6 +764,28 @@ char * __init xen_memory_setup(void)
+ 	/* Make sure the Xen-supplied memory map is well-ordered. */
+ 	e820__update_table(&xen_e820_table);
  
--bool __init xen_is_e820_reserved(phys_addr_t start, phys_addr_t size)
-+static bool __init xen_is_e820_reserved(phys_addr_t start, phys_addr_t size)
- {
- 	struct e820_entry *entry;
- 	unsigned mapcnt;
-@@ -624,6 +624,23 @@ phys_addr_t __init xen_find_free_area(phys_addr_t size)
- 	return 0;
- }
- 
-+/*
-+ * Check for an area in physical memory to be usable for non-movable purposes.
-+ * An area is considered to usable if the used E820 map lists it to be RAM.
-+ * In case the area is not usable, crash the system with an error message.
-+ */
-+void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
-+				   const char *component)
-+{
-+	if (!xen_is_e820_reserved(start, size))
-+		return;
-+
-+	xen_raw_console_write("Xen hypervisor allocated ");
-+	xen_raw_console_write(component);
-+	xen_raw_console_write(" memory conflicts with E820 map\n");
-+	BUG();
-+}
-+
- /*
-  * Like memcpy, but with physical addresses for dest and src.
-  */
-@@ -824,11 +841,16 @@ char * __init xen_memory_setup(void)
- 	 * Failing now is better than running into weird problems later due
- 	 * to relocating (and even reusing) pages with kernel text or data.
- 	 */
--	if (xen_is_e820_reserved(__pa_symbol(_text),
--				 __pa_symbol(_end) - __pa_symbol(_text))) {
--		xen_raw_console_write("Xen hypervisor allocated kernel memory conflicts with E820 map\n");
--		BUG();
--	}
++	/*
++	 * Check whether the kernel itself conflicts with the target E820 map.
++	 * Failing now is better than running into weird problems later due
++	 * to relocating (and even reusing) pages with kernel text or data.
++	 */
 +	xen_chk_is_e820_usable(__pa_symbol(_text),
 +			       __pa_symbol(_end) - __pa_symbol(_text),
 +			       "kernel");
@@ -230,23 +163,45 @@ index 4bcc70a71b7d..96765180514b 100644
 +	 */
 +	xen_chk_is_e820_usable(__pa(xen_start_info), sizeof(*xen_start_info),
 +			       "xen_start_info");
++
++	/*
++	 * Check for a conflict of the hypervisor supplied page tables with
++	 * the target E820 map.
++	 */
++	xen_pt_check_e820();
++
+ 	max_pages = xen_get_max_pages();
  
- 	/*
- 	 * Check for a conflict of the hypervisor supplied page tables with
-diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
-index 0cf16fc79e0b..9a27d1d653d3 100644
---- a/arch/x86/xen/xen-ops.h
-+++ b/arch/x86/xen/xen-ops.h
-@@ -48,7 +48,8 @@ void xen_mm_unpin_all(void);
- void __init xen_relocate_p2m(void);
- #endif
+ 	/* How many extra pages do we need due to remapping? */
+@@ -836,28 +858,6 @@ char * __init xen_memory_setup(void)
  
--bool __init xen_is_e820_reserved(phys_addr_t start, phys_addr_t size);
-+void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
-+				   const char *component);
- unsigned long __ref xen_chk_extra_mem(unsigned long pfn);
- void __init xen_inv_extra_mem(void);
- void __init xen_remap_memory(void);
+ 	e820__update_table(e820_table);
+ 
+-	/*
+-	 * Check whether the kernel itself conflicts with the target E820 map.
+-	 * Failing now is better than running into weird problems later due
+-	 * to relocating (and even reusing) pages with kernel text or data.
+-	 */
+-	xen_chk_is_e820_usable(__pa_symbol(_text),
+-			       __pa_symbol(_end) - __pa_symbol(_text),
+-			       "kernel");
+-
+-	/*
+-	 * Check for a conflict of the xen_start_info memory with the target
+-	 * E820 map.
+-	 */
+-	xen_chk_is_e820_usable(__pa(xen_start_info), sizeof(*xen_start_info),
+-			       "xen_start_info");
+-
+-	/*
+-	 * Check for a conflict of the hypervisor supplied page tables with
+-	 * the target E820 map.
+-	 */
+-	xen_pt_check_e820();
+-
+ 	xen_reserve_xen_mfnlist();
+ 
+ 	/* Check for a conflict of the initrd with the target E820 map. */
 -- 
 2.43.0
 
