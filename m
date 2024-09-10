@@ -1,152 +1,97 @@
-Return-Path: <linux-kernel+bounces-323496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF07973DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A979D973DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E481F277E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7279A287FEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C68D1A00F5;
-	Tue, 10 Sep 2024 17:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B04C4A02;
+	Tue, 10 Sep 2024 17:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nEi2hqXy"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASc5+0TT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B83A3C2F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C283C2F;
+	Tue, 10 Sep 2024 17:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987674; cv=none; b=NM8MO0bz5ZExSSR91Iaaiitz9kGKxwmUaDqYoqtVwmjqafx+cWqaKRm4bxORh+0pmwFniRtYZ+b/5yVwtjF3jUHgBkwV3wI2Y7AKDmNHigyyx+MQqzU/1fmV+QLLKwBLDwItuSDUfIwdQLUW7l+rerAFAay9bU3brjE+5fB4Y6k=
+	t=1725987746; cv=none; b=Tv0tzEuDVdnQLQN6oNZBkVIn1SJrLSyl8eOQtfhuJnH5aSwLfFWziZjaLO06wy2UzbDxSYFL5Sw8mhxrXVfAUG7LxsC9OhiZndqpuuIHZrCOTrZ/Dv5opmiFlI7yzHNXrqX62/0JJftfhyhy63tkmpcr2ylp6ZfQYTwRe2X55PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987674; c=relaxed/simple;
-	bh=HIYNvnAdgW89EfSpETD3OtBL5KxgpvDe1ZV5+r8iyVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSpsXOEcyh+W8mgJ8FeUewX0KnexYd5pb7ZfAyayTIXWibHdtieioAj8rC8bgzKdndFSWSIvxm/mHepEjjUOaZjutH+tnlR8vB8W7I/BcWfrTRfz8TqYxGGNAFSX2K3/vjzH+lRiVJf07h3iTZbN02a/a4WKGNJkbpzNHlPR2+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nEi2hqXy; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-205659dc63aso57753755ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725987673; x=1726592473; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pBskbk3QBU0YMtrU99WpBguxflCzi8adsZB8njQ7nhU=;
-        b=nEi2hqXy4bFv+4EXH00305ZEe9khGaOb0o7r5k1e7907EtjPorp37Sg6idERwbjLrt
-         BaxF3rwNLBB1KcmCg26EowKEPFX+r1J1NJJCiYxlaWaHZARxdOHh2gdslX7eZNDJFvvi
-         aokzwO3fQIkZ2GoLtPmekyEkD7ZGP2ycs+qO6jcnPLsCF7lR1RLO3UxKaGpfSsMcyXX/
-         0C2V//Gn5iFPWG1Gzpqhb1HAoMV3wMGV6RU0K4NvAJu5t+ZKbgWAoBFupFhnwTsR/Kk8
-         vpJFZjcYN157HT82zDoi+sEA4to/H+Y6rWxUNRgApGzdvhgxN6kn7PcKqPrUoVCBDX+L
-         ft/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987673; x=1726592473;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBskbk3QBU0YMtrU99WpBguxflCzi8adsZB8njQ7nhU=;
-        b=UD87SYtwCjqTjzINzu7DQvUQVSDc+Q4Ij39RLI64iL4GY1wTQy9kcQ9319Dk+M71fs
-         tpq6LemIOgES/Ry0Yl+OA88de6fbpCbL50K+WRApZW4PIpVKZGsVkoqMUatiWrNvO29q
-         oW17rydwQ3wBW0wc2JJU8HiNPnadM7eEfvjiGSb1RDLotUSJAy3m1io9nYxDsMQCm4BV
-         JEoNV+JxwkF+SF0JeAH+XSU3A+oJH3fpAwcA+q0LK0+UKh/P223ql9dQc7+pO29PBbX4
-         QtV776f8ismWk/8S5NerbJ5ZEUM0gO/Gqoz/wQR/iPvZmGDFrc1X4VVom1XmxgLV5Dkx
-         LjFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2y8k5LQ2x4vp5uYMH7ty6lv0ESq8Ca7oPnuTTfC9l8ivvlxcdtR6A2+PzbbkLJQrwCl2LJttQ8qwdtdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMoncb/rU5GIrqT0OGXjR1rjCRIV63NTjWkFtBFugz3I5X5NYZ
-	OHuqrfkskcDM3WAsXUFuKnBa5VLfSbCffIUJdYBO9TDtmKk2eUUThwUChA3IFw==
-X-Google-Smtp-Source: AGHT+IF/raqp+DCJypfwe5V7+Q+7qT8bMOaTzbFGyeYWrZCI1/k/X6tIvkrcWMVdJdlQehGHErlM4Q==
-X-Received: by 2002:a17:902:d2c9:b0:207:73f:59f3 with SMTP id d9443c01a7336-2074c681cecmr18549225ad.32.1725987672621;
-        Tue, 10 Sep 2024 10:01:12 -0700 (PDT)
-Received: from thinkpad ([120.60.128.228])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1f469sm50762155ad.223.2024.09.10.10.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 10:01:12 -0700 (PDT)
-Date: Tue, 10 Sep 2024 22:30:52 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	abel.vesa@linaro.org, johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Subject: Re: [PATCH v6 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
-Message-ID: <20240910170052.qorc7hedfy4oqzgt@thinkpad>
-References: <20240904-pci-qcom-gen4-stability-v6-0-ec39f7ae3f62@linaro.org>
- <20240904-pci-qcom-gen4-stability-v6-3-ec39f7ae3f62@linaro.org>
- <ZtgqvXGgp2sWNg5O@hovoldconsulting.com>
- <20240905152742.4llkcjvvu3klmo6j@thinkpad>
- <Ztnb-GauC_8D8N-i@hovoldconsulting.com>
- <20240905173437.hm3hegv5zolaj7gj@thinkpad>
- <Ztql31KXrBQ1I5JV@hovoldconsulting.com>
+	s=arc-20240116; t=1725987746; c=relaxed/simple;
+	bh=OVBlCq7wdehsJYij7F5jGJpGGIG/63DBMElonJ8+ksI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iHpuvQHvmblmrZaafZmnd3xVjwPgrwugrm6j5kCITXQHafgoPXATigwBxymxXwhSC9vZIuTtRsdhP0hxdL2fcsbZap+MDuxCLpb/pRJRhrRm+dpgGXD3A/RX9l1YqB9WwRXUt0fGrSVjnQaYtPidDTVhNcmvYEIZRxoQFhkWTec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASc5+0TT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD78C4CEC4;
+	Tue, 10 Sep 2024 17:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725987746;
+	bh=OVBlCq7wdehsJYij7F5jGJpGGIG/63DBMElonJ8+ksI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ASc5+0TThmRIqMYhqhCpMHdu1Ak3qN/Spnrm7XiTJZQklStsq+fgu+MmFnfK3eYUl
+	 L7hF3/4piwmCI0VvWwZuRu1jOafcXKJbIEee60ne+R++0RjB1aWeJTFI5haxoRkM1I
+	 Ztpwt0Fn9YWlBoYJpTYZKxHfpSSmth9PH5xhbQlO8vKXYiKMLho8zQznlBHejucKhY
+	 SGiP2SVdQUpa0o+lzEjtwrSRn+l1x0mQhG82/X00GmM+DV9liNgpRxrZPDcEMqt+Pl
+	 rkSvDrSOOo63Agc75ODkOyVh6zuE3zZCGDLIgBJ4zQ+0SgUP8fKlu4ZQWCz6t+yjyS
+	 zz8o09OL6Ls0g==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ Tang Bin <tangbin@cmss.chinamobile.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240908124124.1971-1-tangbin@cmss.chinamobile.com>
+References: <20240908124124.1971-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: soc-ac97: Fix the incorrect description
+Message-Id: <172598774446.662466.4403563522756157528.b4-ty@kernel.org>
+Date: Tue, 10 Sep 2024 18:02:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Ztql31KXrBQ1I5JV@hovoldconsulting.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Fri, Sep 06, 2024 at 08:49:03AM +0200, Johan Hovold wrote:
-> On Thu, Sep 05, 2024 at 11:04:37PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Sep 05, 2024 at 06:27:36PM +0200, Johan Hovold wrote:
-> > > On Thu, Sep 05, 2024 at 08:57:42PM +0530, Manivannan Sadhasivam wrote:
->  
-> > > > Perhaps we can just get rid of the Kconfig entry and build it by default for
-> > > > both RC and EP drivers? I don't see a value in building it as a separate module.
-> > > > And we may also move more common code in the future.
-> > > 
-> > > It is already built by default for both drivers. I'm not sure what
-> > > you're suggesting here.
-> > 
-> > Right now it is selected by both drivers using a Kconfig symbol. But I'm
-> > thinking of building it by default as below:
-> > 
-> > -obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
-> > -obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
-> > +obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o pcie-qcom-common.o
-> > +obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o pcie-qcom-common.o
-> > 
-> > A separate Kconfig symbol is not really needed here as this file contains common
-> > code required by both the drivers.
+On Sun, 08 Sep 2024 20:41:23 +0800, Tang Bin wrote:
+> In the function snd_soc_alloc_ac97_component &
+> snd_soc_new_ac97_component, the error return is
+> ERR_PTR, so fix the incorrect description.
 > 
-> But the separate Kconfig symbol will only be enabled via either PCI
-> driver's option (e.g. can't be enabled on its own).
 > 
 
-True. But since the common file is required by both drivers, I thought of just
-building it by default. But looking at your below reply, it won't be possible.
+Applied to
 
-> I'm also not sure if the above works if you build one driver as a module
-> and the other into the kernel (yes, I still intend to resubmit my patch
-> for making the rc driver modular).
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Hmm, I thought you dropped that patch ;) Anyway, if that happens, it will be a
-problem. I'll keep it as it is.
+Thanks!
 
-- Mani
+[1/1] ASoC: soc-ac97: Fix the incorrect description
+      commit: 86a7f453e99c3c202ac1623557e4f57bd73fc88c
 
--- 
-மணிவண்ணன் சதாசிவம்
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
