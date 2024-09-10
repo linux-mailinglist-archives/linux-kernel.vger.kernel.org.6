@@ -1,205 +1,179 @@
-Return-Path: <linux-kernel+bounces-322424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A569728D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928619728D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70BECB24215
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F4D1F218F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F111E17DFFD;
-	Tue, 10 Sep 2024 05:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EA316C854;
+	Tue, 10 Sep 2024 05:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YL4TdmPg"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="lmxYR9IE"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2058.outbound.protection.outlook.com [40.107.255.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC47C17D355;
-	Tue, 10 Sep 2024 05:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945220; cv=none; b=h0Ed0vcwg0vlx0wHXGHylwuD7q5Jymy5zGBJcC4gdNG1UxSJsfWFHCvieL5vu7zSqurv13PLEEqIbd737mL3Kqygu5vEcrzRRwDmcYwraqRizc/ph2z8SyRFwYW01vKXAa5GjLY4Qit6vtHhOyLoyvHXEp76i2BWKjpgwY1Tvco=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945220; c=relaxed/simple;
-	bh=QaUMIR2jAIriOPWTJeTYRrlgMY/AKXUdAomsZ6SCrTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ALU6fPWz2nDaGkiFMhCmksgJedRIrugN720SGxHBABy/mYQQHKYxQbO/PK0HLC/nlv9/kuUV9hAWX0IzYzxFbk5muZaM4zvfXPvAVkAJiMogdA7RckgGLACKSLzTlr2lWxGtMu2Ib2/Wi7UEoXXcM5opGC09FyTorlnbIKLkQF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YL4TdmPg; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-205909afad3so4205445ad.2;
-        Mon, 09 Sep 2024 22:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725945218; x=1726550018; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PrcFRNmr5hZbZ96slhcvo9eITicm6QaTzwg2eqphYZM=;
-        b=YL4TdmPgdRd+0249puCnAXQZy3bd8WpOgzvqt1c20SeKFtRd+tuFSk2Flm3Gr02HLf
-         2tTww2OG7Kw69ux1E056VtkwwE2de4PJDWPAky2DS4E1mxbnqqKdNqG+sMlaSZrRXewM
-         O0RTIIXhX1p2mqL61SV38KPlWixIKFa5YD1KmC+YO1OqvZyiWOL4Sp4rBABP9JICJwBg
-         zoVDnRPfaKNY9j6okoXMoni7hsEgGe6WhV7OhYAdKZuyUznSNgGjYbQ4Zbc8uC9s5jo4
-         mb5nwawuIhIPyZa/gzrOEsc/srIqtG2fqkV6zZfJeD00KW/Xq4lkaoZagoMzdA++0mxG
-         YucQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725945218; x=1726550018;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PrcFRNmr5hZbZ96slhcvo9eITicm6QaTzwg2eqphYZM=;
-        b=ZWTYySBcilj2G5YVu2xV+zicOgPL/eoXKd6m39PdCyWzZdzE0P6EWSfMpQk3AMGsw+
-         gGrSleWkOSjHfysbtGFccKoO834VnynBwTiO0pI99i0nccOt28IEyZ4W3uH3mBjuELnw
-         NiSDw0TKjZq10HZirVqgeiBTE+V7D0eli6HKOiAFErAKnf6vUfJ7t5e/ZHPpAjUXck1r
-         pC1tKRjg30QA+SyF2rmuRX2vYq+Q8UFJhRD1WCwLcnDO4A3hlJXbwGczg3xYcRizprQN
-         is01X7JwWFiycIUtF/rtR3tjgVkfc9m9dRB22fo37i7xsxFguvdBFTpqS0Idx/UHEtMJ
-         oRkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVB8ky7HJIpD6nnH3IqB5FWcqj5HrwMWCoyam5HR1J0QsG+jBVHINaxeCx3s64qNGC+x+o=@vger.kernel.org, AJvYcCWZmy6PpUyoicMoiaueHyBBNHLozzIPB9+Ax9e3b5OWH5rR1EaXBpL51oeu8Y0SClzJ2AZGn0EwnN50LajCyEPiKXGX@vger.kernel.org, AJvYcCXjvTKTVjSmd4xc/1VRJ1XIadBD1d2yP5qep527p/E11xrAOj70gdC8ID8zvim1QtcKP+2Qfhdnv6pc3uAZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5f8ngGEX8hdlQk9SZUFsoXa6JGVI9vHjiGQ2792IDfbMMVD+b
-	qB3ehIjWLa/9PZbDxnzqSAc62pG3+liBNHwK8gMisf+IFnQVAwlr9uh0xGfEvUjzXcyFF64lNkH
-	KWnNCRWboj4KfQequwcj2MX75vsk=
-X-Google-Smtp-Source: AGHT+IGWSH7k1uV54/0MBpkfCOKW4zDfjkr742eQE81GTLjm0Cxzjn2iYMp2AwESyv1OkN1JTQdZy9tVlGoFiTekoVU=
-X-Received: by 2002:a17:902:d2c1:b0:206:ac4b:8157 with SMTP id
- d9443c01a7336-2070a554645mr95706965ad.31.1725945217959; Mon, 09 Sep 2024
- 22:13:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AED13FD72;
+	Tue, 10 Sep 2024 05:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725945240; cv=fail; b=i780D0QPRn2PpOHrw6epPFipgq56r/MypbSjmpuR+QiinFoMAi4VvKSbQE7aCVtdlCEcqBhAwwQRhLMMiOmxiDhWJc3M6pnbBtcmAIgSj+xddTcd/ZxM66w/nTsXhwA4TSS269jJ+vsxIivm9zjUoemdZE+XfkpL4MEK6+NyzIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725945240; c=relaxed/simple;
+	bh=MLsRhp8BSLDG7AxBR2//RavxGSTiaHDcOBi3GZbGwpc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Z8EeLU8WrjEX52PjTxHnoJm8DlNnwEeGO2mtDedz8Ol0Qi2AVoxHFaBkCGP6q0gs5Ry3Qv07Ejdf4EpOrX2aOZBiiGUoUQ6ZKEM8RuVUtGKUD6gotCeG0zA7CVIvstXyt0h3ks3YuXvGju+u6HVyM9rDNvU8+dTxa6I65OBgIs4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=lmxYR9IE; arc=fail smtp.client-ip=40.107.255.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FP55PAllpecj/ajKIBDS+A+cha5SS5Mnj5IrQ2FMZw1qsUY0upuaOcrlGcg3h7GekOlmv7SdvGe2guyG8/X21uPee5YpK5JjbPbHY1cqmktaJmyjzomFk1dj0kSS8DyHGcOuppsB6wQE5hldTjk/kKhYYk6bCLpi97miBuzf+0ArcNG+TPDt3TeeKA3RkloFLj8RtOe8Jd5YDn4WKAqM5T/BVMK+9iIEtqD/FXGruyRmW2yQQsuioRGIyqk3cg37unNgPxlPnoDFYwU6PVm7ya4sg9aTeyGHO8vTTpRkTmRvjVKlUpOOhQrQoxbqT2ArzrbTUIKgZHkGr8hwFc3ngQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oY/TWRr07SZO2pez9pWuWd/uW1vFIoQquPFI2Sx+KlY=;
+ b=JK6zKwOil8gxSEFbLwu+WZsKuD7x2CJ2Wtf5ExveDx1k6GE2jq2nb9ymEYtTcJzKgbNjtAwhf6spXrZPKCsXQ5nYVQ0h95mHa3/zd3AdYHfhTMmjOm19sbk/tVimj2WsF8xRr9K8g916er9U4OCq40Ar5Q0U6Q2O4AHyax521TK6TwNkpdPaM8S1q+8y5736KHUyex6xRY1D22j9TkkrWBpEqqsHAbPrXYC0wGyvG99BJFD9v0OdZlgN8W/sV86zKR0w7ZKnKacDLxHW+4AS6QHGqHX+VmYsIyPhStSj8/8ieSXEoy+A4N8AT86DsPCdcFVYE5w+mbSjmMHmNeSQmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oY/TWRr07SZO2pez9pWuWd/uW1vFIoQquPFI2Sx+KlY=;
+ b=lmxYR9IEEDOSRPCNo6QVUAQDQwiT3kuUBjgwZCJsMdrIwjvA5ns/+SLSZKFyx7aLQ2pCYkRFxsZ2aDDYwQh2rb1LuqckcWNxwiM+IwC+Cw0NV2bAjffU+kbNa4M1/IgkmDO+GqgPiaAt9+n9Ck015138cNAbUnNa79IUUmITnMZkGrs/e1uv6dvQxSY2rzm0fAWBhHWl3kHGfSSW8Y3il1axmAXy774TajERNISZayd8EAGhjZDR44+gCu6GCiAb/wujF1aOsz7z/c9e2pkQjOJqrrVRsMUMmFTR+auhsDOQtUxf+UgQOxIPEkMQ2H8oyT0KpWI01DbA7y3SZ8Uv+A==
+Received: from PUZP153CA0003.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::9) by
+ OSQPR04MB7990.apcprd04.prod.outlook.com (2603:1096:604:298::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
+ 2024 05:13:52 +0000
+Received: from HK2PEPF00006FB5.apcprd02.prod.outlook.com
+ (2603:1096:301:c2:cafe::f4) by PUZP153CA0003.outlook.office365.com
+ (2603:1096:301:c2::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.5 via Frontend
+ Transport; Tue, 10 Sep 2024 05:13:52 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ HK2PEPF00006FB5.mail.protection.outlook.com (10.167.8.11) with Microsoft SMTP
+ Server id 15.20.7918.13 via Frontend Transport; Tue, 10 Sep 2024 05:13:51
+ +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: Revise quad mode to dual mode
+Date: Tue, 10 Sep 2024 13:13:49 +0800
+Message-Id: <20240910051350.2580971-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909224903.3498207-1-andrii@kernel.org> <20240909224903.3498207-2-andrii@kernel.org>
- <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
-In-Reply-To: <CAADnVQLB2b5Uh-qthnCOfJk+v+ty1nQh6LjMDkzjt1BPtGOVZA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Sep 2024 22:13:25 -0700
-Message-ID: <CAEf4Bzap+_fpXjfcnnqz7EH9=bGokpFbnoK==_YDWH855qx7=g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] uprobes: allow put_uprobe() from non-sleepable
- softirq context
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|OSQPR04MB7990:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 72943a29-e0da-4183-c8ff-08dcd1575c4f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jUXa/b8f6HToZuj/RQhq5vKiTr0ni+xrwEu5R7WbwqJct3EIHq7BKI8SXvRk?=
+ =?us-ascii?Q?n3+8583ML/4iQBWa0g1KeuEF9ktYiCqKmC7gCoaD8IjRbGziYXn4LUGM/NfW?=
+ =?us-ascii?Q?yr36pUvf4inOd1RDH7qzxlE/FIC83bodACCCK1EO0D6Yi9blMqOIJfT9y8Oo?=
+ =?us-ascii?Q?mvbreVKEfBLGmrrmH/ZnNr83so7HkHMO4iSK7Ssg342iZK47ZYifHCatVeAf?=
+ =?us-ascii?Q?E9yXNIu0Bhg6N1FnQPDKDa4FOkgeOeCTxpdrPUT6tqLRQav9gE9SMk9wlCJ/?=
+ =?us-ascii?Q?wR4f2hs2/8Dy+UIjutZhzs6fKeQNGIT8k/aV4kTnRpGBE+dXu+ozFYZ7eqeJ?=
+ =?us-ascii?Q?GnPA9oYhE818jwY9r1M/4UoZYtIlGeHX8vuROd6sy0sP/lgxHfMYtSba7duT?=
+ =?us-ascii?Q?04VN9AWRfLZhJBn31IPxtKHzwQbuixcgeB19B+Cm7aJSd3X7xN1KiQp9qrYG?=
+ =?us-ascii?Q?lZAItma+OCwPF8h2BdcvpBMWm+1ZS5YG2BG45u/rj1xiuVlQMjy9hKpedVS/?=
+ =?us-ascii?Q?GBufeiguuShk+/8c4p1Z/dFk23tWj9OZMtPYEv22Re9QfPXamZKmJvaJiXIx?=
+ =?us-ascii?Q?FLqvmlH/FCpvoEYfSP97R99LQ9ZM/+IfvO8mQblg8rX7EVumAGiuaai5/SXU?=
+ =?us-ascii?Q?iknda3NKVEEMuoBl3rc6zJDkwy4jz7w8u5XlLJlIl0maq49Hba2hv+agZNe9?=
+ =?us-ascii?Q?Fl2vjDf0H8BH9tBMvmKWsjeDlxaSOqF8fDSzs9KlyoTxjV/bVx2ZcwlEml07?=
+ =?us-ascii?Q?r0EcrqIhb25JaZfR9siEWLT1IpqHHi8uAVtwHmFQYv/jq50mq43Uof+qr7HC?=
+ =?us-ascii?Q?w94nVYwHAZ1HPVFcjqwGbaRbjDcxhP0QgcI1vHD0cjyzubanzhgAf4U3PMFl?=
+ =?us-ascii?Q?H7bN9L3G0cnSvyiaxxf6GFfbyIshd6lqRU1AUA0106LhggtVQv7jSCdbjoDN?=
+ =?us-ascii?Q?fs73wefjLJj/sWKmsq1lxRzqmmO+8fb3De/aqrbVxb8O3SVFzq885Zyv+O3m?=
+ =?us-ascii?Q?hKBRXcso8Jg7GjmkdkPvykbhZ9mBmGfr34Qcuxzc8iDJ7X4BPbsO5qve65CE?=
+ =?us-ascii?Q?kCXq+YjLjoQlFjVW65UxaA1u2UClFyLlFG9SQD06br7RfFjBYZC3QxR9ZsFl?=
+ =?us-ascii?Q?RH9gHeGGA1bjqaLRAaHb8U1uZieNthYA3LGQs2W6RkQtZ6jjAEsvbUDygjhd?=
+ =?us-ascii?Q?6NcJo0+fnezmy1Oe6EbhAfRekWnhpjb8QfhttTYfcUX1Y0jl46YSOTn51Mzj?=
+ =?us-ascii?Q?pEAGDZG2D0yTLVaxDkuFOYpNiCZFTLbzPikMAeGmEhO1ixOlkSbH3gFdNGmm?=
+ =?us-ascii?Q?51MY3DigWGt88Z0BsGjTKvJ/NRwDTReQM17Fs2MK0VsmTA2qSDBSYpsp6OX2?=
+ =?us-ascii?Q?EVPfsqcFR/rx0E3qARBv8bjrjBCm17jcB9pKjDlhaM98nDhUuB6gPDP5T3+4?=
+ =?us-ascii?Q?jV6TyC/u5w0o/51gICQPzsGZ3K0k46uj?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 05:13:51.8516
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72943a29-e0da-4183-c8ff-08dcd1575c4f
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB5.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR04MB7990
 
-On Mon, Sep 9, 2024 at 7:52=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, Sep 9, 2024 at 3:49=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org=
-> wrote:
-> >
-> > Currently put_uprobe() might trigger mutex_lock()/mutex_unlock(), which
-> > makes it unsuitable to be called from more restricted context like soft=
-irq.
-> >
-> > Let's make put_uprobe() agnostic to the context in which it is called,
-> > and use work queue to defer the mutex-protected clean up steps.
-> >
-> > To avoid unnecessarily increasing the size of struct uprobe, we colocat=
-e
-> > work_struct in parallel with rb_node and rcu, both of which are unused
-> > by the time we get to schedule clean up work.
-> >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  kernel/events/uprobes.c | 30 +++++++++++++++++++++++++++---
-> >  1 file changed, 27 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index a2e6a57f79f2..377bd524bc8b 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -27,6 +27,7 @@
-> >  #include <linux/shmem_fs.h>
-> >  #include <linux/khugepaged.h>
-> >  #include <linux/rcupdate_trace.h>
-> > +#include <linux/workqueue.h>
-> >
-> >  #include <linux/uprobes.h>
-> >
-> > @@ -54,14 +55,20 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
-> >  #define UPROBE_COPY_INSN       0
-> >
-> >  struct uprobe {
-> > -       struct rb_node          rb_node;        /* node in the rb tree =
-*/
-> > +       union {
-> > +               struct {
-> > +                       struct rb_node          rb_node;        /* node=
- in the rb tree */
-> > +                       struct rcu_head         rcu;
-> > +               };
-> > +               /* work is used only during freeing, rcu and rb_node ar=
-e unused at that point */
-> > +               struct work_struct work;
-> > +       };
-> >         refcount_t              ref;
-> >         struct rw_semaphore     register_rwsem;
-> >         struct rw_semaphore     consumer_rwsem;
-> >         struct list_head        pending_list;
-> >         struct list_head        consumers;
-> >         struct inode            *inode;         /* Also hold a ref to i=
-node */
-> > -       struct rcu_head         rcu;
-> >         loff_t                  offset;
-> >         loff_t                  ref_ctr_offset;
-> >         unsigned long           flags;
-> > @@ -620,11 +627,28 @@ static inline bool uprobe_is_active(struct uprobe=
- *uprobe)
-> >         return !RB_EMPTY_NODE(&uprobe->rb_node);
-> >  }
-> >
-> > +static void uprobe_free_deferred(struct work_struct *work)
-> > +{
-> > +       struct uprobe *uprobe =3D container_of(work, struct uprobe, wor=
-k);
-> > +
-> > +       /*
-> > +        * If application munmap(exec_vma) before uprobe_unregister()
-> > +        * gets called, we don't get a chance to remove uprobe from
-> > +        * delayed_uprobe_list from remove_breakpoint(). Do it here.
-> > +        */
-> > +       mutex_lock(&delayed_uprobe_lock);
-> > +       delayed_uprobe_remove(uprobe, NULL);
-> > +       mutex_unlock(&delayed_uprobe_lock);
-> > +
-> > +       kfree(uprobe);
-> > +}
-> > +
-> >  static void uprobe_free_rcu(struct rcu_head *rcu)
-> >  {
-> >         struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu)=
-;
-> >
-> > -       kfree(uprobe);
-> > +       INIT_WORK(&uprobe->work, uprobe_free_deferred);
-> > +       schedule_work(&uprobe->work);
-> >  }
-> >
-> >  static void put_uprobe(struct uprobe *uprobe)
->
-> It seems put_uprobe hunk was lost, since the patch is not doing
-> what commit log describes.
+From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
 
+Revise quad mode to dual mode to avoid WP pin influnece the SPI.
 
-Hmm, put_uprobe() has:
+Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+---
+ .../arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+index 98477792aa00..3073ade6d77c 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+@@ -105,15 +105,17 @@ flash@0 {
+ 		status = "okay";
+ 		m25p,fast-read;
+ 		label = "bmc";
+-		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <2>;
++		spi-rx-bus-width = <2>;
+ 		spi-max-frequency = <50000000>;
+-#include "openbmc-flash-layout-64.dtsi"
++#include "openbmc-flash-layout-128.dtsi"
+ 	};
+ 	flash@1 {
+ 		status = "okay";
+ 		m25p,fast-read;
+ 		label = "bmc2";
+-		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <2>;
++		spi-rx-bus-width = <2>;
+ 		spi-max-frequency = <50000000>;
+ 	};
+ };
+-- 
+2.25.1
 
-at the end (see [0], which added that), so we do schedule_work() in
-RCU callback, similarly to what we do with bpf_map freeing in the BPF
-subsystem.
-
-This patch set is based on the latest tip/perf/core (and also assuming
-the RCU Tasks Trace patch that mysteriously disappeared is actually
-there, hopefully it will just as magically be restored).
-
-  [0] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=
-=3Dperf/core&id=3D8617408f7a01e94ce1f73e40a7704530e5dfb25c
 
