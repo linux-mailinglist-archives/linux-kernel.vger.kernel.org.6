@@ -1,171 +1,150 @@
-Return-Path: <linux-kernel+bounces-323301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC8D973AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:05:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70902973AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A8E1F2583C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953F81C2183C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE48198E65;
-	Tue, 10 Sep 2024 15:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD0199389;
+	Tue, 10 Sep 2024 15:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TKIeRcGx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f5weAyxr"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2Pm3vRG6"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1FA1DFD1;
-	Tue, 10 Sep 2024 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079B31DFD1;
+	Tue, 10 Sep 2024 15:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725980746; cv=none; b=SiTDDNdr/ePNJT1ge3r2X/BiJulz3XQoIYzbkSh4G0LYaMth8pgNSqaBNQb6PJwN0pVjRjm5x19KO3kARN9zaXtybP9dch3F9v6JKe9RjGgpcxuI65H6vdffwPzjFwQu/WDWmoAvvt2NvXWLwvyoc5oeMZfLFWLbbqF0HCvJ2b4=
+	t=1725980762; cv=none; b=CMbk03qnQs2Uq8Cxkn7no74YKfDR5/1rMoswmliUsAbCrUZYy/D1FJyUlfv408EdwPMC5eY7dz+Vz+jvd/YsOdWrjYNel15ynTyu/f29YN0PtCB4VN9WWi0C26vviIuLLAPRkap02ORQbEaYZEK1xewCif+FR4nf4D1ZcQqxGrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725980746; c=relaxed/simple;
-	bh=u5Cx3s38HlH36208jUX1PLJ0rUPHgoDcLUZoB36Irzw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hewZ7Vk7Fsv7lyyIZJeyOlspyClbUN1vCl4vUa5rFOpVO+rk7FSQPimGbqJEq0d6BmGyTfdK8FdtmyxdvKYoj25Mwd0l3w7nFsChoMBmRmD9L1e4t64cNKJlObTM0p+P2S4GzqdKmLNsZvFLrJQgnR+V+4m3Y3iIE1bK2TmEOEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TKIeRcGx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f5weAyxr; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 67FE71380176;
-	Tue, 10 Sep 2024 11:05:43 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 10 Sep 2024 11:05:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725980743;
-	 x=1726067143; bh=aIIu0Ly+LTke4nYzPkOGL+CoGg+fBzxtuvII4tt0pFA=; b=
-	TKIeRcGxxxA5he/dnRdZ2te+hc5hNuBtTezAW1wsDFstqgzrqRzBZ+j8mVs3rr4Z
-	KDMluqtZS+TdvbDXROzWloJBDniq/hvCl8b4JGFF6Jw4njH/K6Ov4l1ZQN6BMB+y
-	jW7zu0CgYHTOJjfzxnFSpEOVNhW3Bifbw25iMAl9MthAuK17yVIVMvQC2zApQ8Sq
-	bbCnKFmbsngz/Q/QS5l1XLnltk39wGT2RiIRzO10P1EZMCa8hIG/vaxTK32OF32j
-	94j0+qhdMSDJBzaPF7FT/9j4ZENHSbCpvEjp9bG2WrrnR5FhkCcOAdN0jkEzlwtJ
-	PmFp4M7Z1xxdMyFDo+soeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725980743; x=
-	1726067143; bh=aIIu0Ly+LTke4nYzPkOGL+CoGg+fBzxtuvII4tt0pFA=; b=f
-	5weAyxrqHFDeYpd9yydOntLn30r5UxkIx2/59Ft+qU0+C238PZ71DabjaCBE5qQz
-	o0IzAHP6ZNhQCo/MMkqSHN/IEa2UV29Rq7nvy8ua7wL1aOgHl6eBwn5JGiMxg/kt
-	Mmi2IGQCyL4B2eUfLynL/THTvBNvQIckjsfEBq5rkMV0MMyovslD9K4kuuleG8tl
-	lpF0BR+VsFRkhVZj43f4rA8t/R9/O41sfizdgVNOlWdDP6SCUc/nTrYaooCw2fev
-	L3Y2/tlLJY42Ucqz1oSHV9MVXvDZxZQou5zOA0Nhmsbm5QXpm8zrSGwFZ2ZSt3c6
-	vx0Z5ydNskyzQlc7ToRVA==
-X-ME-Sender: <xms:RmDgZvVgOiKowplK7X_sPYsUaBZig3whQrJpkClHJhBVxvgvKkISlw>
-    <xme:RmDgZnmCySWJaCelT3Q-io7Ux-jkovqHrVnX9fXF2lIHOD7CPPN75E5lrtvA3cm1-
-    JMD-RtKRoTttIDVMVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgjeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpdhrtghp
-    thhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtph
-    htthhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgtihhoshdrtghomhdp
-    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehnph
-    highhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhoshhtvgguthesghhoohgu
-    mhhishdrohhrghdprhgtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhhhihhrrghmrghtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RmDgZrab8U5ZwXL7qyP_GzT_jOt8QoSSPmG1_rwdLK2radYHzRmXKQ>
-    <xmx:RmDgZqU8cFNJ3llOMJn8tRLJprDxL0pUd5rRUVBHchq_nEMfPrHCGA>
-    <xmx:RmDgZpnUpZd327NuQRsIAeY1Efn6zOncw9XDf8c2qijRK1Qh5CWmEQ>
-    <xmx:RmDgZneXj7rZMt0wxao8ZopqdKt1lt1uMzKwp-dCo6ImPmfGOJQ9bw>
-    <xmx:R2DgZjpvRSsXSOuIu2S6Ks3R-YwPqFc1P0LyAAv352pmEV1Ay3TtJ02v>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 22561222006F; Tue, 10 Sep 2024 11:05:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725980762; c=relaxed/simple;
+	bh=LqlMRXz1PXbeR5LYKLt3w/o2Q31kv9dqDnbyMIOMSCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hhSMHjE3cLLf3xcFw5H6VQl3NhP9t0jlQJrfzfIW+TbwJciqUs3MrZpghrZ6EI++iEech5m64FhVVHY08w3wal6joun6FwnIaSRfgB2r4DTOjKDHjY9ZcYaBQ6aQMCW1+eBbyjkWq3rszD0F5/UiPx5FnYmQzI2nXC/wZjNcpFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2Pm3vRG6; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MbtVK41xgK4idgq8PGW89PrBOMGskTuzUaGyT2iw6+Q=; b=2Pm3vRG68XGpfyN2ZCgPfKGopi
+	we4pslGmbNcTqh8LaiL9VvtvJ9i0dITV4GyirSq363XY6TySOhmHg23VcnplIbKJZfdfPMIJB01TN
+	dUg96aoBCxn580xFvbFxPBS2CTsEYmYv2H6z/QQ/0DuEQmMHIFXrYFlo+GtCkI3pXXRw9HkRyAXAQ
+	zl8sQZQVRkaG973q46UFmxdARTOog4suJE9YUV4DWXNSj7saAxXFoi+ng0N/nVkbrJZFVkx0X26NI
+	wGxiZj6r645B1cBZI2XfZ92Q9x6kgUrWJqCGEBjTuwhanFKELn7o7Aqr87Li0qISJY94eKMpMXdhf
+	if5auyIQ==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1so2Qt-0005VN-MJ; Tue, 10 Sep 2024 17:05:31 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+Date: Tue, 10 Sep 2024 17:07:57 +0200
+Message-ID: <1785617.Ii9rTq9gLj@diego>
+In-Reply-To:
+ <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+References:
+ <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 15:05:16 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>, "Naveen N Rao" <naveen@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>
-Message-Id: <98dc5b85-fdf4-4664-8cca-e6c9e1f8eb14@app.fastmail.com>
-In-Reply-To: <2234a5e1-5926-4b2d-a8f2-c780bf374a27@csgroup.eu>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-4-vincenzo.frascino@arm.com>
- <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
- <e28e1974-cced-462c-8f57-ca1474272e73@arm.com>
- <11527a80-7453-4624-b406-e88c5692b015@app.fastmail.com>
- <ccaac82f-0c43-491e-ab8a-1da8bf8c7477@csgroup.eu>
- <8868ef2c-6bfb-4ab7-ac5e-640e05658ee1@app.fastmail.com>
- <2234a5e1-5926-4b2d-a8f2-c780bf374a27@csgroup.eu>
-Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 10, 2024, at 12:28, Christophe Leroy wrote:
-> Le 08/09/2024 =C3=A0 22:48, Arnd Bergmann a =C3=A9crit=C2=A0:
->> On Fri, Sep 6, 2024, at 18:40, Christophe Leroy wrote:
->
-> uiomem->addr is a phys_addr_t
-> r->start is a ressource_size_t hence a phys_addr_t
->
-> And phys_addr_t is defined as:
->
-> 	#ifdef CONFIG_PHYS_ADDR_T_64BIT
-> 	typedef u64 phys_addr_t;
-> 	#else
-> 	typedef u32 phys_addr_t;
-> 	#endif
->
-> On a 32 bits platform, UL is unsigned 32 bits, so the r->start &=20
-> PAGE_MASK will and r->start with 0x00000000fffff000
->
-> That is wrong.
+Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
+> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+> Samsung IP block.
+> 
+> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+> without audio, CEC or any of the HDMI 2.1 specific features.
+> 
+> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Right, I see. So out of the five 32-bit architectures with a
-64-bit phys_addr_t, arc seems to ignore this problem, x86 has
-a separate PHYSICAL_PAGE_MASK for its internal uses and
-the other three have the definition you mention as
+I had switched from the v3 to this v6 in my playground-kernel today,
+with v3 I've never seen those, but now with v6 I have gotten multiple
+times:
 
-> 	(~((1 << PAGE_SHIFT) - 1))
+[  805.730608] Internal error: synchronous external abort: 0000000096000010 [#1] PREEMPT SMP
+[  805.739764] Modules linked in: snd_soc_simple_card crct10dif_ce snd_soc_simple_card_utils panthor drm_gpuvm drm_exec fuse
+[  805.752031] CPU: 3 UID: 0 PID: 775 Comm: Xorg Not tainted 6.11.0-rc7-00099-g459302f1f908-dirty #934
+[  805.762143] Hardware name: Theobroma Systems RK3588-Q7 SoM on Haikou devkit (DT)
+[  805.770407] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[  805.778186] pc : regmap_mmio_read32le+0x8/0x20
+[  805.783155] lr : regmap_mmio_read+0x44/0x70
+[  805.787828] sp : ffff80008293b830
+[  805.791516] x29: ffff80008293b830 x28: ffff80008293bce8 x27: ffff0001f20ab080
+[  805.799495] x26: ffff800081139500 x25: 0000000000000000 x24: 0000000000000010
+[  805.807472] x23: 0000000000000000 x22: ffff0001f5a4b400 x21: ffff80008293b8c4
+[  805.815450] x20: 0000000000000968 x19: ffff0001f5a27a80 x18: 0000000000000070
+[  805.823428] x17: 0002441400000005 x16: 000004650441043c x15: 0438000008980804
+[  805.831406] x14: 07d8089807800780 x13: 0438000008980804 x12: ffff800081133630
+[  805.839384] x11: 0002441400000005 x10: 000004650441043c x9 : ffff800081a59000
+[  805.847361] x8 : 07d8089807800780 x7 : 0000000000000000 x6 : ffff0001f5b453c0
+[  805.855339] x5 : ffff800080750dc0 x4 : 0000000000000968 x3 : 0000000000000968
+[  805.863316] x2 : ffff800080751520 x1 : 0000000000000968 x0 : ffff800083b20968
+[  805.871294] Call trace:
+[  805.874012]  regmap_mmio_read32le+0x8/0x20
+[  805.878588]  _regmap_bus_reg_read+0x6c/0xac
+[  805.883262]  _regmap_read+0x60/0xd8
+[  805.887159]  _regmap_update_bits+0xf4/0x140
+[  805.891832]  regmap_update_bits_base+0x64/0xa0
+[  805.896797]  dw_hdmi_qp_bridge_atomic_enable+0x134/0x220
+[  805.902734]  drm_atomic_bridge_chain_enable+0x54/0xc8
+[  805.908380]  drm_atomic_helper_commit_modeset_enables+0x194/0x280
+[  805.915190]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+[  805.921125]  commit_tail+0xa0/0x1a0
+[  805.925021]  drm_atomic_helper_commit+0x17c/0x1b0
+[  805.930276]  drm_atomic_commit+0xb8/0x100
+[  805.934754]  drm_atomic_connector_commit_dpms+0xe0/0x110
+[  805.940690]  drm_mode_obj_set_property_ioctl+0x1c0/0x420
+[  805.946626]  drm_connector_property_set_ioctl+0x3c/0x68
+[  805.952465]  drm_ioctl_kernel+0xc0/0x130
+[  805.956846]  drm_ioctl+0x214/0x4a0
+[  805.960643]  __arm64_sys_ioctl+0xac/0xf8
+[  805.965025]  invoke_syscall+0x48/0x104
+[  805.969214]  el0_svc_common.constprop.0+0x40/0xe0
+[  805.974470]  do_el0_svc+0x1c/0x28
+[  805.978171]  el0_svc+0x34/0xe0
+[  805.981582]  el0t_64_sync_handler+0x120/0x12c
+[  805.986449]  el0t_64_sync+0x190/0x194
+[  805.990540] Code: d503201f d503201f f9400000 8b214000 (b9400000)
 
-And this is only documented properly on powerpc.
+I guess that might be some clocking issue?
 
-How about making the common definition this?
 
-#ifdef CONFIG_PHYS_ADDR_T_64BIT
-#define PAGE_MASK (~((1 << PAGE_SHIFT) - 1))
-#else
-#define PAGE_MASK (~(PAGE_SIZE-1))
-#endif
-
-That keeps it unchanged for everything other than arc
-and x86-32, and hopefully fixes the currently behavior
-on those two.
-
-     Arnd
 
