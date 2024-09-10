@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-323578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DCB973F8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:29:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF41E973F8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75BDD1C25781
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751DB1F2A658
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188DB1BA895;
-	Tue, 10 Sep 2024 17:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9971BBBD5;
+	Tue, 10 Sep 2024 17:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GP8h3BWO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osUJv7pE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700F71BA87A;
-	Tue, 10 Sep 2024 17:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2F71BAECA;
+	Tue, 10 Sep 2024 17:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725988992; cv=none; b=ZfTqNnyuIi618QkJ6eBL9YbJpQLu4XdXlYFRoGgOcU5vQYC2SRNWLQgY4St3vA/wd7vF/9/o6zsPt3kRfp8RdEN8FQ4fanl05LMnci/mYyZsGXaLFRSainEnLMGYNgIEpyvpkghuIHuQ7zeXqK6wnD6ijCED+N+KhJmdZFYOuz8=
+	t=1725988995; cv=none; b=YmG+U3ZCBoC71pWPHtwE7VViTpLfOcr1ueOdiKhPdtwYE+zBqflHj+HTEXJQL7KBbsfOSecEs/6Zytk+hqTvRRcWNb21dS2BK/5giB7xARckR66QXdWmJsZuoQx/XftI6QighIAcwgjPZJs+woOuyiSJkL4Ip6EJVrYW0XbmZy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725988992; c=relaxed/simple;
-	bh=gnkIvDChFKCcFwAkMtS3UU0Q/EcMDiyHtjp8ZQ9OC9w=;
+	s=arc-20240116; t=1725988995; c=relaxed/simple;
+	bh=VZHOWKabHNgeKbkC8OGTVZ9kgKI2uaQEWjQehB8zWfM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wm1oCulAQudHrdD49sRaY8frSeqxzUFiZxtfogxu90b2diLEwtodYLvIvJAp4FOX7xQ7+IW5fKHZyQOvIDzQLOPwSorkBlMw2qAzoGfbUIBgBgR5W5sjCGqm//oVQD32TNEX4F/wNHxO1On8ZLpNcbl80lId+Ez4l0UnJiMvmL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GP8h3BWO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA85C4CECD;
-	Tue, 10 Sep 2024 17:23:11 +0000 (UTC)
+	 MIME-Version; b=nodAOtoA0Ojnj3qCHtCmBRj2Pp4rJ5Vvbg0XP+lv8ZOzuEkCQWK3R1wmrkbubb7Wow9rYQu2hLYV50d8gsJTlPHGdIWcsiif96pgkJJdshnH2Aq8Wufon1vvMyth6JwNQ2rm/tWRDky34YSHifCxmNTO+pSSJWDpHrvRGeW3BFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osUJv7pE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89093C4CEC3;
+	Tue, 10 Sep 2024 17:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725988992;
-	bh=gnkIvDChFKCcFwAkMtS3UU0Q/EcMDiyHtjp8ZQ9OC9w=;
+	s=k20201202; t=1725988994;
+	bh=VZHOWKabHNgeKbkC8OGTVZ9kgKI2uaQEWjQehB8zWfM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GP8h3BWOglczvKuKx7v8O7JPmlEqGK/Ov9CjrxIHV2ts4V7qtNnJleF0YAz8Jx/4u
-	 4XSEAz9AtURlZP/p1eNuxV4pfTI4ltoHAOhQ6r7c6pKW5bSPK/kntuHClwwlTeil1D
-	 ntUD7QUeSe1pOWmYYqPq6qn3NG0rmn1WMXb9nKVq4okfk1WMItv8oOl8Ing6x9j8EZ
-	 Wj9FsUTepagEWErVf3Ewm14ZxJYpmD23Ec4bnLCfHKWJdAPr7H2StJG9mu747vi+00
-	 y/fjIV7YyVOVJb863uA697olTGrSAp5gaqW6CJsa2UFMO5TXvJDIFmPtvLPGf1RxFf
-	 exFiQO0JX9ACQ==
+	b=osUJv7pEaC+FzW/vXLyuexqAobJFbZ53aGJlwizvCoFk1/r0BRfVqPBKsDuM15Yl2
+	 Jjf5N4bR5xoB2GK+V5cTQ1Utr+/zp7EHtju1RrmdVHm0p+9m6Wc6kycCDrA8SuaWXG
+	 AjI78asvqskkHziHDX+jmAdika9jthMIgmdqLKvcHky8qFSB64Y7YdnAzmXjzvb7t/
+	 6CdQVRocOfsVuzFgL0DQEHI3gi1MNB0vhDAY95FuhCEr8DpSlw710kD3wUCb66JsNJ
+	 sEUaOfQdQ9f49Cw0B/yweiAyF/BaMnOh4HxPeluHp1qPG2SDKq8FOwyVjbOOhHrsGj
+	 oawPYYoIvtQrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -49,11 +49,12 @@ Cc: Liao Chen <liaochen4@huawei.com>,
 	lgirdwood@gmail.com,
 	perex@perex.cz,
 	tiwai@suse.com,
-	kuninori.morimoto.gx@renesas.com,
+	andy.shevchenko@gmail.com,
+	u.kleine-koenig@pengutronix.de,
 	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 04/12] ASoC: google: fix module autoloading
-Date: Tue, 10 Sep 2024 13:22:46 -0400
-Message-ID: <20240910172301.2415973-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 05/12] ASoC: tda7419: fix module autoloading
+Date: Tue, 10 Sep 2024 13:22:47 -0400
+Message-ID: <20240910172301.2415973-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240910172301.2415973-1-sashal@kernel.org>
 References: <20240910172301.2415973-1-sashal@kernel.org>
@@ -70,31 +71,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Liao Chen <liaochen4@huawei.com>
 
-[ Upstream commit 8e1bb4a41aa78d6105e59186af3dcd545fc66e70 ]
+[ Upstream commit 934b44589da9aa300201a00fe139c5c54f421563 ]
 
 Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
 based on the alias from of_device_id table.
 
 Signed-off-by: Liao Chen <liaochen4@huawei.com>
-Link: https://patch.msgid.link/20240826084924.368387-3-liaochen4@huawei.com
+Link: https://patch.msgid.link/20240826084924.368387-4-liaochen4@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/google/chv3-i2s.c | 1 +
+ sound/soc/codecs/tda7419.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/google/chv3-i2s.c b/sound/soc/google/chv3-i2s.c
-index 0f6513444906..462e970b954f 100644
---- a/sound/soc/google/chv3-i2s.c
-+++ b/sound/soc/google/chv3-i2s.c
-@@ -322,6 +322,7 @@ static const struct of_device_id chv3_i2s_of_match[] = {
- 	{ .compatible = "google,chv3-i2s" },
- 	{},
+diff --git a/sound/soc/codecs/tda7419.c b/sound/soc/codecs/tda7419.c
+index e187d74a1737..3914deb060ca 100644
+--- a/sound/soc/codecs/tda7419.c
++++ b/sound/soc/codecs/tda7419.c
+@@ -623,6 +623,7 @@ static const struct of_device_id tda7419_of_match[] = {
+ 	{ .compatible = "st,tda7419" },
+ 	{ },
  };
-+MODULE_DEVICE_TABLE(of, chv3_i2s_of_match);
++MODULE_DEVICE_TABLE(of, tda7419_of_match);
  
- static struct platform_driver chv3_i2s_driver = {
- 	.probe = chv3_i2s_probe,
+ static struct i2c_driver tda7419_driver = {
+ 	.driver = {
 -- 
 2.43.0
 
