@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-323633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76F19740EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9FF9740EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA56E1C2537E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B39287AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D71A4F03;
-	Tue, 10 Sep 2024 17:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1001A4F3E;
+	Tue, 10 Sep 2024 17:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpKlzFRo"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dD9aw3zZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832981A4AC6;
-	Tue, 10 Sep 2024 17:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757321A2863
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990147; cv=none; b=fqEITgoy9JJGXkV/EkxGpRrTMLf63EH4QYSpJncYzxunde2rwlKXRYxgDu1cXiszG4oVahkulFJ6fUd3vnhcZ8knZhIgz3guYLv50qx6gSkb1BKJ5nN7K28JxJdL32jBvJvryfcdCO+ceE/4NfANLTbiNg986hCnSm8uTl494Ek=
+	t=1725990162; cv=none; b=ZrZP2lS8NcI0jnJlXwJ4LnZ5Xhg0BaVtJbrwjOZHY9lK8EcFWtj4Aono1qqE8tdNFD0p2FuCYe7RqNHy5YPx9KXmJ98dxQSbfXGHlYARqDlGHXqG8/3XRXSAK01ju5wvYEbs67YgV+jw8HEwCO/Qu7P4ZDuC7MssN9+KsNe+Koo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990147; c=relaxed/simple;
-	bh=bV/cCPgQmMGPZOQ6cElFw5TE2AzczFXZAlM9b/E8Fug=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=UPztstZDmRpLDNytyCa62UypwHTXXudhK+RHq7UxkS7ElPX6uktRQUDUDWslV5meFsu/sWjsvxVosTayaljNj2H7aQF2a0ThHpGQ42KWw3ttQ+UQb+bfzVJhdnLCbLcvrcJWBf3YU+zhDhYYHGBpuIWi41yE7PuTWATd9ShYLxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpKlzFRo; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a9ae8fc076so254417285a.2;
-        Tue, 10 Sep 2024 10:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725990144; x=1726594944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=osrSmdlRRbXgWjiWwZC0FQoUmfxKFrAIzTPo9tEegGU=;
-        b=MpKlzFRoClVoF96LXi8EunQL6Ypuq2Fu/80cfMmrdzbC5CR0ntB5zOVDGoyq7/cj16
-         lCOOfTbbxsCyNG+BCZ+Mk4mvkFNzDYZezFnuejZ2JVMyduyDscMoCXcKkR50+j7tlKaz
-         9glK9oJNshKOmHK4Qcxf5TtMDDBVRAzm0T1YmnB7/T3D+en3H9UtCHwVZEVbuTiRoVoj
-         7MxpWyKoKVhQnwnu5Dq1Ev9TflWyfR60etJC22bVXC4L/CUy8JspPWNRISwvBRu2S+Oq
-         ZUD8L2t0lN9fiaQhYzwhQGGhdK16sQmPv+RNH/93szvUo5NkKcIKKNF7VU1eHWNzbyK3
-         CjkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725990144; x=1726594944;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=osrSmdlRRbXgWjiWwZC0FQoUmfxKFrAIzTPo9tEegGU=;
-        b=Uz5u/CjAWntKF8Hnj2iMOiiIuZYLWfKoultmh5KneyA0t56rIzLqBIcckxPNg6jCNt
-         0wxWyWAqV/oH6qV46osmX4dZALQgV16EJy1UwcMUOJ5CqtS2dpwTOAi30T1GQ5hodfUw
-         O8G8eyMFwmSNoBlPuuMjP7salMmwvflTs6i9t9rVhJkGHARwLGQwn9ChPMm4OEClWNRL
-         kG0cP/TA5PetQQbMvlPyvKYjUoKhYJ26jMD7RIH1TiWiPkIZWzxEGU/C3429WM+E1X/y
-         glEnGeJ5kjwSC1y3nQ0a39SNJtUBC7GuUfLdlnNNGXPIdWTEr0/pI7j5lsS2HjO52y3R
-         DqIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmk/EqoytxzjjxiLHbbGFhs6AnwtIZFinqcFnmt4cs9sfh0wI/59gNYtlCzmuyfYufDfC+DPmK0q6nfxvvULVS@vger.kernel.org, AJvYcCV/+x9MxqVwI3pxoZ7ltFjwwW+S6oFDrFdHmD0qNUJG5SD5QxRNYnByG4288WaJbIr6JYT3ZjlNtWUz0kg=@vger.kernel.org, AJvYcCWhx1JaeI+lWXxLZSAmKu6HnNevqI0WhTGkdxsc73RbmqZhIHsRYvNvlME0I1CNbikpWI364ZaV@vger.kernel.org
-X-Gm-Message-State: AOJu0YykUyzO0AZ21rBKHSfSgoSWyCk9GwrjuxmXCPCsgNcl0D3iKfZG
-	AKzLT9YALPgdBV1k8cPZ9pOZW0q2lLjVaW3Tc1PjxVYqzYENmeDa
-X-Google-Smtp-Source: AGHT+IHvwbLEki8g7DoGbzuEAVprt0WWYMJSyX1CbpAViPsW6cMv0Yc1UKcT8kk8wS5Y/sF9i5dOig==
-X-Received: by 2002:a05:620a:4629:b0:7a9:b3a1:94ca with SMTP id af79cd13be357-7a9b3a197c4mr1254397985a.35.1725990144340;
-        Tue, 10 Sep 2024 10:42:24 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a796ad15sm328004285a.30.2024.09.10.10.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 10:42:23 -0700 (PDT)
-Date: Tue, 10 Sep 2024 13:42:23 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Sean Anderson <sean.anderson@linux.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, 
- "David S . Miller" <davem@davemloft.net>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, 
- Willem de Bruijn <willemb@google.com>, 
- linux-kernel@vger.kernel.org, 
- Shuah Khan <shuah@kernel.org>, 
- linux-kselftest@vger.kernel.org
-Message-ID: <66e084ff8f8aa_c435329483@willemb.c.googlers.com.notmuch>
-In-Reply-To: <6d5ca057-87a3-4ec2-a733-8f0c1fb11158@linux.dev>
-References: <20240906210743.627413-1-sean.anderson@linux.dev>
- <66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch>
- <9d5bf385-2ef0-435d-b6f9-1de55533653b@linux.dev>
- <CANn89iJaXgR6c+moGB5kX6ATbLX6fMP0mUBQN=SAsZfdz5ywNw@mail.gmail.com>
- <66df2fd2d6595_3bff929459@willemb.c.googlers.com.notmuch>
- <20240909165116.1bdb4757@kernel.org>
- <66df9a6d42871_81fd3294e8@willemb.c.googlers.com.notmuch>
- <6d5ca057-87a3-4ec2-a733-8f0c1fb11158@linux.dev>
-Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
- non-zero padding
+	s=arc-20240116; t=1725990162; c=relaxed/simple;
+	bh=fMoTGHkDaTGI1XLrajc2behIZwpEPBgHFXWguQYcElg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r5KbZcHVDsbn2zKTi7hx8ojj9cVAuSLm4agVNKb1Gqn/OOUYgqzD3Zv66FBmBm1Xhul+4qSkP3RvG+gSZSYxreZWrPejQNn6qVdy0XEeZ70MvXLyrOnhLUvEAlEaJN4HmHyvSpXmJMY6FlCdhQct/jVcDL177QgJEY5hWznBQYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dD9aw3zZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725990159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8vALpOiTX4q65DEi6gKSQySJMF+gLJveZ7rgNLBab20=;
+	b=dD9aw3zZ1q0nwkDl3dEEeTqTxaOrAl7/AP1d8Z5Q0c4qI/6HfoIxpHtryzQxnFQs6fZnGI
+	Nu4SmX9WWTW6nSkR74PnZ76FrXhnphkyFbZdA8lBwQpv8v3AJuRl/8p2GX/TD42yoTZSBz
+	iQe+IKbwRf8dyhq3zkDdFz+/MsMkLXo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-X8RgaX72Oh-hzdVSHFc2Zw-1; Tue,
+ 10 Sep 2024 13:42:36 -0400
+X-MC-Unique: X8RgaX72Oh-hzdVSHFc2Zw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E825C195608B;
+	Tue, 10 Sep 2024 17:42:33 +0000 (UTC)
+Received: from [10.2.16.251] (unknown [10.2.16.251])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA0021956086;
+	Tue, 10 Sep 2024 17:42:31 +0000 (UTC)
+Message-ID: <1589cf94-6d27-4575-bcea-e36c3667b260@redhat.com>
+Date: Tue, 10 Sep 2024 13:42:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] io_uring/io-wq: inherit cpuset of cgroup in io
+ worker
+To: Felix Moessbauer <felix.moessbauer@siemens.com>, axboe@kernel.dk
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
+ adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com
+References: <20240910171157.166423-1-felix.moessbauer@siemens.com>
+ <20240910171157.166423-3-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240910171157.166423-3-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Sean Anderson wrote:
-> On 9/9/24 21:01, Willem de Bruijn wrote:
-> > Jakub Kicinski wrote:
-> >> On Mon, 09 Sep 2024 13:26:42 -0400 Willem de Bruijn wrote:
-> >> > > This seems to be a bug in the driver.
-> >> > > 
-> >> > > A call to skb_put_padto(skb, ETH_ZLEN) should be added.  
-> >> > 
-> >> > In which case this test detecting it may be nice to have, for lack of
-> >> > a more targeted test.
-> >> 
-> >> IIUC we're basically saying that we don't need to trim because pad
-> >> should be 0? In that case maybe let's keep the patch but add a check 
-> >> on top which scans the pad for non-zero bytes, and print an informative
-> >> warning?
-> > 
-> > Data arriving with padding probably deserves a separate test.
-> > 
-> > We can use this csum test as stand-in, I suppose.
-> > 
-> > Is it safe to assume that all padding is wrong on ingress, not just
-> > non-zero padding. The ip stack itself treats it as benign and trims
-> > the trailing bytes silently.
-> > 
-> > I do know of legitimate cases of trailer data lifting along.
-> 
-> Ideally we would test that
-> 
-> - Ingress padding is ignored.
 
-I think the goal of a hardware padding test is to detect when padding
-leaks onto the wire.
+On 9/10/24 13:11, Felix Moessbauer wrote:
+> The io worker threads are userland threads that just never exit to the
+> userland. By that, they are also assigned to a cgroup (the group of the
+> creating task).
 
-If not adding a new test, detect in csum and fail anytime padding is
-detected (i.e., not only non-zero)?
+The io-wq task is not actually assigned to a cgroup. To belong to a 
+cgroup, its pid has to be present to the cgroup.procs of the 
+corresponding cgroup, which is not the case here. My understanding is 
+that you are just restricting the CPU affinity to follow the cpuset of 
+the corresponding user task that creates it. The CPU affinity (cpumask) 
+is just one of the many resources controlled by a cgroup. That probably 
+needs to be clarified.
 
-> - Egress padding does not leak past the buffer. The easiest way to
->   handle this would be to check that it is constant (e.g. all the
->   padding uses the same value), but this could have false-positives for
->   e.g. timestamps.
-> 
-> --Sean
+Besides cpumask, the cpuset controller also controls the node mask of 
+the memory nodes allowed.
 
+Cheers,
+Longman
+
+>
+> When creating a new io worker, this worker should inherit the cpuset
+> of the cgroup.
+>
+> Fixes: da64d6db3bd3 ("io_uring: One wqe per wq")
+> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+> ---
+>   io_uring/io-wq.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+> index c7055a8895d7..a38f36b68060 100644
+> --- a/io_uring/io-wq.c
+> +++ b/io_uring/io-wq.c
+> @@ -1168,7 +1168,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+>   
+>   	if (!alloc_cpumask_var(&wq->cpu_mask, GFP_KERNEL))
+>   		goto err;
+> -	cpumask_copy(wq->cpu_mask, cpu_possible_mask);
+> +	cpuset_cpus_allowed(data->task, wq->cpu_mask);
+>   	wq->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
+>   	wq->acct[IO_WQ_ACCT_UNBOUND].max_workers =
+>   				task_rlimit(current, RLIMIT_NPROC);
 
 
