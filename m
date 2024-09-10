@@ -1,232 +1,162 @@
-Return-Path: <linux-kernel+bounces-322903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711069733A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:34:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9779732B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D37B27F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 424641F224B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C90E197A76;
-	Tue, 10 Sep 2024 10:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5419994B;
+	Tue, 10 Sep 2024 10:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gmxbGK+x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qFPjlhpL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmB4QdfZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qFPjlhpL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmB4QdfZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0DF18C340
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC3A199920
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963913; cv=none; b=qbtTTNcZabXk0XKEnmczPf7DBiL4vH0rs/uU7TQEi/uK9ybJ7DgPkeE58Xh2trwbG1CMFmLn2Z2xuU6Fn4GQtnMETkmOXLI9CvfixEwHHxOVjfpNHjYk34dyI+KeTBz7SuiiGVmkDKaAmDJm+Ac54WNCYpxh8CjlRXKET54Wzxg=
+	t=1725963589; cv=none; b=oryX9LYls+goN5l/7O+RY9fh8VNLL+qWI2uI/4GzRXWNM82ZysvbcmI8guJXMmTL9CAEJGTyMHEEyRrrJjAXCb9TJUwTxkTbcVrtDT3rNPRZ1aGpIaSAyXokwe7eVO4vDFaAu0T72Knj0bC0bqgTrzI9Qmw2gcnbyZx5TZgaEWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963913; c=relaxed/simple;
-	bh=gWaFuPUqX0h4hai9x3sMNjvszFKB30agMtl48ateG8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejE54JCZGJr0wDddVxUYqL/gJqiVp6ABP2s+47ikl8LJhx/Y2cIYXY42BwL3fzF5xMXHAU2mNLQndilALQ8ADQXwThidWkFJ2z/5u0W1MvbDRwI1oat+RVLp7mpoBObfQvITvWG4N7PrZuKZ6pAr6QuCfKh8h9rjv/JpjOKO4WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gmxbGK+x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725963911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WdBSvdERbANPcE2/9Ji227Jspb3Sq0DdRd0m6MPdrIw=;
-	b=gmxbGK+xbnelzQX6NoN61TIO0kyQ6hJoe+Ksw6lyYtBs9Ho8vZlAJHwhRBE9n4kIqTCHi6
-	8od9qNf6shzbqnFCOdoXdUtVHNHZ257KVekfnrNqGZ3mNMZUxD5fZuVmzia9ewNcd1eCWm
-	9PegGeQfklxiJ1BM+SGlTc3y3W2LVZ0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-290-ooYQJ3ipPAeXxzwTqaOzXA-1; Tue, 10 Sep 2024 06:25:08 -0400
-X-MC-Unique: ooYQJ3ipPAeXxzwTqaOzXA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-378929f1a4eso1445758f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:25:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725963907; x=1726568707;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WdBSvdERbANPcE2/9Ji227Jspb3Sq0DdRd0m6MPdrIw=;
-        b=O4zRoJ8dWEMMj4X2y5VeZqiibclw/pmr3ymu7ICUa17lXEplyXC2HuLQijBIhBo35E
-         yZJ6O45Eu/uVasmHldnxizar/sGAiEQWyDiBnfKDNB+5dPcIDj2kUyDwYwCzIcsuB9xa
-         JxWGzmMC9JO+cT1ABMWIDOu2lLQ6+3Xtb0LSbhFdnA5TQIOaP5naFlP3u6rYvY5XUZ5m
-         ZVCY3z9J7xDOtjXTK634YCo3dOsaOar77lfGAv+/bTw5tkbHCUYNCJeZ+vvu1TaElhda
-         kVXVtCDW8yDPNXq9lq0gkL2eb1o65tq6JkZMXakGjNjzYqwN/6JKqFVOrma8Nqz5irKo
-         bo+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXM3pJBrVFagt/1IEZaA5Wj2m+hYdvB1zgZaFmDlWR+m+MPG72e5tMuGb2kFoXrN4TRfpue+XZhSPXEDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjVowxgNX4zQuts1b9hV6mxxf3406rPWjt+sha+wPaoTOjbkig
-	sM9DfzKOTC72brM/aIOX2esIZqnTmn5Ugguf4tApzhdQi/bLKwBGmQHe4bqJlbwtFwpJvJhUJ4+
-	qrJSOJMlikmj+fTdGTKDlvPgH5eLlJ/22OAQ0sYR8VI+emlH5Glb/vhgJnX8Fpg==
-X-Received: by 2002:a5d:5452:0:b0:374:c0cc:a1fb with SMTP id ffacd0b85a97d-378896573fbmr9704635f8f.39.1725963907271;
-        Tue, 10 Sep 2024 03:25:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlQDm7IYowHDu5fxWW+REkhLpkeH4jz6Xq9AhtvVcKH0ZNTaBFd/AIwLmxH8ZfB4tepI2fQg==
-X-Received: by 2002:a5d:5452:0:b0:374:c0cc:a1fb with SMTP id ffacd0b85a97d-378896573fbmr9704603f8f.39.1725963906845;
-        Tue, 10 Sep 2024 03:25:06 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37895665553sm8541545f8f.39.2024.09.10.03.25.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 03:25:06 -0700 (PDT)
-Message-ID: <acf52e41-e78c-479d-9736-419a86002982@redhat.com>
-Date: Tue, 10 Sep 2024 12:25:05 +0200
+	s=arc-20240116; t=1725963589; c=relaxed/simple;
+	bh=LEwgT1CUdMGxMTx2CBj6jmHHPJejQp1TnXVmhR6DgX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAj6nfaPX14GP+8ahFGcdOPg/norkhBaE1aBjQgKbnyDdZJ5SvJtuaaCs1ZEVCLPNeOYGKITfGMYgM6oVc2f1n+uEztgXnwCJcCJFSaLDDHVz4IyUf2xvU+fpBJOGu1LWISpP25aDYjJ3B/dSMvOEr+/rlHpnwSZxWUVtIZAwCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qFPjlhpL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmB4QdfZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qFPjlhpL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmB4QdfZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9829421A2A;
+	Tue, 10 Sep 2024 10:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725963585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
+	b=qFPjlhpLpAmdzqW1Vt/FFYP7HvMm5q554lNQTOTdByCf7d0wPXb3gp6wSdPS3BMQBFbGdb
+	YPjyMY5scX42C1ubj8ykHLyH0EwoGdHYWTUavsHE3y0Mw+I6O83WRXRhLm2vpq1WyxPWYz
+	GUkndQoe4J+ZKFyxhSR0HJqfl5Zb7Zg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725963585;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
+	b=NmB4QdfZe40w7/v78v15mXtDZYcWuiWoKjfcwBGP8IIDK+eTnrAWWnf38wKBavrc5W6wDj
+	l2a9d8k3Fwyi7mAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qFPjlhpL;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NmB4QdfZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725963585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
+	b=qFPjlhpLpAmdzqW1Vt/FFYP7HvMm5q554lNQTOTdByCf7d0wPXb3gp6wSdPS3BMQBFbGdb
+	YPjyMY5scX42C1ubj8ykHLyH0EwoGdHYWTUavsHE3y0Mw+I6O83WRXRhLm2vpq1WyxPWYz
+	GUkndQoe4J+ZKFyxhSR0HJqfl5Zb7Zg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725963585;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsSIwaqc0VB7URYBD4dQqIcMT8+sfQC9FPAWs4P+03A=;
+	b=NmB4QdfZe40w7/v78v15mXtDZYcWuiWoKjfcwBGP8IIDK+eTnrAWWnf38wKBavrc5W6wDj
+	l2a9d8k3Fwyi7mAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F8C9132CB;
+	Tue, 10 Sep 2024 10:19:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8r7eHEEd4Ga2XQAAD6G6ig
+	(envelope-from <iivanov@suse.de>); Tue, 10 Sep 2024 10:19:45 +0000
+Date: Tue, 10 Sep 2024 13:25:31 +0300
+From: "Ivan T. Ivanov" <iivanov@suse.de>
+To: Corey Minyard <corey@minyard.net>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi:ssif: Improve detecting during probing
+Message-ID: <20240910102531.grjtn2rdmagcgphb@localhost.localdomain>
+References: <20240816065458.117986-1-iivanov@suse.de>
+ <ZsU9SRlQgzQn8bDs@mail.minyard.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/21] KVM: TDX: Finalize VM initialization
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- kvm@vger.kernel.org
-Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
- yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-21-rick.p.edgecombe@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
- KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
- m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
- tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
- dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
- JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
- sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
- OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
- GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
- Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
- usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
- xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
- JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
- dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
- b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20240904030751.117579-21-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsU9SRlQgzQn8bDs@mail.minyard.net>
+X-Rspamd-Queue-Id: 9829421A2A
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 9/4/24 05:07, Rick Edgecombe wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
+Hi Corey,
+
+On 08-20 20:05, Corey Minyard wrote:
 > 
-> Add a new VM-scoped KVM_MEMORY_ENCRYPT_OP IOCTL subcommand,
-> KVM_TDX_FINALIZE_VM, to perform TD Measurement Finalization.
+> If an IPMI SSIF device is probed and there is something there, but
+> probably not an actual BMC, the code would just issue a lot of errors
+> before it failed.  We kind of need these errors to help with certain
+> issues, and some of the failure reports are non-fatal.
 > 
-> Documentation for the API is added in another patch:
-> "Documentation/virt/kvm: Document on Trust Domain Extensions(TDX)"
+> However, a get device id command should alway work.  If that fails,
+> nothing else is going to work and it's a pretty good indication that
+> there's no valid BMC there.  So issue and check that command and bail
+> if it fails.
 > 
-> For the purpose of attestation, a measurement must be made of the TDX VM
-> initial state. This is referred to as TD Measurement Finalization, and
-> uses SEAMCALL TDH.MR.FINALIZE, after which:
-> 1. The VMM adding TD private pages with arbitrary content is no longer
->     allowed
-> 2. The TDX VM is runnable
-> 
-> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reported-by: Ivan T. Ivanov <iivanov@suse.de>
+> Signed-off-by: Corey Minyard <corey@minyard.net>
 > ---
-> TDX MMU part 2 v1:
->   - Added premapped check.
->   - Update for the wrapper functions for SEAMCALLs. (Sean)
->   - Add check if nr_premapped is zero.  If not, return error.
->   - Use KVM_BUG_ON() in tdx_td_finalizer() for consistency.
->   - Change tdx_td_finalizemr() to take struct kvm_tdx_cmd *cmd and return error
->     (Adrian)
->   - Handle TDX_OPERAND_BUSY case (Adrian)
->   - Updates from seamcall overhaul (Kai)
->   - Rename error->hw_error
-> 
-> v18:
->   - Remove the change of tools/arch/x86/include/uapi/asm/kvm.h.
-> 
-> v15:
->   - removed unconditional tdx_track() by tdx_flush_tlb_current() that
->     does tdx_track().
-> ---
->   arch/x86/include/uapi/asm/kvm.h |  1 +
->   arch/x86/kvm/vmx/tdx.c          | 28 ++++++++++++++++++++++++++++
->   2 files changed, 29 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-> index 789d1d821b4f..0b4827e39458 100644
-> --- a/arch/x86/include/uapi/asm/kvm.h
-> +++ b/arch/x86/include/uapi/asm/kvm.h
-> @@ -932,6 +932,7 @@ enum kvm_tdx_cmd_id {
->   	KVM_TDX_INIT_VM,
->   	KVM_TDX_INIT_VCPU,
->   	KVM_TDX_INIT_MEM_REGION,
-> +	KVM_TDX_FINALIZE_VM,
->   	KVM_TDX_GET_CPUID,
->   
->   	KVM_TDX_CMD_NR_MAX,
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 796d1a495a66..3083a66bb895 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1257,6 +1257,31 @@ void tdx_flush_tlb_current(struct kvm_vcpu *vcpu)
->   	ept_sync_global();
->   }
->   
-> +static int tdx_td_finalizemr(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
-> +{
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> +
-> +	if (!is_hkid_assigned(kvm_tdx) || is_td_finalized(kvm_tdx))
-> +		return -EINVAL;
-> +	/*
-> +	 * Pages are pending for KVM_TDX_INIT_MEM_REGION to issue
-> +	 * TDH.MEM.PAGE.ADD().
-> +	 */
-> +	if (atomic64_read(&kvm_tdx->nr_premapped))
-> +		return -EINVAL;
+>  drivers/char/ipmi/ipmi_ssif.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
 
-I suggest moving all of patch 16, plus the
+Do you plan to merge this fix?
 
-+	WARN_ON_ONCE(!atomic64_read(&kvm_tdx->nr_premapped));
-+	atomic64_dec(&kvm_tdx->nr_premapped);
-
-lines of patch 19, into this patch.
-
-> +	cmd->hw_error = tdh_mr_finalize(kvm_tdx);
-> +	if ((cmd->hw_error & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_BUSY)
-> +		return -EAGAIN;
-> +	if (KVM_BUG_ON(cmd->hw_error, kvm)) {
-> +		pr_tdx_error(TDH_MR_FINALIZE, cmd->hw_error);
-> +		return -EIO;
-> +	}
-> +
-> +	kvm_tdx->finalized = true;
-> +	return 0;
-
-This should also set pre_fault_allowed to true.
-
-Paolo
+Regards,
+Ivan
 
 
