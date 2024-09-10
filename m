@@ -1,113 +1,90 @@
-Return-Path: <linux-kernel+bounces-323232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABE59739D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5939739D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85DA91F26638
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A8F2837A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734AF194C77;
-	Tue, 10 Sep 2024 14:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599721946DF;
+	Tue, 10 Sep 2024 14:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl6fWYgy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="L0ownQDG"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F272AEF1;
-	Tue, 10 Sep 2024 14:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415818FDBD;
+	Tue, 10 Sep 2024 14:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978447; cv=none; b=b2aGUuH9eZKggqP9AXmqky27e8yqAif11GZKS0ZHKUlf4gUHmuU6l0MbS5SsXYgHarBmhbNntTKYRChxexlhM5yp4TkDeH9f0VGKd6xFGrOSelG5IXsz4O8gbOurdtpryyoogy+95FWfNTmaiP0VTXh7MeLKtIIHxXII1WsDtW8=
+	t=1725978484; cv=none; b=ePwIQPB8bRc6uoeJHHoh+CMgCUW5hKEFOlcbtwYoDNSQAUu7EZgYEoSEn9XYsdDz1fHVu4ItMOPcU25bVxyVUJ6xFTQwbLSie+rhVCejGziEIbgDdXulgHXQlTapB2D2e4vtwrNAYhyVCaUrGmvmUGL71Rf7FJq1hGM1tnE2Ess=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978447; c=relaxed/simple;
-	bh=ZxDk5Fk89zH/bioeL3XOgTPjQDch7841H+ZV7fVipHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ny4ahOSQvWerCXWeRzQgfKTX7XNhfY0SFPrD4eSiczcyW7PBK8VUcaQfBDhnIHi25DL6FsaapdJz2HGGXsRGW0DaR+l2vIdot55b6w/Itkn6CxFtXXu1Qdn19g8uUt9uLqklhzpZZNFbsik+7Uc/EDGRcuwIYrTCetkW8paDiNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl6fWYgy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CB6C4CEC3;
-	Tue, 10 Sep 2024 14:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725978447;
-	bh=ZxDk5Fk89zH/bioeL3XOgTPjQDch7841H+ZV7fVipHQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yl6fWYgyG+mAfxEu/dFwAgv8LUpgM0zqF/rnitmNqa0iTXaZDx+Da0Vu9a0+B3RAR
-	 51HgqNIUoMeo/HIq8f/FTCDU3UEb8IgM6eeS1pArECU/1TiOsXiuWDVsk6TE04ngpq
-	 1DXHUzq9FEC6rBI4auR2z+SEpLjRuPTJCXm8O2N/ba6QPHCe0qG3NuuQS86aHu+6sp
-	 Kx6IIMMgGL2Ij8T7KjZe1vv2bX9Iwhogy7zFibXOlX+6j30Dbx/AXZ7cubhwUZgC2N
-	 daOIRekkXOv5mZ3ZXYDNR5XXhUMJDZRiLEaQk9LTYf5kUuo2xLmDwGseXUmQrkw3Z2
-	 +yT5jFlwh+wyw==
-Message-ID: <b2e813c4-be89-457d-8c38-38849177ec93@kernel.org>
-Date: Tue, 10 Sep 2024 15:27:16 +0100
+	s=arc-20240116; t=1725978484; c=relaxed/simple;
+	bh=qHkpMV3mLwk0oKfwpkYJ7InrvxkPQlAZpvhOXxJwTko=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eAYdF8SEV3ZMbIH99BKHDNSpJLBL3yFxjoOqx1OoreF5SyKLbEP1tr0auOuxKEvPsnokoPDxnQ0hexrndJZjRSkT6kPcxW/QpaheyFY6AKO2WuWWYe0bEq/0x4xWXwuU0vxxqaPSKCeKgtiVkWhS9b5KhjJlJvyZUWvNAGlJU3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=L0ownQDG; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=kpc4lnod5vhgfipuedzauo6rx4.protonmail; t=1725978479; x=1726237679;
+	bh=qHkpMV3mLwk0oKfwpkYJ7InrvxkPQlAZpvhOXxJwTko=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=L0ownQDG9vwUTrlXtMaaLGKMyi99WfTN8kd6kFo7PaXe0i+L2ED9urXmCvtKr2/i1
+	 LvCtHIz864httSus4+wLrQNoYsFTIy8Ch+xM6B6D0fG7uZE1s7V+BvqTa1t4s2knJa
+	 XPPNn9MXkpGHFypJU8FsFdxCcix7+XYw1/bGwDKsoj/4TigTH+wh4/G7ls+twZGs8N
+	 MdrgY9FHWoSEx2ZJK7ngQ1luAZyonxU368/1B/QP0VmY2gAHcyhYpAJXYScRiUolv8
+	 vtynzgdmhMTu167iZY08AkYPv/aYjrUtJ/vJxHRvpMVjJ6GOe5BYlSYBMvcpCwhZXP
+	 BECdI6b01+GXQ==
+Date: Tue, 10 Sep 2024 14:27:52 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 26/26] MAINTAINERS: add entry for the Rust `alloc` module
+Message-ID: <3b2f4a89-4a41-4bd5-b07c-733b70241686@proton.me>
+In-Reply-To: <ZuBMuHk-_DmGRQad@cassiopeiae>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-27-dakr@kernel.org> <20240831135712.0d7366b6.gary@garyguo.net> <Ztb6_XW3ccnHQDmw@pollux> <CAH5fLgjbnGstjzsudjavzt5+UwK_r8n8X3LPdw29QSkBzaygxQ@mail.gmail.com> <f99d8d3a-5b56-4555-a1fc-bd7685dcea40@proton.me> <CANiq72=MD8jmWb9EGA8yW6eMT6Prj8fYEiJM81-HTq3p4dKmGg@mail.gmail.com> <05abcf53-4997-4bdc-953b-30bbb5118639@proton.me> <ZuBMuHk-_DmGRQad@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 65bc68060d4607b3c0e640286473b7551089d2c8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf build: Autodetect minimum required llvm-dev
- version
-To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
- sesse@google.com, acme@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Changbin Du <changbin.du@huawei.com>, Guilherme Amadio <amadio@gentoo.org>,
- Leo Yan <leo.yan@arm.com>, Manu Bretelle <chantr4@gmail.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev
-References: <20240910140405.568791-1-james.clark@linaro.org>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20240910140405.568791-1-james.clark@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-2024-09-10 15:04 UTC+0100 ~ James Clark <james.clark@linaro.org>
-> The new LLVM addr2line feature requires a minimum version of 13 to
-> compile. Add a feature check for the version so that NO_LLVM=1 doesn't
-> need to be explicitly added. Leave the existing llvm feature check
-> intact because it's used by tools other than Perf.
-> 
-> This fixes the following compilation error when the llvm-dev version
-> doesn't match:
-> 
->    util/llvm-c-helpers.cpp: In function 'char* llvm_name_for_code(dso*, const char*, u64)':
->    util/llvm-c-helpers.cpp:178:21: error: 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct llvm::DILineInfo'} has no member named 'StartAddress'
->      178 |   addr, res_or_err->StartAddress ? *res_or_err->StartAddress : 0);
-> 
-> Fixes: c3f8644c21df ("perf report: Support LLVM for addr2line()")
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->   tools/build/Makefile.feature           |  2 +-
->   tools/build/feature/Makefile           |  9 +++++++++
->   tools/build/feature/test-llvm-perf.cpp | 14 ++++++++++++++
->   tools/perf/Makefile.config             |  6 +++---
->   4 files changed, 27 insertions(+), 4 deletions(-)
->   create mode 100644 tools/build/feature/test-llvm-perf.cpp
-> 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index 0717e96d6a0e..427a9389e26c 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -136,7 +136,7 @@ FEATURE_DISPLAY ?=              \
->            libunwind              \
->            libdw-dwarf-unwind     \
->            libcapstone            \
-> -         llvm                   \
-> +         llvm-perf              \
+On 10.09.24 15:42, Danilo Krummrich wrote:
+> On Tue, Sep 10, 2024 at 01:26:34PM +0000, Benno Lossin wrote:
+>> On 04.09.24 14:57, Miguel Ojeda wrote:
+>>> On Wed, Sep 4, 2024 at 2:51=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>>>>
+>>>> I forgot the reason for not using it, does anyone remember?
+>>>
+>>> One of the reasons argued was that `mod.rs` is the same name
+>>> everywhere, and thus it is hard to notice the difference in some
+>>> editors and may be harder to "jump into" in history/tabs/etc.
+>>
+>> I don't usually open more than 2-4 files anyways, so it's not an issue
+>> for me. But of course people's workflow is different, does anyone have a
+>> problem with switching to `mod.rs`?
+>=20
+> I'm also not against it. I'd appreciate if a potential change doesn't int=
+erfere
+> with this series too much though. :-)
 
-Hi! Just a quick question, why remove "llvm" from the list, here?
+Sure, we can do it after the series.
 
-Quentin
+---
+Cheers,
+Benno
+
 
