@@ -1,176 +1,239 @@
-Return-Path: <linux-kernel+bounces-323135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B6A973864
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:14:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414CB973866
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186151F24539
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:14:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1FDB2307A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A40193081;
-	Tue, 10 Sep 2024 13:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD110192B62;
+	Tue, 10 Sep 2024 13:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Am+tsIX/"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c9A89dcp"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4300E192B78
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E801922F3;
+	Tue, 10 Sep 2024 13:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725974032; cv=none; b=rdWnb4QtnGUBfAyB9JTMvWFDWr16FXksGF6YJt6Vu9/1p9K9K+l/Hqre/DIIxxI7G/SojDUXZpMtamfCSYlFUhnXWt++lEbf/8SwGG7lwqPVfgUCd803lqgBU8NjBKe9ML5aVcXafLkTxK1TN5IVNIkKHscI3cigyuPQo5A/DXk=
+	t=1725974062; cv=none; b=a2jydbjcC6W4A86hRKfStmYSPRi95MnwuGpQ/R2u/qls+7g47rzQmq/IPYolqAsIKWBizQX2r/4k1JqVBHP2xzNkLPFDI/jhBVCwZBVY5Y4KVemHRmMpgMO8q1CFWgFwzJ9xt8VWA3YG6uxW3D+/DysB8MinETEG1aUGuE7i1Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725974032; c=relaxed/simple;
-	bh=Td8G0ZhZzKBRWrXjIEUMlAY6Xd0molozO56n4pFV8iU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UejBMsQJUxs4XpXBfeu94bsNDqZWccc8yfg0+1H6/KCygUO73IgddM3++pc21RVv1F/wUGSPxkiG4Ld3EHJTWKauYeMhhj7BdIKDVjBUfg1iVdZHuV8rVS3FB3uOBw9y+AHLejdrscRbdDACwrfkJYoADqkBFMfQe8HeOfrYUwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Am+tsIX/; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9aec89347so157707085a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1725974029; x=1726578829; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fpN52Tl3Y7hU7ZRXluVo1s+cWZSZSn4C8T8BEZMK7SE=;
-        b=Am+tsIX/q8YPkmqKLk3MEsUHCWyN0fZsQrPapl2OijcrId7JwKGjfLWRzE3eAh75Tr
-         RXyaQ8EkrYjCcg49T97gnEhS9EYBGGsK6bBD+XdLPOhUACQUAo4Ni5muvF8PCCnNUFkC
-         I/pzqs8opqqDdBS1g2cKU/VFwi4hccoTQBdysKq0YNZk3HiNRCy/UHt4wgfb8f7Kd6Gi
-         7nW0eXu9h74kZoSySijqEWMstVy4XbGDZ7c52a7WKQamWxeFU19w4gyfGTX9v5plm14M
-         PUOdZ/bsTo4eYkk1MUY3nh1tyPt3WkWOFsLmwLmZ80Zd+akzbtfGavJ82uTJlB3ePRPn
-         c30A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725974029; x=1726578829;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fpN52Tl3Y7hU7ZRXluVo1s+cWZSZSn4C8T8BEZMK7SE=;
-        b=vSXD5xidrZ+c8HgaDYP/VJO060aJBP9UeXgXIIViaHcXSeRIyxb74uQns1nXzPsx7K
-         NdZV4Dks8HakQIQMfOZHZXGEevDNVJYjd4rB34vwM8VXcmZBeOIU8d06z/8H6KVLF9zW
-         g47hShPrrTb1TLhxpGwxpXGJPf4qo8x2TJqI7Yd3m3GQGva4z2j1SEa9ltGwpx9cflIL
-         Q40eqc+jcXr+wrJMW8ymoh63wNc4NGiO72tu9QOF689Vly9LUdAaDj3hQLcodGEEka72
-         4yrSHSHp6Vx2I3vUq4F3yJd4PB4hNmI9Oq8jzI/FJdSNJbqOOLkypQzX7f+IbzbVDs5B
-         w21g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtQM2XEB3What0z06D8OwIjbyWOt5gvoYhEwUPZchy0gChF8j4JkIcS2Gx7wu4ixh0IURJ3Gf8rCJj/fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlvfguK4FjpwAU5PJF/mjBPZHhenrQehFt9/LfGVErVc+txhL6
-	GgJUXGHCRB8gHp7zBDhsaMli2Y7wE4BJyC4IRCaqOz3IbZNWqbrNrnH2Ki80Vm0/uMyYINFAkIk
-	=
-X-Google-Smtp-Source: AGHT+IF5PRcpk2RCeI33il7JeEsHL67QzDDZTB7lIxRX8RSfCSIdG7+kckjVTEpmGMcjUlhDs60Fuw==
-X-Received: by 2002:a05:620a:4406:b0:7a9:b8dd:eb96 with SMTP id af79cd13be357-7a9b8ddef9amr999401985a.30.1725974029054;
-        Tue, 10 Sep 2024 06:13:49 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::ed50])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a04667sm304784885a.75.2024.09.10.06.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 06:13:48 -0700 (PDT)
-Date: Tue, 10 Sep 2024 09:13:45 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, gregkh@linuxfoundation.org,
-	jorge.lopez2@hp.com, acelan.kao@canonical.com,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3] platform/x86/hp: Avoid spurious wakeup on HP ProOne
- 440
-Message-ID: <fe0d3259-c60b-4ef8-aa42-edb5ca2e2d90@rowland.harvard.edu>
-References: <20240906053047.459036-1-kai.heng.feng@canonical.com>
- <d8600868-6e4b-45ab-b328-852b6ac8ecb5@rowland.harvard.edu>
- <CAAd53p4i1zzW2DsVfirjXVsQX0AgXy1XbzWaM-ziWmAmp8J1=A@mail.gmail.com>
- <7be0c87a-c00f-4346-8482-f41ef0249b57@rowland.harvard.edu>
- <CAAd53p7c4-jpZ6OsW+H9qw2mvvr8kSfX2UEf8YrsWJt5koYbAA@mail.gmail.com>
+	s=arc-20240116; t=1725974062; c=relaxed/simple;
+	bh=1pagGJlMligYKZyOj9tam/1hx/qdYKEwyfiKlbrh+Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hz8AGxaidZ5jZByr+y+mPlRHD7IoZvV6YZWP0XFSbhgv1R6dufFMWufHIzEnU2lDwA3masaiDTQGf0Bljnin8hhk7od+hMPd4dQ/bedrEGoTz2TtVjaXuxUexs43EMLx3GvUvnGCPPkHK5mKZtZ7DkfNgASW6rHDcSPz9tOxGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c9A89dcp; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48ADDt8J016552;
+	Tue, 10 Sep 2024 08:13:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725974035;
+	bh=3QQnfOqsPdOz7QAodUe4yNHrei3gpQ5ULO/eL+FUblo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=c9A89dcpFekInS9FMb1dAXEH0PDAa9GCjUyh8WyFAH4z54SX20IDPSIjeZc6c3Ywt
+	 TouREtliykiaFQ1343IUC9X0iEJbToOZC8bYRTW5KeAF7iaCPgf8F+CwAcTmmUN25a
+	 HSyULQ3B8ikG+8QWnxZzXl/pGEul7SS46p0D2lic=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48ADDtos123525
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 10 Sep 2024 08:13:55 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
+ Sep 2024 08:13:55 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 10 Sep 2024 08:13:55 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48ADDnum091514;
+	Tue, 10 Sep 2024 08:13:49 -0500
+Message-ID: <d1e114ca-aa81-4e7f-b5ab-38656b205a33@ti.com>
+Date: Tue, 10 Sep 2024 18:43:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAd53p7c4-jpZ6OsW+H9qw2mvvr8kSfX2UEf8YrsWJt5koYbAA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 3/5] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
+        <robh@kernel.org>, <jan.kiszka@siemens.com>,
+        <dan.carpenter@linaro.org>, <saikrishnag@marvell.com>,
+        <andrew@lunn.ch>, <javier.carrasco.cruz@gmail.com>,
+        <jacob.e.keller@intel.com>, <diogo.ivo@siemens.com>,
+        <horms@kernel.org>, <richardcochran@gmail.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20240906111538.1259418-1-danishanwar@ti.com>
+ <20240906111538.1259418-4-danishanwar@ti.com>
+ <cf462ca8-08bd-42bd-965a-88e28e63bb3f@kernel.org>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <cf462ca8-08bd-42bd-965a-88e28e63bb3f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Sep 10, 2024 at 11:33:02AM +0800, Kai-Heng Feng wrote:
-> On Mon, Sep 9, 2024 at 10:39 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> >
-> > On Mon, Sep 09, 2024 at 11:05:05AM +0800, Kai-Heng Feng wrote:
-> > > On Fri, Sep 6, 2024 at 10:22 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > >
-> > > > On Fri, Sep 06, 2024 at 01:30:47PM +0800, Kai-Heng Feng wrote:
-> > > > > The HP ProOne 440 has a power saving design that when the display is
-> > > > > off, it also cuts the USB touchscreen device's power off.
-> > > > >
-> > > > > This can cause system early wakeup because cutting the power off the
-> > > > > touchscreen device creates a disconnect event and prevent the system
-> > > > > from suspending:
-> > > >
-> > > > Is the touchscreen device connected directly to the root hub?  If it is
-> > > > then it looks like there's a separate bug here, which needs to be fixed.
-> > > >
-> > > > > [  445.814574] hub 2-0:1.0: hub_suspend
-> > > > > [  445.814652] usb usb2: bus suspend, wakeup 0
-> > > >
-> > > > Since the wakeup flag is set to 0, the root hub should not generate a
-> > > > wakeup request when a port-status-change event happens.
-> > >
-> > > The disconnect event itself should not generate a wake request, but
-> > > the interrupt itself still needs to be handled.
-> > >
-> > > >
-> > > > > [  445.824629] xhci_hcd 0000:00:14.0: Port change event, 1-11, id 11, portsc: 0x202a0
-> > > > > [  445.824639] xhci_hcd 0000:00:14.0: resume root hub
-> > > >
-> > > > But it did.  This appears to be a bug in one of the xhci-hcd suspend
-> > > > routines.
-> >
-> > I failed to notice before that the suspend message message above is for
-> > bus 2 whereas the port change event here is on bus 1.  Nevertheless, I
-> > assume that bus 1 was suspended with wakeup = 0, so the idea is the
-> > same.
+Hi Roger,
+
+On 9/10/2024 5:42 PM, Roger Quadros wrote:
+> Hi,
 > 
-> Yes the bus 1 was already suspended.
+> On 06/09/2024 14:15, MD Danish Anwar wrote:
+>> Add support for offloading HSR port-to-port frame forward to hardware.
+>> When the slave interfaces are added to the HSR interface, the PRU cores
+>> will be stopped and ICSSG HSR firmwares will be loaded to them.
+>>
+>> Similarly, when HSR interface is deleted, the PRU cores will be
+>> restarted and the last used firmwares will be reloaded. PRUeth
+>> interfaces will be back to the last used mode.
+>>
+>> This commit also renames some APIs that are common between switch and
+>> hsr mode with '_fw_offload' suffix.
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+>>  drivers/net/ethernet/ti/icssg/icssg_config.c  |  18 +--
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 132 +++++++++++++++++-
+>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   6 +
+>>  4 files changed, 145 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_classifier.c b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+>> index 9ec504d976d6..833ca86d0b71 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
 > 
-> >
-> > > So should the xhci-hcd delay all interrupt handling after system resume?
-> >
-> > It depends on how the hardware works; I don't know the details.  The
-> > best approach would be: when suspending the root hub with wakeup = 0,
-> > the driver will tell the hardware not to generate interrupt requests for
-> > port-change events (and then re-enable those interrupt requests when the
-> > root hub is resumed, later on).
+> <snip>
 > 
-> So the XHCI_CMD_EIE needs to be cleared in prepare callback to ensure
-> there's no interrupt in suspend callback.
-
-Not in the prepare callback.  Clear it during the suspend callback.
-
-But now reading this and the earlier section, I realize what the problem 
-is.  There's only one bit in the command register to control IRQ 
-generation, so you can't turn off interrupt requests for bus 1 (the 
-legacy USB-2 bus) without also turning them off for bus 2 (the USB-3 
-bus).
-
-> Maybe this can be done, but this seems to greatly alter the xHCI suspend flow.
-Yes, this approach isn't feasible.
-
-> > If that's not possible, another possibility is that the driver could
-> > handle the interrupt and clear the hardware's port-change status bit but
-> > then not ask for the root hub to be resumed.  However, this would
-> > probably be more difficult to get right.
+>> +static void emac_change_hsr_feature(struct net_device *ndev,
+>> +				    netdev_features_t features,
+>> +				    u64 hsr_feature)
+>> +{
+>> +	netdev_features_t changed = ndev->features ^ features;
+>> +
+>> +	if (changed & hsr_feature) {
+>> +		if (features & hsr_feature)
+>> +			ndev->features |= hsr_feature;
+>> +		else
+>> +			ndev->features &= ~hsr_feature;
 > 
-> IIUC the portsc status bit gets cleared after roothub is resumed. So
-> this also brings not insignificant change.
-> Not sure if its the best approach.
+> You are not supposed to change ndev->features here.
+> 
+> From
+> "https://www.kernel.org/doc/Documentation/networking/netdev-features.txt"
+> "
+>  * ndo_set_features:
+> 
+> Hardware should be reconfigured to match passed feature set. The set
+> should not be altered unless some error condition happens that can't
+> be reliably detected in ndo_fix_features. In this case, the callback
+> should update netdev->features to match resulting hardware state.
+> Errors returned are not (and cannot be) propagated anywhere except dmesg.
+> (Note: successful return is zero, >0 means silent error.)"
+> 
+> This means only in 
+> 
+>> +	}
+>> +}
+>> +
+>> +static int emac_ndo_set_features(struct net_device *ndev,
+>> +				 netdev_features_t features)
+>> +{
+>> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_FWD);
+>> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_DUP);
+>> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_TAG_INS);
+>> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_TAG_RM);
+> 
+> I don't understand this part. 
+> 
+> As you are not changing hardware state in ndo_set_features, I'm not sure why
+> you even need ndo_set_features callback.
+> 
 
-It should be possible for this to work.  Just make the interrupt 
-handler skip calling usb_hcd_resume_root_hub() if wakeup is not enabled 
-for the root hub getting the port-status change.  When the root hub 
-resumes as part of the system resume later on, the hub driver will check 
-and see that a connect change occurred.
+We don't need to do any hardware configuration when the feature is
+changed. Instead certain APIs will do certain actions based on which HSR
+related feature is set in ndev->features. I agree this makes the whole
+API redundant. Previously in v3
+(https://lore.kernel.org/all/20240828091901.3120935-4-danishanwar@ti.com/)
+also this API was essentially just changing ndev->features when hsr
+change was requested.
 
-Alan Stern
++static int emac_ndo_set_features(struct net_device *ndev,
++				 netdev_features_t features)
++{
+...
+
++
++	if (hsr_change_request)
++		ndev->features = features;
++
++	return 0;
++}
+
+I think it would be better to drop this call back in the driver as no
+action is needed in the hardware based on what feature is set here.
+
+> You didn't take my feedback about using ndo_fix_features().
+> 
+
+Roger, I have taken your feedback regarding ndo_fix_features() and
+implemented it in the next patch (patch 4/5
+https://lore.kernel.org/all/20240906111538.1259418-5-danishanwar@ti.com/).
+Please have a look at that patch also. The features that have
+dependencies that can be addressed in ndo_fix_features, are not
+introduced in this patch so I have not introduced the function here. It
+is getting introduced in the next patch.
+
+> Please read this.
+> https://www.kernel.org/doc/Documentation/networking/netdev-features.txt
+> "Part II: Controlling enabled features"
+> "Part III: Implementation hints"
+> 
+> Also look at how _netdev_update_features() works and calls ndo_fix_features()
+> and ndo_set_features()
+> 
+
+Thanks for this. I checked that. Based on how _netdev_update_features()
+is implemented, I don't think there is any need of ndo_set_features.
+Whatever hardware dependencies are related to these HSR features, can be
+taken care by ndo_fix_features.
+
+Please let me know how does this look to you.
+
+> https://elixir.bootlin.com/linux/v6.11-rc7/source/net/core/dev.c#L10023
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static const struct net_device_ops emac_netdev_ops = {
+>>  	.ndo_open = emac_ndo_open,
+>>  	.ndo_stop = emac_ndo_stop,
+>> @@ -737,6 +780,7 @@ static const struct net_device_ops emac_netdev_ops = {
+>>  	.ndo_eth_ioctl = icssg_ndo_ioctl,
+>>  	.ndo_get_stats64 = icssg_ndo_get_stats64,
+>>  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
+>> +	.ndo_set_features = emac_ndo_set_features,
+>>  };
+> 
+> <snip>
+> 
+
+-- 
+Thanks and Regards,
+Md Danish Anwar
 
