@@ -1,252 +1,195 @@
-Return-Path: <linux-kernel+bounces-323450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0FB973D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:36:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C071D973D63
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 095F6B26554
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:36:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4281C1F26D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6FD1A38D3;
-	Tue, 10 Sep 2024 16:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE24D1AAE25;
+	Tue, 10 Sep 2024 16:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W8dAvcEs"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="QeyiS+5A"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26361A2C3D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36441A0B10
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725985944; cv=none; b=YJtsFhOtZTINaIPzFWjpFmKaexGpH5vJaxN8zrvj7WNFYUIKwQGByNqKaWG/rpF87k19CFSr/iSMm79uaQ4FFnNXTN7lWEG2fiSC09f8fxh4sCG4zW60RokxcXEt3gqyGyZXFSeQY/AeUCZFjsFHPBcW/9XppYF3yLIUIU7x0A8=
+	t=1725985960; cv=none; b=sM1uG56Qy+zAmGvRLo8Buz9yBiHQXFyOh236618hgjqvRBI5tfFa1r7taWdokyDhYEAETE7LMj1o2YtGTfjlknj4TXc6liUD+YEJrrl+r+B3AFH99tDjPTeRLa2ZzRduduiVgzgCxUIBLQkU/HVbqQKFfYEQA53BcFivlnxArmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725985944; c=relaxed/simple;
-	bh=EWuKgeWWA5soGhYyTDYq01t+mi3z5zhIMP8gGZF/Wtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GpZQXjw7+s5Ndu1kfxIZp1UUmqic3kAFGueKzjVriJr/o8ZkE9p0rSZ0DztThJwcEgiYAkyElicWD2VkF8RkLI+XZSm7HMpneFaqX5vCGi+jMjUp7nTtn9QKX074qbZo5O2a1elD1upCClqpx3/U5+Cs18FBuQynRyAgFbM38Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W8dAvcEs; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4582b71df40so305621cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:32:22 -0700 (PDT)
+	s=arc-20240116; t=1725985960; c=relaxed/simple;
+	bh=4iPN/fsCe14wfGYSYCjynyR282sYt9ED2Ow9xIF9vkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTeyRpax5ME9soRdGcGpVbQ5jTEV3J5zf1SvM/nWmH1ExmjFYfSv5frK95ApkiIkUeIqgzv6N5TAf4kL+DFZyvCZxyvEAC3j4XTbgENiX6thfJ9hD2ajDksW1u5p+PXnTkuMJKBsjqfGhgo2dC0Yv9RfnvlPIiQlRQIO4EJhWxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=QeyiS+5A; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso4739350a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725985941; x=1726590741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f9ncZWKOVJEsq4iDNvlY1nT7hu4+4z6i+c0WR3K9aTs=;
-        b=W8dAvcEsr7Ieae5tsEHO0pK0X2LyYTHWTQOIiMCrCjRiiARRWqQF1zE8AZ/glE6RRw
-         BzleGHWCbtGOR5NQGuWXphdBNZBNU90S54Dts6tC9Aa4QZHbTYjoyoUhp0nHir6f55UA
-         upnMp0QobcOWd63d0/Mt9sVFYbJFhmasxl2Pm5bqsGKPbgwta5eBUEy+3vmxqUn/QmB6
-         dC4PjWdFbYCENO3FjKjm4xTIyEpQlN27Lk6vJ6289IZpwfy2joiyvMlKi4jVAcuF87yR
-         4KDcVjzjLpMu5dxHpvbJ13EdpL+Dp0XK/602/OpWBL/N36qwA1TlE5eVIMF/ZJJg95w1
-         7giw==
+        d=csie.ntu.edu.tw; s=google; t=1725985956; x=1726590756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ELTwotHVw2kePUAUYWtO4H0shRoEHF3K5HxUF2BgZ5g=;
+        b=QeyiS+5ACmGi+c4mTvU9kta+d+9EcD2aNX72XkVinadbAVJWQS2idKdhIFUtxYaTDn
+         oNLrYRcYpdx2DWOrK8StpFlO5FLuI3J8mrReP/g5MK0HPU/bEPAsy5Kuq1QcS/d0uw/p
+         NZVmYt/1Z/hF3S+3mI77HxuL8bQ7Ud2C8YnXZy0gE2U4zTg9ufiijimmmFtqpnywQ1Ud
+         9dp+Nf37eYlbU63UYkipmttPpHigJKpJjB3SIqEE/y4rkhNq3cOZd6w7l/eeL2LP8atG
+         NkplvAsSe5sjg6JUNeQfC65dLcUfv/UWa2UmY64dA9WZzsBqNc+gfSgxcf7CNU6tuPhy
+         /2Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725985941; x=1726590741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f9ncZWKOVJEsq4iDNvlY1nT7hu4+4z6i+c0WR3K9aTs=;
-        b=lhRX2ymcKnNTgGe1NNqWwhxCaN3MVXXfWL9nW7UWVwV3JkxOFMB7wykDBJN8bfkQKu
-         4fx5eg4LQKFwuX0seVoKhg0a2VQERp1FjxFyKc+8/Bm4IBc8UoeFSbeweyVmLvuDC5CL
-         LDh3ZkHJHPXCHfWEibC58sfTbXZRBXpoPAt5isaxNRgp5bY1SLlvcYhwSD76WaBGV+3U
-         VtR/bvOAU5WruVfF5v6S+8Y574gqErEcQg1otFScuUddHiVA3/BEyEyH/j/u/aL9ORRM
-         sBimLunfqmYtVxxqymiJgg4VpSIGjFrdekvl0a/2wM1Es7MOnhLdzrJIXVZSkSlwxvVo
-         VvCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJqo7FQ6yEJ6H7O7utmReJHw1DrP1lqxpfuRnDg1q6YFR9clXiNDYAPgNt8TBrTKsk3DQbNXlje24qI40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+SYQornFwVLLFD0wDGTmQR1uBoSl5wAN7iuLVNqWacw7DXlDQ
-	updhLUfleCzvB2GL2WYz021arnr3I9TGZda7/jaHKEYEe86ouypeZQYCx3FmCyKFQG4DcnmQaIn
-	1jDlx5i5mfv3x6r6wg02eWN7Vk+CNtqPO3HdW
-X-Google-Smtp-Source: AGHT+IGzGAumkHrr2bDnkqRNDINvDYeTyLaFVCvxRDWY8NaodXVwMYUWwwjnEltyVzzl/ubtMR1u/3thAFVQbJZiYv0=
-X-Received: by 2002:a05:622a:11c8:b0:456:7228:c0a2 with SMTP id
- d75a77b69052e-4583efc8c1fmr3705951cf.13.1725985941140; Tue, 10 Sep 2024
- 09:32:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725985956; x=1726590756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELTwotHVw2kePUAUYWtO4H0shRoEHF3K5HxUF2BgZ5g=;
+        b=iJ9xeo5XVQ8V0M8NN/LjaarK20OZUOkRm4f/bKzLU1kz+vo+Lcb/tppzXM2rjnkKQ4
+         YYLQ/EWWOgSHrjmDTA5XHIJl0YXd/oGEO5U0dtuUrgBE6bP6EbgwhAQycXI887MZZ4I4
+         bim5MWJeoEaaRytlPuzeSn1ENVSQGzy0LlqKzGu3oRKaRPKfPU5pZAHcOMx/tLJDqf42
+         mg9p6X12oeluH2cU2cid1z/Ic+AO3QpTjiatIllmxYdRiCqygm1yXayBQ5Zq7/p9RaSA
+         1eokS8UzZvLIOnvW1xJV08DKBKpoISUYGLElQYiBxtEdk9YHdRqnR5GfWrqeMR0D0WSq
+         CRHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJPnmzjFvd2UNV3cy9uq7P9s9iJuFuMj0tx5Hb9ol4cxH3NN8B7XGDuQACBzpqkM6og4jIl98UpQY8KlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDGu4hRgRw/Y1gtR+9TYGiOjrlDpjrMciYhc3P6I1U+RiLBGEy
+	As768kth+whpMgToGTMzXzxCNML8zDNhXuGNQDnht63Xg6lV0nhCX+Pj+CM3yZlG0ztxVAm75en
+	ThPzfriRf2AfKtJYD9vsrDoqfME+n1T/oSD918G9+WYcT8UCey0dMXz8=
+X-Google-Smtp-Source: AGHT+IGsiPCMyX4DWKfV2C1n/j0UcYNxDwTcJHn00avqUPc5NDXLo/1FuFWLrpMOciYip064UpmfsA==
+X-Received: by 2002:a17:90a:ee8f:b0:2d3:c892:9607 with SMTP id 98e67ed59e1d1-2dad4ef4a6amr16294517a91.12.1725985955738;
+        Tue, 10 Sep 2024 09:32:35 -0700 (PDT)
+Received: from zenbook (2001-b011-3808-5e10-d66e-1c97-ed92-266b.dynamic-ip6.hinet.net. [2001:b011:3808:5e10:d66e:1c97:ed92:266b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04966b6asm6636022a91.39.2024.09.10.09.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 09:32:35 -0700 (PDT)
+Date: Wed, 11 Sep 2024 00:32:29 +0800
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: Snehal Koukuntla <snehalreddy@google.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Cc: James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Sebastian Ene <sebastianene@google.com>, 
+	Vincent Donnefort <vdonnefort@google.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, r09922117@csie.ntu.edu.tw
+Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove
+ inline in do_ffa_mem_xfer
+Message-ID: <rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
+References: <20240909180154.3267939-1-snehalreddy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
- <CAG48ez2G1Pf_RRRT0av=6r_4HcLZu6QMgveepk-ENo=PkaZC1w@mail.gmail.com> <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com>
-In-Reply-To: <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 10 Sep 2024 09:32:08 -0700
-Message-ID: <CAJuCfpEhCm3QoZqemO=bX0snO16fxOssMWzLsiewkioiRV_aOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
- resolution
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Christian Brauner <brauner@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Liam Howlett <liam.howlett@oracle.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909180154.3267939-1-snehalreddy@google.com>
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On Mon, Sep 9, 2024 at 2:29=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Sep 9, 2024 at 6:13=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
-> >
-> > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.o=
-rg> wrote:
-> > > Given filp_cachep is already marked SLAB_TYPESAFE_BY_RCU, we can safe=
-ly
-> > > access vma->vm_file->f_inode field locklessly under just rcu_read_loc=
-k()
-> >
-> > No, not every file is SLAB_TYPESAFE_BY_RCU - see for example
-> > ovl_mmap(), which uses backing_file_mmap(), which does
-> > vma_set_file(vma, file) where "file" comes from ovl_mmap()'s
-> > "realfile", which comes from file->private_data, which is set in
-> > ovl_open() to the return value of ovl_open_realfile(), which comes
-> > from backing_file_open(), which allocates a file with
-> > alloc_empty_backing_file(), which uses a normal kzalloc() without any
-> > RCU stuff, with this comment:
-> >
-> >  * This is only for kernel internal use, and the allocate file must not=
- be
-> >  * installed into file tables or such.
-> >
-> > And when a backing_file is freed, you can see on the path
-> > __fput() -> file_free()
-> > that files with FMODE_BACKING are directly freed with kfree(), no RCU d=
-elay.
->
-> Good catch on FMODE_BACKING, I didn't realize there is this exception, th=
-anks!
->
-> I think the way forward would be to detect that the backing file is in
-> FMODE_BACKING and fall back to mmap_lock-protected code path.
->
-> I guess I have the question to Liam and Suren, do you think it would
-> be ok to add another bool after `bool detached` in struct
-> vm_area_struct (guarded by CONFIG_PER_VMA_LOCK), or should we try to
-> add an extra bit into vm_flags_t? The latter would work without
-> CONFIG_PER_VMA_LOCK, but I don't know what's acceptable with mm folks.
->
-> This flag can be set in vma_set_file() when swapping backing file and
-> wherever else vma->vm_file might be set/updated (I need to audit the
-> code).
+Hi everyone,
 
-I understand that this would work but I'm not very eager to leak
-vm_file attributes like FMODE_BACKING into vm_area_struct.
-Instead maybe that exception can be avoided? Treating all vm_files
-equally as RCU-safe would be a much simpler solution. I see that this
-exception was introduced in [1] and I don't know if this was done for
-performance reasons or something else. Christian, CCing you here to
-please clarify.
+On Mon, Sep 09, 2024 at 06:01:54PM GMT, Snehal Koukuntla wrote:
+> When we share memory through FF-A and the description of the buffers
+> exceeds the size of the mapped buffer, the fragmentation API is used.
+> The fragmentation API allows specifying chunks of descriptors in subsequent
+> FF-A fragment calls and no upper limit has been established for this.
+> The entire memory region transferred is identified by a handle which can be
+> used to reclaim the transferred memory.
+> To be able to reclaim the memory, the description of the buffers has to fit
+> in the ffa_desc_buf.
+> Add a bounds check on the FF-A sharing path to prevent the memory reclaim
+> from failing.
+> 
+> Also do_ffa_mem_xfer() does not need __always_inline
+> 
+> Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Sebastian Ene <sebastianene@google.com>
+> Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index e715c157c2c4..637425f63fd1 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
+>  	return;
+>  }
+>  
+> -static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+> +static void do_ffa_mem_xfer(const u64 func_id,
 
-[1] https://lore.kernel.org/all/20231005-sakralbau-wappnen-f5c31755ed70@bra=
-uner/
+I am seeing a compilation error because of this.
 
->
-> >
-> > So the RCU-ness of "struct file" is an implementation detail of the
-> > VFS, and you can't rely on it for ->vm_file unless you get the VFS to
-> > change how backing file lifetimes work, which might slow down some
-> > other workload, or you find a way to figure out whether you're dealing
-> > with a backing file without actually accessing the file.
-> >
-> > > +static struct uprobe *find_active_uprobe_speculative(unsigned long b=
-p_vaddr)
-> > > +{
-> > > +       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSH=
-ARE;
-> > > +       struct mm_struct *mm =3D current->mm;
-> > > +       struct uprobe *uprobe;
-> > > +       struct vm_area_struct *vma;
-> > > +       struct file *vm_file;
-> > > +       struct inode *vm_inode;
-> > > +       unsigned long vm_pgoff, vm_start;
-> > > +       int seq;
-> > > +       loff_t offset;
-> > > +
-> > > +       if (!mmap_lock_speculation_start(mm, &seq))
-> > > +               return NULL;
-> > > +
-> > > +       rcu_read_lock();
-> > > +
-> > > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > > +       if (!vma)
-> > > +               goto bail;
-> > > +
-> > > +       vm_file =3D data_race(vma->vm_file);
-> >
-> > A plain "data_race()" says "I'm fine with this load tearing", but
-> > you're relying on this load not tearing (since you access the vm_file
-> > pointer below).
-> > You're also relying on the "struct file" that vma->vm_file points to
-> > being populated at this point, which means you need CONSUME semantics
-> > here, which READ_ONCE() will give you, and something like RELEASE
-> > semantics on any pairing store that populates vma->vm_file, which
-> > means they'd all have to become something like smp_store_release()).
->
-> vma->vm_file should be set in VMA before it is installed and is never
-> modified afterwards, isn't that the case? So maybe no extra barrier
-> are needed and READ_ONCE() would be enough.
->
-> >
-> > You might want to instead add another recheck of the sequence count
-> > (which would involve at least a read memory barrier after the
-> > preceding patch is fixed) after loading the ->vm_file pointer to
-> > ensure that no one was concurrently changing the ->vm_file pointer
-> > before you do memory accesses through it.
-> >
-> > > +       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC)
-> > > +               goto bail;
-> >
-> > missing data_race() annotation on the vma->vm_flags access
->
-> ack
->
-> >
-> > > +       vm_inode =3D data_race(vm_file->f_inode);
-> >
-> > As noted above, this doesn't work because you can't rely on having RCU
-> > lifetime for the file. One *very* ugly hack you could do, if you think
-> > this code is so performance-sensitive that you're willing to do fairly
-> > atrocious things here, would be to do a "yes I am intentionally doing
-> > a UAF read and I know the address might not even be mapped at this
-> > point, it's fine, trust me" pattern, where you use
-> > copy_from_kernel_nofault(), kind of like in prepend_copy() in
-> > fs/d_path.c, and then immediately recheck the sequence count before
-> > doing *anything* with this vm_inode pointer you just loaded.
-> >
-> >
->
-> yeah, let's leave it as a very unfortunate plan B and try to solve it
-> a bit cleaner.
->
->
-> >
-> > > +       vm_pgoff =3D data_race(vma->vm_pgoff);
-> > > +       vm_start =3D data_race(vma->vm_start);
-> > > +
-> > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_=
-start);
-> > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > > +       if (!uprobe)
-> > > +               goto bail;
-> > > +
-> > > +       /* now double check that nothing about MM changed */
-> > > +       if (!mmap_lock_speculation_end(mm, seq))
-> > > +               goto bail;
-> > > +
-> > > +       rcu_read_unlock();
-> > > +
-> > > +       /* happy case, we speculated successfully */
-> > > +       return uprobe;
-> > > +bail:
-> > > +       rcu_read_unlock();
-> > > +       return NULL;
-> > > +}
+----- LOG START -----
+$ clang --version 
+clang version 18.1.8
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+$ make LLVM=1 ARCH=arm64 defconfig
+$ make LLVM=1 ARCH=arm64 Image
+...
+arch/arm64/kvm/hyp/nvhe/ffa.c:443:2: error: call to '__compiletime_assert_776' declared with 'error' attribute: BUILD_BUG_ON failed: func_id != FFA_FN64_MEM_SHARE && func_id != FFA_FN64_MEM_LEND
+  443 |         BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
+      |         ^
+./include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+   50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+      |         ^
+./include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^
+././include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
+  510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^
+././include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
+  498 |         __compiletime_assert(condition, msg, prefix, suffix)
+      |         ^
+././include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
+  491 |                         prefix ## suffix();                             \
+      |                         ^
+<scratch space>:66:1: note: expanded from here
+   66 | __compiletime_assert_776
+      | ^
+1 error generated.
+make[6]: *** [arch/arm64/kvm/hyp/nvhe/Makefile:46: arch/arm64/kvm/hyp/nvhe/ffa.nvhe.o] Error 1
+make[5]: *** [scripts/Makefile.build:485: arch/arm64/kvm/hyp/nvhe] Error 2
+make[4]: *** [scripts/Makefile.build:485: arch/arm64/kvm/hyp] Error 2
+make[3]: *** [scripts/Makefile.build:485: arch/arm64/kvm] Error 2
+make[3]: *** Waiting for unfinished jobs....
+----- LOG END -----
+
+Is this expected? Because when I add back the __always_inline, or change the
+BUILD_BUG_ON to BUG_ON, it compiles successfully.
+
+Thanks,
+Wei-Lin Chang
+
+>  					    struct arm_smccc_res *res,
+>  					    struct kvm_cpu_context *ctxt)
+>  {
+> @@ -461,6 +461,11 @@ static __always_inline void do_ffa_mem_xfer(const u64 func_id,
+>  		goto out_unlock;
+>  	}
+>  
+> +	if (len > ffa_desc_buf.len) {
+> +		ret = FFA_RET_NO_MEMORY;
+> +		goto out_unlock;
+> +	}
+> +
+>  	buf = hyp_buffers.tx;
+>  	memcpy(buf, host_buffers.tx, fraglen);
+>  
+> -- 
+> 2.46.0.598.g6f2099f65c-goog
+> 
 
