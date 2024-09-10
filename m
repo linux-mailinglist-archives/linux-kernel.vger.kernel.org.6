@@ -1,150 +1,224 @@
-Return-Path: <linux-kernel+bounces-322233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B75B972616
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:13:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FD9972618
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBC8AB22BF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5D61C22D15
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35522901;
-	Tue, 10 Sep 2024 00:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966C61CAB9;
+	Tue, 10 Sep 2024 00:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b="Kfijd79+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gFREr/gL"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="f6BXwNd0"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9301859
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F312594
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725927204; cv=none; b=mm+bIKDCYSQcsj9jYbnBgrKKnjtwPKovHCBszRIcQ+X5uWTViByM6mnoHhTaTB2NWAk0PnfeCGjHuI4v6vAunWgFOQhwB347QjSs61IG8FJYUTGwk5gTERY26w1GktW4frWPmkDzRo/JWQsEw22YtjPr78TAy1cZVTUIz2yuCRw=
+	t=1725927437; cv=none; b=nryOjkQ+nk5E7PtbCEw+krwien+ELhFk4jbsCled84DFziCWOXPaDWAPPZjK9D01FrPhYp/2xPQ/xQe+IhXHA2J1TIL6qZMo0jHrKY2AEnjBDp68qAu+IBKXngda5S78mzPOuTSkHl6Q5EcgaiGGSAAfTItWGjkWW5TdTTcEHdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725927204; c=relaxed/simple;
-	bh=ujbpl4RceXXSiOyrm3n+wCVwZKmNpe535fyfhfNxGmE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eSf9sBSRvpUVcw7ZKE13feiVBwkKb5vliCo6MAVPOsgp8hbSh6xlDYwOSX4fBw5SoOZ8xvBFYbwvMQsz3grjGHOk0GMCs/LpcL5tXZVzHPZ4EDbJXgjzq3QKJoyRfmewPrAYJgnqjPOAV/yMoYbfjrEQ9Z2eJIo/jhZXlkrLZcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org; spf=pass smtp.mailfrom=verbum.org; dkim=pass (2048-bit key) header.d=verbum.org header.i=@verbum.org header.b=Kfijd79+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gFREr/gL; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verbum.org
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9320C13801BA;
-	Mon,  9 Sep 2024 20:13:20 -0400 (EDT)
-Received: from phl-imap-06 ([10.202.2.83])
-  by phl-compute-02.internal (MEProxy); Mon, 09 Sep 2024 20:13:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verbum.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725927200;
-	 x=1726013600; bh=fKI4i4kY3uZ7tC9wpbWIKNOVsMDg+90C6y/ABOelzM0=; b=
-	Kfijd79+HircDC18Co2EGumxNw9SH1q8waXY5i7mXe76Y9zuhqzgDHpOLMc2mMs9
-	njEHv6piBimxZp0XE6Wh+KxDIHMkvFpBlsEjl08eK72YjVijCsak5TMDi64PQbRc
-	HWEXb3TViEyKvW8VGHI8gWArk6Nt4glrCDGfU2Y6yresa2dE12g3zaXTDpFw0nwl
-	VhT/7nFBDW4HmIxI2wNW/ZXD9nqlqtkiHlvEf7Fc2M51s12qhg1HO4FwWobGO0eN
-	sp+LXUkno27npHutBO+dHcDRt7bU4V0wuTyG+3aE/zDg5XhbURCWjcg00Ngy4VcG
-	tFuzdj9q9zZcrhJgRWswyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725927200; x=
-	1726013600; bh=fKI4i4kY3uZ7tC9wpbWIKNOVsMDg+90C6y/ABOelzM0=; b=g
-	FREr/gLpVDe/OeQOgUY6CXg+wx52oY1v8USEDCam+0F+p9AzB7jeGj7PnjKmZDKr
-	VWPh39q+wDi31GKtX09RJfl46/317q42BWa6jNba3WM3AmDNthXcsiuVYy1qXhwB
-	ooPUqeZbNNNMgzFiZzbYnQNlW4zQoFfjxmoJZ7qaScnsAOYupSzT6RH9A4H9DztS
-	rW3tLeMtoYWv9/yKXe3afNYZrzIfwJMnpE++yCa8Jjc1eOx2R7RdsAtZiKHXODLK
-	pTpoyeniMBR17u1vpf8f8NIa6aDWgcYAu3nQVfEcSe0hOgKeS+6QSoho2T3jj3+z
-	EFFm1/vltS+xI4jY5oQuw==
-X-ME-Sender: <xms:H4_fZgFHqSZmkZWgsaCUSMksNM1wKoWBQEFEnoyoa3gP_HYbc4aHvA>
-    <xme:H4_fZpU9wCYo87Erc8MG1DoCjsi23rbVmWW7VFur8YAYEw-b6yvgB88FTlcc8J5_-
-    sty22eBpoRyVBL5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeikedgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefoggffhf
-    fvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdevohhlihhnucghrghlthgv
-    rhhsfdcuoeifrghlthgvrhhssehvvghrsghumhdrohhrgheqnecuggftrfgrthhtvghrnh
-    epleffgeegffffleeugeehgfejleelleejieffffetheelvdekiefgjedvudevtddtnecu
-    ffhomhgrihhnpehgnhhurdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepfigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgpdhnsggprhgt
-    phhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhshhirghnghhkrg
-    hosehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtoheplhhinhhugidqvghr
-    ohhfsheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkh
-    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:H4_fZqJu6ilAYQyf4EhMfhcri2fTYQjts7yyTiyk_aRlvA4oQH9oFQ>
-    <xmx:H4_fZiETcjbPJhrIy5VkzL2UVlPr7ZNzSdWbb-cANx_2Dm_uZPaH3Q>
-    <xmx:H4_fZmWPcSj-OnsFBco2DzBOUponvlAfRxwVzpVqml4T08VnCaxeAA>
-    <xmx:H4_fZlNoMYfqhB8ZmCD2BcmgPRwPc7joInnid2_1Zrun6B6BBaC8WQ>
-    <xmx:II_fZjhEF_C1ui2QikD5RXZ2oAMqLxcWJtBfwXkBKR8-t11E_-cy7ViQ>
-Feedback-ID: ibe7c40e9:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BACCA29C006F; Mon,  9 Sep 2024 20:13:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725927437; c=relaxed/simple;
+	bh=EsQJOobOZzC/f92L4F/REg/2Le1tcr1tC2pQdGGh87U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsrEMu01xa8yNAWxxLWYRFwksqpc7AKTDInaXhrhvI9jdhpXIYHBIdzDHIR1yPV/RrASVkgF7bptW4gL94RLgq+48jCsAFqoWR+7obmhR+m/dP6QsZEDYX3JWYQ55hN7YSDs+RhsxCORdcI24aLuO5pv/jNP8Rc6DoAZPj7LueI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=f6BXwNd0; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2068a7c9286so45649645ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 17:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1725927434; x=1726532234; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ITZxX7UiM8LQ0zk0XrwG6zjEJ0Wb/l4KQMatlFcav2A=;
+        b=f6BXwNd0r5OwpDTyOUd2jZkhDbRx8YzxOGw1ShqiIrcaDriFxjft1eY4Tn3cC25hQu
+         vUrStPY1Pr7uUcg9PUCFEyW1b2zIridRJZZNi+lovq8SFl3DUx7R5T3OKDKT4ghoHWoo
+         NqtwH+/uw+oBnJ4o4iwYjc6vicI30K1blzIj6G0MtK+gDwExuWajQlRYAOE/R8iNqDKO
+         fMEWkqF05mwweqx0V2jXSh8OAOCMQt/tBFw0uJI6BXcs42MOslyyxTZQum3qzOvc8cjI
+         EfloOv5mD9SEuW0yHT+433T61BCBy/DS3fnbdtQVM3cfFQI2iJDwiluKo1/tUlKKT3ey
+         TY9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725927434; x=1726532234;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ITZxX7UiM8LQ0zk0XrwG6zjEJ0Wb/l4KQMatlFcav2A=;
+        b=M/rWjCS0hGOvqI6GkBZktpBcuxyMEY435FMu2RNMTzQjSdpEETKeeovVZWmVjhLOgi
+         sAei1lZJPMxiV0c9Jk4dzV6SoEoqcHlWxFGRliGYpHOf4BbYTzlIR5FrAJCTMrcf5mm9
+         ko6jo5WDEDMQpi/Baus48bvPK2sVInKLvjSaL/xdrH1usCsevUu/CYYIi0boOWIIupFT
+         NQWmsC3r+9+M2B8WDfHNyhVQpdCPKvpThEFQspTkmLvm7RjIZc+jxnWa+LY+dJZxu0XI
+         MmbWwqCUWcnK5EzL6VWvzC/CvEg/dvF9PG2jsRRMtwvfJlNl+suqv6Jsku2wRdcLmQoz
+         nqkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbt5FpLVygpcWESo1mL9HSb6j+lB5tioac+eRGiNDUZrlxoGemRklsT5PziHmKKgNpPdNs8lK+KFDwEKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCblw+xRSkRv6bXJcnIOgqhoD1K5x2byEFGauU9D5mIiyMnJR6
+	loamkbYoUjHEtyzoGeHX8EzGXe1b9RSGT7MR5PF9yd9hFi0Vo8KQK5s1/F7ar1w=
+X-Google-Smtp-Source: AGHT+IH75Vt6xA+IGUZOhqCTzuuJDlJSOYaLbDTCkMHJ4LzN16Burqoa7iZR7nYEWaEGchZzuNuM3A==
+X-Received: by 2002:a17:902:f684:b0:1fd:96e1:801e with SMTP id d9443c01a7336-206f05fa9ebmr159881165ad.51.1725927434108;
+        Mon, 09 Sep 2024 17:17:14 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eef241sm38937055ad.144.2024.09.09.17.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 17:17:13 -0700 (PDT)
+Date: Mon, 9 Sep 2024 17:17:10 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libperf: Add perf_evsel__id() function
+Message-ID: <Zt+QBqsP+hgnG3uu@ghost>
+References: <20240823-perf_evsel_get_id-v1-1-0ffa204c4164@rivosinc.com>
+ <ZtkyCWXVjnn-hjUT@google.com>
+ <Ztn/mRDqPSpmliWq@ghost>
+ <Zt92ADG9_W4ujarg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 09 Sep 2024 20:12:59 -0400
-From: "Colin Walters" <walters@verbum.org>
-To: "Gao Xiang" <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-Message-Id: <7bbda10d-cf22-4a5f-be2d-6c100cf0c5ae@app.fastmail.com>
-In-Reply-To: <f8a965ed-e962-40a8-8287-943e872d238c@linux.alibaba.com>
-References: <20240909022811.1105052-1-hsiangkao@linux.alibaba.com>
- <20240909031911.1174718-1-hsiangkao@linux.alibaba.com>
- <bb2dd430-7de0-47da-ae5b-82ab2dd4d945@app.fastmail.com>
- <25f0356d-d949-483c-8e59-ddc9cace61f6@linux.alibaba.com>
- <21ddadb7-407d-48b6-9c1b-845ead2eefb4@app.fastmail.com>
- <df09821e-d7ca-4bfb-8f57-2046c072af62@linux.alibaba.com>
- <91310d4c-98d5-4a8b-b3db-2043d4a3d533@app.fastmail.com>
- <f8a965ed-e962-40a8-8287-943e872d238c@linux.alibaba.com>
-Subject: Re: [PATCH v2] erofs: fix incorrect symlink detection in fast symlink
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zt92ADG9_W4ujarg@google.com>
 
-
-
-On Mon, Sep 9, 2024, at 11:40 AM, Gao Xiang wrote:
+On Mon, Sep 09, 2024 at 03:26:08PM -0700, Namhyung Kim wrote:
+> On Thu, Sep 05, 2024 at 11:59:37AM -0700, Charlie Jenkins wrote:
+> > On Wed, Sep 04, 2024 at 09:22:33PM -0700, Namhyung Kim wrote:
+> > > Hello,
+> > > 
+> > > On Fri, Aug 23, 2024 at 11:58:38AM -0700, Charlie Jenkins wrote:
+> > > > Introduce perf_evsel__id() to collect the id of an evsel. It is not
+> > > > currently possible when using libperf to determine the id of an evsel.
+> > > > This will allow applications to link the id returned by PERF_SAMPLE_ID
+> > > > to the event being sampled.
+> > > 
+> > > I'm not sure what's your use case.  We have evlist__id2evsel() to
+> > > convert sample-ID to evsel already.  It'd read the IDs from perf data
+> > > file.
+> > 
+> > That function is unfortunately not exposed to be used by applications.
+> > This patch is for libperf, not for the util internals of userspace perf.
+> > Since I am using libperf (and not the python wrapper) I am collecting
+> > data directly from the mmap buffer and not from the perf data file. The
+> > mmap buffer only contains the id of the sample, and no way of
+> > associating this id with the evsel that is backing the id using only
+> > libperf API functions. A libperf function that provides a pointer to the
+> > associated evsel could be another alternative to this. However an API
+> > that returns a pointer to the evsel is not very useful as libperf
+> > applications cannot read members of perf structs, as the layout of perf
+> > structs are not part of the API.
 > 
-> Just my personal opinion, my understanding of rubustness
-> is stability and security.
->
-> But whether to check or not check this, it doesn't crash
-> the kernel or deadlock or livelock, so IMHO, it's already
-> rubustness.
+> Right, thanks for sharing your use case.  The libperf lacks the API to
+> map event ID to evsel.  And perf tools access the internal data struct
+> in the libperf which is not good.  But making it a proper library will
+> take a lot more time.
+> 
+> > 
+> > > 
+> > > > 
+> > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > > > ---
+> > > >  tools/lib/perf/Documentation/libperf.txt |  2 ++
+> > > >  tools/lib/perf/evsel.c                   | 10 ++++++++++
+> > > >  tools/lib/perf/include/perf/evsel.h      |  1 +
+> > > >  3 files changed, 13 insertions(+)
+> > > > 
+> > > > diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
+> > > > index fcfb9499ef9c..69c1d7efb659 100644
+> > > > --- a/tools/lib/perf/Documentation/libperf.txt
+> > > > +++ b/tools/lib/perf/Documentation/libperf.txt
+> > > > @@ -94,6 +94,8 @@ SYNOPSIS
+> > > >    void perf_evlist__enable(struct perf_evlist *evlist);
+> > > >    void perf_evlist__disable(struct perf_evlist *evlist);
+> > > >  
+> > > > +  void perf_evsel__id(struct perf_evsel *evsel, u64 *id);
+> > > > +
+> > > >    #define perf_evlist__for_each_evsel(evlist, pos)
+> > > >  
+> > > >    void perf_evlist__set_maps(struct perf_evlist *evlist,
+> > > > diff --git a/tools/lib/perf/evsel.c b/tools/lib/perf/evsel.c
+> > > > index c07160953224..765b17045342 100644
+> > > > --- a/tools/lib/perf/evsel.c
+> > > > +++ b/tools/lib/perf/evsel.c
+> > > > @@ -484,6 +484,16 @@ int perf_evsel__disable(struct perf_evsel *evsel)
+> > > >  	return err;
+> > > >  }
+> > > >  
+> > > > +int perf_evsel__id(struct perf_evsel *evsel, __u64 *id)
+> > > > +{
+> > > > +	int i;
+> > > > +	int err = 0;
+> > > > +
+> > > > +	for (i = 0; i < xyarray__max_x(evsel->fd) && !err; i++)
+> > > > +		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ID, (unsigned long)id, i);
+> > > 
+> > > IIUC this would update the place pointed by 'id' for every fd then you
+> > > will get the last ID only.
+> > 
+> > Yes I have a misunderstanding with how this is supposed to be written.
+> > Can there be multiple ids associated with a given evsel? When parsing
+> > the data in the mmap buffer, I want to be able to associate a sample id
+> > with the event encoding. I suppose an API to get the evsel from an id,
+> > and then require libperf applications to search some data structure to
+> > get the associated event with the evsel is reasonable.
+> 
+> Yes an evsel can have multiple IDs as it can have multiple FDs.  The
+> evsel is an abstraction to keep related events together and they are
+> actually opened for each CPU and thread, hence the xyarray.  Each opened
+> event (for the evsel) has its own ID.
 
-OK, if you're telling me this is already checked elsewhere then I think we can call this end of thread.
+I see, that makes sense.
 
-> Actually, I think EROFS for i_size > PAGE_SIZE, it's an
-> undefined or reserved behavior for now (just like CPU
-> reserved bits or don't care bits), just Linux
-> implementation treats it with PAGE_SIZE-1 trailing '\0',
-> but using erofs dump tool you could still dump large
-> symlinks.
->
-> Since PATH_MAX is a system-defined constant too, currently
-> Linux PATH_MAX is 4096, but how about other OSes? I've
-> seen some `PATH_MAX 8192` reference but I'm not sure which
-> OS uses this setting.
+> 
+> You will need an array of a same size of file descriptors to retrieve
+> the ID info and also a hash table to map ID to evsel.
 
-Famously GNU Hurd tried to avoid having a PATH_MAX at all:
-https://www.gnu.org/software/hurd/community/gsoc/project_ideas/maxpath.html
+I will extend this to be able to support returning an id for every open
+FD.
 
-But I am pretty confident in saying that Linux isn't going to try to or really be able to meaningfully change its PATH_MAX in the forseeable future.
+Right now in my application I have a hash table to map the sample ID
+back to the evsel.
 
-Now we're firmly off into the weeds but since it's kind of an interesting debate: Honestly: who would *want* to ever interact with such long file paths? And I think a much better evolutionary direction is already in flight - operate in terms of directory fds with openat() etc. While it'd be logistically complicated one could imagine a variant of a Unix filesystem which hard required using openat() to access sub-domains where the paths in that sub-domain are limited to the existing PATH_MAX. I guess that kind of already exists in subvolumes/snapshots, and we're effectively enabling this with composefs too.
+- Charlie
 
-> But I think it's a filesystem on-disk limitation, but if
-> i_size exceeds that, we return -EOPNOTSUPP or -EFSCORRUPTED?
-> For this symlink case, I tend to return -EFSCORRUPTED but
-> for other similar but complex cases, it could be hard to
-> decide.
-
--EFSCORRUPTED is what XFS does at least (in xfs_inactive_symlink()).
+> 
+> Thanks,
+> Namhyung
+> 
+> > > 
+> > > > +	return err;
+> > > > +}
+> > > > +
+> > > >  int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
+> > > >  {
+> > > >  	int err = 0, i;
+> > > > diff --git a/tools/lib/perf/include/perf/evsel.h b/tools/lib/perf/include/perf/evsel.h
+> > > > index 6f92204075c2..1457e5a46b28 100644
+> > > > --- a/tools/lib/perf/include/perf/evsel.h
+> > > > +++ b/tools/lib/perf/include/perf/evsel.h
+> > > > @@ -41,6 +41,7 @@ LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu_map_idx
+> > > >  LIBPERF_API int perf_evsel__enable_thread(struct perf_evsel *evsel, int thread);
+> > > >  LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
+> > > >  LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu_map_idx);
+> > > > +LIBPERF_API int perf_evsel__id(struct perf_evsel *evsel, __u64 *id);
+> > > >  LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
+> > > >  LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
+> > > >  LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
+> > > > 
+> > > > ---
+> > > > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+> > > > change-id: 20240822-perf_evsel_get_id-f7e11f15504b
+> > > > -- 
+> > > > - Charlie
+> > > > 
 
