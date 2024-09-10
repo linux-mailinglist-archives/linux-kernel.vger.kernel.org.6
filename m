@@ -1,274 +1,173 @@
-Return-Path: <linux-kernel+bounces-322419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8475A9728C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E8B9728DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88321C23DC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26A21F22223
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EE316A92E;
-	Tue, 10 Sep 2024 05:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E91D16C850;
+	Tue, 10 Sep 2024 05:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gWKhufzA"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011014.outbound.protection.outlook.com [52.101.70.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="r47X2Z2M"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6301684AE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725944866; cv=fail; b=upaUi70GnXlEqjTN6b77/rMym83spPoUk0PAq6/fyGs8Xk4Cm3RrBMeaUgxP8O3QxqZZSIxjTYLs9vAkzRysRxMS69mx125Vs5BVRDfZQMJTNKwoa1CCF5UoAuxS4PWjtk9y+qMQWcUq239hkkY85gTwqRO99jY82KZydIB5WhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725944866; c=relaxed/simple;
-	bh=t0Zc+A2q60SYhtENJKabRYeuD/zhjX964LpXpAEr2Kw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y2QxyXIpZmZy7QfznEU3UIz7a8jVrK3sm6bKJwgHaNpDhX8JX1cH35wzYG6kMQwjI7+fLRCrn7yIsHsjketa2/ki2R1M94OamjvpC+uLU681O9GVSVgy1kU6+zDco+Lyq77BTlyBOorgJaT6PJuaY+njo1dlwyUzHg/UfvCf1uk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gWKhufzA; arc=fail smtp.client-ip=52.101.70.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FyFy/9Kem+9Q1gvQK2T4Q2aKYslVuCtEL5UNVlpGsYP+R/r26r1jhyDSVYiCNy989GquynFgNnirc55L/LXBweuxM75uU4ppXCKRZnJx3fYAbdAevIZjHlxGmRn+vXalVj4/+W4bbPKmamtnpEeH6/G/xuQgFs9hzi9W6AHzeIAfzIvtzag+KeFSJrs+ou5BMNlqy5bEl8eRRAdz9sJKxsYpKqTF91FUp+4T8hE5SuDOVgp+st8J4mIe8wbEtsRJ6tJb3hj1f8BB/ckGxcYcVTB7fENym0xkzMHCjPcCXrqyfevaH6HT4mwfOMzSBYxfprajLwN9uxk6unzX/TekgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7jgYPtL5RXLvu2IOq7Dn3zXwwd7MgHjU4MVS06875VE=;
- b=BXY9BJ+vjYJ0Pg3R7JNPwirZF6qGJRR6iScmgRzAdX0n74I37USmRVTbiLTueOCwpqp/OMAdB/klHcft6ZpURoYMiMFjsjQ+/T95W0SyhDFYCkmzfM2s4o8f8P/OLd5kZa0VX1Hnn9kvNpoCaSfTL4YMTwW/yBDdowlvwNb2C24Aquz73cMIFYeO+w2Tzbkds6NrEFWcAHtp5GdizqIlEVKkGzWtky92LyewNUrf2orjOw9SVoYj7psilCFmfE5cx0pxX4lKeFlJTBQlUcjI3s9KG68g3qFSdwV57vpQkOnr8gvjssTTnwduMpeFQ1eAjyFdGWKpiIJhx/GTDJFr/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7jgYPtL5RXLvu2IOq7Dn3zXwwd7MgHjU4MVS06875VE=;
- b=gWKhufzAcGGz9lE+8X4y54ubk+RpJc36q02PNiiNkGpkri77r5ixwVhes0G7AHA6iVaMqUnBdooJ5qgP1cgiLsNbwQpK1z/DArafnLlGbPEAIP9F6qDqGbJ1LQiLxCpU5634Aq7UBR2rgCW/1m9OoD+nSsj9Se+P78+ZlY1FkchrxkzWyl8v4xtLivKs74Hrq4a2DaKSUuU+LDGw0vJU7Qy2tbzj0LoJtCjhEvXYCqWbijN2+6zDHLiW/4rlXbA7uBgrevWrgSHe0uFCsGaDazWYM3uDV1JEhYrXROvfcKuaIdcZg9xLKZ7ukNbIkGiulehOBtgcGsv5p40hI1Rk8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB7PR04MB5003.eurprd04.prod.outlook.com (2603:10a6:10:1a::19)
- by VI1PR04MB7134.eurprd04.prod.outlook.com (2603:10a6:800:12e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
- 2024 05:07:41 +0000
-Received: from DB7PR04MB5003.eurprd04.prod.outlook.com
- ([fe80::68ea:5937:4fa7:db2b]) by DB7PR04MB5003.eurprd04.prod.outlook.com
- ([fe80::68ea:5937:4fa7:db2b%6]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
- 05:07:41 +0000
-From: carlos.song@nxp.com
-To: alexandre.belloni@bootlin.com,
-	miquel.raynal@bootlin.com,
-	conor.culhane@silvaco.com,
-	frank.li@nxp.com
-Cc: linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH V5 2/2] i3c: master: svc: use slow speed for first broadcast address
-Date: Tue, 10 Sep 2024 13:16:26 +0800
-Message-Id: <20240910051626.4052552-2-carlos.song@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910051626.4052552-1-carlos.song@nxp.com>
-References: <20240910051626.4052552-1-carlos.song@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0197.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::8) To DB7PR04MB5003.eurprd04.prod.outlook.com
- (2603:10a6:10:1a::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF9344C7C;
+	Tue, 10 Sep 2024 05:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725945486; cv=none; b=jXkZNj4khiHrhqFbVcd0AGLePK+6LrtOBAMplrfF5cYiDe8jgAXpPxdHf+JsArqKl9HR/D1KIoT3PVGJHnX3vTgOcPlx7+TR7c8yE7ZDEO0rgnYKwDuGt+IpfOBMwZWcDF9gPKBdJUE7uOGGNjJ8qF6LPHdXyCIUp7pTKdkAzMA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725945486; c=relaxed/simple;
+	bh=hAhZ364znAxgZljeJw5JgixjqcAtcGqnXZpvX0S0/bM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eE+fuiKkeEb6Z7iLZDF/iEmZMo8X56uZWMl+BziImvqH2C35bSy8bWb10lk7gB9CiQ6SPd1EQT7Z8FukrayU/90PGbhvnm01kh05V8SLnH8Mym4SLp3T29eV1Nl5XxK0R0KrMjICcdyMXT5NS9OHq1An/+ct3/0gFjX+FlE+d+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=r47X2Z2M; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR04MB5003:EE_|VI1PR04MB7134:EE_
-X-MS-Office365-Filtering-Correlation-Id: 913486fb-98ac-4e8c-6418-08dcd1567f29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YRCNy1gdCjUlDh+GM7VDLiYe0UfiMNH7MVi5cd0jcv+z8uhFljaSnJN939U5?=
- =?us-ascii?Q?0xeMXia89/8pwRfZujGjcIr4a4h1+lJx9NUM1Y3Og5LZu2zMgZLveBhvm/fA?=
- =?us-ascii?Q?mH5DSJr/k7AMgg6tMXbclZABbqmj5qzHB83dl04mbVfulYbfFEPCU/PHr0MO?=
- =?us-ascii?Q?wpwOte7B9Lsz9+Onw20Ib4NnwPn0P9RMsurN1NVIstIRwXc/9f84SooorQAZ?=
- =?us-ascii?Q?AnPZwtQ2xFw1Hg2fbRxBKNcmt/sVtza96JyGxCiP8CPTv68ONcoEuHZul7ek?=
- =?us-ascii?Q?/t/xIioHaGO3U+LD+DqEO5MsIFpDySfnnq7E1OR1MLewdpH6bCN633fnAEqp?=
- =?us-ascii?Q?gYAFKUl0KPWHWrBk+rxjIekKlkxVuBNQeNyGII4qulAXRHCzs8oj2vU1zPPJ?=
- =?us-ascii?Q?6rGnD+q+HQEkk9PdlhPPF/gwy9piuvNbX8D+x4AkM4i9B2yI5ZTa4vmJn4fZ?=
- =?us-ascii?Q?srZAfKeEq+hc80T4REpKJxIyzMKfKz8klGuHqVuAI7np1o0Mt9Vdz1rNwUTQ?=
- =?us-ascii?Q?unaB98Zg/KY7vYSEez6Nmjhx07qODI6eZgAM78e8ZUwgwG3rulBNX0Hp7QvI?=
- =?us-ascii?Q?wTKzVcRQpZ99/9QoBPcDrJxYgCAwkA1mCsEefJRbsAl+Iy6Y5vrqG0bf/85x?=
- =?us-ascii?Q?UO1/NPR1MpyWa7dpBC8ohbDe7kimcxx87nthMG4K1BZwaq1BzcwS4sOmNMK+?=
- =?us-ascii?Q?kl+ll35HR3IUxqdjfCiGHQCSogj2Gb3Qt8fvhvQv/hrPq9a6BYT9iW43gSzV?=
- =?us-ascii?Q?TdPaBI2yk9eTo5iUDOip9cJth1tDd83kQ9Z+geMerE4o0LKECfO8ssKenMVj?=
- =?us-ascii?Q?NrQypiuBbpc6PelGoInV2/y83QsL5uH+zGMore/BXI1JnOqDvYZXS/5ODwcb?=
- =?us-ascii?Q?dsdLNyfbKfngTkkz6YO9q//TXkovTIvVDJTWLdCICh+dIIP44wUeiDwkyUaz?=
- =?us-ascii?Q?5MO3jzXblhuTKkrDPBZx2/MJL9fHdYVxiB8ggsIlmoRtJ9h2VzVcEAoaQcz4?=
- =?us-ascii?Q?cmds6w0p8iZH41TGVA2TQM1NXWA2cN9fiG6lIaqIrzPMMmytlo8iPh9S5Jdp?=
- =?us-ascii?Q?4+2znyTeK03ZVspbmQKn6Sf5DMXhV2yYoiow18TjdIkb4S1nUDu+cs0JmKZK?=
- =?us-ascii?Q?1pfw9KEzyVxDPYsSEajOaHGGg+2YySK1XfgBpNeJNteeaZxc0xt/fLck/6hS?=
- =?us-ascii?Q?D5zNX8prL4giODU4HiOST97BjI6r7E/hkxztTb6X5NtJ2MqMkxzOvEBZHZvy?=
- =?us-ascii?Q?ZmIDb8v0IU6C2GiOfyvPTpe9dLpLii2PDstFJkPc7Z7ZRl7Jil7fhKN1gQuV?=
- =?us-ascii?Q?oBe5QrzHxGBwOkP19t2HVxQgHPv8dFhbLIDNb/eVn4MeFyY8kyqII/44REr0?=
- =?us-ascii?Q?d/olouucro5ren73wx3UMV30G/+I1RcYu4CsLmk9nL6nAO9k6Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB5003.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sWhYhBv+b9fRYwa+AdRDcZhJ/ki2Xm6mPHekOk13YiPkl/OlzvAuoFwYudE8?=
- =?us-ascii?Q?rYiYusfu1Nm3KWYX5skCJEqulGu7yUh3/3FFPYaBXtQXOoSO8ceZoAEABL2P?=
- =?us-ascii?Q?zqDTqV8iAxQp3KgfvqrhVCvUJw86ey+IfPVW01M3Zw8T43fASa6wOcXf6GK5?=
- =?us-ascii?Q?+amsUQcpG8qsuQZduDCXLoQ/YNAaW7qMSO5PkPXSwXiMZZ/LeDKiF3OWJ/6s?=
- =?us-ascii?Q?+DaV2HQHtNB+XYsF1cAWbU+whVD6usP/jLHpeoGvIloLdkgEy/y6nRcimOcd?=
- =?us-ascii?Q?/z19V+YykhztgpFIdo6HcMVhv8jVOGlsJ126h8/POm6p3cNooSmteoMiiPFk?=
- =?us-ascii?Q?GEv9nDcJ0Wcxg/AHIPepY7PXAgbqNAJ3pRG/rGqVzLZFxWXNQcK/mAC9rlQR?=
- =?us-ascii?Q?GyVqKbbCvIQk+5avL1B1sWZ2WzJurFaI5SEQ7U4wG8pwqkCagjVArIQeMYZg?=
- =?us-ascii?Q?lOIL2wg8o5JSAPw9Nf/GjAO1Jj9rKmCgAe2A841u+psCOvunCNoQhuNb5pIX?=
- =?us-ascii?Q?yE3psicnxDkEtmUw9CIJFu62wAeKtQ0LoA9KDMJXpFA9s3uc5yzb/hxAwU7b?=
- =?us-ascii?Q?Rx1H/68Py7CXpbGoi0m5E6CfcLfZZxe1r/J1E1P5H6Z5pF974sfrm7/pg3KN?=
- =?us-ascii?Q?KqksrnkmCntMgm8qJv5wZuE8X3Gl9eReuOZalVYA8YISxRBeVgTPqLMyIOh4?=
- =?us-ascii?Q?gkZQSZizEOR+0pjldRoZcZeG21v/zbyKpL0qBI61wMIU7xImHnuouNjiM0md?=
- =?us-ascii?Q?haH/Fnw9r0Db3amrxQfMrshRIJ+FPLyK1wy67Tkme9VcZwizlnTGED5ZPrjE?=
- =?us-ascii?Q?CupOz+Nw23LITwdPTs6sWH9Wcr9bXGqjoQi2aBlmC77HSVMEEvq3iUu6WQOf?=
- =?us-ascii?Q?GINdWUP+MYljg1yGdPZ0tbwQNlx+R5+Z54RV8QyGbOttlssmrMr4/ljM8YLO?=
- =?us-ascii?Q?kBLjnJns/7ihHDlHuBF2N7hZkv5q3ihOiIxELQvtKEEOIOdH/rmsN/b4NO5M?=
- =?us-ascii?Q?r9FV128ltxmrPsoOPKJenqKL9T5wUOl7c2fwiBIYzu7C7ajUkKDHYML94n9o?=
- =?us-ascii?Q?YepegUNMErSwWaER18eRwlcxXkxyfwmQw3S4EOh2tqHQVnB+7gJ3iThDuzny?=
- =?us-ascii?Q?LUtAWE0UP15RmomKPMCQAoucxzePwr3AaI/BlT2N/jHdoH8gJxIVqt1ZY3Fv?=
- =?us-ascii?Q?oOWeiKwRNfPl6l2tpnwyE5V7a/ssLr8qUjREyB3sttgg0+UWd8+3f2I0kgtL?=
- =?us-ascii?Q?fOuhWfCh6RXOfnEdQETC/jMAOvMSf2H50Dx2lKQOUy0yJwWv6+SfnWz5KVTl?=
- =?us-ascii?Q?udV2s97UbNfi2mqs7NxdFp5Dq2bdv0mj39NaYxxa59M/juHICsxqldDrBqe7?=
- =?us-ascii?Q?/rovdQD9ojNpp/yCafeFXCs2lI/5Gxvn1Cp8SCMe3RjD6mHP9bb7akk5ZzS4?=
- =?us-ascii?Q?vueg1J1FRVUVJ8N8Xm7Oy11OWZrbObjILkwEY7NagAn1O2PTnFnePU8N0hQQ?=
- =?us-ascii?Q?hmpX0rK98ctIjM2VHc33UfsrNWYP8ux9RK1/1vI0h6F05HUeamFX59t7Zjsj?=
- =?us-ascii?Q?m2y/CHPuHNsGARObF1yWmVxRX7EfwRsI/AJcmKfG?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 913486fb-98ac-4e8c-6418-08dcd1567f29
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB5003.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 05:07:41.5801
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gCvUoyupMj1pgeRTpml5nwUwCHMTABB8mfmA1LQDQcLQMyVFp6NiThNj9DWno+5WhsFo//RzANEpx1PHd46T1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7134
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1725945475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fstbatTWWnEJ/CPU36BeADiwbLC59NJU+ju1hfFIVHI=;
+	b=r47X2Z2MMM1xhMaCrEtYPgpc8/OcQV9kKz7r6HsZdO9e5QaSwEuq8CMsipUK+XW/iL+seF
+	vixilZs1VMO9MF2aWH5CgXsO3wFzYyj6HEqMQ6tdEvo+8quK8s/m9IT3fJsqhDOWP6nRSw
+	C4c+Ftg6UjqmMM1pQkMVBsdp8vn9W1XGOvEFQ+aP4g5oXIzrLQXUZGG/T/wdSSUq+5UbeY
+	I/g3A8SlApHx5OlYi6YRCSdsWdTKjYK+2EuKRahnnUPuCxcadIRG9V9c2gaWwLp3MSLIRt
+	o2wMnBTSvkFBaN/p/Zw+I9qOA1Bg/A0AdRlC6D8lDHDbs5kHdD4Wi56ZPEQR9w==
+Date: Tue, 10 Sep 2024 07:17:55 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
+ jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
+ file
+In-Reply-To: <20240905142054.58194beb@donnerap.manchester.arm.com>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+ <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+ <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
+ <20240815181508.6800e205@donnerap.manchester.arm.com>
+ <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
+ <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
+ <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
+ <20240905133412.6ba050de@donnerap.manchester.arm.com>
+ <b07f1365a6f942297f7a3308fa628187@manjaro.org>
+ <20240905134254.6e15a1e5@donnerap.manchester.arm.com>
+ <8a80465aaa4b7dc4c8c15d7a73944cfd@manjaro.org>
+ <20240905142054.58194beb@donnerap.manchester.arm.com>
+Message-ID: <df8b774e10a0dbe5c01dc39d3cbd92fd@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Carlos Song <carlos.song@nxp.com>
+Hello Andre,
 
-I3C controller should support adjusting open drain timing for the first
-broadcast address to make I3C device working as a i2c device can see slow
-broadcast address to close its Spike Filter to change working at i3c mode.
+On 2024-09-05 15:20, Andre Przywara wrote:
+> On Thu, 05 Sep 2024 14:54:03 +0200 Dragan Simic <dsimic@manjaro.org> 
+> wrote:
+>> On 2024-09-05 14:42, Andre Przywara wrote:
+>> > On Thu, 05 Sep 2024 14:38:53 +0200
+>> > Dragan Simic <dsimic@manjaro.org> wrote:
+>> >> On 2024-09-05 14:34, Andre Przywara wrote:
+>> >> > On Thu, 5 Sep 2024 20:26:15 +0800
+>> >> > Chen-Yu Tsai <wens@csie.org> wrote:
+>> >> >> On Thu, Sep 5, 2024 at 8:17 PM Dragan Simic <dsimic@manjaro.org>
+>> >> >> wrote:
+>> >> >> > Just checking, any further thoughts about this patch?
+>> >> >>
+>> >> >> Sorry, but I feel like it's not really worth the churn. There's not
+>> >> >> really a problem to be solved here. What you are arguing for is more
+>> >> >> about aesthetics, and we could argue that having them separate makes
+>> >> >> it easier to read and turn on/off.
+>> >> >
+>> >> > Yeah, I agree. If a board wants to support OPPs, they just have to
+>> >> > include
+>> >> > a single file and define the CPU regulator, and that's a nice opt-in,
+>> >> > IMHO.
+>> >> > But having this patch would make it quite hard to opt out, I believe.
+>> >> > For
+>> >> > Linux there are probably ways to disable DVFS nevertheless, but I am
+>> >> > not
+>> >> > sure this is true in an OS agnostic pure-DT-only way.
+>> >>
+>> >> Thanks for your response.  The only thing that still makes me wonder
+>> >> is why would a board want to opt out of DVFS?  Frankly, I'd consider
+>> >> the design of the boards that must keep DVFS disabled broken.
+>> >
+>> > Yes! Among the boards using Allwinner SoCs there are some, say
+>> > less-optimal designs ;-)
+>> 
+>> I see, but such boards could simply disable the "cpu0_opp_table"
+>> node in their dts(i) files, for the encapsulated CPU OPPs scenario,
+>> and everything would still work and be defined in a clean(er) way.
+> 
+> I agree, and I was already about to suggest this as a reply to your 
+> initial
+> post, but I think I tried that, and IIRC this doesn't work: the 
+> "status"
+> property is not honoured for this node.
+> But please double check that.
 
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
-Reviewed-by: Frank Li <frank.li@nxp.com>
----
-Change for V5:
-- No change. Resend this patch to list after subscribe to mail list.
-Change for V4:
-- No change. Send out together with I3C master.c fix patch.
-Change for V3:
-- No change. But miss sending it with I3C master.c fix patch.
-Change for V2:
-- Adjust variable definition order
-- Add mctrl_config description to fix build warning
----
- drivers/i3c/master/svc-i3c-master.c | 52 +++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+I apologize for my delayed response.
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 7c30f58e344b..423db3dca257 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -184,6 +184,7 @@ struct svc_i3c_regs_save {
-  * @ibi.lock: IBI lock
-  * @lock: Transfer lock, protect between IBI work thread and callbacks from master
-  * @enabled_events: Bit masks for enable events (IBI, HotJoin).
-+ * @mctrl_config: Configuration value in SVC_I3C_MCTRL for setting speed back.
-  */
- struct svc_i3c_master {
- 	struct i3c_master_controller base;
-@@ -214,6 +215,7 @@ struct svc_i3c_master {
- 	} ibi;
- 	struct mutex lock;
- 	int enabled_events;
-+	u32 mctrl_config;
- };
- 
- /**
-@@ -531,6 +533,54 @@ static irqreturn_t svc_i3c_master_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int svc_i3c_master_set_speed(struct i3c_master_controller *m,
-+				     enum i3c_open_drain_speed speed)
-+{
-+	struct svc_i3c_master *master = to_svc_i3c_master(m);
-+	struct i3c_bus *bus = i3c_master_get_bus(&master->base);
-+	u32 ppbaud, odbaud, odhpp, mconfig;
-+	unsigned long fclk_rate;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(master->dev);
-+	if (ret < 0) {
-+		dev_err(master->dev, "<%s> Cannot get runtime PM.\n", __func__);
-+		return ret;
-+	}
-+
-+	switch (speed) {
-+	case I3C_OPEN_DRAIN_SLOW_SPEED:
-+		fclk_rate = clk_get_rate(master->fclk);
-+		if (!fclk_rate) {
-+			ret = -EINVAL;
-+			goto rpm_out;
-+		}
-+		/*
-+		 * Set 50% duty-cycle I2C speed to I3C OPEN-DRAIN mode, so the first
-+		 * broadcast address is visible to all I2C/I3C devices on the I3C bus.
-+		 * I3C device working as a I2C device will turn off its 50ns Spike
-+		 * Filter to change to I3C mode.
-+		 */
-+		mconfig = master->mctrl_config;
-+		ppbaud = FIELD_GET(GENMASK(11, 8), mconfig);
-+		odhpp = 0;
-+		odbaud = DIV_ROUND_UP(fclk_rate, bus->scl_rate.i2c * (2 + 2 * ppbaud)) - 1;
-+		mconfig &= ~GENMASK(24, 16);
-+		mconfig |= SVC_I3C_MCONFIG_ODBAUD(odbaud) | SVC_I3C_MCONFIG_ODHPP(odhpp);
-+		writel(mconfig, master->regs + SVC_I3C_MCONFIG);
-+		break;
-+	case I3C_OPEN_DRAIN_NORMAL_SPEED:
-+		writel(master->mctrl_config, master->regs + SVC_I3C_MCONFIG);
-+		break;
-+	}
-+
-+rpm_out:
-+	pm_runtime_mark_last_busy(master->dev);
-+	pm_runtime_put_autosuspend(master->dev);
-+
-+	return ret;
-+}
-+
- static int svc_i3c_master_bus_init(struct i3c_master_controller *m)
- {
- 	struct svc_i3c_master *master = to_svc_i3c_master(m);
-@@ -624,6 +674,7 @@ static int svc_i3c_master_bus_init(struct i3c_master_controller *m)
- 	      SVC_I3C_MCONFIG_I2CBAUD(i2cbaud);
- 	writel(reg, master->regs + SVC_I3C_MCONFIG);
- 
-+	master->mctrl_config = reg;
- 	/* Master core's registration */
- 	ret = i3c_master_get_free_addr(m, 0);
- 	if (ret < 0)
-@@ -1658,6 +1709,7 @@ static const struct i3c_master_controller_ops svc_i3c_master_ops = {
- 	.disable_ibi = svc_i3c_master_disable_ibi,
- 	.enable_hotjoin = svc_i3c_master_enable_hotjoin,
- 	.disable_hotjoin = svc_i3c_master_disable_hotjoin,
-+	.set_speed = svc_i3c_master_set_speed,
- };
- 
- static int svc_i3c_master_prepare_clks(struct svc_i3c_master *master)
--- 
-2.34.1
+Perhaps a safer approach could be to introduce a new dtsi file, named
+sun50i-a64-cpu-opps-disabled.dtsi, with the following contents:
 
+/delete-node/ &cpu0_opp_table;
+
+&cpu0 {
+	/delete-property/ operating-points-v2;
+};
+
+&cpu1 {
+	/delete-property/ operating-points-v2;
+};
+
+&cpu2 {
+	/delete-property/ operating-points-v2;
+};
+
+&cpu3 {
+	/delete-property/ operating-points-v2;
+};
+
+The purpose of this new file would be to delete the CPU OPPs for the
+suboptimally designed boards, when included into their dts(i) files,
+while the CPU OPPs would be "encapsulated" into the SoC dtsi.
+
+Though, I'm not sure how much cleaner this approach would be, but
+I think it would fit rather well with the suggested approach of having
+such suboptimal board designs treated as an exception that would be
+handled in some special way.  As a bonus, it would also make locating
+dts(i) files for such suboptimal designs a bit simpler, by grepping
+for "cpu-opps-disabled".
+
+>> I mean, if there are some suboptimal designs, perhaps the defaults
+>> should be tailored towards the good designs, and the suboptimal
+>> designs should be some kind of exceptions.
+>> 
+>> >> > This could probably be solved, but same as Chen-Yu I don't see any good
+>> >> > enough reason for this patch in the first place.
+>> >> >
+>> >> >> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
+>> >> >> as a default clock rate.
 
