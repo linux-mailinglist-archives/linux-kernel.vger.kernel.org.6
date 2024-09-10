@@ -1,154 +1,183 @@
-Return-Path: <linux-kernel+bounces-323184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28FA973914
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:49:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FED97391A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF8A1C245E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:49:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531ACB23863
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BF418E11;
-	Tue, 10 Sep 2024 13:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7810B192D7B;
+	Tue, 10 Sep 2024 13:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0hKBByp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eaGPx47v"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E2017E8F7;
-	Tue, 10 Sep 2024 13:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1F718E11;
+	Tue, 10 Sep 2024 13:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725976191; cv=none; b=AW7HlQdYWXHaUJc+l0gHGqgdihi/IAgnEiSOqO1uzh3oIbTE0gNZbTg+mkoFCXsqGvt321bk9shrK5z81uOsmIkG1aWfnKfKH2cxdGI/VAsVZ5BepG1VuJ+bguBjMJNhj50TdGg5adSYWGqJWR//jhYB+RxFe+2iWFm5j0GLvMA=
+	t=1725976256; cv=none; b=FgWu4JHOcvQU12bJOhpmnaV4NoLFS86+JleCFDuNMm3sfkVrMmNQU2Cg24+Aj97wzo9kCQ+3TtMfXJN16FoviWNXLb+zM8uqhwqnf1KAfHt0K8RBxw6yKtJNxuU2uIt17k0ffDcO89tn1fjRKJl2SzZxzeBsJYW4EsHAm6ICgJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725976191; c=relaxed/simple;
-	bh=sB67UM2Zr/q7FoL8u4RtQFupw/SD6hgP282y93A+VVc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SWugFNOzzY+WHxSnPFKe2VlMT8grlun2x5xeNiY9xOD74Y8W1CHov02b0WxK91b+braEzUA/VH5aOkKsFH/HynspZZC6b6/YTVlRbmFnqJCix+F65JLiBLrJRw89Q/ZeWCVcWRFoFuNw+R6ApA/vGVJAmNpv6aojxkBZwhDPBls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0hKBByp; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725976189; x=1757512189;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=sB67UM2Zr/q7FoL8u4RtQFupw/SD6hgP282y93A+VVc=;
-  b=b0hKBBypQZ9802NJXCx+yZBYMKHtp23gnz5KlFzQ4f1mCjYcKHesfG25
-   r8sqCTHoQnfD6zVmPDU3uBzelSRKDhHKaB7ZFkEO+MZN2C6JtCospKhfV
-   w1Qr6P8unw9VPd6nlqDxn2pKDstJMVN4XGQwsW19k7oN1YCoBNMbVgSL+
-   qoQKFC1oa8myeXarVQ9N/rwem04ZnTvA3csapkWKuo8YzsQPQsop2a9cz
-   1u/QwDOhy+7lSZfHuW1ugyVlUkAtpc+/kEUxqs1X/htUF6ZQDA7jKeahc
-   0bqhLTrKRC2kV+pzruJB0qXqMU57p4i7gh6ckpkE5+3HEru7f7vNb0JGY
-   w==;
-X-CSE-ConnectionGUID: PhShz7C7RBCtItB9b7ZmRg==
-X-CSE-MsgGUID: 6ovSeOT0TN6i9I36/lL+nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="42240468"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="42240468"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:49:48 -0700
-X-CSE-ConnectionGUID: re10FFAzQcigLzN/JNyLIQ==
-X-CSE-MsgGUID: eGchYnd+QDWW4DIT/4hATQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="66652238"
-Received: from maurocar-mobl2.ger.corp.intel.com (HELO [10.245.245.155]) ([10.245.245.155])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:49:46 -0700
-Message-ID: <a7a4bb04-de90-4637-b9e4-81c3138347d3@linux.intel.com>
-Date: Tue, 10 Sep 2024 16:49:55 +0300
+	s=arc-20240116; t=1725976256; c=relaxed/simple;
+	bh=dYhzfGqHXYEOx8MS6KvaDFYNnbAbgP5YUojlUAiEMAk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=QNBsbn6fTD4eKAvIAuYrf5ar7XPNckjxoUXNWdd/YtCUbwxgOIyuT+y5AYEd0EtqByFMwF7rpVjEuvcjjNciF8H1doiB0aTUayZDKvTDpZB/sXXGyvIgyOXMMaloUM7bCTzVqFQ8ZelgnpJBpMrb+SVleUhP01dAHSxQuOVqciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eaGPx47v; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay6-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::226])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id D6931C2497;
+	Tue, 10 Sep 2024 13:50:45 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4D6B7C000D;
+	Tue, 10 Sep 2024 13:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725976238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FKaZoEWr8UWtqcWAfis4JtnDRQPZMMSkWUHYpeNsgqY=;
+	b=eaGPx47vgkkjXWUCMPhevbzMVrQx+6xiGAlWW1jjipJdpQiNhIsAiuyDC7TDz/BFoQFJSH
+	5FbcGgVYB41zBYzcUmIxkZGyrp2FqyVK0tDTCtDBbCDAjYLpg2Ps1+zkVOAFEhNrPNpK9a
+	knMtt3c6Emm6LpuHYQf0/QGK9NFH3Wlq52sL8/lmQcQbckzrh8F6/GPa/Xm6B0gff9i5AT
+	Mbyt4rbAEzoyCHsCipRVb0jWL1KJvId5qvMHc1228PvJXjkN42P6o0VBwuywXW5Naq6D+X
+	fJUQMEwVlEg38PNdi0PxJ8jCSHcDLiTY0LPBO76k2yZOlD0t39bv78NPLKdghA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] soundwire: stream: Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, stable@vger.kernel.org
-References: <20240909164746.136629-1-krzysztof.kozlowski@linaro.org>
- <568137f5-4e4f-4df7-8054-011977077098@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <568137f5-4e4f-4df7-8054-011977077098@linux.intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 10 Sep 2024 15:50:37 +0200
+Message-Id: <D42NIH63EHZG.KKWZR2WZB68L@bootlin.com>
+Subject: Re: [PATCH v5 09/12] xhci: introduce xhci->lost_power flag
+Cc: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ "Kevin Hilman" <khilman@kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+To: "Roger Quadros" <rogerq@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Peter Chen" <peter.chen@kernel.org>, "Pawel Laszczak"
+ <pawell@cadence.com>, "Mathias Nyman" <mathias.nyman@intel.com>, "Nishanth
+ Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
+ <kristo@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+ <20240726-s2r-cdns-v5-9-8664bfb032ac@bootlin.com>
+ <1cd45625-84e4-43aa-ae2b-a59f10add898@kernel.org>
+In-Reply-To: <1cd45625-84e4-43aa-ae2b-a59f10add898@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+On Mon Aug 5, 2024 at 3:41 PM CEST, Roger Quadros wrote:
+> On 26/07/2024 21:17, Th=C3=A9o Lebrun wrote:
+> > The XHCI_RESET_ON_RESUME quirk allows wrappers to signal that they
+> > expect a reset after resume. It is also used by some to enforce a XHCI
+> > reset on resume (see needs-reset-on-resume DT prop).
+> >=20
+> > Some wrappers are unsure beforehands if they will reset. Add a mechanis=
+m
+> > to signal *at resume* if power has been lost. Parent devices can set
+> > this flag, that defaults to the XHCI_RESET_ON_RESUME value.
+> >=20
+> > The XHCI_RESET_ON_RESUME quirk still triggers a runtime_pm_get() on the
+> > controller. This is required as we do not know if a suspend will
+> > trigger a reset, so the best guess is to avoid runtime PM.
+> >=20
+> > Reset the xhci->lost_power value each time in xhci_resume(), making it
+> > safe for devices to only set lost_power on some resumes.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  drivers/usb/host/xhci.c | 8 +++++++-
+> >  drivers/usb/host/xhci.h | 6 ++++++
+> >  2 files changed, 13 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> > index 0a8cf6c17f82..2c9b32d339f9 100644
+> > --- a/drivers/usb/host/xhci.c
+> > +++ b/drivers/usb/host/xhci.c
+> > @@ -1029,9 +1029,12 @@ int xhci_resume(struct xhci_hcd *xhci, pm_messag=
+e_t msg)
+> > =20
+> >  	spin_lock_irq(&xhci->lock);
+> > =20
+> > -	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken=
+_suspend)
+> > +	if (hibernated || xhci->lost_power || xhci->broken_suspend)
+>
+> Why not treat xhci->lost_power and xhci->quriks & XHCI_RESET_ON_RESUME in=
+dependently?
+>
+> XHCI_RESET_ON_RESUME is sued by devices that know they always need to be =
+reset on resume.
+>
+> xhci->lost_power is used by devices that don't have consistent behavior.
 
+The goal is to avoid almost-duplicate functionality. I feel like:
 
-On 10/09/2024 16:05, Péter Ujfalusi wrote:
-> 
-> 
-> On 09/09/2024 19:47, Krzysztof Kozlowski wrote:
->> This reverts commit ab8d66d132bc8f1992d3eb6cab8d32dda6733c84 because it
->> breaks codecs using non-continuous masks in source and sink ports.  The
->> commit missed the point that port numbers are not used as indices for
->> iterating over prop.sink_ports or prop.source_ports.
->>
->> Soundwire core and existing codecs expect that the array passed as
->> prop.sink_ports and prop.source_ports is continuous.  The port mask still
->> might be non-continuous, but that's unrelated.
->>
->> Reported-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->> Closes: https://lore.kernel.org/all/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
->> Fixes: ab8d66d132bc ("soundwire: stream: fix programming slave ports for non-continous port maps")
->> Acked-by: Bard Liao <yung-chuan.liao@linux.intel.com>
->> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Tested-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+    XHCI_RESET_ON_RESUME is the default value of xhci->lost_power,
+    which might be modified at resume.
 
-Vinod: can you pick this patch for 6.11 if there is still time since
-upstream is also broken since 6.11-rc6
+Is a more straight forward solution than:
 
+    Both XHCI_RESET_ON_RESUME and xhci->lost_power define if power was
+    lost at resume. First must be statically known, second can be
+    updated during runtime. If second is used, first one must NOT be
+    set.
 
-> 
->>
->> ---
->>
->> Resending with Ack/Rb tags and missing Cc-stable.
->> ---
->>  drivers/soundwire/stream.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
->> index f275143d7b18..7aa4900dcf31 100644
->> --- a/drivers/soundwire/stream.c
->> +++ b/drivers/soundwire/stream.c
->> @@ -1291,18 +1291,18 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
->>  					    unsigned int port_num)
->>  {
->>  	struct sdw_dpn_prop *dpn_prop;
->> -	unsigned long mask;
->> +	u8 num_ports;
->>  	int i;
->>  
->>  	if (direction == SDW_DATA_DIR_TX) {
->> -		mask = slave->prop.source_ports;
->> +		num_ports = hweight32(slave->prop.source_ports);
->>  		dpn_prop = slave->prop.src_dpn_prop;
->>  	} else {
->> -		mask = slave->prop.sink_ports;
->> +		num_ports = hweight32(slave->prop.sink_ports);
->>  		dpn_prop = slave->prop.sink_dpn_prop;
->>  	}
->>  
->> -	for_each_set_bit(i, &mask, 32) {
->> +	for (i = 0; i < num_ports; i++) {
->>  		if (dpn_prop[i].num == port_num)
->>  			return &dpn_prop[i];
->>  	}
-> 
+Indeed, the first solution brings two additional lines of code as you
+commented below. I'd argue the easier-to-wrap-your-head-around logic is
+more important.
 
--- 
-Péter
+Tell me if you are convinced the second approach is better.
+
+>
+>
+> >  		reinit_xhc =3D true;
+> > =20
+> > +	/* Reset to default value, parent devices might correct it at next re=
+sume. */
+> > +	xhci->lost_power =3D !!(xhci->quirks & XHCI_RESET_ON_RESUME);
+> > +
+>
+> then you don't need to do this.
+
+To be honest, I added this line out of rigor. We could remove it and say
+that any device that modifies xhci->lost_power once at resume must set
+it at each later resume.
+
+The above line felt like a small safety net to avoid logic mistakes.
+
+>
+> >  	if (!reinit_xhc) {
+> >  		/*
+> >  		 * Some controllers might lose power during suspend, so wait
+> > @@ -5228,6 +5231,9 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_=
+quirks_t get_quirks)
+> >  	if (get_quirks)
+> >  		get_quirks(dev, xhci);
+> > =20
+> > +	/* Default value, that can be corrected at resume. */
+> > +	xhci->lost_power =3D !!(xhci->quirks & XHCI_RESET_ON_RESUME);
+> > +=20
+>
+> nor this.
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
