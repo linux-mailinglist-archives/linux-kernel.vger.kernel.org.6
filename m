@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-323840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BAB974418
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19440974419
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0AD31F264EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:32:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C460E28711A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A151A4B7B;
-	Tue, 10 Sep 2024 20:32:44 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946661A4B84;
+	Tue, 10 Sep 2024 20:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Plh5EDmU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC08A17E473
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A451741E8;
+	Tue, 10 Sep 2024 20:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726000364; cv=none; b=a8fXcTXdSnY5DN7wfabKEbrD4s0oBEA9yzVkrojDHKZvCOeZ4fGhju/TbMCJEtyQ5EV5CYFyU1OYN4duKRnr7vH81QUAbxDKlIgndHj7eFzVUilf2UKFCsn5tRJc7aFWkZb01KF5rMaUBTWCF86ewc716ayn0TCChyEXzgMpjTA=
+	t=1726000540; cv=none; b=Pklz9mdlg4zK3/H+iJvJqZk+bm+Auzn8IdP6TIeYeWphYbfKhY0iqEZ5cZrvWFpNtcVNaOL04YloGfTSUKQ33D8l5YsEU7GojQHti09+YQUrZBx42NVBnD2NRCfN3S6CIUSK72XynRBpQ4XrzGPL26YrAOuyx2FyGu0hpydWAfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726000364; c=relaxed/simple;
-	bh=4DQPIHjwtqh7gKICZd/SOTDF97Xnqa6T0H2Kb71YMSk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=c9uqTdhPfuOFgLIzLxs2XoNX0rEZEkTzaOky4U3PHkSlL9aT8rC9jwZ3BsZpi/WThzVK/IissAPMrUblb/vw9IQpU33tRLPwfAC6WzAKp5NMfnQxuvBuYvGgjSDjQiWEqaUZEb5gQU/8ZYFmcAozXOWiSaw+QivWkdd514+wr/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ce92f8779so582669039f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:32:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726000362; x=1726605162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bSfwNjhTbSE/czuLsNJKKxciq0u6UDuluDmGHJH2hj0=;
-        b=lu3AnGEWJ2jbWBZDT6HWj92GC00tScODVqOmeXVZanaeuc5DyVucAs2Knb4YCurWmh
-         EkTL6gHIIKuQxHErifjSxo2GcQh5Fz+b/DywkQrG6cx3+uKoFa5X28QXtIIHA+cFIZKC
-         S4sheoY382auKUelPNoXn3OCGEx/F+UVx86+a3Jj86qGGo2Tc0kbqvPkKMqMcKpKV8s+
-         7Hs1WffDOMUMBN3LVqYGt0V/AUClCQvDu8abe61/4gFRi9nNwBMIcyBPzbNrvewxxk00
-         GEtW0+jLLH6rdJ4m/uY7c+dvJMNrGMe3Wbk/r6o2DOF6hP3MoEJXBbbPPYD30aPPR5cb
-         FsUw==
-X-Gm-Message-State: AOJu0YzfOnL2Qn6F5afeTqLf+GYbcbs3picA/0kbldGVkhb2i0lkELrk
-	j5K6tFh1tChJSyCGctsHZdEUpHbCqpZoxg0gY4F/Rkolk7F5fYzUNYmQljOP2kerIgSdJQWanzk
-	SnX+zYEAwo1ZEdAeoRlsuj+XYYOdpWoZIC6Lv9txv2l3JoOkIrD3CvQU=
-X-Google-Smtp-Source: AGHT+IFYy6iugUxgst3jGWdi9yYVY27pWHQVuxAdW/SDlT8Kqkar61M5cwDxiil4RQUtM96jCKq8EGj5FcQEPZ7S3vZCJgYXWVzG
+	s=arc-20240116; t=1726000540; c=relaxed/simple;
+	bh=ZBvdMqjUSCBx/TtQ+mFeqJuGoEfmT4hpGxtbN9BKUzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bb3bsIteNVT1z18JYLFEMFYH8qzgGeysU+0L7xUMoUPr9dwEsVf23cVBMsD67C6s+oQ0FYiFxaAugcWEXc4SjRHEaqVbtibYX+ETtPx/yIrax1AExM7oFlAXMLNylmmRPraZiQWuslvFyuMdYp9OI6dHLF4w7wkF2Ejt/kKprHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Plh5EDmU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D395C4CEC3;
+	Tue, 10 Sep 2024 20:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726000539;
+	bh=ZBvdMqjUSCBx/TtQ+mFeqJuGoEfmT4hpGxtbN9BKUzs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Plh5EDmUDB3Ck7HOx2XXcxpVfImxu3quUJBIqWEwAEAYZAEH02wM4xFqWDLaTOEQX
+	 4lSuQRfeJrMfmsTfEm+3cK0gVLKyJiOaTiuFLLiXZLLPM/nuAAGTD/wkYI+i20MfEH
+	 4eV03xyfI5y0Hd73JhxAmh6hLmo+PZwPe3g6d0m85bnaGUI1HZh9QdJdbYVw6gljLS
+	 HMyqb+sLW0B9uLv2O1Ie0pYJMD0VrIUYHdhSiTVUa4XN7hCGfovjdOmr/pfik4Izt1
+	 34Zvfp7Y5vpF007iPyfWBrsFBrczFkocj31jV5V8DCpsCMxJYLq1+xBxz92xxkgnSf
+	 j+R7RIA1Ta8Bg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1so7aL-00BsI0-42;
+	Tue, 10 Sep 2024 21:35:37 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	vdonnefort@google.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	Sebastian Ene <sebastianene@google.com>
+Cc: kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v10 0/5] arm64: ptdump: View the second stage page-tables
+Date: Tue, 10 Sep 2024 21:35:33 +0100
+Message-Id: <172600049355.391902.15401581703143159469.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240909124721.1672199-1-sebastianene@google.com>
+References: <20240909124721.1672199-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2168:b0:3a0:4313:f504 with SMTP id
- e9e14a558f8ab-3a04f072ff5mr164727745ab.2.1726000361689; Tue, 10 Sep 2024
- 13:32:41 -0700 (PDT)
-Date: Tue, 10 Sep 2024 13:32:41 -0700
-In-Reply-To: <0000000000009b8cd30621bf7d02@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000070e31a0621c9c697@google.com>
-Subject: Re: [syzbot] general protection fault in bch2_fs_recovery
-From: syzbot <syzbot+1cecc37d87c4286e5543@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, sebastianene@google.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon, 09 Sep 2024 12:47:16 +0000, Sebastian Ene wrote:
+> This series extends the ptdump support to allow dumping the guest
+> stage-2 pagetables. When CONFIG_PTDUMP_STAGE2_DEBUGFS is enabled, ptdump
+> registers the new following files under debugfs:
+> - /sys/debug/kvm/<guest_id>/stage2_page_tables
+> - /sys/debug/kvm/<guest_id>/stage2_levels
+> - /sys/debug/kvm/<guest_id>/ipa_range
+> 
+> [...]
 
-***
+Applied to next, thanks!
 
-Subject: general protection fault in bch2_fs_recovery
-Author: djahchankoike@gmail.com
+[1/5] KVM: arm64: Move pagetable definitions to common header
+      commit: 29caeda359da15d16963096043cda39530f81cc4
+[2/5] arm64: ptdump: Expose the attribute parsing functionality
+      commit: acc3d3a8176651a839056c7da4b925ea0bcc38c2
+[3/5] arm64: ptdump: Use the ptdump description from a local context
+      commit: 9182301a7bd2564fb050ade9820333c8b1adfcc2
+[4/5] arm64: ptdump: Don't override the level when operating on the stage-2 tables
+      commit: 79c4c7284f92d5e780c8532c343ca2cacfaf5125
+[5/5] KVM: arm64: Register ptdump with debugfs on guest creation
+      commit: 7c4f73548ed15476daf1101f66648085eda65067
 
-#syz test
+Cheers,
 
-When a sb is marked clean but doesn't have a clean section
-bch2_read_superblock_clean returns NULL which PTR_ERR_OR_ZERO
-lets through (returns 0), eventually leading to a null ptr
-dereference down the line. Adjust read sb clean to return an
-ERR_PTR indicating the invalid clean section.
-
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
----
- fs/bcachefs/sb-clean.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index c57d42bb8d1b..025848a9c4c0 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -155,7 +155,7 @@ struct bch_sb_field_clean *bch2_read_superblock_clean(struct bch_fs *c)
- 		SET_BCH_SB_CLEAN(c->disk_sb.sb, false);
- 		c->sb.clean = false;
- 		mutex_unlock(&c->sb_lock);
--		return NULL;
-+		return ERR_PTR(-BCH_ERR_invalid_sb_clean);
- 	}
- 
- 	clean = kmemdup(sb_clean, vstruct_bytes(&sb_clean->field),
+	M.
 -- 
-2.43.0
+Without deviation from the norm, progress is not possible.
+
 
 
