@@ -1,193 +1,196 @@
-Return-Path: <linux-kernel+bounces-322514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FE99729F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248B1972A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028281F2574F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491EE1C2407C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5603F17BB21;
-	Tue, 10 Sep 2024 07:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E6917BEB3;
+	Tue, 10 Sep 2024 07:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="PsVSzPdB"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2041.outbound.protection.outlook.com [40.107.255.41])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YJmhuppl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A332617B4FF;
-	Tue, 10 Sep 2024 07:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725951675; cv=fail; b=sAEGHIT3tiJ1g1rqFooyTA3lLlmnYToN/1q2gMn/WRuJEMkYNicmHcd5lkkCskF6jAV/7n84IeSoReUqtP4D8MNjqiQ6dgZdDt98sJVYh0EO/9rcNGaESCPFwS/oeZYq+Jm5CZB1LPMfNFrUN+qC0hNs04mO8V1DArlErnqXkVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725951675; c=relaxed/simple;
-	bh=D0bJWI4kx4QAbnDYfQkYtoqOhQ9YVJExlOvmzsZW6Xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=WtSCPu4h1Nvg1NLrrqzrJefxgLZyEgShtOWYwag11tUTQUFPQOU30o9CcscJC63NmWC9qKZmhQUChHIHxPQ5GE/ehMVmUqnOkRuLZ0NDofMs7oe6XcMtAuRSfWFbHL6NgcImRSRLbwPqzYunehiJ+GzOVwFHokLtZhjglMsxbgQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=PsVSzPdB; arc=fail smtp.client-ip=40.107.255.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cnh9R1ABOx3Y2CnHetZEGB8AvITYqBIcB0G7KbBpIhMiN2dNtUZ5b/Mh7GRC11CnXLbvGdcX4OHcltsgeyW/vO1PUOc4AJCZmIzk3Qh/qad9JpLHIHxlSq2IaCLa8HIIfILBAOQvaODpzFsmuXu0F8QlLUwPbAFer68d6oN3dUE4rrC6hX5/HbphMz47XK5A8W+dje130W5THUTaLARHJYa3028c1i8j+InQ5ZXF58dU5V71nPQqpziwpQMdS8bRGwmzoVYLr58oLwoMfFMi9jg5paHROZaq6H/16irpZ3QKIbspUXXbumodFUAvp4tMt4z58oYgDo7RNFbS9dDkPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sfdIx0/xYyIKnRdpSahiM1TBvRr6C4U4r8OEPxSxwVs=;
- b=tC2t7JxvExZoCUjU9aLWDgeTj+sSx69vSqaa7y3usAq1E8fpBFTQQ4GO/ZivO6xyQrF5vK4+I5Xs25PFURMvTijWEEZTUXponK5Jzg8LrSE+HQMfZoAOfG7pR1KXnOPYt5tggEh9mPzS+HA37IVYYIj9lwwtQ3T1u4qpt3yL0csWlCxzODQFdBB1uHGHeye4Zzkb84pabnLDLrvF5H3tFW+9VNSdsnfQVEYPKRm+j5wQQjEzc17/9p0Re7XjhH8HLZAUwJ1esOLOGRYLMBwkIuNebGj9if5vQdpFV3439J+hdZaF25Hs9a0j7AcY0cLpMj7zXjc49y5UMpAT2esgdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sfdIx0/xYyIKnRdpSahiM1TBvRr6C4U4r8OEPxSxwVs=;
- b=PsVSzPdBPUyCZUDJDiZ1eYebmrRoXDI63BsgLYlz4HRyQpeRIXq6MxX5KrAU1cFOBaYSa0IU3VRWZ2RjgNKL+1lHB/xKqUAgmhSteLBl9kePM/0iLsp+qxXgoPRKUYSyIj7RApq4i+RZFsJMQ74IqyEkRD1lvBHk6Kc7LWCp1lVL8DtTy6aBWenn7yJxQY3t5jYcR3MynMKIWoKPgAlCKL0thzRoXzh7VBt6x2OMEw71FkYWZwaxNVxGPmVTVHQzFTzKukkScCP5vzHwoUcurNRYQGVvNQhslgqWcSqvjQaexHZO2nqwxrCt4Ibba45QrHx5FhSrkbagAeH2G7VPWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB5896.apcprd06.prod.outlook.com (2603:1096:820:db::5)
- by TYSPR06MB6409.apcprd06.prod.outlook.com (2603:1096:400:411::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 07:01:09 +0000
-Received: from KL1PR06MB5896.apcprd06.prod.outlook.com
- ([fe80::f820:452c:5a5a:fea6]) by KL1PR06MB5896.apcprd06.prod.outlook.com
- ([fe80::f820:452c:5a5a:fea6%6]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 07:01:07 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] watchdog: Convert comma to semicolon
-Date: Tue, 10 Sep 2024 15:00:58 +0800
-Message-Id: <20240910070058.40867-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0196.apcprd06.prod.outlook.com (2603:1096:4:1::28)
- To KL1PR06MB5896.apcprd06.prod.outlook.com (2603:1096:820:db::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D4717BB32;
+	Tue, 10 Sep 2024 07:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725951959; cv=none; b=P+fE/NkyDyhUqyFMeZkBz3j5yVlkAOGQYoBi3mILblM2wFTuOcx6w64btv91KrkhTx1uNN09VcNQlditDN/IEqdsebtCjGRapDL7hR1vcCphUOTqJiBfhyfGg72kRCwKI+bocJT+yTiDBcDVTevxYJedCyu2MdhgrVMH/dK8oSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725951959; c=relaxed/simple;
+	bh=FRulgI0lmiE0mYaYBCABBxeBTTqRHcICmBnluUqRnrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pwrf6FOQRb0CwREVzJTl2TFTZLSicjZccmxpkqFyGmtzszWTeEA9Xdokr7zoANYg9Od03wrqplo7MG2jNXRtdkjm66a5cC6Pbks6i1wuYf5nF7P2DcfoTjr7l3FSFY3HGzYFatXm8UnsfBDpN4Gb4l6NAhrDUvKD+Ap1BGq2Vlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YJmhuppl; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725951958; x=1757487958;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FRulgI0lmiE0mYaYBCABBxeBTTqRHcICmBnluUqRnrs=;
+  b=YJmhuppl9xqYuFQ3Frvl9WQx/BaZzQXQc0RDR2iKCuoQqm3Gi3+Kt+yv
+   mS77rY1QdbH+9NubpxZxWESzGOTLTlknhwwuNjsuAiIp9yTD1oNtIDhLI
+   akpOOA7VN8/iaGsL1SbaX6TRQi6/aXCBB9Ho2vZhRM5sw2IS71lkCqh/a
+   AoUSq2r3+sr2FZ8gUhTAsY3OCOUdi35MsN6s/twMaM1Ob8dF3ex8IhQkK
+   0CH69kQdlH5rgs4WRlS1w+idGYbOanPtI+iaSJHEV4Clv3SbOooHhf3bw
+   VA000/5ZNrKHxlOs5vxJ0FWXHKN91e2453Qimro57QNPVpU2dxi1iOrn+
+   A==;
+X-CSE-ConnectionGUID: sRnTC2FESYemJkAqMy9gpQ==
+X-CSE-MsgGUID: x760udS0TVqx+U2cmCaObw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28571865"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="28571865"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:05:57 -0700
+X-CSE-ConnectionGUID: I3VDDTDyTc+3JjSsWJWdhg==
+X-CSE-MsgGUID: 6+k9GiLTQB2IH5OYdhI0kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="97638224"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 10 Sep 2024 00:05:51 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snuwd-0000CI-1G;
+	Tue, 10 Sep 2024 07:05:47 +0000
+Date: Tue, 10 Sep 2024 15:05:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhash Jha <abhashkumarjha123@gmail.com>, linux-iio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, anshulusr@gmail.com, jic23@kernel.org,
+	lars@metafoo.de, linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: Re: [PATCH 3/4] iio: light: ltr390: Interrupts and threshold event
+ support
+Message-ID: <202409101339.74gDdc6n-lkp@intel.com>
+References: <20240909103623.264113-4-abhashkumarjha123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB5896:EE_|TYSPR06MB6409:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffc55f05-3cbf-4a2e-1667-08dcd1665806
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fnnSz5KSAdK9v/RIoVzM+LO+md6qTSmRjiYOmO+jWQ8UL2Ws6p6V8EEg6hiu?=
- =?us-ascii?Q?EkLYJFBR0v0Jd5TDtj34PVZxybxapQUOphnNv8ZMNtyNty9fWmHj/sQYQDkt?=
- =?us-ascii?Q?HLvxv1mZNSwaa/cCFk3OqXz6Mc0pTU75dqD8fFzS21+xVxuREkJH4SXMn7n4?=
- =?us-ascii?Q?FIl7BqnwqfM60FjSXWfi7wFj5LKBqDeMmzhKb5DHXAEP6fBaeYJawTX6hMUD?=
- =?us-ascii?Q?+sUQF6cKmg8JK5/UZtxS6fTbtnFyUwVnrRbTL2vmX/3clgzGjTpRqW4y4a8c?=
- =?us-ascii?Q?TaUbgCPzfi/oZYyIKv0Bb622nrWLpS8TazOPT0jh0DVmZoteBzzeIOgx879x?=
- =?us-ascii?Q?sTgtGfpQ6wEDpYSsJ1hGbmN2YJVNzTQOci4zyg1rDJE22TAvgaOAUxkCxtYB?=
- =?us-ascii?Q?nnwr43Pfu8kxNcecXQZ4QhnWTNAi1/Wl1Jk88utIBARW+cL9AG9/NMo6qVHy?=
- =?us-ascii?Q?8X0+uHxDd23x1MhBgE/UJAIor2eu7rl+uiLHjy92XfXiAREeqwK9n4QZkDSt?=
- =?us-ascii?Q?mGeHxPzs/PHcmA4zVq3QC1kaFBTnu3Ft3f0hMLi9NH2r50fe0ED9B/+f5Cpc?=
- =?us-ascii?Q?6FUiHzfgbslgSEE6Snfk2o4Pih3YaFqEMqO3zn79WpJ1Kch7bbVdOPjpgkhE?=
- =?us-ascii?Q?EutUNdDzt5L1p0J6pZIPklnHKEk4sbo+hlr/q2ZFuYTHMtAbF+M/gHUEKIl9?=
- =?us-ascii?Q?w6KeeTs1MWY22ktwjtTgXWbfdskynxKGO6eSswh+u3cUK3gYf75ocui1MZ29?=
- =?us-ascii?Q?7p80BOlPDO13wQZCEgYS8QOZiLnfoiWE99ml2+/C1UHYj/6epe6MYkUcBcxz?=
- =?us-ascii?Q?akv/DsO42GhJ9b2+IjsuSxLz9avJQaCPzVVvvHRU/0of7Oevmsg45t+IJ5MZ?=
- =?us-ascii?Q?XuCUmOyitoXIvGU8Vfsoq57nQsfKUZblDTy0dbs8BpSycCiBAExbATHyZywo?=
- =?us-ascii?Q?yEIfCLKJu5Zh3vzrX7NCMiwAk+F/EI047moW4f7zb+cgzckgzUz41SFDjdGH?=
- =?us-ascii?Q?IskS7R/2iqX8aJt4oe0TNZKMsrSN25TsRuWVu4nHEu0m8iHnqIMs8Gak2ypI?=
- =?us-ascii?Q?5i3P/5T/ot5enX3vL5epXvQcxFSQMbNMJ1ovGXdgN0TxZy75wYMp1a5AB0jU?=
- =?us-ascii?Q?17DadV5Uh3Ilxbgx12EeZxx6ZZc546oBbbGoAlE6tMeOwr0CFdY8Y8vrshUC?=
- =?us-ascii?Q?4AYCqr3bZMDMiZb4lJyklxsKaqHpKDpPcNVcD/BBFXXniyfxzsuUs9MxjBhH?=
- =?us-ascii?Q?UvlEC98piIlM2QtHFHjjAhP5ix+UvJ59ce2vf4UsFhZx9eaVzDQAhy7tpMAD?=
- =?us-ascii?Q?kFP9oltMw9s+U8LcftylJI/y09D+H4Ajptz2mhU6J7L1VEQF89wa6x9Jz1Hw?=
- =?us-ascii?Q?rmXnd8EvhiS4UqnMXWWMsTgo1KjmwxTbmKtl0OO+falrUSc85g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB5896.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/JCJqjkZjgn5EWpJQjcfTC7kxTpjqHepLk7FFdN7401WnVXzeX8QFQbWNiGp?=
- =?us-ascii?Q?2hg3FMJrDDv4uG8zoahUj4EZCdEj6NF9nZt0jWu8viyEnhUCv8pXY79/q3kR?=
- =?us-ascii?Q?qQQ/Gj/ye3oYsiFMrQMgzI6VM8Ko2o+28+HKqAJhHQXaZSQjaUUYdpZAeOEI?=
- =?us-ascii?Q?NWHwpQ80TAIIM+ZtB5ycVO2vW4Pp+JkCc131ilhmqvBEmR1OaJfthyJh+737?=
- =?us-ascii?Q?BXTd6RKqFG9FGLpu/AamjAHbAX33l+zQfjJ1eeonpxpWEgZRnb1RIao1E7QU?=
- =?us-ascii?Q?5coxo0QqOS4Gbif2oQtcveK/KhMmmtTaC6Ig+UqDdZgbuvI1MVkmHjrfl3UN?=
- =?us-ascii?Q?lXGSlu/EAYgi4hgqR11DQo7jC2t5fFa0WxNRYC9OIPmURXcURzgT1Cf/r2mK?=
- =?us-ascii?Q?nD5BFxbu2Nmo85ZLlzLxMxHgOr4aP6YnXXx0PFtJfkeBhRANJjihNu8w6gke?=
- =?us-ascii?Q?/alPhSHzlkTRTJ33OcdhKxklYEumaY1sxBWDbyhw9Jq6hAbgpduozl1P1RGp?=
- =?us-ascii?Q?W4RqLNPnO2HOq/PwGYr/G3iU/FZ4eqVQ1NqBnZPU8eiDyVtDKFAdmynhCxUB?=
- =?us-ascii?Q?c37xxFWObYL9x2eZUKI++HWa/EBS3X1DRNhspDLWhETLyKR29fGcr8P5yHzN?=
- =?us-ascii?Q?m29Jx2xeIDd7BiyoXmrmXaw+dDWts+fBaBMQqBaXs7Uhrt6CZ+NOfNkwmlEU?=
- =?us-ascii?Q?bx70j2K6Ip1CZKLW0X4mrSo3ZxSZXWoDzXIigB0ujLxbKwvCCPpzDcMPGxOb?=
- =?us-ascii?Q?2xhZqYeuP+NYgJknVpHQKN5dTFgNf8kwATXQpazA9yX1PB4sfaOnYfOfOSFE?=
- =?us-ascii?Q?7/LeU9Wxk6nrPUJIyoje44qDOxAPPNSPaE4aK9uGGAWzAxwWvYf9KEzFTB+r?=
- =?us-ascii?Q?GJdSh+x0BODaSwOLMtKmrXmS3OcCpaceFrBJv3k+MjkGKnkgJaRvzLTYxeLC?=
- =?us-ascii?Q?i2vOljRx2YJNiV43mV8/V8hWKp+CxoUDsvBypYjWDfPIgUtIX1v5Dd5vfmkQ?=
- =?us-ascii?Q?mlm9UkQX4J9kF0KUICtoH9bC3UNiWogXmypYlQa3yDzJPOkSghgMxNMG1+ZY?=
- =?us-ascii?Q?am18tgjAo0PKrAdNbs9YrJKdIG9v8VHcQ4c/Na4APwXmD9o++mpU5KfNcGvy?=
- =?us-ascii?Q?1Up8Ow7exIEQir3G8WDp2Du4VHSuXyVePLl1O7Uf6hMgTJ/VQK33/PQTuQ7V?=
- =?us-ascii?Q?QUh2Uvv+1fmMReinEfudNcxfeg+lpmZWrB5l5te+TwO2Y6yMEcrdfc+f1PuH?=
- =?us-ascii?Q?3qH8gEMCEGOMgP+3mpSJyWJbBmz3ISEEEYi6uSSgbTjoQXcKfV9peyT7ealY?=
- =?us-ascii?Q?FZehwnhuhAe4NnfAcZD5j7A/As5Ezww+lnB9Rzb1nNwGE5JQIXihIT30ddTk?=
- =?us-ascii?Q?I7E9F/YC/rCzhpCvCPRR/UYeHLGvnd4m3OSifrMAmLmzhYiXB+ri2ccv3C4D?=
- =?us-ascii?Q?OOS0SXFrh0ZdovWSFtm3DTmQKF2BcdOso6vzJNES3IYuwvA5QXWCjQleOi05?=
- =?us-ascii?Q?oh2csJwro1UCcGAjVKfEfktHWpNO1kqaaDE0s1YHWluroein5DaO6VnFyuGR?=
- =?us-ascii?Q?K0vY67xqRrcN7Hfdz+QS8R1202j82vxj7wGrd9rW?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffc55f05-3cbf-4a2e-1667-08dcd1665806
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB5896.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 07:01:07.4581
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BAr0gEWPU0HEvHncA3rXjn6JcXwhdW5lnQqiIqSRrGzU8C9wsnM2rRYMggR00jaz7hGG0uZ3zIe8AExZvLWvvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6409
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909103623.264113-4-abhashkumarjha123@gmail.com>
 
-To ensure code clarity and prevent potential errors, it's advisable
-to employ the ';' as a statement separator, except when ',' are
-intentionally used for specific purposes.
+Hi Abhash,
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/watchdog/iTCO_wdt.c   | 4 ++--
- drivers/watchdog/pm8916_wdt.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-index 264857d314da..35b358bcf94c 100644
---- a/drivers/watchdog/iTCO_wdt.c
-+++ b/drivers/watchdog/iTCO_wdt.c
-@@ -563,8 +563,8 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	ident.firmware_version = p->iTCO_version;
--	p->wddev.info = &ident,
--	p->wddev.ops = &iTCO_wdt_ops,
-+	p->wddev.info = &ident;
-+	p->wddev.ops = &iTCO_wdt_ops;
- 	p->wddev.bootstatus = 0;
- 	p->wddev.timeout = WATCHDOG_TIMEOUT;
- 	watchdog_set_nowayout(&p->wddev, nowayout);
-diff --git a/drivers/watchdog/pm8916_wdt.c b/drivers/watchdog/pm8916_wdt.c
-index f3fcbeb0852c..007ed139ab96 100644
---- a/drivers/watchdog/pm8916_wdt.c
-+++ b/drivers/watchdog/pm8916_wdt.c
-@@ -218,7 +218,7 @@ static int pm8916_wdt_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	wdt->wdev.ops = &pm8916_wdt_ops,
-+	wdt->wdev.ops = &pm8916_wdt_ops;
- 	wdt->wdev.parent = dev;
- 	wdt->wdev.min_timeout = PM8916_WDT_MIN_TIMEOUT;
- 	wdt->wdev.max_timeout = PM8916_WDT_MAX_TIMEOUT;
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on next-20240909]
+[cannot apply to linus/master v6.11-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhash-Jha/iio-light-ltr390-Suspend-and-Resume-support/20240909-193623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240909103623.264113-4-abhashkumarjha123%40gmail.com
+patch subject: [PATCH 3/4] iio: light: ltr390: Interrupts and threshold event support
+config: i386-buildonly-randconfig-002-20240910 (https://download.01.org/0day-ci/archive/20240910/202409101339.74gDdc6n-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101339.74gDdc6n-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409101339.74gDdc6n-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/light/ltr390.c: In function 'ltr390_probe':
+>> drivers/iio/light/ltr390.c:633:33: error: implicit declaration of function 'irq_get_trigger_type' [-Werror=implicit-function-declaration]
+     633 |                 int irq_flags = irq_get_trigger_type(client->irq);
+         |                                 ^~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/irq_get_trigger_type +633 drivers/iio/light/ltr390.c
+
+   578	
+   579	static int ltr390_probe(struct i2c_client *client)
+   580	{
+   581		struct ltr390_data *data;
+   582		struct iio_dev *indio_dev;
+   583		struct device *dev;
+   584		int ret, part_number;
+   585	
+   586		dev = &client->dev;
+   587		indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+   588		if (!indio_dev)
+   589			return -ENOMEM;
+   590	
+   591		data = iio_priv(indio_dev);
+   592	
+   593		data->regmap = devm_regmap_init_i2c(client, &ltr390_regmap_config);
+   594		if (IS_ERR(data->regmap))
+   595			return dev_err_probe(dev, PTR_ERR(data->regmap),
+   596					     "regmap initialization failed\n");
+   597	
+   598		data->client = client;
+   599		/* default value of integration time from pg: 15 of the datasheet */
+   600		data->int_time_us = 100000;
+   601		/* default value of gain from pg: 16 of the datasheet */
+   602		data->gain = 3;
+   603		/* default mode for ltr390 is ALS mode */
+   604		data->mode = LTR390_SET_ALS_MODE;
+   605	
+   606		mutex_init(&data->lock);
+   607	
+   608		indio_dev->info = &ltr390_info;
+   609		indio_dev->channels = ltr390_channels;
+   610		indio_dev->num_channels = ARRAY_SIZE(ltr390_channels);
+   611		indio_dev->name = "ltr390";
+   612	
+   613		ret = regmap_read(data->regmap, LTR390_PART_ID, &part_number);
+   614		if (ret)
+   615			return dev_err_probe(dev, ret,
+   616					     "failed to get sensor's part id\n");
+   617		/* Lower 4 bits of `part_number` change with hardware revisions */
+   618		if (part_number >> 4 != LTR390_PART_NUMBER_ID)
+   619			dev_info(dev, "received invalid product id: 0x%x", part_number);
+   620		dev_dbg(dev, "LTR390, product id: 0x%x\n", part_number);
+   621	
+   622		/* reset sensor, chip fails to respond to this, so ignore any errors */
+   623		regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_SW_RESET);
+   624	
+   625		/* Wait for the registers to reset before proceeding */
+   626		usleep_range(1000, 2000);
+   627	
+   628		ret = regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_SENSOR_ENABLE);
+   629		if (ret)
+   630			return dev_err_probe(dev, ret, "failed to enable the sensor\n");
+   631	
+   632		if (client->irq) {
+ > 633			int irq_flags = irq_get_trigger_type(client->irq);
+   634	
+   635			if (!irq_flags)
+   636				irq_flags = IRQF_TRIGGER_FALLING;
+   637	
+   638			ret = devm_request_threaded_irq(&client->dev, client->irq,
+   639							NULL, ltr390_interrupt_handler,
+   640							irq_flags | IRQF_ONESHOT,
+   641							"ltr390_thresh_event", indio_dev);
+   642			if (ret) {
+   643				dev_err(&client->dev, "request irq (%d) failed\n", client->irq);
+   644				return ret;
+   645			}
+   646		}
+   647	
+   648		return devm_iio_device_register(dev, indio_dev);
+   649	}
+   650	
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
