@@ -1,90 +1,116 @@
-Return-Path: <linux-kernel+bounces-323695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C179741EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:20:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C7E97420B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB301C25A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B271A1F23E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF8D1A4B8A;
-	Tue, 10 Sep 2024 18:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2945F1A4E7B;
+	Tue, 10 Sep 2024 18:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="io0B/oab"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l7QhLuvo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1D9167DB7;
-	Tue, 10 Sep 2024 18:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE48816F27F;
+	Tue, 10 Sep 2024 18:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725992442; cv=none; b=Cb2KSNZmQ14uHPKfd5KqiKUjmlyceER14CigT+07Qr58/9jjpyW7l2Okmirf2c7GEfXCgN2VVAsPhI80U2i37dpKI5FwnD9j4OlTg0qS6RrtTqyspButLXY0Cu7skkxrpWF/w4ZDPz3GIEbxEqauKMa9TA0M97l5glqEFaC0pO0=
+	t=1725992653; cv=none; b=lxafwXJZMH/jZtjw0HWNDVAPSGGBiJ/dqZaTcxaU5dhMJWEoIpw4TKuxh7iGg0kta50Y85j2ZZAELtb19vsLDUEms2AS6912b10QRoTSN1QLp0PYg30MR0E8c2NgXb81ydbYi/tj8J7SuT0RG4cnp4Su5MBAQ0Yoj9hyWQPx25Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725992442; c=relaxed/simple;
-	bh=aE47DC9nwl/98AItjTao91FIJOJr6lT0Tb7gm7bdihA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mD1zgr6wkOh8i4nxFQQMnw2EsjgFAVTxzCjO5ItCaSWxa2rdC4E11bSVMDZyd3JYuEL+0EipfKY/Hh37qY2+7E/+U2Z0cNSErKRT7C1pUzzl1xta7nSmp1BdVXwoQryG3S8i5+Lqsl87HATrENOf3w8gjObafVVL4bSfsPG9luo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=io0B/oab; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gqYeL+uQ8IfNvUhz5bkEnDyhpOy/MIoDCVXGyrUchP8=; b=io0B/oabjK/eKtPbO/ZPyAfsOz
-	G1EtPG88uUIaHaM/tp3KON/XlE/fx9T1QloPsxey1KqLOM4TXZC4Qph4Shzoy2mq8en2xUR+zuFvV
-	KOzWimEkrCSWruJT+014J7peEyMy8QX/d+iibnN4M48ffebW34aCdOU55y/AW+8ZAD8tsoraMTa+r
-	Ws/VaGOiQTDxn/XVY4Z8exl1ohcxqplx35gIiy/JVUN5K1apDMFxYmlcsS6rT8A28YFZuLaWRu/96
-	u7Vk09NpEGtq2j9owmXtMzodJSwb65z9Btx/upAOWfG4ntcT2RWdr8l7EHZohA8sV1RsIIFS74No+
-	ttYjVC5g==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1so5Te-0007Jy-92; Tue, 10 Sep 2024 20:20:34 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject:
- Re: [PATCH v1 2/6] pmdomain: rockchip: cleanup mutex handling in
- rockchip_pd_power
-Date: Tue, 10 Sep 2024 20:23:02 +0200
-Message-ID: <4864529.A9s0UXYOmP@diego>
-In-Reply-To: <20240910180530.47194-3-sebastian.reichel@collabora.com>
-References:
- <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <20240910180530.47194-3-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1725992653; c=relaxed/simple;
+	bh=FXc84KrUTmYWpngdZdX7oT+66rodhCYt/xubydX6mNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=keN9+KgF+a2uxBMt6jGIRvKLl+xxXozNmbOvTTPV0NcMqC50Zr60WRjkm8L3O44K4grBqGCRg7HCknkE43jBZoyjZQNM6z+N9+TJJPNDPCyO7o26XpO50VhJa0itlpIieAcQJ4HlptykcR6bv4MmJxbAHZvYkORMkpKcF2CMXtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l7QhLuvo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AF06TT020621;
+	Tue, 10 Sep 2024 18:24:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FXc84KrUTmYWpngdZdX7oT+66rodhCYt/xubydX6mNI=; b=l7QhLuvoNrB7z+99
+	WvkU89/TJ/VDnvTXiwgXnWo5FqS+k0ik3u7azTTkDe2ExvA9qtSZUQK09jyW3x1S
+	D2IGe3FhZWF6M6NAzBbQJIa2u6yNbMogV9gCxGaCy5ZL6aIl+yyr5uD6mFCRG8bY
+	YngpFMKXVF9TfGP1xlvM8uDqlVwqfBWFFfRkVQ0v9Fvk1ZQ5MTbSfmL/SlK1kU/C
+	KTzDDodEey1qjuRiGC4mHVwKCnFxpu9jdPRWGvl813WxooY+2o18oxl9BJJQVT4S
+	PkP+sVfF/jxWQscjpFmjGfEJ5hcvuHhTd06Tr/yNdK+U6RczX4VroD3CMG8Zv1Mx
+	oiakLQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41he5dx94m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 18:24:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AIO04v002310
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 18:24:00 GMT
+Received: from [10.110.64.127] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Sep
+ 2024 11:23:57 -0700
+Message-ID: <a18a8a39-5e32-4fc0-95bf-9544aab2799f@quicinc.com>
+Date: Tue, 10 Sep 2024 11:23:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: firmware: arm,scmi: allow multiple
+ instances
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <sudeep.holla@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20240910163456.2383372-1-quic_nkela@quicinc.com>
+ <ZuCDXQaUDfmUuh_D@pluto>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <ZuCDXQaUDfmUuh_D@pluto>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TnhuFgINHBQFCfABqCDg2SWbxMR5kp-9
+X-Proofpoint-GUID: TnhuFgINHBQFCfABqCDg2SWbxMR5kp-9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
+ mlxlogscore=620 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100137
 
-Am Dienstag, 10. September 2024, 19:57:11 CEST schrieb Sebastian Reichel:
-> Use the cleanup infrastructure to handle the mutex, which
-> slightly improve code readability for this function.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+On 9/10/2024 10:35 AM, Cristian Marussi wrote:
+> On Tue, Sep 10, 2024 at 09:34:56AM -0700, Nikunj Kela wrote:
+>> This change extends scmi node name so as to allow multiple
+>> SCMI instances.
+>>
+> Hi Nikunj,
+>
+> LGTM.
+> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+>
+> Thanks,
+> Cristian
 
-I guess you could make the guard patch the 1st to not add and then
-remove the mutex_unlock in the "forward errors" patch.
+Thanks Cristian for reviewing the patch!
 
 
 
