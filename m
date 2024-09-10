@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-322968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405CE97360C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F273973611
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DA32858A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BB22860E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B9918C912;
-	Tue, 10 Sep 2024 11:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1WAzxU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E01218DF73;
+	Tue, 10 Sep 2024 11:19:01 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACCD14D280
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF595171671;
+	Tue, 10 Sep 2024 11:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967059; cv=none; b=DRN6KqKEPJyy1a3BM6XrkyHXCn4bS9Z9a9r22cVF19MrqV6duOv0ATPatarFiwd9REnrUgEg8czecc7Ip7Vvw8MjcYJFiAyZXs7+1KGt0IKJxBEqNfol7Dq/2FWXulR2U6bWiAAmDy+IopNaNGI5CGz0nf0CJrFp+M9lXL5pXKc=
+	t=1725967140; cv=none; b=uIYP6GXRU8Ybg/EDTpNnyloddax5KHQq26M/6XiWfmfahHHBNrsI+UBSgNw2klhwoa3qpILJPS9oW484ekZTd0iexo+EMxBw5iltvd8CrsTErrvhXW9uMTmRvsKhTV/ubrfnRqwZh3OOB7YAo8cZDRcllgCAaF52saeYgz+ehfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967059; c=relaxed/simple;
-	bh=P97tC9j046MEsDsgpQ0KZni/NUtZVkdI7VVaaryFMgE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bSXOQFkZl6SFjZD4lsdJZGhwWqKWzP1z6w4sPnHrNTAWc+UIjvC5f6vl7+p9jUbYCSTnUyz6vUqTBfA7vnAhBIXK5lbtIeqTBHrGMqhK2NF6+wvC3fHhmdJrb4d1FWPkMNLlK936Aijn0kYHDmFQqMkqhPMGkkEeoxpo2l1+MFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1WAzxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F287C4CEC3;
-	Tue, 10 Sep 2024 11:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725967058;
-	bh=P97tC9j046MEsDsgpQ0KZni/NUtZVkdI7VVaaryFMgE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=FH1WAzxULMGJBQHv9xC1oSZ7VtJlGF2pxbyvE8nwjj6V/LSMWXqQhadpvs7BKS5b3
-	 Ncq6QDyswAbnDX0aNZZUA2+gYhRBZzUNIxVfp4WHLPVtQAKue1Jdk9HiAJVa3aFtpf
-	 en+1twikaJayrBbRPExUPkZoh2yWtzzmQPvre6nOa1U7uTDtXBNFMEEy7+DQHFdhgJ
-	 hi3nU1f6fURkM1PgyuVCBHeGRj09qmacAEhDvu1rOg/nNX/WZTIIUZi7GL/idZFrHt
-	 GUp0Pac2NB4SvqdVAcwAwSyErqj851OnXZwYPLzTgc4tKtg2+cpeFVjv8slrqsJB7L
-	 H0F1/MA23aGXQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 10 Sep 2024 07:17:32 -0400
-Subject: [PATCH RFC] timekeeping: don't use seqcount loop in
- ktime_mono_to_any on 64-bit arch
+	s=arc-20240116; t=1725967140; c=relaxed/simple;
+	bh=55mpAJh1ejnjG3zjVoMFq9utasuXofU8sWEZisjVxew=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mxt5EYv07lYz/LTeX54UQ7vAIrxIo8hKn4pdqOR7vDMDCkZXpwzVqMjE6v6n2OjUQ26UEx4BREWLnU7w/0u64TiFsSz9el6wH44aLbumvEaxc7afDbNA1ZdT+1kHI59kqNhQojE684NWCjV7VEPnVJYDluSPGwUb62knkfFdNrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 10 Sep
+ 2024 14:18:46 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: David Howells <dhowells@redhat.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Andrew Zaborowski
+	<andrew.zaborowski@intel.com>
+CC: Roman Smirnov <r.smirnov@omp.ru>, <keyrings@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v2] KEYS: prevent NULL pointer dereference in find_asymmetric_key()
+Date: Tue, 10 Sep 2024 14:18:06 +0300
+Message-ID: <20240910111806.65945-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-mgtime-v1-1-35fb64bd0af5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMsq4GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0MD3dz0kszcVF1zY8PUxORU8+TkRFMloOKCotS0zAqwQdFKQW7OSrG
- 1tQAto/AmXQAAAA==
-To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1651; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=P97tC9j046MEsDsgpQ0KZni/NUtZVkdI7VVaaryFMgE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm4CrSuBVhWT3thsOcRyWUinoIvSkpuvmV9JEsF
- zBwu7Dy8LeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuAq0gAKCRAADmhBGVaC
- FWDQD/9NdHa8SF95E/bMIybAqatIvWZd3dyiQ+fwxCPn5cmo25494zdHqXFcndJQePCb5wAnFL3
- LRM+8CbDR+XkuO/+MTshqU22htXDfruNzn8xIDPBoZXdYxKGZhQmWQgnyCJO8SkdFVlQdeFynHH
- tYmzWza0FebOHYbAqxQAYwBl1xAZ0YSfXNIO5w6Euq2qXRyODVPA4ABsYFSoRVsVXJAAmLpcRAG
- MPU4vj6YXFzEqb+SmysqNYGaDv6HcKG48vF7GRMj6aSXGNNnA0pfpMEUw/gLJHBqPdTpaBgIKsv
- g57StNXxLP+0bMdou8TJulGSeN8oxuur3MTgKgvYwxcpQYnmZkyVnoQtu+Hv7abBYcGJgnMwoNp
- oq0ZUMqG3u0dGxveScxSCiQK9XhChGvVRHV3FnbnL3aBk57yEDWPTaf5cl8Xa7GZEGTxwXKL1ie
- CWr88NnQo4N9WDeu2NNp6uVdKLdbWjP0+b4Tbyzvx4azq95NQojOzMbu1kXD8aM8S42dVVppD+C
- rR2pIXegZP1bHiRijrrKevv+/7XypmdntUrIburtzKco4CbqqeYqXhHlwwsuVM+FFr4MLSImFf/
- sjXO1enuY/4C3JpUkdlDgbwyg2wOJ8NDRzj1VdBfwlcalJgc7e5LK1/gpc05vyocFuN2FCO3oEb
- 6YIwF6bwZEH7sRQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/10/2024 10:24:22
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 187650 [Sep 10 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
+ 766319f57b3d5e49f2c79a76e7d7087b621090df
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.22.207.138:7.1.2;127.0.0.199:7.1.2;inp1wst083.omp.ru:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/10/2024 10:27:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/10/2024 9:04:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-ktime_mono_to_any only fetches the offset inside the loop. This is a
-single word on 64-bit arch, and seqcount_read_begin implies a full SMP
-barrier. While we do want to use the latest offset value available, a
-full seqcount loop is overkill on 64-bit, where there is no possibility
-of torn reads. Just do a READ_ONCE for that and don't bother with the
-seqcount.
+In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
+the kernel will first emit WARN and then have an oops because id_2 gets
+dereferenced anyway.
 
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Found by Linux Verification Center (linuxtesting.org) with Svace static
+analysis tool.
+
+Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
+Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
- kernel/time/timekeeping.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ crypto/asymmetric_keys/asymmetric_type.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 5391e4167d60..0693f44e064e 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -924,6 +924,15 @@ EXPORT_SYMBOL_GPL(ktime_get_coarse_with_offset);
-  * @tmono:	time to convert.
-  * @offs:	which offset to use
-  */
-+#if BITS_PER_LONG == 64
-+ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
-+{
-+	ktime_t *offset = offsets[offs];
-+
-+	return ktime_add(tmono, READ_ONCE(*offset));
-+}
-+EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-+#else /* BITS_PER_LONG == 64 */
- ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
- {
- 	ktime_t *offset = offsets[offs];
-@@ -938,6 +947,7 @@ ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
- 	return tconv;
- }
- EXPORT_SYMBOL_GPL(ktime_mono_to_any);
-+#endif /* BITS_PER_LONG == 64 */
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index a5da8ccd353e..43af5fa510c0 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -60,17 +60,18 @@ struct key *find_asymmetric_key(struct key *keyring,
+ 	char *req, *p;
+ 	int len;
  
- /**
-  * ktime_get_raw - Returns the raw monotonic time in ktime_t format
-
----
-base-commit: 79d4f9eb4a3c4c68736d500025423e96e212b13d
-change-id: 20240910-mgtime-731eace7cca5
-
-Best regards,
+-	WARN_ON(!id_0 && !id_1 && !id_2);
+-
+ 	if (id_0) {
+ 		lookup = id_0->data;
+ 		len = id_0->len;
+ 	} else if (id_1) {
+ 		lookup = id_1->data;
+ 		len = id_1->len;
+-	} else {
++	} else if (id_2) {
+ 		lookup = id_2->data;
+ 		len = id_2->len;
++	} else {
++		WARN_ON(1);
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	/* Construct an identifier "id:<keyid>". */
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.34.1
 
 
