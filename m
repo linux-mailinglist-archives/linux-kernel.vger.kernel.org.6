@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-323939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E58797458A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F629745A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD6F28BEB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696E428BF21
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E71AC8BE;
-	Tue, 10 Sep 2024 22:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301161AC88D;
+	Tue, 10 Sep 2024 22:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3V39Y7X"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="Vbkopv/Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tBDF6Uy+"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628861AC421;
-	Tue, 10 Sep 2024 22:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8191AED49;
+	Tue, 10 Sep 2024 22:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006589; cv=none; b=Yn98ULtLpn7bGqf0yjCU9JKRBq2QQGjEHQhATdUFTNgdY4ZTEKHrY8OvRQLtoK9ApwNwjz2VXl1m0RfsxGeWDF/0/148Qv1scgOf5xrBoAVweBmlVEXr0Dgoso0psLObNszEVJkHRXi4uM5msv92GwdrCVkgETUdPl3jRQhnPCY=
+	t=1726006614; cv=none; b=LHqUCTiEgw/yX1ZaxmEB5HJPnCTrgKKwbuf0FaSYHSt6tZU/ohVH0cRwH/T76iX+zjP3UZyR1XK4xYNR/7lWSpe6kB+K6+x5CVNsMfmSVAzjuqRMlUC628HSXR9qT4Ry/ZQ72wgWQXR7ktt07R4G+Yi7pPZfbq/aNZihsY1yP6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006589; c=relaxed/simple;
-	bh=QSttr2JhMVXlGbE1Qo9deB59dtCrXed0BMMThrUfqGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEqBHhh4YAh9sUFQCRDJKwI54vYVPXf/Xs/go467WPC7PgBe4bs7/6Dfs6Q9MLVQIUL3w7ZqvjeWmhHIS9ti4hWYarT9zxwAOYuzoSuV54PZEwAwizx6U2tlkIspuhA18QEb5u8doU5nHw5U5u/MoYKSsSdFViCghTlQjy6pDgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3V39Y7X; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365c512b00so1674166e87.3;
-        Tue, 10 Sep 2024 15:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726006586; x=1726611386; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pdYjqVV7NoPt38X5VJbQiOeKKRdU/zmfKbbwAgjGMD4=;
-        b=i3V39Y7Xlb6vVqHaR3TiMtTT3WLmhzbwFQisYNwtTbyvPFdErUaLgsGAwgKhXzasKk
-         3/KBLLmtxSDUHU0i7wRKnlchB5CZ6TwFU8n4ySXH0bKncksWvvS/OWAa7MgBtgMSM4+h
-         zCm6PekK4WKEH0bwjsoNBdul2bGJriMwVn9MPeZoRK/voYkH70Y2NTC0D/+W9VBi94cU
-         DglN9NwxDZ9DukXzM1BpG9o9UOpkCfF/BFcfAcFQlH0NK5kr27kucADh+SG42Uae22ll
-         Uvl+0kj3tpVq9SwWWpzYdblYtKqSFrZXuHI2B0uCsE3SdByhfh/r5VjZOATO7ST1Orjz
-         9MCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726006586; x=1726611386;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pdYjqVV7NoPt38X5VJbQiOeKKRdU/zmfKbbwAgjGMD4=;
-        b=IOZMDp/Wc7gIzw6C7dmHfn4+D6oznFeN4PcUufSN06QqNz7Mo/9mNmiw/GAdcGSJ54
-         EaiTFJv+dih8NWhItdMQgaToT2UJtpfzT3SZGD2n23JMNJq8wEOmzP5Nh7i51AEdLw8T
-         oo2nNm3rxwrJ8qOZLI3G6FIHjg9uduZFfiAXWQagUxBDGnZayVJS6+VpRT6fUQDc7XKk
-         R2FuLsg7gMbMZksQPxSS1gAk7pPtCWKUgoBUD5COY+vcTc5PXUscsq0BJnOGlqvN/hv9
-         uEecwbzafpbOn1qvKc2bTBqHFyyzJrpfSdjUj5ZeI6ps+ZiBFpHj3TtCgKuA6mwOkdQx
-         iYqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfQN4o4h5k8wK+VW9FioGd2L/zVLsQV+JSVMYwuVOgTVUbAo4Wf3qFLP33KghWpDbrGrMxNEb76jud+g==@vger.kernel.org, AJvYcCUuQewCOWh0xUIzO/6+tBxeY1lNX1LpDlqR+ed21SdQEw+qjOJWWE3fRyck55pJtTS7PHCXG70bG0mU@vger.kernel.org, AJvYcCXi5bCLG9PCDfmCw1MXOUNeX5tTDW2/nMMW8q5GTZEpbH9pBsld+yZPwBL9VzNKN6umJ6AjgSYCfGN+3JRK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmEz5yoahsxSe6PFfclXGbhHOr7R+yDIvMshkeZnegsdvomqSH
-	vZ+PtGK/U8GvJw3kZa3OZoUTqzOd1gkeaLwWeeGsF+p1EtZPCd6uFEpvhg==
-X-Google-Smtp-Source: AGHT+IFi8j9h2IbdF01Mf3JPAdHvgT6Od37WiOHHGnHsZL6o612hM2YVY1L0w1nCJu/s9yHUJTuYBQ==
-X-Received: by 2002:a05:6512:ba8:b0:52f:cffd:39f9 with SMTP id 2adb3069b0e04-53673b5f86bmr663836e87.24.1726006585737;
-        Tue, 10 Sep 2024 15:16:25 -0700 (PDT)
-Received: from mobilestation ([95.79.225.241])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f870ae3sm1371572e87.106.2024.09.10.15.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 15:16:25 -0700 (PDT)
-Date: Wed, 11 Sep 2024 01:16:23 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"paulburton@kernel.org" <paulburton@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] MIPS: cm: Probe GCR address from DeviceTree
-Message-ID: <6oouxspgntbmn5upinbp63x5x52wluk4vg4s3oe3m7wgtk3le5@ua7dup5lkeaa>
-References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
- <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
- <ekvyyq3vzdbyi5suf4irfixyprvtko7rpkffwpc267kiex4ex2@lpu3ctysuviw>
- <79acb1b1-9c1c-4a58-91a5-5dbb286717ec@app.fastmail.com>
- <7j6cc5i4z4nwg73fowjz756eblnesglqm72jveygqfxngw26mc@sdy6xxomo3qe>
- <b4d57581-bad7-4f6f-8d6f-733f1a5d33ba@app.fastmail.com>
+	s=arc-20240116; t=1726006614; c=relaxed/simple;
+	bh=6vSSgVY+sWsTklYYrlr/OHdGD26xT77F0/uVkqmOnyE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=I733ix2VnRHZT9DNu6i38a4fOaqg3NEmFAr3gSMH6DSBN8IRx/lJRwIkjWgT0bQiXWQAoNAl8Dq6LiXVHiUWhZ4aNncGAVjbj5DYeLJdOBwqpAAIy/0afvBzv0gnMqMoSbGdbTu6m7a+XFG3PdcZRJJJOFF5uEFh23wGGtEEpMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=Vbkopv/Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tBDF6Uy+; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7CBC31140089;
+	Tue, 10 Sep 2024 18:16:51 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-03.internal (MEProxy); Tue, 10 Sep 2024 18:16:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1726006611;
+	 x=1726093011; bh=ZFPbHuL11lgtaJbe7iI1GZ1VpmwkrdzMiyKw6UGwaB8=; b=
+	Vbkopv/QTZM0mu+wp79frcd4guHmuSI2BCr1sJL5CXqMWHjzoolqMoHKFXFj+6Ov
+	7EczDHa8hVq7b0WsueeHkvRNHg00/zi5WSFf2wxYsIKMWZlL2P6GXwLrs7DfB+qF
+	eMKDZXmcpEmdkH/miqS2iSSOddDi8LFIrGNoGNOUojHVOLf/cLOwMsI/zowziQy0
+	6XT/1QbHe4MPK9/47tgVU/MsxrvYL23Il59kmrqcQmpsDSnk54NbNNc6bWrcCDYY
+	sbFEAJUlbyjVGaxRaakqOPeqogTg3ofzi/9V1PYE1Gh5ihUEEgyvgPFvYbWCD3R/
+	h4va/PLw0Vu1zmSu9H7ZNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726006611; x=
+	1726093011; bh=ZFPbHuL11lgtaJbe7iI1GZ1VpmwkrdzMiyKw6UGwaB8=; b=t
+	BDF6Uy+wb4qbbNJKTnVM9I4pYnt5x1irLc48v25tdb/jtm4MdfOjvWeHokthWMil
+	0ciQiJeZrE82lELMzlFMG20Yo2szJkzmN5uespmb/LBvel6how7pCNON63ImZNyU
+	8fbZhg1xNLPRp8cK9A0UhPoHySXwul1H2Uc2H9kqtRg+kT8SQ06WNJBt5wyAwl6h
+	qvBXFzTruv5OI/bQCKEGOLRMqkcY+4gsd37L1ropoR9J3DBGwEkTxpD41YM1aSbP
+	APkf7+3DCXXq+MQxNpUCwY4GcIBfK++toJUmC9WAk+uul6VHt1dpp3JZrEhg390+
+	jMTp11FPBmDlGZ97NiYug==
+X-ME-Sender: <xms:UsXgZoSGn9JK7g6cmk4PiCl8suGigoNt6nIb04jqB94Y-iHO_mJTLw>
+    <xme:UsXgZlz6bMIcQc58NWT3KaDnuc5zNGcmemAsnXb5PUuk04FlXyuwih3GnLJorxyMr
+    6PeW10jtXWKUWQWyw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejtddgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefk
+    jghfufgtgfesthhqredtredtjeenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugi
+    husegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpefgleeitefgvefffedufefh
+    ffdtieetgeetgeegheeufeeufeekgfefueffvefhffenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggp
+    rhgtphhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhihkhholh
+    grlhesfhgsrdgtohhmpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvgdprhgt
+    phhtthhopegrlhgvgigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprh
+    gtphhtthhopegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehjohhhnhdrfh
+    grshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopehhrgholhhuohesghho
+    ohhglhgvrdgtohhmpdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvg
+    htpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:U8XgZl2ZhT0bX_v3p9eEQBzvtCDaiGt48YokqalqoDVPxi6cgT-iPA>
+    <xmx:U8XgZsBGS4YLAoyEI-0n8GJg_UBvro1uZ0kmPKbEJW9TMeHZ2oTtRw>
+    <xmx:U8XgZhhk4cRYOCZu6wdUKcBeEWlZw5azMIn7318G7r-diKF_gJKxng>
+    <xmx:U8XgZorK6-reDYHdQUA7_E7LhYMnDYjordf2uYvWlVJKQAOM7dPQ0w>
+    <xmx:U8XgZm1UGeEAUJRZULkL9hKqQ4-67NLDrfzRo4bDSwR8fyUBuk3TO6tk>
+Feedback-ID: i6a694271:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E188018A0065; Tue, 10 Sep 2024 18:16:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Tue, 10 Sep 2024 15:16:30 -0700
+From: "Daniel Xu" <dxu@dxuuu.xyz>
+To: "Andrii Nakryiko" <andrii.nakryiko@gmail.com>
+Cc: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>,
+ "Eduard Zingerman" <eddyz87@gmail.com>,
+ "Andrii Nakryiko" <andrii@kernel.org>,
+ "Daniel Borkmann" <daniel@iogearbox.net>,
+ "Alexei Starovoitov" <ast@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
+ "John Fastabend" <john.fastabend@gmail.com>,
+ "Martin KaFai Lau" <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>,
+ "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
+ "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
+ "Jiri Olsa" <jolsa@kernel.org>, "Mykola Lysenko" <mykolal@fb.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ "Kernel Team" <kernel-team@meta.com>
+Message-Id: <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
+In-Reply-To: 
+ <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
+References: 
+ <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
+ <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
+ <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
+ <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
+Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming BPF_MAP_TYPE_RINGBUF from
+ prog
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b4d57581-bad7-4f6f-8d6f-733f1a5d33ba@app.fastmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 09:48:10PM +0100, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年9月10日九月 下午9:07，Serge Semin写道：
-> [...]
-> > Both MIPS P5600 and P6600 databooks define the GCR_BASE field as
-> > optionally R/W:
-> >
-> > GCR_BASE 31:15 This field sets the base address of the 32KB          R or R/W
-> >                GCR block of the P5600 MPS.                           (IP Config-
-> >                This register has a fixed value after reset if         uration)
-> >                configured as Read-Only (an IP Configuration Option).
-> >
-> 
 
-> Thanks for the pointer, I traced code history and it seems like MIPS decided
-> to not expose this functionality at some point, but documents were not updated.
 
-Got it. Thanks for clarification.
+On Tue, Sep 10, 2024, at 2:07 PM, Daniel Xu wrote:
+> On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
+>> On Tue, Sep 10, 2024 at 11:36=E2=80=AFAM Alexei Starovoitov
+[...]
+>
+>>=20
+>> Also, Daniel, can you please make sure that dynptr we return for each
+>> sample is read-only? We shouldn't let consumer BPF program ability to
+>> corrupt ringbuf record headers (accidentally or otherwise).
+>
+> Sure.
 
-> 
-> Maybe I should add a read back check here.
+So the sample is not read-only. But I think prog is prevented from messi=
+ng
+with header regardless.
 
-The check is already implemented in the mips_cm_probe() method. Just
-10 lines below the mips_cm_phys_base() method call.
+__bpf_user_ringbuf_peek() returns sample past the header:
 
--Serge(y)
+        *sample =3D (void *)((uintptr_t)rb->data +
+                           (uintptr_t)((cons_pos + BPF_RINGBUF_HDR_SZ) &=
+ rb->mask));
 
-> 
-> Thanks
-> -- 
-> - Jiaxun
+dynptr is initialized with the above ptr:
+
+        bpf_dynptr_init(&dynptr, sample, BPF_DYNPTR_TYPE_LOCAL, 0, size);
+
+So I don't think there's a way for the prog to access the header thru th=
+e dynptr.
+
+Thanks,
+Daniel
 
