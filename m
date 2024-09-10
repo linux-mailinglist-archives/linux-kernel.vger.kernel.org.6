@@ -1,154 +1,132 @@
-Return-Path: <linux-kernel+bounces-322583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B831972B27
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:48:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909C6972B30
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FD0285D0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:48:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F18FDB23124
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F028B184544;
-	Tue, 10 Sep 2024 07:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97967181317;
+	Tue, 10 Sep 2024 07:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6sSqXdN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNM2M95T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A889178372;
-	Tue, 10 Sep 2024 07:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A815588B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954518; cv=none; b=WVrnrIclyC1zbEuFYpnU/uiR+Nct39Jw2iAk0c0jVAMZmIp8UM6cYQioYzclJohtRP26ovCEG0/a/j7z8tzKoet+qETFLQlUbuhtKOuFDYHD3DXYodoLJCm/dTqXla4Lz+5/NiALZuKzQxr6wLu7tsX8+sLUvcohcMLbjC1Y01Q=
+	t=1725954634; cv=none; b=P5rpLeDW6xXwSqetozk0+fM7mOXEOsqvxEVDCunho1wSYAhgJAH3T7a0aNxqFbki6/aM7al1VEbl83rSU/Uy7pfa8Ls4pO/jd4nADKT3UdxYkMmgdPgog57rY1b6x7yK7gJ8sIpWDv0oG7txO9YNA2+BnG3oEWL3WWpLdb8J0LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954518; c=relaxed/simple;
-	bh=oVcm5pPuoXPMmaLHWRquGf9gSRas5BoTQHrjW2H/IUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9Ap1kajXUAjJwMk7FczEcYYTAhOZ208ApMJsaQYG2bVscMSD1BHly6nvwG3o+rVvjCZArOm1i9n/KZEQcm1BY0S9xvE0LXjCDK0DpwNO3G/ja4pAjvFMEvqdQm48n8yYxmtGrEXwl4IliyIl0gT2BbWeNaQA7cWd5NfVjGSVX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6sSqXdN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15603C4CEC3;
-	Tue, 10 Sep 2024 07:48:36 +0000 (UTC)
+	s=arc-20240116; t=1725954634; c=relaxed/simple;
+	bh=vswE4xEmJQOfA6+wzXWKCkfpVFKdHaZzmFjzfjPBSrM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YQaee4+4BFkbSyE/Ei9cXRtXFWusBwdV0CrHfwpaqKFu01LiHUGMwbxYyeJ+aiOQljzVC0dhG3wlZkbXxh59c5kUUKntO34AQfZ0I/bgZRbZO7sz+lRiPLvRVJmdCVvOfJxOc7gXQadYdKuZpBIh8HDZOi1+5OSO9U3s3veMOtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNM2M95T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80F3C4CEC6;
+	Tue, 10 Sep 2024 07:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725954517;
-	bh=oVcm5pPuoXPMmaLHWRquGf9gSRas5BoTQHrjW2H/IUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U6sSqXdNBJ+cXXY8R6uMMPmTlSn+NvKYVkPPyUjkhMZTVDTeVrExeiwhcl51o8GUi
-	 OiHjY8BCdnqSXbXt7s86fP3HcF8qAOoaRThNIbQ2N0vHn2elhDekP+YhnImdWcGxGy
-	 S8iV7F5w+epveghDOvxXJl4SWcM96JUlunBsJr/63qq83VJenIONApCrdg+Ld1tpOB
-	 AjxQ+3cwVgtcu2e8Hf5zt76PbrsMNV/fM2k9Hj8MnOgOHbpAjGdrc4MzR1MK1KKNrB
-	 Qvs1sMoKN67g4v9LlGOOOgiUniej1Junbkdp3KlDcb+AIiIgUTznaMP129xYUUGb6v
-	 t1vmkYpWmrUtA==
-Date: Tue, 10 Sep 2024 09:48:34 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: hwmon: pmbus: add ti tps25990
- documentation
-Message-ID: <3efbzcys4762rhx2h2cbhqvi6dgik7pfrxcziccdko34pb5z54@joodcym6c3s4>
-References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
- <20240909-tps25990-v1-1-39b37e43e795@baylibre.com>
+	s=k20201202; t=1725954633;
+	bh=vswE4xEmJQOfA6+wzXWKCkfpVFKdHaZzmFjzfjPBSrM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iNM2M95TL/Sk6Qzjc5rDyQk6v/WTCQWeHB89NpvjAnD21uEyIwBiycKtIYkOx6gbY
+	 AWEZzrr3yqUBJXCVYA/jdVJcEu02SpMaYYgvZku8jIBaTcNDKIm/45SjlwFMblB+RP
+	 qQ7FoLiJYkpQoSCIkp1+H0JvBab/sYW2Jb/mceh79EBAUkoA8QJYQuM7aJYmPJ92Fa
+	 R9840lZ5yjie/4gT1lYpK50dMEqjU1Y9jOtNnwZR/yQ2Xeqgr5EuRB6q5Uh/KE4hNH
+	 o7qFoC/Zb6FLQAOX/C3KCUz2arCN9/p0I6jWiplZNhnJDPhBiAbxwBTdbt/2XvUzLa
+	 Eb61E0bN8gIEA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1snvdv-00BeUN-T9;
+	Tue, 10 Sep 2024 08:50:32 +0100
+Date: Tue, 10 Sep 2024 08:50:30 +0100
+Message-ID: <86y1406j7d.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in gic_ipi_send_mask()
+In-Reply-To: <d1c2f362-da11-b17a-40ff-daecb5abf909@omp.ru>
+References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
+	<87cyli5zj7.ffs@tglx>
+	<d1c2f362-da11-b17a-40ff-daecb5abf909@omp.ru>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240909-tps25990-v1-1-39b37e43e795@baylibre.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: s.shtylyov@omp.ru, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Sep 09, 2024 at 05:39:03PM +0200, Jerome Brunet wrote:
-> Add DT binding documentation for the Texas Instruments TPS25990 eFuse
+On Mon, 09 Sep 2024 20:23:21 +0100,
+Sergey Shtylyov <s.shtylyov@omp.ru> wrote:
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  .../bindings/hwmon/pmbus/ti,tps25990.yaml          | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->
+> On 9/5/24 10:29 AM, Thomas Gleixner wrote:
+> [...]
+> 
+> >> ARM GIC arch v2 spec claims support for just 8 CPU interfaces.  However,
+> >> looking at the GIC driver's irq_set_affinity() method, it seems that the
+> >> passed CPU mask may contain the logical CPU #s beyond 8, and that method
+> 
+>    s/8/7/, of course... :-<
+> 
+> >> filters them out before reading gic_cpu_map[], bailing out with
+> >> -EINVAL.
+> > 
+> > The reasoning is correct in theory, but in reality it's a non problem.
+> 
+>    Frankly, before finalizing this patch I had tried to ascertain whether
+> cpumask could contain CPUs with the logical #s higher than 8 but that was
+> taking way too much time and I gave up... :-)
 
-A nit, subject: drop second/last, redundant "documentation". The
-"dt-bindings" prefix is already stating that these are bindings/docs.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+You can't really work it out form the source code. The trick is that
+the integration requirements prevent you from doing so. It is as
+simple as that. People have built GICv2-like interrupt controllers
+with more than 8 CPUs, but it is a different beast (see the hip04
+driver for a good laugh).
 
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
-> new file mode 100644
-> index 000000000000..e717942b3598
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +
+Another possible hack is to have 2 GICs side by side, and connect up
+to 8 CPUs to each. But then you cannot IPI one cluster from another,
+and you end-up with the hilarious situation that plagued the Axxia
+SoC, which Linux never really supported, because this is utter
+nonsense.
 
-Drop blank line.
+> 
+> > Simply because processors which use this GIC version cannot have more
+> > than 8 cores.
+> 
+>    And big.LITTLE not involved?
 
-> +$id: http://devicetree.org/schemas/hwmon/pmbus/ti,tps25990.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments TPS25990 Stackable eFuse
-> +
-> +maintainers:
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +
-> +description: |
+In what sense? Asymmetric configurations don't impact the number of
+CPU interfaces that can be connected to a single GIC.
 
-Do not need '|' unless you need to preserve formatting.
+> 
+> > That means num_possible_cpus() <= 8 so the cpumask handed in cannot have
+> > bits >= 8 set. Ergo for_each_cpu() can't return a bit which is >= 8.
+> 
+>    Perhaps adding WARN_ON() would make some sense though? :-)
 
-> +  The TI TPS25990 is an integrated, high-current circuit
-> +  protection and power management device with PMBUS interface
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,tps25990
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,rimon-milli-ohms:
-> +    description:
-> +      milli Ohms value of the resistance installed between the Imon pin
-> +      and the ground reference.
+But why? If someone builds something that cannot work, they have
+bigger problems than an extra bit in a bitmap, and the kernel is not a
+validation suite for idiotic integration (though I wonder at times).
 
-Ohms is not enough? We don't have mOhm in property units.
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+	M.
 
-> +
-> +  interrupts:
-> +    description: PMBUS SMB Alert Interrupt.
-> +    maxItems: 1
-> +
-> +  regulators:
-> +    type: object
-> +    description:
-> +      list of regulators provided by this controller.
-
-You have just one regulator, so drop "regulators" node and use directly
-vout here.
-
-> +
-> +    properties:
-> +      vout:
-> +        $ref: /schemas/regulator/regulator.yaml#
-> +        type: object
-> +        unevaluatedProperties: false
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ti,rimon-milli-ohms
-> +
-> +additionalProperties: false
-
-Best regards,
-Krzysztof
-
+-- 
+Without deviation from the norm, progress is not possible.
 
