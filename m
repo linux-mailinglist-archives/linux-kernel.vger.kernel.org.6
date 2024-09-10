@@ -1,183 +1,397 @@
-Return-Path: <linux-kernel+bounces-322760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC34972D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C649972E4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CBC1F2631D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD751287FE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487CF188CB8;
-	Tue, 10 Sep 2024 09:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65F218C039;
+	Tue, 10 Sep 2024 09:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="igf1dGE8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oweMkvx0"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82694187871
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9952D18EFD0
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725960116; cv=none; b=EkFiF/gueEnTRmfxCWx6Pg8qhJQnJ4LdNH5Un3A/z44X0E4GCMJ1xTlK59ok7tM75GOrj0OvJiO8JDR4/Sev+GmP7qVTR8cGCeeLGU3PzkNduvr9VEzQgNXFWO/3b6kgkSh7DVFdZzZa2NnlyfGCItO6wqFyNFv/fdq5cr7hpH4=
+	t=1725961257; cv=none; b=CuGhMHOhEq8CItvsmqMQynmWRvJVzLTq04MlbxPy2EZ6yZ4YZxy9cwwnmH93Vxnu6Sajh2VFWAFVOmSkSgSGBgbWQdm6rSo8DS+QxFECUAp3ql+qwvvimOsITVU7seYjg4M7sPohG/dksEelpOADlZ5s5S6maGEseV0xt3ZkMkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725960116; c=relaxed/simple;
-	bh=9623rCY0FuJR/2+2pv2WxRf224lu49v1FWyq7Q3avbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7lrfxdKuSBsoknscz1jdD1vic+E2LAfWQTVlwdwOOTJD1us6Stlkbcn4M70EEJgzeyQ8fZ9N7fl53idWB9EHXk7zHYSJiPaQO+EMv4E+GmfE+IcWbG2qT6a/wp2gRPuNF1enEeaT6PRGHzWj+H7tsCk6MoWIGycH2DsYjR0WXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=igf1dGE8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725960113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=elvJWqxu25XTUdzHltZvQLTg7t++bNW/Qq+PzFZlXNc=;
-	b=igf1dGE8hdPRE0CMzcfVcFU+rXrkppY24EQvX8RJb/IT1Zu0Pz0OOOPLJu2T5u5wWLV+mb
-	ipm44HsBFDWNi8BwhU0tEobBfrvbMEIFwEiGmlrpMlC0ACHIBHHmIXfFU7sfsW7T9l6W7U
-	VzcLXu0rIsX0EXEta3+kXTu2Jiz69eA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-IytfEHCuO7ioRN4POHDDRA-1; Tue, 10 Sep 2024 05:21:52 -0400
-X-MC-Unique: IytfEHCuO7ioRN4POHDDRA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cae209243so21567475e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:21:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725960111; x=1726564911;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=elvJWqxu25XTUdzHltZvQLTg7t++bNW/Qq+PzFZlXNc=;
-        b=uml5ubVULdqGc2zG+kXCzSEUxD5weWH7F4VIOwDJrMKxthF//a/IVYOpfRbb+4yzD0
-         n+lWvdmG87tcLqstrVs3Nx1KpHBIqTDETgJ6n7BkLteTBBY30r4QV8OGIxuIw3/dGSmg
-         QD2CVsv6nZ3G18On8DffJELvP3U/uQkBGG1LbA6rKHplg4zLj3nqbah9myRX3ZEYI+4/
-         zYHYRrjNicit46hqBJrm42ulrRC9nbb0oxfETweHpsUw2dKBaUrIw+IE4D9U+nK/xC9L
-         ccPDV12oVB3vFreRJiW1ewlNYV8syMYeib/SC8/ZCHoB+TWaM/ri1MOc6EZftx04Dl6c
-         vFQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJFQZpqvH4vls8qxJzwj8jLO+24rW6Ymy0AGLjR2E6r93Affc2M8pycIJWtpArkV5kZeYssfN9WzxARqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGYim53fRZF56x5unRkrZgQ7KCPHqFnA8ALZ6KPTz9uQrGQH08
-	GXOstFtkajBLpXMpTf6wMY0cuo1qxUaNV9/SYoRE7D9vzMOkUU/SASXXrNR9PC5GiSx+Uo7AxdK
-	DowLZRtp0S2GN5TTyJV1oDb2qSmrVb5FryZwijVoAHcJnpPov91bgvGy2yS/cnqZ7vdb+2onp
-X-Received: by 2002:a05:600c:3ba3:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42cae70f5famr74245665e9.15.1725960110830;
-        Tue, 10 Sep 2024 02:21:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz0BFUpVQGbh16AMQLZGh5Axk8G6tFO097zXS3nFjvaGiHVCWQ0w70n3qnN+WsUSWTsBsGiw==
-X-Received: by 2002:a05:600c:3ba3:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-42cae70f5famr74245395e9.15.1725960110179;
-        Tue, 10 Sep 2024 02:21:50 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:b600:cfda:b383:a116:a940? (p200300cbc706b600cfdab383a116a940.dip0.t-ipconnect.de. [2003:cb:c706:b600:cfda:b383:a116:a940])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21a7esm104737915e9.4.2024.09.10.02.21.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 02:21:49 -0700 (PDT)
-Message-ID: <0a23ba16-5a7a-4f8d-bc5a-887bbe42c77e@redhat.com>
-Date: Tue, 10 Sep 2024 11:21:49 +0200
+	s=arc-20240116; t=1725961257; c=relaxed/simple;
+	bh=sKWbOMH4P24E6BnvZYSq6BRnKSlD5ZalDfrKb7+p5ts=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=W53xtw0dfviPUsS9Ay4Vk+Og+SxMvjiv9cziV+5evqjOwBmusmu+rBdbO6l4y/o0PFBbqWHaikkqaFm3lomecoR7/4PuoxIXy8w1oDbDJBLC2TUFnw/lB78xrjPIEQsSQJLD71F1Pt9i5tFxUZKLibzH1T5c+erjO4G7DSgtgNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oweMkvx0; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240910094051epoutp03d23ae6c94a503e70cde000a23c664973~z2J0gB8m_2190621906epoutp03L
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:40:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240910094051epoutp03d23ae6c94a503e70cde000a23c664973~z2J0gB8m_2190621906epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725961251;
+	bh=YB/Kn4zP87WsWLT08fcUQuDrLHGW9spUWa+9l41J8F0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=oweMkvx0B2lx0ZJd0vHRirSyI5Jyb+eAp+dKyKTSg/7hD7/0URVKPgNGTix1jeT+P
+	 kphPkO3E03f2Ik438aA6p8tpnAIw0F1Yf1Luu446Jzikp+T0AYcjJa2FQ8wl8zDZuD
+	 1G+1mBBtGw2+1s9PYj0ZuP2tV0Pro9s5wEA1wU8I=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240910094051epcas5p2c235021bd753f06362025ef2760346bd~z2J0CrBEj2969129691epcas5p2o;
+	Tue, 10 Sep 2024 09:40:51 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4X2zGT2vSsz4x9Q1; Tue, 10 Sep
+	2024 09:40:49 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1F.63.09640.12410E66; Tue, 10 Sep 2024 18:40:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240910092236epcas5p47ae276bce273adcda52aa5ac24cdb777~z155DDxhb2593125931epcas5p4i;
+	Tue, 10 Sep 2024 09:22:36 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240910092236epsmtrp10dd9ea10fae154ca16eb346507df04eb~z155CX3Ug0130801308epsmtrp1H;
+	Tue, 10 Sep 2024 09:22:36 +0000 (GMT)
+X-AuditID: b6c32a49-aabb8700000025a8-d6-66e014219114
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.79.19367.CDF00E66; Tue, 10 Sep 2024 18:22:36 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240910092235epsmtip1d96d5bdbc58b7c24628473ddab9a2381~z154IXow20264702647epsmtip1D;
+	Tue, 10 Sep 2024 09:22:35 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
+	<xue01.he@samsung.com>
+Subject: [PATCH v8 RESENT] io_uring: releasing CPU resources when polling
+Date: Tue, 10 Sep 2024 17:22:23 +0800
+Message-Id: <20240910092223.161685-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Drop unused set_pte_safe()
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240910090409.374424-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240910090409.374424-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmuq6iyIM0gw8XWC3mrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLshA+sFl0XTrE5sHvsnHWX3ePy2VKPvi2rGD0+b5ILYInKtslI
+	TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
+	FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ3x5P40
+	poJVLhVb1s9kbGCcaN7FyMEhIWAicWaubRcjF4eQwG5GidU9a1khnE+MEvemtLMgOGc2M3cx
+	coJ1tHb3skEkdjJKnNg/iR0kISTwg1Hi7858EJtNQEli/5YPjCC2iIC2xOvHU1lA1jELREm8
+	WMsNEhYW8JTYuvcLK4jNIqAqcfPjTSaQEl4BK4lfbQUQq+QlbnbtB1vLKyAocXLmExYQmxko
+	3rx1NjPICRICh9glZs/6yQLR4CJxa/9MKFtY4tXxLewQtpTEy/42KDtfYvL39YwQdo3Eus3v
+	oOqtJf5d2QN1pqbE+l36EGFZiamn1jFB7OWT6P39hAkiziuxYx6MrSSx5MgKqJESEr8nLGKF
+	sD0kbu16wwQJnViJGWuamSYwys9C8s4sJO/MQti8gJF5FaNkakFxbnpqsWmBYV5qOTxWk/Nz
+	NzGCE6GW5w7Guw8+6B1iZOJgPMQowcGsJMLbb3cvTYg3JbGyKrUoP76oNCe1+BCjKTCIJzJL
+	iSbnA1NxXkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTFmay971
+	x3aJfw6eq7NT9iPjpkyvoy9rf5go68gJz/y+r0B5X8UL2St/5VkfTNzIIrdSSPqttu+a9COT
+	nkQccwnP4pnPu/zDHaPEabIul76fqc5L2XZwg+bsHYYJIZXimQvfztwj49d3806PsPtJvfsz
+	/RxKZne/d6jMSha/ZnrbVcnkeYvZ1k8vapnk1jvenrMkQ/Shz67ihHJ+PeayNcE7Hh6LLLDX
+	X5vCqcxTzZ/+5HbPnImy54K1D+pfDNc5orD0+KaIiafZ7KappG0rNr7Zc/Xv8dKWWyxMP7bO
+	Z9xeuWHPueCHy6UyqzSjplZOeflwx6WC1JoH83w3myw7/evFWY5E96on8uWdM8WypiixFGck
+	GmoxFxUnAgC+jCKqDQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMLMWRmVeSWpSXmKPExsWy7bCSnO4d/gdpBndnGFjMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBLFZZOS
+	mpNZllqkb5fAlfHk/jSmglUuFVvWz2RsYJxo3sXIySEhYCLR2t3L1sXIxSEksJ1RYum0LjaI
+	hITEjkd/WCFsYYmV/56zQxR9Y5RYc34dWIJNQEli/5YPjF2MHBwiAroSjXcVQMLMAjESH/ZM
+	YAexhQU8Jbbu/QJWziKgKnHz400mkHJeASuJX20FEOPlJW527WcGsXkFBCVOznzCAjFGXqJ5
+	62zmCYx8s5CkZiFJLWBkWsUomlpQnJuem1xgqFecmFtcmpeul5yfu4kRHI5aQTsYl63/q3eI
+	kYmD8RCjBAezkghvv929NCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8yjmdKUIC6YklqdmpqQWp
+	RTBZJg5OqQamGTsCr6zNP20/+dG9na42Wxh1ansiNqUtNzuvGByrFB6wwjHR+huP7Tqf9hV/
+	5rVsNntqeHILUzKfQNOjEjfRDWs+2W0z+acUmFt89uh/tUWNWs7fDsy8Nm+Fxto6CU3mXzYp
+	ZjxO2vcuHn0Y8SVDsnh7YmeOfUs0r9Qv+X0i+XmX4hMmn3V59+/37VX8HxqeHjeVjJX+eW5t
+	wR+eumzfGy9mHWvdGOPROnfFIdu6R1aH1V8nsy2IE35t/jL83lIf0bv7rsaFbOmYy1TAM+sD
+	b850m/D1igc//PZ1/6TqEf+2RHIhj7PpFDYP3RfNbx2LgwJTf54LjDJLvH7twYVlVxgMVGZq
+	zypri5r/8vUfJZbijERDLeai4kQA2aJCnrYCAAA=
+X-CMS-MailID: 20240910092236epcas5p47ae276bce273adcda52aa5ac24cdb777
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240910092236epcas5p47ae276bce273adcda52aa5ac24cdb777
+References: <CGME20240910092236epcas5p47ae276bce273adcda52aa5ac24cdb777@epcas5p4.samsung.com>
 
-On 10.09.24 11:04, Anshuman Khandual wrote:
-> All set_pte_safe() usage have been dropped after the commit eccd906484d1
-> ("x86/mm: Do not use set_{pud, pmd}_safe() when splitting a large page")
-> This just drops now unused helper set_pte_safe().
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->   include/linux/pgtable.h | 6 ------
->   1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 2a6a3cccfc36..aeabbf0db7c8 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -1058,12 +1058,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->    * same value. Otherwise, use the typical "set" helpers and flush the
->    * TLB.
->    */
-> -#define set_pte_safe(ptep, pte) \
-> -({ \
-> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
-> -	set_pte(ptep, pte); \
-> -})
-> -
->   #define set_pmd_safe(pmdp, pmd) \
->   ({ \
->   	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
+This patch add a new hybrid poll at io_uring level, it also set a signal
+"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+to enable use new hybrid polling flexibly.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+io_uring use polling mode could improve the IO performence, but it will
+spend 100% of CPU resources to do polling.
 
+A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+it will not polling immediately, but block first and re-run before IO
+complete, then poll to reap IO. This poll function could be a suboptimal
+solution when running on a single thread, it offers the performance lower
+than regular polling but higher than IRQ, and CPU utilization is also lower
+than polling.
+
+Test Result
+fio-3.35, 16 poll queues, 1 thread
+-------------------------------------------------------------------------
+Performance
+-------------------------------------------------------------------------
+                write         read        randwrite  randread
+regular poll BW=3939MiB/s  BW=6613MiB/s  IOPS=190K  IOPS=470K
+IRQ          BW=3927MiB/s  BW=6612MiB/s  IOPS=181K  IOPS=203K
+hybrid poll  BW=3937MiB/s  BW=6623MiB/s  IOPS=190K  IOPS=358K(suboptimal)
+-------------------------------------------------------------------------
+CPU Utilization
+------------------------------------------------------
+                write   read    randwrite   randread
+regular poll    100%    100%    100%        100%
+IRQ             50%     53%     100%        100%
+hybrid poll     70%     37%     70%         85%
+------------------------------------------------------
+
+--
+changes since v7:
+- rebase code on for-6.12/io_uring
+- remove unused varibales
+
+changes since v6:
+- Modified IO path, distinct iopoll and uring_cmd_iopoll
+- update test results
+
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
+
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
+
+changes since v3:
+- Simplified the commit
+- Add some comments on code
+
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
+
+changes since v1:
+- Extend hybrid poll to async polled io
+
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ include/linux/io_uring_types.h |  6 +++
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/io_uring.c            |  3 +-
+ io_uring/rw.c                  | 99 ++++++++++++++++++++++++++++++----
+ 4 files changed, 97 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 3315005df117..35ac4a8bf6ab 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -422,6 +422,8 @@ struct io_ring_ctx {
+ 	unsigned short			n_sqe_pages;
+ 	struct page			**ring_pages;
+ 	struct page			**sqe_pages;
++	/* for io_uring hybrid poll*/
++	u64			available_time;
+ };
+ 
+ struct io_tw_state {
+@@ -657,6 +659,10 @@ struct io_kiocb {
+ 		u64			extra1;
+ 		u64			extra2;
+ 	} big_cqe;
++    /* for io_uring hybrid iopoll */
++	bool		poll_state;
++	u64			iopoll_start;
++	u64			iopoll_end;
+ };
+ 
+ struct io_overflow_cqe {
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 2aaf7ee256ac..42ae868651b0 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
+  * Removes indirection through the SQ index array.
+  */
+ #define IORING_SETUP_NO_SQARRAY		(1U << 16)
++#define IORING_SETUP_HY_POLL	(1U << 17)
+ 
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 3942db160f18..bb3dfd749572 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -301,6 +301,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
+ 
+ 	ctx->flags = p->flags;
++	ctx->available_time = LLONG_MAX;
+ 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+ 	init_waitqueue_head(&ctx->sqo_sq_wait);
+ 	INIT_LIST_HEAD(&ctx->sqd_list);
+@@ -3603,7 +3604,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+ 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+ 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+-			IORING_SETUP_NO_SQARRAY))
++			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
+ 		return -EINVAL;
+ 
+ 	return io_uring_create(entries, &p, params);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index c004d21e2f12..4d32b9b9900b 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+ }
+ 
++static void init_hybrid_poll(struct io_kiocb *req)
++{
++	/* make sure every req only block once*/
++	req->poll_state = false;
++	req->iopoll_start = ktime_get_ns();
++}
++
+ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode, int rw_type)
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->iopoll_completed = 0;
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			init_hybrid_poll(req);
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
+@@ -1105,6 +1114,81 @@ void io_rw_fail(struct io_kiocb *req)
+ 	io_req_set_res(req, res, req->cqe.flags);
+ }
+ 
++static int io_uring_classic_poll(struct io_kiocb *req,
++		struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	int ret;
++	struct file *file = req->file;
++
++	if (req->opcode == IORING_OP_URING_CMD) {
++		struct io_uring_cmd *ioucmd;
++
++		ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
++		ret = file->f_op->uring_cmd_iopoll(ioucmd, iob,
++						poll_flags);
++	} else {
++		struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++
++		ret = file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
++	}
++	return ret;
++}
++
++static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	struct hrtimer_sleeper timer;
++	enum hrtimer_mode mode;
++	ktime_t kt;
++	u64 sleep_time;
++
++	if (req->poll_state)
++		return 0;
++
++	if (ctx->available_time == LLONG_MAX)
++		return 0;
++
++	/* Using half running time to do schedul */
++	sleep_time = ctx->available_time / 2;
++
++	kt = ktime_set(0, sleep_time);
++	req->poll_state = true;
++
++	mode = HRTIMER_MODE_REL;
++	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
++	hrtimer_set_expires(&timer.timer, kt);
++	set_current_state(TASK_INTERRUPTIBLE);
++	hrtimer_sleeper_start_expires(&timer, mode);
++
++	if (timer.task)
++		io_schedule();
++
++	hrtimer_cancel(&timer.timer);
++	__set_current_state(TASK_RUNNING);
++	destroy_hrtimer_on_stack(&timer.timer);
++
++	return sleep_time;
++}
++
++static int io_uring_hybrid_poll(struct io_kiocb *req,
++				struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++	u64 runtime, sleep_time;
++
++	sleep_time = io_delay(ctx, req);
++	ret = io_uring_classic_poll(req, iob, poll_flags);
++	req->iopoll_end = ktime_get_ns();
++	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
++
++	/* use minimize sleep time if there are different speed
++	 * drivers, it could get more completions from fast one
++	 */
++	if (ctx->available_time > runtime)
++		ctx->available_time = runtime;
++	return ret;
++}
++
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+@@ -1121,7 +1205,6 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 
+ 	wq_list_for_each(pos, start, &ctx->iopoll_list) {
+ 		struct io_kiocb *req = container_of(pos, struct io_kiocb, comp_list);
+-		struct file *file = req->file;
+ 		int ret;
+ 
+ 		/*
+@@ -1132,17 +1215,11 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		if (READ_ONCE(req->iopoll_completed))
+ 			break;
+ 
+-		if (req->opcode == IORING_OP_URING_CMD) {
+-			struct io_uring_cmd *ioucmd;
+-
+-			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+-			ret = file->f_op->uring_cmd_iopoll(ioucmd, &iob,
+-								poll_flags);
+-		} else {
+-			struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
++		else
++			ret = io_uring_classic_poll(req, &iob, poll_flags);
+ 
+-			ret = file->f_op->iopoll(&rw->kiocb, &iob, poll_flags);
+-		}
+ 		if (unlikely(ret < 0))
+ 			return ret;
+ 		else if (ret)
 -- 
-Cheers,
-
-David / dhildenb
+2.40.1
 
 
