@@ -1,186 +1,165 @@
-Return-Path: <linux-kernel+bounces-322632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD487972BB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:12:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CC9972BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8243C1F26426
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1CD1F26490
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5BE18EFC6;
-	Tue, 10 Sep 2024 08:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P6+nbddx";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="MSdY733J"
-Received: from a7-46.smtp-out.eu-west-1.amazonses.com (a7-46.smtp-out.eu-west-1.amazonses.com [54.240.7.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA06D18F2DF;
+	Tue, 10 Sep 2024 08:09:07 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBF318E744;
-	Tue, 10 Sep 2024 08:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9690718A95B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955723; cv=none; b=kVl73/6Ng24mvPUnzxqHrdn/ujsxuCl/JjFpfM8LTGzz58knyul1WnrDZe8xxW++K8BnRFC5ZZDF6iZK1zlaWDXMHDKwa3nt0K1W9KjeYUDE5De+WkZ77F5oE1kkdCDWSG3WYyVE/DCvrX+zdOgeIjaqMC4G34+TI1WJgyKn1e4=
+	t=1725955747; cv=none; b=tvz3YdhAFgVgKNwq6OUoeMuDFC0xZHGfbFS3CdJIKpfwQrwpMS8XS2Rpav4My9mAwWAgv+7zx+KnTwNpivmetlRjI8KQgve/LLuhKyPXab8ZTUJP4YOJ75NwSBIDqhKS34FVNfNF66+Im9pZDzeYKbSb88LsjSNDHErlQQY+9Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955723; c=relaxed/simple;
-	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=evwpgnMC5ieqKugIA/rJw9F+KVO7NPRrWOkMJUPYpPfud3OmESdp3OnBxm8Kqo8rgJvFOqR+NHfaWx3vNJSB8YFUlrXnsy2zrSHNfHeVwXNGGlRogjG9QStOnieXYZuSeWrxPb+9v9eTusyIX0dxTt9brrIFMmrrEZz+duZk7ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P6+nbddx; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=MSdY733J; arc=none smtp.client-ip=54.240.7.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725955720;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
-	b=P6+nbddx9e8GQe8AEJCW5t1Wu7f5l0l96bnP+ujVgcAgIROuRWvJIdBhySUQsOtw
-	j7Lt8UqBZNfztPGgr2ARPCEnl56LBm9jkfZf0QVfToehnx62GnGlNRMErQ+ChNLBb4Z
-	r2GGVsh0pt3C//K7D2A6oQuCNUMNRSSF/Y65xC2lWU6p7bUmjbMiaq2iLsXx7oOVKOV
-	I95MP0BzEtmWEcJQG134t3/sHo5NuSb3dODZ0MyM2H1QE/JpGjQmDxicFxhZNED7pR+
-	aEL7JGQC1PCW1LWMH5FtGsZjq/xJ6X8hrh9SbVIkDmgqXdiae8NqFmflFz4f1lyifQv
-	2ZI1Aee8lA==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725955720;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
-	b=MSdY733JFvyqSrkXqPdO6T2dgUOs8csMz301DyjJ3BBiuHbsC/UDV8fx4LaXZQae
-	oY+V2/L9RO7BgNdUoLzsEsTCawwLhgru3Q4yqIi4sL3zoBjs3KA5BjJm/se1Ny4FoA7
-	1ZmGsBhP2uozcYc/b6rxC2EQEW0DD71Dfujeh9cc=
-Message-ID: <01020191dafa43a8-cca2fb3f-7eda-4e39-9ca1-eccb78c566a4-000000@eu-west-1.amazonses.com>
-Date: Tue, 10 Sep 2024 08:08:40 +0000
+	s=arc-20240116; t=1725955747; c=relaxed/simple;
+	bh=aSu8YO+NP/wcxcjQDC3NDz2q3VOBwq8/y59BETcWydE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pg2Gsxp6OqBe0HD2EeuX/RiSXXkRQ2PzDWMhnK4k7jR09/zUOKRfc7qG6Ph6/fvHHcL6NblWasU1cmdhNXonEQYSzTvKmmfDSnUe+vEbq4U3peDCA9A9xoZ+J1sJeh8hULXjThErNRvnEFeb58DLOSpxY+0ZL/qnThbjTdyY4t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cdb749559so532247839f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:09:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725955744; x=1726560544;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lgw8DoG1M7BZv9EqJyhvpfzCha2GwnjcVFpemJc3ogk=;
+        b=p9aL7hlo8nAvjGJ2sYmS/3DVfkk42oQPfRXyot15WolbuPScRbFgMXEU/hYcIaeqQQ
+         w1UfJ7sek5O5Fx8AzoKFuTlwkOmcPsjnn+FYWQm8RcG6G+7ESCmPXEWHbhpTex21UvxK
+         X85PX36G7BzQgroRHFBm2dq/iZtPtdCvhYWvGAaYSmY/SzrnnKqj5X0LuX+D6Xo/i6kC
+         V5FjDk6ShukpxfCvMMHG0IAVS0au12iNqzFbKT8XrL4ZGvVzjVvWtRX/8HQk9OOVRCeI
+         7vwWYTaCDZjZX7nuLY57+FjWut6fieK2TAks81EMpbur7a0/PJP8T7qkLw6BC6AAkp0G
+         WlBA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+4fS/zY31IcZY3t42411Ii+TAJzaaLQUaN2OAq3ppSfGIyArXzyY4QdDh8Mm5A/27UXC6zhQXzu0VVWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMAvjGpmG7oi9prIf4zmzv3OHgqlzY8cyZ58cP1PspKV2h+9Jw
+	pszqwDCkC0frsKeRZ5X036Sc8q58SIRR+ul6LT/lmLs1ThcdwBvItY2tI3vhQS6Sxdjt/+HbSuk
+	QV1iRIpjvOSNwcuyd5rbiKi9nf5PrWczf13D8Iw+k5Ag2I6YtJm2mGIU=
+X-Google-Smtp-Source: AGHT+IGMLW2Kb8tJqJZAMt0xk0D1CxQPYJJYMvEV0GqaDcsvU3EheCpfCN4ADCAxYpY9L31rwheu6DwUIQ+eJy9jGErYjjBDcyr9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/3] dt-bindings: display: mediatek: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"sui.jingfeng@linux.dev" <sui.jingfeng@linux.dev>, 
-	"wenst@chromium.org" <wenst@chromium.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	=?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, 
-	=?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>, 
-	"michael@walle.cc" <michael@walle.cc>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"robh@kernel.org" <robh@kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"airlied@gmail.com" <airlied@gmail.com>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"kernel@collabora.com" <kernel@collabora.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	=?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"amergnat@baylibre.com" <amergnat@baylibre.com>
-References: <20240618101726.110416-1-angelogioacchino.delregno@collabora.com>
- <20240618101726.110416-2-angelogioacchino.delregno@collabora.com>
- <3e58a224e6323e28c370d460fa72e23b958bcf62.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <3e58a224e6323e28c370d460fa72e23b958bcf62.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.10-54.240.7.46
+X-Received: by 2002:a05:6602:6183:b0:82a:aba5:dd92 with SMTP id
+ ca18e2360f4ac-82aaba5df35mr865113139f.8.1725955744611; Tue, 10 Sep 2024
+ 01:09:04 -0700 (PDT)
+Date: Tue, 10 Sep 2024 01:09:04 -0700
+In-Reply-To: <20240910071417.7632-1-almaz.alexandrovich@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000e53a60621bf6341@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_bh
+From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Il 08/08/24 05:45, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
-> 
-> On Tue, 2024-06-18 at 12:17 +0200, AngeloGioacchino Del Regno wrote:
->> The display IPs in MediaTek SoCs support being interconnected with
->> different instances of DDP IPs (for example, merge0 or merge1) and/or
->> with different DDP IPs (for example, rdma can be connected with either
->> color, dpi, dsi, merge, etc), forming a full Display Data Path that
->> ends with an actual display.
->>
->> The final display pipeline is effectively board specific, as it does
->> depend on the display that is attached to it, and eventually on the
->> sensors supported by the board (for example, Adaptive Ambient Light
->> would need an Ambient Light Sensor, otherwise it's pointless!), other
->> than the output type.
->>
->> Add support for OF graphs to most of the MediaTek DDP (display) bindings
->> to add flexibility to build custom hardware paths, hence enabling board
->> specific configuration of the display pipeline and allowing to finally
->> migrate away from using hardcoded paths.
->>
->> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
->> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
-> 
-> [snip]
-> 
->>   
->> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
->> index 677882348ede..98db47894eeb 100644
->> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
->> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
->> @@ -110,6 +110,28 @@ properties:
->>         include/dt-bindings/gce/<chip>-gce.h, mapping to the register of display
->>         function block.
->>   
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +    description:
->> +      Input and output ports can have multiple endpoints, each of those
->> +      connects to either the primary, secondary, etc, display pipeline.
->> +
->> +    properties:
->> +      port@0:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description: ETHDR input, usually from one of the MERGE blocks.
-> 
-> Sorry, I find one question now.
-> I think ETHDR may have multiple input, and ETHDR receive data from all input at the same time.
-> Why here has only one input port?
-> 
-> MERGE -->+-----------------+
->           |                 |
-> MERGE -->|                 |
->           |      ETHDR      |
-> MERGE -->|                 |
->           |                 |
-> MERGE -->+-----------------+
-> 
+Hello,
 
-Because ETHDR takes one input (ex. "one image", or "one data stream") port, which
-is composed of multiple input endpoints (where each endpoint is a MERGE block) :-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in ntfs_read_bh
 
-Cheers,
-Angelo
+=====================================================
+BUG: KMSAN: uninit-value in ntfs_fix_post_read fs/ntfs3/fsntfs.c:180 [inline]
+BUG: KMSAN: uninit-value in ntfs_read_bh+0x1eb/0xde0 fs/ntfs3/fsntfs.c:1317
+ ntfs_fix_post_read fs/ntfs3/fsntfs.c:180 [inline]
+ ntfs_read_bh+0x1eb/0xde0 fs/ntfs3/fsntfs.c:1317
+ indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1069
+ indx_find+0xd12/0x1440 fs/ntfs3/index.c:1183
+ indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2668
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3296
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3387
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1057
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ wb_writeback+0x4df/0xea0 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-> Regards,
-> CK
-> 
->> +
->> +      port@1:
->> +        $ref: /schemas/graph.yaml#/properties/port
->> +        description:
->> +          ETHDR output to the input of the next desired component in the
->> +          display pipeline, for example one of the available MERGE blocks,
->> +          or others.
->> +
->> +    required:
->> +      - port@0
->> +      - port@1
->> +
->>   required:
->>     - compatible
->>     - reg
->>
+Uninit was stored to memory at:
+ ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
+ ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
+ indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1069
+ indx_find+0xd12/0x1440 fs/ntfs3/index.c:1183
+ indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2668
+ ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3296
+ ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3387
+ ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1057
+ write_inode fs/fs-writeback.c:1497 [inline]
+ __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
+ writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
+ wb_writeback+0x4df/0xea0 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x40b/0x1940 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4723
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof mm/mempolicy.c:2343 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
+ __filemap_get_folio+0xa05/0x14b0 mm/filemap.c:1950
+ grow_dev_folio fs/buffer.c:1047 [inline]
+ grow_buffers fs/buffer.c:1113 [inline]
+ __getblk_slow fs/buffer.c:1139 [inline]
+ bdev_getblk+0x2c9/0xab0 fs/buffer.c:1441
+ __getblk include/linux/buffer_head.h:381 [inline]
+ sb_getblk include/linux/buffer_head.h:387 [inline]
+ ntfs_get_bh+0x605/0x1190 fs/ntfs3/fsntfs.c:1365
+ indx_new+0x1bc/0x780 fs/ntfs3/index.c:957
+ indx_insert_into_root+0x2fd1/0x37d0 fs/ntfs3/index.c:1725
+ indx_insert_entry+0xe1d/0xee0 fs/ntfs3/index.c:1984
+ ntfs_create_inode+0x4391/0x4df0 fs/ntfs3/inode.c:1694
+ ntfs_mkdir+0x56/0x70 fs/ntfs3/namei.c:207
+ vfs_mkdir+0x4a0/0x780 fs/namei.c:4210
+ do_mkdirat+0x529/0x810 fs/namei.c:4233
+ __do_sys_mkdirat fs/namei.c:4248 [inline]
+ __se_sys_mkdirat fs/namei.c:4246 [inline]
+ __x64_sys_mkdirat+0xc6/0x120 fs/namei.c:4246
+ x64_sys_call+0x39e5/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:259
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 3128 Comm: kworker/u8:10 Not tainted 6.11.0-rc1-syzkaller-00017-g689ecd06ef8d-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: writeback wb_workfn (flush-7:0)
+=====================================================
+
+
+Tested on:
+
+commit:         689ecd06 fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1626f43b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2dda45ca15df5ccb
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=163af43b980000
 
 
