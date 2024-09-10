@@ -1,234 +1,198 @@
-Return-Path: <linux-kernel+bounces-322607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06173972B69
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5977B972B70
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 799EA1F257ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4D8283418
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7599C18756D;
-	Tue, 10 Sep 2024 08:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BhhXNrKZ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA03566A;
+	Tue, 10 Sep 2024 08:02:43 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D437B1862B8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1CF174EFC;
+	Tue, 10 Sep 2024 08:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955312; cv=none; b=HhaJ1wqgMOKdjExy0wJb/mTJX2NgtHEZwc4y3QgeE/UjcYvmZ9cnMKUiWmVOYcprt8YGWIg4cKt8N07nS8380lvaCF6lj/xU5zt4OLe3WEEwOel/FHScZnksna0cJG5wSNvmJf/y4Slc2DnbCiG0i+DxcVtUxehRRNsORXByEPQ=
+	t=1725955363; cv=none; b=uSNvHt7BQbjC5S0BUfGyjUJkjTYa1bq6/dCc6bfTXCGRwDP5u9OnpIytAaDbzGx8wX8bEotiIBXnnnWtilA//DQx6uITs7lpv71/UeEATU0FXTrjihGZYA3DNDR2IQ8GVVbGnuFVgX9dAbgg+MgFLUlEpQW9amW+f3wKdWm2Cmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955312; c=relaxed/simple;
-	bh=fliTI4ku+2nc6L0W4Ad5abYeryIU2dtOv5FKC4kJkK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJWEFNyWYLoTSBmcsjJiqUEC1Q6mji86XRxD/gG6PM3hk2IutDGra/KuOSBWrvOeoiJ81NqhfvrFxrq8wDXSERlNZ58saJHfSm3/GJj3KFm1P0y7Gnj0zAKkRwRG0Wgmaq2AndR7f3Js1P8CZJIe1WjTOksKVyXfo5641LRRKYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BhhXNrKZ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c3ca32971cso692737a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725955309; x=1726560109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2HXx27vJakYic9aWVU4rnACS7qhR7kcJ+b+F6ySTEw=;
-        b=BhhXNrKZKMyH5EYGWHxI7GcKp70lPmaUhfb6a9GN1k4FTbgK8Gbbj1fhXr/Y56oLh6
-         au7L1tiVofZBQdVbA2EViHZig7w8DdFdwkvo/P8P9rZRHAGAyr9RKbd5k6tEFK+1uarI
-         bUaTyBndq5SLuetqE3MD56Iy+jpF+JHLRYKXadc1DA0oJLl8b5RGVjRPkcxuDB7+5hq+
-         txCn6huZpxJGoa48Og0y6IqN+DHrAQQ4uiJue8H/k2a6r81jdSyDHfk3OIvuHOForliB
-         mcxKZBM3vr6JEsoH+kIzODeqg5FOW3ix3Cb0aYmtWgUK3IVt8PDwOY/nUMgcwwl104wY
-         SlSw==
+	s=arc-20240116; t=1725955363; c=relaxed/simple;
+	bh=bZQ56TI9jacC06ucCOzxlRB8MZhqw4u3oVbjFPOEG04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OhohNAwFjzeYZPwm6uvID8OYbZPCVysGghyfko6ZAyzHqL1XnFt8MXnhwLsi3CSCLkyjnjD50+HRlACJTRbRA1/NwCMDJgvqGRcCt1Ff4Mr8CpFTkS6vODY6LBmhHzAx6/tozjtuKu4qVgPmvBFwnWfQzRea+uLQOTbycbSa0TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b6b9867f81so2801497b3.1;
+        Tue, 10 Sep 2024 01:02:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725955309; x=1726560109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u2HXx27vJakYic9aWVU4rnACS7qhR7kcJ+b+F6ySTEw=;
-        b=PGuM61YYbs2H5b6GpLAy90b5V29a7XB3qEjFAiJjDDbBXMupFVR6+uloRTDgQF3J0d
-         KIr2LA21sqwmTLlR8pXCpTMC59TjL1FiWEL+m9+Q1sLuVMmGqqkoTqiGWbl+IVTu3wcX
-         7xLKbBc2rjQRrRbgsNna9zAf+NgKb3hUII11k/89VWMg6jN5uLttJJ7mGssTLngk/yvu
-         KkxdgfwZyw6S6/sY7aI74jGx7JjvwQq0E/4eZK6m/cKKb4Y52QYI/qOUlD+7VHd1WgfW
-         ne183iLp0tdqf/QZOL7mPtCaA9x8A6/5yAjYOQxfVtWWFvxbDSNbDfS0HzJoV8ysS6Y6
-         qXxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG7Yww+C5m6hwcDPRJmY3KALLvoNhzapNrjuyI6CTZE10335+lD+0z6S8SmJOpGrvueX6QO085uNFIM38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1rFBRA2eM315fnu5+kFPd9Jc3DPOFXbl84EMrZIlxFFY7CKg9
-	sSs+0eC6xMTYYw/zTinLHZZ7y6Gndkxe3Leh8lHqU69VMSe+OraxfUpquExOqKA=
-X-Google-Smtp-Source: AGHT+IHr3avMGlJNYFmUlmiQLM7eBFWFezrmyKcnEv8CK4mGzrZPx/NLsrObWoaM30sj+QoeSNwPww==
-X-Received: by 2002:a05:6402:42cb:b0:5a3:a4d7:caf5 with SMTP id 4fb4d7f45d1cf-5c3dc7c9cc1mr7089291a12.36.1725955308754;
-        Tue, 10 Sep 2024 01:01:48 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd523b4sm3962515a12.51.2024.09.10.01.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:01:48 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:01:46 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: zhang warden <zhangwarden@gmail.com>
-Cc: Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
- using function show
-Message-ID: <Zt_86rOMJN4UFEk-@pathway.suse.cz>
-References: <20240828022350.71456-1-zhangwarden@gmail.com>
- <20240828022350.71456-3-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
- <ZtsqLiJPy5e70Ows@pathway.suse.cz>
- <B250EB77-AFB0-4D32-BA4E-3B96976F8A82@gmail.com>
+        d=1e100.net; s=20230601; t=1725955358; x=1726560158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fzRdJw3jGdTpaaxC4oTRsBtst8mfyJSId4rDFBKOHV0=;
+        b=hf/5DvQXc07ReeqJOh/x7w7aAifKsvC+Cdnd9Vr04mivTQCwXxg7QaHx0Dif6dvIYc
+         LGgsuhkAhSpOhpqh/aQevJ5D+AfHqdNZVyHkErX612V9q0P4btxSZHX6gVpy6aSd8UF6
+         nP+g553BD0iahWe7YGE6xY7wa8m3du/x1hu3GyHmp3bmEeFtvQS3Vl4ixTSWTfqQvCa7
+         dFy7y5iBIkvWZjDQvGFMqRkOZOh0xJl+lgxCAI1woEsDYtIUHtPe8vCyaEnVLZW8rylT
+         du1metny8dI9UDXW4XhgPTg6g/dgoK8vtfT0lAsZUecLtL7NihvvTBG436RoRQTSTwKr
+         iMdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOyNIeWSeKkHGVQzhTDNO2brNBi+Et8GUEiS4SLEqVPaSRiN79tCywtrTl9NHRhtfdYPEu8LWC0PMx505s64p1v2s=@vger.kernel.org, AJvYcCX+dPA3oZ2Pn8158a51PHSXdHzIlKdXtu09Xa8al0Ho02AL/nHlzY1JJbYp60rsXanZCYoZGGdQnBHs9IqI@vger.kernel.org, AJvYcCX/+ZcBEOcubMzYUh32DZw/oafIKJJ+lLZORGDr2f4XV8N8fd8p2kdjgW5UhG0iFCx6/T4NDp9a5iYn@vger.kernel.org, AJvYcCXod0PX0RBMUS32LY2LT4HyPu6jvbxcFRnVNJDvEj6mkfIpfwdvUlZwm0YlNCO+yipTHIYjO+m8C5Y/@vger.kernel.org, AJvYcCXqiMs1rEYsm1nBlJIj9A3+jU5cXD94zJo/w0G5/pHGmT8rVkLl9Z2pc4R4BLnZX/9bMpfj6p7YT1Am@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzehQ3ga3o16Hyvn7mkuxXvqR0QqTj5bdQxV0AKK5YpGiLSTY2
+	qdWugiMRgn7subZUHxEwsnAdWAHMe6YKFpnf6VJHlzP0sPW0gadtQjbIF0Bi
+X-Google-Smtp-Source: AGHT+IEDzeFJg++83VtrB6IWJnIkEpcY+S8zu/4dF6JnBPmVZ02H8azk96uClHp01u5ASpF5vIUQ+g==
+X-Received: by 2002:a05:690c:dc5:b0:65f:d27d:3f6a with SMTP id 00721157ae682-6db44d61d1dmr158085997b3.7.1725955358109;
+        Tue, 10 Sep 2024 01:02:38 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db9648d551sm2189837b3.63.2024.09.10.01.02.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 01:02:37 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6b6b9867f81so2801127b3.1;
+        Tue, 10 Sep 2024 01:02:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV8EYR7jgyebhDZo2pAtd6e2eyhG3O2VUVw36sfXiUMPUnKbZN+yPb5CSD9j3fWUmbBK5n/yWP9Y454@vger.kernel.org, AJvYcCVO7uZSVziTLVhbZa/jj0dMctzRtiUoRktz1ONYwhUdH5vLilM5XIW7UCRHLFwr+lFASGdr/52VebTy@vger.kernel.org, AJvYcCWWFJS1hxlG1k45ou7p/89Y8U83wb8ut4tP7weBIgj6DL5lpnPEugFTN9S5zKCbnCl50w0waXmC7enBJxeAofesENU=@vger.kernel.org, AJvYcCXelkVbxMta2r+SPTIgeNe2QU/E4uMe/Gr9jy3t1Ej6LjV35xRzGw2QqGAR21vgHmVrB9hoBGzFH0omN2wm@vger.kernel.org, AJvYcCXzkTYygK8Xt7wG684wXki9BGuOsZF82qRMlOxUQLHHX1/UnC6q/wgvx9uJNbqlPIomwrsC9kcvZc9h@vger.kernel.org
+X-Received: by 2002:a05:690c:d18:b0:6af:eaaf:2527 with SMTP id
+ 00721157ae682-6db44dfed1amr147937807b3.18.1725955356625; Tue, 10 Sep 2024
+ 01:02:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B250EB77-AFB0-4D32-BA4E-3B96976F8A82@gmail.com>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-8-claudiu.beznea.uj@bp.renesas.com>
+ <83fac884d749bda0cf0b346e4e869bc8.sboyd@kernel.org> <d8303146-89e0-4229-a3fe-9f3c42434045@tuxon.dev>
+ <c744cf7a70a3f97722146215a7620cfb.sboyd@kernel.org> <CAMuHMdX40ROk2vZe9VHoiPDJCvtrjto+swkicv29LFyQ7zoVng@mail.gmail.com>
+ <951b5c09c3ca2de3f0a28a078084f7dd.sboyd@kernel.org> <CAMuHMdWBT6AaH2_5qj+j4s8JeeO3qrhYUTCVG=s_J13nSzYPsQ@mail.gmail.com>
+ <8fa43530daa941b059b2de1e15dd7773.sboyd@kernel.org>
+In-Reply-To: <8fa43530daa941b059b2de1e15dd7773.sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Sep 2024 10:02:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW12EO=U2b93C=hkL3Z-ncf85X0-9KB4Ds9d5+b5MhLMw@mail.gmail.com>
+Message-ID: <CAMuHMdW12EO=U2b93C=hkL3Z-ncf85X0-9KB4Ds9d5+b5MhLMw@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] arm64: dts: renesas: r9a08g045: Add VBATTB node
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: alexandre.belloni@bootlin.com, claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	conor+dt@kernel.org, krzk+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun 2024-09-08 10:51:14, zhang warden wrote:
-> 
-> Hi, Petr
-> > 
-> > The 1st patch adds the pointer to struct klp_ops into struct
-> > klp_func. We might check the state a similar way as klp_ftrace_handler().
-> > 
-> > I had something like this in mind when I suggested to move the pointer:
-> > 
-> > static ssize_t using_show(struct kobject *kobj,
-> > struct kobj_attribute *attr, char *buf)
-> > {
-> > struct klp_func *func, *using_func;
-> > struct klp_ops *ops;
-> > int using;
-> > 
-> > func = container_of(kobj, struct klp_func, kobj);
-> > 
-> > rcu_read_lock();
-> > 
-> > if (func->transition) {
-> > using = -1;
-> > goto out;
-> > }
-> > 
-> > # FIXME: This requires releasing struct klp_ops via call_rcu()
+Hi Stephen,
 
-This would require adding "struct rcu_head" into "struct klp_ops",
-like:
+On Mon, Sep 9, 2024 at 11:18=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+> Quoting Geert Uytterhoeven (2024-09-09 05:11:03)
+> > On Sat, Sep 7, 2024 at 1:01=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> =
+wrote:
+> > > Quoting Geert Uytterhoeven (2024-09-06 00:28:38)
+> > > >
+> > > > My main objections are that (1) this approach is different than the=
+ one used
+> > > > for all other external clock inputs on Renesas SoCs, and (2) this r=
+equires
+> > > > duplicating part of the clocks property in all board DTS files.
+> > >
+> > > Can 'clock-ranges' be used here? Leave the cell as null in the SoC dt=
+si
+> > > file and then fill it in with clocks property at the parent node. I
+> > > think you'd have to use clock-names for this though.
+> >
+> > "clock-ranges" does not seem to be well-documented...
+>
+> Yeah, I wasn't aware of it for years!
+>
+> > IUIC, your suggestion is to:
+> >   1. Add "clock-ranges" to the /soc subnode,
+> >   2. Completely leave out the "rtx" clock from the clocks property
+> >      of the vbattb@1005c000 node,
+> >   3. Add the following to the board DTS:
+> >
+> >         &soc {
+> >                 clocks =3D <&vbattb_xtal>;
+> >                 clock-names =3D "rtx";
+> >         };
+> >
+> > Then, when resolving "rtx" for the vbattb@1005c000 node,
+> > of_parse_clkspec() would iterate up and find the proper vbattb_xtal.
+> > Is that correct? And probably that should be done for other external
+> > clock inputs as well?
+>
+> Sounds about right.
+>
+> > Still, it looks a bit complicated and un-intuitive. And what about
+> > e.g. carrier boards with a SoM, where some clocks are provided by
+> > the SoM, and some by the carrier? In that case you still have to
+> > override the clock and clock-names properties in the carrier .dts,
+> > thus duplicating all clocks provided by the SoM.
+>
+> This is the same case as the board wanting to override the soc node?
 
-struct klp_ops {
-	struct list_head func_stack;
-	struct ftrace_ops fops;
-	struct rcu_head rcu;
-};
+Yes, but more complicated,
 
-and then freeing the structure using kfree_rcu():
+> When it's a SoM is there a node for the SoM? Is the clock on the SoM?
+> Does this case exist? Hopefully this isn't a straw man.
 
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 90408500e5a3..f096dd9390d2 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -149,7 +149,7 @@ static void klp_unpatch_func(struct klp_func *func)
- 
- 		list_del_rcu(&func->stack_node);
- 		list_del(&ops->node);
--		kfree(ops);
-+		kfree_rcu(ops, rcu);
- 	} else {
- 		list_del_rcu(&func->stack_node);
- 	}
-@@ -223,7 +223,7 @@ static int klp_patch_func(struct klp_func *func)
- err:
- 	list_del_rcu(&func->stack_node);
- 	list_del(&ops->node);
--	kfree(ops);
-+	kfree_rcu(ops, rcu);
- 	return ret;
- }
+E.g. the White Hawk CPU board[1] contains extal_clk, extalr_clk, and
+scif_clk, so it would need something like:
 
-With this the function should be safe against accessing an invalid
-pointer.
+    &soc {
+            clocks =3D <&extal_clk>, <&extalr_clk>, <&scif_clk>;
+            clocks-names =3D "extal", "extalr", "scif";
+    };
 
-> > ops = func->ops;
-> > if (!ops) {
-> > using = 0;
-> > goto out;
-> > }
-> > 
-> > using_func = list_first_or_null_rcu(&ops->func_stack,
-> > struct klp_func, stack_node);
-> > if (func == using_func)
-> > using = 1;
-> > else
-> > using = 0;
-> > 
-> > out:
-> > rcu_read_unlock();
-> > 
-> > return sysfs_emit(buf, "%d\n", func->using);
-> > }
+The White Hawk Break-Out board[2] contains can_clk, so it would
+need to append that, by overriding (duplicate + append):
 
-But the function is still not correct according the order of reading.
-A more correct solution would be something like:
+    &soc {
+            clocks =3D <&extal_clk>, <&extalr_clk>, <&scif_clk>, <&can_clk>=
+;
+            clocks-names =3D "extal", "extalr", "scif", "can";
+    };
 
-static ssize_t using_show(struct kobject *kobj,
-				struct kobj_attribute *attr, char *buf)
-{
-	struct klp_func *func, *using_func;
-	struct klp_ops *ops;
-	int using;
+Currently, [1] does:
 
-	func = container_of(kobj, struct klp_func, kobj);
+    &extal_clk {
+            clock-frequency =3D <16666666>;
+    };
 
-	rcu_read_lock();
+    &extalr_clk {
+            clock-frequency =3D <32768>;
+    };
 
-	/* This livepatch is used when the function is on top of the stack. */
-	ops = func->ops;
-	if (ops) {
-		using_func = list_first_or_null_rcu(&ops->func_stack,
-						struct klp_func, stack_node);
-		if (func == using_func)
-			using = 1;
-		else
-			using = 0;
-	}
+    &scif_clk {
+            clock-frequency =3D <24000000>;
+    };
 
-	/*
-	 * The function stack gives the right information only when there
-	 * is no transition in progress.
-	 *
-	 * Make sure that we see the updated ops->func_stack when
-	 * func->transition is cleared. This matches with:
-	 *
-	 * The write barrier in  __klp_enable_patch() between
-	 * klp_init_transition() and klp_patch_object().
-	 *
-	 * The write barrier in  __klp_disable_patch() between
-	 * klp_init_transition() and klp_start_transition().
-	 *
-	 * The write barrier in klp_complete_transition()
-	 * between klp_unpatch_objects() and func->transition = false.
-	 */
-	smp_rmb();
+And [2] does:
 
-	if (func->transition)
-		using = -1;
+    &can_clk {
+            clock-frequency =3D <40000000>;
+    };
 
-	rcu_read_unlock();
+[1] arch/arm64/boot/dts/renesas/white-hawk-cpu-common.dtsi:
+[2] arch/arm64/boot/dts/renesas/white-hawk-common.dtsi
 
-	return sysfs_emit(buf, "%d\n", func->using);
-}
+Gr{oetje,eeting}s,
 
-Now, the question is whether we want to maintain such a barrier. Any
-lockless access and barrier adds a maintenance burden.
+                        Geert
 
-You might try to put the above into a patch see what others tell
-about it.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Best Regards,
-Petr
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
