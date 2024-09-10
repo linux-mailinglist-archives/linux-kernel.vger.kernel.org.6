@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-323491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99D8973DE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:59:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B4C973DEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481AC1F270D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:59:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF8AB25801
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C191A0B16;
-	Tue, 10 Sep 2024 16:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFD41A2C26;
+	Tue, 10 Sep 2024 16:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JHEB+Ngm"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wl4AzHJN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662B219E7E0
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9D21A0B16;
+	Tue, 10 Sep 2024 16:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987570; cv=none; b=m4jrMjWG+LKtux1XiA8d6ybmOGs8q//fc0HZOBkiYRAje250hu7ycvCVLqUp1OcxBc5LuDFGnOhMgdxZovoYmuy/LNl8dbeH5UO+DNiL7W0UKFfqqBpLD9Hmc7cTm4AyZ+b8JK3Rrw34ZLsv1joaSf4FhlZ+mv4wbD6vtciO1fk=
+	t=1725987599; cv=none; b=pub4QGW1DjsVusE7w4pg3j30R3KtrDBh0hGHVsfn5yKyS6wFGaIoXhuUKg8sEIGk0JuU/7FWkd7WUa9QA7EkDtJ3kOpEq0TbthzVa/yvrbvVjS1uWEsR2AmZlWLngtom/4c+Q8Rh3w4lRdw/cgV9W4dWVxKphuDOI7QpbsFWTqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987570; c=relaxed/simple;
-	bh=CV/+Xsvud6NgAwF9/16qZCiWRnmYLavG4/G69hQhyac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7Zp3JfDgEFtaaGxXxyrJe3udSu58wLHsFcS2JNEAkVj+i/BcjEpslW7yuTVPq1vr6if3BIwmj0BFsfpAkqmeueBFJBYlF6m8HFku9ZmlkRIkCgOAnPytPpYLWwBVzv3r1rTCBqkznYusS4STbPRR5dzxlv+Yo9LlJR2JQvxKz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JHEB+Ngm; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d6e2b2fbc4so55765647b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:59:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725987568; x=1726592368; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/6PuAoHVqwJAn9H3E/ApoOgwWszRBjm1/LVCy6+Tvk=;
-        b=JHEB+Ngm8k0inM/GRD81oVFuzlyPPlH6DdefJYEDSKJcsEFxMJPFW5a95cXg7FGNA8
-         1siubzLEqiz+PhCzCncWpR3Ofx07hdXqSI3yrvHC9X/NHR+JA/dgvuMluoZK6LapCq37
-         nfA3gr3QZ9bJVTGiaXJSw3K2uQ0Ziu6ooFWqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987568; x=1726592368;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U/6PuAoHVqwJAn9H3E/ApoOgwWszRBjm1/LVCy6+Tvk=;
-        b=QW132M93va1Vr1QnC5gfcVaQuEfhClMoS1qjRsln320vMk+eSUtCc8w4vASpktVlzE
-         LjdiRgRLye/07PEr32cFg7CQDI8Brpq4vvlDCt8ZBHkEErvN/+w1aMyv4jVOWkrDGS9z
-         Dc8gS07Thc83JtyspLbI/Ba8ZLCNEqJVUvFLpLKcLdaW+bovDDU9ctistyRekad962Zj
-         +jTS8dZlxGvuzza0cRAuXEnTW7VVW8pGIhhH+lInBC4xbtAnN1b/zh7Z+lq1Cz84/N27
-         sKYQcuqOp4/oU3+u4wIoIojZd9g06fl7uumYnGVWreVU7JivN8Kk+SpWQSwQHHV1CWjv
-         0CpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV66Gf2PP7iiOOFo1LrX0QEqHM0zK4WaExoE75oHNgV9gQD7Mrcm7xiR7fi8opyVG9YwG5FKPqD+PBkjeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdVHVXxFoy3e/n1Ry2ik6WkeQgZl065Q2Svgc31I2Lq3QwTB1A
-	gCJBZKe7mB18H9gWWl1Ig/7zbIHhphVTKvXoa3P6IUoRid0VRSjyj2IIM5z67w==
-X-Google-Smtp-Source: AGHT+IFvOdcW30wX0d70oj+1ll0GHS5mjd10vuBsPBd87hScoQyIYWMaCVt44EOZ8QoHtMQsNNIIPQ==
-X-Received: by 2002:a05:690c:4982:b0:6db:2d71:916 with SMTP id 00721157ae682-6db44df3824mr193377797b3.14.1725987568340;
-        Tue, 10 Sep 2024 09:59:28 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53474d6a2sm31678716d6.90.2024.09.10.09.59.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 09:59:27 -0700 (PDT)
-Message-ID: <9de505c5-d9a2-44b7-8db1-0686c61a0fb4@broadcom.com>
-Date: Tue, 10 Sep 2024 09:59:23 -0700
+	s=arc-20240116; t=1725987599; c=relaxed/simple;
+	bh=G3Hn6EXAAEnqcit3JwtQng5VYPSUx2pPYSgFWdELybw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jMNkTrXBrcm4V4dSZjtNc8+AY/F+0l8v6f/EvCwW5Frm870rfAO6zhXddiOJXXUVJV+Bo3YOh70BLtWNqDD8/wJeXUqEou15FRmEiN84HrO7H3tOxfBOhCX/UpakvyfaJ501tB9vFKJh5MACAVR71DXIln5kIttPGOvYEW1HT7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wl4AzHJN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AEwwo8022692;
+	Tue, 10 Sep 2024 16:59:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=l1clwwAhA+PxVigDqdpbpW
+	qSsxdksAzpRNKFaR+Ray4=; b=Wl4AzHJNznaMfFJMU8D9xO8ZtWLddweBK4PVqv
+	JPNsb6QihER/ODTZXNVfORsGv5Xab9EJVGbclK+GBqcESnP8K4fxjWqxsrQZ3YAV
+	hJPQow9RQzbNl6U77uWbC9b1BC1+faYwnb0IJfTBjcKdF8zycWnr08kqTRYVYNqO
+	C8F4a2Oack4/ZhhHNgkg3kT1UWoX5NGQw4Ff6LhptPDtCpkfC7nHC4g9MdafsDCj
+	qqo5c5GJsmk4iC92WBT4gSaSjBOPPL2dYv3ucGKlwyj1W+G+TRRCoPwu/p9kakHj
+	tk7UjEmdnhueOLTtsfFzSOYVgfdBg35aQgwItbHTHw2Huzgw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gybpptmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 16:59:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AGxeZE013994
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 16:59:40 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 09:59:37 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <quic_psodagud@quicinc.com>,
+        Nikunj Kela
+	<quic_nkela@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4] dt-bindings: watchdog: qcom-wdt: document support on SA8255p
+Date: Tue, 10 Sep 2024 09:59:26 -0700
+Message-ID: <20240910165926.2408630-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 05/11] PCI: brcmstb: Restore CRS in RootCtl after
- prstn_n
-To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240910151845.17308-1-svarbanov@suse.de>
- <20240910151845.17308-6-svarbanov@suse.de>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240910151845.17308-6-svarbanov@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: I-YMtHjydWTnuv4CPKTiUjjam3E9oBo5
+X-Proofpoint-GUID: I-YMtHjydWTnuv4CPKTiUjjam3E9oBo5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409100126
 
-On 9/10/24 08:18, Stanimir Varbanov wrote:
-> RootCtl bits might reset by perst_n during probe, re-enable
-> CRS SVE here in pcie_start_link.
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+Add a compatible for the SA8255p platform's KPSS watchdog.
 
-This looks like a bug fix, and we should explain what is the user 
-visible effect of that, if any.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+---
+
+Changes in v4:
+        - Added Reviewed-by tag
+
+Changes in v3:
+        - Removed the patch from original series[1]
+
+Changes in v2:
+        - Added Reviewed-by tag
+
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+index 47587971fb0b..932393f8c649 100644
+--- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+@@ -26,6 +26,7 @@ properties:
+               - qcom,apss-wdt-msm8994
+               - qcom,apss-wdt-qcm2290
+               - qcom,apss-wdt-qcs404
++              - qcom,apss-wdt-sa8255p
+               - qcom,apss-wdt-sa8775p
+               - qcom,apss-wdt-sc7180
+               - qcom,apss-wdt-sc7280
 -- 
-Florian
+2.34.1
+
 
