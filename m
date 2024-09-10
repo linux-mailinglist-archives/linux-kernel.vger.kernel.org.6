@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-322700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7770C972C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:50:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE47C972C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D69284265
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:50:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60657B25B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51955186E4B;
-	Tue, 10 Sep 2024 08:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A318A186E21;
+	Tue, 10 Sep 2024 08:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DybY21wc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ouAH4DGr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cVfaEIHn"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE344339AC;
-	Tue, 10 Sep 2024 08:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F52339AC;
+	Tue, 10 Sep 2024 08:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958244; cv=none; b=FeaCEpq1DGwY/ba1gbDRsZJLzIuhLRwnGMQH/QsKXsKjSuooyFnXqi1GCP8mk+tuJ242ky7DGP3nmhxRP63X3tpCaX0rRMBvYw+5naXZLvU8AAEX+nENSEM0V/znlH5NSo2cIBlWX+6RgUQfXMfYQN89M+ujq5yv7SzFYaKUXLA=
+	t=1725958284; cv=none; b=MiqSeCAg8rtWouTeSZcnk7Z0oUtLeTIbvc2mjh2+NxmuxOcEVVKW1BWrR9XaPTKLyP6JWsimCTezK69guLquOUQgfNkz4mf+PG8r0PW4pTPFZhYYI5uWnWhPtnI8Y3uQaWhQ4oYTsJSCk+lGlgJd8EJhroLkOjUFffrhungkHeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958244; c=relaxed/simple;
-	bh=PoOA4aLcmMYYdk6KAOA4VWkUJRMSrYk0W7LLh9nwMwk=;
+	s=arc-20240116; t=1725958284; c=relaxed/simple;
+	bh=CZjuz3xJPTGqO0ibF0Qgl3Y8guh+5IhmvGl5MsGeDAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZ67r4WUTedxdMZVd6SvTs/ryioRK7D/qh48bMlmh+K4dKg3xXb4naBXlpdIpj+aT457fQYWC1hNbD29Qik5YZ73xfhU83/buFtYgj3OBYPWQFCyooNAuTohXGfmapHQ+ZauXaf1/XUb6nHSwsbDjwGMT4EDEFSBh/+RwXi9sh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DybY21wc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB09C4CEC3;
-	Tue, 10 Sep 2024 08:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725958244;
-	bh=PoOA4aLcmMYYdk6KAOA4VWkUJRMSrYk0W7LLh9nwMwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DybY21wcbfKZWCZUlbLkJYW5NuLelHC4gbGP/wUuHqcRZreQcAaCp+mZrdf7fcRr2
-	 TK6PoFcPiT+JaG5xsC5xO/by7XLBf2i58v+5HEl1gg5tV5a0YtyYYNHWVoZcHvuQlT
-	 QjkOFPEtHIEDXA7628HPKwnwT/UAEZgp4kAiAOD08pAhyWh5HPz+5s/yz08Oht455+
-	 S6x6qK6Qq32WJD1ep/z2yso+4akw3DR3OBf9KsKoh8bXxehe155ujczDtw7pe6HvAy
-	 uRLsTh6/krXWQW2hFeNuULvymG+2LVzoNL66W3izktAjHS5E4npl3DngybMgA4A9GY
-	 Vg7SUdfchj1yw==
-Date: Tue, 10 Sep 2024 10:50:39 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
-References: <20240903092745.370fc0c6@canb.auug.org.au>
- <20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
- <20240905105809.6585eec2@canb.auug.org.au>
- <20240910102332.4f171bde@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRsVGHTX3oXM1HCHHbvk6aHjcfuCA8TGqjq3oxiJESC33JA692jx0FXnXYrKgZplA0CRFLr4WyjLPkqGC/SvAEtExJk4iqkIhYfPEiy8Dji8+wKC1OjAfm9gWNbPd3MYheAW13QRnVc3SbvNlptw0l0NLgSLBBbLpHhk72fOa1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ouAH4DGr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cVfaEIHn; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 314C61140316;
+	Tue, 10 Sep 2024 04:51:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 10 Sep 2024 04:51:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1725958281; x=
+	1726044681; bh=QC78W/7TuXehLycwIf9mynBigVoR8+44ttRaTS2VOZQ=; b=o
+	uAH4DGr3XF1Q9ug6D1tqNlAPM5XeEzmgqBFnpSlpJcmpXSlJumKgl2sa1IizBg3N
+	dlEQ7OxvX4wDFa+YcX7eMHfXHEI75dEgFdx/j7TKljkwiN8Eh4tj0WVMiDqu+mPp
+	ZA9VpQyj2F6I4PbmWyHLqppFxZknaPmNSmkRty8tQHiLDAH1WbfOhhIRQsqVd9tr
+	/vtMPhcbuOEJpOv6nH1cs28UvMH7OzCajGm/OSbCRGHoYZdqj97YRwbymPSb+ddx
+	e3lL+x37Cx9OvjQpsY7SzA5N9G+RgM70NsNfyCoMAHSuGdKoFp+2D27OWRNMENgc
+	3yjI/Y46Je1K9OBX83LhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1725958281; x=1726044681; bh=QC78W/7TuXehLycwIf9mynBigVoR
+	8+44ttRaTS2VOZQ=; b=cVfaEIHnc1BYb1Brt/rVr1ANGllUH3X4edTlXNbUZI45
+	wspMme5y05pwWuorkL/bCBA+LV6HH+0AhE51nvyFPZxD6Y8ah3mtqbZI8CZtJ76f
+	XqYk7/+qslxZ6mDkYAfmlCQX6SYiXSq8bwzvqyiarHOH85VTZWedtov9nD+CzlcJ
+	ICGr1LGeXAMsJ02r5PInEc8B3KZEs32XGDn8+s6Jw9YDL2W1H6lKXgXlR3AoZ0jZ
+	ihPBHIKROiIe5/ZeiYq0Oo2tlqOjI5uvR/sMd9GyvwfLa1bNSXhNCajTrBVVrXM+
+	1JRkc86W4yr6I0/0GfSvEV59J4x1OqDZm6snIcMYUw==
+X-ME-Sender: <xms:iQjgZj06Kio82_LtVIAMpmyb03Gl_bxJQ6MBqHAzVXoaInTBgbyQ8A>
+    <xme:iQjgZiG2f8JoZX7sdFzOi7zJBQxPS7CAub1eA4DkcEtyo5lEXT6oIonPvpg5EWzz2
+    nXy91ARICZdN9Cm3v4>
+X-ME-Received: <xmr:iQjgZj6KzgkymXAbmFQRVXMBdQjNkUYQzOHWJZ4GcjqTOl0KBzdRRIBTZHsk_yxBxmLbMXnD9XVta6fA70bpVDuIJEDCrjpjinY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghm
+    ohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrg
+    htthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeu
+    udekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopeef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvg
+    hlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqshhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:iQjgZo38LzfOYE7YYQWTeSTMhaccZFNMA3HOqAh2EnU5xCLXR6LuSA>
+    <xmx:iQjgZmH6lPA7xvwymoiuBRW6ZWzcsspmF5Pd4WTZ3I8EH2vQ2j4C5w>
+    <xmx:iQjgZp9dtLgCia1xapN-hOj6hjOk5tiqdZaTtlXIzdJKP5RyLeh-NQ>
+    <xmx:iQjgZjlIGlSL6-Cr_EnZpZUvYOYB2Wy3mYn7hXHQmIrCz4R46t1dFw>
+    <xmx:iQjgZiA4CQSdSSHM-xKyjlLoaQav4_3Tl6ifYC1_gODflcu-VL80ATOD>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Sep 2024 04:51:19 -0400 (EDT)
+Date: Tue, 10 Sep 2024 17:51:17 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 0/2] firewire: core: optimize for concurrent calls of
+ fw_iso_context_flush_completions()
+Message-ID: <20240910085117.GA91104@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20240909140018.65289-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910102332.4f171bde@canb.auug.org.au>
+In-Reply-To: <20240909140018.65289-1-o-takashi@sakamocchi.jp>
 
-On Tue, Sep 10, 2024 at 10:23:32AM GMT, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Sep 09, 2024 at 11:00:16PM +0900, Takashi Sakamoto wrote:
+> Hi,
 > 
-> On Thu, 5 Sep 2024 10:58:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Tue, 3 Sep 2024 12:41:08 +1000 Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > >
-> > > On 2024-09-03, Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> > > > Hi all,
-> > > > 
-> > > > After merging the vfs-brauner tree, today's linux-next build (native perf)
-> > > > failed like this:
-> > > > 
-> > > > In file included from trace/beauty/fs_at_flags.c:21:
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: error: initialized field overwritten [-Werror=override-init]
-> > > >    10 |         [ilog2(0x0001) + 1] = "RENAME_NOREPLACE",
-> > > >       |                               ^~~~~~~~~~~~~~~~~~
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: note: (near initialization for 'fs_at_flags[1]')
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: error: initialized field overwritten [-Werror=override-init]
-> > > >    14 |         [ilog2(0x200) + 1] = "HANDLE_FID",
-> > > >       |                              ^~~~~~~~~~~~
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: note: (near initialization for 'fs_at_flags[10]')
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: error: initialized field overwritten [-Werror=override-init]
-> > > >    15 |         [ilog2(0x001) + 1] = "HANDLE_MNT_ID_UNIQUE",
-> > > >       |                              ^~~~~~~~~~~~~~~~~~~~~~
-> > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: note: (near initialization for 'fs_at_flags[1]')
-> > > > 
-> > > > Caused by commit
-> > > > 
-> > > >   34cf40849654 ("uapi: explain how per-syscall AT_* flags should be allocated")
-> > > > 
-> > > > I have used the vfs-brauner tree from next-20240902 for today.    
-> > > 
-> > > Ah okay, the overlapping flag definitions in the copied over fcntl.h are
-> > > causing issues. We could just drop that part of the patch, or (since the
-> > > new flags aren't handled by perf/trace/beauty) we could just do
-> > > something simple like:
-> > > 
-> > > diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/beauty/fs_at_flags.sh
-> > > index 456f59addf74..930384029599 100755
-> > > --- a/tools/perf/trace/beauty/fs_at_flags.sh
-> > > +++ b/tools/perf/trace/beauty/fs_at_flags.sh
-> > > @@ -13,9 +13,13 @@ printf "static const char *fs_at_flags[] = {\n"
-> > >  regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
-> > >  # AT_EACCESS is only meaningful to faccessat, so we will special case it there...
-> > >  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
-> > > +# AT_RENAME_* flags are just aliases of RENAME_* flags and we don't need to include them.
-> > > +# AT_HANDLE_* flags are only meaningful for name_to_handle_at, which we don't support.
-> > >  grep -E $regex ${linux_fcntl} | \
-> > >         grep -v AT_EACCESS | \
-> > >         grep -v AT_STATX_SYNC_TYPE | \
-> > > +       grep -Ev "AT_RENAME_(NOREPLACE|EXCHANGE|WHITEOUT)" | \
-> > > +       grep -Ev "AT_HANDLE_(FID|MNT_ID_UNIQUE)" | \
-> > >         sed -r "s/$regex/\2 \1/g"       | \
-> > >         xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
-> > >  printf "};\n"  
-> > 
-> > I have applied that by hand for today.  Please submit it and get it
-> > applied.
+> It seems to be the last week for v6.12 development. I realize it
+> unpreferable to propose intrusive changes, however I also realized that
+> there is a room to refactor core functions in respect to handler of work
+> item for isochronous context for the next merge window...
 > 
-> I am still applying this build fix patch.
+> This series of changes refactors the core function to call
+> fw_iso_context_flush_completions() from the work item. It optimizes some
+> event waiting and mediation of concurrent calls as well.
+> 
+> Takashi Sakamoto (2):
+>   firewire: core: move workqueue handler from 1394 OHCI driver to core
+>     function
+>   firewire: core: use mutex to coordinate concurrent calls to flush
+>     completions
+> 
+>  drivers/firewire/core-iso.c | 31 ++++++++-------
+>  drivers/firewire/core.h     |  5 ---
+>  drivers/firewire/ohci.c     | 78 +++++++------------------------------
+>  include/linux/firewire.h    |  1 +
+>  4 files changed, 31 insertions(+), 84 deletions(-)
 
-That's weird as I removed everything that touches tools/ from that
-commit as the tools/ repository is updated after uapi changes
-separately. That's what I've been told multiple times. I can add this
-change but it feels odd.
+Applied to for-next branch.
+
+
+Regards
+
+Takashi Sakamoto
 
