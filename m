@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-323976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DE5974656
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 748EF97465E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF131C256FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F131C25843
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407A61ABEDB;
-	Tue, 10 Sep 2024 23:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F14B1AC434;
+	Tue, 10 Sep 2024 23:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="lFOdaQHy"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Hmx/xzch"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515E17E8EA
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA7917E8EA;
+	Tue, 10 Sep 2024 23:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726010605; cv=none; b=VWe6AgfKCxyHfwdJQ7ZmblXNEbbLydxxTbTD3UJxe8eH16Y9yNxPbfQi9R2kw2oKY7rxgKGomnw1jPNNQ8g7vMia4eldWJQsWP5YXQDi3a5q2qGL+I5tub7791vXvl2DvQVK6r1AN+w/HZsAdCp8DHDIFtC15ezy0Tcecdv7UVs=
+	t=1726010952; cv=none; b=EZzM+7yaNQEfVb6yzKnhml3uJ/dO5NVNoASIOKr/BMgA688pP4A91lhZzEbmP2Xzhx7H1z7bT3YnF3vtIhsVY1cUcBHxLfIOhCgZLrv0uA+FbyME9xTMX3gDaS2EE05dvk5OuzyLdW10Yek69OUtYC+j4yDhHVQg+w0AEgyo+YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726010605; c=relaxed/simple;
-	bh=KSvBi2d6vm/0KYuogrQllNQnrPvwHkhq7i8d/l/hgyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tDt3fKktmsCMlJcN4QotdkKHfBptrQX/NmHn//YJ7u0cFcWtMGJe2GitxMG6+KUQUOCrEWZxm+vYANMtluCSPB/GNO0Uy3Vl0VabqgJY3STlPEMK2eumt4VL1uBFxIKxMZSLzFmOjKG6SIrqh9GQYqGEk/e4skjlZYGIbImGZkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=lFOdaQHy; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so37756615e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1726010602; x=1726615402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hpXFBylcGnxCC+S0MaQQ7GUPPJbSvGD7+pph+6eGm8w=;
-        b=lFOdaQHyt9fv+KCahyFFLj+mhzoZIOFwHrDRcYCACbfRmqexwyHgQIQFHVZippcE8V
-         lQlFul6rfhY6aEkmZ/q1Vl1X2uexSibLJ50m5dhKwrAYavcnWN1aXzrdsuPHAuXlURRS
-         wYRE8xhhJhQ4bsG5125nMyZqX11Ag+jeENbi4tKOEeWTMZwpusoQslU2KZTReIdY0CKS
-         ZjbbSHCTG6WqmoRBDEjAuy/BrMGhxdDkE2pvCxVD3+sI95T50vmx+2yDIv6Sm5Lh0uWj
-         ZpY1E/N/vxR03kSGGN5goi/GOglVb5trcjFJAr5yt7MHcKgYIEyOGNPZ3h4a/r9EVAHy
-         9fCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726010602; x=1726615402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hpXFBylcGnxCC+S0MaQQ7GUPPJbSvGD7+pph+6eGm8w=;
-        b=UZjAeJVI5K4T4WGcgkgWAz4qljuRL/AfWxs9+jvRwEENdFwsi0SFxL9QdsBBICmlVI
-         tPzvI2ds2N+bLR9HPpNRKOcxjv3c/uVwMygP+VkAgN2hg3AR2hFc9tbaPPNWtXqQ8eF2
-         6KXXlUDNFlxCgKuIW1QpKhyB6MUZ7WSQoxll6ONDYQhe7+cGIangp7ZrfHVGCE/LbuzC
-         oyL7OdJ2OjZMJNCyHRNUmOwD0l6qjzm6vTrkyPeEuubHIf5WmoczjI1d19R9cAZW37HF
-         a+39tzJZx+8ueX77nJrTRmNYqAwc03N9oOvNj9CIRIeZQevud/zrgmXI8VzPC17T4g5S
-         6QsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/k/6HRt7OXN3KLHa5bAfaRI45pSuI2TaPUBYCXd24x3fozUGSpZ8DhawGxYo6DMqLP7xLBG6kfJvkGIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyosjMmoZHU4VN8kN6vC9w630Q0otsik7bnTeY6NC8cGLY5SAr
-	CLoytwOX/SH0gsz0ARq7MMtQxGiAov02wgW7wzob8lhNWQr9UraaIEDS12YrDvBA0sRwg6gBNu2
-	F5AjgGHHjlbOuxwdCl2IPXoubf80NVZdnqesAnQ==
-X-Google-Smtp-Source: AGHT+IHXpAVVFLfb9vXmEQ3pJZZbBxrBQe5whIjxyrQJYKOrv4F86wvqJo/JtPonJoceq/102Dvf8ecry9Xh5xn2lJM=
-X-Received: by 2002:a05:600c:1d23:b0:42c:b905:2bf9 with SMTP id
- 5b1f17b1804b1-42cb9052dc8mr61959925e9.16.1726010602117; Tue, 10 Sep 2024
- 16:23:22 -0700 (PDT)
+	s=arc-20240116; t=1726010952; c=relaxed/simple;
+	bh=FA8d3wDTOXVC1rRCSUGCWQ4z+X7dBeFNfQkYXCMAYFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k58q0EeIxtT37ZNJTnaEeKXJKlU9FBVKz0aJKKDhYsjYyw8b9WN88Ne21b1LhjOspVkf7qriEFw1cIK1Bq68J5/lBinVc+KE8+9Tq2nHYWkxStF0u2U1VeQRRXCrYljfDhCvdmr7u0frpflOJvrCuvFmYtq+HVdCyNmnZtEKqqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Hmx/xzch; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726010625;
+	bh=rCrHA4E/KnV4dNIVzmJQikg/RhBZz5vZD/h+f1f19Dc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Hmx/xzchBjm6HIuFyo3A2kvoWruji7i1Vu3rSzz7X661ZxRZYCWCB0nV0vicWeX8B
+	 KzTpb/GXUkvyTdH3mTOLWvtYF5Y8HDa/zXN2kbjdGS6VA08L+r2sJavjTUi1/3LJn8
+	 NIfDOGbOb8Jt8q1C/cy97Np+sAB4ZU0rxNgqTu9n5nqMa8B6qdexttBJgOA41k5Ryf
+	 OiVgogYH1ZPqybRpOxOeU3yD03ATvsqvcbrzypryBUD6363W7c5qugxtMeW3cr8UHT
+	 BP9wJWTe6PuUceROkvk+sz2mHsVHPHLyoErqlI5stR0tTEsA4W4IlcGn3omIopdVZa
+	 Mw2pFDo8iet3A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3KWz5jsXz4x42;
+	Wed, 11 Sep 2024 09:23:43 +1000 (AEST)
+Date: Wed, 11 Sep 2024 09:23:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Sven Schnelle
+ <svens@linux.ibm.com>
+Subject: Re: linux-next: manual merge of the tip tree with the mm tree
+Message-ID: <20240911092342.5e65f91b@canb.auug.org.au>
+In-Reply-To: <20240905153557.3b0f8db5@canb.auug.org.au>
+References: <20240905153557.3b0f8db5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910092608.225137854@linuxfoundation.org>
-In-Reply-To: <20240910092608.225137854@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Wed, 11 Sep 2024 08:23:11 +0900
-Message-ID: <CAKL4bV4s3tAR1LSASwybirMmYvvTSSCNtjrD60SfkPPW9B0ypw@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/269] 6.6.51-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Ei5FXgL8h8jDjJ_qa1yIVuY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Ei5FXgL8h8jDjJ_qa1yIVuY
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
+Hi all,
 
-On Tue, Sep 10, 2024 at 7:30=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, 5 Sep 2024 15:35:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> This is the start of the stable review cycle for the 6.6.51 release.
-> There are 269 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.51-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   kernel/events/uprobes.c
+>=20
+> between commit:
+>=20
+>   c67907222c56 ("uprobes: use vm_special_mapping close() functionality")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   e240b0fde52f ("uprobes: Use kzalloc to allocate xol area")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc kernel/events/uprobes.c
+> index 6eddf4352ebb,cac45ea4c284..000000000000
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@@ -1518,8 -1480,6 +1499,7 @@@ static struct xol_area *__create_xol_ar
+>   		goto free_area;
+>  =20
+>   	area->xol_mapping.name =3D "[uprobes]";
+> - 	area->xol_mapping.fault =3D NULL;
+>  +	area->xol_mapping.close =3D uprobe_clear_state;
+>   	area->xol_mapping.pages =3D area->pages;
+>   	area->pages[0] =3D alloc_page(GFP_HIGHUSER);
+>   	if (!area->pages[0])
 
-6.6.51-rc1 tested.
+This is now a conflict between the mm-stable tree and Linus' tree.
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+--=20
+Cheers,
+Stephen Rothwell
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+--Sig_/Ei5FXgL8h8jDjJ_qa1yIVuY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-[    0.000000] Linux version 6.6.51-rc1rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Wed Sep 11 07:37:37 JST 2024
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbg1P4ACgkQAVBC80lX
+0Gy+HAf8DXqcdw1TVsTNMEYtKrgLzUi48ulEoPkfqaQ+gigMiE3AW+47p/VfhciJ
+ztTGKn0zWOB9QYk/uP+5y5r04ICjaFayOrL96aioGOkuJgP7FDI9ejU1u7VvHAqB
+X7Ud3pxsJgaHOTOUwB2I5W9qzSAAT+x4c7smVG2hZJSkdEAQIMIA3NynE9bSE2Id
+sMwm6MvuEPTaEubOLKOyMVA7ZHFyG38z71Gh1pQ3WEamhfc6WVYt7CMra2B0t8vz
+3NNCvGhc5AP2NdIH3orVNE4ZFQ3DGMBxQsM2K/SAcofoD8XfYI3Xm/GAp5gQXdEV
+TFRAjn3P+tO1SG8Wz1OQWs6d4Bsdng==
+=KL2V
+-----END PGP SIGNATURE-----
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+--Sig_/Ei5FXgL8h8jDjJ_qa1yIVuY--
 
