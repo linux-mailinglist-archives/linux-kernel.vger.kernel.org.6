@@ -1,240 +1,197 @@
-Return-Path: <linux-kernel+bounces-323802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EC99743AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C55A19743AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80DC6286E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DDD1F20978
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9121A1A38F4;
-	Tue, 10 Sep 2024 19:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE72D1A7ADF;
+	Tue, 10 Sep 2024 19:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WD2HTelg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NwL46EJy"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA46A17B4FC;
-	Tue, 10 Sep 2024 19:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7217E1A2576;
+	Tue, 10 Sep 2024 19:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725997772; cv=none; b=p+SGoR3Crd746z7KxDmayVvbKlGUT3Vc8WpKBxuqYIyDxcbuyjE+4G7svTaR77LGNoRAjtI169BfD2OE175ew1OCM5LrxIKURXs/d8oWltUneNWXhRL+lKfWZZu/q34qLKB1GBs+QmprbxiFA2gDT3VsyDnWlvRXMgg+nnKHRAU=
+	t=1725997790; cv=none; b=jnN4pYVDq/PTmwE+W5SIujKmK6mVfjozQeTirrCXHM86XSgdx8PJG4xc0DzMi5XlFOt8XYAtHqKOvywFZ4iewDCE+M0/WYTJATSyeQd2VhaFZ39MhByJmk+UWImhAkgDjKbPZTQ5NDUwM4uVHJowr7DM87Z2/49dFLnkhFA+SFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725997772; c=relaxed/simple;
-	bh=WeJYGSqNPinOi/i72aoMwHeFytB58XDIlbPCMg7IpcI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjUIu7P4V/mUmvnXw/1W/ojrbq88x8eZFl+IPK/8c+eampcX8yTTv8ksWZ9BshsUTISWOapr5BZZ6dUvb1DNPDcPk4/Wz7gsY7G7k0+GHvqtB5C4cEfNr5WlB7/XzI98tXN0uJ4Y4dBfoN7YAsE84YI9jJNdojsd8GwQGPgwabE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WD2HTelg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1966DC4CEC3;
-	Tue, 10 Sep 2024 19:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725997771;
-	bh=WeJYGSqNPinOi/i72aoMwHeFytB58XDIlbPCMg7IpcI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WD2HTelgMn18myn/iTh5fxPpWrVOUt9wCDMMBP+BuTkRo7LMkPYCbSZF4FVhydHze
-	 QHFZIfBw8BmPK6+0Ica+jH0v+cy5mjol5+ubhAmoUWgajB2R9aaLcNAb8iKKWFsyfi
-	 jcdbNvKJIZ2DK0eUeLa8rHaklU5icysta40CmHgqNsoyJcOhfoB5Xy6OBaAioi8c4Q
-	 9AtTCYK7BnOJz7R1ai7u3fqiH9XPIIVZ0eviMrvAFHS0lflpwoaqI8DnI9K3fR7vaQ
-	 cVZbPSMc7e46LzJSP3LrRs1cfWcGwfrEwYm0wBkWPtsILXrul2MSUr2RRctcHASEQA
-	 4WAlliLJxEymQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1so6rg-00Brkl-QO;
-	Tue, 10 Sep 2024 20:49:28 +0100
-Date: Tue, 10 Sep 2024 20:49:28 +0100
-Message-ID: <86r09r70hj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
-	Snehal Koukuntla <snehalreddy@google.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer
-In-Reply-To: <ZuCNge74gVpJi2Sf@linux.dev>
-References: <20240909180154.3267939-1-snehalreddy@google.com>
-	<rm2pihr27elmdf4zcgrv5khs7qluhn77tkivkr6xkvqcybtl4m@7hesctcacm4h>
-	<ZuCNge74gVpJi2Sf@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1725997790; c=relaxed/simple;
+	bh=bD0vhkUxcynJyipBLvXyCHh0YaXgdiOAXsDiV8DAWlk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rerDfLDTctnBX28Zhg7R+bk8bpCmgUz48jXCGbvqE1o9OJI1tuPG3oCsv8se+UI0cKWBb1LiLBpHbiFPcsV4yWRTZpVvIff3mCoJl6IEQl5SSq0gkDT+HcDiQTGW70+Aqvb/6tA7wTzad0s/4biyOM2cH8CUdmJV4syPhc/JVZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NwL46EJy; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1725997786; x=1726256986;
+	bh=NBSy/ukMPUFq4hhiS8sTvxHbE6CJ6MpnNMDJG5LgNIA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=NwL46EJyGnK9RO/wPG0QgZgUapyz8uQhsLe5hp23XfG3o3P70qLY+TGp4Mq5esA/U
+	 dvUSlc/rKdk65qH+xS3enhxTXDnv3ns69MSaTd0OyrqJextYDhYCh/4OkBxifnnBtE
+	 ankLDKvUMvDxTi4lZdwEPN/zB17Kht3X2DuIl5Mu5Hd8NOn4lQrvcKsgmbNLvImZWq
+	 Bxm6/f00Xx7icAqwvJOkCKJ4idzXzr/idICUXgI9AGbzLooDkxXtC26zya5g8AVkhU
+	 4lexie5ZO4dauIRbiTvRBL5gTYCCUWa0SmiWQclh3M2d6fFwtNknBY6gdJdAxplo5R
+	 oiDW4hDSCRFCA==
+Date: Tue, 10 Sep 2024 19:49:42 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
+Message-ID: <19d81a27-9600-4990-867c-624104e3ad83@proton.me>
+In-Reply-To: <ZuCEneJeXcRo5qs8@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-10-dakr@kernel.org> <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me> <ZuCEneJeXcRo5qs8@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 47c1545a9cd7e38378def8282cdab552c864d3e8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, r09922117@csie.ntu.edu.tw, snehalreddy@google.com, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, sebastianene@google.com, vdonnefort@google.com, jean-philippe@linaro.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Sep 2024 19:18:41 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> On Wed, Sep 11, 2024 at 12:32:29AM +0800, Wei-Lin Chang wrote:
-> > Hi everyone,
-> > 
-> > On Mon, Sep 09, 2024 at 06:01:54PM GMT, Snehal Koukuntla wrote:
-> > > When we share memory through FF-A and the description of the buffers
-> > > exceeds the size of the mapped buffer, the fragmentation API is used.
-> > > The fragmentation API allows specifying chunks of descriptors in subsequent
-> > > FF-A fragment calls and no upper limit has been established for this.
-> > > The entire memory region transferred is identified by a handle which can be
-> > > used to reclaim the transferred memory.
-> > > To be able to reclaim the memory, the description of the buffers has to fit
-> > > in the ffa_desc_buf.
-> > > Add a bounds check on the FF-A sharing path to prevent the memory reclaim
-> > > from failing.
-> > > 
-> > > Also do_ffa_mem_xfer() does not need __always_inline
-> > > 
-> > > Fixes: 634d90cf0ac65 ("KVM: arm64: Handle FFA_MEM_LEND calls from the host")
-> > > Cc: stable@vger.kernel.org
-> > > Reviewed-by: Sebastian Ene <sebastianene@google.com>
-> > > Signed-off-by: Snehal Koukuntla <snehalreddy@google.com>
-> > > ---
-> > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > index e715c157c2c4..637425f63fd1 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > @@ -426,7 +426,7 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
-> > >  	return;
-> > >  }
-> > >  
-> > > -static __always_inline void do_ffa_mem_xfer(const u64 func_id,
-> > > +static void do_ffa_mem_xfer(const u64 func_id,
-> > 
-> > I am seeing a compilation error because of this.
-> 
-> Thanks for reporting this. Looks like the __always_inline was slightly
-> more load bearing...
-> 
-> Marc, can you put something like this on top?
-> 
-> 
-> From c2712eaa94989ae6457baad3ec459cf363ec5119 Mon Sep 17 00:00:00 2001
-> From: Oliver Upton <oliver.upton@linux.dev>
-> Date: Tue, 10 Sep 2024 16:45:30 +0000
-> Subject: [PATCH] KVM: arm64: Drop BUILD_BUG_ON() from do_ffa_mem_xfer()
-> 
-> __always_inline was recently discarded from do_ffa_mem_xfer() since it
-> appeared to be unnecessary. Of course, this was ~immediately proven
-> wrong, as the compile-time check against @func_id depends on inlining
-> for the value to be known.
-> 
-> Just downgrade to a WARN_ON() instead of putting the old mess back in
-> place. Fix the wrapping/indentation of the function parameters while at
-> it.
->
-> Fixes: 39dacbeeee70 ("KVM: arm64: Add memory length checks and remove inline in do_ffa_mem_xfer")
-> Reported-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 637425f63fd1..316d269341f3 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -426,9 +426,8 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
->  	return;
->  }
->  
-> -static void do_ffa_mem_xfer(const u64 func_id,
-> -					    struct arm_smccc_res *res,
-> -					    struct kvm_cpu_context *ctxt)
-> +static void do_ffa_mem_xfer(const u64 func_id, struct arm_smccc_res *res,
-> +			    struct kvm_cpu_context *ctxt)
->  {
->  	DECLARE_REG(u32, len, ctxt, 1);
->  	DECLARE_REG(u32, fraglen, ctxt, 2);
-> @@ -440,8 +439,10 @@ static void do_ffa_mem_xfer(const u64 func_id,
->  	u32 offset, nr_ranges;
->  	int ret = 0;
->  
-> -	BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
-> -		     func_id != FFA_FN64_MEM_LEND);
-> +	if (WARN_ON(func_id != FFA_FN64_MEM_SHARE && func_id != FFA_FN64_MEM_LEND)) {
-> +		ret = SMCCC_RET_NOT_SUPPORTED;
-> +		goto out;
-> +	}
+On 10.09.24 19:40, Danilo Krummrich wrote:
+> On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
+>> On 16.08.24 02:10, Danilo Krummrich wrote:
+>>> +/// # Examples
+>>> +///
+>>> +/// ```
+>>> +/// let b =3D KBox::<u64>::new(24_u64, GFP_KERNEL)?;
+>>> +///
+>>> +/// assert_eq!(*b, 24_u64);
+>>> +/// # Ok::<(), Error>(())
+>>> +/// ```
+>>> +///
+>>> +/// ```
+>>> +/// # use kernel::bindings;
+>>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize + 1;
+>>> +/// struct Huge([u8; SIZE]);
+>>> +///
+>>> +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err=
+());
+>>> +/// ```
+>>
+>> It would be nice if you could add something like "KBox can't handle big
+>> allocations:" above this example, so that people aren't confused why
+>> this example expects an error.
+>=20
+> I don't think that's needed, it's implied by
+> `SIZE =3D=3D bindings::KMALLOC_MAX_SIZE + 1`.
+>=20
+> Surely, we could add it nevertheless, but it's not very precise to just s=
+ay "big
+> allocations". And I think this isn't the place for lengthy explanations o=
+f
+> `Kmalloc` behavior.
+
+Fair point, nevertheless I find examples a bit more useful, when the
+intention behind them is not only given as code.
+
+>>> +///
+>>> +/// ```
+>>> +/// # use kernel::bindings;
+>>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize + 1;
+>>> +/// struct Huge([u8; SIZE]);
+>>> +///
+>>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
+>>> +/// ```
+>>
+>> Similarly, you could then say above this one "Instead use either `VBox`
+>> or `KVBox`:"
+>>
+>>> +///
+>>> +/// # Invariants
+>>> +///
+>>> +/// The [`Box`]' pointer is always properly aligned and either points =
+to memory allocated with `A`
+>>
+>> Please use `self.0` instead of "[`Box`]'".
+>>
+>>> +/// or, for zero-sized types, is a dangling pointer.
+>>
+>> Probably "dangling, well aligned pointer.".
+>=20
+> Does this add any value? For ZSTs everything is "well aligned", isn't it?
+
+ZSTs can have alignment and then unaligned pointers do exist for them
+(and dereferencing them is UB!):
+
+    #[repr(align(64))]
+    struct Token;
+
+    fn main() {
+        let t =3D 64 as *mut Token;
+        let t =3D unsafe { t.read() }; // this is fine.
+        let t =3D 4 as *mut Token;
+        let t =3D unsafe { t.read() }; // this is UB, see below for miri's =
+output
+    }
+
+Miri complains:
+
+    error: Undefined Behavior: accessing memory based on pointer with align=
+ment 4, but alignment 64 is required
+     --> src/main.rs:8:22
+      |
+    8 |     let t =3D unsafe { t.read() }; // this is UB, see below for mir=
+i's output
+      |                      ^^^^^^^^ accessing memory based on pointer wit=
+h alignment 4, but alignment 64 is required
+      |
+      =3D help: this indicates a bug in the program: it performed an invali=
+d operation, and caused Undefined Behavior
+      =3D help: see https://doc.rust-lang.org/nightly/reference/behavior-co=
+nsidered-undefined.html for further information
+      =3D note: BACKTRACE:
+      =3D note: inside `main` at src/main.rs:8:22: 8:30
+
+>>> +#[repr(transparent)]
+>>> +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
 
 
-I'm not overly on the WARN_ON(), as it has pretty fatal effects on
-pKVM (it simply panics). What do you think of this instead, which
-compiles with my prehistoric version of clang (14.0.6):
+>>> +impl<T, A> Box<T, A>
+>>> +where
+>>> +    T: ?Sized,
+>>> +    A: Allocator,
+>>> +{
+>>> +    /// Creates a new `Box<T, A>` from a raw pointer.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// For non-ZSTs, `raw` must point at an allocation allocated with=
+ `A`that is sufficiently
+>>> +    /// aligned for and holds a valid `T`. The caller passes ownership=
+ of the allocation to the
+>>> +    /// `Box`.
+>>
+>> You don't say what must happen for ZSTs.
+>=20
+> Because we don't require anything for a ZST, do we?
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 637425f63fd1b..e433dfab882aa 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -426,9 +426,9 @@ static void do_ffa_mem_frag_tx(struct arm_smccc_res *res,
- 	return;
- }
- 
--static void do_ffa_mem_xfer(const u64 func_id,
--					    struct arm_smccc_res *res,
--					    struct kvm_cpu_context *ctxt)
-+static void __do_ffa_mem_xfer(const u64 func_id,
-+			      struct arm_smccc_res *res,
-+			      struct kvm_cpu_context *ctxt)
- {
- 	DECLARE_REG(u32, len, ctxt, 1);
- 	DECLARE_REG(u32, fraglen, ctxt, 2);
-@@ -440,9 +440,6 @@ static void do_ffa_mem_xfer(const u64 func_id,
- 	u32 offset, nr_ranges;
- 	int ret = 0;
- 
--	BUILD_BUG_ON(func_id != FFA_FN64_MEM_SHARE &&
--		     func_id != FFA_FN64_MEM_LEND);
--
- 	if (addr_mbz || npages_mbz || fraglen > len ||
- 	    fraglen > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
- 		ret = FFA_RET_INVALID_PARAMETERS;
-@@ -517,6 +514,13 @@ static void do_ffa_mem_xfer(const u64 func_id,
- 	goto out_unlock;
- }
- 
-+#define do_ffa_mem_xfer(fid, res, ctxt)				\
-+	do {							\
-+		BUILD_BUG_ON((fid) != FFA_FN64_MEM_SHARE &&	\
-+			     (fid) != FFA_FN64_MEM_LEND);	\
-+		__do_ffa_mem_xfer((fid), (res), (ctxt));	\
-+	} while (0);
-+
- static void do_ffa_mem_reclaim(struct arm_smccc_res *res,
- 			       struct kvm_cpu_context *ctxt)
- {
+We require a non-null, well aligned pointer (see above).
 
-It preserves the build-time assertion, which was the intention of the
-original author.
+---
+Cheers,
+Benno
 
-I can easily squash that in the original commit, avoiding the headache
-of backporting both patch to stable.
+>>> +    #[inline]
+>>> +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
+>>> +        // INVARIANT: Validity of `raw` is guaranteed by the safety pr=
+econditions of this function.
+>>> +        // SAFETY: By the safety preconditions of this function, `raw`=
+ is not a NULL pointer.
+>>> +        Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData::<A>)
+>>> +    }
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
