@@ -1,541 +1,267 @@
-Return-Path: <linux-kernel+bounces-323787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9F9974377
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:27:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC74974379
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE8A1C24A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:27:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B883FB237FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460DB1A4F03;
-	Tue, 10 Sep 2024 19:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4193D1A4F2D;
+	Tue, 10 Sep 2024 19:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/ltOlOC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bq5WxMU/"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011006.outbound.protection.outlook.com [52.101.65.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1B1A2567
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725996437; cv=none; b=OPyVjLhkp4c8WTmJ9JL/5FA0Di0WUXh+cB1eFzlqCmEnMbqZcMhStp284wsDgY3ALV8vO6xNqLf+9NGKmBbAZQYp2SEW9kMHrWb+YvGYGCsWgRl2WGkZxkzFUQcmrQZlZBOvCuvNaAwsWKzu1TQu8IWSOj3Zc5a1wfDsRDtdT9Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725996437; c=relaxed/simple;
-	bh=hKxpolh4BsF65S6a/TZng83PWiuXizdSWd+hwRXu+5E=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIQfHVl3DRiwn2Ym6c4hni2AhJSJdWJusis5BNHkVtLIVzy5CMsR6+CqBdvaebHveXLg+FZ+CBQCXLa/2uEXE7JkHQB7NHKtVCO6TXNPfUz47+ZzESbJ3G1IN7uWJZcX4KyKxXzNzUkAlV6YuAnFFBjb1HD7GTlKjyK7R6cPAv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/ltOlOC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2068a7c9286so55771825ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725996434; x=1726601234; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWUoHOiY2u5V/YKrfd3XC0Jjufow98r2p7nkxpf/st8=;
-        b=T/ltOlOCZ1NOo74KDiAnuz8n/8Z1aKaKWeYNnoO9AQ7vE/7afOPhYAe89EJAQHjhvi
-         SB12aG5JvRRpGV7+cJLfSvkzE3Ao2qBvMPhPPsK9cLC7XXiwXWHfhBFLB7CGGM8dTUTW
-         xZ9KJIpDgtSa/W5d3rBgc9pFJwZCHQGPTGym1lZW2N3h1S5tlKx5hThtQ/1bUvk7Fwr2
-         MamlqbOQfls7fEh2HCoJ4Iwk6mc8KRkJ5dlqUX9GNwoBeOOo00IvvoOwaH6K/fwtHVC9
-         eprtlumxzBQ3omUt6Zehg2ijd3qm+BrbVN4w4x0dvtJctBtl7CbFGQg9Z3QLi53rAl78
-         2lYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725996434; x=1726601234;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pWUoHOiY2u5V/YKrfd3XC0Jjufow98r2p7nkxpf/st8=;
-        b=b+Q3i2UVsv11gziBdjEfPDiCkaxvgZmIwLX4RJvLBr/sE7wYp5S/pDH9R0PW0oSizD
-         MVOTbdtbzsApxwghu5Tz6jCcWAjcTMkuB3vgrK/suCUJSTqrMwrLbDgFDbqltWPWmXqr
-         qyIkHYcpdRLWk3jVsYj0skr3dzaH9dNg2fAt2EJ2wu5mA1uXsvk/2xk+am0sWuR0gLjk
-         QAJ8C1D3mRmGxTQvA6JAEmM4Pjd4shMjh8xhNwbDW6fNrkp6Kg8UOHB4eNcFcY77M2vl
-         TnmrCVhQaPkJCP4ztIansw6yeekekDx0kxNmZqoTdL6oUokmbi4uOUa9u54/B+LRb1du
-         zs7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXC9Eva1oZ6HfOIKvVeXoJ4wy+gUHFB/f9rwgTa8h1lI6bvil6W0jUePeIJ2ZtWkOlA2vXhagNO2nPaP6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9lNsj2Q2y/Ws1WiZ545TL5NP8KtCwcRqSgbfp1VeQbgpbL1q+
-	Sb2UDGqHjGKW6jtaVCSf/FAVr7WbY3qU2NMEUphd2mdzI1yd1kLH6O+OeQ==
-X-Google-Smtp-Source: AGHT+IGBUg5RdsApc+aJFRVzYOV+EJ7jG2APsK2TaVWde4ZBLolIPBUmmg4alY9dJcCBRaxMRV/L0A==
-X-Received: by 2002:a17:903:230c:b0:202:38d8:173 with SMTP id d9443c01a7336-2074c612f58mr28279945ad.29.1725996433986;
-        Tue, 10 Sep 2024 12:27:13 -0700 (PDT)
-Received: from DESKTOP-DUKSS9G. (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc009f91sm8942763a91.16.2024.09.10.12.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 12:27:13 -0700 (PDT)
-Message-ID: <66e09d91.170a0220.16fb63.1454@mx.google.com>
-X-Google-Original-Message-ID: <ZuCdjtP_iW6qO8cX@DESKTOP-DUKSS9G.>
-Date: Tue, 10 Sep 2024 12:27:10 -0700
-From: Vishal Moola <vishal.moola@gmail.com>
-To: Muchun Song <muchun.song@linux.dev>
-Cc: syzbot <syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in hugetlb_fault
- (2)
-References: <00000000000067c20b06219fbc26@google.com>
- <0CCD30A0-6EB0-4019-90B3-9418A179EADD@linux.dev>
- <66df6348.650a0220.1267b3.ac7e@mx.google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BACF1A2567;
+	Tue, 10 Sep 2024 19:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725996513; cv=fail; b=GltFJEh22k9tR11U1eoEjlH2xDadBjtpjZRmFpkc/TTmnCRv3AnZFTAPc46KHU1PnrfnWWm4GFxqM4EeyzVdgfxTbM1CZXjQdeEVc6YswaG2Gz4LgmmO8fj+NGRt9GKQNobTsj+mUhjtzksYfuGlPQWIuLuUPvM390VJp7pxJT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725996513; c=relaxed/simple;
+	bh=8vrpMpWBGhigqtAgg2/7Vpgf/pZyXejXun5mMe5vzGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tP5kfWEYWZBG38L1wfwA0OVmrvPbvnauWNXKbavPW+ZaVV3NF5vtMrOaNY0xdXd4oq3I+XIEeo5j6sN93cUYbjbf+5rXcYRgti/3gSFUo2hN2prqkJ68HR93CsyrMzDqjYJvPnJckg/TGZH4O4WmtV0tbZkMe/ZzzENdGJrKwZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Bq5WxMU/; arc=fail smtp.client-ip=52.101.65.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EECVxh5Uxl2PJbPBPQZlBgEJR9V2gr/hlagh86Qg2LN3ooCduCecdTKhJrh5L6tIxCGcHuRXAruhaq4+wrcC5AVlJZgRiQqvxNPWkznZ2NzeRUyoxUiC4Mz0aTFr5i4a8cOYIHG2y1aPi+4HkRF4vLq169aBeiVcBW9EqnbAY/vASNmygPhU0onarHhLjnhQ4qLqWyiijaT03zDwPKRb5FXjH5IxsMBtt3OSLcx14gkrbeiCj07qFk6A9mRBbH8RJcl/xWfRufO9ppnsZgJdvb0x146FDVU8ZB5CHsQ2qE35FmW5KGEhXf00zzVBatojLkjQOLmaWXRcKseMgQdAwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KEhrMO9iaRYgUrPLPu45T0ywpP0vwz/I//mTkAMPp5I=;
+ b=voKeB9Ok3u+2vyq8WmUd8XwIofmWKMkMw28YMZm3B8creisXf84wKjwwZJvvsmz+0RIfzfQylje/0qEPosJMMlBqBN4gC/lIgBrvQSCgR/xeH93WOdx6idSmTVxRwashrlN6ZwMks993EEgIv2p+jx1cPc+GMo/zIRM9TW70zk1/9bTTH9syWt/bhi6gf6tIl0zP9Iwhw4kyq7sX5QT0wQumYFl9/Nj9hQdCK1OF15bPjUTDKXr94NnFvxzqcxASq+6KwSK54MLxAXEly5/uO2WLsuMNsld3sgSq17s9Vk2KWk2MRV8VKCfpjrJ4ghP705MfwegOuxQutga8x9fwQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KEhrMO9iaRYgUrPLPu45T0ywpP0vwz/I//mTkAMPp5I=;
+ b=Bq5WxMU/NWakqn0LFcrM2gEZeI9e5BmU351Miy3aACyux8E5HNwYA981pXLmWMSaraTXLftwTnvtiVnKixTVr1epK2TvDPMGLQwuELTiNyXbskyiSk9VoSyBbyv125F4dkp41kyUNpvIU2xekvY5KMduBpEjLF2DERWfoWC5i+fqPAH5XggQTXW8XFwyyblk1xwHUofiUkAasj2KXU1hOBPPiPy8EV0QZDXu0s7nAza0mrIZLhlgZrsdXMrEbyrJeJjX/hSf5waODN6gnzaxELO/zlJkwzVS7OBwyeqiHFr036rhJ8Y1T4NotXQAzXq5ER60ntUgStQOJn2JX840Bg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9491.eurprd04.prod.outlook.com (2603:10a6:102:2c3::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.22; Tue, 10 Sep
+ 2024 19:28:27 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 19:28:27 +0000
+Date: Tue, 10 Sep 2024 15:28:19 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: alice.guo@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net, s.hauer@pengutronix.de, shawnguo@kernel.org,
+	wim@linux-watchdog.org, ye.li@nxp.com
+Subject: Re: [PATCH v5 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into
+ struct imx_wdt_hw_feature
+Message-ID: <ZuCd0xTZ29meorYy@lizhi-Precision-Tower-5810>
+References: <20240730145610.2177627-1-Frank.Li@nxp.com>
+ <ZtDvk02cvKCemYbN@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtDvk02cvKCemYbN@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: SJ0PR05CA0201.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::26) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="H5SgWbEn7EJ+G1lf"
-Content-Disposition: inline
-In-Reply-To: <66df6348.650a0220.1267b3.ac7e@mx.google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9491:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69b65f01-8a85-4410-8f69-08dcd1cebed3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Cdutn8ngsgMUHjREQyhnGqNFZMhiskYPHwe2MyXMcge6Sz3T338jQb+/Asfx?=
+ =?us-ascii?Q?Ee+wLngxiMb4s2Z8HFExF2YMgRJmlc7a8xhzklkq16f1Txb54ZeU0yG+UMGp?=
+ =?us-ascii?Q?3m33+YoEcQpBKLyFC0aa21Fz9Pgjs86QYPmTXWKVQs7IdIKSfPxdZctux0L3?=
+ =?us-ascii?Q?c9TCqLaYoTETaEDLMhsUeC2HAVEfqeYo69pBRTnqlFQJ180vVqAXqG9oCgqf?=
+ =?us-ascii?Q?etUWlKPBQvrUAHs7Sq0gjuxFv4dq09UEktiMbnS85O2AGwU+9MiLwsnW7N7n?=
+ =?us-ascii?Q?Wok/dhlP6Sm+t/N/bFs1Y1CeSot9Ft26IKQ1ZDnn33z8sghRJ8HlScSyUL9u?=
+ =?us-ascii?Q?i1pkAgJa3JxChPvJPzS7N08KXqF3aggTR+7a+AhnsR7DwRWeCaTdEtMedyfU?=
+ =?us-ascii?Q?pLCCezzg7tfAiM80u3uy8NihT1YRSsw9uZSP/1QAhj/KiKXXIKr74AU6tlXv?=
+ =?us-ascii?Q?kWrivAnY7Jro9KSrS8Vt6+8UnwvNA0XO0HFoMfhpGT20nGRyZPaWpTTeg6CH?=
+ =?us-ascii?Q?0JM9MFqFYLQOvydJ4W3LjYGi7QRGyJLD04ENRwkpJOdLxa7Rnhn4FlDuHSry?=
+ =?us-ascii?Q?srYoNsd29nt1e9vON1meXHdYIIBwgOlTwRfQiOgKlgoLkNu8D2k+5G7Gqw7G?=
+ =?us-ascii?Q?67KKq1AwWHg0WewWVO+PceYe4u+eHgoT+NPVDAOsFW/XgatYQ7DaVYTcH0aC?=
+ =?us-ascii?Q?+u4JJkVYb9oo+aTFoOq4KNRLJQf8piTtwP3FntAv+tcSpZ3WnzgbWe18XhjD?=
+ =?us-ascii?Q?E3ZiHT1BVJvhFD4sxYVf4EThrurYhKQ30WGlulEnnk9ECgqntgxcKypoMKf4?=
+ =?us-ascii?Q?kbcYCsKSu8lnCVbDBZtlcSDKF3b/ctksFmW5FhjzLWJ+xr0uFHm+VKj6oGJc?=
+ =?us-ascii?Q?ttUXiY/DXzwCPaK4X9/6TBlnNMXel55ZCS2DuGtKR726PQum5e0hYebd3nCw?=
+ =?us-ascii?Q?IMgNxNSaLVjeEmJWxxtQ16NPCEMvnrK3dQN9w05xd6pa69hBVxhBnWjCG30I?=
+ =?us-ascii?Q?JAFKezGQ4yiDeges5kYWSo3mcAtLT/ABzgBElwMReAMlq30DkauDOtUOVbRK?=
+ =?us-ascii?Q?wx/6Aa4mgMVW8nmqyq6DtoqUaU4aJB3xyyLPobCUePYjPOKRvnlIWZceBHXl?=
+ =?us-ascii?Q?UcyE+c+Q/qn0cavozvbxb54HiET91O5hLju0T3OexZOAwfKGQ1YJqucPSs3r?=
+ =?us-ascii?Q?z9z7VqdNUvQ9j4Ctc7eBW2oeQkfbSdMRA9i3MhDDlHPOd0Y3sWGfKiGkzLp6?=
+ =?us-ascii?Q?J8kubrAjEaBSmiEYW+PqgZj8bseoAyXojN0mZxuiwzyLPeNqcQoZHH05xR+H?=
+ =?us-ascii?Q?o34oMAcVp0N39UjW5KkXCWOR5sQONhGN2hjNxusHBIILWA944PKFSriZ9ZrP?=
+ =?us-ascii?Q?y9gEdujZNRGwsKWY5oCRzVW4gG/4dtZYBm/KgDZWb0fGvZ1V7g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BgcGQGImqbGsxA+wnnhV6sNWkLvZ7/wuw7qfn9aRznDXE55LssvLDhitU85m?=
+ =?us-ascii?Q?gRmn2+mymf0pZzeqN+5KYAj1WrN+nwFH8DRF70R2rcdcfZl4XyYduwQbAZNP?=
+ =?us-ascii?Q?px+x8GtjvmUF5C2GTlzffhRBFl16meaiBMx2TRy8Klcw08P60ckbvG+4ryuP?=
+ =?us-ascii?Q?wQ854HbB/0yntb2Zk6A5s1f2EPsYsg1XzcfhXgXG2jIfphW7wnmXmMlrypyo?=
+ =?us-ascii?Q?3T01YYSCHk3BKvZ1V79BQQYV5c10th7Y5qUYUD7rlnUmaaFGaSBdQvf9yOZu?=
+ =?us-ascii?Q?uh16Iiwoqbz0QYKVV/aXR41VN3vdA5KTlcSwZqt3nixE1tLusuNrHw6XP8Wr?=
+ =?us-ascii?Q?MHetq+79V0RyjAbhBNhVjHD90db1DZNlaFfGUs03GL1JsyNR84CAMiJ4VxCp?=
+ =?us-ascii?Q?mu9WEHH2540TTW4TEZoKzlWEHx5ICtoIs2uBs9wxBl7c3OMdAAoBU0tdeWhw?=
+ =?us-ascii?Q?PWrVYDv2fU5J4G6tENDd/JjVf97GkRpmujHxMWyv1h0//JqGbYgZUIUIlpFP?=
+ =?us-ascii?Q?6h4QSyGmthuYQ/usdbOcOumdCu11G2rY7DaF/wU0ra9xZ7ltxZAn6JvIMve0?=
+ =?us-ascii?Q?cKg3CboNcY4xj1BMVqKgoMtNhHp229SjXXPDv675t4hMUckiEyheQooyuHTZ?=
+ =?us-ascii?Q?fFNjAHgXvviHYNOYXySuqzVfMlr85dfTHxFr6pbQM3mn7Heeqra4aXFyyXD6?=
+ =?us-ascii?Q?B+7pvg/SPfoJc0NPKy9CecKPqX0pdV6W1swtPouB4D8ZsLU3dsLkq1+heFy0?=
+ =?us-ascii?Q?rKzRrHN5uYr7ImgQDdQSvum6pNZikGngr8uxO/NkEB8XVM3WZnpcnQjzuQnA?=
+ =?us-ascii?Q?bND49M9LIR8G9kWGP//cXtmMOCN0DT+QsRIfFCNkOsvWLDFqjqfg4V1CSRqj?=
+ =?us-ascii?Q?ATQdGwsedSyGEqPGk9DkIRowzCI/kGyI9qJPawefuViPTYW7vWHrnECvfG2c?=
+ =?us-ascii?Q?kDGlg9ysuTqWjI3pnz7h8CnXvW6JtqlC9rkmprwekUhZ6rgcOIF7sU3ZIo/E?=
+ =?us-ascii?Q?jGSgTU5Z1JAwgtI4Bgqy9qNGeO32g2smUYPkRjDPJVm0aBYuI5HD9XB6TvqV?=
+ =?us-ascii?Q?9QTmrnn7HVBXCWCdWUdxe1l+0TQVuHK+kMud/63PYoTg4WQQR/9nfYfP4gGh?=
+ =?us-ascii?Q?I+WtxdeFKzSn+8PblLPuQP41WW9n8Z6hcGDG1nWrAR/VtOHpy8/Rr6QBRymM?=
+ =?us-ascii?Q?KE/2eLykEOjTKQNOee+8jZHs79+wcUFQFLpYe6HrabjlfHeqsimkRaZjouJU?=
+ =?us-ascii?Q?r/GQE6psPadzJCZuQfE4SIfn28jESkyRgLN3kBTs9uFiMw7srfhHbH9q1i9y?=
+ =?us-ascii?Q?IRikuTRILYFas4X6H3+E6OHOHqFlSCjnCNBrzGzwmVTpKHukOzhjQF8zGe+z?=
+ =?us-ascii?Q?WZodT+PYKqcIK7MbuYCSL/JxOWpY8necihlnv1H/QS4t1xRAPAA/nwQhBgMX?=
+ =?us-ascii?Q?chNpacA5naEYeveX1x5oJVixHxhyuNo0zQleMd7Jw1Os028bUejVk61msj6M?=
+ =?us-ascii?Q?vAxFceCMy0SKsvG/o3Dj9HE7qY2qcs2B3bdNYpgDmK4uqqYXTKviyTwylm5G?=
+ =?us-ascii?Q?qkTcU10q9IrnnbfFPAk=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69b65f01-8a85-4410-8f69-08dcd1cebed3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 19:28:27.6072
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 89me+3xRFLHBby7QUZlXQ/KRCpjJJoYk5PLpzzA7mWtQsTm9N74zrxXdIZpx06IrKlPUkrpNxMiGoNGvUrTOYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9491
 
+On Thu, Aug 29, 2024 at 06:00:51PM -0400, Frank Li wrote:
+> On Tue, Jul 30, 2024 at 10:56:10AM -0400, Frank Li wrote:
+> > Move post_rcs_wait into struct imx_wdt_hw_feature to simple code logic for
+> > difference compatible string.
+> >
+> > i.MX93 watchdog needn't wait 2.5 clocks after RCS is done. So needn't set
+> > post_rcs_wait.
+> >
+> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> > Signed-off-by: Alice Guo <alice.guo@nxp.com>
+> > Reviewed-by: Ye Li <ye.li@nxp.com>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
 
---H5SgWbEn7EJ+G1lf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Wim Van Sebroeck:
 
-On Mon, Sep 09, 2024 at 02:06:13PM -0700, Vishal Moola wrote:
-> On Mon, Sep 09, 2024 at 05:57:52PM +0800, Muchun Song wrote:
-> > 
-> > 
-> > > On Sep 9, 2024, at 02:23, syzbot <syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com> wrote:
-> > > 
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    88fac17500f4 Merge tag 'fuse-fixes-6.11-rc7' of git://git...
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13291d97980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=660f6eb11f9c7dc5
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=2dab93857ee95f2eeb08
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > 
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > 
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/6dfa1c637f53/disk-88fac175.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/7a322b491698/vmlinux-88fac175.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/edc9184a3a97/bzImage-88fac175.xz
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com
-> > > 
-> > > ==================================================================
-> > > BUG: KASAN: slab-use-after-free in __vma_shareable_lock include/linux/hugetlb.h:1278 [inline]
-> > 
-> > This is accessing vma structure.
-> > 
-> > > BUG: KASAN: slab-use-after-free in hugetlb_vma_unlock_read mm/hugetlb.c:281 [inline]
-> > > BUG: KASAN: slab-use-after-free in hugetlb_no_page mm/hugetlb.c:6380 [inline]
-> > > BUG: KASAN: slab-use-after-free in hugetlb_fault+0xfaf/0x3770 mm/hugetlb.c:6485
-> > > Read of size 8 at addr ffff88807c17f9d0 by task syz.0.4558/26998
-> > > 
-> > > CPU: 1 UID: 0 PID: 26998 Comm: syz.0.4558 Not tainted 6.11.0-rc6-syzkaller-00026-g88fac17500f4 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> > > Call Trace:
-> > > <TASK>
-> > > __dump_stack lib/dump_stack.c:93 [inline]
-> > > dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
-> > > print_address_description mm/kasan/report.c:377 [inline]
-> > > print_report+0x169/0x550 mm/kasan/report.c:488
-> > > kasan_report+0x143/0x180 mm/kasan/report.c:601
-> > > __vma_shareable_lock include/linux/hugetlb.h:1278 [inline]
-> > > hugetlb_vma_unlock_read mm/hugetlb.c:281 [inline]
-> > 
-> > I think vma is freed before this call of hugetlb_vma_unlock_read()
-> > but after hugetlb_vma_lock_read() in hugetlb_fault(). I found a
-> > possible scenario to cause this problem.
-> > 
-> > hugetlb_no_page()
-> > 	ret = vmf_anon_prepare()
-> > 		if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> > 			if (!mmap_read_trylock(vma->vm_mm)) {
-> > 				vma_end_read(vma);
-> > 				// VMA lock is released, which could be freed before the call of hugetlb_vma_unlock_read().
-> > 				return VM_FAULT_RETRY;
-> > 			}
-> > 		}
-> > 	if (unlikely(ret))
-> > 		goto out;
-> > out:
-> > 	hugetlb_vma_unlock_read(vma); // UAF of VMA
-> 
-> Thanks for catching this, it indeed looks like the problem. I don't
-> think its easy to reproduce since we would have to unmap the vma while
-> a fault is being handled (and failing).
-> 
-> This same issue should be present in hugetlb_wp() as well, so I'm thinking
-> the best fix would be to make another function similar to
-> vmf_anon_prepare() that doesn't release the vma lock. Then wait to drop
-> the lock until hugetlb_vma_unlock_read() is called.
-> 
-> I'll have that fix out tomorrow.
+	Could you please take care this patch?
 
-The 2 attached patches should fix this.
+Frank
 
-> > The culprit commit should be
-> > 	
-> > 	7c43a553792a1 ("hugetlb: allow faults to be handled under the VMA lock").
-> > 
-> > I will take a closer look at the solution tomorrow. And Cc the author of the
-> > above commit, maybe have some comments on this.
-> > 
-> > Muchun,
-> > Thanks.
-> > 
-> > > hugetlb_no_page mm/hugetlb.c:6380 [inline]
-> > > hugetlb_fault+0xfaf/0x3770 mm/hugetlb.c:6485
-> > > handle_mm_fault+0x1901/0x1bc0 mm/memory.c:5830
-> > > do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
-> > > handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-> > > exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
-> > > asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-> > > RIP: 0033:0x7f2b63744998
-> > > Code: fc 89 37 c3 c5 fa 6f 06 c5 fa 6f 4c 16 f0 c5 fa 7f 07 c5 fa 7f 4c 17 f0 c3 66 0f 1f 84 00 00 00 00 00 48 8b 4c 16 f8 48 8b 36 <48> 89 37 48 89 4c 17 f8 c3 c5 fe 6f 54 16 e0 c5 fe 6f 5c 16 c0 c5
-> > > RSP: 002b:00007f2b63a5fb88 EFLAGS: 00010206
-> > > RAX: 00000000200002c0 RBX: 0000000000000004 RCX: 00676e7277682f76
-> > > RDX: 000000000000000b RSI: 7277682f7665642f RDI: 00000000200002c0
-> > > RBP: 00007f2b63937a80 R08: 00007f2b63600000 R09: 0000000000000001
-> > > R10: 0000000000000001 R11: 0000000000000009 R12: 000000000014aa5e
-> > > R13: 00007f2b63a5fc90 R14: 0000000000000032 R15: fffffffffffffffe
-> > > </TASK>
-> > > 
-> > > Allocated by task 27000:
-> > > kasan_save_stack mm/kasan/common.c:47 [inline]
-> > > kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> > > unpoison_slab_object mm/kasan/common.c:312 [inline]
-> > > __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
-> > > kasan_slab_alloc include/linux/kasan.h:201 [inline]
-> > > slab_post_alloc_hook mm/slub.c:3988 [inline]
-> > > slab_alloc_node mm/slub.c:4037 [inline]
-> > > kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
-> > > vm_area_alloc+0x24/0x1d0 kernel/fork.c:471
-> > > mmap_region+0xc3d/0x2090 mm/mmap.c:2944
-> > > do_mmap+0x8f9/0x1010 mm/mmap.c:1468
-> > > vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
-> > > ksys_mmap_pgoff+0x544/0x720 mm/mmap.c:1514
-> > > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > Freed by task 26255:
-> > > kasan_save_stack mm/kasan/common.c:47 [inline]
-> > > kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
-> > > kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
-> > > poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
-> > > __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
-> > > kasan_slab_free include/linux/kasan.h:184 [inline]
-> > > slab_free_hook mm/slub.c:2252 [inline]
-> > > slab_free mm/slub.c:4473 [inline]
-> > > kmem_cache_free+0x145/0x350 mm/slub.c:4548
-> > > rcu_do_batch kernel/rcu/tree.c:2569 [inline]
-> > > rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
-> > 
-> > VMA structure is freed via rcu, so it is really a UAF problem.
-> > 
-> > > handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
-> > > do_softirq+0x11b/0x1e0 kernel/softirq.c:455
-> > > __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
-> > > spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> > > __fib6_clean_all+0x327/0x4b0 net/ipv6/ip6_fib.c:2277
-> > > rt6_sync_down_dev net/ipv6/route.c:4908 [inline]
-> > > rt6_disable_ip+0x164/0x7e0 net/ipv6/route.c:4913
-> > > addrconf_ifdown+0x15d/0x1bd0 net/ipv6/addrconf.c:3856
-> > > addrconf_notify+0x3cb/0x1020
-> > > notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-> > > call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
-> > > call_netdevice_notifiers net/core/dev.c:2046 [inline]
-> > > dev_close_many+0x33c/0x4c0 net/core/dev.c:1587
-> > > unregister_netdevice_many_notify+0x50b/0x1c40 net/core/dev.c:11327
-> > > unregister_netdevice_many net/core/dev.c:11414 [inline]
-> > > default_device_exit_batch+0xa0f/0xa90 net/core/dev.c:11897
-> > > ops_exit_list net/core/net_namespace.c:178 [inline]
-> > > cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
-> > > process_one_work kernel/workqueue.c:3231 [inline]
-> > > process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
-> > > worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
-> > > kthread+0x2f0/0x390 kernel/kthread.c:389
-> > > ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-> > > ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > > 
-> > > Last potentially related work creation:
-> > > kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
-> > > __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
-> > > __call_rcu_common kernel/rcu/tree.c:3106 [inline]
-> > > call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
-> > > remove_vma mm/mmap.c:189 [inline]
-> > > remove_mt mm/mmap.c:2415 [inline]
-> > > do_vmi_align_munmap+0x155c/0x18c0 mm/mmap.c:2758
-> > > do_vmi_munmap+0x261/0x2f0 mm/mmap.c:2830
-> > > mmap_region+0x72f/0x2090 mm/mmap.c:2881
-> > > do_mmap+0x8f9/0x1010 mm/mmap.c:1468
-> > > vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
-> > > ksys_mmap_pgoff+0x544/0x720 mm/mmap.c:1514
-> > > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > The buggy address belongs to the object at ffff88807c17f9b0
-> > > which belongs to the cache vm_area_struct of size 184
-> > > The buggy address is located 32 bytes inside of
-> > > freed 184-byte region [ffff88807c17f9b0, ffff88807c17fa68)
-> > > 
-> > > The buggy address belongs to the physical page:
-> > > page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7c17f
-> > > memcg:ffff888028997401
-> > > anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-> > > page_type: 0xfdffffff(slab)
-> > > raw: 00fff00000000000 ffff88801bafdb40 ffffea0001f89e00 000000000000000d
-> > > raw: 0000000000000000 0000000000100010 00000001fdffffff ffff888028997401
-> > > page dumped because: kasan: bad access detected
-> > > page_owner tracks the page as allocated
-> > > page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 26741, tgid 26741 (dhcpcd-run-hook), ts 1341391347767, free_ts 1341166373745
-> > > set_page_owner include/linux/page_owner.h:32 [inline]
-> > > post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
-> > > prep_new_page mm/page_alloc.c:1501 [inline]
-> > > get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
-> > > __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
-> > > __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
-> > > alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
-> > > alloc_slab_page+0x5f/0x120 mm/slub.c:2321
-> > > allocate_slab+0x5a/0x2f0 mm/slub.c:2484
-> > > new_slab mm/slub.c:2537 [inline]
-> > > ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
-> > > __slab_alloc+0x58/0xa0 mm/slub.c:3813
-> > > __slab_alloc_node mm/slub.c:3866 [inline]
-> > > slab_alloc_node mm/slub.c:4025 [inline]
-> > > kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
-> > > vm_area_dup+0x27/0x290 kernel/fork.c:486
-> > > dup_mmap kernel/fork.c:695 [inline]
-> > > dup_mm kernel/fork.c:1672 [inline]
-> > > copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
-> > > copy_process+0x187a/0x3dc0 kernel/fork.c:2374
-> > > kernel_clone+0x226/0x8f0 kernel/fork.c:2781
-> > > __do_sys_clone kernel/fork.c:2924 [inline]
-> > > __se_sys_clone kernel/fork.c:2908 [inline]
-> > > __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
-> > > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > page last free pid 26730 tgid 26718 stack trace:
-> > > reset_page_owner include/linux/page_owner.h:25 [inline]
-> > > free_pages_prepare mm/page_alloc.c:1094 [inline]
-> > > free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
-> > > __folio_put+0x2c8/0x440 mm/swap.c:128
-> > > migrate_folio_move mm/migrate.c:1330 [inline]
-> > > migrate_pages_batch+0x2a76/0x3560 mm/migrate.c:1818
-> > > migrate_pages_sync mm/migrate.c:1884 [inline]
-> > > migrate_pages+0x1f59/0x3460 mm/migrate.c:1993
-> > > do_mbind mm/mempolicy.c:1388 [inline]
-> > > kernel_mbind mm/mempolicy.c:1531 [inline]
-> > > __do_sys_mbind mm/mempolicy.c:1605 [inline]
-> > > __se_sys_mbind+0x1490/0x19f0 mm/mempolicy.c:1601
-> > > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > Memory state around the buggy address:
-> > > ffff88807c17f880: fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00 00
-> > > ffff88807c17f900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
-> > >> ffff88807c17f980: fc fc fc fc fc fc fa fb fb fb fb fb fb fb fb fb
-> > >                                                 ^
-> > > ffff88807c17fa00: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
-> > > ffff88807c17fa80: fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00 00
-> > > ==================================================================
-> > > 
-> > > 
-> > > ---
-> > > This report is generated by a bot. It may contain errors.
-> > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > > 
-> > > syzbot will keep track of this issue. See:
-> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > > 
-> > > If the report is already addressed, let syzbot know by replying with:
-> > > #syz fix: exact-commit-title
-> > > 
-> > > If you want to overwrite report's subsystems, reply with:
-> > > #syz set subsystems: new-subsystem
-> > > (See the list of subsystem names on the web dashboard)
-> > > 
-> > > If the report is a duplicate of another one, reply with:
-> > > #syz dup: exact-subject-of-another-report
-> > > 
-> > > If you want to undo deduplication, reply with:
-> > > #syz undup
-> > 
-
---H5SgWbEn7EJ+G1lf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-mm-Change-vmf_anon_prepare-to-__vmf_anon_prepare.patch"
-
-From 734dde34151c2951b86f16cc554e0eed671d340d Mon Sep 17 00:00:00 2001
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Date: Tue, 10 Sep 2024 10:39:46 -0700
-Subject: [PATCH 1/2] mm: Change vmf_anon_prepare() to __vmf_anon_prepare()
-
-Some callers of vmf_anon_prepare() may not want us to release the
-per-VMA lock ourselves. Rename vmf_anon_prepare() to
-__vmf_anon_prepare() and let the callers drop the lock when desired.
-
-Also, make vmf_anon_prepare() a wrapper that releases the per-VMA lock
-itself for any callers that don't care.
-
-This is in preparation to fix this bug reported by syzbot:
-https://lore.kernel.org/linux-mm/00000000000067c20b06219fbc26@google.com/
-
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- mm/internal.h | 11 ++++++++++-
- mm/memory.c   |  8 +++-----
- 2 files changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 44c8dec1f0d7..93083bbeeefa 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -320,7 +320,16 @@ static inline void wake_throttle_isolated(pg_data_t *pgdat)
- 		wake_up(wqh);
- }
- 
--vm_fault_t vmf_anon_prepare(struct vm_fault *vmf);
-+vm_fault_t __vmf_anon_prepare(struct vm_fault *vmf);
-+static inline vm_fault_t vmf_anon_prepare(struct vm_fault *vmf)
-+{
-+	vm_fault_t ret = __vmf_anon_prepare(vmf);
-+
-+	if (unlikely(ret & VM_FAULT_RETRY))
-+		vma_end_read(vmf->vma);
-+	return ret;
-+}
-+
- vm_fault_t do_swap_page(struct vm_fault *vmf);
- void folio_rotate_reclaimable(struct folio *folio);
- bool __folio_end_writeback(struct folio *folio);
-diff --git a/mm/memory.c b/mm/memory.c
-index 36f655eb66c4..d564737255f8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3262,7 +3262,7 @@ static inline vm_fault_t vmf_can_call_fault(const struct vm_fault *vmf)
- }
- 
- /**
-- * vmf_anon_prepare - Prepare to handle an anonymous fault.
-+ * __vmf_anon_prepare - Prepare to handle an anonymous fault.
-  * @vmf: The vm_fault descriptor passed from the fault handler.
-  *
-  * When preparing to insert an anonymous page into a VMA from a
-@@ -3276,7 +3276,7 @@ static inline vm_fault_t vmf_can_call_fault(const struct vm_fault *vmf)
-  * Return: 0 if fault handling can proceed.  Any other value should be
-  * returned to the caller.
-  */
--vm_fault_t vmf_anon_prepare(struct vm_fault *vmf)
-+vm_fault_t __vmf_anon_prepare(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	vm_fault_t ret = 0;
-@@ -3284,10 +3284,8 @@ vm_fault_t vmf_anon_prepare(struct vm_fault *vmf)
- 	if (likely(vma->anon_vma))
- 		return 0;
- 	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
--		if (!mmap_read_trylock(vma->vm_mm)) {
--			vma_end_read(vma);
-+		if (!mmap_read_trylock(vma->vm_mm))
- 			return VM_FAULT_RETRY;
--		}
- 	}
- 	if (__anon_vma_prepare(vma))
- 		ret = VM_FAULT_OOM;
--- 
-2.45.0
-
-
---H5SgWbEn7EJ+G1lf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0002-mm-hugetlb.c-Fix-UAF-of-vma-in-hugetlb-fault-pathway.patch"
-
-From f3a9fd823fa187c57ddd4482d3f089911c912e5c Mon Sep 17 00:00:00 2001
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Date: Tue, 10 Sep 2024 10:24:24 -0700
-Subject: [PATCH 2/2] mm/hugetlb.c: Fix UAF of vma in hugetlb fault pathway
-
-Syzbot reports a UAF in hugetlb_fault(). This happens because
-vmf_anon_prepare() could drop the per-VMA lock and allow the current VMA
-to be freed before hugetlb_vma_unlock_read() is called.
-
-We can fix this by using a modified version of vmf_anon_prepare() that
-doesn't release the VMA lock on failure, and then release it ourselves
-after hugetlb_vma_unlock_read().
-
-Reported-by: syzbot+2dab93857ee95f2eeb08@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-mm/00000000000067c20b06219fbc26@google.com/
-Fixes: 9acad7ba3e25 ("hugetlb: use vmf_anon_prepare() instead of anon_vma_prepare()")
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-Cc: <stable@vger.kernel.org>
----
- mm/hugetlb.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 5c77defad295..190fa05635f4 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5915,7 +5915,7 @@ static vm_fault_t hugetlb_wp(struct folio *pagecache_folio,
- 	 * When the original hugepage is shared one, it does not have
- 	 * anon_vma prepared.
- 	 */
--	ret = vmf_anon_prepare(vmf);
-+	ret = __vmf_anon_prepare(vmf);
- 	if (unlikely(ret))
- 		goto out_release_all;
- 
-@@ -6114,7 +6114,7 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 		}
- 
- 		if (!(vma->vm_flags & VM_MAYSHARE)) {
--			ret = vmf_anon_prepare(vmf);
-+			ret = __vmf_anon_prepare(vmf);
- 			if (unlikely(ret))
- 				goto out;
- 		}
-@@ -6245,6 +6245,14 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 	folio_unlock(folio);
- out:
- 	hugetlb_vma_unlock_read(vma);
-+
-+	/*
-+	 * We must check to release the per-VMA lock. __vmf_anon_prepare() is
-+	 * the only way ret can be set to VM_FAULT_RETRY.
-+	 */
-+	if (unlikely(ret & VM_FAULT_RETRY))
-+		vma_end_read(vma);
-+
- 	mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 	return ret;
- 
-@@ -6466,6 +6474,14 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	}
- out_mutex:
- 	hugetlb_vma_unlock_read(vma);
-+
-+	/*
-+	 * We must check to release the per-VMA lock. __vmf_anon_prepare() in
-+	 * hugetlb_wp() is the only way ret can be set to VM_FAULT_RETRY.
-+	 */
-+	if (unlikely(ret & VM_FAULT_RETRY))
-+		vma_end_read(vma);
-+
- 	mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 	/*
- 	 * Generally it's safe to hold refcount during waiting page lock. But
--- 
-2.45.0
-
-
---H5SgWbEn7EJ+G1lf--
+>
+> Ping?
+>
+> Frank
+>
+> > Change from v4 to v5
+> > - move compatible string 8ulp under 7ulp
+> > Chagne from v3 to v4:
+> > - Go back to v2 according to Guenter's feedback
+> > Change from v2 to v3:
+> > - Set post_rcs_wait to false explicitly to maintain code consistency
+> > - Add Guenter review tag.
+> > Change from v1 to v2:
+> > - Combine to one patch
+> > ---
+> >  drivers/watchdog/imx7ulp_wdt.c | 21 +++++++++------------
+> >  1 file changed, 9 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+> > index 94914a22daff7..0f13a30533574 100644
+> > --- a/drivers/watchdog/imx7ulp_wdt.c
+> > +++ b/drivers/watchdog/imx7ulp_wdt.c
+> > @@ -55,6 +55,7 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+> >
+> >  struct imx_wdt_hw_feature {
+> >  	bool prescaler_enable;
+> > +	bool post_rcs_wait;
+> >  	u32 wdog_clock_rate;
+> >  };
+> >
+> > @@ -62,7 +63,6 @@ struct imx7ulp_wdt_device {
+> >  	struct watchdog_device wdd;
+> >  	void __iomem *base;
+> >  	struct clk *clk;
+> > -	bool post_rcs_wait;
+> >  	bool ext_reset;
+> >  	const struct imx_wdt_hw_feature *hw;
+> >  };
+> > @@ -95,7 +95,7 @@ static int imx7ulp_wdt_wait_rcs(struct imx7ulp_wdt_device *wdt)
+> >  		ret = -ETIMEDOUT;
+> >
+> >  	/* Wait 2.5 clocks after RCS done */
+> > -	if (wdt->post_rcs_wait)
+> > +	if (wdt->hw->post_rcs_wait)
+> >  		usleep_range(wait_min, wait_min + 2000);
+> >
+> >  	return ret;
+> > @@ -334,15 +334,6 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
+> >  	/* The WDOG may need to do external reset through dedicated pin */
+> >  	imx7ulp_wdt->ext_reset = of_property_read_bool(dev->of_node, "fsl,ext-reset-output");
+> >
+> > -	imx7ulp_wdt->post_rcs_wait = true;
+> > -	if (of_device_is_compatible(dev->of_node,
+> > -				    "fsl,imx8ulp-wdt")) {
+> > -		dev_info(dev, "imx8ulp wdt probe\n");
+> > -		imx7ulp_wdt->post_rcs_wait = false;
+> > -	} else {
+> > -		dev_info(dev, "imx7ulp wdt probe\n");
+> > -	}
+> > -
+> >  	wdog = &imx7ulp_wdt->wdd;
+> >  	wdog->info = &imx7ulp_wdt_info;
+> >  	wdog->ops = &imx7ulp_wdt_ops;
+> > @@ -403,6 +394,12 @@ static const struct dev_pm_ops imx7ulp_wdt_pm_ops = {
+> >  static const struct imx_wdt_hw_feature imx7ulp_wdt_hw = {
+> >  	.prescaler_enable = false,
+> >  	.wdog_clock_rate = 1000,
+> > +	.post_rcs_wait = true,
+> > +};
+> > +
+> > +static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
+> > +	.prescaler_enable = false,
+> > +	.wdog_clock_rate = 1000,
+> >  };
+> >
+> >  static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+> > @@ -411,8 +408,8 @@ static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+> >  };
+> >
+> >  static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
+> > -	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx7ulp_wdt_hw, },
+> >  	{ .compatible = "fsl,imx7ulp-wdt", .data = &imx7ulp_wdt_hw, },
+> > +	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx8ulp_wdt_hw, },
+> >  	{ .compatible = "fsl,imx93-wdt", .data = &imx93_wdt_hw, },
+> >  	{ /* sentinel */ }
+> >  };
+> > --
+> > 2.34.1
+> >
 
