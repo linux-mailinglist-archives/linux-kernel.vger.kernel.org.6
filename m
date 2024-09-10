@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-323481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA5E973DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:53:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA33973DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271831F2967D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E32287F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1979E1A254C;
-	Tue, 10 Sep 2024 16:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49DA1A2576;
+	Tue, 10 Sep 2024 16:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1hJ1xie"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWMZaZXr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE462156F2B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89611A0734;
+	Tue, 10 Sep 2024 16:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987176; cv=none; b=IK35sFdzKt1ED7dMIKyn/w03rGtd5OCP0WPu1/1r3b8FjsgSPi/FYsqVwWNSkPt1q9TfSlR6c99L3DvIBsO59wWm1dcnHfsfvrSBDBqeXNZAxY4w5zZafxNYEUQ6pov31Z7fK+5BcTrMuQkNWasG3O5nhlCp9V+7DgFx3DY8Q+4=
+	t=1725987203; cv=none; b=qzDfmXrAmm8DnrhLrnmuuiQNKVO5kwg3/LouoVgMKREvFr1+HXWWPeCEQWqz691nlMR+oMAbHvqk3nDP/GKW+kUkrJuF+31PzctcAnZbtwn0Bv9LijlNpqVC7GkC80FYo9avd/QPPez6zOm6XY6pU0OkxoIilX50D1U6DTCnDFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987176; c=relaxed/simple;
-	bh=pmkiV0ROweHRR1xx9Sy4aOWEKgFXZ9v/XWZ9gvfmcLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0uFuF13N2UjE7Iw5ly4OfdPsqtU/sHVAyVNuvSWROuU4ncCC8I6xWG4B+CY+hhlmixvi6HOio8cqiAi6KnATpqqSmb3IAWHRXVdyl8Lwm23tr6NeMEbg5vYIwT7IU30XA+Cbl0ur4na5lToSguTwC0nJUkl/qAiFJiSjQHleIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1hJ1xie; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718d606726cso3188684b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:52:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725987174; x=1726591974; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=g25Ru7xbbTB3wDSvtSavAzlRmQz6Xvdop91thyf32UM=;
-        b=d1hJ1xie6fxtkA2YLfgL/ICM3wz8RjPudW8E1QFN8k0B+RlUpZUUsyWw/u8127gKXI
-         pNxntAnDI+tCd1b22V5Sz72a9fCmbA7tB53dfACQ4uGU0uYLEMlXRHls5b6Y2mjPYzVR
-         hwGu7NP3yGqxvSUT3GYfrPj1aW7NHKfQORERA5ZT4YylW0hed8tv/xh3wNCiA1yKZj9y
-         xJs5J02zUxKH0DH9P74yIsM7EaUl6SSFkNSGW+FdpjZYmVdEZrwREMblxwYqTruSc3Ti
-         3YB/WNSIlZAA1IDR5+8UJTPHCtSOocn9y6eMETASQ9UcmExxNYcYZ/fQidYcxM5uq/91
-         SLBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987174; x=1726591974;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g25Ru7xbbTB3wDSvtSavAzlRmQz6Xvdop91thyf32UM=;
-        b=Vqq5RUqczBx/ZaDw50eCl5v3JPvLUFSdq9K1Vw4CwGCtkah9BisxL1cQmvVarPBgGq
-         lyLV14VytUbD2Ex2MMYqV5hLaBDiRCRCCf3oG/fENDtYXS5jXPzflWEKr15Z8MEIc+gr
-         EvbfO7EbR19VDXuHWXYsdhuS414VcjkuASXvQmOdxpqE2dEG9Z0kmKcoQo4tvmE9N6Iu
-         73/6CChcBN/o+DgHHDXopX7AG+HT1LqlJ0A2AtYM7EloCB/arYVbgXsYT0GWg2TZFy8z
-         9CE+uJ1jdj82hto6S1ckXBfN8f0BkLqX9Ja85d2DFsnScbnTlEqbyn922sr8NxNcW1aA
-         C/KA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ4Y9WApGGxvXSA1T8KlM/Rdi5IIITnPRJ1izZdqmVEsJxdXNBPsAHdpGLoI5hvfwoCFqk3X7GekZFVcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVv2TrBKIV+02McxGzWkEEq1FIBhqwGvjWwItIF0adxI0OY2TW
-	x1nWwIhwYFj1LtWYe4XYMvDkwV5aWUFEy9PailfM8HmtsRbwQ/7Sk8NCC2q6lg==
-X-Google-Smtp-Source: AGHT+IGT8gCwyZvdGRQRZlzo82GU5AwgsS0cQ+zQt7rE2+MgonPozA5gcDhFM9k5t3u/0UbEHmZSnQ==
-X-Received: by 2002:a05:6a21:1707:b0:1cf:2aaa:9199 with SMTP id adf61e73a8af0-1cf5e075815mr1579531637.15.1725987173970;
-        Tue, 10 Sep 2024 09:52:53 -0700 (PDT)
-Received: from thinkpad ([120.60.128.228])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc03f5aesm8775980a91.28.2024.09.10.09.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 09:52:53 -0700 (PDT)
-Date: Tue, 10 Sep 2024 22:22:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anastasia Belova <abelova@astralinux.ru>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-actions@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: actions: prevent overflow in owl_pll_recalc_rate
-Message-ID: <20240910165242.v6jcirmtbahxqggx@thinkpad>
-References: <20240910130640.20631-1-abelova@astralinux.ru>
+	s=arc-20240116; t=1725987203; c=relaxed/simple;
+	bh=2Rpn8Njt73fgw3DpGP8vD/PC06yNfALDsBx2YphgNLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHk9Q6ZnEjomp4imXb9aB/bMGbCPWc59uosf3dJNBjVLxfmJq/j2aX1pf8cn6RU308kJlMgPY0FRduWqcHW2iGJG50oygZZAdrMDbjkNf53C27E2Hoq0sss6xUdmxU94Pv2aP03FZO3ltEdP49uZY2lrLXueeWkLwQFoNxc1MQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWMZaZXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0086AC4CEC3;
+	Tue, 10 Sep 2024 16:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725987202;
+	bh=2Rpn8Njt73fgw3DpGP8vD/PC06yNfALDsBx2YphgNLk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dWMZaZXrjxOa5UfU0zNTGeflGVHGoxKjDWGYbqB/N/FZee6+lQ7/X5JRVZc8wEbXF
+	 oR7Wr4opmQKKC7N3t0qZFmDw2eZDiQI9f6tHPSvK5vzcXl/PC7IR/81+creMcDPp6t
+	 i1kypKi+eNuICldPess4KnvBra2Pu7RqH1ZcFXlb8s3wfAXwV+y33BLlCqS3G2Cs0h
+	 KzuAxDt324Tx8+081+QWY8Ci6XCsdftsM0of89hzhribYcrPI48YtNvLWIknTGACgt
+	 L+mYBqq0zp6SWGK5lbAc7+ghEbRdaHfM2dItvHNYSxyve9CPdcesWkphFf4Xl9Os07
+	 jGSuNnQ2rUGPw==
+Message-ID: <b60928c6-19c5-473c-8f13-532ed3fd3b3a@kernel.org>
+Date: Tue, 10 Sep 2024 17:53:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf build: Autodetect minimum required llvm-dev
+ version
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ sesse@google.com, acme@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Changbin Du <changbin.du@huawei.com>, Guilherme Amadio <amadio@gentoo.org>,
+ Leo Yan <leo.yan@arm.com>, Manu Bretelle <chantr4@gmail.com>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev
+References: <20240910140405.568791-1-james.clark@linaro.org>
+ <b2e813c4-be89-457d-8c38-38849177ec93@kernel.org>
+ <307568b9-9b6b-4eaa-973c-8f88538b8545@linaro.org>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <307568b9-9b6b-4eaa-973c-8f88538b8545@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240910130640.20631-1-abelova@astralinux.ru>
 
-On Tue, Sep 10, 2024 at 04:06:40PM +0300, Anastasia Belova wrote:
-> In case of OWL S900 SoC clock driver there are cases
-> where bfreq = 24000000, shift = 0. If value read from
-> CMU_COREPLL or CMU_DDRPLL to val is big enough, an
-> overflow may occur.
+2024-09-10 16:11 UTC+0100 ~ James Clark <james.clark@linaro.org>
 > 
-> Add explicit casting to prevent it.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> On 9/10/24 15:27, Quentin Monnet wrote:
+>> 2024-09-10 15:04 UTC+0100 ~ James Clark <james.clark@linaro.org>
+>>> The new LLVM addr2line feature requires a minimum version of 13 to
+>>> compile. Add a feature check for the version so that NO_LLVM=1 doesn't
+>>> need to be explicitly added. Leave the existing llvm feature check
+>>> intact because it's used by tools other than Perf.
+>>>
+>>> This fixes the following compilation error when the llvm-dev version
+>>> doesn't match:
+>>>
+>>>    util/llvm-c-helpers.cpp: In function 'char* 
+>>> llvm_name_for_code(dso*, const char*, u64)':
+>>>    util/llvm-c-helpers.cpp:178:21: error: 
+>>> 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct 
+>>> llvm::DILineInfo'} has no member named 'StartAddress'
+>>>      178 |   addr, res_or_err->StartAddress ? *res_or_err- 
+>>> >StartAddress : 0);
+>>>
+>>> Fixes: c3f8644c21df ("perf report: Support LLVM for addr2line()")
+>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>> ---
+>>>   tools/build/Makefile.feature           |  2 +-
+>>>   tools/build/feature/Makefile           |  9 +++++++++
+>>>   tools/build/feature/test-llvm-perf.cpp | 14 ++++++++++++++
+>>>   tools/perf/Makefile.config             |  6 +++---
+>>>   4 files changed, 27 insertions(+), 4 deletions(-)
+>>>   create mode 100644 tools/build/feature/test-llvm-perf.cpp
+>>>
+>>> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+>>> index 0717e96d6a0e..427a9389e26c 100644
+>>> --- a/tools/build/Makefile.feature
+>>> +++ b/tools/build/Makefile.feature
+>>> @@ -136,7 +136,7 @@ FEATURE_DISPLAY ?=              \
+>>>            libunwind              \
+>>>            libdw-dwarf-unwind     \
+>>>            libcapstone            \
+>>> -         llvm                   \
+>>> +         llvm-perf              \
+>>
+>> Hi! Just a quick question, why remove "llvm" from the list, here?
+>>
+>> Quentin
 > 
-> Fixes: 2792c37e94c8 ("clk: actions: Add pll clock support")
-> Cc: <stable@vger.kernel.org> 
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-
-Currently, val is limited to 8 bits max on the supported SoCs. So there won't be
-any overflow. But for the sake of correctness, I'm OK with this patch.
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/clk/actions/owl-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Just because with respect to the linked fixes: commit, it wasn't 
+> actually there before. It was added just for addr2line so it should 
+> probably be llvm-perf rather than the generic one.
 > 
-> diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-> index 155f313986b4..fa17567665ec 100644
-> --- a/drivers/clk/actions/owl-pll.c
-> +++ b/drivers/clk/actions/owl-pll.c
-> @@ -104,7 +104,7 @@ static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
->  	val = val >> pll_hw->shift;
->  	val &= mul_mask(pll_hw);
->  
-> -	return pll_hw->bfreq * val;
-> +	return (unsigned long)pll_hw->bfreq * val;
->  }
->  
->  static int owl_pll_is_enabled(struct clk_hw *hw)
-> -- 
-> 2.30.2
+> But yes we can add llvm output if it's useful, but could probably be a 
+> separate commit.
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+It wasn't there before, but you're not removing the rest of the "llvm" 
+feature, so I'd expect that part to stay as well? But I don't mind much. 
+We use the "llvm" feature in bpftool, but beyond that, I don't 
+personally need it to be displayed in tools/build/Makefile.feature, so 
+no need to respin for that :)
+
+Thanks,
+Quentin
 
