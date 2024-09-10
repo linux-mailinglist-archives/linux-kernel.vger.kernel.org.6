@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-323289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C4973AB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B299973A95
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B3C1C242ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67E51F24EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E651990CD;
-	Tue, 10 Sep 2024 14:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="smLECJZQ"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4310B195FEC;
+	Tue, 10 Sep 2024 14:51:50 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A17E196C86;
-	Tue, 10 Sep 2024 14:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDC12BB05;
+	Tue, 10 Sep 2024 14:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725980218; cv=none; b=PrIULx6CxHpeHCW9B+jlrtwJzBz2/LoyCwI7M3l99lkvVEdGG1SgGGtGDrtolbrtyUGVcByocTvWz1z5UyGonyNHGnvSzNJrpQwNNQyX6M4TdYesrgS+wu/OPOiHALVdDhbo4cokTN/CoCNVJvHhL1Nr9ShGJhofYqe8nG4vUWY=
+	t=1725979909; cv=none; b=lmr6t2/ah/qexSmF8NfGZbHm0hvDbqLbFSDM7j7+nYK5JBbH8DTDW8HErv/Psj1KsGUlUyJzakKOjhRsGdzDMRr1Ohb5xMCrZlYGFmThzyBFt4xruA/t/ctTGUn2TvdES75Yi2CDpH1hTGZ7asT2Au95Mt6Qix636waT0mMN4Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725980218; c=relaxed/simple;
-	bh=bd9B/iiCBDYvrIKqhelsWDM+scicB0QNH3hNjDy4MyM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=sUff7gYIYuN/BGH+04w6imEPZWeinzd/BjhTPirCWbiKUnc1XSJz/DxFEXRfRFEmFtEMZAmrfDOFtuU52c0gBGAu39pQ1//ievcF2eSD3tdzgzbPekDee2l/171EBHr0ABg7ybPXtPsel1r/OjADojDr/qVq3iBwqLyTaRSQHus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=smLECJZQ; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725980211; bh=DkR2scrRl85rOk3J1IqiLzPP9fGrojFncSkHxO3DImU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=smLECJZQ39FUdTqPFGbR9Fdr9A8kGvWcnVJm+eUB4C08muoyBjoVzQnRe9t0azBLS
-	 UVt4LFTlSJSgHsvQXJBMq9b9IupL8BIED714sczsduQ4ucO5e+4/+tNiHLdPtbfHnF
-	 aOMpN15tcbtx+RG3K+htFnGRMMALUQVlPLlQwWws=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id CA824AC7; Tue, 10 Sep 2024 22:50:40 +0800
-X-QQ-mid: xmsmtpt1725979840tw3h2u1gb
-Message-ID: <tencent_CF67CC46D7D2DBC677898AEEFBAECD0CAB06@qq.com>
-X-QQ-XMAILINFO: MRw/zKT/0BpPvSVxJsMNcxbWyRsb1t7Qu9/32f1GytIOWQx6MlITciGAaY3O/I
-	 /wgRy53NuugE6RzCKSxHPrRDOERfnsfDmMPLlm7ao20zGuqISpJV/4ZcC1XWFWeiQ+KnKK0xSuzR
-	 Ncc7Yw5GL6nui+Eoj83dNDBFI9zA2PGlWjhWoUG72P+uVtuZVq0uHT/4wn4tVQ4FbCLetByj492d
-	 KaR1UY3ha08pAJ+Dr8HB7KadWHST9rSCQEHi8BQYAKCatJ69JUM0oc646OX4GPKELniWMj0CDphM
-	 D3WBEp9NgYE+xrVzQEW8h1B3DGkCOfC/0p8IWAhnaejn5YrN61b9Tu+0/8ocSv0JlK+8S23yTYPY
-	 8/oZB6zlUcg2lO36apnwjl7gYkhhNiTeLO+m0JIFIzDnSxwGdWmssYlEd+pyIjJzhmT49+jCZAXU
-	 Hb4YC9cPKfRan4DQWGTX0jeRucf9PvRJzKTsgxUlyULq14S+cvQpEf8nfFNGfpxr8jOs929nTfXt
-	 DDeuEpPv8fMhT4ACJXPlBYlOJEC2lskK8cO8bgnhrzq0gBWaXLv/XR1MHhJ0aZaA0kvoqTTiCwjm
-	 nZbdprhcfYpAKBuW/O8k4Ahml//wjPimLR4WpdkKYy0yKNdN7i1SrNAORNM64r7lmsstRMoNFwUS
-	 GnEYIK1IglSQikvR2+kllrszhFkOKOCQj/+nFcH+AN/AT7wyhhVp62pu1OItZMBCY+o538p9f94h
-	 F851+6d2HyhOrcCg3KKIHnNumv3twdm1t9kkcsUGhhAQRAhOvdAHfKbkTQmjeKGCARJXjiUaXJhx
-	 KPlEJMA6FAJazWPD3BOJBeyDdXNjxHMCpfvckxdJuTUjRjqfw3Po4zGHkKJVH5FWgOkM3RLLJq27
-	 RkIXjLtdiR75Ynli62bp9vbkBy2n2XuKlBtU8+39dgtf+22uGLvjoA2At7E0HJHsWrhP5/DO+Qam
-	 cgj2V7zyM=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c229849f5b6c82eba3c2@syzkaller.appspotmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH net] net: hsr: Fix null-ptr-deref in hsr_proxy_announce
-Date: Tue, 10 Sep 2024 22:50:40 +0800
-X-OQ-MSGID: <20240910145039.2878172-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <0000000000000d402f0621c44c87@google.com>
-References: <0000000000000d402f0621c44c87@google.com>
+	s=arc-20240116; t=1725979909; c=relaxed/simple;
+	bh=uvwLVFWov70fflU6oUvnlHd70Ue9hF5ps0SZxvsS9sk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QlumY7V+qJTQs+HdxjtdorbYSN+c6iTvxfMv07rfamYdMYhUAz186+Uq6v2UHmNZaRzv+QCMdRtZgXe1OssjUEP3P52Vw9sqQ8sWnqrqvjF3exYkI9fC0B6iNNdyVP6iKBYsLxEm49I9HDU+KUTYiyrfijs83CKXizrtd+gHayc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X35kf0zP6z9v7NN;
+	Tue, 10 Sep 2024 22:32:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 1F6A7140604;
+	Tue, 10 Sep 2024 22:51:35 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDXOMntXOBmIBCoAA--.53684S2;
+	Tue, 10 Sep 2024 15:51:34 +0100 (CET)
+Message-ID: <6c7e34b65d73e9fa2ba0fd39b357b9eb42ee0449.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+ davem@davemloft.net, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
+ zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,  adrian@suse.de, ro@suse.de
+Date: Tue, 10 Sep 2024 16:51:22 +0200
+In-Reply-To: <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+	 <ZsNf1VdfkHqD8R4Q@earth.li>
+	 <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
+	 <ZsSkTs4TFfx2pK8r@earth.li>
+	 <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDXOMntXOBmIBCoAA--.53684S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4DurW5KF45Jr45Wry8Xwb_yoW8KF1Dpa
+	y8GF15AFWkJw1SyFn2k3WUurWYy39rJFy5Wwn8A3s5Crn0qFyF9F1xKF4Y9as8Wr4fCw1j
+	vrW3Jay3W3sYyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQACBGbfqvQMJwAAsL
 
-The NULL pointer is interlink, return by hsr_port_get_hsr(), before using it,
-it is necessary to add a null pointer check.
+On Tue, 2024-09-10 at 16:36 +0200, Roberto Sassu wrote:
+> On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
+> > On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
+> > > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
+> > > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
+> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > >=20
+> > > > > Support for PGP keys and signatures was proposed by David long ti=
+me ago,
+> > > > > before the decision of using PKCS#7 for kernel modules signatures
+> > > > > verification was made. After that, there has been not enough inte=
+rest to
+> > > > > support PGP too.
+> > > >=20
+> > > > You might want to update the RFC/bis references to RFC9580, which w=
+as
+> > > > published last month and updates things.
+> > >=20
+> > > Yes, makes sense (but probably isn't too much hassle to support more
+> > > things for our purposes?)
+> >=20
+> > I'm mostly suggesting that the comments/docs point to the latest
+> > standard rather than the draft version, not changing to support the new
+> > v6 keys.
+> >=20
+> > > > Also, I see support for v2 + v3 keys, and this doesn't seem like a =
+good
+> > > > idea. There are cryptographic issues with fingerprints etc there an=
+d I
+> > > > can't think of a good reason you'd want the kernel to support them.=
+ The
+> > > > same could probably be said of DSA key support too.
+> > >=20
+> > > Uhm, if I remember correctly I encountered some old PGP keys used to
+> > > verify RPM packages (need to check). DSA keys are not supported, sinc=
+e
+> > > the algorithm is not in the kernel.
+> >=20
+> > I would question the benefit gained from using obsolete key/signature
+> > types for verification (I was involved in the process of Debian droppin=
+g
+> > them back in *2010* which was later than it should have been). Dropping
+> > the code for that path means a smaller attack surface/maintenance
+> > overhead for something that isn't giving a benefit.
+>=20
+> Removed support for v3 PGP signatures... but that broke openSUSE
+> Tumbleweed.
+>=20
+> [  295.837602] PGPL: Signature packet with unhandled version 3
 
-[Syzbot reported]
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.11.0-rc6-syzkaller-00180-g4c8002277167 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: netns cleanup_net
-RIP: 0010:send_hsr_supervision_frame+0x37/0xa90 net/hsr/hsr_device.c:290
-Code: 53 48 83 ec 38 48 89 54 24 30 49 89 f7 49 89 fd 48 bb 00 00 00 00 00 fc ff df e8 54 a0 f9 f5 49 8d 6d 18 48 89 e8 48 c1 e8 03 <80> 3c 18 00 74 08 48 89 ef e8 7b e6 60 f6 48 8b 6d 00 4d 89 fc 49
-RSP: 0018:ffffc90000007a70 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: dffffc0000000000 RCX: ffff88801ced3c00
-RDX: 0000000000000100 RSI: ffffc90000007b40 RDI: 0000000000000000
-RBP: 0000000000000018 R08: ffffffff8b995013 R09: 1ffffffff283c908
-R10: dffffc0000000000 R11: ffffffff8b99ec30 R12: ffff888065030e98
-R13: 0000000000000000 R14: ffff888065030cf0 R15: ffffc90000007b40
-FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f76c4f21cf8 CR3: 000000000e734000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- hsr_proxy_announce+0x23a/0x4c0 net/hsr/hsr_device.c:420
- call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- 
-Fixes: 5f703ce5c98 ("net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data")
-Reported-by: syzbot+c229849f5b6c82eba3c2@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/hsr/hsr_device.c | 4 ++++
- 1 file changed, 4 insertions(+)
+To add more context, this patch set adds the ability to the kernel to
+verify the PGP signature of RPM packages against Linux distributions
+PGP keys.
 
-diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
-index ac56784c327..c4a06ee6fb9 100644
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -414,6 +414,9 @@ static void hsr_proxy_announce(struct timer_list *t)
- 	 * of SAN nodes stored in ProxyNodeTable.
- 	 */
- 	interlink = hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
-+	if (!interlink)
-+		goto out;
-+
- 	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
- 		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
- 			continue;
-@@ -428,6 +431,7 @@ static void hsr_proxy_announce(struct timer_list *t)
- 		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
- 	}
- 
-+out:	
- 	rcu_read_unlock();
- }
- 
--- 
-2.43.0
+The purpose of this is to verify the authenticity of such RPM packages,
+and to extract from them file digests, which are in turn used as
+reference values for integrity check (appraisal) with IMA.
+
+Roberto
 
 
