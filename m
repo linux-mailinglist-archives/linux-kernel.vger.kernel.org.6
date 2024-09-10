@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-324033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC5F974706
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0471B97470B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472171F2260E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BAE287315
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49751ABEB9;
-	Tue, 10 Sep 2024 23:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0ED192D98;
+	Tue, 10 Sep 2024 23:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xKqx0FvM"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DINhkYsf"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BADA1AC452
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E851A7062;
+	Tue, 10 Sep 2024 23:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726012315; cv=none; b=LlZH6TkWuD9isRODB2ErA9tgbFOl1Yqefm6GYTQgVtdsN2b/nmhYXYf9lEY9F6tak34sOQawp8zPmmAlOdvVA6KIGKsnzlZyDcp0rlGFCnVden8TnL+1G3EhPLc4uHxK5ZrHsNT2QwcsgkcCUAv96J0CimtkoEpI7S8y+cG8F8U=
+	t=1726012411; cv=none; b=EKCGlS4RVDq2unkdenZ/YpHy84VN5WEqPqu7O+eFJiBgsM97PCg8Fq/bfsHnzu1+RN3uBny4RVjwz2Jc37aREeQ73DIFNMkeVeogMpwHoYTIExFSZdIognRaFvUVwE13MiUtWoubrinwE1Y0Am6Xt/I0XgHT7p6Bu5bBz+5oSvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726012315; c=relaxed/simple;
-	bh=TaA6LtOkaMdzDDJLahf0mqw/Pgw5pmUHh2JeHaA8+w8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k/od2jF7CoMmmrv+0c1KgBfk1UtDWn7A6YkrmZVLKZeNSks77P0+Kvpd2IKt55FBb6hn3XunrzSdfzOH8u3rs+QiryWVx+5k2fwkqUy6g2KTjxH+eH9D/iaC38iX8s9GGBKG9abj2CQYuJgUgadm/xlkjNSnQCacYSLgFVAIxNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xKqx0FvM; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718da0821cbso3853678b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:51:52 -0700 (PDT)
+	s=arc-20240116; t=1726012411; c=relaxed/simple;
+	bh=QBUPbzW5Ujw6G55VRiUeoU7BkiPTrZ8t6vx6VzGLmoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OLfKAoA5hsEN5R1udAcqLu1e1+t5lUug/Um6SoYp9mrBxXt45NnyA0c056mERqsJ7uSP6mIUq4CDEo978EZQXkYeneh3KngvgWVKNBf0j0YfWFeuuhHtZPtcQIwFy7T2FNp8P3N7IHbiwfGmVS1SSjUI7YQUmpHGmD6Q2YBBgwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DINhkYsf; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d8a54f1250so4033135a91.0;
+        Tue, 10 Sep 2024 16:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726012312; x=1726617112; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObeoPBsB3Hucf4NtGoVRcxoG7r9sePIgIowfBO8T26o=;
-        b=xKqx0FvMxRhYFL1GzrYUqNMCbtCNC3FSCMR+L3Y/hriipEyZcpJZvZ5GcOpczYDw+q
-         6AMgc42hIq6VJPPx4ErRKbvpXWReP5/5NMlcMH0hGpbigiOAQbC/RKp/kIJxk/7goFMu
-         px5a3NtlY/L19XZRvI8YUZuR6ArTM2bQlJsVojgPN7crHN01R0jrDNueuR+tFEq/tP8N
-         m1NM6+b7r9itTEXRNC9hpfuX7x96f9gCsz9JgJMCu7+gzxw/OuSwtcTLE++EBMNtkWpO
-         yvabSgzyJpDC8y1/owLaixCiltlhL59CaRDqHXE+pTrNr+jWuaiHpzJp2B0Fu9CUYL8a
-         8HtA==
+        d=gmail.com; s=20230601; t=1726012409; x=1726617209; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ci3pK1EZN53j2koe7RgM9dHEDcCi2B70OXSAa1k1MsA=;
+        b=DINhkYsfQufQM0jk5oCHSdX7ngSKYkst4XlLNkBLAdkD4sDxTtrOIOf5ZxD0RwIYew
+         NxC+3TyKvyi2YprLlYrk4gX8sdAmY0qVrtDk5UmDEiqWPZLoNEylxdvsLRQzJCDtfjhJ
+         8oEzm8r/rR5fcmq1kX40ZpoMTKoc/EdPDFhXGrq4YBgHdOZrJWVaYCLtZlyEi+orNIZz
+         7Fjm/HzNoP1dkLp465Iub3qAKT7pTbdroSygVaaGnk615zPGIQJGjU03THhQbg1L5hJ0
+         TlJtoUQpGgHQw92tND9w6IblJBRV7k7WEAoJsBKBPu//dgmKIQQ210RaWmrpL+ayxrQ8
+         aGsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726012312; x=1726617112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObeoPBsB3Hucf4NtGoVRcxoG7r9sePIgIowfBO8T26o=;
-        b=CfTo0rpKtiODEV1qk+7khGnJacpGC8DjmdQQ8oWBeJSBhVx5JlCXGF4XC3YmZYli4R
-         Nm812DbEc8S3PR9RkYexPemdS2vFp2Mjq9GLPNID/VeBDcGPMvlxzdjy2ojBlVUj8yO7
-         6ViT3oqrx/f5oRknE0WYEvQ9lX4AbjFJVE+W8IuB8rtVC6H2puZHTddWIEG106uN8pLZ
-         BvrFGqUaMOgDZfgj/tFUQRcZMOlcRPDAKwlJsYpg5UgYpKYTBYEsrYqPDsSmnA2H6SxK
-         iC2uQWZb/F9vBAX/9Q4O4XAa7QMMTMSWQwaRUqvehkUz4XW2YsS72iwgq2YlyBlTgufh
-         JpJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEkF6Wa+Yz5Hiq5RtZAfnkdxVWeSPi5tEAFZEF8fbyaIHKEas2n7zwU3v9zrJOgXSrLB76nFKum0ouD2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWz7/ZR+NPsliNc8TD3JNcy83oevZUdOHQwj/ylys3CMAN2AdY
-	LpxQ4ysXhvrD2B3hmBT96WNatLhp5CSgelIF06icKsoXrOsJSaGdWaB9/zJt0HQ=
-X-Google-Smtp-Source: AGHT+IHsS35HDIcTQPwf6dzkSG+kKpt/cCY7Dj6LN88U4ZX8TthbEYmUyeoH840rDgYNG9UCB07f7Q==
-X-Received: by 2002:a05:6a00:2296:b0:717:d4e3:df21 with SMTP id d2e1a72fcca58-718e404ba5cmr19877655b3a.23.1726012311811;
-        Tue, 10 Sep 2024 16:51:51 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71909095124sm1896787b3a.103.2024.09.10.16.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 16:51:51 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon
- <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
- <ssantosh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Pavel
- Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: Re: [PATCH v12 1/5] PM: QoS: Export dev_pm_qos_read_value
-In-Reply-To: <20240904194229.109886-2-msp@baylibre.com>
-References: <20240904194229.109886-1-msp@baylibre.com>
- <20240904194229.109886-2-msp@baylibre.com>
-Date: Tue, 10 Sep 2024 16:51:51 -0700
-Message-ID: <7hbk0vukx4.fsf@baylibre.com>
+        d=1e100.net; s=20230601; t=1726012409; x=1726617209;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ci3pK1EZN53j2koe7RgM9dHEDcCi2B70OXSAa1k1MsA=;
+        b=UY1xmDWY8/wj975IcUZWrr9WD3kuvktX4Pl/F7aTCIdXaUfvuChKn7sNWUYxjErqFn
+         tjILjttfN2pUUCq02K8DnOceiXnDfUpla2J9AbUyzVz863v/ja2p35Mzu4bR1sh4u+wH
+         y2sUG8zEq0CWjNmCW2AaaX7e36f002Tqzgwm+eUjSc5w6AdZFxY+sW8MffkSfyzIXB+z
+         P5RM4WC33O/3QEPqMrm7drP7LN6Ug3LWpJzuoYHa1MO726dyW5zmRMdFrIn5c2TUMnC/
+         Ru27popJcZMKu+jSSoPg1bM8UEKv2JRwoowcs8JzuiW+RgsPoJPpX10r6GPX0i2Fv38n
+         VKMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbyRTKTuXIGyoZZvQGuGBNCOG6s++L/B6RDfbNsO8Tgw1I7OXP9j6c+iI1ROszdTXlgzHsuqkC+yo=@vger.kernel.org, AJvYcCX0pVFLTxCOCF/KZ0buE7HZlha0Vd/2wYCHHzo294RRaHqPCocEaIMUAN1UQaEqd/26z0wmWdzuH9xYRMDw1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrhfTgrFPd7pAK4NToZLcqXjSiUHdxt4jJfEsXM53KC6wjIlkh
+	Fm7KXdM87ePyIvN+XT3/1hJfAEyMo2pNrG95o/DalUJoGnzP3Bla
+X-Google-Smtp-Source: AGHT+IHLdk3yW2rzj6Myza6eYvFTIJyl7/R6WiSmi8f2nxW0Px5jDXFR7AF9QAWLORdGmuPapoPENA==
+X-Received: by 2002:a17:90a:bc9:b0:2d3:ba42:775c with SMTP id 98e67ed59e1d1-2dad4de1446mr19735939a91.1.1726012408905;
+        Tue, 10 Sep 2024 16:53:28 -0700 (PDT)
+Received: from [192.168.0.106] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8242b3d13sm6268729a12.52.2024.09.10.16.53.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 16:53:28 -0700 (PDT)
+Message-ID: <ea2988dd-966a-4ee2-b6d5-9eeceadead7e@gmail.com>
+Date: Wed, 11 Sep 2024 06:53:22 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: livepatch: Correct release locks antonym
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Livepatching <live-patching@vger.kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Marcos Paulo de Souza <mpdesouza@suse.com>
+References: <20240903024753.104609-1-bagasdotme@gmail.com>
+ <ZthJEsogeqfVj8jg@pathway.suse.cz>
+ <cd1340e4-f726-4ac4-9caa-8e8a3c369203@gmail.com>
+ <ZuAm-pgXO4SySyB5@pathway.suse.cz>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <ZuAm-pgXO4SySyB5@pathway.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Markus Schneider-Pargmann <msp@baylibre.com> writes:
+On 9/10/24 18:01, Petr Mladek wrote:
+> On Tue 2024-09-10 17:27:42, Bagas Sanjaya wrote:
+>> On 9/4/24 18:48, Petr Mladek wrote:
+>>> On Tue 2024-09-03 09:47:53, Bagas Sanjaya wrote:
+>>>> "get" doesn't properly fit as an antonym for "release" in the context
+>>>> of locking. Correct it with "acquire".
+>>>>
+>>>> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+>>>
+>>> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>>>
+>>> The patch is trivial. I have have committed it into livepatching.git,
+>>> branch for-6.12/trivial.
+>>>
+>>
+>> Shouldn't this for 6.11 instead? I'm expecting that though...
+> 
+> I am sorry but the change is not urgent enough to be rushed into 6.11.
+> 
 
-> In the ti_sci driver we would like to pass the resume latencies set on
-> devices to the firmware so it can decide which power mode is the best to
-> choose. To be able to build a driver using this function as a module,
-> this function should be exported.
->
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+OK, thanks!
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-Rafael, if there are no objects, feel free to take this one via your
-tree.  Thanks!
-
-Kevin
-
-> ---
->  drivers/base/power/qos.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/base/power/qos.c b/drivers/base/power/qos.c
-> index bd77f6734f14..ff393cba7649 100644
-> --- a/drivers/base/power/qos.c
-> +++ b/drivers/base/power/qos.c
-> @@ -137,6 +137,7 @@ s32 dev_pm_qos_read_value(struct device *dev, enum dev_pm_qos_req_type type)
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(dev_pm_qos_read_value);
->  
->  /**
->   * apply_constraint - Add/modify/remove device PM QoS request.
-> -- 
-> 2.45.2
+-- 
+An old man doll... just what I always wanted! - Clara
 
