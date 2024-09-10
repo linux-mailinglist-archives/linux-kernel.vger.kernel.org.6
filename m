@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-323845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B91974428
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:40:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5A597442D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C32E1F27331
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E621B2162A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF6B1AAE2A;
-	Tue, 10 Sep 2024 20:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22C1AAE26;
+	Tue, 10 Sep 2024 20:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="FYZ/F6Fa"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh394ID6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739A4197A6B;
-	Tue, 10 Sep 2024 20:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D321A7074;
+	Tue, 10 Sep 2024 20:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726000826; cv=none; b=eYTW2fWJpGjtUV+QJZBqNomil44FQRNiONzTApCbpH1fh+CURPSh4v2+WhMzSKc9RHc8gVqfBkt0uqlf0zGk5vqU0h/OFpoFhB7tuQm8+M6zN3fEzVsU07mLnFJE4Kurxel3dbt7nAgJRNgyeSPUGkj1QkPNp+mXZDjatcRjAs8=
+	t=1726000847; cv=none; b=WEZymri2mvBeI5TQcNFVHHSfuq9mNJ9p0M2zfh6Dz6keRt39+N8ZDrO0OIjjWlxI55inlH7F7StQUoZT9i3DOzIjdfv3Sb7uN5uLRgw36HtYy/8OURmLPhO3uXCTfQ2RIOkOQbu9P7GcbJPk9nuPyqq6vE81KRINqi1q/B3GlDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726000826; c=relaxed/simple;
-	bh=6T7SOnIsI601KN0KFoLcN/ZzSCZuK2pskDXrkO5CCWY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gJIS7tzPGw/rD+pfH4W7sKnMn6K1Nq8GPgArxO1qPheJZz8Ci6zKO7IAGBnkuiZ6rELYnwDRHRBMkMe1ldee2vAamoEcmPtqoyeJoPTjWIfbMFe1m9XLIlhv02/kyE1sjiX8qKDUJfoDmB63QMJuUscqGsIXLboUvz165qIAqhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=FYZ/F6Fa; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726000824; x=1757536824;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XY4SJY6vgtWRAaNWx9MgjEkq7Me3c0gkRLKGE36HnnA=;
-  b=FYZ/F6FaH22P5o5Ge0hT5foSZRSzE3fR7d/gbcqowzBFDMhF7fgxrnH/
-   R9q0u4sFDlhoKxGOrFoGBPH1bRvLENEX81HVfOb/586SB1xb9WmP1Ylf4
-   MZL991IITs/iE8PA6XQauSI0q9CqVKRmUvpMZ+Fz/+sWF4Psfbp1mb0Zu
-   U=;
-X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
-   d="scan'208";a="329665798"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 20:40:22 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:19696]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.222:2525] with esmtp (Farcaster)
- id ba656067-30b6-43dd-804c-bc9ab56be096; Tue, 10 Sep 2024 20:40:22 +0000 (UTC)
-X-Farcaster-Flow-ID: ba656067-30b6-43dd-804c-bc9ab56be096
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 10 Sep 2024 20:40:20 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 10 Sep 2024 20:40:18 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <justin.iurman@uliege.be>
-CC: <aahringo@redhat.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next] ipv6: rpl: free skb
-Date: Tue, 10 Sep 2024 13:40:10 -0700
-Message-ID: <20240910204010.96400-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240910100032.18168-1-justin.iurman@uliege.be>
-References: <20240910100032.18168-1-justin.iurman@uliege.be>
+	s=arc-20240116; t=1726000847; c=relaxed/simple;
+	bh=IV+E/Nab4aUEnTT5sV8auZs9usgjz9R4Smx4eJ8YIxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUrb66zFTQGnJam0bUs+pVt2WjhzktS45nxBrkH58wvTIHl9oquhkv1hRC2JIXJ4i6ZALqngN/3v5VhNfhcpkz85TrAQTlevgun9bDaP3z1p2PveGAsUs5B7eK7fbeTFCY6vG0vMEv2Eyyr2dqVHzGjS2V8+1cmV9XC1T9Ap5wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uh394ID6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392C2C4CEC3;
+	Tue, 10 Sep 2024 20:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726000847;
+	bh=IV+E/Nab4aUEnTT5sV8auZs9usgjz9R4Smx4eJ8YIxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uh394ID6AyTHCEER2cldwJG3XQligGj0xFT1q/gUAQJF41TjdwaGAwC6MmtJLlA1X
+	 yJ+hFST9+u8e5BOKzPaG6M2EUF55lzXciR8PQEN8gj8ZmoMSpuvevg3B8dFgbWblgs
+	 6T0z5pnvn5Z3DDZ09B1k+LdsP4yundereO7dNBK8u9DwEFiX4XnFyIgYMBAbx7bDXD
+	 AGM6MflVkWxbuHeRbugG7E6L6korebN0FAlVaAM/a+wElJAEZ25XugajpYtK0YTrMj
+	 Qai7kWemnBUOFUZLv+DWDv8fT0jwPgBglaCY4iZIeHliL3+cXsR1mOc44MMX/mgIdw
+	 CuDlLzlguItuQ==
+Date: Tue, 10 Sep 2024 10:40:46 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Chen Ridong <chenridong@huawei.com>
+Subject: Re: [PATCH 1/4] memcg: Cleanup with !CONFIG_MEMCG_V1
+Message-ID: <ZuCuzmLh94r4hj7x@slm.duckdns.org>
+References: <20240909163223.3693529-1-mkoutny@suse.com>
+ <20240909163223.3693529-2-mkoutny@suse.com>
+ <ZuCmpW2JFFAxmGvS@slm.duckdns.org>
+ <20240910131900.65e40be84b7f70261c62e154@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWB002.ant.amazon.com (10.13.139.175) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+In-Reply-To: <20240910131900.65e40be84b7f70261c62e154@linux-foundation.org>
 
-From: Justin Iurman <justin.iurman@uliege.be>
-Date: Tue, 10 Sep 2024 12:00:32 +0200
-> Make rpl_input() free the skb before returning when skb_cow_head()
-> fails. Use a "drop" label and goto instructions.
+On Tue, Sep 10, 2024 at 01:19:00PM -0700, Andrew Morton wrote:
+> On Tue, 10 Sep 2024 10:05:57 -1000 Tejun Heo <tj@kernel.org> wrote:
 > 
-> Note: if you think it should be a fix and target "net" instead, let me
-> know.
-
-Please do so.
-
-For the future submission, this kind of note and changelog between
-each revision can be placed after '---' below so that it will disappear
-during merge.
-
+> > On Mon, Sep 09, 2024 at 06:32:20PM +0200, Michal Koutný wrote:
+> > > Extern declarations have no definitions with !CONFIG_MEMCG_V1 and no
+> > > users, drop them altogether.
+> > > 
+> > > Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> > 
+> > Acked-by: Tejun Heo <tj@kernel.org>
+> > 
+> > This one should go through -mm. If Andrew doesn't pick it up from this
+> > thread, it might be better to repost it.
+> > 
 > 
-> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
-> ---
->  net/ipv6/rpl_iptunnel.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/net/ipv6/rpl_iptunnel.c b/net/ipv6/rpl_iptunnel.c
-> index 2c83b7586422..db3c19a42e1c 100644
-> --- a/net/ipv6/rpl_iptunnel.c
-> +++ b/net/ipv6/rpl_iptunnel.c
-> @@ -263,10 +263,8 @@ static int rpl_input(struct sk_buff *skb)
->  	rlwt = rpl_lwt_lwtunnel(orig_dst->lwtstate);
->  
->  	err = rpl_do_srh(skb, rlwt);
-> -	if (unlikely(err)) {
-> -		kfree_skb(skb);
-> -		return err;
-> -	}
-> +	if (unlikely(err))
-> +		goto drop;
->  
->  	local_bh_disable();
->  	dst = dst_cache_get(&rlwt->cache);
-> @@ -286,9 +284,13 @@ static int rpl_input(struct sk_buff *skb)
->  
->  	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
->  	if (unlikely(err))
-> -		return err;
-> +		goto drop;
->  
->  	return dst_input(skb);
-> +
-> +drop:
-> +	kfree_skb(skb);
-> +	return err;
->  }
->  
->  static int nla_put_rpl_srh(struct sk_buff *skb, int attrtype,
-> -- 
+> Yep, thanks, I grabbed all four patches.
+
+Oh, I applied the latter three to the cgroup tree. Should be easy to figure
+out later.
+
+Thanks.
+
+-- 
+tejun
 
