@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-322556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C315972AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:32:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91080972AD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA22F282FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF3E1C23ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8784917E002;
-	Tue, 10 Sep 2024 07:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FC917DE36;
+	Tue, 10 Sep 2024 07:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWlNQJJo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oMzpcFD5"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA5D17D36A;
-	Tue, 10 Sep 2024 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB30617D346
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953488; cv=none; b=hZnimcp86706GOT1dupIWw9pZ/v910sVKuH6n9oVrGZ7nz7+QPHqaYk9Zm3IXMUP1GahalC50W9jPw10TXvs+2dM8T5/qqTwbVDFhpEkopO7bj6vKsfAlyYixGMBzhHGGU7RlsHPA1KXC7ynGX0f3KZ5CRqtbGOdeSaxf04Sy98=
+	t=1725953490; cv=none; b=MhqtBKk+arkna0Fe2a+2R90iqvjJdZ4mUO3iFFoX+68sj2c8UaDptGSLZMEWh8gdgUGvRhoo6F30KikkaZsVUdcVPWvAkG7SIcXb5skGGCbhk60VOXXFwpQbeUnL5MnRcF4aVSDiN9M8n3xgdjKxTcHUcXZb0R8pX3yEoL81/xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953488; c=relaxed/simple;
-	bh=YCt4NxJsOXft7UfvMh7H9xp0+sm0JgX70NcVCPZFffQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XjaO0/sDLghUxNphcbxtxnYoU0Al4xNY5J1QcJqDOD7IrCs+flBSrLIfvffO3YTVSDzy9OlmXOavulWgxa7COFCf8SvRVMvFmUDXJ0J59jvHyD6/I6a3DPJkoz0NgARV4hk5bhzsGYRSfDNwjPAYswDlc/3t08NB/eFoXd5SPSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWlNQJJo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEDCC4CEC6;
-	Tue, 10 Sep 2024 07:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725953488;
-	bh=YCt4NxJsOXft7UfvMh7H9xp0+sm0JgX70NcVCPZFffQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IWlNQJJoOjDT5iBQKfNe4zns/uYkM4Q52x3ONsnQKzjcLdHDXICznjI6tC8/a43ew
-	 c2tlhhMjDcGB8DqQ9KN5ZRzpgne9NcLCxizWHVjSitFpoEAp7FI/uYK6dvoKQtSHQs
-	 sfzwQQhLo8J+yDwKVsm5b+0IdxrspkovcY+k1OPZL3eSyNVhG4NRqfqLJOu0fSMOdb
-	 xvRRhOxE6vU5uHjDzfgt66OBTyC3LSNzA/Aug3R+sL/CrgopOEeiS8waw+f1pkT+JE
-	 9sONWo54MNwbwupZh2BHq7fcBpEjGGZJN2YTFLuqtC3UQIsdiSmgi7OVY0gIJmhOlz
-	 cuv5DV0xs9NQg==
-Message-ID: <08b9c12d-1b53-4036-88fa-4ed086f6938d@kernel.org>
-Date: Tue, 10 Sep 2024 09:31:21 +0200
+	s=arc-20240116; t=1725953490; c=relaxed/simple;
+	bh=90iErQjUuxlZuLvLxHWwZTKsBLvAE0hLjm8Girdgx/8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GPWcgucJcJbmavvv6bPV5cIz5vw24zV4cqzqukaabvR11FEgwVKq025JmMSVpkRV2sQ8kM0JkkxZJSneSJDKyTk+GKVmu2Ig9RFApsKI/q+BgimQ3MlwVB94+AjeVv6bRaN5Eu9FrwANOHyVCWEGNCL+4UoB8o9DCufPS39yw/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oMzpcFD5; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b2249bf2d0so155170077b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725953487; x=1726558287; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iJF/m32H/gSTOtDci0bGeFjM2c8K5gpqBOSZEpRycYk=;
+        b=oMzpcFD5v6K9M71PPwB4CYtolR2F1HOgh8iyc1YbLWf4pvfTXC0BqDLjSbEmVDXQbR
+         gtzeiI+gX0BhP9uSid3aCd3ygox1AoXu0Qj+xVLOOXT/2O6HTqPM1jsrseXvjN8HdOYy
+         RxCYS8nF3/sII2UqvTk3sEgxtpk1Rmk30Z4sxSdU15rypxR20s3F+02mKihKbm2SzwyC
+         jfH2Nxei+e1MqsbTrG/vqVgJvwvLBsI4F3PzN4mGXq7wB1Y7m91U53xR8GECLiDM4Mju
+         xOzh0nPOMTM54HAmZsmml609Omon5VB1bbRlR15pNBwd03w5aUj+gDOSfr2XNJqv04Dd
+         K3Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725953487; x=1726558287;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iJF/m32H/gSTOtDci0bGeFjM2c8K5gpqBOSZEpRycYk=;
+        b=oi8NpSrUSVm4xoG1gQKwVtbtN2dN8jEO3IxGtrItqdSK7j7EiC4BCCSLy+ezZJz/t1
+         ayMl1dwhK0rr6V9JsgB8bra361NIBX2GK70+vCXtmgWXfz1K04IbnE8eVn6y46OYmdHd
+         taXlLyJ29H5Xxxo1+MgPVlI/SOGOCR/+lG93EeaAHhstmUiw0/wqWSNl0gIHb3yZzDA4
+         SAhCTi7wmqsfPTr0fKVb9ObicAhM7p5sn1Wo1N5AjOwAO8Iy1/5PmOPfF6Csqa6aNJ46
+         1RJkouCYrUdEGbsJZPGGJuOC4luykzn0H6cF22JVmV9lxmcTkNIjuhhRmN++vYos6hBt
+         l7tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiSnAx2Oi6qhz0XDVd1HYAxGqzLx+HYn2aOp/WOJCB/20pixDUi5lxs95Dxivw0pXHE7An1mxTWKnPcOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB/MTgMSQvwTZurs4uEserPQaYik1rZfC6voDZj2Kxxfd6DZrI
+	ZcvDi+OJ0it+00YwrsDSdGYNbBbmT34dNZk+XfEvA017bM2SQiN410kEehEheVW1MnFIaxupdGL
+	lkrbLkWZ6C3pcgEO/hg==
+X-Google-Smtp-Source: AGHT+IEhwdMjndZFC3i4poKbvtH8lAHK/uqKnN/s5k3PNYjKW74EYSM43oKDyzJ/vCyOoq4uBwnRAOwSYQUOSV3+
+X-Received: from vdonnefort.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2eea])
+ (user=vdonnefort job=sendgmr) by 2002:a05:690c:3746:b0:690:d536:27e1 with
+ SMTP id 00721157ae682-6db44d4dc82mr11184727b3.2.1725953487457; Tue, 10 Sep
+ 2024 00:31:27 -0700 (PDT)
+Date: Tue, 10 Sep 2024 08:31:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Enable watchdog2
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20240910031420.2295727-1-Delphine_CC_Chiu@wiwynn.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240910031420.2295727-1-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Message-ID: <20240910073123.2362028-1-vdonnefort@google.com>
+Subject: [PATCH v2] module: Refine kmemleak scanned areas
+From: Vincent Donnefort <vdonnefort@google.com>
+To: mcgrof@kernel.org
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com, Vincent Donnefort <vdonnefort@google.com>, Song Liu <song@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/09/2024 05:14, Delphine CC Chiu wrote:
-> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-> 
-> Enable watchdog2 setting for yosemite4 system.
-> 
-> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+commit ac3b43283923 ("module: replace module_layout with module_memory")
+introduced a set of memory regions for the module layout sharing the
+same attributes. However, it didn't update the kmemleak scanned areas
+which intended to limit kmemleak scan to sections containing writable
+data. This means sections such as .text and .rodata are scanned by
+kmemleak.
 
-Nothing improved.
+Refine the scanned areas for modules by limiting it to MOD_TEXT and
+MOD_INIT_TEXT mod_mem regions.
 
-I don't understand why you keep sending the same, ignoring feedback.
+CC: Song Liu <song@kernel.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 
-Best regards,
-Krzysztof
+---
+
+v1 -> v2:
+  - Collect Reviewed-by tag
+
+diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+index 12a569d361e8..b4cc03842d70 100644
+--- a/kernel/module/debug_kmemleak.c
++++ b/kernel/module/debug_kmemleak.c
+@@ -12,19 +12,9 @@
+ void kmemleak_load_module(const struct module *mod,
+ 			  const struct load_info *info)
+ {
+-	unsigned int i;
+-
+-	/* only scan the sections containing data */
+-	kmemleak_scan_area(mod, sizeof(struct module), GFP_KERNEL);
+-
+-	for (i = 1; i < info->hdr->e_shnum; i++) {
+-		/* Scan all writable sections that's not executable */
+-		if (!(info->sechdrs[i].sh_flags & SHF_ALLOC) ||
+-		    !(info->sechdrs[i].sh_flags & SHF_WRITE) ||
+-		    (info->sechdrs[i].sh_flags & SHF_EXECINSTR))
+-			continue;
+-
+-		kmemleak_scan_area((void *)info->sechdrs[i].sh_addr,
+-				   info->sechdrs[i].sh_size, GFP_KERNEL);
++	/* only scan writable, non-executable sections */
++	for_each_mod_mem_type(type) {
++		if (type != MOD_DATA && type != MOD_INIT_DATA)
++			kmemleak_no_scan(mod->mem[type].base);
+ 	}
+ }
+
+base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+-- 
+2.46.0.598.g6f2099f65c-goog
 
 
