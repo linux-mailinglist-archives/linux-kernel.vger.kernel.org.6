@@ -1,263 +1,180 @@
-Return-Path: <linux-kernel+bounces-323626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245239740CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:41:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810159740D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C6D1F22462
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C35F1F21E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EDE1A4AC6;
-	Tue, 10 Sep 2024 17:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWPvvdtr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D11A4F3B;
+	Tue, 10 Sep 2024 17:38:42 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63619D8A4;
-	Tue, 10 Sep 2024 17:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064D1A3BCA;
+	Tue, 10 Sep 2024 17:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725989916; cv=none; b=Yb4IIv3Quh4rlN0ST/SGFQILsMMtPE5HFnGXY6sB6I3dgPZePOPBva5D9ueUycjFgKA3iED1yc0NL3Wq0fOa1rn/+IqeYd1gUScnSmXWNwYQIr9OPl3RPTk8lpGqikLXvrK7n1FUuz1FTsP4vYIFXee8Lu7jhLJSC4AYUyT6eCs=
+	t=1725989921; cv=none; b=gQm+hjcC30jIgq7PvfR5RzX4RDXqrEPKnmghHUENz8ij1R88ZCRicxESBUnzLawjB6yPw4X8fbFF0MiGEWauIthzo+nqcYzPaVgALkX+b3BNPnB6uWT4TgrcPzf3fC+rCJ0OLR7JFwqlMOobVsWIrN7RL7TfPwEAkFAnowb6+UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725989916; c=relaxed/simple;
-	bh=V3TbLJmBJh/RUf9NWcwcwaoIBu22nRcRBhAdtaOmmx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RWR6xzLvtBSrTe00aXpNPRS0okBCyYNlSUvyOZNk78T64LhKWs+3iyC9HK/C2vd5MThUkzG++jokw63Ni0jZP0ZIvFs2xRNT/yU3SMqtnoEI64LvF5RJHAkUe2PqT7qcUlhwMZ6MxFqYorrBM6x5kxEbkGMj9fAtmyEPWbmTzPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWPvvdtr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B858DC4CEC3;
-	Tue, 10 Sep 2024 17:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725989915;
-	bh=V3TbLJmBJh/RUf9NWcwcwaoIBu22nRcRBhAdtaOmmx8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AWPvvdtrGpaFnZ+m8UY7CkqmlFRy01oDMQ/Fm1mmY4ngdlWzr4Y/IiJAU7kT9mLeh
-	 is/CNN0NsNBzzmunj1KK2/ekwLSPbcWcJXJHoUv5S/ZJo8EFpiLozzZiLLWzPXEe2E
-	 eKbv7jZZJ2XkT5dgFCYghrnjYUKM7ilMuSnlfYLbym8KIOL2BSl/LSp0bQYvWaWQH3
-	 AmQuwZUZ6qks7UzltsK3B1JepLiCcWu4usFhOfu07iALagnGlIw+b6ffpdHbVwOsDd
-	 Ed77C3JcTDTGGZYNF/03tM5nkIpBkLpBEWE8odtdC8zl5uRkC2Rhe2l13o+Qg1Rx2l
-	 Bck14E5flotXw==
-Message-ID: <7df37a43-e2d6-4775-859d-1ca05f456e21@kernel.org>
-Date: Tue, 10 Sep 2024 20:38:28 +0300
+	s=arc-20240116; t=1725989921; c=relaxed/simple;
+	bh=5dohZWBS/7W3nObqx7vNRfXJnQ+q1SPUZ+exJOqVwpQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pP/OcLsLEUN2u5T1Unoj9AA3x1WUDe6xlwQNirg/RhjHvACc0H9G/Y61KEHoruvdQndTbRfbuI/j1yDgesWuKfNV4ihQ2yC8HW3POOcAwyC9C7Ev8YWXxyvIY86v1Fcrx+KZ5FSxeHLm3YayU/ZQnI8xZPLHn9VHzJ7iN0Raguw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.106] (178.176.76.166) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 10 Sep
+ 2024 20:38:32 +0300
+Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+To: Jarkko Sakkinen <jarkko@kernel.org>, Roman Smirnov <r.smirnov@omp.ru>,
+	David Howells <dhowells@redhat.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>
+CC: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+References: <20240910111806.65945-1-r.smirnov@omp.ru>
+ <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
+Date: Tue, 10 Sep 2024 20:38:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 4/5] net: ti: icssg-prueth: Enable HSR Tx
- duplication, Tx Tag and Rx Tag offload
-To: MD Danish Anwar <danishanwar@ti.com>, robh@kernel.org,
- jan.kiszka@siemens.com, dan.carpenter@linaro.org, saikrishnag@marvell.com,
- andrew@lunn.ch, javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
- diogo.ivo@siemens.com, horms@kernel.org, richardcochran@gmail.com,
- pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Ravi Gunasekaran <r-gunasekaran@ti.com>
-References: <20240906111538.1259418-1-danishanwar@ti.com>
- <20240906111538.1259418-5-danishanwar@ti.com>
+In-Reply-To: <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240906111538.1259418-5-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/10/2024 17:22:53
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 187670 [Sep 10 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
+ 766319f57b3d5e49f2c79a76e7d7087b621090df
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.76.166
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/10/2024 17:27:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/10/2024 3:10:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+On 9/10/24 4:38 PM, Jarkko Sakkinen wrote:
+[...]
 
-
-On 06/09/2024 14:15, MD Danish Anwar wrote:
-> From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
+>> the kernel will first emit WARN and then have an oops because id_2 gets
+>> dereferenced anyway.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with Svace static
+>> analysis tool.
 > 
-> The HSR stack allows to offload its Tx packet duplication functionality to
-> the hardware. Enable this offloading feature for ICSSG driver. Add support
-> to offload HSR Tx Tag Insertion and Rx Tag Removal and duplicate discard.
+> Weird, I recall that I've either sent a patch to address the same site
+> OR have commented a patch with similar reasoning. Well, it does not
+> matter, I think it this makes sense to me.
 > 
-> Inorder to enable hsr-tag-ins-offload, hsr-dup-offload must also be enabled
+> You could further add to the motivation that given the panic_on_warn
+> kernel command-line parameter, it is for the best limit the scope and
+> use of the WARN-macro.
 
-"In order"
+   I don't understand what you mean -- this version of the patch keeps
+the WARN_ON() call, it just moves that call, so that the duplicate id_{0,1,2}
+checks are avoided...
 
-> as these are tightly coupled in the firmware implementation.
+>> Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
 > 
-> Duplicate discard is done as part of RX tag removal and it is
-> done by the firmware. When driver sends the r30 command
-> ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE, firmware does RX tag removal as well as
-> duplicate discard.
+> I would still call this an improvement. It overuses warn but I don't
+> think this a bug. 
+
+   I think warning about passing all NULL ptrs but then causing a NULL ptr
+deref anyway wasn't really intended -- seems like a bug to me...
+ 
+>> Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+>> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+>> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+>> ---
+
+   I forgot to tell Roman to place the changelog here when doing an internal
+review. Anyway, here is some from me:
+
+Changed in v2:
+- kept the WARN_ON() call, just moved it to avoid extra prr checks, updated
+  the patch description accordingly;
+- reworded the patch description according to feedback.
+
+[...]
+
+>> diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+>> index a5da8ccd353e..43af5fa510c0 100644
+>> --- a/crypto/asymmetric_keys/asymmetric_type.c
+>> +++ b/crypto/asymmetric_keys/asymmetric_type.c
+>> @@ -60,17 +60,18 @@ struct key *find_asymmetric_key(struct key *keyring,
+>>  	char *req, *p;
+>>  	int len;
+>>  
+>> -	WARN_ON(!id_0 && !id_1 && !id_2);
+>> -
+>>  	if (id_0) {
+>>  		lookup = id_0->data;
+>>  		len = id_0->len;
+>>  	} else if (id_1) {
+>>  		lookup = id_1->data;
+>>  		len = id_1->len;
+>> -	} else {
+>> +	} else if (id_2) {
+>>  		lookup = id_2->data;
+>>  		len = id_2->len;
+>> +	} else {
+>> +		WARN_ON(1);
 > 
-> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  drivers/net/ethernet/ti/icssg/icssg_common.c | 18 ++++++++++---
->  drivers/net/ethernet/ti/icssg/icssg_config.c |  4 ++-
->  drivers/net/ethernet/ti/icssg/icssg_config.h |  2 ++
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 28 +++++++++++++++++++-
->  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 +++
->  5 files changed, 50 insertions(+), 5 deletions(-)
+> This is totally fine. It is an improvement to the current situation.
+
+   That update also fixes a kernel oops...
+
+>> +		return ERR_PTR(-EINVAL);
+>>  	}
+>>  
+>>  	/* Construct an identifier "id:<keyid>". */
 > 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-> index b9d8a93d1680..fdebeb2f84e0 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-> @@ -660,14 +660,15 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
->  {
->  	struct cppi5_host_desc_t *first_desc, *next_desc, *cur_desc;
->  	struct prueth_emac *emac = netdev_priv(ndev);
-> +	struct prueth *prueth = emac->prueth;
->  	struct netdev_queue *netif_txq;
->  	struct prueth_tx_chn *tx_chn;
->  	dma_addr_t desc_dma, buf_dma;
-> +	u32 pkt_len, dst_tag_id;
->  	int i, ret = 0, q_idx;
->  	bool in_tx_ts = 0;
->  	int tx_ts_cookie;
->  	void **swdata;
-> -	u32 pkt_len;
->  	u32 *epib;
->  
->  	pkt_len = skb_headlen(skb);
-> @@ -712,9 +713,20 @@ enum netdev_tx icssg_ndo_start_xmit(struct sk_buff *skb, struct net_device *ndev
->  
->  	/* set dst tag to indicate internal qid at the firmware which is at
->  	 * bit8..bit15. bit0..bit7 indicates port num for directed
-> -	 * packets in case of switch mode operation
-> +	 * packets in case of switch mode operation and port num 0
-> +	 * for undirected packets in case of HSR offload mode
->  	 */
-> -	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, (emac->port_id | (q_idx << 8)));
-> +	dst_tag_id = emac->port_id | (q_idx << 8);
-> +
-> +	if (prueth->is_hsr_offload_mode &&
-> +	    (ndev->features & NETIF_F_HW_HSR_DUP))
-> +		dst_tag_id = PRUETH_UNDIRECTED_PKT_DST_TAG;
-> +
-> +	if (prueth->is_hsr_offload_mode &&
-> +	    (ndev->features & NETIF_F_HW_HSR_TAG_INS))
-> +		epib[1] |= PRUETH_UNDIRECTED_PKT_TAG_INS;
-> +
-> +	cppi5_desc_set_tags_ids(&first_desc->hdr, 0, dst_tag_id);
->  	k3_udma_glue_tx_dma_to_cppi5_addr(tx_chn->tx_chn, &buf_dma);
->  	cppi5_hdesc_attach_buf(first_desc, buf_dma, pkt_len, buf_dma, pkt_len);
->  	swdata = cppi5_hdesc_get_swdata(first_desc);
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> index 7b2e6c192ff3..72ace151d8e9 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
-> @@ -531,7 +531,9 @@ static const struct icssg_r30_cmd emac_r32_bitmask[] = {
->  	{{EMAC_NONE,  0xffff4000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx ENABLE*/
->  	{{EMAC_NONE,  0xbfff0000, EMAC_NONE, EMAC_NONE}},	/* Preemption on Tx DISABLE*/
->  	{{0xffff0010,  EMAC_NONE, 0xffff0010, EMAC_NONE}},	/* VLAN AWARE*/
-> -	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}}	/* VLAN UNWARE*/
-> +	{{0xffef0000,  EMAC_NONE, 0xffef0000, EMAC_NONE}},	/* VLAN UNWARE*/
-> +	{{0xffff2000, EMAC_NONE, EMAC_NONE, EMAC_NONE}},	/* HSR_RX_OFFLOAD_ENABLE */
-> +	{{0xdfff0000, EMAC_NONE, EMAC_NONE, EMAC_NONE}}		/* HSR_RX_OFFLOAD_DISABLE */
->  };
->  
->  int icssg_set_port_state(struct prueth_emac *emac,
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> index 1ac60283923b..92c2deaa3068 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
-> @@ -80,6 +80,8 @@ enum icssg_port_state_cmd {
->  	ICSSG_EMAC_PORT_PREMPT_TX_DISABLE,
->  	ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE,
->  	ICSSG_EMAC_PORT_VLAN_AWARE_DISABLE,
-> +	ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE,
-> +	ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE,
->  	ICSSG_EMAC_PORT_MAX_COMMANDS
->  };
->  
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> index 676168d6fded..9af06454ba64 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> @@ -41,7 +41,10 @@
->  #define DEFAULT_PORT_MASK	1
->  #define DEFAULT_UNTAG_MASK	1
->  
-> -#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	NETIF_F_HW_HSR_FWD
-> +#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	(NETIF_F_HW_HSR_FWD | \
-> +						 NETIF_F_HW_HSR_DUP | \
-> +						 NETIF_F_HW_HSR_TAG_INS | \
-> +						 NETIF_F_HW_HSR_TAG_RM)
->  
->  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
->  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
-> @@ -758,6 +761,21 @@ static void emac_change_hsr_feature(struct net_device *ndev,
->  	}
->  }
->  
-> +static netdev_features_t emac_ndo_fix_features(struct net_device *ndev,
-> +					       netdev_features_t features)
-> +{
-> +	/* In order to enable hsr tag insertion offload, hsr dup offload must
-> +	 * also be enabled as these two are tightly coupled in firmware
-> +	 * implementation.
-> +	 */
-> +	if (features & NETIF_F_HW_HSR_TAG_INS)
-> +		features |= NETIF_F_HW_HSR_DUP;
+> Can be applied as an improvement and with the added bits about
+> panic_on_warn to the commit message.
 
-What if only NETIF_F_HW_HSR_DUP was set? Don't you have to set NETIF_F_HW_HSR_TAG_INS as well?
+   We no longer care about panic_on_warn...
 
-> +	else
-> +		features &= ~NETIF_F_HW_HSR_DUP;
+> BR, Jarkko
 
-what if NETIF_F_HW_HSR_DUP was still set?
-
-I think you need to write a logic like follows.
-	if both are already cleared in ndev->features and any one is set in features you set both in features.
-	if both are already set in ndev->features and any one is cleared in features you clear both in features.
-
-is this reasonable?
-
-> +
-> +	return features;
-> +}
-> +
->  static int emac_ndo_set_features(struct net_device *ndev,
->  				 netdev_features_t features)
->  {
-> @@ -780,6 +798,7 @@ static const struct net_device_ops emac_netdev_ops = {
->  	.ndo_eth_ioctl = icssg_ndo_ioctl,
->  	.ndo_get_stats64 = icssg_ndo_get_stats64,
->  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
-> +	.ndo_fix_features = emac_ndo_fix_features,
->  	.ndo_set_features = emac_ndo_set_features,
->  };
->  
-> @@ -1007,6 +1026,13 @@ static void icssg_change_mode(struct prueth *prueth)
->  
->  	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
->  		emac = prueth->emac[mac];
-> +		if (prueth->is_hsr_offload_mode) {
-> +			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
-> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
-> +			else
-> +				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
-> +		}
-> +
->  		if (netif_running(emac->ndev)) {
->  			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
->  					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> index a4b025fae797..bba6da2e6bd8 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> @@ -59,6 +59,9 @@
->  
->  #define IEP_DEFAULT_CYCLE_TIME_NS	1000000	/* 1 ms */
->  
-> +#define PRUETH_UNDIRECTED_PKT_DST_TAG	0
-> +#define PRUETH_UNDIRECTED_PKT_TAG_INS	BIT(30)
-> +
->  /* Firmware status codes */
->  #define ICSS_HS_FW_READY 0x55555555
->  #define ICSS_HS_FW_DEAD 0xDEAD0000	/* lower 16 bits contain error code */
-
--- 
-cheers,
--roger
+MBR, Sergey
 
