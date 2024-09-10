@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-322519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6247972A3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D86C972A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E801C240D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:08:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4841F23DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CA217C21E;
-	Tue, 10 Sep 2024 07:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CD517C9B9;
+	Tue, 10 Sep 2024 07:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YmHzDAPO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vVSTO2TF"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FBE17BB1A;
-	Tue, 10 Sep 2024 07:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DD18309B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952090; cv=none; b=kc1bzpLqwdGGlTqs0sjclx9NTjwv2U/h0wzgQXiYkY0DbbVP2rib5Cn2cxaK7Hwy+OjJqoYTLWNEngLuywiOOPeIlO6TrR/K67jtesT5RRiDLruJ13Y6Awc3ngjNoqIYZN5ZibHzpUthnj1f6OTL+vRAsSbbOEKYR9UJgRoFhvo=
+	t=1725952112; cv=none; b=ZCACiO7/PcUUzPqX4bIo9JCkbssPYDTKetM2T0RJ+klErn6mkdNz6XUDh+ZNNAs+IAh382VnIUwDll73iA8gseBxKxJdqfKOjpGmboxNu55/4qiauXBlZ2P+KcMZYGfeSGVYg/v5DLOEENMcK5FDzINeq+cIJY3w/ZqGmKN0gMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952090; c=relaxed/simple;
-	bh=V1J6HYaNIi0kxdp1i7xtFJaVP1RaW0C5i4reV5ZcDrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSG6DxSy1NtlSqYaBbD9/SrgxGg/nd1JMJpeXXli71A1N4NeYF8rlQVGBg/At9b9bvrfHUdwXN+uoVsGEIZSvZOCpsMvIe4px5HZz2+xdlIpoPOpC7GOmTA4fmV8Sb2PNeZLejBtsCl1GMOySkcy2cs1BOOLe1XzcLFwTxiOzA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YmHzDAPO; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725952089; x=1757488089;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=V1J6HYaNIi0kxdp1i7xtFJaVP1RaW0C5i4reV5ZcDrY=;
-  b=YmHzDAPOhYwbx9t51pBFQK9qcoUkxFe2BVAlPUcnBlzt+I3w2Wr2K9eE
-   E5wtdHlRc1bO4ZXEEr7DiQRUX2iGsogHcfUFRoYcl7BbiKIz9m4lmPHnq
-   EsKjINJx4MZa5nQfzfqMauDTuEDXGXcuP/qQfJqpegeVMoiFCtOkMrtma
-   47Lr/Es45zOam8jG7ZkEqpV7j8TDi8CDvCIuNCEM3eWZvNbvw5wvOkuAC
-   thlN1/b/K2oDttfFiVzpqjFvxJ/o2bxInBb1K6Y+xXQc8lhCPeizBm/yk
-   yOT2sCrkmoyZs8D6NOuaJIDuj/LH12nBkA1Q7lSJBn+m3YU7SfOnTkwe1
-   g==;
-X-CSE-ConnectionGUID: 9nNfGO08RbSzJL8fgJ1yIg==
-X-CSE-MsgGUID: 6737wyBwRqmVKAzt48Cbxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24624148"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="24624148"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:08:08 -0700
-X-CSE-ConnectionGUID: Vyt3HIRiRb+8eKgQWeHRxQ==
-X-CSE-MsgGUID: Tq045nH8TgeU/VR3DmyMCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="90220710"
-Received: from xpardee-mobl.amr.corp.intel.com (HELO [10.125.67.115]) ([10.125.67.115])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:08:07 -0700
-Message-ID: <e442f597-cfa5-4c1c-9db0-da0485813b26@linux.intel.com>
-Date: Tue, 10 Sep 2024 00:08:07 -0700
+	s=arc-20240116; t=1725952112; c=relaxed/simple;
+	bh=OLklJSVQNOQI9DT75fzTGObFLfetL3kq3g7TnME/nQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRC71jOJiAVrDgYjhhwdzcluJHT9oFplaiPH6Ixiu5StbkfMq0VqOtlWwopp9c/ux6Zy6xbcq9JTGVOAx+U33LkQlZHDb5cxgPbx5PLOJXz2dQFxtlKFzIyWNU/kSbhwNsofTBI1pLE/I1NEy9suLfCN3+8ozQztuCk18tOULDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vVSTO2TF; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 10 Sep 2024 00:08:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725952106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vplBtqjlTg4eBgWma6lIzm6/3ie/7e5vk9lsOVwoc9o=;
+	b=vVSTO2TFJfh1EBJG/XSokcOFNomrhN3BkYDziVC4NY2avzIdL6S/ILOCI72lp+3AsqkUmD
+	IJkeVKGcSo68y2a+HxMZyf5W+b18idowDgAk3gy7qu1MQ1hnmkRuvVOi+EMIedD5CNhRAh
+	7Rv1kTIzsdPeW7p7GQLEJ5U36BCkjeM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Jingxiang Zeng <linuszeng@tencent.com>
+Cc: linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/memcontrol: add per-memcg pgpgin/pswpin counter
+Message-ID: <e5k22kuavnli72v3lmeezrewut6hvhfdpteouj3ii6dmcdiiin@2e3dlbs4ahe2>
+References: <20240830082244.156923-1-jingxiangzeng.cas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/11] platform/x86:intel/pmc: Remove unneeded h file
- inclusion
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
- Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-References: <20240828222932.1279508-1-xi.pardee@linux.intel.com>
- <20240828222932.1279508-6-xi.pardee@linux.intel.com>
- <8bda80eb-c0b8-c9c7-5c18-bb06701a69cb@linux.intel.com>
-Content-Language: en-US
-From: Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <8bda80eb-c0b8-c9c7-5c18-bb06701a69cb@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830082244.156923-1-jingxiangzeng.cas@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Fri, Aug 30, 2024 at 04:22:44PM GMT, Jingxiang Zeng wrote:
+> From: Jingxiang Zeng <linuszeng@tencent.com>
+> 
+> In proactive memory reclamation scenarios, it is necessary to
+> estimate the pswpin and pswpout metrics of the cgroup to
+> determine whether to continue reclaiming anonymous pages in
+> the current batch. This patch will collect these metrics and
+> expose them.
 
-On 8/29/2024 4:02 AM, Ilpo Järvinen wrote:
-> On Wed, 28 Aug 2024, Xi Pardee wrote:
->
-> In the subject:
->
-> h file -> header
->
->> telemetry.h header file is not needed in arl.c or mtl.c. Remove
->> them to avoid confusion.
-> I'd also note this is cross directory/driver include, so perhaps something
-> along these lines:
->
-> telemetry.h from PMT is not needed in arl.c or mtl.c so remove
-> the cross-driver include.
->
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Please explain a bit more on how these metrics will be used to make
+a decision to continue to do proactive reclaim or not.
 
-Thanks! I will modify the commit message in the next version.
+> 
+> Signed-off-by: Jingxiang Zeng <linuszeng@tencent.com>
+> ---
+>  mm/memcontrol-v1.c | 2 ++
+>  mm/memcontrol.c    | 2 ++
+>  mm/page_io.c       | 4 ++++
+>  3 files changed, 8 insertions(+)
+> 
+> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> index b37c0d870816..44803cbea38a 100644
+> --- a/mm/memcontrol-v1.c
+> +++ b/mm/memcontrol-v1.c
+> @@ -2729,6 +2729,8 @@ static const char *const memcg1_stat_names[] = {
+>  static const unsigned int memcg1_events[] = {
+>  	PGPGIN,
+>  	PGPGOUT,
+> +	PSWPIN,
+> +	PSWPOUT,
+>  	PGFAULT,
+>  	PGMAJFAULT,
+>  };
 
-Xi
+As Yosry said, no need to add these in v1.
 
+thanks,
+Shakeel
 
