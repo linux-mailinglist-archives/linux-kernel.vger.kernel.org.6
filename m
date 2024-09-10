@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-322940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC5F973539
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD06973537
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F15028A0C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B55E28386C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A0F192591;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082281917E2;
 	Tue, 10 Sep 2024 10:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXpnqWih"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bwqtp6Tx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF041552FD;
-	Tue, 10 Sep 2024 10:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55A7144D1A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965114; cv=none; b=DunUyI4kKMUyJMpk1GASTT6kWWpjIR+YIljYVml7UigZ3gM48bxHkjerljQ3ycqMWUyPDhyXKfmFTabgQSJuQTTjUedDnC0fZmwxY5kf9zAb1RNN5q7uRuM1QzZXimVaBFsYxRLha/5d9C/Pf1/rYAh1ymThWQh0/wd0ZO5D1wo=
+	t=1725965114; cv=none; b=BCqSQTmDsey/aCn6SjyvI6kbJi3EPYZ3s7Ysrg78BniZELPOcgItUCWh3tmkah0pPrPaijlySs3h6Z1Eup1hUoKa7Go3Sq+3EJjSyaoDVzYEpLRrtcTgDK3weBOl2Mh4+WX9z7itPa5Gqt9xZfhDnd0Yqe/G4lTHn5JfpJo8sy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725965114; c=relaxed/simple;
-	bh=/mmHqklSPEhEgo8V06sQ63fRm4Mg6nIuO6VmxgWugTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtMbpwDkPWeDEATYnPcUw4ULucLYGLwiuplrLFEY7f9eFH+Zh7n7aNubNQoXf5YD4y3rewkzOWbJ0yksoqERUsRY+kJr1cn4XdYnp1264+5pF9ZjjT0ULwlAZWVHIe63/VQ3KSpQVKI3UH3lbAlwpVXK/q+ecwS1lQdAYayc+gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXpnqWih; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725965112; x=1757501112;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/mmHqklSPEhEgo8V06sQ63fRm4Mg6nIuO6VmxgWugTk=;
-  b=MXpnqWih2au1XH4tAWMTJHW4gjB/zWYBTYENzikj9PJKRsjrpTzAt7Qc
-   EUdJ4lghyFrDgzwE2VnzATDkf34VlA0ngwnY++bYIjMkuxnMxbeAm17LQ
-   DkUvR9WWb8f/xnxqRSkd7Gv8XrCEEdxGb7eEKHaLi35PgagaxTFgbNXjC
-   BtZRCF3uCXHjqN5c9uUDf/6TW7mhrGFmeUPC2t/cG+8X3q04LC+01j6mu
-   MUPQ6s3q7JXW8UnMQzd5Xe1pAj/wk0zF1UQaxBMoeRVLPF1cDsgD0BW7k
-   pNG3DrnS5cuoLXwpE25McdrPLqxt6IVjpAZBSthLe6R8TQdZAskdBPUW5
-   A==;
-X-CSE-ConnectionGUID: qBzOEBEwSwqIqf4FFJo/XQ==
-X-CSE-MsgGUID: 7UJfrNVyQ2SCus3pxyoQ8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="36083839"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="36083839"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 03:45:12 -0700
-X-CSE-ConnectionGUID: +YyFryRrSWCFm4lMklyLmA==
-X-CSE-MsgGUID: b3bscvFuT6CP92JifYEtiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="66609199"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 03:45:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1snyMt-000000079pd-0m3T;
-	Tue, 10 Sep 2024 13:45:07 +0300
-Date: Tue, 10 Sep 2024 13:45:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Liu =?utf-8?B?S2ltcml2ZXIv5YiY6YeR5rKz?= <kimriver.liu@siengine.com>
-Cc: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-	"jsd@semihalf.com" <jsd@semihalf.com>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Message-ID: <ZuAjMmr7q4f8VJpA@smile.fi.intel.com>
-References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
- <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
- <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
+	bh=jYlCh8yNeYIkjiBpQOKOkIMz2OZvTJRJ/aETlxPhMrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nARY/uqrnNoYHmDR6qAxEktNJgOzHmtkmvZFuomZOsofIEMqchGzKo1bJXjmu2gy6zN+UVwyNJzrY+MR5YljULqRTSAwU/16urTQSpHXoBY/IOMJS7+xGNJ7OH3cFrVg2vJBdM5ySEPWMv16jTt0WtYFq8Ckt435KWtszF6jW18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bwqtp6Tx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725965111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jyPpBrEHkd08T4IqqfOrRciboN+U1FHHDgcUpFHe6pE=;
+	b=bwqtp6Tx6WC0DlOaPINpDo5PDPysKZsCYveHHnfz2r1vIehfegoOVYFA9feJ5hrpa2bREF
+	ACLu0MSSz5K2yi5S6RzEgY99C/HFayALLpoW0GaFBer6Qo1Em9jvkgqvPSfejFefM3nBQC
+	kZU7SZ+YNVa2116prW8Xac3n59IOrQQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-HNUSQrjeMECwa8M15wnCoQ-1; Tue, 10 Sep 2024 06:45:10 -0400
+X-MC-Unique: HNUSQrjeMECwa8M15wnCoQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb080ab53so19859155e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:45:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725965109; x=1726569909;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jyPpBrEHkd08T4IqqfOrRciboN+U1FHHDgcUpFHe6pE=;
+        b=XawX8IftzJfH5C3Oj96rBO/eXpFZyp1xUzeGgqsdF8DuI35fOMjzoFPkj+7r+72HJC
+         UgRkaXMXbhtfOYqZUyNIA06yHb8bUfuYjyx4FX/oZU8k99/oUL7z5u26QfHf7HMLhOyX
+         ARpXNLqRmKjwzx8PG1W/lGFpaegsCZmIYhLSaao87DWsPaggdq7xbIhlx8vUZfVWaLQG
+         uKpP05HPKUyZJW4+J3+oOfx7cZXCmTvxEiv1X3wf0kEQPXzpwi5IVwxM5uPjC6zETBvr
+         wUs7ptw6QlkoG1zwNcJoQeN0Gx7uye1e/bHxsUWaJFqu/r+qNSTnLGW6MbRZV0jtbLYi
+         8U3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/tD7UVZYCusGXCMmc0lssKoIUuvoq9Fpy5N/ljmTXw4EM5mMTN9+ThzZrVXQlFByZ5HvytA17eh+WhFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgjHYPvJDU10ZepVUweIKJjteIdgT2ha2Z+5RLW8R5oPed8NJt
+	117vgNqikx5Al8UcDeh72aAQe3R3bAiDNmu97+grdXaKRizJTkEYWEQyYl7pvB998EyOoKwo9kh
+	hmqvNkkulcAlLkCVJsqnDVd1UStpx19exIadzg8k/DQgdvGz08d+8iYSmP1E5Vg==
+X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr68287655e9.28.1725965109335;
+        Tue, 10 Sep 2024 03:45:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfmE2OcdsT+5uBbdXW+uePHJTdUw7zg7QfpVhNTyVckW+6q4fb0qb3B5MMthaJdYsgSv77Gg==
+X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr68287355e9.28.1725965108879;
+        Tue, 10 Sep 2024 03:45:08 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3789564a18asm8495403f8f.15.2024.09.10.03.45.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:45:08 -0700 (PDT)
+Message-ID: <7fab7177-078e-4921-a07e-87c81303a71d@redhat.com>
+Date: Tue, 10 Sep 2024 12:45:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 21/21] KVM: TDX: Handle vCPU dissociation
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-22-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240904030751.117579-22-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 09:38:53AM +0000, Liu Kimriver/刘金河 wrote:
-> >From: Andy Shevchenko <andriy.shevchenko@linux.intel.com> 
-> >Sent: 2024年9月10日 17:03
-> >To: Liu Kimriver/刘金河 <kimriver.liu@siengine.com>
-> >On Tue, Sep 10, 2024 at 02:13:09PM +0800, Kimriver Liu wrote:
+On 9/4/24 05:07, Rick Edgecombe wrote:
+> +/*
+> + * A per-CPU list of TD vCPUs associated with a given CPU.  Used when a CPU
+> + * is brought down to invoke TDH_VP_FLUSH on the appropriate TD vCPUS.
 
-...
+... or when a vCPU is migrated.
 
-> >master --> controller
-> 
->  Update it in V9
+> + * Protected by interrupt mask.  This list is manipulated in process context
+> + * of vCPU and IPI callback.  See tdx_flush_vp_on_cpu().
+> + */
+> +static DEFINE_PER_CPU(struct list_head, associated_tdvcpus);
 
-Also in the Subject.
+It may be a bit more modern, or cleaner, to use a local_lock here 
+instead of just relying on local_irq_disable/enable.
 
-...
+Another more organizational question is whether to put this in the 
+VM/vCPU series but I might be missing something obvious.
 
-> >> holding SCL low. If ENABLE bit is disabled, the software need
-> >> enable it before trying to issue ABORT bit. otherwise,
-> >> the controller ignores any write to ABORT bit.
-> 
-> >Fixes tag?
-> 
->  Patch rebase:  on Linux v6.11.0-rc6 (89f5e14d05b)
-
-No, this one is done by understanding where the problem appear first.
-What you mentioned above may be achieved by using --base option when
-format the patch.
-
-...
-
-> >> +static bool i2c_dw_is_master_idling(struct dw_i2c_dev *dev)
-> 
-> >Sorry if I made a mistake, but again, looking at the usage you have again
-> >negation here and there...
-> 
-> >	i2c_dw_is_controller_active
-> 
-> > (note new terminology, dunno if it makes sense start using it in function
-> > names, as we have more of them following old style)
-> 
->  Last week , You suggested that I used this i2c_dw_is_master_idling(dev)
-
-Yes, sorry about that. I did maybe not clearly get how it is going to
-look like.
-
-> >> +{
-> >> +	u32 status;
-> >> +
-> >> +	regmap_read(dev->map, DW_IC_STATUS, &status);
-> >> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-> >> +		return true;
-> 
-> 		return false;
-> 
-> >> +	return !regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> >> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> >> +			1100, 20000);
-> 
-> >...and drop !.
-> 
->  We reproduce this issue in RTL simulation(About(~1:500) in our soc). It is necessary
->  to add waiting DW_IC_STATUS_MASTER_ACTIVITY idling before disabling I2C when 
->  I2C transfer completed.  as described in the DesignWare
->  I2C databook(Flowchart for DW_apb_i2c Controller)
-
-Cool, but here I'm talking purely about inverting the logic (with renaming),
-nothing more.
-
-> >> +}
-
-...
-
-> >> +	/*
-> >> +	 * This happens rarely and is hard to reproduce. Debug trace
-> 
-> >Rarely how? Perhaps put a ration in the parentheses, like
-> 
-> >"...rarely (~1:100)..."
->  About(~1:500) in our soc
-
-Yes, what I showed was just an example, put the real numbers into the comment.
-
-> >> +	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-> >> +	 * if disable IC_ENABLE.ENABLE immediately that can result in
-> >> +	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low.
-> >> +	 */
-> >> +	if (!i2c_dw_is_master_idling(dev))
-> 
-> >...and here
-> 
-> >	if (i2c_dw_is_controller_active(dev))
-> 
-> >But please double check that I haven't made any mistakes in all this logic.
-> 
->  Last week , You suggested that I used this i2c_dw_is_master_idling(dev)
->  keep using i2c_dw_is_master_idling(dev) , Ok?
-
-See above.
-
-> >> +		dev_err(dev->dev, "I2C master not idling\n");
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Paolo
 
 
