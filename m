@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-323228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD139739C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:24:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36769739CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F351C24649
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A297E283205
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475B1946C4;
-	Tue, 10 Sep 2024 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04E3194151;
+	Tue, 10 Sep 2024 14:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hsKYluYQ"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE5PFkSg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1684204D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FAB2AEF1;
+	Tue, 10 Sep 2024 14:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978284; cv=none; b=Jz8esSTHc7X2CwN2tKgLrrM53UBlKG5vas7zB4XhBdRWo3X3eH81iORysxrHAWJAdDIqdgkSpfSOW4LCEWMX4/9/KizhG8NWzgt0OkR4He74q2Cvfwb7GQHIB9Q9vHLuzDcspu74958ARGfbQ3kRXkX86MJzEh/qX2w5hO0/dak=
+	t=1725978398; cv=none; b=QMFGrJVgPgrJeTjg1zDwxCCmYRiQSwMMfQkKmSMmpFpIj424FN7pZ0Wmka1ZwAZzGPst6qWbYcz1dbJY0IZ/7iQOE/GgTwW9IxdIQ/O620+mtMX7CPMXj5SyelfiNRRtysTTthHmJwcCF2maRSkRnj21KbDqtJXXnTJP5uPX8Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978284; c=relaxed/simple;
-	bh=CRMu0B4kkJ6/dmoWosy7BxE/PMA6DVz7EyRP5fynT28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rx1qnsP9lQlOvj64HYWvmo9ZQ1Dr6pC2Ve7w+nIJjHNBus6xvvw5GUYmxjtMVDZk4wpLrBjffgCjA8jihhaJO3wb1tuM460IK6EVFA85vXZqKLAG29BVeGpwRpCjDoEMFcCSXRCLpf8Z47/dTF3qIXe5gh2RYzBq8N2E9kmvP3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hsKYluYQ; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <318a13f6-da2d-4ba4-a51c-2f8444444bbf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725978280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qZLpOStkN6/rHZsIMHD5J5wm23tF3B9XqkgPQ/y3a6A=;
-	b=hsKYluYQ41lW262/NEUOxUkIZv8C/BJUKjLT4hSdJXOIc9sy08L0A+IaXrVyAiuSMtQXVK
-	sPsird/kvx4IJaB66mtnBV92n6k504YIo7JwLQld5JYXXAxV7q0UNFBBhUNi2ANk4xDTeg
-	4C3VuLY+4XFDUWvYWEP12Xy22Oi6it8=
-Date: Tue, 10 Sep 2024 10:24:36 -0400
+	s=arc-20240116; t=1725978398; c=relaxed/simple;
+	bh=bBMl6pToiyNWX9sPH1obZQpz1aQJ4vu4Oq4rq3zpz5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQDFIc9RXo5F2d2RnidyTEy9qBcTPDZsBRW10hMm1LdBiXiYiv0blqu915hG/rH3vllQIVxHKcY1/5SR+PMqOUhnEGIr1jLui0Nkeatvv5ZtXvWn9BV6hCYJ1SzsjOP6XL1BEtXQmYbPn143xWCYJdfiw8v6r6rho3/jfoJsG8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE5PFkSg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 676E7C4CEC3;
+	Tue, 10 Sep 2024 14:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725978397;
+	bh=bBMl6pToiyNWX9sPH1obZQpz1aQJ4vu4Oq4rq3zpz5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NE5PFkSgtNA9rSEz9WqsvePNC7KS/8r8TBDWgNqmzUho4apQePRUaZZqNeRGsxL1W
+	 HQCncAecmSIPF07JtvHh7PV0nFrWcVNDBsGq0KFoAK2+ONyQbbG611KrnnhexV/v0Z
+	 Hsnit4oCLt/6M5DYTK2C6qQZGQEdsGAayRwXvCV3/+1rmWv5o8v9TXf7YUjCpeAN/O
+	 CAd6EVYM8FqsIAG8RdgOKjw73qoifbLBfBWhwvmQKlMHxz1HaIyi+Ln1Q9bNc7O+HA
+	 Mx4a0D8sY5730J3oMv1MHIoRgJ8bxH4llgW7gHnxEv//ju6chf3BcQspy7uSNcCdWa
+	 3x4ROtAagBWJg==
+Date: Tue, 10 Sep 2024 11:26:35 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <ZuBXG5FEPF0HnMcq@x1>
+References: <20240903092745.370fc0c6@canb.auug.org.au>
+ <20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
+ <20240905105809.6585eec2@canb.auug.org.au>
+ <20240910102332.4f171bde@canb.auug.org.au>
+ <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2] net: xilinx: axienet: Fix packet counting
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andy Chiu <andy.chiu@sifive.com>, Daniel Borkmann <daniel@iogearbox.net>
-References: <20240906164227.505984-1-sean.anderson@linux.dev>
- <20240909180013.4e064fd5@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20240909180013.4e064fd5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
 
-On 9/9/24 21:00, Jakub Kicinski wrote:
-> On Fri,  6 Sep 2024 12:42:27 -0400 Sean Anderson wrote:
->> axienet_free_tx_chain returns the number of DMA descriptors it's
->> handled. However, axienet_tx_poll treats the return as the number of
->> packets. When scatter-gather SKBs are enabled, a single packet may use
->> multiple DMA descriptors, which causes incorrect packet counts. Fix this
->> by explicitly keepting track of the number of packets processed as
->> separate from the DMA descriptors.
->> 
->> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> 
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> index 9aeb7b9f3ae4..556033849d55 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> @@ -670,21 +670,21 @@ static int axienet_device_reset(struct net_device *ndev)
->>   * @force:	Whether to clean descriptors even if not complete
->>   * @sizep:	Pointer to a u32 filled with the total sum of all bytes
->>   *		in all cleaned-up descriptors. Ignored if NULL.
->> - * @budget:	NAPI budget (use 0 when not called from NAPI poll)
->> + * @budget:	NAPI budget (use INT_MAX when not called from NAPI poll)
-> 
-> use INT_MAX and force=true when ... ?
-> To make sure the dependency is clear.
-> But actually...
-> 
->>   *
->>   * Would either be called after a successful transmit operation, or after
->>   * there was an error when setting up the chain.
->> - * Returns the number of descriptors handled.
->> + * Returns the number of packets handled.
->>   */
->>  static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
->>  				 int nr_bds, bool force, u32 *sizep, int budget)
->>  {
->>  	struct axidma_bd *cur_p;
->>  	unsigned int status;
->> +	int i, packets = 0;
->>  	dma_addr_t phys;
->> -	int i;
->>  
->> -	for (i = 0; i < nr_bds; i++) {
->> +	for (i = 0; i < nr_bds && packets < budget; i++) {
-> 
-> why are you doing this? To make sure drivers doesn't complete more 
-> than "budget" Tx skbs? The budget is really for Rx, for Tx you can
-> use a reasonable fixed value, independent of what budget core
-> passes in, e.g. 128. See:
-> https://www.kernel.org/doc/html/next/networking/napi.html#datapath-api
+On Tue, Sep 10, 2024 at 10:50:39AM +0200, Christian Brauner wrote:
+> On Tue, Sep 10, 2024 at 10:23:32AM GMT, Stephen Rothwell wrote:
+> > On Thu, 5 Sep 2024 10:58:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > On Tue, 3 Sep 2024 12:41:08 +1000 Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > > > On 2024-09-03, Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
+> > > > > After merging the vfs-brauner tree, today's linux-next build (native perf)
+> > > > > failed like this:
 
-I read this but it was unclear to me because it seems oriented towards
-"combined" NAPI instances, while we have separate instances for RX and
-TX. So even for TX-only instances, we can ignore budget?
+> > > > > In file included from trace/beauty/fs_at_flags.c:21:
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: error: initialized field overwritten [-Werror=override-init]
+> > > > >    10 |         [ilog2(0x0001) + 1] = "RENAME_NOREPLACE",
+> > > > >       |                               ^~~~~~~~~~~~~~~~~~
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: note: (near initialization for 'fs_at_flags[1]')
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: error: initialized field overwritten [-Werror=override-init]
+> > > > >    14 |         [ilog2(0x200) + 1] = "HANDLE_FID",
+> > > > >       |                              ^~~~~~~~~~~~
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: note: (near initialization for 'fs_at_flags[10]')
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: error: initialized field overwritten [-Werror=override-init]
+> > > > >    15 |         [ilog2(0x001) + 1] = "HANDLE_MNT_ID_UNIQUE",
+> > > > >       |                              ^~~~~~~~~~~~~~~~~~~~~~
+> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: note: (near initialization for 'fs_at_flags[1]')
 
->>  		cur_p = &lp->tx_bd_v[(first_bd + i) % lp->tx_bd_num];
->>  		status = cur_p->status;
->>  
->> @@ -701,8 +701,10 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
->>  				 (cur_p->cntrl & XAXIDMA_BD_CTRL_LENGTH_MASK),
->>  				 DMA_TO_DEVICE);
->>  
->> -		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK))
->> -			napi_consume_skb(cur_p->skb, budget);
->> +		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK)) {
->> +			napi_consume_skb(cur_p->skb, force ? 0 : budget);
->> +			packets++;
->> +		}
->>  
->>  		cur_p->app0 = 0;
->>  		cur_p->app1 = 0;
->> @@ -718,7 +720,13 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
->>  			*sizep += status & XAXIDMA_BD_STS_ACTUAL_LEN_MASK;
->>  	}
->>  
->> -	return i;
->> +	if (!force) {
->> +		lp->tx_bd_ci += i;
->> +		if (lp->tx_bd_ci >= lp->tx_bd_num)
->> +			lp->tx_bd_ci %= lp->tx_bd_num;
->> +	}
-> 
-> Moving this chunk into axienet_free_tx_chain() is a noop, right?
-> Please avoid code cleanups in fixes.
+> > > > > Caused by commit
 
-The relevant variable (number of descriptors handled) is no longer
-returned to axienet_tx_poll, so it can't update the current descriptor
-properly.
+> > > > >   34cf40849654 ("uapi: explain how per-syscall AT_* flags should be allocated")
 
---Sean
+> > > > > I have used the vfs-brauner tree from next-20240902 for today.    
 
->> +	return packets;
->>  }
->>  
->>  /**
+> > > > Ah okay, the overlapping flag definitions in the copied over fcntl.h are
+> > > > causing issues. We could just drop that part of the patch, or (since the
+> > > > new flags aren't handled by perf/trace/beauty) we could just do
+> > > > something simple like:
+
+> > > > diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/beauty/fs_at_flags.sh
+> > > > index 456f59addf74..930384029599 100755
+> > > > --- a/tools/perf/trace/beauty/fs_at_flags.sh
+> > > > +++ b/tools/perf/trace/beauty/fs_at_flags.sh
+> > > > @@ -13,9 +13,13 @@ printf "static const char *fs_at_flags[] = {\n"
+> > > >  regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
+> > > >  # AT_EACCESS is only meaningful to faccessat, so we will special case it there...
+> > > >  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
+> > > > +# AT_RENAME_* flags are just aliases of RENAME_* flags and we don't need to include them.
+> > > > +# AT_HANDLE_* flags are only meaningful for name_to_handle_at, which we don't support.
+> > > >  grep -E $regex ${linux_fcntl} | \
+> > > >         grep -v AT_EACCESS | \
+> > > >         grep -v AT_STATX_SYNC_TYPE | \
+> > > > +       grep -Ev "AT_RENAME_(NOREPLACE|EXCHANGE|WHITEOUT)" | \
+> > > > +       grep -Ev "AT_HANDLE_(FID|MNT_ID_UNIQUE)" | \
+> > > >         sed -r "s/$regex/\2 \1/g"       | \
+> > > >         xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
+> > > >  printf "};\n"  
+
+> > > I have applied that by hand for today.  Please submit it and get it
+> > > applied.
+
+> > I am still applying this build fix patch.
+
+> That's weird as I removed everything that touches tools/ from that
+> commit as the tools/ repository is updated after uapi changes
+> separately. That's what I've been told multiple times. I can add this
+> change but it feels odd.
+
+Right, that is the usual workflow, tools/ should not put any burden on
+kernel development, we need to make these trace/beauty more resilient,
+i.e. if it can't be built then just emit a warning and continue without
+that specific table (generated by
+tools/perf/trace/beauty/fs_at_flags.sh).
+
+Which I'll try to do after LPC, making notes here, so, in this specific
+case here, please add this change as having perf not building on next is
+inconvenient and since the change to make it resilient will take time to
+get implemented, doing it now via the kernel developer seems the
+sensible thing to do, sorry for the incovenience :-\
+
+- Arnaldo
 
