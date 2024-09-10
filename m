@@ -1,76 +1,56 @@
-Return-Path: <linux-kernel+bounces-322788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B4D0972DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:37:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A634B972DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 440EB1F264FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF3728564E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E155D18B46C;
-	Tue, 10 Sep 2024 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639C918C005;
+	Tue, 10 Sep 2024 09:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NSEJCBRi"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkjg8dTC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA937188CC1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B418A6DF;
+	Tue, 10 Sep 2024 09:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961065; cv=none; b=VAd+UiGjXvgXWhr95U0OHsrhTfH/aBIjR3ICBg0wKTiruHVm8iJV9u23LnY5jZW9h4ULw6FXsuJeJwinU0fNjBm54TyRDwaBK81hisuSA91XUwbzTqUA+pCR0/QsSQViCI76thU0gB5etorItHPEK4xaplyr3pqOFs5vnDpP59I=
+	t=1725961075; cv=none; b=mY2y6benNNyc31jtFz6kJI+AoXIbCsc9GT/lI84f3C7338G30z8jBIMnC76dwpCnMl9rn0NWXFTG1Xm7ge9UOtl65CJ/JrG1WcgDQ450sOtM42kKExIShnIBQHDjeBQz4Waicz3+LJ5w8IrUq6aMQi1yjV1Fg0gzXzXi/Mt8lY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961065; c=relaxed/simple;
-	bh=ll6uk2BwnwVbIriytb9lmyB6CmOKQUi7lDm2570Qklk=;
+	s=arc-20240116; t=1725961075; c=relaxed/simple;
+	bh=yjDJud8W9puFv5VkCEq64ew6K8UyJBnq0jOKzD0rCwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hv9eIoiF2ejddJ6mRV48gTDL+v350x69iVvJaQym8cGsMXGxsVKhKynaixCwlFXyjyKT+BX4tT5w2DcWsvw9LREH8EQp1jLX8Y15wDeGqEsOshyvRrZHLufA74HwZigkVWjFeYwqppZDIuSliuo3rchdELOtkeuBOVZTlDr8Gug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NSEJCBRi; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c1324be8easo4320598a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725961063; x=1726565863; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ll6uk2BwnwVbIriytb9lmyB6CmOKQUi7lDm2570Qklk=;
-        b=NSEJCBRijN634pTNxHQiy6JM2x3OPNA0AeHxWeAvJsf53E6f8YbPfnBzRtnnhTxoHt
-         S4UbCZFbpQ++lBB1w1FRSLmKfX+EUKou3lgcW+kZProsbeYv901cso17Db4FSdB19dS6
-         L2V5gRrjEVhUWTej4a/1Q+TTTo7cCOpz5P8Ow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725961063; x=1726565863;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ll6uk2BwnwVbIriytb9lmyB6CmOKQUi7lDm2570Qklk=;
-        b=QL27puZAXjKDk/LZEnH16YCapC6UFOTFIIWwW8Zs3gc/7b4eqc+do3vjzIxE0uyXEc
-         pSek2mKGTyKemKBZoLUNR2G4MkeSE8fakJJH/ln+ywQ9T1DYkAz+e/4tVifo4RzV6l7v
-         ZhuMI/IY4evHElCarz5OBkjMZnFCzgoqQI5xvtzXyd7nXStDrpwGOCIOlZPpk382eZdO
-         RChK+yulkKSBqypDvn2RXh+QhDZFycwILg/cDhpaOpHhdgJLRQms72mjHPZGI1GuscL4
-         Sa1ASWlzv24DCCu8F5okrZLP11JnT91WYBLZ3BSDY06Nq6J1EcsPstim4VUmyTjEo4je
-         8s8g==
-X-Forwarded-Encrypted: i=1; AJvYcCViJX5hdfXoXoc+tf6a6LElwy3uOs64E2Wap3jg/cJD2IugVOdNpnayzKNPSWj1EeIWUgaoh1OLQ2IMyLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+JlX+96nvOoNBpQZEsdgBaFrDiJpnsrPk3s8b516+F3uSe2kp
-	uxGCMxynaziYQ4WkMfOYsvAhE4slZwXLATRSYMqlh2Cgv0Tz8YHeacYEQk8+lQ==
-X-Google-Smtp-Source: AGHT+IHO/t9dYiu6GbIiQglDQjpVGUD3F/yQGpyRTswXCu5Uzr8dEqi3rrJFgD/HOo7XJrCuHJ/7gg==
-X-Received: by 2002:a17:902:cecb:b0:207:6d2:1aa5 with SMTP id d9443c01a7336-2074cb72a71mr866655ad.13.1725961063203;
-        Tue, 10 Sep 2024 02:37:43 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:ab54:b18d:dd53:2da1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e352c1sm45290365ad.65.2024.09.10.02.37.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 02:37:42 -0700 (PDT)
-Date: Tue, 10 Sep 2024 18:37:39 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Minchan Kim <minchan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Chang <richardycc@google.com>, linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCHv2 0/3] zram: optimal post-processing target selection
-Message-ID: <20240910093739.GD2413563@google.com>
-References: <20240908114541.3025351-1-senozhatsky@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEnbPwH2XRHGw2k5YGVf3E4FcwgXteBxb50Oa13YZosJXBO38LDe+JkVZEE1I59OhQQFTB1NpRaIXspUsm1MR/Jq6alXcLKlleNUR41Cunswv9n+AqhrpIs0kvsTRAuH4nz55fbvpKskUcZ6bgB2vduntPtzkQm6zFby/DmnYRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkjg8dTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CB0C4CEC3;
+	Tue, 10 Sep 2024 09:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725961075;
+	bh=yjDJud8W9puFv5VkCEq64ew6K8UyJBnq0jOKzD0rCwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nkjg8dTCx7cKeL+RgZG6evo0MhXjZs8TLK80v5xpfB0AXZRPQFE7YSoKx6uMHKDKn
+	 r1yw6w2euGfXTuDzJqbVK2ByZGotyU2JZqVxC689ea6YS/bootdkn1YEd64ZN/IDzm
+	 FJthGYb8u4xAEoSiqCD73qWYHmm+7E/IXK1Xwuj0zWcyyVYFMxcQNEZ756ZmwYdOCB
+	 bFZmS3vYYngNRkiRq04/HL3/f/Ov0ZpLUctgZT4OqWd8uM+tXx8jH4/ikF+IvHdlJl
+	 KRd2OHpUBuM3pTrrMyNop4+oARU+j/UlkRpmM+SEPxBcJutraQc94yf2ZBQbjFoPzp
+	 KAXDEju9zT7ww==
+Date: Tue, 10 Sep 2024 10:37:51 +0100
+From: Simon Horman <horms@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
+Message-ID: <20240910093751.GA572255@kernel.org>
+References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,14 +59,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240908114541.3025351-1-senozhatsky@chromium.org>
+In-Reply-To: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
 
-On (24/09/08 20:45), Sergey Senozhatsky wrote:
-> v2..v1:
-> -- clear PP_SLOT when slot is accessed
-> -- kmalloc pp_ctl instead of keeoing it on the stack
-> -- increase the number of pp-buckets and rework the way it's defined
-> -- code reshuffle and refactoring
+On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
+> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+> as such we should prefer more robust and less ambiguous string interfaces.
+> 
+> Towards the goal of [2], replace strncpy() with an alternative that
+> guarantees NUL-termination and NUL-padding for the destination buffer.
 
-Folks, ignore this series for now, I'm working on v3.
+Hi Justin,
+
+I am curious to know why the _pad variant was chosen.
+
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+> Link: https://github.com/KSPP/linux/issues/90 [2]
+> Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> ---
+> Note: build-tested only.
+> ---
+>  net/caif/chnl_net.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
+> index 47901bd4def1..ff37dceefa26 100644
+> --- a/net/caif/chnl_net.c
+> +++ b/net/caif/chnl_net.c
+> @@ -347,7 +347,7 @@ static int chnl_net_init(struct net_device *dev)
+>  	struct chnl_net *priv;
+>  	ASSERT_RTNL();
+>  	priv = netdev_priv(dev);
+> -	strncpy(priv->name, dev->name, sizeof(priv->name));
+> +	strscpy_pad(priv->name, dev->name);
+>  	INIT_LIST_HEAD(&priv->list_field);
+>  	return 0;
+>  }
+> 
+> ---
+> base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
+> change-id: 20240909-strncpy-net-caif-chnl_net-c-a505e955e697
+> 
+> Best regards,
+> --
+> Justin Stitt <justinstitt@google.com>
+> 
+> 
 
