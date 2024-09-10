@@ -1,94 +1,123 @@
-Return-Path: <linux-kernel+bounces-322568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF14D972AF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF08972AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18131C202E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3F21C21846
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A317DFFD;
-	Tue, 10 Sep 2024 07:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763417E472;
+	Tue, 10 Sep 2024 07:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PL6lg3M+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUVVggDM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D292017DFF1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D5A17DFEF;
+	Tue, 10 Sep 2024 07:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953895; cv=none; b=RxhRpNQ0Wf3rk8+VJrr/jgFSvAYJxIFof0TClWf3gVoF2UsXHI6lEHIMQrqSP3RxEmGKP0Y0XU0ZCU9UKvU8kuPlTsupky/1i99W9ipFKx9orwVLPMY69jEV/+JeUrJpqVvm5Uv14wRUkUfznKxkuT7VEINNLnLECcvyyIKzNJc=
+	t=1725954015; cv=none; b=B0Mjth+Yiz331bgb5oXl4FAJYtOKbqbJuWFhjzY0EhXvm8FxU+q4RffHmy/Les77apOS8jWI7uO6c+ohkqzo9jnoxxwoyETl5Wx/uxRusts9SKNUYMwuQqy0dnWbxaeJfzdK99WhoeD78P9eXezh35RH6FuX0qEDySSgU9BQ1Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953895; c=relaxed/simple;
-	bh=sjfQ/Eoa81VAVDHDJjTjgWwLjn6c5fS0wVP0NyCXrsY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TvwYnGuhPfu15ZyVf4b+f5WY56nz8Td4I2WB2JEFr9+oEpTRwj7VP/5y262MfrbyWAdAA+9chL6xeuRw4qjqse4Q8eJ49Nl0us27RbJM5xxNe0k4Q8Anfi9MuJ9HGGWmt25urKZsMHMT0lHzl1nPHwf9IAew5/BqvTh72zS1I0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PL6lg3M+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA53C4CEC3;
-	Tue, 10 Sep 2024 07:38:15 +0000 (UTC)
+	s=arc-20240116; t=1725954015; c=relaxed/simple;
+	bh=wlTegC/QTFnptw7DuqNfzDPNGm8rVd8/JkWhJcVsykE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7oLCC7O7PwneY5a1NDdIW9+d/x7wD/IrYLnjwwzqE5qotfs/khd3TBODkQ8Li0jo1BYb4P5mI4qfu5ABXteb3/iGwBjvFSVPuUio2+7dYLjlgtPnSgI5fmuu5ZoEBn4eCaZiW96m4hIzNq+haqWMH2OrVPd6rZ0nk5hiufdyfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUVVggDM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD13C4CEC3;
+	Tue, 10 Sep 2024 07:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725953895;
-	bh=sjfQ/Eoa81VAVDHDJjTjgWwLjn6c5fS0wVP0NyCXrsY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PL6lg3M+6ObMWTnavaQhSVcsyVO4NLz/pRMLedT5dmZozDn4R+NckMRptnw7bY158
-	 VwhIDvT7Zg3kVG0tuECxSBfjOdmQP4ltymg8SSKyxwH4innqzw3Blv77XuwQDQ7GeD
-	 Mli/F63gG00M8h6p+PzbnQBi1fqSm+04KUCFui0pRXLOX2JXMIJLsXMgPW0VMEDKo7
-	 zCgQjjwafNDvH7Q+Uw+/vjazpX8MIWyCZdlbiuh3XyPOVq/xMVExhvz2i206W/PbBA
-	 ETS31V19vn0+fq4UhYebI02KTfK+h53gMRJ1tCt4tf1SfaTOxtH0ctOdFJWg6OxB3n
-	 rR2MSkN/rA+Pw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1snvS1-00Be7W-5r;
-	Tue, 10 Sep 2024 08:38:13 +0100
-Date: Tue, 10 Sep 2024 08:38:12 +0100
-Message-ID: <86zfog6jrv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] irqchip/gic: prevent buffer overflow in gic_ipi_send_mask()
-In-Reply-To: <052d20d5-e8e4-3133-4fa0-1c026ffb4209@omp.ru>
-References: <048ff3bb-09d1-2e60-4f3b-611e2bfde7aa@omp.ru>
-	<87cyli5zj7.ffs@tglx>
-	<86o752v8xs.wl-maz@kernel.org>
-	<f0efe812-a77b-9a77-c17c-ece503475923@omp.ru>
-	<87wmjmv632.wl-maz@kernel.org>
-	<052d20d5-e8e4-3133-4fa0-1c026ffb4209@omp.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1725954015;
+	bh=wlTegC/QTFnptw7DuqNfzDPNGm8rVd8/JkWhJcVsykE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gUVVggDMNXJs62VS/eSboCHyfFHuOPAwRp9z9KEZBHZbsWXqa9aQ9pxfdA0J+etxi
+	 F69wIVikd8TqxQtoQOZd+llfFFqk8sSAu41T7qR2/VfyOrEILVlV99FzENUdY/hRuv
+	 4Hx8PzOVx53DC3JzumRAOOcezfflc2JOC7/gsrumyogTjS60YES34eJ0mkoulQjqzn
+	 xaAoO28415NSwD4e1Xb1XhblcMJhTjG6g5fOC7brr4pmHKKji2sm3YAswqjAqPWizP
+	 9cGVWXHHar4GW0kMpWKT+Mi2Exc7G5HO3OQSzJb0kTfws1/hzSUUJec4kA4rZFayY7
+	 YbI/NZv5MwJTg==
+Date: Tue, 10 Sep 2024 09:40:12 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Lars Povlsen <lars.povlsen@microchip.com>, 
+	Steen Hegelund <Steen.Hegelund@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] dt-bindings: phy: sparx5: document lan969x
+Message-ID: <wd3gzn3lpmw64qor3xslif6rnp7htycfhu33pa2xpxvv6mrwqe@nv6pcwkstywe>
+References: <20240909-sparx5-lan969x-serdes-driver-v2-0-d695bcb57b84@microchip.com>
+ <20240909-sparx5-lan969x-serdes-driver-v2-8-d695bcb57b84@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: s.shtylyov@omp.ru, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240909-sparx5-lan969x-serdes-driver-v2-8-d695bcb57b84@microchip.com>
 
-On Mon, 09 Sep 2024 20:48:24 +0100,
-Sergey Shtylyov <s.shtylyov@omp.ru> wrote:
+On Mon, Sep 09, 2024 at 05:14:48PM +0200, Daniel Machon wrote:
+> Lan969x is going to reuse the existing Sparx5 SERDES driver - document
+> that by adding compatible strings for the different SKU's that we
+> support, and a short description of the SERDES types and data rates
+> supported.
 > 
->    GICv2 spec does talk about 1-N and N-N interrupt handling modes;
-> at the same time, I can't find such words in the GICv3/4 spec. :-)
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> ---
+>  .../bindings/phy/microchip,sparx5-serdes.yaml           | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> index bdbdb3bbddbe..fa0b02916dac 100644
+> --- a/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> +++ b/Documentation/devicetree/bindings/phy/microchip,sparx5-serdes.yaml
+> @@ -8,6 +8,7 @@ title: Microchip Sparx5 Serdes controller
+>  
+>  maintainers:
+>    - Steen Hegelund <steen.hegelund@microchip.com>
+> +  - Daniel Machon <daniel.machon@microchip.com>
+>  
+>  description: |
+>    The Sparx5 SERDES interfaces share the same basic functionality, but
+> @@ -62,12 +63,26 @@ description: |
+>    * 10.3125 Gbps (10GBASE-R/10GBASE-KR/USXGMII)
+>    * 25.78125 Gbps (25GBASE-KR/25GBASE-CR/25GBASE-SR/25GBASE-LR/25GBASE-ER)
+>  
+> +  lan969x has ten SERDES10G interfaces that share the same features, operating
+> +  modes and data rates as the equivalent Sparx5 SERDES10G interfaces.
+> +
+>  properties:
+>    $nodename:
+>      pattern: "^serdes@[0-9a-f]+$"
+>  
+>    compatible:
+> -    const: microchip,sparx5-serdes
+> +    oneOf:
+> +      - enum:
+> +          - microchip,sparx5-serdes
+> +          - microchip,lan9691-serdes
+> +      - items:
+> +          - enum:
+> +              - microchip,lan9698-serdes
+> +              - microchip,lan9696-serdes
+> +              - microchip,lan9694-serdes
+> +              - microchip,lan9693-serdes
+> +              - microchip,lan9692-serdes
 
-See 1.2.3 "Models for handling interrupts" and the pointers this
-section contains. The major difference is that 1:N is enabled on a
-per-CPU basis instead of a per interrupt basis. Needless to say, Linux
-doesn't support this, although I've been pondering it at times.
+If there is going to be a new version, keep rather increasing/growing
+alphanumerical order, but no need to resend just for this.
 
-	M.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-Without deviation from the norm, progress is not possible.
+Best regards,
+Krzysztof
+
 
