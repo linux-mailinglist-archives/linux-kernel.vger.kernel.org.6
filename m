@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-323114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590C697381D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D727973823
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8FD61F255B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155DC288850
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA59191F97;
-	Tue, 10 Sep 2024 12:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D7D191F96;
+	Tue, 10 Sep 2024 12:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHD3uvoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I89ndTGN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2BB191F8C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC74191F73
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973081; cv=none; b=KqRVuzOcr5jUt097/M8FeCmBYNCOyeZEgaOPE1YBLl8fok7rKmuCaEX5PdzctTDH5WLqWwN+Jk0Ysl8nLJ7SGY4vWd06skvQTmYVhDIYtmJRt4dMKjpTvSxeCMT6HdxcJSW8uq1cdLxa0B8JWTf2znTr7VlQ/i2+30w3jEV2J50=
+	t=1725973103; cv=none; b=dxHs1wsM7mmvDVeEduOERkuEpoQDVvtv7m6hWGb/3AOzPn+ERpFgn+W2Ci5Fi9PHQzy9j2WafaxEOOsc9DBTOXHzaT5F87dVkmudI67b00XoyFALddA0PoYaqmDfu9sQU6/BoiTotPQD25CVps6D/+85zEU1cbTb+FmqaykOvL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973081; c=relaxed/simple;
-	bh=vwQ88BpQCZ7595D2+tEmHq3Pwl2yGQtzZstSueKAOZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mc/voitHkBtywna/3GiWSU7U43RTu1hQhbjpxw/uqstTBmfj430Skx6HhaMBcqFEvSy+BqyehE2FHhjXqFjo/mpZqYXQDilCyal4VdzM6Fm5SDyGUaLm2SPBf1R/3MpZkMOXtgzdCp7zQnN8fRddKcgKv7Re0AovHtGnq580l6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHD3uvoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 551E1C4CEC6;
-	Tue, 10 Sep 2024 12:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725973081;
-	bh=vwQ88BpQCZ7595D2+tEmHq3Pwl2yGQtzZstSueKAOZE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eHD3uvoJ/I8pfd67YeayNC93MTrU3OMqBOUZph4Y49FHjaZcElkbyyZ4M9+Q9PF7F
-	 hNhR08toQ9Mkrnr5RezZijq2JHltsnvmV9fpOK3Nmj5dp12xCFPxIPvdwTB/iDHklY
-	 IivOMtRDIoSHTMtAKpB0eHI3O4p+cpeUst0wceH8TWS3TqmySMk5NWMKeiQTtz/NfH
-	 RrCA1a0KM9La9lQyOxeIQcC1ofvBq10PYdcp5kY3QBa+jqJ/wY3gGPJ8ob/aEBlNPY
-	 JArEByH3QWMPu0H/T9KN7+s31qeJcSMrwtcLT7J38kO2OWorKAQO4R5c22FS2Dt3Yy
-	 GeC0YR8m28dEw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to tag STATX_DIOALIGN only if inode support dio
-Date: Tue, 10 Sep 2024 20:57:53 +0800
-Message-Id: <20240910125753.80502-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1725973103; c=relaxed/simple;
+	bh=LJ48zepfU2WM5mSgvbrHvfKAvy/xuXzmrP7tuJvztUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKC+5hEQAKhOQhiKP3DGcvvIyuG0Xq44GNBcvI+Iq9bzjXW8z6jX4Kcor8AIVvl9SH4xqgAB3v5D2aoP1ikW0d/0FExU7l8QfkhsXCBl0nZOX4hUTtUC25MzuI0/dQZqpxudzWFxpkv8lVIfCBZ8AMiUpLQgiRvv96iR4IPjohk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I89ndTGN; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725973102; x=1757509102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LJ48zepfU2WM5mSgvbrHvfKAvy/xuXzmrP7tuJvztUI=;
+  b=I89ndTGNttEG8veMLNfsbMMeqqeZhBiNHfByouXm69oynyL7m/X2/vSt
+   dq4ah9e1ypj4MVmInhiVLS6dDnghujtoWrD5RbvJDg9WCc/bpRVvj08zE
+   dRSHD6PSvJ9BzCs3np3r8Cuv9eBpMs1LgjHauxeBAXNjwvsj8fzhpM3ca
+   ZrZ4rpHfR15Mmg9QHad11MdtuCsTCVpzPv8Mdi+ckr7Az86toBRBF9sim
+   2I6Go8iW62/3LqVU+J/TL5RjmjgzJClmwsLxPEQAO7H3AjQ50KCdiWNLq
+   7JCgLibsJnPTDGP2FGEYrXjntrYf74J11OJiAqRafESbFoQKOnZzZGAtP
+   w==;
+X-CSE-ConnectionGUID: JoIXumLNQReR2JVg6DbZ+A==
+X-CSE-MsgGUID: bYNdnk1dRo6WrTk8MlAkng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24215374"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24215374"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 05:58:21 -0700
+X-CSE-ConnectionGUID: RP14yenjRPywpUO5lCy9RQ==
+X-CSE-MsgGUID: ptATUNVmSxy17Lv7KHXulQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="71145076"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2024 05:58:17 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 38CDB326; Tue, 10 Sep 2024 15:58:16 +0300 (EEST)
+Date: Tue, 10 Sep 2024 15:58:16 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, 
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCH] x86/tdx: Fix crash on kexec with CONFIG_EISA
+Message-ID: <uwr4a2pgvv45xfzvbceghdkm6kgb25y7c2wdkxquphmq2e7rxq@tr5dud4khhl5>
+References: <20240822095122.736522-1-kirill.shutemov@linux.intel.com>
+ <alpine.DEB.2.21.2408240952080.30766@angie.orcam.me.uk>
+ <g3tswlyhrnuzfqf2upq6h23manyrzhnxttnay66nycy2moi4es@5n4oblzpzcjc>
+ <c2ef105b-c42c-e0f4-6bf3-761dafc8e92e@amd.com>
+ <02949473-328f-4dae-b778-d939dc9bba6c@amd.com>
+ <npjx2z3adipvsxngnsoj6hsgk7rxta6ojdomm4tcd42maakuuz@rij273zia5ek>
+ <e13df309-457a-41fa-9406-22476f9f4e72@amd.com>
+ <gnxxp3bzk7cc5eidwvqvqb5hz2ojgjdadujpthweufxms2gjsc@ibcbkjst3pzf>
+ <fe39a04d-2b3a-476f-9505-b874e3ad93b4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe39a04d-2b3a-476f-9505-b874e3ad93b4@amd.com>
 
-After commit 5c8764f8679e ("f2fs: fix to force buffered IO on inline_data
-inode"), f2fs starts to force using buffered IO on inline_data inode.
+On Fri, Aug 30, 2024 at 03:47:50PM -0500, Kalra, Ashish wrote:
+> Hello Kirill,
+> 
+> On 8/29/2024 7:53 AM, Kirill A. Shutemov wrote:
+> > On Wed, Aug 28, 2024 at 02:43:23PM -0500, Kalra, Ashish wrote:
+> >> Hello Kirill,
+> >>
+> >> On 8/28/2024 1:21 AM, Kirill A. Shutemov wrote:
+> >>>>>> memremap()
+> >>>>>>   arch_memremap_wb()
+> >>>>>>     ioremap_cache()
+> >>>>>>       __ioremap_caller(.encrytped = false)
+> >>>>>>
+> >>>>>> I think arch_memremap_wb() should be mapped ioremap_encrypted() in x86
+> >>>>>> case. See the patch below.
+> >>>>>>
+> >>>>>> It seems to be working fine on TDX, but I am not sure about SEV.
+> >>>>>>
+> >>>>>> Tom, any comments?
+> >>>>> I haven't dug through the code that thoroughly, but I don't think making
+> >>>>> arch_memremap_wb() be ioremap_encrypted() will work for SME, where some
+> >>>>> data, e.g. setup data, is unencrypted and needs to be mapped shared.
+> >>>>>
+> >>>>> Let me add @Ashish to the thread and have him investigate this since he
+> >>>>> has been working on the kexec support under SNP. Can someone provide the
+> >>>>> specific kernel options that need to be in place?
+> >>>> As Tom asked for, please provide the specific kernel options to test
+> >>>> with this configuration.
+> >>> It is not about testing a specific configuration. The question is if it
+> >>> safe for memremap() to map all WB memory as encrypted by default.
+> >>>
+> >>> Looks like it is safe for TDX, but I am not sure about SME/SEV.
+> >> For SEV it may make sense, but for SME we don't want memremap() to map
+> >> all WB memory as encrypted by default.
+> > Could you elaborate why?
+> >
+> > I mean if it is specific memory ranges that can be identified as such we
+> > could make exception for them.
+> Looks like that the exception is already made for some of these memory ranges with MEMREMAP_DEC flag set along with MEMREMAP_WB.
+> >>> Maybe we want a specific flag to make memremap() map WB memory as
+> >>> decrypted/shared. Make everything encrypted by default seems like a sane
+> >>> default.
+> >> What are MEMREMAP_ENC, MEMREMAP_DEC flags being used for currently ?
+> > Good question.
+> >
+> > I see zero use of MEMREMAP_ENC in the kernel. And MEMREMAP_DEC only used
+> > for setup data which I believe AMD thing.
+> >
+> > If it is the only memory that must be decrypted, I guess we can make it
+> > work with encrypted by default.
+> 
+> Yes, and this looks pretty much covered with:
+> 
+> arch_memremap_can_ram_remap(..)
+> 
+> -> if (CC_ATTR_HOST_MEM_REMAP)
+> 
+> --> memremap_is_setup_data()
+> 
+> ---> memremap(.., MEMREMAP_WB | MEMREMAP_DEC);
+> 
+> It does look like that it can work with encrypted by default and any memory ranges which need special handling and need to be setup as decrypted can use MEMREMAP_WB | MEMREMAP_DEC flag.
+> 
 
-And also, it will cause f2fs_getattr() returning invalid zeroed value on
-.dio_mem_align and .dio_offset_align fields, however, STATX_DIOALIGN flag
-was been tagged. User may use zeroed .stx_dio_offset_align value
-since STATX_DIOALIGN was been tagged, then it causes a deadloop during
-generic/465 test due to below logic:
+Could you actually test the patch that makes memremap() map WB memory as
+encrypted by default:
 
-align=stx_dio_offset_align(it equals to zero)
-page_size=4096
-while [ $align -le $page_size ]; do
-	echo "$AIO_TEST -a $align -d $testfile.$align" >> $seqres.full
-	$AIO_TEST -a $align -d $testfile.$align 2>&1 | tee -a $seqres.full
-	align=$((align * 2))
-done
+https://lore.kernel.org/all/g3tswlyhrnuzfqf2upq6h23manyrzhnxttnay66nycy2moi4es@5n4oblzpzcjc/
 
-Quoted from description of statx manual:
+?
 
-" If  a  filesystem  does  not support a field or if it has an
-  unrepresentable value (for instance, a file with an exotic type),
-  then the mask bit corresponding to that field will be cleared in
-  stx_mask even if the user asked for it and a dummy value will be
-  filled in for compatibility purposes if one is available (e.g.,
-  a dummy UID and GID may be specified to mount under some
-  circumstances)."
+If it works, I will submit a proper patch.
 
-We should not set STATX_DIOALIGN flag in kstat.stx_mask if inode
-does not support DIO, so that it can indicate related fields contain
-dummy value, and avoid following incorrect use of them.
 
-Fixes: c8c02272a9f7 ("f2fs: support STATX_DIOALIGN")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/file.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 99903eafa7fe..f0b8b77e93ba 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -906,14 +906,11 @@ int f2fs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	 * f2fs sometimes supports DIO reads but not DIO writes.  STATX_DIOALIGN
- 	 * cannot represent that, so in that case we report no DIO support.
- 	 */
--	if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode)) {
--		unsigned int bsize = i_blocksize(inode);
--
-+	if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode) &&
-+				!f2fs_force_buffered_io(inode, WRITE)) {
-+		stat->dio_mem_align = F2FS_BLKSIZE;
-+		stat->dio_offset_align = F2FS_BLKSIZE;
- 		stat->result_mask |= STATX_DIOALIGN;
--		if (!f2fs_force_buffered_io(inode, WRITE)) {
--			stat->dio_mem_align = bsize;
--			stat->dio_offset_align = bsize;
--		}
- 	}
- 
- 	flags = fi->i_flags;
 -- 
-2.40.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
