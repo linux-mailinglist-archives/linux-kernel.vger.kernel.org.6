@@ -1,186 +1,143 @@
-Return-Path: <linux-kernel+bounces-323074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDD7973750
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:29:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A99F97375C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051701F261A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F59B289C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B571917FD;
-	Tue, 10 Sep 2024 12:28:58 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392B7190678;
+	Tue, 10 Sep 2024 12:30:30 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF401917DD;
-	Tue, 10 Sep 2024 12:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE12188CB1;
+	Tue, 10 Sep 2024 12:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971338; cv=none; b=BLrbkM4FzQzfKx95UPXjz/8i+x+qLvrFBuIV3xoqVekTLXRb9E0GbtlESlPGArztLuoZED7l/09Ia8LBpn+lpxdM7QUNgQch3zj6f7gWTxUwb+Iq0kYnX7K/pOw4k16Se60tWPgf59ELpfj9eNNnfZcaaNNkmBNB7GPrabCDBOA=
+	t=1725971429; cv=none; b=kt1PLn+epGl/NYf8/rN6nqTSeJknut/PcBUyMcxXJjvkm9eN6zFYo+t2fhd58F91JbFY/WGZLmjM81joiKUIJVgo7OxldS8RNTrLomeJcB9Q6GJWbfgksFPG/38RhNQ2aZS/a291eMVjH7bZAUdHp5bJDrU31utP0CXBYaujXb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971338; c=relaxed/simple;
-	bh=n34LZR4/qpKiZct0K9lqzEzS5dlXP8p0VQpr2dubN1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hXU/gLYvZAk85RaTBknyFXEQ4hZvcRgsF6Ib0zTKqgVV96lFVoxRIT/5GgTs7bfYkYrRLWZBGUocIAhSpNoNCssU7DZlfXxIT8DpfBiFxh3s03gMtZdlP4EU6g9j4003MHEhxWWFQTtVGioCYO0pYt6sVFkjOVD4+FvMzZbtbmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X330Q0FPrz9sPd;
-	Tue, 10 Sep 2024 14:28:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id g4B1QPtPZwoU; Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X330P6NX8z9rvV;
-	Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C726F8B770;
-	Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id r9qBl1ofIMM4; Tue, 10 Sep 2024 14:28:53 +0200 (CEST)
-Received: from [192.168.232.177] (unknown [192.168.232.177])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EBF1B8B766;
-	Tue, 10 Sep 2024 14:28:52 +0200 (CEST)
-Message-ID: <2234a5e1-5926-4b2d-a8f2-c780bf374a27@csgroup.eu>
-Date: Tue, 10 Sep 2024 14:28:52 +0200
+	s=arc-20240116; t=1725971429; c=relaxed/simple;
+	bh=Urw6u8EdPl5oTOy8EOetqrp+LHS1jwg2yc+cH5bvHBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DBgxsPP+GzhVOUV2qMMF1yuIJvRefjhqpf3aoZ2dFBWHkst+V2Qa2d7QEAKsF/vDjUfU7RNTwcPLO3M0CE3ODPIv2bzM0L0q0S9j4jk10EQe5KQwR1q6l88fNdzd7OXSLtizcC6GrFXlrz43Rr+nkn/tsPn+gZKpScPD4JzNGaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X32y12lQDz1HJ6f;
+	Tue, 10 Sep 2024 20:26:49 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8119E1A016C;
+	Tue, 10 Sep 2024 20:30:23 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 10 Sep 2024 20:30:22 +0800
+Message-ID: <1cae2765-65cc-7dc5-8321-76c8b7ef1b8c@huawei.com>
+Date: Tue, 10 Sep 2024 20:30:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] x86: vdso: Introduce asm/vdso/page.h
-To: Arnd Bergmann <arnd@arndb.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240903151437.1002990-1-vincenzo.frascino@arm.com>
- <20240903151437.1002990-4-vincenzo.frascino@arm.com>
- <cfb5ea05-0322-492b-815d-17a4aad4da99@app.fastmail.com>
- <e28e1974-cced-462c-8f57-ca1474272e73@arm.com>
- <11527a80-7453-4624-b406-e88c5692b015@app.fastmail.com>
- <ccaac82f-0c43-491e-ab8a-1da8bf8c7477@csgroup.eu>
- <8868ef2c-6bfb-4ab7-ac5e-640e05658ee1@app.fastmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <8868ef2c-6bfb-4ab7-ac5e-640e05658ee1@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
+ clock_set()
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>, Richard Cochran
+	<richardcochran@gmail.com>
+CC: <bryan.whitehead@microchip.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<anna-maria@linutronix.de>, <frederic@kernel.org>,
+	<UNGLinuxDriver@microchip.com>, <mbenes@suse.cz>, <jstultz@google.com>,
+	<andrew@lunn.ch>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240909074124.964907-1-ruanjinjie@huawei.com>
+ <20240909074124.964907-2-ruanjinjie@huawei.com>
+ <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
+ <f2c219c8-0765-6942-8495-b5acf3756fb1@huawei.com> <875xr3btou.ffs@tglx>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <875xr3btou.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
 
 
-Le 08/09/2024 à 22:48, Arnd Bergmann a écrit :
-> On Fri, Sep 6, 2024, at 18:40, Christophe Leroy wrote:
->> Le 06/09/2024 à 21:19, Arnd Bergmann a écrit :
->>> On Fri, Sep 6, 2024, at 11:20, Vincenzo Frascino wrote:
-> 
->>>> Looking at the definition of PAGE_SIZE and PAGE_MASK for each architecture they
->>>> all depend on CONFIG_PAGE_SHIFT but they are slightly different, e.g.:
->>>>
->>>> x86:
->>>> #define PAGE_SIZE        (_AC(1,UL) << PAGE_SHIFT)
->>>>
->>>> powerpc:
->>>> #define PAGE_SIZE        (ASM_CONST(1) << PAGE_SHIFT)
->>>>
->>>> hence I left to the architecture the responsibility of redefining the constants
->>>> for the VSDO.
+On 2024/9/10 20:05, Thomas Gleixner wrote:
+> On Tue, Sep 10 2024 at 19:23, Jinjie Ruan wrote:
+>> On 2024/9/9 23:19, Richard Cochran wrote:
+>>> On Mon, Sep 09, 2024 at 03:41:23PM +0800, Jinjie Ruan wrote:
+>>>> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+>>>> index 1cc830ef93a7..34deec619e17 100644
+>>>> --- a/kernel/time/posix-timers.c
+>>>> +++ b/kernel/time/posix-timers.c
+>>>> @@ -1137,6 +1137,9 @@ SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
+>>>>  	if (get_timespec64(&new_tp, tp))
+>>>>  		return -EFAULT;
+>>>>  
+>>>> +	if (!timespec64_valid(&new_tp))
+>>>> +		return -ERANGE;
 >>>
->>> ASM_CONST() is a powerpc-specific macro that is defined the
->>> same way as _AC(). We could probably just replace all ASM_CONST()
->>> as a cleanup, but for this purpose, just remove the custom PAGE_SIZE
->>> and PAGE_SHIFT macros. This can be a single patch fro all
->>> architectures.
->>>
+>>> Why not use timespec64_valid_settod()?
 >>
->> I'm not worried about _AC versus ASM_CONST, but I am by the 1UL versus 1.
->>
->>
->> This can be a problem on 32 bits platforms with 64 bits phys_addr_t
+>> It seems more limited and is only used in timekeeping or
+>> do_sys_settimeofday64().
 > 
-> But that would already be a bug if anything used this, however
-> none of them do. The only instance of an open-coded
+> For a very good reason.
 > 
-> #define PAGE_SIZE       (1 << PAGE_SHIFT)
+>> And the timespec64_valid() is looser and wider used, which I think is
+>> more appropriate here.
 > 
-> is from openrisc, but that is only used inside of __ASSEMBLY__, for
-> the same effect as _AC().
+> Can you please stop this handwaving and provide proper technical
+> arguments?
+> 
+> Why would PTP have less strict requirements than settimeofday()?
 
-Maybe I was not clear enough. The problem is not with PAGE_SHIFT but 
-with PAGE_MASK, and that's what I show with my exemple.
+I checked all the PTP driver, most of them use timespec64_to_ns()
+convert them to ns which already have a check, but the others not check
+them, and lan743x_ptp check them differently and more, so i think this
+is a minimum check.
 
-If take the definition from ARM64 (which is the same as several other 
-artchitectures):
+Use timespec64_to_ns()
+- drivers/net/ethernet/amd/xgbe/xgbe-ptp.c
+- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:
+- drivers/net/ethernet/cavium/liquidio/lio_main.c:
+- drivers/net/ethernet/engleder/tsnep_ptp.c
+- drivers/net/ethernet/freescale/fec_ptp.c
+- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c:
+- drivers/net/ethernet/intel/i40e/i40e_ptp.c
+- drivers/net/ethernet/intel/ice/ice_ptp.c
+- drivers/net/ethernet/intel/igc/igc_ptp.c
+- drivers/net/ethernet/intel/ixgbe/ixgbe_ptp.c
+- drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
+- drivers/net/ethernet/qlogic/qede/qede_ptp.c
+- drivers/ptp/ptp_idt82p33.c
 
-#define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
-#define PAGE_MASK		(~(PAGE_SIZE-1))
+Not check:
+- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
+- drivers/net/ethernet/intel/igb/igb_ptp.c (only one igb_ptp_settime_i210())
+- drivers/net/ethernet/marvell/mvpp2/mvpp2_tai.c
+- drivers/net/ethernet/renesas/rcar_gen4_ptp.c
+-
+drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
+- drivers/net/phy/micrel.c
+- drivers/ptp/ptp_dfl_tod.c
 
-PAGE_SHIFT is 12
-PAGE_SIZE is then 4096 UL
-PAGE_MASK is then 0xfffff000 UL
+Self check and check more:
+- drivers/net/ethernet/microchip/lan743x_ptp.c
 
-So if I take the probe() in drivers/uio/uio_pci_generic.c, it has:
-
-	uiomem->addr = r->start & PAGE_MASK;
-
-uiomem->addr is a phys_addr_t
-r->start is a ressource_size_t hence a phys_addr_t
-
-And phys_addr_t is defined as:
-
-	#ifdef CONFIG_PHYS_ADDR_T_64BIT
-	typedef u64 phys_addr_t;
-	#else
-	typedef u32 phys_addr_t;
-	#endif
-
-On a 32 bits platform, UL is unsigned 32 bits, so the r->start & 
-PAGE_MASK will and r->start with 0x00000000fffff000
-
-That is wrong.
-
-
-That's the reason why powerpc does not define PAGE_MASK like ARM64 but 
-defines PAGE_MASK as:
-
-	(~((1 << PAGE_SHIFT) - 1))
-
-When using 1 instead of 1UL, PAGE_MASK is still 0xfffff000 but it is a 
-signed constant, so when it is anded with an u64, it gets 
-signed-extended to 0xfffffffffffff000 which gives the expected result.
-
-That's what I wanted to illustrate with the exemple in my previous 
-message. The function f() was using the signed PAGE_MASK while function 
-g() was using the unsigned PAGE_MASK:
-
-00000000 <f>:
-    0:    54 84 00 26     clrrwi  r4,r4,12
-    4:    4e 80 00 20     blr
-
-00000008 <g>:
-    8:    54 84 00 26     clrrwi  r4,r4,12
-    c:    38 60 00 00     li      r3,0
-   10:    4e 80 00 20     blr
-
-Function f() returns the given u64 value with the 12 lowest bits cleared
-Function g() returns the given u64 value with the 12 lowest bits cleared 
-and the 32 highest bits cleared as well, which is unexpected.
-
-Christophe
+> 
+> Thanks,
+> 
+>         tglx
+> 
+> 
 
