@@ -1,37 +1,74 @@
-Return-Path: <linux-kernel+bounces-323087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4773C973780
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A2E97378B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19331F25673
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6C428749C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CCA1922D9;
-	Tue, 10 Sep 2024 12:35:19 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690C41917CB;
+	Tue, 10 Sep 2024 12:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NBo6kpKG"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D51917E2;
-	Tue, 10 Sep 2024 12:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BE1E4A4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971718; cv=none; b=apwGqdv0V9S7i+CegfIislCRmfO096DQZZnpvxsWhMob+UtUQWIbXHZROiT4HVdAQxEf8zFXi0MIHoGARlyqdXcxKE81hWwd7RO+pCenWIheN/m0Ol63bWpsni5+WKynkjGnZyG+hq7TYiq5PTcq6x7MVHpyxE2avbF9whG3ayg=
+	t=1725971811; cv=none; b=EhfaEibDQL7fOzP2LqHHij8poKhnZoPyPO86BNC6/RRZh9n/Z/SNnPxxXb3UkvCL3PA6dRI3II5Whi+jHM53kF/F2vEx3i+zsaf+rkXm2popzfmDP53nPIX4YHKoRAzcT4irzpXrhD+LMS7iYEr9GjGamTXAXlNrIeVR9S/jekk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971718; c=relaxed/simple;
-	bh=OQ+Vs2QCCA6pe2c7oQq1SazHpCwagUDdfVm4Y+oDTQ4=;
+	s=arc-20240116; t=1725971811; c=relaxed/simple;
+	bh=k7NHxqA3SglM0ZepSL0ApUEMR+pkYg4qNOQViEo1lvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4HhfbGzab6fuOKSLdxCYv6con8imcS67LqYTXFndC/CSCScP70wARDyC2M4HHte1+iijOnTo+/EqPXudj1kUr1YqlY9lDHC1j58zKiT5KIOa5rOqopcZ5pDjgy6lKBpSXECaUW7HJWsUyvG2K4WQXmqYazQQW3qed14giLvYt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BCA02FF809;
-	Tue, 10 Sep 2024 12:35:06 +0000 (UTC)
-Message-ID: <5d486ff8-2ab5-4ed5-a1da-c2817927b3a2@ghiti.fr>
-Date: Tue, 10 Sep 2024 14:35:06 +0200
+	 In-Reply-To:Content-Type; b=d3gnbbautHT6xQx1S8fRTAi8dSoJc+lmODkRO7g3OB0EVBUUVUORpY6QEdHDXYyQ9uqAyC1eAF2pcCRwaUCEHlsDvpMkv1S4vNjRMF/dowHSpPBzSrDm3V84ssVw1VNA9fEL5H0vjRrDY5NkeK0sUMspXjxoA0/mp0EhyW9ocfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NBo6kpKG; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so45867581fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725971808; x=1726576608; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3xqhKe2V4hP7VjyNfJjl2E35TafJrVbJyzMXlI9uuc=;
+        b=NBo6kpKGh7H5eyoA9Uu9gCWpywn8mqMQIwtFeobWnZ6mzCAnUrhac/3outrJdIfIi5
+         XSHu3n8aIVum6OvbscvWboCiX3AR0B6W/Dl+uo/ZIPXDR8f36nGFqvfHfWVBO/WgLFii
+         wQHYx0i1j8yy4QzZCtA30ZEgZ8rPhm2arS6go6RJ3aNeafvsSjYDKb+RLHvj1PJ+dRuy
+         NhaQk+YHtxe+RglhUysWq2fQTU8VDwQ9JCc6ogavi+kgrFmbV3x64d7GKutCKoqs1CN6
+         c5m1vyRqcitGCNYSLFl18n7Mth1Kz6KFiUiM465sxoDl6RE9GhVwL8qrCH6WZpGmP+mY
+         su0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725971808; x=1726576608;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a3xqhKe2V4hP7VjyNfJjl2E35TafJrVbJyzMXlI9uuc=;
+        b=vzm/2qzJ5WKuCfwvrchAp38U3T6xsK3UzJP2K28jCoHs5vP4PI8pJRdTOsdjHBsCxG
+         x9ndGMRBGid2nb+QJTaIj7I9cppPHMpPiC1szfRF8VGdfc8TjwxptieEE3BG779ji7wb
+         PB580kUgf6w82uCdfMFLReHZHQghc20cais1sevfSapfQDgfN35w/7sIkqx1mCPrwQb0
+         cYDmbxIJnkVTFClAAEun38EkPc6XeiiCMNmJJ6cUl66PczBK3ot/elqVWxM1NtQ89P1f
+         wAG9Q/oi34U9GpAsrZz0SC1LV54gRajxCs6oAn/Z+SCJmg7H5LDyp1b7WgiDRLRvz6/4
+         fTyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVU6Mi+Tn1Tu6N+KzOtYAOCkI5uUnoWpMSoejJMCGA17da/6q0bS+3GvjRBz5YYZtrIjN99MPxduECp4XM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMBsBE04JuljoSru24LQyaOHV8Km643+4ptrtM4pzQup01xLRE
+	8OjOQi8s+J828OcKqDkyTHGvOZjH8rX5o5WYOenE2HVYqL6Vhr8KvDgId8I83A==
+X-Google-Smtp-Source: AGHT+IF3MoHGt1ik2VoSI/zIwXkBeiwZ9N+LJCLGLJBDe7Y5/hECHzQfOWFESmPwN/oMzTzhzfvfug==
+X-Received: by 2002:a2e:801:0:b0:2f3:f8d7:d556 with SMTP id 38308e7fff4ca-2f751f01fafmr65227181fa.18.1725971807575;
+        Tue, 10 Sep 2024 05:36:47 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8cdd3sm4237156a12.96.2024.09.10.05.36.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 05:36:47 -0700 (PDT)
+Message-ID: <3fb809a5-d0a2-4b72-b810-13e4ee93b8b7@suse.com>
+Date: Tue, 10 Sep 2024 14:36:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,134 +76,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
- switch_mm()
+Subject: Re: [PATCH v3 7/7] xen: tolerate ACPI NVS memory overlapping with Xen
+ allocated memory
+To: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
+ <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <20240910103932.7634-1-jgross@suse.com>
+ <20240910103932.7634-8-jgross@suse.com>
 Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
- sashal@kernel.org, parri.andrea@gmail.com, mathieu.desnoyers@efficios.com,
- palmer@rivosinc.com, linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, nathan@kernel.org,
- ndesaulniers@google.com, trix@redhat.com, linux-riscv@lists.infradead.org,
- llvm@lists.linux.dev, paulmck@kernel.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
- brauner@kernel.org, arnd@arndb.de
-References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
- <2024091002-caution-tinderbox-a847@gregkh>
- <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
- <2024091037-errant-countdown-4928@gregkh>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <2024091037-errant-countdown-4928@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <20240910103932.7634-8-jgross@suse.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+
+On 10.09.2024 12:39, Juergen Gross wrote:
+> In order to minimize required special handling for running as Xen PV
+> dom0, the memory layout is modified to match that of the host. This
+> requires to have only RAM at the locations where Xen allocated memory
+> is living. Unfortunately there seem to be some machines, where ACPI
+> NVS is located at 64 MB, resulting in a conflict with the loaded
+> kernel or the initial page tables built by Xen.
+> 
+> Avoid this conflict by swapping the ACPI NVS area in the memory map
+> with unused RAM. This is possible via modification of the dom0 P2M map.
+> Accesses to the ACPI NVS area are done either for saving and restoring
+> it across suspend operations (this will work the same way as before),
+> or by ACPI code when NVS memory is referenced from other ACPI tables.
+> The latter case is handled by a Xen specific indirection of
+> acpi_os_ioremap().
+> 
+> While the E820 map can (and should) be modified right away, the P2M
+> map can be updated only after memory allocation is working, as the P2M
+> map might need to be extended.
+> 
+> Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
 
 
-On 10/09/2024 13:58, Greg KH wrote:
-> On Tue, Sep 10, 2024 at 01:31:04PM +0200, Alexandre Ghiti wrote:
->> Hi Greg,
->>
->> On 10/09/2024 09:32, Greg KH wrote:
->>> On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
->>>> From: Andrea Parri <parri.andrea@gmail.com>
->>>>
->>>> [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
->>>>
->>>> The membarrier system call requires a full memory barrier after storing
->>>> to rq->curr, before going back to user-space.  The barrier is only
->>>> needed when switching between processes: the barrier is implied by
->>>> mmdrop() when switching from kernel to userspace, and it's not needed
->>>> when switching from userspace to kernel.
->>>>
->>>> Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
->>>> primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
->>>> architecture, to insert the required barrier.
->>>>
->>>> Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
->>>> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
->>>> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>>> Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
->>>> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
->>>> Signed-off-by: WangYuli <wangyuli@uniontech.com>
->>>> ---
->>>>    MAINTAINERS                         |  2 +-
->>>>    arch/riscv/Kconfig                  |  1 +
->>>>    arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
->>>>    arch/riscv/mm/context.c             |  2 ++
->>>>    kernel/sched/core.c                 |  5 +++--
->>>>    5 files changed, 38 insertions(+), 3 deletions(-)
->>>>    create mode 100644 arch/riscv/include/asm/membarrier.h
->>> Now queued up, thanks.
->>
->> The original patch was merged in 6.9 and the Fixes tag points to a commit
->> introduced in v4.15. So IIUC, this patch should have been backported
->> "automatically" to the releases < 6.9 right? As stated in the documentation
->> (process/stable-kernel-rules.html):
->>
->> "Note, such tagging is unnecessary if the stable team can derive the
->> appropriate versions from Fixes: tags."
->>
->> Or did we miss something?
-> Yes, you didn't tag cc: stable at all in this commit, which is why we
-> did not see it.  The documentation says that :)
-
-
-Ok, some patches seem to make it to stable without the cc: stable tag 
-(like the one below for example), so I thought it was not necessary.
-
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-[ Upstream commit 1ff95eb2bebda50c4c5406caaf201e0fcb24cc8f ]
-
-RISCV_ALTERNATIVE_EARLY will issue sbi_ecall() very early in the boot
-process, before the first memory mapping is setup so we can't have any
-instrumentation happening here.
-
-In addition, when the kernel is relocatable, we must also not issue any
-relocation this early since they would have been patched virtually only.
-
-So, instead of disabling instrumentation for the whole kernel/sbi.c file
-and compiling it with -fno-pie, simply move __sbi_ecall() and
-__sbi_base_ecall() into their own file where this is fixed.
-
-Reported-by: Conor Dooley <conor.dooley@microchip.com>
-Closes:https://lore.kernel.org/linux-riscv/20240813-pony-truck-3e7a83e9759e@spud/
-Reported-by 
-<https://lore.kernel.org/linux-riscv/20240813-pony-truck-3e7a83e9759e@spud/Reported-by>:syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com 
-<mailto:syzbot%2Bcfbcb82adf6d7279fd35@syzkaller.appspotmail.com>
-Closes:https://lore.kernel.org/linux-riscv/00000000000065062c061fcec37b@google.com/ 
-<https://lore.kernel.org/linux-riscv/00000000000065062c061fcec37b@google.com/>
-Fixes: 1745cfafebdf ("riscv: don't use global static vars to store 
-alternative data")
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Link:https://lore.kernel.org/r/20240829165048.49756-1-alexghiti@rivosinc.com 
-<https://lore.kernel.org/r/20240829165048.49756-1-alexghiti@rivosinc.com>
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-  arch/riscv/include/asm/sbi.h | 20 ++++++++++-
-  arch/riscv/kernel/Makefile   |  6 +++-
-  arch/riscv/kernel/sbi.c      | 63 -----------------------------------
-  arch/riscv/kernel/sbi_ecall.c | 48 ++++++++++++++++++++++++++
-  4 files changed, 72 insertions(+), 65 deletions(-)
-  create mode 100644 arch/riscv/kernel/sbi_ecall.c
-
-I'll pay attention to that from now on.
-
-Thanks,
-
-Alex
-
-
->
-> thanks,
->
-> greg k-h
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
