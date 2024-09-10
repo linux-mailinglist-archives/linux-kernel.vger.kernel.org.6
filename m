@@ -1,109 +1,175 @@
-Return-Path: <linux-kernel+bounces-323812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4279743CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:59:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC539743CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493CF1F269F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7221AB23496
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BB51A7AC6;
-	Tue, 10 Sep 2024 19:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F381A7AE2;
+	Tue, 10 Sep 2024 19:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gaeqoCZq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xRPH8BL/"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0F41A38F4;
-	Tue, 10 Sep 2024 19:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8EB1A3BB8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725998358; cv=none; b=h+fThrHRu0xYOgR7aVBcHXQDjLsYHZW1SR2QvtmIrbE6h4aPkKD0ZYOqsblYceWuCiTU8wMXSl69QMkcmX7GlCHbOc8kumLZ7KLjNga0t3fp5c72j3r+E2q4LYmj2jefJFslprzZ4v8t2Fgj/aa+7A8fAiYdRAGMFHj3LQSmcHk=
+	t=1725998368; cv=none; b=nA3YO19GYukvngfBpOQQ/X4n91D2/JM3foh8g0nsTV37vcjnzthjs/NPzgyGGPi8kUZhdznr3KgJVkm/eaqk4Uwh/KlL319UX2HE1y8F+ntMFqvRY1PWe9qsi04ThpmWuDg0QtlwosM6HmA4gEvNqRX0DzVJetPs+KnV10431Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725998358; c=relaxed/simple;
-	bh=e4U0T65qhqvNn3O/S5aK5OkJiPqkvEGFHzPbP+6pPmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y504O+jKcs7FlUE7z9Jcte5/QvfjOPD/qpCNLJXkg3deKXr31Imw9Q2ZA9tqgnCLpu+y+yHyfMSESfYpqpxBTrLNVilvX/Zxe0WmryridNksjnbTktsedxWQDZkLl9Ktv8CE28S8YikIBuepyGc+QF/GelwD1Eqwb1LSAVrTv38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gaeqoCZq; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725998357; x=1757534357;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e4U0T65qhqvNn3O/S5aK5OkJiPqkvEGFHzPbP+6pPmw=;
-  b=gaeqoCZqRgcegZOHvEYcbraN3DpP+rgf8Hn7uL25mM+GF70OS4SOoJ/B
-   VmoATY1ZxtlOg7YKeT9PeXJH6YXoc8vCg6ZjOvWxLKtajlmGxGCFfNOFr
-   A5xEIcokfcBETBgllAMbwqld4gqlsoQKFeRw88KDF2oH5aSAeVjhS6AYK
-   6E9KmHSuPEf1zdd34rhcICLdrld384mo1Hgf9hKcEjSPnX6Tpqm1ZLBqe
-   ZG6N4Bv4udF+XPMTaOVs+3X077/T4UPwZ6ZvNGf7g+3psldxvUql0VTnk
-   zGp5EXZhjo7fOJwxbAT23r+nHzvB4NGEHOC+V0PJ1BRG1OF9g2jHABwbW
-   w==;
-X-CSE-ConnectionGUID: BsmMwsCiSbqkM4njYTFcuQ==
-X-CSE-MsgGUID: Z/eMPRLFRd6XXbv6JQU3pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="28659763"
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="28659763"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 12:59:16 -0700
-X-CSE-ConnectionGUID: YI5KDJafS0iyIY+1tVg51w==
-X-CSE-MsgGUID: eModdzSlR4yLgRVLbXAgLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="66985748"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 10 Sep 2024 12:59:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8CD95326; Tue, 10 Sep 2024 22:59:10 +0300 (EEST)
-Date: Tue, 10 Sep 2024 22:59:10 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
-	decui@microsoft.com, John.Starks@microsoft.com, stable@vger.kernel.org
-Subject: Re: [PATCH v6 1/6] x86/tdx: Fix "in-kernel MMIO" check
-Message-ID: <gwxxb4o64g5e3ulihhv6aar3m3btkza4vt7gjplx4lvylegd65@vm3sjh243oek>
-References: <cover.1724837158.git.legion@kernel.org>
- <cover.1725622408.git.legion@kernel.org>
- <398de747c81e06be4d3f3602ee11a7e2881f31ed.1725622408.git.legion@kernel.org>
+	s=arc-20240116; t=1725998368; c=relaxed/simple;
+	bh=JsFgjG7RzN9cW564KrDmIlGbzKdzMWvwxWy1OkvvXKs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DWD7C0i9WjtRRHDkpIdx+Iz2ysg0brxBNjTP0NyDaSiTWniU+bshSjpGVkPID5dJRVaqco0HZudFkDsNJxIDwG1Kcn/2Q0kvApcWnLLNTmV+3KgOst9fxFqlmnjrzt4SJHr8ypR2z6jl6oiaAl1AWHY9qtFWrvMk76rlgRNb+sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xRPH8BL/; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c41daso83850237b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725998366; x=1726603166; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/I5yu5GXZLZbi8Yezk0wN06GpM5EScQUnSnfcKR680=;
+        b=xRPH8BL/FokU1vcU2fw3YYuYLv7KrGrqL+CqrU+PdI30GYd7d0hIc0ElDAvqT8agd3
+         wmjpAUurthPQZDdswIqOOemE6/4wUjUG0Hv/8kQ6xfilG5KhglEkdU8uwCcJ2l8goVPX
+         DL6aC0bMnhSQwLi7Lpvg6Sc9ZlKuDJV3ksR0LdNYVXmoZmbLNKMFbgk/D+YA7/Ot5Eyc
+         IBkUNG+VX9L975M15X32p9DKuCfSMbw8CN/089W5murXVnlH7TGHApvBlbOEvqlvMXnr
+         LROJ+2wJFlXDsqK49X5eVunLQoQT2tsX9ZGxKVbIHl4rHFgcvvAXUUX/DtKDvyH5vdVm
+         BOew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725998366; x=1726603166;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/I5yu5GXZLZbi8Yezk0wN06GpM5EScQUnSnfcKR680=;
+        b=nTQ+FSL/zFWjVSnG9ekNi5BmvqsEx9CfTpH9tnXPwSdUvj+WxQgoJf2LNPnJFkAr/o
+         EsGnczabAgZtkbbo70FXpPUys6UkgScTy4oGEI7STplk/IlnbLyNtLo/Vcp1NijuAauh
+         x7VLgwtT3iJ3kDoRJk43HTouhslJTbFQl04zfYfPlnEzWRQoTwMJ+VrPg1q0oq/8bKDj
+         Ebb2HNkNCGK/0Y50alqp5MyXRgz7Zdvrd0V6GGsS+I5MmaDBNnax5ZNDSj0QGxnbUIMM
+         fZwhn4Xuc4HRUGdX/gqChyAR3jIofmoOAxRmu/SoLIl41RCXkCnw0DdT2Ce07NYCbUs4
+         QCTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Ie6BF3wJ/jqqD0p6TTTl0d+xHiIwASsnCfNEEZSu/48S8laIaE9n9pkTArK44tXqD1yBNy0JoOeaKQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygYMW4EE/bVaGRG78MOJFcq8mombGhwfCwedXGhPCtjBSW57ez
+	fBkZMh6MjNNsgVTIzqD2hGSoLcwASxACb4gzZkTdKQPR7rDmPOiiIWBev7hPJ+SKcafNQhTZSlM
+	wag==
+X-Google-Smtp-Source: AGHT+IG3eA252S/hkQDQt3UF35eC4bseSdWlEpPLcwdC9CQyLSErJtQ3fXwKL14p5eudAjUWJUQUgzKZPd8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:38c:b0:6af:623c:7694 with SMTP id
+ 00721157ae682-6db44a5d200mr10392687b3.0.1725998366004; Tue, 10 Sep 2024
+ 12:59:26 -0700 (PDT)
+Date: Tue, 10 Sep 2024 12:59:24 -0700
+In-Reply-To: <20240807123531.69677-1-amit@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <398de747c81e06be4d3f3602ee11a7e2881f31ed.1725622408.git.legion@kernel.org>
+Mime-Version: 1.0
+References: <20240807123531.69677-1-amit@kernel.org>
+Message-ID: <ZuClHCQJf6JY5gMe@google.com>
+Subject: Re: [PATCH v4] KVM: SVM: let alternatives handle the cases when RSB
+ filling is required
+From: Sean Christopherson <seanjc@google.com>
+To: Amit Shah <amit@kernel.org>
+Cc: pbonzini@redhat.com, x86@kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, amit.shah@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kim.phillips@amd.com, david.kaplan@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Sep 06, 2024 at 01:49:59PM +0200, Alexey Gladkov wrote:
-> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+On Wed, Aug 07, 2024, Amit Shah wrote:
+> From: Amit Shah <amit.shah@amd.com>
 > 
-> TDX only supports kernel-initiated MMIO operations. The handle_mmio()
-> function checks if the #VE exception occurred in the kernel and rejects
-> the operation if it did not.
+> Remove superfluous RSB filling after a VMEXIT when the CPU already has
+> flushed the RSB after a VMEXIT when AutoIBRS is enabled.
 > 
-> However, userspace can deceive the kernel into performing MMIO on its
-> behalf. For example, if userspace can point a syscall to an MMIO address,
-> syscall does get_user() or put_user() on it, triggering MMIO #VE. The
-> kernel will treat the #VE as in-kernel MMIO.
+> The initial implementation for adding RETPOLINES added an ALTERNATIVES
+> implementation for filling the RSB after a VMEXIT in
 > 
-> Ensure that the target MMIO address is within the kernel before decoding
-> instruction.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+> commit 117cc7a908c836 ("x86/retpoline: Fill return stack buffer on vmexit")
 
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Nit, no need for 14 digits, 12 is still the "official" recommendation.  To make
+this flow better, I would also prefer to not have each commit reference be on
+its own line.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> Later, X86_FEATURE_RSB_VMEXIT was added in
+> 
+> commit 2b129932201673 ("x86/speculation: Add RSB VM Exit protections")
+
+Oh, the irony.  That commit didn't add RSB_VMEXIT, it added RSB_VMEXIT_LITE.
+Commit 9756bba28470 ("x86/speculation: Fill RSB on vmexit for IBRS") added the
+"heavy" version.  This is also a good opportunity to call out with RSB_VMEXIT
+actually does.
+
+> The AutoIBRS (on AMD CPUs) feature implementation added in
+> 
+> commit e7862eda309ecf ("x86/cpu: Support AMD Automatic IBRS")
+> 
+> used the already-implemented logic for EIBRS in
+> spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not update the
+> code at VMEXIT to act on the mode selected in that function -- resulting
+> in VMEXITs continuing to clear the RSB when RETPOLINES are enabled,
+> despite the presence of AutoIBRS.
+> 
+> Signed-off-by: Amit Shah <amit.shah@amd.com>
+> 
+> ---
+> diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
+> index a0c8eb37d3e1..69d9825ebdd9 100644
+> --- a/arch/x86/kvm/svm/vmenter.S
+> +++ b/arch/x86/kvm/svm/vmenter.S
+> @@ -209,10 +209,14 @@ SYM_FUNC_START(__svm_vcpu_run)
+>  7:	vmload %_ASM_AX
+>  8:
+>  
+> -#ifdef CONFIG_MITIGATION_RETPOLINE
+> -	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
+> -	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
+> -#endif
+> +	/*
+> +	 * IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET!
+> +	 *
+> +	 * Unlike VMX, AMD does not have the hardware bug that necessitates
+> +	 * RSB_VMEXIT_LITE
+> +	 */
+
+I would rather do nothing than carry these comments.  Long term, I would still
+prefer to have RSB_VMEXIT_LITE, but that's not a hill worth dying on, and I am
+a-ok waiting to deal with that if/when I (or someone else) takes on the task
+of unifying the VM-Enter/VM-Exit flows.
+
+So, with the comment changes dropped and the changelog massaged to this:
+
+    Remove superfluous RSB filling after a VMEXIT when the CPU already has
+    flushed the RSB after a VMEXIT when AutoIBRS is enabled.
+    
+    The initial implementation for adding RETPOLINES added an ALTERNATIVES
+    implementation for filling the RSB after a VMEXIT in commit 117cc7a908c8
+    ("x86/retpoline: Fill return stack buffer on vmexit").
+    
+    Later, X86_FEATURE_RSB_VMEXIT was added in commit 9756bba28470
+    ("x86/speculation: Fill RSB on vmexit for IBRS") to handle stuffing the
+    RSB if RETPOLINE=y *or* KERNEL_IBRS=y, i.e. to also stuff the RSB if the
+    kernel is configured to do IBRS mitigations on entry/exit.
+    
+    The AutoIBRS (on AMD) feature implementation added in commit e7862eda309e
+    ("x86/cpu: Support AMD Automatic IBRS") used the already-implemented logic
+    for EIBRS in spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not
+    update the code at VMEXIT to act on the mode selected in that function --
+    resulting in VMEXITs continuing to clear the RSB when RETPOLINES are
+    enabled, despite the presence of AutoIBRS.
+
+Applied to kvm-x86 svm.
+
+[1/1] KVM: SVM: let alternatives handle the cases when RSB filling is required
+      https://github.com/kvm-x86/linux/commit/4440337af4d4
+
+--
+https://github.com/kvm-x86/linux/tree/next
 
