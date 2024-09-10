@@ -1,82 +1,89 @@
-Return-Path: <linux-kernel+bounces-323391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFFD973CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2433E973CAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DD2283193
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2AB1F262D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8161619E989;
-	Tue, 10 Sep 2024 15:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EACC1A01CA;
+	Tue, 10 Sep 2024 15:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b="jbbgcqkp"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2125.outbound.protection.outlook.com [40.107.223.125])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Xj0JyfRq"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22937191F9B;
-	Tue, 10 Sep 2024 15:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2B619FA93
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725983269; cv=fail; b=WUN80QIrN/yMqd6/MQi8ku5mdAgddTOrknHL4EEaHSWHTqffST14B7bOEmCU/UAUlk8Swca0gKOUNgnYEO+m/HKvd+SbiF/9c4HX2Ym5/0Q7ZOPW/LQcUEvAXWUqcpfKMhiGuuAdmTE48418nioLKQZZAcIkC1HO0zptjJICDrw=
+	t=1725983276; cv=fail; b=Qn7x8S2ayDJTS8G0m/EYhGV6kkNbPa6evtaKPh7sGChFBDaxgKmHKtbJUnyEgpJPS/7mMuLl+2PonoCgGLCamY9YjzU9pf/ynKD/ZTsdlq/AZw3twiOEWQIK3F6yxArevWz7AObQRdHXSzWaES7319FiRF+P0UJFTqw4p43n5ys=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725983269; c=relaxed/simple;
-	bh=v5TZttHRhH/Ure4tCF/cA5Oqcx9VPqzzhLTcA2IQ4oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=O5WvnKicAjlP78jEN9IQfB6ivDRTwkD+ezEr7BWnUnksONKag1FzQpPUSLc2MXs7jNdnUu/JTcDDBCz8CNdTpzupoxeiXcTUawL9TpPD9X53VOsHdRtEQ6+GiQV+XbdP/YRCx9rwTIJ1R7ySFqHARghWPU7GdIa3Yw3LJnOOtMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com; spf=pass smtp.mailfrom=labundy.com; dkim=fail (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b=jbbgcqkp reason="signature verification failed"; arc=fail smtp.client-ip=40.107.223.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=labundy.com
+	s=arc-20240116; t=1725983276; c=relaxed/simple;
+	bh=g84kCwUm3czCHNtbqUT/bmyjWbwWO2SeblKempGWO/M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VirO8nSMep1MsaJMvbxSCos1sF69Ihfik094752qqKLGInebSCr1tIulgFxqjOoLbP7zOVHEcL33e3IPG6w/l0zYP3bmboJCfOXGEAEte3sCqydqmZmk/FSmm13tEl001lSJSD/m5YYQ5QgMaFdMH/Yc9Hh1Gw2u3MGUeFjXC/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Xj0JyfRq; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aZHww7ZEWRtMT9rygfmNeUzsa2EMQ+Tg6IMZgzNiRV7+ChxlkMZQUcaF5PDN2E/W2owNA08bnJcXP4mY8M9+fUA1GXOi9Y/ucaZztnGd6g7Ua72WXj1I+4zImy4M5JGBDtHD1lcyo7Z+rs/r+2wbWT86swFP4pJf16bFOCiYUyFU7adi+LzZ+6sLa2vrQU4i+YEgO9wrIziV+SehblVVOtCELPkmHjG3BpUSGPiiWAPcnqg3n8t6bAX6fTdihCN1DmqWa+3se7dgmWKcg8NlC6uaKTzmcU2/mipql+OphOfK+b7eeEebwxChN/Hwb1/FXwhiKAkrzv9Zj0Je6dw3Qg==
+ b=FwfvHAabigHPhGth0x4IwqjgtyJA3yo9NLhaC7q+UWb1hjntXP7C+rnxSGxZIqxLbycWproEPyoPF3tV1eCnjqNZ4BisUtfa5YlEqnI8PcoNz4bGoahmu+pPM44XnQ5tquFf7YSrIxQJF7vDZcpc6tytUToPUKCVlEXBn88WFlC4BaPlFJo/j7AdVZXi4fu35R0b9Z5Bzps6s3En69w7PAF/dWBGaI95wDRzHQxIQR0866qQdOxvw022jzUSCI8dH6jyys3NRM9S/PopktoJFgBs2iQ7ZmFJCx6O1aR7c/Fbjevq+o16MUMDUVXVF03z3ZvCngM58xcxTw2hnD2BTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IcI5txnJltHAaK6fy0IjJbeybicrEjAmq0xnZ5O7sEY=;
- b=BTfNqs1HH0kybK0ywVn9S9YsOMjPQTRjb+cqp3WUXQDSKBir0M95u32li3HxQPNarh8Dx7ydUqftmO+0ylOIvpRznVaD7isuQGrhEUqVJ7luoPsxPqFKvOVQAC3/rUQhtlXCNjljIzEW3Xab6OOX3oivZP02Ur8GPR+DKV3LBPdL3VTsqQ8WPIhHVy9LDrWlCjFTcz4JMC9YIRdr7j9eHpgGMUp/1+UZ5kXXpV55Mmu0PRj0x5AH0LjabChkB2FRbb1kjo4wkci+ClC+9HI1Pt3wq9gpi+wU8OPh3BP3hFl2NVKhpu/P7D/2aDgpV6f1TKCjSJZb+qnzB5M3NMfqHw==
+ bh=g84kCwUm3czCHNtbqUT/bmyjWbwWO2SeblKempGWO/M=;
+ b=irNcQKqXdulu7DLsfoxEIOPy0nPu7vvtajXlv+8KLQyyDpBucIbHVyJXZcCaGu1rWRRRU7WlE7NLSw8HEJoKe1UTVWOGnwhrsfHLlvOhghApkTOaTI981xrgVgF4/D54cKp/s9nqspQs2dK4vaByHoB4yxWarKncXf293rvSYJcmRD62MMLIlhA1DjyUv5DPFs0U3N+++clrDmZOMdMe9LLlZGQ3XNW69gfbH0A5AswuzolpI8BXOha5sRzNKQOJDyktfc5TTYpNz5RLeg0IYtsO+65VPYui8liBvybz0kDUcYuE2T5YxyPXSqhDlz4T5u5AoqWSexJcJ7KnDA32/g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=labundy.com; dmarc=pass action=none header.from=labundy.com;
- dkim=pass header.d=labundy.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=NETORG5796793.onmicrosoft.com; s=selector1-NETORG5796793-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IcI5txnJltHAaK6fy0IjJbeybicrEjAmq0xnZ5O7sEY=;
- b=jbbgcqkpMAyZjAeIih8RkWvKHKJHk23RYTUxl49p0fjvVvBEE0+6KlZO+RC0xDg3ZHmoPszywKPDK7pd6S5o39ggEeW8J9owq0XQg8jBXRGnS6cz1GFGA5Z9dtxXu9IBT9+TNJaJ0pLqiQ9RBYRCRCl0xl6Grn0gq5JNEwtLSnA=
+ bh=g84kCwUm3czCHNtbqUT/bmyjWbwWO2SeblKempGWO/M=;
+ b=Xj0JyfRqxwqTX+COWOgFFZhtNx5E9oVyHdgQZV429+Ireea9CyJ18iFtV/IBeO6HfxNHJJHeE9PMW7xN+LvpPEAMX7npGDcSzGgqYBuacdvNlGJuOM8thjkirHgLAbqZMiO6LC/9na/E5msWpiAM7p9hqgvJtXY/KNL1Ja8a7Dg=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=labundy.com;
-Received: from BN7PR08MB3937.namprd08.prod.outlook.com (2603:10b6:406:8f::25)
- by CH3PR08MB8866.namprd08.prod.outlook.com (2603:10b6:610:19e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
- 2024 15:47:42 +0000
-Received: from BN7PR08MB3937.namprd08.prod.outlook.com
- ([fe80::b729:b21d:93b4:504d]) by BN7PR08MB3937.namprd08.prod.outlook.com
- ([fe80::b729:b21d:93b4:504d%5]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 15:47:42 +0000
-Date: Tue, 10 Sep 2024 10:47:34 -0500
-From: Jeff LaBundy <jeff@labundy.com>
-To: Oleh Kuzhylnyi <kuzhylol@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>, igor.opaniuk@gmail.com,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v6 2/2] input: add driver for Hynitron CST816X touchscreen
-Message-ID: <ZuBqFm9OSAXejhOf@nixie71>
-References: <20240910115158.74502-1-kuzhylol@gmail.com>
- <20240910115158.74502-2-kuzhylol@gmail.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240910115158.74502-2-kuzhylol@gmail.com>
-X-ClientProxiedBy: SN7PR04CA0004.namprd04.prod.outlook.com
- (2603:10b6:806:f2::9) To BN7PR08MB3937.namprd08.prod.outlook.com
- (2603:10b6:406:8f::25)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5311.namprd12.prod.outlook.com (2603:10b6:5:39f::7) by
+ DS7PR12MB8232.namprd12.prod.outlook.com (2603:10b6:8:e3::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7939.23; Tue, 10 Sep 2024 15:47:51 +0000
+Received: from DM4PR12MB5311.namprd12.prod.outlook.com
+ ([fe80::a846:49eb:e660:1b5b]) by DM4PR12MB5311.namprd12.prod.outlook.com
+ ([fe80::a846:49eb:e660:1b5b%4]) with mapi id 15.20.7918.024; Tue, 10 Sep 2024
+ 15:47:51 +0000
+Message-ID: <eeab54b4-c055-4992-9ca4-f9e382db68c4@amd.com>
+Date: Tue, 10 Sep 2024 11:47:48 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
+ some RenPy games causes computer hang
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com,
+ pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
+ <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
+ <CABXGCsMdxHJ-MLkS0pm51Sk8g0PTghsuZxmowvj5t44bVN4ndA@mail.gmail.com>
+ <ffd2c40c-1c2e-4465-b26f-88d5e08a80d9@amd.com>
+ <CABXGCsOoL5vD0+FRALFQFr3ZBpb2z5mpGKzAD5RHoW9_sb5yaQ@mail.gmail.com>
+ <f68020a3-c413-482d-beb2-5432d98a1d3e@amd.com>
+ <CABXGCsMSTsBFW=OirDszPFVOiNgyOBSh3qyzAw-Coi-McnicAQ@mail.gmail.com>
+ <04d3755d-f295-46d7-b35d-008b888b39ae@amd.com>
+ <CABXGCsMDk59-P0Nr1v7KajKsoQh2966mykLPWQxajPtq=OGgXg@mail.gmail.com>
+Content-Language: en-US
+From: Leo Li <sunpeng.li@amd.com>
+In-Reply-To: <CABXGCsMDk59-P0Nr1v7KajKsoQh2966mykLPWQxajPtq=OGgXg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR01CA0059.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:2::31) To DM4PR12MB5311.namprd12.prod.outlook.com
+ (2603:10b6:5:39f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,495 +91,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN7PR08MB3937:EE_|CH3PR08MB8866:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9387cb44-0dc9-4356-c42c-08dcd1afe7ff
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5311:EE_|DS7PR12MB8232:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5a84fd0-b6a2-4cd5-bada-08dcd1afeda0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?HRRcVDfciH8mJEGSoX9mZl9SB5QSE1xKoMueTjm53i9l65vJ+RtWiIExYH?=
- =?iso-8859-1?Q?DcUzeeREOenqvEfjLZVX9WtYpS7FwKVPbmByoiy0zlrEaAEAJN1W6PdPNy?=
- =?iso-8859-1?Q?uuXYyEqiw7fpMYIq5HlG95oco7z0MpQ21RWbDWbs6dYLOoXBR/7TLOgBHz?=
- =?iso-8859-1?Q?A8LqdLhKMuEHmyVb9oJOfRqnFDYsfKIeM+VWioUBV+ocHYjOEDhndei3uJ?=
- =?iso-8859-1?Q?ofyiwwMKr383/GdCnxra3NtlFf3u0gy1xpHMbBx+m0dfT5Fjuoi/+/4ASJ?=
- =?iso-8859-1?Q?hJb551CeWEOblPguuX9H7AOl0TejfBdcqh1Fa4Ax++Yd0LE211DUU9fRd7?=
- =?iso-8859-1?Q?3BsSoLH60ZUJ80lflytWLQkG/EIMaEo1Lb9Qkz4KFPaC2NXFU8uDLIf/kn?=
- =?iso-8859-1?Q?0Ol9ATBe286MgKB7CTXx1P7q1jNYuDvbke+Ylvdjv0JZ7n++1rqMTGpluQ?=
- =?iso-8859-1?Q?CgOcOrmExldpqoT6dvbAQ275Ttd7W8sykgOlOiiNxd6+Y4sr3ZKSI/YEQN?=
- =?iso-8859-1?Q?R5XF2ongLP6+zypLcfA69jUGRe2vKRUq6x61RyLDaGuwq5x9dMXGzFuV9e?=
- =?iso-8859-1?Q?Y2fXc9Zd2L4sLGUNin1lGuCQJ3qYZOVatB7fBaZGXJTPEbPLjvwaqFCyAf?=
- =?iso-8859-1?Q?1dFt5yQzgc9vjQjq31NUCEgUEiQvzxJUmduC8nesyLPU6QOAWnDX7rVnJJ?=
- =?iso-8859-1?Q?9oJOtLwmxkBUT4IZAiYe9wLiQNp7OPnJw/5WInkFzXSgWKL/gSm+XTNoW/?=
- =?iso-8859-1?Q?5/uVPZr2420GvMF4z8iUxnFL+B7wUs4n/Dtvu34un6bYnE4hrw69sr4DMW?=
- =?iso-8859-1?Q?XPO7WjlumZlDtC7qtCaUgc2QyZ5OnpId+Ci7BtWv4Yq7cyArSqiB/WDVHE?=
- =?iso-8859-1?Q?h9ONZ+3U4SX0r9s0mDEwpd9e+KfXF24bQuhyyXg7a5Vmk2g96l362Wta+n?=
- =?iso-8859-1?Q?ieNDaGmmCdeSqlcLPsaFROgJKoCfQJ4sIfyX2OQWex27to68dJ6ACIvrMU?=
- =?iso-8859-1?Q?8zUC/tDQDoly/TiB0y+0Wpig+GJ1xADi4XvcgtGiisYRI1YmKveCMLl4vZ?=
- =?iso-8859-1?Q?cJ54EuNmW357UQe/3ZU1hO2tuhaDQeCVTuxMPKE6CoWzUHwtzFZJzMlJn6?=
- =?iso-8859-1?Q?3AHPimf2musN6p8ITLAPOOM017kJj0tu0+VBosoMvKp/T3T6uDo5YwpMEH?=
- =?iso-8859-1?Q?ilS2h3kVM0jF4Cw594yWgkKsUqmA9+w/2yEMmvRXDReAJRRtsEqUY80cuP?=
- =?iso-8859-1?Q?KWIt01lyN067rvQFw8H363cdcbAnog2fdQXnmATwa8aVdqZ8O1ADv3B//y?=
- =?iso-8859-1?Q?4gl6ypPINpfMRqGXfA02A8aVxXxv+spQ8t5n4m+NtDq0etDphzcyoNmp2e?=
- =?iso-8859-1?Q?qHBYny0ILxxEVMx5sSDuhrzxtqR+rFNg=3D=3D?=
+	=?utf-8?B?aTRNS284d0sycnA4SUJ1VDhQQXZERXVPcy9OcENCNXJsMG5nQXVmdEt2VGFt?=
+ =?utf-8?B?Tk81ZmkxOFAweFlFQ3M5czBkZkZid2daazlZa1RTZmtsdENESW9yb0VqL2Ft?=
+ =?utf-8?B?N3Z2VWpVcDhDMVkwWnArTmxHQjZSaFhyK0EwMm9Ca2FDdDVtTC9pSk9oY0hF?=
+ =?utf-8?B?TjMwdjkrOGZ2aGoyNEdsbmJMUzdUbHVaVVZZb3NvREh1R0M5NllvbFVFUHpF?=
+ =?utf-8?B?VjE3UXZJdnllejRNdVFMbzlWcmRZdEE0TXNvTGc4dGt1RnpPR2VSeE5Wei9p?=
+ =?utf-8?B?VVRsK2ZNOGNPMkdoSFE2VVUzUWc4SlRoeUxFOXZ6SVFhKzM5cjdaejFJMlZm?=
+ =?utf-8?B?SDZ3bElSYXpkcitwNVUrMDBqbzg3eUl5YkpFTFYxMGpxZHJjMTdBWG9uMGJj?=
+ =?utf-8?B?SkdwK2t4VFBpaTBuNjlObDN4U0VDMHpJeSttUEFJOHBGbHo3K2dXS1ZzN2ww?=
+ =?utf-8?B?d3Y5VUF5NzlBSkhrTTRYUitad0NUd0U2Ym5KdkVLMHNURFZGb0tIdzN0SWVt?=
+ =?utf-8?B?YUk2YW0xR0ZvcER6YWMzZldITmxURmxZL2ZUS0t5VDRYZWhJM3VCNE9ZbHdO?=
+ =?utf-8?B?bXJvVndnNENLOGZFMDhma1N6cEQ0VGh3cFRhZHVQY2RSY3V1ZTBVN3EzUzgv?=
+ =?utf-8?B?WklENngvM0tINlQwSnlZRVhjamRQWjlBakV2eG4zODFMOGZ6R1VpRlNlenlo?=
+ =?utf-8?B?MEs4SEtRaWtYT0NNWVNZalQ1alV4UWFHb1JmQmUxZ1JhMm1YM2lvY3EvUDd1?=
+ =?utf-8?B?eHFEWjVrSUhORGZJbStsN1JYL05Pb0RNa215Mi9iZWRKc3J0d3JUanpDZUJ1?=
+ =?utf-8?B?MVBCSGhYK0VhYW8vZmROSWJ6TUJUS1FIL25Daks5b2tia1FUQXZ5ZFBnSnEz?=
+ =?utf-8?B?ZzBxa3J3VUx5L2w5RE9VdklPMHJldHZUV0dFTlE0dU1GL1YyMlFnUWtNU3Fl?=
+ =?utf-8?B?SFpqVW9aT3o0cWZwaDdyTWlkWTJBQXFkQU4reG9MdHRkdEw3WHhNUm15RE9W?=
+ =?utf-8?B?SWVXdDlxOURyeml2U0dYV0gzQU9qWG50M0lrVXZITFZrN1dUUTRteDA5R0FL?=
+ =?utf-8?B?TSsybWI4S0N0a2dMK284aVp5ejNEbTkvNFZtb0t5NWNDUGRHSW5zSzh5RXkw?=
+ =?utf-8?B?VlRtMUs2aElIbWlwU0FDK2U0NnBFV3hJSzd2TllET2hRTGprT2ZLeXhHaU8x?=
+ =?utf-8?B?SjlmWDdJdmQ2TXRmcSsxUEZDMVJaSlBjdkNnL2FjNjhSUmFrNytGOEE1RG9S?=
+ =?utf-8?B?NnRTa2laN2NpcWVCcDdhWm9vMDVmb01YWGxXeVlIUk5BYXU5L3VjLzgwSXc1?=
+ =?utf-8?B?N3hoZU14OEdMUlJ6MXdIak0yenNmWHExVVk4eDNZbDJZbUdzaWRYcEZOUHdX?=
+ =?utf-8?B?OFN0R20wcldKMXNicHRQTXJVTDh6UlBJcTJtRE1obkZXdzFXMUVvWGNCeWg5?=
+ =?utf-8?B?WHJsMlErRXY2LzUrMytTSk1KMjdiZ2hlMTF6dWszcmJYeGFEdC8vbG80U2Zs?=
+ =?utf-8?B?YlZ1MkdtRFVvU2cwYlR4eVNqcElPdVlZdHhJa1c3SFN3bllhRXFDaXNTOEtz?=
+ =?utf-8?B?aFliZDZNZC9aUmVXTGV4eDNoZS84WEZsVHBFSDVXbXh1OHJ2b0VEWlNzY1Yw?=
+ =?utf-8?B?c3ExRForQzFlL1E5ZzlFMGV2S29xSmJwL1kvdVlBa0Qyb1MvSlBDVlp3U0U3?=
+ =?utf-8?B?WXZuaDdUby9UTi9hS0h2T20wUDVTdW9rRExYQWZWSkxwQ0hQQmlPVDBLdmMv?=
+ =?utf-8?Q?pg5h7DbJj5P9uEl1o4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN7PR08MB3937.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5311.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?cO7dPG7DBE3+MkEgod70OLMmHxDNuXz6KGbv6uGnkkIfrrOJc3186ZJumB?=
- =?iso-8859-1?Q?fkavX7ehyOMiYB8/U+YCjBUB4yYxJWMZJtGymeSwU8CWQ4nkQODl5DO7M1?=
- =?iso-8859-1?Q?vtUPguOZQQxqEhgU+PpPwSXcL3J7Ouldd4lSwRK8kiFU3PydYdgTWSNdRE?=
- =?iso-8859-1?Q?TM7L+/cfs3tPDp9QNvOMu4BuDQm4JpUwr4BrU20TLpPWPfFQ9BNYy1Y6H0?=
- =?iso-8859-1?Q?AS6sufqTVNx18gLucmX+nYyBVi2BfvZkyi6h/538GIr62voU7dLRKkW2yc?=
- =?iso-8859-1?Q?9j7pzf0lBQcOgV0K2znq3TevAsC5KJD+HDh3ulNx7PgUs6M+QAOiSdhMrX?=
- =?iso-8859-1?Q?UKnajDdVmH6CcMRoVU4nRStYPSt2yx54F4OjiO8ECqU7qdISedNDVHvcwi?=
- =?iso-8859-1?Q?W4KRRLXr4UEikQ0gtUM730tF2ZLRLWvoGDjhaj991Q73DP5vw38+DuhxRz?=
- =?iso-8859-1?Q?sSb/0lI5PTBWDGY7hlqMjS8i4CfltvYr2WHiOdQvAt+Sg3ERP1S20dDo0C?=
- =?iso-8859-1?Q?rLYiudwsVsaj1rft0KTZgUsx6I691WoHZh/dJ1K/ab9xjzDBiQ7gEgMwMo?=
- =?iso-8859-1?Q?+S8sDRWUQHzDNnvw3LXIppiFuY1NGf6bv9oIJnydEWlX4f4wTmMtqm1Psw?=
- =?iso-8859-1?Q?6ddhojCBOC339M8qsK8hhiUCDpalRmuW0ymkqmooaJqCVolCxLa7GYOP6D?=
- =?iso-8859-1?Q?7m0AhvPFnA5vVCcfEnyLhvXQbXKac1Wi/nHBS3RGtSl27PiEIeXQxsPd72?=
- =?iso-8859-1?Q?yRJx7hi1ZOwvfYCiTy04DF14vZkccdfbpf7Cd1s8V7/cmFh1pNwAoyOE2S?=
- =?iso-8859-1?Q?cc5GknBOwkkh9NFF2Ayq0V2P25P5SmYfFQkh2P1zfkSmtgcy7/yaRcRLfr?=
- =?iso-8859-1?Q?oCiQ8ibbf7V4byaHVwU0qxRoeXOMtD3F1wLJzKiNjdBnkw1h1KP6HpWaiV?=
- =?iso-8859-1?Q?+udzkeM2Tqk5r0mmBIrnGLG4enJVl2GrI3z9wCqfYCkP2Y0d76IVqTZDlI?=
- =?iso-8859-1?Q?bYJcJI9i/lWLQgLXFCFirp1GEKxoSZ6SsnzSGkPO2GmsLgjFtkYqvTuAYz?=
- =?iso-8859-1?Q?yy7LUzRfOSKqBg3qB99KRS1F3MkBiINB/XE+BX3/azeHWaFY4UqC627PBc?=
- =?iso-8859-1?Q?yvbvTNuqKu4roVBaPRtWf1xrmH/VLCoF0le6XiWklDCp1WPYuVFTcwT0Se?=
- =?iso-8859-1?Q?U6Fcbw0oLx6o9HlVB/F+N9JT+gmDf4CSbaba6VCZQfyHQMsiJjcX0No1Rz?=
- =?iso-8859-1?Q?U3Jcm47LMM2FJh/3qWzZjSZ/OzerzPRf6QCfZ1p9/9REGVCN3MakwZyCYE?=
- =?iso-8859-1?Q?i0l/uCNHLi0BZ8JFaWG8PK5qdY5k+OJkZGHkI4Bj5H+6/CnLhLqrojQ0E3?=
- =?iso-8859-1?Q?dNsLnKRZ4b5jalbbywsYcmkuRWWQGoeh7i54W6GKQsWypCSaL2kHqSWhwB?=
- =?iso-8859-1?Q?o1lUoS9DISlFLsMaq48vjpGt9a8ACrE2a8NQQw3AvSDcgJ8hQZv+YTCF63?=
- =?iso-8859-1?Q?ZJp99Wcgh4YHtz+sQ6cwtg8naKU94MrezBGq/3q68+elWlPiLDXch9aFlj?=
- =?iso-8859-1?Q?yDmkchi8eyi7sNQizlBW1ko1wKMcAUbu8NiEzy6PVbw1O8LfiGHgN49VTi?=
- =?iso-8859-1?Q?Jq1kdn+5OABHSf7J8AepU38vToY4C1Do80?=
-X-OriginatorOrg: labundy.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9387cb44-0dc9-4356-c42c-08dcd1afe7ff
-X-MS-Exchange-CrossTenant-AuthSource: BN7PR08MB3937.namprd08.prod.outlook.com
+	=?utf-8?B?aGtvQ0hnUjd3Qy9rVGh4aDlxSmxhTzBtRE5kVVRFZ3BJR1FCa2pvVDdYQUk0?=
+ =?utf-8?B?NzVUWUx3M1NQSGVpSzhkMVFEYytGbjdCd3hHQStjbFZjM1dZN3Y5Q3ZWOEhr?=
+ =?utf-8?B?cHJpcEZrMmZqaWlJTVpvREZOb1FaT2JjbnVwRjQ3SFNWazBsZG9NOE10U01z?=
+ =?utf-8?B?TUduM2tKUFFNQkttZFBVMTkxaHJNNkxYQUtPV01GRWJxbVV1VmlzS21rK1hj?=
+ =?utf-8?B?dElhNVFzYXJPVEM1a1h3U0Vxanc5TEdsT0NmT1NpRFJ0YjlTUXVtNXYrWjBF?=
+ =?utf-8?B?RGV2UWlmWmk1MWZMVUpqOWdGVW5Nam1pS1RCMUpXQ0VMRWtyNG9WMi92RGt2?=
+ =?utf-8?B?MnlzcUVHRHo1eHFHeU9ncUFIWStDdk1lREdpZ3Bra3hWOEEwS1lrbTZjVkRW?=
+ =?utf-8?B?NFdhbUtyWk5HQUxDZEVxZkZzYjFIOGFZYUF1bFAzTDRqd0JPdUdpWVluT1Y1?=
+ =?utf-8?B?dUdHaVNnazNCOG9wYUNLNjNpVjd3U1Qxc2JaMjhXUUJHK2dtY1g0c2hxS2Jz?=
+ =?utf-8?B?UWRSdHZ3d1pMZ3JlRC9zcGMzWUZka3FnYnIybG1QL1hBa2JVVU5LeE5adXhV?=
+ =?utf-8?B?UVBFRGxqUGtDRFgvenp1ajZFc2JzcVFGeldPMTRFa0QrMy9CNWtDaXVkSis5?=
+ =?utf-8?B?UEc3TjF0dkZwV1VMbGhFVTJsQ01iL0hxZFlKK0RQbVgzUGVTZVZiSUxvdklh?=
+ =?utf-8?B?SGUvbFZIS2I2RU5YQlNxTHgzc2d4Um5yYkYyM2ZnWTdyT3dvc3V0TS9hZDRL?=
+ =?utf-8?B?K3NMazRBem0veDUwei9sOFBRbHZ3eTU1bi9FSEZab3hnQ29EMi8weVpTR0Rn?=
+ =?utf-8?B?eFVLVm9lK0NWbi9LdlEzc3EycS9pNm5IOGVXVlB1RGliM3dXSElYSnFDQnZY?=
+ =?utf-8?B?VlBzME9rMU9wWUJ4a1J1UnRVaEpnWmpGczNvMHdZVHFTTnNZTG5rem5DV1Zw?=
+ =?utf-8?B?eTVydERIU0ZxcUNRUTR2WkEydjNTM3JWSnIxVG81ZmtyN0VRMWxDQ3FiQ3pq?=
+ =?utf-8?B?UXNSakx5dGw4U29Kb2Eza3pLS1dtR2M2L0xXYWxkc1dUMFdodURJUmVRYVFW?=
+ =?utf-8?B?QnJ1UGtZdnJlcVg3N01EcHI0ZHErN1dFaVJmTFZRUXZpUDZkSDFiamFNUFRv?=
+ =?utf-8?B?SFlsVE9JQ3FsUTZWK0k3eC8wK0ZvbXFJZkZTQXJFTDgxRVZmQzBsZzB6YThl?=
+ =?utf-8?B?WkxBa0Jtc25CTFFDNXpCaUV2aGNoUHZNeElkL3diMEY2MFd2YjY1L2svRmFN?=
+ =?utf-8?B?dEZDcXBvdEFqMUYxdi9BWDF4R3hZd3JoZWJSNmdBcEJsNEJCRE1ZNm4yZjVi?=
+ =?utf-8?B?ZmtyZUF1QTl1aC9hclZsSEZ0RlRrOFBFV2dWSG5SNVFIc1haV08yczFZckFv?=
+ =?utf-8?B?L1R0OERwOG0rSnNhTzQxQkhJMjdheFlzVVVDbGVlSXRaRjB3N0h2SE01WWZ6?=
+ =?utf-8?B?N0ViUUhJak51c0hjcm4xMnlkVEJ2Zkc3elZhZkZZb2dEMHU1M3o0SzRJLzFT?=
+ =?utf-8?B?TjM4N2F3cXY0ZitxbTlhc1RNUXZaYWRsSUs5V3dsYUczZTk3azFEQ0RqQWd2?=
+ =?utf-8?B?bGg3QytKYTV4SXIvbDNIY3p2N2xieGMzcGc1NGpYZWFTWGF3RHpFSjlBQzB5?=
+ =?utf-8?B?K2VtRFA3aFl6ZVlxRWcvVnNjZnYyWVRsUEZkdklCVGtEUENLdlF3MDlseElx?=
+ =?utf-8?B?TFhlbWora1VYeVNJSTkxeEt4RTl5NTY5VnFsVFlGTFQzbTFkWkkyRkZZTUhZ?=
+ =?utf-8?B?ZGVOTmJUT0xDNDFxRjZ1U1lZR3REMkd4MVVIbTFzNVh5YlVodWFGeFZzaHBa?=
+ =?utf-8?B?bVlVRWtjbEhVSEF4elZ3SmRUcklTUkxTY2pkb2ZKUWpiczB3VmZiOWNtNlp5?=
+ =?utf-8?B?MkJnYmxSYXhvelRoTjV4UlVWdTIvRTc1WVZKZ2FCM3gwSVA2enZka1VVL0NR?=
+ =?utf-8?B?N2p4YVBBb2hyMHVEb1ZvT2tDR3R4WWliN0doZ0NKR2J1SlVJSWUxK0RkeTRa?=
+ =?utf-8?B?TGlWeE1velZ0UXBqU2pMMnhVQjdtKzhoT01MTFNvUHlUV0ZnckVrS2JtcThG?=
+ =?utf-8?B?V2NHS0x4ZVROSXFjSzNuclVzc252NUpVOW0xUm5hSE1uY2Zpa3VwNWovd2N6?=
+ =?utf-8?Q?FF96hR9B0ru4DgGTj8SxDFWAm?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5a84fd0-b6a2-4cd5-bada-08dcd1afeda0
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5311.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 15:47:42.3155
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 15:47:51.7833
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 00b69d09-acab-4585-aca7-8fb7c6323e6f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YUFXyodbd9+4M4IZAky5y4lcydI+emC0OSvB8AiXCk7UEg20B/T7/2Hp4lVGZfpnq9ISdVa+N2nGZ90HZA5GDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR08MB8866
+X-MS-Exchange-CrossTenant-UserPrincipalName: uI1zXKKRjpJA3TUk5bNiXsNRZ24UpH7frRwkZdSP1q2ev8+MlWE2sE6SLiSqyn0P
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8232
 
-Hi Oleh,
 
-Great work! Just a few comments throughout.
 
-On Tue, Sep 10, 2024 at 01:51:58PM +0200, Oleh Kuzhylnyi wrote:
-> Introduce support for the Hynitron CST816X touchscreen controller
-> used for 240×240 1.28-inch Round LCD Display Module manufactured
-> by Waveshare Electronics. The driver is designed based on an Arduino
-> implementation marked as under MIT License. This driver is written
-> for a particular round display based on the CST816S controller, which
-> is not compatiable with existing driver for Hynitron controllers.
-> 
-> Signed-off-by: Oleh Kuzhylnyi <kuzhylol@gmail.com>
-> ---
-> 
-> Changes in v6:
->  - No code changes
-> 
-> Changes in v5:
->  - Update commit based on Dmitry's feedback:
->  - Make GPIO reset optional
->  - Combine declaration and initialization for i2c_xfer
->  - Return 0 explicitly where possible
->  - Rename rc (return code) to error
->  - Make Touch processing call return boolean
->  - Improve error handling for i2c_transfer
->  - Use get_unaligned_be16 for getting coordinates
->  - Move touch event completeness upper to irq callback
-> 
-> Changes in v4:
->  - Update commit based on Dmitry's feedback:
->  - Move abs_x and abs_y to u16
->  - Remove __packed qualifier for touch_info struct
->  - Hide tiny touch irq context to stack
->  - Extend cst816x_i2c_read_register() with buf and buf_size
->  - Remove loop from event lookup
-> 
-> Changes in v3:
->  - Drop timer and delayed work
->  - Process touch in threaded IRQ context
->  - Fix chip reset sequence
->  - Move input_register() before devm_request_threaded_irq()
->  - Re-arrange and document input reporting
->  - Set u16 data type for event_code
->  - Remove double tap event to prevent continuous double side sliding
-> 
-> Changes in v2:
->  - Apply dev_err_probe() for better error handling
->  - Remove redundant printing, remove dev_warn() message spamming
->  - Get rid of PM since the touchscreen goes into sleep mode automatically
->  - Get rid of IRQ control and IRQF_NO_AUTOEN flag
->  - Reduce timer timeout up to 10ms to handle touch events faster
->  - Skip registering of non-gesture CST816X_SWIPE event
->  - Shift input_register_device() as a final call in probe() callback
->  - Specify name of i2c_device_id explicitly
->  - Update module description and fix typo
->  - Add necessary spaces between lines
->  drivers/input/touchscreen/Kconfig            |  12 +
->  drivers/input/touchscreen/Makefile           |   1 +
->  drivers/input/touchscreen/hynitron-cst816x.c | 259 +++++++++++++++++++
->  3 files changed, 272 insertions(+)
->  create mode 100644 drivers/input/touchscreen/hynitron-cst816x.c
-> 
-> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-> index c821fe3ee794..02f40d0fbac0 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -481,6 +481,18 @@ config TOUCHSCREEN_HYNITRON_CSTXXX
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called hynitron-cstxxx.
->  
-> +config TOUCHSCREEN_HYNITRON_CST816X
-> +	tristate "Hynitron CST816X touchscreen support"
-> +	depends on I2C
-> +	help
-> +	  Say Y here if you have a touchscreen using a Hynitron
-> +	  CST816X touchscreen controller.
-> +
-> +	  If unsure, say N.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called hynitron-cst816x.
-> +
->  config TOUCHSCREEN_ILI210X
->  	tristate "Ilitek ILI210X based touchscreen"
->  	depends on I2C
-> diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-> index a81cb5aa21a5..a92a87417a97 100644
-> --- a/drivers/input/touchscreen/Makefile
-> +++ b/drivers/input/touchscreen/Makefile
-> @@ -51,6 +51,7 @@ obj-$(CONFIG_TOUCHSCREEN_GOODIX_BERLIN_CORE)	+= goodix_berlin_core.o
->  obj-$(CONFIG_TOUCHSCREEN_GOODIX_BERLIN_I2C)	+= goodix_berlin_i2c.o
->  obj-$(CONFIG_TOUCHSCREEN_GOODIX_BERLIN_SPI)	+= goodix_berlin_spi.o
->  obj-$(CONFIG_TOUCHSCREEN_HIDEEP)	+= hideep.o
-> +obj-$(CONFIG_TOUCHSCREEN_HYNITRON_CST816X)	+= hynitron-cst816x.o
->  obj-$(CONFIG_TOUCHSCREEN_HYNITRON_CSTXXX)	+= hynitron_cstxxx.o
->  obj-$(CONFIG_TOUCHSCREEN_ILI210X)	+= ili210x.o
->  obj-$(CONFIG_TOUCHSCREEN_ILITEK)	+= ilitek_ts_i2c.o
-> diff --git a/drivers/input/touchscreen/hynitron-cst816x.c b/drivers/input/touchscreen/hynitron-cst816x.c
-> new file mode 100644
-> index 000000000000..3886617e6a71
-> --- /dev/null
-> +++ b/drivers/input/touchscreen/hynitron-cst816x.c
-> @@ -0,0 +1,259 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Driver for I2C connected Hynitron CST816X Touchscreen
-> + *
-> + * Copyright (C) 2024 Oleh Kuzhylnyi <kuzhylol@gmail.com>
-> + */
-> +#include <asm/unaligned.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +
-> +enum cst816x_registers {
-> +	CST816X_FRAME = 0x01,
-> +	CST816X_MOTION = 0xEC,
-> +};
-> +
-> +enum cst816x_gestures {
-> +	CST816X_SWIPE_UP = 0x01,
-> +	CST816X_SWIPE_DOWN = 0x02,
-> +	CST816X_SWIPE_LEFT = 0x03,
-> +	CST816X_SWIPE_RIGHT = 0x04,
-> +	CST816X_SINGLE_TAP = 0x05,
-> +	CST816X_LONG_PRESS = 0x0C,
-> +	CST816X_RESERVED = 0xFF,
-> +};
-> +
-> +struct cst816x_touch_info {
-> +	u8 gesture;
-> +	u8 touch;
-> +	u16 abs_x;
-> +	u16 abs_y;
-> +};
-> +
-> +struct cst816x_priv {
-> +	struct device *dev;
-> +	struct i2c_client *client;
+On 2024-09-08 19:30, Mikhail Gavrilov wrote:
+> I have done additional tests:
+> 1. The computer does not hang with 6900XT instead the screen flickers
+> when moving the cursor.
+> 2. The computer does not hang with 7900XTX if I turn off VRR. But the
+> screen flickers when moving the cursor, as on 6900XT.
+> To enable VRR, please set 'variable-refresh-rate' in
+> experimental-features, and in the Display setting, enable Variable
+> Refresh Rate.
+> $ gsettings set org.gnome.mutter experimental-features
+> "['variable-refresh-rate', 'scale-monitor-framebuffer']"
+> https://postimg.cc/PvXYdvGR
 
-I don't see any value in storing both the device and i2c_client pointers
-in the private struct; I think you can simply drop the former.
+Thanks Mikhail, I think I know what's going on now.
 
-> +	struct gpio_desc *reset;
-> +	struct input_dev *input;
-> +};
-> +
-> +struct cst816x_event_mapping {
-> +	enum cst816x_gestures gesture;
-> +	u16 code;
-> +};
-> +
-> +static const struct cst816x_event_mapping event_map[16] = {
-> +	{CST816X_SWIPE_UP, BTN_FORWARD},
-> +	{CST816X_SWIPE_DOWN, BTN_BACK},
-> +	{CST816X_SWIPE_LEFT, BTN_LEFT},
-> +	{CST816X_SWIPE_RIGHT, BTN_RIGHT},
-> +	{CST816X_SINGLE_TAP, BTN_TOUCH},
-> +	{CST816X_LONG_PRESS, BTN_TOOL_TRIPLETAP},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +	{CST816X_RESERVED, KEY_RESERVED},
-> +};
+The `scale-monitor-framebuffer` experimental setting is what puts us down the
+bad code path. It seems VRR has nothing to do with this issue, just setting
+`scale-monitor-framebuffer` is enough to reproduce.
 
-These really should be configurable via device tree and not hard coded
-in the driver. At the very least, if the touchscreen is installed 180
-degrees for certain platforms, the concept of "left" and "right" changes.
+It seems that mutter with this setting is opting for HW scaling rather than GPU
+scaling. I see that "Find the Orange Narwhal" sends out a 1080p buffer,
+which with this setting, gets directly scanned out and scaled by DCN HW to 4k in
+full screen.
 
-> +
-> +static int cst816x_i2c_read_register(struct cst816x_priv *priv, u8 reg,
-> +				     void *buf, size_t len)
-> +{
-> +	int rc;
-> +	struct i2c_msg xfer[] = {
-> +		{
-> +			.addr = priv->client->addr,
-> +			.flags = 0,
-> +			.buf = &reg,
-> +			.len = sizeof(reg),
-> +		},
-> +		{
-> +			.addr = priv->client->addr,
-> +			.flags = I2C_M_RD,
-> +			.buf = buf,
-> +			.len = len,
-> +		},
-> +	};
-> +
-> +	rc = i2c_transfer(priv->client->adapter, xfer, ARRAY_SIZE(xfer));
-> +	if (rc != ARRAY_SIZE(xfer)) {
-> +		rc = rc < 0 ? rc : -EIO;
-> +		dev_err(&priv->client->dev, "i2c rx err: %d\n", rc);
+An oddity with current gen DCN hardware is that the cursor inherits the scaling
+of the HW plane underneath. So if mutter requests a hw cursor with a different
+scaling than the game's plane, amdgpu will reject that, and likely force mutter
+into SW cursor.
 
-Case in point: you already have priv->dev, but it's not being used.
+My offending patch changed this behavior by rerouting DCN HW pipes to
+accommodate such a configuration. It essentially takes a full-fledged DCN
+overlay plane, and uses that just for the cursor, and thereby freeing it from
+inheriting things from the underlying hw plane.
 
-> +		return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool cst816x_process_touch(struct cst816x_priv *priv,
-> +				  struct cst816x_touch_info *info)
-> +{
-> +	u8 raw[8];
-> +
-> +	if (cst816x_i2c_read_register(priv, CST816X_FRAME, raw, sizeof(raw)))
-> +		return false;
-> +
-> +	info->gesture = raw[0];
-> +	info->touch = raw[1];
-> +	info->abs_x = get_unaligned_be16(&raw[2]) & GENMASK(11, 0);
-> +	info->abs_y = get_unaligned_be16(&raw[4]) & GENMASK(11, 0);
+My guess is this causes flickering due to how DC (display core driver) handles
+updates; it needs all enabled planes in it's update state. However, a KMS cursor
+update will only include the cursor plane. It's likely that amdgpu_dm only adds
+the dedicated cursor plane to DC's update state, leaving the game's plane out.
 
-This seems like a good case to make cst816x_touch_info a __packed struct
-with abs_x and abs_y declared as__be16 members. You can then read into an
-instance of this struct and unpack as necessary, as opposed to essentially
-having two buffers and copying one into the other manually.
+The fix isn't exactly trivial. If I don't get anywhere before the fixes window,
+I'll send out a revert.
 
-> +
-> +	dev_dbg(priv->dev, "x: %d, y: %d, t: %d, g: 0x%x\n", info->abs_x,
-> +		info->abs_y, info->touch, info->gesture);
-> +
-> +	return true;
-> +}
-> +
-> +static int cst816x_register_input(struct cst816x_priv *priv)
-> +{
-> +	priv->input = devm_input_allocate_device(priv->dev);
-> +	if (!priv->input)
-> +		return -ENOMEM;
-> +
-> +	priv->input->name = "Hynitron CST816X Touchscreen";
-> +	priv->input->phys = "input/ts";
-> +	priv->input->id.bustype = BUS_I2C;
-> +	input_set_drvdata(priv->input, priv);
-> +
-> +	for (unsigned int i = 0; i < ARRAY_SIZE(event_map); i++)
-> +		input_set_capability(priv->input, EV_KEY, event_map[i].code);
-
-Nit: it's much more common in kernel code for iterators to be of type int.
-
-> +
-> +	input_set_abs_params(priv->input, ABS_X, 0, 240, 0, 0);
-> +	input_set_abs_params(priv->input, ABS_Y, 0, 240, 0, 0);
-
-I see the binding includes the touchscreen helper binding, but you're not
-actually using any of the helpers. Assuming that's intentional, please drop
-the reference to touchscreen.yaml in the binding.
-
-> +
-> +	return input_register_device(priv->input);
-> +}
-> +
-> +static void cst816x_reset(struct cst816x_priv *priv)
-> +{
-> +	if (priv->reset) {
-> +		gpiod_set_value_cansleep(priv->reset, 1);
-> +		msleep(50);
-> +		gpiod_set_value_cansleep(priv->reset, 0);
-> +		msleep(100);
-> +	}
-
-This is a style choice, but you can save some indentation by doing
-the following:
-
-	if (!priv->reset)
-		return;
-
-	gpiod_set_value_cansleep(...);
-
-> +}
-> +
-> +static void report_gesture_event(const struct cst816x_priv *priv,
-> +				 enum cst816x_gestures gesture, bool touch)
-> +{
-> +	u16 key = event_map[gesture & 0x0F].code;
-> +
-> +	if (key != KEY_RESERVED)
-> +		input_report_key(priv->input, key, touch);
-
-There is no need to manually filter KEY_RESERVED; the input core
-automatically marks this key code as unsupported upon registration.
-
-> +}
-> +
-> +/*
-> + * Supports five gestures: TOUCH, LEFT, RIGHT, FORWARD, BACK, and LONG_PRESS.
-> + * Reports surface interaction, sliding coordinates and finger detachment.
-> + *
-> + * 1. TOUCH Gesture Scenario:
-> + *
-> + * [x/y] [touch] [gesture] [Action] [Report ABS] [Report Key]
-> + *  x y   true    0x00      Touch    ABS_X_Y      BTN_TOUCH
-> + *  x y   true    0x00      Slide    ABS_X_Y
-> + *  x y   false   0x05      Gesture               BTN_TOUCH
-> + *
-> + * 2. LEFT, RIGHT, FORWARD, BACK, and LONG_PRESS Gestures Scenario:
-> + *
-> + * [x/y] [touch] [gesture] [Action] [Report ABS] [Report Key]
-> + *  x y   true    0x00      Touch    ABS_X_Y      BTN_TOUCH
-> + *  x y   true    0x01      Gesture  ABS_X_Y      BTN_FORWARD
-> + *  x y   true    0x01      Slide    ABS_X_Y
-> + *  x y   false   0x01      Detach                BTN_FORWARD | BTN_TOUCH
-> + */
-
-This is one very specific implementation, and too restrictive to be
-hard coded into the driver. As mentioned above, please consider making
-gesture key codes configurable by way of the device tree.
-
-> +static irqreturn_t cst816x_irq_cb(int irq, void *cookie)
-> +{
-> +	struct cst816x_priv *priv = cookie;
-> +	struct cst816x_touch_info info;
-> +
-> +	if (!cst816x_process_touch(priv, &info))
-> +		goto out;
-
-This is mostly a style choice, but it would also be fine to simply
-return directly here since there is no clean-up to do.
-
-> +
-> +	if (info.touch) {
-> +		input_report_abs(priv->input, ABS_X, info.abs_x);
-> +		input_report_abs(priv->input, ABS_Y, info.abs_y);
-> +		input_report_key(priv->input, BTN_TOUCH, 1);
-> +	}
-> +
-> +	if (info.gesture) {
-> +		report_gesture_event(priv, info.gesture, info.touch);
-> +
-> +		if (!info.touch)
-> +			input_report_key(priv->input, BTN_TOUCH, 0);
-> +	}
-> +
-> +	input_sync(priv->input);
-> +
-> +out:
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int cst816x_probe(struct i2c_client *client)
-> +{
-> +	struct cst816x_priv *priv;
-> +	struct device *dev = &client->dev;
-> +	int error;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	priv->client = client;
-> +
-> +	priv->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(priv->reset))
-> +		return dev_err_probe(dev, PTR_ERR(priv->reset),
-> +				     "reset gpio not found\n");
-> +
-> +	cst816x_reset(priv);
-> +
-> +	error = cst816x_register_input(priv);
-> +	if (error)
-> +		return dev_err_probe(dev, error, "input register failed\n");
-> +
-> +	error = devm_request_threaded_irq(dev, client->irq, NULL, cst816x_irq_cb,
-> +				       IRQF_ONESHOT, dev->driver->name, priv);
-> +	if (error)
-> +		return dev_err_probe(dev, error, "irq request failed\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct i2c_device_id cst816x_id[] = {
-> +	{ .name = "cst816s", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, cst816x_id);
-> +
-> +static const struct of_device_id cst816x_of_match[] = {
-> +	{ .compatible = "hynitron,cst816s", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, cst816x_of_match);
-> +
-> +static struct i2c_driver cst816x_driver = {
-> +	.driver = {
-> +		.name = "cst816x",
-> +		.of_match_table = cst816x_of_match,
-> +	},
-> +	.id_table = cst816x_id,
-> +	.probe = cst816x_probe,
-> +};
-> +
-> +module_i2c_driver(cst816x_driver);
-> +
-> +MODULE_AUTHOR("Oleh Kuzhylnyi <kuzhylol@gmail.com>");
-> +MODULE_DESCRIPTION("Hynitron CST816X Touchscreen Driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
-
-Kind regards,
-Jeff LaBundy
+Cheers,
+Leo
 
