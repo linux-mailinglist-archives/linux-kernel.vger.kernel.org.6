@@ -1,177 +1,272 @@
-Return-Path: <linux-kernel+bounces-322837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE334973040
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D90C973046
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0B191C24222
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A400A1F2277E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A7318C000;
-	Tue, 10 Sep 2024 09:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F8E18C32E;
+	Tue, 10 Sep 2024 09:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dwWsWYAW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CiAjd1/m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8PibRn7d"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6A8188CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A01189F3B;
+	Tue, 10 Sep 2024 09:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962345; cv=none; b=he3Dy1THtd4jSJ5QiG6ujZTqMSOzEL451ruSnFDSEwVnxd4oaqIT/8QapjkJzNYJmjtK82bhL4KjmxauxVlg8CKkmZiUFxHcgRhO/Zio9eLqty6EA6K54gvXTxKiS3WBwyAaSLnIW2JruC9REC6ZbHKghhKSt5dErksvREoWlPE=
+	t=1725962346; cv=none; b=HUk28s115cBG+oPT//jSRQ2ZuvROxVz7R82NPxREPbKVeV1sAVciw23tglKQ4paFwQt/NwdztmxkiU2LYq3NY8NswSaAx8fYGmjYWHRTgl+LJw86i1IkTzlltlFEU4ZzxJoMoDQbantojoqSATW5yrZwgurt0oeH1Jr5X74REcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962345; c=relaxed/simple;
-	bh=bQLe2pUIEEyUZE+/EAglMsUr+F12sN/BLUBijDrXSac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Edm8PuLhPW51UhCtboq1nSTm9bvkuZoUVhcA5QVQ8mfieJZt/y+aYpa8hWXrOXXbwVpisCxPhFgafFgdQaGNmY5jQk2JPuoaeIat1auWIlb4X9kQiEbf5Po2PcsmqpxBwkkWDr9DIVxHxZog1+zurs2mnI2rDLTgBaJki8H7qXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dwWsWYAW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725962342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1725962346; c=relaxed/simple;
+	bh=LiH3D9j0J1D1EBxJOA0bfAFTDIYk7hTHSvpag/NdCp4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NxwH0GR0+jAnx/o4ERAj/rLgDzGUB4z5+mPFfPPsbgwB+2zLNVKyJ3K7751InvO3VxqZ1qaP3zw+mhGhvLbiFb7DSsP33f0Gvw3iKVQpYT7Lq3wlRdycljy0KqC2SBxHjPG7MuchRcTTb4OrCArOgzHmG9wnMC4vilCxy8tHYu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CiAjd1/m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8PibRn7d; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 10 Sep 2024 09:59:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1725962342;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jiUkwL8jiwz5bb5LLszsrQRqvrS9SIKe3P1nTjcI9RU=;
-	b=dwWsWYAWI/uWKosgUnEVQj3alAgbhDX8IzmuB/v7r4TuiF9tZaQXwUkrlfOfL1C6N1t5H4
-	GsCHCa/o7ldPtApcIbMHzwyooOO6OrXSOCux99ZTDSvuF46vwsb9i+zYKNqYpobLGGWX6f
-	1b9JMEO7mjwZk8jle4DOmYdhLFk8VPQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-169-w56vGDLjNeisjoNAllrTrQ-1; Tue, 10 Sep 2024 05:59:01 -0400
-X-MC-Unique: w56vGDLjNeisjoNAllrTrQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a877c1d22so253861866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:59:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725962340; x=1726567140;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiUkwL8jiwz5bb5LLszsrQRqvrS9SIKe3P1nTjcI9RU=;
-        b=EVcWLMur00zefPcWs28cI/E4sa3mMK44uWRVqm8rZWrDSroSpyCPViijccbpizqTA8
-         DJz8bqN8py4t2TKSlmvAgspo2+BA7nBCkjJnctwqVjuRwmgQDxPMcrDPZmjMdITJTiM5
-         PKJoZEa06fPYFdddo2TLr7204JsyZSG6ihZqEUfiQy71kA4NcaenBj7UlcjxVCrtkWee
-         rKHdcOHxQyTNpnTdd5ZHRPdna9m6J1uoAFThXH1jfiDjQ36+WSc2rYn6XgN/NsZZ6RaU
-         CQOyVTWA+BF+k6/Gu4BjZTKJuLXMjrtCOBFbblkT5tokzX4oesQfYg89arTfAdAMEj2E
-         OGTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaQ+2VfiOsH3/iN1ZokX8Pi1UKaKV/zfatvE2/ZIp3sw7Uruu02XTS0W81aM4rH/bhZfLA2RjZ6Smofqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZGdzO8f9dIQIoki/rMjzgAKEOv/E126NPKfc1gIJxTJEEsPyX
-	hIxTjRzexT9McUKJVvLZgqUnUfn9owejLcdG6DzSzWeHKG90nPlfF9nEGqcapkqCJXQpxhioSCD
-	3BezwcQBu2RfdfWeZsTfjQ6V7taxii6eQTqCEmXS7jPjcecZzcOgKi2x720Jl2Q==
-X-Received: by 2002:a17:907:268e:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a8ffadf3c37mr21982766b.47.1725962339866;
-        Tue, 10 Sep 2024 02:58:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERbuGqTbebYxtwPp+Ofxmyy5JzHR+T4dmVYSq8mepeZfuhvqFtrdMXLyJgC2KYWCtRG3tCIA==
-X-Received: by 2002:a17:907:268e:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a8ffadf3c37mr21979466b.47.1725962339290;
-        Tue, 10 Sep 2024 02:58:59 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-69-130.dyn.eolo.it. [146.241.69.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25830efdsm459314066b.41.2024.09.10.02.58.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 02:58:58 -0700 (PDT)
-Message-ID: <ff23bcb5-d2e8-4b1b-a669-feab4a97994a@redhat.com>
-Date: Tue, 10 Sep 2024 11:58:56 +0200
+	bh=grD5In4bGPaA+nhqFqj8epzcpTP1SHG7xTFJKKmUVzo=;
+	b=CiAjd1/mVBw9tbxw5BIiGcJgP/Vlfqne70HZ9Uazkw9C3Xu7WE7lpgDnefzt7ZnT19+Dgq
+	Lz6Gm/r32cnbVqz8roxJxcSCKQcCcYMuynP3srNVLePH6ePi1dkWji2FIHy6USEUf+csnQ
+	UU0tHluObTkUgOfXbx+G+QcaUjrVHCLAkwlU+vL0N/EN8JKVnNTDn1eNC+TBAhw9VbTkrp
+	0U+1eYqcc7P6mriqVLwEKGLr3SJRzkY/u66ZknNs7lnY1QmAqaIXIZG73fGZiZCc5U/VDI
+	hzvZO+kjzz5ItQtv954hSbXLjLv6kaGSxvSUTkPzT7VXFJ7Mk1csD/8zwUAGLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1725962342;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=grD5In4bGPaA+nhqFqj8epzcpTP1SHG7xTFJKKmUVzo=;
+	b=8PibRn7dXM3dPADsXj6zR5IsXAAX49qWxDhnNWp5jcgn57cnMYTMhx7wnszn7mhfeOlGQR
+	WPpm5Y/JGuoF4/AA==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86/rapl: Clean up cpumask and hotplug
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240802151643.1691631-8-kan.liang@linux.intel.com>
+References: <20240802151643.1691631-8-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net] usbnet: fix cyclical race on disconnect with work
- queue
-To: Oliver Neukum <oneukum@suse.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240905134811.35963-1-oneukum@suse.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240905134811.35963-1-oneukum@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172596234170.2215.10591822479645117410.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the perf/core branch of tip:
 
+Commit-ID:     fa90a7dad75b47302f6d35f6c6a36d0c87450187
+Gitweb:        https://git.kernel.org/tip/fa90a7dad75b47302f6d35f6c6a36d0c87450187
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Fri, 02 Aug 2024 08:16:43 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 10 Sep 2024 11:44:14 +02:00
 
-On 9/5/24 15:46, Oliver Neukum wrote:
-> The work can submit URBs and the URBs can schedule the work.
-> This cycle needs to be broken, when a device is to be stopped.
-> Use a flag to do so.
-> This is a design issue as old as the driver.
-> 
-> Signed-off-by: Oliver Neukum <oneukum@suse.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> CC: stable@vger.kernel.org
-> ---
-> 
-> v2: fix PM reference issue
-> 
->   drivers/net/usb/usbnet.c   | 37 ++++++++++++++++++++++++++++---------
->   include/linux/usb/usbnet.h | 17 +++++++++++++++++
->   2 files changed, 45 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-> index 18eb5ba436df..2506aa8c603e 100644
-> --- a/drivers/net/usb/usbnet.c
-> +++ b/drivers/net/usb/usbnet.c
-> @@ -464,10 +464,15 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
->   void usbnet_defer_kevent (struct usbnet *dev, int work)
->   {
->   	set_bit (work, &dev->flags);
-> -	if (!schedule_work (&dev->kevent))
-> -		netdev_dbg(dev->net, "kevent %s may have been dropped\n", usbnet_event_names[work]);
-> -	else
-> -		netdev_dbg(dev->net, "kevent %s scheduled\n", usbnet_event_names[work]);
-> +	if (!usbnet_going_away(dev)) {
-> +		if (!schedule_work(&dev->kevent))
-> +			netdev_dbg(dev->net,
-> +				   "kevent %s may have been dropped\n",
-> +				   usbnet_event_names[work]);
-> +		else
-> +			netdev_dbg(dev->net,
-> +				   "kevent %s scheduled\n", usbnet_event_names[work]);
-> +	}
->   }
->   EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
->   
-> @@ -535,7 +540,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
->   			tasklet_schedule (&dev->bh);
->   			break;
->   		case 0:
-> -			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-> +			if (!usbnet_going_away(dev))
-> +				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
->   		}
->   	} else {
->   		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
-> @@ -843,9 +849,18 @@ int usbnet_stop (struct net_device *net)
->   
->   	/* deferred work (timer, softirq, task) must also stop */
->   	dev->flags = 0;
-> -	del_timer_sync (&dev->delay);
-> -	tasklet_kill (&dev->bh);
-> +	del_timer_sync(&dev->delay);
-> +	tasklet_kill(&dev->bh);
->   	cancel_work_sync(&dev->kevent);
-> +
-> +	/* We have cyclic dependencies. Those calls are needed
-> +	 * to break a cycle. We cannot fall into the gaps because
-> +	 * we have a flag
-> +	 */
-> +	tasklet_kill(&dev->bh);
-> +	del_timer_sync(&dev->delay);
-> +	cancel_work_sync(&dev->kevent);
+perf/x86/rapl: Clean up cpumask and hotplug
 
-I guess you do the shutdown twice because a running tasklet or timer 
-could re-schedule the others? If so, what prevent the rescheduling to 
-happen in the 2nd iteration? why can't you add usbnet_going_away() 
-checks on tasklet and timer reschedule point?
+The rapl pmu is die scope, which is supported by the generic perf_event
+subsystem now.
 
-Thanks,
+Set the scope for the rapl PMU and remove all the cpumask and hotplug
+codes.
 
-Paolo
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20240802151643.1691631-8-kan.liang@linux.intel.com
+---
+ arch/x86/events/rapl.c     | 80 +-------------------------------------
+ include/linux/cpuhotplug.h |  1 +-
+ 2 files changed, 2 insertions(+), 79 deletions(-)
 
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index d12f3a6..0f8f4eb 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -135,7 +135,6 @@ struct rapl_model {
+  /* 1/2^hw_unit Joule */
+ static int rapl_hw_unit[NR_RAPL_DOMAINS] __read_mostly;
+ static struct rapl_pmus *rapl_pmus;
+-static cpumask_t rapl_cpu_mask;
+ static unsigned int rapl_cntr_mask;
+ static u64 rapl_timer_ms;
+ static struct perf_msr *rapl_msrs;
+@@ -340,8 +339,6 @@ static int rapl_pmu_event_init(struct perf_event *event)
+ 	if (event->cpu < 0)
+ 		return -EINVAL;
+ 
+-	event->event_caps |= PERF_EV_CAP_READ_ACTIVE_PKG;
+-
+ 	if (!cfg || cfg >= NR_RAPL_DOMAINS + 1)
+ 		return -EINVAL;
+ 
+@@ -360,7 +357,6 @@ static int rapl_pmu_event_init(struct perf_event *event)
+ 	pmu = cpu_to_rapl_pmu(event->cpu);
+ 	if (!pmu)
+ 		return -EINVAL;
+-	event->cpu = pmu->cpu;
+ 	event->pmu_private = pmu;
+ 	event->hw.event_base = rapl_msrs[bit].msr;
+ 	event->hw.config = cfg;
+@@ -374,23 +370,6 @@ static void rapl_pmu_event_read(struct perf_event *event)
+ 	rapl_event_update(event);
+ }
+ 
+-static ssize_t rapl_get_attr_cpumask(struct device *dev,
+-				struct device_attribute *attr, char *buf)
+-{
+-	return cpumap_print_to_pagebuf(true, buf, &rapl_cpu_mask);
+-}
+-
+-static DEVICE_ATTR(cpumask, S_IRUGO, rapl_get_attr_cpumask, NULL);
+-
+-static struct attribute *rapl_pmu_attrs[] = {
+-	&dev_attr_cpumask.attr,
+-	NULL,
+-};
+-
+-static struct attribute_group rapl_pmu_attr_group = {
+-	.attrs = rapl_pmu_attrs,
+-};
+-
+ RAPL_EVENT_ATTR_STR(energy-cores, rapl_cores, "event=0x01");
+ RAPL_EVENT_ATTR_STR(energy-pkg  ,   rapl_pkg, "event=0x02");
+ RAPL_EVENT_ATTR_STR(energy-ram  ,   rapl_ram, "event=0x03");
+@@ -438,7 +417,6 @@ static struct attribute_group rapl_pmu_format_group = {
+ };
+ 
+ static const struct attribute_group *rapl_attr_groups[] = {
+-	&rapl_pmu_attr_group,
+ 	&rapl_pmu_format_group,
+ 	&rapl_pmu_events_group,
+ 	NULL,
+@@ -541,49 +519,6 @@ static struct perf_msr amd_rapl_msrs[] = {
+ 	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
+ };
+ 
+-static int rapl_cpu_offline(unsigned int cpu)
+-{
+-	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+-	int target;
+-
+-	/* Check if exiting cpu is used for collecting rapl events */
+-	if (!cpumask_test_and_clear_cpu(cpu, &rapl_cpu_mask))
+-		return 0;
+-
+-	pmu->cpu = -1;
+-	/* Find a new cpu to collect rapl events */
+-	target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
+-
+-	/* Migrate rapl events to the new target */
+-	if (target < nr_cpu_ids) {
+-		cpumask_set_cpu(target, &rapl_cpu_mask);
+-		pmu->cpu = target;
+-		perf_pmu_migrate_context(pmu->pmu, cpu, target);
+-	}
+-	return 0;
+-}
+-
+-static int rapl_cpu_online(unsigned int cpu)
+-{
+-	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+-	int target;
+-
+-	if (!pmu)
+-		return -ENOMEM;
+-
+-	/*
+-	 * Check if there is an online cpu in the package which collects rapl
+-	 * events already.
+-	 */
+-	target = cpumask_any_and(&rapl_cpu_mask, topology_die_cpumask(cpu));
+-	if (target < nr_cpu_ids)
+-		return 0;
+-
+-	cpumask_set_cpu(cpu, &rapl_cpu_mask);
+-	pmu->cpu = cpu;
+-	return 0;
+-}
+-
+ static int rapl_check_hw_unit(struct rapl_model *rm)
+ {
+ 	u64 msr_rapl_power_unit_bits;
+@@ -707,6 +642,7 @@ static int __init init_rapl_pmus(void)
+ 	rapl_pmus->pmu.stop		= rapl_pmu_event_stop;
+ 	rapl_pmus->pmu.read		= rapl_pmu_event_read;
+ 	rapl_pmus->pmu.module		= THIS_MODULE;
++	rapl_pmus->pmu.scope		= PERF_PMU_SCOPE_DIE;
+ 	rapl_pmus->pmu.capabilities	= PERF_PMU_CAP_NO_EXCLUDE;
+ 
+ 	init_rapl_pmu();
+@@ -857,24 +793,13 @@ static int __init rapl_pmu_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	/*
+-	 * Install callbacks. Core will call them for each online cpu.
+-	 */
+-	ret = cpuhp_setup_state(CPUHP_AP_PERF_X86_RAPL_ONLINE,
+-				"perf/x86/rapl:online",
+-				rapl_cpu_online, rapl_cpu_offline);
+-	if (ret)
+-		goto out;
+-
+ 	ret = perf_pmu_register(&rapl_pmus->pmu, "power", -1);
+ 	if (ret)
+-		goto out1;
++		goto out;
+ 
+ 	rapl_advertise();
+ 	return 0;
+ 
+-out1:
+-	cpuhp_remove_state(CPUHP_AP_PERF_X86_RAPL_ONLINE);
+ out:
+ 	pr_warn("Initialization failed (%d), disabled\n", ret);
+ 	cleanup_rapl_pmus();
+@@ -884,7 +809,6 @@ module_init(rapl_pmu_init);
+ 
+ static void __exit intel_rapl_exit(void)
+ {
+-	cpuhp_remove_state_nocalls(CPUHP_AP_PERF_X86_RAPL_ONLINE);
+ 	perf_pmu_unregister(&rapl_pmus->pmu);
+ 	cleanup_rapl_pmus();
+ }
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index 2101ae2..801053c 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -207,7 +207,6 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_X86_UNCORE_ONLINE,
+ 	CPUHP_AP_PERF_X86_AMD_UNCORE_ONLINE,
+ 	CPUHP_AP_PERF_X86_AMD_POWER_ONLINE,
+-	CPUHP_AP_PERF_X86_RAPL_ONLINE,
+ 	CPUHP_AP_PERF_S390_CF_ONLINE,
+ 	CPUHP_AP_PERF_S390_SF_ONLINE,
+ 	CPUHP_AP_PERF_ARM_CCI_ONLINE,
 
