@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-322480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4CE97296D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAA7972974
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D061C23CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230FB285610
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2291D17622D;
-	Tue, 10 Sep 2024 06:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D119176FAC;
+	Tue, 10 Sep 2024 06:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FLXHgQnQ"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IORkB/U2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372B716F27E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A81386DF;
+	Tue, 10 Sep 2024 06:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725949261; cv=none; b=VXOrmi/9tkZvVMXsDaL8LK6AEAH5b6CBoD10w2B4mTtr90WA9NUMJr2s6kbvm065kPL6fX+UkI3cjKqgkLS9NBgT0ZU4yA3SW38DrWdmA2J45WPEOlgZxhC98kvYMcZ9hAMD1cKIWaPlFoY7UjtgYFdKsdkdJ+sGXoasAA/ZKlQ=
+	t=1725949349; cv=none; b=Qz8fJwZW1o9vV4EBAy72PJ/4BqPU0lYBvga8IO+v+czVacJpj0PjVKmzGTlWNm7sReSfy/Uy05nAHdR7aQyPYfupq1POziFqIe0TpI4R6+rB8QjzvuYl62uNWIcUdMgzFFrDSuMmZTrYC6b4si/htW/Lka9o1kV9jAfFX6pLIQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725949261; c=relaxed/simple;
-	bh=hFD+h+g3Qn5O1IluP2Jlz3i4TTvagOIPayb1NIcvVfY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IMEe0RnAXLVo61LkX7Q4hW+MQNAmKOE3p56kQpVHa/6mPxHSO/XVox0BdDoOQoiiUIIX59A+qVGqevgAKM5S9Ccx7fSta/+k6g4UwIyftt4b+rH7CMWdZx2gyuL6hvir46BMuYux/TLc5/89Jlp30hehMa7BAwXADWXqLa6Db3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FLXHgQnQ; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e7b121be30so3311423a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725949259; x=1726554059; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9NAqLSzfiTKu9/ujNb6PjoEVWXdaDlFqYoM8Sol5284=;
-        b=FLXHgQnQ2uxLU6zrU32LP9vKQLwytBFZKxW2UDpnnngF6lU0qDdTtdHQQiHdMl1ps2
-         aystXOe3pu88NpMqpIH0+U0QUiK+Cw6Kq5oT+N6MK8xg4MSy4KpBJroK4+2QL6tQ7ESI
-         MpNVQKC8ceM0oxPMnG5ronvYj/tox4rU3P5OU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725949259; x=1726554059;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9NAqLSzfiTKu9/ujNb6PjoEVWXdaDlFqYoM8Sol5284=;
-        b=KWrTjUHSgUhhXZWQhL+b2GuZBF61GeMgQPwFVItNB9Tp78WsdJ2UJtNg/mGWElJaGa
-         dq/FLmylPY7jM26aCyQY/OoZl3xYuhJYQ03ClOoP8MmUjJn3aRVz1fpihq7Z/LoWsO2v
-         vHqFuX8oQO9waq5Ket2ynKYpGZMFPaDW9mkzdc22wquFRae1eI0F9u3Vx7LYFQKCX28E
-         lf0kZuQ02C75VYvpIWIBXCXvTEsny+g8VOrt2gaImoTOBSknwH9Ry1Gsqtj5pWZYmPJO
-         Xun4iQyAhvLcnyNHBb6DMkMV6ROFGaf3IrSE+DfzeJXJRpKzeADKjy0KbV9nNZoXToUI
-         Wudg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl96azg708ttK7m1Ve0KmtzuhxYJFAe3aLWQVBiV4mCMdC4arpwRP5gW3rDGNkZyuHsF9kc94Ic63X3GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAw5iRLc/RoniH8zkpMjZp/eE0lbE0O928UoN3QaW7BjqJnz66
-	aJtaoNYR1ADxgFSM/yq4SJL66hLdB6vLzhane7/jpSqa+lSXoM/ONeszgm+0IA==
-X-Google-Smtp-Source: AGHT+IEbJWi/XiTXkjvEqBmFZgc8Mp05CZ7p6lurFZhANudU33VAWtc+4cYuapG1rcW6R1YeF9lrEg==
-X-Received: by 2002:a05:6a20:6f08:b0:1c4:9ef6:499b with SMTP id adf61e73a8af0-1cf1d13337amr13713739637.29.1725949259296;
-        Mon, 09 Sep 2024 23:20:59 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (30.191.80.34.bc.googleusercontent.com. [34.80.191.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090b0397sm675188b3a.154.2024.09.09.23.20.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 23:20:58 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 10 Sep 2024 06:20:55 +0000
-Subject: [PATCH] arm64: dts: mt8183: Add encoder node
+	s=arc-20240116; t=1725949349; c=relaxed/simple;
+	bh=wDXVRRb9fFqnNG/e2J9iPFDPeNe6iKxKjeCSX7UbCTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OuzK2F5ttW8VYItjRBjqlYHG1AS2iS/55AcU5N0E6o4awoI1UYipHUfLxuNUUM14A7n7e4jHjDEu6tHo1heNXReJX/NS+0SvSNIBti9AoHYAPAuAnsbVs9pLpxLWKIwkoYQDZxqB2K2kKzzPEM2q4qZBmQ84dsLkM86/ycM8HHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IORkB/U2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3mI8H028083;
+	Tue, 10 Sep 2024 06:21:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	abGkKzVbCFyg6JdPil4boqV7m6mzwnRG4sSLRPcCDkU=; b=IORkB/U2GEXb5SAd
+	66NTftFHUvLgYmCnfdAD/rUZJIng9zk7Ay7VZDHzvF2ooDb3IJY3yUpe+Xz71Np7
+	zthM8eHN040D1RS+y8Un161tvNpUB2SNERtDQ8da+bV0DD3YxawDt1Sx/9HokC6T
+	C/qkPCUC0MZKnYYnPCurNyXQJSh9cjNPtPEug7g7dCXF4cvXWaS4YSH3MG/bqi4x
+	dPuDsheJcb/JlUIrMk+ky1UJ/bl0q1nq6wqNXf8rLYWQj34EmNNH1v78Tr/u+u+z
+	vLpCA+Jcvuyh+VqsGeV1WWORXSNwnZUztETDrVe04CgP1+g3qrpHw6iEG5z3wonP
+	PEeFGQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5rcwjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 06:21:45 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A6LiPU025302
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 06:21:44 GMT
+Received: from [10.151.37.94] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
+ 23:21:39 -0700
+Message-ID: <bb1397c3-2327-e211-f7eb-cac4b126424e@quicinc.com>
+Date: Tue, 10 Sep 2024 11:51:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
+Content-Language: en-US
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <esben@geanix.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
+ <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
+ <20240903150826.749b8560@xps-13>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20240903150826.749b8560@xps-13>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-venc-v1-1-d17dfd931dc8@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAEbl32YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSwNL3bLUvGRdE3MD02TztLQ00xQzJaDSgqLUtMwKsDHRsbW1AAWLZWl
- WAAAA
-X-Change-ID: 20240909-venc-4705c7fff5d6
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mRLGbG3WlngwSJ0VTAdjQSQVj9PbpP2f
+X-Proofpoint-ORIG-GUID: mRLGbG3WlngwSJ0VTAdjQSQVj9PbpP2f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409100046
 
-Add encoder node.
 
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-According to
-https://lore.kernel.org/all/184d895c-239e-3f23-970e-6a9563235cd9@gmail.com/,
-the encoder node of MT8183 should be added only after its dependency has
-been accepted. Add the encoder node in this patch.
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index fbf145639b8c90b2c69da1cb4bac4f61ca7a1c9e..d24c89e4e13b0c74f549e638e97e0729052909a7 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -1965,6 +1965,24 @@ larb4: larb@17010000 {
- 			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
- 		};
- 
-+		vcodec_enc: vcodec@17020000 {
-+			compatible = "mediatek,mt8183-vcodec-enc";
-+			reg = <0 0x17020000 0 0x1000>,
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_LOW>;
-+			mediatek,larb = <&larb4>;
-+			iommus = <&iommu M4U_PORT_VENC_REC>,
-+				 <&iommu M4U_PORT_VENC_BSDMA>,
-+				 <&iommu M4U_PORT_VENC_RD_COMV>,
-+				 <&iommu M4U_PORT_VENC_CUR_LUMA>,
-+				 <&iommu M4U_PORT_VENC_CUR_CHROMA>,
-+				 <&iommu M4U_PORT_VENC_REF_LUMA>,
-+				 <&iommu M4U_PORT_VENC_REF_CHROMA>;
-+			mediatek,scp = <&scp>;
-+			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
-+			clocks = <&vencsys CLK_VENC_VENC>;
-+			clock-names = "MT_CG_VENC";
-+		};
-+
- 		venc_jpg: jpeg-encoder@17030000 {
- 			compatible = "mediatek,mt8183-jpgenc", "mediatek,mtk-jpgenc";
- 			reg = <0 0x17030000 0 0x1000>;
+On 9/3/2024 6:38 PM, Miquel Raynal wrote:
+> Hi,
+> 
+> quic_mdalam@quicinc.com wrote on Tue, 3 Sep 2024 14:45:15 +0530:
+> 
+>> Hi Miquel,
+>>
+>> On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
+>>> v8:
+>>>    * Fixed compilation warning reported by kernel test robot
+>>>    * Added "chip" description in nandc_set_read_loc_first()
+>>>    * Added "chip" description" in nandc_set_read_loc_last()
+>>>    * Changed data type of read_location0, read_location1,
+>>>      read_location2, read_location3, addr0, addr1, cmd, cfg0,
+>>>      cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+>>>      orig_cmd1, orig_vld to __le32 to fix compilation warning.
+>>>    * Included bitfield.h header file in spi-qpic-snand.c to
+>>>      fix compilation warning
+>>>    * Removed unused variable "steps" variable from
+>>>      qcom_spi_ecc_init_ctx_pipelined()
+>>>    
+>>       I have addressed your comments to v6 and further posted till v8.
+>>       Could you please let me know if this is fine.
+>>       and how to get this merged ?
+> 
+> There are still kernel test robot reports, so this means there are
+> issues in your code that I don't need to point out explicitly, but I am
+> actively waiting for them to be fixed.
 
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240909-venc-4705c7fff5d6
+I have fixed most of the sparse warnings after converting __le32 to u32.
+However am not able to address the following sparse warnings
 
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+	drivers/mtd/nand/raw/qcom_nandc.c:1401:29: sparse: warning: cast to restricted __le32
+	drivers/mtd/nand/raw/qcom_nandc.c:1587:30: sparse: warning: cast to restricted __le32
+	drivers/mtd/nand/raw/qcom_nandc.c:1588:31: sparse: warning: cast to restricted __le32
+	drivers/mtd/nand/raw/qcom_nandc.c:1589:34: sparse: warning: cast to restricted __le32
+	drivers/mtd/nand/raw/qcom_nandc.c:2479:47: sparse:    got restricted __le32 [usertype]
+	drivers/mtd/nand/raw/qcom_nandc.c:2480:47: sparse:    got restricted __le32 [usertype]
+	drivers/mtd/nand/raw/qcom_nandc.c:2616:25: sparse: warning: cast to restricted __le32
+	drivers/mtd/nand/raw/qcom_nandc.c:2672:32: sparse: warning: cast to restricted __le32
 
+These warnings are seen with existing kernel code too. For example
+
+	drivers/mtd/ftl.c:299:39: sparse: warning: cast to restricted __le32
+	drivers/mtd/ftl.c:387:23: sparse:    got restricted __le32 [usertype]
+
+Hence, can these be ignored as false positives and post the next version of the patches.
+Kindly advice.
+
+Thanks
+Alam
 
