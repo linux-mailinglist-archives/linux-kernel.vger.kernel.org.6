@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-323230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36769739CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FC79739D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A297E283205
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E315283BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04E3194151;
-	Tue, 10 Sep 2024 14:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3A194ADB;
+	Tue, 10 Sep 2024 14:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE5PFkSg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gv973UAU"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FAB2AEF1;
-	Tue, 10 Sep 2024 14:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0953194151;
+	Tue, 10 Sep 2024 14:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725978398; cv=none; b=QMFGrJVgPgrJeTjg1zDwxCCmYRiQSwMMfQkKmSMmpFpIj424FN7pZ0Wmka1ZwAZzGPst6qWbYcz1dbJY0IZ/7iQOE/GgTwW9IxdIQ/O620+mtMX7CPMXj5SyelfiNRRtysTTthHmJwcCF2maRSkRnj21KbDqtJXXnTJP5uPX8Fs=
+	t=1725978410; cv=none; b=TwPVcjd3t16wi5E1FDCcGDIKRMJ/WJ/lruJWXfJyNDj3MgfEbS/Saw0sGwPbnvFRlvKfFaZ/SpgoDkTsVDR9J75ZZs90MRyqfShtWKz3TV3JHCxPBXJekuS0bjIP4XeDvp4RQ05ctIfGXPMuM/2c+q3RdXRuUekSdQaKE3hK7io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725978398; c=relaxed/simple;
-	bh=bBMl6pToiyNWX9sPH1obZQpz1aQJ4vu4Oq4rq3zpz5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQDFIc9RXo5F2d2RnidyTEy9qBcTPDZsBRW10hMm1LdBiXiYiv0blqu915hG/rH3vllQIVxHKcY1/5SR+PMqOUhnEGIr1jLui0Nkeatvv5ZtXvWn9BV6hCYJ1SzsjOP6XL1BEtXQmYbPn143xWCYJdfiw8v6r6rho3/jfoJsG8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE5PFkSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 676E7C4CEC3;
-	Tue, 10 Sep 2024 14:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725978397;
-	bh=bBMl6pToiyNWX9sPH1obZQpz1aQJ4vu4Oq4rq3zpz5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NE5PFkSgtNA9rSEz9WqsvePNC7KS/8r8TBDWgNqmzUho4apQePRUaZZqNeRGsxL1W
-	 HQCncAecmSIPF07JtvHh7PV0nFrWcVNDBsGq0KFoAK2+ONyQbbG611KrnnhexV/v0Z
-	 Hsnit4oCLt/6M5DYTK2C6qQZGQEdsGAayRwXvCV3/+1rmWv5o8v9TXf7YUjCpeAN/O
-	 CAd6EVYM8FqsIAG8RdgOKjw73qoifbLBfBWhwvmQKlMHxz1HaIyi+Ln1Q9bNc7O+HA
-	 Mx4a0D8sY5730J3oMv1MHIoRgJ8bxH4llgW7gHnxEv//ju6chf3BcQspy7uSNcCdWa
-	 3x4ROtAagBWJg==
-Date: Tue, 10 Sep 2024 11:26:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <ZuBXG5FEPF0HnMcq@x1>
-References: <20240903092745.370fc0c6@canb.auug.org.au>
- <20240903.020556-bouncing.saws.daring.donor-5KuFrSsG4K2W@cyphar.com>
- <20240905105809.6585eec2@canb.auug.org.au>
- <20240910102332.4f171bde@canb.auug.org.au>
- <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
+	s=arc-20240116; t=1725978410; c=relaxed/simple;
+	bh=hc7NyxgpJ6DbiRHsgdcnzwepguGDZlHND0w3d7+mHNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c4ZX7TSi5ACi17gNvb9lH52AjUasVKx3dmnPCYPk2HlJyNS+I/5O/Qf8YSj7pVBwIcTcZrKIddxkQrP9leC6ODD2b+y9DZdTYeoW1KROsDQF4I5Kx9E281tLp8F75r5FhPtDaIQosq92kNfzvUM4bbG7rRw28t7/Nu2mU9XuXks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gv973UAU; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71788bfe60eso655952b3a.1;
+        Tue, 10 Sep 2024 07:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725978408; x=1726583208; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+t6DdrK5yndZ10uTnmpmlxoTF20sSnH2lNklBwPw3IE=;
+        b=gv973UAUJ0EWjv5/TmuVQr7iiuH+SxXY/hw1amL8NOelZLS1e3W150YAvLRFJQMofl
+         mDU2w/myyo2vRwAGQg3kwodNrMgowU6o1yv6y9LBWzZjg6a/BgSJU0LVbyGO5q6QDNPA
+         K1VWPiiJBrbtV8fPZ/+2T6curZbLcUq/zq/E0aOvfif2DnB8A3vl7iybK1Y+H4vuPaRb
+         ZTEfgmoFmzqbQbcCHTLk3V14E+8Yjwd7v/Y8otcsHfeh8dIDruWXyWovBywxVlNKOF1H
+         rxTRQLiLRLXFPGZ3tBPUSe8utyAa3FqcRXwUxb17TVD6acAURBiQNN38VO5Rj3TsMGrl
+         Hhbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725978408; x=1726583208;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+t6DdrK5yndZ10uTnmpmlxoTF20sSnH2lNklBwPw3IE=;
+        b=mszN4tCayGWv3C+6t7ICDwaSWPfAC4sGI7JX82FUY42op4fr8eE3bO0MV5gsHCkEoK
+         e0u6QT5Jm8//NoOJ5rPdBIGEh2LyOfU/HcOYEbA/MJXUSpXTPxO6PKpWMzoQWkx9BzUc
+         mMVhAxmQi6DUkdunif0ptu9xuGrZVpCDFuWRVk/VeRd68YN0JGeiqOI0HN7ng2GDlyHf
+         Ta+ZblYIAaFeJfNrY2Mkq0AKAyuqzfKr8NgJ+99KVCXKj7Ul5vPW8NDqEQbKPQ2TEI42
+         8r9+FBX2Bm+nxk0e2RyyJVlw6bZWhA87WN+8QQfWgTb7NVb8DXVmq8gHlEFRLRo1sssf
+         pmvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0LcXH1SRsK0jDaZKIR1njVJZ6zyKfyt8nLIpF7O14nsKVH4PlpUoOVY+098eCfO5Ry2yE1Mc0UDew3kQ=@vger.kernel.org, AJvYcCVMxDevHCCrNQMvPay+APQmk6GK1reaNQsHq1rS3R/iqLD3OY2wMtS1uM2Q74xRID+MS4hGB/mN2oDegeC8i9vbDig=@vger.kernel.org, AJvYcCVj6r5ILSBXoaKWQNGHIyHdMpW4mdsuAIXiv4WpM79StRr7pGr3A2+xHMvveazg7ujEbfU0OIBHEwoMRf0A@vger.kernel.org
+X-Gm-Message-State: AOJu0YziycpFtGtS7gP3MfMfhI7PjTO6TXfYQrdbmgySPjDqqPI95Ss8
+	MJnylJfmwCR8weU3p1A0AC0e9Ls1E6nBJKB+ATO/y4v6nfqfBDDkePmFj/Eoyqc=
+X-Google-Smtp-Source: AGHT+IEf3wHNP6yf1vdBPZkHwAbshOdAEbtculahpnCqwG6Zq2HSxCVLlv0APhg8CaZYX2Sbty2Kew==
+X-Received: by 2002:a05:6a20:e609:b0:1cc:bb1f:1d4 with SMTP id adf61e73a8af0-1cf5dc246c8mr1477157637.0.1725978407681;
+        Tue, 10 Sep 2024 07:26:47 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e3271csm49416375ad.78.2024.09.10.07.26.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 07:26:47 -0700 (PDT)
+Message-ID: <a7f7ccb0-1dd2-4df5-a2ad-1fe4c98d67e0@gmail.com>
+Date: Tue, 10 Sep 2024 22:26:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-donnerstag-feucht-2e1aaf9ae8af@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] tty: serial: samsung: Use BIT() macro for
+ APPLE_S5L_*
+Content-Language: en-MW
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, asahi@lists.linux.dev
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+ <20240909084222.3209-2-towinchenmi@gmail.com>
+ <lbyvuozxjywyt46w2imk2jvwfas3p43wooj2ioyhufwkyg72da@d6stk7xk4rx4>
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <lbyvuozxjywyt46w2imk2jvwfas3p43wooj2ioyhufwkyg72da@d6stk7xk4rx4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 10:50:39AM +0200, Christian Brauner wrote:
-> On Tue, Sep 10, 2024 at 10:23:32AM GMT, Stephen Rothwell wrote:
-> > On Thu, 5 Sep 2024 10:58:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > On Tue, 3 Sep 2024 12:41:08 +1000 Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > > > On 2024-09-03, Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> > > > > After merging the vfs-brauner tree, today's linux-next build (native perf)
-> > > > > failed like this:
 
-> > > > > In file included from trace/beauty/fs_at_flags.c:21:
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: error: initialized field overwritten [-Werror=override-init]
-> > > > >    10 |         [ilog2(0x0001) + 1] = "RENAME_NOREPLACE",
-> > > > >       |                               ^~~~~~~~~~~~~~~~~~
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:10:31: note: (near initialization for 'fs_at_flags[1]')
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: error: initialized field overwritten [-Werror=override-init]
-> > > > >    14 |         [ilog2(0x200) + 1] = "HANDLE_FID",
-> > > > >       |                              ^~~~~~~~~~~~
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:14:30: note: (near initialization for 'fs_at_flags[10]')
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: error: initialized field overwritten [-Werror=override-init]
-> > > > >    15 |         [ilog2(0x001) + 1] = "HANDLE_MNT_ID_UNIQUE",
-> > > > >       |                              ^~~~~~~~~~~~~~~~~~~~~~
-> > > > > perf/trace/beauty/generated/fs_at_flags_array.c:15:30: note: (near initialization for 'fs_at_flags[1]')
 
-> > > > > Caused by commit
+On 10/9/2024 20:48, Andi Shyti wrote:
+> Hi Nick,
+> 
+> On Mon, Sep 09, 2024 at 04:37:25PM GMT, Nick Chan wrote:
+>> New entries using BIT() will be added soon, so change the existing ones
+>> for consistency.
+>>
+>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> 
+> I think this is:
+> 
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+We will see... Got a bit paranoid after bad things happened with v2 and v3.
 
-> > > > >   34cf40849654 ("uapi: explain how per-syscall AT_* flags should be allocated")
+> 
+>> ---
+>>  include/linux/serial_s3c.h | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
+>> index 1672cf0810ef..1e8686695487 100644
+>> --- a/include/linux/serial_s3c.h
+>> +++ b/include/linux/serial_s3c.h
+>> @@ -249,9 +249,9 @@
+>>  #define APPLE_S5L_UCON_RXTO_ENA		9
+>>  #define APPLE_S5L_UCON_RXTHRESH_ENA	12
+>>  #define APPLE_S5L_UCON_TXTHRESH_ENA	13
+>> -#define APPLE_S5L_UCON_RXTO_ENA_MSK	(1 << APPLE_S5L_UCON_RXTO_ENA)
+>> -#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_RXTHRESH_ENA)
+>> -#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	(1 << APPLE_S5L_UCON_TXTHRESH_ENA)
+>> +#define APPLE_S5L_UCON_RXTO_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_ENA)
+>> +#define APPLE_S5L_UCON_RXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
+>> +#define APPLE_S5L_UCON_TXTHRESH_ENA_MSK	BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
+>>  
+>>  #define APPLE_S5L_UCON_DEFAULT		(S3C2410_UCON_TXIRQMODE | \
+>>  					 S3C2410_UCON_RXIRQMODE | \
+>> @@ -260,9 +260,9 @@
+>>  					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
+>>  					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
+>>  
+>> -#define APPLE_S5L_UTRSTAT_RXTHRESH	(1<<4)
+>> -#define APPLE_S5L_UTRSTAT_TXTHRESH	(1<<5)
+>> -#define APPLE_S5L_UTRSTAT_RXTO		(1<<9)
+>> +#define APPLE_S5L_UTRSTAT_RXTHRESH	BIT(4)
+>> +#define APPLE_S5L_UTRSTAT_TXTHRESH	BIT(5)
+>> +#define APPLE_S5L_UTRSTAT_RXTO		BIT(9)
+>>  #define APPLE_S5L_UTRSTAT_ALL_FLAGS	(0x3f0)
+> 
+> You could make this GENMASK(0x3f, 4)
+Good idea, given the above context I think I may add
 
-> > > > > I have used the vfs-brauner tree from next-20240902 for today.    
+Suggested-by: Andi Shyti <andi.shyti@kernel.org>
 
-> > > > Ah okay, the overlapping flag definitions in the copied over fcntl.h are
-> > > > causing issues. We could just drop that part of the patch, or (since the
-> > > > new flags aren't handled by perf/trace/beauty) we could just do
-> > > > something simple like:
+too. And actually it should be GENMASK(9, 3)
 
-> > > > diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/beauty/fs_at_flags.sh
-> > > > index 456f59addf74..930384029599 100755
-> > > > --- a/tools/perf/trace/beauty/fs_at_flags.sh
-> > > > +++ b/tools/perf/trace/beauty/fs_at_flags.sh
-> > > > @@ -13,9 +13,13 @@ printf "static const char *fs_at_flags[] = {\n"
-> > > >  regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
-> > > >  # AT_EACCESS is only meaningful to faccessat, so we will special case it there...
-> > > >  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
-> > > > +# AT_RENAME_* flags are just aliases of RENAME_* flags and we don't need to include them.
-> > > > +# AT_HANDLE_* flags are only meaningful for name_to_handle_at, which we don't support.
-> > > >  grep -E $regex ${linux_fcntl} | \
-> > > >         grep -v AT_EACCESS | \
-> > > >         grep -v AT_STATX_SYNC_TYPE | \
-> > > > +       grep -Ev "AT_RENAME_(NOREPLACE|EXCHANGE|WHITEOUT)" | \
-> > > > +       grep -Ev "AT_HANDLE_(FID|MNT_ID_UNIQUE)" | \
-> > > >         sed -r "s/$regex/\2 \1/g"       | \
-> > > >         xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
-> > > >  printf "};\n"  
+> 
+> Andi
 
-> > > I have applied that by hand for today.  Please submit it and get it
-> > > applied.
+Nick Chan
 
-> > I am still applying this build fix patch.
-
-> That's weird as I removed everything that touches tools/ from that
-> commit as the tools/ repository is updated after uapi changes
-> separately. That's what I've been told multiple times. I can add this
-> change but it feels odd.
-
-Right, that is the usual workflow, tools/ should not put any burden on
-kernel development, we need to make these trace/beauty more resilient,
-i.e. if it can't be built then just emit a warning and continue without
-that specific table (generated by
-tools/perf/trace/beauty/fs_at_flags.sh).
-
-Which I'll try to do after LPC, making notes here, so, in this specific
-case here, please add this change as having perf not building on next is
-inconvenient and since the change to make it resilient will take time to
-get implemented, doing it now via the kernel developer seems the
-sensible thing to do, sorry for the incovenience :-\
-
-- Arnaldo
 
