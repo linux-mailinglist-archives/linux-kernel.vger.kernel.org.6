@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-322803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE256972E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:42:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D558972E66
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42ADDB26973
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:42:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78132B22802
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE24F18DF72;
-	Tue, 10 Sep 2024 09:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0874318F2D6;
+	Tue, 10 Sep 2024 09:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cq24zBmm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Va7mJJ4V"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBC518C005
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49D318B493
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961280; cv=none; b=WaBqI4dSNx36VV91rI8fE2c4vv5r58uYfmO58kLLTjTe822s3lJaplqgQORKB80YJpXLAOgPWi3CgsQ23wWDVKCCH3/HrfdQm3jxTYXvBmfEB2IlRi0jxgfFYNRmeZPB9OzvhlXzrWcm9WLXHa2xOJaYyEadaDtqrSaB3cWjx8o=
+	t=1725961322; cv=none; b=PKffBJ8vfcLZcAQV3rVozmNrbAcOZau4KNQWdLwb6avbekDni9ueEkeQtzlP9BxHakgI5OkCVQdsaxNazb8EZml0yJO+6UUitMMBGKNj/xbvlvNOhjHQ4dnfAyDZchQmzt5Kv1ulFAvW/0AY/CiEK3vhR/rPdlVnf3S2Xj6aWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961280; c=relaxed/simple;
-	bh=DykOP0GmIn4GVdryQvldTFp7Scbm7z6qv/XJ3V/veHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PyTQFGkOwK/w/FA3K1sp03KSdzyeGEcQfqcpZmDTntwaPRGWx3AKX2uKsJwsLn8WotU+PZDTLBa/xwB3eX/qhHN87wtIPYDNK4UqBkCMdMrW3g1ZU/6wZIPsd2OxWOgMmVZVgjKB6UTn8ksUn62fatUyx4iQZYpSS9UEpPy6/Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cq24zBmm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725961277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SqUMNjfQs5Iu02+GukJzTHIzHLUxHpQRKRcR4WnGu9w=;
-	b=Cq24zBmm0NGMCb1MZtVpaPGQu9HMDt4DkAwevxxhuizQ+YCLc1BcHB0okPgbMiVKwhp2PA
-	99TnZxB8POfKfPIleX1GDPk98nFWfYkJBodjv5NmEQp/lj2LY2loA8IXgOOcym+X07WDlH
-	iOJM3OAYYcCUnw3w7rStrx7LfcNMM7Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-280-jFOMgkHiO3OvlG1-arxKpA-1; Tue, 10 Sep 2024 05:41:16 -0400
-X-MC-Unique: jFOMgkHiO3OvlG1-arxKpA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb2c5d634so19509765e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:41:15 -0700 (PDT)
+	s=arc-20240116; t=1725961322; c=relaxed/simple;
+	bh=9VgJjVmZ2z3iHIWJKr+PVbZvKtgFkLWgVshWta/n0oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgALxjc88EQmhLOX1BN1ak3Yn0OUu9qUOAsXuqtlZO/9c9NVhPfqqKMLkGDYghtA6zCed/FHzQQ33tRV4lJ3cHqGrmbGhcQHU8PBGZ2jgY6cedZQCSXfRTa2FaPzG4vv8ph3iCschszUA9jgfOI0ld6Kaa16dYEq4Gix4/nlWsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Va7mJJ4V; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3770320574aso3288846f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 02:42:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725961319; x=1726566119; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y/oY6ev45wkHlPwZhqCuB2CkZ0X5S0m6QlbT3d2XbjQ=;
+        b=Va7mJJ4Vg4n5F22OuSPQWUw7LmKAAgM8pofWgYrhP6T/YnkTJKyDqhgU5M089k1o44
+         ztGRkL7pVf31DM8c0dTBeh3PIOjjYb+CQOxMbIElBlF6fjXaNz3vx0cejvr9wH6KAvBk
+         laoWl5XCGzyxl2+qg/rASrE8dJjKvg8SQzOF1VXGtnPzr51Uqsj1CSBDEnkKzxQQTrc0
+         ri0NrNRzhK62Lp3s74epsG51afNeIOJuJCEReAdn812whX5U5TDDgpDzVbe7IbvBKv4o
+         4Ui79+rvveoqMPsCwPh39O12XONzGkMWe7Bq5tZiXr1pJDB/JpYbLQG7+rlqE6PaigfL
+         jTCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725961275; x=1726566075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqUMNjfQs5Iu02+GukJzTHIzHLUxHpQRKRcR4WnGu9w=;
-        b=sq97DgC2xNvD4shw754F0wO6FRK/rtOorscYqYy49d/ppzdPgvvK5A3HPQPeCFV1dl
-         VCEiOfnhQRihf4WCJ4W4Rp9qbNG/WzQ5nC5Jf24CqvRDP09dWuwiuwXKZbTbEie4yTcU
-         /FNH0SArlkZ4B6bWwuxRSZ3HihKvNqLCqp4C/Qh25x2B7Quvbi1XDipVV0oXiKHzgVWM
-         jXiH6wihBH84j+KeJQCTWoU7V2OpWVX2gALDzqdHS83ESEsGhgzD0Dmkk6lGd+Atal6a
-         nu6dq2xLWEN0KdS11+YhN5rW07FArSL/v70gQ4LlR4x+1KHxoXnscaFi7xPi70iET7F8
-         5yjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7mHyyzHPKtMvPlFz3RF8OY+89rzwKyU4tfl5+ozF5fYxCxK33g8rEAWJ9ubK18usUzdMZGTrOVCcDV7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAHuhl/EWA+a8hXtUT9GCbtkI89abxAfyJEkMcijqezdJn+g3B
-	IEGGI7SzwfU+hM3w6bH/DvVgIksaeX+Ov3ejvqkqJhCnT1O0oro+43AOYyCKh/xshehC81F4zfX
-	0a84lmgiEj0VOGq0hAd8gKhZhHnzuQJ+wi0q+ogV4PT4h1JYQmzj/IGOSB97BMA==
-X-Received: by 2002:a05:600c:1385:b0:42b:892d:54c0 with SMTP id 5b1f17b1804b1-42c9f97de8dmr87828905e9.12.1725961274936;
-        Tue, 10 Sep 2024 02:41:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHB/azzGs1se//4AVjkYy8KLuUDEvuyu3UvaFCkZFJtXmeKm2kktKHKACCP84fIu4JeFBKsw==
-X-Received: by 2002:a05:600c:1385:b0:42b:892d:54c0 with SMTP id 5b1f17b1804b1-42c9f97de8dmr87828625e9.12.1725961274412;
-        Tue, 10 Sep 2024 02:41:14 -0700 (PDT)
-Received: from [192.168.88.27] (146-241-69-130.dyn.eolo.it. [146.241.69.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca05c6340sm140968805e9.4.2024.09.10.02.41.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 02:41:13 -0700 (PDT)
-Message-ID: <d58d7b9a-ae20-4c07-af17-425cbdfd861b@redhat.com>
-Date: Tue, 10 Sep 2024 11:41:11 +0200
+        d=1e100.net; s=20230601; t=1725961319; x=1726566119;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y/oY6ev45wkHlPwZhqCuB2CkZ0X5S0m6QlbT3d2XbjQ=;
+        b=NpFTkCkn/hAOoK52mtbDcypcBsBd3OxD8vPjaqtcTHrVo8Z7PVndqx+g8viFcp8Mme
+         S9rKw3F62F0QQ8JpppO8RRtCnrxqzo87CTA/g2bL/s3BqqOW2lhN5QPr0ijc/TtKA3ts
+         +4XBcqPByag/dt12zj1vX7K52ex+mwXZ9fVzUgaPDI7iCdITvpFkuvTFeQVPF06x6D5f
+         gnddwNr8Sv4IXN3P/x6W9id7IJcWNg7w/N5KWbFyiGhhda6biVxMBe4oHJQS3aaD6327
+         +vaMGY6xDwTAKE4tlBAhURv6X0MeLo3nQlPRK16cAQw3Hz7m0zVpQNT7tX+UTfXOyVfr
+         WU7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWhuCDO5ANLUK0tr6iFKX0oK2P59JyHQoDrwI50sprNJFCEXfOxBCEKZIFFlGGQZgUjFeLG4jlYGByYP0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw27ZaHtBxlWyEnmIUx5Xhgh7S/U0ULRrEP/ZVHnleGzWqf/hFk
+	JZDrqWtX4nLqpCbmA26TxuLvrYdPg0xkOQ77IX4h8vyaXUxZw5XsK9zf5wbG8aU=
+X-Google-Smtp-Source: AGHT+IGkWtwB/f9V5AkytZZrRUhRw8yTBucrHpQCVigseOJkrWFmkVG2BpPk6J6yzN3QltddzmfKXg==
+X-Received: by 2002:adf:eb92:0:b0:374:c42f:bac1 with SMTP id ffacd0b85a97d-378895c28camr7531799f8f.8.1725961318785;
+        Tue, 10 Sep 2024 02:41:58 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb449a1sm104805385e9.27.2024.09.10.02.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 02:41:57 -0700 (PDT)
+Date: Tue, 10 Sep 2024 12:41:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Bee <knaerzche@gmail.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Christopher Obbard <chris.obbard@collabora.com>
+Subject: Re: [PATCH v6 08/11] media: rkvdec: Add image format concept
+Message-ID: <8d8fe408-ad2c-4198-89e2-46ce973caa6c@stanley.mountain>
+References: <20240909192522.1076704-1-jonas@kwiboo.se>
+ <20240909192522.1076704-9-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v2 2/4] octeontx2-pf: Add new APIs for queue
- memory alloc/free.
-To: Geetha sowjanya <gakula@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: kuba@kernel.org, davem@davemloft.net, jiri@resnulli.us,
- edumazet@google.com, sgoutham@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com
-References: <20240905094935.26271-1-gakula@marvell.com>
- <20240905094935.26271-3-gakula@marvell.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240905094935.26271-3-gakula@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909192522.1076704-9-jonas@kwiboo.se>
 
-On 9/5/24 11:49, Geetha sowjanya wrote:
-> Group the queue(RX/TX/CQ) memory allocation and free code to single APIs.
+On Mon, Sep 09, 2024 at 07:25:06PM +0000, Jonas Karlman wrote:
+> Add an enum rkvdec_image_fmt used to signal an image format, e.g.
+> 4:2:0 8-bit, 4:2:0 10-bit or any.
 > 
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+> Tag each supported CAPUTRE format with an image format and use this tag
+> to filter out unsupported CAPTURE formats.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
 > ---
->   .../marvell/octeontx2/nic/otx2_common.h       |  2 +
->   .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 54 +++++++++++++------
->   2 files changed, 40 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> index a47001a2b93f..df548aeffecf 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-> @@ -997,6 +997,8 @@ int otx2_pool_init(struct otx2_nic *pfvf, u16 pool_id,
->   int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
->   		   int pool_id, int numptrs);
->   int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
-> +void otx2_free_queue_mem(struct otx2_qset *qset);
-> +int otx2_alloc_queue_mem(struct otx2_nic *pf);
->   
->   /* RSS configuration APIs*/
->   int otx2_rss_init(struct otx2_nic *pfvf);
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> index 4cfeca5ca626..6dfd6d1064ad 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-> @@ -1770,15 +1770,23 @@ static void otx2_dim_work(struct work_struct *w)
->   	dim->state = DIM_START_MEASURE;
->   }
->   
-> -int otx2_open(struct net_device *netdev)
-> +void otx2_free_queue_mem(struct otx2_qset *qset)
-> +{
-> +	kfree(qset->sq);
-> +	qset->sq = NULL;
-> +	kfree(qset->cq);
-> +	qset->cq = NULL;
-> +	kfree(qset->rq);
-> +	qset->rq = NULL;
-> +	kfree(qset->napi);
+> v6:
+> - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
 
-It's strange that the napi ptr is not reset here. You should add a 
-comment describing the reason or zero such field, too.
+Thanks!
 
-Thanks,
-
-Paolo
+regards,
+dan carpenter
 
 
