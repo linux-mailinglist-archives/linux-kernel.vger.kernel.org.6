@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-322789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A634B972DF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0503E972E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF3728564E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E991F2577B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639C918C005;
-	Tue, 10 Sep 2024 09:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807541891A5;
+	Tue, 10 Sep 2024 09:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkjg8dTC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnZDZxpm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B418A6DF;
-	Tue, 10 Sep 2024 09:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB45E1885A6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961075; cv=none; b=mY2y6benNNyc31jtFz6kJI+AoXIbCsc9GT/lI84f3C7338G30z8jBIMnC76dwpCnMl9rn0NWXFTG1Xm7ge9UOtl65CJ/JrG1WcgDQ450sOtM42kKExIShnIBQHDjeBQz4Waicz3+LJ5w8IrUq6aMQi1yjV1Fg0gzXzXi/Mt8lY4=
+	t=1725961142; cv=none; b=JRkMQEWctwt467iMa/ERLK3ezxekKatiTc14MHqX1VLd7P8D58Y/3VFSB02sJ11tDM3+YZaZ50Ye2aZWyBAuRtSioKW1K94P/Yr8l4+hrB9QlOMqTNVruWYHUuGvJ8jelF/anODKD6thN3cRF4vzCZJ4AVmLcZcJLcQxq31bM/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961075; c=relaxed/simple;
-	bh=yjDJud8W9puFv5VkCEq64ew6K8UyJBnq0jOKzD0rCwQ=;
+	s=arc-20240116; t=1725961142; c=relaxed/simple;
+	bh=mhu/u1HMMstptnhA0enUqMKgUpzMKA7vjix+p5byYmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEnbPwH2XRHGw2k5YGVf3E4FcwgXteBxb50Oa13YZosJXBO38LDe+JkVZEE1I59OhQQFTB1NpRaIXspUsm1MR/Jq6alXcLKlleNUR41Cunswv9n+AqhrpIs0kvsTRAuH4nz55fbvpKskUcZ6bgB2vduntPtzkQm6zFby/DmnYRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkjg8dTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CB0C4CEC3;
-	Tue, 10 Sep 2024 09:37:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725961075;
-	bh=yjDJud8W9puFv5VkCEq64ew6K8UyJBnq0jOKzD0rCwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nkjg8dTCx7cKeL+RgZG6evo0MhXjZs8TLK80v5xpfB0AXZRPQFE7YSoKx6uMHKDKn
-	 r1yw6w2euGfXTuDzJqbVK2ByZGotyU2JZqVxC689ea6YS/bootdkn1YEd64ZN/IDzm
-	 FJthGYb8u4xAEoSiqCD73qWYHmm+7E/IXK1Xwuj0zWcyyVYFMxcQNEZ756ZmwYdOCB
-	 bFZmS3vYYngNRkiRq04/HL3/f/Ov0ZpLUctgZT4OqWd8uM+tXx8jH4/ikF+IvHdlJl
-	 KRd2OHpUBuM3pTrrMyNop4+oARU+j/UlkRpmM+SEPxBcJutraQc94yf2ZBQbjFoPzp
-	 KAXDEju9zT7ww==
-Date: Tue, 10 Sep 2024 10:37:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
-Message-ID: <20240910093751.GA572255@kernel.org>
-References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQ1Nf4EKvhW9AUpitBQPFII4D0ywzKr43MzeP7nNu0IkNrYw5abPGEoi3tFiMhFoVxztj2XKKAU0949BRdovaPmVyEak9rNOnVrIEB6B3nqFgMETgR6BfU/7QD4du4MKkIRp7WkggrCwZkUiyNsKfdjjjJpJeRIz3pJAuFABDKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnZDZxpm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725961138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jg80v2sHYr9jxVuH+ZibnLi+74iJM1iXUQ8iFd11kAo=;
+	b=UnZDZxpm86wc/MiN7N4pAjCLvac0d6iidLkmzajVdgMnawJ3rg3HvZqyr6pJi4RSa1QY2x
+	9AY4GI3w/vl4j/eWIQDxjuWj/vt8g4cT3OgT5KSAdjVbugjvcQCg3J4xd0YMLZiIizV5JH
+	66View48aPLFk86I/mQXfPLmspg7SDA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-2G_Q7nXqOuOwOzjcoc0RYQ-1; Tue,
+ 10 Sep 2024 05:38:55 -0400
+X-MC-Unique: 2G_Q7nXqOuOwOzjcoc0RYQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9359919560BF;
+	Tue, 10 Sep 2024 09:38:53 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.58])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 351951955D44;
+	Tue, 10 Sep 2024 09:38:51 +0000 (UTC)
+Date: Tue, 10 Sep 2024 17:38:47 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH] mm/vmalloc.c: Use "high-order" in description non
+ 0-order pages
+Message-ID: <ZuATpy6mPwX1C0/K@MiWiFi-R3L-srv>
+References: <20240906095049.3486-1-urezki@gmail.com>
+ <Zt5j+c/SUNvCMY/+@MiWiFi-R3L-srv>
+ <Zt815f8dHOKdAeiY@pc636>
+ <Zt+ViveH9q1F+ShB@MiWiFi-R3L-srv>
+ <ZuAJ3lHh7XCC4M3w@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,52 +78,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
+In-Reply-To: <ZuAJ3lHh7XCC4M3w@pc636>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
-> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
-> as such we should prefer more robust and less ambiguous string interfaces.
-> 
-> Towards the goal of [2], replace strncpy() with an alternative that
-> guarantees NUL-termination and NUL-padding for the destination buffer.
+On 09/10/24 at 10:57am, Uladzislau Rezki wrote:
+> On Tue, Sep 10, 2024 at 08:40:42AM +0800, Baoquan He wrote:
+> > On 09/09/24 at 07:52pm, Uladzislau Rezki wrote:
+> > > On Mon, Sep 09, 2024 at 10:56:57AM +0800, Baoquan He wrote:
+> > > > On 09/06/24 at 11:50am, Uladzislau Rezki (Sony) wrote:
+> > > > > In many places, in the comments, we use both "higher-order" and
+> > > > > "high-order" to describe the non 0-order pages. That is confusing,
+> > > > > because a "higher-order" statement does not reflect what it is
+> > > > > compared with.
+> > > > > 
+> > > > > Suggested-by: Baoquan He <bhe@redhat.com>
+> > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > > ---
+> > > > >  mm/vmalloc.c | 4 ++--
+> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > This looks good to me, thanks.
+> > > > 
+> > > > Reviewed-by: Baoquan He <bhe@redhat.com>
+> > > > 
+> > > > By the way, do you plan to clean up the rest of them in other places?
+> > > > 
+> > > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher include/linux/vmalloc.h 
+> > > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher mm/vmalloc.c
+> > > 493:     * nr is a running index into the array which helps higher level
+> > > urezki@pc638:~/data/raid0/coding/linux-next.git$
+> > > 
+> > > What am i missing? Didn't i do it?
+> > 
+> > Sorry, I didn't make it clear. I meant those places other than vmalloc
+> > related files, e.g mm/page_alloc.c, there are a lot of [Hhigh]er-order
+> > mixed with high-order. I can continue the cleaning sometime if it's not
+> > in your TO-DO list.
+> > 
+> > mm/page_alloc.c:551: * Higher-order pages are called "compound pages".  They are structured thusly:
+> > mm/page_alloc.c:716: * of the next-higher order is free. If it is, it's possible
+> > mm/page_alloc.c:720: * as a 2-level higher order page
+> > mm/page_alloc.c:735:    return find_buddy_page_pfn(higher_page, higher_page_pfn, order + 1,
+> > mm/page_alloc.c:2750: * split_page takes a non-compound higher-order page, and splits it into
+> > mm/page_alloc.c:3587:   /* The OOM killer will not help higher order allocs */
+> > mm/page_alloc.c:4811: *  within a 0 or higher order page.  Multiple fragments within that page
+> > mm/page_alloc.c:6516:    * page allocator holds, ie. they can be part of higher order
+> > mm/page_alloc.c:6790: * Break down a higher-order page in sub-pages, and keep our target out of
+> > 
+> I see. I appreciate if you go ahead and improve it further.
 
-Hi Justin,
+Ok, will do later.
 
-I am curious to know why the _pad variant was chosen.
-
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
-> Link: https://github.com/KSPP/linux/issues/90 [2]
-> Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-> ---
-> Note: build-tested only.
-> ---
->  net/caif/chnl_net.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-> index 47901bd4def1..ff37dceefa26 100644
-> --- a/net/caif/chnl_net.c
-> +++ b/net/caif/chnl_net.c
-> @@ -347,7 +347,7 @@ static int chnl_net_init(struct net_device *dev)
->  	struct chnl_net *priv;
->  	ASSERT_RTNL();
->  	priv = netdev_priv(dev);
-> -	strncpy(priv->name, dev->name, sizeof(priv->name));
-> +	strscpy_pad(priv->name, dev->name);
->  	INIT_LIST_HEAD(&priv->list_field);
->  	return 0;
->  }
-> 
-> ---
-> base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
-> change-id: 20240909-strncpy-net-caif-chnl_net-c-a505e955e697
-> 
-> Best regards,
-> --
-> Justin Stitt <justinstitt@google.com>
-> 
-> 
 
