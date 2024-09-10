@@ -1,458 +1,196 @@
-Return-Path: <linux-kernel+bounces-322268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580EB97267E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C49697267C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79533B2233F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:08:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F0F2B228BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F96177119;
-	Tue, 10 Sep 2024 01:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59652770FE;
+	Tue, 10 Sep 2024 01:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za/tyWzm"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A4GEghjC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDD3757EB;
-	Tue, 10 Sep 2024 01:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EA66F2F4
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725930475; cv=none; b=ugqHaZX/Y0hUV8Lal52yunRTT5cvzAz3oKmWipDHuPcfeCOsNoJZx1OU7pDOxbtABMSiqIA6X+d8u8fbJY//JyHlP7Muk0M0iL24p5oensykK22B4vVyaUl7iPoUUUV4I+Dqhpzb/qZlQT8Yru9sCpn5jEb59163VSgUG80TStc=
+	t=1725930467; cv=none; b=IuJDBEJb6Pai09Q8Bq5XN8QM0p7D1Gtl5YGDOsEuyUB3C7KscT84Fx+H9hePD6WVNcwGO9P5MlMDznrj3Fxg1j37p/Qx7WnzsLIApElEJ7+p6aWGsRqDCfTbhKNeEEVQjjcUbg36slFuTjSXSA6OHYDKWZFRA/3BB5Is9CAb9+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725930475; c=relaxed/simple;
-	bh=mp4CcRydjn0mStYV+6XbBLDjp/PudkdR1p3z9kOiHtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXBYYHqD4UaRjEsbacjxEUvYgjsL+3gJM9FhuF8Vc1GF8y0Iymd0ZYmATY5/X8N1EuhufqnBQEGOeW1u5UQJ8MKECyPoGki/GU055XO7bfVgGEjkEdbgjBUC1Uondg6mmiSCb19YZedeoXGkORqRVDWQcao4bFvkADgmmeCtrWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Za/tyWzm; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-501274e2c29so1470795e0c.3;
-        Mon, 09 Sep 2024 18:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725930472; x=1726535272; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EW3Pn4mq0GNLE0pC0+xgLS+v2msNvlVAJm6ZwMqloRI=;
-        b=Za/tyWzmlYb7qPBLX2sBvkSZXUgxjYnAkUuwErjHgH0zWIs+fvYZzmbNpoc86XCgak
-         kmqlxDcq+m+XjxBvd06A9D/8cpAj9O+jwYKq7JmkuLgSDIJLZxfAUIZ8/CpbFEf3UpI3
-         HJndoeBwnIiJOHQHi3KW+LZ9hylodb+KBW7ibxmyvwVaeiwE2m8RGX+O187jq+Cvurqv
-         Arwvc/g2dLqTBk6V8eNTgdcRN5HkQ1oey8HmI6iz0pMPuhbhv4aAtV4OINF1t7LyCA9N
-         eG4cy9G3lRRirG50hGEb5m0HcqqCa55wsAlX+uH8wg4syyfK4h7p5EFe0uhCPzRz+1nO
-         cFlQ==
+	s=arc-20240116; t=1725930467; c=relaxed/simple;
+	bh=ATHsS1AmT3JG3F7YpaxSATtnFZdtl+P+auqorHApaBw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MjylwP7TxHL8hYJNk4g7If2KrzxaT/FeVwpUmCaQ6t6hf09kNiRLc5ccmwPvRsn23h4YnOZRfg1Zm8lHxaHH1lPL+Lu7QVy8xSLfT5Y9bOer2Dez4OnS3it4CqseYD6k1alrksiZjGDWvhLVdi+Anmo2HB9RrNRf5xPwlAIIVnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A4GEghjC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725930464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e1Tybp6E4T4YrtJAbYUVLevBkFVS1yDP1bl67K5nnks=;
+	b=A4GEghjCoqMlPQ0IIpTpaBrzUQPclGgu2t9L76wrxqinNLLT6mXAJixfGa4VqSczWF4OLd
+	4XhzzT6RNi9WOHV7eqhQ9E7skeWCeWRKQqu+nnJLUMxRO65LKUsT7aq03nhvgpVXn9HkfL
+	mM6VWwZdVAP165lR9GLt0+0vOmrht5M=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-421-Q1MRFAjhMOaNaxTgtNgn6Q-1; Mon, 09 Sep 2024 21:07:42 -0400
+X-MC-Unique: Q1MRFAjhMOaNaxTgtNgn6Q-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6c3554020afso74777816d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 18:07:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725930472; x=1726535272;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EW3Pn4mq0GNLE0pC0+xgLS+v2msNvlVAJm6ZwMqloRI=;
-        b=sVIwnv6MAT1WKlHiiytnv2moI1QFhKvDmBRTy9Bp6SQB2zCfzyXGZQE6mhJqxP8yTr
-         kUumKf60a7hQos/4XicTAsC6ON6yAu86zka6vRkoAQOKCNBT01uiBDRNjwJAUH38y4hZ
-         IHS0RO1h0alugBnElNUBYc13e2+rOWFNGMxO6qkPJXAsBFEQuJRzJmNaGDD0A5LyUJmz
-         WL81/xMxahKka7R3Kuy9aqsn44e/ihaa7POYaemp/Ug+aLsutSFy2/QLyPcs6EuYxust
-         dM+FMRQQq3gj0Pja9SqFQ/vA06DfDl6neiggUjL1K/Z6886hLRlHwGz23+8rDhfOphBF
-         nALA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0u6ZBT1VWNI08YZWMoQynXrCeAJ8woSbd5+aBLL6cWTHgDXJhjiYPdqA0xBRXdWEzgor2w/CJu3GtwWAOocNqc71q@vger.kernel.org, AJvYcCWb2BXn1iUnARcfuvki0TmWyomZ6vK0FBCZn25zSOTiDd0O9PQ/YG5lJUebFV7+rR1z+scceqDFMkqaiJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNsYPiKjPkGllTSvdx+Vlvw126Zhi1q7ONHzB1rdiZ06kjfP7s
-	fQGcfIe0Lxa+RuBxSScBj26HuQydVvCLckxuCmoCxXh+XdWf5T9w9uJWv4387bTqLoOVlHBXuCq
-	nOYBm7COXhtd+j+Hq01V6NMC6b+Q=
-X-Google-Smtp-Source: AGHT+IEBp3X/UWW6yY/UWQMMaEyL6XiiT028Nah7B+QRocDkx7cGztWwN4z4iHgcc+k5KJlsNx8PpYN43o2hbUOaryI=
-X-Received: by 2002:a05:6122:2021:b0:4fc:da8f:c8c4 with SMTP id
- 71dfb90a1353d-5022146e600mr14892280e0c.12.1725930471497; Mon, 09 Sep 2024
- 18:07:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725930462; x=1726535262;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e1Tybp6E4T4YrtJAbYUVLevBkFVS1yDP1bl67K5nnks=;
+        b=MNbMrkxfRTlrPUIk2MDGeM/DBDmgI8FHIk+G2ijwZuxGaMcJHlgP4opTuQjTmeY3sw
+         H7EK04QNGOsWxS+JU6T7hEJzuR6Ts9H58fMmmANL2BpuKbJzerrvhRuUvCgZO90XzqkZ
+         Xwf4PdTK9EWmdosVLxl2p0uQ1mEeC+s5GX/q5Uj9uPUSu+iKE2Pt9hAfxTO6EDPeZhuP
+         wMI3JHlCwtVG5+gyg62Thhtq1gwr6seZppZj5LmdRtFIY2UIcpHD2u9EdMYPBpCwfjKg
+         Um4FsMSNb46efECMdUSP5yCCkbI+7yaJ56rWUno3yYulTIhpzAkX6nZUsBO6+Np8UN2C
+         HtyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGFAZdMLUVwoG0gV9kU5DTnIbBXTdZoTAnKUAsoSD4qKZnwYaGLtstJEtbLd3mlSjC+KPto/kd4FiCaTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaBmJKyMJy12H+cvUiAy5gNHkKZ5uP/xFiEJWTnPx2dRQv8bPf
+	a84V/lAoZ81JAqcgXn+uNp+245gNR5/vldExXFHB2pUEdp2AX2IiIJGWxSLtQdZhBttXWw6agNU
+	+LeQOXhlkqvthvu+G0bjZ805lk1ErI0pcofiTbIdEHecrUE4uBSUiNoAcaIFvwkaJHFJLUH5n
+X-Received: by 2002:a05:6214:3f90:b0:6c5:1616:b5c5 with SMTP id 6a1803df08f44-6c532ad6e5amr117463506d6.15.1725930462105;
+        Mon, 09 Sep 2024 18:07:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1iFOB9OlXSHTVdnaaPPLfkmO7lh6TSHwWW9yPfAV+5I6XTNWVIUUSS2xEO1Zny6HH9/PWvQ==
+X-Received: by 2002:a05:6214:3f90:b0:6c5:1616:b5c5 with SMTP id 6a1803df08f44-6c532ad6e5amr117463226d6.15.1725930461611;
+        Mon, 09 Sep 2024 18:07:41 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53474d890sm25672526d6.94.2024.09.09.18.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 18:07:41 -0700 (PDT)
+Message-ID: <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
+Subject: Re: [PATCH v3 2/2] VMX: reset the segment cache after segment
+ initialization in vmx_vcpu_reset
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+ x86@kernel.org
+Date: Mon, 09 Sep 2024 21:07:40 -0400
+In-Reply-To: <61e7e64c615aba6297006dbf32e48986d33c12ab.camel@redhat.com>
+References: <20240725175232.337266-1-mlevitsk@redhat.com>
+	 <20240725175232.337266-3-mlevitsk@redhat.com> <ZrF55uIvX2rcHtSW@chao-email>
+	 <ZrY1adEnEW2N-ijd@google.com>
+	 <61e7e64c615aba6297006dbf32e48986d33c12ab.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
-In-Reply-To: <20240908142544.1409032-1-dolinux.peng@gmail.com>
-From: Jeff Xie <xiehuan09@gmail.com>
-Date: Tue, 10 Sep 2024 09:07:39 +0800
-Message-ID: <CAEr6+EDqReXpDUgOQpa5DZKArvf55Te_nynTnGe2C+zoY7n6XQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
- function return address
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com, 
-	mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 8, 2024 at 10:26=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> When using function_graph tracer to analyze the flow of kernel function
-> execution, it is often necessary to quickly locate the exact line of code
-> where the call occurs. While this may be easy at times, it can be more
-> time-consuming when some functions are inlined or the flow is too long.
->
-> This feature aims to simplify the process by recording the return address
-> of traced funcions and printing it when outputing trace logs.
->
-> To distinguish the return value, 'V=3D' is used as the prefix for the ker=
-nel
-> return value, and 'A=3D' is used as the prefix for the return address in =
-trace
-> logs. A new trace option named 'funcgraph-retaddr' has been added, and th=
-e
-> option 'sym-addr' can control the format of the return address.
->
-> See below logs with both funcgraph-retval and funcgraph-retaddr enabled.
->
-> 4)               |  load_elf_binary() { /* A=3Dbprm_execve+0x249/0x600 */
-> 4)               |    load_elf_phdrs() { /* A=3Dload_elf_binary+0x84/0x17=
-30 */
-> 4)               |      __kmalloc_noprof() { /* A=3Dload_elf_phdrs+0x4a/0=
-xb0 */
-> 4) + 47.910 us   |        __cond_resched(); /* V=3D0x0 A=3D__kmalloc_nopr=
-of+0x28c/0x390 */
-> 4) ! 204.142 us  |      } /* __kmalloc_noprof V=3D0xffff888201e32c00 */
-> 4)               |      kernel_read() { /* A=3Dload_elf_phdrs+0x6c/0xb0 *=
-/
-> 4)               |        rw_verify_area() { /* A=3Dkernel_read+0x2b/0x50=
- */
-> 4)               |          security_file_permission() {
-> 4)               |            selinux_file_permission() { /* A=3Dsecurity=
-_file_permission+0x26/0x40 */
-> 4)               |              __inode_security_revalidate() { /* A=3Dse=
-linux_file_permission+0x6d/0x140 */
-> 4)   1.182 us    |                __cond_resched(); /* V=3D0x0 A=3D__inod=
-e_security_revalidate+0x5f/0x80 */
-> 4)   4.138 us    |              } /* __inode_security_revalidate V=3D0x0 =
-*/
-> 4)   1.513 us    |              avc_policy_seqno(); /* V=3D0x0 A=3Dselinu=
-x_file_permission+0x107/0x140 */
-> 4) + 12.133 us   |            } /* selinux_file_permission V=3D0x0 */
-> 4) + 39.834 us   |          } /* security_file_permission V=3D0x0 */
-> 4) + 42.710 us   |        } /* rw_verify_area V=3D0x0 */
->
-> Then, we can use the faddr2line to locate the source code, for example:
->
-> $ ./scripts/faddr2line ./vmlinux load_elf_phdrs+0x6c/0xb0
-> load_elf_phdrs+0x6c/0xb0:
-> elf_read at fs/binfmt_elf.c:471
-> (inlined by) load_elf_phdrs at fs/binfmt_elf.c:531
+On Mon, 2024-09-09 at 15:11 -0400, Maxim Levitsky wrote:
+> On Fri, 2024-08-09 at 08:27 -0700, Sean Christopherson wrote:
+> > On Tue, Aug 06, 2024, Chao Gao wrote:
+> > > On Thu, Jul 25, 2024 at 01:52:32PM -0400, Maxim Levitsky wrote:
+> > > > Fix this by moving the vmx_segment_cache_clear() call to be after the
+> > > > segments are initialized.
+> > > > 
+> > > > Note that this still doesn't fix the issue of kvm_arch_vcpu_in_kernel
+> > > > getting stale data during the segment setup, and that issue will
+> > > > be addressed later.
+> > > > 
+> > > > Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> > > 
+> > > Do you need a Fixes tag and/or Cc: stable?
+> > 
+> > Heh, it's an old one
+> > 
+> >   Fixes: 2fb92db1ec08 ("KVM: VMX: Cache vmcs segment fields")
+> > 
+> > > > ---
+> > > > arch/x86/kvm/vmx/vmx.c | 6 +++---
+> > > > 1 file changed, 3 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > > > index fa9f307d9b18..d43bb755e15c 100644
+> > > > --- a/arch/x86/kvm/vmx/vmx.c
+> > > > +++ b/arch/x86/kvm/vmx/vmx.c
+> > > > @@ -4870,9 +4870,6 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > > > 	vmx->hv_deadline_tsc = -1;
+> > > > 	kvm_set_cr8(vcpu, 0);
+> > > > 
+> > > > -	vmx_segment_cache_clear(vmx);
+> > > > -	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
+> > > > -
+> > > > 	seg_setup(VCPU_SREG_CS);
+> > > > 	vmcs_write16(GUEST_CS_SELECTOR, 0xf000);
+> > > > 	vmcs_writel(GUEST_CS_BASE, 0xffff0000ul);
+> > > > @@ -4899,6 +4896,9 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > > > 	vmcs_writel(GUEST_IDTR_BASE, 0);
+> > > > 	vmcs_write32(GUEST_IDTR_LIMIT, 0xffff);
+> > > > 
+> > > > +	vmx_segment_cache_clear(vmx);
+> > > > +	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
+> > > 
+> > > vmx_segment_cache_clear() is called in a few other sites. I think at least the
+> > > call in __vmx_set_segment() should be fixed, because QEMU may read SS.AR right
+> > > after a write to it. if the write was preempted after the cache was cleared but
+> > > before the new value being written into VMCS, QEMU would find that SS.AR held a
+> > > stale value.
+> > 
+> > Ya, I thought the plan was to go for a more complete fix[*]?  This change isn't
+> > wrong, but it's obviously incomplete, and will be unnecessary if the preemption
+> > issue is resolved.
+> 
+> Hi,
+> 
+> I was thinking to keep it simple, since the issue is mostly theoretical after this fix,
+> but I'll give this another try.
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
+> > [*] https://lore.kernel.org/all/f183d215c903d4d1e85bf89e9d8b57dd6ce5c175.camel@redhat.com
+> > 
 
-That's a great idea; I often use it that way. However, I used both the
-function tracer and the function graph simultaneously
-because the function tracer can also show context messages, such as
-displaying 'd.h3.'
+Hi,
 
-Example:
-<idle>-0 [001] d.h3. 41.119330: __napi_schedule+0x4/0x90 <-e1000_intr+0x8d/=
-0x110
+This is what I am thinking, after going over this issue again:
 
-I suggest that we consider displaying the results of both the function
-tracer and the function graph together in the same instance ;-)
-
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
->  include/linux/ftrace.h               |   1 +
->  kernel/trace/fgraph.c                |   1 +
->  kernel/trace/trace.h                 |   1 +
->  kernel/trace/trace_entries.h         |  19 ++++-
->  kernel/trace/trace_functions_graph.c | 105 ++++++++++++++++++---------
->  5 files changed, 92 insertions(+), 35 deletions(-)
->
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index fd5e84d0ec47..bdf51163b3b8 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -1011,6 +1011,7 @@ static inline void ftrace_init(void) { }
->   */
->  struct ftrace_graph_ent {
->         unsigned long func; /* Current function */
-> +       unsigned long retaddr;  /* Return address */
->         int depth;
->  } __packed;
->
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index d7d4fb403f6f..fcc4162c10f6 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -622,6 +622,7 @@ int function_graph_enter(unsigned long ret, unsigned =
-long func,
->
->         trace.func =3D func;
->         trace.depth =3D ++current->curr_ret_depth;
-> +       trace.retaddr =3D ret;
->
->         offset =3D ftrace_push_return_trace(ret, func, frame_pointer, ret=
-p, 0);
->         if (offset < 0)
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index bd3e3069300e..87e02815b030 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -870,6 +870,7 @@ static __always_inline bool ftrace_hash_empty(struct =
-ftrace_hash *hash)
->  #define TRACE_GRAPH_GRAPH_TIME          0x400
->  #define TRACE_GRAPH_PRINT_RETVAL        0x800
->  #define TRACE_GRAPH_PRINT_RETVAL_HEX    0x1000
-> +#define TRACE_GRAPH_PRINT_RETADDR       0x2000
->  #define TRACE_GRAPH_PRINT_FILL_SHIFT   28
->  #define TRACE_GRAPH_PRINT_FILL_MASK    (0x3 << TRACE_GRAPH_PRINT_FILL_SH=
-IFT)
->
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index c47422b20908..8b8753319dd3 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -71,6 +71,7 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
->         perf_ftrace_event_register
->  );
->
-> +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
->  /* Function call entry */
->  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
->
-> @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_e=
-ntry,
->         F_STRUCT(
->                 __field_struct( struct ftrace_graph_ent,        graph_ent=
-       )
->                 __field_packed( unsigned long,  graph_ent,      func     =
-       )
-> +               __field_packed( unsigned long,  graph_ent,      retaddr  =
-       )
->                 __field_packed( int,            graph_ent,      depth    =
-       )
->         ),
->
-> @@ -86,8 +88,6 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_e=
-ntry,
->  );
->
->  /* Function return entry */
-> -#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> -
->  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
->
->         TRACE_GRAPH_RET,
-> @@ -110,6 +110,21 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret=
-_entry,
->
->  #else
->
-> +/* Function call entry */
-> +FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> +
-> +       TRACE_GRAPH_ENT,
-> +
-> +       F_STRUCT(
-> +               __field_struct( struct ftrace_graph_ent,        graph_ent=
-       )
-> +               __field_packed( unsigned long,  graph_ent,      func     =
-       )
-> +               __field_packed( int,            graph_ent,      depth    =
-       )
-> +       ),
-> +
-> +       F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
-> +);
-> +
-> +/* Function return entry */
->  FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
->
->         TRACE_GRAPH_RET,
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
-nctions_graph.c
-> index 13d0387ac6a6..655535d57763 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -63,6 +63,8 @@ static struct tracer_opt trace_opts[] =3D {
->         { TRACER_OPT(funcgraph-retval, TRACE_GRAPH_PRINT_RETVAL) },
->         /* Display function return value in hexadecimal format ? */
->         { TRACER_OPT(funcgraph-retval-hex, TRACE_GRAPH_PRINT_RETVAL_HEX) =
-},
-> +       /* Display function return address ? */
-> +       { TRACER_OPT(funcgraph-retaddr, TRACE_GRAPH_PRINT_RETADDR) },
->  #endif
->         /* Include sleep time (scheduled out) between entry and return */
->         { TRACER_OPT(sleep-time, TRACE_GRAPH_SLEEP_TIME) },
-> @@ -651,50 +653,86 @@ print_graph_duration(struct trace_array *tr, unsign=
-ed long long duration,
->  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
->
->  #define __TRACE_GRAPH_PRINT_RETVAL TRACE_GRAPH_PRINT_RETVAL
-> +#define __TRACE_GRAPH_PRINT_RETADDR TRACE_GRAPH_PRINT_RETADDR
->
-> -static void print_graph_retval(struct trace_seq *s, unsigned long retval=
-,
-> -                               bool leaf, void *func, bool hex_format)
-> +static bool print_graph_retaddr(struct trace_seq *s, struct ftrace_graph=
-_ent *graph_ent,
-> +                               u32 trace_flags, bool comment)
->  {
-> -       unsigned long err_code =3D 0;
-> +       if (unlikely(graph_ent->retaddr =3D=3D
-> +                (unsigned long)dereference_kernel_function_descriptor(re=
-turn_to_handler)))
-> +               return false;
->
-> -       if (retval =3D=3D 0 || hex_format)
-> -               goto done;
-> +       if (comment)
-> +               trace_seq_puts(s, " /*");
->
-> -       /* Check if the return value matches the negative format */
-> -       if (IS_ENABLED(CONFIG_64BIT) && (retval & BIT(31)) &&
-> -               (((u64)retval) >> 32) =3D=3D 0) {
-> -               /* sign extension */
-> -               err_code =3D (unsigned long)(s32)retval;
-> -       } else {
-> -               err_code =3D retval;
-> +       trace_seq_puts(s, " A=3D");
-> +       seq_print_ip_sym(s, graph_ent->retaddr, trace_flags | TRACE_ITER_=
-SYM_OFFSET);
-> +
-> +       if (comment)
-> +               trace_seq_puts(s, " */");
-> +
-> +       return true;
-> +}
-> +
-> +static void print_graph_retval(struct trace_seq *s, struct ftrace_graph_=
-ent *graph_ent,
-> +                               struct ftrace_graph_ret *graph_ret,
-> +                               u32 opt_flags, u32 trace_flags)
-> +{
-> +       unsigned long err_code =3D 0;
-> +       unsigned long retval =3D graph_ret->retval;
-> +       bool hex_format =3D !!(opt_flags & TRACE_GRAPH_PRINT_RETVAL_HEX);
-> +       bool print_retaddr =3D !!(opt_flags & TRACE_GRAPH_PRINT_RETADDR);
-> +       bool print_retval =3D !!(opt_flags & TRACE_GRAPH_PRINT_RETVAL);
-> +       void *func =3D (void *)graph_ret->func;
-> +
-> +       if (print_retval && retval && !hex_format) {
-> +               /* Check if the return value matches the negative format =
-*/
-> +               if (IS_ENABLED(CONFIG_64BIT) && (retval & BIT(31)) &&
-> +                       (((u64)retval) >> 32) =3D=3D 0) {
-> +                       err_code =3D sign_extend64(retval, 31);
-> +               } else {
-> +                       err_code =3D retval;
-> +               }
-> +
-> +               if (!IS_ERR_VALUE(err_code))
-> +                       err_code =3D 0;
->         }
->
-> -       if (!IS_ERR_VALUE(err_code))
-> -               err_code =3D 0;
-> +       if (print_retaddr && graph_ent && unlikely(graph_ent->retaddr =3D=
-=3D
-> +                (unsigned long)dereference_kernel_function_descriptor(re=
-turn_to_handler)))
-> +               print_retaddr =3D false;
->
-> -done:
-> -       if (leaf) {
-> -               if (hex_format || (err_code =3D=3D 0))
-> -                       trace_seq_printf(s, "%ps(); /* =3D 0x%lx */\n",
-> -                                       func, retval);
-> +       if (graph_ent) {
-> +               trace_seq_printf(s, "%ps();", func);
-> +               if (print_retval || print_retaddr)
-> +                       trace_seq_puts(s, " /*");
->                 else
-> -                       trace_seq_printf(s, "%ps(); /* =3D %ld */\n",
-> -                                       func, err_code);
-> +                       trace_seq_putc(s, '\n');
->         } else {
-> +               print_retaddr =3D false;
-> +               trace_seq_printf(s, "} /* %ps", func);
-> +       }
-> +
-> +       if (print_retval) {
->                 if (hex_format || (err_code =3D=3D 0))
-> -                       trace_seq_printf(s, "} /* %ps =3D 0x%lx */\n",
-> -                                       func, retval);
-> +                       trace_seq_printf(s, " V=3D0x%lx", retval);
->                 else
-> -                       trace_seq_printf(s, "} /* %ps =3D %ld */\n",
-> -                                       func, err_code);
-> +                       trace_seq_printf(s, " V=3D%ld", err_code);
->         }
-> +
-> +       if (print_retaddr)
-> +               print_graph_retaddr(s, graph_ent, trace_flags, false);
-> +
-> +       if (!graph_ent || print_retval || print_retaddr)
-> +               trace_seq_puts(s, " */\n");
->  }
->
->  #else
->
->  #define __TRACE_GRAPH_PRINT_RETVAL 0
-> +#define __TRACE_GRAPH_PRINT_RETADDR 0
->
-> -#define print_graph_retval(_seq, _retval, _leaf, _func, _format) do {} w=
-hile (0)
-> +#define print_graph_retval(_seq, _ent, _ret, _opt_flags, _trace_flags) d=
-o {} while (0)
->
->  #endif
->
-> @@ -746,9 +784,8 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->          * Write out the function return value if the option function-ret=
-val is
->          * enabled.
->          */
-> -       if (flags & __TRACE_GRAPH_PRINT_RETVAL)
-> -               print_graph_retval(s, graph_ret->retval, true, (void *)ca=
-ll->func,
-> -                               !!(flags & TRACE_GRAPH_PRINT_RETVAL_HEX))=
-;
-> +       if (flags & (__TRACE_GRAPH_PRINT_RETVAL | __TRACE_GRAPH_PRINT_RET=
-ADDR))
-> +               print_graph_retval(s, call, graph_ret, flags, tr->trace_f=
-lags);
->         else
->                 trace_seq_printf(s, "%ps();\n", (void *)call->func);
->
-> @@ -788,7 +825,10 @@ print_graph_entry_nested(struct trace_iterator *iter=
-,
->         for (i =3D 0; i < call->depth * TRACE_GRAPH_INDENT; i++)
->                 trace_seq_putc(s, ' ');
->
-> -       trace_seq_printf(s, "%ps() {\n", (void *)call->func);
-> +       trace_seq_printf(s, "%ps() {", (void *)call->func);
-> +       if (flags & __TRACE_GRAPH_PRINT_RETADDR)
-> +               print_graph_retaddr(s, call, tr->trace_flags, true);
-> +       trace_seq_putc(s, '\n');
->
->         if (trace_seq_has_overflowed(s))
->                 return TRACE_TYPE_PARTIAL_LINE;
-> @@ -1032,9 +1072,8 @@ print_graph_return(struct ftrace_graph_ret *trace, =
-struct trace_seq *s,
->          * Always write out the function name and its return value if the
->          * function-retval option is enabled.
->          */
-> -       if (flags & __TRACE_GRAPH_PRINT_RETVAL) {
-> -               print_graph_retval(s, trace->retval, false, (void *)trace=
-->func,
-> -                       !!(flags & TRACE_GRAPH_PRINT_RETVAL_HEX));
-> +       if (flags & (__TRACE_GRAPH_PRINT_RETVAL | __TRACE_GRAPH_PRINT_RET=
-ADDR)) {
-> +               print_graph_retval(s, NULL, trace, flags, tr->trace_flags=
-);
->         } else {
->                 /*
->                  * If the return function does not have a matching entry,
-> --
-> 2.25.1
->
->
+Pre-populating the cache and/or adding 'exited_in_kernel' will waste vmreads on *each* vmexit, 
+I worry that this is just not worth the mostly theoretical issue that we have.
 
 
---=20
-Thanks,
-JeffXie
+Since the segment and the register cache only optimize the case of reading a same field twice or more,
+I suspect that reading these fields always is worse performance wise than removing the segment cache
+altogether and reading these fields again and again.
+
+
+Finally all 3 places that read the segment cache, only access one piece of data (SS.AR or RIP), 
+thus it doesn't really matter if they see an old or a new value. 
+
+I mean in theory if userspace changes the SS's AR bytes out of the
+blue, and then we get a preemption event, in theory as you say the old value is correct but it really
+doesn't matter.
+
+So IMHO, just ensuring that we invalidate the segment cache right after we do any changes is the simplest
+solution.
+
+I can in addition to that add a warning to kvm_register_is_available and vmx_segment_cache_test_set, that
+will test that only SS.AR and RIP are read from the interrupt context, so that if in the future someone
+attempts to read more fields, this issue can be re-evaluated.
+
+Best regards,
+	Maxim Levitsky
+
 
