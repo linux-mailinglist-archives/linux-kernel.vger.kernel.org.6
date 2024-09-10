@@ -1,147 +1,232 @@
-Return-Path: <linux-kernel+bounces-323088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A2E97378B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D31D973793
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6C428749C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5281C20D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690C41917CB;
-	Tue, 10 Sep 2024 12:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CAD191496;
+	Tue, 10 Sep 2024 12:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NBo6kpKG"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVZDJ3nl"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BE1E4A4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EBF191F7B;
+	Tue, 10 Sep 2024 12:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971811; cv=none; b=EhfaEibDQL7fOzP2LqHHij8poKhnZoPyPO86BNC6/RRZh9n/Z/SNnPxxXb3UkvCL3PA6dRI3II5Whi+jHM53kF/F2vEx3i+zsaf+rkXm2popzfmDP53nPIX4YHKoRAzcT4irzpXrhD+LMS7iYEr9GjGamTXAXlNrIeVR9S/jekk=
+	t=1725971823; cv=none; b=ZXS+Lx5rF1tzbsc1t1+Be5mvrQ0/OGBMtxFbjn92FFSfiAW1QL++PUVBSJhqIwSh5wdpIwUXP2rDHxvsEvCLvnFJVaTBG5LGc7faOfYgROak/tYGIHQAOJ1G1dQeznTTy2aPzQq6PlxgFn6s9rDRy2hQX8MRf5BxTZDJBZwDgP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971811; c=relaxed/simple;
-	bh=k7NHxqA3SglM0ZepSL0ApUEMR+pkYg4qNOQViEo1lvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d3gnbbautHT6xQx1S8fRTAi8dSoJc+lmODkRO7g3OB0EVBUUVUORpY6QEdHDXYyQ9uqAyC1eAF2pcCRwaUCEHlsDvpMkv1S4vNjRMF/dowHSpPBzSrDm3V84ssVw1VNA9fEL5H0vjRrDY5NkeK0sUMspXjxoA0/mp0EhyW9ocfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NBo6kpKG; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so45867581fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:36:49 -0700 (PDT)
+	s=arc-20240116; t=1725971823; c=relaxed/simple;
+	bh=3YBxnINn/t0lQcFrU81o08vn8d3pzQWi3VoH07aTmPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6UAXW+5i0yBKUath+0eun1OBJQBrH3IvYHFJ5pwglt7GRKHil+mMNk98daFv1k0vSD5KHTPMagbi9CD+eblFYIu3+nAfDlahFHE5UrHyLcu8YasG1zVzY35vez6GEFsuAIfWh7Fp7+1F31i+NoYbIkmM9Ymbnxal4291sO+Tp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVZDJ3nl; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5344ab30508so6017691e87.0;
+        Tue, 10 Sep 2024 05:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725971808; x=1726576608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a3xqhKe2V4hP7VjyNfJjl2E35TafJrVbJyzMXlI9uuc=;
-        b=NBo6kpKGh7H5eyoA9Uu9gCWpywn8mqMQIwtFeobWnZ6mzCAnUrhac/3outrJdIfIi5
-         XSHu3n8aIVum6OvbscvWboCiX3AR0B6W/Dl+uo/ZIPXDR8f36nGFqvfHfWVBO/WgLFii
-         wQHYx0i1j8yy4QzZCtA30ZEgZ8rPhm2arS6go6RJ3aNeafvsSjYDKb+RLHvj1PJ+dRuy
-         NhaQk+YHtxe+RglhUysWq2fQTU8VDwQ9JCc6ogavi+kgrFmbV3x64d7GKutCKoqs1CN6
-         c5m1vyRqcitGCNYSLFl18n7Mth1Kz6KFiUiM465sxoDl6RE9GhVwL8qrCH6WZpGmP+mY
-         su0g==
+        d=gmail.com; s=20230601; t=1725971820; x=1726576620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GfDwurtxEMjjQNq4SMlCCzib1zx52Gjtutww8fMlFNY=;
+        b=ZVZDJ3nlbWuXbI/6lqSCh6CT08EvUxrrZtB3BKmqXN2w26M5M3RPZ1aTmZuZbdIhVC
+         eWqVLZaK5BrCEDy5R20VTd6BzTXyJbyw4/rj4Y+FZIlYT1bFM4SgVxgDV+bQ/HJnBOqm
+         7/WUkKjXFo8RMYWYYxyJWBups3ZV2w/788Fl8AfgvvV3sieaSLXyKu3WmGuu4hny5pRO
+         3JF1RUUrC3k7ntPv8IhXcM+f4h3tGvHdlxAUbJRJOgPUGcX1771HaZKN852CJs+GyNU1
+         dp+gpP4NxKMGXbBme9atPa1XTU+yu+mI+xnf+q5AEZ7bZa0kvtc7lCRoC4dO/2JWdEfR
+         YBjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725971808; x=1726576608;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1725971820; x=1726576620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a3xqhKe2V4hP7VjyNfJjl2E35TafJrVbJyzMXlI9uuc=;
-        b=vzm/2qzJ5WKuCfwvrchAp38U3T6xsK3UzJP2K28jCoHs5vP4PI8pJRdTOsdjHBsCxG
-         x9ndGMRBGid2nb+QJTaIj7I9cppPHMpPiC1szfRF8VGdfc8TjwxptieEE3BG779ji7wb
-         PB580kUgf6w82uCdfMFLReHZHQghc20cais1sevfSapfQDgfN35w/7sIkqx1mCPrwQb0
-         cYDmbxIJnkVTFClAAEun38EkPc6XeiiCMNmJJ6cUl66PczBK3ot/elqVWxM1NtQ89P1f
-         wAG9Q/oi34U9GpAsrZz0SC1LV54gRajxCs6oAn/Z+SCJmg7H5LDyp1b7WgiDRLRvz6/4
-         fTyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVU6Mi+Tn1Tu6N+KzOtYAOCkI5uUnoWpMSoejJMCGA17da/6q0bS+3GvjRBz5YYZtrIjN99MPxduECp4XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMBsBE04JuljoSru24LQyaOHV8Km643+4ptrtM4pzQup01xLRE
-	8OjOQi8s+J828OcKqDkyTHGvOZjH8rX5o5WYOenE2HVYqL6Vhr8KvDgId8I83A==
-X-Google-Smtp-Source: AGHT+IF3MoHGt1ik2VoSI/zIwXkBeiwZ9N+LJCLGLJBDe7Y5/hECHzQfOWFESmPwN/oMzTzhzfvfug==
-X-Received: by 2002:a2e:801:0:b0:2f3:f8d7:d556 with SMTP id 38308e7fff4ca-2f751f01fafmr65227181fa.18.1725971807575;
-        Tue, 10 Sep 2024 05:36:47 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8cdd3sm4237156a12.96.2024.09.10.05.36.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 05:36:47 -0700 (PDT)
-Message-ID: <3fb809a5-d0a2-4b72-b810-13e4ee93b8b7@suse.com>
-Date: Tue, 10 Sep 2024 14:36:47 +0200
+        bh=GfDwurtxEMjjQNq4SMlCCzib1zx52Gjtutww8fMlFNY=;
+        b=c1zdElFDZzJ6g0uHtU9jWrGEA/Rr5pugI9Ud/cE/LPbZUJXEmWBqZZEgJSZljo6ZGX
+         juN/Yi28mPQnoQcVPhhDwMLp6ermmJbiwNyqZz1A7dgSgHoUFLtLKgmid4zARja1pzRP
+         79cXeLG55HAuEdZy/HOULcA5U8ayaCoMHg/QdXcnx6QlQirPU2K5HoLbG4CvfzKEn7MI
+         n3eLzIh+AdwizdZ/qnREkKMbH10nnrOsO5WKMUn/D/XeN5YnkVeYpZAHZZLGWXCv7jE6
+         5gLsC+hh298yCa7jFYXhYfiH55DyjCJVP35J8tMoUgUWirnQ4XSN2bpJmifEdGjnf9NR
+         6ivg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/9NA9UH9TvniYVwQMNhOtDYC4rRkbb0BoHm61s/dPnY0dLmxAvlVHiIVdzd8HLPGUJneMnbn5H/6N@vger.kernel.org, AJvYcCW1pm/bLGjI/WZ14HsM3IcE+4K1pZRwu5j/cm22M/bSWntaQPYKUlCKNFrfJchooqpsQg+uZ1eKWoetPQ==@vger.kernel.org, AJvYcCW7bsg5t3csl+zzG87inwuL4P9Sfd/I0HDog+3qw4qKV1dXzWRBo1BPtE2e5Ci1P/KDNLTybx1nfi2NUzxy@vger.kernel.org
+X-Gm-Message-State: AOJu0YymmR2Y3bozp3Mosc/r3j4rpK8hocAbifXnoJezUymU+sqfi9xH
+	139rV7PFvDPZznLmU+0IOPn4fEtQqom2XVGziAGPKCOPuYP4HjCvLhweWg==
+X-Google-Smtp-Source: AGHT+IGABtalMW6NjNIBosO4jGbAECXIzDFUD+8ZsQLiYbEkkK8hialMMjrCFPIp8uViNf8RYwgbcw==
+X-Received: by 2002:a05:6512:2814:b0:52f:336:e846 with SMTP id 2adb3069b0e04-5366b933140mr911353e87.14.1725971819358;
+        Tue, 10 Sep 2024 05:36:59 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d4d3sm1139438e87.270.2024.09.10.05.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 05:36:58 -0700 (PDT)
+Date: Tue, 10 Sep 2024 15:36:56 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Paul Burton <paulburton@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] MIPS: cm: Probe GCR address from DeviceTree
+Message-ID: <ekvyyq3vzdbyi5suf4irfixyprvtko7rpkffwpc267kiex4ex2@lpu3ctysuviw>
+References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+ <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] xen: tolerate ACPI NVS memory overlapping with Xen
- allocated memory
-To: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
- =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-References: <20240910103932.7634-1-jgross@suse.com>
- <20240910103932.7634-8-jgross@suse.com>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20240910103932.7634-8-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612-cm_probe-v2-6-a5b55440563c@flygoat.com>
 
-On 10.09.2024 12:39, Juergen Gross wrote:
-> In order to minimize required special handling for running as Xen PV
-> dom0, the memory layout is modified to match that of the host. This
-> requires to have only RAM at the locations where Xen allocated memory
-> is living. Unfortunately there seem to be some machines, where ACPI
-> NVS is located at 64 MB, resulting in a conflict with the loaded
-> kernel or the initial page tables built by Xen.
+Hi Jiaxun, Thomas
+
+On Wed, Jun 12, 2024 at 11:08:58AM +0100, Jiaxun Yang wrote:
+> Traditionally, CM GCR address can be probed from CP0_CMGCRBase.
 > 
-> Avoid this conflict by swapping the ACPI NVS area in the memory map
-> with unused RAM. This is possible via modification of the dom0 P2M map.
-> Accesses to the ACPI NVS area are done either for saving and restoring
-> it across suspend operations (this will work the same way as before),
-> or by ACPI code when NVS memory is referenced from other ACPI tables.
-> The latter case is handled by a Xen specific indirection of
-> acpi_os_ioremap().
+> However there are chips in wild that do have CM GCR but CP0_CMGCRBase
+> is not available from CPU point of view. Thus we need to be able to
+> probe GCR address from DeviceTree.
 > 
-> While the E820 map can (and should) be modified right away, the P2M
-> map can be updated only after memory allocation is working, as the P2M
-> map might need to be extended.
+> It is implemented as:
+> - If only CP0_CMGCRBase present, trust CP0_CMGCRBase
+> - If only mti,mips-cm node present, trust mti,mips-cm reg prop
+> - If both present, remap address space to address specified in dt
 > 
-> Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> v2: Fix build warning (test bot)
+> ---
+>  arch/mips/kernel/mips-cm.c | 61 +++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 55 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/mips/kernel/mips-cm.c b/arch/mips/kernel/mips-cm.c
+> index dddc9428fe58..02afc795ba8a 100644
+> --- a/arch/mips/kernel/mips-cm.c
+> +++ b/arch/mips/kernel/mips-cm.c
+> @@ -5,6 +5,8 @@
+>   */
+>  
+>  #include <linux/errno.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/percpu.h>
+>  #include <linux/spinlock.h>
+>  
+> @@ -179,23 +181,70 @@ static char *cm3_causes[32] = {
+>  static DEFINE_PER_CPU_ALIGNED(spinlock_t, cm_core_lock);
+>  static DEFINE_PER_CPU_ALIGNED(unsigned long, cm_core_lock_flags);
+>  
+> +static int __init mips_cm_fdt_scan(unsigned long node, const char *uname,
+> +		int depth, void *data)
+> +{
+> +	u64 addr;
+> +	unsigned long *cmgcr = data;
+> +
+> +	if (!of_flat_dt_is_compatible(node, "mti,mips-cm"))
+> +		return 0;
+> +
+> +	addr = of_flat_dt_translate_address(node);
+> +	if (addr == OF_BAD_ADDR || addr >= ULONG_MAX)
+> +		*cmgcr = 0;
+> +	else
+> +		*cmgcr = addr;
+> +
+> +	return 0;
+> +}
+> +
+>  phys_addr_t __init __weak mips_cm_phys_base(void)
+>  {
+> -	unsigned long cmgcr;
+> +	unsigned long gcr_reg = 0, gcr_dt = 0;
+> +
+> +	if (of_have_populated_dt()) {
+> +		int err;
+> +		struct resource res;
+> +		struct device_node *cm_node;
+> +
+> +		cm_node = of_find_compatible_node(of_root, NULL, "mti,mips-cm");
+> +		if (cm_node) {
+> +			err = of_address_to_resource(cm_node, 0, &res);
+> +			of_node_put(cm_node);
+> +			if (!err)
+> +				gcr_dt = res.start;
+> +		}
+> +	} else {
+> +		of_scan_flat_dt(mips_cm_fdt_scan, &gcr_dt);
+> +	}
+>  
+>  	/* Check the CMGCRBase register is implemented */
+>  	if (!(read_c0_config() & MIPS_CONF_M))
+> -		return 0;
+> +		return gcr_dt;
+>  
+>  	if (!(read_c0_config2() & MIPS_CONF_M))
+> -		return 0;
+> +		return gcr_dt;
+>  
+>  	if (!(read_c0_config3() & MIPS_CONF3_CMGCR))
+> -		return 0;
+> +		return gcr_dt;
+>  
+>  	/* Read the address from CMGCRBase */
+> -	cmgcr = read_c0_cmgcrbase();
+> -	return (cmgcr & MIPS_CMGCRF_BASE) << (36 - 32);
+> +	gcr_reg = read_c0_cmgcrbase();
+> +	gcr_reg = (gcr_reg & MIPS_CMGCRF_BASE) << (36 - 32);
+> +
+> +	/* If no of node, return straight away */
+> +	if (!gcr_dt)
+> +		return gcr_reg;
+> +
+> +	/* If the CMGCRBase mismatches with dt, remap it */
+> +	if (gcr_reg != gcr_dt) {
+> +		pr_info("Remapping CMGCRBase from 0x%08lx to 0x%08lx\n",
+> +			gcr_reg, gcr_dt);
 
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
+> +		change_gcr_base(CM_GCR_BASE_GCRBASE, gcr_dt);
 
+This causes the kernel boot-up procedure to crash/hang-up because the
+CM GCR base address is supposed to be redefined by means of the
+already mapped CM GCR address space by accessing the
+CM_GCR_BASE_GCRBASE register:
+change_gcr_base()
++-> read_gcr_base()
+    +-> addr_gcr_base()
+        +-> return mips_gcr_base + CM_GCR_BASE_GCRBASE
 
+By the time of the change_gcr_base() call in mips_cm_phys_base(), the
+mips_gcr_base variable hasn't been defined. So the IO operations
+performed in the change_gcr_base() method would be accessing the
+NULL-based memory space. That's why the kernel crash/hanging-up.
+
+In order to fix this we have to first map the CM GCR block at the
+default base-address, then update the CM GCR-base CSR and after that
+remap the CM GCR-space.
+
+Please also note, the GCR_BASE field might be RO. It depends on the
+IP-core configuration. So it's possible that the CM_GCR_BASE_GCRBASE
+field update won't work. Although that will be detected a bit later in
+the mips_cm_probe() method by comparing the address returned from
+mips_cm_phys_base() and retrieved from the CM GCR-base CSR.
+
+-Serge(y)
+
+> +	}
+> +
+> +	return gcr_dt;
+>  }
+>  
+>  phys_addr_t __init __weak mips_cm_l2sync_phys_base(void)
+> 
+> -- 
+> 2.43.0
+> 
 
