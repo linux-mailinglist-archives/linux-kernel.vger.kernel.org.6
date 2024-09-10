@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-323116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D727973823
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5CB973825
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155DC288850
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56A91F2660B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D7D191F96;
-	Tue, 10 Sep 2024 12:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F241922DF;
+	Tue, 10 Sep 2024 12:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I89ndTGN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRMu7Oz2"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC74191F73
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE7C1EB2F;
+	Tue, 10 Sep 2024 12:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973103; cv=none; b=dxHs1wsM7mmvDVeEduOERkuEpoQDVvtv7m6hWGb/3AOzPn+ERpFgn+W2Ci5Fi9PHQzy9j2WafaxEOOsc9DBTOXHzaT5F87dVkmudI67b00XoyFALddA0PoYaqmDfu9sQU6/BoiTotPQD25CVps6D/+85zEU1cbTb+FmqaykOvL0=
+	t=1725973117; cv=none; b=GvhohFbuVhUVkfNA03EldEuGABw8BYK7yoNTlheupTzuM/UteO7Wway98QlrAw6rEkmgyJplFy1domxJ5kMOkJh09PIBzgX5aoMnbrg21a9FOMrEoyOOhSI4g8ZMLuFO4vqaRZw8M4bdRlT9gsrF4lG4hmfs1wAKNcmt8sgO8PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973103; c=relaxed/simple;
-	bh=LJ48zepfU2WM5mSgvbrHvfKAvy/xuXzmrP7tuJvztUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKC+5hEQAKhOQhiKP3DGcvvIyuG0Xq44GNBcvI+Iq9bzjXW8z6jX4Kcor8AIVvl9SH4xqgAB3v5D2aoP1ikW0d/0FExU7l8QfkhsXCBl0nZOX4hUTtUC25MzuI0/dQZqpxudzWFxpkv8lVIfCBZ8AMiUpLQgiRvv96iR4IPjohk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I89ndTGN; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725973102; x=1757509102;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LJ48zepfU2WM5mSgvbrHvfKAvy/xuXzmrP7tuJvztUI=;
-  b=I89ndTGNttEG8veMLNfsbMMeqqeZhBiNHfByouXm69oynyL7m/X2/vSt
-   dq4ah9e1ypj4MVmInhiVLS6dDnghujtoWrD5RbvJDg9WCc/bpRVvj08zE
-   dRSHD6PSvJ9BzCs3np3r8Cuv9eBpMs1LgjHauxeBAXNjwvsj8fzhpM3ca
-   ZrZ4rpHfR15Mmg9QHad11MdtuCsTCVpzPv8Mdi+ckr7Az86toBRBF9sim
-   2I6Go8iW62/3LqVU+J/TL5RjmjgzJClmwsLxPEQAO7H3AjQ50KCdiWNLq
-   7JCgLibsJnPTDGP2FGEYrXjntrYf74J11OJiAqRafESbFoQKOnZzZGAtP
-   w==;
-X-CSE-ConnectionGUID: JoIXumLNQReR2JVg6DbZ+A==
-X-CSE-MsgGUID: bYNdnk1dRo6WrTk8MlAkng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24215374"
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="24215374"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 05:58:21 -0700
-X-CSE-ConnectionGUID: RP14yenjRPywpUO5lCy9RQ==
-X-CSE-MsgGUID: ptATUNVmSxy17Lv7KHXulQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
-   d="scan'208";a="71145076"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2024 05:58:17 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 38CDB326; Tue, 10 Sep 2024 15:58:16 +0300 (EEST)
-Date: Tue, 10 Sep 2024 15:58:16 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH] x86/tdx: Fix crash on kexec with CONFIG_EISA
-Message-ID: <uwr4a2pgvv45xfzvbceghdkm6kgb25y7c2wdkxquphmq2e7rxq@tr5dud4khhl5>
-References: <20240822095122.736522-1-kirill.shutemov@linux.intel.com>
- <alpine.DEB.2.21.2408240952080.30766@angie.orcam.me.uk>
- <g3tswlyhrnuzfqf2upq6h23manyrzhnxttnay66nycy2moi4es@5n4oblzpzcjc>
- <c2ef105b-c42c-e0f4-6bf3-761dafc8e92e@amd.com>
- <02949473-328f-4dae-b778-d939dc9bba6c@amd.com>
- <npjx2z3adipvsxngnsoj6hsgk7rxta6ojdomm4tcd42maakuuz@rij273zia5ek>
- <e13df309-457a-41fa-9406-22476f9f4e72@amd.com>
- <gnxxp3bzk7cc5eidwvqvqb5hz2ojgjdadujpthweufxms2gjsc@ibcbkjst3pzf>
- <fe39a04d-2b3a-476f-9505-b874e3ad93b4@amd.com>
+	s=arc-20240116; t=1725973117; c=relaxed/simple;
+	bh=5gPskckxp1UZ/XMepxRnnd8/OYzrY0Fe4nPWYZHp+Cc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OHMqRAdc0lFzyN1oxmR2vFaT6yYs+M30WFMciXB0oqRKYSApK7OVwNmpRr/uFBY8md1zFAK2PySI55nKLi1apW9vAXlx3/X+Jh9Yw6h2zwUVYY8X4HLeVo7h2Q1NJHFrsw3G7tcGC2E/CUcB2RBOOpBPE6+fnZ/MyU5XeSOFT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRMu7Oz2; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d8818337a5so4659085a91.1;
+        Tue, 10 Sep 2024 05:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725973116; x=1726577916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xyel3imRxFpwdfOO24O3J/3zDsAOJUckvL1hBK+vtmY=;
+        b=XRMu7Oz2EGuyVnuZy5stnnOJ7Cd1NtYdoAcP+3jwOJti2EqxtoDqzm2sX1XQvBKGQy
+         fyxXvAV34GIfcWB2DgodUg3BjU0PUBwsE4SJ6uH9PK3RsQDUY8C0BOHXWvNi0Lws4HxD
+         lcRv2YXAb1MDjSa2OCLqoct86HWYnaFTh92M++QkuAg5+u9h2RuyCNPhPEUTtH6g7fPC
+         J5z3l49rOaKFXOuiKJkx86VHx0uLM2S5tRWS2JXzrbv1NZcOqdrxGlT+1bZU/h5z/0bB
+         yt1IPydLGDVsRLnxXILFdb8UGvfsCMZY8erD7hbnXW73ZzKRpqg4hoZViXZoA9HFq5yQ
+         G1xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725973116; x=1726577916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xyel3imRxFpwdfOO24O3J/3zDsAOJUckvL1hBK+vtmY=;
+        b=EwpGUs4+SMFW+dJFKeSD9LZFVX/H9jRvWQawZdXO+DogQeZhBQwhE/vIqIwYbfSdVK
+         SNbWoPzUdZmJfyU265YOr/2pCvGmhbIheTuEgf46VdJ/1M7i5qdskjEkh76T5HWpYn1i
+         +W8/F/Qv3gqxsEeDUfIakPQodelI/E6qFYzIW64fCYDlMGvIYXmy0sWklHQy9lGa1xeT
+         rR4mYFIyaiL+wLfZb+YIS9NnrU3kJqlU7EKKg4PHJ1hzm8MRnRtzjnU5OBkX6OVFe31V
+         0ajJukpPswZ1kssg0Yui8WRm0HFvSyJx1Q3jegyeAUAoeyA4SSQblYh9/yOgoE0GVxiI
+         H0Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMl3f3IGAYOGr95o1wOdOYVq3O/YLyxmYIbGRF8y4PHwC/6x5nEUE3VHhVjqZrUj6PW/Um5FzLLTH9moPL@vger.kernel.org, AJvYcCWRnqX28FuSTHT8TQeqkGt2yQV636may/tooyamdP2OqW7GaEO3Oqr5aH2o2KhdoCfRtqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQGm9ZkbirITimQfzeHxzbNepIZG8oMeFry0V3VSgceyQ1tTfF
+	oFbwX1lu088NAAAd8NVmIMTH/LTd8Q5hwu0ynGYKBiOTL4Hrre8g
+X-Google-Smtp-Source: AGHT+IE7ob/q4REwITMiP9KAyvcXSHODWgpuTUkOwhOiNL+e1rPHjMwDYF+qlOzPcYjq25Bw5ZM+Sg==
+X-Received: by 2002:a17:90a:2c4a:b0:2d8:719d:98a2 with SMTP id 98e67ed59e1d1-2db671989damr4480758a91.7.1725973115573;
+        Tue, 10 Sep 2024 05:58:35 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04988470sm6301628a91.54.2024.09.10.05.58.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 05:58:34 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: qmo@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] bpftool: Fix undefined behavior in qsort(NULL, 0, ...)
+Date: Tue, 10 Sep 2024 20:58:26 +0800
+Message-Id: <20240910125826.3172950-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe39a04d-2b3a-476f-9505-b874e3ad93b4@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 03:47:50PM -0500, Kalra, Ashish wrote:
-> Hello Kirill,
-> 
-> On 8/29/2024 7:53 AM, Kirill A. Shutemov wrote:
-> > On Wed, Aug 28, 2024 at 02:43:23PM -0500, Kalra, Ashish wrote:
-> >> Hello Kirill,
-> >>
-> >> On 8/28/2024 1:21 AM, Kirill A. Shutemov wrote:
-> >>>>>> memremap()
-> >>>>>>   arch_memremap_wb()
-> >>>>>>     ioremap_cache()
-> >>>>>>       __ioremap_caller(.encrytped = false)
-> >>>>>>
-> >>>>>> I think arch_memremap_wb() should be mapped ioremap_encrypted() in x86
-> >>>>>> case. See the patch below.
-> >>>>>>
-> >>>>>> It seems to be working fine on TDX, but I am not sure about SEV.
-> >>>>>>
-> >>>>>> Tom, any comments?
-> >>>>> I haven't dug through the code that thoroughly, but I don't think making
-> >>>>> arch_memremap_wb() be ioremap_encrypted() will work for SME, where some
-> >>>>> data, e.g. setup data, is unencrypted and needs to be mapped shared.
-> >>>>>
-> >>>>> Let me add @Ashish to the thread and have him investigate this since he
-> >>>>> has been working on the kexec support under SNP. Can someone provide the
-> >>>>> specific kernel options that need to be in place?
-> >>>> As Tom asked for, please provide the specific kernel options to test
-> >>>> with this configuration.
-> >>> It is not about testing a specific configuration. The question is if it
-> >>> safe for memremap() to map all WB memory as encrypted by default.
-> >>>
-> >>> Looks like it is safe for TDX, but I am not sure about SME/SEV.
-> >> For SEV it may make sense, but for SME we don't want memremap() to map
-> >> all WB memory as encrypted by default.
-> > Could you elaborate why?
-> >
-> > I mean if it is specific memory ranges that can be identified as such we
-> > could make exception for them.
-> Looks like that the exception is already made for some of these memory ranges with MEMREMAP_DEC flag set along with MEMREMAP_WB.
-> >>> Maybe we want a specific flag to make memremap() map WB memory as
-> >>> decrypted/shared. Make everything encrypted by default seems like a sane
-> >>> default.
-> >> What are MEMREMAP_ENC, MEMREMAP_DEC flags being used for currently ?
-> > Good question.
-> >
-> > I see zero use of MEMREMAP_ENC in the kernel. And MEMREMAP_DEC only used
-> > for setup data which I believe AMD thing.
-> >
-> > If it is the only memory that must be decrypted, I guess we can make it
-> > work with encrypted by default.
-> 
-> Yes, and this looks pretty much covered with:
-> 
-> arch_memremap_can_ram_remap(..)
-> 
-> -> if (CC_ATTR_HOST_MEM_REMAP)
-> 
-> --> memremap_is_setup_data()
-> 
-> ---> memremap(.., MEMREMAP_WB | MEMREMAP_DEC);
-> 
-> It does look like that it can work with encrypted by default and any memory ranges which need special handling and need to be setup as decrypted can use MEMREMAP_WB | MEMREMAP_DEC flag.
-> 
+When netfilter has no entry to display, qsort is called with
+qsort(NULL, 0, ...). This results in undefined behavior, as UBSan
+reports:
 
-Could you actually test the patch that makes memremap() map WB memory as
-encrypted by default:
+net.c:827:2: runtime error: null pointer passed as argument 1, which is declared to never be null
 
-https://lore.kernel.org/all/g3tswlyhrnuzfqf2upq6h23manyrzhnxttnay66nycy2moi4es@5n4oblzpzcjc/
+Although the C standard does not explicitly state whether calling qsort
+with a NULL pointer when the size is 0 constitutes undefined behavior,
+Section 7.1.4 of the C standard (Use of library functions) mentions:
 
-?
+"Each of the following statements applies unless explicitly stated
+otherwise in the detailed descriptions that follow: If an argument to a
+function has an invalid value (such as a value outside the domain of
+the function, or a pointer outside the address space of the program, or
+a null pointer, or a pointer to non-modifiable storage when the
+corresponding parameter is not const-qualified) or a type (after
+promotion) not expected by a function with variable number of
+arguments, the behavior is undefined."
 
-If it works, I will submit a proper patch.
+To avoid this, add an early return when nf_link_count is 0 to prevent
+calling qsort with a NULL pointer.
 
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ tools/bpf/bpftool/net.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/tools/bpf/bpftool/net.c b/tools/bpf/bpftool/net.c
+index 968714b4c3d4..13e098fa295a 100644
+--- a/tools/bpf/bpftool/net.c
++++ b/tools/bpf/bpftool/net.c
+@@ -824,6 +824,9 @@ static void show_link_netfilter(void)
+ 		nf_link_count++;
+ 	}
+ 
++	if (!nf_link_count)
++		return;
++
+ 	qsort(nf_link_info, nf_link_count, sizeof(*nf_link_info), netfilter_link_compar);
+ 
+ 	for (id = 0; id < nf_link_count; id++) {
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
 
