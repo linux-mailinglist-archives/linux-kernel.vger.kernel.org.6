@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-324021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE12F9746E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E6C9746E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD34287060
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654B51F27578
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBF61C233A;
-	Tue, 10 Sep 2024 23:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4EC1C2431;
+	Tue, 10 Sep 2024 23:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CX42pobh"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pLAsUS0G"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066431C1ADE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F6B1C2326
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011927; cv=none; b=hDv1hv1aY4njyCl60vIXx/lpKIrBhanG4XrQcPGvPLEF/40Kzm2DoPIkdCK368Kqi6AfgRB0rz61dc0gIrQWagLHxULExME8s5WzolUeb4KFr3imgAwHlxlQE6UXFmXCClbsbV8xLmSF3BVnb+U5DR867CNSVPvqY8MXzgTX+7A=
+	t=1726011929; cv=none; b=h6ypKAo1iujV4uS+mtd/VgPYCTRQXfaJKPyxCNdiy9HGBYXfQ4IeQWZyQ5sM6RS5kL98iuiiSTghTyGQfhh8bN5j2jcX8/EjVCWMZKoDBeUcWjwq8DREZERgRFWcIT9f9qJWgv52CPqsIrpvX4jABeN2iEv5azKr0Sm/NCeKWBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011927; c=relaxed/simple;
-	bh=bB9BdtkjjVNcS9mxcL5NczC5O+Pq5uAFXDHF0ZiMZ2Q=;
+	s=arc-20240116; t=1726011929; c=relaxed/simple;
+	bh=T0w2KZlhe2rovrIvRN5dcVMPNovGh8zN8pefjySPrWM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=REzkYl1baJK2Ui2AfvXLwMvia8rV0ZD2TuwvlPrN6cXlGQcTzmnfm5qRyKVPGKgRBrTPqLFFsGlwsgPbqw/QzYn/DjVQ0UoWJTFPmc7pb1bbug9hRQH2V5uFNx1yTZPj6848GCEqze+Y0BG7elAj5c30jTa7wPjWBCOYSA7Lyhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CX42pobh; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=d9Qs7uTmy2fF8sU7NfsKRoeZhOhvYWNn39kb3BMNx4tI2IP20sH05/yfoWbex27FxMVjXAjOwBohuHtFAeo/qNm9Ym7WDva3KMOtpIKny58qfjnOHeFfptJj8lMkEjyqnfyCAAZo8XzR3A6Nrto4upzolgL5QoYjBTu1t8IFq/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pLAsUS0G; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d3e062dbeeso7487997b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:25 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d4426ad833so39295217b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726011925; x=1726616725; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726011927; x=1726616727; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3nxHl/A8XO7B4MgOY4YbNCzyESNqY5WdHlaVGBDG2E=;
-        b=CX42pobhdVm6+IyAp8M6oTsOuofj4qZRJtNy1RgQpZZIB2hiaqoYRNP8m+5vF2fB2i
-         SVRzah2aT28nPhWSrg+8fuCpMktKaV/rZaaE/s1t4muCESgQKOiRMkly8L4+tgzcXvSm
-         I7aUQ8LTEvNP/w054rEwP8UYFffk9ope21s9q1RwU+CiSmgAKyBzm2ee3vto3TNWwYnB
-         z3+h+E0H0eOrkboltRoEmZiyxVxJ+QSfJzhj7RTAFtnqy8qQ3JaaLbonvskgDvUeHkb4
-         yOWNAILNHEQ6ZvDL8yVrMieqyJCoRv1e9JJjBehzRNExPOuLv/F6HBXsIFaYCDq+ocYv
-         QbiQ==
+        bh=uwf1PxblOjz5NXZUaTh7zfbmgn6lBhrxKJq/6ZLohcs=;
+        b=pLAsUS0GYbfquLsP8tIzmZ9+BPahMdB/i5COrQPy6oX8uknuzzVCHUkB+ygy+RKm5c
+         eXJgXJJp3RF1whdQ/l8YBIrOtLaBBu0UjRoVrPVmXoNxUIexsQzs8pRHm2jRuN6LZPMh
+         9vO1+3e7+/vYnbRL40NtUwAe5gtCiDM4f4abIY8TmeA3AZ50KRWWrfHNf7KjLkYlamVn
+         39gPRS+wkKfxufFupi7WKM8VBfGOxBI/0D/M/7k+tiVcDbTAGxdM6EW1xSJEbusjkSg/
+         KrfJ4zklFt1H9hAFZpsFMdqANWBLrggGTaWKg5Lidwu4WqWgntu6z/12oxlA+nEKmN0W
+         WMnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726011925; x=1726616725;
+        d=1e100.net; s=20230601; t=1726011927; x=1726616727;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3nxHl/A8XO7B4MgOY4YbNCzyESNqY5WdHlaVGBDG2E=;
-        b=lJwNODgiMe3qpqLz75eaFiqXKliDxDa7xSTrn1ShL2dmDg6XblNeUpCe3bH1SHjJsY
-         x8lqt/JadUQJZNrAyDSchFV5qsy4IBz+kZVFF1z8qblcILXAOHfnRSY6E/wL1LFqK6FB
-         YnnL7JWWaNJ8MrVA73I/G4QSNE8GOHm+7lKWU25i763G/9xXyRuNizv615imsFGGZOOW
-         w/XkI277hMo3bdXD+sb3ffnGMP/8I5jAE2Jh03o5Gk0sWwQtM6InGQTy3Eq7dXZoKgM5
-         fVuQzs/GNwq+1kcigvcLNk/hXgwH8sl8JFTdWjxo7ElfJCnp4tS3k2D5ScL8gqjDo22P
-         1TUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2AMtOH7fkVxOANPREi99nTOOkTnECwPvzdvuyfju5JWlAqO+LGANUS7g74gsI1YLUkwkC4ZXiEA6Qrd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOPHtaY4Cf8c+Z0rD9+++8Jvnj3KF4CzI1zeqzphcGE5dob11q
-	Kdu3tXPO2PJMvZXwX/Cly4aWAVXnLUH8uoEI6WLNqsVZrutCue1BEuYOmEBPz71d5QoG6wxgjB0
-	FJFg+0/CTn52i2f+7zI/OUA==
-X-Google-Smtp-Source: AGHT+IHnLEBVmryIC9G4GF4GWQoXu2VnZ3KvRT32M4K9/h8Y/56ASW5COSwM++WZGjik0HMML4LUNHLenr0THNvvKg==
+        bh=uwf1PxblOjz5NXZUaTh7zfbmgn6lBhrxKJq/6ZLohcs=;
+        b=DTgSATG5j8CuOaFK1xmUS6LO0kpDK11v0pGyR4ua95yIXg+JUeoGS/wYIGA17iDayQ
+         ib+tS4SQN8efYkKnMHrU6CTZpVV2y0+sUhQJC4Y0yRG8xtrCoiyDue+Rd0LeFMdQ/kqb
+         5pi9/Ua+2OqaBCKmiJnRM6XJfbOG19FzvbIwzz34Mro5m9xqc75spNZSxf2hYQbHt4+g
+         niC1/kc4aWJmszgpV/2ITyn/uw+lNol2FfoK8WMS0l70a24e7s/FpDKmJ9zbny87pn/y
+         8hJv/UDiJbCEneaz8BbCIPkLeeFr9YpjDEJM0yej3OnlMh2pNJJq6N/XwWGE9+xUvlwA
+         T6ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV3kgFTwcLHM8YnmYBKvAQhFfLoscAAXfCyl7FHMbnCN2c7J6wGwKTcVxcw5cnuPP7YjHXCdIXAm89Wm8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ctZ3CN5qq/72UeWcv3V4SXzcCL9rhR9vcLonjcD37RtGMHGW
+	JQg3pbM67IflRTDhI1R160wIhR7j4jPHVX87IAyRRIgwWp1pzcvFCAckuzDMmtEkU2EBC7ma1cp
+	uLboIONh30kMUnwxLCEgklA==
+X-Google-Smtp-Source: AGHT+IFHLL/JWASNEnEkZcv6PFIj58I/J8+OY1FCIRm5r4Bk9ay3Th/8kINWVB3DiXd8md6IPOJl8xsEmDXgV5bz6w==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a81:a883:0:b0:6d3:e7e6:8462 with SMTP
- id 00721157ae682-6db952f5ee5mr1095417b3.1.1726011924932; Tue, 10 Sep 2024
- 16:45:24 -0700 (PDT)
-Date: Tue, 10 Sep 2024 23:44:01 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a25:aa43:0:b0:e16:55e7:5138 with SMTP
+ id 3f1490d57ef6-e1d8c022ba7mr1649276.0.1726011926642; Tue, 10 Sep 2024
+ 16:45:26 -0700 (PDT)
+Date: Tue, 10 Sep 2024 23:44:02 +0000
 In-Reply-To: <cover.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1726009989.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <24cf7a9b1ee499c4ca4da76e9945429072014d1e.1726009989.git.ackerleytng@google.com>
-Subject: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
+Message-ID: <6faf6d63a98531539b05ea36728e51ff51bb3cde.1726009989.git.ackerleytng@google.com>
+Subject: [RFC PATCH 31/39] KVM: selftests: Allow vm_set_memory_attributes to
+ be used without asserting return value of 0
 From: Ackerley Tng <ackerleytng@google.com>
 To: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
 	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
@@ -94,238 +94,46 @@ Cc: erdemaktas@google.com, vannapurve@google.com, ackerleytng@google.com,
 	linux-fsdevel@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-Since guest_memfd now supports mmap(), folios have to be prepared
-before they are faulted into userspace.
-
-When memory attributes are switched between shared and private, the
-up-to-date flags will be cleared.
-
-Use the folio's up-to-date flag to indicate being ready for the guest
-usage and can be used to mark whether the folio is ready for shared OR
-private use.
+No functional change intended.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 
 ---
- virt/kvm/guest_memfd.c | 131 ++++++++++++++++++++++++++++++++++++++++-
- virt/kvm/kvm_main.c    |   2 +
- virt/kvm/kvm_mm.h      |   7 +++
- 3 files changed, 139 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/include/kvm_util.h | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 110c4bbb004b..fb292e542381 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -129,13 +129,29 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+index 63c2aaae51f3..d336cd0c8f19 100644
+--- a/tools/testing/selftests/kvm/include/kvm_util.h
++++ b/tools/testing/selftests/kvm/include/kvm_util.h
+@@ -374,8 +374,8 @@ static inline void vm_enable_cap(struct kvm_vm *vm, uint32_t cap, uint64_t arg0)
+ 	vm_ioctl(vm, KVM_ENABLE_CAP, &enable_cap);
  }
  
- /**
-- * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
-+ * Use folio's up-to-date flag to indicate that this folio is prepared for usage
-+ * by the guest.
-+ *
-+ * This flag can be used whether the folio is prepared for PRIVATE or SHARED
-+ * usage.
-  */
- static inline void kvm_gmem_mark_prepared(struct folio *folio)
+-static inline void vm_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
+-					    uint64_t size, uint64_t attributes)
++static inline int __vm_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
++					     uint64_t size, uint64_t attributes)
  {
- 	folio_mark_uptodate(folio);
+ 	struct kvm_memory_attributes attr = {
+ 		.attributes = attributes,
+@@ -391,7 +391,15 @@ static inline void vm_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
+ 	TEST_ASSERT(!attributes || attributes == KVM_MEMORY_ATTRIBUTE_PRIVATE,
+ 		    "Update me to support multiple attributes!");
+ 
+-	vm_ioctl(vm, KVM_SET_MEMORY_ATTRIBUTES, &attr);
++	return __vm_ioctl(vm, KVM_SET_MEMORY_ATTRIBUTES, &attr);
++}
++
++static inline void vm_set_memory_attributes(struct kvm_vm *vm, uint64_t gpa,
++					    uint64_t size, uint64_t attributes)
++{
++	int ret = __vm_set_memory_attributes(vm, gpa, size, attributes);
++
++	__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_SET_MEMORY_ATTRIBUTES", ret, vm);
  }
  
-+/**
-+ * Use folio's up-to-date flag to indicate that this folio is not yet prepared for
-+ * usage by the guest.
-+ *
-+ * This flag can be used whether the folio is prepared for PRIVATE or SHARED
-+ * usage.
-+ */
-+static inline void kvm_gmem_clear_prepared(struct folio *folio)
-+{
-+	folio_clear_uptodate(folio);
-+}
-+
- /*
-  * Process @folio, which contains @gfn, so that the guest can use it.
-  * The folio must be locked and the gfn must be contained in @slot.
-@@ -148,6 +164,12 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	pgoff_t index;
- 	int r;
  
-+	/*
-+	 * Defensively zero folio to avoid leaking kernel memory in
-+	 * uninitialized pages. This is important since pages can now be mapped
-+	 * into userspace, where hardware (e.g. TDX) won't be clearing those
-+	 * pages.
-+	 */
- 	if (folio_test_hugetlb(folio)) {
- 		folio_zero_user(folio, folio->index << PAGE_SHIFT);
- 	} else {
-@@ -1017,6 +1039,7 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
- {
- 	struct inode *inode;
- 	struct folio *folio;
-+	bool is_prepared;
- 
- 	inode = file_inode(vmf->vma->vm_file);
- 	if (!kvm_gmem_is_faultable(inode, vmf->pgoff))
-@@ -1026,6 +1049,31 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
- 	if (!folio)
- 		return VM_FAULT_SIGBUS;
- 
-+	is_prepared = folio_test_uptodate(folio);
-+	if (!is_prepared) {
-+		unsigned long nr_pages;
-+		unsigned long i;
-+
-+		if (folio_test_hugetlb(folio)) {
-+			folio_zero_user(folio, folio->index << PAGE_SHIFT);
-+		} else {
-+			/*
-+			 * Defensively zero folio to avoid leaking kernel memory in
-+			 * uninitialized pages. This is important since pages can now be
-+			 * mapped into userspace, where hardware (e.g. TDX) won't be
-+			 * clearing those pages.
-+			 *
-+			 * Will probably need a version of kvm_gmem_prepare_folio() to
-+			 * prepare the page for SHARED use.
-+			 */
-+			nr_pages = folio_nr_pages(folio);
-+			for (i = 0; i < nr_pages; i++)
-+				clear_highpage(folio_page(folio, i));
-+		}
-+
-+		kvm_gmem_mark_prepared(folio);
-+	}
-+
- 	vmf->page = folio_file_page(folio, vmf->pgoff);
- 	return VM_FAULT_LOCKED;
- }
-@@ -1593,6 +1641,87 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
- }
- EXPORT_SYMBOL_GPL(kvm_gmem_populate);
- 
-+static void kvm_gmem_clear_prepared_range(struct inode *inode, pgoff_t start,
-+					  pgoff_t end)
-+{
-+	pgoff_t index;
-+
-+	filemap_invalidate_lock_shared(inode->i_mapping);
-+
-+	/* TODO: replace iteration with filemap_get_folios() for efficiency. */
-+	for (index = start; index < end;) {
-+		struct folio *folio;
-+
-+		/* Don't use kvm_gmem_get_folio to avoid allocating */
-+		folio = filemap_lock_folio(inode->i_mapping, index);
-+		if (IS_ERR(folio)) {
-+			++index;
-+			continue;
-+		}
-+
-+		kvm_gmem_clear_prepared(folio);
-+
-+		index = folio_next_index(folio);
-+		folio_unlock(folio);
-+		folio_put(folio);
-+	}
-+
-+	filemap_invalidate_unlock_shared(inode->i_mapping);
-+}
-+
-+/**
-+ * Clear the prepared flag for all folios in gfn range [@start, @end) in memslot
-+ * @slot.
-+ */
-+static void kvm_gmem_clear_prepared_slot(struct kvm_memory_slot *slot, gfn_t start,
-+					 gfn_t end)
-+{
-+	pgoff_t start_offset;
-+	pgoff_t end_offset;
-+	struct file *file;
-+
-+	file = kvm_gmem_get_file(slot);
-+	if (!file)
-+		return;
-+
-+	start_offset = start - slot->base_gfn + slot->gmem.pgoff;
-+	end_offset = end - slot->base_gfn + slot->gmem.pgoff;
-+
-+	kvm_gmem_clear_prepared_range(file_inode(file), start_offset, end_offset);
-+
-+	fput(file);
-+}
-+
-+/**
-+ * Clear the prepared flag for all folios for any slot in gfn range
-+ * [@start, @end) in @kvm.
-+ */
-+void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end)
-+{
-+	int i;
-+
-+	lockdep_assert_held(&kvm->slots_lock);
-+
-+	for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-+		struct kvm_memslot_iter iter;
-+		struct kvm_memslots *slots;
-+
-+		slots = __kvm_memslots(kvm, i);
-+		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-+			struct kvm_memory_slot *slot;
-+			gfn_t gfn_start;
-+			gfn_t gfn_end;
-+
-+			slot = iter.slot;
-+			gfn_start = max(start, slot->base_gfn);
-+			gfn_end = min(end, slot->base_gfn + slot->npages);
-+
-+			if (iter.slot->flags & KVM_MEM_GUEST_MEMFD)
-+				kvm_gmem_clear_prepared_slot(iter.slot, gfn_start, gfn_end);
-+		}
-+	}
-+}
-+
- /**
-  * Returns true if pages in range [@start, @end) in inode @inode have no
-  * userspace mappings.
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 1a7bbcc31b7e..255d27df7f5c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2565,6 +2565,8 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
- 		KVM_BUG_ON(r, kvm);
- 	}
- 
-+	kvm_gmem_clear_prepared_vm(kvm, start, end);
-+
- 	kvm_handle_gfn_range(kvm, &post_set_range);
- 
- out_unlock:
-diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-index d8ff2b380d0e..25fd0d9f66cc 100644
---- a/virt/kvm/kvm_mm.h
-+++ b/virt/kvm/kvm_mm.h
-@@ -43,6 +43,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- void kvm_gmem_unbind(struct kvm_memory_slot *slot);
- int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
- 				   unsigned long attrs);
-+void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end);
- #else
- static inline void kvm_gmem_init(struct module *module)
- {
-@@ -68,6 +69,12 @@ static inline int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start,
- 	return 0;
- }
- 
-+static inline void kvm_gmem_clear_prepared_slots(struct kvm *kvm,
-+						 gfn_t start, gfn_t end)
-+{
-+	WARN_ON_ONCE(1);
-+}
-+
- #endif /* CONFIG_KVM_PRIVATE_MEM */
- 
- #endif /* __KVM_MM_H__ */
 -- 
 2.46.0.598.g6f2099f65c-goog
 
