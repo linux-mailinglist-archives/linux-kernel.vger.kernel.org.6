@@ -1,80 +1,185 @@
-Return-Path: <linux-kernel+bounces-323832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CD79743FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:19:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D299743FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB982884FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A04287490
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD7119E827;
-	Tue, 10 Sep 2024 20:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA1D1A0B05;
+	Tue, 10 Sep 2024 20:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="n0mpy8zV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAnOMtGg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC51176252;
-	Tue, 10 Sep 2024 20:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B116E17CA03
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999541; cv=none; b=fjHUop9uuowg9KdAl/iNGRE60jD503N3+zvPJmHVg2GvVDItoNnav8e/tOTdgsucc9kN51xhugg0oQuNd/7PNs7pj/UWw4l771yA//J9B88u3VDYYwwDSWNFwWyMLTWukWGL0lVNPgn4OosQ1gkKL/BqIZ9OJ3S5xFUUoir8nnQ=
+	t=1725999574; cv=none; b=LQS7CFg5Yn3pVbcxBUU+Qnu+mVCAYnFwQ5jf8cBxjDFcaRzNKZQ3w2mFNiHBXYhTqE+A2k/nq7ROTBPgwL4ANXkjm3272DysnpCuKT9D/QRZwvf2RsMNlRQxeOrxbB7PGq3ofzKvy12mez3+3hsU/bl6CISKgkk70tqmQdpg3Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999541; c=relaxed/simple;
-	bh=75laWeeAWTRgZG79KiruKCR/lnIpOdrzgV36Hmy4/OM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XFx0h0+fGUdr8ElcUJrBXMFhIE6vYX8u8lkPAZ78AiKkQDJHtTlxxXUYhVhFmK1ChGMKV4V1MTdS9WqGrpF8RwkQ+xKI/7bxI4DMNeA3JrBPPN+gAaszIwXDeFDKzSIMjaxjgq1d/diOOW2xY9Hlz7NIE1ozzJFVhCEnPfwus4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=n0mpy8zV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF6F9C4CEC3;
-	Tue, 10 Sep 2024 20:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1725999541;
-	bh=75laWeeAWTRgZG79KiruKCR/lnIpOdrzgV36Hmy4/OM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n0mpy8zVaG+4zCIvwNUFzlJ9rltSaQVNvLMHfgwENxcr+Hz9qb08SzGU2rWiXJUJv
-	 9GBtuFn0QnSwF5+3WKQkvAaFuS/1jdsfJ62BGcPFImNuszJKaWGN0MU5pg7XfKUepW
-	 xHH6zA5Mzv2u+4GlYDPhcr6mu/6XFEYJ5WQvkRnc=
-Date: Tue, 10 Sep 2024 13:19:00 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Michal =?ISO-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Muchun
- Song <muchun.song@linux.dev>, Chen Ridong <chenridong@huawei.com>
-Subject: Re: [PATCH 1/4] memcg: Cleanup with !CONFIG_MEMCG_V1
-Message-Id: <20240910131900.65e40be84b7f70261c62e154@linux-foundation.org>
-In-Reply-To: <ZuCmpW2JFFAxmGvS@slm.duckdns.org>
-References: <20240909163223.3693529-1-mkoutny@suse.com>
-	<20240909163223.3693529-2-mkoutny@suse.com>
-	<ZuCmpW2JFFAxmGvS@slm.duckdns.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725999574; c=relaxed/simple;
+	bh=8CCuLYWdWTSFpLwKxbqHrDLHqq2DH1fE8m6jNkhdCNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2XTy55gzg5l1NwgwimQItHVAibxdbW2skSlkP/6bIsxoqDWewhEf1kLh87NJ6eMC5Q6wejL11JmUMCSAxWv0RTnqviOOsDuKAVs2kxXdzYh/fNHYDECsO2excMxfJWogAjtJI4F9KxWLaXsPnvH7moVC01ByC9ZMF4qv175ijw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAnOMtGg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725999570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W/Ek58qaXc13SAy2fWa0xfKNbuHUlKabbBtKkvuJifU=;
+	b=fAnOMtGg/vKj8V5YBuo9kuAU+OPPZ4RGrSp+3DRy823hdp3gigiPWOHQJ4GCj4JhdL6N+8
+	NHRAq46f1DZ3+1Nx8gbkziZpZoGMHn03mI0Al2ySBUoTNp7+2kqZCFXY4mZLYO5+ho5jh+
+	b0fcqrn9xQNTxuTwrZSwQIiUnQwp1mY=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-C30tjIN2OjOOpucIMNgQ_w-1; Tue, 10 Sep 2024 16:19:29 -0400
+X-MC-Unique: C30tjIN2OjOOpucIMNgQ_w-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8d2f475416so202210566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725999568; x=1726604368;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W/Ek58qaXc13SAy2fWa0xfKNbuHUlKabbBtKkvuJifU=;
+        b=OvNRsSuRZJCuSCi06lB5bMnJEqa8gV6Aye7L/wVUcrT8i8AnP7VjtmJg4JwKuKj85s
+         Wk9Wf6VIDtsdjMRe1ZgVGdkZElkvEEs3xrz1Y0sodXVjD0MGOvrScMiSFOQTNX76yU8y
+         6Coz5BoejV9PVeG+fj1xZG0EMEyw/m5bQgnbq/UKYQ1ILyLIEz4JfFaQl4SylHNgcWNj
+         THXkvOALiBBDbnFIftcfA1gdEoHILewz9LHDa47bPQJ72e/YFvDZm3B6kIyFvCrS5yds
+         TD5xZvTNhmp+QNbEX5LuQQyzVy74r5tZZ7E9eseAERbTE3j2mYocANOD+DqVnlegMfPT
+         4ZSA==
+X-Gm-Message-State: AOJu0YwCNxaosta3QljRueCDV30BTlphXI4AsQmpOYXijPftAWTMZK7K
+	JD4JToVeQNkACKGozQmmAGB3Z4shDQrc2BMYRVIk31x2BTNO1H9hQsv5DEXb7N9CxHfau6bq5fz
+	CMmuiKkEUoBDAOwbFcu8F+52y1B6tjKlZye0ZM0i4GHPQ2IXzQo17zLhACoJujQ==
+X-Received: by 2002:a17:907:9812:b0:a88:b90b:bd5e with SMTP id a640c23a62f3a-a8ffaaacfa1mr185691266b.3.1725999568236;
+        Tue, 10 Sep 2024 13:19:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIpn+zlExuTE3yAX+xjiMRNjjie27yYDse9XLe2ciVUQSSxwhcmURZ5WywfpEvPrJPhC6Cgg==
+X-Received: by 2002:a17:907:9812:b0:a88:b90b:bd5e with SMTP id a640c23a62f3a-a8ffaaacfa1mr185687666b.3.1725999567396;
+        Tue, 10 Sep 2024 13:19:27 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:176:f5ce:2d9:5bfa:9916:aa0a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c62485sm519926966b.104.2024.09.10.13.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 13:19:26 -0700 (PDT)
+Date: Tue, 10 Sep 2024 16:19:19 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 0/5] virtio-mem: s390x support
+Message-ID: <20240910161847-mutt-send-email-mst@kernel.org>
+References: <20240910191541.2179655-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240910191541.2179655-1-david@redhat.com>
 
-On Tue, 10 Sep 2024 10:05:57 -1000 Tejun Heo <tj@kernel.org> wrote:
+On Tue, Sep 10, 2024 at 09:15:34PM +0200, David Hildenbrand wrote:
+> Let's finally add s390x support for virtio-mem; my last RFC was sent
+> 4 years ago, and a lot changed in the meantime.
+> 
+> This is based on mm/stable.
+> 
+> I sent out the QEMU part earlier today [1], that contains some more details
+> and a usage example on s390x (last patch).
+> 
+> There is not too much in here: The biggest part is querying a new diag(500)
+> STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end". Once this
+> and the QEMU part will go upstream, it will get documented in [2]
+> 
+> The last two patches are not strictly required but certainly nice-to-have.
+> 
+> Note that -- in contrast to standby memory -- virtio-mem memory must be
+> configured to be automatically onlined as soon as hotplugged. The easiest
+> approach is using the "memhp_default_state=" kernel parameter or by using
+> proper udev rules. More details can be found at [3].
+> 
+> I have reviving+upstreaming a systemd service to handle configuring
+> that on my todo list, but for some reason I keep getting distracted ...
+> 
+> I tested various things, including:
+>  * Various memory hotplug/hotunplug combinations
+>  * Device hotplug/hotunplug
+>  * /proc/iomem output
+>  * reboot
+>  * kexec
+>  * kdump: make sure we don't hotplug memory
+> 
+> One remaining work item is kdump support for virtio-mem memory. I
+> am working on a prototype that will be fairly straight forward,
+> because the virtio-mem driver already supports a special kdump mode and
+> dracut will already include it in the initrd as default. With
+> holiday and conferences coming up I rather sent this out now.
+> 
+> [1] https://lkml.kernel.org/r/20240910175809.2135596-1-david@redhat.com
+> [2] https://gitlab.com/davidhildenbrand/s390x-os-virt-spec
+> [3] https://virtio-mem.gitlab.io/user-guide/user-guide-linux.html
+> 
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Thomas Huth <thuth@redhat.com>
+> Cc: Cornelia Huck <cohuck@redhat.com>
+> Cc: Janosch Frank <frankja@linux.ibm.com>
+> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Cc: "Eugenio Pérez" <eperezma@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
 
-> On Mon, Sep 09, 2024 at 06:32:20PM +0200, Michal Koutn=FD wrote:
-> > Extern declarations have no definitions with !CONFIG_MEMCG_V1 and no
-> > users, drop them altogether.
-> >=20
-> > Signed-off-by: Michal Koutn=FD <mkoutny@suse.com>
->=20
-> Acked-by: Tejun Heo <tj@kernel.org>
->=20
-> This one should go through -mm. If Andrew doesn't pick it up from this
-> thread, it might be better to repost it.
->=20
 
-Yep, thanks, I grabbed all four patches.
+It's mostly s390 changes, so should be merged through that tree.
+I acked the only virtio specific patch.
+
+> David Hildenbrand (5):
+>   s390/kdump: implement is_kdump_kernel()
+>   s390/physmem_info: query diag500(STORAGE_LIMIT) to support QEMU/KVM
+>     memory devices
+>   virtio-mem: s390x support
+>   lib/Kconfig.debug: default STRICT_DEVMEM to "y" on s390x
+>   s390/sparsemem: reduce section size to 128 MiB
+> 
+>  arch/s390/boot/physmem_info.c        | 46 ++++++++++++++++++++++++++--
+>  arch/s390/include/asm/kexec.h        |  4 +++
+>  arch/s390/include/asm/physmem_info.h |  3 ++
+>  arch/s390/include/asm/sparsemem.h    |  2 +-
+>  arch/s390/kernel/crash_dump.c        |  6 ++++
+>  drivers/virtio/Kconfig               | 12 ++++----
+>  lib/Kconfig.debug                    |  2 +-
+>  7 files changed, 64 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.46.0
+
 
