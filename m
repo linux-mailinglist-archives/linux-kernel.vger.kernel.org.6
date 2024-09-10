@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-323504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEFE973E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EFF973DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 755CBB26576
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6111C252CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF291A2C1A;
-	Tue, 10 Sep 2024 17:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322D91A257B;
+	Tue, 10 Sep 2024 16:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="s+FYJdZo"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="QH0m4UuJ"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211A41A01CC;
-	Tue, 10 Sep 2024 17:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790091A0AF1;
+	Tue, 10 Sep 2024 16:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987917; cv=none; b=tlKmh8qOM4cKAuCRqBi5ZQ7XiqXGOOJreWBdLwfvQEyxh4wYewrtgM54Xpv/9faJCtjjUAYBxRLw/65+/ocrVarXUtFFILg9haiE1lR5BdM05RHP6UrEfLXSh1E5fVcku29yBOKCSJarx294Jnxib+Uh3hBVU2oo+4m1XQCUrjI=
+	t=1725987377; cv=none; b=lm/l09oGfft7Yf1iPoKXBqicArVw1c+cKIkRe5KQS6+NDO6MM3nI18vomRE7BL9ag/vjjghRGYnclEDP1GJKMR5cl4exM/z+0c1136jdzBHm4GOiJDjzqU9lV2ySDoYax2U2jZtslLqyJcw/ATJOIESQXZ1Yt53wO+jVoQON5NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987917; c=relaxed/simple;
-	bh=x2vpo566IpKINGvRxE112gh8KoGHeHf3zP1Nk6w3PW8=;
+	s=arc-20240116; t=1725987377; c=relaxed/simple;
+	bh=QASMGkEsSRO3GG4RNCrtw3i1K+JPiCBiSMSLWt79ni8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uj8IFjQopmrrYfihWqjmYoNtZQlaSTSBdoSWL6NCi3ehYUIPCKajWUbOeaaIBp5YXw16VRfal2/WPaY8n0sD72iOcRgNrKCYNhXtDHJeNLZM/Ra7Bmd5nw8drF1fFvQhpUoZObaH+u35zwGC6REgl8bHMIejHCdvkHEP7+lpOto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=s+FYJdZo; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id o49vszwl60aTdo49vs80n2; Tue, 10 Sep 2024 18:56:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1725987369;
-	bh=6IVX0uCQNd9zCee3e9vv63knqK4j3qT0VDnonUeshHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=s+FYJdZo7Fumol7rX0Ymlqbbwkx7JkbOSf7MvZGvdLkUGi9YDB4CQx7TvynwWZsa/
-	 3MDYEZXqwtAHW6b9Ev58Jxg0vyZGZ4US9argXgqJv7/JFYKo37FGaft1GxLmBzMLJR
-	 VcqJ0O5XGr2R42Do6dRdl3iEgAisZdjG6B0iNczqu91Jbd96BcFvUwpz2HAJTZkFqg
-	 0ZYldeTY25CepXoM0G3XR/sjk7FdN01VAwzwQC8M89sUwJCu0a0NsJgI+/s8zC3hwj
-	 xQaPr2cXug26WADIv7yXLuMFBPekVlxOyPDR35leKVoiaV8UASjysLKRApW+1OZxNe
-	 z7QEi++N8KGrg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 10 Sep 2024 18:56:09 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <be4bcfa9-6445-4e8a-a510-0777341026b0@wanadoo.fr>
-Date: Tue, 10 Sep 2024 18:56:07 +0200
+	 In-Reply-To:Content-Type; b=LnUy1Q3Q2t5Kh39Ksx0E4lIahyABPse2gv9fLkPM8aKUAUMO4B1XZqIV1zihUApZHd+fRRIMPhrxgzl7kIWU/7uaGhGL6Ce1QRSZEgpp807dhxY82FOU580/S17yMHJk6lucrW8QINWJWBQK1xrKOPc1KOxr6WiIwFdQsPQPl+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=QH0m4UuJ; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4X38wt6nPKz6ClY9D;
+	Tue, 10 Sep 2024 16:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1725987373; x=1728579374; bh=av8MBTYW2/cFVFhrt36tfaA8
+	FJ1upg3KjEox21DoSCQ=; b=QH0m4UuJTRnLOjm7dhYXNYM/L4fceHeKlot2yT9R
+	Gvq+Ptfa3aGvNc2dphcCAUY6uMvRSVtSWOUEzcTyih5KaYw7zGLwbUu3fMMug0X+
+	rVDDKneJ0CtkhISvdSx81FaE7fqQcS7sPn/AmhUYzkw5ZV5n5Ax7kS3PHtOxJ0yW
+	5RSaoJcehux51RNV+nLVq9DPJtE4RHZ/L8A55xlgj4dWVn9pzuHyVxBC7aDbzpG/
+	EVz9VDelsAqsmk4jxhqEFGHwOgfNolyxZ3UR277Dj8uOLL0XzHdhAyUJEyhs1wZA
+	17jLE0LIQXt3pZ5A2+37OzPG8bvDUBNqKFzlHkvhrWJePw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 00Ez00uSiIIh; Tue, 10 Sep 2024 16:56:13 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4X38ws0j9pz6ClbFZ;
+	Tue, 10 Sep 2024 16:56:12 +0000 (UTC)
+Message-ID: <85a71ca6-3011-4bcf-bdb8-cb57e1be23ce@acm.org>
+Date: Tue, 10 Sep 2024 09:56:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,78 +64,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: k3-dsp: Fix an error handling path in
- k3_dsp_rproc_probe()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Bjorn Andersson <andersson@kernel.org>, Beleswar Padhi <b-padhi@ti.com>,
- Andrew Davis <afd@ti.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <9485e427a9041cc76cfd3dbcc34874af495e160a.1725653543.git.christophe.jaillet@wanadoo.fr>
- <ZuBlvhf5AszNHV1e@p14s>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZuBlvhf5AszNHV1e@p14s>
+Subject: Re: [PATCH] block/blk-rq-qos: introduce macro RQ_QOS_FN for common
+ behaviors in rq_qos*
+To: chensong_2000@189.cn, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240910084238.3543971-1-chensong_2000@189.cn>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240910084238.3543971-1-chensong_2000@189.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 10/09/2024 à 17:29, Mathieu Poirier a écrit :
+On 9/10/24 1:42 AM, chensong_2000@189.cn wrote:
+> +#define RQ_QOS_FN(q, fn, ...)	\
+> +	do {	\
+> +		struct rq_qos *rqos;	\
+> +		for_each_rqos(rqos, q)	\
+> +			if (rqos->ops->fn)	\
+> +				rqos->ops->fn(rqos, ##__VA_ARGS__);	\
+> +	} while (0)
 
->> +static void k3_dsp_free_channel(void *data)
->> +{
->> +	struct k3_dsp_rproc *kproc = data;
-> 
-> How did the struct rproc from devm_add_action_or_reset() got turned into a
-> struct k3_dsp_rproc?
-> 
+I'm not sure whether this patch is a step in the right direction. If
+others agree with the approach of this patch, I think we need a better
+name for this macro, e.g. CALL_RQ_QOS_FN().
 
-Well, Linux is a wonderful system, that is able to make wonderful thinks!
+Thanks,
 
-In this particular case, if it is not the correct explanation, it is 
-likely an unfortunate typo :(
-Sorry about that, and thanks for the careful review.
-I'll send a v3.
-
-
-But, looking at it, and trying to see if similar issues may exist, the 
-following naive script spots 2 similar issues. 1 of them looks valid.
-
-
-I'll try to improve it (Julia in copy, if she wants to give it a look 
-as-well :))
-
-CJ
-
-
-
-@devm@
-expression RET, DEV;
-identifier FCT, VAR;
-type T;
-@@
-	T VAR;
-	...
-(
-	RET = devm_add_action_or_reset(DEV, FCT, VAR);
-|
-	devm_add_action_or_reset(DEV, FCT, VAR);
-)
-
-@depends on devm@
-identifier FCT = devm.FCT, x, VAR;
-type T1 = devm.T, T2;
-@@
-void FCT(void *x)
-{
-	...
-(
-	T1 VAR = x;
-|
-*	T2 VAR = x;
-)
-	...
-}
-
-
+Bart.
 
 
