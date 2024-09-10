@@ -1,88 +1,150 @@
-Return-Path: <linux-kernel+bounces-323698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A524974207
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:24:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F8A974219
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6E5287948
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:24:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B53CAB22A8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B451A4F16;
-	Tue, 10 Sep 2024 18:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92C71A4F30;
+	Tue, 10 Sep 2024 18:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="hR2Ju+2A"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0xMwiaQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53811A3BB8;
-	Tue, 10 Sep 2024 18:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017816F27F;
+	Tue, 10 Sep 2024 18:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725992636; cv=none; b=bmRxkSTcGPuy6jijGNXdJjzwwS4DaHSwedMCT8W+VYFeIHc/u7gu6n/J0DThbpOv2cDwTZyViY12BjjMevRSIEFHSkOK+m18DZ9u60Z9+jBQWcE4U7PrCTyAzHVIh/xTLdqJMpo5bOFZcQR+Xrqy6K8dI3xPRzKaB5Br5J+MRy4=
+	t=1725992813; cv=none; b=CdoE64E8g5fvasVuoivjCq5BIZ/WgBTSJj0PNksXL29Gk7dYdXXJHJA1jKkU9onNvjocaMipBewljkJBHtM7fmyeeJSAh2yIolCnV1eX6muoidP6DzbNjDJA/6A7vjmYLs7rTSW4aQC6Fuw62rtTlmefnbdpw1Lsjl4Q7zilRUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725992636; c=relaxed/simple;
-	bh=KpbqArYY4tsxF7f4+5ZopT6L3iZhLbvCXwOIm7Kkr54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=skGDIuQCdFnAfdYpz8Xx289Q5eZbobcoBcaQpctKomgaJBkZ8VNEtmdDuIX8H9acOne7blQgEpjOW0O5PObx8dwsTWbpe00cQfWuMfxPRIE7eIHv9lt0r0ZpWPU4DEqQgrZbQyejeMEV1m8sRu0AqQNhJi2TSR45bBpXsL8bJdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=hR2Ju+2A; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tJdvoX4bYWfo5nT4U9dcgC8mgoUNfWu0sO6XHPGd1zo=; b=hR2Ju+2AeJ9MOJGCVR47pRYwie
-	ffm9GBt5O1fFqMqIwTtTp9ek0tkDzXKASo62F5d9IDqt3D/a1Sz09cgtHSRM7WNWq55sPb7Zg7Tq9
-	Xz8+xzv3aICvO1noaO9sq+P464H6zDpYoJqxlqiRp/LATrndaRZMD7mSF2kVNq5yX+2vGdzX4tgkJ
-	kznImmhVFwaQFgfoVVFbS8NK58cNh31dkCxiMVQvnQf60TnbWibn4DlA9jn1T6X7pgy3fVMwmdMR2
-	p8AbOCj1qFpj2X+oKixYUXv7R5vNfrxOwqC84ppnUNKPeP+ZgDbflxzNIYRcCZ25iwM5Alb9CR3MK
-	G6m9+G/g==;
-Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1so5Wn-0007L4-6C; Tue, 10 Sep 2024 20:23:49 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject:
- Re: [PATCH v1 3/6] pmdomain: rockchip: reduce indention in rockchip_pd_power
-Date: Tue, 10 Sep 2024 20:26:17 +0200
-Message-ID: <1787473.G7SD5HZVK5@diego>
-In-Reply-To: <20240910180530.47194-4-sebastian.reichel@collabora.com>
-References:
- <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <20240910180530.47194-4-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1725992813; c=relaxed/simple;
+	bh=jz3VZRhNBfWywJI7JxqA/XXrvUS86hBZ1FzrBWdED0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aJrZFb+brm737ugBfuHxo9JHa5ATF6c40NzOutUou08KUvba9kK6MRa6FiIlS1P4SbGYOqU7ZhRHfMD9IXsYVMWWxCAfF7r2zrQVPzEzI+AzxkIfuz7R1QLs8AWT78gDLIa79mQVF3LtFjEfE0El6Fim/bzP7Ca2nRU0vlrw7q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0xMwiaQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7241C4CEC4;
+	Tue, 10 Sep 2024 18:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725992812;
+	bh=jz3VZRhNBfWywJI7JxqA/XXrvUS86hBZ1FzrBWdED0g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V0xMwiaQhkzzx0QTztQsm/Bmi9IJL+LAwDYVp08Y9zxetqJk9GSQnOr1SfPKJxLY/
+	 JcekjeuQgJtW+VnYZdcitu9KJA18vaTYUQlswI0SnnYWYNMK6TNRx8YbuW65SsvYhs
+	 1WqJ1d36Hrg3mKSEIogQdtOYYJzVN22I+8pxZl37BwPbAnRj02wOJs1WZgdULg0QqY
+	 MACd4vgqg0UDjc+w1CkPGcqUE5HUuId/fKnpwtTQNQQQbfFCkmuw5i1ntbi2KEvUSX
+	 7a5Z0NivoXQC3YOS8LL8EAZDDSRPilT9eRxGyBUxBMeIMrycZWqaRg7AMoklaG6Vac
+	 aFT4onAnehcuQ==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5e1d5acb04bso1465649eaf.0;
+        Tue, 10 Sep 2024 11:26:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7ljuxE3E9y5KIyXOCMZ3nzDcAERzqtG8DBkmqYyHOklfJqBTjT2QsW6qdo/MJHN3LwaZDxm8fNAn9@vger.kernel.org, AJvYcCXEaPj9xeFb+FawiwPvX548ubieUAUOP37AYAY0k6/odXmzq6S58+MoR6HiBPdZDeFPMKvkXRCvpHx5+Q+l@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7N7nFyIVzKw+zOJJ7BIxR1wfYT2/JeTymR68eyay0cUUZVZiH
+	y8bjsEadNGavW3R8yE6qd+m/+pItHJxrUE0JNo6OcOBDWgVNaFFcEUo/J581gjLeIVqqxG/4KWD
+	56p/wnUTJHSd9HWAYg8WnCM+LPxQ=
+X-Google-Smtp-Source: AGHT+IG/DhjptzeoHT8dxB/41EeapT55Z7O/b5vx8QovBr1jkm+ujEdksGh9VIDEj0+wfRAwy9a62vc2ahVXoQauxkA=
+X-Received: by 2002:a05:6870:9a96:b0:268:2189:f0d with SMTP id
+ 586e51a60fabf-27b82fc5ab6mr15855374fac.33.1725992811995; Tue, 10 Sep 2024
+ 11:26:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20240910031524.106387-1-superm1@kernel.org>
+In-Reply-To: <20240910031524.106387-1-superm1@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 10 Sep 2024 20:26:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gvGyrT854c7jE0x8uLP246TowxURAGo785GXEvaAvXAQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gvGyrT854c7jE0x8uLP246TowxURAGo785GXEvaAvXAQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: CPPC: Add support for setting EPP register in FFH
+To: Mario Limonciello <superm1@kernel.org>
+Cc: rafael@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, perry.yuan@amd.com, gautham.shenoy@amd.com, 
+	luke@ljones.dev, Mario Limonciello <mario.limonciello@amd.com>, al0uette@outlook.com, 
+	vderp@icloud.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, 10. September 2024, 19:57:12 CEST schrieb Sebastian Reichel:
-> Rework the logic, so that the function exits early when the
-> power domain state is already correct to reduce code indention.
+On Tue, Sep 10, 2024 at 5:15=E2=80=AFAM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>
+> Some Asus AMD systems are reported to not be able to change EPP values
+> because the BIOS doesn't advertise support for the CPPC MSR and the PCC
+> region is not configured.
+>
+> However the ACPI 6.2 specification allows CPC registers to be declared
+> in FFH:
+> ```
+> Starting with ACPI Specification 6.2, all _CPC registers can be in
+> PCC, System Memory, System IO, or Functional Fixed Hardware address
+> spaces. OSPM support for this more flexible register space scheme
+> is indicated by the =E2=80=9CFlexible Address Space for CPPC Registers=E2=
+=80=9D _OSC
+> bit.
+> ```
+>
+> If this _OSC has been set allow using FFH to configure EPP.
+>
+> Reported-by: al0uette@outlook.com
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218686
+> Suggested-by: al0uette@outlook.com
+> Tested-by: vderp@icloud.com
+> Tested-by: al0uette@outlook.com
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index dd3d3082c8c7..3b5b695bb80b 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -103,6 +103,11 @@ static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_pt=
+r);
+>                                 (cpc)->cpc_entry.reg.space_id =3D=3D     =
+   \
+>                                 ACPI_ADR_SPACE_PLATFORM_COMM)
+>
+> +/* Check if a CPC register is in FFH */
+> +#define CPC_IN_FFH(cpc) ((cpc)->type =3D=3D ACPI_TYPE_BUFFER &&         =
+   \
+> +                               (cpc)->cpc_entry.reg.space_id =3D=3D     =
+   \
+> +                               ACPI_ADR_SPACE_FIXED_HARDWARE)
+> +
+>  /* Check if a CPC register is in SystemMemory */
+>  #define CPC_IN_SYSTEM_MEMORY(cpc) ((cpc)->type =3D=3D ACPI_TYPE_BUFFER &=
+&  \
+>                                 (cpc)->cpc_entry.reg.space_id =3D=3D     =
+   \
+> @@ -1486,9 +1491,12 @@ int cppc_set_epp_perf(int cpu, struct cppc_perf_ct=
+rls *perf_ctrls, bool enable)
+>                 /* after writing CPC, transfer the ownership of PCC to pl=
+atform */
+>                 ret =3D send_pcc_cmd(pcc_ss_id, CMD_WRITE);
+>                 up_write(&pcc_ss_data->pcc_lock);
+> +       } else if (osc_cpc_flexible_adr_space_confirmed &&
+> +                  CPC_SUPPORTED(epp_set_reg) && CPC_IN_FFH(epp_set_reg))=
+ {
+> +               ret =3D cpc_write(cpu, epp_set_reg, perf_ctrls->energy_pe=
+rf);
+>         } else {
+>                 ret =3D -ENOTSUPP;
+> -               pr_debug("_CPC in PCC is not supported\n");
+> +               pr_debug("_CPC in PCC and _CPC in FFH are not supported\n=
+");
+>         }
+>
+>         return ret;
+> --
 
-				indentation
-both here and in the subject
-
-change itself
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
+Applied as 6.12 material, thanks!
 
