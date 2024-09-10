@@ -1,150 +1,234 @@
-Return-Path: <linux-kernel+bounces-322606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901A4972B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06173972B69
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D79C2858CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 799EA1F257ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C5C1862B2;
-	Tue, 10 Sep 2024 08:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7599C18756D;
+	Tue, 10 Sep 2024 08:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="diDFjKNx"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BhhXNrKZ"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6446917C215
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D437B1862B8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955307; cv=none; b=Q+6UaZUtW3BcTUWhL0qaLFBCHkKw63GPRsFhEM6WirzCQZVugejBHPb7AWzMCvlt8wd2g65M7J9qj/ItqL4ekULfNdoShtF89WrR/ZrQF/qQBhyIe04mi1FPY5aXZvqux5J6/SOMzXg4oHQOtrbg3tGJNJD8jg9kKX9Y/OfcYWw=
+	t=1725955312; cv=none; b=HhaJ1wqgMOKdjExy0wJb/mTJX2NgtHEZwc4y3QgeE/UjcYvmZ9cnMKUiWmVOYcprt8YGWIg4cKt8N07nS8380lvaCF6lj/xU5zt4OLe3WEEwOel/FHScZnksna0cJG5wSNvmJf/y4Slc2DnbCiG0i+DxcVtUxehRRNsORXByEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955307; c=relaxed/simple;
-	bh=/r6IUis8EJbLyFM6C8Q7kCm8hDOlngYXSkv1zgZDfBE=;
+	s=arc-20240116; t=1725955312; c=relaxed/simple;
+	bh=fliTI4ku+2nc6L0W4Ad5abYeryIU2dtOv5FKC4kJkK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMvkaMwrYohuB8gWxJCKXk9KzJ9iqk67vCLpTuCtAsHjTPRYm46rYU/dGXXAJrq9SGLX0nI+9qkSeXrMQ5gNImvdJ+mJ3tS/BWAYEHG2OaMSCu2YEFHxOW000BzypZV+Hk8Pv/79kBeNGkgHWeHj4vVlFwysP2hvTS1TNDn5acY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=diDFjKNx; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42ca573fd5aso34499915e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:01:43 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJWEFNyWYLoTSBmcsjJiqUEC1Q6mji86XRxD/gG6PM3hk2IutDGra/KuOSBWrvOeoiJ81NqhfvrFxrq8wDXSERlNZ58saJHfSm3/GJj3KFm1P0y7Gnj0zAKkRwRG0Wgmaq2AndR7f3Js1P8CZJIe1WjTOksKVyXfo5641LRRKYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BhhXNrKZ; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c3ca32971cso692737a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725955302; x=1726560102; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1725955309; x=1726560109; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/r6IUis8EJbLyFM6C8Q7kCm8hDOlngYXSkv1zgZDfBE=;
-        b=diDFjKNxJvXr3vwucBiQ2W6AOgcl0oH81aS2Tr+4EavFAhGlEBMLeDIZwgJiGh4tWt
-         ay6HdIEuNrU1RFZ8N6qDkRf/k24XlIQAs6Drr/hEv2TO/DRrZQVK7cYHiqpNltmXDytL
-         SGy27YEVnh4WjRUUpmdfsqt8AjHJm0k6JxegYOPEeOufNZn7107K7b6Z01Kj9EuLIlTw
-         4qY66jiSWYdmDkFPkX+OqgTxdrOxY0DbFwSK3LfFZRF/wJzmuM7rn5Nyc/9kGfg9qcl8
-         0pxxAK3Oik1gXAdoj32ke1an57iYLiogoo3mLZpPuqvZCYceiydPuRmSKMmidR1h3p8P
-         IYKg==
+        bh=u2HXx27vJakYic9aWVU4rnACS7qhR7kcJ+b+F6ySTEw=;
+        b=BhhXNrKZKMyH5EYGWHxI7GcKp70lPmaUhfb6a9GN1k4FTbgK8Gbbj1fhXr/Y56oLh6
+         au7L1tiVofZBQdVbA2EViHZig7w8DdFdwkvo/P8P9rZRHAGAyr9RKbd5k6tEFK+1uarI
+         bUaTyBndq5SLuetqE3MD56Iy+jpF+JHLRYKXadc1DA0oJLl8b5RGVjRPkcxuDB7+5hq+
+         txCn6huZpxJGoa48Og0y6IqN+DHrAQQ4uiJue8H/k2a6r81jdSyDHfk3OIvuHOForliB
+         mcxKZBM3vr6JEsoH+kIzODeqg5FOW3ix3Cb0aYmtWgUK3IVt8PDwOY/nUMgcwwl104wY
+         SlSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725955302; x=1726560102;
+        d=1e100.net; s=20230601; t=1725955309; x=1726560109;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/r6IUis8EJbLyFM6C8Q7kCm8hDOlngYXSkv1zgZDfBE=;
-        b=IGAXPu3XvPm+fLeeEuCQEcya80FExooGLFfawsKm+kOo0gTsbd+P15aY7oqyYHD+0u
-         Sd/dkkZUluIdAFRoxXw5RVdllV/U0poskvK+r7ptsRBJ+cHoP907SlV4yHW/+zxKW2ox
-         Jol3QU3n7jzF8uxYjxzw2ZXPEK4ljQvwzmFVJuktGf1yYkhoyr63jvN3w7wIvFqvsl+J
-         aS2dr5+1NXRnmHAfznUUTtUpE60oJXS03ECEKa/83dSh9Wn7oMvS+t9dRsZTALt6Qx/Z
-         SQJ0x0Vhm8H49514V7B+2VJwmx0wNITV9IUcV3dtc9bHsMEIRP2zqc3Blhvk86XdKeIV
-         PaVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy64BV2yql08PC3/wWV2dgvy3JPZ+5QUgGPdFNL4c8NKuSQDixFHfWHqzVy1fx9kQniCQysjikL4eZYIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD80wl7QqeYzGfg+Ji5gLVxHeCWRvmdInf6ZjK3mI/qc9GkcOj
-	xT46YOQLaeT5c6llZOlVJAYuANMDeCC4G58utBYnFiHb3X2135Ckf8ruJWxkz6E=
-X-Google-Smtp-Source: AGHT+IG+nXjNuOi1bG5OAXxiKvCxpS9SGnHKIVE3xSF72Xioz3RZFybD57LPt1sAtAgTE84B8jAhPg==
-X-Received: by 2002:a05:600c:17d4:b0:42c:b16e:7a22 with SMTP id 5b1f17b1804b1-42cb16e7addmr53122225e9.12.1725955301542;
-        Tue, 10 Sep 2024 01:01:41 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8b2f4sm102922055e9.45.2024.09.10.01.01.40
+        bh=u2HXx27vJakYic9aWVU4rnACS7qhR7kcJ+b+F6ySTEw=;
+        b=PGuM61YYbs2H5b6GpLAy90b5V29a7XB3qEjFAiJjDDbBXMupFVR6+uloRTDgQF3J0d
+         KIr2LA21sqwmTLlR8pXCpTMC59TjL1FiWEL+m9+Q1sLuVMmGqqkoTqiGWbl+IVTu3wcX
+         7xLKbBc2rjQRrRbgsNna9zAf+NgKb3hUII11k/89VWMg6jN5uLttJJ7mGssTLngk/yvu
+         KkxdgfwZyw6S6/sY7aI74jGx7JjvwQq0E/4eZK6m/cKKb4Y52QYI/qOUlD+7VHd1WgfW
+         ne183iLp0tdqf/QZOL7mPtCaA9x8A6/5yAjYOQxfVtWWFvxbDSNbDfS0HzJoV8ysS6Y6
+         qXxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG7Yww+C5m6hwcDPRJmY3KALLvoNhzapNrjuyI6CTZE10335+lD+0z6S8SmJOpGrvueX6QO085uNFIM38=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1rFBRA2eM315fnu5+kFPd9Jc3DPOFXbl84EMrZIlxFFY7CKg9
+	sSs+0eC6xMTYYw/zTinLHZZ7y6Gndkxe3Leh8lHqU69VMSe+OraxfUpquExOqKA=
+X-Google-Smtp-Source: AGHT+IHr3avMGlJNYFmUlmiQLM7eBFWFezrmyKcnEv8CK4mGzrZPx/NLsrObWoaM30sj+QoeSNwPww==
+X-Received: by 2002:a05:6402:42cb:b0:5a3:a4d7:caf5 with SMTP id 4fb4d7f45d1cf-5c3dc7c9cc1mr7089291a12.36.1725955308754;
+        Tue, 10 Sep 2024 01:01:48 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd523b4sm3962515a12.51.2024.09.10.01.01.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:01:41 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:01:39 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: George Stark <gnstark@salutedevices.com>, 
-	Rob Herring <robh@kernel.org>, conor+dt@kernel.org, krzk+dt@kernel.org, 
-	neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
-	martin.blumenstingl@googlemail.com, hkallweit1@gmail.com, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com, 
-	Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: pwm: amlogic: Add new bindings for
- meson A1 PWM
-Message-ID: <ak53ha3kltm24s45n5pczvibtltzocg33inpnro4bjeolu25re@33lae7y7qzvw>
-References: <20240710234116.2370655-1-gnstark@salutedevices.com>
- <20240710234116.2370655-3-gnstark@salutedevices.com>
- <20240712125219.GA472311-robh@kernel.org>
- <55f73e79-2d21-48ba-8486-26ee168c7bc3@salutedevices.com>
- <20240725-excursion-waving-0e0ad54006d4@spud>
+        Tue, 10 Sep 2024 01:01:48 -0700 (PDT)
+Date: Tue, 10 Sep 2024 10:01:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: zhang warden <zhangwarden@gmail.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] livepatch: Add using attribute to klp_func for
+ using function show
+Message-ID: <Zt_86rOMJN4UFEk-@pathway.suse.cz>
+References: <20240828022350.71456-1-zhangwarden@gmail.com>
+ <20240828022350.71456-3-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409051215140.8559@pobox.suse.cz>
+ <ZtsqLiJPy5e70Ows@pathway.suse.cz>
+ <B250EB77-AFB0-4D32-BA4E-3B96976F8A82@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rkd4jonklnzz2ghs"
-Content-Disposition: inline
-In-Reply-To: <20240725-excursion-waving-0e0ad54006d4@spud>
-
-
---rkd4jonklnzz2ghs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <B250EB77-AFB0-4D32-BA4E-3B96976F8A82@gmail.com>
 
-On Thu, Jul 25, 2024 at 03:08:53PM +0100, Conor Dooley wrote:
-> On Fri, Jul 12, 2024 at 06:12:26PM +0300, George Stark wrote:
-> > Hello Rob, Conor
-> >=20
-> > On 7/12/24 15:52, Rob Herring wrote:
-> > > On Thu, Jul 11, 2024 at 02:41:15AM +0300, George Stark wrote:
-> > > > The chip has 3 dual-channel PWM modules PWM_AB, PWM_CD, PWM_EF.
-> > > >=20
-> > > > Signed-off-by: George Stark <gnstark@salutedevices.com>
-> > > > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > >=20
-> > > Missing ack from Conor. When you submit new versions, it is your
-> > > responsibility to add tags.
-> >=20
-> > I had Conor's ack in my mind but his response was related to the
-> > squashed patch (a1 compatible + power domains) and the current patch was
-> > a bit different that's why I didn't dare to add the ack.
-> >=20
-> > Conor, do you mind if I resend this patch (and may be [PATCH v4 1/3])
-> > with your ack?
->=20
-> Ye, both are fine :+1:
+On Sun 2024-09-08 10:51:14, zhang warden wrote:
+> 
+> Hi, Petr
+> > 
+> > The 1st patch adds the pointer to struct klp_ops into struct
+> > klp_func. We might check the state a similar way as klp_ftrace_handler().
+> > 
+> > I had something like this in mind when I suggested to move the pointer:
+> > 
+> > static ssize_t using_show(struct kobject *kobj,
+> > struct kobj_attribute *attr, char *buf)
+> > {
+> > struct klp_func *func, *using_func;
+> > struct klp_ops *ops;
+> > int using;
+> > 
+> > func = container_of(kobj, struct klp_func, kobj);
+> > 
+> > rcu_read_lock();
+> > 
+> > if (func->transition) {
+> > using = -1;
+> > goto out;
+> > }
+> > 
+> > # FIXME: This requires releasing struct klp_ops via call_rcu()
 
-I interpreted that as an ack for patches 1 and 2 and applied these to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-=2E I guess that interpretation is fine, please tell me if not.
+This would require adding "struct rcu_head" into "struct klp_ops",
+like:
 
-Best regards
-Uwe
+struct klp_ops {
+	struct list_head func_stack;
+	struct ftrace_ops fops;
+	struct rcu_head rcu;
+};
 
---rkd4jonklnzz2ghs
-Content-Type: application/pgp-signature; name="signature.asc"
+and then freeing the structure using kfree_rcu():
 
------BEGIN PGP SIGNATURE-----
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 90408500e5a3..f096dd9390d2 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -149,7 +149,7 @@ static void klp_unpatch_func(struct klp_func *func)
+ 
+ 		list_del_rcu(&func->stack_node);
+ 		list_del(&ops->node);
+-		kfree(ops);
++		kfree_rcu(ops, rcu);
+ 	} else {
+ 		list_del_rcu(&func->stack_node);
+ 	}
+@@ -223,7 +223,7 @@ static int klp_patch_func(struct klp_func *func)
+ err:
+ 	list_del_rcu(&func->stack_node);
+ 	list_del(&ops->node);
+-	kfree(ops);
++	kfree_rcu(ops, rcu);
+ 	return ret;
+ }
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbf/OAACgkQj4D7WH0S
-/k7u8wgAh+MoDvk6VmcbZhv3CNsVOKqhoT+xIzvJgiBbhHlANMT/TSxuBhwe7un+
-YHK3prRMH8wJsJoD0CqAVKt7O34BIAQiG7uQxbJ8LLVIGTgCjIZGiOibvb9jc0q4
-yzLjuXJGP3hkonekvncYTNgLM+U8FNP5t6ZjXR9BrB6a556c6Zx5go4JC0EE+wG7
-BE2uNduWzkSzmvpUE78R+PftaDr9iCuPjIereXhlVXYXLxL6wrDZLxFRtyOD/bP4
-AKX4Wuf2rq6TPy+5XfGFjSQtMVp0W/5hSTZYRS9v9af1dAPe213qY1DDCOL0rZp1
-lwGevELL5nVRIgso7w0Dr9q5kj9/YA==
-=kVzG
------END PGP SIGNATURE-----
+With this the function should be safe against accessing an invalid
+pointer.
 
---rkd4jonklnzz2ghs--
+> > ops = func->ops;
+> > if (!ops) {
+> > using = 0;
+> > goto out;
+> > }
+> > 
+> > using_func = list_first_or_null_rcu(&ops->func_stack,
+> > struct klp_func, stack_node);
+> > if (func == using_func)
+> > using = 1;
+> > else
+> > using = 0;
+> > 
+> > out:
+> > rcu_read_unlock();
+> > 
+> > return sysfs_emit(buf, "%d\n", func->using);
+> > }
+
+But the function is still not correct according the order of reading.
+A more correct solution would be something like:
+
+static ssize_t using_show(struct kobject *kobj,
+				struct kobj_attribute *attr, char *buf)
+{
+	struct klp_func *func, *using_func;
+	struct klp_ops *ops;
+	int using;
+
+	func = container_of(kobj, struct klp_func, kobj);
+
+	rcu_read_lock();
+
+	/* This livepatch is used when the function is on top of the stack. */
+	ops = func->ops;
+	if (ops) {
+		using_func = list_first_or_null_rcu(&ops->func_stack,
+						struct klp_func, stack_node);
+		if (func == using_func)
+			using = 1;
+		else
+			using = 0;
+	}
+
+	/*
+	 * The function stack gives the right information only when there
+	 * is no transition in progress.
+	 *
+	 * Make sure that we see the updated ops->func_stack when
+	 * func->transition is cleared. This matches with:
+	 *
+	 * The write barrier in  __klp_enable_patch() between
+	 * klp_init_transition() and klp_patch_object().
+	 *
+	 * The write barrier in  __klp_disable_patch() between
+	 * klp_init_transition() and klp_start_transition().
+	 *
+	 * The write barrier in klp_complete_transition()
+	 * between klp_unpatch_objects() and func->transition = false.
+	 */
+	smp_rmb();
+
+	if (func->transition)
+		using = -1;
+
+	rcu_read_unlock();
+
+	return sysfs_emit(buf, "%d\n", func->using);
+}
+
+Now, the question is whether we want to maintain such a barrier. Any
+lockless access and barrier adds a maintenance burden.
+
+You might try to put the above into a patch see what others tell
+about it.
+
+Best Regards,
+Petr
 
