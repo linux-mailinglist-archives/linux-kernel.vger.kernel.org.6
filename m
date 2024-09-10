@@ -1,152 +1,199 @@
-Return-Path: <linux-kernel+bounces-323829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12A79743EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BE09743F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE611C255BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8931F2712D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3601A7076;
-	Tue, 10 Sep 2024 20:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743717CA1B;
+	Tue, 10 Sep 2024 20:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="qOu+N3eJ"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEoSdl4S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CFB1A2574
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF2D566A;
+	Tue, 10 Sep 2024 20:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725999291; cv=none; b=YeBqLYsNgMoHSdPXxcyoNufH5KEFL+U+rfnJnkaw1aDSEir648ioYTuy5+cZOXvF7kq3Vyy24YSLWRj0kVfR6dmBuKu+96+8jCRNQ+y1mQGUUU8ibVDBaWJQulsYuYS4sSMNvsFOWbMBTWHrTtF6GjawxOmFeFJazyAe9CF7v60=
+	t=1725999386; cv=none; b=e4m4gjCP89YEHyG2CQRk6ImlG5TzF0GVqmD+ozYiwgofaffWEWRS+j0dYAZykTrJ0XOX/+g7QDnlj7tdLzW3kmRht6sVGiENnmcEkKkYf+xbu97U4iI57CMtRvg4U0qyI8GcERh4AOue0Zz9kAL3pT2GSvPojL9pjN7URaPISpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725999291; c=relaxed/simple;
-	bh=uLqkbtaF/lYOCg5L7+7mzBordSwyiyem7pG6ozNXv6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OgY77UnCeJolBd6PtWcOf9dkewCPskQ00yiPnUBsS3fGgTN2aV5o3sYPz/O02pg6b6+KospryYi//GCk17TbgJHYuJMWszP/bBp0QA+fOUd9as8Ka7BAN35p1P2G/RHraHV0vbNpIqoyBg8ft6lv7p/Zy7tUlSSFLKKX4gLrUJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=qOu+N3eJ; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso582438766b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1725999287; x=1726604087; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=re/RvoGbxwdzYBSMy04B2Az3HNgONOU/qvSCSe57sDc=;
-        b=qOu+N3eJTxVHbmcOMlTab09ztE/iX3G95RqCy1Xi8dZUEIJmaGGIC2i9RZ1qbNP1tl
-         oNxZp4Qt+TrNJ2r9RR2Z19/qAaOQZwRwAkUGxLfiSV1jty3s1d61Ztb/LSNZs81bNPE8
-         rM0HzQNyy5rG/BFxWRcnrgn53svZejmvKYxCJmhtbxbA5cr/uFTAN17GX60i1hVahzPY
-         KScIGmv/d4vnLUW/qMQeandTkJn5mJ3OMaxXx4v33Nfud4OUq7YQZOSSFeDkKDvcbzEI
-         NpfjHYIhjaO+RWGozZh9N6phVAgEXvzt9iyrWBiN69vz6lXgKjrriyKdsZPyu5TCkZji
-         4Rlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725999287; x=1726604087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=re/RvoGbxwdzYBSMy04B2Az3HNgONOU/qvSCSe57sDc=;
-        b=WPd/MsXdF1uCkXgHxnSEFko2IHscIxbfw7FVCwsyHCc74+8ehcIhFyjQdTpmm+31HA
-         o3smZ3vRzX/upFKzkMyJySs5pBLQ/d2AuQqgc21ExnN7dy/6mTwBqv5vzvk62HhKE8i1
-         p4XMegCROurNKXe5S08MmzjBAqiV6P07iXFtvRsk1zgxvzJiLRFp7Tqxd4Al69m/HQIO
-         NMUHsW/PG8YtGBYWgXyNCs0yl3wBf2Tknlz681sQvJNKKSlU2C/NgxlMdcu/TUqWej4Z
-         gujR8gTe3bOZ9rhw4tiYMHi3TaeKgw4VtrNeogDZcXH7A5oUGXuNM4eq6p9hWv8tf2cg
-         Ms/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWJfElvVS1cREc60gR98HJl+/+5mK+OX70UCNE8GRpk6b5hun89VpyeDQ0BN66JdFxAt0uRZ35y45i9OVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXcGiILIps4W+IDKYb8TtkaeVmKHIBvN7J7QIlBKp0ypWttd+4
-	OyY2eb0Q+qIVWKj0fMeIU4lMPT5qbHeexLe8yDJmJVfSlu1hh0vO2+u4RGNKXpw+hhpSWj+3au7
-	4O+7A1UTen5/lo5c9Tbpgu9cxvJjQ+7yUtQ/+rQ==
-X-Google-Smtp-Source: AGHT+IFSy3754qdsgn+YFAz1meLOVeKD2q6UuOoxvRh0g802fr0oiEfcIphQGK8utwSUQpeBElrdfh5jrqHgOaz8vc0=
-X-Received: by 2002:a17:907:94d5:b0:a8d:3705:4101 with SMTP id
- a640c23a62f3a-a8ffab78b54mr175294266b.39.1725999286224; Tue, 10 Sep 2024
- 13:14:46 -0700 (PDT)
+	s=arc-20240116; t=1725999386; c=relaxed/simple;
+	bh=HJYKcbje20h/WDUJRQJAyfWugUsdTUiUzb7xkzJpOL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L19sVnUtN9AzEZ0kFWoWxJl17HTUoOA0wPwmC37xqAhs4VFDLGojSjHrHEmlf0+NGZv0R1wlbIKk/kscnTmYvJLruEMAEny4qedY00lbsbtfvGHO+eDz9U9AG7OjQxto4MCUt+B4j/HkZR5TBR4A41PXoJK4FhJ/Zswcw+krgJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEoSdl4S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6506C4CEC3;
+	Tue, 10 Sep 2024 20:16:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725999385;
+	bh=HJYKcbje20h/WDUJRQJAyfWugUsdTUiUzb7xkzJpOL8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UEoSdl4SgKUVcPgxQMv7y6264JIMhvyy35scTQwfs4CQMRmxFffZaltYEPLGWBwcB
+	 QFvyj4cxTR0+gPX7XLlaj2MaFTpKPBZsa0NiFG/LGSJyPozCJNUzu4dgqbwihB4pBh
+	 5wjWsBOI1oR0pImu66JZlnMpkfTvZlDb53lD5IUhdUXyChbhWRBaNbGPgCmcg54TM1
+	 8aTGI4kttydl499NhLZFRosgcPdTBNmGaYBL+VoTLLTTZp6TymEaJSeZ0zOa6U5cWf
+	 wtOUG706dDOfteGwi4MHCg14vi1vbEhS4ZCcLtwEoZXipGy3MeF08Zg3h4km0YLQwf
+	 Ci2FwDYfu7G6g==
+Date: Tue, 10 Sep 2024 21:16:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Aishwarya.TCV@arm.com
+Subject: Re: [tip: locking/urgent] jump_label: Fix static_key_slow_dec() yet
+ again
+Message-ID: <fefd460f-ae33-44cc-9143-d1de4ab64b35@sirena.org.uk>
+References: <875xsc4ehr.ffs@tglx>
+ <172563367463.2215.5542972042769938731.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909215359.780561-1-tharvey@gateworks.com> <ef218f6b-7c24-41f2-a3a3-fcd97c29886d@kontron.de>
-In-Reply-To: <ef218f6b-7c24-41f2-a3a3-fcd97c29886d@kontron.de>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Tue, 10 Sep 2024 13:14:34 -0700
-Message-ID: <CAJ+vNU0zZMcg3fFqZinx5cs0WGV4LGVByj=XEqn3mGt-Qa=xrg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mp-venice*: enable NPU support
-To: Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NYw/P0L4bhK7Sn5+"
+Content-Disposition: inline
+In-Reply-To: <172563367463.2215.5542972042769938731.tip-bot2@tip-bot2>
+X-Cookie: Not every question deserves an answer.
+
+
+--NYw/P0L4bhK7Sn5+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 11:50=E2=80=AFPM Frieder Schrempf
-<frieder.schrempf@kontron.de> wrote:
->
-> Hi Tim,
->
-> On 09.09.24 11:53 PM, Tim Harvey wrote:
-> > The IMX8MP has a VeriSilicon (Vivante VIP8000) NPU which
-> > is supported by the etnaviv driver. Enable it.
-> >
-> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi | 4 ++++
-> >  arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts  | 4 ++++
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi b/=
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-> > index 6c75a5ecf56b..f0211a96855b 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
-> > @@ -393,6 +393,10 @@ &i2c3 {
-> >       status =3D "okay";
-> >  };
-> >
-> > +&npu {
-> > +     status =3D "okay";
-> > +};
-> > +
-> >  /* off-board header */
-> >  &uart1 {
-> >       pinctrl-names =3D "default";
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts b/a=
-rch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-> > index 9885948952b4..8a04b66a4afc 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
-> > @@ -666,6 +666,10 @@ &i2c4 {
-> >       status =3D "okay";
-> >  };
-> >
-> > +&npu {
-> > +     status =3D "okay";
-> > +};
-> > +
-> >  &pcie_phy {
-> >       fsl,refclk-pad-mode =3D <IMX8_PCIE_REFCLK_PAD_INPUT>;
-> >       fsl,clkreq-unsupported;
->
-> I think there is no need for this patch as the NPU is already enabled by
-> default in imx8mp.dtsi (same as the GPUs). Or do you disable it in some
-> intermediate devicetree include file?
->
+On Fri, Sep 06, 2024 at 02:41:14PM -0000, tip-bot2 for Peter Zijlstra wrote:
 
-Frieder,
+> The following commit has been merged into the locking/urgent branch of ti=
+p:
 
-Thanks for pointing this out... you are correct. I'm not sure why I
-thought it needed to be explicitly enabled.
+> jump_label: Fix static_key_slow_dec() yet again
+>=20
+> While commit 83ab38ef0a0b ("jump_label: Fix concurrency issues in
+> static_key_slow_dec()") fixed one problem, it created yet another,
+> notably the following is now possible:
 
-Please ignore this patch.
+This patch, which is now in -next appears to have caused the KVM unit
+tests to start exploding badly on some arm64 systems (at least N1SDP and
+Cavium TX2).  I've bisected the issue, but not analyzed it at all beyond
+noting that the commit looks relevant to the failure.  None of the other
+tests we run on these platforms seem to trigger the issue.
 
-Best Regards,
+Before producing any output the tests trigger a warning:
 
-Tim
+<4>[   17.303495] ------------[ cut here ]------------
+<4>[   17.308364] WARNING: CPU: 1 PID: 279 at kernel/jump_label.c:266 stati=
+c_key_dec+0x68/0x74
+<4>[   17.316706] Modules linked in: crct10dif_ce arm_spe_pmu coresight_rep=
+licator coresight_funnel coresight_tmc coresight_stm stm_core coresight_tpi=
+u arm_cmn coresight cfg80211 rfkill fuse dm_mod ip_tables x_tables ipv6
+<4>[   17.336080] CPU: 1 UID: 0 PID: 279 Comm: qemu-system-aar Not tainted =
+6.11.0-rc7-00006-g3a0c7230588b #10
+<4>[   17.345719] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTY=
+PE=3D--)
+<4>[   17.352927] pc : static_key_dec+0x68/0x74
+<4>[   17.357183] lr : __static_key_slow_dec_cpuslocked+0x24/0x84
+<4>[   17.363003] sp : ffff800083c8ba80
+
+=2E...
+
+<4>[   17.440381] Call trace:
+<4>[   17.443074]  static_key_dec+0x68/0x74
+<4>[   17.446984]  static_key_slow_dec+0x2c/0x80
+<4>[   17.451327]  preempt_notifier_dec+0x18/0x24
+<4>[   17.455759]  kvm_destroy_vm+0x208/0x2b0
+<4>[   17.459845]  kvm_vm_release+0x80/0xb0
+<4>[   17.463754]  __fput+0xcc/0x2d4
+<4>[   17.467057]  ____fput+0x10/0x1c
+<4>[   17.470446]  task_work_run+0x78/0xd4
+<4>[   17.474268]  do_exit+0x2c8/0x90c
+
+then the test times out and all the remaining cores splat on:
+
+4>[   18.067930] registering preempt_notifier while notifiers disabled
+<4>[   18.067935] WARNING: CPU: 2 PID: 470 at kernel/sched/core.c:4729 pree=
+mpt_notifier_register+0x24/0x58
+
+The bisect seems to converge fairly smoothly:
+
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [6708132e80a2ced620bde9b9c36e426183544a23] Add linux-next specific f=
+iles for 20240910
+git bisect bad 6708132e80a2ced620bde9b9c36e426183544a23
+# status: waiting for good commit(s), bad commit known
+# good: [028ac237a57e1bcb07c7130b11527c0e025e4bef] Merge branch 'for-linux-=
+next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+git bisect good 028ac237a57e1bcb07c7130b11527c0e025e4bef
+# good: [b66d58fce82c825b3dbb57a46b9a74f081ef7ec7] Merge branch 'main' of g=
+it://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect good b66d58fce82c825b3dbb57a46b9a74f081ef7ec7
+# good: [a636a90415dbc59f005369e3053996f859f0af50] Merge branch 'for-next' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
+git bisect good a636a90415dbc59f005369e3053996f859f0af50
+# bad: [8e5ac35ddecbeddce79e915c226baaf577a2be6e] Merge branch 'driver-core=
+-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.=
+git
+git bisect bad 8e5ac35ddecbeddce79e915c226baaf577a2be6e
+# bad: [1bcadc80ec6a46fb7193999935aaa299b4916569] Merge branch 'master' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+git bisect bad 1bcadc80ec6a46fb7193999935aaa299b4916569
+# good: [c2d0e416bdd9c83db3c9bb1f19433d5ba34e18c2] Merge branch 'for-next' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+git bisect good c2d0e416bdd9c83db3c9bb1f19433d5ba34e18c2
+# bad: [723da3b00882e1d13038fc48ba2602af9de4dd2e] Merge branch into tip/mas=
+ter: 'locking/core'
+git bisect bad 723da3b00882e1d13038fc48ba2602af9de4dd2e
+# bad: [a70a5c33a65ee54048e4ae479e3479d765a1bbc2] Merge branch into tip/mas=
+ter: 'core/core'
+git bisect bad a70a5c33a65ee54048e4ae479e3479d765a1bbc2
+# good: [85e511df3cec46021024176672a748008ed135bf] sched/eevdf: Allow short=
+er slices to wakeup-preempt
+git bisect good 85e511df3cec46021024176672a748008ed135bf
+# good: [20f13385b5836d00d64698748565fc6d3ce9b419] posix-timers: Consolidat=
+e timer setup
+git bisect good 20f13385b5836d00d64698748565fc6d3ce9b419
+# good: [42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7] timekeeping: Use time_af=
+ter() in timekeeping_check_update()
+git bisect good 42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7
+# bad: [3a0c7230588b40caf1d81270ceaa3aa5c0355bc0] Merge branch into tip/mas=
+ter: 'perf/urgent'
+git bisect bad 3a0c7230588b40caf1d81270ceaa3aa5c0355bc0
+# bad: [de752774f38bb766941ed1bf910ba5a9f6cc6bf7] jump_label: Fix static_ke=
+y_slow_dec() yet again
+git bisect bad de752774f38bb766941ed1bf910ba5a9f6cc6bf7
+# good: [fe513c2ef0a172a58f158e2e70465c4317f0a9a2] static_call: Replace poi=
+ntless WARN_ON() in static_call_module_notify()
+git bisect good fe513c2ef0a172a58f158e2e70465c4317f0a9a2
+# first bad commit: [de752774f38bb766941ed1bf910ba5a9f6cc6bf7] jump_label: =
+Fix static_key_slow_dec() yet again
+
+--NYw/P0L4bhK7Sn5+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgqRMACgkQJNaLcl1U
+h9CaoAf/WEHszCEtu0E/ZLuteJCN/8fHtjcQYf85VbcmRn4ar2Tx/s0lQycNbup+
+vYz/MmdyatYIOkepv6Bog0K9z0vCYNgTssvide+cfoNBwz8wB9/c4+HaUFhznNoH
+XO9Tx/ImFpMEefF3lv3QwVKyGAZHzjsGaN/wMm9HktMnSW9VkW6QcbwuG04Aq2mP
+jBk1Mh0PZ5jl0aE2cS1+Z/l8UiUY5q8XSiuUoD8qdb4U9iOG/K24ZFIFVusfm5b5
+/HyxU4+bSybwLxz61+MOB+r8yJYgKnToEwbXt2nu2lQikns9WHDAWjGBTnbnxvhX
+uVKTIB3QrlzkMDiEwhWIVD41mKLecw==
+=6Vrc
+-----END PGP SIGNATURE-----
+
+--NYw/P0L4bhK7Sn5+--
 
