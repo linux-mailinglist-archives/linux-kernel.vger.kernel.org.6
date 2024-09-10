@@ -1,185 +1,166 @@
-Return-Path: <linux-kernel+bounces-322441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D7297290B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B3397290F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21334285350
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A2E2855B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DE116F0DC;
-	Tue, 10 Sep 2024 05:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XR0Ahpgr"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E0717332B;
+	Tue, 10 Sep 2024 05:55:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C0BBA42;
-	Tue, 10 Sep 2024 05:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F8B16BE23
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725947718; cv=none; b=uWjbViT0hW/IaCXYkoRvXJu4uEwxejXAz1qu51Zxr2tPs3aYpu8L0COXKTKPtPBFg1DSp0yVeo90Afou/yGDXzhW8PmxeXvNFhxFz0nwYtYUqRhQa02Zg/TQSw6ecQJuXzQI7KosqR4ym5HQNk9hKrNG1m5LfziwP/JC33WWnyY=
+	t=1725947755; cv=none; b=E/jwvyrJg6IB09HOJGdOpQcwUhcrekglSwpfq/HvKLqLSGjjEc/i3pAAMpVLYA5gv/aAc31NxZCUHLdrZ/4KmG5AqAzd+PAWWa1b9T5Bopez6zWDLjDdJk8HayTGG9VG+oiahRxK3ioPCJFCXX7fTGA4vrgAMzuihefI1ZuZOXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725947718; c=relaxed/simple;
-	bh=jCMOo32aAOxhSAoezhGNiFwU189v3QtxX0IEdyDCFu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9DP1zY08w5fDL036pqdX7qXHtA+ebnbxiPwnx3UXBC4A9xaNkCV7i0xBvxub3OPhosVe0iVF0cwZ2mBqYglMhWp6oODudaZqyYo+ZeJM/zSe9h3DrE7tGiltSlAFbEnZwGsDp8ahaCx0DoID2r4C6fYe4LAt8BdE8eZBopGCVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XR0Ahpgr; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1725947707; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Q0yviRGBPKBitFi3hppGbYn4wyovmBxnZN0o6fY+fTo=;
-	b=XR0AhpgrPGx+V5N9odCp8VPNAGsnAdtUj3PhGllWurwvFAQ8nUn1BHt70F/ddcfaAWe6lVgWNqTWnHGfbJuSD0bss4SgmRcochoFQ6xzHfBOqLbNyd9a9VOoXcwWCFmUdWQ5N4l2yciWEZLQBKtWzIN1XH1oVhDmF4QRex/nbOw=
-Received: from 30.221.149.60(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WEj560t_1725947705)
-          by smtp.aliyun-inc.com;
-          Tue, 10 Sep 2024 13:55:06 +0800
-Message-ID: <02634384-2468-4598-b64a-0f558730c925@linux.alibaba.com>
-Date: Tue, 10 Sep 2024 13:55:05 +0800
+	s=arc-20240116; t=1725947755; c=relaxed/simple;
+	bh=Ho4ZzCdLVym7iH2NjL0Cr3mj1YvTC1wvKFr2o0rQ0Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQDQv4WcAqijXeACqK5B81xzI31jc/chMp9R+Hb6AYw+6fpyvoE1Br1GbFScVdxcMddMpzdz/Z1b2jeIp5Yo6aYzeo/PGNrDalxUy44pmPgTdhoNARo9xZw0Z6gvWa+pdGjcd9MADu3nfcF5UeshBLaB9ov9OxicxOHF6PulGOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sntqv-0007am-IB; Tue, 10 Sep 2024 07:55:49 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sntqu-006pDf-Gj; Tue, 10 Sep 2024 07:55:48 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sntqu-00HW9M-1L;
+	Tue, 10 Sep 2024 07:55:48 +0200
+Date: Tue, 10 Sep 2024 07:55:48 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"francesco@dolcini.it" <francesco@dolcini.it>,
+	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+ different channel
+Message-ID: <Zt_fZEJyiCyanf7X@pengutronix.de>
+References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
+ <ZtWHhSQlPVMekW1I@pengutronix.de>
+ <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt9blTxk88Opujsk@pengutronix.de>
+ <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Eric Dumazet <edumazet@google.com>,
- syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>,
- Dust Li <dust.li@linux.alibaba.com>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-References: <0000000000000311430620013217@google.com>
- <0000000000005d1b320621973380@google.com>
- <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
- <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+On Tue, Sep 10, 2024 at 01:55:14AM +0000, David Lin wrote:
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Tuesday, September 10, 2024 4:33 AM
+> > To: David Lin <yu-hao.lin@nxp.com>
+> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
+> > Hsieh <tsung-hsien.hsieh@nxp.com>
+> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+> > different channel
+> > 
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> > 
+> > 
+> > On Mon, Sep 02, 2024 at 10:35:01AM +0000, David Lin wrote:
+> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > Sent: Monday, September 2, 2024 5:38 PM
+> > > > To: David Lin <yu-hao.lin@nxp.com>
+> > > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
+> > > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+> > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
+> > > > running on different channel
+> > > >
+> > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
+> > > > > Current firmware doesn't support AP and STA running on different
+> > > > > channels simultaneously.
+> > > >
+> > > > As mentioned here:
+> > > >
+> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flo
+> > > >
+> > re.kern%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C7712df39ac37414fd
+> > a7
+> > > >
+> > e08dcd10eac35%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
+> > 15108
+> > > >
+> > 157502805%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
+> > 2luMz
+> > > >
+> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=URNJPJE17iRY
+> > Tu4i
+> > > > rx7eQAC97tE5OE6a4kUfjUwuaVU%3D&reserved=0
+> > > >
+> > el.org%2Fall%2FZtGnWC7SPHt7Vbbp%40pengutronix.de%2F&data=05%7C02%
+> > > >
+> > 7Cyu-hao.lin%40nxp.com%7Cce9b7d4e417c41113c7d08dccb32fc49%7C686ea
+> > > >
+> > 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638608667089710854%7CUnkn
+> > > >
+> > own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1h
+> > > >
+> > aWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=nMZO565xCUO%2BwxD4tIfi
+> > > > w6cGyYrinaEsi7XLfqyxgXg%3D&reserved=0
+> > > >
+> > > > AP and STA can indeed have different channels when DRCS is enabled,
+> > > > so I think you have to check this in your patch.
+> > > >
+> > > > Maybe the same question here again: Wouldn't it make sense to enable
+> > > > DRCS by default?
+> > > >
+> > > > Sascha
+> > > >
+> > >
+> > > I will look into DRCS support later after current tasks on hand.
+> > > This patch is a quick fix to avoid firmware crash in the specific scenario.
+> > 
+> > With DRCS support enabled AP and STA actually can run on different channels
+> > with the current code. You are breaking this scenario with this patch.
+> > 
+> > Sascha
+> > 
+> 
+> DRCS will be checked in the future.
 
+By future you mean v3 of this patch?
 
-On 9/9/24 7:44 PM, Wenjia Zhang wrote:
->
->
-> On 09.09.24 10:02, Eric Dumazet wrote:
->> On Sun, Sep 8, 2024 at 10:12 AM syzbot
->> <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
->>>
->>> syzbot has found a reproducer for the following issue on:
->>>
->>> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into 
->>> for-kernelci
->>> git tree: 
->>> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git 
->>> for-kernelci
->>> console output: 
->>> https://syzkaller.appspot.com/x/log.txt?x=12bdabc7980000
->>> kernel config: 
->>> https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
->>> dashboard link: 
->>> https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
->>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils 
->>> for Debian) 2.40
->>> userspace arch: arm64
->>> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=1798589f980000
->>> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=10a30e00580000
->>>
->>> Downloadable assets:
->>> disk image: 
->>> https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
->>> vmlinux: 
->>> https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
->>> kernel image: 
->>> https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the 
->>> commit:
->>> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
->>>
->>> ======================================================
->>> WARNING: possible circular locking dependency detected
->>> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
->>> ------------------------------------------------------
->>> syz-executor272/6388 is trying to acquire lock:
->>> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c 
->>> net/core/rtnetlink.c:79
->>>
->>> but task is already holding lock:
->>> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: 
->>> smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
->>>
->>> which lock already depends on the new lock.
->>>
+Sascha
 
-I have noticed this issue for a while, but I question the possibility of 
-it. If I understand correctly, a deadlock issue following is reported here:
-
-#2
-lock_sock_smc
-{
-     clcsock_release_lock            --- deadlock
-     {
-
-     }
-}
-
-#1
-rtnl_mutex
-{
-     lock_sock_smc
-     {
-
-     }
-}
-
-#0
-clcsock_release_lock
-{
-     rtnl_mutex                      --deadlock
-     {
-
-     }
-}
-
-This is of course a deadlock, but #1 is suspicious.
-
-How would this happen to a smc sock?
-
-#1 ->
-        lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
-        lock_sock include/net/sock.h:1607 [inline]
-        sockopt_lock_sock net/core/sock.c:1061 [inline]
-        sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
-        do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
-        ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
-        raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
-        sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
-        do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
-
-As a comparison, the correct calling chain should be:
-
-        sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
-        smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
-        do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
-
-
-That's to say,  any setting on SOL_IP options of smc_sock will
-go with smc_setsockopt, which will try lock clcsock_release_lock at first.
-
-Anyway, if anyone can explain #1, then we can see how to solve this problem,
-otherwise I think this problem doesn't exist. (Just my opinion)
-
-Best wishes,
-D. Wythe
-
-
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
