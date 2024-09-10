@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-322697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C02972C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D996F972C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F251B2328B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DA12879D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7E518787C;
-	Tue, 10 Sep 2024 08:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7894B18785F;
+	Tue, 10 Sep 2024 08:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fVHXZSPS"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2r0+MNe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A3817DFFD
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEECC17DFFD;
+	Tue, 10 Sep 2024 08:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958071; cv=none; b=AwdEstNx7Xwn5P6R1y1KnxRH/eksL0xCwyaE8qlH5IUL6himVlUq57PMUXRVBF51NV1ej7xdZPY8VM4Q4WfQvi8fqDhCuD4BTFu4qJQXzyX/FKr8Cg+RlKJ68s6a2FYlSScrzbLz2cOcZZhrVuNdhiW6hEaFJ9HG5L//VDyQx+Q=
+	t=1725958089; cv=none; b=jI3Oe33fFrwlqfTMY81Dic4/NJjb9sEK1rqHjYEmyoPRbFAwxSVOmh0A9LbY8fei7E7uEkC9A7W/VKLf4Iu2NZUlMyCRjyN+NvJ3EH47kZuo2eVsM2klsDI9fS/ckdoGbKtHGvhDPp/TabGWYlG6B2eIcWfD0OPsuK+2nZCT7t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958071; c=relaxed/simple;
-	bh=jHA0jeu39KXliSARGIHnAxhwXIadsXhXT0Q+hrmmgng=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JNGh4lIpxFvHfbNzMBdvkYtwLMUde+2ej3Numpr73o51j50Hb88aZimdPZJQHhCaLNf99IOnrGwUO1BFxzGa4pFQrb01BDUmCh923NivquiBvtszIBCs/dhF51GejfjsSeBKSTaS1nlrUsGtjXbgSwkCXOJ7QJxMQP2zfwW5kyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fVHXZSPS; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39d47a9ffd5so1769665ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725958069; x=1726562869; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBBzknlK+lLnrfwKbcqJfsrQ3C2pRWbeBhTXiYHvZyE=;
-        b=fVHXZSPSFhKYYe3gtyoThElvELUXlaX1nQkqHGOVXkACrwR4sguPB8nX7bkFrZ1bwI
-         a0/2NTx+8zHAwiKS4IPzWLrXklKTSn1f4ShhXq6kLnULbimH5X+ms8tUOWiCBTt/t1W5
-         BPlXCDgN6ppwi0z2R/jaPC/9MgUEBmE+I6TyM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725958069; x=1726562869;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cBBzknlK+lLnrfwKbcqJfsrQ3C2pRWbeBhTXiYHvZyE=;
-        b=kl8XfJnzNi5TaPVBv9LWeNGESvZsJA5Up6Hl53RBXVcO5bbCmGcxXaJXXXoWhu9MH3
-         4vTTNv+6gqiQHRCV/mrkdzqkULFWZx8uGa3YSGeubZ2TWcmV5X2LA1f9EReFzxe/QFwP
-         67uN3tzYGYsOlu2lcRCeKJNAAXtohnHYUN9eAppZP2CVXX7BAZoFspL4CHgJqpCqsB8C
-         qBUVMmXQvABjgel3f4maPuxhZpyazpE0ERExealIp4hoa70GeLXZo4t5x1qyeEOFUt3n
-         r3MqThHnI5O1qIlCQKe77ISU69qQBej/w1du61g1jYi/nAFzDrfPRQ9iRwh8MuPQDZf9
-         M9kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhELFufrGw5REL9h6Ud5M7LLS8GiZjxe6WqgejX3ju219kQBmFgwb5Zz8RcpKdRX+X8GaBvCHarqU5nIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXYyangCnMbOIKCdCbx+vdPVpnPeffnPB5Yr/sUYEuMKi7mUGp
-	7dSHLGSYc9T8onUPYpJCFoR3kqalFw2HoksDZwKybGtK/Li0BBdGnvJSRpDbAQ==
-X-Google-Smtp-Source: AGHT+IFOVFWWzyNSgsRLILhNfgn8ya/XNChSnkapjK3BwdkIfk05bwfwygl28fTApbbAe6jPdsd0hQ==
-X-Received: by 2002:a05:6e02:1d82:b0:3a0:4603:70df with SMTP id e9e14a558f8ab-3a04f07e7d9mr156667075ab.7.1725958068990;
-        Tue, 10 Sep 2024 01:47:48 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (30.191.80.34.bc.googleusercontent.com. [34.80.191.30])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8b0fbffa0sm3931470a12.1.2024.09.10.01.47.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:47:48 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 10 Sep 2024 08:47:44 +0000
-Subject: [PATCH v2] arm64: dts: mt8183: set DMIC one-wire mode on Damu
+	s=arc-20240116; t=1725958089; c=relaxed/simple;
+	bh=noGUHiHs9Zgm+97JzXrmCR7Pe+55n1E+td0QbsIhGos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N/WEDpFOMXSA4Id00t6Ig670WN1+zHLXboV0kxiqoSDWmjyneUiR+rl6849f+ldVIrCddqUh80oJJwLwlRiSORJJfM38IDUrQy1KZlFzPwDXfLgxkQH6GbVDcRgHtErnIe1FTEOExWoVg4atLGM/8UQekKcmCnjSuY9JFzb/IJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2r0+MNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D0BEC4CEC3;
+	Tue, 10 Sep 2024 08:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725958089;
+	bh=noGUHiHs9Zgm+97JzXrmCR7Pe+55n1E+td0QbsIhGos=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m2r0+MNeB2u9StkmzgwwW/TCbugtRSVWg3UcYjI6B0svQIl7eBYZCj/mf2xTuIdBB
+	 TGTVn/fgu6xJuyt9a2oJpatsxeNIiPm1/4WV03U2Sh0qBRp7Fxwnr0akkah7A9hCfR
+	 p1POAOYSCG/NciqVHR5XZJEZrQDDOPRqDVdHZKjvqilVpWQhQuYL+0Twp4TJwG1Vtb
+	 cXuS/oLZP9ZLm2bdBwl/EByEva/bIYZgV0YWDH6p+rj0RbwnBlt7yd1UxIQP51N7MH
+	 BxxrMjeNkXQspjQJBGweadLGHAQcZFBmjmNzMYr25wIKiaiwLuStl27k024YW4cuA1
+	 cKyV2I3C8DLAQ==
+Message-ID: <e34bc47d-aada-4bf8-ac29-d3462f351f20@kernel.org>
+Date: Tue, 10 Sep 2024 10:48:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: cpumap: Move xdp:xdp_cpumap_kthread
+ tracepoint before rcv
+To: Daniel Xu <dxu@dxuuu.xyz>, davem@davemloft.net, ast@kernel.org,
+ kuba@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, lorenzo@kernel.org,
+ aleksander.lobakin@intel.com, kernel-team@meta.com
+References: <47615d5b5e302e4bd30220473779e98b492d47cd.1725585718.git.dxu@dxuuu.xyz>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <47615d5b5e302e4bd30220473779e98b492d47cd.1725585718.git.dxu@dxuuu.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAK8H4GYC/23MQQ7CIBCF4as0sxYDWLG68h6mCwrTMosWMyhqG
- u4udu3yf3n5VkjIhAkuzQqMmRLFpYbeNeCCXSYU5GuDlrqVZyVFXFC8iFFoL8eTUgfvugHq/c4
- 40nujbn3tQOkR+bPJWf3WP0hWQgmvj21nrBms8VcXOM70nPeRJ+hLKV+4ODgSowAAAA==
-X-Change-ID: 20240910-one-wire-2d0f7113dc8b
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
 
-From: Hsin-Yi Wang <hsinyi@chromium.org>
 
-Sets DMIC one-wire mode on Damu.
 
-Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-Changes in v2:
-- Add fixes tag 
-- Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
----
- arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On 06/09/2024 03.22, Daniel Xu wrote:
+> cpumap takes RX processing out of softirq and onto a separate kthread.
+> Since the kthread needs to be scheduled in order to run (versus softirq
+> which does not), we can theoretically experience extra latency if the
+> system is under load and the scheduler is being unfair to us.
+> 
+> Moving the tracepoint to before passing the skb list up the stack allows
+> users to more accurately measure enqueue/dequeue latency introduced by
+> cpumap via xdp:xdp_cpumap_enqueue and xdp:xdp_cpumap_kthread tracepoints.
+> 
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-index 0b45aee2e29953b6117b462034a00dff2596b9ff..06a689feff52945d141d196d439cba034f25fdf6 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-@@ -26,6 +26,10 @@ &touchscreen {
- 	hid-descr-addr = <0x0001>;
- };
- 
-+&mt6358codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
-+
- &qca_wifi {
- 	qcom,ath10k-calibration-variant = "GO_DAMU";
- };
+It makes sense for me to move this :-)
+It actually fits my use-case even better.
 
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240910-one-wire-2d0f7113dc8b
+> f9419f7bd7a5 ("bpf: cpumap add tracepoints") which added the tracepoints
+> states that the intent behind them was for general observability and for
+> a feedback loop to see if the queues are being overwhelmed. This change
+> does not mess with either of those use cases but rather adds a third
+> one.
 
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+Yes, my use-case is to this as a feedback loop, to see when queue is
+overwhelmed as you say.  I will soon be playing with this feature in
+production environments, so I'm excited that it looks like you have
+similar use-cases for this :-)
 
+> 
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+
+> ---
+>   kernel/bpf/cpumap.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+> index fbdf5a1aabfe..a2f46785ac3b 100644
+> --- a/kernel/bpf/cpumap.c
+> +++ b/kernel/bpf/cpumap.c
+> @@ -354,12 +354,14 @@ static int cpu_map_kthread_run(void *data)
+>   
+>   			list_add_tail(&skb->list, &list);
+>   		}
+> -		netif_receive_skb_list(&list);
+>   
+> -		/* Feedback loop via tracepoint */
+> +		/* Feedback loop via tracepoint.
+> +		 * NB: keep before recv to allow measuring enqueue/dequeue latency.
+> +		 */
+>   		trace_xdp_cpumap_kthread(rcpu->map_id, n, kmem_alloc_drops,
+>   					 sched, &stats);
+>   
+> +		netif_receive_skb_list(&list);
+>   		local_bh_enable(); /* resched point, may call do_softirq() */
+>   	}
+>   	__set_current_state(TASK_RUNNING);
 
