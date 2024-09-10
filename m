@@ -1,74 +1,37 @@
-Return-Path: <linux-kernel+bounces-323086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE9097377E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:35:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4773C973780
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302221C24EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19331F25673
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0021917FD;
-	Tue, 10 Sep 2024 12:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LO1Xbjex"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CCA1922D9;
+	Tue, 10 Sep 2024 12:35:19 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8529F1917E2
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D51917E2;
+	Tue, 10 Sep 2024 12:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725971703; cv=none; b=GZBekhXBN8/O6qmiv2jxK9VKdY/3iHd9vsjcjzNkYZukUTrbnTLW2zX6bthT9z2VtuLoEfdQsqhM5J/shdNlsbDS7/Wrj8EHQEqM7bWgAjwAPC38LiNDHvSl7xx/s+USf2icdOuo8QHjF7sMNrkF3dxRIvgm5JDgfP5MnRrd4Ok=
+	t=1725971718; cv=none; b=apwGqdv0V9S7i+CegfIislCRmfO096DQZZnpvxsWhMob+UtUQWIbXHZROiT4HVdAQxEf8zFXi0MIHoGARlyqdXcxKE81hWwd7RO+pCenWIheN/m0Ol63bWpsni5+WKynkjGnZyG+hq7TYiq5PTcq6x7MVHpyxE2avbF9whG3ayg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725971703; c=relaxed/simple;
-	bh=YPxL+WStp4d5x5HW+heH1w6KnMYpLQkMgr/GiunWpXE=;
+	s=arc-20240116; t=1725971718; c=relaxed/simple;
+	bh=OQ+Vs2QCCA6pe2c7oQq1SazHpCwagUDdfVm4Y+oDTQ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPtF44io1iwMWQ5bxzIc8ZVP6DoZsf7/8qkmonyM2qjWF2EJ9FYt6IDtlKNxwP0ngsBhMryLZTtcntXBNs5/EoEa1VjIYQH33yY8DZ/uVAiEkSaw2jCMpHG60wfMz0YigA4TnfLaSa3BtNIa7OaUPCxpOAAWR8ZU/2gRpyEWsds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LO1Xbjex; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso5903166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725971699; x=1726576499; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSsewx7UU6gQEwik2bNEi5/xY6888BEnxTjH/v5O+cc=;
-        b=LO1Xbjex5/aGLzTGQvlhGgCLVNO2MeUnpUOzuwdUc868j4YCrHgUZACCkQ7TflJQhc
-         SCC6Uneus0AgTOZmLKwhsEozoME6yERzSLbUesszHvMy7o1wnU8pYIvUkznAm6szliGb
-         O/KIyvRecjzI9hzusK1EpieoevkEkB1a4l+8SZ/HMisxOTpXfR5SU+YF2mNhkYQGv8+6
-         kkFHq70UlO6DrSIqoHgdTZk/nbsNlGo2bITXMzZegUnAq4Y1ZY6LcIM8hZG/P83Ase/m
-         Mpc0x/IiWYs/7BKZAP44mN0A8LibA1Pe/jvMQTrQg0TQrpV+5isdWNvIcVbmd82ejLUx
-         GdDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725971699; x=1726576499;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LSsewx7UU6gQEwik2bNEi5/xY6888BEnxTjH/v5O+cc=;
-        b=o9zr4o4Xocv7VOR8vj9hAMG0/9Z0CfL6q4NPPo7Ne9A3vN1qtohUfdHzRK55q6ChT1
-         LXdWZqmHEjNg5MpoVXUkopboKJn61Li1ZykkQFPJIAtvszJe4TKfTxwlqN7XHIx8g3fb
-         SxUUjtwo7dlL23v4/O45rbL9hT0DtkvN0FeyqSeDvdVIQeLXIm72XwChLnsqXGra1pft
-         oBrKc2IC4gqQD4CNMuEdHkth2hg+kGkK/12hzaNyJtz2Jmb8k1hXCLLyEXoNlxXAkaRo
-         SPT7ImDxHD0o/4JmSZxCTa6xFmeRfNUyZUad/2am/KkhwGnB0bDc9S5Q+3KFjOPi+M+s
-         7+OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjbsYJQs8RRDCZ4lELbo0kG91Jz41RfHNDurhJefWzmiaQiki9JlHKygm05JH0TJjOPGQCq+SnSvlfec8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPr1B4s11YOkiBgAahir7K/PwD5uP3Zt+YIXPJNuRerVD43ACc
-	daSY241FhOl2YA4p8aGDeaotO/9wYZI/gDCoOYVAD+q4s1V4K8ECQq5GJQKK2Q==
-X-Google-Smtp-Source: AGHT+IHELrHmlAkPKV+ybsGZZAWa6S6u/zQgSyh6j6a/3oTZxhoBs4+pUZuEmgEWmeYEHs9VSlDY4A==
-X-Received: by 2002:a17:907:972a:b0:a72:7a71:7f4f with SMTP id a640c23a62f3a-a8ffb1b644emr55038566b.7.1725971698680;
-        Tue, 10 Sep 2024 05:34:58 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c61263sm478368866b.128.2024.09.10.05.34.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 05:34:58 -0700 (PDT)
-Message-ID: <6bed58f8-016f-4390-be4c-128eebff6545@suse.com>
-Date: Tue, 10 Sep 2024 14:34:58 +0200
+	 In-Reply-To:Content-Type; b=b4HhfbGzab6fuOKSLdxCYv6con8imcS67LqYTXFndC/CSCScP70wARDyC2M4HHte1+iijOnTo+/EqPXudj1kUr1YqlY9lDHC1j58zKiT5KIOa5rOqopcZ5pDjgy6lKBpSXECaUW7HJWsUyvG2K4WQXmqYazQQW3qed14giLvYt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BCA02FF809;
+	Tue, 10 Sep 2024 12:35:06 +0000 (UTC)
+Message-ID: <5d486ff8-2ab5-4ed5-a1da-c2817927b3a2@ghiti.fr>
+Date: Tue, 10 Sep 2024 14:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,108 +39,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/7] xen: allow mapping ACPI data using a different
- physical address
-To: Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-acpi@vger.kernel.org
-References: <20240910103932.7634-1-jgross@suse.com>
- <20240910103932.7634-7-jgross@suse.com>
+Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
+ switch_mm()
 Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <20240910103932.7634-7-jgross@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
+ sashal@kernel.org, parri.andrea@gmail.com, mathieu.desnoyers@efficios.com,
+ palmer@rivosinc.com, linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, nathan@kernel.org,
+ ndesaulniers@google.com, trix@redhat.com, linux-riscv@lists.infradead.org,
+ llvm@lists.linux.dev, paulmck@kernel.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ brauner@kernel.org, arnd@arndb.de
+References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
+ <2024091002-caution-tinderbox-a847@gregkh>
+ <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
+ <2024091037-errant-countdown-4928@gregkh>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <2024091037-errant-countdown-4928@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-On 10.09.2024 12:39, Juergen Gross wrote:
-> When running as a Xen PV dom0 the system needs to map ACPI data of the
-> host using host physical addresses, while those addresses can conflict
-> with the guest physical addresses of the loaded linux kernel. The same
-> problem might apply in case a PV guest is configured to use the host
-> memory map.
-> 
-> This conflict can be solved by mapping the ACPI data to a different
-> guest physical address, but mapping the data via acpi_os_ioremap()
-> must still be possible using the host physical address, as this
-> address might be generated by AML when referencing some of the ACPI
-> data.
-> 
-> When configured to support running as a Xen PV domain, have an
-> implementation of acpi_os_ioremap() being aware of the possibility to
-> need above mentioned translation of a host physical address to the
-> guest physical address.
-> 
-> This modification requires to fix some #include of asm/acpi.h in x86
-> code to use linux/acpi.h instead.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-with a request to comment a tiny bit more:
+On 10/09/2024 13:58, Greg KH wrote:
+> On Tue, Sep 10, 2024 at 01:31:04PM +0200, Alexandre Ghiti wrote:
+>> Hi Greg,
+>>
+>> On 10/09/2024 09:32, Greg KH wrote:
+>>> On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
+>>>> From: Andrea Parri <parri.andrea@gmail.com>
+>>>>
+>>>> [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
+>>>>
+>>>> The membarrier system call requires a full memory barrier after storing
+>>>> to rq->curr, before going back to user-space.  The barrier is only
+>>>> needed when switching between processes: the barrier is implied by
+>>>> mmdrop() when switching from kernel to userspace, and it's not needed
+>>>> when switching from userspace to kernel.
+>>>>
+>>>> Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
+>>>> primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
+>>>> architecture, to insert the required barrier.
+>>>>
+>>>> Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
+>>>> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>>>> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>> Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
+>>>> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+>>>> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+>>>> ---
+>>>>    MAINTAINERS                         |  2 +-
+>>>>    arch/riscv/Kconfig                  |  1 +
+>>>>    arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
+>>>>    arch/riscv/mm/context.c             |  2 ++
+>>>>    kernel/sched/core.c                 |  5 +++--
+>>>>    5 files changed, 38 insertions(+), 3 deletions(-)
+>>>>    create mode 100644 arch/riscv/include/asm/membarrier.h
+>>> Now queued up, thanks.
+>>
+>> The original patch was merged in 6.9 and the Fixes tag points to a commit
+>> introduced in v4.15. So IIUC, this patch should have been backported
+>> "automatically" to the releases < 6.9 right? As stated in the documentation
+>> (process/stable-kernel-rules.html):
+>>
+>> "Note, such tagging is unnecessary if the stable team can derive the
+>> appropriate versions from Fixes: tags."
+>>
+>> Or did we miss something?
+> Yes, you didn't tag cc: stable at all in this commit, which is why we
+> did not see it.  The documentation says that :)
 
-> @@ -836,6 +837,33 @@ void __init xen_do_remap_nonram(void)
->  	pr_info("Remapped %u non-RAM page(s)\n", remapped);
->  }
->  
-> +#ifdef CONFIG_ACPI
-> +/*
-> + * Xen variant of acpi_os_ioremap() taking potentially remapped non-RAM
-> + * regions into acount.
 
-(Nit: account)
+Ok, some patches seem to make it to stable without the cc: stable tag 
+(like the one below for example), so I thought it was not necessary.
 
-> + * Any attempt to map an area crossing a remap boundary will produce a
-> + * WARN() splat.
-> + */
-> +static void __iomem *xen_acpi_os_ioremap(acpi_physical_address phys,
-> +					 acpi_size size)
-> +{
-> +	unsigned int i;
-> +	const struct nonram_remap *remap = xen_nonram_remap;
-> +
-> +	for (i = 0; i < nr_nonram_remap; i++) {
-> +		if (phys + size > remap->maddr &&
-> +		    phys < remap->maddr + remap->size) {
-> +			WARN_ON(phys < remap->maddr ||
-> +				phys + size > remap->maddr + remap->size);
-> +			phys = remap->paddr + phys - remap->maddr;
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-This might be slightly easier / more logical to read as
+[ Upstream commit 1ff95eb2bebda50c4c5406caaf201e0fcb24cc8f ]
 
-			phys += remap->paddr - remap->maddr;
+RISCV_ALTERNATIVE_EARLY will issue sbi_ecall() very early in the boot
+process, before the first memory mapping is setup so we can't have any
+instrumentation happening here.
 
-Also because of "phys" not consistently expressing a physical address
-(when you need convert it, the incoming value is a machine address) a
-comment may help here. In fact at the first glance (and despite having
-seen the code before) I thought the translation was done the wrong way
-round, simply because of the name of the variable.
+In addition, when the kernel is relocatable, we must also not issue any
+relocation this early since they would have been patched virtually only.
 
-Jan
+So, instead of disabling instrumentation for the whole kernel/sbi.c file
+and compiling it with -fno-pie, simply move __sbi_ecall() and
+__sbi_base_ecall() into their own file where this is fixed.
+
+Reported-by: Conor Dooley <conor.dooley@microchip.com>
+Closes:https://lore.kernel.org/linux-riscv/20240813-pony-truck-3e7a83e9759e@spud/
+Reported-by 
+<https://lore.kernel.org/linux-riscv/20240813-pony-truck-3e7a83e9759e@spud/Reported-by>:syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com 
+<mailto:syzbot%2Bcfbcb82adf6d7279fd35@syzkaller.appspotmail.com>
+Closes:https://lore.kernel.org/linux-riscv/00000000000065062c061fcec37b@google.com/ 
+<https://lore.kernel.org/linux-riscv/00000000000065062c061fcec37b@google.com/>
+Fixes: 1745cfafebdf ("riscv: don't use global static vars to store 
+alternative data")
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Link:https://lore.kernel.org/r/20240829165048.49756-1-alexghiti@rivosinc.com 
+<https://lore.kernel.org/r/20240829165048.49756-1-alexghiti@rivosinc.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+  arch/riscv/include/asm/sbi.h | 20 ++++++++++-
+  arch/riscv/kernel/Makefile   |  6 +++-
+  arch/riscv/kernel/sbi.c      | 63 -----------------------------------
+  arch/riscv/kernel/sbi_ecall.c | 48 ++++++++++++++++++++++++++
+  4 files changed, 72 insertions(+), 65 deletions(-)
+  create mode 100644 arch/riscv/kernel/sbi_ecall.c
+
+I'll pay attention to that from now on.
+
+Thanks,
+
+Alex
+
+
+>
+> thanks,
+>
+> greg k-h
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
