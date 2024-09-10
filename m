@@ -1,269 +1,231 @@
-Return-Path: <linux-kernel+bounces-323875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7914097448B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF41974490
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEA7AB255EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:08:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8390DB23807
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A6D1AAE2C;
-	Tue, 10 Sep 2024 21:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D881A76DA;
+	Tue, 10 Sep 2024 21:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W49oBH0o"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CGmfoTlv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB071F951
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002481; cv=none; b=Jjq3/Un+7oc3Rbal/VZT8UXd9bI7kSP2oGMi9Ao5Qg1SV3pMCQl+jOSTurkc3zq0C8SZ9wFlrtiNBdEwJUsnl2pIERZllqXW2kYLWOp+7TK/sgvSEh03w3JzP6AQmYIEelG5E8ckbo0KXA7Lq+ASdC0YYXDSuvEHBNEwry24gJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002481; c=relaxed/simple;
-	bh=KExRflW8J1qrGZemxSMBTuo2DT5ZtIVX+177fgt01io=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=hexJxL2CAcsXKk3tj30Hlu+iv8NW6LaXdELNXfR003y1vFlm6bSqW5028tYRejOatNMV9xd5WGtOiAx2HHMS+3ZM4VszyR57NdUGwoI54qzI2NWJiioVWWdyJm6hr8XNja5GFFquVJxfu7vEFv41GCXQ9aqUWqX0vRmXECSGjHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W49oBH0o; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a9ad15d11bso316216185a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726002478; x=1726607278; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xsgweXIpmstBe5GJ597qL3m2SDBc+q8DcPeq2Npix+U=;
-        b=W49oBH0onyfkZgIj2/9fQl4mU2iRC0wGidJp73eZ9nryWWwjm27dyEHJdtNZDaLEH6
-         x6BvEp5/ErQS2iFTCu4d9YRkdsWDfsjiWxE1wxdSg23EN4Rl23Id2x5xIEMq9Zv/ursx
-         k7UIZlVf9ObsF5UWTkbwFroUkE1Qwj/msqVo58/zFJ2RF82rUyOPGEdsANqlT4mh1sDy
-         mCOJbKboJK64hErhvbLOkABqpVkY4ouJp+fvKiYDW7fUSBj7T/8y2KtCDal0XqC4FFw/
-         lDP2pItHyQHa7qOzQVuIdtnSb3NBd6gZd2lB0dn4og1DqHhM+WDGZgAueOyVAEJsk42G
-         OAFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726002478; x=1726607278;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xsgweXIpmstBe5GJ597qL3m2SDBc+q8DcPeq2Npix+U=;
-        b=LGSoJ1lvGOVgbdaLjV9bKR4txzdlhATF5Yqhj6KSVz1IcXfAhxy2Y9LYY6fYwUquJH
-         KPFroPuMg638FEmw+LTINdO2rnqB4LpsMI7asxFYJKMotmOaDrZtQIJNmNJ9mR51vzX5
-         PEwfa/F82SzeZ+HxRkB5WXj70gXyu/2jeO/EKF6F/MBMLQFHxL/46T1hPU24+ajQTZiZ
-         s7fI21FAgaRP594+YNWC5KNi7bAFcoX0ctHx2986Q6iju0P/nwOcCx5uUEqm3XrKPeH+
-         M5pHhFlo1M6rao7T27hSpdoP1ezRccH2608qJrbiChLDu4Ql7FG3CrdgKpe1/Cmskom2
-         v3VA==
-X-Gm-Message-State: AOJu0Yz7RrcXLxkaYff/X/0D4Medk9HTevQBMaNoBjbSesVOMvbz+OnB
-	bN8yMpImQTrUhykvW/1ECiCXNK7hwCSFhYWhI+7E4PPzLVSULA6Mf2KqrGytq4bJWPdbs6zPq7g
-	=
-X-Google-Smtp-Source: AGHT+IGdN3Bip/QFL1/JxWNAkcL/JUmgw8uKd+/pDtMXUXN6GSGIZoTS92X+BzdXp0VO+irY5HiZ9w==
-X-Received: by 2002:a05:620a:491:b0:7a9:9ed7:b49f with SMTP id af79cd13be357-7a99ed7bed2mr1837046285a.38.1726002478185;
-        Tue, 10 Sep 2024 14:07:58 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a79972e3sm343656385a.68.2024.09.10.14.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 14:07:57 -0700 (PDT)
-Date: Tue, 10 Sep 2024 17:07:57 -0400
-Message-ID: <47697d5f8d557113244b7c044251fe09@paul-moore.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14CB1F951
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726002558; cv=fail; b=httCecuCElZ6Kn3p2MTqZ+QIOzJ5dbwTjEdLRV2ZPJs4LhGWY8Qw0eylLBXdjScTV8WLv4SjtBGd/hISBv9IYO1Z3d6z+pu0JxgxE5EK8+PratzXaTxQf5VUrvgpd6xDFgDt7s+6kIrVMGT/d1eGfXXdHPfWxc8KVCyF59hzj5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726002558; c=relaxed/simple;
+	bh=CXFuw5AoybP16icTHkxgh7JhNik9/3VTGoL48DloIuA=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BakfhnFCzrjEwsqNCWSPHIyP8DgCXZFQWzIlsOj35URRDbQL2AC99kXBB+6f4kN8/MexdwcZDiO9Ie7q7U9HtULnUli7tUQo3pFn8KafNgzDxIetgGOoZpLBk3Shx+ur5GJtJehPbzVdWmlkIc+DdTOXvPOqiQjaLJGF8ftgFE8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CGmfoTlv; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726002557; x=1757538557;
+  h=message-id:date:subject:to:references:from:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=CXFuw5AoybP16icTHkxgh7JhNik9/3VTGoL48DloIuA=;
+  b=CGmfoTlvnPoGmejWri0wz3ErEQBMRjRvzaCL5Ps4EPzr97IfCmET1nqF
+   KztAAPZFL7FrlIRyfjLr9eCRmcWUUp3i2Z9KaD+wrCzkk9qUiA7fvAZ9F
+   BFck033+7SZ2X0TlGIeep81cxCZ1yI3a5V0nxrmKCG6ugKEKEVcpIKQge
+   1znB80heGX/8eEwocgFw4sQfjuOs4Itvnv1UN8GOPp1ND/vLxbglyMU9P
+   Q52svOQjJPABrSsBXjJdnpE7GhJ5SN/ERN+G6gG0Gycc8Fws+znhnaN5R
+   ARaOoG/ch1R3Yx63FVV4z/4LlFEu4M+Xy7H0+zPGUvHvHqwILs2N5MEn3
+   g==;
+X-CSE-ConnectionGUID: rY1cfbxCTv6MMDasumyz6Q==
+X-CSE-MsgGUID: GJa772SeTX+SdSVRZ//UnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="42295351"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="42295351"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 14:09:16 -0700
+X-CSE-ConnectionGUID: nVqdnCQKT4OMf5QtRpmk2A==
+X-CSE-MsgGUID: nyHM0hTDSqmG2KiuhQWEzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="67106378"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 14:09:16 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 14:09:15 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 14:09:15 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 14:09:15 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 14:09:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J4scWmDjfzthY45vqg+oT16mGaMmh+jNCW2ChoUubU/zPWrFf84Qn6ASthMC8O9cD8ZhkDqVPmhfZl1hJ3irVdwe4bwxw8Yc1e1+RNMHflUQFwG0NuYoMmQPdCpTvP2izkd7c2Qhrmnv/VEUQNUvoHsALuCsFKW+knU+k4+VIVn4nD/aY1YDJodNOdHaAhSQeaUUjnsl+UjT3hoYpKLobklGScvoA+di9xcJQ1JtEAuog974VDn2S927jMrcZk3qT4f3ufQpHTsv7SPbZgk8JuwoTckD75TionGPQk9kUgr4p7oogqiG7v9Sef7tlkv9JSiKvrIs1Fx63zbTZdoZlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DkIfzI0edLNEr4A/XwFa/1DsAe3Yuoztf4JbyTp+Qbg=;
+ b=XRMB6VPOiezja8hnciUbNlZdT6VrEJZb+UE0T/L0WZVxpEAxg4Ro8ue2WkL+pXT+pUL38jKuRSbpDNflqnRFWQuIhlvFxw8K1fxbJKyXmrR38e/bkBxB1JTIt1BxK8m9MDqrMvcTOPUJeT6jZwnQhsDjSxQszZzI5tGU2BrR0sloQ7hZBPIYx5nQHE4z/ygDtHTSsr4CGIeKVzMSFJNift11lLbOJgH1oyZevfl4M8KvETU9hUvwzY0EBjL+ITdkyyiDDfFUP9d5/4QYsTQGdhDTDPXLVcwLz/qkWfMpe+l01pkiq5DTz3OfL7hAFEF4jGqyFKYQSSyd3pwNY77pGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by BL1PR11MB5255.namprd11.prod.outlook.com (2603:10b6:208:31a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 21:09:10 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
+ 21:09:10 +0000
+Message-ID: <16a795e7-5cc3-483e-8c29-f8d1acc0057a@intel.com>
+Date: Tue, 10 Sep 2024 14:09:07 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib: PLDM supports parsing the `DeviceUpdateOptionFlags`
+ parameter
+To: Shawn.Shao <shawn.shao@jaguarmicro.com>, <linux-kernel@vger.kernel.org>
+References: <20240910030330.1880-1-shawn.shao@jaguarmicro.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <20240910030330.1880-1-shawn.shao@jaguarmicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0039.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::14) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v2 1/2] KEYS: use synchronous task work for changing parent  credentials
-References: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
-In-Reply-To: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|BL1PR11MB5255:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78728994-b9d8-4d86-c667-08dcd1dcd0ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K2pORzFGRUthQkJkOWhBRDEyb3ZjZmZMK0RlNG5ZSnE2SkxycXZ5UXAzSk8r?=
+ =?utf-8?B?Mlpad3QvRDZSUS9icG9BMXhOZTkybG85Zld2M2FoN1AreW5FUCt0eVNWb0hN?=
+ =?utf-8?B?djJJd25uZldLenNaS3hWNU9wdXdHTVdqVlk4OWR0dG5EWEZyTmxwM3ZUdUtD?=
+ =?utf-8?B?ZWFmZEFIcVFSRC9NbitKT1kvVDh0Q1k3TmJHUmc5bnRBR2hxZXNqTnB6Zkds?=
+ =?utf-8?B?Smg5eU9pbXBUNzAzbnRsSFRteW9RdytJbEFudDNEQk0waFBNZSt4VG9XZ3Nl?=
+ =?utf-8?B?cC9YbTNzWWZQeXZ6cDJXb3h3cUJWM3hoV0FHdnNUbm1qTXFQZkdOTXNrWUpQ?=
+ =?utf-8?B?M0d5a0xQdG5EbHh3YjZOZDVGV0oxZFVXQkowUFI1Lzh3ejJIZXdmc055QzVq?=
+ =?utf-8?B?bStncXVFbmVRTEJTRUhtQVpralNYdEo5T2RBblgwNHVNYmhmMkhHQTZOeE5F?=
+ =?utf-8?B?WStwdnhwcmNLcy91cVk0MCtyUUtibjJJQy84UFByeTNVZFRRcUlZVHRGYTZM?=
+ =?utf-8?B?MW1pVHZBM3l0ZVZTUGxZOCs2dHJISTZPKzlBbDRWWEo1ckhlaW9HN3paOUtB?=
+ =?utf-8?B?Y01ONHhQRUpwTmdJV0F5OFlnckpQbE9kK2lBSGpKcXVINmRVdlJqRklMU2tq?=
+ =?utf-8?B?ZmVMSzNmdlpJSnYvaUZsNmJrdG5WN0JPd2FzM3QwcExtWkNoUGZqMmNuV3NR?=
+ =?utf-8?B?SXI2MWsweXBkUUxlRE9EdG43bmlwb1ZvMmFHQXhCdDYwbjJHU0VhSlQ1dEdP?=
+ =?utf-8?B?N0NYbjJvTDluUnM3UVMrTEl1SG5LSUo2OUZlVGtWWWhlSm12cWgzTUdKSW83?=
+ =?utf-8?B?QmJXeGRQUzdVM3NFeVVsSlNCZUpRRjI1NkVtUmEyN0c4Q2hiN1hHbWpwRzBk?=
+ =?utf-8?B?b0RHeVRoeWJ1WHhnMGZMWlVmUk5ZTUhLVDVaVkhmMnZ1REp5bmdmazdlaVI1?=
+ =?utf-8?B?MzFjenZyK0tZVXpSTXJVbktqWFQ5Z2VCbWY2SG5JbVlBNWluVEJHQXExS0oz?=
+ =?utf-8?B?YUN2SWdVQ0NVYW9vUDkvTGxPOXVGeFg2VzArbHVydXFKam5nb0xMTFBBWnJE?=
+ =?utf-8?B?SUJnU1FiVTFSN01zeHRZUHdVbms4bmRQa3hXZVAza0ZSSGQwRGpGb05WbFRM?=
+ =?utf-8?B?K2IwMGNHVHNBc3IrKzloWnpneE5rbWJ5QnlYS1I3UTBYeUZLMlRtM1BkNXRj?=
+ =?utf-8?B?OEpmdVVQU08raHhQZDRYcWtVb1ZZcERzcDFTZG53bHgxN252bUxsbFVKeTJp?=
+ =?utf-8?B?ak9RdEFPbTU5dkZJQWo2SjJYdWhBUmZiMm9MbmxEQWdNdG9ZMkVKTTIvSkp1?=
+ =?utf-8?B?a3dEMGpnWDRoWXZpUWwzaW5lTk1HSzF3MlM0a2ZuVlNUZkVzYVZZbzFsaUpH?=
+ =?utf-8?B?OVN5aTZSYWwwN2w3MFpmTldYM1V5UmdaTmxuMHV5ZXNZZi9zNFlsU1Z5ZXJB?=
+ =?utf-8?B?RW9laC90SUcvRzZ3VmVhbFdyTVVISjM5YU40QThFTWxybUtoU0taeVpvNXVp?=
+ =?utf-8?B?cHFHQ1RCOHdMNFhIRWFhVmdtZ0M2ZHFtMGhaVFZpZXdjeGxBMGxRa21FbkpZ?=
+ =?utf-8?B?UFF1cXk3MW5rdTBHN3NFaTZrZTRqdmJtODFnWlVCSjB1S1NYMVBnSVRrWG92?=
+ =?utf-8?B?aVRXVm5yUnBtZEdoL2p2QWdkTDZ1d1dJY1haZ1BPVUlUbVFQbWQ0WDE1QmZ5?=
+ =?utf-8?B?ZE9aYkd6UVpjTUF5M2w0Mi9kK0Y2NldodFhiNnlZcHhYQUc1ZXVGWkdLSWFw?=
+ =?utf-8?B?aWhwYUdBc2VScVNxaVByWXRzdkhkYWhSTVNYcG9pUGdrOE95TjBrVURGNnpk?=
+ =?utf-8?Q?JIK5d6c4m/ZTx9F5xVz2vg6LtSUX5H0njvoIk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZEdPTmNBVWNmTmlJaDFoMXZ0b2d1T1BBb0NHd0tXK3FCdXFzYkd2TGhYRG9E?=
+ =?utf-8?B?UE82Z2JtNmNGRWhON0IvMG50YmVyNnh6ZWNhUEdZN2FhRitkdll3OFRlQkxY?=
+ =?utf-8?B?MHkyTk9VUm1aMkljblFjcjJ0OUx0eStENWljVEdSUnJTZytLZ2M1cTZQTSs2?=
+ =?utf-8?B?VUp1QkhFM1hZbjFmUFFqYnpsKytzTThCSGxpalRlOCtaZ0N2alZHd3hkN2VV?=
+ =?utf-8?B?M0NhdWhHeWphZWV1UTNxejdibnZ3L2ZHM1ZyTkJnOUs3RityZGQxcUVDWndr?=
+ =?utf-8?B?WW9ONWZDNERDOW9qQjd0ckFjN3hoM0FSSU9OY1ZTNjRmNW9iYXpXSkdBUG1X?=
+ =?utf-8?B?V01BUFlvODJ3MWxHQnJ4R2JJaFdMYktGdGZsenZnSkMzTnMyTEptQ0lObjdz?=
+ =?utf-8?B?a1J4NUxneW0wTW1MSTJxNGpzRzVZRUNid2dUYWJpOUs3K1lrRWxCZExhNE1Y?=
+ =?utf-8?B?TU10VUJwZGJSQThqVVEvdHM2Y2xsNUs5RHZNQm1mLy9wWUtaT1ZuOGFLZ3JM?=
+ =?utf-8?B?RnhTckJqc0dCV2JIV2oxL0dzVmdwZHQ3aU54dVlGdVBMQklUbjRXRStWSTNr?=
+ =?utf-8?B?YlFST1VTaDNLamxZcDhlNWRNbmZtY3hENmVBUVV1RlFycXJaK0c0M2xObTFt?=
+ =?utf-8?B?eEtVWHN5cmlIdkdOWTBBV3pEbm9IbUJ2SEI3S1RvNnJpK25vbmQrS05PZWlJ?=
+ =?utf-8?B?TGpvQUs1bU5Lckh1eElPVkRibWh5VDFYOFJUSEQvcGtVb2ZzeDVBbk95UWlV?=
+ =?utf-8?B?dWVURnkxVThCSkxqU2xQVXErZXhMcyt4Njc3YUtVYk5WcmMvMy93TFRQWURn?=
+ =?utf-8?B?TFpjeFljWUtmNjVVeDBobUExVmV3V1FQYVkySjRSSjhSTWgrckp3VXFnbjQy?=
+ =?utf-8?B?aDNNWEhwL0hIMWJRVWNqQldId3JESFk0bGloMW8wb1lWcW9XZm16dUt3UFpT?=
+ =?utf-8?B?bFU3bmUyNXRUczNRRU9zUVFSQmxQb1hwemZlZEgzcUZRa2JTTStJN3RvbmlD?=
+ =?utf-8?B?S2VpUml1Tjh4M0hrOG5JMzkzOGVHUnpKU1NjdjhSNWZTaEY0ZTd2V0VPQkZ2?=
+ =?utf-8?B?YlJ5OUd5LzEyM0JKNGF6aXQwUGthVXk0VnNrNjBuM0JUem1GL3hwajhvWWNq?=
+ =?utf-8?B?OS9YRHk0OTBUVzBHRTcrWlFLY3ZiSWtScUVTWW1UaGJnSzdVWUJGSWxnbGNP?=
+ =?utf-8?B?M2J3NWF1c2QzdGFUZ0hobG9BMUtHMEdKMXJBMkNZS3l1NVNaYTJiYm9SNGx0?=
+ =?utf-8?B?NVFZSUVVY1hoTXdwTEhxMHRUb0I4czNneE5kVldHdEd4MHJsWFdMTzgzNVJK?=
+ =?utf-8?B?U2FYWVgxQTZEUS9ibEhqREVwb2d0dDVVSmlIbzJmWTdUV1EyNWM4Ym82Y2hK?=
+ =?utf-8?B?NXRZYnpRaVM2UjYrSmVDR25SWGo4SjFEODUxTVFoWGJ3MnduWjFzSVVBN2pH?=
+ =?utf-8?B?am5WTzhFbHg0Rk5hVm10RnlselJBYXA0N0NTSC95bzFNSlNNbFpsWlEvbVlY?=
+ =?utf-8?B?RVIveHR0MVRMeWo5d0kvTXl5TGZtNnVIL3dEZ1dsN0hyYWpnQkM2QW02c085?=
+ =?utf-8?B?byt3eFQxemMzZ2g1WmlYbjBvbmxLODc2aXV6MUMxR0V6T05UbGlMak9PbFZI?=
+ =?utf-8?B?Rks5TVo5akJ1YmJmZGR0VDQzRjhJSFBpWnoxNml2WlZvdGFKUkRybGZ6bzdL?=
+ =?utf-8?B?VEZDQzJIU3AxaDVDRWdiMnc5djFrcExNYWJHazUwV1p4bDRoL0ZtSWJIMmc5?=
+ =?utf-8?B?TUluM2xyTEZ1V2ZFYVY3SFFWUWxQQ2JZRE9USUVXRmZ6UG1rWHoxQ2FjKzdN?=
+ =?utf-8?B?WUpKd09hL0o0VDA1OE9yQXArMWxVNWxuREh1VU9jekoxZGNYV3NKc2NISDZ6?=
+ =?utf-8?B?aUs3bnBzUEh1azVvczZibDRmZlVjNHg1NW9rc0Iwd2twejdkWklVaHFCOGdL?=
+ =?utf-8?B?N2MyV1dHVldzd2NxMmNKaHVZVFlVaXlMbklhclVpRkdGWDZ4emdHenJHcC9s?=
+ =?utf-8?B?dXVMZEZidnF2clNkZVRpUEVqSW9jWlJYc2p2VHdDTUVPS0J0QXJjZjFvamZ2?=
+ =?utf-8?B?cCttMklPb3Uva1V1OHdNQWhONm5MaCtxMFBzUCtvdzlYTUhKOGlvditrMmE0?=
+ =?utf-8?B?NFFsNDlRVGRLS1hTWXQ1V1QyZ1U3REdZYUpvdUtRRUdsT3hVVUo1VE5sZnNr?=
+ =?utf-8?B?REE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78728994-b9d8-4d86-c667-08dcd1dcd0ac
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 21:09:10.5633
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YjpAvSdOXtw6aSmU64YOiYhSIvkZUepTCzPAmZn35vx1lnwaIJJujVRehw8HJO9+iFeObnjQ9ONt/iUnon3pP65T34DUkXvIVWPHygzXSYE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5255
+X-OriginatorOrg: intel.com
 
-On Aug  5, 2024 Jann Horn <jannh@google.com> wrote:
-> 
-> keyctl_session_to_parent() involves posting task work to the parent task,
-> with work function key_change_session_keyring.
-> Because the task work in the parent runs asynchronously, no errors can be
-> returned back to the caller of keyctl_session_to_parent(), and therefore
-> the work function key_change_session_keyring() can't be allowed to fail due
-> to things like memory allocation failure or permission checks - all
-> allocations and checks have to happen in the child.
-> 
-> This is annoying for two reasons:
-> 
->  - It is the only reason why cred_alloc_blank() and
->    security_transfer_creds() are necessary.
->  - It means we can't do synchronous permission checks.
-> 
-> Rewrite keyctl_session_to_parent() to run task work on the parent
-> synchronously, so that any errors that happen in the task work can be
-> plumbed back into the syscall return value in the child.
-> This allows us to get rid of cred_alloc_blank() and
-> security_transfer_creds() in a later commit, and it will make it possible
-> to write more reliable security checks for this operation.
-> 
-> Note that this requires using TWA_SIGNAL instead of TWA_RESUME, so the
-> parent might observe some spurious -EAGAIN syscall returns or such; but the
-> parent likely anyway has to be ready to deal with the side effects of
-> receiving signals (since it'll probably get SIGCHLD when the child dies),
-> so that probably isn't an issue.
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->  security/keys/internal.h     |   8 ++++
->  security/keys/keyctl.c       | 107 +++++++++++++------------------------------
->  security/keys/process_keys.c |  86 ++++++++++++++++++----------------
->  3 files changed, 87 insertions(+), 114 deletions(-)
 
-...
 
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index ab927a142f51..e4cfe5c4594a 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -1616,104 +1616,63 @@ long keyctl_get_security(key_serial_t keyid,
->   * parent process.
->   *
->   * The keyring must exist and must grant the caller LINK permission, and the
->   * parent process must be single-threaded and must have the same effective
->   * ownership as this process and mustn't be SUID/SGID.
->   *
-> - * The keyring will be emplaced on the parent when it next resumes userspace.
-> + * The keyring will be emplaced on the parent via a pseudo-signal.
->   *
->   * If successful, 0 will be returned.
->   */
->  long keyctl_session_to_parent(void)
->  {
-> -	struct task_struct *me, *parent;
-> -	const struct cred *mycred, *pcred;
-> -	struct callback_head *newwork, *oldwork;
-> +	struct keyctl_session_to_parent_context ctx;
-> +	struct task_struct *parent;
->  	key_ref_t keyring_r;
-> -	struct cred *cred;
->  	int ret;
->  
->  	keyring_r = lookup_user_key(KEY_SPEC_SESSION_KEYRING, 0, KEY_NEED_LINK);
->  	if (IS_ERR(keyring_r))
->  		return PTR_ERR(keyring_r);
->  
-> -	ret = -ENOMEM;
-> -
-> -	/* our parent is going to need a new cred struct, a new tgcred struct
-> -	 * and new security data, so we allocate them here to prevent ENOMEM in
-> -	 * our parent */
-> -	cred = cred_alloc_blank();
-> -	if (!cred)
-> -		goto error_keyring;
-> -	newwork = &cred->rcu;
-> +	write_lock_irq(&tasklist_lock);
-> +	parent = get_task_struct(rcu_dereference_protected(current->real_parent,
-> +					lockdep_is_held(&tasklist_lock)));
-> +	write_unlock_irq(&tasklist_lock);
->  
-> -	cred->session_keyring = key_ref_to_ptr(keyring_r);
-> -	keyring_r = NULL;
-> -	init_task_work(newwork, key_change_session_keyring);
-> +	/* the parent mustn't be init and mustn't be a kernel thread */
-> +	if (is_global_init(parent) || (READ_ONCE(parent->flags) & PF_KTHREAD) != 0)
-> +		goto put_task;
+On 9/9/2024 8:03 PM, Shawn.Shao wrote:
+> From: Shawn Shao <shawn.shao@jaguarmicro.com>
+> 
+> The current PLDM library does not support parsing the
+> DeviceUpdateOptionFlags parameter, which is defined in
+> the PLDM specification to facilitate the transfer of
+> control information between the UA (Update Agent) and
+> the firmware.Please refer to:
+> https://www.dmtf.org/sites/default/files/standards/
+> documents/DSP0267_1.3.0.pdf P37.
 
-I think we need to explicitly set @ret if we are failing here, yes?
-  
-> -	me = current;
-> -	rcu_read_lock();
-> -	write_lock_irq(&tasklist_lock);
-> +	ctx.new_session_keyring = key_ref_to_ptr(keyring_r);
-> +	ctx.child_cred = current_cred();
-> +	init_completion(&ctx.done);
-> +	init_task_work(&ctx.work, key_change_session_keyring);
-> +	ret = task_work_add(parent, &ctx.work, TWA_SIGNAL);
-> +	if (ret)
-> +		goto put_task;
->  
-> -	ret = -EPERM;
-> -	oldwork = NULL;
-> -	parent = rcu_dereference_protected(me->real_parent,
-> -					   lockdep_is_held(&tasklist_lock));
-> +	ret = wait_for_completion_interruptible(&ctx.done);
->  
-> -	/* the parent mustn't be init and mustn't be a kernel thread */
-> -	if (parent->pid <= 1 || !parent->mm)
-> -		goto unlock;
-> -
-> -	/* the parent must be single threaded */
-> -	if (!thread_group_empty(parent))
-> -		goto unlock;
-> -
-> -	/* the parent and the child must have different session keyrings or
-> -	 * there's no point */
-> -	mycred = current_cred();
-> -	pcred = __task_cred(parent);
-> -	if (mycred == pcred ||
-> -	    mycred->session_keyring == pcred->session_keyring) {
-> -		ret = 0;
-> -		goto unlock;
-> +	if (task_work_cancel(parent, &ctx.work)) {
-> +		/*
-> +		 * We got interrupted and the task work was canceled before it
-> +		 * could execute.
-> +		 * Use -ERESTARTNOINTR instead of -ERESTARTSYS for
-> +		 * compatibility - the manpage does not list -EINTR as a
-> +		 * possible error for keyctl().
-> +		 */
-> +		ret = -ERESTARTNOINTR;
-> +	} else {
-> +		/* task work is running or has been executed */
-> +		wait_for_completion(&ctx.done);
-> +		ret = ctx.result;
->  	}
->  
-> -	/* the parent must have the same effective ownership and mustn't be
-> -	 * SUID/SGID */
-> -	if (!uid_eq(pcred->uid,	 mycred->euid) ||
-> -	    !uid_eq(pcred->euid, mycred->euid) ||
-> -	    !uid_eq(pcred->suid, mycred->euid) ||
-> -	    !gid_eq(pcred->gid,	 mycred->egid) ||
-> -	    !gid_eq(pcred->egid, mycred->egid) ||
-> -	    !gid_eq(pcred->sgid, mycred->egid))
-> -		goto unlock;
-> -
-> -	/* the keyrings must have the same UID */
-> -	if ((pcred->session_keyring &&
-> -	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
-> -	    !uid_eq(mycred->session_keyring->uid, mycred->euid))
-> -		goto unlock;
-> -
-> -	/* cancel an already pending keyring replacement */
-> -	oldwork = task_work_cancel_func(parent, key_change_session_keyring);
-> -
-> -	/* the replacement session keyring is applied just prior to userspace
-> -	 * restarting */
-> -	ret = task_work_add(parent, newwork, TWA_RESUME);
-> -	if (!ret)
-> -		newwork = NULL;
-> -unlock:
-> -	write_unlock_irq(&tasklist_lock);
-> -	rcu_read_unlock();
-> -	if (oldwork)
-> -		put_cred(container_of(oldwork, struct cred, rcu));
-> -	if (newwork)
-> -		put_cred(cred);
-> -	return ret;
-> -
-> -error_keyring:
-> +put_task:
-> +	put_task_struct(parent);
->  	key_ref_put(keyring_r);
->  	return ret;
->  }
+Just to confirm this is also spelled out in the 1.0.0 standard on page
+26, available at:
 
---
-paul-moore.com
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0267_1.0.0.pdf
+
+
+That's important since we currently only support the initial 1.0.0
+standard format.
+
+Thanks for fixing this oversight.
+
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
