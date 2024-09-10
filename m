@@ -1,189 +1,178 @@
-Return-Path: <linux-kernel+bounces-322695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE999972C6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:44:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2EF972C6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C41F2314B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:44:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7420728784C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEDB1862B8;
-	Tue, 10 Sep 2024 08:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E6418661B;
+	Tue, 10 Sep 2024 08:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LffjfOAa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EHn+tIHI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872C614A4C3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FE414A4C3
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725957845; cv=none; b=u80XHyd1G8csyHPev+agESMFppNI0UyXZcAXEO0UX/F+shXP3x+Md3m65KxPqIVH3143qm/A4MgkBjhvGuoNuPRaSC4tjTQP+/V4IanV/9iXZRhfhpsWD13SxwyouH53YhDQznkdF7pSUEqrx33f3VdW5upovTpCGdDnNzBgznM=
+	t=1725957785; cv=none; b=Kieyw1n/ZKQRUeHcAKT5s687Dz6JYnU7BHdRkxpghlPH34bUwXeQVYlTHh246+q2Wo/UvSlZtM/+Y/mFmXwIEldXrKv/drNb3Nb+251zot3dDTi2KFEw5nPrM+xBV7DckugRDCwOY9Ncxa0r+1MBIGZQt4/SQjHSwMiwcjeV6EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725957845; c=relaxed/simple;
-	bh=qqlizFQaM14OE2fhleEMqA9GnZPbB0rWThRND9fodLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FiYq0Pwb3z/d5RCtwv+IVbPWbojFNshlaRKpOYsf/VwahIDmJDm3G5IDcidIlzTDzvhuQ766vUXmghkFcaqFtjZmh1dZ7g9rDrvsrUJC2oHDOoHgqlq+g3xBByxorYI73TnkJ81KjhwgvREi8bcc8KzsIbRLOBSKXvRNrK4Mykc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LffjfOAa; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725957844; x=1757493844;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qqlizFQaM14OE2fhleEMqA9GnZPbB0rWThRND9fodLg=;
-  b=LffjfOAaAJ6Ehc1QCARPI6HGVruii+4BCB8n40cIXqNHv3nxa6aZEFON
-   ZLusXtiXpnmxma9KaMSTvmat2x9Gs9+bPVnZQ8e3qjwPI7GU8SRE6Oznq
-   xQFFrBvLHAio+w60Qi1By859LO+0/lVqcktrtY23xZnODqPACurplvVZH
-   0bgXIVPrIC6+oMnj0IzqgWhNhC/bqO7XFKo2Q6ymgNgiD2LtX1Vdo7aou
-   HkIToiWTgd0ycMp25s4WzDrcCDEAcmZuemc8kFI3oPbIs5Hi720Qr1ry7
-   403+SlBoy2IUBH0fzPDw5L+J8eAWNoDbdLfZKiTMXXGOkB4vTe29VGxRR
-   w==;
-X-CSE-ConnectionGUID: kdkE5by3QqCZZB5HjHPTnw==
-X-CSE-MsgGUID: a4DleFGETHm7RZpfQSV1nw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24565909"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="24565909"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:44:02 -0700
-X-CSE-ConnectionGUID: 9kN+kNqCQ3aNTCFWPFjFfg==
-X-CSE-MsgGUID: IBZPnqfzRXSfgoJq+aAamA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="67252448"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 10 Sep 2024 01:43:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A1BF3408; Tue, 10 Sep 2024 11:43:57 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
+	s=arc-20240116; t=1725957785; c=relaxed/simple;
+	bh=ihGFXKSdNq1acfmeBeiDK3GKtbP9QbngzFbcDCCyUBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3W0AjbM4iYjq1R4ix3Z9XheZxD4n5QfzBaJrZYabQz0RGalgwOEAr/OyMApm2fhNhCuOzfb0eh92Wfm3S+h8YNNr71hRU5t54J41ckObrsNEDYN7qPewpri7/o7eFxmx5iB0T26tBlwLxOsB7hpnXT17ym50ZYncxrOmGCJhdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EHn+tIHI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725957782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lTFhbUrNZRNdJ67rXYj34xiYWTFaYUZHryTDusV4E/w=;
+	b=EHn+tIHIFY8Hw2CY6KbMU9Zl7OjzfVfMaXG3ogkS2tNLgmewF9JihFoGYULNGG5/PEjtmB
+	l/37bD63ZNhKZQAiNHYeS2GqPD+9YfT/Io2TKJ7gZnYEoR4gpAnXhVN0v0S+fmN65dGeQu
+	wkLRtn66CyerwfUISY7YaGSYzeNLvB8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-479-iMKILaccMNChzl_ZcbKxkQ-1; Tue, 10 Sep 2024 04:43:01 -0400
+X-MC-Unique: iMKILaccMNChzl_ZcbKxkQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb22d396cso21147915e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:43:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725957780; x=1726562580;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lTFhbUrNZRNdJ67rXYj34xiYWTFaYUZHryTDusV4E/w=;
+        b=VOAYAQW5wDPfb8Cz1+CK7QkCQtzu7V42edX3nICHiM1y+f0mJxYFKUDhEqQ/LpZGK9
+         /UwYq58O+z8e+E6d/X0wwFfSHsKbUiluT7B9LSve9L1Y1Xod55iVS5yUyab0vM4t9cTH
+         8B3fUYpJpYx3LqwWaUip48GlKRw7eEQmueZ2g6aopthjihToWSUDVuLEHr3qzffaMYUn
+         Q3mokjjabYc6/oz8BZRDqenEmdZM7AcCVS+lIM6eKoU6gylvGvs+xaESoU2IYOi+MImm
+         6KKd/eXiziYrW9lmmPFV2SzBp+2gufG0aHuuqYjhQ2cneez5Ca5bIsyLaELd99N4iXW4
+         tISg==
+X-Forwarded-Encrypted: i=1; AJvYcCXble1p9PZLvHfW8wt04KpABgP8p3M0wja/PdoxhC97u9pecvegioyEW7opcLy83+BLe8l2ciU445WWusA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQJDdq0KvQbh36NFZ0jU/v99aUDqGVoN+2PnR887jlESOymRi2
+	s6ChJ3hj2fdojqRrg/klRuume8OxKZokaM9RpmhTdbj8RQ3MJ0VsGhP6MP0uLd90m/tjO4vg1K9
+	cQrLGyj1Rw7uU2H0FOjiGOwFn7+ePve5vtNgGdALghUS7Xucre0xemH8P/zaalsR1EJPE6Q==
+X-Received: by 2002:a05:600c:1d8a:b0:42c:b0f9:9b28 with SMTP id 5b1f17b1804b1-42cb0f99c0amr67407155e9.28.1725957779663;
+        Tue, 10 Sep 2024 01:42:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPns4vTGAdO8znaVJVGMHVa1kyeW8lXfvHZwGX/F3imSQLPTE0WFTpfxqcqz4Ud12xzFMAwg==
+X-Received: by 2002:a05:600c:1d8a:b0:42c:b0f9:9b28 with SMTP id 5b1f17b1804b1-42cb0f99c0amr67406955e9.28.1725957779082;
+        Tue, 10 Sep 2024 01:42:59 -0700 (PDT)
+Received: from redhat.com ([31.187.78.173])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca7cccd35sm121482885e9.18.2024.09.10.01.42.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 01:42:58 -0700 (PDT)
+Date: Tue, 10 Sep 2024 04:42:55 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, michael.christie@oracle.com,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v3 1/1] x86/cpu: Make sure flag_is_changeable_p() is always being used
-Date: Tue, 10 Sep 2024 11:42:42 +0300
-Message-ID: <20240910084356.1518209-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	virtualization@lists.linux-foundation.org
+Subject: Re: [RESEND PATCH v1 0/7]vhost: Add support of kthread API
+Message-ID: <20240910044139-mutt-send-email-mst@kernel.org>
+References: <20240909020138.1245873-1-lulu@redhat.com>
+ <20240910032825-mutt-send-email-mst@kernel.org>
+ <CACGkMEvrti4E2fZBMHGR9LKifZDqtzBqOSg=v7AkKK-r9OZ3wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEvrti4E2fZBMHGR9LKifZDqtzBqOSg=v7AkKK-r9OZ3wQ@mail.gmail.com>
 
-When flag_is_changeable_p() is unused, it prevents kernel builds
-with clang, `make W=1` and CONFIG_WERROR=y:
+On Tue, Sep 10, 2024 at 04:37:52PM +0800, Jason Wang wrote:
+> On Tue, Sep 10, 2024 at 3:42 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Mon, Sep 09, 2024 at 10:00:38AM +0800, Cindy Lu wrote:
+> > > In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"),
+> > > vhost removed the support for the kthread API. However, there are
+> > > still situations where there is a request to use kthread.
+> > > In this PATCH, the support of kthread is added back. Additionally,
+> > > a module_param is added to enforce which mode we are using, and
+> > > a new UAPI is introduced to allow the userspace app to set the
+> > > mode they want to use.
+> > >
+> > > Tested the user application with QEMU.
+> >
+> > Cindy, the APIs do not make sense, security does not make sense,
+> > and you are not describing the issue and the fix.
+> >
+> >
+> > The name should reflect what this does from userspace POV, not from
+> > kernel API POV.  kthread and task mode is not something that any users
+> > have any business even to consider.
+> >
+> >
+> > To help you out, some ideas:
+> >
+> > I think the issue is something like "vhost is now a child of the
+> > owner thread. While this makes sense from containerization
+> > POV, some old userspace is confused, as previously vhost not
+> > and so was allowed to steal cpu resources from outside the container."
+> >
+> > Now, what can be done? Given we already released a secure kernel,
+> > I am not inclined to revert it back to be insecure by default.
+> 
+> It depends on how we define "secure". There's plenty of users of
+> kthread and if I was not wrong, mike may still need to fix some bugs.
+> 
 
-arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
-  351 | static inline int flag_is_changeable_p(u32 flag)
-      |                   ^~~~~~~~~~~~~~~~~~~~
+which bugs?
 
-Fix this by moving core around to make sure flag_is_changeable_p() is
-always being used.
+> > But I'm fine with a modparam to allow userspace to get insecure
+> > behaviour.
+> >
+> >
+> > Now, a modparam is annoying in that it affects all userspace,
+> > and people might be running a mix of old and new userspace.
+> > So if we do that, we also want a flag that will get
+> > safe behaviour even if unsafe one is allowed.
+> 
+> I am not sure this can help. My understanding is that the flag is
+> sufficient. Otherwise the layered product needs to know if there's old
+> user space or new which seems to be a challenge.
+> 
+> Thanks
 
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
+this will be up to userspace to resolve.
 
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
 
-v3: rewritten as suggested (Dave)
-v2: marked both 32- and 64-bit cases
-
- arch/x86/kernel/cpu/common.c | 31 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d4e539d4e158..5525afa6e888 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -275,22 +275,14 @@ static int __init x86_noinvpcid_setup(char *s)
- }
- early_param("noinvpcid", x86_noinvpcid_setup);
- 
--#ifdef CONFIG_X86_32
--static int cachesize_override = -1;
--static int disable_x86_serial_nr = 1;
--
--static int __init cachesize_setup(char *str)
--{
--	get_option(&str, &cachesize_override);
--	return 1;
--}
--__setup("cachesize=", cachesize_setup);
--
- /* Standard macro to see if a specific flag is changeable */
- static inline int flag_is_changeable_p(u32 flag)
- {
- 	u32 f1, f2;
- 
-+	if (!IS_ENABLED(CONFIG_X86_32))
-+		return 1;
-+
- 	/*
- 	 * Cyrix and IDT cpus allow disabling of CPUID
- 	 * so the code below may return different results
-@@ -315,6 +307,17 @@ static inline int flag_is_changeable_p(u32 flag)
- 	return ((f1^f2) & flag) != 0;
- }
- 
-+#ifdef CONFIG_X86_32
-+static int cachesize_override = -1;
-+static int disable_x86_serial_nr = 1;
-+
-+static int __init cachesize_setup(char *str)
-+{
-+	get_option(&str, &cachesize_override);
-+	return 1;
-+}
-+__setup("cachesize=", cachesize_setup);
-+
- /* Probe for the CPUID instruction */
- int have_cpuid_p(void)
- {
-@@ -348,10 +351,6 @@ static int __init x86_serial_nr_setup(char *s)
- }
- __setup("serialnumber", x86_serial_nr_setup);
- #else
--static inline int flag_is_changeable_p(u32 flag)
--{
--	return 1;
--}
- static inline void squash_the_stupid_serial_number(struct cpuinfo_x86 *c)
- {
- }
-@@ -1087,7 +1086,6 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
- 
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
- {
--#ifdef CONFIG_X86_32
- 	int i;
- 
- 	/*
-@@ -1108,7 +1106,6 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
- 				break;
- 			}
- 		}
--#endif
- }
- 
- #define NO_SPECULATION		BIT(0)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+> >
+> >
+> > Is this clear enough, or do I need to elaborate more?
+> >
+> > Thanks!
+> >
+> > > Cindy Lu (7):
+> > >   vhost: Add a new module_param for enable kthread
+> > >   vhost: Add kthread support in function vhost_worker_queue()
+> > >   vhost: Add kthread support in function vhost_workers_free()
+> > >   vhost: Add the vhost_worker to support kthread
+> > >   vhost: Add the cgroup related function
+> > >   vhost: Add kthread support in function vhost_worker_create
+> > >   vhost: Add new UAPI to support change to task mode
+> > >
+> > >  drivers/vhost/vhost.c      | 246 +++++++++++++++++++++++++++++++++++--
+> > >  drivers/vhost/vhost.h      |   1 +
+> > >  include/uapi/linux/vhost.h |   2 +
+> > >  3 files changed, 240 insertions(+), 9 deletions(-)
+> > >
+> > > --
+> > > 2.45.0
+> >
 
 
