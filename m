@@ -1,180 +1,219 @@
-Return-Path: <linux-kernel+bounces-322491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A967E97299E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:37:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD0F9729A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF3E1F260C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:37:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745221C23E16
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED0D17A58F;
-	Tue, 10 Sep 2024 06:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C2517B50A;
+	Tue, 10 Sep 2024 06:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1rezO7k"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qae3IWWn"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D381CD1F;
-	Tue, 10 Sep 2024 06:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79BB17ADE8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725950229; cv=none; b=qIgobF8o/y/FtrBgwuE/jDT22PdN/rJ0xNOzgpKzhUAsswBM34URTGUOXDEczd2WdYjxNi6zkVQkYniFTFhdwCG/BGzgZyDbiaaACLnTOsW2rNwOQUtsJzqaz1n+L43zuLZunwy64DgaG/hq/qncqTomNP+XvYl8qLQgsCdKVrs=
+	t=1725950232; cv=none; b=nltkoVBO9MlurH5SPDoAKzgAqB/7eiwGm5RZAPaRaH5wqPT81XcYfaz6JsNYNFDooN9NIfKZ7e7t/cTioan8N87+7IeG8Ok8LoRABAiiiUFeyTxX6vGwPRpBKnqV0GyaFTo45MLFHMfubWCpXeoK8j6F3z0PQiB1iA3ylMyzm4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725950229; c=relaxed/simple;
-	bh=kINXuvi1wypT2o8VzSOaOSKacPP9/oktyF0CBpZUseQ=;
+	s=arc-20240116; t=1725950232; c=relaxed/simple;
+	bh=/gZ/e9rJtdKGsqdl5Nd3WaCf6RpxN2blOu9TshVlFaw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3ZfL6v424UMyu+jIUFUO03LgT/D84mhsVqJ7boMqBCFzL+46agPjjf6jOqF6QkASCezw+MZRBf6jvhXWLvvPp+R6R3OLyh7GGLIA2EEdXS8d/howLN5j9tjY8uEp5fxu6rVo5fkwDbNincHf8wr2w8xUVwgfzGzSm1pVusA3xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1rezO7k; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so305251e87.0;
-        Mon, 09 Sep 2024 23:37:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=aUOBgO5N0Gm4FSnDnk8DJt6pAlQdh3XD3i5guNCjHZkIlNPRfZQYjoI3nLIgKvwQZH6Etx0jO7JtjW9W+VqcfkvWtxdgpdJLHrcDDSzk3hb/y/2FiRqopiWtXFkwRdf+63AYoQ8vm/hZ1P8ON0kycFfabO+ZaifN5IUQ94qe3rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qae3IWWn; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d4093722bso387178466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:37:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725950225; x=1726555025; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1725950229; x=1726555029; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D2nLBV36l1E+nJwy+AajRSSrY5cr4kLPDW591ReZ6/c=;
-        b=K1rezO7k74ZWQmwfhiQJvvP+k4vtn8CCsIf4FB0qCGErkypJYs2o+FI0NnKsiRgLJe
-         J3iVY5AI088udLGjyujdDOJsmxiOjxEO3csakU+W8VhSx7tZqJdeBgfWtYHSCcQ+JNwj
-         uUe3SJRdOcXwwOeroaG112ol/1l/GLqbLK305C3NXW5JVRiP/4bScpJ4fxCcV1nVMLs3
-         u9WLMGX4LM66s89MgVfBlbF4NDEhrVniaev6QIOyE1NHPs/zO2newM/26Jka2tmfUD59
-         dO2QnfKbvFukfytThQoePN3+9d2Ddef0EPFYBuZW03rkOwXxdt06f07Jb5qzldoAWyjy
-         i/Lg==
+        bh=jghqw20+C9fL5tVNTNoyx1SLKWNXxTj4hY1LELdiq+0=;
+        b=Qae3IWWnXV+qvf5A9nneMzOHDYJ2zRpcM0SvYQ/Qyp227gzqoCDOwQ91ny22C+M2v7
+         YWg9o+wjowh/XlJS6ULAreUpzKhr5bbi0Mdo8VNoXpvaNS2fVTCbjuGfiQVCIpX53Q7p
+         Wblt3vCGI1Z1AsACRsJL68513g5kXo2oCvWmj90q82APYmMblTpUxQh9SEK4vldVte4g
+         cjpFhduNQxcJqlQu0swg5ralut1tudl9FhHcTXqUI687yVKuzMsLZMOeqUlTaLB5UJ6J
+         XyTaRpQngLaArvzjqfFc6HsdTbVSFPaqrgGEX1SRYuOqcZhVhVH+4kgTYNc+aOkAc7Ah
+         CJ0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725950225; x=1726555025;
+        d=1e100.net; s=20230601; t=1725950229; x=1726555029;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D2nLBV36l1E+nJwy+AajRSSrY5cr4kLPDW591ReZ6/c=;
-        b=SY4xdNDJpHg4tqXPDJGanWQmm5dhdPZcFqtvaQRli1qAGrLFBPbzWFr72w9PNssMPX
-         zrHDaG0cDxQlrWFFSyz6yiQbWa/hx/Mo5NOW5F5wjDvadnLuxP2XxnIOZvfpIzghO8Uv
-         sjnHYEEF7BdXPmBoZ1/3hfQQwJlUJlysRyQkMenosjkyBaI2vRTMwnoh7XrVFoasl14W
-         KevO4y+qNYEd9THthqMJm1n6hqgwtIgUctmy9Y/vfEQG8JSniLLdySdFcTD0S6TyHKg2
-         d8kR188hJrv3RVYZHTJ97UA5Ys+w29m476J7FavS+sJ3pWH+olD4yAQQFgwBQFfE2wyo
-         x8Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtihNyecrlDcf0uKGJx8yOgR7mT1/PANrvv9e66uZGhYxJyHTo6PxgoJZMhKc7FgzlYCybbvicFSNl@vger.kernel.org, AJvYcCX42UKoX0UlDW8b3x5tCHnxI3sy0EnHNJxhivJaqtZKAJqnfYOMWqwVyRnYw1wRJV4si2ZA3AUDRxEj2i0e@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8MLGihUv2Cl3OdHyiADdxa0Sxc7nlqqrgmMStgFc7cspovt1K
-	87jUCycQTUjyojga3W10Sk08tBerofvAljs3TGn00d8L2JB1tmDGTesbOmkfhm+It8MwRTycQgZ
-	0YlPaBOtlXLLPc1P7oRpX6pTOA6M=
-X-Google-Smtp-Source: AGHT+IFPZAx9kPYY95dxfLshFcr9d9jwdnZZtlIhHuaooIrQJWH1Yex4S0wumOZrsLKbcz0QWDgtTbo8e48TS3d8y00=
-X-Received: by 2002:a05:6512:6cf:b0:52c:850b:cfc6 with SMTP id
- 2adb3069b0e04-536587f5c84mr9047301e87.38.1725950225214; Mon, 09 Sep 2024
- 23:37:05 -0700 (PDT)
+        bh=jghqw20+C9fL5tVNTNoyx1SLKWNXxTj4hY1LELdiq+0=;
+        b=XJO955yMCHYbXfyD8+2E4876B49br/pcK57Yu4UxH06gYR6WWAFoIrtw9B/53YPgKh
+         s0bkTPCYrLLmf6acKWE85281dX6rWeJD65Fyupn34Po6/dzBzBeis5YD8KxtkLFKALHl
+         SX26zNg1vJOzuXpQheD8+B5G0Wya+Rh2+hkimUH6TVRihgK5HavjMJgqaLS8PEayj27F
+         dZG8nB/LxSPEPPCla0g6nyAR6H48ZIuSzr2touwDOxTSqhYEiy2GAN4Jn5sy+7j9Jl/c
+         R9bQKT17Ge+HG7jv8dvNLPfHDrXZhxNMs/1tACpOAD07aR0QN3HZHp7pTthCrBbrsmc6
+         9FTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZgvzrKcWP/evaNqIeq/wcB2SenDEz2q7WTBc2tTAMrHEjZx6oVcQaUwBOmR2hT1RxBqK1aGeADGspwSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwTJoOG9W5nbanVqyBmHs4Dpd6GtVhQEcesO9ExyF3GOB9kglo
+	RjMYxXzDhgwO/SgIdODmtZIkQTkGFEaqt9ZfqVoX/a5xwUBZFef5YrGC4lOLi/zyeN2NmnkXr/P
+	jx/KuaMoDQ6ayZAO+9EP9K1ebULK99umoWElL
+X-Google-Smtp-Source: AGHT+IFhz9Ea6Ytm456NNVlcwQqaEs92ozth94eaizAc0QlKR8/XD18NjGwolnXIm/Amzef+NyPriSpCjfunSMoaziI=
+X-Received: by 2002:a17:907:9703:b0:a8a:837c:ebd4 with SMTP id
+ a640c23a62f3a-a8d1bfcb40bmr895053466b.27.1725950228569; Mon, 09 Sep 2024
+ 23:37:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com>
-In-Reply-To: <20240822082101.391272-1-chenxiaosong@chenxiaosong.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 10 Sep 2024 01:36:53 -0500
-Message-ID: <CAH2r5muWoAobVc53LLkifZL_hE7bfxU6ZgPH2CAfAWoe-9jJrA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] smb: fix some bugs, move duplicate definitions
- to common header file, and some small cleanups
-To: chenxiaosong@chenxiaosong.com
-Cc: linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org, 
-	tom@talpey.com, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
-	bharathsm@microsoft.com, chenxiaosong@kylinos.cn, liuzhengyuan@kylinos.cn, 
-	huhai@kylinos.cn, liuyun01@kylinos.cn
+References: <0000000000000311430620013217@google.com> <0000000000005d1b320621973380@google.com>
+ <CANn89iJGw2EVw0V5HUs9-CY4f8FucYNgQyjNXThE6LLkiKRqUA@mail.gmail.com>
+ <17dc89d6-5079-4e99-9058-829a07eb773f@linux.ibm.com> <02634384-2468-4598-b64a-0f558730c925@linux.alibaba.com>
+In-Reply-To: <02634384-2468-4598-b64a-0f558730c925@linux.alibaba.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Sep 2024 08:36:57 +0200
+Message-ID: <CANn89iKcWmufo83xy-SwSrXYt6UpL2Pb+5pWuzyYjMva5F8bBQ@mail.gmail.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+To: "D. Wythe" <alibuda@linux.alibaba.com>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>, 
+	syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>, 
+	Dust Li <dust.li@linux.alibaba.com>, davem@davemloft.net, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following patches from the series have been added to cifs-2.6.git
-for-next (the other patches in the series were either for fs/smb/server
-rather than the client, or have already been merged).  Let me know
-if any objections or problems seen.
+On Tue, Sep 10, 2024 at 7:55=E2=80=AFAM D. Wythe <alibuda@linux.alibaba.com=
+> wrote:
+>
+>
+>
+> On 9/9/24 7:44 PM, Wenjia Zhang wrote:
+> >
+> >
+> > On 09.09.24 10:02, Eric Dumazet wrote:
+> >> On Sun, Sep 8, 2024 at 10:12=E2=80=AFAM syzbot
+> >> <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com> wrote:
+> >>>
+> >>> syzbot has found a reproducer for the following issue on:
+> >>>
+> >>> HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into
+> >>> for-kernelci
+> >>> git tree:
+> >>> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+> >>> for-kernelci
+> >>> console output:
+> >>> https://syzkaller.appspot.com/x/log.txt?x=3D12bdabc7980000
+> >>> kernel config:
+> >>> https://syzkaller.appspot.com/x/.config?x=3Ddde5a5ba8d41ee9e
+> >>> dashboard link:
+> >>> https://syzkaller.appspot.com/bug?extid=3D51cf7cc5f9ffc1006ef2
+> >>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils
+> >>> for Debian) 2.40
+> >>> userspace arch: arm64
+> >>> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=3D1798589f9800=
+00
+> >>> C reproducer: https://syzkaller.appspot.com/x/repro.c?x=3D10a30e00580=
+000
+> >>>
+> >>> Downloadable assets:
+> >>> disk image:
+> >>> https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4=
+a1.raw.xz
+> >>> vmlinux:
+> >>> https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df5=
+4f4a1.xz
+> >>> kernel image:
+> >>> https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f=
+4a1.gz.xz
+> >>>
+> >>> IMPORTANT: if you fix the issue, please add the following tag to the
+> >>> commit:
+> >>> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+> >>>
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> >>> WARNING: possible circular locking dependency detected
+> >>> 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
+> >>> ------------------------------------------------------
+> >>> syz-executor272/6388 is trying to acquire lock:
+> >>> ffff8000923b6ce8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x20/0x2c
+> >>> net/core/rtnetlink.c:79
+> >>>
+> >>> but task is already holding lock:
+> >>> ffff0000dc408a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at:
+> >>> smc_setsockopt+0x178/0x10fc net/smc/af_smc.c:3064
+> >>>
+> >>> which lock already depends on the new lock.
+> >>>
+>
+> I have noticed this issue for a while, but I question the possibility of
+> it. If I understand correctly, a deadlock issue following is reported her=
+e:
+>
+> #2
+> lock_sock_smc
+> {
+>      clcsock_release_lock            --- deadlock
+>      {
+>
+>      }
+> }
+>
+> #1
+> rtnl_mutex
+> {
+>      lock_sock_smc
+>      {
+>
+>      }
+> }
+>
+> #0
+> clcsock_release_lock
+> {
+>      rtnl_mutex                      --deadlock
+>      {
+>
+>      }
+> }
+>
+> This is of course a deadlock, but #1 is suspicious.
+>
+> How would this happen to a smc sock?
+>
+> #1 ->
+>         lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
+>         lock_sock include/net/sock.h:1607 [inline]
+>         sockopt_lock_sock net/core/sock.c:1061 [inline]
+>         sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
+>         do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
+>         ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
+>         raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
+>         sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
+>         do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
+>
+> As a comparison, the correct calling chain should be:
+>
+>         sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
+>         smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
+>         do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
+>
+>
+> That's to say,  any setting on SOL_IP options of smc_sock will
+> go with smc_setsockopt, which will try lock clcsock_release_lock at first=
+.
+>
+> Anyway, if anyone can explain #1, then we can see how to solve this probl=
+em,
+> otherwise I think this problem doesn't exist. (Just my opinion)
 
-d837dec2296c smb: add comment to STATUS_MCA_OCCURED
-15dd39d9da2b smb: move SMB2 Status code to common header file
-5ce486228d95 smb: move some duplicate definitions to common/smbacl.h
-1e4b28faf320 smb/client: rename cifs_ace to smb_ace
-664987e5e550 smb/client: rename cifs_acl to smb_acl
-624d2ce94277 smb/client: rename cifs_sid to smb_sid
-8335848d54c1 smb/client: rename cifs_ntsd to smb_ntsd
+Then SMC lacks some lockdep annotations.
 
-On Thu, Aug 22, 2024 at 3:25=E2=80=AFAM <chenxiaosong@chenxiaosong.com> wro=
-te:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> Fix some bugs in smb2_open() of smb server.
->
-> In order to maintain the code more easily, move some duplicate
-> definitions to common header file.
->
-> Additionally, add some small cleanups to the patchset.
->
-> v1->v2:
->   - update patch #2 according to Namjae's suggestions.
->   - add patch #6~9 to rename 'cifs_ntsd' 'cifs_sid' 'cifs_acl' 'cifs_ace'=
- according to Namjae's suggestions.
->   - add patch #12 to explained why the typo 'STATUS_MCA_OCCURED' was not =
-corrected.
->
-> v1: https://lore.kernel.org/all/20240820143319.274033-1-chenxiaosong@chen=
-xiaosong.com/
->
-> ChenXiaoSong (12):
->   smb/server: fix return value of smb2_open()
->   smb/server: fix potential null-ptr-deref of lease_ctx_info in
->     smb2_open()
->   smb/server: remove useless assignment of 'file_present' in smb2_open()
->   smb/client: fix typo: GlobalMid_Sem -> GlobalMid_Lock
->   smb/server: update misguided comment of smb2_allocate_rsp_buf()
->   smb/client: rename cifs_ntsd to smb_ntsd
->   smb/client: rename cifs_sid to smb_sid
->   smb/client: rename cifs_acl to smb_acl
->   smb/client: rename cifs_ace to smb_ace
->   smb: move some duplicate definitions to common/smbacl.h
->   smb: move SMB2 Status code to common header file
->   smb: add comment to STATUS_MCA_OCCURED
->
->  fs/smb/client/cifsacl.c                |  224 +--
->  fs/smb/client/cifsacl.h                |   99 +-
->  fs/smb/client/cifsfs.c                 |    6 +-
->  fs/smb/client/cifsglob.h               |   22 +-
->  fs/smb/client/cifsproto.h              |   18 +-
->  fs/smb/client/cifssmb.c                |    6 +-
->  fs/smb/client/smb2file.c               |    2 +-
->  fs/smb/client/smb2inode.c              |    6 +-
->  fs/smb/client/smb2maperror.c           |    2 +-
->  fs/smb/client/smb2misc.c               |    2 +-
->  fs/smb/client/smb2ops.c                |   16 +-
->  fs/smb/client/smb2pdu.c                |   14 +-
->  fs/smb/client/smb2pdu.h                |    8 +-
->  fs/smb/client/smb2proto.h              |    2 +-
->  fs/smb/client/smb2transport.c          |    2 +-
->  fs/smb/client/xattr.c                  |    4 +-
->  fs/smb/{client =3D> common}/smb2status.h |    6 +
->  fs/smb/common/smbacl.h                 |  121 ++
->  fs/smb/server/oplock.c                 |    4 +-
->  fs/smb/server/server.c                 |    2 +-
->  fs/smb/server/smb2misc.c               |    2 +-
->  fs/smb/server/smb2pdu.c                |   17 +-
->  fs/smb/server/smb_common.c             |    2 +-
->  fs/smb/server/smbacl.h                 |  111 +-
->  fs/smb/server/smbstatus.h              | 1822 ------------------------
->  fs/smb/server/transport_rdma.c         |    2 +-
->  26 files changed, 314 insertions(+), 2208 deletions(-)
->  rename fs/smb/{client =3D> common}/smb2status.h (99%)
->  create mode 100644 fs/smb/common/smbacl.h
->  delete mode 100644 fs/smb/server/smbstatus.h
->
-> --
-> 2.34.1
->
->
-
-
---=20
-Thanks,
-
-Steve
+Please take a look at sock_lock_init_class_and_name() callers.
 
