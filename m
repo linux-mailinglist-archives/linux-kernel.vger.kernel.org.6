@@ -1,219 +1,214 @@
-Return-Path: <linux-kernel+bounces-322469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B41997294A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A140972947
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07171F26310
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B45287A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3163417A5AA;
-	Tue, 10 Sep 2024 06:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBzntBuK"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDDC17622D;
+	Tue, 10 Sep 2024 06:07:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929C6166F00
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87002172773
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725948422; cv=none; b=HuYF7FBhbrmD2F7Tw9vKdCKmq5a/z5yG3uq83XEIConrS3iD27AHm7xIn69uzUyBWp6T4KCbbTpYT4688Ogmknp9qV8RT1/RrL7rbmu+NoMYWzh3UScnw0vtgtVsr9Ibw5+weUpXPcZb6nugkmugbXuVVwS/DQbjJzXsLb0tMBA=
+	t=1725948419; cv=none; b=Jz/eX5ratZL5OsCvzGogi0iumk8dwtqsda4GaLc6xI/rGdSdcmZ/NWpTGQhNDPYqWtbZEhtieZoy4gmeTLD0yiUn74oG/iCfKsG8j1R+Y7pwtfwv65IESAyYJ8mM7oFwpR2XT2y4HRsL7FY+swZF5DwasUKlukPnYwU8oGRJL2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725948422; c=relaxed/simple;
-	bh=Y4IUApUSHTsnmcu4wF4wE4pQLfT7M//t+j035MFadwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LpByJpzoWfly75kpLrjGVNgN2BRGoC/J1PczbyEtk50/u6cLyQ4rbLqGCdlvDsVI7Bj8NAo9b/TphHYyzxDR+ltUJuR4si6O8GwdarxKPZX5MXST6L0SMis2F6NapjDSZH6+pVmCpu66yP/obkFgkoUhaM0yt0lIh6U44cXcorU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBzntBuK; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-277e6002b7dso2706303fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:06:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725948418; x=1726553218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z9MHdiQIKbQZ7sHVzFN+NNCUWOQwDHp5p4yZrC2v9dg=;
-        b=CBzntBuK2A80ovZYB1HZeo1BQcV1R3JOEpzWXtSSPd97UEQgaaQ/giTYolQiIlr+L0
-         h8PwVtwiwPLypvtN/15CnRw1nWQWh9v47565FNPzLypO8K9hzscNCsxmp+q3g5u0Heyw
-         iTEVkuW8Na+SOpW2LzN7YMOKjwAqPKOTvuvnj+hkqo/QEM/W1w7iufVPCGlwcbWyUxKo
-         L+Oa6hURcTi9CrPmrEe/ep93cCXFh/K39VS9lgOkpgXOngus3Kc8EmxaNJDPbwnnhxt1
-         UreKI9e7FOGBDmO/wFWkv5kpE27cFx9CeeM5PRWF8FhPMjvhbF7GIv2uRsStrbuIsvez
-         CRbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725948419; x=1726553219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z9MHdiQIKbQZ7sHVzFN+NNCUWOQwDHp5p4yZrC2v9dg=;
-        b=eHweoqODYnvSEPLOsmLvSRJ8x59V4WEKWe4OPpWq/tp7/dCFr8lMz/DJiknnNmu7Em
-         D2A//FTf6nUzhq2jB0xf659ZPxOaNC7c9cbb64o4ifdNshF4QR8OK3yDlCeYXEfPJTXN
-         somOWBA4j5ELYE0N77tKSfBrxzO1a3WUWqrkbMS59HmF6cK25qPd8+6TuOmnUAxd1rQT
-         48UrznuspHgxcVxn+GPNiDdQ2gB5zP2giIjV3ZRjTKIhxQaNPL67BemJxbSkeRnLY2OS
-         IuEEfBsqVrsgzu9Vwo9IBTuVJLBtHB/N9zGO8WcQy5R+x0JGtPGW4eFFl2IXwHYSvZ0N
-         Uo5Q==
-X-Gm-Message-State: AOJu0YwggP8u7bpInxdWJ4Yi9+uExxckzUSIMg1HCTtZT4mrd271WTWu
-	/7i3nWHWBKtuZUj6yDJTFmnueNuIr4oK0rUXVw2aESlT9somEQdEuJUW6rkcTx6dnxovPZ/nywq
-	ZU5j7x2MJsW4YtfdgayxL/2j+NOPam4pl+zXZDQ==
-X-Google-Smtp-Source: AGHT+IEICe98dkZbn2Ns9nln8TerGdgfmay8kae6nOnNQUjTdvKEr1T8PPGslpKcLz8r5N2w/0aeGsRv9D3S4R0GNlg=
-X-Received: by 2002:a05:6870:9122:b0:278:22d3:53 with SMTP id
- 586e51a60fabf-27b82e076cdmr13465979fac.12.1725948418296; Mon, 09 Sep 2024
- 23:06:58 -0700 (PDT)
+	s=arc-20240116; t=1725948419; c=relaxed/simple;
+	bh=0u0Ic82teMPVdI77mCAypb2Gawhi8xTU7RiSGEjStsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCS20PxH1fq8yeQxGVq037qCWE6TsQGqxAm9GIHrsHc7iTKl5i4neUxy3eroNw/SnOk6tMF9cpO3FtI8RVXzuCnLDncOauqfesF82uQafVqoC6WItqYZUGJOtw6ZWxg0PBWnjohqpuABfBWxoSNWwcJsKSLIUmSrLL6lj5gnpco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snu1f-0003bB-Rv; Tue, 10 Sep 2024 08:06:55 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snu1e-006pVN-VD; Tue, 10 Sep 2024 08:06:54 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1snu1e-00HWSG-2m;
+	Tue, 10 Sep 2024 08:06:54 +0200
+Date: Tue, 10 Sep 2024 08:06:54 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"francesco@dolcini.it" <francesco@dolcini.it>,
+	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+ different channel
+Message-ID: <Zt_h_mW4nFWKu2SI@pengutronix.de>
+References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
+ <ZtWHhSQlPVMekW1I@pengutronix.de>
+ <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt9blTxk88Opujsk@pengutronix.de>
+ <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <Zt_fZEJyiCyanf7X@pengutronix.de>
+ <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
- <20240830070351.2855919-5-jens.wiklander@linaro.org> <CABdmKX2KzswmiDY4oWw69_rPWs8d_Cqp7OXouSeMQaYX1SDSmw@mail.gmail.com>
- <CAHUa44FYYFVQWf0DGUXNHoOVQEC0-HRyYa0386dHNjo4y1qSiQ@mail.gmail.com> <CABdmKX0qd0RoTn2TBQTs9zdf=_JP8pW8hFRUR_7n_t-sfxsGdg@mail.gmail.com>
-In-Reply-To: <CABdmKX0qd0RoTn2TBQTs9zdf=_JP8pW8hFRUR_7n_t-sfxsGdg@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 10 Sep 2024 08:06:46 +0200
-Message-ID: <CAHUa44E-7UMseWSEeneYYnAPyhH___=a1YYR6uaOVTNZytzg7g@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] dma-buf: heaps: add Linaro restricted dmabuf heap support
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Sep 4, 2024 at 11:42=E2=80=AFPM T.J. Mercier <tjmercier@google.com>=
- wrote:
->
-> On Wed, Sep 4, 2024 at 2:44=E2=80=AFAM Jens Wiklander <jens.wiklander@lin=
-aro.org> wrote:
-> >
-> > On Tue, Sep 3, 2024 at 7:50=E2=80=AFPM T.J. Mercier <tjmercier@google.c=
-om> wrote:
+On Tue, Sep 10, 2024 at 05:56:58AM +0000, David Lin wrote:
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Tuesday, September 10, 2024 1:56 PM
+> > To: David Lin <yu-hao.lin@nxp.com>
+> > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
+> > Hsieh <tsung-hsien.hsieh@nxp.com>
+> > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
+> > different channel
+> > 
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> > 
+> > 
+> > On Tue, Sep 10, 2024 at 01:55:14AM +0000, David Lin wrote:
+> > > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > Sent: Tuesday, September 10, 2024 4:33 AM
+> > > > To: David Lin <yu-hao.lin@nxp.com>
+> > > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
+> > > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+> > > > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
+> > > > running on different channel
+> > > >
+> > > > Caution: This is an external email. Please take care when clicking
+> > > > links or opening attachments. When in doubt, report the message
+> > > > using the 'Report this email' button
+> > > >
+> > > >
+> > > > On Mon, Sep 02, 2024 at 10:35:01AM +0000, David Lin wrote:
+> > > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > > > Sent: Monday, September 2, 2024 5:38 PM
+> > > > > > To: David Lin <yu-hao.lin@nxp.com>
+> > > > > > Cc: linux-wireless@vger.kernel.org;
+> > > > > > linux-kernel@vger.kernel.org; briannorris@chromium.org;
+> > > > > > kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
+> > > > > > <tsung-hsien.hsieh@nxp.com>
+> > > > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
+> > > > > > running on different channel
+> > > > > >
+> > > > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
+> > > > > > > Current firmware doesn't support AP and STA running on
+> > > > > > > different channels simultaneously.
+> > > > > >
+> > > > > > As mentioned here:
+> > > > > >
+> > > > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%
+> > > > > >
+> > 2Flo%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7Cd0a1e3797a0d4acd7a
+> > > > > >
+> > 9c08dcd15d3ddb%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
+> > 6
+> > > > > >
+> > 15445620612026%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJ
+> > QI
+> > > > > >
+> > joiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=5yC
+> > > > > > jjIqxpV%2BJxlPdrCH0gRTQ%2FCQZKr%2FDc0S1cjkaIA8%3D&reserved=0
+> > > > > >
+> > > >
+> > re.kern%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C7712df39ac37414fd
+> > > > a7
+> > > > > >
+> > > >
+> > e08dcd10eac35%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
+> > > > 15108
+> > > > > >
+> > > >
+> > 157502805%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
+> > > > 2luMz
+> > > > > >
+> > > >
+> > IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=URNJPJE17iRY
+> > > > Tu4i
+> > > > > > rx7eQAC97tE5OE6a4kUfjUwuaVU%3D&reserved=0
+> > > > > >
+> > > >
+> > el.org%2Fall%2FZtGnWC7SPHt7Vbbp%40pengutronix.de%2F&data=05%7C02%
+> > > > > >
+> > > >
+> > 7Cyu-hao.lin%40nxp.com%7Cce9b7d4e417c41113c7d08dccb32fc49%7C686ea
+> > > > > >
+> > > >
+> > 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638608667089710854%7CUnkn
+> > > > > >
+> > > >
+> > own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1h
+> > > > > >
+> > > >
+> > aWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=nMZO565xCUO%2BwxD4tIfi
+> > > > > > w6cGyYrinaEsi7XLfqyxgXg%3D&reserved=0
+> > > > > >
+> > > > > > AP and STA can indeed have different channels when DRCS is
+> > > > > > enabled, so I think you have to check this in your patch.
+> > > > > >
+> > > > > > Maybe the same question here again: Wouldn't it make sense to
+> > > > > > enable DRCS by default?
+> > > > > >
+> > > > > > Sascha
+> > > > > >
+> > > > >
+> > > > > I will look into DRCS support later after current tasks on hand.
+> > > > > This patch is a quick fix to avoid firmware crash in the specific scenario.
+> > > >
+> > > > With DRCS support enabled AP and STA actually can run on different
+> > > > channels with the current code. You are breaking this scenario with this
+> > patch.
+> > > >
+> > > > Sascha
+> > > >
 > > >
-> > > On Fri, Aug 30, 2024 at 12:04=E2=80=AFAM Jens Wiklander
-> > > <jens.wiklander@linaro.org> wrote:
-> > > >
-> > > > Add a Linaro restricted heap using the linaro,restricted-heap bindi=
-ngs
-> > > > implemented based on the generic restricted heap.
-> > > >
-> > > > The bindings defines a range of physical restricted memory. The hea=
-p
-> > > > manages this address range using genalloc. The allocated dma-buf fi=
-le
-> > > > descriptor can later be registered with the TEE subsystem for later=
- use
-> > > > via Trusted Applications in the secure world.
-> > > >
-> > > > Co-developed-by: Olivier Masse <olivier.masse@nxp.com>
-> > > > Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
-> > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > > ---
-> > > >  drivers/dma-buf/heaps/Kconfig                 |  10 ++
-> > > >  drivers/dma-buf/heaps/Makefile                |   1 +
-> > > >  .../dma-buf/heaps/restricted_heap_linaro.c    | 165 ++++++++++++++=
-++++
-> > > >  3 files changed, 176 insertions(+)
-> > > >  create mode 100644 drivers/dma-buf/heaps/restricted_heap_linaro.c
-> > > >
-> > > > diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/=
-Kconfig
-> > > > index 58903bc62ac8..82e2c5d09242 100644
-> > > > --- a/drivers/dma-buf/heaps/Kconfig
-> > > > +++ b/drivers/dma-buf/heaps/Kconfig
-> > > > @@ -28,3 +28,13 @@ config DMABUF_HEAPS_RESTRICTED_MTK
-> > > >         help
-> > > >           Enable restricted dma-buf heaps for MediaTek platform. Th=
-is heap is backed by
-> > > >           TEE client interfaces. If in doubt, say N.
-> > > > +
-> > > > +config DMABUF_HEAPS_RESTRICTED_LINARO
-> > > > +       bool "Linaro DMA-BUF Restricted Heap"
-> > > > +       depends on DMABUF_HEAPS_RESTRICTED
-> > > > +       help
-> > > > +         Choose this option to enable the Linaro restricted dma-bu=
-f heap.
-> > > > +         The restricted heap pools are defined according to the DT=
-. Heaps
-> > > > +         are allocated in the pools using gen allocater.
-> > > > +         If in doubt, say N.
-> > > > +
-> > > > diff --git a/drivers/dma-buf/heaps/Makefile b/drivers/dma-buf/heaps=
-/Makefile
-> > > > index 0028aa9d875f..66b2f67c47b5 100644
-> > > > --- a/drivers/dma-buf/heaps/Makefile
-> > > > +++ b/drivers/dma-buf/heaps/Makefile
-> > > > @@ -2,4 +2,5 @@
-> > > >  obj-$(CONFIG_DMABUF_HEAPS_CMA)         +=3D cma_heap.o
-> > > >  obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED)  +=3D restricted_heap.o
-> > > >  obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED_MTK)      +=3D restricted_hea=
-p_mtk.o
-> > > > +obj-$(CONFIG_DMABUF_HEAPS_RESTRICTED_LINARO)   +=3D restricted_hea=
-p_linaro.o
-> > > >  obj-$(CONFIG_DMABUF_HEAPS_SYSTEM)      +=3D system_heap.o
-> > > > diff --git a/drivers/dma-buf/heaps/restricted_heap_linaro.c b/drive=
-rs/dma-buf/heaps/restricted_heap_linaro.c
-> > > > new file mode 100644
-> > > > index 000000000000..4b08ed514023
-> > > > --- /dev/null
-> > > > +++ b/drivers/dma-buf/heaps/restricted_heap_linaro.c
-> > > > @@ -0,0 +1,165 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * DMABUF secure heap exporter
-> > > > + *
-> > > > + * Copyright 2021 NXP.
-> > > > + * Copyright 2024 Linaro Limited.
-> > > > + */
-> > > > +
-> > > > +#define pr_fmt(fmt)     "rheap_linaro: " fmt
-> > > > +
-> > > > +#include <linux/dma-buf.h>
-> > > > +#include <linux/err.h>
-> > > > +#include <linux/genalloc.h>
-> > > > +#include <linux/module.h>
-> > > > +#include <linux/of.h>
-> > > > +#include <linux/of_fdt.h>
-> > > > +#include <linux/of_reserved_mem.h>
-> > > > +#include <linux/scatterlist.h>
-> > > > +#include <linux/slab.h>
-> > > > +
-> > > > +#include "restricted_heap.h"
-> > > > +
-> > > > +#define MAX_HEAP_COUNT 2
-> > >
-> > > Are multiple supported because of what Cyrille mentioned here about p=
-ermissions?
-> > > https://lore.kernel.org/lkml/DBBPR04MB7514E006455AEA407041E4F788709@D=
-BBPR04MB7514.eurprd04.prod.outlook.com/
-> >
-> > Yes, I kept that as is.
->
-> Ok thanks.
->
-> > > So this is just some arbitrary limit? I'd prefer to have some sort of
-> > > documentation about this.
-> >
-> > How about removing the limit and using dynamic allocation instead?
->
-> That works too!
+> > > DRCS will be checked in the future.
+> > 
+> > By future you mean v3 of this patch?
+> > 
+> > Sascha
+> > 
+> 
+> No schedule now.
 
-It turns out that was easier said than done. The limit is hardcoded
-because dynamic memory allocation isn't available at that stage during
-boot. We have a short description of this heap in Kconfig. I'll add
-something about the limit there if that makes sense.
+I am getting confused now. You want us to abandon my patch in favour of
+yours, but you have no plans to update your patch to avoid a regression
+that you introduce with your patch?
 
-Thanks,
-Jens
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
