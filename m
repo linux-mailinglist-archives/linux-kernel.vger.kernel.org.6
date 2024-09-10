@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-323748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7319D9742DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF779742E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37206286E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AF3289AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625FD1A7051;
-	Tue, 10 Sep 2024 18:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s4/P31pr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DE51A76AE;
+	Tue, 10 Sep 2024 18:59:20 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76B1A0708;
-	Tue, 10 Sep 2024 18:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0D1A7043;
+	Tue, 10 Sep 2024 18:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994757; cv=none; b=lYGCzaUNL0hlWNvymdQmGYfohqU8xw6/3+p0ceWIo+qCFNJQAQZJVw0q4jiQySoZepsfpejVTeu8Odl/4fj5m2+DqhuMkm2sScvI/tA9x/renxuJZSGEFTOXXtJ3x2y4YAD+JDTZNQ+O/TuL+iGUF10Spg04TBa58Mp4c1mh/U4=
+	t=1725994760; cv=none; b=dlsulBIoCCjrxNNPYzKTij8sLsROnwT5FYXphzyYq0uvuU5oFOVXOXiaknV26XlGp6vFuxcXi5BpkWpk6LtahQllZwpRmBcQcRLAqIeXXyP14+zE9wlqwLs5M6gny/+pTmMQGsmmDH4wh6VRpP9T9Yg3X8eVwx9pG0/c1u6tZhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994757; c=relaxed/simple;
-	bh=f2gKhhCaAZOrRih/26d2mAxc09wPg7jwSjHQwbCur1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyyGYomdZL7cPTtay+q+K+dRO/3r8REOo42RQyITa3eTm42A+SbNpdqkEibNF27b83bx8+AEMyHrPHdKI092eDqI2HxMf+Ik3jbeJ8mYOynAbVO5yyvzNOMwAyYo3NyTA4TpyzxUz9ul3i8Hcbx4wB/kR4MYp2O6melIcU6i3gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=s4/P31pr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=faIiyJTdeUZNcnYDzrYg0JikXUSOkAxYS32UaSWmdlE=; b=s4/P31prm7EKsDTXjw1Y8d1/aM
-	5f5OUfyiksMzg9/VMCYuTkfiTPc+MB0QV2VCs5X+rH83DbXlVDKkfKc/9lbm0QXT0GBxjceDDJm6w
-	UBJVuBOOJ4R2thDbVP+2eOuES8x4isrTOIz9NiiXRWZv/axiEh5YNpTElyoaxgl3wjqE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1so64s-0078Yb-Mc; Tue, 10 Sep 2024 20:59:02 +0200
-Date: Tue, 10 Sep 2024 20:59:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandra Diupina <adiupina@astralinux.ru>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Message-ID: <82162974-00b5-44c9-bbb8-701e6c871bb0@lunn.ch>
-References: <884103b1-e373-4446-b9fd-1cb06cd75360@lunn.ch>
- <20240910173110.31944-1-adiupina@astralinux.ru>
+	s=arc-20240116; t=1725994760; c=relaxed/simple;
+	bh=lZdWc1QdGCBc0gphOiz83m01CLzb0fC3FjmmjOJIe9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WVdpW4S88a8XyKQ/YXDyVZdr9248oomT8eLl1VVihBPGWROnM9/WwPkSprCroUMEXilWu+dnqQvRttSjWCzjfYww9t/2V5Ga+DLYs+3OG5MTVTDrzwRJp5zSPlxui11gMY4P8YVGT8jYhaxLh0sIGhex60nNlYFhuaZABeCO87Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BDCA3FF803;
+	Tue, 10 Sep 2024 18:59:09 +0000 (UTC)
+Message-ID: <77d0f59f-554b-4cd9-ae1c-4c89a76058ef@ghiti.fr>
+Date: Tue, 10 Sep 2024 20:59:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910173110.31944-1-adiupina@astralinux.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
+ switch_mm()
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
+ sashal@kernel.org, parri.andrea@gmail.com, mathieu.desnoyers@efficios.com,
+ palmer@rivosinc.com, linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, nathan@kernel.org,
+ ndesaulniers@google.com, trix@redhat.com, linux-riscv@lists.infradead.org,
+ llvm@lists.linux.dev, paulmck@kernel.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ brauner@kernel.org, arnd@arndb.de
+References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
+ <2024091002-caution-tinderbox-a847@gregkh>
+ <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
+ <2024091037-errant-countdown-4928@gregkh>
+ <5d486ff8-2ab5-4ed5-a1da-c2817927b3a2@ghiti.fr>
+ <2024091056-bogus-whoops-4bde@gregkh>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <2024091056-bogus-whoops-4bde@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Sep 10, 2024 at 08:31:10PM +0300, Alexandra Diupina wrote:
-> get_div() may return zero, so it is necessary to check
-> before calling DIV_ROUND_UP_ULL().
-> 
-> Return value of get_div() depends on reg1, reg2, shift1, shift2
-> fields of clk_double_div structure which are filled using the
-> PERIPH_DOUBLEDIV macro. This macro is called from the
-> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
-> 
-> It is not known exactly what values can be contained in the registers
-> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-> div can be zero. Print an error message and return 0 in this case.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
-> ---
-> v2: added explanations to the commit message and printing 
-> of an error message when div==0
->  drivers/clk/mvebu/armada-37xx-periph.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 8701a58a5804..8e749a354ffc 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -343,7 +343,13 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
->  	div = get_div(double_div->reg1, double_div->shift1);
->  	div *= get_div(double_div->reg2, double_div->shift2);
->  
-> -	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> +	if (!div) {
-> +		pr_err("Can't recalculate the rate of clock %s\n",
-> +										hw->init->name);
+On 10/09/2024 15:25, Greg KH wrote:
+> On Tue, Sep 10, 2024 at 02:35:06PM +0200, Alexandre Ghiti wrote:
+>> On 10/09/2024 13:58, Greg KH wrote:
+>>> On Tue, Sep 10, 2024 at 01:31:04PM +0200, Alexandre Ghiti wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 10/09/2024 09:32, Greg KH wrote:
+>>>>> On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
+>>>>>> From: Andrea Parri <parri.andrea@gmail.com>
+>>>>>>
+>>>>>> [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
+>>>>>>
+>>>>>> The membarrier system call requires a full memory barrier after storing
+>>>>>> to rq->curr, before going back to user-space.  The barrier is only
+>>>>>> needed when switching between processes: the barrier is implied by
+>>>>>> mmdrop() when switching from kernel to userspace, and it's not needed
+>>>>>> when switching from userspace to kernel.
+>>>>>>
+>>>>>> Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
+>>>>>> primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
+>>>>>> architecture, to insert the required barrier.
+>>>>>>
+>>>>>> Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
+>>>>>> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+>>>>>> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>>>> Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
+>>>>>> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+>>>>>> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+>>>>>> ---
+>>>>>>     MAINTAINERS                         |  2 +-
+>>>>>>     arch/riscv/Kconfig                  |  1 +
+>>>>>>     arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
+>>>>>>     arch/riscv/mm/context.c             |  2 ++
+>>>>>>     kernel/sched/core.c                 |  5 +++--
+>>>>>>     5 files changed, 38 insertions(+), 3 deletions(-)
+>>>>>>     create mode 100644 arch/riscv/include/asm/membarrier.h
+>>>>> Now queued up, thanks.
+>>>> The original patch was merged in 6.9 and the Fixes tag points to a commit
+>>>> introduced in v4.15. So IIUC, this patch should have been backported
+>>>> "automatically" to the releases < 6.9 right? As stated in the documentation
+>>>> (process/stable-kernel-rules.html):
+>>>>
+>>>> "Note, such tagging is unnecessary if the stable team can derive the
+>>>> appropriate versions from Fixes: tags."
+>>>>
+>>>> Or did we miss something?
+>>> Yes, you didn't tag cc: stable at all in this commit, which is why we
+>>> did not see it.  The documentation says that :)
+>>
+>> Ok, some patches seem to make it to stable without the cc: stable tag (like
+>> the one below for example), so I thought it was not necessary.
+> Yes, they do, because many maintainers and developers don't follow the
+> normal rules, so we sweep the tree when we have a chance and do a "best
+> effort" backport at times.
+>
+> But again, it is NOT guaranteed that this will happen, and even if it
+> does, you will NOT get emails saying the attempt-at-backporting fails,
+> if it fails, as obviously the developers involved weren't explicitly
+> asking for it to be backported.
+>
+> So in short, just properly tag things for stable, and all will be fine.
 
-Rather odd indentation!
 
-It is too late for this merge window. Please fix this and repost on
-top of 6.12-rc1.
+Great, thank you, I'll make sure we tag the fixes to backport properly!
 
-Thanks
-	Andrew
+Thanks again,
+
+Alex
+
+
+>
+> thanks,
+>
+> greg k-h
 
