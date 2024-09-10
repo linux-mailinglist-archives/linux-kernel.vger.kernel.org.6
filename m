@@ -1,153 +1,107 @@
-Return-Path: <linux-kernel+bounces-322481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAA7972974
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:22:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9402E97297A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230FB285610
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D36286301
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D119176FAC;
-	Tue, 10 Sep 2024 06:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IORkB/U2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E287178372;
+	Tue, 10 Sep 2024 06:26:26 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A81386DF;
-	Tue, 10 Sep 2024 06:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0EA167265;
+	Tue, 10 Sep 2024 06:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725949349; cv=none; b=Qz8fJwZW1o9vV4EBAy72PJ/4BqPU0lYBvga8IO+v+czVacJpj0PjVKmzGTlWNm7sReSfy/Uy05nAHdR7aQyPYfupq1POziFqIe0TpI4R6+rB8QjzvuYl62uNWIcUdMgzFFrDSuMmZTrYC6b4si/htW/Lka9o1kV9jAfFX6pLIQM=
+	t=1725949586; cv=none; b=h7RrFki8FbhkFxjuJJLBp0K/o3W6qoh7RqGhjA4veTQS5XA6hSMuf9+/M/dfd1Eps7m2vVFFTm0ItHUqq+xKht28qY1BoODsDMAOKIEU/kSo6EEjBP6TTPsdY7l28l4kcPfGwHCX1xUrSWwANY+rKxSAVeU5awuq9ydaAJT65tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725949349; c=relaxed/simple;
-	bh=wDXVRRb9fFqnNG/e2J9iPFDPeNe6iKxKjeCSX7UbCTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OuzK2F5ttW8VYItjRBjqlYHG1AS2iS/55AcU5N0E6o4awoI1UYipHUfLxuNUUM14A7n7e4jHjDEu6tHo1heNXReJX/NS+0SvSNIBti9AoHYAPAuAnsbVs9pLpxLWKIwkoYQDZxqB2K2kKzzPEM2q4qZBmQ84dsLkM86/ycM8HHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IORkB/U2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3mI8H028083;
-	Tue, 10 Sep 2024 06:21:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	abGkKzVbCFyg6JdPil4boqV7m6mzwnRG4sSLRPcCDkU=; b=IORkB/U2GEXb5SAd
-	66NTftFHUvLgYmCnfdAD/rUZJIng9zk7Ay7VZDHzvF2ooDb3IJY3yUpe+Xz71Np7
-	zthM8eHN040D1RS+y8Un161tvNpUB2SNERtDQ8da+bV0DD3YxawDt1Sx/9HokC6T
-	C/qkPCUC0MZKnYYnPCurNyXQJSh9cjNPtPEug7g7dCXF4cvXWaS4YSH3MG/bqi4x
-	dPuDsheJcb/JlUIrMk+ky1UJ/bl0q1nq6wqNXf8rLYWQj34EmNNH1v78Tr/u+u+z
-	vLpCA+Jcvuyh+VqsGeV1WWORXSNwnZUztETDrVe04CgP1+g3qrpHw6iEG5z3wonP
-	PEeFGQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5rcwjr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 06:21:45 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A6LiPU025302
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 06:21:44 GMT
-Received: from [10.151.37.94] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Sep 2024
- 23:21:39 -0700
-Message-ID: <bb1397c3-2327-e211-f7eb-cac4b126424e@quicinc.com>
-Date: Tue, 10 Sep 2024 11:51:27 +0530
+	s=arc-20240116; t=1725949586; c=relaxed/simple;
+	bh=/qmfKFmLdvMow1NT8OvtMXM3ryx2ZK8H+ypz/oi4Gdc=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KrjtpQdrJQ1+ZMEUQrWt24PPybm0Bsro0LBPmr37pfmqkq/DsRecGk4fy1PPyYaQ5y6Tw7fpgHIqh5CyKLSiISR07kzq015yRtN3NPV9sswAwITiPtRjInHp4R+MfpAWPUy+I6+VfrnNvztfCj/7kn4omxFv9tvH+aByanxhKBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X2txM5Dmvz1S9qq;
+	Tue, 10 Sep 2024 14:25:43 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 216801A016C;
+	Tue, 10 Sep 2024 14:26:12 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 14:26:11 +0800
+Message-ID: <8f17b1be-cf69-4701-ab62-40141b1cbf99@huawei.com>
+Date: Tue, 10 Sep 2024 14:26:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v8 0/8] Add QPIC SPI NAND driver
-Content-Language: en-US
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <richard@nod.at>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <esben@geanix.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>
-References: <20240820104239.1774600-1-quic_mdalam@quicinc.com>
- <5169761b-422d-70ab-ba53-a898cb7bfa2f@quicinc.com>
- <20240903150826.749b8560@xps-13>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <20240903150826.749b8560@xps-13>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, Kalesh Anakkur Purayil
+	<kalesh-anakkur.purayil@broadcom.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>, <zhuyuan@huawei.com>,
+	<forest.zhouchang@huawei.com>, <jdamato@fastly.com>, <horms@kernel.org>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V8 net-next 05/11] net: hibmcge: Implement some .ndo
+ functions
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240909023141.3234567-1-shaojijie@huawei.com>
+ <20240909023141.3234567-6-shaojijie@huawei.com>
+ <CAH-L+nOxj1_wHdSacC5R9WG5GeMswEQDXa4xgVFxyLHM7xjycg@mail.gmail.com>
+ <116bff77-f12f-43f0-8325-b513a6779a55@huawei.com>
+ <fec0a530-64d9-401c-bb43-4c5670587909@lunn.ch>
+ <1a7746a7-af17-43f9-805f-fd1cbd24e607@huawei.com>
+ <49166f60-bf25-4313-bacb-496103086d40@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <49166f60-bf25-4313-bacb-496103086d40@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mRLGbG3WlngwSJ0VTAdjQSQVj9PbpP2f
-X-Proofpoint-ORIG-GUID: mRLGbG3WlngwSJ0VTAdjQSQVj9PbpP2f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- clxscore=1015 malwarescore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- mlxscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409100046
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
 
-
-On 9/3/2024 6:38 PM, Miquel Raynal wrote:
-> Hi,
-> 
-> quic_mdalam@quicinc.com wrote on Tue, 3 Sep 2024 14:45:15 +0530:
-> 
->> Hi Miquel,
+on 2024/9/9 22:48, Andrew Lunn wrote:
+>> No, HBG_NIC_STATE_OPEN is not intended to ensure that hbg_net_open() and
+>> hbg_net_stop() are mutually exclusive.
 >>
->> On 8/20/2024 4:12 PM, Md Sadre Alam wrote:
->>> v8:
->>>    * Fixed compilation warning reported by kernel test robot
->>>    * Added "chip" description in nandc_set_read_loc_first()
->>>    * Added "chip" description" in nandc_set_read_loc_last()
->>>    * Changed data type of read_location0, read_location1,
->>>      read_location2, read_location3, addr0, addr1, cmd, cfg0,
->>>      cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
->>>      orig_cmd1, orig_vld to __le32 to fix compilation warning.
->>>    * Included bitfield.h header file in spi-qpic-snand.c to
->>>      fix compilation warning
->>>    * Removed unused variable "steps" variable from
->>>      qcom_spi_ecc_init_ctx_pipelined()
->>>    
->>       I have addressed your comments to v6 and further posted till v8.
->>       Could you please let me know if this is fine.
->>       and how to get this merged ?
-> 
-> There are still kernel test robot reports, so this means there are
-> issues in your code that I don't need to point out explicitly, but I am
-> actively waiting for them to be fixed.
+>> Actually, when the driver do reset or self-test(ethtool -t or ethtool --reset or FLR).
+>> We hope that no other data is transmitted or received at this time.
+> That is an invalid assumption. You could be receiving line rate
+> broadcast traffic for example, because there is a broadcast storm
+> happening.
+>
+> I assume for testing, you are configuring a loopback somewhere? PHY
+> loopback or PCS loopback? I've seen some PHYs do 'broken' loopback
+> where egress traffic is looped back, but ingress traffic is also still
+> received. Is this true for your hardware? Is this why you make this
+> assumption?
+>
+> What is your use case for ethtool --reset? Are you working around
+> hardware bugs? Why not simply return -EBUSY if the user tries to use
+> --reset when the interface is admin up. You then know the interface is
+> down, you don't need open/close to be re-entrant safe.
+>
+> Same for testing. Return -ENETDOWN if the user tries to do self test
+> on an interface which is admin down.
+>
+> 	Andrew
 
-I have fixed most of the sparse warnings after converting __le32 to u32.
-However am not able to address the following sparse warnings
+Good idea. I'll remove priv->state first in v9. We'll discuss this 
+internally. Thank you very much. Jiji Shao
 
-	drivers/mtd/nand/raw/qcom_nandc.c:1401:29: sparse: warning: cast to restricted __le32
-	drivers/mtd/nand/raw/qcom_nandc.c:1587:30: sparse: warning: cast to restricted __le32
-	drivers/mtd/nand/raw/qcom_nandc.c:1588:31: sparse: warning: cast to restricted __le32
-	drivers/mtd/nand/raw/qcom_nandc.c:1589:34: sparse: warning: cast to restricted __le32
-	drivers/mtd/nand/raw/qcom_nandc.c:2479:47: sparse:    got restricted __le32 [usertype]
-	drivers/mtd/nand/raw/qcom_nandc.c:2480:47: sparse:    got restricted __le32 [usertype]
-	drivers/mtd/nand/raw/qcom_nandc.c:2616:25: sparse: warning: cast to restricted __le32
-	drivers/mtd/nand/raw/qcom_nandc.c:2672:32: sparse: warning: cast to restricted __le32
-
-These warnings are seen with existing kernel code too. For example
-
-	drivers/mtd/ftl.c:299:39: sparse: warning: cast to restricted __le32
-	drivers/mtd/ftl.c:387:23: sparse:    got restricted __le32 [usertype]
-
-Hence, can these be ignored as false positives and post the next version of the patches.
-Kindly advice.
-
-Thanks
-Alam
 
