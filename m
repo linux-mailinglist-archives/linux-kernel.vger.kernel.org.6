@@ -1,139 +1,160 @@
-Return-Path: <linux-kernel+bounces-323480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99179973DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:51:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE38973DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8F2287EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:50:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25C41C2518F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88661A2569;
-	Tue, 10 Sep 2024 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FRadL2fu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D6B1A0B1A;
+	Tue, 10 Sep 2024 16:50:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9F11A0729;
-	Tue, 10 Sep 2024 16:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E83B1755C;
+	Tue, 10 Sep 2024 16:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987049; cv=none; b=dEBgvbgF9effUTyJCQfJvPw47i6w69n4ydA9xM5IFub62dg/48A2Euj6h0jkB15e6vYnDqOkhaaB0J5lymwzEJqBQgyUM6QzrAUZyXha90BD9QuMXzdRdhaU4x0aORgk30RDvrB3FzibzZeCNvp7EUlV9a7k2Vl4+shDlBjtGzU=
+	t=1725987033; cv=none; b=pRp/zPnV8ryJc3UUchjZ11xWilwoOicSxjRrRvGlp56bo+U/jXjEv1OKxPiKBwI5FmD8RENLtbrarzxKYZgr25/7Kft1VbxMfSjdxwQCsfezWXaaE5XS6z+KObvS/oeGoLdcS/y6nhvVURkxVeFqrAr9zQyjLubTWwzulsIM9Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987049; c=relaxed/simple;
-	bh=hn32+nLIPsJdBZLDtjJUW1S+s9pXJdgyRmyAbrJ3xvA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VbnN9SLMDMQC3UPtEiQkOf7w0pM5F2+DuDIUUcq82G/WbqBY6EfG+d3UWvi+PoyFOmlWdcpj/z57wa/Xs4v32h1NxvUs70l9Nzd4VIA9Uj2SKQyNF0mVdznbwTGiPx5eY0mhVOo8Z+8iDHrUegHbJeJ45MNWV7pvwK3jSfTC4Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FRadL2fu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AEV8oC000514;
-	Tue, 10 Sep 2024 16:50:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=wSySHV0OBt861k7egZN9XT
-	ajNDWSLjiqaFWg2xR1lp8=; b=FRadL2furQ7V+akIQc32T0Pb8Y5aANAHiRfk2G
-	kmbuMPCyNcKE5KtJ+AnzwzXE97MPKulmycbPgzCyhsw70vzVEmu+Mc0D+lknCNqA
-	aBBwXrdiBfi0pVdiDE/RJCDLckdiYJbWzA8oTsZC6t1V2pAcaIVU2xJd9g8rsuCn
-	CgPE9KmCim0e/f8n/edJHFoA+Uh3DnW8oaJMAdF0xP3S6YLF5yDc/P9FgZx11se7
-	7qt6Hqxiae43dgTwNDP82IPn74sC17oEtY418O4/yZ4CYntqkQEZg3q2OnxJ6+CQ
-	qmZCLawWKrbfAhQwlEPvvufVEaEL775LQRYHz12yVkppWwCw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy516nve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 16:50:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AGofkV013112
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 16:50:41 GMT
-Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Sep 2024 09:50:38 -0700
-From: Nikunj Kela <quic_nkela@quicinc.com>
-To: <andersson@kernel.org>, <linus.walleij@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, <quic_psodagud@quicinc.com>,
-        Nikunj Kela
-	<quic_nkela@quicinc.com>
-Subject: [PATCH v4] dt-bindings: pinctrl: Add SA8255p TLMM
-Date: Tue, 10 Sep 2024 09:50:26 -0700
-Message-ID: <20240910165026.2406338-1-quic_nkela@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725987033; c=relaxed/simple;
+	bh=wnsExEAv9F4rU9Jsc1b+G6uequLRWbDtooFkhbI7Ous=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ptBNDPkgflErDfKBxGMg4CUcCJCICsq3JiEi5x8L/vId7PwXVpK2EgXg9nWsnPQ7918CcTCVnfdXCFHfUYFPj8ZCDzrZGPK+DxoLTDgQDjvdlp+DcO+y6yL13Ck9Uk5f2NT/zmzImm574sc9Pu+DR0cECFgcgNJ0k3jcPwq8UC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3614FC4CEC3;
+	Tue, 10 Sep 2024 16:50:32 +0000 (UTC)
+Date: Tue, 10 Sep 2024 12:50:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Donglin Peng <dolinux.peng@gmail.com>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com,
+ mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
+ function return address
+Message-ID: <20240910125033.0a3986fa@gandalf.local.home>
+In-Reply-To: <CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
+References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
+	<20240909110415.33cb5f22@gandalf.local.home>
+	<CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wqvEGwXEne_Gy9-MOaI775I1m-Nm1CMQ
-X-Proofpoint-GUID: wqvEGwXEne_Gy9-MOaI775I1m-Nm1CMQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 clxscore=1015 phishscore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409100125
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add compatible for TLMM block representing support on SA8255p.
+On Tue, 10 Sep 2024 14:15:39 +0800
+Donglin Peng <dolinux.peng@gmail.com> wrote:
+> > >
+> > > See below logs with both funcgraph-retval and funcgraph-retaddr enabled.
+> > >
+> > > 4)               |  load_elf_binary() { /* A=bprm_execve+0x249/0x600 */  
+> >
+> > I wonder if we should make this look more like the function tracer when it
+> > shows the parent. That is:
+> >
+> >   4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x600 */  
+> 
+> Nice, Is it necessary to add a prefix letter for the return value? For
+> example, when
+>  both funcgraph-retval and funcgraph-retaddr are enabled, like this:
+> 
+>          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 V=0x0 */
 
-SA8255p uses the same TLMM block as SA8775p however the ownership
-of pins are split between Firmware VM and Linux VM on SA8255p. For
-example, pins used by UART are owned and configured by Firmware VM
-while pins used by ethernet are owned and configured by Linux VM.
-Therefore, adding a sa8255p specific compatible to mark the difference.
+How about:
 
-Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
----
+>          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 ret=0x0 */
 
-Changes in v4:
-	- Removed items tag
+As "ret" is more obvious than "V".
 
-Changes in v3:
-        - Removed the patch from original series[1]
-        - Fixed mising spaces schema errors
+> 
+> >  
+> > > 4)               |    load_elf_phdrs() { /* A=load_elf_binary+0x84/0x1730 */
+> > > 4)               |      __kmalloc_noprof() { /* A=load_elf_phdrs+0x4a/0xb0 */
+> > > 4) + 47.910 us   |        __cond_resched(); /* V=0x0 A=__kmalloc_noprof+0x28c/0x390 */
+> > > 4) ! 204.142 us  |      } /* __kmalloc_noprof V=0xffff888201e32c00 */
+> > > 4)               |      kernel_read() { /* A=load_elf_phdrs+0x6c/0xb0 */
+> > > 4)               |        rw_verify_area() { /* A=kernel_read+0x2b/0x50 */
+> > > 4)               |          security_file_permission() {
+> > > 4)               |            selinux_file_permission() { /* A=security_file_permission+0x26/0x40 */
+> > > 4)               |              __inode_security_revalidate() { /* A=selinux_file_permission+0x6d/0x140 */
+> > > 4)   1.182 us    |                __cond_resched(); /* V=0x0 A=__inode_security_revalidate+0x5f/0x80 */
+> > > 4)   4.138 us    |              } /* __inode_security_revalidate V=0x0 */
+> > > 4)   1.513 us    |              avc_policy_seqno(); /* V=0x0 A=selinux_file_permission+0x107/0x140 */
+> > > 4) + 12.133 us   |            } /* selinux_file_permission V=0x0 */
+> > > 4) + 39.834 us   |          } /* security_file_permission V=0x0 */
+> > > 4) + 42.710 us   |        } /* rw_verify_area V=0x0 */
+> > >
 
-Changes in v2:
-        - Modified subject line
-        - Fixed schema to include fallback
+> > > +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> > >  /* Function call entry */
+> > >  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
+> > >
+> > > @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
+> > >       F_STRUCT(
+> > >               __field_struct( struct ftrace_graph_ent,        graph_ent       )
+> > >               __field_packed( unsigned long,  graph_ent,      func            )
+> > > +             __field_packed( unsigned long,  graph_ent,      retaddr         )
+> > >               __field_packed( int,            graph_ent,      depth           )
+> > >       ),
+> > >  
+> >
+> > Let's make this a new event, so that when this option is not enabled, we
+> > don't waste the ring buffer. For function tracing, every element added to
+> > the event will add megabytes extra to the ring buffer.
+> >
+> > It should be possible to switch what event gets created at the time of the
+> > trace. Even calling different functions to do it.  
+> 
+> Sounds good, we may create a new event as follows:
+> 
+> struct ftrace_graph_ent {
+> unsigned long func; /* Current function */
+> unsigned long retaddr;
+> int depth;
+> } __packed;
+> 
+> FTRACE_ENTRY_PACKED(funcgraph_retaddr_entry, ftrace_graph_ent_readdr_entry,
+> 
+> TRACE_GRAPH_RETADDR_ENT,
+> 
+> F_STRUCT(
+> __field_struct( struct ftrace_graph_retaddr_ent, graph_retaddr_ent )
+> __field_packed( unsigned long, graph_retaddr_ent, func )
+> __field_packed( unsigned long, graph_retaddr_ent, retaddr )
+> __field_packed( int, graph_retaddr_ent, depth )
+> ),
+> 
+> F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
 
-[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
----
- .../devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml     | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Why not add the ret in the printk?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
-index e9abbf2c0689..2520ae8b965d 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml
-@@ -17,7 +17,12 @@ allOf:
- 
- properties:
-   compatible:
--    const: qcom,sa8775p-tlmm
-+    oneOf:
-+      - items:
-+          - enum:
-+              - qcom,sa8255p-tlmm
-+          - const: qcom,sa8775p-tlmm
-+      - const: qcom,sa8775p-tlmm
- 
-   reg:
-     maxItems: 1
--- 
-2.34.1
+  F_printk("--> %ps (%d) <-%ps", (void *)__entry->func, __entry->depth, (void *)__entry->retaddr)
 
+Then user space parsing tools could use this by default, when it doesn't
+know how to parse it.
+
+> );
+> 
+> If we were to introduce another new feature such as funcgraph-args which
+> adds a `ftrace_regs` to the `ftrace_graph_ent`, would it be necessary to
+> create yet another new event?
+
+Probably yes.
+
+> 
+>  In the scenario where both funcgrah-retaddr and funcgraph-args are enabled,
+> it is possible that an additional new event may also be required.
+
+Yes, that would likely be another event.
+
+-- Steve
 
