@@ -1,142 +1,244 @@
-Return-Path: <linux-kernel+bounces-322710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53428972CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7E1972CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A4F1C2143A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58449287056
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE002187859;
-	Tue, 10 Sep 2024 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291BE15FA74;
+	Tue, 10 Sep 2024 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghPKJkmK"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8LM8sO0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E8C17C9B9
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7802339AC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725958630; cv=none; b=QU1gEK07KYrrPm8Ny+OStzSwOoEIgo6uhhrcNbiLBMADX8Z3XZmyWh+bl8Vw4QluOHueuy0i5EWn1qOMf3narZf1GMqwapqpwElXBTijKLm2g+O4VLR8XhUpdu31hOxgtv5Q+JYVjCXiTx6ZCXnwB/c1BUOEgKxvlwPjE5s2Vzg=
+	t=1725958719; cv=none; b=Qaw1TGXNI4kDdj/BnxyBo8+weANandER9keLRf38BxNl9M6IBoS4SVLxOA5iwW8PS2ZAdmWRmteZPtADF4OLkXkvA/NzD4fcbaU6UK2gfBjveMW1v44sUGK6jW/WWKAJ7M3htskIdZxCZsrZyRbxX29iL8ZefyC/q0x3h7BjbYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725958630; c=relaxed/simple;
-	bh=e7O3GLax/XVAzocolL8EgfeWkjtN2OSWt42m8GCQlPg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IiswljtSXV3CG0IAM2HAjMczwD8H8TNPN7bZAe6s+uwqyeFCvFp6tZrO4PNGTngrrVrgSmmHVqaRyenrV9/FpCkIQ5r684JyqJoLpKdsJyo8gqgjERRTTGqd2NVbKqjP5+tYTjaryEpkRJxpE/Yf72KXj3ZdN6LMN+Tt2u9mEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghPKJkmK; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f74e468baeso63759231fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725958627; x=1726563427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ClddBKTpFhc9CnFInwAIwrp55e49LC20yixgnWvdO2I=;
-        b=ghPKJkmKHdzwxkC+JlrxhydlGTffvcpPsHzuu4ZOFk/aYjNlG9HO9YXuYFVgfnzO+M
-         QwCR6eflwG9d0ZDqfVMiS9/8HBDR4q/j1/wxtBEV+sIoOSxUaaK3cP0FkxdRxzxHboXR
-         eI474eRj5vHWkTYUAygcrnG6UHnqNtuPGkECje1gMevw0AV6GSkJYxIVy7B1R7033o46
-         uxK/fqvby0yWj+6vHfvRtp8hlOs7Wdp4aE+rK15xR5A+RXTuAWHdvRNL6hzVWWFcCiZf
-         62O9OPLWjcJkI092EeAQAp2InFn8c6+qYRaF2nRfX0OxvKi/pC2b5rtYb19eIW1qLwFA
-         7QoQ==
+	s=arc-20240116; t=1725958719; c=relaxed/simple;
+	bh=wj10f5L5Wns2vhKnqNbO9AbzsGu/jBhFA2sX1CYqkPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fh861F3LQSErbY2xm858aQOznP75TwIzjBc5ANb53yaYv6mrZNwCPKR4jn9JU5d2mPwzEbGxe74eB0U2nfyQgtM/ZxkOTWpLezZWTnw/sbA7YG6wfV6byP3oZVN0iwuXzi4poTuHMRLjiZd1qTAXVPxPbqw3nUQO2iv3wcp8v0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8LM8sO0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725958716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ly3LxhkuPW+RkMjeSwFB2spg7yLSAYV4L7yhhC7D1n0=;
+	b=U8LM8sO0DYjGsVwCi9r7XrWwTj3aoGsti7+0evdAJVuVUkWF+iGckFSNiPn0w6DLtd20rU
+	fIa79HtMbT7wchyoSwqIo8sZ/daRcx2fqEwlt2f1Sx8BkNjxfIsRUTUtlwXSqZjkVwdXmO
+	U7Xx9j6PIRa9WAe8fbnayC6YzlNtxaw=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-0GxQDk7MOLq98zb7zdgUkA-1; Tue, 10 Sep 2024 04:58:35 -0400
+X-MC-Unique: 0GxQDk7MOLq98zb7zdgUkA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8d3085ab6fso145828266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:58:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725958627; x=1726563427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ClddBKTpFhc9CnFInwAIwrp55e49LC20yixgnWvdO2I=;
-        b=OasQ5C0Uc6R7YUOnNanYwPwj+UjyQb87xGW7ouBtC3mC1PL0w+kBWj85NcOATKVg+s
-         bk+8pv8m3snIzrZry7rFe56A0X55a/fL85zzYQpidbh1ZW2Z5Y55bvdh0siZ/uLQXsQ0
-         RixI7cBxrMmfuw1T32HO5W9G3ZZqMugS00Ys6+9gfguoLTTke/CM8hL+rQjb63TDDkbB
-         b8PdoE1XICa2yH3QKvU5pbAaaEuvabABmkIQtFo2b1ZioVYy0jmXQ+QJf5PmCtKDGzLE
-         FcQHACvDSaSunXdNT9g/GyH5GHGLxvhsf0gNaDyQxH4EgjkcA9QQuPjU+GLAixFwpGMx
-         xrMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6yjTsAAseYLLg6rWnl3XNBIXJ3BI2+8b7I1c3ZyqByWNiCuZusJQLyLImmhcdQcAtIZmdExIMrXsYSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkMGWvVyIQvWMeJwno7GquR3Zg+SL+9b9vqXFLU/33+tk6maCz
-	q9XoRRVF2gDu2xMXISRt0EmsFRQNZXe5Vl0jiv1055ncB7odU6oM
-X-Google-Smtp-Source: AGHT+IGVMfPHMIIQj4j2shaIpBXWAYWn/aZbnyeKQoRcePoJuQDHvX+fcf4Lww69xHzmqkLALK/gsQ==
-X-Received: by 2002:a2e:bc1b:0:b0:2f7:5a83:a90b with SMTP id 38308e7fff4ca-2f75b87eba0mr77099661fa.8.1725958625672;
-        Tue, 10 Sep 2024 01:57:05 -0700 (PDT)
-Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bfe6ae1sm10930141fa.18.2024.09.10.01.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:57:05 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 10 Sep 2024 10:57:02 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH] mm/vmalloc.c: Use "high-order" in description non
- 0-order pages
-Message-ID: <ZuAJ3lHh7XCC4M3w@pc636>
-References: <20240906095049.3486-1-urezki@gmail.com>
- <Zt5j+c/SUNvCMY/+@MiWiFi-R3L-srv>
- <Zt815f8dHOKdAeiY@pc636>
- <Zt+ViveH9q1F+ShB@MiWiFi-R3L-srv>
+        d=1e100.net; s=20230601; t=1725958714; x=1726563514;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ly3LxhkuPW+RkMjeSwFB2spg7yLSAYV4L7yhhC7D1n0=;
+        b=UHQNqtNTRnNF6OGy58LjjcAGGS9sxqwsboy+8Po0jEChXDDoQonALFg0flpIMq+S4e
+         D8XxEeAgIEQr2mHs4otIl3BZgvPxToKDBeTxsVdSoyViRkFU15FnVtqmM6dk2Avbm899
+         29EOacod9+fyG2fSN0ViGpQLtc0UksqdxPV2nMxNwrNdGE4QZokkN2z4+3UWjTK6Cpph
+         i9and6HEFvalUzey/LQl2c32LnzwO/3Ev7sQbQ7wrurc/Re3aZuZeSyGvUqyMbTJpzN6
+         fxFecKdJv1ZnOUkPCVPEiSZzvyF0meGrUnCk889jF5MvFDYstOEDgPFHT6RAUjGv8Mbb
+         kLwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ7LjKCWA9RYYEDQcSha34BwTZEolintZhLLuQ1mexlrAs2ynP8u+LMz1Wbo9VNVavKDWMjz03VXbhgPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB4N+je77ToaPcbfnOf4svHsHwWGPs85fM74ZiuC7jgvg6z4Ct
+	G1b12MzYGiEBxnR4TCNDztHBQ6RS/EHnkeDf3G+pVzKxpXC5NvYBML86ZNZPaUyLQz7gz3CyhQ3
+	CP2ze3OtahG3o79fajkA+kkEw7gSQyqcmQmRydXSqX1Ue26lsAv45j4tsupRPUw==
+X-Received: by 2002:a17:907:3682:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a8ffa837442mr11324366b.0.1725958713977;
+        Tue, 10 Sep 2024 01:58:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOATzVlVe9TSjQp3hFYFYav34Qj0CrLgfC0JraVHH3EpXlFAH0T1vBiZAHXvImfhs2CW7iZQ==
+X-Received: by 2002:a17:907:3682:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a8ffa837442mr11321666b.0.1725958713398;
+        Tue, 10 Sep 2024 01:58:33 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce96d9sm446948066b.157.2024.09.10.01.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 01:58:32 -0700 (PDT)
+Message-ID: <303e4691-dc06-400f-8b74-6f9386ffe216@redhat.com>
+Date: Tue, 10 Sep 2024 10:58:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt+ViveH9q1F+ShB@MiWiFi-R3L-srv>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86:intel/pmc: Ignore all LTRs during suspend
+To: Xi Pardee <xi.pardee@linux.intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-pm@vger.kernel.org
+References: <20240906184016.268153-1-xi.pardee@linux.intel.com>
+ <15d08ff3-6787-7042-8afc-3a64f1ebc756@linux.intel.com>
+ <2d8249a2-22a0-4785-9eea-a2d59c1d9b1a@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <2d8249a2-22a0-4785-9eea-a2d59c1d9b1a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 08:40:42AM +0800, Baoquan He wrote:
-> On 09/09/24 at 07:52pm, Uladzislau Rezki wrote:
-> > On Mon, Sep 09, 2024 at 10:56:57AM +0800, Baoquan He wrote:
-> > > On 09/06/24 at 11:50am, Uladzislau Rezki (Sony) wrote:
-> > > > In many places, in the comments, we use both "higher-order" and
-> > > > "high-order" to describe the non 0-order pages. That is confusing,
-> > > > because a "higher-order" statement does not reflect what it is
-> > > > compared with.
-> > > > 
-> > > > Suggested-by: Baoquan He <bhe@redhat.com>
-> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > ---
-> > > >  mm/vmalloc.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > This looks good to me, thanks.
-> > > 
-> > > Reviewed-by: Baoquan He <bhe@redhat.com>
-> > > 
-> > > By the way, do you plan to clean up the rest of them in other places?
-> > > 
-> > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher include/linux/vmalloc.h 
-> > urezki@pc638:~/data/raid0/coding/linux-next.git$ grep -rni higher mm/vmalloc.c
-> > 493:     * nr is a running index into the array which helps higher level
-> > urezki@pc638:~/data/raid0/coding/linux-next.git$
-> > 
-> > What am i missing? Didn't i do it?
-> 
-> Sorry, I didn't make it clear. I meant those places other than vmalloc
-> related files, e.g mm/page_alloc.c, there are a lot of [Hhigh]er-order
-> mixed with high-order. I can continue the cleaning sometime if it's not
-> in your TO-DO list.
-> 
-> mm/page_alloc.c:551: * Higher-order pages are called "compound pages".  They are structured thusly:
-> mm/page_alloc.c:716: * of the next-higher order is free. If it is, it's possible
-> mm/page_alloc.c:720: * as a 2-level higher order page
-> mm/page_alloc.c:735:    return find_buddy_page_pfn(higher_page, higher_page_pfn, order + 1,
-> mm/page_alloc.c:2750: * split_page takes a non-compound higher-order page, and splits it into
-> mm/page_alloc.c:3587:   /* The OOM killer will not help higher order allocs */
-> mm/page_alloc.c:4811: *  within a 0 or higher order page.  Multiple fragments within that page
-> mm/page_alloc.c:6516:    * page allocator holds, ie. they can be part of higher order
-> mm/page_alloc.c:6790: * Break down a higher-order page in sub-pages, and keep our target out of
-> 
-I see. I appreciate if you go ahead and improve it further.
+Hi Xi,
 
---
-Uladzislau Rezki
+On 9/10/24 2:43 AM, Xi Pardee wrote:
+> Hi,
+> 
+> On 9/9/2024 1:07 AM, Ilpo Järvinen wrote:
+>> On Fri, 6 Sep 2024, Xi Pardee wrote:
+>>
+>>> From: Xi Pardee <xi.pardee@intel.com>
+>>>
+>>> Add support to ignore all LTRs before suspend and restore the previous
+>>> LTR values after suspend. This feature could be turned off with module
+>>> parameter ltr_ignore_all_suspend.
+>>>
+>>> LTR value is a mechanism for a device to indicate tolerance to access
+>>> the corresponding resource. When system suspends, the resource is not
+>>> available and therefore the LTR value could be ignored. Ignoring all
+>>> LTR values prevents problematic device from blocking the system to get
+>>> to the deepest package state during suspend.
+>>>
+>>> Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> Signed-off-by: Xi Pardee <xi.pardee@intel.com>
+>>>
+>>> v2:
+>>> - Add more details to commit message
+>>> - Fix format: ltr->LTR, S0IX->S0ix, space between name and email
+>>>
+>>> ---
+>>>   drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
+>>>   drivers/platform/x86/intel/pmc/core.h |  2 +
+>>>   2 files changed, 55 insertions(+)
+>>>
+>>> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+>>> index 01ae71c6df59..0ec703af16a4 100644
+>>> --- a/drivers/platform/x86/intel/pmc/core.c
+>>> +++ b/drivers/platform/x86/intel/pmc/core.c
+>>> @@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
+>>>   }
+>>>   DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
+>>>   +static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
+>>> +        struct pmc *pmc;
+>>> +        u32 ltr_ign;
+>>> +
+>>> +        pmc = pmcdev->pmcs[i];
+>>> +        if (!pmc)
+>>> +            continue;
+>>> +
+>>> +        guard(mutex)(&pmcdev->lock);
+>>> +        pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
+>>> +
+>>> +        /* ltr_ignore_max is the max index value for LTR ignore register */
+>>> +        ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
+>>> +        pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
+>>> +    }
+>>> +
+>>> +    /*
+>>> +     * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
+>>> +     * deeper S0ix substate.
+>>> +     */
+>>> +    pmc_core_send_ltr_ignore(pmcdev, 6, 0);
+>>> +}
+>>> +
+>>> +static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
+>>> +{
+>>> +    unsigned int i;
+>>> +
+>>> +    for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
+>>> +        struct pmc *pmc;
+>>> +
+>>> +        pmc = pmcdev->pmcs[i];
+>>> +        if (!pmc)
+>>> +            continue;
+>>> +
+>>> +        guard(mutex)(&pmcdev->lock);
+>>> +        pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
+>>> +    }
+>>> +}
+>>> +
+>>>   static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
+>>>                          const int lpm_adj_x2)
+>>>   {
+>>> @@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
+>>>   module_param(warn_on_s0ix_failures, bool, 0644);
+>>>   MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
+>>>   +static bool ltr_ignore_all_suspend = true;
+>>> +module_param(ltr_ignore_all_suspend, bool, 0644);
+>>> +MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
+>>> +
+>>>   static __maybe_unused int pmc_core_suspend(struct device *dev)
+>>>   {
+>>>       struct pmc_dev *pmcdev = dev_get_drvdata(dev);
+>>> @@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
+>>>       if (pmcdev->suspend)
+>>>           pmcdev->suspend(pmcdev);
+>>>   +    if (ltr_ignore_all_suspend)
+>>> +        pmc_core_ltr_ignore_all(pmcdev);
+>>> +
+>>>       /* Check if the syspend will actually use S0ix */
+>>>       if (pm_suspend_via_firmware())
+>>>           return 0;
+>>> @@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
+>>>   {
+>>>       struct pmc_dev *pmcdev = dev_get_drvdata(dev);
+>>>   +    if (ltr_ignore_all_suspend)
+>>> +        pmc_core_ltr_restore_all(pmcdev);
+>>> +
+>>>       if (pmcdev->resume)
+>>>           return pmcdev->resume(pmcdev);
+>>>   diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+>>> index ea04de7eb9e8..e862ea88b816 100644
+>>> --- a/drivers/platform/x86/intel/pmc/core.h
+>>> +++ b/drivers/platform/x86/intel/pmc/core.h
+>>> @@ -372,6 +372,7 @@ struct pmc_info {
+>>>    * @map:        pointer to pmc_reg_map struct that contains platform
+>>>    *            specific attributes
+>>>    * @lpm_req_regs:    List of substate requirements
+>>> + * @ltr_ign:        Holds LTR ignore data while suspended
+>>>    *
+>>>    * pmc contains info about one power management controller device.
+>>>    */
+>>> @@ -380,6 +381,7 @@ struct pmc {
+>>>       void __iomem *regbase;
+>>>       const struct pmc_reg_map *map;
+>>>       u32 *lpm_req_regs;
+>>> +    u32 ltr_ign;
+>>>   };
+>>>     /**
+>>>
+>> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> Thanks for the Reviewed-by tag! I wonder if I need to send another version with the Reviewed-by tag for this patch to be accepted.
+
+There is no need for a v3. I'll merge this patch into
+my review-hans branch (and from there on it will move
+to for-next) soon.
+
+Regards,
+
+Hans
+
+
 
