@@ -1,186 +1,174 @@
-Return-Path: <linux-kernel+bounces-323043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C999736E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:12:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CC99736EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE93B2141A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EBA11F263BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539D318FDAF;
-	Tue, 10 Sep 2024 12:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F4818FC99;
+	Tue, 10 Sep 2024 12:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N0+j3NxW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRxgIDYV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02FE18F2DB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 12:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E210F18C021;
+	Tue, 10 Sep 2024 12:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725970336; cv=none; b=X0APKZ48RznqvYPV5W/tvcMh7NhDRbEYHMrORylQsniCV3MTlkXiJk0fHJCHHweiq46N5FVaVkaGUiyOsqU+FIzK9RmCdMlWPlfvDwemt6XNbk7HgdsoS+2EpOTc/Of1bG+vxmwdPzTGMXQEEtmI3ugFbMfYCODoSDkELDxTdSE=
+	t=1725970348; cv=none; b=n06og0LgCPY6JSYiOvFr0MqZhYJd6MAhothbNk8X1f9RhthlSiPESsbVvoAAaipONYb3UdnbO4G5BA4LEA4zAE8XUr44XaC4QIAi/cPLXNrz8f2Lx7IqRwNCgZNUvMLV3DigC8rp7EULlZss4cW8rUpcbIBxsTA/lRIYukawEg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725970336; c=relaxed/simple;
-	bh=t0gEutdl6lArfQ4mxt9PBtquIJv22r6Vqp5mGj9q1Hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvo12o7g0nwP11gDQH65d15MUUxphJ41ATmou+J8Ah09FfoAYA6M26+fZo4khd3sppds/szqwEdu7WYiBkW06ie2Hj0axZWPGT3kg4QUOapjngoir/C8M8z+qdy/jAhZc0c4axQNAbnetNzPBpeNSeQE7u7mJ+OoUnIHFnFyYfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N0+j3NxW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725970333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nyK5emFvwMpmdU1nLRx0/iN2Gl/znXxq5FCrTqgvDWw=;
-	b=N0+j3NxWSMshcTBJVNgaENAhgmLxZh1QZuQ8ClIJYoqlX9YPTOtZTJ8A5hZCv0D8Hla9px
-	y5zDBjk+XwHVz1tGfbTAyc7qXyHcSdj3u3W4Y/VBg+W4Q90Lb3kmCB65AwOe8gUC4mYtW8
-	8dfa9FZyGSQe+E/n6njTJISMVPSpfTQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-85-6JbTV2KpMXOuA3BC3M810g-1; Tue,
- 10 Sep 2024 08:12:10 -0400
-X-MC-Unique: 6JbTV2KpMXOuA3BC3M810g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82C631955DDC;
-	Tue, 10 Sep 2024 12:12:08 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.32.72])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F1DE1956096;
-	Tue, 10 Sep 2024 12:12:06 +0000 (UTC)
-Date: Tue, 10 Sep 2024 08:12:03 -0400
-From: Phil Auld <pauld@redhat.com>
-To: =?utf-8?B?5YiY5bWp?= <liusong@linux.alibaba.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] sched, cgroup: cgroup1 can also take the
- non-RUNTIME_INF min
-Message-ID: <20240910121203.GD318990@pauld.westford.csb>
-References: <20240910074832.62536-1-liusong@linux.alibaba.com>
- <20240910104949.GA318990@pauld.westford.csb>
- <0339F628-43F2-40D1-B199-5E641C238CAC@linux.alibaba.com>
+	s=arc-20240116; t=1725970348; c=relaxed/simple;
+	bh=nCmtNYl6PFgAuy/ejaKdSQO7yrl3z5VPdGNg+0ZOAfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J1JGXJhh2U6rSNszxpGfvNsaZSExUONlKt6KZ5+nURclA91o1MgN6orm00uefjbqGpKNp3Uu7lzZNrGOcfHf2R5rRZu14MHgo2c7u/rRHzmIZeNA/d1nsMgL8Vwgl84fI7GGFzAizawZi84evEwoGhpxNCCknK+9waJJtqFLByY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRxgIDYV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDBCC4CEC3;
+	Tue, 10 Sep 2024 12:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725970347;
+	bh=nCmtNYl6PFgAuy/ejaKdSQO7yrl3z5VPdGNg+0ZOAfs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CRxgIDYVj++/7UYxRS/HCNsCyppNsagU+GRLfNKk60+GzgET4Wwkzf2KPmIXQysyS
+	 fx5/Pe4jWANM0RtqGuZQ1a2Pna/XdU8+gy16Is74Gm4gnwyTad6+3NwVh0SNsUCuz3
+	 3XZvm1T/+0mcs+kcfOGAFRnGX+vbuAea8kv9hF+JZMukpvyxcSguSRx0KXhS4cUyO4
+	 CyYvIH6p/HmQvmcvsznbtwv5rOBmFQZcBB4ODM0zQ0rN/ZdB6SD/cHq/BYseWWi00y
+	 AsFd56uvsbZSIPyiHdBo72aQ0ciXiMRzLP6ErGXOD42M7Ix/aywk/PVb260sRiRiR+
+	 ztS1DceyhNLyw==
+Message-ID: <cf462ca8-08bd-42bd-965a-88e28e63bb3f@kernel.org>
+Date: Tue, 10 Sep 2024 15:12:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0339F628-43F2-40D1-B199-5E641C238CAC@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 3/5] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+To: MD Danish Anwar <danishanwar@ti.com>, robh@kernel.org,
+ jan.kiszka@siemens.com, dan.carpenter@linaro.org, saikrishnag@marvell.com,
+ andrew@lunn.ch, javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
+ diogo.ivo@siemens.com, horms@kernel.org, richardcochran@gmail.com,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240906111538.1259418-1-danishanwar@ti.com>
+ <20240906111538.1259418-4-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240906111538.1259418-4-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 07:13:32PM +0800 刘嵩 wrote:
-> 
-> 
-> > 2024年9月10日 18:49，Phil Auld <pauld@redhat.com> 写道：
-> > 
-> > 
-> > Hi,
-> > 
-> > On Tue, Sep 10, 2024 at 03:48:32PM +0800 Liu Song wrote:
-> >> For the handling logic of child_quota, there is no need to distinguish
-> >> between cgroup1 and cgroup2, so unify the handling logic here.
-> >> 
-> >> Signed-off-by: Liu Song <liusong@linux.alibaba.com>
-> >> ---
-> >> kernel/sched/core.c | 21 +++++----------------
-> >> 1 file changed, 5 insertions(+), 16 deletions(-)
-> >> 
-> >> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >> index e752146e59a4..8418c67faa69 100644
-> >> --- a/kernel/sched/core.c
-> >> +++ b/kernel/sched/core.c
-> >> @@ -9501,23 +9501,12 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
-> >> parent_quota = parent_b->hierarchical_quota;
-> >> 
-> >> /*
-> >> - * Ensure max(child_quota) <= parent_quota.  On cgroup2,
-> >> - * always take the non-RUNTIME_INF min.  On cgroup1, only
-> >> - * inherit when no limit is set. In both cases this is used
-> >> - * by the scheduler to determine if a given CFS task has a
-> >> - * bandwidth constraint at some higher level.
-> > 
-> > This comment is here for a reason. Please don't remove it.
-> 
-> Hi
-> 
-> I don’t see why cgroup1 needs to impose this restriction while cgroup2
-> can directly take the non-RUNTIME_INF minimum value. What is the
-> necessity of this? 
->
+Hi,
 
-That's how cgroupv1 bandwidth control is defined. See
-Documentation/scheduler/sched-bcw.rst.
-
-> It seems more reasonable to unify the handling logic. Even if the child
-> group quota exceeds the parent group quota, it would not actually take
-> effect. 
->
-
-It's not about it taking effect or not. You are not supposed to be
-allowed to configure a child quota > parent quota. It's supposed to
-be an error. 
-
-Also, my comment about the comment specifically is that last sentence, which
-explains that other parts of the scheduler rely on this being set correctly,
-needs to remain.  But since I don't think this change is right, that should
-not be an issue.
-
-
-Cheers,
-Phil
-
-> However, if the parent group quota is reset to a larger value, then the
-> child group quota would have actual significance. Therefore, the handling
-> logic should be consistent between cgroup1 and cgroup2.
+On 06/09/2024 14:15, MD Danish Anwar wrote:
+> Add support for offloading HSR port-to-port frame forward to hardware.
+> When the slave interfaces are added to the HSR interface, the PRU cores
+> will be stopped and ICSSG HSR firmwares will be loaded to them.
 > 
-> Thanks
+> Similarly, when HSR interface is deleted, the PRU cores will be
+> restarted and the last used firmwares will be reloaded. PRUeth
+> interfaces will be back to the last used mode.
 > 
+> This commit also renames some APIs that are common between switch and
+> hsr mode with '_fw_offload' suffix.
 > 
-> > 
-> >> + * Ensure max(child_quota) <= parent_quota.
-> >> */
-> >> - if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
-> >> - if (quota == RUNTIME_INF)
-> >> - quota = parent_quota;
-> >> - else if (parent_quota != RUNTIME_INF)
-> >> - quota = min(quota, parent_quota);
-> >> - } else {
-> >> - if (quota == RUNTIME_INF)
-> >> - quota = parent_quota;
-> >> - else if (parent_quota != RUNTIME_INF && quota > parent_quota)
-> >> - return -EINVAL;
-> >> - }
-> >> + if (quota == RUNTIME_INF)
-> >> + quota = parent_quota;
-> >> + else if (parent_quota != RUNTIME_INF)
-> >> + quota = min(quota, parent_quota);
-> >> }
-> >> cfs_b->hierarchical_quota = quota;
-> >> 
-> > 
-> > I don't think there is a need to optimize this slow path
-> > to allow setting invalid values which have to be handled in
-> > fast paths.   And this will change expected behavior.
-> > 
-> > So NAK.
-> > 
-> > Cheers,
-> > Phil
-> > 
-> > --
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+>  drivers/net/ethernet/ti/icssg/icssg_config.c  |  18 +--
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 132 +++++++++++++++++-
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   6 +
+>  4 files changed, 145 insertions(+), 12 deletions(-)
 > 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_classifier.c b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+> index 9ec504d976d6..833ca86d0b71 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+
+<snip>
+
+> +static void emac_change_hsr_feature(struct net_device *ndev,
+> +				    netdev_features_t features,
+> +				    u64 hsr_feature)
+> +{
+> +	netdev_features_t changed = ndev->features ^ features;
+> +
+> +	if (changed & hsr_feature) {
+> +		if (features & hsr_feature)
+> +			ndev->features |= hsr_feature;
+> +		else
+> +			ndev->features &= ~hsr_feature;
+
+You are not supposed to change ndev->features here.
+
+From
+"https://www.kernel.org/doc/Documentation/networking/netdev-features.txt"
+"
+ * ndo_set_features:
+
+Hardware should be reconfigured to match passed feature set. The set
+should not be altered unless some error condition happens that can't
+be reliably detected in ndo_fix_features. In this case, the callback
+should update netdev->features to match resulting hardware state.
+Errors returned are not (and cannot be) propagated anywhere except dmesg.
+(Note: successful return is zero, >0 means silent error.)"
+
+This means only in 
+
+> +	}
+> +}
+> +
+> +static int emac_ndo_set_features(struct net_device *ndev,
+> +				 netdev_features_t features)
+> +{
+> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_FWD);
+> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_DUP);
+> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_TAG_INS);
+> +	emac_change_hsr_feature(ndev, features, NETIF_F_HW_HSR_TAG_RM);
+
+I don't understand this part. 
+
+As you are not changing hardware state in ndo_set_features, I'm not sure why
+you even need ndo_set_features callback.
+
+You didn't take my feedback about using ndo_fix_features().
+
+Please read this.
+https://www.kernel.org/doc/Documentation/networking/netdev-features.txt
+"Part II: Controlling enabled features"
+"Part III: Implementation hints"
+
+Also look at how _netdev_update_features() works and calls ndo_fix_features()
+and ndo_set_features()
+
+https://elixir.bootlin.com/linux/v6.11-rc7/source/net/core/dev.c#L10023
+
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct net_device_ops emac_netdev_ops = {
+>  	.ndo_open = emac_ndo_open,
+>  	.ndo_stop = emac_ndo_stop,
+> @@ -737,6 +780,7 @@ static const struct net_device_ops emac_netdev_ops = {
+>  	.ndo_eth_ioctl = icssg_ndo_ioctl,
+>  	.ndo_get_stats64 = icssg_ndo_get_stats64,
+>  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
+> +	.ndo_set_features = emac_ndo_set_features,
+>  };
+
+<snip>
 
 -- 
-
+cheers,
+-roger
 
