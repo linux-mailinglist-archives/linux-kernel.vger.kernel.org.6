@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-323717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D9697426C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:43:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E459742C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DE21C25866
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5703F28AC8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0213B2B1;
-	Tue, 10 Sep 2024 18:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327F21A76BB;
+	Tue, 10 Sep 2024 18:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="o1CcYAEg"
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BkVxSMKZ"
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441D21A4F16
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AFF1A4F25
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725993793; cv=none; b=PNNxF5uMFfZzvOj0Sv/0AmxfmNEhKR8GmF1LNcWLTVHnpvpK9P1ghKgoyqS/swqZncEtV2jZO2koERmxlx3Nmb3nQgeYRwIkw2RNsH/epKGF7mYqDhdP55VdelnGLai0kIcBT3ulBhoigT/bL3MtvVsEOpX4yHwJdggDYEEpe3w=
+	t=1725994405; cv=none; b=kQsXJm2sJVTA6uPtJ7trfy80vuS0ji40oZ1gp0hZrQcu0arNS7hMafAg19CM2R+RgSyGBF439N+apu4mVdz2jaK+lKmDaWqFNHrIFpYaOUtJ/XrN9vRbZ0IcgloePAMsLlePWMwZjwmXsy3HdnkJrpE4xp9hKSvX4OOcgIefJFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725993793; c=relaxed/simple;
-	bh=VGjyx9B/Z4+kocDkhqMO+H/zICDuO+jZ0NcWrDxEWE8=;
+	s=arc-20240116; t=1725994405; c=relaxed/simple;
+	bh=IoX9nQjI2oP0imTJJZDHPStaBUxY820d4vgsxZmjUYo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZUE+mdWGsmoB1isrZOlvR7apbbYP+1cGMBu/VtwxnZu0WlSCGnx/ILrW+vwicdXxzvdmfwwK6x4kQ+p81aik6X/y6SFY0IEAQQon/idnpVBy9VruWp147H6vSGgdEHPYOs0uICfQCNjIPIIbpL+SeZVAef1meZE8x3dH0NrT5CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=o1CcYAEg; arc=none smtp.client-ip=66.163.185.153
+	 MIME-Version; b=UGvOn7zAiW4uYO+sWTCRleT2I/S3IFTUeNxWWcSYQ0++nRPMRNLDmfIqqZnGMzeY6T7xcaK8l6aJ38R22qKJYTaMBUMIboOYXToGSmemdVArM5UfoetLcqX8Wf17imtM+jGNBnVg2DIeBpRF4U72Zmek7SBpvFvLJkAMzddKq4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BkVxSMKZ; arc=none smtp.client-ip=66.163.188.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725993791; bh=D5unLbLL6pg0Re2Ov6tBETKGM6evFCb7Pkbv24KcTZ4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=o1CcYAEgG02tssR04bQ2CUFanhWNypLIRuzY4Eu0FKgQ+huqtQnQn6x8lARr9gnyGW/+918akh5zHudbbiIcIWqDXhftw/YiMgobQvAw5dozUG+BUhE7ZaADRGfgu2TvXGKZgsNdEHQCl0HBMLBfS0RqxaOvL6+lFwu+qt+4mV0FUVsEV3GrO+y+w9Eh0eWtr2OWPAqQv4jNNOckcvAaCWYQrpnvt5OmRk/x8cE1HdlNoKv6r+hrd2JJSZ8RbXcp9h2e9LqX2njH1XpuhU2rWAwtO2bo7Jjx7lVeeP0lmCsURN3UEHWiX1Az7CMn3H2W5MlqPn/q7cVDjB0sUp65Kw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725993791; bh=O+NocvRdikTpSo+L3h9APPt4G7T7zT7S92Bqww+oJOf=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Ae30PAX/XS6EiccnX4GBeeqYu4qPWmgXbfMa3pfBVaNQGrU85cTR5wARXmVgIQag5Eu895ljaX6QX6W6hHlHRgW14hhN8HXuHHV7DEyi6AG5wbjfjFGJzLLjHmdxn+FtSbYF3q+tAgjWopV6ED71Psoh7Tz1z9lstj2KKVhj84O4PdMKl1ArehupFPBV5hbs/1JK/rCxCDZL7IM+hV9H36AgcFABUHeaARPkHxF4UWu49avJ+rN6ETKq5xFtb3kut2AcMiqJ/h3N6RO7qU0j2sGH7htydopFeDv71KJHFeY0CuS1m4B9Atw1RqtLMZHJE/LynAc5berYT6Jw0pmsJA==
-X-YMail-OSG: .PsKYZgVM1lyw8vg4IibopsqWCVcisrp9DlqO6HoJQw0HVo5PvlSRFOPyVBBrLI
- tm7rgz1dK4Vu90A6V28jm7xe1WdCH9keHb3lMBP.KTgA2vMvgVxeOppkjLEIofJTv0uUPHBQMx1s
- K8.xApGRsmfrOvHQDlmB7MgzylrDtqIpRRQuAfJtjjVOEUq.F4tM3XSXh1dxfIKaYlD9qNIjRAGj
- 4f_1BCqRZVMAa.Qo9_BhgqM7EX0deP5SkcUeKmXrrC0RONH6B1eT_UfKPAF0ynqZeqtm8w8YJgB4
- jsNqecxck8Rv7sDFVyBdlFXYAJsRyzuewDD0GaykioYO5Y_pq0d9SSe1u4QZUzjAVR3tTPUedY1t
- 2NXL9sP.Kws3u03pw43OySw.EZGSXuyu_CcPUw9mV2fKn4FMOfKnT9Q_PhIW0gHdQF9KL1WNlcMn
- 4_Lg2y4u1wcPdFTl8fPl4vMIgKWHsqNKGRUzRKa.TSs.0yNJxxzvc97MqrZr4sekiYL9R0uSzH0U
- RlXNXzJwEGKh_B2qfd4OM3NieFV2fiYbjguM6O3747HqKWBZbI7VmH4ZtPnCbVypzxFTfmZUJLPT
- hRsL_Jv4aRG65NCLwTgLXhtrel3JhtezHuN1BSOhLgVN0QiXJRBwySyvxznADVAQgbeTzC.GRw6d
- g8a9aang4ZEIFirOzv1ebmhzVMSF71whBBOERn03WFnRVYpuSZVMvnZ7E_Sv9hBZasj7fp2dEOAN
- GC6SkUAX_gD.dyAFEEIfnIVDQotcVBQtPiuHMYusy99bsi7hHymv9ItgvgpomYqf8pVjQ3QcLtsb
- mwnI7hROXqjpuSzBLz2ku8T_jIxU0SCgCk0tNuJsIDu8eIihQqcOtwFdMZyXmBbjZrVliAZ5xVLg
- G0nhSGdUpiqHdR1vG_UnVLqPgLXuo_.hGyfzkw_ao2X3hqLbD3H7Htxhswo7FI5XhrobpUGvdhWA
- ICEKNmtcfIROY16onWbzkDNO7P..kuGbE1XzMC_dIHW.S3chcUOcv001JQI2dcOeCGET731mgj7j
- 1UkLWJziwUYtvcCLLwt449k0b8NxUcpxBCbnfrO3bR6qSpZuQYwq6PLPPYlx3pRSdHxVWG3dH52B
- UezDsmOMGNDYOvmp5ui4aTzuAT1Szs1yeTSZU4fV3Qp4qGrjY5bCAa9.0IkH4Psw9ssX6srm5DSA
- U_4gPf21AdBlha_Zd2XBjYXIKvtLjDwaA2p5xP_Rfw5Bo.DykzEa3kQ.9uj7h2JuqbKLGBttcIue
- gJs0Bec7rGNuekFh3jYCgS2lPBE727h4NcKPcJH7mV_jsbz725ByxzO73qcwcQ7u1zv8w_uPW4LS
- tGCbUEiLleYvBsQSGYa7kCIC1KLwdR2vjwejYhQymzxOkHnNxaSq4XSbgpM0Mpvj5.SVbti2rylc
- 4pObI5lWY8xcJt_7uWDy_MkYDI58PWG55Yv_dpKhw.111LTm6zfBRTm1PS2BcE8CUxEWZwQUTHfF
- q08XFJUBHKUr1_F6U1i_fbEfwmQBjrIEOeSX9cjlkV3RgI2IxAlieM4nr115IaUHmNAKYEoyE6TG
- V1kYiyikvzXJGn5jjzrl3NavRTz0JaNNHVN._BAU28dVab1f6WH0bWr2urtGtE6q0nbUzWHJ3xwy
- M10M3m6o2urQuZSAAFP.0.YXUMoV9QYXKPIn3nmhvHP.dz9ZftFXMNQMw10XqipmBwZz4vLXM24b
- pkHSpQxaKJ.7NCxHJI9_yap9MqPiGyPjnef2tzyernoPHBuFhtWrZG.lBQU9m4mEbcL4c8WsZW4n
- f4Vqx8tlQ8NiTwmyjlej.wuLGOivH7R9.DK.Cw54JCyhOosowEp441JvOChS7wMG0CESRYZBrlhv
- VnHpNTKFukHW29DmVVcGuduqyGMdg0OP_mxQrgqd.HxKso.RIn.MqFrglqP2fGH2bFFsF_yuO03N
- yThd.R6wgJfj2nRaDfhAhNqV91prdLjc6R85h8ufXGxneKJpLqRKlj5MfCvOlT7tvdPd.nFpk4hS
- 2vKPmDP8Jokr_yTXb_6vMiZSdD6F4lKHWehKBwFdVVrPmLVl_FOPrD3PzTYIEHc1fZ4ihOfVZnF.
- ghBCVACy7URyuJTOHI5OefHT6_zSnJxqm3RUyjW6tqXd2xR3IUREYssa.sMwAY6PL5XlGpCq.p.7
- K674jk8IPufzjKy9dPBQW9d305gZ8EmvAoaPj3xnyCdnqudD9T36prWZbDSWNmEIc1IpAsDy9x91
- 9NcDtMjTgWE2fcvR._Lu956RIVYC97hOJ.yI1gKv.zAcLYG154A4oKJTuKObSqiWjOT_De9AFOJ0
- ic_whHmMM27UhRrQM.LPqfGZVm9gVobZRm7UY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725994402; bh=snRkCW1CoQhwTkFHaGmHmPb0/0EzthT9FmZrwfJIwtA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=BkVxSMKZKXeVo2Zqj/ZrDy8064QucMXIU6a05eaBjTWDtgmScGZWhcjX5AJHup4kZgy7FFyCj8R5tBJbJKvBGSzJJd0jJxBPDwmr7xdpLPy4Znlrl4T+0tVzKuMWCyE9HN1ANQMgPGwYNSUFBtCtLuq0DHf/ZxzUEnBpzT9uVuTMyQ/UIqThGAMPfBYTW/1oeHOk9A3CTqi6nc5q6Ca/n2ZwwvE965JR4YNbG2ZOAyNXrVUqAOz6xjyyg7UyVlRmk3ArgINagYLkXUTX+DKE0rq7OOgHIJB8UkZ3bi3lHpUDYdYgiHOgqiuYhEiS1lo4GbIrCISs8IlIVzE4ckYjqA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1725994402; bh=BlycUwdOnb1m2nimtfebdN2x1gkgraVjxrHy/ZYvjk6=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=MVvG7iOqEEhWrBmbDM+OroXNZlD/Wi6BShgK3yzVbUXFekRv0weRH5xU3iU/fSn9c0oKA8udtlkulWbZzE/3TYtpzYUXG852v6+CtuCzZ//YPhaNS5slOoJbwiUNgZWGOKPX750dDdFLiOPBaPclq7adtawabtfTfY4BGIjw0qNAM7JyOpMFNfBbUU6PKB003Gr5XBPW/pb9kCm2V4ASdp+QYSXHv0+FBOUMSalZIl6IwSUlQSeRHNC0O3948O7+99h4eVhO9DKlUY90i+SRQVUdtcmdooGTUBQUVEIwvY/2NMGgs5bNMj75CqE96ElwPSmMMXU8iWKqbaLrx6muXA==
+X-YMail-OSG: DWhATRMVM1newNlpUoJ0rvExXh0dXCALrF8_47tYcXZh0O22LarfIyporiWjKZq
+ .P6J6WqLusmVB8kqPHBHoYzUN.gyl.IY4LJIMEnMi9xfy_HycMJTmEdY6jGDGpMK91cdtuJFqrOg
+ .e2RxFgbip2LaZxQYN3vX22YqGd_qqBg7Y3Am3xo.MrFEHiC9EifgfCRrKhIKaVpwZ3C4H2isnE4
+ xaJFmchs91.epl0eLiWgGmV0v5fVNeZdTFUSTqCcGakkhDpXeOSEb5U7bsN9kxxQD.rpYKMDacY7
+ 6RSk_rb457fqj1.1O9ho.Z_Sx1DZTo9XpZnngeS97_._5wmEVvks4N5x5OtmSwfLOjCXeAVk06rw
+ Q9EpRguli_YpFbmiMsEaTC0jwVs.LIvPBpSoHCZNX8W9D1PfRUqfcHwa5ip9Al2ud0cvX..v3U4X
+ 2dBwcITtMHVu05Nq0Oofw6A8AA5v6sFwsCyfUf6NLlUIrDXw0aFv3SscZxGvLuhekGbvnGfozOnR
+ fd2YW3webPo07WTzZfK3Sv9f6bOtdEgBEnoilMxy4cQUVXejVY4UA1889Aoe51CGVUjm9hotj92W
+ 5l3VOlMMXXc1QUn0kSVqHYGMG.7QJeivGKVBdi7CjQ2HPvsu9fRQLCCPkIbL2Cy8Yld4SK50bPpO
+ 4syF29ccgIJlfu.FMI48CL8KkZPuzlBxHJwbYbnrTK84lcma56Rg1437fMVCwjjnJOisLDUGehK3
+ HcFoIm1x.ZkNnkFE84WzYwf9u5GsVyeiq0N9yygW7Vkof0K2FgHnJrNRYbxLCoG9uveYQvr.g4J_
+ NE_OCe_wGKtNUf8tAc5rl379yvYBrvWZbzlE3HIXN79DMzv_2JgCN6KlftENlpyQa05r9VJh8qm5
+ F2ATOzqGecpIjOWfTevTm.FNcsh.aYuHWmMsiJ4UOiYztLf12UMu0LacZP1Mq5LnUcbLJCvtyABh
+ wYr2wvAlauuQJubLIuGZUykFg0_kPQiIL9wub5hPZjhgxmcpR1hCgJe0yQuZj3O.tAATf9W922FR
+ eIp.HmSr78JvgNWODJksVC91a24Ui0CKDFNCGTP2G5QMqCOe4Kgj9C0tJSjnCD6oYBRO7X7NFvL3
+ oDpBVVABomtydpLUT90jMHnl6LtvSau_U7Bx11pQ_zFcUfc6ReSIxy6KRIa_sPUOdNZ.n4NQptaU
+ AmEEoZ4Y.95EW8KSwRpDtLZ4YKPo5FDzI0tJGtNTqorZLE2oSq8W8wgYLCvRurW09eA_p4ypilUR
+ JAia2t1SwgL9SumsMaBInZfapqE7L9IU9sfhNAb9NYs5Q6y2vhBANZOqVoflJHirvpkmx3Qb3DCB
+ 9AhPMlO5OpCtjMku8ZIOJFb1wBw5K.r.NT06UNNjOuDeYEeimTrimUkJSjWAp7G0HlcFKyVTIrxY
+ TjgPBa50w0d4dUolu7bZzIxfSBoDXmdal5HJEW_URfLXTXLddAg8cJdVlSj9ergBaYvFReCdP_Of
+ YKj5T7K.gnK05iQdJA2uZ2sR_lKU3I9dYplmkLf.CHgy3PZUs6gFCD0rd6MPaboXlhnjgL73fUOe
+ cUGb5XRs3qsav9Duk7Z6ctNEl9GKLHO6QXGokh1xJH4whdTZzaurkP8rW_f19dvT9jrJh581IGdB
+ XmmGmdw9LTG1Z.ysSflhuSMAi9ibWRpJc2UX_9ZMtGw5sXYXaWrHcE0oVSzfGqXXYwWHmAempst6
+ bP9n3I20LyN1RHUFqH751J8cPzT4nr8ARSh3DMy71jmsTmmfi6DCHHLVWLbb_Dn7FWnJ4kwt.._F
+ 0ZXUz6Kz6eB2RMED1YFe.DWbqU2fPArh37hkIY0VyJhAvUumY7MNQt8GqWCIjexayx9ddA.lJ0mG
+ .TDuhucTPCx7CghYs5rU3ITGx_2hH5KpIms5aPEijaIO64rwWF0A8EE5WCSG1WYIVRxTl6IePq.9
+ lGEJBNbumX6kFYVK.0wQvrtm9AkadhhyezbxYijXLySxI8rjoWc9Z15wqJ.BXntBSGbqc3R8Hr8u
+ X1ctgvuD2.IxHzLAtVH2rCm8fr_2tgaqagNZPNxL08ZbErdj.rQrBuv9mSKcjOc_Nnj3aHdmotNM
+ TTHuXhlBtoePVxdp_Tobz0t.F1_ziYINvid0Bz5sXPEg0KVu9KoML_QAEyyBCD8_zZt0_xIsIzcd
+ BlcdP9U5KZmlQMMdf_jlHnsk3dDRyvp0Ok9JYmMftJzZsE1N8nYb1Lx5RmmBLpbmVoS4XsfW69Lq
+ yBNr0nOxaf8X9HA8gnk7hgSbxtb2ixEzLOJHW0WrbS7nA5MsX8jKYSAxqAE77MHAaSwRzM7TISP9
+ hVUlf5_UIuNopGkl3vHB61Bw_VTmHveOymXcuL1Q-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 90301bce-3976-442a-a013-829a0a5019e8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 10 Sep 2024 18:43:11 +0000
+X-Sonic-ID: 5dba500b-dbef-4d20-9d04-e54cd028f336
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 10 Sep 2024 18:53:22 +0000
 Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID bfec55394db9c3ecf7e1196118de0a4c;
-          Tue, 10 Sep 2024 18:43:08 +0000 (UTC)
+          Tue, 10 Sep 2024 18:43:10 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -81,10 +81,11 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH v3 04/13] Audit: maintain an lsm_prop in audit_context
-Date: Tue, 10 Sep 2024 11:41:16 -0700
-Message-ID: <20240910184125.224651-5-casey@schaufler-ca.com>
+	mic@digikod.net,
+	audit@vger.kernel.org
+Subject: [PATCH v3 05/13] LSM: Use lsm_prop in security_ipc_getsecid
+Date: Tue, 10 Sep 2024 11:41:17 -0700
+Message-ID: <20240910184125.224651-6-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240910184125.224651-1-casey@schaufler-ca.com>
 References: <20240910184125.224651-1-casey@schaufler-ca.com>
@@ -96,143 +97,219 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the secid value stored in struct audit_context with a struct
-lsm_prop. Change the code that uses this value to accommodate the
-change. security_audit_rule_match() expects a lsm_prop, so existing
-scaffolding can be removed. A call to security_secid_to_secctx()
-is changed to security_lsmprop_to_secctx().  The call to
-security_ipc_getsecid() is scaffolded.
-
-A new function lsmprop_is_set() is introduced to identify whether
-an lsm_prop contains a non-zero value.
+There may be more than one LSM that provides IPC data for auditing.
+Change security_ipc_getsecid() to fill in a lsm_prop structure instead
+of the u32 secid.  Change the name to security_ipc_getlsmprop() to
+reflect the change.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: audit@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: selinux@vger.kernel.org
 ---
- include/linux/security.h | 24 ++++++++++++++++++++++++
- kernel/audit.h           |  3 ++-
- kernel/auditsc.c         | 19 ++++++++-----------
- 3 files changed, 34 insertions(+), 12 deletions(-)
+ include/linux/lsm_hook_defs.h |  4 ++--
+ include/linux/security.h      | 22 +++++++++++++++++-----
+ kernel/auditsc.c              |  5 ++---
+ security/security.c           | 14 +++++++-------
+ security/selinux/hooks.c      |  9 ++++++---
+ security/smack/smack_lsm.c    | 16 +++++++++-------
+ 6 files changed, 43 insertions(+), 27 deletions(-)
 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index f53323e52fe1..315bbe1f63fc 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -253,8 +253,8 @@ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
+ 	 struct inode *inode)
+ LSM_HOOK(int, 0, userns_create, const struct cred *cred)
+ LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+-LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
+-	 u32 *secid)
++LSM_HOOK(void, LSM_RET_VOID, ipc_getlsmprop, struct kern_ipc_perm *ipcp,
++	 struct lsm_prop *prop)
+ LSM_HOOK(int, 0, msg_msg_alloc_security, struct msg_msg *msg)
+ LSM_HOOK(void, LSM_RET_VOID, msg_msg_free_security, struct msg_msg *msg)
+ LSM_HOOK(int, 0, msg_queue_alloc_security, struct kern_ipc_perm *perm)
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 1c3768c9cf30..d739a4cf43d3 100644
+index d739a4cf43d3..c8f020cf2a84 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -279,6 +279,19 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+@@ -277,6 +277,17 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+ 	return kernel_load_data_str[id];
+ }
  
++/**
++ * lsmprop_init - initialize a lsm_prop structure
++ * @prop: Pointer to the data to initialize
++ *
++ * Set all secid for all modules to the specified value.
++ */
++static inline void lsmprop_init(struct lsm_prop *prop)
++{
++	memset(prop, 0, sizeof(*prop));
++}
++
  #ifdef CONFIG_SECURITY
  
-+/**
-+ * lsmprop_is_set - report if there is a value in the lsm_prop
-+ * @prop: Pointer to the exported LSM data
-+ *
-+ * Returns true if there is a value set, false otherwise
-+ */
-+static inline bool lsm_prop_is_set(struct lsm_prop *prop)
-+{
-+	const struct lsm_prop empty = {};
-+
-+	return !!memcmp(prop, &empty, sizeof(*prop));
-+}
-+
- int call_blocking_lsm_notifier(enum lsm_event event, void *data);
- int register_blocking_lsm_notifier(struct notifier_block *nb);
- int unregister_blocking_lsm_notifier(struct notifier_block *nb);
-@@ -532,6 +545,17 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
- 		      void *val, size_t val_len, u64 id, u64 flags);
- #else /* CONFIG_SECURITY */
- 
-+/**
-+ * lsmprop_is_set - report if there is a value in the lsm_prop
-+ * @prop: Pointer to the exported LSM data
-+ *
-+ * Returns true if there is a value set, false otherwise
-+ */
-+static inline bool lsm_prop_is_set(struct lsm_prop *prop)
-+{
-+	return false;
-+}
-+
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+ /**
+@@ -285,7 +296,7 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+  *
+  * Returns true if there is a value set, false otherwise
+  */
+-static inline bool lsm_prop_is_set(struct lsm_prop *prop)
++static inline bool lsmprop_is_set(struct lsm_prop *prop)
  {
- 	return 0;
-diff --git a/kernel/audit.h b/kernel/audit.h
-index a60d2840559e..d14924a887c9 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -11,6 +11,7 @@
+ 	const struct lsm_prop empty = {};
  
- #include <linux/fs.h>
- #include <linux/audit.h>
-+#include <linux/security.h>
- #include <linux/skbuff.h>
- #include <uapi/linux/mqueue.h>
- #include <linux/tty.h>
-@@ -160,7 +161,7 @@ struct audit_context {
- 			kuid_t			uid;
- 			kgid_t			gid;
- 			umode_t			mode;
--			u32			osid;
-+			struct lsm_prop		oprop;
- 			int			has_perm;
- 			uid_t			perm_uid;
- 			gid_t			perm_gid;
+@@ -500,7 +511,7 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
+ int security_create_user_ns(const struct cred *cred);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+-void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
++void security_ipc_getlsmprop(struct kern_ipc_perm *ipcp, struct lsm_prop *prop);
+ int security_msg_msg_alloc(struct msg_msg *msg);
+ void security_msg_msg_free(struct msg_msg *msg);
+ int security_msg_queue_alloc(struct kern_ipc_perm *msq);
+@@ -551,7 +562,7 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
+  *
+  * Returns true if there is a value set, false otherwise
+  */
+-static inline bool lsm_prop_is_set(struct lsm_prop *prop)
++static inline bool lsmprop_is_set(struct lsm_prop *prop)
+ {
+ 	return false;
+ }
+@@ -1350,9 +1361,10 @@ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
+ 	return 0;
+ }
+ 
+-static inline void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
++static inline void security_ipc_getlsmprop(struct kern_ipc_perm *ipcp,
++					   struct lsm_prop *prop)
+ {
+-	*secid = 0;
++	lsmprop_init(prop);
+ }
+ 
+ static inline int security_msg_msg_alloc(struct msg_msg *msg)
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index effb1a7e0405..014d23370384 100644
+index 014d23370384..3e051014484c 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk,
- 				/* Find ipc objects that match */
- 				if (!ctx || ctx->type != AUDIT_IPC)
- 					break;
--				/* scaffolding */
--				prop.scaffold.secid = ctx->ipc.osid;
--				if (security_audit_rule_match(&prop,
-+				if (security_audit_rule_match(&ctx->ipc.oprop,
- 							      f->type, f->op,
- 							      f->lsm_rule))
- 					++result;
-@@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *context, int *call_panic)
- 			audit_log_format(ab, " a%d=%lx", i,
- 				context->socketcall.args[i]);
- 		break; }
--	case AUDIT_IPC: {
--		u32 osid = context->ipc.osid;
--
-+	case AUDIT_IPC:
- 		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+@@ -1397,7 +1397,7 @@ static void show_special(struct audit_context *context, int *call_panic)
  				 from_kuid(&init_user_ns, context->ipc.uid),
  				 from_kgid(&init_user_ns, context->ipc.gid),
  				 context->ipc.mode);
--		if (osid) {
-+		if (lsm_prop_is_set(&context->ipc.oprop)) {
+-		if (lsm_prop_is_set(&context->ipc.oprop)) {
++		if (lsmprop_is_set(&context->ipc.oprop)) {
  			char *ctx = NULL;
  			u32 len;
  
--			if (security_secid_to_secctx(osid, &ctx, &len)) {
--				audit_log_format(ab, " osid=%u", osid);
-+			if (security_lsmprop_to_secctx(&context->ipc.oprop,
-+						       &ctx, &len)) {
- 				*call_panic = 1;
- 			} else {
- 				audit_log_format(ab, " obj=%s", ctx);
-@@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *context, int *call_panic)
- 				context->ipc.perm_gid,
- 				context->ipc.perm_mode);
- 		}
--		break; }
-+		break;
- 	case AUDIT_MQ_OPEN:
- 		audit_log_format(ab,
- 			"oflag=0x%x mode=%#ho mq_flags=0x%lx mq_maxmsg=%ld "
-@@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+@@ -2638,8 +2638,7 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
  	context->ipc.gid = ipcp->gid;
  	context->ipc.mode = ipcp->mode;
  	context->ipc.has_perm = 0;
--	security_ipc_getsecid(ipcp, &context->ipc.osid);
-+	/* scaffolding */
-+	security_ipc_getsecid(ipcp, &context->ipc.oprop.scaffold.secid);
+-	/* scaffolding */
+-	security_ipc_getsecid(ipcp, &context->ipc.oprop.scaffold.secid);
++	security_ipc_getlsmprop(ipcp, &context->ipc.oprop);
  	context->type = AUDIT_IPC;
  }
+ 
+diff --git a/security/security.c b/security/security.c
+index 859b37e51796..410bf69af427 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -3611,17 +3611,17 @@ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ }
+ 
+ /**
+- * security_ipc_getsecid() - Get the sysv ipc object's secid
++ * security_ipc_getlsmprop() - Get the sysv ipc object LSM data
+  * @ipcp: ipc permission structure
+- * @secid: secid pointer
++ * @prop: pointer to lsm information
+  *
+- * Get the secid associated with the ipc object.  In case of failure, @secid
+- * will be set to zero.
++ * Get the lsm information associated with the ipc object.
+  */
+-void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
++
++void security_ipc_getlsmprop(struct kern_ipc_perm *ipcp, struct lsm_prop *prop)
+ {
+-	*secid = 0;
+-	call_void_hook(ipc_getsecid, ipcp, secid);
++	lsmprop_init(prop);
++	call_void_hook(ipc_getlsmprop, ipcp, prop);
+ }
+ 
+ /**
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index a2da81d0d5f5..10c7fc61a786 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6328,10 +6328,13 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ 	return ipc_has_perm(ipcp, av);
+ }
+ 
+-static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
++static void selinux_ipc_getlsmprop(struct kern_ipc_perm *ipcp,
++				   struct lsm_prop *prop)
+ {
+ 	struct ipc_security_struct *isec = selinux_ipc(ipcp);
+-	*secid = isec->sid;
++	prop->selinux.secid = isec->sid;
++	/* scaffolding */
++	prop->scaffold.secid = isec->sid;
+ }
+ 
+ static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
+@@ -7252,7 +7255,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(userns_create, selinux_userns_create),
+ 
+ 	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
+-	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
++	LSM_HOOK_INIT(ipc_getlsmprop, selinux_ipc_getlsmprop),
+ 
+ 	LSM_HOOK_INIT(msg_queue_associate, selinux_msg_queue_associate),
+ 	LSM_HOOK_INIT(msg_queue_msgctl, selinux_msg_queue_msgctl),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 1f478bb08779..7926f40bc7db 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3442,16 +3442,18 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
+ }
+ 
+ /**
+- * smack_ipc_getsecid - Extract smack security id
++ * smack_ipc_getlsmprop - Extract smack security data
+  * @ipp: the object permissions
+- * @secid: where result will be saved
++ * @prop: where result will be saved
+  */
+-static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
++static void smack_ipc_getlsmprop(struct kern_ipc_perm *ipp, struct lsm_prop *prop)
+ {
+-	struct smack_known **blob = smack_ipc(ipp);
+-	struct smack_known *iskp = *blob;
++	struct smack_known **iskpp = smack_ipc(ipp);
++	struct smack_known *iskp = *iskpp;
+ 
+-	*secid = iskp->smk_secid;
++	prop->smack.skp = iskp;
++	/* scaffolding */
++	prop->scaffold.secid = iskp->smk_secid;
+ }
+ 
+ /**
+@@ -5157,7 +5159,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(task_to_inode, smack_task_to_inode),
+ 
+ 	LSM_HOOK_INIT(ipc_permission, smack_ipc_permission),
+-	LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
++	LSM_HOOK_INIT(ipc_getlsmprop, smack_ipc_getlsmprop),
+ 
+ 	LSM_HOOK_INIT(msg_msg_alloc_security, smack_msg_msg_alloc_security),
  
 -- 
 2.46.0
