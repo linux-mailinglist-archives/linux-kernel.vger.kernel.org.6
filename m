@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-322563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED28972AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:35:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8C3972AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02911C21B6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB92D1F250A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E80E17DFF9;
-	Tue, 10 Sep 2024 07:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A900917DFE3;
+	Tue, 10 Sep 2024 07:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+LltnAv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rvT8amEK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D337817C231;
-	Tue, 10 Sep 2024 07:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E753917C7C1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953744; cv=none; b=W1RqRqspp+DjRepAwQ2wRMzyp3Fg1Q6iHYXcf78WM2ebYsX8bFP4iMGSVLjW14BezKE7cfgccsOEIChLfHggwX1FcxSpsSAeMZH68msLFnP9qqA7ytZTKshQgDlC+TnXsopWOQn5hvQ0jWqq9gKYynHVveldFA9PVuI7er7UjCk=
+	t=1725953783; cv=none; b=p4NkZpeheRDLVW1b/PRexvJ5NjPzBm89T9RU0Yecg2gbjfo0if+escM3UBYHMFX/I4vQQwsaY1BPIo5Qc158V/Otg+g/pHymDvdMWUKrHagw99UHqFI8xJB4nmk1Gj2/zoyUcWWS1euYn2+PVk1lt9MvDrxGsyKqoI5SifzbEBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953744; c=relaxed/simple;
-	bh=mr8XvHNsiLz95NPj4gzHNsXQjjy6cU6eIPrWByINPBI=;
+	s=arc-20240116; t=1725953783; c=relaxed/simple;
+	bh=oWix37stBNwJxtbe3UXPDaMSfPzGHkzXhGIMwquQFoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shkDVMF+ysXCF67T1cmoCb6ZCEbdtUsElF6iYDO8VKsRWk+nJhNi7OnBO0ey8pP0CNSD+WHrWOVE17R8Ac5nQhvY6sPpAGAnufWWlWqEedwRWI3TdsuqyjOXVY0Yzbpg7aSHJcKkUbWR9Y9pnsNbfh7cU/TUZYjmZZvBnVf37Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+LltnAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46480C4CEC3;
-	Tue, 10 Sep 2024 07:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725953744;
-	bh=mr8XvHNsiLz95NPj4gzHNsXQjjy6cU6eIPrWByINPBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+LltnAvFPIXt3RyLBcWL89DQOVgII2wPBcJ0bZsZcDXBSiOvSKq6Zs+YYN7ywkAH
-	 44vXRD1iskOjHh0FlDRzLNtoMcWY4pCR99Co/PiuBxYoq8twiP75CnXo43noW+cCy2
-	 z+GugpL3ETW/JweHSv1WARuibugQ9lUqrhADeVR2LhShsVbFN2X3+TMJiPjsb3cazf
-	 vs7RO3YyL9iXla6oBlyhaT1moplymnUONutumhYg5RpAscysiiO58DvpF08BJBL5mk
-	 I6VCCesiKllsqYr7qDEuhK89ZvNi+hmjTf7xYQEFngcEDVDav6XHz5eKTSFjInBtpc
-	 bB2ennlka90DA==
-Date: Tue, 10 Sep 2024 08:35:40 +0100
-From: Simon Horman <horms@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Justin Lai <justinlai0215@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] rtase: Fix spelling mistake: "tx_underun" ->
- "tx_underrun"
-Message-ID: <20240910073540.GB525413@kernel.org>
-References: <20240909134612.63912-1-colin.i.king@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q/dS6Xu1dLtTbBmzBSSLxavHjNMY2onwfuGQhk4OCeUKHNMPC4T8vKCSAIpWFWSmTZx1s0087VeZrFrDc+y31CW+H5qWxsac7ykD3JdO7188TaFqt19LyjFztlJ/uHK4btAF19vVdziJfV9RpuPrY1IOtpoFTZWy5x+4P3gUBRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rvT8amEK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qsfq8CjFa3TULy0LmBKitvvfjc/5FR+uNsSc6qd7Jr4=; b=rvT8amEKQiQ8ZUr+i070flTxFF
+	ayQH5RbNrEZUxPZQgjbl3/BXGzk5mka1iG82qtfICE4wCjWepqS4nK7PX/coVvveQxVEjVmQmTOu3
+	FaKi2IjRxln/fnM9cVy5CQEXmOiqqWe/nLvKbpbSk6MM5jUuxgzMRYmU5/71fx1ZSqnD+QKAlxsc5
+	5VNS6y7uBY9OHj85ewDOuY8ZeaWLUDGLaqrNmo7Fo8Vyiy/MFl9aUx+4W6ToCs9S4j5nuML1q+YPV
+	gpfRbuikjQSXC+4xuDzRVAWXmFhLP7SN5L69EEI1NtnYDj8T9wG20EmyBCt3fKQfJQNXJ8v6Wyvu4
+	cYO3uZ7g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1snvQA-00000006tRO-3Pw3;
+	Tue, 10 Sep 2024 07:36:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 09B0B300321; Tue, 10 Sep 2024 09:36:18 +0200 (CEST)
+Date: Tue, 10 Sep 2024 09:36:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: warning: objtool: data relocation to !ENDBR
+Message-ID: <20240910073617.GG15400@noisy.programming.kicks-ass.net>
+References: <20240910024409-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,21 +61,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909134612.63912-1-colin.i.king@gmail.com>
+In-Reply-To: <20240910024409-mutt-send-email-mst@kernel.org>
 
-On Mon, Sep 09, 2024 at 02:46:12PM +0100, Colin Ian King wrote:
-> There is a spelling mistake in the struct field tx_underun, rename
-> it to tx_underrun.
+On Tue, Sep 10, 2024 at 02:46:21AM -0400, Michael S. Tsirkin wrote:
+> Hi objtool maintainers,
+> I noticed that each time I build my kernel, I am getting this:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> vmlinux.o: warning: objtool: .export_symbol+0x3af10: data relocation to !ENDBR: stpcpy+0x0
+> 
+> Things seem to mostly work for me, so maybe it's benign,
+> but presumably the warning was put there for some good reason?
+> Am I doing something wrong?
 
-Thanks Colin,
+I think you might be hitting this one:
 
-I've confirmed that this addresses all instances of this problem
-in this driver. Thanks for also sending a patch for the same problem
-in the r8169 driver [1].
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-[1] https://lore.kernel.org/all/20240909140021.64884-1-colin.i.king@gmail.com/
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116174
 
