@@ -1,341 +1,262 @@
-Return-Path: <linux-kernel+bounces-322477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5265D972967
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2DD972969
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDC72862F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8C01C23E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D5B176AAD;
-	Tue, 10 Sep 2024 06:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDD3176AD0;
+	Tue, 10 Sep 2024 06:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Rqe2Sm3U"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010040.outbound.protection.outlook.com [52.101.69.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LTAOzdw/"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D28167265;
-	Tue, 10 Sep 2024 06:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725949143; cv=fail; b=kCtW8Qds0n33xPVZc5G83JzQpTXvUqwo9IUjB5DUGrDtNr6we6k5SqPFPGMBMzmYUFvJHa8yJs3gWb0Naz4KewVKqtAnj4If1119o7gJudjZv4uanlY+bzEXEWiS64FfKKujUbXKg7UH5oXeFXObhNOui+UvbkTx+J3Dq7Vlyqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725949143; c=relaxed/simple;
-	bh=X7sUjzgek62Vo04HzfWPv3KPLHJonRWVEyO32c6PdjQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PudUEAEACxSxGG0J+MBOPpPexDmM66ixmcOxq4XkuVGxOVx3fO831gSZLNO+L6Cf/U65i0cT388RIlzOxjO+K0Y4l95MylXZxDsszbP9iZTSefN4uNLU+jD7i8t1aRwDXY1o4UtgzdCWjgBS/mEhrVVtSjYdhdoH0kOkEOPY46Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Rqe2Sm3U; arc=fail smtp.client-ip=52.101.69.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=duJF4UjOd9lKKIpUMA3/fR3xSpQjocOXvreIcmq2HSRcYqrOM8I7MoEZP5Bt/5U35IuFpTfFSN/DmhBC5dtOmrO1fbfkWv0y5IcFX9fT33ifQpcc7w5m/+KN/q+yoAT6Nfmy2HFWLux7eAWZFF2YryDPF2mvg9U/Pk4EptYcNwWQs2tbDc6PbJ503QUxAwfw9gnB2k75EcO0p6GGF+p3MSq5De80qJIhSyC4hagONLeXf5Tqt57uoMAVYMkonXxE4mWLNo1xvPQdrjlPVEadLrLJn+7FH4JRMk5jqCKWBw3YYUxuBcfOzDmxacPwFejzNhJh+zVWJcGOOdGBnsSSOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X7sUjzgek62Vo04HzfWPv3KPLHJonRWVEyO32c6PdjQ=;
- b=PItrbcDCf1pTY3MAsdQ4M5wHFtJuuia+P53/aBiOSkBC/mZs1utFuauqHKo6NHYhlxoW5Y5+MaxaBGFISldh77+04UjqJc89TdnEM5yIzR1sE7MAYdRIeA55wQJeqLyfX07LktSmlSLwW/YZHEzHJNnq5v/MCRgYYuRCk4sniEYEmmhzugMEqENrNaQk9cHeELx+IRwUuYuXUi3ptWqCAnvU1+K/tWYnZzS34CkW+hULS3Eb0BFPaQmzIbv+Tossh1/xjfmPfVUUZ0ATzbaho7z0jRIo64R8sXjmzQzygep2uqIG2/0PEHhmyrZ5Rmu8IPzG4TLjm7yDtUBt2Q1GDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X7sUjzgek62Vo04HzfWPv3KPLHJonRWVEyO32c6PdjQ=;
- b=Rqe2Sm3UZhPhJx7ep/lb7d9dUfymEUQDJddlQZ25KkiGvYIkRKx5mwYyBDBzj/OMU6zQi9VFoACHsQf7QlcNCq10g8bXpMMzqP2TTKBPTd0dNHikjU1uMzTlMrMhqucupSyP1AxvBxh5B0YVZqUSTrzmzOsOMU7VJCEU3VMJsp9AzZ+nNiXseZLLtNuEX1ZrT+moZHaleNeUGZZKHwGDSc5wzvV6midj+vV18c/Ye/g+69EvwOt/hyW+R+4lKxHxJm1B1tdEWAQOSSAFlorPMW+h8+UZuVPGWVidywwVjBPujFW3HK1PeUNMljZS5hJCrdtKt/eUd3stXSd0sFxTwA==
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by VI1PR04MB6846.eurprd04.prod.outlook.com (2603:10a6:803:12f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Tue, 10 Sep
- 2024 06:18:57 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%3]) with mapi id 15.20.7939.022; Tue, 10 Sep 2024
- 06:18:57 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
-	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Topic: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running on
- different channel
-Thread-Index:
- AQHa/RQwZkxE7S8BN0ebi7x6fu8g/rJEPYCAgAAPeUCAC6fogIAAWbHQgABDcACAAAAqgIAAAvAAgAAC0XA=
-Date: Tue, 10 Sep 2024 06:18:57 +0000
-Message-ID:
- <PA4PR04MB96389B2CC16060957878D0D3D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240902084311.2607-1-yu-hao.lin@nxp.com>
- <ZtWHhSQlPVMekW1I@pengutronix.de>
- <PA4PR04MB9638EC10C0B656B750D922ADD1922@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt9blTxk88Opujsk@pengutronix.de>
- <PA4PR04MB963813D69B4D87B7147704A5D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_fZEJyiCyanf7X@pengutronix.de>
- <PA4PR04MB9638C8978D9C6360A9B214E4D19A2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <Zt_h_mW4nFWKu2SI@pengutronix.de>
-In-Reply-To: <Zt_h_mW4nFWKu2SI@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|VI1PR04MB6846:EE_
-x-ms-office365-filtering-correlation-id: 0396fe86-bc63-4a67-0471-08dcd16073ea
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?N5ZEmFcAcBTnYXrv4+366rN/DQ/AUfTkhioIRG2I89HvbwQyiMuzyNjsPR6m?=
- =?us-ascii?Q?4nveKNlp+0AGcObzePglGsQRJXSZgQGl7ptDt57JFm60TanLAAdQPmAc9SaB?=
- =?us-ascii?Q?sLWSk1TYdw+NxLy48/YTnwkZAYSYTJk2X2CIbhuFdS+wCc230dIPuOgoRJE+?=
- =?us-ascii?Q?nBOLoqoG9cu1xJgDkYOVKNs4PERKRC0xC3kFlhS3Z44kzuRtqy0UJDyQJjEq?=
- =?us-ascii?Q?2j33uoHsZdMp7SnLY47y1VMbamYXeJq9g2Ef47T6n3BHss7vI+TozBC0sENE?=
- =?us-ascii?Q?iG7UTVK17jm8odLuxurnDkc+v32XCu+rGrROoj6H8TkM0e+8MFeo77c3eo85?=
- =?us-ascii?Q?8uwAnWFSOfz83rp7M4AjhcV2QMVTBsYjjhI2fXUjeNq1OEFbKulxCjd65l91?=
- =?us-ascii?Q?rzw1bWiEA/er7q+jE11A4QqFyOYlMW/Ik9OARIvBF9qDU70Ysdmqr4HrpTxZ?=
- =?us-ascii?Q?pe6H8rCE97sQkcVu0eHi/D6NRbtpYuukvAlQEtiLrBMLsONBYK64QkiqDX+p?=
- =?us-ascii?Q?NdLfYd4vhiTeGQ3Vy9QPT5Q9EDPKQJmgMaKU8XNAG165psTPLMdmjS0GPUXf?=
- =?us-ascii?Q?2mdiVrBBok0A0Lg+TBaNIzFMt9ZWzn0lWv3ih3rNxV/TEKpBzLvsX8/HdKd+?=
- =?us-ascii?Q?ogcIvh9f18RzPun0Z6EdlfMLutS3qLUFzZfqFWPVSCrlSDZ5sNa6Mxk2t9BH?=
- =?us-ascii?Q?1KcEiN+3Fo5SIRnEtju/47dObHDdV5gcFKxc3hu7kz/a731J07XwSLJn/E0L?=
- =?us-ascii?Q?tz4qTglGt1LWG2EkqXf7weq0KVgHwc5vzf1xvlXD1totbxr8CeXLEFL4OPHk?=
- =?us-ascii?Q?hpRm6lZCqL9TuXwDV0NpCuRWDoc05Vrn4JbBMAHwC1+5185XUbZQJPnx/xQ+?=
- =?us-ascii?Q?uBZTNFdFr0ycLb8rGpr/+tjZoFZQaJKI1LZfOi3nMVNrrAGGKYG1IFIu5UzV?=
- =?us-ascii?Q?yGcVuD3onMvvU2w/a4YzLh2N39XXSIsYtzjzV4NrOERlTgb4aYNx5aE63pMS?=
- =?us-ascii?Q?IOCT0IPnh/A/WIncwlNOz+fL6ht74WAZjXcC48gnYdxxCpwtFrOH4MxG9AQS?=
- =?us-ascii?Q?ygA94fZesNsxDpVQFUhAI04CyQLY1Dgtzsp0NTMORQxmA/MxmypQqKCsUo2s?=
- =?us-ascii?Q?ulMqJJ3Tw6KEA7QM1GN/asVk8AntbJ6AGy/M+/QJzTwthsEnKgBUqAsaceyv?=
- =?us-ascii?Q?Qt08UwWgkODsLLUvj5bqZRNQqBvmWtUi1CAeF0bBG6tBFj14KpMbGN+id5tf?=
- =?us-ascii?Q?dgxt9wHIuZ5xwxpAWVTxHlRudr+fruivEiqFYzkuWBvifDrpFjZltQ8I6fRf?=
- =?us-ascii?Q?qb0g7EbRdBH/bsrydObdiZ61ZKfSys59kljgjfHJjtrjYpShVwjAVurg1Tu2?=
- =?us-ascii?Q?v3WbW3k=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?UvGLTsXykCChX2dyu5RD80W0bBapE9vjmDJjSo563/2gBv50kO6JmBbJ3fR9?=
- =?us-ascii?Q?Swurtzva78Sii0u2MD+yUZPrt9FWobykbj9p13F1D/EAquaOI9Jaov9JE7jn?=
- =?us-ascii?Q?JOJ5MqjzF5Q0ZZGk0Emi4IyxvQxe4P3bm4PGWcRlNY+h3EiD1YJPpEu2bYzt?=
- =?us-ascii?Q?Rjc4YjZgZrIXMhRWshh7DJ1E6fHsnsb2vpZPjttK/trmWOoso5TWUGobAGDZ?=
- =?us-ascii?Q?CB0PSsfKloFvS6rVe6hQ+h2WWDt0YaQELuV7lQ7Qlct92JixCNIWM4kePb/s?=
- =?us-ascii?Q?mDESrJ92GAiXHGefYMV3jxiGdx64HV1N1gzbN2zWLVpxgwPQv8ZqvYWJqIrG?=
- =?us-ascii?Q?7XfHUuXdIw77j8Sf2Lbj99vymbca1P/nW719ieSWRr4cQrRRABDtZDBMgUTR?=
- =?us-ascii?Q?cE72D2n143hs71VFh6fholjImTsRZ85pNbFtwRzALWBEr1kiOWERaNsi3uRg?=
- =?us-ascii?Q?wwxX44vy1QSIYQIf21cho1r6yA1t7dYrUwFGNJQ2Gt42vNqIuK1oeEeduCsg?=
- =?us-ascii?Q?bzqyZtFodQey/oIHLVbADBU0SK4xzp03RTgyIiIZtRPfDfpPL633gsBHahA1?=
- =?us-ascii?Q?i/up1IMU7SRuQuca8Ltllah7mZw4/egCFGmOoptjY/PFkqtRISHTqxFIB6we?=
- =?us-ascii?Q?O+n2DRyAIQHAUVlVB2NlYUy8D6LMzYOB3Nghv1LRd222XO/DMNFwUDjuWdes?=
- =?us-ascii?Q?bRU+930BiGyImfk5O+I9RNvpO5zjXgTm6exGxnix+Qo0AHnwcMWOzZ90ZHW6?=
- =?us-ascii?Q?7PYp2NBeqgGZpPdvwxlct+gmuOPA4+6rz874vOjnB9kHFwtb23aQ7ENsfoUY?=
- =?us-ascii?Q?qgU8difuQ38ZiMxgfRZ99julX+7MQkHs26Ma9akN8b0PkECrFyIWiz39EX9Q?=
- =?us-ascii?Q?RmcNnw6sVX//jsQu6ZqXUQgl7429llTuI7v+/jKR1ShqjAGH3Z8+F1TI4EeS?=
- =?us-ascii?Q?+y+3Jzi2Dz9k/utHWmBvhrCa55Y2jaWPii/XPJv4C7U14SZ2Pfay7GiT2zuU?=
- =?us-ascii?Q?2QvPnoAOCzPXn6QV9FXuCql1itcJgh4k0Gl+gfqprd8UcU9UKZWzzsdA8NjI?=
- =?us-ascii?Q?oCb/wbqhtYIAQpHy3pdQjfNhbPP2Eldg/lXyW+R5DkQOTEol+1B3zMVbjFDj?=
- =?us-ascii?Q?6W6nVSiFJv2rDw5tL4FJ29HhCnnDS2qqJNCA13PK+kzgnIJHD+OBsud3lXBd?=
- =?us-ascii?Q?Yt+16kI8dVxNTziCZ9E53HDQwv2nBtEfwuz/OD1rvOO8M3G6Iv9cOEaaGxV9?=
- =?us-ascii?Q?1j43Qx04CJQWGFqYASE4Uoz3SVXdpc60NjBdHuabYcR2jY2B33OCA9zpoDWz?=
- =?us-ascii?Q?j9mb0AyzjRnTdkDeTbaiVds8svOEk3io3wyFrOsJD/NH5tenoqYIx7qVbHnt?=
- =?us-ascii?Q?EtJVDHU1bkaECU3F0vJefZwM2i8LVNGou+zAiEfCm8qPkuh6XrKhFKQzW9DQ?=
- =?us-ascii?Q?zaLuRRZxHWcZ9O2qzYDd0KRtaH9vZIf44WaTSpQl1ck9sKnrRB7/XMzXgPmo?=
- =?us-ascii?Q?nKtaqMdoUyCtXTzB5q2PG6XyER3KhwMQCMupR/+ceHFWchu1lJGlunUSDWJ1?=
- =?us-ascii?Q?AWDVKmwbL60QF4NmQpoMcF2ipe4aMCGKDsH/q+i0?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3674176AAD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725949184; cv=none; b=Bwi58QllCbwJyNHrSLZAlpHklFcNl3D4Wg6zKMLznfaruhqrUKkj+QW1n6AYWOsLOyWA96eW4+sL+SV8lgmbUskmlUEgoE4QCxotyxb04DBuud/Ur9PpdXd49Eodc+YLvUDskhYUaUVKD02vWaH16Cn7Z2ZzFxWLV8C/GD2yJjA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725949184; c=relaxed/simple;
+	bh=lY4/p7K6RZOBmF20Gd+RKKXipb1S0uZcwkiYx4rQhVs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c9WtoObKU4q5ce4/WelcaqbvEPpS4AkIHb3ueZjlsBWyMtNcQpNnnzAMwXpBok13vhameV1+wF2iWGypkSKb0Rmb6wIaDiXvq+0A0SGelyN2WHj4qClufBI5cFGVJItjvBxvYmRf+aJSauXqiwGdmU1eEU/mvwImKEVPCwBxQbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LTAOzdw/; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8ce5db8668so564919466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725949181; x=1726553981; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oUAeyIds51JtPFXcdK1ittCx1+8Jcad8Ely1vSAfpKs=;
+        b=LTAOzdw/WBZ+R6/zT5NGR6VvxDNx//Yx966ag0fb2xK7tq4nayyzesrTmpYdnu8F1N
+         PIcUgqmgm+oH++Cd8YRgAMZVrySLW5eYtuqScLdd1TZW8mwozoZvg/6IkC652vSUxkhh
+         0vLf6woXbqkvzgr1mwAOPPB7+1doDzeIYn8Q1ffDvZAlDOS5xs8itMoW9wuATbaqstJV
+         e5odWlXzNSH+otTpez/qrmxqJaPfu8ZVaycO5zNUp+NLZR8bdsarpL91cvi9oKMFT/Hh
+         Qm50/msQG6sSywE2pBOmOoGxb/Qok0vF9N+oq9zgIWqWPzNNJq2NlrBIgrDxaAtqrSWD
+         qgOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725949181; x=1726553981;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oUAeyIds51JtPFXcdK1ittCx1+8Jcad8Ely1vSAfpKs=;
+        b=KZHqKd0T+FmAXG8yJUVPC0VAs9VK4upKCY1a3ZK0AbGGDKHCUirUWIYPcTncnoYdix
+         fKWQ16lMgQfe/zHk+l9Rrh8guOWseq8T6HKJhKRs4kfriFs427P0jdCFbQ0pWQ3DlbEV
+         HA/toaP8T4kn+r2B49I5f6jWd1DBIV+M+WmkrO5dVE8dpNtbpa2xBMF29DnhEjgLFiCQ
+         miXl4rl6pYasVp9fzuCiQrLAgc34yJomuKq2NN9oK/N17HJLl0mnlNV9Nc6Xk/m302Zu
+         qF3Y6DCB51QBfz7eFeVLBqBRe1J9p3Gaeb10I4ZJnIjBzjTH35JAUlMlX75Ourj0KSye
+         68Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr7emL186PlbElCSpbhYTqu0orTICZk7OhoTTlN04wLr78vzu/Qm/koplmeICZ8yAgpgOg5D9klmkx2OI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ePYPIBaLzrkjvo+BMpQg0iRt1blRu+i/hhkpmWw9t2OUvfaB
+	FQX9KVE12sfzK3Shu5Lvf7RFy2QBRIBZD653kSCWBAojdnc/i4jzS7AdfVStZVd3MJSJUxI5NM6
+	xGUNKjFx8lRsoe4zsPmB0Eo7hWaBMX53PtR6X
+X-Google-Smtp-Source: AGHT+IFz3wKuYcS0dbn0eQ1fNcqoiYJmBXkiZT1ExZr/j09DUL3xyimhmzyT/sJgCFOvtY6lwLx9zp7ZDlAt7wpJZLI=
+X-Received: by 2002:a17:907:961e:b0:a86:a6ee:7dad with SMTP id
+ a640c23a62f3a-a8d1c73d9a6mr913996366b.52.1725949180257; Mon, 09 Sep 2024
+ 23:19:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0396fe86-bc63-4a67-0471-08dcd16073ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2024 06:18:57.1263
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7Y6gJr5cXBh/Gy8ljmfwV2D5RQ4kFVRukGvM6JybFDsaCuaDyX0xtm14ohTZPJvwPhAbo5NX0NOANanTWcwoUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6846
+References: <CANn89iLmOgH6RdRc_XGhawM03UEOkUK3QB0wK_Ci_YBVNwhUHQ@mail.gmail.com>
+ <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
+In-Reply-To: <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 10 Sep 2024 08:19:29 +0200
+Message-ID: <CANn89iLYUjfsaXrtV19_DF9nUSaLSwmWnd7tzh8+v9OoUesBHg@mail.gmail.com>
+Subject: Re: [PATCH net] net: prevent NULL pointer dereference in
+ rt_fibinfo_free() and rt_fibinfo_free_cpus()
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
+	pabeni@redhat.com, kafai@fb.com, weiwan@google.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Tuesday, September 10, 2024 2:07 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> Hsieh <tsung-hsien.hsieh@nxp.com>
-> Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA running=
- on
-> different channel
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> On Tue, Sep 10, 2024 at 05:56:58AM +0000, David Lin wrote:
-> > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > Sent: Tuesday, September 10, 2024 1:56 PM
-> > > To: David Lin <yu-hao.lin@nxp.com>
-> > > Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it;
-> > > Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-> > > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and STA
-> > > running on different channel
-> > >
-> > > Caution: This is an external email. Please take care when clicking
-> > > links or opening attachments. When in doubt, report the message
-> > > using the 'Report this email' button
-> > >
-> > >
-> > > On Tue, Sep 10, 2024 at 01:55:14AM +0000, David Lin wrote:
-> > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > > Sent: Tuesday, September 10, 2024 4:33 AM
-> > > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > > Cc: linux-wireless@vger.kernel.org;
-> > > > > linux-kernel@vger.kernel.org; briannorris@chromium.org;
-> > > > > kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
-> > > > > <tsung-hsien.hsieh@nxp.com>
-> > > > > Subject: Re: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and
-> > > > > STA running on different channel
-> > > > >
-> > > > > Caution: This is an external email. Please take care when
-> > > > > clicking links or opening attachments. When in doubt, report the
-> > > > > message using the 'Report this email' button
-> > > > >
-> > > > >
-> > > > > On Mon, Sep 02, 2024 at 10:35:01AM +0000, David Lin wrote:
-> > > > > > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > > > > > Sent: Monday, September 2, 2024 5:38 PM
-> > > > > > > To: David Lin <yu-hao.lin@nxp.com>
-> > > > > > > Cc: linux-wireless@vger.kernel.org;
-> > > > > > > linux-kernel@vger.kernel.org; briannorris@chromium.org;
-> > > > > > > kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
-> > > > > > > <tsung-hsien.hsieh@nxp.com>
-> > > > > > > Subject: [EXT] Re: [PATCH v2] wifi: mwifiex: avoid AP and
-> > > > > > > STA running on different channel
-> > > > > > >
-> > > > > > > On Mon, Sep 02, 2024 at 04:43:11PM +0800, David Lin wrote:
-> > > > > > > > Current firmware doesn't support AP and STA running on
-> > > > > > > > different channels simultaneously.
-> > > > > > >
-> > > > > > > As mentioned here:
-> > > > > > >
-> > > > > > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3=
-A
-> > > > > > > %2F%
-> > > > > > >
-> > >
-> 2Flo%2F&data=3D05%7C02%7Cyu-hao.lin%40nxp.com%7Cd0a1e3797a0d4acd7a
-> > > > > > >
-> > >
-> 9c08dcd15d3ddb%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
-> > > 6
-> > > > > > >
-> > >
-> 15445620612026%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJ
-> > > QI
-> > > > > > >
-> > >
-> joiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3D5yC
-> > > > > > >
-> jjIqxpV%2BJxlPdrCH0gRTQ%2FCQZKr%2FDc0S1cjkaIA8%3D&reserved=3D0
-> > > > > > >
-> > > > >
-> > >
-> re.kern%2F&data=3D05%7C02%7Cyu-hao.lin%40nxp.com%7C7712df39ac37414fd
-> > > > > a7
-> > > > > > >
-> > > > >
-> > >
-> e08dcd10eac35%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6386
-> > > > > 15108
-> > > > > > >
-> > > > >
-> > >
-> 157502805%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV
-> > > > > 2luMz
-> > > > > > >
-> > > > >
-> > >
-> IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DURNJPJE17iRY
-> > > > > Tu4i
-> > > > > > > rx7eQAC97tE5OE6a4kUfjUwuaVU%3D&reserved=3D0
-> > > > > > >
-> > > > >
-> > >
-> el.org%2Fall%2FZtGnWC7SPHt7Vbbp%40pengutronix.de%2F&data=3D05%7C02%
-> > > > > > >
-> > > > >
-> > >
-> 7Cyu-hao.lin%40nxp.com%7Cce9b7d4e417c41113c7d08dccb32fc49%7C686ea
-> > > > > > >
-> > > > >
-> > >
-> 1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638608667089710854%7CUnkn
-> > > > > > >
-> > > > >
-> > >
-> own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1h
-> > > > > > >
-> > > > >
-> > >
-> aWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DnMZO565xCUO%2BwxD4tIfi
-> > > > > > > w6cGyYrinaEsi7XLfqyxgXg%3D&reserved=3D0
-> > > > > > >
-> > > > > > > AP and STA can indeed have different channels when DRCS is
-> > > > > > > enabled, so I think you have to check this in your patch.
-> > > > > > >
-> > > > > > > Maybe the same question here again: Wouldn't it make sense
-> > > > > > > to enable DRCS by default?
-> > > > > > >
-> > > > > > > Sascha
-> > > > > > >
-> > > > > >
-> > > > > > I will look into DRCS support later after current tasks on hand=
-.
-> > > > > > This patch is a quick fix to avoid firmware crash in the specif=
-ic
-> scenario.
-> > > > >
-> > > > > With DRCS support enabled AP and STA actually can run on
-> > > > > different channels with the current code. You are breaking this
-> > > > > scenario with this
-> > > patch.
-> > > > >
-> > > > > Sascha
-> > > > >
-> > > >
-> > > > DRCS will be checked in the future.
-> > >
-> > > By future you mean v3 of this patch?
-> > >
-> > > Sascha
-> > >
+On Tue, Sep 10, 2024 at 5:23=E2=80=AFAM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
+>
+>
+> > Eric Dumazet <edumazet@google.com> wrote:
+> > =EF=BB=BFOn Mon, Sep 9, 2024 at 8:48=E2=80=AFPM Jeongjun Park <aha31051=
+0@gmail.com> wrote:
+> >>
+> >> rt_fibinfo_free() and rt_fibinfo_free_cpus() only check for rt and do =
+not
+> >> verify rt->dst and use it, which will result in NULL pointer dereferen=
+ce.
+> >>
+> >> Therefore, to prevent this, we need to add a check for rt->dst.
+> >>
+> >> Fixes: 0830106c5390 ("ipv4: take dst->__refcnt when caching dst in fib=
+")
+> >> Fixes: c5038a8327b9 ("ipv4: Cache routes in nexthop exception entries.=
+")
+> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> >> ---
 > >
-> > No schedule now.
->=20
-> I am getting confused now. You want us to abandon my patch in favour of y=
-ours,
-> but you have no plans to update your patch to avoid a regression that you
-> introduce with your patch?
->=20
-> Sascha
->=20
+> > As far as I can tell, your patch is a NOP, and these Fixes: tags seem
+> > random to me.
+>
+> I somewhat agree with the opinion that the fixes tag is random.
+> However, I think it is absolutely necessary to add a check for
+> &rt->dst , because the existence of rt does not guarantee that
+> &rt->dst will not be NULL.
+>
+> >
+> > Also, I am guessing this is based on a syzbot report ?
+>
+> Yes, but it's not a bug reported to syzbot, it's a bug that
+> I accidentally found in my syzkaller fuzzer. The report is too long
+> to be included in the patch notes, so I'll attach it to this email.
 
-My patch resolves the same issue as your patch. But your patch can't let AP=
- and STA run on the same channel if some wiphy parameters are set.
+syzbot has a similar report in its queue, I put it on hold because
+this is some unrelated memory corruption.
 
-I wonder did you test your patch?
+rt (R14 in your case) is 0x1 at this point, which is not a valid memory poi=
+nter.
 
-David
+So I am definitely saying no to your patch.
+
+>
+> Report:
+>
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 0 UID: 0 PID: 4694 Comm: systemd-udevd Not tainted 6.11.0-rc6-00326-=
+gd1f2d51b711a #16
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> RIP: 0010:dst_dev_put+0x26/0x330 net/core/dst.c:149
+> Code: 90 90 90 90 f3 0f 1e fa 41 57 41 56 49 89 fe 41 55 41 54 55 e8 0b 9=
+0 af f8 4c 89 f2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 8=
+5 da 02 00 00 49 8d 7e 3a 4d 8b 26 48 b8 00 00 00
+> RSP: 0018:ffffc90000007d68 EFLAGS: 00010246
+> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff8976519a
+> RDX: 0000000000000000 RSI: ffffffff88d97a95 RDI: 0000000000000001
+> RBP: dffffc0000000000 R08: 0000000000000001 R09: ffffed100c8020c3
+> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff1ab5a81
+> R13: 0000607f8106c5c8 R14: 0000000000000001 R15: 0000000000000000
+> FS:  00007f235c5fd8c0(0000) GS:ffff88802c400000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f39c90e5168 CR3: 0000000019688000 CR4: 0000000000750ef0
+> PKRU: 55555554
+> Call Trace:
+>  <IRQ>
+>  rt_fibinfo_free_cpus.part.0+0xf4/0x1d0 net/ipv4/fib_semantics.c:206
+>  rt_fibinfo_free_cpus net/ipv4/fib_semantics.c:198 [inline]
+>  fib_nh_common_release+0x121/0x360 net/ipv4/fib_semantics.c:217
+>  fib_nh_release net/ipv4/fib_semantics.c:229 [inline]
+>  free_fib_info_rcu+0x18f/0x4b0 net/ipv4/fib_semantics.c:241
+>  rcu_do_batch kernel/rcu/tree.c:2569 [inline]
+>  rcu_core+0x826/0x16d0 kernel/rcu/tree.c:2843
+>  handle_softirqs+0x1d4/0x870 kernel/softirq.c:554
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu kernel/softirq.c:637 [inline]
+>  irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inli=
+ne]
+>  sysvec_apic_timer_interrupt+0x99/0xb0 arch/x86/kernel/apic/apic.c:1043
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.=
+h:702
+> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:1=
+52 [inline]
+> RIP: 0010:_raw_spin_unlock_irqrestore+0x3c/0x70 kernel/locking/spinlock.c=
+:194
+> Code: 74 24 10 e8 d6 03 6f f6 48 89 ef e8 8e 77 6f f6 81 e3 00 02 00 00 7=
+5 29 9c 58 f6 c4 02 75 35 48 85 db 74 01 fb bf 01 00 00 00 e8 bf 24 61 f6 6=
+5 8b 05 c0 79 0b 75 85 c0 74 0e 5b 5d c3 cc cc cc
+> RSP: 0018:ffffc90001f978f8 EFLAGS: 00000206
+> RAX: 0000000000000006 RBX: 0000000000000200 RCX: 1ffffffff1fe4be9
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
+> RBP: ffffffff8dbc0ac0 R08: 0000000000000001 R09: 0000000000000001
+> R10: ffffffff8ff2a39f R11: ffffffff815d29ca R12: 0000000000000246
+> R13: ffff88801e866100 R14: 0000000000000200 R15: 0000000000000000
+>  rcu_read_unlock_special kernel/rcu/tree_plugin.h:691 [inline]
+>  __rcu_read_unlock+0x2d9/0x580 kernel/rcu/tree_plugin.h:436
+>  __netlink_sendskb net/netlink/af_netlink.c:1278 [inline]
+>  netlink_broadcast_deliver net/netlink/af_netlink.c:1408 [inline]
+>  do_one_broadcast net/netlink/af_netlink.c:1495 [inline]
+>  netlink_broadcast_filtered+0x8ec/0xe00 net/netlink/af_netlink.c:1540
+>  netlink_broadcast net/netlink/af_netlink.c:1564 [inline]
+>  netlink_sendmsg+0x9ee/0xd80 net/netlink/af_netlink.c:1899
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  __sock_sendmsg net/socket.c:745 [inline]
+>  ____sys_sendmsg+0xabe/0xc80 net/socket.c:2597
+>  ___sys_sendmsg+0x11d/0x1c0 net/socket.c:2651
+>  __sys_sendmsg+0xfe/0x1d0 net/socket.c:2680
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f235c8b0e13
+> Code: 8b 15 b9 a1 00 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b8 0f 1f 0=
+0 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 2e 00 00 00 0f 05 48 3d 00 f0 ff f=
+f 77 55 c3 0f 1f 40 00 48 83 ec 28 89 54 24 1c 48
+> RSP: 002b:00007ffe93910d38 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000556a6858ba60 RCX: 00007f235c8b0e13
+> RDX: 0000000000000000 RSI: 00007ffe93910d60 RDI: 000000000000000e
+> RBP: 0000556a6858bdc0 R08: 00000000ffffffff R09: 0000556a685488e0
+> R10: 0000556a6858be38 R11: 0000000000000246 R12: 0000000000008010
+> R13: 0000556a6856fc30 R14: 0000000000000000 R15: 00007ffe93910df0
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:dst_dev_put+0x26/0x330 net/core/dst.c:149
+> Code: 90 90 90 90 f3 0f 1e fa 41 57 41 56 49 89 fe 41 55 41 54 55 e8 0b 9=
+0 af f8 4c 89 f2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 8=
+5 da 02 00 00 49 8d 7e 3a 4d 8b 26 48 b8 00 00 00
+> RSP: 0018:ffffc90000007d68 EFLAGS: 00010246
+> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff8976519a
+> RDX: 0000000000000000 RSI: ffffffff88d97a95 RDI: 0000000000000001
+> RBP: dffffc0000000000 R08: 0000000000000001 R09: ffffed100c8020c3
+> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff1ab5a81
+> R13: 0000607f8106c5c8 R14: 0000000000000001 R15: 0000000000000000
+> FS:  00007f235c5fd8c0(0000) GS:ffff88802c400000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f39c90e5168 CR3: 0000000019688000 CR4: 0000000000750ef0
+> PKRU: 55555554
+> ----------------
+> Code disassembly (best guess):
+>    0:   90                      nop
+>    1:   90                      nop
+>    2:   90                      nop
+>    3:   90                      nop
+>    4:   f3 0f 1e fa             endbr64
+>    8:   41 57                   push   %r15
+>    a:   41 56                   push   %r14
+>    c:   49 89 fe                mov    %rdi,%r14
+>    f:   41 55                   push   %r13
+>   11:   41 54                   push   %r12
+>   13:   55                      push   %rbp
+>   14:   e8 0b 90 af f8          call   0xf8af9024
+>   19:   4c 89 f2                mov    %r14,%rdx
+>   1c:   48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
+>   23:   fc ff df
+>   26:   48 c1 ea 03             shr    $0x3,%rdx
+> * 2a:   80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1) <-- trapping in=
+struction
+>   2e:   0f 85 da 02 00 00       jne    0x30e
+>   34:   49 8d 7e 3a             lea    0x3a(%r14),%rdi
+>   38:   4d 8b 26                mov    (%r14),%r12
+>   3b:   48                      rex.W
+>   3c:   b8                      .byte 0xb8
+>   3d:   00 00                   add    %al,(%rax)
 
