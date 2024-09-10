@@ -1,418 +1,111 @@
-Return-Path: <linux-kernel+bounces-322911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B18973363
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:32:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA90973378
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5846283FE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE67287AF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CFD1A0706;
-	Tue, 10 Sep 2024 10:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FFC190485;
+	Tue, 10 Sep 2024 10:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="KpL+b2K9"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUTUbbqu"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CE518FDB1;
-	Tue, 10 Sep 2024 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A09B172BA8;
+	Tue, 10 Sep 2024 10:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725964047; cv=none; b=l+M/cu92c+Uq8Io4SFHXcMTo/2WIsqsmiWvsJzKuuunVvWUH8yLSRhdy5iFGSkgSoHKTYU3rE6naQi4u/KoN5aqNG0xpii4rYQ3wH7LNRG8X8T1xopni1Kjqyp2WBQxMKMySik7Ek4ect9GdKwvhE4BPvhWGn15Kq59t+lw/Vqc=
+	t=1725964072; cv=none; b=a0MwEwvfxwSwRLMd5Q3DwvURgtI+VRAAb4khgWlyM6nx1as7nhpIprmWhWdSTqVebroD3t0qwApucD1VUo4VhcVSvEVbm2wLE7FvXzguI1xlOBYZoRkbCPE7VTq6+7ACRTXItsZ5u7Co2lDxQyJ5/rXd+ntVM8NJTBi/j2GimfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725964047; c=relaxed/simple;
-	bh=/VCo3XRpUVs+ODdkjbFXah0zX1uRcsm6ZU80nw+Wnkg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I0tTKzGsvJi2US4bWi17oVdvocp6SmIztoP/9mH+kwdbuDW2FPC4Hkhu7OgzB67YTKeaEyit8m1QOIG5VaBnfG2YZhaz0EZJiS6cddqjr/nQvYpuQJYHBTqc4Hfbm16c3Or8+COqw2PnYeKT1H5P4meChEP981Pg0hq9MNJHsnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=KpL+b2K9; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=yt9WoZ0adE82ZlbhbGGDqQ9EFvIA4tp5imjpHwFF5ms=; b=KpL+b2K93gmmywGJkOg6r9b9BK
-	qoTIN4ETEXzXFSeSkmqAGCsTWL5QVhkoReSTvMAcXdG6kr4Q9laOtIxN1jd+G4OOBi59//6LC7WJ+
-	gQ7+VJZawlnsfBBUX5YttlHel1aaPXXqL2oNTXE8kYweSMQGg6/nGQ3zqvA4jtlhvVWhEJ4U/Jqow
-	l/DtaYZqAvMHDXozfuSC7ubF2EC1g/iAhQiFWBIzrXUirS1HF99pSAwedQdFMKLcuIdzIpupl5HMr
-	7dhkzcK9cI1y1y2+d85tuYNcwwkBzhv5F5COgFC4qOZvOgm7JgG5+Bsft+Uv7wZoys54kUu1bf0Xe
-	9ii+DbJQ==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sny5h-000GsJ-I2; Tue, 10 Sep 2024 12:27:21 +0200
-Received: from [80.62.117.18] (helo=localhost)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sny5h-000Ml6-2c;
-	Tue, 10 Sep 2024 12:27:21 +0200
-From: Esben Haabendal <esben@geanix.com>
-Date: Tue, 10 Sep 2024 12:27:11 +0200
-Subject: [PATCH 2/2] rtc: isl12022: Add alarm support
+	s=arc-20240116; t=1725964072; c=relaxed/simple;
+	bh=PbymxaNYKWisICEPVN+Os7ZJit3MRfZQfFqNVukMdxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sp/6VEQtGaEpDUvDIBnkmFo9u5Fg2Vcfkytf5n0BnxpGWbjYQJoezey9LwHFQr6iC5j7p5zNG/5jpb+6KjXpbHNnbPPrK9zxR5xfH2la+bvg2W+aSLqOv8+hA1Ae4jxbrNLis3rg0/KPpvI/43Jce/WmCC4mGZDje4zFy9jlV4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUTUbbqu; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2059204f448so44200735ad.0;
+        Tue, 10 Sep 2024 03:27:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725964071; x=1726568871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zIyR38y07x529tvCfbRZKMKVYOciOW8f0OoLScjnlLA=;
+        b=BUTUbbqugpVz4SLf+jWKXxzHikZ+gK/nugYbUEF529QVUYvriGn2Wq4LoROv1+NVIO
+         bUIWzLhiLV10NssyycnTbjplroXqn6AIk5sLJEQkq6hp1GsMDOWnrO8HN4KnyZ0VnImp
+         YgOeLC2MHCwdnjYxoQi+A6WSDh3qEBfY2v925ZYfrAV/wsvU0oUDbPTC63YrsIhbXQGD
+         o2lUZRVCID9HBOTnRclgPegT4CsQO1PwXPIgpYy2rWs9oQwUWLYqsfwsW1QiB2jnurUj
+         sAnMG5R/2WM8VI/PxZzC/z793LGHwP3fNCh6pVGHuyGmXYeZD/CwNFL+vn/kpqpmp5JI
+         EPAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725964071; x=1726568871;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIyR38y07x529tvCfbRZKMKVYOciOW8f0OoLScjnlLA=;
+        b=FeS9MFrUezQOZCnicB7pIegKL7WeU4rsSUpx5FQzU7O0sJd7Gh+bytK99CwY162cQ6
+         +1yrbPMhTGQErdcsRhsOGZT5AErsUXrEKSaUdnngJ5OPxU0o5CesTnT3ic1rFmIx+hO7
+         IuVLtM+XjnQ56fHtcqmwwTe0p8RRbsd+6POktDtndf6KKebabziJpuNTVEyzUKOYDG0l
+         no5vdcImDTcWNSFPfBFguncJ6W3H0d+VAz/DmwfV87SNdaLrwqst9eFXWlp/9kmkPUeM
+         8Vc124iOuflBr8exo12ePUWUIjNKXzW5LHk/FQr4CLpkCE6NRv/MZCwccSooBWuXZkaF
+         aIEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWS0DpyOGua9h7dShsbDmOVzD/aARYbZniF7JCmF5T9dy6J2h7mvgxZvHH02rUry2GsFuA/vlIXKFs=@vger.kernel.org, AJvYcCWVRfpGeqjKsa1hOW2Gw6sleW3qxth7gqWsKthFPaq2OM8re+lteEC5tFe/yEid0T3mTtqUf7QiAceG608MJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YylVxgmFbZw+K9uChQ0wIs45PSe3aZoUs0F5S9ZeQ//WdEI7zfC
+	eZ+rJp78EVl5fy5vXc2CfZOhACILr/OwJGfugRAzCl3FfOef57IW79FAQg==
+X-Google-Smtp-Source: AGHT+IE0cOCoZz2a6Eq/RhwCR1w/LeizFbIS4+1ET66eUPsxYlSvO3gMXgqxdNfia9R4+ZvvCAQjfw==
+X-Received: by 2002:a17:902:d586:b0:206:c5cf:9727 with SMTP id d9443c01a7336-2074c60a65cmr2875625ad.31.1725964070554;
+        Tue, 10 Sep 2024 03:27:50 -0700 (PDT)
+Received: from [192.168.0.106] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2071ac25428sm40793195ad.306.2024.09.10.03.27.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:27:50 -0700 (PDT)
+Message-ID: <cd1340e4-f726-4ac4-9caa-8e8a3c369203@gmail.com>
+Date: Tue, 10 Sep 2024 17:27:42 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: livepatch: Correct release locks antonym
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Livepatching <live-patching@vger.kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Marcos Paulo de Souza <mpdesouza@suse.com>
+References: <20240903024753.104609-1-bagasdotme@gmail.com>
+ <ZthJEsogeqfVj8jg@pathway.suse.cz>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <ZthJEsogeqfVj8jg@pathway.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
-References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
-In-Reply-To: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725964039; l=10043;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=/VCo3XRpUVs+ODdkjbFXah0zX1uRcsm6ZU80nw+Wnkg=;
- b=iOGDNc8FZHtSZxRt6z7QypzBk2Kc7GZ+wx/kMBEjUPUOyevm45ZHP+SWAsC8SYKXvuB/H89Zd
- vfJuV8sNOoZDW7hyNd8eAz5h2hj9Hag+ayw6UyehK/+Z7zW5IBfKqv+
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27394/Tue Sep 10 10:30:36 2024)
 
-The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
-interrupt when frequency output is not enabled.
+On 9/4/24 18:48, Petr Mladek wrote:
+> On Tue 2024-09-03 09:47:53, Bagas Sanjaya wrote:
+>> "get" doesn't properly fit as an antonym for "release" in the context
+>> of locking. Correct it with "acquire".
+>>
+>> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> 
+> The patch is trivial. I have have committed it into livepatching.git,
+> branch for-6.12/trivial.
+> 
 
-The device-tree bindings should ensure that interrupt and clock output is
-not enabled at the same time.
-
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/rtc/rtc-isl12022.c | 244 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 241 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/rtc/rtc-isl12022.c b/drivers/rtc/rtc-isl12022.c
-index d82278fdc29b..682b1bf10160 100644
---- a/drivers/rtc/rtc-isl12022.c
-+++ b/drivers/rtc/rtc-isl12022.c
-@@ -21,7 +21,7 @@
- 
- #include <asm/byteorder.h>
- 
--/* ISL register offsets */
-+/* RTC - Real time clock registers */
- #define ISL12022_REG_SC		0x00
- #define ISL12022_REG_MN		0x01
- #define ISL12022_REG_HR		0x02
-@@ -30,21 +30,36 @@
- #define ISL12022_REG_YR		0x05
- #define ISL12022_REG_DW		0x06
- 
-+/* CSR - Control and status registers */
- #define ISL12022_REG_SR		0x07
- #define ISL12022_REG_INT	0x08
--
- #define ISL12022_REG_PWR_VBAT	0x0a
--
- #define ISL12022_REG_BETA	0x0d
-+
-+/* ALARM - Alarm registers */
-+#define ISL12022_REG_SCA0	0x10
-+#define ISL12022_REG_MNA0	0x11
-+#define ISL12022_REG_HRA0	0x12
-+#define ISL12022_REG_DTA0	0x13
-+#define ISL12022_REG_MOA0	0x14
-+#define ISL12022_REG_DWA0	0x15
-+#define ISL12022_ALARM_SECTION		ISL12022_REG_SCA0
-+#define ISL12022_ALARM_SECTION_LEN	(ISL12022_REG_DWA0 - ISL12022_REG_SCA0 + 1)
-+
-+/* TEMP - Temperature sensor registers */
- #define ISL12022_REG_TEMP_L	0x28
- 
- /* ISL register bits */
- #define ISL12022_HR_MIL		(1 << 7)	/* military or 24 hour time */
- 
-+#define ISL12022_SR_ALM		(1 << 4)
- #define ISL12022_SR_LBAT85	(1 << 2)
- #define ISL12022_SR_LBAT75	(1 << 1)
- 
-+#define ISL12022_INT_ARST	(1 << 7)
- #define ISL12022_INT_WRTC	(1 << 6)
-+#define ISL12022_INT_IM		(1 << 5)
-+#define ISL12022_INT_FOBATB	(1 << 4)
- #define ISL12022_INT_FO_MASK	GENMASK(3, 0)
- #define ISL12022_INT_FO_OFF	0x0
- #define ISL12022_INT_FO_32K	0x1
-@@ -52,10 +67,18 @@
- #define ISL12022_REG_VB85_MASK	GENMASK(5, 3)
- #define ISL12022_REG_VB75_MASK	GENMASK(2, 0)
- 
-+#define ISL12022_ALARM_ENABLE	(1 << 7)	/* for all ALARM registers  */
-+
- #define ISL12022_BETA_TSE	(1 << 7)
- 
-+static struct i2c_driver isl12022_driver;
-+
- struct isl12022 {
-+	struct i2c_client *i2c;
-+	struct rtc_device *rtc;
- 	struct regmap *regmap;
-+	int irq;
-+	bool irq_enabled;
- };
- 
- static umode_t isl12022_hwmon_is_visible(const void *data,
-@@ -215,6 +238,208 @@ static int isl12022_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	return regmap_bulk_write(regmap, ISL12022_REG_SC, buf, sizeof(buf));
- }
- 
-+static int isl12022_rtc_read_alarm(struct device *dev,
-+				   struct rtc_wkalrm *alarm)
-+{
-+	struct rtc_time *const tm = &alarm->time;
-+	struct isl12022 *isl12022 = dev_get_drvdata(dev);
-+	struct regmap *regmap = isl12022->regmap;
-+	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
-+	int ret, yr, i;
-+
-+	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
-+			       buf, sizeof(buf));
-+	if (ret) {
-+		dev_err(dev, "%s: reading ALARM registers failed\n",
-+			__func__);
-+		return ret;
-+	}
-+
-+	dev_dbg(dev,
-+		"%s: sc=%02x, mn=%02x, hr=%02x, dt=%02x, mo=%02x, dw=%02x\n",
-+		__func__, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
-+
-+	tm->tm_sec = bcd2bin(buf[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION]
-+			     & 0x7F);
-+	tm->tm_min = bcd2bin(buf[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION]
-+			     & 0x7F);
-+	tm->tm_hour = bcd2bin(buf[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION]
-+			      & 0x3F);
-+	tm->tm_mday = bcd2bin(buf[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION]
-+			      & 0x3F);
-+	tm->tm_mon = bcd2bin(buf[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION]
-+			     & 0x1F) - 1;
-+	tm->tm_wday = buf[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] & 0x07;
-+
-+	/* The alarm doesn't store the year so get it from the rtc section */
-+	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
-+	if (ret) {
-+		dev_err(dev, "%s: reading YR register failed\n", __func__);
-+		return yr;
-+	}
-+	tm->tm_year = bcd2bin(yr) + 100;
-+
-+	for (i = 0 ; i < ISL12022_ALARM_SECTION_LEN ; i++) {
-+		if (buf[i] & ISL12022_ALARM_ENABLE) {
-+			alarm->enabled = 1;
-+			break;
-+		}
-+	}
-+
-+	dev_dbg(dev, "%s: %ptR\n", __func__, tm);
-+
-+	return 0;
-+}
-+
-+static int isl12022_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-+{
-+	struct rtc_time *alarm_tm = &alarm->time;
-+	struct isl12022 *isl12022 = dev_get_drvdata(dev);
-+	struct regmap *regmap = isl12022->regmap;
-+	u8 regs[ISL12022_ALARM_SECTION_LEN] = { 0, };
-+	struct rtc_time rtc_tm;
-+	int ret = 0, enable, dw;
-+
-+	ret = isl12022_rtc_read_time(dev, &rtc_tm);
-+	if (ret)
-+		return ret;
-+
-+	/* If the alarm time is before the current time disable the alarm */
-+	if (!alarm->enabled || rtc_tm_sub(alarm_tm, &rtc_tm) <= 0)
-+		enable = 0;
-+	else
-+		enable = ISL12022_ALARM_ENABLE;
-+
-+	/* Set non-matching tm_wday to safeguard against early false matching
-+	 * while setting all the alarm registers (this rtc lacks a general
-+	 * alarm/irq enable/disable bit).
-+	 */
-+	if (enable) {
-+		ret = regmap_read(regmap, ISL12022_REG_DW, &dw);
-+		if (ret) {
-+			dev_err(dev, "%s: reading DW failed\n", __func__);
-+			return ret;
-+		}
-+		/* ~4 days into the future should be enough to avoid match */
-+		dw = ((dw + 4) % 7) | ISL12022_ALARM_ENABLE;
-+		ret = regmap_write(regmap, ISL12022_REG_DWA0, dw);
-+		if (ret) {
-+			dev_err(dev, "%s: writing DWA0 failed\n", __func__);
-+			return ret;
-+		}
-+	}
-+
-+	/* Program the alarm and enable it for each setting */
-+	regs[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_sec) | enable;
-+	regs[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_min) | enable;
-+	regs[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_hour) | enable;
-+	regs[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_mday) | enable;
-+	regs[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_mon + 1) | enable;
-+	regs[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] =
-+		bin2bcd(alarm_tm->tm_wday & 7) | enable;
-+
-+	/* write ALARM registers */
-+	ret = regmap_bulk_write(regmap, ISL12022_REG_SCA0,
-+				&regs, sizeof(regs));
-+	if (ret) {
-+		dev_err(dev, "%s: writing ALARM registers failed\n", __func__);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static irqreturn_t isl12022_rtc_interrupt(int irq, void *data)
-+{
-+	struct isl12022 *isl12022 = data;
-+	struct rtc_device *rtc = isl12022->rtc;
-+	struct device *dev = &rtc->dev;
-+	struct regmap *regmap = isl12022->regmap;
-+	u32 val = 0;
-+	unsigned long events = 0;
-+	int ret;
-+
-+	ret = regmap_read(regmap, ISL12022_REG_SR, &val);
-+	if (ret) {
-+		dev_err(dev, "%s: reading SR failed\n", __func__);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (val & ISL12022_SR_ALM)
-+		events |= RTC_IRQF | RTC_AF;
-+
-+	if (events & RTC_AF)
-+		dev_dbg(dev, "alarm!\n");
-+
-+	if (!events)
-+		return IRQ_NONE;
-+
-+	rtc_update_irq(rtc, 1, events);
-+	return IRQ_HANDLED;
-+}
-+
-+static int isl12022_rtc_alarm_irq_enable(struct device *dev,
-+					 unsigned int enabled)
-+{
-+	struct isl12022 *isl12022 = dev_get_drvdata(dev);
-+
-+	if (!isl12022->irq_enabled == !enabled)
-+		return 0;
-+
-+	if (enabled)
-+		enable_irq(isl12022->irq);
-+	else
-+		disable_irq(isl12022->irq);
-+
-+	isl12022->irq_enabled = !!enabled;
-+
-+	return 0;
-+}
-+
-+static int isl12022_setup_irq(struct isl12022 *isl12022, int irq)
-+{
-+	struct device *dev = &isl12022->i2c->dev;
-+	struct regmap *regmap = isl12022->regmap;
-+	unsigned int reg_mask, reg_val;
-+	u8 buf[ISL12022_ALARM_SECTION_LEN] = { 0, };
-+	int ret;
-+
-+	/* Clear and disable all alarm registers */
-+	ret = regmap_bulk_write(regmap, ISL12022_ALARM_SECTION,
-+				buf, sizeof(buf));
-+	if (ret)
-+		return ret;
-+
-+	/* Enable automatic reset of ALM bit, enable single event interrupt
-+	 * mode, and disable IRQ/fOUT pin during battery-backup mode.
-+	 */
-+	reg_mask = ISL12022_INT_ARST | ISL12022_INT_IM
-+		| ISL12022_INT_FOBATB | ISL12022_INT_FO_MASK;
-+	reg_val = ISL12022_INT_ARST | ISL12022_INT_FOBATB | ISL12022_INT_FO_OFF;
-+	ret = regmap_write_bits(regmap, ISL12022_REG_INT,
-+				reg_mask, reg_val);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+					isl12022_rtc_interrupt,
-+					IRQF_SHARED | IRQF_ONESHOT,
-+					isl12022_driver.driver.name,
-+					isl12022);
-+	if (ret) {
-+		dev_err(dev, "Unable to request irq %d\n", irq);
-+		return ret;
-+	}
-+
-+	isl12022->irq = irq;
-+	return 0;
-+}
-+
- static int isl12022_rtc_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
- {
- 	struct isl12022 *isl12022 = dev_get_drvdata(dev);
-@@ -246,6 +471,9 @@ static const struct rtc_class_ops isl12022_rtc_ops = {
- 	.ioctl		= isl12022_rtc_ioctl,
- 	.read_time	= isl12022_rtc_read_time,
- 	.set_time	= isl12022_rtc_set_time,
-+	.read_alarm	= isl12022_rtc_read_alarm,
-+	.set_alarm	= isl12022_rtc_set_alarm,
-+	.alarm_irq_enable = isl12022_rtc_alarm_irq_enable,
- };
- 
- static const struct regmap_config regmap_config = {
-@@ -347,6 +575,7 @@ static int isl12022_probe(struct i2c_client *client)
- 	isl12022 = devm_kzalloc(&client->dev, sizeof(*isl12022), GFP_KERNEL);
- 	if (!isl12022)
- 		return -ENOMEM;
-+	isl12022->i2c = client;
- 
- 	regmap = devm_regmap_init_i2c(client, &regmap_config);
- 	if (IS_ERR(regmap)) {
-@@ -367,11 +596,20 @@ static int isl12022_probe(struct i2c_client *client)
- 	rtc = devm_rtc_allocate_device(&client->dev);
- 	if (IS_ERR(rtc))
- 		return PTR_ERR(rtc);
-+	isl12022->rtc = rtc;
- 
- 	rtc->ops = &isl12022_rtc_ops;
- 	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
- 	rtc->range_max = RTC_TIMESTAMP_END_2099;
- 
-+	if (client->irq > 0) {
-+		ret = isl12022_setup_irq(isl12022, client->irq);
-+		if (ret)
-+			return ret;
-+	} else {
-+		clear_bit(RTC_FEATURE_ALARM, rtc->features);
-+	}
-+
- 	return devm_rtc_register_device(rtc);
- }
- 
+Shouldn't this for 6.11 instead? I'm expecting that though...
 
 -- 
-2.46.0
-
+An old man doll... just what I always wanted! - Clara
 
