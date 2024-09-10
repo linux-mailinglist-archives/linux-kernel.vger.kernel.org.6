@@ -1,281 +1,118 @@
-Return-Path: <linux-kernel+bounces-322934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC6D9735B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:56:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81079734F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC3B2B26238
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:43:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EC01C2504F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3841A1917C6;
-	Tue, 10 Sep 2024 10:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5459619066D;
+	Tue, 10 Sep 2024 10:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Zly8IT/T";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qkyPntwh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="c5fhk7If"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CF4198E65
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A2317A924
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725964819; cv=none; b=iUku6GF2QL7IXT7p75S9vY+bDcvSK/094wrTHXnFvQL14jjgud7rMZa7NVaYnUYK7Hf0XqKQmEvAeQRJu4sQGTKL0Y/p5AaPeWFK/gm57PAK9g9NFcGtZcJzPK8vHIy6lxcgPCVEOTkblSrl4Di9QQCAU5vx+uOM+G9fB4Yzebk=
+	t=1725964957; cv=none; b=eiJvgT1jiyK3WzaA4WvxJ6DlEx2O+/TmTT4CBaiZNNPvGcchgQcTkCAw/9Uh7VyIhqaUb3+wkBxHmWkr35qvMaz85jc3S5ybHs82X2K43LvlMk7eh4OhWkSqgBU9NP0eGsu2Yqh5AQnYHBWY8zWXnTYv2Ww7SF5CV1SGqRlq214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725964819; c=relaxed/simple;
-	bh=K9c5KHkwCuh861NE1SMNBket3FmJ54a29s5NMvjqltE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gWTVONoFmXKjUUbHNUWgfakuEkL/pPe7hNNwavymtDb1E5Xe8lW0hFn32pD3t40+oSEkE21FTY3H0Wpa0Uq1QopvlGzuR3SG9WDHbnuAbNUp+k1aRE0hbO4CKrCqfG+liweOtw57XatOPbGaaMsmT+hrtrMLZAx+w/ykbzjSPK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Zly8IT/T; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qkyPntwh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ECE461FCA1;
-	Tue, 10 Sep 2024 10:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=emLEtDCHOyRNeSPAQA99QwKawrV9ff6zxw6QsKyQz4s=;
-	b=Zly8IT/Tx7rrkOELPq2/w436dUI2daOA8jVa9PDBtoDS3qSMXqg/oXSlJZtPSRYB8nmZlI
-	4Hhf3jU973rikjt/K2TsrK5WTekGaTClHpA6V8qucU8H7ks9uEQrHZE6cyTLP2ZsJTvZDP
-	lCkUD2K8DizIbgsa5q56S4cKmp3WX/E=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=qkyPntwh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1725964815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=emLEtDCHOyRNeSPAQA99QwKawrV9ff6zxw6QsKyQz4s=;
-	b=qkyPntwhQzj0CgrV1YR5cPvBvhVkpsVq0Vs1QXm+uH7Pz1Rt25SYBcrlHTpvuhOtRvW85S
-	HaxKTv7qaPqWeIv580vrhRFZukJEqVTznqkJxvRX6ZgHPqXoxQcq5INwhlXX+z8+9wYxhz
-	kYHTw7yl0Knjqf94QWDyCahBtQMxloc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F149132CB;
-	Tue, 10 Sep 2024 10:40:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qQOPIQ8i4GbwYwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 10 Sep 2024 10:40:15 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	xen-devel@lists.xenproject.org,
-	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-Subject: [PATCH v3 7/7] xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
-Date: Tue, 10 Sep 2024 12:39:32 +0200
-Message-ID: <20240910103932.7634-8-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240910103932.7634-1-jgross@suse.com>
-References: <20240910103932.7634-1-jgross@suse.com>
+	s=arc-20240116; t=1725964957; c=relaxed/simple;
+	bh=lm9tjfZQgsoefmrIiw7t02owl3uvWdL/KtvHtx5V6L0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7WhaMCEYsN9T4nX/o7yIzyfgpG3YJqllwQWrzB5lqD6vyJ6DlJz1oh6QvWSibGkijV2TrRJ/vEVvF9UTQZi+Md0VfnREoBLQ8R2Bw7QWlr7myE84ZpxSU4Ry0S0Xc8uGXlCRzLrJSRu7Cw3xjYCFpjNo+S9SWMo8zC48letkZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=c5fhk7If; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374b3632ef0so177842f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1725964954; x=1726569754; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nI3i22KwgZnkUxlnZb1O9ZWeCUJAdA3POKLSePBt0ZQ=;
+        b=c5fhk7IfUNl18/gkfY3zwGVC0HBS6u9yAQmy6CphoFkVRVOQXeLQDrT3NaihDgVqzp
+         q+257Gmd8XPw2Hby10gNKten8bRpu6Hd8SloWCozO0rtLcc9Ew+mGwz8CZom0qEdzeAm
+         Fd0uspPQL74AGFSQYVJvKDOKlawqRla2i7dVsTF3P5EfZj50GCHXe+llC9d61JYVrKta
+         RvNBxGoBh3omJBsTVotnUUEYlkw6WzWuasQ+8plfcKqVB8+SQhhwUK8rCDrL2Js+9aIV
+         nVtBE6prUn4HPYeIoLWYXC6ziLhHZhhAAuvpxThRCVADEdotB2qn7AYALd1jW954b2Ai
+         pf0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725964954; x=1726569754;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nI3i22KwgZnkUxlnZb1O9ZWeCUJAdA3POKLSePBt0ZQ=;
+        b=ZNHsAI+aLVh8L25CEwbLLAgifbm3gs6zyrf0CyYay5Nz7KIGthuJ0Gwasr3I3MdhKc
+         TcNLtl3DRXxfaJrqKmws6XB8o2C/bgrgdLs0mS5gdFt596T6+1QeCmQ8uBV4iJFVEepx
+         9nOPegxtZH3rMGHSGoBMekp8s7WXbfC80XCGjN26/v8xIzEl6vsj085W199o1RiA+nvp
+         q/dmeiApQ/naeklqLcbwKQyugsLhb4JM7R8/NAVrb626Jnc+BD+D/5QuzC7QDcLQLNpL
+         q2Np370SmS6laaukEDfhwxxf01n522WnpKtpdFSx9ur3gfVwQH4jMUY8L6Fx8lKOEGTP
+         lRJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIeRJ2AJVhdn8QvW0+2bZCmFlZ7K98JlPo6wbHKaIqftsU0+nNLOYcZYhrecwK/6uymQbuqunX3qMCP/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0sRvWL5haygKywy4mX+ihRNzoR3UvbLI8QztjUnHO08rFJwhh
+	ZdgJTL0B8oAOR/DQXkbtcURAeO59uUfzUgh/LVPkK/qTVBgyapXc+kf3r36mZnDc/lXBi4sbXZn
+	3
+X-Google-Smtp-Source: AGHT+IHXR1gwf3tvcw3upD6Bu+YihJH01jdCDM/lQXHFtWeNk9Z8uh021EAX9vPK9LXSM2psNHEXtw==
+X-Received: by 2002:a5d:6d08:0:b0:378:955f:d243 with SMTP id ffacd0b85a97d-378955fd2damr3024674f8f.13.1725964954111;
+        Tue, 10 Sep 2024 03:42:34 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-91.dynamic.mnet-online.de. [62.216.208.91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb444b0sm107624335e9.21.2024.09.10.03.42.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 03:42:33 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: trondmy@kernel.org,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>,
+	Benjamin Coddington <bcodding@redhat.com>
+Subject: [RESEND PATCH] nfs: Remove unnecessary NULL check before kfree()
+Date: Tue, 10 Sep 2024 12:42:09 +0200
+Message-ID: <20240910104208.4536-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: ECE461FCA1
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RLkdkdrsxe9hqhhs5ask8616i6)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.51
-X-Spam-Flag: NO
 
-In order to minimize required special handling for running as Xen PV
-dom0, the memory layout is modified to match that of the host. This
-requires to have only RAM at the locations where Xen allocated memory
-is living. Unfortunately there seem to be some machines, where ACPI
-NVS is located at 64 MB, resulting in a conflict with the loaded
-kernel or the initial page tables built by Xen.
+Since kfree() already checks if its argument is NULL, an additional
+check before calling kfree() is unnecessary and can be removed.
 
-Avoid this conflict by swapping the ACPI NVS area in the memory map
-with unused RAM. This is possible via modification of the dom0 P2M map.
-Accesses to the ACPI NVS area are done either for saving and restoring
-it across suspend operations (this will work the same way as before),
-or by ACPI code when NVS memory is referenced from other ACPI tables.
-The latter case is handled by a Xen specific indirection of
-acpi_os_ioremap().
+Remove it and thus also the following Coccinelle/coccicheck warning
+reported by ifnullfree.cocci:
 
-While the E820 map can (and should) be modified right away, the P2M
-map can be updated only after memory allocation is working, as the P2M
-map might need to be extended.
+  WARNING: NULL check before some freeing functions is not needed
 
-Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
-V2:
-- remap helpers split off into other patch
-V3:
-- adjust commit message (Jan Beulich)
----
- arch/x86/xen/setup.c | 92 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 91 insertions(+), 1 deletion(-)
+ fs/nfs/read.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index 1114e49937da..c3db71d96c43 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -495,6 +495,8 @@ void __init xen_remap_memory(void)
- 	set_pte_mfn(buf, mfn_save, PAGE_KERNEL);
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index a6103333b666..81bd1b9aba17 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -48,8 +48,7 @@ static struct nfs_pgio_header *nfs_readhdr_alloc(void)
  
- 	pr_info("Remapped %ld page(s)\n", remapped);
-+
-+	xen_do_remap_nonram();
- }
- 
- static unsigned long __init xen_get_pages_limit(void)
-@@ -625,14 +627,102 @@ phys_addr_t __init xen_find_free_area(phys_addr_t size)
- 	return 0;
- }
- 
-+/*
-+ * Swap a non-RAM E820 map entry with RAM above ini_nr_pages.
-+ * Note that the E820 map is modified accordingly, but the P2M map isn't yet.
-+ * The adaption of the P2M must be deferred until page allocation is possible.
-+ */
-+static void __init xen_e820_swap_entry_with_ram(struct e820_entry *swap_entry)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t mem_end = PFN_PHYS(ini_nr_pages);
-+	phys_addr_t swap_addr, swap_size, entry_end;
-+
-+	swap_addr = PAGE_ALIGN_DOWN(swap_entry->addr);
-+	swap_size = PAGE_ALIGN(swap_entry->addr - swap_addr + swap_entry->size);
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		entry_end = entry->addr + entry->size;
-+		if (entry->type == E820_TYPE_RAM && entry->size >= swap_size &&
-+		    entry_end - swap_size >= mem_end) {
-+			/* Reduce RAM entry by needed space (whole pages). */
-+			entry->size -= swap_size;
-+
-+			/* Add new entry at the end of E820 map. */
-+			entry = xen_e820_table.entries +
-+				xen_e820_table.nr_entries;
-+			xen_e820_table.nr_entries++;
-+
-+			/* Fill new entry (keep size and page offset). */
-+			entry->type = swap_entry->type;
-+			entry->addr = entry_end - swap_size +
-+				      swap_addr - swap_entry->addr;
-+			entry->size = swap_entry->size;
-+
-+			/* Convert old entry to RAM, align to pages. */
-+			swap_entry->type = E820_TYPE_RAM;
-+			swap_entry->addr = swap_addr;
-+			swap_entry->size = swap_size;
-+
-+			/* Remember PFN<->MFN relation for P2M update. */
-+			xen_add_remap_nonram(swap_addr, entry_end - swap_size,
-+					     swap_size);
-+
-+			/* Order E820 table and merge entries. */
-+			e820__update_table(&xen_e820_table);
-+
-+			return;
-+		}
-+
-+		entry++;
-+	}
-+
-+	xen_raw_console_write("No suitable area found for required E820 entry remapping action\n");
-+	BUG();
-+}
-+
-+/*
-+ * Look for non-RAM memory types in a specific guest physical area and move
-+ * those away if possible (ACPI NVS only for now).
-+ */
-+static void __init xen_e820_resolve_conflicts(phys_addr_t start,
-+					      phys_addr_t size)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t end;
-+
-+	if (!size)
-+		return;
-+
-+	end = start + size;
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		if (entry->addr >= end)
-+			return;
-+
-+		if (entry->addr + entry->size > start &&
-+		    entry->type == E820_TYPE_NVS)
-+			xen_e820_swap_entry_with_ram(entry);
-+
-+		entry++;
-+	}
-+}
-+
- /*
-  * Check for an area in physical memory to be usable for non-movable purposes.
-- * An area is considered to usable if the used E820 map lists it to be RAM.
-+ * An area is considered to usable if the used E820 map lists it to be RAM or
-+ * some other type which can be moved to higher PFNs while keeping the MFNs.
-  * In case the area is not usable, crash the system with an error message.
-  */
- void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
- 				   const char *component)
+ static void nfs_readhdr_free(struct nfs_pgio_header *rhdr)
  {
-+	xen_e820_resolve_conflicts(start, size);
-+
- 	if (!xen_is_e820_reserved(start, size))
- 		return;
+-	if (rhdr->res.scratch != NULL)
+-		kfree(rhdr->res.scratch);
++	kfree(rhdr->res.scratch);
+ 	kmem_cache_free(nfs_rdata_cachep, rhdr);
+ }
  
 -- 
-2.43.0
+2.46.0
 
 
