@@ -1,207 +1,249 @@
-Return-Path: <linux-kernel+bounces-323967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D9D974632
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F28974631
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F6328842A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C61F26F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332211AAE34;
-	Tue, 10 Sep 2024 23:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496291AC440;
+	Tue, 10 Sep 2024 22:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCSntRBH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="akL3JuPZ"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B46817B4FE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EC81ABEC9;
+	Tue, 10 Sep 2024 22:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726009264; cv=none; b=umH0KvjrVpvaQZMF9g/vbbJAPHlKa3EHtaArHTro8PL15kgdVFHx7b4KofMWgAMOFxQfM/g2JAitDxJ9GFM5+NMmn12kHQquRNJbvq/Rqd+0B7f4FZK2G7XzJiGx+RpTgPpdVzk6TpT4rLgSVwBLbGvXXcKGODUo8o1vfAoTLp0=
+	t=1726009176; cv=none; b=AnQiNQxVnPuIM1SVT/JkwZ6v+kOceM4+UtLY/vDf0laGVniK6GvL4Nb9c/i24dmMOeK7W2pc3hzYl1N8YvXgl7QSMK9n8L0sBABUy+1rjRC3nIyBN5q2ZgkdaMVP2KKyCTG2zXRSjZg/VkL9TM5pgRYEOlDplwEu7YHI7pbGzFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726009264; c=relaxed/simple;
-	bh=qC5KTazQjcvshFpSR9Bzc4qHBHR8bkjSdpCkXbdaHdM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Oe81izIcyGJIANMAI0t03SOF7/AHgj9MmQqfRcEh5UxDBBi89lTCa82A6D06GwuyRqoKT7bYja/4zXaITp4u89G0rCjOt0xplaqwTnBhyna0eS4Ltw84khjNvYgCEbqHE7Y2CrokhkUz5PaSKeDqkZchPxX8oIPQMXPi3dlNa9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCSntRBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 546B8C4CEC3;
-	Tue, 10 Sep 2024 23:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726009264;
-	bh=qC5KTazQjcvshFpSR9Bzc4qHBHR8bkjSdpCkXbdaHdM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=NCSntRBHf/6E+IFS67dpfQdSWaBBseiZae0h0cwMF+mx5DbF/1RX9sEUymADuSdBM
-	 0CO2P1MbwLJRB6r4wkGFcjfL3iGMIHI99c1X56jPOjNvKs+tzn/lY7TBHvaLe/jU+f
-	 IZ0fucJecVJR5Gm4I2J+CjjblS5z/c4s3L9k2Z6pRwc1wwJgtAXIyH2mZhWfX+ndbG
-	 BolPNQ4r8EGQHO0+CaXS4wPwYsbu+0A3wv5+e1hrZgWBjlFW9kkyC6bJmsIyU8DGzH
-	 RTEY6UjNc9W/5MkCbI6Zrl5BYWUdHbvOWGusjWxphoR9RIsGQg9kJlvh6st3V5ftLL
-	 sctXyP4zQySxA==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 10 Sep 2024 23:56:53 +0100
-Subject: [PATCH] x86/shstk: Free the thread shadow stack before
- disassociating from the mm
+	s=arc-20240116; t=1726009176; c=relaxed/simple;
+	bh=QUzpux5lnYnn+c7pRLdFYUnkVr9E8BaYoOh/q/rf+Jo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AzvaDBSq5cRiQ3GcIRBBWdIPgv4vQbCKO3CZ8Wc/3/ynrcHg2ZnLS1xdMiifCl5+WOJ+udjLsDD0d6n/bPLCPptbb2vi3Pa0D+bNcUCd7qqa6Oz7rhUAOuyScO221jJsq8xu+mU8c53bv4QFJ2yzF9m8DMa16eQ90yQ2692YlRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=akL3JuPZ; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726009175; x=1757545175;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5Dvk8Et4bwnTGxADZlsOQ0cJMTGwPj7/oyjK5hdwxlM=;
+  b=akL3JuPZQgJY8wu67FqG/PKHNpXyXnehOBs2nRQbV1yDXiNFja5PbMuB
+   18Bsya7GRS5anGvT+pnFY6Lf0SkUm/k0vxziGGfSxdaxaInxbaUvoeipg
+   tcjFnH5oBv0ijMEr/csUeVL7XJIkh0uSq1AWe7mYVQxW5JT0IpmW1Mnd2
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
+   d="scan'208";a="432574511"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 22:59:31 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:9226]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.47.156:2525] with esmtp (Farcaster)
+ id 551096bc-5391-464a-91f8-4e44af82fe58; Tue, 10 Sep 2024 22:59:30 +0000 (UTC)
+X-Farcaster-Flow-ID: 551096bc-5391-464a-91f8-4e44af82fe58
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 10 Sep 2024 22:59:30 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 10 Sep 2024 22:59:28 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Tue, 10 Sep 2024 15:59:20 -0700
+Message-ID: <20240910225920.11636-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <d8f99152-e500-4f52-8899-885017bdb362@oracle.com>
+References: <d8f99152-e500-4f52-8899-885017bdb362@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-x86-fix-shstk-leak-v1-1-43cef0c56b75@kernel.org>
-X-B4-Tracking: v=1; b=H4sIALXO4GYC/x2MQQqAIBAAvyJ7bkFNpPpKdBDdaikq3Igg+nvSc
- WBmHhDKTAKdeiDTxcL7VsBUCuIctomQU2Gw2jrdGo1343HkG2WWc8GVwoIhJV/7aJImByU8MhX
- jn/bD+3403loFZAAAAA==
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Kees Cook <kees@kernel.org>, Yu-cheng Yu <yu-cheng.yu@intel.com>, 
- Rick Edgecombe <rick.p.edgecombe@intel.com>, 
- "Mike Rapoport (IBM)" <rppt@kernel.org>
-Cc: Deepak Gupta <debug@rivosinc.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4122; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qC5KTazQjcvshFpSR9Bzc4qHBHR8bkjSdpCkXbdaHdM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm4M+sgm4BDnwKct9XaZABtimrGRdnuiaMoexCyLjI
- Xc3umYKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZuDPrAAKCRAk1otyXVSH0DnkB/
- oCH4mMSvPC8EkbLdPvoTMIbYKrzbEZv4Skd0WaodPPFGeQd+799VPfCVa0pfZsLS/GZjIvn7I8Dkrn
- sJGfHuTWFr/yvS/wn6le7/c3EbUy46dRwPddgRoKux7RZedCjz1RQm3+/T75SNBX/G6aqCOa1cB13N
- AVMAmnq0GMPxJzjHU9bOmCYFkHF6aXRaZhv+WK+xkkebBAAT3Ipv1cYg6QsH6n2X8L/JtBOfE8Jz2Z
- DAMe6nT3mLSg4f97KdRJ5sg9AUfFLY56PsmHugYAJDrOfH877xipMLUOYoSBJEJiX6S3qOtbbej4eN
- i+4LXre8qK8aIQN7+si0UE/tgWcVXl
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D037UWB001.ant.amazon.com (10.13.138.123) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-When using shadow stacks the kernel will transparently allocate a shadow
-stack for each thread. The intention is that this will be freed when the
-thread exits but currently this doesn't actually happen. The deallocation
-is done by shstk_free() which is called from exit_thread() and has a guard
-to check for !tsk->mm due to the use of vm_unmap(). This doesn't actually
-do anything since in do_exit() we call exit_mm() prior to thread_exit() and
-exit_mm() disassociates the task from the mm and clears tsk->mm. The result
-is that no shadow stacks will be freed until the process exits, leaking
-memory for any process which creates and destroys threads.
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Tue, 10 Sep 2024 15:30:08 -0700
+> My fellow engineer let's first take a breath and calm down. We both are 
+> trying to do the right thing. Now read my comments below and if I still 
+> don't get it, please be patient, maybe I am not as smart as you are.
+> 
+> On 9/10/2024 2:53 PM, Kuniyuki Iwashima wrote:
+> > From: Shoaib Rao <rao.shoaib@oracle.com>
+> > Date: Tue, 10 Sep 2024 13:57:04 -0700
+> >> The commit Message:
+> >>
+> >> syzbot reported use-after-free in unix_stream_recv_urg(). [0]
+> >>
+> >> The scenario is
+> >>
+> >>     1. send(MSG_OOB)
+> >>     2. recv(MSG_OOB)
+> >>        -> The consumed OOB remains in recv queue
+> >>     3. send(MSG_OOB)
+> >>     4. recv()
+> >>        -> manage_oob() returns the next skb of the consumed OOB
+> >>        -> This is also OOB, but unix_sk(sk)->oob_skb is not cleared
+> >>     5. recv(MSG_OOB)
+> >>        -> unix_sk(sk)->oob_skb is used but already freed
+> > 
+> > How did you miss this ?
+> > 
+> > Again, please read my patch and mails **carefully**.
+> > 
+> > unix_sk(sk)->oob_sk wasn't cleared properly and illegal access happens
+> > in unix_stream_recv_urg(), where ->oob_skb is dereferenced.
+> > 
+> > Here's _technical_ thing that you want.
+> 
+> This is exactly what I am trying to point out to you.
+> The skb has proper references and is NOT de-referenced because 
+> __skb_datagram_iter() detects that the length is zero and returns EFAULT.
 
-Fix this by moving the shstk_free() to a new exit_thread_early() call which
-runs immediately prior to exit_mm(). We don't do this right at the start of
-do_exit() due to the handling for klling init. This could trigger some
-incompatibility if there is code that looks at the shadow stack of a thread
-which has exited but this seems much less likely than the leaking of shadow
-stacks due to thread deletion.
+It's dereferenced as UNIXCB(skb).consumed first in
+unix_stream_read_actor().
 
-Fixes: 18e66b695e78 ("x86/shstk: Add Kconfig option for shadow stack")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-It is entirely possible I am missing something here, I don't have a
-system that allows me to test shadow stack support directly and have
-only checked this by inspection and tested with my arm64 GCS series.
-If this makes sense it'll need to become a dependency for GCS.
----
- arch/Kconfig               | 5 +++++
- arch/x86/Kconfig           | 1 +
- arch/x86/kernel/process.c  | 9 ++++++++-
- include/linux/sched/task.h | 7 +++++++
- kernel/exit.c              | 2 ++
- 5 files changed, 23 insertions(+), 1 deletion(-)
+Then, 1 byte of data is copied without -EFAULT because
+unix_stream_recv_urg() always passes 1 as chunk (size) to
+recv_actor().
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 975dd22a2dbd..2fa3aedc1d23 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1037,6 +1037,11 @@ config HAVE_EXIT_THREAD
- 	help
- 	  An architecture implements exit_thread.
- 
-+config HAVE_EXIT_THREAD_EARLY
-+	bool
-+	help
-+	  An architecture implements exit_thread_early.
-+
- config ARCH_MMAP_RND_BITS_MIN
- 	int
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 007bab9f2a0e..916616026111 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -225,6 +225,7 @@ config X86
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_EISA
- 	select HAVE_EXIT_THREAD
-+	select HAVE_EXIT_THREAD_EARLY
- 	select HAVE_GUP_FAST
- 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
- 	select HAVE_FTRACE_MCOUNT_RECORD
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index f63f8fd00a91..af3cabe08185 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -110,6 +110,14 @@ void arch_release_task_struct(struct task_struct *tsk)
- }
- #endif
- 
-+/*
-+ * Free thread data structures etc..
-+ */
-+void exit_thread_early(struct task_struct *tsk)
-+{
-+	shstk_free(tsk);
-+}
-+
- /*
-  * Free thread data structures etc..
-  */
-@@ -123,7 +131,6 @@ void exit_thread(struct task_struct *tsk)
- 
- 	free_vm86(t);
- 
--	shstk_free(tsk);
- 	fpu__drop(fpu);
- }
- 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index d362aacf9f89..cbafc6ba4e3e 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -88,6 +88,13 @@ static inline void exit_thread(struct task_struct *tsk)
- {
- }
- #endif
-+#ifdef CONFIG_HAVE_EXIT_THREAD_EARLY
-+extern void exit_thread_early(struct task_struct *tsk);
-+#else
-+static inline void exit_thread_early(struct task_struct *tsk)
-+{
-+}
-+#endif
- extern __noreturn void do_group_exit(int);
- 
- extern void exit_files(struct task_struct *);
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 7430852a8571..bc2c2a3da9fb 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -866,6 +866,8 @@ void __noreturn do_exit(long code)
- 	tsk->exit_code = code;
- 	taskstats_exit(tsk, group_dead);
- 
-+	exit_thread_early(tsk);
-+
- 	exit_mm();
- 
- 	if (group_dead)
+That's why I said KASAN should be working on your setup and suggested
+running the repro with/without KASAN.  If KASAN is turned off, single
+byte garbage is copied from the freed area.
 
----
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-change-id: 20240910-x86-fix-shstk-leak-add636c1d0e4
+See the last returned values below
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+Without KASAN:
 
+---8<---
+write(1, "executing program\n", 18
+executing program
+)     = 18
+socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT
+[   15.657345] queued OOB: ff1100000442c700
+) = 1
+recvmsg(3,
+[   15.657793] reading OOB: ff1100000442c700
+{msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
+sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE
+[   15.659830] queued OOB: ff1100000442c300
+) = 1
+recvfrom(3,
+[   15.660272] free skb: ff1100000442c300
+"\21", 125, MSG_DONTROUTE|MSG_TRUNC, NULL, NULL) = 1
+recvmsg(3,
+[   15.661014] reading OOB: ff1100000442c300
+{msg_namelen=0, MSG_OOB|MSG_ERRQUEUE) = 1
+---8<---
+
+
+With KASAN:
+
+---8<---
+socketpair(AF_UNIX, SOCK_STREAM, 0, [3, 4]) = 0
+sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\333", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_DONTWAIT
+[  134.735962] queued OOB: ff110000099f0b40
+) = 1
+recvmsg(3,
+[  134.736460] reading OOB: ff110000099f0b40
+{msg_name=NULL, msg_namelen=0, msg_iov=NULL, msg_iovlen=0, msg_controllen=0, msg_flags=MSG_OOB}, MSG_OOB|MSG_WAITFORONE) = 1
+sendmsg(4, {msg_name=NULL, msg_namelen=0, msg_iov=[{iov_base="\21", iov_len=1}], msg_iovlen=1, msg_controllen=0, msg_flags=0}, MSG_OOB|MSG_NOSIGNAL|MSG_MORE
+[  134.738554] queued OOB: ff110000099f0c80
+) = 1
+recvfrom(3,
+[  134.739086] free skb: ff110000099f0c80
+"\21", 125, MSG_DONTROUTE|MSG_TRUNC, NULL, NULL) = 1
+recvmsg(3,
+[  134.739792] reading OOB: ff110000099f0c80
+ {msg_namelen=0}, MSG_OOB|MSG_ERRQUEUE) = -1 EFAULT (Bad address)
+---8<---
+
+
+> 
+> See more below
+> > 
+> > ---8<---
+> > # ./oob
+> > executing program
+> > [   25.773750] queued OOB: ff1100000947ba40
+> > [   25.774110] reading OOB: ff1100000947ba40
+> > [   25.774401] queued OOB: ff1100000947bb80
+> > [   25.774669] free skb: ff1100000947bb80
+> > [   25.774919] reading OOB: ff1100000947bb80
+> > [   25.775172] ==================================================================
+> > [   25.775654] BUG: KASAN: slab-use-after-free in unix_stream_read_actor+0x86/0xb0
+> > ---8<---
+> > 
+> > ---8<---
+> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> > index a1894019ebd5..ccd9c47160a5 100644
+> > --- a/net/unix/af_unix.c
+> > +++ b/net/unix/af_unix.c
+> > @@ -2230,6 +2230,7 @@ static int queue_oob(struct socket *sock, struct msghdr *msg, struct sock *other
+> >   	__skb_queue_tail(&other->sk_receive_queue, skb);
+> >   	spin_unlock(&other->sk_receive_queue.lock);
+> >   
+> > +	printk(KERN_ERR "queued OOB: %px\n", skb);
+> >   	sk_send_sigurg(other);
+> >   	unix_state_unlock(other);
+> >   	other->sk_data_ready(other);
+> > @@ -2637,6 +2638,7 @@ static int unix_stream_recv_urg(struct unix_stream_read_state *state)
+> >   	spin_unlock(&sk->sk_receive_queue.lock);
+> >   	unix_state_unlock(sk);
+> >   
+> > +	printk(KERN_ERR "reading OOB: %px\n", oob_skb);
+> >   	chunk = state->recv_actor(oob_skb, 0, chunk, state);
+> >   
+> >   	if (!(state->flags & MSG_PEEK))
+> > @@ -2915,7 +2917,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
+> >   
+> >   			skb_unlink(skb, &sk->sk_receive_queue);
+> >   			consume_skb(skb);
+> > -
+> > +			printk(KERN_ERR "free skb: %px\n", skb);
+> 
+> This printk is wrongly placed
+
+It's not, because this just prints the address of OOB skb just after
+it's illegally consumed without MSG_OOB.  The code is only called
+for the illegal OOB during the repro.
+
+
+> because the skb has been freed above, but 
+> since it is just printing the pointer it should be OK, access to any skb 
+> field will be an issue. You should move this printk to before 
+> unix_stream_read_generic and print the refcnt on the skb and the length 
+> of the data and verify what I am saying, that the skb has one refcnt and 
+> zero length.
+
+Note this is on top of net-next where no additional refcnt is taken
+for OOB, so no need to print skb's refcnt.  Also the length is not
+related because chunk is always 1.
+
+
+> This is the kind of interaction I was looking for. If I have missed 
+> something please be patient and let me know.
+> 
+> Regards,
+> 
+> Shoaib
 
