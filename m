@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-323502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916E3973E09
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C020973E0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04EFB218C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5FC288B38
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D49C1A01CC;
-	Tue, 10 Sep 2024 17:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC26F1A00F4;
+	Tue, 10 Sep 2024 17:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ULxOLIAd"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPGcw0MA"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4EC16C684
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E7216C684;
+	Tue, 10 Sep 2024 17:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987895; cv=none; b=VDf4Kp10soRklKJwY83ob7kr9ctb2vJXC4orOMYAmb+RXQ4TIY2ZBvQ3OpwyRDLdPcHmACavSx9tAAO88YC/XRt5fCQ+vaPLe4JVmG6sR0+GIUHXuMNEvz31hFdAWx+Qhy2quKEKl7H1AGu4oir8BnIFcpW/DKPMg+Katkg0Jp4=
+	t=1725987913; cv=none; b=rYigNxj7JIaF0IKFn8viKzJp0o7+Bvrk4TxDGET9fAVGX9+4UbIUhMc94rrzW5wMxmF8AFM2rINEoikTKabXlgbmHPdfTgIeFVGpDoUCPoxS35JMnmTIuF89C5kV7zwutfKTFv1eM/tobaRJcpg46He4vuTsE3mey16Y3eydfno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987895; c=relaxed/simple;
-	bh=LW8FEX9mkCpB1RVUvuseZXdPeOEksUAqYyTZgqApHnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VNWhlYkSlMTIpz0r2hjbmq3nZmDOLysCrRPVXrk4O9CPF4yXawTq5EhMEUY5YcDAVql+ujnKls96LFicgdKdojLOL5+K699Wudn1nKMfy4YJlYFzaEA+5Lnyet5384cP3ZwxvL0Ar67fAteQhaIx+klnn80EotUD5Mdsc8GmgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ULxOLIAd; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9acc6f22dso90640485a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:04:53 -0700 (PDT)
+	s=arc-20240116; t=1725987913; c=relaxed/simple;
+	bh=uRDLkFFDIUho/LgoMzI7j/gSOXIub9oNK+V6iTGkVXI=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Qtsg+Ik3LamqDgbS/ZxI6tMF3+GmwG9hGmEe3y8l6hdKwUj3/dGr1FasvZoxmA5ig+HlcJ0ZDaQSOUl3LTsg7+dS0cqkaWep72Qb+CavhLjZh6CMog6RDFMqWCCXHNpbalErbDMd49SIgwMbbQViI1HXt/bcGSkfKcT/YBcDyK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OPGcw0MA; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c3e1081804so573306a12.3;
+        Tue, 10 Sep 2024 10:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725987892; x=1726592692; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VV4INpQE5dil1UicDv8WEVlgmBThvwhZa9jQ/i9V3A=;
-        b=ULxOLIAd0WTp6qE6tUXl6bA4oBQlXSk4RiUuDlTWhFFT0sr/+iOjigOow+BVZaENTh
-         lucjeDeexI2Tfs+MJVHxgfI8HjTAHompUMdNErbMCmjHyBbqXWw9bpfrdKAmaZk6iHKH
-         JPqje7PIpbwaY0MyRWadDrJItkXB8FtIVJSRg=
+        d=gmail.com; s=20230601; t=1725987911; x=1726592711; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ET6G2wODCglT9r88gN0jOSL74gqMV3Ge/ZWntzZjf9A=;
+        b=OPGcw0MA6y1Gs0IXps4IVwHf8aIgO4O1QiCA5bAiUmzKRQc4HXQEDlks8IX0wsj7uW
+         M1hWZxZ7aMAGE2i6vxchcDR4yzDD8SF9rolvpHdNotf8AlIapmWeWdzHFam6jgrXSGc7
+         xXaxtxzmv0W/3emuv1hxE3kFjUqjM+ppzD3O/dFY07paSahp8yU1pqdKxDwnrN6V/lOQ
+         i0KLtBRFK7E4pz82zlUAdoML7Z782flqLkroOA0Ol7JqPE+ykj3WMQ5hfASQKRLAmiYA
+         ZnQZI6YRtcy4+2h/8O+Ap9PdI6pMN949pq+mV3R7H8/4Ojg1v6mfJLppPDP3wMRsnYx6
+         /0ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987892; x=1726592692;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+VV4INpQE5dil1UicDv8WEVlgmBThvwhZa9jQ/i9V3A=;
-        b=n58VZeLHGEjSHQhkHoch6aY+0C2Q42wCEc5ThHs5OVngoUD/HydHiMI2q0K3hbDUY9
-         yp1Q5nWVCbYgkkUm9ZvxbJvAj+0KpPh5kxBIJqhucc2vIelFW/LNGDsN+kbW4NxkcWuS
-         xBDz+oOt6XHQyL42VSDjLUAl3C5Vqx3VElRfboJfA5mc+Zjy7FubDA/xvrlIN7kEpNv9
-         G9otKlUyjOj2HmqdA4JA1a1a/6jlLOkny59MQWm3nQ6hp23VnUPVhc/L/DlT92cfvHRw
-         dn0rywdVVu6INbbqAq1UzUftXiwA37r1oU5lDfBkOHYC8qgvWiapiKiBL2HCvncDfldI
-         jKHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQhsM5AtttCnrGqr11/EpPqCSZnTkH4hnZm/L0+drOQwpDJsKvrdIhU4RFkNIplEzM7DvANMUZ49lHkoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaAB6LSw9l4WOpg3knUNmHYrdH6AzEBGcRuVwaMBdqMyT8rEHg
-	RG6VUOA2zCylNRvU0P1uLtyCVUUxOYAZfS2jYt4w5zLoCA+E3cUmRfeNaVZ3pw==
-X-Google-Smtp-Source: AGHT+IEGESbHlEgOq14msNVhQByCIEg2VpukIkmwt0wZ4JkLOSYM2I4SAcQcWdRV2CPiiiYw+cergg==
-X-Received: by 2002:a05:620a:2a02:b0:7a9:aca7:e270 with SMTP id af79cd13be357-7a9d3a433c4mr34612985a.22.1725987892372;
-        Tue, 10 Sep 2024 10:04:52 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a796d1d7sm321527585a.52.2024.09.10.10.04.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 10:04:51 -0700 (PDT)
-Message-ID: <89ff93ce-edb5-48f0-9f56-4e033990966e@broadcom.com>
-Date: Tue, 10 Sep 2024 10:04:48 -0700
+        d=1e100.net; s=20230601; t=1725987911; x=1726592711;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ET6G2wODCglT9r88gN0jOSL74gqMV3Ge/ZWntzZjf9A=;
+        b=R/bfDBcZPBBr3k6JrlMgjeX5QfgpQJ8Q0OjUIilPyuak+RSAAt7B10lmr1wvS4jUpZ
+         IQBUHD89nrQxs6u0VDHJSui6d7P9CmNSgjW5/fSu2gM8AJkj7mlbdMtroNpcdqoLTFfE
+         lZRe4/FrvqOtx3eSVl17+PiOKIODlZ+HiWDXQa9j46u+Meh7IhKuqzvxr90WwYX/Bljm
+         9XEUlubko3wLfBsRwDbdpFPYXIB5JCCLVcf/x+2OS0GTzd+ECqCunUKtTzSH+oIGtnE1
+         xdAii86SWBGMSjR7xE0ZluVSuAvPXhtkecOIyM1whDONK0B+LzMp5bISAAbENoJUifOB
+         kp0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVdLP62ERXcP/DuqHw7Ot8JY4sQZcDkf1ieZfmt727gfLTB4FbakpSBrpvMPzEL88SU1LPvh90A+eVrKns=@vger.kernel.org, AJvYcCXxnwwBEcekrZ9IMlrGVbUZyVRurqhgsXClq1JwjBdHXHg8DpoDb+5kSxHG1+7ZO8UCYQmU9fihQ2fuSmeYny5d5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX+p2YugIYt6Dvq2gOTkExIOZzIAzpxUcd3EWKjM6UEza1r7y/
+	Yo4mgilAsZdiY9l2llvBSG6Oknp1SBW6+T2yjEwt5HNjfMApXWgS
+X-Google-Smtp-Source: AGHT+IG1u+veK7HEAcEldDvIEGUqlJc6dHaHNfQsYSeY6jficbJys3YhE8TFpisXTCbvCytEk5E08w==
+X-Received: by 2002:a17:902:c403:b0:205:9201:b520 with SMTP id d9443c01a7336-207522154eemr2574695ad.58.1725987910647;
+        Tue, 10 Sep 2024 10:05:10 -0700 (PDT)
+Received: from localhost ([138.0.199.149])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e19716sm50809775ad.38.2024.09.10.10.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 10:05:10 -0700 (PDT)
+From: arnaldo.melo@gmail.com
+Date: Tue, 10 Sep 2024 14:05:07 -0300
+To: Ian Rogers <irogers@google.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Howard Chu <howardchu95@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1] perf trace: If a syscall arg is marked as 'const',
+ assume it is coming _from_ userspace
+Message-ID: <ZuB8Q3NQej-gB6Tz@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 09/11] PCI: brcmstb: Reuse config structure
-To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240910151845.17308-1-svarbanov@suse.de>
- <20240910151845.17308-10-svarbanov@suse.de>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240910151845.17308-10-svarbanov@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/10/24 08:18, Stanimir Varbanov wrote:
-> Instead of copying fields from pcie_cfg_data structure to
-> brcm_pcie reference it directly.
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+We need to decide where to copy syscall arg contents, if at the
+syscalls:sys_entry hook, meaning is something that is coming from
+user to kernel space, or if it is a response, i.e. if it is something
+the _kernel_ is filling in and thus going to userspace.
 
-Reviewed-by: Florian Fainelil <florian.fainelli@broadcom.com>
+Since we have 'const' used in those syscalls, and unsure about this
+being consistent, doing:
+
+  root@number:~# echo $(grep const /sys/kernel/tracing/events/syscalls/sys_enter_*/format  | grep struct | cut -c47- | cut -d'/' -f1)
+  clock_nanosleep clock_settime epoll_pwait2 futex io_pgetevents landlock_create_ruleset listmount mq_getsetattr mq_notify mq_timedreceive mq_timedsend preadv2 preadv prlimit64 process_madvise process_vm_readv process_vm_readv process_vm_writev process_vm_writev pwritev2 pwritev readv rt_sigaction rt_sigtimedwait semtimedop statmount timerfd_settime timer_settime vmsplice writev
+  root@number:~#
+
+Seems to indicate that we can use that for the ones that have the
+'const' to mark it as coming from user space, do it.
+
+Most notable/frequent syscall that now gets BTF pretty printed in a
+system wide 'perf trace' session is:
+
+  root@number:~# perf trace
+     21.160 (         ): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e1dfe964, op: WAIT_BITSET|PRIVATE_FLAG, utime: (struct __kernel_timespec){.tv_sec = (__kernel_time64_t)50290,.tv_nsec = (long long int)810362837,}, val3: MATCH_ANY) ...
+      21.166 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+      21.169 ( 0.001 ms): RemVidChild/6995 sendmsg(fd: 25<socket:[78915]>, msg: 0x7f49e9af9da0, flags: DONTWAIT) = 280
+      21.172 ( 0.289 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa58, op: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) = 0
+      21.463 ( 0.000 ms): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+      21.467 ( 0.001 ms): RemVidChild/6995 futex(uaddr: 0x7f49e28bb964, op: WAKE|PRIVATE_FLAG, val: 1)           = 1
+      21.160 ( 0.314 ms): MediaSu~isor #/1028597  ... [continued]: futex())                                            = 0
+      21.469 (         ): RemVidChild/6995 futex(uaddr: 0x7f49fcc7fa5c, op: WAIT_BITSET|PRIVATE_FLAG|CLOCK_REALTIME, val3: MATCH_ANY) ...
+      21.475 ( 0.000 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49d0223040, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+      21.478 ( 0.001 ms): MediaSu~isor #/1028597 futex(uaddr: 0x7f49e26ac964, op: WAKE|PRIVATE_FLAG, val: 1)           = 1
+  ^Croot@number:~#
+  root@number:~# cat /sys/kernel/tracing/events/syscalls/sys_enter_futex/format
+  name: sys_enter_futex
+  ID: 454
+  format:
+  	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+  	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+  	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+  	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+  	field:int __syscall_nr;	offset:8;	size:4;	signed:1;
+  	field:u32 * uaddr;	offset:16;	size:8;	signed:0;
+  	field:int op;	offset:24;	size:8;	signed:0;
+  	field:u32 val;	offset:32;	size:8;	signed:0;
+  	field:const struct __kernel_timespec * utime;	offset:40;	size:8;	signed:0;
+  	field:u32 * uaddr2;	offset:48;	size:8;	signed:0;
+  	field:u32 val3;	offset:56;	size:8;	signed:0;
+
+  print fmt: "uaddr: 0x%08lx, op: 0x%08lx, val: 0x%08lx, utime: 0x%08lx, uaddr2: 0x%08lx, val3: 0x%08lx", ((unsigned long)(REC->uaddr)), ((unsigned long)(REC->op)), ((unsigned long)(REC->val)), ((unsigned long)(REC->utime)), ((unsigned long)(REC->uaddr2)), ((unsigned long)(REC->val3))
+  root@number:~#
+
+Suggested-by: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>
+Cc: Howard Chu <howardchu95@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-trace.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 83eb15b72333edd9..e26baf1256d5bb56 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2001,11 +2001,14 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 
+ 		len = strlen(field->name);
+ 
++		// As far as heuristics (or intention) goes this seems to hold true, and makes sense!
++		if ((field->flags & TEP_FIELD_IS_POINTER) && strstarts(field->type, "const "))
++			arg->from_user = true;
++
+ 		if (strcmp(field->type, "const char *") == 0 &&
+ 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+ 		     strstr(field->name, "path") != NULL)) {
+ 			arg->scnprintf = SCA_FILENAME;
+-			arg->from_user = true;
+ 		} else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+ 			arg->scnprintf = SCA_PTR;
+ 		else if (strcmp(field->type, "pid_t") == 0)
 -- 
-Florian
+2.46.0
+
 
