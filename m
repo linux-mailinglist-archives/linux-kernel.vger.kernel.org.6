@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-324020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6209746DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE12F9746E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD31C25BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD34287060
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DA11C231B;
-	Tue, 10 Sep 2024 23:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBF61C233A;
+	Tue, 10 Sep 2024 23:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kkvXkgr/"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CX42pobh"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355181C1AB1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066431C1ADE
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726011926; cv=none; b=BWkq1IZE7b1mAst4WvvDmMGikZhadi72zhqddEZ/u8iCDxcaKd4G/D1LYDHC+z7Lq9P0HglJYOFYvqgbdnktsRqPs10StwJcbZHDJTARJ+m5nRotBWss3ZUB21BtQcV0lEludzZoER4xjKORwvCuJ4x9SoD2wrWMdU1vw4j7jNg=
+	t=1726011927; cv=none; b=hDv1hv1aY4njyCl60vIXx/lpKIrBhanG4XrQcPGvPLEF/40Kzm2DoPIkdCK368Kqi6AfgRB0rz61dc0gIrQWagLHxULExME8s5WzolUeb4KFr3imgAwHlxlQE6UXFmXCClbsbV8xLmSF3BVnb+U5DR867CNSVPvqY8MXzgTX+7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726011926; c=relaxed/simple;
-	bh=E5exUTcHox7ZsBbSugU4kB9L1tXTbIgmGnzZ+uWTAcI=;
+	s=arc-20240116; t=1726011927; c=relaxed/simple;
+	bh=bB9BdtkjjVNcS9mxcL5NczC5O+Pq5uAFXDHF0ZiMZ2Q=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=a2Y82VfNlCSqIk4yRNCTze3ERLFhn96RLPdUVKWpX+glmIRNNBLXzhOWxYjlgt2OpMfKub/YhI4Vyd9iLtPRKrRdms6+aoYN9DcDeOMhKmn2ar2TdA0b5Td6kkRB8nH0qksSYxo21OuJsmVle5N3FrXPzAzqvennEz8m3tGZUxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kkvXkgr/; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=REzkYl1baJK2Ui2AfvXLwMvia8rV0ZD2TuwvlPrN6cXlGQcTzmnfm5qRyKVPGKgRBrTPqLFFsGlwsgPbqw/QzYn/DjVQ0UoWJTFPmc7pb1bbug9hRQH2V5uFNx1yTZPj6848GCEqze+Y0BG7elAj5c30jTa7wPjWBCOYSA7Lyhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CX42pobh; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d817394b39so2910054a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:24 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d3e062dbeeso7487997b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 16:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726011923; x=1726616723; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726011925; x=1726616725; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FjI6cBjR9AW7KizYJRES3kHs2nxbgzqD9PMU12DXiXA=;
-        b=kkvXkgr/VVSh+6ffqFLFkQrHLirqCJUIz2CLLG4LBIreXlfxbKEyBtXPDgc57rKgeJ
-         41smivW0T1pTZGVhcxkL/MoemqHPzyJP+Q/NAC5eIj54zcLigUFWnTq1eamHC9m+5EZT
-         kSTA49px7qb4+TAWYKCLYv5sgKGE9/oUeZFZ/nTyCTOjiD6eK/GLOb8c6xopdvtWZuwM
-         DJyxZaDKR79JWE2WdU7aJTKnt0a9tlwa9g2GxGDWmbwSTEQNencTMsxH1OZwlQ0oE4t0
-         ccvEXTglDIX+JwpOHGbD7+7cfqzLpNFsXhmDYj9C0OSgcsrkNKV5NVxRQnu+uj+bmQr6
-         eMYA==
+        bh=v3nxHl/A8XO7B4MgOY4YbNCzyESNqY5WdHlaVGBDG2E=;
+        b=CX42pobhdVm6+IyAp8M6oTsOuofj4qZRJtNy1RgQpZZIB2hiaqoYRNP8m+5vF2fB2i
+         SVRzah2aT28nPhWSrg+8fuCpMktKaV/rZaaE/s1t4muCESgQKOiRMkly8L4+tgzcXvSm
+         I7aUQ8LTEvNP/w054rEwP8UYFffk9ope21s9q1RwU+CiSmgAKyBzm2ee3vto3TNWwYnB
+         z3+h+E0H0eOrkboltRoEmZiyxVxJ+QSfJzhj7RTAFtnqy8qQ3JaaLbonvskgDvUeHkb4
+         yOWNAILNHEQ6ZvDL8yVrMieqyJCoRv1e9JJjBehzRNExPOuLv/F6HBXsIFaYCDq+ocYv
+         QbiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726011923; x=1726616723;
+        d=1e100.net; s=20230601; t=1726011925; x=1726616725;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FjI6cBjR9AW7KizYJRES3kHs2nxbgzqD9PMU12DXiXA=;
-        b=rVzii7rSILMSQ0U+MhDyRMPVZUGdvrEUGWIhh8WbplN1DW8xpYKYf2PADb5LzDU+cY
-         hkRHFRHXoAZ0k5QP5zjKnejWBFAj0F3krqELF7gXGR47HxW2s6GKzfHP1QqCSGRNZy92
-         +HJ2tp1+XS6T2mrCi9VGS3HjcWXV2MbeJvtHt/hevrdxUyL2xH1qgd5GW/4FD/YuTWhQ
-         UUFyHQ7Nnu7CWXZFhgPLINwyDGNiOyRwsL4r+iR5ChFtbzrUDwZr3QfDKy2JwOLrG1UD
-         eBFwub+QsQg4vjgQfih6cMLT50SPxEo0zLFvK8xiek5gA8F+F2BbJuQwwkQwE1frrBjF
-         8r4A==
-X-Forwarded-Encrypted: i=1; AJvYcCV4g+e2AmCJGLzNL8A3G0+LUdEgr42gwynaWb52YfD/Gsm3nlKl19RW0v+B1OCzIv7xFqixEMGEmKISK68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0vdPfo3tIwH+23auYZPUSAGV2FQ3E6IAT3QFMUBZ+7NWXJGQR
-	/Cdx6A1eUMdAstxlUwODfr6N+8rEgkSGnbDq7bJX8Rg4PSc0B9XwmFwEbMcstwPQYgAuaNAtpct
-	3+WXauIZCm2MSTfOvx1przA==
-X-Google-Smtp-Source: AGHT+IHSKJ4yx6H+R6vmjAajFKhOO5Lbm3TP4ppQgPnLaqzbpul3ZYzZk4Z4nMlq9x4ej3kbxbURUt5MTOfpTqRbXQ==
+        bh=v3nxHl/A8XO7B4MgOY4YbNCzyESNqY5WdHlaVGBDG2E=;
+        b=lJwNODgiMe3qpqLz75eaFiqXKliDxDa7xSTrn1ShL2dmDg6XblNeUpCe3bH1SHjJsY
+         x8lqt/JadUQJZNrAyDSchFV5qsy4IBz+kZVFF1z8qblcILXAOHfnRSY6E/wL1LFqK6FB
+         YnnL7JWWaNJ8MrVA73I/G4QSNE8GOHm+7lKWU25i763G/9xXyRuNizv615imsFGGZOOW
+         w/XkI277hMo3bdXD+sb3ffnGMP/8I5jAE2Jh03o5Gk0sWwQtM6InGQTy3Eq7dXZoKgM5
+         fVuQzs/GNwq+1kcigvcLNk/hXgwH8sl8JFTdWjxo7ElfJCnp4tS3k2D5ScL8gqjDo22P
+         1TUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2AMtOH7fkVxOANPREi99nTOOkTnECwPvzdvuyfju5JWlAqO+LGANUS7g74gsI1YLUkwkC4ZXiEA6Qrd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOPHtaY4Cf8c+Z0rD9+++8Jvnj3KF4CzI1zeqzphcGE5dob11q
+	Kdu3tXPO2PJMvZXwX/Cly4aWAVXnLUH8uoEI6WLNqsVZrutCue1BEuYOmEBPz71d5QoG6wxgjB0
+	FJFg+0/CTn52i2f+7zI/OUA==
+X-Google-Smtp-Source: AGHT+IHnLEBVmryIC9G4GF4GWQoXu2VnZ3KvRT32M4K9/h8Y/56ASW5COSwM++WZGjik0HMML4LUNHLenr0THNvvKg==
 X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a17:902:c405:b0:207:50e2:f54 with SMTP
- id d9443c01a7336-20750e20f6emr1226925ad.1.1726011923409; Tue, 10 Sep 2024
- 16:45:23 -0700 (PDT)
-Date: Tue, 10 Sep 2024 23:44:00 +0000
+ (user=ackerleytng job=sendgmr) by 2002:a81:a883:0:b0:6d3:e7e6:8462 with SMTP
+ id 00721157ae682-6db952f5ee5mr1095417b3.1.1726011924932; Tue, 10 Sep 2024
+ 16:45:24 -0700 (PDT)
+Date: Tue, 10 Sep 2024 23:44:01 +0000
 In-Reply-To: <cover.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1726009989.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <f4ca1711a477a3b56406c05d125dce3d7403b936.1726009989.git.ackerleytng@google.com>
-Subject: [RFC PATCH 29/39] KVM: Handle conversions in the SET_MEMORY_ATTRIBUTES
- ioctl
+Message-ID: <24cf7a9b1ee499c4ca4da76e9945429072014d1e.1726009989.git.ackerleytng@google.com>
+Subject: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
+ guest_memfd mmap
 From: Ackerley Tng <ackerleytng@google.com>
 To: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
 	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
@@ -94,71 +94,125 @@ Cc: erdemaktas@google.com, vannapurve@google.com, ackerleytng@google.com,
 	linux-fsdevel@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
-The key steps for a private to shared conversion are:
+Since guest_memfd now supports mmap(), folios have to be prepared
+before they are faulted into userspace.
 
-1. Unmap from guest page tables
-2. Set pages associated with requested range in memslot to be
-   faultable
-3. Update kvm->mem_attr_array
+When memory attributes are switched between shared and private, the
+up-to-date flags will be cleared.
 
-The key steps for a shared to private conversion are:
+Use the folio's up-to-date flag to indicate being ready for the guest
+usage and can be used to mark whether the folio is ready for shared OR
+private use.
 
-1. Check and disallow set_memory_attributes if any page in the range
-   is still mapped or pinned, by
-   a. Updating guest_memfd's faultability to prevent future faulting
-   b. Returning -EINVAL if any pages are still pinned.
-2. Update kvm->mem_attr_array
-
-Userspace VMM must ensure shared pages are not in use, since any
-faults racing with this call will get a SIGBUS.
-
-Co-developed-by: Ackerley Tng <ackerleytng@google.com>
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Co-developed-by: Vishal Annapurve <vannapurve@google.com>
-Signed-off-by: Vishal Annapurve <vannapurve@google.com>
 
 ---
- include/linux/kvm_host.h |   1 +
- virt/kvm/guest_memfd.c   | 207 +++++++++++++++++++++++++++++++++++++++
- virt/kvm/kvm_main.c      |  15 +++
- virt/kvm/kvm_mm.h        |   9 ++
- 4 files changed, 232 insertions(+)
+ virt/kvm/guest_memfd.c | 131 ++++++++++++++++++++++++++++++++++++++++-
+ virt/kvm/kvm_main.c    |   2 +
+ virt/kvm/kvm_mm.h      |   7 +++
+ 3 files changed, 139 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 79a6b1a63027..10993cd33e34 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -2476,6 +2476,7 @@ typedef int (*kvm_gmem_populate_cb)(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
- 
- long kvm_gmem_populate(struct kvm *kvm, gfn_t gfn, void __user *src, long npages,
- 		       kvm_gmem_populate_cb post_populate, void *opaque);
-+
- #endif
- 
- #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
 diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 1d4dfe0660ad..110c4bbb004b 100644
+index 110c4bbb004b..fb292e542381 100644
 --- a/virt/kvm/guest_memfd.c
 +++ b/virt/kvm/guest_memfd.c
-@@ -1592,4 +1592,211 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
- 	return ret && !i ? ret : i;
+@@ -129,13 +129,29 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+ }
+ 
+ /**
+- * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
++ * Use folio's up-to-date flag to indicate that this folio is prepared for usage
++ * by the guest.
++ *
++ * This flag can be used whether the folio is prepared for PRIVATE or SHARED
++ * usage.
+  */
+ static inline void kvm_gmem_mark_prepared(struct folio *folio)
+ {
+ 	folio_mark_uptodate(folio);
+ }
+ 
++/**
++ * Use folio's up-to-date flag to indicate that this folio is not yet prepared for
++ * usage by the guest.
++ *
++ * This flag can be used whether the folio is prepared for PRIVATE or SHARED
++ * usage.
++ */
++static inline void kvm_gmem_clear_prepared(struct folio *folio)
++{
++	folio_clear_uptodate(folio);
++}
++
+ /*
+  * Process @folio, which contains @gfn, so that the guest can use it.
+  * The folio must be locked and the gfn must be contained in @slot.
+@@ -148,6 +164,12 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	pgoff_t index;
+ 	int r;
+ 
++	/*
++	 * Defensively zero folio to avoid leaking kernel memory in
++	 * uninitialized pages. This is important since pages can now be mapped
++	 * into userspace, where hardware (e.g. TDX) won't be clearing those
++	 * pages.
++	 */
+ 	if (folio_test_hugetlb(folio)) {
+ 		folio_zero_user(folio, folio->index << PAGE_SHIFT);
+ 	} else {
+@@ -1017,6 +1039,7 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+ {
+ 	struct inode *inode;
+ 	struct folio *folio;
++	bool is_prepared;
+ 
+ 	inode = file_inode(vmf->vma->vm_file);
+ 	if (!kvm_gmem_is_faultable(inode, vmf->pgoff))
+@@ -1026,6 +1049,31 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+ 	if (!folio)
+ 		return VM_FAULT_SIGBUS;
+ 
++	is_prepared = folio_test_uptodate(folio);
++	if (!is_prepared) {
++		unsigned long nr_pages;
++		unsigned long i;
++
++		if (folio_test_hugetlb(folio)) {
++			folio_zero_user(folio, folio->index << PAGE_SHIFT);
++		} else {
++			/*
++			 * Defensively zero folio to avoid leaking kernel memory in
++			 * uninitialized pages. This is important since pages can now be
++			 * mapped into userspace, where hardware (e.g. TDX) won't be
++			 * clearing those pages.
++			 *
++			 * Will probably need a version of kvm_gmem_prepare_folio() to
++			 * prepare the page for SHARED use.
++			 */
++			nr_pages = folio_nr_pages(folio);
++			for (i = 0; i < nr_pages; i++)
++				clear_highpage(folio_page(folio, i));
++		}
++
++		kvm_gmem_mark_prepared(folio);
++	}
++
+ 	vmf->page = folio_file_page(folio, vmf->pgoff);
+ 	return VM_FAULT_LOCKED;
+ }
+@@ -1593,6 +1641,87 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
  }
  EXPORT_SYMBOL_GPL(kvm_gmem_populate);
-+
-+/**
-+ * Returns true if pages in range [@start, @end) in inode @inode have no
-+ * userspace mappings.
-+ */
-+static bool kvm_gmem_no_mappings_range(struct inode *inode, pgoff_t start, pgoff_t end)
+ 
++static void kvm_gmem_clear_prepared_range(struct inode *inode, pgoff_t start,
++					  pgoff_t end)
 +{
 +	pgoff_t index;
-+	bool checked_indices_unmapped;
 +
 +	filemap_invalidate_lock_shared(inode->i_mapping);
 +
 +	/* TODO: replace iteration with filemap_get_folios() for efficiency. */
-+	checked_indices_unmapped = true;
-+	for (index = start; checked_indices_unmapped && index < end;) {
++	for (index = start; index < end;) {
 +		struct folio *folio;
 +
 +		/* Don't use kvm_gmem_get_folio to avoid allocating */
@@ -168,83 +222,22 @@ index 1d4dfe0660ad..110c4bbb004b 100644
 +			continue;
 +		}
 +
-+		if (folio_mapped(folio) || folio_maybe_dma_pinned(folio))
-+			checked_indices_unmapped = false;
-+		else
-+			index = folio_next_index(folio);
++		kvm_gmem_clear_prepared(folio);
 +
++		index = folio_next_index(folio);
 +		folio_unlock(folio);
 +		folio_put(folio);
 +	}
 +
 +	filemap_invalidate_unlock_shared(inode->i_mapping);
-+	return checked_indices_unmapped;
 +}
 +
 +/**
-+ * Returns true if pages in range [@start, @end) in memslot @slot have no
-+ * userspace mappings.
++ * Clear the prepared flag for all folios in gfn range [@start, @end) in memslot
++ * @slot.
 + */
-+static bool kvm_gmem_no_mappings_slot(struct kvm_memory_slot *slot,
-+				      gfn_t start, gfn_t end)
-+{
-+	pgoff_t offset_start;
-+	pgoff_t offset_end;
-+	struct file *file;
-+	bool ret;
-+
-+	offset_start = start - slot->base_gfn + slot->gmem.pgoff;
-+	offset_end = end - slot->base_gfn + slot->gmem.pgoff;
-+
-+	file = kvm_gmem_get_file(slot);
-+	if (!file)
-+		return false;
-+
-+	ret = kvm_gmem_no_mappings_range(file_inode(file), offset_start, offset_end);
-+
-+	fput(file);
-+
-+	return ret;
-+}
-+
-+/**
-+ * Returns true if pages in range [@start, @end) have no host userspace mappings.
-+ */
-+static bool kvm_gmem_no_mappings(struct kvm *kvm, gfn_t start, gfn_t end)
-+{
-+	int i;
-+
-+	lockdep_assert_held(&kvm->slots_lock);
-+
-+	for (i = 0; i < kvm_arch_nr_memslot_as_ids(kvm); i++) {
-+		struct kvm_memslot_iter iter;
-+		struct kvm_memslots *slots;
-+
-+		slots = __kvm_memslots(kvm, i);
-+		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
-+			struct kvm_memory_slot *slot;
-+			gfn_t gfn_start;
-+			gfn_t gfn_end;
-+
-+			slot = iter.slot;
-+			gfn_start = max(start, slot->base_gfn);
-+			gfn_end = min(end, slot->base_gfn + slot->npages);
-+
-+			if (iter.slot->flags & KVM_MEM_GUEST_MEMFD &&
-+			    !kvm_gmem_no_mappings_slot(iter.slot, gfn_start, gfn_end))
-+				return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
-+/**
-+ * Set faultability of given range of gfns [@start, @end) in memslot @slot to
-+ * @faultable.
-+ */
-+static void kvm_gmem_set_faultable_slot(struct kvm_memory_slot *slot, gfn_t start,
-+					gfn_t end, bool faultable)
++static void kvm_gmem_clear_prepared_slot(struct kvm_memory_slot *slot, gfn_t start,
++					 gfn_t end)
 +{
 +	pgoff_t start_offset;
 +	pgoff_t end_offset;
@@ -257,18 +250,16 @@ index 1d4dfe0660ad..110c4bbb004b 100644
 +	start_offset = start - slot->base_gfn + slot->gmem.pgoff;
 +	end_offset = end - slot->base_gfn + slot->gmem.pgoff;
 +
-+	WARN_ON(kvm_gmem_set_faultable(file_inode(file), start_offset, end_offset,
-+				       faultable));
++	kvm_gmem_clear_prepared_range(file_inode(file), start_offset, end_offset);
 +
 +	fput(file);
 +}
 +
 +/**
-+ * Set faultability of given range of gfns [@start, @end) in memslot @slot to
-+ * @faultable.
++ * Clear the prepared flag for all folios for any slot in gfn range
++ * [@start, @end) in @kvm.
 + */
-+static void kvm_gmem_set_faultable_vm(struct kvm *kvm, gfn_t start, gfn_t end,
-+				      bool faultable)
++void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end)
 +{
 +	int i;
 +
@@ -288,132 +279,48 @@ index 1d4dfe0660ad..110c4bbb004b 100644
 +			gfn_start = max(start, slot->base_gfn);
 +			gfn_end = min(end, slot->base_gfn + slot->npages);
 +
-+			if (iter.slot->flags & KVM_MEM_GUEST_MEMFD) {
-+				kvm_gmem_set_faultable_slot(slot, gfn_start,
-+							    gfn_end, faultable);
-+			}
++			if (iter.slot->flags & KVM_MEM_GUEST_MEMFD)
++				kvm_gmem_clear_prepared_slot(iter.slot, gfn_start, gfn_end);
 +		}
 +	}
 +}
 +
-+/**
-+ * Returns true if guest_memfd permits setting range [@start, @end) to PRIVATE.
-+ *
-+ * If memory is faulted in to host userspace and a request was made to set the
-+ * memory to PRIVATE, the faulted in pages must not be pinned for the request to
-+ * be permitted.
-+ */
-+static int kvm_gmem_should_set_attributes_private(struct kvm *kvm, gfn_t start,
-+						  gfn_t end)
-+{
-+	kvm_gmem_set_faultable_vm(kvm, start, end, false);
-+
-+	if (kvm_gmem_no_mappings(kvm, start, end))
-+		return 0;
-+
-+	kvm_gmem_set_faultable_vm(kvm, start, end, true);
-+	return -EINVAL;
-+}
-+
-+/**
-+ * Returns true if guest_memfd permits setting range [@start, @end) to SHARED.
-+ *
-+ * Because this allows pages to be faulted in to userspace, this must only be
-+ * called after the pages have been invalidated from guest page tables.
-+ */
-+static int kvm_gmem_should_set_attributes_shared(struct kvm *kvm, gfn_t start,
-+						 gfn_t end)
-+{
-+	/* Always okay to set shared, hence set range faultable here. */
-+	kvm_gmem_set_faultable_vm(kvm, start, end, true);
-+
-+	return 0;
-+}
-+
-+/**
-+ * Returns 0 if guest_memfd permits setting attributes @attrs for range [@start,
-+ * @end) or negative error otherwise.
-+ *
-+ * If memory is faulted in to host userspace and a request was made to set the
-+ * memory to PRIVATE, the faulted in pages must not be pinned for the request to
-+ * be permitted.
-+ *
-+ * Because this may allow pages to be faulted in to userspace when requested to
-+ * set attributes to shared, this must only be called after the pages have been
-+ * invalidated from guest page tables.
-+ */
-+int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
-+				   unsigned long attrs)
-+{
-+	if (attrs & KVM_MEMORY_ATTRIBUTE_PRIVATE)
-+		return kvm_gmem_should_set_attributes_private(kvm, start, end);
-+	else
-+		return kvm_gmem_should_set_attributes_shared(kvm, start, end);
-+}
-+
- #endif
+ /**
+  * Returns true if pages in range [@start, @end) in inode @inode have no
+  * userspace mappings.
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 92901656a0d4..1a7bbcc31b7e 100644
+index 1a7bbcc31b7e..255d27df7f5c 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -2524,6 +2524,13 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
- 		.on_lock = kvm_mmu_invalidate_end,
- 		.may_block = true,
- 	};
-+	struct kvm_mmu_notifier_range error_set_range = {
-+		.start = start,
-+		.end = end,
-+		.handler = (void *)kvm_null_fn,
-+		.on_lock = kvm_mmu_invalidate_end,
-+		.may_block = true,
-+	};
- 	unsigned long i;
- 	void *entry;
- 	int r = 0;
-@@ -2548,6 +2555,10 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+@@ -2565,6 +2565,8 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+ 		KVM_BUG_ON(r, kvm);
+ 	}
  
- 	kvm_handle_gfn_range(kvm, &pre_set_range);
- 
-+	r = kvm_gmem_should_set_attributes(kvm, start, end, attributes);
-+	if (r)
-+		goto err;
++	kvm_gmem_clear_prepared_vm(kvm, start, end);
 +
- 	for (i = start; i < end; i++) {
- 		r = xa_err(xa_store(&kvm->mem_attr_array, i, entry,
- 				    GFP_KERNEL_ACCOUNT));
-@@ -2560,6 +2571,10 @@ static int kvm_vm_set_mem_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
- 	mutex_unlock(&kvm->slots_lock);
+ 	kvm_handle_gfn_range(kvm, &post_set_range);
  
- 	return r;
-+
-+err:
-+	kvm_handle_gfn_range(kvm, &error_set_range);
-+	goto out_unlock;
- }
- static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
- 					   struct kvm_memory_attributes *attrs)
+ out_unlock:
 diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-index 715f19669d01..d8ff2b380d0e 100644
+index d8ff2b380d0e..25fd0d9f66cc 100644
 --- a/virt/kvm/kvm_mm.h
 +++ b/virt/kvm/kvm_mm.h
-@@ -41,6 +41,8 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
- int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 		  unsigned int fd, loff_t offset);
+@@ -43,6 +43,7 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
  void kvm_gmem_unbind(struct kvm_memory_slot *slot);
-+int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
-+				   unsigned long attrs);
+ int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start, gfn_t end,
+ 				   unsigned long attrs);
++void kvm_gmem_clear_prepared_vm(struct kvm *kvm, gfn_t start, gfn_t end);
  #else
  static inline void kvm_gmem_init(struct module *module)
  {
-@@ -59,6 +61,13 @@ static inline void kvm_gmem_unbind(struct kvm_memory_slot *slot)
- {
- 	WARN_ON_ONCE(1);
+@@ -68,6 +69,12 @@ static inline int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start,
+ 	return 0;
  }
-+
-+static inline int kvm_gmem_should_set_attributes(struct kvm *kvm, gfn_t start,
-+						 gfn_t end, unsigned long attrs)
+ 
++static inline void kvm_gmem_clear_prepared_slots(struct kvm *kvm,
++						 gfn_t start, gfn_t end)
 +{
-+	return 0;
++	WARN_ON_ONCE(1);
 +}
 +
  #endif /* CONFIG_KVM_PRIVATE_MEM */
