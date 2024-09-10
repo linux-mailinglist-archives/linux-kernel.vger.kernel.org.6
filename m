@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-323888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A859744AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:18:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31CB9744B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A595288D54
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122C61C24DC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACC51AB51A;
-	Tue, 10 Sep 2024 21:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJf4199l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6F31AB50D;
+	Tue, 10 Sep 2024 21:18:08 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB94176FCF;
-	Tue, 10 Sep 2024 21:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631491A7AEE;
+	Tue, 10 Sep 2024 21:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726003071; cv=none; b=XWKzjxHcZwhoWJR53TaFBO2oL/+hF/F2TuyXr83237htV+3TICBHmPQ0jnGm+n8hzcPhL8We+0q/poFEpvQoLh1WMqrnSSpQjCC/Y1JQThoO8gEFLYi4gdV02oLCUlHTEl50SdtB8n475jONShhPYq13UNwytvfKrgsucySoPp8=
+	t=1726003088; cv=none; b=I1139Askn0MCgTI5BjJIDpGlsFdLtpbxbMdgAe7smwr6P6cvPV5VhMsAVcMocjZadi+U4R0Z3B2sl8txRsdqhNM7vQnc0oHOvqCFdPsWagoOP/ILDrAV3+T7oI/2AWQL31ADkTAhRfhlKvAW3vvaJXip5kfWML+kR8cMZup64+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726003071; c=relaxed/simple;
-	bh=P0Hk/iCMM4k/FoA5zYdNDZbQLjR5F1uujVoLBkg1iec=;
+	s=arc-20240116; t=1726003088; c=relaxed/simple;
+	bh=8g9TV2/suphqrvT2OhTPAA8wYMJFZCJAWkQHFG1+mIw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8yR6b+wCKZP0zxFbmTvW6kAkU9ggCQm9bvaY4TAOjHHVW6jL6+WvZ93tnWuIY3viEri8iBbYggTPvORxW621kWucB8mWWwMBEvVhD45FXMxSWn6sZ+bthLIcyRicah+tZ2sYJWK/+M+urhdzWLPdgIF0PevZNn00He84+7TqYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJf4199l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F815C4CEC3;
-	Tue, 10 Sep 2024 21:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726003070;
-	bh=P0Hk/iCMM4k/FoA5zYdNDZbQLjR5F1uujVoLBkg1iec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJf4199lFxM1fkMHeCsiI6ugm1lrdazW8wCmGVDtYgOZRpi6outrx+6eXxi2X5Rid
-	 vicHg8V3TIAK94jnPkbGxuCI0Cz9wizeiCT/YMbY+AHvA3+2ljb/IHJKVH1USVvE6v
-	 7wG31a02zWZccyFKV4rPj6L/+eFp3+h3qyQkJdKIhjtFNixG9hYvhNkDFxirU3jJcz
-	 I2ikdfytM58KmLE36rxCkN/KL57+N+5n9HBJ037QeGgV41ORjmRclqHy+pUrRs2DiY
-	 W5n6ONZseSswCqMQVYm9rSo2PwjdPq0OvDnP7XydUmFpLdMi6Wn7quZwRam1M0xndC
-	 BgoxnwjuzR8wg==
-Date: Tue, 10 Sep 2024 11:17:49 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Chen Ridong <chenridong@huaweicloud.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Chen Ridong <chenridong@huawei.com>, martin.lau@linux.dev,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, jolsa@kernel.org, lizefan.x@bytedance.com,
-	hannes@cmpxchg.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-Message-ID: <ZuC3femqBNufgX1D@slm.duckdns.org>
-References: <20240817093334.6062-1-chenridong@huawei.com>
- <20240817093334.6062-2-chenridong@huawei.com>
- <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
- <07501c67-3b18-48e3-8929-e773d8d6920f@huaweicloud.com>
- <ZuC0A98pxYc3TODM@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+BHvubeaewzt6etJyLKnrcWw7kuQFxkp4fdUGC+IirpEf/zAggWoA/Q+C/GhP3a6eIFLh9RmQL2wPJkNzQ+DGNBPKPuU3iVWzQc3DOTeKyv5ZW3YbQyiCIwE1MaEsaw87IXx+MMwHRkUPuj2wh/VhBip88MQLdoQglnvVjlf8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id EA30B1C00A9; Tue, 10 Sep 2024 23:18:03 +0200 (CEST)
+Date: Tue, 10 Sep 2024 23:18:03 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pavel Machek <pavel@denx.de>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
+Message-ID: <ZuC3i1IvbeglFlUs@duo.ucw.cz>
+References: <20240910092557.876094467@linuxfoundation.org>
+ <ZuAhCgJ3LUBROwBR@duo.ucw.cz>
+ <2024091051-blooper-comply-47d3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0nag7RDMpWKqiaR6"
+Content-Disposition: inline
+In-Reply-To: <2024091051-blooper-comply-47d3@gregkh>
+
+
+--0nag7RDMpWKqiaR6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuC0A98pxYc3TODM@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 09:02:59PM +0000, Roman Gushchin wrote:
-...
-> > > By that reasoning any holder of cgroup_mutex on system_wq makes system
-> > > susceptible to a deadlock (in presence of cpu_hotplug_lock waiting
-> > > writers + cpuset operations). And the two work items must meet in same
-> > > worker's processing hence probability is low (zero?) with less than
-> > > WQ_DFL_ACTIVE items.
-> 
-> Right, I'm on the same page. Should we document then somewhere that
-> the cgroup mutex can't be locked from a system wq context?
-> 
-> I think thus will also make the Fixes tag more meaningful.
+On Tue 2024-09-10 12:44:36, Greg Kroah-Hartman wrote:
+> On Tue, Sep 10, 2024 at 12:35:54PM +0200, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > > This is the start of the stable review cycle for the 6.1.110 release.
+> > > There are 192 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, plea=
+se
+> > > let me know.
+> >=20
+> > Can you quote git hash of the 6.1.110-rc1?
+>=20
+> Nope!  We create the git trees for those that want throw-away trees,
+> once I create them I automatically delete them so I don't even know the
+> hash anymore.
 
-I think that's completely fine. What's not fine is saturating system_wq.
-Anything which creates a large number of concurrent work items should be
-using its own workqueue. If anything, workqueue needs to add a warning for
-saturation conditions and who are the offenders.
+Modify your scripts so that you can quote hash in the announcement?
 
-Thanks.
+Avoid using "-rc1" tag for things that are... well... not released as -rc1?
 
--- 
-tejun
+> > We do have
+> >=20
+> > Linux 6.1.110-rc1 (244a97bb85be)
+> > Greg Kroah-Hartman authored 1 day ago
+> >=20
+> > passing tests
+> >=20
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/li=
+nux-6.1.y
+> >=20
+> > . But that's 1 day old.
+>=20
+> Lots have changed since then, please use the latest.
+
+I will, but matching releases and tests based on timestamps is just
+not right.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--0nag7RDMpWKqiaR6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZuC3iwAKCRAw5/Bqldv6
+8tl4AJ9PuFMfhI3x0R2NJmJzMoP/fSWLvQCgkVwg9780H4X06uPb293ll+Wtwd0=
+=b1LH
+-----END PGP SIGNATURE-----
+
+--0nag7RDMpWKqiaR6--
 
