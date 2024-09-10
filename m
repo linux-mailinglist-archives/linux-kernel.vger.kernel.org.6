@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-322685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2750972C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:37:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4134F972C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49E01F259A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800F8287249
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49648187859;
-	Tue, 10 Sep 2024 08:37:26 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81A0186E21;
+	Tue, 10 Sep 2024 08:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhEO7W3l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD7D186285;
-	Tue, 10 Sep 2024 08:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE21850A4;
+	Tue, 10 Sep 2024 08:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725957445; cv=none; b=RckzeS+CDc6W/G3prULcDOmZ1pJhEHaN+L8tUi5NCDPh+QoTSOT47PgkBTuB0BCCFfd1R7ajGC6i15j0JbCKbLRtzGCcXqfJNvjsOdQhN//WqEapi/OGizU6gWOvdw7CVhlTsGJvSn73XABKrkIKV+H8to1PoB7q6E3/sJZ5SAQ=
+	t=1725957440; cv=none; b=G6AxReHJyts1jeivjMQtwPPFXLME5I8DPb6RcmwUqHQ6snlj0HI5fKpeSebSVS+hwm8OhTRArRmEOqh1HuIEc2pf7XwilI0D1vbbg+6UvjevFf/6UO+OqZiGfFuqF1lhoX6Y2TZAfxBkd7RQGp7dbRUT0j/YEq7NSff17wSfS7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725957445; c=relaxed/simple;
-	bh=oxBpnBaSb18ZCmhI9DN1neCWkluARg45MSJPHMp2Pm8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rwxv0dTqV0AODyzyENdL266IqCQAkSn564b+loPW4bC7Rid2Vd8zel/49aFt9r6d+BMJNF9L6ZbcGYCcuUde8UvMn3ueUgU4Ys7Z/u4fA5moaFZzLR+i9J5uhkvISMM+KPJcI8Jrq85ngKe3cNW3VfkPY6d1G3G68K5Owrzo7OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAC3DaswBeBmMJxTAg--.48716S2;
-	Tue, 10 Sep 2024 16:37:07 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: linux@dominikbrodowski.net,
-	make24@iscas.ac.cn,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
-Date: Tue, 10 Sep 2024 16:37:03 +0800
-Message-Id: <20240910083703.1416342-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725957440; c=relaxed/simple;
+	bh=U4vZj52NB5milRFEpws1fUA4U+pVdLmHLqJ+9K91t3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Em4246Llk06YBo1Fed25QKojWFwU3YD3NlsYx3C6l6j2nkJdW1K+/O9KlZHWRKP2agf9ugO21PnsfHG7pBVZttjQRtKGLzbT33Db+SQnrKUrwcnvbxja3c9wwyUl/pilDfokFgjRZwL1YK4oFA1HWkXvvAXbb8f4nC8TraAJf6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhEO7W3l; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725957439; x=1757493439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U4vZj52NB5milRFEpws1fUA4U+pVdLmHLqJ+9K91t3g=;
+  b=NhEO7W3lfRLKuxgdoz8Lo6nR17S8nXqrkoBRnNlYnahcosjvGKWSw6pl
+   nJ5dQHt99yQ4yVEIlgLddPY8Tw+N8DEBSTPPx4iGxXruQuaWursWi+eyY
+   C/WS1FbAeUsjzRjLVhRiIoCjWVapkG1FAgsTt9qnIAeAMUEeuf8GALbWP
+   PlUs9lq8yXJunZx2t1fMlcoyLKutLr21TUzzPeMliOb+qmcIYT9JlzWPz
+   orTaaet3N7dPZQwfQe0C+BgbcaT36cKRPxofebMo5AmjKErfKPhqpUNTl
+   15+Q6N8cRS45nSCDbgiM90abZ9OKhglveXmtZZSa/vevklmgpkMOlnawB
+   A==;
+X-CSE-ConnectionGUID: 72/EcU9LTDiv5KVlZsicfg==
+X-CSE-MsgGUID: 9CXDgI/RQZqjGYY4aEi+1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35356057"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="35356057"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:37:18 -0700
+X-CSE-ConnectionGUID: a3i8FuqTQoiuFh6tZkXP7Q==
+X-CSE-MsgGUID: dogKNTkMT/Cix+OM0R7PdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="67487165"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:37:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1snwN5-000000077pF-0obo;
+	Tue, 10 Sep 2024 11:37:11 +0300
+Date: Tue, 10 Sep 2024 11:37:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Felix Huettner <felix.huettner@mail.schwarz>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH net-next v2 1/1] netfilter: conntrack: Guard possible
+ unused functions
+Message-ID: <ZuAFNv5zjkR-J-Kv@smile.fi.intel.com>
+References: <20240909154043.1381269-2-andriy.shevchenko@linux.intel.com>
+ <20240909183546.GF2097826@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3DaswBeBmMJxTAg--.48716S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF1fXw17Kr17GrWDKrWDtwb_yoWDArc_WF
-	10gr97Gr4jqr4Ikw42yrsakr9a9rn3ur1xWFn3ta4fur9Fvw13uF1fJryDXw1xJrn3JF1k
-	AF9rJr13u3ZF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjJ3vUUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909183546.GF2097826@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-In __iodyn_find_io_region(), pcmcia_make_resource() is assigned to
-res and used in pci_bus_alloc_resource(). There is a dereference of res
-in pci_bus_alloc_resource(), which could lead to a NULL pointer
-dereference on failure of pcmcia_make_resource().
+On Mon, Sep 09, 2024 at 07:35:46PM +0100, Simon Horman wrote:
+> On Mon, Sep 09, 2024 at 06:39:56PM +0300, Andy Shevchenko wrote:
 
-Fix this bug by adding a check of res.
+...
 
-Found by code review, complie tested only.
+> > Fix this by guarding possible unused functions with ifdeffery.
+> 
+> I think it would be worth mentioning, that
+> the condition is that neither CONFIG_NETFILTER_NETLINK_GLUE_CT
+> nor CONFIG_NF_CONNTRACK_EVENTS are defined (enabled).
 
-Cc: stable@vger.kernel.org
-Fixes: 49b1153adfe1 ("pcmcia: move all pcmcia_resource_ops providers into one module")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/pcmcia/rsrc_iodyn.c | 3 +++
- 1 file changed, 3 insertions(+)
+Done in v3.
 
-diff --git a/drivers/pcmcia/rsrc_iodyn.c b/drivers/pcmcia/rsrc_iodyn.c
-index b04b16496b0c..2677b577c1f8 100644
---- a/drivers/pcmcia/rsrc_iodyn.c
-+++ b/drivers/pcmcia/rsrc_iodyn.c
-@@ -62,6 +62,9 @@ static struct resource *__iodyn_find_io_region(struct pcmcia_socket *s,
- 	unsigned long min = base;
- 	int ret;
- 
-+	if (!res)
-+		return NULL;
-+
- 	data.mask = align - 1;
- 	data.offset = base & data.mask;
- 
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
