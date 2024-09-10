@@ -1,173 +1,132 @@
-Return-Path: <linux-kernel+bounces-322427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E8B9728DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F179728DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26A21F22223
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBB91F23D3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E91D16C850;
-	Tue, 10 Sep 2024 05:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761EC14D6EF;
+	Tue, 10 Sep 2024 05:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="r47X2Z2M"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOseYrST"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF9344C7C;
-	Tue, 10 Sep 2024 05:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9391531E9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 05:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725945486; cv=none; b=jXkZNj4khiHrhqFbVcd0AGLePK+6LrtOBAMplrfF5cYiDe8jgAXpPxdHf+JsArqKl9HR/D1KIoT3PVGJHnX3vTgOcPlx7+TR7c8yE7ZDEO0rgnYKwDuGt+IpfOBMwZWcDF9gPKBdJUE7uOGGNjJ8qF6LPHdXyCIUp7pTKdkAzMA=
+	t=1725945628; cv=none; b=ITJPPKdz0IbkDvF/ag1T3Q5J3gYwcYhP41Lzakyr9epuTqbxyIOPtqowf0MxLVOJJDxzl735HpjWKWZuN0Ez1T68vuRLFq8JSTwar58VHG5cYSQE9xWbzlmJdhys/C6UmjC/7LEuWC45SE66rnB3e4MN3LmyfF7BP7WWqFzEvvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725945486; c=relaxed/simple;
-	bh=hAhZ364znAxgZljeJw5JgixjqcAtcGqnXZpvX0S0/bM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=eE+fuiKkeEb6Z7iLZDF/iEmZMo8X56uZWMl+BziImvqH2C35bSy8bWb10lk7gB9CiQ6SPd1EQT7Z8FukrayU/90PGbhvnm01kh05V8SLnH8Mym4SLp3T29eV1Nl5XxK0R0KrMjICcdyMXT5NS9OHq1An/+ct3/0gFjX+FlE+d+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=r47X2Z2M; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1725945628; c=relaxed/simple;
+	bh=7b0Rr88eNSzpQLh5K3UFKt4jOcdnPD5O2wg7rMP6sNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CCZhnZ4Sbsm/ThnACP6wKSJ2VWd1jkZ9XbMCc6jx9vHVhp4wOexy0i5xGWMUh+Kq+tPIESFDvHppFsotyXWoTbtlsqSU8CSjupRWWkWpGKHVudxhiHBT0jzpkUD+sCqu+Ye15N0z4nF9mqpwwDiQqkltQw1ztGLlfxWXQkdQ310=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOseYrST; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2057c6c57b5so27961755ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 22:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725945627; x=1726550427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=38ixz8H0ArhjT/fAPUPjglJ0fnVIDwgldPg04iXAj68=;
+        b=eOseYrSTRjpKrvOg1Ptic0llBJx6JE3tOaboPsTNlKf0XWhtnraE0tR9cwA9a1Licz
+         R307ZQFHkpykT6boyVFj5EC+FV08945E04TsC42Ge0qW4FLsQQ4jEByClH0q/aU10yac
+         dbzyCWxeBAw+klyFeBPzkCaYENSQfAkmgUwPUrM7UF2gIVsQKa9LbbiThmsJulrxr3Rq
+         +bR/coxIjRrK0Oj1nuaAAkwyLnrjUYlgo0TYmKA3WfsVyp0qBWYJXyGS28HDgc2UQW69
+         AGkJ4wR6LwGHTC5+RELpGLwaC+azwM7RV4B8CBqzq4qMj4g6nHhEXJzSiKaAWyYNamWf
+         9VZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725945627; x=1726550427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=38ixz8H0ArhjT/fAPUPjglJ0fnVIDwgldPg04iXAj68=;
+        b=ZFr+TbBxzNYEUcEohhc48bkaOfrwbPuIVnwQ4hGZ74DNfHigEweQotW0f0QlxYKh9a
+         c2r38IiWdjD2SRq5AWLvH09PCO++fk+jVfJbvpjOd5ToRQ5TQ3YsB1nrrR942p0s/hEd
+         FeAdfyx8pP4+GFyRalU3xi0K9SEB8bbhOxebjFVIF4Ai0u/YzpaApe5jUsocJdAC9gzJ
+         paSHmn8pOz2T8UqJRdY7CAQC5wuroprf928qR5QnmxfKon4sbXt1Hmx6CWulEFhv6cwo
+         RHayrawg5UdT55s2xZ0dk5BwB/jE8OkQRXijWM1lyUirpvKjwvG7xz2ZULnCmthEIozE
+         1FVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCS/HFbbsbPssXV5Rt6WBgulxi+qFpelWJScaODZlcUH08OgeKeN/3PBgHjxhgbkiONZVBEqpeUaYrG48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVSdsi96qldXcOlSHyO4H4GGSHqjR4H1sbz7JDieI69e8YHuYF
+	kxlmYa64yJojZaCYAkQSdCHiJ40gpaMHaxosjTkedouBfEJjkEIM
+X-Google-Smtp-Source: AGHT+IGu3Y1CcJmRFdUpSbd0OW2QBX0fNyuk7bD9zsfOdokX/bim2pYUB/hyYkbt4ewLxgurBIZ5Sg==
+X-Received: by 2002:a17:903:a88:b0:207:2093:99bc with SMTP id d9443c01a7336-20743a2150emr28751155ad.14.1725945626627;
+        Mon, 09 Sep 2024 22:20:26 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f1e93bsm41288535ad.199.2024.09.09.22.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 22:20:26 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: Laurent.pinchart@ideasonboard.com,
+	patrik.r.jakobsson@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH] drm/gma500: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date: Tue, 10 Sep 2024 10:48:56 +0530
+Message-ID: <20240910051856.700210-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1725945475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fstbatTWWnEJ/CPU36BeADiwbLC59NJU+ju1hfFIVHI=;
-	b=r47X2Z2MMM1xhMaCrEtYPgpc8/OcQV9kKz7r6HsZdO9e5QaSwEuq8CMsipUK+XW/iL+seF
-	vixilZs1VMO9MF2aWH5CgXsO3wFzYyj6HEqMQ6tdEvo+8quK8s/m9IT3fJsqhDOWP6nRSw
-	C4c+Ftg6UjqmMM1pQkMVBsdp8vn9W1XGOvEFQ+aP4g5oXIzrLQXUZGG/T/wdSSUq+5UbeY
-	I/g3A8SlApHx5OlYi6YRCSdsWdTKjYK+2EuKRahnnUPuCxcadIRG9V9c2gaWwLp3MSLIRt
-	o2wMnBTSvkFBaN/p/Zw+I9qOA1Bg/A0AdRlC6D8lDHDbs5kHdD4Wi56ZPEQR9w==
-Date: Tue, 10 Sep 2024 07:17:55 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
- jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
- file
-In-Reply-To: <20240905142054.58194beb@donnerap.manchester.arm.com>
-References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
- <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
- <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
- <20240815181508.6800e205@donnerap.manchester.arm.com>
- <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
- <0fc37f3074a3e99c15a2f441194b7032@manjaro.org>
- <CAGb2v65h8zaxoEKeqdT8BZD9t=4gf0QM7zBnhuDoiEhHQLKduw@mail.gmail.com>
- <20240905133412.6ba050de@donnerap.manchester.arm.com>
- <b07f1365a6f942297f7a3308fa628187@manjaro.org>
- <20240905134254.6e15a1e5@donnerap.manchester.arm.com>
- <8a80465aaa4b7dc4c8c15d7a73944cfd@manjaro.org>
- <20240905142054.58194beb@donnerap.manchester.arm.com>
-Message-ID: <df8b774e10a0dbe5c01dc39d3cbd92fd@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Andre,
+Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+monitor HDMI information is available after EDID is parsed. Additionally
+rewrite the code the code to have fewer indentation levels.
 
-On 2024-09-05 15:20, Andre Przywara wrote:
-> On Thu, 05 Sep 2024 14:54:03 +0200 Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> On 2024-09-05 14:42, Andre Przywara wrote:
->> > On Thu, 05 Sep 2024 14:38:53 +0200
->> > Dragan Simic <dsimic@manjaro.org> wrote:
->> >> On 2024-09-05 14:34, Andre Przywara wrote:
->> >> > On Thu, 5 Sep 2024 20:26:15 +0800
->> >> > Chen-Yu Tsai <wens@csie.org> wrote:
->> >> >> On Thu, Sep 5, 2024 at 8:17 PM Dragan Simic <dsimic@manjaro.org>
->> >> >> wrote:
->> >> >> > Just checking, any further thoughts about this patch?
->> >> >>
->> >> >> Sorry, but I feel like it's not really worth the churn. There's not
->> >> >> really a problem to be solved here. What you are arguing for is more
->> >> >> about aesthetics, and we could argue that having them separate makes
->> >> >> it easier to read and turn on/off.
->> >> >
->> >> > Yeah, I agree. If a board wants to support OPPs, they just have to
->> >> > include
->> >> > a single file and define the CPU regulator, and that's a nice opt-in,
->> >> > IMHO.
->> >> > But having this patch would make it quite hard to opt out, I believe.
->> >> > For
->> >> > Linux there are probably ways to disable DVFS nevertheless, but I am
->> >> > not
->> >> > sure this is true in an OS agnostic pure-DT-only way.
->> >>
->> >> Thanks for your response.  The only thing that still makes me wonder
->> >> is why would a board want to opt out of DVFS?  Frankly, I'd consider
->> >> the design of the boards that must keep DVFS disabled broken.
->> >
->> > Yes! Among the boards using Allwinner SoCs there are some, say
->> > less-optimal designs ;-)
->> 
->> I see, but such boards could simply disable the "cpu0_opp_table"
->> node in their dts(i) files, for the encapsulated CPU OPPs scenario,
->> and everything would still work and be defined in a clean(er) way.
-> 
-> I agree, and I was already about to suggest this as a reply to your 
-> initial
-> post, but I think I tried that, and IIRC this doesn't work: the 
-> "status"
-> property is not honoured for this node.
-> But please double check that.
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-I apologize for my delayed response.
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+index 2d95e0471291..cfbf3137e144 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+@@ -135,16 +135,16 @@ static enum drm_connector_status cdv_hdmi_detect(
+ 
+ 	hdmi_priv->has_hdmi_sink = false;
+ 	hdmi_priv->has_hdmi_audio = false;
+-	if (edid) {
+-		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+-			status = connector_status_connected;
+-			hdmi_priv->has_hdmi_sink =
+-						drm_detect_hdmi_monitor(edid);
+-			hdmi_priv->has_hdmi_audio =
+-						drm_detect_monitor_audio(edid);
+-		}
+-		kfree(edid);
++	if (!edid)
++		return status;
++
++	if (edid->input & DRM_EDID_INPUT_DIGITAL) {
++		status = connector_status_connected;
++		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
++		hdmi_priv->has_hdmi_audio = drm_detect_monitor_audio(edid);
+ 	}
++	kfree(edid);
++
+ 	return status;
+ }
+ 
+-- 
+2.46.0
 
-Perhaps a safer approach could be to introduce a new dtsi file, named
-sun50i-a64-cpu-opps-disabled.dtsi, with the following contents:
-
-/delete-node/ &cpu0_opp_table;
-
-&cpu0 {
-	/delete-property/ operating-points-v2;
-};
-
-&cpu1 {
-	/delete-property/ operating-points-v2;
-};
-
-&cpu2 {
-	/delete-property/ operating-points-v2;
-};
-
-&cpu3 {
-	/delete-property/ operating-points-v2;
-};
-
-The purpose of this new file would be to delete the CPU OPPs for the
-suboptimally designed boards, when included into their dts(i) files,
-while the CPU OPPs would be "encapsulated" into the SoC dtsi.
-
-Though, I'm not sure how much cleaner this approach would be, but
-I think it would fit rather well with the suggested approach of having
-such suboptimal board designs treated as an exception that would be
-handled in some special way.  As a bonus, it would also make locating
-dts(i) files for such suboptimal designs a bit simpler, by grepping
-for "cpu-opps-disabled".
-
->> I mean, if there are some suboptimal designs, perhaps the defaults
->> should be tailored towards the good designs, and the suboptimal
->> designs should be some kind of exceptions.
->> 
->> >> > This could probably be solved, but same as Chen-Yu I don't see any good
->> >> > enough reason for this patch in the first place.
->> >> >
->> >> >> And even though the GPU OPPs are in the dtsi, it's just one OPP acting
->> >> >> as a default clock rate.
 
