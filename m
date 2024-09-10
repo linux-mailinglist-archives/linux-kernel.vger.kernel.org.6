@@ -1,213 +1,269 @@
-Return-Path: <linux-kernel+bounces-323874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7737974488
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7914097448B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B2B28247C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEA7AB255EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1EA1AAE39;
-	Tue, 10 Sep 2024 21:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A6D1AAE2C;
+	Tue, 10 Sep 2024 21:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="NKcEUcgg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i5b14eWp"
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W49oBH0o"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9359A17622D;
-	Tue, 10 Sep 2024 21:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB071F951
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 21:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726002460; cv=none; b=GPLGm/5mH9y+l3GnRWLT5QbmxC//q2lRxYQQBj5r/0NBd5MFHuOVd5zXx0KibcUWYgxLsDtgZNuLBcc9fXKNjQ/m+oluHVep5S/Ou2UqFnW6hOyj0ntShT1xJWelDM3yVxWEOMU7pjNIvrGsXh5QmuG2KXLxq1NNGet9/7PKU5Y=
+	t=1726002481; cv=none; b=Jjq3/Un+7oc3Rbal/VZT8UXd9bI7kSP2oGMi9Ao5Qg1SV3pMCQl+jOSTurkc3zq0C8SZ9wFlrtiNBdEwJUsnl2pIERZllqXW2kYLWOp+7TK/sgvSEh03w3JzP6AQmYIEelG5E8ckbo0KXA7Lq+ASdC0YYXDSuvEHBNEwry24gJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726002460; c=relaxed/simple;
-	bh=hZFJbd/8+nyhB2YzrMCHW+UhaWzsPRQ/R/aTHVJ7V8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VG5pp051QzLkxSK04Z3lBSaqjF6sYwv14ZomxMpfmZqOizi0cg7MgRTCEierW9r0bFs1R96f+1NHkFGSrGolWYvkT5hlGiLKXCU3y/qo59zX/sj/Qs/ArAI5/2Et5Wx8LnJw3RDRTavTsTyvgACrF64jLPVG0FOzUYRyIpc5U6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=NKcEUcgg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i5b14eWp; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A4FB111400B0;
-	Tue, 10 Sep 2024 17:07:29 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 10 Sep 2024 17:07:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1726002449;
-	 x=1726088849; bh=TkNWhENOyhhpEk3zhiKLTed65bX4Z8sXkyAVOU+7z7M=; b=
-	NKcEUcgglDIRxvqaw+Iczadqs8+I9Hr8RnS6nWNmzPg9rvYVyJvdhuHLQvOBZVSa
-	OUiK7/TM451GcVDT7+xnITd170f10XRgFNUpAsSYyBmQ/AokiIhcX/csxhfCqIlj
-	YwY/18IL6FpCYhvJH7evlnM5EgHEYVUB59583Xe7HTpdd6Zy30Y4XIZP64zFDs+u
-	QH6uCQkEtu2pE0OHhoJjk0xOJXCQXL8XtgaXCA8sR2LLeq3neTbvhHsYjw475YR6
-	lbv5sHrmMHhdxCw13RbalFnlOVxFGcUW59NxMrFvPMjXsXkJ365Ahuo+xTCWHL7Y
-	X/cPIhMFDYb68hz9G3hixQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726002449; x=
-	1726088849; bh=TkNWhENOyhhpEk3zhiKLTed65bX4Z8sXkyAVOU+7z7M=; b=i
-	5b14eWpEa65rwqAgaaB+QP4x8RyumRPku/tIWSqREl1VzzV8lsc6ifzSz4tJyHCj
-	b3dKIJVzssE1apnfunXwLul8Tz7QCz4aTeE0ARS/5gYG4m2RSiWYmuun6b1BlL68
-	PbgAJsQKccaSY6UQjRKxmGJfywfPiqyRFI2NFh98QkfKRKOghxZV6G8NrgJiVNc6
-	x2dRjhzFSRSAEU9NYS+JkT4+5JHEjRYg2QK4qOYtSUskRB5eiLjikPLZglnsA8kd
-	IHz5SvfC0oOQ31zHp0kgsi5s6aIaDHP339nqn8MpUQmmCY2HTxEpwyKD7xp69fI/
-	bJ2SxxN0Dxftv9ZSCmzsg==
-X-ME-Sender: <xms:EbXgZp-_ryDr225alWc8euev-lVcxOD3DfbM-tOwSOqGWcna9k3BNw>
-    <xme:EbXgZtuMh6HqY_KGjXr6GHtnAa8_8XJnV91HOa7ryavk7PzcXNg0Sq-c1-tWvekUA
-    Aa4WYB3hfGzqoQc0g>
-X-ME-Received: <xmr:EbXgZnATiErcxZUhLQOvWl1gEkyJCB_ZqvkN9JvscrHVx2_ZPK-NP9VZNFRPjVuGL1eBn-d98KRrZxZ6cGBwHMOblyf4OivgpU7JO_0USX3AYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenfghrlhcuvffnffculdejtddmnecujfgurhepfffhvfevuffk
-    fhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguh
-    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnheptdfgueeuueekieekgfeiueek
-    ffelteekkeekgeegffevtddvjeeuheeuueelfeetnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghr
-    tghpthhtohepvddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhhiih
-    drnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghlvgigvghirdhs
-    thgrrhhovhhoihhtohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepvgguugihiiekje
-    esghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtoh
-    eprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:EbXgZtdSik0MzBa99ZVHcBI0GfcLKM85xIhL9SFgOf3iUGBFbDdkHQ>
-    <xmx:EbXgZuMzylYPx2koruqokmlGuPpulkqsFVQsb7NGLNzdbUNQLr7IMg>
-    <xmx:EbXgZvml4M6QHVzzKPpNYulXdueXsJ3xAN2xhAQL7T8v_hj17mk4hQ>
-    <xmx:EbXgZovy7Uz-cNdIYDvG-gdsauyJc6oAyY8y36kCsqpzhUCmcZxxtQ>
-    <xmx:EbXgZquqMMOW5pEZmDFCp4KOZnexnESXWYkp9xE3UeADMfX5J1tzOMqj>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 Sep 2024 17:07:26 -0400 (EDT)
-Date: Tue, 10 Sep 2024 15:07:24 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Eddy Z <eddyz87@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
- BPF_MAP_TYPE_RINGBUF from prog
-Message-ID: <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
-References: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
- <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
- <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
+	s=arc-20240116; t=1726002481; c=relaxed/simple;
+	bh=KExRflW8J1qrGZemxSMBTuo2DT5ZtIVX+177fgt01io=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=hexJxL2CAcsXKk3tj30Hlu+iv8NW6LaXdELNXfR003y1vFlm6bSqW5028tYRejOatNMV9xd5WGtOiAx2HHMS+3ZM4VszyR57NdUGwoI54qzI2NWJiioVWWdyJm6hr8XNja5GFFquVJxfu7vEFv41GCXQ9aqUWqX0vRmXECSGjHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W49oBH0o; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a9ad15d11bso316216185a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726002478; x=1726607278; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xsgweXIpmstBe5GJ597qL3m2SDBc+q8DcPeq2Npix+U=;
+        b=W49oBH0onyfkZgIj2/9fQl4mU2iRC0wGidJp73eZ9nryWWwjm27dyEHJdtNZDaLEH6
+         x6BvEp5/ErQS2iFTCu4d9YRkdsWDfsjiWxE1wxdSg23EN4Rl23Id2x5xIEMq9Zv/ursx
+         k7UIZlVf9ObsF5UWTkbwFroUkE1Qwj/msqVo58/zFJ2RF82rUyOPGEdsANqlT4mh1sDy
+         mCOJbKboJK64hErhvbLOkABqpVkY4ouJp+fvKiYDW7fUSBj7T/8y2KtCDal0XqC4FFw/
+         lDP2pItHyQHa7qOzQVuIdtnSb3NBd6gZd2lB0dn4og1DqHhM+WDGZgAueOyVAEJsk42G
+         OAFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726002478; x=1726607278;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xsgweXIpmstBe5GJ597qL3m2SDBc+q8DcPeq2Npix+U=;
+        b=LGSoJ1lvGOVgbdaLjV9bKR4txzdlhATF5Yqhj6KSVz1IcXfAhxy2Y9LYY6fYwUquJH
+         KPFroPuMg638FEmw+LTINdO2rnqB4LpsMI7asxFYJKMotmOaDrZtQIJNmNJ9mR51vzX5
+         PEwfa/F82SzeZ+HxRkB5WXj70gXyu/2jeO/EKF6F/MBMLQFHxL/46T1hPU24+ajQTZiZ
+         s7fI21FAgaRP594+YNWC5KNi7bAFcoX0ctHx2986Q6iju0P/nwOcCx5uUEqm3XrKPeH+
+         M5pHhFlo1M6rao7T27hSpdoP1ezRccH2608qJrbiChLDu4Ql7FG3CrdgKpe1/Cmskom2
+         v3VA==
+X-Gm-Message-State: AOJu0Yz7RrcXLxkaYff/X/0D4Medk9HTevQBMaNoBjbSesVOMvbz+OnB
+	bN8yMpImQTrUhykvW/1ECiCXNK7hwCSFhYWhI+7E4PPzLVSULA6Mf2KqrGytq4bJWPdbs6zPq7g
+	=
+X-Google-Smtp-Source: AGHT+IGdN3Bip/QFL1/JxWNAkcL/JUmgw8uKd+/pDtMXUXN6GSGIZoTS92X+BzdXp0VO+irY5HiZ9w==
+X-Received: by 2002:a05:620a:491:b0:7a9:9ed7:b49f with SMTP id af79cd13be357-7a99ed7bed2mr1837046285a.38.1726002478185;
+        Tue, 10 Sep 2024 14:07:58 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a79972e3sm343656385a.68.2024.09.10.14.07.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 14:07:57 -0700 (PDT)
+Date: Tue, 10 Sep 2024 17:07:57 -0400
+Message-ID: <47697d5f8d557113244b7c044251fe09@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v2 1/2] KEYS: use synchronous task work for changing parent  credentials
+References: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+In-Reply-To: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
 
-On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
-> On Tue, Sep 10, 2024 at 11:36 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Mon, Sep 9, 2024 at 5:55 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> > >
-> > > Right now there exists prog produce / userspace consume and userspace
-> > > produce / prog consume support. But it is also useful to have prog
-> > > produce / prog consume.
-> > >
-> > > For example, we want to track the latency overhead of cpumap in
-> > > production. Since we need to store enqueue timestamps somewhere and
-> > > cpumap is MPSC, we need an MPSC data structure to shadow cpumap. BPF
-> > > ringbuf is such a data structure. Rather than reimplement (possibly
-> > > poorly) a custom ringbuffer in BPF, extend the existing interface to
-> > > allow the final quadrant of ringbuf usecases to be filled. Note we
-> > > ignore userspace to userspace use case - there is no need to involve
-> > > kernel for that.
-> > >
-> > > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > > ---
-> > >  kernel/bpf/verifier.c                         |  6 +-
-> > >  tools/testing/selftests/bpf/Makefile          |  3 +-
-> > >  .../selftests/bpf/prog_tests/ringbuf.c        | 50 +++++++++++++++
-> > >  .../bpf/progs/test_ringbuf_bpf_to_bpf.c       | 64 +++++++++++++++++++
-> > >  4 files changed, 120 insertions(+), 3 deletions(-)
-> > >  create mode 100644 tools/testing/selftests/bpf/progs/test_ringbuf_bpf_to_bpf.c
-> > >
-> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > index 53d0556fbbf3..56bfe559f228 100644
-> > > --- a/kernel/bpf/verifier.c
-> > > +++ b/kernel/bpf/verifier.c
-> > > @@ -9142,7 +9142,8 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
-> > >                     func_id != BPF_FUNC_ringbuf_query &&
-> > >                     func_id != BPF_FUNC_ringbuf_reserve_dynptr &&
-> > >                     func_id != BPF_FUNC_ringbuf_submit_dynptr &&
-> > > -                   func_id != BPF_FUNC_ringbuf_discard_dynptr)
-> > > +                   func_id != BPF_FUNC_ringbuf_discard_dynptr &&
-> > > +                   func_id != BPF_FUNC_user_ringbuf_drain)
-> > >                         goto error;
-> > >                 break;
-> > >         case BPF_MAP_TYPE_USER_RINGBUF:
-> > > @@ -9276,7 +9277,8 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
-> > >                         goto error;
-> > >                 break;
-> > >         case BPF_FUNC_user_ringbuf_drain:
-> > > -               if (map->map_type != BPF_MAP_TYPE_USER_RINGBUF)
-> > > +               if (map->map_type != BPF_MAP_TYPE_USER_RINGBUF &&
-> > > +                   map->map_type != BPF_MAP_TYPE_RINGBUF)
-> > >                         goto error;
-> >
-> > I think it should work.
-> >
-> > Andrii,
-> >
-> > do you see any issues with such use?
-> >
+On Aug  5, 2024 Jann Horn <jannh@google.com> wrote:
 > 
-> Not from a quick glance. Both ringbufs have the same memory layout, so
-> user_ringbuf_drain() should probably work fine for normal BPF ringbuf
-> (and either way bpf_user_ringbuf_drain() has to protect from malicious
-> user space, so its code is pretty unassuming).
+> keyctl_session_to_parent() involves posting task work to the parent task,
+> with work function key_change_session_keyring.
+> Because the task work in the parent runs asynchronously, no errors can be
+> returned back to the caller of keyctl_session_to_parent(), and therefore
+> the work function key_change_session_keyring() can't be allowed to fail due
+> to things like memory allocation failure or permission checks - all
+> allocations and checks have to happen in the child.
 > 
-> We should make it very explicit, though, that the user is responsible
-> for making sure that bpf_user_ringbuf_drain() will not be called
-> simultaneously in two threads, kernel or user space.
-
-I see an atomic_try_cmpxchg() protecting the drain. So it should be
-safe, right? What are they supposed to expect?
-
+> This is annoying for two reasons:
 > 
-> Also, Daniel, can you please make sure that dynptr we return for each
-> sample is read-only? We shouldn't let consumer BPF program ability to
-> corrupt ringbuf record headers (accidentally or otherwise).
-
-Sure.
-
+>  - It is the only reason why cred_alloc_blank() and
+>    security_transfer_creds() are necessary.
+>  - It means we can't do synchronous permission checks.
 > 
-> And as a thought exercise. I wonder what would it take to have an
-> open-coded iterator returning these read-only dynptrs for each
-> consumed record? Maybe we already have all the pieces together. So
-> consider looking into that as well.
+> Rewrite keyctl_session_to_parent() to run task work on the parent
+> synchronously, so that any errors that happen in the task work can be
+> plumbed back into the syscall return value in the child.
+> This allows us to get rid of cred_alloc_blank() and
+> security_transfer_creds() in a later commit, and it will make it possible
+> to write more reliable security checks for this operation.
 > 
-> P.S. And yeah "user_" part in helper name is kind of unfortunate given
-> it will work for both ringbufs. Can/should we add some sort of alias
-> for this helper so it can be used with both bpf_user_ringbuf_drain()
-> and bpf_ringbuf_drain() names?
+> Note that this requires using TWA_SIGNAL instead of TWA_RESUME, so the
+> parent might observe some spurious -EAGAIN syscall returns or such; but the
+> parent likely anyway has to be ready to deal with the side effects of
+> receiving signals (since it'll probably get SIGCHLD when the child dies),
+> so that probably isn't an issue.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  security/keys/internal.h     |   8 ++++
+>  security/keys/keyctl.c       | 107 +++++++++++++------------------------------
+>  security/keys/process_keys.c |  86 ++++++++++++++++++----------------
+>  3 files changed, 87 insertions(+), 114 deletions(-)
 
-You mean register a new helper that shares the impl? Easy enough, but I
-thought we didn't want to add more uapi helpers.
+...
 
-Thanks,
-Daniel
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index ab927a142f51..e4cfe5c4594a 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -1616,104 +1616,63 @@ long keyctl_get_security(key_serial_t keyid,
+>   * parent process.
+>   *
+>   * The keyring must exist and must grant the caller LINK permission, and the
+>   * parent process must be single-threaded and must have the same effective
+>   * ownership as this process and mustn't be SUID/SGID.
+>   *
+> - * The keyring will be emplaced on the parent when it next resumes userspace.
+> + * The keyring will be emplaced on the parent via a pseudo-signal.
+>   *
+>   * If successful, 0 will be returned.
+>   */
+>  long keyctl_session_to_parent(void)
+>  {
+> -	struct task_struct *me, *parent;
+> -	const struct cred *mycred, *pcred;
+> -	struct callback_head *newwork, *oldwork;
+> +	struct keyctl_session_to_parent_context ctx;
+> +	struct task_struct *parent;
+>  	key_ref_t keyring_r;
+> -	struct cred *cred;
+>  	int ret;
+>  
+>  	keyring_r = lookup_user_key(KEY_SPEC_SESSION_KEYRING, 0, KEY_NEED_LINK);
+>  	if (IS_ERR(keyring_r))
+>  		return PTR_ERR(keyring_r);
+>  
+> -	ret = -ENOMEM;
+> -
+> -	/* our parent is going to need a new cred struct, a new tgcred struct
+> -	 * and new security data, so we allocate them here to prevent ENOMEM in
+> -	 * our parent */
+> -	cred = cred_alloc_blank();
+> -	if (!cred)
+> -		goto error_keyring;
+> -	newwork = &cred->rcu;
+> +	write_lock_irq(&tasklist_lock);
+> +	parent = get_task_struct(rcu_dereference_protected(current->real_parent,
+> +					lockdep_is_held(&tasklist_lock)));
+> +	write_unlock_irq(&tasklist_lock);
+>  
+> -	cred->session_keyring = key_ref_to_ptr(keyring_r);
+> -	keyring_r = NULL;
+> -	init_task_work(newwork, key_change_session_keyring);
+> +	/* the parent mustn't be init and mustn't be a kernel thread */
+> +	if (is_global_init(parent) || (READ_ONCE(parent->flags) & PF_KTHREAD) != 0)
+> +		goto put_task;
+
+I think we need to explicitly set @ret if we are failing here, yes?
+  
+> -	me = current;
+> -	rcu_read_lock();
+> -	write_lock_irq(&tasklist_lock);
+> +	ctx.new_session_keyring = key_ref_to_ptr(keyring_r);
+> +	ctx.child_cred = current_cred();
+> +	init_completion(&ctx.done);
+> +	init_task_work(&ctx.work, key_change_session_keyring);
+> +	ret = task_work_add(parent, &ctx.work, TWA_SIGNAL);
+> +	if (ret)
+> +		goto put_task;
+>  
+> -	ret = -EPERM;
+> -	oldwork = NULL;
+> -	parent = rcu_dereference_protected(me->real_parent,
+> -					   lockdep_is_held(&tasklist_lock));
+> +	ret = wait_for_completion_interruptible(&ctx.done);
+>  
+> -	/* the parent mustn't be init and mustn't be a kernel thread */
+> -	if (parent->pid <= 1 || !parent->mm)
+> -		goto unlock;
+> -
+> -	/* the parent must be single threaded */
+> -	if (!thread_group_empty(parent))
+> -		goto unlock;
+> -
+> -	/* the parent and the child must have different session keyrings or
+> -	 * there's no point */
+> -	mycred = current_cred();
+> -	pcred = __task_cred(parent);
+> -	if (mycred == pcred ||
+> -	    mycred->session_keyring == pcred->session_keyring) {
+> -		ret = 0;
+> -		goto unlock;
+> +	if (task_work_cancel(parent, &ctx.work)) {
+> +		/*
+> +		 * We got interrupted and the task work was canceled before it
+> +		 * could execute.
+> +		 * Use -ERESTARTNOINTR instead of -ERESTARTSYS for
+> +		 * compatibility - the manpage does not list -EINTR as a
+> +		 * possible error for keyctl().
+> +		 */
+> +		ret = -ERESTARTNOINTR;
+> +	} else {
+> +		/* task work is running or has been executed */
+> +		wait_for_completion(&ctx.done);
+> +		ret = ctx.result;
+>  	}
+>  
+> -	/* the parent must have the same effective ownership and mustn't be
+> -	 * SUID/SGID */
+> -	if (!uid_eq(pcred->uid,	 mycred->euid) ||
+> -	    !uid_eq(pcred->euid, mycred->euid) ||
+> -	    !uid_eq(pcred->suid, mycred->euid) ||
+> -	    !gid_eq(pcred->gid,	 mycred->egid) ||
+> -	    !gid_eq(pcred->egid, mycred->egid) ||
+> -	    !gid_eq(pcred->sgid, mycred->egid))
+> -		goto unlock;
+> -
+> -	/* the keyrings must have the same UID */
+> -	if ((pcred->session_keyring &&
+> -	     !uid_eq(pcred->session_keyring->uid, mycred->euid)) ||
+> -	    !uid_eq(mycred->session_keyring->uid, mycred->euid))
+> -		goto unlock;
+> -
+> -	/* cancel an already pending keyring replacement */
+> -	oldwork = task_work_cancel_func(parent, key_change_session_keyring);
+> -
+> -	/* the replacement session keyring is applied just prior to userspace
+> -	 * restarting */
+> -	ret = task_work_add(parent, newwork, TWA_RESUME);
+> -	if (!ret)
+> -		newwork = NULL;
+> -unlock:
+> -	write_unlock_irq(&tasklist_lock);
+> -	rcu_read_unlock();
+> -	if (oldwork)
+> -		put_cred(container_of(oldwork, struct cred, rcu));
+> -	if (newwork)
+> -		put_cred(cred);
+> -	return ret;
+> -
+> -error_keyring:
+> +put_task:
+> +	put_task_struct(parent);
+>  	key_ref_put(keyring_r);
+>  	return ret;
+>  }
+
+--
+paul-moore.com
 
