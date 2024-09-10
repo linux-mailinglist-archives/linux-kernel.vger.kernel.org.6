@@ -1,79 +1,55 @@
-Return-Path: <linux-kernel+bounces-323552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F136E973F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:23:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82460973F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90336285623
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59301C2550C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04251A38CD;
-	Tue, 10 Sep 2024 17:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF891A3BBA;
+	Tue, 10 Sep 2024 17:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gb+sysyK"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKlsUtqj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E8D1A00DA
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EAA1A2875;
+	Tue, 10 Sep 2024 17:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725988632; cv=none; b=UOKKNHKKrjR5zl3wLu2JUskPmPJXXxFMGEHO3XpqxWoDCbBZsa99We79W/7orrHna6MBZ+f/XiUJBF5ygcjdlTeDk14FZKUA30LBu1GMj1/3YzvKu0U+5emWbV6uxtoMz7Vm+d/JW/sFBLpCfgxLldLZaXUIdYXHVgQ2f11JNF4=
+	t=1725988804; cv=none; b=TPheUsBDprncCzpsohrnKkc8tSW6GJY2pGc9AwGJg7MNo73xbuFRreE/av7qO2/A3NZBqjaLXZRJViCoIXYuDcoaK1L72qZ5edzMPat3ZYg6qeJxuujh7zm65a21iIoxdppafP6mGQkC7pCypVt0TZn9QMTfp/sXIk8t4IKOunQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725988632; c=relaxed/simple;
-	bh=oSg1jqSi6Gk43occzaUFP7TUotm9lEyrfyUHl9PfiY0=;
+	s=arc-20240116; t=1725988804; c=relaxed/simple;
+	bh=TvaB6J4SPaO1w4vDtpj2zNE8JWO+8r1xf8HiEUcu1xM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMiXiD/mvnj1kjmd3uIvakS73guPQpOfF/N3T6i+Z0tvoju3MjVHzCXsWec/JGf2keXpMXwqRHEUeUwL3/aJMAtpZVm+kN9omsMyLFQS0KTj+yMXxvkttOnNV7Ue06JIYfRfyy8RIlwWaJInOfSGX/G6eSTaoBwEuh/evrId3cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gb+sysyK; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718d8d6af8fso3731071b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725988630; x=1726593430; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fn/AZ4xb9LMx66eVPn747xkrVzFL0qyHkUKyAmziAvo=;
-        b=Gb+sysyKDpHqS0d2zrV25INJPQLpC/BtfGrtmcy0iV+vNQe0k/4wC5jVHOD3cZup52
-         wo0XJztMqMaW0FCGJNuVcq0uSjfwXK36e8G6YStrV5oiMYskOtEyxAyAwZdAN6rg06C0
-         dQi+F9kQMJE9PkuC7fnXOgMBCZaul4gNCeueQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725988630; x=1726593430;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fn/AZ4xb9LMx66eVPn747xkrVzFL0qyHkUKyAmziAvo=;
-        b=D4/ga1bzeZos5KOwWI7LN6z0Mm9TxOhxcRjyDGCVjE7c+W/ORx7qHvpWkqyrmLhHzX
-         G3LuUMQiqIZStKWPBBTHeyFb6/oL5sPLHN4qB1Vh5OVvIH1Mv648tCBCl3pOuhzXqqZJ
-         CRNXWDK97ymzTw7QXvXirpRnyLjpxpD6H6FThCO5gBvIZn3zF+rl7mx1HsswtCBNd6HZ
-         1kv50/Fqpz1IcLvfcP67NyGgqhIYBcY2Ov2SahsVinToSHM2SGSa1NeJ1q96XcCPo1g3
-         P27HV53JhO4+ueGY/UUiAt76Hgeejw/U4WX9f8B3m952PfHh6b2tB3UPAEFfHRqkcVui
-         gFlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ60sM/luFRup9lPVll8PFFCcdne0xXooLDHgkXefBw9QkHwtAYDX7Jn3iSzyMysRTdjf854EpMKFz/k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTt1p4WP1i+nslCbi/sHcS9r6Zds8dZd7kgVXeCPQaw0Gi51u/
-	U8EVB5Cew1FsV1RGWhrQkyLkgc9WVL5hfjXejDeh5kFPg6Ge2oqpl+RvaHs8Qw==
-X-Google-Smtp-Source: AGHT+IELBBH+BVqW4jojD1yiE+U1VTuTVHaLtVLuYuv3KRyDEoVquQilq1awiMvvsKXH0tH0bFH5KA==
-X-Received: by 2002:a05:6a00:2ea5:b0:717:97ac:ef46 with SMTP id d2e1a72fcca58-718e3fe638amr14703295b3a.15.1725988630104;
-        Tue, 10 Sep 2024 10:17:10 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:a9f8:b780:a61c:6acb])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7daca4d27fesm2743652a12.0.2024.09.10.10.17.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 10:17:09 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:17:07 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: chunkeey@googlemail.com, kvalo@kernel.org, francesco@dolcini.it,
-	krzysztof.kozlowski@linaro.org, leitao@debian.org,
-	linville@tuxdriver.com, rajatja@google.com,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH wireless v2 2/3] wifi: mwifiex: Use IRQF_NO_AUTOEN flag
- in request_irq()
-Message-ID: <ZuB_E1XasAVw52q7@google.com>
-References: <20240910124314.698896-1-ruanjinjie@huawei.com>
- <20240910124314.698896-3-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUANcE93nofGveDODO+D2iCQk4Y4rFaf9zijBdtoJV7zLX5k6+WoaMdT6o4rNnecxFMXmaPULymn7FiicmA5dFKBDi9AEU5EJBptu+0HpZrfOVSSlRqxJy6DGre1xtSdvZ3ntw3TgYIETPdh55LjZXLs0jHRiF+kh4YCJ4BAEYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKlsUtqj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45769C4CEC3;
+	Tue, 10 Sep 2024 17:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725988803;
+	bh=TvaB6J4SPaO1w4vDtpj2zNE8JWO+8r1xf8HiEUcu1xM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oKlsUtqjBxe9ewO+kBetG3hSNfCwXfigGim7srXmxu3ikqBMLUeL07dcBc+H13ZWr
+	 hyqLMpeBDI3h1zXJQliHtZeT3Rj3iTse2jtsU5BUaMooI6UBu1vHtqwiP3AKMWtg6Y
+	 xgPyys2WP3y7oSPbyq+pzBr3EEvEJ5p633EtOWqCUF/dZ8QCRqgxsmUUMPj8QEoVOU
+	 +epCFf2DMuKroLqg0rPFXbuApZZ2XTgnEJ8NhBsr7G/fl92Kkk0YlSGZAxSJifpmAm
+	 IvKM5fc4EuIWCnxJXZsUhvaggesPsBq1yqfnDApzX375T+/FfCdT/fNvxM00pSAUlF
+	 iOh3JGEQALfnA==
+Date: Tue, 10 Sep 2024 10:20:01 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+	dm-devel@lists.linux.dev
+Subject: Re: drivers/md/dm-integrity.c:521 sb_mac() error: __builtin_memcmp()
+ 'actual_mac' too small (64 vs 448)
+Message-ID: <20240910172001.GD2642@sol.localdomain>
+References: <e8c80d61-2c74-4b50-ab50-2cf1291df9bc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,22 +58,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910124314.698896-3-ruanjinjie@huawei.com>
+In-Reply-To: <e8c80d61-2c74-4b50-ab50-2cf1291df9bc@stanley.mountain>
 
-On Tue, Sep 10, 2024 at 08:43:13PM +0800, Jinjie Ruan wrote:
-> disable_irq() after request_irq() still has a time gap in which
-> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-> disable IRQ auto-enable when request IRQ.
+[+Cc dm-devel@lists.linux.dev]
+
+On Tue, Sep 10, 2024 at 10:31:56AM +0300, Dan Carpenter wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   b831f83e40a24f07c8dcba5be408d93beedc820f
+> commit: 070bb43ab01e891db1b742d4ddd7291c7f8d7022 dm integrity: use crypto_shash_digest() in sb_mac()
+
+This commit seems unrelated, as the alleged issue existed in the code before
+that commit too (maybe smatch just didn't notice it yet).
+
+> date:   10 months ago
+> config: i386-randconfig-141-20240906 (https://download.01.org/0day-ci/archive/20240906/202409061401.44rtN1bh-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 > 
-> Fixes: 853402a00823 ("mwifiex: Enable WoWLAN for both sdio and pcie")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
-> v2:
-> - Add fix tag.
-> - Wireless patches go to wireless-next, submit them in a separate patchset.
-> ---
->  drivers/net/wireless/marvell/mwifiex/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202409061401.44rtN1bh-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/md/dm-integrity.c:521 sb_mac() error: __builtin_memcmp() 'actual_mac' too small (64 vs 448)
+> 
+> vim +/actual_mac +521 drivers/md/dm-integrity.c
+> 
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  492  static int sb_mac(struct dm_integrity_c *ic, bool wr)
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  493  {
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  494  	SHASH_DESC_ON_STACK(desc, ic->journal_mac);
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  495  	int r;
+> 070bb43ab01e89 Eric Biggers      2023-10-28  496  	unsigned int mac_size = crypto_shash_digestsize(ic->journal_mac);
+> 070bb43ab01e89 Eric Biggers      2023-10-28  497  	__u8 *sb = (__u8 *)ic->sb;
+> 070bb43ab01e89 Eric Biggers      2023-10-28  498  	__u8 *mac = sb + (1 << SECTOR_SHIFT) - mac_size;
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  499  
+> 070bb43ab01e89 Eric Biggers      2023-10-28  500  	if (sizeof(struct superblock) + mac_size > 1 << SECTOR_SHIFT) {
+> 
+> This is paired with the line before and prevents the subtraction from going
+> negative.  It limits the mac_size to 0-448.  Is it reasonable to have a mac_size
+> which is > HASH_MAX_DIGESTSIZE (64)?
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+crypto_shash_digestsize() cannot return a value greater than HASH_MAX_DIGESTSIZE
+because the crypto API doesn't allow registering any hash algorithms with
+digests larger than that.  That's the whole point of HASH_MAX_DIGESTSIZE.
+
+> This buffer is only 64 bytes.
+
+Yes.
+
+> 0ef0b4717aa684 Heinz Mauelshagen 2023-02-01  515  
+> 070bb43ab01e89 Eric Biggers      2023-10-28  516  		r = crypto_shash_digest(desc, sb, mac - sb, actual_mac);
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  517  		if (unlikely(r < 0)) {
+> 070bb43ab01e89 Eric Biggers      2023-10-28  518  			dm_integrity_io_error(ic, "crypto_shash_digest", r);
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  519  			return r;
+> 09d85f8d8909ec Mikulas Patocka   2021-01-21  520  		}
+> 070bb43ab01e89 Eric Biggers      2023-10-28 @521  		if (memcmp(mac, actual_mac, mac_size)) {
+>                                                                                 ^^^^^^^^^^
+> Read overflow.
+
+No, because mac_size <= 64.
+
+We might as well explicitly check that in the code to suppress the static
+analysis warning (I'll send a patch), but it's not fixing an actual bug.
+
+- Eric
 
