@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-322529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C596E972A51
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAA0972A53
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F53628625B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8001C23F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E17A17BEC5;
-	Tue, 10 Sep 2024 07:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FVmCFbzn"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E8117BEAE;
+	Tue, 10 Sep 2024 07:14:34 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DFE12B143;
-	Tue, 10 Sep 2024 07:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158E13A242
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952256; cv=none; b=Qjk6CjMvgjcbheHq287DoPVHWerCOj0tt1s7sVuySwypRj+t8XmgRKB1AdeqSy9YgKGcRM4OLiwd8l1AGABmOWUAljlJ5IuoIQt0e4h5aaUv2wJhHmI11xBJH1kvhLpSEtB6EsRqm+bdAQ6VhG0QselfSELwQpNngzh94KjEKDI=
+	t=1725952474; cv=none; b=BvB+S1YkQt1lof+xjDExxdOkw0eEYpZOeRNu2GZ0IJXtVIjtFwhx6va7CpIm/jtB+zl9DR9rfci8g0oEf55FH5Jicjo1gUkN/poFA1jcyZhB9eWCY5Fs7vY6wvOU4asjBHDT4Cd3x11njAVp+OByhUeJqs9qJqLgQq0tNDckKwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952256; c=relaxed/simple;
-	bh=Lj5Sd8urnV5cGR8bCaMgOHsQZWxqX/08qozA/Wp5OfI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WQhxYVkP/KEktgH6xXIW44FnespZ5zSspwAdHjrBHqSeBuLRJ0udo7EeJrLJwCF/Jk83/JqCsWzjbwE3AdXIY5lVlg+VpHeBxwwQX9FQY9kiikztf4BV9bJbmVFrauKdNo/EddkV4juy2x+Vorir9m83KWRhtO6yAd0f0Uc7lVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FVmCFbzn; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725952252; x=1726211452;
-	bh=Tvk63EWKIJfcsR9nu+1LRzzHViUVxsD4efOy36kxKd8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=FVmCFbznzGpr7Y6VsJ4XEHMtK7KafwMwU22GdtiSxiZ4xKfo1GYPqBf7guIqQjSlz
-	 xLHzc7RKrhS+WUba9zRPpdcmrK97rz1/ka0pYkCASavn5fW30E5+erV1y9TPR28u3T
-	 3esTtHcVseRda3Jgu0knzSkXDCRMkXKldCfIiBl1v23+DEws5w/y9Go7B/th19VQ/A
-	 GcrkMOrjsj0AT1mp8r5rxRwZZUFFzwAWdGIFw2MZgLWp0WH8hb7VpwqDbSSwSxWHmc
-	 tlaGoKlbXkBcRzYuDQ8Y8j+Kl8nn7l585Q6wawIwjvwInpLtubSFVpd79Q+/zy00zt
-	 0Ot/1lDksIY9w==
-Date: Tue, 10 Sep 2024 07:10:46 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: add global lock support
-Message-ID: <3c471d06-d8c4-47a2-b29b-4faa5d61d25d@proton.me>
-In-Reply-To: <CAH5fLgh9kHm4XbcH2X4y6nwZ9VLYuUeu3hNmQBcdZ+Vx1H1L9w@mail.gmail.com>
-References: <20240827-static-mutex-v2-1-17fc32b20332@google.com> <10453342-d269-4b78-8962-821ef53d3cb5@proton.me> <CAH5fLgh-DYvXobXQVaQ9txYS4Rx8QhjyVvfTphk6vvnUOGzPnw@mail.gmail.com> <3b557f61-cead-4568-b2b4-4a56c4cbff52@proton.me> <CAH5fLggE-fWDuZXH_F3ixDSo7sQEFwnUV3cd+9_rpFH+XmnA2Q@mail.gmail.com> <CAH5fLgiZt3uVZiU1xXPcvYNR-Em2V3y+-C9EbsqrNvkScbiAYA@mail.gmail.com> <0030a292-49f4-4575-846f-424b098c7f1a@proton.me> <CAH5fLgh9kHm4XbcH2X4y6nwZ9VLYuUeu3hNmQBcdZ+Vx1H1L9w@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: fff6e56f1003443a7083231ea76ea55439635c5b
+	s=arc-20240116; t=1725952474; c=relaxed/simple;
+	bh=h2wxjCymlnRMLxsDvaEZESRG2a29uegeljS+qR3pG8k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qZ75FIjO5vBcR1UCsDTifwPBQcmjvhulbzPXGoa3/huyWoZYajbaK+SGzSADw4Yw7/4DdUr9ZUJ0RkFH65xiaY7/sVZB2QVu4hoLIdeHtHTF9tJJkYmNVKDwkXLINh81/vOXrAjO1+kqsO7jkfi9F4g5DkSOTyMV8AubwDLIoCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a3ad86c74so1171586139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:14:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725952471; x=1726557271;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+jf3KxE8qK4ehGhyYzrdxQNBV75iTvSyPk5AN1GjWg=;
+        b=ut8ZS7Tf6E1XndbnWpsOKQ9RRzIb6PizVs6Tp/TFMWW3x7QyF3dgKUUSq56aa4UzRp
+         8oHER9WGddJjGQff8ucBqYXSOA351UVTvJa8/6XuQJrlDriXO5+04OVNYI+i2qN6Wtuj
+         jcGLbxIpADKRw8GdQM7J9Et16ZFEJr5iku0kmcB65tVUrZJfG4pYEX9dkFeSU0EakLFp
+         Nea4YulefgpkgTA67k6Qr2MuNwecwziXQ4BfCP+QMDihXr8OH3cqbN1O6UQvyHWNMKEe
+         EMrmkqrJqLx6/PNwkiLnxsqug+Lx+wwgY3aIKFw9h8+IdvwCrMbKMWK7Ga+N6sbK5KeE
+         u4Pw==
+X-Gm-Message-State: AOJu0YxrGrj6iC2fCJjtUYHkBwU9gJxv2uysqLIzDknXPB2L/Xmzmzrk
+	p4A5h2Hw693WZLesYKtzQGBjM9THIaNsejWu8uYaCuo7X88yT9U1BNtUyWy0OSRU3to5cJtns7C
+	W4ceJ1RpmBhDn/8ow7r8jHndS+01KwQ9uXvbdhwUgnspoGJub6NPo49s=
+X-Google-Smtp-Source: AGHT+IGfsv1nY9y+wMRQVfyUob6soaXjTGG6+oWMexZTdJzohOJGOyRd3jzZZG9TFaKEzgx/JuMShxd0XZjut+jG4M0K5Ymr/L3D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6602:3f92:b0:82c:d843:edcc with SMTP id
+ ca18e2360f4ac-82cd843ef9amr835462139f.11.1725952470709; Tue, 10 Sep 2024
+ 00:14:30 -0700 (PDT)
+Date: Tue, 10 Sep 2024 00:14:30 -0700
+In-Reply-To: <000000000000b3424a062114aaa3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ea89ee0621be9fc5@google.com>
+Subject: Re: [syzbot] possible fix (linux-ntfs3)
+From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 04.09.24 12:32, Alice Ryhl wrote:
-> On Tue, Sep 3, 2024 at 12:17=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> On 02.09.24 13:42, Alice Ryhl wrote:
->>> On Mon, Sep 2, 2024 at 1:37=E2=80=AFPM Alice Ryhl <aliceryhl@google.com=
-> wrote:
->>>>
->>>> On Fri, Aug 30, 2024 at 3:22=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
->>>>>
->>>>> On 30.08.24 07:34, Alice Ryhl wrote:
->>>>>> On Thu, Aug 29, 2024 at 8:17=E2=80=AFPM Benno Lossin <benno.lossin@p=
-roton.me> wrote:
->>>>>>>
->>>>>>> On 27.08.24 10:41, Alice Ryhl wrote:
->>>>>>>> For architectures that don't use all-zeros for the unlocked case, =
-we
->>>>>>>> will most likely have to hard-code the correct representation on t=
-he
->>>>>>>> Rust side.
->>>>>>>
->>>>>>> You mean in `unsafe_const_init`?
->>>>>>
->>>>>> No, I mean we would have `unsafe_const_new` directly set `state` to
->>>>>> the right value and let `unsafe_const_init` be a no-op.
->>>>>
->>>>> But how do you set the right value of a list_head? The value will be
->>>>> moved.
->>>>
->>>> Right ... we probably can't get around needing a macro. Can statics
->>>> even reference themselves?
->>>
->>> Looks like they can:
->>>
->>> use std::ptr::addr_of;
->>>
->>> struct MyStruct {
->>>     ptr: *const MyStruct,
->>> }
->>>
->>> static mut MY_STRUCT: MyStruct =3D MyStruct {
->>>     ptr: addr_of!(MY_STRUCT),
->>> };
->>
->> That's useful to know...
->> But I don't see a way to get pinned-init to work with this. I would need
->> a lot of currently experimental features (const closures, const traits)
->> and a way to initialize a static without providing a direct value, since
->> I can't just do
->>
->>     static mut MY_STRUCT: MyStruct =3D {
->>         unsafe { __pinned_init(addr_of_mut!(MY_STRUCT), /* initializer *=
-/) };
->>         unsafe { addr_of!(MY_STRUCT).read() }
->>     };
->>
->> It (rightfully) complains that I am initializing the static with itself.
->>
->> We /might/ be able to do something special for `Mutex`/ other locks, but
->> I haven't tried yet. So the unsafe approach seems the best at the moment=
-.
->=20
-> It sounds like we'll just want a macro that generates a global wrapped
-> in a Mutex/SpinLock for now ...
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Yeah.
+***
 
-> If we're going to do that, we could take the extra step and have it
-> generate special Guard and LockedBy types so that you can have a
-> LockedBy that doesn't need to make any runtime checks.
+Subject: possible fix (linux-ntfs3)
+Author: almaz.alexandrovich@paragon-software.com
 
-Oh that is a good idea!
+Not sure about all indexes on volume must have the same index_block_size.
 
----
-Cheers,
-Benno
+#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 9089c58a005c..63fbb8ba6e1b 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -892,7 +892,9 @@ int indx_init(struct ntfs_index *indx, struct ntfs_sb_info *sbi,
+ 	indx->idx2vbn_bits = __ffs(root->index_block_clst);
+ 
+ 	t32 = le32_to_cpu(root->index_block_size);
+-	indx->index_bits = blksize_bits(t32);
++	if (t32 != sbi->index_size)
++		goto out;
++	indx->index_bits = sbi->index_bits;
+ 
+ 	/* Check index record size. */
+ 	if (t32 < sbi->cluster_size) {
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 3dd6215316e4..73d72fa8ab65 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -222,8 +222,9 @@ struct ntfs_sb_info {
+ 	u32 record_size;
+ 	u32 index_size;
+ 
+-	u8 cluster_bits;
+-	u8 record_bits;
++	u8 cluster_bits; // log2(cluster_size)
++	u8 record_bits; // log2(record_size)
++	u8 index_bits; // log2(index_size)
+ 
+ 	u64 maxbytes; // Maximum size for normal files.
+ 	u64 maxbytes_sparse; // Maximum size for sparse file.
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 128d49512f5d..f96641b80869 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -993,6 +993,7 @@ static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
+ 			 sbi->index_size);
+ 		goto out;
+ 	}
++	sbi->index_bits = blksize_bits(sbi->index_size);
+ 
+ 	sbi->volume.size = sectors * boot_sector_size;
+ 
 
