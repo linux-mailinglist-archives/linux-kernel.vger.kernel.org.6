@@ -1,172 +1,236 @@
-Return-Path: <linux-kernel+bounces-323222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663549739AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:18:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC199739B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10F21F21E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC53B2377F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A2C1946B5;
-	Tue, 10 Sep 2024 14:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE2018FDBD;
+	Tue, 10 Sep 2024 14:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QE08hCjd"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="csImg/AV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC9317BEC8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725977881; cv=none; b=i9FBK9uCS0tKzM0vXs7Ywoq78AA1sJC+3/BQtJexsepYkeCrTeVRKJQkoeCvgN1zUCbBuc0b8d8urI7T6CsgoRAp7nOALP0rzcDY3WW+fy4ZzqzPqiju+4WTk0qpPQ0lZk8hH57UBg66/3gX/IEduyWgPy1SyTRtLt/yZOhvtVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725977881; c=relaxed/simple;
-	bh=GGEARYjG+B84skQ/gQZ2YSitjcN2OvNyakrwejuFeos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aqzu6bxqIBJcBKR3xQDWO90get6nHgfk7K4JzTibmDu8wKjYj8uZfDiOmZ+tztK9CditWpxU72aLGi9LELMgk6Ud6xXWzBbbDM3PBsX1vwq+7d6cv8iBskPHrI4KRWZFb2wdydTmDIzdsYriwZXWIBPz4ytwG+ZXKK+FcR8WL34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QE08hCjd; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb2191107so21847415e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725977877; x=1726582677; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GGEARYjG+B84skQ/gQZ2YSitjcN2OvNyakrwejuFeos=;
-        b=QE08hCjdWXcsj5kA57xCTKtADAE8h1Uyk6TxdUMphVO9INSMa3lCO3ZzRPhU0IQ+cI
-         MmO41JESLXo2zOKBlsfeykkkYnv9Wk1qoR37VxUFGUiokShyJXTxDasryXwvxxl4Rsgv
-         XFs0cptLYGyI9jogi/gpeD37vLQ1DjhANtvawj2EefPwqWXBmCQEQu/77fMTm8ja6JNF
-         FygyBlWF46cMUfMGIrU5lnlgfpfuN24bB6wSlK2TWWm0APYJMa5TtSeIi9SOHVvLLwXE
-         PI70MU8eGSMFe0jZEckLAzwK1DclqzME6q0m3vD2qT4TOFGS9iylZ3MrGbxN5zT5NeKM
-         dc6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725977877; x=1726582677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GGEARYjG+B84skQ/gQZ2YSitjcN2OvNyakrwejuFeos=;
-        b=Yl17jq0CgRn5iqsZShN6qL7CNOnxkDHbnWFUS3bmFfMK+UZ79gBXTPaSSQAzF/HcNq
-         kbTP9PPrT1o5lm24o+LMX6c49Cp+TDEAS7RhvTNc1RQqjq2Ie0HncOzJ7+ngDyukXHU1
-         KQloj0DfWcjrLn/4sZMFNJIdemuE51vV791KEjA3uXbT00zUjZ6aVXG8p4uLjlt/quHE
-         50sI1Jneymzz7Mkxx9Di9P3qwZ/u4PhlMry9hzO0BT52ZunecfO19N09atY6I5W79PVi
-         I/RiZgq70N4yzTci2JM94yYCzObM69G1Vt/21ncGtu8cLeMQbb8f2aDyulyF1qNv6WBm
-         dTkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUl9zYuchHu4JlxB59KPM6KLPq6XI6HeBJIaWORTUkBCyuTMiSb7vVjFaKu8x1rl8p9ipt7oDExLQyLYDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj3VIsPRCioyO8F1a2zyau2zaKnBHQdaBbJkpO1+rPx+vXIFfH
-	WLY7lV7kM8ylkr5MleCGqdyu1Byspya5h+3lC2t5lrBarSl01TmcVt88XoPy3mMsOdFLE/P2srD
-	sbN5cSyn5WXP5fmw8NSR1vSTz4rGg1phjKKN8
-X-Google-Smtp-Source: AGHT+IFP50KLZfbGJ8bH9xXy+TL6LHRHDCKh34oPF+iM3gvovF6kGCtP9aBu6fgoYkXrl3dPW8ldzSS/rZq+xC4o3NU=
-X-Received: by 2002:adf:a1d0:0:b0:374:bb0c:c067 with SMTP id
- ffacd0b85a97d-37892703fdcmr7136480f8f.40.1725977876172; Tue, 10 Sep 2024
- 07:17:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300071946BA
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725977907; cv=fail; b=nqNWKj3/Eh65tVLKxqv3pE1gJin+QZUV1vuQVfnhUGER3cdoe1ShTgUY9kzaBxWUnCtCEAWTvNAtfjecvtN+NQr+8WtwbXsTtzXWsCtVVuo90zscyltb8Iz6aO8w0jkjNP/iIYw3eN5GdTKy6YK2fgdtR/XyicXtsv7tROMs/1k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725977907; c=relaxed/simple;
+	bh=75lEwn4SBcQZ2RGSiItSW9CoDcPvdaapFPx+cJRXFdg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H3aOpN+ldXhMR+yKa+4A8H4miTTCwFWjZdE5H7nLb+d4ctvwkf2TSlBninwV8izl0XPSsDSJAAa7hQFM+SdxeYkdSPQ/v9BSF0QGFRl90Cxzdele6C1iYL5l8ZMyywu4Z/vvioJJJr7uRYrVzwlPj/XS8TTTGzeZySBi39neOVc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=csImg/AV; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725977906; x=1757513906;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=75lEwn4SBcQZ2RGSiItSW9CoDcPvdaapFPx+cJRXFdg=;
+  b=csImg/AV1yeQO+g6bI+M9f99Rl+mz6ys64F9/pguOmg6D0giRhaicvnx
+   blG/sWL5KacCttQfK9FRCSqv3kBCjY3dbROE1+/WJOar9KDohqGmh0IWT
+   4qfunVK/X3qSPNUrqulI2dAXeXro0dV9SQat5s0O955hebhD9TIzQ1ix/
+   0hwIIVE13Ah44NcY/jiN9sVKQDl3Ra0Yr6cyEC5zyg2WNx3OIIXG52pvl
+   UzUVIowp70Q5gAbsT+HnZdXYb9EL1/gjlkjiRWN3HxFMkr9utqA9989O8
+   FX2JM/cUwIbIF0Fm3tNisAFQMCKVomguhQ3LQe/eoE9PFir9yVtr9MkWm
+   w==;
+X-CSE-ConnectionGUID: L3Z6Yk95TcaEoNUcUrEJbA==
+X-CSE-MsgGUID: SfUfMKDoQyCXMDo3Gg+VpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24271246"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24271246"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 07:18:25 -0700
+X-CSE-ConnectionGUID: lgqwb18EQFevkvZAJpFsJA==
+X-CSE-MsgGUID: 46rZcYu/TCKNdGwDIqUfmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="72029963"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 07:18:25 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 07:18:24 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 07:18:24 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 07:18:24 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 07:18:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ixKimrXXiAndg7vxZ5Z2yV+GdD/X9QG/IsGJKUU+XgDMvXXB3GLYkWg9y1lxK+l1QkBCy07Nm4Pk8ktvYcclY5aAGAWWFyYwVDEUrDWp6TsmJijPvwVGvqXkcIE/8iy4OYDyvfynPTOzDpq44hzHUMT1wEfdZ6acRBnmsYVVUIbjCD6Y9oiizZ9zqCaFsiIvXnxsxoydOqRHAu6+wLSuarX19GuQPW1xAUb4P2rzNuIi9d4RkQhYx/NxpE5LrkIQeq+6HhhPCYE8q7wM2AIhNYLSbetGiYl5uup6HcBwU8+RwFNs36KKJWL2JCbvpscoFv5YrKW9WRnIFh7tSj9PNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vq+EYJmY9+RqFTJZO/ubOVl6JI6t1pm73ZjZOZOo7NA=;
+ b=Bf4T/tvThTiZcdZTHuU27LXi7qGcihXqgQnbsxnToyNCJHPsDpyHr1A19j69bzTXnYFKqbTKxTvYz3ilhBb0mSnrHLZeDXpkbAG0PbU8YAR3grBZ3DEKNpC+GSyFmaIsETO4GT8zlSJeeNTbK9D6eNA9nh4B+6CRRTFUf1APraSxpSaaGOyq0+CpXw/Ui3oQ6CBUS4PzmbMfb711Z83/CZi+BHbaWI85NC3fe0Et0CgmKjuvETRnk1c9AmRjavyHYHMZ7LRAw5YzjQdw8Mculnz3BUxhbjmJQDzdMxQB5BXG+CD02r84VqTIBS9H+yuw1N+UK30PT5f3TEs2El+6ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
+ by MN6PR11MB8146.namprd11.prod.outlook.com (2603:10b6:208:470::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 14:18:22 +0000
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508]) by MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
+ 14:18:22 +0000
+Date: Tue, 10 Sep 2024 22:18:11 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+CC: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+	<cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes
+	<rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin
+	<roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Andrey
+ Konovalov" <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, Shuah Khan
+	<skhan@linuxfoundation.org>, David Gow <davidgow@google.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, <linux-mm@kvack.org>,
+	<kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] mm/slub: Improve redzone check and zeroing for
+ krealloc()
+Message-ID: <ZuBVI2DXyeZ15lTZ@feng-clx.sh.intel.com>
+References: <20240909012958.913438-1-feng.tang@intel.com>
+ <20240909012958.913438-4-feng.tang@intel.com>
+ <dee10b40-0cf5-4560-b4e7-6b682de3f415@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <dee10b40-0cf5-4560-b4e7-6b682de3f415@suse.cz>
+X-ClientProxiedBy: TYAPR01CA0021.jpnprd01.prod.outlook.com (2603:1096:404::33)
+ To MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89iLmOgH6RdRc_XGhawM03UEOkUK3QB0wK_Ci_YBVNwhUHQ@mail.gmail.com>
- <03C87C05-301E-4C34-82FF-6517316A11C2@gmail.com> <CANn89iLYUjfsaXrtV19_DF9nUSaLSwmWnd7tzh8+v9OoUesBHg@mail.gmail.com>
- <CAO9qdTEOSa=GAQQ-tcWa6hUJVNKBKDOqLOVOZffKw9K5SJeOBA@mail.gmail.com>
-In-Reply-To: <CAO9qdTEOSa=GAQQ-tcWa6hUJVNKBKDOqLOVOZffKw9K5SJeOBA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 10 Sep 2024 16:17:41 +0200
-Message-ID: <CANn89iL7VkYp0WPWw5vt964p_6Bx29XdOaeMiTk7PzhLpNBW5g@mail.gmail.com>
-Subject: Re: [PATCH net] net: prevent NULL pointer dereference in
- rt_fibinfo_free() and rt_fibinfo_free_cpus()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, kafai@fb.com, weiwan@google.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|MN6PR11MB8146:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41a3d09b-6d58-4203-2fd2-08dcd1a36d2d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zLst8W95XduiIwqmBWf4U2Meh+NGFRTBYDRG2yJhye6DD19XCUkpN4fVT5rT?=
+ =?us-ascii?Q?0LoBfD0RfrF8IYb22VL+DwhpgadHvN7AZU0qAvoumT527RGzbEF0BG7GGrZ9?=
+ =?us-ascii?Q?4xnudPxLnGgUmPl3Grfbr9Rf2HjT1FTylXTP69jf5LVbKEGdz6W/LAPBNTTP?=
+ =?us-ascii?Q?unDQ6tbbwnuLmTluoyojQughuDDJvh+ZF/LMIq+ZKABs0KmUFE01tpF1g5H1?=
+ =?us-ascii?Q?rNgpn7TojvhbcKzHMaW2LupzwUu/tmxHn8ncqnB4lBIgfIAG3xawOBKRyU6/?=
+ =?us-ascii?Q?kAFNAAe3z++JSF//ZCNAi+4X2wPVfgAtqRvEvhrOB+mEvrR28MW5kjfso8Om?=
+ =?us-ascii?Q?HKp7NEcCmuFe/zQ4R1EHaAowOvaQ9YDr9LWvwqqflUZlAj6cYwrranJbHQSW?=
+ =?us-ascii?Q?9mUy/FsfkKimrgoFcoWfwTzdix01Z9Jf0qdeWMZ+NnTOluuAZHO0XXVKHzl/?=
+ =?us-ascii?Q?MyJmiQ92aMZnnE/lHH2chKqiwjKAurkRvkDB4dqHIqcMgV/c1wiX1Yel3jEU?=
+ =?us-ascii?Q?M+mNDA82P7sIKe3vehEW0Z1J8qvozPbk8j9qvYl0vz8xRG3PMyJRuF+bK9LG?=
+ =?us-ascii?Q?QjBZqNPZ8tjc8y4Xyy7qRiXwjmqs0jaQbf9jHUKPvSx/btiXCbbp7e6J9/OB?=
+ =?us-ascii?Q?E6eafypI32yCqouQSrflA2SjkEzPzk9oRTgCzTkC/xyrv+LYH1W5tHrL9oGj?=
+ =?us-ascii?Q?kb6M7tKDRrhWVY0ZQoXvErzzcgAiNQ2s9MbCMpgckfXTiAjbjkNomex43HW1?=
+ =?us-ascii?Q?5pVliLCJ2syz9LkF3y1ApmgR2J0P0AMcNUH2pWa00DUVR19Ji6Jbh96voc2k?=
+ =?us-ascii?Q?5Z6Ns+xTtSUDtjlSv5fxbvMR5TT2nyXChSnShlT3YSlR1TwoSqKhbzUW5j7N?=
+ =?us-ascii?Q?MnJjUTlHXG9Qe6KYyGM67+rgNOHjx9q+5xcX76Hdbsev/eJxsyHoYgI+cnar?=
+ =?us-ascii?Q?Y2/OsZvzAsRxrT/zWozi+EQp6lB/zxjQm0xPlZ8esiYNQLiQnUnTd6nZWKN2?=
+ =?us-ascii?Q?WqqEQ8rdPp23DUurKv1qLC1drVMlnbR05pt5FQ9W2SC9Q5HaZF47+vpalji4?=
+ =?us-ascii?Q?o0hRu8JD67JUH02HcmW2+VYN1CRV1Xwf+8zioBKeSt2z7ZktBBt11L5KMW03?=
+ =?us-ascii?Q?THWS1Bhu81uu73WOZcqLYnQEy8I1Qj2v/r0THsaJJ8P6q+eFDHLP25xOwDBb?=
+ =?us-ascii?Q?fus+I5+X3NNfzCtB3WaIoSVAZinHtLFa4sEt5b9TNVC0WFch7/hi4uraK98O?=
+ =?us-ascii?Q?OOasrbjHUT9XMfnuskJx14D2oxOxUJLiGAyYkFn98qiMmLJ3qYLoKzXQVTsp?=
+ =?us-ascii?Q?EW5NL7/VLN06iArVZC3k1/FvSn0ZCMUzDMsrVgdJsNIgfQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5Ruet0koTHsT1tntLbIub9u+QtsFXG25NmO3bIPc4fjJ+29MR/w0+GHNejDe?=
+ =?us-ascii?Q?tWHgTnOjEMyndY0ITvx/hM1zf2d6+i9xAma4eDdXxbzVN7zcOkGxrYqVBg6g?=
+ =?us-ascii?Q?6QNjn9ph616GAxUfHW+/7KSdbDIjpb6xIF+C28rEHI3zriqZxXX637zds+aT?=
+ =?us-ascii?Q?YVHakA+zm+KJS51aqCWl2BTwIwTdGRUrcxKU9Ggq5pDtSbb8WVscHtIjTZ3B?=
+ =?us-ascii?Q?WMBpEZFHduwzTCElcTqCwWuC19FVjWpWB0G7onDya0fh80ncM8bmjblGf0jd?=
+ =?us-ascii?Q?JvH41v4z6wUBp3U2hsSrkgF0J6rNP9FHwjblwj7tKjGEGeSa72Uz9ezJA+/s?=
+ =?us-ascii?Q?wh4ND72v54+bytUYKjez1jjRIqBsCmWAZ3n+WNYUPlIWP7ILuv3nrIDSZulM?=
+ =?us-ascii?Q?53K1qMZ7fFL5FVkyMvB/tg/Kzb+UHlMNVDFRf3IrSnoEuadf3ji1PXN/bt7z?=
+ =?us-ascii?Q?3GPH9jt3df+zABb4ZME7LU/bfhv4RzUKeb7H3ailWxWyrdtZsmSwYYr+CwX3?=
+ =?us-ascii?Q?kg36th8+StykxLqD5T/vEaofY/dlW7v0mZ7O7fv0Y/a5jGz1yU4cljlVPxy+?=
+ =?us-ascii?Q?3SynJXofXzk4mJC7MJ0omdwS8W3x/aRjhWoxWNajSv73tBoEN1VzfiQUm+QN?=
+ =?us-ascii?Q?dfD6tVjohxFTheXCqIXGnDZm0SGMvyoBofkwOl/dp7Ui4SLVyC+Bl/qBRE2I?=
+ =?us-ascii?Q?SU8j4rnRCY/WiBTwa8m5zT8Q65Z5j4dtkyMVpALMnFRlLKq7UG3CXUHKM8Xj?=
+ =?us-ascii?Q?s8bpcmeOuINZ2zwZS0MvT5bTtfr2lWiDckOEonoHK9hjRD5Hbvj0g/k8XRvE?=
+ =?us-ascii?Q?3uIH6MFKr4HV0KhMFeryzlTy052z4w95aOmGR1fqxj11spbMKDV6w621OdUH?=
+ =?us-ascii?Q?fpvYsKD0Q7e6d3LRJ8pxGWDa5wWEE9X0ClNty5p3bT7Jgbe8+ucU+cDZSihQ?=
+ =?us-ascii?Q?ujeJX+e73SCj2Rv3ZKPKs0D5eM/kmj4kNcf3ePb/F7S2Dvqo1LXvfxiU7YDd?=
+ =?us-ascii?Q?F/ocDdf81qrvApXhVMwP2qWr311m4rGpQvqmKyiry8fOe6CxklI6vuo1TIQ2?=
+ =?us-ascii?Q?dA7oKvf9xA/tW/VGMvjDJ1CHuGmySrSDxtgBcp1SkdntcOVXhcQJ9s8cP86c?=
+ =?us-ascii?Q?3AhuutDv1pyM9+beTFXdtFKxpXvr+WWCtS5rIUhdOGIsfbs4stpQ8KfDsCSi?=
+ =?us-ascii?Q?Tc6J3ay3p7SMD1F0zOHikjmy4NRHIZn8uSRisUP78g5vzq8nXga77pI1H0EJ?=
+ =?us-ascii?Q?Jz1zYe3WFUv9dF1yRn5fcmQPoHpVzi4fRjKYpLK4CaEQVkHd1nl8DfkFasoM?=
+ =?us-ascii?Q?isu8ZtT3MA7jKFaVu/TIR1ywOssjT/28j9qSK3yXTs5S22KCmC+83fHikktY?=
+ =?us-ascii?Q?bgAEJmML9MDPW6sGzQZdrTWn613yFUXngqVx3tpATsHbBAP9AOEYt8olzEDE?=
+ =?us-ascii?Q?mQrJ9KqeWKYr0rK8dsWpSB4QyhUNccPMkgxR67xhRv0MFONWUoA4xW6WD/qr?=
+ =?us-ascii?Q?QxjPEdqHIyJqyUkukXChqOXLIzjJlSC0O6vepk18slgphTo6pU16kUuaxe17?=
+ =?us-ascii?Q?NqQe4fKguxzitK3tHtmLfAv4alv/4pSiXLWcXFNG?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41a3d09b-6d58-4203-2fd2-08dcd1a36d2d
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 14:18:22.2336
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BSlAzNDaNYcpbdhIGejhcoUbf/1jNA/gbwflRKDF15yEAfhmmNwUhwZlsdnpLwakID5Tc6dP7lYqn11XaHmrZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8146
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 10, 2024 at 4:06=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > On Tue, Sep 10, 2024 at 5:23=E2=80=AFAM Jeongjun Park <aha310510@gmail.=
-com> wrote:
-> > >
-> > >
-> > > > Eric Dumazet <edumazet@google.com> wrote:
-> > > > =EF=BB=BFOn Mon, Sep 9, 2024 at 8:48=E2=80=AFPM Jeongjun Park <aha3=
-10510@gmail.com> wrote:
-> > > >>
-> > > >> rt_fibinfo_free() and rt_fibinfo_free_cpus() only check for rt and=
- do not
-> > > >> verify rt->dst and use it, which will result in NULL pointer deref=
-erence.
-> > > >>
-> > > >> Therefore, to prevent this, we need to add a check for rt->dst.
-> > > >>
-> > > >> Fixes: 0830106c5390 ("ipv4: take dst->__refcnt when caching dst in=
- fib")
-> > > >> Fixes: c5038a8327b9 ("ipv4: Cache routes in nexthop exception entr=
-ies.")
-> > > >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > >> ---
-> > > >
-> > > > As far as I can tell, your patch is a NOP, and these Fixes: tags se=
-em
-> > > > random to me.
-> > >
-> > > I somewhat agree with the opinion that the fixes tag is random.
-> > > However, I think it is absolutely necessary to add a check for
-> > > &rt->dst , because the existence of rt does not guarantee that
-> > > &rt->dst will not be NULL.
-> > >
-> > > >
-> > > > Also, I am guessing this is based on a syzbot report ?
-> > >
-> > > Yes, but it's not a bug reported to syzbot, it's a bug that
-> > > I accidentally found in my syzkaller fuzzer. The report is too long
-> > > to be included in the patch notes, so I'll attach it to this email.
-> >
-> > syzbot has a similar report in its queue, I put it on hold because
-> > this is some unrelated memory corruption.
-> >
-> > rt (R14 in your case) is 0x1 at this point, which is not a valid memory=
- pointer.
-> >
-> > So I am definitely saying no to your patch.
-> >
->
-> I see. Thanks to the explanation, I understood that this patch is wrong.
->
-> However, while continuing to analyze this bug, I found out something.
-> According to the rcu_dereference_protected() doc, when using
-> rcu_dereference_protected(), it is specified that ptr should be protected
-> using a lock, but free_fib_info_rcu() does not have any protection for
-> the fib_info structure.
->
-> I think this may cause a data-race, which modifies the values of rt and
-> &rt->dst, causing the bug. Even if this is not the root cause, I don't
-> think there is a reason why free_fib_info_rcu() should not be protected
-> with fib_info_lock.
->
-> What do you think about protecting the fib_info structure like the patch
-> below?
->
+On Tue, Sep 10, 2024 at 03:15:36PM +0200, Vlastimil Babka wrote:
+> On 9/9/24 03:29, Feng Tang wrote:
+> > For current krealloc(), one problem is its caller doesn't know what's
+> > the actual request size, say the object is 64 bytes kmalloc one, but
+> 
+> It's more accurate to say the caller doesn't pass the old size (it might
+> actually know it).
 
-By the time free_fib_info_rcu() is called, we have the guarantee that
-no other threads/cpu can possibly use the
-struct fib_info.
+Right!
 
-nexthop_put(), fib_nh_release(), ip_fib_metrics_put, kfree() do not
-need this spinlock protection.
+> 
+> > the original caller may only requested 48 bytes. And when krealloc()
+> > shrinks or grows in the same object, or allocate a new bigger object,
+> > it lacks this 'original size' information to do accurate data preserving
+> > or zeroing (when __GFP_ZERO is set).
+> 
+> Let's describe the problem specifically by adding:
+> 
+> Thus with slub debug redzone and object tracking enabled, parts of the
+> object after krealloc() might contain redzone data instead of zeroes, which
+> is violating the __GFP_ZERO guarantees.
+ 
+Will add it. Thanks for the enhancement!
 
-fib_info_lock has absolutely no effect here.
+> > And when some slub debug option is enabled, kmalloc caches do have this
+> > 'orig_size' feature. So utilize it to do more accurate data handling,
+> > as well as enforce the kmalloc-redzone sanity check.
+> > 
+> > The krealloc() related code is moved from slab_common.c to slub.c for
+> > more efficient function calling.
+> 
+> Agreed with Danilo that having the move as separate preparatory patch would
+> make review easier.
 
-Also, 0x1 is not a valid pointer, there is absolutely no chance a
-network layer could use 0x1 as a rt/dst pointer.
+Yes and will do.
 
-As I said, the bug is elsewhere, something is mangling some piece of memory=
-.
+Thanks,
+Feng
+
+> Thanks.
+> 
 
