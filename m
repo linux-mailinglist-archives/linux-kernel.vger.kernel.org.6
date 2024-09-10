@@ -1,288 +1,267 @@
-Return-Path: <linux-kernel+bounces-323214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA17E97398C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:14:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010F7973994
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 16:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A289D2840E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4981F25592
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 14:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5E619995B;
-	Tue, 10 Sep 2024 14:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D85C194145;
+	Tue, 10 Sep 2024 14:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tA3pojio"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LFRlXRKh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D91188CBB;
-	Tue, 10 Sep 2024 14:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725977616; cv=none; b=fzk17dFYxrWm6aZxBLufJaeU5sSCFLF76dqt405VSWHDLil++rbcq9m6EcBzhyM+HfyDSC7/4Tr2wAZ1dsdMngYi9lvA1vfosEOnfrEGWGBxcgIwcB4VgkVA08pnYEOA5zvalRFxsKHiCht9JxAsrr6Z/vNpBnS8gxW0R4VBZo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725977616; c=relaxed/simple;
-	bh=zQY9ylJsw5DVKosYUHbe+6rAr4wehAk1+o/s2b7Heqo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zvnh25J3wNaWNSGq7E4aYIhYHZiMEihPcOxEmIxTlNj4soUIHeXOZYOE1cbbSDqaEbhI+I2v4t4Y22bzct/YFO3UrPVTdj2vWyx9XUkmU3gNTYG00fKHz7fSmV6coIqTEQZ50XlzHfKL/8UH+h1iABx6DjkWaQ4DDzsKeixmYpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tA3pojio; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776F8C4CED0;
-	Tue, 10 Sep 2024 14:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725977615;
-	bh=zQY9ylJsw5DVKosYUHbe+6rAr4wehAk1+o/s2b7Heqo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tA3pojioUVPd7sBSaFU+tYoEOTWRWMUMrb4Qt63RHrqrdHnl7gRBfwl8Do3D1Bjfr
-	 W+J6CgEcsnJXUJFpufW9nnQX2A6GtsXYAjAGNbFTg+kSk2cw+lwJPOIjiKIm1tCoN1
-	 RSDQVJ/giR255Ta41PSJHMjEu5QNYFxMqI8sObRCrOU4pxdTCiS3mjhlgS19OJgSy4
-	 riWWqUlgXw3LXY/KdbbuW7/rhmhKxGGnqKZ2n/ma4Fj4vJmrTgnpWbIIYtn25BuZPz
-	 uNuxHdhtVYnUuYX84AOCi/V5e9LzHQR9u3h6KMrep9PhHcDZxx0yUlML2j5jhO2ch5
-	 sXtjIWJY5wVSA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 10 Sep 2024 16:13:01 +0200
-Subject: [PATCH bpf-next/net v5 3/3] selftests/bpf: Add mptcp subflow
- subtest
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1616F307
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 14:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725977688; cv=fail; b=oNJGCSrShFaxbR7n9toEgYirjNKQAtKS+ZDzjkPjXMd43nG0fmuAjhewdt/rUsRu8mD0mXA2HXqZG+XMv3/pmvBx2OTjySNQYHNzImUGd/qoa+AqxHz7Lymq3IM2wjrxWkE3nKPDEa3oxHtwfKAbeBiVnJ0uPJYmUVu1ssMvcWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725977688; c=relaxed/simple;
+	bh=bZtMD3j6bOXV8CQoP/CvBcar9RoZbfQS5E+1m8lnhtw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hQe+p/u3ecGYGf2u+GX6DhMlGI/eqUnZJFUIl0G6D/JzlDCQ6j1+kFDxoISr41CUoubBkIH723CyXSmVHBWNEUdF4tSbK/1SjSBD84hphR7ZKUjrtUmrgJZEWe9+bQIGi08FzkBbXVVgx3v94jvFN9tYa9ycBYwW/myPTXvDCnw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LFRlXRKh; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725977687; x=1757513687;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=bZtMD3j6bOXV8CQoP/CvBcar9RoZbfQS5E+1m8lnhtw=;
+  b=LFRlXRKh6bs3xJZ5xKBqjnvMwbf1+uBrWoFM0I64LsoQKYaNpkqQ/0UW
+   TxfTkSebIVygizONS6qyAGS/AT3biEWq+2x4KdVPOCydooSV6VFPlG5CA
+   TGCE68VpWcEU5PZTMfJmCWx3lVT4FimsvIGu8SbXzr594EJMwq1vF3GmI
+   x/rMXq6oP6arTdf0Woq911uRwlF4DRPbJJ24ZUPtj16uDE7WpnYtXURqx
+   okLn8mdMR6JhFnUtda3MzVkI947eDCL1ACExCI7avUv86txiUGVuBSLWr
+   mMTFt/VA1ld/dOEtABrFE+FevW2HZB0y/dj6/H+apWPrCMGILImM0suwi
+   Q==;
+X-CSE-ConnectionGUID: FEiY25XCSOqIz29T/c7DdQ==
+X-CSE-MsgGUID: blJA+r+/TeqR9DeQPA3vbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24665162"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24665162"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 07:14:46 -0700
+X-CSE-ConnectionGUID: Fn1dYGxpReCShy9WOr71Gg==
+X-CSE-MsgGUID: pcdLy1F9RWKGJLJS84shgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="67805582"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 07:14:45 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 07:14:44 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 07:14:44 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.172)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 07:14:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d9TckCrKA8HkALTLfO+kK8ml7LtCCotb8fkCgDQ/ZFUQ821AiXstJNMxdf7ii3N4znRhyC4Dlxm0Gbm/BH45StqdLcDbtAyruVCNikBMdfSyFG7zJ4y0h3M2HBDW9uxo9ZDUchXSu8MFT5okuKu2Y1GfqDEcxgIg33sc7R9CSjIuh5CxXHKfKSsqMhF/AGSbUmAwNfUbM3beiwc0D5apMY/PUulLyXujjOOwHNWn9EUZTQjowxh8/CE5vCqgmaUQ194/72RLxm7L4PZq3w2fXwLmSVZSLGEjxbY3zow2j6+AlNuzLOmdDDUCGXPudc/UZi0A/bX4SNtJPFvy3X60Kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PUUuJyYLxcmQ7nBuaz3+uFUy9Y7wbU/sjLUBjcBmdPM=;
+ b=PKwal17cQyswkGl9LPewhQRqjJlAjPEoE/uSymVUQ8b2zefLCpkXsF0Bj2NBnrAYvkNd1FxB8OhwV4qQB1CikwB9sOT8T5ys+GK0HTlw587x6gH73vUDV2No9NaIhdTM0mlz5ljQZjDHdPN+Vp728OpQTKRYsUPwPIy41q/LMCE8/UO/dpKJCIKnUVLqVNQG2KQMOV1faUO/TPerGRj0lvBMl2+KSpnjfEK7P65CQONDQ1doSzCIuBE9Ip9UrQuLZD5u4Hib21gtNlK1pzdSiL8vlmjxeJp8oOEl7bXbEO8e0fX5DaqkNiXz7g+e1OgAaZ2gS2Jq0aWguHvndjITGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com (2603:10b6:208:3c0::7)
+ by MN6PR11MB8146.namprd11.prod.outlook.com (2603:10b6:208:470::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 14:14:41 +0000
+Received: from MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508]) by MN0PR11MB6304.namprd11.prod.outlook.com
+ ([fe80::7f88:f3b1:22ec:f508%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
+ 14:14:41 +0000
+Date: Tue, 10 Sep 2024 22:14:29 +0800
+From: Feng Tang <feng.tang@intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+CC: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+	<cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes
+	<rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin
+	<roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Andrey
+ Konovalov" <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, Shuah Khan
+	<skhan@linuxfoundation.org>, David Gow <davidgow@google.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, <linux-mm@kvack.org>,
+	<kasan-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] kunit: kfence: Make KFENCE_TEST_REQUIRES macro
+ available for all kunit case
+Message-ID: <ZuBURfScdtDbSBeo@feng-clx.sh.intel.com>
+References: <20240909012958.913438-1-feng.tang@intel.com>
+ <20240909012958.913438-5-feng.tang@intel.com>
+ <4b7670e1-072a-46e6-bfd7-0937cdc7d329@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <4b7670e1-072a-46e6-bfd7-0937cdc7d329@suse.cz>
+X-ClientProxiedBy: SG2PR06CA0228.apcprd06.prod.outlook.com
+ (2603:1096:4:68::36) To MN0PR11MB6304.namprd11.prod.outlook.com
+ (2603:10b6:208:3c0::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-upstream-bpf-next-20240506-mptcp-subflow-test-v5-3-2c664a7da47c@kernel.org>
-References: <20240910-upstream-bpf-next-20240506-mptcp-subflow-test-v5-0-2c664a7da47c@kernel.org>
-In-Reply-To: <20240910-upstream-bpf-next-20240506-mptcp-subflow-test-v5-0-2c664a7da47c@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6158; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=bjjivKOUvp0bVG0rbMsxWryHAGBQZQyRzRlpNeCUmXk=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm4FP6+yFAYgRXp+ZVvgKXqjKPaGUYtTntUQRkz
- OMrVkkpKjaJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZuBT+gAKCRD2t4JPQmmg
- c1mHEADOQYiUZ3/fpHwHr+LkMlmigNvbCZApf3Tyv1xTgIHRS1MaQU9cvQuugsEEreoWAYarSA0
- /2FVWIEBMkFPnz8538zaEQwe+IfxgnLZ2gJok8d8qlDxCqQWMz7tnLThF0jEIZs6DZtP6We6Y/+
- Bx1IMh9h3yNW7F9qNJdiSO922dgbx0+mrKv377wrkc22p44SwlU99PBFbZUN9cVKYJAIc8Odwxm
- KwtteegAMvNEszQaMAX3mwO3ruoRn05JXrOB1XAqg8eA59CYcZfLxALRaiJyyvICNAIAaHMt8MY
- 1wvwJPQTqGlHXZA6jEs99tyYvIPek9nGei9hNjcXDOr+lxQM0Bwa3Y/EF9jk089IIcIqXwqcR5T
- edNfo5Npd5mXXQa8JQ0u2zI/eFN47ivAyRCjtvUsOM6IxgHEtjnKkpcfJAneFx0Coi2j4AD3zTa
- da8tX4arNppdy9ytLQZxI+VA2GRs/sE5jMo6vCMKFcD9Nny1GWxsZSLuhdoIVpx1aowc9k+pVYd
- 6i86Dvp5v7W4fhJikFqToSsh+ZndnD4bd6Yrg/uuTa0YGz6geZCVx8NyxtdNsxdwaU1mHNuJMVq
- AEACBysJSfwuAL0TlI5W6j0RWQnK4aPXz6JNWA1tPErtYJnb0Nc7WeAG1mOO6zHXdWzYbi6YCD0
- 8pdLmHcIyFoJpVw==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6304:EE_|MN6PR11MB8146:EE_
+X-MS-Office365-Filtering-Correlation-Id: eab63e3d-589d-4d87-6eb7-08dcd1a2e9a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EMSLLnUZ425zid4JCzwYww68bBGBOeNBHcVaST+NMxWc4vGZ0Op/u+FgzRB7?=
+ =?us-ascii?Q?QvT4InqdSGqnqRBPtY9QBJsMtrLuR1ROVoqtDUV32R/n0nGWTyhKizb0xeIL?=
+ =?us-ascii?Q?A4U6SBXymAUFOey4smlmdivU2Ro2iEFCz7X5ydZ1b7p0xw2h+rcz75aAZdqk?=
+ =?us-ascii?Q?dvc9ud1XyY3ZGDBGpWPHqYQ1WstbPxNgfgCZFCYui1Vzrcs9Iyo6l7/Wjtpm?=
+ =?us-ascii?Q?ggoigzDGTW4lUEYdcpyf3uGWs/uethhku8aLUURSCoryaZvIEULNn5XfHov6?=
+ =?us-ascii?Q?8SSK/LyNEpatimlM41wZl9vOYvSj8RlCDGhWjdNxg9ax/NEd9y1YBBpHrzi7?=
+ =?us-ascii?Q?1dx9OcKrMxAVz4td6P2tXkD+rTXU30aXoO6HZBj5qhmWxxOMjiZuSpl33i4z?=
+ =?us-ascii?Q?LMkE6sOLU4dDLpE9zvq75KvuuDjwe/ujs0+5G/yhh4RfolfMkLea73a+QfQa?=
+ =?us-ascii?Q?yUNPDAqlKY4VZ1Vdn1UWaHtaJT3SnGwU75A2TuQrEtnAcTpdO8CPhAFMEqNo?=
+ =?us-ascii?Q?y2ny8ffI5zSHA/nd4F6O94/nbcKyC6s6RjyZ72cMJBM1gQajrKmVTvpBm29y?=
+ =?us-ascii?Q?/06wLzISgFUubVfCdzRVqZt0MU3y1gJ8Woa2/1nZR05rEljiJ0FrR0xrlBQA?=
+ =?us-ascii?Q?RA1HviF/pQRobZmm4zY9kxOAZpBogpnJQvNGOy1FqI56NnyD38WZtW98/StV?=
+ =?us-ascii?Q?EYQPNdOnK+2hhQMWclpmm8obPsvRjEIsQ/keFIp4bH/SNKsqqoR2HPgz4Cwm?=
+ =?us-ascii?Q?wUsS8dnZvJN5NfaTGREAHbPTN3iHZWziZxDTGXZnkeeFJddXKOYdYQXf3bo4?=
+ =?us-ascii?Q?pV6sDxinqpTEmQ+oFoYwJyDPkdNyvSVFqX6CNcu8E5ZSZHlrMnTXFR67Veih?=
+ =?us-ascii?Q?oU2XHtc4tnsyh8gwcbXPssJ3KEeoYc5GR9NKAz7zRVW5W4AUGXzkFS7kde2J?=
+ =?us-ascii?Q?nuX6iVTyQBxGfLZXhRb18niRkxAQc5xNqK3H4xJMt8cTTOcdkXKPMJnKe5JF?=
+ =?us-ascii?Q?zxQrkKIjZJAYIJ0JcsAvYkdH+1hu4Mw5MQ2p1xJ5o5yXTyRCMWiEdj2VL6sx?=
+ =?us-ascii?Q?LMehq7+BFSz8h4Cd4qV5w6ZuNpQlPdMzKrsFg3VXyN6d+gGTPMREmAIe0mLt?=
+ =?us-ascii?Q?rB445ZHaqWDmh7LN2NFt7q4S1u1l9O4PjN+Bdz7SjhLvJNYOxqhicSY6m4KG?=
+ =?us-ascii?Q?AduiiZvUUM/4gV4rLBoIEeNYwlwKfIqcARJ0TT6EPysLlKLybPtNUs9tUGsf?=
+ =?us-ascii?Q?ycsZn5pNhOwzzz+jnx1XyHsto1+Bk6O+YfDvtd7e/rTgh3B4e88CTW6Xm048?=
+ =?us-ascii?Q?pHjfs+2mIWVZ+uipVufWJzit1wKY9mZ6BYLI3Tc+tZ28Qw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6304.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lqsuNYSJvQKjGp00kaAcoRpyuNCH/avug+eot0OTOFvwSYvGaSoU/YmL6b9T?=
+ =?us-ascii?Q?QMiD6gNLAo7teR9tgas0pR8cH6eEf/itO60fj4vwSt2hx+K2DgaWSzUu5i3T?=
+ =?us-ascii?Q?jsjgOO7ZCTgsiYdMEItUBGE+lcowLylMr8L44fem9QGrHE94FWGZGtf01ppF?=
+ =?us-ascii?Q?QueuPd6bRFF+7pzV5/i8RNHIhgVkNa3GlInOdbceBnH2Ug8ouIAvfAYTjmZO?=
+ =?us-ascii?Q?VeB09ns6qJSaCO357x/TxnLc3pexR3goAxUwsV7jJ01yban/kYHq3DxqHYZa?=
+ =?us-ascii?Q?HFtBvUCaohkH7SwBeXyG7X6TP7qnrc5DLLFeruaH5mP9mWtFOKDY0X5R/InB?=
+ =?us-ascii?Q?7Qwc2rb1Mi1VMgJAAWDWHQhLMtUY9mshVvPXQKgdqg2f/tvP4DeQ50nKG/Ft?=
+ =?us-ascii?Q?c0+QpQSTVsr2SvJg/JzHqLb7ymZYGrIfbA/yiuQVwsGKMgzdWbgW9SJNMlQT?=
+ =?us-ascii?Q?ch5Ej82+XhC+BIRObcArS7ttNNscy2s26D3bNMd98WUtRS+iPu1PGkxzR8vr?=
+ =?us-ascii?Q?F/u/7AyuL+TrTqaAyhGxrlcL0fuk2S/jvATlgtIk+a8hOvtvlYUbieDG+EaM?=
+ =?us-ascii?Q?ZFIhK94sTVrzPaRUWreaPgqolrkFwXaML8NdPh6BAkeb7T8v0PrpvYHfUdst?=
+ =?us-ascii?Q?9lagwedchJUoueyb4E330zDF84N9vMJosPv41WmTttfKGExuUZBpL6Rh61YT?=
+ =?us-ascii?Q?YOOQqioHlFf5jDCF6RT+g0zDa+XB5BMrVcSKqz9kxX5FahulgLzH8WpUxaRm?=
+ =?us-ascii?Q?NJ8Ry7afv72fs27W74KvEiYh8w7tEtRgBvai7sh+3qW411ekvswJ0g5onAr+?=
+ =?us-ascii?Q?43vKkwyLg/iDPc9a9Ro7gv/r2ig7AhIxzt45oyEcKr3yg0fjEBsGPnlF0iA8?=
+ =?us-ascii?Q?nz8UPsqzWunc3yFwx2TI6g605VnJv3WxB5zBUjG7xIlIFrJYicEC/UyLzDbp?=
+ =?us-ascii?Q?8/hztbs/a3P+tPFo2pLfteureV1Q88mISU1dyGbJkdHj1rxmkuOvb9GtZUr9?=
+ =?us-ascii?Q?W9tM6RQL4INxVuXEuHMc4I6+k3g1dhXkxF5cyv6kMCYnZb5wF8BNRlPd+u9U?=
+ =?us-ascii?Q?f2mXoeEzun+R1XjKJ8GpvVhGWA7XbtzEs7N3bR7KhTU8/9r03eSkVdP2emX4?=
+ =?us-ascii?Q?ajJENRzIhpYnf97o2iaguwuetKOCoE7sX70XQdwS3tNHNd9vLyFwEozG105h?=
+ =?us-ascii?Q?2A/ZRT8CmdrGvD0Z127+v0X2HCLb0yrIp2XuW3sB3I9G6pG+iKcKlwKl8Oqx?=
+ =?us-ascii?Q?G8KXQfpwYjru/RPd1vrRaFZA0o/0f4959OzsX3H76GWjYMdLNJ4BEDt3p/Xp?=
+ =?us-ascii?Q?QFFLIwPd1jsO2dnKZSVPMtOzoKPXEsupDfXxtnbgK2u2tJpAvdZvyhWcCtgn?=
+ =?us-ascii?Q?+aeTdhjVL4s+cGSh5tgTxuz7nzjVOmlX3E4JAxTBKQgTTUcAq44bQKM2iZZd?=
+ =?us-ascii?Q?Eb/43vfi+xagKF+wpH6D5ar/+qj4o7z8bpqwFMxpAZmeuvDbmdHtDIO9oq0Z?=
+ =?us-ascii?Q?w8ANDag4jJzuCzmSODk3LPSz7zT9f634FVHnS9yGcaEoXOWu9Xt/FVcPKUk4?=
+ =?us-ascii?Q?y/spyzlto4O/baChiGUMvf1iFoods8hqWgE8IKB7?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: eab63e3d-589d-4d87-6eb7-08dcd1a2e9a3
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6304.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 14:14:41.5323
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qf7DYT/r3nFTJU54YXQXw+EGoicqijPZYIm/CoO5nENZ7iV7DgTL9jxMhmdwsO5EdpCNCPZXrJhRq7TMgqMkEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8146
+X-OriginatorOrg: intel.com
 
-From: Geliang Tang <tanggeliang@kylinos.cn>
+On Tue, Sep 10, 2024 at 03:17:10PM +0200, Vlastimil Babka wrote:
+> On 9/9/24 03:29, Feng Tang wrote:
+> > KFENCE_TEST_REQUIRES macro is convenient for judging if a prerequisite of a
+> > test case exists. Lift it into kunit/test.h so that all kunit test cases
+> > can benefit from it.
+> > 
+> > Signed-off-by: Feng Tang <feng.tang@intel.com>
+> 
+> I think you should have Cc'd kunit and kfence maintainers on this one.
+> But if that's necessary depends on the review for patch 5...
 
-This patch adds a subtest named test_subflow in test_mptcp to load and
-verify the newly added MPTCP subflow BPF program. To goal is to make
-sure it is possible to set different socket options per subflows, while
-the userspace socket interface only lets the application to set the same
-socket options for the whole MPTCP connection and its multiple subflows.
+I added Marco Elver, Shuah Khan, David Gow and kasan-dev@googlegroups.com 
+for kence and kunit review. That should be incomplete, will add more in
+next verion. Thanks for the reminder!
 
-To check that, a client and a server are started in a dedicated netns,
-with veth interfaces to simulate multiple paths. They will exchange data
-to allow the creation of an additional subflow.
+- Feng
 
-When the different subflows are being created, the new MPTCP subflow BPF
-program will set some socket options: marks and TCP CC. The validation
-is done by the same program, when the userspace checks the value of the
-modified socket options. On the userspace side, it will see that the
-default values are still being used on the MPTCP connection, while the
-BPF program will see different options set per subflow of the same MPTCP
-connection.
-
-Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/76
-Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
- - v2 -> v3:
-   - Use './mptcp_pm_nl_ctl' instead of 'ip mptcp', not supported by the
-     BPF CI running IPRoute 5.5.0.
-   - Use SYS_NOFAIL() in _ss_search() instead of calling system()
- - v3 -> v4:
-   - Drop './mptcp_pm_nl_ctl', but skip this new test if 'ip mptcp' is
-     not supported.
- - v4 -> v5:
-   - Note that this new test is no longer skipped on the BPF CI, because
-     'ip mptcp' is now supported after the switch from Ubuntu 20.04 to
-     22.04.
-   - Update the commit message, reflecting the latest version.
-   - The validations are no longer done using 'ss', but using the new
-     BPF program added in the previous patch, to reduce the use of
-     external dependences.
----
- tools/testing/selftests/bpf/prog_tests/mptcp.c | 126 +++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index d2ca32fa3b21..c30f032edaca 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -9,8 +9,12 @@
- #include "network_helpers.h"
- #include "mptcp_sock.skel.h"
- #include "mptcpify.skel.h"
-+#include "mptcp_subflow.skel.h"
- 
- #define NS_TEST "mptcp_ns"
-+#define ADDR_1	"10.0.1.1"
-+#define ADDR_2	"10.0.1.2"
-+#define PORT_1	10001
- 
- #ifndef IPPROTO_MPTCP
- #define IPPROTO_MPTCP 262
-@@ -335,10 +339,132 @@ static void test_mptcpify(void)
- 	close(cgroup_fd);
- }
- 
-+static int endpoint_init(char *flags)
-+{
-+	SYS(fail, "ip -net %s link add veth1 type veth peer name veth2", NS_TEST);
-+	SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
-+	SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
-+	SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
-+	SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
-+	if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST, ADDR_2, flags)) {
-+		printf("'ip mptcp' not supported, skip this test.\n");
-+		test__skip();
-+		goto fail;
-+	}
-+
-+	return 0;
-+fail:
-+	return -1;
-+}
-+
-+static void wait_for_new_subflows(int fd)
-+{
-+	socklen_t len;
-+	u8 subflows;
-+	int err, i;
-+
-+	len = sizeof(subflows);
-+	/* Wait max 1 sec for new subflows to be created */
-+	for (i = 0; i < 10; i++) {
-+		err = getsockopt(fd, SOL_MPTCP, MPTCP_INFO, &subflows, &len);
-+		if (!err && subflows > 0)
-+			break;
-+
-+		sleep(0.1);
-+	}
-+}
-+
-+static void run_subflow(void)
-+{
-+	int server_fd, client_fd, err;
-+	char new[TCP_CA_NAME_MAX];
-+	char cc[TCP_CA_NAME_MAX];
-+	unsigned int mark;
-+	socklen_t len;
-+
-+	server_fd = start_mptcp_server(AF_INET, ADDR_1, PORT_1, 0);
-+	if (!ASSERT_OK_FD(server_fd, "start_mptcp_server"))
-+		return;
-+
-+	client_fd = connect_to_fd(server_fd, 0);
-+	if (!ASSERT_OK_FD(client_fd, "connect_to_fd"))
-+		goto close_server;
-+
-+	send_byte(client_fd);
-+	wait_for_new_subflows(client_fd);
-+
-+	len = sizeof(mark);
-+	err = getsockopt(client_fd, SOL_SOCKET, SO_MARK, &mark, &len);
-+	if (ASSERT_OK(err, "getsockopt(client_fd, SO_MARK)"))
-+		ASSERT_EQ(mark, 0, "mark");
-+
-+	len = sizeof(new);
-+	err = getsockopt(client_fd, SOL_TCP, TCP_CONGESTION, new, &len);
-+	if (ASSERT_OK(err, "getsockopt(client_fd, TCP_CONGESTION)")) {
-+		get_msk_ca_name(cc);
-+		ASSERT_STREQ(new, cc, "cc");
-+	}
-+
-+	close(client_fd);
-+close_server:
-+	close(server_fd);
-+}
-+
-+static void test_subflow(void)
-+{
-+	int cgroup_fd, prog_fd, err;
-+	struct mptcp_subflow *skel;
-+	struct nstoken *nstoken;
-+	struct bpf_link *link;
-+
-+	cgroup_fd = test__join_cgroup("/mptcp_subflow");
-+	if (!ASSERT_OK_FD(cgroup_fd, "join_cgroup: mptcp_subflow"))
-+		return;
-+
-+	skel = mptcp_subflow__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_load: mptcp_subflow"))
-+		goto close_cgroup;
-+
-+	skel->bss->pid = getpid();
-+
-+	err = mptcp_subflow__attach(skel);
-+	if (!ASSERT_OK(err, "skel_attach: mptcp_subflow"))
-+		goto skel_destroy;
-+
-+	prog_fd = bpf_program__fd(skel->progs.mptcp_subflow);
-+	err = bpf_prog_attach(prog_fd, cgroup_fd, BPF_CGROUP_SOCK_OPS, 0);
-+	if (!ASSERT_OK(err, "prog_attach"))
-+		goto skel_destroy;
-+
-+	nstoken = create_netns();
-+	if (!ASSERT_OK_PTR(nstoken, "create_netns: mptcp_subflow"))
-+		goto skel_destroy;
-+
-+	if (endpoint_init("subflow") < 0)
-+		goto close_netns;
-+
-+	link = bpf_program__attach_cgroup(skel->progs._getsockopt_subflow,
-+					  cgroup_fd);
-+	if (!ASSERT_OK_PTR(link, "getsockopt prog"))
-+		goto close_netns;
-+
-+	run_subflow();
-+
-+	bpf_link__destroy(link);
-+close_netns:
-+	cleanup_netns(nstoken);
-+skel_destroy:
-+	mptcp_subflow__destroy(skel);
-+close_cgroup:
-+	close(cgroup_fd);
-+}
-+
- void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
- 		test_base();
- 	if (test__start_subtest("mptcpify"))
- 		test_mptcpify();
-+	if (test__start_subtest("subflow"))
-+		test_subflow();
- }
-
--- 
-2.45.2
-
+> 
+> > ---
+> >  include/kunit/test.h    | 6 ++++++
+> >  mm/kfence/kfence_test.c | 9 ++-------
+> >  2 files changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/include/kunit/test.h b/include/kunit/test.h
+> > index 5ac237c949a0..8a8027e10b89 100644
+> > --- a/include/kunit/test.h
+> > +++ b/include/kunit/test.h
+> > @@ -643,6 +643,12 @@ void __printf(2, 3) kunit_log_append(struct string_stream *log, const char *fmt,
+> >  	WRITE_ONCE(test->last_seen.line, __LINE__);			       \
+> >  } while (0)
+> >  
+> > +#define KUNIT_TEST_REQUIRES(test, cond) do {			\
+> > +	if (!(cond))						\
+> > +		kunit_skip((test), "Test requires: " #cond);	\
+> > +} while (0)
+> > +
+> > +
+> >  /**
+> >   * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
+> >   * @test: The test context object.
+> > diff --git a/mm/kfence/kfence_test.c b/mm/kfence/kfence_test.c
+> > index 00fd17285285..5dbb22c8c44f 100644
+> > --- a/mm/kfence/kfence_test.c
+> > +++ b/mm/kfence/kfence_test.c
+> > @@ -32,11 +32,6 @@
+> >  #define arch_kfence_test_address(addr) (addr)
+> >  #endif
+> >  
+> > -#define KFENCE_TEST_REQUIRES(test, cond) do {			\
+> > -	if (!(cond))						\
+> > -		kunit_skip((test), "Test requires: " #cond);	\
+> > -} while (0)
+> > -
+> >  /* Report as observed from console. */
+> >  static struct {
+> >  	spinlock_t lock;
+> > @@ -561,7 +556,7 @@ static void test_init_on_free(struct kunit *test)
+> >  	};
+> >  	int i;
+> >  
+> > -	KFENCE_TEST_REQUIRES(test, IS_ENABLED(CONFIG_INIT_ON_FREE_DEFAULT_ON));
+> > +	KUNIT_TEST_REQUIRES(test, IS_ENABLED(CONFIG_INIT_ON_FREE_DEFAULT_ON));
+> >  	/* Assume it hasn't been disabled on command line. */
+> >  
+> >  	setup_test_cache(test, size, 0, NULL);
+> > @@ -609,7 +604,7 @@ static void test_gfpzero(struct kunit *test)
+> >  	int i;
+> >  
+> >  	/* Skip if we think it'd take too long. */
+> > -	KFENCE_TEST_REQUIRES(test, kfence_sample_interval <= 100);
+> > +	KUNIT_TEST_REQUIRES(test, kfence_sample_interval <= 100);
+> >  
+> >  	setup_test_cache(test, size, 0, NULL);
+> >  	buf1 = test_alloc(test, size, GFP_KERNEL, ALLOCATE_ANY);
+> 
 
