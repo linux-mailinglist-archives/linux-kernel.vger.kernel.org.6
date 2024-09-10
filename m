@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-323151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C159973891
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B73D9738A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2BA1C24B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2212864E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00451191F94;
-	Tue, 10 Sep 2024 13:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B575191F94;
+	Tue, 10 Sep 2024 13:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UvNI427V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHcAaJRW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38993137772;
-	Tue, 10 Sep 2024 13:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C7E137772
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725974729; cv=none; b=t0KjJL5dOOf7LbZhiHv++2MAQRft6OIx2cd+JFp0LZqlX1ySp404J50OWarGcwEZUrGkyM2n9RMbRcdJD0UXUCA+Pg8OO11Xdco9nw7b91pJV88RUG4P/OQL1Uv9e3Lu6PPIrlVXTLbrgBue/5MKwHGSw6/mZzrg2bgfDTq6apo=
+	t=1725974963; cv=none; b=t0hfw/EVV0JhJBJew3oVUx4RlrCUX9CgE49YbSoYpm0nsN2gETYCJ+mVxINOGelLBgXYXPeMHGGGJMInNl4si/vWRJlmjYlSYzgWU0b8ENz44a8n0aXQlWg3cC8jEr4iK8s/Sz/tBh5RFhE6LHnY2y1X9KTAznwgESt/3OPXSxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725974729; c=relaxed/simple;
-	bh=iErFQRjvVaeRZZjjypJjPsqKtrbs1/0tXgyfPY3kmLs=;
+	s=arc-20240116; t=1725974963; c=relaxed/simple;
+	bh=yfTc6oxpd+Mt+p18VAYXcuhQze32Z41xBhz/NewZGsI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oX8VHPyW+PXYn35+SG+npiFjBl4CCgebZAOb0M+2Z3g8dRljeLTxNTzQQsJKyoqK0UOEtqplTxRMH6G+uQfNhS9NujwhPHjLs90o6lAyGX6R6fTjP65pL41HvbtISHvgTwuzc5LjsyjnbwjfoDSMVFpvQ+M1E3nzFmQi5nzf6AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UvNI427V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11685C4CEC3;
-	Tue, 10 Sep 2024 13:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725974728;
-	bh=iErFQRjvVaeRZZjjypJjPsqKtrbs1/0tXgyfPY3kmLs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LILsMgqWVyoUdvuc3zT9MpFRNEqPuYU9xxXF8w5m31z5mOyjpaZBRV5B3GlQ9fjE/St9s2t6E7JYprcNgXo8Bp3bazqjI/DTdszywiqp/mK1ve8XdtzaQZQducoNG+1ZMIUAjpMLfrXe7DM2KrG13x3VSlsiG6SY49gsNeQQ4ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHcAaJRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478D0C4CEC3;
+	Tue, 10 Sep 2024 13:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725974963;
+	bh=yfTc6oxpd+Mt+p18VAYXcuhQze32Z41xBhz/NewZGsI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UvNI427V24MmWNO6p4R/aCPouxzmHYkcslJu44OJmlY074/gMUvEcJBgc+8unpqmo
-	 34Kabs2y6x+Vjsr883Q2aXbocI5JwTMoZrh90gNKM2+5gftHxV8NRsYCKcxeDQUyJK
-	 s0rfVlfTKn/PNMLuMk5eske1c5fS5DPZUSDYE9+Y=
-Date: Tue, 10 Sep 2024 15:25:25 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
-	sashal@kernel.org, parri.andrea@gmail.com,
-	mathieu.desnoyers@efficios.com, palmer@rivosinc.com,
-	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, nathan@kernel.org,
-	ndesaulniers@google.com, trix@redhat.com,
-	linux-riscv@lists.infradead.org, llvm@lists.linux.dev,
-	paulmck@kernel.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	brauner@kernel.org, arnd@arndb.de
-Subject: Re: [PATCH 6.6] membarrier: riscv: Add full memory barrier in
- switch_mm()
-Message-ID: <2024091056-bogus-whoops-4bde@gregkh>
-References: <10F34E3A3BFBC534+20240909025701.1101397-1-wangyuli@uniontech.com>
- <2024091002-caution-tinderbox-a847@gregkh>
- <364e0e33-68ad-4f0c-86f1-f6a95def9a30@ghiti.fr>
- <2024091037-errant-countdown-4928@gregkh>
- <5d486ff8-2ab5-4ed5-a1da-c2817927b3a2@ghiti.fr>
+	b=hHcAaJRWOUGEdqWKky0WxlBtwVlBuQ4xRlKQg3XW/F56aFVNmtFwB0FQoyoTfcVhc
+	 bNMgw93N7sGKydI3ORmARKZVAeFZSx9f1euMvNZxdrv3UIni7Qip+d2ps0Tgaj7XSk
+	 xy3TgGFs5xdsI8v1EyyQNP1wG0VNzBPsqR89lIvW8Uv/Sjwzzs/b3YFnVQZijJfA5a
+	 zrBe5rVqFPs/Sk0mXY+/WHlkYUvqjr1qP72vOMDifVNp4VRE9f/H2h351DfaUfWdj7
+	 kEvH+sdp6ZmvQpql1pb/DQDPfGCK9mmRYY89wx/US+4zer5VLu8CiZcslHQ7hPbIm7
+	 mgU97oyquwMeQ==
+Date: Tue, 10 Sep 2024 16:26:26 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Drop unused set_pte_safe()
+Message-ID: <ZuBJArZ2kNxen1_z@kernel.org>
+References: <20240910090409.374424-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,74 +57,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d486ff8-2ab5-4ed5-a1da-c2817927b3a2@ghiti.fr>
+In-Reply-To: <20240910090409.374424-1-anshuman.khandual@arm.com>
 
-On Tue, Sep 10, 2024 at 02:35:06PM +0200, Alexandre Ghiti wrote:
+On Tue, Sep 10, 2024 at 02:34:09PM +0530, Anshuman Khandual wrote:
+> All set_pte_safe() usage have been dropped after the commit eccd906484d1
+> ("x86/mm: Do not use set_{pud, pmd}_safe() when splitting a large page")
+> This just drops now unused helper set_pte_safe().
 > 
-> On 10/09/2024 13:58, Greg KH wrote:
-> > On Tue, Sep 10, 2024 at 01:31:04PM +0200, Alexandre Ghiti wrote:
-> > > Hi Greg,
-> > > 
-> > > On 10/09/2024 09:32, Greg KH wrote:
-> > > > On Mon, Sep 09, 2024 at 10:57:01AM +0800, WangYuli wrote:
-> > > > > From: Andrea Parri <parri.andrea@gmail.com>
-> > > > > 
-> > > > > [ Upstream commit d6cfd1770f20392d7009ae1fdb04733794514fa9 ]
-> > > > > 
-> > > > > The membarrier system call requires a full memory barrier after storing
-> > > > > to rq->curr, before going back to user-space.  The barrier is only
-> > > > > needed when switching between processes: the barrier is implied by
-> > > > > mmdrop() when switching from kernel to userspace, and it's not needed
-> > > > > when switching from userspace to kernel.
-> > > > > 
-> > > > > Rely on the feature/mechanism ARCH_HAS_MEMBARRIER_CALLBACKS and on the
-> > > > > primitive membarrier_arch_switch_mm(), already adopted by the PowerPC
-> > > > > architecture, to insert the required barrier.
-> > > > > 
-> > > > > Fixes: fab957c11efe2f ("RISC-V: Atomic and Locking Code")
-> > > > > Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> > > > > Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > > > > Link: https://lore.kernel.org/r/20240131144936.29190-2-parri.andrea@gmail.com
-> > > > > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> > > > > Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> > > > > ---
-> > > > >    MAINTAINERS                         |  2 +-
-> > > > >    arch/riscv/Kconfig                  |  1 +
-> > > > >    arch/riscv/include/asm/membarrier.h | 31 +++++++++++++++++++++++++++++
-> > > > >    arch/riscv/mm/context.c             |  2 ++
-> > > > >    kernel/sched/core.c                 |  5 +++--
-> > > > >    5 files changed, 38 insertions(+), 3 deletions(-)
-> > > > >    create mode 100644 arch/riscv/include/asm/membarrier.h
-> > > > Now queued up, thanks.
-> > > 
-> > > The original patch was merged in 6.9 and the Fixes tag points to a commit
-> > > introduced in v4.15. So IIUC, this patch should have been backported
-> > > "automatically" to the releases < 6.9 right? As stated in the documentation
-> > > (process/stable-kernel-rules.html):
-> > > 
-> > > "Note, such tagging is unnecessary if the stable team can derive the
-> > > appropriate versions from Fixes: tags."
-> > > 
-> > > Or did we miss something?
-> > Yes, you didn't tag cc: stable at all in this commit, which is why we
-> > did not see it.  The documentation says that :)
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> ---
+>  include/linux/pgtable.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 2a6a3cccfc36..aeabbf0db7c8 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -1058,12 +1058,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+>   * same value. Otherwise, use the typical "set" helpers and flush the
+>   * TLB.
+>   */
+> -#define set_pte_safe(ptep, pte) \
+> -({ \
+> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+> -	set_pte(ptep, pte); \
+> -})
+> -
+>  #define set_pmd_safe(pmdp, pmd) \
+>  ({ \
+>  	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
+> -- 
+> 2.30.2
 > 
 > 
-> Ok, some patches seem to make it to stable without the cc: stable tag (like
-> the one below for example), so I thought it was not necessary.
 
-Yes, they do, because many maintainers and developers don't follow the
-normal rules, so we sweep the tree when we have a chance and do a "best
-effort" backport at times.
-
-But again, it is NOT guaranteed that this will happen, and even if it
-does, you will NOT get emails saying the attempt-at-backporting fails,
-if it fails, as obviously the developers involved weren't explicitly
-asking for it to be backported.
-
-So in short, just properly tag things for stable, and all will be fine.
-
-thanks,
-
-greg k-h
+-- 
+Sincerely yours,
+Mike.
 
