@@ -1,162 +1,214 @@
-Return-Path: <linux-kernel+bounces-322548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF10972AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738E7972AB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BCE1C23E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA011F25128
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4A117E012;
-	Tue, 10 Sep 2024 07:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27CC17CA17;
+	Tue, 10 Sep 2024 07:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="p5AmSKrt"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KSSeH4UW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4A317CA1B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCB517BB3F;
+	Tue, 10 Sep 2024 07:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953215; cv=none; b=aS177Ks+n2wUZBlr2O1v+dOpMZoE8PeWmahXkg1jX/oHtiEdHfzu5/ewfi4coYcixQhC8ZKaymYP6cIFcLXOklAfmbTLSI7khnKGKvbsQr67BSz57Saqx3nUkaLYDaNpBDykzg/6FDr0Vrcte2QPm8oHOo9bLuOfsIU6eyz3lrw=
+	t=1725953337; cv=none; b=ZhLf2f1YOM7rRBYl+uXe/rgr95WogQiHL34kQL9CRjU1vQ4XX2oVAbhJ4oMBkWllgpinvNyDNaG5UxhX0YAZ/PB9c1CQexl6glGUceIoFST0No4XAJ+aHtnBw4ZqoyxRM3mHGh2go5n65NMcw16h1zsPZ0SV1/K+hoqZ8onCpAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953215; c=relaxed/simple;
-	bh=Gj5V2Egk4EGbaKkPeTjpfC7Xya042ySnvCaQqI4xPns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4GSPQuvYGVtdgB8i1Ksoa75FimZ9OTlpnp758AYvzKuEtSU7mvGm9XtXUlOQIsDDihoKkUYfWaKI1hmJb5nAYVTmIzFc+bXJIWxCTflPAMy/B99pgseEPgSMT1HnzE/j/W3fACqnbh/rRjDCftYyKWYr+b9Nk6I+cl14Brk2g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=p5AmSKrt; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c3eef39eso2914075f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1725953212; x=1726558012; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PxMzW8bRkSWH7N3FT2nOWV85gkTf+9ZwqbV1H9/D7u0=;
-        b=p5AmSKrtbLdv7meTVTf5hyBISVIAbYsSeIruRy/t5Lkkk7R8o+bHIYIPWo8sVnHO+c
-         bsUlhmgpmziGZm/u/DaopeGcZxW6hvExzm0ZROpJ7AsYd+wPJXdi1W0K8nTguq6IebWm
-         I4fP9ePDkDZGT8QDwLdAnpjRxJRUPDVPZmn1x/15oHfa7Ef9mfx22NBDycOowmUHL8k9
-         pB2DBLy14Nfv6VqPqbzvrD9oboVypmG9Zka8aRW6+CVpa3ElTyQ9h5KmXhy2YrzpAcv7
-         ZxtxHym/a07wrBVlCNzcpf2o7FBv95jan7WCcabtcTokuIZnkl1f9UF+qoPjnC4SfVvP
-         v8Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725953212; x=1726558012;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxMzW8bRkSWH7N3FT2nOWV85gkTf+9ZwqbV1H9/D7u0=;
-        b=w4e5gZ8xGLXq4gVRKB89Au0vpe+XCRGWtQqas1hoWv9Y9cteOHTnwKMs66UCJ31huy
-         7nIXze0Rp6Za0zryz/I0XK+Umevn8Sl38Qr9C6113MoJ6A7qoEoMzvliU7Ox5rkIHu8J
-         FGqU5A8bfpeALmq1C5sbOTi4Psd2XiavQjc5h0XbFIwZNpG3IhZcQd1K5UlbYf1BOlhU
-         bMjdAk5Of036CvsjAGOvJZou46LTJBlsEVrPEAZVdZTLYbET2bAukabMz02qRZIDV/Ir
-         ct2L0t4PgVG6Jb6+dhnG63nXAimvAoUHRK58DtjeeJvDnVqoyMF43ZvJbf34LAKzY7Aa
-         eWaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAH7YyFfuACJoATdE/MfMlNKSBEeetBQxTdiBM6TKGTMDwNlEgGcRJBiB11Btt3u5ig+ComtLvmApjZec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCn+nVeC2CwMtD5+LNwgEJKoDnkGYa6PMUffdS4/cllyBM4WW6
-	/imUNBwZzV+FlXuLDgcIqmbMf/f5ZjAXye9XpgxR/RzypBdKbANpEBt8toNasWM=
-X-Google-Smtp-Source: AGHT+IGESuTP3eLnl+EJI3vciZdTv1kUP9QMFpZOxqQKA5bFwEZ0VHvpLLczzXOyCMDvE2xlo0xZ8w==
-X-Received: by 2002:a05:6000:a8c:b0:371:7dda:d7d9 with SMTP id ffacd0b85a97d-378895c3004mr8487755f8f.9.1725953211362;
-        Tue, 10 Sep 2024 00:26:51 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956655fcsm8006471f8f.38.2024.09.10.00.26.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 00:26:51 -0700 (PDT)
-Message-ID: <c970dfb2-078c-4bf1-8b50-6e535cf4adf7@ursulin.net>
-Date: Tue, 10 Sep 2024 08:26:49 +0100
+	s=arc-20240116; t=1725953337; c=relaxed/simple;
+	bh=oHfOiuXeROeapZx5nV1VqUqUHQVGGiRVnhF4ET0GNEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZLail5Cwe+tnkZB/FyfiH2EerzVoinNJj6f9qNhltm/4M0O0ZlhOvD2d0i98PnuyxiGKJYnV5OVh7hu1DQP/earbbFx83I1h0WZuzS5u2UOER8HWHqjZmI8K/rI0ZMw58gHKLA19N/UcvZ7eoQCDNCuFNMz117w04kN36rdFQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KSSeH4UW; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725953336; x=1757489336;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oHfOiuXeROeapZx5nV1VqUqUHQVGGiRVnhF4ET0GNEs=;
+  b=KSSeH4UWLLD5BO5sShuGX4XvGITxobiVsMMkheV2mSwGqdqXmRXTBOHd
+   8hF6lwlU60GAPYwYt3NCWBajLdKukJGrMKH/0YYCQZftJjx6aaw1wV/Im
+   R8lneb+zn27KVGzeq2zxYVwplIAE9RadCVJrsUp98EHbhtsivi9rBfmTZ
+   V3sU8AJHTBNZzzUqFWErcS9vVeQ6hAO8NPuwUcIfhMDxOSXrMwnpYDEdB
+   1mKmgjd8+KI/81XdGwgOxZpeLRBr+ocNfqBECh5N6v8RwB9cmMXD4jUDT
+   y4VU01eLXFZQj8O29AWRa2CE28k6/PNDZyvmjOn+830R1Gjj6DKN4+GFX
+   A==;
+X-CSE-ConnectionGUID: 2fFTsUEWTzyypf9UWxDbig==
+X-CSE-MsgGUID: JjFczBwyRCSXUbVjLNYL2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="35822078"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="35822078"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 00:28:09 -0700
+X-CSE-ConnectionGUID: ku3WCRXqRQGfm8cvnjYRrA==
+X-CSE-MsgGUID: tvhMKvAkT4+uKOGx3IKQvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="71539619"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 10 Sep 2024 00:27:54 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1snvI0-0000E6-0U;
+	Tue, 10 Sep 2024 07:27:52 +0000
+Date: Tue, 10 Sep 2024 15:27:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	Yann Sionneau <ysionneau@kalrayinc.com>,
+	Julian Vetter <jvetter@kalrayinc.com>
+Subject: Re: [PATCH v2 3/4] Use generic io memcpy functions on the csky
+ architecture
+Message-ID: <202409101549.CyV0mJ2S-lkp@intel.com>
+References: <20240909133159.2024688-4-jvetter@kalrayinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/syncobj: Fix syncobj leak in
- drm_syncobj_eventfd_ioctl
-To: "T.J. Mercier" <tjmercier@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>
-Cc: Xingyu Jin <xingyuj@google.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240909205400.3498337-1-tjmercier@google.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20240909205400.3498337-1-tjmercier@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909133159.2024688-4-jvetter@kalrayinc.com>
+
+Hi Julian,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+[also build test ERROR on arm64/for-next/core soc/for-next linus/master v6.11-rc7 next-20240909]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Vetter/Consolidate-__memcpy_-to-from-io-and-__memset_io-into-a-single-lib/20240909-213659
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20240909133159.2024688-4-jvetter%40kalrayinc.com
+patch subject: [PATCH v2 3/4] Use generic io memcpy functions on the csky architecture
+config: csky-allnoconfig (https://download.01.org/0day-ci/archive/20240910/202409101549.CyV0mJ2S-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101549.CyV0mJ2S-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409101549.CyV0mJ2S-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from ./arch/csky/include/generated/asm/unaligned.h:1,
+                    from lib/io_copy.c:9:
+   lib/io_copy.c: In function '__memcpy_fromio':
+>> lib/io_copy.c:28:39: error: implicit declaration of function '__raw_readq'; did you mean '__raw_readl'? [-Wimplicit-function-declaration]
+      28 |                         put_unaligned(__raw_readq(from), (uintptr_t *)to);
+         |                                       ^~~~~~~~~~~
+   include/asm-generic/unaligned.h:19:22: note: in definition of macro '__put_unaligned_t'
+      19 |         __pptr->x = (val);                                                      \
+         |                      ^~~
+   lib/io_copy.c:28:25: note: in expansion of macro 'put_unaligned'
+      28 |                         put_unaligned(__raw_readq(from), (uintptr_t *)to);
+         |                         ^~~~~~~~~~~~~
+   lib/io_copy.c: In function '__memcpy_toio':
+>> lib/io_copy.c:57:25: error: implicit declaration of function '__raw_writeq'; did you mean '__raw_writel'? [-Wimplicit-function-declaration]
+      57 |                         __raw_writeq(get_unaligned((uintptr_t *)from), to);
+         |                         ^~~~~~~~~~~~
+         |                         __raw_writel
+   lib/io_copy.c: In function '__memset_io':
+>> lib/io_copy.c:83:26: warning: left shift count >= width of type [-Wshift-count-overflow]
+      83 |                 qc |= qc << 32;
+         |                          ^~
 
 
-On 09/09/2024 21:53, T.J. Mercier wrote:
-> A syncobj reference is taken in drm_syncobj_find, but not released if
-> eventfd_ctx_fdget or kzalloc fails. Put the reference in these error
-> paths.
-> 
-> Reported-by: Xingyu Jin <xingyuj@google.com>
-> Fixes: c7a472297169 ("drm/syncobj: add IOCTL to register an eventfd")
-> Signed-off-by: T.J. Mercier <tjmercier@google.com>
-> ---
->   drivers/gpu/drm/drm_syncobj.c | 17 +++++++++++++----
->   1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
-> index a0e94217b511..4fcfc0b9b386 100644
-> --- a/drivers/gpu/drm/drm_syncobj.c
-> +++ b/drivers/gpu/drm/drm_syncobj.c
-> @@ -1464,6 +1464,7 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
->   	struct drm_syncobj *syncobj;
->   	struct eventfd_ctx *ev_fd_ctx;
->   	struct syncobj_eventfd_entry *entry;
-> +	int ret;
->   
->   	if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ_TIMELINE))
->   		return -EOPNOTSUPP;
-> @@ -1479,13 +1480,15 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
->   		return -ENOENT;
->   
->   	ev_fd_ctx = eventfd_ctx_fdget(args->fd);
-> -	if (IS_ERR(ev_fd_ctx))
-> -		return PTR_ERR(ev_fd_ctx);
-> +	if (IS_ERR(ev_fd_ctx)) {
-> +		ret = PTR_ERR(ev_fd_ctx);
-> +		goto err_fdget;
-> +	}
->   
->   	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
->   	if (!entry) {
-> -		eventfd_ctx_put(ev_fd_ctx);
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto err_kzalloc;
->   	}
->   	entry->syncobj = syncobj;
->   	entry->ev_fd_ctx = ev_fd_ctx;
-> @@ -1496,6 +1499,12 @@ drm_syncobj_eventfd_ioctl(struct drm_device *dev, void *data,
->   	drm_syncobj_put(syncobj);
->   
->   	return 0;
-> +
-> +err_kzalloc:
-> +	eventfd_ctx_put(ev_fd_ctx);
-> +err_fdget:
-> +	drm_syncobj_put(syncobj);
-> +	return ret;
->   }
->   
->   int
+vim +28 lib/io_copy.c
 
-Easy enough to review while browsing the list:
+6a9bfa83709a84e Julian Vetter 2024-09-09  16  
+6a9bfa83709a84e Julian Vetter 2024-09-09  17  void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
+6a9bfa83709a84e Julian Vetter 2024-09-09  18  {
+6a9bfa83709a84e Julian Vetter 2024-09-09  19  	while (count && !IS_ALIGNED((unsigned long)from, NATIVE_STORE_SIZE)) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  20  		*(u8 *)to = __raw_readb(from);
+6a9bfa83709a84e Julian Vetter 2024-09-09  21  		from++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  22  		to++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  23  		count--;
+6a9bfa83709a84e Julian Vetter 2024-09-09  24  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  25  
+6a9bfa83709a84e Julian Vetter 2024-09-09  26  	while (count >= NATIVE_STORE_SIZE) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  27  		if (IS_ENABLED(CONFIG_64BIT))
+6a9bfa83709a84e Julian Vetter 2024-09-09 @28  			put_unaligned(__raw_readq(from), (uintptr_t *)to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  29  		else
+6a9bfa83709a84e Julian Vetter 2024-09-09  30  			put_unaligned(__raw_readl(from), (uintptr_t *)to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  31  
+6a9bfa83709a84e Julian Vetter 2024-09-09  32  		from += NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  33  		to += NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  34  		count -= NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  35  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  36  
+6a9bfa83709a84e Julian Vetter 2024-09-09  37  	while (count) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  38  		*(u8 *)to = __raw_readb(from);
+6a9bfa83709a84e Julian Vetter 2024-09-09  39  		from++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  40  		to++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  41  		count--;
+6a9bfa83709a84e Julian Vetter 2024-09-09  42  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  43  }
+6a9bfa83709a84e Julian Vetter 2024-09-09  44  EXPORT_SYMBOL(__memcpy_fromio);
+6a9bfa83709a84e Julian Vetter 2024-09-09  45  
+6a9bfa83709a84e Julian Vetter 2024-09-09  46  void __memcpy_toio(volatile void __iomem *to, const void *from, size_t count)
+6a9bfa83709a84e Julian Vetter 2024-09-09  47  {
+6a9bfa83709a84e Julian Vetter 2024-09-09  48  	while (count && !IS_ALIGNED((unsigned long)to, NATIVE_STORE_SIZE)) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  49  		__raw_writeb(*(u8 *)from, to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  50  		from++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  51  		to++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  52  		count--;
+6a9bfa83709a84e Julian Vetter 2024-09-09  53  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  54  
+6a9bfa83709a84e Julian Vetter 2024-09-09  55  	while (count >= NATIVE_STORE_SIZE) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  56  		if (IS_ENABLED(CONFIG_64BIT))
+6a9bfa83709a84e Julian Vetter 2024-09-09 @57  			__raw_writeq(get_unaligned((uintptr_t *)from), to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  58  		else
+6a9bfa83709a84e Julian Vetter 2024-09-09  59  			__raw_writel(get_unaligned((uintptr_t *)from), to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  60  
+6a9bfa83709a84e Julian Vetter 2024-09-09  61  		from += NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  62  		to += NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  63  		count -= NATIVE_STORE_SIZE;
+6a9bfa83709a84e Julian Vetter 2024-09-09  64  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  65  
+6a9bfa83709a84e Julian Vetter 2024-09-09  66  	while (count) {
+6a9bfa83709a84e Julian Vetter 2024-09-09  67  		__raw_writeb(*(u8 *)from, to);
+6a9bfa83709a84e Julian Vetter 2024-09-09  68  		from++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  69  		to++;
+6a9bfa83709a84e Julian Vetter 2024-09-09  70  		count--;
+6a9bfa83709a84e Julian Vetter 2024-09-09  71  	}
+6a9bfa83709a84e Julian Vetter 2024-09-09  72  }
+6a9bfa83709a84e Julian Vetter 2024-09-09  73  EXPORT_SYMBOL(__memcpy_toio);
+6a9bfa83709a84e Julian Vetter 2024-09-09  74  
+6a9bfa83709a84e Julian Vetter 2024-09-09  75  void __memset_io(volatile void __iomem *dst, int c, size_t count)
+6a9bfa83709a84e Julian Vetter 2024-09-09  76  {
+6a9bfa83709a84e Julian Vetter 2024-09-09  77  	uintptr_t qc = (u8)c;
+6a9bfa83709a84e Julian Vetter 2024-09-09  78  
+6a9bfa83709a84e Julian Vetter 2024-09-09  79  	qc |= qc << 8;
+6a9bfa83709a84e Julian Vetter 2024-09-09  80  	qc |= qc << 16;
+6a9bfa83709a84e Julian Vetter 2024-09-09  81  
+6a9bfa83709a84e Julian Vetter 2024-09-09  82  	if (IS_ENABLED(CONFIG_64BIT))
+6a9bfa83709a84e Julian Vetter 2024-09-09 @83  		qc |= qc << 32;
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Regards,
-
-Tvrtko
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
