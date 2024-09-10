@@ -1,141 +1,218 @@
-Return-Path: <linux-kernel+bounces-322742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817A1972D1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F843972D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06BD0B23CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC67E282BB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118DA188586;
-	Tue, 10 Sep 2024 09:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA98618801B;
+	Tue, 10 Sep 2024 09:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ODmDPNLj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f2bKFIaw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194FB187FF1;
-	Tue, 10 Sep 2024 09:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81358186E4B;
+	Tue, 10 Sep 2024 09:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725959587; cv=none; b=OgF9kztJ+Cd/NskW4bi5zGFsdYDQK4LA7R9YfwBOS3yP4PGxNaG11cpK9HQs8vO92/CToLOiwSQnol1BehYnOWcmi6HvfXbj1wZ9Aa1dPntS0IorP7Y+f3Gks+dMUhm8ty3JdS4uuHs1jikn0eP8ZpemP04aairBlnM1mMOvK/E=
+	t=1725959616; cv=none; b=D8is7BeLrr8sgEVAWmiPxOrfXekIp2o0OVREEuR+ps6sCMGditFX3F8xmaI/xqg/ZqOmHDJMdQJWk61ZU8unS8Z1ZKG1s8nSNKNevcmElNzfEXK3itoPSzNy0CnIve+v05cneNDs3bG1Sfy/b0JmPznnd9zhCpv1ZAfh3JX64FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725959587; c=relaxed/simple;
-	bh=Lezq+U3H887inOfyy3V1Me75JuHcQiTlIihEXv/5Fbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fzf3auY46obGn5heDiZHRwjdARRK3OCOYn8/SQ0naAhChYk5dG/CHIm7b//q6eZJTe7YV1OXxHF60w9d9Y4E40nKi3i0TcOZfEFxXV0qvV+y6KA7G7JAr5/WnO8/2rQs2aAaOq/q8mocZQuu/f6p4UJCsAUEa0G8JswxMDceOJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ODmDPNLj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A3vB6k021155;
-	Tue, 10 Sep 2024 09:12:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FmH+zB6/GPs4UaIX/qXAiBvZoKZi8FD1npayW8UUFd0=; b=ODmDPNLjBjtU+EgL
-	lsRfBrFYo2miY7LhNXUe1VaO/fJqW7O5HWiXoZGbf80oHGyGJlxnSaTBNYhn0VlW
-	h8urQTrUU8JWNPtUu+43cBby/MyMmqqUidM/zJIO/HIJbaEEwFYygdSTYIEBHEv1
-	+4in2EmA1+bwEmsTiG36BOgu9hRxEzebJfTJL1pQVVnczhJqpuuc2rNVwF2OyovE
-	4XKx5ndyyWL8P62qVOH12B2M9jqrJ7UxjJRuX+FA+hx2Q1uK7WuFmc2GcJKpXC4p
-	RMydJYYIcDjU7Sil8ka7oQjQ0HmvcObaFDeZhfcPKfsgu8I21oGYUjhRhm5xzkcT
-	FazflA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy59wdtg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 09:12:56 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A9CuvV010001
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 09:12:56 GMT
-Received: from [10.218.13.83] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Sep
- 2024 02:12:50 -0700
-Message-ID: <76f9f086-583f-4f5b-b5f8-04f0a53e0b1d@quicinc.com>
-Date: Tue, 10 Sep 2024 14:42:47 +0530
+	s=arc-20240116; t=1725959616; c=relaxed/simple;
+	bh=YINo2g1H0Op1NpkCuXXnppwfgjGpy5ajXOb4LCsVAZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1c358P0nnUy2ZbSSeF4FtJJR80Nq8FM4XFCb15CSZ0cra9VbyOIb8N2F429kcezV0r0q6oTwgcygHLv/AjkZN/vQUA3h/rBXsGHt/EwQa+xoK0nBCa8KnOJtoYC9t7uZG2N+ULjEiUbF61Qn3Ds0qPcyu7qzwqIS0oN5U5YNLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f2bKFIaw; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725959615; x=1757495615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YINo2g1H0Op1NpkCuXXnppwfgjGpy5ajXOb4LCsVAZY=;
+  b=f2bKFIawRYPxlgoALOyzl/0bqVdaCGsI34R4clUFmy6Xol2WqSXghQEM
+   XJP04uvF0TdkQNEF0M8CvXrDYktnT4bNOWMh4USuHSDgWmpcFpy5wePl6
+   2EY3bwIaQzLN9kuyBC+oFaIZBBMeZnUcXbDrEBx+LA3egqOW0oQbSXpW9
+   BQ4moR6laTSCBS8EUGbC+s9JVknSvv1Fb2+7c8CPCBE8L+H45bKwP1RSN
+   dUrQ8jjBzoCjGmqYbAO1Bpx79bfjihyaOtJJFUQG0D7UcCHoWgEM8CjrM
+   Y+IPnHuE7c7/dHMlUUjK2PLnaoiqJdIfmPiJo2DKKyg5s8Km7IjIRG+Hp
+   w==;
+X-CSE-ConnectionGUID: G52eIM+GQreFjZb/6oSmWw==
+X-CSE-MsgGUID: uFVuNQp4T4KwSkNDk/eAiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="47210552"
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="47210552"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 02:13:34 -0700
+X-CSE-ConnectionGUID: HXDW64PPTlm42dqy064KGw==
+X-CSE-MsgGUID: so8cop4WRbyQJo57SG7cqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
+   d="scan'208";a="67256093"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 10 Sep 2024 02:13:31 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0EC5520B; Tue, 10 Sep 2024 12:13:30 +0300 (EEST)
+Date: Tue, 10 Sep 2024 12:13:29 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Gary Li <Gary.Li@amd.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240910091329.GI275077@black.fi.intel.com>
+References: <20240903182509.GA260253@bhelgaas>
+ <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
+ <20240904120545.GF1532424@black.fi.intel.com>
+ <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
+ <20240905093325.GJ1532424@black.fi.intel.com>
+ <b4237bef-809f-4d78-8a70-d962e7eb467b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Konrad Dybcio <konradybcio@kernel.org>, <neil.armstrong@linaro.org>,
-        <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <conor+dt@kernel.org>,
-        <agross@kernel.org>, <devicetree@vger.kernel.org>, <vkoul@kernel.org>,
-        <linux@treblig.org>, <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>
-CC: <quic_vdadhani@quicinc.com>
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
- <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
- <3bd27b6d-74b8-4f7b-b3eb-64682442bbda@quicinc.com>
- <3fa58f58-c1d2-41ac-b85b-c86bce5c06b9@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <3fa58f58-c1d2-41ac-b85b-c86bce5c06b9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rwKpTtjDbrB3nDd67LIhzauXPhVEcnZH
-X-Proofpoint-ORIG-GUID: rwKpTtjDbrB3nDd67LIhzauXPhVEcnZH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 clxscore=1015 adultscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100069
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b4237bef-809f-4d78-8a70-d962e7eb467b@amd.com>
 
-Thanks Konrad !
+Hi,
 
-On 9/9/2024 5:07 PM, Konrad Dybcio wrote:
-> On 9.09.2024 11:18 AM, Mukesh Kumar Savaliya wrote:
->> Hi Neil,
->>
->> On 9/9/2024 2:24 PM, neil.armstrong@linaro.org wrote:
->>> Hi,
->>>
->>> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
->>>> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
->>>> Use  "qcom,shared-se" flag in a particular i2c instance node if the
->>>> usecase requires i2c controller to be shared.
->>>>
->>>> I2C driver just need to mark first_msg and last_msg flag to help indicate
->>>> GPI driver to  take lock and unlock TRE there by protecting from concurrent
->>>> access from other EE or Subsystem.
->>>>
->>>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
->>>> Unlock TRE for the respective transfer operations.
->>>>
->>>> Since the GPIOs are also shared for the i2c bus between two SS, do not
->>>> touch GPIO configuration during runtime suspend and only turn off the
->>>> clocks. This will allow other SS to continue to transfer the data
->>>> without any disturbance over the IO lines.
->>>
->>> This doesn't answer my question about what would be the behavior if one
->>> use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE DMA ?
->>>
->> Shared usecase is not supported for non GSI mode (FIFO and DMA), it should be static usecase. Dynamic sharing from two clients of two subsystems is only for GSI mode. Hope this helps ?
+On Mon, Sep 09, 2024 at 03:40:54PM -0500, Mario Limonciello wrote:
+> > Few additional side paths here, though. This is supposed to work so that
+> > once the host router sleep bit is set the driver is supposed to allow
+> > the domain to enter sleep (e.g it should not be waken up before it is
+> > fully transitioned). That's what we do:
+> > 
+> > 1. All tunneled PCIe Root/Downstream ports are in D3.
+> > 2. All tunneled USB 3.x ports are in U3.
+> > 3. No DisplayPort is tunneled.
+> > 4. Thunderbolt driver enables wakes.
+> > 5. Thunderbolt driver writes sleep ready bit of the host router.
+> > 6. Thunderbolt driver runtime suspend is complete.
+> > 7. ACPI method is called (_PS3 or _PR3.OFF) that will trigger the "Sleep
+> > Event".
+> > 
+> > If between 5 and 7 there is device connected, it should not "abort" the
+> > sequence. Unfortunately this is not explict in the USB4 spec but the
+> > connection manager guide has similar note. Even if the connect happens
+> > there the "Sleep Event" should happen but after that it can trigger
+> > normal wakeup which will then bring everything back.
+> > 
+> > Would it be possible to enable tracing around these steps so that we
+> > could see if there is hotplug notification somewhere there that is not
+> > expected? Here are instructions how to get pretty accurate trace:
+> > 
+> > https://github.com/intel/tbtools?tab=readme-ov-file#tracing
+> > 
+> > Please also take full dmesg.
 > 
-> This should very much be explained in commit message and perhaps in code
+> Sure, here is the dmesg with tracing enabled:
 > 
-Noted,  will add in commit message and cover letter.
-> And since it can't work with FIFO mode, there should be checks in code
-> to disallow such invalid configurations
+> https://gist.github.com/superm1/5186e0023c8a5d2ecd75c50fd2168308
+
+Thanks! I meant also enable control channel tracing as explained in the
+above linked page so we could maybe see the hotplug packet coming from
+the lane adapter too. Anyhow,
+
+[  560.789681] thunderbolt 0-2: device disconnected
+[  560.789771] thunderbolt 0000:e5:00.5: bandwidth consumption changed, re-calculating estimated bandwidth
+[  560.789775] thunderbolt 0000:e5:00.5: bandwidth re-calculation done
+[  560.789778] thunderbolt 0000:e5:00.5: looking for DP IN <-> DP OUT pairs:
+[  560.789800] thunderbolt 0000:e5:00.5: 0:6: DP IN available
+[  560.789803] thunderbolt 0000:e5:00.5: 0:6: no suitable DP OUT adapter available, not tunneling
+[  560.790484] thunderbolt 0000:e5:00.5: 0:7: DP IN available
+[  560.790487] thunderbolt 0000:e5:00.5: 0:7: no suitable DP OUT adapter available, not tunneling
+...
+[  578.677640] thunderbolt 0000:e5:00.5: nhi_runtime_suspend() - enter, pdev->current_state = 0
+[  578.677648] thunderbolt 0000:e5:00.5: 0: suspending switch
+[  578.677653] thunderbolt 0000:e5:00.5: 0: enabling wakeup: 0x3f
+[  578.678248] thunderbolt 0000:e5:00.5: stopping RX ring 0
+[  578.678256] thunderbolt 0000:e5:00.5: disabling interrupt at register 0x38200 bit 3 (0x9 -> 0x1)
+[  578.678272] thunderbolt 0000:e5:00.5: stopping TX ring 0
+[  578.678277] thunderbolt 0000:e5:00.5: disabling interrupt at register 0x38200 bit 0 (0x1 -> 0x0)
+[  578.678287] thunderbolt 0000:e5:00.5: control channel stopped
+...
+pci_pm_runtime_resume()
+  pci_pm_default_resume_early(pci_dev);
+    pci_pm_power_up_and_verify_state(pci_dev);
+      pci_power_up(pci_dev);
+        platform_pci_set_power_state(dev, PCI_D0);
+	// here we should see acpi_pci_set_power_state() printing "xxx: power
+	// state changed by ACPI to D0" but we don't.
+	//
+	// also pdev->current_state is set to PCI_D0
+      pci_update_current_state(pci_dev, PCI_D0);
+        // this one reads it back, it should be 0..
+  pm->runtime_resume(dev);
+    nhi_runtime_resume(dev)
+[  578.773503] thunderbolt 0000:e5:00.5: nhi_runtime_resume() - enter, pdev->current_state = 3
+
+// .. but it is not. It seems to be powered off, D3cold.
+
+[  578.773516] thunderbolt 0000:e5:00.5: control channel starting...
+[  578.773518] thunderbolt 0000:e5:00.5: starting TX ring 0
+[  578.773524] thunderbolt 0000:e5:00.5: enabling interrupt at register 0x38200 bit 0 (0xffffffff -> 0xffffffff)
+
+// As here too.
+
+It would be interesting to see what ACPI does here, I mean enabling
+dynamic debugging of acpi_device_set_power() and friends. One suspect is
+that when the runtime suspends happens, the power resource or _PS3()
+gets called to put the device into D3cold and it has some sort of
+Sleep() inside. This allows the OS to relese the CPU to do other things
+too according to ACPI spec (and Linux does this) so now when you plug in
+the device the GPE triggers wake and Linux starts processing that one.
+We see the above runtime resume but then the Sleep() in the _PS3()
+completes and cuts the power from the NHI while we are in the middle of
+resuming it already (or something along those lines).
+
+We saw similar "context switch" happening when PCIe L2 failed, BIOS
+implemented the timeout using Sleep() that allowed Linux to process
+other things which resulted unexpected wake (not the same as here
+though).
+
+So one thing to check too is how the ACPI methods get called and
+especially if they somehow end up messing with each other.
+
+> > It is entirely possible that this has nothing to do with the issue but I
+> > think it is worth checking.
+> > 
+> > The second thing we could try is to check the wake status bits after
+> > this has happened, like:
+> > 
+> >    # tbdump -r 0 -a <ADAPTER> -vv -N 1 PORT_CS_18
+> > 
+> > (where <ADAPTER> is the lane 0 adapter of the USB4 port the device was
+> > connected).
+> > 
 > 
-Agree, will add in next patch.
-> Konrad
+> Unfortunately the adapter is in such a bad state at this time that tbdump
+> doesn't work.
+
+Oh, indeed it is.
+
+> > The third thing to try is to comment out TB_WAKE_ON_CONNECT in
+> > tb_switch_suspend(). This should result no wake even if the device is
+> > connected. This tells us that it is really the connect on USB4 port that
+> > triggered the wake.
+> 
+> Yup that's correct; there is no action on the hotplug with this change.
+
+Okay thanks for checking.
 
