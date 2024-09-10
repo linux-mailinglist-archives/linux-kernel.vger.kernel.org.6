@@ -1,97 +1,111 @@
-Return-Path: <linux-kernel+bounces-323925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548C797455D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:05:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE84C974561
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8151C1C25819
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:05:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3033DB22029
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB7E1AB52E;
-	Tue, 10 Sep 2024 22:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6765E1AB535;
+	Tue, 10 Sep 2024 22:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfpDMTbz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpQQk5gg"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078617BB3D;
-	Tue, 10 Sep 2024 22:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B5E17BB3D;
+	Tue, 10 Sep 2024 22:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726005915; cv=none; b=O0n+AqwVGZ3l5gRU14Ipoc3AL+ct43bbmjDhedjf1jw0ytTTjssi37wgnzJXFETcSiax1nFO2ko71peCjLCFNeGHitp4X0fPmgK5ZsP/Hi4K9xyYc8xV/y5Oz9pK2jV/Ttzlm9DcZYlR00rm4v+WINdJg7pyClNbLu2LKv4lnz0=
+	t=1726006048; cv=none; b=OJKeOQumRr75DLpHOO1DLMFVGxs4pPJaT06MCOVR3KpJq35Ps/8radGBgHla9yeO6MiHjQ9oGHZGhRLIrZkEhpsMxewdy0iRtVfvyMv92Qw93tlGhVGKn0G4k+smVMDADpfok5d9EBLxuX9UjpZ+NFofvrckIVrUjvRpWp4nJLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726005915; c=relaxed/simple;
-	bh=NRLEHkoUp4iA1+zIm4JewpKZibG28aKp1yzvDTqM6F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wbv6rzLAxJnHH7RNsEQwu7XKcqv9P4IL/UQ4Bivy5wOGfrB6NEEC3uQ42p/Fcj+9LKGHPig77BSbf1cHuwIDRk0f7qgdyJ4lgNlr2STgOdRraEz0BT3781eewl0Y8wB4tFNBiBuMoh8D6RiVR7J8KoCyRbyeg50bsY+Q2cF59fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfpDMTbz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC21C4CEC3;
-	Tue, 10 Sep 2024 22:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726005915;
-	bh=NRLEHkoUp4iA1+zIm4JewpKZibG28aKp1yzvDTqM6F0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QfpDMTbzaIFpaCUfJciulQOrsSBF78SGRfK2Cxmt0YGdI4vpyzJftvvrKD3v4vS1E
-	 xoiHPaerNZVdaBfFzS+QVJjePMvaESihhtP5EWnhOQ1+B8F0qOdePDwlM9txshaJSh
-	 XdhlEpgVg8ghClMj1Jh44vVneN/T/Pexqx1TpoqnjOHj6FSaMwavfe13aUAnkbFWMS
-	 OiXiRMTyaqhGj8Wz2xo12o94/qypYiOIi5YTtHAINI/5K0FOmD4vjpIibWHgcScR9F
-	 wHM5pGBihAvuf7aoF/2VpmfJxq2z37jkwtJ1wVohHdCQdUnZVcE90OQoZbzfP4dse/
-	 /EES3xDlZhomA==
-Date: Tue, 10 Sep 2024 23:05:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
-Message-ID: <ea450041-b282-4667-b29d-22e633e2f034@sirena.org.uk>
-References: <20240910092557.876094467@linuxfoundation.org>
+	s=arc-20240116; t=1726006048; c=relaxed/simple;
+	bh=kdB8NLO4ZMDypGj2iACl796DbiWwdzaFuMblyo/sNnw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXM1o9UhGmgwD9Cd1i/Aerd+jZ9lPQZPQtgtRw/HYEoHKJQIMoMLVdg/4MOB903wL2D0hW62XNUV14syYIUnZ0H1ksc+Z197RPoupxtCHtmx01ME6GmEeu7vqh2/n3jqxZL0EeLgHAu9GnHDjzi9J3cc2G29kVfGEgi8iALj+ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpQQk5gg; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d13b83511so499647266b.2;
+        Tue, 10 Sep 2024 15:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726006045; x=1726610845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zaBHXlFSVgtX2uoKTZ5NhrWWMPF3C7Nb9IELiMHEquY=;
+        b=mpQQk5gg2oBVxWx6xZRbga1UDPhTKR68hLaXzw8djHskGq6we1Kj2wpoW/zTjOvczD
+         PIifaPXqy183cH8n6yZ1twSKWE/mD7R129G0+g/paXYCNX23VV1Bb7Hf3OIUrnypYJgg
+         4NygpEopl1HYWQmUP1+jam6j7hDFGFoLEIqAcbnfCm+X5Jyp6FZ8Z6L1b58XXuoYpM0X
+         OmRVFGA2e2XmHt9qEOYKzG8ocjmFXpRr0K3aKlYWkLMR+/h+wqIvR6GCO3/ltusCVBWX
+         7C2TuRu9ji/o8zQzGAdH8Dr//2tFXUrJ7DKXFgTtmdQRhhQk+mQbUYICWdp9OXOl1Olo
+         nsPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726006045; x=1726610845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zaBHXlFSVgtX2uoKTZ5NhrWWMPF3C7Nb9IELiMHEquY=;
+        b=v7YZQOBS5dLmf99x7UxK7awN1fVu9RrC9FCsAVHiDLZs2+3SQl6jXUgP0G3bQkR7oH
+         BeVSuSv+Npor6TTjmbbpniYOf5AmpcJqQXyfaP/JEl1knywqwWnVHFfhZHwK1RcyrSp2
+         /vowFpZacJWITvzRv4j2KcWz5F0bwV4P3Y10/vtR8uhnbx0IkDT7LxBR2c67EbBYwzkx
+         IyPgQ890qmu5ULdqHNIuT/WmjuSBCl80RpPNO2sPbHK+Km6NdGqy6N89aJaWXs16th6n
+         xJY3H7clOIhV72u4Uz6PKOQfs136rr3BTXqKyzh6azPLMg6E4GAzbssy8UevRQNooTKc
+         snYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgRP8cohF1uwseXwJU0PrxH6E2JD+mNuHc4bDfuSFgal3dUk24Ud2oIgM8+QQT2c43VV4MVJGCbcc=@vger.kernel.org, AJvYcCWzFuvERUdLZKB14Yce6+l5cEyc8aCuotoJhjbjWdt+6Rs7e3ztRUxuGWOMdbLQJCkaZ7qVsX/Q3T+oNgUs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1fTJglQY8xsCMbz7aVbZUmhmAn4D78cVOawQR+wd15VlNiTxU
+	m3lCDz4dzA5EEBRQBG6SFIhrtuGnMc10huif2PTuveLbgojpQQhP
+X-Google-Smtp-Source: AGHT+IExOL0WVn3DXnZe0alPPu0E0ST8azrpTI/W2OLMwUhsHGqeFbXh1M7j4Uu3nGk2HUNTCkaP9Q==
+X-Received: by 2002:a17:907:97d5:b0:a8a:8c4c:3e2a with SMTP id a640c23a62f3a-a8ffab29409mr173617366b.23.1726006045382;
+        Tue, 10 Sep 2024 15:07:25 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:5d47:19e4:3e71:414c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d74e26sm533905066b.225.2024.09.10.15.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 15:07:24 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 11 Sep 2024 00:07:22 +0200
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: iio: pressure: bmp280: Use char instead of s32 for data buffer
+Message-ID: <20240910220722.GD12725@vamoiridPC>
+References: <20240823172017.9028-1-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RhBarRI6VwanoEjX"
-Content-Disposition: inline
-In-Reply-To: <20240910092557.876094467@linuxfoundation.org>
-X-Cookie: You're not Dave.  Who are you?
-
-
---RhBarRI6VwanoEjX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240823172017.9028-1-vassilisamir@gmail.com>
 
-On Tue, Sep 10, 2024 at 11:30:24AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.110 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Aug 23, 2024 at 07:20:17PM +0200, Vasileios Amoiridis wrote:
+> As it was reported and discussed here [1], storing the sensor data in an
+> endian aware s32 buffer is not optimal. Advertising the timestamp as an
+> addition of 2 s32 variables which is also implied is again not the best
+> practice. For that reason, change the s32 sensor_data buffer to a char
+> buffer with an extra value for the timestamp (as it is common practice).
+> 
+> [1]: https://lore.kernel.org/linux-iio/73d13cc0-afb9-4306-b498-5d821728c3ba@stanley.mountain/
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 43 +++++++++++++++++-------------
+>  drivers/iio/pressure/bmp280.h      |  5 +++-
+>  2 files changed, 28 insertions(+), 20 deletions(-)
+> 
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Hi Jonathan,
 
---RhBarRI6VwanoEjX
-Content-Type: application/pgp-signature; name="signature.asc"
+I noticed that this patch didn't receive any comments nor applied.
+Was this intentional because we wait for something from mainline to
+be merged back?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbgwpMACgkQJNaLcl1U
-h9CLswf/SxTNjChCzJGQauDu4Yy+LP1470itfUPiXzilyZpn9fY2qrb5Fy+VjNSO
-UdeCMgdUdXLJgSpysdmo3x2L6fPUGE0pY2Aqd/AZ6Tp1tUYXV2FC6PSF0GTUgmf1
-gh1t1qFKLePZ2qKAbq4Nk+NChWHNB+ELYxs0SmEJGoa3sXiYVK9dEtI8yHTN4Sox
-3a+6kVgJJu3dqSXOUS+eo4Olbrw1eY7+L6v7h94WG5/LA7RHvnThp+3bpEz4nuNI
-zBI42PtYEGS83gtDkBis2g6ZqplvZv98EmivjVFWx5Nl50UckaqCvVlVHPVatHqK
-3NI8nkQZRnxEkQNX8hZ0OCGQD86Ymw==
-=R0/4
------END PGP SIGNATURE-----
-
---RhBarRI6VwanoEjX--
+Cheers,
+Vasilis
 
