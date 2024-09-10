@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-323123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4750F973841
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C547973843
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4B628513C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3431285DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E881922F5;
-	Tue, 10 Sep 2024 13:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2B71922F6;
+	Tue, 10 Sep 2024 13:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaCbEsBa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fLxD+SZH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65CA17799F;
-	Tue, 10 Sep 2024 13:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F973191F72;
+	Tue, 10 Sep 2024 13:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725973587; cv=none; b=H/BTqMB1zxIBa0t/tX1Ck5TqbdQTJTVeln6tPPaGEDIr10MfS53mLo8m9+6s52T9ZIrzWwBYqP4O+Imhj/clXqKLAjvYxlwiOLZlTmInMWVzbs5qpgGOfVbpey/MSxDQTQDDvTsUbyjjX+PIl+v6FA3Um5+V5f3E3kLR2LxyruY=
+	t=1725973604; cv=none; b=kVOumgkpjGIs0MgagCaaIACVZN1wBOGfUz07nrJ8fI7YC00bRQ9Zz5i5bqNayl0s6Nxvf1uj8Jl12+rZk5ncqcc5cqhWBEl5aiJc6Htb95soIsQfha+KQ5etwXJWso/O1sUAeK3XDhKzii8sQwqencLIyw1PiHfFfDnkvIqWOyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725973587; c=relaxed/simple;
-	bh=8qv/qbqX+FSLrTmUR9r1kfR0lpNJmlhQgGQUTSQPCIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fsABB+B3khoZXxKaLdOzbI/E9tzL+XuwhqPtZ76dgYHpMBxfXe6+WZP/i7tsVfXhYs6cNV7PXpwQgZ3y4uqckiU7c/9w5klJ6tMnYmeIPhckj/S/kOime2VistGMDCtXpgKWlmFZBZw4fuWS3Ezu3DeQxyFrNKZf+IViA3MmWRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaCbEsBa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313F4C4CEC3;
-	Tue, 10 Sep 2024 13:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725973587;
-	bh=8qv/qbqX+FSLrTmUR9r1kfR0lpNJmlhQgGQUTSQPCIk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SaCbEsBaV4XAF8x7PTcwuWqQQ50nPLUyZ2udbfoAzXkwgV46S6sLaLilNmudW1DnV
-	 BSjJWPkUtcjzjIlsbWmswDkVllVTlIsdsMGce790rfVa/vq1sWbVWB2AAfyACUA2LA
-	 Ng/bM047MJLCa7NyX2rXOM823ettXxCrQ7trR20Fg5Y79oiWu9S+Z42DV2j1z4zqOh
-	 iV5S7m/y8N/wXXEk5ZzY7gvhImaJY3zaHjdIXoz4/VpCjufcYIKqi3tPiMtf2hBCRY
-	 jSNS34ix6mXdzHnLOLnaV2mf46gqXvNoDVALmgH2CMGG+7c/eA2UjyPT6Tz0WcoVIR
-	 LsuvSAc6jrMZA==
-Message-ID: <d2c82922-675e-470f-a4d3-d24c4aecf2e8@kernel.org>
-Date: Tue, 10 Sep 2024 22:06:23 +0900
+	s=arc-20240116; t=1725973604; c=relaxed/simple;
+	bh=Yz/kpha3wBkhE6LIgb99aDoBkB6GQjW3qis7RjJNGvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQ/aSWmI4kbaIeYin0HAUKu55ahOY/4UOtwMhRrTnp73oLAR0WugACJ2DneH7MDtCAA+7bl4m+rrytd7vW+RpU/qRgwDnvy00XUBnNkG9lWCIBZEA8PEml9QSOhHwpD4J/mLxE4BLQ7aHdqnQIgCvnFlr0il1wuolP+1HfZpYSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fLxD+SZH; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725973602; x=1757509602;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yz/kpha3wBkhE6LIgb99aDoBkB6GQjW3qis7RjJNGvk=;
+  b=fLxD+SZHzqPbeQF3kZNw81lHoWhXOSZbM3j6ctVCGpvKKjUq5+wRmPz8
+   w6tqvAQ4bfQXN13rMuKKw7v/N14NHBmclh/RCVi8DF425MAYu8sL2Ciu7
+   MjaamJwCNgc6+gYkIBHPjHOXOp6MESPt016nPUce8y1YjzTG/xcBY2zqi
+   Rs+1lM4PddZceqA3FYSHhXu/C98ebGv+s9cyhLOF5tPOA1qmPCsMhy2R4
+   bCBfqD8vfhTy3W2EMmXMsdpfsJxNNufLOY7uHSVe51vXA0kBniThgs7jq
+   YWQRhBL1DMBZydWKTdNIhmJlaKQSK2bf7DHeNb8dlyggRAO5CICGMd4F5
+   g==;
+X-CSE-ConnectionGUID: xbMurTaZQvG3s7Q5jsTCZQ==
+X-CSE-MsgGUID: Fkmxy9tsQ8uaQA/WRs+YKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24822637"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24822637"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 06:06:41 -0700
+X-CSE-ConnectionGUID: UBmpZ3GcT4KjmRobpQCIzw==
+X-CSE-MsgGUID: fGF6n0NGR/2IbP3iOG/jOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="66820124"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 10 Sep 2024 06:06:40 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1so0Zp-00026o-0d;
+	Tue, 10 Sep 2024 13:06:37 +0000
+Date: Tue, 10 Sep 2024 21:06:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Len Brown <lenb@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: Enable ACPI BGRT handling
+Message-ID: <202409102056.DNqh6zzA-lkp@intel.com>
+References: <20240909015514.597253-1-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression v6.11 booting cannot mount harddisks (xfs)
-To: Jesper Dangaard Brouer <hawk@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Netdev <netdev@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
- linux-ide@vger.kernel.org, cassel@kernel.org, handan.babu@oracle.com,
- djwong@kernel.org, Linux-XFS <linux-xfs@vger.kernel.org>,
- hdegoede@redhat.com, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, kernel-team <kernel-team@cloudflare.com>
-References: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909015514.597253-1-maobibo@loongson.cn>
 
-On 2024/09/10 21:19, Jesper Dangaard Brouer wrote:
-> Hi Linus,
-> 
-> My testlab kernel devel server isn't booting correctly on v6.11 branches 
-> (e.g. net-next at 6.11.0-rc5)
-> I just confirmed this also happens on your tree tag: v6.11-rc7.
-> 
-> The symptom/issue is that harddisk dev names (e.g /dev/sda, /dev/sdb, 
-> /dev/sdc) gets reordered.  I switched /etc/fstab to use UUID's instead 
-> (which boots on v6.10) but on 6.11 it still cannot mount harddisks and 
-> doesn't fully boot.
+Hi Bibo,
 
-Parallel SCSI device scanning has been around for a long time... This is
-controlled with CONFIG_SCSI_SCAN_ASYNC. And yes, that can cause disk names to
-change, which is why it is never a good idea to rely on them but instead use
-/dev/disk/by-* names. Disabling CONFIG_SCSI_SCAN_ASYNC will likely not guarantee
-that disk names will be constant, given that you seem to have 2 AHCI adapters on
-your host and PCI device scanning is done in parallel.
+kernel test robot noticed the following build warnings:
 
-> E.g. errors:
->    systemd[1]: Expecting device 
-> dev-disk-by\x2duuid-0c2b348d\x2de013\x2d482b\x2da91c\x2d029640ec427a.device 
-> - /dev/disk/by-uuid/0c2b348d-e013-482b-a91c-029640ec42
-> 7a...
->    [DEPEND] Dependency failed for var-lib.mount - /var/lib.
->    [...]
->    [ TIME ] Timed out waiting for device 
-> dev-d…499e46-b40d-4067-afd4-5f6ad09fcff2.
->    [DEPEND] Dependency failed for boot.mount - /boot.
-> 
-> That corresponds to fstab's:
->   - UUID=8b499e46-b40d-4067-afd4-5f6ad09fcff2 /boot     xfs defaults 0 0
->   - UUID=0c2b348d-e013-482b-a91c-029640ec427a /var/lib/ xfs defaults 0 0
-> 
-> It looks like disk controller initialization happens in *parallel* on
-> these newer kernels as dmesg shows init printk's overlapping:
-> 
->   [    5.683393] scsi 5:0:0:0: Direct-Access     ATA      SAMSUNG 
-> MZ7KM120 003Q PQ: 0 ANSI: 5
->   [    5.683641] scsi 7:0:0:0: Direct-Access     ATA      SAMSUNG 
-> MZ7KM120 003Q PQ: 0 ANSI: 5
->   [    5.683797] scsi 8:0:0:0: Direct-Access     ATA      Samsung SSD 
-> 840  BB0Q PQ: 0 ANSI: 5
->   [...]
->   [    7.057376] sd 5:0:0:0: [sda] 234441648 512-byte logical blocks: 
-> (120 GB/112 GiB)
->   [    7.062279] sd 7:0:0:0: [sdb] 234441648 512-byte logical blocks: 
-> (120 GB/112 GiB)
->   [    7.070628] sd 5:0:0:0: [sda] Write Protect is off
->   [    7.070701] sd 8:0:0:0: [sdc] 488397168 512-byte logical blocks: 
-> (250 GB/233 GiB)
-> 
-> Perhaps this could be a hint to what changed?
+[auto build test WARNING on b31c4492884252a8360f312a0ac2049349ddf603]
 
-See above. The disk /dev/sdX names not being reliable is rather normal.
-Are you sure you have the correct UUIDs of your FSes on the disks ? You can
-check them with "blkid /dev/sdX[n]"
+url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-Enable-ACPI-BGRT-handling/20240909-095705
+base:   b31c4492884252a8360f312a0ac2049349ddf603
+patch link:    https://lore.kernel.org/r/20240909015514.597253-1-maobibo%40loongson.cn
+patch subject: [PATCH] LoongArch: Enable ACPI BGRT handling
+config: loongarch-randconfig-r133-20240910 (https://download.01.org/0day-ci/archive/20240910/202409102056.DNqh6zzA-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240910/202409102056.DNqh6zzA-lkp@intel.com/reproduce)
 
-> Any hints what commit I should try to test revert?
-> Or good starting point for bisecting?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409102056.DNqh6zzA-lkp@intel.com/
 
-You said that 6.10 works, so maybe start from there ?
+sparse warnings: (new ones prefixed by >>)
+>> drivers/firmware/efi/efi-bgrt.c:69:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *image @@     got void [noderef] __iomem * @@
+   drivers/firmware/efi/efi-bgrt.c:69:15: sparse:     expected void *image
+   drivers/firmware/efi/efi-bgrt.c:69:15: sparse:     got void [noderef] __iomem *
+>> drivers/firmware/efi/efi-bgrt.c:76:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __iomem *addr @@     got void *image @@
+   drivers/firmware/efi/efi-bgrt.c:76:24: sparse:     expected void [noderef] __iomem *addr
+   drivers/firmware/efi/efi-bgrt.c:76:24: sparse:     got void *image
+
+vim +69 drivers/firmware/efi/efi-bgrt.c
+
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  26  
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  27  void __init efi_bgrt_init(struct acpi_table_header *table)
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  28  {
+50a0cb565246f2 arch/x86/platform/efi/efi-bgrt.c Sai Praneeth  2015-12-09  29  	void *image;
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  30  	struct bmp_header bmp_header;
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  31  	struct acpi_table_bgrt *bgrt = &bgrt_tab;
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  32  
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  33  	if (acpi_disabled)
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  34  		return;
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  35  
+792ef14df5c585 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-06-09  36  	if (!efi_enabled(EFI_MEMMAP))
+7425826f4f7ac6 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-05-26  37  		return;
+7425826f4f7ac6 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-05-26  38  
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  39  	if (table->length < sizeof(bgrt_tab)) {
+7f9b474c927130 arch/x86/platform/efi/efi-bgrt.c Josh Boyer    2016-05-03  40  		pr_notice("Ignoring BGRT: invalid length %u (expected %zu)\n",
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  41  		       table->length, sizeof(bgrt_tab));
+5d6d578c170bb2 arch/x86/platform/efi/efi-bgrt.c Jan Beulich   2012-11-07  42  		return;
+1282278ee00b41 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2014-07-30  43  	}
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  44  	*bgrt = *(struct acpi_table_bgrt *)table;
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  45  	/*
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  46  	 * Only version 1 is defined but some older laptops (seen on Lenovo
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  47  	 * Ivy Bridge models) have a correct version 1 BGRT table with the
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  48  	 * version set to 0, so we accept version 0 and 1.
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  49  	 */
+55087c5713dcf1 drivers/firmware/efi/efi-bgrt.c  Hans de Goede 2020-01-31  50  	if (bgrt->version > 1) {
+7f9b474c927130 arch/x86/platform/efi/efi-bgrt.c Josh Boyer    2016-05-03  51  		pr_notice("Ignoring BGRT: invalid version %u (expected 1)\n",
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  52  		       bgrt->version);
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  53  		goto out;
+1282278ee00b41 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2014-07-30  54  	}
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  55  	if (bgrt->image_type != 0) {
+7f9b474c927130 arch/x86/platform/efi/efi-bgrt.c Josh Boyer    2016-05-03  56  		pr_notice("Ignoring BGRT: invalid image type %u (expected 0)\n",
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  57  		       bgrt->image_type);
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  58  		goto out;
+1282278ee00b41 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2014-07-30  59  	}
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  60  	if (!bgrt->image_address) {
+7f9b474c927130 arch/x86/platform/efi/efi-bgrt.c Josh Boyer    2016-05-03  61  		pr_notice("Ignoring BGRT: null image address\n");
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  62  		goto out;
+1282278ee00b41 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2014-07-30  63  	}
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  64  
+6de47a5e371f75 drivers/firmware/efi/efi-bgrt.c  Jan Beulich   2017-08-25  65  	if (efi_mem_type(bgrt->image_address) != EFI_BOOT_SERVICES_DATA) {
+792ef14df5c585 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-06-09  66  		pr_notice("Ignoring BGRT: invalid image address\n");
+792ef14df5c585 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-06-09  67  		goto out;
+792ef14df5c585 drivers/firmware/efi/efi-bgrt.c  Dave Young    2017-06-09  68  	}
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31 @69  	image = early_memremap(bgrt->image_address, sizeof(bmp_header));
+1282278ee00b41 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2014-07-30  70  	if (!image) {
+7f9b474c927130 arch/x86/platform/efi/efi-bgrt.c Josh Boyer    2016-05-03  71  		pr_notice("Ignoring BGRT: failed to map image header memory\n");
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31  72  		goto out;
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  73  	}
+2223af38903242 arch/x86/platform/efi/efi-bgrt.c Josh Triplett 2012-09-28  74  
+50a0cb565246f2 arch/x86/platform/efi/efi-bgrt.c Sai Praneeth  2015-12-09  75  	memcpy(&bmp_header, image, sizeof(bmp_header));
+7b0a911478c74c arch/x86/platform/efi/efi-bgrt.c Dave Young    2017-01-31 @76  	early_memunmap(image, sizeof(bmp_header));
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
