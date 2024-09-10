@@ -1,252 +1,159 @@
-Return-Path: <linux-kernel+bounces-323862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18763974460
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:57:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D729974463
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728EEB24C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D621F2868D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55B41AAE1C;
-	Tue, 10 Sep 2024 20:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0F91AAE32;
+	Tue, 10 Sep 2024 20:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zr/Ovd6S"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsQy+O5h"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220DE183CA0;
-	Tue, 10 Sep 2024 20:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C9A183CA0;
+	Tue, 10 Sep 2024 20:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726001822; cv=none; b=MRIs7eGT6EcnPKW+oRBtf9c119kS4vbpOd2oY/LUlIUtKTaDFKOI1bqtSuYKJ4M2bixhDAk3tyO9l4Omw/5UkqMdteyczLrt5rqh1kKgH6BnExvvvgn8Un2ActVctIijCIc3T9iBmGFEYTTocNDEBknIsFnsdTTXLTj2vvUNox4=
+	t=1726001835; cv=none; b=aOuA6enzywln6bxg0IAjoDo20rp4YBVMIjqBK/bjM548yyfPlmcuvVgFbynIxAfVq9Y+W+RjTjebu9zPxvdVoDMyYUb+fN7CWX0SZv4sppSukzPEdxN0ygV+TO1rr7kwiOaAeZR8371pLnHi+eFFIlDuWb94eADSQ2bAazfZcGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726001822; c=relaxed/simple;
-	bh=N4VmgKgwY8GUcBbkgxWszWk30kfzQBL4CNgFZeiMmyU=;
+	s=arc-20240116; t=1726001835; c=relaxed/simple;
+	bh=faM/BMQ2vimssAaLBqKtdnKV6Toowm0WUHQfbpSXJgc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KrCnu7SLkxb4NSh1WWcTBVPJHXCEgNK6QkztwBM/cKbQHvTulCWBLKGYaodK3MUgwZS/AzxXt9YHtnXUXvOckJVxt7kQVQXRnu7ljBQX2TOzP/yHRvYJ3WWTuA4aukJmsen9RZuiv3+sR1rZyg9NUsTCCq5G8diojSynwW/Pj00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zr/Ovd6S; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=fnRucqSMU3jhG5+wnd2spcN6yc8+69S3hbSqARwKuCZO4aCv1cwLy8R/flUl1PW5jcwswmujXUBG0YL3CtunMfRovIiAhRqApJ0vSYIy0fE11OPfw1hql8r6JdFQk5UAfnlr8uAie9jbxUzAgE5asN6iIIrkNS0Xkdknzr1ns0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsQy+O5h; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f74e468baeso74005621fa.2;
-        Tue, 10 Sep 2024 13:56:59 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d87a0bfaa7so4383834a91.2;
+        Tue, 10 Sep 2024 13:57:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726001818; x=1726606618; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726001834; x=1726606634; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YDu3G11kx64LAUyK5ZsIhCW1kA3/azdinuYrcDqmzTc=;
-        b=Zr/Ovd6Sl0NaMdztbl9ljDJllr3t0MJS5p4odd3D7kexus1MS7XPPoxIy9s0xHHqYb
-         JeCE0GyJEfaE5oiMeGUxeQq0PDItys8sQJOFoUe3CR34xHP6+zay3D1xGGK3rvh+/Gdr
-         VdVqvYXJUJNtElJdglQrwR2OOVy1WejSBdqUNd1m1nTORYKL66sIb9repEtHKQktjIZ5
-         1iRGAuoMQYFhfd9jiVxzswXtUpP6dXBAaS1BySQDzYYVQKsQuYUzRsFO8uH+s/IZCEeu
-         mlrHsVwBkrUgVpRCJzsRyNFzzV+41dtGaszrA5mKwevBjZoVAremzz1LiSxe6t3L1gOh
-         O+Lg==
+        bh=0na4dQJa2L1cmen5wGJM2Op9qiKCCHHFdeDVlG5p8P0=;
+        b=EsQy+O5hJ9ED6TRAYqTMbd5pP0isz0hG13Qufrk4QtoFM1yXFEI9Nyz8HAf4x8+k9z
+         BebAWxHsheuH/R7bksLwVqjEqCfenChI0uFSjiNp8z17gGdPQTEYxnQdP+dBaFIC6vQS
+         +KvP6TPBXDIgTcxTV7KfyJErD3OdVFj5jVT+6rC3wnh5FOfQzBwVTHVUD9mKEv+xrREJ
+         qU3DlAzt6EW8QdGp4DogCd1fFKq/LIcJt7MDYPuu1DYUHiwtKIbbDo3xw13H/TWwa9yy
+         utgbusWpNe0pmw0wJEff8J44vaFTh0wSBv89brE3/rdxY/pRe6PhsSMpr/q9pHBU8o6v
+         f+vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726001818; x=1726606618;
+        d=1e100.net; s=20230601; t=1726001834; x=1726606634;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YDu3G11kx64LAUyK5ZsIhCW1kA3/azdinuYrcDqmzTc=;
-        b=tSdiBIyL96j31Mw6hsMQ6d02XJVegfb96bJlHgAxrgDl1bxMnW9s0VTl/JrY1+P480
-         B5AJ4oay2iODW6SnANoBKM3SQw8s2T7uCivB1om0120pQ3npHJvqz4x49KIAxe8MHMOs
-         LyBcZWgLfdYJBdYppJfWnmWqKLtsPQLw99G3Hrxkf6rcKgNjWJY/So3dkAQn1+8XMc8V
-         MiscPbbva8/VLsxT6nKR9gXElYyxG+6MnRV9n80JpP5tpkyCBpzFAP7Uol/lU8uKajwh
-         ezJ1nu+5KElR6aDSGYVNRDubGxNlYwDioKH4Tz4MLOLaN601N78GDYFM3mjpNGsSD/iM
-         AVvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGDrR2F6ScE354nNwVKtCA6PkjEjvvkJdSsJEz0OE3Wnc6KN68A42ksVSafph9lfEHXXTHkgmxzaCQLvlvgqE=@vger.kernel.org, AJvYcCVg/1GZ9uThgLiSL2fa/VxU84M4AW6z/jkVRP2zCZpxQdF4XXodh5ybmy0fBRDaeZxZdBy/KTgDXjRYDBKy@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywogxr/g9y8+yEbyodZycTTLc5TNRBMw9byveFQKAhKnp4K8BAu
-	hCk+O9R7lD4ruypHiKFHinGccO46k+0wOWUSyBbM2exovfKVKoRlajy916c4B6dpqavAquBLjUE
-	7vL2fQYYiCPmFJX+Ko44yHXaTqqV5+gkv
-X-Google-Smtp-Source: AGHT+IEKrGkcf8e04zTYtkuyfw3RJj/D5hGQZYugK+VucvwpD7Ygo35zTdpe4eH+N0/FFIqArSlXZHqNcCM/RJus1cw=
-X-Received: by 2002:a05:651c:2129:b0:2f7:528f:421e with SMTP id
- 38308e7fff4ca-2f75b6e1726mr88515481fa.0.1726001817248; Tue, 10 Sep 2024
- 13:56:57 -0700 (PDT)
+        bh=0na4dQJa2L1cmen5wGJM2Op9qiKCCHHFdeDVlG5p8P0=;
+        b=UkcKLGKjulyqjOMm++/js4Lt5uma9Ztg41gvjSx0DLC8MxJsFeHz/Hz2fpgLhNU9nk
+         t0EePX+rqKQyVhaVU07Fy6ZX6WAt+NsQU2fohVpw4Y4eVd7oMCPWV+Ec3LTOjjb17/5B
+         lAq/PIgK/U5M0vobnvtm5DhaeLqYlPSLewv1inYqXj1m/TGH6LNk5Pm5uj/Tsx9Tfdrb
+         c6znMTY/wPuSBjP4DdahSeLec6PNE/BfBhRk1RsqvmQHNkAGt08saeZP+D1nUZSoqu0C
+         Ql+kDxVwUhiwJoCd7YGInA1RTRmxSlbXg7n4txr8TFpQgt1WEf1UOO7lc6K5bAqxn58X
+         SqWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURpI0BE+V8Kp7SPZz2IdBsoCgPyEfzO3oJ4vx0yeS4OxzQhZyg3m4Dy4kgSBVUVD4O5b3SfQHOh4cfJnDhyFt5aOV1@vger.kernel.org, AJvYcCWRa4vaR9RbRdIJOtD0/wF5uSpX9/hOy/uHhvjib3AwfgnNEyO2nGQRe9DYY1y9j9KqWDinMFqOIrpsPgFt@vger.kernel.org, AJvYcCX9Mo19U91t1/x6XlisnaPppUpAVqq/Pyyb560svgB7yqlKGBrSg/ydh1gZxb7hYOPxbHKVnB2+MfzYxmNBHA==@vger.kernel.org, AJvYcCXpA7/gkcbsEpmY2XU3s75C7zj+//Fz8Kfg/TS/EVwAr+B1+pxc7J9w2PCKdK+ZYeWfC04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD6SqN5E/zS+XwwiqEVZYap4UW/Bagb0RIC9QX3O4w2gDonPKD
+	wwCWpdL6Lg9ocGkWnD3a292rdnTs3czDV6fpxDW1oE2tt1l7zKi53dk5aKXEzWh6GyW7dtFTk92
+	Estkhx/lyEvRG0nDgmagqwZE6TBE=
+X-Google-Smtp-Source: AGHT+IFIKU8LRNjthnXGWB53ZSi2GAcwL6hTYP36TFmTzguRaNKaVZk5srgulC0aAUobh2XIR0/+fYvfyHAf+lqZzfo=
+X-Received: by 2002:a17:90a:ce81:b0:2c9:1012:b323 with SMTP id
+ 98e67ed59e1d1-2dad50cbcf7mr19247342a91.27.1726001833546; Tue, 10 Sep 2024
+ 13:57:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000004a130a0621888811@google.com> <tencent_7697B4E9DEEC52CEB478626D182DE96CB00A@qq.com>
-In-Reply-To: <tencent_7697B4E9DEEC52CEB478626D182DE96CB00A@qq.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 10 Sep 2024 16:56:44 -0400
-Message-ID: <CABBYNZLnohZofm4Tchk7p36XS=HwYmN94DB0FGyiPFJno+evSw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth/l2cap: Fix uaf in l2cap_connect
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com, 
-	johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-3-andrii@kernel.org>
+ <CAG48ez2G1Pf_RRRT0av=6r_4HcLZu6QMgveepk-ENo=PkaZC1w@mail.gmail.com>
+ <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com> <CAG48ez1d9tU7-QeRSjRuxovG-jjNAwJ8B_G2jd43_etYMUPV6g@mail.gmail.com>
+In-Reply-To: <CAG48ez1d9tU7-QeRSjRuxovG-jjNAwJ8B_G2jd43_etYMUPV6g@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 10 Sep 2024 13:56:59 -0700
+Message-ID: <CAEf4Bzb60-PjWXK3apuvxsJh70iXpoBo0WR2R4iXYsXwEChnsA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe
+ resolution
+To: Jann Horn <jannh@google.com>
+Cc: surenb@google.com, Liam Howlett <liam.howlett@oracle.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, brauner@kernel.org, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Edward,
-
-On Sun, Sep 8, 2024 at 3:22=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> w=
-rote:
+On Tue, Sep 10, 2024 at 8:39=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
 >
-> [Syzbot reported]
-> BUG: KASAN: slab-use-after-free in l2cap_connect.constprop.0+0x10d8/0x127=
-0 net/bluetooth/l2cap_core.c:3949
-> Read of size 8 at addr ffff8880241e9800 by task kworker/u9:0/54
+> On Mon, Sep 9, 2024 at 11:29=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> > On Mon, Sep 9, 2024 at 6:13=E2=80=AFAM Jann Horn <jannh@google.com> wro=
+te:
+> > > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel=
+.org> wrote:
+> > > > +static struct uprobe *find_active_uprobe_speculative(unsigned long=
+ bp_vaddr)
+> > > > +{
+> > > > +       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAY=
+SHARE;
+> > > > +       struct mm_struct *mm =3D current->mm;
+> > > > +       struct uprobe *uprobe;
+> > > > +       struct vm_area_struct *vma;
+> > > > +       struct file *vm_file;
+> > > > +       struct inode *vm_inode;
+> > > > +       unsigned long vm_pgoff, vm_start;
+> > > > +       int seq;
+> > > > +       loff_t offset;
+> > > > +
+> > > > +       if (!mmap_lock_speculation_start(mm, &seq))
+> > > > +               return NULL;
+> > > > +
+> > > > +       rcu_read_lock();
+> > > > +
+> > > > +       vma =3D vma_lookup(mm, bp_vaddr);
+> > > > +       if (!vma)
+> > > > +               goto bail;
+> > > > +
+> > > > +       vm_file =3D data_race(vma->vm_file);
+> > >
+> > > A plain "data_race()" says "I'm fine with this load tearing", but
+> > > you're relying on this load not tearing (since you access the vm_file
+> > > pointer below).
+> > > You're also relying on the "struct file" that vma->vm_file points to
+> > > being populated at this point, which means you need CONSUME semantics
+> > > here, which READ_ONCE() will give you, and something like RELEASE
+> > > semantics on any pairing store that populates vma->vm_file, which
+> > > means they'd all have to become something like smp_store_release()).
+> >
+> > vma->vm_file should be set in VMA before it is installed and is never
+> > modified afterwards, isn't that the case? So maybe no extra barrier
+> > are needed and READ_ONCE() would be enough.
 >
-> CPU: 0 UID: 0 PID: 54 Comm: kworker/u9:0 Not tainted 6.11.0-rc6-syzkaller=
--00268-g788220eee30d #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> Workqueue: hci2 hci_rx_work
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0xc3/0x620 mm/kasan/report.c:488
->  kasan_report+0xd9/0x110 mm/kasan/report.c:601
->  l2cap_connect.constprop.0+0x10d8/0x1270 net/bluetooth/l2cap_core.c:3949
->  l2cap_connect_req net/bluetooth/l2cap_core.c:4080 [inline]
->  l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4772 [inline]
->  l2cap_sig_channel net/bluetooth/l2cap_core.c:5543 [inline]
->  l2cap_recv_frame+0xf0b/0x8eb0 net/bluetooth/l2cap_core.c:6825
->  l2cap_recv_acldata+0x9b4/0xb70 net/bluetooth/l2cap_core.c:7514
->  hci_acldata_packet net/bluetooth/hci_core.c:3791 [inline]
->  hci_rx_work+0xaab/0x1610 net/bluetooth/hci_core.c:4028
->  process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
->  process_scheduled_works kernel/workqueue.c:3312 [inline]
->  worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
->  kthread+0x2c1/0x3a0 kernel/kthread.c:389
->  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> ...
+> Ah, right, I'm not sure what I was thinking there.
 >
-> Freed by task 5245:
->  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
->  poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
->  __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
->  kasan_slab_free include/linux/kasan.h:184 [inline]
->  slab_free_hook mm/slub.c:2256 [inline]
->  slab_free mm/slub.c:4477 [inline]
->  kfree+0x12a/0x3b0 mm/slub.c:4598
->  l2cap_conn_free net/bluetooth/l2cap_core.c:1810 [inline]
->  kref_put include/linux/kref.h:65 [inline]
->  l2cap_conn_put net/bluetooth/l2cap_core.c:1822 [inline]
->  l2cap_conn_del+0x59d/0x730 net/bluetooth/l2cap_core.c:1802
->  l2cap_connect_cfm+0x9e6/0xf80 net/bluetooth/l2cap_core.c:7241
->  hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
->  hci_conn_failed+0x1c3/0x370 net/bluetooth/hci_conn.c:1265
->  hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
->  abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2917
->  hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
->  process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
->  process_scheduled_works kernel/workqueue.c:3312 [inline]
->  worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
->  kthread+0x2c1/0x3a0 kernel/kthread.c:389
->  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> [Analysis]
-> There was a data race when accessing conn in hci_rx_work and hci_cmd_sync=
-_work.
-> This is because the hci dev lock was prematurely exited when executing
-> hci_acldata_macket() in hci_rx_work, which resulted in it being released
-> by hci_cmd_sync_work when accessing conn outside the lock.
->
-> Reported-and-tested-by: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail=
-.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dc12e2f941af1feb5632c
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  net/bluetooth/hci_core.c   | 3 ++-
->  net/bluetooth/l2cap_core.c | 2 --
->  2 files changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> index f25a21f532aa..4f7b45bb863f 100644
-> --- a/net/bluetooth/hci_core.c
-> +++ b/net/bluetooth/hci_core.c
-> @@ -3776,18 +3776,19 @@ static void hci_acldata_packet(struct hci_dev *hd=
-ev, struct sk_buff *skb)
->
->         hci_dev_lock(hdev);
->         conn =3D hci_conn_hash_lookup_handle(hdev, handle);
-> -       hci_dev_unlock(hdev);
->
->         if (conn) {
->                 hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OF=
-F);
->
->                 /* Send to upper protocol */
->                 l2cap_recv_acldata(conn, skb, flags);
-> +               hci_dev_unlock(hdev);
->                 return;
->         } else {
->                 bt_dev_err(hdev, "ACL packet for unknown connection handl=
-e %d",
->                            handle);
->         }
-> +       hci_dev_unlock(hdev);
+> I... guess you only _really_ need the READ_ONCE() if something can
+> actually ever change the ->vm_file pointer, otherwise just a plain
+> load with no annotation whatsoever would be good enough? I'm fairly
 
-This is sort of risky, we shouldn't be calling this deep into the
-stack with hci_dev_lock held.
+yep, probably, I was just trying to be cautious :)
 
->
->         kfree_skb(skb);
->  }
-> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> index 9988ba382b68..b948b0a3b2f2 100644
-> --- a/net/bluetooth/l2cap_core.c
-> +++ b/net/bluetooth/l2cap_core.c
-> @@ -4072,10 +4072,8 @@ static int l2cap_connect_req(struct l2cap_conn *co=
-nn,
->         if (cmd_len < sizeof(struct l2cap_conn_req))
->                 return -EPROTO;
->
-> -       hci_dev_lock(hdev);
->         if (hci_dev_test_flag(hdev, HCI_MGMT))
->                 mgmt_device_connected(hdev, hcon, NULL, 0);
-> -       hci_dev_unlock(hdev);
+> sure nothing can ever change the ->vm_file pointer of a live VMA, and
+> I think _currently_ it looks like nothing will NULL out the ->vm_file
+> pointer on free either... though that last part is probably not
+> something you should rely on...
 
-So this might explain why things gets freed while processing the
-request, we are locking to call mgmt_device_connected which I suspect
-is no longer needed ever since:
-
-commit db11223571d489d1aab575a4ac4b7352d2d54e2f
-Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Date:   Tue Oct 25 14:12:58 2022 -0700
-
-    Bluetooth: btusb: Default CONFIG_BT_HCIBTUSB_POLL_SYNC=3Dy
-
-    poll_sync has been proven to fix races of USB data and event endpoints
-    so this enables it by default.
-
-    Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Tested-by: Tedd Ho-Jeong An <tedd.an@intel.com>
-
-Anyway syzbot don't use btusb so I think this might be due some
-command pending that the emulator is not responding and instead
-sending data, and then there is the issue that 7b064edae38d
-("Bluetooth: Fix authentication if acl data comes before remote
-feature evt") attempted to fix which I think it actually made it worse
-by moving the call to mgmt_device_connected into l2cap_core.c it sort
-move the problem but didn't fix the actual problem.
-
-Maybe something like the following would be a better approach:
-
-https://gist.github.com/Vudentz/121a15fa4391b2b1f6c7e8d420a6846e
-
->
->         l2cap_connect(conn, cmd, data, L2CAP_CONN_RSP);
->         return 0;
-> --
-> 2.43.0
->
-
-
---=20
-Luiz Augusto von Dentz
+This seems to be rather important, but similarly to how vm_file can't
+be modified, it seems reasonable to assume that it won't be set to
+NULL (it's a modification to set it to a new NULL value, isn't it?). I
+mean, we can probably just add a NULL check and rely on the atomicity
+of setting a pointer, so not a big deal, but seems like a pretty
+reasonable assumption to make.
 
