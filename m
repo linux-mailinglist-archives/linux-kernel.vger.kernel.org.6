@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-322875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF309731B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:14:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62009973253
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467032885F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B981F21EC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455A2199FCC;
-	Tue, 10 Sep 2024 10:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A0A19DF40;
+	Tue, 10 Sep 2024 10:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkMysAmN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YElqqXyo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2C1192B60
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C2E18B498;
+	Tue, 10 Sep 2024 10:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963002; cv=none; b=FdN7r5ZX3xwHQadFUAoNpSNsbvtX216uo3w3KqgE7GjL465Ff4Y8h7gHC9Wo81Cq9r4lmVU61xdZ+imn5J5Ucsu8/uQ+dYSE+a49kpfYXwJIabn3QfyjxSyben9SWGc+1IZ/+KJ/MM2KkKhV8e+TyBzI3HuKucHkhN0l8P0m9kc=
+	t=1725963347; cv=none; b=rx8BJWrvncLfet8vroPyUMue3GsOesxhWPYpB4FgY41jOLJ6ad6pWYh93MfBEOCUQvewYvsZgUgrqNDMoagorCuR5OkUklgN3o3PdQMx5hvJ26uQW7Q9MjFYYRZqbU5AdVnuIDO7tAO00kqzJDiGzNtmgtjsENR3rYgPrMBy8Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963002; c=relaxed/simple;
-	bh=qci39d1xKfJDxp/aLwjtEh2USiUe2UEO295o+Qvvu3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTgdERaWLzszHsoUEx63wkmBV9syrr6IGxlbF1ydpMsSFFX1QClUa+mHCgyOKfJqJO6Q0uJxzHkDSV1wFYKQv0JlWnJll9Qy5wq1og9mrqmdRXi87Iy5tT2vfUUYHwG8njTQUSDBAQ/GGBeyFTIzG24ikWtKrtDQ1TxK5iYGMYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkMysAmN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE6AC4CEC3;
-	Tue, 10 Sep 2024 10:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725963002;
-	bh=qci39d1xKfJDxp/aLwjtEh2USiUe2UEO295o+Qvvu3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jkMysAmNcyCCTeplDafB2PHC8Ir3R5Mi55t7clWLtj5hWoXo/2YOmJKj+8VgDo74r
-	 0pwlRQlZVKy9QazVzJgHc9ts+iabrDESOmsnyNIoAbs+55qUgQX4B9yRQaiHcRsqW1
-	 NNa5uynyiPhzVrVT+JagutlmHcgU1X78tbR/hTNCP4pOXpeZnXqb2YVJNdlEfLVyBe
-	 OKZ943uHnucygqL+smpLURNUQP6on9fse9UlMtYHyXHVRjoF+fSWOOVqmGzvlR5q/S
-	 nJAy5nUN5DPKwMNEPspCZilUa8HHnUv0LOKpg6gIjoNxdLwG4lSXNoU0Dc31mv9YOw
-	 VMmuD9QGsBGuw==
-Date: Tue, 10 Sep 2024 12:09:56 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Feng Tang <feng.tang@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	David Gow <davidgow@google.com>, linux-mm@kvack.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] mm/slub, kunit: Add testcase for krealloc redzone
- and zeroing
-Message-ID: <ZuAa9DxCNwvFsZ50@pollux>
-References: <20240909012958.913438-1-feng.tang@intel.com>
- <20240909012958.913438-6-feng.tang@intel.com>
+	s=arc-20240116; t=1725963347; c=relaxed/simple;
+	bh=RJakgAWPl3L8DYhY9yMdwho4N1JyK2KPRQa3NxMSuYk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ESO0MTkxlwfaaylYDqE0eYN4fM6b5lgEFbvl0ZOblSkKxR6qiezCz3QYOBmONOekzpXclOsJJxcZISnlHLxA1C25KBhfVJdVma5+OeLE8zgJ0xvXcqlb/MMrzDMZgdSLrErmZPbjARlAZt3V+6MDdw4/oCxQ4pq4B0MaBaSzRh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YElqqXyo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A4b1Zg000538;
+	Tue, 10 Sep 2024 10:10:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=N5YXDTqQmIZOplCswfYBfX
+	Uif9UQ0Rc55Bi0BP6n8qg=; b=YElqqXyo7z8jUpeC2jpPZDHku4+9ne3YmKRJgt
+	uhR9KvLNEiGhxdzYV2Sl0MTYaVA9EExUiIkBloAisFKH1DVwI5HKJCV3h/LiAud0
+	GUeKPmo1G8X41wFdgcYES8zYHkDUzaWoyMMWYWU/Mo83orR05FJGvbq4yMWFALLD
+	D3qpoRR9pVOylcNX68UaSGIZrrP9mIlZIEVOppL4bFVM4OjowEG7NsMqRArscLtw
+	4H5nYG9DfOZCGAta0Z0ttklkIBF5FITCnnQlmlSq48aP6oP2cbTfqkdEgulCVs8G
+	VZpJNaiwzmbl7i7CDjazy1jjj1xaWf6NMJsN1xzLXUOvT7HQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy515fyu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 10:10:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48AAAY4x016629
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Sep 2024 10:10:34 GMT
+Received: from 3a9ae799c7fb.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 03:10:29 -0700
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Stephan Gerhold
+	<stephan.gerhold@kernkonzept.com>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        "Adam Skladowski" <a39.skl@gmail.com>,
+        Vladimir Lypak
+	<vladimir.lypak@gmail.com>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Odelu
+ Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V3 0/2] Add interconnect support for QCS8300 SoC
+Date: Tue, 10 Sep 2024 10:10:11 +0000
+Message-ID: <20240910101013.3020-1-quic_rlaggysh@quicinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909012958.913438-6-feng.tang@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5KI-C9ruJ9W-bKaA_drjmlrH2nlwYBEo
+X-Proofpoint-GUID: 5KI-C9ruJ9W-bKaA_drjmlrH2nlwYBEo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 phishscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409100077
 
-On Mon, Sep 09, 2024 at 09:29:58AM +0800, Feng Tang wrote:
-> Danilo Krummrich raised issue about krealloc+GFP_ZERO [1], and Vlastimil
-> suggested to add some test case which can sanity test the kmalloc-redzone
-> and zeroing by utilizing the kmalloc's 'orig_size' debug feature.
-> 
-> It covers the grow and shrink case of krealloc() re-using current kmalloc
-> object, and the case of re-allocating a new bigger object.
-> 
-> User can add "slub_debug" kernel cmdline parameter to test it.
-> 
-> [1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
-> 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
+Add interconnect dtbindings and driver support for Qualcomm QCS8300 SoC.
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+Changes since V2:
+ - Addressed comments related to dt-bindings title and commit text.
 
-> ---
->  lib/slub_kunit.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-> index 6e3a1e5a7142..03e0089149ad 100644
-> --- a/lib/slub_kunit.c
-> +++ b/lib/slub_kunit.c
-> @@ -186,6 +186,51 @@ static void test_leak_destroy(struct kunit *test)
->  	KUNIT_EXPECT_EQ(test, 1, slab_errors);
->  }
->  
-> +static void test_krealloc_redzone_zeroing(struct kunit *test)
-> +{
-> +	char *p;
-> +	int i;
-> +
-> +	KUNIT_TEST_REQUIRES(test, __slub_debug_enabled());
-> +
-> +	/* Allocate a 64B kmalloc object */
-> +	p = kzalloc(48, GFP_KERNEL);
-> +	if (unlikely(is_kfence_address(p))) {
-> +		kfree(p);
-> +		return;
-> +	}
-> +	memset(p, 0xff, 48);
-> +
-> +	kasan_disable_current();
-> +	OPTIMIZER_HIDE_VAR(p);
-> +
-> +	/* Test shrink */
-> +	p = krealloc(p, 40, GFP_KERNEL | __GFP_ZERO);
-> +	for (i = 40; i < 64; i++)
-> +		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-> +
-> +	/* Test grow within the same 64B kmalloc object */
-> +	p = krealloc(p, 56, GFP_KERNEL | __GFP_ZERO);
-> +	for (i = 40; i < 56; i++)
-> +		KUNIT_EXPECT_EQ(test, p[i], 0);
-> +	for (i = 56; i < 64; i++)
-> +		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-> +
-> +	/* Test grow with allocating a bigger 128B object */
-> +	p = krealloc(p, 112, GFP_KERNEL | __GFP_ZERO);
-> +	if (unlikely(is_kfence_address(p)))
-> +		goto exit;
-> +
-> +	for (i = 56; i < 112; i++)
-> +		KUNIT_EXPECT_EQ(test, p[i], 0);
-> +	for (i = 112; i < 128; i++)
-> +		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
-> +
-> +exit:
-> +	kfree(p);
-> +	kasan_enable_current();
-> +}
-> +
->  static int test_init(struct kunit *test)
->  {
->  	slab_errors = 0;
-> @@ -196,6 +241,7 @@ static int test_init(struct kunit *test)
->  }
->  
->  static struct kunit_case test_cases[] = {
-> +	KUNIT_CASE(test_krealloc_redzone_zeroing),
->  	KUNIT_CASE(test_clobber_zone),
->  
->  #ifndef CONFIG_KASAN
-> -- 
-> 2.34.1
-> 
+Changes since V1:
+ - constify all the array of pointers to structures and provider
+   descriptor structures.
+ - Dropped all empty nodes.
+ - Added reg as required property for all the providers excluding
+   clk-virt and mc-virt in dt-bindings.
+
+Raviteja Laggyshetty (2):
+  dt-bindings: interconnect: document the RPMh Network-On-Chip
+    interconnect in QCS8300 SoC
+  interconnect: qcom: add QCS8300 interconnect provider driver
+
+ .../interconnect/qcom,qcs8300-rpmh.yaml       |   72 +
+ drivers/interconnect/qcom/Kconfig             |   11 +
+ drivers/interconnect/qcom/Makefile            |    2 +
+ drivers/interconnect/qcom/qcs8300.c           | 2088 +++++++++++++++++
+ drivers/interconnect/qcom/qcs8300.h           |  177 ++
+ .../interconnect/qcom,qcs8300-rpmh.h          |  189 ++
+ 6 files changed, 2539 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
+ create mode 100644 drivers/interconnect/qcom/qcs8300.c
+ create mode 100644 drivers/interconnect/qcom/qcs8300.h
+ create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
+
+-- 
+2.39.2
+
 
