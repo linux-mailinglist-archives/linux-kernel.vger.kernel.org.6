@@ -1,182 +1,171 @@
-Return-Path: <linux-kernel+bounces-323336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EDE973B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225AE973B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C621F21E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53071F26014
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656AE1A4F01;
-	Tue, 10 Sep 2024 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7783319ABB3;
+	Tue, 10 Sep 2024 15:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K3xH550v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RqubavTv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K3xH550v";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RqubavTv"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bQZuqxW3"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D05A1A4AA8;
-	Tue, 10 Sep 2024 15:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC581205;
+	Tue, 10 Sep 2024 15:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725981565; cv=none; b=Z1v2bIYwSlwCzVt3nTE0Q3KfTf4ZWu/Ibn81F0KyztOC8TIM0YfMsZA/BMTaji8xDs4haoGO8SGNoo+7X04dBsL23gMB9R8bNswX+Llsdhxm0r7pfhzrckv3GOpja9A1gDYGysKpbb0I9ow7x3Pnyn3EsTCU1SpCciGoC+uFkbs=
+	t=1725981573; cv=none; b=opDIz4tN7KktqWN7HkiHB//FGq/kp+E3A3P6JIF+m5dn8b9RZ/lCAe46pH4hnNMyhr33FFfgO/44k9NwibkmXwvAmJuwjdY4FUqeznoIyBd6Xw0BnSWJ+n3D4juRJU1X1fSfzZXTH+GVTVpkKGUKB/KUHdaSYLxpNfIRXdF8SBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725981565; c=relaxed/simple;
-	bh=cSctLIy+Ueh9E3uOggfIzmmhU3Wfl0bc8PZ27z1Sk00=;
+	s=arc-20240116; t=1725981573; c=relaxed/simple;
+	bh=nviXM2aYMDrYl4A43vMvdw85c6Uajxuf2z9ZuwcObaM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jca+o6nkUOjdlODx3B89evmEbb1Q/ilq0748mqjAoe7lASohH/OZASMJ7MStyW1DU+eAXrSm7Ljwv7vz2MYntCMFj2KPffKV0q2y4VY3P/iCc1u9B2AgU0RRACz4+xt7SubPB3OCs4C3fpEc4FvLawyw+vDpaCxvu9INjReAxo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K3xH550v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RqubavTv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K3xH550v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RqubavTv; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7561E21A68;
-	Tue, 10 Sep 2024 15:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725981562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS/6HzsIq3IulkJS4iX4Snvr5Ush1QhGkDf3KbzmlYA=;
-	b=K3xH550vq3TS8ey6H7TUGTNefNVJG8CJX1jh4Zkkcf6QGgtxJCVVSY8OSlTSDSy0Bl2hQt
-	S+KRRUD6UWsJk8FaIr5Tt3gz3fStAdmuVpcyUT9pDyzqiQMeelP9GC85eGjlXNfKfSHtR4
-	4iEB2/6ifwiaIs12uQZh05u6CWMbEiE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725981562;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS/6HzsIq3IulkJS4iX4Snvr5Ush1QhGkDf3KbzmlYA=;
-	b=RqubavTv4t6LKC/HCnxn/i5/XksLuPaib1UkYphxOWpJKlY4rhLhvecCzhEBzxtGhbeCsh
-	Qmp+TdlE2MGLwOCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725981562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS/6HzsIq3IulkJS4iX4Snvr5Ush1QhGkDf3KbzmlYA=;
-	b=K3xH550vq3TS8ey6H7TUGTNefNVJG8CJX1jh4Zkkcf6QGgtxJCVVSY8OSlTSDSy0Bl2hQt
-	S+KRRUD6UWsJk8FaIr5Tt3gz3fStAdmuVpcyUT9pDyzqiQMeelP9GC85eGjlXNfKfSHtR4
-	4iEB2/6ifwiaIs12uQZh05u6CWMbEiE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725981562;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS/6HzsIq3IulkJS4iX4Snvr5Ush1QhGkDf3KbzmlYA=;
-	b=RqubavTv4t6LKC/HCnxn/i5/XksLuPaib1UkYphxOWpJKlY4rhLhvecCzhEBzxtGhbeCsh
-	Qmp+TdlE2MGLwOCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6ED5113A3A;
-	Tue, 10 Sep 2024 15:19:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IF+yD3lj4GaxQgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Tue, 10 Sep 2024 15:19:21 +0000
-From: Stanimir Varbanov <svarbanov@suse.de>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	kw@linux.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Stanimir Varbanov <svarbanov@suse.de>
-Subject: [PATCH v2 -next 11/11] arm64: dts: broadcom: bcm2712-rpi-5-b: Enable PCIe DT nodes
-Date: Tue, 10 Sep 2024 18:18:45 +0300
-Message-ID: <20240910151845.17308-12-svarbanov@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240910151845.17308-1-svarbanov@suse.de>
-References: <20240910151845.17308-1-svarbanov@suse.de>
+	 MIME-Version:Content-Type; b=DKorSkxc9TmzMq/48RQ3DjLKgq4qEjhDZ32JBc/n9YMkNIead4KIQWyg16ViYq23hoEBBIWMV1XwW8BIPgtfSI2TBePbMbZn3sAz/Tn9W44XsiM+JWkLkJx9FOSsrQLV0yohSUmokQwNV9w4p3ReGrGRhGB217qCYkMugQIKV+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bQZuqxW3; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OHTaPFU7IxdysyuX/tN5EzMTydhIoay+K+w5Wew1vlA=; b=bQZuqxW3egMUmeGk2K3dn2mgUk
+	q3z7m1ypz51hUzQgzkUHrTUpWt87uhkuU1OnJJ7etrwMpzri+/kULWEqoqwUKNHEBk/0d1ZzUxcDT
+	wqXjn/kTM8kryz9l14qJmPu8l9DG5I6szJnMuyZATk0cP364QUbVXTlznzOJ6O/77yNSkhGFpuEpq
+	VZj0zVumkA2nWca9W34f8xR0Y09m3uAE6zg5VpxqlfWG4DesKKmrheyYiupz9rHdoe5CZU/ex1nve
+	ybZzNk2gc+4B19S2EeNAA2WN420714viUaqfPd4MKyZoEezfjNxYiVTLjOQ/oIRJO1Zi8oy8ixKgd
+	hHEo5Fsw==;
+Received: from i53875a02.versanet.de ([83.135.90.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1so2dx-0005bU-1b; Tue, 10 Sep 2024 17:19:01 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+Date: Tue, 10 Sep 2024 17:21:27 +0200
+Message-ID: <1899262.u6TykanW85@diego>
+In-Reply-To: <1785617.Ii9rTq9gLj@diego>
+References:
+ <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <20240906-b4-rk3588-bridge-upstream-v6-3-a3128fb103eb@collabora.com>
+ <1785617.Ii9rTq9gLj@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com,suse.de];
-	FROM_HAS_DN(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_RATELIMIT(0.00)[to_ip_from(RL7mwea5a3cdyragbzqhrtit3y)];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -5.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Enable pcie1 and pcie2 DT nodes. Pcie1 is used for the extension
-connector and pcie2 is used for RP1 south-bridge.
+Am Dienstag, 10. September 2024, 17:07:57 CEST schrieb Heiko St=FCbner:
+> Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
+> > The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+> > Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+> > Samsung IP block.
+> >=20
+> > Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+> > without audio, CEC or any of the HDMI 2.1 specific features.
+> >=20
+> > Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> > Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>=20
+> I had switched from the v3 to this v6 in my playground-kernel today,
+> with v3 I've never seen those, but now with v6 I have gotten multiple
+> times:
+>=20
+> [  805.730608] Internal error: synchronous external abort: 00000000960000=
+10 [#1] PREEMPT SMP
+> [  805.739764] Modules linked in: snd_soc_simple_card crct10dif_ce snd_so=
+c_simple_card_utils panthor drm_gpuvm drm_exec fuse
+> [  805.752031] CPU: 3 UID: 0 PID: 775 Comm: Xorg Not tainted 6.11.0-rc7-0=
+0099-g459302f1f908-dirty #934
+> [  805.762143] Hardware name: Theobroma Systems RK3588-Q7 SoM on Haikou d=
+evkit (DT)
+> [  805.770407] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYP=
+E=3D--)
+> [  805.778186] pc : regmap_mmio_read32le+0x8/0x20
+> [  805.783155] lr : regmap_mmio_read+0x44/0x70
+> [  805.787828] sp : ffff80008293b830
+> [  805.791516] x29: ffff80008293b830 x28: ffff80008293bce8 x27: ffff0001f=
+20ab080
+> [  805.799495] x26: ffff800081139500 x25: 0000000000000000 x24: 000000000=
+0000010
+> [  805.807472] x23: 0000000000000000 x22: ffff0001f5a4b400 x21: ffff80008=
+293b8c4
+> [  805.815450] x20: 0000000000000968 x19: ffff0001f5a27a80 x18: 000000000=
+0000070
+> [  805.823428] x17: 0002441400000005 x16: 000004650441043c x15: 043800000=
+8980804
+> [  805.831406] x14: 07d8089807800780 x13: 0438000008980804 x12: ffff80008=
+1133630
+> [  805.839384] x11: 0002441400000005 x10: 000004650441043c x9 : ffff80008=
+1a59000
+> [  805.847361] x8 : 07d8089807800780 x7 : 0000000000000000 x6 : ffff0001f=
+5b453c0
+> [  805.855339] x5 : ffff800080750dc0 x4 : 0000000000000968 x3 : 000000000=
+0000968
+> [  805.863316] x2 : ffff800080751520 x1 : 0000000000000968 x0 : ffff80008=
+3b20968
+> [  805.871294] Call trace:
+> [  805.874012]  regmap_mmio_read32le+0x8/0x20
+> [  805.878588]  _regmap_bus_reg_read+0x6c/0xac
+> [  805.883262]  _regmap_read+0x60/0xd8
+> [  805.887159]  _regmap_update_bits+0xf4/0x140
+> [  805.891832]  regmap_update_bits_base+0x64/0xa0
+> [  805.896797]  dw_hdmi_qp_bridge_atomic_enable+0x134/0x220
+> [  805.902734]  drm_atomic_bridge_chain_enable+0x54/0xc8
+> [  805.908380]  drm_atomic_helper_commit_modeset_enables+0x194/0x280
+> [  805.915190]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+> [  805.921125]  commit_tail+0xa0/0x1a0
+> [  805.925021]  drm_atomic_helper_commit+0x17c/0x1b0
+> [  805.930276]  drm_atomic_commit+0xb8/0x100
+> [  805.934754]  drm_atomic_connector_commit_dpms+0xe0/0x110
+> [  805.940690]  drm_mode_obj_set_property_ioctl+0x1c0/0x420
+> [  805.946626]  drm_connector_property_set_ioctl+0x3c/0x68
+> [  805.952465]  drm_ioctl_kernel+0xc0/0x130
+> [  805.956846]  drm_ioctl+0x214/0x4a0
+> [  805.960643]  __arm64_sys_ioctl+0xac/0xf8
+> [  805.965025]  invoke_syscall+0x48/0x104
+> [  805.969214]  el0_svc_common.constprop.0+0x40/0xe0
+> [  805.974470]  do_el0_svc+0x1c/0x28
+> [  805.978171]  el0_svc+0x34/0xe0
+> [  805.981582]  el0t_64_sync_handler+0x120/0x12c
+> [  805.986449]  el0t_64_sync+0x190/0x194
+> [  805.990540] Code: d503201f d503201f f9400000 8b214000 (b9400000)
+>=20
+> I guess that might be some clocking issue?
 
-Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
----
- arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+=46orgot to add, this happens when the display has blanked and then is
+supposed to unblank again.
 
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-index 2bdbb6780242..e970a6013c6f 100644
---- a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -62,3 +62,11 @@ &sdio1 {
- 	sd-uhs-ddr50;
- 	sd-uhs-sdr104;
- };
-+
-+&pcie1 {
-+	status = "okay";
-+};
-+
-+&pcie2 {
-+	status = "okay";
-+};
--- 
-2.35.3
+Heiko
+
 
 
