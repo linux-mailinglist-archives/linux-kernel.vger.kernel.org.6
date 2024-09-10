@@ -1,89 +1,70 @@
-Return-Path: <linux-kernel+bounces-322727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCF9972CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5904B972CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE35B261E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5361C24726
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79787187FF6;
-	Tue, 10 Sep 2024 09:04:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CFC175568
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 09:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F354188A10;
+	Tue, 10 Sep 2024 09:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fInl1ysE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F5188002;
+	Tue, 10 Sep 2024 09:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725959063; cv=none; b=Rr4kobFfqI+w6LZvVqq41mA0orVcnjzVPFzy63k47kgCY4VvVNxYVDrwJQ4heFGzuLi3zsb2Jzb4nQVKdgaZEINnCZHV53DGwrTgUgQzOTiYFA5T/pOBkRPM8bHbtQDm3OEjecpu8eRcusZcId6opJmHM+2w0UZpkUNF1xNbXIg=
+	t=1725959081; cv=none; b=BGprnmZDbeohCnxlM/77y9xjGZzMjr7OLuM7zFu0/bAnXTDMoBORSLj0zkHH8GCPJazOPkmg/WqBk9FDLS3s9lXp9Mo4E1EDuvV/MpM+l9mkiPrDPfX6+s6Et+VaJTC72YejPtsZ+aBnUkDeZS766Yid1O6/jWixMqlzAcrD+ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725959063; c=relaxed/simple;
-	bh=+l8xZJ5Z2gudgi6cWpsuTSOuc0ht2cU5I4VjyI75N1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HxbGmfcA+BEVU6g2nfYEmDcMfQvoSXLXyG+U0lv1BHe/W8guZ8A/p7gffLj14EIp/m6JFycD2rnkPU7wSSNOXdCY3iKmU/tYk6wBOOc/4zf3/ZxdllNSSbW1lqZrmC+gv50vn/L6tHmFmbKuAIoekLAmgYsKDpXdOJQBn6W+AnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46256113E;
-	Tue, 10 Sep 2024 02:04:48 -0700 (PDT)
-Received: from a077893.arm.com (unknown [10.163.63.106])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8EB473F66E;
-	Tue, 10 Sep 2024 02:04:15 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-mm@kvack.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	s=arc-20240116; t=1725959081; c=relaxed/simple;
+	bh=H8CEp2/9jZrHleI1Lrib9tpsZICUCaPP2NNzePDTsIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeXlVRew8taF5ZCpcCznacLnhEdr9Y9PSmqoZdHTFR35lO2YQ4oAvYLyK3Fs3JSkgAJn3IadgrrbHp0Z83L7f3knOt2QVmocOhG322kbrnRATjWFK6zcXGz04imCL8knvjzroea99bWtmrAfS2aqw/WQIZaOpPyNg6gzMtdHYxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fInl1ysE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE07C4CEC3;
+	Tue, 10 Sep 2024 09:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725959081;
+	bh=H8CEp2/9jZrHleI1Lrib9tpsZICUCaPP2NNzePDTsIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fInl1ysELlfXBZ5rZYn2C/8XqQLsX9jQADNKUFYC4dz5+tzaJtJEO4bVWL9R8maC3
+	 DX/P4UdNMPHqSVVJiZr2wmElhDXGXpC12K4kRpJQDUByzOPfLZTCrm41R2KzFRMjRD
+	 qD6euzDvj060RN7da5VT79JnSJqlMou1uR7pn7oQ=
+Date: Tue, 10 Sep 2024 11:04:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: rui.silva@linaro.org, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: Drop unused set_pte_safe()
-Date: Tue, 10 Sep 2024 14:34:09 +0530
-Message-Id: <20240910090409.374424-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH] usb: isp1760: Use devm_kcalloc
+Message-ID: <2024091053-deforest-acuteness-7d20@gregkh>
+References: <20240910072642.39396-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910072642.39396-1-zhangjiao2@cmss.chinamobile.com>
 
-All set_pte_safe() usage have been dropped after the commit eccd906484d1
-("x86/mm: Do not use set_{pud, pmd}_safe() when splitting a large page")
-This just drops now unused helper set_pte_safe().
+On Tue, Sep 10, 2024 at 03:26:42PM +0800, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> Use devm_kcalloc to simplify code.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- include/linux/pgtable.h | 6 ------
- 1 file changed, 6 deletions(-)
+In what way?
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 2a6a3cccfc36..aeabbf0db7c8 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1058,12 +1058,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
-  * same value. Otherwise, use the typical "set" helpers and flush the
-  * TLB.
-  */
--#define set_pte_safe(ptep, pte) \
--({ \
--	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
--	set_pte(ptep, pte); \
--})
--
- #define set_pmd_safe(pmdp, pmd) \
- ({ \
- 	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
--- 
-2.30.2
+Are you sure it's safe to do this?  How was this tested?
 
+thanks,
+
+greg k-h
 
