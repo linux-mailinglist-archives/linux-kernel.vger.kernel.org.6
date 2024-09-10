@@ -1,226 +1,208 @@
-Return-Path: <linux-kernel+bounces-322248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E689972649
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:43:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3FF97264E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F097D1F24CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4B5285B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8060A49658;
-	Tue, 10 Sep 2024 00:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D92555E58;
+	Tue, 10 Sep 2024 00:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQtQm5PM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="duIPFWkD"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020077.outbound.protection.outlook.com [52.101.193.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A713A45013;
-	Tue, 10 Sep 2024 00:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725928990; cv=none; b=R00gKFmnJ0tafdmS7Ik3KuHTda3zIeVHWySCTJL7jovODN9dY9r8ZCpnAZdW2NKNVprSeUao2t/iRs+casVzEvuEcoKMA4vUxLbXDtGqWW9syAqaZGi3zOOtdaiCBaT6arOo2cqyf4tuoPRACuZwSLb06liCl2D6f+VDMW33Ziw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725928990; c=relaxed/simple;
-	bh=47e87rjjwrv3Klk0s/ZjV4Ua4MteTFTnXkPzD8ijqos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rvXeGRXtQDjeGnYid2H2bNSF8PDcxpz9vOun+qReYbCCDxJkaH9IhZxN1QS2kFZhEwtsqFI/lezJiqxmuvlfR9DzdoD0pjIdI6RGpu0R2Wqg1nWX9dNBNE6aZV+2h+YqgiOB0cczmwt3fdFjlt7x+6pVpbv8Xu5Pc1Mdw+WAPZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQtQm5PM; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725928989; x=1757464989;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=47e87rjjwrv3Klk0s/ZjV4Ua4MteTFTnXkPzD8ijqos=;
-  b=WQtQm5PMnTMM7OeRUEy6MK9B3xLVctwsHfvNKtw9yNSx0va1+jkMYLU0
-   f1Hf/f0LSTYu0DWQ9sNsXj19iF49NqWsjmLLFGITYPwUwIK/CcaEq5Inp
-   1vTywusjJgHCsYVrJKOElPLJWPQkM6DpdsUMHcnm51eSzkBPeYSqF9KqI
-   pVQ9RjLlglElHLfrwjMqFYLGMLDWxPvuncyUAZvfSg8m3KIOwOwn1JK/C
-   rSJEsomxyRHCyHV2Uui30694Lhwf/fwDxEAIcsPojC3f8ouZ/5cGz40Ho
-   ZnZSj9+v59lyxy6vFU7Yv0Mo6Z4+hQWrFcnT4Nme5DDk2eCHCj8bRPJXE
-   g==;
-X-CSE-ConnectionGUID: 9BciBPeIQQid2W8/UUGeGA==
-X-CSE-MsgGUID: bT9TjOzEQ0G1+jsuIBDVvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28542210"
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="28542210"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 17:43:06 -0700
-X-CSE-ConnectionGUID: CsHaniE4RjaD+aVroL7SXA==
-X-CSE-MsgGUID: RzdD9defTNmjbp2pidQpFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,215,1719903600"; 
-   d="scan'208";a="66796157"
-Received: from xpardee-mobl.amr.corp.intel.com (HELO [10.125.67.115]) ([10.125.67.115])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2024 17:43:05 -0700
-Message-ID: <2d8249a2-22a0-4785-9eea-a2d59c1d9b1a@linux.intel.com>
-Date: Mon, 9 Sep 2024 17:43:04 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5499423AB;
+	Tue, 10 Sep 2024 00:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725929158; cv=fail; b=kIHhMBavG3PQCROl2tbiU8ByE086EDtIw1CVoBA+2D/mb3Td1I+oLlyqbuRrrE+/ZnPEnsbi6ntfdmAAqy8rXOcPR9+kRLdR6+YoUusCMIvvJWQhvnhmd3i2ewUZcUwcvqqXbHJJxrAuoOWfZUH2JLmAcOT32JTORAJOYNR1tXk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725929158; c=relaxed/simple;
+	bh=D2/kNpBduLtargRXr6ZTDi1YRv2bVTErbIA0UNKkCF0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ajFbd7rHqoRWrjyPT8h17WWdjJe/r8mUSaUQfrH1fFcPo7BPloFOy2px15EHXGu1xQqLTZKwWDgoPzBXUB48tC88DOxkI/HueW746SEU1EZgXIjLOyCVXckPSH6HsmYDM4WpvqM7N76y3Qn4gW7/mke3slP7y5GqaChLUJlMAGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=duIPFWkD; arc=fail smtp.client-ip=52.101.193.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gBYmwNIueKYMDdhCtDRdyOIWYFcMJNoNLK9XqjDyzBW4/RwCturDIoaUUF3BJK+PLLltp2eirTIUJiEgrhaMbpeLZj2OBCjrGb3L7YaYixe1fD06eNI0gXjc6DpKvX6caVycrt0ABXSI3IYU2nHsTi4wXZ0R5ew+Dq5IqU7jiqpv2KaQqewKk7ONOVK7NCPCh6jFFoXEz7zeC4Ek1nDJrLDBg1Pg7WrIE0JZbxre4567VdAescs+3t74RikLiqHr90BnFx7DIXbBp0R9rmKGuEeaqiEFm1nC4wmml5hkc6e7GPlAYm8PYNchv2qci+8eSoXJW/CUlJ1s7UNIDAs9wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YUuf/AEBRsx05JbMV/+uwa0VrhZsiCGwV2k+3WfByN4=;
+ b=YaY5FNO/RYkAJo0QnLo+u+PiRH7Wr13qDeYQD9rgIn2XrVFWzVJLaqaxcAhUqUBLEAUyExwILTzRvwCL0/QjOOpIEZtCjOhU01+oSZS7kdkYDYXRBR1/8IUeQrFVQz7RAyp0il1E2vUGyPIA8I+QMNAZ41wG234sHPXjzSXx1kOFg0xTtMl6FUlqpS2ycXoeAoKAZ0txi+bfR/lSyseVVtEg8yzg4WU2pmTeNImnoHsyYmBqJ6a08+OkRvI1JgB3TrvJqWRd9Wdfvn5Lnoh8N0PGd3XFZ5WrdSOrWjYG2RCbnTEIdFEJ0FqU1cZPf8moVjSsYrDHXIgev3EwKHg3WQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YUuf/AEBRsx05JbMV/+uwa0VrhZsiCGwV2k+3WfByN4=;
+ b=duIPFWkDxvuzRE9k6NIDkguqOhduUZ0M1kiMCx0RY3ByfrFwBASPx2VdlQonk3eYWZwmYfhAXjMPj/DLH4dsrD8dNVJ7VnBAd/gUeJaviVXoZUUeFjxV62pwZiIWbPxkDItCT1muoBXrWQpKEfqSj/KKYhrVsX7ZPdTwY4WEqts=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+Received: from SA3PR21MB3915.namprd21.prod.outlook.com (2603:10b6:806:300::22)
+ by BY5PR21MB1425.namprd21.prod.outlook.com (2603:10b6:a03:237::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.5; Tue, 10 Sep
+ 2024 00:45:54 +0000
+Received: from SA3PR21MB3915.namprd21.prod.outlook.com
+ ([fe80::fa84:e37b:af8f:a1cb]) by SA3PR21MB3915.namprd21.prod.outlook.com
+ ([fe80::fa84:e37b:af8f:a1cb%3]) with mapi id 15.20.7962.008; Tue, 10 Sep 2024
+ 00:45:54 +0000
+From: Dexuan Cui <decui@microsoft.com>
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org (open list:Hyper-V/Azure CORE AND DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: stable@vger.kernel.org
+Subject: [PATCH] tools: hv: Fix a complier warning in the fcopy uio daemon
+Date: Tue, 10 Sep 2024 00:44:32 +0000
+Message-Id: <20240910004433.50254-1-decui@microsoft.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR19CA0129.namprd19.prod.outlook.com
+ (2603:10b6:930:64::27) To SA3PR21MB3915.namprd21.prod.outlook.com
+ (2603:10b6:806:300::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86:intel/pmc: Ignore all LTRs during suspend
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
- Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-References: <20240906184016.268153-1-xi.pardee@linux.intel.com>
- <15d08ff3-6787-7042-8afc-3a64f1ebc756@linux.intel.com>
-Content-Language: en-US
-From: Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <15d08ff3-6787-7042-8afc-3a64f1ebc756@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR21MB3915:EE_|BY5PR21MB1425:EE_
+X-MS-Office365-Filtering-Correlation-Id: daa749e1-d28b-4e2b-85cf-08dcd131ed5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|52116014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4XLnohdAEb5h4N66+mH9D0MhNzrW7vkfzUruThUc5hKltKMAXd2qDuxXkB6v?=
+ =?us-ascii?Q?AEBAvnxJPJiIiE8MUgHjfYd+s7y9lqVoz592a+l9pOJz2jSG4xwi/nVOpncv?=
+ =?us-ascii?Q?qEzJD8D2coQvLK5PzSbpES/kOEBG+KAhJOgDD0XpbtQBXxxUnJp6w8aBSpAg?=
+ =?us-ascii?Q?vKInaevORVz7FNrjd6+T3yTYP5m3TmC5xCnVVzveXq+BNin7mgKpP3f9s38Y?=
+ =?us-ascii?Q?bXmJJtTQXGng2sV81BKxwVhLJ409VoNPgFM2ipSGWpJ8/vZCmI1ZE/pawmp5?=
+ =?us-ascii?Q?S9CpBEZgdWuFI2dz6rYEnGBJFNrzqAzeH6bUuzhpu8cwFgjQCL7LL+zXNE/h?=
+ =?us-ascii?Q?P30Mrg/6A0BOH5JnzJPGC7snla4um3vUHwaji3fOlgXZ3ncvPIWHAjxc/RPT?=
+ =?us-ascii?Q?QO+XHypoJjerwEqFxD8TWm+0p/QG08ckXKrGbjacj/VJRnR8KqpmLEHvQOEm?=
+ =?us-ascii?Q?JclmwINZWPI56vxdDd7WQes8/VkyIooMGt//vGTP3HMFahEu35x2KkiCR5vY?=
+ =?us-ascii?Q?ZwJn/flH2aNmECysOy5i68SA4rkpjhsi18oZGzYw/bI/zbEJjhGSNYmGvt6O?=
+ =?us-ascii?Q?qgGyfS5wgNIC0huJpfWN+whoXEkwwvqnbjDLQ9ZqknaQjgUfMrRzhELpWIeM?=
+ =?us-ascii?Q?VZ+NT8agyMTSPd1ewXtrn0gBu+P9Dz1ukVJrsYcsxyTDB7IJBq6HMh4xvdc4?=
+ =?us-ascii?Q?ccXGmvjkl0EjSuyo26uJ27Uf8ol51YddmuPsmERyTDEMvidS7KA6/909SwNd?=
+ =?us-ascii?Q?Z9iJBjb2gWLQ5Ni/3F2zhwxPB7Gw46ceiB5eKZR5ww9tK4QzHUGgoAZd2xJc?=
+ =?us-ascii?Q?jnntYV+mUbhIDHSCxMgNY6HwfmSOUya5HSHPWoUvkShXb/aqnKHwTXeZLUXK?=
+ =?us-ascii?Q?5+PceM4kmzUHOzeG5yaMsc8hjRWEjQQejnkg1dSuYjwvIMWBBzGFSGy5vGd2?=
+ =?us-ascii?Q?qTCrLfFjimpYcymwr9AAw4j2407QD4KBR1QO2Cxj9PHCvJDuOb1HApD7WVZQ?=
+ =?us-ascii?Q?S2YrWHGpJN0Hq/z4cFKpDcefLzXUtD/vY29iOgClDcE2jspZFK9J1FobIhwE?=
+ =?us-ascii?Q?6nMvWJIGqlj2w7Xhmnsb/nfk0BeD8wgkCaOkZA7rJ3gLMrEtBbdsJOv/IMX3?=
+ =?us-ascii?Q?nWa2BCPWy5PHq0NiueKI3gH25hJ25/J+yB428QK4t2uCB+iEGkO5lXD62TnF?=
+ =?us-ascii?Q?zQTtghjqKRgrX5AHtq5MP1it3cGtxxhVluBUzknrM15D20ZGNB7YK6pecNYf?=
+ =?us-ascii?Q?bLv+8vvsEd0hj7Zh5X+CJXTk85Tc4WOpj9FWEfYjhtkfVvVIUiwiV9nnuG8a?=
+ =?us-ascii?Q?vI15fcUCRxVVnnkJHweME7qEp+bn/9vLinPdFuMK+pT94Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR21MB3915.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?d/zYqXGVI521yD0pD7AvdFfYOlbcMWIyejgyoTWkmJAxFAuUE7PKouKvcVfr?=
+ =?us-ascii?Q?o1zj4uVtKES0TtRwAk4OsSfo7hlUNxS+X4XOrJJoEFiYiIrRgGFfx4Lf2YSB?=
+ =?us-ascii?Q?RDfpmX15lyf5M1yExhVYhqw+y2PMcPRS9pu243taujjKb6r3H6j6tJ1BJB4+?=
+ =?us-ascii?Q?IhtxscYiMacFP5aQKb23NCXpA9ojeRzTBGPXWan1UiOV2VvEeXCWUQaW93Sq?=
+ =?us-ascii?Q?dTebfv3DomdfP7pp3Za3mR6+K5mrgdP6NZP3wLCZSv3B1R8e1Ow7KItLc9ZQ?=
+ =?us-ascii?Q?D2g4h/Xg8L9R2sV9TSN8i1iofgokLT7+oyXb1cruqyDb5VcPt/3zo7nTxsm3?=
+ =?us-ascii?Q?zud2kDWqAvLGaeSKYztcGjoyhZ0rCCuaM3mcnLy4ibz687N8Ucvp0fxogXXa?=
+ =?us-ascii?Q?lDqyhWuS5088I+haeK1kqSJZZM8qovwirhkhAe0zEOKlWwWllS/BBrF24rzc?=
+ =?us-ascii?Q?GUu6l5uLTTX+Du2ayBWThLkjRfbDeESbdZUrNrbmJSG+50ywrWBrXC5zO48R?=
+ =?us-ascii?Q?os9ns15vi5fhxt4FX+ZBAiFzDXrQnSzg2hPa1ucceqgSyrQPRa+wQei71EKb?=
+ =?us-ascii?Q?gNikaq2fxi/5YHjI+6bz8Hx/MOmRIEGhI400laMXfn7JEOBK5KiFES0YkxWn?=
+ =?us-ascii?Q?L8Y1GasQxSnQBul4SQDwgQ1enz8U8kY1+XqR4vQy+hkRuH+W6y6fVFJ3V/jf?=
+ =?us-ascii?Q?vcy+NtKc7qxpF1cRRIoeHg6yYsrF8Uq0wGlO0u/o3kYpnXhzlS0BsMsPM586?=
+ =?us-ascii?Q?VnAd4jUvLU3hGuZxwAj4WF8isbWBCJE6GdhEI7eYiGUFQKA/U3XHYJ2wq/ZR?=
+ =?us-ascii?Q?EKPfaAdvyjqM74xgsw7jWIy6s7UHsUXIWO6fxWc++pJ968zwP/C/USaUS9qN?=
+ =?us-ascii?Q?sPRkFd4LKVbJ9/42AUOTf7VwonAiebyIjSB9t5C3YfN8rv/6Fhk0VTBDF4uc?=
+ =?us-ascii?Q?vljGJIR9MJAeW+f++zuEdkMCXk1BYg1ux1PseOi3se8T/wGrUiSw69YOtDoL?=
+ =?us-ascii?Q?cQ0pxwKCZEWDcyVBXajAe7ttQfqwHOYu/1U35lw7/nDqHTWtnpeEY33w7f+t?=
+ =?us-ascii?Q?J4Fr2tT6/mwpcKqYdusMij0Pw0HwgxFclU8briRiKzpUKN1+2iouRzjoAopv?=
+ =?us-ascii?Q?nw3ZHG5ZWspxXHEYO59/ZHSnv6xHHop/Bzty2sGKK5MEY2h79G2Ve6jYHNc6?=
+ =?us-ascii?Q?hBVsIGwjSFeM9A0yxVcZZO9A72EYAR4Hnq2Kd0RE+AdvMEiYEoIhqAOGzKZ4?=
+ =?us-ascii?Q?jwpiSdrYgg/4Ze+rTNXC0f5lbXT1NMn/AVQIKS9rm54MY/Y9hJZkciw5DhVa?=
+ =?us-ascii?Q?q5afqlPQdqVXedLvH0yXa9eVOtDEyIgNgjFTqZW2V0CrfJHIE/0s3S4CxZfY?=
+ =?us-ascii?Q?0XMwB8Jg9Uj05hc8NuR59noUD+c+OKHCaajeuCw3UHlm+F9prCHbUROSfhwR?=
+ =?us-ascii?Q?ymXL7M+ptEPIGphnmYZhLXSlZMVitVlJdakilaovdcPNOCgV67CSTsbUgXub?=
+ =?us-ascii?Q?ppN60U7Xom4bvOAD7/WATf1l2RbNfATjzR7oX0+SteUY3D10d/8ZhNlxF0ve?=
+ =?us-ascii?Q?bo8ttes7O28v0olMH/WKx7K3MymLjFALrrmb5B7CnuZQorBqr7bQpui2F32N?=
+ =?us-ascii?Q?klswdq5GtRJyIWjVJRujny4HUJBXuO2YpzgTJ6k/5JmH?=
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: daa749e1-d28b-4e2b-85cf-08dcd131ed5c
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR21MB3915.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 00:45:54.8511
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wNEEdtpb9kpP89ryhsprA5XJzZYcU9Axx01ztN9K1fjrnDDNaU8O18gQMDDkhaXuKvzpzqNB0m1lG529kcEebw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR21MB1425
 
-Hi,
+hv_fcopy_uio_daemon.c:436:53: warning: '%s' directive output may be truncated
+writing up to 14 bytes into a region of size 10 [-Wformat-truncation=]
+  436 |  snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
 
-On 9/9/2024 1:07 AM, Ilpo Järvinen wrote:
-> On Fri, 6 Sep 2024, Xi Pardee wrote:
->
->> From: Xi Pardee <xi.pardee@intel.com>
->>
->> Add support to ignore all LTRs before suspend and restore the previous
->> LTR values after suspend. This feature could be turned off with module
->> parameter ltr_ignore_all_suspend.
->>
->> LTR value is a mechanism for a device to indicate tolerance to access
->> the corresponding resource. When system suspends, the resource is not
->> available and therefore the LTR value could be ignored. Ignoring all
->> LTR values prevents problematic device from blocking the system to get
->> to the deepest package state during suspend.
->>
->> Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Signed-off-by: Xi Pardee <xi.pardee@intel.com>
->>
->> v2:
->> - Add more details to commit message
->> - Fix format: ltr->LTR, S0IX->S0ix, space between name and email
->>
->> ---
->>   drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
->>   drivers/platform/x86/intel/pmc/core.h |  2 +
->>   2 files changed, 55 insertions(+)
->>
->> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
->> index 01ae71c6df59..0ec703af16a4 100644
->> --- a/drivers/platform/x86/intel/pmc/core.c
->> +++ b/drivers/platform/x86/intel/pmc/core.c
->> @@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
->>   }
->>   DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
->>   
->> +static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
->> +{
->> +	unsigned int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
->> +		struct pmc *pmc;
->> +		u32 ltr_ign;
->> +
->> +		pmc = pmcdev->pmcs[i];
->> +		if (!pmc)
->> +			continue;
->> +
->> +		guard(mutex)(&pmcdev->lock);
->> +		pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
->> +
->> +		/* ltr_ignore_max is the max index value for LTR ignore register */
->> +		ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
->> +		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
->> +	}
->> +
->> +	/*
->> +	 * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
->> +	 * deeper S0ix substate.
->> +	 */
->> +	pmc_core_send_ltr_ignore(pmcdev, 6, 0);
->> +}
->> +
->> +static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
->> +{
->> +	unsigned int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
->> +		struct pmc *pmc;
->> +
->> +		pmc = pmcdev->pmcs[i];
->> +		if (!pmc)
->> +			continue;
->> +
->> +		guard(mutex)(&pmcdev->lock);
->> +		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
->> +	}
->> +}
->> +
->>   static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
->>   				       const int lpm_adj_x2)
->>   {
->> @@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
->>   module_param(warn_on_s0ix_failures, bool, 0644);
->>   MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
->>   
->> +static bool ltr_ignore_all_suspend = true;
->> +module_param(ltr_ignore_all_suspend, bool, 0644);
->> +MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
->> +
->>   static __maybe_unused int pmc_core_suspend(struct device *dev)
->>   {
->>   	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
->> @@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
->>   	if (pmcdev->suspend)
->>   		pmcdev->suspend(pmcdev);
->>   
->> +	if (ltr_ignore_all_suspend)
->> +		pmc_core_ltr_ignore_all(pmcdev);
->> +
->>   	/* Check if the syspend will actually use S0ix */
->>   	if (pm_suspend_via_firmware())
->>   		return 0;
->> @@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
->>   {
->>   	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
->>   
->> +	if (ltr_ignore_all_suspend)
->> +		pmc_core_ltr_restore_all(pmcdev);
->> +
->>   	if (pmcdev->resume)
->>   		return pmcdev->resume(pmcdev);
->>   
->> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
->> index ea04de7eb9e8..e862ea88b816 100644
->> --- a/drivers/platform/x86/intel/pmc/core.h
->> +++ b/drivers/platform/x86/intel/pmc/core.h
->> @@ -372,6 +372,7 @@ struct pmc_info {
->>    * @map:		pointer to pmc_reg_map struct that contains platform
->>    *			specific attributes
->>    * @lpm_req_regs:	List of substate requirements
->> + * @ltr_ign:		Holds LTR ignore data while suspended
->>    *
->>    * pmc contains info about one power management controller device.
->>    */
->> @@ -380,6 +381,7 @@ struct pmc {
->>   	void __iomem *regbase;
->>   	const struct pmc_reg_map *map;
->>   	u32 *lpm_req_regs;
->> +	u32 ltr_ign;
->>   };
->>   
->>   /**
->>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Also added 'static' for the array 'desc[]'.
 
-Thanks for the Reviewed-by tag! I wonder if I need to send another 
-version with the Reviewed-by tag for this patch to be accepted.
+Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
+Cc: stable@vger.kernel.org # 6.10+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+---
+ tools/hv/hv_fcopy_uio_daemon.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Thanks!
-
-Xi
+diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
+index 3ce316cc9f97..f7741af08a79 100644
+--- a/tools/hv/hv_fcopy_uio_daemon.c
++++ b/tools/hv/hv_fcopy_uio_daemon.c
+@@ -35,8 +35,6 @@
+ #define WIN8_SRV_MINOR		1
+ #define WIN8_SRV_VERSION	(WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
+ 
+-#define MAX_FOLDER_NAME		15
+-#define MAX_PATH_LEN		15
+ #define FCOPY_UIO		"/sys/bus/vmbus/devices/eb765408-105f-49b6-b4aa-c123b64d17d4/uio"
+ 
+ #define FCOPY_VER_COUNT		1
+@@ -51,7 +49,7 @@ static const int fw_versions[] = {
+ 
+ #define HV_RING_SIZE		0x4000 /* 16KB ring buffer size */
+ 
+-unsigned char desc[HV_RING_SIZE];
++static unsigned char desc[HV_RING_SIZE];
+ 
+ static int target_fd;
+ static char target_fname[PATH_MAX];
+@@ -402,8 +400,8 @@ int main(int argc, char *argv[])
+ 	struct vmbus_br txbr, rxbr;
+ 	void *ring;
+ 	uint32_t len = HV_RING_SIZE;
+-	char uio_name[MAX_FOLDER_NAME] = {0};
+-	char uio_dev_path[MAX_PATH_LEN] = {0};
++	char uio_name[NAME_MAX] = {0};
++	char uio_dev_path[PATH_MAX] = {0};
+ 
+ 	static struct option long_options[] = {
+ 		{"help",	no_argument,	   0,  'h' },
+-- 
+2.25.1
 
 
