@@ -1,136 +1,265 @@
-Return-Path: <linux-kernel+bounces-323512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7062973E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ED3973E1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0AB1F26EA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7EA288A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FDD1A4F06;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322DA1A4B69;
 	Tue, 10 Sep 2024 17:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lv+sN86g"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egq4yuIo"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BE01A42A4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF001A38FD;
+	Tue, 10 Sep 2024 17:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725987987; cv=none; b=ZC/0kr5OxwjlUMDWVA5IVFOqpSJvrF0WGs4ElYyr6TZjHiWDhwpd1JedQs6N+ppqWkKjbuB9AIX2Yhqcj8TqsZoK/KPPYx2Tw6ZrhObb/nFsXbjGAMB0DAq3vk5ScwXKb93fFh7poiIM8r5AufG0PLwkZXxbVpGortZ9vVp9l5Q=
+	t=1725987986; cv=none; b=JMTQAZcaqwxtvQHgyyXNtKjeHRupY+TdA/v/8dzGXxoyHTFeryp7mOLoy47NtQU56y42nL7ThOoG16iGO5OtL4z2oh7JzoajV6zXheYD1x0bN+iic0BNmxHuQcKQ3JRiuCh+sgMLR3ou+8YiO/uURjfBK+3A52WwIQ/6gmM6P4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725987987; c=relaxed/simple;
-	bh=K1zMb74fLs/3b55dFPaW8pZ6BoPzNIUNMZnJvQ2/+yk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WIWkU/lvE3alCauQwdy2lZc/eKHPcrB7xm5wjuSwG437Ge8BdAigM92+dVdQ1A0xCO8l4RXV/Yo5GOa2p9QFk73Q78QC4z+6mFjef1w9JBn6HMOOsATBF4qbE1fVoN89/jr5+4woe3y1Mu1qm/RBhVPUbI0fvJRIHlcBqv9zy6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lv+sN86g; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c42e3so69986777b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:06:25 -0700 (PDT)
+	s=arc-20240116; t=1725987986; c=relaxed/simple;
+	bh=X6GxUXgIpthZ4hkYtW1OBXJavA9LWUA1gRiTxvcauQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iqgaTmJ0YEWyTblT4B+J6XdUEZrErT3uBGZ1yLf8ehPJDiJrT0vIUkWesV6zrsvxqDnL+rlfMQNNUS78+mom6YGF1q7VjjTV+rqxvaaV/pSHnTkkuB7OW/+HmnFeVas38CFhEOG6KmzFrBk/yIVT4JrFeByU1IMgr+ib6PqtuSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egq4yuIo; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374c84dcc64so4495478f8f.1;
+        Tue, 10 Sep 2024 10:06:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725987985; x=1726592785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bO8RJUCEv3T+MW3ZwzmCcUtuhGy0JOcrONU3LjeHDvk=;
-        b=lv+sN86gDiTEFvuC4QMNZ05yijGfMBX00czh5+weyS1Tl/o0doWV3iTVXkIgUyBVLh
-         dJcZVD9Va+FggUBJGL9D4QXT5Ps+N6F8f/V6fJ5/dHziqLFxHuYzOqaAJ2BAnf3eOc0v
-         VyeMNwkPcyxCxqcpyJIlL9OokaKAYmXaNHyjnNmbVUx9Q2HPDWDDylBmsB/ajCtRoyqo
-         doBYZzkqXmNpdQR440Ijeml+usc6W0nendmnVtSAdHt5UUR9RASExLPyC/l8tqPe9i9v
-         Ph2eBrzyG5w8Wge7RhcbyWokbtrtH1N6IDXy3Nt+0gam7vcLTjP3U7x7DLMBxJdY0LDC
-         w5UA==
+        d=gmail.com; s=20230601; t=1725987983; x=1726592783; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXwEs9Y9JVv7cES2jlT6BP+QZdA8iaeYLh1s141Dr0E=;
+        b=egq4yuIoEUNbPQoUg1bGlOwH0LHzO12+s2ekXh3Slj4+P2R4RR3ihxtsO1MyPYHnk7
+         /S1H6DNLGTAb6xS/WZNuqrNtI1P17cQ6phLlqUQpNONQYo4S123GHCvsEL903HkUkWvZ
+         OjUpwXeHh1B14zlLGHWpcKdy+iQ8C6pP3C97P0nWpmPPoD+qkMeWfaDOujosg3V3uhgB
+         ZCi34uspIB12cAnCDD6y+2XpMxtEYLvzGiF1PG+GyaK6GsjjUpShVX3P2WKzSpVRTYyA
+         UMcFvKVdU8BE1x7jKAYpAxhXTqf1Qa18tl84brJ37AluTK+JOhAPPQf5+P5HvQ8Mubju
+         JZog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725987985; x=1726592785;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bO8RJUCEv3T+MW3ZwzmCcUtuhGy0JOcrONU3LjeHDvk=;
-        b=XASvTL1bsoWH+DhbjqZddzXzbTa7hL9ClZFXZLNokZbw861ho3bwp4WClc88ib2xFR
-         Ezbbb1GxpDQsQMi5utLgc1MJdFN8AmMbuoiYJ0pQkzZ2o1egj/Y30UFOgoN00a+dsAqG
-         IBHjo2XG+DM8a/Wg5Bwh7f8f8zcI+lzpyzeldaJi4eD4y0XaJaKTLeQQa30FPRTm8pBx
-         +GObA8X3EHPLsv3YqTm4AQjHhYvkANRL22ZW9wZ/vraILp5bt3ZJg2OSRShrS3M/9ifa
-         ApPNAZMECudpqisbuTba4iJsi+dkkh3yqQk4YUMTL1BUHwWeYqjM1WeTlpHPVgUYWcf5
-         3/ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrNKTGRyHErkm1KKc8ddR00AOvxaRKaGRPIc7ThwQGSILl2sStVBqChgCPGXIHv5UvCe+PD5qE8H7KQZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+4V+9wMLDH6VCaZLWz7ooKTZaJlmWRDq8ksf3wz4cUi7ffSju
-	yiiw0lcyG61drlVaQTNLXa8AwnHkm5VxIMCteA08rsNRr1XNkIz1TeOBPw1qNnM3QTB+lG74qJe
-	d1A==
-X-Google-Smtp-Source: AGHT+IEyaU7HwD8P1kj9fZKH///TZKTxYleYQe9/4U+rzcNrsW+wdQjOiMgd4p7gsiXUIRaKzhvpQ4gUL4g=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2c11:b0:690:8ad7:55f9 with SMTP id
- 00721157ae682-6db44d6c217mr1835277b3.2.1725987984610; Tue, 10 Sep 2024
- 10:06:24 -0700 (PDT)
-Date: Tue, 10 Sep 2024 10:06:23 -0700
-In-Reply-To: <1cd7516391a4c51890c5b0c60a6f149b00cae3af.camel@kernel.org>
+        d=1e100.net; s=20230601; t=1725987983; x=1726592783;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXwEs9Y9JVv7cES2jlT6BP+QZdA8iaeYLh1s141Dr0E=;
+        b=WCQielCFI2PRG6QRyl3SQSi6d87T97ikIs4H+v/2AxD8BnLpC1fTCr7WLSliX/aWO6
+         fdOT1WfLfL7KJnLn2jhDwK/5UO5MLcZYIfSXe3mbOKKEJPTZB0SlglU8T1/AJiAV95Pt
+         16HEQxmoXA6VHC3ZNDokAI7TnvDDU814/Vws7cc69qZDtQK97ljpqxk5yhcN4HHwG8iN
+         zzuKCSQAeN2SOhZxg5JqWvonsVMiTf89JH/w1yoIlYB+G0np5hQVu38b16pJzxMwv63W
+         aiaDOwNnE5cx3g669oIsxSQDok0+AhwwxfETEMPTVGOZwzRj/ycbAqb1zZ2Ebfzrmf+D
+         We6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVw9THSO6RYvUKP8z7j84xXtbqQsVpZ543nkrqH+z/jeP+YZ0NNbpiUeFNvrgXZaenBKgnIYzE5BDpnDUQ=@vger.kernel.org, AJvYcCW/pOya5Z+cR8MqaYeR4c1E7gwRwyD6G67tXiwkYi0Fh1M4ofK062v+lVRX+sIJbRROsTh+gOlq@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi0Hg6OuKeEQx+UjaLy4Px2t6KdErwhjn/wFNgm+RS/v4dolOt
+	yKuaH2PLs/AXSXjN/+yP3xUqI4SOd4+Fa/XD7iqGdUYxyrWihh6C
+X-Google-Smtp-Source: AGHT+IEHJFQxDeA1DhumdJmAXc+zefco2qlhdZRV8v+Jig+0woeksn7yRxxgCVacEU3SHcFKS9PyVg==
+X-Received: by 2002:adf:ea0e:0:b0:374:c05f:2313 with SMTP id ffacd0b85a97d-3789243fa0bmr9923077f8f.45.1725987982222;
+        Tue, 10 Sep 2024 10:06:22 -0700 (PDT)
+Received: from ?IPV6:2a02:3100:a1e4:b900:551f:92c7:e4c2:de47? (dynamic-2a02-3100-a1e4-b900-551f-92c7-e4c2-de47.310.pool.telefonica.de. [2a02:3100:a1e4:b900:551f:92c7:e4c2:de47])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8d25ce9277sm513817666b.149.2024.09.10.10.06.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 10:06:21 -0700 (PDT)
+Message-ID: <038166f4-9c47-4017-9543-4b4a5ca503f5@gmail.com>
+Date: Tue, 10 Sep 2024 19:06:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240626073719.5246-1-amit@kernel.org> <Zn7gK9KZKxBwgVc_@google.com>
- <CALMp9eSfZsGTngMSaWbFrdvMoWHyVK_SWf9W1Ps4BFdwAzae_g@mail.gmail.com>
- <52d965101127167388565ed1520e1f06d8492d3b.camel@kernel.org>
- <DS7PR12MB57665C3E8A7F0AF59E034B3C94D32@DS7PR12MB5766.namprd12.prod.outlook.com>
- <Zow3IddrQoCTgzVS@google.com> <ZpTeuJHgwz9u8d_k@t470s.drde.home.arpa>
- <ZpbFvTUeB3gMIKiU@google.com> <1cd7516391a4c51890c5b0c60a6f149b00cae3af.camel@kernel.org>
-Message-ID: <ZuB8j02laOrxq-ji@google.com>
-Subject: Re: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB
- filling is required
-From: Sean Christopherson <seanjc@google.com>
-To: Amit Shah <amit@kernel.org>
-Cc: David Kaplan <David.Kaplan@amd.com>, Jim Mattson <jmattson@google.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	Kim Phillips <kim.phillips@amd.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] r8169: correct the reset timing of RTL8125 for
+ link-change event
+To: En-Wei WU <en-wei.wu@canonical.com>
+Cc: nic_swsd@realtek.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kuan-ying.lee@canonical.com,
+ kai.heng.feng@canonical.com, me@lagy.org
+References: <20240906083539.154019-1-en-wei.wu@canonical.com>
+ <8707a2c6-644d-4ccd-989f-1fb66c48d34a@gmail.com>
+ <CAMqyJG0FcY0hymX6xyZwiWbD8zdsYwWG7GMu2zcL9-bMkq-pMw@mail.gmail.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <CAMqyJG0FcY0hymX6xyZwiWbD8zdsYwWG7GMu2zcL9-bMkq-pMw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 22, 2024, Amit Shah wrote:
-> On Tue, 2024-07-16 at 12:10 -0700, Sean Christopherson wrote:
-> > FWIW, I feel the same way about all the other post-VM-Exit mitigations,
-> > they just don't stand out in the same way because the entire mitigation
-> > sequence is absent on one vendor the other, i.e. they don't look wrong =
-at
-> > first glance.=C2=A0 But if KVM could have a mostly unified VM-Enter =3D=
-> VM-Exit
-> > assembly code, I would happliy eat a dead NOP/JMP or three.=C2=A0 Now t=
-hat I
-> > look at it, that actually seems very doable...
->=20
-> Sure.  I think some of the fallacy there is also to treat VMX and SVM
-> as similar (while not treating the Arm side as similar).
+On 09.09.2024 07:25, En-Wei WU wrote:
+> Hi Heiner,
+> 
+> Thank you for the quick response.
+> 
+> On Sat, 7 Sept 2024 at 05:17, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>
+>> On 06.09.2024 10:35, En-Wei Wu wrote:
+>>> The commit 621735f59064 ("r8169: fix rare issue with broken rx after
+>>> link-down on RTL8125") set a reset work for RTL8125 in
+>>> r8169_phylink_handler() to avoid the MAC from locking up, this
+>>> makes the connection broken after unplugging then re-plugging the
+>>> Ethernet cable.
+>>>
+>>> This is because the commit mistakenly put the reset work in the
+>>> link-down path rather than the link-up path (The commit message says
+>>> it should be put in the link-up path).
+>>>
+>> That's not what the commit message is saying. It says vendor driver
+>> r8125 does it in the link-up path.
+>> I moved it intentionally to the link-down path, because traffic may
+>> be flowing already after link-up.
+>>
+>>> Moving the reset work from the link-down path to the link-up path fixes
+>>> the issue. Also, remove the unnecessary enum member.
+>>>
+>> The user who reported the issue at that time confirmed that the original
+>> change fixed the issue for him.
+>> Can you explain, from the NICs perspective, what exactly the difference
+>> is when doing the reset after link-up?
+>> Including an explanation how the original change suppresses the link-up
+>> interrupt. And why that's not the case when doing the reset after link-up.
+> 
+> The host-plug test under original change does have the link-up
+> interrupt and r8169_phylink_handler() called. There is not much clue
+> why calling reset in link-down path doesn't work but in link-up does.
+> 
+> After several new tests, I found that with the original change, the
+> link won't break if I unplug and then plug the cable within about 3
+> seconds. On the other hand, the connections always break if I re-plug
+> the cable after a few seconds.
+> 
+Interesting finding. 3 seconds sounds like it's unrelated to runtime pm,
+because this has a 10s delay before the chip is transitioned to D3hot.
+It makes more the impression that after 3s of link-down the chip (PHY?)
+transitions to a mode where it doesn't wake up after re-plugging the cable.
 
-Bringing ARM into the picture is little more than whataboutism.  KVM x86 an=
-d KVM
-arm64 _can't_ share assembly.  They _can't_ share things like MSR intercept=
-ion
-tracking because MSRs are 100% an x86-only concept.  The fact that sharing =
-code
-across x86 and ARM is challenging doesn't have any bearing on whether or no=
-t
-VMX and SVM can/should share code.
+Just a wild guess: It may be some feature like ALDPS (advanced link-down
+power saving). Depending on the link partner this may result in not waking
+up again, namely if the link partner uses ALDPS too.
+What is the link partner in your case? If you put a simple switch in between,
+does this help?
 
-> They are different implementations, with several overlapping details - bu=
-t
-> it's perilous to think everything maps the same across vendors.
+In the RTL8211F datasheet I found the following:
 
-I never said everything maps the same.  The point I am trying to make is th=
-at
-there is significant value _for KVM_ in having common code between architec=
-tures,
-and between vendors within an architecture.  I can provide numerous example=
-s
-where something was implemented/fixed in vendor/arch code, and then later i=
-t was
-discovered that the feature/fix was also wanted/needed in other vendor/arch=
- code.
+Link Down Power Saving Mode.
+1: Reflects local device entered Link Down Power Saving Mode,
+i.e., cable not plugged in (reflected after 3 sec)
+0: With cable plugged in
+
+This is a 1Gbps PHY, but Realtek may use the same ALDPS mechanism with the
+integrated PHY of RTL8125. The 3s delay described there perfectly matches
+your finding.
+
+> With this new patch (reset in link-up path), both of the tests work
+> without any error.
+> 
+>>
+>> I simply want to be convinced enough that your change doesn't break
+>> behavior for other users.
+>>
+>>> Fixes: 621735f59064 ("r8169: fix rare issue with broken rx after link-down on RTL8125")
+>>> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+>>> ---
+>>>  drivers/net/ethernet/realtek/r8169_main.c | 11 +++++------
+>>>  1 file changed, 5 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+>>> index 3507c2e28110..632e661fc74b 100644
+>>> --- a/drivers/net/ethernet/realtek/r8169_main.c
+>>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+>>> @@ -590,7 +590,6 @@ struct rtl8169_tc_offsets {
+>>>  enum rtl_flag {
+>>>       RTL_FLAG_TASK_ENABLED = 0,
+>>>       RTL_FLAG_TASK_RESET_PENDING,
+>>> -     RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE,
+>>>       RTL_FLAG_TASK_TX_TIMEOUT,
+>>>       RTL_FLAG_MAX
+>>>  };
+>>> @@ -4698,8 +4697,6 @@ static void rtl_task(struct work_struct *work)
+>>>  reset:
+>>>               rtl_reset_work(tp);
+>>>               netif_wake_queue(tp->dev);
+>>> -     } else if (test_and_clear_bit(RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE, tp->wk.flags)) {
+>>> -             rtl_reset_work(tp);
+>>>       }
+>>>  out_unlock:
+>>>       rtnl_unlock();
+>>> @@ -4729,11 +4726,13 @@ static void r8169_phylink_handler(struct net_device *ndev)
+>>>       if (netif_carrier_ok(ndev)) {
+>>>               rtl_link_chg_patch(tp);
+>>>               pm_request_resume(d);
+>>> -             netif_wake_queue(tp->dev);
+>>> -     } else {
+>>> +
+>>>               /* In few cases rx is broken after link-down otherwise */
+>>>               if (rtl_is_8125(tp))
+>>> -                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE);
+>>> +                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_PENDING);
+>>> +             else
+>>> +                     netif_wake_queue(tp->dev);
+>>
+>> This call to netif_wake_queue() isn't needed any longer, it was introduced with
+>> the original change only.
+>>
+>>> +     } else {
+>>>               pm_runtime_idle(d);
+>>>       }
+>>>
+>>
+> 
+> CC. Martin Kjær Jørgensen  <me@lagy.org>, could you kindly test if
+> this new patch works on your environment? Thanks!
+> 
+> En-Wei,
+> Best regards.
+
 
