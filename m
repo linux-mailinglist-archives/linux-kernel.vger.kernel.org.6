@@ -1,331 +1,125 @@
-Return-Path: <linux-kernel+bounces-322897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079239732A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:25:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7B597329A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D441C24A1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:25:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1A91C2487A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D99B198A07;
-	Tue, 10 Sep 2024 10:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA841A01CA;
+	Tue, 10 Sep 2024 10:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDfy82SR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fTy9BUaF"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AAB188A28;
-	Tue, 10 Sep 2024 10:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C16172BAE;
+	Tue, 10 Sep 2024 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963565; cv=none; b=LTvChTlBZlccmuXrLkT3f14tCn2HFI55m5v64YWm/Leiiu1JGnHNZx0oL5+PWuGhT+IWQ/rcYOXbUVi+oCnelF2/AyOKmk0ldoWCxhVIPEqLlzgKVCZEmsdxsAJlksoT+mOEnbefz4bQwrAVkush4Km8xLaPKb23Cw7+dGf9PiA=
+	t=1725963537; cv=none; b=ip6pFy4OIFH4ftH59ohWC9KynOPvavRprPyWW4DzxwqS04UNZmVz2POgH1HvTXzliB1LTcSWtWasQKfBQEiA7M4oSVPEhH8r3YF/q2lwH8LXhr/wHwKJ8ifo9djSaX7SGJqERQJ1TyOaYYiB047aQN2t0BZAQRreigwQm5wnn3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963565; c=relaxed/simple;
-	bh=q+krpLA9WNZnvWjIyi+jH35POZYLBa+qsnEdlbQwO1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lwYx8HTES7k/6XOUXbivJrzixzpwl3HdQeoYHb5aYCbjZDHvmm6Yij8VaF4AiO+RqNbtNIP/6sDmxBDWKpLpoEIxu8CtBhIe5b+QHZwLXsSEaQX4tko95IfAEaC40pXZah/8FwtJPJsNoUIe0lpp7Q923cP4adAoUgL11/J/3Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDfy82SR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD09C4CECD;
-	Tue, 10 Sep 2024 10:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725963565;
-	bh=q+krpLA9WNZnvWjIyi+jH35POZYLBa+qsnEdlbQwO1c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pDfy82SRX/3DseH/ISW4EfhbED8IUd/WnNLYsR/WR+c0K6YqiSeFBL8YvWkGb7Pkj
-	 fuTyCtihHqULNZGAP4Kxm2OHZ+yByXxzIe/abC4RsxhtQIiqhPaV7/e5As3b4shlBr
-	 OMg2hFt+Mei0sNcCNEhA0BNr2YGkpukFK73zCpPM5C1cxfvxb30oWdSw9pP9x4O8w0
-	 Bvgfjo3IQh1gHabXOiYxoo2TmQ9SRtcbLn3RpcdvIGwzyU6hOcu6XjlB2Q7+RzCpPH
-	 giivcXw3viUx99BWZdpX5ZAsyFrRnGHyNG3NX3bXSL9u2jE8Mrk0XnueKOiAZ5uPsx
-	 sdnBPwmubnHhg==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso245327966b.1;
-        Tue, 10 Sep 2024 03:19:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUFS5DNYqRYNhnQ3ivFun1fuETTCFu8zgpZIlcJUZzUVbGWRJJNEQAv88FBENR70ECvvp6Et4BVjciHmg==@vger.kernel.org, AJvYcCXX/c1Fep/4IHaa9Yv6MP9yxzuoM9WZ50JIJq0vbfZi0nsfCh5hF11MXyL0nnXkg1in8rtGSPmmfGBaMEId@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvM73dCjZdiSZJ+wzsIXz21EpDVsscdNylL9lIqPbQFhkMpFxB
-	G+qiVxou/o3TFe5TFuA0MPOTeVBaI1OsUvmu9nAld9zgaf98xjLqrMD/AT+Cv948ZsgwhMZ9s6a
-	QnFo0j3rkmexasMiXhPysVyi+2kk=
-X-Google-Smtp-Source: AGHT+IFo9x4lYJkrVXpDHxHeK47RKEfUZ1ZqkW1WcXUsxFDleK/79LOy4Ht37GLyfA/he+2dRYXyfBg3SYBVXYEVgmY=
-X-Received: by 2002:a17:907:7283:b0:a86:9fac:6939 with SMTP id
- a640c23a62f3a-a8ffb2fe465mr25911166b.30.1725963564121; Tue, 10 Sep 2024
- 03:19:24 -0700 (PDT)
+	s=arc-20240116; t=1725963537; c=relaxed/simple;
+	bh=aJ1k/F8YDt/bGKW3O/jYwKwGwBrRW2D3DV2RXryYuFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfCTtxqvITqxi2BjwBT5xery2PxlwMReEHXrMauUdpHqMuV/hPayszfPnPfzilTYUGn2ryOx7T0YpplFVJq9Fe0EUjYJgYHkj78HwUK0WM3HTlBTXfEucs5GkmuZ40TOvPPMpVTbAWtMBo2iwwby5Cd4FxqsnUb5/ud+wn5qWGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fTy9BUaF; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BEC5263F;
+	Tue, 10 Sep 2024 12:17:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725963456;
+	bh=aJ1k/F8YDt/bGKW3O/jYwKwGwBrRW2D3DV2RXryYuFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fTy9BUaF30nyMnIDVlpDx2jbZPXG9aHaa0rcf3zxv7qMOIfDaSJMp8PIW6c5/GtZr
+	 qkVU06IS6fBuR+6Zy8AfG65q3V2tVn3tBYFuCuFnG6eCansEqaf64lp6I3ek8cGGNj
+	 EE8F6HTURmeZsidqHKg6H9TjwitrVA+HRIdWEMqI=
+Date: Tue, 10 Sep 2024 12:18:50 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Naushir Patuck <naush@raspberrypi.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <csfjh3rdhdieemasmfjmvuy4uaypvbct7y7vm2zogdgmglsc56@u7yzkyrbuthz>
+References: <20240905111120.GK16183@pendragon.ideasonboard.com>
+ <40cc1e95-b9fc-4c27-9428-1698d0bf9d25@ideasonboard.com>
+ <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
+ <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
+ <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
+ <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
+ <20240909134516.GA9448@pendragon.ideasonboard.com>
+ <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
+ <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
+ <49e375a3-d8e4-4b58-9456-1e6395b02a07@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dd0cb649510537a495bc64d91e09da5a8119d2e3.1725950283.git.jth@kernel.org>
-In-Reply-To: <dd0cb649510537a495bc64d91e09da5a8119d2e3.1725950283.git.jth@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Tue, 10 Sep 2024 11:18:45 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7RE+cUJaN7fmvwT64gVteRY2s=uqcQPjcBe8dwChBj7Q@mail.gmail.com>
-Message-ID: <CAL3q7H7RE+cUJaN7fmvwT64gVteRY2s=uqcQPjcBe8dwChBj7Q@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: don't take dev_replace rwsem on task already
- holding it
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <49e375a3-d8e4-4b58-9456-1e6395b02a07@ideasonboard.com>
 
-On Tue, Sep 10, 2024 at 8:55=E2=80=AFAM Johannes Thumshirn <jth@kernel.org>=
- wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Running fstests btrfs/011 with MKFS_OPTIONS=3D"-O rst" to force the usage=
- of
-> the RAID stripe-tree, we get the following splat from lockdep:
->
->  BTRFS info (device sdd): dev_replace from /dev/sdd (devid 1) to /dev/sdb=
- started
->
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  WARNING: possible recursive locking detected
->  6.11.0-rc3-btrfs-for-next #599 Not tainted
->  --------------------------------------------
->  btrfs/2326 is trying to acquire lock:
->  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_ma=
-p_block+0x39f/0x2250
->
->  but task is already holding lock:
->  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_ma=
-p_block+0x39f/0x2250
->
->  other info that might help us debug this:
->   Possible unsafe locking scenario:
->
->         CPU0
->         ----
->    lock(&fs_info->dev_replace.rwsem);
->    lock(&fs_info->dev_replace.rwsem);
->
->   *** DEADLOCK ***
->
->   May be due to missing lock nesting notation
->
->  1 lock held by btrfs/2326:
->   #0: ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btr=
-fs_map_block+0x39f/0x2250
->
->  stack backtrace:
->  CPU: 1 UID: 0 PID: 2326 Comm: btrfs Not tainted 6.11.0-rc3-btrfs-for-nex=
-t #599
->  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5b/0x80
->   __lock_acquire+0x2798/0x69d0
->   ? __pfx___lock_acquire+0x10/0x10
->   ? __pfx___lock_acquire+0x10/0x10
->   lock_acquire+0x19d/0x4a0
->   ? btrfs_map_block+0x39f/0x2250
->   ? __pfx_lock_acquire+0x10/0x10
->   ? find_held_lock+0x2d/0x110
->   ? lock_is_held_type+0x8f/0x100
->   down_read+0x8e/0x440
->   ? btrfs_map_block+0x39f/0x2250
->   ? __pfx_down_read+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   btrfs_map_block+0x39f/0x2250
->   ? btrfs_dev_replace_by_ioctl+0xd69/0x1d00
->   ? btrfs_bio_counter_inc_blocked+0xd9/0x2e0
->   ? __kasan_slab_alloc+0x6e/0x70
->   ? __pfx_btrfs_map_block+0x10/0x10
->   ? __pfx_btrfs_bio_counter_inc_blocked+0x10/0x10
->   ? kmem_cache_alloc_noprof+0x1f2/0x300
->   ? mempool_alloc_noprof+0xed/0x2b0
->   btrfs_submit_chunk+0x28d/0x17e0
->   ? __pfx_btrfs_submit_chunk+0x10/0x10
->   ? bvec_alloc+0xd7/0x1b0
->   ? bio_add_folio+0x171/0x270
->   ? __pfx_bio_add_folio+0x10/0x10
->   ? __kasan_check_read+0x20/0x20
->   btrfs_submit_bio+0x37/0x80
->   read_extent_buffer_pages+0x3df/0x6c0
->   btrfs_read_extent_buffer+0x13e/0x5f0
->   read_tree_block+0x81/0xe0
->   read_block_for_search+0x4bd/0x7a0
->   ? __pfx_read_block_for_search+0x10/0x10
->   btrfs_search_slot+0x78d/0x2720
->   ? __pfx_btrfs_search_slot+0x10/0x10
->   ? lock_is_held_type+0x8f/0x100
->   ? kasan_save_track+0x14/0x30
->   ? __kasan_slab_alloc+0x6e/0x70
->   ? kmem_cache_alloc_noprof+0x1f2/0x300
->   btrfs_get_raid_extent_offset+0x181/0x820
->   ? __pfx_lock_acquire+0x10/0x10
->   ? __pfx_btrfs_get_raid_extent_offset+0x10/0x10
->   ? down_read+0x194/0x440
->   ? __pfx_down_read+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   btrfs_map_block+0x5b5/0x2250
->   ? __pfx_btrfs_map_block+0x10/0x10
->   scrub_submit_initial_read+0x8fe/0x11b0
->   ? __pfx_scrub_submit_initial_read+0x10/0x10
->   submit_initial_group_read+0x161/0x3a0
->   ? lock_release+0x20e/0x710
->   ? __pfx_submit_initial_group_read+0x10/0x10
->   ? __pfx_lock_release+0x10/0x10
->   scrub_simple_mirror.isra.0+0x3eb/0x580
->   scrub_stripe+0xe4d/0x1440
->   ? lock_release+0x20e/0x710
->   ? __pfx_scrub_stripe+0x10/0x10
->   ? __pfx_lock_release+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   scrub_chunk+0x257/0x4a0
->   scrub_enumerate_chunks+0x64c/0xf70
->   ? __mutex_unlock_slowpath+0x147/0x5f0
->   ? __pfx_scrub_enumerate_chunks+0x10/0x10
->   ? bit_wait_timeout+0xb0/0x170
->   ? __up_read+0x189/0x700
->   ? scrub_workers_get+0x231/0x300
->   ? up_write+0x490/0x4f0
->   btrfs_scrub_dev+0x52e/0xcd0
->   ? create_pending_snapshots+0x230/0x250
->   ? __pfx_btrfs_scrub_dev+0x10/0x10
->   btrfs_dev_replace_by_ioctl+0xd69/0x1d00
->   ? lock_acquire+0x19d/0x4a0
->   ? __pfx_btrfs_dev_replace_by_ioctl+0x10/0x10
->   ? lock_release+0x20e/0x710
->   ? btrfs_ioctl+0xa09/0x74f0
->   ? __pfx_lock_release+0x10/0x10
->   ? do_raw_spin_lock+0x11e/0x240
->   ? __pfx_do_raw_spin_lock+0x10/0x10
->   btrfs_ioctl+0xa14/0x74f0
->   ? lock_acquire+0x19d/0x4a0
->   ? find_held_lock+0x2d/0x110
->   ? __pfx_btrfs_ioctl+0x10/0x10
->   ? lock_release+0x20e/0x710
->   ? do_sigaction+0x3f0/0x860
->   ? __pfx_do_vfs_ioctl+0x10/0x10
->   ? do_raw_spin_lock+0x11e/0x240
->   ? lockdep_hardirqs_on_prepare+0x270/0x3e0
->   ? _raw_spin_unlock_irq+0x28/0x50
->   ? do_sigaction+0x3f0/0x860
->   ? __pfx_do_sigaction+0x10/0x10
->   ? __x64_sys_rt_sigaction+0x18e/0x1e0
->   ? __pfx___x64_sys_rt_sigaction+0x10/0x10
->   ? __x64_sys_close+0x7c/0xd0
->   __x64_sys_ioctl+0x137/0x190
->   do_syscall_64+0x71/0x140
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->  RIP: 0033:0x7f0bd1114f9b
->  Code: Unable to access opcode bytes at 0x7f0bd1114f71.
->  RSP: 002b:00007ffc8a8c3130 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f0bd1114f9b
->  RDX: 00007ffc8a8c35e0 RSI: 00000000ca289435 RDI: 0000000000000003
->  RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000007
->  R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffc8a8c6c85
->  R13: 00000000398e72a0 R14: 0000000000004361 R15: 0000000000000004
->   </TASK>
->
-> This happens because on RAID stripe-tree filesystems we recurse back into
-> btrfs_map_block() on scrub to perform the logical to device physical
-> mapping.
->
-> But as the device replace task is already holding the dev_replace::rwsem
-> we deadlock.
->
-> So don't take the dev_replace::rwsem in case our task is the task perform=
-ing
-> the device replace.
->
-> Suggested-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Hi Tomi
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+On Tue, Sep 10, 2024 at 12:56:38PM GMT, Tomi Valkeinen wrote:
+> On 10/09/2024 12:19, Jacopo Mondi wrote:
+>
+> > However, I think this current patch is correct (assuming the above
+> > reasoning on i2c sensor drivers is correct) and doesn't require
+> > CONFIG_PM, so I would be tempted to keep this version.
+>
+> I think the existence of this discussion alone proves my point that we
+> should only support PM-case, unless !PM is a requirement =).
+>
+> But if you do want to keep !PM:
+>
+> Is there a reason why not mark the device as active with
+> pm_runtime_set_active() after calling pispbe_runtime_resume and before
 
-Looks good, thanks.
-The review applies regardless of using task_struct or pid_t.
+cargo-cult ?
 
-> ---
->  fs/btrfs/dev-replace.c | 2 ++
->  fs/btrfs/fs.h          | 2 ++
->  fs/btrfs/volumes.c     | 8 +++++---
->  3 files changed, 9 insertions(+), 3 deletions(-)
+> accessing the device? That feels like the most logical way to use the
+> function, and it would be right regardless whether the core will enable the
+> parents before probe() or not.
+
+Possibly more accurate, but there's no guarantee it's correct. The
+peripheral might have requirements on the clock or power rails
+enablement order and some might be managed by the parent. I know we're
+talking hypothesis but my point is that there's not correctness
+guarantee we can enforce unless the parent is powered up when the
+device probes ?
+
+Anyway, I'll defer the call to the group: either keep the patch as it
+is right now on the list, or go full runtime_pm. I understand there is
+no reason to care about !CONFIG_PM but somehow I feel "bad" in listing
+it as a dependency if the peripheral can actually work without it.
+Maybe I should just ignore that feeling ?
+
+
 >
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index 83d5cdd77f29..604399e59a3d 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -641,6 +641,7 @@ static int btrfs_dev_replace_start(struct btrfs_fs_in=
-fo *fs_info,
->                 return ret;
+> And not related to the BE or CFE drivers, but it strikes me odd that to
+> support PM and !PM we need to play with these tricks. I think the core
+> should just do the right thing if the driver does pm_runtime_get_sync() even
+> with !PM (although maybe the time has passed to be able to do that).
+
+I wish that was the case.
+
 >
->         down_write(&dev_replace->rwsem);
-> +       dev_replace->replace_task =3D current;
->         switch (dev_replace->replace_state) {
->         case BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED:
->         case BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED:
-> @@ -994,6 +995,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_f=
-s_info *fs_info,
->         list_add(&tgt_device->dev_alloc_list, &fs_devices->alloc_list);
->         fs_devices->rw_devices++;
->
-> +       dev_replace->replace_task =3D NULL;
->         up_write(&dev_replace->rwsem);
->         btrfs_rm_dev_replace_blocked(fs_info);
->
-> diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> index 79f64e383edd..cbfb225858a5 100644
-> --- a/fs/btrfs/fs.h
-> +++ b/fs/btrfs/fs.h
-> @@ -317,6 +317,8 @@ struct btrfs_dev_replace {
->
->         struct percpu_counter bio_counter;
->         wait_queue_head_t replace_wait;
-> +
-> +       struct task_struct *replace_task;
->  };
->
->  /*
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 8f340ad1d938..995b0647f538 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -6480,13 +6480,15 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
->         *length =3D min_t(u64, map->chunk_len - map_offset, max_len);
->
-> -       down_read(&dev_replace->rwsem);
-> +       if (dev_replace->replace_task !=3D current)
-> +               down_read(&dev_replace->rwsem);
-> +
->         dev_replace_is_ongoing =3D btrfs_dev_replace_is_ongoing(dev_repla=
-ce);
->         /*
->          * Hold the semaphore for read during the whole operation, write =
-is
->          * requested at commit time but must wait.
->          */
-> -       if (!dev_replace_is_ongoing)
-> +       if (!dev_replace_is_ongoing && dev_replace->replace_task !=3D cur=
-rent)
->                 up_read(&dev_replace->rwsem);
->
->         switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
-> @@ -6626,7 +6628,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
-enum btrfs_map_op op,
->         bioc->mirror_num =3D io_geom.mirror_num;
->
->  out:
-> -       if (dev_replace_is_ongoing) {
-> +       if (dev_replace_is_ongoing && dev_replace->replace_task !=3D curr=
-ent) {
->                 lockdep_assert_held(&dev_replace->rwsem);
->                 /* Unlock and let waiting writers proceed */
->                 up_read(&dev_replace->rwsem);
-> --
-> 2.43.0
->
+>  Tomi
 >
 
