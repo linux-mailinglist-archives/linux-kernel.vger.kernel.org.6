@@ -1,117 +1,171 @@
-Return-Path: <linux-kernel+bounces-323758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A724197430C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:08:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22908974301
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B00C289500
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D791C25A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D331AB50F;
-	Tue, 10 Sep 2024 19:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CBD1A7ADD;
+	Tue, 10 Sep 2024 19:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM2cMH04"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVOSOZiC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8701AAE3F;
-	Tue, 10 Sep 2024 19:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F54417A922;
+	Tue, 10 Sep 2024 19:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725995227; cv=none; b=WvSpF/vm13f9yRTDig5bYQYEer+OevbsLqMMhxtbbZ55libYqrvQTPo79bSSGkdynrh5vE8m8+xuQ9w1IgSWY+Tq3FCKMfptXqXGaHhDLDvs0sc/V/eDqlK95fRPgZWe/LTs3xe2Det8CZ5XShpf50G7/YmD2Rm1aXI8kjrk8GQ=
+	t=1725995202; cv=none; b=pRGHvoc5Aa5kcsc4mdj2Y+MO+CpZ2P6zp+YdIBKHufG053GYr616ickOa04vh2VFTmY6TiAlj5UB0GC3o15n+FTION3HDUcesaaHlxeeJbA3Dx8eFstpKrAnkckvTR5LCtm1r4kqVaqVQ8nLvNoen1LsJiy4wBjWQcZKLSo7D7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725995227; c=relaxed/simple;
-	bh=qDdqHdcGxPDTj/mv2nTeJVub1oxQDtvYdII5/k1oFio=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MpplXgCETBeER5DljTK3jmITLEQHAS2BlvhXwchDxFP6fKJwHK4FP8VdBhMVrxlDyX8V2McfxzRS7xZuJOvA0FAxslK10Ov1bc+sHSbYGLDpmw4MIsukCjK4YEAo5sdWqRYDPumRvFMycOgk9vf76trUk7KxD3EHHp9n2vDOjc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RM2cMH04; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDB1C4CEC4;
-	Tue, 10 Sep 2024 19:07:03 +0000 (UTC)
+	s=arc-20240116; t=1725995202; c=relaxed/simple;
+	bh=Ul9jDHWGKcBdzpbOj4O7RU6PYDWlFr5RqCIVNG7UVOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMPPd2zG5msn3Cr5Ck6ZVh0ZT5ok429LP/cNXQxtKgnYyuF8mD5Y0aCTz2JyCR2wFx7vMs4N+6KfckfrKbeHGXinJ3niMa1NSrPFN/lKzMfecGoZgr4tGY9a2CKo9CzAP1RNKRhWG99EvDaMS282oYVr9iET7AUfmCFyRMc3ihs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVOSOZiC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EA9C4CEC4;
+	Tue, 10 Sep 2024 19:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725995226;
-	bh=qDdqHdcGxPDTj/mv2nTeJVub1oxQDtvYdII5/k1oFio=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RM2cMH04h22dZOzYMS+2rS4ATooohzdO3/v5PoF0noLzA9SGei+MXiQ3VGUoKBDcT
-	 Q2AVIfpLZn5UIaBB/rI1Ze0B20aSxgi6lL5n1DVgBxQw6WxphaDGNW/G9QEy8ZzPGQ
-	 84QJ9HEcLkcR28Eh/FeKpEaYU5OMcz2j/yATqG3gNk0lstUSMvPKicnYHHP+PcirAH
-	 bHLK3eesKp7JQQrBgSVj113SzpPLwshsViyK6gXsJMM4UzeLmnp5EAcyQyMgsduDl6
-	 bocCTIJzv5pfjx5UoHMR3RUP+g0N610H/A1kPaYWmcKEkqGT5BaTAJt588tCMELB0b
-	 O+og18JhXniqA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 10 Sep 2024 21:06:37 +0200
-Subject: [PATCH net 2/3] selftests: mptcp: include lib.sh file
+	s=k20201202; t=1725995201;
+	bh=Ul9jDHWGKcBdzpbOj4O7RU6PYDWlFr5RqCIVNG7UVOw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hVOSOZiCswbfLcdQm9Bl76P0KObTxVAy6s1pWxVvLhPdFXFb4sHAFNDQpG8yYClyn
+	 Z6+7pdCscYqMFRX+kxRKxgMkU1NAl1m1kWeS1Ujak17v5ZKq4VbiaohjVFqgf2yxgk
+	 /qcp7Ep+pJsqC0KRWXxSL3Tqf8XCbOYHjLzmF+HRflEPn0yGWQatYEjC8cxkYnIEDm
+	 gmvx9Wm4ftR2E83qrG+xG0MogShoFZwxcMvzbulTPZMouUQEEBh0QfzLJu2k3QmrAe
+	 JrXLTM9yiFWpqP1RMV7PQmigkTif/TOwZeNl/UdNvzisQkKEcLcMAo3EZtB/XXhutq
+	 tQERftEB4pdvg==
+Date: Tue, 10 Sep 2024 16:06:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+	sesse@google.com, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	Guilherme Amadio <amadio@gentoo.org>, Leo Yan <leo.yan@arm.com>,
+	Manu Bretelle <chantr4@gmail.com>, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 1/2] perf build: Autodetect minimum required llvm-dev
+ version
+Message-ID: <ZuCYvvjJZm3jSQux@x1>
+References: <20240910140405.568791-1-james.clark@linaro.org>
+ <b2e813c4-be89-457d-8c38-38849177ec93@kernel.org>
+ <307568b9-9b6b-4eaa-973c-8f88538b8545@linaro.org>
+ <b60928c6-19c5-473c-8f13-532ed3fd3b3a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-net-selftests-mptcp-fix-install-v1-2-8f124aa9156d@kernel.org>
-References: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-In-Reply-To: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1129; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=qDdqHdcGxPDTj/mv2nTeJVub1oxQDtvYdII5/k1oFio=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm4JjRZQ24BZMu1h1QV0ZFxLUIY/bq73nziQz1G
- GMZAAiJHKSJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZuCY0QAKCRD2t4JPQmmg
- c35KD/9BUEvN905IXtVjRV2aziGXNRcfNcIk/UrdILqNuLyUMkz/Wgn6EjYV6366J7DrCst+fzT
- 9L94X4Vd/NmKSGLvPOfFpOnZYocfxGaa4cFqkJ4fKHdgK6aKFpovVRg+wc32UvWZmm8SBR5e3Mw
- 1BnBKl746BD8EArjD6k2h/VTngSHAZovxo/71JshFUgf1xlX57qkwJ35Aq/bd3PdAJOAb+Grrzv
- NBQvfJT3QHpHtyI4bOgsYj72dYBoln6qEdBvGx6qnY8wr3K+8MG12AQP0qaO3dS13nWz8vz55wy
- 5XDUGfWI0tXE50lGdM83FVohDJUO9sft7jhGF+NkThYTvdxeVbnwbhdKwTgvz+qdjuw/e9Th1pA
- sM6v0mbWB4ufNt/6sFXHNoD/VFQJqKFGko4K4j2UG4tQ9SiCxl72uAOvt36qgZv3/GDQqbzpyPe
- BkrQFkXU56haWnj9+yLLvbr9fNLKfL6I5cr17MD//YAMRnZX9+PjYGSvXlFcg7h+gkAO58N6BXa
- 84U0Cv3lM35i4iPDcqlkUNlPa7/7LWCG8BUrKmvdmeelWvpLMg9O9iq33gYSoyBQNnGbJHfgdhr
- vLiKZro1dbp/ZaWv0fPH37/fDadD/Vsatejr4fhGrqG5GDMKfPEc0FKgctjxxbNqosG4wI7oe4w
- o4RYKa3eVu17JHA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b60928c6-19c5-473c-8f13-532ed3fd3b3a@kernel.org>
 
-The lib.sh file from the parent directory is used by the MPTCP selftests
-and it needs to be present when running the tests.
-
-This file then needs to be listed in the Makefile to be included when
-exporting or installing the tests, e.g. with:
-
-  make -C tools/testing/selftests \
-          TARGETS=net/mptcp \
-          install INSTALL_PATH=$KSFT_INSTALL_PATH
-
-  cd $KSFT_INSTALL_PATH
-  ./run_kselftest.sh -c net/mptcp
-
-Fixes: f265d3119a29 ("selftests: mptcp: lib: use setup/cleanup_ns helpers")
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/testing/selftests/net/mptcp/Makefile b/tools/testing/selftests/net/mptcp/Makefile
-index 7b936a926859..68924053a1e6 100644
---- a/tools/testing/selftests/net/mptcp/Makefile
-+++ b/tools/testing/selftests/net/mptcp/Makefile
-@@ -11,6 +11,8 @@ TEST_GEN_FILES = mptcp_connect pm_nl_ctl mptcp_sockopt mptcp_inq
+On Tue, Sep 10, 2024 at 05:53:16PM +0100, Quentin Monnet wrote:
+> 2024-09-10 16:11 UTC+0100 ~ James Clark <james.clark@linaro.org>
+> > 
+> > 
+> > On 9/10/24 15:27, Quentin Monnet wrote:
+> > > 2024-09-10 15:04 UTC+0100 ~ James Clark <james.clark@linaro.org>
+> > > > The new LLVM addr2line feature requires a minimum version of 13 to
+> > > > compile. Add a feature check for the version so that NO_LLVM=1 doesn't
+> > > > need to be explicitly added. Leave the existing llvm feature check
+> > > > intact because it's used by tools other than Perf.
+> > > > 
+> > > > This fixes the following compilation error when the llvm-dev version
+> > > > doesn't match:
+> > > > 
+> > > >    util/llvm-c-helpers.cpp: In function 'char*
+> > > > llvm_name_for_code(dso*, const char*, u64)':
+> > > >    util/llvm-c-helpers.cpp:178:21: error:
+> > > > 'std::remove_reference_t<llvm::DILineInfo>' {aka 'struct
+> > > > llvm::DILineInfo'} has no member named 'StartAddress'
+> > > >      178 |   addr, res_or_err->StartAddress ? *res_or_err-
+> > > > >StartAddress : 0);
+> > > > 
+> > > > Fixes: c3f8644c21df ("perf report: Support LLVM for addr2line()")
+> > > > Signed-off-by: James Clark <james.clark@linaro.org>
+> > > > ---
+> > > >   tools/build/Makefile.feature           |  2 +-
+> > > >   tools/build/feature/Makefile           |  9 +++++++++
+> > > >   tools/build/feature/test-llvm-perf.cpp | 14 ++++++++++++++
+> > > >   tools/perf/Makefile.config             |  6 +++---
+> > > >   4 files changed, 27 insertions(+), 4 deletions(-)
+> > > >   create mode 100644 tools/build/feature/test-llvm-perf.cpp
+> > > > 
+> > > > diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+> > > > index 0717e96d6a0e..427a9389e26c 100644
+> > > > --- a/tools/build/Makefile.feature
+> > > > +++ b/tools/build/Makefile.feature
+> > > > @@ -136,7 +136,7 @@ FEATURE_DISPLAY ?=              \
+> > > >            libunwind              \
+> > > >            libdw-dwarf-unwind     \
+> > > >            libcapstone            \
+> > > > -         llvm                   \
+> > > > +         llvm-perf              \
+> > > 
+> > > Hi! Just a quick question, why remove "llvm" from the list, here?
+> > > 
+> > > Quentin
+> > 
+> > Just because with respect to the linked fixes: commit, it wasn't
+> > actually there before. It was added just for addr2line so it should
+> > probably be llvm-perf rather than the generic one.
+> > 
+> > But yes we can add llvm output if it's useful, but could probably be a
+> > separate commit.
  
- TEST_FILES := mptcp_lib.sh settings
- 
-+TEST_INCLUDES := ../lib.sh
-+
- EXTRA_CLEAN := *.pcap
- 
- include ../../lib.mk
+> It wasn't there before, but you're not removing the rest of the "llvm"
+> feature, so I'd expect that part to stay as well? But I don't mind much. We
+> use the "llvm" feature in bpftool, but beyond that, I don't personally need
+> it to be displayed in tools/build/Makefile.feature, so no need to respin for
+> that :)
 
--- 
-2.45.2
+My worry was that something were being removed because it wasn't being
+used in tools/perf/ only to realize later that that was being used
+somewhere else in tools/.
 
+That is not the case as you reported, so going back to what we had
+before the addr2line llvm code being introduced, i.e.:
+
+commit c3f8644c21df9b7db97eb70e08e2826368aaafa0
+Author: Steinar H. Gunderson <sesse@google.com>
+Date:   Sat Aug 3 17:20:06 2024 +0200
+
+    perf report: Support LLVM for addr2line()
+
+Just did:
+
++++ b/tools/build/Makefile.feature
+@@ -136,6 +136,7 @@ FEATURE_DISPLAY ?=              \
+          libunwind              \
+          libdw-dwarf-unwind     \
+          libcapstone            \
++         llvm                   \
+          zlib                   \
+          lzma                   \
+          get_cpuid              \
+
+So just displaying whatever was detected, and now we display the new
+llvm-perf, so that should be ok, probably even for bpftool, its just
+requires a newer version of llvm-dev, right?
+
+- Arnaldo
 
