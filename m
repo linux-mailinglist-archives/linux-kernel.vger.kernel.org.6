@@ -1,172 +1,139 @@
-Return-Path: <linux-kernel+bounces-323324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851C0973B64
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:19:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61DA1973C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C441C24F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AFD1C21191
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905C199FB3;
-	Tue, 10 Sep 2024 15:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D474F19A28B;
+	Tue, 10 Sep 2024 15:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEr7/BtE"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="I15zwZNd"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11036199FA9
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 15:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5965F4204D;
+	Tue, 10 Sep 2024 15:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725981539; cv=none; b=CGcJ/scQ9bbD1s8FaTYH5MxfFRWGpOXeAVIOJxYp3kNs4TGNufipgOwwEJfdCXkQzh/QIkWw6oC8+QaF6yBHwCc+e3puHWDT/nfSEMoed8xX/dZJ+GqvcyvRoR5X/07/2+uQi+qRCj1OcWeo21q703Y62ByffudNkZiQGjqylJU=
+	t=1725982485; cv=none; b=homY8TL1OlR5a+FPxmTYOURoLZcF//Gz9oZNQdix28sgi22mdVL7wCswtxTeOimEYkv2bsv3AAsYki9nVe2iJIHx571Px95dAkhL4Ng5pDkZX2ZhtTX0lKkuez4Y78OdzTr+MKxpKuOO8GdVEtFR+/vm7e9D+j1khMD/ikSxCWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725981539; c=relaxed/simple;
-	bh=B7L8eicaLL/uQdqZZRGKF332ltFTMFjZxuNmtoxY+qE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OjrubYfKtbHk1CpDDrKj8qeXPoiBTADvBD6OfFaXsTD49JX72+5Zs4FjjlcKz2aKelMC1PzTxYzbaNxcBZyVqZhkAdYlUcKBJvi5GekBVC2M6Le+Fsem5N3XVfV15EsxR1M0LBDkhXHEZn+iwOAZGR3bgRC8weXHBqKOUSUjPjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEr7/BtE; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374c326c638so4231297f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 08:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725981536; x=1726586336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gzYejL55jw2kalTO5A0DRq7hhLyM8T3G+Vfejwo9sVk=;
-        b=gEr7/BtE13W5sDCDX8u125oEB9fkDvvPXsLSfAqeMfWLFDS9sELGm/hWoFEhk2gyGJ
-         Mrm5gubKEpHrCNNWb1a0Fh87VCIRU5yluJ4jWaz7RTPhWlLYm1SYM1jL7LOMA5I/Pxhy
-         b+wYVSJHf9okd75fb1jgxAjuHljf42J4Z2eB3gCthb1EU0GVSCkuCsupTH412I5f1zna
-         huWrggSs5ffDt2GFyp8TmCpQy8y6qdimvTOK+AM+zVJneZ0naKMZ15bFLlR+i6wXMxYg
-         mJBbEDQiFIGgkDfQl4NcCEkVn5ltkwpZBDuS1bwx0FMTQ6CLn71Ho1ukT7mkoTyVNy8r
-         qCvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725981536; x=1726586336;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gzYejL55jw2kalTO5A0DRq7hhLyM8T3G+Vfejwo9sVk=;
-        b=l59V1rzqS9nYfBoWYbAleHTNB/lKd0aGjw99ZYy0T5m4+yrbQ4tldvtYljfgouT8tV
-         wHJb6QUEoq1F6UJZXaF6G+Chz/8KXj5Rk431ug3rqnrb/IjV9KYdjLKiJldZejZ+98Rt
-         AoCgyNuK/K6o0Tw7yEv3rgJ/fcjyVgh1w77ffpIhEl5g0bQfXFHU/ZjjIRiBhmqd1iQT
-         QZ/jO8a1XIndepxY8EJZFU80XPkXr8aWZ2IdNMRxl7BaMmfMQh5lbsDIzkoTCG9yXdGa
-         oF183mTcnfdFHwM+wEquAP5jhnqeDrU1Wy6tSH0VdZBDC+kvVYRhlhmtB/XMav0Kp5/r
-         /uTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+v1nO7ZGymcALhTYGUtEbKlwg1xLlBuL4p7+MEEMZTzjLUoCRDOJGDwEdUsB+r+RQOGcwER0eGcV9dcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWPqSORTtuKuNSOd+zCbqHPlLdgRpReqiEefcGAa2mkEehrq/6
-	smkX6o3auGpug10uAp5bbDRskCCI6RJCbCFeuyeTYLAYBkq/yxHXZstsIBgT7yM=
-X-Google-Smtp-Source: AGHT+IHy/RhwX57CcCqc82tipU7Ic/6+Q/to0vq5e7VGq8SEkdeQH7tu0qUqClXsdQ0xyoyauIPQiA==
-X-Received: by 2002:a05:6000:d05:b0:374:b399:ad6e with SMTP id ffacd0b85a97d-378895f20damr9927699f8f.35.1725981536253;
-        Tue, 10 Sep 2024 08:18:56 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665517sm9440844f8f.36.2024.09.10.08.18.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 08:18:55 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: irogers@google.com,
-	linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com,
-	ak@linux.intel.com,
-	namhyung@kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 7/7] perf test: Add a test for default perf stat command
-Date: Tue, 10 Sep 2024 16:16:25 +0100
-Message-Id: <20240910151640.907359-8-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240910151640.907359-1-james.clark@linaro.org>
-References: <20240910151640.907359-1-james.clark@linaro.org>
+	s=arc-20240116; t=1725982485; c=relaxed/simple;
+	bh=Y7iQeD4hGzv3JM+SzFixGYto396Sd0RNqqi7OPzSN3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVNrQQ70bhxQaX71N7L8Ni6YdwybPtKZY0jOzGgkBBQUA1p4ilVS/ebEJ9YrdXvjgvS1+YWrTCf+/toouRbecziIFqNpxECFVL8FCKJORc169qC9Lr/iYM0FqcAyy5vOT+eI5tbAZe7chDaEubCIQwrVmNqYBtjitrGTuBrcfdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=I15zwZNd; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+recKoM7vFCwb1CTbRB4jGT2zAWewASBgrq/1E9M2bk=; b=I15zwZNdG7NLvGqEw2d8JTT3m8
+	SD6vM1xPqI2sokjlAYGNDkWWJ3WsVIfT4FimElW0Sn5uzXIluF2jac1NtsheuMsSRIkkiXhXBBOnW
+	zGpQcy5V8DGtBY6RiIDH2vFZNV2sjiLocLMxhEVpZqpzCaXyPKN2KFrlakRJLUrjsoEbwAhOzCSXx
+	OXXElYSvqUVRpaI2xBxbQ7NRHA4dE7XrShuuuUhw9bRAABWvQEKBjQq8Op2WXoVSa5aIP/v4b9vPi
+	B2YLbQFtNHllik3XTK+Mx5aKHQLYQEN02C5ftJMCnCYc8eZAxR6KQgqAVhz2NvC3pLh5xNwRfeFz/
+	mKcSl6xw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1so2bv-004qYZ-0A;
+	Tue, 10 Sep 2024 16:16:55 +0100
+Date: Tue, 10 Sep 2024 16:16:55 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>, adrian@suse.de,
+	ro@suse.de
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <ZuBi56VwWxxX2Ce5@earth.li>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+ <ZsNf1VdfkHqD8R4Q@earth.li>
+ <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
+ <ZsSkTs4TFfx2pK8r@earth.li>
+ <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
+ <6c7e34b65d73e9fa2ba0fd39b357b9eb42ee0449.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c7e34b65d73e9fa2ba0fd39b357b9eb42ee0449.camel@huaweicloud.com>
 
-Test that one cycles event is opened for each core PMU when "perf stat"
-is run without arguments.
+On Tue, Sep 10, 2024 at 04:51:22PM +0200, Roberto Sassu wrote:
+> On Tue, 2024-09-10 at 16:36 +0200, Roberto Sassu wrote:
+> > On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
+> > > On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
+> > > > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
+> > > > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
+> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > 
+> > > > > > Support for PGP keys and signatures was proposed by David long time ago,
+> > > > > > before the decision of using PKCS#7 for kernel modules signatures
+> > > > > > verification was made. After that, there has been not enough interest to
+> > > > > > support PGP too.
+> > > > > 
+> > > > > You might want to update the RFC/bis references to RFC9580, which was
+> > > > > published last month and updates things.
+> > > > 
+> > > > Yes, makes sense (but probably isn't too much hassle to support more
+> > > > things for our purposes?)
+> > > 
+> > > I'm mostly suggesting that the comments/docs point to the latest
+> > > standard rather than the draft version, not changing to support the new
+> > > v6 keys.
+> > > 
+> > > > > Also, I see support for v2 + v3 keys, and this doesn't seem like a good
+> > > > > idea. There are cryptographic issues with fingerprints etc there and I
+> > > > > can't think of a good reason you'd want the kernel to support them. The
+> > > > > same could probably be said of DSA key support too.
+> > > > 
+> > > > Uhm, if I remember correctly I encountered some old PGP keys used to
+> > > > verify RPM packages (need to check). DSA keys are not supported, since
+> > > > the algorithm is not in the kernel.
+> > > 
+> > > I would question the benefit gained from using obsolete key/signature
+> > > types for verification (I was involved in the process of Debian dropping
+> > > them back in *2010* which was later than it should have been). Dropping
+> > > the code for that path means a smaller attack surface/maintenance
+> > > overhead for something that isn't giving a benefit.
+> > 
+> > Removed support for v3 PGP signatures... but that broke openSUSE
+> > Tumbleweed.
 
-The event line can either be output as "pmu/cycles/" or just "cycles" if
-there is only one PMU. Include 2 spaces for padding in the one PMU case
-to avoid matching when the word cycles is included in metric
-descriptions.
+Is this a signature from a v3 key, or a v3 signature? Unfortunately
+there are implementations which will issue a v3 signature even from a v4
+key; IIRC this ambiguity has been cleared up in the updated RFC.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/shell/stat.sh | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> > [  295.837602] PGPL: Signature packet with unhandled version 3
+> 
+> To add more context, this patch set adds the ability to the kernel to
+> verify the PGP signature of RPM packages against Linux distributions
+> PGP keys.
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 525d0c44fdc6..5a2ca2bcf94d 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -148,6 +148,30 @@ test_cputype() {
-   echo "cputype test [Success]"
- }
- 
-+test_hybrid() {
-+  # Test the default stat command on hybrid devices opens one cycles event for
-+  # each CPU type.
-+  echo "hybrid test"
-+
-+  # Count the number of core PMUs, assume minimum of 1
-+  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
-+  if [ "$pmus" -lt 1 ]
-+  then
-+    pmus=1
-+  fi
-+
-+  # Run default Perf stat
-+  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles  " | wc -l)
-+
-+  if [ "$pmus" -ne "$cycles_events" ]
-+  then
-+    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-+    err=1
-+    return
-+  fi
-+  echo "hybrid test [Success]"
-+}
-+
- test_default_stat
- test_stat_record_report
- test_stat_record_script
-@@ -155,4 +179,5 @@ test_stat_repeat_weak_groups
- test_topdown_groups
- test_topdown_weak_groups
- test_cputype
-+test_hybrid
- exit $err
+> The purpose of this is to verify the authenticity of such RPM packages,
+> and to extract from them file digests, which are in turn used as
+> reference values for integrity check (appraisal) with IMA.
+
+I don't believe allowing a v3 *key* gives a useful verification that is
+worth supporting. However unfortunately I think it sounds like support
+for v3 signatures from v4 keys is necessary.
+
+J.
+
 -- 
-2.34.1
-
+Listen to the words, they tell you what to do...
 
