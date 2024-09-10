@@ -1,224 +1,186 @@
-Return-Path: <linux-kernel+bounces-322634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AC5972BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD487972BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5261F26406
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8243C1F26426
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A769418FC9D;
-	Tue, 10 Sep 2024 08:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5BE18EFC6;
+	Tue, 10 Sep 2024 08:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cqX6uCHF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P6+nbddx";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="MSdY733J"
+Received: from a7-46.smtp-out.eu-west-1.amazonses.com (a7-46.smtp-out.eu-west-1.amazonses.com [54.240.7.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE68183CC7;
-	Tue, 10 Sep 2024 08:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBF318E744;
+	Tue, 10 Sep 2024 08:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955747; cv=none; b=DnmsaXXr8e5unhmN2JnqGmRz4JYO5C/jZaBxfxWukYA3GeKnlLKsK4JWLh7Nr1/GASipXWet/C3lr3ubcC4TCq/YaVtt8BwvjTdB0njD4K3fLSYv0cHaTsRFzfE+xR2lPRcCmi5kT0Sg43UBaeKK/CYL9b5UkqwRL4vJm/+pzak=
+	t=1725955723; cv=none; b=kVl73/6Ng24mvPUnzxqHrdn/ujsxuCl/JjFpfM8LTGzz58knyul1WnrDZe8xxW++K8BnRFC5ZZDF6iZK1zlaWDXMHDKwa3nt0K1W9KjeYUDE5De+WkZ77F5oE1kkdCDWSG3WYyVE/DCvrX+zdOgeIjaqMC4G34+TI1WJgyKn1e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955747; c=relaxed/simple;
-	bh=CbhqKnSgFyeafE5ynffMFbxesySdvJj911eauV3Hiag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdADuoiIQYVeiejRRQesPztx+y7KSZ2tUpjVkB/nteXOtGqB6x5vfTU0lgaigO5m28U8IasELLs5mAQ0ly3A5e9tfL6g4faLLmNoigJKmJvZvjOUnZ4AShX4uOpQNjb6kwqFvoGseGNZUekxWpnt5eAJrOdAAq9BOhgRkd2VHK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cqX6uCHF; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725955746; x=1757491746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CbhqKnSgFyeafE5ynffMFbxesySdvJj911eauV3Hiag=;
-  b=cqX6uCHFwjbOXDIQMHxmp7bSfpW7ZlHGLPkccFiufDYcUslYlgW1SM9T
-   OkePCfXpAmKivPY7aQE7dGVr3f/fRdYU32z0GWPPBEZBZJWxJE1CbNPKG
-   Wy9g4MxEIEC13J/P30osgOM7cf4M3zZT8CmEVULAWInXqDvkGZxPMjsQR
-   my4ceIIjNCYthdiOE3PjZDpRZoqodBmVGcMDjCrBjqKnpmC1YOrJ5VnSE
-   r60HMFe5oPijHw0AYtwDDToxEkibG4S34fdbd0PEwfjE3OPVHUnfFWlWS
-   bJJ3x163kWvmSuJeaVLwbll6khcxm615DjUlZXVcHCiLEu+IpjZ3i1DV8
-   A==;
-X-CSE-ConnectionGUID: aQPbH1+HQki0C2kAMMzmbA==
-X-CSE-MsgGUID: 7XNj/sBTQvuWcJqcOxb8ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="28466396"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="28466396"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:09:02 -0700
-X-CSE-ConnectionGUID: MM1uZ7wBTqatJjnpG6ldaA==
-X-CSE-MsgGUID: XnXP7mZjTj6X9ne0+UzxVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="71069793"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2024 01:08:59 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1snvvk-0000GQ-2r;
-	Tue, 10 Sep 2024 08:08:56 +0000
-Date: Tue, 10 Sep 2024 16:08:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 3/3] hwmon: (pmbus/tps25990): add initial support
-Message-ID: <202409101522.ZoP360wM-lkp@intel.com>
-References: <20240909-tps25990-v1-3-39b37e43e795@baylibre.com>
+	s=arc-20240116; t=1725955723; c=relaxed/simple;
+	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=evwpgnMC5ieqKugIA/rJw9F+KVO7NPRrWOkMJUPYpPfud3OmESdp3OnBxm8Kqo8rgJvFOqR+NHfaWx3vNJSB8YFUlrXnsy2zrSHNfHeVwXNGGlRogjG9QStOnieXYZuSeWrxPb+9v9eTusyIX0dxTt9brrIFMmrrEZz+duZk7ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P6+nbddx; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=MSdY733J; arc=none smtp.client-ip=54.240.7.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1725955720;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
+	b=P6+nbddx9e8GQe8AEJCW5t1Wu7f5l0l96bnP+ujVgcAgIROuRWvJIdBhySUQsOtw
+	j7Lt8UqBZNfztPGgr2ARPCEnl56LBm9jkfZf0QVfToehnx62GnGlNRMErQ+ChNLBb4Z
+	r2GGVsh0pt3C//K7D2A6oQuCNUMNRSSF/Y65xC2lWU6p7bUmjbMiaq2iLsXx7oOVKOV
+	I95MP0BzEtmWEcJQG134t3/sHo5NuSb3dODZ0MyM2H1QE/JpGjQmDxicFxhZNED7pR+
+	aEL7JGQC1PCW1LWMH5FtGsZjq/xJ6X8hrh9SbVIkDmgqXdiae8NqFmflFz4f1lyifQv
+	2ZI1Aee8lA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1725955720;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=CMzM2OmUAjHBG7xyXlb5CqeG7AYsJx3XrH0ReYN+K80=;
+	b=MSdY733JFvyqSrkXqPdO6T2dgUOs8csMz301DyjJ3BBiuHbsC/UDV8fx4LaXZQae
+	oY+V2/L9RO7BgNdUoLzsEsTCawwLhgru3Q4yqIi4sL3zoBjs3KA5BjJm/se1Ny4FoA7
+	1ZmGsBhP2uozcYc/b6rxC2EQEW0DD71Dfujeh9cc=
+Message-ID: <01020191dafa43a8-cca2fb3f-7eda-4e39-9ca1-eccb78c566a4-000000@eu-west-1.amazonses.com>
+Date: Tue, 10 Sep 2024 08:08:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909-tps25990-v1-3-39b37e43e795@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/3] dt-bindings: display: mediatek: Add OF graph
+ support for board path
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"sui.jingfeng@linux.dev" <sui.jingfeng@linux.dev>, 
+	"wenst@chromium.org" <wenst@chromium.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	=?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>, 
+	"mripard@kernel.org" <mripard@kernel.org>, 
+	=?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>, 
+	"michael@walle.cc" <michael@walle.cc>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+	"robh@kernel.org" <robh@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"airlied@gmail.com" <airlied@gmail.com>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"kernel@collabora.com" <kernel@collabora.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	=?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"amergnat@baylibre.com" <amergnat@baylibre.com>
+References: <20240618101726.110416-1-angelogioacchino.delregno@collabora.com>
+ <20240618101726.110416-2-angelogioacchino.delregno@collabora.com>
+ <3e58a224e6323e28c370d460fa72e23b958bcf62.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <3e58a224e6323e28c370d460fa72e23b958bcf62.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.10-54.240.7.46
 
-Hi Jerome,
+Il 08/08/24 05:45, CK Hu (胡俊光) ha scritto:
+> Hi, Angelo:
+> 
+> On Tue, 2024-06-18 at 12:17 +0200, AngeloGioacchino Del Regno wrote:
+>> The display IPs in MediaTek SoCs support being interconnected with
+>> different instances of DDP IPs (for example, merge0 or merge1) and/or
+>> with different DDP IPs (for example, rdma can be connected with either
+>> color, dpi, dsi, merge, etc), forming a full Display Data Path that
+>> ends with an actual display.
+>>
+>> The final display pipeline is effectively board specific, as it does
+>> depend on the display that is attached to it, and eventually on the
+>> sensors supported by the board (for example, Adaptive Ambient Light
+>> would need an Ambient Light Sensor, otherwise it's pointless!), other
+>> than the output type.
+>>
+>> Add support for OF graphs to most of the MediaTek DDP (display) bindings
+>> to add flexibility to build custom hardware paths, hence enabling board
+>> specific configuration of the display pipeline and allowing to finally
+>> migrate away from using hardcoded paths.
+>>
+>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+>> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+> 
+> [snip]
+> 
+>>   
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
+>> index 677882348ede..98db47894eeb 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ethdr.yaml
+>> @@ -110,6 +110,28 @@ properties:
+>>         include/dt-bindings/gce/<chip>-gce.h, mapping to the register of display
+>>         function block.
+>>   
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +    description:
+>> +      Input and output ports can have multiple endpoints, each of those
+>> +      connects to either the primary, secondary, etc, display pipeline.
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: ETHDR input, usually from one of the MERGE blocks.
+> 
+> Sorry, I find one question now.
+> I think ETHDR may have multiple input, and ETHDR receive data from all input at the same time.
+> Why here has only one input port?
+> 
+> MERGE -->+-----------------+
+>           |                 |
+> MERGE -->|                 |
+>           |      ETHDR      |
+> MERGE -->|                 |
+>           |                 |
+> MERGE -->+-----------------+
+> 
 
-kernel test robot noticed the following build errors:
+Because ETHDR takes one input (ex. "one image", or "one data stream") port, which
+is composed of multiple input endpoints (where each endpoint is a MERGE block) :-)
 
-[auto build test ERROR on d22bd451d5606411895ef55cb105277e4f4f6e54]
+Cheers,
+Angelo
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/dt-bindings-hwmon-pmbus-add-ti-tps25990-documentation/20240909-234152
-base:   d22bd451d5606411895ef55cb105277e4f4f6e54
-patch link:    https://lore.kernel.org/r/20240909-tps25990-v1-3-39b37e43e795%40baylibre.com
-patch subject: [PATCH 3/3] hwmon: (pmbus/tps25990): add initial support
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240910/202409101522.ZoP360wM-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240910/202409101522.ZoP360wM-lkp@intel.com/reproduce)
+> Regards,
+> CK
+> 
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description:
+>> +          ETHDR output to the input of the next desired component in the
+>> +          display pipeline, for example one of the available MERGE blocks,
+>> +          or others.
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@1
+>> +
+>>   required:
+>>     - compatible
+>>     - reg
+>>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409101522.ZoP360wM-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/hwmon/pmbus/tps25990.c: In function 'tps25990_read_word':
->> drivers/hwmon/pmbus/tps25990.c:267:23: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     267 |                 ret = FIELD_GET(PK_MIN_AVG_AVG_CNT, ret);
-         |                       ^~~~~~~~~
-   drivers/hwmon/pmbus/tps25990.c: In function 'tps25990_write_word':
->> drivers/hwmon/pmbus/tps25990.c:337:46: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-     337 |                                              FIELD_PREP(PK_MIN_AVG_AVG_CNT, value));
-         |                                              ^~~~~~~~~~
-
-
-vim +/FIELD_GET +267 drivers/hwmon/pmbus/tps25990.c
-
-   254	
-   255	static int tps25990_read_word(struct i2c_client *client,
-   256				      int page, int phase, int reg)
-   257	{
-   258		int ret, addr;
-   259	
-   260		addr = tps25990_get_addr(reg);
-   261		if (addr < 0)
-   262			return addr;
-   263	
-   264		switch (reg) {
-   265		case PMBUS_VIRT_SAMPLES:
-   266			ret = pmbus_read_byte_data(client, page, addr);
- > 267			ret = FIELD_GET(PK_MIN_AVG_AVG_CNT, ret);
-   268			break;
-   269	
-   270		case PMBUS_IIN_OC_FAULT_LIMIT:
-   271			ret = pmbus_read_byte_data(client, page, addr);
-   272			break;
-   273	
-   274		default:
-   275			ret = pmbus_read_word_data(client, page, -1, addr);
-   276			break;
-   277		}
-   278	
-   279		if (ret >= 0)
-   280			ret = tps25990_read_adapt_value(reg, ret);
-   281	
-   282		return ret;
-   283	}
-   284	
-   285	static int tps25990_write_adapt_value(int reg, int val)
-   286	{
-   287		switch (reg) {
-   288		case PMBUS_VIN_UV_WARN_LIMIT:
-   289		case PMBUS_VIN_UV_FAULT_LIMIT:
-   290		case PMBUS_VIN_OV_WARN_LIMIT:
-   291		case PMBUS_VOUT_UV_WARN_LIMIT:
-   292		case PMBUS_IIN_OC_WARN_LIMIT:
-   293		case PMBUS_OT_WARN_LIMIT:
-   294		case PMBUS_OT_FAULT_LIMIT:
-   295		case PMBUS_PIN_OP_WARN_LIMIT:
-   296		case PMBUS_POWER_GOOD_OFF:
-   297			val >>= TPS25990_8B_SHIFT;
-   298			val = clamp(val, 0, 0xff);
-   299			break;
-   300	
-   301		case PMBUS_VIN_OV_FAULT_LIMIT:
-   302			val -= TPS25990_VIN_OVF_OFF;
-   303			val = DIV_ROUND_CLOSEST(val * TPS25990_VIN_OVF_DIV, TPS25990_VIN_OVF_NUM);
-   304			val = clamp_val(val, 0, 0xf);
-   305			break;
-   306	
-   307		case PMBUS_IIN_OC_FAULT_LIMIT:
-   308			val -= TPS25990_IIN_OCF_OFF;
-   309			val = DIV_ROUND_CLOSEST(val * TPS25990_IIN_OCF_DIV, TPS25990_IIN_OCF_NUM);
-   310			val = clamp_val(val, 0, 0x3f);
-   311			break;
-   312	
-   313		case PMBUS_VIRT_SAMPLES:
-   314			val = clamp_val(val, 1, 1 << PK_MIN_AVG_AVG_CNT);
-   315			val = ilog2(val);
-   316			break;
-   317		}
-   318	
-   319		return val;
-   320	}
-   321	
-   322	static int tps25990_write_word(struct i2c_client *client,
-   323				       int page, int reg, u16 value)
-   324	{
-   325		int addr, ret;
-   326	
-   327		addr = tps25990_get_addr(reg);
-   328		if (addr < 0)
-   329			return addr;
-   330	
-   331		value = tps25990_write_adapt_value(reg, value);
-   332	
-   333		switch (reg) {
-   334		case PMBUS_VIRT_SAMPLES:
-   335			ret = pmbus_update_byte_data(client, page, addr,
-   336						     PK_MIN_AVG_AVG_CNT,
- > 337						     FIELD_PREP(PK_MIN_AVG_AVG_CNT, value));
-   338			break;
-   339	
-   340		case PMBUS_IIN_OC_FAULT_LIMIT:
-   341			ret = pmbus_write_byte_data(client, page, addr,
-   342						    value);
-   343			break;
-   344	
-   345		default:
-   346			ret = pmbus_write_word_data(client, page, addr, value);
-   347			break;
-   348		}
-   349	
-   350		return ret;
-   351	}
-   352	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
