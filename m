@@ -1,88 +1,60 @@
-Return-Path: <linux-kernel+bounces-322497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58179729BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF1C9729BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6FB285E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B05C285DF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E917A938;
-	Tue, 10 Sep 2024 06:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32FB17B402;
+	Tue, 10 Sep 2024 06:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bzYO1fCz"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQ550xSO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAABA175D2F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB41208A5;
+	Tue, 10 Sep 2024 06:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725950602; cv=none; b=PFqQYPTwcMGIgWvs3e1smaR7u1SRhso9pZMKCAZ6+/24FaKZz7f/rVPcdbww75LHSpfaSdIJjujRLXbRNVJYps9lzVnEU7KblNHm7aLTlCXBn9k0vo/kqiBvUm85veS2jd2nNA7SLWb4B8HVfsNZehnnKtF+C+EuekKxzzjLMCM=
+	t=1725950686; cv=none; b=cuP6wniRIgG2fQBl5cbs0kbz0Q9KkRwj7ligkxtqzIPi1yycT5RVpratG5GMWZnK5O3rTiYjnS2rhvauvhTC2OdzCCJ0HpnmfSh7UwoHO2Hp62VHZ+BWVHba+xBoMfhBP+npm7O6SG3NlRH8bWEC+KCBmjxqYeDjrjYh90HEQrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725950602; c=relaxed/simple;
-	bh=na/rRKAm0dtxvPFcGIyuBVMyz7/vq21KrFg6CQhI+Jg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kXWtxSwZ2tlDYlRd1v72uE9d9VthbfKuutNXITUpLIcf/CMV9e+6Wj160/TLRQLQYweTm5whhroFMrcCHQRiVNN1UY55yXvQIIXLf75kRajTqJZ76LA3r15EZT6RD4ynplWCzElv5FOEarZ5mNr9wS+0ERhj3hNHZmzkcrrerUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bzYO1fCz; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso23510295e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 23:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725950598; x=1726555398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YHIjfVpopAQsFYDysnM68orgUpUrGZh7owWOhiV6j1E=;
-        b=bzYO1fCzYrmv5YPWOEB9bycB8uZjylGJeE3W/gthNYYr9OcE5qvRx24/QUaAmZdovt
-         YH216OrZFnaMNIo1QWI207ywRnn7gjdwJbSiXmiDdyQyHyCYEwYYYhrhq9Oc7VYOrxxY
-         /CXygSFXaAwbybAyl4j9MS8y2ROQwrJwLgwWeY3XXXbhmZvtZ6KdRFpRsUp3olXjDzTD
-         MlCdfXyhp8+4FPM46z4/NXJEV5dn0rD8skOVTd2asQ+tyYtXp1powov1cJSFpU08WvDQ
-         9qjbguqFVdcRoAQWoif8PNahiyPRbSR0OCGgOfPmGj3/iG0hC6Z3pEU3DaYgJg8WX9TH
-         LuIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725950598; x=1726555398;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YHIjfVpopAQsFYDysnM68orgUpUrGZh7owWOhiV6j1E=;
-        b=eozhUpwwAkwv//dxoX4+q5B/0V1Utb0xvyPxqoJO1RX/EVfgAEcGfwtihThg8UztMk
-         81UeaCBZYM7CE3AuDblf33dAa7mTCFCp8ET66DKFgoCJjJcse7o3joco5m28D85ZeLu8
-         E/DtA17riQp1Q/8X5BuAREYVabOwnB2cw27ivvFKvskoqYCj9crZQOM0Kf9XAB0pRIjw
-         wy77ga0Gjp8CsVxds5ZTUfMYZhWsbFc+rzqql79QWZDSt1a8+/dg5gRqRvhTh+S5IMn/
-         /pzcSywXE/pSfgbM3w4ax8zgBI0dsS5ohEydY/htBUvS2scZ58CvNW1JOEAqFaeXsiZx
-         fwlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZFDOHd3qbjwOAVE5NB+R1RnNz2y7CzkSO2xkp3a9FnKaMmbB7aPlrHqkTux5QWwqOlgsyudjJE28fOCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSGbXPRTgyje4Lrur3xF1vphOdGL39fcDRdcHvYc68RXjRvl/S
-	DqfZC/L/ctbpb1vx6UOYdjOJfoUFOQXflSm5oEYZsPlo0oJyPNODughhPQK8eXs=
-X-Google-Smtp-Source: AGHT+IEGTUNHbTSsmZjzta3HrF24ou/pG5zqXuiZFFF8PEDIjWSL6u1zq98mgz76KtjH/M2c0b8JiQ==
-X-Received: by 2002:a05:600c:1d9f:b0:42c:b220:4769 with SMTP id 5b1f17b1804b1-42cb2204a93mr73976985e9.32.1725950597453;
-        Mon, 09 Sep 2024 23:43:17 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:8ba7:bfe4:fea9:65b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d375asm7872010f8f.66.2024.09.09.23.43.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 23:43:16 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Delphine CC
- Chiu <Delphine_CC_Chiu@Wiwynn.com>,  linux-hwmon@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 2/3] hwmon: (pmbus/core) add POWER_GOOD signal limits
- support
-In-Reply-To: <d76290e0-f5e7-4192-92b8-94f260270fe3@roeck-us.net> (Guenter
-	Roeck's message of "Mon, 9 Sep 2024 11:16:41 -0700")
-References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
-	<20240909-tps25990-v1-2-39b37e43e795@baylibre.com>
-	<d76290e0-f5e7-4192-92b8-94f260270fe3@roeck-us.net>
-Date: Tue, 10 Sep 2024 08:43:16 +0200
-Message-ID: <1j8qw0t3ej.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1725950686; c=relaxed/simple;
+	bh=nHnXaPv3ZxJwVaKNgDaBMtI7zm71hl2BFvIrhZbkT7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jn/xwnqVD6ncFhoZtf4zVrExN2huxfAIimhx9sQ4aOBHyB/VpbXdbf0Xu0Wz6Fy/jhxHFOfYMG2R0wVCBeMtrtxjZjkMwiP7TL9etILo9KG0rqaTIm1yLPiKk9HoGF17IzS1v4SEfDNiIIHZG7btSF0zzO4UFJRi7W/w63yrRGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQ550xSO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4502C4CEC3;
+	Tue, 10 Sep 2024 06:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725950685;
+	bh=nHnXaPv3ZxJwVaKNgDaBMtI7zm71hl2BFvIrhZbkT7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HQ550xSOyqkguE3g7zqkKxcXjiL6kyO50tXKBIo+lT0IkCW31FxCp3NIZE/DcHMfs
+	 wqWOywomj5V5CTXTQgznTcf+emiyhsZ4MAQoBqvSSfYIPX3hPapbA0JrLt8X14s/Qw
+	 nkDSkCSQvQ8qFihe3GdGVvCITn7XwJADRiQcLDk0m0mTkMwTCFLzSrjXyGVPlDwyT1
+	 +L02NO500DF0t9uS6fiJD/+aibOK0HpmE+jlTPW8JSJisrmfbLW6wUC9vJJGM6Y364
+	 vADoue/sk482kXsIRyLJ3kg3N0UQ8rLgtzs35kdYqWOSl/M+/Y/pYhPT0txy4cP2v9
+	 i+wACgrmyCl0Q==
+Date: Tue, 10 Sep 2024 07:44:41 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com,
+	mail@david-bauer.net
+Subject: Re: [PATCH net-next] net: gianfar: fix NVMEM mac address
+Message-ID: <20240910064441.GH2097826@kernel.org>
+References: <20240908213554.11979-1-rosenp@gmail.com>
+ <20240909085542.GV2097826@kernel.org>
+ <CAKxU2N_1t5osUc53p=G2tRLRctwbxQr3p3fScR-N1kgoNxc80Q@mail.gmail.com>
+ <CAKxU2N9kgnqAgo2mHxExjgZos+MvhZw40LWCr4pYOL5DUcJJWg@mail.gmail.com>
+ <20240909184850.GG2097826@kernel.org>
+ <CAKxU2N_y9CM=P3ki2XGDV+9nZ9SCQwC3y2qWRHbiEZzKK_t62Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,91 +62,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKxU2N_y9CM=P3ki2XGDV+9nZ9SCQwC3y2qWRHbiEZzKK_t62Q@mail.gmail.com>
 
-On Mon 09 Sep 2024 at 11:16, Guenter Roeck <linux@roeck-us.net> wrote:
+On Mon, Sep 09, 2024 at 12:14:38PM -0700, Rosen Penev wrote:
+> On Mon, Sep 9, 2024 at 11:48 AM Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Mon, Sep 09, 2024 at 11:20:20AM -0700, Rosen Penev wrote:
+> > > On Mon, Sep 9, 2024 at 11:11 AM Rosen Penev <rosenp@gmail.com> wrote:
+> > > >
+> > > > On Mon, Sep 9, 2024 at 1:55 AM Simon Horman <horms@kernel.org> wrote:
+> > > > >
+> > > > > On Sun, Sep 08, 2024 at 02:35:54PM -0700, Rosen Penev wrote:
+> > > > > > If nvmem loads after the ethernet driver, mac address assignments will
+> > > > > > not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
+> > > > > > case so we need to handle that to avoid eth_hw_addr_random.
+> > > > > >
+> > > > > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/net/ethernet/freescale/gianfar.c | 2 ++
+> > > > > >  1 file changed, 2 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+> > > > > > index 634049c83ebe..9755ec947029 100644
+> > > > > > --- a/drivers/net/ethernet/freescale/gianfar.c
+> > > > > > +++ b/drivers/net/ethernet/freescale/gianfar.c
+> > > > > > @@ -716,6 +716,8 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
+> > > > > >               priv->device_flags |= FSL_GIANFAR_DEV_HAS_BUF_STASHING;
+> > > > > >
+> > > > > >       err = of_get_ethdev_address(np, dev);
+> > > > > > +     if (err == -EPROBE_DEFER)
+> > > > > > +             return err;
+> > > > >
+> > > > > To avoid leaking resources, I think this should be:
+> > > > >
+> > > > >                 goto err_grp_init;
+> > > > will do in v2. Unfortunately net-next closes today AFAIK.
+> > > On second thought, where did you find this?
+> > >
+> > > git grep err_grp_init
+> > >
+> > > returns nothing.
+> > >
+> > > Not only that, this function has no goto.
+> >
+> > Maybe we are looking at different things for some reason.
+> Well that's embarrassing. Locally I seem to have a commit that adds a
+> bunch of devm and as a result these gotos. Unfortunately I don't have
+> the hardware to test those changes. I'll be doing a v2 for when
+> net-next opens.
 
-> On 9/9/24 08:39, Jerome Brunet wrote:
->> Add support for POWER_GOOD_ON and POWER_GOOD_OFF standard PMBus commands.
->> For PMBus devices that offer a POWER_GOOD signal, these commands are used
->> for setting the output voltage at which a power good signal should be
->> asserted and negated.
->> Power Good signals are device and manufacturer specific. Many factors
->> other
->> than output voltage may be used to determine whether or not the POWER_GO=
-OD
->> signal is to be asserted. PMBus device users are instructed to consult t=
-he
->> device manufacturer=E2=80=99s product literature for the specifics of th=
-e device
->> they are using.
->> Note that depending on the choice of the device manufacturer that a
->> device
->> may drive a POWER_GOOD signal high or low to indicate that the signal is
->> asserted.
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>   drivers/hwmon/pmbus/pmbus.h      | 3 +++
->>   drivers/hwmon/pmbus/pmbus_core.c | 6 ++++++
->>   2 files changed, 9 insertions(+)
->> diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
->> index 5d5dc774187b..e322d2dd9fb7 100644
->> --- a/drivers/hwmon/pmbus/pmbus.h
->> +++ b/drivers/hwmon/pmbus/pmbus.h
->> @@ -78,6 +78,9 @@ enum pmbus_regs {
->>   	PMBUS_IIN_OC_FAULT_LIMIT	=3D 0x5B,
->>   	PMBUS_IIN_OC_WARN_LIMIT		=3D 0x5D,
->>   +	PMBUS_POWER_GOOD_ON		=3D 0x5E,
->> +	PMBUS_POWER_GOOD_OFF		=3D 0x5F,
->> +
->>   	PMBUS_POUT_OP_FAULT_LIMIT	=3D 0x68,
->>   	PMBUS_POUT_OP_WARN_LIMIT	=3D 0x6A,
->>   	PMBUS_PIN_OP_WARN_LIMIT		=3D 0x6B,
->> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbu=
-s_core.c
->> index 0ea6fe7eb17c..94ddf0166770 100644
->> --- a/drivers/hwmon/pmbus/pmbus_core.c
->> +++ b/drivers/hwmon/pmbus/pmbus_core.c
->> @@ -1768,6 +1768,12 @@ static const struct pmbus_limit_attr vout_limit_a=
-ttrs[] =3D {
->>   		.attr =3D "crit",
->>   		.alarm =3D "crit_alarm",
->>   		.sbit =3D PB_VOLTAGE_OV_FAULT,
->> +	}, {
->> +		.reg =3D PMBUS_POWER_GOOD_ON,
->> +		.attr =3D "good_on",
->> +	}, {
->> +		.reg =3D PMBUS_POWER_GOOD_OFF,
->> +		.attr =3D "good_off",
->>   	}, {
->>   		.reg =3D PMBUS_VIRT_READ_VOUT_AVG,
->>   		.update =3D true,
->>=20
->
-> Those attributes are not hardware monitoring attributes and therefore not
-> acceptable. In general I am not sure if they should be configurable in the
-> first place, but definitely not from the hardware monitoring subsystem.
-> Maybe the regulator subsystem callbacks set_over_voltage_protection and
-> set_under_voltage_protection would be appropriate (with severity
-> REGULATOR_SEVERITY_PROT), but that should be discussed with regulator
-> subsystem maintainers.
+No problem. TBH it is a relief, as I was beginning to doubt my own sanity.
 
-According to PMBUS spec, there is no protection associated with that
-command. It just tells when the output voltage is considered good, when
-it is not. What it does after that really depends the device, it may
-drive a pin for example (or an LED indicator in my case).
-
-It is very similar to 'crit' or other limits in that sense,
-I think. I don't really get why such property is not OK in hwmon then
-and why it should not be configurable, if the other limits are ?
-
-I don't mind dropping that completly, that change is not critical to me.
-The intent was to contribute something to overall pmbus support.
-
->
-> Thanks,
-> Guenter
-
---=20
-Jerome
+> >
+> > I'm looking at this:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/ethernet/freescale/gianfar.c?id=bfba7bc8b7c2c100b76edb3a646fdce256392129#n814
+> >
+> > > > >
+> > > > > Flagged by Smatch.
+> > > > >
+> > > > > >       if (err) {
+> > > > > >               eth_hw_addr_random(dev);
+> > > > > >               dev_info(&ofdev->dev, "Using random MAC address: %pM\n", dev->dev_addr);
+> > > > >
+> > > > > --
+> > > > > pw-bot: cr
+> > >
+> 
 
