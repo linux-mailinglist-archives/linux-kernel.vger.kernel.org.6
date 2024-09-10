@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-323147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0227D973888
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 572B197388B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 15:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85DDE1F255EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A331F256F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB019259F;
-	Tue, 10 Sep 2024 13:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A781922E1;
+	Tue, 10 Sep 2024 13:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Wjqq6YcI"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Fd0LAx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432618D640
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 13:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEC673459;
+	Tue, 10 Sep 2024 13:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725974576; cv=none; b=fJM9VU3/GIvVo9bbkL+QkZEMUEbazNSwsCigZNdmODuUB6M6RtkmS4fT7DPMd5+Tn9c3DqOR9jO/Wx3vg+dXtTWLtWkDkScqMmjZGP9sSSBzYD2LSRMvlzPMhWoMxzDdwFtib2me9kaHrqz/R4XhMI14r3j3gKjVn9kG6wV//h4=
+	t=1725974634; cv=none; b=lyMMJOGs60+hqSJmx2PVEnOWz/G9p+27cTVnkxRfy5C66yWC/TLP37E6skP9ypfGW3YaUPNqPBY1gHDAY1EmTjHiQJeqma6qO9Dbl5qOUvUCkMk7YvuWYF9r3ePs4ct+S5w7ITGJywDtsQHHsUPMcekrhAxt1uV+w5Dfq+BT41U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725974576; c=relaxed/simple;
-	bh=f3PKTxtggDOgToEGYYGgjQ0uDntcy+Y/oFBGor32rWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxFySB1grMTk9AWxATQAYb3I0pCdVH2zUpLlLFC6VOTRP35D5TeKeIGDfnwIoo+VUsQ5UQ+VgaZEIuv5ZxmGmqGu67ft/yH/FjKbUYkSLv7Ns2ZbiPTwJDZbxVzNyYme74lyGSF1kkCqCpAex2YuyXtLFT3UfghXh3ddIBs3pFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Wjqq6YcI; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39f54079599so17625825ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 06:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725974574; x=1726579374; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zsz2DawbKokjmCBHoMj/5IgWeYCvivyMxUGL8HZEg8Y=;
-        b=Wjqq6YcIwekcYIUP82qaSo5KJRNUo/vaoYe6mbB4Gu5qDpHtmn0ea0wKVoaxC2jrr2
-         CgTE9MRUyj0jkMbwTmFHAGpNwWZ75opRaDmCbdrzWhOIO8FxGLEPj0pZZEtJ3LZQ/RZb
-         77obYaHF8oEuyOQgTU3zgmlOENzKP74hYg9dxc0Pzrp4Mw2q/w+tN7RoC27wZcZBNqtf
-         brnMkgUH8kOZMvFp/BVyUt1RMCsQPeMGQNm1emjrSV68iOnsnWg4v6DNel9tt2YN4ZO2
-         QFeKvyNMoL/dPFNE8MgDuav213H/7XU3S0raD2dhPrkmLi+AfCfgnbeVgErtnLgSAiIk
-         a0fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725974574; x=1726579374;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zsz2DawbKokjmCBHoMj/5IgWeYCvivyMxUGL8HZEg8Y=;
-        b=NLypVOLpGFqjniRSQVAy5ttuLn4XwYiRv6MljNxG3yqTk5Qha2ehaMZ+RYP1hH4xvp
-         fQuxfwkxXeafBU+Q3GKzqmQK5mvOeQpHHeagiTuc+SSKsBHilbLSi/vy2Tytn60pAi/i
-         zIRmg/bMMfXOUZ3Jp13QDTpQa6vtnZw2Yqijd6dgzAHW+v6trzAeXcyMSOiBdt/2sJC/
-         xs/sNgB2Gwd0sJZ1i8TNqKXfj9HM5umkSvgscmrDSF27jQBd3nnHRproT6vdOl37iP/J
-         QoRG37KqIUHkRcNo1gWaYN4i637F5p2KDIVSg8aMyp0ox8yhPtaivUC3YyRHWioJ/yHx
-         5Qng==
-X-Forwarded-Encrypted: i=1; AJvYcCULn2bNRBsuX0gW9KxKh5GvpEd3J/tp4yWevbyZvXQ83VGpqMavcQD8VyBMpNk1h6Pl3dQLdvlaY/r+Iw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQB3TRqRsByF3J33A8fpeC8czz2nEn3yoTVkIFkfh8NsndB/hR
-	D5clFYcXZv08n6BC12RQWr5ucdrq4MiadMIlA/izlo/nZRGmOEPPruNJe4WBcj4=
-X-Google-Smtp-Source: AGHT+IHDvPZKRi5OPPT6Zxfq8GNcWYpeSOUaFFkDUjr74r3mQgiKPzPecXFzXvcX2Pd0XEIj7P7WGQ==
-X-Received: by 2002:a05:6e02:17c6:b0:39f:558a:e414 with SMTP id e9e14a558f8ab-3a06b15a49emr25341685ab.7.1725974574552;
-        Tue, 10 Sep 2024 06:22:54 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a0590161cfsm20022565ab.77.2024.09.10.06.22.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 06:22:54 -0700 (PDT)
-Message-ID: <db5193e8-5b8e-46f9-bbfc-a1821217f5a6@kernel.dk>
-Date: Tue, 10 Sep 2024 07:22:53 -0600
+	s=arc-20240116; t=1725974634; c=relaxed/simple;
+	bh=LFb2YHlrS3wGYB3pz6ZfwEjzOnQjkSzgEc19Fpysuh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJjX7DaJemHVDbQoH24bO/1lRp2gcTKXgIrs3HYaEL7608dIs+OEEYS2q/0bECvSkElwhH15EDoNXg5aQWec3ZhcIqC2xGLqtake/GK1aCu2i1L5WJ71lmMTQTroBQn5k9A7b5DSCNWw2JXpK3rUHJSCevSaHva2q+/6tRM3pfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4Fd0LAx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A94C4CEC4;
+	Tue, 10 Sep 2024 13:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725974633;
+	bh=LFb2YHlrS3wGYB3pz6ZfwEjzOnQjkSzgEc19Fpysuh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4Fd0LAxzkz4uP/JKACsrqfRhozSxFHdSAR2K2VqcpDdLpscgVmpjnh8mrF50pPfR
+	 ZRc4EMILUQOpoWe3Uc+QONeXCYucqsH5qxro6u/+q9D2qMC/dPRANDh5TV/BoKqko2
+	 8Tq0z3nGIP6fkMD3o86PC3pX50izL8XVeoDdHxdfGc2bAMtEES8qx73L0UZS/KZhaw
+	 dLKozQiDluu31rpkY8fN3bIqToeZeKj6xjgCDJE/K3+aw7/uG9Qf1hv2vtkQ087cop
+	 jgya0xuSEAtxOO7t3A3/nHATv3iUOg5qmC93Ss/do8k0/FwpSc05HQY3puU1YqtIR+
+	 OQNcQsnSvzv9Q==
+Date: Tue, 10 Sep 2024 15:23:44 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
+Message-ID: <ZuBIYNrwIiGXx8Uw@cassiopeiae>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-2-dakr@kernel.org>
+ <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me>
+ <ZtDuf0QGfhiy5X_I@pollux.localdomain>
+ <44b80095-8b03-4558-967e-138ea712f780@proton.me>
+ <Ztb5arBBX2LsrFKo@pollux>
+ <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] block: fix ordering between checking
- BLK_MQ_S_STOPPED and adding requests
-To: Muchun Song <songmuchun@bytedance.com>, ming.lei@redhat.com,
- yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- muchun.song@linux.dev, stable@vger.kernel.org
-References: <20240903081653.65613-1-songmuchun@bytedance.com>
- <20240903081653.65613-4-songmuchun@bytedance.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240903081653.65613-4-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5761d8e-8e17-42a5-9793-92edb121428e@proton.me>
 
-On 9/3/24 2:16 AM, Muchun Song wrote:
-> Supposing first scenario with a virtio_blk driver.
+On Tue, Sep 10, 2024 at 01:03:48PM +0000, Benno Lossin wrote:
+> On 03.09.24 13:56, Danilo Krummrich wrote:
+> > On Fri, Aug 30, 2024 at 01:06:00PM +0000, Benno Lossin wrote:
+> >> On 29.08.24 23:56, Danilo Krummrich wrote:
+> >>> On Thu, Aug 29, 2024 at 06:19:09PM +0000, Benno Lossin wrote:
+> >>>> On 16.08.24 02:10, Danilo Krummrich wrote:
+> >>>>> Add a kernel specific `Allocator` trait, that in contrast to the one in
+> >>>>> Rust's core library doesn't require unstable features and supports GFP
+> >>>>> flags.
+> >>>>>
+> >>>>> Subsequent patches add the following trait implementors: `Kmalloc`,
+> >>>>> `Vmalloc` and `KVmalloc`.
+> >>>>>
+> >>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >>>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> >>>>
+> >>>> We discussed this in our weekly meeting (I think ~one week ago?). If you
+> >>>> give me a draft version of the comment that you plan to add regarding
+> >>>> the `old_layout` parameter, I can see if I am happy with it. If I am, I
+> >>>> would give you my RB.
+> >>>
+> >>> May I propose you let me know what you would like to see covered, rather than
+> >>> me trying to guess it. :-)
+> >>
+> >> I was hoping that we put that in our meeting notes, but I failed to find
+> >> them... I would put this in a normal comment, so it doesn't show up in the
+> >> documentation. Preface it like implementation decision/detail:
+> >> - Why do `Allocator::{realloc,free}` not have an `old_layout` parameter
+> >>   like in the stdlib? (the reasons you had for that decision, like we
+> >>   don't need it etc.)
+> > 
+> > Ok.
+> > 
+> >> - Then something along the lines of "Note that no technical reason is
+> >>   listed above, so if you need/want to implement an allocator taking
+> >>   advantage of that, you can change it"
+> > 
+> > I don't really want to set the conditions for this to change in the
+> > documentation. It really depends on whether it's actually needed or the
+> > advantage of having it is huge enough to leave the core kernel allocators with
+> > unused arguments.
+> > 
+> > This can really only be properly evaluated case by case in a discussion.
 > 
-> CPU0                                                                CPU1
-> 
-> blk_mq_try_issue_directly()
->     __blk_mq_issue_directly()
->         q->mq_ops->queue_rq()
->             virtio_queue_rq()
->                 blk_mq_stop_hw_queue()
->                                                                     virtblk_done()
->     blk_mq_request_bypass_insert()                                      blk_mq_start_stopped_hw_queues()
->         /* Add IO request to dispatch list */   1) store                    blk_mq_start_stopped_hw_queue()
->                                                                                 clear_bit(BLK_MQ_S_STOPPED)                 3) store
->     blk_mq_run_hw_queue()                                                       blk_mq_run_hw_queue()
->         if (!blk_mq_hctx_has_pending())                                             if (!blk_mq_hctx_has_pending())         4) load
->             return                                                                      return
->         blk_mq_sched_dispatch_requests()                                            blk_mq_sched_dispatch_requests()
->             if (blk_mq_hctx_stopped())          2) load                                 if (blk_mq_hctx_stopped())
->                 return                                                                      return
->             __blk_mq_sched_dispatch_requests()                                          __blk_mq_sched_dispatch_requests()
-> 
-> Supposing another scenario.
-> 
-> CPU0                                                                CPU1
-> 
-> blk_mq_requeue_work()
->     /* Add IO request to dispatch list */       1) store            virtblk_done()
->     blk_mq_run_hw_queues()/blk_mq_delay_run_hw_queues()                 blk_mq_start_stopped_hw_queues()
->         if (blk_mq_hctx_stopped())              2) load                     blk_mq_start_stopped_hw_queue()
->             continue                                                            clear_bit(BLK_MQ_S_STOPPED)                 3) store
->         blk_mq_run_hw_queue()/blk_mq_delay_run_hw_queue()                       blk_mq_run_hw_queue()
->                                                                                     if (!blk_mq_hctx_has_pending())         4) load
->                                                                                         return
->                                                                                     blk_mq_sched_dispatch_requests()
-> 
-> Both scenarios are similar, the full memory barrier should be inserted between
-> 1) and 2), as well as between 3) and 4) to make sure that either CPU0 sees
-> BLK_MQ_S_STOPPED is cleared or CPU1 sees dispatch list. Otherwise, either CPU
-> will not rerun the hardware queue causing starvation of the request.
-> 
-> The easy way to fix it is to add the essential full memory barrier into helper
-> of blk_mq_hctx_stopped(). In order to not affect the fast path (hardware queue
-> is not stopped most of the time), we only insert the barrier into the slow path.
-> Actually, only slow path needs to care about missing of dispatching the request
-> to the low-level device driver.
+> Agreed, but I don't want people to think that we have a reason against
+> doing it in the future. Do you have an idea how to convey this?
 
-Again, this is way too wide, it's unreadable.
+I understand (and agree with) your intention. But I don't think it's necessary
+to document, because, ideally, this is already true for the whole kernel.
 
-Patch looks fine, though.
+Generally, I think it's valid to assume that people are willing to change the
+code if the advantages outweigh the disadvantages.
 
--- 
-Jens Axboe
+So, we could write something like "This may be changed if the advantages
+outweigh the disadvantages.", but it'd be a bit random, since we could probably
+sprinkle this everywhere.
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
