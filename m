@@ -1,227 +1,134 @@
-Return-Path: <linux-kernel+bounces-322577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30026972B0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B938972B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51A41F250DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0BB1F24DA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26AF1865E1;
-	Tue, 10 Sep 2024 07:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fxdSSrC2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BD017E8E5;
+	Tue, 10 Sep 2024 07:43:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A69185B51
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7517DE36
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 07:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725954132; cv=none; b=OfHTz5N2XGZ7Zw94tCSjLodpw7LdU+nAFjOv05byu++MwtKytcQOr3NdrFMFkM8TdGNSRpvfFXvwapHY/mR3+w1Gtyf34oKp+Og+vNyApZ2GCGfLAAe4YZ7KY4EITeqcCP4z8TX8pHz5e/IBNsl+87uxZR1aaYyTioUSgPEIbQA=
+	t=1725954185; cv=none; b=VdJCaDLokdgX8rlt+/bbzCBZGMHnDnMD5ECEZof96Rq2mY/ISstcyatv89qEeozAspCl6H97oVkJasPk4E/MzUhvbSep+9stC/aEFZQvDsq1yzQOSONUGoq8PMI50eb0Id+oGrAIM1UlcvFSOcP7ggtGUAV0tYfFbknuO606pks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725954132; c=relaxed/simple;
-	bh=Qyl+jeM29UcIUIpBkMaXSrvyQbplQx2dePM9hleo3fk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mukg3XoaeVf/RlQVjhScHAE156JlTgSoWeq6ZU8vp4asRpRXYorWJ0R4Z2ZMlSdM9WzlWNPm9XfLsmXsFkvJ35v7LRzh96b99P78l/6GqEGntzJlinGXdmlJFvvh0mg9bHFeeTerGa0UcQNIV6jPppy5hCd33yIIS0eJGljmE/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fxdSSrC2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725954129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vuOGAWKRYAVrkFr1NxQHAvJfBsIuxorao5YMycZLxA4=;
-	b=fxdSSrC2brIzX5y+XbwI4AQ3s8a1G2kvC67BNnKAVAgDFtA2uYAOwmMgVi9sLn2hDc57UG
-	Ho4Xwj8gGeK4VWON50zUwNxbtovwhf7L/WNCp4Itd4D1vfR1hPe2uuEwLKVB/cNPShSTIY
-	v+mtfE23uRWJrAhkdZaZOVYRVfHAtqM=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-FhjREanKPDSVS8I84y2esg-1; Tue, 10 Sep 2024 03:42:07 -0400
-X-MC-Unique: FhjREanKPDSVS8I84y2esg-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c25680de68so256406a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:42:07 -0700 (PDT)
+	s=arc-20240116; t=1725954185; c=relaxed/simple;
+	bh=agDh5uSrUaRfmL2l3e+u+SgR8YKDegx1ASp5V3gWUNc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LYWkZE7oiL1suZ8hVqmx789ANuM3LgeObP7TiM+mgU/ly4tyjbmg37Y6Ikg0PrlnJ79dG4GR+T+zuCyXlFBpc5cxkaMJkM5ujdjni3jKKD71jHPxTnYyc/EQs21XitkJI8BgHjJHueSGQ/gHf12qqgo64HBqFt8YXggJ2I6r3n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ce2629e40so402828939f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:43:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725954123; x=1726558923;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vuOGAWKRYAVrkFr1NxQHAvJfBsIuxorao5YMycZLxA4=;
-        b=abMc4iZ/qrZFKafvGf0GfIOJxq3lECDanPoCRxiSeLdRo3yY+p3jLa56MCDGM3kYaJ
-         5X8CHTAf+nq4xFFIZx3WkOa5s2mOwn54PvcFJ31fVAAJ18oi57KzefTQKP+wbEf1w18v
-         dW+QGC6cmHLuKr20XcFe/cCZ1LRM0cfs4qYFH+FrNi7BnUqXIYNFSOWtL1aOnpwaFwBr
-         tCu60eM18PeTPux0ku50bVVM6OvoNykiVSWA2zovtdng/gySFJ7Id/4+FsUj1vvr8E42
-         0E1KjS70zMqvF4sJuj+8KDWdGxL6DaHfUmM94ZvvBnLhADWkS6uEETBfk0iEuWGjkO7U
-         D/0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCH9Juvd0+9hY03l/4yzi+/gWH/+IRXKsdKgyaw88QsuERVjdHlBuuuEojd91uSe/e0oyfaYK2r+QUIX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye/6mVGXCRObxVvxIY1WSaT0nGmMgy/fWxmf2doTQc5s6tdjze
-	6BjkgAhqrpzYNTU0LwynGSMjaVPIqelb2gMIhtG/tgxBzk61wWpFaWcjCsr+prfzsOLLhrWDJv2
-	trBw4UIw0Zqqu4pE2e2zQagbpFw91uWfB9G4yBxBPskerxmSP+8UeijkZuWjMMg==
-X-Received: by 2002:a17:906:d555:b0:a86:9fbd:5168 with SMTP id a640c23a62f3a-a8a885be012mr934459966b.10.1725954122693;
-        Tue, 10 Sep 2024 00:42:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlH0u6x8kCMDvPcDbginVMnhXO4lApiSQpceWmr1sBGfZmmYznkDhVeEEVWw9Lf1VtTtVaBw==
-X-Received: by 2002:a17:906:d555:b0:a86:9fbd:5168 with SMTP id a640c23a62f3a-a8a885be012mr934451466b.10.1725954121495;
-        Tue, 10 Sep 2024 00:42:01 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cf03fcsm438718266b.162.2024.09.10.00.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 00:42:01 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 18BC7152C346; Tue, 10 Sep 2024 09:42:00 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Florian Kauer <florian.kauer@linutronix.de>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S.
- Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Jesper
- Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, David Ahern
- <dsahern@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>, Mykola Lysenko
- <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
- linux-kselftest@vger.kernel.org, Florian Kauer
- <florian.kauer@linutronix.de>
-Subject: Re: [PATCH net v3 2/2] bpf: selftests: send packet to devmap
- redirect XDP
-In-Reply-To: <20240909-devel-koalo-fix-ingress-ifindex-v3-2-66218191ecca@linutronix.de>
-References: <20240909-devel-koalo-fix-ingress-ifindex-v3-0-66218191ecca@linutronix.de>
- <20240909-devel-koalo-fix-ingress-ifindex-v3-2-66218191ecca@linutronix.de>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 10 Sep 2024 09:41:59 +0200
-Message-ID: <87seu8dkfs.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1725954183; x=1726558983;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJ03XQFNZMqhbImfNKMgvJZs5lZWQY9KTsvzod3/cDY=;
+        b=Hz0nVPeEu/vgJuwiOuFgjO3Sx4+72gfUTOL4IL6Luv+uHjRL7OTsNnrpZ/rjW95x1R
+         qXazC6UxXy0VSJmcpDzgbOuGFQ/IVvcAzglm+zyP1cQ0+zgm+ctddUqZLkGBgwBjMtBg
+         SWmVqGvRdN9/ufRW8skPHaBXSklavGvlYoONjxLffphARVlZEmy9mvhGbRmOuKLRoZeP
+         Pm7SH3WnxuDpgFEVqRvHmaXyZTHbgObPEUqyrUcmqKWjdSfg+4S2yz304W7OGB28jgMb
+         TGWGOmv41jwZYJXV6KbmI0ssVQWkLZyDvV6ckB1A5B9jUOPcJkkacnMzAqWreTh4a09C
+         cjgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmin9JUDwVcjv4nN4PmDdhIuoFGqFviQ9vxoY0Eu2I6Yj1QdosROhAPK+iU4b4gwNiiBljhSegd6Gt0LI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv7GqZPLfeZ0SzRwmG/G3KyrGHGtK90vEqtqCBhJZ7i1STsArI
+	mGEd0XSRyw5Tv6T14cadf9wprGgKPh6B10cTZbwb8qwtQp2xXfP1r7lbTLPfVnFYFkAhfp2DynY
+	SP2x0EOZQAoWrBGCNnj5sj/nCOxpigydXsZWXtKdWFpIfSvi2JesrsdM=
+X-Google-Smtp-Source: AGHT+IEE21rX19rK9X93cdUde08nWnfVf1LfYJA50EWYkVL9Q6ySPo2n+ArWPR+P3Z7/B4TCtgHyWFMw3wt6taC05D60uop8AOGJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:13c4:b0:82a:a8af:626f with SMTP id
+ ca18e2360f4ac-82aa8af63bcmr1183133839f.2.1725954182913; Tue, 10 Sep 2024
+ 00:43:02 -0700 (PDT)
+Date: Tue, 10 Sep 2024 00:43:02 -0700
+In-Reply-To: <bab2637d-45a0-4f45-8488-6a56b4feaf4e@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f8b3650621bf0562@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: slab-out-of-bounds Read in
+ udf_get_filelongad (2)
+From: syzbot <syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, zhaomengmeng@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 
-Florian Kauer <florian.kauer@linutronix.de> writes:
+Hello,
 
-> The current xdp_devmap_attach test attaches a program
-> that redirects to another program via devmap.
->
-> It is, however, never executed, so do that to catch
-> any bugs that might occur during execution.
->
-> Also, execute the same for a veth pair so that we
-> also cover the non-generic path.
->
-> Warning: Running this without the bugfix in this series
-> will likely crash your system.
->
-> Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
-> ---
->  .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
->  1 file changed, 108 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-> index ce6812558287..3da45f719736 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-> @@ -1,6 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0
-> +#include <arpa/inet.h>
->  #include <uapi/linux/bpf.h>
->  #include <linux/if_link.h>
-> +#include <network_helpers.h>
-> +#include <net/if.h>
->  #include <test_progs.h>
->  
->  #include "test_xdp_devmap_helpers.skel.h"
-> @@ -17,7 +20,7 @@ static void test_xdp_with_devmap_helpers(void)
->  		.ifindex = IFINDEX_LO,
->  	};
->  	__u32 len = sizeof(info);
-> -	int err, dm_fd, map_fd;
-> +	int err, dm_fd, dm_fd_redir, map_fd;
->  	__u32 idx = 0;
->  
->  
-> @@ -25,14 +28,11 @@ static void test_xdp_with_devmap_helpers(void)
->  	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
->  		return;
->  
-> -	dm_fd = bpf_program__fd(skel->progs.xdp_redir_prog);
-> -	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
-> +	dm_fd_redir = bpf_program__fd(skel->progs.xdp_redir_prog);
-> +	err = bpf_xdp_attach(IFINDEX_LO, dm_fd_redir, XDP_FLAGS_SKB_MODE, NULL);
->  	if (!ASSERT_OK(err, "Generic attach of program with 8-byte devmap"))
->  		goto out_close;
->  
-> -	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
-> -	ASSERT_OK(err, "XDP program detach");
-> -
->  	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_dm);
->  	map_fd = bpf_map__fd(skel->maps.dm_ports);
->  	err = bpf_prog_get_info_by_fd(dm_fd, &info, &len);
-> @@ -47,6 +47,23 @@ static void test_xdp_with_devmap_helpers(void)
->  	ASSERT_OK(err, "Read devmap entry");
->  	ASSERT_EQ(info.id, val.bpf_prog.id, "Match program id to devmap entry prog_id");
->  
-> +	/* send a packet to trigger any potential bugs in there */
-> +	char data[10] = {};
-> +	DECLARE_LIBBPF_OPTS(bpf_test_run_opts, opts,
-> +			    .data_in = &data,
-> +			    .data_size_in = 10,
-> +			    .flags = BPF_F_TEST_XDP_LIVE_FRAMES,
-> +			    .repeat = 1,
-> +		);
-> +	err = bpf_prog_test_run_opts(dm_fd_redir, &opts);
-> +	ASSERT_OK(err, "XDP test run");
-> +
-> +	/* wait for the packets to be flushed */
-> +	kern_sync_rcu();
-> +
-> +	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
-> +	ASSERT_OK(err, "XDP program detach");
-> +
->  	/* can not attach BPF_XDP_DEVMAP program to a device */
->  	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
->  	if (!ASSERT_NEQ(err, 0, "Attach of BPF_XDP_DEVMAP program"))
-> @@ -124,6 +141,88 @@ static void test_xdp_with_devmap_frags_helpers(void)
->  	test_xdp_with_devmap_frags_helpers__destroy(skel);
->  }
->  
-> +static void test_xdp_with_devmap_helpers_veth(void)
-> +{
-> +	struct test_xdp_with_devmap_helpers *skel = NULL;
-> +	struct bpf_prog_info info = {};
-> +	struct bpf_devmap_val val = {};
-> +	struct nstoken *nstoken = NULL;
-> +	__u32 len = sizeof(info);
-> +	int err, dm_fd, dm_fd_redir, map_fd, ifindex_dst;
-> +	__u32 idx = 0;
-> +
-> +	SYS(out_close, "ip netns add testns");
-> +	nstoken = open_netns("testns");
-> +	if (!ASSERT_OK_PTR(nstoken, "setns"))
-> +		goto out_close;
-> +
-> +	SYS(out_close, "ip link add veth_src type veth peer name veth_dst");
-> +	SYS(out_close, "ip link set dev veth_src up");
-> +	SYS(out_close, "ip link set dev veth_dst up");
-> +
-> +	val.ifindex = if_nametoindex("veth_src");
-> +	ifindex_dst = if_nametoindex("veth_dst");
-> +	if (!ASSERT_NEQ(val.ifindex, 0, "val.ifindex") ||
-> +	    !ASSERT_NEQ(ifindex_dst, 0, "ifindex_dst"))
-> +		goto out_close;
-> +
-> +	skel = test_xdp_with_devmap_helpers__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
-> +		return;
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in __udf_add_aext
 
-This should be 'goto out_close'.
+loop0: rw=0, sector=117, nr_sectors = 1 limit=0
+syz.0.15: attempt to access beyond end of device
+loop0: rw=0, sector=117, nr_sectors = 1 limit=0
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5602 at fs/udf/inode.c:2043 __udf_add_aext+0x571/0x700 fs/udf/inode.c:2042
+Modules linked in:
+CPU: 0 UID: 0 PID: 5602 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-gbc83b4d1f086-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__udf_add_aext+0x571/0x700 fs/udf/inode.c:2042
+Code: 41 5f 5d c3 cc cc cc cc e8 5c d7 74 fe 90 0f 0b 90 e9 e7 fb ff ff e8 4e d7 74 fe 90 0f 0b 90 e9 54 fc ff ff e8 40 d7 74 fe 90 <0f> 0b 90 e9 45 fd ff ff 44 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c c7
+RSP: 0018:ffffc900026b78f8 EFLAGS: 00010293
+RAX: ffffffff831eb570 RBX: 0000000000000120 RCX: ffff888000990000
+RDX: 0000000000000000 RSI: 0000000000000120 RDI: ffffffffffffff40
+RBP: 00000000bffffe00 R08: ffffffff831eb2b0 R09: ffffffff831eb066
+R10: 0000000000000002 R11: ffff888000990000 R12: ffffc900026b7b80
+R13: ffffffffffffff40 R14: dffffc0000000000 R15: 0000000000000010
+FS:  00007f2deb03b6c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa084b2c000 CR3: 0000000054cbe000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ udf_add_aext fs/udf/inode.c:2104 [inline]
+ udf_do_extend_file+0xaf7/0x11e0 fs/udf/inode.c:540
+ udf_extend_file fs/udf/inode.c:692 [inline]
+ udf_setsize+0xcc2/0x1320 fs/udf/inode.c:1265
+ udf_setattr+0x3c7/0x5d0 fs/udf/file.c:236
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ do_truncate fs/open.c:65 [inline]
+ do_ftruncate+0x46b/0x590 fs/open.c:181
+ do_sys_ftruncate fs/open.c:199 [inline]
+ __do_sys_ftruncate fs/open.c:207 [inline]
+ __se_sys_ftruncate fs/open.c:205 [inline]
+ __x64_sys_ftruncate+0x95/0xf0 fs/open.c:205
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2dea179eb9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2deb03b038 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 00007f2dea315f80 RCX: 00007f2dea179eb9
+RDX: 0000000000000000 RSI: 0000008002007ffb RDI: 0000000000000005
+RBP: 00007f2dea1e793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2dea315f80 R15: 00007ffec4d97f58
+ </TASK>
 
--Toke
+
+Tested on:
+
+commit:         bc83b4d1 Merge tag 'bcachefs-2024-09-09' of git://evil..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10303f29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1686f43b980000
 
 
