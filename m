@@ -1,128 +1,187 @@
-Return-Path: <linux-kernel+bounces-323003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7000973684
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F4F973681
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3EE1F25C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BE3E1F25B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC0C18F2F0;
-	Tue, 10 Sep 2024 11:55:23 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD83118F2DB;
+	Tue, 10 Sep 2024 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZfaKzm8m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3B118C003;
-	Tue, 10 Sep 2024 11:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D9718C003;
+	Tue, 10 Sep 2024 11:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725969322; cv=none; b=YiqeXYOu3AoraaIqqoi61HifJT24/LWAICFpj/QmtKse7RrkYFn0JkT76B3dGA63L7XHzmIQHzT+cf2JYqeW5qX6odYvSfvKQRQWnFso8LuuTh7/Am8wwtjytwtNckjxj43NHblQgmAbnzjwWiWGAO8dSYu1Xw5oK4hlAF3IkKU=
+	t=1725969306; cv=none; b=qwwdeK4pQ4fq64l2Ryr9h686w3clpXs9RoC6F+a1XEPMGxKIr1Nha5DPV1N0YqRZfRiafKn1hqo8M/gy0m/ZTBG3aPbu0YEw/YOIgHFckhKZrTvBTqOqAz5VNmrAgxDLOOU4+/a8buyldWwgquCFY/IYAJKyyTrseYowQzQ3Vx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725969322; c=relaxed/simple;
-	bh=joWNMT0D6LwowNYPYBBSsBEyhHR8fxiSXgF15vYlk6I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=U6nrbbL7906UM36UhyXSHXgEVCS2Xk6UPbKivfoUayKe9mUAcW3Qeuj1dufH1vkBfN0QdpqWNtqUjJabZuqgWPY7A9mcn1S6tFvQthPT5BI+tIsm0D9+0u0UMYipWNDBNx8ogAAqFIrFMVY6sNppSB1PPTKTNAx+q9kbz1KWKtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 48ABsi2p074038
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 10 Sep 2024 19:54:44 +0800 (+08)
-	(envelope-from kimriver.liu@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X32Dz6rjzz7ZMt3;
-	Tue, 10 Sep 2024 19:54:43 +0800 (CST)
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Tue, 10 Sep 2024 19:54:43 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Tue, 10 Sep 2024 19:54:43 +0800
-From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-CC: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "jsd@semihalf.com" <jsd@semihalf.com>,
-        "andi.shyti@kernel.org"
-	<andi.shyti@kernel.org>,
-        "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v8] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Thread-Topic: [PATCH v8] i2c: designware: fix master is holding SCL low while
- ENABLE bit is disabled
-Thread-Index: AQHbA0iDEXTpjDBp/E6xp/M7s9EaBrJQM8eAgACJC/D//51HAIAAjNPQ
-Date: Tue, 10 Sep 2024 11:54:43 +0000
-Message-ID: <40ee4f61d7cb4a3ebb683d498bb587f0@siengine.com>
-References: <9d181a45f3edf92364c9e6b729638f0b3f2e7baa.1725946886.git.kimriver.liu@siengine.com>
- <ZuALQVyTBFugG0Sw@smile.fi.intel.com>
- <743187d2fde54a9ebf86d42e29eadfb4@siengine.com>
- <a2de8e23-d2a0-4585-8b51-2144801eeff8@linux.intel.com>
-In-Reply-To: <a2de8e23-d2a0-4585-8b51-2144801eeff8@linux.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1725969306; c=relaxed/simple;
+	bh=eah5Sen1l0Aw0ayjvsVeKGFBQX7863WPYIJIOytk2U4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BzDHkRul1KHLVDERhRRI5J66b8hywh1txTJHJTHKQiX5lIwTTjv9Aegk37QgHb5txmqnC8LbmI6VT1Kk9/RwkEjE+tdu0L+h+7CIOCMJBdo64uykcOwhnxm1g+pYhE44/WVTkAquVgXuArGhMothpjFWMOoqosSOcqU3PlALwEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZfaKzm8m; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725969304; x=1757505304;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eah5Sen1l0Aw0ayjvsVeKGFBQX7863WPYIJIOytk2U4=;
+  b=ZfaKzm8mWeWxMKl2Xvp2C/LjSoiX82RG5NEJzuuz1y/bokZIkX2Uh4JI
+   ECZmlsmlXv0C0PiQRcGxRwEcPR4EKXbfjbJvdX+LNDUUwM8P47ry55Vci
+   I4B3jTEIECHjbP3PjRJMDTD+ChSWJ5JheKHmmtgavyb3Qo5IP2aD7Gt49
+   8jd8wVSn3WqClTFbxxyuNSlfoxlN+r7jopE0j2jJoaF5MoMxVO9ckjywi
+   aUZU9+WmK8AEe4/zbJ3byd8uJSw7FF/I+Duc3QMUdJgLhOGUg1gi1Pvsg
+   AqXHh4NGSuUvSnSSRHmd9Haoj5RD4+ZSKl583QMAISVWHOOTfBHyl+Qf4
+   Q==;
+X-CSE-ConnectionGUID: umelgkIqTLGV2UKQfXJ8PQ==
+X-CSE-MsgGUID: 3/1ZZbgOTBqYU+3yjkHwEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="24525206"
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="24525206"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:55:04 -0700
+X-CSE-ConnectionGUID: a5ta+mteSUGBdy9s1uL/9w==
+X-CSE-MsgGUID: +Me8vOSjRhqQMxh0Ue2FBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,217,1719903600"; 
+   d="scan'208";a="71990261"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 04:55:00 -0700
+Message-ID: <88eb6d03-2fb4-49cf-944a-6ec64bf83ac8@intel.com>
+Date: Tue, 10 Sep 2024 14:54:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 48ABsi2p074038
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 20/21] KVM: TDX: Finalize VM initialization
+To: Paolo Bonzini <pbonzini@redhat.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-21-rick.p.edgecombe@intel.com>
+ <acf52e41-e78c-479d-9736-419a86002982@redhat.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <acf52e41-e78c-479d-9736-419a86002982@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGksIEphcmtrbw0KDQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEphcmtr
-byBOaWt1bGEgPGphcmtrby5uaWt1bGFAbGludXguaW50ZWwuY29tPiANCj5TZW50OiAyMDI0xOo5
-1MIxMMjVIDE5OjIwDQo+VG86IExpdSBLaW1yaXZlci/B9b3wutMgPGtpbXJpdmVyLmxpdUBzaWVu
-Z2luZS5jb20+OyBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVs
-LmNvbT4NCj5DYzogbWlrYS53ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbTsganNkQHNlbWloYWxm
-LmNvbTsgYW5kaS5zaHl0aUBrZXJuZWwub3JnOyBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+U3ViamVjdDogUmU6IFtQQVRDSCB2OF0gaTJj
-OiBkZXNpZ253YXJlOiBmaXggbWFzdGVyIGlzIGhvbGRpbmcgU0NMIGxvdyB3aGlsZSBFTkFCTEUg
-Yml0IGlzIGRpc2FibGVkDQoNCj5PbiA5LzEwLzI0IDEyOjM4IFBNLCBMaXUgS2ltcml2ZXIvwfW9
-8LrTIHdyb3RlOg0KPj4gSGkgQW5keSwNCj4+IA0KPj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
-LS0tDQo+Pj4gRnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5p
-bnRlbC5jb20+DQo+Pj4gU2VudDogMjAyNMTqOdTCMTDI1SAxNzowMw0KPj4+IFRvOiBMaXUgS2lt
-cml2ZXIvwfW98LrTIDxraW1yaXZlci5saXVAc2llbmdpbmUuY29tPg0KPj4+IENjOiBqYXJra28u
-bmlrdWxhQGxpbnV4LmludGVsLmNvbTsgbWlrYS53ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbTsg
-DQo+Pj4ganNkQHNlbWloYWxmLmNvbTsgYW5kaS5zaHl0aUBrZXJuZWwub3JnOyBsaW51eC1pMmNA
-dmdlci5rZXJuZWwub3JnOyANCj4+PiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+Pj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2OF0gaTJjOiBkZXNpZ253YXJlOiBmaXggbWFzdGVyIGlzIGhv
-bGRpbmcgU0NMIA0KPj4+IGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQo+PiANCj4+
-PiBPbiBUdWUsIFNlcCAxMCwgMjAyNCBhdCAwMjoxMzowOVBNICswODAwLCBLaW1yaXZlciBMaXUg
-d3JvdGU6DQo+Pj4+IEl0IHdhcyBvYnNlcnZlZCBpc3N1aW5nIEFCT1JUIGJpdChJQ19FTkFCTEVb
-MV0pIHdpbGwgbm90IHdvcmsgd2hlbg0KPj4+DQo+Pj4gIi4uLm9ic2VydmVkIHRoYXQgaXNzdWlu
-Zy4uLiINCj4+PiAuLi5iaXQgKC4uLiINCj4+IA0KPj4gDQo+Pj4+IElDX0VOQUJMRSBpcyBhbHJl
-YWR5IGRpc2FibGVkLg0KPj4+Pg0KPj4+PiBDaGVjayBpZiBFTkFCTEUgYml0KElDX0VOQUJMRVsw
-XSkgaXMgZGlzYWJsZWQgd2hlbiB0aGUgbWFzdGVyIGlzDQo+PiANCj4+PiAiLi4uYml0ICguLi4i
-DQo+Pj4gbWFzdGVyIC0tPiBjb250cm9sbGVyDQo+PiANCj4+ICAgVXBkYXRlIGl0IGluIFY5DQo+
-PiANCj5QbGVhc2UgYWRkIGJhY2sgYWxzbyBrZXJuZWwgZXJyb3JzIHRoYXQgYXJlIHNob3duIHdo
-ZW4gdGhlIGlzc3VlIG9jY3Vycy4gDQo+SSBzYXcgdGhvc2UgbWVudGlvbmVkIGluIHRoZSBjb21t
-aXQgbG9nIGluIHNvbWUgZWFybGllciB2ZXJzaW9uIG9mIHRoZSBwYXRjaC4NCg0KVGhvc2UgbWF5
-IGhlbHAgZ29vZ2xpbmcgdGhlIHNvbHV0aW9uIChpLmUuIHRoaXMgcGF0Y2gpIGlmIHNvbWVib2R5
-IHNlZXMgc2ltaWxhciBlcnJvciBvbiB0aGVpciBIVy4NCiBPaw0KDQogQWRkIGJhY2sga2VybmVs
-IGVycm9ycyBsb2dzIGluIFY5Og0KVGhlc2Uga2VybmVsIGxvZ3Mgc2hvdyB1cCB3aGVuZXZlciBh
-biBJMkMgdHJhbnNhY3Rpb24gaXMNCmF0dGVtcHRlZCBhZnRlciB0aGlzIGZhaWx1cmUuDQppMmNf
-ZGVzaWdud2FyZSBlOTVlMDAwMC5pMmM6IHRpbWVvdXQgaW4gZGlzYWJsaW5nIGFkYXB0ZXINCmky
-Y19kZXNpZ253YXJlIGU5NWUwMDAwLmkyYzogdGltZW91dCB3YWl0aW5nIGZvciBidXMgcmVhZHkN
-Cg0KVGhlIHBhdGNoIGNhbiBiZSBmaXggdGhlIGNvbnRyb2xsZXIgY2Fubm90IGJlIGRpc2FibGVk
-IHdoaWxlDQpTQ0wgaXMgaGVsZCBsb3cgaW4gRU5BQkxFIGJpdCBpcyBhbHJlYWR5IGRpc2FibGVk
-Lg0KDQpUaGFua3MhDQoNCkkgd2lsbCBiZSBvZmYgd29yaywgSWYgdGhlcmUgYXJlIHN0aWxsIGVt
-YWlscyB0aGF0IEkgaGF2ZSBub3QgYmVlbiByZXBsaWVkIHRvLA0KSSB3aWxsIHJlcGx5IHRvIHlv
-dXIgZW1haWwgaW1tZWRpYXRlbHkgYWZ0ZXIgZ29pbmcgdG8gd29yayB0b21vcnJvdy4NCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KQmVzdCBSZWdhcmRzDQpLaW1y
-aXZlciBMaXUNCg==
+On 10/09/24 13:25, Paolo Bonzini wrote:
+> On 9/4/24 05:07, Rick Edgecombe wrote:
+>> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>>
+>> Add a new VM-scoped KVM_MEMORY_ENCRYPT_OP IOCTL subcommand,
+>> KVM_TDX_FINALIZE_VM, to perform TD Measurement Finalization.
+>>
+>> Documentation for the API is added in another patch:
+>> "Documentation/virt/kvm: Document on Trust Domain Extensions(TDX)"
+>>
+>> For the purpose of attestation, a measurement must be made of the TDX VM
+>> initial state. This is referred to as TD Measurement Finalization, and
+>> uses SEAMCALL TDH.MR.FINALIZE, after which:
+>> 1. The VMM adding TD private pages with arbitrary content is no longer
+>>     allowed
+>> 2. The TDX VM is runnable
+>>
+>> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
+>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>> ---
+>> TDX MMU part 2 v1:
+>>   - Added premapped check.
+>>   - Update for the wrapper functions for SEAMCALLs. (Sean)
+>>   - Add check if nr_premapped is zero.  If not, return error.
+>>   - Use KVM_BUG_ON() in tdx_td_finalizer() for consistency.
+>>   - Change tdx_td_finalizemr() to take struct kvm_tdx_cmd *cmd and return error
+>>     (Adrian)
+>>   - Handle TDX_OPERAND_BUSY case (Adrian)
+>>   - Updates from seamcall overhaul (Kai)
+>>   - Rename error->hw_error
+>>
+>> v18:
+>>   - Remove the change of tools/arch/x86/include/uapi/asm/kvm.h.
+>>
+>> v15:
+>>   - removed unconditional tdx_track() by tdx_flush_tlb_current() that
+>>     does tdx_track().
+>> ---
+>>   arch/x86/include/uapi/asm/kvm.h |  1 +
+>>   arch/x86/kvm/vmx/tdx.c          | 28 ++++++++++++++++++++++++++++
+>>   2 files changed, 29 insertions(+)
+>>
+>> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+>> index 789d1d821b4f..0b4827e39458 100644
+>> --- a/arch/x86/include/uapi/asm/kvm.h
+>> +++ b/arch/x86/include/uapi/asm/kvm.h
+>> @@ -932,6 +932,7 @@ enum kvm_tdx_cmd_id {
+>>       KVM_TDX_INIT_VM,
+>>       KVM_TDX_INIT_VCPU,
+>>       KVM_TDX_INIT_MEM_REGION,
+>> +    KVM_TDX_FINALIZE_VM,
+>>       KVM_TDX_GET_CPUID,
+>>         KVM_TDX_CMD_NR_MAX,
+>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>> index 796d1a495a66..3083a66bb895 100644
+>> --- a/arch/x86/kvm/vmx/tdx.c
+>> +++ b/arch/x86/kvm/vmx/tdx.c
+>> @@ -1257,6 +1257,31 @@ void tdx_flush_tlb_current(struct kvm_vcpu *vcpu)
+>>       ept_sync_global();
+>>   }
+>>   +static int tdx_td_finalizemr(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>> +{
+>> +    struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+>> +
+>> +    if (!is_hkid_assigned(kvm_tdx) || is_td_finalized(kvm_tdx))
+>> +        return -EINVAL;
+>> +    /*
+>> +     * Pages are pending for KVM_TDX_INIT_MEM_REGION to issue
+>> +     * TDH.MEM.PAGE.ADD().
+>> +     */
+>> +    if (atomic64_read(&kvm_tdx->nr_premapped))
+>> +        return -EINVAL;
+> 
+> I suggest moving all of patch 16, plus the
+> 
+> +    WARN_ON_ONCE(!atomic64_read(&kvm_tdx->nr_premapped));
+> +    atomic64_dec(&kvm_tdx->nr_premapped);
+> 
+> lines of patch 19, into this patch.
+> 
+>> +    cmd->hw_error = tdh_mr_finalize(kvm_tdx);
+>> +    if ((cmd->hw_error & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_BUSY)
+>> +        return -EAGAIN;
+>> +    if (KVM_BUG_ON(cmd->hw_error, kvm)) {
+>> +        pr_tdx_error(TDH_MR_FINALIZE, cmd->hw_error);
+>> +        return -EIO;
+>> +    }
+>> +
+>> +    kvm_tdx->finalized = true;
+>> +    return 0;
+> 
+> This should also set pre_fault_allowed to true.
+
+Ideally, need to ensure it is not possible for another CPU
+to see kvm_tdx->finalized==false and pre_fault_allowed==true
+
+Perhaps also, to document the dependency, return an error if
+pre_fault_allowed is true in tdx_mem_page_record_premap_cnt().
+
 
