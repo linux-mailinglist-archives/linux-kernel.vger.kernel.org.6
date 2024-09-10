@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-322370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D8E9727EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6CB972850
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 06:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE85B1F2489D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5CD1F24D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 04:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E0B18306E;
-	Tue, 10 Sep 2024 04:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA14014EC44;
+	Tue, 10 Sep 2024 04:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHeCyqzN"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="M9EENae7"
+Received: from mail-m25482.xmail.ntesmail.com (mail-m25482.xmail.ntesmail.com [103.129.254.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DC770E2;
-	Tue, 10 Sep 2024 04:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BED14F218;
+	Tue, 10 Sep 2024 04:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.254.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725941708; cv=none; b=F4KGSN/Hk9EVUE12/Y0R8MBhpjw18sAzrCAeYratFH1kfc+xz1wUsBypFRNnWRYs4r0fSGu5tQDakzDk+ECOrmsTMQVmU9YC8CGVbQjSowXrtz5dNvykwQv+eSRR+yNJcAQNhr2nw3yLzi4clcGt5MF38ex9R5/p8VtmlkcguMQ=
+	t=1725942496; cv=none; b=H8grmvqVe5y3UBUG6S25d/gL6Uq6bP/p2Oq+8UGws8nLk7TwBj1Fkgn6gO5EyZuVFUuDJXrTk9ib5yJXqyJAFDCehKtDMqk99snyfOU7AABGfD3DojSCcuakVxUOhmYKQ5q0+1bbyTngkBp7cOxlTAeFQAruw7wnmoNxUvQgKxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725941708; c=relaxed/simple;
-	bh=ONWChnD4WtjLaVWnzZPF0/WnUFQpyPeRsbfOM8cm0UU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C03RWI1z0d84rylfYtvze+AmOgTRMvx5aWqHYGN/xzEjNcktl0x1NtCyyMkPnu2U6zVx1kc0WNsmfAAAJb1dHg7rXXfPMQSm6lhDqqR0F0dnhllgvFq937mxvANJ+z39RdmCmqaOPnnx4x/esgyJi2z5wUlKs+Fku23ssolrfeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHeCyqzN; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-277e4327c99so2948992fac.0;
-        Mon, 09 Sep 2024 21:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725941705; x=1726546505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
-        b=QHeCyqzNJGWctw5wIFM5ndgGxCc8WxK/lVH/An9601Cvyu1/DS/t4MLLitAqWzdsM+
-         ggxlvy55vPZxZuLxzKcqXARkZ9oYgmksJs8bwQ15OxFZzKg75Xu7a3PvLcdt0KMvNlNb
-         nBBT06kCjszfYwwoHdr5JT1vah7ZbKSbTeATdmN5EzVL8XVZ0QvXuIo9mnt/x7zPmq81
-         N78q5h2+SMqJkyDw9GfipWTQa/NVofvtT9xA1pRTz2pLrmZDCUZ/gDh1TLhfSGcWgR1u
-         3mf5sihR/7ihsQ8gzVK5Of/6CguXIvswey7qnl94GdB9qBv9ksz5CUnEFcB0ggGRYxaK
-         8Ygw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725941705; x=1726546505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+s+5c8Omf1wEXIDwyDQuFABOjgkZQaBttk6gT8y6VY=;
-        b=JEfaR1QgQsydVjzDm/BHQZ7ReetG4zRhwr6xPoH8kSWRXLewg9ECHEGsVd+j+c4fyj
-         l90cfhhTSOjUAJ9JL7Y2kf2JiEresewkVyTB7Y9cRZneY4vzGcrVLeEoKquWRr8/BrLZ
-         sC7zABX+TazcTZ9ntyOSpNdtTAiuC8OgNUy8nEHE0i1IygGAWfvj/9EEkonHmWDATuLm
-         T66x/bd9+YjZEVWjGMfiu1bkJKRaFnW2FRX5bqGm7Y65QIrm61f2cE8OxtIYAUoTwGqz
-         7T7BHPW8KskoXrXxAVGH42Ru4BmuYYh6rZ7e57g3u/fAOzRRGYjjJncnR+dEyWQb6sOU
-         6WtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFU096AWinGDdDD6MWibgucxtgLo7JnvY5Jj52gCX77bBKsFoguVFIykBRLgB8CqkwM6C7Gs3XjblLRm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2MADHl+F9LcO+HdGz40jJOnvcu0jeQeSH0uUjVmnjPy6tVrd8
-	eJZF3Fvm7H5+nVzYTsYlwOptF/f8Z+g4o1WSwro6hJXTTcYGYueouCrtLv/J80fwq2pTiD+bC1S
-	/22PI7Rlv8QuKjvsWeEkoKjoEsB/Z1w==
-X-Google-Smtp-Source: AGHT+IFXlsvZmB7pSC0OnIO5zV+J1X5s0KvZEumRTRhAnv5SlVHbn1KE/i0B6VE/5fy7TBX0hfbq75qdHi0DkIT9s7E=
-X-Received: by 2002:a05:6870:610b:b0:25e:1610:9705 with SMTP id
- 586e51a60fabf-27b82dccc41mr14673171fac.2.1725941705391; Mon, 09 Sep 2024
- 21:15:05 -0700 (PDT)
+	s=arc-20240116; t=1725942496; c=relaxed/simple;
+	bh=obxQ8mvuugakE4oLNK/5ZHZ5HwX8BVR6JNobh3UVUW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=owZ407Djzi9RwS5SkjdTAD9KdGZQpMteq+AUMbYc2CeefvKEY7iEdmgF46MnYhmhy7gzhfwXiQvRbjex2oM9d2GaokyP0/jnFjwNDXMzyoNAFjSWHTT8PK+gCVNoxiC6zP1DQQ7sC7dp+XYXtXsAooqucxet1uNRTx4LFxopDMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=M9EENae7; arc=none smtp.client-ip=103.129.254.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=M9EENae7dm9lrvZydttnTOhjp+1HrXCuKXNZddCnkvrgJBW3zC3wjS62FKIpOHbW1IEGyAut0Gry7+iWs5MmXegTV06jLowE/RaObwQ7xUkUAwDfhupGnIr7zuNTQmKPZgCp6dlqLdWMdBAc+9kUZQ0iumSnwmtRscsgFKVwUKs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=OyCjbYBCeFbpBOCm7HDwCrJogQYorO3TUDUejbm/lqI=;
+	h=date:mime-version:subject:message-id:from;
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id B57D81004DD;
+	Tue, 10 Sep 2024 11:10:01 +0800 (CST)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	macromorgan@hotmail.com,
+	jonas@kwiboo.se,
+	tim@feathertop.org,
+	knaerzche@gmail.com,
+	efectn@protonmail.com,
+	andyshrk@163.com,
+	jagan@edgeble.ai,
+	dsimic@manjaro.org,
+	megi@xff.cz,
+	sebastian.reichel@collabora.com,
+	alchark@gmail.com,
+	boris.brezillon@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v1 0/2] Add support for RK3588S Evaluation board
+Date: Tue, 10 Sep 2024 11:09:49 +0800
+Message-Id: <20240910030951.3670653-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806142902.224164-1-sergio.paracuellos@gmail.com> <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYAP286MB07463A0C8ABD8837888C6853BC992@TYAP286MB0746.JPNP286.PROD.OUTLOOK.COM>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Tue, 10 Sep 2024 06:14:54 +0200
-Message-ID: <CAMhs-H9rJEO8Yje1qsWQ9rt19wLZLbbiVVa3aR_Uwh2QRO9a=Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
-To: Shiji Yang <yangshiji66@outlook.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, tsbogend@alpha.franken.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhhIT1ZOTh4YTU4aSUoZSBpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a91d9e8de5e03a7kunmb57d81004dd
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Phw6GTo5ITI5PzUzTSpDSxRD
+	PA8aCg5VSlVKTElOQkhMQ0tIT0hOVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSUNINwY+
 
-Hi Shiji,
+Specification:
+- Rockchip RK3588S
+- RK806-2x2pcs + DiscretePower
+- eMMC5.1 + SPI Flash
+- Micro SD Card3.0
+- 1 x Typec3.0 + 2 x USB2 HOST
+- 1 x 1Lane PCIE2.0 Connector(RC Mode)
+- Headphone output
+- Array Key(MENU/VOL+/VOP-/ESC), Reset, Power on/off Key
+- 6 x SARADC
 
-On Mon, Sep 9, 2024 at 1:20=E2=80=AFPM Shiji Yang <yangshiji66@outlook.com>=
- wrote:
->
-> On Tue,  6 Aug 2024 16:29:02 +0200, Sergio Paracuellos wrote:
->
-> >diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mt=
-mips.c
-> >index 50a443bf79ec..787ff3e66b34 100644
-> >--- a/drivers/clk/ralink/clk-mtmips.c
-> >+++ b/drivers/clk/ralink/clk-mtmips.c
-> >@@ -267,6 +267,11 @@ static struct mtmips_clk_fixed rt305x_fixed_clocks[=
-] =3D {
-> >       CLK_FIXED("xtal", NULL, 40000000)
-> > };
-> >
-> >+static struct mtmips_clk_fixed rt3383_fixed_clocks[] =3D {
->
-> Hi! I found a small issue. The SoC name is rt3883 instead of rt3383.
+Damon Ding (2):
+  dt-bindings: arm: rockchip: Add rk3588s evb1 board
+  arm64: dts: rockchip: Add support for rk3588s evb1 board
 
-Ouch :). True. Since I have some other pending patches of this driver
-I will fix this and
-send a new patchset including this fixed.
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 1120 +++++++++++++++++
+ 3 files changed, 1126 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
 
-Thanks,
-    Sergio Paracuellos
->
-> >+      CLK_FIXED("xtal", NULL, 40000000),
-> >+      CLK_FIXED("periph", "xtal", 40000000)
-> >+};
-> >+
-> > static struct mtmips_clk_fixed rt3352_fixed_clocks[] =3D {
-> >       CLK_FIXED("periph", "xtal", 40000000)
-> > };
-> >@@ -779,8 +784,8 @@ static const struct mtmips_clk_data rt3352_clk_data =
-=3D {
-> > static const struct mtmips_clk_data rt3883_clk_data =3D {
-> >       .clk_base =3D rt3883_clks_base,
-> >       .num_clk_base =3D ARRAY_SIZE(rt3883_clks_base),
-> >-      .clk_fixed =3D rt305x_fixed_clocks,
-> >-      .num_clk_fixed =3D ARRAY_SIZE(rt305x_fixed_clocks),
-> >+      .clk_fixed =3D rt3383_fixed_clocks,
-> >+      .num_clk_fixed =3D ARRAY_SIZE(rt3383_fixed_clocks),
-> >       .clk_factor =3D NULL,
-> >       .num_clk_factor =3D 0,
-> >       .clk_periph =3D rt5350_pherip_clks,
->
-> Regards,
-> Shiji Yang
+-- 
+2.34.1
+
 
