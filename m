@@ -1,113 +1,249 @@
-Return-Path: <linux-kernel+bounces-322273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44708972695
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945DB97269C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 03:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05145285BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F67DB22B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 01:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5842136643;
-	Tue, 10 Sep 2024 01:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MRStBg3m"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F698139D1A;
+	Tue, 10 Sep 2024 01:31:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4527345B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 01:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D2A5695;
+	Tue, 10 Sep 2024 01:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725931297; cv=none; b=d402+UfZlKvWyfzK3/3+QV1Sof8AdqiIcWSdzedwIIsM8+YhfbuOYoogXOnZGuwY0SRcB9n972A5Rzogadk4u4MPlEn3OkvQzEUPfS7f5AcQaEoN7mQtLxNVoldNHIvxDlxKLK3+h+cFchs4I56lBoos9xiXKXsqrKsfVlkBiWU=
+	t=1725931912; cv=none; b=rqvBoXL/fJw0TEoLjLK1gKdycYFxFN2I+H+WMKsT7U2WH1FY/6Wa6UW13awJsSEhvTsUkzE9wHEQnBou/oCsgetgaSZgjVWx1V4K3fNcbEYZd2HPTuguyIVn8iIfRKFr8z3TtXoDwgmq4FN+1L46H/BaDinmeRt3bRBCO8unJO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725931297; c=relaxed/simple;
-	bh=LbvpkixmVT7St4fCI6yGGQAnAo0U7oJSCnjSVHAkbRs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z+eIPaPIReQw/hFLZe70CxvWuT7y9P8EThqyJDP33V6sSKavogc8PMbbr6ik4O3dEt9mpyaKGSevIOcNB8UNVXj6xuttOh43SCqnE0fFvpIbhmeLZIniTQpgtKNYYttGfklFCXeSqBF2+G40Jr/x8dzGmy0dpzb7PfVTrYq2OBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MRStBg3m; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20570b42f24so2140305ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 18:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1725931294; x=1726536094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FbHezFl/yia2I+g8JEPGnuA0HdRe8qPShzuc/dAam7o=;
-        b=MRStBg3mHE36aEzGRUKgl8wKBv37glNrXIU46gxoq/+Fvh7cge7tY4OUm+oKtKW3jM
-         1zuv3TrP5UoK0kahd/gOeoVeNQ1/HJd1aQpyn+xOeI7mQP1ezPvCslufbMC16Gm7EaQi
-         AtuKz1HI4aZtz2oc11en9WHTvivGGxP6DZoDfL/nYHf8IuexyAVPnj+7DFZDFQropMLg
-         HQt/MoMZ/EYANvjaK69DZxObCp4vlZ7GzH0KYp8IT77QLt1wvR1jOwQ3EtIXEz1sTMzu
-         ewf0QQ6rmX+GyJFesmbfsQnOdT4JHX0hO2NZ/AHDI9dNRVcCzbz+Uj5yUZ9QrKjAg4Og
-         CXdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725931294; x=1726536094;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FbHezFl/yia2I+g8JEPGnuA0HdRe8qPShzuc/dAam7o=;
-        b=JvRoUJTWEyEZnPDXjVvdLfDqLUdb+aNyOY0SZnPkQZe4T/OmKUAOZRHw2omH0zR9zQ
-         ALZzRwJYfgjvm5/wb9PHE3JRPxcDoM7ux7pcu3VZsJTXIWJq2ZX2cJ5eMmYtKPDn13au
-         g3jV/emtaTyo3sfCDhqFkH/ZgXtETGMdX5iwjNEBxGXvwXhUVuPbSgcuKFzMvkGVVFoW
-         Mlt5okrxgvksigxhX6UK9RqNhQ1diTYeXESGsyaePQ1EOV6boLkFKOfqxq6zBPZFIEvV
-         d9vQKkNnG1qNBzbg7wRnOnG/OyZUteUG1prYNobGxfEwR9Q1BKkySa8O/5KsF9QpjRmt
-         kUqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUP7cQxrxQxEWKKUEAEs8Cns6ndHImoIPnlBGNDR/1apJrCROVvbl+XwX0+SkDaHlk9OmKlPW0iCo/nLpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyn5CYUW54Lrd3gxYrVqgtTQah9J8VLQQv/K+Jzx+qLQxkhmYW
-	wC/q7fIR2SYe27bGJ23DQO5V0ilq418OoFiYvmF7SlEHbPp0LNnnKM4f2cE4wdE=
-X-Google-Smtp-Source: AGHT+IFa+VZ81ocWMaBa2mFn46xb84Mt6PsKyBjpAI0MI3gvqZzTycK0AEdo/AX/35uwZXb4OrHhvg==
-X-Received: by 2002:a17:902:dacc:b0:205:7c76:4b2c with SMTP id d9443c01a7336-206f05f6924mr132506985ad.48.1725931293861;
-        Mon, 09 Sep 2024 18:21:33 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e1b09bsm39335845ad.56.2024.09.09.18.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 18:21:33 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Philipp Reisner <philipp.reisner@linbit.com>, 
- Mikhail Lobanov <m.lobanov@rosalinux.ru>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, drbd-dev@lists.linbit.com, 
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lvc-project@linuxtesting.org, stable@vger.kernel.org
-In-Reply-To: <20240909133740.84297-1-m.lobanov@rosalinux.ru>
-References: <20240909133740.84297-1-m.lobanov@rosalinux.ru>
-Subject: Re: [PATCH] drbd: Add NULL check for net_conf to prevent
- dereference in state validation
-Message-Id: <172593129267.13781.9847171739560045999.b4-ty@kernel.dk>
-Date: Mon, 09 Sep 2024 19:21:32 -0600
+	s=arc-20240116; t=1725931912; c=relaxed/simple;
+	bh=S7Z1cGFHh5sWS+TsBJHRcmpg3hVPKg/xmER13R9dUE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=toISx8iRFRcQq+7kOMXZZ1da7k8DAzU6nYRpy/+eAspuIFrJ82hhcpXgTwQRgY8r+YzJpSRHBiFEJ/3xkpzw6MLm6WyIRXF389pg9dPN9tovpsSHD/dXRsDTYFXyFe8CGX6vSMkiwtmIGaupQpx2tO8893nYhhikWWncMdOdKq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X2mPs0kTwz4f3kvh;
+	Tue, 10 Sep 2024 09:31:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4061F1A07B6;
+	Tue, 10 Sep 2024 09:31:45 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgCXzMh9od9mInePAw--.1036S2;
+	Tue, 10 Sep 2024 09:31:43 +0800 (CST)
+Message-ID: <07501c67-3b18-48e3-8929-e773d8d6920f@huaweicloud.com>
+Date: Tue, 10 Sep 2024 09:31:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Chen Ridong <chenridong@huawei.com>
+Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240817093334.6062-1-chenridong@huawei.com>
+ <20240817093334.6062-2-chenridong@huawei.com>
+ <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXzMh9od9mInePAw--.1036S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4UtFWUJw1rGF45uF1fCrg_yoWxGF17pr
+	s0vw1UKF48Wr1v9ayvgayaqFWFkw4vgF47JFZ5Jw1jyrW3Xr12vr129r4YvFZ7Gr93Zrn0
+	vay3Zr90gas8trJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
-On Mon, 09 Sep 2024 09:37:36 -0400, Mikhail Lobanov wrote:
-> If the net_conf pointer is NULL and the code attempts to access its
-> fields without a check, it will lead to a null pointer dereference.
-> Add a NULL check before dereferencing the pointer.
+
+On 2024/9/9 22:19, Michal Koutný wrote:
+> On Sat, Aug 17, 2024 at 09:33:34AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
+>> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+>> acquired in different tasks, which may lead to deadlock.
+>> It can lead to a deadlock through the following steps:
+>> 1. A large number of cpusets are deleted asynchronously, which puts a
+>>     large number of cgroup_bpf_release works into system_wq. The max_active
+>>     of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
+>>     cgroup_bpf_release works, and many cgroup_bpf_release works will be put
+>>     into inactive queue. As illustrated in the diagram, there are 256 (in
+>>     the acvtive queue) + n (in the inactive queue) works.
+>> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
+>>     smp_call_on_cpu work into system_wq. However step 1 has already filled
+>>     system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
+>>     to wait until the works that were put into the inacvtive queue earlier
+>>     have executed (n cgroup_bpf_release), so it will be blocked for a while.
+>> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
+>> 4. Cpusets that were deleted at step 1 put cgroup_release works into
+>>     cgroup_destroy_wq. They are competing to get cgroup_mutex all the time.
+>>     When cgroup_metux is acqured by work at css_killed_work_fn, it will
+>>     call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
+>>     However, cpuset_css_offline will be blocked for step 3.
+>> 5. At this moment, there are 256 works in active queue that are
+>>     cgroup_bpf_release, they are attempting to acquire cgroup_mutex, and as
+>>     a result, all of them are blocked. Consequently, sscs.work can not be
+>>     executed. Ultimately, this situation leads to four processes being
+>>     blocked, forming a deadlock.
+>>
+>> system_wq(step1)		WatchDog(step2)			cpu offline(step3)	cgroup_destroy_wq(step4)
+>> ...
+>> 2000+ cgroups deleted asyn
+>> 256 actives + n inactives
+>> 				__lockup_detector_reconfigure
+>> 				P(cpu_hotplug_lock.read)
+>> 				put sscs.work into system_wq
+>> 256 + n + 1(sscs.work)
+>> sscs.work wait to be executed
+>> 				warting sscs.work finish
+>> 								percpu_down_write
+>> 								P(cpu_hotplug_lock.write)
+>> 								...blocking...
+>> 											css_killed_work_fn
+>> 											P(cgroup_mutex)
+>> 											cpuset_css_offline
+>> 											P(cpu_hotplug_lock.read)
+>> 											...blocking...
+>> 256 cgroup_bpf_release
+>> mutex_lock(&cgroup_mutex);
+>> ..blocking...
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> Thanks, Ridong, for laying this out.
+> Let me try to extract the core of the deps above.
+> 
+> The correct lock ordering is: cgroup_mutex then cpu_hotplug_lock.
+> However, the smp_call_on_cpu() under cpus_read_lock may lead to
+> a deadlock (ABBA over those two locks).
+> 
+
+That's right.
+
+> This is OK
+> 	thread T					system_wq worker
+> 	
+> 	  						lock(cgroup_mutex) (II)
+> 							...
+> 							unlock(cgroup_mutex)
+> 	down(cpu_hotplug_lock.read)
+> 	smp_call_on_cpu
+> 	  queue_work_on(cpu, system_wq, scss) (I)
+> 							scss.func
+> 	  wait_for_completion(scss)
+> 	up(cpu_hotplug_lock.read)
+> 
+> However, there is no ordering between (I) and (II) so they can also happen
+> in opposite
+> 
+> 	thread T					system_wq worker
+> 	
+> 	down(cpu_hotplug_lock.read)
+> 	smp_call_on_cpu
+> 	  queue_work_on(cpu, system_wq, scss) (I)
+> 	  						lock(cgroup_mutex)  (II)
+> 							...
+> 							unlock(cgroup_mutex)
+> 							scss.func
+> 	  wait_for_completion(scss)
+> 	up(cpu_hotplug_lock.read)
+> 
+> And here the thread T + system_wq worker effectively call
+> cpu_hotplug_lock and cgroup_mutex in the wrong order. (And since they're
+> two threads, it won't be caught by lockdep.)
+> 
+> By that reasoning any holder of cgroup_mutex on system_wq makes system
+> susceptible to a deadlock (in presence of cpu_hotplug_lock waiting
+> writers + cpuset operations). And the two work items must meet in same
+> worker's processing hence probability is low (zero?) with less than
+> WQ_DFL_ACTIVE items.
+> 
+> (And more generally, any lock that is ordered before cpu_hotplug_lock
+> should not be taken in system_wq work functions. Or at least such works
+> items should not saturate WQ_DFL_ACTIVE workers.)
+> 
+> Wrt other uses of cgroup_mutex, I only see
+>    bpf_map_free_in_work
+>      queue_work(system_unbound_wq)
+>        bpf_map_free_deferred
+>          ops->map_free == cgroup_storage_map_free
+>            cgroup_lock()
+> which is safe since it uses a different workqueue than system_wq.
+> 
+>> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
+>> which can break the loop and solve the problem.
+> 
+> Yes, it moves the problematic cgroup_mutex holder away from system_wq
+> and cgroup_destroy_wq could not cause similar problems because there are
+> no explicit waiter for particular work items or its flushing.
 > 
 > 
-> [...]
+>> System wqs are for misc things which shouldn't create a large number
+>> of concurrent work items.  If something is going to generate
+>>> WQ_DFL_ACTIVE(256) concurrent work
+>> items, it should use its own dedicated workqueue.
+> 
+> Actually, I'm not sure (because I lack workqueue knowledge) if producing
+> less than WQ_DFL_ACTIVE work items completely eliminates the chance of
+> two offending work items producing the wrong lock ordering.
+> 
 
-Applied, thanks!
+If producing less than WQ_DFL_ACTIVE work items, it won't lead to a 
+deadlock. Because scss.func can be executed and doesn't have to wait for 
+work that holds cgroup_mutex to be completed. Therefore, the probability 
+is low and this issue can only be reproduced under pressure test.
 
-[1/1] drbd: Add NULL check for net_conf to prevent dereference in state validation
-      commit: de068f4741781bbba0568b44b41d51da0feef6f9
+> 
+>> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
+> 
+> I'm now indifferent whether this is needed (perhaps in the sense it is
+> the _latest_ of multiple changes that contributed to possibility of this
+> deadlock scenario).
+> 
+> 
+>> Link: https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/bpf/cgroup.c             | 2 +-
+>>   kernel/cgroup/cgroup-internal.h | 1 +
+>>   kernel/cgroup/cgroup.c          | 2 +-
+>>   3 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> I have convinved myself now that you can put
+> 
+> Reviewed-by: Michal Koutný <mkoutny@suse.com>
+> 
+> Regards,
+> Michal
 
-Best regards,
--- 
-Jens Axboe
+Thank you very much.
 
-
+Best Regards,
+Ridong
 
 
