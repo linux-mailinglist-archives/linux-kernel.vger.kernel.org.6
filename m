@@ -1,406 +1,155 @@
-Return-Path: <linux-kernel+bounces-322434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5725E9728F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F2F9728FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E897A285A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599D71C23C43
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 05:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4066166F00;
-	Tue, 10 Sep 2024 05:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694E216BE23;
+	Tue, 10 Sep 2024 05:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dxng1gsp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="SjY6yZYY"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2042.outbound.protection.outlook.com [40.107.255.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED659BA42;
-	Tue, 10 Sep 2024 05:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725947241; cv=none; b=jZgoRTVgMU1YN7lY/YpInxywukZUlbsM3Kus4Y718nsdF2HcOIMQrEng8ShsewMJSBGCHAqqOOdVtynF8e55Fc3zm+5C7fTkbZGd7QjKDE+DjqiHBaus59vsFXW1hUtlo/aeMvbN0BpNHv83ibkIoxy6EZP6kD3/Vx2rbn3QgqQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725947241; c=relaxed/simple;
-	bh=WRoumuQphCwlzHiG/u+VlRe/ifboAmcKcC1BlbfpaYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=td1dQPDRNWxj06XKpZaI3PGE0R05kiemY9lvGfK+yAHHSfw8T+UEOIF65bZR6l7n/crmCKqVPQTDhc+nFZ2Evq7YI4lqOswb3QJRLqnX39dIVra0DUMUXsG8pUbwi32Y7mkbXjO3zOQ9/1BNsujWRHku+SGtNQA/rvmHhgBrn+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dxng1gsp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0997DC4CEC3;
-	Tue, 10 Sep 2024 05:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725947240;
-	bh=WRoumuQphCwlzHiG/u+VlRe/ifboAmcKcC1BlbfpaYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dxng1gspAs86MBcW9KdNdE6a2jmTcHbYz8TmsHvGK+Cbhh+nvoqDsso9/2WszDLzF
-	 I+tzHVgrtFsxQg9DANcPh5aJdOHyMrLho/fbe/40N/iIXyoHK9WHqsG3LgSugxyKzl
-	 ty2q8R6ydJJ2q4QIAJ3g2qkE50wBBzYq37JJC/MA5utkhLzqio6W02UC9rvTG4uSC9
-	 HQ/FpOb2H1wyb6sayhU3Mi/x9zZ/wGpNqZbfGndNHfaH7bwCVf7n6UE6FXveen3pKT
-	 ZUx5hoWq7ZQLOPYLyT3MwHNoyUmZuhc2jNgMWYvqoAY9eVaJa1+jHPDcC3LaYDvvRw
-	 I/nqdZWl/HCnA==
-Date: Mon, 9 Sep 2024 22:47:17 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Junhao He <hejunhao3@huawei.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 12/15] perf tool_pmu: Switch to standard pmu functions
- and json descriptions
-Message-ID: <Zt_dZdGCWwTtHRT1@google.com>
-References: <20240907050830.6752-1-irogers@google.com>
- <20240907050830.6752-13-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9A8BA42;
+	Tue, 10 Sep 2024 05:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725947285; cv=fail; b=P85e41zsZMQk9tCy5CWiteD22xIg8ke890GdOcWQFofFRpT05/0k7PiZgdepefJFbNOpS5vkGBvi0nOjWiLV+2Lnv2z1rcmr0u4S1Kojew+FhJzN6yT0iAIO1MKQ1WJgpn8enioI0/1csnx/xfFLvErUzivi7Z/RxmzqfaOZBFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725947285; c=relaxed/simple;
+	bh=eaD/K34T9n8TxAG4r+PoRQ38CiDNHOHERl+p/CeyeEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OHjEznSkJo91RTgG5vhjOh8PE/47kAOz4MBgduqFpIT+nZIqQq4nx+Ay/xgcM1LPnAfkiJwfRuETwt/O/jt1mi6XrcQjpfGL4aIVIyG1UfIc3b1h4C1Tna6oC3wY+TSTyNgWKUW0RlTnVyHdB+i/JkpNWeMJCqwFJFIgFqcGhag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=SjY6yZYY; arc=fail smtp.client-ip=40.107.255.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QhKrGWvAExacYImlC8kZ8gBLRY36Rlu/NxajgyILLBz2sRVW+oUGk1GwbxzIhxYAqHGeYjuUo/la/SI77WobkZAFgw+5T5vtIUuruuofT0H3R759dVWGaHpllvg5+vFjRxPsIy9VkfknuB1DtdVA+2GmBJE81IDr2/oaKWuTCq43rZYDa3ZohmT3Za+LXxMpujCveQYUubC88Sgczz2gi9nUQ67NjYp+dBZ3KScXQ8N+xMm3TGaKhH0bQAQwXW+q8/1n3nr54POXJwUCrJUoTtj8C7UGjx4Syuxk/OOQiaEQJlYsuaLhgcSjt3ff+aLkIHuwdPmFC3Fcp/eIlCl5hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iDLbwJxcVO6qXb84Bz9khN14NF7j0sVNm4T4YFM2eMs=;
+ b=lH9eIY+5w2NOwcTz7LKiRxfWNzyW5g70rI2uxBTr4cOUZc7nlqNbhYLHqQZ97iZBF5r8zIKGVKsi9vzPmmRPeKxBJmL5lM2UMUtBd3tnqqUQpCESTf/qEqbCgAnfHvZtk/XZt2QtvM7pRQmjW1Pvd3EOlRw2ie2XQunqRaE4cUPhauBf+8y/jyihYSJeKIo44BZ6js5hnJOEEiJxonVnAJrIT3RvRry4kadbZMBHMjcTh+sn5upTFE+nuPupqW2yX6O7M2+kpLNE6Ia0XhOjvG51nmfoGx+oviRS0SMAraL3MRekEhVGiA5VIo4ItxBEIouh4rQIPp5yH8tno/xSUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iDLbwJxcVO6qXb84Bz9khN14NF7j0sVNm4T4YFM2eMs=;
+ b=SjY6yZYYJL4ZyYMEJqrEdqNr8B3CsKIu216VWCEqK3POD3BNXAlW9KFAXaFRSEievn8f16Zs45nJGQkA6rNH753wDltrhD7nBapmJJR1fDXRXyv/Efyxp2NmmKFvkkh3US4qAlw91Kb550GLs5Fdxjl6LwbTIT/QQ2PZEpyq4vW3EbirM/s0gfsVYvFmeo6YOO3127fk9tiogJNqiAczqbb4DP5xT6vdCQ690uJhhqdZeDkp3g6MiSfuIAdKa7QnMLtlhiwJrEW2wcKs3VLNt9HIhb4zNmbXBSV97AnGTsvuzttD0pJJcIryK2Pe/u9RDCq9Zf7C+cTS9oq/pii7Rg==
+Received: from SG2PR02CA0136.apcprd02.prod.outlook.com (2603:1096:4:188::16)
+ by SEZPR04MB5707.apcprd04.prod.outlook.com (2603:1096:101:72::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Tue, 10 Sep
+ 2024 05:47:55 +0000
+Received: from SG1PEPF000082E5.apcprd02.prod.outlook.com
+ (2603:1096:4:188:cafe::d1) by SG2PR02CA0136.outlook.office365.com
+ (2603:1096:4:188::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Tue, 10 Sep 2024 05:47:55 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ SG1PEPF000082E5.mail.protection.outlook.com (10.167.240.8) with Microsoft
+ SMTP Server id 15.20.7918.13 via Frontend Transport; Tue, 10 Sep 2024
+ 05:47:53 +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Yosemite4: Add devices on I2C buses to server boards
+Date: Tue, 10 Sep 2024 13:47:49 +0800
+Message-Id: <20240910054751.2943217-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240907050830.6752-13-irogers@google.com>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E5:EE_|SEZPR04MB5707:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: c4935c1b-99ad-4b86-8943-08dcd15c1dca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cBH6avbHty3OJe5OLHsTbSOCYrOG9RT/1tuiMDrezmk+drNEIoTZzg0ekvtw?=
+ =?us-ascii?Q?iFDt9dFPt8UZD1JYRX+l+j6OeK4YpUnoKrN20IJRQRkSJbMtoc2qk0ZAjsQJ?=
+ =?us-ascii?Q?IL1zMgrUROjEitZZhoFIld6kLh7iOq0w2qVu4sv+XKVYFEd/RzjMPFdRaCEU?=
+ =?us-ascii?Q?u/EtP15cn/WIsLfD6uQPTj9oBtq4D2Dtb/vbYtAs+mCUNeiObHcdTaXa+oWF?=
+ =?us-ascii?Q?Ts17LuDTSbihCIB8W5jI7s2B59yF5eliY1Ec1Ndgh5d+eNbxv9YFDyhdD8xP?=
+ =?us-ascii?Q?/VX4x4ajI9r1vc0VeRhDmXV1RUc375M9bxXzSxZo3oG7nlFlBLNG0FsUklRF?=
+ =?us-ascii?Q?NXWYVrUAMyiBjwLZRM5c9OeDHS87Yt2mT+Hqq2Sv81pchXfeljyk04ekaNha?=
+ =?us-ascii?Q?H/5UB+AHDf3IYjBB+GZzvBt0wkid/Gfh96Gj9rySD1y2DWpHVJDM8IhHCjPc?=
+ =?us-ascii?Q?8GYYHJLn/hQJall0FAacJ15Ypa65cqPRhzylSGAXdkmP4cHOlO/RCprwhSVL?=
+ =?us-ascii?Q?mcgSWO/WoxX6dxBAM53lWttnKuaykf0duV4WMa5aojY0pyCOpa/Rl126P3kQ?=
+ =?us-ascii?Q?mLygDfceOzUDsxwgxRfMUZwKLSTTecvI/ShtmQlUW1YovGmeIFEbduyoTgU6?=
+ =?us-ascii?Q?HivQ9wW9+6lS5aLXRIqG1Gi/ZRAliO/kIMBxrPKVUPGQ4IgzHUM8ED+x6PKo?=
+ =?us-ascii?Q?2w91jKoOmPwOOabY/7EReQP63ajym9nPlv67VTL0Lh1un/Ldzus8RKBq95lL?=
+ =?us-ascii?Q?/8g+RS1jcm7F370zUZUnFYrN02sjzZtLloEuj+fhZQAzlG++8lFibGsLn15g?=
+ =?us-ascii?Q?LHtMRgUxKWtUHyLKpcD+9gi92G730fhCnB5qS6EZeCaPe9aciX/WvhI9R5IG?=
+ =?us-ascii?Q?6dLJ85vzrS98kBVaMct58fTbJdkYI+KAQcsAj4ZqLoT0mvaXBYNm37b8hdem?=
+ =?us-ascii?Q?KV5F0x5rmeR0t438YhaiTfQ4MYXJTdbjCaDXcQ4NWBJFI+h19BhcOSCH1EuY?=
+ =?us-ascii?Q?bmrnEjZY8rhQSCyzgXzn9coTIUBzRVFlf5Y1im6Y/ewUGiuS2IFncqDUEACF?=
+ =?us-ascii?Q?zcWqGEcSoqDbSQITFOTc8qbxPiCaTDlnlRxJyoodPU+1xwSNFERLSE3cYCuF?=
+ =?us-ascii?Q?tcuifR7AUSQZ+28IX75xSi6iZIrtUm/hUIq1st+KrO79G8VHWi9M6mM2UsF+?=
+ =?us-ascii?Q?LXASeqEKdqU7x0wnoO6t+Bko2+kB6brcaUHY02PxV/gLXMrt1/7wIDR74iz9?=
+ =?us-ascii?Q?xydbd+gJYuPYXeZ6idDjAi1FgPtQnFGTz679Y94sjhgQCrxbnqM21eZxTjF+?=
+ =?us-ascii?Q?IldATg05v7RxmCrbUn29XxyjWpG9prPX1CiZSF+pnphxEW8RZDcGTNhkNAw2?=
+ =?us-ascii?Q?NN2PdSV1Z8ObSsfBsUC50axysU8DVmzoUKPn8hVzpAoVTYCza1Sn04Vi5sl3?=
+ =?us-ascii?Q?Z2v6vI+Y6xBPXpWq32T/GTpZ/fH9Cgih?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 05:47:53.9901
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4935c1b-99ad-4b86-8943-08dcd15c1dca
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E5.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB5707
 
-On Fri, Sep 06, 2024 at 10:08:27PM -0700, Ian Rogers wrote:
-> Use the regular PMU approaches with tool json events to reduce the
-> amount of special tool_pmu code - tool_pmu__config_terms and
-> tool_pmu__for_each_event_cb are removed. Some functions remain, like
-> tool_pmu__str_to_event, as conveniences to metricgroups. Add
-> tool_pmu__skip_event/tool_pmu__num_skip_events to handle the case that
-> tool json events shouldn't appear on certain architectures. This isn't
-> done in jevents.py due to complexity in the empty-pmu-events.c and
-> when all vendor json is built into the tool.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/pmu.c      |  26 ++++-----
->  tools/perf/util/pmus.c     |   4 +-
->  tools/perf/util/tool_pmu.c | 111 ++++++++++++-------------------------
->  tools/perf/util/tool_pmu.h |  12 +---
->  4 files changed, 48 insertions(+), 105 deletions(-)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index a412c9c62f9c..5ff6556292fd 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -1549,9 +1549,6 @@ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
->  {
->  	bool zero = !!pmu->perf_event_attr_init_default;
->  
-> -	if (perf_pmu__is_tool(pmu))
-> -		return tool_pmu__config_terms(attr, head_terms, err);
-> -
->  	/* Fake PMU doesn't have proper terms so nothing to configure in attr. */
->  	if (perf_pmu__is_fake(pmu))
->  		return 0;
-> @@ -1664,8 +1661,8 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
->  	info->scale    = 0.0;
->  	info->snapshot = false;
->  
-> -	/* Tool/fake PMU doesn't rewrite terms. */
-> -	if (perf_pmu__is_tool(pmu) || perf_pmu__is_fake(pmu))
-> +	/* Fake PMU doesn't rewrite terms. */
-> +	if (perf_pmu__is_fake(pmu))
->  		goto out;
->  
->  	list_for_each_entry_safe(term, h, &head_terms->terms, list) {
-> @@ -1831,8 +1828,8 @@ bool perf_pmu__have_event(struct perf_pmu *pmu, const char *name)
->  {
->  	if (!name)
->  		return false;
-> -	if (perf_pmu__is_tool(pmu))
-> -		return tool_pmu__str_to_event(name) != TOOL_PMU__EVENT_NONE;
-> +	if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name))
-> +		return false;
->  	if (perf_pmu__find_alias(pmu, name, /*load=*/ true) != NULL)
->  		return true;
->  	if (pmu->cpu_aliases_added || !pmu->events_table)
-> @@ -1844,9 +1841,6 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
->  {
->  	size_t nr;
->  
-> -	if (perf_pmu__is_tool(pmu))
-> -		return tool_pmu__num_events();
-> -
->  	pmu_aliases_parse(pmu);
->  	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
->  
-> @@ -1857,6 +1851,9 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
->  	else
->  		assert(pmu->cpu_json_aliases == 0);
->  
-> +	if (perf_pmu__is_tool(pmu))
-> +		nr -= tool_pmu__num_skip_events();
-> +
->  	return pmu->selectable ? nr + 1 : nr;
->  }
->  
-> @@ -1907,15 +1904,15 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
->  	int ret = 0;
->  	struct strbuf sb;
->  
-> -	if (perf_pmu__is_tool(pmu))
-> -		return tool_pmu__for_each_event_cb(pmu, state, cb);
-> -
->  	strbuf_init(&sb, /*hint=*/ 0);
->  	pmu_aliases_parse(pmu);
->  	pmu_add_cpu_aliases(pmu);
->  	list_for_each_entry(event, &pmu->aliases, list) {
->  		size_t buf_used, pmu_name_len;
->  
-> +		if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(event->name))
-> +			continue;
-> +
->  		info.pmu_name = event->pmu_name ?: pmu->name;
->  		pmu_name_len = pmu_deduped_name_len(pmu, info.pmu_name,
->  						    skip_duplicate_pmus);
-> @@ -2321,9 +2318,6 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
->  	if (!pmu)
->  		return NULL;
->  
-> -	if (perf_pmu__is_tool(pmu))
-> -		return tool_pmu__event_to_str(config);
-> -
->  	pmu_aliases_parse(pmu);
->  	pmu_add_cpu_aliases(pmu);
->  	list_for_each_entry(event, &pmu->aliases, list) {
-> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> index 36329bc77316..19673b9991c6 100644
-> --- a/tools/perf/util/pmus.c
-> +++ b/tools/perf/util/pmus.c
-> @@ -440,6 +440,7 @@ static int perf_pmus__print_pmu_events__callback(void *vstate,
->  		pr_err("Unexpected event %s/%s/\n", info->pmu->name, info->name);
->  		return 1;
->  	}
-> +	assert(info->pmu != NULL || info->name != NULL);
->  	s = &state->aliases[state->index];
->  	s->pmu = info->pmu;
->  #define COPY_STR(str) s->str = info->str ? strdup(info->str) : NULL
-> @@ -590,9 +591,6 @@ void perf_pmus__print_raw_pmu_events(const struct print_callbacks *print_cb, voi
->  		int len = pmu_name_len_no_suffix(pmu->name);
->  		const char *desc = "(see 'man perf-list' or 'man perf-record' on how to encode it)";
->  
-> -		if (perf_pmu__is_tool(pmu))
-> -			continue;
-> -
->  		if (!pmu->is_core)
->  			desc = NULL;
->  
-> diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-> index 3dc7cc7b8d32..f2d26e9e51f5 100644
-> --- a/tools/perf/util/tool_pmu.c
-> +++ b/tools/perf/util/tool_pmu.c
-> @@ -33,101 +33,54 @@ static const char *const tool_pmu__event_names[TOOL_PMU__EVENT_MAX] = {
->  	"system_tsc_freq",
->  };
->  
-> -
-> -const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
-> -{
-> -	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
-> -		return tool_pmu__event_names[ev];
-> -
-> -	return NULL;
-> -}
-> -
-> -enum tool_pmu_event tool_pmu__str_to_event(const char *str)
-> +bool tool_pmu__skip_event(const char *name)
+Changelog:
+  - v1
+    - Revise to use adm1281 on Medusa board.
+    - Add gpio pca9506 for CPLD I/O expander.
 
-I think you need __maybe_unused.
+Ricky CX Wu (2):
+  ARM: dts: aspeed: yosemite4: Revise to use adm1281 on Medusa board
+  ARM: dts: aspeed: yosemite4: Add gpio pca9506 for CPLD IOE
 
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 276 +++++++++++++++++-
+ 1 file changed, 268 insertions(+), 8 deletions(-)
 
->  {
-> -	int i;
-> -
-> -	tool_pmu__for_each_event(i) {
-> -		if (!strcasecmp(str, tool_pmu__event_names[i])) {
->  #if !defined(__aarch64__)
-> -			/* The slots event should only appear on arm64. */
-> -			if (i == TOOL_PMU__EVENT_SLOTS)
-> -				return TOOL_PMU__EVENT_NONE;
-> +	/* The slots event should only appear on arm64. */
-> +	if (strcasecmp(name, "slots") == 0)
-> +		return true;
->  #endif
-> -			return i;
-> -		}
-> -	}
-> -	return TOOL_PMU__EVENT_NONE;
-> +#if !defined(__i386__) && !defined(__x86_64__)
-> +	/* The system_tsc_freq event should only appear on x86. */
-> +	if (strcasecmp(name, "system_tsc_freq") == 0)
-> +		return true;
-> +#endif
-> +	return false;
->  }
->  
-> -static int tool_pmu__config_term(struct perf_event_attr *attr,
-> -				 struct parse_events_term *term,
-> -				 struct parse_events_error *err)
-> +int tool_pmu__num_skip_events(void)
->  {
-> -	if (term->type_term == PARSE_EVENTS__TERM_TYPE_USER) {
-> -		enum tool_pmu_event ev = tool_pmu__str_to_event(term->config);
-> +	int num = 0;
->  
-> -		if (ev == TOOL_PMU__EVENT_NONE)
-> -			goto err_out;
-> -
-> -		attr->config = ev;
-> -		return 0;
-> -	}
-> -err_out:
-> -	if (err) {
-> -		char *err_str;
-> -
-> -		parse_events_error__handle(err, term->err_val,
-> -					asprintf(&err_str,
-> -						"unexpected tool event term (%s) %s",
-> -						parse_events__term_type_str(term->type_term),
-> -						term->config) < 0
-> -					? strdup("unexpected tool event term")
-> -					: err_str,
-> -					NULL);
-> -	}
-> -	return -EINVAL;
-> +#if !defined(__aarch64__)
-> +	num++;
-> +#endif
-> +#if !defined(__i386__) && !defined(__x86_64__)
-> +	num++;
-> +#endif
-> +	return num;
->  }
->  
-> -int tool_pmu__config_terms(struct perf_event_attr *attr,
-> -			   struct parse_events_terms *terms,
-> -			   struct parse_events_error *err)
-> +const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
->  {
-> -	struct parse_events_term *term;
-> -
-> -	list_for_each_entry(term, &terms->terms, list) {
-> -		if (tool_pmu__config_term(attr, term, err))
-> -			return -EINVAL;
-> -	}
-> -
-> -	return 0;
-> +	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
-> +		return tool_pmu__event_names[ev];
->  
-> +	return NULL;
->  }
->  
-> -int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb)
-> +enum tool_pmu_event tool_pmu__str_to_event(const char *str)
->  {
-> -	struct pmu_event_info info = {
-> -		.pmu = pmu,
-> -		.event_type_desc = "Tool event",
-> -	};
->  	int i;
->  
-> +	if (tool_pmu__skip_event(str))
-> +		return TOOL_PMU__EVENT_NONE;
-> +
->  	tool_pmu__for_each_event(i) {
-> -		int ret;
-> -
-> -		info.name = tool_pmu__event_to_str(i);
-> -		info.alias = NULL;
-> -		info.scale_unit = NULL;
-> -		info.desc = NULL;
-> -		info.long_desc = NULL;
-> -		info.encoding_desc = NULL;
-> -		info.topic = NULL;
-> -		info.pmu_name = pmu->name;
-> -		info.deprecated = false;
-> -		ret = cb(state, &info);
-> -		if (ret)
-> -			return ret;
-> +		if (!strcasecmp(str, tool_pmu__event_names[i]))
-> +			return i;
->  	}
-> -	return 0;
-> +	return TOOL_PMU__EVENT_NONE;
->  }
->  
->  bool perf_pmu__is_tool(const struct perf_pmu *pmu)
-> @@ -544,8 +497,12 @@ struct perf_pmu *perf_pmus__tool_pmu(void)
->  	static struct perf_pmu tool = {
->  		.name = "tool",
->  		.type = PERF_PMU_TYPE_TOOL,
-> +		.aliases = LIST_HEAD_INIT(tool.aliases),
-> +		.caps = LIST_HEAD_INIT(tool.caps),
+-- 
+2.25.1
 
-This can be moved to the previous patch.
-
-Thanks,
-Namhyung
-
-
->  		.format = LIST_HEAD_INIT(tool.format),
->  	};
-> +	if (!tool.events_table)
-> +		tool.events_table = find_core_events_table("common", "common");
->  
->  	return &tool;
->  }
-> diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
-> index ecdf316525bb..a60184859080 100644
-> --- a/tools/perf/util/tool_pmu.h
-> +++ b/tools/perf/util/tool_pmu.h
-> @@ -29,17 +29,11 @@ enum tool_pmu_event {
->  #define tool_pmu__for_each_event(ev)					\
->  	for ((ev) = TOOL_PMU__EVENT_DURATION_TIME; (ev) < TOOL_PMU__EVENT_MAX; ev++)
->  
-> -static inline size_t tool_pmu__num_events(void)
-> -{
-> -	return TOOL_PMU__EVENT_MAX - 1;
-> -}
-> -
->  const char *tool_pmu__event_to_str(enum tool_pmu_event ev);
->  enum tool_pmu_event tool_pmu__str_to_event(const char *str);
-> -int tool_pmu__config_terms(struct perf_event_attr *attr,
-> -			   struct parse_events_terms *terms,
-> -			   struct parse_events_error *err);
-> -int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb);
-> +bool tool_pmu__skip_event(const char *name);
-> +int tool_pmu__num_skip_events(void);
-> +
->  bool tool_pmu__read_event(enum tool_pmu_event ev, u64 *result);
->  
->  u64 tool_pmu__cpu_slots_per_cycle(void);
-> -- 
-> 2.46.0.469.g59c65b2a67-goog
-> 
 
