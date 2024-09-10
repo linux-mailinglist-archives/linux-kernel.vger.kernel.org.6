@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-322650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57434972BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB3A972BAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDDAC1F2200C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22AB1F26487
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B52F18800A;
-	Tue, 10 Sep 2024 08:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB7B18DF69;
+	Tue, 10 Sep 2024 08:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c1JO7NKW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izI6WbZk"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A2187FE2;
-	Tue, 10 Sep 2024 08:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1CA174EFC;
+	Tue, 10 Sep 2024 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955950; cv=none; b=SZgNBCOX9FlPKbRzHaaUuhpiOS/xYqdk4XHqj/fnIoEnPJW2UrpeuBvYrzYd99FmTjdFT0jGWzFfik0CiEf3iJMs/rDFNXCxlFyOODczYRH6bRfD0cipK23clt4tIwFHtwWvRYfYzZk3kqu5vpSSodUWWnkY+LOt+H3uUxtYCX0=
+	t=1725955712; cv=none; b=kAuoGPAntSYjUQDbus6L+OXFkZQ7ws1wf/6d09JO6ARAxtKKBg5BpPlvsd1kv6oeJBK6ZHNdHQeJB3acmTPXhcQUC8SgK8/V927JKwt/L2w7xGG86IxhZTScFjm7CObp4pmcKsB2pPlDIbUM9MsOv1jy7jf6Nn+qe3Fa6fIcnPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955950; c=relaxed/simple;
-	bh=X6w/BPx5GBKrPXBB3CaDS2kMB9yUmJ5UQVZ/g6ar698=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YegdEfdlTGseyYaKGYen+yqOhudxwpZEf0AXPpreiADeLEypm5QaQRXyAzO23IZUbDAC0Sg25qSYUUXzEhmxuFzpPsIP7XG43q0ro4WsV9HLOdG+lNKbwcnoU4HUGHybec8jvMgjmfOxkHxpqY3/MBsovFtn0Y0idUuY5tK4xD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c1JO7NKW; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725955949; x=1757491949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X6w/BPx5GBKrPXBB3CaDS2kMB9yUmJ5UQVZ/g6ar698=;
-  b=c1JO7NKWOYPt8+q5NLhYkD7Z2AWl3620cVQL8IoL3rRzLUfvlsSEjQw/
-   /Jxkdp5zhH6HLT1X5OKF+mPF6I4eOptSHNATKeyOy9bUoV7UkBeLyqfQz
-   o9LW3uptwegk5DysrW4UBFfZaJY9mMy3oMHISrHKFtZpUGkWK3og6f6GH
-   fdybnE8oEFX4VIwpDCm3zp2vwgfwuf2mSQkmWV0KcMDp/slqf7xW4uD+m
-   kOxZqZkXOgKHT0NDVmColnXWZhqlhTf0HVcUnyYlK4APM3Xn4+WMilmmT
-   v0mgnZYNUOGZdMe9dhQKg1aZkEQfcxtNGQ36ZM5xequnD76f22UDx0Oxx
-   A==;
-X-CSE-ConnectionGUID: THDnvafVShaDNko6ydX6yw==
-X-CSE-MsgGUID: Wmk+4VwlQ9eQ2NsU5zNsYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11190"; a="47204529"
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="47204529"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:12:29 -0700
-X-CSE-ConnectionGUID: fyEZI10hQyekJ/4mrj2MmQ==
-X-CSE-MsgGUID: 7C9rnatgR5+/KfxNh0wgfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,216,1719903600"; 
-   d="scan'208";a="97648069"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 01:12:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1snvz3-000000077EJ-2djD;
-	Tue, 10 Sep 2024 11:12:21 +0300
-Date: Tue, 10 Sep 2024 11:12:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH net v1 1/1] netfilter: conntrack: Guard possoble unused
- functions
-Message-ID: <Zt__ZT-P0kUY909z@smile.fi.intel.com>
-References: <20240905203612.333421-1-andriy.shevchenko@linux.intel.com>
- <20240906162938.GH2097826@kernel.org>
- <Zt7B79Q3O7mNqrOl@smile.fi.intel.com>
- <20240909151712.GZ2097826@kernel.org>
- <Zt8V5xjrZaEvR8K5@smile.fi.intel.com>
- <20240909183043.GE2097826@kernel.org>
+	s=arc-20240116; t=1725955712; c=relaxed/simple;
+	bh=ouoonEplLPwSxZkoSj2E1PtZlp2iv3h/AHqc/FfODxk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J8HcQzae4sd8CJyiUeuz1ebjFrMya/zcPr7iXdVtZnxPQwDhfCH7NgjAeLAqWhSvc/TK9sbxcda8Ci/b6Z3l4AZM1qMbYkq9DklwdOC4vDu4oMNQrWR2ufzL3sEqUszYIu+O2Rw6yHntFOz0uUWvKULhrvTsAUltNAw4ljFDqOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izI6WbZk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so28469345e9.1;
+        Tue, 10 Sep 2024 01:08:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725955708; x=1726560508; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ouoonEplLPwSxZkoSj2E1PtZlp2iv3h/AHqc/FfODxk=;
+        b=izI6WbZkE5oXc+Xoo9ljSOXgjO8NtkvExAoj1ta2ArIgHdul7Kk5q/i+7mWcW0kvzV
+         wce7yBKysIH/YpHlq3I0+jvGtBjDP6sF6iuZ/kxdzXWgqVMt1EMNkRMb1yHzu/0gFd2g
+         92QXIjnh9tvz1NMSQF9w2WpzgQxw1JKUcgSy9ma4mwDc78mdHg4DEyWDMmaQm31Z/bQn
+         KknM31KMZL9WeN/W6PqqFOl088GxStvd2OZaXmPx8Q/uOfq6IbAFnCCV5bZHruBe28EA
+         tbOsg6CZ7J0hldNaRtjk1qXxvt10ArEUaUOm/lcKTE8h4tKVtXbmgfBzJOrXA5cgejiQ
+         nKFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725955708; x=1726560508;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ouoonEplLPwSxZkoSj2E1PtZlp2iv3h/AHqc/FfODxk=;
+        b=r13B9AKtV3pCIuz9tij9EDKFrITW6x4vvx0lPaXDEj/Kh2SDAVBeb9bx8JJdbcZgNg
+         Ko1t2LP/znIk8L0JjeXoOTCskqYXPkG8UNPc3KPFlaceMXMFA6eHdM5bbCcKvxzHhzMB
+         Vmb7y6TZW2BK9QtzgnmlCps9Hum724sKm7k7zEJgQNHzWEkkJWO2n/g7pBqqeTbAuMd4
+         QABBaHiMed8HH2ic1WokkEoz21hSTZCHP+uBST2imJe5pv909sTrqbmEG1LUdvo4tq80
+         GO/ZRxn2tdon8rQxKTuySR9ZQ2pq2xDTwHQHKD8MBo+h959uFPlqUTfP+Rv0EQedLi5M
+         QuLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEBHc8dOo4OGSQS4PDzTiUr/vnhFhD598BpO8DsgVFuT+ECuEVUGD2erhbVUMhGLDmtBiXOuo0DVQV@vger.kernel.org, AJvYcCWIVYSIC8+uxlp0s2E5hL9h411VJpXWkg2TH+Xo/jKe6OFt6Dq7bPZyJfRWn7zHcdspqJbzUSSJWmZrdp7q@vger.kernel.org, AJvYcCXANhpZv8qoEJd1b6SH4+tKKL5pvi8oP1jqPQE/Ln4lkBK/wsvEaliKzYs38y5MeWx8eWuAW+JsyCO4@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg0mz/gAn900g9z28cJhk7A1IO68TtZGrCjGA0Qlh7KabtwPOX
+	DRC7OuOpR83RTPe6yzuu4euhryyn2o2KOlPqc5ZJrAKyr4eMuZ3w
+X-Google-Smtp-Source: AGHT+IEq7FcjLR1iTKF/2cTQ3RHcIyuxu8ctxoMnjHU+K6yWQHO77ht4wSQcI4OvfrH0BvTy6RUXaA==
+X-Received: by 2002:a5d:58f8:0:b0:371:8319:4dbd with SMTP id ffacd0b85a97d-378895c9c3emr8635840f8f.17.1725955708372;
+        Tue, 10 Sep 2024 01:08:28 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caf33e9b2sm102001305e9.14.2024.09.10.01.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 01:08:28 -0700 (PDT)
+Message-ID: <a8941a316a96be620a058be853b55923ab51fb5b.camel@gmail.com>
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Jonathan Cameron
+ <jic23@kernel.org>, Angelo Dureghello <adureghello@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner
+ <dlechner@baylibre.com>
+Date: Tue, 10 Sep 2024 10:12:36 +0200
+In-Reply-To: <20240909-retrieval-guide-da2a35e571a5@spud>
+References: 
+	<20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+	 <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+	 <20240908132925.331c5175@jic23-huawei>
+	 <20240909-dwelled-specimen-949f44c8d04d@wendy>
+	 <1dca9ce52e7c701c7fb6cbbc723e9dff5d0ace8b.camel@gmail.com>
+	 <20240909-retrieval-guide-da2a35e571a5@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909183043.GE2097826@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 09, 2024 at 07:30:43PM +0100, Simon Horman wrote:
-> On Mon, Sep 09, 2024 at 06:36:07PM +0300, Andy Shevchenko wrote:
-> > On Mon, Sep 09, 2024 at 04:17:12PM +0100, Simon Horman wrote:
-> > > On Mon, Sep 09, 2024 at 12:37:51PM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Sep 06, 2024 at 05:29:38PM +0100, Simon Horman wrote:
-> > > > > On Thu, Sep 05, 2024 at 11:36:12PM +0300, Andy Shevchenko wrote:
-> > > > 
-> > > > > Local testing seems to show that the warning is still emitted
-> > > > > for ctnetlink_label_size if CONFIG_NETFILTER_NETLINK_GLUE_CT is enabled
-> > 
-> > Hold on, this is not related to the patch.
-> > It might be another issue.
-> 
-> Yes, sorry, I see that now too.
-> 
-> Perhaps it can be fixed separately, something like this:
+On Mon, 2024-09-09 at 17:06 +0100, Conor Dooley wrote:
+> On Mon, Sep 09, 2024 at 04:03:17PM +0200, Nuno S=C3=A1 wrote:
+> > On Mon, 2024-09-09 at 13:46 +0100, Conor Dooley wrote:
+> > > On Sun, Sep 08, 2024 at 01:29:25PM +0100, Jonathan Cameron wrote:
+>=20
+> > > I'd also really like to know how this fits in with spi-offloads. It
+> > > /feels/, and I'd like to reiterate the word feels, like a rather simi=
+lar
+> > > idea just applied to a DAC instead of an ADC.
+> >=20
+> > The offload main principle is to replay a spi transfer periodically giv=
+en an
+> > input trigger. I'm not so sure we have that same principle in here. In =
+here
+> > I
+> > guess we stream data over the qspi interface based on SCLK which can lo=
+ok
+> > similar. The difference is that this IP does not need any trigger for a=
+ny
+> > spi
+> > transfer replay (I think).=20
+>=20
+> Right, if the trigger part is what decides it for you then I'm wildin
+> here.
 
-If you make a patch, it will help somebody who has that in their configuration
-files enabled (with the other one being disabled). Note, I use x86_64_defconfig
-which doesn't have this specific issue to be occurred.
+I mean, not only the trigger. These IPs (axi-dac/adc) are meant to deal wit=
+h
+data while in theory the spi offload principle is about replaying any spi
+transfers. But yeah, the above reasoning does not make sense as a data tran=
+sfer
+is still a transfer.
 
--- 
-With Best Regards,
-Andy Shevchenko
+FWIW, these IPs are inherently offload HW as their goal is really to stream=
+ data
+without any SW intervention (so called HW_BUFFERING in IIO world). Just tha=
+t
+typically you have LVDS/CMOS data interfaces and now we have a qspi interfa=
+ce
+and a spi-offload concept already introduced.=C2=A0
 
+So, yeah, as we want to have spi-offloads documented in the bindings, we ca=
+n
+also document this setup with the same bindings.
+
+- Nuno S=C3=A1
 
 
