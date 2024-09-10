@@ -1,239 +1,143 @@
-Return-Path: <linux-kernel+bounces-322744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244F0972D31
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82606972D34
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498621C2441D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43881C244CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDDC1885A6;
-	Tue, 10 Sep 2024 09:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qdlXhAh4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WGSeEqGT"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DEA17BED6;
-	Tue, 10 Sep 2024 09:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52066188591;
+	Tue, 10 Sep 2024 09:15:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD911779BC;
+	Tue, 10 Sep 2024 09:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725959664; cv=none; b=H5iCvg06bNtiN664G5jWpCps3b1C7O9gyNKsf3LtqjMuH8kXcK0+qeRUGDPl+Gsn0Fvrdhr3u5tfiA92uoFUEB5Sh5mKePpoBt6SreKNLYjbpsKshNaRNnCIS4sN5VCsM8/GPAno+XAMyr2/ZjcpNJQsjg1bqd/mNdxUgMhug+Y=
+	t=1725959722; cv=none; b=CGexC3214o6vLSDN2QQhNgqyE0tAo/qIqlJp0bdfmm5kQbu0tD5jgG95hEQEziUXM5JjN8pwQtHZ9y9DG1MpaGoU9/xC2CTe/5Vmncbjk4OX1Y5x+mywOyzjnyIQQ868apdlfRRCUcgep95jig8L1j5qFAFSY8WQ+7YgtxWFPH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725959664; c=relaxed/simple;
-	bh=ofDWqCs41OUr2oUiMhBqPf9Yy+vN58jzrJOk+Qtpsvs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Yat5CJtDEG39TZw3Gc6wi0+diSduo5U6kIfYfUOzk/bfQndkHWRgb9dPAdIz1ZxbH1rgmJkxUc5NFYHmsyTl9iFXi/vTFHdvt8K+BsUs3sFKGMDdE83xfjEUuHnLg/4Kl81gleZBUBRCLFRlXzIDLLkP0jeRZVNql5xtmEmDkrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qdlXhAh4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WGSeEqGT; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id AD4951380266;
-	Tue, 10 Sep 2024 05:14:19 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 10 Sep 2024 05:14:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1725959659;
-	 x=1726046059; bh=0bAs8GYS7XnporkOcRS5T4HRjTKpKe/QReainQI38Rk=; b=
-	qdlXhAh4KhW/Gwzc8zjnCEsVCEToC/jfpbc1LGNeyXjHyxrGkaOEdko1GhLMeXCG
-	0mTSaWDXHNdhgb20rNU4vFIh0eT/cmHVcbimKEx8EUzOj3EPP3ytGQvipRQWMYA4
-	R4fWxdeXmPPKjUj85lLoCW4Ay5K0Oy6eYIqi0eqeOcZkyuTt8OaqAdcZU2VB73fx
-	qsreMHjZ4C58eHheS67EFcWx19H8O8vrPM+ZYx4KIi76fOrAYZVajcAjyhpY0ycl
-	9fK9PCSUnhZdVb8nDCalpuXmZHgJxBA6ekcrrrofvixRCtQFS5jCDgKuDG07tn9/
-	flRHtT3wFN2tH/hrKVrHtQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725959659; x=
-	1726046059; bh=0bAs8GYS7XnporkOcRS5T4HRjTKpKe/QReainQI38Rk=; b=W
-	GSeEqGTy6UXfqglELD3nzeP1F1cpqL6nv4ukTZozaakPrRqeKjVQjY/rxP35zSuh
-	DP3szT6uUCEWxiNPuIznGDyGANCc1sUDCsh1bTcRCDIGaqLn17ihXR/S1gMys9K+
-	Jqz2F+bIJN5PE4UxyQv6SvzTRRxleY2Yd3vs7GI0WfkJumnpVpcFyMkOnpzYuSHW
-	A7836+XYl9KZBqILr9EX8wghl1AJ6VMmdOiQmXl32CA6uTJlf6F58YePtVWGEVnY
-	u57N/BgbtmOgCQEwuZd77mnK+2KEFj7a3XPQRqvj3IORTpf7UE9m0y6CuAOLEMYg
-	QyKrEE8BZDgerRiexZvyA==
-X-ME-Sender: <xms:6w3gZoyW7bXaYX3kixZKzIkDRpyLdjOgBETNPy-cJTVwRYg4nw3yNg>
-    <xme:6w3gZsT9cGRLVA8efNbqb7vCLfQhDNHPhT_L4064P9CuudspnM2CEHv2JN3Uph7le
-    3CXjBw6i2MMQNKZ7fA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgtshhkhiesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshht
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhsse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgrrhhishgt
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshefledtse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhhsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhprghrtghlihhnuhigsehvghgvrh
-    drkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6w3gZqV8KihhiFdi7sRhaWKpMZMHrGPpA76KLXrK634lgezoYNTvSA>
-    <xmx:6w3gZmi8EonkLyDOLg_9QXKH1ocXMsJ6ejyEeHiHTgSAWPYddJ6bpg>
-    <xmx:6w3gZqBsY05cbm8jG7BD07qm-UbnkG-KQzHwrMNW01aB-ZvqW-kjww>
-    <xmx:6w3gZnKcUxhMu_f7cpTmrDZK1u2JZ9yB3UB6TCxa0xloKeTdc_iNvQ>
-    <xmx:6w3gZu5m_naip13-t88JgloMOWJCdou_b5AMdlRZZHFgz7xai_GlLMuM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 02253222006F; Tue, 10 Sep 2024 05:14:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1725959722; c=relaxed/simple;
+	bh=sWmvYjt7uSUB9j2qE+JpMvBWwIknNNTJ9dnFTdiTjzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:References:
+	 In-Reply-To:Content-Type; b=SfF1gnqWKkLJ+Y83+ZNPGWNSXRdDpH9lWqgsIph7tC4Vypb/BPaw9ylAD9GBbCK5aYPdHywhXbRQEV0o2Oc9Z0IJMrFFcSI84TPvmo/vdbiKAdrIMZ6FBAxXQ3lWAvau0B6HiKSYuVSimZW9FISmT8LVyuqj64QGsY4I18f5MSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4C1E113E;
+	Tue, 10 Sep 2024 02:15:47 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 689113F66E;
+	Tue, 10 Sep 2024 02:15:14 -0700 (PDT)
+Message-ID: <dfc21e62-8429-4df3-8df7-2460781e3c58@arm.com>
+Date: Tue, 10 Sep 2024 10:15:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 09:13:33 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Charlie Jenkins" <charlie@rivosinc.com>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>
-Cc: "Richard Henderson" <richard.henderson@linaro.org>,
- "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
- "Matt Turner" <mattst88@gmail.com>, "Vineet Gupta" <vgupta@kernel.org>,
- "Russell King" <linux@armlinux.org.uk>, guoren <guoren@kernel.org>,
- "Huacai Chen" <chenhuacai@kernel.org>, "WANG Xuerui" <kernel@xen0n.name>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Helge Deller" <deller@gmx.de>, "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Gerald Schaefer" <gerald.schaefer@linux.ibm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Yoshinori Sato" <ysato@users.sourceforge.jp>,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Andy Lutomirski" <luto@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Muchun Song" <muchun.song@linux.dev>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, shuah <shuah@kernel.org>,
- "Christoph Hellwig" <hch@infradead.org>,
- "Michal Hocko" <mhocko@suse.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>,
- "Chris Torek" <chris.torek@gmail.com>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net
-Message-Id: <89d21669-8daa-4225-b6d2-33d439ebd746@app.fastmail.com>
-In-Reply-To: <Zt+DGHZrHFxfq7xo@ghost>
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
- <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
- <58f39d58-579e-4dd3-8084-baebf86f1ae0@lucifer.local>
- <7be08ea9-f343-42da-805f-e5f0d61bde26@app.fastmail.com>
- <016c7857-9ea8-4333-96e6-3ae3870f375f@lucifer.local> <Zt+DGHZrHFxfq7xo@ghost>
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to 47 bits
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/19] efi: arm64: Map Device with Prot Shared
+To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-13-steven.price@arm.com>
+ <29016e56-e632-422d-a4d2-1891fad2c565@redhat.com>
+In-Reply-To: <29016e56-e632-422d-a4d2-1891fad2c565@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 9, 2024, at 23:22, Charlie Jenkins wrote:
-> On Fri, Sep 06, 2024 at 10:52:34AM +0100, Lorenzo Stoakes wrote:
->> On Fri, Sep 06, 2024 at 09:14:08AM GMT, Arnd Bergmann wrote:
->> The intent is to optionally be able to run a process that keeps higher bits
->> free for tagging and to be sure no memory mapping in the process will
->> clobber these (correct me if I'm wrong Charlie! :)
->> 
->> So you really wouldn't want this if you are using tagged pointers, you'd
->> want to be sure literally nothing touches the higher bits.
+On 10/09/2024 05:15, Gavin Shan wrote:
+> On 8/19/24 11:19 PM, Steven Price wrote:
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Device mappings need to be emualted by the VMM so must be mapped shared
+>> with the host.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v4:
+>>   * Reworked to use arm64_is_iomem_private() to decide whether the memory
+>>     needs to be decrypted or not.
+>> ---
+>>   arch/arm64/kernel/efi.c | 12 ++++++++++--
+>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
+>> index 712718aed5dd..95f8e8bf07f8 100644
+>> --- a/arch/arm64/kernel/efi.c
+>> +++ b/arch/arm64/kernel/efi.c
+>> @@ -34,8 +34,16 @@ static __init pteval_t 
+>> create_mapping_protection(efi_memory_desc_t *md)
+>>       u64 attr = md->attribute;
+>>       u32 type = md->type;
+>> -    if (type == EFI_MEMORY_MAPPED_IO)
+>> -        return PROT_DEVICE_nGnRE;
+>> +    if (type == EFI_MEMORY_MAPPED_IO) {
+>> +        pgprot_t prot = __pgprot(PROT_DEVICE_nGnRE);
+>> +
+>> +        if (arm64_is_iomem_private(md->phys_addr,
+>> +                       md->num_pages << EFI_PAGE_SHIFT))
+>> +            prot = pgprot_encrypted(prot);
+>> +        else
+>> +            prot = pgprot_decrypted(prot);
+>> +        return pgprot_val(prot);
+>> +    }
+> 
+> Question: the second parameter (@size) passed to 
+> arm64_is_iomem_private() covers the
+> whole region. In [PATCH v5 10/19] arm64: Override set_fixmap_io, the 
+> size has been
+> truncated to the granule size (4KB). They look inconsistent and I don't 
+> understand
+> the reason.
 
-My understanding was that the purpose of the existing design
-is to allow applications to ask for a high address without having
-to resort to the complexity of MAP_FIXED.
+Agreed, and the comment in patches 09/19 and 10/19 kind of vaguely 
+explains this. For set_fixmap_io, we are trying to map a PAGE_SIZE, 
+always. And when we want to check the "Is the range Private ?" the
+answer could be different based on the PAGE_SIZE used by the kernel.
+This is due to the fact that RMM always tracks the RIPAS for a 4K
+granule and not the OS page size. So, if the kernel uses a 64K page
+size, the RMM cannot confirm that the region is entirely RIPAS_DEV
+if only the 4K granule is indeed marked as RIPAS_DEV. However, given
+the same driver works for a 4K page size kernel, we can safely assume
+that the driver doesn't access it beyond the 4K range  with FIXMAP.
 
-In particular, I'm sure there is precedent for applications that
-want both tagged pointers (for most mappings) and untagged pointers
-(for large mappings). With a per-mm_struct or per-task_struct
-setting you can't do that.
+e.g:
 
-> Various architectures handle the hint address differently, but it
-> appears that the only case across any architecture where an address
-> above 47 bits will be returned is if the application had a hint address
-> with a value greater than 47 bits and was using the MAP_FIXED flag.
-> MAP_FIXED bypasses all other checks so I was assuming that it would be
-> logical for MAP_FIXED to bypass this as well. If MAP_FIXED is not set,
-> then the intent is for no hint address to cause a value greater than 47
-> bits to be returned.
+Addr  = 0x100000        +0x2000              0x110000
+RIPAS = [ EMPTY | EMPTY | DEV | EMPTY | ...] [EMPTY | ...]
 
-I don't think the MAP_FIXED case is that interesting here because
-it has to work in both fixed and non-fixed mappings.
+So, if we were to check the RIPAS of 0x102000, we have to restrict the
+check to 4K (for the FIXMAP). Elswhere, we get the exact size of the
+requested map region and can use that to check the state.
 
->> This would be more consistent vs. other arches.
->
-> Yes riscv is an outlier here. The reason I am pushing for something like
-> a flag to restrict the address space rather than setting it to be the
-> default is it seems like if applications are relying on upper bits to be
-> free, then they should be explicitly asking the kernel to keep them free
-> rather than assuming them to be free.
+I agree that we should have a comment explaining this in the appropriate
+patch.
 
-Let's see what the other architectures do and then come up with
-a way that fixes the pointer tagging case first on those that are
-broken. We can see if there needs to be an extra flag after that.
-Here is what I found:
+Kind regards
+Suzuki
 
-- x86_64 uses DEFAULT_MAP_WINDOW of BIT(47), uses a 57 bit
-  address space when an addr hint is passed.
-- arm64 uses DEFAULT_MAP_WINDOW of BIT(47) or BIT(48), returns
-  higher 52-bit addresses when either a hint is passed or
-  CONFIG_EXPERT and CONFIG_ARM64_FORCE_52BIT is set (this
-  is a debugging option)
-- ppc64 uses a DEFAULT_MAP_WINDOW of BIT(47) or BIT(48),
-  returns 52 bit address when an addr hint is passed
-- riscv uses a DEFAULT_MAP_WINDOW of BIT(47) but only uses
-  it for allocating the stack below, ignoring it for normal
-  mappings
-- s390 has no DEFAULT_MAP_WINDOW but tried to allocate in
-  the current number of pgtable levels and only upgrades to
-  the next level (31, 42, 53, 64 bits) if a hint is passed or
-  the current level is exhausted.
-- loongarch64 has no DEFAULT_MAP_WINDOW, and a default VA
-  space of 47 bits (16K pages, 3 levels), but can support
-  a 55 bit space (64K pages, 3 levels).
-- sparc has no DEFAULT_MAP_WINDOW and up to 52 bit VA space.
-  It may allocate both positive and negative addresses in
-  there. (?)
-- mips64, parisc64 and alpha have no DEFAULT_MAP_WINDOW and
-  at most 48, 41 or 39 address bits, respectively.
 
-I would suggest these changes:
+> 
+> Thanks,
+> Gavin
+> 
 
-- make riscv enforce DEFAULT_MAP_WINDOW like x86_64, arm64
-   and ppc64, leave it at 47
-
-- add DEFAULT_MAP_WINDOW on loongarch64 (47/48 bits
-  based on page size), sparc (48 bits) and s390 (unsure if
-  42, 53, 47 or 48 bits)
-
-- leave the rest unchanged.
-
-       Arnd
 
