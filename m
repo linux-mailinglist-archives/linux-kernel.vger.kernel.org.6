@@ -1,152 +1,384 @@
-Return-Path: <linux-kernel+bounces-323743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5E9742CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFE19742D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 20:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8FC2B24D7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:55:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5690728BEB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 18:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9294E1A4F3A;
-	Tue, 10 Sep 2024 18:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11F31A7056;
+	Tue, 10 Sep 2024 18:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaooHUKA"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sCxOl4R8"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECE72AD13;
-	Tue, 10 Sep 2024 18:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E087E199FAC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725994514; cv=none; b=YVmTbxKiIuWJVcqAuLjQYuZ0ONaFnu1yRUMl7HU9NSuZheIHAMj658Jji0rSzBzPcV7f607ExmJLD7Bm+TnZZZ0Txm3t6UQtE49+AXS/zevfhsJJVpQrobg7GifD6S/0btEaGe/+PBUP/SjLYrsXowVLHwv+KwVsMS6fh3HBmeM=
+	t=1725994560; cv=none; b=Uv6vlSDeyLZoEuJ/PCnQ4Sdnu3tw2TOtrjIIg6A5PMSbW2c0VLcECdiuhYuwfWT0qH0/Io6MznHWh0isP7gCkUXd3bgBK5BtyaGllxfGSeDafQWFAHA9bw/IKqhmMlCSIYeTiSUmji62xHau9yB5qk12hvB5QjG7Nl8Sz+WyYLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725994514; c=relaxed/simple;
-	bh=cE62Kh82tgiPrZnsi9E5rRKiQpqtOTEnQEb7Kfh4WVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7P8iVkj0gxHP33yiEAD9v5CE3rHOGYAbl3lOGvI/bfp4emnXAfewBJqNLxM8D45921x5UprzZ/OabyibBwStCkKolhUWNcVzNxk4+rOT0dNfKoTnRICAPjkJnk26d1SpA46wGUT+cjHfRaQpuH6tjOvru8TMITDuM3rHerdaz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NaooHUKA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-205659dc63aso58966905ad.1;
-        Tue, 10 Sep 2024 11:55:12 -0700 (PDT)
+	s=arc-20240116; t=1725994560; c=relaxed/simple;
+	bh=8VGF50TMS6kba3bI9dZfv086gYyzJ0yvGVHhxmK056A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VEDd38UsoHW+4eIXftL9pRKWfBUdioSKyWXAfbBkhQrlKid+zUfygftR0M49ROzwVoKTrcpPhyhQIh41b7uCnninaubh2Yjn2D89i4s55zurZS5xrOHZ88areYghkb1HBUsdOkpvDA2olh9NvNMuCduu/LpydJLbdOcSpVOtB4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sCxOl4R8; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a81bd549eso120849266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 11:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725994512; x=1726599312; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CuCHQ8QLtBw7Am3RuFk09iLIFccWYPwQSJTDQSs5Yig=;
-        b=NaooHUKAHAWVtPa58uS4/YdQCUv7oPu1l5FUGRz4d3XofWAV7lpbT7T1WVrXkryWnJ
-         xZU3YPlHbEEwZSjASZ3CECGJuutlPJnyo5dwTMzqsbY0D4g1ckV8zhJlzgYsg4mAIYTl
-         4IRBpwQtXEgbnSV88gedcCfLAIJofGwnyTejMYxxojaCgHnWgivBwX+pD2TBIDIa+pq8
-         OwpyA185+CFFTF/KfmT5kEiM+CTWmHokQmHRy93PMwEasneU+I8JBMhY/jqrcM6GE+aH
-         /ElvkFMGA7fFTBtMfS9R+/vt7FgwsUFR5zqaQ4v51TpCYmFRPbu7LOVG/w9DoIe/bkhu
-         iTLQ==
+        d=google.com; s=20230601; t=1725994557; x=1726599357; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXR2kju3UEdCGGD2E4YqZAQO3VbWRTwOTNC3dPcvl+8=;
+        b=sCxOl4R8Y6oGrsnk4dBhTgO3Wi0AyT694GKB+gp/e4nCNYryBaSiUJqs8J9g5Tfht1
+         0NeTrYfOdcqeuSOqdXZJDw6oiiH+WXtkrFgXXHG4qCzcZTO+uIWR0Ub5AbhwnfvEh3Ol
+         ndpj8XXCAq21iil0uIQDC6oL5HMAf+VihD45Hu2J8tSaymOqrMxb/kyL0CsZ0aCaBNwm
+         xVZereeTjcNGgUgyMUlNdWwVS5aynnmUXBomESBd2sGCN9btk9fJqeK5g17NTqjUYP5u
+         ArgMjzzsE4q5K7Fo2jquY14xPZ4K+2djGtkaqui0erad6HnjufS9UnxqLC57GT3j7W8t
+         z8ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725994512; x=1726599312;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CuCHQ8QLtBw7Am3RuFk09iLIFccWYPwQSJTDQSs5Yig=;
-        b=OYAekApOAPX3ss/v/TUtJhw3aqsMJl8pD27SXY0wa8i5X3sclhScc5fsBRirLoxxA8
-         FYee10WjQmpjZ/8mvW63moW8GaUo67+DE9z9mj8pG5iK3V9+S76YUyQDg481NjG3XRww
-         jJIRUIZqXUSFULt8CPloHq+zmJtrP6m4QICRkcICmIOxL/BknQjJ/sOnJr1cOpvE7eiY
-         NIQtQmr+s8G0BOofcxsPZbLrFVixIaLwbw9iRaZkSIeAupv8T8UpIq9kd5c44CWmKxcF
-         5ptTcUHXnIMOok5YnXwb38N88w1cQvmQQmp52VlPKR30Kodmq8BxIeonM27udsKkyqqD
-         YsSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7JZ8tg1+c52oqp7bVxncT/1+N49urwD+zxU000dN1jbcirKehBaw+eOvDL2Y43uCLi+qHhiEV@vger.kernel.org, AJvYcCWHphzm56N0ORfczKgnJNBI6fjAJvxKhTn+wWCSZBrGOrEhNH8NkXqorLDLMH+5NwuANOwX5v7aYJKRhQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywny7dFo5c+hWKSGR9PDv5ys2qsNphEN6PfpO2mnE70WJnOxcCZ
-	qbhhSnqBvE5oZxEg9SaivteTpVV0CXGq/04Bkb8pwYFMDNx+3ngw
-X-Google-Smtp-Source: AGHT+IG/G26k0EcjBwpl0thwOyHG2vzYcIXNRY0m3Fz4kOl819XXr7VimJPZCwGHMXKiUFl/QgZKcA==
-X-Received: by 2002:a17:90b:388b:b0:2d3:d09a:630e with SMTP id 98e67ed59e1d1-2dad5083440mr16046438a91.1.1725994511770;
-        Tue, 10 Sep 2024 11:55:11 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04988465sm6750338a91.53.2024.09.10.11.55.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 11:55:11 -0700 (PDT)
-Message-ID: <905eedd0-bd08-4d9d-bbd8-dd41e128a111@gmail.com>
-Date: Tue, 10 Sep 2024 11:55:09 -0700
+        d=1e100.net; s=20230601; t=1725994557; x=1726599357;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FXR2kju3UEdCGGD2E4YqZAQO3VbWRTwOTNC3dPcvl+8=;
+        b=Qmzcw48hKzFiZOTxmIkwoU4s1rzIpC9fwgWol76oBSOtWMDbqlV6x94jXU42LUv3B0
+         JhFnA7U0vD7EJdG4YDgJU9zZQIaV82hvjPRu1a3tEMeYLx8dNLec5RwlitisvyfJaNlt
+         DXOgCrduCsGhEfPVo+9zWmgVH2SH73epqH1XX5erUB9Uiz/3PJDrkgtV8PS7N2BxaP2w
+         7OFRwKXIE4DIfJjvetReUUQEh2Ncn9CJ/l+aH/+sUK5943YyMYDiNMFDy7EwtEKKFaJW
+         QhGoDMvH8LB6z2Ke5bl9MlLRMyZGCnUDuNeeK0n6E17Am+IH2bDSOXGHHYtgy+cQqkAE
+         NoNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjv0DexNqiWSkUBWVIH4Yjnan1JFNwp53W0RXzlPxzooM6kTf1IgoM2aQElB0UnAaUia1/wzAM4F6O1Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl9WgDUS7s+aUHNI9GE/EpKvToLxjEJ+JOLd8k8SICLn93Vw7o
+	I3WTAFzp8inXA3Zof6SZctAjRhFziVusHMazsdUMqM/IFkameuMtDJBPF1Lf3KOfkIjYdLFIaFh
+	BjrTHP5mcEpZnr9bbghKWAM6uRrRo9ESlK4sP
+X-Google-Smtp-Source: AGHT+IEgbpHsyDuBgsbwneGuULRFoC8klWZGxMO9rnuUITgbaVccfC/bSg2nf+v+jbTqFrgm/SSpqmqMwNnNalcnxis=
+X-Received: by 2002:a17:907:efdc:b0:a8d:64af:dc4c with SMTP id
+ a640c23a62f3a-a9004833ef8mr49898866b.25.1725994556644; Tue, 10 Sep 2024
+ 11:55:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240910092557.876094467@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240910092557.876094467@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <172547884995.206112.808619042206173396.stgit@firesoul>
+ <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
+ <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
+ <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org>
+In-Reply-To: <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 10 Sep 2024 11:55:20 -0700
+Message-ID: <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
+Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
+ root flush
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	mfleming@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/10/24 02:30, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.110 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.110-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+[..]
+>
+> >>>> +       /*
+> >>>> +        * Check if ongoing flusher is already taking care of this.  Descendant
+> >>>> +        * check is necessary due to cgroup v1 supporting multiple root's.
+> >>>> +        */
+> >>>> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
+> >>>> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing))
+> >>>> +               return false;
+> >>>
+> >>> Why did we drop the agreed upon method of waiting until the flushers
+> >>> are done? This is now a much more intrusive patch which makes all
+> >>> flushers skip if a root is currently flushing. This causes
+> >>> user-visible problems and is something that I worked hard to fix. I
+> >>> thought we got good results with waiting for the ongoing flusher as
+> >>> long as it is a root? What changed?
+> >>>
+> >>
+> >> I disagree with the idea of waiting until the flusher is done.
+> >> As Shakeel have pointed out before, we don't need accurate stats.
+> >> This caused issues and 'completions' complicated the code too much.
+> >
+> > I think Shakeel was referring specifically to the flush in the reclaim
+> > path. I don't think this statement holds for all cgroup flushers,
+> > especially those exposed to userspace.
+> >
+>
+> My userspace readers (of /sys/fs/cgroup/*/*/memory.stat) are primarily
+> cadvisor and systemd, which doesn't need this accuracy.
+>
+> Can you explain your userspace use-case that need this accuracy?
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Please look at the commit log of this patch [1] that removed
+stats_flush_ongoing (the one in Fixes).
+
+[1]https://lore.kernel.org/lkml/20231129032154.3710765-6-yosryahmed@google.com/
+
+>
+>
+> I assume you are primarily focused on memory.stat?
+> Can we slack on accuracy for io.stat and cpu.stat?
+
+
+I feel like this will eventually also cause problems as it is a
+user-visible change, but I can't tell for sure.
+
+>
+>
+> Detail: reading cpu.stat already waits on the ongoing flusher by always
+> taking the lock (as it use lock to protect other things).  This
+> indirectly created what you are asking for... If your userspace program
+> first reads cpu.stat, then it will serve as a barrier that waits for the
+> ongoing flusher.
+
+
+Making userspace programs read cpu.stat before memory.stat to get the
+correct flushing behavior is certainly not the way to address this
+imo.
+
+>
+>
+> Could we have a sysctl that enabled "accurate" cgroup rstat reading?
+> As most users don't need this high accuracy.
+
+
+I did a lot of testing of flushing latency in the commit I referred to
+above, you'll find numbers there. I think the problem for you mainly
+comes from having 12 kswapd threads flushing the root, they compete
+among one another as well as with userspace reads. Shakeel's patch
+should address this, and honestly I think the longer-term approach
+should be to eliminate all in-kernel flushers [2], rather than making
+all flushers inaccurate.
+
+[2]https://lore.kernel.org/lkml/CAJD7tkaBfWWS32VYAwkgyfzkD_WbUUbx+rrK-Cc6OT7UN27DYA@mail.gmail.com/
+
+>
+>
+>
+> >>
+> >> When multiple (12) kswapd's are running, then waiting for ongoing
+> >> flusher will cause us to delay all other kswapd threads, for on my
+> >> production system approx 24 ms (see attached prod graph).
+> >> Matt (Cc) is currently[1] looking into page alloc failures that are
+> >> happening across the fleet, when NIC RX packets as those allocs are
+> >> GFP_ATOMIC.  So, basically kswapd isn't reclaiming memory fast enough on
+> >> our systems, which could be related to this flush latency.  (Quick calc,
+> >> prod server RX 1,159,695 pps, thus in 24 ms period 27,832 packets are
+> >> handled, that exceed RX ring size 1024).
+> >>
+> >>    [1]
+> >> https://lore.kernel.org/all/CAGis_TWzSu=P7QJmjD58WWiu3zjMTVKSzdOwWE8ORaGytzWJwQ@mail.gmail.com/
+> >>
+> >> For this reason, I don't want to have code that waits for ongoing
+> >> flushers to finish.  This is why I changed the code.
+> >
+> > My understanding was that the previous versions solved most of the
+> > problem. However, if it's not enough and we need to completely skip
+> > the flush, then I don't think this patch is the right way to go. This
+> > affects all flushers, not just the reclaim path, and not even just the
+> > memcg flushers. Waiting for ongoing flushers was a generic approach
+> > that should work for all flushers, but completely skipping the flush
+> > is not.
+> >
+>
+> IMHO waiting for ongoing flushers was not a good idea, as it caused
+> other issues. Letting 11 other kswapd wait 24 ms for a single kswapd
+> thread was not good for our production systems.
+
+
+If it takes one kswapd thread 24 ms to flush the stats, then that's
+the raw flush time. If all 12 kswapd threads started at different
+times they would all spend 24 ms flushing anyway, so waiting for the
+ongoing flusher is not a regression or a newly introduced delay. The
+ongoing flusher mechanism rather tries to optimize this by avoiding
+the lock contention and waiting for the ongoing flusher rather than
+competing on the lock and redoing some of the work.
+
+>
+>
+> I need remind people that "completely skipping the flush" due to ongoing
+> flusher have worked well for us before kernel v6.8 (before commit
+> 7d7ef0a4686a). So, I really don't see skipping the flush, when there is
+> an ongoing flusher is that controversial.
+
+
+Skipping the flush was introduced in v5.15 as part of aa48e47e3906
+("memcg: infrastructure to flush memcg stats"). Before then, reading
+the stats from userspace was as accurate as possible. When we moved to
+a kernel with that commit we noticed the regression. So it wasn't
+always the case that userspace reads were inaccurate or did not flush.
+
+>
+>
+> I think it is controversial to *wait* for the ongoing flusher as that
+> IMHO defeats the whole purpose of having an ongoing flusher...
+
+
+The point of having an ongoing flusher is to avoid reacquiring the
+lock after they are done, and checking all the percpu trees again for
+updates, which would be a waste of work and unnecessary contention on
+the lock. It's definitely an improvement over directly competing over
+the lock, yet it doesn't sacrifice accuracy.
+
+>
+> then we could just have a normal mutex lock if we want to wait.
+
+
+I am not against using a mutex as I mentioned before. If there are
+concerns about priority inversions we can add a timeout as we
+discussed. The ongoing flusher mechanism is similar in principle to a
+mutex, the advantage is that whoever holds the lock does not sleep, so
+it gets the flush done faster and waiters wake up faster.
+
+>
+>
+>
+> > If your problem is specifically the flush in the reclaim path, then
+> > Shakeel's patch to replace that flush with the ratelimited version
+> > should fix your problem. It was already merged into mm-stable (so
+> > headed toward v6.11 AFAICT).
+> >
+> >>
+> >>
+> >>> You also never addressed my concern here about 'ongoing' while we are
+> >>> accessing it, and never responded to my question in v8 about expanding
+> >>> this to support non-root cgroups once we shift to a mutex.
+> >>>
+> >>
+> >> I don't think we should expand this to non-root cgroups.  My production
+> >> data from this V10 shows we don't need this for non-root cgroups.
+> >
+> > Right, because you are concerned with the flush in the kswapd path
+> > specifically. This patch touches affects much more than that.
+> >
+>
+> It is not only the flush in the kswapd path that concerns me.
+> My other concern is userspace cadvisor that periodically reads ALL the
+> .stat files on the system and creates flush spikes (every minute).  When
+> advisor collides with root-cgroup flush (either 2 sec periodic or
+> kswapd) then bad interactions happens in prod.
+
+
+I believe the problem here is the kswapd flushers competing with
+cadvisor userspace read. I don't think the periodic flusher that runs
+every 2s colliding with the cadvisor reader that runs every minute
+would really cause a problem. Also both of these paths should not be
+latency sensitive anyway. So again, Shakeel's patch should help here.
+
+Did you check if Shakeel's patch fixes your problem?
+
+>
+>
+> >>
+> >>
+> >>> I don't appreciate the silent yet drastic change made in this version
+> >>> and without addressing concerns raised in previous versions. Please
+> >>> let me know if I missed something.
+> >>>
+> >>
+> >> IMHO we needed a drastic change, because patch was getting too
+> >> complicated, and my production experiments showed that it was no-longer
+> >> solving the contention issue (due to allowing non-root cgroups to become
+> >> ongoing).
+> >
+> > I thought we agreed to wait for the ongoing flusher to complete, but
+> > only allow root cgroups to become the ongoing flusher (at least
+> > initially). Not sure what changed.
+> >
+>
+> Practical implementation (with completions) and production experiments
+> is what changed my mind. Thus, I no-longer agree that waiting for the
+> ongoing flusher to complete is the right solution.
+
+
+My understanding based on [1] was that the ongoing flusher mechanism
+with only root flushers fixed the problem, but maybe you got more data
+afterward.
+
+[1]https://lore.kernel.org/lkml/ee0f7d29-1385-4799-ab4b-6080ca7fd74b@kernel.org/
+
+>
+>
+>
+> >>
+> >> Production servers with this V10 patch applied shows HUGE improvements.
+> >> Let me grab a graf showing level-0 contention events being reduced from
+> >> 1360 event/sec to 0.277 events/sec.  I had to change to a log-scale graf
+> >> to make improvement visible.  The wait-time is also basically gone.  The
+> >> improvements are so convincing and highly needed, that we are going to
+> >> deploy this improvement.  I usually have a very strong upstream first
+> >> principle, but we simply cannot wait any-longer for a solution to this
+> >> production issue.
+> >
+> > Of course there is a huge improvement, you are completely skipping the
+> > flush :) You are gaining a lot of performance but you'll also lose
+> > something, there is no free lunch here. This may be an acceptable
+> > tradeoff for the reclaim path, but definitely not for all flushers.
+> >
+>
+> To move forward, can you please list the flushers that cannot accept
+> this trade off?
+> Then I can exclude these in the next version.
+
+
+I am not sure which flushers would be problematic, I have seen
+problems with the memcg userspace readers, but this doesn't mean it's
+the only source of problems. There is also a flush in the zswap path
+for charging that may be affected, but we discussed moving that to a
+completely different approach to avoid the flush.
+
+I am against skipping the flush for all cases with exceptions. What
+Shakeel did was the opposite and the less controversial approach, skip
+the flush only for the reclaim path because it's the one we observed
+causing problems.
+
+>
+>
+> >>
+> >>
+> >>>> +
+> >>>> +       /* Grab right to be ongoing flusher */
+> >>>> +       if (!ongoing && cgroup_is_root(cgrp)) {
+> >>>> +               struct cgroup *old;
+> >>>> +
+> >>>> +               old = cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
+> >>>> +               if (old) {
+> >>>> +                       /* Lost race for being ongoing flusher */
+> >>>> +                       if (cgroup_is_descendant(cgrp, old))
+> >>>> +                               return false;
+> >>>> +               }
+> >>>> +               /* Due to lock yield combined with strict mode record ID */
+> >>>> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
+> >>>
+> >>> I am not sure I understand why we need this, do you mind elaborating?
+> >>
+> >> Let me expand the comment. Due to lock yield an ongoing (root) flusher
+> >> can yield the lock, which would allow a root flush in strict mode to
+> >> obtain the lock, which then in the unlock call (see below) will clear
+> >> cgrp_rstat_ongoing_flusher (as cgrp in both cases have "root" cgrp ptr),
+> >> unless it have this flush_ID to tell them apart.
+> >
+> > The pointers should be different for different roots though, right?
+> > Why do we need the ID to tell them apart? I am not sure I follow.
+>
+> It is not different roots, it is needed for "the-same" root.
+>
+> It is possible that while an ongoing flusher is working, another process
+> can call the flush in "strict" mode (for same root cgroup), that will
+> bypass the ongoing check, and it will be waiting for the lock.  The
+> ongoing flusher chooses to yield the lock, letting in the strict-mode
+> flusher that then clears the ongoing flusher, unless we add this ID
+> check.  I hope it is more clear now.
+>
+> --Jesper
 
