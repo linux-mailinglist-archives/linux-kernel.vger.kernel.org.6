@@ -1,265 +1,132 @@
-Return-Path: <linux-kernel+bounces-322746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5EC972D3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393FB972D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E541D284D6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E2B284EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3781885A9;
-	Tue, 10 Sep 2024 09:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C8C189F52;
+	Tue, 10 Sep 2024 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JVGDZc7C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="a1j62AdA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l+J5gSQ/"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A21171671;
-	Tue, 10 Sep 2024 09:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A4F188002;
+	Tue, 10 Sep 2024 09:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725959732; cv=none; b=Nlnu0BSAm7LWkVIXuQf+EOKJj2X9hXZ8eKKztl3cypn860dNYLDwS5ogG4F3vi1BOH2eSp7iWaDy0EiH1OU8jvf6qDrRTD61+BfhriAk5N95WRotSQ5iHejvtQjMV6XWaUsxoSxvV86bg2beGJ57UbSdMh8+ZtEKcqVcoCLhoYg=
+	t=1725959765; cv=none; b=MIumscLIfTmCvfu58ek9HCI2wLXOflMhF+SlrJdeju/BGLAPwin/vX1qdAOKeQfpEm5Ga7P10vMEeYBq1k8mJSZaypRw/I7zKlQuP41EmbK0SdKJXgFgfNX9QwSWTzuLHtnUz3hoAdvqkHCF1rjIy4d9RCTm/F7UHlgKBR5bOdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725959732; c=relaxed/simple;
-	bh=hzh+J6/Xpo/8eBZY2lc5T4MswvsUoOpgSkJML+t7I6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WVBte+Ou3lOq08doAP+OeVQvyK408ee+nO8kgqXs91toIe9PYEu2kIYP50mlV2ZL8uptdSdwj1809B6rJpdGvckCf30gWSuHx/cfJD3Po1Q2TdmEL/ZObg++byUeWM5wpTZeq8jcqrWMi31TegtAZSFvYZU8YhHzAgT7k4iP0pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JVGDZc7C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48A57eDu021294;
-	Tue, 10 Sep 2024 09:15:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ti5eEUzUoscS5gULG+Nev2Yltim4D2dB65KfWC7XflU=; b=JVGDZc7Cfs+fRh2/
-	/N7mrjTR0a8TmxwsDwQfHe22IpykeW+Dcm7I1NHHtT9K+LTYwIjjVIk81VyBWpoD
-	Wn4fv8MXtYyry79VEYQUYY1JF9Ac6ukliONWxBtA3eJs7QUKADA3Aae+7Ln/AVrh
-	jB6cg6ewZF1H7U+ztnpHoe4CK8g8xEUh60p7NXvn4AdEAw3H9AF+3s082L0Wk4DK
-	Q/cjeQfrzpS4EueaqEczPjCf5c8wegOwK68tkWy9WoubcfR6p7DKI115ETc6acNU
-	8Ap7lD9EhnMuuYvVy4L989TZ4ZB81N5g4vbCCv6+wftWTUili9gSZDNQEiZw/7EL
-	fSwkUA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gybpncdm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 09:15:22 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48A9FMvd005215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Sep 2024 09:15:22 GMT
-Received: from [10.218.13.83] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Sep
- 2024 02:15:16 -0700
-Message-ID: <687db538-1a41-4353-89fd-d1869d960a12@quicinc.com>
-Date: Tue, 10 Sep 2024 14:45:13 +0530
+	s=arc-20240116; t=1725959765; c=relaxed/simple;
+	bh=FBMJWJqB79yGDbUvlWAy35uxPHrp8h6XY0yZZg4VB4w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YSwt7lJrbIHsaIkpIEtI/D9L/odgwXgtOhT1gvcdYduOeHAuVx12STZxNkrJ1Y0IKsLRenRJRN2j5iHMoI/GaF0JFRSIIafP7BhdGhelKU6L9jGurF41bhwmLMSY/ZLhteSA5JXfOnmBZVAbWrGMGEXys0jPl83VuQdJfd2tPcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=a1j62AdA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l+J5gSQ/; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2196111402FF;
+	Tue, 10 Sep 2024 05:16:03 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 10 Sep 2024 05:16:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1725959763;
+	 x=1726046163; bh=MBfqYJPMZJv6Y590XG1x2GpGDpSRx867w+Y9UYCRbw8=; b=
+	a1j62AdAnQhf0HLyjSZe8JZWKYzSnjAvjaaddrKACiX0WQDkHUFIgKBXcODTv7qw
+	o1/nXcSntC1fW3ImMyZD8xhgHO0fr611gdnbAHFuF5z4DUMs9TQubhDDyJjzfIS9
+	NWO3ciAvN4cQfAluv8ggEgfXX60wCjEQMGmlM0R8+dS25X9HDB8B2lxkH8Dorp2u
+	bjTGq6VlZSpKU3u2f+9LyUbsPQvq78e1HtLg2/p6Zz/G9lnxw3br+6/YMNHY2Njm
+	6wFeHugpyLPXcvl6l1+4GEqdUKNs07zzC/Q+sGNqhAII5aRFQpL4D1fmym7HhhuU
+	aXrGw70YdK2qbYpLdsm3tA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725959763; x=
+	1726046163; bh=MBfqYJPMZJv6Y590XG1x2GpGDpSRx867w+Y9UYCRbw8=; b=l
+	+J5gSQ/KGDhLUDLnXehAjvmnaoBep82FwwBq3dm1GhJQ7LGWzxlqxVIGSvtAC93F
+	/2uvVGb4dFIDjCrvGBYjUO+QYVxL5vFgk9NiRtUxwjbdWPz8B/RpCls3ZmAByPeP
+	WQ07CvO/OQePvsYc4AJ5M2wGSQdRO4lGSkySRoOT5iHNBxddUEup1ktRCyvROKrL
+	swFUjiL1PBP/Pfl55OTWP8IkjDyH72iHI1dy6z+CNe9V4cBv+/TUJlXzwmJyTWvG
+	hhsTAeJfqgMNQQ1vKEmM71VcB91UWQS0BXToJhOtYK0lMrMHC/kxvY20995KylsI
+	JoqiXacJ6Gb6OIpEvnjCQ==
+X-ME-Sender: <xms:Ug7gZjojGXn6UCqfUmTT12seRnAENgWdJ7W8kdqF22TzXXX55R0e0g>
+    <xme:Ug7gZto3yDJxstGEgORYARNSrMttFE7f1Db_Y9-9qnoXukE6oCcEhBnPs6BmMcw9b
+    njjWYtDa-nKCfOVEd0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrg
+    hssegrrhhmrdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphht
+    thhopehjvhgvthhtvghrsehkrghlrhgrhihinhgtrdgtohhmpdhrtghpthhtohephihsih
+    honhhnvggruheskhgrlhhrrgihihhntgdrtghomhdprhgtphhtthhopegthhgvnhhhuhgr
+    tggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuh
+    igqdhfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:Ug7gZgP8xQEG18G7xPFL4QGmK2mXkM-t716YUekMYUG_PwYZTZ7x3Q>
+    <xmx:Ug7gZm5rXtNcuwvnJMGqh3g-bZpf_v76S_FVbRRxDhb9oxBMuVNKYQ>
+    <xmx:Ug7gZi5WZH3YWgrEsaCy5grLKqoGpwgdTQeMr0fH7tVKyiej_2g4lA>
+    <xmx:Ug7gZuihdGDVMGl1i-UIbLgjJBq7YSAOJitHj9GhJeCT4mnTSPQE-g>
+    <xmx:Uw7gZhT3YmmvpnNfQ7pxMrIcJew_JCbe3z_lqcSOto6EG6CQMtdD7pwU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C1566222006F; Tue, 10 Sep 2024 05:16:02 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: <neil.armstrong@linaro.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20240906191438.4104329-1-quic_msavaliy@quicinc.com>
- <20240906191438.4104329-5-quic_msavaliy@quicinc.com>
- <b3a5dd54-90ba-4d75-9650-efbff12cddeb@linaro.org>
- <3bd27b6d-74b8-4f7b-b3eb-64682442bbda@quicinc.com>
- <3dddd226-c726-434e-8828-c12f76a71752@linaro.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <3dddd226-c726-434e-8828-c12f76a71752@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LPWdNrYVz1yK5lL6_Dbzj4GOWfWbbaEO
-X-Proofpoint-GUID: LPWdNrYVz1yK5lL6_Dbzj4GOWfWbbaEO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409100070
+Date: Tue, 10 Sep 2024 09:15:42 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "kernel test robot" <lkp@intel.com>,
+ "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+ "Linux Memory Management List" <linux-mm@kvack.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ loongarch@lists.linux.dev, "Yann Sionneau" <ysionneau@kalrayinc.com>
+Message-Id: <c78987ba-6b54-4433-b5dc-3b3b9f98354a@app.fastmail.com>
+In-Reply-To: <202409101549.CyV0mJ2S-lkp@intel.com>
+References: <20240909133159.2024688-4-jvetter@kalrayinc.com>
+ <202409101549.CyV0mJ2S-lkp@intel.com>
+Subject: Re: [PATCH v2 3/4] Use generic io memcpy functions on the csky architecture
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Neil,
+On Tue, Sep 10, 2024, at 07:27, kernel test robot wrote:
 
-On 9/9/2024 6:34 PM, neil.armstrong@linaro.org wrote:
-> On 09/09/2024 11:18, Mukesh Kumar Savaliya wrote:
->> Hi Neil,
->>
->> On 9/9/2024 2:24 PM, neil.armstrong@linaro.org wrote:
->>> Hi,
->>>
->>> On 06/09/2024 21:14, Mukesh Kumar Savaliya wrote:
->>>> Add support to share I2C SE by two Subsystems in a mutually 
->>>> exclusive way.
->>>> Use  "qcom,shared-se" flag in a particular i2c instance node if the
->>>> usecase requires i2c controller to be shared.
->>>>
->>>> I2C driver just need to mark first_msg and last_msg flag to help 
->>>> indicate
->>>> GPI driver to  take lock and unlock TRE there by protecting from 
->>>> concurrent
->>>> access from other EE or Subsystem.
->>>>
->>>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock 
->>>> and
->>>> Unlock TRE for the respective transfer operations.
->>>>
->>>> Since the GPIOs are also shared for the i2c bus between two SS, do not
->>>> touch GPIO configuration during runtime suspend and only turn off the
->>>> clocks. This will allow other SS to continue to transfer the data
->>>> without any disturbance over the IO lines.
->>>
->>> This doesn't answer my question about what would be the behavior if one
->>> use uses, for example, GPI DMA, and the Linux kernel FIFO mode or SE 
->>> DMA ?
->>>
->> Shared usecase is not supported for non GSI mode (FIFO and DMA), it 
->> should be static usecase. Dynamic sharing from two clients of two 
->> subsystems is only for GSI mode. Hope this helps ?
-> 
-> Sure, this is why I proposed on v1 cover letter reply to add:
-Sure, i will add in cover letter and code check combining with 
-fifo_disable check.
-> ==============><=====================================================================
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c 
-> b/drivers/i2c/busses/i2c-qcom-geni.c
-> index ee2e431601a6..a15825ea56de 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -885,7 +885,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
->           else
->                   fifo_disable = readl_relaxed(gi2c->se.base + 
-> GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
-> 
-> -       if (fifo_disable) {
-> +       if (gi2c->is_shared || fifo_disable) {
-  Should be ANDING logically, as we need to combine both check. Shared
-  usecase possible only for fifo_disable.
+> 6a9bfa83709a84e Julian Vetter 2024-09-09  55  	while (count >= 
+> NATIVE_STORE_SIZE) {
+> 6a9bfa83709a84e Julian Vetter 2024-09-09  56  		if 
+> (IS_ENABLED(CONFIG_64BIT))
+> 6a9bfa83709a84e Julian Vetter 2024-09-09 @57  
+> 			__raw_writeq(get_unaligned((uintptr_t *)from), to);
+> 6a9bfa83709a84e Julian Vetter 2024-09-09  58  		else
 
-  if(gi2c->is_shared && fifo_disable) {
->                   /* FIFO is disabled, so we can only use GPI DMA */
->                   gi2c->gpi_mode = true;
->                   ret = setup_gpi_dma(gi2c);
-> ==============><=====================================================================
-> 
-> Thanks,
-> Neil
-> 
->>> Because it seems to "fix" only the GPI DMA shared case.
->>>
->>> Neil
->>>
->>>>
->>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> ---
->>>>   drivers/i2c/busses/i2c-qcom-geni.c | 29 ++++++++++++++++++++++-------
->>>>   1 file changed, 22 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c 
->>>> b/drivers/i2c/busses/i2c-qcom-geni.c
->>>> index eebb0cbb6ca4..ee2e431601a6 100644
->>>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->>>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->>>> @@ -1,5 +1,6 @@
->>>>   // SPDX-License-Identifier: GPL-2.0
->>>>   // Copyright (c) 2017-2018, The Linux Foundation. All rights 
->>>> reserved.
->>>> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights 
->>>> reserved.
->>>>   #include <linux/acpi.h>
->>>>   #include <linux/clk.h>
->>>> @@ -99,6 +100,7 @@ struct geni_i2c_dev {
->>>>       struct dma_chan *rx_c;
->>>>       bool gpi_mode;
->>>>       bool abort_done;
->>>> +    bool is_shared;
->>>>   };
->>>>   struct geni_i2c_desc {
->>>> @@ -602,6 +604,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev 
->>>> *gi2c, struct i2c_msg msgs[], i
->>>>       peripheral.clk_div = itr->clk_div;
->>>>       peripheral.set_config = 1;
->>>>       peripheral.multi_msg = false;
->>>> +    peripheral.shared_se = gi2c->is_shared;
->>>>       for (i = 0; i < num; i++) {
->>>>           gi2c->cur = &msgs[i];
->>>> @@ -612,6 +615,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev 
->>>> *gi2c, struct i2c_msg msgs[], i
->>>>           if (i < num - 1)
->>>>               peripheral.stretch = 1;
->>>> +        peripheral.first_msg = (i == 0);
->>>> +        peripheral.last_msg = (i == num - 1);
->>>>           peripheral.addr = msgs[i].addr;
->>>>           ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
->>>> @@ -631,8 +636,11 @@ static int geni_i2c_gpi_xfer(struct 
->>>> geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>>>           dma_async_issue_pending(gi2c->tx_c);
->>>>           time_left = wait_for_completion_timeout(&gi2c->done, 
->>>> XFER_TIMEOUT);
->>>> -        if (!time_left)
->>>> +        if (!time_left) {
->>>> +            dev_err(gi2c->se.dev, "I2C timeout gpi flags:%d 
->>>> addr:0x%x\n",
->>>> +                        gi2c->cur->flags, gi2c->cur->addr);
->>>>               gi2c->err = -ETIMEDOUT;
->>>> +        }
->>>>           if (gi2c->err) {
->>>>               ret = gi2c->err;
->>>> @@ -800,6 +808,11 @@ static int geni_i2c_probe(struct 
->>>> platform_device *pdev)
->>>>           gi2c->clk_freq_out = KHZ(100);
->>>>       }
->>>> +    if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
->>>> +        gi2c->is_shared = true;
->>>> +        dev_dbg(&pdev->dev, "Shared SE Usecase\n");
->>>> +    }
->>>> +
->>>>       if (has_acpi_companion(dev))
->>>>           ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
->>>> @@ -962,14 +975,16 @@ static int __maybe_unused 
->>>> geni_i2c_runtime_suspend(struct device *dev)
->>>>       struct geni_i2c_dev *gi2c = dev_get_drvdata(dev);
->>>>       disable_irq(gi2c->irq);
->>>> -    ret = geni_se_resources_off(&gi2c->se);
->>>> -    if (ret) {
->>>> -        enable_irq(gi2c->irq);
->>>> -        return ret;
->>>> -
->>>> +    if (gi2c->is_shared) {
->>>> +        geni_se_clks_off(&gi2c->se);
->>>>       } else {
->>>> -        gi2c->suspended = 1;
->>>> +        ret = geni_se_resources_off(&gi2c->se);
->>>> +        if (ret) {
->>>> +            enable_irq(gi2c->irq);
->>>> +            return ret;
->>>> +        }
->>>>       }
->>>> +    gi2c->suspended = 1;
->>>>       clk_disable_unprepare(gi2c->core_clk);
->>>
->>>
-> 
-> 
+Right, this one actually has to be a preprocessor conditional
+because __raw_writeq is not defined.
+
+     Arnd
 
