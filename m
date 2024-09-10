@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-322969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F273973611
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B3897361A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 13:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BB22860E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44C01F23CE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E01218DF73;
-	Tue, 10 Sep 2024 11:19:01 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418D818EFEE;
+	Tue, 10 Sep 2024 11:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wAZgJ9Dw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF595171671;
-	Tue, 10 Sep 2024 11:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE074171671;
+	Tue, 10 Sep 2024 11:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725967140; cv=none; b=uIYP6GXRU8Ybg/EDTpNnyloddax5KHQq26M/6XiWfmfahHHBNrsI+UBSgNw2klhwoa3qpILJPS9oW484ekZTd0iexo+EMxBw5iltvd8CrsTErrvhXW9uMTmRvsKhTV/ubrfnRqwZh3OOB7YAo8cZDRcllgCAaF52saeYgz+ehfs=
+	t=1725967185; cv=none; b=DXJq/4WixY2jEeUiqbGFAzoZFC8/gfwWotEPxeC/MTJ9c+c8tUPbx9JPg/vWGt3N0EeZVD3pI4fcJVGRZ371oXabxG18f8N1ipgEI1E0K7fSZ67gYpPFeTvNb24HMInm9nzF9TyZNMk1aR0w2EYMRyzAJn2rNFj+C4LHe86qfSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725967140; c=relaxed/simple;
-	bh=55mpAJh1ejnjG3zjVoMFq9utasuXofU8sWEZisjVxew=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mxt5EYv07lYz/LTeX54UQ7vAIrxIo8hKn4pdqOR7vDMDCkZXpwzVqMjE6v6n2OjUQ26UEx4BREWLnU7w/0u64TiFsSz9el6wH44aLbumvEaxc7afDbNA1ZdT+1kHI59kqNhQojE684NWCjV7VEPnVJYDluSPGwUb62knkfFdNrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 10 Sep
- 2024 14:18:46 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: David Howells <dhowells@redhat.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Jarkko Sakkinen <jarkko@kernel.org>, Andrew Zaborowski
-	<andrew.zaborowski@intel.com>
-CC: Roman Smirnov <r.smirnov@omp.ru>, <keyrings@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v2] KEYS: prevent NULL pointer dereference in find_asymmetric_key()
-Date: Tue, 10 Sep 2024 14:18:06 +0300
-Message-ID: <20240910111806.65945-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725967185; c=relaxed/simple;
+	bh=NITUG13tg6OeRjUeeRV7q4yVc5SHqZar4SuO8+29cuA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CsEUDMpjXbEHJdTREdNIcKMA8+AocpRVd8zZCgGuqOnBQXa+xROAnG+/RBdeaRocXgQLikkI0H6Hr4AZUesc7virHSLpdUQ/XHk7mVc34uzavNPnmi0q5OjmULnY8q/1oRoI+RKb5RIZ/0sESsHCFwKyNmEO52R65wSGmbD/Dcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wAZgJ9Dw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2BBABC8A;
+	Tue, 10 Sep 2024 13:18:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725967104;
+	bh=NITUG13tg6OeRjUeeRV7q4yVc5SHqZar4SuO8+29cuA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=wAZgJ9Dwzdy0Cy+BVVn5PYr7PFtBpzLdqbkdrdKJQzvzuIJMUSUkBJLjYAwUbDFYC
+	 vVUGAbxYZFVmcpGoKvthtIWHC/WIbsD2w3kPyOgL/xeYGD5MJgQZLrDfZWX4omnYEl
+	 d8UckE94fKz9ZYFpWYejNYBEGTlmdou1Afcw/3co=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v3 0/3] drm: xlnx: zynqmp: Add DP audio support
+Date: Tue, 10 Sep 2024 14:19:18 +0300
+Message-Id: <20240910-xilinx-dp-audio-v3-0-75560793f4d0@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/10/2024 10:24:22
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 187650 [Sep 10 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
- 766319f57b3d5e49f2c79a76e7d7087b621090df
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.22.207.138:7.1.2;127.0.0.199:7.1.2;inp1wst083.omp.ru:7.1.1;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/10/2024 10:27:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/10/2024 9:04:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-B4-Tracking: v=1; b=H4sIADcr4GYC/3XNQQ7CIBCF4as0rMUU2lBx5T2MiykDdhKFBpTUN
+ L27tCsTdfm/ZL6ZWbKRbGLHambRZkoUfIlmVzEzgL9aTliayVq2dSMkn+hGfuI4cngiBd6qA6C
+ QTjvVsnI1Ruto2sTzpfRA6RHia3uQxbr+t7LgNVdamU47MH2vT4QWUvB9gIh7E+5sJbP8ZPQ3I
+ wujJSpsoDPQ2R/Msixv8Z7ofvwAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Vishal Sagar <vishal.sagar@amd.com>, 
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
+ =?utf-8?q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3325;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=NITUG13tg6OeRjUeeRV7q4yVc5SHqZar4SuO8+29cuA=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBm4CtFkj2OEzt5vjCDAw7ixveNwniJGPXDDCDjG
+ 3q9ejfqVZyJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZuArRQAKCRD6PaqMvJYe
+ 9cOBEACK/WWJMncR8gV/veFBv7cUYc7po2u4ALuJ/rDNhCEQjnerX31CWZOFsBTiRQpIKzWSFYP
+ vGZCwxwunaszhccgL05hhkYN8v7dKgpuLgFJicmjLq/OpE3KJoyDSIwwtcyptzMPPAuV7nz3976
+ WamvaCeWoB/J9B1cFqan2GK09+XCW8XY2+DCFLEYStNoYm/4ZyzMMbH1b1AIrtn8nfEfwd3A2AO
+ 0TL4YHSMJcuyOwXqf51pu47u/vrg0FESIO9SXowYExsaM4sfOZICfPVgVnQfpZk9MDCZwPubmUS
+ yGXQcRrHADZcKop3zIATQszwQtgBxuQiXRkDSplVhB7pISQLa1okZkWQYKyJ5nnsC7nvFQsqDTY
+ 1f2nG0Q5TNoXTgzzHaxUlrCuqG0NIJavKf8jmt5r+e35c62Pj0w1Hj1Bg7yVS9ZOwTzhPRylJqJ
+ v15kk+z8IT0ES9nSzSXTSOSTlR9S/CIEyl+K4yNyIn1vNJLmrPQgt7DjZZ2TyYEmgFtjtwMIato
+ HVgcOF+sQ/qv8a+9Qgr0+bf6OnU24eC7FUK3oC6EvxONdvRuBUgsqyonWH589Cgnp+O5NCaAI2I
+ OObfIKVT0fHCtVrj8DyIIOm5oESeONwDRenPvW0XLF6XYnAtsoKN3bi2JRLWqvLKd1BAepeYRdj
+ Bf9RdgmrHaZbaHA==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
-the kernel will first emit WARN and then have an oops because id_2 gets
-dereferenced anyway.
+Add DisplayPort audio support for Xilinx ZynqMP platforms.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace static
-analysis tool.
+This depends on patch adding cyclic DMA mode for DPDMA driver:
 
-Fixes: 7d30198ee24f ("keys: X.509 public key issuer lookup without AKID")
-Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+https://lore.kernel.org/all/20240228042124.3074044-3-vishal.sagar@amd.com/
+
+If that patch is missing, starting an audio playback will fail with an
+ASoC error. The cyclic DMA patch has recently been accepted to the DMA
+tree.
+
+The current DT is, for some reason, missing the DMA channels for the
+audio. This series adds that to the bindings and the dts file, but to
+support older dtb files without the audio DMA, the driver will not fail
+if the audio DMA is missing, but will just mark the audio support as
+disabled.
+
+To: Lars-Peter Clausen <lars@metafoo.de>
+To: Jaroslav Kysela <perex@perex.cz>
+To: Takashi Iwai <tiwai@suse.com>
+To: Liam Girdwood <lgirdwood@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Vishal Sagar <vishal.sagar@amd.com>
+Cc: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Cc: Péter Ujfalusi <peter.ujfalusi@gmail.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+Changes in v3:
+- Expand the description in "dt-bindings: display/xlnx/zynqmp-dpsub: Add
+  audio DMAs" to be more clear about the DT binding change.
+- Rebased on top of current upstream
+- Link to v2: https://lore.kernel.org/r/20240319-xilinx-dp-audio-v2-0-92d6d3a7ca7e@ideasonboard.com
+
+Changes in v2:
+- Fix a missing double-quote in the DT binding
+- Link to v1: https://lore.kernel.org/r/20240312-xilinx-dp-audio-v1-0-696c79facbb9@ideasonboard.com
+
 ---
- crypto/asymmetric_keys/asymmetric_type.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Tomi Valkeinen (3):
+      dt-bindings: display/xlnx/zynqmp-dpsub: Add audio DMAs
+      arm64: dts: zynqmp: Add DMA for DP audio
+      drm: xlnx: zynqmp_dpsub: Add DP audio support
 
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index a5da8ccd353e..43af5fa510c0 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -60,17 +60,18 @@ struct key *find_asymmetric_key(struct key *keyring,
- 	char *req, *p;
- 	int len;
- 
--	WARN_ON(!id_0 && !id_1 && !id_2);
--
- 	if (id_0) {
- 		lookup = id_0->data;
- 		len = id_0->len;
- 	} else if (id_1) {
- 		lookup = id_1->data;
- 		len = id_1->len;
--	} else {
-+	} else if (id_2) {
- 		lookup = id_2->data;
- 		len = id_2->len;
-+	} else {
-+		WARN_ON(1);
-+		return ERR_PTR(-EINVAL);
- 	}
- 
- 	/* Construct an identifier "id:<keyid>". */
+ .../bindings/display/xlnx/xlnx,zynqmp-dpsub.yaml   |  10 +-
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |   7 +-
+ drivers/gpu/drm/xlnx/Kconfig                       |   9 +
+ drivers/gpu/drm/xlnx/Makefile                      |   1 +
+ drivers/gpu/drm/xlnx/zynqmp_disp.c                 |  48 ---
+ drivers/gpu/drm/xlnx/zynqmp_disp_regs.h            |   7 +-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                   |  54 ++-
+ drivers/gpu/drm/xlnx/zynqmp_dp.h                   |   7 +
+ drivers/gpu/drm/xlnx/zynqmp_dp_audio.c             | 461 +++++++++++++++++++++
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c                |  39 +-
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.h                |  15 +-
+ 11 files changed, 553 insertions(+), 105 deletions(-)
+---
+base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+change-id: 20240312-xilinx-dp-audio-468ad12f9f64
+
+Best regards,
 -- 
-2.34.1
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
 
