@@ -1,52 +1,59 @@
-Return-Path: <linux-kernel+bounces-322562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2253972AE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED28972AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7861B2864EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02911C21B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B717DFE3;
-	Tue, 10 Sep 2024 07:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E80E17DFF9;
+	Tue, 10 Sep 2024 07:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NYpjFeAj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+LltnAv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E523282E2;
-	Tue, 10 Sep 2024 07:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D337817C231;
+	Tue, 10 Sep 2024 07:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953726; cv=none; b=nSRG4+NqWoXDdqZxcKMrzjFUV3S9PKgmDgNLIYzZBy7E83q42WAVlq6zco8RMasUcHFenUpCIX43TWOq/qSiOO8WFUPogw+VnC0An7K0Opw3twQDxk+2qIL3NGAsaM3O60Edn5AhpFS+PgHeez1iMj5zdKPuiWD6hVGYBfVycoo=
+	t=1725953744; cv=none; b=W1RqRqspp+DjRepAwQ2wRMzyp3Fg1Q6iHYXcf78WM2ebYsX8bFP4iMGSVLjW14BezKE7cfgccsOEIChLfHggwX1FcxSpsSAeMZH68msLFnP9qqA7ytZTKshQgDlC+TnXsopWOQn5hvQ0jWqq9gKYynHVveldFA9PVuI7er7UjCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953726; c=relaxed/simple;
-	bh=jmuPBBDko1ACFWgPbOy808BcO+FQdwdlAD0birFTW8A=;
+	s=arc-20240116; t=1725953744; c=relaxed/simple;
+	bh=mr8XvHNsiLz95NPj4gzHNsXQjjy6cU6eIPrWByINPBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCWKG0YMuwmwlltk18LRTWlXnhaWGelBI5l9y6Pi8CfMb+Ny+Iwbt9e9kpJiuCNtLViMz6S38Hcraz9v1k1oUNtp0BjqCaZooJJ25B+o/sZOhEzlHJ5JF6l1yvBZg8pGEw+6XUl9/T5L3v04Uwp3X9jYlHswfOyOcW+yOZDdk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NYpjFeAj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B270CC4CEC3;
-	Tue, 10 Sep 2024 07:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725953726;
-	bh=jmuPBBDko1ACFWgPbOy808BcO+FQdwdlAD0birFTW8A=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=shkDVMF+ysXCF67T1cmoCb6ZCEbdtUsElF6iYDO8VKsRWk+nJhNi7OnBO0ey8pP0CNSD+WHrWOVE17R8Ac5nQhvY6sPpAGAnufWWlWqEedwRWI3TdsuqyjOXVY0Yzbpg7aSHJcKkUbWR9Y9pnsNbfh7cU/TUZYjmZZvBnVf37Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+LltnAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46480C4CEC3;
+	Tue, 10 Sep 2024 07:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725953744;
+	bh=mr8XvHNsiLz95NPj4gzHNsXQjjy6cU6eIPrWByINPBI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NYpjFeAjrPCkwZGbEKuSxbFLY2tgvWIv7H9pYXAEXz/cSDZD4V3Enj+396B4IAc0x
-	 UO7N8DRT5qG3IwgZJv/gI4fNvwRzZT8SXunbM/apNNoiyXtATGKOqJtY88XdfJSbQt
-	 8RJj04XaTDMTEGengK4W24Xpn1QV+wiDEtiVq/mA=
-Date: Tue, 10 Sep 2024 09:35:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jamie Heilman <jamie@audible.transient.net>,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	stable@vger.kernel.org
-Subject: Re: regression in 6.6.46; arch/x86/mm/pti.c
-Message-ID: <2024091014-crawling-copied-8034@gregkh>
-References: <Zt6Bh2J5xMcCETbb@audible.transient.net>
- <87h6apcp9x.ffs@tglx>
+	b=F+LltnAvFPIXt3RyLBcWL89DQOVgII2wPBcJ0bZsZcDXBSiOvSKq6Zs+YYN7ywkAH
+	 44vXRD1iskOjHh0FlDRzLNtoMcWY4pCR99Co/PiuBxYoq8twiP75CnXo43noW+cCy2
+	 z+GugpL3ETW/JweHSv1WARuibugQ9lUqrhADeVR2LhShsVbFN2X3+TMJiPjsb3cazf
+	 vs7RO3YyL9iXla6oBlyhaT1moplymnUONutumhYg5RpAscysiiO58DvpF08BJBL5mk
+	 I6VCCesiKllsqYr7qDEuhK89ZvNi+hmjTf7xYQEFngcEDVDav6XHz5eKTSFjInBtpc
+	 bB2ennlka90DA==
+Date: Tue, 10 Sep 2024 08:35:40 +0100
+From: Simon Horman <horms@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Justin Lai <justinlai0215@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] rtase: Fix spelling mistake: "tx_underun" ->
+ "tx_underrun"
+Message-ID: <20240910073540.GB525413@kernel.org>
+References: <20240909134612.63912-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,26 +62,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h6apcp9x.ffs@tglx>
+In-Reply-To: <20240909134612.63912-1-colin.i.king@gmail.com>
 
-On Mon, Sep 09, 2024 at 08:30:34AM +0200, Thomas Gleixner wrote:
-> On Mon, Sep 09 2024 at 05:03, Jamie Heilman wrote:
-> > 3db03fb4995e ("x86/mm: Fix pti_clone_entry_text() for i386") which got
-> > landed in 6.6.46, has introduced two back to back warnings on boot on
-> > my 32bit system (found on 6.6.50):
+On Mon, Sep 09, 2024 at 02:46:12PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in the struct field tx_underun, rename
+> it to tx_underrun.
 > 
-> Right.
-> 
-> > Reverting that commit removes the warnings (tested against 6.6.50).
-> > The follow-on commit of c48b5a4cf312 ("x86/mm: Fix PTI for i386 some
-> > more") doesn't apply cleanly to 6.6.50, but I did try out a build of
-> > 6.11-rc7 and that works fine too with no warnings on boot.
-> 
-> See backport below.
-> 
-> Thanks,
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Now queued up, thanks!
+Thanks Colin,
 
-greg k-h
+I've confirmed that this addresses all instances of this problem
+in this driver. Thanks for also sending a patch for the same problem
+in the r8169 driver [1].
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+[1] https://lore.kernel.org/all/20240909140021.64884-1-colin.i.king@gmail.com/
 
