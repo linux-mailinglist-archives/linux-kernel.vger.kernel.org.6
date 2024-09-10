@@ -1,128 +1,204 @@
-Return-Path: <linux-kernel+bounces-322622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04089972B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6959972B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E9728863C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F891C24AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 08:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F430185B5F;
-	Tue, 10 Sep 2024 08:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15E4188003;
+	Tue, 10 Sep 2024 08:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFVzPDGj"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uL4bvR8I"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428D814EC64;
-	Tue, 10 Sep 2024 08:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08C9187FE7;
+	Tue, 10 Sep 2024 08:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725955623; cv=none; b=cj2B7Oh2UjWUbXH7Fw9FIWdIAf5XEBT+u4fAt5vM87L87r5QPmGFzDvddquNrrx0o5b8obyTE5fK3MsPu11LHgDPlkuro0IEBtSeTSsUzgAej3g3uytqaL488+xAMgXYsuj2JuLU5jTI7kUatKwTMr//GpanBRKvHvR0HCnhhVE=
+	t=1725955654; cv=none; b=UCG7zYsKYr8Rqq1fIe7G9h6UEI9r1iW0k2lD6pe9I6Y3j5wb3NSPIvb5vIZzSl4K9lKTr0Dux9mg3z4CInuGb513kP7LSb+l1nwm6plntoS6loHcg9dDfBVMlQHkQw22q0U2hWtveRxEnUrfb9eZp6I2YZ40pZG/09DzNifvw/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725955623; c=relaxed/simple;
-	bh=1ltcXmceTLZy9QqnQ13U4oGqvK2CTpI93pBXiQ17Hvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ut4IeTt/02IbW8p/hKmqLL3QjRch2h+16nb6Ct3367ubHW7Cmwb9HSToSg35KvfQT0XFHrVMDqSd6WquiSlgRK5fvcVt6raGHRTZViCT/obngf3IIhbw6En4c8ZeXZpUMn7I03rD7ek64UaWGZi0d2T+iLZYIgXELjGfp0BgjNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFVzPDGj; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53653ff0251so6181360e87.0;
-        Tue, 10 Sep 2024 01:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725955620; x=1726560420; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xz5CIdHVHvkHtiNrFTW/30ci7obg66dA0as2KpLkByU=;
-        b=QFVzPDGj6u3LNmx+cwLDXp+5UaI0Ol4hr0RvZopWfOym7EI+xGn9NxZzxDcskmRBdF
-         pElmDJFBhijdu+SYxYwqaW4PCYZs/XJqeCSNtUJK/Wgq7Jm4LWr0Lcw9l+AGeCAy3zYS
-         R/Xq4i0tHS/sx0Ghm8MTmV2oDdIY7FLD6+rNVU1sbsAEhq21w2NXkxpHFVtlY/W8MhL9
-         4KktQGJdrz1UgcnhT6lq5DT8rHYCHZ3zWatUtaWSKbZl3TmT7q//N09MPIZgCOnVJYyt
-         RQUSLFxwZn1mLMAFe1Fy5rTnoXNi1AfzPUteMqBT5UMC+Jj7rmh+1mMQnDNIuVUi9/q+
-         PleQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725955620; x=1726560420;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xz5CIdHVHvkHtiNrFTW/30ci7obg66dA0as2KpLkByU=;
-        b=WdXxxkKkzxwyFsI/sZhjdLP7rgWKgTg600LNVijd9sqhLnaC8f6A0Ch/T5FLwILQwh
-         l6J1VAG9dHaYrBx4jhpjEoPUiVPniYajU8Z5VKdeisOlPex1HgP1zHhf9BD7gN0RGOgH
-         Q4QCAestW6OTOXszAF5UnR7IEThqH/wQyx1FlvXEhi53Uv7h1oxpbtv0eLSup11o+EYb
-         UsDsH1TxGX1rGRlaDrAbnNtFzB1zkMzf645if82BkUVY2AZ05gfNXg43WuT98wKu/G+r
-         ZrGfqFW7sSHgigZP6VWTQ200kUQ+lXB4NfiEFkCTmP4J0T0+5SqtOXDXeet//ZQiKlbT
-         vBtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRYXsPhL3Q+kdf2Q3lyxDzK7zLx3/LnA02gkIhsNaZNmbMmu/uJQcFVyEhHgVP1xIgmlT2Cl1+5ZJg@vger.kernel.org, AJvYcCW4fYVblyq2RLo+840rA7f2ZTfw9TMewxf+oqq3LSEdVjSda5toP1c/rynTU4jaZHJhyFdvRr8ozc46xw==@vger.kernel.org, AJvYcCWDhXK/PmAaqbJcO/yDmdEXgbjxhRJ7m4uP7I4gylySOLH4k0Y1W3XKN3HeBCXzN33kepBhGNnmWQzeZpow@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4clOoHPW/ZBSbCUUcVChSNhEEN2JCFA87vEPsTdxmODH2AuZx
-	zTRp6RwM84vAi69KL9KvzF/HFYMyYBi3Ex8Jf64NwXXl6Ual/EcV
-X-Google-Smtp-Source: AGHT+IH1aZC32vo+iln8qSrTi4KRxrtdkgJniacmqzDUfBPShm6QxI6FHwLAlx4LAs4kuShuES66Yg==
-X-Received: by 2002:a05:6512:31c5:b0:52c:e07d:229c with SMTP id 2adb3069b0e04-536587b06e0mr10247610e87.22.1725955619305;
-        Tue, 10 Sep 2024 01:06:59 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cacf8sm1020961e87.131.2024.09.10.01.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 01:06:58 -0700 (PDT)
-Date: Tue, 10 Sep 2024 11:06:56 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Paul Burton <paulburton@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] MIPS: cm: Probe GCR address from devicetree
-Message-ID: <tyjojeubipma56cnldy3yabbiakca7bnt4efei7i4r5xme7gpq@ecz5rqwwyg5n>
-References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
- <3wemwdkev7pafyfu3yxhpvvpqaplhlejbzxtmahcarrnoeelzr@747sgyl63kwj>
- <Zt745ZtuZmVH61uA@alpha.franken.de>
+	s=arc-20240116; t=1725955654; c=relaxed/simple;
+	bh=RtVNswHRz3cymvLxxz6qA0j9iMPcwqxtPHCjGnFRzUE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M2XLE+iDfKmF3Pev4CJ+XSLecTX1Rhk9sfjo0hlkLyRV0DK+1q0WdDG0HGQr+hgUDW32cPeMmVOBDzZjbdjHgqzuqSc+IcM+LIffzzg9LrS9k1n4yIRhTKCvrXbpj4RWYynTz2nZJQ4TcD/HiUE+9Zt7ZhKu8FQMokJrw2b1TSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uL4bvR8I; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2558C741;
+	Tue, 10 Sep 2024 10:06:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1725955574;
+	bh=RtVNswHRz3cymvLxxz6qA0j9iMPcwqxtPHCjGnFRzUE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uL4bvR8I+fwLJCkOmzzAaBQosf2A+/kw2UFBVFYX5uAvOJCB3qLwJAY6eu2W6sn0o
+	 gG36xAHQGuYWO1Ahg11M4dG5s217FGulHmmzgp2eHLfo1tMhDR7D6GbLoeuW9/r95l
+	 8SjcymPAqwR80/vMpguw8Ttn9oxngfWDb5v5P1LE=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v5 0/4] media: raspberrypi: Support RPi5's CFE
+Date: Tue, 10 Sep 2024 11:07:05 +0300
+Message-Id: <20240910-rp1-cfe-v5-0-9ab4c4c8eace@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zt745ZtuZmVH61uA@alpha.franken.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACn+32YC/3WRzU7EIBhFX6VhLZXfljbG+B7GBZSvMxgpFTrNm
+ Mm8u7QTZaGzvMC5uTlcUILoIKG+uqAIq0suTDnIhwoNRz0dADubM2KECcKpwHGmeBgBU8FMw5R
+ pGRUov54jjO68N72+5Xx0aQnxay9e6Xb606F+O1aKCdZDY7uGjCNj9sVZ0ClMJuho6yF4tFWtr
+ OANIwVnGTfKCDVao7nhd3BecEVlwXnGgUrdtZ01nLV3cFHwjhQBq8j4SI003DbdoOg/+PUmJsL
+ nKZtdbnaQ0Qlwvvdu6asPN53O2IN1GqdFH+DR67RA3Jx6SEnvX9BXT/sAySlRpCVtzYVsFKb4X
+ Q9hDrUPk3V/FjznCddvQZXpQ+QBAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Naushir Patuck <naush@raspberrypi.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5030;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=RtVNswHRz3cymvLxxz6qA0j9iMPcwqxtPHCjGnFRzUE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBm3/48nh4gnkN8vMQfP2HQOeIfwivrmlR5lxwkl
+ +s5tY1YFOiJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZt/+PAAKCRD6PaqMvJYe
+ 9UdpD/oDq7Uz/uRejFy6i2xpiPZoIkdG0wfFYTf7H2tFz5Tgm6mr7lKgCPNatQoLUK4Q5iWVTTy
+ aYn0URNVUXfLvIJfjHfDuvx33SPMC2kVhL462d4leuAgT/RDAF1zrgq0V4sB/bjAw8zAtJTItqr
+ dLqWNAYIW6WYyagtfBRAd8YbzE4P73pMvNsSG0Xm2HvPEfWBOysSxsDcds61Estq67GdMnxDllj
+ 7fqc2vOaB0x8eJYH1mQD6IY7u8/HX96h8/M7DEmRCod3wAxfo4F9eaG2EYoohldhh3+MwolMkpB
+ kytlZjkUZ1FCOQfzL9g9BPuz/pyXA9VLR6m2lPdmlEMckacq0ZzOxeXTmwT4FgEdyzP/twnlkyD
+ yttTQ5daZeoCfhxw8hEal5nQ09m9cQz1VW+lh15xvmhsFy8XC+5lqKpFLFIQIYH7SqH0yTDPJpb
+ 9kgQoR/ys6qWW5WPYd608jfpOVXwKNWB1YUEGEM4yp4KFDiShhWHdPPeYqmD3fulNFFRZjP64vq
+ 7huIeOC8aiE+jzKTH+7F2xzvoGZjpQmrCSDC4svh8azr2Cj8fKsHN+QjJj3Imb/8vzqsZxtq84O
+ /Iu8MP/GHePK+3/Uu2sw9F8jAwutxoEtGx/SUtzrTyWRI1pPvnvWabNbTJwqJ4nDHThq/N+8Gne
+ 7z5N/atngXai0TA==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Hi Thomas
+This series adds support to the CFE hardware block on RaspberryPi 5. The
+CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
+ISP.
 
-On Mon, Sep 09, 2024 at 03:32:21PM +0200, Thomas Bogendoerfer wrote:
-> On Tue, Aug 06, 2024 at 10:49:52PM +0300, Serge Semin wrote:
-> > Hi Jiaxun
-> > 
-> > On Wed, Jun 12, 2024 at 11:08:52AM +0100, Jiaxun Yang wrote:
-> > > Hi all,
-> > > 
-> > > This series enabled mips-cm code to probe GCR address from devicetree.
-> > > 
-> > > This feature has been implemented in MIPS's out-of-tree kernel for
-> > > a while, and MIPS's u-boot fork on boston will generate required
-> > > "mti,mips-cm" node as well.
-> > > 
-> > > Please review.
-> > > Thanks
-> > 
-> > Got this tested on my P5600-based SoC implemented as non-generic
-> > platform. Alas the system hangs up on the early boot-up stage with no
-> > even a single char printed to the console. I'll be able to get back to
-> > the problem debugging on the next week.
-> 
-> any news about that ?
+To run this, you need the basic RPi5 kernel support plus relevant dts
+changes to enable the cfe and camera. My work branch with everything
+needed to run CFE can be found from:
 
-Oops. This patch set has absolutely slipped out of my mind. I am
-getting back to it immediately and will submit the debug status
-shortly after I dig out the reason of the hanging up. Sorry for the
-inconvenience.
+git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
 
--Serge(y)
+A few notes about the patches:
 
-> 
-> Thomas.
-> 
-> -- 
-> Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-> good idea.                                                [ RFC1925, 2.3 ]
+- The original work was done by RaspberryPi, mostly by Naushir Patuck.
+- The second video node only sets V4L2_CAP_META_CAPTURE instead of both
+  V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
+  This is a temporary workaround for userspace (libcamera), and
+  hopefully can be removed soon.
+
+I have tested this with:
+- A single IMX219 sensor connected to the RPi5's CSI-2 port
+- Arducam's UB960 FPD-Link board with four imx219 sensors connected
+
+ Tomi
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v5:
+- Add "depends on PM". The platforms that use CFE will always have PM in
+  practice, and it's not worth supporting both the PM and !PM cases as
+  it adds complexity to the driver.
+- Link to v4: https://lore.kernel.org/r/20240904-rp1-cfe-v4-0-f1b5b3d69c81@ideasonboard.com
+
+Changes in v4:
+- Drop unnecessary clock-lanes from the DT bindings
+- Drop unnecessary linux-media from MAINTAINERS entry
+- Drop unnecessary conversion to bool with !!
+- Don't set cap->bus_info in cfe_querycap()
+- Make debugfs files not readable by the world
+- Check the return value of v4l2_fwnode_endpoint_parse()
+- Remove the code dealing with remote_ep_fwnode. Instead use
+  v4l2_create_fwnode_links_to_pad() and media_pad_remote_pad_unique() to
+  create the link and get the pad index.
+- Add cfe/csi2/fe/dphy argument to the respective dbg/info/err print
+  macros.
+- Drop some debug prints and add a few, clarifying the prints for
+  enabling and disabling the streams.
+- Some cosmetic changes (linefeed, drop unnecessary assignment, move a
+  define)
+- Link to v3: https://lore.kernel.org/r/20240815-rp1-cfe-v3-0-e15a979db327@ideasonboard.com
+
+Changes in v3:
+- Based on v6.11-rc3. The PiSP BE series is now in upstream so no extra
+  dependencies are needed.
+- Fixed cfe_remove() return value, as the .remove hook has changed
+- Added Krzysztof's Rb.
+- Link to v2: https://lore.kernel.org/r/20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com
+
+Changes in v2:
+- Change the compatible string back to raspberrypi,rp1-cfe from raspberrypi,rpi5-rp1-cfe
+- Drop the references to rp1 headers in the DT binding example. This
+  allows compiling the example without the rp1 support.
+- Fix missing remap lines for mono formats
+- Fix csi2_pad_set_fmt() so that the format can be changed back to the
+  sink's format from 16-bit or compressed format.
+- Link to v1: https://lore.kernel.org/r/20240318-rp1-cfe-v1-0-ac6d960ff22d@ideasonboard.com
+
+---
+Tomi Valkeinen (4):
+      media: uapi: Add meta formats for PiSP FE config and stats
+      dt-bindings: media: Add bindings for raspberrypi,rp1-cfe
+      media: raspberrypi: Add support for RP1-CFE
+      media: admin-guide: Document the Raspberry Pi CFE (rp1-cfe)
+
+ .../admin-guide/media/raspberrypi-rp1-cfe.dot      |   27 +
+ .../admin-guide/media/raspberrypi-rp1-cfe.rst      |   78 +
+ Documentation/admin-guide/media/v4l-drivers.rst    |    1 +
+ .../bindings/media/raspberrypi,rp1-cfe.yaml        |   93 +
+ .../userspace-api/media/v4l/meta-formats.rst       |    1 +
+ .../userspace-api/media/v4l/metafmt-pisp-fe.rst    |   39 +
+ MAINTAINERS                                        |    7 +
+ drivers/media/platform/raspberrypi/Kconfig         |    1 +
+ drivers/media/platform/raspberrypi/Makefile        |    1 +
+ drivers/media/platform/raspberrypi/rp1-cfe/Kconfig |   15 +
+ .../media/platform/raspberrypi/rp1-cfe/Makefile    |    6 +
+ .../media/platform/raspberrypi/rp1-cfe/cfe-fmts.h  |  332 +++
+ .../media/platform/raspberrypi/rp1-cfe/cfe-trace.h |  196 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.c   | 2487 ++++++++++++++++++++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.h   |   43 +
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.c  |  583 +++++
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.h  |   89 +
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.c  |  180 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.h  |   27 +
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.c   |  581 +++++
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.h   |   53 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+ .../uapi/linux/media/raspberrypi/pisp_fe_config.h  |  273 +++
+ .../linux/media/raspberrypi/pisp_fe_statistics.h   |   64 +
+ include/uapi/linux/videodev2.h                     |    2 +
+ 25 files changed, 5181 insertions(+)
+---
+base-commit: 431c1646e1f86b949fa3685efc50b660a364c2b6
+change-id: 20240314-rp1-cfe-142b628b7214
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
