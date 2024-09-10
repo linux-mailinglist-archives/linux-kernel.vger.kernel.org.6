@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-323974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF598974653
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F352974655
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E793B22FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:22:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3E71F271B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 23:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DB61AC427;
-	Tue, 10 Sep 2024 23:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0171AC89C;
+	Tue, 10 Sep 2024 23:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="p/pDJEtL"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oC8Voj3B"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145A717E8EA;
-	Tue, 10 Sep 2024 23:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E271AAE0D;
+	Tue, 10 Sep 2024 23:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726010548; cv=none; b=J0JPLdOwMEqZ4VY0aNtbwUoN08EZk+EKMw11MgmQeI5Y+gVrf5FompyIbjv4e8obmTtWYUky7KK8aOjn+hUo9ncLaCQ4C87vUIyR3I1Ti96CYlx3qrZ202zebaDdQL6gkfESL8B6JVipMim2bEvQ+OCfmmt3zkyNPgfoVOX1Hxk=
+	t=1726010550; cv=none; b=HAT5zSC8aDAdNcML8bwoJbabmJCjJkMeDwXYK2dPZ722/LZ1BPE42hLWJqBetJIAph7av6EUzWyT1LBQ+t/jI8aW6/tXEzTXrB0SgLjsVXuWhQRnFzfq7dD8RisiavAE4TP7BgAs+ZhpgR6EmXhNAIVZdCaU8nLayvj6Ejm8tQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726010548; c=relaxed/simple;
-	bh=2Le4J1qFOBEeDzYrGwzIXoDLW8A/stxYseEXHveVP0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/VXb3yCjsuQoRo7V8AomgjfYA+zcG7ALMPaVMeNelDtZcFgmMBneqPsBgzr6G81QisUI9m/mQwNjLzP8cPBEB/xyzZg8OU9DO7Og2z3/V2PXCdpUEo3wICd5oFeMC/tWRtE5cot+Vn7wiU78zkYSpzq8PnbuWxmR1JjK5YqySI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=p/pDJEtL; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.192.84] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 04DA740FB7;
-	Tue, 10 Sep 2024 23:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726010541;
-	bh=OI2bhI4JX7fq+K7LPH3GOOJRQdjD8k3Jc2c1bwHWzrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=p/pDJEtLX79YyqiLUbtbx0Qde04k3/15qgCWPHp4zVIA5YnmKO96KmIaUVOz8v3AD
-	 TQqOl8HwqxyBLj6AtY9YgGMhhburq/9yaMrLqNLAZylx/Te27N9SbHBxG5lYOfgymu
-	 6rBrzu9F2oDwWb2M5qIlzIYVFbjvLb60PBtdzHo4b9QolEyHsd4CCJBpsznhzhpJFO
-	 y9/ICLwZdBVPpfMnI7f/DtlaaV5g50Unh7UYoG87VP3LoWExwc8aKnrGRpjXspaL+p
-	 9110s9Ij5aWGe5vdH8MrPKOoGV0aUKH5zWiSqbPj7+YBg4Y84ppPdCpAWnkXh+uJd7
-	 JYOqkPmVtNp3Q==
-Message-ID: <0e37939d-e996-4591-939a-a48d0f2a0a2a@canonical.com>
-Date: Tue, 10 Sep 2024 16:22:17 -0700
+	s=arc-20240116; t=1726010550; c=relaxed/simple;
+	bh=HEA+s30WUUlivN9vVASRW71UL6lRVxHrAeYlYDtMsTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QQyFOBtuE9z3jRh4M6PKtKP4h9c8T0EEWNbmBcYGTiBcdkLJz0zhZo1tEP6x5ixB7lOF1sBaU9tA6DnbVexWOQpOsVffdz9TZAdu+S7gLz5iWRW6Fy/Qua9wt8UjKyu5trkFvudfHYyZ8IJRxfDLjdtOLozR1yfehHUCiNJPd6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oC8Voj3B; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48ANMM2T041201;
+	Tue, 10 Sep 2024 18:22:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726010542;
+	bh=5qk97iBIhLEre/lgdZmwVuweJj61PMEKYVD/mxl1Us8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=oC8Voj3BCR04tHveNnSaXhyy+KQib4eVaJHCY7xZQ45IKrQIlilbEFqGcd9TIzyo9
+	 mUjGlZGDyGyo+cvpmEasHgwxRMt1X9yMFSGYXxPGL734a+2PbbxIXtndWfNKAX4qLR
+	 fA4/3NCIqi50fE4y7k1GpEJc1B5ca9EgoM9QsehI=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48ANMMb7018231
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 10 Sep 2024 18:22:22 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
+ Sep 2024 18:22:21 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 10 Sep 2024 18:22:21 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48ANMLDA073331;
+	Tue, 10 Sep 2024 18:22:21 -0500
+Message-ID: <091d7920-e197-4e14-af0c-8932af92a9dd@ti.com>
+Date: Tue, 10 Sep 2024 18:22:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,98 +64,237 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] security/apparmor: remove duplicate unpacking in
- unpack_perm function
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Shen Lichuan <shenlichuan@vivo.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240821072238.3028-1-shenlichuan@vivo.com>
- <46fc455c-385c-44fb-b194-0fd046f6d21c@canonical.com>
- <20240910205744.GA314978@mail.hallyn.com>
+Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240906175032.1580281-1-jm@ti.com>
+ <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
+ <cce6ec2f-3293-4f08-a965-76dece0ddfab@ti.com>
+ <b154b9b3-cb74-4a51-953c-d4328f992898@intel.com>
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240910205744.GA314978@mail.hallyn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <b154b9b3-cb74-4a51-953c-d4328f992898@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 9/10/24 13:57, Serge E. Hallyn wrote:
-> On Mon, Sep 09, 2024 at 11:57:05PM -0700, John Johansen wrote:
->> On 8/21/24 00:22, Shen Lichuan wrote:
->>> The code was unpacking the 'allow' parameter twice.
->>> This change removes the duplicate part.
->>>
->>> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Hi Adrian,
+
+On 9/10/24 12:10 PM, Adrian Hunter wrote:
+> On 10/09/24 17:30, Judith Mendez wrote:
+>> Hi Adrian,
 >>
->> NAK, this would break the unpack. The first entry is actually a reserved
->> value and is just being thrown away atm. Instead of double unpacking to
->> perms->allow we could unpack it to a temp variable that just gets discarded
+>> On 9/9/24 1:26 AM, Adrian Hunter wrote:
+>>> On 6/09/24 20:50, Judith Mendez wrote:
+>>>> The sdhci_start_signal_voltage_switch function sets
+>>>> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
+>>>> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
+>>>> edge or pos edge of clock.
+>>>>
+>>>> Due to some eMMC and SD failures seen across am62x platform,
+>>>> do not set V1P8_SIGNAL_ENA by default, only enable the bit
+>>>> for devices that require this bit in order to switch to 1v8
+>>>> voltage for uhs modes.
+>>>>
+>>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>> ---
+>>>>    drivers/mmc/host/sdhci_am654.c | 86 ++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 86 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+>>>> index 0aa3c40ea6ed8..fb6232e56606b 100644
+>>>> --- a/drivers/mmc/host/sdhci_am654.c
+>>>> +++ b/drivers/mmc/host/sdhci_am654.c
+>>>> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
+>>>>        u32 tuning_loop;
+>>>>      #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>>>> +#define SDHCI_AM654_QUIRK_SET_V1P8_ENA BIT(1)
+>>>
+>>> It would be better for the quirk to represent the deviation
+>>> from normal i.e.
+>>>
+>>> #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+>>>
+>>>>    };
+>>>>      struct window {
+>>>> @@ -356,6 +357,79 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
+>>>>        sdhci_set_clock(host, clock);
+>>>>    }
+>>>>    +int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+>>>> +                        struct mmc_ios *ios)
+>>>
+>>> Simpler to call sdhci_start_signal_voltage_switch() for the normal
+>>> case e.g.
+>>
+>> This is simpler, so sure will use thanks.
+>>
+>>>
+>>> static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
+>>> {
+>>>      struct sdhci_host *host = mmc_priv(mmc);
+>>>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>      struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>>>
+>>>
+>>>      if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
+>>>          ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
+>>>          ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>          if (ret < 0) {
+>>>              pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>>>                  mmc_hostname(mmc));
+>>>              return -EIO;
+>>>          }
+>>>          return 0;
+>>>      }
+>>>
+>>>      return sdhci_start_signal_voltage_switch(mmc, ios);
+>>> }
+>>>
+>>>> +{
+>>>> +    struct sdhci_host *host = mmc_priv(mmc);
+>>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> +    struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>>>> +    u16 ctrl;
+>>>> +    int ret;
+>>>> +
+>>>> +    if (host->version < SDHCI_SPEC_300)
+>>>> +        return 0;
+>>>> +
+>>>> +    switch (ios->signal_voltage) {
+>>>> +    case MMC_SIGNAL_VOLTAGE_330:
+>>>> +        if (!(host->flags & SDHCI_SIGNALING_330))
+>>>> +            return -EINVAL;
+>>>> +
+>>>> +        ctrl &= ~SDHCI_CTRL_VDD_180;
+>>>> +        sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>> +
+>>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>> +            if (ret < 0) {
+>>>> +                pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
+>>>> +                    mmc_hostname(mmc));
+>>>> +                return -EIO;
+>>>> +            }
+>>>> +        }
+>>>> +
+>>>> +        usleep_range(5000, 5500);
+>>>> +
+>>>> +        ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>>> +        if (!(ctrl & SDHCI_CTRL_VDD_180))
+>>>> +            return 0;
+>>>> +
+>>>> +        pr_warn("%s: 3.3V regulator output did not become stable\n",
+>>>> +            mmc_hostname(mmc));
+>>>> +
+>>>> +        return -EAGAIN;
+>>>> +
+>>>> +    case MMC_SIGNAL_VOLTAGE_180:
+>>>> +        if (!(host->flags & SDHCI_SIGNALING_180))
+>>>> +            return -EINVAL;
+>>>> +
+>>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>> +            if (ret < 0) {
+>>>> +                pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>>>> +                    mmc_hostname(mmc));
+>>>> +                return -EIO;
+>>>> +            }
+>>>> +        }
+>>>> +
+>>>> +        if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
+>>>> +            ctrl |= SDHCI_CTRL_VDD_180;
+>>>> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>> +
+>>>> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>>> +            if (ctrl & SDHCI_CTRL_VDD_180)
+>>>> +                return 0;
+>>>> +
+>>>> +            pr_warn("%s: 1.8V regulator output did not become stable\n",
+>>>> +                mmc_hostname(mmc));
+>>>> +
+>>>> +            return -EAGAIN;
+>>>> +        }
+>>>> +        return 0;
+>>>> +
+>>>> +    default:
+>>>> +        return 0;
+>>>> +    }
+>>>> +}
+>>>> +
+>>>>    static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
+>>>>    {
+>>>>        writeb(val, host->ioaddr + reg);
+>>>> @@ -801,6 +875,8 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>>>>                        struct sdhci_am654_data *sdhci_am654)
+>>>>    {
+>>>>        struct device *dev = &pdev->dev;
+>>>> +    struct device_node *np = dev->of_node;
+>>>> +    struct device_node *node;
+>>>>        int drv_strength;
+>>>>        int ret;
+>>>>    @@ -844,6 +920,15 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>>>>        if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
+>>>>            sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
+>>>>    +    node = of_parse_phandle(np, "vmmc-supply", 0);
+>>>> +
+>>>> +    if (node) {
+>>>> +        node = of_parse_phandle(np, "vqmmc-supply", 0);
+>>>> +
+>>>> +        if (!node)
+>>>> +            sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SET_V1P8_ENA;
+>>>> +    }
+>>>
+>>> It would be simpler without 'np' and 'node'.  Not sure
+>>> what the rule is meant to be, but it could be something like:
+>>>
+>>>      if (of_parse_phandle(dev->of_node, "vmmc-supply", 0) &&
+>>>          of_parse_phandle(dev->of_node, "vqmmc-supply", 0)
+>>>          sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
+>>
+>> My issue with this is that I also need the quirk (SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) for eMMC. DT node for eMMC does
+>> not include vmmc and vqmmc supplies. That is why I had the quirk logic
+>> inverted.
 > 
-> Heh, I recon this should probably be documented in a comment? :)
+> Ideally there would be a more direct way to distinguish eMMC, but
+> otherwise, having both supplies or neither would be:
+> 
+> 	if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
+> 	    !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
+> 		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
 
-yes, definitely.
 
+Not sure I love the double NOT, but ok, I can use this, will fix for v2.
+
+Thanks for your suggestion!
+
+~ Judith
+
+> 
+> 
+>>
+>> This patch fixes timing issues with both eMMC and SD. (:
+>>
+>> ~ Judith
 >>
 >>
->>> ---
->>>    security/apparmor/policy_unpack.c | 1 -
->>>    1 file changed, 1 deletion(-)
 >>>
->>> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
->>> index 5a570235427d..4ec1e1251012 100644
->>> --- a/security/apparmor/policy_unpack.c
->>> +++ b/security/apparmor/policy_unpack.c
->>> @@ -649,7 +649,6 @@ static bool unpack_perm(struct aa_ext *e, u32 version, struct aa_perms *perm)
->>>    		return false;
->>>    	return	aa_unpack_u32(e, &perm->allow, NULL) &&
->>> -		aa_unpack_u32(e, &perm->allow, NULL) &&
->>>    		aa_unpack_u32(e, &perm->deny, NULL) &&
->>>    		aa_unpack_u32(e, &perm->subtree, NULL) &&
->>>    		aa_unpack_u32(e, &perm->cond, NULL) &&
+>>>> +
+>>>>        sdhci_get_of_property(pdev);
+>>>>          return 0;
+>>>> @@ -940,6 +1025,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>>>>            goto err_pltfm_free;
+>>>>        }
+>>>>    +    host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+>>>>        host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>>>>          pm_runtime_get_noresume(dev);
+>>>>
+>>>> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
+>>>
+>>>
 >>
+> 
 
 
