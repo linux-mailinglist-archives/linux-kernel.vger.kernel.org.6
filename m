@@ -1,171 +1,223 @@
-Return-Path: <linux-kernel+bounces-322876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D3C9731B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:14:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87370973135
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359341F29154
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:14:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8341C255D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D0218C913;
-	Tue, 10 Sep 2024 10:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714C19EEB7;
+	Tue, 10 Sep 2024 10:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pCk0rRF4"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JO2GOP5Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0647188A0C;
-	Tue, 10 Sep 2024 10:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72219ABDC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963017; cv=none; b=mBcOkwfH1A5moqKQdwquv7uTrEtTu1PNn+aE0ZTERLbwZcHFDiPrtCxMWCix5sSb0WVWqLR/WBxh8FTiXL8hGoK/AwzdG5K5u1SbPqHiqcrtgWZvJxoOppr5+a6inkLfDYrD0nAz+GO+Uq0J7boCrDUi6q0Eq2HiVfok/vDQNBU=
+	t=1725962685; cv=none; b=JBGLo3hU2aJzVH5ii+0JMTANqrfo0JUj9EeqWkflpW1YGJq3O3IRqnx0yG4Tn07oeDuZXGp1h4cRj7Ga6NwresSKXGuSe9uxOwaMQwRc5Q8RE2hFr8ip57wAxJcXgXEgAi/wyD8vUT7Fvz8eQ7/rEDMQ1c+C0mMjiZokCv36Jps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963017; c=relaxed/simple;
-	bh=9+c9pvgoddnrMvDhdI6Wh8Iz8hbCY/65n/sGOMz/UlA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=p+ykqDfNiHyS+3cfdNib6CLpbH9RCy/PqKWGJIXPeUE+PprpXNyqiE3yJ2Tfr0va9CJxr6quY17+PSzYfD+ZqOzt6fhnkK7b3CjBUrSjiVON3ePE+YlmKD2sFH9N88+ss2wbuK0xT1bBPAu/zXUj/mWMuL9j7sG0TM7XHoQRr/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pCk0rRF4; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1725962711; bh=SH5quYrxe+ydY/dZue9zWjjQGockMw3uC6pR6yuHmC0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pCk0rRF4CKm8dEwCpRUsrKXFLhsp5LePti14GKHEk0FcXfal0ByDGLhZ7lEeAdS66
-	 SVq+p4e0Pwlmx4HEqADPMa73EmoSEIxUlxiQVkC9iWyx2WsBUB/oQiY1W44j61U4J7
-	 80wdifw4QFtyEhSd52zzhqyj1uicQimbeTVBTeik=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id EB82C6BA; Tue, 10 Sep 2024 17:58:56 +0800
-X-QQ-mid: xmsmtpt1725962336tey4kg212
-Message-ID: <tencent_7142963A37944B4A74EF76CD66EA3C253609@qq.com>
-X-QQ-XMAILINFO: MoTnVqEimZYUDPMNuaEEYD1qKiYGKR18HtjHTCrT9DFB6E6aYK2PWPueA8De56
-	 P5jrFDiiQQqQQFd8Cxr6HKaKZyl1Z3fyvyHD8pwgAKbXJ5ZwF3mH+GCFFnEIChpjNneSaKRu9NQc
-	 7WbFeayXT4kaQevoB9LajPHWxkAEmzaEB1lw75XEhiArRrbQ3NnBAknTMNGR0lM3L0B50LxBObm/
-	 ifIzj7bXQOc/1hX7NmCPpN8kc/e2xGyCIW8yH4ZWiVMLUbAPuXM8krf9Ypk3rQTkOYCa2Q/RfNIq
-	 DwdGOX8aJjYXF9SRecYLKQDVo9D7b3jPEW+/vfnp+No4kxo3dIJGoRs+BcmBY3v3J0Wo1e5FNuaq
-	 VF5lCBuNTD42I3GxXBRGKSuAQ9fgElF4zk3iueDv9arxK58cA5r/+9kXj69lniegPw3sFei75C9T
-	 UwIKWhgf0RV+74swfUUrqG5BuolVXntmBhJA1UPDZPQQAJAiSWGy1lkK1Y9CVAzb/46c04ssDRkl
-	 Cx4RSH3buQK00B7Osb/+FHXZ2FVJS36fiMZctefRod+kuH7uRts9Zo2meXRckT+9pzpomlAkXb2Q
-	 YdLgTG/QkHnEr0L3Qj57u9d3ZuP9KY/rP9Wf/Aq7wLHjr8Zt1DLgoHvuwrRv0mhGvWQmuAoJNonr
-	 iv1O7m9aDFa6ojTOiT9rrDHFPgfS9rb2DH5YGOcuSl1fBzRTJBxYmEtry+y9t+rnJWsLtlzMihfL
-	 jDJvNlwY+xSu0gIWNfHENwKgIdsD2T319KGuN6NUGhyT/ki1rFYxqwVyWBRkx80LiIIxyHuDcOvL
-	 SY8U+rYd0muh0wYg4boHX9FlvIbpbPS2WSxFPvenM00N1paEXhy9QgV0U6g7zxO9uQPOQD6XH22/
-	 kGs6tOUZIEL3QSqaOZRUUsgujLGxoUIUHF5DoupAX5SJ5X/zPDP/c1A4djpNioqZgt/Zno8fYQCn
-	 cf4F4kklhD/LcmnhKrUyB/NVRyfpz+tMgUsNKx4keYV2G2C1sK4TSGH1TKFHY4u3BgF4p+ss50DN
-	 vHi7LKz1YKozdRep8GjLl33xUFZZkCaNI4eJKo7VBHzhc5wKyv6CXnOsJ1qUQ=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	geliang@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martineau@kernel.org,
-	matttbe@kernel.org,
-	mptcp@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH net V4] mptcp: pm: Fix uaf in __timer_delete_sync
-Date: Tue, 10 Sep 2024 17:58:56 +0800
-X-OQ-MSGID: <20240910095855.2618606-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <tencent_272542BA3FBB37337F9EE91B384BB21BF008@qq.com>
-References: <tencent_272542BA3FBB37337F9EE91B384BB21BF008@qq.com>
+	s=arc-20240116; t=1725962685; c=relaxed/simple;
+	bh=c1q+2ZRMkIemQg5aKWOwHHskC4R3MMARGodpVyx0GPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iXZJqrlsG0sue83zOPqzFnTFvmokfvOK2beD+FndFOL8XFOy0ZzWlknkTYPGUoGQ1OQ0TBljvMztQ4TbPT0B93zAVE6D0T91GQqi/57EO4sLVYEBFXZEKSAjTaIYMiF5E3xYj2iPA1vidMZ7Kqwvs1jw1nwLq3LDPI8crw35leo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JO2GOP5Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725962681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kabCxL/6w6s9bJiFniqx3kSTgIzeS/1Z08vJuRnvWiA=;
+	b=JO2GOP5Qxda67Ir7Pw9dGU9q1hr9UBbq+zD3KHMEmW4V276EPci09vV3tw252+rItr2IvR
+	UxCUzcYm26kM2TVXXEP+o7EndcwKAA+VM5ecxMYF05Ana3obBTsxpwVa5ICfQTXYrn3vfi
+	f2Lz0lhE5QZl6dTepOfB1zphwtbJJtU=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-e-V2O_jIPde0SvcN_q3ssg-1; Tue, 10 Sep 2024 06:04:40 -0400
+X-MC-Unique: e-V2O_jIPde0SvcN_q3ssg-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-535699f7a6bso5018803e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:04:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725962679; x=1726567479;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kabCxL/6w6s9bJiFniqx3kSTgIzeS/1Z08vJuRnvWiA=;
+        b=HcmYXo0BLKAb2EqY+h7AmjTnd+9fHGlIlSseN/RN/x7pcO36Pml3Fp5EVmycuyr8z3
+         ncwX4dHN38PFW/vp/PE207XinVk4JfbJ3jgRqLc9DgJGtZnvXwEqT4/O1dtJBiIxH1Y/
+         mdMlLGqRpfYOVINds9Ogjunr9RafOrYmQ6708d0KwLZYmiQmKOEiyvXolf1DHDScR7+0
+         4KGDfinLBALBeYkHdmUV2KKIAvmykocQxxZApvI7lIzE5idYshtgjqxHM4rv3xD6swT8
+         eTdUXvPvqM7GTZWhAnFTmE/e3cd9yhfd+NcfyaNJyDR9Od91vW1twCgEoXHpSQCk7rKn
+         fgmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSRtexVncz+dyJacoSzCJE0yjVUrhmc0pKDP/8CLn16MYTv4vsXpJ+s/WKu8C0bRuwklUrAtRBlzqpUys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCeCywNMT5qTQeqAspbX0Xj+QWFS5PLCic78QbvDtmmmyibsRY
+	A9duYzWlCcLPqrzhsBKohCyRtP9/iPRR6BKZh6mA43jIuNFE9LnK9T2LfoNcuC5vLLkHq9pID6g
+	qx+lHGTbB4Hnmmk9652Suzn5Pz6BShLzTi8XFLhkiQt97elRO5QHM+4MgeXitrw==
+X-Received: by 2002:a05:6512:39ce:b0:536:54df:bff2 with SMTP id 2adb3069b0e04-53658812f84mr9622741e87.54.1725962678924;
+        Tue, 10 Sep 2024 03:04:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+PoFLbcRKIJkJNVfdmgaoelN5gExicdgOdCqJVTkL4CGjPFfbnWqFRTQk4Pv12lYKO58SlA==
+X-Received: by 2002:a05:6512:39ce:b0:536:54df:bff2 with SMTP id 2adb3069b0e04-53658812f84mr9622706e87.54.1725962678246;
+        Tue, 10 Sep 2024 03:04:38 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42cb73ab096sm68228645e9.22.2024.09.10.03.04.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:04:37 -0700 (PDT)
+Message-ID: <b791a3f6-a5ab-4f7e-bb2a-d277b26ec2c4@redhat.com>
+Date: Tue, 10 Sep 2024 12:04:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/21] KVM: TDX: MTRR: implement get_mt_mask() for TDX
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, dmatlack@google.com, isaku.yamahata@gmail.com,
+ yan.y.zhao@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-18-rick.p.edgecombe@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240904030751.117579-18-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There are two paths to access mptcp_pm_del_add_timer, result in a race
-condition:
+On 9/4/24 05:07, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+> 
+> Although TDX supports only WB for private GPA, it's desirable to support
+> MTRR for shared GPA.  Always honor guest PAT for shared EPT as what's done
+> for normal VMs.
+> 
+> Suggested-by: Kai Huang <kai.huang@intel.com>
+> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU part 2 v1:
+>   - Align with latest vmx code in kvm/queue.
+>   - Updated patch log.
+>   - Dropped KVM_BUG_ON() in vt_get_mt_mask(). (Rick)
 
-     CPU1				CPU2
-     ====                               ====
-     net_rx_action
-     napi_poll                          netlink_sendmsg
-     __napi_poll                        netlink_unicast
-     process_backlog                    netlink_unicast_kernel
-     __netif_receive_skb                genl_rcv
-     __netif_receive_skb_one_core       netlink_rcv_skb
-     NF_HOOK                            genl_rcv_msg
-     ip_local_deliver_finish            genl_family_rcv_msg
-     ip_protocol_deliver_rcu            genl_family_rcv_msg_doit
-     tcp_v4_rcv                         mptcp_pm_nl_flush_addrs_doit
-     tcp_v4_do_rcv                      mptcp_nl_remove_addrs_list
-     tcp_rcv_established                mptcp_pm_remove_addrs_and_subflows
-     tcp_data_queue                     remove_anno_list_by_saddr
-     mptcp_incoming_options             mptcp_pm_del_add_timer
-     mptcp_pm_del_add_timer             kfree(entry)
+The only difference at this point is
 
-In remove_anno_list_by_saddr(running on CPU2), after leaving the critical
-zone protected by "pm.lock", the entry will be released, which leads to the
-occurrence of uaf in the mptcp_pm_del_add_timer(running on CPU1).
+         if (!static_cpu_has(X86_FEATURE_SELFSNOOP) &&
+             !kvm_arch_has_noncoherent_dma(vcpu->kvm))
+                 return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT) | 
+VMX_EPT_IPAT_BIT;
 
-Keeping a reference to add_timer inside the lock, and calling
-sk_stop_timer_sync() with this reference, instead of "entry->add_timer".
 
-Move list_del(&entry->list) to mptcp_pm_del_add_timer and inside the pm lock,
-do not directly access any members of the entry outside the pm lock, which
-can avoid similar "entry->x" uaf.
+which should never be true.  I think this patch can simply be dropped.
 
-Fixes: 00cfd77b9063 ("mptcp: retransmit ADD_ADDR when timeout")
-Cc: stable@vger.kernel.org
-Reported-and-tested-by: syzbot+f3a31fb909db9b2a5c4d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f3a31fb909db9b2a5c4d
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/mptcp/pm_netlink.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Paolo
 
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 3e4ad801786f..f195b577c367 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -331,15 +331,21 @@ mptcp_pm_del_add_timer(struct mptcp_sock *msk,
- {
- 	struct mptcp_pm_add_entry *entry;
- 	struct sock *sk = (struct sock *)msk;
-+	struct timer_list *add_timer = NULL;
- 
- 	spin_lock_bh(&msk->pm.lock);
- 	entry = mptcp_lookup_anno_list_by_saddr(msk, addr);
--	if (entry && (!check_id || entry->addr.id == addr->id))
-+	if (entry && (!check_id || entry->addr.id == addr->id)) {
- 		entry->retrans_times = ADD_ADDR_RETRANS_MAX;
-+		add_timer = &entry->add_timer;
-+	}
-+	if (!check_id && entry)
-+		list_del(&entry->list);
- 	spin_unlock_bh(&msk->pm.lock);
- 
--	if (entry && (!check_id || entry->addr.id == addr->id))
--		sk_stop_timer_sync(sk, &entry->add_timer);
-+	/* no lock, because sk_stop_timer_sync() is calling del_timer_sync() */
-+	if (add_timer)
-+		sk_stop_timer_sync(sk, add_timer);
- 
- 	return entry;
- }
-@@ -1430,7 +1436,6 @@ static bool remove_anno_list_by_saddr(struct mptcp_sock *msk,
- 
- 	entry = mptcp_pm_del_add_timer(msk, addr, false);
- 	if (entry) {
--		list_del(&entry->list);
- 		kfree(entry);
- 		return true;
- 	}
--- 
-2.43.0
-
+> +static u8 vt_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
+> +{
+> +	if (is_td_vcpu(vcpu))
+> +		return tdx_get_mt_mask(vcpu, gfn, is_mmio);
+> +
+> +	return vmx_get_mt_mask(vcpu, gfn, is_mmio);
+> +}
+> +
+>   static int vt_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
+>   {
+>   	if (!is_td(kvm))
+> @@ -292,7 +300,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+>   
+>   	.set_tss_addr = vmx_set_tss_addr,
+>   	.set_identity_map_addr = vmx_set_identity_map_addr,
+> -	.get_mt_mask = vmx_get_mt_mask,
+> +	.get_mt_mask = vt_get_mt_mask,
+>   
+>   	.get_exit_info = vmx_get_exit_info,
+>   
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 435112562954..50ce24905062 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -374,6 +374,14 @@ int tdx_vm_init(struct kvm *kvm)
+>   	return 0;
+>   }
+>   
+> +u8 tdx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
+> +{
+> +	if (is_mmio)
+> +		return MTRR_TYPE_UNCACHABLE << VMX_EPT_MT_EPTE_SHIFT;
+> +
+> +	return MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT;
+> +}
+> +
+>   int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+>   {
+>   	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+> diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
+> index 66829413797d..d8a00ab4651c 100644
+> --- a/arch/x86/kvm/vmx/x86_ops.h
+> +++ b/arch/x86/kvm/vmx/x86_ops.h
+> @@ -128,6 +128,7 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp);
+>   int tdx_vcpu_create(struct kvm_vcpu *vcpu);
+>   void tdx_vcpu_free(struct kvm_vcpu *vcpu);
+>   void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event);
+> +u8 tdx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio);
+>   
+>   int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp);
+>   
+> @@ -153,6 +154,7 @@ static inline int tdx_vm_ioctl(struct kvm *kvm, void __user *argp) { return -EOP
+>   static inline int tdx_vcpu_create(struct kvm_vcpu *vcpu) { return -EOPNOTSUPP; }
+>   static inline void tdx_vcpu_free(struct kvm_vcpu *vcpu) {}
+>   static inline void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event) {}
+> +static inline u8 tdx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio) { return 0; }
+>   
+>   static inline int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp) { return -EOPNOTSUPP; }
+>   
 
 
