@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-323946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006739745E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4F19745F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91294B21755
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CBF91F270E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 22:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CA31ABED2;
-	Tue, 10 Sep 2024 22:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208D21ABEDA;
+	Tue, 10 Sep 2024 22:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbjSE0Aw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rziymZl5"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04olkn2020.outbound.protection.outlook.com [40.92.46.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB00192B84;
-	Tue, 10 Sep 2024 22:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726006979; cv=none; b=cFvG7TnJF79SL8AvZkTuZSN2wk5Po2bsGyz//+37paJjyTSmUipySuQRNxUMEfoQb8Pk+FtEJ47XBNJiyLFSed1q0KZbK1HonVDBuuUMqIiHgZTWBpdAxcVzWrfMynzTNTIqut0yKvAZsM9RjzDLonYa2zhF9IBKytzOuggriFE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726006979; c=relaxed/simple;
-	bh=nWDIUhPbDOdOvxZD/AeQRWA9CuWMQJKn0QwLGuQZYQ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p5NNoRJjLvNcCH+BfjxydTw7rDoNkIN607xTJyxFHihu6xa0izRNO/yLB1M18DDTL6J/kKH5bmaz55luAyYSocDi/6oA3w8cSQ9wn4WsIvjYjrOEzP1sUe1743Ton3o14FfK2+MziRwi10CJorMFS4s/NBM0UN+hyA6nE5Dc+Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbjSE0Aw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d3e662791so218242166b.1;
-        Tue, 10 Sep 2024 15:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726006976; x=1726611776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWDIUhPbDOdOvxZD/AeQRWA9CuWMQJKn0QwLGuQZYQ8=;
-        b=RbjSE0AwyJ1hU8M+7k5/0giuU6PU4LBdpFgqaqgu5D0jkM+n40oyxWSKtOR7rHdn5U
-         OvIlifcXOu80BdhRJjlv7k4HZMeV9G/iOZZfmETRVCe11sDDfXPHHt0F0Svw4qiZC0B2
-         YH+G1TY/FxQfOKhUp1Z9YtwGffrZj7sPdLJ91jUZFiUHa7PnBVe9n89GwBhRnC3JczZj
-         UhL6gf0KWuxU8yi6QTDJoxmtjfHpVEGa8HXP9SWLFdLT8rAqpXBpItNijOD6WeSHKtcU
-         Wx3w5w5XEczZBprZZiqrbXH6ZXNL78Elb3Tb5SkE5kGROSAhh8llSI1GthF6jNdz4wth
-         zl7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726006976; x=1726611776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWDIUhPbDOdOvxZD/AeQRWA9CuWMQJKn0QwLGuQZYQ8=;
-        b=WtkMDmGJVrBpXD1YBWjbkGuRfNp2dLkgf9ar7soG30G+6xSIzXVkUJB3YVKV4lS1lC
-         NTCdXZJ5QYWKwo7jSY7FMvnpudgSsT/jvbP0s2cJVzBNVu5a59QU0bGaNlxF7y+6uAj8
-         RXS63abh7tNx/LkDGq+yBxCHKlbxvISFcCwyAOVOW3Tirijt389JVCiooc145cNWmAnT
-         CBZhuzyiUhc7QCQvaLbhssR3kzCSpY2+O/nGZ06gFJY5Sz6MKHjPQjPyfTvR4+VT36rd
-         VVioERG+uATooC8NIOCDueHyrUk6bp8Njrp5Y2pfeCae5DhHh7Xx55m3YNSOKmlXXVUI
-         Iz3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIOLQEmQuMY6aojmn/f+8t6fBHNaSwcqfIjKn4ETVeLtoA+XTjdq59/VdH8gc6aG6wQXZwrkMOc+f4@vger.kernel.org, AJvYcCVpo+9uwJb3Ef/g887aw2UKZxyfzTZpzHHCdEwavPGd6sigyRZXDG2v1S/fVNLsgGcD6J7R0DlcKCeI@vger.kernel.org, AJvYcCW6ENBtrnjoqXbzd01I5Ppvw1+nFUglC16aYfBEazn6/SrZDybR1+KzX1nMIUgBWn2+fSZt/NO13jL1z8nu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/vsmbDdQWo2GOu0RvbBTJwcpKvjcNMx9GCddlCc+qHI0Mx8zG
-	3r1g77eDAZXVONYwYYSEge1pwztBsbL2zxyAutRR0ufRbMx0NYj5
-X-Google-Smtp-Source: AGHT+IEOkX7gJEx6aRMFapdf8fVYvdC4mXv37XJ0mGPzipQWOlhSynFEkCFSeo764XF1s14W3huYQg==
-X-Received: by 2002:a05:6402:210d:b0:5c2:5f24:98bd with SMTP id 4fb4d7f45d1cf-5c3dc78b665mr16745577a12.10.1726006976115;
-        Tue, 10 Sep 2024 15:22:56 -0700 (PDT)
-Received: from localhost.localdomain ([2a04:ee41:82:7577:5d47:19e4:3e71:414c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd467a7sm4664568a12.28.2024.09.10.15.22.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 15:22:55 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: lanzano.alex@gmail.com
-Cc: Jonathan.Cameron@huawei.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	jagathjog1996@gmail.com,
-	jic23@kernel.org,
-	krzk+dt@kernel.org,
-	lars@metafoo.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nuno.sa@analog.com,
-	ramona.bolboaca13@gmail.com,
-	robh@kernel.org,
-	skhan@linuxfoundation.org,
-	vassilisamir@gmail.com
-Subject: Re: [PATCH v3 0/2] Add I2C driver for Bosch BMI270 IMU
-Date: Wed, 11 Sep 2024 00:22:54 +0200
-Message-Id: <20240910222254.14281-1-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240909043254.611589-1-lanzano.alex@gmail.com>
-References: <20240909043254.611589-1-lanzano.alex@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19F51A3BAF;
+	Tue, 10 Sep 2024 22:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.46.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726007232; cv=fail; b=nDq9wWHf24HueExt/pHP0blK5IB3SYvvKHajC9VMFXsqNS1r+IPzHb8W1om6iiKsZ4MNKghD6GS3f6PhakDlg8HxJI8cCOjxibuoibaWHoHEN0V/RPou1eGI79TSqiz9IdYiukKIx2sJ3XugqyAqhMXnkVnDbGDZnfQVBlrX1ZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726007232; c=relaxed/simple;
+	bh=jV08mHRhECHFNpOT/v0mRg6SQ6fvdI2T3Z8l4iIwKcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Qjm5IbrkCM0cbCb49+WadaX81f4jmZQfXg5ULvsD/ueRSdqUJDrsmeFWbVEoYOW1si6AQabamrl6HYnufkvTx5wI5DohiVEavcUCHxijB92X7vsVWQtobIiUQL7pyDoYqMGuRchQW6KjTdN0al6hyMjODPbBYJ1CTxb1xvljheQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=rziymZl5; arc=fail smtp.client-ip=40.92.46.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wMYKLLhGlPPW8CDNzW7i3blQuqdL0uD3s49i8wUyuqHMnkRIJCmx15sX0BVtb04qLwaCHxIngT/bB4WBWTCmk9FMsGT5om40nkEKIm5Vvn3oQW0Rp4J1c3k/Z24vEI+Ap+IXqGDy4hQGmRWBD2iWayJRc6+B1hzs7B7F2C6WGRQF+m88lpkyIpE+XxaQPYm/duTCp0UgovciWdoamPlGcAN6tmk7Nkp1swsInzGxS3ax2mw3ymF4Gh5N2lAbEfEBxHvbT8wGqexR+h/5ztTp8i0uPTBb484OePWCpoyeuI1tnWr1axlkQOZ66g+SBJl2ojjbssmh8sC7PehubGBZ5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HSFRnQhZP4g7kdAk6rJhyseq4OmtnlenShNmkN4qjjU=;
+ b=uP7wgORNKT5oT6QE2ax/U93c33pJl3i55WtUbNIbB0UW5svevZvuLnev3fo/peGNiXadgcRZ77QYL2rXmRi+HzrrbUmasELaCG/Q5xg9oRA0UDbc2IzoD7kZt0dJPgH45hvupl8KD4mQR2ADyucwJDI6Ilkr+Dwoku34TNvO6sjtdhoLnppEAAi9qKNHQEfnKkoHEZMxnRxkh4JMaS+IUyQSCjc68WAlatKFvPnQ+6/zSPQZg2On6SdoORGI3Zgj/0uAXe/rFOvIca+xg4G6Nru4MUE8+atgRj21MPmsZxyAiIbMjcTgx+OF7WgWDLz6lRq9MOq+VOw9bWEv6cKULQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HSFRnQhZP4g7kdAk6rJhyseq4OmtnlenShNmkN4qjjU=;
+ b=rziymZl5BegSCNUOr/06dw8WP1UlKuZdVpOlsxvIReFo28PxX0wZqgICBqzFiNTYk3ZhkMeMXZOCvorA3stP7+/XMKyulMc+z+W7a3+sSmGzxkqOw0ze7CBsiJG4jkm/+rd2P4FpbZltkZvp+rWE+wuh+a+2EnKMIdz0N1J9I+UDT9/rlKioQhFJ36JOpmxV9xj71/CuoQutO8C7szAtA7LUODgz7iWFRAhqfJfXVuL1MIkWsCXzTcW0axSeUFx1RintlNF7VVUA+HTcEtjlHeQ0vbjo24c+J6fFcbPEw/4xIZ2NK7GD8Xm1qV1DcqMjalq9fpccojD+4xyBSdec2Q==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by MW4PR20MB5297.namprd20.prod.outlook.com (2603:10b6:303:20c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Tue, 10 Sep
+ 2024 22:27:07 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7939.017; Tue, 10 Sep 2024
+ 22:27:07 +0000
+Date: Wed, 11 Sep 2024 06:25:49 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@outlook.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jisheng Zhang <jszhang@kernel.org>, Haylen Chu <heylenay@outlook.com>, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] riscv: sophgo: Add pinctrl support for CV1800
+ series SoC
+Message-ID:
+ <IA1PR20MB495316205F5AC588867FA8E1BB9A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB495374DB8C4208575AAC9675BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240909-prowler-renewal-0592d820ccca@spud>
+ <IA1PR20MB4953A0D6A2B73D03BF162671BB992@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240910-bust-mulled-e45f6f6ef29d@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910-bust-mulled-e45f6f6ef29d@spud>
+X-TMN: [AWn+tYGNRNo8yQKl6YinOeuDG2TiVcdinU9FABZh8SE=]
+X-ClientProxiedBy: PS2PR01CA0027.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:58::15) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <jcalupqrlblzwyiewq7ldtcvo3ok6bpy7jcrnotg62c2y4v54w@2sk72fe6jgn4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MW4PR20MB5297:EE_
+X-MS-Office365-Filtering-Correlation-Id: b06810d0-30da-498b-6494-08dcd1e7b3f4
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|5072599009|15080799006|19110799003|461199028|6090799003|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	NVCWJAB1KVD3dmTmm5cY4yuSAZwaEi1RFanI7fgN3V5CgoEnAuUypFxpgCgAJFK7h84S6FFiXSRsfCy2wOtNgXXoqkfFXneKcxiR1nX1wtDsxUWBjxq7rR0BD8BRhmpdYom2Dgjq2cIIomVrKhoDkHdBiFM6KeVxwwu3yjcVPm+ZJBCR+O/BiiMyhPC5vyL+6wAk/umTVlRWKOKurv7wH2HMlZ+PhlbMaAqlUYKJw6MAe5Cpue2gE8PZuA8ezq9HeAOI4En0a9mimLAb2UuxzNltr26vPajU3XlLzWVvf0kXxvJ2xXwI1ZCGr0PTwzwQlDbMqlzP2lPHySJS+n3uCET72xaeNHqUDiFlzbjbI3CFIwj0rDIrQTZkUtCrNHKuyIBCpGQg45HbH7rqAW4k5PdXGAI+Nhi4ZD3p2SclXtJkwwnohiiREXZHBX5qqv+7d/MmFQw0JWfOVJ9gkOq4b4SjOhZ+zdLHo/nhc6rNv+ebGFf+RGNqy0fnmIRQ2Ln/2c7DK4uEuqlRYIYFSTqv3tM2Xx0DIO2gHCuzrIC3e4Bttu6EG5mf587Jde0P3XvSsgDLjTFbBBDbYCg9ONocHoI6TKK2QC94tIUG1ubXh9yUhNQqqkRyXiwxjYvpyvFjgnXIrWwh4juqIv9u8TWmGeJ1L5qgLmLu1TMTBkmFKzmMeu6mZcXCnuczyjZEJMaNikbc2rsIA8Q5hyWOcTKD+setF6o2m3/aMTWVQls9vkia+qBA927zRGNbtB3IGyevdjlgCwXmbab+wPhytebWxg==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+6+1S0K+lE6ZVIom9RWSK4xvs+PrgVhMQ8Q3MHc32aT9gdE/wFpq8+WRBV1A?=
+ =?us-ascii?Q?WRGgRcF2j41q0O65edqNiJga4pSGC2N3M3eSt7/JbiV7L6lFrSqJqxmeyoZd?=
+ =?us-ascii?Q?JVtpQbbL7+oeF4ICQfLgqjpYVfWgYM7RN0/7htzsCMRDRZhVHGmYLB3QEstK?=
+ =?us-ascii?Q?2bGDJsHSQXplQnVBJwzRwkfWewow6YLhLGOWhbZstHqO6p/C0N95PVk1J4y6?=
+ =?us-ascii?Q?8vHojbY+IikDGUpPDa9P3qb0Jk3eMLMA540EUvBKyU9y3SdjRR5DWhuqD194?=
+ =?us-ascii?Q?uCFe/6B7HJDpF/DsfOjxVLJPFxkQM2pfdUr79nEk7haNUMl40+lhT1kiK4Ou?=
+ =?us-ascii?Q?spQgg18eNifK6TG0wTrKhw+2xiDJdTQjra5gdJeeVFu5+d+/LPbGpqG6Xnxo?=
+ =?us-ascii?Q?X6Qr57120woBhH2w4kA79JZoyEyqRZB5M0q8bMBpmaKzYrjWUIMDrypUqFzV?=
+ =?us-ascii?Q?5rWMzKDFZlFmWd0b0yOAbkuneQHJBxk3PU+tVXVvgyDJuEh6VJjZcT8y4xqP?=
+ =?us-ascii?Q?twFEO4zJoGkKfIvs6FqqbcvfuJv1g9IEorsPlgAaxkkDMaa12u2ra4vg+7iy?=
+ =?us-ascii?Q?oaw2pMlYMz8t007DltDF+uU+mISYbI0bfUwTIBJtHcEdQE7xK8B5mYH60I+y?=
+ =?us-ascii?Q?m/Q0sdYLccGL8BFsRhTymLofZwFOotb81QtpxL1o5nbJeC+lupBxMbQTaVBW?=
+ =?us-ascii?Q?DmkeQWnZP9KKoEvNgigBvj82IWYnidPLho33gSLD3sCmiccOSCUBQQ5USYUf?=
+ =?us-ascii?Q?Vl5hyeSs+8ZXbSQHnFE1rhboZ6+U0TdXTCBFDbZE3TybDRrHKrD2C7/R7Gsd?=
+ =?us-ascii?Q?27A0UySSaUhfupYE8xNNxuzRNyG4synhgKuJ1UKvvNEEXAkUgFc0d/keWYAV?=
+ =?us-ascii?Q?YGUh62hB5MSek/+Lt2PNtBto92QUN6uoyu728cHBVLai3zXLAxbX0U8/euqO?=
+ =?us-ascii?Q?9TGSvHOMiKee7976pvcoDogpuqBUL3e+Uu+wLkQuYM/9ke+uOGe98vbrcOzg?=
+ =?us-ascii?Q?g7d6IxOFP70T6C/DI/U6iwmr2UFyhDXBpXTgXkVab3/yEn2Z5TulxZIW9p0b?=
+ =?us-ascii?Q?+uv5nCm7R2Mll1Uz+NUoUcDSsgcNwipblIAyMM8HcHkP+OoMrZRuFPQGJjLX?=
+ =?us-ascii?Q?LbgAR7S7F+QDb7L1zKsixAOJyEvnSsQpgqfkOobpkSgUXdKjQla/RGuu7USk?=
+ =?us-ascii?Q?qMIJUdgEQKQPNtdcxlRz21mx8xT6RuSzk5toFjyKtTUZZcHnxS1QZ8zGqZK3?=
+ =?us-ascii?Q?nqRuyRJRVzB064VbPKMv?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b06810d0-30da-498b-6494-08dcd1e7b3f4
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2024 22:27:06.8693
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR20MB5297
 
-Hi Alex!
+On Tue, Sep 10, 2024 at 05:13:43PM GMT, Conor Dooley wrote:
+> On Tue, Sep 10, 2024 at 06:24:34AM +0800, Inochi Amaoto wrote:
+> > On Mon, Sep 09, 2024 at 03:41:10PM GMT, Conor Dooley wrote:
+> > > On Sat, Aug 31, 2024 at 06:38:40AM +0800, Inochi Amaoto wrote:
+> > > > Add basic pinctrl driver for Sophgo CV1800 series SoCs.
+> > > > This patch series aims to replace the previous patch from Jisheng [1].
+> > > > Since the pinctrl of cv1800 has nested mux and its pin definination
+> > > > is discrete, it is not suitable to use "pinctrl-single" to cover the
+> > > > pinctrl device.
+> > > > 
+> > > > This patch require another patch [2] that provides standard attribute
+> > > > "input-schmitt-microvolt"
+> > > > 
+> > > > The v4 version is from [3]
+> > > 
+> > > Which version of this ended up in linux-next? I see a link to v4 in
+> > > what's been applied, but this v5 was sent before that code was
+> > > committed.
+> > > 
+> > > Either way, what's been applied and what's here produce warnings:
+> > > cv1812h.dtsi:19.28-24.5: Warning (simple_bus_reg): /soc/pinctrl@3008000: simple-bus unit address format error, expected "3001000"
+> > > cv1800b.dtsi:18.28-23.5: Warning (simple_bus_reg): /soc/pinctrl@3008000: simple-bus unit address format error, expected "3001000"
+> > > 
+> > > It's just a copy-paste error I would imagine, but please send a fix.
+> > 
+> > Yes, it is like some copy-paste error, I will fix it.
+> 
+> I'd rather you had sent some follow-up patches, than rebase your tree at
+> this point in the cycle. I assume you hadn't yet sent that stuff in a PR
+> to Arnd?
+> 
+> Cheers,
+> Conor.
 
-I recently received a review for the code for the BMP280 sensors, and I think
-it applies well to you as well. Since you are using the sleeping functions in
-your code, maybe a comment on top that explains why this value or where you
-found it in the datasheet would be helpful.
+Yes, the pinctrl dts needs binding header, which is taken by Linus.
+So we hadn't sent them. This is why I sent a new version to fix this.
 
-Specifically for the Bosch Sensors, because Bosch's datasheets have either
-hidden or no information at all, and you need to search for stuff in the
-respective C sensor API in the Bosch GitHub.
-
-Cheers,
-Vasilis
+Thanks,
+Inochi
+ 
 
