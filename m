@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-323795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B34974394
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A27E8974399
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 21:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276D81C25434
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D538E1C252FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751641A0AE6;
-	Tue, 10 Sep 2024 19:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFAD1A704B;
+	Tue, 10 Sep 2024 19:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YnVxhK2N"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kfBau5Vj"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181501A42A4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2339A17C7B1;
+	Tue, 10 Sep 2024 19:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725997081; cv=none; b=ho3UMYIyyR7Cmy5UKrYE8UWtr1C5oYrb11kn6t9g8GmrAEy7UKvc7oVhvGce6CbF6g7TwjIhO5P0zpUUXJPhbTcn9Um++L3Edt+Lqe9WnCtFF9DS7WTsxccPRgj5xvD3QquU4Bjh9Fl/CNBNV8z5ajntu7R72ACDPG3+DWKjky4=
+	t=1725997190; cv=none; b=YBLUaRYtOOyhr4UEiMgre9wHe9PE6CvzXKRxyJVUIcZ1V9PXQiA/lLQpOXSEAOMhAJMOGif0B+MUUn50Gz9klUodqykxnjVpUnhLs88BnFP7xHPmh8roxbThoYMFitFH2i6TJxZj0fIauzEd0uPD61yY6k4VmaNxqYz6GJAStkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725997081; c=relaxed/simple;
-	bh=zz7VkGJwIOEzToa+PR/Cbp9y3j4yAwF9jm2YXuy5SG0=;
+	s=arc-20240116; t=1725997190; c=relaxed/simple;
+	bh=5TqNBcmp+Soe4nTjyFxypqVNkbC4Zkx9BXwIEPnnbBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDeaLvHf3MgetvOOksSjCZywA1Dve0NHf9GpvPvbayt6phCK2+nBAE7FLdoO++QJKXfVrLeiztSaAdTl2lbFgmJbMpjAVxjFTHhkeO3kIDLQaMj+gAluNRpkT9Ey4HHYCqcUSsz+DW/TlKV4WiYU/YPZl+RE3mLom9nBVM2VeSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YnVxhK2N; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 10 Sep 2024 15:37:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725997077;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzzvmSu6APY0pqKc+SB/QymaPx1j+qq2ydgnvO7X8ajBpKX2ZMYpgL6FeJ2DR7unTBA1kb6dyGYOiL2ZwYjKRLNYNVqXxK4c64LsbUqgTvny4yQCem807FpH6NswmLVFpv3PUKyvI14xzR0Snq24I2d2QbGWD4aY27ccmpoZIJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kfBau5Vj; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2AB2BC0003;
+	Tue, 10 Sep 2024 19:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725997185;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uwF6WNjv+64m7Y/xYevSxpjj6a6C720ZalVCVxXofIQ=;
-	b=YnVxhK2NvUmB33++CPXRAbch8KVrXQqZPaP8iitDUDVApLGs+sjgyI1AU52bkVZgZ5Suf7
-	K50hTHv4ZJUHPCJpGBiOqFXAeDAvDCtQf7xZelrXg/doiSLJYcmdkJE8OgNp0zQxE7WwA1
-	qYcFvlgZXyjptwHpYs+UKkMVHBxKiyQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Chinner <dchinner@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2 v2] remove PF_MEMALLOC_NORECLAIM
-Message-ID: <4fhhgnadehlfkjcmycwj27apokgrbqjz2cs44fhfzu7nfe2ask@s7vswmwqvev5>
-References: <20240902095203.1559361-1-mhocko@kernel.org>
- <20240910122912.e7abfa39b0fd7683fbaf2325@linux-foundation.org>
+	bh=tv0Y5s/hQ6Mnt04wo1p2p60cvaKhF/HLy/Jdnv+k8Pw=;
+	b=kfBau5VjheFEZz8PN7AvfsWyHM9kWuPY2wBj5G8BWN6RSPvzF50maixIP+CAMXFyK+cJUq
+	gvqjzjDiFrD80osvY122PP5RUTwfLY9IgS6y30d30UV89Xr9aDn/x2a1yw4XayNzceb2X3
+	Ot02V8ESnj82egBj5CCCrApX9z6dg1Zj7DXjClmpi78G0t2C2YhsvkEDjwG3iQMGC5gQ0S
+	7DcQmMQs0eFfdGx/7pn/VYzUl9MOiyKhW5Aau5ozpRhv58PW4jHy/9qj8ndwShU/1hVlhV
+	qcOAKj7jajdA2+DaPoF7OFgXTELU0W23AZrxNyNTGng9lizytA+fmsJdLkt3XQ==
+Date: Tue, 10 Sep 2024 21:39:44 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+Message-ID: <202409101939448128973d@mail.local>
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+ <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +60,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910122912.e7abfa39b0fd7683fbaf2325@linux-foundation.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Sep 10, 2024 at 12:29:12PM GMT, Andrew Morton wrote:
-> Thanks, I have queued this for 6.12-rc1.
+Hello Esben,
+
+On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
+> The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
+> interrupt when frequency output is not enabled.
 > 
-> Kent, if this results in observable runtime issues with bcachefs,
-> please report those and let's see what we can come up with to address
-> them.
+> The device-tree bindings should ensure that interrupt and clock output is
+> not enabled at the same time.
 
-Andrew, have you ever had to hunt down tail latency bugs?
+Ideally, we would get a pinmuxing part in the driver to ensure this ;)
+
+> +static int isl12022_rtc_read_alarm(struct device *dev,
+> +				   struct rtc_wkalrm *alarm)
+> +{
+> +	struct rtc_time *const tm = &alarm->time;
+> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> +	struct regmap *regmap = isl12022->regmap;
+> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+> +	int ret, yr, i;
+> +
+> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+> +			       buf, sizeof(buf));
+> +	if (ret) {
+> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+> +			__func__);
+
+I don't really like those error messages because there is nothing the
+user can actually do apart from trying again and this bloats the kernel.
+
+> +	/* The alarm doesn't store the year so get it from the rtc section */
+> +	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
+> +	if (ret) {
+> +		dev_err(dev, "%s: reading YR register failed\n", __func__);
+
+Ditto
+
+> +	isl12022->rtc = rtc;
+>  
+>  	rtc->ops = &isl12022_rtc_ops;
+>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
+>  
+> +	if (client->irq > 0) {
+> +		ret = isl12022_setup_irq(isl12022, client->irq);
+
+You can't do this in probe, the RTC lifecycle is longer than the linux
+system. Or said differently: "oh no, my linux has rebooted and now I
+lost my future alarm" ;)
+
+
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		clear_bit(RTC_FEATURE_ALARM, rtc->features);
+> +	}
+> +
+>  	return devm_rtc_register_device(rtc);
+>  }
+>  
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
