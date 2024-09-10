@@ -1,157 +1,216 @@
-Return-Path: <linux-kernel+bounces-322230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35D9972609
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:03:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DEE97260C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 02:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D75081C23432
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:03:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2221F249E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 00:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC881E498;
-	Tue, 10 Sep 2024 00:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28773C0C;
+	Tue, 10 Sep 2024 00:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4tlgYu4"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3uxbiYI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDF029A5;
-	Tue, 10 Sep 2024 00:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE2881E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 00:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725926597; cv=none; b=JBo3splHuh8EP528KyNJYLy76rya+yTxK1NQ+M03KXn+ZYO1L1lgrkVeFHNvW1vPm0coxtdxMH/LJBydo0K301ETJS18Cw9mahZUP23XcT9OKuch0WcBvbHIpWiANy9oU7lrIAWtngwsgArxkaxqPCbBbVBCkuBZGTDHBcqSlJU=
+	t=1725926905; cv=none; b=hxiH94Jr5O4PK4KuoobQ56Q6pHvzeElSwTgYWA/xUPaLGCprR36+6VZzWYuSPtiRHJRaXCsjrL8r1e1XrDKIQrH/zVimfgzboKE73+jyuECoRsrkDDIWlw90CAWmCRKANdLHhxG2VHwiT9cMw8AMsoT4s0Wf01FZLv96QiY/pcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725926597; c=relaxed/simple;
-	bh=RVU/WXgoPWforUjJ0oVD1VRfrBNg19UyZXAgKVK9VaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jiFy5Y5+VgUcONNV1KZMttS1CMg6HwnT887d+b9Xq7UtM8ob2RZWeAGGgIt2IlLjtP9Z6Zjqb1K+1GN5zGhPASIgxQvl/gg3bz0wG0BHWvSuKwP5q2rhgAroljuXMTi+1goncjdj+L/e1ErlgxRNIYUFUsyG3RD3Is/24WsVqc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4tlgYu4; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d8a4bad409so3439462a91.0;
-        Mon, 09 Sep 2024 17:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725926596; x=1726531396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vX07L4MyH3UtAmhVXaceT+nqL4USjSuMhroAMQ1kAWc=;
-        b=P4tlgYu4+Rggz79cGvtSrRN0yDNASRnFGzHcVsPBLDXXV5MOhsOLTrqY9f5OrB47pM
-         KUdhp00J5E/mapo+kbwRRgz6iudmJsWbtTRev2Y1iN+xthCpotSeHwS0J/7VW24z0Gfc
-         4EtgQxKyzyYKF39uucTGe0d909jGhGbjFEm22thKCDdN4s/iXUcJ/a50KB9vqrDrJZh0
-         tCXhMVJ0V+5iSCRa/JQABCT2hKoVHeqG15LwW31nbLujxBsIcts01bDcAhf4HkdhUruN
-         Azt5VIij5o0Krt0o15yjwcoeNtvWT+ZWdruOlPHeuJMIOVsWGAQZnUiVGo7EQAjgnFuZ
-         6+Pg==
+	s=arc-20240116; t=1725926905; c=relaxed/simple;
+	bh=Do2fCornus2k7XFLKiGW+Kh3SphMXE9ozbe7zCoiQuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzypmod2bc/8rT6g7SOLXq9f4UqgKVX2k4fk7Ewfl3v1GelaNL5oyZbVcDzIlrAtK9VwQbtS4OtrAxBxH84y/49HGYokWC49EbnMUNn4mo5TUvpQcyckt6bAowpqga1Gt05RpF0Decdqlp/EhAkIsiafQJct1VoLYrM4EzsCvds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3uxbiYI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725926902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nS90PBsQLo/NAADX0RLPD+B7rTpNZ5FJaTlKjF8OXUU=;
+	b=L3uxbiYIsAJaCg4EWsOmjRioxJpvgccM77IkHsUe5xZbF/kCfog8k9VO/EXzZDa6y2ENKH
+	1sWg3wGb604hs7NCRptA8yCNjDIAI4vbx8rYd5xf/Sz4sAEv+k3UBlgTMios5ZAjsf7tHr
+	dxeNxDd2UGIDep0cZsD1G2ZwI1sxcpo=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-itmoAk6cOZmovuoQSqVyJA-1; Mon, 09 Sep 2024 20:08:21 -0400
+X-MC-Unique: itmoAk6cOZmovuoQSqVyJA-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6c54fb2327fso15610416d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Sep 2024 17:08:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725926596; x=1726531396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vX07L4MyH3UtAmhVXaceT+nqL4USjSuMhroAMQ1kAWc=;
-        b=wC3ky7EqCJ9M4eBwLt1cVoH0T4Bbr7v3qqZDO0tnK6Gek7Lp9dIPgg9gT5hezbZWrR
-         Mgh3M5QXlD2rghv2k6CLeR1/61NZ50RcEjkpmlEi7qqclzI/jHFqCmM/Jpr0fL8qozwR
-         4afi2ajBSBnvX/5s6Qmh/qmmdWbSxty7v0Jm1Hk22KW70qmy5JBhBf0Wjogf/0BckAXH
-         l1OFYz7r/tX1k0qGiRI66UK/wLmU8eX/++8nnrqs/xyuI6FxbbbZimtBjc1CyYNocCnZ
-         q/jQ1U7EBF9TbsRDF6oaJzJmR31BsIi6mZ8gyRBTFfTC3YY+c/yj7q3PpyypJzwIZSJp
-         0RLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUep8tuSlHY4t4yXYTdOA6A3vlsLscZdD8weUyHARC49w88XflLB4iibq/+HzUlKhEp3lY=@vger.kernel.org, AJvYcCUs42Ts3HRBtLS4FCL58Yz5Ab/fW7mplMWcUKiiS84Tqrp4mf/vflHRzRarTyShds+efrbDlHCS4C4OI5phduXFl8bS@vger.kernel.org, AJvYcCW8yh7sxTRx7GMExj9rEeNgMhJJ7fuWQ/mpT2yO76J2XIIdlDOHreH4WiK3/qhYzLyeBxZ047L3mZLSeeC+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Bj5NWZxzAB/vUNNeTBUhuIl/pmoJ7yq/ab1Gex/ClsoPmqDG
-	L8OACfCEEHZ8Ot9hmckagO1mCDUu71vO5M+Fnvt9JKusl9/kLpoQJWFlM/iwSRjRWmKqeK2chhb
-	0RHcwIWeuMZXvQDq6vUNJaRdJGek=
-X-Google-Smtp-Source: AGHT+IFf8sUPFNRoE6HG/5otm81c0UQzsaXRgNB9WUVkQnJGtqaVmqSOeqk7BwoGLjGAl+cQ5lj4P0iXwUrikTB/aZg=
-X-Received: by 2002:a17:90b:1b4b:b0:2c8:64a:5f77 with SMTP id
- 98e67ed59e1d1-2dad5196e14mr12806819a91.37.1725926595585; Mon, 09 Sep 2024
- 17:03:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725926901; x=1726531701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nS90PBsQLo/NAADX0RLPD+B7rTpNZ5FJaTlKjF8OXUU=;
+        b=ktCopwTmWxsqlXhEVAgbV8WQ/W4Mt+w2pIiXQjwbJwzG6IXRJyR0qvSh31R72Fal4+
+         qKCPWa5DwoKPr6e10py8hnnBVc8Lgjs9bpshqPLCQ9OAZErZD1pOO0pHgfoCeWtcwdMt
+         MNXIg8CjGRKRNp5LT8UXp0onJTwfE1gO9gBJFRe4j4BYDlgKEuRT0+USQfmEd5fltSjM
+         ROvZgEkJhH67z8uXACSvxrcbZ9X5ZswJL7rurf7GgAt0oWjYefJ7bx6vmrRq8qwWFzGQ
+         hfc+wB4Y+qscE3P3CWsJqGU+pFS/HQisBocfTUHBH38zSzZQwy3XFu9JByt93ceMJmDx
+         77Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWarq65eIDr98xEFpmditauPXGAqtiVNMdmsx0Z6nkNFqQqIUiotI6S8Cb9SdURnRTYP6vJMIiIjLU9CSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqHfsXJNVAhdOJupHgVIyHmXDGQvbd4rJsaAog3XVyxTa83H52
+	NObhygC/BmkWim5vg50kAJLiPxAR47B1kILoFSxePr8fKKw03xERmLpuV66lBgXvsbqQw0X1gBl
+	sgNIL722mjSnSYv6NDz76tpK9l0O/97MIFPeCjVvs63l+s589N3uhya3T+KbXDA==
+X-Received: by 2002:a05:6214:2dc2:b0:6c5:53b8:c8b1 with SMTP id 6a1803df08f44-6c553b8c8e3mr29371976d6.13.1725926900633;
+        Mon, 09 Sep 2024 17:08:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4mcc+7qwVSx7ydxnAtNmRQVI9fbDsEeVC4thly4922XNAYI8zD2xHJ+6aII9StNVEuLJ8dw==
+X-Received: by 2002:a05:6214:2dc2:b0:6c5:53b8:c8b1 with SMTP id 6a1803df08f44-6c553b8c8e3mr29371626d6.13.1725926900246;
+        Mon, 09 Sep 2024 17:08:20 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53432968esm25143526d6.23.2024.09.09.17.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 17:08:19 -0700 (PDT)
+Date: Mon, 9 Sep 2024 20:08:16 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
+Message-ID: <Zt-N8MB93XSqFZO_@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-8-peterx@redhat.com>
+ <ZtVwLntpS0eJubFq@yzhao56-desk.sh.intel.com>
+ <Ztd-WkEoFJGZ34xj@x1n>
+ <20240909152546.4ef47308e560ce120156bc35@linux-foundation.org>
+ <Zt96CoGoMsq7icy7@x1n>
+ <20240909161539.aa685e3eb44cdc786b8c05d2@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com> <20240909201652.319406-5-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20240909201652.319406-5-mathieu.desnoyers@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Sep 2024 17:03:02 -0700
-Message-ID: <CAEf4BzZUgLaK8r5VK4VmfQTEKZ13qDEGUEEdeKJeZYc_96KCTw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] tracing/bpf: guard syscall probe with preempt_notrace
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-trace-kernel@vger.kernel.org, Michael Jeanson <mjeanson@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240909161539.aa685e3eb44cdc786b8c05d2@linux-foundation.org>
 
-On Mon, Sep 9, 2024 at 1:17=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> In preparation for allowing system call enter/exit instrumentation to
-> handle page faults, make sure that bpf can handle this change by
-> explicitly disabling preemption within the bpf system call tracepoint
-> probes to respect the current expectations within bpf tracing code.
->
-> This change does not yet allow bpf to take page faults per se within its
-> probe, but allows its existing probes to adapt to the upcoming change.
->
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> ---
->  include/trace/bpf_probe.h | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
+On Mon, Sep 09, 2024 at 04:15:39PM -0700, Andrew Morton wrote:
+> On Mon, 9 Sep 2024 18:43:22 -0400 Peter Xu <peterx@redhat.com> wrote:
+> 
+> > > > > Do we need the logic to clear dirty bit in the child as that in
+> > > > > __copy_present_ptes()?  (and also for the pmd's case).
+> > > > > 
+> > > > > e.g.
+> > > > > if (vma->vm_flags & VM_SHARED)
+> > > > > 	pud = pud_mkclean(pud);
+> > > > 
+> > > > Yeah, good question.  I remember I thought about that when initially
+> > > > working on these lines, but I forgot the details, or maybe I simply tried
+> > > > to stick with the current code base, as the dirty bit used to be kept even
+> > > > in the child here.
+> > > > 
+> > > > I'd expect there's only performance differences, but still sounds like I'd
+> > > > better leave that to whoever knows the best on the implications, then draft
+> > > > it as a separate patch but only when needed.
+> > > 
+> > > Sorry, but this vaguensss simply leaves me with nowhere to go.
+> > > 
+> > > I'll drop the series - let's revisit after -rc1 please.
+> > 
+> > Andrew, would you please explain why it needs to be dropped?
+> > 
+> > I meant in the reply that I think we should leave that as is, and I think
+> > so far nobody in real life should care much on this bit, so I think it's
+> > fine to leave the dirty bit as-is.
+> > 
+> > I still think whoever has a better use of the dirty bit and would like to
+> > change the behavior should find the use case and work on top, but only if
+> > necessary.
+> 
+> Well.  "I'd expect there's only performance differences" means to me
+> "there might be correctness issues, I don't know".  Is it or is it not
+> merely a performance thing?
 
-LGTM.
+There should have no correctness issue pending.  It can only be about
+performance, and AFAIU what this patch does is exactly the way where it
+shouldn't ever change performance either, as it didn't change how dirty bit
+was processed (just like before this patch), not to mention correctness (in
+regards to dirty bits).
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+I can provide some more details.
 
+Here the question we're discussing is "whether we should clear the dirty
+bit in the child for a pgtable entry when it's VM_SHARED".  Yan observed
+that we don't do the same thing for pte/pmd/pud, which is true.
 
-> diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-> index c85bbce5aaa5..211b98d45fc6 100644
-> --- a/include/trace/bpf_probe.h
-> +++ b/include/trace/bpf_probe.h
-> @@ -53,8 +53,17 @@ __bpf_trace_##call(void *__data, proto)               =
-                       \
->  #define DECLARE_EVENT_CLASS(call, proto, args, tstruct, assign, print) \
->         __BPF_DECLARE_TRACE(call, PARAMS(proto), PARAMS(args))
->
-> +#define __BPF_DECLARE_TRACE_SYSCALL(call, proto, args)                 \
-> +static notrace void                                                    \
-> +__bpf_trace_##call(void *__data, proto)                                 =
-       \
-> +{                                                                      \
-> +       guard(preempt_notrace)();                                       \
-> +       CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(=
-args));        \
-> +}
-> +
->  #undef DECLARE_EVENT_SYSCALL_CLASS
-> -#define DECLARE_EVENT_SYSCALL_CLASS DECLARE_EVENT_CLASS
-> +#define DECLARE_EVENT_SYSCALL_CLASS(call, proto, args, tstruct, assign, =
-print) \
-> +       __BPF_DECLARE_TRACE_SYSCALL(call, PARAMS(proto), PARAMS(args))
->
->  /*
->   * This part is compiled out, it is only here as a build time check
-> --
-> 2.39.2
->
+Before this patch:
+
+  - For pte:     we clear dirty bit if VM_SHARED in child when copy
+  - For pmd/pud: we never clear dirty bit in the child when copy
+
+The behavior of clearing dirty bit for VM_SHARED in child for pte level
+originates to the 1st commit that git history starts.  So we always do so
+for 19 years.
+
+That makes sense to me, because clearing dirty bit in pte normally requires
+a SetDirty on the folio, e.g. in unmap path:
+
+        if (pte_dirty(pteval))
+                folio_mark_dirty(folio);
+
+Hence cleared dirty bit in the child should avoid some extra overheads when
+the pte maps a file cache, so clean pte can at least help us to avoid calls
+into e.g. mapping's dirty_folio() functions (in which it should normally
+check folio_test_set_dirty() again anyway, and parent pte still have the
+dirty bit set so we won't miss setting folio dirty):
+
+folio_mark_dirty():
+        if (folio_test_reclaim(folio))
+                folio_clear_reclaim(folio);
+        return mapping->a_ops->dirty_folio(mapping, folio);
+
+However there's the other side of thing where when the dirty bit is missing
+I _think_ it also means when the child writes to the cleaned pte, it'll
+require (e.g. on hardware accelerated archs) MMU setting dirty bit which is
+slower than if we don't clear the dirty bit... and on software emulated
+dirty bits it could even require a page fault, IIUC.
+
+In short, personally I don't know what's the best to do, on keep / remove
+the dirty bit even if it's safe either way: there are pros and cons on
+different decisions.
+
+That's why I said I'm not sure which is the best way.  I had a feeling that
+most of the people didn't even notice this, and we kept running this code
+for the past 19 years just all fine..
+
+OTOH, we don't do the same for pmds/puds (in which case we persist dirty
+bits always in child), and I didn't check whether it's intended, or why.
+It'll have similar reasoning as above discussion on pte, or even more I
+overlooked.
+
+So again, the safest approach here is in terms of dirty bit we keep what we
+do as before.  And that's what this patch does as of now.
+
+IOW, if I'll need a repost, I'll repost exactly the same thing (with the
+fixup I sent later, which is already in mm-unstable).
+
+Thanks,
+
+-- 
+Peter Xu
+
 
