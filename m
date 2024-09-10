@@ -1,136 +1,122 @@
-Return-Path: <linux-kernel+bounces-322534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688FE972A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDEA972A64
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190F31F25909
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB26F1F2586A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 07:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CBA17CA16;
-	Tue, 10 Sep 2024 07:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD5117C232;
+	Tue, 10 Sep 2024 07:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFhd5Qpq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WU+uwxiU"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ADD17C7CC;
-	Tue, 10 Sep 2024 07:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1359BA45;
+	Tue, 10 Sep 2024 07:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725952636; cv=none; b=ZLwvb1E01UJEiAWKskB7cO19Ybxvw8xpttUWQBWGpSDOFTfnFJYw9hGgtLQ7G8PR8xTFVwQ2YlH9Rj5GwvCTHmuDHgxsmE0sDEquQuBP1k7k10dKjbyyrfxmfaBnIu+scavOOvLj/dFHyi9WcGgTY9OP2GKOUQ/dpVM+3umt14Q=
+	t=1725952634; cv=none; b=ca/fPGX/PtcTkbL228abkU90HXhFPoE562Z74gnvQZy7KWEKpjJ83rOaRPVjR/UYr45RcjqTx6bUXgpIwrV+VxJ2w+ksVX8+g+rCf1Zq+0jvogbZ1DNBdCJrWh808yRoO6ACo5LSyBrA73sbVmjp1IhKZ9AqhxuiL1xnt0HSsvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725952636; c=relaxed/simple;
-	bh=8/RT5ao2Rj3jfocZ0k8UtnhxLNqZkXtdUUVZZK1tl7s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mG2QBaYd03uyOU3XjMWlIWlqDikW3B90cqVvzu13Yny7yVCSIZZK91EmD4q5R8A4AnDLFvcRiaTnODXcfBgWhN+2wfuOU+HYGfkqmHwfYo0unllNi0Rp1NnMGKj3pAtZZscjlrzsnQzmPigXeUzaY6iucnYaXsggCmcjtGLx0iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFhd5Qpq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3CFDC4CEC3;
-	Tue, 10 Sep 2024 07:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725952635;
-	bh=8/RT5ao2Rj3jfocZ0k8UtnhxLNqZkXtdUUVZZK1tl7s=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=kFhd5QpqHZn+sKWHT9GLnHza8v0tZFJaZ4Od2s3Bw3wBNdFDTuuILQVGw/sKiv+Ux
-	 hwohoqBk9efe8H66K04rNLLgL/yPNO/zvCQV/3+i35ADZtlJ9D4iT+ttmpxi9wVk2p
-	 VnVENOEhUbxzQJih6xee9lQuEIuFV0RfHmnAO1mhoHFqSqYgXTv0+afqlLM2Ro+sEj
-	 h/7etLhUIEx14eY8gyQCA2o2QaTiDFJJH/zb6rmbrypcuOUI1aND/VlKDVzvZ6ynBB
-	 LcA5tm1ta67Gx84LiUcD8+QFFV3cg6Vy9RAHM+9CngcqIHFNoVktT5zqFW/pLYR1nJ
-	 aG1ksCsubQ84g==
-Message-ID: <c2178d70-2acd-4e74-976d-6ac6350a7b2d@kernel.org>
-Date: Tue, 10 Sep 2024 09:17:07 +0200
+	s=arc-20240116; t=1725952634; c=relaxed/simple;
+	bh=p59Ss6VtrKpvbydD51f2XLHA6rxcKBxjCY60kv3T+D8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlE+vKomu3RGhQiW6zuUvzJ1urUaLQn1ayYCpMo7rXM3NL4I/OjBpdIWo0wODAyZdOMdHDMs4wyNUZ7Z29f7eX+Wr/QWkMfe8MxuV0fz4ndUok4j6Ve0s62SFfKLlOzLBoDDc2vfZibK+Wj8TTmWpBa1WvIxpKl9FGV9ca9I16A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WU+uwxiU; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3787f30d892so3113522f8f.0;
+        Tue, 10 Sep 2024 00:17:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725952631; x=1726557431; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Wk5p0AaosOp3QnIYyh9WhfdmB+ZMEKWe8kuMctYctKg=;
+        b=WU+uwxiU0AhE6vJ+Ty8/vH8X4matMvi/SiDH94LdOQPyGos/MrZv1Ci2hthGNtBQ+b
+         vcOOuDhNLKN/c5zMqpb30qnP+6s5ZXSc+LNCZJnbn56qqK6GYlkCM39j3u0omBSL7kRh
+         8BK+C5DifCQ/AvWk2VgO1PpZQtG9Gyfvla2iyzhs5B28vhfSNQ5ie0G9BtF/FSl+Ymbp
+         kf8AAl9IcnrMUKDPUCQ+0KT4ez8K8dgMio5vaqO2jHfbCNmkE2Uetef813P+9VsCaFt2
+         dUrgR67pDQdu9uEZtQSAUOaScH5fr70Hd7Qa9bQwnVVSmfY6ALgp4GuxEYJvA/lShmKh
+         WNYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725952631; x=1726557431;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wk5p0AaosOp3QnIYyh9WhfdmB+ZMEKWe8kuMctYctKg=;
+        b=JhbkCtWRsxblbIlhCcdgc44tZn5DS1KlUvcbMvjvdnsM3dzVNZVvJqssueit/b7jTw
+         0uyUlXLebPdILhdG1hg1L3yoa2SCDKpmEjKrOZYyzIZ6+SiTpnPOQDG5H7QDAw9/WIEw
+         9wY38FwZIraBVO8+09pu4H2tHERqGbNXRtPDuU6mmB6DdUycZ2ucnJ+eR3jPPQUk7DRF
+         tFNxB0zM+/33myOgpzuIPxp5COPFrUZaAIGIRb9axZSGraTYpfKg5EWy1WzChrUEWWbx
+         /PGR6qMc+2qmMiF7CUsJ9HS1L71QfF9GMpotzKnzH199r8oFNylvT5XNBbFXkQ7zNkLk
+         tCtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCcAFTJ0CyAdHUxXNJAjTKrurdP5MxGJWHQNA3VSXlVnJOjBl8DTIU/HJHMe/ktzPKOA+bekEoKEXj2+jo@vger.kernel.org, AJvYcCWhkGTO3+efejyGiIZ5g7NwPmoWM7GKiYeiOCQgMfTNgJKzwI7P4VP4EnTFAA/opbXHOEY=@vger.kernel.org, AJvYcCWwjvYImY5IBf1R2EpCefwRbjZNOcbisncJa+mBq0vKIBX3S/HK2Cpflu6kl/4tfrnvZk26rGTE8FbikMuWKy+y0p7r@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdjX5j9aOrsezLRZ/MDWfeSRinERhia3b4pKdHvq0IH5UO22xF
+	dhexYc8F7CsvRnNHgIHXl+UmlowK+FPJds5LQxqHWJjxs0ncO2a9
+X-Google-Smtp-Source: AGHT+IGwAKlJ0tPbumQP9ijb2hqxRTKEIzjuK5U9pKYKx7TpB3hM83iW8io9mcahSYP/cieSCof6jQ==
+X-Received: by 2002:a5d:6a0e:0:b0:371:8dbf:8c1b with SMTP id ffacd0b85a97d-378895e9015mr8775342f8f.34.1725952630550;
+        Tue, 10 Sep 2024 00:17:10 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8182dsm101648745e9.36.2024.09.10.00.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 00:17:10 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 10 Sep 2024 09:17:08 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 5/7] selftests/bpf: Add uprobe session test
+Message-ID: <Zt_ydMfrfNipE7py@krava>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-6-jolsa@kernel.org>
+ <CAEf4BzZQA4Sy+7mWzCM1zeWCZh8PM3OQqoLAMPWd+4dA4D=KoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ASoC: dt-bindings: microchip,sama7g5-i2smcc: Add
- 'sound-name-prefix' property
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrei Simion <andrei.simion@microchip.com>, claudiu.beznea@tuxon.dev,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-References: <20240909083530.14695-1-andrei.simion@microchip.com>
- <20240909083530.14695-3-andrei.simion@microchip.com>
- <2bb15a72-82ef-4bc4-b01e-e4768687bab6@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2bb15a72-82ef-4bc4-b01e-e4768687bab6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZQA4Sy+7mWzCM1zeWCZh8PM3OQqoLAMPWd+4dA4D=KoA@mail.gmail.com>
 
-On 09/09/2024 10:38, Krzysztof Kozlowski wrote:
-> On 09/09/2024 10:35, Andrei Simion wrote:
->> From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->>
->> Add 'sound-name-prefix' property to differentiate between interfaces in
->> DPCM use-cases. Property is optional.
->>
->> [andrei.simion@microchip.com: Adjust the commit title and message.
->> Reword the description for 'sound-name-prefix'.]
->>
->> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
->> ---
->>  .../bindings/sound/microchip,sama7g5-i2smcc.yaml           | 7 +++++++
->>  1 file changed, 7 insertions(+)
+On Mon, Sep 09, 2024 at 04:45:35PM -0700, Andrii Nakryiko wrote:
+> On Mon, Sep 9, 2024 at 12:47 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > Adding uprobe session test and testing that the entry program
+> > return value controls execution of the return probe program.
+> >
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  .../bpf/prog_tests/uprobe_multi_test.c        | 47 ++++++++++++
+> >  .../bpf/progs/uprobe_multi_session.c          | 71 +++++++++++++++++++
+> >  2 files changed, 118 insertions(+)
+> >  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+> >
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> (also note Stanislav's change of email, please don't cc his old email)
 
-One more point for future (I missed this before) - be sure you CC
-necessary lists. Use get_maintainers or b4 for this. Skipping DT list
-means skipping automation, so this would be a NAK anyway.
+yea sorry about that, will change
 
-Best regards,
-Krzysztof
-
+thanks,
+jirka
 
