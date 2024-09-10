@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-322886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880359731FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92317973244
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCB31C212BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AE6B22626
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330F194082;
-	Tue, 10 Sep 2024 10:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C1B19755B;
+	Tue, 10 Sep 2024 10:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CVGrpJIB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EIiAOEZh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA51A18C025;
-	Tue, 10 Sep 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4123196C7C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725963149; cv=none; b=qx73bwDp97rkqtyPQt8aKis8aYz3emcYlF0NPy0KmazbuhltgbrCDxnNL/2NFx63/hUKlBCnmAZ+LHd9xwg4qwZwjjGNONZ4+GUKswWGHWn0Re97zIYhMqeqm00ajo2FYajuVAYqV+i+oM3eYPNeuaY+7EUsC+Lm2hAxfGxlUj8=
+	t=1725963236; cv=none; b=pviRqmUZzGEvjBjqmICQXlBWLjdoRECVr9hn1LPbcuWH9/Ox7NdGQxiuAYurCYXUVorAHYGgkOTeIs+eNAJVQXtjNc2A9Mivh9U4y8JRbKOs2yToE3OvXySLiDK/lqXaTqTyQ/beVh39WJwSNEqwgld+6s+WUKb+M3HgT88/UO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725963149; c=relaxed/simple;
-	bh=VyYakeR5q2gj2qCC9iwfxK5M8Ob6MBmeAoDuJlw+zSg=;
+	s=arc-20240116; t=1725963236; c=relaxed/simple;
+	bh=DfmBoqhY5ZJUvGoqCesXpmishaSxskD00ID1HShSmto=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXots3vcg0qxdCTtBtvsG5xS1lIRJ9OB/Mh0xKNBxMPJgWCApVHOjy9tK/nUSlUebduJW3CAKi+rapPcbGu3iVmVCjSUhPvu3qFPlCB7R3GMdmblXa9euMAU/HdEuQ61f6CLNTCUx1CHVZwxdzU/PpM8KZo0mHlpLv2utn/ALu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CVGrpJIB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6D1C3EA;
-	Tue, 10 Sep 2024 12:11:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1725963069;
-	bh=VyYakeR5q2gj2qCC9iwfxK5M8Ob6MBmeAoDuJlw+zSg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CVGrpJIB6XCBH84LYK5iU1wsM3+QPJhhjFAMTxNWZ3Nrr3F+9mc294RDyiQHpp64Q
-	 7kvf2LAJH91n0OGjslx+U/ZFTK9BvErzdy4LZ95v8q+18rZ8As/Q0/GLycvZUar6is
-	 QxML5QenW8o6E5A4sLKJs+NxxwPZu73VmOYUWoFA=
-Message-ID: <5fe23378-901d-4b5e-a8a6-c0cccca74b70@ideasonboard.com>
-Date: Tue, 10 Sep 2024 13:12:22 +0300
+	 In-Reply-To:Content-Type; b=DB2QuxzUPmi8yWG4vwSIGcHrABg6YUpGfDpooEpmGnax2m7N210KyL/UwSNsOyT3l5ayU/UgtZe0M75zrS7tGc8AhjJw/9rkRPh7JpeSaWyXB01s2ONABx9Cqqe2MuIldJhUeItQFMr3ipiIlw1vOCYj/+VupdoQv0kz2GHGaX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EIiAOEZh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725963233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6AP6r25f65ztGYBeuRMH9nyvJDb+6rpvy3qvP6qysss=;
+	b=EIiAOEZhNPvWUerMuciHNURAt6o4BzjmF6snX8sNHc3IpSHjvjBRwOJE4Gj32aTO68ON1f
+	/Mpjdz8odVejZqwsut0OAFy4uICfz+RNaE8evfPpqaHFCB1K1fpwG6bt4iM07+XG5PdLFI
+	jbEU8aZk8i+LyKYpo3LplHpVp9H9Xdo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-325-AR884MJ-N6CggA9Usi9-4w-1; Tue, 10 Sep 2024 06:13:52 -0400
+X-MC-Unique: AR884MJ-N6CggA9Usi9-4w-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42ac185e26cso42384865e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 03:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725963231; x=1726568031;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6AP6r25f65ztGYBeuRMH9nyvJDb+6rpvy3qvP6qysss=;
+        b=vsb40Y+ykyNBn3oKUdrtE6d1J7ZQWvY34tOiMkYDi0dLSUCUZPVRSVvc7KNVpSWKFb
+         ImdBeeLhCCLndZCRt7vQDVBXOYyl+3YzKnWD4X4Lpcu6mnyp3S3PjsB5RZMKOTSCuHE9
+         k5LmARDaG4LfZ5Ji5b3SCjZTRj1usrwij4XzJcf11649KoVLdRHhxtZMt2e60xP8f2uO
+         Ig1+LGnzivwK4NWud9v19bF8jUfL2K1ZnH7dn9ncGQaZGroPfVdxaMIBmqrFY9n2yCnA
+         5DqhV4kgomevzBDVJM5AzhWtqG5aQjylvnqeSzV3iNoH5YeETWcyM+wk3S2F2hwaAx4V
+         1Q1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4V/xLnImdOUB4DI/W4HLPSXOZXLZ0ZBPkH9gthX/z7s3COZy86ONkCKa2v/j2RihTodD++bzJo2zip58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz9f+4j1dLcVU4bLMphtP6IBNE0ZKBw/Q6WNw1fNOsVnc64YT9
+	9swiU/eLDpdqUgj3dBV3cZBzmKooTIFCgiHYcdzWrh+N7SG5N78dVCyWFq7KTccsWSq2dOGVwNP
+	Vnmpy1fbsUO2kIuTj6UCysVl4Hm40j/pnrZ3XIJ+93IrCKkwf9WyJEi8ACmkkmQ==
+X-Received: by 2002:a05:6000:d8c:b0:371:8cc3:3995 with SMTP id ffacd0b85a97d-378896035a0mr8983518f8f.34.1725963231122;
+        Tue, 10 Sep 2024 03:13:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHy5P0EwcX0ItxKYDRTeq52pENXWKZzMDGIn+kiNA9wiZmAaVMqy9YBbSaqe53p8fp2gaS+DQ==
+X-Received: by 2002:a05:6000:d8c:b0:371:8cc3:3995 with SMTP id ffacd0b85a97d-378896035a0mr8983496f8f.34.1725963230533;
+        Tue, 10 Sep 2024 03:13:50 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378956d37a1sm8431319f8f.77.2024.09.10.03.13.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 03:13:49 -0700 (PDT)
+Message-ID: <0feae675-3ccb-4d0e-b2cd-4477f9288058@redhat.com>
+Date: Tue, 10 Sep 2024 12:13:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +82,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] media: raspberrypi: Add support for RP1-CFE
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, oe-kbuild-all@lists.linux.dev,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Naushir Patuck
- <naush@raspberrypi.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
- kernel test robot <lkp@intel.com>
-References: <763b3147-d7cb-44a7-b73b-8f7f4fd622ab@ideasonboard.com>
- <yib2r4wisxvk3kgogbjqawrpmfq6lcezfk4xjmftj44jzkbclc@icapodv2ffzk>
- <d5188c0a-4a52-4378-89b1-48f606e448cc@ideasonboard.com>
- <ggtlreq5gyhzfdv6yzeuia46y7fxpuyvg236prig52t43xsl2a@crlqks2nhfpe>
- <20240909134516.GA9448@pendragon.ideasonboard.com>
- <Zt8ZysTT5DIZr-J7@kekkonen.localdomain>
- <jdtjdspf4qyrgn6jmyxeab5ueo53wjd5vuhvlpin3pdiyifwht@dndfcqnmv7sd>
- <ZuAQpITcee2SSYKk@kekkonen.localdomain>
- <6u2g4v4ktt543sy5jlp3vonemhzhrwyz2liikg6jb2kx3h7jao@z6s233clqwqk>
- <ZuAXiKjdgMUY1jcV@kekkonen.localdomain>
- <20240910100608.GC6996@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 19/21] KVM: TDX: Add an ioctl to create initial guest
+ memory
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+ <kai.huang@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+ "dmatlack@google.com" <dmatlack@google.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-20-rick.p.edgecombe@intel.com>
+ <Ztfn5gh5888PmEIe@yzhao56-desk.sh.intel.com>
+ <925ef12f51fe22cd9154196a68137b6d106f9227.camel@intel.com>
+ <9983d4229ad0f6c75605da8846253d1ffca84ae8.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240910100608.GC6996@pendragon.ideasonboard.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <9983d4229ad0f6c75605da8846253d1ffca84ae8.camel@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/09/2024 13:06, Laurent Pinchart wrote:
-
->>> Unrelated, but I am wrong the driver core calls pm_request_idle() on
->>> the just probed device ? Does this mean drivers doesn't have to do
->>> that by themseleves ? (it's not a big deal, as request_idle() doesn't
->>> change the usage counter)
->>
->> Seems like that. This could be omitted from drivers then.
+On 9/6/24 18:30, Edgecombe, Rick P wrote:
+> /*
+>   * The case to care about here is a PTE getting zapped concurrently and
+>   * this function erroneously thinking a page is mapped in the mirror EPT.
+>   * The private mem zapping paths are already covered by other locks held
+>   * here, but grab an mmu read_lock to not trigger the assert in
+>   * kvm_tdp_mmu_gpa_is_mapped().
+>   */
 > 
-> Is that guaranteed, or is it an implementation detail that could change
-> at any time ?
+> Yan, do you think it is sufficient?
 
-The runtime_pm.rst says:
+If you're actually requiring that the other locks are sufficient, then 
+there can be no ENOENT.
 
-> It may be desirable to suspend the device once ->probe() has finished.
-> Therefore the driver core uses the asynchronous pm_request_idle() to submit a
-> request to execute the subsystem-level idle callback for the device at that
-> time.  A driver that makes use of the runtime autosuspend feature may want to
-> update the last busy mark before returning from ->probe().
+Maybe:
 
-But I can't find any mention of the dependencies (parent, suppliers) 
-being powered up automatically for probe.
+	/*
+	 * The private mem cannot be zapped after kvm_tdp_map_page()
+	 * because all paths are covered by slots_lock and the
+	 * filemap invalidate lock.  Check that they are indeed enough.
+	 */
+	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
+		scoped_guard(read_lock, &kvm->mmu_lock) {
+			if (KVM_BUG_ON(kvm,
+				!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa)) {
+				ret = -EIO;
+				goto out;
+			}
+		}
+	}
 
-  Tomi
+Paolo
 
 
