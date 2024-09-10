@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-322945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C89973578
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:50:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FAE97357B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 12:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B41B1C25084
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189B31C250FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 10:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001318C343;
-	Tue, 10 Sep 2024 10:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462EE187325;
+	Tue, 10 Sep 2024 10:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=datenfreihafen.org header.i=@datenfreihafen.org header.b="BSKZ3agC"
-Received: from proxima.lasnet.de (proxima.lasnet.de [78.47.171.185])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TzqaPsiL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2F1C8DF;
-	Tue, 10 Sep 2024 10:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.171.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAB123A6
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 10:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725965376; cv=none; b=LsVR8FtQYSWcTe8lH/JmchCilxpwxF4jdsZ/8fb3wX7UQ99qPSnQZxySb5y3S4DJ06Tz/N7UR7CTJnoaDaIQszYGW5GYI6olOHu0FkOBjeUA2t5t8+rIMbvlY8OO34xhOjkfLnT4rsi5JC4bvL7bDt25U0T/Ele6vCCQCCvOD1M=
+	t=1725965403; cv=none; b=BY0VhjLADkObLjbppocCdG5lLOUyzHKW/u5MWynNRsGV1FhunshJdUGbwhlkKuImNKXdWTIQjAnZIBYfTLyY5IgpJA/eqNSp2TNZn9GXuwKC+7SiGkWJRsCVwTr20qSkeF1pJl7aQJ02RvVXFmJKDPnaNT3PhoKktYC7V6sfDUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725965376; c=relaxed/simple;
-	bh=4h9ugKqamWguH6j/Qqkh5uCQAVj+/GDplf6he6MaF4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=h5w3BnxKunl3NAaUOWepOYCJfIkPl66aZYXIxMH+KT7MykSOT8cTIEgyLPRvSfOzBtcSvr/Qh/bNuXv+2UGOgRr6CrVZeftVNz0qmmSn0yW73FfrS0oLvgG1V/MZzfXrMM9MowjQ+LQ0Bn+49CnKofrE5xCDi59Ovovxw5K4sC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org; spf=pass smtp.mailfrom=datenfreihafen.org; dkim=pass (2048-bit key) header.d=datenfreihafen.org header.i=@datenfreihafen.org header.b=BSKZ3agC; arc=none smtp.client-ip=78.47.171.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=datenfreihafen.org
-Received: from [192.168.2.107] (unknown [45.118.184.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: stefan@datenfreihafen.org)
-	by proxima.lasnet.de (Postfix) with ESMTPSA id 65B8AC04EC;
-	Tue, 10 Sep 2024 12:49:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=datenfreihafen.org;
-	s=2021; t=1725965369;
+	s=arc-20240116; t=1725965403; c=relaxed/simple;
+	bh=tjRIYlNK9oEPZidwMLKbN36DkLeUA/Mt/bor3mAYdzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fm5P5BUvaSDz1YkmmUB1maHNci7PkZMTXf5wz06IHz1UJS/MXUO+2xrPZInLWnSGiDknegyUiaED8fvkNSFbKJAP+hnT1cNttrBv5Ljp8wKmTMvUOyrTjWZr1tDT5oiko0XmP7RVRzdRGD2myGKTaQ9lXy7LPcejgpVrzvHNgCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TzqaPsiL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725965401;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F4Njp4aZmAUi+ZgiJdMyb8GGh61pN9VCyJUoqbzXl1U=;
-	b=BSKZ3agC4GpavxSIHoc/ZoYIB6yBE8Kwp4xzIlpt1EgbCaWjRRucXutcGpi9ZBYNQMkc17
-	xZgmGcDOEr/Qw5ikntGCiq2JVvVt4yuNF2bae8oygxsvG4xdbkHGMIXj3dv0FoH3lW7e5E
-	Mz2Gs9DWSMPQG9Cu+1uRjf3BEkzqTp9bhYTURDLIBy16p9DUvXaoR4wPrvIAbXkJvySXgM
-	tlMkZvsBPl17hgYSSzN8Mtp/iU0bMWjz8Loc5QPLXm0gtx3+LKZFuoVitSQ7L20xgvX09S
-	y/k1ahmrogEDp8oZry3tIF8WQ+6Qut7c9rI+QuAGybu5jZs+DA4r74vKxWUAWQ==
-Message-ID: <75bfcd83-4b71-4fee-a560-5ca112e6fbb0@datenfreihafen.org>
-Date: Tue, 10 Sep 2024 12:49:28 +0200
+	bh=YZgcuspLqcfqCSPDpXA3njSxo7eX4xp8bIeZdoi4VBY=;
+	b=TzqaPsiLsZh7E+OQuLA7/IYRCjuc/S8hYYfWRYZe4bYUMS+iWq7mBTUW+/lYAQvKz5rrBT
+	R/i5ZEbRxujoWduoYTX2FC/1aJLwhdbLtOEN5GQcN3krdr/tJ6Bm9IuU6jtEnu9Kl7o/gA
+	RN9mgDkT4urqpLX6qzFMNzSTCOUrs54=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-199-iGTAO14eOdC-kAtyuE9GqQ-1; Tue,
+ 10 Sep 2024 06:49:55 -0400
+X-MC-Unique: iGTAO14eOdC-kAtyuE9GqQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08EAE19560B2;
+	Tue, 10 Sep 2024 10:49:54 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.32.72])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 009A219560AA;
+	Tue, 10 Sep 2024 10:49:51 +0000 (UTC)
+Date: Tue, 10 Sep 2024 06:49:49 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Liu Song <liusong@linux.alibaba.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] sched, cgroup: cgroup1 can also take the
+ non-RUNTIME_INF min
+Message-ID: <20240910104949.GA318990@pauld.westford.csb>
+References: <20240910074832.62536-1-liusong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in
- request_irq()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, louis.peens@corigine.com,
- alex.aring@gmail.com, miquel.raynal@bootlin.com, chunkeey@googlemail.com,
- kvalo@kernel.org, briannorris@chromium.org, francesco@dolcini.it,
- set_pte_at@outlook.com, damien.lemoal@opensource.wdc.com,
- mpe@ellerman.id.au, horms@kernel.org, yinjun.zhang@corigine.com,
- fei.qin@corigine.com, johannes.berg@intel.com, ryno.swart@corigine.com,
- krzysztof.kozlowski@linaro.org, leitao@debian.org, liuxuenetmail@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- oss-drivers@corigine.com, linux-wpan@vger.kernel.org,
- linux-wireless@vger.kernel.org
-References: <20240909133034.1296930-1-ruanjinjie@huawei.com>
- <20240909133034.1296930-5-ruanjinjie@huawei.com>
-Content-Language: en-US
-From: Stefan Schmidt <stefan@datenfreihafen.org>
-In-Reply-To: <20240909133034.1296930-5-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910074832.62536-1-liusong@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hello Jinjie Ruan.
 
-On 9/9/24 3:30 PM, Jinjie Ruan wrote:
-> disable_irq() after request_irq() still has a time gap in which
-> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-> disable IRQ auto-enable when request IRQ.
+Hi,
+
+On Tue, Sep 10, 2024 at 03:48:32PM +0800 Liu Song wrote:
+> For the handling logic of child_quota, there is no need to distinguish
+> between cgroup1 and cgroup2, so unify the handling logic here.
 > 
-> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Signed-off-by: Liu Song <liusong@linux.alibaba.com>
 > ---
->   drivers/net/ieee802154/mcr20a.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+>  kernel/sched/core.c | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-> index 433fb5839203..020d392a98b6 100644
-> --- a/drivers/net/ieee802154/mcr20a.c
-> +++ b/drivers/net/ieee802154/mcr20a.c
-> @@ -1302,16 +1302,13 @@ mcr20a_probe(struct spi_device *spi)
->   		irq_type = IRQF_TRIGGER_FALLING;
->   
->   	ret = devm_request_irq(&spi->dev, spi->irq, mcr20a_irq_isr,
-> -			       irq_type, dev_name(&spi->dev), lp);
-> +			       irq_type | IRQF_NO_AUTOEN, dev_name(&spi->dev), lp);
->   	if (ret) {
->   		dev_err(&spi->dev, "could not request_irq for mcr20a\n");
->   		ret = -ENODEV;
->   		goto free_dev;
->   	}
->   
-> -	/* disable_irq by default and wait for starting hardware */
-> -	disable_irq(spi->irq);
-> -
->   	ret = ieee802154_register_hw(hw);
->   	if (ret) {
->   		dev_crit(&spi->dev, "ieee802154_register_hw failed\n");
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index e752146e59a4..8418c67faa69 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -9501,23 +9501,12 @@ static int tg_cfs_schedulable_down(struct task_group *tg, void *data)
+>  		parent_quota = parent_b->hierarchical_quota;
+>  
+>  		/*
+> -		 * Ensure max(child_quota) <= parent_quota.  On cgroup2,
+> -		 * always take the non-RUNTIME_INF min.  On cgroup1, only
+> -		 * inherit when no limit is set. In both cases this is used
+> -		 * by the scheduler to determine if a given CFS task has a
+> -		 * bandwidth constraint at some higher level.
 
+This comment is here for a reason. Please don't remove it. 
 
-Dave, Eric, Jakub, if you are taking them into net/net-next directly 
-here is my ack (and Miquel's review as well).
+> +		 * Ensure max(child_quota) <= parent_quota.
+>  		 */
+> -		if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
+> -			if (quota == RUNTIME_INF)
+> -				quota = parent_quota;
+> -			else if (parent_quota != RUNTIME_INF)
+> -				quota = min(quota, parent_quota);
+> -		} else {
+> -			if (quota == RUNTIME_INF)
+> -				quota = parent_quota;
+> -			else if (parent_quota != RUNTIME_INF && quota > parent_quota)
+> -				return -EINVAL;
+> -		}
+> +		if (quota == RUNTIME_INF)
+> +			quota = parent_quota;
+> +		else if (parent_quota != RUNTIME_INF)
+> +			quota = min(quota, parent_quota);
+>  	}
+>  	cfs_b->hierarchical_quota = quota;
+>
 
-Acked-by: Stefan Schmidt <stefan@datenfreihafen.org>
+I don't think there is a need to optimize this slow path
+to allow setting invalid values which have to be handled in
+fast paths.   And this will change expected behavior.
 
-regards
-Stefan Schmidt
+So NAK.
+
+Cheers,
+Phil
+
+-- 
+
 
