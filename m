@@ -1,172 +1,186 @@
-Return-Path: <linux-kernel+bounces-322826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-322793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9CF972F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EFE972E1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 11:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5E11C24B41
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3C11C24736
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 09:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EFC18C347;
-	Tue, 10 Sep 2024 09:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DCD18B49E;
+	Tue, 10 Sep 2024 09:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QpLghcPa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="RCkOyiCk"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB283184101;
-	Tue, 10 Sep 2024 09:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC331891A1;
+	Tue, 10 Sep 2024 09:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725961861; cv=none; b=LKXD5uY7XMI3vUeums2bG6+uQvWkpdfCCVBQcDGR8VDii7wWgVFSZT28HORkb4mppA4a/HCNbTt3cTrn8AiV/aol7wc6RiuCgj52eyqXfR6sTbMoyRm6+/B583tdWp347SQYFdJH0Uew8vIITJ8/omd8k+4UZvilycLSXgVwlxo=
+	t=1725961168; cv=none; b=ECcMQE7kMddmAnikqmh6Qt4XQ3A1KQ+OhHOSM39n896j5sbe3a9OsIqwSq0TIXhQHnoZvvVZHmYYu+3OjdpvSW+BHbnnbtCRR4gzom/aTnUpS/1z6PQq9C/RiTUfPai0aGMe2DyQXSs9PNnpKxBmbhI4Ez3SANJu08vv2EfD/PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725961861; c=relaxed/simple;
-	bh=3Pj8QcmA0Z7A7wynd6iaoEDBiyrJZyhqJlkcETNNd40=;
+	s=arc-20240116; t=1725961168; c=relaxed/simple;
+	bh=Uj/sl+T25qrRr38QlD3fqLUWWSOsn0W+6LPzNqo0/ZQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pJarnVaKC5dyyCeikJurmVXLMr+5ukPJMGM3+3rHXgxK3bIzxKvFAgY0ecDVElE4OO0fNty8IwWJTGdqK/Xn1LNZfAYCy6v3XliL457LVpSfHEoos8Qzyh3xGhXnbUd3tKFzP5xg0mnCrSwYqgy+LyN6HluQV0QeZchpMxS4oV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QpLghcPa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6067C4CEC3;
-	Tue, 10 Sep 2024 09:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725961861;
-	bh=3Pj8QcmA0Z7A7wynd6iaoEDBiyrJZyhqJlkcETNNd40=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QpLghcPayv8PaQIM1ZPqEfO1n7b9Rnjjmn90t+JEW9YtEMIp9hkaNjX1M6HiWlXvk
-	 RcHgcwRUfn8ZCQfdw5ehTrkU1j7XvAocbjZnygioerVw/Ni90ksb5ykUwB09IwbrxT
-	 PC5pvTDhpgZooHzC/7YGjg3LP1AYNQn1LoWw7+3I=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	=?UTF-8?q?Marcin=20=C5=9Alusarz?= <mslusarz@renau.com>,
-	Tim K <tpkuester@gmail.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.10 213/375] wifi: rtw88: usb: schedule rx work after everything is set up
-Date: Tue, 10 Sep 2024 11:30:10 +0200
-Message-ID: <20240910092629.679284973@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
-References: <20240910092622.245959861@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	 MIME-Version:Content-Type; b=s9a9uDr/fpP4W+Jh1RJG/Lb5oljJ9yARye8Kv+An5R7KVdlT9WmUcR2ju4+Jn/capB7pRk3JLn7ausX6Ud6vjZY77/FxaKvogFoHbryNYwT0XTbKE+ajsI+cSG5ME8h73eOABxu8AyTzuzotKtspWGjd6PjLcJfKs37QlU2KOg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=RCkOyiCk reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id f9c7542ddd4df7b8; Tue, 10 Sep 2024 11:39:23 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 079806B836C;
+	Tue, 10 Sep 2024 11:39:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1725961163;
+	bh=Uj/sl+T25qrRr38QlD3fqLUWWSOsn0W+6LPzNqo0/ZQ=;
+	h=From:Subject:Date;
+	b=RCkOyiCklvWugGE3eGLg3GcDvW3YaZa7BJbjLnHkU+bn7C/zOLQIOES8gTLnmvu3Q
+	 iiqUEzcEUhJ37ajqv/20ymsSFAfo1wjPn0xRn/P/Gxch6D5pyTxCsmUjeQ8I+4jLhU
+	 E9Bnz7Q5ATUBgIfW9+wDeMTSA3jsEs5ZLaE3fHGLA6sfv+7aWr/e2ofArjzvoDrov1
+	 v6yH3RUtdZO4r3Ri0n9tkfSEPQOYxnN8+USdX+Duz6Qesu4dbqzd/buw37CPmFeafZ
+	 SMboQ6GKploIhqok0M5mTF1RKbPXzdr8gUp5rQHsuKQW7lHvJ1ONV36qT7AfO8IHiY
+	 QGM0Ltt4BI3Qg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH for 6.13 v1 3/8] thermal: core: Build sorted lists instead of sorting
+ them later
+Date: Tue, 10 Sep 2024 11:30:13 +0200
+Message-ID: <3316488.44csPzL39Z@rjwysocki.net>
+In-Reply-To: <4920970.GXAFRqVoOG@rjwysocki.net>
+References: <4920970.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiledgudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdr
+ tghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=15 Fuz1=15 Fuz2=15
 
-6.10-stable review patch.  If anyone has any objections, please let me know.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-------------------
+Large numbers of trip points are not expected to be crossed in one go,
+so quite likely it is more efficient to build a sorted list of crossed
+trip points than to put them on an unsorted list and sort it later.
 
-From: Marcin Ślusarz <mslusarz@renau.com>
+Moreover, trip points are often provided in ascending temperature order
+during thermal zone registration. so they are naturally sorted anyway
+and building a sorted list out of them is quite straightforward.
 
-[ Upstream commit adc539784c98a7cc602cbf557debfc2e7b9be8b3 ]
+Accordingly, make handle_thermal_trip() maintain list ordering when
+adding trip points to the lists and get rid of separate list sorting
+in __thermal_zone_device_update().
 
-Right now it's possible to hit NULL pointer dereference in
-rtw_rx_fill_rx_status on hw object and/or its fields because
-initialization routine can start getting USB replies before
-rtw_dev is fully setup.
+No intentional functional impact.
 
-The stack trace looks like this:
-
-rtw_rx_fill_rx_status
-rtw8821c_query_rx_desc
-rtw_usb_rx_handler
-...
-queue_work
-rtw_usb_read_port_complete
-...
-usb_submit_urb
-rtw_usb_rx_resubmit
-rtw_usb_init_rx
-rtw_usb_probe
-
-So while we do the async stuff rtw_usb_probe continues and calls
-rtw_register_hw, which does all kinds of initialization (e.g.
-via ieee80211_register_hw) that rtw_rx_fill_rx_status relies on.
-
-Fix this by moving the first usb_submit_urb after everything
-is set up.
-
-For me, this bug manifested as:
-[    8.893177] rtw_8821cu 1-1:1.2: band wrong, packet dropped
-[    8.910904] rtw_8821cu 1-1:1.2: hw->conf.chandef.chan NULL in rtw_rx_fill_rx_status
-because I'm using Larry's backport of rtw88 driver with the NULL
-checks in rtw_rx_fill_rx_status.
-
-Link: https://lore.kernel.org/linux-wireless/CA+shoWQ7P49jhQasofDcTdQhiuarPTjYEDa--NiVVx494WcuQw@mail.gmail.com/
-Signed-off-by: Marcin Ślusarz <mslusarz@renau.com>
-Cc: Tim K <tpkuester@gmail.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Link: https://patch.msgid.link/20240528110246.477321-1-marcin.slusarz@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/net/wireless/realtek/rtw88/usb.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/thermal/thermal_core.c |   33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
-index 0001a1ab6f38..edc1507514f6 100644
---- a/drivers/net/wireless/realtek/rtw88/usb.c
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c
-@@ -744,7 +744,6 @@ static struct rtw_hci_ops rtw_usb_ops = {
- static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
- {
- 	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
--	int i;
- 
- 	rtwusb->rxwq = create_singlethread_workqueue("rtw88_usb: rx wq");
- 	if (!rtwusb->rxwq) {
-@@ -756,13 +755,19 @@ static int rtw_usb_init_rx(struct rtw_dev *rtwdev)
- 
- 	INIT_WORK(&rtwusb->rx_work, rtw_usb_rx_handler);
- 
-+	return 0;
-+}
-+
-+static void rtw_usb_setup_rx(struct rtw_dev *rtwdev)
-+{
-+	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
-+	int i;
-+
- 	for (i = 0; i < RTW_USB_RXCB_NUM; i++) {
- 		struct rx_usb_ctrl_block *rxcb = &rtwusb->rx_cb[i];
- 
- 		rtw_usb_rx_resubmit(rtwusb, rxcb);
- 	}
--
--	return 0;
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -15,7 +15,6 @@
+ #include <linux/slab.h>
+ #include <linux/kdev_t.h>
+ #include <linux/idr.h>
+-#include <linux/list_sort.h>
+ #include <linux/thermal.h>
+ #include <linux/reboot.h>
+ #include <linux/string.h>
+@@ -421,6 +420,21 @@ static void handle_critical_trips(struct
+ 		tz->ops.hot(tz);
  }
  
- static void rtw_usb_deinit_rx(struct rtw_dev *rtwdev)
-@@ -899,6 +904,8 @@ int rtw_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		goto err_destroy_rxwq;
- 	}
- 
-+	rtw_usb_setup_rx(rtwdev);
++static void add_trip_to_sorted_list(struct thermal_trip_desc *td,
++				    struct list_head *list)
++{
++	struct thermal_trip_desc *entry;
 +
- 	return 0;
++	/* Assume that the new entry is likely to be the last one. */
++	list_for_each_entry_reverse(entry, list, notify_list_node) {
++		if (entry->notify_temp <= td->notify_temp) {
++			list_add(&td->notify_list_node, &entry->notify_list_node);
++			return;
++		}
++	}
++	list_add(&td->notify_list_node, list);
++}
++
+ static void handle_thermal_trip(struct thermal_zone_device *tz,
+ 				struct thermal_trip_desc *td,
+ 				struct list_head *way_up_list,
+@@ -450,8 +464,8 @@ static void handle_thermal_trip(struct t
+ 		 * In that case, the trip temperature becomes the new threshold.
+ 		 */
+ 		if (tz->temperature < trip->temperature - trip->hysteresis) {
+-			list_add(&td->notify_list_node, way_down_list);
+ 			td->notify_temp = trip->temperature - trip->hysteresis;
++			add_trip_to_sorted_list(td, way_down_list);
  
- err_destroy_rxwq:
--- 
-2.43.0
+ 			if (trip->type == THERMAL_TRIP_PASSIVE) {
+ 				tz->passive--;
+@@ -466,8 +480,9 @@ static void handle_thermal_trip(struct t
+ 		 * if the zone temperature exceeds the trip one.  The new
+ 		 * threshold is then set to the low temperature of the trip.
+ 		 */
+-		list_add_tail(&td->notify_list_node, way_up_list);
+ 		td->notify_temp = trip->temperature;
++		add_trip_to_sorted_list(td, way_up_list);
++
+ 		td->threshold -= trip->hysteresis;
+ 
+ 		if (trip->type == THERMAL_TRIP_PASSIVE)
+@@ -531,16 +546,6 @@ static void thermal_trip_crossed(struct
+ 	thermal_governor_trip_crossed(governor, tz, trip, crossed_up);
+ }
+ 
+-static int thermal_trip_notify_cmp(void *not_used, const struct list_head *a,
+-				   const struct list_head *b)
+-{
+-	struct thermal_trip_desc *tda = container_of(a, struct thermal_trip_desc,
+-						     notify_list_node);
+-	struct thermal_trip_desc *tdb = container_of(b, struct thermal_trip_desc,
+-						     notify_list_node);
+-	return tda->notify_temp - tdb->notify_temp;
+-}
+-
+ void __thermal_zone_device_update(struct thermal_zone_device *tz,
+ 				  enum thermal_notify_event event)
+ {
+@@ -591,11 +596,9 @@ void __thermal_zone_device_update(struct
+ 
+ 	thermal_zone_set_trips(tz, low, high);
+ 
+-	list_sort(NULL, &way_up_list, thermal_trip_notify_cmp);
+ 	list_for_each_entry(td, &way_up_list, notify_list_node)
+ 		thermal_trip_crossed(tz, &td->trip, governor, true);
+ 
+-	list_sort(NULL, &way_down_list, thermal_trip_notify_cmp);
+ 	list_for_each_entry_reverse(td, &way_down_list, notify_list_node)
+ 		thermal_trip_crossed(tz, &td->trip, governor, false);
+ 
 
 
 
