@@ -1,126 +1,280 @@
-Return-Path: <linux-kernel+bounces-323634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-323635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9FF9740EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:44:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFF39740ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 19:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B39287AEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BC061C25412
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Sep 2024 17:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1001A4F3E;
-	Tue, 10 Sep 2024 17:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E101A7066;
+	Tue, 10 Sep 2024 17:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dD9aw3zZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADibAe+F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757321A2863
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1147D1A257C;
+	Tue, 10 Sep 2024 17:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725990162; cv=none; b=ZrZP2lS8NcI0jnJlXwJ4LnZ5Xhg0BaVtJbrwjOZHY9lK8EcFWtj4Aono1qqE8tdNFD0p2FuCYe7RqNHy5YPx9KXmJ98dxQSbfXGHlYARqDlGHXqG8/3XRXSAK01ju5wvYEbs67YgV+jw8HEwCO/Qu7P4ZDuC7MssN9+KsNe+Koo=
+	t=1725990198; cv=none; b=lSDzUbYg57+q/rubCSotNqjyxaQVuO1u5nbtrlS8Ma5RGxhVAxAnj9XFexUMl/tmBkRzj7A01u19VzexgT0dUAdSWGQDiUtxnt2yKArA7toXGtNoL1MTIDas7DUAkelo9spZ2DyAnsIqcG0SxbQmnkGUHtRDAn2Ab8Juz/qKkDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725990162; c=relaxed/simple;
-	bh=fMoTGHkDaTGI1XLrajc2behIZwpEPBgHFXWguQYcElg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r5KbZcHVDsbn2zKTi7hx8ojj9cVAuSLm4agVNKb1Gqn/OOUYgqzD3Zv66FBmBm1Xhul+4qSkP3RvG+gSZSYxreZWrPejQNn6qVdy0XEeZ70MvXLyrOnhLUvEAlEaJN4HmHyvSpXmJMY6FlCdhQct/jVcDL177QgJEY5hWznBQYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dD9aw3zZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725990159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8vALpOiTX4q65DEi6gKSQySJMF+gLJveZ7rgNLBab20=;
-	b=dD9aw3zZ1q0nwkDl3dEEeTqTxaOrAl7/AP1d8Z5Q0c4qI/6HfoIxpHtryzQxnFQs6fZnGI
-	Nu4SmX9WWTW6nSkR74PnZ76FrXhnphkyFbZdA8lBwQpv8v3AJuRl/8p2GX/TD42yoTZSBz
-	iQe+IKbwRf8dyhq3zkDdFz+/MsMkLXo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-X8RgaX72Oh-hzdVSHFc2Zw-1; Tue,
- 10 Sep 2024 13:42:36 -0400
-X-MC-Unique: X8RgaX72Oh-hzdVSHFc2Zw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E825C195608B;
-	Tue, 10 Sep 2024 17:42:33 +0000 (UTC)
-Received: from [10.2.16.251] (unknown [10.2.16.251])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EA0021956086;
-	Tue, 10 Sep 2024 17:42:31 +0000 (UTC)
-Message-ID: <1589cf94-6d27-4575-bcea-e36c3667b260@redhat.com>
-Date: Tue, 10 Sep 2024 13:42:30 -0400
+	s=arc-20240116; t=1725990198; c=relaxed/simple;
+	bh=xGn/YST+dT5kw0k0wV6Y9Q9JFuAjIKJHBvLtmxFvpt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JGJHbeh/F/oWXsFpKk6dpUXAIi7h8CdlvofqElgtjXgvblUEfqRvOHI5WvMdGEhg5bYvzMoaoVCbGW/RXiyL5A+lntxbozENHux7nYbklNLxClD6lmIrJVl9QM1ZVLElGQ9QK/5nY24S3sbvvRcn0VKbpAuIkPc4jiOl9cB6BlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADibAe+F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73460C4CEC4;
+	Tue, 10 Sep 2024 17:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725990197;
+	bh=xGn/YST+dT5kw0k0wV6Y9Q9JFuAjIKJHBvLtmxFvpt0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ADibAe+F06ryG0Lg1VF7/ERhj/NpDIEebU1LITZuhmszQoZP47BY8QkRyp2WRfAio
+	 ZyZHWLuMreChaKtqTFVLyr4Uv/uPGuAENZBDX23jv0PnmFav1fJyG4ns6UD3iXDPYY
+	 I+eV13tdc4QhyI+AgWs631P59CpZFSX0FiIBZfmq7UmyOmJQ+6TXBwJa4GzOzup1T6
+	 qAN6cjV+g6KtITFjLmqjY+3qHp0M2ZAkm5Q+C1M8ynynjIKDs9gjSF0luedg1b7Lrb
+	 pFfoqARTUScYco5KZQ9heX/+qxbup/ceYOGujG5tX9sna3Jh4AuUb9EED8FgiTyZGF
+	 RGJgDsenj02Vg==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	mingo@kernel.org
+Cc: oleg@redhat.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH] uprobes: switch to RCU Tasks Trace flavor for better performance
+Date: Tue, 10 Sep 2024 10:43:12 -0700
+Message-ID: <20240910174312.3646590-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] io_uring/io-wq: inherit cpuset of cgroup in io
- worker
-To: Felix Moessbauer <felix.moessbauer@siemens.com>, axboe@kernel.dk
-Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
- adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com
-References: <20240910171157.166423-1-felix.moessbauer@siemens.com>
- <20240910171157.166423-3-felix.moessbauer@siemens.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240910171157.166423-3-felix.moessbauer@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This patch switches uprobes SRCU usage to RCU Tasks Trace flavor, which
+is optimized for more lightweight and quick readers (at the expense of
+slower writers, which for uprobes is a fine tradeof) and has better
+performance and scalability with number of CPUs.
 
-On 9/10/24 13:11, Felix Moessbauer wrote:
-> The io worker threads are userland threads that just never exit to the
-> userland. By that, they are also assigned to a cgroup (the group of the
-> creating task).
+Similarly to baseline vs SRCU, we've benchmarked SRCU-based
+implementation vs RCU Tasks Trace implementation.
 
-The io-wq task is not actually assigned to a cgroup. To belong to a 
-cgroup, its pid has to be present to the cgroup.procs of the 
-corresponding cgroup, which is not the case here. My understanding is 
-that you are just restricting the CPU affinity to follow the cpuset of 
-the corresponding user task that creates it. The CPU affinity (cpumask) 
-is just one of the many resources controlled by a cgroup. That probably 
-needs to be clarified.
+SRCU
+====
+uprobe-nop      ( 1 cpus):    3.276 ± 0.005M/s  (  3.276M/s/cpu)
+uprobe-nop      ( 2 cpus):    4.125 ± 0.002M/s  (  2.063M/s/cpu)
+uprobe-nop      ( 4 cpus):    7.713 ± 0.002M/s  (  1.928M/s/cpu)
+uprobe-nop      ( 8 cpus):    8.097 ± 0.006M/s  (  1.012M/s/cpu)
+uprobe-nop      (16 cpus):    6.501 ± 0.056M/s  (  0.406M/s/cpu)
+uprobe-nop      (32 cpus):    4.398 ± 0.084M/s  (  0.137M/s/cpu)
+uprobe-nop      (64 cpus):    6.452 ± 0.000M/s  (  0.101M/s/cpu)
 
-Besides cpumask, the cpuset controller also controls the node mask of 
-the memory nodes allowed.
+uretprobe-nop   ( 1 cpus):    2.055 ± 0.001M/s  (  2.055M/s/cpu)
+uretprobe-nop   ( 2 cpus):    2.677 ± 0.000M/s  (  1.339M/s/cpu)
+uretprobe-nop   ( 4 cpus):    4.561 ± 0.003M/s  (  1.140M/s/cpu)
+uretprobe-nop   ( 8 cpus):    5.291 ± 0.002M/s  (  0.661M/s/cpu)
+uretprobe-nop   (16 cpus):    5.065 ± 0.019M/s  (  0.317M/s/cpu)
+uretprobe-nop   (32 cpus):    3.622 ± 0.003M/s  (  0.113M/s/cpu)
+uretprobe-nop   (64 cpus):    3.723 ± 0.002M/s  (  0.058M/s/cpu)
 
-Cheers,
-Longman
+RCU Tasks Trace
+===============
+uprobe-nop      ( 1 cpus):    3.396 ± 0.002M/s  (  3.396M/s/cpu)
+uprobe-nop      ( 2 cpus):    4.271 ± 0.006M/s  (  2.135M/s/cpu)
+uprobe-nop      ( 4 cpus):    8.499 ± 0.015M/s  (  2.125M/s/cpu)
+uprobe-nop      ( 8 cpus):   10.355 ± 0.028M/s  (  1.294M/s/cpu)
+uprobe-nop      (16 cpus):    7.615 ± 0.099M/s  (  0.476M/s/cpu)
+uprobe-nop      (32 cpus):    4.430 ± 0.007M/s  (  0.138M/s/cpu)
+uprobe-nop      (64 cpus):    6.887 ± 0.020M/s  (  0.108M/s/cpu)
 
->
-> When creating a new io worker, this worker should inherit the cpuset
-> of the cgroup.
->
-> Fixes: da64d6db3bd3 ("io_uring: One wqe per wq")
-> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-> ---
->   io_uring/io-wq.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index c7055a8895d7..a38f36b68060 100644
-> --- a/io_uring/io-wq.c
-> +++ b/io_uring/io-wq.c
-> @@ -1168,7 +1168,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
->   
->   	if (!alloc_cpumask_var(&wq->cpu_mask, GFP_KERNEL))
->   		goto err;
-> -	cpumask_copy(wq->cpu_mask, cpu_possible_mask);
-> +	cpuset_cpus_allowed(data->task, wq->cpu_mask);
->   	wq->acct[IO_WQ_ACCT_BOUND].max_workers = bounded;
->   	wq->acct[IO_WQ_ACCT_UNBOUND].max_workers =
->   				task_rlimit(current, RLIMIT_NPROC);
+uretprobe-nop   ( 1 cpus):    2.174 ± 0.001M/s  (  2.174M/s/cpu)
+uretprobe-nop   ( 2 cpus):    2.853 ± 0.001M/s  (  1.426M/s/cpu)
+uretprobe-nop   ( 4 cpus):    4.913 ± 0.002M/s  (  1.228M/s/cpu)
+uretprobe-nop   ( 8 cpus):    5.883 ± 0.002M/s  (  0.735M/s/cpu)
+uretprobe-nop   (16 cpus):    5.147 ± 0.001M/s  (  0.322M/s/cpu)
+uretprobe-nop   (32 cpus):    3.738 ± 0.008M/s  (  0.117M/s/cpu)
+uretprobe-nop   (64 cpus):    4.397 ± 0.002M/s  (  0.069M/s/cpu)
+
+Peak throughput for uprobes increases from 8 mln/s to 10.3 mln/s
+(+28%!), and for uretprobes from 5.3 mln/s to 5.8 mln/s (+11%), as we
+have more work to do on uretprobes side.
+
+Even single-thread (no contention) performance is slightly better: 3.276
+mln/s to 3.396 mln/s (+3.5%) for uprobes, and 2.055 mln/s to 2.174 mln/s
+(+5.8%) for uretprobes.
+
+We also select TASKS_TRACE_RCU for UPROBES in Kconfig due to the new
+dependency.
+
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ arch/Kconfig            |  1 +
+ kernel/events/uprobes.c | 38 ++++++++++++++++----------------------
+ 2 files changed, 17 insertions(+), 22 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 975dd22a2dbd..a0df3f3dc484 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -126,6 +126,7 @@ config KPROBES_ON_FTRACE
+ config UPROBES
+ 	def_bool n
+ 	depends on ARCH_SUPPORTS_UPROBES
++	select TASKS_TRACE_RCU
+ 	help
+ 	  Uprobes is the user-space counterpart to kprobes: they
+ 	  enable instrumentation applications (such as 'perf probe')
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 4b7e590dc428..a2e6a57f79f2 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -26,6 +26,7 @@
+ #include <linux/task_work.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/khugepaged.h>
++#include <linux/rcupdate_trace.h>
+ 
+ #include <linux/uprobes.h>
+ 
+@@ -42,8 +43,6 @@ static struct rb_root uprobes_tree = RB_ROOT;
+ static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
+ static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
+ 
+-DEFINE_STATIC_SRCU(uprobes_srcu);
+-
+ #define UPROBES_HASH_SZ	13
+ /* serialize uprobe->pending_list */
+ static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
+@@ -652,7 +651,7 @@ static void put_uprobe(struct uprobe *uprobe)
+ 	delayed_uprobe_remove(uprobe, NULL);
+ 	mutex_unlock(&delayed_uprobe_lock);
+ 
+-	call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
++	call_rcu_tasks_trace(&uprobe->rcu, uprobe_free_rcu);
+ }
+ 
+ static __always_inline
+@@ -707,7 +706,7 @@ static struct uprobe *find_uprobe_rcu(struct inode *inode, loff_t offset)
+ 	struct rb_node *node;
+ 	unsigned int seq;
+ 
+-	lockdep_assert(srcu_read_lock_held(&uprobes_srcu));
++	lockdep_assert(rcu_read_lock_trace_held());
+ 
+ 	do {
+ 		seq = read_seqcount_begin(&uprobes_seqcount);
+@@ -935,8 +934,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
+ 	bool ret = false;
+ 
+ 	down_read(&uprobe->consumer_rwsem);
+-	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+-				 srcu_read_lock_held(&uprobes_srcu)) {
++	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+ 		ret = consumer_filter(uc, mm);
+ 		if (ret)
+ 			break;
+@@ -1157,7 +1155,7 @@ void uprobe_unregister_sync(void)
+ 	 * unlucky enough caller can free consumer's memory and cause
+ 	 * handler_chain() or handle_uretprobe_chain() to do an use-after-free.
+ 	 */
+-	synchronize_srcu(&uprobes_srcu);
++	synchronize_rcu_tasks_trace();
+ }
+ EXPORT_SYMBOL_GPL(uprobe_unregister_sync);
+ 
+@@ -1241,19 +1239,18 @@ EXPORT_SYMBOL_GPL(uprobe_register);
+ int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
+ {
+ 	struct uprobe_consumer *con;
+-	int ret = -ENOENT, srcu_idx;
++	int ret = -ENOENT;
+ 
+ 	down_write(&uprobe->register_rwsem);
+ 
+-	srcu_idx = srcu_read_lock(&uprobes_srcu);
+-	list_for_each_entry_srcu(con, &uprobe->consumers, cons_node,
+-				 srcu_read_lock_held(&uprobes_srcu)) {
++	rcu_read_lock_trace();
++	list_for_each_entry_rcu(con, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+ 		if (con == uc) {
+ 			ret = register_for_each_vma(uprobe, add ? uc : NULL);
+ 			break;
+ 		}
+ 	}
+-	srcu_read_unlock(&uprobes_srcu, srcu_idx);
++	rcu_read_unlock_trace();
+ 
+ 	up_write(&uprobe->register_rwsem);
+ 
+@@ -2123,8 +2120,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+ 
+ 	current->utask->auprobe = &uprobe->arch;
+ 
+-	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+-				 srcu_read_lock_held(&uprobes_srcu)) {
++	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+ 		int rc = 0;
+ 
+ 		if (uc->handler) {
+@@ -2162,15 +2158,13 @@ handle_uretprobe_chain(struct return_instance *ri, struct pt_regs *regs)
+ {
+ 	struct uprobe *uprobe = ri->uprobe;
+ 	struct uprobe_consumer *uc;
+-	int srcu_idx;
+ 
+-	srcu_idx = srcu_read_lock(&uprobes_srcu);
+-	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+-				 srcu_read_lock_held(&uprobes_srcu)) {
++	rcu_read_lock_trace();
++	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+ 		if (uc->ret_handler)
+ 			uc->ret_handler(uc, ri->func, regs);
+ 	}
+-	srcu_read_unlock(&uprobes_srcu, srcu_idx);
++	rcu_read_unlock_trace();
+ }
+ 
+ static struct return_instance *find_next_ret_chain(struct return_instance *ri)
+@@ -2255,13 +2249,13 @@ static void handle_swbp(struct pt_regs *regs)
+ {
+ 	struct uprobe *uprobe;
+ 	unsigned long bp_vaddr;
+-	int is_swbp, srcu_idx;
++	int is_swbp;
+ 
+ 	bp_vaddr = uprobe_get_swbp_addr(regs);
+ 	if (bp_vaddr == uprobe_get_trampoline_vaddr())
+ 		return uprobe_handle_trampoline(regs);
+ 
+-	srcu_idx = srcu_read_lock(&uprobes_srcu);
++	rcu_read_lock_trace();
+ 
+ 	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
+ 	if (!uprobe) {
+@@ -2319,7 +2313,7 @@ static void handle_swbp(struct pt_regs *regs)
+ 
+ out:
+ 	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
+-	srcu_read_unlock(&uprobes_srcu, srcu_idx);
++	rcu_read_unlock_trace();
+ }
+ 
+ /*
+-- 
+2.43.5
 
 
