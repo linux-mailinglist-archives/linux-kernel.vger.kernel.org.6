@@ -1,159 +1,184 @@
-Return-Path: <linux-kernel+bounces-325408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD1975950
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DCE975955
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA9F286515
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAE51C2390B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95EC1B5EA2;
-	Wed, 11 Sep 2024 17:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52D51B3B0D;
+	Wed, 11 Sep 2024 17:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HwHjrkA7"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RLTfxw5x"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231D1B4C41
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9141B29B9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726075542; cv=none; b=qan9QuQi+4jPXQwDcdf0LGAUH8RpbdLdBrd5+NBCVDaHM8G96xGdhx7Jha5IyvB0l9tDmXyekv0rtdAZ1vU0/3h3WgFCOO+jLnSb7ZooJTrHyAcj/M/GugCgeHd0ePpCkWFDQPugsA47X9iQlVPiApzbrPI0BX/habY/qUG2ljU=
+	t=1726075586; cv=none; b=Yk57Q+J0W7n4eZZ0iMWib5nfYovqkaGvu0JV5hyB4EWb93VZ9U696fhPO+C1TSjYwne2I89etAdwcwgQju9PPrn1Hjqo3qeqQuvKGSD8izNlHPw3VLtGQCurlV8uwDvR6zn9jMGIEItcY78z33vKRm4Ib3nR5RtZBGESMe/3G0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726075542; c=relaxed/simple;
-	bh=2CXGVg6NEhqLRKhGUyW5174lZyw87X6GSvdQUeR5MmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7iL+WzN3hjePKA/C3vlKjoTMwAxztbvIgUywfEZSM+wHratp+XpeZjwRmqOVEfaaBZgm+qqBIWYIHE8zLnsmyXLRzEN70crVmVZyj4i3JbILvtx8cVyg78E1ZwGhZXEUX+25v5pazzKSTxPNod0qQi4BSaSegJw3bV6pRXhJUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HwHjrkA7; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso20947815e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:25:39 -0700 (PDT)
+	s=arc-20240116; t=1726075586; c=relaxed/simple;
+	bh=j4LfUsx854x7YJ4n3qpUsMJcQSYqch/FDWG/7MZN6hg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dtoaObsLFYTTHmAWzh8rHGJahAmm+d20wHOFkI0hsRc2J9e8YEyOKrPG7rb24aMVZCCr9CraCvols2+eBDRBJOUZ8Q7MAcNvC2eudvV6fxhi8+wz5tmF/pNYAtLrrkLHqxpeIX4xxyS6dsSh4q/aJ0+XjPCdrvwK0VdPZgZa2pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RLTfxw5x; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so20881265e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726075538; x=1726680338; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xmCKuyw0DapJvOtbSWzmF0OL2IUWJWDlS7+rw4t0ojA=;
-        b=HwHjrkA7gzRnzqnFdZlE8r6f5osEn/6loIJMeUgfFx4K6WN80pA/kVCIa5Z2V2BRjK
-         oBIAS4iyhXLPEyteeDJ2g/iOKbY6g746NyGc8G3DudBVDhzwdzvp4GUFLXSf9kTz6R4W
-         OtWw5cnx6+4KIgkTKLzWtNAgIVuhuG3/mq3vhGlM/dcdkWYyxSoFxEjjk3MKjiuI1yZd
-         JBjlhTRp9dyISMNvcHvGgYAeA72qQwwQFI/b4w1qlVEWFyjOqVnJ85gJzjm5lBEGBY8N
-         JsTslB+5SyT9CRCvWieZ0bprCE0C8qYgGMhya917d5SNnXLn197NHtrzqQ/Eys7coEqA
-         8eBQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726075581; x=1726680381; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLZX+SWdHz2tB91UF3usEBJbpzw/IHLAgfNzOfmxmj0=;
+        b=RLTfxw5xjaulz4Fgppqf+838Phf5Qm/KRabvOD/E4QrPBdfU1+YNeBVHUvfxC2kTac
+         FCdGG31ezs//EDw6jyo/9N1W765YOrbwgUddEjZJXjDLkWl0JMoF5SDGRgA8998AUg5W
+         Oy21iDDfyTzIi7pHTN5dFLzuab1m5D11aVKN3DaSyTzUXUvA/guIjWBKZBQVSqEonrgW
+         ewHURwuIM3mznE78SeGlpnOT9TfsIoE7EnYaKiaK9fiE++iQyn8q3r+Gm2yRZKXIcOoe
+         AI1krpr7+3DqzEsLlhIdKa3T5bbif4iwc7pL9PkANyR1O/QFVhmMGXgj/jVS/VzH9UJ/
+         TYbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726075538; x=1726680338;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xmCKuyw0DapJvOtbSWzmF0OL2IUWJWDlS7+rw4t0ojA=;
-        b=gB29qwekYabvWuqxRxjJA24Vk52reHuy7v4s+2cn0k3OqFIml1kNTfaROtmHV307xi
-         8kW/VuK5vbcmta0OAZe55hmd5XeIUXO4htHyL1jzNy0M99PxufrVb7DXlHCVRFf6KgJn
-         KiEKejdAarZl9gW6x0D3DeUXnwMhUHfMOGp9ajyePWv2NgzRs2i7MGX00dORz2Ydn45c
-         r9qUKAHbYDGk3Np7RjZT4pjLTofSA9drDFzA9quZPhs4WI0hxdsHLnevHoNvCae3ojAO
-         +/0FNv1paZiQs6pql1CYr/W6JNbuEh01Aif4N+qr9HJRJQTsXebA96EiqkoKjQ4EC0Om
-         vYOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKQ3TRdvcEM4X7wJtL/0X5RfN4LzDLydqJJXbcJBrNl4OjwvJW31v/9kmiEzye/WtnUOBh3LLL8DMVGDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBIpnedlloqgbll3pDWtQYIV/n5hUogMr6LEszzbYzNrETS3EJ
-	uZqQeKHGsrfMcwvcQN3C5OGWg/4yP+DRppSkLDx274Emz5lrucLeZxBiKbNzcJI=
-X-Google-Smtp-Source: AGHT+IHwgouVHhx28DMTt5PoacyStj3TzOC4jjzt7G5qL8rZ2fYGdKla/4VYhBMKB9fgtOsriRz47g==
-X-Received: by 2002:a5d:6111:0:b0:374:93c4:2f61 with SMTP id ffacd0b85a97d-378b07966dbmr2405056f8f.5.1726075538049;
-        Wed, 11 Sep 2024 10:25:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a18asm12049442f8f.15.2024.09.11.10.25.36
+        d=1e100.net; s=20230601; t=1726075581; x=1726680381;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLZX+SWdHz2tB91UF3usEBJbpzw/IHLAgfNzOfmxmj0=;
+        b=QQnwIQJ3uDwACDk8gBmmdS/2R6M65S6vzC3ZfQ0J9NEuo8otgAZBHHx3BW5hiFf5hK
+         lFokNdiLo12e8rskofyAbcUBLZoDiXLTbixIASKb101WQIP0am2ZW+ftNZ1HrddlEuFf
+         mgSNToaxxrV+hF9CWGLyppKeqyXZRkqufvrr1c9H8dbvraNxIlhAbCcJhWeKze/+HOnx
+         5hlJma1SYM5lj74CZ2E2AbiD0sUPN+Ly+TbL9WUsIqoQslYPve1JNetmENj3IpivVWDU
+         GC9ZSJFKGKArcz2556Gb3NaHuxUfSN6JGEqXgXs++HqM3PJLQpRjposWj6f5/Vtsfy6L
+         L59g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUfDXqkVTrqr29e0UDgKTiLnxvZ2REaeUy1jYZa6/+iakXzAt88gzkSa1YZrMRYxj4HvmTSdkAcj9MKaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPq1F9lecmzJvYvEIn9E87FEn1RVTAJzuvtbdmksNn7dd0IeIU
+	/01BbG+3oNo5xfdgxndglG4IMwrj+IqEwvSYmaB/81A2hOSzZMLCb60oM0PBKPg=
+X-Google-Smtp-Source: AGHT+IFkbjwusK7GBMy+uvOrk1ENPvXDg5jbLTlihJ6/ABtP7FGYUmy39dxdfPmSU+lvToCwURKoow==
+X-Received: by 2002:a05:600c:5123:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-42cdb4e6bbcmr2458165e9.1.1726075580979;
+        Wed, 11 Sep 2024 10:26:20 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:7388:2adc:a5d5:ff63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5a66475sm118471705e9.44.2024.09.11.10.26.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 10:25:37 -0700 (PDT)
-Date: Wed, 11 Sep 2024 20:25:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Richard Narron <richard@aaazen.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-mm@kvack.org, stable@vger.kernel.org
-Subject: Re: [PATCH hotfix 6.11] minmax: reduce egregious min/max macro
- expansion
-Message-ID: <cd6e01fb-4605-4f5f-835e-592ca70ebe03@stanley.mountain>
-References: <20240911153457.1005227-1-lorenzo.stoakes@oracle.com>
- <181dec64-5906-4cdd-bb29-40bc7c02d63e@redhat.com>
+        Wed, 11 Sep 2024 10:26:20 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,  Jean Delvare
+ <jdelvare@suse.com>,  Guenter Roeck <linux@roeck-us.net>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+  Jonathan Corbet <corbet@lwn.net>,  Delphine CC Chiu
+ <Delphine_CC_Chiu@wiwynn.com>,  linux-hwmon@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: hwmon: pmbus: add ti tps25990
+ documentation
+In-Reply-To: <20240911144532.GA154835-robh@kernel.org> (Rob Herring's message
+	of "Wed, 11 Sep 2024 09:45:32 -0500")
+References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
+	<20240909-tps25990-v1-1-39b37e43e795@baylibre.com>
+	<3efbzcys4762rhx2h2cbhqvi6dgik7pfrxcziccdko34pb5z54@joodcym6c3s4>
+	<1jzfofsvmh.fsf@starbuckisacylon.baylibre.com>
+	<20240911144532.GA154835-robh@kernel.org>
+Date: Wed, 11 Sep 2024 19:26:19 +0200
+Message-ID: <1j7cbiqeys.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <181dec64-5906-4cdd-bb29-40bc7c02d63e@redhat.com>
+Content-Type: text/plain
 
-On Wed, Sep 11, 2024 at 06:24:54PM +0200, Hans de Goede wrote:
-> Hi Lorenzo,
-> 
-> On 9/11/24 5:34 PM, Lorenzo Stoakes wrote:
-> > Avoid nested min()/max() which results in egregious macro expansion.
-> > 
-> > This issue was introduced by commit 867046cc7027 ("minmax: relax check to
-> > allow comparison between unsigned arguments and signed constants") [2].
-> > 
-> > Work has been done to address the issue of egregious min()/max() macro
-> > expansion in commit 22f546873149 ("minmax: improve macro expansion and type
-> > checking") and related, however it appears that some issues remain on more
-> > tightly constrained systems.
-> > 
-> > Adjust a few known-bad cases of deeply nested macros to avoid doing so to
-> > mitigate this. Porting the patch first proposed in [1] to Linus's tree.
-> > 
-> > Running an allmodconfig build using the methodology described in [2] we
-> > observe a 35 MiB reduction in generated code.
-> > 
-> > The difference is much more significant prior to recent minmax fixes which
-> > were not backported. As per [1] prior these the reduction is more like 200
-> > MiB.
-> > 
-> > This resolves an issue with slackware 15.0 32-bit compilation as reported
-> > by Richard Narron.
-> > 
-> > Presumably the min/max fixups would be difficult to backport, this patch
-> > should be easier and fix's Richard's problem in 5.15.
-> > 
-> > [0]:https://lore.kernel.org/all/b97faef60ad24922b530241c5d7c933c@AcuMS.aculab.com/
-> > [1]:https://lore.kernel.org/lkml/5882b96e-1287-4390-8174-3316d39038ef@lucifer.local/
-> > [2]:https://lore.kernel.org/linux-mm/36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local/
-> > 
-> > Reported-by: Richard Narron <richard@aaazen.com>
-> > Closes: https://lore.kernel.org/all/4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com/
-> > Fixes: 867046cc7027 ("minmax: relax check to allow comparison between unsigned arguments and signed constants")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> 
-> Thank you for your patch.
-> 
-> I must say that I'm not a fan of that this is patching 3 totally
-> unrelated files here in a single patch.
-> 
-> This is e.g. going to be a problem if we need to revert one of
-> the changes because of regressions...
+On Wed 11 Sep 2024 at 09:45, Rob Herring <robh@kernel.org> wrote:
 
-These kinds of thing also complicates backporting to stable.  The stable kernel
-developers like whole, unmodified patches.  So if we have to fix something in
-sDIGIT_FITTING() then we'd want to pull this back instead of re-writing the fix
-on top of the original define (unmodified patches).  But now we have to backport
-the chunk which changes mvpp2 as well (whole patches).
+> gOn Tue, Sep 10, 2024 at 11:31:18AM +0200, Jerome Brunet wrote:
+>> On Tue 10 Sep 2024 at 09:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> 
+>> > On Mon, Sep 09, 2024 at 05:39:03PM +0200, Jerome Brunet wrote:
+>> >> Add DT binding documentation for the Texas Instruments TPS25990 eFuse
+>> >> 
+>> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> >> ---
+>> >>  .../bindings/hwmon/pmbus/ti,tps25990.yaml          | 73 ++++++++++++++++++++++
+>> >>  1 file changed, 73 insertions(+)
+>> >>
+>> >
+>> > A nit, subject: drop second/last, redundant "documentation". The
+>> > "dt-bindings" prefix is already stating that these are bindings/docs.
+>> > See also:
+>> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>> >
+>> >> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
+>> >> new file mode 100644
+>> >> index 000000000000..e717942b3598
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
+>> >> @@ -0,0 +1,73 @@
+>> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> >> +%YAML 1.2
+>> >> +---
+>> >> +
+>> >
+>> > Drop blank line.
+>> >
+>> >> +$id: http://devicetree.org/schemas/hwmon/pmbus/ti,tps25990.yaml#
+>> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> >> +
+>> >> +title: Texas Instruments TPS25990 Stackable eFuse
+>> >> +
+>> >> +maintainers:
+>> >> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> >> +
+>> >> +description: |
+>> >
+>> > Do not need '|' unless you need to preserve formatting.
+>> >
+>> >> +  The TI TPS25990 is an integrated, high-current circuit
+>> >> +  protection and power management device with PMBUS interface
+>
+> And wrap at 80.
+>
+>> >> +
+>> >> +properties:
+>> >> +  compatible:
+>> >> +    const: ti,tps25990
+>> >> +
+>> >> +  reg:
+>> >> +    maxItems: 1
+>> >> +
+>> >> +  ti,rimon-milli-ohms:
+>> >> +    description:
+>> >> +      milli Ohms value of the resistance installed between the Imon pin
+>> >> +      and the ground reference.
+>> >
+>> > Ohms is not enough? We don't have mOhm in property units.
+>> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+>> >
+>> 
+>> Same discussion as we've had on the driver change.
+>> At the moment Ohms is enough for the cases I've seen.
+>> 
+>> Will it be, not sure.
+>> Using mOhms is' way to avoid "S**t, R is 80.2 Ohms, I
+>> need another digit to not loose precision " kind of situation and
+>> introduce a second property just for that.
+>> 
+>> No idea if Rimon will get that low. Probably not.
+>> 
+>> I'll switch to Ohms.
+>
+> You can can use "-micro-ohms" too. The reason we don't have every 
+> possible unit is so we have everyone picking their own.
 
-regards,
-dan carpenter
+Noted. after discussing with Guenter, I'll use micro-ohms in the next
+version, not ohms
 
+>
+> Rob
+
+-- 
+Jerome
 
