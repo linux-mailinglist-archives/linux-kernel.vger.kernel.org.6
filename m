@@ -1,139 +1,108 @@
-Return-Path: <linux-kernel+bounces-325340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB93975813
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:18:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3031C97580E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D1FB26912
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6271A1C261D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5E1AED39;
-	Wed, 11 Sep 2024 16:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890E71AE058;
+	Wed, 11 Sep 2024 16:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Re5r7x30"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nYQFwv1J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903EA1AD40D;
-	Wed, 11 Sep 2024 16:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE0F1AD9FF;
+	Wed, 11 Sep 2024 16:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726071353; cv=none; b=NbqfoI/J88i8cXty3OZnzDoVq/tbuerf4mLLX15axz+qA9hVD7CrXRvz01ScpyH3UKkyQehdVu7hxeygUKW+hYvGLsi2rrKhBlsOJNbYZ4qDgP7OMjr2fRC8cBOm7pNFO3Oc1CrstpFhr8s2IolmJCUpxUk9g1pj97Q5Fp98F/Q=
+	t=1726071341; cv=none; b=by6AwdlySAtORgZqzE6phAv/B6XSH6qOQEZLDjRYMEnz4TJ5YxtZ2MwSn4f+pDrvMMYdI9ruL1QatNf/g/+yKj6SMiMLkNI4bDS8l60e39hsg+WNQN5wBIempZF4uwMoMyTpD2+0dMB6L2idqJajiI1ZNKTdU89jylb7l+hB4ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726071353; c=relaxed/simple;
-	bh=DGQSUDDdyRJOFJ1VH1Rob5rJribm+UEFtdMpF8HJa/c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tCcUX3boIy+zfNpyZ17Xa1a1ObQ6uS5oapT/zNKbHQFLIeintC++H6ITK3mDQGNG5TkjiuzDgT/UsJc+XxToHe82lE7cPD856KrW7zNunFBcwaEUQWc7G0GGg8cz1DtdFrtv12ucrtEzzD+KiwHcUTUd7LKVE1Qk66MnX4wvJFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Re5r7x30; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1726071341; c=relaxed/simple;
+	bh=wFW/qpO3n7da0r6jkEGnN0ulyTu2/pFJJneaFG7nFAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Di/ScgazwMSPxTVBv+MVbl1Wv+fTJu9eBdbcaygkP5Pgh9EfHEC4ZjZskNsU/8/nYfakVquOBK8P36sPGgbEzGoxMUxz5S0bcO9rwCuVL42usbHpYvWMc/oIz+jK0CEIWkSH2vfqFIbmpFaEDSmTcbXiPUhkdqvY5AOj3Oo15OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nYQFwv1J; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726071351; x=1757607351;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DGQSUDDdyRJOFJ1VH1Rob5rJribm+UEFtdMpF8HJa/c=;
-  b=Re5r7x30RQQZfymvdu3Oel0wtUao0yurL+SUISivC1LCmxIjQssyJBdR
-   f67zcg/imbW3HArJvtfVv+0hZNlrlWN6/iV1zxnQm+5hzUUbmhHk/RVmS
-   g4I4c0no5IEOLq2JWdGxvUwarFUYZiXgk8ecO3jIWNT+2UhFrTXjwPc+u
-   VBs7h7zd7mfkBpHXpYgpeMxNEpRCbZ7/Z+EMeSVcsOLvnzVxPkvxlAsUL
-   Cy4/4dMPbvmbWHsXwM97n5XBxTvTUnmf573LzBxNyU0KmABluZUhujXVj
-   2v327uP0Aq+WymGijumS5OHaFkYg1BRV86iQUg4No2M5m2RnGOpMyRcfi
-   A==;
-X-CSE-ConnectionGUID: wQTYqSpVRaKatvgABLE7Ew==
-X-CSE-MsgGUID: Za8HzPuCTpetq2lmKjkOpA==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726071339; x=1757607339;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wFW/qpO3n7da0r6jkEGnN0ulyTu2/pFJJneaFG7nFAI=;
+  b=nYQFwv1J6zk97F/atgzc0BWDrEtT71R7p7zIHWMJf5TO7BJEEVu6zemq
+   sNUp7nMQjk2Ivfqb+NMhSlmepWkQI4g+j2Wr89+DxpA3nStBtIW3yzjyE
+   iNXCna30+3W+5EUdCi6fXsQ1k6SCtxE/JZOxNonG4OrxEem959zgi1BcY
+   D3/JKTh48gw21cQSR1ldnuYeXHE8x0qZg9Uhjzi4qY/0nyhP9mHdOnOoW
+   lwkTSG/2EPULHuBuARQVDve91xhQ5v4I0T5BsZ/1SYPJrAV/9JPAh2AF9
+   ku8gV0UDDrEXJctRBRzH/5ZaoCMxMiwoL9KPawn6Wr31UU+/s8+sthRWf
+   g==;
+X-CSE-ConnectionGUID: fbSxBg1vQz+Vaaf6AB7eZw==
+X-CSE-MsgGUID: vKlIDHGkSg2753JXvwn0CA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="35475466"
 X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="34798045"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 09:15:50 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Sep 2024 09:15:15 -0700
-Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 11 Sep 2024 09:15:11 -0700
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: <netdev@vger.kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <bryan.whitehead@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <linux@armlinux.org.uk>,
-	<maxime.chevallier@bootlin.com>, <rdunlap@infradead.org>, <andrew@lunn.ch>,
-	<Steen.Hegelund@microchip.com>, <Raju.Lakkaraju@microchip.com>,
-	<daniel.machon@microchip.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next V2 5/5] net: lan743x: Add Support for 2.5G SFP with 2500Base-X Interface
-Date: Wed, 11 Sep 2024 21:40:54 +0530
-Message-ID: <20240911161054.4494-6-Raju.Lakkaraju@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+   d="scan'208";a="35475466"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:15:38 -0700
+X-CSE-ConnectionGUID: 114nkUoOTua0Dl8R0hdwMQ==
+X-CSE-MsgGUID: PaxNLYlmTiuy5YOGhbQGjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="67705555"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:15:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1soQ0E-00000007cN3-0DZz;
+	Wed, 11 Sep 2024 19:15:34 +0300
+Date: Wed, 11 Sep 2024 19:15:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: robh@kernel.org, saravanak@google.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] of/irq: Use helper to define resources
+Message-ID: <ZuHCJcTyQvfPl7ai@smile.fi.intel.com>
+References: <20240911160253.37221-1-vassilisamir@gmail.com>
+ <20240911160253.37221-3-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911160253.37221-3-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Support for 2.5G SFP modules utilizing the 2500Base-X interface.
-The implementation includes integration with the Phylink subsystem to
-manage the link state and configuration dynamically.
+On Wed, Sep 11, 2024 at 06:02:53PM +0200, Vasileios Amoiridis wrote:
+> Resources definition can become simpler and more organised by using the
+> dedicated helpers.
 
-Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
----
-Change List:
-============
-V2 : Include this new patch in the V2 series. 
+...
 
- drivers/net/ethernet/microchip/lan743x_main.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+> -		r->start = r->end = irq;
+> -		r->flags = IORESOURCE_IRQ | irq_get_trigger_type(irq);
+> -		r->name = name ? name : of_node_full_name(dev);
+> +		*r = DEFINE_RES_IRQ_NAMED(irq, name ? name : of_node_full_name(dev));
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index ef76d0c1642f..7fe699e5a134 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -1495,7 +1495,10 @@ static void lan743x_phy_interface_select(struct lan743x_adapter *adapter)
- 	data = lan743x_csr_read(adapter, MAC_CR);
- 	id_rev = adapter->csr.id_rev & ID_REV_ID_MASK_;
- 
--	if (adapter->is_pci11x1x && adapter->is_sgmii_en)
-+	if (adapter->is_pci11x1x && adapter->is_sgmii_en &&
-+	    adapter->is_sfp_support_en)
-+		adapter->phy_interface = PHY_INTERFACE_MODE_2500BASEX;
-+	else if (adapter->is_pci11x1x && adapter->is_sgmii_en)
- 		adapter->phy_interface = PHY_INTERFACE_MODE_SGMII;
- 	else if (id_rev == ID_REV_ID_LAN7430_)
- 		adapter->phy_interface = PHY_INTERFACE_MODE_GMII;
-@@ -3359,6 +3362,7 @@ static int lan743x_phylink_create(struct lan743x_adapter *adapter)
- 	lan743x_phy_interface_select(adapter);
- 
- 	switch (adapter->phy_interface) {
-+	case PHY_INTERFACE_MODE_2500BASEX:
- 	case PHY_INTERFACE_MODE_SGMII:
- 		__set_bit(PHY_INTERFACE_MODE_SGMII,
- 			  adapter->phylink_config.supported_interfaces);
-@@ -3412,12 +3416,13 @@ static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
- 	struct device_node *dn = adapter->pdev->dev.of_node;
- 	struct net_device *dev = adapter->netdev;
- 	struct phy_device *phydev;
--	int ret;
-+	int ret = 0;
- 
- 	if (dn)
- 		ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
- 
--	if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
-+	if (!adapter->is_sfp_support_en &&
-+	    (!dn || (ret && !lan743x_phy_handle_exists(dn)))) {
- 		phydev = phy_find_first(adapter->mdiobus);
- 		if (phydev) {
- 			/* attach the mac to the phy */
+Hmm... It seems you haven't replied to me why you avoid using Elvis here,
+while at it.
+
+Also for both patches you probably want
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> +		r->flags |= irq_get_trigger_type(irq);
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
