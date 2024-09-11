@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-324675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C90974F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B559974F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68C61C222A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:21:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB728B26874
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B6185957;
-	Wed, 11 Sep 2024 10:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C1E185B7A;
+	Wed, 11 Sep 2024 10:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKEkj0C/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HLyIv147"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B883418592A;
-	Wed, 11 Sep 2024 10:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE7B42AB4;
+	Wed, 11 Sep 2024 10:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726050023; cv=none; b=fLebmbOhcmdKQaHW9gACd4TXZaDqWX+quacv0uHr5xadDjj1mcu0TljE1S0NMdlFegMCkMSTT3fDbhSt31BJZ9v//OhmC8z/RfrlVqif9fQcKv3wVnC6FhShJnvBdyVYMwPoMbuQKgLqEv1Cf+y3NW7Pr52bI8DbEUWv/jEtvE8=
+	t=1726050082; cv=none; b=k3vFThv3XGaube8EKZvCbr1dStlMYDfUxtkD0n+qIZ+TWXOrFyYAozdFh2GGHe/kZHsTxAhP32jJIi+do+c6ekzBFxSXgz5ZLqm9mI4n6SdpkIhFxQ6IFI3aSJRILOBckGbVLgg6w3AGDJctt0zrXMtaIHz8Lrt+GVPikLAbjRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726050023; c=relaxed/simple;
-	bh=44mLgS0KPbMic/uDwAJWMxwTITSGBXKzlDUFRNsJ+OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5GWjqfvzKuP2uxAf26NuxzU6eVmo8JLicjk4Qn806om506KmbRjU/vyhoxpkBUPslI/BUxBpqD4L2Vo/DBGonxo2/lPE9n6Ns2PT2SXY4LmHMMXsQIyv62veNoQ1IBr54AruHjJgMCWrrTS+mAySapxgQxTPlIimUZY5VTVNeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKEkj0C/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD0AFC4CEC5;
-	Wed, 11 Sep 2024 10:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726050023;
-	bh=44mLgS0KPbMic/uDwAJWMxwTITSGBXKzlDUFRNsJ+OQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cKEkj0C/r0iPebMEtq2M1DSca8oCj/+s/zhDLxXjyVrFQ7ReFxCvgT/jciHLtEUev
-	 vWxd7KmE5tNa8P+2eI+8lDPUH2pK1eAYMseCO9DRvYb+jyX1bZUBqLnW2LJT43FhLB
-	 zxfQdbCYG9aVnDvzWk8BnUdK2VTIHl78NsHhP0LhKic+vCOetZ3l0zELUxyw21Gq4Z
-	 sQANNgeBABvQaZG70Rs8iP6cEaNrv2r+6v518lp+MQISUfNcViOxIgMfwK5VHl3YiK
-	 KbDT4w4h9FCq+VPpYDnvbcybCP6zbeRHAlHmsvtDDNOCFrCme1TEp5xn0zpT/t0uCr
-	 z3X5QKmVfo0pA==
-Date: Wed, 11 Sep 2024 13:20:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-	linuxarm@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 for-next 1/2] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
-Message-ID: <20240911102018.GF4026@unreal>
-References: <20240905131155.1441478-1-huangjunxian6@hisilicon.com>
- <20240905131155.1441478-2-huangjunxian6@hisilicon.com>
- <ZtxDF7EMY13tYny2@ziepe.ca>
- <d76dd514-aceb-b7cb-705a-298fc905fae3@hisilicon.com>
+	s=arc-20240116; t=1726050082; c=relaxed/simple;
+	bh=p2A2vCVb6pei6YzTYFDois9iFz9dIWj89IQgTLKIV54=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SExa5UsO7XGsXQIIiO9W1+XSfvhK3rtEMVpD/UgouL4k++FjOzMvU/ARLXj9zRP5teenEwDYO2zIw8hEe5WhjRYVjK3HeAcOmG3d1eUKwhdX7SUEicG7Iq6zrOYRqI5ECjLWYfaMPvcHFe+08ona7kqinh51FF+Zwbyp3SPYcMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HLyIv147; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726050077;
+	bh=6feN7h7kAlsKXM0hxfEaT/zkwz3k/oL6pEDqw/eJl1E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HLyIv147b08DO30+wNcCbsU6/0FV1kyZGrfj2ZmUXUto5vMczhgmXN0pw/PAqvND4
+	 Cd03fE+ZMlFmYYodXbtN5ox11AAzfOcAHzJgafe4jxyMgVyBN7f2j0NbSvEjyXCyzA
+	 2u2nZbqr0aPhM4jMq+2prT/8ke6cGPPzVtu+btYKjBsy/Z+bF9H2LFpNGxzmx4/Yve
+	 BOypHQqCwLGQ6K1eM0PBgDrW5a701kXXy4l0fZGPpBszslE5kkrFOQORXQAAWpPYSX
+	 8XrHjBi5QLnzRZO/0ZzCKqGgilNW1zG25VphsnuISEHMYgEn/sGxABzPfHq4079nlo
+	 NbGzhWbDz7OxA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3c6j0Zz5z4x6n;
+	Wed, 11 Sep 2024 20:21:16 +1000 (AEST)
+Date: Wed, 11 Sep 2024 20:21:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the mm tree
+Message-ID: <20240911202115.2ff85943@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d76dd514-aceb-b7cb-705a-298fc905fae3@hisilicon.com>
+Content-Type: multipart/signed; boundary="Sig_/77lDK24Ti0WfLosBUmEnMlc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Sep 09, 2024 at 04:41:00PM +0800, Junxian Huang wrote:
-> 
-> 
-> On 2024/9/7 20:12, Jason Gunthorpe wrote:
-> > On Thu, Sep 05, 2024 at 09:11:54PM +0800, Junxian Huang wrote:
-> > 
-> >> @@ -698,11 +700,20 @@ static int ib_uverbs_mmap(struct file *filp, struct vm_area_struct *vma)
-> >>  	ucontext = ib_uverbs_get_ucontext_file(file);
-> >>  	if (IS_ERR(ucontext)) {
-> >>  		ret = PTR_ERR(ucontext);
-> >> -		goto out;
-> >> +		goto out_srcu;
-> >>  	}
-> >> +
-> >> +	mutex_lock(&file->disassociation_lock);
-> >> +	if (file->disassociated) {
-> >> +		ret = -EPERM;
-> >> +		goto out_mutex;
-> >> +	}
-> > 
-> > What sets disassociated back to false once the driver reset is
-> > completed?
-> > 
-> > I think you should probably drop this and instead add a lock and test
-> > inside the driver within its mmap op. While reset is ongoing fail all
-> > new mmaps.
-> > 
-> 
-> disassociated won't be set back to false. This is to stop new mmaps on
-> this ucontext even after reset is completed, because during hns reset,
-> all resources will be destroyed, and the ucontexts will become unavailable.
+--Sig_/77lDK24Ti0WfLosBUmEnMlc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-ucontext is SW object and not HW object, why will it become unavailable?
+Hi all,
 
-Thanks
+After merging the mm tree, today's linux-next build (htmldocs) produced
+these warnings:
+
+fs/inode.c:242: warning: expecting prototype for inode_init_always(). Proto=
+type was for inode_init_always_gfp() instead
+security/security.c:749: warning: Function parameter or struct member 'gfp'=
+ not described in 'lsm_inode_alloc'
+security/security.c:1689: warning: Function parameter or struct member 'gfp=
+' not described in 'security_inode_alloc'
+
+Introduced by commit
+
+  3346ada04cf5 ("bcachefs: do not use PF_MEMALLOC_NORECLAIM")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/77lDK24Ti0WfLosBUmEnMlc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhbxsACgkQAVBC80lX
+0GzekAf6ApkgLw7Dsyb8alluSSH3K6u/DadwiLM6J5AuWcymTr8ujKEegfxvebTj
+hgX6uTze5Z3U3UuMil8YFcFEzwvbQF6inOQjFWiQBgNpEolra9cnz5aSBQD2Ylai
+7kJVSQ/ZSyQG7nUmNrMiYjv5zMp8kfhrp04tnch1JVsYV7PxsITMuLnajgi3qH6D
+o9FTzBB9sHZ/8bY1A+iyCk5jFFrCiiUXOUeFF/R9fYKcMbsvR+fEuKPOusZanMHM
+w9MRaRx5FAxk1yy0PDJAdBcqrVKJwrw8IoTcosW1fAs8OGcBQOmjxOj+Yr40KuW4
+U6O/dLdLW69cer8IwW7f5VWKuz8fXQ==
+=uTPb
+-----END PGP SIGNATURE-----
+
+--Sig_/77lDK24Ti0WfLosBUmEnMlc--
 
