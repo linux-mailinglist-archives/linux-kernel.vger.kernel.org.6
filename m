@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-325692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D878975D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:33:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53181975D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04B21C21E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD285753
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F14A1BA868;
-	Wed, 11 Sep 2024 22:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF60185B62;
+	Wed, 11 Sep 2024 22:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="elLjxVwx"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aTkduiB+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FD315442D;
-	Wed, 11 Sep 2024 22:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E4A15442D;
+	Wed, 11 Sep 2024 22:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093978; cv=none; b=ZRf6RAm7czGx0+uM6g4Yb6Ck6hbZo8MwHPBpn16T7LigDye9rXtdWpuGRfs0jmIQEP29/AqJvphQRG8pjzhVsMUt+53KZgv2jMNtkrWpIs3veTjH46+lFwLOuRDkY/ixYwuDdFUAwh6sbyCnvsWQR6auA6zYugKns1a1juyFw60=
+	t=1726093986; cv=none; b=E8tdssgOEybtPmG2Y+dtgyl3Gm/qH1kTb5O3Kw5Pjheh7rvRxOnzQXN99gsHXFScbWgD2lZS5CduP4ygOFG19FJMgnZuOy+nBn/0RVKBbkRXSYQYazhqJsQfAEiqwelv8EtO1Zf6fZNiajZ0OfYbh/TaxL+N4k7Nfod5CR95VA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093978; c=relaxed/simple;
-	bh=ri02tmiI/Fny0K80RpVCmC5qXeAd5Ny5JNmTjqHehXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aHa94+EF23Kg+DxBKayPN8D/+KC0QZqV3X/r3c6QS6VNGy+IwPHbLbCn9BMY5+cApJdt3xHvpKcNInjE2iL6CnLIOQm2zQIjfl2PsxFErlQVAuhPeK7+SiO30KalftwJKD6lN/64cz55YLPAWx4RlQLZGxacLMFHoIGLOd71CwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=elLjxVwx; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4X3wLw35Ysz6ClY9S;
-	Wed, 11 Sep 2024 22:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1726093974; x=1728685975; bh=ri02tmiI/Fny0K80RpVCmC5q
-	XeAd5Ny5JNmTjqHehXM=; b=elLjxVwx9VAzFxniWyRO+6x14OWsxd4+yZQjLRp8
-	duo1F+3Y5swt8w6/LFDzgo0pCPYJXMM9i7Lx9j0Z5MnU3Isu/EHKmxVZccHnQ2uq
-	PJ+mmmRrMTVcJUMvdwvx0a81vmkfYXGTEHizroYPZLQ3i/59k1pmmnXiQ8igageI
-	G5+AsqvWmNbOPiSErbCZM8GmB7IcpOlC+V2g7qGccjKq+EiRWDTC824U3QT+ABn2
-	RozWDl4f7qj037tloIHEzc7qjDaAUW8rvs4G7pFxGlsesngNxSfCS1GLmNWLOqKV
-	VgEIpeY6K9xrsRoSSWFy5R761fUi2/eTeZ1VQ6hhGYQdfg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 0Bz_iw8E3IBp; Wed, 11 Sep 2024 22:32:54 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	s=arc-20240116; t=1726093986; c=relaxed/simple;
+	bh=MTQil0PVuo6dZWE+07P/G0EJIa/lxSWcbf5rZ7LKkFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=X3uvZhtGwp8O/WRM9Kns+S4UyPYewQKTthfI0bMA1LuQjSvdPh1YsXOF2IQsxWtmLV9Ve81TjeI7TWAjfu/z/Qb06vJ9Xea46iZct+GzTwQpxvoNWQPCVNnGawVI8NYdmtOmeAvdyaS/aG4UgzjcfRUNDlwS1mxFOO1Q+g4KA84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aTkduiB+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726093978;
+	bh=dIw/I97nyOSuSoNnqas0N7JMs8pcfS2d44H3Hh+U2QM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aTkduiB+hddq+cZIH6ge91MFhZjezyiDt0v7GEUqeGmY3MOxeDl9mC/iqpUBoSxV+
+	 Ian1T5Vm58YhX7i/xdasKxj3pWmLjZoJD4UAzRMoBeSM7zZ3WAZKkYJSa30VbBne5q
+	 J5KayLLlxK4ggGrKb1nT3Sl7o809pNSOSppOnczQb6b1BjnuijJklemvlJXjb1ZrjO
+	 iuQNszPfqeSpTpOmK/WKYjasM0y6bo37+vlalEC4ihRfqqGFXOeHeZW5aFbLXRPq3J
+	 vSw7APfvjnMBdBqkJEY266Skf131cKaIUjnPGfTFa5yVocGpuY09tXEkReS1XNkao5
+	 NfH5keS/PaE1g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4X3wLt0fq3z6ClY9R;
-	Wed, 11 Sep 2024 22:32:53 +0000 (UTC)
-Message-ID: <f47a00da-a072-491d-80a0-59b984ea92b0@acm.org>
-Date: Wed, 11 Sep 2024 15:32:52 -0700
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3wLy2Xbpz4x3J;
+	Thu, 12 Sep 2024 08:32:58 +1000 (AEST)
+Date: Thu, 12 Sep 2024 08:32:56 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
+ <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Message-ID: <20240912083256.27843fd0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: Use pre-calculated offsets in
- ufshcd_init_lrb
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240910044543.3812642-1-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240910044543.3812642-1-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/gPjd3Lc7HOEzLZDkk4Ui7s5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 9/9/24 9:45 PM, Avri Altman wrote:
-> Replace manual offset calculations for response_upiu and prd_table in
-> ufshcd_init_lrb() with pre-calculated offsets already stored in the
-> utp_transfer_req_desc structure. The pre-calculated offsets are set
-> differently in ufshcd_host_memory_configure() based on the
-> UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk, ensuring correct alignment and
-> access.
+--Sig_/gPjd3Lc7HOEzLZDkk4Ui7s5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With which host controllers has this patch been tested?
+Hi all,
 
-Thanks,
+Commits
 
-Bart.
+  cf700e558e1d ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
+  f579278d690c ("clk: fixed-rate: add devm_clk_hw_register_fixed_rate_paren=
+t_data()")
 
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gPjd3Lc7HOEzLZDkk4Ui7s5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiGpgACgkQAVBC80lX
+0GzX+Qf+MnfBr/+l0kHd85FIh9tC1V3+wJb3UI6AVkUvYGs5qAbpb/TbBG4joxzt
+XYHqBTycQOH0jlg/NIX1w7dKb4CO1qqov0pfhhFSKxbuspkH3rmVcHh87jd3VeFG
+beylkEBjIu7NxJEi9pseTm6jjFu195TeEkykuUgw8g86iEyB1ex61PAkLJLOZWVE
+VyktswZAu69DTnWLYArtyc7K/BHLDqJbVK1IGVTyD/VFN5Zh7JQLRyKPlEna/2ds
+iBwoLNCGcKvOgL9sHmSKGjl80guO9Xjm6IZmezUmgGOw9L8xVNEEufNiF+yyqy+v
+w1sVGvg0Fq+P2G4UENMcx8b7wiqRQQ==
+=2195
+-----END PGP SIGNATURE-----
+
+--Sig_/gPjd3Lc7HOEzLZDkk4Ui7s5--
 
