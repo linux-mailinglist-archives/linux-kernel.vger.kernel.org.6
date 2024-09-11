@@ -1,53 +1,49 @@
-Return-Path: <linux-kernel+bounces-324125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E887397482C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6229197480F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75672B23652
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2527A28797E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2882BAEF;
-	Wed, 11 Sep 2024 02:17:47 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190592C182;
+	Wed, 11 Sep 2024 02:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJhxmXY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6329422;
-	Wed, 11 Sep 2024 02:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A6425745;
+	Wed, 11 Sep 2024 02:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726021067; cv=none; b=gaCKW4uLH0nozpCC/MkgBHDK0cNzjrUZ1wC7fmB1tt4ZHVHl8o/KF5VWnYM0muvLY0jxePhwoLwzWK2YbNoFmJieeQFvf7iFLc/tiyTnE0SvnM35u8/s6ApxfEm/hUOEVSEobkgLyYhrmpg4mitUbiuBuvQtNpi5j8/H8UzxKYM=
+	t=1726020633; cv=none; b=I1xjFN8pieypynNNEXE/foWGT2jPkcchafIex2GyZ7riNZrcSiTVn890qbihi3kwkBXKM1H2Q4AEsWM7yIhoRXECMgrfwaurXdpqGKziv4IGDquni4AOw+YpsT0Pi4wk0oAP7bf7C98z2Fe7m2N2FL3ueBsLpFpkPPrEMoYa6sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726021067; c=relaxed/simple;
-	bh=0x/nYsvJB5SusdTXecLpy6Cie3u1cVXOtJvPmzCGgW8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cFVDJ0Rl5LsjKuDEf63AQf+YTTutGSP3gC3PMyNX2gW8NyaTwG8/K69nmYA6xzZnTocqxzPo3dfMH1lq1ljhbZkn45SLw8FfPR/M1yPbhhKHmIPE2uLgA5l74K6m2yWJkmkMmNqNGFduGvCLG633lbROylWk9HbLtJLdTYq67CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [58.61.141.10])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 8C78F7E0126;
-	Wed, 11 Sep 2024 10:10:28 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: dmitry.baryshkov@linaro.org
-Cc: amadeus@jmu.edu.cn,
-	andersson@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: ipq6018: add 1.2GHz CPU Frequency
-Date: Wed, 11 Sep 2024 10:10:25 +0800
-Message-Id: <20240911021025.17283-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
-References: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
+	s=arc-20240116; t=1726020633; c=relaxed/simple;
+	bh=Ukvdmk6V9AkDsXn18d1wcBFwVU2wInYSavYgNP9N5v4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=kGZbjas9jd6sq0eGZgVs2qIBmy7JTA1S94BA4tORvxf02ZxmzIgbLO/Y0F2foAzBwKmJ7MH7YhETkm+rk7RY5NJklzEZGn8HOR2027352npuLmeE6zL7BN9ebPwzHXUUxtk+p3eMq7Fp0KEIyg4RyogQ/nCRNiokXCGw8CkQ75c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJhxmXY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF6CFC4CEC4;
+	Wed, 11 Sep 2024 02:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726020632;
+	bh=Ukvdmk6V9AkDsXn18d1wcBFwVU2wInYSavYgNP9N5v4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MJhxmXY5ACfTu9lK2dO6lJ12cvkv49jnbviNSg4Y/wPAJxz0MT9j7dHnp8KY4p0D1
+	 wsJtvXAeupdL21TRCMVgaIPiKQQ72pMuw5b0vklKdaALjcVnskZveAbmp0+P9QVcMk
+	 eYgyNOXFknJr02WbWl0RzEYwlaTWe5gJAoKqjfhlZofNMaQ/N5Bkedg2igpqnCvtvW
+	 PFt7KNjONwxKHWl2iSybhQ5GQBmgns/GoNp6oKgKesTdN9YZUfVYiGGVh9jeCDY0ow
+	 UzSt8tdLxIToQcPrgaAKFjFvMCFTb0lSgdw/dfdS1TqXhiDlS7fe+RysJmBgky9IPH
+	 d5oy4avdJNCTg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBB5A3822FA4;
+	Wed, 11 Sep 2024 02:10:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,26 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTR9MVhpISEpPQkIdGhhLTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0pVSktZV1kWGg8SFR0UWUFZT0tIVUpLSUJNSEpVSktLVUtZBg
-	++
-X-HM-Tid: 0a91ded8b14d03a2kunm8c78f7e0126
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Eww*SjI5PykUPiw0KEIY
-	Mz8aCh9VSlVKTElNS0lLTUlCT0JIVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWU5D
-	VU1KVUpPSlVKS1lXWQgBWUFKTk1ONwY+
+Subject: Re: [PATCH net-next] net: amlogic,meson-dwmac: Fix "amlogic,tx-delay-ns"
+ schema
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172602063377.461532.17295023219958087443.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Sep 2024 02:10:33 +0000
+References: <20240909172342.487675-2-robh@kernel.org>
+In-Reply-To: <20240909172342.487675-2-robh@kernel.org>
+To: Rob Herring (Arm) <robh@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-> opp-supported-hw is selected for all IPQ6000. Please add more details
-> here. Is 1.2 GHz really to be enabled for all IPQ6000?
+Hello:
 
-The 1.2GHz frequency is available only if the fuse is IPQ6000.
-I will try to add more details.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks,
-Chukun
+On Mon,  9 Sep 2024 12:23:42 -0500 you wrote:
+> The "amlogic,tx-delay-ns" property schema has unnecessary type reference
+> as it's a standard unit suffix, and the constraints are in freeform
+> text rather than schema.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/net/amlogic,meson-dwmac.yaml     | 22 +++++++++----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 
+Here is the summary with links:
+  - [net-next] net: amlogic,meson-dwmac: Fix "amlogic,tx-delay-ns" schema
+    https://git.kernel.org/netdev/net-next/c/955f5b150862
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
