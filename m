@@ -1,112 +1,92 @@
-Return-Path: <linux-kernel+bounces-325137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E43975574
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32C8975584
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3025B1F27AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C181C21C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2811A3052;
-	Wed, 11 Sep 2024 14:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054EE1A00F4;
+	Wed, 11 Sep 2024 14:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9x08tqx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0446F1A3041;
-	Wed, 11 Sep 2024 14:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NDmOFM2K"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5362C191F8C;
+	Wed, 11 Sep 2024 14:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065116; cv=none; b=RNIPy3uYfsEXsKU0JFnrF05qz6i8iS7vGJrcI38SJfzN7H72MMa8pYftPVp0Ru6pQjwT+PH3aV0BYj9lSds1xPF7DG+OxrhqDffRIVxlffoY7XB8jdLsi7ru9zlBoN2ICzgIM6qRjnlmLjinrLJWeTosQEF359Or5ifrNuowx+0=
+	t=1726065190; cv=none; b=JSF+b7uXa64aXtPt/GZ4hx7awqnE1qfJlIq61AbtOlmnvW9TWikYlQi5rmT01CYkUU/xrHjJc844JXS9vNgMxHOLvfG0CKSdOCCkMBf7GdYq7X4y5yiU9ophsDHOOlw/aB3SNVFWHSGKVsdGdp2H0gBR59Ae82Gmj+oI32P1nsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065116; c=relaxed/simple;
-	bh=Mw1y4wLHHfBdKNO78tJQNdKZ1uzYVbptjk/O8odXsyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dN3hn2EB4FNtceyJCNEL9/jxDUK90h3L/cLmMMjW90qWE+mLjjb2VdtcNM5PSukgMuWv9Wzao2wbtaoRlB5nuqW0Ekxj0svPFyES1Ui3MiUDQq0zfiwpCdloaxaKqC5bSrwyWiiPl6SEiFUhuntlC4gBSKHewvNgLweQglkKO4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9x08tqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF7CC4CEC0;
-	Wed, 11 Sep 2024 14:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726065115;
-	bh=Mw1y4wLHHfBdKNO78tJQNdKZ1uzYVbptjk/O8odXsyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O9x08tqxuk8uGTAQMURWwqXD937SsnBMX8ktRkA1fROJWNZL/r7jhq/v9RT9rRlsq
-	 Pn/6SfPE1RjkGJz1JHDY0fblpuqlN43baJmsZdoOqVsUtP4w2s6vhl3C/Y2Qxxbebd
-	 zWdBdykojgl7F4E1TjFtecuDOCyOwhfx5N61PsYvRARfG3Mu96Qub/iOG9LNAqEMBG
-	 mBIdg3TO4mZ3Qx15aR32q888vlDdJzsY9+fCB7bJTwHao0rHsmYl9ufuW5gAnTz/4O
-	 tH9A4Afrnc9PFFFtyNHKSMWyEypvwjbdV2Zp4W7M+IoVbgVhwsBuFLctmb3oCTDT1z
-	 +0EOsSWg7EUAg==
-Date: Wed, 11 Sep 2024 11:31:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Junhao He <hejunhao3@huawei.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 05/15] perf pmu: Allow hardcoded terms to be applied
- to attributes
-Message-ID: <ZuGp2Mt-f-PQ6HIa@x1>
-References: <20240907050830.6752-1-irogers@google.com>
- <20240907050830.6752-6-irogers@google.com>
+	s=arc-20240116; t=1726065190; c=relaxed/simple;
+	bh=nH7uXR/mf89HIjvFTdMKPGL8LxZGyXArM3vFfrHZHHk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qAHV0LJ/Yhauqt3if+S74alpiTQleUMwteCnYh5pEZBVP90PBajtDv0iq238xXlXcrl3oyaGys4Z3u9d5BYP+uxB2omA2e4K0hTXGc5amHeR/ZVNGTWSv/Zj5o5pBSzik7VIDetyqvixodyTqHhIj4NVxk/TxpnjEIyTLOF7X38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NDmOFM2K; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BeDJb
+	itMR/rHgNLbtzCICYHaqbwBV6Q3Kpd+79Ocnh0=; b=NDmOFM2KsaKH9f366mVWW
+	Sf13O3yxeAZTUlhdT1SOVEX4yX7fg5LBaWLARqMF5h1wN/Y57C520cxygDwoJRep
+	+GEUdatOmFgswFdsdkZRQ1BYL7EiWb46IpdEpuwG7ZDHX43uFQM8pzzJ+iB9OIkQ
+	dep6uYMrgDJ61wH1yb/iQc=
+Received: from iZbp1asjb3cy8ks0srf007Z.. (unknown [120.26.85.94])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wDnT_r1qeFmmhDyCg--.6633S2;
+	Wed, 11 Sep 2024 22:32:21 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: ryder.lee@mediatek.com,
+	jianjun.wang@mediatek.com,
+	lpieralisi@kernel.org,
+	matthias.bgg@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH] PCI: mediatek-gen3: Check the return value of the reset_control_bulk_deassert
+Date: Wed, 11 Sep 2024 22:31:55 +0800
+Message-Id: <20240911143154.59816-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240907050830.6752-6-irogers@google.com>
+X-CM-TRANSID:_____wDnT_r1qeFmmhDyCg--.6633S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr4xJr43Gr4kAry5tr4ktFb_yoWkJFg_Xr
+	Z7GFsrA3yDCry3KwnFyrWrArZxAas7Z3W0kF95tF13Aa48ur1FqrnrZrWDZF4UGF4Yqr9x
+	GF1kuw4fAa4UJjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjJPEDUUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwVXamVOGRDjgwACsX
 
-On Fri, Sep 06, 2024 at 10:08:20PM -0700, Ian Rogers wrote:
-> Hard coded terms like "config=10" are skipped by perf_pmu__config
-> assuming they were already applied to a perf_event_attr by parse
-> event's config_attr function. When doing a reverse number to name
-> lookup in perf_pmu__name_from_config, as the hardcoded terms aren't
-> applied the config value is incorrect leading to misses or false
-> matches. Fix this by adding a parameter to have perf_pmu__config apply
-> hardcoded terms too (not just in parse event's config_term_common).
+"reset_control_bulk_deassert" may return error code, we should check the
+return value of it.
 
-Stopped here:
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+ drivers/pci/controller/pcie-mediatek-gen3.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-  CC      /tmp/build/perf-tools-next/util/stat.o
-util/pmu.c: In function ‘pmu_config_term’:
-util/pmu.c:1397:17: error: switch missing default case [-Werror=switch-default]
- 1397 |                 switch (term->type_term) {
-      |                 ^~~~~~
-  CC      /tmp/build/perf-tools-next/util/stat-shadow.o
+diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+index 66ce4b5d309b..5b35dc32ad47 100644
+--- a/drivers/pci/controller/pcie-mediatek-gen3.c
++++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+@@ -1016,7 +1016,9 @@ static int mtk_pcie_setup(struct mtk_gen3_pcie *pcie)
+ 	 * Deassert the line in order to avoid unbalance in deassert_count
+ 	 * counter since the bulk is shared.
+ 	 */
+-	reset_control_bulk_deassert(pcie->soc->phy_resets.num_resets, pcie->phy_resets);
++	err = reset_control_bulk_deassert(pcie->soc->phy_resets.num_resets, pcie->phy_resets);
++	if (err)
++		return err;
+ 	/*
+ 	 * The controller may have been left out of reset by the bootloader
+ 	 * so make sure that we get a clean start by asserting resets here.
+-- 
+2.39.2
 
 
