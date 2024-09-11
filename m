@@ -1,107 +1,152 @@
-Return-Path: <linux-kernel+bounces-325661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503CF975CDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37B0975CDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43B3DB21F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB97E285B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF60414D702;
-	Wed, 11 Sep 2024 22:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F251E144D0A;
+	Wed, 11 Sep 2024 22:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YCGtBX7A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hu0hVXWS"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D7413AA45
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44E115D5D9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726092173; cv=none; b=nQwZPX9ggH5g4DBh/7Ie9zkuDVMN9FvFh7NClbuzDY9poSu4x9f/IvPtULtfT8k9s4kDj3tpVDQyu3zfWtyZlZZkfed57tWdZIperRuAOsaRVmUHWBrWRS6Cq8iJ+8eVAkj6JYHO6CbDWxbzbAv/DBniaqUaV0lhX0oSFkxxdtw=
+	t=1726092339; cv=none; b=XiUiVfIbUVGB84FIh1N3oZGpdZkrnHin4eSumsUSFkK67JceRMqkwI+BRxFc/+3NeoxZjjVzc4HaUWBiv/yjO4mMM9G4VbF7CfxgPOt5jVBjWkW43IW/MLg+P0Qvw/P8q8RmC44XVstPWRzRn4KN1Vr+TS+2h2MDtii9xazEwBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726092173; c=relaxed/simple;
-	bh=xMpuObgjXikWG7fNV0A/8aPWH354XHNMrK1owAgYlnI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sPGrYLw6wJ33buudLP2eN5DkWHwOvpy8yxcoooQb8+jMKhIuXnMxpNzjGG+c1GGpbosjWdLUCxBSCW3l5K4+pGrZCdazh3zeRI662cGhLjBjCtqOOGRdJpv5F/Rn3m0qX+fNQg+e4CzybGXI12gtIw1jXQIxOPHyUd+N+otkKu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YCGtBX7A; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726092171; x=1757628171;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xMpuObgjXikWG7fNV0A/8aPWH354XHNMrK1owAgYlnI=;
-  b=YCGtBX7A6RuqKNy6xTsVWZ9slrmLcRxSa0sk6Z2n3bpTDij8ZaC9utSl
-   48lho7TlcedxsvguwKjkvp19HKcy2KRn/x4dE24JBBMRtZ32DuCflPN2p
-   JHZaRq2xaeeMSzinItTlVzftBLfCUpeQCAdk+84s5GGjsO35ZhTIbR2ox
-   4rzFLP2M0infQ0s7icLFSA0B0qJSc6yPwd9nDNGi/UHyj1SBBvn9wc6eU
-   Ff+EXwPHzceAGKu40CCGlryfzItWdWDy1M99nVltac80cMt9CRJo71oBQ
-   sQ3mx7Mu7QHSoFsMkL6/z6FnJAus1a1yrcyz2lgjtylrUbAtiW37/FsQ5
-   g==;
-X-CSE-ConnectionGUID: gNjVbOC/SWireWwhirarJw==
-X-CSE-MsgGUID: KEa5m+j9SQmpBMDr1LYdTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24459175"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="24459175"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 15:02:51 -0700
-X-CSE-ConnectionGUID: CmljKjtCTfqmc9rpchJxmg==
-X-CSE-MsgGUID: +WhkDPA3Q/KoPx0s+AiNpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="67238252"
-Received: from viggo.jf.intel.com (HELO ray2.sr71.net) ([10.54.77.144])
-  by fmviesa007.fm.intel.com with ESMTP; 11 Sep 2024 15:02:50 -0700
-From: Dave Hansen <dave.hansen@linux.intel.com>
-To: torvalds@linux-foundation.org
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [GIT PULL] x86/sgx for 6.12-rc1
-Date: Wed, 11 Sep 2024 15:02:28 -0700
-Message-Id: <20240911220228.4051834-1-dave.hansen@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726092339; c=relaxed/simple;
+	bh=bUuvrWFSv3BmUrrwJf5eHrL8j4woZvMxGXVhs85lWkk=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=uPUBgcGmb+pnkiQVIr3PrOmdPzqcGu9tMvpcObreXJk/qgiTSiMQys90HspyyLDkHiCfC0QVVs8L2wmJ3kSFJmQa48Ur15zWYEs8SAWbSUjLGG9WWAb9k4dtUEJBwFDCg3ouBL3IFWV0NRn/olJB82VzsxCAPJRTG2mdcm3TAiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hu0hVXWS; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1a8de19f5fso790419276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726092337; x=1726697137; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uSnPM7Z73BdDwIKjWD3zfTeRtaq8wKDl6kU6LBNgXKw=;
+        b=Hu0hVXWSRNSYV6Z+7qhxnmpnKymV3LpBErD5gWvTSM+VftMZzkGPmGSghCVco5Bq5o
+         JdfLbwjO46vMjsLz8/veyQHxKvN2aBG1M65WRtB6AxtLsQCYcMlEGlx55H6mjln0e7Az
+         gGwOSuoYiJP4zjQjF+tS00FY4vcSuEr4fLUI8DZNwsFdgGBxx0KOr9jliVbm9wUl/zDa
+         4wvMLf+j/+pyJkSdK7WndmWq2NT9JokbLM2UjXQfQokGMGG2mjafO2AMrLQetXWsVGGh
+         avMPO54x0TaC+Oiw1uh6EmCE8ilJcLx9Vncz7t/xv6XfighNmF/ErqjKUv9VKQwEBYWA
+         D73A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726092337; x=1726697137;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSnPM7Z73BdDwIKjWD3zfTeRtaq8wKDl6kU6LBNgXKw=;
+        b=oj6+nV7dpvNCLQx9dBTvjDgOP24zfPATOFRUeQdwEdgO4NzQBRzvEIuuAA1pPnH6fu
+         RSXs8xiPOLXlBTLqfWfyK9j1ZRvbjAAnArJOL2Mv+SQw1HlaV7wYZUerj2vLQsFYkfNu
+         DmJ5rBQ5/WNuBhcHk+tGyZqhjRUgilzvitMc6TICgzoNwkH1gPyr2D0HZ0vYKzBhhFxP
+         dOE3E2sGTODGjtcBEvv0XQZUYg0OavWYY4PRXirulhAFCoXUGsZE2wGb4+GOF/58clGQ
+         dBUzVHZFKZk5OLncl2TjCykyWWn//lU0k/YPCgtzJlAUuYPkyViF2OmCRfY6GROcMOD8
+         tOTw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1TS+Hu8w/8keW1oJ7gSi/rScZjJMWVEF+AKXNBr35l3SGuu4b9/u66ikLD6ER3JObW3B8DbVqa1kwxI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTTliG0KQEyQd5lsE+rZ+Wt5J5Rf+F1RU1y1rqz9Fi8YIW8E0a
+	T/Ax3Z63gQyenVJ2I7bUnSe86pIjKdD1CXB2nY1wr3EdOU97xv8VEdMgJ2sSe21g9oxweH8OblL
+	TiPSNpudiXtxzmUiy3QrQvw==
+X-Google-Smtp-Source: AGHT+IF9AOcID1tAjXrc0JMac0EDJz+dHtqrQkj3EUSn3vqGuyTbyD2exFl+z4P0Z9sNallPuFjPTF0m9Vi898GeuQ==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
+ (user=coltonlewis job=sendgmr) by 2002:a25:aa87:0:b0:e0b:fe07:1e22 with SMTP
+ id 3f1490d57ef6-e1d9db996f3mr4706276.1.1726092336807; Wed, 11 Sep 2024
+ 15:05:36 -0700 (PDT)
+Date: Wed, 11 Sep 2024 22:05:35 +0000
+In-Reply-To: <Ztl4TDI98tnCkH0X@gmail.com> (message from Ingo Molnar on Thu, 5
+ Sep 2024 11:22:20 +0200)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Message-ID: <gsnto74tdexc.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH 4/5] x86: perf: Refactor misc flag assignments
+From: Colton Lewis <coltonlewis@google.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: kvm@vger.kernel.org, oliver.upton@linux.dev, seanjc@google.com, 
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	will@kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
+	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	naveen@kernel.org, hca@linux.ibm.com, gor@linux.ibm.com, 
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-Hi Linus,
+Ingo Molnar <mingo@kernel.org> writes:
 
-Please pull some x86/sgx changes for 6.12-rc1. These fix a deadlock
-in the SGX NUMA allocator. It's probably only triggerable today on
-servers with buggy BIOSes, but it's theoretically possible it can
-happen on less goofy systems.
+> * Colton Lewis <coltonlewis@google.com> wrote:
 
---
+>> Break the assignment logic for misc flags into their own respective
+>> functions to reduce the complexity of the nested logic.
 
-The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+>> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+>> ---
+>>   arch/x86/events/core.c            | 31 +++++++++++++++++++++++--------
+>>   arch/x86/include/asm/perf_event.h |  2 ++
+>>   2 files changed, 25 insertions(+), 8 deletions(-)
 
-  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 760ad067527c..87457e5d7f65 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -2948,16 +2948,34 @@ unsigned long  
+>> perf_arch_instruction_pointer(struct pt_regs *regs)
+>>   	return regs->ip + code_segment_base(regs);
+>>   }
 
-are available in the Git repository at:
+>> +static unsigned long common_misc_flags(struct pt_regs *regs)
+>> +{
+>> +	if (regs->flags & PERF_EFLAGS_EXACT)
+>> +		return PERF_RECORD_MISC_EXACT_IP;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+>> +{
+>> +	unsigned long guest_state = perf_guest_state();
+>> +	unsigned long flags = common_misc_flags();
+>> +
+>> +	if (guest_state & PERF_GUEST_USER)
+>> +		flags |= PERF_RECORD_MISC_GUEST_USER;
+>> +	else if (guest_state & PERF_GUEST_ACTIVE)
+>> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
+>> +
+>> +	return flags;
+>> +}
+>> +
+>>   unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>>   {
+>>   	unsigned int guest_state = perf_guest_state();
+>> -	int misc = 0;
+>> +	unsigned long misc = common_misc_flags();
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_sgx_for_6.12-rc1
+> So I'm quite sure this won't even build at this point ...
 
-for you to fetch changes up to c8ddc99eeba5f00b65efeae920eec3990bfc34ca:
+Must have been a wrongly resolved conflict after rebase. I had thought I
+rebuilt before sending but something slipped.
 
-  x86/sgx: Log information when a node lacks an EPC section (2024-09-05 15:20:47 -0700)
+It's fixed
 
-----------------------------------------------------------------
-Fix deadlock in SGX NUMA node search
+> Thanks,
 
-----------------------------------------------------------------
-Aaron Lu (2):
-      x86/sgx: Fix deadlock in SGX NUMA node search
-      x86/sgx: Log information when a node lacks an EPC section
-
- arch/x86/kernel/cpu/sgx/main.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+> 	Ingo
 
