@@ -1,127 +1,77 @@
-Return-Path: <linux-kernel+bounces-324883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D47975212
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C9B975217
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8671F22E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FA11F23132
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BC176FD2;
-	Wed, 11 Sep 2024 12:27:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57287187322;
-	Wed, 11 Sep 2024 12:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C381F199948;
+	Wed, 11 Sep 2024 12:27:59 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719D9192D66
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057672; cv=none; b=ZAo9lY+DH9BEAuMmlYh1eyzhm6Xf8Klmj48F00Y66IQQ2LhpN1Itczah0DRM8GJH0oLiLi5ZcOPnv0+2sTmSKXSjuaZaPyX2nUeETg50LylXYLTsaRGsibCKNGdjZMSzo2SDfrtlzBUTznnpJ1gLHfwc9GVvGsh8yTnLfkx6sQU=
+	t=1726057679; cv=none; b=icA+T2pAUuCgXpN/hEccw7fgC43bf6KZZmMMqjJJtUnkQObg0cuPgH1/om1DMDQYs/thQ3kRYbsSeiIrQOkXet+8VutpfcUMR7sikJ6rqly23g3elSGpbcwFBcB1M41LojGzCgKPIq4k+FxYhIR2GVC0LQocsIJPOijEnqoCkRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057672; c=relaxed/simple;
-	bh=OKDEPAE0Prkb/4ZE29P7txkEuNt7r/yadoNnWUnDPsk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pQ5+znVxIRCfh9Cn4Ywk1h8WDeebQ3XaAoWyVTABBngzmpHkVdqjyW3CSga8yVU1b5TyaCjX5I8QfhvlbxDpKDSfRe+BjC0mTlz95CutJHmuOKLotPQSHScgHdnAgJ4ckWcjwnWP8US7ACztf2iLKzA384/wsA7gpKGwIshWpSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 513311007;
-	Wed, 11 Sep 2024 05:28:20 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 578AB3F66E;
-	Wed, 11 Sep 2024 05:27:49 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mark.rutland@arm.com,
-	james.clark@linaro.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mingo@elte.hu
-Cc: nd@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH] trace/trace_event_perf: remove duplicate samples on the first tracepoint event
-Date: Wed, 11 Sep 2024 13:27:47 +0100
-Message-Id: <20240911122747.4168556-1-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726057679; c=relaxed/simple;
+	bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uEgXke4Ht5mU6pNShHb15aTjN80EKcJUwlv6wkEg1T0C+XHybl3HxKMx+4uXpR3PZclQuagb7ENBcxcSxKOaYr7kiOda4a94guRP0GSD/EEfIdSNOWj8+EI11WM3YUcqmn9rijsQ7PoahD4IUSHyp0JJpi1+RKuc0X1kFXTdEqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso126093735ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:27:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726057676; x=1726662476;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
+        b=i2uDazTww3Ue4ZK36ZOlgoTFgP7m3B//xqYdY2T2NWyEJlN1NZdC7xAknFRaBumNPJ
+         vrAmZGXmdwDAmEdMGJTWs8jjW7rG0wIC+gBH+5UnPrVcmxEd6m4NJr2S2ySgdddUAdN+
+         sihSVVudPaHWF0xnMbE+KhWtoSXi6NSVrgTQrk8iulFL8P1VcQ4jBeUJojBtp3xzIJfa
+         lJMLRMOrendp7IG1G9Wd4uyVsPjHAC7PZP47IIBSAkS8UKkE/KYEgMMOatI1G7Zbb3Om
+         UEAbD/30ePPUbSCdN9tHo6Qp3P7zCeFXOVBMsJ0sCJm+GYwYrwnI8PiKhCwWCGnMnM6D
+         lvww==
+X-Gm-Message-State: AOJu0YxADxWZIHaWno0M2eAX2Dg/E8dKg/PMOgEDbd3nFW+mJEtQHhaD
+	4Oa5bFVvLtpzS+h7yEES3J52InazCTRscJ4JFbOeWuu9F2rRAUS8lqyFd3FUmV8SxSlElf7xsSw
+	G8v8EWwULUxQA+dH8Ns7udVa+huIwWm2y5XQe1fswePzJhi20d5OrKVE=
+X-Google-Smtp-Source: AGHT+IFMZkCrVMOd7BzX3ng/7DCa3afbgnZoYPifmZWoi1S5vKSHGGwboAcfxkGlx3jpFQlKBVfN6U3zdpSXLhhwMEBgVyCAaJTj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:20c9:b0:39d:24db:d50d with SMTP id
+ e9e14a558f8ab-3a04f069c65mr203471905ab.1.1726057676675; Wed, 11 Sep 2024
+ 05:27:56 -0700 (PDT)
+Date: Wed, 11 Sep 2024 05:27:56 -0700
+In-Reply-To: <0000000000000311430620013217@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ae2b0a0621d71ef2@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When a tracepoint event is created with attr.freq = 1,
-'hwc->period_left' is not initialized correctly. As a result,
-in the perf_swevent_overflow() function, when the first time the event occurs,
-it calculates the event overflow and the perf_swevent_set_period() returns 3,
-this leads to the event are recorded for three duplicate times.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Step to reproduce:
-    1. Enable the tracepoint event & starting tracing
-         $ echo 1 > /sys/kernel/tracing/events/module/module_free
-         $ echo 1 > /sys/kernel/tracing/tracing_on
+***
 
-    2. Record with perf
-         $ perf record -a --strict-freq -F 1 -e "module:module_free"
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+Author: alibuda@linux.alibaba.com
 
-    3. Trigger module_free event.
-         $ modprobe -i sunrpc
-         $ modprobe -r sunrpc
 
-Result:
-     - Trace pipe result:
-         $ cat trace_pipe
-         modprobe-174509  [003] .....  6504.868896: module_free: sunrpc
-
-     - perf sample:
-         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
-         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
-         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
-
-By setting period_left via perf_swevent_set_period() as other sw_event did,
-This problem could be solved.
-
-After patch:
-     - Trace pipe result:
-         $ cat trace_pipe
-         modprobe 1153096 [068] 613468.867774: module:module_free: xfs
-
-     - perf sample
-         modprobe 1153096 [068] 613468.867794: module:module_free: xfs
-
-Fixes: bd2b5b12849a ("perf_counter: More aggressive frequency adjustment")
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
----
- kernel/trace/trace_event_perf.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-index 05e791241812..9050c631fe06 100644
---- a/kernel/trace/trace_event_perf.c
-+++ b/kernel/trace/trace_event_perf.c
-@@ -352,10 +352,16 @@ void perf_uprobe_destroy(struct perf_event *p_event)
- int perf_trace_add(struct perf_event *p_event, int flags)
- {
- 	struct trace_event_call *tp_event = p_event->tp_event;
-+	struct hw_perf_event *hwc = &p_event->hw;
-
- 	if (!(flags & PERF_EF_START))
- 		p_event->hw.state = PERF_HES_STOPPED;
-
-+	if (is_sampling_event(event)) {
-+		hwc->last_period = hwc->sample_period;
-+		perf_swevent_set_period(p_event);
-+	}
-+
- 	/*
- 	 * If TRACE_REG_PERF_ADD returns false; no custom action was performed
- 	 * and we need to take the default action of enqueueing our event on
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+#syz test
 
