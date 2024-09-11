@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-324381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5B1974BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2A0974BDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832461F25A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A272B217EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07E113D539;
-	Wed, 11 Sep 2024 07:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A36713DDC2;
+	Wed, 11 Sep 2024 07:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGKYRqvC"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP7X5r83"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AF713B5B7;
-	Wed, 11 Sep 2024 07:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214CD2C190;
+	Wed, 11 Sep 2024 07:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041126; cv=none; b=OrzWyk5V649xTcn4u1+VUZe/GidGetVy1ddaB6cA846JaGUAYwGvDpxCiNpUnhWScQ/6eTwbIStjQRHuROktkYrH9kXZ9rVuTiPWlQdYy+t97q22ovT1+XaG6ogj888l2+qfM5L9qF6bPOXnZ/e9q6XGceRpG3Ttn2iXeLeffbw=
+	t=1726041160; cv=none; b=SxIXiUyamGXWx5EkhviQJ9v1m8SC06NHClCW7J94mdKe7FIj9Q+Mo58zK+cIZqugxMclSQjwHg1ch5PhX3jgu+2Okm5Gl7l346+Brah5pm2+8XxnDoqNABjXulbmUPRrnPFuW5LmveswVFBr1CMWX4EmoH0ZeeeuCZhPvo3hEE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041126; c=relaxed/simple;
-	bh=c6VlnkuDB7VPlVRoAL7PhSFawFbjpQIlhNJgWMHiP7E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P5HuaEQA5pN93+nQSNgGnNaZStYcorHwu0WAbEtOIwAHzVLG0f6AsK+l5NjT9omxVkE6cF7BOBd+iAIgtV3+ELdnue5tpEoDPxppy8igqjUn2b/nmsXFe8vJAsqYU+uW+bcBD0uIES2lUltOewqvy1RQFY/dRd9tRDTTcWctGsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGKYRqvC; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1726041160; c=relaxed/simple;
+	bh=UI29GiP/BTLgiRbNSRwQ6gBKRktbmqpd0ppzqV8JY2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=hdIgMaXY2UpmUia318eZRxRPicDKu0uNzsdT1aUChupOzI1PSAi/AmLu44mlSRev/+/dXohoXMLdfi7wcrUpyAmSzwLsbak+atMr7irWNup1AIs9eTAUJ6drun5UWQpImF7oLOGB/mAXxDvS3HUEakIqaFc6LPL2XNYwujZIxEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP7X5r83; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso10940310e87.2;
-        Wed, 11 Sep 2024 00:52:04 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d64b27c45so408631866b.3;
+        Wed, 11 Sep 2024 00:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726041123; x=1726645923; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5mGLOCnwkaWK/oS511bNCFB/e44jaVJMXFEk0X2Af6A=;
-        b=GGKYRqvCmcwtGbALjWSzXZ91fQru8TaGjiHJvWIAZpf9x04aAEl8ysh/pYT7N8VA3z
-         ueQtRGDP0v+dmZqUFoS8LOoPMfQ6eVNlZDv9nn5FW6vJk7UcYT2pBMt9EEmsUnNIsNw7
-         /WQT0B0tVIbqVzFTELwpiUs7f1J1H99CCzRKeS23LKGi1LMMxhDP7oGAJgilORXJMshS
-         s68rdBztURC1BiRt5+aajL5Rk2dKP6/uqMjMKZNtj2KYfsgI0oTuwPOIDQUNJiN7FdSX
-         JcyWN9hgmAhYbBO6D9JQMOp/y2DsA3+BoMP5QYLnynT/0UbgbhhGxwg+nBEv9d45i+zK
-         P6+w==
+        d=gmail.com; s=20230601; t=1726041157; x=1726645957; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIm4Dw5q7Rs9OaJTn4hnJUtrKFl6GJTKrB6nNZ9HBHY=;
+        b=RP7X5r830dtNm+kY4G1SPatf61FPZmZVGxLzQZ8FhRBMXltzbB/y1SLV98B8HueAqK
+         VLmqn9Hfg1uumuCndfXsxdblRN3q7i8X2g4ziRGewfNPe7KTFhm9lK2OUH5dzP3t+DId
+         jnAD1QYOVJ09Tx6UmELtpyfl7yWV+JvTu7rgeTz1EeOike9tkOGZ7lbN0bl7qz+feooK
+         vyMg3kXsDkJ2pw25tVFLsTyWCrh6SAUZA8Uc5yIaxhte6kUegQoH+jDRzR7dd4Rt6t6a
+         DhX2sgCvTu7tmlE+NEB9k2OwAIJjwi8mKHK1GgJeoyxvUIbmlUQFyUI239zJg9VeBtc0
+         g6RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041123; x=1726645923;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5mGLOCnwkaWK/oS511bNCFB/e44jaVJMXFEk0X2Af6A=;
-        b=CyZkdgcB7LIpI1rl19kS0pDxk2h5WcDWRIAEnELEIzJ/6c9PRH3NOdPIoDsUENx9kr
-         VcYxtvvH+gUnK94kBss2w2NlCt8lU0nJgU/NiBuB5qsT+N4BXe38P6mq5xcgwQynGbLp
-         +9UdJBena0qA91OgmnKPNiXPVudyTkhTFS3Ytw7lclUFrJoPeNDYFKpVHEByRr1vVTBP
-         v+Cm2RogHbZeXA51kZCgsugHPewnbdXQV7UfePgdwJ8Pgdj8M3lm1107ZrqgsZ22+UJE
-         N2Ipx9+NVYuMt01ENEejIH4Je2aZrwmKRgJoBn9yTguYen4kMbagCG3SdN5gxLdjVUNw
-         Ogqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg6MsxDYcQEdSGR1i6gzmPJ+8GYyYiPNO9srits6EhxO9KyblYDTZmt6RhileSlq+CkLFxy7n23/RIhpuJDG4=@vger.kernel.org, AJvYcCVqQnLMmgOJ7A9a/n16smf72E8uOPtYJ9jgws5PX6u3zU/4pK1zcPdub9HgzsXBV0hM1g0MpnsFZ/JekCK5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL9HOXhu5gtCH4sV1OEu27e9XwGEgqQv5CqYioBski2IMeJ2UW
-	dWVv88pEiCaUqtvi100Zs4SMcYdkwnNI42QwgpEFWNkhJRiAS3pQ
-X-Google-Smtp-Source: AGHT+IHlK1x/288tPyCeksFi0y4Qjn1N90VOfZFThJn6fo3CV2Yp83nkq4I+hoJMCqadnX13pQosoA==
-X-Received: by 2002:a05:6512:114f:b0:536:55cc:963e with SMTP id 2adb3069b0e04-536587f873bmr17003036e87.44.1726041122274;
-        Wed, 11 Sep 2024 00:52:02 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ceaf4fsm579313866b.152.2024.09.11.00.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:52:01 -0700 (PDT)
-Message-ID: <895c9d2f81023b8fa88209b244209202ce202af5.camel@gmail.com>
-Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
- ep93xx_div_recalc_rate()
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Nikita Shubin
-	 <nikita.shubin@maquefel.me>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
-	 <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Wed, 11 Sep 2024 09:52:28 +0200
-In-Reply-To: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+        d=1e100.net; s=20230601; t=1726041157; x=1726645957;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YIm4Dw5q7Rs9OaJTn4hnJUtrKFl6GJTKrB6nNZ9HBHY=;
+        b=DhN8CeRyFMyFXdxsffDCDLbp/FYS1SPyCODtKXtisZMIaf8kIWIZ4/+YgxOTojgKuz
+         7AIzjwJk9xZMqoB2HbfPurjoUOhLE4qGgXViZ4OgnkTf+a3aNTB2V2eVP56G+Mb4oRAc
+         Eu0j2T4eM9TQ+BHoO+v80yu6etw4nJIJlkm0v9IjRNAav91g78CWlOSxN+Zd+GXICJLv
+         p/X3E/iTmtAnHeSO0MZWs8zOlxDNTSVI85OaNGJmiHJWlumG8pjMc9ymw1IG5IHTKB4e
+         yY6fWNM4AMDzHJX0jJPWm2d5s2UcvscaR6AIeGHaRg1dh6KhfBhh52ak37tdti5B7IcX
+         zQuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Hp5pi9g++CMdCNAEvyPrmnQeU5nQ0lm6oLkW8vv/v1EB0ytLcmkedMwzBtYwJhJHKjULPqkO@vger.kernel.org, AJvYcCVEga6xpLW0Le4woiHEXx1xwW+kOSVc8rJi6Adte5/vKHUGtCuhWjTlAhKvGP9hHYZZmq65V9VpPFXhFq4=@vger.kernel.org, AJvYcCW+B6Y0xzV+l9Zs1sLZzFCWD17i6eCP4DWeZiL9k3WbMGjmPPjaz78d1WYONMr+F44KJOByXxJSPVUH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz81NzZTyz7VQ1s5tTQJK729m0KmBbZKS5I15MkUihM8U4iQI+h
+	CQ8pjEB1fwvic2wGZs5ii0o+ducWxJiUnd1jLPQoz7dfggRv0guR
+X-Google-Smtp-Source: AGHT+IF3r5SvX0o26mmTqhW1R6mkJkUFdnD/jtn0nOQQaVNIrITpcYaKVGaWDQVKtiA548yW/02BsA==
+X-Received: by 2002:a17:906:d554:b0:a8f:f799:e7d4 with SMTP id a640c23a62f3a-a8ffae21979mr289611966b.59.1726041157120;
+        Wed, 11 Sep 2024 00:52:37 -0700 (PDT)
+Received: from foxbook (bff5.neoplus.adsl.tpnet.pl. [83.28.43.5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25952671sm580707166b.68.2024.09.11.00.52.36
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 11 Sep 2024 00:52:36 -0700 (PDT)
+Date: Wed, 11 Sep 2024 09:52:33 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: ki.chiang65@gmail.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
+Message-ID: <20240911095233.3e4d734d@foxbook>
+In-Reply-To: <20240911051716.6572-2-ki.chiang65@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dan!
+Hi,
 
-On Wed, 2024-09-11 at 10:39 +0300, Dan Carpenter wrote:
-> The psc->div[] array has psc->num_div elements.=C2=A0 These values come f=
-rom
-> when we call clk_hw_register_div().=C2=A0 It's adc_divisors and
-> ARRAY_SIZE(adc_divisors)) and so on.=C2=A0 So this condition needs to be =
->=3D
-> instead of > to prevent an out of bounds read.
->=20
-> Fixes: 9645ccc7bd7a ("ep93xx: clock: convert in-place to COMMON_CLK")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This happens when the xHCI driver enqueue a control TD (which cross
+> over the Link TRB between two ring segments, as shown) in the endpoint
+> zero's transfer ring. Seems the Etron xHCI host can not perform this
+> TD correctly, causing the USB transfer error occurred, maybe the upper
+> driver retry that control-IN request can solve problem, but not all
+> drivers do this.
+> 
+> |     |
+> -------
+> | TRB | Setup Stage
+> -------
+> | TRB | Link
+> -------
+> -------
+> | TRB | Data Stage
+> -------
+> | TRB | Status Stage
+> -------
+> |     |
 
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+I wonder about a few things.
 
-> ---
-> =C2=A0arch/arm/mach-ep93xx/clock.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
-> index 85a496ddc619..e9f72a529b50 100644
-> --- a/arch/arm/mach-ep93xx/clock.c
-> +++ b/arch/arm/mach-ep93xx/clock.c
-> @@ -359,7 +359,7 @@ static unsigned long ep93xx_div_recalc_rate(struct cl=
-k_hw *hw,
-> =C2=A0	u32 val =3D __raw_readl(psc->reg);
-> =C2=A0	u8 index =3D (val & psc->mask) >> psc->shift;
-> =C2=A0
-> -	if (index > psc->num_div)
-> +	if (index >=3D psc->num_div)
-> =C2=A0		return 0;
-> =C2=A0
-> =C2=A0	return DIV_ROUND_UP_ULL(parent_rate, psc->div[index]);
+1. What are the exact symptoms, besides Ethernet driver errors?
+Any errors from xhci_hcd? What if dynamic debug is enabled?
 
---=20
-Alexander Sverdlin.
+2. How did you determine that this is the exact cause?
 
+3. Does it happen every time when a Link follows Setup, or only
+randomly and it takes lots of control transfers to trigger it?
+
+4. How is it even possible? As far as I see, Linux simply queues
+three TRBs for a control URB. There are 255 slots in a segemnt,
+so exactly 85 URBs should fit, and then back to the first slot.
+
+Regards,
+Michal
 
