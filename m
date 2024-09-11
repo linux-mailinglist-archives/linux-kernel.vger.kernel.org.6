@@ -1,232 +1,258 @@
-Return-Path: <linux-kernel+bounces-325362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775C197589A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AD897589B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 957EC1C25D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9CF11F22CE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5261AE87E;
-	Wed, 11 Sep 2024 16:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0644A1AE864;
+	Wed, 11 Sep 2024 16:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKB47R8z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxZIycRr"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBEF157A5C;
-	Wed, 11 Sep 2024 16:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726072589; cv=fail; b=Qc8AzE+iZP/S+VumeaNuPtaEw4EbSnagx+//SsJin3+1fRak8Jp9WtctYfje8bhT4VR1JUf/YCWdZwgH+kiKdsVwWDT/oCoz7qGnB11v6pWt8wae340Wo++xz3PJdSbFT0kzVwPrPYEaFgm4xak97C2R4DPOzKF5TZB4Dey4RHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726072589; c=relaxed/simple;
-	bh=3zV0chMfjpahQHRXzX+n+TGdqVsOuh4cRXJ3EtDXaHM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=av3S6p5K4/Eatt4WPvikDpAMcngesXNj4341GIVxJGbCAhJ9IQ0dqs8EPamJMFjxaF5qVnwfZB2W2De2ikWCx/1opnzcBlo43QqRYELIj6cKms3DPWSGkudwVHDwH8Be+IYsdQTd7R/rzd7e6A4OoKHZNjft+dpRh8+azzW3Erw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKB47R8z; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726072588; x=1757608588;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=3zV0chMfjpahQHRXzX+n+TGdqVsOuh4cRXJ3EtDXaHM=;
-  b=MKB47R8zv8B2nl9e5s7ltWFl7gMsI0iENrSOvFw8NdVC7juQbySWBLMy
-   WPzrGp40h8ShYWvs+L52ZE8jlMDz8y4A7GwZBRIHsoOILpq4kyCfRkxwo
-   c28A/Jy/5SCRYC94n1TjCwPssQ0tM3YI6iJ3EvuNqXmKDSDZIuUSVsn0g
-   bWkKx8l1gq0VQe/Ky7p6Rv7hCBZdjIRN4X5QdgAmfck2HTw8k0y2raDkx
-   D5cwUdwOZVKvkIP8I9AhKzTI/11Xo16drOZhHhCks8GoaioB8fR3wqNCn
-   D040wqeWwpe7raOL5oxEEe9wa1S4pUhpAkvpxcC+miBpnUmkOY8XGWb8s
-   Q==;
-X-CSE-ConnectionGUID: YfPnoBDoRtO5fVswpZZ9qg==
-X-CSE-MsgGUID: x3O3ffzkQwWDIu3Et8ozDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24760985"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="24760985"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:36:27 -0700
-X-CSE-ConnectionGUID: kC5WqMTSSE2L1la7dSYVJA==
-X-CSE-MsgGUID: etj+5ZF+SpCPYiyW5MirSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="71803669"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 09:36:26 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 09:36:26 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 09:36:25 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 09:36:25 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Sep 2024 09:36:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zQtF3clA/wfnISgbvJmcEghJhL8FMxT9g/IWI0eJOaPC43P67Ov2hgtMAbrVWro5gP8gOYZW1Y/nJZAIZiKysmZKaccDmvidMGkooD8qv9wOiT7V1SLBWVwG9xNr+0Nr07r7sJyn+YH0tu3F4gdWS4faVzMZPvIB3mltsJx1NL+dkrTIRtRhkAFSAx01ojYYMAl5RQ9oylaubEc4RoSRqjMf0G67Paz3cCFLVgJokUZH7kuvgOEnxIbfA/rfnJYjmqYQTvhFcFOfL8T8fBb47DfTAXg2EfVu58ulNiZHLMpl7KHczE6kTWFIR/SXDJCmYIMF6dYJ+MljoOX1iJbj2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3zV0chMfjpahQHRXzX+n+TGdqVsOuh4cRXJ3EtDXaHM=;
- b=W6crcklI3I+mM+ZJjWsCmnWkiRSdbAAydwnh6i8+uYFWOvdMGJ2RbTYwDhJbnJtnmJMXlV6U/LvPwPZ23RVyhRQsHXlVdkrsJvhbmKw4l4cafIMX2hpmXguVUQ69oOLQjB92yGZHv1I6VSI7AqN9ytpYLyxwNtM6KUJB0PceeYonCSMEo1ro8jA9slRid9FiNXUYeM/6toL+Mvd4G+oEPeH90GD/++zQG3IeZsvfRV+OxiDD13/V82XZwMSayJdZkyR7Krnnqzo1XUFTVzmYD89+7PvnCNhD5Loz4ouR7zLDQ8xMqoly0Nd/MYN0qTBSNpYXlMZ1HgNGN8X4ZJF8kQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by MN6PR11MB8219.namprd11.prod.outlook.com (2603:10b6:208:471::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
- 2024 16:36:22 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.7939.017; Wed, 11 Sep 2024
- 16:36:22 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
-	<kai.huang@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>, "dmatlack@google.com" <dmatlack@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "nik.borisov@suse.com"
-	<nik.borisov@suse.com>
-Subject: Re: [PATCH 16/21] KVM: TDX: Premap initial guest memory
-Thread-Topic: [PATCH 16/21] KVM: TDX: Premap initial guest memory
-Thread-Index: AQHa/neylxoaYrTILUWaulhlDyL5EbJQ4UMAgADldQCAAKoFgIAAY8uA
-Date: Wed, 11 Sep 2024 16:36:22 +0000
-Message-ID: <e69406690a063874f72267cd656dbb8f393c6e47.camel@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
-	 <20240904030751.117579-17-rick.p.edgecombe@intel.com>
-	 <09df9848-b425-4f8b-8fb5-dcd6929478de@redhat.com>
-	 <2f311f763092f6e462061f6cd55b8633379486bc.camel@intel.com>
-	 <CABgObfYiMWrq2GgxO4vvcPzhJFKFGsgR11V52nokdbcHCknzNw@mail.gmail.com>
-In-Reply-To: <CABgObfYiMWrq2GgxO4vvcPzhJFKFGsgR11V52nokdbcHCknzNw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|MN6PR11MB8219:EE_
-x-ms-office365-filtering-correlation-id: ec47936c-06d5-4bc4-855c-08dcd27fdf19
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?SW5vM3lBN3FCa1ZtV3hTZ1BDRW1pSnVoVzh0TWRNNmV4K205QlZEcDhMYTRY?=
- =?utf-8?B?eW8vZ1hvS1VmQzI0MmhJNG5RUjYyd2VRejNBZGd1Zit5cjYraHpxaEcxa0sx?=
- =?utf-8?B?VXdXa0lDYW0rOEMwV1ArV2IrNzI2UWlGVXVwYVVmd2IwTHF5QVd1ZUtJblp6?=
- =?utf-8?B?c1Y5cE5zOG82ZFhsZHcyWFh1VlJRWHgvdjBFM3FsS0xuQnFNRUVwLzBUSEhT?=
- =?utf-8?B?cUM4ZTV3SU1tSEZta0YvNmtLRFFGRHZEU3BiR3JVZi9maXNxVS84MlpEME5s?=
- =?utf-8?B?NXFRa0VHMXhiRjJaeW5HK3hBditSRVQvbmhObU5zcVVHR2FIaWZrMENtQlZZ?=
- =?utf-8?B?OFpBRUplVFNHQ0lQdjZTVnh4MzlxM2ZmZnZLZzlkVnV2YjNkcUhpMnN1Mkc3?=
- =?utf-8?B?Q2g3Ty9ZREVadWZ0Q2MwZ2VJNWVqdzNZalp2OVlydnBjalJKOVptNjNVZ2Nx?=
- =?utf-8?B?TXZSUE5qeVJpa2Q2ZkRQS1FSczkxNVloNE16TGNzMXFITHpHRWcyU3RhaVRM?=
- =?utf-8?B?UHE2YUdZUnVNZU8zUFp5cnc0OFlIS21IN2dyenk1Yi9nY3VhRVFJcWoyNVZK?=
- =?utf-8?B?N1d1eG1SUzh1RWM2ZWl5MW53eWdhYTZSbDBUbUNObnZxbUZSOHdvdXZteG9h?=
- =?utf-8?B?Wk5HRk5YUkJJcFVlNnFteTFPbjJZN2RjL20vZXY0TEp1bTBCOWxyMm43eGpG?=
- =?utf-8?B?NXY3Q2xrbDdRNVVYMEdrdHowcjhCOWJ4OHR3ajBNaW9RREZ1cHBnUU5kUWJU?=
- =?utf-8?B?Wlh3dzJSZHVhWE9wNHV5eEFWbEFhOWtidHBpcTRPUzhTSGFMbEFWa1Z0WDYw?=
- =?utf-8?B?VkFuL1krSmp4Nk93eXNMeXBCR1gyeGttdXV2STFzSGI1b0kxTVQrSkVadlpN?=
- =?utf-8?B?YVFRRytjT3V6SkkrRnVaKys4N1RzK0xqQU02ZVRFOTNlVmQyeHlTYTh4TVR6?=
- =?utf-8?B?WXkrV2R5ZWVwdnlzQUNITkc0RWZCVGZNZElvQ1JGSG55eGdabFErWFlUQk9D?=
- =?utf-8?B?aERrckxXcUU1d0pmWThuRGdyVzdlaDRjVytVZWUwQzQxV0YzQTlYQzJXVFBC?=
- =?utf-8?B?bXRSSWViTmUvSUo3ZmZvVGJsNGdxQzNlcUlDNjNEV0lqM0lFejYrMmNuam5i?=
- =?utf-8?B?c1lhUURKUStKc29BUW9vVk03aGM4RVRxaFIyN3M0L1dPTUcwbmxRVHZ2ZS9z?=
- =?utf-8?B?SDBMamxDMU9HVHNTdk9ic2ZJSnR1eFRUejl0UHRvU0JLdDZnemxlVS9LWlZ2?=
- =?utf-8?B?NEQ5UmtFZ0hKY1hreGF0NlNHb2pxTkx6R2JzbW1MaXJ6dnlkbFpmQ1dSalB0?=
- =?utf-8?B?cTM3M2J3dk9VSFpQRXo0QjltQjd4VkZTNVYxWmpZVlRVcmJERDFHZzA5RFIw?=
- =?utf-8?B?eWRycjh0NWhIczZmSXcrZmpQWFJhT3M0K1dBY2pkOVZEYlRzYVlhaGtlT01C?=
- =?utf-8?B?QjZJdlJwaSs1ejIra0FxODJiZlF2dUJkTm10bVFVR2VWYU1wMFZQdUVvcHpL?=
- =?utf-8?B?REFzVzFIWFJCMjA0RzlqMFc5bDdnZ2V5WHdja05US3hlMURXMHNQL1lhQU45?=
- =?utf-8?B?alppMHBJaXVnR1NEZi85dUtKQW1ocWw2Wk55eU50S2M5dVp3WkdyVFlocW9t?=
- =?utf-8?B?S05ndWlEQ216cEQzS3h1S3JIbTZWc2cycDVjbjdPY0NMc0o1U0pBbWNLcXkz?=
- =?utf-8?B?MHFELzVwem5NM3djdzlpVkVUWUxvQXBIMlppczhFQ3FTZ2xYc0dmRUxXV25t?=
- =?utf-8?B?V2EvK0t1bzZDOE8vRWJmeG5iZHJwdURUVlNvZjlEU3k0dzY3TDBTWHNwdm1B?=
- =?utf-8?B?Y2FyV1RNeXUwWnJtWVhwaVNQLys4T3ZMVThQUm8yUFdiKzBGS2h0bFhoR2p1?=
- =?utf-8?B?SWRiRHpEYmNuVEZUR3VwRTVERDhzSnVYMGVmNHVkVVBUR3c9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V1o1REdlV3VOdGVTbEgwU1B0YjRDZzZJNjFibEg2bDBvSXoxYU54WHVaWUxJ?=
- =?utf-8?B?M2hHMG9XRnZkTnl6bE54SENHb3R2YklVWFNrVStIL1dxZElVVXZqb0lJNUFM?=
- =?utf-8?B?TjRxN1FQa3ZWNGYyV0Z4WUJmWFc3NGdMZEtnNFlWR1NyOGRYQ0k0SXdqbEpa?=
- =?utf-8?B?R1h5b0YwbWVFQ21UVUJTdlNCRjhXWHV2YWh6L3hWS1hCcFNEWHdqS3A2N0Fj?=
- =?utf-8?B?MGp3VDhqdVArZE0zMTQyN2U0c250Tmo2NkFyWlpJSGVFQm1kRldOalRJZzQ1?=
- =?utf-8?B?b2FxMHJwWEdrM2lOZGFidXFId291UkxHUngxeDdTUzRUOUJGZmEvZFNDZDRB?=
- =?utf-8?B?NS9iVU9oclQ5Qys3UXIwQjB0NHEvTG1EVEFRejNsZkh5bkt4SzNwbGVzd2Fx?=
- =?utf-8?B?NFVDMFU0QXdpOXIzQU9LV3RnbU4yWUM5YUdqcXFCZzZFU1dzemt3bXkwRVZT?=
- =?utf-8?B?SFlQVEc2ck4vOU5NU1ZVcmtmQ3gzOXdXWnFuZnB5amM0YTJGOVQ4U3pyZ2Jo?=
- =?utf-8?B?M1hISHdMNXBxUC8vOE1SQXpuTVRwcFk3Zkh0UWxCclovaEJHZFJQZnRZbUwx?=
- =?utf-8?B?b21jRHJOaFIzcHhCY0UrM1U4ajBRcmVkdzhtRXZkaThWcVIzaFcyUWVoaXpu?=
- =?utf-8?B?UGxBTllHRmR4eHZvdDRlU3pBYVRkQzVvYW0vaHhpY25hcm1ScitZNkk4WlNi?=
- =?utf-8?B?MElRbzdxcjlQVHlyWEEzU0VnYi9LVjNucm5yZnFiN0JxOXlNZ3UvdlZFKys3?=
- =?utf-8?B?TSt4ejBKY0ViZWlXQm1NNEhwMWJXY1dJeDZDSmMvVDd0Tk40a2ZBaVlIQ0ZB?=
- =?utf-8?B?alloZlg0RVZxK0FOUXVxbXpQTVdrYXljUmMrazZZeVgxdUNEdHdGWXRDSGlM?=
- =?utf-8?B?VGRJMGdDSGVId0phek1yQW9tY0VkN1FzSWFsQStra2UxWUdYcjFrVXFyb01w?=
- =?utf-8?B?NjhsUnowRWlsSzczMC9IbzdOQ0dnN0dORVRiQWx4Sm43MVVRUndHcGRSRnJx?=
- =?utf-8?B?ZVhsNU8xSC93K1g3YnJFQzQwdHZWYllmVzV3YlhYSllVMS9nbkp2U21Rclhs?=
- =?utf-8?B?KzNHUEs3N3NiTEhQNllZZUJtdERyMm10d0VwN1hiZ3k1VFhrckh5ME93WGgr?=
- =?utf-8?B?ZEJEanFXc3R6UUtaRGs5bXZ4MkdjYlI5QkMwU1ZJdUg3Z1E4bjduRHIrQ3Bx?=
- =?utf-8?B?RDdhNC9vQmo1VHlqaHYxMnRxSUQrNU56R2hlRlpmRE41TnFvZHc1SXBINFNi?=
- =?utf-8?B?RXl6L01jYml5YWVkYmVQdnpiNzY5UWk3TyttOHE2NDVwTFkveitGOWtORzA0?=
- =?utf-8?B?SCtGb3MxcGpocVMzRDdza0hmekhvVHI5dzFSVGFFQW5IOTBlWUlYUnFmQ0gx?=
- =?utf-8?B?QWkrcVJxcmFyb3BWSzVjdTJqeHd4OExxY1VKWksyRkJiKyt3TytjOG9MYXZ1?=
- =?utf-8?B?YlEzS0pUM1FnK0lzSVVVblV2WlRFNUl4cno1WkFQR1hncVN1VWVmZ1V2dUhy?=
- =?utf-8?B?ZmdyVmhEYmMrTENOU2lwNVpvMEZMc3dBVHY4VHVrNFdteE1lZnAzeHl4Sm51?=
- =?utf-8?B?ZWpDNTRkakk4d1dvZHVGcFd4cEl1dDQ2a1ZqZy9KcXJjcVVYM0MwcmpkNEZP?=
- =?utf-8?B?Zjd3REdtdDBWSDBYY0dLaC9hbm1vMFBhT0g2L3ZSdVltVWRmSWd4WTNlenZM?=
- =?utf-8?B?SkpIeTU4YTNqKzc0WlEvdFhWcFpjMUZBc3Q3WlBpb2tiK1VkQU1nd0dpRFZR?=
- =?utf-8?B?Q295THBaK2V0UGdiQzFxamMwRFFXdGM0QXY3Zy9DQ1FpOTNWaTFsQSswdC9U?=
- =?utf-8?B?TkFkSUUwKzlrcEQwczEzUHlaU0tlMFlKd3YrT2RQVUhSeDIxODUyVnJWb25j?=
- =?utf-8?B?elJqV1dYZ2ZBSVJMTXFrc3hmU3NYNlJLSG5WWURaUGg1Ni85alZhcEc1Tmt4?=
- =?utf-8?B?RHFNYy9yU1NZMjc5VTgwVTBOUHVpZDVPeHVwMStNdFFOU1VBTFk2UlJ6Nmk5?=
- =?utf-8?B?NVdTMGJ0NkFjSWZ4UkNoblpGZkFTN1dLU1AwcnJGTk10OTZ4bmQvaEZRRXN1?=
- =?utf-8?B?MWVmbEdGSm1zRExjQTFTT2Zsd0RLSTV0WmRoTzJUdDFURk1Fb1N2V2p3bVFF?=
- =?utf-8?B?NG44aFI2cG4yemtmWEh6aWpEdEs2R0N3Nk1YOUd1dHl4MzVUMDZjWDRld0V4?=
- =?utf-8?B?Mnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BE140D0CF00CF944A65713D95A5D5F67@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5727819AA4E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726072609; cv=none; b=GNQTq9W9LGtoD0VFh6fe7DTspinbhZqaQOoG4Dc4KyjHb60xZQGsp0V6TvrPzs23AoLpHKbBiqRZ86TdDjkvUb6pIEstT7IyC3/veTFUdvio2v+oD8XkZ23Py0bb4Q9WcVGUBToi8iKWH1fhPQ+PBx1dCyEnuwijgvH/0KJjDZ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726072609; c=relaxed/simple;
+	bh=Y0B40j+6XfhANv86hO/y2jfsZpiCElizXindBwzyRU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bp8SW9ktcZOwB61/Vlr8eDGtDKEgdcZjiAXo0qeQeIlNHTHLALuo+9MZPvY71KjOQqtA8wrbW1TFibOB+TqqV5nFnKzr2V9yxHBEcpKMTiCSATBMgZWw8L+4uAMPQErpiKYLEv47AQe2Ult6ufoLokCvJJTjr+uSylJIpCOd7Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IxZIycRr; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so7483698a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726072606; x=1726677406; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vGFSZxbGGSwXr4tsYBH87dhImbiPRckhT6s8NPepfIw=;
+        b=IxZIycRrq2ZzWUVhM/+tXQvlOQ/5ZLDgy5XEENRpYK2VjqzD+gwMItAf7BoBPYvAH3
+         hDsSKlYpK7+0SSQPAoW6Qzi8WeQojFmhd6seFMNRaxSM6Dn5sGHYFdVSssigJaMl3kx+
+         Ovov9aEtCnq0JrwJIB9k1swJ8HY/H9qM0gvONM7GaG0sbSGPwEth7EYjjw9PlV9J7nSi
+         gWen+aKCMzWsIrpajWyNB57kJrEKkJl4yKnOuYAGoA01RHIKKD8ioxi7InkZo8lAX5BA
+         FE/xsuwxiOnLAEVrNG21qpADepsKAO7ZSQD3pwrtBAywWqDjBMOCJXrxXJHsX52reEC8
+         DVww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726072606; x=1726677406;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGFSZxbGGSwXr4tsYBH87dhImbiPRckhT6s8NPepfIw=;
+        b=YhtqmvSHR8ZbTNxdM+IfbOIL1F5NJKSBuGJHU82+T+enjhaa/OiLB3yTqvAkm2szA5
+         wrtBhG57rg467lz75p1RxddAV5IuR0+WTbE4HhcdxkVWKNz2EX/eY8J4NmfCf/pBgcBx
+         bdocDfl/P9kl46tR5Jq6reaciU2zt64IJ5z1fZB+2++Qy8HKLQdubKQp3e0nGC+3L25Q
+         1yP1siPYpCfCRMUnrRJ9BKteuXeEXtwt4HsTnbi8QkfCO9erlPB17kQuC0DpEgh4Cd9M
+         Bpv1bgztlWIJF0kj6zMA2IaiIkOLrYYcU3dpbAth0CJvnbyrwpBtbZDwSb7TU9OhqZJd
+         S2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKFAZUdHW0Dfo3+SnXUBszUFn7juhtQkC1R9yk+3A2DrRbbXVg4489m31azLHFkW14JMHmF2LU8DARXjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuhIVwMPsNaqm9C95YiVydI3r4mH1Ppz2IL/QETTCe/INJNbux
+	hMOgk6gZ+MyuyDR4SpJxWZuwbYvu11zGO3U5g8ar70MK+/QmUZSP
+X-Google-Smtp-Source: AGHT+IFB8LrmoJ77KXeUcOqmvYDxZrxZCXblK6guiGjjrd9zznVwaL7hH6w33YQENm1mdPtPPoNcbw==
+X-Received: by 2002:a05:6402:3092:b0:5c0:8c5a:f4f3 with SMTP id 4fb4d7f45d1cf-5c413e4fb87mr33032a12.26.1726072605230;
+        Wed, 11 Sep 2024 09:36:45 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8584:fadb:465e:486a:4871? (p200300c78f2a8584fadb465e486a4871.dip0.t-ipconnect.de. [2003:c7:8f2a:8584:fadb:465e:486a:4871])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd4680esm5565368a12.21.2024.09.11.09.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 09:36:44 -0700 (PDT)
+Message-ID: <93afc2fd-7aa2-41d5-bd08-2afc72540abb@gmail.com>
+Date: Wed, 11 Sep 2024 18:36:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec47936c-06d5-4bc4-855c-08dcd27fdf19
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 16:36:22.4971
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vSCcBHgE5bIopGE6fGuzr42/pVLtptJhnGNtoB/2qQ20FjeLSqGPPGXPBrDPGnqFJGzvBntoT05dEtZppDdzBxCm0DyhA8oXcdYlXzoenRs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8219
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] staging: rtl8723bs: Fix coding style issues in the
+ hal_pwr_seq.h
+To: Sayyad Abid <sayyad.abid16@gmail.com>
+Cc: linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org
+References: <20240910121144.635348-1-sayyad.abid16@gmail.com>
+ <89893a22-5018-4ae0-b4f9-e473a36f09b6@gmail.com> <ZuCY1Tuog1sFHLBQ@debian>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <ZuCY1Tuog1sFHLBQ@debian>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gV2VkLCAyMDI0LTA5LTExIGF0IDEyOjM5ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiBPbiBXZWQsIFNlcCAxMSwgMjAyNCBhdCAyOjMw4oCvQU0gRWRnZWNvbWJlLCBSaWNrIFANCj4g
-PHJpY2sucC5lZGdlY29tYmVAaW50ZWwuY29tPiB3cm90ZToNCj4gPiBBcmgsIHllcyB0aGlzIGhh
-cyBkZXRhaWxzIHRoYXQgYXJlIG5vdCByZWxldmFudCB0byB0aGUgcGF0Y2guDQo+ID4gDQo+ID4g
-U3F1YXNoaW5nIGl0IHNlZW1zIGZpbmUsIGJ1dCBJIHdhc24ndCBzdXJlIGFib3V0IHdoZXRoZXIg
-d2UgYWN0dWFsbHkgbmVlZGVkDQo+ID4gdGhpcw0KPiA+IG5yX3ByZW1hcHBlZC4gSXQgd2FzIG9u
-ZSBvZiB0aGUgdGhpbmdzIHdlIGRlY2lkZWQgdG8gcHVudCBhIGRlY2lzaW9uIG9uIGluDQo+ID4g
-b3JkZXINCj4gPiB0byBjb250aW51ZSBvdXIgZGViYXRlcyBvbiB0aGUgbGlzdC4gU28gd2UgbmVl
-ZCB0byBwaWNrIHVwIHRoZSBkZWJhdGUgYWdhaW4uDQo+IA0KPiBJIHRoaW5rIGtlZXBpbmcgbnJf
-cHJlbWFwcGVkIGlzIHNhZmVyLg0KDQpIZWgsIHdlbGwgaXQncyBub3QgaHVydGluZyBhbnl0aGlu
-ZyBleGNlcHQgYWRkaW5nIGEgc21hbGwgYW1vdW50IG9mIGNvbXBsZXhpdHksDQpzbyBJIGd1ZXNz
-IHdlIGNhbiBjYW5jZWwgdGhlIGRlYmF0ZS4gVGhhbmtzLg0K
+On 9/10/24 21:07, Sayyad Abid wrote:
+> On Tue, Sep 10, 2024 at 08:47:54PM +0200, Philipp Hortmann wrote:
+>> On 9/10/24 14:11, abid-sayyad wrote:
+>>> Improving the code readability and coding style compliance of the code.
+>>> Running checkpatch.pl on the file raised coding style warnings:
+>>> -The comment block needs "*" on all lines of the block
+>>> from line 8 to 26
+>>> -Use tabs for indent
+>>> on line 103 and 115
+>>>
+>>> Applying the patch fixes these coding style issues and makes the code more
+>>> readable/developer friendly.
+>>>
+>>> Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+>>> ---
+>>
+>> Hi Abid,
+>>
+>> I cannot apply your patch. Are you using the right git repo?
+>>
+>> git remote show origin
+>> * remote origin
+>>    Fetch URL:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+>> ...
+>> git branch -a
+>> my branch: staging-testing
+>>
+>>
+>> kernel@matrix-ESPRIMO-P710:~/Documents/git/kernels/staging$ mutt
+>> Applying: staging: rtl8723bs: Fix coding style issues in the hal_pwr_seq.h
+>> error: patch failed: drivers/staging/rtl8723bs/include/hal_pwr_seq.h:101
+>> error: drivers/staging/rtl8723bs/include/hal_pwr_seq.h: patch does not apply
+>> Patch failed at 0001 staging: rtl8723bs: Fix coding style issues in the
+>> hal_pwr_seq.h
+>>
+> I found the issue, I have been amending these changes on the mainline repo,
+>    $ git remote show origin
+> * remote origin
+>    Fetch URL: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> 
+>    I need to clone the staging branch.
+>> Please also change your Description. Concentrate on why this patch makes
+>> sense. Do not describe the patch. What is changed can be seen below. Please
+>> also use the correct time.
+>>
+> I did not understand the correct time here. could you please
+> elaborate a little on this please.
+
+Hi Abid,
+
+please visit:
+
+https://kernelnewbies.org/PatchPhilosophy#Patch_description_format_for_checkpatch_fixes
+
+Look for this clause:
+"In patch descriptions and in the subject, it is common and preferable 
+to use present-tense, imperative language. Write as if you are telling 
+git what to do with your patch. For example, instead of:"
+
+This is about the time that should be used in patches.
+
+Bye Philipp
+
+>> You can find accepted examples in the git repo.
+>>
+> I'll look into the accepted patches right now. Meanwhile I have this question
+> , descriptions addressing only the coding style issue fixes are acceptable or
+> it needs to be having somethingelse too? (apologies in advance for
+> this illy question)
+>> Thanks for your support.
+>>
+>> Bye Philipp
+>>
+> Thank Youy for your feedbacks
+>>
+>>
+>>> changes since v1:
+>>> v2: Fix the email body, amke it more informative
+>>> link to v1:
+>>> https://lore.kernel.org/all/ca1908f3-74aa-45e7-a389-3995aba2660c@gmail.com/
+>>>    .../staging/rtl8723bs/include/hal_pwr_seq.h   | 46 +++++++++----------
+>>>    1 file changed, 23 insertions(+), 23 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+>>> index 5e43cc89f535..10fef1b3f393 100644
+>>> --- a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+>>> +++ b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+>>> @@ -5,26 +5,26 @@
+>>>    #include "HalPwrSeqCmd.h"
+>>>
+>>>    /*
+>>> -	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
+>>> -	There are 6 HW Power States:
+>>> -	0: POFF--Power Off
+>>> -	1: PDN--Power Down
+>>> -	2: CARDEMU--Card Emulation
+>>> -	3: ACT--Active Mode
+>>> -	4: LPS--Low Power State
+>>> -	5: SUS--Suspend
+>>> -
+>>> -	The transition from different states are defined below
+>>> -	TRANS_CARDEMU_TO_ACT
+>>> -	TRANS_ACT_TO_CARDEMU
+>>> -	TRANS_CARDEMU_TO_SUS
+>>> -	TRANS_SUS_TO_CARDEMU
+>>> -	TRANS_CARDEMU_TO_PDN
+>>> -	TRANS_ACT_TO_LPS
+>>> -	TRANS_LPS_TO_ACT
+>>> -
+>>> -	TRANS_END
+>>> -*/
+>>> + *	Check document WM-20130815-JackieLau-RTL8723B_Power_Architecture v08.vsd
+>>> + *	There are 6 HW Power States:
+>>> + *	0: POFF--Power Off
+>>> + *	1: PDN--Power Down
+>>> + *	2: CARDEMU--Card Emulation
+>>> + *	3: ACT--Active Mode
+>>> + *	4: LPS--Low Power State
+>>> + *	5: SUS--Suspend
+>>> + *
+>>> + *	The transition from different states are defined below
+>>> + *	TRANS_CARDEMU_TO_ACT
+>>> + *	TRANS_ACT_TO_CARDEMU
+>>> + *	TRANS_CARDEMU_TO_SUS
+>>> + *	TRANS_SUS_TO_CARDEMU
+>>> + *	TRANS_CARDEMU_TO_PDN
+>>> + *	TRANS_ACT_TO_LPS
+>>> + *	TRANS_LPS_TO_ACT
+>>> + *
+>>> + *	TRANS_END
+>>> + */
+>>>    #define	RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS	26
+>>>    #define	RTL8723B_TRANS_ACT_TO_CARDEMU_STEPS	15
+>>>    #define	RTL8723B_TRANS_CARDEMU_TO_SUS_STEPS	15
+>>> @@ -101,7 +101,7 @@
+>>>    	{0x0007, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0x20}, /*0x07 = 0x20 , SOP option to disable BG/MB*/	\
+>>>    	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK|PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, BIT3}, /*0x04[12:11] = 2b'01 enable WL suspend*/	\
+>>>    	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT2, BIT2}, /*0x04[10] = 1, enable SW LPS*/	\
+>>> -        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
+>>> +	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 1}, /*0x48[16] = 1 to enable GPIO9 as EXT WAKEUP*/   \
+>>>    	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, BIT4}, /*0x23[4] = 1b'1 12H LDO enter sleep mode*/   \
+>>>    	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, BIT0}, /*Set SDIO suspend local register*/	\
+>>>    	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, 0}, /*wait power state to suspend*/
+>>> @@ -112,7 +112,7 @@
+>>>    	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3 | BIT7, 0}, /*clear suspend enable and power down enable*/	\
+>>>    	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_WRITE, BIT0, 0}, /*Set SDIO suspend local register*/	\
+>>>    	{0x0086, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_SDIO, PWR_CMD_POLLING, BIT1, BIT1}, /*wait power state to suspend*/\
+>>> -        {0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
+>>> +	{0x004A, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_USB_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT0, 0}, /*0x48[16] = 0 to disable GPIO9 as EXT WAKEUP*/   \
+>>>    	{0x0005, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT3|BIT4, 0}, /*0x04[12:11] = 2b'01enable WL suspend*/\
+>>>    	{0x0023, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_SDIO_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, BIT4, 0}, /*0x23[4] = 1b'0 12H LDO enter normal mode*/   \
+>>>    	{0x0301, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_PCI_MSK, PWR_BASEADDR_MAC, PWR_CMD_WRITE, 0xFF, 0},/*PCIe DMA start*/
+>>> @@ -209,7 +209,7 @@
+>>>    #define RTL8723B_TRANS_END															\
+>>>    	/* format */																\
+>>>    	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, comments here*/								\
+>>> -	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
+>>> +	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
+>>>
+>>>
+>>>    extern struct wlan_pwr_cfg rtl8723B_power_on_flow[RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS+RTL8723B_TRANS_END_STEPS];
+>>> --
+>>> 2.39.2
+>>>
+>>
+
 
