@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-324800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8328E975106
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:44:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A568975104
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7961F2192C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CE128244A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F4187875;
-	Wed, 11 Sep 2024 11:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F519187FE1;
+	Wed, 11 Sep 2024 11:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5tBM9NH"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jb8ZBocJ"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9164815383B;
-	Wed, 11 Sep 2024 11:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F049C155753
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726055044; cv=none; b=Ckpod/Fzrl5dwjYQI+FAFppN0klrYo2gTvLkBUG1nR/nBuRozara19RuGijMhL8vKL7lFpSbAAHiybkbXS9lB5G/tsSFEO9bJwBK4bIFGuKjdLEeGqEAxIyQ+bMqifKRnEr+XhtExThHC1XNgOF2EUxBiR8AhEC6JKGlZ413Qu4=
+	t=1726055031; cv=none; b=N0ff0tT3qVuY06jEo3WxL2cblQzJOpF1j1qMKmsBoSisoGkJev+EzfrT5/q5d0sy4iOWMdRBhg1r0/Yne/PLpzIXRv9PwifRs5rn518vqcZhc9LnB+IImwVprQSNnSyaWBvyQU+SGf/4olxZ0QQp1MaakSEbwJ7pk7lX04Fm6L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726055044; c=relaxed/simple;
-	bh=7M7mYWiGFN926Z34bF/OjYDWBSDfeYbG2CdcI8roNfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t7v746lVRZyssQYE2eqPzvtWH9eeLIC1Ci2VyxNiyjI598SP/cXpwW1fEhr7Jr0G19FrozIq6t8lq75yLCv6/7KFS9a9+JsJ/26vmFROOjYxg+x3lc6lCtyGDcPCASed5S3Z26lzQ3xNX1EFfGDXRzu+1uhFYs5t2nuyOyOQQcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5tBM9NH; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374d29ad870so4139419f8f.3;
-        Wed, 11 Sep 2024 04:44:02 -0700 (PDT)
+	s=arc-20240116; t=1726055031; c=relaxed/simple;
+	bh=9hiabN1M+tFNIMHDE9LStpgFSYodQc7eDrfAIyTkOt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XJLgmFuvU2o23VGlqnE5gXBlOBY/hHJjmDo26CizxrUXI7MACfurLnsvJ3k0w3t5HT+flbUhpuQJMZ8E7fUc3eJgZiXoW2iWKjcCRkZCI9MZtd6L3tzKQP4tfcbngDInNtbXrMs9N3PuQyWKnwR1oFeEn2qPax9qnYH/+va2lZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jb8ZBocJ; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d43657255so508920666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:43:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726055041; x=1726659841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSGLwJEd8UNrFUVwhp66iDC67a7nQy5YCYZpUJIy5bE=;
-        b=T5tBM9NHV5jZrcFYepKJN947qQRFsYKbqw6VBo7p0AV+528PTe+oktwGGYgaFS3ja5
-         EPk+UqYhKVIth2oxyBcVldvFA0xDHqMV1/J1xKYuLVfmbnHLKITmDciY/nfwNfWoStcG
-         9cA2+2/oU4XsmSJHYb0Wf5x28/z7fyinLfen3gDOOyu2coM4Ptqf13+ire4x/S8/E3uB
-         jSr2XNT2hDmTGkxd48aVt3JPNlE40TQmBkp2ilPRC06RFYbAlOC4jLuBUm4zAIbsaIH3
-         r0yAOL7wWdRlOaYPj+VVv6rXnrNWaRMACpqUhZ98UR6OYizZS+XThZCndEEmLzi3h6dI
-         08sg==
+        d=suse.com; s=google; t=1726055028; x=1726659828; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0836bPdfIiVhJZmRIpwdukfSHhRJerCCPsKDHVUH+Xo=;
+        b=Jb8ZBocJ7jZyWFF5OTAhOZOcqC4RFE+/vrOVXNe9nZnnRyckUmpcX6gH+63iEWoaPn
+         jv8AOOF0tW+PfpzU3ER3mDJQAFv77eaKEfhqABdlqQcy7zofOqc2eBpyJzwZ8QySxsJ5
+         BeDAi9IBXE5XywostMWjEzru4y14iYalgzcZi2LK1WD9DuO+wPsHoyuRTsOV35jvDnRh
+         I5jQ5a8qxpE+YsPhAL7zDWi7BWkIrM7Xq/u2GS0kMP9eMRMk2v2QrTgHv3JJxeLnpKrh
+         fIV3CWDoETaj07/Z+FQBx85De44D6+7F3hMIopwEpsS0x8ug+EH8ynJE+TFFPqNZR39p
+         HieQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726055041; x=1726659841;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kSGLwJEd8UNrFUVwhp66iDC67a7nQy5YCYZpUJIy5bE=;
-        b=MFG4iro/pWx2jZS0WtvKY13b/gOqMufS9GXqygxJ86m5tbo0shb/ZoyVZHCgmZ8UCE
-         8tjod9U75YOpsFfHT4JAm6ph0HWJZJp8Q6QdlSH0jCfWa0C4+Y0PMNygN00LD9cJpH1y
-         ZGyP4qEzg1YZXsanwJuoG+6e9PQfe14Vb6/s9ymnjwBrPbGInn+XSvfFLIm55S6YdmQI
-         S6v81O/kkosztbWofDyjPmyAezMYShQPk0sjkQulg9go+jP6Ejam1LKqHfNxdXDaTnIa
-         IVQmmvZGem1CJsWypcAe404ZwB7cDpEnz/f2X9bvvgDllutRL70ZJLw9i9GouGsqSvwN
-         2NKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbM+ccVkyIrjQPl+khYd5NvwSdds5K2dUgOqBt4va7CEDclSsqh0BzC+mrNYKvpEgbOWzOQ8KPrLIGjXeTfCc=@vger.kernel.org, AJvYcCWMhkKAdeQE4ixdKl+yXN+4hx6jT0ScF1a65b/k/2eTdStVFqaZlYtWee/5yquobfVtcmdMNXT833yofRCb@vger.kernel.org
-X-Gm-Message-State: AOJu0YznFVd5LS2yNZRX95iNdAutpAn7+qGAyjt8YNqGKJv1/ClRnPZy
-	i5tKZc6iwrPBh7n+Dgdn9RSLbIbNpAxuAT9GcMlA1ZDtBW2Vtgqe
-X-Google-Smtp-Source: AGHT+IFcX9w0A3XRz5vCjxSnjChRLuaD27tW13dUPTJL1T7nfkezHAVfoNQvZ3Jg/n02w0vh4Xh+WA==
-X-Received: by 2002:a5d:688f:0:b0:360:791c:aff2 with SMTP id ffacd0b85a97d-378896a3f79mr11769671f8f.47.1726055039987;
-        Wed, 11 Sep 2024 04:43:59 -0700 (PDT)
-Received: from void.void ([141.226.10.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564aea0sm11332929f8f.20.2024.09.11.04.43.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 04:43:59 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] rv: Fix a typo
-Date: Wed, 11 Sep 2024 14:43:38 +0300
-Message-ID: <20240911114349.20449-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1726055028; x=1726659828;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0836bPdfIiVhJZmRIpwdukfSHhRJerCCPsKDHVUH+Xo=;
+        b=HZhdJvBU89J0eylgKLJOswJTjtcG+KRXo/h5e0eYTJZQiqhyfFewZS5TaagMeJwVNi
+         byfQD47ZaurWE4VT8DY7cb8ac5Plrgd8o0LTujFtbMFbA0UTiSLzCxqPwOsqP5MlSV7T
+         Dy0ONR9lsck+2V0kYqQKUnmgdmwlIDQ3aD+ZGu2e2nI2y7o7kFEDcwPIMZHxwoOv2DSY
+         n+9WtyXOEbo3gSSzGs3USSbNFQjgCHeJ1o+KvLwmRiIUs6+iuXs/hT4zT7QBBmNIYkuO
+         4uraRWCigCFH9yvoVa4CobyW7vWKtlNbK/a+06kFYUcKrm5hhKeV+2NyM1kJq6UAlB8M
+         mzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaEkDKomRCVKmI3TfTU3UNIaKao/7HQHsEd6D0fk2Qy9wTQ/SluhQnqaubZe/wlCuw+3GKqTigs2xzB0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+rO8bjGW5RT39f8o2EDmEFslZ22TYKkfunxl2KS4JezOmhdOh
+	QV50NyPuInX8VOzeE7QI9lfTXpcQsN/JDaZLNaSmgH5UCXR4yxCiT9fEbVjJrMA=
+X-Google-Smtp-Source: AGHT+IE06+xDqkLYzGpC/L+2NLQeM/nBC/Gy5jIkoMSaoEd70RtXRRQzFeVamgQr7aHe0PKw8Wnx3w==
+X-Received: by 2002:a17:907:2d0a:b0:a86:82e2:8c64 with SMTP id a640c23a62f3a-a8ffab78821mr368553266b.35.1726055027526;
+        Wed, 11 Sep 2024 04:43:47 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835d97sm606731866b.4.2024.09.11.04.43.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 04:43:47 -0700 (PDT)
+Message-ID: <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com>
+Date: Wed, 11 Sep 2024 13:43:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Sami Tolvanen <samitolvanen@google.com>, Miroslav Benes <mbenes@suse.cz>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com>
+ <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+ <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Fix a typo in comments.
+On 8/31/24 02:05, Sami Tolvanen wrote:
+> On Fri, Aug 30, 2024 at 9:34 AM Miroslav Benes <mbenes@suse.cz> wrote:
+>>
+>> yes, this is one of the approaches we use in SLES. We add kabi paddings
+>> to some structures in advance (see [1] as a random example) and then use
+>> it later if needed.
+>>
+>> It is not the only approach. Much more often we do not have a padding and
+>> use alignment holes ([5]), addition of a new member to the end of a
+>> structure ([2] or [3]) and such "tricks" ([4] for a newly fully defined
+>> structure).
+> 
+> Thanks for bringing this up! Sounds like we're also going to need a
+> way to completely exclude specific fields from the output then. I
+> think we can use a similar union approach, but instead of instructing
+> the tool to use another type, we can just indicate that the field
+> should be skipped. I'll come up with a solution for v3.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- kernel/trace/rv/rv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It might have been mentioned previously, not sure, but one more case to
+consider is handling of enum declarations. New enumerators can be
+typically added without breaking ABI, e.g. 'enum E { OLD1, OLD2, NEW }'.
+It would be then great to have some ability to hide them from
+gendwarfksyms.
 
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index df0745a42a3f..9d6de2d9e62c 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -41,7 +41,7 @@
-  * per-task monitor, and so on), and the helper functions that glue the
-  * monitor to the system via trace. Generally, a monitor includes some form
-  * of trace output as a reaction for event parsing and exceptions,
-- * as depicted bellow:
-+ * as depicted below:
-  *
-  * Linux  +----- RV Monitor ----------------------------------+ Formal
-  *  Realm |                                                   |  Realm
+I think neither of the __kabi_reserved or __gendwarfksyms_declonly
+mechanism can currently help with that.
+
 -- 
-2.46.0
-
+Thanks,
+Petr
 
