@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-324444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C932974C8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:24:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AECE974C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF45C285000
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:24:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44AB6B264DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23B414EC56;
-	Wed, 11 Sep 2024 08:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D7154BE3;
+	Wed, 11 Sep 2024 08:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="adGKKc5N";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="U9Qi49xi"
-Received: from a7-48.smtp-out.eu-west-1.amazonses.com (a7-48.smtp-out.eu-west-1.amazonses.com [54.240.7.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYCqtepz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE3AD24;
-	Wed, 11 Sep 2024 08:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9217815445B;
+	Wed, 11 Sep 2024 08:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726043071; cv=none; b=BPzQUp38Aw4R+c4xiT8vxlK1Le4N8iXiA0Do4H5Mn3cHE59wPbR3zyx7VcJ5pKx91xV3DeD5Cg/p+IGOjj8yijYYj+Jt03+TpgU1Wu/mySCmzYTq3BlotO29yMUqIZ4OHKrAha50ijLgqk/JSGSaIHxFnXFMytKkJu8Oczr/ET4=
+	t=1726043073; cv=none; b=u3oyahWhWlASRDM860OsWr/Ll9UzI+8WMWaSalwU2RjdX1/ImLYECkbA+mYnAAdj2WFmej3ii8N3ePlWFsEK4OcznV2DyeSyPEa+3B1LW3W3bXFMTVdXOo6ZqHZAhFoCnW4CdpO/wAiF5DO3UIkvm5IjUs0+er5OXimJo1/BlB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726043071; c=relaxed/simple;
-	bh=698wQpzFq84To+s/WCVIOmpSbbSmg4VSicihqf9qw34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NTDJY3Jry3gJ1ZX1yDtXr5d5Frr5wXq+mPKQgnNpjqAUz70scZzprNKxmCfCg5g3nCmWYQHbHlAEF3lPrE6eGDxVTLbdWoM6h7jpbpmfX91IjIldBV9tFKKzjG6FgrTWDf/TmoC5qyK+Z2IThBNzgYwUin1/sVLP7+tmQCN/x/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=adGKKc5N; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=U9Qi49xi; arc=none smtp.client-ip=54.240.7.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726043067;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=698wQpzFq84To+s/WCVIOmpSbbSmg4VSicihqf9qw34=;
-	b=adGKKc5NT2ZFSl95Fm2PZ6Z+//DbP/dttZO00kj4pks97lOTKrjysIAfeVjB0z/h
-	nys7hYP1QKJeIcJXZIPtyA825I4f36sC3Rzmg6S+8cZnmd/gbiejjPRABEs7amxUoSC
-	7cUrYC+dHyTFgIDHPnHmL7gt6BgThMdCapdaRKizjD92YeOpfeQump11KKcWh9DUZqi
-	bSRDSvHJ+RHxIycBUyPpVtHbb+iX2PBGWG2+HbaDxI2O5NtEoe3rvFz9nUr0dQO5mNH
-	shZcEDzJ0Smxa0DgKcLHNTjyRyokFp7lbltK25Bm/uoH01DRwFoG02p2jGP1gObbr50
-	WIVAS5L32g==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726043067;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=698wQpzFq84To+s/WCVIOmpSbbSmg4VSicihqf9qw34=;
-	b=U9Qi49xifLwDGMtHMpHh2nQqpgp5SGgpN7gJmQ8YVGnWUcEoKm1ZpGPrQYfbgWYy
-	eUQ37fgpjVj6Xg+k/agsrJXYVvIphsuPGMQiyPYJxOnEFYj004w0aGIaRp271uLAAD7
-	/QLaO3RjCZ4qLnu6VrXrVHkY4lGTZJOUnGQHH4TM=
-Message-ID: <01020191e02f1538-47c02c52-c508-4cf3-ba84-fc339b55047c-000000@eu-west-1.amazonses.com>
-Date: Wed, 11 Sep 2024 08:24:27 +0000
+	s=arc-20240116; t=1726043073; c=relaxed/simple;
+	bh=3QL8lvn6X8Kvy8h9uFOJovBR7ARpx43Z9qXG051KXRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1knpUMrVn7rfAglZbMsLhsM2z8xJHNmZhyBC5EOIOWUcJUxu8ZzfG9N6kLVU838ik8GcbhG/T+GOeLzex/piWpZ98C+tvreUSNx3GUCbpKUBwLaGAqspQ40FYXfkaW3o75Eq+KMADWXJDieUYaL8wUAwwGqj6DU/CVvgfbRhAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYCqtepz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CE6C4CEC5;
+	Wed, 11 Sep 2024 08:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726043073;
+	bh=3QL8lvn6X8Kvy8h9uFOJovBR7ARpx43Z9qXG051KXRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DYCqtepzbCPmkfJKH0DDHFCMYzgXH6PL2CJ8e611GtqFm0xjxcxAeGicYfrot1IL2
+	 AQ7nAZTJ1NzwzAMe3xSrZq4fyP35fbOSNSfv9I3FzWYc8h5VGaow7n854xdA0EiC5r
+	 mHV/mDSM70nkmpxw1AcOYYkvv//VKp0NQSQ8qyjfYobl1Ku7qfg7QsElJVYAdbNrIH
+	 YHL1adnGXkAnNhV659NQ4OGVgE68Iu3by4WofYPrD8UScy36eolDsOu4RlQbVMn3VF
+	 tViau7wxS/mavBnE+6Ni7vG4tKQGU8VPhKz4WyeTtUrnYkrOyTAYocS8F6GdnaUrQ0
+	 lDKuFjROZ7jmA==
+Date: Wed, 11 Sep 2024 10:24:29 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>
+Cc: "git (AMD-Xilinx)" <git@amd.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>, 
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "Goud, Srinivas" <srinivas.goud@amd.com>, 
+	"Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>, "manion05gk@gmail.com" <manion05gk@gmail.com>
+Subject: Re: [PATCH 3/3] i2c: cadence: Add atomic transfer support for
+ controller version 1.4
+Message-ID: <zblc42zoivn3ofoe2ymqm2bar3ffiujzknqzm54ww5mi26oq32@25cjisrx274e>
+References: <20240801094408.2004460-1-manikanta.guntupalli@amd.com>
+ <20240801094408.2004460-4-manikanta.guntupalli@amd.com>
+ <5hjezq5ag4etru6suzbntvg2fwn45acckiyxsujmsjxsrgqxrd@asub7zr2t3gd>
+ <DM4PR12MB61098BA9557140DB0BEA36848C9B2@DM4PR12MB6109.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: mediatek: Drop duplicate
- mediatek,mt6795-sys-clock.yaml
-To: "Rob Herring (Arm)" <robh@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-References: <20240910234238.1028422-1-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240910234238.1028422-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.11-54.240.7.48
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM4PR12MB61098BA9557140DB0BEA36848C9B2@DM4PR12MB6109.namprd12.prod.outlook.com>
 
-Il 11/09/24 01:42, Rob Herring (Arm) ha scritto:
-> The compatible strings for mt6795 clocks are also documented in other
-> schemas:
-> 
-> "mediatek,mt6795-apmixedsys" in clock/mediatek,apmixedsys.yaml
-> "mediatek,mt6795-topckgen" in clock/mediatek,topckgen.yaml
-> "mediatek,mt6795-pericfg" in clock/mediatek,pericfg.yaml
-> "mediatek,mt6795-infracfg" in clock/mediatek,infracfg.yaml
-> 
-> The only difference is #reset-cells is not allowed in some of these,
-> but that aligns with actual users in .dts files.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Manikanta,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > >  	if (msg_timeout < adap->timeout)
+> > >  		msg_timeout = adap->timeout;
+> > >
+> > > -	/* Wait for the signal of completion */
+> > > -	time_left = wait_for_completion_timeout(&id->xfer_done, msg_timeout);
+> > > +	if (!id->atomic) {
+> > > +		/* Wait for the signal of completion */
+> > > +		time_left = wait_for_completion_timeout(&id->xfer_done,
+> > msg_timeout);
+> > > +	} else {
+> > > +		/* 0 is success, -ETIMEDOUT is error */
+> > > +		time_left = !readl_poll_timeout_atomic(id->membase +
+> > CDNS_I2C_ISR_OFFSET,
+> > > +						       reg, (reg & CDNS_I2C_IXR_COMP),
+> > > +						       CDNS_I2C_POLL_US_ATOMIC,
+> > msg_timeout);
+> > > +	}
+> > 
+> > You can merge this if/else with the one above, to save some code.
+> Thank you for your suggestion to merge the if/else blocks to streamline the code. We have considered this approach; however, merging them would necessitate duplicating the following lines in both the if and else blocks:
+>      if (msg_timeout < adap->timeout)
+>                 msg_timeout = adap->timeout;
 
+OK, makes sense, I didn't see it.
 
+Thanks,
+Andi
 
