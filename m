@@ -1,114 +1,150 @@
-Return-Path: <linux-kernel+bounces-324837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCB0975168
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F4397516A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9A51F264D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AE928B6F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05805192B84;
-	Wed, 11 Sep 2024 12:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C7D185B4A;
+	Wed, 11 Sep 2024 12:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Hco7YKrU"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbaoNNZy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D9613AA3E;
-	Wed, 11 Sep 2024 12:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B3351C4A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056212; cv=none; b=i299KGUj19Sv7m4yOkZO3T3kY5+1PZIMrQPaJMUcMdkrFIi/H1uMcWRZhmfqLZlIc8Zrp5gYaBX2KGI/j+fW4fR4VMO6rXls8v0Qh0T/LCyQ60jCgBDItW5aIQM5xR14QIZS8Z2L9NCgQj+wIJD9BX+7TMhFllTA29bmaHBDmLk=
+	t=1726056272; cv=none; b=qsc23rf4wiaiQjX8sn33zmd42oBwI8vDfxHitrTm6S7GdlLAKXlWBKtd0Ti1oCyBgx0G0JyzdF5ORrhSane7YhO6W09KUBUdJl/3jIeVqaMOG8olWhGMrfx5Ges3tB9ZOi9m8h3IqRbfFGZB0uXrjfjjqarMOmCxU2bKCHESpdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056212; c=relaxed/simple;
-	bh=to/dI+U8c82M6OElNphf9TFg4NuIv4FJo3rnED38GM0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qyo6R6X+0OrSonWS/Zz/d5FwTsrO2hwVNIC3KZvoI1aJx3d1VpAr6HxcObhAefsxD5YDL8RPtGgTkKUx4NRU0njWLWmMw7OgNmjtalwp8tyuC7Rw8ROdSHzUtXJp6bOMt/+l7DASv2+ohPk1OpqRNcUlRP7NapiFOFidYEHOnzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Hco7YKrU; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726056179; x=1726660979; i=markus.elfring@web.de;
-	bh=to/dI+U8c82M6OElNphf9TFg4NuIv4FJo3rnED38GM0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Hco7YKrUwUPLHLTI+twaLWbzmwXkV0mINsS6UdWH0Ao4XcME4uYbNUftJ3kU1pHV
-	 3TnV+338SIWsnrYLfBGOePElSld13/qNvlJzwiGtQ3iGlpC+H7hbOvZM7TyhO7fll
-	 j6Igv1gKAJbFpN3QKa0DoYV8pdLnS8gvG7G0jL1s1BVle1excKCC5rDKt/mV5bfOz
-	 uvSA1U51+g6XacpRV91OjjW5OTJibj9W/f6N4h3/N6zkoGazT0xycNsGIfmfsW0ZA
-	 q7TFkNuWXMuarFC58jEqaiUmN3y9MLvljDU9RCR47gd9+K6X1cWrd2Up2l+TQ8H9R
-	 y8sK5w41dgaVC01TgA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mq182-1sBDbl0Two-00cfwJ; Wed, 11
- Sep 2024 14:02:59 +0200
-Message-ID: <ba285b99-96a6-4fbf-b72e-b264a300ce6f@web.de>
-Date: Wed, 11 Sep 2024 14:02:56 +0200
+	s=arc-20240116; t=1726056272; c=relaxed/simple;
+	bh=BrvCDT4TB0sx1BI3jg+JNhXoijBqn8lODDE+FwuTf9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KS3rj01DA43242M7dy5F2rzcCBEEj7ktacmGSYB4qUACCpHKr73KZlgvoR8Gxo/GYzZSc8Rwqu/0aGKXnfpSiF8+898R/cHS9BqasLSjL/dnudhbxza+9tL6Zo/ZW8fbnSckKopgD8K2HWifvVdc5NYSB6Us/pjddeXg4f5oaJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WbaoNNZy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C134C4CEC5;
+	Wed, 11 Sep 2024 12:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726056271;
+	bh=BrvCDT4TB0sx1BI3jg+JNhXoijBqn8lODDE+FwuTf9A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WbaoNNZyc2VDdC4cYHG62nVDHWyogYtH+EwSEp+XXn1QGJ3BZcSHXyHeKKu4pem49
+	 sJo3ahp8hFo+mrmW6C9tJC0voh5NBFr/rJgUkGbFWuJJ6DiG0ai8xGtsA44Dtm0oLP
+	 6oO+h6PkIrP3pvWf9CpQQ+awSck2Mgi1hSEBMfWBzsBsYbBguMZAOmjnU68co1QZs8
+	 lqSSdFIHjzbO7to2uRsySVFfFVYlFl7g9ZnVeDt07BW4EQ6l+UjqluGZgJp4G6rtsy
+	 a6ZhKb01EdM04nIggXhXg6NCwUkkfiMtDPwNxmgVJnm7M+ZltBzOes09FIgur1vXTc
+	 PpjBlzp/7HSiw==
+Date: Wed, 11 Sep 2024 14:04:28 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>
+Cc: hdanton@sina.com, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>
+Subject: [PATCH] kthread: Unpark only parked kthreads (was Re: [syzbot]
+ [wireguard?] WARNING in kthread_unpark (2))
+Message-ID: <ZuGHTBfUlB0qlgn4@localhost.localdomain>
+References: <20240731110501.2425-1-hdanton@sina.com>
+ <000000000000af4044061e89668a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Will Deacon <will@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
-Subject: Re: [PATCH 8/9] accel/rocket: Add job submission IOCTL
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gBOc2VelSGYN7vMulw3gUfHiDfi7Fce6hUGRA3ig0e7CkPk7ctW
- 02fliq1YqKL5NKGvp3rgm2vGCmn6B7aS1N/nr+h0YbeeRcbBWnwr7+rO2Hwhq057gL31eNi
- LR1cvkK0e+qFvnrh0GnTB7rpMSh2/emhZOdJ2z2xi7Ae1r7gPW55kJ+Yp8MMxUhxUlDXyUk
- vYuXx5zKe7w6f1ZlWKmSg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kwUCKjmSRow=;GXfTPl9KFQxzuxjHbnw0svEf0G3
- Uctcq9Kr/ho6Y0LyjZNPPDYlzYjtlry3asr8W82jx14bpGu3jCx2WlCJNwLO0/RybxYvHtqyt
- 0eJR2xvpk1mD3BfD6ES4G4nPghEA0Xe0VmyS/bOP3h7e5ccgwFG6rh5+NcRay3ifHOEpc2dJq
- 3lz97Wz4Jwb+bX9qUxV2p21EKo0fk/MGTTw+ic/kF7yL3Hj0qMX55emMFpldoG2w1wb3XZSas
- NTbXmQfGKosykNVgoNLaRCy92S00vVSewSAIGc7NLaQksiPebe2x0I0CrEBOSyFKCiJ1lRKHs
- sXoJDShFfVErAk+ftvVPr/5f+uwSALx5Rn4ga/tYXitIuOicPsv9lctt2RJvUUeu7CopQY/J7
- x3Gm3cmwjHVs4GpfTV5F3yUxpiX6gHTwl420nPg98AEQKnlw+9G56/eEv/UOYcHYRq3Plq8xo
- 3BzcllAiZYFg/2VEUN85RXJ8nvHYIV6O2UPR0dIeVS97RQfqr5ZDQ58q/KjOl2l2TTgvLYDwo
- 9z08q7kvWwjdKsZp7dfTFcdDRsL54w4z7bFZ9Pri6T9YrKUSbIdKGaElp2z7CW+1e4YP0L3Zz
- RkpV3P0IioN2RRARyS9Q4KgwspVFg+nS7lYw/QAgc2hYLa4ve7+kGrWH+XeYK99OXePLIThWj
- oIhQy4AkUaIfiAw2vIr5HWObE/R3WDhulqPh2xWizhETqAPkKZJbRPr6v/yopUUdtUnQB9Kwg
- 3id6Oi229ubAiXjr8QtfEw3lsksciZSnl8UuBNhEEOYXyXsNd/B84HnV1Z6/QUqaoKJRztkHQ
- Al0RJc+9fpFxCgs5ckOfnE1w==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000000000000af4044061e89668a@google.com>
 
-=E2=80=A6
-> +++ b/drivers/accel/rocket/rocket_job.h
-> @@ -0,0 +1,49 @@
-=E2=80=A6
-> +#ifndef __ROCKET_JOB_H__
-> +#define __ROCKET_JOB_H__
-=E2=80=A6
+Le Wed, Jul 31, 2024 at 04:29:02AM -0700, syzbot a écrit :
+> Hello,
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> Reported-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+> Tested-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+> 
+> Tested on:
+> 
+> commit:         dc1c8034 minmax: simplify min()/max()/clamp() implemen..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1264b511980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
+> dashboard link: https://syzkaller.appspot.com/bug?extid=943d34fa3cf2191e3068
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=10fe9911980000
+> 
+> Note: testing is done by a robot and is best-effort only.
+> 
 
-I suggest to omit leading underscores from such identifiers.
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
+The problem is in the kthread code. kthread_stop() seem to assume that
+the target is parked and since kthread_stop() is seldom called on per-cpu
+kthreads (smpboot_unregister_percpu_thread() doesn't have any user yet), this
+went unnoticed until workqueue happened to do it.
 
-Regards,
-Markus
+Can you test the following?
+---
+From: Frederic Weisbecker <frederic@kernel.org>
+Date: Tue, 10 Sep 2024 22:10:19 +0200
+Subject: [PATCH] kthread: Unpark only parked kthreads
+
+Calling into kthread unparking unconditionally is mostly harmless when
+the kthread is already unparked. The wake up is then simply ignored
+because the target is not in TASK_PARKED state.
+
+However if the kthread is per CPU, the wake up is preceded by a call
+to kthread_bind() which expects the task to be inactive and in
+TASK_PARKED state, which obviously isn't the case if it is unparked.
+
+As a result, calling kthread_stop() on an unparked per-cpu kthread
+triggers such a warning:
+
+	WARNING: CPU: 0 PID: 11 at kernel/kthread.c:525 __kthread_bind_mask kernel/kthread.c:525
+	 <TASK>
+	 kthread_stop+0x17a/0x630 kernel/kthread.c:707
+	 destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5810
+	 wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+	 netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10693
+	 default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11769
+	 ops_exit_list net/core/net_namespace.c:178 [inline]
+	 cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+	 process_one_work kernel/workqueue.c:3231 [inline]
+	 process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+	 worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+	 kthread+0x2f0/0x390 kernel/kthread.c:389
+	 ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+	 ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+	 </TASK>
+
+Fix this with skipping unecessary unparking while stopping a kthread.
+
+Reported-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/kthread.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index f7be976ff88a..5e2ba556aba8 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -623,6 +623,8 @@ void kthread_unpark(struct task_struct *k)
+ {
+ 	struct kthread *kthread = to_kthread(k);
+ 
++	if (!test_bit(KTHREAD_SHOULD_PARK, &kthread->flags))
++		return;
+ 	/*
+ 	 * Newly created kthread was parked when the CPU was offline.
+ 	 * The binding was lost and we need to set it again.
+-- 
+2.46.0
+
 
