@@ -1,160 +1,211 @@
-Return-Path: <linux-kernel+bounces-324186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816C1974915
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22983974913
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03AAAB2490A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:25:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432C91C24399
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ADA4D8BC;
-	Wed, 11 Sep 2024 04:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4C433D6;
+	Wed, 11 Sep 2024 04:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lk+VxBPW"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FaKpatb5"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA402C182;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC19C144;
 	Wed, 11 Sep 2024 04:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726028708; cv=none; b=joFqQekh/8dIuF/o8kzCi/2eqHwPoMlCJcnkUkCy3RAhcnOiNgIAD++JEVneo3Q26/ZQxgZqrsC3A+qP91zqWQqp+yZqAZf7x5Zrw3MbYn3rtvL2RdyZOjPFhP3DBpOVOx6FvMBchrmytvxIKUqV0mkVeQxeU9LHqjMQtpc7UgU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726028708; c=relaxed/simple;
-	bh=7VLTBjpky6igUftxdBDkTN5vDdOqTSmgO+QqBQQEono=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZWldtbOk+06zK2pDyslkhQL1cuIGXdJU12/k0pQDEAu4hvEE4uZfvYyMAX8tvKbXiXXVJyuvHlJZrzxkLiLiNQ7lri8hdusRBgHvPq7sA+KgaZLO1Rzs2hBUSBrs8mEBEYgtMGRyBQkWH8iMAYMG1VpeISfguMWbOcHf/HKaG4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lk+VxBPW; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48B4Ohkt050176;
-	Tue, 10 Sep 2024 23:24:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726028683;
-	bh=qeo883kIG8MfQ5Wpr0jRy26jAgX7sEL8Vri37fZJQUQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lk+VxBPWJzqaQKHo4LGlazNuzQDd4fNjBMPzffdzCuiARfmVutJbuUsYOAoi3xDAi
-	 pKU8moXmdJcUE+XI3MFG3ugijCnlJAFKlYiDdmgF15UFLjEHLtllWagUcqNaaYYxrr
-	 0NbuWjt/6fU/SI8ZPpdU+UA9Xd2dMkoXDkVdfZnQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48B4Oh1v045219
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 10 Sep 2024 23:24:43 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Sep 2024 23:24:42 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Sep 2024 23:24:42 -0500
-Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48B4OcGA043330;
-	Tue, 10 Sep 2024 23:24:38 -0500
-Message-ID: <2f36c165-1ec5-4af9-a2aa-9484a38d87d3@ti.com>
-Date: Wed, 11 Sep 2024 09:54:37 +0530
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726028707; cv=fail; b=QLNZ4ngFcOqrWknrX5phXW5SnFlbwdBT4Dxvbg2+dcaFsqbm/ocqrsnPeMANFXA9S3bMxCMpoyTyQ+CvdyeUOl3dSSNHUPuiVJLo2tlhKvCAZTILq6Nsfd3I4qyRYg+KSjKZveBXkktYB6PrZCmsQqugHk6sRA9EfVj2szNeuF8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726028707; c=relaxed/simple;
+	bh=yA+VeqoDzYX9IMI1gBHVgyWusLW+w2jcUVwBAZmhBDk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rr/dDUxPxZdty9RVG1ij08kVIS2TZjYKCZQDQID1bQmL57vn+SmUe6jv1s/DBOP0krfNQ795NTmMK+nehyEG0xtdBn4+4WBiwc5qT8jFICxC1mNkWJcLHYXVirV8hHr/CLa+xLmlkrxIpZnfQZqzOlyir82lqMJzzMqde6RMjuY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FaKpatb5; arc=fail smtp.client-ip=40.107.220.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lncR5Ms4gxDAvzj4ixzH3NlJmkZu5d1C0gNhRuEx4FVE+dZAw9NUBQ+rLEAjeJuUyjYcGtfIMxTrVpi6poZH/4+PgwvZTWqOLh55ODJAlQatDHa3U50IqONsUcvN5+JSJM+FPTrKT5U0hQScH34Oh4rH0wDEqiFc7/Nsh30CcKt/rSOXa5Z1WCZuQm0UADrsIwXOWlbMYdb0PZFdXhSNsOkuIHP0kbfJmFj+ZupnO9w1njK3wba1QRpOyilLj5F2ZYW/YK1wzpdACTTpQPJBJk6f5NpTLC1eMOXL02BIrm7gzquIVBUP6TALz43XK4KpuscA01rklNszFIBs45z46Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vX5LmPe8CPR6uGNKtTRPZiCcEzXeVZVRPGeqTUTn+E0=;
+ b=B6APyGEgyklAAtUWAjny6lcL2eZ4y4Qr4zgGKck3oJVipzrL02EIAewwL4p5F5+6Q/L/wjADjaH8hkdqRshk0wdWByRfJRuxBxjIQsJEb4EItS0fCh2rgARBoHf0Cs+FPE5/nyvOtGE6TbK6F5va+ed2+YMMY2WhPa4k0YJ5wlLWhaFzRY2NmF5XzQvQRFX6euCUAJNvmfZGXtRw0ESEObi/DLFRXCrLcyfbp1P9s5P59iB1XJd1H5VGqXHZToMR2gsvNEniAVzWcdVmBWdZgloQz/oHcX0B5pwBKVqFjIIS7dJvsYIpWVK0zezyElR9Utj7GQaFZSQhacMf6zhGiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vX5LmPe8CPR6uGNKtTRPZiCcEzXeVZVRPGeqTUTn+E0=;
+ b=FaKpatb5i1I2O1qVfgJLGjc77UJqx2s9t+21dnyjA1CULaVjHzBTa93+YUtFYy4EKAn7sM1nLVozgZh5PYgKhuMhVep7pbOWh+3FbqurCD2zKUbTsn6FwDuFq1TksfWc4lJpyDVMPcmPi/UqhSW99BXznQYKYYarkLm6PzRMnyV6cOFVSZ4naY9d0bvpav2ri1gQzNp8TmKEWTFSsxNE6+RiJxQRD4cDWbI+7+4QKP/XEYHPaamorkbWoRuW80YrFOOI+3T88tVMhZ97LiEWZqwFjd5vDXwsKMEpdf0ukjUrGyWArt55NN9/VJ3ilAa4LRVabqYJ7/0LcGjEk56Bnw==
+Received: from SJ0PR13CA0170.namprd13.prod.outlook.com (2603:10b6:a03:2c7::25)
+ by CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Wed, 11 Sep
+ 2024 04:25:01 +0000
+Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c7:cafe::75) by SJ0PR13CA0170.outlook.office365.com
+ (2603:10b6:a03:2c7::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Wed, 11 Sep 2024 04:25:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Wed, 11 Sep 2024 04:25:00 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 10 Sep
+ 2024 21:24:47 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 10 Sep
+ 2024 21:24:47 -0700
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 10 Sep 2024 21:24:44 -0700
+Date: Tue, 10 Sep 2024 21:24:42 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
+	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yi.l.liu@intel.com>,
+	<eric.auger@redhat.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH] Documentation: userspace-api: iommufd: Update
+ HWPT_PAGING and HWPT_NESTED
+Message-ID: <ZuEbir5Np3sUFkHz@nvidia.com>
+References: <20240910204111.7969-1-nicolinc@nvidia.com>
+ <ZuD8tsci0JPikUYL@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
- and children as bootph-all
-To: Andrew Halaney <ahalaney@redhat.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Keerthy
-	<j-keerthy@ti.com>,
-        Neha Malcom Francis <n-francis@ti.com>,
-        Eric Chanudet
-	<echanude@redhat.com>,
-        Enric Balletbo <eballetb@redhat.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Manorit Chawdhry <m-chawdhry@ti.com>
-References: <20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com>
- <20240906-j784s4-tps6594-bootph-v1-1-c5b58d43bf04@redhat.com>
- <bd188c0d-9fa1-4350-8787-36af319c7930@ti.com>
- <4h4wm5jja4wadh6bmbouuxjvoai6cokqqgxsl4kmhurvqnd7tu@y65y5pakijpq>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <4h4wm5jja4wadh6bmbouuxjvoai6cokqqgxsl4kmhurvqnd7tu@y65y5pakijpq>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZuD8tsci0JPikUYL@archie.me>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|CH3PR12MB7500:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a5f19b9-8b6a-44c4-023f-08dcd219b390
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cOuLPWyVdiSOnRIBgTeVzPAcH+udJ/OUXcuQP9VL+QEZoumc0JPEE5cF60oO?=
+ =?us-ascii?Q?/tEJkjLFXbqxYW0p1tZfc9zqUg0FEfJEKeKIRS6rXgn3CvedP2xorIAoC4Xd?=
+ =?us-ascii?Q?A563Rjxq6TSEbfgeSP5fCfAw434PQ9/gUhAJKB7G17BpywOgsrV1okvtlveA?=
+ =?us-ascii?Q?zQjvNV2CoymB1Mxx52KlGsBFLFpOFMvJoouKRUTQ0rCUmGPdm24g54IGEpYa?=
+ =?us-ascii?Q?mv1yfsm9niYYOu6Sj/RbaaTYScLZyUeEU/POtrB/ZuCzvhICIi82jjrcZ/TC?=
+ =?us-ascii?Q?GZZuXct2/+itm6YIt4jhSFu6bjBjrWodfY85jzED0WLAxlJLXJHDg6XB4XhA?=
+ =?us-ascii?Q?A6xdjRXN83SBlUc6vrpYPL9dGvVfsAX+9WKjDQt9GV2d2aKLKDHk1sRKXYOV?=
+ =?us-ascii?Q?CcweqOYVjJNCnjYHcDksRrK8BHaOiZ2MVzpmTVnjYGYIoVy/ES1aFa37+S0W?=
+ =?us-ascii?Q?2FypYIua76MYPSlERY7iqTPQV75V0+cJueK0J6FczfI0YZ5ATRSB3y5AZ25x?=
+ =?us-ascii?Q?VPLW4MOazU55rVhUakcQ2mFTuXwqpManh21QCsIm+iajOScrzhukYlBludyC?=
+ =?us-ascii?Q?dqA/3eND9PhxQvxvDXQaPv4XGROv2i9MS3lRsZ+2me2b7fdlfprO/+NdJoR6?=
+ =?us-ascii?Q?1t8XAhH6heKBdjRa5ZwC3W5QlNKzxAW3oekCWH8BYZAf2ZQUcUbCqqlmg8Zq?=
+ =?us-ascii?Q?7oTdNRXqD0M8VQufsxTeUtnFfeD1bXWb07yletPsbQPqPro7Tp+Zg8DEgKs+?=
+ =?us-ascii?Q?mmFRpADsjctqN9rsVULT7LKS7R/4UBWZGwNRwz2upJZjeeCx2Kffxlg8JAhe?=
+ =?us-ascii?Q?NH72X9oYmCwoTUPsS34jOJBrSOR1CXFH123iAYTQR53BPww6bJgxVL76suhW?=
+ =?us-ascii?Q?ovbn9mYCiVm4fG97G578smiUefEqsiH9mnHThpHU8nJ0ks0HLPdWHh6joCRa?=
+ =?us-ascii?Q?8Gi/wWSdbkC2bdieU7TsX5NKJQ22dnvPaWAJYHuEllem459ImlBke4ge6BDR?=
+ =?us-ascii?Q?ANszmGiBlCI+A7nXKsu8asLkZT3AEylnv8Cw94JN7GnNTLDe4G/X6M9TpP7k?=
+ =?us-ascii?Q?F+7fHnzN+7dXqvJG3UVXfmi2ExziiFYLYx+6yM7RhErZkShMfOJYH/fuxE90?=
+ =?us-ascii?Q?CqJ/qqzHBZ060krk1iQxiLa6p14h9IgRTrdcVQDYdrZNRxvDVJNj2gP30q6j?=
+ =?us-ascii?Q?qNrCSbltj7hVSHiCoz3Pdgd7hKCDy36M55vWUIBtxBkbS9nYnYE/UfXPdMO4?=
+ =?us-ascii?Q?JWAiq+tfieHTQEIdd5QCxhVQe8bil+kv5/e7HNEnW1oqJJDfj6BcYitz5Qf+?=
+ =?us-ascii?Q?2ElGMkhGsvdQJ2heHt+FHCrfENoC0ij7DEoDlv0a0ugL8xMRj7ZrDTIkTGz8?=
+ =?us-ascii?Q?K2Uz0qzcqSObh8xP4s4UVc4RPl2ciSPn2C9pPY/Dkaxp2JzP0QAZcR022ncs?=
+ =?us-ascii?Q?kUienNz8YtU9mpXHpdzrdfxYAhG5k+7e?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 04:25:00.7092
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a5f19b9-8b6a-44c4-023f-08dcd219b390
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002315.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7500
 
-Hi Andrew,
+Hi Bagas,
 
-On 9/10/2024 10:50 PM, Andrew Halaney wrote:
-> On Sat, Sep 07, 2024 at 11:04:50AM GMT, Kumar, Udit wrote:
->> Thanks for your patch Andrew
->>
->>
->> On 9/7/2024 2:51 AM, Andrew Halaney wrote:
->>> In order for the MCU domain to access this PMIC and its children in
->>> u-boot SPL, the nodes need to be marked appropriately otherwise they
->>> are not seen by SPL.
->>>
->>> This is necessary if the MCU domain is to program the TPS6594 MCU ESM
->>> state machine, which is required to wire up the watchdog in a manner
->>> that will reset the board.
->>>
->>> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
->>> ---
->>>    arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 11 +++++++++++
->>>    1 file changed, 11 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> index 6695ebbcb4d0..044a428136df 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
->>> @@ -642,6 +642,7 @@ eeprom@50 {
->>>    	};
->>>    	tps659413: pmic@48 {
->>> +		bootph-all;
->>>    		compatible = "ti,tps6594-q1";
->>>    		reg = <0x48>;
->>>    		system-power-controller;
->>> @@ -662,7 +663,10 @@ tps659413: pmic@48 {
->>>    		ldo4-supply = <&vsys_3v3>;
->>>    		regulators {
->>> +			bootph-all;
->>> +
->>>    			bucka12: buck12 {
->>> +				bootph-all;
->>
->> Add bootph in on regulator node should be enough,
->>
->> As I see SPL/u-boot does not need all nodes.
-> Ahhh, I finally see now, all parents of a bootph-* node get that
-> property. Makes sense.
->
-> Would you rather see it in the regulators node, or all of the actual
-> regulators (bucka12, buacka3... etc)?
->
-> The former is all that's *needed* to get the PMIC ESM probing and
-> programmed. The latter makes sense to me if we want to actual use the
-> regulators in the future in that context... Doing just *one* of the
-> regulators seems odd to me though, someone may want a different one,
-> so if we describe one to SPL we may as well describe all.
->
-> What are your thoughts?
+On Wed, Sep 11, 2024 at 09:13:10AM +0700, Bagas Sanjaya wrote:
+> ---- >8 ---
+> diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/userspace-api/iommufd.rst
+> index 3b0e46017dce22..e3ff476aba097e 100644
+> --- a/Documentation/userspace-api/iommufd.rst
+> +++ b/Documentation/userspace-api/iommufd.rst
+> @@ -115,21 +115,21 @@ creating the objects and links::
+>  
+>  3. IOMMUFD_OBJ_HWPT_PAGING can be created in two ways:
+>  
+> -   IOMMUFD_OBJ_HWPT_PAGING is created when an external driver calls the IOMMUFD
+> -   kAPI to attach a bound device to an IOAS. Similarly the external driver uAPI
+> -   allows userspace to initiate the attaching operation. If a compatible
+> -   pagetable already exists then it is reused for the attachment. Otherwise a
+> -   new pagetable object and iommu_domain is created. Successful completion of
+> -   this operation sets up the linkages among IOAS, device and iommu_domain. Once
+> -   this completes the device could do DMA. Note that every iommu_domain inside
+> -   the IOAS is also represented to userspace as an IOMMUFD_OBJ_HWPT_PAGING.
+> +   * IOMMUFD_OBJ_HWPT_PAGING is created when an external driver calls the IOMMUFD
+> +     kAPI to attach a bound device to an IOAS. Similarly the external driver uAPI
+> +     allows userspace to initiate the attaching operation. If a compatible
+> +     pagetable already exists then it is reused for the attachment. Otherwise a
+> +     new pagetable object and iommu_domain is created. Successful completion of
+> +     this operation sets up the linkages among IOAS, device and iommu_domain. Once
+> +     this completes the device could do DMA. Note that every iommu_domain inside
+> +     the IOAS is also represented to userspace as an IOMMUFD_OBJ_HWPT_PAGING.
+>  
+> -   IOMMUFD_OBJ_HWPT_PAGING can be also manually created via the IOMMU_HWPT_ALLOC
+> -   uAPI, provided an ioas_id via @pt_id to associate the new HWPT_PAGING object
+> -   to the corresponding IOAS object. The benefit of this manual allocation is to
+> -   provide allocation flags (defined in enum iommufd_hwpt_alloc_flags), e.g. it
+> -   allocates a nesting parent HWPT_PAGING, if the IOMMU_HWPT_ALLOC_NEST_PARENT
+> -   flag is set.
+> +   * IOMMUFD_OBJ_HWPT_PAGING can be also manually created via the IOMMU_HWPT_ALLOC
+> +     uAPI, provided an ioas_id via @pt_id to associate the new HWPT_PAGING object
+> +     to the corresponding IOAS object. The benefit of this manual allocation is to
+> +     provide allocation flags (defined in enum iommufd_hwpt_alloc_flags), e.g. it
+> +     allocates a nesting parent HWPT_PAGING, if the IOMMU_HWPT_ALLOC_NEST_PARENT
+> +     flag is set.
+>  
+>  4. IOMMUFD_OBJ_HWPT_NESTED can be only manually created via the IOMMU_HWPT_ALLOC
+>     uAPI, provided an hwpt_id via @pt_id to associate the new HWPT_NESTED object
+> 
+> > <snipped>...
+> > +      When @pt_id carries an ioas_id to an IOAS object, the IOMMU_HWPT_ALLOC
+> > +      call is instructed to allocate an HWPT_PAGING object only.
+> > +      When @pt_id carries an hwpt_id to an HWPT_PAGING object, the uAPI call
+>          "If instead @pt_id ..."
+> > +      is instructed to allocate an HWPT_NESTED object only.
+> > +      If any other type of object is passed in via the @pt_id, the uAPI call
+> > +      will fail.
 
+I've applied the diff to my local version and will respin another
+version after collecting remarks from others.
 
-For now, adding boothph for bucka12 regulator is enough
-
-but other nodes may be needed in future so i suggest to keep in
-
-all regulators nodes ( bucka12, buacka3... etc)
-
-
->
+Thanks!
+Nicolin
 
