@@ -1,217 +1,217 @@
-Return-Path: <linux-kernel+bounces-324066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D824974787
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277C297478B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6166287418
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:45:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBF1C256AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B1017BA6;
-	Wed, 11 Sep 2024 00:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D83125DB;
+	Wed, 11 Sep 2024 00:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="HRG7/y+a"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YImhK7Ss"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFEB15E8B
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1003D7A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726015515; cv=none; b=m3KJv+TVfi+bhL1zQ3jeOsYI0K0sYipesvMo3G0Va1Aw9+pDvvhKMEnWeafE2u8unWe7B5pHEK6Q1bk4zeQcbWxHbiv3R2VZZjVuhfJOFN6z11Dndyq/dFr7Our5NuIOwcuuWhPQuXZVokLvxJjZSvCG7XjJtYBDlNAn6z7T4ZI=
+	t=1726015640; cv=none; b=IcN3qlAmJYx/ZFcgCoQII6RoXDmTh8KTr9NTXyQ65qWoEXWQPUq5LfqvA5Dy7erLHtGddW3j7K1f7FcSLZ4X96wF51AyyO/CfwPPYqVnUZVUReyw+CF9qNDAHG6sWUMS5oKd63MGZ18vahxC0ieFqnKBZSK8cxJ2YyAC1Ba8c6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726015515; c=relaxed/simple;
-	bh=8uhBmyPDd+dw+VI5uhVYY1EG3bpNisgmno6ZxW+y4TE=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NT2tc5pUK4Ds7068Xi5ti4R1151PTvyMgjecOmgVIDCFPEZOwu9fMKzJvG/ctcOflaU92cdCirSCDSQVsRtkJ3xpuadHrC23f5F18Fi1d76q8+eqYhugB23McNwl0UxhafmdSlWPuEaE7W1FuFR/qsfl12pI4DCFgoSkJORKpvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=HRG7/y+a; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-206aee40676so51145805ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726015513; x=1726620313; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N9UqXwHRW6ngdlKfPJV8zADUN4nB1bOhg7HrFQqhnhI=;
-        b=HRG7/y+aX1MXBuj4PxCAfrJQARzvotcj/icoF4vbUzZN0X3VaPtSQAhpGkfukLxuJf
-         OGWcaVOFerPLWqviXmrUTxPFQvhRFuM1MCcd0S8EMK9H0Du6nuh5Mpuxa2xLksqKZCHL
-         EwEdRZB6gFHzy3tNDLeWGmXTQW874dnEa1W4JPqaD3gYXhMsBlhk2nZlD/75wrLIOKXK
-         qQKs2husBROsrfAkb15B2yWo/Q+BbAWJG7P2I6cv7jy7N2tKWqKUREjM9xt+/3PTTxGU
-         7jBrbdNwyu+VbnJO6Dj5QYrcg9xWRPBfKKBvT+V12UGZyUTXl3lt9IhOO7aUqicV3OLH
-         gqCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726015513; x=1726620313;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N9UqXwHRW6ngdlKfPJV8zADUN4nB1bOhg7HrFQqhnhI=;
-        b=p1kwsuMfSNhbsFlWYQigWMLl4pgKyz3+eU/3BeNTQ5rU10q4aIIYp+gQkfqVNugDcV
-         yFEE/lzf7/rNG6E8mL+rxwi8Yxb+rT9uaEp2MWyHHMU0sMDe/jhans66D1VuCQ60ClN7
-         lJzGuJTMgsy0xFuTTyxvSaAucyoK6ZN5+ubSkTrWY8AdmcYZkAisfqKCQNkW08SADqld
-         K6/YuuwWQEP5zmw3e7FLybed7IBekfOcY7b69erIPPygoeJbBVXki6ceCqRnzwz6O88x
-         jgh75nfd7azb7B8MWBYRd94Q8OLDoJdEWPOY8CioKvwyw7Oeb6NiUg4fbJw3uQQCPlmP
-         YPzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoYK208mDcHhiQYVLZB+9G4pwIPNRsx9DWygw69mDTnAU3kEK4O29ctkm/ryfFYCCbM/VPjMvuPBbSVHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiIa86ROQY8i3ZX4MxXxsm8J5536t/GUgs3ogAjcg+nT/jd5BB
-	N8yqUs4p9mt6pyqOrln5b9yhIJAY2LFUovZMmhkoryZdCxxFA+/sBShdJcpFMLw=
-X-Google-Smtp-Source: AGHT+IFSjrtRoDoL7sPwVRBWFNV85MfE4DpNXnElb7X54mGXN2iqCTI2uhxpyL/CAIcKh7QAswSthg==
-X-Received: by 2002:a17:902:d2ce:b0:205:5427:2231 with SMTP id d9443c01a7336-2074c6a338fmr45444085ad.47.1726015512680;
-        Tue, 10 Sep 2024 17:45:12 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eef1f2sm53832165ad.145.2024.09.10.17.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 17:45:11 -0700 (PDT)
-Date: Tue, 10 Sep 2024 17:45:07 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>,
-	Chris Torek <chris.torek@gmail.com>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-abi-devel@lists.sourceforge.net
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
- 47 bits
-Message-ID: <ZuDoExckq21fePoe@ghost>
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
- <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
- <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
- <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
- <Ztrq8PBLJ3QuFJz7@arm.com>
- <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+	s=arc-20240116; t=1726015640; c=relaxed/simple;
+	bh=gS3ZxyAm+hyBT0ht4BjhvcwNhHhJsvyMv62jjgyUvR0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cojcGdxwJyKURO0L6JlNvdO02bFpHotN6e8HCsgZ61QYZHxNDe1D/H+kvBsqNaJ8yMNQ50rVP48vECPNpcvgVVaCTkr9IWYSV2XV9TaZz4qdO7cn5nuICOwhP4yRnKs8fcCMHjKwQXPdjS8d4upIN5fiUt9NLf6j5Tr+H6aQWxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YImhK7Ss; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726015639; x=1757551639;
+  h=date:from:to:cc:subject:message-id;
+  bh=gS3ZxyAm+hyBT0ht4BjhvcwNhHhJsvyMv62jjgyUvR0=;
+  b=YImhK7SsX3eMKNYIoSSXzMwtx9+mqvB0B2+vff9ULuzIquoJTqOuCDtO
+   kCc6JDnKrK/1TNRDJyRzZh9z+0BohOFjk9NWUjifZ4/WJBJizr1SZV7p2
+   kgqjnTtaJolN95Tgzjp2lhSBMPubVQ8mSkC7gmJYcdE8fJvWYeNVrucdo
+   zi8cWNrnyG1MLYDFWhwGZaoWXKD04WaBNMDUtvNGiaK/15Q3dSSrJyuAo
+   2gWyqx5XGk5v64+Ef+PIQIF/k6CWreFH559q7XVAUyFJXbAAoLpmIYZ5B
+   heXvMAA7l76DGdp1dN0qlCrqw+XqE95OYu3y6B+JAzEjdjfW8qtN5S732
+   A==;
+X-CSE-ConnectionGUID: Xy37SqD1Tf6hO8F143OdqA==
+X-CSE-MsgGUID: vJgGQlOuSIG0N/iWYEWToA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="27714526"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="27714526"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:47:19 -0700
+X-CSE-ConnectionGUID: drcnZ7yGRziozlIb+wig5w==
+X-CSE-MsgGUID: yC7QFZ+/Ssa/I3mnWBuo6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="67435638"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Sep 2024 17:47:18 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1soBVr-0002sw-1N;
+	Wed, 11 Sep 2024 00:47:15 +0000
+Date: Wed, 11 Sep 2024 08:46:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD REGRESSION
+ 6cbbb91711c6b17da3802a3cf072d3311828ca33
+Message-ID: <202409110855.nvi2VykL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
 
-On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
-> * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
-> > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
-> > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
-> > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >> It's also unclear to me how we want this flag to interact with
-> > > >> the existing logic in arch_get_mmap_end(), which attempts to
-> > > >> limit the default mapping to a 47-bit address space already.
-> > > >
-> > > > To optimize RISC-V progress, I recommend:
-> > > >
-> > > > Step 1: Approve the patch.
-> > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
-> > > > Step 3: Wait approximately several iterations for Go & OpenJDK
-> > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
-> > > 
-> > > I really want to first see a plausible explanation about why
-> > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
-> > > like all the other major architectures (x86, arm64, powerpc64),
-> > 
-> > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
-> > configuration. We end up with a 47-bit with 16K pages but for a
-> > different reason that has to do with LPA2 support (I doubt we need this
-> > for the user mapping but we need to untangle some of the macros there;
-> > that's for a separate discussion).
-> > 
-> > That said, we haven't encountered any user space problems with a 48-bit
-> > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
-> > approach (47 or 48 bit default limit). Better to have some ABI
-> > consistency between architectures. One can still ask for addresses above
-> > this default limit via mmap().
-> 
-> I think that is best as well.
-> 
-> Can we please just do what x86 and arm64 does?
-> 
-> Thanks,
-> Liam
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: 6cbbb91711c6b17da3802a3cf072d3311828ca33  sched/cpufreq: Use NSEC_PER_MSEC for deadline task
 
-I responded to Arnd in the other thread, but I am still not convinced
-that the solution that x86 and arm64 have selected is the best solution.
-The solution of defaulting to 47 bits does allow applications the
-ability to get addresses that are below 47 bits. However, due to
-differences across architectures it doesn't seem possible to have all
-architectures default to the same value. Additionally, this flag will be
-able to help users avoid potential bugs where a hint address is passed
-that causes upper bits of a VA to be used.
+Error/Warning reports:
 
-The other issue I have with this is that if there is not a hint address
-specified to be greater than 47 bits on x86, then mmap() may return an
-address that is greater than 47-bits. The documentation in
-Documentation/arch/x86/x86_64/5level-paging.rst says:
+https://lore.kernel.org/oe-kbuild-all/202409110611.dmyDCkoe-lkp@intel.com
 
-"If hint address set above 47-bit, but MAP_FIXED is not specified, we try
-to look for unmapped area by specified address. If it's already
-occupied, we look for unmapped area in *full* address space, rather than
-from 47-bit window."
+Error/Warning: (recently discovered and may have been fixed)
 
-arm64 on the other hand defines this as only being able to opt-into the
-52-bit VA space with the hint address, and my understanding is that
-mmap() will not fall back to the 52-bit address space. Please correct me
-if I am wrong. From Documentation/arch/arm64/memory.rst:
+drivers/cpufreq/cppc_cpufreq.c:227:20: error: use of undeclared identifier 'NSER_PER_MSEC'
+drivers/cpufreq/cppc_cpufreq.c:229:3: error: member reference base type 'long' is not a structure or union
 
-"To maintain compatibility with software that relies on the ARMv8.0
-VA space maximum size of 48-bits, the kernel will, by default,
-return virtual addresses to userspace from a 48-bit range.
+Error/Warning ids grouped by kconfigs:
 
-"Software can "opt-in" to receiving VAs from a 52-bit space by
-specifying an mmap hint parameter that is larger than 48-bit."
+recent_errors
+`-- riscv-allmodconfig
+    |-- drivers-cpufreq-cppc_cpufreq.c:error:member-reference-base-type-long-is-not-a-structure-or-union
+    `-- drivers-cpufreq-cppc_cpufreq.c:error:use-of-undeclared-identifier-NSER_PER_MSEC
 
-This is an inconsistency I am trying to solve with this personality
-flag.
+elapsed time: 999m
 
-- Charlie
+configs tested: 112
+configs skipped: 3
 
+tested configs:
+alpha                             allnoconfig   gcc-14.1.0
+alpha                            allyesconfig   clang-20
+alpha                               defconfig   gcc-14.1.0
+arc                              allmodconfig   clang-20
+arc                               allnoconfig   gcc-14.1.0
+arc                              allyesconfig   clang-20
+arc                                 defconfig   gcc-14.1.0
+arm                              allmodconfig   clang-20
+arm                               allnoconfig   gcc-14.1.0
+arm                              allyesconfig   clang-20
+arm                       aspeed_g4_defconfig   gcc-14.1.0
+arm                                 defconfig   gcc-14.1.0
+arm                      footbridge_defconfig   gcc-14.1.0
+arm                            hisi_defconfig   gcc-14.1.0
+arm                           imxrt_defconfig   gcc-14.1.0
+arm                            mmp2_defconfig   gcc-14.1.0
+arm                        realview_defconfig   gcc-14.1.0
+arm                         s5pv210_defconfig   gcc-14.1.0
+arm                       spear13xx_defconfig   gcc-14.1.0
+arm64                            allmodconfig   clang-20
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-14.1.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   gcc-14.1.0
+hexagon                          allyesconfig   clang-20
+hexagon                             defconfig   gcc-14.1.0
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                             allyesconfig   clang-18
+i386         buildonly-randconfig-001-20240911   gcc-12
+i386         buildonly-randconfig-002-20240911   gcc-12
+i386         buildonly-randconfig-003-20240911   gcc-12
+i386         buildonly-randconfig-004-20240911   gcc-12
+i386         buildonly-randconfig-005-20240911   gcc-12
+i386         buildonly-randconfig-006-20240911   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240911   gcc-12
+i386                  randconfig-002-20240911   gcc-12
+i386                  randconfig-003-20240911   gcc-12
+i386                  randconfig-004-20240911   gcc-12
+i386                  randconfig-005-20240911   gcc-12
+i386                  randconfig-006-20240911   gcc-12
+i386                  randconfig-011-20240911   gcc-12
+i386                  randconfig-012-20240911   gcc-12
+i386                  randconfig-013-20240911   gcc-12
+i386                  randconfig-014-20240911   gcc-12
+i386                  randconfig-015-20240911   gcc-12
+i386                  randconfig-016-20240911   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                          atari_defconfig   gcc-14.1.0
+m68k                                defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+mips                           ip32_defconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-14.1.0
+openrisc                          allnoconfig   clang-20
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-12
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   clang-20
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-12
+parisc64                            defconfig   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   clang-20
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                   currituck_defconfig   gcc-14.1.0
+powerpc                       maple_defconfig   gcc-14.1.0
+powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
+powerpc                     rainier_defconfig   gcc-14.1.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   clang-20
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-12
+s390                             allmodconfig   clang-20
+s390                             allmodconfig   gcc-14.1.0
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-12
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-12
+sh                          sdk7780_defconfig   gcc-14.1.0
+sh                           se7206_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-12
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-20
+um                               allyesconfig   clang-20
+um                                  defconfig   gcc-12
+um                             i386_defconfig   gcc-12
+um                           x86_64_defconfig   gcc-12
+x86_64                           alldefconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   clang-18
+x86_64                                  kexec   gcc-12
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   gcc-12
+xtensa                            allnoconfig   gcc-14.1.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
