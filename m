@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-325422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CF0975982
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AB7975984
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECC52857B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:35:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991B31F21CCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED95B1B3F3D;
-	Wed, 11 Sep 2024 17:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9A71B4C29;
+	Wed, 11 Sep 2024 17:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPK/J+EQ"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miLmdgGo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2141B1D53;
-	Wed, 11 Sep 2024 17:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA2E1AE852;
+	Wed, 11 Sep 2024 17:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726076118; cv=none; b=ssOXaKfDHlK9ClLPTqHkgaejBeeJfZ3Lj8ubUl6OJH5pYtRVeX/Ead3Xqc0VQjqttL4x7lIlGeDEV3t0odWbRkdeUsRj8Nh1USgkbPDn4vDN5TBjQQuWwnHRvGLYmIFH909w9rkgx7WNKzlFOnuX6t1qOD6XUuLc/YlQYdhDAt0=
+	t=1726076144; cv=none; b=XtvlNr2FJbhlzGR7vUKSPMOlRp8tFYqzQRc0enfspGmpHFPhWdumr2kiyk4P3wiXudLSBprNqACx6LNeBkL00/+1aVtIUtnRUH9pJNyTy5Wo4YO2IqZV4p1zCfa8ZXRd+RpcZgixcmiYZG8Vmu860hhKgY2xehS9W7olRnIrw0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726076118; c=relaxed/simple;
-	bh=Z4RVgfc5uHKs7ewVUL3u0mqgjSdExBkQE4ZzvPPNM5A=;
+	s=arc-20240116; t=1726076144; c=relaxed/simple;
+	bh=YbkFZVRnO7z0xDZitZm29si1xpSBine6L+hGh61wN1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9oVWXwKYoQZy+3VAFcMBofZ2TNaTGjD8geU+PNrFxuMcQVMw77vGMuP5PPNWRZ6AZyNrlPgM1lNbjZ6S4082q+5fwd70Bd80d7vkM+PFZ6qHA+XrMdZdmFaav5Wq5SAwqudmW7zXdy9LERon/ErzfCKKiGMSpRbiK7WlEkX16s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cPK/J+EQ; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso60342a91.0;
-        Wed, 11 Sep 2024 10:35:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726076116; x=1726680916; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=slfxIcfnsrGD+CeYSsnObbjpdIHxz53HhKI3kduoLEY=;
-        b=cPK/J+EQau6FahuieOmxcubVDZYNgotd6LTTOSBH/D+WUs6EdVbdKuIr9Iz7c9O4+j
-         Kzts/gsxOV9vUlf1K40nB1eIl7dU5brbYIfuJDjzTt6u6T36w4mUiV+jk/txsCemgs5N
-         V5TKUfdwfi+jG4Cm66USHeA7K++LZt8ardmjyuO+JYXG5RFwB7EjCwt42F2ACOcZGZRt
-         b+Am5/6wlJdKJhYdBEsfIgVqeCUZNrC9kPFzxuE6a6PXv9NGv81zYaWFTKymK8UZ3ONc
-         h0H79OL5tl26Hae+hrY+2+Cf0/vjruIfJD2l17ursOM+DVY1Yzry+xcjYAHNU5oyxJM9
-         ZiCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726076116; x=1726680916;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=slfxIcfnsrGD+CeYSsnObbjpdIHxz53HhKI3kduoLEY=;
-        b=WG5c2k43UJO/bz9WBAjvngpHdNXFwV2jbCnFGPPPZB5uJUbf4M41cVlXoriFeMlL1m
-         SEfdCMVcf6iwUSbTh7ZbeOqxyRCXZAMP9651+6oZGZwYg3xr81setGymNr1lQkZRByYD
-         SLBJ1EMCZGh+s3yrXqddlTHqve8RUzCj3NfBUP8TL631Ubr6kCHpnPeYGX1PYy0pzQ3u
-         c6pWoBBoJRjWBVsK7I5LBX/Ydo5Kk01XEwKg6VC91OldyVj0fBMpSdPP7AhQzx28/HKh
-         QCpC1gJb/8tvr38MGPeZ4H2wqe+eRatzhOI1LoxtKIz+UHLbZlmfXF+TiLCD7aESDh1K
-         SGDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp2qM6rmimpNnqEfCx9vOguyXbEGM5L9dkyk1tDE/OVyQ7uvcvchHi4+UlZldD22BlXFmnTywt@vger.kernel.org, AJvYcCWTOURQhs8nfV7zhxAox137xdaW5ySBmvzgUfc9Yh5jAcN8j1ebWV2TVoyGYw1TUdUr/TsYIz3pqxnizfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD8FpcfWawmLL05ztI1YRHckMaLnr6o/ZaIvje0a5Z6e1q9A36
-	OWmTxniiEyCgonRnnHJEoV17pszXyVT4Jc6ozALx2+rt79E/xsNG
-X-Google-Smtp-Source: AGHT+IHB6rEJGL8SWENnyEiintq4ISgz+q0Q2o1uadwr5fMKQVeIwdubqRhVHM9q03qTAhf1Fxbmhg==
-X-Received: by 2002:a17:90a:66c6:b0:2d8:8252:f675 with SMTP id 98e67ed59e1d1-2db83087f69mr4222854a91.39.1726076116216;
-        Wed, 11 Sep 2024 10:35:16 -0700 (PDT)
-Received: from localhost ([2601:647:6881:9060:6166:a54d:77fb:b10d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc12bcd5sm10799795a91.53.2024.09.11.10.35.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 10:35:15 -0700 (PDT)
-Date: Wed, 11 Sep 2024 10:35:14 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Qianqiang Liu <qianqiang.liu@163.com>, davem@davemloft.net,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
-Message-ID: <ZuHU0mVCQJeFaQyF@pop-os.localdomain>
-References: <20240911050435.53156-1-qianqiang.liu@163.com>
- <CANn89iKhbQ1wDq1aJyTiZ-yW1Hm-BrKq4V5ihafebEgvWvZe2w@mail.gmail.com>
- <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z>
- <CANn89i+G-ycrV57nc-XrgToJhwJuhuCGtHpWtFsLvot7Wu9k+w@mail.gmail.com>
- <ZuHMHFovurDNkAIB@pop-os.localdomain>
- <CANn89iJkfT8=rt23LSp_WkoOibdAKf4pA0uybaWMbb0DJGRY5Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rgg2N+y1g0KC9V24EXWMfslTmL/6cKHCqhA/5/a9BSGbKqMcOHP711XDQ1uwBLsY8bmXxezlrgEqYS7zh4uX9jnikVbIBRqpZjp76I4uZO1BDnNJ01lIEEUybrf7c9RLlLBTtaGamiDYyiOxYfNmEiqsSQRN0xHMBw+U5BC/YqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miLmdgGo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195EAC4CEC0;
+	Wed, 11 Sep 2024 17:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726076143;
+	bh=YbkFZVRnO7z0xDZitZm29si1xpSBine6L+hGh61wN1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=miLmdgGorlsJh0FQ94RmjTjwSf0/zRABbJ94KLqEmEDIjjdPPXJ34x69OvXCpI9nx
+	 Yxf0CufuinCFr8VaPmOMhDerDsA8hp49UbpnvvfTAUO0R/mssnjDuPOnfVPMsHdwkZ
+	 dmZzUnDLnYY54Wh9WNmYqdfFXYkSkwYzpYoj4W3xgZjzJx/RJjVKlhhbmnaDvQJRzU
+	 PhAPSO4s0fMSwLMAC5lFT22m3syGPJVsOVCuRr41760TEVausfkYOezblo9RkM0xHz
+	 E9v9kAHilNC13DoR/thFVknR2PQsN7/Os4jOIpTQbQECNMdmjxxaKZTPRv47DUpjmM
+	 Ii9Du3WxbVnaw==
+Date: Wed, 11 Sep 2024 19:35:35 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ayush Singh <ayush@beagleboard.org>, fabien.parent@linaro.org,
+	d-gole@ti.com, lorforlinux@beagleboard.org,
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+	Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/8] rust: kernel: Add Platform device and driver
+ abstractions
+Message-ID: <ZuHU5yrJUOKnJGrB@pollux>
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
+ <2024091106-scouring-smitten-e740@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iJkfT8=rt23LSp_WkoOibdAKf4pA0uybaWMbb0DJGRY5Q@mail.gmail.com>
+In-Reply-To: <2024091106-scouring-smitten-e740@gregkh>
 
-On Wed, Sep 11, 2024 at 07:15:27PM +0200, Eric Dumazet wrote:
-> On Wed, Sep 11, 2024 at 6:58 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> >
-> > On Wed, Sep 11, 2024 at 11:12:24AM +0200, Eric Dumazet wrote:
-> > > On Wed, Sep 11, 2024 at 10:23 AM Qianqiang Liu <qianqiang.liu@163.com> wrote:
-> > > >
-> > > > > I do not think it matters, because the copy is performed later, with
-> > > > > all the needed checks.
-> > > >
-> > > > No, there is no checks at all.
-> > > >
-> > >
-> > > Please elaborate ?
-> > > Why should maintainers have to spend time to provide evidence to
-> > > support your claims ?
-> > > Have you thought about the (compat) case ?
-> > >
-> > > There are plenty of checks. They were there before Stanislav commit.
-> > >
-> > > Each getsockopt() handler must perform the same actions.
-> >
-> >
-> > But in line 2379 we have ops->getsockopt==NULL case:
-> >
-> > 2373         if (!compat)
-> > 2374                 copy_from_sockptr(&max_optlen, optlen, sizeof(int));
-> > 2375
-> > 2376         ops = READ_ONCE(sock->ops);
-> > 2377         if (level == SOL_SOCKET) {
-> > 2378                 err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
-> > 2379         } else if (unlikely(!ops->getsockopt)) {
-> > 2380                 err = -EOPNOTSUPP;         // <--- HERE
-> > 2381         } else {
-> > 2382                 if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
-> > 2383                               "Invalid argument type"))
-> > 2384                         return -EOPNOTSUPP;
-> > 2385
-> > 2386                 err = ops->getsockopt(sock, level, optname, optval.user,
-> > 2387                                       optlen.user);
-> > 2388         }
-> >
-> > where we simply continue with calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
-> > which actually needs the 'max_optlen' we copied via copy_from_sockptr().
-> >
-> > Do I miss anything here?
+On Wed, Sep 11, 2024 at 04:56:14PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Sep 11, 2024 at 07:57:18PM +0530, Ayush Singh wrote:
+> > +/// An identifier for Platform devices.
+> > +///
+> > +/// Represents the kernel's [`struct of_device_id`]. This is used to find an appropriate
+> > +/// Platform driver.
+> > +///
+> > +/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
+> > +pub struct DeviceId(&'static CStr);
+> > +
+> > +impl DeviceId {
 > 
-> This is another great reason why we should not change current behavior.
-
-Hm? But the current behavior is buggy?
-
+> <snip>
 > 
-> err will be -EOPNOTSUPP, which was the original error code before
-> Stanislav patch.
+> I appreciate posting this, but this really should go on top of the
+> device driver work Danilo Krummrich has been doing.
 
-You mean we should continue calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
-despite -EFAULT?
+If everyone agrees, I'd offer to just provide platform device / driver
+abstractions with my next patch series. This way you don't need to worry
+about aligning things with the rest of the abstractions yourself and throughout
+potential further versions of the series.
 
+Just be aware that I probably won't get to work on it until after LPC.
+
+> He and I spent a
+> lot of time working through this this past weekend (well, him talking
+> and explaining, and me asking too many stupid questions...)
 > 
-> Surely the eBPF program will use this value first, and not even look
-> at max_optlen
+> I think what he has will make the platform driver/device work simpler
+> here, and I'll be glad to take it based on that, this "independent" code
+> that doesn't interact with that isn't the best idea overall.
 > 
-> Returning -EFAULT might break some user programs, I don't know.
-
-As you mentioned above, other ->getsockopt() already returns -EFAULT, so
-what is breaking? :)
-
+> It also will properly handle the "Driver" interaction as well, which we
+> need to get right, not a one-off like this for a platform driver.
+> Hopefully that will not cause much, if any, changes for your use of this
+> in your driver, but let's see.
 > 
-> I feel we are making the kernel slower just because we can.
-
-Safety and correctness also matter.
-
-Thanks.
+> thanks,
+> 
+> greg k-h
+> 
 
