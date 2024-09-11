@@ -1,82 +1,168 @@
-Return-Path: <linux-kernel+bounces-325016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FEF9753EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:31:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477619753F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C71DB2888F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4541C21F9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1843519C548;
-	Wed, 11 Sep 2024 13:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0AD19CC15;
+	Wed, 11 Sep 2024 13:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2O2tWTfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B7RSF/oR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uBlec/9y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F02190667;
-	Wed, 11 Sep 2024 13:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEE319CC29;
+	Wed, 11 Sep 2024 13:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061376; cv=none; b=ftg1EZjpoYCIF6PrjnYdW+F9NDjL8W4KRfJQxEirSit4sgXVtABL+wLM2DBD+T4RRT+CfMsI7qqIpDaTjE1jknAJCBNUq71huTwAgEyBgL3qBsGsYklNi7BgtrUyA+DijZ/elE4m731V7EYdRi/lC8h/jIIsewtsfZaJetWYbSE=
+	t=1726061404; cv=none; b=neDnzlkwWnPQdDfXEWDJ511J+A5H7r9eaE4fyyHMKA4hleksOLFPOUCSFL0Iyae2uWQt1qKIYZpnLNfddnGUDo/qTGYv12VsKFhZ/zyhLxsyDyTpWQISToCQRIQSHFtqfAhOJ3X4YpbrssjsyReKslSAxPacup5U0YJ5QSW9zdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061376; c=relaxed/simple;
-	bh=c2N3N5ofava+mbFCf7vOwTGfK67dX6Kp62Jacnr2MPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcS0GgUBu1QuqagCu4vDTQ+JJMJ3Z9MBSQ/NYRBYuoyRurpr8rvHBaQaTpzT979rYmJMX2MXMENig/FPgKwOxdjHlSVog0uWl1XBtpb5tlSJ0WNFhTk6rx3lXrU/2B53kE3dkRqaEI3pvItgB+k/m8SVUwbqmQnMdcOreZH8MG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2O2tWTfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A79C4CEC5;
-	Wed, 11 Sep 2024 13:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726061375;
-	bh=c2N3N5ofava+mbFCf7vOwTGfK67dX6Kp62Jacnr2MPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2O2tWTfd6ahS2acsI5zvGQWyv3FjlUDWVo016GUcgrUDrXmBadl3WbLCVuXDISj9b
-	 Jui9MfnszPOT3zKWIj7SJ8AMhOhGSys+axdKnd9lvpF6YwGoFEi06qM5OiVhae/oOw
-	 6MHtnPkLTNhOsEl11bpGA7uzzZuXJuR20C1c8Ek4=
-Date: Wed, 11 Sep 2024 15:29:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kyle Tso <kyletso@google.com>
-Cc: Thinh.Nguyen@synopsys.com, raychi@google.com, badhri@google.com,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	royluo@google.com, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: dwc3: Runtime get and put usb power_supply handle
-Message-ID: <2024091114-armful-lure-1725@gregkh>
-References: <20240715025827.3092761-1-kyletso@google.com>
+	s=arc-20240116; t=1726061404; c=relaxed/simple;
+	bh=dkFOCyvalwHeNMvRypyWO4UnX7mhw0JQw9NqQjLVCbM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ocuWJWAZcCMqy2/JJww6o/4XkAnin9fJHrjZ73OCQSitRoGfkkDCu61pUb5Q1kENgfu6ry+Gy82GrlS9kcldbIMj5qM5+Rm+FeLPHhzWsAzTzb9kIU5m9g8gTy7Z/U1w7aR6rWsuYkIEArNI5WD71aXYNfJ/wsdTSrLvEyqQf9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B7RSF/oR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uBlec/9y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726061400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=d5MgnnLW0tJEzYRXxpu+WsPzEVtvVIfkgrh1D7ZrkxY=;
+	b=B7RSF/oRKCMzSKVtci4WJz4W+oyEoQMFd0R4zuh5TkoJaQrHVsIXa1PEi/N0S2Pb+Y+FuI
+	XU1FxbqIjlHGa7YNwLhs5QN09trBnXEDXYPuHgoqAHSALk16OSkp8xF2ePsW4XG7fakQQ3
+	sCoxpCJRC9GQktKv28TEWzu2sHw37CYOOzeDXPmXBZUfElVfjUTBc6k480ixLAxZWLt8kS
+	tg60ZqT9rsjvMW1CyVlYDHBpKwnlpGm9b6ojdlMQzf10TGd+lu8GGDXNsKKsc51mBzPcZu
+	pUSXCInednXSCvFvUVz1FHUf4C4U6eRE6Bg4OplxeKW3kLj6Uea8014QzhirWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726061400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=d5MgnnLW0tJEzYRXxpu+WsPzEVtvVIfkgrh1D7ZrkxY=;
+	b=uBlec/9y10Kd50pV4M2TGWhctyFcBO5g9eyU9P//oa4BIbDVrhxNPbUYGN++twjUKdKsA9
+	I0/4t6+LPSUiGdDQ==
+Subject: [PATCH 00/24] timekeeping: Rework to prepare support of
+ indenpendent PTP clocks
+Date: Wed, 11 Sep 2024 15:29:44 +0200
+Message-Id: <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-0-f7cae09e25d6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715025827.3092761-1-kyletso@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEib4WYC/x2NwQrCMBAFf6Xs2YVNDIj+injYts+6aNeQlCKU/
+ ruht5nLzEYVxVDp1m1UsFq1rzcJp46Gl/oEtrE5RYlJriHwiBUfVnflWYsp94kXm1Eq5yUf+Aa
+ y+cRDEjn3F0lRArVgLnja75jdH/v+Bxtfyhd8AAAA
+To: John Stultz <jstultz@google.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Miroslav Lichvar <mlichvar@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Christopher S Hall <christopher.s.hall@intel.com>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-On Mon, Jul 15, 2024 at 10:58:27AM +0800, Kyle Tso wrote:
-> It is possible that the usb power_supply is registered after the probe
-> of dwc3. In this case, trying to get the usb power_supply during the
-> probe will fail and there is no chance to try again. Also the usb
-> power_supply might be unregistered at anytime so that the handle of it
-> in dwc3 would become invalid. To fix this, get the handle right before
-> calling to power_supply functions and put it afterward.
-> 
-> Fixes: 6f0764b5adea ("usb: dwc3: add a power supply for current control")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kyle Tso <kyletso@google.com>
-> ---
->  drivers/usb/dwc3/core.c   | 25 +++++--------------------
->  drivers/usb/dwc3/core.h   |  4 ++--
->  drivers/usb/dwc3/gadget.c | 19 ++++++++++++++-----
->  3 files changed, 21 insertions(+), 27 deletions(-)
+The generic clock and timekeeping infrastructure supports only the already
+defined clocks and as they are not independent there is no need of
+generalization of data structures. But PTP clocks can be independent from
+CLOCK_TAI.
 
-Did this get lost somewhere?  You might need to resend it now that Thinh
-is back from vacation.
+PTP clocks already have clock_gettime() support via the file descriptor
+based posix clocks. These interfaces access the PTP hardware and are
+therefore slow and cannot be used from within the kernel, e.g. TSN
+networking.
 
-thanks,
+This problem can be solved by emulating clock_gettime() via the system
+clock source e.g. TSC on x86. Such emulation requires:
 
-greg k-h
+1. timekeeping mechanism similar to the existing system timekeeping
+2. clock steering equivalent to NTP/adjtimex()
+
+In the already existing system timekeeping implementation the lock and
+shadow timekeeper are separate from the timekeeper and sequence
+counter. Move this information into a new struct type "tk_data" to be able
+to recycle it for the above explained approach.
+
+NTP/adjtimex() related information is all stored in static variables. Move
+all of them into the new struct type ntp_data to make it reusable. (See
+https://lore.kernel.org/r/20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de)
+
+Even without the future support for independent PTP clocks, the
+generalization of timekeeping and NTP/adjtimex() improves the structure and
+readability of the already existing code.
+
+Once this is implemented clock_gettime() support for these clocks via vdso
+can be implement as well but this is an orthogonal task.
+
+This queue covers only the generalization of timekeeping:
+
+- Patch 1-5:   Basic cleanups
+- Patch 6-10:  Generalization of tk_data
+- Patch 11-24: Use always shadow timekeeper for updates
+
+The queue is available here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/ptp/timekeeping
+
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Christopher S Hall <christopher.s.hall@intel.com>
+To: John Stultz <jstultz@google.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+
+Thanks,
+
+Anna-Maria
+
+---
+Anna-Maria Behnsen (16):
+      timekeeping: Avoid duplicate leap state update
+      timekeeping: Move timekeeper_lock into tk_core
+      timekeeping: Define a struct type for tk_core to make it reusable
+      timekeeping: Add struct tk_data as argument to timekeeping_update()
+      timekeeping: Split out timekeeper update of timekeeping_advanced()
+      timekeeping: Introduce combined timekeeping action flag
+      timekeeping: Rework do_settimeofday64() to use shadow_timekeeper
+      timekeeping: Rework timekeeping_inject_offset() to use shadow_timekeeper
+      timekeeping: Rework change_clocksource() to use shadow_timekeeper
+      timekeeping: Rework timekeeping_init() to use shadow_timekeeper
+      timekeeping: Rework timekeeping_inject_sleeptime64() to use shadow_timekeeper
+      timekeeping: Rework timekeeping_resume() to use shadow_timekeeper
+      timekeeping: Rework timekeeping_suspend() to use shadow_timekeeper
+      timekeeping: Rework do_adjtimex() to use shadow_timekeeper
+      timekeeping: Remove TK_MIRROR timekeeping_update() action
+      timekeeping: Merge timekeeping_update_staged() and timekeeping_update()
+
+Thomas Gleixner (8):
+      timekeeping: Read NTP tick length only once
+      timekeeping: Don't stop time readers across hard_pps() update
+      timekeeping: Abort clocksource change in case of failure
+      timekeeping: Simplify code in timekeeping_advance()
+      timekeeping: Reorder struct timekeeper
+      timekeeping: Move shadow_timekeeper into tk_core
+      timekeeping: Encapsulate locking/unlocking of timekeeper_lock
+      timekeeping: Provide timekeeping_restore_shadow()
+
+ include/linux/timekeeper_internal.h | 102 ++++++----
+ kernel/time/timekeeping.c           | 369 +++++++++++++++++-------------------
+ kernel/time/timekeeping_internal.h  |   3 +-
+ kernel/time/vsyscall.c              |   5 +-
+ 4 files changed, 238 insertions(+), 241 deletions(-)
+
 
