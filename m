@@ -1,138 +1,349 @@
-Return-Path: <linux-kernel+bounces-324707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3280974FF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:42:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F3E974FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40C21C21293
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAD1A1F22A7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77969186E39;
-	Wed, 11 Sep 2024 10:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EDF183CBC;
+	Wed, 11 Sep 2024 10:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="iFy3VlOI"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="crLQSR+R"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A3A183090;
-	Wed, 11 Sep 2024 10:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D298213C80A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726051306; cv=none; b=Q5ncI7z3DAZxCfL9by1vfqJgB2sC/G/D8u5LXsVxzo6Fl5JqDJ+MbxCfOZ6xuwrepnuFaW8a3zrPQ8r8pKv/4N4PzsQu5+fqucrK3swAqIPmZQpYIqNnEkzHFWMEcUFLTuhrkr6gzCQSqPAs7Ov5S4JIdkw97Y93/cdfjXKBlPU=
+	t=1726051129; cv=none; b=apUkfICBetPFcGms1Fri6q8xsfhKqmwQtHryObwsBFkDJF9IDt2nE/KXn2cmWu6vPwL5F24O4q2Ve38qX/20qGk3giY9ommEBEM7YbbSIHIl6vF6mpCf8TaYsejJ3sdrJV1V0WxC/ICYIEHmL9oLELYJsbrNmgOujw5yNYtake4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726051306; c=relaxed/simple;
-	bh=I20UKD7TQvAFU5EVSACkB6b8Z2rW1py26Q1UcKXaY+I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K7s6B/v1iFzNVZ5B4lD4V1FNgc+sFasT7xPw0D+raizIUzdb3lATSLkn3K4aPLxcmPf20KqI3gOMUnM5ZZfqT3zm4Fj/cbSS/BT+98oVRTr6u82i+M/AIu46XyYEJ51G4aGafqRAM6CeQ71hXK8t2Y+IMnI9Qsk2hBr4U7rqZR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=iFy3VlOI; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B7nWjM005470;
-	Wed, 11 Sep 2024 12:41:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4fv1sQ8oNVXZbR6VQwj242LUMa622njNgXPkguclEbo=; b=iFy3VlOIok70Wf1D
-	XUBfK0zXFXtae8gE8k6iHXkrjbNnU83Iipeq1g//KG6xywr3vsQcZ0BUpoNtzTeq
-	0v3MgtPMhrMudblbrx9/TOkY9aY9NoZJXeHXNX/bLla2kX6p2fxPt/3Kyph65Ftm
-	4bYJyZe2y87ORsYfgAweJUiD7v0Xd57bVtMyqHohpkJYw+3/W5nqNFqQ4rKYjhqq
-	8yflMO5mcmi0PKad8ua33DF+7qW+07cuIBaezpXYA5EnLcg3riBp3SbMCFMpdKos
-	lR6sOSdeocg5hsh8nQYUdiHvmlE/B9MJ/QRdplN7OU74/zE5HCkrMqbxNlr/0oKx
-	Nu4Icw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gyeh6fkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 12:41:29 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id EB711400B9;
-	Wed, 11 Sep 2024 12:40:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3043F265097;
-	Wed, 11 Sep 2024 12:37:42 +0200 (CEST)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 11 Sep
- 2024 12:37:41 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>
-CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <fabrice.gasnier@foss.st.com>,
-        Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH v7 4/5] arm64: dts: st: Add combophy node on stm32mp251
-Date: Wed, 11 Sep 2024 12:37:28 +0200
-Message-ID: <20240911103729.2980431-5-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911103729.2980431-1-christian.bruel@foss.st.com>
-References: <20240911103729.2980431-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1726051129; c=relaxed/simple;
+	bh=MDv+n+5JOFt/G2Z2qjiEGomhxVYycOt0ZBpuhZxVzBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JdeVdEF7m2ZR3hYBuLk2Y0XXWamStQFQ8VXfgY+ZQb/AFUX3uQDCFuoLvBP4ZGg/dK1scuKaJ1znsEYQiXiFO4wB5ZN5/GQJB5Cf6KS6bCdi4v7rWhtg3cf2zFN66sv0th1QYxnvP8C1xLY0XxcB+gRo2l0/V4rZOIq0r/k72Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=crLQSR+R; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F09C63F5B0
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1726051125;
+	bh=XZ3NpBRuI85Nx16fH1QRYUdTD1iasNHxgIiJlTjULR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=crLQSR+R/ri10FLJdsGSg1BRC4xD2d4+4zK71bvk0tw+sZh5dhE97lLUKOW0ey3Jo
+	 8SsZRo/hbXONOnWjczmAYV5jL/HhX9V7yJ3kLlremGKYP35soNF1quCFpfsQ4Hme8m
+	 q+5cVRRdxRw7RrJQ1mBmuVw1BXzddQgJ7XLF2dWAP6KjDJXcCQECMumYnbPhtJACzH
+	 4kzWS9PPobGFuTcd8xg3Y/epoEQHL/jcclSpSAwY/72R3d9uPt5YkhZf8E+DXA6cfB
+	 f7T+D/gB5H7X6nvbc4h8HU2KKJMJFR7CSxpBgxAH1e9Sucu+czvbXqKnpGZXSIcOLi
+	 W+4accTNIgwcA==
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374bfc57e2aso3911876f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:38:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726051124; x=1726655924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XZ3NpBRuI85Nx16fH1QRYUdTD1iasNHxgIiJlTjULR4=;
+        b=HHKbsi/u6OQnkhBQOlKQuaAzh9x/p4k64fAqdczswJlC6++Bx/KsBZ4JMGyhiwvcKx
+         OA0eevVPvUthf7KOrS1H8TcFCAjAcW15gboBOrTBLSaLMR5eOO2ovTamd152IEvcP4ZQ
+         J8hlR3grYyT1ZE35BEqo+7B0O463cS1oyMrpLWy+MczPhwGo4dIBxZ5ZixwDbkgBdAS8
+         7CIfCg/nFmXJUar+dycGS4VTBnn4O/xUNdMx1pILZYJVrCCXkb4tY5YSq2Qe5wQIzmX8
+         eJ66rhw+cRvlnsHgUsyYEYdDpMWCEyPXeshRFOGtflDq86GAd3ORUJdB5Ne9TYiUo7lx
+         4RHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdvtnIyS51Uz0LvVdxZw8mTOuBWAQ83cARAsGryX9ZJ58ctBlte1wsRD1Vz/UVOWjZQzouzZkhSADM8HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbZogfuWNX1GYiyfx1rUCxwd+2Zw8xMGq0TpZHBiatr39tGB4Y
+	1l29xlIxee1I+zTanFR71GNxkknclWs45j2yyhX4oijO/lgmikNJnGOzKKVJjq+NpEk/rIPeIsh
+	oFA2MqSGA1TbES4wxhQ2E4acSiM18/WC+JGyFH7GuNoo5Je77He9CZuYU9tzjdRlFDDYCpdY2uZ
+	jD3rpH1B/d4DztggamC3D308NcAoHW6QK1j8CvB308N4XoYejYhCm2
+X-Received: by 2002:a5d:5d84:0:b0:374:c84d:1cfe with SMTP id ffacd0b85a97d-3789f86f674mr6210287f8f.21.1726051124225;
+        Wed, 11 Sep 2024 03:38:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRSJj9yuS657ZVmDugU201ImM20XuALCk/aw2SV3c7fIUGHktt4avj8J3R3N4f1ZVQRj306wDMQk4AeUoW4+s=
+X-Received: by 2002:a5d:5d84:0:b0:374:c84d:1cfe with SMTP id
+ ffacd0b85a97d-3789f86f674mr6210273f8f.21.1726051123596; Wed, 11 Sep 2024
+ 03:38:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20240906083539.154019-1-en-wei.wu@canonical.com>
+ <8707a2c6-644d-4ccd-989f-1fb66c48d34a@gmail.com> <CAMqyJG0FcY0hymX6xyZwiWbD8zdsYwWG7GMu2zcL9-bMkq-pMw@mail.gmail.com>
+ <038166f4-9c47-4017-9543-4b4a5ca503f5@gmail.com> <CAMqyJG0-35Phq1i3XkTyJfjzk07BNuOvPyDpdbFECzbEPHp_ig@mail.gmail.com>
+ <ed753ef5-3913-413a-ad46-2abe742489b2@gmail.com>
+In-Reply-To: <ed753ef5-3913-413a-ad46-2abe742489b2@gmail.com>
+From: En-Wei WU <en-wei.wu@canonical.com>
+Date: Wed, 11 Sep 2024 18:38:32 +0800
+Message-ID: <CAMqyJG1Z13Xkw28jrKKhthJphjBBxmEpsKTVPmuU0auHHz-fxQ@mail.gmail.com>
+Subject: Re: [PATCH net] r8169: correct the reset timing of RTL8125 for
+ link-change event
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: nic_swsd@realtek.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kuan-ying.lee@canonical.com, 
+	kai.heng.feng@canonical.com, me@lagy.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for COMBOPHY which is used either by the USB3 and PCIe
-controller.
-USB3 or PCIe mode is done with phy_set_mode().
-PCIe internal reference clock can be generated from the internal clock
-source or optionnaly from an external 100Mhz pad.
+> Also wrt ALDPS: Do you have the firmware for the NIC loaded?
+The firmware is rtl8125b-2_0.0.2 07/13/20
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> Just to be sure. Can you test with the following?
+Your patch works for our machine. Seems like the root cause is indeed the A=
+LDPS.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 1167cf63d7e8..b596afec1b6e 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/st,stm32mp25-rcc.h>
- #include <dt-bindings/regulator/st,stm32mp25-regulator.h>
-+#include <dt-bindings/phy/phy.h>
- 
- / {
- 	#address-cells = <2>;
-@@ -518,6 +519,21 @@ i2c8: i2c@46040000 {
- 				status = "disabled";
- 			};
- 
-+			combophy: phy@480c0000 {
-+				compatible = "st,stm32mp25-combophy";
-+				reg = <0x480c0000 0x1000>;
-+				#phy-cells = <1>;
-+				clocks = <&rcc CK_BUS_USB3PCIEPHY>, <&rcc CK_KER_USB3PCIEPHY>;
-+				clock-names = "apb", "ker";
-+				resets = <&rcc USB3PCIEPHY_R>;
-+				reset-names = "phy";
-+				access-controllers = <&rifsc 67>;
-+				power-domains = <&CLUSTER_PD>;
-+				wakeup-source;
-+				interrupts-extended = <&exti1 45 IRQ_TYPE_EDGE_FALLING>;
-+				status = "disabled";
-+			};
-+
- 			sdmmc1: mmc@48220000 {
- 				compatible = "st,stm32mp25-sdmmc2", "arm,pl18x", "arm,primecell";
- 				arm,primecell-periphid = <0x00353180>;
--- 
-2.34.1
-
+On Wed, 11 Sept 2024 at 17:16, Heiner Kallweit <hkallweit1@gmail.com> wrote=
+:
+>
+> On 11.09.2024 09:01, En-Wei WU wrote:
+> >> What is the link partner in your case?
+> > My link partner is FS S3900-48T4S switch.
+> >
+> >>  If you put a simple switch in between, does this help?
+> > I just put a simple D-link switch in between with the original kernel,
+> > the issue remains (re-plugging it after 3 seconds).
+> >
+> >> It makes more the impression that after 3s of link-down the chip (PHY?=
+)
+> >> transitions to a mode where it doesn't wake up after re-plugging the c=
+able.
+> > I've done a ftrace on the r8169.ko and the phy driver (realtek.ko),
+> > and I found that the phy did wake up:
+> >
+> >    kworker/u40:4-267   [003]   297.026314: funcgraph_entry:
+> >        |      phy_link_change() {
+> > 3533    kworker/u40:4-267   [003]   297.026315: funcgraph_entry:
+> >  6.704 us   |        netif_carrier_on();
+> > 3534    kworker/u40:4-267   [003]   297.026322: funcgraph_entry:
+> >             |        r8169_phylink_handler() {
+> > 3535    kworker/u40:4-267   [003]   297.026322: funcgraph_entry:
+> >  0.257 us   |          rtl_link_chg_patch();
+> > 3536    kworker/u40:4-267   [003]   297.026324: funcgraph_entry:
+> >  4.026 us   |          netif_tx_wake_queue();
+> > 3537    kworker/u40:4-267   [003]   297.026328: funcgraph_entry:
+> >             |          phy_print_status() {
+> > 3538    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
+> >  0.245 us   |            phy_duplex_to_str();
+> > 3539    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
+> >  0.240 us   |            phy_speed_to_str();
+> > 3540    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
+> > + 12.798 us  |            netdev_info();
+> > 3541    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
+> > + 14.385 us  |          }
+> > 3542    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
+> > + 21.217 us  |        }
+> > 3543    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
+> > + 28.785 us  |      }
+> >
+> > So I doubt that the issue isn't necessarily related to the ALDPS,
+> > because the PHY seems to have woken up.
+> >
+> > After looking at the reset function (plus the TX queue issue
+> > previously reported by the user) , I'm wondering if the problem is
+> > related to DMA:
+> > static void rtl_reset_work(struct rtl8169_private *tp) {
+> >     ....
+> >     for (i =3D 0; i < NUM_RX_DESC; i++)
+> >          rtl8169_mark_to_asic(tp->RxDescArray + i);
+> >     ....
+> > }
+> >
+> > On Wed, 11 Sept 2024 at 01:06, Heiner Kallweit <hkallweit1@gmail.com> w=
+rote:
+> >>
+> >> On 09.09.2024 07:25, En-Wei WU wrote:
+> >>> Hi Heiner,
+> >>>
+> >>> Thank you for the quick response.
+> >>>
+> >>> On Sat, 7 Sept 2024 at 05:17, Heiner Kallweit <hkallweit1@gmail.com> =
+wrote:
+> >>>>
+> >>>> On 06.09.2024 10:35, En-Wei Wu wrote:
+> >>>>> The commit 621735f59064 ("r8169: fix rare issue with broken rx afte=
+r
+> >>>>> link-down on RTL8125") set a reset work for RTL8125 in
+> >>>>> r8169_phylink_handler() to avoid the MAC from locking up, this
+> >>>>> makes the connection broken after unplugging then re-plugging the
+> >>>>> Ethernet cable.
+> >>>>>
+> >>>>> This is because the commit mistakenly put the reset work in the
+> >>>>> link-down path rather than the link-up path (The commit message say=
+s
+> >>>>> it should be put in the link-up path).
+> >>>>>
+> >>>> That's not what the commit message is saying. It says vendor driver
+> >>>> r8125 does it in the link-up path.
+> >>>> I moved it intentionally to the link-down path, because traffic may
+> >>>> be flowing already after link-up.
+> >>>>
+> >>>>> Moving the reset work from the link-down path to the link-up path f=
+ixes
+> >>>>> the issue. Also, remove the unnecessary enum member.
+> >>>>>
+> >>>> The user who reported the issue at that time confirmed that the orig=
+inal
+> >>>> change fixed the issue for him.
+> >>>> Can you explain, from the NICs perspective, what exactly the differe=
+nce
+> >>>> is when doing the reset after link-up?
+> >>>> Including an explanation how the original change suppresses the link=
+-up
+> >>>> interrupt. And why that's not the case when doing the reset after li=
+nk-up.
+> >>>
+> >>> The host-plug test under original change does have the link-up
+> >>> interrupt and r8169_phylink_handler() called. There is not much clue
+> >>> why calling reset in link-down path doesn't work but in link-up does.
+> >>>
+> >>> After several new tests, I found that with the original change, the
+> >>> link won't break if I unplug and then plug the cable within about 3
+> >>> seconds. On the other hand, the connections always break if I re-plug
+> >>> the cable after a few seconds.
+> >>>
+> >> Interesting finding. 3 seconds sounds like it's unrelated to runtime p=
+m,
+> >> because this has a 10s delay before the chip is transitioned to D3hot.
+> >> It makes more the impression that after 3s of link-down the chip (PHY?=
+)
+> >> transitions to a mode where it doesn't wake up after re-plugging the c=
+able.
+> >>
+> >> Just a wild guess: It may be some feature like ALDPS (advanced link-do=
+wn
+> >> power saving). Depending on the link partner this may result in not wa=
+king
+> >> up again, namely if the link partner uses ALDPS too.
+> >> What is the link partner in your case? If you put a simple switch in b=
+etween,
+> >> does this help?
+> >>
+> >> In the RTL8211F datasheet I found the following:
+> >>
+> >> Link Down Power Saving Mode.
+> >> 1: Reflects local device entered Link Down Power Saving Mode,
+> >> i.e., cable not plugged in (reflected after 3 sec)
+> >> 0: With cable plugged in
+> >>
+> >> This is a 1Gbps PHY, but Realtek may use the same ALDPS mechanism with=
+ the
+> >> integrated PHY of RTL8125. The 3s delay described there perfectly matc=
+hes
+> >> your finding.
+> >>
+> >>> With this new patch (reset in link-up path), both of the tests work
+> >>> without any error.
+> >>>
+> >>>>
+> >>>> I simply want to be convinced enough that your change doesn't break
+> >>>> behavior for other users.
+> >>>>
+> >>>>> Fixes: 621735f59064 ("r8169: fix rare issue with broken rx after li=
+nk-down on RTL8125")
+> >>>>> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> >>>>> ---
+> >>>>>  drivers/net/ethernet/realtek/r8169_main.c | 11 +++++------
+> >>>>>  1 file changed, 5 insertions(+), 6 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/ne=
+t/ethernet/realtek/r8169_main.c
+> >>>>> index 3507c2e28110..632e661fc74b 100644
+> >>>>> --- a/drivers/net/ethernet/realtek/r8169_main.c
+> >>>>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+> >>>>> @@ -590,7 +590,6 @@ struct rtl8169_tc_offsets {
+> >>>>>  enum rtl_flag {
+> >>>>>       RTL_FLAG_TASK_ENABLED =3D 0,
+> >>>>>       RTL_FLAG_TASK_RESET_PENDING,
+> >>>>> -     RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE,
+> >>>>>       RTL_FLAG_TASK_TX_TIMEOUT,
+> >>>>>       RTL_FLAG_MAX
+> >>>>>  };
+> >>>>> @@ -4698,8 +4697,6 @@ static void rtl_task(struct work_struct *work=
+)
+> >>>>>  reset:
+> >>>>>               rtl_reset_work(tp);
+> >>>>>               netif_wake_queue(tp->dev);
+> >>>>> -     } else if (test_and_clear_bit(RTL_FLAG_TASK_RESET_NO_QUEUE_WA=
+KE, tp->wk.flags)) {
+> >>>>> -             rtl_reset_work(tp);
+> >>>>>       }
+> >>>>>  out_unlock:
+> >>>>>       rtnl_unlock();
+> >>>>> @@ -4729,11 +4726,13 @@ static void r8169_phylink_handler(struct ne=
+t_device *ndev)
+> >>>>>       if (netif_carrier_ok(ndev)) {
+> >>>>>               rtl_link_chg_patch(tp);
+> >>>>>               pm_request_resume(d);
+> >>>>> -             netif_wake_queue(tp->dev);
+> >>>>> -     } else {
+> >>>>> +
+> >>>>>               /* In few cases rx is broken after link-down otherwis=
+e */
+> >>>>>               if (rtl_is_8125(tp))
+> >>>>> -                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_NO_=
+QUEUE_WAKE);
+> >>>>> +                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_PEN=
+DING);
+> >>>>> +             else
+> >>>>> +                     netif_wake_queue(tp->dev);
+> >>>>
+> >>>> This call to netif_wake_queue() isn't needed any longer, it was intr=
+oduced with
+> >>>> the original change only.
+> >>>>
+> >>>>> +     } else {
+> >>>>>               pm_runtime_idle(d);
+> >>>>>       }
+> >>>>>
+> >>>>
+> >>>
+> >>> CC. Martin Kj=C3=A6r J=C3=B8rgensen  <me@lagy.org>, could you kindly =
+test if
+> >>> this new patch works on your environment? Thanks!
+> >>>
+> >>> En-Wei,
+> >>> Best regards.
+> >>
+>
+> Just to be sure. Can you test with the following?
+>
+>
+> diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/ne=
+t/ethernet/realtek/r8169_phy_config.c
+> index 2c8845e08..cf29b1208 100644
+> --- a/drivers/net/ethernet/realtek/r8169_phy_config.c
+> +++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
+> @@ -1060,6 +1060,7 @@ static void rtl8125a_2_hw_phy_config(struct rtl8169=
+_private *tp,
+>         phy_modify_paged(phydev, 0xa86, 0x15, 0x0001, 0x0000);
+>         rtl8168g_enable_gphy_10m(phydev);
+>
+> +       rtl8168g_disable_aldps(phydev);
+>         rtl8125a_config_eee_phy(phydev);
+>  }
+>
+> @@ -1099,6 +1100,7 @@ static void rtl8125b_hw_phy_config(struct rtl8169_p=
+rivate *tp,
+>         phy_modify_paged(phydev, 0xbf8, 0x12, 0xe000, 0xa000);
+>
+>         rtl8125_legacy_force_mode(phydev);
+> +       rtl8168g_disable_aldps(phydev);
+>         rtl8125b_config_eee_phy(phydev);
+>  }
+>
+> --
+> 2.46.0
+>
+>
 
