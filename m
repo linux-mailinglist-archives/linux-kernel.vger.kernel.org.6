@@ -1,59 +1,70 @@
-Return-Path: <linux-kernel+bounces-325359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF95975879
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:33:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2C897587D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EAC5282473
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827D61F2212B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380211AC8BB;
-	Wed, 11 Sep 2024 16:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474921AED31;
+	Wed, 11 Sep 2024 16:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3DQ+l1D8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cke0NNEi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF911A3AB8;
-	Wed, 11 Sep 2024 16:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7901A3AB8;
+	Wed, 11 Sep 2024 16:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726072418; cv=none; b=e26Dyxwd0KIr6y0g96X/keGKmGxO0GRd0r0Sd6AVZ4b5wqMvD2Llr+mC4iJdGl2BZyt/TMObkLFEajL3fagoLhX2ttLkgD360wL/i1t+i+E4UPI94ChRZkPekbbx9QhN1idn6aXehDleI4x4UqNuAFHyjCf4j5yuTwLFpK/WFis=
+	t=1726072439; cv=none; b=QfszJNOkGr1b7pAiK1fg8BOGMhDqxs8V6NAH8W8JaM4PQB19KsEDbJEpo/1u+tHWAXYK834zqzDGaJFq2fiWDdc2dvPoa7iOO0kdGplmmIw/DKAvmKowcdWNqUJJB3oPT9mD4T5ypWCv9WnwRjDaCPIIDvcTj+9nUCBsbDgxU40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726072418; c=relaxed/simple;
-	bh=KqfZ7m8EhNnWklRAqvkBm7rwHrjSBYj4Do2WyPRns1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rR8nICx0IU1hjR2hqWYofvB6atU+UIINuxKW/sGnI8r/t9CwujVgHTlmFeurcLru+693gLfqPkpNrQxmAz77O43aK8mYMN2ZyBx0aH4/9qfe2KUYxcrSKNzmRP4psr7hjwne5B0X6MyMQ9xWgDVFOoat6deX28J9sbk1fjOXToc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3DQ+l1D8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=PcQ5fDBXQF38IS4nRj4kQDxty2PynUOlWmn1XjuXuXM=; b=3DQ+l1D8m98ij39QikYlBuszAn
-	PgWs8Jx6RTgqPxRSy4Ykvm2wipX1/HILjJbr48w/hUbni68SCLwg/Udj8FMv+nBcNtibzavtcr5Qo
-	VdjcbkgacLKbMAn5Bt82DW1rnc7KgM/ZWNtGJvb8ictWaSYEOd1Qscx2o0J+rS3g3HYo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1soQHV-007ET5-Ud; Wed, 11 Sep 2024 18:33:25 +0200
-Date: Wed, 11 Sep 2024 18:33:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thomas Martitz <tmartitz-oss@avm.de>
-Cc: Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	jnixdorf-oss@avm.de, bridge@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] net: bridge: drop packets with a local source
-Message-ID: <210e3e45-21b3-4cbe-9372-297f32cf6967@lunn.ch>
-References: <20240911125820.471469-1-tmartitz-oss@avm.de>
+	s=arc-20240116; t=1726072439; c=relaxed/simple;
+	bh=me2IwCdr0YPbwk7LPVsZk6xYX4lHvRc5w/WlwEq5Ot0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LUHNmTXVZX+PjYJC00IFNHFVdNqsUj7ROHp2ldUqZLJVZWTD++JAkHCOqU2gXIJcmc4TD9ulJ9K2gm1ikDKlXi6yVzagVkHeH8QbR0j7sb1pQR18zYTCH+zlnCdNrahG/Adtriou0JdDe1iP2mWrY5P7E5Ap5UDYIrv4S0c3reI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cke0NNEi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99A8C4CEC0;
+	Wed, 11 Sep 2024 16:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726072439;
+	bh=me2IwCdr0YPbwk7LPVsZk6xYX4lHvRc5w/WlwEq5Ot0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Cke0NNEiY/Ntdi9DzOQWVIx2io2HmhtOE9Tfn/DtPR7XxhJ2nNd/qGrWUEHNo0Hu7
+	 jtXTkS39wkSgMp5MdfGtAdXasMqWFKucOTqwcKosQ2zT355Tkz1r45LHx34oa7hkMk
+	 PFYXqcEQJnAV98EKJ1fw8P67GORnJ/TU3U6pBOKSv42z/bTShuyl5xPhDFjVxyN9fQ
+	 3ZH2P8eMrByP8jTwXRBuAAT/mdCh4dEwC15fTixvA8LXqKJ/yDKBmitZw+BBY/475u
+	 M9thXb3k+g7hf2aRQkbAExivGG3g//uIsLFPSQ3l2XLhQkkGqPbGlheoEpDTYSCfcE
+	 xxQja9Fio1UyQ==
+Date: Wed, 11 Sep 2024 11:33:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Qianqiang Liu <qianqiang.liu@163.com>
+Subject: Re: [PATCH v8 11/11] PCI: imx6: Add i.MX8Q PCIe root complex (RC)
+ support
+Message-ID: <20240911163356.GA643833@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +73,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911125820.471469-1-tmartitz-oss@avm.de>
+In-Reply-To: <ZuG1BfhQpd9GajNH@lizhi-Precision-Tower-5810>
 
-On Wed, Sep 11, 2024 at 02:58:17PM +0200, Thomas Martitz wrote:
-> Currently, there is only a warning if a packet enters the bridge
-> that has the bridge's or one port's MAC address as source.
+On Wed, Sep 11, 2024 at 11:19:33AM -0400, Frank Li wrote:
+> On Wed, Sep 11, 2024 at 09:07:21AM -0500, Bjorn Helgaas wrote:
+> > [+cc Qianqiang]
+> >
+> > On Mon, Jul 29, 2024 at 04:18:18PM -0400, Frank Li wrote:
+> > > From: Richard Zhu <hongxing.zhu@nxp.com>
+> > >
+> > > Implement i.MX8Q (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe RC support. While
+> > > the controller resembles that of iMX8MP, the PHY differs significantly.
+> > > Notably, there's a distinction between PCI bus addresses and CPU addresses.
+> > >
+> > > Introduce IMX_PCIE_FLAG_CPU_ADDR_FIXUP in drvdata::flags to indicate driver
+> > > need the cpu_addr_fixup() callback to facilitate CPU address to PCI bus
+> > > address conversion according to "ranges" property.
+> >
+> > > +static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
+> > > +{
+> > > +	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
+> > > +	struct dw_pcie_rp *pp = &pcie->pp;
+> > > +	struct resource_entry *entry;
+> > > +	unsigned int offset;
+> > > +
+> > > +	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
+> > > +		return cpu_addr;
+> > > +
+> > > +	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
+> > > +	offset = entry->offset;
+> > > +	return (cpu_addr - offset);
+> > > +}
+> >
+> > I'm sure that with enough effort, we could prove "entry" cannot be
+> > NULL here, but I'm not sure I want to spend the effort, and we're
+> > going to end up with more patches like this:
+> >
+> >   https://lore.kernel.org/r/20240911125055.58555-1-qianqiang.liu@163.com
+> >
+> > I propose this minor change:
+> >
+> >   entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
+> >   if (!entry)
+> >     return cpu_addr;
+> >
+> >   return cpu_addr - entry->offset;
+> >
+> > I still think we should get rid of the .cpu_addr_fixup() callback if
+> > possible.  But that's a discussion for another day.
 > 
-> Clearly this indicates a network loop (or even spoofing) so we
-> generally do not want to process the packet. Therefore, move the check
-> already done for 802.1x scenarios up and do it unconditionally.
+> Stop these fake alarm from some tools's scan. entry never be NULL here.
+> I am working on EP side by involve a "ranges" support like RC side.
+> 
+> Or just omit this kinds of patches.
 
-Does 802.1d say anything about this?
+As I said initially, we probably *could* prove that "entry" can never
+be NULL here, but why should I have to spend the effort to do that?
+The "windows" list is not even built in this file, so it's not
+trivial.  And even if "entry" can't be NULL now, what's to prevent
+that assumption from breaking in the future?
 
-Quoting the standard gives you a strong case for getting the patch
-merged.
+I don't think there's anything wrong with checking for NULL here, and
+it avoids copy/pasting this somewhere where it *does* matter.  So I'm
+in favor of this kind of patch.
 
-	Andrew
+Bjorn
 
