@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-325306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5340A9757A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D459757A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BA71C26286
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47861C261D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741DC1AD9CF;
-	Wed, 11 Sep 2024 15:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2C61B29D8;
+	Wed, 11 Sep 2024 15:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oe2UFUkT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O53vvKAD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11E7192D86;
-	Wed, 11 Sep 2024 15:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED61A3021;
+	Wed, 11 Sep 2024 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726069955; cv=none; b=AwXt9+0wXiiiW6jVgusmI40ZudDVfCHK0uNpjJYav6ConUjmHYZG17tmNy05ISaV/0vqKzlZ64QCXlHk2IMVdDmGBBhYvS/UqXMTa/ARlH3lYm+AO6MdCgWAbTbEAmfAWfvieVcKvy29GCdkDFAMz3cJ7cVo4I1bBzBZlGhMgHU=
+	t=1726069960; cv=none; b=XCk9prNel3Qe3dWDyXr0UnUK7KI4rl50966zawUykHhaSJh763SlXkFKdBNBOr+dP4pMrWOoo4ozSqeOkZZ7agsKAjyqMxDpiK8K+0plSJCF0lwJbjzPOayp6fR6zdBpL9NSvTnHjWFO5uPD7Q6pKj3Lp9b8KPbq0yOQ8LWReeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726069955; c=relaxed/simple;
-	bh=rKWA3UShZ/s8ZMt2mlMUZHDP2tW4HLoJaMa0ps78jio=;
+	s=arc-20240116; t=1726069960; c=relaxed/simple;
+	bh=EaRo3nIvBeULRRnHqzUQ05tQMRJjg5ALvOAHP3Y91Qc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WR0gb5IehgFR6b/WU2EDY45SDTrHEdg40IIn4yamV7QgVoyipgKQr4y+b1dAFtgCSepjxMsTuvsocDbzZJcxJjFMkYbrsFZf5gYfCsXC08Z4lR7d1hyYhTGYtqhZRhpl4CSdiUbJNvdHk45CaisMk2myXOqTptToSfubMIhDWls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oe2UFUkT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF749C4CEC0;
-	Wed, 11 Sep 2024 15:52:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEw9Nth+L713nkl1c9jVpJ60ipZsin3k2nzg2nLY3ai36+oXNu18T20/zpDGFEz5bnlttU7c6BQ+JYdNUTL5DBc3X4mY1+pzb2jHX19gs33W6/h4Z6ZOW6FqKPgu2fSsn7bsBLIEdYIHfzKkrvxgp/58eL3vXUWj9rC9zYIXI5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O53vvKAD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B5FC4CED0;
+	Wed, 11 Sep 2024 15:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726069955;
-	bh=rKWA3UShZ/s8ZMt2mlMUZHDP2tW4HLoJaMa0ps78jio=;
+	s=k20201202; t=1726069959;
+	bh=EaRo3nIvBeULRRnHqzUQ05tQMRJjg5ALvOAHP3Y91Qc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oe2UFUkTIMMsv9Lx5GYRuQa/ml85xgNW4CoT9+MOsE7O0JyYoTZhGEgA3lUYd+aCO
-	 RhlLQxv+5hTVZoGSMOuKDb4yAgk3VYIndLuPn6idTHofUUmfnV9ZxKIGoZDZFf0Cty
-	 4IfiXdG3Q2a2tm6genjGkHxPm+V/tI8c3vHQr8jR05jteS/W0Um8R5J7LmGV22wxEL
-	 3Y/oSsDHJaOQc0ghCh8QWk6vs2vLV7048s73HPsvT5JJ/fmWL2adS8stre2XkGMONa
-	 HwHVkGbwHfAEDWUtviB04P7em/H7AeDvgWzpBGaxH7UPwuL1o2cEpqSFDYVD119ggO
-	 i1GwAAD42A19w==
-Date: Wed, 11 Sep 2024 12:52:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: kan.liang@linux.intel.com, namhyung@kernel.org, jolsa@kernel.org,
-	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf evlist: Print hint for group
-Message-ID: <ZuG8wCjFjeW3stUI@x1>
-References: <20240908202847.176280-1-kan.liang@linux.intel.com>
- <CAP-5=fXjH5C0H8RWULGm9UJc36mp=1rfoeBCxVVoHxe2KnGY8g@mail.gmail.com>
+	b=O53vvKADVc2odhiedKGSyCanEhIgja3ljEd9a2PgKFVz2pWndZITepiIts4ziDx1J
+	 3vQaiVIX9SMnsdq7USKWHNw4CTlX51WtDUbg0nWokkrY6JOQNptxJAibuMydppfz08
+	 qwf1cQOhkPD/Q3TwL+scqChMY8uwLCwMw27awSUFEnrBrNyE7sTpF+GvwEtYZiTYn5
+	 jotU1ukSAd/CkMYs9Q9xWU/TI1IbI22GFBDkLLDPPLEO/AmSu0HOec7XH+yDnE810R
+	 QENQWKkuOOSUtuCRf23z/zGiekAJe1BxlxCyjaFgAxoYvMu6ul46En1jO9AozQ0P3f
+	 IHfFsgI9dD48w==
+Date: Wed, 11 Sep 2024 16:52:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/212] 5.15.167-rc2 review
+Message-ID: <090abdd1-bd82-483e-8d51-fef56c8039ee@sirena.org.uk>
+References: <20240911130535.165892968@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ahH29RshIXgcaMP2"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXjH5C0H8RWULGm9UJc36mp=1rfoeBCxVVoHxe2KnGY8g@mail.gmail.com>
-
-On Mon, Sep 09, 2024 at 09:54:57AM -0700, Ian Rogers wrote:
-> On Sun, Sep 8, 2024 at 1:28 PM <kan.liang@linux.intel.com> wrote:
-> >
-> > From: Kan Liang <kan.liang@linux.intel.com>
-> >
-> > An event group is a critical relationship. There is a -g option that can
-> > display the relationship. But it's hard for a user to know when should
-> > this option be applied.
-> >
-> > If there is an event group in the perf record, print a hint to suggest
-> > the user apply the -g to display the group information.
-> >
-> > With the patch,
-> >
-> >  $perf record -e "{cycles,instructions},instructions" sleep 1
-> >  [ perf record: Woken up 1 times to write data ]
-> >  [ perf record: Captured and wrote 0.024 MB perf.data (4 samples) ]
-> >
-> >  $perf evlist
-> >  cycles
-> >  instructions
-> >  instructions
-> >  # Tip: use 'perf evlist -g' to show group information
-> >
-> >  $perf evlist -g
-> >  {cycles,instructions}
-> >  instructions
-> >
-> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Closes: https://lore.kernel.org/lkml/ZttgvduaKsVn1r4p@x1/
-> > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks, tested:
-
-    Committer testing:
-    
-    So for a perf.data file _with_ a group:
-    
-      root@number:~# perf evlist -g
-      {cpu_core/branch-instructions/pp,cpu_core/branches/}
-      dummy:u
-      root@number:~# perf evlist
-      cpu_core/branch-instructions/pp
-      cpu_core/branches/
-      dummy:u
-      # Tip: use 'perf evlist -g' to show group information
-      root@number:~#
-    
-    Then for something _without_ a group, no hint:
-    
-      root@number:~# perf record ls
-      <SNIP>
-      [ perf record: Woken up 1 times to write data ]
-      [ perf record: Captured and wrote 0.035 MB perf.data (7 samples) ]
-      root@number:~# perf evlist
-      cpu_atom/cycles/P
-      cpu_core/cycles/P
-      dummy:u
-      root@number:~#
-    
-    No suggestion, good.
-    
-    Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-    Reviewed-by: Ian Rogers <irogers@google.com>
-    Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+In-Reply-To: <20240911130535.165892968@linuxfoundation.org>
+X-Cookie: No Canadian coins.
 
 
-Applied.
+--ahH29RshIXgcaMP2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-- Arnaldo
+On Wed, Sep 11, 2024 at 03:07:08PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.167 release.
+> There are 212 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--ahH29RshIXgcaMP2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbhvMAACgkQJNaLcl1U
+h9ASrwf/deW7IhEH0alp/BDC60u+MfVsjYsjFvv/Z2BSfgEr9c5wsxj9u2jBzfCD
+oUVkf5bv1+JQYiITy6RpqWOF0yozP9IpSt7Zv4+VH4wVz9zCrtp7toORL3+qfiI3
+NL8Zduflu+lkO0AzVmTpPY3NX51Yb1NKikT8/ywcRhKp+OqhZMVfW5OXjaCcmn+3
+20M7bvQOMTQeavHTaxMlptsDP8WADAJPn4Qsi6bhHbuiBrucwHsYJTw12Gi0FjvO
+32qz6x99exo1Gt+/nd+nQYViCBtF1M526M+8c38rnw8ufKvq03I2OxFhMGoU+XAB
+KlgcG5uOW3z/gxTm5xQwKanPa3xLfA==
+=peKz
+-----END PGP SIGNATURE-----
+
+--ahH29RshIXgcaMP2--
 
