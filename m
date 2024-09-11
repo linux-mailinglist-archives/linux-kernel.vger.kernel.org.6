@@ -1,153 +1,115 @@
-Return-Path: <linux-kernel+bounces-324474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A05974CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539E6974C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787601F28AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 156EC283306
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AC215E5B8;
-	Wed, 11 Sep 2024 08:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDBB14D2A6;
+	Wed, 11 Sep 2024 08:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S/iNXc68"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YVJeeQTG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2FC15688F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77AA14D449;
+	Wed, 11 Sep 2024 08:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044142; cv=none; b=U4+vmqwhGVZJ0rUk6Q6Fe6E9pkUgpzBaoJNroRoouSKL11Ok/FX21b4qsNzZZWrQu5xTvWA6itWL5y/JNxd9RYh/vyXD016JzNO3rFw+Hi9/xUFZsXS18v2DeJOH4oZmDSjL48pYKN23XAIjDJ8aK3dHtPunn/kQgr9SM9a/ySY=
+	t=1726042064; cv=none; b=Sd1p90aR1eELjE6eZgp1OEPa43T6ltAbLU91jCf8eI2Wdz3/zsxXWaCpo5HCL22k+hdbAXVxBWrxZhNYCkHfJbsyWJh4LlGIFerrrK+mNkZdwYA0WrR4CJn1K/kzpNC6lTB0QC6lkxNvbw8+s5XGfk88zkVgPX43vDKsOJxreIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044142; c=relaxed/simple;
-	bh=lWcvgcpXFfD0LiIyh8fiFShe2yixbkA4oXcwss+L+/E=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=b34Np7AIRrqJfkYzYXy3ZkA8yyHoYN5RcadKN9RKIghj6lFfrprkJXc4Zq1Z3lVfUVRKtluoFKve1nHmbpClFXLx8duE+BeN0ne9OnGbVZE3G5ub8vn9kRW/2XWiXzIrlmHLLtgChBi6KyXEb9UmCqPMa2qQ4kTdQgJGZIfSG/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=S/iNXc68; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240911084212euoutp0259aac1a82fd2e25b65b3394e158a1cbf~0I-5xVM7k2575125751euoutp02I
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:42:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240911084212euoutp0259aac1a82fd2e25b65b3394e158a1cbf~0I-5xVM7k2575125751euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726044132;
-	bh=P8Y2JKzGo93bR6n3j3ntff8Z9u6c14CWqudvn1yYg6k=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=S/iNXc68JzxgrCX9MF/rIVFknSkEJkY2m0z8QKQF098zFWVE0mvJ5/fHiBgqxvXY6
-	 3EcuNRtAinpSN1ZNMTZZRsSiH82kkG+Cjt+KjaWYqD/lqn2XQ0Dx0Gys2qhydDuG2F
-	 VJVTG6YCyYJe83Pr/AVn/WvBqgHvJx6IAUO1YoEs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240911084212eucas1p15da32c0dbca8825d345f3cacd2733744~0I-5dsufc0782707827eucas1p1j;
-	Wed, 11 Sep 2024 08:42:12 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id A2.01.09875.4E751E66; Wed, 11
-	Sep 2024 09:42:12 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240911084212eucas1p2266e0807bc628806014a4aff9500f7d2~0I-47QIdw1367013670eucas1p2f;
-	Wed, 11 Sep 2024 08:42:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240911084212eusmtrp1c32ee2fc4ffde3ebe5359c17697bdba4~0I-46uoDL2353523535eusmtrp1D;
-	Wed, 11 Sep 2024 08:42:12 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-55-66e157e49777
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 56.E9.19096.3E751E66; Wed, 11
-	Sep 2024 09:42:11 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240911084211eusmtip165d828774c4052fbd66f73bee6a28a16~0I-4sCS8j1189711897eusmtip1_;
-	Wed, 11 Sep 2024 08:42:11 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 11 Sep 2024 09:42:10 +0100
-Date: Wed, 11 Sep 2024 09:40:59 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: David Woodhouse <dwmw2@infradead.org>, Lu Baolu
-	<baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
-	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Kevin Tian
-	<kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-Subject: Re: [PATCH 3/6] iommu: kconfig: Move IOMMU_IOPF into INTEL_IOMMU
-Message-ID: <20240911074059.f3i22vso6g6payrj@joelS2.panther.com>
+	s=arc-20240116; t=1726042064; c=relaxed/simple;
+	bh=EKZEIu89oRth7yodb/7PPbffl+lMha21+1Do9ttFjVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+VENxJbMas8mgWoR+7DuyywvMXs9yx8ffxxOV4Kfd2eVhWzbeVowp2Hj1mH8EliLPvY6SUhf5afi6aLSauSwOXU0kWf/7wYir2bh7TIczozUhE/Un42rkqyRLzr4BdPype0oixdOxg959UiLyjvlEPEoJ9v4P1kDme2XkQZ8Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YVJeeQTG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726042064; x=1757578064;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EKZEIu89oRth7yodb/7PPbffl+lMha21+1Do9ttFjVI=;
+  b=YVJeeQTG5cciGWe2NJQkxl02CpwzbzvEL5nNYXLw9fqSxnnrLiEX1uTc
+   5xIEaEzce6F+pLbUlvWArrdS6udu+Zq2kDX1kV6kpYX914ZD1uOzDtBn+
+   neDahxaUatvRMNci6R4Ma8bHtH3HZImrSP3sMzKKjPvDB5pFzrMHRMo/H
+   lJG9qCCmrwOyxD6V3r2KSp3zNex5N4eZ3bEga5OBsjB52A0Mm/tyxWaNG
+   cg8jHUJvLSx0nau0CcOcNUSfhMRhKPkFGiIslwDYA32vs00aD5z1wqWaV
+   tUTrNzMa8LHqI8Q1N5FjlzuasDaEbKh580me63lhNk2tSiMIsXQPEFDOA
+   w==;
+X-CSE-ConnectionGUID: XG+O25I4Rtyya2c5EnTNyQ==
+X-CSE-MsgGUID: 685+qW65SimdLrbKocEW3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24321857"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="24321857"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:07:42 -0700
+X-CSE-ConnectionGUID: KEWhRgfHSIS3VTcnfiBibQ==
+X-CSE-MsgGUID: BUYId16kREuvLRI0XGNutQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="67127393"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 11 Sep 2024 01:07:39 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1soIO0-0003DY-2v;
+	Wed, 11 Sep 2024 08:07:36 +0000
+Date: Wed, 11 Sep 2024 16:06:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Hsin-Te Yuan <yuanhsinte@chromium.org>
+Subject: Re: [PATCH] arm64: dts: mt8183: Add encoder node
+Message-ID: <202409111520.z5LrGscP-lkp@intel.com>
+References: <20240910-venc-v1-1-d17dfd931dc8@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtxFAxM6QQBYVSJp@ziepe.ca>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7pPwh+mGbTeULDYPHErm8XElZOZ
-	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
-	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
-	rowXm9cwFWxnqfjV8J2pgXEjcxcjJ4eEgInE9SnzWbsYuTiEBFYwSrx6tIIZwvnCKPH7xyOw
-	KiGBz4wSG55awnTcvbuJCaJoOaPEkqUzoNqBihav+MsI4WxmlHj+pZUVpIVFQFXiybI1LCA2
-	m4COxPk3d8DGiggoSezbNZEdpIFZYAeTRN/sSWwgCWEBT4mHbd/AbF4BB4n/qzugbEGJkzOf
-	gA1iBhq0YPcnoDgHkC0tsfwfB0iYU0BD4tmkN0wQpypKfF18jwXCrpU4teUW2NkSArM5Jb7u
-	WAyVcJFYeHgnlC0s8er4FnYIW0bi9OQeFoiGyYwS+/99YIdwVjNKLGv8CrXCWqLlyhOoDkeJ
-	b0/esYJcJCHAJ3HjrSDEoXwSk7ZNZ4YI80p0tAlBVKtJrL73hmUCo/IsJK/NQvLaLITXFjAy
-	r2IUTy0tzk1PLTbKSy3XK07MLS7NS9dLzs/dxAhMXKf/Hf+yg3H5q496hxiZOBgPMUpwMCuJ
-	8Pbb3UsT4k1JrKxKLcqPLyrNSS0+xCjNwaIkzquaIp8qJJCeWJKanZpakFoEk2Xi4JRqYFJN
-	3jDh4suDVtZHHTjmVtgLbLz5nTe/LsUoxoyNzzno8f0SA+2TcdNlBPlOiF+6zjmvVNPPf7N7
-	ZOqxh4al0/mav981LK43yChTPVdZIvaXm//rb+l3S49onN63f93eLXMNHz2UOm8UNN1u+hHX
-	lkSbR8VinTbT7ovazI+5Y/NUQHziodPHOpzf9rjey1ssEfZIucBRVXxRRMad36t8fO2Mbp+X
-	3dDQVneyrkDyivovV5uur38Wx/I71Ph/Mb6oUcK67/rn1Mk5pxeKiFkv43YI/J8rZJ9jWl+2
-	8MZl8aXbq4U0XSzlxbJ+aGlM3H3t+p3akhkqZ7xCdN2ShcpK59XuyT/RVfhcLfXKP+svSizF
-	GYmGWsxFxYkAfKDh6MsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7qPwx+mGfzZa2axeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
-	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkvNq9hKtjOUvGr4TtTA+NG
-	5i5GTg4JAROJu3c3MXUxcnEICSxllFg4eQ8rREJGYuOXq1C2sMSfa11sILaQwEdGiQebVCAa
-	NjNK3G7YwgKSYBFQlXiybA2YzSagI3H+zR2wDSICShL7dk1kB2lgFtjBJNE3exLYJGEBT4mH
-	bd/AbF4BB4n/qzvYIKY+Z5S4enktI0RCUOLkzCdgU5mBpi7Y/QmoiAPIlpZY/o8DJMwpoCHx
-	bNIbJohLFSW+Lr7HAmHXSnz++4xxAqPwLCSTZiGZNAth0gJG5lWMIqmlxbnpucVGesWJucWl
-	eel6yfm5mxiB0bvt2M8tOxhXvvqod4iRiYPxEKMEB7OSCG+/3b00Id6UxMqq1KL8+KLSnNTi
-	Q4ymwLCYyCwlmpwPTB95JfGGZgamhiZmlgamlmbGSuK8bFfOpwkJpCeWpGanphakFsH0MXFw
-	SjUwhQhez1KtLHzh5VE77/LZq7I1bBqWUxeu8ZxtUT230ai5K+/Rssa5QZ17ZY9/O9JTfXm1
-	bBHv5FrvCeuYmlfd33mdY3pw0MTTR6wXONvUZk+8cYrVgUf67zm90xNX7ef2WBkySfzo/m36
-	e89c/yK/oK++dFf54k2H10vHWtRdfFYgEtooPcH8tE79zbIW0cSouxJ1Ory/SqSWMi06zqV7
-	xETiamJM21FRg51Ppu8svu4vaHDtequjVefa9p9cvCe5Twhfb/65yCjo3YNqX/0ttw6+F4m4
-	p9U/4Y9TkR3/LuN7BdKrxYNqp139UBB373XkZZ39r7Q/ym1KcdJlYb4qdnpDQXGJvtPKpdcP
-	mTkdVGIpzkg01GIuKk4EANvlLl1nAwAA
-X-CMS-MailID: 20240911084212eucas1p2266e0807bc628806014a4aff9500f7d2
-X-Msg-Generator: CA
-X-RootMTR: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba
-References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
-	<20240904-jag-iopfv8-v1-3-e3549920adf3@samsung.com>
-	<CGME20240907122025eucas1p26776e1be9713e21ecd4ee612e470d5ba@eucas1p2.samsung.com>
-	<ZtxFAxM6QQBYVSJp@ziepe.ca>
+In-Reply-To: <20240910-venc-v1-1-d17dfd931dc8@chromium.org>
 
-On Sat, Sep 07, 2024 at 09:20:19AM -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 04, 2024 at 03:17:14PM +0200, Joel Granados via B4 Relay wrote:
-> > @@ -51,7 +52,6 @@ config INTEL_IOMMU_SVM
-> >  	depends on X86_64
-> >  	select MMU_NOTIFIER
-> >  	select IOMMU_SVA
-> > -	select IOMMU_IOPF
-> 
-> Does patch 1 still compile if INTEL_IOMMU_SVM=n?
-It does for me. With and without INTEL_IOMMU_SVM. Is there a config that
-is not compiling for you? You can send that you to me and I can give it
-a try, to see if I get the same issue.
+Hi Hsin-Te,
 
-Best
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on da3ea35007d0af457a0afc87e84fddaebc4e0b63]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Hsin-Te-Yuan/arm64-dts-mt8183-Add-encoder-node/20240910-142236
+base:   da3ea35007d0af457a0afc87e84fddaebc4e0b63
+patch link:    https://lore.kernel.org/r/20240910-venc-v1-1-d17dfd931dc8%40chromium.org
+patch subject: [PATCH] arm64: dts: mt8183: Add encoder node
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240911/202409111520.z5LrGscP-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409111520.z5LrGscP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409111520.z5LrGscP-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> Error: arch/arm64/boot/dts/mediatek/mt8183.dtsi:1971.4-5 syntax error
+   FATAL ERROR: Unable to parse input tree
 
 -- 
-
-Joel Granados
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
