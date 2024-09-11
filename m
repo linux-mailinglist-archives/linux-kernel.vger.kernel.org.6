@@ -1,212 +1,153 @@
-Return-Path: <linux-kernel+bounces-324274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FA3974A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA963974A86
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881B01C217C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8899E28897B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434457DA9E;
-	Wed, 11 Sep 2024 06:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9D4139D13;
+	Wed, 11 Sep 2024 06:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Bd1KIqr7"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2059.outbound.protection.outlook.com [40.107.255.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZJw84cNq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D3C2BAE3;
-	Wed, 11 Sep 2024 06:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726036967; cv=fail; b=MM2RvFf/NOqY2ujo24kMRN1C99JZRfLoePv4n+Zh7aZlU5i2H1BwtmM4W7DYvdIjqcURAm0RckIAVxoRgIIhASLBHCeBjI38c5TRjUHe6QLISk5kCT9euSgH9f1o4HkVXG836nhikvQbGZwGXJGRD0j6ctg9AAcJeba748aOooE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726036967; c=relaxed/simple;
-	bh=h6BVk3TLj1V0ElLJ2m4pHUoXbT/C9z19bvUdvFEiGZc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UiHKanDEATrD9oMrzhrSeC+uKwiKHQ28W4qfXFPcKrcGbaDVmQb89bJ4kFovC3aZhhlePu3InuTEN+1EbHd/75MHmHsZTW0npZ1ZbjlaMtW8e0+W2Jl+5N4ym+bsREqQP83bGxUOPBFf7joaElLZZAy/O4rFcYHGGcYI/Q/ccTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Bd1KIqr7; arc=fail smtp.client-ip=40.107.255.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SGhigmjsDO7vQIOoKKi3YGOhxwLROEPhfzlJpeE5RMwLPxphK7c4kF+VERWk4ZNTFGWb2vlsuBPZXf/3GQbeUiNR2WKbRYDcCeejry1E0dv1mTnID0VI37xNW8LUjTEEGoi8wbsVfOEitWU5lIwjKTqbX1Hbk5xDenggsXOnbn4dWldnftd7Tizeduho4kr1U884n04dQKgW/mFNRorZkEQSxXYd9YfDnm1uV9KixmeFAnGMPdtjORJpy8u7wQ+APJUZbsw7wSqcrJKHDqR2vggz1VXC0cW3YpzfrvR7SIrrY2A0THGSeAobILRTdoEfTI7Cl1v0L3eIz4NViOmAZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D9J0Eanrc6wm2PLrCT67HVaz6P8iSscAbM06vcqpsZY=;
- b=jXqEsr/F/Ig5SsZNIMNaFR28ckkdziu6KsMZDlTmZtUvEuBJjFUaiKIOvtvm7+aT8gFIUSJXUPg+raLx15eDIFlcataN8rjnPtHsi8+EG0J1+3+jj++6CfHd3dXYTPT1XfEJTUljmj0O1UiGloFw8xz3WaB+ZB5pmmonSXRFgFK+JSPTl428w0V0sT1Qf4rf2fcDFEkfxxqFzcGAASMfzmVqzI3gtE0yf47A/D7/A1ovJYvQHJZMDKIJ5ycPWEQAsWXdBWF7HJqQFZJ8fe4OErmTFOMnRssrZWKdahXPuLtgPnnCCp6u2k0TwZqJugiGszdEf4jVcrdlAS7hNKsjgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D9J0Eanrc6wm2PLrCT67HVaz6P8iSscAbM06vcqpsZY=;
- b=Bd1KIqr7aV5s5gCj1khcXXYdualmqAzOf8symbnj99rGKmn0dA5OsyqcLo4Nc8uneJvowdYpStrQSckQ8GhVtECz6C2vX3o33C4lHOIAem39EkotXr6NT0J4kxFGlZ5tfKc+7BDpL64P0P8W+uayVf9YYrg+hLHmMKAqYPbH8jrRY+VsYJnRzd+UNVaWtnmT3lCOQCUs6Ly9XUJZ7eULT81YfSP9Mq34N/0spMUimeQ9pnumDUg7L3jlQRCHUJ8IhrqryuJMWdDNIQv4Mp3uoLfVMADDMDpxs1bsUzG1ZqmaRKh1ddE+L7I+ZX56fk0Iqih79PMPjWMj7JY2mE4Cvw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by TYSPR06MB7066.apcprd06.prod.outlook.com (2603:1096:400:46b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Wed, 11 Sep
- 2024 06:42:41 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%6]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
- 06:42:41 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Stefan Haberland <sth@linux.ibm.com>,
-	Jan Hoeppner <hoeppner@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] s390/dasd: Fix typo in comment
-Date: Wed, 11 Sep 2024 14:42:12 +0800
-Message-Id: <20240911064213.3891052-1-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0047.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::10) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167F32C1B4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726036994; cv=none; b=kwnyYkrSB7eLei7Wyd7WG+aLNjPwG3yuiHznqF4UcMcxUvv5fH6TQKJ/ZYWMSEjwsziShq1mA8t72m2pYy4Lu1tu8GadM64c3oxA6BxJ1SP+JltmQ3xVD8OpfiuxZ92YQiLC8i+tTvyxpqdUjz5UnkTcxWoLcij527GlxlXpCFU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726036994; c=relaxed/simple;
+	bh=3cWG+X4tIryXCXOVKA+yf4o3lQhStXuPl/otjwBQ0v8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Disposition; b=CsV022dCvvZ+uKxWtuNF19fB0v2OSw1x7RzHCMtRsgY8Q+MJ/3UpBzT7DrHt0IWGS+lxbYYbwnkXddU2GFrJL3LthjgPQ+rI8eNklUVZvi7QB4WDCvsaVa9Pu603FxXEI6cDtwr3bDQ4RGoHMoDNg0K0Jdj92zV28cOaNPBc13s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZJw84cNq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726036991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GG53hfFZsBWWfq8LdPjycb2UAQG90BS+o/E8pJ1P9Wk=;
+	b=ZJw84cNqC35uLy6i9UmDKipLnrkhB/yuHjJuz0aSe9U5rQNjMib2Qm3JQcMRtyzVnsYhfk
+	R5LXco6FpWYgU69uhJRxx3W1mryhXgnLaDRVL60Cakyarcc0Tixoov79KBIqobLBpV4gUV
+	9l02xihVViyeVSGMaLFp0u1uuHPwR9w=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-UZz4AON7PyaEb3zcGipxEw-1; Wed, 11 Sep 2024 02:43:10 -0400
+X-MC-Unique: UZz4AON7PyaEb3zcGipxEw-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7179469744dso2565247b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:43:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726036990; x=1726641790;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GG53hfFZsBWWfq8LdPjycb2UAQG90BS+o/E8pJ1P9Wk=;
+        b=kLp7TIyjgGFhsAtyy47b/36gk2tAkr14qUMghvHUb896pnHCbOZB+i9Uv3qVb9lPZq
+         5xRwYJKJ8Pwiu8CWuBFJ3BimMershCDpo89Jjw7fD4Zr7x0j4egaxUF/TabFecH2newE
+         6ilWbGTvb7vsevsZRb9sIaoP3Its28sRCkr2NfIJis5y5aiMhH7RqD1PnRX4cCT32usU
+         vxStOeUZvHgBliL1mo4fqXzydyw6lIP+V3XIdDrsIEuGEsJnEWGQZ2IJDC/D8q5VK361
+         ezygF5Np4FVDWW9SPF69MpP6tnr3XaC2EV6GZ2IsHeVXKT/N2FMS1MXrLmTcJprw5Zb2
+         J50Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX4iRrbKbfjQeTasAMfEpkNpmuNWoSnUrfxf8O/dDweeUIThMbLfYFvh0tPLFeIrWUzfV7L4xxgUps3udU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtleVp6GjDFrn2g8ZAl+03wAM1KW+vETGSOeruEmmQclyaeDin
+	HVRl9X5Vor5Dzl96ZBDy3oUdW3ajQyfI7884kWLUghSp6x2tGMmtDmB15Rn9WVE4SzB416Dg8Pg
+	BqNoRbV45U9/bMvucTjbbo4IMJVPXbOZwBJhc9xHIWgfB7atdvoRFH3OB174Rwg==
+X-Received: by 2002:a05:6a00:b45:b0:719:1df4:9d02 with SMTP id d2e1a72fcca58-7191df49f2cmr979018b3a.25.1726036989580;
+        Tue, 10 Sep 2024 23:43:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwuQeX0ud6nORQ8TR0AXWmS5VlyhnVnzN28k65Xqpf2kX3IMRBU8JsICzb8QWIa+FRdpdzag==
+X-Received: by 2002:a05:6a00:b45:b0:719:1df4:9d02 with SMTP id d2e1a72fcca58-7191df49f2cmr978995b3a.25.1726036989042;
+        Tue, 10 Sep 2024 23:43:09 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a800:3c59:c8f1:7d33:571a:fde2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71909003573sm2398061b3a.90.2024.09.10.23.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 23:43:08 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Leonardo Bras <leobras@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
+Date: Wed, 11 Sep 2024 03:42:49 -0300
+Message-ID: <ZuE76YaeJGl1pCuQ@LeoBras>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240905221908.1960-1-hdanton@sina.com>
+References: <Zp/k+rJuVV+EcXqL@tpad> <20240905221908.1960-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TYSPR06MB7066:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71f26066-b405-48df-8a78-08dcd22cef41
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K058uonnpnOfXM9HmglcgTowK53n7uoiedeBcWG4n0OT0gEeQyf6S7MoTiYs?=
- =?us-ascii?Q?bFDjjNWlgDSxJwfWKrxNyLP1ZTKzLtiyscMSwq19b+tS/cjpcFtdN2J/5H3w?=
- =?us-ascii?Q?QCF9XM0y6ygQnFwKoZWInSyY3upJtTAtouYZatzc8EQe7gujzGiKJMMbBBg0?=
- =?us-ascii?Q?GikVsoTzEX9+c3rkWKKVMsfBNFZOoSQS9yhMcgXQqj60Sure2alyVCmFPl3d?=
- =?us-ascii?Q?cwLT8qWGsdf+SlMMMBikEncOi1IxqgRrPQJxFfNURjEt97UZ++ZhGvfysliC?=
- =?us-ascii?Q?Ta+JnCFiEBd5abAI6MrvdaQ3p3KhcD6kDSu4o5QE6POKLUMGH1ooqDEc1N3l?=
- =?us-ascii?Q?6AVL3M6aoe34xqOhyZHvC04z3854dl7GDs9NtCwycnUG//dPA9hpEIFbUOgi?=
- =?us-ascii?Q?sygvRM9GOR2IC686VevvufuJiyv8CKeIxxVaZLU+s7160K5RV2sFrJZ02wqt?=
- =?us-ascii?Q?X1XuBNjtPdi+HgKWo6zKowzLFjV+depD9LW4FvMYt+W2hP1Z2ZP2JYqKG1xy?=
- =?us-ascii?Q?T9zOLrTQZATIT5VHIK19+ivJWclkwBTsOW5uTKTikZmzIQxdOr08Znc6Sq5R?=
- =?us-ascii?Q?zpu7QjU7gdjsU/8HJMgtwIMxGCvi4kjWdZAoZ9oU9ocZP2taEqWFMtUpg403?=
- =?us-ascii?Q?KzuWXy371BS34C+h6VgQf9+xUeE+TuM2cltryYODKCZy4ZBkHjmGK6n/W9I6?=
- =?us-ascii?Q?VDw0e15dKpP+PSxQ/1ze0MIp4nh14KGcKkpBwY69dRyZ0pM3qnwN71uk/czy?=
- =?us-ascii?Q?9M2PFCjhXWzmYCBVsIRpc2cdBQCq6hyTnHNBeXRjqOFDE8q2YCzWwFsw60yx?=
- =?us-ascii?Q?Hk9xdSLC1lEpuTQ/RB8Uo1TW7mc8ePA4eKmWQLCYbdtnhsRwT28tmpONUVSW?=
- =?us-ascii?Q?ynHp0Pj+lIW1lGkQFxToQ0SvfjQmM+AJHJfpnVh/8k/c+o3xZfsdNDgFObiy?=
- =?us-ascii?Q?xtWkD+vuR4J2GK4tz1V320s0x5UrDetls8XzIOM4/uNz7G6chhLmL8tVcesF?=
- =?us-ascii?Q?fbPEJo5zgn2k0VmMlHLW/7id85dZ9KRLS5nIMqGrCEzGpwxQY3ycxL9tHCxb?=
- =?us-ascii?Q?h3Fp25FqfnFkN5He0H7IGZSAd/iPcAhs2Vxljhaq2Jwlk/tx4n3OiGSDII2o?=
- =?us-ascii?Q?9+qXiGFek9vqn5Y9fP7UgZ54aHTLJRkHbGhzIguRe3Za7yOofTBLdA+uwz2t?=
- =?us-ascii?Q?zOVFyIsnC36EAPbr7rvyC5442mm7OCJFaoqiIBhmOsWaKHkzH6ex08gxqWkT?=
- =?us-ascii?Q?7vB2JXAxhFjVhT/l6GQ+4Pph9MpuChotw+ZHrjiSNhmMo9B/jfvFnDipuz+n?=
- =?us-ascii?Q?UXwFQvg1dSfM0xzt5yAVjScB7j8Jdytivch69qzI3o1VmrNa6ufYwLxH0OBn?=
- =?us-ascii?Q?XC2lIU6379eI43NNNLa1p+Q6x2VknFz7oLESj2iXDS4RtQSq8A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?N58IDvtA7NjDGi+co93VR+PS4nzDsP4cdWlvehkecWt7/Wdbo3nsWwDaSbFz?=
- =?us-ascii?Q?IDOY9QUFyDCUangKtmmr/hbLlJdTmavODIkt4X9PiQEsrSYcA2tAF23B9nMJ?=
- =?us-ascii?Q?KK7uKN9XnpONgRo231CjiXM8qjIyokCScx5Mw0hESFt9/EuCh/e9KlIyFUk4?=
- =?us-ascii?Q?cHLbmQNc3LtxX2Ox7Hh7G+1bbSrjhIvzgla+Uhj4tK8NmfWp1duaVsXcr9qL?=
- =?us-ascii?Q?vJhvEyY9PlfzKwWhrtr2WDYSOOdrbK6rlTjHl8exCTsugJkAeY5jK2Nv06OS?=
- =?us-ascii?Q?3hdCMBl9+zDUfCLzD6Z41b+iJFJ9ZffRrel3jlNWEg9pn4fCzMpsQUNw04V8?=
- =?us-ascii?Q?5inpznGAGMrAkcOShzfWvQRjJAKO3RclcDDBk2F48GQTCt9zyryEO4FICNFo?=
- =?us-ascii?Q?qeHYwjk1i0nL4LTMm/gYLTBL+ddsByEloDm6vMeKPW9WXZ4GkxmN48OnZcQN?=
- =?us-ascii?Q?4dbw+xYqoDmM/u40s8HwvIUnMaOhpRMQ19ccQkPfu601OgYghybKfh8L4mg2?=
- =?us-ascii?Q?Vqy+BhbdvyB+Iiz7549AEW5+2DmFwTxWSYMJxUhdeb8wTTeS4DyzXaV0BzMU?=
- =?us-ascii?Q?3RS1KRsKdHvzay0S0kcsb7aiCA1S9MTeDogdMnyUTjqRzTHfkOl38bapC34+?=
- =?us-ascii?Q?eOzRSj3OL9UT7XJSoxjzJsTKonadP6zvPeOR4Fc+DYMmlLNY+Xfg+lP4+4gW?=
- =?us-ascii?Q?Wm3lMhuGNnZ2vabkcWaHdGdZ9c0fivak80SE13VOMTCreZUPofsZs8o5aNMb?=
- =?us-ascii?Q?R+Gq7SajMV3eS13x3O0fuF8rB1elygstdTxfE5DsZw5eprf6uczGlpzgwjYn?=
- =?us-ascii?Q?sYARdwpZaFApyc0BrugJEVODJ0jcuJZDpgM6vmkS5w7nCazWH82x4+1i6Ele?=
- =?us-ascii?Q?panUcjD5rh7btKfxlq5l3a+0mps1Bwm6QP9R0se4/ZGdYdFkz+fkN31HAvW5?=
- =?us-ascii?Q?8JXYau3T+ykbK8S50y8H3VnmAGMgB20tPjXJR3ifYUQkcQvgY3CWip0WgVjA?=
- =?us-ascii?Q?j3/jo4XIuYNcWCjvwTJox+DQBBwsx9x618HmhmEQYcbiTeIDbwilfrpQ51Af?=
- =?us-ascii?Q?a/hNaZA5EYkn2Mmf/QrITeTv9g6PSONEjfiWdN99gdspCxWoX2/5iawwLA+E?=
- =?us-ascii?Q?90qnLOedz/hEy18lm+k60TqoI0jtf955Xqabs2P6pcTInQdCqjlpynwwa47V?=
- =?us-ascii?Q?R4Nn9HP+2dccmmbzSXvC7Ngzo7ea5V0gmcPQgdfxg0eKGqhEc+8lW1gJBKgE?=
- =?us-ascii?Q?v5ns8y+OQYpZPANlZJrj6Q5NC117cZi+HqUA/d09UdMiIicRNmBM5dSIEtSP?=
- =?us-ascii?Q?jO1soaq2EKZV/6k/hzPt3vzagG/AKctsIxarJq6pH3ql7i5MbisJ7MI0FNGm?=
- =?us-ascii?Q?kYZJzGo0Si8WLKrZto4K6xvq8E5rQLMsm7WSg6IApjhN3OLeqTnL/4DgV5ct?=
- =?us-ascii?Q?5KZRnpX9srsgQs0cBG4hikiYvW+xnIlBnhdTIqqDw3PXziJbGmTK3Y+iACl+?=
- =?us-ascii?Q?BEOLXw8EbxxPb51vs+zWy6MH+3DB+UdtwVTU3DJpTKbLtDCroeCImR5FLo9K?=
- =?us-ascii?Q?7cnXcDR5oDPqN0FaRbfnwSnwi3X75sX79eoFwHT6?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f26066-b405-48df-8a78-08dcd22cef41
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 06:42:41.5622
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5zvptpp5rTxMa6Wu1n9mt0dXQjeTfoz1bT1iGwX0BVQtD/1BAlujivy9FHCAYH9nxjn8bMJNull5FKIy0mn6tQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB7066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Fix typo in comment:
-requeust->request,
-Removve->Remove,
-notthing->nothing.
+On Fri, Sep 06, 2024 at 06:19:08AM +0800, Hillf Danton wrote:
+> On Tue, 23 Jul 2024 14:14:34 -0300 Marcelo Tosatti <mtosatti@redhat.com>
+> > On Sat, Jun 22, 2024 at 12:58:08AM -0300, Leonardo Bras wrote:
+> > > The problem:
+> > > Some places in the kernel implement a parallel programming strategy
+> > > consisting on local_locks() for most of the work, and some rare remote
+> > > operations are scheduled on target cpu. This keeps cache bouncing low since
+> > > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+> > > kernels, even though the very few remote operations will be expensive due
+> > > to scheduling overhead.
+> > > 
+> > > On the other hand, for RT workloads this can represent a problem: getting
+> > > an important workload scheduled out to deal with remote requests is
+> > > sure to introduce unexpected deadline misses.
+> > 
+> > Another hang with a busy polling workload (kernel update hangs on
+> > grub2-probe):
+> > 
+> > [342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds.
+> > [342431.665458]       Tainted: G        W      X  -------  ---  5.14.0-438.el9s.x86_64+rt #1
+> > [342431.665488] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [342431.665515] task:grub2-probe     state:D stack:0     pid:24484 ppid:24455  flags:0x00004002
+> > [342431.665523] Call Trace:
+> > [342431.665525]  <TASK>
+> > [342431.665527]  __schedule+0x22a/0x580
+> > [342431.665537]  schedule+0x30/0x80
+> > [342431.665539]  schedule_timeout+0x153/0x190
+> > [342431.665543]  ? preempt_schedule_thunk+0x16/0x30
+> > [342431.665548]  ? preempt_count_add+0x70/0xa0
+> > [342431.665554]  __wait_for_common+0x8b/0x1c0
+> > [342431.665557]  ? __pfx_schedule_timeout+0x10/0x10
+> > [342431.665560]  __flush_work.isra.0+0x15b/0x220
+> 
+> The fresh new flush_percpu_work() is nop with CONFIG_PREEMPT_RT enabled, why
+> are you testing it with 5.14.0-438.el9s.x86_64+rt instead of mainline? Or what
+> are you testing?
+> 
+> BTW the hang fails to show the unexpected deadline misses.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- drivers/s390/block/dasd.c        | 2 +-
- drivers/s390/block/dasd_devmap.c | 2 +-
- drivers/s390/block/dasd_eckd.c   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+I think he is showing a client case in which my patchset would be helpful, 
+and avoid those stalls in RT=y.
 
-diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
-index 42a4a996defb..3ed642f4f00d 100644
---- a/drivers/s390/block/dasd.c
-+++ b/drivers/s390/block/dasd.c
-@@ -2117,7 +2117,7 @@ int dasd_flush_device_queue(struct dasd_device *device)
- 		case DASD_CQR_IN_IO:
- 			rc = device->discipline->term_IO(cqr);
- 			if (rc) {
--				/* unable to terminate requeust */
-+				/* unable to terminate request */
- 				dev_err(&device->cdev->dev,
- 					"Flushing the DASD request queue failed\n");
- 				/* stop flush processing */
-diff --git a/drivers/s390/block/dasd_devmap.c b/drivers/s390/block/dasd_devmap.c
-index 6adaeb985dde..71d8fb86139d 100644
---- a/drivers/s390/block/dasd_devmap.c
-+++ b/drivers/s390/block/dasd_devmap.c
-@@ -855,7 +855,7 @@ dasd_delete_device(struct dasd_device *device)
- 	dev_set_drvdata(&device->cdev->dev, NULL);
- 	spin_unlock_irqrestore(get_ccwdev_lock(device->cdev), flags);
- 
--	/* Removve copy relation */
-+	/* Remove copy relation */
- 	dasd_devmap_delete_copy_relation_device(device);
- 	/*
- 	 * Drop ref_count by 3, one for the devmap reference, one for
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 90b106408992..1ebe589b5185 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -2405,7 +2405,7 @@ static int dasd_eckd_end_analysis(struct dasd_block *block)
- 	}
- 
- 	if (count_area != NULL && count_area->kl == 0) {
--		/* we found notthing violating our disk layout */
-+		/* we found nothing violating our disk layout */
- 		if (dasd_check_blocksize(count_area->dl) == 0)
- 			block->bp_block = count_area->dl;
- 	}
--- 
-2.34.1
+> 
+> > [342431.665565]  ? __pfx_wq_barrier_func+0x10/0x10
+> > [342431.665570]  __lru_add_drain_all+0x17d/0x220
+> > [342431.665576]  invalidate_bdev+0x28/0x40
+> > [342431.665583]  blkdev_common_ioctl+0x714/0xa30
+> > [342431.665588]  ? bucket_table_alloc.isra.0+0x1/0x150
+> > [342431.665593]  ? cp_new_stat+0xbb/0x180
+> > [342431.665599]  blkdev_ioctl+0x112/0x270
+> > [342431.665603]  ? security_file_ioctl+0x2f/0x50
+> > [342431.665609]  __x64_sys_ioctl+0x87/0xc0
+> 
 
 
