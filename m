@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-325509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D797975A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976CF975A8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DDF1C22BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A23C1F24474
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E4815E5B8;
-	Wed, 11 Sep 2024 18:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348831B7902;
+	Wed, 11 Sep 2024 18:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWVFt+KF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jq0Ta0lF"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A008B1B533C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1B215E5B8;
+	Wed, 11 Sep 2024 18:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080566; cv=none; b=IBBl3mf/S+56pbF/9iVwyXwfuzB8Euy8+LDBsIt3sbMSWR74T6B9uudnQWj9IEdFqhENiPe43bP6ZMPujUtSseOK6vmcjb0e/YmFNeaPx8f3OFAO9uD2X6vy8HaXh8XD5xypMgIJB6ICMiF7suRKEjrR5dBNP7i/kFVOhBZfXSg=
+	t=1726080575; cv=none; b=Rr7rimNtW29qT3CL8z9S9p3MAEPKoiYoHfTIT9ooL2fiRF0vI86FG2rOz0z4Uhud1u8E8cooU5EzaK8GRDPNKG5BLF8+ghXJcuAThcGL+gLyHJoiY1ZvpEr7YkgaNo4axe+FicnA8vJiTeIACT7KU5ONUwPVQvZmm/5wA5st9UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080566; c=relaxed/simple;
-	bh=QkRTtUH1Qx9EeNdcC4BeO8C9YO9X21MwlKIOOxowpH8=;
+	s=arc-20240116; t=1726080575; c=relaxed/simple;
+	bh=T66dp24AzjefhwfW1RczRPfd7+nb/I9+zQXFrOxli7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BnHh+HWBXJg+aoub/rzO6D1xzT/UMiQolLq59NLO4k+U7AIkZftfatTf9Wigq3ahSdkgsN0ovIuLG1eIr3j8GgUq5/yUlf2bCF7XKulRXrcNajbbUz7ioruZRAX0xIexHLzMocT9gkSZBc2+zfvmY59l5o0ae6L3jQMwx9cySrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWVFt+KF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B53C3C4CEC7;
-	Wed, 11 Sep 2024 18:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726080566;
-	bh=QkRTtUH1Qx9EeNdcC4BeO8C9YO9X21MwlKIOOxowpH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qWVFt+KFkvJ29ZRJipd0lZwZzachVDhgX5+tZy23VA7Hy3sVMVbH8qs8r5Kf7vuj6
-	 EpZyfGLlne914dT5Uhsi89Yi3I7IZNSu8nkVGYXocmS/KlNZdVljnzgjk8RyfjjA++
-	 8OySos9fOL6fHpgrKGXHvjgTJG1gIGVlGD/6vOs6u382xxJyAcbE3IoDGZaHJH5UwW
-	 p2ae4WaH4+KrZrAnOjum7QzlMbhUt+ze/6NglQNUmrvEc9aaF98/kNMtukacKkw7B+
-	 Krx6X9NCKXVc8sl6oG9UT3vdU856r6OA8aj5w9MPNJmkY0GyiCOsafy/G/QBDcF3d/
-	 WSGk/Fw94ApgA==
-Date: Wed, 11 Sep 2024 19:49:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Yu, Yu-cheng" <yu-cheng.yu@intel.com>,
-	"Yang, Weijiang" <weijiang.yang@intel.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"bp@alien8.de" <bp@alien8.de>, "rppt@kernel.org" <rppt@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>
-Subject: Re: [PATCH] x86/shstk: Free the thread shadow stack before
- disassociating from the mm
-Message-ID: <ed4bccc1-add2-49fd-8c46-505f0e493fc7@sirena.org.uk>
-References: <20240910-x86-fix-shstk-leak-v1-1-43cef0c56b75@kernel.org>
- <d4c68681d9e72a5b841bbbb1af1606b382079ad6.camel@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3erQBhMnNb9cTE89HHsLsZJNcD1yWgV8vp224MB+EOdNmJcs76W7HCaCR7bWz9Lc2iR/CSRYgyXucPcZ66QWrSbByU81BTTh95dgf6fU7I6+r2ViWpTCnfKT9l8QIDU1KWT7WXyzoWq8o342oYZ00h83JBgaO6WuZSbmJ9xCNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jq0Ta0lF; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2055f630934so1659155ad.1;
+        Wed, 11 Sep 2024 11:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726080573; x=1726685373; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0TkHtqPbdlcbDhsAgIpZTSjTvi+92a07vd3QkuC55Tk=;
+        b=Jq0Ta0lFHaZwGT7Y0kTyz6UmFpCijWMxNXSB8buRbn06QF0Vc6AUvXk087rS9eibNr
+         yMFzn5gXivq/qwmZuGz+XTcy1ix8uaYqGucw1e0h/WuDC2ml/t5G36uwp5avO5A1ithN
+         SBSwhVA7ggpnoCIIJMHVEGFt0y/2HI+xJiua9R5SJ6BB4tHTrsUb28vwi6GPVPs50FN0
+         RTz37g8HH00dFafwj553w/Nzg7aVRx6RJH9KIrskR4gNdX1KQSo3UdU+jt9fy2qB2dRs
+         DW3aox50FJ7HY0R1ORFvEV7qh8jHHX64whtZeEHx0Tw7qzaEl5Eu5htZoEc884gSp2ZY
+         OGNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726080573; x=1726685373;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0TkHtqPbdlcbDhsAgIpZTSjTvi+92a07vd3QkuC55Tk=;
+        b=c5JZOifEude/nxhMeHpHLlZpBxtM+scunBLFeOe4TRS4OMlgJTBPtwh5fdhPTa7Bbw
+         AU/RYe3taRtGn2tkBnhW6t52iuxnP+aON5nCpDa0ccjF4KPqS4KRJaobKHMeY7AkStRp
+         w0NObe9QAfbYqhTwLI5L6/aBfLsaHsP2cvD6jk8wWzSr6isZan6wr8cl4ozo6PIYfFz0
+         /AmK8T8+vwq74dreE3k8hDbGBR5byZ6drCrw5y5V4pPtOOkEUN/V818IbZiIES6Ikg7z
+         RGw5SwcqmxR+7f8ke+swKso99eWZunCAGNjeqTUxAF0MSF9S08c4kLLRRAYVQqk5Qu6o
+         n4Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFYztHxeNGJnxTrqaqkbUEb7cr6kod0GUNkmUPNRFcZMtrf9klsuK7DBTa61Sfh4djqjJ/v8Om1wc58+c=@vger.kernel.org, AJvYcCXg1oe3dyZClJXTuMU/3zEfz4KYjbC/qRTpcOwFt+jITsJvGplQP2ElvygAnwMv2dOk9NGC2hpY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAguo2/ns3n446gbDwHEq/Sq2yXd4gQIumurDwpIEZw8q7w+Ss
+	KkPwfuc8FftVWcuYLQUOIxmoAYKmdyURK1pXRmpORwuJUzKcbbY=
+X-Google-Smtp-Source: AGHT+IG/AWJKd5HM7CJCBqbMq0zLQul7juhrQIaXgzqktDsTLlkZewVwfXtccotJ+ou9IVAb+UaN6A==
+X-Received: by 2002:a17:902:ec88:b0:206:dc2a:232c with SMTP id d9443c01a7336-2076e32fa72mr4669725ad.15.1726080573371;
+        Wed, 11 Sep 2024 11:49:33 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b009742sm2629335ad.263.2024.09.11.11.49.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 11:49:32 -0700 (PDT)
+Date: Wed, 11 Sep 2024 11:49:32 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Qianqiang Liu <qianqiang.liu@163.com>, davem@davemloft.net,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
+Message-ID: <ZuHmPBpPV7BxKrxB@mini-arch>
+References: <20240911050435.53156-1-qianqiang.liu@163.com>
+ <CANn89iKhbQ1wDq1aJyTiZ-yW1Hm-BrKq4V5ihafebEgvWvZe2w@mail.gmail.com>
+ <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z>
+ <CANn89i+G-ycrV57nc-XrgToJhwJuhuCGtHpWtFsLvot7Wu9k+w@mail.gmail.com>
+ <ZuHMHFovurDNkAIB@pop-os.localdomain>
+ <CANn89iJkfT8=rt23LSp_WkoOibdAKf4pA0uybaWMbb0DJGRY5Q@mail.gmail.com>
+ <ZuHU0mVCQJeFaQyF@pop-os.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Cca5Ht1IQtErMzzx"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d4c68681d9e72a5b841bbbb1af1606b382079ad6.camel@intel.com>
-X-Cookie: No Canadian coins.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuHU0mVCQJeFaQyF@pop-os.localdomain>
 
+On 09/11, Cong Wang wrote:
+> On Wed, Sep 11, 2024 at 07:15:27PM +0200, Eric Dumazet wrote:
+> > On Wed, Sep 11, 2024 at 6:58 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> > >
+> > > On Wed, Sep 11, 2024 at 11:12:24AM +0200, Eric Dumazet wrote:
+> > > > On Wed, Sep 11, 2024 at 10:23 AM Qianqiang Liu <qianqiang.liu@163.com> wrote:
+> > > > >
+> > > > > > I do not think it matters, because the copy is performed later, with
+> > > > > > all the needed checks.
+> > > > >
+> > > > > No, there is no checks at all.
+> > > > >
+> > > >
+> > > > Please elaborate ?
+> > > > Why should maintainers have to spend time to provide evidence to
+> > > > support your claims ?
+> > > > Have you thought about the (compat) case ?
+> > > >
+> > > > There are plenty of checks. They were there before Stanislav commit.
+> > > >
+> > > > Each getsockopt() handler must perform the same actions.
+> > >
+> > >
+> > > But in line 2379 we have ops->getsockopt==NULL case:
+> > >
+> > > 2373         if (!compat)
+> > > 2374                 copy_from_sockptr(&max_optlen, optlen, sizeof(int));
+> > > 2375
+> > > 2376         ops = READ_ONCE(sock->ops);
+> > > 2377         if (level == SOL_SOCKET) {
+> > > 2378                 err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
+> > > 2379         } else if (unlikely(!ops->getsockopt)) {
+> > > 2380                 err = -EOPNOTSUPP;         // <--- HERE
+> > > 2381         } else {
+> > > 2382                 if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
+> > > 2383                               "Invalid argument type"))
+> > > 2384                         return -EOPNOTSUPP;
+> > > 2385
+> > > 2386                 err = ops->getsockopt(sock, level, optname, optval.user,
+> > > 2387                                       optlen.user);
+> > > 2388         }
+> > >
+> > > where we simply continue with calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
+> > > which actually needs the 'max_optlen' we copied via copy_from_sockptr().
+> > >
+> > > Do I miss anything here?
+> > 
+> > This is another great reason why we should not change current behavior.
+> 
+> Hm? But the current behavior is buggy?
+> 
+> > 
+> > err will be -EOPNOTSUPP, which was the original error code before
+> > Stanislav patch.
+> 
+> You mean we should continue calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
+> despite -EFAULT?
+> 
+> > 
+> > Surely the eBPF program will use this value first, and not even look
+> > at max_optlen
+> > 
+> > Returning -EFAULT might break some user programs, I don't know.
+> 
+> As you mentioned above, other ->getsockopt() already returns -EFAULT, so
+> what is breaking? :)
+> 
+> > 
+> > I feel we are making the kernel slower just because we can.
+> 
+> Safety and correctness also matter.
 
---Cca5Ht1IQtErMzzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Can you explain what is not correct?
 
-On Wed, Sep 11, 2024 at 06:01:00PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2024-09-10 at 23:56 +0100, Mark Brown wrote:
-
-> > When using shadow stacks the kernel will transparently allocate a shadow
-> > stack for each thread. The intention is that this will be freed when the
-> > thread exits but currently this doesn't actually happen. The deallocation
-> > is done by shstk_free() which is called from exit_thread() and has a guard
-> > to check for !tsk->mm due to the use of vm_unmap(). This doesn't actually
-> > do anything since in do_exit() we call exit_mm() prior to thread_exit() and
-> > exit_mm() disassociates the task from the mm and clears tsk->mm. The result
-> > is that no shadow stacks will be freed until the process exits, leaking
-> > memory for any process which creates and destroys threads.
-
-...
-
-> > It is entirely possible I am missing something here, I don't have a
-> > system that allows me to test shadow stack support directly and have
-> > only checked this by inspection and tested with my arm64 GCS series.
-> > If this makes sense it'll need to become a dependency for GCS.
-
-> The common cleanup case is via deactivate_mm()->shstk_free(), which happens when
-> the MM is still attached. But there is also an exit_thread() caller in the fork
-> failure patch (see copy_process()).
-
-Ah, yes - glad I was missing something!  I saw exit_thread() doing the
-right thing in the error paths but not deactivate_mm().
-
-> A quick search through the arm series and I don't see deactivate_mm()
-> implementation, and instead a separate cleanup solution. Could that be the
-> reason why you saw the leak on arm? Considering the trickiness of the auto
-> allocated shadow stacks lifecycle, I think it would be great if all the
-> implementations had common logic. If possible at least.
-
-Yes, it's because we don't have a deactivate_mm() implementation and I
-didn't add one (or lost it at some point), effectively this patch is
-just adding deactivate_mm() by another name.  The hook being a macro
-definition in the header caught me out I think, I was probably just
-using regular grep not git grep when I went looking.
-
-I was actually considering what some factoring out might look like in
-the context of the clone3() work, as incremental work on top of landing
-the ABI so we try to avoid introducing yet more rounds of discussion to
-delay that.  map_shadow_stack() as well.
-
-> BTW, two more notes on this whole area:
-> 1. 99% sure glibc has some tests that catch leaks like hypothesized here, by
-> watching for memory grown after repeated thread exits. IIRC I introduced a
-> shadow stack leak at some point during development that failed the test.
-
-Guess how this was noticed!  It's tst-create-detached.c, with IIRC
-tweaks to the environment (I think it was turning overcommit off was the
-main thing) to make the test actually detect something itself.
-
-> 2. Weijiang (CCed) is working on a fix for case in the opposite direction. An
-> error path that attempts to free the shadow stack twice and triggers a warning.
-
-Ack.
-
---Cca5Ht1IQtErMzzx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbh5jAACgkQJNaLcl1U
-h9AZBwf+NTIYpD24UCRf8TQhSUE6wuwUyCXKvX75CO1oLQTUF7bTpIuOjPhkTEjC
-mvL6MPtj5xhUnu8O583VTkZNCXLdSRr3j+06xI9WqqGpW0d8eplS94NjL4QQCOxL
-/SWXmjGXa2VHokVSCsHkW6B+kh0ZrtRZ5KrH9WPshDcIcZ5gwAOg1WzxuNwYCzsV
-/9zyGAMxoZ258YZm922+radIUUYqnqDPoH0BGstDG2I7pRQJRHSR/WwFd7d3wF0D
-tXSVVtvRKbs9WmpECAwjpByCbsx0BMOJ3DdvSGiuuSCrVqvMbsOFRa5RXm0pwfCr
-OOq4GZrcrhfQp8D94+Cs8No+SZVfVg==
-=jHwk
------END PGP SIGNATURE-----
-
---Cca5Ht1IQtErMzzx--
+Calling BPF_CGROUP_RUN_PROG_GETSOCKOPT with max_optlen=0 should not be
+a problem I think? (the buffer simply won't be accessible to the bpf prog)
 
