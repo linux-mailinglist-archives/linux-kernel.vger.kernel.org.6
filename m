@@ -1,264 +1,250 @@
-Return-Path: <linux-kernel+bounces-325512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450DA975A9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:54:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A195975A9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F17B92880E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86D94B24EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8BB1BA87E;
-	Wed, 11 Sep 2024 18:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A991BA26A;
+	Wed, 11 Sep 2024 18:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="jhKBGsue";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ltsvb1hN"
-Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfP+h2Z6"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1916A187337;
-	Wed, 11 Sep 2024 18:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4508118C344;
+	Wed, 11 Sep 2024 18:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080835; cv=none; b=BXpSrjhmrQ3LWDKoIS1k4GtB18dJDWXN6Fv2hwnlAKyAdpYfRG+ApjqkGef43L6FPLU1lNSAEEoPgKBCo48P/efJrGqkEH/t08o6ur1kU3HprhDIH/4e5Ye7jMKAt9BvbDenSo687KS8dwHbcnR+rT8BU3BvNOwptkQ9jndx+H4=
+	t=1726081176; cv=none; b=peZZLzdb0pa+00+f+xJOvjZN0BnThkJTk+UeC/IvwmOZc7bjgy+ZnBqqlwPnJthGkjE+qPN1uaciG3/Zg59C5fn7PQ4p/1yo8Ll0Q+forjiCSuyLSq13b/QPJGXbe/LZLDrB5vrXG+FUyPZua5Mg4yYLd0Sx1GF5gOInDVDKgFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080835; c=relaxed/simple;
-	bh=T1YNUXtauaZKRegG7ATGOac3MwWLqKwbt0G1jC2mne8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOVSb/FbdfVyGMYwfGX0JkcYE1Ho8blJaR00AZr5viKMc80osl0oYXyYSsyF+jnmBWvP42dK/Amtv93ekHKgRLpn8PWl5lrGXJnmQjXiU2BuPQhhJB+F8c7omXWiu33CW6Bwx50fM210PGA/WPwf4rCRwwyGhEpYuXSIAAwBiuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=jhKBGsue; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ltsvb1hN; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailflow.phl.internal (Postfix) with ESMTP id 0C9D9200255;
-	Wed, 11 Sep 2024 14:53:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Wed, 11 Sep 2024 14:53:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1726080831;
-	 x=1726088031; bh=9fMv2GffujFwQIlQdEBnH5FOZnBoPmz6xA7sOJ1AMUA=; b=
-	jhKBGsueI9Qx1CZq2FC4EKt3FzpK8IUagVi0puFUnEJC/0Db+3EpUeppVZsgP692
-	JYZvhYrWWADTy8kxydJXO/SMeViV3GNbVzcxxGb/59ppwhO2Mc0GjZ1XLJsuV7Ie
-	1geL/yeyoVymD6T41L0f7TVJA7A+vumFeFB2q3RQsiarcSO/wV3IqtRMQdO74yfR
-	oaHroOa87G77JrmTDZZEjfJ4sJ8l1uS6AhrvSQzHKGafKyuyTtE2yRlmrhfivnw+
-	qfQpRIU0PPmtOyZ6C5fURiJWdAb+AWgUZmRSofzxLGrZQULwItMYAaYD+JLaXI71
-	DOF95/s23N9Be6kdq0eLRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726080831; x=
-	1726088031; bh=9fMv2GffujFwQIlQdEBnH5FOZnBoPmz6xA7sOJ1AMUA=; b=L
-	tsvb1hN9lQBF6f3opboaF4eo7Dk7YenTbk0anrCJgWykRINsWW8IKNzB+MZADgqN
-	9S8weytcWkV6AN4WOGbYaoXBxCVoarah1vRJJaJhPXrHKK032Sza83sHkVZ5lDXv
-	o8nX2mcC/fHRR5uF5k4ZQ0Tj6qMWiL/yq+2kzB7PAkykhKCh15DZv7wvge49dd1S
-	+Tk3EB4NIZPheuJCVpchx8jtXnZVFivPD7v+KxPfOtiId6el7TT9vesg+HTE1qe2
-	NbxqeXib/zlgu9kfIvT3ZbKeQdqLot9mA0hnjFZaGF+ltnBRso5oIZ/Rwc0tSOwK
-	k9eLJ+K0gBEEImFh4QHDg==
-X-ME-Sender: <xms:PufhZoIhCMMEdvCl4V6ygTYIsrSrltXO_PD6W1JF4IyLaRVK_JEquw>
-    <xme:PufhZoIsX0C2B3lqQIlLMdQC2Z-o-E33QSw8fRX64QepDJwNDusRPjBj8RwIc8ai8
-    DKG31_rz3lmut5hhQ>
-X-ME-Received: <xmr:PufhZosXu6WjC_ozuXy6dcEhHUdHDCDHVPioQLoiaZF0Ve_axG51karv4fFeqzLBzWxnxwemrNbIsD3LtFSmMwIzXRfcNzefgUSMxvm1lSQ4ZQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddguddvlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenfghrlhcuvffnffculdefhedmnecujfgurhepfffhvfevuffk
-    fhggtggugfgjsehtkefstddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguh
-    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepffffgeegkeejvdejgeehteek
-    udfhgfefgeevkeelhfegueeljefhleejtdekveffnecuffhomhgrihhnpehgihhthhhusg
-    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegugihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohephhgrfihksehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheprg
-    hlvgigvghirdhsthgrrhhovhhoihhtohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    vgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvght
-    pdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehg
-    mhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:PufhZlZU1yrF9hWjmM5hU82YIL4g7JMi_oMZjhHzpKJcC3rVF8VRSA>
-    <xmx:PufhZvbw_0K9S0ui6zJ_9DPNOqyKfm8wbFjHO7lv4cfTI5S2lWXrag>
-    <xmx:PufhZhA5JXEwMUD2H1CtKFNZNRobgRPVIqYrB3HelyBi7S7pGjT2dg>
-    <xmx:PufhZlY9e4uWGeovn7JzsV1x5t4t7cLcxpqMLCckkr9lgjFJd9Pxzg>
-    <xmx:PufhZsTyuJ7gK9LjSQNMo-lkIJMD28kWvLLNjEeJotwxv-X2D_00JaNb>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Sep 2024 14:53:48 -0400 (EDT)
-Date: Wed, 11 Sep 2024 12:53:46 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
-	LKML <linux-kernel@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
- BPF_MAP_TYPE_RINGBUF from prog
-Message-ID: <oq2gfokp7godtkvkedod2ixpw3m6qfnhohaiy7sz4pq7pbkitl@eiqkz2tzrxc3>
-References: <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
- <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
- <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
- <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
- <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
- <rsdwvah5ov3itchsgkwgleihswoycoal5vjbeql2wbqoz5noiz@myk2atnnjaub>
- <CAEf4BzbKoyja2ErsusUcK8YaS1Rqm0VmBzwsNtQtM1-XHDhD7g@mail.gmail.com>
- <cz7qwrujjiunv3yydkfamfm5mkis5xdy4vg4odwatchjoaoolk@zzithxrzdxkv>
- <8a088e49-2b40-4a04-ae16-57cdddde09bc@app.fastmail.com>
- <d6a2da12-6442-4a8e-a5dc-6f8af5a5178c@kernel.org>
+	s=arc-20240116; t=1726081176; c=relaxed/simple;
+	bh=31fX0mqF11YiBkL12YdfveYdX1XS8aNbLaEy2k8GHMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WarIM9F4wu3BPp9il0OCc20SYxZpee8Fo1FrsXIDuqxGEcB/Y/lxlqUcwlbXG+AQsBRTbcM1PSkIXTYsFUJn0pYCSB4o50EDwf6obmFHb6GzMUsSX3ZO0hBYWUaIzqBzVK16gzo55ob4KcMHc9gq4W/MjxJigCFdx98qdilAOQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfP+h2Z6; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5e1cdfe241eso88563eaf.1;
+        Wed, 11 Sep 2024 11:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726081174; x=1726685974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RSKooU1U1hQ/VIwbHIM1KYqC3Tngd/M3BbIpyV3X5N0=;
+        b=bfP+h2Z6gZpQvWknNaYm7aLfuagRDbnuEleefT0ndVqSLIWX1vBiFzFf3ABiNf9b67
+         +To4qgmZUpob1YMNSSznzoT45emqW8Be3aG/QK6+Imtj0yLeDqhUGLO1FjCSpIqTwTTW
+         8QClxk1/FyjJlysEzd15VeWWd2PyO8U4wxGI3Ei/Dp0U1t3Ro5hv+MvBi1tb/+IGcZNj
+         mGc7Gr8wIe/7Q27bGzw6fYkM/giclP9mHfVwjuedxXq7XGq7emiu3kqAwUWKpsEwnrMC
+         XVE1Z6VqnBsbkakfeAlJaBQFCII5M3b8wbBy1Nb9NjUlEBFL9d7ffjmiCdo4A93s3b78
+         HbFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726081174; x=1726685974;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RSKooU1U1hQ/VIwbHIM1KYqC3Tngd/M3BbIpyV3X5N0=;
+        b=r/eNA4OKFDWAUYs2f2PRuzd81vNbBG8TVS8KR1kx7BDU6RsVPBeM/NDjzEKFXTX1fs
+         5nuYPPtZYK5HQn3lyDh9YLicGrA2IdEIvCLsOAX4MH7gEHDFVkTBQ3Ccf/uFfwmf0cVA
+         +Uf31PigGqOrtpreN9mD0hy1K+xcsIf3W9MDRhaFYTZCAbpe7833251/kkturdUNkBcR
+         xqY+usST6P2gfXIZzEGFwNr1fbbyBPt/0F4FSS5Tv/Yu9+nbXWdZojh8Tngh5sIumDLY
+         S3/B25bz/4J4kSx8daXJ9+AHryHYHhGfOp+U45VVxA7c2n25ClU7K09BzPZen6EWMh5D
+         p5Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuxq2UsGyRx9DF6c0LBUK7Zq3nLZZGst+e/GWY7K1XKv9XkoNg2UbMsZfgzJDacnTIgJfnkyVZQ2s=@vger.kernel.org, AJvYcCVoCThxsBp/ys9FzMmFKl7ivFJcb4yS2SVmF8/lGzDs7GOpClMUl8YX0Qu7ue8elX8MwTwR35dyGsL9@vger.kernel.org, AJvYcCVw3qqPZKjkk69deoPZmPe069QedFpNHvtIfVZAT2JVAGil9C10iSE597hYRRtqpkRu/frWeyqSJDQe28Yu@vger.kernel.org, AJvYcCWHKva5JcISt2QuxSeFGJhx2SfJ5eJK0GfX5V9CkxWCFAOXSwAN6F1OL15C+9QpbiqgSiToJTZoOCnIy+6KC5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw29U6WZCmQxT19mScNPQEur9pGXBOJFj2oEoRWIt8P1+285CVl
+	3SGvNUBn2I7hwbUqbe3nZX4Vznka7oXoiuwxG45yoNl/LoL2t8pU
+X-Google-Smtp-Source: AGHT+IGFYrD2JsWDGvuTdxMxZqchPY23mKraBaSmrroUVisCVdQH8qxiNZMnli2UZNlAI3MPeGVniA==
+X-Received: by 2002:a05:6830:3c09:b0:710:ec4a:b394 with SMTP id 46e09a7af769-7110957134cmr502026a34.29.1726081174149;
+        Wed, 11 Sep 2024 11:59:34 -0700 (PDT)
+Received: from pipaware.tx.rr.com ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9db2ce0sm2440293a34.57.2024.09.11.11.59.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 11:59:33 -0700 (PDT)
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+To: corbet@lwn.net,
+	ojeda@kernel.org
+Cc: alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	bilbao@vt.edu,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH] kernel-docs: Add new section for Rust learning materials
+Date: Wed, 11 Sep 2024 13:59:30 -0500
+Message-ID: <20240911185931.16971-1-carlos.bilbao.osdev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d6a2da12-6442-4a8e-a5dc-6f8af5a5178c@kernel.org>
 
-On Wed, Sep 11, 2024 at 10:32:56AM GMT, Jesper Dangaard Brouer wrote:
-> 
-> 
-> On 11/09/2024 06.43, Daniel Xu wrote:
-> > [cc Jesper]
-> > 
-> > On Tue, Sep 10, 2024, at 8:31 PM, Daniel Xu wrote:
-> > > On Tue, Sep 10, 2024 at 05:39:55PM GMT, Andrii Nakryiko wrote:
-> > > > On Tue, Sep 10, 2024 at 4:44 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> > > > > 
-> > > > > On Tue, Sep 10, 2024 at 03:21:04PM GMT, Andrii Nakryiko wrote:
-> > > > > > On Tue, Sep 10, 2024 at 3:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> > > > > > > 
-> [...cut...]
-> 
-> > > > Can you give us a bit more details on what
-> > > > you are trying to achieve?
-> > > 
-> > > BPF cpumap, under the hood, has one MPSC ring buffer (ptr_ring) for each
-> > > entry in the cpumap. When a prog redirects to an entry in the cpumap,
-> > > the machinery queues up the xdp frame onto the destination CPU ptr_ring.
-> > > This can occur on any cpu, thus multi-producer. On processing side,
-> > > there is only the kthread created by the cpumap entry and bound to the
-> > > specific cpu that is consuming entries. So single consumer.
-> > > 
-> 
-> An important detail: to get Multi-Producer (MP) to scale the CPUMAP does
-> bulk enqueue into the ptr_ring.  It stores the xdp_frame's in a per-CPU
-> array and does the flush/enqueue as part of the xdp_do_flush(). Because
-> I was afraid of this adding latency, I choose to also flush every 8
-> frames (CPU_MAP_BULK_SIZE).
-> 
-> Looking at code I see this is also explained in a comment:
-> 
-> /* General idea: XDP packets getting XDP redirected to another CPU,
->  * will maximum be stored/queued for one driver ->poll() call.  It is
->  * guaranteed that queueing the frame and the flush operation happen on
->  * same CPU.  Thus, cpu_map_flush operation can deduct via this_cpu_ptr()
->  * which queue in bpf_cpu_map_entry contains packets.
->  */
-> 
-> 
-> > > Goal is to track the latency overhead added from ptr_ring and the
-> > > kthread (versus softirq where is less overhead). Ideally we want p50,
-> > > p90, p95, p99 percentiles.
-> > > 
-> 
-> I'm very interesting in this use-case of understanding the latency of
-> CPUMAP.
-> I'm a fan of latency histograms that I turn into heatmaps in grafana.
-> 
-> > > To do this, we need to track every single entry enqueue time as well as
-> > > dequeue time - events that occur in the tail are quite important.
-> > > 
-> > > Since ptr_ring is also a ring buffer, I thought it would be easy,
-> > > reliable, and fast to just create a "shadow" ring buffer. Every time
-> > > producer enqueues entries, I'd enqueue the same number of current
-> > > timestamp onto shadow RB. Same thing on consumer side, except dequeue
-> > > and calculate timestamp delta.
-> > > 
-> 
-> This idea seems overkill and will likely produce unreliable results.
-> E.g. the overhead of this additional ring buffer will also affect the
-> measurements.
+Include a new section in the Index of Further Kernel Documentation with
+resources to learn Rust. Reference it in the Rust index.
 
-Yeah, good point.
+Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+---
+ Documentation/process/kernel-docs.rst | 111 +++++++++++++++++++++++---
+ Documentation/rust/index.rst          |   3 +
+ 2 files changed, 103 insertions(+), 11 deletions(-)
 
-> 
-> > > I was originally planning on writing my own lockless ring buffer in pure
-> > > BPF (b/c spinlocks cannot be used w/ tracepoints yet) but was hoping I
-> > > could avoid that with this patch.
-> > 
-> > [...]
-> > 
-> > Alternatively, could add a u64 timestamp to xdp_frame, which makes all
-> > this tracking inline (and thus more reliable). But I'm not sure how precious
-> > the space in that struct is - I see some references online saying most drivers
-> > save 128B headroom. I also see:
-> > 
-> >          #define XDP_PACKET_HEADROOM 256
-> > 
-> 
-> I like the inline idea. I would suggest to add u64 timestamp into
-> XDP-metadata area (ctx->data_meta code example[1]) , when XDP runs in
-> RX-NAPI.  Then at the remote CPU you can run another CPUMAP-XDP program that
-> pickup this timestamp, and then calc a delta from "now" timestamp.
-> 
-> 
->  [1] https://github.com/xdp-project/bpf-examples/blob/master/AF_XDP-interaction/af_xdp_kern.c#L62-L77
+diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
+index 55552ec4b043..d917accd7fc3 100644
+--- a/Documentation/process/kernel-docs.rst
++++ b/Documentation/process/kernel-docs.rst
+@@ -72,17 +72,6 @@ On-line docs
+         programming. Lots of examples. Currently the new version is being
+         actively maintained at https://github.com/sysprog21/lkmpg.
+ 
+-    * Title: **Rust for Linux**
+-
+-      :Author: various
+-      :URL: https://rust-for-linux.com/
+-      :Date: rolling version
+-      :Keywords: glossary, terms, linux-kernel.
+-      :Description: From the website: "Rust for Linux is the project adding
+-        support for the Rust language to the Linux kernel. This website is
+-        intended as a hub of links, documentation and resources related to
+-        the project".
+-
+ Published books
+ ---------------
+ 
+@@ -220,6 +209,106 @@ Miscellaneous
+         other original research and content related to Linux and software
+         development.
+ 
++Rust
++----
++
++    * Title: **Rust for Linux**
++
++      :Author: various
++      :URL: https://rust-for-linux.com/
++      :Date: rolling version
++      :Keywords: glossary, terms, linux-kernel, rust.
++      :Description: From the website: "Rust for Linux is the project adding
++        support for the Rust language to the Linux kernel. This website is
++        intended as a hub of links, documentation and resources related to
++        the project".
++
++    * Title: **Learning Rust the Dangerous Way**
++
++      :Author: Cliff L. Biffle
++      :URL: https://cliffle.com/p/dangerust/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, blog.
++      :Description: From the website: "LRtDW is a series of articles
++        putting Rust features in context for low-level C programmers who
++        maybe don’t have a formal CS background — the sort of people who
++        work on firmware, game engines, OS kernels, and the like.
++        Basically, people like me.". It illustrates line-by-line
++        conversions from C to Rust.
++
++    * Title: **The Rust Book**
++
++      :Author: Steve Klabnik and Carol Nichols, with contributions from the
++        Rust community
++      :URL: https://doc.rust-lang.org/book/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, book.
++      :Description: From the website: "This book fully embraces the
++        potential of Rust to empower its users. It’s a friendly and
++        approachable text intended to help you level up not just your
++        knowledge of Rust, but also your reach and confidence as a
++        programmer in general. So dive in, get ready to learn—and welcome
++        to the Rust community!".
++
++    * Title: **Rust for the Polyglot Programmer**
++
++      :Author: Ian Jackson
++      :URL: https://www.chiark.greenend.org.uk/~ianmdlvl/rust-polyglot/index.html
++      :Date: December 2022
++      :Keywords: rust, blog, tooling.
++      :Description: From the website: "There are many guides and
++        introductions to Rust. This one is something different: it is
++        intended for the experienced programmer who already knows many
++        other programming languages. I try to be comprehensive enough to be
++        a starting point for any area of Rust, but to avoid going into too
++        much detail except where things are not as you might expect. Also
++        this guide is not entirely free of opinion, including
++        recommendations of libraries (crates), tooling, etc.".
++
++    * Title: **Fasterthanli.me**
++
++      :Author: Amos Wenger
++      :URL: https://fasterthanli.me/
++      :Date: Accessed Sep 11 2024
++      :Keywords: rust, blog, news.
++      :Description: From the website: "I make articles and videos about how
++        computers work. My content is long-form, didactic and exploratory
++        — and often an excuse to teach Rust!".
++
++    * Title: **You Can't Spell Trust Without Rust**
++
++      :Author: Alexis Beingessner
++      :URL: https://repository.library.carleton.ca/downloads/1j92g820w?locale=en
++      :Date: 2015
++      :Keywords: rust, master, thesis.
++      :Description: This thesis focuses on Rust's ownership system, which
++        ensures memory safety by controlling data manipulation and
++        lifetime, while also highlighting its limitations and comparing it
++        to similar systems in Cyclone and C++.
++
++    * Name: **Linux Plumbers (LPC) Rust presentations**
++
++      :Title: Rust microconference
++      :URL: https://lpc.events/event/18/sessions/186/#20240918
++      :Title: Rust for Linux
++      :URL: https://lpc.events/event/18/contributions/1912/
++      :Title: Journey of a C kernel engineer starting a Rust driver project
++      :URL: https://lpc.events/event/18/contributions/1911/
++      :Title: Crafting a Linux kernel scheduler that runs in user-space
++        using Rust
++      :URL: https://lpc.events/event/18/contributions/1723/
++      :Title: openHCL: A Linux and Rust based paravisor
++      :URL: https://lpc.events/event/18/contributions/1956/
++      :Keywords: rust, lpc, presentations.
++      :Description: A number of LPC talks related to Rust.
++
++    * Name: **The Rustacean Station Podcast**
++
++      :URL: https://rustacean-station.org/
++      :Keywords: rust, podcasts.
++      :Description: A community project for creating podcast content for
++        the Rust programming language.
++
+ -------
+ 
+ This document was originally based on:
+diff --git a/Documentation/rust/index.rst b/Documentation/rust/index.rst
+index 46d35bd395cf..01f09216c229 100644
+--- a/Documentation/rust/index.rst
++++ b/Documentation/rust/index.rst
+@@ -42,6 +42,9 @@ configurations.
+     arch-support
+     testing
+ 
++You can also find learning materials for Rust in its section in
++:doc:`../process/kernel-docs`.
++
+ .. only::  subproject and html
+ 
+    Indices
+-- 
+2.43.0
 
-Cool! This is a much better idea than mine :)
-
-I'll give this a try.
-
-> 
-> 
-> > Could probably amortize the timestamp read by setting it in
-> > bq_flush_to_queue().
-> 
-> To amortize, consider that you might not need to timestamp EVERY packet to
-> get sufficient statistics on the latency.
-> 
-> Regarding bq_flush_to_queue() and the enqueue tracepoint:
->   trace_xdp_cpumap_enqueue(rcpu->map_id, processed, drops, to_cpu)
-> 
-> I have an idea for you, on how to measure the latency overhead from XDP
-> RX-processing to when enqueue "flush" happens.  It is a little tricky to
-> explain, so I will outline the steps.
-> 
-> 1. XDP bpf_prog store timestamp in per-CPU array,
->    unless timestamp is already set.
-> 
-> 2. trace_xdp_cpumap_enqueue bpf_prog reads per-CPU timestamp
->    and calc latency diff, and clears timestamp.
-> 
-> This measures the latency overhead of bulk enqueue. (Notice: Only the
-> first XDP redirect frame after a bq_flush_to_queue() will set the
-> timestamp). This per-CPU store should work as this all runs under same
-> RX-NAPI "poll" execution.
-
-Makes sense to me. This breaks down the latency even further. I'll keep
-it in mind if we need further troubleshooting.
-
-> This latency overhead of bulk enqueue, will (unfortunately) also
-> count/measure the XDP_PASS packets that gets processed by the normal
-> netstack.  So, watch out for this. e.g could have XDP actions (e.g
-> XDP_PASS) counters as part of step 1, and have statistic for cases where
-> XDP_PASS interfered.
-
-Not sure I got this. If we only set the percpu timestamp for
-XDP_REDIRECT frames, then I don't see how XDP_PASS interferes. Maybe I
-misunderstand something.
-
-Thanks,
-Daniel
 
