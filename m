@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-325493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BC1975A5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EBA975A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C13A6B22E9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:25:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174722881C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893D1BA26A;
-	Wed, 11 Sep 2024 18:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4761A1B6554;
+	Wed, 11 Sep 2024 18:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avqJjFg4"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="WazDwtuM"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FC11B655A;
-	Wed, 11 Sep 2024 18:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF3D7AE5D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726079123; cv=none; b=NKSEOvs4PaP/0C26aa+8Il+ySOlIZm8ApJexgzojlwKSltBN9jrGUX7a5Q7alfL7AlOsv1nBmeTJ2LBnEP6QdKg0YnEWuw6audrSeN4Pra0CG/rHUiEQdrgmL7eA3hjqGO7hF9kukuMAOMVjTaadvVDJWLPGDbHxMfnWpCk71I4=
+	t=1726079212; cv=none; b=UceIcG79DZZJz0rauvQ1OLD91uORV22SiQqt5gdTErPFg6MdlWvXz5qhBhDTR24YgBKIloejeObMf3TEMTWZT8WBiBpactdmgQJgZ+KMsLdh8Jx/G+ohEF4TBvDy4ZoD7k2Kamf81xRnxfcgQh/I2H8N5H70Ixej7EwtpDBl460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726079123; c=relaxed/simple;
-	bh=ZFbm6RvuGzyg/OXzLGx4dFjmyQYMdMuowComNjj6Bbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NuyI+Sz/Z7mBnGkHu+k1j3wZfbJQy/sff3Oknh3+gIjuDs613g5rDBM3cb9td8YKlm4uJYmQVpBvWeTZNtXbKZOeM+6lZhJzNwaeWL+BZlJEkF0gKhVcSv0suXjhpXRNQnMOZZrAfF+Wk4IwKVBIKdvHAcfpVQ2ZyUnUdYg5Qek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avqJjFg4; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so532655e9.1;
-        Wed, 11 Sep 2024 11:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726079121; x=1726683921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TxR+vNB93ufPg0Y1ZRk8v4VwhhNXPxM1gxuKsa+d6/0=;
-        b=avqJjFg4O4NdBLdgSPIBByggRc6VkPGcarvqwNd+yq2tWrnVbolb/ulrzn+dz1mlJX
-         Jx36PQOFsMXZTQrTIhwHNNGPP4kfWa8CuE03mcuqxku4NN/PIVA4u/ZGNFeetZ3qJrPQ
-         mqar0m0V+eDucVKdgEWVSM2nh4Tpbvapqbv/VxXGLbQS1UHGtM/UOBqIpNESvwzWheXJ
-         icqSMfs4vhs8wDwDpfrKOsyolM/MDemBz06HJ2kjnp5y2x+oqvZVgG9zh3PAk4efNBZX
-         9hgI3Hg9dlDjwzpkRMC1hL+xzXb0HuBEJtyV9QZLNpHVOE0BH2XOKmwVKoWaX5gAsnee
-         m4lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726079121; x=1726683921;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TxR+vNB93ufPg0Y1ZRk8v4VwhhNXPxM1gxuKsa+d6/0=;
-        b=QHfsKnp3e98dSNxAK9vxN5g+HRi3foWk08iqc84aGvplbQst1WY0uTuAHlLc1iYC6l
-         ehmDqJPV8XQKfEWl287idp1w+ZKTbxoqpkF5ognmko4c1YIUtVczqv8lAdzyphjTZ7WH
-         QYvEMZW6Vw+88mjvSh/qXyu5uUeh2aStinHgD4BnVpfVG4ZvwLMaflbPiNW0so19uTVr
-         lyn0ju7FAVRzK4fKLMnb9VYjIBW2QURQCdm6P8wVSPTBuMbRE+eD/uF2agEuySQoy9B4
-         kEEj/TYFqSah98uziNRFL/6q0WtNbpqjQzlmCpwG3IWyWdRRza5exRLjuXcDdsil2ai2
-         k+0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAc2fgLeU9+IgFdOsDuNweuU9SEusRkFcQtvrEwQnCim40xYCtscGQIegLh1yd6T/TSNt2hQYAKCKjrx8=@vger.kernel.org, AJvYcCVEEBDcaMv+TbkdN9DQ6lm4r/6tu3gh4ep9X1jozZEvtWDLL8imjoney8MfHDo0Q6914C4VC9isSX364sko@vger.kernel.org, AJvYcCVxV3Sl5YIhmLQJlGhARptqKggoKIwaNcNdsNlcaA4dbQ9WkjbsMEXQyVKCvScifZ8I3Gqbi0tMyGfi3bbrVMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZR+Uv8LpJcQhcHZ0d+geGPdM9Kk5ZuBTHKhB6pFTYPDBIACd5
-	CekxAwAyBFXAglQg0tRzDiVXQGFnXmQ5RI+COO6KtqqrESz93bzI
-X-Google-Smtp-Source: AGHT+IG6EBJS+D/O14RGqyVdq3Z1OqN0oOzz6xJGseNGrMXdlv0fn7sOAFcf/NaC2Z7Gh++8z1XETA==
-X-Received: by 2002:a05:600c:45cf:b0:42c:a802:540a with SMTP id 5b1f17b1804b1-42cdb511f33mr3768055e9.7.1726079119903;
-        Wed, 11 Sep 2024 11:25:19 -0700 (PDT)
-Received: from void.void ([141.226.10.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb099acf6sm146736855e9.9.2024.09.11.11.25.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 11:25:19 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] video: fbdev: Fix a typo
-Date: Wed, 11 Sep 2024 21:24:37 +0300
-Message-ID: <20240911182503.3600-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726079212; c=relaxed/simple;
+	bh=HVgjg48h7yQ5aSQh0ZIA4md6dKOF+acuihSkQ39ahRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mhFToeJl86APl6V5D16NBKOfchkCbxOpf/RPs9Y0pzvzqKWtLOeAglS4gcIb2m6Gs/NNMnv+8NS+oE5TZptEgCFK81grHSeirD3GeQ2DSYorbvJkPo4fSNXe6IgrLkTaWlD8acOLd+baSmrn/YrfSUREFnWcTYD8W2cfPNQFjAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=WazDwtuM; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 83CD9BFB39;
+	Wed, 11 Sep 2024 20:26:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1726079208; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=c7s+a1DXGSnU83uOS1h87JsKv2O/+rk28GPS9hHpHGo=;
+	b=WazDwtuMX9Law/jw92lkZ9NWsct2Z1n4yKrMNadHBH2hJI08rpUE67JpGCdhEreGhdWUbQ
+	BmGL+6JwEyiHZlxdw4RsEEe7mM9fK5H7ygjjfL3/no2sxIZ7nIfD6Z40ZNp7oKqeRZ+OXw
+	lN0FgjGgBl92YbACFdUJyJy0SKt7nYhuTxH96mDnwgLcSCsAqPlZCU5D7Vy4ZNRf3VIfHc
+	nGARRFLf8PVeCt+9ydqf0qGc+5JLkAPmzbaMoLlvbsnK+AICcyvZiPz2HJMe/dP7qcmQfO
+	QQ5KKZ9n1L3zmTKLbyn/ZCMuMVz3qdgL6nghYo4h0YczWFU/Ir0Nm/eLWz/dCA==
+Message-ID: <440cf92a-052f-4a03-91a8-2405c902aa3e@fris.de>
+Date: Wed, 11 Sep 2024 20:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Extending PLL LUT for i.MX8MP Samsung HDMI PHY
+To: Dominique Martinet <dominique.martinet@atmark-techno.com>,
+ Adam Ford <aford173@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>, Marco Felsch
+ <m.felsch@pengutronix.de>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>
+References: <20240910181544.214797-1-frieder@fris.de>
+ <ZuDjAwPxHeJTvXAp@atmark-techno.com>
+ <CAHCN7xJD8jsqyZX1JkWxrA84XkZ8YYN19hXW6KVe+jkOFugqrw@mail.gmail.com>
+ <ZuDyBQ1I2vcGzAqX@atmark-techno.com>
+Content-Language: en-GB, de-DE
+From: Frieder Schrempf <frieder@fris.de>
+In-Reply-To: <ZuDyBQ1I2vcGzAqX@atmark-techno.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Fix a typo in comments.
+On 11.09.24 03:27, Dominique Martinet wrote:
+> Adam Ford wrote on Tue, Sep 10, 2024 at 08:16:04PM -0500:
+>>> That aside, I see no problem with this, just one meta-comment about
+>>> adding a link to the script in an external repo: I see some other
+>>> drivers have python scripts in their trees e.g.
+>>> drivers/comedi/drivers/ni_routing/tools/*py
+>>> drivers/gpu/drm/ci/xfails/update-xfails.py
+>>> drivers/gpu/drm/msm/registers/gen_header.py
+>>>
+>>> would it make sense to commit the script here instead of linking to a
+>>> repo that might be lost in the future?
+>>>
+>>> I'm not quite sure what policy the linux repo has here, so leaving that
+>>> as an open question.
+>>
+>> Is there a reason this couldn't be coded in C and used to expand my
+>> integer calculator series?  With that, we could drop the lookup table.
+> 
+> Quoting a previous mail from Frieder:
+>> I will clean things up a bit and then share what I have. I hope that this
+>> allows anyone to calculate parameters for their non-standard displays if
+>> required.
+>>
+>> If someone feels extra motivated they could try to calculate the fractional
+>> parameters at runtime. However I'm not sure that this is feasible. The
+>> numerical computation of a large number of parameters is quite heavy and it's
+>> probably not easy to strip the algorithm down to something that can be run on
+>> the target without too much overhead.
+> 
+> Trying a random frequency with the algorithm he has implemented it
+> easily takes 10 seconds to run on my imx8mp board, so even if we asssume
+> C is 3-4 times faster I think the current algorithm is too slow for
+> runtime and it makes more sense to extended the LUT to me (as long as
+> the values can be & are checked at least once, which we now can)
+> 
+> The current algorithm brute-forces its way through so there could be a
+> better way of computing the fractional part of the divider, but I'm not
+> sure it's worth the effort at this point; I guess it's a good
+> intellectual challenge though so someone might do it in the future.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/video/fbdev/omap2/omapfb/dss/hdmi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h b/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
-index 9a7253355f6d..cdb1dedca492 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
-@@ -351,7 +351,7 @@ struct omap_hdmi {
- 	bool audio_configured;
- 	struct omap_dss_audio audio_config;
- 
--	/* This lock should be taken when booleans bellow are touched. */
-+	/* This lock should be taken when booleans below are touched. */
- 	spinlock_t audio_playing_lock;
- 	bool audio_playing;
- 	bool display_enabled;
--- 
-2.46.0
-
+Second this. My algorithm is far from optimal and there might be more 
+elegant solutions. If anyone feels like creating something that can be 
+added to the driver that would be interesting and welcome for sure.
 
