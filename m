@@ -1,173 +1,121 @@
-Return-Path: <linux-kernel+bounces-325527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63904975AD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E26975AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D1E1C2241D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E321F23AF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C571BA86F;
-	Wed, 11 Sep 2024 19:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B551BA87A;
+	Wed, 11 Sep 2024 19:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QmUxzc0N"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0nDtLUf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333CF1BA28F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF418C357;
+	Wed, 11 Sep 2024 19:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726082870; cv=none; b=m9TkOFY++7siZ9/hmJyPXMSzZz1QqWC/A7y7T38jz1NpsCGuh91tijAkQ4TQvOgoS50ZnsyJ1jpWZGiqAIjsGxt8328pwnjo9Vx13j+IzTm6KjFWdjS7dylncVJkUE+SNJAJPzXqePaQD+1cnNalLExAw3V0zcrMzCA4jh26jqY=
+	t=1726082937; cv=none; b=uIrwU7ZnNk6gTVGhpX31mekAWWUXkd0qZmmW7mm97+fwVJqjaymCV8/DYKZMtoZHNMjNwr6n1ZsbNrLFvLbWgWnK9HepSDVZKuIkPHuOWHA5F8vWbKot6QZCgPm4oF8ojRwjYGZt+QEk14VmFaqt+qIjW7So00Ebfl0H0iinjuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726082870; c=relaxed/simple;
-	bh=28VQxxTcF6zriSW//kiDBloDgrUWMiPf3s4r6H2DoeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qMxcRI2kMbODWtQ87qHH6RiYZyyqrtFjgHFPW3RexoiXZoiRDHmHgo0y8rtZbmxA01FX52C1xANRpjpV/VP/4qOxoidGEKk7ntbjbOJcnes5SMh06a5OzN6GibqwvSw0l6xZ6LG3b+q3GfdrUTmi5UnEseU6vockziJHLfFI0Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QmUxzc0N; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53659867cbdso242768e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726082865; x=1726687665; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eVNn2ed2GBXRXi1IS2byeByLJGlVq8ZELsiy66KEkNM=;
-        b=QmUxzc0NMI+Gw3nYTWZ8pHFwF2doPnLEKY2+kx/12AiTOVys85NyEFL/6tdB1vMb5N
-         s86zic89XqHQgvlaNSto/MPbnm0JU1yYzutX8DHibdZtb+LdRp6Q4SCuzPL0lgXv9C0F
-         catIz9V4+9uGUQyFI+VCDzFuSzUQgOfh0eJsY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726082865; x=1726687665;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eVNn2ed2GBXRXi1IS2byeByLJGlVq8ZELsiy66KEkNM=;
-        b=XMDpxivxgE+uPBnB0SkqE86/TVTK8ZCE+iyPek5WdBKzTgOL2gc5PT1T4xZVcxsjIy
-         +zlpZ07DT/6rPJI9Rd+PNlPflphh2FYyav93npyvOu/r5qwUnPZDD1NXMT15krWNaNrl
-         U0EurJfOWE2Jj9y5tfejmeaHjAcP3br4CCedEwxLOs0CXtgkjN5PPWgUcM1R5bIkFst7
-         x8YHb6OmEWHFAre0Yup+tqLPlmRGfoEvzg+YcrBQCJq787XBdfRWWaIpqBTZsFRQ6eJT
-         zmTToe2fcOuKJMLQEaexr2sg5maT8ZtBuFDZsRdp8diHux+TnZBEbvhgwMxsJb+O3Vmn
-         eYVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUfMDSTwX/VV3bb4ZAR0+ZOtJPy++HOpTWeyi/QduXg7QIvPLeOw6y0YRYvy4ZKJTmIU4XpwktPrZDEqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTFoKzarzE9wU6sjOoszv7JJy4MyR3HgDm2NDsdDBg1fUVnTmU
-	9yDs7/XlPtwtk0jb/kmXhkE8Y5nfuI325tgTtXMsNj5F1V2fJm8zsQR8bleyc/XBoV3Ck6EY1kU
-	QSDddXWzIGn3UCRVNZ2uE2kOxKK3i9y5MdfuD
-X-Google-Smtp-Source: AGHT+IEW2bxQx2PeMhxbvntpzjVnkkvCp2gCzaOGUyXEwbimgXH5Avs6JFBqhKxW4Eh2kobLxWBwS7SfV7odLAGzdEE=
-X-Received: by 2002:a05:6512:ac9:b0:52e:932d:88ab with SMTP id
- 2adb3069b0e04-53678fb7165mr370248e87.23.1726082865014; Wed, 11 Sep 2024
- 12:27:45 -0700 (PDT)
+	s=arc-20240116; t=1726082937; c=relaxed/simple;
+	bh=T59rRg4dwHWf7KWGVsIxvIu6KQZtNF20xzVnDzCyhtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4i4//Qn8l6Wg/oDds1Gtedcoe9sw1bSsxtYxEqmepboDRNMVC7IMQJxFvBCl/W+mQ6XlmNKOPa0BxpZfntybX1kob2ibn7lOE4R0sOvacqz7DMFQPJK6+W3+fFfvsc+vbAz03zDp8txBjTczqhjH4DOjRTVBZwTq4s/UVTwLIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0nDtLUf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F2D0C4CEC0;
+	Wed, 11 Sep 2024 19:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726082937;
+	bh=T59rRg4dwHWf7KWGVsIxvIu6KQZtNF20xzVnDzCyhtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K0nDtLUfXMABcLr6ks2RSEg7CCf6CImgpC68zc9IPTwacQ7o+Oqld1UbbXTXZlGKC
+	 83mDleEPxFTO6WPWwy0/14+lRXXYianiJfyu2XE8agczCxqRug/FzyTjEpTfoAkMT7
+	 7Lk6YZ4Qd0Z0PgNDyDud56CARPZYaPKdhqOEFJYx7JTqrRiepONcmiocP7ZD58fce2
+	 hN0SAW7DrvjARIsDFYoGzX6cqn4AnrqsSmIOj5Czl9Qet5hs4cb71UpJTQ7pPa0fWB
+	 EoDM7yDpZbsMYU7EUkpjPyNaPTIcNnZlWtnLJyD+/7/0dsJSfLk+X3zwWXx+5Bzcye
+	 tBBn5dcGjsR3Q==
+Date: Wed, 11 Sep 2024 20:28:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: iio: dac: ad3552r: add io-backend
+ property
+Message-ID: <20240911-unfixed-faceplate-cb1ffe239125@spud>
+References: <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-0-87d669674c00@baylibre.com>
+ <20240905-wip-bl-ad3552r-axi-v0-iio-testing-v2-1-87d669674c00@baylibre.com>
+ <20240908132925.331c5175@jic23-huawei>
+ <20240909-dwelled-specimen-949f44c8d04d@wendy>
+ <1dca9ce52e7c701c7fb6cbbc723e9dff5d0ace8b.camel@gmail.com>
+ <66090d3e-bf6c-43ee-9dc8-7bca449d448f@baylibre.com>
+ <f54646877c2a68d01e15db31ae21224053f87439.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906211445.3924724-1-joshuapius@google.com>
- <878qw2d1ry.wl-tiwai@suse.de> <CAFs7P=g8Pqk2-WH8kX6spNSjJ8x80GnDur0ny2CvpzTKb7oa+Q@mail.gmail.com>
- <87o74v7w43.wl-tiwai@suse.de>
-In-Reply-To: <87o74v7w43.wl-tiwai@suse.de>
-From: Joshua Pius <joshuapius@chromium.org>
-Date: Wed, 11 Sep 2024 15:27:34 -0400
-Message-ID: <CAPUqXZAabm2xCK_H9bf=JBZk25BXKzsCUtcGEv0dHsMCyUTcZQ@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: usb-audio: Add logitech Audio profile quirk
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Joshua Pius <joshuapius@google.com>, alsa-devel@alsa-project.org, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	"Steven 'Steve' Kendall" <skend@chromium.org>, Karol Kosik <k.kosik@outlook.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="JeA0oE2RwfhgVEAi"
+Content-Disposition: inline
+In-Reply-To: <f54646877c2a68d01e15db31ae21224053f87439.camel@gmail.com>
+
+
+--JeA0oE2RwfhgVEAi
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Done.
+On Tue, Sep 10, 2024 at 10:16:24AM +0200, Nuno S=E1 wrote:
+> On Mon, 2024-09-09 at 12:19 -0500, David Lechner wrote:
+
+> > So I think we could make a single binding that works for the the AXI DAC
+> > backend/offload and the AXI SPI Engine offload. (I don't think it would
+> > be so easy to integrate the AXI DAC into the SPI framework on the driver
+> > side - and hopefully we won't have to, but the DT still could use the
+> > proposed SPI offload bindings.)
+> >=20
+>=20
+> Hopefully not...=20
+
+Yeah, I wasn't really trying to place any expectations on how the driver
+would look. My motivation in talking about offloads here was to see if
+the data direct switch would help at all in trying to ensure the
+spi-offloads stuff was being handled generically.
+
+That said, I do think the current implementation binding wise is
+probably capable of supporting both directions with little to no
+problems, it'd mostly be the kernel's (proposed) interpretation that'd
+not be up to it?
 
 
-On Tue, Sep 10, 2024 at 4:25=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Mon, 09 Sep 2024 04:03:36 +0200,
-> Joshua Pius wrote:
-> >
-> > Yes, this change is for UCM profiles.
-> >
-> > Yes this should be a one time occurrence as afterwards effort is being
-> > made to migrate over to UCM v2.
->
-> OK, then I'll take it.  But, I noticed that your Signed-off-by tag was
-> with google.com address while you submitted from chromium.org.
-> Could you align those?
->
->
-> thanks,
->
-> Takashi
->
-> >
-> > Thanks,
-> >
-> > Joshua P
-> >
-> >
-> >
-> >
-> >
-> > On Sun, Sep 8, 2024 at 3:47=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wro=
-te:
-> > >
-> > > On Fri, 06 Sep 2024 23:14:38 +0200,
-> > > Joshua Pius wrote:
-> > > >
-> > > > Specify shortnames for the following Logitech Devices: Rally bar, R=
-ally
-> > > > bar mini, Tap, MeetUp and Huddle.
-> > > >
-> > > > Signed-off-by: Joshua Pius <joshuapius@chromium.org>
-> > >
-> > > Is this change needed only for UCM profiles?  UCM v2 should be able t=
-o
-> > > handle better to identify models, and such short name updates aren't
-> > > needed for them.
-> > >
-> > > OTOH, I don't mind much to take this kind of small harmless changes
-> > > (unless it happens too frequently).  So I'll likely take this, but
-> > > just for verifying the situation.
-> > >
-> > >
-> > > thanks,
-> > >
-> > > Takashi
-> > >
-> > >
-> > > > ---
-> > > >  sound/usb/card.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/sound/usb/card.c b/sound/usb/card.c
-> > > > index 778de9244f1e..9c411b82a218 100644
-> > > > --- a/sound/usb/card.c
-> > > > +++ b/sound/usb/card.c
-> > > > @@ -384,6 +384,12 @@ static const struct usb_audio_device_name usb_=
-audio_names[] =3D {
-> > > >       /* Creative/Toshiba Multimedia Center SB-0500 */
-> > > >       DEVICE_NAME(0x041e, 0x3048, "Toshiba", "SB-0500"),
-> > > >
-> > > > +     /* Logitech Audio Devices */
-> > > > +     DEVICE_NAME(0x046d, 0x0867, "Logitech, Inc.", "Logi-MeetUp"),
-> > > > +     DEVICE_NAME(0x046d, 0x0874, "Logitech, Inc.", "Logi-Tap-Audio=
-"),
-> > > > +     DEVICE_NAME(0x046d, 0x087c, "Logitech, Inc.", "Logi-Huddle"),
-> > > > +     DEVICE_NAME(0x046d, 0x0898, "Logitech, Inc.", "Logi-RB-Audio"=
-),
-> > > > +     DEVICE_NAME(0x046d, 0x08d2, "Logitech, Inc.", "Logi-RBM-Audio=
-"),
-> > > >       DEVICE_NAME(0x046d, 0x0990, "Logitech, Inc.", "QuickCam Pro 9=
-000"),
-> > > >
-> > > >       DEVICE_NAME(0x05e1, 0x0408, "Syntek", "STK1160"),
-> > > > --
-> > > > 2.46.0.598.g6f2099f65c-goog
-> > > >
+--JeA0oE2RwfhgVEAi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHvcwAKCRB4tDGHoIJi
+0miWAPsHuPjsOWcESVczdK4JMl/e/qDVkATpitK3BEhGVmGlPQD/ae6Jf2DfgwQ9
+T+hgsDy6ENpgZKWuPPz52CyHhExI0Ao=
+=V+bY
+-----END PGP SIGNATURE-----
+
+--JeA0oE2RwfhgVEAi--
 
