@@ -1,208 +1,91 @@
-Return-Path: <linux-kernel+bounces-324746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7160B97505F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:03:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E9B975063
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AFB1F22146
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:03:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B061EB222A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB69186287;
-	Wed, 11 Sep 2024 11:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A721865F3;
+	Wed, 11 Sep 2024 11:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="ngualw4h"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLjRBmjb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43BC183087
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F2248CDD;
+	Wed, 11 Sep 2024 11:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726052615; cv=none; b=BnUAaGUwxsbDbHb+dG2s3a8ZHSkVGaCJQldOizFEELWvlX5YGWBC22uA3goVqoLu7cpQsvU21BQQvAkywLqm/KHjv8iyVqsObGruaUWqqjS2iadXGj7W4z1dWj5SLRHdpcVstuUlDRHQf3X5RPgj/5xhG5CkB1D9DG67Hg9Ch1w=
+	t=1726052647; cv=none; b=PRpptZBft9+8EGHmUn3k+/QAfSEbcpfVg/8bJ+nYmcKNtpAtD4wuEqWNNv7CuFHlvT20SzxQ01j0C2QNbeRXm0vqXL5BV5mhIHxRmOY41uIpj9bAtae7Js+7/GELn64qZzK8Y3JggrDgLHdonZ8HxoGevujS7EqhzPwnvM2Z+jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726052615; c=relaxed/simple;
-	bh=ORjVOdeptDBmaHaEY2r7GosRGBJcUlHe/3hAQlnOrz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NqSkROfcS50P1SwOqWBqKAJ5tHMXsNvcmLqxhPNdOXTnEtwP//dcaUL1HLsMein8PfcCpEvIHCLzCCHZ2ZOdqPMDZa9ByKS9RW1In2hFcakVPWPIRmOYesW6z47k/ndupWjEnf7YDesGoAufG40z/7Y+844Px8w/RvlxJ4dved4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=ngualw4h; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6d3f4218081so63966677b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1726052611; x=1726657411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AxDPM9JMquUGtRkhciAkGUBMtgFCHGxBT/7mvWlerhM=;
-        b=ngualw4hRVF5ZCmEB3N3M78txTOX1Bo9ezNLhw422P3AxqnpuyNRSoYu0ieVmcjvbC
-         xIbE9Q4M9t8OYJZ/N8jqgKmTb7yU6DT4KEWIExqsiSBeCHYtAIH46HDBmtBLfi4n/+dt
-         1gt5CPm4nQDX75VaXsi2wh2FPyXHN2rsubJ6d7ctLumCK0Y7erBLRZ3uVSLFtn5FSjlb
-         TSwBLJAOoLqecXUDCrrhQuyqJjOXjBfY1VBKONUqQzBDh+2hz57NbvaKLhhpHDjVzpoY
-         ag57Xr+7eBS+2HDSyAlbMdDsMJ6+0mCwU8Pyc+AYLUFeWpyWtQfdYOytBNPKC+Lk7QRW
-         4O5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726052611; x=1726657411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AxDPM9JMquUGtRkhciAkGUBMtgFCHGxBT/7mvWlerhM=;
-        b=FGBy12Fcuc3vQ8sWZZWmOsGKGfntRELyY+Xw/RMO/uI8OPiKZlLnFGem0bm9kEeTZj
-         lOdwPzS6Kwou3nEpXive4KRKjVHSyf36KXNba2RJYp0rN2l5MF0Tq4ixtsvLcJYzBCN/
-         7x6CIk2N3cWPG1m51XqNvn7fkO+jb71j3p2z4A1Tr2Iv9fqnhepnFl9kLUvrGzqEZGv+
-         Ns/OWVlhLTDJLF1H+GK4P1Eq2MrpGfU/n4ICLf2ZSAlDLWlRf2g80yaK1dIIHRS//2c9
-         HMEJh9B4txnUYdTrv4qc4Iu70Z/JHBT/EhXNGfF7N+u3gLD4uTHcxlt10yPyaoAj3Zg2
-         VtQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU74B28c1sowH6x+Cs3iziHZIjxCIvJYZdYIhqTbFPN5SDKILBpjsfMRDaX/znO0qtsNR62CvyBo4x3Qh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkoFPUyqHDgLTSkuakUwN0Qeye0C/XLM/BlcC+aWBiPogqWsFH
-	yaFr0cjirs3MqFONlf0UzA+DjVZCfkolTyqm0BsTop4HRrn/mseC3C+N+mGX4zYA2k+br81LLA9
-	DG5IWTw==
-X-Google-Smtp-Source: AGHT+IEksBAtqNIVyEeMs9l3E8i8FNYnoZY0XPPufsecc+4JGJPiqW+9JP8Cs7vP2yaYj7j9QgBnUA==
-X-Received: by 2002:a05:690c:4445:b0:6b1:2825:a3e2 with SMTP id 00721157ae682-6db451667e9mr179156077b3.44.1726052611525;
-        Wed, 11 Sep 2024 04:03:31 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db96501f0bsm6580827b3.80.2024.09.11.04.03.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 04:03:31 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a9e4fa5aaso6439874276.2;
-        Wed, 11 Sep 2024 04:03:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRTbL+SfiiK/1yRyb+nuP5z57TWL+k7TH9KropMU5FwMfOggMIxWTHIbLKhuTfp/T2QrejL+iPASGnLk/o@vger.kernel.org, AJvYcCVU41OMxDOdEWr13nu0a6vPTYznnyCMvLqC8B+GXadVACcgafLNrds8vzYfV/JiaoNyLd8jP7zs15PM@vger.kernel.org, AJvYcCWff63YrzReDk33mnnQnh+pRwPqlaM7cIJyniuqy4Qd5GOkR2nEjYu+fadtGbXf2ZJ0CPU/SpYbGMoRY3c=@vger.kernel.org
-X-Received: by 2002:a05:6902:2e11:b0:e11:698f:8843 with SMTP id
- 3f1490d57ef6-e1d349cf097mr17492302276.44.1726052610124; Wed, 11 Sep 2024
- 04:03:30 -0700 (PDT)
+	s=arc-20240116; t=1726052647; c=relaxed/simple;
+	bh=1+IU6LatGUY8P8DoeAOBjptphnvD2Ge6sR2P5NNpFHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AuiU+x1En9piTSyHCYjkguxESzBkGgTw6s1Wk70bJ26/zSLmWbhch8RPS1dBD2jf7gLGKXm5Dwev2amSDZqeAR4wJxTH8rVfxtT+l3AMJ2FmgXjn+SfE4bKTBf69tbGL7429ydwaMciKr2n6xfJhaOQQWnn5ZZY4HjxJudAnxH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLjRBmjb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2E2C4CEC5;
+	Wed, 11 Sep 2024 11:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726052647;
+	bh=1+IU6LatGUY8P8DoeAOBjptphnvD2Ge6sR2P5NNpFHs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sLjRBmjbdA058AD0mbvoAyeCAr3fsLhksbFfYgPua7cmTShzERKlWAAuCnnsLIGYO
+	 KQL8SCzedWy/lRmz3nuRKhMPGpVT2drshBuDrzQtTjhD/tZOp5ZCQr3JiPbe0iFy3s
+	 LdtSZZDM7kAOoIt0lYORsPE63rot5yT1eRRG0nYlHcJLIldiQEnRZt8/LN/+g1c6Y2
+	 xPdpMSIe+v9PlcF70ZKvoBeRBZclcS65ru21nDqU7WbsyrPVObQb+ii2A3wusOx8KN
+	 mLXRhPp+rP1xDM6efY2EQq3SoexrZn1yWBqV6lsS9evX20ddFYgQgGXxbf9DaYJi26
+	 a+5ISXkWyZa5Q==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf@vger.kernel.org
+Cc: linux-arch@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH 1/3] btf: remove redundant CONFIG_BPF test in scripts/link-vmlinux.sh
+Date: Wed, 11 Sep 2024 20:03:56 +0900
+Message-ID: <20240911110401.598586-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net> <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
- <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
- <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com> <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
-In-Reply-To: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Wed, 11 Sep 2024 13:03:18 +0200
-X-Gmail-Original-Message-ID: <CAAObsKAigVVFWuoATTBWbCEfwg0RRHXa=Ehw2OQJyug6EdCDnA@mail.gmail.com>
-Message-ID: <CAAObsKAigVVFWuoATTBWbCEfwg0RRHXa=Ehw2OQJyug6EdCDnA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 11:38=E2=80=AFPM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hi,
->
-> On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
-> > On Thu, Jun 13, 2024 at 11:24=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizos=
-o.net> wrote:
-> > > On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Sebastian Reichel
-> > > <sebastian.reichel@collabora.com> wrote:
-> > > > On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
-> > > > > IOMMUs with multiple base addresses can also have multiple power
-> > > > > domains.
-> > > > >
-> > > > > The base framework only takes care of a single power domain, as s=
-ome
-> > > > > devices will need for these power domains to be powered on in a s=
-pecific
-> > > > > order.
-> > > > >
-> > > > > Use a helper function to stablish links in the order in which the=
-y are
-> > > > > in the DT.
-> > > > >
-> > > > > This is needed by the IOMMU used by the NPU in the RK3588.
-> > > > >
-> > > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > > > > ---
-> > > >
-> > > > To me it looks like this is multiple IOMMUs, which should each get
-> > > > their own node. I don't see a good reason for merging these
-> > > > together.
-> > >
-> > > I have made quite a few attempts at splitting the IOMMUs and also the
-> > > cores, but I wasn't able to get things working stably. The TRM is
-> > > really scant about how the 4 IOMMU instances relate to each other, an=
-d
-> > > what the fourth one is for.
-> > >
-> > > Given that the vendor driver treats them as a single IOMMU with four
-> > > instances and we don't have any information on them, I resigned mysel=
-f
-> > > to just have them as a single device.
-> > >
-> > > I would love to be proved wrong though and find a way fo getting
-> > > things stably as different devices so they can be powered on and off
-> > > as needed. We could save quite some code as well.
-> >
-> > FWIW, here a few ways how I tried to structure the DT nodes, none of
-> > these worked reliably:
-> >
-> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
-devices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1=
-163
-> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-su=
-bnodes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1162
-> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
-devices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
-> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
-iommus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L2669
-> >
-> > I can very well imagine I missed some way of getting this to work, but
-> > for every attempt, the domains, iommus and cores were resumed in
-> > different orders that presumably caused problems during concurrent
-> > execution fo workloads.
-> >
-> > So I fell back to what the vendor driver does, which works reliably
-> > (but all cores have to be powered on at the same time).
->
-> Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
-> only one iommu node in that. I would have expected a test with
->
-> rknn {
->     // combined device
->
->     iommus =3D <&iommu1>, <&iommu2>, ...;
-> };
+CONFIG_DEBUG_INFO_BTF depends on CONFIG_BPF_SYSCALL, which in turn
+selects CONFIG_BPF.
 
-You are right, I'm afraid I lost those changes...
+When CONFIG_DEBUG_INFO_BTF=y, CONFIG_BPF=y is always met.
 
-> Otherwise I think I would go with the schema-subnodes variant. The
-> driver can initially walk through the sub-nodes and collect the
-> resources into the main device, so on the driver side nothing would
-> really change. But that has a couple of advantages:
->
-> 1. DT and DT binding are easier to read
-> 2. It's similar to e.g. CPU cores each having their own node
-> 3. Easy to extend to more cores in the future
-> 4. The kernel can easily switch to proper per-core device model when
->    the problem has been identified
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-You mean having subnodes containing the different resources that a
-core uses such as clocks, memory resources, power domain, etc? The
-problem with that is that the existing code in the kernel assumes that
-those resources are directly within a device node. Or do you suggest
-something else?
+ scripts/link-vmlinux.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index bd196944e350..cfffc41e20ed 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -288,7 +288,7 @@ strip_debug=
+ vmlinux_link vmlinux
+ 
+ # fill in BTF IDs
+-if is_enabled CONFIG_DEBUG_INFO_BTF && is_enabled CONFIG_BPF; then
++if is_enabled CONFIG_DEBUG_INFO_BTF; then
+ 	info BTFIDS vmlinux
+ 	${RESOLVE_BTFIDS} vmlinux
+ fi
+-- 
+2.43.0
 
-Tomeu
 
