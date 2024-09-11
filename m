@@ -1,155 +1,169 @@
-Return-Path: <linux-kernel+bounces-324654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2EB974F5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81208974F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F91C21253
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FDF1C22109
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F01714C0;
-	Wed, 11 Sep 2024 10:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188F7177992;
+	Wed, 11 Sep 2024 10:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lahY+rCF"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ThHWqJwG";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ArS1iDDN"
+Received: from a7-43.smtp-out.eu-west-1.amazonses.com (a7-43.smtp-out.eu-west-1.amazonses.com [54.240.7.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424F41822F8
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F27E0E8;
+	Wed, 11 Sep 2024 10:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049335; cv=none; b=dF39H+yKexvApnvK61SyVftY5OfVOGZcqc3pkGZOPzOfzql5MX+/N3XZGC3+Ucgg1LK/OgHdIFOkrL52IcFG5Hkwnhjy7g5HMGMGcDeC7vkOvfzQwDSRLI8rDe6E78aw4TqiSRasEp5OfiZVuKCO75Df0kbla3vda8v2qOd7tWw=
+	t=1726049430; cv=none; b=gCSmdHVqyh6M2mZuOQxQ2IEnih/1iUyKTxv2nDItN3Yn/dvzq92PHpoc2jwZFUBrLC6RkUyT0YPylnvWIbLGXufumEQjzX3z1MQRPyvkEoHCskp1NTfLkD57Z7xs34bQTurwYDzPyICUv7EXpwmQekF5ArwAIyEBH/X1Y3MgCSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049335; c=relaxed/simple;
-	bh=9p4+hZQjh71lVxuvzfXMO5h2mg2JsxoLOa6VRFSlmYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oaLeXnVeZONPajeCpZjMrCqLIJ2ytEjCTfZG52NlAbDFD/KavBkni8I2aRvMZdSyO7SK+t9sXnXUC9ov3UOwnsI7rR6N9Gi7l2kx8mO/o+lTztzeiWABzUXoGTKhD0s6Ydut9FS34Jl7aR4zqNsyEdKgGoj2RtqxLiY3yB7YxgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lahY+rCF; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso1995345a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726049331; x=1726654131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B9hdLYUUwjUF1hpY600kXGnyLYC/hudZ8vg3i7Z84wI=;
-        b=lahY+rCFdc/x5Z1c4MUKDG+FGYDkd8Xuf4qKowNyZJgaLwDs2Ij0l+836HiKYVTrbi
-         8PQ1TlVs/kJ3ZPd1N7ZeQvVJ+b25CyeSZqsY5r21xit5OjAP8UhN7lCgk39Ju0mXWSLM
-         xn/Wi6IMvDjaNtqMQzFySFyAMOQt8pt8dkYHNkzimz7wUxeWEjMFLVepohFqf9rx0diB
-         +z++oS8ZZpDtvMkaM7oC0N7M23ZMwaMX++F/nD18i5ilxGL1yE6IjYMegXFJ7jc7vFkw
-         vgXYIgWYUFk6wA8b0ePzSqvZMixeIusKiE7OzHynJnmjCmP9UXWRMzcI6RxYVNZwY77Y
-         jGpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726049331; x=1726654131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B9hdLYUUwjUF1hpY600kXGnyLYC/hudZ8vg3i7Z84wI=;
-        b=etJEkt9peszkK9m5sNpl//ApGbGTkNDwDRVxrzaPNRRKSPKzsGzjUaJ7m5nrv00iv2
-         ZmR3/JWxOh5+i0IFXCBxdsXIovTBOX8/Y7WRmcvBv4/OqG+W9TuFgBxqgLFvDPx/wKu0
-         SpSY1O++1lHx28fI6RmvO3EWGrJej9YM6+d91E212IlDJM5HVNz/iUC8GgKvaBA0zC+t
-         5DYkU6DOhulEIvUUF2WJZMLBMdzYgoL/BktJ54joUDuTJMevXsHEjqJYwpsvFgJRiGG5
-         P3qmkVcwqY0tWNuxNVqiN4roiCIwineD+WfAdJEPQe43ZP6/KEJO4K8/CY6QBfwsFK0i
-         J98A==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ESWsgTXOFpwQjPj6Qc3VynB1BPKlhXozaKorgB1ZyePa5HkviWNn2oPhD1n3KBYOy0fqFzF8sbYTN6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjGs4JOi4u+ra28mU6vyfxmR089mGl4VKrtXA2isrglzkTqDuq
-	/ABwdfjDy2alnU+bo+TMaR43wWJVpotXL730Tu9y+m4VmqD/rBqbOu4yH6/a/JGgvBD71UIGBiW
-	Ar7UUM/2rWyjRIVLQRUSjwQUK7PDziQinPFdc
-X-Google-Smtp-Source: AGHT+IFkRabYBVWE7beqKCTPtmzMJTAcAA4DOyN0ipywboc72PB58+sFy/RcmZ1ciMDzBl90IvVFngE+dsyhyzBF+LQ=
-X-Received: by 2002:a05:6402:5ca:b0:5be:eaf1:807d with SMTP id
- 4fb4d7f45d1cf-5c40bc5ba38mr1201960a12.29.1726049330681; Wed, 11 Sep 2024
- 03:08:50 -0700 (PDT)
+	s=arc-20240116; t=1726049430; c=relaxed/simple;
+	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AH7C0LZyepaH1cQ1ODlvfVmN0+8UcPKJ9PiFuhQ3X+dYw716/BGBFYHEqa4MjOltQK96PO3DfxhvFZSiWlU1GujcBXtc2mM6xn2GE8J4mUrgygc7FuQjNN5t3Z4jyUmIOOJm+BoBPkW9L8F9wIA+2hFjrASGEatz3JBeUQ++UH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ThHWqJwG; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=ArS1iDDN; arc=none smtp.client-ip=54.240.7.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726049426;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
+	b=ThHWqJwGW2d6SgyvZM1kISkV9MQ6nVMsxL2KWE26xxtlCQW80zdB8yiAjabscpRC
+	bOD5jsyr6s6bIs+TsbuckZZy9MCboXfkHh3+EfKMyqpFvexSvcX4tH9TmvyXZ4XgAY1
+	DCQvrz0JopgyhvSCWaxUZoQssBn6lRGB4pIYbUulCGEdYF4dOayl4E4yrZOy+n5xq9l
+	E8lJSWDxwOcxts64gHTg+u+M2OKdjZtODLeqriAgAca0QHngJXQ83ctzJ5wZuhJpjbh
+	iz9B3czYJqmuW3Bbcavw9lOClse881/vi7YSVtKwrYP8jXHPZWCSL84RTFcJEn89Z6i
+	/lVBbmpB0Q==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726049426;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
+	b=ArS1iDDNHqlmkcm+u7EYSSuksf2KcUGgBpJVPaEqYStCHYkvoCscsGkyFNEnPMe6
+	FWFNuCqLUXDnoF+UcRe5Aet6oNeeq32j1AnnALjkKdEz18fFM8JLGeFieNcuqhGlp4A
+	cpM9tBN8dtWu0P/MpggzN6H1KH81iPpOisHflY/Y=
+Message-ID: <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
+Date: Wed, 11 Sep 2024 10:10:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000d3bf150621d361a7@google.com> <20240911120406.123aa4d4@fedora.home>
-In-Reply-To: <20240911120406.123aa4d4@fedora.home>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 11 Sep 2024 12:08:36 +0200
-Message-ID: <CANn89iJBFiHzMPCXyDB4=MAvE0OY5izFUzHxb3cnRzTRr=M3yA@mail.gmail.com>
-Subject: Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>, 
-	christophe.leroy@csgroup.eu, davem@davemloft.net, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] pinctrl: mediatek: paris: Expose more
+ configurations to GPIO set_config
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Sean Wang <sean.wang@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Bamvor Jian Zhang <bamv2005@gmail.com>, 
+	Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-kselftest@vger.kernel.org, kernelci@lists.linux.dev
+References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
+ <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.43
 
-On Wed, Sep 11, 2024 at 12:04=E2=80=AFPM Maxime Chevallier
-<maxime.chevallier@bootlin.com> wrote:
->
-> Hi,
->
-> On Wed, 11 Sep 2024 01:00:23 -0700
-> syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com> wrote:
->
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    a9b1fab3b69f Merge branch 'ionic-convert-rx-queue-buffe=
-rs-..
-> > git tree:       net-next
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1193c49f980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D37742f4fda0=
-d1b09
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3De9ed4e4368d45=
-0c8f9db
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14bb7bc79=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D17b0a100580=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/0459f959b12d/d=
-isk-a9b1fab3.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/337f1be5353b/vmli=
-nux-a9b1fab3.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/0e3701969c4a=
-/bzImage-a9b1fab3.xz
-> >
-> > The issue was bisected to:
-> >
-> > commit 17194be4c8e1e82d8b484e58cdcb495c0714d1fd
-> > Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> > Date:   Wed Aug 21 15:10:01 2024 +0000
-> >
-> >     net: ethtool: Introduce a command to list PHYs on an interface
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1034a49f=
-980000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1234a49f=
-980000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1434a49f980=
-000
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-> > Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on=
- an interface")
->
-> I'm currently investigating this. I couldn't reproduce it though, even
-> with the C reproducer, although this was on an arm64 box. I'll give it
-> a try on x86_64 with the provided .config, see if I can figure out
-> what's going on, as it looks like the ethnl_phy_start() doesn't get
-> called.
+Il 09/09/24 20:37, Nícolas F. R. A. Prado ha scritto:
+> Currently the set_config callback in the gpio_chip registered by the
+> pinctrl_paris driver only supports PIN_CONFIG_INPUT_DEBOUNCE, despite
 
-Make sure to have in your .config
+[...] only supports operations configuring the input debounce parameter
+of the EINT controller and denies configuring params on the other AP GPIOs [...]
 
-CONFIG_REF_TRACKER=3Dy
-CONFIG_NET_DEV_REFCNT_TRACKER=3Dy
-CONFIG_NET_NS_REFCNT_TRACKER=3Dy
+(reword as needed)
+
+> many other configurations already being implemented and available
+> through the pinctrl API for configuration of pins by the Devicetree and
+> other drivers.
+> 
+> Expose all configurations currently implemented through the GPIO API so
+> they can also be set from userspace, which is particularly useful to
+> allow testing them from userspace.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   drivers/pinctrl/mediatek/pinctrl-paris.c | 20 ++++++++++----------
+
+You can do the same for pinctrl-moore too, it's trivial.
+
+Other than that, I agree about performing this change, as this may be useful
+for more than just testing.
+
+Cheers,
+Angelo
+
+>   1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> index e12316c42698..668f8055a544 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+> @@ -255,10 +255,9 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
+>   	return err;
+>   }
+>   
+> -static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+> +static int mtk_pinconf_set(struct mtk_pinctrl *hw, unsigned int pin,
+>   			   enum pin_config_param param, u32 arg)
+>   {
+> -	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
+>   	const struct mtk_pin_desc *desc;
+>   	int err = -ENOTSUPP;
+>   	u32 reg;
+> @@ -795,7 +794,7 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
+>   	int i, ret;
+>   
+>   	for (i = 0; i < num_configs; i++) {
+> -		ret = mtk_pinconf_set(pctldev, grp->pin,
+> +		ret = mtk_pinconf_set(hw, grp->pin,
+>   				      pinconf_to_config_param(configs[i]),
+>   				      pinconf_to_config_argument(configs[i]));
+>   		if (ret < 0)
+> @@ -937,18 +936,19 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+>   {
+>   	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
+>   	const struct mtk_pin_desc *desc;
+> -	u32 debounce;
+> +	enum pin_config_param param = pinconf_to_config_param(config);
+> +	u32 arg = pinconf_to_config_argument(config);
+>   
+>   	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
+>   
+> -	if (!hw->eint ||
+> -	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
+> -	    desc->eint.eint_n == EINT_NA)
+> -		return -ENOTSUPP;
+> +	if (param == PIN_CONFIG_INPUT_DEBOUNCE) {
+> +		if (!hw->eint || desc->eint.eint_n == EINT_NA)
+> +			return -ENOTSUPP;
+>   
+> -	debounce = pinconf_to_config_argument(config);
+> +		return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, arg);
+> +	}
+>   
+> -	return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, debounce);
+> +	return mtk_pinconf_set(hw, offset, param, arg);
+>   }
+>   
+>   static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+> 
+
+
+
 
