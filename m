@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-324749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA1597506A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D15297506B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F3D1C22914
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B91C22B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EBD18859C;
-	Wed, 11 Sep 2024 11:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B9C188A1C;
+	Wed, 11 Sep 2024 11:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPCzarS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UdCFLliG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9346187872;
-	Wed, 11 Sep 2024 11:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE751185B68;
+	Wed, 11 Sep 2024 11:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726052653; cv=none; b=a+RwJlrBUyOMTPvwQbjikQlQRnIkuR5gGYOtilbBt84nUR2xjDCfvBRMGKGDLTas03Aqxi9V1CMd/rA9qZh8rYWOTDUBLxt5aVhSAGdT4eiEkxmjpQWgXCptcpbO6n+3dt9e3649FfCA+VQ6+F8M0I+Jh7qtGdCc7pgkyeFRNHM=
+	t=1726052656; cv=none; b=oSD+/kf184cGq7PRRkbIujDS7hf9BWf2/xL2cATisDM8FqsdILu+h/6l8nR80/F7cTIMlIkc7j6/a5zcfzE5WxgDTpv28ZubhKuXCdLxhwIp1hVhAhKhkTbcP4PmDDiMpQdnRyqkXOtyOnX7nIEys5INYP+s+1l3RrQLNhZBFMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726052653; c=relaxed/simple;
-	bh=thqMcdaspNIy4jxq3jBQbrvGsrz0EH5sU9B3enTaQ1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jZzMsWP044+0XnmC3MPLBPeFBeCRT4OJpUvldrbx6WA5qz5vIImgd59UCIq1/sIE8KqB6P0a5ub7rlSwfJvcY/Y9xrLWnNU14sJTrquFUpcQOyBTnFQO0+lmVVdNMByyeF8n+EinnZnztR3OBSChY5/3gveeGwA55GjhAePW9XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPCzarS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 089F0C4CEC5;
-	Wed, 11 Sep 2024 11:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726052652;
-	bh=thqMcdaspNIy4jxq3jBQbrvGsrz0EH5sU9B3enTaQ1A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RPCzarS/BE45uF2Km6hgHp9uKmHYAM7noDzb46keOGzRFqw0wLTZWMZY1wz15MxUo
-	 59O9KKiGs+t9MXo73trAMfj+1FrR5kgtdeQF0B8OwhH0Z9iTAJ5tjPv9CZVTcu9ZQY
-	 VJUbF5V5DkerTk98t8fUQpBFLCrblxlAlWnqmzrl+rV93N3L4j6CAHlhQNIGvWhLdp
-	 ZzCGXvlkwWsZvzyrpK6T1NictVhVg8dZX47ICyTANth+Htsrfhs82OvVqJHyugfp3G
-	 7g0xjZ92QzuVaS4nD0Lu2dQVnSjUeyBlLNRTo4g7z43ZSCUQFrMWA9Xzkq1RFydiQf
-	 uKRVHv10HnJjg==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf@vger.kernel.org
-Cc: linux-arch@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	llvm@lists.linux.dev
-Subject: [PATCH 3/3] btf: require pahole 1.21+ for DEBUG_INFO_BTF with default DWARF version
-Date: Wed, 11 Sep 2024 20:03:58 +0900
-Message-ID: <20240911110401.598586-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240911110401.598586-1-masahiroy@kernel.org>
-References: <20240911110401.598586-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1726052656; c=relaxed/simple;
+	bh=63tlxJTpPIMy+FO/Rgfx6YxVpQEL0qxeUzDpU3gziZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcS6/TvFIY2IXdh7cyXqYO9gEVIE+b31L8wwzAwV9/0GrRrvgsFADZsrIIwmCKAz5JzCSxseBoN0ItpAo8powul5trtazyxyvPkFB0/bWYiHcPiwbjqXGEOSbuBEH+JhqOBSfm4PeKFklSA9NrnLD/bgh1uuz98BHunVW8R0rYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UdCFLliG; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726052655; x=1757588655;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=63tlxJTpPIMy+FO/Rgfx6YxVpQEL0qxeUzDpU3gziZ4=;
+  b=UdCFLliGgKGt+zcymapnZ6H5mM3dsks5Ku9PdlANw/ODLY9IPmX7Rind
+   fbVk6giIIje3ozmPMrQReDiyfJsKqpoIbZee/z/SgUGFaLIYxOZUU4fe7
+   ay45KGe6tA9nJVia8iubhVI9jk0xW2QhONFZVsGihuwBBfO5hndfAuME5
+   X2xr97yPmAi98zIi5Jeu6UpyIcJh1lFqDKjXTJjIilKG8+LSKzhqr9rzH
+   5bnTM8pPX8ZaivdviLX+UKShOF+sSoldw3yw0MisxLRb2CwQ+M6Rjq27P
+   ssiRyumLWMGsnqGPn5eshZdrvWQujn3WpadX+ixfXqkTXcepu3naub66T
+   w==;
+X-CSE-ConnectionGUID: /HpoKA3ERB6fzJhR34vMuQ==
+X-CSE-MsgGUID: fzQTNfvMTBK51GlL4PPflg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="36220602"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="36220602"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 04:04:14 -0700
+X-CSE-ConnectionGUID: 2dGXu00sQ1OyAcfV/fFuEg==
+X-CSE-MsgGUID: s98ZHqlIR6qiK0n/PzwLFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="98034498"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.117])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 04:04:11 -0700
+Date: Wed, 11 Sep 2024 14:04:05 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com,
+	xiaoyao.li@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+Message-ID: <ZuFPBPLy9MqgTsR1@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+ <b8ed694f-3ab1-453c-b14b-25113defbdb6@suse.com>
+ <Zs_-YqQ-9MUAEubx@tlindgre-MOBL1>
+ <b3a46758-b0ac-4136-934b-ec38fc845eeb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3a46758-b0ac-4136-934b-ec38fc845eeb@redhat.com>
 
-As described in commit 42d9b379e3e1 ("lib/Kconfig.debug: Allow BTF +
-DWARF5 with pahole 1.21+"), the combination of CONFIG_DEBUG_INFO_BTF
-and CONFIG_DEBUG_INFO_DWARF5 requires pahole 1.21+.
+On Tue, Sep 10, 2024 at 07:15:12PM +0200, Paolo Bonzini wrote:
+> On 8/29/24 06:51, Tony Lindgren wrote:
+> > > nit: Since there are other similarly named functions that come later how
+> > > about rename this to init_kvm_tdx_caps, so that it's clear that the
+> > > functions that are executed ones are prefixed with "init_" and those that
+> > > will be executed on every TDV boot up can be named prefixed with "setup_"
+> > We can call setup_kvm_tdx_caps() from from tdx_get_kvm_supported_cpuid(),
+> > and drop the struct kvm_tdx_caps. So then the setup_kvm_tdx_caps() should
+> > be OK.
+> 
+> I don't understand this suggestion since tdx_get_capabilities() also needs
+> kvm_tdx_caps.  I think the code is okay as it is with just the rename that
+> Nik suggested (there are already some setup_*() functions in KVM but for
+> example setup_vmcs_config() is called from hardware_setup()).
 
-GCC 11+ and Clang 14+ default to DWARF 5 when the -g flag is passed.
-For the same reason, the combination of CONFIG_DEBUG_INFO_BTF and
-CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is also likely to require
-pahole 1.21+. (At least, it is uncertain whether the requirement is
-pahole 1.16+ or 1.21+.)
+Oh sorry for the confusion, looks like I pasted the function names wrong
+way around above and left out where setup_kvm_tdx_caps() can be called
+from.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+I meant only tdx_get_capabilities() needs to call setup_kvm_tdx_caps().
+And setup_kvm_tdx_caps() calls tdx_get_kvm_supported_cpuid().
 
- lib/Kconfig.debug | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The data in kvm_tdx_caps is only needed for tdx_get_capabilities(). It can
+be generated from the data already in td_conf.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index eff408a88dfd..011a7abc68a8 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -380,7 +380,7 @@ config DEBUG_INFO_BTF
- 	depends on !GCC_PLUGIN_RANDSTRUCT || COMPILE_TEST
- 	depends on BPF_SYSCALL
- 	depends on PAHOLE_VERSION >= 116
--	depends on !DEBUG_INFO_DWARF5 || PAHOLE_VERSION >= 121
-+	depends on DEBUG_INFO_DWARF4 || PAHOLE_VERSION >= 121
- 	# pahole uses elfutils, which does not have support for Hexagon relocations
- 	depends on !HEXAGON
- 	help
--- 
-2.43.0
+At least that's what it looks like to me, but maybe I'm missing something.
 
+Regards,
+
+Tony
 
