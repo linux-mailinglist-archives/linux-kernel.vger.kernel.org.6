@@ -1,190 +1,116 @@
-Return-Path: <linux-kernel+bounces-325014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDFB9753E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AED9753EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3848428840D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AF1287806
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A4E19F13A;
-	Wed, 11 Sep 2024 13:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869351A255A;
+	Wed, 11 Sep 2024 13:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnB53X8V"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vA01a1YP"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E47C19AA75
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9D21A2563
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061294; cv=none; b=JtUcaMFwR7uTbJyeu1LHhvJVH9Cy5YdpGrUiYuj8m3Pe8Befts+zIO7yZjRjADiDRlFB/S03RGg/UPXarGe3u1jzQo6hNjBxiCtoEmDvnmI/3mB3ajjRrKwVMin8K3dTnNMN8nw//OF7HQbD8RUbEGAkHNvje6lPtcp+zqWDqco=
+	t=1726061303; cv=none; b=LkMgWAyrszPZGFuThBwxXRwY5akQ1tlOb3lOAlbDydLpO3QW9IZOpwfzVhd1hpoBQuISvPPt2uKv1RytmbqrXCL3X+UDSITZJmqtFWJzVsed+S3fwG5gjpI1B/cnjnByfU6OgiqkXJJeAtvetEWaJG8v29RFw7XR1ziLPVImhVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061294; c=relaxed/simple;
-	bh=px4cSD8HQGH2wO4T6TnkDTDsLBmuGTU3jnHSj51SJ2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oSuU2TRqFcYSQBVnpjfgHu7YaJX6eOoXnNTQ5FpRmacOIm4MdaUtTToDT/rF2AqcSdquII4pIrCk9e1q6vzxUFgxHFphHYK/BrO6i7x8Ok9MHIyznyKT/Lzd5hKbdWktjm7IviEK4FXwqFnK52f7UY+VgVxWABtlHv8VC3mGrdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnB53X8V; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374c7d14191so577466f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:28:12 -0700 (PDT)
+	s=arc-20240116; t=1726061303; c=relaxed/simple;
+	bh=4Aq3EGL6vjZOV0V8QUAKM9cPAmFz583dltN7Bh4jhE4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=no20CpTsodkXfLvpeC3svfGrrIW6xvKnTYGfLAzY7+FO9TkiKG7akh3SWGN5jVqdPYxUFQ9FPR3SkrrXQ4TVjaGFHMr6nT1974Kak3deA3zx4AibI6Eyay5WfPwl+1Vip9JM3LVDG6DvDu+pciYyALh14N5jbR9NIwylll5m/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vA01a1YP; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82ce603d8b5so157060039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:28:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726061291; x=1726666091; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726061300; x=1726666100; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=px4cSD8HQGH2wO4T6TnkDTDsLBmuGTU3jnHSj51SJ2E=;
-        b=bnB53X8VxXIBcNZ/8mcD1FjYGExRq7iiBlyb6+tCu8rBeCAGIBbpGhfu+PUZgxK9LN
-         7l2fYpyQDt5Z7Xf6716dTwz3pSZEPy1Eafj7NW3QKz3tmCxIRkAmPa0dj1PVJEsDcQ24
-         XEQub6gLyEn16rwYLyM2Rjdmoe+EsLNB6CgjtyvsqEG2HR5T1NSH3dT89cNnaORTewQe
-         hp5j0oKiu/7u2HgpDjFC8zua+moRgOI8mDfs5ONe/Ait8QhZqSuW2QnpxtuT3KsD5XWG
-         /0eHAFfKiCEJPnDWlkDK9gDbgaK/G2XWKAE0BCbtIf7eRP/DR/bue7lLOMZ/PePPmon4
-         FCdQ==
+        bh=bovJNT5vymtg0/+LN4HIO7mrl/RKcmaAfiJmsEEKKg4=;
+        b=vA01a1YPMF9acfWLPe7sYypU0acd1YDJH4mJ4byYxTA9SuZLnZDCU0bEGV/C7OgQsd
+         xwfZuxJH/QgQGUYhQixkirCQnyuqPwjJv1AlKBdYmVM9dGY7t0oUj152PQfzqGvkcMZY
+         oTitwnUyY53Zw/iZdIB7+WLvqzar1hG2TrWaDSUWmtnTtN8VYGsS0uaSQcJgyBpQ+1u8
+         4Dx+bVXs1Wj5aT1JT8n0JhJIWqxXzUfsNy+D91Cqgh3KGes3IEN0qQUUpW2B+sRH950D
+         H8RZ7ykgmhnws4t6JdEteY3MsvRJr8WWu+cP80JYBWfmb86rlppQtKowM1miJYFrySTS
+         Xu5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726061291; x=1726666091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726061300; x=1726666100;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=px4cSD8HQGH2wO4T6TnkDTDsLBmuGTU3jnHSj51SJ2E=;
-        b=JwlfU3H+zqfcUamHQVf5wRTffLpErLw0Mx/3yUz9c/g61K8LIEOv/4SqXR1Y4nA8tZ
-         SGpcz3FzmnzIrUo9c8mdKq24DfZ/hloWFzk2kLLRzkCm/yEYN4u00UKHR3DMwdRAxbse
-         flMNs+Xd7RHV1Vs+U+h1+b0/VrcV3J2DcW29ym6X4m0zsAKsjsV9o8bMwqE24LeoLDY3
-         +2h/O+UuvjLpWbmsDa4rZHnVB6P29WwHAB5J0d7xSi1O/2rAZa8VCGF0txcilfhHdh8o
-         600DqxsKObGQ5eT5K1KMtKUPbx1/Y0FhRXPsS2oL0+hZmCRMSV1eA4nviXcSxX9ocz6X
-         sfGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOtA1REqnFpCFJc5z+CSMQWwjiHnwTgurMdibRnXSUfHPQVy8va12JfvXcdenxsQbQ258s0weGCJ6JE/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX8XYCZ+uin58usswrx/3pATbNGP9SOPLcMdpolZdcX+su+NNR
-	YcDDObf7HKF2x5NXXfM9HBCYtaeHtK14b8WjHoMvpl4BCn/y2qqPzG2XqmwOTALKkq8xBE3OhQj
-	v5zi1hZh4FgRAvMH7pSx9mmP+qZvpi8W0kXGO
-X-Google-Smtp-Source: AGHT+IF7/qa6erGSnEBi7fIAOrWoIKy5LBtKxYx46O8lTaD8uJY5tg4G2Y2qvcaMrtOl7y3nlkrlm3fI+Ca7t7jxV0U=
-X-Received: by 2002:a05:6000:511:b0:374:cb8e:4b43 with SMTP id
- ffacd0b85a97d-378a8a8405amr3432838f8f.32.1726061290584; Wed, 11 Sep 2024
- 06:28:10 -0700 (PDT)
+        bh=bovJNT5vymtg0/+LN4HIO7mrl/RKcmaAfiJmsEEKKg4=;
+        b=el7mWnCdVysp4aHU+hbheomeZkRAI+j2tc8faKAieIPq7+OBAMNoLKPGaaNotnbggx
+         7+21mwfoZh62IZsZVkLH9AZUzslbj0ckQq19OBPqurH5IxpBYD5x8umvXkTX+LObxDqp
+         DGBloJQjH6DRQoI3EhuA1c1LjBYhMWCex6Qd4m8vtHfRrAqRO4rs9xidcHU1Gl3j27Pw
+         m/UNLmzUVMtx1tqVUJGlKr6ehAIUOzhme8xa7diNTanMX98SV2pKoF2GSOBAqxclUzZ+
+         z6G/+qC5A8X8nFruckz6cnSbCst2qAccVrHlXJAXVKvX38eQ/lpR51rWHwlwU0UlTH+Q
+         9+NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlKjhHjEjnsnXfx3M4Xz+5nI3muH7sl7ArZIDDWrOrY8G/pOH5DXPLh5B/2ksqWLDxt949BtfwTjjchgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZObpLh7MbEx/Za/hQ66KzmVlzPFteVEH5KeBhTAea/IwVAx94
+	M0UcXjgHrqXnEoPr2xRfRYNBmf7tUmJ0gfgQYOEfVhn3L/Dp8x0YXKAzAR7qQ4g=
+X-Google-Smtp-Source: AGHT+IEEyHDqkjl8SeQPyVpXiKMNrTIBX51J/e+C4e938rN1IJwaXThSnaa6qkQovcsMbydA0TBZgA==
+X-Received: by 2002:a05:6602:6d07:b0:82d:754:5026 with SMTP id ca18e2360f4ac-82d075464e1mr586939539f.4.1726061300302;
+        Wed, 11 Sep 2024 06:28:20 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82aa73536fasm263926739f.17.2024.09.11.06.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 06:28:19 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org, 
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com, 
+ longman@redhat.com, adriaan.schmidt@siemens.com, 
+ florian.bezdeka@siemens.com
+In-Reply-To: <20240910171157.166423-1-felix.moessbauer@siemens.com>
+References: <20240910171157.166423-1-felix.moessbauer@siemens.com>
+Subject: Re: [PATCH v3 0/2] io_uring/io-wq: respect cgroup cpusets
+Message-Id: <172606129845.167290.7805052336711734654.b4-ty@kernel.dk>
+Date: Wed, 11 Sep 2024 07:28:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-10-dakr@kernel.org>
- <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me> <ZuCEneJeXcRo5qs8@pollux>
- <19d81a27-9600-4990-867c-624104e3ad83@proton.me> <ZuDVekRzfeBkWmKz@pollux>
- <77b91448-a21e-4e1b-9a8e-3d2052d79a78@proton.me> <ZuF444VO8gK8l7UR@pollux> <b80cb238-5fcc-4bbb-8b03-42e173c28653@proton.me>
-In-Reply-To: <b80cb238-5fcc-4bbb-8b03-42e173c28653@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 11 Sep 2024 15:27:57 +0200
-Message-ID: <CAH5fLghwj-rD8zoPFgp3g1JYm8WrOhuiWnm7w=zStqOfRRZUJw@mail.gmail.com>
-Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Sep 11, 2024 at 3:26=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 11.09.24 13:02, Danilo Krummrich wrote:
-> > On Wed, Sep 11, 2024 at 08:36:38AM +0000, Benno Lossin wrote:
-> >> On 11.09.24 01:25, Danilo Krummrich wrote:
-> >>> On Tue, Sep 10, 2024 at 07:49:42PM +0000, Benno Lossin wrote:
-> >>>> On 10.09.24 19:40, Danilo Krummrich wrote:
-> >>>>> On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
-> >>>>>> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>>>>>> +///
-> >>>>>>> +/// ```
-> >>>>>>> +/// # use kernel::bindings;
-> >>>>>>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize + =
-1;
-> >>>>>>> +/// struct Huge([u8; SIZE]);
-> >>>>>>> +///
-> >>>>>>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
-> >>>>>>> +/// ```
-> >>>>>>
-> >>>>>> Similarly, you could then say above this one "Instead use either `=
-VBox`
-> >>>>>> or `KVBox`:"
-> >>>>>>
-> >>>>>>> +///
-> >>>>>>> +/// # Invariants
-> >>>>>>> +///
-> >>>>>>> +/// The [`Box`]' pointer is always properly aligned and either p=
-oints to memory allocated with `A`
-> >>>>>>
-> >>>>>> Please use `self.0` instead of "[`Box`]'".
-> >>>>>>
-> >>>>>>> +/// or, for zero-sized types, is a dangling pointer.
-> >>>>>>
-> >>>>>> Probably "dangling, well aligned pointer.".
-> >>>>>
-> >>>>> Does this add any value? For ZSTs everything is "well aligned", isn=
-'t it?
-> >>>>
-> >>>> ZSTs can have alignment and then unaligned pointers do exist for the=
-m
-> >>>> (and dereferencing them is UB!):
-> >>>
-> >>> Where is this documented? The documentation says:
-> >>>
-> >>> "For operations of size zero, *every* pointer is valid, including the=
- null
-> >>> pointer. The following points are only concerned with non-zero-sized =
-accesses."
-> >>> [1]
-> >>
-> >> That's a good point, the documentation looks a bit outdated. I found
-> >> this page in the nomicon: https://doc.rust-lang.org/nomicon/vec/vec-zs=
-ts.html
-> >> The first iterator implementation has an alignment issue. (Nevertheles=
-s,
-> >> that chapter of the nomicon is probably useful to you, since it goes
-> >> over implementing `Vec`, but maybe you already saw it)
-> >>
-> >>> [1] https://doc.rust-lang.org/std/ptr/index.html
-> >>
-> >> Might be a good idea to improve/complain about this at the rust projec=
-t.
-> >
-> > Well, my point is how do we know? There's no language specification and=
- the
-> > documentation is (at least) ambiguous.
->
-> So I went through the unsafe-coding-guidelines issues list and only
-> found this one: https://github.com/rust-lang/unsafe-code-guidelines/issue=
-s/93
-> Maybe I missed something. You could also try to ask at the rust zulip in
-> the t-opsem channel for further clarification.
->
-> I think we should just be on the safe side and assume that ZSTs require
-> alignment. But if you get a convincing answer and if they say that they
-> will document it, then I don't mind removing the alignment requirement.
 
-Please see the section on alignment in the same page. Just because a
-pointer is valid does not mean that it is properly aligned.
+On Tue, 10 Sep 2024 19:11:55 +0200, Felix Moessbauer wrote:
+> this series continues the affinity cleanup work started in
+> io_uring/sqpoll. It has been successfully tested against the liburing
+> testsuite (make runtests), liburing @ caae94903d2e201.
+> 
+> The test wq-aff.t succeeds if at least cpu 0,1 are in
+> the set and fails otherwise. This is expected, as the test wants
+> to pin on these cpus. I'll send a patch for liburing to skip that test
+> in case this pre-condition is not met.
+> 
+> [...]
 
-From the page:
+Applied, thanks!
 
-Valid raw pointers as defined above are not necessarily properly
-aligned (where =E2=80=9Cproper=E2=80=9D alignment is defined by the pointee=
- type,
-i.e., *const T must be aligned to mem::align_of::<T>()). However, most
-functions require their arguments to be properly aligned, and will
-explicitly state this requirement in their documentation. Notable
-exceptions to this are read_unaligned and write_unaligned.
+[1/2] io_uring/io-wq: do not allow pinning outside of cpuset
+      commit: 0997aa5497c714edbb349ca366d28bd550ba3408
+[2/2] io_uring/io-wq: inherit cpuset of cgroup in io worker
+      commit: 84eacf177faa605853c58e5b1c0d9544b88c16fd
 
-When a function requires proper alignment, it does so even if the
-access has size 0, i.e., even if memory is not actually touched.
-Consider using NonNull::dangling in such cases.
+Best regards,
+-- 
+Jens Axboe
 
-Alice
+
+
 
