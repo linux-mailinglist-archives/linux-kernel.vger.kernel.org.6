@@ -1,502 +1,269 @@
-Return-Path: <linux-kernel+bounces-324421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A741974C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:11:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3F3974C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEB01C20F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF28281F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531CF14B97E;
-	Wed, 11 Sep 2024 08:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F7214EC46;
+	Wed, 11 Sep 2024 08:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="fm94DBY2"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DmtVkjLq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A82D137772;
-	Wed, 11 Sep 2024 08:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726042291; cv=none; b=DDO1zphyBfES3uz3Ac3DydSzfu4CGOAyZiJTQs/J1KB9IN5y8/4v9krzUrzJUv33GJY2ikW6AZ3OTKYe4EgjYSBKdDhkFiBGzpiBS1LdztnB7+UIjIgGTBs8gqhVE+6DalAvYvVVsXEIKZnaPQ8xwBCr21yAUFCPtqrkmcbl9X8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726042291; c=relaxed/simple;
-	bh=7uqnwTxuEqITkvDtwo9hswuvX0oIkvm4/7HLrEEJCoM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KzB66tXYaalUg6R7HY6ehNWVwQq7zK0q2iLhZixcLwpAklaAcEk0s1JW4o+gQahb+rZXFLpIg2XaoB6Zqlp7AEGABQleRWYKufG9drIYvZExMJ1hSbwQq6k1NsLoYH7lckMtK/DVa74zTqgGPIBWiEqa/6j3tF5isGvR/Gy9OJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=fm94DBY2; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=pbQ/mxW3mZ3ayhnpQ6Z0tLRe04uX80t/9ftVQgxNrWU=; b=fm94DBY2hY63dJVxXQYcTTLgqm
-	QHxUVPYRyp83B2s7P7N3kCFB3WL0KRswylbrgjIq6ogWAhIKciDLFCoaVWBHDQqQtwBrl4essaMEp
-	h5Qmx/pVJvMBKHyANgfdTgbtNhqrghbaw6iwMZgy+DNo4OBPkTNZNUe8dPX2LufVRBLtfXwO1FBpI
-	cYeUek0CGBaOLI8ffmEfReD6NV+Xm9kvyM2INowaCctkLgRXsDyGTSxZOThLtZpuqnf9ksIPGyT2w
-	Vi3T+R8Vs6X5W8K1xAoX3wmrRccN9zRDFbG44mtog9iBStWcNZZqn5oueoi3Dl0pGqhSg5ilQrWha
-	Dl3V8fBg==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1soIRa-000CtN-0C; Wed, 11 Sep 2024 10:11:18 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1soIRZ-0000Ef-0x;
-	Wed, 11 Sep 2024 10:11:17 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-  linux-rtc@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
-In-Reply-To: <875xr3iape.fsf@prevas.dk> (Rasmus Villemoes's message of "Tue,
-	10 Sep 2024 21:13:17 +0200")
-References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
-	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
-	<875xr3iape.fsf@prevas.dk>
-Date: Wed, 11 Sep 2024 10:11:17 +0200
-Message-ID: <87r09q7gpm.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271B143878;
+	Wed, 11 Sep 2024 08:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726042389; cv=fail; b=N3umln7OdLYsibLz+OvnZCzEKj9ZRKw19pAkCogO9Qhp7cCoOay3pwuAkk6a4VL3MEKFkxThFeqUgnLzeq0suO5LvId4NRqdnU0l7OWmn/GA+Sr8ynma7JRtYOL3Utw6bVxR04v07mfCfmzPonVHufvmT6i6wOdjXean2x7HROE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726042389; c=relaxed/simple;
+	bh=4lcXdCwa9WWH4AGL0SRPbQCdp7dWNKAbPH8IE1o+95U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PDCL4U09SoIRPAoEnOmA1z9l3FQu5SEgYTRnNq6GeTh1r59eE9tecNPCPxff8kejKsGpG+Saf/YMOfbW/ZvnSemNt8g8+R+Jm9BJxrTw2nkqN4PlTegVr41YaVb37Iew9PbwqvHtRqcxxuckP6cUcgpPek9x4gcqdDRWF196JB8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DmtVkjLq; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726042388; x=1757578388;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=4lcXdCwa9WWH4AGL0SRPbQCdp7dWNKAbPH8IE1o+95U=;
+  b=DmtVkjLq22RTKoFZ8IfnQMLZnbO2nQm8K3eet0FrDXHnslX4wD2ZL650
+   HfF7Jsx1495Y/HWz1UFJlyARMULVyn7rKt9V8abcBpzPZB+MUXq2Dk8as
+   6DX+TYA1ObhvehDsuVkcVb6YEAwYAmwa+NcHpqbcLeuaRAyLU/JeqpkTj
+   gYlCng4esgKFWbOE00VoWShcMC0vtfcGvzJoK4jyAAbETl+SZxtZ9XHEe
+   wk95JtBgRYNc3wIxi3umkXRGSaoPfqX6PsmJfvAfDSZxEDEbuDe9qH+mB
+   oX3FczSDGjZBiFEkYYVTfAx3xo4zQvTQ3cVMq+2ntpMe5c6aibM1+sgR5
+   A==;
+X-CSE-ConnectionGUID: usmCyu/lTMu6aoJLqyxBQw==
+X-CSE-MsgGUID: TQb2ccbmQS+lm6XGTX9CaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="42305419"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="42305419"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:13:07 -0700
+X-CSE-ConnectionGUID: 9/rqN6SzRn26s7Hmuw3U0Q==
+X-CSE-MsgGUID: ODeR3ANFTgGQBK3mKsHkbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="67341074"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 01:13:06 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Sep 2024 01:13:05 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 01:13:05 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.175)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 11 Sep 2024 01:13:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gx7TRNR0iUvoNfeV5ZA+QT8QyR6AJdejKQSXQ9btL6ZtrlENiYUvQTxjQ8O/qg86RUK/iNevE4ahdnd22n0fkqRIt2k7l6gidtId5s3J3sqSWE+VP/RpLxr+xaTp4xSWVMSX1W9pY64Ur7PsPtXycAPMIi8hzXc+qdeF7+4vdTxPg+oESoA8Icqpx6ZN1hjNESYrTeIxjY4YJIzUU52XHgF0+AI5AVOoPxFJg6LJpu+8lRnmKEGQW2g6SSeCa8Y4OQA224v3GcqbPF7ic8ybFCkdmxAW+clmzKZ/Ms/Ty30yihEASi/QyQx/Le8mIjxHeqwqFP6G9dv+3Ao5OIXbJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KnoVa6gXv0v2tsug/27yrCeKCHVq3K8nrGlQ4DpwV8Y=;
+ b=n+MNZhSCUW2U7d48/fU7zzWmo/okroyQSO8gVgKLtMvpK8bbk1WJvC2UnrTZ77K/NC5pF9vmMfINBZMVKwSwTXzD1qexEfFohxq9xZ/UclfIFZk0dr0z+DzDcxCAZUo0kherhxA1PUKgzE1HjSLe69n31f/eDXqrkkQd/xDz2BLCvCPrFGkUSdFnpDDBW8TECdRuylDDiiXK/Baxn08DJ8HluMJAWk7OLl4cR89UPqqkVMgds26F69mMNqymJX8ASC/Mpgv3OpmLONL8hrW0O0Rhdv5cSWII+jdoMXy/Bv/hYXFzx1A+sXD7Slz/uW96Aoj1xFbK6C016i7T5Z1HEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by BY1PR11MB7982.namprd11.prod.outlook.com (2603:10b6:a03:530::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 11 Sep
+ 2024 08:13:03 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7962.016; Wed, 11 Sep 2024
+ 08:13:02 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
+	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>
+Subject: RE: [PATCH v2 17/19] iommu/arm-smmu-v3: Add
+ arm_smmu_viommu_cache_invalidate
+Thread-Topic: [PATCH v2 17/19] iommu/arm-smmu-v3: Add
+ arm_smmu_viommu_cache_invalidate
+Thread-Index: AQHa+KLw6F1nSDclIE+ushKsvSKoLbJJbdGAgAAb/YCAAAXcAIAIpC/QgAARFYCAAA2CoA==
+Date: Wed, 11 Sep 2024 08:13:01 +0000
+Message-ID: <BN9PR11MB5276EBE0F714CF3EF0DAEDEC8C9B2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <4b61aba3bc6c1cce628d9db44d5b18ea567a8be1.1724776335.git.nicolinc@nvidia.com>
+ <20240905162039.GT1358970@nvidia.com> <Ztnx0c4BpGt6umrM@nvidia.com>
+ <20240905182148.GA1358970@nvidia.com>
+ <BL1PR11MB52712F4AAF7D1388A080A49E8C9B2@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <ZuFEx7mp3v0/lY/g@nvidia.com>
+In-Reply-To: <ZuFEx7mp3v0/lY/g@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|BY1PR11MB7982:EE_
+x-ms-office365-filtering-correlation-id: fd635ba5-8718-4977-d3a8-08dcd2398e37
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?IB8DT5flEug2f1MhyGAgb3FvwlSKQXrztS5sSJCs1860W4Ko2zH3K2e1euFt?=
+ =?us-ascii?Q?cmExf7NT/Ec4ngo7B1u/WwXZUYNdUZ38squmALxCfC8aqF4ff+mV3JTiLSOe?=
+ =?us-ascii?Q?+b2cmRoyNxnO8nWxRaKIX0O02kLJx5wt+tV3rta4DVBBcXNyId4rGvN8ddt6?=
+ =?us-ascii?Q?ESHnsz8wuQIVLPjZYIrB7/qSmKLelveNz+YjnTnaacLYYmqxoortyalRE4h1?=
+ =?us-ascii?Q?i5VOrzfnGUftzlgTwTv7Mfms72DjXynwLCLZ5e+oqAlv7yDQlI9uR4uJIt1m?=
+ =?us-ascii?Q?yHP5mPv5Pt8lrHbzMyV2nHyqz1niZlO6vBpanuN89/s2vw5zk2BZRMJVVHES?=
+ =?us-ascii?Q?N58mPRtmPfln5NDJ6aQQU6Wrku/EXxganG5p011u+4BNVWOlEmvtovY+RMfy?=
+ =?us-ascii?Q?hct834T+RhW/4PpWkc/Shz3y8cusCaUrt94l1MWx5jPoNb9Shl91u5zX8Yul?=
+ =?us-ascii?Q?cQ/gtb7tHBqFBZCElqCFFsa1NHBIFeYzknhFQGfDduLfetGHrDLF2UhWF46n?=
+ =?us-ascii?Q?Z4X6MZHe24obkKq/Ux0X4ZfQaGA1iTlbyI1BKdpDb5hRL/PVsnF+j/HKlPVZ?=
+ =?us-ascii?Q?KVYwtiSLY6+c2K81jAZNatjqoneDYg5pwWtcuTKkSpHzIYgE8S77yHvLpsM2?=
+ =?us-ascii?Q?1W48gDK2J4vrqn5OpkHosIVOFRGWC/hOwSxLnhgKVBPgOloz94ADZcuPZGu8?=
+ =?us-ascii?Q?Uck9QlZLcBPUzjTHAnCnXefqIZbQXvWwRs9BAkbzkVTjT0bQqbjyMh1L6DOg?=
+ =?us-ascii?Q?ltl/qIe+JuUugCneUXlGe5i+kN2AyTmygSg7uLfnTTdZThcEjOWkbcFa2Peo?=
+ =?us-ascii?Q?ruV6zufA2IkiolPvxIGslThpwXhbyPcQdNz0X+d1gnS39Vet7fHZOhxnZj3/?=
+ =?us-ascii?Q?oFObqIJAmEElfPwhVv1UbnXi/1CbaXGbxKYBj0bjMzdzYkeG78MXFvzRvQj0?=
+ =?us-ascii?Q?EVNmkI3oVHprbCMyHuuG1mEnCun8DMFxHN5b+o45mPZ+X6jSc86RvO4ey69h?=
+ =?us-ascii?Q?FGkm7nIKET/RMLHW6LCoQ/TMbxB20TvSAgKEkZxoNk6GdAm0oK2hK7rFcaS8?=
+ =?us-ascii?Q?uSqoZxaKRIDKgS+QxfTG07PC0D2RMIbzSwtJLXiC8JTbihoOmriQeirLN/CY?=
+ =?us-ascii?Q?XUWckkTB/nG6KgG2ZBvJrbuPjUiAcJkZw7sKoaK1bl/b+ykX+aoeo3sA4kRj?=
+ =?us-ascii?Q?K35qskKyKuelqISvfpn/xlJp0VQDfjw+h1JBtr7uFBxYy9vnxJMfmMj6A23+?=
+ =?us-ascii?Q?XrdQ210rJLKkdwEzXaoZk7Mt92d//EXOF9P8Z4rh8SBFdcDdog7o0T02/3g9?=
+ =?us-ascii?Q?JN+hG0QsZ31prBVy5CrNXLqZHwZ2wl4ryEgXB7I9IPWmhmH4II037tpkPPHG?=
+ =?us-ascii?Q?cPgUbPuJBL4hmh2Ir9BvqDswfe/kUZzAWssHYeKcLtcxyaANcg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zbydixQMuIU9hjywMHR8qzSbFWw57TW0UeuU9NCTOLFP3SAWdv93DJ48erR6?=
+ =?us-ascii?Q?8DS+56panZXxjDZuWe6BohIRZdYNcINepsak4tVnBCZw9R2iTNYYfyPoiLM7?=
+ =?us-ascii?Q?cxQnNQC43Bpnf2oCtJnIMrJOzNk1HQW7S5oUla1d+iFmXz6nulu4olQArdH+?=
+ =?us-ascii?Q?rygjrVrlyv1eTu1PaU/cqfWM03im+B79wQwNOarMVd/HUaH2txsICh+aR6m+?=
+ =?us-ascii?Q?2UZnllL0KTQcnaVsbMuop6QaXf07VzEI6nQe7319QzqX3HyFyQoOxGCcexw8?=
+ =?us-ascii?Q?evIkQcIPAQCDuA6dp9ZMrfFProamhpV8sFgCOcVTaNFWIfhFpP9G0kP5/HLR?=
+ =?us-ascii?Q?dMtvBJ9ML0U+9BqkgKqXwaeMHmvvC64Fpvo4N//Jv8upC9cZ1OM/GTARoOob?=
+ =?us-ascii?Q?3LxeVCExjEN0gf8ZxZrdDperHz5b08XqcM002GtkijPq8StDeWC/8VC1jnvI?=
+ =?us-ascii?Q?YUYgyqdwOJN0CI3m595btIBBFPFqb2CdxSUK5JG/42REc8mx9+Mv+81I+l75?=
+ =?us-ascii?Q?560swmGFlXcSMOdYHT8nLCXtxuiaB6lgJ8ok2i7vlk1JycM2xgVjT3tRVzc3?=
+ =?us-ascii?Q?7SQ68JMo4HzFVhsvJu3ZEZEaxQy9QtnpQ5iUzW4SYPWofUap2Ne78V2h3toE?=
+ =?us-ascii?Q?WV//yWNwueruwLdcpmWBGnNfQueaFeWk+a5FY14ObLiisDdc6iAC+g2uP1Oj?=
+ =?us-ascii?Q?DS8rI5p+WHcOyhgdU3NH4o+yRGAb40DCFhQZtgJNQJKmNKt0SbB0bFqqUxJo?=
+ =?us-ascii?Q?D3AkyTMLesqamtovM7HBn08wFe2tzNTtM1dIaJMsGXZ7iaJKpqkgq9pZou29?=
+ =?us-ascii?Q?raqQr+SQscJgRZtaKOtj4wF9UrfvOjFFKAr1LcjKZxZyJq37qvgNK6y2zXDD?=
+ =?us-ascii?Q?WxZ8tEjIugXLL5FqmZjXZzbtaAVk9eKxp4p3/Nl+sKfQBy/ap7RsG0n0lk67?=
+ =?us-ascii?Q?iawAPC7IWUa5QKYtC4j8KgsVmHeOTNgqzF9Bp102gW2SkLKjesdtiti4L/jD?=
+ =?us-ascii?Q?COdCic/OXwkWtRj5NnFDlXfg6utlxYz9EzQroVeCpdTf6CjCdh69HR7/T3sx?=
+ =?us-ascii?Q?5neIvQqKWHAaFYWLM0IlXa6FsR2aGRaueFVYZE6CZJ9YbkkmAT01q/wnTevj?=
+ =?us-ascii?Q?BYrdhNH5rvKaGE4MpKU6xCaBJ/YnWROYgd7ibqJ/mV8Z2f+MG+J4FZx6L2Mz?=
+ =?us-ascii?Q?ihd1Uz297gQH3n7sHIcPDFNJseDspJuD29dXB40H+cPpQ3Oyw4LDt+Ldz71T?=
+ =?us-ascii?Q?oiFMg2R8kKHCAccFaDmFVj/bwLR2NRMSH5nzOU0mpB9pvZEjqFE+DNRYjsE+?=
+ =?us-ascii?Q?hxKRkuJTRCMpL3F9uM7feRxQI476kGjWCBP0d0KW3nOkFR8iITckNfcGvWj8?=
+ =?us-ascii?Q?mVoSqn3GheK6f+EZGynCqlh+40q/dLQCMr2XHOhRPwBqZIAu/T/7c8lOevcm?=
+ =?us-ascii?Q?2OcP/wP26fbIgKVMDKNUUgrQMfaAzGBqGo5hugWTtouGzNaKYcPi4604sYyR?=
+ =?us-ascii?Q?g4av2ol2ecGssGJ1tLqN3hU33StiqEc8mFSno0eRBVGlDnu+nqu7zZN3bpL/?=
+ =?us-ascii?Q?IU+Do/xayRlG2yE+Dsv+mRFqIZaLEgs/yKusMPOW?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27394/Tue Sep 10 10:30:36 2024)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd635ba5-8718-4977-d3a8-08dcd2398e37
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 08:13:02.0263
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hbj94ob+TjWyyas/7Zmo1Ihm+KW983GAQ7JJBLPbPWloEaeC7/Q6nxFy7h5pqsepncgGyeLGodb8/mIQEjhpzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB7982
+X-OriginatorOrg: intel.com
 
-Rasmus Villemoes <linux@rasmusvillemoes.dk> writes:
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Wednesday, September 11, 2024 3:21 PM
+>=20
+> On Wed, Sep 11, 2024 at 06:25:16AM +0000, Tian, Kevin wrote:
+> > > From: Jason Gunthorpe <jgg@nvidia.com>
+> > > Sent: Friday, September 6, 2024 2:22 AM
+> > >
+> > > On Thu, Sep 05, 2024 at 11:00:49AM -0700, Nicolin Chen wrote:
+> > > > On Thu, Sep 05, 2024 at 01:20:39PM -0300, Jason Gunthorpe wrote:
+> > > > > On Tue, Aug 27, 2024 at 09:59:54AM -0700, Nicolin Chen wrote:
+> > > > >
+> > > > > > +static int arm_smmu_viommu_cache_invalidate(struct
+> > > iommufd_viommu *viommu,
+> > > > > > +                                           struct iommu_user_d=
+ata_array
+> > > *array)
+> > > > > > +{
+> > > > > > +       struct iommu_domain *domain =3D
+> > > iommufd_viommu_to_parent_domain(viommu);
+> > > > > > +
+> > > > > > +       return __arm_smmu_cache_invalidate_user(
+> > > > > > +                       to_smmu_domain(domain), viommu, array);
+> > > > >
+> > > > > I'd like to have the viommu struct directly hold the VMID. The ne=
+sted
+> > > > > parent should be sharable between multiple viommus, it doesn't
+> make
+> > > > > any sense that it would hold the vmid.
+> > > > >
+> > > > > This is struggling because it is trying too hard to not have the
+> > > > > driver allocate the viommu, and I think we should just go ahead a=
+nd
+> do
+> > > > > that. Store the vmid, today copied from the nesting parent in the=
+ vmid
+> > > > > private struct. No need for iommufd_viommu_to_parent_domain(),
+> just
+> > > > > rework the APIs to pass the vmid down not a domain.
+> > > >
+> > > > OK. When I designed all this stuff, we still haven't made mind
+> > > > about sharing the s2 domain, i.e. moving the VMID, which might
+> > > > need a couple of more patches to achieve.
+> > >
+> > > Yes, many more patches, and don't try to do it now.. But we can copy
+> > > the vmid from the s2 and place it in the viommu struct during
+> > > allocation time.
+> > >
+> >
+> > does it assume that a viommu object cannot span multiple physical
+> > IOMMUs so there is only one vmid per viommu?
+>=20
+> I think so. One the reasons of introducing vIOMMU is to maintain
+> the shareability across physical IOMMUs at the s2 HWPT_PAGING.
+>=20
 
-> Esben Haabendal <esben@geanix.com> writes:
->
->> The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
->> interrupt when frequency output is not enabled.
->>
->> The device-tree bindings should ensure that interrupt and clock output is
->> not enabled at the same time.
->>
->> Signed-off-by: Esben Haabendal <esben@geanix.com>
->> ---
->>  drivers/rtc/rtc-isl12022.c | 244 ++++++++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 241 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-isl12022.c b/drivers/rtc/rtc-isl12022.c
->> index d82278fdc29b..682b1bf10160 100644
->> --- a/drivers/rtc/rtc-isl12022.c
->> +++ b/drivers/rtc/rtc-isl12022.c
->> @@ -21,7 +21,7 @@
->>  
->>  #include <asm/byteorder.h>
->>  
->> -/* ISL register offsets */
->> +/* RTC - Real time clock registers */
->>  #define ISL12022_REG_SC		0x00
->>  #define ISL12022_REG_MN		0x01
->>  #define ISL12022_REG_HR		0x02
->> @@ -30,21 +30,36 @@
->>  #define ISL12022_REG_YR		0x05
->>  #define ISL12022_REG_DW		0x06
->>  
->> +/* CSR - Control and status registers */
->>  #define ISL12022_REG_SR		0x07
->>  #define ISL12022_REG_INT	0x08
->> -
->>  #define ISL12022_REG_PWR_VBAT	0x0a
->> -
->>  #define ISL12022_REG_BETA	0x0d
->> +
->> +/* ALARM - Alarm registers */
->> +#define ISL12022_REG_SCA0	0x10
->> +#define ISL12022_REG_MNA0	0x11
->> +#define ISL12022_REG_HRA0	0x12
->> +#define ISL12022_REG_DTA0	0x13
->> +#define ISL12022_REG_MOA0	0x14
->> +#define ISL12022_REG_DWA0	0x15
->> +#define ISL12022_ALARM_SECTION		ISL12022_REG_SCA0
->> +#define ISL12022_ALARM_SECTION_LEN	(ISL12022_REG_DWA0 - ISL12022_REG_SCA0 + 1)
->> +
->> +/* TEMP - Temperature sensor registers */
->>  #define ISL12022_REG_TEMP_L	0x28
->>  
->>  /* ISL register bits */
->>  #define ISL12022_HR_MIL		(1 << 7)	/* military or 24 hour time */
->>  
->> +#define ISL12022_SR_ALM		(1 << 4)
->>  #define ISL12022_SR_LBAT85	(1 << 2)
->>  #define ISL12022_SR_LBAT75	(1 << 1)
->>  
->> +#define ISL12022_INT_ARST	(1 << 7)
->>  #define ISL12022_INT_WRTC	(1 << 6)
->> +#define ISL12022_INT_IM		(1 << 5)
->> +#define ISL12022_INT_FOBATB	(1 << 4)
->>  #define ISL12022_INT_FO_MASK	GENMASK(3, 0)
->>  #define ISL12022_INT_FO_OFF	0x0
->>  #define ISL12022_INT_FO_32K	0x1
->> @@ -52,10 +67,18 @@
->>  #define ISL12022_REG_VB85_MASK	GENMASK(5, 3)
->>  #define ISL12022_REG_VB75_MASK	GENMASK(2, 0)
->>  
->> +#define ISL12022_ALARM_ENABLE	(1 << 7)	/* for all ALARM registers  */
->> +
->>  #define ISL12022_BETA_TSE	(1 << 7)
->>  
->> +static struct i2c_driver isl12022_driver;
->> +
->>  struct isl12022 {
->> +	struct i2c_client *i2c;
->> +	struct rtc_device *rtc;
->>  	struct regmap *regmap;
->> +	int irq;
->> +	bool irq_enabled;
->>  };
->>  
->>  static umode_t isl12022_hwmon_is_visible(const void *data,
->> @@ -215,6 +238,208 @@ static int isl12022_rtc_set_time(struct device *dev, struct rtc_time *tm)
->>  	return regmap_bulk_write(regmap, ISL12022_REG_SC, buf, sizeof(buf));
->>  }
->>  
->> +static int isl12022_rtc_read_alarm(struct device *dev,
->> +				   struct rtc_wkalrm *alarm)
->> +{
->
-> Style nit, but I think it's easier to read and grep for if the prototype
-> is on one line, and it wouldn't go significantly over 80 chars. The file
-> already has a few lines > 80 chars, and the 80 char limit doesn't really
-> exist anymore.
+I don't quite get it. e.g. for intel-iommu the S2 domain itself can
+be shared across physical IOMMUs then what is the problem=20
+preventing a vIOMMU object using that S2 to span multiple IOMMUs?
 
-Ok. I will change it to a single line. No problem.
-
->
->> 
->> +	struct rtc_time *const tm = &alarm->time;
->
-> Hm, declaring auto variables const is quite unusual. I see that a few
-> other rtc drivers have done this, but I don't it's an example to copy.
-
-Ok. Dropping the const here. And yes, it had crept via copy-paste.
-
->> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
->> +	struct regmap *regmap = isl12022->regmap;
->> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
->
-> The kernel normally says u8 (and you do as well in _set_alarm()).
-
-Another copy-paste issue. This time it was from _read_time() and
-_set_time().
-
-To avoid inconsistent coding style, I guess I should add a commit
-changing to u8 in _read_time() and _set_time() as well.
-
->> +	int ret, yr, i;
->> +
->> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
->> +			       buf, sizeof(buf));
->> +	if (ret) {
->> +		dev_err(dev, "%s: reading ALARM registers failed\n",
->> +			__func__);
->> +		return ret;
->> +	}
->> +
->> +	dev_dbg(dev,
->> +		"%s: sc=%02x, mn=%02x, hr=%02x, dt=%02x, mo=%02x, dw=%02x\n",
->> +		__func__, buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
->> +
->> +	tm->tm_sec = bcd2bin(buf[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION]
->> +			     & 0x7F);
->> +	tm->tm_min = bcd2bin(buf[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION]
->> +			     & 0x7F);
->> +	tm->tm_hour = bcd2bin(buf[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION]
->> +			      & 0x3F);
->> +	tm->tm_mday = bcd2bin(buf[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION]
->> +			      & 0x3F);
->> +	tm->tm_mon = bcd2bin(buf[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION]
->> +			     & 0x1F) - 1;
->> +	tm->tm_wday = buf[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] & 0x07;
->> +
->
-> Here I'd also suggest keeping each assignment on one line, it's rather
-> hard to read this way.
-
-I agree, and I will change it here. But if the 80 columns rule is out,
-what kind of rule for line width is used instead?
-
->> +	/* The alarm doesn't store the year so get it from the rtc section */
->> +	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
->> +	if (ret) {
->> +		dev_err(dev, "%s: reading YR register failed\n", __func__);
->> +		return yr;
->
-> return ret, presumably.
-
-Oops. Fixing.
-
-> regmap_read() takes an 'unsigned int *', but yr is int. If the compiler
-> doesn't warn I suppose it doesn't matter.
-
-My compiler seems happy. But no harm in fixing it.
-
-> I suggest moving the reading of the yr register up to right after the
-> other regmap_read, then you could also include it in the dev_dbg output,
-> and all the bcd2bin() conversions are done next to each other.
->
->> +	}
->> +	tm->tm_year = bcd2bin(yr) + 100;
->> +
->> +	for (i = 0 ; i < ISL12022_ALARM_SECTION_LEN ; i++) {
->
-> Nit: no spaces before the semicolons.
-
-Nit removal in progress.
-
->> +		if (buf[i] & ISL12022_ALARM_ENABLE) {
->> +			alarm->enabled = 1;
->> +			break;
->> +		}
->> +	}
->> +
->> +	dev_dbg(dev, "%s: %ptR\n", __func__, tm);
->> +
->> +	return 0;
->> +}
->> +
->> +static int isl12022_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
->> +{
->> +	struct rtc_time *alarm_tm = &alarm->time;
->> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
->> +	struct regmap *regmap = isl12022->regmap;
->> +	u8 regs[ISL12022_ALARM_SECTION_LEN] = { 0, };
->> +	struct rtc_time rtc_tm;
->> +	int ret = 0, enable, dw;
->> +
->
-> Nit: No need to initialize ret when the very first thing you do is
-> assigning to it.
-
-Fixing.
-
->> +	ret = isl12022_rtc_read_time(dev, &rtc_tm);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* If the alarm time is before the current time disable the alarm */
->> +	if (!alarm->enabled || rtc_tm_sub(alarm_tm, &rtc_tm) <= 0)
->> +		enable = 0;
->> +	else
->> +		enable = ISL12022_ALARM_ENABLE;
->> +
->> +	/* Set non-matching tm_wday to safeguard against early false matching
->> +	 * while setting all the alarm registers (this rtc lacks a general
->> +	 * alarm/irq enable/disable bit).
->> +	 */
->
-> Nit: Don't use network comment style.
-
-Ok. I did not know this was network comment style only.
-So it should be with both '/*' and '*/' on separate lines?
-
->> +	if (enable) {
->> +		ret = regmap_read(regmap, ISL12022_REG_DW, &dw);
->> +		if (ret) {
->> +			dev_err(dev, "%s: reading DW failed\n", __func__);
->> +			return ret;
->> +		}
->> +		/* ~4 days into the future should be enough to avoid match */
->> +		dw = ((dw + 4) % 7) | ISL12022_ALARM_ENABLE;
->> +		ret = regmap_write(regmap, ISL12022_REG_DWA0, dw);
->> +		if (ret) {
->> +			dev_err(dev, "%s: writing DWA0 failed\n", __func__);
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	/* Program the alarm and enable it for each setting */
->> +	regs[ISL12022_REG_SCA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_sec) | enable;
->> +	regs[ISL12022_REG_MNA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_min) | enable;
->> +	regs[ISL12022_REG_HRA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_hour) | enable;
->> +	regs[ISL12022_REG_DTA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_mday) | enable;
->> +	regs[ISL12022_REG_MOA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_mon + 1) | enable;
->> +	regs[ISL12022_REG_DWA0 - ISL12022_ALARM_SECTION] =
->> +		bin2bcd(alarm_tm->tm_wday & 7) | enable;
->> +
->
-> The dwa0 handling is a nice trick for avoiding triggering a false
-> alarm. But I do wonder if you might need to do it also for the !enable
-> case. That is, suppose we've had the alarm set for 01:02:15. The alarm
-> fires, we do stuff, and then we want to turn it off. So this gets called
-> with some 00:00:00 value in alarm_tm and enable==0. Then when we start
-> writing the new register values, as soon as REG_SCA0 has been written
-> to, the alarm condition for 01:02:xx is automatically satisfied.
->
-> If you unconditionally write a "four days in the future, with alarm bit
-> set" value to DWA0, that should prevent this and the DWA0 does get its
-> !enable value set via the bulk_write.
-
-Good idea. I will remove the condition for the DWA0 trick.
-
->> +	/* write ALARM registers */
->> +	ret = regmap_bulk_write(regmap, ISL12022_REG_SCA0,
->> +				&regs, sizeof(regs));
->
-> Nit: Fits in one line (I think), and you probably want to use the
-> ISL12022_ALARM_SECTION name here, even if they're of course the same.
-
-Using ISL12022_ALARM_SECTION makes the line 85 columns. I must admit I
-feel a bit uneasy about going over the 80 columns, as I have no idea
-when to wrap the lines then...
-
->> +	if (ret) {
->> +		dev_err(dev, "%s: writing ALARM registers failed\n", __func__);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static irqreturn_t isl12022_rtc_interrupt(int irq, void *data)
->> +{
->> +	struct isl12022 *isl12022 = data;
->> +	struct rtc_device *rtc = isl12022->rtc;
->> +	struct device *dev = &rtc->dev;
->> +	struct regmap *regmap = isl12022->regmap;
->> +	u32 val = 0;
->> +	unsigned long events = 0;
->> +	int ret;
->> +
->> +	ret = regmap_read(regmap, ISL12022_REG_SR, &val);
->> +	if (ret) {
->> +		dev_err(dev, "%s: reading SR failed\n", __func__);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	if (val & ISL12022_SR_ALM)
->> +		events |= RTC_IRQF | RTC_AF;
->> +
->> +	if (events & RTC_AF)
->> +		dev_dbg(dev, "alarm!\n");
->> +
->> +	if (!events)
->> +		return IRQ_NONE;
->> +
->> +	rtc_update_irq(rtc, 1, events);
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int isl12022_rtc_alarm_irq_enable(struct device *dev,
->> +					 unsigned int enabled)
->> +{
->> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
->> +
->> +	if (!isl12022->irq_enabled == !enabled)
->> +		return 0;
->> +
->> +	if (enabled)
->> +		enable_irq(isl12022->irq);
->> +	else
->> +		disable_irq(isl12022->irq);
->> +
->> +	isl12022->irq_enabled = !!enabled;
->> +
->
-> I see why you do the ! and !! dances to canonicalize boolean values for
-> comparison, but it's not very pretty. But ->alarm_irq_enable has the
-> signature it has (that should probably get changed), so to be safe I
-> guess you do need them. That said, I don't think it's unreasonable to
-> assume that ->alarm_irq_enable is only ever invoked with the values 0
-> and 1 for the enabled argument, and e.g. rtc-cpcap.c gets away with that
-> assumption.
-
-The handling in rtc-cpcap.c looks a bit strange IMHO. The comparison is
-without using !, and then the assignment is done with !!. I think we
-should either rely on enabled always being either 0 or 1, or handle the
-cases where it might be something else.
-
-I prefer to play it safe for now.
-
-But if I explicitly do this first
-
-    /* Make sure enabled is 0 or 1 */
-    enabled = !!enabled;
-
-Then we can leave out the ! and !! below. The code should be more
-readable, and it will be much clearer for anyone that later on will want
-to get rid of this.
-
->> +	return 0;
->> +}
->> +
->> +static int isl12022_setup_irq(struct isl12022 *isl12022, int irq)
->> +{
->> +	struct device *dev = &isl12022->i2c->dev;
->
-> I was wondering why you needed to stash the i2c_client, but I see it
-> here. The other initialization helpers (_set_trip_levels and
-> _hwmon_register) are passed &client->dev so they have this dev directly,
-> and they then get the regmap (or, with patch 1, the struct isl12022)
-> from that with dev_get_drvdata(). For consistency I think you should do
-> the same, and then you can drop the i2c field in struct isl12022.
-
-Good idea. I had been thinking about something like this, but got away
-from it again. I will change it in v2.
-
->> +	struct regmap *regmap = isl12022->regmap;
->> +	unsigned int reg_mask, reg_val;
->> +	u8 buf[ISL12022_ALARM_SECTION_LEN] = { 0, };
->> +	int ret;
->> +
->> +	/* Clear and disable all alarm registers */
->> +	ret = regmap_bulk_write(regmap, ISL12022_ALARM_SECTION,
->> +				buf, sizeof(buf));
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Enable automatic reset of ALM bit, enable single event interrupt
->> +	 * mode, and disable IRQ/fOUT pin during battery-backup mode.
->> +	 */
->
-> Network-style.
-
-Got it.
-
->
->> +	reg_mask = ISL12022_INT_ARST | ISL12022_INT_IM
->> +		| ISL12022_INT_FOBATB | ISL12022_INT_FO_MASK;
->> +	reg_val = ISL12022_INT_ARST | ISL12022_INT_FOBATB | ISL12022_INT_FO_OFF;
->> +	ret = regmap_write_bits(regmap, ISL12022_REG_INT,
->> +				reg_mask, reg_val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_request_threaded_irq(dev, irq, NULL,
->> +					isl12022_rtc_interrupt,
->> +					IRQF_SHARED | IRQF_ONESHOT,
->> +					isl12022_driver.driver.name,
->> +					isl12022);
->> +	if (ret) {
->> +		dev_err(dev, "Unable to request irq %d\n", irq);
->> +		return ret;
->
-> This should probably be "return dev_err_probe(...);" - the irq could in
-> theory be routed to some gpio expander which is not yet probed, so we
-> could get -EPROBE_DEFER. And regardless, dev_err_probe has the advantage
-> of printing what the err code actually is.
-
-I will change this both this and the other dev_err() in _probe() to
-dev_err_probe().
-
-/Esben
+Probably there is a good reason e.g. for simplification or better
+aligned with hw accel stuff. But it's not explained clearly so far.
 
