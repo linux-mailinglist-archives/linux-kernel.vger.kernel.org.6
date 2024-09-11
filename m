@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-325222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D114975669
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313CC97567B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703C11C22D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FA41C25DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4F51A38F4;
-	Wed, 11 Sep 2024 15:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667981A303D;
+	Wed, 11 Sep 2024 15:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKY1g6lj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CZKvIOj7"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EDE2AE90;
-	Wed, 11 Sep 2024 15:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61F1DA5E;
+	Wed, 11 Sep 2024 15:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726067242; cv=none; b=l9EjDDEPsNhxuGB93RmTK1BUa4XYZTtwyFhpGJkwnJP0nqN1IcCi92/lR6dFBcTwC3x6QqDcxRZrtaOvRoWJpTg3sNl6A11EHa0KyvC9twYutu5X9AgE/KVswFgIxufhw8/1Vvr8GJmmVXKlwsKwivPTyfDVzmgbctM+CXXYcbQ=
+	t=1726067434; cv=none; b=VKkKnAfpq9ccdVbmU9ck1s0fQndYsBDa8kKBeDVmZtT4S37C7a7vOLnMlZw/vjsbwAft/OqsB/8yUrliJDYtKBUX4ze50LUi5bOsAf75oUCPMz8C57x3b2rJAgKgfU5At5QxXq4AnczOoKJuxdXVWQSrZ14BiOdoD92dwzmRG3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726067242; c=relaxed/simple;
-	bh=cmThnpgJWyD6GM0ZD6Ic8qiZjE3t5L8P8LLk2F0ysFQ=;
+	s=arc-20240116; t=1726067434; c=relaxed/simple;
+	bh=jKRMmVrA0oabeJgO6HQmJU/Kq/BN+bLc7Eq02gvZhTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrbiBu2FnM0jNA44V7hQWKaeH1mt/Ktl1pNsolTj4H3HsnP5dsCJ8VQKAHfMbNdonkLrv0ZGRj1LYccfuWXZF7CklYD6tK+c0ccQgyNjlmxXZBAehk4YQRHpaW9RBcc/jKsQXoao6WZdJ6+JKWWELnrXlrl3li/VOpoT51r7s6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKY1g6lj; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726067241; x=1757603241;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cmThnpgJWyD6GM0ZD6Ic8qiZjE3t5L8P8LLk2F0ysFQ=;
-  b=fKY1g6ljufVtYlg1v11w5Hjlqrpv3QuuiynQ5v2zJsAhLZwpsUrYZNWW
-   s5KYTpt8jyMP3cAadjQrqiO86Dah7vU1VoKsyfoWMti6trIfF+fSwyGhD
-   /dXbvY2UWhAVtMZ8lUS86zo+Rl1uNO0K66jd9vPaE3jzstux7rSA84reX
-   i25moORbmIPUy+In/QIrYTL+F44BoWWU/D08XTP04+T9b2ryiWlCV+9P1
-   IkYCovEKCvOeKRVlLXNrXfdltk0NY4k7Di+iecEMr+F7j7u/xMu9wmpu9
-   Y8zbjeq/lND99l+s4Fa8TQsDW+4hCORfzUkmlKd4qm3AavOdUiP00LRxo
-   g==;
-X-CSE-ConnectionGUID: 2jedS0BGSpGNzafYaWbO3w==
-X-CSE-MsgGUID: o69p6PfbQnGla2Ykd8n4GA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28609248"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="28609248"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 08:07:21 -0700
-X-CSE-ConnectionGUID: rrS8zVvQQNGfzDo5caZUrw==
-X-CSE-MsgGUID: Uh75a3uNTRq8+QsaelPOWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="67688103"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa006.jf.intel.com with ESMTP; 11 Sep 2024 08:07:18 -0700
-Message-ID: <14c33b7a-19a7-4639-aa4a-c5d259e32fe1@linux.intel.com>
-Date: Wed, 11 Sep 2024 18:09:25 +0300
+	 In-Reply-To:Content-Type; b=Avm+zsgP6tKZ9cfk9IuDSbOk0ryhtUHRACpA64Y5w818XgDxP5nSU7kSbpbAu+i+ziOvd4SkGGaJjmtGVYKTP5tyZaCXYWKWT3ge4a9eoBFc42lxWiphF8fpVp0cLq7nsHF9vU0Ra5DPLiZMF2e+y9ihY9cH0AUkx2G8zIvwu4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CZKvIOj7; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iSUmAoKbkFC1zgzAwsv+m6BjssQM8FyL0ByRqeFy6+I=; b=CZKvIOj7HFsJS0sdHhYovrfpue
+	oo92pRbxJYzGUfB2zrQwfScKO4eESbCllOLYBd6xMu4DIFZ5hQjmPaN6p+FSw/zaAPn99YsB8o483
+	FFW+GGCJHG8uedG1UApHD93E3r55OaLsWXNKe+gfZnhhaKFK7BPxJeuKdJmWKC3xRiaB7BaVjnNLU
+	GkHusTCXSwzDr2eLMIwMJTIQmx9E3QoWTiNpXcEMm+w56j7+N7zT8aDU5fwuqOo9TbExjAygmHnIe
+	HKcNAymcqlf64ASd/BMN686Z49TG/j8/r2/TlOXW5J4M/3jh1AY1p7NNvos8B8QW6E+0VzKQ4biCk
+	0Xo7ZPcA==;
+Received: from [195.69.0.8] (helo=[172.21.208.109])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1soOzD-00CUVu-4l; Wed, 11 Sep 2024 17:10:27 +0200
+Message-ID: <121b62a7-bd2d-0ded-97a7-ac890831ca63@igalia.com>
+Date: Wed, 11 Sep 2024 17:10:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>,
- ki.chiang65@gmail.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
-References: <20240911095233.3e4d734d@foxbook>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V2] Documentation: Improve crash_kexec_post_notifiers
+ description
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20240911095233.3e4d734d@foxbook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Simon Horman <horms@kernel.org>
+Cc: kexec@lists.infradead.org, linux-doc@vger.kernel.org, bhe@redhat.com,
+ corbet@lwn.net, kernel@gpiccoli.net, linux-kernel@vger.kernel.org,
+ stephen.s.brennan@oracle.com, kernel-dev@igalia.com, dyoung@redhat.com,
+ vgoyal@redhat.com, linux-debuggers@vger.kernel.org
+References: <20240830182219.485065-1-gpiccoli@igalia.com>
+ <20240902082342.GC23170@kernel.org>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20240902082342.GC23170@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-> 4. How is it even possible? As far as I see, Linux simply queues
-> three TRBs for a control URB. There are 255 slots in a segemnt,
-> so exactly 85 URBs should fit, and then back to the first slot.
+On 02/09/2024 10:23, Simon Horman wrote:
+> 
+> Hi Guilherme,
+> 
+> Some subjective grammar nits.
+> 
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index efc52ddc6864..351730108c58 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -913,12 +913,16 @@
+>>  			the parameter has no effect.
+>>  
+>>  	crash_kexec_post_notifiers
+>> -			Run kdump after running panic-notifiers and dumping
+>> -			kmsg. This only for the users who doubt kdump always
+>> -			succeeds in any situation.
+>> -			Note that this also increases risks of kdump failure,
+>> -			because some panic notifiers can make the crashed
+>> -			kernel more unstable.
+>> +			Only jump to kdump kernel after running the panic
+>> +			notifiers and dumping kmsg. This option increases the
+>> +			risks of a kdump failure, since some panic notifiers
+>> +			can make the crashed kernel more unstable. In the
+> 
+> nit: In the configurations -> In configurations
+> 
+>> +			configurations where kdump may not be reliable,
+>> +			running the panic notifiers can allow collecting more
+>> +			data on dmesg, like stack traces from other CPUS or
+>> +			extra data dumped by panic_print. Notice that some
+> 
+> nit: Notice that -> Note that
+> 
+>> +			code enables this option unconditionally, like
+> 
+> Maybe: some code enables -> some configurations enable
+> 
 
-Not all control transfers have a Data stage TRB.
+Hey Simon, tnx for the suggestions, will change in the next version.
+Cheers,
 
--Mathias
 
+Guilherme
 
