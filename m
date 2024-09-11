@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-324778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A292F9750B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149F99750CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E4B1C22926
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36261F219EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57495186E52;
-	Wed, 11 Sep 2024 11:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3974187343;
+	Wed, 11 Sep 2024 11:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ODdPJDx/";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="k16cWy3X"
-Received: from a7-33.smtp-out.eu-west-1.amazonses.com (a7-33.smtp-out.eu-west-1.amazonses.com [54.240.7.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v7O+hv0P"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B02F17C21B;
-	Wed, 11 Sep 2024 11:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD92185B7A;
+	Wed, 11 Sep 2024 11:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726053946; cv=none; b=NuL4YSeLrZOa4HDX2v4AVCDHysDxv1tIZ2mkYxKeY4Uuupf5kojdj8j0gFH6e8wYAixC6mQnee31nS2aPY/9+zCH4UZYds40haRJNOI8qCmQka0OorCDDqj8cfQOIBIuhEJxczLu7Mz/XFSuog4kV04bimKdpwHhiIEL875Dgl0=
+	t=1726054112; cv=none; b=rwja0joepd7prVIYHzbCe+cCBmVnrhm95O5lgEapyoRhmvImO7oKARseOb3u7LZtcjkf1DRmE84oAmNZnUihuzXG9rk//8Z3uCyC4iSGKMH8x2hqjIVbmHDzAu9VSyZwcX3Xjd3xs38F1OIhaFqkw9Cnc42Jsy+TxoUaOXLE3ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726053946; c=relaxed/simple;
-	bh=ClJQQmMllX6exPeX1+6DYsZvUq0xm7fA8sKPr1Vr3Nc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aHE+AH3EBCwBZ7uL0Lf7iIxa8KJISTL3SS5ozTO866BWbCZ/h7zmQ/pbgqMEoF7Sxa/19YOx4OruhqWQtRDhHEcJewtp00oASC5KS3KgdBcsVgG8qwcHj8KCqLDXFnAH69079JZAFlXkwNnNqNckqfX9/Y5Hzs9R3YodD8T4X+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ODdPJDx/; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=k16cWy3X; arc=none smtp.client-ip=54.240.7.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726053943;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=ClJQQmMllX6exPeX1+6DYsZvUq0xm7fA8sKPr1Vr3Nc=;
-	b=ODdPJDx/jLT17tOcmTCDctsItStRbKWp8X3MSQU7oVrdu7YFJ7prdqiVu7WAId1b
-	xVtH+o4qIjOb/c67yc2G/aSvF+7nZIQcIE+Koc8n7boutJUqpzyDhNLNsJprKleQuVs
-	DVQ9Pxy6/FUv4CpZ+spFIi/H22qlhrsKfCa7XTjRWFYq7dQRugRPYpQFPX0oBA8owYN
-	Aaj2Oj5gXArb4fYtjykCFcksA9sZpEb95lCXI/4kMxk3ocRjuzuVq6bX+Fzq5gOzLY0
-	fZJxj0j0ITXZ9xKCzMts7d9qMXepO2xhNJkKw5zFk28VxsiCkuVZBRIPFd2+HjUwjQT
-	ul/1oabzOg==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726053943;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=ClJQQmMllX6exPeX1+6DYsZvUq0xm7fA8sKPr1Vr3Nc=;
-	b=k16cWy3X0L74jRDviwtgOVzvQsoPOP/SaGOHvWUu5MalRuJIoWjykKtaRJWPas0z
-	4P9KBjl4JPNaNIVbs4tI9zpqB8WUgc2IraFXjIvyramjpddD1zLIFwscREfE3g5gQxE
-	LVZat2W0hO5XuksMn6raClR2wZtZtIol3A7V77WI=
-Message-ID: <01020191e0d508d9-18f9aef4-fecc-4486-a8c8-f41bd4784e13-000000@eu-west-1.amazonses.com>
-Date: Wed, 11 Sep 2024 11:25:43 +0000
+	s=arc-20240116; t=1726054112; c=relaxed/simple;
+	bh=G+RdD7E+bzW4iedtiBzQQENI8h25tsSLHurvSrLM67g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BVaI0G0bMIpVVUgJ/QFhkxG6wD4OLAS+6fO2Juf+lNe7Cd6QCb3/xbMm9NzzEBHPxUFqIryDRGY/wNz0td2xxMQvI00VIUlUXJ6nd4Q2FZ8GQ/9PWL5Yq9b4C8GiFdC8XUirqCW+RdLZLyzF5ouGHKRv7M89BStoU0xz41PXNvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v7O+hv0P; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726054066; x=1726658866; i=markus.elfring@web.de;
+	bh=yTtZxWE0JHb3TnA6oJ50YzGe95/FIcKE44d4OiLu6iY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=v7O+hv0Pzxur6hSXyQsSyzWcSvALNs8t7DoMepgzk/EIvE6coR6h5wrLCiV84VP2
+	 yWGTGdFq8d2lGn4B1OfVqsyFJgIlfpjHymgYNYA9yUAbtorOqP1EDndL+reSaKsTq
+	 k2v7NX1ZLhl23YUlMOJdlb5ylRrT5MdmNXZWkukOPFBKHTuTNAo0BuLPirsHOpmWS
+	 /Zun4/Bg1c4xr2nhs0HQspM7IqYmhm+nX7Tg6byaFLaP4bnIonedU5zYWDrGyMMBY
+	 1NhZNIQxfgE143BOpBQ/oxj9Lw2QAh3jvx9vKvlcY8SiZ5Q3eZEsgD5W41Fwbrdt9
+	 5HLRQpxflVyC3BLDMw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSIF2-1sQ2I61AYC-00NmSK; Wed, 11
+ Sep 2024 13:27:46 +0200
+Message-ID: <50b75b24-afbd-46cf-af4d-01e6ea4832dc@web.de>
+Date: Wed, 11 Sep 2024 13:27:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,29 +56,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] arm64: dts: mediatek: mt8188: Add socinfo nodes
-To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-References: <20240911105131.4094027-1-fshao@chromium.org>
- <20240911105131.4094027-9-fshao@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240911105131.4094027-9-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.11-54.240.7.33
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>
+References: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
+Subject: Re: [PATCH 8/9] accel/rocket: Add job submission IOCTL
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YmCb7NXdmFPxc7xnbYpPH3gDEvf/+oJCB9LfDAxISh25xOGXJhX
+ xJqwC0k2vwG8Wg4Ljwp7J46b69w5H04HZv2saRwka7NMsngHoOuHBmnF99t40n/HTDcyhGv
+ OrfeycGLIHZUB7lOU6SsqIQpHvz9/XbkMtydirXYtDwk1N8Bm+5VGFHufghtREbqgs5ak67
+ RyCZOjWVRgOrA3ww41D7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vOiVie10tQI=;pJqeoruLOD0q7PLKWjhqjCwpMIi
+ wUbyfof0VkY56VFhYv5E8enK/5ratFGUpbica8CWkS3qKC1hdYt+nL1C9lBq/QYL3ggZ7tHMK
+ Ay6RFBIY1peAsoplJfuNsFcf5yc/+e0a1vH3K54FG1XxeFO/KyBd1FagIie5cpHn4hag4+IGq
+ Fk9XkUeWuK/w2igQAWvqKiRbdKvW4FrMZDe29pyjluya5cnGhRG6ymxugx0zGew4ta+fGLMAs
+ c9e0y95ig0wgeGxExJx7DlNodPGaWckOHFx1DqwNW/ebOYhaKCljiQCWBe26rXyLX3QKbRNQB
+ OD+26NpEXB3m31Scmy6ikiA5W31Fn30ExYO4LYL+yvtad8t1VygAI+DPUEOo5HsWylUeIQSJ2
+ ZpAD586s5jnQmq4W3Vc9+Hf098axsiatJr+6qwvvHzrWzBLI2erE2nmpWo2hcgATmBTSUwZT4
+ GM4qWb6SKc7gxH2I1Ye0b9Z+gc6ZDgFSu2HDMr9DGS5qWGTpQJfJGuV1VNaLqEFGeGQwkvUwd
+ giCNsWeWCkGNvKws6NOLjWJUhsjYO6jLNeIIyjD4oWwKikAujz/MpjFh9H7AXFtJgTkdUvov/
+ ra0USbAlz9O58lp7DkyTQtNap5DGe9arwchl5QkVTe8pGtvxjMhJFb7frOH2X+fsPNCINrQFT
+ y3amKgwJB2dzOEWcwV84QlydNzgJQhe86O2ihbbEBl5Buiz7slG7BWBF//5tzRxwmyOoA5o4F
+ YIZExP3lWGJX0GcnA7zpzTCgIAqCRuoqiG+/TnWhl2oVEQloxmjuIMK5APcPETjfdyRYsdvNM
+ ufMAAL+QG9jA4fAnPdJj9w4A==
 
-Il 11/09/24 12:51, Fei Shao ha scritto:
-> Add two socinfo efuse data nodes for the SoC information probing on
-> MT8188.
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
+=E2=80=A6
+> +++ b/drivers/accel/rocket/rocket_job.c
+> @@ -0,0 +1,708 @@
+=E2=80=A6
+> +static int rocket_job_push(struct rocket_job *job)
+> +{
+=E2=80=A6
+> +	mutex_lock(&rdev->sched_lock);
+> +	drm_sched_job_arm(&job->base);
+=E2=80=A6
+> +	drm_sched_entity_push_job(&job->base);
+> +
+> +	mutex_unlock(&rdev->sched_lock);
+=E2=80=A6
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&rdev->sched_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/mutex.h#L1=
+96
 
+Regards,
+Markus
 
