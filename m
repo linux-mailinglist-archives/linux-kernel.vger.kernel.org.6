@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-325208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF925975623
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:56:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B96975636
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27F21C25E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CB31F261BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116DC1AB53B;
-	Wed, 11 Sep 2024 14:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DB51A3044;
+	Wed, 11 Sep 2024 14:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tDmogz9l"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="diiAG7RO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374DB1AAE37;
-	Wed, 11 Sep 2024 14:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263E81A3AB7;
+	Wed, 11 Sep 2024 14:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726066578; cv=none; b=W5xCKmDvjuwnyAxqUbl9oGYud3ROXkbzHOqndumPm7Z9Vn/Nzrdd2kiaFrOgKUhtTMoiimd8gyKaYu0RzfCqSpcVZpVxJ5mDqsH/HgnvP7PzfuKPEuOymZjA5P/bivae2TDy1gxdO2deyjiG3mAacu1dbglkWFDUDq5GctQQX+A=
+	t=1726066663; cv=none; b=MDOUAAgdJxL3s2jdz7bK9ACp7WkmZZGyxuo/AZG5L1rCPR6eJOiRKGnC9XG8Npwe7PA35uL4E7Rx7wVPxm4t8TMI7agdVJMg8HFu1qyK2cseLCJQj6X50kKrqPXf9HQgi2UBKcqtkFY4/HKH6GwWeTMmiR32b2+o61ylJRbzz1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726066578; c=relaxed/simple;
-	bh=OPBj4Qudavihi4KmrNd2ipOv17IedhIybARx9D2kEns=;
+	s=arc-20240116; t=1726066663; c=relaxed/simple;
+	bh=IqUX2V7EiXOEzNuwkkw8pyGCRs0LMUPt/GHdSfxXN30=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXR0B4m9ITpeXZoQ23cDbm/nfdyHt655aJ8nucyx/TO5VoV5ohoVybjUMyxs9Iwnf8+CznUya7FEYwjBRNCOikrDg3mYVtuw6c4oEr+sF+51+vQCEHMkEEKgcdXt8xnSpuYje/sblpoOMB+QFkdtR1IcuzXYrFujjueDwlERpzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tDmogz9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39136C4CECF;
-	Wed, 11 Sep 2024 14:56:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RW2SnowmL1wgWeWzDrDjk3Ehds456Dvhk8aoZzwCGKDOSptUlhbytssJPGWzef1Jl9cH1eCww485HqT1uOy1ZDZlBQFtdQlckaxamKOdrwNUqi4vZpwVONfhqkwLq6uIpFfWc5AM71oIARqOBm9EDA0q3k92V0SFNVm797xwz8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=diiAG7RO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10399C4CEC5;
+	Wed, 11 Sep 2024 14:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726066577;
-	bh=OPBj4Qudavihi4KmrNd2ipOv17IedhIybARx9D2kEns=;
+	s=korg; t=1726066662;
+	bh=IqUX2V7EiXOEzNuwkkw8pyGCRs0LMUPt/GHdSfxXN30=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tDmogz9lkBqz3punQT2C12MDWaqNTFOGfwXmIgAy/y537o7njVPpicrO0C4hAHN7m
-	 wIOp7FWkPKgfmLXbTQ9ConR/swll0oAhX0nprTmCkoezdXiyL1/F/MsAW0TGHm3rYd
-	 zj4e6iluo33WS4ybOYFEMGlZni4xCw/mAjLx9qp8=
-Date: Wed, 11 Sep 2024 16:56:14 +0200
+	b=diiAG7ROWhoSuhEFjMWBZU1zby3fBsWNni50e+cMgGhI/iys1CC+6LAYjIVJ7rxgy
+	 AMmz3+IACpEeO+x7SNpG99GwgNrU4xjEg613BgqmpyzEUxuvnA0Nem+/V+aWY7GQXR
+	 aBk91V0VRE2U9+3eLHVU1kxHqIkU1Ple/bf09c60=
+Date: Wed, 11 Sep 2024 16:57:39 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Ayush Singh <ayush@beagleboard.org>
 Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
@@ -59,11 +59,10 @@ Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
 	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] rust: kernel: Add Platform device and driver
- abstractions
-Message-ID: <2024091106-scouring-smitten-e740@gregkh>
+Subject: Re: [PATCH 3/8] mikrobus: Add mikrobus driver
+Message-ID: <2024091144-glitzy-kindly-fa74@gregkh>
 References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
- <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,34 +71,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
+In-Reply-To: <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
 
-On Wed, Sep 11, 2024 at 07:57:18PM +0530, Ayush Singh wrote:
-> +/// An identifier for Platform devices.
-> +///
-> +/// Represents the kernel's [`struct of_device_id`]. This is used to find an appropriate
-> +/// Platform driver.
-> +///
-> +/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-> +pub struct DeviceId(&'static CStr);
-> +
-> +impl DeviceId {
+On Wed, Sep 11, 2024 at 07:57:20PM +0530, Ayush Singh wrote:
+> A simple platform driver for now that does nothing. This is required
+> because without a platform driver, the mikrobus_gpio0 nexus node cannot
+> be used.
+> 
+> In future, this driver will also allow for dynamic board detection using
+> 1-wire eeprom in new mikrobus boards.
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+> ---
+>  MAINTAINERS              |  1 +
+>  drivers/misc/Kconfig     | 17 +++++++++++++++++
+>  drivers/misc/Makefile    |  1 +
+>  drivers/misc/mikrobus.rs | 32 ++++++++++++++++++++++++++++++++
+>  4 files changed, 51 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0cc27446b18a..d0c18bd7b558 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15433,6 +15433,7 @@ MIKROBUS CONNECTOR
+>  M:	Ayush Singh <ayush@beagleboard.org>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+> +F:	drivers/misc/mikrobus.rs
+>  
+>  MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
+>  M:	Luka Kovacic <luka.kovacic@sartura.hr>
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 3fe7e2a9bd29..30defb522e98 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -610,6 +610,23 @@ config MARVELL_CN10K_DPI
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called mrvl_cn10k_dpi.
+>  
+> +menuconfig MIKROBUS
+> +	tristate "Module for instantiating devices on mikroBUS ports"
+> +	help
+> +	  This option enables the mikroBUS driver. mikroBUS is an add-on
+> +	  board socket standard that offers maximum expandability with
+> +	  the smallest number of pins. The mikroBUS driver instantiates
+> +	  devices on a mikroBUS port described by identifying data present
+> +	  in an add-on board resident EEPROM, more details on the mikroBUS
+> +	  driver support and discussion can be found in this eLinux wiki :
+> +	  elinux.org/Mikrobus
 
-<snip>
+So you want to be a bus?  Or just a single driver?  I'm confused, what
+exactly is this supposed to do?
 
-I appreciate posting this, but this really should go on top of the
-device driver work Danilo Krummrich has been doing.  He and I spent a
-lot of time working through this this past weekend (well, him talking
-and explaining, and me asking too many stupid questions...)
+If a bus, great, let's tie into the proper driver core bus code, don't
+"open code" all of that, as that's just going to make things messier and
+harder to work overall in the end.
 
-I think what he has will make the platform driver/device work simpler
-here, and I'll be glad to take it based on that, this "independent" code
-that doesn't interact with that isn't the best idea overall.
-
-It also will properly handle the "Driver" interaction as well, which we
-need to get right, not a one-off like this for a platform driver.
-Hopefully that will not cause much, if any, changes for your use of this
-in your driver, but let's see.
+If a single driver, why is it called "bus"?  :)
 
 thanks,
 
