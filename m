@@ -1,118 +1,181 @@
-Return-Path: <linux-kernel+bounces-324921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7C19752A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:39:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E009752AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C7CB29AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0964D282935
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7CE185B7A;
-	Wed, 11 Sep 2024 12:38:43 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FC018858A;
+	Wed, 11 Sep 2024 12:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b9ABdE+8"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C92E185B4C;
-	Wed, 11 Sep 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA98770E8
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726058323; cv=none; b=qxCdaC0N9QQkx7inXaKFcnmpA3MnS5y7fbBj6hEqLlwZMveNXknBFT4Prpp1/PIaHZDPlw/O2rLym8D79HR1orpZpxkgLZBg/F/hqQG2InHJZpCM/ScqaBOwAoARli1WobDdzLVTrDboTEpPaInHYD8Cavs22iXbzwCthtfsKc4=
+	t=1726058465; cv=none; b=lwqPZseVe0BYjZObm81mWq9gD5+lCqSEt+/wSY8uAFTiRoJsS3ZlSZlzoIrnpPhGBz2BDYQAMItuka58MhKKpj+HL+lIi/x1tUBVVmk62vwNWbf/BOzKG76TgCjxezDhCgkeSLVaedmKQJ4SlTKiRX6hjtiQc/B8zXPogR1B2Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726058323; c=relaxed/simple;
-	bh=hpZscvYNtOfhk9PiPZCJ8VHW132F3mGpgJjhXSuER2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Fo7w+0rFMFDhmxFCyWfqo+HlC2UdCsLEzZex91MN05keB0HnTnW9vgKxRg0QNBjRmK05/VR4PeVn7Y6H1VNVvi0/4KQrWk4bWcEtgdzZA1J5T6WY0atIPSCBIA053U1qqolJdOPe8CsPKbvgrPZr5T+oSTNKkxlrcsmFFgXkYqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X3g8b1qwxz1j8SB;
-	Wed, 11 Sep 2024 20:38:07 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7DDCD1401F0;
-	Wed, 11 Sep 2024 20:38:36 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 20:38:35 +0800
-Message-ID: <d8015dc6-c65c-2eed-0ffe-0c35a4cd0b2a@hisilicon.com>
-Date: Wed, 11 Sep 2024 20:38:35 +0800
+	s=arc-20240116; t=1726058465; c=relaxed/simple;
+	bh=wtxLoB4vPqYrdT/EYT8t2Xa0CqGkZfNrMbsI0noNrbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X/65yXI7NpE86d61DQOpjS++9BOKvVb272Yc27E0AnACwoprHHJufjfTVM9ScfBizHXTMIXYu/QA+L3JXnahOk7/72QXHtBR0CU4d+xHIRP8rHRiskUT2/V2+do5/3pbW9ufBNXhNNc60/ay55EkQuIUl4vkL46qlf0pa8eZ4+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b9ABdE+8; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d3cde1103so590793666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:41:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726058462; x=1726663262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MKVy292doNLbN9I6GbrU5oq0mh9HaUJH9jCBxs6u1xk=;
+        b=b9ABdE+84APD84FSEzB8Br+r8VpxKMKd+go7aaVJDsYFwvg7YFgXT5WNtf7PUrfeG0
+         UM7Oyzp+RInSm7QB1nZJhqo7BpQ6oYK3cZGYID3pzol9LaRm/HIQPbaa16ZaZxxqpgUx
+         JnUG8v/opIjNrebXsppTWPMOD4cCDkm9XhdM7dHnu9s/0UJvw9C+Z3LRKsjlgLnTN2yb
+         86iukDyDjMYwaPnTeBP2rQPu5yf+P5/+UHrMIw84U0ovpjU3i/6WkAFxVGJqJYVmiUtA
+         jgvHYHk/T/KZDpHFeJiNXxKZ3lCVnGNhUNS25z100veh/X8kzo7FcAc/VZFpL//dQK20
+         +Hrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726058462; x=1726663262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MKVy292doNLbN9I6GbrU5oq0mh9HaUJH9jCBxs6u1xk=;
+        b=lWxqULj6OvAwX237oY/hZNQ2KeYij173K9G+bH35UT0U64OyNW+5mYGmjQwdjtWt7x
+         2T/OSeJupMDtTCtvuKgfLkaX1idE1xmai8ckwrzVpfKGMbPccU4Nkln2cYiD/FE0avRE
+         xW5JCXJ8NWgLjWbkhuDaTN7DIJH1doCHa1v84YTdypgRkdjSpOz49YsthODA0i+S4Qzn
+         7NW0PFrey2MBYeo335892vJOuVzKkFAaN5i+6N0Ue8ipdZ5sJ+7zY+mU/SzrK82Is+xU
+         /2/oq8pt6abbyiO+K6nhYSsIaRURNs0ricFMVnQUIWquPJFRE+u0ugn5BNIoIFb6ypPx
+         eWhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0su87LUcRo/9MpFKW4qdgZOtcwfJUt5700/scgHg5RYHp5SSK9jO1xATGMDxsW7ayXDVhCeaZT5m9EP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA5oi4brDaAaqIWWwTP082rz2FNz+Vzi74c0kvPzB+yf6y3HjX
+	OScVSHddBOauUmh5tNfOkbc6C2XzEU/hy2Opo+bQS8ZJC5Aw7F87sN28HuK4Qipbu1AjQSUUsjd
+	eqLwbCLlZzPIBXvUN7mpj6sAf+MfshCsy+k1g2PqMvuC6JLgR6qRG
+X-Google-Smtp-Source: AGHT+IFbWUhMgRXADba1zKZ2Sm/Cl1vs4wqI8zXUpGXpt82kSgwA6LanLYq6HBPG/igVcyCzEtAG2QyZ0s99mtsEu7g=
+X-Received: by 2002:a17:907:9620:b0:a86:9e84:dddc with SMTP id
+ a640c23a62f3a-a8ffae204b6mr397140166b.61.1726058461030; Wed, 11 Sep 2024
+ 05:41:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH v4 for-next 1/2] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-	<linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20240905131155.1441478-1-huangjunxian6@hisilicon.com>
- <20240905131155.1441478-2-huangjunxian6@hisilicon.com>
- <ZtxDF7EMY13tYny2@ziepe.ca>
- <d76dd514-aceb-b7cb-705a-298fc905fae3@hisilicon.com>
- <20240911102018.GF4026@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240911102018.GF4026@unreal>
+References: <20240911050435.53156-1-qianqiang.liu@163.com> <CANn89iKhbQ1wDq1aJyTiZ-yW1Hm-BrKq4V5ihafebEgvWvZe2w@mail.gmail.com>
+ <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z> <CANn89i+G-ycrV57nc-XrgToJhwJuhuCGtHpWtFsLvot7Wu9k+w@mail.gmail.com>
+ <ZuFv88V0qhcwfOgP@iZbp1asjb3cy8ks0srf007Z>
+In-Reply-To: <ZuFv88V0qhcwfOgP@iZbp1asjb3cy8ks0srf007Z>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 11 Sep 2024 14:40:47 +0200
+Message-ID: <CANn89i+zW+t1OEs2ut9Zm6FweY869Yrn-fnjq38tcmqqHLaTvA@mail.gmail.com>
+Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: Tze-nan.Wu@mediatek.com, xiyou.wangcong@gmail.com, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Sep 11, 2024 at 1:14=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
+m> wrote:
+>
+> On Wed, Sep 11, 2024 at 11:12:24AM +0200, Eric Dumazet wrote:
+> > On Wed, Sep 11, 2024 at 10:23=E2=80=AFAM Qianqiang Liu <qianqiang.liu@1=
+63.com> wrote:
+> > >
+> > > > I do not think it matters, because the copy is performed later, wit=
+h
+> > > > all the needed checks.
+> > >
+> > > No, there is no checks at all.
+> > >
+> >
+> > Please elaborate ?
+> > Why should maintainers have to spend time to provide evidence to
+> > support your claims ?
+> > Have you thought about the (compat) case ?
+> >
+> > There are plenty of checks. They were there before Stanislav commit.
+> >
+> > Each getsockopt() handler must perform the same actions.
+> >
+> > For instance, look at do_ipv6_getsockopt()
+> >
+> > If you find one getsockopt() method failing to perform the checks,
+> > please report to us.
+>
+> Sorry, let me explain a little bit.
+>
+> The issue was introduced in this commit: 33f339a1ba54e ("bpf, net: Fix a
+> potential race in do_sock_getsockopt()")
 
+Not really.
 
-On 2024/9/11 18:20, Leon Romanovsky wrote:
-> On Mon, Sep 09, 2024 at 04:41:00PM +0800, Junxian Huang wrote:
->>
->>
->> On 2024/9/7 20:12, Jason Gunthorpe wrote:
->>> On Thu, Sep 05, 2024 at 09:11:54PM +0800, Junxian Huang wrote:
->>>
->>>> @@ -698,11 +700,20 @@ static int ib_uverbs_mmap(struct file *filp, struct vm_area_struct *vma)
->>>>  	ucontext = ib_uverbs_get_ucontext_file(file);
->>>>  	if (IS_ERR(ucontext)) {
->>>>  		ret = PTR_ERR(ucontext);
->>>> -		goto out;
->>>> +		goto out_srcu;
->>>>  	}
->>>> +
->>>> +	mutex_lock(&file->disassociation_lock);
->>>> +	if (file->disassociated) {
->>>> +		ret = -EPERM;
->>>> +		goto out_mutex;
->>>> +	}
->>>
->>> What sets disassociated back to false once the driver reset is
->>> completed?
->>>
->>> I think you should probably drop this and instead add a lock and test
->>> inside the driver within its mmap op. While reset is ongoing fail all
->>> new mmaps.
->>>
->>
->> disassociated won't be set back to false. This is to stop new mmaps on
->> this ucontext even after reset is completed, because during hns reset,
->> all resources will be destroyed, and the ucontexts will become unavailable.
-> 
-> ucontext is SW object and not HW object, why will it become unavailable?
-> 
+Code before this commit also ignored copy_from_sockptr() return code.
 
-Once hns device is reset, we don't allow any doorbell until driver's
-re-initialization is completed. Not only all existing mmaps on ucontexts
-will be zapped, no more new mmaps are allowed either.
+>
+> diff --git a/net/socket.c b/net/socket.c
+> index fcbdd5bc47ac..0a2bd22ec105 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -2362,7 +2362,7 @@ INDIRECT_CALLABLE_DECLARE(bool tcp_bpf_bypass_getso=
+ckopt(int level,
+>  int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+>                        int optname, sockptr_t optval, sockptr_t optlen)
+>  {
+> -       int max_optlen __maybe_unused;
+> +       int max_optlen __maybe_unused =3D 0;
+>         const struct proto_ops *ops;
+>         int err;
+>
+> @@ -2371,7 +2371,7 @@ int do_sock_getsockopt(struct socket *sock, bool co=
+mpat, int level,
+>                 return err;
+>
+>         if (!compat)
+> -               max_optlen =3D BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
+> +               copy_from_sockptr(&max_optlen, optlen, sizeof(int));
+>
+>         ops =3D READ_ONCE(sock->ops);
+>         if (level =3D=3D SOL_SOCKET) {
+>
+> The return value of "copy_from_sockptr()" in "do_sock_getsockopt()" was
+> not checked. So, I added the following patch:
+>
+> diff --git a/net/socket.c b/net/socket.c
+> index 0a2bd22ec105..6b9a414d01d5 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -2370,8 +2370,11 @@ int do_sock_getsockopt(struct socket *sock, bool c=
+ompat, int level,
+>         if (err)
+>                 return err;
+>
+> -       if (!compat)
+> -               copy_from_sockptr(&max_optlen, optlen, sizeof(int));
+> +       if (!compat) {
+> +               err =3D copy_from_sockptr(&max_optlen, optlen, sizeof(int=
+));
+> +               if (err)
+> +                       return -EFAULT;
+> +       }
+>
+>         ops =3D READ_ONCE(sock->ops);
+>         if (level =3D=3D SOL_SOCKET) {
+>
+> Maybe I missed something?
+>
+> If you think it's not an issue, then I'm OK with it.
 
-This actually makes ucontexts unavailable since userspace cannot access
-HW with them any more. Users will have to destroy the old ucontext and
-allocate a new one after driver's re-initialization is completed.
-
-Junxian
-
-> Thanks
+It is not an issue, just adding extra code for an unlikely condition
+that must be tested later anyway.
 
