@@ -1,96 +1,139 @@
-Return-Path: <linux-kernel+bounces-325587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F224975BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:30:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E143A975BD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B421F239D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281671C21F1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE1D14F10F;
-	Wed, 11 Sep 2024 20:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AE914A61B;
+	Wed, 11 Sep 2024 20:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKQiY+Ul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="kyD3opri"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE3F149C7D;
-	Wed, 11 Sep 2024 20:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDD21BB69A;
+	Wed, 11 Sep 2024 20:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726086629; cv=none; b=mkygEXdecP54lnzFl0U/egEbZpEVL7WIewacac+huA9G90XDNUpf+Ph76votkm/RnnjkkBiC6Vxf4PPC5fJ7fM9GHOwkbkQkN2OBlr751e1qGCAx++/kHk7SnPSFirH9MdXLBOPT8hLrazDXqkR+JKlhFA0kzBS2t9p8xx64B5Y=
+	t=1726086880; cv=none; b=EfriqOWEGa940Yvtf/FJG1DKKi0k+ewpmJiwVC5AHtdqmDb2Cbj+DQshyYkYUKkTjK2bW9m9zgN6Kh5sykWdPV3PsPhY9b40XqQsuhzwEH2z67DbYsdai1lqG6XJAmPVOx5rhIclPFV1Zy8Gdu4fnZjsejL+IdbRRIiGqV57Sng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726086629; c=relaxed/simple;
-	bh=v/Yrte8Jw5KgfJel5NdVbyIKhs87v+lyoQcR6vFj3EU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Fx5oZcl/W9QKIrxwcy5WBU9bMv/Zt8NaYklRjr7Gr1SVom86Gc06tkGHS2HuTOaqHsW7kUAGsJsaGw+PLLe9D1ovTp9nD5gJjIyxcHJ/9g/xaEyLjdM7pjfOgci78pwHsiJ7WxP06BFhguhKtRua6x2RuYLiEAbX+rVw8ov9vVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKQiY+Ul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A25DC4CEC6;
-	Wed, 11 Sep 2024 20:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726086629;
-	bh=v/Yrte8Jw5KgfJel5NdVbyIKhs87v+lyoQcR6vFj3EU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VKQiY+Ulc/jPYmnjyUi35+3gUg0Dvzk8sNcJpNakffn/iw2AyuZhNEN7p7vsf8Nnz
-	 9zUCeljUopTyDLBFvM7pF3yOzn0ScddAH462LHUYj/BZHLCSeA4mMNYb4ESkMnOkRN
-	 /t40xQ3DrsBp98xF7IhThaHJEusRKAy10OWRjKVSCyFYFJR/fpo2JjiYxo0Face0sO
-	 3xQ4oizT313IzYqTVNklZ9pCEvflbwoW7v5o7VXY9RLdcW8UyRImpkD/qp2CQ5XmpD
-	 l3iXXhd3j662RR0PuNgH8OJbuJQegOOpe8yMo2U895zJ7Qxg83lHs7kKlMIUenFxO8
-	 onvmrO5/8iCaQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEDA3806656;
-	Wed, 11 Sep 2024 20:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726086880; c=relaxed/simple;
+	bh=gEudtiPCzCxVqopBXaUE/SMC6Te12ig5VrFW1mJA2L0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWzA4D82OK6UISPOMTP0CWniuWtaIzr1Hn4O6OP/mzM9kxWTsKrW5m4csjPPf1Xj1uDWaEv5fJWGl/p/adSDoWFlLizZJeeq9q1deFdYnON2vZAnHMpZlZDmrNTDDL/tyqZb7YabD7n1IrejpekAVHnEqDtb2G0lmoLabGeJp8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=kyD3opri; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 7A4CC88A0D;
+	Wed, 11 Sep 2024 22:34:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1726086876;
+	bh=Ok+BUDNrfexcljnvB4T1qmpytCr6OBWgfdYb5mlMJSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kyD3opri7Bs+bmNEaHbYZKs6HiNYTJNVNJehYTgQIoTnR4//QQ2hiznLOmkgZWzc5
+	 FX5wurs8IWh0ByqSbp1GmGLmqRTqr4xCSQ9ZyuSjUsSCga0f27mL3UzBDTW6BfXSVR
+	 UEDw2LIc8IuMVVBj7pvaaFiv3+qp21DMnrxJoh+LFoY1pmk//lwT7CRaY2STIoSDMY
+	 FyzbLlY7rkdzLwbA7e7Fcl+YVWNdFobpZk20Mef72rSOoN5XlEITke61iZtj53z1IM
+	 0thot4wtoK7PEn2QOGCn4yzWjmJRYT5bvv6R3AjI+1tmXODSZtCw4NseKFV0mkP/SP
+	 ctqlqCsrQrkYw==
+Message-ID: <40ecdbb2-8470-4e33-8a74-ccae6532174a@denx.de>
+Date: Wed, 11 Sep 2024 22:31:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [v3 PATCH bpf-next 0/2] bpf: Add percpu map value size check
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172608663051.1037972.16330226485258580048.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 20:30:30 +0000
-References: <20240910144111.1464912-1-chen.dylane@gmail.com>
-In-Reply-To: <20240910144111.1464912-1-chen.dylane@gmail.com>
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, song@kernel.org, houtao1@huawei.com,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] pwm: imx27: Add optional 32k clock for pwm in
+ i.MX8QXP MIPI subsystem
+To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, pratikmanvar09@gmail.com,
+ francesco@dolcini.it, Liu Ying <victor.liu@nxp.com>
+References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
+ <20240910-pwm-v3-3-fbb047896618@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240910-pwm-v3-3-fbb047896618@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Tue, 10 Sep 2024 22:41:09 +0800 you wrote:
-> Check percpu map value size first and add the test case in selftest.
+On 9/10/24 9:07 PM, Frank Li wrote:
+> From: Liu Ying <victor.liu@nxp.com>
 > 
-> Change list:
-> - v2 -> v3:
->     - use bpf_map_create API and mv test case in map_percpu_stats.c
-> - v1 -> v2:
->     - round up map value size with 8 bytes in patch 1
->     - add selftest case in patch 2
+> PWM in i.MX8QXP MIPI subsystem needs the clock '32k'. Use it if the DTS
+> provides that.
 > 
-> [...]
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v2 to v3
+> - use buck clk API
+> 
+> Change from v1 to v2
+> - remove if check for clk
+> - use dev_err_probe
+> - remove int val
+> ---
+>   drivers/pwm/pwm-imx27.c | 13 ++++++++++++-
+>   1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+> index ce9208540f1b8..2a9fba6f9d0a8 100644
+> --- a/drivers/pwm/pwm-imx27.c
+> +++ b/drivers/pwm/pwm-imx27.c
+> @@ -81,10 +81,11 @@
+>   #define MX3_PWMPR_MAX			0xfffe
+>   
+>   static const char * const pwm_imx27_clks[] = {"ipg", "per"};
+> +static const char * const pwm_imx27_opt_clks[] = {"32k"};
+>   #define PWM_IMX27_PER			1
+>   
+>   struct pwm_imx27_chip {
+> -	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks)];
+> +	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks) + ARRAY_SIZE(pwm_imx27_opt_clks)];
+>   	int clks_cnt;
+>   	void __iomem	*mmio_base;
+>   
+> @@ -371,6 +372,16 @@ static int pwm_imx27_probe(struct platform_device *pdev)
+>   		return dev_err_probe(&pdev->dev, ret,
+>   				     "getting clocks failed\n");
+>   
+> +	for (i = 0; i < ARRAY_SIZE(pwm_imx27_opt_clks); i++)
+> +		imx->clks[i + imx->clks_cnt].id = pwm_imx27_opt_clks[i];
+> +
+> +	ret = devm_clk_bulk_get_optional(&pdev->dev, ARRAY_SIZE(pwm_imx27_opt_clks),
+> +					 imx->clks + imx->clks_cnt);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "get optional clocks failed\n");
+> +
+> +	imx->clks_cnt += ARRAY_SIZE(pwm_imx27_opt_clks);
+> +
 
-Here is the summary with links:
-  - [v3,bpf-next,1/2] bpf: Check percpu map value size first
-    https://git.kernel.org/bpf/bpf-next/c/1d244784be6b
-  - [v3,bpf-next,2/2] bpf/selftests: Check errno when percpu map value size exceeds
-    https://git.kernel.org/bpf/bpf-next/c/7eab3a58ac7b
+This will succeed even if the regular PWM clock are invalid or not 
+present, wouldn't it? I don't think removing that protection is an 
+improvement.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Also, it is not clear whether the 32kHz clock are really supplying the 
+PWM, see my comment on 1/3 in this series.
 
