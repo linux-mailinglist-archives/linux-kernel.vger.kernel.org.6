@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-325749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0BB975DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:31:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE12A975DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45E21F23F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728942855A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9494C1A3021;
-	Wed, 11 Sep 2024 23:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AFF1B373A;
+	Wed, 11 Sep 2024 23:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rPj8FKMf"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IIvfIZpK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F413D502
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98314149002
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726097509; cv=none; b=vCaxxS1mgerPeU7IVqUi0/uamKgXCHZKADLeO300sBzCBSIGUXuIvWK6OJDB1S9JJp2OHdrfu316Ac5QRtnQwDlByWa1Pk3FybvvH8PHtr13uE6pOWrPzTGtbJ50UT57wlLmPK2YwMCAgf32Jam1T0B2s5+w2ZaRMgHkQcvkWWY=
+	t=1726097310; cv=none; b=mVvWAOwj0AQS5ouKWjR7EQL8VNWxoLbndy5twTUyz1yZIp/1ceY3k3r0LxCzckr9wz7vaELuFb90w8Fokfa5+mmLeUTgtX8oZhOSD6Oy028J50qgkEnb8CZ341+deEi0aLJMfB80LtFpwSRbPOOSmVALXIhhJrwRz/vL9KFHQw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726097509; c=relaxed/simple;
-	bh=z9U4HbiEuFhGKos1gmTUMjT6OYGXO8JxmAs6sF5RZLg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j+//yrhmzKqTdi8dXvdHubPh0T+ce3/US4a2ri5tkzR/rEifSL+63UiK6uav/78Z9BH9VowAXcCot9A1TF51Qw56A5Q5/ayjDno2nNp8LecxyVQYngiZevozwfs9TbPq6b7CVERFEfYY8Q0s4NLn0gXFsDAn2OMrGBa2vgsyW5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rPj8FKMf; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2070daaf8f1so5094345ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726097507; x=1726702307; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHnlH+pH4QGhSAdS+6z8R3FVfMy6IzZKMdnVMkZg7oo=;
-        b=rPj8FKMf96PrlJtU5Zull4O0tHHCV85sHf4LLGZQedd06R0d6BGD+95mEhw3fyYnKb
-         rr+WkgkDKnHfMHKePaZ76dvQV5J2bkS1Z/9/M5p1sP/UXZikb434rQl72IC4gMtTwj1c
-         x87w0Eya+azbik4eVPYx2Iv14Flg/BdIdbBYGZ+UnHR1lMkRe8UgkLdxDGl0dcX8JTus
-         mknsCGKTzZTNqvIvnY7skjUzAGuMVx8dPOKMYje4fkN6z7WbZcQsdKv0ITe3iD/FQZYj
-         Jj6kAtvfuts+dol3lzuJwydb4XHzg/sAsVyjRCaeeP5FgDETPHbFfOdxHG3sGtPqGhnX
-         b7wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726097507; x=1726702307;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHnlH+pH4QGhSAdS+6z8R3FVfMy6IzZKMdnVMkZg7oo=;
-        b=ewy3jv6y6X28kq5/5ET55q8rVwx/83IjJw5dZK3ihGs2eouK+QwRj1gGqBJ3T2JJbX
-         g3TopXTW6zk1P2xzKAIBBTlTCMgUdz/Xhw5oGNFjugQYe6e3n+j/vIhVKY0hTwG30Z6u
-         TN5BYB/gWht9yh0RC6oHYTGdX/gxybVBxLYD/LVwn1HyZtZY8W37jPzO/2cr5KY5u8+k
-         mJ5fDRdnk14u3jJmc0DhkWM+YW9zkgqJYxXBfMGbdUmkW4Qrfaq5PORfgBnQt6n4/Oq+
-         8Ww5QkF5APYXSbLQr8C/CTwSBunBik9Fb+OQK9tQNXcrB4Sy6e/nqfAYDioxDJXQrG7l
-         s+FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVK/sS6kulWZDVpOdLgu2gBoRmFUW/N1QlNFrfwVoDy9iopFrDeH4X/FrIhbYVlO8eCMBtb0BpQ/3dYCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywlfrIM6hT5LvJlYwIRXDjlb99qE4yhJ3nGZNwth5uuCK8ewT7
-	vnHEl2bAmo/oUHZSInt7/aicriHS5JnM1IvhInEFAt9ftTrvIPAr4SDHmW4D9zvUmeR2wfyjQ/i
-	t3w==
-X-Google-Smtp-Source: AGHT+IFNRwx2gTMhNsyitKZnT2yohlwJlFqNdkxyBgStEIKIu3twZqn2Lqc71xWomvSuKolY1sCGDK/a+ZE=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:c950:b0:206:8c37:bcc7 with SMTP id
- d9443c01a7336-2076e315e2emr484135ad.1.1726097506689; Wed, 11 Sep 2024
- 16:31:46 -0700 (PDT)
-Date: Wed, 11 Sep 2024 16:31:45 -0700
-In-Reply-To: <8e3146250f31db92fa42a29a892858c9ec33aeab.camel@intel.com>
+	s=arc-20240116; t=1726097310; c=relaxed/simple;
+	bh=Xavp+uvKp5iySBdVS0P1MPRUHvVMZeQmjjbpevDIKV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hK+JRCZDR1Bw0Xa94rCfKl3HaYLd8KMgBjiqgrNiD+BFundNK5leC8aIIqxjncYTsIWxUR1YHbam2E39UYU+nUqzthf9i1cgnWJXe0KaIXYzykflh9Z647jTO3H9Ht2bZT/fgLQsqA3scmYSeZTAjF+IfmoE1GSpY7wIqmxhpCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IIvfIZpK; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726097309; x=1757633309;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Xavp+uvKp5iySBdVS0P1MPRUHvVMZeQmjjbpevDIKV4=;
+  b=IIvfIZpK3+xbG7Zrk2WJRhBpswN+q2wYxyL7mXIyEoCaOP1cxKRElxp9
+   uJG8cau9ZrNcGHueTfni4AFgS54pwQi4/sLe67Jz8q5WY3fKCRYy/7UBH
+   Zx2Ua5fGjZpHUkc+N6M604ahIXDUoPCnAl6aeIrMz9VZ1Lv34UZMgLbZK
+   /V6dMApBx1daNWfMQyjcQzRIh0cl3FuIbY9xff1tPaVqRf7DxznUoJywI
+   3bNBtGtGUTWPAVfxq81WAet6gFYmJx9Q/s4zldLLBrCQGbq/CIVBge/FQ
+   nfbVUvuaTPa/QmCAjMpxwJTwwX0pm5lsYBflFz6q19AuNgo6OzaRbBXSv
+   Q==;
+X-CSE-ConnectionGUID: xkKam6m+Si2UO4I1C9SIsg==
+X-CSE-MsgGUID: fWA4HOQ2TtiiK5MFrF4ozw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28814546"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="28814546"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 16:28:28 -0700
+X-CSE-ConnectionGUID: Yz+afc+ZTs2xlM/aXHRFgA==
+X-CSE-MsgGUID: pgIP8HO8S/mRS3v6AzCAkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="67454522"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 16:28:28 -0700
+Date: Wed, 11 Sep 2024 16:34:10 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/4] cacheinfo: Allocate memory during CPU hotplug if
+ not done from the primary CPU
+Message-ID: <20240911233410.GA7043@ranerica-svr.sc.intel.com>
+References: <20240905060036.5655-1-ricardo.neri-calderon@linux.intel.com>
+ <20240905060036.5655-3-ricardo.neri-calderon@linux.intel.com>
+ <20240911140844.GFZuGkbHQ_E-K5LW1q@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240602115444.1863364-1-kirill.shutemov@linux.intel.com>
- <8992921e-7343-4279-9953-0c042d8baf90@intel.com> <crv2ak76xudopm7xnbg6zp2ntw4t2gni3vlowm7otl7xyu72oz@rt2ncbmodsth>
- <Zl9sXGj890yerBPJ@google.com> <8e3146250f31db92fa42a29a892858c9ec33aeab.camel@intel.com>
-Message-ID: <ZuIoYUnJ9uJoSLzm@google.com>
-Subject: Re: [PATCH] x86/tdx: Enhance code generation for TDCALL and SEAMCALL wrappers
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
-	Dave Hansen <dave.hansen@intel.com>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kys@microsoft.com" <kys@microsoft.com>, 
-	Dexuan Cui <decui@microsoft.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911140844.GFZuGkbHQ_E-K5LW1q@fat_crate.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On Wed, Aug 28, 2024, Rick P Edgecombe wrote:
-> On Tue, 2024-06-04 at 12:34 -0700, Sean Christopherson wrote:
+On Wed, Sep 11, 2024 at 04:08:44PM +0200, Borislav Petkov wrote:
+> On Wed, Sep 04, 2024 at 11:00:34PM -0700, Ricardo Neri wrote:
+> > Commit 5944ce092b97 ("arch_topology: Build cacheinfo from primary CPU")
+> > adds functionality that architectures can use to optionally allocate and
+> > build cacheinfo early during boot. Commit 6539cffa9495 ("cacheinfo: Add
+> > arch specific early level initializer") lets secondary CPUs correct (and
+> > reallocate memory) cacheinfo data if needed.
 > > 
-> > If we're willing to suffer a few gnarly macros, I think we get a
-> > satisfactory mix of standardized arguments and explicit operands, and
-> > generate vastly better code.
+> > If the early build functionality is not used and cacheinfo does not need
+> > correction, memory for cacheinfo is never allocated. x86 does not use the
+> > early build functionality. Consequently, during the cacheinfo CPU hotplug
+> > callback, last_level_cache_is_valid() attempts to dereference a NULL
+> > pointer:
+> > 
+> >      BUG: kernel NULL pointer dereference, address: 0000000000000100
+> >      #PF: supervisor read access in kernel mode
+> >      #PF: error_code(0x0000) - not present page
+> >      PGD 0 P4D 0
+> >      Oops: 0000 [#1] PREEPMT SMP NOPTI
+> >      CPU: 0 PID 19 Comm: cpuhp/0 Not tainted 6.4.0-rc2 #1
+> >      RIP: 0010: last_level_cache_is_valid+0x95/0xe0a
+> > 
+> > Allocate memory for cacheinfo during the cacheinfo CPU hotplug callback if
+> > not done earlier.
 > 
-> Hi Sean,
+> Why is this a separate patch?
 > 
-> We are kind of stuck on improving the code generation for the existing calls.
-> x86 maintainers don't seem to be enthusiastic about tackling this urgently and
-> there is not consensus on how to weigh source code clarity with code generation
-> sanity [0]. I think we are going to table it for the time being, unless it's a
-> showstopper for you.
+> It sounds like it should be merged with the first one as both address a CPU
+> hotplug issue AFAICT.
 
-I'll survive.
+Thank you for your review Borislav!
 
-> An option is still to have a separate helper infrastructure for KVM's calls, but
-> as discussed originally this duplicates code.
+Yes, both patches address issues during CPU hotplug (both NULL-pointer
+dereference). However, IHMO, they are separate issues. Patch 1/4 fixes
+a missing allocation check. Patch 2/4 causes the allocation to happen in
+case early allocation is not used.
 
-Ya.  Tangentially related to this topic, at some point in the not-to-distant
-future, I think we need to have a discussion for how to maintain TDX (and SNP)
-going forward.
+If I did not convince you, I am happy to merge together patches 1 and 2.
 
-Not because I want to take more ownership in KVM (I would generally prefer to do
-the opposite), but because I suspect there will be more overlaps similar to this
-in the future, e.g. if the guest kernel gets cornered into doing some amount
-of SSE/AVX emulation for userspace MMIO.  And because I also suspect that future
-additions to TDX and SNP will require modifications and tighter integration in/with
-subsystems outside of KVM, while simultaneously moving further away from the areas
-that KVM has historically operated in, e.g. emulation, feature enumeration, memory
-management, etc.
+Thanks and BR,
+Ricardo
 
-I don't have any concrete (or even half-baked) thoughts, just flagging that we
-might want to have a conversation to hash out what we think would be the best
-way to operate, knowing what's on the horizon, versus winging it as we go and
-hoping everything works out.
 
