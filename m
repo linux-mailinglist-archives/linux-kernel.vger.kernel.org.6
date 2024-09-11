@@ -1,97 +1,121 @@
-Return-Path: <linux-kernel+bounces-324284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E74F974AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:52:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04982974AB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0952B228E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30DDA28729C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D87313635F;
-	Wed, 11 Sep 2024 06:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HkwwtjUq"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BB642052;
-	Wed, 11 Sep 2024 06:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E9A8174E;
+	Wed, 11 Sep 2024 06:56:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941861B85FC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726037515; cv=none; b=eZCuT+gkbdzuDf/44xaRjOv8+Kmu83dK7IW8DMHFvBoIIlGurJgGNhCMZu3SwTY8tUPxO5R7Z5BiuOWSDZysgruTUvUuod0dd616YP22Q7hPhmKttTnbIpXmgSHOcZ6jatmSeuV1F1hV+ToeunF080RCe89gw+u5O7Fnu2gQP4k=
+	t=1726037784; cv=none; b=W3iTAPY6HIbmaYBJTlL9514gmUymSKfG6eUH97qeo/YvpzGhh11yeqLkugRxLcQwk1nYvkyySdCKTgrYx7wIYxlRuSSaA0Liin8gskWnpnBLLkBLgxtnRXRRNHbk2ROb8kZ2oUzVlwHWYTXNFR8nTE0zPUL5IfxTK+bCO4i2GVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726037515; c=relaxed/simple;
-	bh=5GoDa1ZuHwo8DnYHyJawsyRzPVv7J7o0/+2nhxgXx0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m9VxZa33vZLyrPkZgav4A/gAfkxrqusVoTvxExAOT8/Q24z01pUXXcx3ToLX74u9pKXQZhYKTnSdDqf8qYjBa55/rmhBi/2C3MWj/DHcx2vQEd+VQFPj+A83lbWUiHKnYjnWVnOW4l8sIlNoacb+pdZ/tzLKqc0nu1f0rROgP90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HkwwtjUq; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726037510; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=V+Cf3j8kyIpe7fIpFYgsQUDbORzHorAudKvDimVjAPU=;
-	b=HkwwtjUqqCUh5JQRxPbJNu4c+jv7Rip8VX4yhLQr4qBC4bgw8f7fE9zHIkCnKeZBfp6THW1sujy2spFbJZaI0suOoObkhqT7zJQmaJeP7miI4Hkvo5sKNe4/UiSzHX5121CHiODAIFGREz4OTS9p1YQmXz/TZaf/6MNQcf0lCqk=
-Received: from 30.221.149.106(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WEmySDX_1726037508)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Sep 2024 14:51:49 +0800
-Message-ID: <18f0012c-c7b6-410f-9c48-74419c8f7de4@linux.alibaba.com>
-Date: Wed, 11 Sep 2024 14:51:48 +0800
+	s=arc-20240116; t=1726037784; c=relaxed/simple;
+	bh=vkGG+qf1ZU7PYWaxTECr/ZPqv7TDUFBftxpUeV36hVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RsUBebNeYw9fPyDThxQ+UytsNvgPUvbr4FItK1/BSwxYLFmbw3MJ/0B1G+7Y94vPhcHGy4NMx5Oy/p9KHjjOyrbMym+pT3B7neZspxryBMxdiwEn5l9fyiPH/omqATDGHGicX4Yho4C/3K4nfwI8hqcpbGQfcVWJTq683NUQq+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BCA11007;
+	Tue, 10 Sep 2024 23:56:50 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.31])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0B25C3F64C;
+	Tue, 10 Sep 2024 23:56:11 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	willy@infradead.org,
+	kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	catalin.marinas@arm.com,
+	cl@gentwo.org,
+	vbabka@suse.cz,
+	mhocko@suse.com,
+	apopple@nvidia.com,
+	dave.hansen@linux.intel.com,
+	will@kernel.org,
+	baohua@kernel.org,
+	jack@suse.cz,
+	mark.rutland@arm.com,
+	hughd@google.com,
+	aneesh.kumar@kernel.org,
+	yang@os.amperecomputing.com,
+	peterx@redhat.com,
+	ioworker0@gmail.com,
+	jglisse@google.com,
+	wangkefeng.wang@huawei.com,
+	ziy@nvidia.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v3 0/2] Do not shatter hugezeropage on wp-fault
+Date: Wed, 11 Sep 2024 12:25:58 +0530
+Message-Id: <20240911065600.1002644-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
-To: Qianqiang Liu <qianqiang.liu@163.com>, xiyou.wangcong@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240911050435.53156-1-qianqiang.liu@163.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240911050435.53156-1-qianqiang.liu@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+It was observed at [1] and [2] that the current kernel behaviour of
+shattering a hugezeropage is inconsistent and suboptimal. For a VMA with
+a THP allowable order, when we write-fault on it, the kernel installs a
+PMD-mapped THP. On the other hand, if we first get a read fault, we get
+a PMD pointing to the hugezeropage; subsequent write will trigger a
+write-protection fault, shattering the hugezeropage into one writable
+page, and all the other PTEs write-protected. The conclusion being, as
+compared to the case of a single write-fault, applications have to suffer
+512 extra page faults if they were to use the VMA as such, plus we get
+the overhead of khugepaged trying to replace that area with a THP anyway.
 
+Instead, replace the hugezeropage with a THP on wp-fault.
 
-On 9/11/24 1:04 PM, Qianqiang Liu wrote:
-> We must check the return value of the copy_from_sockptr. Otherwise, it
-> may cause some weird issues.
->
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> ---
->   net/socket.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
+v2->v3:
+ - Drop foliop and order parameters, prefix the thp functions with pmd_
+ - First allocate THP, then pgtable, not vice-versa
+ - Move pgtable_trans_huge_deposit() from map_pmd_thp() to caller
+ - Drop exposing functions in include/linux/huge_mm.h
+ - Open code do_huge_zero_wp_pmd_locked()
+ - Release folio in case of pmd change after taking the lock, or
+   check_stable_address_space() returning VM_FAULT_SIGBUS
+ - Drop uffd-wp preservation. Looking at page_table_check_pmd_flags(), 
+   preserving uffd-wp on a writable entry is invalid. Looking at
+   mfill_atomic(), uffd_copy() is a null operation when pmd is marked
+   uffd-wp.
 
-Looks like a fix patch, maybe you could add a fix tag.
+v1->v2:
+ - Wrap do_huge_zero_wp_pmd_locked() around lock and unlock
+ - Call thp_fault_alloc() before do_huge_zero_wp_pmd_locked() to avoid
+ - calling sleeping function from spinlock context
 
-> diff --git a/net/socket.c b/net/socket.c
-> index 0a2bd22ec105..6b9a414d01d5 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -2370,8 +2370,11 @@ int do_sock_getsockopt(struct socket *sock, bool compat, int level,
->   	if (err)
->   		return err;
->   
-> -	if (!compat)
-> -		copy_from_sockptr(&max_optlen, optlen, sizeof(int));
-> +	if (!compat) {
-> +		err = copy_from_sockptr(&max_optlen, optlen, sizeof(int));
-> +		if (err)
-> +			return -EFAULT;
-> +	}
->   
->   	ops = READ_ONCE(sock->ops);
->   	if (level == SOL_SOCKET) {
+[1]: https://lore.kernel.org/all/3743d7e1-0b79-4eaf-82d5-d1ca29fe347d@arm.com/
+[2]: https://lore.kernel.org/all/1cfae0c0-96a2-4308-9c62-f7a640520242@arm.com/
 
+The patchset applies on the latest mm-unstable branch.
 
+Dev Jain (2):
+  mm: Abstract THP allocation
+  mm: Allocate THP on hugezeropage wp-fault
 
+ mm/huge_memory.c | 158 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 114 insertions(+), 44 deletions(-)
 
+-- 
+2.30.2
 
 
