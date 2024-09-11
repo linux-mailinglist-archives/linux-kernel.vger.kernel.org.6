@@ -1,92 +1,113 @@
-Return-Path: <linux-kernel+bounces-325670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F85B975CFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:18:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C201975CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E841FB2488A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EAEB1C22453
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D9C1BA29C;
-	Wed, 11 Sep 2024 22:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19A185950;
+	Wed, 11 Sep 2024 22:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QDUaeIFv"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aG/xfp1A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7B28F6D;
-	Wed, 11 Sep 2024 22:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DA978C9D;
+	Wed, 11 Sep 2024 22:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093079; cv=none; b=LppHh6xT2GFR3ET79ZUyUrLmVlVQooa3Q++qCg84sZuqDValbZuM8bYCSDIp0nC1LlBPdCj7dRMH3Gu2ToKRykJ/hgVZlmQGGI0q6VmsfMd6Xne9EyW488RPFv+VWkLjkhKliq61q546yZJCzRFN5gVA17HK2EaWc38ARQJf4gE=
+	t=1726093077; cv=none; b=iy6SfOAKWG2WqL+KpYM0Sk/kBXIscMNOr8ZZtJ63NTpxh0RYRRw+Tt7pCjclN3h9z5tpHlng9HTZ/NioRcSnFf1rCMPUpTUcte251ZP62vgPZn+1z7gDHkXY7wpM20U1qsCEk2dzsrkp0+MzQpG6iqyv09jT/c9Q47Rcc+rK8jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093079; c=relaxed/simple;
-	bh=li9v6yiviwnt3ovdHj3DZYZuBaKKid6ePo/ZNpVli4M=;
+	s=arc-20240116; t=1726093077; c=relaxed/simple;
+	bh=8hESPHedU+ENYGrgiTg2aQkKK1dO07lnpjlYWMsSgFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKY+QFmi5DvQAiygU2DKy3Cmv7ydROj8ZQr2xLkOA0LcmrfvQ3Wdk9YL4QewRZOyD707Xivtpr/vnATsdCTFxRPqs3wgImOk7vB0XCi4x8rYygKYBs/llMJW9O3d5oQqe5X0jlebipRh8N5vLYrkfgwOxiclsVPjyUVfYQZvddo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QDUaeIFv; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 39BAFE0004;
-	Wed, 11 Sep 2024 22:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726093074;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/4ea5b68JNPpQkoa0RULHniTfxnkj3aB4lpW/s58/o=;
-	b=QDUaeIFvNqDCAAhDfB5zrYg6uCK3f8KemwxBFAImkWY5povnSa4PVoSR5uKHiuyGCzf6JO
-	wcMS6tY0VbyzNETqOT2JIf5u/y3DR6xHVbesDkz4MLTkqoRQilIXJW7azoyeWhrVqUP1Sl
-	zHe1kYWJsinMSmsy6OOH8uMRoboRfMevFApgYfcbsnCGP/YMK/mo9FumHF1iSTIxphQwi6
-	aL32QwGmGWlgW6GUL4kViY25osOZpPk1b+Nfgl3MMHThlhfxRXXfxMRN6OU6WOlT0EuLTn
-	x4tZCVGv4bZvQmwYiUmtIPqdjIw03S2A4fJtrN+hhdHsLyxj/K+1AZg4VPFY7g==
-Date: Thu, 12 Sep 2024 00:17:53 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?T=F3th_J=E1nos?= <gomba007@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	=?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 0/3] Add support for the DFRobot SD2405AL I2C RTC
- Module.
-Message-ID: <172609305464.1547920.8314811462806286244.b4-ty@bootlin.com>
-References: <20240830-rtc-sd2405al-v7-0-2f7102621b1d@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s0Y5ncd83PtZ5g1Cw4RTN+KdzkOzFUeY09NO1eBXcxATDMhxqzxnNbBsiODJyW3OjCIeX0A/T0ZbiA0EF6U1Gi0003VA86F9AuIS5Hmg8UcNxsgpXf7/AThoJLhp6St7oDrya9R6CB8UMNKhuO5yWrJQR87lUFLN7h0Je8f66V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aG/xfp1A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF085C4CEC6;
+	Wed, 11 Sep 2024 22:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726093077;
+	bh=8hESPHedU+ENYGrgiTg2aQkKK1dO07lnpjlYWMsSgFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aG/xfp1AsFxxDmMA21Vujsx3gz8BU65cYKDoFnLk8hluj+5HCFGjrxMuCw+Z6D5Yb
+	 Ar9ABnQnEjtJeJk9eC4nNpHOrjlLuQPoxnp/I+gyMuU9QSUy/3/9s5TqbW6gmkHRqq
+	 DgoM07a/lkJiEOR+K67MpXSaX10dyo+BbWUAdDX8dKdqCk5uMWDrKhC5tDkovC5Hwz
+	 FmHAMspWVWb/nLMkj/cxJmxC6fPJZ/8QJVBbxOomWn/hrrVytKWHbo1BQh5rjMcv9L
+	 TbjQeCBm2eBjdZcj45gIHmmvyqw6IOG6hA3Ev5C/nc1gzmXBuXmYRnIjQt2xL0tYX0
+	 GEyZyen2H3vHA==
+Date: Wed, 11 Sep 2024 15:17:56 -0700
+From: Kees Cook <kees@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/5] codetag: Run module_load hooks for builtin codetags
+Message-ID: <202409111517.2461E9DC4@keescook>
+References: <20240809072532.work.266-kees@kernel.org>
+ <20240809073309.2134488-2-kees@kernel.org>
+ <CAJuCfpFY9=NOftvaKqkuohZH9L1QTHshORXeqLomrHBPPTd9kw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240830-rtc-sd2405al-v7-0-2f7102621b1d@gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <CAJuCfpFY9=NOftvaKqkuohZH9L1QTHshORXeqLomrHBPPTd9kw@mail.gmail.com>
 
-On Fri, 30 Aug 2024 10:36:38 +0200, T�th J�nos wrote:
-> This patch series adds a driver and the documentation for the SD2405AL I2C RTC.
+On Thu, Aug 29, 2024 at 08:02:13AM -0700, Suren Baghdasaryan wrote:
+> On Fri, Aug 9, 2024 at 12:33 AM Kees Cook <kees@kernel.org> wrote:
+> >
+> > The module_load callback should still run for builtin codetags that
+> > define it, even in a non-modular kernel. (i.e. for the cmod->mod == NULL
+> > case).
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
 > 
+> Hi Kees,
+> I finally got some time and started reviewing your patches.
+> Coincidentally I recently posted a fix for this issue at
+> https://lore.kernel.org/all/20240828231536.1770519-1-surenb@google.com/
+> Your fix is missing a small part when codetag_module_init() is using
+> mod->name while struct module is undefined (CONFIG_MODULES=n) and you
+> should see this build error:
 > 
+> In file included from ./include/linux/kernel.h:31,
+>                  from ./include/linux/cpumask.h:11,
+>                  from ./include/linux/smp.h:13,
+>                  from ./include/linux/lockdep.h:14,
+>                  from ./include/linux/radix-tree.h:14,
+>                  from ./include/linux/idr.h:15,
+>                  from lib/codetag.c:3:
+> lib/codetag.c: In function ‘codetag_module_init’:
+>   CC      drivers/acpi/acpica/extrace.o
+> lib/codetag.c:167:34: error: invalid use of undefined type ‘struct module’
+>   167 |                         mod ? mod->name : "(built-in)");
+>       |                                  ^~
 
-Applied, thanks!
+Ah-ha! Excellent. Thanks; I will double-check that your version of this
+doesn't have any surprises for how I was using it here. I expect it'll
+be fine.
 
-[1/3] drivers: rtc: Add driver for SD2405AL.
-      https://git.kernel.org/abelloni/c/b4ce83671973
-[2/3] dt-bindings: rtc: Add support for SD2405AL.
-      https://git.kernel.org/abelloni/c/0eb6d12a2bc1
-[3/3] dt-bindings: vendor-prefixes: Add DFRobot.
-      https://git.kernel.org/abelloni/c/6894ed34666f
-
-Best regards,
+-Kees
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kees Cook
 
