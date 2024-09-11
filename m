@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-324328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ADC974B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C91974B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A91C1F26A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5637C1C242D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C7713D24C;
-	Wed, 11 Sep 2024 07:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BB513D246;
+	Wed, 11 Sep 2024 07:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nZwH4kPt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ht9pNGhx"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159C313AA3F;
-	Wed, 11 Sep 2024 07:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E8013B58D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726039535; cv=none; b=HhdimOJj+VucmYobBhdTjdUPWtA3LyzICd8Ot5hGoSmI2NGAmsPuP/xiDjAzTV5fSZoGsrzwOH1XB2BETjfMaeaIfXjG3Wh2HBquCbg5ph18ODdBkLX2YATuUy0GirAu1zizIWMikmzobVoc+o/gZyarW/wii+V2rqx5jCM3iwY=
+	t=1726039599; cv=none; b=S8GZNHKxj2DDQzTEru7gEhM3wF7MXmxrO6qCwfogdbk61UHVuMtPxlGViAKj335qI1bjBsOJ3D9g5EDYUl5FtwI5Gk5F5GTltL7ydRBLO4qHKjGmF+8+CRxRVBEibSYGtusTcRQaAjczSvmgazTs7XAdv3Hph/XIkDZQ/HyHquA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726039535; c=relaxed/simple;
-	bh=fWh9wTT1hRsm06rNlOwK3vlWOTqq04CDdl3lI/fHXYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kPCre6Ix01B2MW2GDy2SXZTPP6xZNQdCANFURh88hJ9IjkK8mr6Gy+bynpQTOg7DOPjORLNQtScHj5GmGPhG2WOK4ZhpwU0Fv9GH43EeeWfIqNXgfIQKFkQSHW5KFdof7UGtkrzl46UQF+HJEFuEpxWqyjZPD6jp+vhnF/ep/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nZwH4kPt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B4EokG021289;
-	Wed, 11 Sep 2024 07:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=24DZE/gqBF4+eS49GMnnS+
-	S0OuubCmpa5vHhdv/Zm7o=; b=nZwH4kPtSE9yxtbNKoE8kKj/MzxUqsPaq68/Og
-	xgsLArpRrteh7AusnBfrOwyuzi2ADPQAhx9S5tfxBNq4VAIEakq/sc2/X7cKt3Ul
-	Xs0fbg+SUeFUYzqZXARsazaRbBtGIAqQR9JHboFOg97ov4rs4dBG2mICm1bUK+F1
-	4ROKkzOxrhGj7h8VkTW3J/r2SbX1WwuIWuIu+WtogJaRTBje88G02rxEYnh73e/7
-	n/A3PyDjKM/GVuZz4eEj+ZWGwSsDk71L93/f54pvXmckMo4e/T07Ifbsn1r+RmdD
-	xqdqY81Yj3opl1KB55tPtAxhkTPWZw+FQ8mW1DzkPEWFCW0A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gybprpxq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 07:25:29 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48B7PTt1005738
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 07:25:29 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Sep 2024 00:25:26 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Wed, 11 Sep 2024 15:25:15 +0800
-Subject: [PATCH v2] dt-bindings: mailbox: qcom-ipcc: Document QCS8300 IPCC
+	s=arc-20240116; t=1726039599; c=relaxed/simple;
+	bh=g/Fjt+IZe7AcMApvLTV3LW6COQN5ALZvCZMWD58xZHI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6DXzmCxwxozMlvTY2N34J6efwm55DtWLzlCGy5wxwRAAvy3Gk2dz5uAjzxQWCy8DeV//VIIdgyPaPT69doJ3X3qFUYrv2nbfTcqTjYbXsWuspzBirQQ2FGS9dLBirWjvpMRF2RHqUjEmqIc8eIvrYYtuqP3Nv948ibkebaa9Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ht9pNGhx; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso99549866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:26:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726039596; x=1726644396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g/Fjt+IZe7AcMApvLTV3LW6COQN5ALZvCZMWD58xZHI=;
+        b=ht9pNGhxLKx4O/pkNUqqb00WQ9jgDSbnoHDIRzSwmCk9+H8owm7brJva5YZ3Uarodu
+         4Vz8kWTOrTyNVkbBH3CoiCowyYjaZkwPqKPBucokQPHg5wANyZCvOKrZpOlOE34KOt94
+         NKcw/60uyfB1JPOJu78pc9IaDM7jaVWslZSnUulPJ6jS3L3eA4z5f6rp+y/nmcl0stsb
+         WN8zqxOwka8r29gvOhPInTtZ4aea4XQxSD6YWecDYlEELu6VFcyEiAZB2qZ6WCX8HaYQ
+         StiJBHzAVVy48vUz928QT6pMNn0nQHGmmOCpctqGje1vSl0msuE7Hr2MdDY+Jrnq4G4O
+         IL9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726039596; x=1726644396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g/Fjt+IZe7AcMApvLTV3LW6COQN5ALZvCZMWD58xZHI=;
+        b=AB7tdGp3weM/Yd0LZZ0MD0RDhPGfzvjYw8/OlqkkR1wy/U16q8s2R5o4xWYHsAcHbd
+         lWxyygt1BKi+cDiN5EXaOcUhlz8egrqj2ro1lW0cHuu+2RjjMXcuzGI8hUQ9wVwUSsC0
+         25Tm4y2RabNsO/yus8d/mY0KeB9cyZ7H4KrdP8PHzrQaDVvMC6CUitqIqGCBfFTTA7K2
+         gGPPydLvCOAy9mQB+aDezkRcN+LQGL5i+XqdbzHskAs/ZTwX6ogr1UProbABUEJkN/Vr
+         WN2pGodGdzWF7iVi8fM59XX7ew7RCRf8r+tYAYAa0njaOqqJytAPdkNTVhVh5aGa5FMn
+         eemA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOR9rwdjjEH4RYPesIgyQK0uGauk1rNYuEC+JSVwEJ2hwcqCoKWQbcog08KasbqMFbR4glrUYm2Z9OCBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZUPOX3gKLeBTzxelG0ldoM1WOr5n5q/lp3mskt3GRkhl/iE8L
+	VRDV4sjEIPGjTeNulcoUsLHHE8dVk8CthsgiLl/XledKL8NmHXRLP/328hx7LGVWXkwXMUYyQtO
+	ULp9+vn9CHTdX83JK3unkytHxh5f0x+rqORHK
+X-Google-Smtp-Source: AGHT+IGVpkBn8RUpuDxQlOtKpPtR/qRX02F+JdkFtCruT3r9iMJWufOPR9VNi9q1e5Xgeu06OOVkwFNcMZplFtIqJZs=
+X-Received: by 2002:a17:907:3682:b0:a86:a866:9e26 with SMTP id
+ a640c23a62f3a-a8ffaaa4c30mr447255266b.3.1726039595194; Wed, 11 Sep 2024
+ 00:26:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240911-qcs8300_ipcc_binding-v2-1-ca15326c5d0f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANpF4WYC/0WNQQ6CMBBFr0Jmbc20AgIr72EIqdMCk2iBFomGc
- HcrMXH5XvLfXyFYzzZAlazg7cKBBxdBHRKgXrvOCjaRQaFKsZRSTBSKE2LDI1FzY2fYdUIZSXm
- ayyKjDOJ09Lbl15691pF7DvPg3/vLIr/2F8T0H3Q8s743Zg4sFilQGLS61K0hxPNlejKxoyMND
- 6i3bfsAeHq7k7oAAAA=
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tengfan@quicinc.com>, Jingyi Wang <quic_jingyw@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726039526; l=1176;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=fWh9wTT1hRsm06rNlOwK3vlWOTqq04CDdl3lI/fHXYE=;
- b=TKaKt8elHR8A3WjuVql4a8Rs0tzM4v/CUGnG7xvEu7vMRieAvGcQCGgcfuHe7oQZeiHzGTpA2
- vmPOC4JuY6gBOxr3XI2UBoQjPH/j7G+mJ0rsxsNkD8Lv/egBgxDeqVR
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kPnRybWH6c78TR8WE4LCnMrocWuFfszs
-X-Proofpoint-GUID: kPnRybWH6c78TR8WE4LCnMrocWuFfszs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=827 clxscore=1015 bulkscore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409110055
+References: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 11 Sep 2024 09:26:23 +0200
+Message-ID: <CANn89iKxDzbpMD6qV6YpuNM4Eq9EuUUmrms+7DKpuSUPv8ti-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ethtool: phy: Check the req_info.pdn field
+ for GET commands
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>, 
+	Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+	=?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>, 
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, 
+	Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Romain Gantois <romain.gantois@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the Inter-Processor Communication Controller on the Qualcomm
-QCS8300 Platform, which will be used to route interrupts across various
-subsystems found on the SoC.
+On Tue, Sep 10, 2024 at 7:46=E2=80=AFPM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> When processing the netlink GET requests to get PHY info, the req_info.pd=
+n
+> pointer is NULL when no PHY matches the requested parameters, such as whe=
+n
+> the phy_index is invalid, or there's simply no PHY attached to the
+> interface.
+>
+> Therefore, check the req_info.pdn pointer for NULL instead of
+> dereferencing it.
+>
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> Reported-by: Eric Dumazet <edumazet@google.com>
+> Closes: https://lore.kernel.org/netdev/CANn89iKRW0WpGAh1tKqY345D8WkYCPm3Y=
+9ym--Si42JZrQAu1g@mail.gmail.com/T/#mfced87d607d18ea32b3b4934dfa18d7b366692=
+85
+> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on a=
+n interface")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ---
 
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
-Changes in v2:
-- decoupled from the original series.
-- Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
----
- Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Thanks, there is another issue found by syzbot BTW (one imbalanced netdev_p=
+ut())
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-index 05e4e1d51713..6323c3519a8a 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-@@ -24,6 +24,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - qcom,qcs8300-ipcc
-           - qcom,qdu1000-ipcc
-           - qcom,sa8775p-ipcc
-           - qcom,sc7280-ipcc
-
----
-base-commit: 100cc857359b5d731407d1038f7e76cd0e871d94
-change-id: 20240911-qcs8300_ipcc_binding-2d1c646185c5
-
-Best regards,
--- 
-Jingyi Wang <quic_jingyw@quicinc.com>
-
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
