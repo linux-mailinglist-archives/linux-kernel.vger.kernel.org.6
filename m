@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-325331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CD39757F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8679757F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319AA281C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252511F28260
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE88D1AB6F0;
-	Wed, 11 Sep 2024 16:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042E11AC428;
+	Wed, 11 Sep 2024 16:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fUPYnjGQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KhdS3fDi"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0987224CC;
-	Wed, 11 Sep 2024 16:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDB1224CC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070827; cv=none; b=rIHBjFLnIDxzkIT+BViNAjLGpVoRMv9BCclyqJtjMGZqU8M1Kdlu7jiwBRa2LLC1tNO+scucNdOVH9onwqh5/G3+ppFykZG8BvWnS6bRhHDd8sva9WwpTntLxrEY6+hWteLPhzvyz5wSZPEuSnIgbTgWp/r/oYXI2zuPYWT9z0U=
+	t=1726070864; cv=none; b=T+alkx8TCnvp1gL/VyMqzSejJA8nBaDgU5Br6lXAcFk1sGCnmZ8rpj5xA86U7w3dUsI17fGg2eaoqnC6O63srlADBBsfPuTfWkLSs7cG8IQVnYOT7BkuhvL0tBY9dgX1VyH6TGjUcqEHYRELR4Hmlg2uK20wrmrDu4ER8vJlQ30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070827; c=relaxed/simple;
-	bh=woCqzjgKPLuQc/CyCNxI48JyV25/iWpRGAW6/RK+8z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQ/MFyom2J08kNxs9hUcGVNI7lbjfjorn7b2u/yZU6UWAqoyg4oWmBuyd0yPObtNp2qvnANb2J3YwXBARcvZc3RX6EQVo/8LZFGUHIl3Bk+W/e+IFaAbULevCm0Y7ObggYamethelDBFaSGxE2RbHjSlmV9QWcCVyMH0DBZP+Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fUPYnjGQ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726070826; x=1757606826;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=woCqzjgKPLuQc/CyCNxI48JyV25/iWpRGAW6/RK+8z8=;
-  b=fUPYnjGQ78jNuArKpDZD/wHZqnNjTV0UYqwIrZsLBV3U2bmWrqLmVYBO
-   t9nW/qdrUohXGkPLxGMe6wX1o2+9UvGVFAJOdygl0t9Sf1WrXAPwn5+Z9
-   ji4oKUBXnxlUDKWCIKQSZbzMcxDb9eJaGft7D6G+ko2VoRTN/fcIURo7R
-   7Iw/X54Mtl8I/knFNCfMTpMCy5E+ExmFad0FaUI8gp3y/YkSpThXrUdPB
-   prPT4KLmBYpj1zv0bcDS0DqJqequRaUkO/yhtumzbTOGtAMl/FeNlxZdM
-   16hzkFvFtVq4FsS9TecwhFvbFnGX6argonKzAsVwSpKmiFJr1AVoQImen
-   w==;
-X-CSE-ConnectionGUID: PQRRZ5wNT/2aSELj1JKr+g==
-X-CSE-MsgGUID: r/wUQuMLThSwrtRpT3vERQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42397471"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="42397471"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:06:58 -0700
-X-CSE-ConnectionGUID: JlOIlOL8QZGlOchz6RNNKg==
-X-CSE-MsgGUID: 53k3lsP+T6KA8Wv5Fuh1zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="71795153"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:06:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1soPrZ-00000007cBD-46zZ;
-	Wed, 11 Sep 2024 19:06:37 +0300
-Date: Wed, 11 Sep 2024 19:06:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jesper Juhl <jesperjuhl76@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: Re: [PATCH v1 11/12] i2c: isch: Prefer to use octal permission
-Message-ID: <ZuHADXmd5vrWUsNN@smile.fi.intel.com>
-References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
- <20240911154820.2846187-12-andriy.shevchenko@linux.intel.com>
- <CAHaCkmd_HWCgyfiAV56VgENgMaS3kG9cz5CPrUzyiVoy0y1oBg@mail.gmail.com>
+	s=arc-20240116; t=1726070864; c=relaxed/simple;
+	bh=gGSZGUKeQVT4ZwzLlokUxbSN1eRYqJmr3gBNVK+rgJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DEpqP8g/vpffCnSFRHgEM1WwTU2gvS8duVlCd6iOSxPQn/Gu0e2fLnObugLIUHyx6oi+eX2sfu+pacdqlbQwDOXEtMnEdHIkx/jLgj26SMz7zSBO0tjljTnYDLYC1laf0xvrnjY32TQ1U8fCYfY7XJA6yvfY4uqM9nYMUSJhmaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KhdS3fDi; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82ceab75c05so172239639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726070862; x=1726675662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5KatlnqVDdtDHNzA3/VvJS4Anj9gvfC556sbE+09mqc=;
+        b=KhdS3fDiMMLr6ieI2Ou4nUYXcnKrBA1uRtI0AiQDUBM1FVIaBfBfoTSlySlSn3DQxs
+         RtqlMXTkCFX35HaxIhdYYPmWVbdMW82Rj4r30St1BlaZVcZSxBuvYcoLOJcdUO4q6cnu
+         EslasYnnZrUsD+DzLGO2V2ujjgdH5oEQUu+nM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726070862; x=1726675662;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5KatlnqVDdtDHNzA3/VvJS4Anj9gvfC556sbE+09mqc=;
+        b=kKhrxcx0VDuNYDG9Gxlt2G1lNEuU3SMoIBIk5MzOlaqq8wIVLDGAotnOUFqCjCwBO8
+         49ThuT888MyRSZSsWirxdhd4gHnmEuWxtCWSHiELGRbr+IUeil1PUNvyoP2d03Uxn8LA
+         STQr+IHvlj8J5t91gKbkHZYEyWEAydL7QdQZwa5e7U91G15AUyqVSmTVqSY3nFzMYl7V
+         pI5g0hqC5SaOZDXIaRHLBrbE75tOknSbW4Hx8lTeZ/YwlB1CnLSr/2aqHuVVX21Nlj9k
+         9UgxyrOow9npBYleuvjGWuQf97CNqiePwGoeUb+Nc8ztYfRUNWLlJTYqKDfmnZR71ZmA
+         eJXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9mCXI6Jm48N0zkxE/K7rlnponqFaxnculZA38PuYfd6DUqVGSURV3z6Cpfo12ndv7WhsgSUm50DcAeYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeGiexPWkQiIxjOl+kHanKFDwvR6wBHAAn9C7Ic9w2vtfogdlQ
+	OCBhx9+sC1pI3DYbQtNoraZezgczYtWlCYpUpO30AUbQiF3dg6QsWgs6SyeuZ0c=
+X-Google-Smtp-Source: AGHT+IEtx7ZNKIzeVnQ3i3tBxUubPcG6cNPINitY1trPy3JPEme5x005QR3erw4KJL1JQ4gK9UAsaw==
+X-Received: by 2002:a05:6e02:1ca8:b0:39d:300f:e8fd with SMTP id e9e14a558f8ab-3a04f06c881mr206357585ab.2.1726070861691;
+        Wed, 11 Sep 2024 09:07:41 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f8da6cdsm56731173.121.2024.09.11.09.07.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 09:07:41 -0700 (PDT)
+Message-ID: <2df38d7a-682e-4af5-be01-67adb6fdd5b0@linuxfoundation.org>
+Date: Wed, 11 Sep 2024 10:07:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHaCkmd_HWCgyfiAV56VgENgMaS3kG9cz5CPrUzyiVoy0y1oBg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 2/2] ring-buffer/selftest: Handle meta-page bigger
+ than the system
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Donnefort <vdonnefort@google.com>
+Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, kernel-team@android.com,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240910162335.2993310-1-vdonnefort@google.com>
+ <20240910162335.2993310-3-vdonnefort@google.com>
+ <20240910124555.180428eb@gandalf.local.home>
+ <bf48db12-1e97-4690-b733-bad6b2363edb@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <bf48db12-1e97-4690-b733-bad6b2363edb@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 05:53:44PM +0200, Jesper Juhl wrote:
-> Personally I find this to be *less* readable, but maybe that's just me.
+On 9/10/24 12:50, Shuah Khan wrote:
+> On 9/10/24 10:45, Steven Rostedt wrote:
+>>
+>> Shuah,
+>>
+>> Can you take this through your tree?
+>>
+>> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> Yes I can take it through my tree.
+> 
+>>
+>> -- Steve
+>>
+>> On Tue, 10 Sep 2024 17:23:35 +0100
+>> Vincent Donnefort <vdonnefort@google.com> wrote:
+>>
+>>> Handle the case where the meta-page content is bigger than the system
+>>> page-size. This prepares the ground for extending features covered by
+>>> the meta-page.
+>>>
+>>> Cc: Shuah Khan <skhan@linuxfoundation.org>
+>>> Cc: linux-kselftest@vger.kernel.org
+>>> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> 
+> Vincent,
+> 
+> Can you please rebase these on linux-kselftest next branch and
+> resend. This patch doesn't apply.
+> 
+> Also please fix the subject to say:
+> 
+> selfttests/ring-buffer
 
-It's just you :-)
+Once this is fixed:
 
-checkpatch should complain nowadays about non-octal permissions.
-It is documented here Documentation/dev-tools/checkpatch.rst.
-IIRC it's added after Linus' rant on them.
+Steve, This is yours to take due to the dependency on linux-trace/ring-buffer/for-next
 
-But nonetheless thanks for the review!
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-> On Wed, 11 Sept 2024 at 17:51, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > Octal permissions are preferred over the symbolics ones
-> > for readbility. This ceases warning message pointed by checkpatch.
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+thanks,
+-- Shuah
 
