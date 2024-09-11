@@ -1,164 +1,155 @@
-Return-Path: <linux-kernel+bounces-325644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE48975C73
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:31:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4AF975C79
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA9E1C2260B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760951F23C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9478814EC79;
-	Wed, 11 Sep 2024 21:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F1615350D;
+	Wed, 11 Sep 2024 21:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0oMPIqg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="rAjdXYQf"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439D62EAE5;
-	Wed, 11 Sep 2024 21:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5786143C6C;
+	Wed, 11 Sep 2024 21:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726090277; cv=none; b=vA4UwLoMTVg0dzxpPGOI5WnGM/arIJyHczrWqcz+kVIiACXLkQMAbvS2qHAeLvdy6Ufqww1D3YYur+X2wyyH4lYZrMP73clAFBHlR/8efudm3kftpcdVwkedfozRxiK9CFSlnOogpgz0QrapTo1PUA26wWp8UUW9YTey81wS+qw=
+	t=1726090388; cv=none; b=fp6TzT56I0WQznUI0s8IFAaudVxAoIU7NmFvUFhjWVk+pUDR677V8+qJ7fDgx2SMWxiXE13phzZWF23J86pPkWiZAk2mtH6Cfl51WZ336NLVanueg0chZEDyus0yWpCY9LFLd3EPZ2lD9ysWWU8+H85VPFk/qUD4gkPtgIN6/Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726090277; c=relaxed/simple;
-	bh=iNWEbTYcT/nvFB163ly5IMOZWOgwxgH1UpgT47gwP+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NxGx1ewvQg5uSJTh2jtaVjZNycOOC1ZzeDEWBfzaAX3CNYRzOrBBxIfCzj04J6LA6P7duQja/7I1lwfp2HAs4UeimcVMwl5g3SUyi1/adEyNPfO1ADyuqYiBBMyfmEmo7cAmqHuTRhOzVXJtVpRD+IEaeFWtf3fXpOAuK+oLPdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0oMPIqg; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726090275; x=1757626275;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iNWEbTYcT/nvFB163ly5IMOZWOgwxgH1UpgT47gwP+Y=;
-  b=e0oMPIqg9WZwoUt6FtBo9TONOcqwoPPw2RbcKvhdtzLjZFnrsPbrbeBu
-   eUKeRMtntv/rMLXTYrqwppXIMaBWRvB3twDuh/88thctsuHF80wJMP6XU
-   nEjwHTHlymdVusrdEQ8PJYxnEduYVhB+oztuQznoOO3jF4XHpuzt7PMS+
-   A5iNSTbnrytq7tGLZnDyyHLvh6CogpKiM5MVMq1V29hgPoFyhKwU9MwMu
-   SHc3ZAKs1e+Vp8Vd+6MenB1jJCyzFrV7nSBeW3nXLbLXlYdA6jF1t2Qrp
-   YbjNs4CNqo6ywjPP8JZ6y67OOeIetegNGBDzjZSxuSnPpgmt+z9vz5yHi
-   A==;
-X-CSE-ConnectionGUID: kpai5d4zSryViTN7JsMNkw==
-X-CSE-MsgGUID: 0vqmRlBVREW5lrsVBu3u2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24851956"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="24851956"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 14:31:15 -0700
-X-CSE-ConnectionGUID: kqJ9EAOCSTmzprcJAicTsA==
-X-CSE-MsgGUID: 72WYPs8fTy2iMkIPLdWGSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="67327781"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 11 Sep 2024 14:31:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E8B43170; Thu, 12 Sep 2024 00:31:11 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v1 1/1] iio: imu: kmx61: Drop most likely fake ACPI ID
-Date: Thu, 12 Sep 2024 00:31:10 +0300
-Message-ID: <20240911213110.2893562-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1726090388; c=relaxed/simple;
+	bh=PnxYhyVNbyCOopm8g5LJu3HReBrjQHCQkN49t80pc7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rAbCnCNCdX4QVh3HkeO0VRKqpBEJ6dVv+x1OafAkMQ7s/0TTrcPkZWRwa5mI1IslPWf8bkhOGUf7D1N97qNuISlwj/BCtrlyXN5X7h+OrJCY3tOocn4yZ5g+eISZ1jDovlxwnuVE5vC/u9lEKHLEAhwyAJpPJq7Kh1kpw75SKl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=rAjdXYQf; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 0528988B67;
+	Wed, 11 Sep 2024 23:33:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1726090384;
+	bh=ddpYuBZRcEsA1dU6Hx5Ycr4lFfoUaN9MGd+rgWKCyPU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rAjdXYQf8csIxExtF5HSVODOC+fbUcTy+BlGK9xSTg3qNnhhx+tvnUK+7+nSOSvxO
+	 gqXVpcslSnYyieEZUVqygUdpTKRh7o9Zbn5QLd3n1y63d5gT/e1onmTWj3y8g6D0U7
+	 w+U5S98dA4m0C4lvw8TuwvY04MpZSXrI/mfdqAoxjg/1KHTrlFhXRrxzIRZHuWfD2L
+	 wSivy9tXoiqaWa86Rs91g33nsIdYb8owQ/bqAoQerTjWMUAKQA0Kl7ip0MmPpoF31j
+	 ps/2E1Y0rtG1B9hveMxKmfcjnpcNAobBSwq/GkKEAQSKC6W5RmI882incyoa68XRvL
+	 DUkIwdZPwgHKQ==
+Message-ID: <522db306-64b1-42f5-8446-e6dd56eea7ec@denx.de>
+Date: Wed, 11 Sep 2024 23:33:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] pwm: imx27: Add optional 32k clock for pwm in
+ i.MX8QXP MIPI subsystem
+To: Frank Li <Frank.li@nxp.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ pratikmanvar09@gmail.com, francesco@dolcini.it, Liu Ying <victor.liu@nxp.com>
+References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
+ <20240910-pwm-v3-3-fbb047896618@nxp.com>
+ <40ecdbb2-8470-4e33-8a74-ccae6532174a@denx.de>
+ <ZuILmHRO9rIXfxIm@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <ZuILmHRO9rIXfxIm@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-The commit in question does not proove that ACPI ID exists.
-Quite likely it was a cargo cult addition while doint that
-for DT-based enumeration.  Drop most likely fake ACPI ID.
+On 9/11/24 11:28 PM, Frank Li wrote:
+> On Wed, Sep 11, 2024 at 10:31:40PM +0200, Marek Vasut wrote:
+>> On 9/10/24 9:07 PM, Frank Li wrote:
+>>> From: Liu Ying <victor.liu@nxp.com>
+>>>
+>>> PWM in i.MX8QXP MIPI subsystem needs the clock '32k'. Use it if the DTS
+>>> provides that.
+>>>
+>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>> Change from v2 to v3
+>>> - use buck clk API
+>>>
+>>> Change from v1 to v2
+>>> - remove if check for clk
+>>> - use dev_err_probe
+>>> - remove int val
+>>> ---
+>>>    drivers/pwm/pwm-imx27.c | 13 ++++++++++++-
+>>>    1 file changed, 12 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+>>> index ce9208540f1b8..2a9fba6f9d0a8 100644
+>>> --- a/drivers/pwm/pwm-imx27.c
+>>> +++ b/drivers/pwm/pwm-imx27.c
+>>> @@ -81,10 +81,11 @@
+>>>    #define MX3_PWMPR_MAX			0xfffe
+>>>    static const char * const pwm_imx27_clks[] = {"ipg", "per"};
+>>> +static const char * const pwm_imx27_opt_clks[] = {"32k"};
+>>>    #define PWM_IMX27_PER			1
+>>>    struct pwm_imx27_chip {
+>>> -	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks)];
+>>> +	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks) + ARRAY_SIZE(pwm_imx27_opt_clks)];
+>>>    	int clks_cnt;
+>>>    	void __iomem	*mmio_base;
+>>> @@ -371,6 +372,16 @@ static int pwm_imx27_probe(struct platform_device *pdev)
+>>>    		return dev_err_probe(&pdev->dev, ret,
+>>>    				     "getting clocks failed\n");
+>>> +	for (i = 0; i < ARRAY_SIZE(pwm_imx27_opt_clks); i++)
+>>> +		imx->clks[i + imx->clks_cnt].id = pwm_imx27_opt_clks[i];
+>>> +
+>>> +	ret = devm_clk_bulk_get_optional(&pdev->dev, ARRAY_SIZE(pwm_imx27_opt_clks),
+>>> +					 imx->clks + imx->clks_cnt);
+>>> +	if (ret)
+>>> +		return dev_err_probe(&pdev->dev, ret, "get optional clocks failed\n");
+>>> +
+>>> +	imx->clks_cnt += ARRAY_SIZE(pwm_imx27_opt_clks);
+>>> +
+>>
+>> This will succeed even if the regular PWM clock are invalid or not present,
+>> wouldn't it? I don't think removing that protection is an improvement.
+> 
+> I have not touch regular PWM clock's code. Just add more optional clocks.
+> 
+> devm_clk_bulk_get(imx->clks);
+> devm_clk_bulk_get_optional(imx->clks + required_cnt);
+> 
+> so imx->clks have two part {required_part, optional_part};
+> 
+> require part is the same as the before. If it invalidate or not present,
+> driver will fail probe.
 
-Googling for KMX61021L gives no useful results in regard to DSDT.
-Moreover, the official vendor ID in the registry for Kionix is KIOX.
+Ah, understood, thank you for clarifying.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/imu/kmx61.c | 25 +++----------------------
- 1 file changed, 3 insertions(+), 22 deletions(-)
+>> Also, it is not clear whether the 32kHz clock are really supplying the PWM,
+>> see my comment on 1/3 in this series.
+> 
+> Yes, it is for pwm.
+Do the older SoCs (iMX8M or iMX6 or such) also need 32kHz clock for PWM?
 
-diff --git a/drivers/iio/imu/kmx61.c b/drivers/iio/imu/kmx61.c
-index c61c012e25bb..2af772775b68 100644
---- a/drivers/iio/imu/kmx61.c
-+++ b/drivers/iio/imu/kmx61.c
-@@ -7,12 +7,13 @@
-  * IIO driver for KMX61 (7-bit I2C slave address 0x0E or 0x0F).
-  */
- 
--#include <linux/module.h>
- #include <linux/i2c.h>
--#include <linux/acpi.h>
- #include <linux/interrupt.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
-+
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/iio/events.h>
-@@ -1217,16 +1218,6 @@ static irqreturn_t kmx61_trigger_handler(int irq, void *p)
- 	return IRQ_HANDLED;
- }
- 
--static const char *kmx61_match_acpi_device(struct device *dev)
--{
--	const struct acpi_device_id *id;
--
--	id = acpi_match_device(dev->driver->acpi_match_table, dev);
--	if (!id)
--		return NULL;
--	return dev_name(dev);
--}
--
- static struct iio_dev *kmx61_indiodev_setup(struct kmx61_data *data,
- 					    const struct iio_info *info,
- 					    const struct iio_chan_spec *chan,
-@@ -1293,8 +1284,6 @@ static int kmx61_probe(struct i2c_client *client)
- 
- 	if (id)
- 		name = id->name;
--	else if (ACPI_HANDLE(&client->dev))
--		name = kmx61_match_acpi_device(&client->dev);
- 	else
- 		return -ENODEV;
- 
-@@ -1496,13 +1485,6 @@ static const struct dev_pm_ops kmx61_pm_ops = {
- 	RUNTIME_PM_OPS(kmx61_runtime_suspend, kmx61_runtime_resume, NULL)
- };
- 
--static const struct acpi_device_id kmx61_acpi_match[] = {
--	{"KMX61021", 0},
--	{}
--};
--
--MODULE_DEVICE_TABLE(acpi, kmx61_acpi_match);
--
- static const struct i2c_device_id kmx61_id[] = {
- 	{ "kmx611021" },
- 	{}
-@@ -1513,7 +1495,6 @@ MODULE_DEVICE_TABLE(i2c, kmx61_id);
- static struct i2c_driver kmx61_driver = {
- 	.driver = {
- 		.name = KMX61_DRV_NAME,
--		.acpi_match_table = kmx61_acpi_match,
- 		.pm = pm_ptr(&kmx61_pm_ops),
- 	},
- 	.probe		= kmx61_probe,
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+I think what I am asking is, what exactly does consume the 32kHz clock 
+in the PWM IP ?
 
