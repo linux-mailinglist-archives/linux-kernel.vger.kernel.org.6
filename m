@@ -1,147 +1,196 @@
-Return-Path: <linux-kernel+bounces-325179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6DC9755EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC14C9755E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39363B2C960
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D496281E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F031A01C6;
-	Wed, 11 Sep 2024 14:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961311AB6F8;
+	Wed, 11 Sep 2024 14:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BgwxafNM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NykAzLAG"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Nz36pbCX"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42B1156993
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFF71AAE36;
+	Wed, 11 Sep 2024 14:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065888; cv=none; b=RSDdSbaSmHOyEIaUXAyKXXr1ZUP6xGwDhZhvxodrygbNKJXKIFbg4i9+8sveyb8QLKkzOmo4ACv8caiJdIY9ZjT2Z6Z5Of+5/Lq3/GQ76WLL/SJeJrRdH+6oP0Y5OsstfvYVx8zgNO1sYow/8qNLb406LQCKmGGA1Xq9BWQ8EiE=
+	t=1726065940; cv=none; b=isz+pRBhNvvZlK4EFeXxhRSvv60y0S2vCm9fnacc8LWf2bkTuiL6pPG2o4yyMHe+/oYVm/lH+wx4hW8lV3gJXSTPibf6j+d4QTi6PND2NoeIQRHr//kM+jys3VBKX6Jpk3pl2mlN6FjyQ0RHQN+LFhaGpsex5yG8Da2+YF1KgFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065888; c=relaxed/simple;
-	bh=2odF99ee1cMXzMIBgWrtpiE+8wSE5xsuhArLITMhHjU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Z5Sq0eTdW3R+Ys/RdXLQERbMWEoxBrunZz8ToQBp7+7BUu2Jy0wE5VQ2dq/ShQnNho5bFUCd0iGj4+nE8lhlpMadrD/34rrj7BU4UQmLempr1VQ5cLZ0y6Y7FVhOy7Qki/8eG0K+LdRqAhJpxXmhyOWkDgf/cTTQ7zaV+zROj90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BgwxafNM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NykAzLAG; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id BCF72138015F;
-	Wed, 11 Sep 2024 10:44:45 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 11 Sep 2024 10:44:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726065885;
-	 x=1726152285; bh=2Ng/bXiCXjVjtyMJeROcRRqL/fQsE7Mfw13aZjFqLzA=; b=
-	BgwxafNM5bKX3Ce/U0F6WZ+aC5o5sjz4OMh15+TTzPfa0YCiPmEK6cR2kao8bmWQ
-	aBh4d34vXfH4Yfc/8b9atNR0DXwzsrw5eQPFF5k1l5DkcvroDhaJQa4CGoukUtM7
-	k7wFXBCu46sNDgYH6hJ/v6HjWXHs0oI2cyCcUEvLdTr2oJHY7iBDjdvZaHwuZpLf
-	97Z6SdsHOBRoSWwo2jaXBuwUGMluy9rGXbJJ3PSuHgghCQv21a06YxPxtU5zVaeT
-	HKA+iE6/WNnHX6L5ZZC/Xi2xym07F2sUSHanuyY4a8wwL2ze5tyRshWbXNCd1629
-	xJG4egfKjuGRR5y2lWXpgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726065885; x=
-	1726152285; bh=2Ng/bXiCXjVjtyMJeROcRRqL/fQsE7Mfw13aZjFqLzA=; b=N
-	ykAzLAGujHi/rvqJ8EyJAfxN9i0jeUnDXGdJ2GyMS6i6hRarnwUefd8RJjm1PnB3
-	4CSi6jWDGoFnNeOtyF0ni9DZzmqNGXXLu4creP5L97eoWa9snxW//gsH9Uic+QZ8
-	7FOvD0DbBqGpzdE6wGnPxpP/0U6r3UOSpwAcV4MuSZEZcWQ2eEUZRX/7SxUQ2I19
-	zLSd5w7dFVhrFpBg4Y3wz0iisDYc+UTmzKbeivDNSeYYFAZyOixWOz1rZk9PGykq
-	QjYb4jHDBcx+o/ri38d5kWpOi9fo/+3n5rLZqdnFdR8rUM4egAvWxbzOLtbWLo5A
-	0yVvZhuzjC1Yxg7AsfokQ==
-X-ME-Sender: <xms:3azhZmcWYMzkxBe_L5peqV-q_7TkG-pMXZ4RXgt0o_fhgtyjzoB91w>
-    <xme:3azhZgMw9Jm_APNWZ-ATsKY91_Ad5IKSQXU331WNdT560KR6StrUeeloWJGJuR_PM
-    jUfJbUT6_KtfvRzMzk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgjeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghrihhsthhirghnrdhmrghruhhssh
-    hisegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgt
-    ohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvg
-    hnshdrfihikhhlrghnuggvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:3azhZnh7P8Sh9kqIr6wiFh_Ri79ju2rS5FEf4YHj9ETHcpcSrmh4Rw>
-    <xmx:3azhZj_OeL_d4IK3MaTSHwqV8Ev8lETu2y9LBWt9vySol0FOD8u8mg>
-    <xmx:3azhZisvFBCMbrAivJwZCCqy1nkxHDSOkmAVRFb3LT89wa_XETKT2A>
-    <xmx:3azhZqFTg0Fr2mT-4a02yWunZLZM1b-wsr7clrUzWFOWp4VxE_fH5Q>
-    <xmx:3azhZkUbEq0qNZqzXCTwneM8X9DWUt1ARtMjQk4JivN3k8GmmEsd9QCU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 51A3A2220071; Wed, 11 Sep 2024 10:44:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726065940; c=relaxed/simple;
+	bh=5Mn959TADJkYCXAawT7of+0OZGK1XcsFEYVQ3MAfnkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mCIKHXLTrrM9ydMm6DVzKusjeHQKu8ISBLH05cLaHR4g3HiZ67txgeZ+/NGuEim0R+4hVXF2CvNiuENUtVhBu0hEMTDOME5MN2Y5+tsbctiU+2SpQj4+Vqj+QyKIv6+7xCP/vceXhfu0T8l/IO08KaL9bOagck/ovZvYuJPrd04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Nz36pbCX; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MyvDI5SZJUc5TNBctReci30K/h4zQoO/K4PlGc3yjRw=; b=Nz36pbCXKc/Gfi6yC2JOty6Ic3
+	6sOLZ33V7/pdNQG+uRuG8AqReIp8rffzcHizbqociOCwCYCuRQJ2k8ohvTwNEQvB9SRZUW6/vbiua
+	MmzeWD5gvZzOvj/Wpi1VorfhQRwF1KVWY/pDynad+Yil4aiguQFPLQZkaCq2J0LYhmxRoHNyV771V
+	DA4aEaUJbUJs4Hbj4GLyrFFMW6Nt66kyXn334T2SkDA6TlvC9I5gOWWBIZcxNlIaTLS8MValrALCB
+	jrGf+AxaygcF+lFsf1s+iY1CVP2dho6CI2+ZDIHmSaZeZ74udzBBsaGS3xg+31quCsIMcBcUfbW8H
+	b3VL4fDw==;
+Received: from [177.172.122.98] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1soOal-00CTwi-Dv; Wed, 11 Sep 2024 16:45:11 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	krisman@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Daniel Rosenberg <drosen@google.com>,
+	smcv@collabora.com,
+	Christoph Hellwig <hch@lst.de>,
+	Theodore Ts'o <tytso@mit.edu>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v4 00/10] tmpfs: Add case-insensitive support for tmpfs
+Date: Wed, 11 Sep 2024 11:44:52 -0300
+Message-ID: <20240911144502.115260-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 11 Sep 2024 14:44:25 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sudeep Holla" <sudeep.holla@arm.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Cristian Marussi" <cristian.marussi@arm.com>,
- "Jens Wiklander" <jens.wiklander@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <0ae7475f-f53a-45e3-a484-667820042724@app.fastmail.com>
-In-Reply-To: <ZuGl3v0y4SYR1np7@bogus>
-References: <20240909110938.247976-1-arnd@kernel.org> <ZuGl3v0y4SYR1np7@bogus>
-Subject: Re: [PATCH] firmware: arm_ffa: avoid string-fortify warningn in export_uuid()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024, at 14:14, Sudeep Holla wrote:
-> On Mon, Sep 09, 2024 at 11:09:24AM +0000, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> Copying to a 16 byte structure into an 8-byte struct member
->> causes a compile-time warning:
->> 
->> In file included from drivers/firmware/arm_ffa/driver.c:25:
->> In function 'fortify_memcpy_chk',
->>     inlined from 'export_uuid' at include/linux/uuid.h:88:2,
->>     inlined from 'ffa_msg_send_direct_req2' at drivers/firmware/arm_ffa/driver.c:488:2:
->> include/linux/fortify-string.h:571:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->>   571 |                         __write_overflow_field(p_size_field, size);
->>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> 
->> Use a union for the conversion instead and make sure the byte order
->> is fixed in the process.
->> 
->
-> Thanks for spotting and fixing the issue. I tested enabling
-> CONFIG_FORTIFY_SOURCE but couldn't hit this with gcc 13 and clang 20
+Hi,
 
-Unfortunately I also don't have a reproducer at the moment,
-but I know it was from a randconfig build with gcc-14.2. I tried
-another few hundred randconfigs now with my patch reverted but it
-didn't come back. I assume it only shows up in rare combinations
-of some options,
+This series is based on [0].
 
-Do you have any additional information on the endianess question?
-Is this arm_ffa firmware code supposed to work with big-endian
-kernels?
+This patchset adds support for case-insensitive file names lookups in
+tmpfs. The main difference from other casefold filesystems is that tmpfs
+has no information on disk, just on RAM, so we can't use mkfs to create a
+case-insensitive tmpfs.  For this implementation, I opted to have a mount
+option for casefolding. The rest of the patchset follows a similar approach
+as ext4 and f2fs.
 
-> Also do you want this sent as fix on top of my FF-A PR now or after -rc1 ?
+* Use case (from the original cover letter)
 
-Earlier would be better I think. I usually have one set of
-bugfixes before rc1 even if it doesn't make it into the
-first set of branches.
+The use case for this feature is similar to the use case for ext4, to
+better support compatibility layers (like Wine), particularly in
+combination with sandboxing/container tools (like Flatpak). Those
+containerization tools can share a subset of the host filesystem with an
+application. In the container, the root directory and any parent
+directories required for a shared directory are on tmpfs, with the
+shared directories bind-mounted into the container's view of the
+filesystem.
 
-      Arnd
+If the host filesystem is using case-insensitive directories, then the
+application can do lookups inside those directories in a
+case-insensitive way, without this needing to be implemented in
+user-space. However, if the host is only sharing a subset of a
+case-insensitive directory with the application, then the parent
+directories of the mount point will be part of the container's root
+tmpfs. When the application tries to do case-insensitive lookups of
+those parent directories on a case-sensitive tmpfs, the lookup will
+fail.
+
+For example, if /srv/games is a case-insensitive directory on the host,
+then applications will expect /srv/games/Steam/Half-Life and
+/srv/games/steam/half-life to be interchangeable; but if the
+container framework is only sharing /srv/games/Steam/Half-Life and
+/srv/games/Steam/Portal (and not the rest of /srv/games) with the
+container, with /srv, /srv/games and /srv/games/Steam as part of the
+container's tmpfs root, then making /srv/games a case-insensitive
+directory inside the container would be necessary to meet that
+expectation.
+
+* Testing
+
+I send a patch for xfstests to enable the casefold test (generic/556) for
+tmpfs.[1] The test succeed.
+
+You can test this patchset using:
+
+  sudo mount -t tmpfs -o casefold tmpfs mnt/
+
+And making a dir case-insensitive:
+
+  mkdir mnt/dir
+  chattr +F mnt/dir
+
+[0] https://lore.kernel.org/linux-fsdevel/20210323195941.69720-1-andrealmeid@collabora.com/
+[1] https://lore.kernel.org/fstests/20240823173008.280917-1-andrealmeid@igalia.com/
+
+Changes in v4:
+ - Got rid of shmem_lookup() and changed simple_lookup() to cover casefold use
+   case
+ - Simplified shmem_parse_opt_casefold() and how it handle the lastest_version
+   option
+ - Simplified utf8_parse_version() to return the version in one variable instead
+   of three
+ - Rewrote part of the documentation patch
+ - Make sure that d_sb->s_d_op is set during mount time
+ - Moved `generic_ci_always_del_dentry_ops` to mm/shmem.c as `shmem_ci_dentry_ops`
+v3: https://lore.kernel.org/lkml/20240905190252.461639-1-andrealmeid@igalia.com/
+
+Changes in v3:
+ - Renamed utf8_check_strict_name() to generic_ci_validate_strict_name(), and
+ reworked the big if(...) to be more clear
+ - Expose the latest UTF-8 version in include/linux/unicode.h
+ - shmem_lookup() now sets d_ops
+ - reworked shmem_parse_opt_casefold()
+ - if `mount -o casefold` has no param, load latest UTF-8 version
+ - using (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir) when possible
+ - Fixed bug when adding a non-casefold flag in a non-empty dir
+v2: https://lore.kernel.org/lkml/20240902225511.757831-1-andrealmeid@igalia.com/
+
+Changes in v2:
+ - Found and fixed a bug in utf8_load()
+ - Created a helper for checking strict file names (Krisman)
+ - Merged patch 1/ and 3/ together (Krisman)
+ - Reworded the explanation about d_compare (Krisman)
+ - Removed bool casefold from shmem_sb_info (Krisman)
+ - Reworked d_add(dentry, NULL) to be called as d_add(dentry, inode) (Krisman)
+ - Moved utf8_parse_version to common unicode code
+ - Fixed some smatch/sparse warnings (kernel test bot/Dan Carpenter)
+v1: https://lore.kernel.org/linux-fsdevel/20240823173332.281211-1-andrealmeid@igalia.com/
+
+André Almeida (10):
+  libfs: Create the helper function generic_ci_validate_strict_name()
+  ext4: Use generic_ci_validate_strict_name helper
+  unicode: Recreate utf8_parse_version()
+  unicode: Export latest available UTF-8 version number
+  libfs: Check for casefold dirs on simple_lookup()
+  libfs: Export generic_ci_ dentry functions
+  tmpfs: Add casefold lookup support
+  tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
+  tmpfs: Expose filesystem features via sysfs
+  docs: tmpfs: Add casefold options
+
+ Documentation/filesystems/tmpfs.rst |  24 +++
+ fs/ext4/namei.c                     |   3 +-
+ fs/libfs.c                          |  50 +++++-
+ fs/unicode/utf8-core.c              |  26 ++++
+ fs/unicode/utf8-selftest.c          |   3 -
+ include/linux/fs.h                  |   4 +
+ include/linux/shmem_fs.h            |   6 +-
+ include/linux/unicode.h             |   4 +
+ mm/shmem.c                          | 226 ++++++++++++++++++++++++++--
+ 9 files changed, 325 insertions(+), 21 deletions(-)
+
+-- 
+2.46.0
+
 
