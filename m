@@ -1,241 +1,295 @@
-Return-Path: <linux-kernel+bounces-324819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25728975150
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A37975161
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5661C22B8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7385D28A686
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7002218FDB7;
-	Wed, 11 Sep 2024 11:59:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F74188A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827EB185B4C;
+	Wed, 11 Sep 2024 12:00:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EF913AA3E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726055945; cv=none; b=KQwe1IAb15mMF+raEmIqjnx7ZkfMqzc7Jfkg2NWcJyQSRUon3/pyayXTdXnvGrwu10hMkHkl43aCO/CBfmGUoGv0J+zuXsyN/IKvv3/f4+9XN26kvCuw9t0QUeboTsWgPicPCXNKFcoI3vPTpKKIt3btVdlVall1WFe3IgaSKno=
+	t=1726056047; cv=none; b=QeJt9YxxSDqlrOiD+bpxHzMTF8HuuRgDYkeyTACKUU0lttadeHrthsa1Bd/rDS92chY5DFzY7foo33P6gCl42qSqv+zk1Ie0+QXiyJ+DsHIyFVMI47fwHDvmbzHXirWuP2DZ8g/nlmeBdO0m3IZ/namM6iddTOK+UXYx7M0P0eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726055945; c=relaxed/simple;
-	bh=NifjeCvlZVqg97uNGgboAvL1IA6oePHO7ESk0KwvNsQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fvutyETUlcmFcBKq+BvNg8fK3PvV0fw8ekPfmoX1JdVip2dXr+Gv7kGl4FlWC8AgjDfrNE4Bm565hITnN+girPKYSloUNEcz6dJ8/+wiTyHXWvG1W7u0LSHXqf4ptRm+7cxhQWE/mDjbNKJmdO0157R62/gVpSi7IQeVP3J2iao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cf28c74efso643745239f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726055943; x=1726660743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5946hHtUqB/3tC2yS+C03djbz5yRP603bjVzmXcLlxQ=;
-        b=gc6qZRYZHF8elVtSWlOgSi9MxJ+2AYGWuwl3+lyKsGrZ0cFx/ePRIyVlNp72KJtoju
-         A4RXPkn4Uo7PMiTm0nuSdL+Pj+UQzVhCBrWa976a8l45t/eQZGEkqcnX/cmuDYCCs8jM
-         XKaq8YToqOLGv2tv38K46Euj9nets0Lk2gw9qYI6o0k6nyJhJXogc4LpD633ium4lVAu
-         ZsVJ1OxSx9SvANtEHWJwmt0Ozntej1vWflRmKuYYa4YaJD92fTRXxKx/GegBGoqN8KEg
-         q4UK3894ayWUSUbCY3ZxSIjNleVuwxrllLb481HQv0r3iBmdPiFK/MjSWKCU74EQ6IUG
-         IqQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwDJiHCNvb7GqsMa6capvrfghjpWD1AMv2Wt17cnIZQDPa62T4xn5rCfNbBxrlEIG1B+kp6qwFvVuvvEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDSQwG0Eutz0/DsYrDu5xZ9Vx8X4N1SSoD9zgAd19SVZt+BREc
-	YewvRPBZHpro1Aum0mcyRv8apDUZsaW2XUodYxPU392L89bglbVC44zh8LqR7f0hyjg41vpcati
-	kF3+Ku63pajeQZ8HjrTGM/O612BCnXM/QI3TJx3GmsD0RaMQveA2zgoA=
-X-Google-Smtp-Source: AGHT+IGY9fIZvRNYtDPnsOBBolZJbEVa5WKclwkvY8HBMXT/lz6lWg12LWKA6msryGD0ye7JQdfaEDHu+gPVOuAgju4uOqH1LAui
+	s=arc-20240116; t=1726056047; c=relaxed/simple;
+	bh=hQguWJEfBWPr8JBEnyBpS+c5eZWedehS612Nu7YiuB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hv7sA3PcW8JGvKX9P4mP5XgGLkOqWhZrHRaW73HgqJFFFim7wXILFDiuhL2kNUn4y46NVIoHkmEZVeZpD8grdqrQQgUQGk9rD4jKqE/zfjWPxCt1Rivuk2OqddYQZh3uvlYW45T3J15//2qrm9+NyqDwq++H2+25FeaWL8LR0GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2D681007;
+	Wed, 11 Sep 2024 05:01:12 -0700 (PDT)
+Received: from [10.162.40.31] (e116581.arm.com [10.162.40.31])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B2A13F66E;
+	Wed, 11 Sep 2024 05:00:34 -0700 (PDT)
+Message-ID: <552e9b77-c1ea-4a60-8434-e360ca692f1f@arm.com>
+Date: Wed, 11 Sep 2024 17:30:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fce:b0:39d:300f:e8ff with SMTP id
- e9e14a558f8ab-3a052238407mr191678825ab.6.1726055943216; Wed, 11 Sep 2024
- 04:59:03 -0700 (PDT)
-Date: Wed, 11 Sep 2024 04:59:03 -0700
-In-Reply-To: <20240911112958.2845-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005bb3170621d6b746@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_connect (2)
-From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in hci_send_acl
-
-Bluetooth: Wrong link type (-22)
-Bluetooth: Wrong link type (-71)
-==================================================================
-BUG: KASAN: slab-use-after-free in hci_send_acl+0xc03/0xd30 net/bluetooth/hci_core.c:3230
-Read of size 8 at addr ffff8880252f2018 by task kworker/u9:5/6019
-
-CPU: 0 UID: 0 PID: 6019 Comm: kworker/u9:5 Not tainted 6.11.0-rc7-syzkaller-00020-g8d8d276ba2fb-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci2 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- hci_send_acl+0xc03/0xd30 net/bluetooth/hci_core.c:3230
- l2cap_send_cmd+0x6e5/0x920 net/bluetooth/l2cap_core.c:973
- l2cap_sig_send_rej net/bluetooth/l2cap_core.c:5512 [inline]
- l2cap_sig_channel net/bluetooth/l2cap_core.c:5548 [inline]
- l2cap_recv_frame+0x21db/0x8f20 net/bluetooth/l2cap_core.c:6827
- l2cap_recv_acldata+0xc03/0xf00 net/bluetooth/l2cap_core.c:7524
- hci_acldata_packet net/bluetooth/hci_core.c:3793 [inline]
- hci_rx_work+0xabe/0x1630 net/bluetooth/hci_core.c:4031
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 6020:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
- kmalloc_noprof include/linux/slab.h:681 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- hci_chan_create+0xa6/0x3d0 net/bluetooth/hci_conn.c:2732
- l2cap_conn_add.part.0+0x1a/0xa60 net/bluetooth/l2cap_core.c:6866
- l2cap_conn_add net/bluetooth/l2cap_core.c:69 [inline]
- l2cap_connect_cfm+0x428/0xf80 net/bluetooth/l2cap_core.c:7247
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- hci_remote_features_evt+0x548/0x9e0 net/bluetooth/hci_event.c:3721
- hci_event_func net/bluetooth/hci_event.c:7446 [inline]
- hci_event_packet+0x9eb/0x1180 net/bluetooth/hci_event.c:7498
- hci_rx_work+0x2c6/0x1630 net/bluetooth/hci_core.c:4026
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 5281:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
- __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2256 [inline]
- slab_free mm/slub.c:4477 [inline]
- kfree+0x12a/0x3b0 mm/slub.c:4598
- hci_chan_list_flush+0x81/0xf0 net/bluetooth/hci_conn.c:2772
- hci_conn_cleanup net/bluetooth/hci_conn.c:150 [inline]
- hci_conn_del+0x1cc/0xdb0 net/bluetooth/hci_conn.c:1162
- hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
- abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2917
- hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff8880252f2000
- which belongs to the cache kmalloc-128 of size 128
-The buggy address is located 24 bytes inside of
- freed 128-byte region [ffff8880252f2000, ffff8880252f2080)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880252f2900 pfn:0x252f2
-flags: 0xfff00000000200(workingset|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000200 ffff88801ac41a00 ffffea00007ba290 ffffea00008abdd0
-raw: ffff8880252f2900 000000000010000c 00000001fdffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6020, tgid 6020 (kworker/u9:6), ts 135162004436, free_ts 135147554210
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1500
- prep_new_page mm/page_alloc.c:1508 [inline]
- get_page_from_freelist+0x1351/0x2e50 mm/page_alloc.c:3446
- __alloc_pages_noprof+0x22b/0x2460 mm/page_alloc.c:4702
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x4e/0xf0 mm/slub.c:2325
- allocate_slab mm/slub.c:2488 [inline]
- new_slab+0x84/0x260 mm/slub.c:2541
- ___slab_alloc+0xdac/0x1870 mm/slub.c:3727
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3817
- __slab_alloc_node mm/slub.c:3870 [inline]
- slab_alloc_node mm/slub.c:4029 [inline]
- __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4188
- kmalloc_noprof include/linux/slab.h:681 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- hci_chan_create+0xa6/0x3d0 net/bluetooth/hci_conn.c:2732
- l2cap_conn_add.part.0+0x1a/0xa60 net/bluetooth/l2cap_core.c:6866
- l2cap_conn_add net/bluetooth/l2cap_core.c:69 [inline]
- l2cap_connect_cfm+0x428/0xf80 net/bluetooth/l2cap_core.c:7247
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- hci_remote_features_evt+0x548/0x9e0 net/bluetooth/hci_event.c:3721
- hci_event_func net/bluetooth/hci_event.c:7446 [inline]
- hci_event_packet+0x9eb/0x1180 net/bluetooth/hci_event.c:7498
- hci_rx_work+0x2c6/0x1630 net/bluetooth/hci_core.c:4026
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-page last free pid 5597 tgid 5597 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1101 [inline]
- free_unref_folios+0x9e9/0x1390 mm/page_alloc.c:2667
- folios_put_refs+0x560/0x760 mm/swap.c:1039
- free_pages_and_swap_cache+0x36d/0x510 mm/swap_state.c:332
- __tlb_batch_free_encoded_pages+0xf9/0x290 mm/mmu_gather.c:136
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu mm/mmu_gather.c:373 [inline]
- tlb_finish_mmu+0x168/0x7b0 mm/mmu_gather.c:465
- exit_mmap+0x3d1/0xb20 mm/mmap.c:3425
- __mmput+0x12a/0x480 kernel/fork.c:1345
- mmput+0x62/0x70 kernel/fork.c:1367
- exit_mm kernel/exit.c:571 [inline]
- do_exit+0x9bf/0x2bb0 kernel/exit.c:869
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1040
- x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff8880252f1f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880252f1f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880252f2000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff8880252f2080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880252f2100: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
-==================================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: Abstract THP allocation
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240911065600.1002644-1-dev.jain@arm.com>
+ <20240911065600.1002644-2-dev.jain@arm.com>
+ <f610e933-278e-4f95-a363-8f023a5e7aa9@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <f610e933-278e-4f95-a363-8f023a5e7aa9@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-Tested on:
+On 9/11/24 14:57, David Hildenbrand wrote:
+> On 11.09.24 08:55, Dev Jain wrote:
+>> In preparation for the second patch, abstract away the THP allocation
+>> logic present in the create_huge_pmd() path, which corresponds to the
+>> faulting case when no page is present.
+>>
+>> There should be no functional change as a result of applying
+>> this patch.
+>>
+>
+> Hi,
+>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
+>>   1 file changed, 67 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 67c86a5d64a6..b96a1ff2bf40 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -943,47 +943,88 @@ unsigned long thp_get_unmapped_area(struct file 
+>> *filp, unsigned long addr,
+>>   }
+>>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>>   -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>> -            struct page *page, gfp_t gfp)
+>> +static struct folio *pmd_thp_fault_alloc(gfp_t gfp, struct 
+>> vm_area_struct *vma,
+>> +                     unsigned long haddr, unsigned long addr)
+>
+> I suggest calling this something like "vma_alloc_anon_folio_pmd()"? 
+> Then it's more consistent with vma_alloc_folio().
+>
+> Also, likely we should just only pass in "addr" and calculate "haddr" 
+> ourselves, it's cheap and reduces the number of function parameters.
 
-commit:         8d8d276b Merge tag 'trace-v6.11-rc6' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11556100580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28869f34c32848cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=162a07c7980000
+Makes sense, thanks.
+>
+>>   {
+>> -    struct vm_area_struct *vma = vmf->vma;
+>> -    struct folio *folio = page_folio(page);
+>> -    pgtable_t pgtable;
+>> -    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> -    vm_fault_t ret = 0;
+>> +    const int order = HPAGE_PMD_ORDER;
+>> +    struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, 
+>> true);
+>>   -    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>> +    if (unlikely(!folio)) {
+>> +        count_vm_event(THP_FAULT_FALLBACK);
+>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> +        goto out;
+>> +    }
+>>   +    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>>       if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
+>>           folio_put(folio);
+>>           count_vm_event(THP_FAULT_FALLBACK);
+>>           count_vm_event(THP_FAULT_FALLBACK_CHARGE);
+>> -        count_mthp_stat(HPAGE_PMD_ORDER, 
+>> MTHP_STAT_ANON_FAULT_FALLBACK);
+>> -        count_mthp_stat(HPAGE_PMD_ORDER, 
+>> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>> -        return VM_FAULT_FALLBACK;
+>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+>> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>> +        goto out;
+>>       }
+>>       folio_throttle_swaprate(folio, gfp);
+>>   -    pgtable = pte_alloc_one(vma->vm_mm);
+>> -    if (unlikely(!pgtable)) {
+>> -        ret = VM_FAULT_OOM;
+>> -        goto release;
+>> -    }
+>> -
+>> -    folio_zero_user(folio, vmf->address);
+>> +    folio_zero_user(folio, addr);
+>>       /*
+>>        * The memory barrier inside __folio_mark_uptodate makes sure that
+>>        * folio_zero_user writes become visible before the set_pmd_at()
+>>        * write.
+>>        */
+>>       __folio_mark_uptodate(folio);
+>> +out:
+>> +    return folio;
+>> +}
+>> +
+>> +static void __pmd_thp_fault_success_stats(struct vm_area_struct *vma)
+>> +{
+>> +    count_vm_event(THP_FAULT_ALLOC);
+>> +    count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
+>> +    count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>> +}
+>
+> Why isn't that moved into map_pmd_thp()
+>
+> Note that in this patch you do:
+>
+> map_pmd_thp(folio, vmf, vma, haddr);
+> spin_unlock(vmf->ptl);
+> __pmd_thp_fault_success_stats(vma);
+>
+> But in patch #2
+>
+> map_pmd_thp(folio, vmf, vma, haddr);
+> __pmd_thp_fault_success_stats(vma);
+> goto unlock;
+> release:
+>     folio_put(folio);
+> unlock:
+>     spin_unlock(vmf->ptl);
 
+Yes, while writing it I knew about this inconsistency, but I wanted
+to reduce latency by dropping the lock before. But in do_huge_zero_wp_pmd(),
+I couldn't figure out a way to call the stat function after dropping the 
+lock,
+without I guess, introducing too many labels and goto jumps and the 
+like. In the
+current code, the lock gets dropped first.
+
+>
+> Please make that consistent, meaning:
+>
+> 1) Inline __pmd_thp_fault_success_stats() into map_pmd_thp(). No need 
+> to have the separated out.
+>
+> 2) Either do the PTL unlocking in __pmd_thp_fault_success_stats() or in
+>    the caller. In the caller is likely easiest. Adjusting the counters
+>    should be cheap, if not we could revisit this later with real data.
+
+I will then call it in map_pmd_thp(), that is cleaner...I did find 
+occurrences
+of these stat computations after taking the lock, for example, in 
+do_swap_page():
+count_vm_event(PGMAJFAULT)
+so I guess it should be alright.
+>
+>> +
+>> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>> +            struct vm_area_struct *vma, unsigned long haddr)
+>> +{
+>> +    pmd_t entry;
+>> +
+>> +    entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>> +    entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>> +    folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>> +    folio_add_lru_vma(folio, vma);
+>> +    set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>> +    update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>
+> It's quite weird to see a mixture of haddr and vmf->address, and 
+> likely this mixture is wrong or not not required.
+>
+> Looking at arc's update_mmu_cache_pmd() implementation, I cannot see 
+> how passing in the unaligned address would do the right thing. But 
+> maybe arc also doesn't trigger that code path ... who knows :)
+>
+>
+> Staring at some other update_mmu_cache_pmd() users, it's quite 
+> inconsistent. Primarily only do_huge_pmd_numa_page() and 
+> __do_huge_pmd_anonymous_page() use the unaligned address. The others 
+> seem to use the aligned address ... as one would expect when modifying 
+> a PMD.
+>
+>
+> I suggest to change this function to *not* pass in the vmf, and rename 
+> it to something like:
+>
+> static void folio_map_anon_pmd(struct folio *folio, struct 
+> vm_area_struct *vma, pmd_t *pmd, unsigned long haddr)
+>
+> Then use haddr also to do the update_mmu_cache_pmd().
+
+The code I changed, already was passing vmf->address to 
+update_mmu_cache_pmd().
+I did not change any of the haddr and vmf->address semantics, so really 
+can't comment
+on this.
+I agree with the name change; vmf will be required for 
+set_pmd_at(vmf->pmd), so I should
+just pass pmd?
+>
+>> +    add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>> +    mm_inc_nr_ptes(vma->vm_mm);
+>> +}
+>> +
+>> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>> +{
+>> +    struct vm_area_struct *vma = vmf->vma;
+>> +    struct folio *folio;
+>> +    pgtable_t pgtable;
+>> +    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> +    vm_fault_t ret = 0;
+>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
+>
+> Nit: While at it, try to use reverse christmas-tree where possible, 
+> makes things more reasible. You could make haddr const.
+>
+> struct vm_area_struct *vma = vmf->vma;
+> unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+> gfp_t gfp = vma_thp_gfp_mask(vma);
+> struct folio *folio;
+> vm_fault_t ret = 0;
+
+Okay.
+> ...
+>
+>> +
+>> +    folio = pmd_thp_fault_alloc(gfp, vma, haddr, vmf->address);
+>> +    if (unlikely(!folio)) {
+>> +        ret = VM_FAULT_FALLBACK;
+>> +        goto release;
+>> +    }
+>> +
+>> +    pgtable = pte_alloc_one(vma->vm_mm);
+>> +    if (unlikely(!pgtable)) {
+>> +        ret = VM_FAULT_OOM;
+>> +        goto release;
+>> +    }
+>>         vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>> +
+>
+> Nit Unrelated change.
+
+Are you asking me to align this line with the below line?
+>
+>>       if (unlikely(!pmd_none(*vmf->pmd))) {
+>>           goto unlock_release;
+>
+>
 
