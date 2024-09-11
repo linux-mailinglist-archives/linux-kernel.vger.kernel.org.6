@@ -1,244 +1,229 @@
-Return-Path: <linux-kernel+bounces-324190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CDF97495B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FAB97495C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F331F26BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CDF1C24BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAE755897;
-	Wed, 11 Sep 2024 04:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="DEH+eF2a";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LX9q9qim"
-Received: from flow4-smtp.messagingengine.com (flow4-smtp.messagingengine.com [103.168.172.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF044C627;
+	Wed, 11 Sep 2024 04:46:05 +0000 (UTC)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBFB39AEB;
-	Wed, 11 Sep 2024 04:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46198F6C;
+	Wed, 11 Sep 2024 04:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726029822; cv=none; b=R6jy5M62GbZOXHuLgQnLxpI0drWy5EyVgoy97TdmotVkTw2XWJinjHNtqwVQ0lLtsaQ3dAUJ6mBiCdxxy52UuP8NqlCrpv6rXNwrft9zGDQdHCVC13B7SEjIxM978ibcInMTAxWiXXG41kNewvLwq86jUi7+GEeh+GiTmvQOVXo=
+	t=1726029964; cv=none; b=BOd3JrgBAtwsXDroSTbopCNEKvR4U44iYrnGzDqGsPys7bZSPEq0YH4yoUQ3JH7KTp4SgAjTfaR1Q3MBrrD/B+TZDR24/E11huvrRDRgPe06vhnWHkmF0QfvBhkaOAElukMiLpOttsG37uAqTTCm8t0JxF6axhybPtFgp7k7hi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726029822; c=relaxed/simple;
-	bh=5WJmlUpv4uarehRVhZPvsD4DxEp0exdQL0oR9rX1viQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BSrlA3C0JUxUSYkcYy1Rt5TyqUBTqQchkps3RiL5R+t/7WuYFYLSrPDIKLIfTyHAPD2idICjV455kzB2N29EWiAkwZr148DNlatECOx762qpzY5jj4rmOEQdBul/ljFCtK+TjMQgSjMlbqep/zWRp7iytSlSxPqrXQ7nmWeEyMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=DEH+eF2a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LX9q9qim; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailflow.phl.internal (Postfix) with ESMTP id 2F9A22002F0;
-	Wed, 11 Sep 2024 00:43:39 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-03.internal (MEProxy); Wed, 11 Sep 2024 00:43:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1726029819;
-	 x=1726037019; bh=U9YHIYH7MDBn8W8m5ipffYcdOZHKNXYCU4csAZFBp0E=; b=
-	DEH+eF2apJ98APgQPYNh6XK2m04O63eL+8sF5i84xFMQzIqX/d+dYYEOy+GbalG9
-	RBoxkO+Wb7x6qitIUKJfeuVi/h/wl5tkvofP7pli+zyRRDT9zlxRZ7yDEL799Tkq
-	sjNOJ9y+HDMgiijlJIfLpXFqsQtDVJZ0UTpvZ96ySqIwFcqYPyUKy+MqiuqqPeJf
-	sfgp5vjcA/1UPX74v7G5dTTJo/VxKdi6vo8H3NmYHS3R9aAXYT8aQKiKlxhxw8/a
-	CwnWM5ne6295Mo5HER9qsKzdEzbh4W/VE6DodyQA/352i6exJrDKIo/U0VXlBL8b
-	1jhe26IDKj7xjGuPndO0jw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726029819; x=
-	1726037019; bh=U9YHIYH7MDBn8W8m5ipffYcdOZHKNXYCU4csAZFBp0E=; b=L
-	X9q9qimlwytCr3wy6RA8JWzTHF1PgCsvxU860sGMMA79qsULmzRRCwAFjkMCtXJB
-	+Xmr3JRi7DJEI9BAos8cPR3bXS90IgMJ4tAXw8LB0xLWFTSqOLwdcvYp2+TKSrPQ
-	4kfZm1speIONlYJjI7z0S0kgAk5NT1zayt5xe+gmn1t4Uex0fMCJZ40LOOHlxvw5
-	mDiWbZMW6AqNaXWftwSzHf8CnxF5IOyE3bquDZDGJSe8YGUSc078T08uRmKpVJ+M
-	TlY147lf0miNsRTSq9+BKpBlBizRDuTfsc8+ugJ2fSqkq8nINU3QusnKkFU1+bXQ
-	h0AMY7dG5p3bNeu3i+JBA==
-X-ME-Sender: <xms:-h_hZnVHLkV6mN97PjZRXqceB6Z5mDZ2YJSLeru-OZkHO0vbuMi5Kw>
-    <xme:-h_hZvmmuaYz2KzfoieYhR2XT1nUh2i9uiLgIJEH2U5iZQhBNs1qjtqTnQGdkyz2E
-    2oh9v2febItXn-UyA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejtddgkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefk
-    jghfufgtgfesthhqredtredtjeenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugi
-    husegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpefgleeitefgvefffedufefh
-    ffdtieetgeetgeegheeufeeufeekgfefueffvefhffenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggp
-    rhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhihkhholh
-    grlhesfhgsrdgtohhmpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvgdprhgt
-    phhtthhopegrlhgvgigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprh
-    gtphhtthhopegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghp
-    thhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehjohhhnhdrfh
-    grshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopehhrgholhhuohesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvg
-    htpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:-h_hZjYm_JsKU-SWJKhPpHRf7HWtCOSPBCgDn8nzsSGKcm_vp1fIFQ>
-    <xmx:-h_hZiU1XEdfk4qEEiTkQhBsliDp5bOXeBQ6jnFiE8rl1xpZj55SFQ>
-    <xmx:-h_hZhmjYYpmDMXp2qtu_tZQzOf6Tm1OUPntjnpJnzKBZ_fagGcxUQ>
-    <xmx:-h_hZveDDS4Ebten0B46D8YD2SXxZ72BGY9TvNJrMPJY1BrQkAddgQ>
-    <xmx:-x_hZspB9AnDHwaJNIMKwExFdXvRGlhbATh1-oGx7fGBCDDPhr5WxSF7>
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 732FC18A0065; Wed, 11 Sep 2024 00:43:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726029964; c=relaxed/simple;
+	bh=Lq1oXz0gkmgIU1u6krv/9+X0gSEq95JULA+kVd5E14I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SHx7HX8yLQa3soIZf+1m0WvfWeC1oAtnbBlnTEmZn7/zb4GFtkjNAOEIsmpySagluBAe48VfbHvGmEcTAKcOQ4iK2MyDufS95XnbFhfiUE0MXOELh2S5qTEYvdIjzaffl654RnJEGY99kx7XCFHNWD2DbpohFdedfG5IgLfNdRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso5297776a12.1;
+        Tue, 10 Sep 2024 21:46:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726029962; x=1726634762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eUz8ozbOx96dq0NpB/mix4VjJOdTobXha/wl0Htocfk=;
+        b=XKRz0IdDEuPNCmQp8QNQiwv/zUs95YJ/6QTzLb4CgkiWqlJwhdS90pzEkPSM40lHmR
+         h3gmPKC1qU9C0Jg9MdOlux0QMTIZxOmbxxBvnxb/lGJVZ2Kko7VF9fCpkiST1nxmIJxK
+         boRpaP6I5Ri3JRYP4khA/o/DSLF3zRCLjxjOJWw+hoLgNoOjiO7uorK/AM5TB0N92hXo
+         6AnXALOwHPo/c4DoEVj+va87rDTkd4f2Dk9PhX5xyMFKcHNiKOIWkbNmhtjSriNM0DhK
+         2CGVinllzpC/cl7G5i65h+VAeJ8m5J1hGSkeFV5lA6Q0oK6kukZ7O4HAggiAdya4VKI9
+         dD+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhMXUm+DKl/pHKp8JVYpr2rg4QCBaa7pjchrdajIs1DJcLkUBFFTh2lnp9UEGKRGa+LbaA9I/ppXs0Sk63@vger.kernel.org, AJvYcCUuYKY8/uRzJYAYfddwU8qq39l1EoCJP8cRC8bbXyhDsPT2S36qhEPsjA4i01qfjG+G96r8dn9V0fXvryGfYy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3mdGZU3QM1KhXTub/lGt+Jgw/pr3zobwjz8cpO3iMnkYejWFX
+	3Oa4S/iY+aMjRI0kVwp7wCGKKx04bc4jJapLthYeJCs+aqnx59dwAxz+hy1VGz0aONPn++CpxKB
+	mrxNPtmaKVeT+qJIBGrOJUZn6RuVgBQbC
+X-Google-Smtp-Source: AGHT+IHQsP68oyoc64PQVzm920uafjXEnHkFGRdl+sDX53OEec/wkjt5bPatoI2rtQXfUx+AmXmZwIPMLF9MLe86q/4=
+X-Received: by 2002:a17:902:d4c2:b0:207:1828:3570 with SMTP id
+ d9443c01a7336-2074c379fe2mr39716155ad.0.1726029961878; Tue, 10 Sep 2024
+ 21:46:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 10 Sep 2024 21:43:18 -0700
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
- "Jesper Dangaard Brouer" <hawk@kernel.org>
-Cc: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>,
- "Eduard Zingerman" <eddyz87@gmail.com>,
- "Andrii Nakryiko" <andrii@kernel.org>,
- "Daniel Borkmann" <daniel@iogearbox.net>,
- "Alexei Starovoitov" <ast@kernel.org>, "Shuah Khan" <shuah@kernel.org>,
- "John Fastabend" <john.fastabend@gmail.com>,
- "Martin KaFai Lau" <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>,
- "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
- "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
- "Jiri Olsa" <jolsa@kernel.org>, "Mykola Lysenko" <mykolal@fb.com>,
- LKML <linux-kernel@vger.kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- "Kernel Team" <kernel-team@meta.com>
-Message-Id: <8a088e49-2b40-4a04-ae16-57cdddde09bc@app.fastmail.com>
-In-Reply-To: 
- <cz7qwrujjiunv3yydkfamfm5mkis5xdy4vg4odwatchjoaoolk@zzithxrzdxkv>
-References: 
- <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
- <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
- <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
- <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
- <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
- <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
- <rsdwvah5ov3itchsgkwgleihswoycoal5vjbeql2wbqoz5noiz@myk2atnnjaub>
- <CAEf4BzbKoyja2ErsusUcK8YaS1Rqm0VmBzwsNtQtM1-XHDhD7g@mail.gmail.com>
- <cz7qwrujjiunv3yydkfamfm5mkis5xdy4vg4odwatchjoaoolk@zzithxrzdxkv>
-Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming BPF_MAP_TYPE_RINGBUF from
- prog
-Content-Type: text/plain; charset=utf-8
+References: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr> <202409101729.C242EEC@keescook>
+In-Reply-To: <202409101729.C242EEC@keescook>
+From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
+Date: Wed, 11 Sep 2024 13:45:50 +0900
+Message-ID: <CAMZ6RqJ1N9E=yqJLcreVsqk5xtoHWQghBaezB+=TzjC3ChxxGA@mail.gmail.com>
+Subject: Re: [PATCH v2] overflow: optimize struct_size() calculation
+To: Kees Cook <kees@kernel.org>
+Cc: David Laight <David.Laight@aculab.com>, 
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-[cc Jesper]
-
-On Tue, Sep 10, 2024, at 8:31 PM, Daniel Xu wrote:
-> On Tue, Sep 10, 2024 at 05:39:55PM GMT, Andrii Nakryiko wrote:
->> On Tue, Sep 10, 2024 at 4:44=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wro=
-te:
->> >
->> > On Tue, Sep 10, 2024 at 03:21:04PM GMT, Andrii Nakryiko wrote:
->> > > On Tue, Sep 10, 2024 at 3:16=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz>=
- wrote:
->> > > >
->> > > >
->> > > >
->> > > > On Tue, Sep 10, 2024, at 2:07 PM, Daniel Xu wrote:
->> > > > > On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
->> > > > >> On Tue, Sep 10, 2024 at 11:36=E2=80=AFAM Alexei Starovoitov
->> > > > [...]
->> > > > >
->> > > > >>
->> > > > >> Also, Daniel, can you please make sure that dynptr we return=
- for each
->> > > > >> sample is read-only? We shouldn't let consumer BPF program a=
-bility to
->> > > > >> corrupt ringbuf record headers (accidentally or otherwise).
->> > > > >
->> > > > > Sure.
->> > > >
->> > > > So the sample is not read-only. But I think prog is prevented f=
-rom messing
->> > > > with header regardless.
->> > > >
->> > > > __bpf_user_ringbuf_peek() returns sample past the header:
->> > > >
->> > > >         *sample =3D (void *)((uintptr_t)rb->data +
->> > > >                            (uintptr_t)((cons_pos + BPF_RINGBUF_=
-HDR_SZ) & rb->mask));
->> > > >
->> > > > dynptr is initialized with the above ptr:
->> > > >
->> > > >         bpf_dynptr_init(&dynptr, sample, BPF_DYNPTR_TYPE_LOCAL,=
- 0, size);
->> > > >
->> > > > So I don't think there's a way for the prog to access the heade=
-r thru the dynptr.
->> > > >
->> > >
->> > > By "header" I mean 8 bytes that precede each submitted ringbuf re=
-cord.
->> > > That header is part of ringbuf data area. Given user space can set
->> > > consumer_pos to arbitrary value, kernel can return arbitrary part=
- of
->> > > ringbuf data area, including that 8 byte header. If that data is
->> > > writable, it's easy to screw up that header and crash another BPF
->> > > program that reserves/submits a new record. User space can only r=
-ead
->> > > data area for BPF ringbuf, and so we rely heavily on a tight cont=
-rol
->> > > of who can write what into those 8 bytes.
->> >
->> > Ah, ok. I think I understand.
->> >
->> > Given this and your other comments about rb->busy, what about enfor=
-cing
->> > bpf_user_ringbuf_drain() NAND mmap? I think the use cases here are
->> > different enough where this makes sense.
->>=20
->> You mean disabling user-space mmap()? TBH, I'd like to understand the
->> use case first before we make such decisions. Maybe what you need is
->> not really a BPF ringbuf? Can you give us a bit more details on what
->> you are trying to achieve?
+On Wed. 11 Sep. 2024 at 09:36, Kees Cook <kees@kernel.org> wrote:
+> On Tue, Sep 10, 2024 at 11:49:52AM +0900, Vincent Mailhol wrote:
+> > If the offsetof() of a given flexible array member (fam) is smaller
+> > than the sizeof() of the containing struct, then the struct_size()
+> > macro reports a size which is too big.
+> >
+> > This occurs when the two conditions below are met:
+> >
+> >   - there are padding bytes after the penultimate member (the member
+> >     preceding the fam)
+> >   - the alignment of the fam is less than or equal to the penultimate
+> >     member's alignment
+> >
+> > In that case, the fam overlaps with the padding bytes of the
+> > penultimate member. This behaviour is not captured in the current
+> > struct_size() macro, potentially resulting in an overestimated size.
+> >
+> > Below example illustrates the issue:
+> >
+> >   struct s {
+> >       u64 foo;
+> >       u32 count;
+> >       u8 fam[] __counted_by(count);
+> >   };
+> >
+> > Assuming a 64 bits architecture:
+> >
+> >   - there are 4 bytes of padding after s.count (the penultimate
+> >     member)
+> >   - sizeof(struct s) is 16 bytes
+> >   - the offset of s.fam is 12 bytes
+> >   - the alignment of s.fam is 1 byte
+> >
+> > The sizes are as below:
+> >
+> >    s.count    current struct_size()   actual size
+> >   ---------------------------------------------------------------------=
+--
+> >    0          16                      16
+> >    1          17                      16
+> >    2          18                      16
+> >    3          19                      16
+> >    4          20                      16
+> >    5          21                      17
+> >    .          .                       .
+> >    .          .                       .
+> >    .          .                       .
+> >    n          sizeof(struct s) + n    max(sizeof(struct s),
+> >                                           offsetof(struct s, fam) + n)
+> >
+> > Change struct_size() from this pseudo code logic:
+> >
+> >   sizeof(struct s) + sizeof(*s.fam) * s.count
+> >
+> > to that pseudo code logic:
+> >
+> >   max(sizeof(struct s), offsetof(struct s, fam) + sizeof(*s.fam) * s.co=
+unt)
+> >
+> > Here, the lowercase max*() macros can cause struct_size() to return a
+> > non constant integer expression which would break the DEFINE_FLEX()
+> > macro by making it declare a variable length array. Because of that,
+> > use the unsafe MAX() macro only if the expression is constant and use
+> > the safer max() otherwise.
+> >
+> > Reference: ISO/IEC 9899:2018 =C2=A76.7.2.1 "Structure and union specifi=
+ers" =C2=B618
+> >
+> > Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> > ---
+> >
+> > I also tried to think of whether the current struct_size() macro could
+> > be a security issue.
+> >
+> > The only example I can think of is if someone manually allocates the
+> > exact size but then use the current struct_size() macro.
+> >
+> > For example (reusing the struct s from above):
+> >
+> >   u32 count =3D 5;
+> >   struct s *s =3D kalloc(offsetof(typeof(*s), fam) + count);
+> >   s->count =3D count;
+> >   memset(s, 0, struct_size(s, fam, count)); /* 4 bytes buffer overflow =
+*/
+> >
+> > If we have concerns that above pattern may actually exist, then this
+> > patch should also go to stable. I personally think that the above is a
+> > bit convoluted and, as such, I only suggest this patch to go to next.
 >
-> BPF cpumap, under the hood, has one MPSC ring buffer (ptr_ring) for ea=
-ch
-> entry in the cpumap. When a prog redirects to an entry in the cpumap,
-> the machinery queues up the xdp frame onto the destination CPU ptr_rin=
-g.
-> This can occur on any cpu, thus multi-producer. On processing side,
-> there is only the kthread created by the cpumap entry and bound to the
-> specific cpu that is consuming entries. So single consumer.
+> Yeah, this "over-estimation" has come up before, and my thinking as been
+> that while the above situation is certainly possible (but unlikely),
+> I've worried that the reverse situation (after this patch) is
+> potentially worse, where we allocate very precisely, but then manually
+> index too far:
 >
-> Goal is to track the latency overhead added from ptr_ring and the
-> kthread (versus softirq where is less overhead). Ideally we want p50,
-> p90, p95, p99 percentiles.
->
-> To do this, we need to track every single entry enqueue time as well as
-> dequeue time - events that occur in the tail are quite important.
->
-> Since ptr_ring is also a ring buffer, I thought it would be easy,
-> reliable, and fast to just create a "shadow" ring buffer. Every time
-> producer enqueues entries, I'd enqueue the same number of current
-> timestamp onto shadow RB. Same thing on consumer side, except dequeue
-> and calculate timestamp delta.
->
-> I was originally planning on writing my own lockless ring buffer in pu=
-re
-> BPF (b/c spinlocks cannot be used w/ tracepoints yet) but was hoping I
-> could avoid that with this patch.
+>         struct s *s =3D kmalloc(struct_size(s, fam, count), gfp);
+>         typeof(*s->fam) *element;
+>         element =3D (void *)s + sizeof(*s);
+>         for (i =3D 0; i < count; i++)
+>                 element[i] =3D ...;
 
-[...]
+To me, this pointer arithmetic is just a bug. Anyone in his right mind
+would write:
 
-Alternatively, could add a u64 timestamp to xdp_frame, which makes all
-this tracking inline (and thus more reliable). But I'm not sure how prec=
-ious
-the space in that struct is - I see some references online saying most d=
-rivers
-save 128B headroom. I also see:
+        typeof(*s->fam) *element =3D s->fam;
 
-        #define XDP_PACKET_HEADROOM 256
+When I compare your example to my example, I think that both are
+convoluted and unrealistic but with the *huge* difference that:
 
-Could probably amortize the timestamp read by setting it in
-bq_flush_to_queue().
+ - in my example, the code logic is correct and the thing breaks
+   because of the current overestimation in struct_size(). See the
+   clang documentation:
+
+      https://clang.llvm.org/docs/AttributeReference.html#counted-by
+
+    The clang guys are using the same calculation as in my patch. So I
+    can think of a world in which someone with good intent would copy
+    this example, and then (for example because of a collaborative
+    work), someone else would use the struct_size() to do a copy or a
+    memset resulting in an out of bound as illustrated  in my example.
+
+ - in your example, the code is incorrect. If we start to apply that
+   "what if users do random pointer arithmetic" reasoning, then
+   anything can be proven to be a security risk.
+
+To repeat, I think that my example was convoluted, but I see yours as
+even more convoluted.
+
+So, with this said, what do you think is the good trade-off? Return
+the exact size so that code with correct logic works as intended or
+keep the extra bytes in case someone does some crazy pointer
+arithmetic?
+
+> And for a max 7 byte savings, I'm concerned we can get bit much worse in
+> the above situation. It *should* be unlikely, but I've especially seen a
+> lot of manually calculated games especially for structs that have
+> effectively multiple trailing flexible arrays (wifi likes to do this,
+> for example).
+
+How does a struct with "multiple trailing flexible arrays" look like? By
+the C standard, structures can only have one single fam, so this isn't
+something I am aware of.
+
+Would the struct_size() macro still be relevant for those "multiple
+fam" structures or would the structure size also be hand calculated?
+Isn't this argument out of scope of this patch discussion?
+
+> So while I don't have very concrete evidence, my sensation is that we're
+> in a more defensive position leaving it over-estimated.
+
+So far, I think that my example is more concrete than your pointer
+arithmetic argument. Not by a lot, and this is why I just put that
+security argument at the end after the --- cutter.
+
+
+Yours sincerely,
+Vincent Mailhol
 
