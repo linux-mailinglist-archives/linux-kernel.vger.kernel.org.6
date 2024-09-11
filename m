@@ -1,712 +1,868 @@
-Return-Path: <linux-kernel+bounces-325217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B2197567D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:11:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8D7975618
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AEC8B21FFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB0C28444D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C2D3D984;
-	Wed, 11 Sep 2024 15:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B6218EFC6;
+	Wed, 11 Sep 2024 14:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hoML3a1d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KzmHJF4h"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010050.outbound.protection.outlook.com [52.101.69.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F602C859
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726066927; cv=none; b=K7xrehHptZIH4CThLmyjVCU5APpYlm+PiJdzGCU/HBaQpfr2LZVk1hwnF1joBBu9sU+sBwSZ29SuBoT9aRPhN7FmNbhwYgDJAZSkRZgxwwyOfXvEBx8H6rO2GxDsCfw2LWzVhmpOJpr2Of0evU8440SuDG/y+Pf9UR1MV71O0jI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726066927; c=relaxed/simple;
-	bh=aQZRHnZWKTwwoiOTyn2dgDxoOAC0Vc6HZLNwdm4NcI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDjvRqobveaHa844VfeRao9fC8KWiBfpKcloKdBPDXAz1ERZNo+s1R22vyyVtvB8cdHFCugh7pWp94b+SVHMSzCs1Dm6fkzg+mrWSWd9kXzcINPoNxnJRYDa8QHlxEXwNi7n+/aQp+naY7xFFTOi+f5ElmMuZ61bElEm8Du0L44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hoML3a1d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726066924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nn9bXK1BdSebugOBbEYMceGXLXwIY7LiI27+C3ZtM90=;
-	b=hoML3a1dVc0H3VbY/kNejaIq+/j7ZT3BOAu9uZHcgQj3nZlcHkNpVIEse5W9HPVerIyytx
-	BeIJsZzcQqBwNgt8IPK2f6CJeY4NcLy5WXrMczgFOMtwCKT2y6AINAmgV64xtGJQUv522z
-	rKM1K062MFaOUP/NQUyY/yZNuLQ7ZFU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-ftpdsqF7Ple_lLE5bodbUg-1; Wed, 11 Sep 2024 11:02:03 -0400
-X-MC-Unique: ftpdsqF7Ple_lLE5bodbUg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb2c9027dso17470865e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726066922; x=1726671722;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nn9bXK1BdSebugOBbEYMceGXLXwIY7LiI27+C3ZtM90=;
-        b=MT0GOb9vM81wBdppPLIFkPGx72lodquRwjeZMOQqlzLqJ55Zp/kD5tZyAn8C3sxyu1
-         mSaP7AzYU2zmXZCQtkLLk34he7rgv5t/tJOU8/eWfFylm+6WtmL/nB2NB0P73Qg9SpyA
-         clRNbtkUtufdaYrEp/DRXecfjiwR8KB1QN9Xw6tIRkGTNNpJiVy21CoL9L+9+lQrQ+rB
-         OC3mDON9TM+nOgnZtPQQ6+jfz5p0phxyB3U9aUagDz8U4MsgNEy2sP3v5eSy19jIiRah
-         DwxKipLZxIhu+xeMU76dNEfCX4kWMHxWhaP6ZrGrtsDULmUnK4/qVxqkuMOr0tPjPbgA
-         Bibg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQhUtyTxgx3B61I133zjscZ/sywtIcDsfrIgghJ5mYOheCcrO0uB8bIF0HRIlrRXXnWVCbupA/anM3XO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuoUsnTHcLXWDGFi4wWw1CqcQF6TtbVCO3g/eaqgqTbol9KMxX
-	O9VWEwPGqbQw9fUbTqT3eb9txPYHwR/M8BuWWTxQlRDOiz5iF73zxeInzGFrBddKbOo5bklsagi
-	TFUjVcqD0zaPExU4liOkPAH1Q9aIMmLthrfYdLsP/veUcum2+ST5ztPGx0aepLg==
-X-Received: by 2002:adf:ef4b:0:b0:374:b71f:72c0 with SMTP id ffacd0b85a97d-378b07a4e65mr2297950f8f.21.1726066921319;
-        Wed, 11 Sep 2024 08:02:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxH0DoQKBSmd0ALjJbjMto2VzTIEIjv8UURlnAjPk9s9Gf97w2BlKw2mdakD8N3ywwPJQpzg==
-X-Received: by 2002:adf:ef4b:0:b0:374:b71f:72c0 with SMTP id ffacd0b85a97d-378b07a4e65mr2297837f8f.21.1726066920009;
-        Wed, 11 Sep 2024 08:02:00 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de4b9sm11818658f8f.111.2024.09.11.08.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 08:01:59 -0700 (PDT)
-Date: Wed, 11 Sep 2024 17:01:57 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Peter Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v9 02/12] acpi/ghes: rework the logic to handle HEST
- source ID
-Message-ID: <20240911170157.792225ef@imammedo.users.ipa.redhat.com>
-In-Reply-To: <de67e08436e6903579f4fdc6beee7a5bc2696303.1724556967.git.mchehab+huawei@kernel.org>
-References: <cover.1724556967.git.mchehab+huawei@kernel.org>
-	<de67e08436e6903579f4fdc6beee7a5bc2696303.1724556967.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EF68F6C;
+	Wed, 11 Sep 2024 14:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726066415; cv=fail; b=kRy07BrD7sUNfpkQ2PFUmfap9xw5xgdhM6RLg0Zl6rm//BF8sG0MGl14GVqRCPhuITkEvbXp6PX1fxEJK2NLd1WhGLSKbhrxoC+Czc63MHOLcnEcwg309zVhGcW7FEOw3EHQqISyZii1OV8BUQY/QmY7MpOz1M7aArmsYbBtCOI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726066415; c=relaxed/simple;
+	bh=/iDcme2vGRZDL/4zkjrZ5cPf9bxsoj2PAIlXgHAL3fA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kWahKCRWUO7n7b6Yx154TEdU8frM8kezsh1MQAj0ATmZGoJuhzbTMYsEmVZEhEyO+2PlrEQ5uRdABycwLxwua+LDTe/Igx/hUmtFJezIubnsBAShySTpjl/L2/nKSvK8op4HXvYX38r9yLLjAt8RzpZFXZc/du42EYNq8yf9H9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KzmHJF4h; arc=fail smtp.client-ip=52.101.69.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V1qr9KC9cJovgvUmngElrFsCOUX/YG7lu24SAs29yvjG3sXfVC08LLrCfVAJb3qXLZaOFS28t3qi3GXSkG6YSzgkMpOcoBH3AcaCUZBHK9ZMYXF/oJaFKimuED9eaVkdy7LytwfsjLQO4+gXiqQbdHL/feeV6e7+FWKsqV7V182uFnaNFWgV4stPkqBbWaU9dEc7BURd4+qvCdJuHjHRs7RH5p2+eoLHUREmDLaqmTrxP9WH2IJN6uNhePeBITOkaIVSNfF3tyIJGxBfnFRlzH5r6skFUzRVQ3IR4yxo6u7SwF1VfP+GwK10J8jJ408IRfodXJYcZP3Tu5r1hxs/Cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k4MdAhXaoS7BxKBll4LHryjJjk8zKhCHtXVukQFlcqM=;
+ b=a+gpWJyL605uq9EGIjSAoSUj4Fymtgl7lqEH2Xx+QRR/9dIFiTTkO3JLMPpXfFrcvR/5C2dbdKOoGsJr22SF+pVsjUf7bjupjbupaqI1Li/yEVfk5LX2SmMUAC9Z+ZznoS7GTQmvVyg3Ul8ldBvFn+Dz05DiqEHSvXYESc3IIVfW8aJYjtQI9FFfEnfnofHfRZt5UuPJ+9XNvIHVOUMZ4dcvlXTtNUZUTBx5Bt1SevM8ttjS+PXNEyliS551do6j1+odpFgvt4mZJhiDzf2dnhtgbvB+ZZ3d7yXL2xhXq9Qc4c6cxOoXrRLSAlPbN5ruXQC9sJ7FzPktNnlAh4HHTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k4MdAhXaoS7BxKBll4LHryjJjk8zKhCHtXVukQFlcqM=;
+ b=KzmHJF4hYeb1jWEtIKzSjKDe48/E4HiR6f2vlYgEIRqvdsOShYlyctCo6GwiljUVl01224ta/IS3aogBe/2A+7ZAdcK/9IKkO/ySZTG2Bv+gfO0bTUL3lbO2OyroRuI1TxenMoo2Gg+V6bE6PX/LCWEiL6IQrljs9MwibnpXyDNHDJyik7YB3ulDt2oTMlJhM0caPHQioyl+vprjZhX+OmgtTx0rGoBiX9gYv4u2e6ghqprJ296UL0+Q7Ma8UK6F55LPmn7aqpJyULkkJknDWAH+Fbc77fXlFwC561fiFKvzgo4e1S8LPIuM6hGl9vpidkl4PZUrM4IZwwSRHLHjWg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
+ by AM7PR04MB6838.eurprd04.prod.outlook.com (2603:10a6:20b:10a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 14:53:28 +0000
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb]) by VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb%6]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 14:53:28 +0000
+From: carlos.song@nxp.com
+To: andi.shyti@kernel.org,
+	aisheng.dong@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	sumit.semwal@linaro.org,
+	christian.koenig@amd.com,
+	frank.li@nxp.com
+Cc: linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH V5] i2c: imx-lpi2c: add eDMA mode support for LPI2C
+Date: Wed, 11 Sep 2024 23:02:25 +0800
+Message-Id: <20240911150225.192468-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM8P191CA0020.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21a::25) To VI1PR04MB5005.eurprd04.prod.outlook.com
+ (2603:10a6:803:57::30)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5005:EE_|AM7PR04MB6838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8503ad8a-54d6-439a-311d-08dcd2717e1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XWQcaHeC0T301XOmLqt1OvnkQKqf32MhIaqOv8KSut2OWi6rH5roCmQXeBHj?=
+ =?us-ascii?Q?ox6+6YjPKTK2tbkzlMoZjiEhoK2n7/YG/ZvytMzMsrAASEIdJbUIQFHpBymy?=
+ =?us-ascii?Q?jEHa76Ti4XVy6AyVIddiAWe0Xbe6/xmAvBb8ikk1mheB/bX6ept1VlprGLsi?=
+ =?us-ascii?Q?+JhFHi1sS2gBNgNeUnYIoVmO2HXw9o/4UHKaPGWKdLLuEu1mUypoOx8PQPv4?=
+ =?us-ascii?Q?4T3geRrBvf6bNjH4xdPVt93CSONTudjTDsm2H5XyN+QKowhFmV+3oRab7B/t?=
+ =?us-ascii?Q?7UDIqmGxsser7FeUcCPHnM/wATA0m2/6vMQZET+W4IGRVo2FZDpm+4VcT32w?=
+ =?us-ascii?Q?oenrKG7Ccq3/hHBeKtHG/B2zzESkJcQet83idLTm5CD/HuTSIHZd1KsimWKI?=
+ =?us-ascii?Q?DtPMh2td34IYP5kXhGpKMr2pZ6SyArF4VT913hi8jIbsYqof3/PfNmLWtnyi?=
+ =?us-ascii?Q?6FtHr2nDFLuPzCfSg6qhU2unwlKLMQBFFcsyb5caGA2X8uG9N/EEKK6D3IzU?=
+ =?us-ascii?Q?GmQ5yoRm3AZmoLe958Jcz13ygfVCqic35UY8B02pvYfSoHCoC77357XKeT74?=
+ =?us-ascii?Q?Ke9t7luCgUnioSHg34uXsoEYHTHW4Qvw59i5BY/u2oCq8h9Bk0l7VUfWSta+?=
+ =?us-ascii?Q?/O18hsm0GYjFtu+0QNwh55netw62yxq4hV0ekmzaC2KhbL8dwGOw5wc1g00+?=
+ =?us-ascii?Q?jbqb9s4j4HN97mJGvhthI+dVPfNMYR271oC1kgYVOw+kJYdytRyrYuuOJF5q?=
+ =?us-ascii?Q?+sYFhNFJNZ3jNkVkqhCE35JCDyTrfnjn7cuHIpt0G+tmCmiW7kpQzk5eCDps?=
+ =?us-ascii?Q?fp6adVWWPZLrcS+Kr8fo5vWj3rOws2jC/FBZgysNdy6d1+k3jyHtVfL0O3MC?=
+ =?us-ascii?Q?lqn6HBuSh9fTsY3yGJLUkW+UAo+s8zGzkNkVQ56VeSY6AFWV4jq21ObnHBRB?=
+ =?us-ascii?Q?FopgoTtnB2de3rUsWPY/uCOcccJAWBv7xVeqw1J2IdGTzbQulUxOPk4sHzFS?=
+ =?us-ascii?Q?h/9kf8QMRd8lRf6D0GjyGccUsjpipSwr8oYqXgETRu6u/duKFCX6lIsJZpFs?=
+ =?us-ascii?Q?+epszGIRaehlmq9F0ToSRvHKuueGCFUsDWrjSpVVyPxyrihyyNEYVW2fytDE?=
+ =?us-ascii?Q?XiuEUdb1SiNf0IpeeroT1iKnnLErPLmOeIWFFjyCKrzHGm1AUfognTNNx018?=
+ =?us-ascii?Q?+QUT5p6MnR2fJNQG4SrAYoh9wSM1aNjD4I7P7FawWOHaifk1fW/PzmhCqOmQ?=
+ =?us-ascii?Q?urYu2bAtF5ZV53W0e3uGlElORQCPhUtGZJvXaFkcPEiltEDzKQLcU0HBLfro?=
+ =?us-ascii?Q?wqdWYGnLJZ3SPNhiHxAu3UXwUnAZ3YtW6bYLvU0MKfVEb4txkcUXVRyfCem4?=
+ =?us-ascii?Q?/zOI4tuNT0TY89odpCKVM0LDdTDOIb/JJV2p3iCzdD5lZ+3UfA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iJIuZPN55tukTA9CviB+3dvEHnI1fEtl6UJyFkl17+31BGrJZX4WpGm7YZ1I?=
+ =?us-ascii?Q?EHQO2NFHqvQHNiFCtRc6dRHuq+P6npouky3fEtPNTHBrstc784yQApWWiFis?=
+ =?us-ascii?Q?WfMDWfhfRhsG3f3wjJpB3et3BlK6VSaik9EaFcxH4hqbUYZRdpfrrhGISpjS?=
+ =?us-ascii?Q?1NvU55KUEVaXO4Ceidam22GqObbNx351qlGdSg3CXf5MDGjXas6WO8q1vRDi?=
+ =?us-ascii?Q?8FoE29zU0CDb9frxQnWnf04eZgHnIwbwTyA+6rG2XMBPXfPJ6Q2zluO8uovt?=
+ =?us-ascii?Q?hnXYQB/33oYICOTtU5rgAz6v+XTBfqRqlNmgCsD1dPBvaQluqmOf5bDVehga?=
+ =?us-ascii?Q?T3vGJFmu26fbczTP/C2M5JrX74P/+DtVeTHWZM/v+ifWdl681vl1vPL3YhrO?=
+ =?us-ascii?Q?xc0TxSYQR5ZpdnAAB1N7ietlOLNKhunqDvegD1ehCvFZzBOk33xA0EN9z1Yw?=
+ =?us-ascii?Q?0q2v2s85wpiEhAAAlqp/7ctFHJTQZEKpnuxgrf+QtIRGJzjXNsDOIGqkvAUj?=
+ =?us-ascii?Q?NCiz1F8LYRMgeKM+cqH0QkjBcTMc+i6Rx6sPobCZVen35e7UfuqVAPfSABBy?=
+ =?us-ascii?Q?yzVznAND7gbE8m0QKaMlheN7v4m5SeUlX2ZoL3WVYNRDsppF972X5M8mzspC?=
+ =?us-ascii?Q?a1ia8DgwJIvFu3C5D2ZPqa6OKEGkaJW4XV0djrYdwXFUvDFpbS480Mjhkkqh?=
+ =?us-ascii?Q?DFxJOMBd3KPQPHlM5UL8wl3Pe+kAwMlEyOi2Eibh8wJzJ1z3bGx1U6AzSHZy?=
+ =?us-ascii?Q?CenIzEfJGS4ZJSQsg10hZQvLiYUGD8rRdPW7is40Rl4rcyi4ztUatLnX743m?=
+ =?us-ascii?Q?LyuHsFmPrI44QpfXKHG5pEgSdpbcIH+Sn3RpnIq9IWiCSOnh0Xc9S0gh/964?=
+ =?us-ascii?Q?fAdXTMAzNwvBC7flwbdIC7mmyDqqJixwLYeFodj53mHGpGfllZUpNIF0Nj5L?=
+ =?us-ascii?Q?rzhBVHiUnKNE2wb8P8W8rcEgaGIAf/KsbpBjKv8zL5yGAlheogS1hTIlSO9S?=
+ =?us-ascii?Q?lUnb6pUZOlcTMKaRJRN8upt2zJ8wzG+6TcPhIMlEM0axEVhCKJvRiOj4diqX?=
+ =?us-ascii?Q?Wtipbw485PYru+8MKSqtWTCzgMtZWluEQ+Y0O/dXvZPHquYGnlpe62UG+zAZ?=
+ =?us-ascii?Q?dLtYkhOgqHZVsvvdmPgthvXoQqBLj9Y7pMuPIT3QYhpNvN4nNUdaOVowwW1W?=
+ =?us-ascii?Q?6I4+dvRCswfCnd1W+zRobh4YglIhOdF8oQKYE7bz3Fy8XLtz1wFnumMUbFq1?=
+ =?us-ascii?Q?uKjCuIH/3Kn/slo8XeL299oKOw38bs8CAHinsHCuSFB7XfYD6DCAg2TCwqGn?=
+ =?us-ascii?Q?3SA1EJ1pSyW0ZFFJdW0Xlrc8tPARDDbGGs/sTEuXbEl7W0K1LBTr1Y0RYsJw?=
+ =?us-ascii?Q?YcrAw1r/ugEhI6a29K194ev8A0RD90JjGd/7JMdaofRzCJu8mblQ+2qFMLPm?=
+ =?us-ascii?Q?uSsqd0M6wEnuAp+ahcsGc34a7A5+3wMDvvtnvLN38q0PY9KuT5dTHkedvtYR?=
+ =?us-ascii?Q?qn2Fmbf/DnwpzvgI7O36mhaF3GwH8WVcLQSJxQMsJbhUDbCWlCbvRuwA2gGb?=
+ =?us-ascii?Q?SjZrV8Xi6cmAepOMlcXoWnd6+rNdzLFmoaUx0xxY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8503ad8a-54d6-439a-311d-08dcd2717e1e
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 14:53:28.1844
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VvAgYFK1ayygAILmOzPRpSdZfl/EUjYpdK38IIbglickNyjvWdVYlPDO6fqsTjKQKTsubrW0HB0+c1Rd4+WUVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6838
 
-On Sun, 25 Aug 2024 05:45:57 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+From: Carlos Song <carlos.song@nxp.com>
 
-> The current logic is based on a lot of duct tape, with
-> offsets calculated based on one define with the number of
-> source IDs and an enum.
-> 
-> Rewrite the logic in a way that it would be more resilient
-> of code changes, by moving the source ID count to an enum
-> and make the offset calculus more explicit.
-> 
-> Such change was inspired on a patch from Jonathan Cameron
-> splitting the logic to get the CPER address on a separate
-> function, as this will be needed to support generic error
-> injection.
+Add eDMA mode support for LPI2C.
 
-patch is too large and does too many things at once,
-see inline suggestions on how to split it in more
-manageable chunks.
-(I'll mark preferred patch order with numbers)
+There are some differences between TX DMA mode and RX DMA mode.
+LPI2C MTDR register is Controller Transmit Data Register.
+When lpi2c send data, it is tx cmd register and tx data fifo.
+When lpi2c receive data, it is just a rx cmd register. LPI2C MRDR
+register is Controller Receive Data Register, received data are
+stored in this.
 
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> 
-> ---
-> 
-> Changes from v8:
-> - Non-rename/cleanup changes merged altogether;
-> - source ID is now more generic, defined per guest target.
->   That should make easier to add support for 86.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c           | 275 ++++++++++++++++++++++++---------------
->  hw/arm/virt-acpi-build.c |  10 +-
->  include/hw/acpi/ghes.h   |  18 +--
->  include/hw/arm/virt.h    |   7 +
->  target/arm/kvm.c         |   3 +-
->  5 files changed, 198 insertions(+), 115 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 529c14e3289f..965fb1b36587 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -35,9 +35,6 @@
->  /* The max size in bytes for one error block */
->  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
->  
-> -/* Now only support ARMv8 SEA notification type error source */
-> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
+MTDR[8:10] is CMD field and MTDR[0:7] is DATA filed.
++-----------+-------------------------------+
+|  C  M  D  |          D  A  T  A           |
++---+---+---+---+---+---+---+---+---+---+---+
+| 10| 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
++---+---+---+---+---+---+---+---+---+---+---+
 
- [patch 4] getting rid of this and introducing num_sources
-     (aka variable size HEST) 
+MRDR is Controller Receive Data Register.
+MRDR[0:7] is DATA filed.
++-------------------------------+
+|          D  A  T  A           |
++---+---+---+---+---+---+---+---+
+| 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
++---+---+---+---+---+---+---+---+
 
->  /* Generic Hardware Error Source version 2 */
->  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
->  
-> @@ -64,6 +61,19 @@
->   */
->  #define ACPI_GHES_GESB_SIZE                 20
->  
-> +/*
-> + * Offsets with regards to the start of the HEST table stored at
-> + * ags->hest_addr_le, according with the memory layout map at
-> + * docs/specs/acpi_hest_ghes.rst.
-> + */
-perhaps  mention in comment/commit message, that hest lookup
-is implemented only GHESv2 error sources.
+When the LPI2C controller needs to send data, tx cmd and 8-bit data
+should be written into MTDR:
+CMD: 000b: Transmit the value in DATA[7:0].
+DATA: 8-bit data.
 
-That will work as far we do forward migration only
-(i.e. old qemu -> new qemu), which is what upstream supports.
+If lpi2c controller needs to send N 8-bit data, just write N times
+(CMD(W) + DATA(u8)) to MTDR.
 
-However it won't work for backward migration (new qemu -> old qemu)
-since old one doesn't know about new non-GHESv2 sources.
-And that means we would need to introduce compat knobs for every
-new non-GHESv2 source is added. Which is easy to overlook and
-it adds up to maintenance.
-(You've already described zoo of types ACPI spec has in v8 review,
-but I don't thing it's too complex to implement lookup of all
-known types. compared to headache we would have with compat
-settings if anyone remembers)
+When the LPI2C controller needs to receive data, rx cmd should be
+written into MTDR, the received data will be stored in the MRDR.
 
-I won't insist on adding all known sources lookup in this series,
-if you agree to do it as a patch on top of this series within this
-dev cycle (~2 months time-frame).
+MTDR(CMD): 001b: Receive (DATA[7:0] + 1) 8-bit data.
+MTDR(DATA): byte counter.
+MRDR(DATA): 8-bit data.
 
-> +/* ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2 */
+So when lpi2c controller needs to receive N 8-bit data,
+1. N <= 256:
+Write 1 time (CMD(R) + BYTE COUNT(N-1)) into MTDR and receive data from
+MRDR.
+2. N > 256:
+Write N/256 times (CMD(R) + BYTE COUNT(255)) + 1 time (CMD(R) + BYTE
+COUNT(N%256)) into MTDR and receive data from MRDR.
 
- +  ,Table 18-383
+Due to these differences, when lpi2c is in DMA TX mode, only enable TX
+channel to send data. But when lpi2c is in DMA RX mode, TX and RX channel
+are both enabled, TX channel is used to send RX cmd and RX channel is
+used to receive data.
 
-> +#define HEST_GHES_V2_TABLE_SIZE  92
-> +#define GHES_ACK_OFFSET          (64 + GAS_ADDR_OFFSET)
-> +
-> +/* ACPI 6.2: 18.3.2.7: Generic Hardware Error Source */
-     
-   Table 18-380 'Error Status Address' field 
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
+Signed-off-by: Frank Li <frank.li@nxp.com>
+---
+Change for V5:
+- According to Andi's suggestion:
+- Fix code alignment and improve logs.
+- Add exit goto branch in lpi2c_imx_dma_xfer(), lpi2c_dma_rx_cmd_submit()
+  and lpi2c_dma_submit() to simplify code.
+- Use dma_data_dir and dma_transfer_dir to replace dma_direction
+  for better readability when setting variables in lpi2c_dma_submit().
+Change for V4:
+- According Aisheng's suggestion, fix code for improving readability.
+- Add dma struct, when dma resource not ready not alloc dma resources.
+Change for V3:
+- Optimize DMA timeout calculate function names and variables avoid confusing.
+Change for V2:
+- Optimized eDMA rx cmd buf free function to improve code readability.
+---
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 525 ++++++++++++++++++++++++++++-
+ 1 file changed, 518 insertions(+), 7 deletions(-)
 
-> +#define GHES_ERR_ST_ADDR_OFFSET  (20 + GAS_ADDR_OFFSET)
-> +
->  /*
->   * Values for error_severity field
->   */
-> @@ -185,51 +195,30 @@ static void acpi_ghes_build_append_mem_cper(GArray *table,
->      build_append_int_noprefix(table, 0, 7);
->  }
->  
-> -static int acpi_ghes_record_mem_error(uint64_t error_block_address,
-> -                                      uint64_t error_physical_addr)
-> +static void
-> +ghes_gen_err_data_uncorrectable_recoverable(GArray *block,
-> +                                            const uint8_t *section_type,
-> +                                            int data_length)
-  [patch 2] splitting acpi_ghes_record_mem_error() on reusable and mem specific
-           code
-
->  {
-> -    GArray *block;
-> -
-> -    /* Memory Error Section Type */
-> -    const uint8_t uefi_cper_mem_sec[] =
-> -          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
-> -                  0xED, 0x7C, 0x83, 0xB1);
-> -
->      /* invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
->       * Table 17-13 Generic Error Data Entry
->       */
->      QemuUUID fru_id = {};
-> -    uint32_t data_length;
->  
-> -    block = g_array_new(false, true /* clear */, 1);
-> -
-> -    /* This is the length if adding a new generic error data entry*/
-> -    data_length = ACPI_GHES_DATA_LENGTH + ACPI_GHES_MEM_CPER_LENGTH;
->      /*
-> -     * It should not run out of the preallocated memory if adding a new generic
-> -     * error data entry
-> +     * Calculate the size with this block. No need to check for
-> +     * too big CPER, as CPER size is checked at ghes_record_cper_errors()
->       */
-> -    assert((data_length + ACPI_GHES_GESB_SIZE) <=
-> -            ACPI_GHES_MAX_RAW_DATA_LENGTH);
-> +    data_length += ACPI_GHES_GESB_SIZE;
->  
->      /* Build the new generic error status block header */
->      acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
->          0, 0, data_length, ACPI_CPER_SEV_RECOVERABLE);
->  
->      /* Build this new generic error data entry header */
-> -    acpi_ghes_generic_error_data(block, uefi_cper_mem_sec,
-> +    acpi_ghes_generic_error_data(block, section_type,
->          ACPI_CPER_SEV_RECOVERABLE, 0, 0,
->          ACPI_GHES_MEM_CPER_LENGTH, fru_id, 0);
-> -
-> -    /* Build the memory section CPER for above new generic error data entry */
-> -    acpi_ghes_build_append_mem_cper(block, error_physical_addr);
-> -
-> -    /* Write the generic error data entry into guest memory */
-> -    cpu_physical_memory_write(error_block_address, block->data, block->len);
-> -
-> -    g_array_free(block, true);
-> -
-> -    return 0;
->  }
->  
->  /*
-> @@ -237,17 +226,18 @@ static int acpi_ghes_record_mem_error(uint64_t error_block_address,
->   * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
->   * See docs/specs/acpi_hest_ghes.rst for blobs format.
->   */
-> -void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
-> +static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker,
-> +                                   int num_sources)
->  {
->      int i, error_status_block_offset;
->  
->      /* Build error_block_address */
-> -    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
-> +    for (i = 0; i < num_sources; i++) {
->          build_append_int_noprefix(hardware_errors, 0, sizeof(uint64_t));
->      }
->  
->      /* Build read_ack_register */
-> -    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
-> +    for (i = 0; i < num_sources; i++) {
->          /*
->           * Initialize the value of read_ack_register to 1, so GHES can be
->           * writable after (re)boot.
-> @@ -262,13 +252,13 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
->  
->      /* Reserve space for Error Status Data Block */
->      acpi_data_push(hardware_errors,
-> -        ACPI_GHES_MAX_RAW_DATA_LENGTH * ACPI_GHES_ERROR_SOURCE_COUNT);
-> +        ACPI_GHES_MAX_RAW_DATA_LENGTH * num_sources);
->  
->      /* Tell guest firmware to place hardware_errors blob into RAM */
->      bios_linker_loader_alloc(linker, ACPI_GHES_ERRORS_FW_CFG_FILE,
->                               hardware_errors, sizeof(uint64_t), false);
->  
-> -    for (i = 0; i < ACPI_GHES_ERROR_SOURCE_COUNT; i++) {
-> +    for (i = 0; i < num_sources; i++) {
->          /*
->           * Tell firmware to patch error_block_address entries to point to
->           * corresponding "Generic Error Status Block"
-
-> @@ -283,14 +273,20 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
->       * tell firmware to write hardware_errors GPA into
->       * hardware_errors_addr fw_cfg, once the former has been initialized.
->       */
-> -    bios_linker_loader_write_pointer(linker, ACPI_GHES_DATA_ADDR_FW_CFG_FILE,
-> -        0, sizeof(uint64_t), ACPI_GHES_ERRORS_FW_CFG_FILE, 0);
-> +    bios_linker_loader_write_pointer(linker, ACPI_GHES_DATA_ADDR_FW_CFG_FILE, 0,
-> +                                     sizeof(uint64_t),
-> +                                     ACPI_GHES_ERRORS_FW_CFG_FILE, 0);
-
- [patch 1] all indent changes in its own patch, or just drop them altogether 
-
->  }
->  
->  /* Build Generic Hardware Error Source version 2 (GHESv2) */
-> -static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
-> +static void build_ghes_v2(GArray *table_data,
-> +                          BIOSLinker *linker,
-> +                          enum AcpiGhesNotifyType notify,
-> +                          uint16_t source_id,
-> +                          int num_sources)
->  {
->      uint64_t address_offset;
-> +
->      /*
->       * Type:
->       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
-> @@ -317,21 +313,13 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->      build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
->                       4 /* QWord access */, 0);
->      bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-> -        address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),
-> -        ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
-> +                                   address_offset + GAS_ADDR_OFFSET,
-> +                                   sizeof(uint64_t),
-> +                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
-> +                                   source_id * sizeof(uint64_t));
-ditto
-
-
-> -    switch (source_id) {
-> -    case ACPI_HEST_SRC_ID_SEA:
-> -        /*
-> -         * Notification Structure
-> -         * Now only enable ARMv8 SEA notification type
-> -         */
-> -        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
-> -        break;
-> -    default:
-> -        error_report("Not support this error source");
-> -        abort();
-> -    }
-> +    /* Notification Structure */
-> +    build_ghes_hw_error_notification(table_data, notify);
->  
->      /* Error Status Block Length */
->      build_append_int_noprefix(table_data, ACPI_GHES_MAX_RAW_DATA_LENGTH, 4);
-> @@ -345,9 +333,11 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->      build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
->                       4 /* QWord access */, 0);
->      bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-> -        address_offset + GAS_ADDR_OFFSET,
-> -        sizeof(uint64_t), ACPI_GHES_ERRORS_FW_CFG_FILE,
-> -        (ACPI_GHES_ERROR_SOURCE_COUNT + source_id) * sizeof(uint64_t));
-> +                                   address_offset + GAS_ADDR_OFFSET,
-> +                                   sizeof(uint64_t),
-> +                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
-> +                                   (num_sources + source_id) *
-> +                                   sizeof(uint64_t));
-ditto
-
->      /*
->       * Read Ack Preserve field
-> @@ -360,19 +350,28 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->  }
->  
->  /* Build Hardware Error Source Table */
-> -void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
-> +void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-> +                     BIOSLinker *linker,
-> +                     const uint16_t * const notify,
-> +                     int num_sources,
->                       const char *oem_id, const char *oem_table_id)
->  {
->      AcpiTable table = { .sig = "HEST", .rev = 1,
->                          .oem_id = oem_id, .oem_table_id = oem_table_id };
-> +    int i;
-> +
-> +    build_ghes_error_table(hardware_errors, linker, num_sources);
->  
->      acpi_table_begin(&table, table_data);
->  
-> +    /* Beginning at the HEST Error Source struct count and data */
->      int hest_offset = table_data->len;
->  
->      /* Error Source Count */
-> -    build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
-> -    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
-> +    build_append_int_noprefix(table_data, num_sources, 4);
-> +    for (i = 0; i < num_sources; i++) {
-> +        build_ghes_v2(table_data, linker, notify[i], i, num_sources);
-> +    }
->  
->      acpi_table_end(linker, &table);
->  
-> @@ -403,60 +402,132 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
->      ags->present = true;
->  }
->  
-> -int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-> +void ghes_record_cper_errors(const void *cper, size_t len,
-> +                             uint16_t source_id, Error **errp)
-
- [patch 3] switching to hest source id lookup method
-
->  {
-> -    uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
-> -    uint64_t start_addr;
-> -    bool ret = -1;
-> +    uint64_t hest_read_ack_start_addr, read_ack_start_addr;
-> +    uint64_t hest_addr, cper_addr, err_source_struct;
-> +    uint64_t hest_err_block_addr, error_block_addr;
-> +    uint32_t num_sources, i;
->      AcpiGedState *acpi_ged_state;
->      AcpiGhesState *ags;
-> +    uint64_t read_ack;
->  
-> -    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
-> +    if (len > ACPI_GHES_MAX_RAW_DATA_LENGTH) {
-> +        error_setg(errp, "GHES CPER record is too big: %ld", len);
-> +    }
->  
->      acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
->                                                         NULL));
->      g_assert(acpi_ged_state);
->      ags = &acpi_ged_state->ghes_state;
->  
-> -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> -
-> -    if (physical_address) {
-> -
-> -        if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
-> -            start_addr += source_id * sizeof(uint64_t);
-> -        }
-> -
-> -        cpu_physical_memory_read(start_addr, &error_block_addr,
-> -                                 sizeof(error_block_addr));
-> -
-> -        error_block_addr = le64_to_cpu(error_block_addr);
-> -
-> -        read_ack_register_addr = start_addr +
-> -            ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
-> -
-> -        cpu_physical_memory_read(read_ack_register_addr,
-> -                                 &read_ack_register, sizeof(read_ack_register));
-> -
-> -        /* zero means OSPM does not acknowledge the error */
-> -        if (!read_ack_register) {
-> -            error_report("OSPM does not acknowledge previous error,"
-> -                " so can not record CPER for current error anymore");
-> -        } else if (error_block_addr) {
-> -            read_ack_register = cpu_to_le64(0);
-> -            /*
-> -             * Clear the Read Ack Register, OSPM will write it to 1 when
-> -             * it acknowledges this error.
-> -             */
-> -            cpu_physical_memory_write(read_ack_register_addr,
-> -                &read_ack_register, sizeof(uint64_t));
-> -
-> -            ret = acpi_ghes_record_mem_error(error_block_addr,
-> -                                             physical_address);
-> -        } else
-> -            error_report("can not find Generic Error Status Block");
-> +    hest_addr = le64_to_cpu(ags->hest_addr_le);
-> +
-> +    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
-> +
-> +    if (source_id >= num_sources) {
-> +        error_setg(errp,
-> +                   "GHES: Source %d not found. Only %d sources are defined",
-> +                   source_id, num_sources);
-> +        return;
-> +    }
-> +    err_source_struct = hest_addr + sizeof(num_sources);
-> +
-> +    for (i = 0; i < num_sources; i++) {
-> +        uint64_t addr = err_source_struct;
-> +        uint16_t type, src_id;
-> +
-> +        cpu_physical_memory_read(addr, &type, sizeof(type));
-> +
-> +        /* For now, we only know the size of GHESv2 table */
-> +        assert(type == ACPI_GHES_SOURCE_GENERIC_ERROR_V2);
-> +
-> +        /* It is GHES. Compare CPER source address */
-> +        addr += sizeof(type);
-> +        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
-> +
-> +        if (src_id == source_id)
-> +            break;
-> +
-> +        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-> +    }
-> +    if (i == num_sources) {
-> +        error_setg(errp, "HEST: Source %d not found.", source_id);
-> +        return;
-> +    }
-> +
-> +    /* Check if BIOS addr pointers were properly generated */
-> +
-> +    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-> +    hest_read_ack_start_addr = err_source_struct + GHES_ACK_OFFSET;
-> +
-> +    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-> +                             sizeof(error_block_addr));
-> +
-> +    cpu_physical_memory_read(error_block_addr, &cper_addr,
-> +                             sizeof(error_block_addr));
-> +
-> +    cpu_physical_memory_read(hest_read_ack_start_addr, &read_ack_start_addr,
-> +			     sizeof(read_ack_start_addr));
-> +
-> +    /* Update ACK offset to notify about a new error */
-> +
-> +    cpu_physical_memory_read(read_ack_start_addr,
-> +                             &read_ack, sizeof(read_ack));
-> +
-> +    /* zero means OSPM does not acknowledge the error */
-> +    if (!read_ack) {
-> +        error_setg(errp,
-> +                   "Last CPER record was not acknowledged yet");
-> +        read_ack = 1;
-> +        cpu_physical_memory_write(read_ack_start_addr,
-> +                                  &read_ack, sizeof(read_ack));
-> +        return;
-> +    }
-> +
-> +    read_ack = cpu_to_le64(0);
-> +    cpu_physical_memory_write(read_ack_start_addr,
-> +                              &read_ack, sizeof(read_ack));
-> +
-> +    /* Write the generic error data entry into guest memory */
-> +    cpu_physical_memory_write(cper_addr, cper, len);
-> +}
-> +
-> +int acpi_ghes_record_errors(int source_id, uint64_t physical_address)
-> +{
-> +    /* Memory Error Section Type */
-> +    const uint8_t guid[] =
-> +          UUID_LE(0xA5BC1114, 0x6F64, 0x4EDE, 0xB8, 0x63, 0x3E, 0x83, \
-> +                  0xED, 0x7C, 0x83, 0xB1);
-> +    Error *errp = NULL;
-> +    GArray *block;
-> +
-> +    if (!physical_address) {
-> +        error_report("can not find Generic Error Status Block for source id %d",
-> +                     source_id);
-> +        return -1;
-> +    }
-> +
-> +    block = g_array_new(false, true /* clear */, 1);
-> +
-> +    ghes_gen_err_data_uncorrectable_recoverable(block, guid,
-> +                                                ACPI_GHES_MAX_RAW_DATA_LENGTH);
-> +
-> +    /* Build the memory section CPER for above new generic error data entry */
-> +    acpi_ghes_build_append_mem_cper(block, physical_address);
-> +
-> +    /* Report the error */
-> +    ghes_record_cper_errors(block->data, block->len, source_id, &errp);
-> +
-> +    g_array_free(block, true);
-> +
-> +    if (errp) {
-> +        error_report_err(errp);
-> +        return -1;
->      }
->  
-> -    return ret;
-> +    return 0;
->  }
->  
->  bool acpi_ghes_present(void)
-> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-> index f76fb117adff..39100c2822c2 100644
-> --- a/hw/arm/virt-acpi-build.c
-> +++ b/hw/arm/virt-acpi-build.c
-> @@ -890,6 +890,10 @@ static void acpi_align_size(GArray *blob, unsigned align)
->      g_array_set_size(blob, ROUND_UP(acpi_data_len(blob), align));
->  }
->  
-> +static const uint16_t hest_ghes_notify[] = {
-> +    [ARM_ACPI_HEST_SRC_ID_SEA] = ACPI_GHES_NOTIFY_SEA,
-> +};
-
-I agree that machine/platform shall opt in for a specific source id,
-but I'm not sure about whether we need platform specific source ids,
-it seems to complicate things needlessly.
-
-For example if one would define different src_id for error injection
-for ARM and X86, then we would somehow need to take that in account
-when QMP command X called so it would use correct ID
+diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+index 976d43f73f38..f2bbd9898551 100644
+--- a/drivers/i2c/busses/i2c-imx-lpi2c.c
++++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+@@ -8,6 +8,8 @@
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/delay.h>
++#include <linux/dma-mapping.h>
++#include <linux/dmaengine.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+ #include <linux/i2c.h>
+@@ -29,6 +31,7 @@
+ #define LPI2C_MCR	0x10	/* i2c contrl register */
+ #define LPI2C_MSR	0x14	/* i2c status register */
+ #define LPI2C_MIER	0x18	/* i2c interrupt enable */
++#define LPI2C_MDER	0x1C	/* i2c DMA enable */
+ #define LPI2C_MCFGR0	0x20	/* i2c master configuration */
+ #define LPI2C_MCFGR1	0x24	/* i2c master configuration */
+ #define LPI2C_MCFGR2	0x28	/* i2c master configuration */
+@@ -70,11 +73,14 @@
+ #define MCFGR1_AUTOSTOP	BIT(8)
+ #define MCFGR1_IGNACK	BIT(9)
+ #define MRDR_RXEMPTY	BIT(14)
++#define MDER_TDDE	BIT(0)
++#define MDER_RDDE	BIT(1)
  
-Maybe this needs it's own patch with a commit message that
-would explain need for this approach (but so far I'm not seeing the point).
-
-PS:
-I'd prefer common/shared SRC_ID registry, from which boards would pick
-applicable ones.
-
-> +
->  static
->  void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
->  {
-> @@ -943,10 +947,10 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
->      build_dbg2(tables_blob, tables->linker, vms);
->  
->      if (vms->ras) {
-> -        build_ghes_error_table(tables->hardware_errors, tables->linker);
->          acpi_add_table(table_offsets, tables_blob);
-> -        acpi_build_hest(tables_blob, tables->linker, vms->oem_id,
-> -                        vms->oem_table_id);
-> +        acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
-> +                        hest_ghes_notify, sizeof(hest_ghes_notify),
-> +                        vms->oem_id, vms->oem_table_id);
->      }
->  
->      if (ms->numa_state->num_nodes > 0) {
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index 28b956acb19a..4b5af86ec077 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -23,6 +23,7 @@
->  #define ACPI_GHES_H
->  
->  #include "hw/acpi/bios-linker-loader.h"
-> +#include "qapi/error.h"
->  
->  /*
->   * Values for Hardware Error Notification Type field
-> @@ -56,24 +57,23 @@ enum AcpiGhesNotifyType {
->      ACPI_GHES_NOTIFY_RESERVED = 12
->  };
->  
-> -enum {
-> -    ACPI_HEST_SRC_ID_SEA = 0,
-> -    /* future ids go here */
-> -    ACPI_HEST_SRC_ID_RESERVED,
-> -};
-> -
->  typedef struct AcpiGhesState {
->      uint64_t hest_addr_le;
->      uint64_t ghes_addr_le;
->      bool present; /* True if GHES is present at all on this board */
->  } AcpiGhesState;
->  
-> -void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker);
-> -void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
-> +void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
-> +                     BIOSLinker *linker,
-> +                     const uint16_t * const notify,
-> +                     int num_sources,
->                       const char *oem_id, const char *oem_table_id);
->  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
->                            GArray *hardware_errors);
-> -int acpi_ghes_record_errors(uint8_t notify, uint64_t error_physical_addr);
-> +int acpi_ghes_record_errors(int source_id,
-> +                            uint64_t error_physical_addr);
-> +void ghes_record_cper_errors(const void *cper, size_t len,
-
-use GArray for cper so you won't have to pass down len
-
-> +                             uint16_t source_id, Error **errp);
->  
->  /**
->   * acpi_ghes_present: Report whether ACPI GHES table is present
-> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
-> index a4d937ed45ac..d62d8d9db5ae 100644
-> --- a/include/hw/arm/virt.h
-> +++ b/include/hw/arm/virt.h
-> @@ -189,6 +189,13 @@ OBJECT_DECLARE_TYPE(VirtMachineState, VirtMachineClass, VIRT_MACHINE)
->  void virt_acpi_setup(VirtMachineState *vms);
->  bool virt_is_acpi_enabled(VirtMachineState *vms);
->  
-> +/*
-> + * ID numbers used to fill HEST source ID field
-> + */
-> +enum {
-> +    ARM_ACPI_HEST_SRC_ID_SEA,
-> +};
-> +
->  /* Return number of redistributors that fit in the specified region */
->  static uint32_t virt_redist_capacity(VirtMachineState *vms, int region)
->  {
-> diff --git a/target/arm/kvm.c b/target/arm/kvm.c
-> index 849e2e21b304..8c4c8263b85a 100644
-> --- a/target/arm/kvm.c
-> +++ b/target/arm/kvm.c
-> @@ -2373,7 +2373,8 @@ void kvm_arch_on_sigbus_vcpu(CPUState *c, int code, void *addr)
->               */
->              if (code == BUS_MCEERR_AR) {
->                  kvm_cpu_synchronize_state(c);
-> -                if (!acpi_ghes_record_errors(ACPI_HEST_SRC_ID_SEA, paddr)) {
-> +                if (!acpi_ghes_record_errors(ARM_ACPI_HEST_SRC_ID_SEA,
-> +                                             paddr)) {
->                      kvm_inject_arm_sea(c);
->                  } else {
->                      error_report("failed to record the error");
+ #define I2C_CLK_RATIO	2
+ #define CHUNK_DATA	256
+ 
+ #define I2C_PM_TIMEOUT		10 /* ms */
++#define I2C_DMA_THRESHOLD	8 /* bytes */
+ 
+ enum lpi2c_imx_mode {
+ 	STANDARD,	/* 100+Kbps */
+@@ -91,6 +97,24 @@ enum lpi2c_imx_pincfg {
+ 	FOUR_PIN_PP,
+ };
+ 
++struct lpi2c_imx_dma {
++	bool		using_pio_mode;
++	u8		rx_cmd_buf_len;
++	u8		*dma_buf;
++	u16		*rx_cmd_buf;
++	unsigned int	dma_len;
++	unsigned int	tx_burst_num;
++	unsigned int	rx_burst_num;
++	unsigned long	dma_msg_flag;
++	resource_size_t	phy_addr;
++	dma_addr_t	dma_tx_addr;
++	dma_addr_t	dma_addr;
++	enum dma_data_direction dma_data_dir;
++	enum dma_transfer_direction dma_transfer_dir;
++	struct dma_chan	*chan_tx;
++	struct dma_chan	*chan_rx;
++};
++
+ struct lpi2c_imx_struct {
+ 	struct i2c_adapter	adapter;
+ 	int			num_clks;
+@@ -108,6 +132,8 @@ struct lpi2c_imx_struct {
+ 	unsigned int		rxfifosize;
+ 	enum lpi2c_imx_mode	mode;
+ 	struct i2c_bus_recovery_info rinfo;
++	bool			can_use_dma;
++	struct lpi2c_imx_dma	*dma;
+ };
+ 
+ static void lpi2c_imx_intctrl(struct lpi2c_imx_struct *lpi2c_imx,
+@@ -305,7 +331,7 @@ static int lpi2c_imx_master_disable(struct lpi2c_imx_struct *lpi2c_imx)
+ 	return 0;
+ }
+ 
+-static int lpi2c_imx_msg_complete(struct lpi2c_imx_struct *lpi2c_imx)
++static int lpi2c_imx_pio_msg_complete(struct lpi2c_imx_struct *lpi2c_imx)
+ {
+ 	unsigned long time_left;
+ 
+@@ -451,6 +477,426 @@ static void lpi2c_imx_read(struct lpi2c_imx_struct *lpi2c_imx,
+ 	lpi2c_imx_intctrl(lpi2c_imx, MIER_RDIE | MIER_NDIE);
+ }
+ 
++static bool is_use_dma(struct lpi2c_imx_struct *lpi2c_imx, struct i2c_msg *msg)
++{
++	if (!lpi2c_imx->can_use_dma)
++		return false;
++
++	/*
++	 * When the length of data is less than I2C_DMA_THRESHOLD,
++	 * cpu mode is used directly to avoid low performance.
++	 */
++	return !(msg->len < I2C_DMA_THRESHOLD);
++}
++
++static int lpi2c_imx_pio_xfer(struct lpi2c_imx_struct *lpi2c_imx,
++			      struct i2c_msg *msg)
++{
++	reinit_completion(&lpi2c_imx->complete);
++
++	if (msg->flags & I2C_M_RD)
++		lpi2c_imx_read(lpi2c_imx, msg);
++	else
++		lpi2c_imx_write(lpi2c_imx, msg);
++
++	return lpi2c_imx_pio_msg_complete(lpi2c_imx);
++}
++
++static int lpi2c_imx_dma_timeout_calculate(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	unsigned long time = 0;
++
++	time = 8 * lpi2c_imx->dma->dma_len * 1000 / lpi2c_imx->bitrate;
++
++	/* Add extra second for scheduler related activities */
++	time += 1;
++
++	/* Double calculated time */
++	return msecs_to_jiffies(time * MSEC_PER_SEC);
++}
++
++static int lpi2c_imx_alloc_rx_cmd_buf(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	u16 rx_remain = dma->dma_len;
++	int cmd_num;
++	u16 temp;
++
++	/*
++	 * Calculate the number of rx command words via the DMA TX channel
++	 * writing into command register based on the i2c msg len, and build
++	 * the rx command words buffer.
++	 */
++	cmd_num = DIV_ROUND_UP(rx_remain, CHUNK_DATA);
++	dma->rx_cmd_buf = kcalloc(cmd_num, sizeof(u16), GFP_KERNEL);
++	dma->rx_cmd_buf_len = cmd_num * sizeof(u16);
++
++	if (!dma->rx_cmd_buf) {
++		dev_err(&lpi2c_imx->adapter.dev, "Alloc RX cmd buffer failed\n");
++		return -ENOMEM;
++	}
++
++	for (int i = 0; i < cmd_num ; i++) {
++		temp = rx_remain > CHUNK_DATA ? CHUNK_DATA - 1 : rx_remain - 1;
++		temp |= (RECV_DATA << 8);
++		rx_remain -= CHUNK_DATA;
++		dma->rx_cmd_buf[i] = temp;
++	}
++
++	return 0;
++}
++
++static int lpi2c_imx_dma_msg_complete(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	unsigned long time_left, time;
++
++	time = lpi2c_imx_dma_timeout_calculate(lpi2c_imx);
++	time_left = wait_for_completion_timeout(&lpi2c_imx->complete, time);
++	if (time_left == 0) {
++		dev_err(&lpi2c_imx->adapter.dev, "I/O Error in DMA Data Transfer\n");
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
++
++static void lpi2c_dma_unmap(struct lpi2c_imx_dma *dma)
++{
++	struct dma_chan *chan = dma->dma_data_dir == DMA_FROM_DEVICE
++				? dma->chan_rx : dma->chan_tx;
++
++	dma_unmap_single(chan->device->dev, dma->dma_addr,
++			 dma->dma_len, dma->dma_data_dir);
++
++	dma->dma_data_dir = DMA_NONE;
++}
++
++static void lpi2c_cleanup_rx_cmd_dma(struct lpi2c_imx_dma *dma)
++{
++	dmaengine_terminate_sync(dma->chan_tx);
++	dma_unmap_single(dma->chan_tx->device->dev, dma->dma_tx_addr,
++			 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
++}
++
++static void lpi2c_cleanup_dma(struct lpi2c_imx_dma *dma)
++{
++	if (dma->dma_data_dir == DMA_FROM_DEVICE)
++		dmaengine_terminate_sync(dma->chan_rx);
++	else if (dma->dma_data_dir == DMA_TO_DEVICE)
++		dmaengine_terminate_sync(dma->chan_tx);
++
++	lpi2c_dma_unmap(dma);
++}
++
++static void lpi2c_dma_callback(void *data)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = (struct lpi2c_imx_struct *)data;
++
++	complete(&lpi2c_imx->complete);
++}
++
++static int lpi2c_dma_rx_cmd_submit(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct dma_async_tx_descriptor *rx_cmd_desc;
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	struct dma_chan *txchan = dma->chan_tx;
++	dma_cookie_t cookie;
++
++	dma->dma_tx_addr = dma_map_single(txchan->device->dev,
++					  dma->rx_cmd_buf, dma->rx_cmd_buf_len,
++					  DMA_TO_DEVICE);
++	if (dma_mapping_error(txchan->device->dev, dma->dma_tx_addr)) {
++		dev_err(&lpi2c_imx->adapter.dev, "DMA map failed, use pio\n");
++		return -EINVAL;
++	}
++
++	rx_cmd_desc = dmaengine_prep_slave_single(txchan, dma->dma_tx_addr,
++						  dma->rx_cmd_buf_len, DMA_MEM_TO_DEV,
++						  DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
++	if (!rx_cmd_desc) {
++		dev_err(&lpi2c_imx->adapter.dev, "DMA prep slave sg failed, use pio\n");
++		goto desc_prepare_err_exit;
++	}
++
++	cookie = dmaengine_submit(rx_cmd_desc);
++	if (dma_submit_error(cookie)) {
++		dev_err(&lpi2c_imx->adapter.dev, "submitting DMA failed, use pio\n");
++		goto submit_err_exit;
++	}
++
++	dma_async_issue_pending(txchan);
++
++	return 0;
++
++desc_prepare_err_exit:
++	dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
++			 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
++	return -EINVAL;
++
++submit_err_exit:
++	dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
++			 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
++	dmaengine_desc_free(rx_cmd_desc);
++	return -EINVAL;
++
++}
++
++static int lpi2c_dma_submit(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	struct dma_async_tx_descriptor *desc;
++	struct dma_chan *chan;
++	dma_cookie_t cookie;
++
++	if (dma->dma_msg_flag & I2C_M_RD) {
++		chan = dma->chan_rx;
++		dma->dma_data_dir = DMA_FROM_DEVICE;
++		dma->dma_transfer_dir = DMA_DEV_TO_MEM;
++	} else {
++		chan = dma->chan_tx;
++		dma->dma_data_dir = DMA_TO_DEVICE;
++		dma->dma_transfer_dir = DMA_MEM_TO_DEV;
++	}
++
++	dma->dma_addr = dma_map_single(chan->device->dev,
++				       dma->dma_buf, dma->dma_len, dma->dma_data_dir);
++	if (dma_mapping_error(chan->device->dev, dma->dma_addr)) {
++		dev_err(&lpi2c_imx->adapter.dev, "DMA map failed, use pio\n");
++		return -EINVAL;
++	}
++
++	desc = dmaengine_prep_slave_single(chan, dma->dma_addr,
++					   dma->dma_len, dma->dma_transfer_dir,
++					   DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
++	if (!desc) {
++		dev_err(&lpi2c_imx->adapter.dev, "DMA prep slave sg failed, use pio\n");
++		goto desc_prepare_err_exit;
++	}
++
++	reinit_completion(&lpi2c_imx->complete);
++	desc->callback = lpi2c_dma_callback;
++	desc->callback_param = lpi2c_imx;
++
++	cookie = dmaengine_submit(desc);
++	if (dma_submit_error(cookie)) {
++		dev_err(&lpi2c_imx->adapter.dev, "submitting DMA failed, use pio\n");
++		goto submit_err_exit;
++	}
++
++	/* Can't switch to PIO mode when DMA have started transfer */
++	dma->using_pio_mode = false;
++
++	dma_async_issue_pending(chan);
++
++	return 0;
++
++desc_prepare_err_exit:
++	lpi2c_dma_unmap(dma);
++	return -EINVAL;
++
++submit_err_exit:
++	lpi2c_dma_unmap(dma);
++	dmaengine_desc_free(desc);
++	return -EINVAL;
++}
++
++static int lpi2c_imx_find_max_burst_num(unsigned int fifosize, unsigned int len)
++{
++	unsigned int i;
++
++	for (i = fifosize / 2; i > 0; i--)
++		if (!(len % i))
++			break;
++
++	return i;
++}
++
++/*
++ * For a highest DMA efficiency, tx/rx burst number should be calculated according
++ * to the FIFO depth.
++ */
++static void lpi2c_imx_dma_burst_num_calculate(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	unsigned int cmd_num;
++
++	if (dma->dma_msg_flag & I2C_M_RD) {
++		/*
++		 * One RX cmd word can trigger DMA receive no more than 256 bytes.
++		 * The number of RX cmd words should be calculated based on the data
++		 * length.
++		 */
++		cmd_num = DIV_ROUND_UP(dma->dma_len, CHUNK_DATA);
++		dma->tx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->txfifosize,
++								 cmd_num);
++		dma->rx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->rxfifosize,
++								 dma->dma_len);
++	} else {
++		dma->tx_burst_num = lpi2c_imx_find_max_burst_num(lpi2c_imx->txfifosize,
++								 dma->dma_len);
++	}
++}
++
++static int lpi2c_dma_config(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	struct dma_slave_config rx = {}, tx = {};
++	int ret;
++
++	lpi2c_imx_dma_burst_num_calculate(lpi2c_imx);
++
++	if (dma->dma_msg_flag & I2C_M_RD) {
++		tx.dst_addr = dma->phy_addr + LPI2C_MTDR;
++		tx.dst_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTES;
++		tx.dst_maxburst = dma->tx_burst_num;
++		tx.direction = DMA_MEM_TO_DEV;
++		ret = dmaengine_slave_config(dma->chan_tx, &tx);
++		if (ret < 0)
++			return ret;
++
++		rx.src_addr = dma->phy_addr + LPI2C_MRDR;
++		rx.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++		rx.src_maxburst = dma->rx_burst_num;
++		rx.direction = DMA_DEV_TO_MEM;
++		ret = dmaengine_slave_config(dma->chan_rx, &rx);
++		if (ret < 0)
++			return ret;
++	} else {
++		tx.dst_addr = dma->phy_addr + LPI2C_MTDR;
++		tx.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
++		tx.dst_maxburst = dma->tx_burst_num;
++		tx.direction = DMA_MEM_TO_DEV;
++		ret = dmaengine_slave_config(dma->chan_tx, &tx);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++static void lpi2c_dma_enable(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	/*
++	 * TX interrupt will be triggerred when the number of words in
++	 * the transmit FIFO is equal or less than TX watermark.
++	 * RX interrupt will be triggerred when the number of words in
++	 * the receive FIFO is greater than RX watermark.
++	 * In order to trigger the DMA interrupt, TX watermark should be
++	 * set equal to the DMA TX burst number but RX watermark should
++	 * be set less than the DMA RX burst number.
++	 */
++	if (dma->dma_msg_flag & I2C_M_RD) {
++		/* Set I2C TX/RX watermark */
++		writel(dma->tx_burst_num | (dma->rx_burst_num - 1) << 16,
++				 lpi2c_imx->base + LPI2C_MFCR);
++		/* Enable I2C DMA TX/RX function */
++		writel(MDER_TDDE | MDER_RDDE, lpi2c_imx->base + LPI2C_MDER);
++	} else {
++		/* Set I2C TX watermark */
++		writel(dma->tx_burst_num, lpi2c_imx->base + LPI2C_MFCR);
++		/* Enable I2C DMA TX function */
++		writel(MDER_TDDE, lpi2c_imx->base + LPI2C_MDER);
++	}
++
++	/* Enable NACK detected */
++	lpi2c_imx_intctrl(lpi2c_imx, MIER_NDIE);
++};
++
++/*
++ * When lpi2c is in TX DMA mode we can use one DMA TX channel to write
++ * data word into TXFIFO, but in RX DMA mode it is different.
++ *
++ * The LPI2C MTDR register is a command data and transmit data register.
++ * Bits 8-10 are the command data field and Bits 0-7 are the transmit
++ * data field. When the LPI2C master needs to read data, the number of
++ * bytes to read should be set in the command field and RECV_DATA should
++ * be set into the command data field to receive (DATA[7:0] + 1) bytes.
++ * The recv data command word is made of RECV_DATA in the command data
++ * field and the number of bytes to read in transmit data field. When the
++ * length of data to be read exceeds 256 bytes, recv data command word
++ * needs to be written to TXFIFO multiple times.
++ *
++ * So when in RX DMA mode, the TX channel also must to be configured to
++ * send RX command words and the RX command word must be set in advance
++ * before transmitting.
++ */
++static int lpi2c_imx_dma_xfer(struct lpi2c_imx_struct *lpi2c_imx,
++			      struct i2c_msg *msg)
++{
++	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
++	int ret;
++
++	/* When DMA mode fails before transferring, CPU mode can be used. */
++	dma->using_pio_mode = true;
++
++	dma->dma_len = msg->len;
++	dma->dma_msg_flag = msg->flags;
++	dma->dma_buf = i2c_get_dma_safe_msg_buf(msg, I2C_DMA_THRESHOLD);
++	if (!dma->dma_buf)
++		return -ENOMEM;
++
++	ret = lpi2c_dma_config(lpi2c_imx);
++	if (ret) {
++		dev_err(&lpi2c_imx->adapter.dev, "Failed to configure DMA (%d)\n", ret);
++		goto disable_dma;
++	}
++
++	lpi2c_dma_enable(lpi2c_imx);
++
++	ret = lpi2c_dma_submit(lpi2c_imx);
++	if (ret) {
++		dev_err(&lpi2c_imx->adapter.dev, "DMA submission failed (%d)\n", ret);
++		goto disable_dma;
++	}
++
++	if (dma->dma_msg_flag & I2C_M_RD) {
++		ret = lpi2c_imx_alloc_rx_cmd_buf(lpi2c_imx);
++		if (ret)
++			goto disable_cleanup_data_dma;
++
++		ret = lpi2c_dma_rx_cmd_submit(lpi2c_imx);
++		if (ret)
++			goto disable_cleanup_data_dma;
++	}
++
++	ret = lpi2c_imx_dma_msg_complete(lpi2c_imx);
++	if (ret)
++		goto disable_cleanup_all_dma;
++
++	/* When encountering NACK in transfer, clean up all DMA transfers */
++	if ((readl(lpi2c_imx->base + LPI2C_MSR) & MSR_NDF) && !ret) {
++		ret = -EIO;
++		goto disable_cleanup_all_dma;
++	}
++
++	if (dma->dma_msg_flag & I2C_M_RD)
++		dma_unmap_single(dma->chan_tx->device->dev, dma->dma_tx_addr,
++				 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
++	lpi2c_dma_unmap(dma);
++
++	goto disable_dma;
++
++disable_cleanup_all_dma:
++	if (dma->dma_msg_flag & I2C_M_RD)
++		lpi2c_cleanup_rx_cmd_dma(dma);
++disable_cleanup_data_dma:
++	lpi2c_cleanup_dma(dma);
++disable_dma:
++	/* Disable I2C DMA function */
++	writel(0, lpi2c_imx->base + LPI2C_MDER);
++
++	if (dma->dma_msg_flag & I2C_M_RD)
++		kfree(dma->rx_cmd_buf);
++
++	if (ret)
++		i2c_put_dma_safe_msg_buf(dma->dma_buf, msg, false);
++	else
++		i2c_put_dma_safe_msg_buf(dma->dma_buf, msg, true);
++
++	return ret;
++}
++
+ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 			  struct i2c_msg *msgs, int num)
+ {
+@@ -477,12 +923,14 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 		lpi2c_imx->msglen = msgs[i].len;
+ 		init_completion(&lpi2c_imx->complete);
+ 
+-		if (msgs[i].flags & I2C_M_RD)
+-			lpi2c_imx_read(lpi2c_imx, &msgs[i]);
+-		else
+-			lpi2c_imx_write(lpi2c_imx, &msgs[i]);
++		if (is_use_dma(lpi2c_imx, &msgs[i])) {
++			result = lpi2c_imx_dma_xfer(lpi2c_imx, &msgs[i]);
++			if (result && lpi2c_imx->dma->using_pio_mode)
++				result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++		} else {
++			result = lpi2c_imx_pio_xfer(lpi2c_imx, &msgs[i]);
++		}
+ 
+-		result = lpi2c_imx_msg_complete(lpi2c_imx);
+ 		if (result)
+ 			goto stop;
+ 
+@@ -546,6 +994,58 @@ static int lpi2c_imx_init_recovery_info(struct lpi2c_imx_struct *lpi2c_imx,
+ 	return 0;
+ }
+ 
++static void dma_exit(struct device *dev, struct lpi2c_imx_dma *dma)
++{
++	if (dma->chan_rx)
++		dma_release_channel(dma->chan_rx);
++
++	if (dma->chan_tx)
++		dma_release_channel(dma->chan_tx);
++
++	devm_kfree(dev, dma);
++}
++
++static int lpi2c_dma_init(struct device *dev, dma_addr_t phy_addr)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = dev_get_drvdata(dev);
++	struct lpi2c_imx_dma *dma;
++	int ret;
++
++	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
++	if (!dma)
++		return -ENOMEM;
++
++	dma->phy_addr = phy_addr;
++
++	/* Prepare for TX DMA: */
++	dma->chan_tx = dma_request_chan(dev, "tx");
++	if (IS_ERR(dma->chan_tx)) {
++		ret = PTR_ERR(dma->chan_tx);
++		if (ret != -ENODEV && ret != -EPROBE_DEFER)
++			dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
++		dma->chan_tx = NULL;
++		goto dma_exit;
++	}
++
++	/* Prepare for RX DMA: */
++	dma->chan_rx = dma_request_chan(dev, "rx");
++	if (IS_ERR(dma->chan_rx)) {
++		ret = PTR_ERR(dma->chan_rx);
++		if (ret != -ENODEV && ret != -EPROBE_DEFER)
++			dev_err(dev, "can't request DMA rx channel (%d)\n", ret);
++		dma->chan_rx = NULL;
++		goto dma_exit;
++	}
++
++	lpi2c_imx->can_use_dma = true;
++	lpi2c_imx->dma = dma;
++	return 0;
++
++dma_exit:
++	dma_exit(dev, dma);
++	return ret;
++}
++
+ static u32 lpi2c_imx_func(struct i2c_adapter *adapter)
+ {
+ 	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL |
+@@ -566,6 +1066,8 @@ MODULE_DEVICE_TABLE(of, lpi2c_imx_of_match);
+ static int lpi2c_imx_probe(struct platform_device *pdev)
+ {
+ 	struct lpi2c_imx_struct *lpi2c_imx;
++	struct resource *res;
++	dma_addr_t phy_addr;
+ 	unsigned int temp;
+ 	int irq, ret;
+ 
+@@ -573,7 +1075,7 @@ static int lpi2c_imx_probe(struct platform_device *pdev)
+ 	if (!lpi2c_imx)
+ 		return -ENOMEM;
+ 
+-	lpi2c_imx->base = devm_platform_ioremap_resource(pdev, 0);
++	lpi2c_imx->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(lpi2c_imx->base))
+ 		return PTR_ERR(lpi2c_imx->base);
+ 
+@@ -587,6 +1089,7 @@ static int lpi2c_imx_probe(struct platform_device *pdev)
+ 	lpi2c_imx->adapter.dev.of_node	= pdev->dev.of_node;
+ 	strscpy(lpi2c_imx->adapter.name, pdev->name,
+ 		sizeof(lpi2c_imx->adapter.name));
++	phy_addr = (dma_addr_t)res->start;
+ 
+ 	ret = devm_clk_bulk_get_all(&pdev->dev, &lpi2c_imx->clks);
+ 	if (ret < 0)
+@@ -640,6 +1143,14 @@ static int lpi2c_imx_probe(struct platform_device *pdev)
+ 	if (ret == -EPROBE_DEFER)
+ 		goto rpm_disable;
+ 
++	/* Init DMA */
++	ret = lpi2c_dma_init(&pdev->dev, phy_addr);
++	if (ret) {
++		if (ret == -EPROBE_DEFER)
++			goto rpm_disable;
++		dev_info(&pdev->dev, "use pio mode\n");
++	}
++
+ 	ret = i2c_add_adapter(&lpi2c_imx->adapter);
+ 	if (ret)
+ 		goto rpm_disable;
+-- 
+2.34.1
 
 
