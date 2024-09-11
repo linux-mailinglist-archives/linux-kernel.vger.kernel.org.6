@@ -1,141 +1,124 @@
-Return-Path: <linux-kernel+bounces-325003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F029753CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE32C9753D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BEF51C21D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490201F23A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413DE19CC0C;
-	Wed, 11 Sep 2024 13:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C7719F127;
+	Wed, 11 Sep 2024 13:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YnDhUQyX"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQqYXlL0"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D187A19341A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38A419341A;
+	Wed, 11 Sep 2024 13:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726060802; cv=none; b=sauqM5mTIsvzs0vVYe0BH6Q6Of/TpBQQvrbjicDi7A2N4V4O7wj8Vfa77kvyt1FXMi3MDNATCjwj+tF5kXh3XjU46G+k9VHP6U1KBSxdVvFXESIRGuSjNPmwhSpXmBZgvEJa1VG6/P0qFqxt0pkZylAyF0ydXD4EurroSQgy6ZE=
+	t=1726060846; cv=none; b=KL9kXI4JFWibxmSaNJruBJIBGEZl2mY+tPcoFX45EWE/5dlaP7wcj9sOyYXv9Ori5W2Oe5/lIAW+7a++qSCvEOpxlyZRKtemomNoCY4X/mswjjKP9ffvwXwQteohzJx1A2O+cEnc0MiDLgtJAI+H6LhpxMB+g0Mt5TrGQTJpOhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726060802; c=relaxed/simple;
-	bh=D1EiHcY8P9weXlSZhRTUAEeg4iKK3QtrCo4b6y9PHW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bYS148Sk0p7WPWqdBOZ/z0oHiLEl87ZhKE6vRrN6asqf/i0Fkk0/qP07zUfnpCVNFteiCTBC+amh7Lo4P1v3v4ioKyvqLtb14JTqTR7q1UUKyN6aBoYA4YvrFs3cmtjhdkRH4uineXFSPCKxZ5HltNrV9VkUg6FfR0uqY9Fd85k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YnDhUQyX; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c6187b6eso4240161f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:20:00 -0700 (PDT)
+	s=arc-20240116; t=1726060846; c=relaxed/simple;
+	bh=aTIvXlAhOchnA1LSzX3Lh6171UeL2VoQ+xFy/wcuwGc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DYH+/VmW7tMP95UTUNekkXDUYoAWtU+ywTOj9JZAcoDiL7DI7f81RVLYyuJK7mYClp/vXZb5BqcshYcWZWU7s39WY8VqVg4l0oj8pcSIn3nQjzKxDczY2sv6NmnY2eIgUWJd865GN0Xcofa2CSNb6Ie503OCwK6L/lXHHHdQJvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQqYXlL0; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso2121915e9.2;
+        Wed, 11 Sep 2024 06:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726060799; x=1726665599; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RCmH6mf58csP77BoUiBG1NiEIHJIhhD8mtjQ0XUQ2Ew=;
-        b=YnDhUQyX1nl0WR0Hexusub1+WDPsIk/Z2q12qmVQZaAfqMD96CNYbmkY7qvbxZSxvT
-         7WDACKLZaPbtHRLhIl+X4t6sGd6HF2FWufFzEveDCslvqtlAt3MDbeoITwVXgUsS18B9
-         fBSceuGk7dhUUWEGbnyW33DOlbmoOPPlCmFsbTzGgz5w5HmyJevY1A9g74390bw2//Yj
-         qTRWGUH4J5f3WbJIPeMeqt4yg6taCHR09PaeDxgC3O/gkD6qZUx+Iijlr9gxh9lBdRQi
-         HQGyAhiyiC9HWFg5r4KvqxAZGcqUlws6kiouQNSZJQ7j8shHXvjzEw4ai99NH6yvyO84
-         2RzQ==
+        d=gmail.com; s=20230601; t=1726060843; x=1726665643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cv8t06vDvqWS56ZQgDh5smGqYcG8mSgVGYmge5+e74c=;
+        b=bQqYXlL0/1RnVvtb29NkkY7eZDRY+eDbmZN25XY7fJ7GllPIotLgriFozX5Ky9Y6yE
+         Rex5+lX0VaUCOj9jlErRwAEy6j5/kT4dkJhGA4HEm9+htNa08cfyvQ+dSv3R8atGYCCf
+         fXNJFmrBvkSe4EwH9tS4ZZSJuhZitNpq35D0SuXLBQjsbcGoYlQ+p1ILtHrWtDuYMwfD
+         +Y44JYGdKIJU2QpehFzv2XA+eud7pyeufB5w/CtcOh8yWapBJ3Hsa/wLwUeF3H9JZP/a
+         fyjFZylSs3nCGF8LCRjmyzpxg1ihN7cnuPiKAgY/9UGcOETuTqG4A3v2YzteUK1Ig5hS
+         NOSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726060799; x=1726665599;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCmH6mf58csP77BoUiBG1NiEIHJIhhD8mtjQ0XUQ2Ew=;
-        b=GvljSslEKlEHeJLakKTUumd3aEB9og7SoR9dsSqWiFhFzHgB/DnYPrs5CjaGcIf8k4
-         i6xnc6sPhSLgRd2IV1IV+r9eLcvPkkvOmjbXxcmaxn85261o9pkvjBNTvTw2Qaqb8GKT
-         2eN0UF9qnlld1x3NSmMuukJ3C2xWEXY4GRRueRik6K/div4mlAK4IriemCcgBlj8v8YZ
-         /SWm2/AeND0AKwaBhfFC35aQSTtCiXLde4Qaz0F2m4W8YYEt9BF0TjlcEBdsBYbnSvRT
-         agCxsUjECxm7/RrvpQHq8y0HvJYNjKphkOHIg+/RgvGEA1dF0TxMBANe20jPH+kChp+l
-         +EMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWa89gP5vIwz5znd8yxpKuWBOzDnnODZ2+/8bpdItFUSAMc2na21Jg5v0SgQ5IPtxrgFOHRXVguyb67tJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk1R6ZgnVM3UfCHRnkHQdMX4JHasCpkp2CC3K0cPwmbRXNN0YP
-	iislINQG3MGvRBTypufcXPR0SlfHClvb1B3Cj0Kt9kf6yN6EqpQqhK4ppTKjcgU=
-X-Google-Smtp-Source: AGHT+IFEENixLL18/yVJLAJfrYAgTnbVQ6WwdXnBfanZyIiOghGVV3B0zi9SftdyFackY5eWv55XaQ==
-X-Received: by 2002:adf:f582:0:b0:374:bb1b:d8a1 with SMTP id ffacd0b85a97d-378895c8952mr11094429f8f.13.1726060798926;
-        Wed, 11 Sep 2024 06:19:58 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caf436998sm140496745e9.29.2024.09.11.06.19.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 06:19:58 -0700 (PDT)
-Message-ID: <586cc208-faee-4b76-bd9b-180ac06a0a92@linaro.org>
-Date: Wed, 11 Sep 2024 14:20:09 +0100
+        d=1e100.net; s=20230601; t=1726060843; x=1726665643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cv8t06vDvqWS56ZQgDh5smGqYcG8mSgVGYmge5+e74c=;
+        b=Z0nAfVu1fJ9akvqICu3Xn2u7YetFQi0qe83+Sc0NkeWLvXG6Vz4uEse6UCI14apyIh
+         +do0pkdb8VByfiBLeu6uXp6WmmT8roJixTNJz8ACup3bUwy804OideartIFfEh2IwyvZ
+         T7JIz3fFRbY8PgUoU6YzsCG1g22ORyHO4Bq30hXl3pq3b+XPPCYbg/Rykg9zR3eebtwM
+         0CY9Sl3ZPO/nHYBG6ex1hZJhoLgnI5rExUAg81MueLFzHYzg9/JvgydM5V4wMt3lLedC
+         aDIeQETs5Mojb6xtNuPVn30dK2xL6ZNpuiM07BsPmM16tKb1+ignlS5E6ELVPRvM4dph
+         +RVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGJIBG+lMBlGaytNg6JAiWVXywUK1pRZ5soh4ATGic9/7QiOfsdkxkFmmIdU6O+6+0ehmnbSMXiPLlnWEthqE=@vger.kernel.org, AJvYcCV/r7mlpkZ2XYz42u2zeTJe+DD2ALL4XrQ56JboJA8nuoS8SI3gckgmEMGJligbHxGyegjfaWIZisOITOpADl1FAA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPM0QNj8mWVtrgHbzjxOl7/ZuyKzkdkJD3k5iJHamDhqQlNrjx
+	ByEuwjsp3FNLQC5YKhaf1eWoYzJtLCmaTA/8pC94TfE8Ln2WhcUs
+X-Google-Smtp-Source: AGHT+IEt9X9eG+LPA7JAVBfR+MGBEWWZR+hF+fGb/UCfwbLPnRHFF0k9T1EjLEC+oq/zMzPgwuN62A==
+X-Received: by 2002:a05:600c:3508:b0:42c:bd4d:e8ab with SMTP id 5b1f17b1804b1-42cbd4ebf4cmr78485435e9.10.1726060842723;
+        Wed, 11 Sep 2024 06:20:42 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d365fsm11597735f8f.82.2024.09.11.06.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 06:20:42 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] watchdog: rzv2h_wdt: Add missing MODULE_LICENSE tag to fix modpost error
+Date: Wed, 11 Sep 2024 14:20:31 +0100
+Message-Id: <20240911132031.544479-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 2/2] perf stat: Stop repeating when ref_perf_stat()
- returns -1
-To: Levi Yun <yeoreum.yun@arm.com>
-Cc: nd@arm.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, irogers@google.com,
- asmadeus@codewreck.org
-References: <20240911121919.4167483-1-yeoreum.yun@arm.com>
- <20240911121919.4167483-3-yeoreum.yun@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240911121919.4167483-3-yeoreum.yun@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Add the missing `MODULE_LICENSE()` tag to the `rzv2h_wdt` driver, which
+resolves the following modpost error when built as a module:
 
-On 11/09/2024 13:19, Levi Yun wrote:
-> Exit when run_perf_stat() returns an error to avoid continuously
-> repeating the same error message. It's not expected that COUNTER_FATAL
-> or internal errors are recoverable so there's no point in retrying.
-> 
-> This fixes the following flood of error messages for permission issues,
-> for example when perf_event_paranoid==3:
->    perf stat -r 1044 -- false
-> 
->    Error:
->    Access to performance monitoring and observability operations is limited.
->    ...
->    Error:
->    Access to performance monitoring and observability operations is limited.
->    ...
->    (repeating for 1044 times).
-> 
-> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-> ---
->   tools/perf/builtin-stat.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 954eb37ce7b8..18197ded88a7 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2875,7 +2875,10 @@ int cmd_stat(int argc, const char **argv)
->   			evlist__reset_prev_raw_counts(evsel_list);
-> 
->   		status = run_perf_stat(argc, argv, run_idx);
-> -		if (forever && status != -1 && !interval) {
-> +		if (status == -1)
-> +			break;
+    ERROR: modpost: missing MODULE_LICENSE() in drivers/watchdog/rzv2h_wdt.o
 
-Was this "status != -1" here correct? Seems like everything in 
-run_perf_stat() returns -1 except what's in "if (STAT_RECORD)" for some 
-reason.
+Fixes: f6febd0a30b6 ("watchdog: Add Watchdog Timer driver for RZ/V2H(P)")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Hi Wim,
 
-Maybe there is something special about -1, but that feels a bit fragile 
-and relies on the whole chain to continue to do the right thing. At 
-least a comment about the relevance of -1 is required, although the 
-issue might not be introduced by this patch.
+As `rzv2h_wdt.c` still not in -next maybe we can merge this patch in
+original commit in the watchdog tree?
 
-James
+Cheers,
+Prabhakar
+---
+ drivers/watchdog/rzv2h_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
+index 2da7a631fb2a..1d1b17312747 100644
+--- a/drivers/watchdog/rzv2h_wdt.c
++++ b/drivers/watchdog/rzv2h_wdt.c
+@@ -270,3 +270,4 @@ static struct platform_driver rzv2h_wdt_driver = {
+ module_platform_driver(rzv2h_wdt_driver);
+ MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
+ MODULE_DESCRIPTION("Renesas RZ/V2H(P) WDT Watchdog Driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
 
 
