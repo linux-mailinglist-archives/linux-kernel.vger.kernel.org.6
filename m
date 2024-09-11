@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-325750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC94B975DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:32:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34075975DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFBDC1C21E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:32:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5945F1C222FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7B4185B6E;
-	Wed, 11 Sep 2024 23:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9FC1A3047;
+	Wed, 11 Sep 2024 23:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9P9nneL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="XcEOl5XW"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E5F14F6C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C79186E2C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726097525; cv=none; b=gH362DVbwy4UC8r6J61uIrOIJNHan+ygYLRLMQ0PgsZkROSFKFWxyhErqhONoq3ZRTSFWNVUOdB19dC7lH7IztAq3FavLASvfaVH3s9kT/EQ07tFg/UpnEDm0pGYVdbrwueS/f1ajj4qf50m6CqOOHwfZl3L7Cx1gub6qZJt/Oc=
+	t=1726098276; cv=none; b=l62C1XB9giDIgV3RmVh+mSt5kEll9k4xp0g96NyI9ptkWuIb4mMVui4GS9YtO0WLFOonp6CIZmJ1iLVcAkvpOExkithKDGm+DL0rZH3CgOTgZbaHv+KuYBcvt84kFOXhPY3oNzhKS+BimA0YUNC3KtOFVQMxCy5m5SZE1M4UAGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726097525; c=relaxed/simple;
-	bh=HJuN3zUbj8WBQmqvMkVa+VDFYiZQRE0Dxq60HMS2Xd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mar7MxTiRqbOnNeHocJCe4ygw7Edr+XYa/HYqkUju5xdmqpsfvNQQ3PlMysY4V3bRftLSvmwMDB56KIhydIk8Ec075ujUQeh5rb0YjLglxKaMRlhho8sQOV4c1Ab/oz5Xa+9fBilf11rZUu6lfBMOreg1zMeSxI3Pnl4o4quscQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9P9nneL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726097524; x=1757633524;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HJuN3zUbj8WBQmqvMkVa+VDFYiZQRE0Dxq60HMS2Xd0=;
-  b=f9P9nneLwd7ePYuriqtbGGzB8Ji77V58FnUqDKdXDHaRAL0NVNV6t66n
-   Pi7WDqr1jDLOwARgYLzDylqnnNU39VE319rXYVwPZfGszGpjmOLAV1pn3
-   1xrVvNuyGKDyhGFn/b3yfLh56v9DqCLA9iXgYhl0mOuYj4h9NQgGpZQa/
-   poDoYgPnizhN9slHjzzfCeBdGnSq8BB1lJl7PUUXBFJqC0BMUtKGbQkpi
-   Y3PSj8tYSGusOwRw2iZByUwqkia30IKDX6TkwM2yYRfFsEWCa6cbJUb06
-   5aHV4YOPvPYkxShiFtA1uLWhEoHKisgx1RVP8J1mmsw/y2uCycTgSyTsu
-   A==;
-X-CSE-ConnectionGUID: 40S5XIyNRgyqfjlIFSRp8A==
-X-CSE-MsgGUID: /B/+ctRMTcCuQnpebg4rWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28814754"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="28814754"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 16:32:03 -0700
-X-CSE-ConnectionGUID: GaibvmmXSBSDEfBU6VPGpw==
-X-CSE-MsgGUID: 5l2h+Y75RVmTc7rUJrwxHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="67455855"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 16:32:03 -0700
-Date: Wed, 11 Sep 2024 16:37:46 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/4] cacheinfo: Check for null last-level cache info
-Message-ID: <20240911233746.GB7043@ranerica-svr.sc.intel.com>
-References: <20240905060036.5655-1-ricardo.neri-calderon@linux.intel.com>
- <20240905060036.5655-2-ricardo.neri-calderon@linux.intel.com>
- <20240911140509.GEZuGjlfyxj5hvSDYU@fat_crate.local>
+	s=arc-20240116; t=1726098276; c=relaxed/simple;
+	bh=y2VXaeJJxVoGvguqe8WDtlnLzOelU9lMxIjVbY1WZ6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tNOLDk10nUxZxFz0EOQ8p1uf0R7vnJUFvlT0IJ23rIj1/TtmUYL4TyAlvH/T/C7uipdlBOmCwJENnyMrvYYc4XvyhkvuECpwfBsiKaU9H0wEXsnd7whAY2ugQL6EkfaknHyrGFzXf78fMmkZF5sF5xyClVnLrBDuMbHBAtkmbjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=XcEOl5XW; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48BNi5BY2640137
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 11 Sep 2024 16:44:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48BNi5BY2640137
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024081601; t=1726098247;
+	bh=Gg6xQY5ra1K8phmbiZHoNGy2VSSxwc5nYjsqFC3Pg4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XcEOl5XW9ADrF1o4FFLpCrZ7Pr02ZVSj0744ToAzev7PTHY7c2dJ4VJTkllky/l5y
+	 tFJEb22xwyas25ISzHvPfK/VDWIqYYRz83NBK16GhGzpZ320/8MnrSqAQCfbKTxXVl
+	 Ex85UTHpjw48N0BV4i7x5U9dw9hhIpt+1ti+Kt5yco6akn8Q6WOv55jE6vZgQ9BBH5
+	 ifGOsXMDqmUdYxrBrvgPrjSfPqkykUs6usGZVQ01EAhWIshNzvw4MMxaNjqhJq3Zm3
+	 UQ1wITxCwYYMH0++9trCG7y/aWRhhPCSnaO+CbP2WkKdurB6fT5fTuMaVqHBd78wZG
+	 ky7QMWE5dbxBw==
+Message-ID: <9efbfb57-d454-4bad-bdb8-e3000b6ba0ce@zytor.com>
+Date: Wed, 11 Sep 2024 16:44:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911140509.GEZuGjlfyxj5hvSDYU@fat_crate.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
+ #CP
+To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org
+References: <20240911231929.2632698-1-xin@zytor.com>
+ <04674df0-a026-42d1-aacf-293f3018329f@citrix.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <04674df0-a026-42d1-aacf-293f3018329f@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 04:05:09PM +0200, Borislav Petkov wrote:
-> On Wed, Sep 04, 2024 at 11:00:33PM -0700, Ricardo Neri wrote:
-> > Before determining the validity of the last-level cache info, ensure that
-> > it has been allocated. Simply checking for non-zero cache_leaves() is not
-> > sufficient, as some architectures (e.g., Intel processors) have non-zero
-> > cache_leaves() before allocation.
-> >
-> > Dereferencing NULL cacheinfo can occur in update_per_cpu_data_slice_size().
-> > This function iterates over all online CPUs. However, a CPU may have come
-> > online recently, but its cacheinfo may not have been allocated yet.
-> > 
-> > Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Tested-by: Andreas Herrmann <aherrmann@suse.de>
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+On 9/11/2024 4:35 PM, Andrew Cooper wrote:
+> On 12/09/2024 12:19 am, Xin Li (Intel) wrote:
+>> The WFE, i.e., WAIT_FOR_ENDBRANCH, bit in the augmented CS of FRED
+>> stack frame is set to 1 in missing-ENDBRANCH #CP exceptions.
+>>
+>> The CPU will generate another missing-ENDBRANCH #CP if the WFE bit
+>> is left as 1, because the indirect branch tracker will be set in
+>> the WAIT_FOR_ENDBRANCH state upon completion of the following ERETS
+>> instruction and the CPU will restart from the IP that just caused a
+>> previous missing-ENDBRANCH #CP.
+>>
+>> Clear the WFE bit to avoid dead looping in missing-ENDBRANCH #CP.
+>>
+>> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 > 
-> While at it, pls fix the formatting insanity of allocate_cache_info() into:
+> Ah - good.  Finally some evidence that this hole in CET has been plugged
+> by FRED.
 > 
-> static inline int allocate_cache_info(int cpu)
-> {
->         per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu), sizeof(struct cacheinfo), GFP_ATOMIC);
->         if (!per_cpu_cacheinfo(cpu)) {
->                 cache_leaves(cpu) = 0;
->                 return -ENOMEM;
->         }
->             
->         return 0;
-> }
-> 
-> Thx.
+> However, I'd suggest describing it differently.
 
-Sure! I can do this. I assume this should be a separate patch.
+Yep, it's a much better story including historical issues with IDT.
+
+I will use it as the comment above ibt_clear_fred_wfe() in the next
+iteration, but keep the change log.  Is it okay?
+
+> 
+> 
+> By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
+> 
+> But, in original CET under IDT delivery, any transfer for
+> interrupt/exception/etc that does not change privilege will clobber the
+> WFE state because MSR_{U,S}_CET.WFE is intentionally set by microcode so
+> as to expect to find an ENDBR at the interrupt/exception/syscall entrypoint.
+> 
+> In practice, this means interrupts and exceptions hitting the kernel, or
+> user interrupts, loose the WFE state of the interrupted context.  And
+> yes, this means that a well timed interrupt (to the precise instruction
+> boundary) will let an attacker sneak a bad function pointer past the
+> CET-IBT enforcement.
+> 
+> In FRED, the WFE state of the interrupted context (even if it is the
+> same privilege) is preserved and restored, in order to close this hole.
+> 
+> Therefore, the intentional #CP selfchecks need to clear WFE when they
+> are deemed to have succeeded, now that FRED is causing the state not to
+> get lost.
+> 
+> ~Andrew
+
 
