@@ -1,86 +1,103 @@
-Return-Path: <linux-kernel+bounces-325348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFDA975833
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75AA2975843
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E2D1F257FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F158283873
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC42F1AE870;
-	Wed, 11 Sep 2024 16:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222AD1B1D5E;
+	Wed, 11 Sep 2024 16:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiUzo0Vz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="AcdymZsL"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2375D224CC;
-	Wed, 11 Sep 2024 16:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE51AED24
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726071743; cv=none; b=u7/Ov4d3W1yPOmJuAd5I6wCoohYuZmJRG2o+jlRLHpSHWJl+ezNfhShZc5ioisajWn58q7wxOaTsyCwhfUOzoYRZNFENtItm2RRXt7VY+od60J8pFnJz5uJF76BCUbFw2b9UhngUMxd18Q332YqaPJVe6C1yaQRlrRD+wgIg3Zs=
+	t=1726071817; cv=none; b=nE2AV010Ay77olE1BvoJa0cF8meTXbgfs1wBQ7IdnoWZdQjc1ICJkug5DdmaTOKQr2zo0FYRRFKyju8YrJnEX4xq3e1x32D6ds0qqF612ZA3zN2vdsHymwwHIsYqftOqcdYgGkmAScAIutSLrc/WO5qyjh3+Xr6mOWHYuwg4p1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726071743; c=relaxed/simple;
-	bh=0PHSN8Z8Ga6gGdIabdpiB4yZj0UtQvwndVg/JTxkKRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCfTu4Ae3bHnWVngWV469Wpjkm+INMFaoTAL5/wgM2iiDoAppjfMxtuOa67tQNwn7959TdvwfH4qWM2ymBZEmMpzKBl3w2Fqrobum1exynR2BDcTfxzc/7wzyTyy6RuZOZ3Gr35yE735rHhvf2j0f/0asbD9SyjLvG+TYefjq9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiUzo0Vz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892DFC4CEC0;
-	Wed, 11 Sep 2024 16:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726071742;
-	bh=0PHSN8Z8Ga6gGdIabdpiB4yZj0UtQvwndVg/JTxkKRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oiUzo0VzxBEmBrjNEbkYJsPAEc9eZi/N7P5Ft4A46hxB+62e9yeVJSe+q7pNvqPJu
-	 qHGrcPLCUlMk14RbTpDo82ZriZuNnyOhgfGz9wXKnFhpK59yA+0E+fNX+ORt4RECn6
-	 ObQr7aQSLZV8umuXOjvB5RUN0fHvWIeuw2YZaADTmEWoYdEgn/XJdm8A1arAEi1Xt3
-	 fxxuG0YbW2R+18NQoD/X1hsCB/vNaebltbuXq4N7yhcVUJ4U6+MvwdQbqFEag4mq/D
-	 mxp1DWpMV9LShCqi/4rPDuxfSatmdIyp4cX0+6Tgyj80jUoCj78qTI2h83hXVx52Kv
-	 rkppIBxiYH/0Q==
-Date: Wed, 11 Sep 2024 11:22:20 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jianping.Shen@de.bosch.com
-Cc: lars@metafoo.de, linux-iio@vger.kernel.org,
-	Christian.Lorenz3@de.bosch.com, Ulrike.Frauendorf@de.bosch.com,
-	linux-kernel@vger.kernel.org, jic23@kernel.org,
-	marcelo.schmitt1@gmail.com, Kai.Dolde@de.bosch.com,
-	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
-	dima.fedrau@gmail.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: iio: imu: smi240: add Bosch smi240
-Message-ID: <172607173923.689453.12557027377891944945.robh@kernel.org>
-References: <20240910113650.4733-1-Jianping.Shen@de.bosch.com>
- <20240910113650.4733-2-Jianping.Shen@de.bosch.com>
+	s=arc-20240116; t=1726071817; c=relaxed/simple;
+	bh=DQ4/cLuEW5tcRqYwQZf/I4l9TuqIbQLDHOMgEpeUrxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OQBNEexQM1e5o9YItUXwpFBAjJD00tK6G1ShCZjtfjtsQKiBxCWFYoXl/o5/yg9o4KNBgLSrhnlDi2fzunGZ//sLpIzuYuGVciml3/8VWRGVO3yQ96qG5H4yZzZhSWJrCjotoXK8KswPGqeJjoc7LaNxyBYBpxxeojyUgfDTcbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=AcdymZsL; arc=none smtp.client-ip=185.136.64.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240911162326a12d6da67e62720e28
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 11 Sep 2024 18:23:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=ZbAxDD40Km9oPWWOUlychunrfPvdHvgL52O1h9AsdFk=;
+ b=AcdymZsLHnLeYRW2KJhr/G8jq+9fu1woqH9QglaZrO2E7M75jn0+0Yj7KeUBIDNi2gO57m
+ 4mYKnCWyG8qUwxBiJUy/d59o+eooXY3fA3DyY1Yhqr2aH4snZ9adrYRaeXCdeMBSZwgThqS9
+ AJjro2N1phkfznUBWIPNj4DxDKUg4kzt5E5sQROJxtBT7HPA4laqFIS2W5X4v0R5g8oYczBv
+ BTeDHYigobpt6WA1XNO9ELg5NA3KCBo1g9mEP8wC1MwhBIc65arucOvkCwaNDmWedD8ipwxF
+ Y/1+BEeXYDH/GvKYq0Ag4PERSxDb60iai4pcBUiyd5vNRRcpKkv0AGuQ==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: axboe@kernel.dk
+Cc: stable@vger.kernel.org,
+	asml.silence@gmail.com,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	dqminh@cloudflare.com,
+	longman@redhat.com,
+	adriaan.schmidt@siemens.com,
+	florian.bezdeka@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH 6.1 0/2] io_uring/io-wq: respect cgroup cpusets
+Date: Wed, 11 Sep 2024 18:23:14 +0200
+Message-Id: <20240911162316.516725-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910113650.4733-2-Jianping.Shen@de.bosch.com>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
+Hi,
 
-On Tue, 10 Sep 2024 13:36:49 +0200, Jianping.Shen@de.bosch.com wrote:
-> From: Shen Jianping <Jianping.Shen@de.bosch.com>
-> 
-> add devicetree binding for Bosch imu smi240.
-> The smi240 is a combined three axis angular rate and
-> three axis acceleration sensor module.
-> 
-> * The smi240 requires VDD and VDDIO
-> * Provides only spi interface.
-> 
-> Signed-off-by: Shen Jianping <Jianping.Shen@de.bosch.com>
-> ---
->  .../bindings/iio/imu/bosch,smi240.yaml        | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> 
+as discussed in [1], this is a manual backport of the remaining two
+patches to let the io worker threads respect the affinites defined by
+the cgroup of the process.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+In 6.1 one worker is created per NUMA node, while in da64d6db3bd3
+("io_uring: One wqe per wq") this is changed to only have a single worker.
+As this patch is pretty invasive, Jens and me agreed to not backport it.
+
+Instead we now limit the workers cpuset to the cpus that are in the
+intersection between what the cgroup allows and what the NUMA node has.
+This leaves the question what to do in case the intersection is empty:
+To be backwarts compatible, we allow this case, but restrict the cpumask
+of the poller to the cpuset defined by the cgroup. We further believe
+this is a reasonable decision, as da64d6db3bd3 drops the NUMA awareness
+anyways.
+
+[1] https://lore.kernel.org/lkml/ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk
+
+Best regards,
+Felix Moessbauer
+Siemens AG
+
+Felix Moessbauer (2):
+  io_uring/io-wq: do not allow pinning outside of cpuset
+  io_uring/io-wq: inherit cpuset of cgroup in io worker
+
+ io_uring/io-wq.c | 33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
+
+-- 
+2.39.2
 
 
