@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-324945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC84975309
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:58:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD2397530B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72A731C21CCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BE428610B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC346199945;
-	Wed, 11 Sep 2024 12:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5B519CC03;
+	Wed, 11 Sep 2024 12:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="IzzA2EBo"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="GCr4RyQt"
 Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9678E18F2FF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F8198A21
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059514; cv=none; b=IFnh7qaZzYvfDLhfv2UBdgJJscQEg9kVdgs+AJTj6OwqBIdvpJUVQdoW8kBVUTaCG2IIXtHAcmDFRVOLMdZ6+b7xvM5gXkMicJcxOYmfyA8WVPd/UcJzeX7RRyu7KFDnSwixPjdoVI0ovTVwsMrGdbLTFGBeTd1Sbu8UqFUCzOw=
+	t=1726059516; cv=none; b=V8S3MCNGasTaQiaYFhQN8J1BaebgpXmbDK1+OnHzzlOX5EqppUdSTSUIZKMvWdp8uiBpvJ54yBTLndEfsDqPNRI8280VheDibJ7ctyl2KJn7kIuilprGGIux4i9Egqnq++Tg+ZLDAX4Q9hHm7EtkI+odLYYJc0mwaD8ScyaZiPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059514; c=relaxed/simple;
-	bh=BH2ZrelUubVJCF6wTv9S6Cqu7h+JqUuIXV9011jFZ24=;
+	s=arc-20240116; t=1726059516; c=relaxed/simple;
+	bh=V0kLceQ0WcbG7t28DFnms44uXcaiBfy6qibn4T4i1UM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FyPLenFW/M5vJ8lgqrebYBbbHCfAk37eiuBsfYfri7FFxh8VqzCrj/za9bg5wto4vRj8UC030nWi0gY/epjcRo3qCneaSEoeuXuC6cUVrrj2op3AK3tfcDcF2AHKpZeBNK7VrSvfghi4Lm30VPALfIjqJwyPgQgsUVaxAv+KtuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=IzzA2EBo; arc=none smtp.client-ip=91.26.50.163
+	 MIME-Version:Content-Type; b=o1Dgy8fYkdvq1hkmWqULJO0paoViAzL5kcFRshjMSfDD3VJv/PJ7UFS0z2L7YFgEkjwzir4CsYdalEpEiSD+YbaeWDEWooWnza5esOX8Sb2Wi0OoOpn8jYzutlxCQFljpW3TFZxMduc/j9qzGYvsGZ/5UIaXw6M8O2i024fXNbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=GCr4RyQt; arc=none smtp.client-ip=91.26.50.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
 DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
@@ -36,15 +36,15 @@ DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BH2ZrelUubVJCF6wTv9S6Cqu7h+JqUuIXV9011jFZ24=;
-	b=IzzA2EBoZBVxYVSe5VLEUjJJbMIvYF78OHPhnguODwpt/SYKQg5DnHXllKAJ0Moi
-	rnRc5OW3K/WQlDXlw3AyTQQNd4d8lCAwVAkj/oNzqOYm8WdSB0C82U/pfeF+VAgg
-	4MvhsT3LJINycvNIOUiATDhRIGT+2F2k1uEwwpNgVS0=;
-X-AuditID: ac14000a-4577e70000004e2a-e0-66e1905995fa
+	bh=V0kLceQ0WcbG7t28DFnms44uXcaiBfy6qibn4T4i1UM=;
+	b=GCr4RyQtcEbmdVVcbxXAR3zSrMUUAqkpJnyGDDseQHMHZ1EmqTmdUXYK/LuXjKoK
+	ly6Vrz8uyYOAyUTmUxEQugq8XC7HCAFCgAyqesit7Ab0g0qc8DQWvJy0zr4DjolT
+	srz+9EglfK/cR5g6yb1MSLQl8ARHmIx+BT2phkY7mxY=;
+X-AuditID: ac14000a-4637f70000004e2a-e1-66e1905ae0e2
 Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
 	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id EA.35.20010.95091E66; Wed, 11 Sep 2024 14:43:05 +0200 (CEST)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 9B.35.20010.A5091E66; Wed, 11 Sep 2024 14:43:06 +0200 (CEST)
 Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
  (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 11 Sep
@@ -55,9 +55,9 @@ To: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
 CC: <d.schultz@phytec.de>, <nm@ti.com>, <vigneshr@ti.com>,
 	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<conor+dt@kernel.org>
-Subject: [PATCH 2/3] arm64: dts: ti: k3-am64-phycore-som: Add M4F remoteproc nodes
-Date: Wed, 11 Sep 2024 14:42:50 +0200
-Message-ID: <20240911124251.702590-2-w.egorov@phytec.de>
+Subject: [PATCH 3/3] arm: arm64: dts: ti: k3-am642-phyboard-electra-rdk: Enable trickle charger
+Date: Wed, 11 Sep 2024 14:42:51 +0200
+Message-ID: <20240911124251.702590-3-w.egorov@phytec.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240911124251.702590-1-w.egorov@phytec.de>
 References: <20240911124251.702590-1-w.egorov@phytec.de>
@@ -71,86 +71,46 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
  (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWyRpKBRzdywsM0g02frS3W7D3HZDH/yDlW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWyRpKBRzdqwsM0g+MTuSzW7D3HZDH/yDlW
 	i+WfZ7NbvJx1j81i0+NrrBaXd81hs3jz4yyTxf89O9gtut+pW/w/+4Hdgctj06pONo/NS+o9
-	+rtbWD2O39jO5PF5k1wAaxSXTUpqTmZZapG+XQJXxs3LZ1gKXghUvDm5nLWB8SRvFyMnh4SA
-	icTttbuYuxi5OIQEljBJHD/1gA3Cecwosf7IXiaQKjYBdYk7G76xgiREBNoYJVb+vQ5WxSww
-	iVHiwr+fLCBVwgJBEosbHoHZLAKqEl8vr2UHsXkFLCSebN7FDrFPXmLmpe9gNqeApcTzkxvZ
-	QGwhoJpLj1ug6gUlTs58AjaHGai+eetsZghbQuLgixfMEPXyEi8uLWeBmTnt3GtmCDtUYuuX
-	7UwTGIVmIRk1C8moWUhGLWBkXsUolJuZnJ1alJmtV5BRWZKarJeSuokRFC8iDFw7GPvmeBxi
-	ZOJgPMQowcGsJMLbb3cvTYg3JbGyKrUoP76oNCe1+BCjNAeLkjjv6o7gVCGB9MSS1OzU1ILU
-	IpgsEwenVAOji1SZ+/3N6nNmV1eu3MR2PCxX+lDynKKehM3tk4wZ1jJcDfuxvfRfm0ze51+h
-	/Mvqyp9NSc9drq8rz2A8LcXz9TKGa5/D3Xlr9mf4Bxwyu/lxzjrtQwVRPL3XpVLuKUyprI9N
-	fXNevbKa7+U2zeaHmzfPS4nmUtVe8vZN+w8u5vLfEzfWS21XYinOSDTUYi4qTgQAAnLk+IUC
+	+rtbWD2O39jO5PF5k1wAaxSXTUpqTmZZapG+XQJXxsLWmIIWjor9P6eyNzC+Z+ti5OCQEDCR
+	2Ho9qouRi0NIYAmTxNrWm8wQzmNGifVH9jJ1MXJysAmoS9zZ8I0VJCEi0MYosfLvdTYQh1lg
+	EqPEhX8/WUCqhAXiJQ5+2cQGYrMIqErc3/2bHcTmFbCQmL39PliNhIC8xMxL38HinAKWEs9P
+	bgSrFwKqufS4BapeUOLkzCdg9cxA9c1bZzND2BISB1+8YIaol5d4cWk53Mxp514zQ9ihElu/
+	bGeawCg0C8moWUhGzUIyagEj8ypGodzM5OzUosxsvYKMypLUZL2U1E2MoFgRYeDawdg3x+MQ
+	IxMH4yFGCQ5mJRHefrt7aUK8KYmVValF+fFFpTmpxYcYpTlYlMR5V3cEpwoJpCeWpGanphak
+	FsFkmTg4pRoYRet2zhUyWS39JWUW16vLGdv7OH+YKex5f4p1S7f+pHM/HyRwv3MynJH/TVu3
+	Wm05h5aenoLQt+s+tdZKCQuFk6QEP9zzUZ7BOL9Nyrlm+yttt7I3P+4+1LWataOkJlvyatFp
+	K1fF2GVXzt2Ry6hzOrNNlCdL65P0hNBLcgXxaW2qCRJfTjsosRRnJBpqMRcVJwIAROuCjYMC
 	AAA=
 
-The AM64x SoCs of the TI K3 family have a Cortex M4F core in the MCU
-domain. This core can be used by non safety applications as a remote
-processor. When used as a remote processor with virtio/rpmessage IPC,
-two carveout reserved memory nodes are needed. The first region is used
-as a DMA pool for the rproc device, and the second region will furnish
-the static carveout regions for the firmware memory.
+From: Daniel Schultz <d.schultz@phytec.de>
 
-The current carveout addresses and sizes are defined statically for
-each rproc device. The M4F processor does not have an MMU, and as such
-requires the exact memory used by the firmware to be set-aside.
+Be default, R511 iand D19 are not populated on our phyBOARD-Electra.
+This resistor and diode connect VCC_3V3_SW with VBAT and permantly
+charge the RTC battery.
 
+Enable trickle charge to charge the battery through the RTC.
+
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
 Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
 ---
- .../boot/dts/ti/k3-am64-phycore-som.dtsi      | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-index ea7c58fb67e2..ea3ce3338783 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-@@ -87,6 +87,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
- 			reg = <0x00 0xa3100000 0x00 0xf00000>;
- 			no-map;
- 		};
-+
-+		mcu_m4fss_dma_memory_region: m4f-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_m4fss_memory_region: m4f-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
- 	};
- 
- 	leds {
-@@ -242,6 +254,15 @@ mbox_main_r5fss1_core1: mbox-main-r5fss1-core1 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+index 30729b49dd69..fec917fa067c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+@@ -198,6 +198,10 @@ AM64X_IOPAD(0x0040, PIN_OUTPUT, 7)	/* (U21) GPMC0_AD1.GPIO0_16 */
  	};
  };
  
-+&mailbox0_cluster6 {
-+	status = "okay";
-+
-+	mbox_m4_0: mbox-m4-0 {
-+		ti,mbox-rx = <0 0 2>;
-+		ti,mbox-tx = <1 0 2>;
-+	};
++&i2c_som_rtc {
++	trickle-resistor-ohms = <3000>;
 +};
 +
- &main_i2c0 {
- 	status = "okay";
- 	pinctrl-names = "default";
-@@ -335,6 +356,13 @@ &main_r5fss1_core1 {
- 			<&main_r5fss1_core1_memory_region>;
- };
- 
-+&mcu_m4fss {
-+	mboxes = <&mailbox0_cluster6 &mbox_m4_0>;
-+	memory-region = <&mcu_m4fss_dma_memory_region>,
-+			<&mcu_m4fss_memory_region>;
-+	status = "okay";
-+};
-+
- &ospi0 {
+ &main_i2c1 {
  	status = "okay";
  	pinctrl-names = "default";
 -- 
