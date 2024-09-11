@@ -1,221 +1,144 @@
-Return-Path: <linux-kernel+bounces-324804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12FC975115
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA7A975119
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DEF1F23DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FFFB1F2660A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA8C18732A;
-	Wed, 11 Sep 2024 11:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C8D187866;
+	Wed, 11 Sep 2024 11:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIHVCcaK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="0Mc6moVN"
+Received: from pv50p00im-ztbu10021601.me.com (pv50p00im-ztbu10021601.me.com [17.58.6.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636FB1537C9;
-	Wed, 11 Sep 2024 11:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D924E186E24
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726055476; cv=none; b=sj/G2O889RRkLMRcx/rQ3S0OVDaeRaczBM3tzf8bozTkiYkFpLByUS7MCNY4GW7ZdsAcC27Ym5VnkZ9s+huAjIXtgYVoVrm3ZlFcP+HihVjF11PyrdkxAcVU3Ma9pAniBIClUR9hZFreufgSJmikbq+BBas4MMdiHBIjFiG6ZUE=
+	t=1726055563; cv=none; b=VPAGfSNlfzPwimmEGF5qsAsWXzR9B0lKFmZC3murBVHTshnUiXUUS8PTJvgkmPD+OW7YNLggRJdTrmR6KAkngqhh7XatzJ01G7/eG6B5Yw5cCVQ9xqYu0nsmhKGaJO5WA/Omum52puHCZAIqymocpERnqNrOsGvLP0IDpHnND5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726055476; c=relaxed/simple;
-	bh=VcRhp8593HorVnJcoMR5P9X1KIpUuGKL1andDHcc1Hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G0Y18ZaiK2mZkxl11i7ZldWxX9BalDyGle6KUeiANIH+iToZ2SsI5C+dTPNHXaoUIrUBEA4ZQAtpUI3wQNqLAPDfeDilDgyw7tY426FdMygKcoamUyhbt4JZtPm50lkq4IbtsLrOvTOXk4Y9OS4+rfAbDuw0FwDL7zXy0bWV1Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIHVCcaK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED287C4CECF;
-	Wed, 11 Sep 2024 11:51:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726055476;
-	bh=VcRhp8593HorVnJcoMR5P9X1KIpUuGKL1andDHcc1Hk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MIHVCcaKsa/zc981NiZjWwhlyj8GlC14BFiTWuoRMESHKnbYNJGqutrVX0nPqlxB1
-	 5Afwg7242KCcXd5anOcaTlzPcKxNhLdxUXphlJNtV9YD0gIZLuI6nO09cLiQjzaxiP
-	 5ZWfby9vuP1+upPnES1+8k1tiveYjVw+u8Yp/C8YL20V0v90TjbXY3ZgR5QgXa0Wv+
-	 JER5a2WNkNkX47RcufzOW4swU2XjR8bdhCVsamHeniAbyobpjeR323iE7XFsP84pAY
-	 8HdI4wBbHCxNmko+zowE18fZpuwrnivCSQuIBpdw5wYdabTNH26KFzpjbqTEvBa+t9
-	 94Et/eMvgK9rA==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f753375394so47805361fa.0;
-        Wed, 11 Sep 2024 04:51:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWB3/20lolXU260HK3SlABpnVj6bWA8IlNLkkCzpc14Bd1r7Vd+clkjlQLBVWIupWJ4vx6cCzyYMSoe+Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+HqKCh3V3ful/4AEZyXJkopQLR2upOwAFG72bAA3nm0YscVZW
-	yFRlNgjcgocAV7pbrM9MA7S3nE0V8fXTLKVsDgi1PUO7uHXeQ53v5jpZLBgw/Hu3beVEEcZnVbD
-	5hSfxrkrQYF6f7sRz0wncJigKpEM=
-X-Google-Smtp-Source: AGHT+IGwbhZjGqOj6sOlVvxEtdzPPBl7wj7LtWnVpMe6yBubbv7XFzPAcVcy/8ieGc+uRemrmEZv58Pc2Xmv81kF6a0=
-X-Received: by 2002:a05:651c:2212:b0:2f6:9787:5fc0 with SMTP id
- 38308e7fff4ca-2f751faa255mr103181591fa.40.1726055474181; Wed, 11 Sep 2024
- 04:51:14 -0700 (PDT)
+	s=arc-20240116; t=1726055563; c=relaxed/simple;
+	bh=1nKrHB2l1LWv7Ehl9rYYKmu0QV/L+jpnIJlN7OKLazs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B7vFanPG+B8Gd0y54x4e5fk4CypL/W1/jqRj6Ga3O+tp/MlzSVUZjjzY2gg+o0TsiTPd3Vo0lppQdLhOdhzavV2Kxx/InB8bmeV8+CAYVy+qluW/vN2CfvLUHf6onLnoklikwk+dOHfH6jRv7q+xCippamMc8WgaS/QZe+DxECo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=0Mc6moVN; arc=none smtp.client-ip=17.58.6.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1726055561;
+	bh=8BXVMDejX71W48TZhhQpKYFMwY2Brelh8RqgI9K0HVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=0Mc6moVN8OwjfGM2mUkEjVeRY0IKGQcc+uDIp40Wi3OctttT0bDSb15R+jDmFWmSs
+	 /EDW9O0NVtMt7fFgydptg7EvkRf81Gw+XzzC75CfFi1HIzIKtwFt5lUFJSgqvnI4A7
+	 TxnHK8nIu52tlNmfM72U0fkGyJp5oTMaDuKTTDhrMg3dO5UFnGIaITYMlmsfLVeOTu
+	 +L9S1+W8NHWOX8RejzrWN0tl8n1Y9oRdwWWygoDEV5mpN/cLDUj93x1EGEGd+P9ljx
+	 3qDKInI8tpBb/Jq7zbZIPoCJPooak5GJ9BRgjixNiip1FGBwhod74wNz/Vq9r78s3K
+	 9Riyb2LlJPACQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztbu10021601.me.com (Postfix) with ESMTPSA id 4D3EB80322;
+	Wed, 11 Sep 2024 11:52:31 +0000 (UTC)
+Message-ID: <1b1cf618-b62f-43ab-b2dd-29398e33a43d@icloud.com>
+Date: Wed, 11 Sep 2024 19:52:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
-In-Reply-To: <20240911104109.1831501-1-usamaarif642@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 11 Sep 2024 13:51:02 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
-Message-ID: <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: linux-efi@vger.kernel.org, devel@edk2.groups.io, kexec@lists.infradead.org, 
-	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	leitao@debian.org, rmikey@meta.com, gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
+ device_for_each_child()
+To: Dan Williams <dan.j.williams@intel.com>,
+ quic_zijuhu <quic_zijuhu@quicinc.com>, Ira Weiny <ira.weiny@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
+ <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
+ <2024090531-mustang-scheming-3066@gregkh>
+ <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
+ <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
+ <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
+ <e7e6ea66-bcfe-4af4-9f82-ae39fef1a976@icloud.com>
+ <66e06d66ca21b_3264629448@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <66e06d66ca21b_3264629448@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: XGgXzuS8JxHYSjgIR97mjtZ1k14OF2Zz
+X-Proofpoint-ORIG-GUID: XGgXzuS8JxHYSjgIR97mjtZ1k14OF2Zz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_12,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 clxscore=1015 spamscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=820 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2409110089
 
-On Wed, 11 Sept 2024 at 12:41, Usama Arif <usamaarif642@gmail.com> wrote:
->
-> Looking at the TPM spec [1]
->
-> If the ACPI TPM2 table contains the address and size of the Platform
-> Firmware TCG log, firmware =E2=80=9Cpins=E2=80=9D the memory associated w=
-ith the
-> Platform FirmwareTCG log, and reports this memory as =E2=80=9CReserved=E2=
-=80=9D memory
-> via the INT 15h/E820 interface.
->
-> It looks like the firmware should pass this as reserved in e820 memory
-> map. However, it doesn't seem to. The firmware being tested on is:
-> dmidecode -s bios-version
-> edk2-20240214-2.el9
->
-> When this area is not reserved, it comes up as usable in
-> /sys/firmware/memmap. This means that kexec, which uses that memmap
-> to find usable memory regions, can select the region where efi.tpm_log
-> is and overwrite it and relocate_kernel.
->
-> Having a fix in firmware can be difficult to get through. As a secondary
-> fix, this patch marks that region as reserved in e820_table_firmware if i=
-t
-> is currently E820_TYPE_RAM so that kexec doesn't use it for kernel segmen=
-ts.
->
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/PC-ClientPlatfor=
-m_Profile_for_TPM_2p0_Systems_v49_161114_public-review.pdf
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+On 2024/9/11 00:01, Dan Williams wrote:
+> Zijun Hu wrote:
+> [..]
+>>
+>> do not known how you achieve it, perhaps, it is not simpler than
+>> my below solution:
+>>
+>> finding a free switch cxl decoder with minimal ID
+>> https://lore.kernel.org/all/20240905-fix_cxld-v2-1-51a520a709e4@quicinc.com/
+>>
+>> which has simple logic and also does not have any limitation related
+>> to add/allocate/de-allocate a decoder.
+>>
+>> i am curious why not to consider this solution ?
+> 
+> Because it leaves region shutdown ordering bug in place.
+> 
+>>> 2/ search for decoders in their added order: done, device_find_child()
+>>> guarantees this, although it is not obvious without reading the internals
+>>> of device_add().
+>>>
+>>> 3/ regions are de-allocated from decoders in reverse decoder id order.
+>>> This is not enforced, in fact it is impossible to enforce. Consider that
+>>> any memory device can be removed at any time and may not be removed in
+>>> the order in which the device allocated switch decoders in the topology.
+>>>
+>>
+>> sorry, don't understand, could you take a example ?
+>>
+>> IMO, the simple change in question will always get a free decoder with
+>> the minimal ID once 1/ is ensured regardless of de-allocation approach.
+> 
+> No, you are missing the fact that CXL hardware requires that decoders
+> cannot be sparsely allocated. They must be allocated consecutively and
+> in increasing address order.
+> 
+> Imagine a scenario with a switch port with three decoders,
+> decoder{A,B,C} allocated to 3 respective regions region{A,B,C}.
+> 
+> If regionB is destroyed due to device removal that does not make
+> decoderB free to be reallocated in hardware. The destruction of regionB
+> requires regionC to be torn down first. As it stands the driver does not
+> force regionC to shutdown and it falsely clears @decoderB->region making
+> it appear free prematurely.
+> 
+> So, while regionB would be the next decoder to allocate after regionC is
+> torn down, it is not a free decoder while decoderC and regionC have not been
+> reclaimed.
 
-I would expect the EFI memory map to E820 conversion implemented in
-the EFI stub to take care of this.
+understood it due to your detailed explanation. thank you Dan.
 
-If you are not booting via the EFI stub, the bootloader is performing
-this conversion, and so it should be done there instead.
-
-
-> ---
->  arch/x86/include/asm/e820/api.h | 2 ++
->  arch/x86/kernel/e820.c          | 6 ++++++
->  arch/x86/platform/efi/efi.c     | 9 +++++++++
->  drivers/firmware/efi/tpm.c      | 2 +-
->  include/linux/efi.h             | 7 +++++++
->  5 files changed, 25 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/=
-api.h
-> index 2e74a7f0e935..4e9aa24f03bd 100644
-> --- a/arch/x86/include/asm/e820/api.h
-> +++ b/arch/x86/include/asm/e820/api.h
-> @@ -16,6 +16,8 @@ extern bool e820__mapped_all(u64 start, u64 end, enum e=
-820_type type);
->
->  extern void e820__range_add   (u64 start, u64 size, enum e820_type type)=
-;
->  extern u64  e820__range_update(u64 start, u64 size, enum e820_type old_t=
-ype, enum e820_type new_type);
-> +extern u64  e820__range_update_firmware(u64 start, u64 size, enum e820_t=
-ype old_type,
-> +                                       enum e820_type new_type);
->  extern u64  e820__range_remove(u64 start, u64 size, enum e820_type old_t=
-ype, bool check_type);
->  extern u64  e820__range_update_table(struct e820_table *t, u64 start, u6=
-4 size, enum e820_type old_type, enum e820_type new_type);
->
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index 4893d30ce438..912400161623 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -538,6 +538,12 @@ u64 __init e820__range_update_table(struct e820_tabl=
-e *t, u64 start, u64 size,
->         return __e820__range_update(t, start, size, old_type, new_type);
->  }
->
-> +u64 __init e820__range_update_firmware(u64 start, u64 size, enum e820_ty=
-pe old_type,
-> +                                      enum e820_type new_type)
-> +{
-> +       return __e820__range_update(e820_table_firmware, start, size, old=
-_type, new_type);
-> +}
-> +
->  /* Remove a range of memory from the E820 table: */
->  u64 __init e820__range_remove(u64 start, u64 size, enum e820_type old_ty=
-pe, bool check_type)
->  {
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index 88a96816de9a..aa95f77d7a30 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -171,6 +171,15 @@ static void __init do_add_efi_memmap(void)
->         e820__update_table(e820_table);
->  }
->
-> +/* Reserve firmware area if it was marked as RAM */
-> +void arch_update_firmware_area(u64 addr, u64 size)
-> +{
-> +       if (e820__get_entry_type(addr, addr + size) =3D=3D E820_TYPE_RAM)=
- {
-> +               e820__range_update_firmware(addr, size, E820_TYPE_RAM, E8=
-20_TYPE_RESERVED);
-> +               e820__update_table(e820_table_firmware);
-> +       }
-> +}
-> +
->  /*
->   * Given add_efi_memmap defaults to 0 and there is no alternative
->   * e820 mechanism for soft-reserved memory, import the full EFI memory
-> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> index e8d69bd548f3..8e6e7131d718 100644
-> --- a/drivers/firmware/efi/tpm.c
-> +++ b/drivers/firmware/efi/tpm.c
-> @@ -60,6 +60,7 @@ int __init efi_tpm_eventlog_init(void)
->         }
->
->         tbl_size =3D sizeof(*log_tbl) + log_tbl->size;
-> +       arch_update_firmware_area(efi.tpm_log, tbl_size);
->         memblock_reserve(efi.tpm_log, tbl_size);
->
->         if (efi.tpm_final_log =3D=3D EFI_INVALID_TABLE_ADDR) {
-> @@ -107,4 +108,3 @@ int __init efi_tpm_eventlog_init(void)
->         early_memunmap(log_tbl, sizeof(*log_tbl));
->         return ret;
->  }
-> -
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 6bf3c4fe8511..9c239cdff771 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1371,4 +1371,11 @@ extern struct blocking_notifier_head efivar_ops_nh=
-;
->  void efivars_generic_ops_register(void);
->  void efivars_generic_ops_unregister(void);
->
-> +#ifdef CONFIG_X86_64
-> +void __init arch_update_firmware_area(u64 addr, u64 size);
-> +#else
-> +static inline void __init arch_update_firmware_area(u64 addr, u64 size)
-> +{
-> +}
-> +#endif
->  #endif /* _LINUX_EFI_H */
-> --
-> 2.43.5
->
 
