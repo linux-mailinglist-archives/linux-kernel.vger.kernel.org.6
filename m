@@ -1,344 +1,181 @@
-Return-Path: <linux-kernel+bounces-324618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E25B974EE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E39974EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CE41F24DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:42:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCEFB24794
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F7F155A52;
-	Wed, 11 Sep 2024 09:42:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC971741E8;
+	Wed, 11 Sep 2024 09:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dpk/DtQf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A7945C18
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29E17DFE8;
+	Wed, 11 Sep 2024 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047747; cv=none; b=SDyL4WZpz6+n0UiNK6gGJidMQccZi+Zm+GWh8/3pmSAbpZJYSwN2xDSrdzo61RYW+jBLi1AZwg4Jpl9L69kYqIx8LfiVrrngtYU5lEBhNuo8hqaWxvhylNwN2XM5InCZ2s/N4HQuug+H+WfU+DzicJ7z42yeAF187l4I5A2E3g4=
+	t=1726047809; cv=none; b=t2AKANYnaP5G/i/1iHp3/wZxEhQIeU/HsuHsK6u6PwqrRo2hwSOLAYcoOunl4VWNiRq3PfmgobdS9XKLpauFw8X06EeGZ3d+e9nIJtPf+s2EtBLjR89E8Y+1Fk1/6ec5ccXo2YB3Mx7xZjH3GBQARJxrc4bEJmdaVKVpUj0Tfhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047747; c=relaxed/simple;
-	bh=OgOkm8AFqXnQlxzeCjS8rXM2EPN0ios0pmLlM2AT0kw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mAypz5W0EpzeJDhQ2X+v1Kkz9nm6c31AIZXgT7tI3B5bqBDFSTYWYeuSyRgBB7xb6fAnC+8PeIYsgerAnY8LBNs/3OxqSwzQvDjtM94RBhzw2P7zcKpI+3SjtW6rKq9rGnucz//d24loMfD4efyTFSifex7rl7brhgP6yWKdUSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f53125f4eso23703545ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:42:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726047745; x=1726652545;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CtCIsJfgbK2Iig4YxKC95LTJRjaUglkldGuMRvhslxg=;
-        b=QWDsxp1k9Bd3RXUBNNhIwuNoHzweGv8ZMVOPE9Xd1XYAhghqp33zzG/55CkOfoMFo0
-         NBMVlz0aK0fXMYc15+v+YPXb1Pd0a+tj26KkVax4zcqC0vf4X8RMmr20YKGbTgt6g7Fi
-         2q+OXM44p0nd17QE8kk1vx4zTkgEVC5+EtlrKj7QLQpOlp5gENap5D7Wt77rRpO3E6uk
-         GMF//sRJspTCv7r5bcZMKweMm5LBZ0Go4cWdPdmbo9Q5LpuBUVc4FNQ+8JU8iV/D1zH8
-         kMNBeb/19bUVpwgy+3J+/Dk4XI6F6226FqHHlJszsm1g2bVPx88oPmg1Nm22az8egv1f
-         P9kg==
-X-Gm-Message-State: AOJu0YxOK3u/BtB57Q8oivbtcD00l0j/j9WIqXdPk0VxtY3lxYewpNdb
-	HHo+Q/F3u7ix4W7XHVPNN283/LRzFrxgSqeHWAuCy3AjSvGUFTk6WspiHxh7ZFpD94C72Y2NjI8
-	80ySWKz97YQ2bifU0L9Yqmoquyow3rrm2PimuLD08uFV1sz1N9S7CEko=
-X-Google-Smtp-Source: AGHT+IF9nt9FgPW9ZTkjGnz0ttkbIb+HeqSid4mIkJJ2cwKmPr2dpsYbBJiajfzGeq3vtawX4fT6IoIUZBdUqjBzhMd28KdJAuxa
+	s=arc-20240116; t=1726047809; c=relaxed/simple;
+	bh=EWMOQDrgbdeHEFspLRojh7jCLMPwWmpwnLfye5ARu2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyzBAEctDSrbfiiSX/pBuH0hA3PcdLsu1bJqTJwfknBIA1043R0ILwHGEkeDY5gzxOvxsqSgCLxBdjTwOkiLED3tAQHgA1dJAgCKmEhe8H6l5Zn5W80a4e0wYPHUB/LmLKdSkkuWzmVqTWg6MBTTPTEPuAok+1q4NBIVpE2adSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dpk/DtQf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA2BC4CEC5;
+	Wed, 11 Sep 2024 09:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726047809;
+	bh=EWMOQDrgbdeHEFspLRojh7jCLMPwWmpwnLfye5ARu2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dpk/DtQfRV52ayuDT/7sejXVknvjwZbM/9rHMDYCo+YywoHLw9wBnRsXtYQX9s2so
+	 oC/bCfpttyotj4Mu2DPx/FrcNZhUY2L5jF1e7k4WR9Ksgy51XnYCqynNwex1Ec/yf4
+	 BaTXLCic3qTKy7xxW+NQJtcwQFnzBJwI7Fyuwk6Y=
+Date: Wed, 11 Sep 2024 11:43:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [regression] frozen usb mouse pointer at boot
+Message-ID: <2024091128-imperial-purchase-f5e7@gregkh>
+References: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26e:0:b0:3a0:4c24:7045 with SMTP id
- e9e14a558f8ab-3a07429627bmr24258055ab.20.1726047745077; Wed, 11 Sep 2024
- 02:42:25 -0700 (PDT)
-Date: Wed, 11 Sep 2024 02:42:25 -0700
-In-Reply-To: <0000000000000311430620013217@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b607070621d4ce4b@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Sep 11, 2024 at 09:55:03AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+> 
+> I noticed a report about a linux-6.6.y regression in bugzilla.kernel.org
+> that appears to be caused by this commit from Dan applied by Greg:
+> 
+> 15fffc6a5624b1 ("driver core: Fix uevent_show() vs driver detach race")
+> [v6.11-rc3, v6.10.5, v6.6.46, v6.1.105, v5.15.165, v5.10.224, v5.4.282,
+> v4.19.320]
+> 
+> The reporter did not check yet if mainline is affected; decided to
+> forward the report by mail nevertheless, as the maintainer for the
+> subsystem is also the maintainer for the stable tree. ;-)
+> 
+> To quote from https://bugzilla.kernel.org/show_bug.cgi?id=219244 :
 
-***
+This is very odd, because:
 
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-Author: alibuda@linux.alibaba.com
+> > The symptoms of this bug are as follows:
+> > 
+> > - After booting (to the graphical login screen) the mouse pointer
+> > would frozen and only after unplugging and plugging-in again the usb
+> > plug of the mouse would the mouse be working as expected.
+> > - If one would log in without fixing the mouse issue, the mouse
+> > pointer would still be frozen after login.
+> > - The usb keyboard usually is not affected even though plugged into
+> > the same usb-hub - thus logging in is possible.
+> > - The mouse pointer is also frozen if the usb connector is plugged
+> > into a different usb-port (different from the usb-hub)
+> > - The pointer is moveable via the inbuilt synaptics trackpad
 
+The patch from Dan should only affect when the module is unloaded, not
+when the device is removed.
 
+And it should not diferenciate between device types (i.e. mouse,
+keyboard, etc.) as it affects ALL devices in the system.
 
-On 8/19/24 11:49 AM, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ke=
-r..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D129dd7d998000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D804764788c030=
-71f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D51cf7cc5f9ffc10=
-06ef2
-> compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (=
-GNU Binutils for Debian) 2.40
-> userspace arch: arm64
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/3=
-84ffdcca292/non_bootable_disk-1fb91896.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/7b8fac7b5b8b/vmlinu=
-x-1fb91896.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/676950a147e6/I=
-mage-1fb91896.gz.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0 Not tainted
-> ------------------------------------------------------
-> syz.0.5481/17612 is trying to acquire lock:
-> ffff8000880033a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28 net/co=
-re/rtnetlink.c:79
->
-> but task is already holding lock:
-> ffff000010332b50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsoc=
-kopt+0xd8/0xcec net/smc/af_smc.c:3064
->
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
->         __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->         __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
->         mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
->         smc_switch_to_fallback+0x34/0x80c net/smc/af_smc.c:902
->         smc_sendmsg+0xe4/0x8f8 net/smc/af_smc.c:2779
->         sock_sendmsg_nosec net/socket.c:730 [inline]
->         __sock_sendmsg+0xc8/0x168 net/socket.c:745
->         __sys_sendto+0x1a8/0x254 net/socket.c:2204
->         __do_sys_sendto net/socket.c:2216 [inline]
->         __se_sys_sendto net/socket.c:2212 [inline]
->         __arm64_sys_sendto+0xc0/0x134 net/socket.c:2212
->         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->         invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
->         el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c=
-:132
->         do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
->         el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
->         el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c=
-:730
->         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
->         lock_sock_nested+0x38/0xe8 net/core/sock.c:3543
->         lock_sock include/net/sock.h:1607 [inline]
->         sockopt_lock_sock net/core/sock.c:1061 [inline]
->         sockopt_lock_sock+0x58/0x74 net/core/sock.c:1052
->         do_ip_setsockopt+0xe0/0x2358 net/ipv4/ip_sockglue.c:1078
->         ip_setsockopt+0x34/0x9c net/ipv4/ip_sockglue.c:1417
->         raw_setsockopt+0x7c/0x2e0 net/ipv4/raw.c:845
->         sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
->         do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
->         __sys_setsockopt+0xdc/0x178 net/socket.c:2347
->         __do_sys_setsockopt net/socket.c:2356 [inline]
->         __se_sys_setsockopt net/socket.c:2353 [inline]
->         __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
->         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->         invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
->         el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c=
-:132
->         do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
->         el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
->         el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c=
-:730
->         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> -> #0 (rtnl_mutex){+.+.}-{3:3}:
->         check_prev_add kernel/locking/lockdep.c:3133 [inline]
->         check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->         validate_chain kernel/locking/lockdep.c:3868 [inline]
->         __lock_acquire+0x2aa4/0x6340 kernel/locking/lockdep.c:5142
->         lock_acquire kernel/locking/lockdep.c:5759 [inline]
->         lock_acquire+0x48c/0x7a4 kernel/locking/lockdep.c:5724
->         __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->         __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
->         mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
->         rtnl_lock+0x1c/0x28 net/core/rtnetlink.c:79
->         do_ipv6_setsockopt+0x1a04/0x3814 net/ipv6/ipv6_sockglue.c:566
->         ipv6_setsockopt+0xc8/0x140 net/ipv6/ipv6_sockglue.c:993
->         tcp_setsockopt+0x90/0xcc net/ipv4/tcp.c:3768
->         sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
->         smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
->         do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
->         __sys_setsockopt+0xdc/0x178 net/socket.c:2347
->         __do_sys_setsockopt net/socket.c:2356 [inline]
->         __se_sys_setsockopt net/socket.c:2353 [inline]
->         __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
->         __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->         invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
->         el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c=
-:132
->         do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
->         el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
->         el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c=
-:730
->         el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
-> other info that might help us debug this:
->
-> Chain exists of:
->    rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
->
->   Possible unsafe locking scenario:
->
->         CPU0                    CPU1
->         ----                    ----
->    lock(&smc->clcsock_release_lock);
->                                 lock(sk_lock-AF_INET);
->                                 lock(&smc->clcsock_release_lock);
->    lock(rtnl_mutex);
->
->   *** DEADLOCK ***
->
-> 1 lock held by syz.0.5481/17612:
->   #0: ffff000010332b50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_=
-setsockopt+0xd8/0xcec net/smc/af_smc.c:3064
->
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 17612 Comm: syz.0.5481 Not tainted 6.11.0-rc3-syzkalle=
-r-00066-g1fb918967b56 #0
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->   dump_backtrace+0x9c/0x11c arch/arm64/kernel/stacktrace.c:317
->   show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:324
->   __dump_stack lib/dump_stack.c:93 [inline]
->   dump_stack_lvl+0xa4/0xf4 lib/dump_stack.c:119
->   dump_stack+0x1c/0x28 lib/dump_stack.c:128
->   print_circular_bug+0x420/0x6f8 kernel/locking/lockdep.c:2059
->   check_noncircular+0x2dc/0x364 kernel/locking/lockdep.c:2186
->   check_prev_add kernel/locking/lockdep.c:3133 [inline]
->   check_prevs_add kernel/locking/lockdep.c:3252 [inline]
->   validate_chain kernel/locking/lockdep.c:3868 [inline]
->   __lock_acquire+0x2aa4/0x6340 kernel/locking/lockdep.c:5142
->   lock_acquire kernel/locking/lockdep.c:5759 [inline]
->   lock_acquire+0x48c/0x7a4 kernel/locking/lockdep.c:5724
->   __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->   __mutex_lock+0x134/0x840 kernel/locking/mutex.c:752
->   mutex_lock_nested+0x24/0x30 kernel/locking/mutex.c:804
->   rtnl_lock+0x1c/0x28 net/core/rtnetlink.c:79
->   do_ipv6_setsockopt+0x1a04/0x3814 net/ipv6/ipv6_sockglue.c:566
->   ipv6_setsockopt+0xc8/0x140 net/ipv6/ipv6_sockglue.c:993
->   tcp_setsockopt+0x90/0xcc net/ipv4/tcp.c:3768
->   sock_common_setsockopt+0x70/0xe0 net/core/sock.c:3735
->   smc_setsockopt+0x150/0xcec net/smc/af_smc.c:3072
->   do_sock_setsockopt+0x17c/0x354 net/socket.c:2324
->   __sys_setsockopt+0xdc/0x178 net/socket.c:2347
->   __do_sys_setsockopt net/socket.c:2356 [inline]
->   __se_sys_setsockopt net/socket.c:2353 [inline]
->   __arm64_sys_setsockopt+0xa4/0x100 net/socket.c:2353
->   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->   invoke_syscall+0x6c/0x258 arch/arm64/kernel/syscall.c:49
->   el0_svc_common.constprop.0+0xac/0x230 arch/arm64/kernel/syscall.c:132
->   do_el0_svc+0x40/0x58 arch/arm64/kernel/syscall.c:151
->   el0_svc+0x50/0x180 arch/arm64/kernel/entry-common.c:712
->   el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
->   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+> > The kernel log shows almost the same messages (not sure if the
+> > differences mean anything in regards to this bug) for the initial
+> > recognizing the mouse (frozen mouse pointer) and the re-plugged-in mouse
+> > (and subsequently moveable mouse pointer):
+> > 
+> > [kernel] [    8.763158] usb 1-2.2.1.2: new low-speed USB device number 10 using xhci_hcd
+> > [kernel] [    8.956028] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
+> > [kernel] [    8.956036] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+> > [kernel] [    8.956039] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
+> > [kernel] [    8.956041] usb 1-2.2.1.2: Manufacturer: Microsoft 
+> > [kernel] [    8.963554] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0002/input/input18
+> > [kernel] [    8.964417] hid-generic 0003:045E:00CB.0002: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
+> > 
+> > [kernel] [   31.258381] usb 1-2.2.1.2: USB disconnect, device number 10
+> > [kernel] [   31.595051] usb 1-2.2.1.2: new low-speed USB device number 16 using xhci_hcd
+> > [kernel] [   31.804002] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
+> > [kernel] [   31.804010] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+> > [kernel] [   31.804013] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
+> > [kernel] [   31.804016] usb 1-2.2.1.2: Manufacturer: Microsoft 
+> > [kernel] [   31.812933] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0004/input/input20
+> > [kernel] [   31.814028] hid-generic 0003:045E:00CB.0004: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
+> > 
+> > Differences:
+> > 
+> > ../0003:045E:00CB.0002/input/input18 vs ../0003:045E:00CB.0004/input/input20
 
-#syz test
+That's normal, just a different name for the device, they are always
+dynamic.
 
-Make Lockdep happy with IPPROTO_SMC
+> > and
+> > 
+> > hid-generic 0003:045E:00CB.0002 vs hid-generic 0003:045E:00CB.0004
 
----
- =C2=A0net/smc/smc_inet.c | 17 ++++++++++++++++-
- =C2=A01 file changed, 16 insertions(+), 1 deletion(-)
+Again, different device names, all should be fine.
 
-diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-index bece346..281f0450 100644
---- a/net/smc/smc_inet.c
-+++ b/net/smc/smc_inet.c
-@@ -102,14 +102,29 @@
- =C2=A0};
- =C2=A0#endif /* CONFIG_IPV6 */
+> > The connector / usb-port was not changed in this case!
+> > 
+> > 
+> > The symptoms of this bug have been present at one point in the
+> > recent
+> > past, but with kernel v6.6.45 (or maybe even some version before that)
+> > it was fine. But with 6.6.45 it seems to be definitely fine.
+> > 
+> > But with v6.6.46 the symptoms returned. That's the reason I
+> > suspected
+> > the kernel to be the cause of this issue. So I did some bisecting -
+> > which wasn't easy because that bug would often times not appear if the
+> > system was simply rebooted into the test kernel.
+> > As the bug would definitely appear on the affected kernels (v6.6.46
+> > ff) after shutting down the system for the night and booting the next
+> > day, I resorted to simulating the over-night powering-off by shutting
+> > the system down, unplugging the power and pressing the power button to
+> > get rid of residual voltage. But even then a few times the bug would
+> > only appear if I repeated this procedure before booting the system again
+> > with the respective kernel.
+> > 
+> > This is on a Thinkpad with Kaby Lake and integrated Intel graphics. 
+> > Even though it is a laptop, it is used as a desktop device, and the
+> > internal battery is disconnected, the removable battery is removed as
+> > the system is plugged-in via the power cord at all times (when in use)!
+> > Also, the system has no power (except for the bios battery, of
+> > course)
+> > over night as the power outlet is switched off if the device is not in use.
+> > 
+> > Not sure if this affects the issue - or how it does. But for
+> > successful bisecting I had to resort to the above procedure.
+> > 
+> > Bisecting the issue (between the release commits of v6.6.45 and
+> > v6.6.46) resulted in this commit [1] being the probable culprit.
+> > 
+> > I then tested kernel v6.6.49. It still produced the bug for me. So I
+> > reverted the changes of the assumed "bad commit" and re-compiled kernel
+> > v6.6.49. With this modified kernel the bug seems to be gone.
 
-+static struct lock_class_key smc_clcsk_slock_keys[2];
-+static struct lock_class_key smc_clcsk_keys[2];
-+
- =C2=A0static int smc_inet_init_sock(struct sock *sk)
- =C2=A0{
-+=C2=A0=C2=A0 bool is_ipv6 =3D sk->sk_family =3D=3D AF_INET6;
- =C2=A0=C2=A0=C2=A0 struct net *net =3D sock_net(sk);
-+=C2=A0=C2=A0 int rc;
+This is odd.
 
- =C2=A0=C2=A0=C2=A0 /* init common smc sock */
- =C2=A0=C2=A0=C2=A0 smc_sk_init(net, sk, IPPROTO_SMC);
- =C2=A0=C2=A0=C2=A0 /* create clcsock */
--=C2=A0=C2=A0 return smc_create_clcsk(net, sk, sk->sk_family);
-+=C2=A0=C2=A0 rc =3D smc_create_clcsk(net, sk, sk->sk_family);
-+=C2=A0=C2=A0 if (rc)
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return rc;
-+
-+=C2=A0=C2=A0 sock_lock_init_class_and_name(smc_sk(sk)->clcsk,
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is_ipv6 ? "slock-AF_INET6-=
-SMC-CLCSK" :=20
-"slock-AF_INET-SMC-CLCSK",
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &smc_clcsk_slock_keys[is_i=
-pv6],
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is_ipv6 ? "sk_lock-AF_INET=
-6-SMC-CLCSK" :=20
-"sk_lock-AF_INET-SMC-CLCSK",
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &smc_clcsk_keys[is_ipv6]);
-+
-+=C2=A0=C2=A0 return 0;
- =C2=A0}
+Does the latest 6.10.y release also show this problem?
 
- =C2=A0int __init smc_inet_init(void)
---
-1.8.3.1
+I can't duplicate this here, and it's the first I've heard of it (given
+that USB mice are pretty popular, I would suspect others would have hit
+it as well...)
 
+thanks,
+
+greg k-h
 
