@@ -1,295 +1,166 @@
-Return-Path: <linux-kernel+bounces-324934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E8A9752E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77459752EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0F31C2277A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D30283E8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D182193099;
-	Wed, 11 Sep 2024 12:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QGQohbQ8"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDED218A6B9;
-	Wed, 11 Sep 2024 12:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0101C18EFC6;
+	Wed, 11 Sep 2024 12:54:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9A7EC4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059172; cv=none; b=l818/MnfeaRMCC2QGH2qJcVeK/mpVy1rxEJvG7ga97vX41Gu1/yczvrYYsIsPlZ2QfC7HVpQLiCa9/b1YZ1MKx8sNEWqUgKTAPjGkzIZVfGr7/LiPyL/P0cFwzYi+M7DLEyQbimPRh+zGPbaMhhUXwJrbrKIucxCw4FhPW1yzJY=
+	t=1726059241; cv=none; b=Oeid1gKxnbUTcVgcVikRliFIOABuzDCHfD8V/p6dV9w4Jq9LYIgYaKYsm180eKLSTkTqhVvHEZ5NtrRXPIu4qH9mOiHrRfsrPTJVXG3yiptxCvA8QVAI2E5cZAOPd/9RHTdmr/NlJ1YToq5WwrL7WqU7pJelOkX/7RkI+Fugawg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059172; c=relaxed/simple;
-	bh=8pc6zUftTePnKsFif7HOo4mBe2dPhXToHtJ4JpuoYHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBkLCbwco5t9QP+zGRuwjMyjDwmpPvxqKREAmhFkNyE6p7XD7Hw4EAf/uRBsZmNq7M4QuajjfywCPR4qpeZAzLnaBvR8Q9R/mHWwOMj2Sq6Lf+s+Cp4o8KVU/x30UKLI6VG5sfvDXxybj81/pvbhKzHWB3KcgjVwHDVKeZYRh5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QGQohbQ8; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so172518866b.1;
-        Wed, 11 Sep 2024 05:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726059169; x=1726663969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OsMLBhML6sz1HDYJ3QdvJLhl/K9b5dz0pvEo/+gRrfk=;
-        b=QGQohbQ8FxSbUWjLssRt5I01gyWDxTosCKWIF1AjAJJf9Yhrw26j0RPkOGrr+yAmFc
-         YFbthhcWXXE6ezCGxdA+AysD7/n95vYaY7N009CU08eTEHp9+FebTIPDvAWQI4Yerens
-         Xnahm6Oal2dqy14aIsm6/+rcLAGoZWpB1s53x1XmQbVxD4mGn+Gq1HGiMSoqRIZ6PKKh
-         V0qp1eGGrkORM1zhYCKf2MMxhw0EFHkQl17J4VI8H6/5aQzOJ7B5FJLX/rd0Ijk+qVJH
-         uBKGetAfNLwRrI3lKyWaBxVV9wf+X0JwVTfWtSTsLR4LvpJQhkaEaQCPYq/OvfXa1zsn
-         zMVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726059169; x=1726663969;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OsMLBhML6sz1HDYJ3QdvJLhl/K9b5dz0pvEo/+gRrfk=;
-        b=GWgr3jTz93NxiNUcoLr0G5Ytb3FZzg/6u7dJSq1FJVK0ppFupb1peoubJaZb+gqDgZ
-         F9qI8VbdQvwW/M/nvmRDpLdx/h8Gp6jcpuSAH5pECwoUA7OBorM2Zw4JEywKhImlEXM4
-         2fS9WMYGCPts17pzLO6ivNyXQS/d3jMc3SOTyqfgSYfaMaTKAC7DsJioDzX25xz/J6Ol
-         qO1fqv5wxQ6NSvIk9IkdJhPJ792/as3ZEFifj+3NEuofAiQjmAlRKncp4BC/fYmH9DFt
-         QFgb3z79yUx//tsC23Dn7+WTpVn3S2BOIV4c/86kHgnNz+M369AFU4K8KMwKSTEF6ROC
-         Xyjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQFp9leYJQYv1S1UlRGiTZDY1sRfQLrfaIbWeUGbSTnYN8PHvmenJKv9gen7P5hlzhXwzViy+P@vger.kernel.org, AJvYcCXGMadvxzDAZGWlsDaVl4h+nIyutMF9OkgG9JdD3Po4KX4HIVm9XXOqnPvV5gnPN/SBytYVl1ar3R5zMKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjSG034B/EePKyyEIbDaLjY8/VWBMhKn9v+1tDgEFLmoVFYCJe
-	ZADOSszyd4jxm8+14Xq7UEyeuBbTabZodr/+AMs+A2fLLBM5rRz2
-X-Google-Smtp-Source: AGHT+IHq45tkenupRA9vDqE9xZTkLm7PWdrsRVDd3A8nGPjBqlteoLoFUEErYLDmFsg9bYCexZQaxQ==
-X-Received: by 2002:a17:907:2ce1:b0:a8d:41d8:14ad with SMTP id a640c23a62f3a-a8ffae3fd9fmr520510766b.29.1726059168611;
-        Wed, 11 Sep 2024 05:52:48 -0700 (PDT)
-Received: from localhost ([149.199.80.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835551sm613395766b.24.2024.09.11.05.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 05:52:48 -0700 (PDT)
-Date: Wed, 11 Sep 2024 13:52:46 +0100
-From: Martin Habets <habetsm.xilinx@gmail.com>
-To: jonathan.s.cooper@amd.com
-Cc: Edward Cree <ecree.xilinx@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] sfc: Add X4 PF support
-Message-ID: <20240911125246.GA65878@gmail.com>
-Mail-Followup-To: jonathan.s.cooper@amd.com,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org
-References: <20240910153014.12803-1-jonathan.s.cooper@amd.com>
+	s=arc-20240116; t=1726059241; c=relaxed/simple;
+	bh=14D//i72PG0G7UWjz8E2+D9dNoF5n7L+kd8QQ9Lwrms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=llAn/HCcpeMGE/n6MUdpRcCFtMD01HnXJkMBllTV47BAXDabsXqursQaJmaAB1UmpY2ZSrHPjiC4JEcwvA0HjqCtDAOSNX93Du4x1sQdCwOM642lo4RpvCFuF2/sY0seUExkqMbhFtHOA0EZSm9m8FaWOdgDrW4h33OdU3qBkAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 560CF1007;
+	Wed, 11 Sep 2024 05:54:28 -0700 (PDT)
+Received: from [10.162.40.31] (e116581.arm.com [10.162.40.31])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 777F43F66E;
+	Wed, 11 Sep 2024 05:53:50 -0700 (PDT)
+Message-ID: <8bc0e51b-0e9b-4eeb-997f-e2a0b1a0c0f8@arm.com>
+Date: Wed, 11 Sep 2024 18:23:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910153014.12803-1-jonathan.s.cooper@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: Abstract THP allocation
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240911065600.1002644-1-dev.jain@arm.com>
+ <20240911065600.1002644-2-dev.jain@arm.com>
+ <f610e933-278e-4f95-a363-8f023a5e7aa9@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <f610e933-278e-4f95-a363-8f023a5e7aa9@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 04:30:13PM +0100, jonathan.s.cooper@amd.com wrote:
-> From: Jonathan Cooper <jonathan.s.cooper@amd.com>
-> 
-> Add X4 series. Most functionality is the same as previous
-> EF10 nics but enough is different to warrant a new nic type struct
-> and revision; for example legacy interrupts and SRIOV are
-> not supported.
-> 
-> Most removed features will be re-added later as new implementations.
-> 
-> Signed-off-by: Jonathan Cooper <jonathan.s.cooper@amd.com>
 
-Acked-by: Martin Habets <habetsm.xilinx@gmail.com>
+On 9/11/24 14:57, David Hildenbrand wrote:
+> On 11.09.24 08:55, Dev Jain wrote:
+>> In preparation for the second patch, abstract away the THP allocation
+>> logic present in the create_huge_pmd() path, which corresponds to the
+>> faulting case when no page is present.
+>>
+>> There should be no functional change as a result of applying
+>> this patch.
+>>
+>
+> [...]
+>
+>> +
+>> +static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
+>> +            struct vm_area_struct *vma, unsigned long haddr)
+>> +{
+>> +    pmd_t entry;
+>> +
+>> +    entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+>> +    entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>> +    folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+>> +    folio_add_lru_vma(folio, vma);
+>> +    set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+>> +    update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+>
+> It's quite weird to see a mixture of haddr and vmf->address, and 
+> likely this mixture is wrong or not not required.
+>
+> Looking at arc's update_mmu_cache_pmd() implementation, I cannot see 
+> how passing in the unaligned address would do the right thing. But 
+> maybe arc also doesn't trigger that code path ... who knows :)
 
-> ---
->  drivers/net/ethernet/sfc/ef10.c       | 127 ++++++++++++++++++++++++++
->  drivers/net/ethernet/sfc/efx.c        |   4 +
->  drivers/net/ethernet/sfc/nic.h        |   2 +
->  drivers/net/ethernet/sfc/nic_common.h |   1 +
->  4 files changed, 134 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-> index 7d69302ffa0a..de131fc5fa0b 100644
-> --- a/drivers/net/ethernet/sfc/ef10.c
-> +++ b/drivers/net/ethernet/sfc/ef10.c
-> @@ -4302,3 +4302,130 @@ const struct efx_nic_type efx_hunt_a0_nic_type = {
->  	.sensor_event = efx_mcdi_sensor_event,
->  	.rx_recycle_ring_size = efx_ef10_recycle_ring_size,
->  };
-> +
-> +const struct efx_nic_type efx_x4_nic_type = {
-> +	.is_vf = false,
-> +	.mem_bar = efx_ef10_pf_mem_bar,
-> +	.mem_map_size = efx_ef10_mem_map_size,
-> +	.probe = efx_ef10_probe_pf,
-> +	.remove = efx_ef10_remove,
-> +	.dimension_resources = efx_ef10_dimension_resources,
-> +	.init = efx_ef10_init_nic,
-> +	.fini = efx_ef10_fini_nic,
-> +	.map_reset_reason = efx_ef10_map_reset_reason,
-> +	.map_reset_flags = efx_ef10_map_reset_flags,
-> +	.reset = efx_ef10_reset,
-> +	.probe_port = efx_mcdi_port_probe,
-> +	.remove_port = efx_mcdi_port_remove,
-> +	.fini_dmaq = efx_fini_dmaq,
-> +	.prepare_flr = efx_ef10_prepare_flr,
-> +	.finish_flr = efx_port_dummy_op_void,
-> +	.describe_stats = efx_ef10_describe_stats,
-> +	.update_stats = efx_ef10_update_stats_pf,
-> +	.start_stats = efx_mcdi_mac_start_stats,
-> +	.pull_stats = efx_mcdi_mac_pull_stats,
-> +	.stop_stats = efx_mcdi_mac_stop_stats,
-> +	.push_irq_moderation = efx_ef10_push_irq_moderation,
-> +	.reconfigure_mac = efx_ef10_mac_reconfigure,
-> +	.check_mac_fault = efx_mcdi_mac_check_fault,
-> +	.reconfigure_port = efx_mcdi_port_reconfigure,
-> +	.get_wol = efx_ef10_get_wol,
-> +	.set_wol = efx_ef10_set_wol,
-> +	.resume_wol = efx_port_dummy_op_void,
-> +	.get_fec_stats = efx_ef10_get_fec_stats,
-> +	.test_chip = efx_ef10_test_chip,
-> +	.test_nvram = efx_mcdi_nvram_test_all,
-> +	.mcdi_request = efx_ef10_mcdi_request,
-> +	.mcdi_poll_response = efx_ef10_mcdi_poll_response,
-> +	.mcdi_read_response = efx_ef10_mcdi_read_response,
-> +	.mcdi_poll_reboot = efx_ef10_mcdi_poll_reboot,
-> +	.mcdi_reboot_detected = efx_ef10_mcdi_reboot_detected,
-> +	.irq_enable_master = efx_port_dummy_op_void,
-> +	.irq_test_generate = efx_ef10_irq_test_generate,
-> +	.irq_disable_non_ev = efx_port_dummy_op_void,
-> +	.irq_handle_msi = efx_ef10_msi_interrupt,
-> +	.tx_probe = efx_ef10_tx_probe,
-> +	.tx_init = efx_ef10_tx_init,
-> +	.tx_write = efx_ef10_tx_write,
-> +	.tx_limit_len = efx_ef10_tx_limit_len,
-> +	.tx_enqueue = __efx_enqueue_skb,
-> +	.rx_push_rss_config = efx_mcdi_pf_rx_push_rss_config,
-> +	.rx_pull_rss_config = efx_mcdi_rx_pull_rss_config,
-> +	.rx_push_rss_context_config = efx_mcdi_rx_push_rss_context_config,
-> +	.rx_pull_rss_context_config = efx_mcdi_rx_pull_rss_context_config,
-> +	.rx_restore_rss_contexts = efx_mcdi_rx_restore_rss_contexts,
-> +	.rx_probe = efx_mcdi_rx_probe,
-> +	.rx_init = efx_mcdi_rx_init,
-> +	.rx_remove = efx_mcdi_rx_remove,
-> +	.rx_write = efx_ef10_rx_write,
-> +	.rx_defer_refill = efx_ef10_rx_defer_refill,
-> +	.rx_packet = __efx_rx_packet,
-> +	.ev_probe = efx_mcdi_ev_probe,
-> +	.ev_init = efx_ef10_ev_init,
-> +	.ev_fini = efx_mcdi_ev_fini,
-> +	.ev_remove = efx_mcdi_ev_remove,
-> +	.ev_process = efx_ef10_ev_process,
-> +	.ev_read_ack = efx_ef10_ev_read_ack,
-> +	.ev_test_generate = efx_ef10_ev_test_generate,
-> +	.filter_table_probe = efx_ef10_filter_table_probe,
-> +	.filter_table_restore = efx_mcdi_filter_table_restore,
-> +	.filter_table_remove = efx_ef10_filter_table_remove,
-> +	.filter_insert = efx_mcdi_filter_insert,
-> +	.filter_remove_safe = efx_mcdi_filter_remove_safe,
-> +	.filter_get_safe = efx_mcdi_filter_get_safe,
-> +	.filter_clear_rx = efx_mcdi_filter_clear_rx,
-> +	.filter_count_rx_used = efx_mcdi_filter_count_rx_used,
-> +	.filter_get_rx_id_limit = efx_mcdi_filter_get_rx_id_limit,
-> +	.filter_get_rx_ids = efx_mcdi_filter_get_rx_ids,
-> +#ifdef CONFIG_RFS_ACCEL
-> +	.filter_rfs_expire_one = efx_mcdi_filter_rfs_expire_one,
-> +#endif
-> +#ifdef CONFIG_SFC_MTD
-> +	.mtd_probe = efx_ef10_mtd_probe,
-> +	.mtd_rename = efx_mcdi_mtd_rename,
-> +	.mtd_read = efx_mcdi_mtd_read,
-> +	.mtd_erase = efx_mcdi_mtd_erase,
-> +	.mtd_write = efx_mcdi_mtd_write,
-> +	.mtd_sync = efx_mcdi_mtd_sync,
-> +#endif
-> +	.ptp_write_host_time = efx_ef10_ptp_write_host_time,
-> +	.ptp_set_ts_sync_events = efx_ef10_ptp_set_ts_sync_events,
-> +	.ptp_set_ts_config = efx_ef10_ptp_set_ts_config,
-> +	.vlan_rx_add_vid = efx_ef10_vlan_rx_add_vid,
-> +	.vlan_rx_kill_vid = efx_ef10_vlan_rx_kill_vid,
-> +	.udp_tnl_push_ports = efx_ef10_udp_tnl_push_ports,
-> +	.udp_tnl_has_port = efx_ef10_udp_tnl_has_port,
-> +#ifdef CONFIG_SFC_SRIOV
-> +	/* currently set to the VF versions of these functions
-> +	 * because SRIOV will be reimplemented later.
-> +	 */
-> +	.vswitching_probe = efx_ef10_vswitching_probe_vf,
-> +	.vswitching_restore = efx_ef10_vswitching_restore_vf,
-> +	.vswitching_remove = efx_ef10_vswitching_remove_vf,
-> +#endif
-> +	.get_mac_address = efx_ef10_get_mac_address_pf,
-> +	.set_mac_address = efx_ef10_set_mac_address,
-> +	.tso_versions = efx_ef10_tso_versions,
-> +
-> +	.get_phys_port_id = efx_ef10_get_phys_port_id,
-> +	.revision = EFX_REV_X4,
-> +	.max_dma_mask = DMA_BIT_MASK(ESF_DZ_TX_KER_BUF_ADDR_WIDTH),
-> +	.rx_prefix_size = ES_DZ_RX_PREFIX_SIZE,
-> +	.rx_hash_offset = ES_DZ_RX_PREFIX_HASH_OFST,
-> +	.rx_ts_offset = ES_DZ_RX_PREFIX_TSTAMP_OFST,
-> +	.can_rx_scatter = true,
-> +	.always_rx_scatter = true,
-> +	.option_descriptors = true,
-> +	.min_interrupt_mode = EFX_INT_MODE_MSIX,
-> +	.timer_period_max = 1 << ERF_DD_EVQ_IND_TIMER_VAL_WIDTH,
-> +	.offload_features = EF10_OFFLOAD_FEATURES,
-> +	.mcdi_max_ver = 2,
-> +	.max_rx_ip_filters = EFX_MCDI_FILTER_TBL_ROWS,
-> +	.hwtstamp_filters = 1 << HWTSTAMP_FILTER_NONE |
-> +			    1 << HWTSTAMP_FILTER_ALL,
-> +	.check_caps = ef10_check_caps,
-> +	.print_additional_fwver = efx_ef10_print_additional_fwver,
-> +	.sensor_event = efx_mcdi_sensor_event,
-> +	.rx_recycle_ring_size = efx_ef10_recycle_ring_size,
-> +};
-> +
-> diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-> index 6f1a01ded7d4..36b3b57e2055 100644
-> --- a/drivers/net/ethernet/sfc/efx.c
-> +++ b/drivers/net/ethernet/sfc/efx.c
-> @@ -821,6 +821,10 @@ static const struct pci_device_id efx_pci_table[] = {
->  	 .driver_data = (unsigned long) &efx_hunt_a0_nic_type},
->  	{PCI_DEVICE(PCI_VENDOR_ID_SOLARFLARE, 0x1b03),  /* SFC9250 VF */
->  	 .driver_data = (unsigned long) &efx_hunt_a0_vf_nic_type},
-> +	{PCI_DEVICE(PCI_VENDOR_ID_SOLARFLARE, 0x0c03),  /* X4 PF (FF/LL) */
-> +	 .driver_data = (unsigned long)&efx_x4_nic_type},
-> +	{PCI_DEVICE(PCI_VENDOR_ID_SOLARFLARE, 0x2c03),  /* X4 PF (FF only) */
-> +	 .driver_data = (unsigned long)&efx_x4_nic_type},
->  	{0}			/* end of list */
->  };
->  
-> diff --git a/drivers/net/ethernet/sfc/nic.h b/drivers/net/ethernet/sfc/nic.h
-> index 1db64fc6e909..9fa5c4c713ab 100644
-> --- a/drivers/net/ethernet/sfc/nic.h
-> +++ b/drivers/net/ethernet/sfc/nic.h
-> @@ -211,4 +211,6 @@ int efx_ef10_tx_tso_desc(struct efx_tx_queue *tx_queue, struct sk_buff *skb,
->  extern const struct efx_nic_type efx_hunt_a0_nic_type;
->  extern const struct efx_nic_type efx_hunt_a0_vf_nic_type;
->  
-> +extern const struct efx_nic_type efx_x4_nic_type;
-> +
->  #endif /* EFX_NIC_H */
-> diff --git a/drivers/net/ethernet/sfc/nic_common.h b/drivers/net/ethernet/sfc/nic_common.h
-> index 466df5348b29..7ec4ac7b7ff5 100644
-> --- a/drivers/net/ethernet/sfc/nic_common.h
-> +++ b/drivers/net/ethernet/sfc/nic_common.h
-> @@ -21,6 +21,7 @@ enum {
->  	 */
->  	EFX_REV_HUNT_A0 = 4,
->  	EFX_REV_EF100 = 5,
-> +	EFX_REV_X4 = 6,
->  };
->  
->  static inline int efx_nic_rev(struct efx_nic *efx)
-> -- 
-> 2.17.1
-> 
+If I am reading correctly, arch/arc/mm/tlb.c: update_mmu_cache_pmd() 
+calls update_mmu_cache_range() which is already expecting an unaligned 
+address? But...
+>
+>
+> Staring at some other update_mmu_cache_pmd() users, it's quite 
+> inconsistent. Primarily only do_huge_pmd_numa_page() and 
+> __do_huge_pmd_anonymous_page() use the unaligned address. The others 
+> seem to use the aligned address ... as one would expect when modifying 
+> a PMD.
+
+Looking at riscv: 
+update_mmu_cache_pmd()->update_mmu_cache()->update_mmu_cache_range(). 
+The argument getting passed to local_flush_tlb_page() seems like, should 
+expect an aligned address.
+>
+>
+> I suggest to change this function to *not* pass in the vmf, and rename 
+> it to something like:
+>
+> static void folio_map_anon_pmd(struct folio *folio, struct 
+> vm_area_struct *vma, pmd_t *pmd, unsigned long haddr)
+>
+> Then use haddr also to do the update_mmu_cache_pmd().
+>
+>> +    add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>> +    mm_inc_nr_ptes(vma->vm_mm);
+>> +}
+>> +
+>> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>> +{
+>> +    struct vm_area_struct *vma = vmf->vma;
+>> +    struct folio *folio;
+>> +    pgtable_t pgtable;
+>> +    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>> +    vm_fault_t ret = 0;
+>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
+>
+> Nit: While at it, try to use reverse christmas-tree where possible, 
+> makes things more reasible. You could make haddr const.
+>
+> struct vm_area_struct *vma = vmf->vma;
+> unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+> gfp_t gfp = vma_thp_gfp_mask(vma);
+> struct folio *folio;
+> vm_fault_t ret = 0;
+> ...
+>
+>> +
+>> +    folio = pmd_thp_fault_alloc(gfp, vma, haddr, vmf->address);
+>> +    if (unlikely(!folio)) {
+>> +        ret = VM_FAULT_FALLBACK;
+>> +        goto release;
+>> +    }
+>> +
+>> +    pgtable = pte_alloc_one(vma->vm_mm);
+>> +    if (unlikely(!pgtable)) {
+>> +        ret = VM_FAULT_OOM;
+>> +        goto release;
+>> +    }
+>>         vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>> +
+>
+> Nit Unrelated change.
+>
+>>       if (unlikely(!pmd_none(*vmf->pmd))) {
+>>           goto unlock_release;
+>
+>
 
