@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-324787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0DB9750DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489DE9750DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B9F1F24B73
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5331C220EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C521187347;
-	Wed, 11 Sep 2024 11:33:02 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B2E187337;
+	Wed, 11 Sep 2024 11:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJrC1mKu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A7A185606;
-	Wed, 11 Sep 2024 11:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FE13D984;
+	Wed, 11 Sep 2024 11:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726054382; cv=none; b=igSqRo2aNaTShgFgyx4esLF+th1TkELSeKShua6oUTSTpjND3E3hrtmAsSaGaddk8kEO9r+f54tTUONNC3N14Z9LgpPAC0EnSOxZ8jEKsjRA0leuzuHhUVO7b/Wss/+zNveQy6vy4ttGa6Qqtgb5bIIq1/+jvRJ8d9Vz4Z7JLos=
+	t=1726054391; cv=none; b=jyXQL9UZK7SjuxM93oIXdKhFS28kofXAr4UUW4qe/ARHZC/4kgsTjv5Wc5SOg6Ucb2CkXo+oOldnIpPenJA6SyvuNjYYqQGzEMMkTEgIs143MWjVgzZnx0vm1EUc59lzUCrQZaZsF+QJKO9wzVjZMENMbgZs98PUNj+ml/QaOIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726054382; c=relaxed/simple;
-	bh=0DIxhEwZg/78wWcSQ5yXLGoyNvQez9CoT8yY1buUSUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nHKm9sB1cgVNySS25wve5XkG48Fg1VJ/jRam3l/V20FbB/IWPKMivKynSFf0FR/Wr0635QqFE2wP3z119CD/aPooLU49tC3pS2g4uFruaI/tXJOI4UQI/1aw0bsQ4iadz3AnDUQhdLGXx4CHGeop0zTNfC0tdxK9wsjsIBm2oD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X3dhp2Rzzz1SB6d;
-	Wed, 11 Sep 2024 19:32:26 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4545C180043;
-	Wed, 11 Sep 2024 19:32:56 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 19:32:55 +0800
-Message-ID: <17df1bfe-4e73-464e-8802-019eb13159e3@huawei.com>
-Date: Wed, 11 Sep 2024 19:32:55 +0800
+	s=arc-20240116; t=1726054391; c=relaxed/simple;
+	bh=d/6BYN/hz0vb6byjvWNc4phCG22oIwVbCnvyfL1nmP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u69PvsG3Xx8r+l1XcU1b84PZl4na24ocHk8Xx72drMWINrh5Zp3cgmNEM8O1lxNm9nyKRT9XFWv08wcyCFZGF/SUHn7sxyb/GurgoDZGsff1g318wFsrpij41yOXg3eJbgduFLUmIHitCul51jFtx+2BOpfnY6guRImOn1bst64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJrC1mKu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79ECC4CEC5;
+	Wed, 11 Sep 2024 11:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726054391;
+	bh=d/6BYN/hz0vb6byjvWNc4phCG22oIwVbCnvyfL1nmP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BJrC1mKuzmCf5h4ZN/N4P6hYPuKbfXWRIhz0oMROBeEZug+h/+T4pMtUcsWl7lkTX
+	 8To1SmRdKnLcEFd2JLUEET9DFIq7A/Hm1LW//VzLbYGoFXDbZezCETlCRMmSAky0su
+	 vrpjyzkqVZnYdsUJY3MFIrYJyiXQpSJDb4v5J+QPpS44wOQwMambL/KQrI7LiEHJG3
+	 vYmAWyrZKU07KfA1nPIQVwji9pk2vPfY30ktwgAqfk7jWt76BH+fxJZvtf7CLutq7n
+	 i0YqtLiubl8yuDc377zIFUzNZn+VaFDwdOJtUVYRFWk5uGQ/67UZhWPe1fI0C/A9Mq
+	 7GP4I/vtLMONw==
+Date: Wed, 11 Sep 2024 13:33:03 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 15/26] rust: alloc: implement `collect` for `IntoIter`
+Message-ID: <ZuF_76DHQRukLEMb@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-16-dakr@kernel.org>
+ <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me>
+ <ZuDiurdQfvmewzDh@pollux>
+ <503abe24-fbac-440a-a063-fc30a2a6bd77@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] page_pool: add a test module for page_pool
-To: Jesper Dangaard Brouer <hawk@kernel.org>, Mina Almasry
-	<almasrymina@google.com>
-CC: <ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	<linux-kselftest@vger.kernel.org>
-References: <20240909091913.987826-1-linyunsheng@huawei.com>
- <CAHS8izNfLYQFgZYkRPJFonq8LH6SnV70B4pfC_cQ5gyz780cZA@mail.gmail.com>
- <b438256d-a233-4708-9a82-e4f5f4b86a63@huawei.com>
- <fda4dfdc-7ef8-4c75-8d29-a33a621fd703@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <fda4dfdc-7ef8-4c75-8d29-a33a621fd703@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <503abe24-fbac-440a-a063-fc30a2a6bd77@proton.me>
 
-On 2024/9/10 19:27, Jesper Dangaard Brouer wrote:
-...
+On Wed, Sep 11, 2024 at 08:53:24AM +0000, Benno Lossin wrote:
+> On 11.09.24 02:22, Danilo Krummrich wrote:
+> > On Tue, Sep 10, 2024 at 08:12:24PM +0000, Benno Lossin wrote:
+> >> On 16.08.24 02:10, Danilo Krummrich wrote:
+> >>> +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIter`.
+> >>> +    ///
+> >>> +    /// Currently, we can't implement `FromIterator`. There are a couple of issues with this trait
+> >>> +    /// in the kernel, namely:
+> >>> +    ///
+> >>> +    /// - Rust's specialization feature is unstable. This prevents us to optimze for the special
+> >>> +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
+> >>> +    /// - We also can't use `I::IntoIter`'s type ID either to work around this, since `FromIterator`
+> >>> +    ///   doesn't require this type to be `'static`.
+> >>> +    /// - `FromIterator::from_iter` does return `Self` instead of `Result<Self, AllocError>`, hence
+> >>> +    ///   we can't properly handle allocation failures.
+> >>> +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle additional allocation
+> >>> +    ///   flags.
+> >>> +    ///
+> >>> +    /// Instead, provide `IntoIter::collect`, such that we can at least convert a `IntoIter` into a
+> >>> +    /// `Vec` again.
+> >>
+> >> I think it's great that you include this in the code, but I don't think
+> >> that it should be visible in the documentation,
+> > 
+> > Why not? I think this information is valuable for users of this API.
+> 
+> If you want to keep it, then I don't mind, but I would still move it
+> underneath `Examples` and add a section header `# Implementation
+> Details` or similar.
 
->>
->> The main issue I remembered was that it only support x86:(
->>
-> 
-> Yes, because I've added ASM code for reading TSC counter in a very
-> precise manor. Given we run many iterations, then I don't think we
-> need this precise reading.  I guess it can simply be replaced with
-> get_cycles() or get_cycles64().  Then it should work on all archs.
-
-Agreed.
-
-> 
-> The code already supports wall-clock time via ktime_get() (specifically
-> ktime_get_real_ts64()).
-> 
-> 
->>>
->>> My preference here (for the performance part) is to upstream the
->>> out-of-tree tests that Jesper (and probably others) are using, rather
->>> than adding a new performance test that is not as battle-hardened.
->>
->> I looked through the out-of-tree tests again, it seems we can take the
->> best of them.
->> For Jesper' ko:
->> It seems we can do prefill as something that pp_fill_ptr_ring() does
->> in bench_page_pool_simple.c to avoid the noise from the page allocator.
->>
->>
->> For the ko in this patch:
->> It uses NAPI instead of tasklet mimicking the NAPI context, support
->> PP_FLAG_DMA_MAP flag testing, and return '-EAGAIN' in module_init()
->> to use perf stat for collecting and calculating performance data.
->>
-> My bench don't return minus-number on module load, because I used perf
-> record, and to see symbols decoded with perf report, I needed the module
-> to be loaded.
-> 
-> I started on reading the PMU counters[1] around the bench loop, it works
-> if enabling PMU counters yourself/manually, but I never finished that work.
-> 
->  [1] https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/include/linux/time_bench.h#L195-L209
-> 
-> 
->> Is there other testcase or better practicing that we can learn from
->> Jesper' out of tree ko?
->>
-> 
-> I created a time_bench.c [2] module that other modules [3] can use to
-> easier reuse the benchmarking code in other modules.
-> 
->  [2] https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/time_bench.c
-> 
->  [3] https://github.com/netoptimizer/prototype-kernel/blob/master/kernel/lib/bench_page_pool_simple.c
-
-Will take a look at it, thanks.
+Sure, we can do that.
 
 > 
-> --Jesper
+> ---
+> Cheers,
+> Benno
+> 
+> >> can you move it under
+> >> the `Examples` section and turn it into normal comments?
+> >>
+> >>> +    ///
+> >>> +    /// Note that `IntoIter::collect` doesn't require `Flags`, since it re-uses the existing backing
+> >>> +    /// buffer. However, this backing buffer may be shrunk to the actual count of elements.
+> >>> +    ///
+> >>> +    /// # Examples
+> >>> +    ///
+> >>> +    /// ```
+> >>> +    /// let v = kernel::kvec![1, 2, 3]?;
+> >>> +    /// let mut it = v.into_iter();
+> >>> +    ///
+> >>> +    /// assert_eq!(it.next(), Some(1));
+> >>> +    ///
+> >>> +    /// let v = it.collect(GFP_KERNEL);
+> >>> +    /// assert_eq!(v, [2, 3]);
+> >>> +    ///
+> >>> +    /// # Ok::<(), Error>(())
+> >>> +    /// ```
+> >>> +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
+> 
 
