@@ -1,214 +1,192 @@
-Return-Path: <linux-kernel+bounces-324161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728D89748C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:43:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DBC9748E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A541F26EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A390A285A8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A5540858;
-	Wed, 11 Sep 2024 03:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DACE3BBC5;
+	Wed, 11 Sep 2024 03:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="F9N6gWON"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2075.outbound.protection.outlook.com [40.107.117.75])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2rsa9VI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B479E3EA76;
-	Wed, 11 Sep 2024 03:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726026184; cv=fail; b=KaRZKEZBAqPTuVsEl8cXI92PrIanuGpOBvMaJVFffeTJWku6QdwYtMNHui5Wq78Z9rLcGX5QKV8Y1RGklx5JIDQoYnOJgsp90nxuC9QUxUpwkdhVXH1D4fbRmj7iISaXytO446iRjUnJ2w40UmwVM30TINbBnUyQ72XNBWKylgs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726026184; c=relaxed/simple;
-	bh=+LSynLjDE5l19UwdcaAhtxJEdm7xPneZkcW/oGMB61Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=i2P5jAjJxjrfXEz+libQqJMY648eF1R9RMwbAG/6jludvmQV7mjUoGuKVAEF5sEJbVxtS7orlijR59a4ZrqoDybzBgkNsmVXF8Hj//e3eLhkRLb/dhzaJlu8Eqv0sKDXsEfGFt9QbBbg0+OEy9RaRZrJIr9L1m+xeF5EE04pP3Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=F9N6gWON; arc=fail smtp.client-ip=40.107.117.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o19WlMps///gb3+FTb5rObCKQPTXfjtZ0Ehqe3xP0gev7jvXaVbZ+BJTlCIU8PAaki2TTvlTgb45fWkpzNmHD8AIwN6uVwXpo+24bKVWJpgMO3hXJrD1mHzE1QoFtJNcNmlCDeB+t4eR3N7FvFwwioqoKRJhHY+Vig9bHoo8zKsY0VJlsl1SB4fL8dQ4kjfgJzZ5WA8SHvSWYZKnGmxr/l5D8pG8wZ7cedlfz5hZiNvMFITpRCkT5N7vWKztjstB/TylsraTrpu3Y92mt4vAQdndIcZxAbRcyAzW0mO0dwjkew2rlKszA5Tl5zDZ87ekBrIZcbp0DYB4TngbNgabyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CaspPLTg+HV+EcUnHwMLUvrGkx1xe8uSskvjKYQEtm8=;
- b=MVBl/SE/MuasBnjeUodT2rrrBxjS7mIbM2NqPiC6oJLyux8l2kCwGBBZA6wIpOcno3l/wTii1MZhJtCxuVCTv4+DTcFWP7jGfRVnf/B0IddSpgNlPyJDrjlsXgWdwm3JW3c08XkxleAZT0UwkK5xkCbDHAvk4AxB7B+ibUNUaaarP0mibvep+0EvMZDBPuVXZQZ2ZGgetcHp7YXt8FJHUbHOdSk9pCHrf4Q6jYqJ/aiVlYh27W/aCE+MxEgY4kTJr9CJJYiAtaomrI2/yZtblnNwD6/fdp5bSSwu1v94MhVbB92Te9kqbyDzG/mt5o2sNhGz2pBUjGtU4tGVrEYCqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CaspPLTg+HV+EcUnHwMLUvrGkx1xe8uSskvjKYQEtm8=;
- b=F9N6gWONxWzQk2Womk5M8e3qLuRvBvaV0CvX6OMW8qptJTSxbqtwMDVGcCxDV9i2qplB24BQrt/D3MFnt+y2Iw5Eug3bnZkrGOnOOQSy6gUdpAIe4cOHlaK12ZmZtYNTwp9WYmSvLgSTA3vF8aQi1Ks2OJZzAy3CIkXgf8I+WJVufgiJW/QA8INTCOsn+oi7w1O7IUG46+Iho8aCgax5Dbf5K/9O8+n7OcvdDnhQT4A4h7UODUPUfPfI0B5S/M3rWWA2j2lESg/gYJl6UthHIvenAKr3+uWiOiAh7Yyfkcc6WH9UJFv+oS/RDTFOg7YG9STz7IizgBm/x2Uz8J1yCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TYZPR06MB6378.apcprd06.prod.outlook.com (2603:1096:400:419::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Wed, 11 Sep
- 2024 03:42:57 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7962.016; Wed, 11 Sep 2024
- 03:42:56 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] wifi: mt76: mt7615: Convert comma to semicolon
-Date: Wed, 11 Sep 2024 11:42:43 +0800
-Message-Id: <20240911034243.31596-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR0101CA0039.apcprd01.prod.exchangelabs.com
- (2603:1096:404:8000::25) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEADB38DE5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726026351; cv=none; b=ttmJw9rGPc9zShBe/iAHYcI1hRjaba6nDTaxiDrLjjBczFV2tM97rz+10uTG6rjrMQzFMMy9SD07Sz9YBWM9jbOd6AxF1FA9+9c/opjjdddH1+UDvfp+2L42LDlSlrWFEQNnlx9uJH67oD4PCmCJrEdkRZml/017OxVbXthBKBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726026351; c=relaxed/simple;
+	bh=+Rqn0P9mB0La8B4Fje7p5aX1Sl7TbVmBDFgISlRF8pI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GCAVBBz00y06E2LvHj9vjNh/BuNTAo0vlLdXcMgpDpEGpO6PqNKbLMtY7w2tTLsq8PbDjh7vfcu8gsD3X/G5X+AH2+MIlNE0EryAmLO31m2HTKtzQO/XMVU/fqAmZCF3XWw7BFGgMBBUqhjwKN830S7/zpywvgr8PUyo+NL3cec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2rsa9VI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726026348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kpoA2K3FbuBcPt6tnw7KwvXi7Ya0b7H2b/GB31m+eoM=;
+	b=V2rsa9VIdAN1UbdDt7OL4fXcoOT5+/yziUhvYQGqf9rzG+ngHTHvk5m5fWSahJlWonHLFx
+	VIlfVCc+EYeG0RJtotgRNaUoYlkmfdgjY6/SSzpYKl7zpC9PZdVpVx3EZd4X6rz2d4Cg6o
+	IogiVbg+3Enb3iL12Y3TiwKScbawUrc=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-385-C640vVL_PpSalfgzP1i6Qw-1; Tue, 10 Sep 2024 23:45:47 -0400
+X-MC-Unique: C640vVL_PpSalfgzP1i6Qw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2db470aa646so2657124a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 20:45:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726026346; x=1726631146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kpoA2K3FbuBcPt6tnw7KwvXi7Ya0b7H2b/GB31m+eoM=;
+        b=iTsdmM7aduDRadBOGHafrzs7x+0oERaF2wDCu3cIfLcmlP0FxYSg0G39sPv2m3K2Ep
+         EeS390OtlOGj3GySy9iPqkhjiuh7F2GNRXqKUvHD2I1JUStTaypf+OWjeyKKv0dKj7n1
+         waHgZO0C851w5NQOt3oZnoloME9Mj3bH+ZDhgsI6co7cFHISwA//VFf1xR/7goB6oB4X
+         rxYQPOcduL244dqi5ZCXOff9Z7Me+HHIGSE1BoOe5dlezz8Xj4E/fsQNRz/bnfi+ZvR7
+         NAUKVT+Ao0CpDJhK/lu2OtCMUV2/RnYq59RuBFgbX6jS8klQp6NHpGj3+HbntijamQrr
+         hN0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTWzXbSjoOX2pBc14xqavkqFTxdq+ly5divMLqLPiUKbpzVuFNXBCr9hjcBgWGF8U3QPm3v9bqi946Xck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze9Y7z7azlB51UyKv9CtssY0Xt198NAOfst4Her2RspcSeYNYs
+	TrmySx1hTQSsaDSrTbkoo6Q8O/zrASGWFRcAyQBHTN8iVWigMFyUzSfzUgZ6Eosr5qfI1Hl5fpr
+	vNXO6l5XsvmxkLCtOW/sa53DnoF/2xUxsQWNKhKDTx1yFx/txnFfPkySUsdP/a5WoPlvmuI7eTl
+	8VTi0FwIRTrAH8NKkmXl1Z3ImAseRbEHaFpN51
+X-Received: by 2002:a17:90a:ee8f:b0:2d3:c892:9607 with SMTP id 98e67ed59e1d1-2dad4ef4a6amr18033877a91.12.1726026346126;
+        Tue, 10 Sep 2024 20:45:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEj9vZUExbOBNU4jOmP5eXmRYi/TEXq3HEgEg7kx8fYKg3PiXc3U9CsuxA3ZvSd76wvoTopUe5ybTKLYrtquv4=
+X-Received: by 2002:a17:90a:ee8f:b0:2d3:c892:9607 with SMTP id
+ 98e67ed59e1d1-2dad4ef4a6amr18033853a91.12.1726026345640; Tue, 10 Sep 2024
+ 20:45:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB6378:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5101b37-e69d-4ae2-e8a4-08dcd213d2d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|366016|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hmPb0G6I+l3r9ZzkqfhoggWcJs88jTj9QP4xu0kDRditFigI0YOPdZirWfbz?=
- =?us-ascii?Q?uwlwNDZ+kDJ/gl0mT6gQUZjrb9jfNgC1FJBHz1WfEtV1AIGe+teKDFPbPLkl?=
- =?us-ascii?Q?fwUjTkexFBVnhflr6XQAJ0+cc4TOn0rdxF3eOi10KWuzUDSz11SiKKKRnCaJ?=
- =?us-ascii?Q?DCBDqytXflsifq63YeJGm40UisYf3HjU9ShPna+OA9vAYHyzXDXSI21p3uoq?=
- =?us-ascii?Q?lAU02g2910CzyZEW2YGoFLrh3nZA5q+eMQYdZ07hCdL4ixMbZcdot7KiYWjt?=
- =?us-ascii?Q?a/QDQ+/hGEYaqgOTLcHYJSZCytVyxlUEy7tz7DeOU/6nAGIdpQZmOpDfXUwB?=
- =?us-ascii?Q?AT3drgAAwc8ej7Cs5HKJZm/wp8jI/6ZV3AtYFJrNC7tZF6Vnp5Zo0PtB6FXf?=
- =?us-ascii?Q?8/nTYu9YzH7mnHSafaV7iCouRgrMgQ/mBmU5rN5s1w9FNTs51JN7g9EX2Tjj?=
- =?us-ascii?Q?GKKp61S/WNIGYNAnkB9NMJfxbMNRzPvonDXvXvkJMUjubx+dyJDeCvAZgF/Y?=
- =?us-ascii?Q?Ww4AXariJlR1GxI4OIXg0mR2dYEM39r8h9DvLl181Yc7wjOxKyV7/j49ZyGn?=
- =?us-ascii?Q?C+kk+nCPawTiywWXecerOvP6jh5ZoWiN8NOohoM++WdOu6eLeJE55qRcHqJR?=
- =?us-ascii?Q?9rUU76csfrd9ElVV8q1muzLlynU0qEdxNN8nXzmNdRs3wy7KkiON0iD+O6aJ?=
- =?us-ascii?Q?6WYyRUnxH1PMYjHD41F1a1DyvX5dflXh8fEImMwqjrcCofLaxqQ13HhLnP8L?=
- =?us-ascii?Q?322OEkzsfub6z4qy4g8vaCgo+09UxIP9SLBsg40/RPehg8XBAK04lSbnT5Jw?=
- =?us-ascii?Q?L2FvzoyiYO2cDrFQil0jpQ/CQcJo6vFHVoNCl44IjFFGTnbAaUyOpZ3P3I/z?=
- =?us-ascii?Q?yzKwkqmplXrBvsgNKrM/aBpV7mNnJkmWICG+PlEbc8Q1d0r9PWix/y9GMcsw?=
- =?us-ascii?Q?/F8hQl8Yh4DmdGT8LD3wa3O2E4320UVXb4bt7T07RWaYXd5vFDXu5Tv/izri?=
- =?us-ascii?Q?TPZG2Am6bCrR0iYVO05ncEf7WyUEs+QqBkQzcsCrCHRmd2xXphWB+TLv0/tp?=
- =?us-ascii?Q?xqlYoSNbdSMBV8C41KjFpCeCd19KvON72JZQPVVil1sD8nDPvzwP2RVg1+Lq?=
- =?us-ascii?Q?UysTfm9PUQLUk4pX1j+Bhj8zJ0v6M29LcitomNU824Dwot2CSO8gK3ft3D90?=
- =?us-ascii?Q?ZdhnJZcrlRzBca9nBlmjRD/YOUc3JsPdwygMN9fJW9R7yfazWHLlWE1rlQzW?=
- =?us-ascii?Q?8uGPN79+7nudSutEempyEE9cBLxFR4gYn1z6ksXX39uU0vCKlKM+b2RWvW39?=
- =?us-ascii?Q?AObzSHKCC93w4dy5FuzBsVDFSZkvM7YR9LcgH6ax5bUqpBnL0LMbUuCLeQYi?=
- =?us-ascii?Q?EW9r+gcjsKEZ6AYa1/4JdcZIyuXRVqLUtFh54E95MVclrhnGxw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OsJ83t3sU2+Lh3oOYBSrw7tSImMNZbflBFps/QoHlP2WGkgIKRjsCq7o2a8d?=
- =?us-ascii?Q?NSjFl60nqh7KPv18G1ICRal0eKrNm2OT07POdeZRsQHaxwXtfFu5GyRrPFwC?=
- =?us-ascii?Q?6p5it9tytEI+PcE7v3aNwgzO4qLcQr4MlWJDgOSdEoY5W2SNpANZhxJVV4tQ?=
- =?us-ascii?Q?njuvCOrueVGx5qbdlAW0sInShtrxDLlUvbxhLZN7bIKKoxr78MRMLJjexn5Z?=
- =?us-ascii?Q?wdrlnzCpUsbh/46G81aGFOhY2zfPBwOJE0QxdYlm4/H3I9g4zID126myJRJW?=
- =?us-ascii?Q?lcu0Ls1e/eRjfmPBsNB61JmG7s+VvqgVDrtT3Dgx9/L4XalBlkEetRbb8FJo?=
- =?us-ascii?Q?s864VWcC4K65ORsoCfGd9Xw9r5/Ypzu1Au/7bD/Y23D9bJznrIGTeiFtsDfj?=
- =?us-ascii?Q?clyfCXUjhvJ6pDsewmk3DZEY+hZJmpNYAZHOBOar1uMfilrPTX/8y0FbmRcP?=
- =?us-ascii?Q?ECh/PnaydVNlkjIjnW+6P+xU+4hu9wCksJF+kRcbn3C5BcXhHTf2qaXHHa3s?=
- =?us-ascii?Q?/K5sfRgqa5rXMsrB6b2uVHCqC8rlrGjKYjVxgzq7Eh2QIEyJjjnBjlLXnR/p?=
- =?us-ascii?Q?Fvu8ST5bmLzYs8Z9QbPDL7PbrVJyXO397sp0v4w/iBc++h0N0Tq4Hyaj3tgy?=
- =?us-ascii?Q?wzziNqJ9Rb0MkXj1XAOPIENZa7RU+8kwpnCyueR5gp32h0vL4eghvLE5Jpte?=
- =?us-ascii?Q?Ab8DvqID2txk+UXxjTnxyuJJr4Vh2CCYr3gMd4Xwc4hGJ4JH8sOSfTfXReQK?=
- =?us-ascii?Q?chLzdKw4xuHv5A6GPt1YFhW1BB1XCvyUzYYaXdTJu6BWVEduv2KDyM6Qqa+L?=
- =?us-ascii?Q?bp14WXggoqLhwxdeKQ826JG/MZZZATFEcDQ/qC2P2uxjXbRi6CgtGoPgTBqN?=
- =?us-ascii?Q?e/B89NL37jsD9Cja8T+5MZ6Rib5mVHxkJykd/0Z7klmm4DBG4lzmN17fU0Tc?=
- =?us-ascii?Q?k0HsH6FopBt6OI6hWi9pma0G2ReRzVrNwq3sdMpzCCTeob3ut4Q3f3gRDM3C?=
- =?us-ascii?Q?tHROlaRXx8u7Jw2TVF/xme73LMQEAXUnOuYYoeOZ9I4skAEYS5cYvfkoglD1?=
- =?us-ascii?Q?qQa+YYge3NfXtuJqk8FgGxBPPTfzV/tO8/oWvHTprE0Igyx0fP+FLr2sqDJK?=
- =?us-ascii?Q?ZRrcNQIPz89xPvD/I5pE76rZsJuleHdyQE5sWB9Nqw5m7bpaf4EVkFFOHtAA?=
- =?us-ascii?Q?75Xf9rk44nhFgmhiiYB6/6iNyQGvF41aCH86uJJJXmbx/CAJWWUbURIklnqb?=
- =?us-ascii?Q?6I+bE7xcnFa/vrGpKPLQcKOV60oM+QIHwi5wATUaAvcJ3a1DXRUIdrY5GpOy?=
- =?us-ascii?Q?NzkdvOVyHxJ2gzaaKB8lfoAEK9essor4sJk4xz9mrarwwK/xxEo7sJlpDKvs?=
- =?us-ascii?Q?JnU6/jwN5NFuTitzShaE1cqiM6xbhk46efo7DtezN61vTFJZwX6JrhXUAHPI?=
- =?us-ascii?Q?5QSAPw1KEY796c2LPlg+IbZ+3wHIZXvRffAlJFIWK8uy8kptmhDjKwFLZU05?=
- =?us-ascii?Q?d26waIma9Wt+R2RycpNC6+n3c7cQxFKIFuU9N1hBPRrIytABBacDN13gQqSV?=
- =?us-ascii?Q?GDZAMvGJ5b3KDKl223Zn90mdgDp61Svg+dhQtjDg?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5101b37-e69d-4ae2-e8a4-08dcd213d2d4
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 03:42:56.5036
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 39OHNEKA1EiQoytvvqy6ltLXjA/kKArjmAVo5d0LT0/992tSByJf9kz+OPzAzzZXGHqBwilQc4JhYfYdorsHww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6378
+References: <20240909020138.1245873-1-lulu@redhat.com> <20240910032825-mutt-send-email-mst@kernel.org>
+ <CACGkMEvrti4E2fZBMHGR9LKifZDqtzBqOSg=v7AkKK-r9OZ3wQ@mail.gmail.com> <20240910044139-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240910044139-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 11 Sep 2024 11:45:33 +0800
+Message-ID: <CACGkMEv71_eUY_2361TNKhTxqxnR4iTyOXq6aKR_6MqaxqM5Dg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v1 0/7]vhost: Add support of kthread API
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, michael.christie@oracle.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To ensure code clarity and prevent potential errors, it's advisable
-to employ the ';' as a statement separator, except when ',' are
-intentionally used for specific purposes.
+On Tue, Sep 10, 2024 at 4:43=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Tue, Sep 10, 2024 at 04:37:52PM +0800, Jason Wang wrote:
+> > On Tue, Sep 10, 2024 at 3:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
+com> wrote:
+> > >
+> > > On Mon, Sep 09, 2024 at 10:00:38AM +0800, Cindy Lu wrote:
+> > > > In commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads"=
+),
+> > > > vhost removed the support for the kthread API. However, there are
+> > > > still situations where there is a request to use kthread.
+> > > > In this PATCH, the support of kthread is added back. Additionally,
+> > > > a module_param is added to enforce which mode we are using, and
+> > > > a new UAPI is introduced to allow the userspace app to set the
+> > > > mode they want to use.
+> > > >
+> > > > Tested the user application with QEMU.
+> > >
+> > > Cindy, the APIs do not make sense, security does not make sense,
+> > > and you are not describing the issue and the fix.
+> > >
+> > >
+> > > The name should reflect what this does from userspace POV, not from
+> > > kernel API POV.  kthread and task mode is not something that any user=
+s
+> > > have any business even to consider.
+> > >
+> > >
+> > > To help you out, some ideas:
+> > >
+> > > I think the issue is something like "vhost is now a child of the
+> > > owner thread. While this makes sense from containerization
+> > > POV, some old userspace is confused, as previously vhost not
+> > > and so was allowed to steal cpu resources from outside the container.=
+"
+> > >
+> > > Now, what can be done? Given we already released a secure kernel,
+> > > I am not inclined to revert it back to be insecure by default.
+> >
+> > It depends on how we define "secure". There's plenty of users of
+> > kthread and if I was not wrong, mike may still need to fix some bugs.
+> >
+>
+> which bugs?
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c      | 2 +-
- drivers/net/wireless/mediatek/mt76/mt7615/sdio_mcu.c | 2 +-
- drivers/net/wireless/mediatek/mt76/mt7615/usb_mcu.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+https://lore.kernel.org/all/06369c2c-c363-4def-9ce0-f018a9e10e8d@oracle.com=
+/T/
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index 96e34277fece..804d3f5a5244 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -1700,7 +1700,7 @@ int mt7615_mcu_init(struct mt7615_dev *dev)
- 	};
- 	int ret;
- 
--	dev->mt76.mcu_ops = &mt7615_mcu_ops,
-+	dev->mt76.mcu_ops = &mt7615_mcu_ops;
- 
- 	ret = mt7615_mcu_drv_pmctrl(dev);
- 	if (ret)
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/sdio_mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/sdio_mcu.c
-index b0094205ba95..a7b8acb2da83 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/sdio_mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/sdio_mcu.c
-@@ -147,7 +147,7 @@ int mt7663s_mcu_init(struct mt7615_dev *dev)
- 	if (ret)
- 		return ret;
- 
--	dev->mt76.mcu_ops = &mt7663s_mcu_ops,
-+	dev->mt76.mcu_ops = &mt7663s_mcu_ops;
- 
- 	ret = mt76_get_field(dev, MT_CONN_ON_MISC, MT_TOP_MISC2_FW_N9_RDY);
- 	if (ret) {
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/usb_mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/usb_mcu.c
-index a8b1a0f8b2d7..33c01f8ce8e2 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/usb_mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/usb_mcu.c
-@@ -72,7 +72,7 @@ int mt7663u_mcu_init(struct mt7615_dev *dev)
- 	};
- 	int ret;
- 
--	dev->mt76.mcu_ops = &mt7663u_mcu_ops,
-+	dev->mt76.mcu_ops = &mt7663u_mcu_ops;
- 
- 	mt76_set(dev, MT_UDMA_TX_QSEL, MT_FW_DL_EN);
- 	if (test_and_clear_bit(MT76_STATE_POWER_OFF, &dev->mphy.state)) {
--- 
-2.17.1
+>
+> > > But I'm fine with a modparam to allow userspace to get insecure
+> > > behaviour.
+> > >
+> > >
+> > > Now, a modparam is annoying in that it affects all userspace,
+> > > and people might be running a mix of old and new userspace.
+> > > So if we do that, we also want a flag that will get
+> > > safe behaviour even if unsafe one is allowed.
+> >
+> > I am not sure this can help. My understanding is that the flag is
+> > sufficient. Otherwise the layered product needs to know if there's old
+> > user space or new which seems to be a challenge.
+> >
+> > Thanks
+>
+> this will be up to userspace to resolve.
+
+I actually mean the module parameter. It would be very hard for the
+layered product to decide the value for that.
+
+Thanks
+
+>
+>
+> > >
+> > >
+> > > Is this clear enough, or do I need to elaborate more?
+> > >
+> > > Thanks!
+> > >
+> > > > Cindy Lu (7):
+> > > >   vhost: Add a new module_param for enable kthread
+> > > >   vhost: Add kthread support in function vhost_worker_queue()
+> > > >   vhost: Add kthread support in function vhost_workers_free()
+> > > >   vhost: Add the vhost_worker to support kthread
+> > > >   vhost: Add the cgroup related function
+> > > >   vhost: Add kthread support in function vhost_worker_create
+> > > >   vhost: Add new UAPI to support change to task mode
+> > > >
+> > > >  drivers/vhost/vhost.c      | 246 +++++++++++++++++++++++++++++++++=
+++--
+> > > >  drivers/vhost/vhost.h      |   1 +
+> > > >  include/uapi/linux/vhost.h |   2 +
+> > > >  3 files changed, 240 insertions(+), 9 deletions(-)
+> > > >
+> > > > --
+> > > > 2.45.0
+> > >
+>
 
 
