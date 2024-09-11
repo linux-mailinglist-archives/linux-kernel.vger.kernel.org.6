@@ -1,285 +1,217 @@
-Return-Path: <linux-kernel+bounces-324065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34544974779
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:42:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D824974787
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57ABA1C2551B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6166287418
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA3712E7F;
-	Wed, 11 Sep 2024 00:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B1017BA6;
+	Wed, 11 Sep 2024 00:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SYKlpGdh"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="HRG7/y+a"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADC7C148
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFEB15E8B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726015356; cv=none; b=U6F6J413pST/mlTakgVzIacy+kzRLO7WzXMazBQJ0Xcl6+PtBl8XJw1ShZQm3tHLinY9q/DN7hNbB1MNCckaRo1cvEmm6EcptA90Mjf+R7TVttoy2prL5opMi4YStuKikgroAyCGpNx6d/7iP6keZlsC/9mM7g9lEeeEezrNxUI=
+	t=1726015515; cv=none; b=m3KJv+TVfi+bhL1zQ3jeOsYI0K0sYipesvMo3G0Va1Aw9+pDvvhKMEnWeafE2u8unWe7B5pHEK6Q1bk4zeQcbWxHbiv3R2VZZjVuhfJOFN6z11Dndyq/dFr7Our5NuIOwcuuWhPQuXZVokLvxJjZSvCG7XjJtYBDlNAn6z7T4ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726015356; c=relaxed/simple;
-	bh=7HvliKdnoD8aAmw6Hf/HTmMxdFIQZKz91rN2SxxOu04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CpYKBkQxZv/Qz7Lh13zTsGWs37UyZVcnp9PvsWvDuUle23Ozypk/vJTIysDVzGoOg/5dxGnw8lMj55phIHBPxkUu3V2WEM4dNn2bsAl79psQ4LDpdgLDVYWMoqdWxQyg6nc8BYMpE7D3p5Y0n1Um3wA8r1kOBZLpbWPUAYfUU8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SYKlpGdh; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-39d2a107aebso439255ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:42:34 -0700 (PDT)
+	s=arc-20240116; t=1726015515; c=relaxed/simple;
+	bh=8uhBmyPDd+dw+VI5uhVYY1EG3bpNisgmno6ZxW+y4TE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NT2tc5pUK4Ds7068Xi5ti4R1151PTvyMgjecOmgVIDCFPEZOwu9fMKzJvG/ctcOflaU92cdCirSCDSQVsRtkJ3xpuadHrC23f5F18Fi1d76q8+eqYhugB23McNwl0UxhafmdSlWPuEaE7W1FuFR/qsfl12pI4DCFgoSkJORKpvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=HRG7/y+a; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-206aee40676so51145805ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726015353; x=1726620153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BeF3/6J6UTqVNK5mhc393zQ0sBFTjQfiTdi/4A4nx4o=;
-        b=SYKlpGdhIYxrFbuR1X377AdwNqdo9McBisHExfLOogm7dL83F9kHDx/IR1yrXK1Uol
-         V6PUFIuXjJRmpJbk8iDebBY5ct9f1wasxvcKv+i/HXZ9DFIwfqQ8ZXIOwVp/7TljRR+A
-         +NjgXV4kmHmDTf+qt59hr++B2V+I5mCzreS4g6WrgcZR7PMMobLJECA52srg9mYGF2AE
-         eOiVtUXYCX4IlRy9Ya097Ohv/dCuW4+xmSnfcbxvPFDAttj2T14zQ0IhuFLV4BGpGBce
-         9W+G67jR7EnNm1fX6fxtkMc5gQFkQgo+FWqo2mLlgM1wHdULb9zE+ZS34Hu2CpnzPNlZ
-         eC0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726015353; x=1726620153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726015513; x=1726620313; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BeF3/6J6UTqVNK5mhc393zQ0sBFTjQfiTdi/4A4nx4o=;
-        b=okzqLzToG2uaa3gbWYxEdPjcJBGQOSSWT1I40lX8y4ZfDDgCDCyD54bk489zGqRdcE
-         QbGMBgKlmjFkrRTChVHtws12hQpkfN9yJv5/5zvDpH2idlZli/qMt/iyI6bnewn0lhOC
-         paGUAU9KN0Twg6CA+fW+KFN77Tn3TLwDKBYehTsWtTi7JYIu6L1XmN4nVY9/UBUI9KRE
-         cLkP/kMnZlftf4rqo1pNiT+/cU0zi3CRKlv3vjuY2tIJEG07kZNPfh7xgxARA7YkYP5p
-         RjFqE2/rgEuwgmxtS1dKE40nPqFTBXqdlD0ocgn/20gNsEun7xAombfmKPx7dAtsh2cI
-         RuJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5bpHCKJ/FRQNunYF84S8CkfglncsWJU5658bp4i73nL3dfw54PAt8aYnXVTcVLbfKGk5Dd45lRh39EJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRj8fkFTliDz2+raB4mFuuijm8PZgohzqT+d9H+S29JBtHzRS9
-	vWYNIgLeZ25jTz6hZJBqIWc677827hPG/6UJ+ppjB+rpB6BNlxrXGKoxcJHRQgyFPdychNtflHS
-	/T83FDlbDwKiul4g1FW2PPK4RGBJ52pLXInI=
-X-Google-Smtp-Source: AGHT+IEPvjw5YasAhztllQuvAmSMS4doZl53jlQJSzQ6sqU46zj93mw8ws0rhRo6lpIc5cKdK+SR90M+5GW7gRMWJIA=
-X-Received: by 2002:a05:6e02:1a4f:b0:375:9743:9fc with SMTP id
- e9e14a558f8ab-3a074fbe9femr1744795ab.0.1726015353255; Tue, 10 Sep 2024
- 17:42:33 -0700 (PDT)
+        bh=N9UqXwHRW6ngdlKfPJV8zADUN4nB1bOhg7HrFQqhnhI=;
+        b=HRG7/y+aX1MXBuj4PxCAfrJQARzvotcj/icoF4vbUzZN0X3VaPtSQAhpGkfukLxuJf
+         OGWcaVOFerPLWqviXmrUTxPFQvhRFuM1MCcd0S8EMK9H0Du6nuh5Mpuxa2xLksqKZCHL
+         EwEdRZB6gFHzy3tNDLeWGmXTQW874dnEa1W4JPqaD3gYXhMsBlhk2nZlD/75wrLIOKXK
+         qQKs2husBROsrfAkb15B2yWo/Q+BbAWJG7P2I6cv7jy7N2tKWqKUREjM9xt+/3PTTxGU
+         7jBrbdNwyu+VbnJO6Dj5QYrcg9xWRPBfKKBvT+V12UGZyUTXl3lt9IhOO7aUqicV3OLH
+         gqCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726015513; x=1726620313;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N9UqXwHRW6ngdlKfPJV8zADUN4nB1bOhg7HrFQqhnhI=;
+        b=p1kwsuMfSNhbsFlWYQigWMLl4pgKyz3+eU/3BeNTQ5rU10q4aIIYp+gQkfqVNugDcV
+         yFEE/lzf7/rNG6E8mL+rxwi8Yxb+rT9uaEp2MWyHHMU0sMDe/jhans66D1VuCQ60ClN7
+         lJzGuJTMgsy0xFuTTyxvSaAucyoK6ZN5+ubSkTrWY8AdmcYZkAisfqKCQNkW08SADqld
+         K6/YuuwWQEP5zmw3e7FLybed7IBekfOcY7b69erIPPygoeJbBVXki6ceCqRnzwz6O88x
+         jgh75nfd7azb7B8MWBYRd94Q8OLDoJdEWPOY8CioKvwyw7Oeb6NiUg4fbJw3uQQCPlmP
+         YPzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoYK208mDcHhiQYVLZB+9G4pwIPNRsx9DWygw69mDTnAU3kEK4O29ctkm/ryfFYCCbM/VPjMvuPBbSVHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiIa86ROQY8i3ZX4MxXxsm8J5536t/GUgs3ogAjcg+nT/jd5BB
+	N8yqUs4p9mt6pyqOrln5b9yhIJAY2LFUovZMmhkoryZdCxxFA+/sBShdJcpFMLw=
+X-Google-Smtp-Source: AGHT+IFSjrtRoDoL7sPwVRBWFNV85MfE4DpNXnElb7X54mGXN2iqCTI2uhxpyL/CAIcKh7QAswSthg==
+X-Received: by 2002:a17:902:d2ce:b0:205:5427:2231 with SMTP id d9443c01a7336-2074c6a338fmr45444085ad.47.1726015512680;
+        Tue, 10 Sep 2024 17:45:12 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eef1f2sm53832165ad.145.2024.09.10.17.45.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 17:45:11 -0700 (PDT)
+Date: Tue, 10 Sep 2024 17:45:07 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuDoExckq21fePoe@ghost>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827234848.4429-1-helgaas@kernel.org> <20240827234848.4429-2-helgaas@kernel.org>
-In-Reply-To: <20240827234848.4429-2-helgaas@kernel.org>
-From: Duc Dang <ducdang@google.com>
-Date: Tue, 10 Sep 2024 17:42:20 -0700
-Message-ID: <CAOBz7Wi2aE8bVVnwBZGhJ5peZ0xAwvP73=QBJR4zHMWd+2qfGg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] PCI: Wait for device readiness with Configuration RRS
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Maciej W . Rozycki" <macro@orcam.me.uk>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Lukas Wunner <lukas@wunner.de>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
 
-Tested-by: Duc Dang <ducdang@google.com>
+On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
+> * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
+> > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
+> > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
+> > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > >> It's also unclear to me how we want this flag to interact with
+> > > >> the existing logic in arch_get_mmap_end(), which attempts to
+> > > >> limit the default mapping to a 47-bit address space already.
+> > > >
+> > > > To optimize RISC-V progress, I recommend:
+> > > >
+> > > > Step 1: Approve the patch.
+> > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
+> > > > Step 3: Wait approximately several iterations for Go & OpenJDK
+> > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
+> > > 
+> > > I really want to first see a plausible explanation about why
+> > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
+> > > like all the other major architectures (x86, arm64, powerpc64),
+> > 
+> > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
+> > configuration. We end up with a 47-bit with 16K pages but for a
+> > different reason that has to do with LPA2 support (I doubt we need this
+> > for the user mapping but we need to untangle some of the macros there;
+> > that's for a separate discussion).
+> > 
+> > That said, we haven't encountered any user space problems with a 48-bit
+> > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
+> > approach (47 or 48 bit default limit). Better to have some ABI
+> > consistency between architectures. One can still ask for addresses above
+> > this default limit via mmap().
+> 
+> I think that is best as well.
+> 
+> Can we please just do what x86 and arm64 does?
+> 
+> Thanks,
+> Liam
 
-On Tue, Aug 27, 2024 at 4:57=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> After a device reset, delays are required before the device can
-> successfully complete config accesses.  PCIe r6.0, sec 6.6, specifies som=
-e
-> delays required before software can perform config accesses.  Devices tha=
-t
-> require more time after those delays may respond to config accesses with
-> Configuration Request Retry Status (RRS) completions.
->
-> Callers of pci_dev_wait() are responsible for delays until the device can
-> respond to config accesses.  pci_dev_wait() waits any additional time unt=
-il
-> the device can successfully complete config accesses.
->
-> Reading config space of devices that are not present or not ready typical=
-ly
-> returns ~0 (PCI_ERROR_RESPONSE).  Previously we polled the Command regist=
-er
-> until we got a value other than ~0.  This is sometimes a problem because
-> Root Complex handling of RRS completions may include several retries and
-> implementation-specific behavior that is invisible to software (see sec
-> 2.3.2), so the exponential backoff in pci_dev_wait() may not work as
-> intended.
->
-> Linux enables Configuration RRS Software Visibility on all Root Ports tha=
-t
-> support it.  If it is enabled, read the Vendor ID instead of the Command
-> register.  RRS completions cause immediate return of the 0x0001 reserved
-> Vendor ID value, so the pci_dev_wait() backoff works correctly.
->
-> When a read of Vendor ID eventually completes successfully by returning a
-> non-0x0001 value (the Vendor ID or 0xffff for VFs), the device should be
-> initialized and ready to respond to config requests.
->
-> For conventional PCI devices or devices below Root Ports that don't suppo=
-rt
-> Configuration RRS Software Visibility, poll the Command register as befor=
-e.
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pci.c   | 41 ++++++++++++++++++++++++++++-------------
->  drivers/pci/pci.h   |  5 +++++
->  drivers/pci/probe.c |  9 +++------
->  include/linux/pci.h |  1 +
->  4 files changed, 37 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e3a49f66982d..fc2ecb7fe081 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1283,7 +1283,9 @@ static int pci_dev_wait(struct pci_dev *dev, char *=
-reset_type, int timeout)
->  {
->         int delay =3D 1;
->         bool retrain =3D false;
-> -       struct pci_dev *bridge;
-> +       struct pci_dev *root, *bridge;
-> +
-> +       root =3D pcie_find_root_port(dev);
->
->         if (pci_is_pcie(dev)) {
->                 bridge =3D pci_upstream_bridge(dev);
-> @@ -1292,16 +1294,23 @@ static int pci_dev_wait(struct pci_dev *dev, char=
- *reset_type, int timeout)
->         }
->
->         /*
-> -        * After reset, the device should not silently discard config
-> -        * requests, but it may still indicate that it needs more time by
-> -        * responding to them with CRS completions.  The Root Port will
-> -        * generally synthesize ~0 (PCI_ERROR_RESPONSE) data to complete
-> -        * the read (except when CRS SV is enabled and the read was for t=
-he
-> -        * Vendor ID; in that case it synthesizes 0x0001 data).
-> +        * The caller has already waited long enough after a reset that t=
-he
-> +        * device should respond to config requests, but it may respond
-> +        * with Request Retry Status (RRS) if it needs more time to
-> +        * initialize.
->          *
-> -        * Wait for the device to return a non-CRS completion.  Read the
-> -        * Command register instead of Vendor ID so we don't have to
-> -        * contend with the CRS SV value.
-> +        * If the device is below a Root Port with Configuration RRS
-> +        * Software Visibility enabled, reading the Vendor ID returns a
-> +        * special data value if the device responded with RRS.  Read the
-> +        * Vendor ID until we get non-RRS status.
-> +        *
-> +        * If there's no Root Port or Configuration RRS Software Visibili=
-ty
-> +        * is not enabled, the device may still respond with RRS, but
-> +        * hardware may retry the config request.  If no retries receive
-> +        * Successful Completion, hardware generally synthesizes ~0
-> +        * (PCI_ERROR_RESPONSE) data to complete the read.  Reading Vendo=
-r
-> +        * ID for VFs and non-existent devices also returns ~0, so read t=
-he
-> +        * Command register until it returns something other than ~0.
->          */
->         for (;;) {
->                 u32 id;
-> @@ -1311,9 +1320,15 @@ static int pci_dev_wait(struct pci_dev *dev, char =
-*reset_type, int timeout)
->                         return -ENOTTY;
->                 }
->
-> -               pci_read_config_dword(dev, PCI_COMMAND, &id);
-> -               if (!PCI_POSSIBLE_ERROR(id))
-> -                       break;
-> +               if (root && root->config_crs_sv) {
-> +                       pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
-> +                       if (!pci_bus_crs_vendor_id(id))
-> +                               break;
-> +               } else {
-> +                       pci_read_config_dword(dev, PCI_COMMAND, &id);
-> +                       if (!PCI_POSSIBLE_ERROR(id))
-> +                               break;
-> +               }
->
->                 if (delay > timeout) {
->                         pci_warn(dev, "not ready %dms after %s; giving up=
-\n",
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 79c8398f3938..fa1997bc2667 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -139,6 +139,11 @@ bool pci_bridge_d3_possible(struct pci_dev *dev);
->  void pci_bridge_d3_update(struct pci_dev *dev);
->  int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_t=
-ype);
->
-> +static inline bool pci_bus_crs_vendor_id(u32 l)
-> +{
-> +       return (l & 0xffff) =3D=3D PCI_VENDOR_ID_PCI_SIG;
-> +}
-> +
->  static inline void pci_wakeup_event(struct pci_dev *dev)
->  {
->         /* Wait 100 ms before the system can be put into a sleep state. *=
-/
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b14b9876c030..b1615da9eb6b 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1209,9 +1209,11 @@ static void pci_enable_crs(struct pci_dev *pdev)
->
->         /* Enable CRS Software Visibility if supported */
->         pcie_capability_read_word(pdev, PCI_EXP_RTCAP, &root_cap);
-> -       if (root_cap & PCI_EXP_RTCAP_CRSVIS)
-> +       if (root_cap & PCI_EXP_RTCAP_CRSVIS) {
->                 pcie_capability_set_word(pdev, PCI_EXP_RTCTL,
->                                          PCI_EXP_RTCTL_CRSSVE);
-> +               pdev->config_crs_sv =3D 1;
-> +       }
->  }
->
->  static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
-> @@ -2343,11 +2345,6 @@ struct pci_dev *pci_alloc_dev(struct pci_bus *bus)
->  }
->  EXPORT_SYMBOL(pci_alloc_dev);
->
-> -static bool pci_bus_crs_vendor_id(u32 l)
-> -{
-> -       return (l & 0xffff) =3D=3D PCI_VENDOR_ID_PCI_SIG;
-> -}
-> -
->  static bool pci_bus_wait_crs(struct pci_bus *bus, int devfn, u32 *l,
->                              int timeout)
->  {
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 4cf89a4b4cbc..121d8d94d6d0 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -371,6 +371,7 @@ struct pci_dev {
->                                            can be generated */
->         unsigned int    pme_poll:1;     /* Poll device's PME status bit *=
-/
->         unsigned int    pinned:1;       /* Whether this dev is pinned */
-> +       unsigned int    config_crs_sv:1; /* Config CRS software visibilit=
-y */
->         unsigned int    imm_ready:1;    /* Supports Immediate Readiness *=
-/
->         unsigned int    d1_support:1;   /* Low power state D1 is supporte=
-d */
->         unsigned int    d2_support:1;   /* Low power state D2 is supporte=
-d */
-> --
-> 2.34.1
->
+I responded to Arnd in the other thread, but I am still not convinced
+that the solution that x86 and arm64 have selected is the best solution.
+The solution of defaulting to 47 bits does allow applications the
+ability to get addresses that are below 47 bits. However, due to
+differences across architectures it doesn't seem possible to have all
+architectures default to the same value. Additionally, this flag will be
+able to help users avoid potential bugs where a hint address is passed
+that causes upper bits of a VA to be used.
+
+The other issue I have with this is that if there is not a hint address
+specified to be greater than 47 bits on x86, then mmap() may return an
+address that is greater than 47-bits. The documentation in
+Documentation/arch/x86/x86_64/5level-paging.rst says:
+
+"If hint address set above 47-bit, but MAP_FIXED is not specified, we try
+to look for unmapped area by specified address. If it's already
+occupied, we look for unmapped area in *full* address space, rather than
+from 47-bit window."
+
+arm64 on the other hand defines this as only being able to opt-into the
+52-bit VA space with the hint address, and my understanding is that
+mmap() will not fall back to the 52-bit address space. Please correct me
+if I am wrong. From Documentation/arch/arm64/memory.rst:
+
+"To maintain compatibility with software that relies on the ARMv8.0
+VA space maximum size of 48-bits, the kernel will, by default,
+return virtual addresses to userspace from a 48-bit range.
+
+"Software can "opt-in" to receiving VAs from a 52-bit space by
+specifying an mmap hint parameter that is larger than 48-bit."
+
+This is an inconsistency I am trying to solve with this personality
+flag.
+
+- Charlie
+
 
