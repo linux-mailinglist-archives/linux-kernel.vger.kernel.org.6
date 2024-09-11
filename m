@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-325021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4909753F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 351D1975403
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D261B1C22860
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:32:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670D51C2031F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E633A1A3AB5;
-	Wed, 11 Sep 2024 13:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F1A1AB52A;
+	Wed, 11 Sep 2024 13:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N72ZPXwu"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YWgYzHzA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EPcm/mSM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC76F1A265A;
-	Wed, 11 Sep 2024 13:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDC81A4AD0;
+	Wed, 11 Sep 2024 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061406; cv=none; b=BjcXarEbKzJJOiReDwrLcgtrHYDP2YWCo2vBkIRFsYD6B8h57E8UJGdZpev4/VVQtJyCmPOoCOWUwXZXzdNlV5KqmfaVlnwK5iWSV/y+t57m4B/aKE5eBKqtAG2SXcUFzWGPW4FwYHTHQKCv9f4Akq720PhIhhEUjXBTszOAOnc=
+	t=1726061409; cv=none; b=i4s1VJgvq9EatsGzVovZbuk+BRQywVHRJ8AzNTzNaUMLij7d2CqFcO46OWQBJc0lQhU4KwKwUFL6taJzUj2gtnBYhGtOCrCQTL4YtE2dEXV7Tqd5OhC44pMmc1BVawlJ306HrI0I7XvHAKIH8tslODecekuKKL03+AAhvyEkNak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061406; c=relaxed/simple;
-	bh=dMhEphHy+O8j39E5txrufUCudty2PVP4cqsdsV9+XAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPReWUxvVFBJjpex36u73c+1e6ZfD8tMPJ3uedNeHn1HXWF3T0WcxuvrKKyGe/oFZVEaKZkGXTiB3FNc2pNe3c0tGwzKUbVy7Sq7eOKh1MKVTBmpJZ6/+WZIUz8ewOI1qIixw04PU6JS0lPIxiZRJgcGwao94UIvdANpILy5phU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N72ZPXwu; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so1596921a12.3;
-        Wed, 11 Sep 2024 06:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726061404; x=1726666204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wlcZXnZFv9I9uByKvWIO0FNVwpBbdTye0whj7Tlruj0=;
-        b=N72ZPXwucDkLphGrPu9NRxsTyXAVlW8XnKP/1/J3tHucEdEk6/1zsU7xjw7tn3QCW9
-         3WwQp5eMZ2peUJRtOXCZfubYheZZv2E3hXst/lzfaNG8PPaoHWRAyoezEKvGOHYIslDE
-         G+/wuwy5YPRkHwEUc/uesMQLCHPLFgbHuSK5FqZ3QKKPTpEswvD4hmnrbWTUO2bX8Iup
-         UZBztTMxe3E6tvoRlfYUluURc/j2wOgildwPl27QXQ6KXXUQQTlVYDvtNZ9Y7O0V6bVX
-         dL2aazX/AbrLPwZLqGqYaOyyPaEe+X4gGYad5NtGcCra+M6PMvBkMHI3ywu2jM33CWZZ
-         odlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726061404; x=1726666204;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wlcZXnZFv9I9uByKvWIO0FNVwpBbdTye0whj7Tlruj0=;
-        b=KFQ7hCWSpCRMWti2k5LXJYvjcULrstTMqtRDoj8vE2WioUZyxjQwjL9sy8jbOYcAtV
-         9MB5l/PlBp/eDol9a34bSzO0ua2PKZDgMMJ/0OOKquTXJuaLdD25ZzA59J718onSMd5d
-         bTyqCiZvz01EPILOCkYxV004PQlIOb7x3/R7Fc/wqtsRbYJSL9G6wMCghVGCP+MyRdsK
-         QWavVJntkcDTdiCatBMg7fWMsRIc1nyBhFOGXZct7EYhomIzq+m0bnRQ3ebK5IAANRed
-         S6C7bsYn2/iqzwSVzfxHnq0ivw4eMJkdihRHTEEBWpInZHamnyTmhT5XypF8LpnTZDIU
-         ctvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3T7aLWJYfCBaEmV9bu+Urixc2gIb47CAuV4DtcdDw73uvOVyfdedIFMtIVz5RE2I4yN2gM531lt05d6JB@vger.kernel.org, AJvYcCUCvqCgmHy8MY1O4SKIKzuFPReC/hBQd8gsbvV7eA6vWVd0BOkeff93JCAli1ToF29vHWGew+fMD1xO5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvldFTQIw+jfOw8H4mS4cn7E77ZG8kH7T4kCWmOotv9SodNuSN
-	ZXDKUQto8IP3DV9Nak81l5Pak4teL6lWWKrzsdq488W8ZLklkqU8
-X-Google-Smtp-Source: AGHT+IGOv+OxMXBI2jZQjqzHkQqEgB82w8HnI3pTqrR6G/ldM1+rnr/L4pV1cx1RTVwseXp5Av8Pfw==
-X-Received: by 2002:a17:90b:1e4c:b0:2d8:d098:4f31 with SMTP id 98e67ed59e1d1-2db82fe9fd4mr3629539a91.17.1726061403557;
-        Wed, 11 Sep 2024 06:30:03 -0700 (PDT)
-Received: from fedora.. ([106.219.162.154])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc110527sm10543906a91.36.2024.09.11.06.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 06:30:03 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: axboe@kernel.dk
-Cc: hch@lst.de,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH v2] block: fix potential invalid pointer dereference in blk_add_partition
-Date: Wed, 11 Sep 2024 18:59:54 +0530
-Message-ID: <20240911132954.5874-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726061409; c=relaxed/simple;
+	bh=aeBtCMLHwDjW5RjaS1UYpwEZIfdhF+bv3HGtKlY3PgY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=q1S9I+HHwxobPfUcTCNITjqqgkfDgoSmeyzSbbZnqSy0P3vVdINu7RQwwSjLA0Pxzz1MHO4V0S3HOBeKBdTILTXXxAZj+9yUQDpSzfUuz3g0dXhttR2niDiCDYgvWSr7Yz2NiSmrXzPR3Xk5Alwz8mESKtCJiONGlCLQWcvv9nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YWgYzHzA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EPcm/mSM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726061406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5/yMD3R9spIxspDFxWIwUYuBkiPd/L8Pz+d/L53r+ac=;
+	b=YWgYzHzA3cdcMVwu+fdQIrFpnLkcCN0OlsSOISqzfWICO6UKbEiK1kQl2PACalSFub+BI5
+	Kg2Fdb7XLrnLjnmjqWN2BtWOGGMD4GZKFRTEVK5McJidKvEYTYZ/Qqpp2U5TRXpUVhuE8D
+	5srfhmTjBt87jCYED5Q3E3+uBKoGP3UH6iYdgbn8zGs6o2dgpBqcTYkHAGX2gPavzJt0QF
+	0KjyZAWjYhRhZ6jCyJ/8Y/pxP+z1at/8IAHjdEUHnmF7R8R9fyZgGRTgdWnODXTCiov5yD
+	XKzLE+a2sCFe3XEMLhZrRXouQLmTCWtt+GaL/MKrKZePwuZUzt4o8HuHWyeycg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726061406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5/yMD3R9spIxspDFxWIwUYuBkiPd/L8Pz+d/L53r+ac=;
+	b=EPcm/mSMh42WIpzTvEpDqkN/t/wYov8XMzK5usKO1dt+oW8x3Y4OctekoHgUZm0G4Q+dDW
+	psi2LeGVSgAD0zCw==
+Date: Wed, 11 Sep 2024 15:29:54 +0200
+Subject: [PATCH 10/24] timekeeping: Define a struct type for tk_core to
+ make it reusable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-10-f7cae09e25d6@linutronix.de>
+References: <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-0-f7cae09e25d6@linutronix.de>
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-0-f7cae09e25d6@linutronix.de>
+To: John Stultz <jstultz@google.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Miroslav Lichvar <mlichvar@redhat.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Christopher S Hall <christopher.s.hall@intel.com>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-The blk_add_partition() function initially used a single if-condition
-(IS_ERR(part)) to check for errors when adding a partition. This was
-modified to handle the specific case of -ENXIO separately, allowing the
-function to proceed without logging the error in this case. However,
-this change unintentionally left a path where md_autodetect_dev()
-could be called without confirming that part is a valid pointer.
+The struct tk_core uses is not reusable. As long as there is only a single
+timekeeper, this is not a problem. But when the timekeeper infrastructure
+will be reused for per ptp clock timekeepers, an explicit struct type is
+required.
 
-This commit separates the error handling logic by splitting the
-initial if-condition, improving code readability and handling specific
-error scenarios explicitly. The function now distinguishes the general
-error case from -ENXIO without altering the existing behavior of
-md_autodetect_dev() calls.
+Define struct tk_data as explicit struct type for tk_core.
 
-Fixes: b72053072c0b (block: allow partitions on host aware zone devices)
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 ---
-Compile tested only.
-V2 -> removed line between Fixes tag and Signed-off and cc commit author
+ kernel/time/timekeeping.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- block/partitions/core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index f8ffab5bb790..be939ce3bcfc 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -45,12 +45,14 @@ enum timekeeping_adv_mode {
+  * The most important data for readout fits into a single 64 byte
+  * cache line.
+  */
+-static struct {
++struct tk_data {
+ 	seqcount_raw_spinlock_t	seq;
+ 	struct timekeeper	timekeeper;
+ 	struct timekeeper	shadow_timekeeper;
+ 	raw_spinlock_t		lock;
+-} tk_core ____cacheline_aligned;
++} ____cacheline_aligned;
++
++static struct tk_data tk_core;
+ 
+ /* flag for if timekeeping is suspended */
+ int __read_mostly timekeeping_suspended;
 
-diff --git a/block/partitions/core.c b/block/partitions/core.c
-index ab76e64f0f6c..5bd7a603092e 100644
---- a/block/partitions/core.c
-+++ b/block/partitions/core.c
-@@ -555,9 +555,11 @@ static bool blk_add_partition(struct gendisk *disk,
- 
- 	part = add_partition(disk, p, from, size, state->parts[p].flags,
- 			     &state->parts[p].info);
--	if (IS_ERR(part) && PTR_ERR(part) != -ENXIO) {
--		printk(KERN_ERR " %s: p%d could not be added: %pe\n",
--		       disk->disk_name, p, part);
-+	if (IS_ERR(part)) {
-+		if (PTR_ERR(part) != -ENXIO) {
-+			printk(KERN_ERR " %s: p%d could not be added: %pe\n",
-+			       disk->disk_name, p, part);
-+		}
- 		return true;
- 	}
- 
 -- 
-2.46.0
+2.39.2
 
 
