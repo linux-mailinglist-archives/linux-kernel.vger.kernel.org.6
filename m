@@ -1,229 +1,172 @@
-Return-Path: <linux-kernel+bounces-324846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41BE97517A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:11:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169F597517C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB33B29353
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE1C1F226AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278C915C13F;
-	Wed, 11 Sep 2024 12:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4685A187FFF;
+	Wed, 11 Sep 2024 12:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gf4c9HYI"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fNKA+/nm"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AFA73477
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668FF15C13F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056681; cv=none; b=JaZBtD3vaj6XRZ7n2Tastt1ZFSgryQUb/8UZW0vWC9sKsP3HNliLz6tWdXJGNVNt4lnJDLCwMjPL0K0CYrBOm+Kt2EtX9RrFTMuy5O35yyXkgywidU95D0jzttWbUsYNLQLnroul5zLjDFTgOmJqg2r7scJ09+YEoeKW56IWmrQ=
+	t=1726056714; cv=none; b=Aqb//ctxaYmLaXJfWaPhUCh8hxuZiKZ2w2V9dahUzdgtK0SuTqyDq7YmEKqcTlQi41tLfT+0TrJyeQ24Sq2SK/T923liNbLICKrt8DgRnjonoxwh0xLy/Vx0ICkkiQ8+UhbickPTopN3hqkv50uLuJOz2VYIHoL74Max0zb4fqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056681; c=relaxed/simple;
-	bh=xH58OJ+sXl2b826OYiPHRd9NE5L94C4pw9hdMWq1/Yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qlUOjSvXF7AMDEs1GyC31M4d513vEQMoezgUA9I+Z/Aujz6n2NugtesQZwCxcQC2gsYfiOCgtGeOWJmvCfR6gFiRDPioDn08ElryglgLpPaL1kFU0zsncSoROwXtz1CDDGk8xgBOBWj12FCl+PRp3PCmME66tX2zVGfgutNrEgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gf4c9HYI; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-49bd221ef66so621511137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726056679; x=1726661479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ho+7AIPs7Mj1ey3Hhl/CyW2qOQaHptxWFNtHcun401k=;
-        b=gf4c9HYImzE4UQuTDxxLIbuD1wb7gR8Wcdxq8r7ggiVlnWPfLpdLiYbeI7h+kBHbqK
-         tMnZuVVt3i3hP7KqjrjHvtH1ehY6K6t0iwaFz20z+ST91Km3oPPiKBo2Z2tWd3nxnMCs
-         DukAkcTFKlYwP1k68+rx05UDN/e2EYgkS8hPJMcUWtAPOD/FUCJr62Dr+hmFMLhUS7dJ
-         bpEyfXo8SEggkFOnzpSFzMpPCBB5EVyFMjPQAwCt/MXInLdyRgjjCu6NTY8PAUptbwS2
-         LYod8DQtixfM8UPOBU0doXhaqMsVaNNzQe7IhFehR8BuRhpFoxE9dD4JteV9U0cDpvKQ
-         N2CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726056679; x=1726661479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ho+7AIPs7Mj1ey3Hhl/CyW2qOQaHptxWFNtHcun401k=;
-        b=L8Eyp4sonqjDaWcn+VwrRjCd0YyShAnrnaBn4KSVrUvafOiCb5mHejU23Srru0fH9M
-         /gE2zRLeYlrbHg8EWAg3Ffs02maE9+FL5AnHnIShQ5AZdBd5d3+ObPsYjHUE7/dor6rt
-         4H6YB20iK3v1pLvTpkJVSiiTCdlCKYprFwL0/YClxgy4679PrFoNtCt1GCmV1qn0txII
-         Gnl9pZdZzfnMOncpSDpzINkYv1J+acMqa5itc4WTXPQ2lUKJQDVM21AWrTmoXJa+gYhs
-         gd6YPPXtNvgrJ7meRmoPIm8gqiDgFUA27IxRt3caqyzqd/S27m5T4CsdY3N8g+l/Sfru
-         BuNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFStX39/wPgkhslYGFBhHW4843RZC9sDVgeQUgWa3JFAsZdPKTLe8/7+JxHOdRD4qKHCIrVL099mw+bZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9dh19tQPTzYo6SnF5mJfYS4+IgSbvRbjGnzODFFwuRaxL77H6
-	BVG6qgblnH9WNWiEjBhVzG6Doz4UPC/5I5b9FDEHynhveOyTh7zPMgRwluwx+9dKkBJOaIwmU7A
-	bMuPQVPadq0Qx62U7hwLI0k4pHVAXWxXdOSnS2g==
-X-Google-Smtp-Source: AGHT+IHAGLp8FFMpwA9BUsKJ9g/3gCMiYlxWvo5DEgx4Tv4M+C4I//vvNIEVPZXKv5ZFtVnEuoo+K2MZ6alrUTtiRsE=
-X-Received: by 2002:a05:6102:c8a:b0:492:a8b5:b980 with SMTP id
- ada2fe7eead31-49c2429fd01mr2260268137.27.1726056678709; Wed, 11 Sep 2024
- 05:11:18 -0700 (PDT)
+	s=arc-20240116; t=1726056714; c=relaxed/simple;
+	bh=3Swu0Hd8jz4hEyhWca91c8oRCzGFb39Ieire6DVvOcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=Z14ikSEejj36azBP/JsRGfiISwvDrngXTy7TrCZSFo/ovF9ZMWjyunUZk/6XLm//47CvMv2dfuC7BL3IWdRSFbD20TAtn//tftwLA3YeXZmoDp3LRmJu+uIO7D6st+lZztDfifgTAlrZqCbOWlPHA3Po2o2Nimq4VNzroa9d8SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fNKA+/nm; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240911121150euoutp025e8dfe18b8d78f008726340171253aba~0L27s3GK_3264732647euoutp02X
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:11:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240911121150euoutp025e8dfe18b8d78f008726340171253aba~0L27s3GK_3264732647euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726056710;
+	bh=JJQazKGbc8eC2nG+ZbcooFNwFLYJU5Lc7hKXABWosA0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=fNKA+/nmBKhKHJzuyF8FWdSl58z8dJc+Hlx3qOG+oKKa59ke+STT8Jr4rSdeGtsXY
+	 aPINrwDJBzjrpnTEZ4Nx4qhbFo1gh0CT1n7wHbr7PiA5OqmiKdqUzpb5kxlZOApR+J
+	 z7Bg6wDmnYrhtuIThBh600ranJrJ+DHuyzA6+h/c=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240911121149eucas1p28d2864cd11bd828ddde8f104984bc07d~0L27EVQ8j1734517345eucas1p25;
+	Wed, 11 Sep 2024 12:11:49 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 3E.38.09620.50981E66; Wed, 11
+	Sep 2024 13:11:49 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183~0L26qYr0i1735817358eucas1p25;
+	Wed, 11 Sep 2024 12:11:49 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240911121149eusmtrp2398e0023dca67fda0474c1fd19aeca81~0L26pn7zv2688526885eusmtrp2T;
+	Wed, 11 Sep 2024 12:11:49 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-66-66e189054cb8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id D7.E9.14621.50981E66; Wed, 11
+	Sep 2024 13:11:49 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240911121148eusmtip14c9e2adaadac8aea8c6f73d897d0f577~0L25vfIki0847908479eusmtip1g;
+	Wed, 11 Sep 2024 12:11:48 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
+	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
+	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
+	Moon <linux.amoon@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 0/7] Add initial Exynos850 support to the thermal driver
+Date: Wed, 11 Sep 2024 14:11:23 +0200
+Message-ID: <20240911121136.1120026-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910092554.645718780@linuxfoundation.org>
-In-Reply-To: <20240910092554.645718780@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 11 Sep 2024 17:41:06 +0530
-Message-ID: <CA+G9fYuLkVvqToMRRDri2Co+EavEezCFeBmT9YkVTTqT+HrnJw@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/186] 5.10.226-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7djPc7qsnQ/TDJ78MrV4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi3Ubb7FbLGxqYbeY
+	eGwys8XaI3fZLeZ+mcps8X/PDnaLJw/72Cye9+1jchDyWDNvDaPHzll32T0W73nJ5LFpVSeb
+	x51re9g8Ni+p9+jbsorR4/MmuQCOKC6blNSczLLUIn27BK6MGbvnshSs4Kl4t3oKcwPjH84u
+	Rk4OCQETiWMPb7CD2EICKxglPi8N62LkArK/MEq8PfqPGcL5zChxYskeZpiOcz1HWCESyxkl
+	mrvXQjmtTBLP77xjBKliEzCQePBmGTtIQkRgMaNE4493YFXMAhNZJNa/6Qaq4uAQFvCWuP8j
+	B6SBRUBVYuOHrWCH8ArYSRz79YAdYp28xMU1z9kg4oISJ2c+YQGxmYHizVtng90nIdDMKbHi
+	z2ZWiAYXibZJz6FsYYlXx7dADZKR+L9zPhOEnS8xY/N7FpAbJAQqJO4e9IIwrSU+nmEGMZkF
+	NCXW79KHKHaU6Ll+lB2igk/ixltBiAP4JCZtm84MEeaV6GgTgqhWlTi+ZxI0qKQlnrTchlrp
+	IXFp9zRoQMdKHG+7yjqBUWEWkrdmIXlrFsINCxiZVzGKp5YW56anFhvnpZbrFSfmFpfmpesl
+	5+duYgSmu9P/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEePvt7qUJ8aYkVlalFuXHF5XmpBYfYpTm
+	YFES51VNkU8VEkhPLEnNTk0tSC2CyTJxcEo1MOVdj5nzzKjmydqbKrP4Fp5h6dis7h3KlCqg
+	EHX44HzBzuOMhZmpmgzmwrF6RTVSlTKhSwXbUpyOnCjj7nt75vjGthqe07Xm1gd7BA+4yxra
+	ru8tX9Qc+fKqWtPx3PdB8w5VXLi5luvjzIMsot8chHhnrU7/c2o9ry3PxGKesA91LtNfhU75
+	vVjBfucX9Ve9W8xaSirf77loYy7PwPP0h+fc6xy8r6/kHngpP+FhOWvy78X8aouK9rd+Vn60
+	8t79449KbhTvNzI3fFjjH+eq+f1yypm/z1alrH14537Ajk3avvGzzLjrJUKNLx9wmL1nRd+v
+	45HLbPJLbOqN/u9PW3br1IJ9Rif//v6/X+va1VIlluKMREMt5qLiRACnbczx5gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7qsnQ/TDGa0y1g8mLeNzeL7lutM
+	Fmv2nmOymPdZ1mL+kXOsFufPb2C32PT4GqvF5V1z2Cw+9x5htJhxfh+TxbqNt9gtFja1sFtM
+	PDaZ2WLtkbvsFnO/TGW2+L9nB7vFk4d9bBbP+/YxOQh5rJm3htFj56y77B6L97xk8ti0qpPN
+	4861PWwem5fUe/RtWcXo8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayV
+	kamSvp1NSmpOZllqkb5dgl7GjN1zWQpW8FS8Wz2FuYHxD2cXIyeHhICJxLmeI6xdjFwcQgJL
+	GSVWbDrLDpGQljj8ZQqULSzx51oXG0RRM5PEm91dYAk2AQOJB2+WgdkiAssZJTa3e4AUMQvM
+	ZZHofL0aKMHBISzgLXH/Rw5IDYuAqsTGD1vB6nkF7CSO/XoAtUBe4uKa52wQcUGJkzOfsIDY
+	zEDx5q2zmScw8s1CkpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYLRtO/Zz8w7G
+	ea8+6h1iZOJgPMQowcGsJMLbb3cvTYg3JbGyKrUoP76oNCe1+BCjKdB9E5mlRJPzgfGeVxJv
+	aGZgamhiZmlgamlmrCTO63b5fJqQQHpiSWp2ampBahFMHxMHp1QDk8BVuYd8sdr1ulb1H/60
+	XX1dvW9F4K1WRd2Lcayh30MPv4vWcXq/7/rfpP9V0914om6+mimZmTid30U6c7vl/N+BiTvv
+	dRb27Xzo2eO4W/7bmwXvH3+XO7r0o9016QBOvXbXR2Zn5v9wkdncGd5Vp/12m75RsLOyW7CA
+	gErfv//rk2bPZGabzVo9Zd35VPFNt1x3xZtwbtoupcH2NFLptHWWolryLZfQ/J4pwqL+AXM6
+	r5xeVJgnt3Nl9u+fqjEcOqavD12YIVX5b/e6Cy7eurfv7zapM//fEe2hUi3iq7nxi0r1OmOr
+	xKULz7WJ90u1MDZ1Vp84sOT11wWtyTM/u/+xqjFwXSRRLV/Uc3CzEktxRqKhFnNRcSIAVZre
+	RT8DAAA=
+X-CMS-MailID: 20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183
+References: <CGME20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183@eucas1p2.samsung.com>
 
-On Tue, 10 Sept 2024 at 16:10, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.226 release.
-> There are 186 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.226-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+This series adds initial Exynos850 support to the thermal driver
+together with its requirements (sanitize_temp_error fix, adding the new
+string to dt-bindings), while also cleaning up a bit (improving power
+management support and removing some outdated information from
+dt-bindings).
+
+Changelog:
+ v4:
+   - Cleaned up sanitize_temp_error a bit more
+   - Modified exynos_tmu_update_temp to match sanitize_temp_error
+ v3:
+   - Reworded the commit message of the dt-binding information removal
+     change
+ v2:
+   - Reimplemented to use the Exynos850 TMU clock: removed the patch to
+     make the clock optional and changed dt-bindings change accordingly
+   - Improved the Exynos850 implementation itself (style and one correct
+     register offset)
+   - Removed conditional compilation in favor of pm_sleep_ptr
+   - Shortened dt-bindings description
 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Mateusz Majewski (7):
+  drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
+  drivers/thermal/exynos: use pm_sleep_ptr instead of conditional
+    compilation
+  drivers/thermal/exynos: improve sanitize_temp_error
+  drivers/thermal/exynos: reuse data->temp_mask in
+    exynos_tmu_update_temp
+  dt-bindings: thermal: samsung,exynos: add exynos850-tmu string
+  drivers/thermal/exynos: add initial Exynos850 support
+  dt-bindings: thermal: samsung,exynos: remove driver-specific
+    information
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+ .../thermal/samsung,exynos-thermal.yaml       |   8 +-
+ drivers/thermal/samsung/exynos_tmu.c          | 237 +++++++++++++++---
+ 2 files changed, 209 insertions(+), 36 deletions(-)
 
-## Build
-* kernel: 5.10.226-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: b5b733d78a833f5453a1af52e5d2498023d526d3
-* git describe: v5.10.225-187-gb5b733d78a83
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.225-187-gb5b733d78a83
+-- 
+2.45.2
 
-## Test Regressions (compared to v5.10.224-152-gee485d4aa099)
-
-## Metric Regressions (compared to v5.10.224-152-gee485d4aa099)
-
-## Test Fixes (compared to v5.10.224-152-gee485d4aa099)
-
-## Metric Fixes (compared to v5.10.224-152-gee485d4aa099)
-
-## Test result summary
-total: 89639, pass: 74081, fail: 2028, skip: 13468, xfail: 62
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 102 total, 102 passed, 0 failed
-* arm64: 29 total, 29 passed, 0 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 23 total, 23 passed, 0 failed
-* riscv: 6 total, 6 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 25 total, 25 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
