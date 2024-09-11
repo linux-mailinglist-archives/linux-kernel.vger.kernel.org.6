@@ -1,289 +1,198 @@
-Return-Path: <linux-kernel+bounces-324976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28132975362
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:16:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78EA97535A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE246289A71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56AD11F269BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D70192B96;
-	Wed, 11 Sep 2024 13:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F5190047;
+	Wed, 11 Sep 2024 13:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dwhjibgK"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BiqZ508Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB161714AC;
-	Wed, 11 Sep 2024 13:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB7F185E64
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726060608; cv=none; b=fY4LuYd7tImxXGxWDpE2daB/tlMxJC1G7/T20CVU4PrrOaok1194gS7WtDphS0T0lgSL3S2eC1jzjHQ6iGP82fV2CUGF5dz9/XMZ5E81hmTSV1zp/T6LsjM8jgCVZKKcwA5KrE+TEEEGB5QW/5kM/BxQeT36j2ylCn8EZPz9Mbw=
+	t=1726060437; cv=none; b=TLg+qyXopCo+WLDk8afRxJgnDU3ipDZ1TU21MNp03nBEzsW1Ptk8hVgp42uKdWVRh+hkfIfGaY1PscHmnFblB6yK7aqRSILb9VN/cdgMhzF2HEjk7yfrqFZ6gkLzHnjHAfdkbaybXCK+4qAAm2x9QMfxbMcwqldH/V3BQBOklJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726060608; c=relaxed/simple;
-	bh=GVeidM8o4ega2wg1yFoIZMqzVWIF2rHgnizr5mTMjy0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Df6MwIl0aej8k0a+A9KFBE/p76TsA803NBAqoySw+tPYMu8jc+C7FroqhHnzi2HwkDpFEsChCX0WwbdiRPabV6n2bycUGFUL+7xxfvJdopZM1+mirC24v4Au2NQWv4aL+a6RTJU+kF/i+vBA8BUZAXVWwkyZlQDEApsy9DHtV4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dwhjibgK; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726060606; x=1757596606;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GVeidM8o4ega2wg1yFoIZMqzVWIF2rHgnizr5mTMjy0=;
-  b=dwhjibgK3SEyjy93nSNDvlGuKDb5Xqo0BDlnQEyTLCb0A2tERXHdm2Wv
-   qm3MDlEyaNbI1gJZcJFH6cNTrqBW8bh+YmZw1jxCKH7llZqMu4QMoJ8vG
-   vuJZQqnkPsoqT0WiQHuI33gK2PjODWoWUa9p1PVT6dqq8hMwh6xjmAEfr
-   j3rmcDtQkBXMaju6bqUknAvs38xPYPZunes5U8p1y8OLI3azr3FCHjKd/
-   ODVbovtfG/+iI7XVxi6L19/CoQgNv7zvlNc+mXb0Xw3gPsKGL9rT3ZzFq
-   X5hYFwyG7JHt5JA8CJMmCpj5Z38jcRtWY0xdX+dgK1fTaLL2M6YhJ7lvk
-   A==;
-X-CSE-ConnectionGUID: s3pohALoT4KsIphbLOcJTg==
-X-CSE-MsgGUID: mUuEqcJAS+e4nNrD5qXyrw==
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="262630041"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 06:16:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Sep 2024 06:16:04 -0700
-Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 11 Sep 2024 06:16:01 -0700
-From: Tarun Alle <tarun.alle@microchip.com>
-To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next V3] net: phy: microchip_t1: SQI support for LAN887x
-Date: Wed, 11 Sep 2024 18:41:24 +0530
-Message-ID: <20240911131124.203290-1-tarun.alle@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726060437; c=relaxed/simple;
+	bh=lLQujuaQVsINKOcP87KS9IaW5lEIAgM6cp+Fl8ujQkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LrFnNSt+s4j7NAM45vkTVmEU29ZAWWgek9J2LPwYOfk/xnvFrxIVYd6ZPV6N3jyseQIKAT4B4yzWqD+jZOERci3a4ysN1VzpIBfLP4vhAHkDJMB4X1zYPxBFjpA1AgtgJjmYOpbRUYmZXpEtOZdxtQACRqp4GhBtUfFlexyDehc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BiqZ508Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726060435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bVgk6KxCVvyf7/kqB/bzV5TeZ0PX9U997rsx8aaL5Jg=;
+	b=BiqZ508QdvUTlP2AB8wsggh4QnXLUkCFz1XpN86zm/Ziu1gWcFjJXtN0SL55ajfJpgXi0c
+	SmMkqVixqpy9DoOxZ/tY6HBTkziYzGgKhrLsFhjipvmNAwQo/9jSpTAUlhJLX1dd1CET9E
+	bM09rM+QkAeJukCJj/M67dgyJv49Ing=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-hzJk0tqeP8eufD5z4fsd7w-1; Wed,
+ 11 Sep 2024 09:13:48 -0400
+X-MC-Unique: hzJk0tqeP8eufD5z4fsd7w-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76DEA1956048;
+	Wed, 11 Sep 2024 13:13:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.229])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 26E1119560A3;
+	Wed, 11 Sep 2024 13:13:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 11 Sep 2024 15:13:34 +0200 (CEST)
+Date: Wed, 11 Sep 2024 15:13:20 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sven Schnelle <svens@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH -mm 1/3] Revert "uprobes: use vm_special_mapping close()
+ functionality"
+Message-ID: <20240911131320.GA3448@redhat.com>
+References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
+ <20240903073629.2442754-1-svens@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903073629.2442754-1-svens@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Tarun Alle <Tarun.Alle@microchip.com>
+This reverts commit 08e28de1160a712724268fd33d77b32f1bc84d1c.
 
-Add support for measuring Signal Quality Index for LAN887x T1 PHY.
-Signal Quality Index (SQI) is measure of Link Channel Quality from
-0 to 7, with 7 as the best. By default, a link loss event shall
-indicate an SQI of 0.
+A malicious application can munmap() its "[uprobes]" vma and in this case
+xol_mapping.close == uprobe_clear_state() will free the memory which can
+be used by another thread, or the same thread when it hits the uprobe bp
+afterwards.
 
-Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
-v2 -> v3
-Addressed below review comment
-- Replaced hard-coded values with ARRAY_SIZE(rawtable).
----
-v1 -> v2
-Addressed below review comments
-- Replaced hard-coded 200 with ARRAY_SIZE(rawtable).
-- Replaced return value -EINVAL with -ENETDOWN.
-- Changed link checks.
----
- drivers/net/phy/microchip_t1.c | 155 +++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
+ include/linux/uprobes.h |  1 +
+ kernel/events/uprobes.c | 36 +++++++++++++++++++-----------------
+ kernel/fork.c           |  1 +
+ 3 files changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index 5732ad65e7f9..29ab45b919dc 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -2,6 +2,7 @@
- // Copyright (C) 2018 Microchip Technology
- 
- #include <linux/kernel.h>
-+#include <linux/sort.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/mii.h>
-@@ -188,6 +189,20 @@
- #define LAN887X_EFUSE_READ_DAT9_SGMII_DIS	BIT(9)
- #define LAN887X_EFUSE_READ_DAT9_MAC_MODE	GENMASK(1, 0)
- 
-+#define LAN887X_COEFF_PWR_DN_CONFIG_100		0x0404
-+#define LAN887X_COEFF_PWR_DN_CONFIG_100_V	0x16d6
-+#define LAN887X_SQI_CONFIG_100			0x042e
-+#define LAN887X_SQI_CONFIG_100_V		0x9572
-+#define LAN887X_SQI_MSE_100			0x483
-+
-+#define LAN887X_POKE_PEEK_100			0x040d
-+#define LAN887X_POKE_PEEK_100_EN		BIT(0)
-+
-+#define LAN887X_COEFF_MOD_CONFIG		0x080d
-+#define LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN	BIT(8)
-+
-+#define LAN887X_DCQ_SQI_STATUS			0x08b2
-+
- #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
- #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
- 
-@@ -1420,6 +1435,144 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 		ethtool_puts(&data, lan887x_hw_stats[i].string);
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 493dc95d912c..b503fafb7fb3 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -126,6 +126,7 @@ extern int uprobe_pre_sstep_notifier(struct pt_regs *regs);
+ extern void uprobe_notify_resume(struct pt_regs *regs);
+ extern bool uprobe_deny_signal(void);
+ extern bool arch_uprobe_skip_sstep(struct arch_uprobe *aup, struct pt_regs *regs);
++extern void uprobe_clear_state(struct mm_struct *mm);
+ extern int  arch_uprobe_analyze_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long addr);
+ extern int  arch_uprobe_pre_xol(struct arch_uprobe *aup, struct pt_regs *regs);
+ extern int  arch_uprobe_post_xol(struct arch_uprobe *aup, struct pt_regs *regs);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index c2d6b2d64de2..73cc47708679 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1482,22 +1482,6 @@ void * __weak arch_uprobe_trampoline(unsigned long *psize)
+ 	return &insn;
  }
  
-+/* Compare block to sort in ascending order */
-+static int data_compare(const void *a, const void *b)
-+{
-+	return  *(u16 *)a - *(u16 *)b;
-+}
-+
-+static int lan887x_get_sqi_100M(struct phy_device *phydev)
-+{
-+	u16 rawtable[200];
-+	u32 sqiavg = 0;
-+	u8 sqinum;
-+	int rc;
-+
-+	/* Configuration of SQI 100M */
-+	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
-+			   LAN887X_COEFF_PWR_DN_CONFIG_100,
-+			   LAN887X_COEFF_PWR_DN_CONFIG_100_V);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100,
-+			   LAN887X_SQI_CONFIG_100_V);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SQI_CONFIG_100);
-+	if (rc != LAN887X_SQI_CONFIG_100_V)
-+		return -EINVAL;
-+
-+	rc = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_POKE_PEEK_100,
-+			    LAN887X_POKE_PEEK_100_EN,
-+			    LAN887X_POKE_PEEK_100_EN);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Required before reading register
-+	 * otherwise it will return high value
-+	 */
-+	msleep(50);
-+
-+	/* Link check before raw readings */
-+	rc = genphy_c45_read_link(phydev);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (!phydev->link)
-+		return -ENETDOWN;
-+
-+	/* Get 200 SQI raw readings */
-+	for (int i = 0; i < ARRAY_SIZE(rawtable); i++) {
-+		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1,
-+				   LAN887X_POKE_PEEK_100,
-+				   LAN887X_POKE_PEEK_100_EN);
-+		if (rc < 0)
-+			return rc;
-+
-+		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1,
-+				  LAN887X_SQI_MSE_100);
-+		if (rc < 0)
-+			return rc;
-+
-+		rawtable[i] = rc;
-+	}
-+
-+	/* Link check after raw readings */
-+	rc = genphy_c45_read_link(phydev);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (!phydev->link)
-+		return -ENETDOWN;
-+
-+	/* Sort SQI raw readings in ascending order */
-+	sort(rawtable, ARRAY_SIZE(rawtable), sizeof(u16), data_compare, NULL);
-+
-+	/* Keep inliers and discard outliers */
-+	for (int i = ARRAY_SIZE(rawtable) / 5;
-+	     i < ARRAY_SIZE(rawtable) / 5 * 4; i++)
-+		sqiavg += rawtable[i];
-+
-+	/* Get SQI average */
-+	sqiavg /= 120;
-+
-+	if (sqiavg < 75)
-+		sqinum = 7;
-+	else if (sqiavg < 94)
-+		sqinum = 6;
-+	else if (sqiavg < 119)
-+		sqinum = 5;
-+	else if (sqiavg < 150)
-+		sqinum = 4;
-+	else if (sqiavg < 189)
-+		sqinum = 3;
-+	else if (sqiavg < 237)
-+		sqinum = 2;
-+	else if (sqiavg < 299)
-+		sqinum = 1;
-+	else
-+		sqinum = 0;
-+
-+	return sqinum;
-+}
-+
-+static int lan887x_get_sqi(struct phy_device *phydev)
-+{
-+	int rc, val;
-+
-+	if (phydev->speed != SPEED_1000 &&
-+	    phydev->speed != SPEED_100) {
-+		return -ENETDOWN;
-+	}
-+
-+	if (phydev->speed == SPEED_100)
-+		return lan887x_get_sqi_100M(phydev);
-+
-+	/* Writing DCQ_COEFF_EN to trigger a SQI read */
-+	rc = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
-+			      LAN887X_COEFF_MOD_CONFIG,
-+			      LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Wait for DCQ done */
-+	rc = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-+				       LAN887X_COEFF_MOD_CONFIG, val, ((val &
-+				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN) !=
-+				       LAN887X_COEFF_MOD_CONFIG_DCQ_COEFF_EN),
-+				       10, 200, true);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_DCQ_SQI_STATUS);
-+	if (rc < 0)
-+		return rc;
-+
-+	return FIELD_GET(T1_DCQ_SQI_MSK, rc);
-+}
-+
- static struct phy_driver microchip_t1_phy_driver[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
-@@ -1468,6 +1621,8 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
- 		.read_status	= genphy_c45_read_status,
-+		.get_sqi	= lan887x_get_sqi,
-+		.get_sqi_max	= lan87xx_get_sqi_max,
- 	}
- };
+-/*
+- * uprobe_clear_state - Free the area allocated for slots.
+- */
+-static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_area_struct *vma)
+-{
+-	struct xol_area *area = container_of(vma->vm_private_data, struct xol_area, xol_mapping);
+-
+-	mutex_lock(&delayed_uprobe_lock);
+-	delayed_uprobe_remove(NULL, vma->vm_mm);
+-	mutex_unlock(&delayed_uprobe_lock);
+-
+-	put_page(area->pages[0]);
+-	kfree(area->bitmap);
+-	kfree(area);
+-}
+-
+ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ {
+ 	struct mm_struct *mm = current->mm;
+@@ -1516,7 +1500,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
  
+ 	area->xol_mapping.name = "[uprobes]";
+ 	area->xol_mapping.fault = NULL;
+-	area->xol_mapping.close = uprobe_clear_state;
+ 	area->xol_mapping.pages = area->pages;
+ 	area->pages[0] = alloc_page(GFP_HIGHUSER);
+ 	if (!area->pages[0])
+@@ -1562,6 +1545,25 @@ static struct xol_area *get_xol_area(void)
+ 	return area;
+ }
+ 
++/*
++ * uprobe_clear_state - Free the area allocated for slots.
++ */
++void uprobe_clear_state(struct mm_struct *mm)
++{
++	struct xol_area *area = mm->uprobes_state.xol_area;
++
++	mutex_lock(&delayed_uprobe_lock);
++	delayed_uprobe_remove(NULL, mm);
++	mutex_unlock(&delayed_uprobe_lock);
++
++	if (!area)
++		return;
++
++	put_page(area->pages[0]);
++	kfree(area->bitmap);
++	kfree(area);
++}
++
+ void uprobe_start_dup_mmap(void)
+ {
+ 	percpu_down_read(&dup_mmap_sem);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 61070248a7d3..3d590e51ce84 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1338,6 +1338,7 @@ static inline void __mmput(struct mm_struct *mm)
+ {
+ 	VM_BUG_ON(atomic_read(&mm->mm_users));
+ 
++	uprobe_clear_state(mm);
+ 	exit_aio(mm);
+ 	ksm_exit(mm);
+ 	khugepaged_exit(mm); /* must run before exit_mmap */
 -- 
-2.34.1
+2.25.1.362.g51ebf55
+
 
 
