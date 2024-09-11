@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-324636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3E4974F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D404A974F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28961C20B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4031F251D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AAA1714DD;
-	Wed, 11 Sep 2024 09:52:27 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A79717C7CA;
+	Wed, 11 Sep 2024 09:55:52 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C6E224F6;
-	Wed, 11 Sep 2024 09:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94414153820;
+	Wed, 11 Sep 2024 09:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726048347; cv=none; b=ruXOSB4+ZtVSDIPZAC45XU7ahpIYD0Fu/yB5KJT6A+E+We4mRy9o5leSELlAYyvKuVfVilDFKM+7Q5Fa+EpizjN0Wly2m4B5h4d9wRJtNCFHkLh2+1dw1sc4CmhpeFViRigmdL4JM2KEOLeRl1lQXzuMdcNZ0an0yVvXH/LJr7Q=
+	t=1726048551; cv=none; b=PEGtF4e5WsnM8T9sHSHxvsFI71cqHZQH8mqX0iCUQi44P7BPCAQYRHfRNq4B6fj+7txw/oivCorwa1vTIsM13OLtSOM8yvJ6BFSq7eiRL5bIZsKhNIpI3YgrgXO2VzyZePrxpnVvPAKX84TGUoJULWLa64fK9eaK2Cho3WFPGrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726048347; c=relaxed/simple;
-	bh=NYc2YZ5PM2+TMgbeqlCX6YZUtsMtN7emPC5oR7x/64k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R774bqRTQTXLixgu3sk8IXAZXnNG+9B07EhldMbI43Zry0ICuHy9rU25T2m6xIKxJRaFDHhQV23C9Bpq6me9StDycWwfaL7ZuQAc5MMPnxIxvCAKHlw3geq2x1n3rHDAQZQMwkiGp6NY9nAvsBmQVoFGqJkCwMsW1GEIX2hLPAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso40792755e9.2;
-        Wed, 11 Sep 2024 02:52:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726048344; x=1726653144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zKsh8KL7iwj3VIFfzseruBz4dJRBWDFlUzwPNjq08ts=;
-        b=UKM2LKgGndZrIiEwouNhReJ2tzP+HRyfXZCk4StIPc7Tyhk5RfM6cANZ/w2ZY0uT9P
-         WcBftSezV5jZtThhpqFdbKHELsXVxXeWLVNMVvNzS/akj1xm1UE/dP9u9GU4oFZ/4J4O
-         KqbQnNJ8Uf8v5cf/b9bphx92bTkM9pc+7ZS1+sebLoT6pedgTUeqc+WVTGRoD1pL90nR
-         wQIjjRUpEY9hRRhjEJ3s3micTrFs6kMkoI4r5EOaHt/y14geOTChvQSYTL3z5hnJrRV+
-         E8JltHKeReiHy549ZVXRkxg9KG3+5f/za3M5iZMrb5Qu3k2kmQGL0g6hgdZsR9gjAVBV
-         iy0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/LRxUOvaqBTWJ+W0wL+RVjL/BRkf3Vna/1iPddIugHsB8SrhmutIs6YZhyMx/h7PqoHjg6HNuQuwp3A==@vger.kernel.org, AJvYcCVcxsVP2tcekTuNm1xEFg+2IWM3Y5Nfu4oni3FnlxkaoAgM05KjxlGtYlNFPG4qVpnb7O82VKVxRBBf06Ju@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw80ay1IAbyLfj+jpTTtRZu3k3z81Ur2ov/hTANxFZ9P8HmNCX5
-	SRx8/c1ez4KSyEsAClOU3b0cF8uB5+UqPsds+9M/k4Q8of1OMgN/
-X-Google-Smtp-Source: AGHT+IH2fl6EvyowPSZVginLJWxZJzpL307bK4QDFsJAQfU/ip2YYwDUNUMQue7C5pfFa4u5w7aCDw==
-X-Received: by 2002:a05:600c:34ce:b0:42c:aeaa:6b0d with SMTP id 5b1f17b1804b1-42caeaa6d63mr128768845e9.9.1726048343700;
-        Wed, 11 Sep 2024 02:52:23 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f7178100fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f717:8100:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ca7cccd35sm155195945e9.18.2024.09.11.02.52.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 02:52:22 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2] btrfs: stripe-tree: correctly truncate stripe extents on delete
-Date: Wed, 11 Sep 2024 11:52:05 +0200
-Message-ID: <20240911095206.31060-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726048551; c=relaxed/simple;
+	bh=pqsQYybeyYCDsOvPt+6+YrugYdGqWC0sdV8avoQ+enI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ei93sPu6LVS7IYKBtF+IHxyFZDWvj0a08cknQnxkfFrVon52kE5+/1KuSNSasBLnmWWb7aY1KOleJuRW2Fd89NAVqGcueNH00cljrhXI8ThfBpldqLj5vr8mDVip13rWbyb4+6eDcRHNIEJfkEauOb6wWpBOB1yjivur6V8xIlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X3b6p2b2xz9v7NP;
+	Wed, 11 Sep 2024 17:36:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id BDCC61404A8;
+	Wed, 11 Sep 2024 17:55:35 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAnazIOaeFmhK2zAA--.63556S2;
+	Wed, 11 Sep 2024 10:55:35 +0100 (CET)
+Message-ID: <34c4c5b31e795144a6fdd258c99ce3da89c97c03.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+ davem@davemloft.net, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
+ zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,  adrian@suse.de, ro@suse.de
+Date: Wed, 11 Sep 2024 11:55:23 +0200
+In-Reply-To: <ZuBi56VwWxxX2Ce5@earth.li>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+	 <ZsNf1VdfkHqD8R4Q@earth.li>
+	 <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
+	 <ZsSkTs4TFfx2pK8r@earth.li>
+	 <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
+	 <6c7e34b65d73e9fa2ba0fd39b357b9eb42ee0449.camel@huaweicloud.com>
+	 <ZuBi56VwWxxX2Ce5@earth.li>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwAnazIOaeFmhK2zAA--.63556S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw4xKr4fWFWDZw1kuF4Durg_yoW5Zryxpa
+	y8JF1YyFZ5Jwn7AF1vyw1DCFWYy39rJF15Xwn8J348Crn0qFya9F1xKFW5u3s8Wr1xGw1j
+	vrW3J3y3W3s8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGbg-HQFrQAAsg
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Tue, 2024-09-10 at 16:16 +0100, Jonathan McDowell wrote:
+> On Tue, Sep 10, 2024 at 04:51:22PM +0200, Roberto Sassu wrote:
+> > On Tue, 2024-09-10 at 16:36 +0200, Roberto Sassu wrote:
+> > > On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
+> > > > On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
+> > > > > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
+> > > > > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
+> > > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > >=20
+> > > > > > > Support for PGP keys and signatures was proposed by David lon=
+g time ago,
+> > > > > > > before the decision of using PKCS#7 for kernel modules signat=
+ures
+> > > > > > > verification was made. After that, there has been not enough =
+interest to
+> > > > > > > support PGP too.
+> > > > > >=20
+> > > > > > You might want to update the RFC/bis references to RFC9580, whi=
+ch was
+> > > > > > published last month and updates things.
+> > > > >=20
+> > > > > Yes, makes sense (but probably isn't too much hassle to support m=
+ore
+> > > > > things for our purposes?)
+> > > >=20
+> > > > I'm mostly suggesting that the comments/docs point to the latest
+> > > > standard rather than the draft version, not changing to support the=
+ new
+> > > > v6 keys.
+> > > >=20
+> > > > > > Also, I see support for v2 + v3 keys, and this doesn't seem lik=
+e a good
+> > > > > > idea. There are cryptographic issues with fingerprints etc ther=
+e and I
+> > > > > > can't think of a good reason you'd want the kernel to support t=
+hem. The
+> > > > > > same could probably be said of DSA key support too.
+> > > > >=20
+> > > > > Uhm, if I remember correctly I encountered some old PGP keys used=
+ to
+> > > > > verify RPM packages (need to check). DSA keys are not supported, =
+since
+> > > > > the algorithm is not in the kernel.
+> > > >=20
+> > > > I would question the benefit gained from using obsolete key/signatu=
+re
+> > > > types for verification (I was involved in the process of Debian dro=
+pping
+> > > > them back in *2010* which was later than it should have been). Drop=
+ping
+> > > > the code for that path means a smaller attack surface/maintenance
+> > > > overhead for something that isn't giving a benefit.
+> > >=20
+> > > Removed support for v3 PGP signatures... but that broke openSUSE
+> > > Tumbleweed.
+>=20
+> Is this a signature from a v3 key, or a v3 signature? Unfortunately
+> there are implementations which will issue a v3 signature even from a v4
+> key; IIRC this ambiguity has been cleared up in the updated RFC.
 
-In our CI system, we're seeing the following ASSERT()ion to trigger when
-running RAID stripe-tree tests on non-zoned devices:
+Yes, it looks a v3 signature from a v4 key.
 
- assertion failed: found_start >= start && found_end <= end, in fs/btrfs/raid-stripe-tree.c:64
 
-This ASSERT()ion triggers, because for the initial design of RAID stripe-tree,
-I had the "one ordered-extent equals one bio" rule of zoned btrfs in mind.
+> > > [  295.837602] PGPL: Signature packet with unhandled version 3
+> >=20
+> > To add more context, this patch set adds the ability to the kernel to
+> > verify the PGP signature of RPM packages against Linux distributions
+> > PGP keys.
+>=20
+> > The purpose of this is to verify the authenticity of such RPM packages,
+> > and to extract from them file digests, which are in turn used as
+> > reference values for integrity check (appraisal) with IMA.
+>=20
+> I don't believe allowing a v3 *key* gives a useful verification that is
+> worth supporting. However unfortunately I think it sounds like support
+> for v3 signatures from v4 keys is necessary.
 
-But for a RAID stripe-tree based system, that is not hosted on a zoned
-storage device, but on a regular device this rule doesn't apply.
+Yes, after re-adding support for v3 signatures, openSUSE Tumbleweed is
+back to normal, does IMA appraisal with RPM packages.
 
-So in case the range we want to delete starts in the middle of the
-previous item, grab the item and "truncate" it's length. That is, subtract
-the deleted portion from the key's offset.
+Thanks
 
-In case the range to delete ends in the middle of an item, we have to
-adjust both the item's key as well as the stripe extents.
-
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
-
-Changes to v1:
-- ASSERT() that slot > 0 before calling btrfs_previous_item()
-
- fs/btrfs/raid-stripe-tree.c | 52 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-index 4c859b550f6c..075fecd08d87 100644
---- a/fs/btrfs/raid-stripe-tree.c
-+++ b/fs/btrfs/raid-stripe-tree.c
-@@ -61,7 +61,57 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
- 		trace_btrfs_raid_extent_delete(fs_info, start, end,
- 					       found_start, found_end);
- 
--		ASSERT(found_start >= start && found_end <= end);
-+		if (found_start < start) {
-+			struct btrfs_key prev;
-+			u64 diff = start - found_start;
-+
-+			ASSERT(slot > 0);
-+
-+			ret = btrfs_previous_item(stripe_root, path, start,
-+						  BTRFS_RAID_STRIPE_KEY);
-+			leaf = path->nodes[0];
-+			slot = path->slots[0];
-+			btrfs_item_key_to_cpu(leaf, &prev, slot);
-+			prev.offset -= diff;
-+
-+			btrfs_mark_buffer_dirty(trans, leaf);
-+
-+			start += diff;
-+			length -= diff;
-+
-+			btrfs_release_path(path);
-+			continue;
-+		}
-+
-+		if (end < found_end && found_end - end < key.offset) {
-+			struct btrfs_stripe_extent *stripe_extent;
-+			u64 diff = key.offset - length;
-+			int num_stripes;
-+
-+			num_stripes = btrfs_num_raid_stripes(
-+				btrfs_item_size(leaf, slot));
-+			stripe_extent = btrfs_item_ptr(
-+				leaf, slot, struct btrfs_stripe_extent);
-+
-+			for (int i = 0; i < num_stripes; i++) {
-+				struct btrfs_raid_stride *stride =
-+					&stripe_extent->strides[i];
-+				u64 physical = btrfs_raid_stride_physical(
-+					leaf, stride);
-+
-+				physical += diff;
-+				btrfs_set_raid_stride_physical(leaf, stride,
-+							       physical);
-+			}
-+
-+			key.objectid += diff;
-+			key.offset -= diff;
-+
-+			btrfs_mark_buffer_dirty(trans, leaf);
-+			btrfs_release_path(path);
-+			break;
-+		}
-+
- 		ret = btrfs_del_item(trans, stripe_root, path);
- 		if (ret)
- 			break;
--- 
-2.43.0
+Roberto
 
 
