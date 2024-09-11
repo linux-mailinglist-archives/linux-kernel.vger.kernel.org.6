@@ -1,864 +1,263 @@
-Return-Path: <linux-kernel+bounces-324346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABE2974B69
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F907974B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6EFF1F21798
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A871F2265F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409B0137772;
-	Wed, 11 Sep 2024 07:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18D313C67A;
+	Wed, 11 Sep 2024 07:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eR0uc0aZ"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tHVn2L3w"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D0A13C80A;
-	Wed, 11 Sep 2024 07:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726039755; cv=none; b=osdU9l4GyDy28fXBWV3StZ51CVZxItoeEstsP3P7D7r3GhxIXGkXZ2eXA/ZTSsXzp9epl0kZ1OXeiufA+Lm9ghsDSf8WLufB8lJgPhMrcAxot5kKSmiuAslD6sB2wULOirYbiphBke06HIF+4ayl6eg11P7jIIRVP8BJqmhn9VU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726039755; c=relaxed/simple;
-	bh=x8WwHdIy6cKpFGjNFamnh2q6ikwIwAW7tWGgSKymdpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7p8BFFe006j/Ez7xLY/XUBNyXQbBvgwm4m2LyggLz8iaTynE5cUbRQ5Ef4Ebz/FoOVPdfQJpL9MZNHXP3UEzSgUdLeooOxacG0c2AN3RcenlqqzEIPqClXvi6QbCLu4e9uvzE54cLgL84o1runVUa/QMgeAL+KDT99gUC1/9/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eR0uc0aZ; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1a8ae00f5eso6509044276.0;
-        Wed, 11 Sep 2024 00:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726039752; x=1726644552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCXME0Em7Fd6bu8YPE8BmT8VpXXIKyjxQn6Y4lJD6VQ=;
-        b=eR0uc0aZxdxx1rSns27cTTGsbO/kObL87IzH/TpZm0BK6csF0yWVNwNOVtUB8ljGmy
-         RRfWEu81aGOCC7A9SGH9owgr12IgorzjSKj5vOZ/R3aKIZrzTYGKEMT/H/LrGDIttr4I
-         l5uGNFDHhkKzIPIzU1xDcYK+fkx/x4egzGzMFlGvQ+EgyZcdNFAPvWtuYQEySJ5mkauW
-         jwbDeiJgoTcLHc6wvgy9t4VVxFZgsv+DkcQrCmZPvoaAlvDhKTRyJq2nE8gvJ8SsLEQM
-         eVK6jnxLXhuT7iPNs7ZNUHW5NcGD5c7vU9pxaA8XmPlxZw7t2e7i0lzu/upWHE99mtsm
-         svEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726039752; x=1726644552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCXME0Em7Fd6bu8YPE8BmT8VpXXIKyjxQn6Y4lJD6VQ=;
-        b=gXSn4Do5kcLo+m/G60DJhiavRco7Zg34Kg/TncSTh0qy1PR5BxMkgc2N0WcSvZofo/
-         GUwL1eClZ7dntN9155fW+3poDP2g/k1UGIevyYDNK9UFow8jPPpQfU4zcg4vIZSEZ3NH
-         D/1RswMrS5Io3C8c+7V3aQA+Ne/sA8oagev7++jvacDWd5kVCi/MucVm93aU72VaiGET
-         DhGQZfcziqmKUGe+6eeW7Spq0jxzqiKNqO0rO78af9madHZfen1bd/sI7AnHi65OM193
-         ZGEH6O8G2oGupBfILoKp2wBIyuBAOMvbdygj4MbRdHjh9Hq8WsBNZP/YsCycUKASj9yP
-         F/rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuP7Di57925gSKPF8yCiakMqQh+VQCyCZ67j4oseHeK7NORxbLEMahKZxIgpUKsBzXclGELI07UoJmYVA=@vger.kernel.org, AJvYcCWSu8DPTNYgTU7D5WjYoGPE8AhwfhR5sQYxAzyFDAdM7pjz+8WZ2vJFX1Gebf+m0zeza8Bg9oJSfA2AjGsgVSDBLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr/+Up7XDOl4r2OSJNoTAaneuDnAWX+yqAjA+ODIqByNmwWyD9
-	fZAjPVYq/9K1N6ZCkYiYMoUjB3QHj0Qj6uxNHRpyGWW7yOntpgtkPyX+MntzoDcfaKVcAPwDZwI
-	2EdLSWnfcX0epr4TqzTI955SUKGC5GgGDk+Y=
-X-Google-Smtp-Source: AGHT+IFo+qdMuEky2bETEZsU3+yzp4Qfr1ffiVKFK5ft7PKc5KeLfLMnPjzjp06KbvvesIlPEAPPDHJ+6vdKDU12Ltw=
-X-Received: by 2002:a25:b127:0:b0:e16:4d32:adcd with SMTP id
- 3f1490d57ef6-e1d3489aa17mr14164394276.29.1726039752149; Wed, 11 Sep 2024
- 00:29:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697F3135A69;
+	Wed, 11 Sep 2024 07:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726039864; cv=fail; b=Wlf9mtrK+J5ASDrARBOBwSR/u6ORkN3PvOBnm6ezdJKo0GoYY5YxHqLaLxWYtx2OwHo4VjZ3xDsSajJht2nPytqa4XZQBFRCQeEJMBrsIxHsN8Bkaw3fEctwgkTH4xqAvnJ2b4CJ/RZk+l9ESHsYFEP2rDssiKM0JmlsOeN8UnM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726039864; c=relaxed/simple;
+	bh=NjMdOCdgk/5u1Kp0jk3H7N5HFTy+pw2GHH4xZS4xSZU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFtBFS0LYzVpxjjsA6QYGIVIUmyHwfKH33HPI1PTECq0jyVJV79h/g2U7N0gcnbXhz1ioeq4DIkgP7srE3PfylzAyP/35QboeaFHr/KxjHfAFKY22BB7+hcbAool7gXuMF2YTqHaJehX+CIsSz6s6pLZoCgNMM0sgXiE2xmUS0I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tHVn2L3w; arc=fail smtp.client-ip=40.107.236.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SuDovCLPkCabLJS+gK1eQGpS2jLASHR8Akp6Qfvf3UIT7/ZRjtzCN4sJB9H0CLM5VHk+9jVgid9qdt+ONlt+GfunIENKVKUNmwMcsRzuAeTMQzn/4XjFw3HwPwS2ThFLTdn2LDiRKhPgOZE1Z4KxHK6RtCtcMq9/3fW8X8Py7eQCcwNc2PGxoD5f337HAgxJcavkPqbhy/twEZDX1Ayr81+Gk4jhbNRXoXTic/6tJbUzzx69zmK9gDXou+Ft8+GfyFcaohhTwOnkKXdeKrt+9wo++6J2BpxtNnKE7B+t6TexL/5xZlCJECXFb/gcwbRrdj0PqHz8k3hzAkzXhHQ4ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s3qOukB7JAZwgE0YPqossyWFletbA4sidkaNlZ/NhGs=;
+ b=bHZrvcUVpHBSd/y5gQkEsAWgS7NlYgLx6vKNsDtRphgI7pb4T9KKML+0tnDStCB1jTv0ytGPVC3ODrzm9lBbgi0w+EPQGx/Wr28Bj+AZMEalr+2su7t8qUFX5U8WQlhqTZwKcWqPIqVmAC5EfcuAzm3xuAIrvygfQL+UeFMhNc37qdTd/dfFT4TSMzeOQjevBlhy5bFI9sqGMcPSjDv0SfNVWnmvCzm7dixygQOnueDD7zIWCIcrK0QNS11RwjNUVt8F/YHoMthRHy7i/vng2vuCvnka+nKp+tE5u0HNTCNCdZoQCbkTS+zNHWWQ92sPHFPWIK9tyTSwHIch5F/TEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s3qOukB7JAZwgE0YPqossyWFletbA4sidkaNlZ/NhGs=;
+ b=tHVn2L3wOHzPXXaDdKFRrOZt0RIOsYw+sgoP7W0nM/XPHM9i+t6nPE+5KcQ5SUJtgS7mHBO7b7zJQRAzMRqXyyMt5v+lYfPPIFCLTAgdShz8HcdRyFr5506/9GS2ieO4PZO+URs60kb9/uQs3zFk2a4Hkop6jLumh7EGXX3Qc0R5fIhbBYjoJ7ftGZSXVG0gBaGKLYhRnjxLrP8UeXw1CX/VOJEmC+70aglYJe2O6Pn6/pLMB/ytzWPyaZUg0LwfS4I2LemrqlkevanElba/uForS9zZMMtAQXzIRQB8D4ZKJtTeL/xZizcaDWjZLXQRwIloWplMXdA9X8skziMLvA==
+Received: from PH8PR07CA0036.namprd07.prod.outlook.com (2603:10b6:510:2cf::9)
+ by DS7PR12MB8369.namprd12.prod.outlook.com (2603:10b6:8:eb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 07:30:57 +0000
+Received: from MWH0EPF000A6735.namprd04.prod.outlook.com
+ (2603:10b6:510:2cf:cafe::e3) by PH8PR07CA0036.outlook.office365.com
+ (2603:10b6:510:2cf::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Wed, 11 Sep 2024 07:30:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ MWH0EPF000A6735.mail.protection.outlook.com (10.167.249.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Wed, 11 Sep 2024 07:30:56 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 11 Sep
+ 2024 00:30:39 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 11 Sep 2024 00:30:38 -0700
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 11 Sep 2024 00:30:34 -0700
+Date: Wed, 11 Sep 2024 00:30:32 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH] Documentation: userspace-api: iommufd: Update
+ HWPT_PAGING and HWPT_NESTED
+Message-ID: <ZuFHGHd2S+r6XzyN@nvidia.com>
+References: <20240910204111.7969-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276142EF52299176BA3179F8C9B2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuBJQp1lf5uAjpo1@x1> <CAH0uvoh=Q6iv1YG96tVw3ynskOGhBEhKzCGBS9nwbu_zgZOB3Q@mail.gmail.com>
- <ZuCr7yOQb-1qeuox@x1>
-In-Reply-To: <ZuCr7yOQb-1qeuox@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 11 Sep 2024 00:29:01 -0700
-Message-ID: <CAH0uvojKOftSj=6-0x8MSCiF4Cwt8ojBDPSQJ7o9SLy1VQq0wQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf trace: Support collecting 'union's with the BPF augmenter
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276142EF52299176BA3179F8C9B2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6735:EE_|DS7PR12MB8369:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a2503ef-2ebe-4f3e-289d-08dcd233ad2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HG/zKCtkAqzrBICLkGlj05U7GseL9F3Qt3k9DfdqAKtGqvEA1od/PrVOv6ln?=
+ =?us-ascii?Q?yWqS4mzGjMxHL+Pk1pgCvHqarM11kB1dBy83F2dBKcOElLUbLiGz19xNICV8?=
+ =?us-ascii?Q?FVwLGYnxT2hjxaHISsDG9jT/sm50JBLKSDWq0OlRYqTLgVvakNrDwmjHZZ5b?=
+ =?us-ascii?Q?4V3yL7GeMD6IzEFOqJsXLR8jBccAgJJfMG7HVWr6tKFCdoDVUHEQsDHCmUUY?=
+ =?us-ascii?Q?VnRywt2oakDXdFonfWnGayh9q5CQ/LOp2CXCSt8CyxebNamFwwpdSK1F7DCF?=
+ =?us-ascii?Q?+7q8+8BpxtRnG1N23PbjUKAHDRPSCbMF4Sd1Y/wKay2iS5BRzxsXbrQIBfEl?=
+ =?us-ascii?Q?jm3xqfrYbM7uxY1qu8QGPNEWq6S/4tCokKdbcpv+GyO4y9TnMoL6mMdcpYwz?=
+ =?us-ascii?Q?PbKJVly/zvpNU0DSypVYiMLjbQ7gA513naGdzaFJ0KUe6kRK1pjG1hwQppXC?=
+ =?us-ascii?Q?Euz7C0jLHsqcfn3cotU2I2aFmWuh6fGApj+hmqGcEdxCnuunoY9VvWNxTsB4?=
+ =?us-ascii?Q?6W9iphtu73y6z9UjDr0dHNmnqwAF/BiIgQTDPisF7mRSMeHQOXUtmmEd12Fh?=
+ =?us-ascii?Q?lOLCWwlIyPN4gm2rgtx6xcITEVZ24kdH+PXjeeSMKHkZLZhkHgXnbK0lrIPh?=
+ =?us-ascii?Q?MmuF13/ooWKyELNi2xjOR9+1tDm3GELWiI8VbWlnnRRpxJtscY7/Q0u5B3BK?=
+ =?us-ascii?Q?AF1bTAHXEsryWHl/RgLY2sir1kHNd7msS/spqiueRekU2X9sLTSZB7aj7y+G?=
+ =?us-ascii?Q?iVOeIz0C7qHGRbmkCwNZLlw/2EOxDujzZ60euhD/qNsXCq7H3jEE23YyBEaD?=
+ =?us-ascii?Q?X2qNXimyK53IOOVTCltV3J27m4GkBsDVf1/Nld8V1EE+gfQaLgOYyrLGaIbW?=
+ =?us-ascii?Q?IgU1CjqC3kU27OdMkBdJ6xnnWl5jPyjCqULos0dGUZXovoaQwanLVMm5Tlxe?=
+ =?us-ascii?Q?9zWwOhu+R+CrIUow3u+FHptIvfPxBMToVM/lgIAqsRJWQyirHHt53VYzmERS?=
+ =?us-ascii?Q?5DqaL4kbmSXtBWIc8LC+ExOIs7VECn0FhPbqYxifuiK3oX3pamX9Z0FoAwRa?=
+ =?us-ascii?Q?yeAlFdB3OlO5o9fVBzzIvzXj+1q3rTb6NleiEcgOcpDHU1LPTgFtH7LyeSaH?=
+ =?us-ascii?Q?t8N6Jui57FQvAxsc2lv2OF1ti2TiFxfvA/xwGJUiUOvDJQBaeFLSBFSar2kA?=
+ =?us-ascii?Q?Ii2g3KKclHx0N6clB3z/YirOXJTQ+HalccGsBilDNvSnenvKd7gLuyVhWdRG?=
+ =?us-ascii?Q?DDEv8lST1akB60a53M/ahDiDfEBrqOakc+iQJ7aDRQImN3vYLgP7cCawlSeN?=
+ =?us-ascii?Q?uUgAovXWSn1EC3aAn6Jf8NZonvYNXFwgVKQ8EAqN2KYCoP1ADypuUlG0raRq?=
+ =?us-ascii?Q?aM0gOI7espm/Kt9vCWAB7Q+HSyahFMPGW6lTYlWLd4dlaKjNdpJd7vBr6Lad?=
+ =?us-ascii?Q?AbvGMB35gse/JNooJvvf2j6JhkHRIn02?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 07:30:56.9438
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a2503ef-2ebe-4f3e-289d-08dcd233ad2b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6735.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8369
 
-Hello,
-
-On Tue, Sep 10, 2024 at 1:28=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Sep 10, 2024 at 09:16:56AM -0700, Howard Chu wrote:
-> > Hello Arnaldo,
+On Wed, Sep 11, 2024 at 07:09:15AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Wednesday, September 11, 2024 4:41 AM
 > >
-> > LGTM.
->
-> Taking that as an Acked-by, as per the Documentation/  submitting
-> patches docs, next time consider providing an:
->
-> Acked-by: you
->
-> or a stronger:
->
-> Reviewed-by: you
+> > +  feature flag. This can be either an UNMANAGED stage-1 domain for a
+> > device
+> > +  running in the user space, or a nesting parent stage-2 domain for
+> > mappings
+> > +  from guest-level physical addresses to host-level physical addresses.
+> 
+> the former part is inaccurate. It could be an UNMANAGED stage-2 domain.
+> 
+> > +
+> > +- IOMMUFD_OBJ_HWPT_NESTED, representing an actual hardware I/O
+> > page table
+> > +  (i.e. a single struct iommu_domain) managed by user space (e.g. guest OS).
+> > +  "NESTED" indicates that this type of HWPT can be linked to an
+> > HWPT_PAGING.
+> 
+> s/can be/should be/
 
-Wow, thank you.
+Was thinking of the 2nd choice: HWPT_NESTED->vIOMMU (HWPT_PAGING)
+Yet, I think "should" could fit that narrative too. Will change.
 
->
-> since this is code you worked with for a long time.
->
-> Tested-by: you
-
-Well actually it takes --max-entries=3D2 for me to get some interesting
-results but it works.
-
-perf $ ./perf trace --max-events 2 -e bpf bpftool map
-277: hash  name pids_filtered  flags 0x0
-        key 4B  value 1B  max_entries 64  memlock 6368B
-        btf_id 558
-278: prog_array  name syscalls_sys_en  flags 0x0
-        key 4B  value 4B  max_entries 512  memlock 4344B
-        owner_prog_type tracepoint  owner jited
-        btf_id 558
-279: prog_array  name syscalls_sys_ex  flags 0x0
-        key 4B  value 4B  max_entries 512  memlock 4344B
-        owner_prog_type tracepoint  owner jited
-        btf_id 558
-280: perf_event_array  name __augmented_sys  flags 0x0
-        key 4B  value 4B  max_entries 4096  memlock 33016B
-281: percpu_array  name augmented_args_  flags 0x0
-        key 4B  value 8272B  max_entries 1  memlock 33344B
-        btf_id 558
-282: hash  name beauty_map_ente  flags 0x0
-        key 4B  value 24B  max_entries 512  memlock 50464B
-        btf_id 558
-283: percpu_array  name beauty_payload_  flags 0x0
-        key 4B  value 24688B  max_entries 1  memlock 99008B
-        btf_id 558
-     0.000 ( 0.009 ms): bpftool/112031 bpf(cmd: MAP_GET_NEXT_ID,
-uattr: (union bpf_attr){}, size: 12)        =3D 0
-     0.011 ( 0.005 ms): bpftool/112031 bpf(cmd: MAP_GET_FD_BY_ID,
-uattr: (union bpf_attr){(struct){.map_type =3D (__u32)277,.max_entries =3D
-(__u32)32140,.map_flags =3D (__u32)92,.numa_node =3D
-(__u32)3894591678,.map_name =3D (char[16])['F','_',21,1,],.btf_fd =3D
-(__u32)2,},(struct){.map_fd =3D (__u32)277,.key =3D
-(__u64)138040248893440,(union){.value =3D (__u64)92,.next_key =3D
-(__u64)92,},.flags =3D (__u64)104758146941118,},.batch =3D
-(struct){.in_batch =3D (__u64)277,.out_batch =3D
-(__u64)138040248893440,.keys =3D (__u64)92,.values =3D
-(__u64)104758146941118,.map_fd =3D (__u32)277,.flags =3D
-(__u64)2,},(struct){.prog_type =3D (__u32)277,.insns =3D
-(__u64)138040248893440,.license =3D (__u64)92,.log_level =3D
-(__u32)3894591678,.log_size =3D (__u32)24390,.log_buf =3D
-(__u64)1189705940992,.prog_name =3D (char[16])[2,],},(struct){.pathname
-=3D (__u64)277,.file_flags =3D (__u32)32140,.path_fd =3D
-(__s32)92,},(struct){(union){.target_fd =3D (__u32)277,.target_ifindex =3D
-(__u32)277,},.attach_flags =3D (__u32)32140,.replace_bpf_fd =3D
-(__u32)92,.expected_revision =3D (__u64)104758146941118,},.test =3D
-(struct){.prog_fd =3D (__u32)277,.data_size_out =3D (__u32)32140,.data_in
-=3D (__u64)92,.data_out =3D (__u64)104758146941118,.duration =3D
-(__u32)277,.ctx_in =3D (__u64)2,},(struct){(union){.start_id =3D
-(__u32)277,.prog_id =3D (__u32)277,.map_id =3D (__u32)277,.btf_id =3D
-(__u32)277,.link_id =3D (__u32)277,},},.info =3D (struct){.bpf_fd =3D
-(__u32)277,.info =3D (__u64)138040248893440,},.query =3D
-(struct){(union){.target_fd =3D (__u32)277,.target_ifindex =3D
-(__u32)277,},.attach_flags =3D (__u32)32140,.prog_ids =3D
-(__u64)92,(union){.prog_cnt =3D (__u32)3894591678,.count =3D
-(__u32)3894591678,},.prog_attach_flags =3D
-(__u64)1189705940992,.link_attach_flags =3D (__u64)2,},.raw_tracepoint =3D
-(struct){.name =3D (__u64)277,.cookie =3D (__u64)92,},(struct){.btf =3D
-(__u64)277,.btf_log_buf =3D (__u64)138040248893440,.btf_size =3D
-(__u32)92,.btf_log_level =3D (__u32)3894591678,.btf_log_true_size =3D
-(__u32)24390,.btf_token_fd =3D (__s32)277,},.task_fd_query =3D
-(struct){.pid =3D (__u32)277,.buf_len =3D (__u32)32140,.buf =3D
-(__u64)92,.prog_id =3D (__u32)3894591678,.fd_type =3D
-(__u32)24390,.probe_offset ) =3D 3
-
-
-Tested-by: Howard Chu <howardchu95@gmail.com>
-
-Thanks,
-Howard
->
-> also is interesting, indicating you actually built and tested it.
->
-> All these things on the record are important for the trust we put in the
-> code and in the persons involved.
->
-> I'll remove the now not needed () as you noted below.
->
-> Thanks,
->
-> - Arnaldo
->
-> > On Tue, Sep 10, 2024 at 6:27=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <arnaldo.melo@gmail.com> wrote:
-> > >
-> > > And reuse the BTF based struct pretty printer, with that we can offer
-> > > initial support for the 'bpf' syscall's second argument, a 'union
-> > > bpf_attr' pointer.
-> > >
-> > > But this is not that satisfactory as the libbpf btf dumper will prett=
-y
-> > > print _all_ the union, we need to have a way to say that the first ar=
-g
-> > > selects the type for the union member to be pretty printed, something
-> > > like what pahole does translating the PERF_RECORD_ selector into a na=
-me,
-> > > and using that name to find a matching struct.
-> > >
-> > > In the case of 'union bpf_attr' it would map PROG_LOAD to one of the
-> > > union members, but unfortunately there is no such mapping:
-> > >
-> > >   root@number:~# pahole bpf_attr
-> > >   union bpf_attr {
-> > >         struct {
-> > >                 __u32              map_type;           /*     0     4=
- */
-> > >                 __u32              key_size;           /*     4     4=
- */
-> > >                 __u32              value_size;         /*     8     4=
- */
-> > >                 __u32              max_entries;        /*    12     4=
- */
-> > >                 __u32              map_flags;          /*    16     4=
- */
-> > >                 __u32              inner_map_fd;       /*    20     4=
- */
-> > >                 __u32              numa_node;          /*    24     4=
- */
-> > >                 char               map_name[16];       /*    28    16=
- */
-> > >                 __u32              map_ifindex;        /*    44     4=
- */
-> > >                 __u32              btf_fd;             /*    48     4=
- */
-> > >                 __u32              btf_key_type_id;    /*    52     4=
- */
-> > >                 __u32              btf_value_type_id;  /*    56     4=
- */
-> > >                 __u32              btf_vmlinux_value_type_id; /*    6=
-0     4 */
-> > >                 /* --- cacheline 1 boundary (64 bytes) --- */
-> > >                 __u64              map_extra;          /*    64     8=
- */
-> > >                 __s32              value_type_btf_obj_fd; /*    72   =
-  4 */
-> > >                 __s32              map_token_fd;       /*    76     4=
- */
-> > >         };                                             /*     0    80=
- */
-> > >         struct {
-> > >                 __u32              map_fd;             /*     0     4=
- */
-> > >
-> > >                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                 __u64              key;                /*     8     8=
- */
-> > >                 union {
-> > >                         __u64      value;              /*    16     8=
- */
-> > >                         __u64      next_key;           /*    16     8=
- */
-> > >                 };                                     /*    16     8=
- */
-> > >                 __u64              flags;              /*    24     8=
- */
-> > >         };                                             /*     0    32=
- */
-> > >         struct {
-> > >                 __u64              in_batch;           /*     0     8=
- */
-> > >                 __u64              out_batch;          /*     8     8=
- */
-> > >                 __u64              keys;               /*    16     8=
- */
-> > >                 __u64              values;             /*    24     8=
- */
-> > >                 __u32              count;              /*    32     4=
- */
-> > >                 __u32              map_fd;             /*    36     4=
- */
-> > >                 __u64              elem_flags;         /*    40     8=
- */
-> > >                 __u64              flags;              /*    48     8=
- */
-> > >         } batch;                                       /*     0    56=
- */
-> > >         struct {
-> > >                 __u32              prog_type;          /*     0     4=
- */
-> > >                 __u32              insn_cnt;           /*     4     4=
- */
-> > >                 __u64              insns;              /*     8     8=
- */
-> > >                 __u64              license;            /*    16     8=
- */
-> > >                 __u32              log_level;          /*    24     4=
- */
-> > >                 __u32              log_size;           /*    28     4=
- */
-> > >                 __u64              log_buf;            /*    32     8=
- */
-> > >                 __u32              kern_version;       /*    40     4=
- */
-> > >                 __u32              prog_flags;         /*    44     4=
- */
-> > >                 char               prog_name[16];      /*    48    16=
- */
-> > >                 /* --- cacheline 1 boundary (64 bytes) --- */
-> > >                 __u32              prog_ifindex;       /*    64     4=
- */
-> > >                 __u32              expected_attach_type; /*    68    =
- 4 */
-> > >                 __u32              prog_btf_fd;        /*    72     4=
- */
-> > >                 __u32              func_info_rec_size; /*    76     4=
- */
-> > >                 __u64              func_info;          /*    80     8=
- */
-> > >                 __u32              func_info_cnt;      /*    88     4=
- */
-> > >                 __u32              line_info_rec_size; /*    92     4=
- */
-> > >                 __u64              line_info;          /*    96     8=
- */
-> > >                 __u32              line_info_cnt;      /*   104     4=
- */
-> > >                 __u32              attach_btf_id;      /*   108     4=
- */
-> > >                 union {
-> > >                         __u32      attach_prog_fd;     /*   112     4=
- */
-> > >                         __u32      attach_btf_obj_fd;  /*   112     4=
- */
-> > >                 };                                     /*   112     4=
- */
-> > >                 __u32              core_relo_cnt;      /*   116     4=
- */
-> > >                 __u64              fd_array;           /*   120     8=
- */
-> > >                 /* --- cacheline 2 boundary (128 bytes) --- */
-> > >                 __u64              core_relos;         /*   128     8=
- */
-> > >                 __u32              core_relo_rec_size; /*   136     4=
- */
-> > >                 __u32              log_true_size;      /*   140     4=
- */
-> > >                 __s32              prog_token_fd;      /*   144     4=
- */
-> > >         };                                             /*     0   152=
- */
-> > >         struct {
-> > >                 __u64              pathname;           /*     0     8=
- */
-> > >                 __u32              bpf_fd;             /*     8     4=
- */
-> > >                 __u32              file_flags;         /*    12     4=
- */
-> > >                 __s32              path_fd;            /*    16     4=
- */
-> > >         };                                             /*     0    24=
- */
-> > >         struct {
-> > >                 union {
-> > >                         __u32      target_fd;          /*     0     4=
- */
-> > >                         __u32      target_ifindex;     /*     0     4=
- */
-> > >                 };                                     /*     0     4=
- */
-> > >                 __u32              attach_bpf_fd;      /*     4     4=
- */
-> > >                 __u32              attach_type;        /*     8     4=
- */
-> > >                 __u32              attach_flags;       /*    12     4=
- */
-> > >                 __u32              replace_bpf_fd;     /*    16     4=
- */
-> > >                 union {
-> > >                         __u32      relative_fd;        /*    20     4=
- */
-> > >                         __u32      relative_id;        /*    20     4=
- */
-> > >                 };                                     /*    20     4=
- */
-> > >                 __u64              expected_revision;  /*    24     8=
- */
-> > >         };                                             /*     0    32=
- */
-> > >         struct {
-> > >                 __u32              prog_fd;            /*     0     4=
- */
-> > >                 __u32              retval;             /*     4     4=
- */
-> > >                 __u32              data_size_in;       /*     8     4=
- */
-> > >                 __u32              data_size_out;      /*    12     4=
- */
-> > >                 __u64              data_in;            /*    16     8=
- */
-> > >                 __u64              data_out;           /*    24     8=
- */
-> > >                 __u32              repeat;             /*    32     4=
- */
-> > >                 __u32              duration;           /*    36     4=
- */
-> > >                 __u32              ctx_size_in;        /*    40     4=
- */
-> > >                 __u32              ctx_size_out;       /*    44     4=
- */
-> > >                 __u64              ctx_in;             /*    48     8=
- */
-> > >                 __u64              ctx_out;            /*    56     8=
- */
-> > >                 /* --- cacheline 1 boundary (64 bytes) --- */
-> > >                 __u32              flags;              /*    64     4=
- */
-> > >                 __u32              cpu;                /*    68     4=
- */
-> > >                 __u32              batch_size;         /*    72     4=
- */
-> > >         } test;                                        /*     0    80=
- */
-> > >         struct {
-> > >                 union {
-> > >                         __u32      start_id;           /*     0     4=
- */
-> > >                         __u32      prog_id;            /*     0     4=
- */
-> > >                         __u32      map_id;             /*     0     4=
- */
-> > >                         __u32      btf_id;             /*     0     4=
- */
-> > >                         __u32      link_id;            /*     0     4=
- */
-> > >                 };                                     /*     0     4=
- */
-> > >                 __u32              next_id;            /*     4     4=
- */
-> > >                 __u32              open_flags;         /*     8     4=
- */
-> > >         };                                             /*     0    12=
- */
-> > >         struct {
-> > >                 __u32              bpf_fd;             /*     0     4=
- */
-> > >                 __u32              info_len;           /*     4     4=
- */
-> > >                 __u64              info;               /*     8     8=
- */
-> > >         } info;                                        /*     0    16=
- */
-> > >         struct {
-> > >                 union {
-> > >                         __u32      target_fd;          /*     0     4=
- */
-> > >                         __u32      target_ifindex;     /*     0     4=
- */
-> > >                 };                                     /*     0     4=
- */
-> > >                 __u32              attach_type;        /*     4     4=
- */
-> > >                 __u32              query_flags;        /*     8     4=
- */
-> > >                 __u32              attach_flags;       /*    12     4=
- */
-> > >                 __u64              prog_ids;           /*    16     8=
- */
-> > >                 union {
-> > >                         __u32      prog_cnt;           /*    24     4=
- */
-> > >                         __u32      count;              /*    24     4=
- */
-> > >                 };                                     /*    24     4=
- */
-> > >
-> > >                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                 __u64              prog_attach_flags;  /*    32     8=
- */
-> > >                 __u64              link_ids;           /*    40     8=
- */
-> > >                 __u64              link_attach_flags;  /*    48     8=
- */
-> > >                 __u64              revision;           /*    56     8=
- */
-> > >         } query;                                       /*     0    64=
- */
-> > >         struct {
-> > >                 __u64              name;               /*     0     8=
- */
-> > >                 __u32              prog_fd;            /*     8     4=
- */
-> > >
-> > >                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                 __u64              cookie;             /*    16     8=
- */
-> > >         } raw_tracepoint;                              /*     0    24=
- */
-> > >         struct {
-> > >                 __u64              btf;                /*     0     8=
- */
-> > >                 __u64              btf_log_buf;        /*     8     8=
- */
-> > >                 __u32              btf_size;           /*    16     4=
- */
-> > >                 __u32              btf_log_size;       /*    20     4=
- */
-> > >                 __u32              btf_log_level;      /*    24     4=
- */
-> > >                 __u32              btf_log_true_size;  /*    28     4=
- */
-> > >                 __u32              btf_flags;          /*    32     4=
- */
-> > >                 __s32              btf_token_fd;       /*    36     4=
- */
-> > >         };                                             /*     0    40=
- */
-> > >         struct {
-> > >                 __u32              pid;                /*     0     4=
- */
-> > >                 __u32              fd;                 /*     4     4=
- */
-> > >                 __u32              flags;              /*     8     4=
- */
-> > >                 __u32              buf_len;            /*    12     4=
- */
-> > >                 __u64              buf;                /*    16     8=
- */
-> > >                 __u32              prog_id;            /*    24     4=
- */
-> > >                 __u32              fd_type;            /*    28     4=
- */
-> > >                 __u64              probe_offset;       /*    32     8=
- */
-> > >                 __u64              probe_addr;         /*    40     8=
- */
-> > >         } task_fd_query;                               /*     0    48=
- */
-> > >         struct {
-> > >                 union {
-> > >                         __u32      prog_fd;            /*     0     4=
- */
-> > >                         __u32      map_fd;             /*     0     4=
- */
-> > >                 };                                     /*     0     4=
- */
-> > >                 union {
-> > >                         __u32      target_fd;          /*     4     4=
- */
-> > >                         __u32      target_ifindex;     /*     4     4=
- */
-> > >                 };                                     /*     4     4=
- */
-> > >                 __u32              attach_type;        /*     8     4=
- */
-> > >                 __u32              flags;              /*    12     4=
- */
-> > >                 union {
-> > >                         __u32      target_btf_id;      /*    16     4=
- */
-> > >                         struct {
-> > >                                 __u64 iter_info;       /*    16     8=
- */
-> > >                                 __u32 iter_info_len;   /*    24     4=
- */
-> > >                         };                             /*    16    16=
- */
-> > >                         struct {
-> > >                                 __u64 bpf_cookie;      /*    16     8=
- */
-> > >                         } perf_event;                  /*    16     8=
- */
-> > >                         struct {
-> > >                                 __u32 flags;           /*    16     4=
- */
-> > >                                 __u32 cnt;             /*    20     4=
- */
-> > >                                 __u64 syms;            /*    24     8=
- */
-> > >                                 __u64 addrs;           /*    32     8=
- */
-> > >                                 __u64 cookies;         /*    40     8=
- */
-> > >                         } kprobe_multi;                /*    16    32=
- */
-> > >                         struct {
-> > >                                 __u32 target_btf_id;   /*    16     4=
- */
-> > >
-> > >                                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                                 __u64 cookie;          /*    24     8=
- */
-> > >                         } tracing;                     /*    16    16=
- */
-> > >                         struct {
-> > >                                 __u32 pf;              /*    16     4=
- */
-> > >                                 __u32 hooknum;         /*    20     4=
- */
-> > >                                 __s32 priority;        /*    24     4=
- */
-> > >                                 __u32 flags;           /*    28     4=
- */
-> > >                         } netfilter;                   /*    16    16=
- */
-> > >                         struct {
-> > >                                 union {
-> > >                                         __u32  relative_fd; /*    16 =
-    4 */
-> > >                                         __u32  relative_id; /*    16 =
-    4 */
-> > >                                 };                     /*    16     4=
- */
-> > >
-> > >                                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                                 __u64 expected_revision; /*    24    =
- 8 */
-> > >                         } tcx;                         /*    16    16=
- */
-> > >                         struct {
-> > >                                 __u64 path;            /*    16     8=
- */
-> > >                                 __u64 offsets;         /*    24     8=
- */
-> > >                                 __u64 ref_ctr_offsets; /*    32     8=
- */
-> > >                                 __u64 cookies;         /*    40     8=
- */
-> > >                                 __u32 cnt;             /*    48     4=
- */
-> > >                                 __u32 flags;           /*    52     4=
- */
-> > >                                 __u32 pid;             /*    56     4=
- */
-> > >                         } uprobe_multi;                /*    16    48=
- */
-> > >                         struct {
-> > >                                 union {
-> > >                                         __u32  relative_fd; /*    16 =
-    4 */
-> > >                                         __u32  relative_id; /*    16 =
-    4 */
-> > >                                 };                     /*    16     4=
- */
-> > >
-> > >                                 /* XXX 4 bytes hole, try to pack */
-> > >
-> > >                                 __u64 expected_revision; /*    24    =
- 8 */
-> > >                         } netkit;                      /*    16    16=
- */
-> > >                 };                                     /*    16    48=
- */
-> > >         } link_create;                                 /*     0    64=
- */
-> > >         struct {
-> > >                 __u32              link_fd;            /*     0     4=
- */
-> > >                 union {
-> > >                         __u32      new_prog_fd;        /*     4     4=
- */
-> > >                         __u32      new_map_fd;         /*     4     4=
- */
-> > >                 };                                     /*     4     4=
- */
-> > >                 __u32              flags;              /*     8     4=
- */
-> > >                 union {
-> > >                         __u32      old_prog_fd;        /*    12     4=
- */
-> > >                         __u32      old_map_fd;         /*    12     4=
- */
-> > >                 };                                     /*    12     4=
- */
-> > >         } link_update;                                 /*     0    16=
- */
-> > >         struct {
-> > >                 __u32              link_fd;            /*     0     4=
- */
-> > >         } link_detach;                                 /*     0     4=
- */
-> > >         struct {
-> > >                 __u32              type;               /*     0     4=
- */
-> > >         } enable_stats;                                /*     0     4=
- */
-> > >         struct {
-> > >                 __u32              link_fd;            /*     0     4=
- */
-> > >                 __u32              flags;              /*     4     4=
- */
-> > >         } iter_create;                                 /*     0     8=
- */
-> > >         struct {
-> > >                 __u32              prog_fd;            /*     0     4=
- */
-> > >                 __u32              map_fd;             /*     4     4=
- */
-> > >                 __u32              flags;              /*     8     4=
- */
-> > >         } prog_bind_map;                               /*     0    12=
- */
-> > >         struct {
-> > >                 __u32              flags;              /*     0     4=
- */
-> > >                 __u32              bpffs_fd;           /*     4     4=
- */
-> > >         } token_create;                                /*     0     8=
- */
-> > >   };
-> > >
-> > >   root@number:~#
-> > >
-> > > So this is one case where BTF gets us only that far, not getting all
-> > > the way to automate the pretty printing of unions designed like 'unio=
-n
-> > > bpf_attr', we will need a custom pretty printer for this union, as us=
-ing
-> > > the libbpf union BTF dumper is way too verbose:
-> > >
-> > >   root@number:~# perf trace --max-events 1 -e bpf bpftool map
-> > >        0.000 ( 0.054 ms): bpftool/3409073 bpf(cmd: PROG_LOAD, uattr: =
-(union bpf_attr){(struct){.map_type =3D (__u32)1,.key_size =3D (__u32)2,.va=
-lue_size =3D (__u32)2755142048,.max_entries =3D (__u32)32764,.map_flags =3D=
- (__u32)150263906,.inner_map_fd =3D (__u32)21920,},(struct){.map_fd =3D (__=
-u32)1,.key =3D (__u64)140723063628192,(union){.value =3D (__u64)94145833392=
-226,.next_key =3D (__u64)94145833392226,},},.batch =3D (struct){.in_batch =
-=3D (__u64)8589934593,.out_batch =3D (__u64)140723063628192,.keys =3D (__u6=
-4)94145833392226,},(struct){.prog_type =3D (__u32)1,.insn_cnt =3D (__u32)2,=
-.insns =3D (__u64)140723063628192,.license =3D (__u64)94145833392226,},(str=
-uct){.pathname =3D (__u64)8589934593,.bpf_fd =3D (__u32)2755142048,.file_fl=
-ags =3D (__u32)32764,.path_fd =3D (__s32)150263906,},(struct){(union){.targ=
-et_fd =3D (__u32)1,.target_ifindex =3D (__u32)1,},.attach_bpf_fd =3D (__u32=
-)2,.attach_type =3D (__u32)2755142048,.attach_flags =3D (__u32)32764,.repla=
-ce_bpf_fd =3D (__u32)150263906,(union){.relative_fd =3D (__u32)21920,.relat=
-ive_id =3D (__u32)21920,},},.test =3D (struct){.prog_fd =3D (__u32)1,.retva=
-l =3D (__u32)2,.data_size_in =3D (__u32)2755142048,.data_size_out =3D (__u3=
-2)32764,.data_in =3D (__u64)94145833392226,},(struct){(union){.start_id =3D=
- (__u32)1,.prog_id =3D (__u32)1,.map_id =3D (__u32)1,.btf_id =3D (__u32)1,.=
-link_id =3D (__u32)1,},.next_id =3D (__u32)2,.open_flags =3D (__u32)2755142=
-048,},.info =3D (struct){.bpf_fd =3D (__u32)1,.info_len =3D (__u32)2,.info =
-=3D (__u64)140723063628192,},.query =3D (struct){(union){.target_fd =3D (__=
-u32)1,.target_ifindex =3D (__u32)1,},.attach_type =3D (__u32)2,.query_flags=
- =3D (__u32)2755142048,.attach_flags =3D (__u32)32764,.prog_ids =3D (__u64)=
-94145833392226,},.raw_tracepoint =3D (struct){.name =3D (__u64)8589934593,.=
-prog_fd =3D (__u32)2755142048,.cookie =3D (__u64)94145833392226,},(struct){=
-.btf =3D (__u64)8589934593,.btf_log_buf =3D (__u64)140723063628192,.btf_siz=
-e =3D (__u32)150263906,.btf_log_size =3D (__u32)21920,},.task_fd_query =3D =
-(struct){.pid =3D (__u32)1,.fd =3D (__u32)2,.flags =3D (__u32)2755142048,.b=
-uf_len =3D (__u32)32764,.buf =3D (__u64)94145833392226,},.link_create =3D (=
-struct){(union){.prog_fd =3D (__u32)1,.map_fd =3D (__u32)1,},(u) =3D 3
-> > >   root@number:~# 2: prog_array  name hid_jmp_table  flags 0x0
-> > >         key 4B  value 4B  max_entries 1024  memlock 8440B
-> > >         owner_prog_type tracing  owner jited
-> > >   13: hash_of_maps  name cgroup_hash  flags 0x0
-> > >         key 8B  value 4B  max_entries 2048  memlock 167584B
-> > >         pids systemd(1)
-> > >   960: array  name libbpf_global  flags 0x0
-> > >         key 4B  value 32B  max_entries 1  memlock 280B
-> > >   961: array  name pid_iter.rodata  flags 0x480
-> > >         key 4B  value 4B  max_entries 1  memlock 8192B
-> > >         btf_id 1846  frozen
-> > >         pids bpftool(3409073)
-> > >   962: array  name libbpf_det_bind  flags 0x0
-> > >         key 4B  value 32B  max_entries 1  memlock 280B
-> > >
-> > >   root@number:~#
-> > >
-> > > For simpler unions this may be better than not seeing any payload, so
-> > > keep it there.
-> > >
-> > > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > Cc: Howard Chu <howardchu95@gmail.com>
-> > > Cc: Ian Rogers <irogers@google.com>
-> > > Cc: Jiri Olsa <jolsa@kernel.org>
-> > > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > ---
-> > >  tools/perf/builtin-trace.c | 17 ++++++++++-------
-> > >  1 file changed, 10 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > > index c47fde936c33a2e6..d28a56cc171b2b2e 100644
-> > > --- a/tools/perf/builtin-trace.c
-> > > +++ b/tools/perf/builtin-trace.c
-> > > @@ -1075,7 +1075,7 @@ static size_t trace__btf_scnprintf(struct trace=
- *trace, struct syscall_arg *arg,
-> > >
-> > >         if (btf_is_enum(arg_fmt->type))
-> > >                 return btf_enum_scnprintf(arg_fmt->type, trace->btf, =
-bf, size, val);
-> > > -       else if (btf_is_struct(arg_fmt->type))
-> > > +       else if (btf_is_struct(arg_fmt->type) || btf_is_union(arg_fmt=
-->type))
-> > >                 return btf_struct_scnprintf(arg_fmt->type, trace->btf=
-, bf, size, arg);
-> > >
-> > >         return 0;
-> > > @@ -2365,8 +2365,7 @@ static size_t syscall__scnprintf_args(struct sy=
-scall *sc, char *bf, size_t size,
-> > >                         default_scnprintf =3D sc->arg_fmt[arg.idx].sc=
-nprintf;
-> > >
-> > >                         if (trace->force_btf ||
-> > > -                           (default_scnprintf =3D=3D NULL ||
-> > > -                            (default_scnprintf =3D=3D SCA_PTR && str=
-str(field->type, "struct")))) {
-> > > +                           (default_scnprintf =3D=3D NULL || (defaul=
-t_scnprintf =3D=3D SCA_PTR))) {
 > >
-> > Can we discard the parenthesis surrounding the 'default_scnprintf =3D=
-=3D SCA_PTR'?
+> > -3. IOMMUFD_OBJ_HW_PAGETABLE is created when an external driver calls
+> > the IOMMUFD
+> > +3. IOMMUFD_OBJ_HWPT_PAGING can be created in two ways:
+> > +
+> > +   IOMMUFD_OBJ_HWPT_PAGING is created when an external driver calls
+> > the IOMMUFD
+> >     kAPI to attach a bound device to an IOAS. Similarly the external driver uAPI
+> >     allows userspace to initiate the attaching operation. If a compatible
+> >     pagetable already exists then it is reused for the attachment. Otherwise a
+> >     new pagetable object and iommu_domain is created. Successful
+> > completion of
+> >     this operation sets up the linkages among IOAS, device and
+> > iommu_domain. Once
+> > -   this completes the device could do DMA.
+> > -
+> > -   Every iommu_domain inside the IOAS is also represented to userspace as
+> > a
+> > -   HW_PAGETABLE object.
+> > +   this completes the device could do DMA. Note that every iommu_domain
+> > inside
+> > +   the IOAS is also represented to userspace as an
+> > IOMMUFD_OBJ_HWPT_PAGING.
+> 
+> the last sentence is redundant. here we are talking about how HWPT_PAGING
+> is created so it's implied. probably you can state that HWPT_PAGING object
+> is created when talking about "otherwise a new page table object and
+> iommu_domain is created".
+
+I don't quite get this part...where is the redundancy? And where
+is "otherwise a new page table object .."?
+
+
+> > +
+> > +4. IOMMUFD_OBJ_HWPT_NESTED can be only manually created via the
+> > IOMMU_HWPT_ALLOC
+> > +   uAPI, provided an hwpt_id via @pt_id to associate the new
+> > HWPT_NESTED object
+> > +   to the corresponding HWPT_PAGING object. The associating
+> > HWPT_PAGING object
+> > +   must be a nesting parent manually allocated via the same uAPI previously
+> > with
+> > +   an IOMMU_HWPT_ALLOC_NEST_PARENT flag, otherwise the allocation
+> > will fail. The
+> > +   allocation will be further validated by the IOMMU driver of an IOMMU
+> > hardware
+> > +   that the given device (via @dev_id) is physically linked to, to ensure that
+> > +   the nesting parent domain and a nested domain being allocated are
+> > compatible.
+> 
+> just "validated by the IOMMU driver to ensure that ..."
+
+OK.
+
 > >
-> > (default_scnprintf =3D=3D NULL || default_scnprintf =3D=3D SCA_PTR)) {
+> >     .. note::
 > >
-> > Thanks,
-> > Howard
-> > >                                 btf_printed =3D trace__btf_scnprintf(=
-trace, &arg, bf + printed,
-> > >                                                                    si=
-ze - printed, val, field->type);
-> > >                                 if (btf_printed) {
-> > > @@ -3663,14 +3662,18 @@ static int trace__bpf_sys_enter_beauty_map(st=
-ruct trace *trace, int key, unsigne
-> > >                 return -1;
-> > >
-> > >         for (i =3D 0, field =3D sc->args; field; ++i, field =3D field=
-->next) {
-> > > -               struct_offset =3D strstr(field->type, "struct ");
-> > > -
-> > >                 // XXX We're only collecting pointer payloads _from_ =
-user space
-> > >                 if (!sc->arg_fmt[i].from_user)
-> > >                         continue;
-> > >
-> > > -               if (field->flags & TEP_FIELD_IS_POINTER && struct_off=
-set) { /* struct */
-> > > -                       struct_offset +=3D 7;
-> > > +               struct_offset =3D strstr(field->type, "struct ");
-> > > +               if (struct_offset =3D=3D NULL)
-> > > +                       struct_offset =3D strstr(field->type, "union =
-");
-> > > +               else
-> > > +                       struct_offset++; // "union" is shorter
-> > > +
-> > > +               if (field->flags & TEP_FIELD_IS_POINTER && struct_off=
-set) { /* struct or union (think BPF's attr arg) */
-> > > +                       struct_offset +=3D 6;
-> > >
-> > >                         /* for 'struct foo *', we only want 'foo' */
-> > >                         for (tmp =3D struct_offset, cnt =3D 0; *tmp !=
-=3D ' ' && *tmp !=3D '\0'; ++tmp, ++cnt) {
-> > > --
-> > > 2.46.0
-> > >
+> > -      Future IOMMUFD updates will provide an API to create and manipulate
+> > the
+> > -      HW_PAGETABLE directly.
+> > +      Either a manual IOMMUFD_OBJ_HWPT_PAGING or an
+> > IOMMUFD_OBJ_HWPT_NESTED is
+> > +      created via the same IOMMU_HWPT_ALLOC uAPI. The difference is at
+> > the type
+> > +      of the object passed in via the @pt_id field of struct
+> > iommufd_hwpt_alloc:
+> > +      When @pt_id carries an ioas_id to an IOAS object, the
+> > IOMMU_HWPT_ALLOC
+> > +      call is instructed to allocate an HWPT_PAGING object only.
+> > +      When @pt_id carries an hwpt_id to an HWPT_PAGING object, the uAPI
+> > call
+> > +      is instructed to allocate an HWPT_NESTED object only.
+> > +      If any other type of object is passed in via the @pt_id, the uAPI call
+> > +      will fail.
+> >
+> 
+> I'm not sure whether this note is still required. probably just one
+> sentence to highlight that it's @pt_id field to mark out the
+> object type? most descriptions duplicate with the earlier words.
+
+I feel it's a nice summary though... I'll see how I can simplify it.
+
+Thanks
+Nicolin
 
