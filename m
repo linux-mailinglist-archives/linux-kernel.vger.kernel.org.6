@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-325080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989239754C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A127097548D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4771D1F234D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CE342837F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E939619E971;
-	Wed, 11 Sep 2024 13:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888BD154BE4;
+	Wed, 11 Sep 2024 13:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="W0hTDX/6"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9mLSEnF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EAD184559;
-	Wed, 11 Sep 2024 13:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C984819F10A;
+	Wed, 11 Sep 2024 13:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062766; cv=none; b=sXGyPWU4q26fztY+WffP8bZDk7TIJ0BStDNDAFW1nrJeWawUYcMAQC30b89x0foAo3QP6mRuFzIpL+0aZyeIZdHOivv1RWbtTA4qgEYxgEyu9in+B0L44jQuXXC9tcOjO81qFlNoI7O1pEz/UpHPRGqPcRVenI++UbDekmn+5QM=
+	t=1726062613; cv=none; b=fDEqzC8EZ4LD/JRrkn4ibJSO7vXnuQRkHuhqocr3nqvFrCRflvmy1bRClmPtEAscMvT2tPE3IVb/1fRc/sh35FlBdg3nVeuKktWJQzNiZ67hxbWpvnsNcL+aHOUrM4rwlyl5nPBAivBOwvq+CLWIJPvMdtOx3oOnXkaVGOhIcGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062766; c=relaxed/simple;
-	bh=9a+r1QhU384OiYxfZOMtoDimOlvR9dzSCJtmmsOcydU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qETnAaK8XfVvCv1Sf64SX997+tiJVsauEVvcmV7VPRey/P3htVS1E/tWcIMYG25WOpQhriJe6AWC8M0JTMvihz+lPSW0q33IxRu0nezZSBbXWVqfQZM/UToKVTqayGlGL9hSCkdr/51wfv4/ny7W6iYLZkdtg63mNAtciJibTOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=W0hTDX/6; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BALUbe005722;
-	Wed, 11 Sep 2024 15:52:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	A8c+AY+qNssnoCfN0gZ6jZd2oPaxif5QtDT69HbwCEA=; b=W0hTDX/67HYbz70c
-	mUJAZJltZcRY4co1wK6bvrv0Ar8Qnbq5kf+q/MYrXzQ9Zn3k6lq7nIaSEewkZWlp
-	IUKXR8Jb3mKD6NpBbElGV/2Qctsu2DYs8J8YgjRsij03N/phG3tWkpQPEq0dqyB/
-	Pb30tJsfKZjLT5TCovpjg6ma2NmvQAcn9GNxDM196GUpejB15rGaAF/erJX+z73H
-	6/rphJyfJxRvY/nAy2pRgOAYAxhi5lTe8tvnfmAHGUDWpSgXBP4QEuOE9LFiq2/H
-	OHfHDQFB/9f8wFnu8N6NQw31E8Mf3VPKvnW8uFtkcGwxfTJP0R39YOGs9cEWxV2a
-	aLhCGQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gy7sfgr3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 15:52:29 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A50944005B;
-	Wed, 11 Sep 2024 15:51:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 460C6231537;
-	Wed, 11 Sep 2024 15:50:15 +0200 (CEST)
-Received: from localhost (10.48.86.208) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 11 Sep
- 2024 15:50:14 +0200
-From: Hugues Fruchet <hugues.fruchet@foss.st.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ezequiel Garcia
-	<ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans
- Verkuil <hverkuil-cisco@xs4all.nl>,
-        Fritz Koenig <frkoenig@chromium.org>,
-        Sebastian Fricke <sebastian.fricke@collabora.com>,
-        Daniel Almeida
-	<daniel.almeida@collabora.com>,
-        Andrzej Pietrasiewicz
-	<andrzej.p@collabora.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-CC: Hugues Fruchet <hugues.fruchet@foss.st.com>
-Subject: [PATCH 2/2] media: verisilicon: add WebP decoding support
-Date: Wed, 11 Sep 2024 15:50:11 +0200
-Message-ID: <20240911135011.161217-3-hugues.fruchet@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
-References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
+	s=arc-20240116; t=1726062613; c=relaxed/simple;
+	bh=wYsdocLzsrX8Sgm48gaz7cTnSul0At+itod/zabIoOU=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=aBU9nf/9tzNwPwwxrSPC8ZUHPWq1i+XzTcZz9gVg1q/W2zL18ndg5i8G3+mR9iEWJ5Qqif6vPFrUmE7Ix+XPM/cgRk13+J69UsHugYeOqNd9jIsFKJjFruWs7Ae0UOmpaNO1o8KqN/D+3ruS186O+JJC4NBjlm5kInqlpDQ5MgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9mLSEnF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B63C4CECE;
+	Wed, 11 Sep 2024 13:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726062613;
+	bh=wYsdocLzsrX8Sgm48gaz7cTnSul0At+itod/zabIoOU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=C9mLSEnFhr+nx8dP8a7N7jr4B5FWnpm1pNgKZbvRR/SAVMO5WwJhZagTfehif0eSW
+	 YdaOYbeguafk5SJQxOMB2uOmnPCMPLN1c1KC51RXMlJgBzYbRYDcAhZ9C19Na7B88H
+	 h0w/v5Q5iffhYd44cmR+3Vhczin2G/aLrnGh6XH3NldK97dywbEFp/dOroq5aPR25N
+	 Fnf0usfOFELuqbMvbbRyUGZAZQjrw1T4tRlBV5oLmgDXV6NCtSgEGGHLYt0G0pFxMf
+	 YBB2AyQoVWGCNd9naFhCBl4SQUQvNmgrHrsPCP3+904UONphV2x6VO7pyoSeBXs6ZH
+	 u/WTtJIdCVYVg==
+Date: Wed, 11 Sep 2024 08:50:12 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
+ kernel@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com>
+References: <20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com>
+Message-Id: <172606224532.90794.3646639531528428689.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] arm64: dts: qcom: Add support for the QCS9100
+ SoC and board
 
-Add WebP picture decoding support to VP8 stateless decoder.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
----
- drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
- drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
- 2 files changed, 8 insertions(+)
+On Wed, 11 Sep 2024 19:10:54 +0800, Tengfei Fan wrote:
+> Add QCS9100 SoC ID and board device trees support.
+> QCS9100 is a variant of SA8775p, and they are fully compatible with each
+> other.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Changes in v2:
+> - Add SoC binding for add QCS9100 Ride and QCS9100 Ride Rev3
+> - Update SoC binding patch commit message
+> - Add QCS9100 Ride and Ride Rev3 board device tree patches
+> - Link to v1: https://lore.kernel.org/r/20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com
+> 
+> ---
+> Tengfei Fan (4):
+>       dt-bindings: arm: qcom,ids: add SoC ID for QCS9100
+>       soc: qcom: socinfo: add QCS9100 ID
+>       dt-bindings: arm: qcom: Document qcs9100-ride and qcs9100-ride Rev3
+>       arm64: dts: qcom: qcs9100: Add support for the QCS9100 Ride and Ride Rev3 boards
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml |  8 ++++++++
+>  arch/arm64/boot/dts/qcom/Makefile               |  2 ++
+>  arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts    | 11 +++++++++++
+>  arch/arm64/boot/dts/qcom/qcs9100-ride.dts       | 11 +++++++++++
+>  drivers/soc/qcom/socinfo.c                      |  1 +
+>  include/dt-bindings/arm/qcom,ids.h              |  1 +
+>  6 files changed, 34 insertions(+)
+> ---
+> base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
+> change-id: 20240911-add_qcs9100_support-dbb22dd8b475
+> 
+> Best regards,
+> --
+> Tengfei Fan <quic_tengfan@quicinc.com>
+> 
+> 
+> 
 
-diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-index c623b3b0be18..e7d4db788e57 100644
---- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
-+++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-@@ -232,6 +232,7 @@
- #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
- #define G1_REG_ADDR_STR					0x030
- #define G1_REG_ADDR_DST					0x034
-+#define G1_REG_ADDR_DST_CHROMA				0x038
- #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
- #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
- #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
-diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-index 851eb67f19f5..c6a7584b716a 100644
---- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-+++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-@@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
- 
- 	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
- 	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
-+
-+	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
-+		vdpu_write_relaxed(vpu, dst_dma +
-+				   ctx->dst_fmt.height * ctx->dst_fmt.width,
-+				   G1_REG_ADDR_DST_CHROMA);
- }
- 
- int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
-@@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
- 		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
- 	if (hdr->lf.level == 0)
- 		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
-+	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
-+		reg |= G1_REG_DEC_CTRL0_WEBP_E;
- 	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
- 
- 	/* Frame dimensions */
--- 
-2.25.1
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/qcs9100-ride-r3.dtb qcom/qcs9100-ride.dtb' for 20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com:
+
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+
+
+
+
 
 
