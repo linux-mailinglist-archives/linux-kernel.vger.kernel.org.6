@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-325192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1C39755F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C5E9755D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D69285542
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50831F25FD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718EC1B2EEE;
-	Wed, 11 Sep 2024 14:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD881A3AA6;
+	Wed, 11 Sep 2024 14:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="f8TRd/op"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kq3rJPOW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542F1B2EC2;
-	Wed, 11 Sep 2024 14:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256971A3053;
+	Wed, 11 Sep 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065963; cv=none; b=kB82uJMQvqRGBxHDQWU4iBWZhpo4JwTSHWd/XJLxVp10161InYojdtaIRXWvlZz/e5GUfcmIY5E5vprJJwr6YdU2Y9baAFCPVQsBHnpHcwgu1xNLelbkv3Iy0KaYizUg7pJTtNEMlApSUGBdzTQ+ARS2fYp5n9vvz6oGQQ3hWEw=
+	t=1726065911; cv=none; b=MO0+9+OZ87/COUAcFwUC0PAcac2L2zR1gs7A39vd1k6FgwXYuFDSxINL2R+2TRGGiVVTDhIq9lZhUR9xHZ00TMz/U5oLfikknIfdb/BezIRqW2FMYf5YUhRbV85J89mUp8R/WuKl1TUIcfV4t0t+q+4E8KnKpQ6+yjn/wvwqv/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065963; c=relaxed/simple;
-	bh=tAhx4WtHwtNNtqBtA6C9IS/6URDL5GzuezIWXIWXOJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JV+8xFYUahd7V3MjwoypKLclEzeoBTM0857ei/D49A5It1w5Ek4rojiaX3ZGmb4hVKIYCo51wfuxIAUl9fZVCbQVwatHPcuTGBf27iDKorKxX4l+xGbkwOCNCN2jYuCfog4ypEX1x44EaHCThptTgOGqCo49P+Bm163Jk/in5qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=f8TRd/op; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZrWTg49UzMkjH8qd8vKX5SzyF13hb+rnSQKtHmhmDkI=; b=f8TRd/opCrY9v2ZjWMMp83cRTL
-	K8o057bdo7X+rtob6NwPA+uNCqwDbmAUYFeIZd6ShwqIRTBRRgq/TkNEG8FpwNDUl61n13XXNjRfo
-	L/wvYEiBYcPJ275FTVs6AoJ1R55b4O7yXher5u36fgakVeVl/A7tEmS9ahsG3H6xcgbgthySTSrHD
-	ba2x2Az6gGYRk9WHA/sB3qy5rbduq6QgwF4cZ8zD/lxKMxVreJwGZlG/NwU11Rd1vUKu3jJBjYuXr
-	ChfM17dfstrvbewzcKEifKQ2ILLXzPsc4Hz+qOEnh6qBLVhaLiAi76y5NeURt73wDP7P0pLjMh4ZC
-	apRs/NMA==;
-Received: from [177.172.122.98] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1soObR-00CTwi-OM; Wed, 11 Sep 2024 16:45:54 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v4 10/10] docs: tmpfs: Add casefold options
-Date: Wed, 11 Sep 2024 11:45:02 -0300
-Message-ID: <20240911144502.115260-11-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240911144502.115260-1-andrealmeid@igalia.com>
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1726065911; c=relaxed/simple;
+	bh=jqNxTzMz4Z3qCpVlcxRhkuEOkHSxJRuyKZgnduF8C5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G7eL5wUnx12AflrOygYNxiUB3cjgR4aZHj4RVjmOlyclZzyzJADf/49y59G7c1gk7ytdoXMEoFwry1H8BWmy2QcQUl3En/BHvVl1ifQq9bd+vU8LCwzwhnYzg7GY2hKLGTPVxJ1vf5SAsx9c+W8eNxn6bgBYY0JXE6hJ/QDF54I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kq3rJPOW; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726065910; x=1757601910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jqNxTzMz4Z3qCpVlcxRhkuEOkHSxJRuyKZgnduF8C5Q=;
+  b=Kq3rJPOWmLjluK8EYcA2XfOM3VDQxmT/p1i56/Z/oK/Cd72v+k518Csb
+   mzP3PUyB7CERfYNOxEZRTUecmpja6WntGzh6403/UE5CCOYj6Vr3dnrqd
+   2q0h1WOXGK48rdVImb8yLnYKgdoe3B+Z4qoTw9y1ub6axYTywDQ6bS39S
+   dk1+d2JUiXeuvsxzP6C5J4F9mEHrsXWL1Ri44JcIqKDzF3WwhwB23HY/+
+   fIOlQod46h8gq7axhQbVDwDuGrInfZfjnAAE+koRYWefHYpZiFR+lkCdC
+   DntJfu1WShzXdRr26sDOWwF10JHOwuMLRfKbcG6V46/Vzl+eqEbaR8VeI
+   g==;
+X-CSE-ConnectionGUID: QPB+eOtTRR6b1RmO4Ja9dQ==
+X-CSE-MsgGUID: 9n/RRvIgS0CTd7SxzAZXlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25026419"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="25026419"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:45:10 -0700
+X-CSE-ConnectionGUID: vt+rUVppS0+ITLMYGxsYGg==
+X-CSE-MsgGUID: 8u0i2ioaSQSwBNytgNzJPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="98226910"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:45:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1soOaf-00000007aYQ-17GJ;
+	Wed, 11 Sep 2024 17:45:05 +0300
+Date: Wed, 11 Sep 2024 17:45:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kimriver Liu <kimriver.liu@siengine.com>
+Cc: jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
+	jsd@semihalf.com, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9] i2c: designware: fix controller is holding SCL low
+ while ENABLE bit is disabled
+Message-ID: <ZuGs8Vbd9zYuNo_U@smile.fi.intel.com>
+References: <69401183add8f79ee98b84c91983204df753a3e6.1726043461.git.kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69401183add8f79ee98b84c91983204df753a3e6.1726043461.git.kimriver.liu@siengine.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Document mounting options for casefold support in tmpfs.
+On Wed, Sep 11, 2024 at 04:39:45PM +0800, Kimriver Liu wrote:
+> It was observed that issuing ABORT bit (IC_ENABLE[1]) will not
+> work when IC_ENABLE is already disabled.
+> 
+> Check if ENABLE bit (IC_ENABLE[0]) is disabled when the controller
+> is holding SCL low. If ENABLE bit is disabled, the software need
+> to enable it before trying to issue ABORT bit. otherwise,
+> the controller ignores any write to ABORT bit.
+> 
+> These kernel logs show up whenever an I2C transaction is
+> attempted after this failure.
+> i2c_designware e95e0000.i2c: timeout waiting for bus ready
+> i2c_designware e95e0000.i2c: timeout in disabling adapter
+> 
+> The patch can be fix the controller cannot be disabled while
+> SCL is held low in ENABLE bit is already disabled.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v3:
-- Rewrote note about "this doesn't enable casefold by default" (Krisman)
----
- Documentation/filesystems/tmpfs.rst | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+...
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe..f72fcc0baef3 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,28 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insensitive lookup support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only UTF-8
-+                  encodings are supported. If no argument is used, it will load
-+                  the latest UTF-8 encoding available.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). In this mode, the filesystem refuses to create file
-+                  and directory with names containing invalid UTF-8 characters.
-+================= ==============================================================
-+
-+This option doesn't render the entire filesystem case-insensitive. One needs to
-+still set the casefold flag per directory, by flipping +F attribute in an empty
-+directory. Nevertheless, new directories will inherit the attribute. The
-+mountpoint itself will cannot be made case-insensitive.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name /mytmpfs
-+    $ mount -t tmpfs -o casefold fs_name /mytmpfs
-+
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +272,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
+> +/*
+> + * This functions waits controller idling before disabling I2C
+> + * When the controller is not in the IDLE state,
+> + * MST_ACTIVITY bit (IC_STATUS[5]) is set.
+> + * Values:
+> + * 0x1 (ACTIVE): Controller not idle
+> + * 0x0 (IDLE): Controller is idle
+> + * The function is called after returning the end of the current transfer
+> + * Returns:
+
+> + * Return 0 as controller IDLE
+> + * Return a negative errno as controller ACTIVE
+
+But why non-boolean again?
+
+> + */
+> +static int i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
+> +{
+> +	u32 status;
+> +
+> +	regmap_read(dev->map, DW_IC_STATUS, &status);
+> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
+> +		return 0;
+> +
+> +	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> +			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> +			1100, 20000);
+> +}
+
+...
+
+> +	/*
+> +	 * This happens rarely (~1:500) and is hard to reproduce. Debug trace
+> +	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
+> +	 * if disable IC_ENABLE.ENABLE immediately that can result in
+> +	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low. Check if
+> +	 * controller is still ACTIVE before disabling I2C.
+> +	 */
+
+> +	if (i2c_dw_is_controller_active(dev))
+> +		dev_err(dev->dev, "controller active\n");
+
+No, this is rarely we skip the error code returned. Either you find the
+meaningful use of the returned error code, or change to boolean.
+
+Personally I think the latter is what we need for now.
+
+>  	/*
+>  	 * We must disable the adapter before returning and signaling the end
+>  	 * of the current transfer. Otherwise the hardware might continue
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
