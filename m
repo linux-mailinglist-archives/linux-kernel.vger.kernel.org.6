@@ -1,279 +1,101 @@
-Return-Path: <linux-kernel+bounces-324251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A55974A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:13:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53E7974A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC04B285F41
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACA71F26A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5A7D3F8;
-	Wed, 11 Sep 2024 06:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2407DA9E;
+	Wed, 11 Sep 2024 06:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hACQQODt"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3N7AesZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B051178C91
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086742AF18;
+	Wed, 11 Sep 2024 06:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726035175; cv=none; b=WBBNtG9ardwYcyl0BCGqtK0qKOdpML6wb/FmZMn/ZcFcSLBm1LkX4uNKyLdFbaw7LSTyONLJZpnkPVWSPW9zI/MHkd+ZnwoIPhByDzSmEudjdsRzyh40w4U1982/eAt0SeDKiv1rvnUNQUZbAGZEuoqrardLQUHWabZer8N8Rvw=
+	t=1726035194; cv=none; b=r77Spbksm0ZJ2tyD0NagQout3aZ0aMP5yvmfFUZS4pyz9EUt0d7d2JMOTzmHOS+LsII0I/6oZmzWKpGZk+gxSkQeFZFcxPovGqzi/wE+eaoQxWw7wQ2UestO7A7v6swkLFTG4QQAhmM91C1lcruQqMyn2jjWPqVZbTn33OjZCmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726035175; c=relaxed/simple;
-	bh=lWel3D6GMiP9Rfq6kYs4mMzndOOkGErK+hNpBxYCXh0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jU2cTB4arfnCk+9jdBU7oRKkMCKbhjjtdr49ZVdAYQYH80YuGVsaXxoHACdrA2399FUHFQ4QUUCg3cHA4Jp9hRFsboDiUyXs7YfDg64wX0BzgoPj3SPY5vPFNBybxZsgoYkAAn0lHww6xjsImBM1Xthq9Jndz+Ll3FH0JUHaRAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hACQQODt; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so1811199e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 23:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726035172; x=1726639972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4XNFzyMI6KqMDwE1IO9Ek2dtaONrpE2artFV7jstPIM=;
-        b=hACQQODtdJHgQCW0ZPco3c1Ge3TOnTTBm4nXJnQnBuddDSQhjAEdhviZeIG4XZTa3B
-         Z34qWxrlMIVTgFRTTIu99xjEIi9sCS+RDwfdLBFsNg8suwcX85djXu0IkkPDKfkIcQmO
-         gI7cgbeO4JzY28u56wxHpqGt+jzusnVZfAuvM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726035172; x=1726639972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4XNFzyMI6KqMDwE1IO9Ek2dtaONrpE2artFV7jstPIM=;
-        b=R9NF/9qHZMIL2bp2WUCzaHgZoJ97JPRMYdCF5cb7OY846oVKJHg6LOggEp90Hd8nol
-         0OSBWnyR+G20lHuihcvg15wRhDPCpwZkT89tx6GEYyjoASPWdUtPQ1kJikY4ZipH4ljB
-         CV6Eq83eam5et2yIFg4U1jGr38qf8WcMqF/CTV8e5IhbQwvOlobrhqix5NMr953zbIvG
-         s5uY33Yl4pCcdkZNR14by4MqVMgi9wDzHODHv+uIDeMyECBv8keW3cF9BfSshBRcx/rz
-         m8QND4sVDNVYPUA1qPBJe3utASRyzQAcztqKe9UygcJnQliH3nh248NSm52KdtBkjY0z
-         /vNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEB/R8oogOJYUgNzbBHG2YOafdcN4Yyo40P3rQYpPd9BrLfODrMeh/wUs8Hmt2q/wmrxKX/04OrInEgro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw55QNdGmnLIkXwqrqJ05ZaY9JuYSI1aU9Z4BkaI2yrAktPtdNU
-	Cdv4kMcctmv9LrfdefsBP2IFZP8prcwSa91MDP/BfdDxwGf76T0xGOYiOPDCcb/4Q5AVAWIcnw0
-	CZMxmHDkamAaaiFKjor0E6eJdZd0b8FBt4gMS
-X-Google-Smtp-Source: AGHT+IESpl9e5qogMXjCi+PCfTVtTiD2A76c7HZC3GBajms5nyfib2OnEjFoW3h6xIM0cWiUrvCKreVPmCVCrosR47U=
-X-Received: by 2002:a05:6512:e85:b0:536:53f0:2f8e with SMTP id
- 2adb3069b0e04-53673c96a8fmr856177e87.37.1726035171499; Tue, 10 Sep 2024
- 23:12:51 -0700 (PDT)
+	s=arc-20240116; t=1726035194; c=relaxed/simple;
+	bh=9jbMG3ru9EXg+xJ84H5vV5M8Oih5pehmomkdNLtVlyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lusF/e6CkIolBQH6B3nK423TOD4ELQHqumnPMy/3vJg3g0L/sUS9xpZAtIneaYPvHhc/eeTUwU4H4JlofKxPO6tRjnja5RtdDiy1Ce4QXi67QCNhlfyc05tRFf/b6uh7kjxew/CTpX4lP7YjbWabbruhQWQ4kPZjaAXibgCSFi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3N7AesZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96550C4CEC5;
+	Wed, 11 Sep 2024 06:13:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726035193;
+	bh=9jbMG3ru9EXg+xJ84H5vV5M8Oih5pehmomkdNLtVlyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G3N7AesZzBtc82YWzG6wUAVPXzCH22R3lO3lDSujsog1tQ0vZm9qXapMh7uJxCTqo
+	 C8IOENbAMrhPYlyzeSX+amSshIHIHEgaC7R+CCpB3j8/E/pG18e5/K5yo+/R6durGs
+	 l9EGfyj3c3x1b6rKr8U8Pzgnx0kOOmXSTIuRWkMBwBvXMJS8kGEaa5u7avtgeF9DJ2
+	 0/PZ1wDgcW2PgviKroYQsmz+1pDZ18WF9PzG+0ODefdNg8pgW3Lou5XSrE/78JhsCY
+	 BS9b1mmHxR+caxDvHlWrYsqvz7Q4iKLGqVgegRnQzJ76SSGeY1BMj715HocQ3B9Qc5
+	 BJ2O9Cm0CMScw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1soGbb-000000005eO-1SCE;
+	Wed, 11 Sep 2024 08:13:31 +0200
+Date: Wed, 11 Sep 2024 08:13:31 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
+Message-ID: <ZuE1CzTmx2Jd4TCP@hovoldconsulting.com>
+References: <20240723151328.684-1-johan+linaro@kernel.org>
+ <Zsb_1YDo96J_AGkI@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-10-wenst@chromium.org>
- <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
- <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
- <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
- <CAGXv+5HO=POHNL_tQHCsy+8=a0gPLMDVHcWMguferahVU+BnZA@mail.gmail.com> <CAD=FV=U2yDGv74GQWRQuHN9sjdY5iThqpH-br-jYXMkV1cujEg@mail.gmail.com>
-In-Reply-To: <CAD=FV=U2yDGv74GQWRQuHN9sjdY5iThqpH-br-jYXMkV1cujEg@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 11 Sep 2024 14:12:40 +0800
-Message-ID: <CAGXv+5G9pMOU+SZpNH=Rk31wnhADQc3MTm4TjykmdGb=WXdVDw@mail.gmail.com>
-Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zsb_1YDo96J_AGkI@hovoldconsulting.com>
 
-On Wed, Sep 11, 2024 at 8:30=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Thu, Sep 5, 2024 at 8:45=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
-> >
-> > > > IIUC we could have the "options" data structure have much more boar=
-d
-> > > > specific information:
-> > > >
-> > > >   - name of node to fetch resources (regulator supplies and GPIOs) =
-from
-> > > >   - names of the resources for the node given from the previous ite=
-m
-> > > >   - delay time after each resource is toggled
-> > > >   - polarity in the case of GPIOs
-> > > >   - prober callback to do power sequencing
-> > > >
-> > > > The "resource collection" step would use the first two items to ret=
-rieve
-> > > > the regulator supplies and GPIOS instead of the bulk APIs used righ=
-t now.
-> > > >
-> > > > The power sequencing callback would use the resources combined with=
- the
-> > > > given delays to enable the supplies and toggle the GPIOs.
-> > > >
-> > > > For now I would probably only implement a generic one regulator sup=
-ply
-> > > > plus one GPIO helper. That is the common case for touchscreens and
-> > > > trackpads connected over a ribbon cable.
-> > > >
-> > > > Does that sound like what you have in mind?
-> > >
-> > > I guess I'd have to see how the code looks to know for sure, but if I
-> > > understand it sounds a little awkward. Specifically, the "options"
-> > > sound like they might become complicated enough that you're inventing
-> > > your own little programming language (with delays, abilities to drive
-> > > pins low and high, abilities to turn on/off clocks, and abilities to
-> > > turn off/on regulators) and then probers need to code up their
-> > > programs in this language. You also need to handle undoing things
-> > > properly if there is a failure in the middle. Like your "program"
-> > > would look like this (obviously you'd have to play with enums more,
-> > > but you get the idea):
-> > >
-> > > {
-> > >    { OPCODE_TURN_REGULATOR_ON, "vdd" },
-> > >    { OPCODE_DELAY, 10 },
-> > >    { OPCODE_GPIO_ASSERT, "reset" },
-> > >    { OPCODE_DELAY, 5 },
-> > >    { OPCODE_GPIO_DEASSERT "reset" },
-> > >    { OPCODE_DELAY, 100 },
-> > >    { OPCODE_TURN_REGULATOR_ON, "vddIO" },
-> > > }
-> > >
-> > > Why not just expect the board probers to write C code to turn things
-> > > on before looking for i2c devices, then provide helpers to the C code=
-?
-> > >
-> > > So there wouldn't be some generic "resource collection" API, but you'=
-d
-> > > provide a helper to make it easy to grab regulators from one of the
-> > > nodes by name. If you think bulk enabling regulators is common then
-> > > you could make a helper that grabs all of the regulators from a node
-> > > in a way that is consistent with the bulk APIs, but I wouldn't expect
-> > > every driver to use that since devices I've seen expect regulators to
-> > > be enabled in a very specific order even if they don't need a delay
-> > > between them.
-> > >
-> > > I wouldn't expect a "collect all GPIOs" API because it seems really
-> > > weird to me that we'd ever want to jam multiple GPIOs in a state
-> > > without knowing exactly which GPIO was what and asserting them in the
-> > > right sequence.
-> >
-> > So I'm slightly confused, as it sounds like at this point the i2c probe=
-r
-> > would be litter more than just a framework, and the heavy lifting is to
-> > be all done by callbacks provided by the board-specific driver?
-> >
-> > So the framework becomes something like:
-> >
-> > 1. find i2c bus node
-> > 2. call provided callback with i2c bus node to gather resources;
-> >    let callback handle specifics
-> > 3. call provided callback to enable resources
-> > 4. for each i2c component, call provided callback to probe
->
-> I don't think I'd do it as callbacks but just have the HW prober call
-> the functions directly. AKA, instead of doing:
->
->   i2c_of_probe_component(dev, "touchscreen", ts_opts, ts_callbacks);
->
-> Do:
->
->   grab_touchscreen_resources(...);
->   power_on_touchscreens(...);
->   i2c_of_probe_component(...);
->   power_off_touchscreen(...);
->   release_touchscreen_resources(...);
->
-> Obviously I'm spitballing here, though. Without writing the code it's
-> hard for me to know that my proposal would be better, but my gut tells
-> me that trying to write something overly generic with lots of options
-> / callbacks would be more confusing.
+On Thu, Aug 22, 2024 at 11:07:33AM +0200, Johan Hovold wrote:
+> On Tue, Jul 23, 2024 at 05:13:28PM +0200, Johan Hovold wrote:
+> > Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
+> > dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
+> > bindings, which results in DT checker warnings like:
+> > 
+> > 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+> >         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
+> > 
+> > Note that this property has been part of the Qualcomm PCIe bindings
+> > since 2018 and would need to be deprecated rather than simply removed if
+> > there is a desire to replace it with 'vpcie3v3' which is used for some
+> > non-Qualcomm controllers.
+> > 
+> > Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> 
+> Can someone pick this one up for 6.11?
 
-The helpers would be exported along with the framework, so there's nothing
-preventing others from using the helpers directly. The framework provides
-boilerplate so that scenarios fitting it won't have to duplicate the code.
-Obviously I'm basing it on my scenario here, but I think it works out for
-the simpler cases.
+Another three weeks have passed and the merge window is now around the
+corner.
 
-I'll send out what I have reworked, and we can continue the discussion
-either on the mailing list or in person at ELCE and Plumbers.
+Can someone please pick this one up for 6.12.
 
-> >   If the probe succeeded:
-> >
-> >     5. call provided callback for early release of resources (GPIOs)
-> >     6. set "status" to "okay"
-> >     7. call provided callback for late release of resources (regulators=
-)
-> >
-> >   Otherwise at the end of the loop
-> >
-> > 8. release resources
-> >
-> > The current code can be reworked into helpers for steps 2, 3, 5, 7 for
-> > the single regulator single GPIO case.
-> >
-> > > > This next item would be a later enhancement (which isn't implemente=
-d in
-> > > > this series anyway):
-> > > >
-> > > >   - optional prober callback that does actual probing
-> > > >
-> > > > In our case it would only be used for cases where an HID-over-I2C
-> > > > component shares the same address as a non-HID one, and some extra
-> > > > work is needed to determine which type it is. I still need to think
-> > > > about the structure of this.
-> > >
-> > > IMO _that_ would be a great option to the i2c prober. It feels like
-> > > you could have an optional register read that needs to match to have
-> > > the i2c prober succeed. Most people would leave it blank (just the i2=
-c
-> > > device existing is enough) but probably a single register read would
-> > > be enough to confirm you got the right device. Most i2c devices have
-> > > some sort of "version" / "vendor" / "id" type register somewhere.
-> >
-> > At least for the stuff that we have (touchscreens and trackpads) such
-> > registers typically don't exist, unless it's an HID-over-I2C device,
-> > in which case there's the standard HID descriptor at some address.
-> > But, yeah, reading the HID descriptor was the use case I had in mind.
-> >
-> > At least for one Chromebooks it's a bit more tricky because that one
-> > HID-over-I2C component shares the same address as a non-HID one. We
-> > currently have different SKU IDs and thus different device trees for
-> > them, but we could make the prober work with this. It just has be able
-> > to tell if the component it's currently probing needs the special
-> > prober and is it responding correctly. This bit I need to think about.
->
-> I guess Mark Brown also thought that there wouldn't be some magic
-> register, but my gut still tells me that most i2c devices have some
-> way to confirm that they are what you expect even if it's not an
-> official "vendor" or "version" register. Some type of predictable
-> register at a predictable location that you could use, at least if you
-> knew all of the options that someone might stuff.
->
-> For instance, in elan trackpads you can see elan_i2c_get_product_id().
-> That just reads a location (ETP_I2C_UNIQUEID_CMD =3D 0x0101) that could
-> theoretically be used to figure out (maybe in conjunction with other
-> registers) that it's an elan trackpad instead of an i2c-hid one. You'd
-> have to (of course) confirm that an i2c-hid device wouldn't somehow
-> return back data from this read that made it look like an elan
-> trackpad, but it feels like there ought to be some way to figure it
-> out with a few i2c register reads.
->
-> ...that being said, I guess my original assertion that you might be
-> able to figure out with a simple register read was naive and you'd
-> actually need a function (maybe as a callback) to figure this out.
+Note that this patch has been acked by the driver maintainer as well as
+a DT maintainer.
 
-Yeah, that's my plan for a follow-up series, likely after the SKU ID
-based prober work is done. The actual probe function would likely only
-target the known cases of I2C address conflicts we have on ChromeOS
-devices.
+Johan
 
