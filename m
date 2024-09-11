@@ -1,136 +1,91 @@
-Return-Path: <linux-kernel+bounces-324625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53E3974EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C664F974EAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAA62896FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060591C21F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5293B17F4F6;
-	Wed, 11 Sep 2024 09:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ytuhh0np"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5399185944;
+	Wed, 11 Sep 2024 09:35:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4D14F105
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E44C7E110;
+	Wed, 11 Sep 2024 09:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047895; cv=none; b=UsRPSBN95K3I57pK+Pq2nUquNYkzya3JytjBih+3nkiCKi24Yw+MYhmhvWi1SnYVwt9TkwDvGurwdJ1byBHoxSkA9kVUfXnUrRPfShxn7aO9XP0f0aZovrQkkcA+lHOF/Oj7Utsor1GquAOHzlD/DWosNg864yradTaOXYthJAo=
+	t=1726047350; cv=none; b=qgMCimO3fNYootIpnRMk2hqsva8TMzHK2YLL9wT9Kg1a624tABPVT5M6D3FKiOTwljJ1gEC2xWOY+7vhA8yvus00r7nfAzTVK036b9p44aLZfdMCreFSLx/BxxahCXDlhGPEwX0gSg7PiZKxI/Tz+wZPULxMQF+nsCWroUDtFo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047895; c=relaxed/simple;
-	bh=EnR+oo27yAv5GKCX3AEPVtY60+LJCRR+y9Ua5zT0u+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YAAktb82z8pZva3d9VpWdpz7Jso2XSthSjtXEb46c2POWiHkaic+XPWOsSh0Du5WTOdp3SvuIeTq7KNprOaiv20bW4HZxXwbXgtawme0r+dRzDQ+m5Hun6/JUG6laUJozFh43OCpwK/tDrUz7UvntjAF2zsRAYej1Xf9l5P2RiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ytuhh0np; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726047891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mSLhNCaRgYSV37c8BlqEIRRGLtzVm1X6zZhHgWY14/4=;
-	b=Ytuhh0npMKund1Mm8sP85n0996yGpko/HRv/LqRxdQVoIpi4Dg+Bl4kJCSbQ8az1V4UXwv
-	EerzQdOSpwSvLM6niUQ3QkaDVzlp1bnBuivnbXNXu3CnT7XKjZhjqOj0iVEEe9qK9JRFHu
-	6IY04ggiUb9bxpcdNxuMgq32Zxo7ixo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-aPhGQU4LPUynJ91kaz0maw-1; Wed,
- 11 Sep 2024 05:44:48 -0400
-X-MC-Unique: aPhGQU4LPUynJ91kaz0maw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5C041955BCB;
-	Wed, 11 Sep 2024 09:44:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.229])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E0A9419560AB;
-	Wed, 11 Sep 2024 09:44:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 11 Sep 2024 11:44:33 +0200 (CEST)
-Date: Wed, 11 Sep 2024 11:44:25 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sven Schnelle <svens@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: use vm_special_mapping close() functionality
-Message-ID: <20240911094401.GA19080@redhat.com>
-References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
- <20240903073629.2442754-1-svens@linux.ibm.com>
+	s=arc-20240116; t=1726047350; c=relaxed/simple;
+	bh=YKTAzuTAPAhmNZkS9NdUoRHE9sIRTmRBUa9a9AcStcc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a9LnvUwzSyZ5tPPiv+5kXY9SSflNXVQZ822Kt0E9rO5y48EHuilHoeb7/xdNNMpRuG6EFYQ+RIL9hFmqvX8faP/89kmNx0SI/vWjBpIg0r7B4vyHt8ofPifx5mt1KKt805vE2AwdkxcHE5BYSQZ40qansPK1pd33Mtc7B3kvEmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X3b4s6Z0czyQrp;
+	Wed, 11 Sep 2024 17:34:37 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id B47B114038F;
+	Wed, 11 Sep 2024 17:35:44 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 11 Sep
+ 2024 17:35:43 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>,
+	<louis.peens@corigine.com>, <damien.lemoal@opensource.wdc.com>,
+	<set_pte_at@outlook.com>, <mpe@ellerman.id.au>, <horms@kernel.org>,
+	<yinjun.zhang@corigine.com>, <ryno.swart@corigine.com>,
+	<johannes.berg@intel.com>, <fei.qin@corigine.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <oss-drivers@corigine.com>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH net RESEND 0/3] net: Use IRQF_NO_AUTOEN flag in request_irq()
+Date: Wed, 11 Sep 2024 17:44:42 +0800
+Message-ID: <20240911094445.1922476-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903073629.2442754-1-svens@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On 09/03, Sven Schnelle wrote:
->
-> +static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_area_struct *vma)
-> +{
-> +	struct xol_area *area = container_of(vma->vm_private_data, struct xol_area, xol_mapping);
-> +
-> +	mutex_lock(&delayed_uprobe_lock);
-> +	delayed_uprobe_remove(NULL, vma->vm_mm);
-> +	mutex_unlock(&delayed_uprobe_lock);
-> +
-> +	if (!area)
-> +		return;
-> +
-> +	put_page(area->pages[0]);
-> +	kfree(area->bitmap);
-> +	kfree(area);
-> +}
-> +
->  static struct xol_area *__create_xol_area(unsigned long vaddr)
->  {
->  	struct mm_struct *mm = current->mm;
-> @@ -1481,6 +1500,7 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
->
->  	area->xol_mapping.name = "[uprobes]";
->  	area->xol_mapping.fault = NULL;
-> +	area->xol_mapping.close = uprobe_clear_state;
+As commit cbe16f35bee6 ("genirq: Add IRQF_NO_AUTOEN for request_irq/nmi()")
+said, reqeust_irq() and then disable_irq() is unsafe.
 
-Ah, no, we can't do this :/
+IRQF_NO_AUTOEN flag can be used by drivers to request_irq(). It prevents
+the automatic enabling of the requested interrupt in the same safe way.
+With that the usage can be simplified and corrected.
 
-A malicious application can munmap() its "[uprobes]" vma and free
-area/pages/bitmap. If this application hits the uprobe breakpoint after
-that it will use the freed memory.
+Only compile-tested.
 
-And no, "mm->uprobes_state.xol_area = NULL" in uprobe_clear_state() won't
-help. Say, another thread can sleep on area.wq when munmap() is called.
+v1 -> RESNED
+- Add reviewed-by.
+- Put wireless into another patch set.
+- Update to net prefix subject.
 
-Sorry, I should have realized that immediately, but I didn't :/
+Jinjie Ruan (3):
+  net: apple: bmac: Use IRQF_NO_AUTOEN flag in request_irq()
+  net: enetc: Use IRQF_NO_AUTOEN flag in request_irq()
+  nfp: Use IRQF_NO_AUTOEN flag in request_irq()
 
-Andrew, this is uprobes-use-vm_special_mapping-close-functionality.patch
-in mm-stable
+ drivers/net/ethernet/apple/bmac.c                   | 3 +--
+ drivers/net/ethernet/freescale/enetc/enetc.c        | 3 +--
+ drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 5 ++---
+ 3 files changed, 4 insertions(+), 7 deletions(-)
 
-Oleg.
+-- 
+2.34.1
 
 
