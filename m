@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-324971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78EA97535A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:14:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B59497535C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56AD11F269BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40E32898C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F5190047;
-	Wed, 11 Sep 2024 13:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DCB18FDC5;
+	Wed, 11 Sep 2024 13:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BiqZ508Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyxDge5y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB7F185E64
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50FC185E64
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726060437; cv=none; b=TLg+qyXopCo+WLDk8afRxJgnDU3ipDZ1TU21MNp03nBEzsW1Ptk8hVgp42uKdWVRh+hkfIfGaY1PscHmnFblB6yK7aqRSILb9VN/cdgMhzF2HEjk7yfrqFZ6gkLzHnjHAfdkbaybXCK+4qAAm2x9QMfxbMcwqldH/V3BQBOklJ0=
+	t=1726060475; cv=none; b=FLPILfT6gDZdQN/pYyhQyhc2wrpGtwoyG4f2/UvYRVPnzf5JPF5rLgAEcIKt4HzLFXb7g8hhW8OKDOpbLQTpUZq/l6x/xqNWCSA5oEvQO3O7QzdzfuD1daUeurcctBogCt/gcVShDM1ALtqmaN3qkYiarapNdkUbo3SA945nt/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726060437; c=relaxed/simple;
-	bh=lLQujuaQVsINKOcP87KS9IaW5lEIAgM6cp+Fl8ujQkI=;
+	s=arc-20240116; t=1726060475; c=relaxed/simple;
+	bh=xMCskwQcfEwOUbdWrAErBf7MWGcAi69GXyrTD2rmklQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrFnNSt+s4j7NAM45vkTVmEU29ZAWWgek9J2LPwYOfk/xnvFrxIVYd6ZPV6N3jyseQIKAT4B4yzWqD+jZOERci3a4ysN1VzpIBfLP4vhAHkDJMB4X1zYPxBFjpA1AgtgJjmYOpbRUYmZXpEtOZdxtQACRqp4GhBtUfFlexyDehc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BiqZ508Q; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFwz4dr2JTJMLUU9MjOs2rvPuwUKgrBLYqBfuBAD8B3ZstVgomFykmv1+g6v5SvXhAd3wQSvDzbTlhU3rD/2E2G+Z746NmOrcZkB12ChZfb3g0rdKakPQDJG4B9GD6LCqJTGNbnpuUTSpUqX6hHX5nhNNAZecy9cfJLd2EF1Cmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyxDge5y; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726060435;
+	s=mimecast20190719; t=1726060472;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bVgk6KxCVvyf7/kqB/bzV5TeZ0PX9U997rsx8aaL5Jg=;
-	b=BiqZ508QdvUTlP2AB8wsggh4QnXLUkCFz1XpN86zm/Ziu1gWcFjJXtN0SL55ajfJpgXi0c
-	SmMkqVixqpy9DoOxZ/tY6HBTkziYzGgKhrLsFhjipvmNAwQo/9jSpTAUlhJLX1dd1CET9E
-	bM09rM+QkAeJukCJj/M67dgyJv49Ing=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=V7W3kDXSwt1yeFb/GkUq9ycOOE066CsELW4k/XSqo1U=;
+	b=ZyxDge5yv/Q92NderNonKJEloPRo49wbyCg4UHv3urH6FsfTUtRCNzzdIstPJVcTYvmgdK
+	eP1z758wDGuNkA7BZswJledkVrN6+UkEC+oxLqgIGVhmAcR2qr5IIpMbB9jLAnuNQRtxpO
+	jGhQk8L0njCah/VNL1JmZEgZ/4xcZAk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-hzJk0tqeP8eufD5z4fsd7w-1; Wed,
- 11 Sep 2024 09:13:48 -0400
-X-MC-Unique: hzJk0tqeP8eufD5z4fsd7w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-UdEgacnvMGaY4T7ugj50_g-1; Wed,
+ 11 Sep 2024 09:14:29 -0400
+X-MC-Unique: UdEgacnvMGaY4T7ugj50_g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76DEA1956048;
-	Wed, 11 Sep 2024 13:13:45 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A48B9197700E;
+	Wed, 11 Sep 2024 13:14:26 +0000 (UTC)
 Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.229])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 26E1119560A3;
-	Wed, 11 Sep 2024 13:13:32 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 85A893001D11;
+	Wed, 11 Sep 2024 13:14:19 +0000 (UTC)
 Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 11 Sep 2024 15:13:34 +0200 (CEST)
-Date: Wed, 11 Sep 2024 15:13:20 +0200
+	oleg@redhat.com; Wed, 11 Sep 2024 15:14:15 +0200 (CEST)
+Date: Wed, 11 Sep 2024 15:14:07 +0200
 From: Oleg Nesterov <oleg@redhat.com>
 To: Sven Schnelle <svens@linux.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -75,11 +75,12 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>,
 	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH -mm 1/3] Revert "uprobes: use vm_special_mapping close()
- functionality"
-Message-ID: <20240911131320.GA3448@redhat.com>
+Subject: [PATCH -mm 2/3] uprobes: introduce the global struct
+ vm_special_mapping xol_mapping
+Message-ID: <20240911131407.GB3448@redhat.com>
 References: <CAHk-=wjD0XLhkzou89J-TK=L6B88pFoNYxN1uTWRQB3U5Czywg@mail.gmail.com>
  <20240903073629.2442754-1-svens@linux.ibm.com>
+ <20240911131320.GA3448@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,109 +89,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240903073629.2442754-1-svens@linux.ibm.com>
+In-Reply-To: <20240911131320.GA3448@redhat.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This reverts commit 08e28de1160a712724268fd33d77b32f1bc84d1c.
+Currently each xol_area has its own instance of vm_special_mapping, this
+is suboptimal and ugly. Kill xol_area->xol_mapping and add a single global
+instance of vm_special_mapping, the ->fault() method can use area->pages
+rather than xol_mapping->pages.
 
-A malicious application can munmap() its "[uprobes]" vma and in this case
-xol_mapping.close == uprobe_clear_state() will free the memory which can
-be used by another thread, or the same thread when it hits the uprobe bp
-afterwards.
+As a side effect this fixes the problem introduced by the recent commit
+223febc6e557 ("mm: add optional close() to struct vm_special_mapping"), if
+special_mapping_close() is called from the __mmput() paths, it will use
+vma->vm_private_data = &area->xol_mapping freed by uprobe_clear_state().
 
+Reported-by: Sven Schnelle <svens@linux.ibm.com>
+Closes: https://lore.kernel.org/all/yt9dy149vprr.fsf@linux.ibm.com/
+Fixes: 223febc6e557 ("mm: add optional close() to struct vm_special_mapping")
 Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- include/linux/uprobes.h |  1 +
- kernel/events/uprobes.c | 36 +++++++++++++++++++-----------------
- kernel/fork.c           |  1 +
- 3 files changed, 21 insertions(+), 17 deletions(-)
+ kernel/events/uprobes.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 493dc95d912c..b503fafb7fb3 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -126,6 +126,7 @@ extern int uprobe_pre_sstep_notifier(struct pt_regs *regs);
- extern void uprobe_notify_resume(struct pt_regs *regs);
- extern bool uprobe_deny_signal(void);
- extern bool arch_uprobe_skip_sstep(struct arch_uprobe *aup, struct pt_regs *regs);
-+extern void uprobe_clear_state(struct mm_struct *mm);
- extern int  arch_uprobe_analyze_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long addr);
- extern int  arch_uprobe_pre_xol(struct arch_uprobe *aup, struct pt_regs *regs);
- extern int  arch_uprobe_post_xol(struct arch_uprobe *aup, struct pt_regs *regs);
 diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index c2d6b2d64de2..73cc47708679 100644
+index 73cc47708679..a478e028043f 100644
 --- a/kernel/events/uprobes.c
 +++ b/kernel/events/uprobes.c
-@@ -1482,22 +1482,6 @@ void * __weak arch_uprobe_trampoline(unsigned long *psize)
- 	return &insn;
+@@ -99,7 +99,6 @@ struct xol_area {
+ 	atomic_t 			slot_count;	/* number of in-use slots */
+ 	unsigned long 			*bitmap;	/* 0 = free slot */
+ 
+-	struct vm_special_mapping	xol_mapping;
+ 	struct page 			*pages[2];
+ 	/*
+ 	 * We keep the vma's vm_start rather than a pointer to the vma
+@@ -1433,6 +1432,21 @@ void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned lon
+ 		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
  }
  
--/*
-- * uprobe_clear_state - Free the area allocated for slots.
-- */
--static void uprobe_clear_state(const struct vm_special_mapping *sm, struct vm_area_struct *vma)
--{
--	struct xol_area *area = container_of(vma->vm_private_data, struct xol_area, xol_mapping);
--
--	mutex_lock(&delayed_uprobe_lock);
--	delayed_uprobe_remove(NULL, vma->vm_mm);
--	mutex_unlock(&delayed_uprobe_lock);
--
--	put_page(area->pages[0]);
--	kfree(area->bitmap);
--	kfree(area);
--}
--
- static struct xol_area *__create_xol_area(unsigned long vaddr)
- {
- 	struct mm_struct *mm = current->mm;
-@@ -1516,7 +1500,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 
- 	area->xol_mapping.name = "[uprobes]";
- 	area->xol_mapping.fault = NULL;
--	area->xol_mapping.close = uprobe_clear_state;
- 	area->xol_mapping.pages = area->pages;
- 	area->pages[0] = alloc_page(GFP_HIGHUSER);
- 	if (!area->pages[0])
-@@ -1562,6 +1545,25 @@ static struct xol_area *get_xol_area(void)
- 	return area;
- }
- 
-+/*
-+ * uprobe_clear_state - Free the area allocated for slots.
-+ */
-+void uprobe_clear_state(struct mm_struct *mm)
++static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
++			    struct vm_area_struct *vma, struct vm_fault *vmf)
 +{
-+	struct xol_area *area = mm->uprobes_state.xol_area;
++	struct xol_area *area = vma->vm_mm->uprobes_state.xol_area;
 +
-+	mutex_lock(&delayed_uprobe_lock);
-+	delayed_uprobe_remove(NULL, mm);
-+	mutex_unlock(&delayed_uprobe_lock);
-+
-+	if (!area)
-+		return;
-+
-+	put_page(area->pages[0]);
-+	kfree(area->bitmap);
-+	kfree(area);
++	vmf->page = area->pages[0];
++	get_page(vmf->page);
++	return 0;
 +}
 +
- void uprobe_start_dup_mmap(void)
++static const struct vm_special_mapping xol_mapping = {
++	.name = "[uprobes]",
++	.fault = xol_fault,
++};
++
+ /* Slot allocation for XOL */
+ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
  {
- 	percpu_down_read(&dup_mmap_sem);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 61070248a7d3..3d590e51ce84 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1338,6 +1338,7 @@ static inline void __mmput(struct mm_struct *mm)
- {
- 	VM_BUG_ON(atomic_read(&mm->mm_users));
+@@ -1459,7 +1473,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
  
-+	uprobe_clear_state(mm);
- 	exit_aio(mm);
- 	ksm_exit(mm);
- 	khugepaged_exit(mm); /* must run before exit_mmap */
+ 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
+ 				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
+-				&area->xol_mapping);
++				&xol_mapping);
+ 	if (IS_ERR(vma)) {
+ 		ret = PTR_ERR(vma);
+ 		goto fail;
+@@ -1498,9 +1512,6 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ 	if (!area->bitmap)
+ 		goto free_area;
+ 
+-	area->xol_mapping.name = "[uprobes]";
+-	area->xol_mapping.fault = NULL;
+-	area->xol_mapping.pages = area->pages;
+ 	area->pages[0] = alloc_page(GFP_HIGHUSER);
+ 	if (!area->pages[0])
+ 		goto free_bitmap;
 -- 
 2.25.1.362.g51ebf55
 
