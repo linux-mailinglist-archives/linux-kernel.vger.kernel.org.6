@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-325569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8B3975B82
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:14:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DEA975B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083E1B23F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEB3B246FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6CD1BB69C;
-	Wed, 11 Sep 2024 20:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977B01BB69F;
+	Wed, 11 Sep 2024 20:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGxBeDRb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oc1UXcoQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F581BA275;
-	Wed, 11 Sep 2024 20:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCA31BB684;
+	Wed, 11 Sep 2024 20:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726085685; cv=none; b=Svb3L0bgJu1TbVjVgairFdKzp4d/wJVkKYnAE6/AIQYdoR8/qq1p+hKzlo0mFRjmnLz2OpO8ahMoTBuQl2fg45/u9uODKTtoEWrkXD3P5hBtUM+yW6jCc8FfZISU+AQbdd+TT8VpvGRb8y8LzimB/C1yJ/9+QxYqMjfImNsk0dI=
+	t=1726085698; cv=none; b=Qq5HSHsMgvK1VAVDynLL1g8n5CNwMSgGfMoPgDNrp7t73uJ3LfCzpgwGJRRSTvCoXEFzZaLf60E7CrlX8I6zmL4AzSoPGuTVB88Oc1XotgKgq+iP0yiwK9kUgt64pxpB/EGiroBX8SjoZv9xOoaB0IFII7b1HYS2+yMPtcSJkjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726085685; c=relaxed/simple;
-	bh=1wHqUFFiMad7Gas+MgBorKqaEVUuQRiUtgil0RdFmeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eyGDzZtcQKEg60ZcJzw3e1GrD8XCaherKuUSIurNyR4mz3h69C15CR9Sp7eSHqa4sWoZ64w9Lwv44/+OnDCfeJm+gmDSmkihSX/mJZLm9jmLj95qSZw9XtmQWsY8wEmmd9MB2gx27k4666nDqGQwIn1vbBLJWu+yPTAiVG9f7tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGxBeDRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06088C4CEC0;
-	Wed, 11 Sep 2024 20:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726085685;
-	bh=1wHqUFFiMad7Gas+MgBorKqaEVUuQRiUtgil0RdFmeI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BGxBeDRbwmygMO2Je+ZeCTdZUJiA0nBYQE52POglqJssa0MXINrcsmHki4+sHBnVf
-	 Ix7UKOIFoBVRTBYaNrFqp3cLMRqXABNrDRWN0WUluo4/t9wX5cxHXpXu49tvjqetub
-	 fUFpkAJTGAilTIYk5RMwM6dgSkWtG0b6avTctHUVR7ZWSIVS3sM6fbn1cYoUl/l/k9
-	 0lDtHNiwDELgpzZk+C7L+zUvR0OCogk0rKizkw19ezwehs3G8hTbkvJ52L7tqb1LGi
-	 uw0a6HaCHsTPdU4YpTSYwaZ5ac3px+dR3alBYUHSD+EEdghRmJ9k6oHl6esk4dOFkm
-	 3B32yV5ow/pAQ==
-Date: Wed, 11 Sep 2024 17:14:42 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] perf trace: Mark the 'head' arg in the set_robust_list
- syscall as coming from user space
-Message-ID: <ZuH6MquMraBvODRp@x1>
+	s=arc-20240116; t=1726085698; c=relaxed/simple;
+	bh=tTzueqvJZSwNGtAUxZsJa3Qkf8M9iYbOpXyKF9YvBIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCIOUty4HbOePzHDt7hawrzBXGYQgxcIVRmErmBO6zgBvl5Dwk6MEW0BviKRrweosnFYa7kP2J8c8k6U51VSC/obPMLt0CdjL+FC8yLOcVZ3nx9VpwtLM+rlolpctr8BktSg6gdXTQRROYOYMYTO72MIjp477frjS5TY8L+IOls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oc1UXcoQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC7BC4CEC0;
+	Wed, 11 Sep 2024 20:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726085697;
+	bh=tTzueqvJZSwNGtAUxZsJa3Qkf8M9iYbOpXyKF9YvBIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oc1UXcoQikN7QJc8eJ+K9TOkXKU+4cSkUrBKXBjBLVfNhBRw3u9UNHTBbt4oHhVmV
+	 FQ3yNVv5tZkwU7laOglXcL4bUI08tF6LRxqbEldDho8b0N9Sy18pG9hMV5N1r+GVMJ
+	 124vk+S7H/9BrcsfIZtPz6Qa91Bo+sQH2FiFhlJs=
+Date: Wed, 11 Sep 2024 22:14:54 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.15 000/212] 5.15.167-rc2 review
+Message-ID: <2024091145-pavilion-probing-04e8@gregkh>
+References: <20240911130535.165892968@linuxfoundation.org>
+ <9bbb8370-758a-46bf-a01d-7e4d4f3c3a68@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +59,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <9bbb8370-758a-46bf-a01d-7e4d4f3c3a68@linuxfoundation.org>
 
-With that it uses the generic BTF based pretty printer:
+On Wed, Sep 11, 2024 at 11:25:32AM -0600, Shuah Khan wrote:
+> On 9/11/24 07:07, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.167 release.
+> > There are 212 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri, 13 Sep 2024 13:05:05 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.167-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> All good without the iio/adc/ad7606 commit
 
-This one we need to think about, not being acquainted with this syscall,
-should we _traverse_ that list somehow? Would that be useful?
+Great, thanks for testing!
 
-  root@number:~# perf trace -e set_robust_list sleep 1
-       0.000 ( 0.004 ms): sleep/1206493 set_robust_list(head: (struct robust_list_head){.list = (struct robust_list){.next = (struct robust_list *)0x7f48a9a02a20,},.futex_offset = (long int)-32,}, len: 24) =
-  root@number:~#
-
-strace prints the default integer args:
-
-  root@number:~# strace -e set_robust_list sleep 1
-  set_robust_list(0x7efd99559a20, 24)     = 0
-  +++ exited with 0 +++
-  root@number:~#
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 27084ae38bc480c9..f6e8475290739a10 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1351,6 +1351,8 @@ static const struct syscall_fmt syscall_fmts[] = {
- 	{ .name	    = "sendto",
- 	  .arg = { [3] = { .scnprintf = SCA_MSG_FLAGS, /* flags */ },
- 		   [4] = SCA_SOCKADDR_FROM_USER(addr), }, },
-+	{ .name	    = "set_robust_list",	    .errpid = true,
-+	  .arg = { [0] = { .from_user = true /* head */, }, }, },
- 	{ .name	    = "set_tid_address", .errpid = true, },
- 	{ .name	    = "setitimer",
- 	  .arg = { [0] = STRARRAY(which, itimers), }, },
--- 
-2.46.0
-
+greg k-h
 
