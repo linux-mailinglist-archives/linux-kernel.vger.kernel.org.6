@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-324920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B250F9752A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7C19752A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4ED91C22F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C7CB29AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B35187543;
-	Wed, 11 Sep 2024 12:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meGsVCPN"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7CE185B7A;
+	Wed, 11 Sep 2024 12:38:43 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7589154C0B;
-	Wed, 11 Sep 2024 12:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C92E185B4C;
+	Wed, 11 Sep 2024 12:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726058297; cv=none; b=kw2YWlf+h5FZF0P8TTb0z/XXDVLwFJirUdInG0nSNFpYVujrtw/ZmePV5sbLBOiwOtynEsUaSxDSviaxiIyN4/bJNqmQNuZWOKTvexcHSvq4YPbGdzY/eud7iIp2jtgIKLQQFFAX/TapvndXDQEDgQXOpOEV0QedpBxtr+RZ5Bs=
+	t=1726058323; cv=none; b=qxCdaC0N9QQkx7inXaKFcnmpA3MnS5y7fbBj6hEqLlwZMveNXknBFT4Prpp1/PIaHZDPlw/O2rLym8D79HR1orpZpxkgLZBg/F/hqQG2InHJZpCM/ScqaBOwAoARli1WobDdzLVTrDboTEpPaInHYD8Cavs22iXbzwCthtfsKc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726058297; c=relaxed/simple;
-	bh=ErB7k+owsapqZOqYElNaW9OC2HT524c1l5alZXyfx2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0rBUGXGqvvs/72tGbUn2IPDnueYS9Gk6pe/VRjloaBiAvXqs/8dwugbhEThy+vEANhNTjlkET1ElRx1p7VK7Y/w7eztqh//YalzhH+UIXsBwAqr06hoiN2iFO/8geqczUF6UA02wA0BTyOUmWwfssd5UdOrK97yJVu/WY4uNG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=meGsVCPN; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6c35357cdacso41673176d6.0;
-        Wed, 11 Sep 2024 05:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726058295; x=1726663095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JJdkhwtpSR/xetmtoOM5xaNPmMk/QvQ0r1VyhnokH14=;
-        b=meGsVCPNF2ShyJ4OyR7SPqeVmQKxkX7C5up3syTIyawtqsw8qMwO5MjJVFDH5KtEjU
-         mry+RlxWEWYbE6DFlC+ETimU9E52Ip9E0P1DxQbftZRGnnwUAufOUy9m3OVFwer7P7Fw
-         BDGasZlM4uuXv//oLYqZQf2FEEP3k8pnDo9bJIJIIncWZic0HOCYogdphjNHfJyHBjtB
-         57XSWYGQSKZQAeuqX+TtX92mwtrDjuk9rW8pGCUgKJre9g5vo6/vdlLQgapbU3/k4SB0
-         dShkMh8DK20G+37yrM90nTiCe0j5orO4csOaiCHL6PmkV9yKT1iJI3Uh//euOBUR449P
-         MHPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726058295; x=1726663095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJdkhwtpSR/xetmtoOM5xaNPmMk/QvQ0r1VyhnokH14=;
-        b=qrQVpASLeBN5htl9AcgXfCYc2N9s4h0werrTtW6EYHyPV37aFsYLf6Y6Y2g9dRlNFU
-         FB+9gU5PWhrfq24P/4/xbod5hoze0qsjjetAQcoss1HSFSU9XYlItd+Cz1uR0as+KzNH
-         W7o6ZUSJCAnbOMxnnFUiO0vQywaA4JrUcrbg3NED7TKy4j8zyhf2uFomow5yJB+xAzJl
-         lWk6m1zt0jeIcFd4UqZHrDNvMWmkoBNsv/kyMejFnYnJfMogq6AhCaVca2CBR7tW9dOl
-         t5LA8E1l7pEqfpaqaciRy2zARUVUKkAsKWcW4j7mDVNFdR4BN+IPJi+QUj+XyFDZOoY9
-         xOaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4iO8hg2EtCUUHXhWgPbAzeoeyCdw6DkNTr4auMiAN0och63f3AyzWjzmFGte7wuTZTXI9uM/6xx3PzauQ@vger.kernel.org, AJvYcCVK4J0TwhPg4sYUodsOFUITjExoeYbhg//ZopRzpqSynnJmaOts6USO9Nz+2Csa3GaK3efGevuxK3uc@vger.kernel.org, AJvYcCX+buD3cm3mXXes5Gs1gWNN4prLPyXtxFgGhjFdd+55yAQCeuUKBvV9x3/QK95ZKpnp60biflcrX27G@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5+592tCXmKpjU0SbitsKkHgrwMtn4NLnXY4wLrTm9lIRzrRld
-	Fcyg/5jjRyivNJAmN99YqaQ3mjWeSh1j5sINrXGu/hSeb0ad8kSR
-X-Google-Smtp-Source: AGHT+IGgwwN2WPLqtEao6Nlv2i1oUDa7B4fXEZVM/Cl4rAcFfeWhaK2jO9k0MI+elEb8wQZFNTY8wA==
-X-Received: by 2002:a05:6214:1406:b0:6c3:665e:a1fa with SMTP id 6a1803df08f44-6c5282fe6damr257541076d6.11.1726058294500;
-        Wed, 11 Sep 2024 05:38:14 -0700 (PDT)
-Received: from VM-Arch (191.sub-174-193-8.myvzw.com. [174.193.8.191])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53432dee3sm41578346d6.8.2024.09.11.05.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 05:38:13 -0700 (PDT)
-Date: Wed, 11 Sep 2024 08:38:05 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: Jonathan.Cameron@huawei.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, jagathjog1996@gmail.com, jic23@kernel.org, krzk+dt@kernel.org, 
-	lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nuno.sa@analog.com, ramona.bolboaca13@gmail.com, robh@kernel.org, 
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH v3 0/2] Add I2C driver for Bosch BMI270 IMU
-Message-ID: <6e6urdzq5hf6n2ibfxs25b6hi5yccpl35g3neuqwj5ijolonhp@23vgf23pqj7x>
-References: <20240909043254.611589-1-lanzano.alex@gmail.com>
- <20240910222254.14281-1-vassilisamir@gmail.com>
+	s=arc-20240116; t=1726058323; c=relaxed/simple;
+	bh=hpZscvYNtOfhk9PiPZCJ8VHW132F3mGpgJjhXSuER2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Fo7w+0rFMFDhmxFCyWfqo+HlC2UdCsLEzZex91MN05keB0HnTnW9vgKxRg0QNBjRmK05/VR4PeVn7Y6H1VNVvi0/4KQrWk4bWcEtgdzZA1J5T6WY0atIPSCBIA053U1qqolJdOPe8CsPKbvgrPZr5T+oSTNKkxlrcsmFFgXkYqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X3g8b1qwxz1j8SB;
+	Wed, 11 Sep 2024 20:38:07 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7DDCD1401F0;
+	Wed, 11 Sep 2024 20:38:36 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Sep 2024 20:38:35 +0800
+Message-ID: <d8015dc6-c65c-2eed-0ffe-0c35a4cd0b2a@hisilicon.com>
+Date: Wed, 11 Sep 2024 20:38:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910222254.14281-1-vassilisamir@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH v4 for-next 1/2] RDMA/core: Provide
+ rdma_user_mmap_disassociate() to disassociate mmap pages
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
+	<linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
+References: <20240905131155.1441478-1-huangjunxian6@hisilicon.com>
+ <20240905131155.1441478-2-huangjunxian6@hisilicon.com>
+ <ZtxDF7EMY13tYny2@ziepe.ca>
+ <d76dd514-aceb-b7cb-705a-298fc905fae3@hisilicon.com>
+ <20240911102018.GF4026@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240911102018.GF4026@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-On Wed, Sep 11, 2024 at 12:22:54AM GMT, Vasileios Amoiridis wrote:
-> Hi Alex!
+
+
+On 2024/9/11 18:20, Leon Romanovsky wrote:
+> On Mon, Sep 09, 2024 at 04:41:00PM +0800, Junxian Huang wrote:
+>>
+>>
+>> On 2024/9/7 20:12, Jason Gunthorpe wrote:
+>>> On Thu, Sep 05, 2024 at 09:11:54PM +0800, Junxian Huang wrote:
+>>>
+>>>> @@ -698,11 +700,20 @@ static int ib_uverbs_mmap(struct file *filp, struct vm_area_struct *vma)
+>>>>  	ucontext = ib_uverbs_get_ucontext_file(file);
+>>>>  	if (IS_ERR(ucontext)) {
+>>>>  		ret = PTR_ERR(ucontext);
+>>>> -		goto out;
+>>>> +		goto out_srcu;
+>>>>  	}
+>>>> +
+>>>> +	mutex_lock(&file->disassociation_lock);
+>>>> +	if (file->disassociated) {
+>>>> +		ret = -EPERM;
+>>>> +		goto out_mutex;
+>>>> +	}
+>>>
+>>> What sets disassociated back to false once the driver reset is
+>>> completed?
+>>>
+>>> I think you should probably drop this and instead add a lock and test
+>>> inside the driver within its mmap op. While reset is ongoing fail all
+>>> new mmaps.
+>>>
+>>
+>> disassociated won't be set back to false. This is to stop new mmaps on
+>> this ucontext even after reset is completed, because during hns reset,
+>> all resources will be destroyed, and the ucontexts will become unavailable.
 > 
-> I recently received a review for the code for the BMP280 sensors, and I think
-> it applies well to you as well. Since you are using the sleeping functions in
-> your code, maybe a comment on top that explains why this value or where you
-> found it in the datasheet would be helpful.
+> ucontext is SW object and not HW object, why will it become unavailable?
 > 
-> Specifically for the Bosch Sensors, because Bosch's datasheets have either
-> hidden or no information at all, and you need to search for stuff in the
-> respective C sensor API in the Bosch GitHub.
 
-Thanks for the review! I'll be sure to comment the sleeping functions.
+Once hns device is reset, we don't allow any doorbell until driver's
+re-initialization is completed. Not only all existing mmaps on ucontexts
+will be zapped, no more new mmaps are allowed either.
 
-Best regards,
-Alex
+This actually makes ucontexts unavailable since userspace cannot access
+HW with them any more. Users will have to destroy the old ucontext and
+allocate a new one after driver's re-initialization is completed.
+
+Junxian
+
+> Thanks
 
