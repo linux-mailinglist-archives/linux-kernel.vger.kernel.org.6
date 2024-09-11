@@ -1,212 +1,131 @@
-Return-Path: <linux-kernel+bounces-324624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21937974EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:45:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2349974F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469351C21FEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914A3284596
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5A07DA81;
-	Wed, 11 Sep 2024 09:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0V366jw6"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6D416EB54;
+	Wed, 11 Sep 2024 09:48:02 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A680A45C18;
-	Wed, 11 Sep 2024 09:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0922814A097
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047895; cv=none; b=TLAeSle55dCtqwO7RfSnDbEtV6xgA1MuVuom2OjSE6MZMlwhS+5yOqeeRADhf5iKeMYzGuaH4qe8RZBZ9GqLRkT82Zg21ABB7lrBJP5u/VDE0DCJ4G/b9l67MEvSbkG4Uka3UegV/h9Z88v56r8Zd1JdC+cVdvfTXkMVllIjAJg=
+	t=1726048082; cv=none; b=gT3+RSS0pvyORNfUz4XuKnMYZBvoToJPN+V62XVD0UHaYR/VVJZUPkoWqaw5ewG1g1ecfpTcIcZIZx+cTQgOIHo1ZvjaxBC6LQnVlPHFyik5MrOKHTXUD3f0Hikj3Q9jCj//hturhlaqM9d9fByeDZGKLlnuqVU7WBuBzM8Xgwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047895; c=relaxed/simple;
-	bh=qhj7KM8Of8EZEkH4d38oeP6Xh2Sr8VhoFo22LcaMxGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=edm6mjs/5C1z8KzFLYpjC3gM5v9C/mYGOafmqt1VFescI1KqTSxaDQ6z0GEICJLplx0A+Y3BgKorUa5/au32h5DUGdT/qTXC75SRN7Jwh33gt+1eqPwXkpM28pb8eppf68DoIKV8naKrv84LnV6JkYLhEI96UiqaT60grT5k3Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0V366jw6; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nNb8FNqNc1pyiluz5XbOkdKPgdGwdFZnKD4YbayYcKs=; b=0V366jw6uETJ6sjPeanMRDucm+
-	KrBb5CGgRh9DKb3D32v1lzPu7ijmHE0reQ/aCu7F7N7qHMySUIWoGnKl2ATRnBNcI5lHIa9uZICYR
-	7fsDvCepVe12TFIMtdmvoZxlOAq4toPvNzNjainKXSAQf8B01wtHuNL214MmPrjN+yL261N13HXkn
-	kj7bmqygquwI+rKjI/jzEinxLorz7gbatnySNjIzbz97p1hDS7CUrHRONpJ9IPLg8y8/ntYgbJlfN
-	/mHdB9GKw3yBBqEq8GU5kbAFWSJgJh/harGnIdSFfz2DJM/41t5/qApYNveETrxf65zZltPzvTW/l
-	eB0ODdKg==;
-Received: from i53875a03.versanet.de ([83.135.90.3] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1soJtk-0007oi-Kw; Wed, 11 Sep 2024 11:44:28 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v1 5/6] pmdomain: rockchip: add regulator support
-Date: Wed, 11 Sep 2024 11:46:58 +0200
-Message-ID: <2224005.vXnMlVU4IS@diego>
-In-Reply-To: <20240910180530.47194-6-sebastian.reichel@collabora.com>
-References:
- <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <20240910180530.47194-6-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1726048082; c=relaxed/simple;
+	bh=JoBM1fuN3Ci8KMccukxu1bHwglfAX1/VWZS/SV9lpeg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EcaEKF0IBOxt7byYsXtXGgOVkssSeeUt86Why2r+8HAXQZJuyp/uBo1xddn6ypOFhpI8ehQ/cCUDlfP0QRvOGjBJOB1OTTIpLwGYV8gc8VV/qSk6C3B5BMsNRle1h2RlCdFDsHyjSme6/dTpVPP5NFb3gVjEA+h3D4qLCLJrkKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82d0daa1b09so78795739f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:48:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726048080; x=1726652880;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JoBM1fuN3Ci8KMccukxu1bHwglfAX1/VWZS/SV9lpeg=;
+        b=vC5BOZwDj7+290ZOZhz3CQ/QV/AMTftu+uLGJcB3SWJ6aaimhoECLwSI6yOlClNctF
+         F7EXQwYOphaNvL/Qik3GKRSovTLsjK7Ww+nDKNi9Xmz9pqtGPrKyot31OlqDv3DIV4Uw
+         pbU3s55IYTWo5UcW7zuL0hd/kkMCX8EtWvgrxH6x9vWfr2SPRERQ9yu91PAlIoqSubW+
+         l8+vOtes2BmcKJBICqykn4IpGdiJCYwdeGHFl1Wk/r6cpTq5hQLEHwlDkjs8AnZOjNtJ
+         XdqVhZwHANyNZVtIr6Msw9mTDWe5iag7dWlE0t6bqlVfhuFAZtYkbqeEnfIpEgWDXOCO
+         x9aw==
+X-Gm-Message-State: AOJu0YzvzgaqGntrHGeOBzv183nKGnJYTa0PAZxdEDNR5K0X4/9psjf6
+	uZuT4Xh3LtRIFQtNgpYuymC4kYwfLxB8abEi2BC3ar3eHl9GnB3F1HhgkC4nkcvmXUept1FmBgK
+	XYhQoZHMQCgeyEV8OTCQhfqqyrPWY8iXeZZsrTgXjd1FzzjUdOaRjGIY=
+X-Google-Smtp-Source: AGHT+IHGhqFkjEiIhr59nd9jlVlbQ+LBj1DnUdnzSSF0C6mxMw6Ha39779C0C5tH2HnXjmHbfSDo72Yo9lEBi+736nJnSYSi0DDx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6602:1583:b0:82a:ac63:e7fc with SMTP id
+ ca18e2360f4ac-82aac63e892mr1010356639f.15.1726048080030; Wed, 11 Sep 2024
+ 02:48:00 -0700 (PDT)
+Date: Wed, 11 Sep 2024 02:48:00 -0700
+In-Reply-To: <0000000000000311430620013217@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000acfb4e0621d4e20a@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Dienstag, 10. September 2024, 19:57:14 CEST schrieb Sebastian Reichel:
-> Some power domains require extra voltages to be applied. For example
-> trying to enable the GPU domain on RK3588 fails when the SoC does not
-> have VDD GPU enabled.
-> 
-> The solution to temporarily change the device's device tree node has
-> been taken over from the Mediatek power domain driver.
-> 
-> The regulator is not acquired at probe time, since that creates circular
-> dependencies. The power domain driver must be probed early, since SoC
-> peripherals need it. Regulators on the other hand depend on SoC
-> peripherals like SPI, I2C or GPIO.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-It does look like Chen-Yu Tsai is working on a similar problem [0].
+***
 
-I.e. this really is a hack, so I started looking around the regulator API
-and found of_regulator_bulk_get existing but unused that already
-operates on a of-node.
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+Author: alibuda@linux.alibaba.com
 
-Googling further I stumbled upon the linked patch from some days
-ago ;-) . So maybe that could be a cleaner way forward?
+#syz test
 
+Make Lockdep happy with IPPROTO_SMC
 
-[0] https://patchwork.kernel.org/project/linux-mediatek/patch/20240904090016.2841572-6-wenst@chromium.org/
+---
+ =C2=A0net/smc/smc_inet.c | 17 ++++++++++++++++-
+ =C2=A01 file changed, 16 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/pmdomain/rockchip/pm-domains.c | 57 +++++++++++++++++++++++++-
->  1 file changed, 55 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 663d390faaeb..ae6990897928 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_clk.h>
->  #include <linux/clk.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/mfd/syscon.h>
->  #include <soc/rockchip/pm_domains.h>
->  #include <dt-bindings/power/px30-power.h>
-> @@ -89,6 +90,8 @@ struct rockchip_pm_domain {
->  	u32 *qos_save_regs[MAX_QOS_REGS_NUM];
->  	int num_clks;
->  	struct clk_bulk_data *clks;
-> +	struct device_node *node;
-> +	struct regulator *supply;
->  };
->  
->  struct rockchip_pmu {
-> @@ -571,18 +574,67 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
->  	return 0;
->  }
->  
-> +static int rockchip_pd_regulator_disable(struct rockchip_pm_domain *pd)
-> +{
-> +	return pd->supply ? regulator_disable(pd->supply) : 0;
-> +}
-> +
-> +
-> +static int rockchip_pd_regulator_enable(struct rockchip_pm_domain *pd)
-> +{
-> +	struct rockchip_pmu *pmu = pd->pmu;
-> +	struct device_node *main_node;
-> +
-> +	if (!pd->supply) {
-> +		/*
-> +		 * Find regulator in current power domain node.
-> +		 * devm_regulator_get() finds regulator in a node and its child
-> +		 * node, so set of_node to current power domain node then change
-> +		 * back to original node after regulator is found for current
-> +		 * power domain node.
-> +		 */
-> +		main_node = pmu->dev->of_node;
-> +		pmu->dev->of_node = pd->node;
-> +		pd->supply = devm_regulator_get(pmu->dev, "domain");
-> +		pmu->dev->of_node = main_node;
-> +		if (IS_ERR(pd->supply)) {
-> +			pd->supply = NULL;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return regulator_enable(pd->supply);
-> +}
-> +
->  static int rockchip_pd_power_on(struct generic_pm_domain *domain)
->  {
->  	struct rockchip_pm_domain *pd = to_rockchip_pd(domain);
-> +	int ret;
-> +
-> +	ret = rockchip_pd_regulator_enable(pd);
-> +	if (ret) {
-> +		dev_err(pd->pmu->dev, "Failed to enable supply: %d\n", ret);
-> +		return ret;
-> +	}
->  
-> -	return rockchip_pd_power(pd, true);
-> +	ret = rockchip_pd_power(pd, true);
-> +	if (ret)
-> +		rockchip_pd_regulator_disable(pd);
-> +
-> +	return ret;
->  }
->  
->  static int rockchip_pd_power_off(struct generic_pm_domain *domain)
->  {
->  	struct rockchip_pm_domain *pd = to_rockchip_pd(domain);
-> +	int ret;
->  
-> -	return rockchip_pd_power(pd, false);
-> +	ret = rockchip_pd_power(pd, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rockchip_pd_regulator_disable(pd);
-> +	return ret;
->  }
->  
->  static int rockchip_pd_attach_dev(struct generic_pm_domain *genpd,
-> @@ -663,6 +715,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
->  
->  	pd->info = pd_info;
->  	pd->pmu = pmu;
-> +	pd->node = node;
->  
->  	pd->num_clks = of_clk_get_parent_count(node);
->  	if (pd->num_clks > 0) {
-> 
+diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
+index bece346..281f0450 100644
+--- a/net/smc/smc_inet.c
++++ b/net/smc/smc_inet.c
+@@ -102,14 +102,29 @@
+ =C2=A0};
+ =C2=A0#endif /* CONFIG_IPV6 */
 
++static struct lock_class_key smc_clcsk_slock_keys[2];
++static struct lock_class_key smc_clcsk_keys[2];
++
+ =C2=A0static int smc_inet_init_sock(struct sock *sk)
+ =C2=A0{
++=C2=A0=C2=A0 bool is_ipv6 =3D sk->sk_family =3D=3D AF_INET6;
+ =C2=A0=C2=A0=C2=A0 struct net *net =3D sock_net(sk);
++=C2=A0=C2=A0 int rc;
 
+ =C2=A0=C2=A0=C2=A0 /* init common smc sock */
+ =C2=A0=C2=A0=C2=A0 smc_sk_init(net, sk, IPPROTO_SMC);
+ =C2=A0=C2=A0=C2=A0 /* create clcsock */
+-=C2=A0=C2=A0 return smc_create_clcsk(net, sk, sk->sk_family);
++=C2=A0=C2=A0 rc =3D smc_create_clcsk(net, sk, sk->sk_family);
++=C2=A0=C2=A0 if (rc)
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return rc;
++
++=C2=A0=C2=A0 sock_lock_init_class_and_name(smc_sk(sk)->clcsk,
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is_ipv6 ? "slock-AF_INET6-=
+SMC-CLCSK" :=20
+"slock-AF_INET-SMC-CLCSK",
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &smc_clcsk_slock_keys[is_i=
+pv6],
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is_ipv6 ? "sk_lock-AF_INET=
+6-SMC-CLCSK" :=20
+"sk_lock-AF_INET-SMC-CLCSK",
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &smc_clcsk_keys[is_ipv6]);
++
++=C2=A0=C2=A0 return 0;
+ =C2=A0}
 
-
+ =C2=A0int __init smc_inet_init(void)
+--=20
+1.8.3.1
 
