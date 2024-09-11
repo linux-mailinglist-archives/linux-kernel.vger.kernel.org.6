@@ -1,311 +1,130 @@
-Return-Path: <linux-kernel+bounces-325311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330669757B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:56:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41A39757CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59971F259FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:56:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C69B2B164
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2382A1ABED6;
-	Wed, 11 Sep 2024 15:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A581AD9CB;
+	Wed, 11 Sep 2024 15:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pp3b2RfD"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPiAHl/6"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FDD187336
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457331AC8A2;
+	Wed, 11 Sep 2024 15:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070177; cv=none; b=FKXHWVXSYeg9FlXHp4TVPROgmbXnR5KPE4SLBOb5dTW8Gdrn7NLpcM4sdtEJJEgpIpdYCKcrOObJmxsZr+0YWR9L0aAyDyh8JvPf/oCC82MH2SaE+WqHA4ii4IUdRToROWP33XdcNIA3ujxp2HVN5WbijzndhsOzkm/84rs70bM=
+	t=1726070182; cv=none; b=MTvFYNEZToj/lt9fUE2VtUC6gWyZMxTKtwQ5+gVUFy1tExN3XiZsIP0tj5PNLpysPCGrCPEUyqxgwaDLwByfkAJ89EdPcUy2feGO+VIeh5nyU03XWamcAq0bm9LWqT3kkAWDpMBdQ00PJf/TQfU06Jdmlt9MacGb546qUDCVS/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070177; c=relaxed/simple;
-	bh=5MNG4HOkOTF6AKS6N4c5zwJ4wQrJIxGKiYo6sqenF3o=;
+	s=arc-20240116; t=1726070182; c=relaxed/simple;
+	bh=3RzPUMFytqwEGstKy+pM1kJth/A7eKAmDwDt5MnkrsM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bBDzraXlEztvU8rlrpgOpPE0m9qSjCVJCDtdfFveIXDMjXkHC3MM507e3GiBeIVBEx7dbrgMskJPxSWhA12klHUq4G3Q3JAmNTVUzihT4nq0vANjUFYYbNVCk/j1uxvexdeHL5pd3ecnnDODWFFfMAtiGgkl0kFsyVceaKsM4Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pp3b2RfD; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ceb00673-8151-49b0-b36b-75b5dc402041@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726070168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J8NaUEcC/jxxHDpfZXwZPhCuZ+KZJ7rMZcv9TtycY/A=;
-	b=pp3b2RfDorR3bidkDidzDEAsRCIsQ8XomPytKNyTz1OX51OQ38KYet0NW7ZYJk/L3oLSV4
-	wwVbtho6SIUpIIx2MkEYIvaLfqHEstRyLspm/kVEOMdRiGRZIS1dvDpnK63s8i9g6BLjLv
-	Wt9q/n1hhgyyLuksA9ylb2cUeR/pDR8=
-Date: Wed, 11 Sep 2024 16:56:03 +0100
+	 In-Reply-To:Content-Type; b=hpRCdRogzvPDbw9BSHSx3XTThPwL2y9d5KhpNTodl6zAryrjNV8L5MqzuJgF+3RLyhAQyv27FKGzxT8M1cV5gOrMGx+t6JoKc7guY7x838hVGuVXfja+seI/uCMSwBIyo4Fe43VFGz/jstXmZOMLnqgVP3V6rI0M2lSGHLee7Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPiAHl/6; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d89229ac81so5486157a91.0;
+        Wed, 11 Sep 2024 08:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726070180; x=1726674980; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ekEGS5LhVrz52kPhdjD1qBU5D/FHKxR2d7m0EFtF8wo=;
+        b=NPiAHl/6NRqQlh7axFtTNJWyaSDPZKTSyWgk38VD7vXakEexRqpD63bT5kjYJ8xh0L
+         03wxrKO7gq47UcBWWAXttjDECp1rqlp2BJ9K/yD/YfKXjR60tDoAnkGPuOt6hh97x7+U
+         NbCndbJUcVu9SiF2HrVYo9LUZwXU06gzFwLuiHle8B/XY7ykwF0aofVys5WzFlzvG7lg
+         nxRPrmPWCyha77wXC8pTloM614DPzpJPdcCpul8QqvYgUF5oPZe0DLGy7fqLjEM8UUIT
+         NNRzsB8hlilAH57/DgVjDFiXy7kEoohKu3C4IigrbLM/N+dQ57sz0cyOhHUBE/FpODut
+         e4Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726070180; x=1726674980;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ekEGS5LhVrz52kPhdjD1qBU5D/FHKxR2d7m0EFtF8wo=;
+        b=PbqlAR7hHBNqk18DWHLP5PTsfcB79USzdBSPVt3/s9j4P0aPglXf/1/Y17Pw6rwPbP
+         60qkTbvlu0IkMPE9lLv1rkec/3AdiVIk9wTjd4kOmF/zckqieru8mgxmHHLYDs4Qc3Jz
+         1ORYHN91gPFBIqradBr/GwhY6XbgcxN30QvFe0JlrcCtsWoMVN1KpVfzEemWaHWazpwN
+         f2dBKtAtJaKlK4ZHdfZrzBl8X7aIh2/AaWYjxR4NEPNU4HlROSy3CZipIvs3V7OMK26f
+         tT/ThpIMj5RcRzyetGDtG+yCtUAM37wbW0yBg2ZYs9KEDRERqdkw73kosymVDl9kCLCu
+         W22A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9GBAHw6+XxMALScaSIe0gJvmnKENLu8Zq2vehtmFw0gSJvM7HZd0W5ov4HQqnK7NhUcqDuqo3+ItjvhhD@vger.kernel.org, AJvYcCWS6jp1kk+ItZPhD9SoPZ8UbI73RrkpK1UGyrGYSIbOi+Iv6uQyb9McBLp/yW+2Vie/NFgze1JSUG/1zYProxM=@vger.kernel.org, AJvYcCXyEuTwvIIi3csp86CnUWQWuwtQkQpVxTe3U2QYwGLKA/PK1J987vUp5a3XZCtONBhdcKbqG8hu7t/u@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ+08MUVzZ1GyaJx/MUI3hkk7YHLdC6/oKZA8cqdPWCzRpzz3r
+	nSe7rbnwCJDtbTbuqbuJtdaopElGacjxDy8YIhy746alVfD8s+In
+X-Google-Smtp-Source: AGHT+IHnhAO56F3iLPQNKaaUfn3CT/B+2/Stp03j6qiLYfTfQdKSUV5CbkgI8VGevBOXfRC1CJw1Ow==
+X-Received: by 2002:a17:90a:a08e:b0:2d8:8a03:b90d with SMTP id 98e67ed59e1d1-2dad512d6f9mr21023583a91.41.1726070180261;
+        Wed, 11 Sep 2024 08:56:20 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadb42e6fasm10838752a91.0.2024.09.11.08.56.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 08:56:19 -0700 (PDT)
+Message-ID: <44039255-159a-4284-abd8-a0f558ad006d@gmail.com>
+Date: Wed, 11 Sep 2024 21:26:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 1/2] octeontx2-af: Knobs for NPC default rule
- counters
-To: Linu Cherian <lcherian@marvell.com>, davem@davemloft.net,
- sgoutham@marvell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gakula@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-References: <20240911143303.160124-1-lcherian@marvell.com>
- <20240911143303.160124-2-lcherian@marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] addon_boards: mikrobus: Add GPS3 Click
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240911143303.160124-2-lcherian@marvell.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ayush Singh <ayush@beagleboard.org>
+Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
+ jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+ Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-8-3ded4dc879e7@beagleboard.org>
+ <2024091149-vocalize-composite-6e48@gregkh>
+From: Ayush Singh <ayushdevel1325@gmail.com>
+In-Reply-To: <2024091149-vocalize-composite-6e48@gregkh>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 11/09/2024 15:33, Linu Cherian wrote:
-> Add devlink knobs to enable/disable counters on NPC
-> default rule entries.
-> 
-> Introduce lowlevel variant of rvu_mcam_remove/add_counter_from/to_rule
-> for better code reuse, which assumes necessary locks are taken at
-> higher level.
-> 
-> Sample command to enable default rule counters:
-> devlink dev param set <dev> name npc_def_rule_cntr value true cmode runtime
-> 
-> Sample command to read the counter:
-> cat /sys/kernel/debug/cn10k/npc/mcam_rules
-> 
-> Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> ---
->   .../net/ethernet/marvell/octeontx2/af/rvu.h   |   8 +-
->   .../marvell/octeontx2/af/rvu_devlink.c        |  32 +++++
->   .../ethernet/marvell/octeontx2/af/rvu_npc.c   | 132 ++++++++++++++++--
->   .../marvell/octeontx2/af/rvu_npc_fs.c         |  36 ++---
->   4 files changed, 171 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> index 43b1d83686d1..fb4b88e94649 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> @@ -526,6 +526,7 @@ struct rvu {
->   	struct mutex		alias_lock; /* Serialize bar2 alias access */
->   	int			vfs; /* Number of VFs attached to RVU */
->   	u16			vf_devid; /* VF devices id */
-> +	bool			def_rule_cntr_en;
->   	int			nix_blkaddr[MAX_NIX_BLKS];
->   
->   	/* Mbox */
-> @@ -961,7 +962,11 @@ void rvu_npc_disable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
->   void rvu_npc_enable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
->   void rvu_npc_update_flowkey_alg_idx(struct rvu *rvu, u16 pcifunc, int nixlf,
->   				    int group, int alg_idx, int mcam_index);
-> -
-> +void __rvu_mcam_remove_counter_from_rule(struct rvu *rvu, u16 pcifunc,
-> +					 struct rvu_npc_mcam_rule *rule);
-> +void __rvu_mcam_add_counter_to_rule(struct rvu *rvu, u16 pcifunc,
-> +				    struct rvu_npc_mcam_rule *rule,
-> +				    struct npc_install_flow_rsp *rsp);
->   void rvu_npc_get_mcam_entry_alloc_info(struct rvu *rvu, u16 pcifunc,
->   				       int blkaddr, int *alloc_cnt,
->   				       int *enable_cnt);
-> @@ -986,6 +991,7 @@ void npc_set_mcam_action(struct rvu *rvu, struct npc_mcam *mcam,
->   void npc_read_mcam_entry(struct rvu *rvu, struct npc_mcam *mcam,
->   			 int blkaddr, u16 src, struct mcam_entry *entry,
->   			 u8 *intf, u8 *ena);
-> +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable);
->   bool is_cgx_config_permitted(struct rvu *rvu, u16 pcifunc);
->   bool is_mac_feature_supported(struct rvu *rvu, int pf, int feature);
->   u32  rvu_cgx_get_fifolen(struct rvu *rvu);
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> index 7498ab429963..9c26e19a860b 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> @@ -1238,6 +1238,7 @@ enum rvu_af_dl_param_id {
->   	RVU_AF_DEVLINK_PARAM_ID_DWRR_MTU,
->   	RVU_AF_DEVLINK_PARAM_ID_NPC_MCAM_ZONE_PERCENT,
->   	RVU_AF_DEVLINK_PARAM_ID_NPC_EXACT_FEATURE_DISABLE,
-> +	RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
->   	RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
->   };
->   
-> @@ -1358,6 +1359,32 @@ static int rvu_af_dl_npc_mcam_high_zone_percent_validate(struct devlink *devlink
->   	return 0;
->   }
->   
-> +static int rvu_af_dl_npc_def_rule_cntr_get(struct devlink *devlink, u32 id,
-> +					   struct devlink_param_gset_ctx *ctx)
-> +{
-> +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-> +	struct rvu *rvu = rvu_dl->rvu;
-> +
-> +	ctx->val.vbool = rvu->def_rule_cntr_en;
-> +
-> +	return 0;
-> +}
-> +
-> +static int rvu_af_dl_npc_def_rule_cntr_set(struct devlink *devlink, u32 id,
-> +					   struct devlink_param_gset_ctx *ctx,
-> +					   struct netlink_ext_ack *extack)
-> +{
-> +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-> +	struct rvu *rvu = rvu_dl->rvu;
-> +	int err;
-> +
-> +	err = npc_config_cntr_default_entries(rvu, ctx->val.vbool);
-> +	if (!err)
-> +		rvu->def_rule_cntr_en = ctx->val.vbool;
-> +
-> +	return err;
-> +}
-> +
->   static int rvu_af_dl_nix_maxlf_get(struct devlink *devlink, u32 id,
->   				   struct devlink_param_gset_ctx *ctx)
->   {
-> @@ -1444,6 +1471,11 @@ static const struct devlink_param rvu_af_dl_params[] = {
->   			     rvu_af_dl_npc_mcam_high_zone_percent_get,
->   			     rvu_af_dl_npc_mcam_high_zone_percent_set,
->   			     rvu_af_dl_npc_mcam_high_zone_percent_validate),
-> +	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
-> +			     "npc_def_rule_cntr", DEVLINK_PARAM_TYPE_BOOL,
-> +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-> +			     rvu_af_dl_npc_def_rule_cntr_get,
-> +			     rvu_af_dl_npc_def_rule_cntr_set, NULL),
->   	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
->   			     "nix_maxlf", DEVLINK_PARAM_TYPE_U16,
->   			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> index 97722ce8c4cb..a766870520b3 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> @@ -2691,6 +2691,51 @@ void npc_mcam_rsrcs_reserve(struct rvu *rvu, int blkaddr, int entry_idx)
->   	npc_mcam_set_bit(mcam, entry_idx);
->   }
->   
-> +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable)
-> +{
-> +	struct npc_install_flow_rsp rsp = { 0 };
-> +	struct npc_mcam *mcam = &rvu->hw->mcam;
-> +	struct rvu_npc_mcam_rule *rule;
-> +	int blkaddr;
-> +
-> +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
-> +	if (blkaddr < 0)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&mcam->lock);
-> +	list_for_each_entry(rule, &mcam->mcam_rules, list) {
-> +		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
-> +			continue;
-> +		if (!rule->default_rule)
-> +			continue;
-> +		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
-> +			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
-> +						       rule, &rsp);
-> +			if (rsp.counter < 0) {
-> +				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
-> +					__func__, rsp.counter);
-> +				break;
-> +			}
-> +			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
-> +						    rule->entry, rsp.counter);
-> +		}
-> +
-> +		if (enable && rule->has_cntr) /* Reset counter before use */ {
-> +			rvu_write64(rvu, blkaddr,
-> +				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
-> +			continue;
-> +		}
-> +
-> +		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
-> +			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
-> +							    rule);
-> +		}
-> +	}
-> +	mutex_unlock(&mcam->lock);
-> +
-> +	return 0;
-> +}
-> +
->   int rvu_mbox_handler_npc_mcam_alloc_entry(struct rvu *rvu,
->   					  struct npc_mcam_alloc_entry_req *req,
->   					  struct npc_mcam_alloc_entry_rsp *rsp)
-> @@ -2975,9 +3020,9 @@ int rvu_mbox_handler_npc_mcam_shift_entry(struct rvu *rvu,
->   	return rc;
->   }
->   
-> -int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> -			struct npc_mcam_alloc_counter_req *req,
-> -			struct npc_mcam_alloc_counter_rsp *rsp)
-> +static int __npc_mcam_alloc_counter(struct rvu *rvu,
-> +				    struct npc_mcam_alloc_counter_req *req,
-> +				    struct npc_mcam_alloc_counter_rsp *rsp)
->   {
->   	struct npc_mcam *mcam = &rvu->hw->mcam;
->   	u16 pcifunc = req->hdr.pcifunc;
-> @@ -2998,7 +3043,6 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
->   	if (!req->contig && req->count > NPC_MAX_NONCONTIG_COUNTERS)
->   		return NPC_MCAM_INVALID_REQ;
->   
-> -	mutex_lock(&mcam->lock);
->   
->   	/* Check if unused counters are available or not */
->   	if (!rvu_rsrc_free_count(&mcam->counters)) {
-> @@ -3035,12 +3079,27 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
->   		}
->   	}
->   
-> -	mutex_unlock(&mcam->lock);
+On 9/11/24 20:28, Greg Kroah-Hartman wrote:
 
-There is mutex_unlock() left in this function in error path of
-rvu_rsrc_free_count(&mcam->counters)
+> On Wed, Sep 11, 2024 at 07:57:25PM +0530, Ayush Singh wrote:
+>> - GPS3 Click is a UART MikroBUS addon Board
+>>
+>> Link: https://www.mikroe.com/gps-3-click
+>>
+>> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+>> ---
+>>   addon_boards/mikrobus/Makefile         |  1 +
+>>   addon_boards/mikrobus/mikroe-1714.dtso | 28 ++++++++++++++++++++++++++++
+> Odd top-level directory for the kernel, are you sure this is correct?
+>
+> thanks,
+>
+> greg k-h
+>
+Well, it is kinda a temporary location, since well, I could not find a 
+good place for board overlays but a top-level location seems better than 
+putting them in any arch specific location. I am open to moving them to 
+a more suitable location if we have one.
 
->   	return 0;
->   }
->   
-> -int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
-> -		struct npc_mcam_oper_counter_req *req, struct msg_rsp *rsp)
-> +int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> +			struct npc_mcam_alloc_counter_req *req,
-> +			struct npc_mcam_alloc_counter_rsp *rsp)
-> +{
-> +	struct npc_mcam *mcam = &rvu->hw->mcam;
-> +	int err;
-> +
-> +	mutex_lock(&mcam->lock);
-> +
-> +	err = __npc_mcam_alloc_counter(rvu, req, rsp);
-> +
-> +	mutex_unlock(&mcam->lock);
-> +	return err;
-> +}
-> +
-> +static int __npc_mcam_free_counter(struct rvu *rvu,
-> +				   struct npc_mcam_oper_counter_req *req,
-> +				   struct msg_rsp *rsp)
->   {
->   	struct npc_mcam *mcam = &rvu->hw->mcam;
->   	u16 index, entry = 0;
-> @@ -3050,7 +3109,6 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
->   	if (blkaddr < 0)
->   		return NPC_MCAM_INVALID_REQ;
->   
-> -	mutex_lock(&mcam->lock);
->   	err = npc_mcam_verify_counter(mcam, req->hdr.pcifunc, req->cntr);
->   	if (err) {
->   		mutex_unlock(&mcam->lock);
 
-And here it's even visible in the chunk..
-
-> @@ -3077,10 +3135,66 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
->   					      index, req->cntr);
->   	}
->   
-> -	mutex_unlock(&mcam->lock);
->   	return 0;
->   }
->   
+Ayush Singh
 
 
