@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-324621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01075974EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:44:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ECF974EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC8EC28319D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC31F2196D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0909178396;
-	Wed, 11 Sep 2024 09:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBVCN2aB"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D120F181BA8;
+	Wed, 11 Sep 2024 09:44:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6754114F105;
-	Wed, 11 Sep 2024 09:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7F6155A52
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047842; cv=none; b=eyFCXqi+yMwTMVHUtZJTE5QihrULJlNI+io2DbC+R+agD+iu57hZru4HE6oXsNox0EVaZYcPPW2Fcktb8xr4gRWZKoVGubBY8lFuYp3chvnMEgbjcB/vRG9WGJNjn6sM3ycL6IJtN2FI/VselYalqJDjiFeqtMyogQvBL+qhNO0=
+	t=1726047845; cv=none; b=AgwsceR9TdvEgVRjgEzRILIzKvn2FmVybm2rpXh+XkRYd+W0s3nMCa9c1Bdh7rAvvBaBfOyxMEG36Ab4YgeZRJAxLrHz8MfIeLh56PUEJhgzzBydzWIxpmLfNOOW2QHSMksaHsjjjUC/PjLTsMGN6Ow/rdP4POwDTB+J5THubaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047842; c=relaxed/simple;
-	bh=Upu3RSMMQXqVbQkLU8A4pW+vF+nso3kCAcQkkCqDWa8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFLCmgCdbMLoGHrermbJfqermPrSdQI1HjN/3xfi7xJBUeVGba9EXPiTAnf+2VM1NWH6I9HhofMeYV9KoLzg0Osdi2xcYOWHQbZBvhCYMekpiHDdj/MihgIpy8c36SVFmaDMdBpZqCDx7GtZ2KRBzQbtxpJ6i7aZ8SQmT7aWV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBVCN2aB; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5353cd2fa28so8012924e87.3;
-        Wed, 11 Sep 2024 02:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726047837; x=1726652637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vK4hXm3cLDT7VU3thxO/xWMzCFk73a3C3JCmK+dAb1c=;
-        b=NBVCN2aBo28aSOgQapOYOMBZQhP1+Zgnvh3tMKAd7ghGbwRde6niPmrTeDyMBceQHp
-         GYG3CSzaOQwr+XPViuVyXa65NXUWQwJgsn8MwyJk5dJJs1UbZEDnPeTLh+5hyydQ70Ay
-         chZJE9C5GkM3xNXCpC3FMoeLw5pca0nGBcwXV02BdSeoB1wYcfH7jP7jUbZ374EAHOEd
-         7Yucwa8Vq4t5HvwXEPPkm7zsANxG5RF22YXKsLMPEGBovOSN20OddYvg/2Vvhjc+FfPu
-         /ycmcNf/BxXmgDAfXaEL9g7ItXb+UxPt+0eR+3xkbBWtG9yLjpLydZS2/YNCNPO5rpZr
-         Lhfw==
+	s=arc-20240116; t=1726047845; c=relaxed/simple;
+	bh=v8K/X/4eaAAVtMsUr1GVS3W2ec6EtOV1Y5JyyFg2oJw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QfT6O1dCc8qj1jnKczLbtGSKKP74iXE/ua7G9z6wSVtuU//MTEEvr7pmPbktDoTSdnIdm11SGYOtkbcndonJ2Qk54XJzFS9ybFfkiFykeGurHr+hZGvUCWNeyyamkZeTGL1z3rGEOCHLPCHAM6HabCi/RObLirwigxwFf9GDGRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0448fa4f4so149201955ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:44:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726047837; x=1726652637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vK4hXm3cLDT7VU3thxO/xWMzCFk73a3C3JCmK+dAb1c=;
-        b=ADiGNfTMWTWbN1SWwg/AuXY3suclcXn3OwFbNIg7X76ZH2xafXOx2IRq4WpNPqbVVC
-         S7FILaBqEwpXsW+wiYIygjcz4h68B+nW730ApJgmC3OBojY5MsqrrpqmYJDL+IiJtGc2
-         TVMv6ESeKkfFx9SRlmMEYGbBlppSTUkQdn2KN0lXI2otLBNBflD3D7HCgIWtjsnUyTAZ
-         ljkjERoWGWhe+cuMKkd2ocY74WpQZsU3LQIePtkXPL3Pvn9cDiPrhXx9L9zvIFB7BmxQ
-         fyQQ6lBxL0EWpnc7nJ0uufFI/nogMQaMHvw4lx/SEnhbi+RaiNWPIFL24Ru/CP0AJGsc
-         mRVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5f4xIXVSWnQjkqBR5vLUPRyEoow7OxoQiWNQi5C3ExCD1nV2ivZIKLd5dY4T2Tk/H9Ktf@vger.kernel.org, AJvYcCXFYsaEOW1sZR084UMcwVpfLUG2lvJ6dmh4YtZER+GzyDInDfzrk0PEvWaa2JDkkrF+UBg5uZ+Hm8cIVZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOoED8QksE8UuuopgNryfvtKUSUVPC7F8lpovn4Ob8ujijykUq
-	sy6I1tTBMlCJ0bGkCK7fKjD/drDEx2EAUPiLo1dd1a4wepFTolFtgRbMMw==
-X-Google-Smtp-Source: AGHT+IHbQwlRNKAug8LWOfz3XOOyd8OsiWy7fGS3gti0cKlOImM2McqhQVBhgn/SJBfyvhTr8TQh6A==
-X-Received: by 2002:a05:6512:4024:b0:536:553f:3ef6 with SMTP id 2adb3069b0e04-536587b034dmr11385493e87.18.1726047837179;
-        Wed, 11 Sep 2024 02:43:57 -0700 (PDT)
-Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f868e60sm1510053e87.38.2024.09.11.02.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 02:43:56 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 11 Sep 2024 11:43:54 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
-Message-ID: <ZuFmWuUK8POsihzf@pc636>
-References: <20240820155935.1167988-1-urezki@gmail.com>
- <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1726047843; x=1726652643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SXOeVXC/7ccCd215gkshLKO3A1iLFtTv02K+llXYg94=;
+        b=w+6sU5jdv1iwJpKkxkWbaRAbDwBGF10l4LQxgTos14aWp+UN3ZP0eKd7+7qHPj+kcF
+         08hLYJ1OWZyU10og8bjA/I5IRQ7UV/0pV8cbwX8VbyiaxGGqznFJkyRLf8USoMCUH7Lm
+         ajDRY04fY/aetfRR83aLJfxt2+8DzJLpm/ISLqIYk+oS3MKD7Tm+GMRK+sCjVMYdzlxf
+         KzeY0l16p8I+pd4ex9a9IUWuSuTAv87Wa7R/QWJsJl+gN2RWMstdC4pqWjI42QprZnUo
+         yB5gAccCCEeC02eGxQMG3TJ0g2xHpBS4QK6PVAKOshVEZsQJ2BxlN1z659lGA+1zyAl0
+         wRCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbIhpb0fu+Fb0aktwfvARLg00VDrJCqnQFxurBhfr6qwIi2mCa9pIT4gLn8eTQ8rEayg64s321X4iNZOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUrd+qIX8toLjUmUCGm72pAjy+ytPgpZmWjy9fiAcd7JjdNAJy
+	hxcK58AInipxEQmNPWlhUIKsWvs6/6QRJl0nbb16c5a8OmFh1T19sZcf0x1o/ufbruRCyQJfs7B
+	wkyc5UHG90rpDzMmQhlGsysO5D3PQ0SAepcssOKUMpoLZmj6KAHw/GJs=
+X-Google-Smtp-Source: AGHT+IEBk+wXiOPDzqUMrejQcBNntLrioWkSlSxO9AiNLz0+VLcvi0YUKichnrCScej6FZQ2WpHjUfh11mEd2ZCA//1IAmgkHtyK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
+X-Received: by 2002:a05:6e02:1a69:b0:39f:5e12:1dde with SMTP id
+ e9e14a558f8ab-3a052399e54mr133214095ab.21.1726047843298; Wed, 11 Sep 2024
+ 02:44:03 -0700 (PDT)
+Date: Wed, 11 Sep 2024 02:44:03 -0700
+In-Reply-To: <bcb5d5d6-fac4-4297-91bf-2d40fb023153@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000090c9f80621d4d4ae@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: alibuda@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 10, 2024 at 08:42:54AM -0700, Paul E. McKenney wrote:
-> On Tue, Aug 20, 2024 at 05:59:35PM +0200, Uladzislau Rezki (Sony) wrote:
-> > Add a kvfree_rcu_barrier() function. It waits until all
-> > in-flight pointers are freed over RCU machinery. It does
-> > not wait any GP completion and it is within its right to
-> > return immediately if there are no outstanding pointers.
-> > 
-> > This function is useful when there is a need to guarantee
-> > that a memory is fully freed before destroying memory caches.
-> > For example, during unloading a kernel module.
-> > 
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> As a follow-on patch, once kvfree_rcu_barrier() is accepted into
-> mainline, should we add a call to kvfree_rcu_barrier() to the
-> rcu_barrier_throttled() function in kernel/rcu/tree.c?
-> 
-> This would allow the do_rcu_barrier module parameter to be used to clear
-> out kfree_rcu() as well as call_rcu() work.  This would be useful to
-> people running userspace benchmarks that cause the kernel to do a lot
-> of kfree_rcu() calls.  Always good to avoid messing up the results from
-> the current run due to deferred work from the previous run.  Even better
-> would be to actually account for the deferred work, but do_rcu_barrier
-> can help with that as well.  ;-)
-> 
-> Thoughts?
->
-Makes sense. To be make sure that all objects are flushed. And as you
-mentioned it is good to have it for benchmarking as a return to a baseline
-point.
+Hello,
 
-One issue is probably a "name" which would be common for both:
+syzbot tried to test the proposed patch but the build/boot failed:
 
-rcu_barrier()
-kvfree_rcu_barrier()
+failed to apply patch:
+checking file net/smc/smc_inet.c
+patch: **** unexpected end of file in patch
 
-i mean /sys/module/rcutree/parameters/do_rcu_barrier. From how i
-would see it, it is supposed to trigger just rcu_barrier() API.
 
---
-Uladzislau Rezki
+
+Tested on:
+
+commit:         7e3e2c7f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
+dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
+compiler:       
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11a9a477980000
+
 
