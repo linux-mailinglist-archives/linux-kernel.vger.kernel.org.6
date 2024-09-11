@@ -1,250 +1,235 @@
-Return-Path: <linux-kernel+bounces-324197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9873597496B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8628897496E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190961F26DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0061C24ED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC43537E9;
-	Wed, 11 Sep 2024 04:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FC34AEF4;
+	Wed, 11 Sep 2024 05:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jXdFqoie"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2E5589B;
-	Wed, 11 Sep 2024 04:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmcbyhzS"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E401B748A;
+	Wed, 11 Sep 2024 05:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726030606; cv=none; b=Rj43tzFs6nzrzaR0Y4XX8o/5SqahIIfLbJDdPLO2USf+fqftGfKr/9sAPJUV4+87GOHxtvZiT+NduOwBTc+p+3vRaAvLEIyoPr38xh6sWyoy5jauWChiEn5xvgXvoowTjXHgDLweFOQ3Gj3zdsqGEoLYJKOyJYdE5tXIClWRUSc=
+	t=1726030922; cv=none; b=f3Wv4eIJNNRCRvIjhgoV1+0R/IjxTA0/r5ZT0gKNwoxIYuPOtk9EtUHpNbWg3Qo3pRDiRveL/flVPpY3yFQCWIQkt8FioTuVfgntL8xU/09rFH6CvtiSbSsPaMQbpSikDVRcUdrFvuZHJAW0i17j82WW0xgABVUIEWKQpuB6GOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726030606; c=relaxed/simple;
-	bh=WCT3gLIPKi2rloiBhOc+oD67Lrpf+PtV0i/c70mMkeo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=huLTEgWeUVb13Veuwx3Jgok8cneWvxAiunJnMkA3CnCo+6zo5nJHrcj12gBXko8itvL+E0aFpDZWfYWgURiYkEF0naZ54tyEFvr0xFaEeAcWNjl3pBHnA6VWHsMNVfSLzi/V/9Zm2I5WGsZ7PR7I/XNEdd+8ks23Jw6TFgqWvRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jXdFqoie; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from namjain-Virtual-Machine.mshome.net (unknown [167.220.238.141])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DC2C620B9A88;
-	Tue, 10 Sep 2024 21:56:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DC2C620B9A88
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726030603;
-	bh=9bq4kQISS+sdNw0M52IYsF90Bgvmo3NQ+h9q6SDUnJE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jXdFqoiexQLH9gRlzWsQEGaUBok2wTyWLeF5OYUKyLNYKXTHqoQyT+kzNMIST/qjp
-	 YEaTmS9TWu/WOjJTeWwKCbd+Dj4+NPSq2XJrNBIJNjQYrej0Rq5oJ+aOiTxSV1IE0V
-	 43evBpQCHSNuywQYNt5PNavK52Xrrlimik/V6AVw=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Michael Kelley <mhklinux@outlook.com>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	namjain@linux.microsoft.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2] clocksource: hyper-v: Fix hv tsc page based sched_clock for hibernation
-Date: Wed, 11 Sep 2024 10:26:32 +0530
-Message-Id: <20240911045632.3757-1-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726030922; c=relaxed/simple;
+	bh=GR03gk6l/4yIvEanNyYHAWaaQVnuLtoTZlnpwAHeNro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTTyWXJXzVmrwpmt2D5sQVNH86AGE9u/rLzpkf0i+0LpoYjB/qQR48dYmdYLlkJ6mLRnnBeL38Pl5S7IbWsP4lsypOuF9+ZjzPQGw8y5H3p3M81bB+r6GL2yDYwBtOQHe32cP5smSvCz6+AiU5VxRcQMLTYBIXy8PhGEQ3qFBB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmcbyhzS; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e663fso1841851a12.1;
+        Tue, 10 Sep 2024 22:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726030919; x=1726635719; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3y9WGvN4gCJZlWmeipDMEUKxZ6qFuoA/tJ0u/3oEbPE=;
+        b=DmcbyhzSzA7Zu2FuJgknXaOPDwW1NLRQI/UEdGyENMkyZdxxmpjOv2P2xzIXucnUd3
+         r72hXYuYN809ny76vQcXmtUDVjggk26jHyiEYD5/SehoR+t3Jh88hElhEHEAZFzuio2t
+         vwUrd+xhBD6lhtUeD7/9JNONn+dS+ktejj3P9RGEjdj7Qz+bLX0683tFsFBIqdirOrFF
+         7NStCEJovLNPZdYp+dxgbXyrLNmbdIXs+rymNRWPtdiJTclrm71xT4gckLAQ9oS4DmQx
+         ar42eftQEckd4mSBnEe5JCUcE22HHQ8J6HcZ0E5o00SSNhcZfMnu28OGGRdb+I4crGxV
+         G9Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726030919; x=1726635719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3y9WGvN4gCJZlWmeipDMEUKxZ6qFuoA/tJ0u/3oEbPE=;
+        b=wMMc3ACtbfj6i7xMIj0jyebFF6XTmJLdgpYJkZPNwykwjq7oFKb9nvRk4m9fyBJPA/
+         y0ecgYQf9s+qV0dMpSzLC46UChFf9ETK/D9wEhbGrlVRCaLmP/mWuq3ajqgpBS/2y6KH
+         ITlBgwBjHKpX1Ub9ajaMKYkCtKe+jLfhP83RCRUsqsGCqrlijdNJxNWOFEjLWX2HcAF5
+         smL0PpPX98IMg1dWFXBZX5O8z2T+h31dnj85WlKqzNixiRZ/9HCGUHKjE8DqOBp4C8sN
+         mRDGNAz2tAXKLbVMPQ/YaouExjdl9Zce1U9EjL194a27lVkv/zwAsd0sWI5E+jS+s5I/
+         yKoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP++yJCU4ABJEoe30kGXrZnWoHTSAp4N2nx4N3pcT4rO77kJ5qGW538RnCUrKIw7sjCg1FLKHPSU+l8lw=@vger.kernel.org, AJvYcCWQu+c0dK/onu5OBl7QkjWEsa1DqZ1cOy42+TUtjTgas9Fm9WltLWurjCvNfD+zIBARd6UoYZ35bDA+yoiJ0ynKFq0l@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVakl5z5GTfNLUpahzcQepdmQYNhT3QqGOrfK8uXk7wN5ThOqp
+	6WYIo6RBBmex6OAQi29yREuAX2mbvXpDLpxDr/DuNQ5SKFM8/o2dd72rKAbteuQw/cYPe8LOvDc
+	i6tPGibja4wjkGs3D5t9SzCYcQ5M=
+X-Google-Smtp-Source: AGHT+IFv4KG/qOrb+mXNnO6ScWxmZtswlWxiJPynO52N6MZsl01Dtqkf5+8xYwDe1BBhNQOy4dVhYsUFA60FsJQinjc=
+X-Received: by 2002:a05:6402:2345:b0:5c2:5c56:c31b with SMTP id
+ 4fb4d7f45d1cf-5c40bc5cc87mr1215565a12.30.1726030918048; Tue, 10 Sep 2024
+ 22:01:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
+ <20240909110415.33cb5f22@gandalf.local.home> <CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
+ <20240910125033.0a3986fa@gandalf.local.home>
+In-Reply-To: <20240910125033.0a3986fa@gandalf.local.home>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 11 Sep 2024 13:01:32 +0800
+Message-ID: <CAErzpmtz185jYSzVcDCFiVwB5b9J7nBQB-_=j7Q4_TxwjRwpTg@mail.gmail.com>
+Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
+ function return address
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-read_hv_sched_clock_tsc() assumes that the Hyper-V clock counter is
-bigger than the variable hv_sched_clock_offset, which is cached during
-early boot, but depending on the timing this assumption may be false
-when a hibernated VM starts again (the clock counter starts from 0
-again) and is resuming back (Note: hv_init_tsc_clocksource() is not
-called during hibernation/resume); consequently,
-read_hv_sched_clock_tsc() may return a negative integer (which is
-interpreted as a huge positive integer since the return type is u64)
-and new kernel messages are prefixed with huge timestamps before
-read_hv_sched_clock_tsc() grows big enough (which typically takes
-several seconds).
+On Wed, Sep 11, 2024 at 12:50=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+>
+> On Tue, 10 Sep 2024 14:15:39 +0800
+> Donglin Peng <dolinux.peng@gmail.com> wrote:
+> > > >
+> > > > See below logs with both funcgraph-retval and funcgraph-retaddr ena=
+bled.
+> > > >
+> > > > 4)               |  load_elf_binary() { /* A=3Dbprm_execve+0x249/0x=
+600 */
+> > >
+> > > I wonder if we should make this look more like the function tracer wh=
+en it
+> > > shows the parent. That is:
+> > >
+> > >   4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x60=
+0 */
+> >
+> > Nice, Is it necessary to add a prefix letter for the return value? For
+> > example, when
+> >  both funcgraph-retval and funcgraph-retaddr are enabled, like this:
+> >
+> >          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 V=
+=3D0x0 */
+>
+> How about:
+>
+> >          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 r=
+et=3D0x0 */
+>
+> As "ret" is more obvious than "V".
 
-Fix the issue by saving the Hyper-V clock counter just before the
-suspend, and using it to correct the hv_sched_clock_offset in
-resume. Override x86_platform.save_sched_clock_state  and
-x86_platform.restore_sched_clock_state.
+I agree, and will modify it, thanks.
 
-Note: if Invariant TSC is available, the issue doesn't happen because
-1) we don't register read_hv_sched_clock_tsc() for sched clock:
-See commit e5313f1c5404 ("clocksource/drivers/hyper-v: Rework
-clocksource and sched clock setup");
-2) the common x86 code adjusts TSC similarly: see
-__restore_processor_state() ->  tsc_verify_tsc_adjust(true) and
-x86_platform.restore_sched_clock_state().
+>
+> >
+> > >
+> > > > 4)               |    load_elf_phdrs() { /* A=3Dload_elf_binary+0x8=
+4/0x1730 */
+> > > > 4)               |      __kmalloc_noprof() { /* A=3Dload_elf_phdrs+=
+0x4a/0xb0 */
+> > > > 4) + 47.910 us   |        __cond_resched(); /* V=3D0x0 A=3D__kmallo=
+c_noprof+0x28c/0x390 */
+> > > > 4) ! 204.142 us  |      } /* __kmalloc_noprof V=3D0xffff888201e32c0=
+0 */
+> > > > 4)               |      kernel_read() { /* A=3Dload_elf_phdrs+0x6c/=
+0xb0 */
+> > > > 4)               |        rw_verify_area() { /* A=3Dkernel_read+0x2=
+b/0x50 */
+> > > > 4)               |          security_file_permission() {
+> > > > 4)               |            selinux_file_permission() { /* A=3Dse=
+curity_file_permission+0x26/0x40 */
+> > > > 4)               |              __inode_security_revalidate() { /* =
+A=3Dselinux_file_permission+0x6d/0x140 */
+> > > > 4)   1.182 us    |                __cond_resched(); /* V=3D0x0 A=3D=
+__inode_security_revalidate+0x5f/0x80 */
+> > > > 4)   4.138 us    |              } /* __inode_security_revalidate V=
+=3D0x0 */
+> > > > 4)   1.513 us    |              avc_policy_seqno(); /* V=3D0x0 A=3D=
+selinux_file_permission+0x107/0x140 */
+> > > > 4) + 12.133 us   |            } /* selinux_file_permission V=3D0x0 =
+*/
+> > > > 4) + 39.834 us   |          } /* security_file_permission V=3D0x0 *=
+/
+> > > > 4) + 42.710 us   |        } /* rw_verify_area V=3D0x0 */
+> > > >
+>
+> > > > +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> > > >  /* Function call entry */
+> > > >  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
+> > > >
+> > > > @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph=
+_ent_entry,
+> > > >       F_STRUCT(
+> > > >               __field_struct( struct ftrace_graph_ent,        graph=
+_ent       )
+> > > >               __field_packed( unsigned long,  graph_ent,      func =
+           )
+> > > > +             __field_packed( unsigned long,  graph_ent,      retad=
+dr         )
+> > > >               __field_packed( int,            graph_ent,      depth=
+           )
+> > > >       ),
+> > > >
+> > >
+> > > Let's make this a new event, so that when this option is not enabled,=
+ we
+> > > don't waste the ring buffer. For function tracing, every element adde=
+d to
+> > > the event will add megabytes extra to the ring buffer.
+> > >
+> > > It should be possible to switch what event gets created at the time o=
+f the
+> > > trace. Even calling different functions to do it.
+> >
+> > Sounds good, we may create a new event as follows:
+> >
+> > struct ftrace_graph_ent {
+> > unsigned long func; /* Current function */
+> > unsigned long retaddr;
+> > int depth;
+> > } __packed;
+> >
+> > FTRACE_ENTRY_PACKED(funcgraph_retaddr_entry, ftrace_graph_ent_readdr_en=
+try,
+> >
+> > TRACE_GRAPH_RETADDR_ENT,
+> >
+> > F_STRUCT(
+> > __field_struct( struct ftrace_graph_retaddr_ent, graph_retaddr_ent )
+> > __field_packed( unsigned long, graph_retaddr_ent, func )
+> > __field_packed( unsigned long, graph_retaddr_ent, retaddr )
+> > __field_packed( int, graph_retaddr_ent, depth )
+> > ),
+> >
+> > F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
+>
+> Why not add the ret in the printk?
+>
+>   F_printk("--> %ps (%d) <-%ps", (void *)__entry->func, __entry->depth, (=
+void *)__entry->retaddr)
+>
+> Then user space parsing tools could use this by default, when it doesn't
+> know how to parse it.
 
-Cc: stable@vger.kernel.org
-Fixes: 1349401ff1aa ("clocksource/drivers/hyper-v: Suspend/resume Hyper-V clocksource for hibernation")
-Co-developed-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
-Changes from v1:
-https://lore.kernel.org/all/20240909053923.8512-1-namjain@linux.microsoft.com/
-* Reorganized code as per Michael's comment, and moved the logic to x86
-specific files, to keep hyperv_timer.c arch independent.
+Thanks, I will modify it.
 
----
- arch/x86/kernel/cpu/mshyperv.c     | 70 ++++++++++++++++++++++++++++++
- drivers/clocksource/hyperv_timer.c |  8 +++-
- include/clocksource/hyperv_timer.h |  8 ++++
- 3 files changed, 85 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index e0fd57a8ba84..d83a694e387c 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -224,6 +224,75 @@ static void hv_machine_crash_shutdown(struct pt_regs *regs)
- 	hyperv_cleanup();
- }
- #endif /* CONFIG_CRASH_DUMP */
-+
-+static u64 hv_sched_clock_offset_saved;
-+static void (*old_save_sched_clock_state)(void);
-+static void (*old_restore_sched_clock_state)(void);
-+
-+/*
-+ * Hyper-V clock counter resets during hibernation. Save and restore clock
-+ * offset during suspend/resume, while also considering the time passed
-+ * before suspend. This is to make sure that sched_clock using hv tsc page
-+ * based clocksource, proceeds from where it left off during suspend and
-+ * it shows correct time for the timestamps of kernel messages after resume.
-+ */
-+static void save_hv_clock_tsc_state(void)
-+{
-+	hv_sched_clock_offset_saved = hv_read_reference_counter();
-+}
-+
-+static void restore_hv_clock_tsc_state(void)
-+{
-+	/*
-+	 * hv_sched_clock_offset = offset that is used by hyperv_timer clocksource driver
-+	 *                         to get time.
-+	 * Time passed before suspend = hv_sched_clock_offset_saved
-+	 *                            - hv_sched_clock_offset (old)
-+	 *
-+	 * After Hyper-V clock counter resets, hv_sched_clock_offset needs a correction.
-+	 *
-+	 * New time = hv_read_reference_counter() (future) - hv_sched_clock_offset (new)
-+	 * New time = Time passed before suspend + hv_read_reference_counter() (future)
-+	 *                                       - hv_read_reference_counter() (now)
-+	 *
-+	 * Solving the above two equations gives:
-+	 *
-+	 * hv_sched_clock_offset (new) = hv_sched_clock_offset (old)
-+	 *                             - hv_sched_clock_offset_saved
-+	 *                             + hv_read_reference_counter() (now))
-+	 */
-+	hv_adj_sched_clock_offset(hv_sched_clock_offset_saved - hv_read_reference_counter());
-+}
-+
-+/*
-+ * Functions to override save_sched_clock_state and restore_sched_clock_state
-+ * functions of x86_platform. The Hyper-V clock counter is reset during
-+ * suspend-resume and the offset used to measure time needs to be
-+ * corrected, post resume.
-+ */
-+static void hv_save_sched_clock_state(void)
-+{
-+	old_save_sched_clock_state();
-+	save_hv_clock_tsc_state();
-+}
-+
-+static void hv_restore_sched_clock_state(void)
-+{
-+	restore_hv_clock_tsc_state();
-+	old_restore_sched_clock_state();
-+}
-+
-+static void __init x86_setup_ops_for_tsc_pg_clock(void)
-+{
-+	if (!(ms_hyperv.features & HV_MSR_REFERENCE_TSC_AVAILABLE))
-+		return;
-+
-+	old_save_sched_clock_state = x86_platform.save_sched_clock_state;
-+	x86_platform.save_sched_clock_state = hv_save_sched_clock_state;
-+
-+	old_restore_sched_clock_state = x86_platform.restore_sched_clock_state;
-+	x86_platform.restore_sched_clock_state = hv_restore_sched_clock_state;
-+}
- #endif /* CONFIG_HYPERV */
- 
- static uint32_t  __init ms_hyperv_platform(void)
-@@ -575,6 +644,7 @@ static void __init ms_hyperv_init_platform(void)
- 
- 	/* Register Hyper-V specific clocksource */
- 	hv_init_clocksource();
-+	x86_setup_ops_for_tsc_pg_clock();
- 	hv_vtl_init_platform();
- #endif
- 	/*
-diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-index b2a080647e41..e424892444ed 100644
---- a/drivers/clocksource/hyperv_timer.c
-+++ b/drivers/clocksource/hyperv_timer.c
-@@ -27,7 +27,8 @@
- #include <asm/mshyperv.h>
- 
- static struct clock_event_device __percpu *hv_clock_event;
--static u64 hv_sched_clock_offset __ro_after_init;
-+/* Note: offset can hold negative values after hibernation. */
-+static u64 hv_sched_clock_offset __read_mostly;
- 
- /*
-  * If false, we're using the old mechanism for stimer0 interrupts
-@@ -456,6 +457,11 @@ static void resume_hv_clock_tsc(struct clocksource *arg)
- 	hv_set_msr(HV_MSR_REFERENCE_TSC, tsc_msr.as_uint64);
- }
- 
-+void hv_adj_sched_clock_offset(u64 offset)
-+{
-+	hv_sched_clock_offset -= offset;
-+}
-+
- #ifdef HAVE_VDSO_CLOCKMODE_HVCLOCK
- static int hv_cs_enable(struct clocksource *cs)
- {
-diff --git a/include/clocksource/hyperv_timer.h b/include/clocksource/hyperv_timer.h
-index 6cdc873ac907..62e2bad754c0 100644
---- a/include/clocksource/hyperv_timer.h
-+++ b/include/clocksource/hyperv_timer.h
-@@ -38,6 +38,14 @@ extern void hv_remap_tsc_clocksource(void);
- extern unsigned long hv_get_tsc_pfn(void);
- extern struct ms_hyperv_tsc_page *hv_get_tsc_page(void);
- 
-+/*
-+ * Called during resume from hibernation, from overridden
-+ * x86_platform.restore_sched_clock_state routine. This is to adjust offsets
-+ * used to calculate time for hv tsc page based sched_clock, to account for
-+ * time spent before hibernation.
-+ */
-+extern void hv_adj_sched_clock_offset(u64 offset);
-+
- static __always_inline bool
- hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
- 		     u64 *cur_tsc, u64 *time)
-
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
--- 
-2.25.1
-
+>
+> > );
+> >
+> > If we were to introduce another new feature such as funcgraph-args whic=
+h
+> > adds a `ftrace_regs` to the `ftrace_graph_ent`, would it be necessary t=
+o
+> > create yet another new event?
+>
+> Probably yes.
+>
+> >
+> >  In the scenario where both funcgrah-retaddr and funcgraph-args are ena=
+bled,
+> > it is possible that an additional new event may also be required.
+>
+> Yes, that would likely be another event.
+>
+> -- Steve
 
