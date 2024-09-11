@@ -1,169 +1,105 @@
-Return-Path: <linux-kernel+bounces-324655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81208974F65
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EB4974F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FDF1C22109
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3307A1F251AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188F7177992;
-	Wed, 11 Sep 2024 10:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E580185928;
+	Wed, 11 Sep 2024 10:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ThHWqJwG";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ArS1iDDN"
-Received: from a7-43.smtp-out.eu-west-1.amazonses.com (a7-43.smtp-out.eu-west-1.amazonses.com [54.240.7.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biBE3PuQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F27E0E8;
-	Wed, 11 Sep 2024 10:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4961183CCA;
+	Wed, 11 Sep 2024 10:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049430; cv=none; b=gCSmdHVqyh6M2mZuOQxQ2IEnih/1iUyKTxv2nDItN3Yn/dvzq92PHpoc2jwZFUBrLC6RkUyT0YPylnvWIbLGXufumEQjzX3z1MQRPyvkEoHCskp1NTfLkD57Z7xs34bQTurwYDzPyICUv7EXpwmQekF5ArwAIyEBH/X1Y3MgCSM=
+	t=1726049431; cv=none; b=AUkIqnr3mxYIu4THVA4WNRNB63ZTHAZxClPkZdWD2+aPH8f0rQPQUGZ9piQ64auekOms5eIGZYyJ1D5g207ix+46vDG7nmpVhmmXAtvqIs9n55miVJ78NP1Ig9G00cfUPU9rOtOWgUKoXar5ItPaJSpo6HbYXs522xOiRR+zmUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049430; c=relaxed/simple;
-	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AH7C0LZyepaH1cQ1ODlvfVmN0+8UcPKJ9PiFuhQ3X+dYw716/BGBFYHEqa4MjOltQK96PO3DfxhvFZSiWlU1GujcBXtc2mM6xn2GE8J4mUrgygc7FuQjNN5t3Z4jyUmIOOJm+BoBPkW9L8F9wIA+2hFjrASGEatz3JBeUQ++UH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ThHWqJwG; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=ArS1iDDN; arc=none smtp.client-ip=54.240.7.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726049426;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
-	b=ThHWqJwGW2d6SgyvZM1kISkV9MQ6nVMsxL2KWE26xxtlCQW80zdB8yiAjabscpRC
-	bOD5jsyr6s6bIs+TsbuckZZy9MCboXfkHh3+EfKMyqpFvexSvcX4tH9TmvyXZ4XgAY1
-	DCQvrz0JopgyhvSCWaxUZoQssBn6lRGB4pIYbUulCGEdYF4dOayl4E4yrZOy+n5xq9l
-	E8lJSWDxwOcxts64gHTg+u+M2OKdjZtODLeqriAgAca0QHngJXQ83ctzJ5wZuhJpjbh
-	iz9B3czYJqmuW3Bbcavw9lOClse881/vi7YSVtKwrYP8jXHPZWCSL84RTFcJEn89Z6i
-	/lVBbmpB0Q==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726049426;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=XXNXRYbmz3Zes9xyUsSvTiVqxoySTWzbF2/5l+DV+OQ=;
-	b=ArS1iDDNHqlmkcm+u7EYSSuksf2KcUGgBpJVPaEqYStCHYkvoCscsGkyFNEnPMe6
-	FWFNuCqLUXDnoF+UcRe5Aet6oNeeq32j1AnnALjkKdEz18fFM8JLGeFieNcuqhGlp4A
-	cpM9tBN8dtWu0P/MpggzN6H1KH81iPpOisHflY/Y=
-Message-ID: <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
-Date: Wed, 11 Sep 2024 10:10:26 +0000
+	s=arc-20240116; t=1726049431; c=relaxed/simple;
+	bh=06fkwrLjY2/fniZWS4mcw4m1AubrB1trbnaxhYs/urc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=P7mBc2FDKOmh+na9tdFKthzIc7gTBT9RQ+JbGWOsg7EpZo2K3ie2OAHvMAZ0PMYnLyOagKD0qTv+JesNI+wxPKf5PXct120TM5/GRSyOCvjdzzLQADTXTshPAWN/nxzvrk0uASs+T6EMm+aM+HhK/aK/OXZP4c1KNn1sksy8icc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biBE3PuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4364C4CEC5;
+	Wed, 11 Sep 2024 10:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726049430;
+	bh=06fkwrLjY2/fniZWS4mcw4m1AubrB1trbnaxhYs/urc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=biBE3PuQYW45aHRIsJTV24neAqMcPn8D5bcP+xeKIVBNQBXyZdLa3CNUcMIhpRlMX
+	 ZlONmDeD1tfWf/294g0qPOb0+vYvZWoFBJZXQ1yAlDV5EYFPhivYWg8xHaXUUJ7Hoo
+	 z/rRHNUcr1eDfN42/dLPdzIXgwG6xY5LYmk3DqgmEhyrXTWUlgcz76Q5qaZW6yJnM/
+	 m6K86OBREA4QwtZR1Mqqvz8xm8otYUAR9dLGwVZ3EemRylaAtlvpnf0qMMfkH8Ia/F
+	 njGPvLmSCak0zLu2f//A4k14hwxH2CMydB1nU2yaB+ir99Y0cNgKkhtEwFb1Ubz/al
+	 IorAU7q9JZ2Kw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB35A3822FA4;
+	Wed, 11 Sep 2024 10:10:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] pinctrl: mediatek: paris: Expose more
- configurations to GPIO set_config
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	Bamvor Jian Zhang <bamv2005@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org, kernelci@lists.linux.dev
-References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
- <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.11-54.240.7.43
+Subject: Re: [PATCH net-next V6 0/5] Add support to PHYLINK for LAN743x/PCI11x1x
+ chips
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172604943175.568857.6737661563582328586.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Sep 2024 10:10:31 +0000
+References: <20240906103511.28416-1-Raju.Lakkaraju@microchip.com>
+In-Reply-To: <20240906103511.28416-1-Raju.Lakkaraju@microchip.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, linux@armlinux.org.uk,
+ kuba@kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ richardcochran@gmail.com, rdunlap@infradead.org,
+ bryan.whitehead@microchip.com, edumazet@google.com, pabeni@redhat.com,
+ maxime.chevallier@bootlin.com, linux-kernel@vger.kernel.org,
+ horms@kernel.org, UNGLinuxDriver@microchip.com
 
-Il 09/09/24 20:37, Nícolas F. R. A. Prado ha scritto:
-> Currently the set_config callback in the gpio_chip registered by the
-> pinctrl_paris driver only supports PIN_CONFIG_INPUT_DEBOUNCE, despite
+Hello:
 
-[...] only supports operations configuring the input debounce parameter
-of the EINT controller and denies configuring params on the other AP GPIOs [...]
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-(reword as needed)
-
-> many other configurations already being implemented and available
-> through the pinctrl API for configuration of pins by the Devicetree and
-> other drivers.
+On Fri, 6 Sep 2024 16:05:06 +0530 you wrote:
+> This is the follow-up patch series of
+> https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
 > 
-> Expose all configurations currently implemented through the GPIO API so
-> they can also be set from userspace, which is particularly useful to
-> allow testing them from userspace.
+> Divide the PHYLINK adaptation and SFP modifications into two separate patch
+> series.
 > 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->   drivers/pinctrl/mediatek/pinctrl-paris.c | 20 ++++++++++----------
-
-You can do the same for pinctrl-moore too, it's trivial.
-
-Other than that, I agree about performing this change, as this may be useful
-for more than just testing.
-
-Cheers,
-Angelo
-
->   1 file changed, 10 insertions(+), 10 deletions(-)
+> The current patch series focuses on transitioning the LAN743x driver's PHY
+> support from phylib to phylink.
 > 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> index e12316c42698..668f8055a544 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-> @@ -255,10 +255,9 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->   	return err;
->   }
->   
-> -static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> +static int mtk_pinconf_set(struct mtk_pinctrl *hw, unsigned int pin,
->   			   enum pin_config_param param, u32 arg)
->   {
-> -	struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
->   	const struct mtk_pin_desc *desc;
->   	int err = -ENOTSUPP;
->   	u32 reg;
-> @@ -795,7 +794,7 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
->   	int i, ret;
->   
->   	for (i = 0; i < num_configs; i++) {
-> -		ret = mtk_pinconf_set(pctldev, grp->pin,
-> +		ret = mtk_pinconf_set(hw, grp->pin,
->   				      pinconf_to_config_param(configs[i]),
->   				      pinconf_to_config_argument(configs[i]));
->   		if (ret < 0)
-> @@ -937,18 +936,19 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
->   {
->   	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
->   	const struct mtk_pin_desc *desc;
-> -	u32 debounce;
-> +	enum pin_config_param param = pinconf_to_config_param(config);
-> +	u32 arg = pinconf_to_config_argument(config);
->   
->   	desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
->   
-> -	if (!hw->eint ||
-> -	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
-> -	    desc->eint.eint_n == EINT_NA)
-> -		return -ENOTSUPP;
-> +	if (param == PIN_CONFIG_INPUT_DEBOUNCE) {
-> +		if (!hw->eint || desc->eint.eint_n == EINT_NA)
-> +			return -ENOTSUPP;
->   
-> -	debounce = pinconf_to_config_argument(config);
-> +		return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, arg);
-> +	}
->   
-> -	return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, debounce);
-> +	return mtk_pinconf_set(hw, offset, param, arg);
->   }
->   
->   static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
-> 
+> [...]
 
+Here is the summary with links:
+  - [net-next,V6,1/5] net: phylink: Add phylink_set_fixed_link() to configure fixed link state in phylink
+    https://git.kernel.org/netdev/net-next/c/4b3fc475c61f
+  - [net-next,V6,2/5] net: lan743x: Create separate PCS power reset function
+    https://git.kernel.org/netdev/net-next/c/ef0250456cc3
+  - [net-next,V6,3/5] net: lan743x: Create separate Link Speed Duplex state function
+    https://git.kernel.org/netdev/net-next/c/92b740a43fea
+  - [net-next,V6,4/5] net: lan743x: Migrate phylib to phylink
+    https://git.kernel.org/netdev/net-next/c/a5f199a8d8a0
+  - [net-next,V6,5/5] net: lan743x: Add support to ethtool phylink get and set settings
+    https://git.kernel.org/netdev/net-next/c/f95f28d794ed
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
