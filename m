@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-324562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F70974E3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:14:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A3B974E3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4D91C26A40
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C7F283358
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9B6185B57;
-	Wed, 11 Sep 2024 09:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E4116B391;
+	Wed, 11 Sep 2024 09:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUQ3qsRZ"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mj4abAQJ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B676316DC33
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325555339F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726045961; cv=none; b=cqftYsEcO4k2YPlCgfyW3GEJedS1eDESnivXhEnTMn59vfHCTQ/lprg7QK8tJs70b9ai9V5O1v/TLq8KwkLRlOBU7p2rob3qwiLy4vSdtSAo4ziXrLxzf+l+Up9lsVH3G3eFyTqnR7Ub9M26gwPKIplLY7MKwCgivXFY/+OnhlM=
+	t=1726046025; cv=none; b=WJh/slRBtP1qX8ALrVZ4YYPO8WpAFWFZTN8HV4eXv9MQtAU24m02AQrg8djR0hqXzY1+2Fewtiz9sgsCiIqpcOMIEdlHZW0Uthl048eS2Xeqor4fSu6UHk+L0JtOJR0YZhTs0bqghu6diSueVm/iZeLBsV7jN4aWsJMkQUoqiKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726045961; c=relaxed/simple;
-	bh=vbUWD4st5YJACw89LRnLBpQGYy6V7Oeo/NpfG48VMs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZ1+eP7xUqXZA4JY8WSJ61Phd3ieeXccwjN5HXsPMrEjQYQ59Ehf1KhClvPMpaj58KR3LRFxxWfppAHtMRLKP36tBm5Thj0dYz3ljwoz5mh0FpHXPLZEDpbK8kKVp7uhzmy5R5BVDWXBy8LvzTJciLoa3EduCIU+FPCPb2GIDOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CUQ3qsRZ; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa086b077so610616766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726045958; x=1726650758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vbUWD4st5YJACw89LRnLBpQGYy6V7Oeo/NpfG48VMs0=;
-        b=CUQ3qsRZq2UXVci/02H0PkTqQfuW9S00kAC46O6XaE+KLkv4JURf9/QQilXXatj1hW
-         L5L5VIckgO43psOiY8OZAp30AS1pZfjSem/01p9E6R75y943cI81spjBUoIyDZvq+5fc
-         G4eM+c50LYlZW6Vq9NPenREc6k1M0BNY8DrLNZE4s8zT83oZF5lc+ee0CZ18tZNLlqU7
-         nJdRLI2jexlNvsOUeiGJII7C4cz9tq0nCQM1eOOv5tKwFh2llDFNqMcdk+4GsFxdhv+c
-         FaP6gPIswwbc8DYf9+4NgCZjtivHfudHQeovHE1kmoRru8Xs3eomgymVz065z7OBFiSE
-         ge7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726045958; x=1726650758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vbUWD4st5YJACw89LRnLBpQGYy6V7Oeo/NpfG48VMs0=;
-        b=S2bAZBZ1CcjramWB//mgNApyM4hdqkkY9sx9eSy3FCkOnbx5bRffjhSiG/X1Zfv1WK
-         T8Zpzn/8HBD0g4RFfLuW08pinJztUCv8SrKG3HxUnG3J7nj0mwtWGRaX3MJVJXOtgGDl
-         mpUvj1xh1XWuSKMkePwsbZoZvOyCk9dj1sbxOI3DZnscIISOfFAxVcteVJjLPaa8w3s5
-         T5nqUa3eaKjcXWjR+H2APp+HDFginICToy3RBbQ3AGktFftpVcyKdDza4WkE9BAynWj2
-         9iAZM1nyOCvopNQj5sC01s/fgbMwdVA57LAZF6HOX+fjLkXNPkJQ2yhQz/jUDr2EmivZ
-         IaLg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5hKBS3Nw3dcFKqXPJ3ii2/sKoGbpeBphayAnkTm+1PXOFDMTmgahBTq3A8E/7S0LSfhOmcU9MnDd3KO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTbH+FYb9u54oD3TZsUDJ05deYHeUZ5k6OKHhBpDgL/KfCMDwJ
-	NvwLxb6sf3SUBrpqH6MrGjoawOod7QJcpM4DRgz3XD1YUQ6Z7syYLMhwh1IQutjL0AI/f9qk+MR
-	QFNB2baa/B31WFY7Az/XNBynomPf9PJByhDjk
-X-Google-Smtp-Source: AGHT+IFTOe7wINzq4zhj3zcJRL3zZsKN9eN9L1F6J2ydGaat1CgRGk6c4e3IwLEldhlg+/NBYzt39to5OiJNJbJiSQE=
-X-Received: by 2002:a17:907:d16:b0:a8d:510b:4f48 with SMTP id
- a640c23a62f3a-a8ffaadafc4mr362683966b.22.1726045957356; Wed, 11 Sep 2024
- 02:12:37 -0700 (PDT)
+	s=arc-20240116; t=1726046025; c=relaxed/simple;
+	bh=+TPij8FfGpoiqOZVfxF7YnF6MD7c4NnCFj3YmqLJpRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHkwmtKKgHeEmpDaHKpe+0+9ak4N/TEyv95RaNP83QErCl6BRHzSGGbmPn+QQHLPDnhSVs0K5SPffpwxlfLOJMA8L66vuVSEHPw6olojKS3QX8Vmt8lJ1pB8p/Cldr7nNfzLS2Im0qWWes8AyIOwbPktW0tG/LovgZPxxOE+rk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mj4abAQJ; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=34o6bTM0ZyPEB27rus1S/oT82gPMUgCCbVenuFYnt/c=; b=mj4abAQJXkdF+lR7gclmvb96me
+	AUmBwIv8nLgNzWL3hv7LTebQCoELGemqfTudQ0Swv9BAvHDXJfcVRApLXe5M1FpNaNqYR8rlbP326
+	gzECLfhSIKqyi8+v8FUyKVhdZGTiy3gHq6RJ6QWQstD6iHNkARuVTWvhoobp03W1Pb4GYatlDNAKJ
+	JNq/ZWFkPoC7UOylMTtOjgecSs4KY8J7nUsLGOg4V1J+PYQ0vSCcWEICl/6OpffRpO2WiZbv/buRt
+	w7g/e46MRSwtZVF3FS0/WhzIkgkwHmgVU5neqntrHIxrEEPVEKIffSZaz4tYpPu2nouc9iku+gYa7
+	Abq3ZEnw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1soJPk-00000000963-1jev;
+	Wed, 11 Sep 2024 09:13:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1095B300642; Wed, 11 Sep 2024 11:13:28 +0200 (CEST)
+Date: Wed, 11 Sep 2024 11:13:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Luis Machado <luis.machado@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Hongyan Xia <hongyan.xia2@arm.com>, mingo@redhat.com,
+	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+Message-ID: <20240911091328.GM4723@noisy.programming.kicks-ass.net>
+References: <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
+ <CAKfTPtCNUvWE_GX5LyvTF-WdxUT=ZgvZZv-4t=eWntg5uOFqiQ@mail.gmail.com>
+ <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+ <20240905145354.GP4723@noisy.programming.kicks-ass.net>
+ <20240906104525.GG4928@noisy.programming.kicks-ass.net>
+ <8d0d01b9-a430-49cc-93a5-67b4d68aa35c@arm.com>
+ <20240910140524.GH4723@noisy.programming.kicks-ass.net>
+ <52ca4cea-8f65-434e-af17-e4bf664d9488@arm.com>
+ <20240911084528.GJ4723@noisy.programming.kicks-ass.net>
+ <4fde8f26a9aeaeafda15b81bbb17b0ffc96941f0.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911050435.53156-1-qianqiang.liu@163.com> <CANn89iKhbQ1wDq1aJyTiZ-yW1Hm-BrKq4V5ihafebEgvWvZe2w@mail.gmail.com>
- <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z>
-In-Reply-To: <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 11 Sep 2024 11:12:24 +0200
-Message-ID: <CANn89i+G-ycrV57nc-XrgToJhwJuhuCGtHpWtFsLvot7Wu9k+w@mail.gmail.com>
-Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: xiyou.wangcong@gmail.com, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4fde8f26a9aeaeafda15b81bbb17b0ffc96941f0.camel@gmx.de>
 
-On Wed, Sep 11, 2024 at 10:23=E2=80=AFAM Qianqiang Liu <qianqiang.liu@163.c=
-om> wrote:
->
-> > I do not think it matters, because the copy is performed later, with
-> > all the needed checks.
->
-> No, there is no checks at all.
->
+On Wed, Sep 11, 2024 at 11:10:26AM +0200, Mike Galbraith wrote:
+> On Wed, 2024-09-11 at 10:45 +0200, Peter Zijlstra wrote:
+> > On Wed, Sep 11, 2024 at 09:35:16AM +0100, Luis Machado wrote:
+> > > > 
+> > > > I'm assuming that removing the usage sites restores function?
+> > > 
+> > > It does restore function if we remove the usage.
+> > > 
+> > > From an initial look:
+> > > 
+> > > cat /sys/kernel/debug/sched/debug | grep -i delay                                                                                                                                                                                                                             
+> > >   .h_nr_delayed                  : -4
+> > >   .h_nr_delayed                  : -6
+> > >   .h_nr_delayed                  : -1
+> > >   .h_nr_delayed                  : -6
+> > >   .h_nr_delayed                  : -1
+> > >   .h_nr_delayed                  : -1
+> > >   .h_nr_delayed                  : -5
+> > >   .h_nr_delayed                  : -6
+> > > 
+> > > So probably an unexpected decrement or lack of an increment somewhere.
+> > 
+> > Yeah, that's buggered. Ok, I'll go rebase sched/core and take this patch
+> > out. I'll see if I can reproduce that.
+> 
+> Hm, would be interesting to know how the heck he's triggering that.
+> 
+> My x86_64 box refuses to produce any such artifacts with anything I've
+> tossed at it, including full LTP with enterprise RT and !RT configs,
+> both in master and my local SLE15-SP7 branch.  Hohum.
 
-Please elaborate ?
-Why should maintainers have to spend time to provide evidence to
-support your claims ?
-Have you thought about the (compat) case ?
-
-There are plenty of checks. They were there before Stanislav commit.
-
-Each getsockopt() handler must perform the same actions.
-
-For instance, look at do_ipv6_getsockopt()
-
-If you find one getsockopt() method failing to perform the checks,
-please report to us.
+Yeah, my hackbench runs also didn't show that. Perhaps something funny
+with cgroups. I didn't test cgroup bandwidth for exanple.
 
