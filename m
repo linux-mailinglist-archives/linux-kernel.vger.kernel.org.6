@@ -1,162 +1,286 @@
-Return-Path: <linux-kernel+bounces-325703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65AC975D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0344D975D6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793951F23520
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830651F23782
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9549D1ABEA0;
-	Wed, 11 Sep 2024 22:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3655A1B6551;
+	Wed, 11 Sep 2024 22:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wg82qdu1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCH6sGkY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75015442D;
-	Wed, 11 Sep 2024 22:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D5D149002;
+	Wed, 11 Sep 2024 22:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726095102; cv=none; b=LAsDy96j8J/T5aMrG3XZ4JKUpXRr78Ht38U55sC+TdhmD3DhsWR1N0dD49GFxAV74molBlPJIx6b13qSCZtPEgon1sqhjJgZ91uK3dkgRoN7xv14/0+NEporgLkqXfTCqhL4htP/hFM1Mit560mlLKcLZLTVcWQsKvsdCjopYGs=
+	t=1726095301; cv=none; b=U/7utfqaBaWnsXsCsoD91Co4hVSFTaO2fEMJ9FlTV5eu4YV3Y4JyfRpV0LU39O/3pg/Vfqt9aNI99JSojpFHHQbYfn1pT3FC1SK+6U3zci6l5Y2iaSzS1VlrcidCqXWhDbuSQ6U1uGn/EtOINW6DVMEfiNpC4FklNZv+JT7C2HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726095102; c=relaxed/simple;
-	bh=HfUUqX6K3r+8VuUvm7rHqhhuSxEAqolXoqoXtRDEsxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=McACRQz6k/Fx8tc58QUR0spfstSJd9s6xRLl2F6KChNUJKkE2eSOzzOr/NdcmSApJ6001SOeFTPCCr5wzyeeru18YLhWAmigEZDjFejPGNyVWlSgz/wM2ei1Z5diqcTsZ8Lx2SAXzD0JqFJo+apN5nrZEgCPOfnAWsr/3NVaSaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wg82qdu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D179DC4CEC0;
-	Wed, 11 Sep 2024 22:51:38 +0000 (UTC)
+	s=arc-20240116; t=1726095301; c=relaxed/simple;
+	bh=1MiDAPOMXwvs7Mvjgi6FRoHdOy/J3VM4lhRV/Mn3oSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SFkAN7TJOEd+Ak3St1kl9LoH1lW0nMEPCmTm9rBnXet01gkis6VYkq0JflwUTGd16a+EWOSNdxnQLTcRjKXz/S4uuVcoflUZli2c11n3kgkcjkpgAypjqc+IA5l8HKMoSf0EyB1TZDWNLnCVjcdNNnjKMw9sYyyOa4Gbs+kkSSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCH6sGkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C63C4CEC0;
+	Wed, 11 Sep 2024 22:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726095101;
-	bh=HfUUqX6K3r+8VuUvm7rHqhhuSxEAqolXoqoXtRDEsxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wg82qdu163JRMoLt1yRO20gTZmg1rLm/Cl+XJC161ygHfxGVkJvinNredb7L7gwRz
-	 qKsHOtLJOD6d8NE6uJGhV4jvo2bSS/p1Syj5RrzyYWGV/dC0EvzzHu+4Dmxwi20lI2
-	 CwmEl3Ui/7/r0WZtSuyphNld1izlzmT4UBfEp7KIxeReUey1BA5pvxjNg/CrkwRA0e
-	 /ZUHkUDllzMbkt9wgn9hNOw2KiaHxyCO+8PHdsSsstHCGmo6+JMM/ex51SxENqi6m0
-	 olbmQfbvGOkguP1uO4WMxRHVr2UVo8jwmVlFr7MVqk7TE5a/pp5o41SPJDRXzCmC51
-	 vLEc0xWfKCdLg==
-Date: Wed, 11 Sep 2024 23:51:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] riscv: sophgo: Add pinctrl support for CV1800
- series SoC
-Message-ID: <20240911-amniotic-reluctant-81eae9e66138@spud>
-References: <IA1PR20MB495374DB8C4208575AAC9675BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240909-prowler-renewal-0592d820ccca@spud>
- <IA1PR20MB4953A0D6A2B73D03BF162671BB992@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240910-bust-mulled-e45f6f6ef29d@spud>
- <IA1PR20MB495316205F5AC588867FA8E1BB9A2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <20240911-perfectly-buddhist-0c79aed7bb98@spud>
- <IA1PR20MB49538A046810421A8F24E346BB9B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+	s=k20201202; t=1726095300;
+	bh=1MiDAPOMXwvs7Mvjgi6FRoHdOy/J3VM4lhRV/Mn3oSo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FCH6sGkY1LWCBzWFA0W/I9khvzWDYRc3aT54WKIuP6UkpgbSQMlBj663MWqVrX13n
+	 AXce6vMX7WamI/3NBOJh6V9Oenx0P1Md/drRuvdsCrWYESiYd2YWaPFAQTChaLOPZL
+	 bYMImGzuKLFeaNPwuulGpUnkdEBRoq+W9QrlZHWYq42VYHOqvXntsTZt+Zqa+LPdBD
+	 FRehAzxEK0B5wWSI16xazbiNj4mbYwTlHpy/MvJRtvLHobu0+7hXw1j86YPwbUMXiJ
+	 wzkVnFUwEdd7BumDnbY6/sWiYedp4igPor9sB+rghKqmKe1psBHK4xV2SKOiaqNqWV
+	 poFQaGEUWP5Vg==
+From: Danilo Krummrich <dakr@kernel.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com,
+	lina@asahilina.net,
+	mcanal@igalia.com,
+	zhiw@nvidia.com,
+	cjia@nvidia.com,
+	jhubbard@nvidia.com,
+	airlied@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v7 00/26] Generic `Allocator` support for Rust
+Date: Thu, 12 Sep 2024 00:52:36 +0200
+Message-ID: <20240911225449.152928-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qgvyslhUt5KCrDse"
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB49538A046810421A8F24E346BB9B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+This patch series adds generic kernel allocator support for Rust, which so far
+is limited to `kmalloc` allocations.
+
+In order to abstain from (re-)adding unstable Rust features to the kernel, this
+patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+nor does it extend the `BoxExt` and `VecExt` extensions.
+
+Instead, this series introduces a kernel specific `Allocator` trait, which is
+implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+implemented in the context of this series.
+
+As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+Additionally, this series adds the following type aliases:
+
+```
+pub type KBox<T> = Box<T, Kmalloc>;
+pub type VBox<T> = Box<T, Vmalloc>;
+pub type KVBox<T> = Box<T, KVmalloc>;
 
 
---qgvyslhUt5KCrDse
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+pub type KVec<T> = Vec<T, Kmalloc>;
+pub type VVec<T> = Vec<T, Vmalloc>;
+pub type KVVec<T> = Vec<T, KVmalloc>;
+```
 
-On Thu, Sep 12, 2024 at 06:43:31AM +0800, Inochi Amaoto wrote:
-> On Wed, Sep 11, 2024 at 08:11:15PM GMT, Conor Dooley wrote:
-> > On Wed, Sep 11, 2024 at 06:25:49AM +0800, Inochi Amaoto wrote:
-> > > On Tue, Sep 10, 2024 at 05:13:43PM GMT, Conor Dooley wrote:
-> > > > On Tue, Sep 10, 2024 at 06:24:34AM +0800, Inochi Amaoto wrote:
-> > > > > On Mon, Sep 09, 2024 at 03:41:10PM GMT, Conor Dooley wrote:
-> > > > > > On Sat, Aug 31, 2024 at 06:38:40AM +0800, Inochi Amaoto wrote:
-> > > > > > > Add basic pinctrl driver for Sophgo CV1800 series SoCs.
-> > > > > > > This patch series aims to replace the previous patch from Jis=
-heng [1].
-> > > > > > > Since the pinctrl of cv1800 has nested mux and its pin defini=
-nation
-> > > > > > > is discrete, it is not suitable to use "pinctrl-single" to co=
-ver the
-> > > > > > > pinctrl device.
-> > > > > > >=20
-> > > > > > > This patch require another patch [2] that provides standard a=
-ttribute
-> > > > > > > "input-schmitt-microvolt"
-> > > > > > >=20
-> > > > > > > The v4 version is from [3]
-> > > > > >=20
-> > > > > > Which version of this ended up in linux-next? I see a link to v=
-4 in
-> > > > > > what's been applied, but this v5 was sent before that code was
-> > > > > > committed.
-> > > > > >=20
-> > > > > > Either way, what's been applied and what's here produce warning=
-s:
-> > > > > > cv1812h.dtsi:19.28-24.5: Warning (simple_bus_reg): /soc/pinctrl=
-@3008000: simple-bus unit address format error, expected "3001000"
-> > > > > > cv1800b.dtsi:18.28-23.5: Warning (simple_bus_reg): /soc/pinctrl=
-@3008000: simple-bus unit address format error, expected "3001000"
-> > > > > >=20
-> > > > > > It's just a copy-paste error I would imagine, but please send a=
- fix.
-> > > > >=20
-> > > > > Yes, it is like some copy-paste error, I will fix it.
-> > > >=20
-> > > > I'd rather you had sent some follow-up patches, than rebase your tr=
-ee at
-> > > > this point in the cycle. I assume you hadn't yet sent that stuff in=
- a PR
-> > > > to Arnd?
-> > > >=20
-> > > Yes, the pinctrl dts needs binding header, which is taken by Linus.
-> > > So we hadn't sent them. This is why I sent a new version to fix this.
-> >=20
-> > Oh, I'm surprised that you didn't get a shared branch from him for that
-> > to be honest.
->=20
-> He did provide a shared branch, but I am not sure the right way to use=20
-> it. He said it is used for SoC tree to pull it. So I think it is just=20
-> used as dependency. Is it OK to just mention it in the PR and add the=20
-> pinctrl dts? Or need some other git tags to tell the dependency?
+With that, we can start using the kernel `Box` and `Vec` types throughout the
+tree and remove the now obolete extensions `BoxExt` and `VecExt`.
 
-It's a bit late now to be adding stuff for 6.12, but for next time what
-you do is git pull the tag he gave you here
-https://lore.kernel.org/all/CACRpkdZ5zAgQyo9y_nO8M0Z6b8zqbkg5H_3ceEJN6z6mHL=
-4TOQ@mail.gmail.com/
-into your for-next branch and then apply the dts patches to your tree
-after that.
+For a final cleanup, this series removes the last minor dependencies to Rust's
+`alloc` crate and removes it from the entire kernel build.
 
-And then you make sure to write a commit message for the resulting
-merge commit that explains why it was pulled.
+The series ensures not to break the `rusttest` make target by implementing the
+`allocator_test` module providing a stub implementation for all kernel
+`Allocator`s.
+
+This patch series passes all KUnit tests, including the ones added by this
+series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+without any issues.
+
+This series is based on [1], which hit -mm/mm-stable, and is also available
+in [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+
+Changes in v7:
+ - rebase onto rust-next resolving recent conflicts (93dc3be19450447a3a7090bd1dfb9f3daac3e8d2)
+ - documentation / safety comment changes suggested by Benno and Boqun
+ - rename `ptr` to `current` in `IntoIter::next` (Alice)
+ - remove unnecessary braces in `kvec!` (Benno)
+ - add `debug_assert!` in `Vec::set_len` (Benno)
+ - remove unused args in `impl_slice_eq!` (Benno)
+ - simplify `if` statement in `Cmalloc::realloc` (Benno)
+
+Changes in v6:
+ - rebase onto rust-dev
+ - keep compiler annotations for {k,v,kv}realloc()
+ - documentation changes suggested by Alice, Benno
+ - remove `Box::into_pin`
+ - fix typo in `Send` and `Sync` for `Box` and `Vec`
+ - `kvec!` changes suggested by Alice
+ - free `src` after copy in `Cmalloc`
+ - handle `n == 0` in `Vec::extend_with`
+
+Changes in v5:
+ - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
+ - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
+ - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
+   expects to fail for `KMALLOC_MAX_SIZE`
+ - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
+   `ReallocFuncs`
+ - drop `Box::drop_contents` for now, will add it again, once I actually rebase
+   on the original patch that introduces it
+ - improve usage of `size_of_val` in `Box`
+ - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
+ - fix missing `Box` conversions in rnull.rs
+ - reworked `Cmalloc` to keep track of the size of memory allocations itself
+ - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
+ - remove `alloc` from scripts/generate_rust_analyzer.py
+
+Changes in v4:
+ - (safety) comment fixes suggested by Alice and Boqun
+ - remove `Box::from_raw_alloc` and `Box::into_raw_alloc`, we don't need them
+ - in `Box::drop` call `size_of_val` before `drop_in_place`
+ - implement ForeignOwnable for Pin<Box<T>> as suggested by Alice
+ - in `Vec::extend_with`, iterate over `n` instead of `spare.len()`
+ - for `Vmalloc` and `KVmalloc` fail allocation for alignments larger than
+   PAGE_SIZE for now (will add support for larger alignments in a separate
+   series)
+ - implement `Cmalloc` in `allocator_test` and type alias all kernel allocator
+   types to it, such that we can use the kernel's `Box` and `Vec` types in
+   userspace tests (rusttest)
+   - this makes patch "rust: str: test: replace `alloc::format`" rather trivial
+
+Changes in v3:
+ - Box:
+   - minor documentation fixes
+   - removed unnecessary imports in doc tests
+   - dropeed `self` argument from some remaining `Box` methods
+   - implement `InPlaceInit` for Box<T, A> rather than specifically for `KBox<T>`
+ - Vec:
+   - minor documentation fixes
+   - removed useless `Vec::allocator` method
+   - in `Vec::extend_with` use `Vec::spare_capacity_mut` instead of raw pointer operations
+   - added a few missing safety comments
+   - pass GFP flags to `Vec::collect`
+ - fixed a rustdoc warning in alloc.rs
+ - fixed the allocator_test module to implement the `Allocator` trait correctly
+ - rebased to rust-next
+
+Changes in v2:
+  - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+  - remove `&self` parameter from all `Allocator` functions (Benno)
+  - various documentation fixes for `Allocator` (Benno)
+  - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+    `Allocator::realloc` (Benno)
+  - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+  - always realloc (try to shrink) in `Vec::collect`, it's up the the
+    `Allocator` to provide a heuristic whether it makes sense to actually shrink
+  - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+    provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+    - This allows for much cleaner code and, in combination with removing
+      `&self` parameters from `Allocator`s, gets us rid of the need for
+      `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+      functions.
+    - Before: `KBox::new_alloc(foo, Vmalloc)?`
+    - After:  `VBox::new(foo)?`, which resolves to
+              `Box::<Foo,  Vmalloc>::new(foo)?;
+
+Danilo Krummrich (26):
+  rust: alloc: add `Allocator` trait
+  rust: alloc: separate `aligned_size` from `krealloc_aligned`
+  rust: alloc: rename `KernelAllocator` to `Kmalloc`
+  rust: alloc: implement `Allocator` for `Kmalloc`
+  rust: alloc: add module `allocator_test`
+  rust: alloc: implement `Vmalloc` allocator
+  rust: alloc: implement `KVmalloc` allocator
+  rust: alloc: add __GFP_NOWARN to `Flags`
+  rust: alloc: implement kernel `Box`
+  rust: treewide: switch to our kernel `Box` type
+  rust: alloc: remove extension of std's `Box`
+  rust: alloc: add `Box` to prelude
+  rust: alloc: implement kernel `Vec` type
+  rust: alloc: implement `IntoIterator` for `Vec`
+  rust: alloc: implement `collect` for `IntoIter`
+  rust: treewide: switch to the kernel `Vec` type
+  rust: alloc: remove `VecExt` extension
+  rust: alloc: add `Vec` to prelude
+  rust: error: use `core::alloc::LayoutError`
+  rust: error: check for config `test` in `Error::name`
+  rust: alloc: implement `contains` for `Flags`
+  rust: alloc: implement `Cmalloc` in module allocator_test
+  rust: str: test: replace `alloc::format`
+  rust: alloc: update module comment of alloc.rs
+  kbuild: rust: remove the `alloc` crate and `GlobalAlloc`
+  MAINTAINERS: add entry for the Rust `alloc` module
+
+ MAINTAINERS                         |   7 +
+ drivers/block/rnull.rs              |   4 +-
+ rust/Makefile                       |  43 +-
+ rust/bindings/bindings_helper.h     |   1 +
+ rust/exports.c                      |   1 -
+ rust/helpers/helpers.c              |   1 +
+ rust/helpers/slab.c                 |   6 +
+ rust/helpers/vmalloc.c              |   9 +
+ rust/kernel/alloc.rs                | 152 ++++-
+ rust/kernel/alloc/allocator.rs      | 198 ++++--
+ rust/kernel/alloc/allocator_test.rs | 200 ++++++
+ rust/kernel/alloc/box_ext.rs        |  87 ---
+ rust/kernel/alloc/kbox.rs           | 465 ++++++++++++++
+ rust/kernel/alloc/kvec.rs           | 905 ++++++++++++++++++++++++++++
+ rust/kernel/alloc/vec_ext.rs        | 185 ------
+ rust/kernel/error.rs                |   6 +-
+ rust/kernel/init.rs                 |  95 +--
+ rust/kernel/init/__internal.rs      |   2 +-
+ rust/kernel/lib.rs                  |   1 -
+ rust/kernel/prelude.rs              |   5 +-
+ rust/kernel/rbtree.rs               |  49 +-
+ rust/kernel/str.rs                  |  35 +-
+ rust/kernel/sync/arc.rs             |  17 +-
+ rust/kernel/sync/condvar.rs         |   4 +-
+ rust/kernel/sync/lock/mutex.rs      |   2 +-
+ rust/kernel/sync/lock/spinlock.rs   |   2 +-
+ rust/kernel/sync/locked_by.rs       |   2 +-
+ rust/kernel/types.rs                |  52 +-
+ rust/kernel/uaccess.rs              |  17 +-
+ rust/kernel/workqueue.rs            |  20 +-
+ rust/macros/lib.rs                  |  12 +-
+ samples/rust/rust_minimal.rs        |   4 +-
+ scripts/Makefile.build              |   7 +-
+ scripts/generate_rust_analyzer.py   |  11 +-
+ 34 files changed, 2029 insertions(+), 578 deletions(-)
+ create mode 100644 rust/helpers/vmalloc.c
+ create mode 100644 rust/kernel/alloc/allocator_test.rs
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
+ create mode 100644 rust/kernel/alloc/kbox.rs
+ create mode 100644 rust/kernel/alloc/kvec.rs
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
 
 
+base-commit: db8c7e4c95acc68f1e1cd51e0a7f1532c69a23c9
+-- 
+2.46.0
 
---qgvyslhUt5KCrDse
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuIe+AAKCRB4tDGHoIJi
-0sWQAP9zJHUNnQx6XAhTUPqtYR8QkVnQXE1ZUWadj7m+bMedeQEAnt4gabRrmwBq
-5NL00G/BsHrvbhY6qYKpkCEeOsp5yAE=
-=8N+1
------END PGP SIGNATURE-----
-
---qgvyslhUt5KCrDse--
 
