@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-324117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6FD974814
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:12:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DFB974817
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BEF9287B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7917B1C24D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5523A8CB;
-	Wed, 11 Sep 2024 02:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBkkQBwz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A709A29CE6;
+	Wed, 11 Sep 2024 02:12:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A153A39FD9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58723E479
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726020720; cv=none; b=rvx5QcgrwW1LsQYqtvli72PYupVqJGb5zhQ0fzEp+3VM3gASVKINRBl4k7HsFRFGg74WzR5a4bYfVg/BNf7imGs6rz8IjYMLRf4//hAxyZ7J8SAw7lDobObh/qRGiKNqAL54Tl4nssIrO/qiO8JU6IuW0s3QIoHuQTtA+QgEGpQ=
+	t=1726020724; cv=none; b=lcgsCzcrlBcY70w36N/RHE8AF4cq5BtHd9KbxAh9jAFehflgvCMDiDJZTO/eXM5MwUTQKK8N3cXVYD9EpcaWEV7p5QpBdj6Wa4V6v2puJWuITT5lZXi9ozxvUP7vc7t1iJ/9Wlj+g4U3wp+DRyN7E4957fIv3E23q+9wkbnpgwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726020720; c=relaxed/simple;
-	bh=XD3xU71GufM2mam+Bj4b7+0w5mWce4gp07uM3VRrjSc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=D/881otLIUCKwS55Drk2cmFftVsgs/TcMV6nLYLZLec7gTelmZkuio+h9pMMmRny3HcKbSJKKRIr6hw0i32fo9doHwsnfx/i5BYjtrRcsRVL9CxGXns2+CNQpF+4Cz6PeUUTsxPnzogbfKztzzy8/f9ZRlykxPtzPgCKfWBb0tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBkkQBwz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70242C4CEC3;
-	Wed, 11 Sep 2024 02:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726020719;
-	bh=XD3xU71GufM2mam+Bj4b7+0w5mWce4gp07uM3VRrjSc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=GBkkQBwz2sdnZ8OQ2J/aw49QN7rsmPKVZFDZd0/PIcFCffgLjNHEgOccqA5nYDQKv
-	 x7D+4Yg9oPQ4MwMETng0bP4Y43b88ofCiBrOLrlcQjnjrHg4oRUgu/hPKMZ4/OeVKr
-	 ndVLmG948HoPtA0NDMQT05thK0vM2qPkqZ+FZJaJMB9/jvfIXoLNH/gOaI3QVB/oEl
-	 hVkK+ZZeLT4R9W41esBVevbfZX/jTWgw7xdQumipIZ5D3QZBeNUU6aJFT90TMxw0xm
-	 ffcVfMbEz3LR58Gr2SrW1F0TWrJfxg13WYTn2/OSfU0QyfpNCZ5L9V2zNEeV0B3NjO
-	 D0FVx2DK1gaug==
-Message-ID: <9b9ee9a3-af25-45eb-a85b-eb86234a4463@kernel.org>
-Date: Wed, 11 Sep 2024 10:11:54 +0800
+	s=arc-20240116; t=1726020724; c=relaxed/simple;
+	bh=Uik71iTs+REqXna/yMneBWwOGbOEHEX7ilNKdV6o1O4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nw8CVi+XihYis91LP9gL6bmSNNPrUBOA+V/CPZJvfSis26u8aw6aHjNtQFKaGCy7zL+q+Os2Hq4Z5SycRQ2KDWLol63mmkaX9Gm6fbJpeHJbVvAp4gZt8cTKQ6W1S5uY7slhE0jbpFAhinS4H3WBZnYkplGX9+wsZDONSzStFq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a678fbd0dso197103039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:12:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726020722; x=1726625522;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VAb6PrucaF3wYrRP+7jKeLaHRcrUdHKeMrEXsjelCv4=;
+        b=FbbBviysd2nWXK9RSiqSnzcUHjY5gS+C4lpvL+dgli+Ph6tRZpIRX03ighhyROofNQ
+         79WQnkNxZhAkQ4g6QgknW4Gw0rY9GTM1TcncfxyCtLv9f6bcRf0eNVxOP4XhW24fYBdU
+         KqC0olFCRUML88c9xwdFG7721r54gFgDt/d+FyQcQP0XzD5JpoCWKWiFGBq2B8O+vnRU
+         MFJqJuUYjpWMh6L9x2lt50kHwMSHgHGKpDj7eijLtgT1+AVqfCb6QTI3RNcyN+WxWDsw
+         TXWp7pqzvBmDIVXLwauF97qiiWGpOJmLVq9mmvg3h0hmPsrwzbDTDlmlOZoBTZp+Z0s8
+         bBqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXijXwOPhUhqZIJue1CSEzLGcGM4rgVGACa/0byxePIJZUFmMVFOqU45lgs4x0X6jluCTvyFZUw5NUFUlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm17VwRjrOxkN8ijUOvrQqpDvwAy8PUBOQ2Me0KDSHpijH8G+C
+	kmBn7C+MCvWtuTvJG+uGO1qGkYgGt7HgTOcphCwgPE3iIJ8w9vLgO7y6lTFAi8k3Jn8BKbWOSOb
+	e+CO8zDN4MLl1E/lEGAq3OEDkovniaC9lsiSF/NMITIGvh59e0TODhSs=
+X-Google-Smtp-Source: AGHT+IG8OnDxIx8zhynaeNrH9ZWBpxv85d4tUS50j5wGR/JJmwJu4dQH1js3aFIsJEZk1GEdjvAevNdyH7TIe6YwroIGKCIDGD5Y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH v2 3/7] f2fs: add reserved_segments sysfs node
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20240909221946.2004046-1-daeho43@gmail.com>
- <20240909221946.2004046-3-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240909221946.2004046-3-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cd84:0:b0:3a0:57b5:72e6 with SMTP id
+ e9e14a558f8ab-3a057b57348mr49780205ab.7.1726020722026; Tue, 10 Sep 2024
+ 19:12:02 -0700 (PDT)
+Date: Tue, 10 Sep 2024 19:12:02 -0700
+In-Reply-To: <2fba030d-bd24-4a3d-852e-e10a484feaaf@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000002f8e20621ce84e3@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, jack@suse.cz, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/9/10 6:19, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> For the fine tuning of GC behavior, add reserved_segments sysfs node.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Hello,
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks,
+Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+Tested-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         f3815bfb f2fs: fix to tag STATX_DIOALIGN only if inode..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+console output: https://syzkaller.appspot.com/x/log.txt?x=1319e807980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
