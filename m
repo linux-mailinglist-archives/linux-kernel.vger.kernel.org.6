@@ -1,109 +1,94 @@
-Return-Path: <linux-kernel+bounces-325453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6A59759DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:01:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 694EE9759DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062941F2462A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209991F24EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35971B6543;
-	Wed, 11 Sep 2024 18:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C331AAE3D;
+	Wed, 11 Sep 2024 18:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csCyTeVJ"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="kPkR1XrZ"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC421B815;
-	Wed, 11 Sep 2024 18:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EE615E5B8
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726077681; cv=none; b=opdpH/O0bn405XnsJoX1Q7xkZqV06oLGB6zML/4vZFvBPXk8VPJ8ihdcz+azqN3awubb+ryYCBnFCEsAmpL7CeaIroAdkhdWdb/pQeOjRFrNvJdHXR4vWynUqs2AoZnvPbqXGT+Xwjjy+gQvKNZph9mxxR43ZKA7uXe/8v9iMcI=
+	t=1726077747; cv=none; b=QxzA4cuCbL8Z7UdzbVhvXCdEgqx54SNP5v+1/kVKz4eE4IBJ0LJvd2h1/wNmLkwaHx5yh+wNFUsSJ2/+6uz9/29+I/TL+aWRM3of+GpYATO6ON6NsdXx1zyNHcJUUYNzD/FHCitzLApBYPh7XkT8NO8SuhSzNCWueU0OPe5Lh40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726077681; c=relaxed/simple;
-	bh=PgRsx6Uwt5h275yzSb8/FZd5WJLFOVnsq6EOuNZBvBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WDvViGWYlP7PoC6WFVCYou62/XpQZ4zee4nO5FXppH0OitSgU6esQiJwlsvY1lpxMwwOzH0vG088Dl2XanP4BQjGnu1h7cvoriWgAar0lbD0I32RUNXlLAhlCj+2XJC+8CVHFtt6w8oszvctEzOT1DqrZFg9j0XC7YrsXwap+nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csCyTeVJ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d87176316eso925838a91.0;
-        Wed, 11 Sep 2024 11:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726077679; x=1726682479; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PgRsx6Uwt5h275yzSb8/FZd5WJLFOVnsq6EOuNZBvBc=;
-        b=csCyTeVJ7W3kqBSygcL4OYRbjbWC5IPyF10KlaEAuR9lADkNFNQQN/Z5IUWluJbBBo
-         TTM7UsHsgNt2yBmHG9WFzh81Z1ZcTjd7haQWTBXay4nCPGqgRb3ys70CyAmCk3lRINoh
-         vve8ZJrS0O9bSWryqywxdpLUo3yNUgGgDghfE5jlzFqrCn1INhSyd2cFUBmyfpKaEHis
-         sBgcvmYv8awHmvefb18n46c2DdVJcT47nABwoGfK5N9XVPG7l0h6hmtFVFevNU4ZbK4+
-         uwgnHp3b3oiv7kJs2I/88LXUhXue7bpVxrQT8+MDJDpiRu2Lc0PleXoN0mnHaHa4wQ7k
-         WGKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726077679; x=1726682479;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgRsx6Uwt5h275yzSb8/FZd5WJLFOVnsq6EOuNZBvBc=;
-        b=lu79a6nvurqYAv3oYq+2GyMd4yjMprz3PxVaCQzVcrJHFPzfkATbBaDHioavaqJLbI
-         b5e1j39JPf/yJQd4bc/sddYJAYAObCoXVX7M3aRMZ9EAYHkVkRpLIonNjwoJDFhun9pr
-         NrjrtyPZkBTiTwy6SeuVwYa0Qq+B9A4veFQ2Pd+nfDlQwWrlTtkTvlF8a2d8fr20GE7i
-         UHo4+caSiC/F2+JDXPqAJ9n8bjfDrBg8uiC5XxIC4AWdIRfCeWsjUxl4zkeq5x1N0/Fw
-         Ojsgyk0gstP11Iy8giu4+5S3YEl3O+ttlfcPZuUaV3Ah1UF44cbSY8DZVvxadCvFuMGg
-         OBKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvzrnhCStPJJVkYlPlmFSkvQDPapWMEfX8PcvwO6SfGrv+5s6Fw4hQJKvfXnfcV7IBu3tpJQgsclsSqTCB@vger.kernel.org, AJvYcCWQUqSRDvfLylrYIajF3jWbXixN3GZ6MqEuLm91q5uxMgiO4y9CQDc/6DsbVeTXjKjVMuKMElYZaoTbnJnN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Ofgupjom+kNzHpWacBjlbqQCmcJPZbicEylu/dsfen733pJg
-	MuY2Jq+1a699eUkhcGp/OvHldDi0cnZIx3xDd6Dy6vu7Jyxwgtj1
-X-Google-Smtp-Source: AGHT+IFJCmNKVCfhr3nWS97aq01yxI0F6VcZrCEo9qiA6Onska31rD2XOFimj6Vrk39sRmcvWUMpBw==
-X-Received: by 2002:a17:90b:906:b0:2da:82d4:c63c with SMTP id 98e67ed59e1d1-2db6717819bmr11123575a91.4.1726077678971;
-        Wed, 11 Sep 2024 11:01:18 -0700 (PDT)
-Received: from ?IPV6:2601:644:8502:9460:864b:f5ff:fe5c:59a5? ([2601:644:8502:9460:864b:f5ff:fe5c:59a5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db049703a0sm8704727a91.42.2024.09.11.11.01.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 11:01:18 -0700 (PDT)
-Message-ID: <8d9fde52-2582-499f-a971-e9aa46b23fa2@gmail.com>
-Date: Wed, 11 Sep 2024 11:01:16 -0700
+	s=arc-20240116; t=1726077747; c=relaxed/simple;
+	bh=JsC3UbeAOry4i3hZKqF5bCpco4jHXbR/yYpwAHNRCcM=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R+8LIE9tIGvMbKXT1nNYpgFT/ff984551+WH8AHPTHzLn1vZvsUCwQoiSsSFZvAiOBQ3sMSlRsTQ07WDxch3lk6iULk8+B3n9z6Gqcy/9zPyygqy0RIzDQCRnYBDdmdRbNp881RJ9IqFhvWOIs6d9Tbkngl1p/WNTEQD1cb7uFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=kPkR1XrZ; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726077741; x=1726336941;
+	bh=EUollz0ynXHjxBi/lGQvIBbGGBRXwy/+cd/CajGyCVY=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=kPkR1XrZYDPyClyayXqRmyxrExtO610pQV3++3KqhbDHZ48t8Voxw/3oXAvRN3OVe
+	 9Rwx+sB97NHfhUO3UCqSUbw3W8tn0QxWUgMo+q8g0oSc6zzw8Cq6kkR1zremGMwchg
+	 su+z4epJqZ794gBfJnImQqBPJCImGxo/xtzwafNzziGjsf2yq+Zw1MwAhr80dZ3mQ7
+	 5koBQ4eH5EOHntqc9NgPrPHigzTlT4gjaQncdNsoXDjvE5mQ+9u9sMkNuMzNs8R53R
+	 hJQdofnO9T/EaevuLlBA7zEwzpclKmQs0VO075XU5S509II04FR7UuAtQoBKkfD1KY
+	 7vU6lrwgiZqQQ==
+Date: Wed, 11 Sep 2024 18:02:19 +0000
+To: philipp.g.hortmann@gmail.com, gregkh@linuxfoundation.org
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH] staging: vt6655: mac.h: Fix possible precedence issue in macros
+Message-ID: <20240911180149.14474-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 5f41f40d95e98f84cc4a94f7f6ff930cd5557798
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] firmware: qcom: scm: fall back to kcalloc() for no
- SCM device bound
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Elliot Berman <quic_eberman@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Andrew Halaney
- <ahalaney@redhat.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
- <20240909-tzmem-null-ptr-v1-2-96526c421bac@linaro.org>
- <20240909131842193-0700.eberman@hu-eberman-lv.qualcomm.com>
- <CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com>
- <CAMRc=MefTjz=h6jzE5vE-yaHnyM601Ts8XYZqEYnOsidfQEavA@mail.gmail.com>
-Content-Language: en-US
-From: Rudraksha Gupta <guptarud@gmail.com>
-In-Reply-To: <CAMRc=MefTjz=h6jzE5vE-yaHnyM601Ts8XYZqEYnOsidfQEavA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> I'm wondering about how to approach an eventual refactoring and I'm
-> thinking that for platforms that are known to have DTs out there
-> without the node, we could exceptionally instantiate the SCM device
-> when the module is loaded? And then modify the driver to require the
-> provider to have an actual struct device attached.
+It is safer to put macro arguments in parentheses. This way, accidental
+operator precedence issues can be avoided.
 
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
+---
+ drivers/staging/vt6655/mac.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm happy to help test these changes if you'd like!
+diff --git a/drivers/staging/vt6655/mac.h b/drivers/staging/vt6655/mac.h
+index acf931c3f5fd..a33af2852227 100644
+--- a/drivers/staging/vt6655/mac.h
++++ b/drivers/staging/vt6655/mac.h
+@@ -537,9 +537,9 @@
+=20
+ /*---------------------  Export Macros ------------------------------*/
+=20
+-#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, iobase + MAC_REG_PAGE1=
+SEL)
++#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, (iobase) + MAC_REG_PAG=
+E1SEL)
+=20
+-#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, iobase + MAC_REG_PAGE1=
+SEL)
++#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, (iobase) + MAC_REG_PAG=
+E1SEL)
+=20
+ #define MAKEWORD(lb, hb) \
+ =09((unsigned short)(((unsigned char)(lb)) | (((unsigned short)((unsigned =
+char)(hb))) << 8)))
+--=20
+2.34.1
+
 
 
