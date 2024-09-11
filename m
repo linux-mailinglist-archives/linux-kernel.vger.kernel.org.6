@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-325524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05B0975AC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75689975ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37D61C232A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E79F285DBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A055B1BA893;
-	Wed, 11 Sep 2024 19:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D906F1BA291;
+	Wed, 11 Sep 2024 19:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaOyqbUt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS3ZVO0C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E531BA26C;
-	Wed, 11 Sep 2024 19:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B8A1AAE1C;
+	Wed, 11 Sep 2024 19:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726082229; cv=none; b=ow/nmnVtwWJn39KH1l3TdBJtGBFgNDNv8IULwKqyZo4cd5yjZKNSKgPNie+XEogz0oZSFwHPlZW+loyuI8qr3P7+QHhZE9LqAoFxfMvjp+obMZ0AYhHfXqUw2iwdHUJqmRmTc2f1MdV2QgPMXdDsV/2Lb+FfoTnAuVTGkfi414o=
+	t=1726082420; cv=none; b=DCWCkCjAIEZ96F80wn/Uzerl3p+S1AAhmgIUlNrsNw4DADgMH0N1G7eSfkT/iQHF6OknKLC3j1c8Gg/EWeqx3K/gSePx6l09c49T9iw4249sdDSXTUjVJWQGkiljGQN54FzAW8+OBzUCDPVeF8XtTH0UgyHR5nOerpQMYmXo5yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726082229; c=relaxed/simple;
-	bh=3x34o9ccfmgr+Yc5/Xm+YmpddZXSeb8HJ9VjzD4S6cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlR0Yz6PopZHs8vqelKXbNGqiyR0J5VLBjc/O9GB87GKTGYz7aveUDqpvnu45Fsm5Y+4NUYUkL8J7Kw1CHjpb1OJT4dSoUlvtNw71WCCdgSZLV83uxlOZ5AT2FdWIernFYwxLzevnTIdG8HdsLNMj6Kja2rdUSQBPHPqIo0AjCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaOyqbUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C82CC4CEC0;
-	Wed, 11 Sep 2024 19:17:06 +0000 (UTC)
+	s=arc-20240116; t=1726082420; c=relaxed/simple;
+	bh=q607gZ7bOXAshnrnxWeCn9nyXjUqdJHM08X3Sq7cS80=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=k+KZ3vhEiKjFDTl7EDxjFcZgv8tQ7I8f8oX+ai3uxscMCq2ydWI3tHbd98RLuXY2MOjlue2fYBC3/GJCPrAwgKkmjNU7U15FuUtogvYjvSGih5NjWG4aVrbtuMjutUNfv3mrL1bZO63AA3/yHRaNUj10gPcLgBjIlni4Ipuir2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS3ZVO0C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590F4C4CEC0;
+	Wed, 11 Sep 2024 19:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726082228;
-	bh=3x34o9ccfmgr+Yc5/Xm+YmpddZXSeb8HJ9VjzD4S6cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GaOyqbUtFT5BXaPw53avIWqv+U+o7o3dUt27/Pua04UYM0YZ1iJQ/WOVWiYt2rSaW
-	 VA5wluQlEkAHAq6oY1mXmYtmqTOPFvWx9VfDZB9KRmyvMNoeCSb4ozXjT8SrMwVaX8
-	 Ot1EmkJh9sHHeLi9kr4bxvCAyeUJg5JosKmD4LhGbVKxJDIqOQyYojrCrbI7m2qtot
-	 CpisDR0f9567Q2CvRddlBnPCtu9klu49Kr6kFhqlLLJlBh815pIfOvonbECf891CaC
-	 jiVhfAtG+v1WeZBW70gXqhsFgsbKjkrhiPQv3HVWkke944yZCyoB6rqCx6BhLZLAdk
-	 kx6GwtLeN8kZg==
-Date: Wed, 11 Sep 2024 20:17:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: clock: mediatek: Drop duplicate
- mediatek,mt6795-sys-clock.yaml
-Message-ID: <20240911-train-carnage-f19405590f8d@spud>
-References: <20240910234238.1028422-1-robh@kernel.org>
+	s=k20201202; t=1726082419;
+	bh=q607gZ7bOXAshnrnxWeCn9nyXjUqdJHM08X3Sq7cS80=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bS3ZVO0CiuxGRQoi9DLloyk/wC9ZLzvW/ysi9fA1TBYlCLMeGUlGpEprzWAauaSi4
+	 /q3zRqXdMBTgUXrSxR8IxXMNnLaIE60V/CQX/dR2gNaHs8KoOADowfYiaRzFmjaRJk
+	 G67oLBcLVtdMiWS2mmjfqGppyFwiKAfLqc103pBrMmmCipWtlQbs/voZjBiQl2hVgb
+	 rJT2pKgG6j/+GADO/UJSlRkzLhTcJmO5cwziPbDfrQEaSGNIkp5UwqLvyeNbAuX0dX
+	 KGlaSYDq2O4a3T6V6dZJK50oJE53tPoCQcS768i0Wb1Q8wdUgPqIbVjCraiwDBvTeT
+	 y26TN2UBCFkkw==
+Date: Wed, 11 Sep 2024 21:20:15 +0200
+From: Helge Deller <deller@kernel.org>
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Cc: linux-parisc@vger.kernel.org
+Subject: [PATCH] [RFC] mm: mmap: Allow mmap(MAP_STACK) to map growable stack
+Message-ID: <ZuHtb43Ar21ZptNz@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Kx11F4IBYxbm4SiO"
-Content-Disposition: inline
-In-Reply-To: <20240910234238.1028422-1-robh@kernel.org>
-
-
---Kx11F4IBYxbm4SiO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 06:42:37PM -0500, Rob Herring (Arm) wrote:
-> The compatible strings for mt6795 clocks are also documented in other
-> schemas:
->=20
-> "mediatek,mt6795-apmixedsys" in clock/mediatek,apmixedsys.yaml
-> "mediatek,mt6795-topckgen" in clock/mediatek,topckgen.yaml
-> "mediatek,mt6795-pericfg" in clock/mediatek,pericfg.yaml
-> "mediatek,mt6795-infracfg" in clock/mediatek,infracfg.yaml
->=20
-> The only difference is #reset-cells is not allowed in some of these,
-> but that aligns with actual users in .dts files.
+This is a RFC to change the behaviour of mmap(MAP_STACK) to be
+sufficient to map memory for usage as stack on all architectures.
+Currently MAP_STACK is a no-op on Linux, and instead MAP_GROWSDOWN
+has to be used.
+To clarify, here is the relevant info from the mmap() man page:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+MAP_GROWSDOWN
+   This flag is used for stacks. It indicates to the kernel virtual
+   memory system that the mapping should extend downward in memory.  The
+   return address is one page lower than the memory area that is
+   actually created in the process's virtual address space.  Touching an
+   address in the "guard" page below the mapping will cause the mapping
+   to grow by a page. This growth can be repeated until the mapping
+   grows to within a page of the high end of the next lower mapping,
+   at which point touching the "guard" page will result in a SIGSEGV
+   signal.
 
---Kx11F4IBYxbm4SiO
-Content-Type: application/pgp-signature; name="signature.asc"
+MAP_STACK (since Linux 2.6.27)
+   Allocate the mapping at an address suitable for a process or thread
+   stack.
 
------BEGIN PGP SIGNATURE-----
+   This flag is currently a no-op on Linux. However, by employing this
+   flag, applications can ensure that they transparently obtain support
+   if the flag is implemented in the future. Thus, it is used in the
+   glibc threading implementation to allow for the fact that
+   some architectures may (later) require special treatment for
+   stack allocations. A further reason to employ this flag is
+   portability: MAP_STACK exists (and has an effect) on some
+   other systems (e.g., some of the BSDs).
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHssAAKCRB4tDGHoIJi
-0uDqAQCgJaSn0aIreDVI8iXzweTSUXhnaVeVmWq1uBIOFi4VuQEAuIB5sxXIZXZR
-4zajWaprYZit0ZrBumAPqpkI8wjf3wo=
-=W+In
------END PGP SIGNATURE-----
+The reason to suggest this change is, that on the parisc architecture the
+stack grows upwards. As such, using solely the MAP_GROWSDOWN flag will not
+work. Note that there exists no MAP_GROWSUP flag.
+By changing the behaviour of MAP_STACK to mark the memory area with the
+VM_STACK bit (which is VM_GROWSUP or VM_GROWSDOWN depending on the
+architecture) the MAP_STACK flag does exactly what people would expect on
+all platforms.
 
---Kx11F4IBYxbm4SiO--
+This change should have no negative side-effect, as all code which
+used mmap(MAP_GROWSDOWN | MAP_STACK) still work as before.
+
+Signed-off-by: Helge Deller <deller@gmx.de>
+
+diff --git a/include/linux/mman.h b/include/linux/mman.h
+index bcb201ab7a41..66bc72a0cb19 100644
+--- a/include/linux/mman.h
++++ b/include/linux/mman.h
+@@ -156,6 +156,7 @@ calc_vm_flag_bits(unsigned long flags)
+ 	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
+ 	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
+ 	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
++	       _calc_vm_trans(flags, MAP_STACK,      VM_STACK     ) |
+ 	       _calc_vm_trans(flags, MAP_STACK,	     VM_NOHUGEPAGE) |
+ 	       arch_calc_vm_flag_bits(flags);
+ }
 
