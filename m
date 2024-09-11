@@ -1,201 +1,286 @@
-Return-Path: <linux-kernel+bounces-324334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B41974B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:29:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F1D974B63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C441F270F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADB31F215A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88D13D88E;
-	Wed, 11 Sep 2024 07:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB81428E3;
+	Wed, 11 Sep 2024 07:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A9kfiGP1"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBt8u00X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3099C13CFAD
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2D16A33B;
+	Wed, 11 Sep 2024 07:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726039707; cv=none; b=aYPv5b9dwrxgqReZob0wy6sHKcRYgNliVz/4Lg1NH+6RuW/vTwEZizqQ+3rfNgTDbr62qTOzhE/xuTIprBGJ0k0mQ9399CgOFTDWlA2HhNnTNqe9e4bY2ijPZFQtBZubyhE8zdBc2zMzdu/der+KrxhAhzb0ehZud9a0OAhqPCk=
+	t=1726039748; cv=none; b=aaKeiGa1FfBW3wff93AD2K6AE94tR7U8pJ9xiz+qyFg3qR5o7PRrDmG49UVfDqePNeUSxzLHfyGiMHObzkYrDeYkI/xckSjP163ZXEP9dEp9N5/HcYBAkOXQiH6sZW6SEKtwY92jIzuxOJcCWMj8S9Bo3p6kUxDl6UVJ7dzVG3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726039707; c=relaxed/simple;
-	bh=APdJph7gaicjs+tOowsU3frR0yv8vE0vROecMhOCPmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1Yg2MdPfIMiCu5vW2k1ZfFOQkkum4aEBoyoeyrfOQu8KbnwMvI6UFkBKE0ei5bshqY5IdcI6Q81fxgLWEbEf9Uf6k6ga17Fxxhh3gmIf4bBj263epNCM4UudQEmhp6k5mYUtfnIlJjHhRuz7sOldN+GLYc/4MFgZV+mY5kf2HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A9kfiGP1; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726039696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=1FVrW79iD8OZdNUG6s51hH/WHjboDl1XekYbQsR2hew=;
-	b=A9kfiGP1OxeXSvsdvhRzzsICYzUuk1IXn3ahwQDVcY/EGBNWSepu73SrH6IOMUY0EZE5F8BA+XXGfmnCW0nhyaQ0PW0QkWc3CtkoQs7C+osmF8SBIElaLEdw7sXILm4e7BQsEYCfQ12utDSkDd2Y2K7gz7ExhE+G+/jcnBGeDG0=
-Received: from 30.221.129.31(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEmyeU6_1726039695)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Sep 2024 15:28:15 +0800
-Message-ID: <6b8f2dee-12a7-4a8d-a67f-e4c67277d230@linux.alibaba.com>
-Date: Wed, 11 Sep 2024 15:28:15 +0800
+	s=arc-20240116; t=1726039748; c=relaxed/simple;
+	bh=KbUoUBvcWX9rFYePbVpImFGQLgDAvUmaqTioMBxsWfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ndDq8LXdgx9bM5s4DkpeNoiLvh8xQmbSb9sOok4gpZYM2ROnENF23nfMZY2JlQ3Db0hLyDUp8BzfXuO6pUeU2gA6E9lq3ytYRdN8ItAtMQqtZi6jUjubbLYHZ7BNcFTCdqzNhxawXM7l1K66vBAywmXB3biBEFA9GshZFTb1Wpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBt8u00X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F26C4CEC6;
+	Wed, 11 Sep 2024 07:29:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726039747;
+	bh=KbUoUBvcWX9rFYePbVpImFGQLgDAvUmaqTioMBxsWfc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cBt8u00XQHt/nU03fXmbDp/LdHs0RRP/Ha6rtdbyOZsTsLCyETX1h8OiRxzc1V4Oy
+	 b1GUSuQ9TYd8oZLCtO29JEkzU3fl4spcbFOcbjiVkiciV2eAYK0oVMT32zvN859B/X
+	 b0lYN8vocfrbCssIc3bJAZvGm3ksNLShOacCrMaIEe2Mxp51Q2N6FKBHkB1mNSO5YQ
+	 FkaXcyEfeQBNbzOVCGFK6eaOX6+D96Ui5RWyHgNGCihBp4Q+hQLmYBg2SAG9P42V0q
+	 2vOmx7sFPK9MQbirI1uZA2ZSpPfmLY1JakQUTbf0cK8wEUg0xFQNLseSiO6ZNhriPx
+	 UZ3/jlnMkBSdQ==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75d044201so5752111fa.0;
+        Wed, 11 Sep 2024 00:29:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9Riqx1iQ6yCg47lx7027wmadhbvUZrFkjQrdh1/3pNAlyl26+nWXAgDTOmX6/4vUARb0yisfI0cMpgz8=@vger.kernel.org, AJvYcCWXBind/CPa6B3lbvwoAy/W2Zl0vWT6XkhsccxPr4E/fTjiGr00XSpXqX/5r+g2xQXSXzm43JN/xoJ8CtVS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH7Qubf0Rflq4mE/l/h5lu349fayBVvWiTQXBbuAn4K/xNhUxL
+	1v5tFlJ9joyLhHjMZgn7Q5/m+rHIVfiHAVe1CcUNy/sSl06p5wESM1MmWQJpzIQj3VE8fKTO9dH
+	k5Tl9N9Cy6W360ZemssqCuF/XjYM=
+X-Google-Smtp-Source: AGHT+IHRZZMu7s1CwuHZGaWoY2UgPTfkO8OHLCmhRY0wGYeMecrs07iKYrpRq++AoCZwC3W5T4Utz6ngqDv8O7R6snE=
+X-Received: by 2002:a05:651c:1987:b0:2f7:5c20:5daf with SMTP id
+ 38308e7fff4ca-2f772603a6cmr19792991fa.2.1726039746520; Wed, 11 Sep 2024
+ 00:29:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/1] ocfs2: reserve space for inline xattr before
- attaching reflink tree
-To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-Cc: junxiao.bi@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
- ocfs2-devel@lists.linux.dev,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240910044045.257958-1-gautham.ananthakrishna@oracle.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240910044045.257958-1-gautham.ananthakrishna@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aowpzz4rbedjkwkl7b4a2f5pf2p5cgsu6knsgxnayckhbumxf3@aznrm7oliydb>
+ <442e8058.43a4.191dea175d7.Coremail.3090101217@zju.edu.cn>
+ <lnizw6jklneisxkhah7ezy4tcrn2wpm52ibh5euz7ipyfansde@kc4onuvrrmxr> <mesi5e46iumhgdbvzl2gfwdamtv34baydb5d4pmud4fu7n4dto@fewx4uzbtjl6>
+In-Reply-To: <mesi5e46iumhgdbvzl2gfwdamtv34baydb5d4pmud4fu7n4dto@fewx4uzbtjl6>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 11 Sep 2024 16:28:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATDVN9ukAJdztobZ=aMLvfgE_wW1N_gsB-x3OiRE-Jrog@mail.gmail.com>
+Message-ID: <CAK7LNATDVN9ukAJdztobZ=aMLvfgE_wW1N_gsB-x3OiRE-Jrog@mail.gmail.com>
+Subject: Re: External modules with O=... (was: Re: [PATCH] kbuild: Fix include
+ path in scripts/Makefile.modpost)
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Jing Leng <3090101217@zju.edu.cn>, Michal Marek <michal.lkml@markovi.net>, 
+	Nick Desaulniers <ndesaulniers@google.com>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jing Leng <jleng@ambarella.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 11, 2024 at 1:36=E2=80=AFPM Lucas De Marchi
+<lucas.demarchi@intel.com> wrote:
+>
+> On Tue, Sep 10, 2024 at 09:43:14PM GMT, Lucas De Marchi wrote:
+> >On Wed, Sep 11, 2024 at 09:10:09AM GMT, Jing Leng wrote:
+> >>>-----Original Messages-----
+> >>>From: "Lucas De Marchi" <lucas.demarchi@intel.com>
+> >>>Send time:Tuesday, 09/10/2024 22:00:29
+> >>>To: "Masahiro Yamada" <masahiroy@kernel.org>
+> >>>Cc: 3090101217@zju.edu.cn, "Michal Marek" <michal.lkml@markovi.net>, "=
+Nick
+> >>> Desaulniers" <ndesaulniers@google.com>, "Linux Kbuild mailing list" <=
+linux-kbuild@vger.kernel.org>, "Linux Kernel Mailing List" <linux-kernel@vg=
+er.kernel.org>, "Jing Leng" <jleng@ambarella.com>
+> >>>Subject: External modules with O=3D... (was: Re: [PATCH] kbuild: Fix i=
+nclude path in scripts/Makefile.modpost)
+> >>>
+> >>>Hi, I was pointed to this thread since I'm trying something similar
+> >>>in kmod's testsuite. See below.
+> >>>
+> >>>On Tue, May 24, 2022 at 02:52:45AM GMT, Masahiro Yamada wrote:
+> >>>>On Tue, May 17, 2022 at 7:51 PM <3090101217@zju.edu.cn> wrote:
+> >>>>>
+> >>>>> From: Jing Leng <jleng@ambarella.com>
+> >>>>>
+> >>>>> When building an external module, if users don't need to separate t=
+he
+> >>>>> compilation output and source code, they run the following command:
+> >>>>> "make -C $(LINUX_SRC_DIR) M=3D$(PWD)". At this point, "$(KBUILD_EXT=
+MOD)"
+> >>>>> and "$(src)" are the same.
+> >>>>>
+> >>>>> If they need to separate them, they run "make -C $(KERNEL_SRC_DIR)
+> >>>>> O=3D$(KERNEL_OUT_DIR) M=3D$(OUT_DIR) src=3D$(PWD)". Before running =
+the
+> >>>>> command, they need to copy "Kbuild" or "Makefile" to "$(OUT_DIR)" t=
+o
+> >>>>> prevent compilation failure.
+> >>>>>
+> >>>>> So the kernel should change the included path to avoid the copy ope=
+ration.
+> >>>>>
+> >>>>> Signed-off-by: Jing Leng <jleng@ambarella.com>
+> >>>>> ---
+> >>>>>  scripts/Makefile.modpost | 3 +--
+> >>>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> >>>>> index 48585c4d04ad..0273bf7375e2 100644
+> >>>>> --- a/scripts/Makefile.modpost
+> >>>>> +++ b/scripts/Makefile.modpost
+> >>>>> @@ -87,8 +87,7 @@ obj :=3D $(KBUILD_EXTMOD)
+> >>>>>  src :=3D $(obj)
+> >>>>>
+> >>>>>  # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
+> >>>>> -include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
+> >>>>> -             $(KBUILD_EXTMOD)/Kbuild, $(KBUILD_EXTMOD)/Makefile)
+> >>>>> +include $(if $(wildcard $(src)/Kbuild), $(src)/Kbuild, $(src)/Make=
+file)
+> >>>>>
+> >>>>>  # modpost option for external modules
+> >>>>>  MODPOST +=3D -e
+> >>>>> --
+> >>>>> 2.17.1
+> >>>>>
+> >>>>
+> >>>>
+> >>>>I do not think "M=3D$(OUT_DIR) src=3D$(PWD)" is the official way,
+> >>>>but this patch is a clean up.
+> >>>
+> >>>I tried what is in this patch and also tried to find an official way i=
+n
+> >>>the docs.
+
+
+There is no official way.
+
+> >>>
+> >>>In kmod's testsuite we build dummy kernel modules to exercise the API.
+> >>>https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/tree/testsui=
+te/module-playground
+> >>>
+> >>>This works:
+> >>>     make -C /lib/modules/$(uname -r)/build M=3D$PWD
+> >>>
+> >>>This doesn't:
+> >>>     make -C /lib/modules/$(uname -r)/build M=3D$PWD O=3D/tmp/kmod_tes=
+t_modules
 
 
 
-On 9/10/24 12:40 PM, Gautham Ananthakrishna wrote:
-> One of our customers reported a crash and a corrupted ocfs2 filesystem.
-> The crash was due to the detection of corruption. Upon troubleshooting,
-> the fsck -fn output showed the below corruption
-> 
-> [EXTENT_LIST_FREE] Extent list in owner 33080590 claims 230 as the next free chain record,
-> but fsck believes the largest valid value is 227.  Clamp the next record value? n
-> 
-> The stat output from the debugfs.ocfs2 showed the following corruption
-> where the "Next Free Rec:" had overshot the "Count:" in the root metadata
-> block.
-> 
->         Inode: 33080590   Mode: 0640   Generation: 2619713622 (0x9c25a856)
->         FS Generation: 904309833 (0x35e6ac49)
->         CRC32: 00000000   ECC: 0000
->         Type: Regular   Attr: 0x0   Flags: Valid
->         Dynamic Features: (0x16) HasXattr InlineXattr Refcounted
->         Extended Attributes Block: 0  Extended Attributes Inline Size: 256
->         User: 0 (root)   Group: 0 (root)   Size: 281320357888
->         Links: 1   Clusters: 141738
->         ctime: 0x66911b56 0x316edcb8 -- Fri Jul 12 06:02:30.829349048 2024
->         atime: 0x66911d6b 0x7f7a28d -- Fri Jul 12 06:11:23.133669517 2024
->         mtime: 0x66911b56 0x12ed75d7 -- Fri Jul 12 06:02:30.317552087 2024
->         dtime: 0x0 -- Wed Dec 31 17:00:00 1969
->         Refcount Block: 2777346
->         Last Extblk: 2886943   Orphan Slot: 0
->         Sub Alloc Slot: 0   Sub Alloc Bit: 14
->         Tree Depth: 1   Count: 227   Next Free Rec: 230
->         ## Offset        Clusters       Block#
->         0  0             2310           2776351
->         1  2310          2139           2777375
->         2  4449          1221           2778399
->         3  5670          731            2779423
->         4  6401          566            2780447
->         .......          ....           .......
->         .......          ....           .......
-> 
-> The issue was in the reflink workfow while reserving space for inline xattr.
-> The problematic function is ocfs2_reflink_xattr_inline(). By the time this
-> function is called the reflink tree is already recreated at the destination
-> inode from the source inode. At this point, this function reserves space
-> space inline xattrs at the destination inode without even checking if there
-> is space at the root metadata block. It simply reduces the l_count from 243
-> to 227 thereby making space of 256 bytes for inline xattr whereas the inode
-> already has extents beyond this index (in this case upto 230), thereby causing
-> corruption.
-> 
-> The fix for this is to reserve space for inline metadata before the at the
-> destination inode before the reflink tree gets recreated. The customer has
-> verified the fix.
-> 
-> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+O=3D points the output directory of the kernel,
+not the output directory of the external modules.
 
-Fixes: ef962df057aa ("ocfs2: xattr: fix inlined xattr reflink")
-Cc: <stable@vger.kernel.org>
 
-> ---
->  fs/ocfs2/refcounttree.c | 18 ++++++++++++++++++
->  fs/ocfs2/xattr.c        | 11 +----------
->  2 files changed, 19 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-> index 3f80a56d0d60..c0edb32a7ff6 100644
-> --- a/fs/ocfs2/refcounttree.c
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -25,6 +25,7 @@
->  #include "namei.h"
->  #include "ocfs2_trace.h"
->  #include "file.h"
-> +#include "symlink.h"
->  
->  #include <linux/bio.h>
->  #include <linux/blkdev.h>
-> @@ -4182,6 +4183,23 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto out_unlock;
->  	}
->  
-> +	if ((OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
-            ^ align it here, please.
+/lib/modules/$(uname -r)/build
+is the clean source tree.
 
-> +		(OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
-> +		/*
-> +		 * Adjust extent record count to reserve space for extended attribute.
-> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> +		 */
-> +		if (!(OCFS2_I(new_inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-                    ^ ditto.
+/tmp/kmod_test_modules
+contains the build artifacts of vmlinux and
+in-tree modules.
 
-And since there are many places access OCFS2_I(new_inode), I'd like
-define a variable for it. This can also make code in one line much
-shorter. e.g.
-struct ocfs2_inode_info *oi = OCFS2_I(inode);
+Then, the command you gave would work.
 
-> +			!(ocfs2_inode_is_fast_symlink(new_inode))) {
-> +			struct ocfs2_dinode *new_di = new_bh->b_data;
-> +			struct ocfs2_dinode *old_di = old_bh->b_data;
-> +			struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> +			int inline_size = le16_to_cpu(old_di->i_xattr_inline_size);
-Add a blank line here.
 
-BTW, also cc lkml.
 
-Thanks,
-Joseph
 
-> +			le16_add_cpu(&el->l_count, -(inline_size /
-> +					sizeof(struct ocfs2_extent_rec)));
-> +		}
-> +	}
-> +
->  	ret = ocfs2_create_reflink_node(inode, old_bh,
->  					new_inode, new_bh, preserve);
->  	if (ret) {
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 3b81213ed7b8..a9f716ec89e2 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -6511,16 +6511,7 @@ static int ocfs2_reflink_xattr_inline(struct ocfs2_xattr_reflink *args)
->  	}
->  
->  	new_oi = OCFS2_I(args->new_inode);
-> -	/*
-> -	 * Adjust extent record count to reserve space for extended attribute.
-> -	 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> -	 */
-> -	if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> -	    !(ocfs2_inode_is_fast_symlink(args->new_inode))) {
-> -		struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> -		le16_add_cpu(&el->l_count, -(inline_size /
-> -					sizeof(struct ocfs2_extent_rec)));
-> -	}
-> +
->  	spin_lock(&new_oi->ip_lock);
->  	new_oi->ip_dyn_features |= OCFS2_HAS_XATTR_FL | OCFS2_INLINE_XATTR_FL;
->  	new_di->i_dyn_features = cpu_to_le16(new_oi->ip_dyn_features);
 
+
+> >>>
+> >>>I also tried the variants above with setting src, but all of them give
+> >>>me errors - I used 6.10 and 6.11-rc7 for these tests.
+> >>>
+> >>>Is there a way to do this?
+> >>>
+> >>>thanks
+> >>>Lucas De Marchi
+> >>>
+> >>>>
+> >>>>Applied to linux-kbuild. Thanks.
+> >>>>
+> >>>>
+> >>>>--
+> >>>>Best Regards
+> >>>>Masahiro Yamada
+> >>
+> >>Hi Masahiro,
+> >
+> >I guess you meant Lucas :)
+> >
+> >>
+> >>I think your intention is to separate the source code from the compiled=
+ output.
+> >>The correct command should be:
+> >>   make -C /lib/modules/$(uname -r)/build src=3D$PWD M=3D/tmp/kmod_test=
+_modules
+> >
+> >oh, looks like this works. Apparently my mistake was trying to set O=3D
+> >like I normally do for in-tree modules.
+>
+> spoke too early... It worked because I was in another machine pointing
+> to a 6.8 kernel. It seems like something broke between 6.9 and 6.10.
+>
+> Running a quick bisect, it's pointing to this commit:
+> 9a0ebe5011f4 ("kbuild: use $(obj)/ instead of $(src)/ for common pattern =
+rules")
+
+
+Overriding 'src' from the command is not allowed. That's why.
+
+
+> Error like below:
+>
+> $ make -j$(nproc) -C ~/p/linux-dim/src MddPWD/build srcx=3D$PWD
+> make: Entering directory '/home/ldmartin/p/linux-dim/src'
+> make[2]: *** No rule to make target '/home/ldmartin/p/kmod/testsuite/modu=
+le-playground/build/mod-simple.o', needed by '/home/ldmartin/p/kmod/testsui=
+te/module-playground/build/'.  Stop.
+> make[1]: *** [/home/ldmartin/p/linux-dim/src/Makefile:1922: /home/ldmarti=
+n/p/kmod/testsuite/module-playground/build] Error 2
+> make: *** [Makefile:240: __sub-make] Error 2
+> make: Leaving directory '/home/ldmartin/p/linux-dim/src'
+
+
+I suggested M=3Drelative-path + VPATH=3D
+but I do not know what you want to achieve.
+
+https://lore.kernel.org/linux-kbuild/CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7J=
+YuHTWzgGL2Zjg@mail.gmail.com/
+
+
+
+
+
+
+
+> Lucas De Marchi
+>
+> >
+> >Thanks
+> >Lucas De Marchi
+> >
+> >>
+> >>You also can refer to:
+> >>   https://github.com/lengjingzju/cbuild-ng/blob/main/scripts/core/inc.=
+mod.mk
+> >>1. The complete command is as follows:
+> >>   make -C <Linux kernel source code directory> O=3D<Linux kernel compi=
+lation output directory> src=3D<Current driver module source code directory=
+> M=3D<Current driver module compilation output directory>
+> >>2. If the <Linux kernel source code directory> and the <Linux kernel co=
+mpilation output directory> are the same, <O=3Dxxx> can be omitted:
+> >>   make -C <Linux kernel source code directory> src=3D<Current driver m=
+odule source code directory> M=3D<Current driver module compilation output =
+directory>
+> >>2. If the <Current driver module source code directory> and the <Curren=
+t driver module compilation output directory> are the same, <src=3Dxxx> can=
+ be omitted:
+> >>   make -C <Linux kernel source code directory> O=3D<Linux kernel compi=
+lation output directory> M=3D<Current driver module source code directory>
+> >>
+> >>Best Regards!
+> >>Jing Leng
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
