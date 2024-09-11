@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-324614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3776974ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:39:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB3C974ECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 443FC1F21D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:39:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA95B29B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BDE185B48;
-	Wed, 11 Sep 2024 09:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnEdk+4g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C13183CDC;
+	Wed, 11 Sep 2024 09:38:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710CE155346;
-	Wed, 11 Sep 2024 09:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2603C183CA1;
+	Wed, 11 Sep 2024 09:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047537; cv=none; b=n7y7xk44vW3cLkU4n9lKvwTlQddPczwpt+d1QE9sQMytdosgb5NXqMGu0Ksx1QdY52+yc/21kbF2lNLOwuyz+hh3NZcysMD7oeB7ebZK8fO/ohKSjce1UVWvofZY++azcvp1bhGL4U3OJzds0xD+/Qg6YSqyqCe0D/CyeoeilKk=
+	t=1726047523; cv=none; b=kdQxVUeJ4Etim7Srqh3ndrCaUZSPmjxQq5MsjRWCLzcAsWQvAGl1I9xmXuUIY0OzfY/DnxQ54blJCh0oQbR/1bTirakx2CVyOfNYuo38yvL+koI3D2FbTLODzRRiJYsUa2MHeT9qEG4IY9ZWxpNAxQPlFpMwXM2gK/GruX+ADTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047537; c=relaxed/simple;
-	bh=TXTCVGDJlbNno9ttEPj7rnDWQWoN8w2hVYVp7GKrmpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOn6HIyU/IIu+5ZTn608y/SkM5UdPLunKVf3qMkeWIKjV0vvAWE3PCsuUeGJBzWe4//dlJKvXTNU9EYiw8NyUASa3GY5w7vjFzOOJoXDIIVmeBrcQX3QIyQ+G0aMl7IL0NAoiTs3N8FkljzBO+TmMafxqS/PcOUQdyD3JbWb7Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnEdk+4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CDCC4AF09;
-	Wed, 11 Sep 2024 09:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726047536;
-	bh=TXTCVGDJlbNno9ttEPj7rnDWQWoN8w2hVYVp7GKrmpQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lnEdk+4gATmDRncybiDX+GlZDf6d1P/2OjdW4KL7Mi94c1VswTTla1iN/rPbwxhSX
-	 WnQn6jjWTpTpS03nOJfpNdTchXsuYAHTAjOGf9TMW2s/an8F8mTkBg2NUACVEXR9gw
-	 WCK8xIENWpmeTqC9jRaEUbiEjuD3fRJEcbbHOcEpDd7Ba8ZUKO3bH6Kgu4vKI9XAjr
-	 L3v/cs6gTJYaWaTuOn3GPftl6bSmcupzzf1WaPBKBqKIZB+HONBTqtqR3C/uOiF6xD
-	 UBdF0a6tarKdMwiBmnx0mYY9g+sQoe/AQ0ITjaHZOeZwWt0ehqfIj9Zg2vGaEFo2y/
-	 FonKSrkomDvyg==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f025b94e07so54178691fa.0;
-        Wed, 11 Sep 2024 02:38:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUSCQmPno5K9EBnvO+sT828UQ6qHbQ58+oI4PstLxjgc3Gi8sW8fkJ1MbcCSnCQIXwo1/HVN3imE31gCA==@vger.kernel.org, AJvYcCVsXVEJHqmtyFyZfJ4ItewRefZUJkvAJ4u7g4xLguabbH+nwt0tQ5vIlEpTRbKLLeEqPx9VkIm87NrG6xE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8hmyNxam2wYVDfWAUukyh2IdG1+O+hGs5LimQ9TKEbByvkudT
-	YqnPbcP2D/H/Mr8YU3WIo9RtTY99rneqUfNzM89xkQduIbhvG10xj8UPC5OJtuLQ0LxqdarkuHC
-	k0COOdTj8yhl8MUcfsQsGkbR994o=
-X-Google-Smtp-Source: AGHT+IFHpxvzWd6wRhm2DCrr3VlZDZfHcXgUn9OdPiMz/+f63jDlANSONY9jX99GUPY/z3kqiWRK6AG6IctYOm/ZQ84=
-X-Received: by 2002:a05:651c:210a:b0:2f6:57b1:98b0 with SMTP id
- 38308e7fff4ca-2f7524a31d6mr100279011fa.42.1726047535609; Wed, 11 Sep 2024
- 02:38:55 -0700 (PDT)
+	s=arc-20240116; t=1726047523; c=relaxed/simple;
+	bh=1XdogLv4I3RF6PQaq27ulG6D0GvjJvypUyJUpS3eFBk=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LcZtcRP42WVDw111o4M9mD49tRKhTf9BNd8e2T6TqVuHSnIDWu8aIwaospgD3bLPdZNfBkAbD7rnu8lFf2vZzpT8fHWshnR4R9Cy1tGHHjpLFjJ9OrrF/soPWF+ng+Y8qUuaAa8iljAhCseuCjs8qNn+upq+p/L15gQ3Ml55Qcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X3b8D1m4lzyQKn;
+	Wed, 11 Sep 2024 17:37:32 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 139B0180AF6;
+	Wed, 11 Sep 2024 17:38:39 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Sep 2024 17:38:38 +0800
+Subject: Re: [PATCH 3/3] debugobjects: Use hlist_cut_number() to optimize
+ performance and improve readability
+To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>, David Gow
+	<davidgow@google.com>, <linux-kselftest@vger.kernel.org>,
+	<kunit-dev@googlegroups.com>
+References: <20240904134152.2141-1-thunder.leizhen@huawei.com>
+ <20240904134152.2141-4-thunder.leizhen@huawei.com> <87jzfkbrgf.ffs@tglx>
+ <5333927d-3f21-b7cc-8c57-6e21f1b4a3e5@huawei.com> <87bk0vbumx.ffs@tglx>
+ <85a8aa26-f135-fdde-fadf-c2b38a563805@huawei.com> <878qvya7u6.ffs@tglx>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <c7c42fef-187b-a218-f4dd-cc21aa733a90@huawei.com>
+Date: Wed, 11 Sep 2024 17:38:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911101810.1d5dde08@canb.auug.org.au>
-In-Reply-To: <20240911101810.1d5dde08@canb.auug.org.au>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 11 Sep 2024 18:38:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASLc=ik9QdX4K_XuN=cg+1VcUBk-y5EnQEtOG+qOWaY=Q@mail.gmail.com>
-Message-ID: <CAK7LNASLc=ik9QdX4K_XuN=cg+1VcUBk-y5EnQEtOG+qOWaY=Q@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 11, 2024 at 9:18=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> After merging the kbuild tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> make[3]: *** Deleting file 'modules.builtin.ranges'
-> /bin/sh: 1: scripts/generate_builtin_ranges.awk: not found
-> make[3]: *** [scripts/Makefile.vmlinux:47: modules.builtin.ranges] Error =
-127
-> make[2]: *** [Makefile:1157: vmlinux] Error 2
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [Makefile:224: __sub-make] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
-> Command exited with non-zero status 2
->
-> Caused by commit
->
->   04b15cdd611a ("kbuild: generate offset range data for builtin modules")
->
-> I do not have gawk installed - I do have mawk installed (as awk).  Does
-> this script actually need gawk, or will just plain awk suffice?
->
-> I have installed gawk.
->
-
-
-This is what I was worried about.
-
-As Documentation/process/changes.rst was modified in that commit,
-it specifically requires GNU AWK.
-
-Anyway, you were able to fix the build error
-by installing /usr/bin/gawk.
-
-If a distro installs gawk somewhere else,
-(/usr/local/bin/gawk, for example), it is a problem.
-The shebang "#!/usr/bin/gawk -f" will not work.
-"#!/usr/bin/env gawk -f" will not work either.
-
-More people may start complaining about it.
+In-Reply-To: <878qvya7u6.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
 
 
---=20
-Best Regards
-Masahiro Yamada
+On 2024/9/11 16:54, Thomas Gleixner wrote:
+> On Wed, Sep 11 2024 at 15:44, Leizhen wrote:
+>> On 2024/9/10 19:44, Thomas Gleixner wrote:
+>>> That minimizes the pool lock contention and the cache foot print. The
+>>> global to free pool must have an extra twist to accomodate non-batch
+>>> sized drops and to handle the all slots are full case, but that's just a
+>>> trivial detail.
+>>
+>> That's great. I really admire you for completing the refactor in such a
+>> short of time.
+> 
+> The trick is to look at it from the data model and not from the
+> code. You need to sit down and think about which data model is required
+> to achieve what you want. So the goal was batching, right?
+
+Yes, when I found a hole in the road, I thought about how to fill it. But
+you think more deeply, why is there a pit, is there a problem with the
+foundation? I've benefited a lot from communicating with you these days.
+
+> 
+> That made it clear that the global pools need to be stacks of batches
+> and never handle single objects because that makes it complex. As a
+> consequence the per cpu pool is the one which does single object
+> alloc/free and then either gets a full batch from the global pool or
+> drops one into it. The rest is just mechanical.
+> 
+>> But I have a few minor comments.
+>> 1. When kmem_cache_zalloc() is called to allocate objs for filling,
+>>    if less than one batch of objs are allocated, all of them can be
+>>    pushed to the local CPU. That's, call pcpu_free() one by one.
+> 
+> If that's the case then we should actually immediately give them back
+> because thats a sign of memory pressure.
+
+Yes, that makes sense, and that's a solution too.
+
+> 
+>> 2. Member tot_cnt of struct global_pool can be deleted. We can get it
+>>    simply and quickly through (slot_idx * ODEBUG_BATCH_SIZE). Avoid
+>>    redundant maintenance.
+> 
+> Agreed.
+> 
+>> 3. debug_objects_pool_min_level also needs to be adjusted accordingly,
+>>    the number of batches of the min level.
+> 
+> Sure. There are certainly more problems with that code. As I said, it's
+> untested and way to big to be reviewed. I'll split it up into more
+> manageable bits and pieces.
+
+Looking forward to...
+
+> 
+> Thanks,
+> 
+>         tglx
+> .
+> 
+
+-- 
+Regards,
+  Zhen Lei
 
