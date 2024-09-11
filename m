@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-325171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5307F9755C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:41:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41F59755C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19DF228B77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E7F1C22D29
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B2B1A3052;
-	Wed, 11 Sep 2024 14:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F72A1A4E9A;
+	Wed, 11 Sep 2024 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odhwWcw0"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfRI8rZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C9919F120
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EAC19FA86;
+	Wed, 11 Sep 2024 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065558; cv=none; b=Zjei4SKC046/TUrhTYd6jA/gFl9d5/aLJdDNBgGvXkGSNy2ugRjRRV4qHV8LecIXR1IjKqzDFoOU2q5495HQxY3lUYeWu8IIysUtXki7g8zeq9zUQZQIBkSzHiBgNoY/0O7+RgpJQUweW5y92Wc4DMuwPWNox8KHGsO2pK7+Wrg=
+	t=1726065557; cv=none; b=DwA/yAFTH0MuyzNs2OyaBeZKLm5wefwWbJ4Exdq9mQ6MkzoYlm2SR3a7144EpUXJshGQOteKvkFb07KvZ4VYciAG8RNKIM/WhU5b9aq5tgPH/tLRH5OLeM4zym1B6g7NG9xKpLiZm3w7awAnwR9FkXc7T/lD2HznYjMsR45KJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065558; c=relaxed/simple;
-	bh=w+cR6+El7pqymgvTvcDumh1q8dbGf9jWi7bmfr8+Pvg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Tcoyy0B4EnoElNWy8Dzq1d04vT9g7WeSfYoShO7Y8m+X2wj7NVC/5cw38Kw0sc7XrqgBCXQpF9rHe4FeRIhudRy3KJkRZqyVogr4PxSVJSiKJMFMgt4nB/HEGicz/cI4gndqJzybXA4rE6Obo0AOVplytSRftlkCVWvffQVSELw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=odhwWcw0; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b41e02c293so236426037b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726065555; x=1726670355; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRS2EqIj41lUCa2DwfWJx0AGrSuakq62cQAUHPjwAcs=;
-        b=odhwWcw09F2yMD86XWS+i6LzHSFJnwa+eguUdzTpWj5tO/Qp0CcCgu1XooAw1LiuVc
-         ZP7hwtnrtAyttUwsddp22CslY2/uK9FoAPr/W374UVs9cZpRNDWHGzhXX2RPlLwyuil1
-         A6DqI9Uro9xKT3WbhZBNcWy8sMKAz1924lSvZ43vdPjBXqb2pOgZoT04GhAGNXctogSU
-         koHZdKWhV6xEHT/qyo791DXTrp/r/P9PEK1TbRfSFpkPz7Cc5kMdN2ooi5IlcQlTmLvr
-         ijAS67V9g6qT33396BpIdYZzzQpZeP/VhxwhVsqVN2vx+GImCfBBiJG1y6tXOU2SCtmc
-         nOLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726065555; x=1726670355;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRS2EqIj41lUCa2DwfWJx0AGrSuakq62cQAUHPjwAcs=;
-        b=CsilpaXFzEqXzbX0P/brLnsdOsb87ZGiMnzilZWgUXZjJfU1ptFRn4h8q0g39jIJLa
-         qcSmiAuLk34MSnuMD2AmvPUaySvtUCuR8RylCSeko+8/guZX27P0LZ6PjRfawB6bpEu2
-         oTgMClfc5u54pu69xpCsyieOwB+Ds2DYQEj5BEQvOal329shWNQaXRhk2dy2dJm6mGPn
-         vWs7swQ7t2vVKb9curn/hIVi4YH2szcxMbU3dV7yidLkoBf4AUb+YdtO0V4QZUPywhPZ
-         iD3DABbfq8oB6rUlteZd//fR261ftc625mE5EA1QxqgewoBm9ZlTICwl7kAEiKIImMQb
-         39qw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Vy7fjwULf7YFzA/JdksX+2zX0HQta6If92VuM0qW0O0vTzT4Is2siXoYU/4n4MerQ6U84I5vwwyWWms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlFmmF8vW5EaaOysg/WWa4/heiNH9XFHioFwm9HTUNc4OQmds2
-	gVv8C2TKw9ggA0/ZU5cyQwr5BnoCFvxvC/ZH+kHShMfxPuFkrNYoBoZ8Qbt/0WUEnqAD7DiApBY
-	rdQ==
-X-Google-Smtp-Source: AGHT+IFVyQPF8pUNfEauUCtlIvJXdL6Wqa8cZN71thCsgn84UzyBYJoUBSMJQ8C2d9HG+i/lEn5gguvdMJs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:3601:b0:6d7:37b9:ac93 with SMTP id
- 00721157ae682-6db45168382mr11415147b3.5.1726065555623; Wed, 11 Sep 2024
- 07:39:15 -0700 (PDT)
-Date: Wed, 11 Sep 2024 07:39:14 -0700
-In-Reply-To: <20240911154328.0ad45c38@canb.auug.org.au>
+	s=arc-20240116; t=1726065557; c=relaxed/simple;
+	bh=RIl2vqs1rYnlBT7Pma3eLUwMyWxA2WhBMmHCl3yi23w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qa56kvUYDTk5tFtGkUJ2FZ6eLCRbdt/MaopCB8rxglh6EYrUloTelPpzdzkXwMbwNjriAkxTvOn3wZ/jpkUvcd9TZp0N8GgwpZJW6OHFDfoOXEemStgb5LEXbfaM3u5XByPjxY7gDbhG7z4lXLiUUOsGYRmGLvXl43hS3F8hnXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfRI8rZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAF5C4CEC0;
+	Wed, 11 Sep 2024 14:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726065556;
+	bh=RIl2vqs1rYnlBT7Pma3eLUwMyWxA2WhBMmHCl3yi23w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pfRI8rZkJxendEAuv296Bmdk4n5+LS0TrKnAdyRfGNFbRry3Cc8V9v5w+OCkGJquL
+	 Hb546cSEeEqrKuwYHwWehHT2yTVW98jjqaDMA2oxWTAzXZj2dTJQ4VNRLRWKlGd/IR
+	 OWAaxEZubpLkhCWdAa+cNhOrTYIRCu9bKeg6dZHw059FTJ/DSq5YRTPASqFenV9eeM
+	 4S9PsqZCziq4X2OTpXMXrT/JP4OJmtNUPuIhfExVz26KcvEUBsLz7VU7QleKH9r7jZ
+	 RNEj2iKswTHfK4auCiezX/d9k3TPpLeStgf4y139By85RbAPGzkLlstoIn7TI6aFLL
+	 QQM3q9B00ajcw==
+Date: Wed, 11 Sep 2024 09:39:15 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jie Gan <quic_jiegan@quicinc.com>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Tao Zhang <quic_taozha@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Song Chai <quic_songchai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>, coresight@lists.linaro.org,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-arm-msm@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jinlong Mao <quic_jinlmao@quicinc.com>,
+	Mike Leach <mike.leach@linaro.org>
+Subject: Re: [PATCH v5 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
+ hardware
+Message-ID: <172606555436.153197.17103030569267503329.robh@kernel.org>
+References: <20240909033458.3118238-1-quic_jiegan@quicinc.com>
+ <20240909033458.3118238-4-quic_jiegan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240911154328.0ad45c38@canb.auug.org.au>
-Message-ID: <ZuGrkqwbBt2V0dJL@google.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the kvm6390 tree
-From: Sean Christopherson <seanjc@google.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Christoph Schlameuss <schlameuss@linux.ibm.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909033458.3118238-4-quic_jiegan@quicinc.com>
 
-On Wed, Sep 11, 2024, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm-x86 tree got a conflict in:
-> 
->   tools/testing/selftests/kvm/.gitignore
-> 
-> between commit:
-> 
->   011901fc2224 ("selftests: kvm: s390: Add s390x ucontrol test suite with hpage test")
-> 
-> from the kvm6390 tree and commit:
-> 
->   9d15171f39f0 ("KVM: selftests: Explicitly include committed one-off assets in .gitignore")
-> 
-> from the kvm-x86 tree.
-> 
-> I fixed it up (the latter includes the former) and can carry the fix as
 
-Ya, I'll make sure to note this in my pull request to Paolo, but I don't think
-there's anything else to be done at this time.
+On Mon, 09 Sep 2024 11:34:56 +0800, Jie Gan wrote:
+> Add binding file to specify how to define a Coresight TMC
+> Control Unit device in device tree.
+> 
+> It is responsible for controlling the data filter function
+> based on the source device's Trace ID for TMC ETR device.
+> The trace data with that Trace id can get into ETR's buffer
+> while other trace data gets ignored.
+> 
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>  .../bindings/arm/qcom,coresight-ctcu.yaml     | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> 
 
-Thanks Stephen!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
 
