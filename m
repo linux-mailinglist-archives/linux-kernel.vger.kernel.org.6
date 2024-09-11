@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-324094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7459747D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:34:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998109747D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA54B2529D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF371F276F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30902209D;
-	Wed, 11 Sep 2024 01:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C1Eq9wfH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC752231C;
+	Wed, 11 Sep 2024 01:34:32 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD94B676;
-	Wed, 11 Sep 2024 01:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4983520B0F;
+	Wed, 11 Sep 2024 01:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726018454; cv=none; b=Zh+n9A5wuTi75T3xbo2UabZkRIPZJaalTqcK+JKzCv1QlVig4+sYo5Ar07yDdlBCsr4/GF9kiTe6gnVQTFhPLBiSDNJsvicA/2bzcmcZbUU8uPiu5HDT1yeLTVnur7HuXSplYqBspvEpvxL53iviy3xs2E4uHBakQJ7z/4lN2Us=
+	t=1726018472; cv=none; b=mCE0KiCNppTqi1SfuPoGT1jsoosPQecrc1D8fL8ZtVwBT2SW48esl/80pHjSR8ASQVur8GFtm3teLlHewOKaULdaDDnTCZN3yCX4NMfVbX0pkcQVWftVhTS4wD4wLTfHPyLdJjj/yVURd6snviZiZCYiNHJY6Uuc1RB7Dimnb14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726018454; c=relaxed/simple;
-	bh=g+qUkng/FdNbH3C8UGjTbQQ+TEjqH1oGwgxN5YG7u5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LP/zXdNp5pl1xu35d3vTI8b7xi94WZyVDdPmROTNborlNwR+zxcCdzOqkZQwrvyjk85LB2UdzXPhRXmSjHGNfbBarEtdyLSHSFZstzpr83g94No47JAxAXWDnjZX5foApUi087YyiB98B8eNF+uDYveAwcRS+05U9R3LlGcpje0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C1Eq9wfH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=g+qUkng/FdNbH3C8UGjTbQQ+TEjqH1oGwgxN5YG7u5I=; b=C1Eq9wfHLeXbkf8CkIBfEKV8Uk
-	aaRvBwac36C4hca5QAxOlZDSzIKoJkxIPDyKUIDSOBe/nOm4wSlG70k5p63OW3D7GDHempFf6Wven
-	cdmPz0/sALT20LjF9Vt/zox9QfEaKaUoYvq4TD41c7CIslItWUnnixuj8tjy67T75TEWrzPAblf92
-	5rCko0ql+MgL4DrKhYW6SFHia/P6au3V/eJ3u7mE3A2HcR9w4ADpe74upPsgCcLNeMdLmZEXQJaMk
-	Z9QHgp5RMmaB9xYANZU5pY/Fh4/cNXOhpsVeL7ngkO3gkGERGZ4mwXUK+jX9D370zDK0/lLcM8BtT
-	EjGwL42w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1soCF7-00000001Qbc-3oLf;
-	Wed, 11 Sep 2024 01:34:01 +0000
-Date: Wed, 11 Sep 2024 02:34:01 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: zhiguojiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH] mm: remove redundant if overhead
-Message-ID: <ZuDziT9eOyltK6qp@casper.infradead.org>
-References: <20240910143945.1123-1-justinjiang@vivo.com>
- <ZuBtvW9TWCnHte4V@casper.infradead.org>
- <4a308d13-932a-494e-b116-12e442a6352d@vivo.com>
+	s=arc-20240116; t=1726018472; c=relaxed/simple;
+	bh=E4n8hVRYdle1IsmTUXIhxE0J57haaa1Xa7brDvP3xy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=saKZ9NeEC/Br8jAEW2bbO3yw7QTH+OXL1J5G9d5y4RwZ3xKHy0FICFBdde7Tysn9nGVwxuXXhZpJYfRKOyxCUDtdslslT7mHQnxAHhRoopEIvDRZGRX5Ii87/0brkm/WcB/k2NYcjaagDOd5P5sgTlCrx7xYYOc4d/RJT5rpJqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4X3NLY5tb0z1HJC2;
+	Wed, 11 Sep 2024 09:30:45 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 88ED1180042;
+	Wed, 11 Sep 2024 09:34:20 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Sep 2024 09:34:20 +0800
+Message-ID: <4c202653-1ad7-d885-55b7-07c77a549b09@hisilicon.com>
+Date: Wed, 11 Sep 2024 09:34:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a308d13-932a-494e-b116-12e442a6352d@vivo.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-next 3/9] RDMA/hns: Fix cpu stuck caused by printings
+ during reset
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
+ <20240906093444.3571619-4-huangjunxian6@hisilicon.com>
+ <20240910130946.GA4026@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240910130946.GA4026@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-On Wed, Sep 11, 2024 at 09:14:10AM +0800, zhiguojiang wrote:
-> 在 2024/9/11 0:03, Matthew Wilcox 写道:
-> > On Tue, Sep 10, 2024 at 10:39:45PM +0800, Zhiguo Jiang wrote:
-> > > Remove redundant if judgment overhead.
-> > It's not redundant; it avoids dirtying the cacheline if the folio
-> > is already marked as dirty.
 
-> Ok, Is it necessary to add comments here to explain and avoid readers'
-> misunderstandings? E.g. 'Avoid dirtying the cacheline if the folio is
-> already marked as dirty.'
 
-No, it's a fairly common pattern to test-and-test-and-set(or clear)
+On 2024/9/10 21:09, Leon Romanovsky wrote:
+> On Fri, Sep 06, 2024 at 05:34:38PM +0800, Junxian Huang wrote:
+>> From: wenglianfa <wenglianfa@huawei.com>
+>>
+>> During reset, cmd to destroy resources such as qp, cq, and mr may
+>> fail, and error logs will be printed. When a large number of
+>> resources are destroyed, there will be lots of printings, and it
+>> may lead to a cpu stuck. Replace the printing functions in these
+>> paths with the ratelimited version.
+> 
+> At lease some of them if not most should be deleted.
+> 
+
+Hi Leon,I wonder if there is a clear standard about whether printing
+can be added?
+
+Thanks,
+Junxian
+
+> Thanks
 
