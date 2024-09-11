@@ -1,263 +1,121 @@
-Return-Path: <linux-kernel+bounces-324270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E283974A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:41:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934E9974A7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C7F1F2744D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508D6288517
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E569E7E110;
-	Wed, 11 Sep 2024 06:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RVDS4oEv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D452BAE3;
-	Wed, 11 Sep 2024 06:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50E57DA9C;
+	Wed, 11 Sep 2024 06:41:04 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D8C2BAE3;
+	Wed, 11 Sep 2024 06:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726036855; cv=none; b=j3fXtEfAhYdCCa4G5NtzolkZPEy0XvIoexIHm5hjY9AJO86FoUOEpMEjxrYQzSRh1AKQVDw4No9RL5ZHTLMJvEHPjIXZgLJ2Dyx2NckzXJ/RLb0dxYvulOllnI1fcFUXMHXZpMyRpmRXHXEzHee8MIJQoNga8T0nCNuv545rdUs=
+	t=1726036864; cv=none; b=bVdkY3yRa5VJ8yHlRs+5soJ2iE5DXz6i0hGhd8kpuJf+tnX+Rdm/X4xxYfbPzuj83OpgQY/kVUGpOcDAKoLnyAZjHFZn1Omd171ubLr46VGFy4bOyBGlNHYuLNTvm+JsNjxdPHz00+5gECVJTYJl6fT5rErILiUnYrRD4FuEaFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726036855; c=relaxed/simple;
-	bh=HTyrCGRnO8IJ/YTMkc28EzUOnC2WB0EPA29mlwsPQiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KyL86akzPqWjDk8eJteMG5NQoLOQedkf85hUprrFHxyygPDWX7qXrxOJXk3SXbLlHsLM5SzO6sjM6fWU7wg2R3PvUNa3RrNkT+08hjCfpxvhQdOhmffMD+XXfTWsekFUKxpTbN1zovNqsEI42j4b4wKlgeJ408Im01+oy1XgNjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RVDS4oEv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726036849;
-	bh=r1awy6sqi3TYaGOEqCF8Y53VqhxPh2kIlkOVwdfOF2g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RVDS4oEvOWs4uKVWMKCksiDJBcoLFEa2g/EX0bYzqD9seCM+uHFyVsTf6ITb2kOr4
-	 Yl6ek/KeFIRGphrOWVBbWiByHTVv/gusiDIIWNEv33OwFr2PmfZcf29r7eKFWnpAo6
-	 4JnARRXb3L/LZoDANWEtaHDNDGe0upEdAIq8Cf0u9aLtrBFpkiTNIW4oslE6K3CpO6
-	 MThfcEa7/u8b8fITonnRNCVXsvD6HoD567gfzoHypjeVBjRWulCjR+D7eUwBwzHudM
-	 algRftsLrtVzGqUxB77OD5oxK0QmFqWY1Y/mFAUgdOSg8/REjDoqZ47Yt0+Ol12TTH
-	 msI4IqwGfSUdQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3WDH6g1bz4wc1;
-	Wed, 11 Sep 2024 16:40:46 +1000 (AEST)
-Date: Wed, 11 Sep 2024 16:40:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chen Yu
- <yu.c.chen@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the sched-ext tree with the tip tree
-Message-ID: <20240911164046.2c97e2b7@canb.auug.org.au>
+	s=arc-20240116; t=1726036864; c=relaxed/simple;
+	bh=PUT6YAZ8urCaAMTnaBkha89E9PhBervZNpgnP6+Uxjs=;
+	h=To:Cc:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=To7bIBOCcvTv8J7Tebq4Cv//GlYfzTxZkpsO3V2UamMvOqCfRooN8hm+58MTZsx2nwhD4s/OBn+6mr+SDWH9yPZcdR8rmRRygXnCDnUgH03cmEUW5moxgjTXd3cwCxy0NXtxDFQlr2JHD3gjc9EneBaaAGg9xxY0Hl/q/7y2Iq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Cxyul5O+FmTXIEAA--.10403S3;
+	Wed, 11 Sep 2024 14:40:58 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front2 (Coremail) with SMTP id qciowMAxKsZ4O+FmkjsEAA--.19709S3;
+	Wed, 11 Sep 2024 14:40:57 +0800 (CST)
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Question about config UPROBES and UPROBE_EVENTS
+Message-ID: <1a3567d5-e558-351a-c45d-73b2e5a8788c@loongson.cn>
+Date: Wed, 11 Sep 2024 14:40:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s.quQoGObOJ+Xl/v8R8Iq2j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qciowMAxKsZ4O+FmkjsEAA--.19709S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7AFy3CryDJF13WF1xJFW3XFc_yoW8GF1Dpr
+	n0ywn3Xrs8GFsYy3yayryxCry8Xwn3JrW3XFn3Ga4rJrWrA3y8urnIgr9rta4UCwsrt3yr
+	KFyfWayjqa9xurbCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8cz
+	VUUUUUU==
 
---Sig_/s.quQoGObOJ+Xl/v8R8Iq2j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Masami,
 
-Hi all,
+I am a little confused about config UPROBES and UPROBE_EVENTS.
+Uprobes is the user-space counterpart to kprobes, I want to do
+some small changes:
 
-Today's linux-next merge of the sched-ext tree got conflicts in:
+(1) since config KPROBES can be selectable, just make config UPROBES
+     selectable too.
 
-  kernel/sched/fair.c
-  kernel/sched/syscalls.c
+(2) since config KPROBE_EVENTS depends on KPROBES rather than select
+     KPROBES, just make config UPROBE_EVENTS depends on UPROBES rather
+     than select UPROBES.
 
-between commits:
+Could you please let me know are you OK with the following changes?
+If yes, I will send formal patches later.
 
-  84d265281d6c ("sched/pelt: Use rq_clock_task() for hw_pressure")
-  5d871a63997f ("sched/fair: Move effective_cpu_util() and effective_cpu_ut=
-il() in fair.c")
+-- >8 --
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 975dd22a2dbd..5de2187d3440 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -124,7 +124,8 @@ config KPROBES_ON_FTRACE
+           optimize on top of function tracing.
 
-from the tip tree and commit:
+  config UPROBES
+-       def_bool n
++       bool "Uprobes"
++       default n
+         depends on ARCH_SUPPORTS_UPROBES
+         help
+           Uprobes is the user-space counterpart to kprobes: they
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 721c3b221048..7db0462a5d11 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -732,10 +732,9 @@ config KPROBE_EVENTS_ON_NOTRACE
 
-  96fd6c65efc6 ("sched: Factor out update_other_load_avgs() from __update_b=
-locked_others()")
+  config UPROBE_EVENTS
+         bool "Enable uprobes-based dynamic events"
+-       depends on ARCH_SUPPORTS_UPROBES
++       depends on UPROBES
+         depends on MMU
+         depends on PERF_EVENTS
+-       select UPROBES
+         select PROBE_EVENTS
+         select DYNAMIC_EVENTS
+         select TRACING
 
-from the sched-ext tree.
+Thanks,
+Tiezhu
 
-I fixed it up (I used the latter version of kernel/sched/fair.c and see
-below) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/sched/syscalls.c
-index cb03c790c27a,7ecade89eada..000000000000
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@@ -258,6 -258,126 +258,28 @@@ int sched_core_idle_cpu(int cpu
- =20
-  #endif
- =20
-+ #ifdef CONFIG_SMP
-+ /*
-+  * Load avg and utiliztion metrics need to be updated periodically and be=
-fore
-+  * consumption. This function updates the metrics for all subsystems exce=
-pt for
-+  * the fair class. @rq must be locked and have its clock updated.
-+  */
-+ bool update_other_load_avgs(struct rq *rq)
-+ {
-+ 	u64 now =3D rq_clock_pelt(rq);
-+ 	const struct sched_class *curr_class =3D rq->curr->sched_class;
-+ 	unsigned long hw_pressure =3D arch_scale_hw_pressure(cpu_of(rq));
-+=20
-+ 	lockdep_assert_rq_held(rq);
-+=20
-++	/* hw_pressure doesn't care about invariance */
-+ 	return update_rt_rq_load_avg(now, rq, curr_class =3D=3D &rt_sched_class)=
- |
-+ 		update_dl_rq_load_avg(now, rq, curr_class =3D=3D &dl_sched_class) |
- -		update_hw_load_avg(now, rq, hw_pressure) |
-++		update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
-+ 		update_irq_load_avg(rq, 0);
-+ }
- -
- -/*
- - * This function computes an effective utilization for the given CPU, to =
-be
- - * used for frequency selection given the linear relation: f =3D u * f_ma=
-x.
- - *
- - * The scheduler tracks the following metrics:
- - *
- - *   cpu_util_{cfs,rt,dl,irq}()
- - *   cpu_bw_dl()
- - *
- - * Where the cfs,rt and dl util numbers are tracked with the same metric =
-and
- - * synchronized windows and are thus directly comparable.
- - *
- - * The cfs,rt,dl utilization are the running times measured with rq->cloc=
-k_task
- - * which excludes things like IRQ and steal-time. These latter are then a=
-ccrued
- - * in the IRQ utilization.
- - *
- - * The DL bandwidth number OTOH is not a measured metric but a value comp=
-uted
- - * based on the task model parameters and gives the minimal utilization
- - * required to meet deadlines.
- - */
- -unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
- -				 unsigned long *min,
- -				 unsigned long *max)
- -{
- -	unsigned long util, irq, scale;
- -	struct rq *rq =3D cpu_rq(cpu);
- -
- -	scale =3D arch_scale_cpu_capacity(cpu);
- -
- -	/*
- -	 * Early check to see if IRQ/steal time saturates the CPU, can be
- -	 * because of inaccuracies in how we track these -- see
- -	 * update_irq_load_avg().
- -	 */
- -	irq =3D cpu_util_irq(rq);
- -	if (unlikely(irq >=3D scale)) {
- -		if (min)
- -			*min =3D scale;
- -		if (max)
- -			*max =3D scale;
- -		return scale;
- -	}
- -
- -	if (min) {
- -		/*
- -		 * The minimum utilization returns the highest level between:
- -		 * - the computed DL bandwidth needed with the IRQ pressure which
- -		 *   steals time to the deadline task.
- -		 * - The minimum performance requirement for CFS and/or RT.
- -		 */
- -		*min =3D max(irq + cpu_bw_dl(rq), uclamp_rq_get(rq, UCLAMP_MIN));
- -
- -		/*
- -		 * When an RT task is runnable and uclamp is not used, we must
- -		 * ensure that the task will run at maximum compute capacity.
- -		 */
- -		if (!uclamp_is_used() && rt_rq_is_runnable(&rq->rt))
- -			*min =3D max(*min, scale);
- -	}
- -
- -	/*
- -	 * Because the time spend on RT/DL tasks is visible as 'lost' time to
- -	 * CFS tasks and we use the same metric to track the effective
- -	 * utilization (PELT windows are synchronized) we can directly add them
- -	 * to obtain the CPU's actual utilization.
- -	 */
- -	util =3D util_cfs + cpu_util_rt(rq);
- -	util +=3D cpu_util_dl(rq);
- -
- -	/*
- -	 * The maximum hint is a soft bandwidth requirement, which can be lower
- -	 * than the actual utilization because of uclamp_max requirements.
- -	 */
- -	if (max)
- -		*max =3D min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
- -
- -	if (util >=3D scale)
- -		return scale;
- -
- -	/*
- -	 * There is still idle time; further improve the number by using the
- -	 * IRQ metric. Because IRQ/steal time is hidden from the task clock we
- -	 * need to scale the task numbers:
- -	 *
- -	 *              max - irq
- -	 *   U' =3D irq + --------- * U
- -	 *                 max
- -	 */
- -	util =3D scale_irq_capacity(util, irq, scale);
- -	util +=3D irq;
- -
- -	return min(scale, util);
- -}
- -
- -unsigned long sched_cpu_util(int cpu)
- -{
- -	return effective_cpu_util(cpu, cpu_util_cfs(cpu), NULL, NULL);
- -}
-+ #endif /* CONFIG_SMP */
-+=20
-  /**
-   * find_process_by_pid - find a process with a matching PID value.
-   * @pid: the pid in question.
-
---Sig_/s.quQoGObOJ+Xl/v8R8Iq2j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhO24ACgkQAVBC80lX
-0GxAcQf9EMQmK2Gl0YcQlnzjI/Psp/DRLAJEfhhW1gu9TFJFG3phn2Qsmpq3LAKB
-ZYDFeVi9CEQ18VzKoi5LRTqomjmpfrlfoy2rTkIrL9/dR9xA3TBK6hWuVpVxHW5v
-yeLMzO76UemKiX9F2HgUEMaf6/B1bm96zthzFPAJN3DM8FR8PK+iTeMgLEOGAlR+
-qQ5etf8wtrrn1eYZLVzMSET/n86l/nnY/cYiHof67G1OlM6kQCD5MHsrGsXiFdl7
-j7okeuaEhJi95KqFTX7pXx9mK7h+NZPK/Mxe+UTVkXXIkDm4cy+TIc3zVeFJmdkl
-UTxjRL29Om7zSsk2wjU2d2E2Db/ORg==
-=py34
------END PGP SIGNATURE-----
-
---Sig_/s.quQoGObOJ+Xl/v8R8Iq2j--
 
