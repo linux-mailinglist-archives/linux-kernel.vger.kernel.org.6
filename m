@@ -1,298 +1,282 @@
-Return-Path: <linux-kernel+bounces-325283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95F697575D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:42:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF489757A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E0E1F247D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622981F2398A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907A31AB6FD;
-	Wed, 11 Sep 2024 15:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4651AE865;
+	Wed, 11 Sep 2024 15:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="biyLkvWw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="vUGRq5o7";
+	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="YbH8/Xn8"
+Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0749515C13F;
-	Wed, 11 Sep 2024 15:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726069318; cv=none; b=OoG2RGgtTzbDHuD1o+rRKk+Nr8Lo83R4KUBwIp7i9lYbwvT03wjzn2D/uCfPAq5w/5zmoGNoFd0dk1JL5g1I+L0j66r4jfJOQxiI2bzkUM7MTeLE3OnE1MBJ3o6Q4omAWHz6qv8eAB6VHdqd0zZqrUQf9iEPV8OmJwxbM1YFXjA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726069318; c=relaxed/simple;
-	bh=l8agknXOHhuK8j6L1LR3NxdQOL2ZslLS4qY5lnPt0mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lv94ue0tolwehU3JkRz8NAMJlgsg34xCGEXXXna2DdTUnYdKqS3qK9FcMxYlJuSX62TpMt8kwnewH62ArvSUhAIiJhByTAtvd6539b2WElh19XW2XyRU61m7j1UQUWkCMypxdWSKFZc45uqdc45ca0cB8fpgJzSqUsfWJ04VScQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=biyLkvWw; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726069317; x=1757605317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=l8agknXOHhuK8j6L1LR3NxdQOL2ZslLS4qY5lnPt0mA=;
-  b=biyLkvWwBNzuhth85k8P+8IWpetRN9U9+iPJan3QWbIRGdD2l/0e+GU2
-   vgU1IuTp9RB3tvp/6NUmx8WDuKJ5PsNSZCMh0/B6enOUQqPx5neGf2cv0
-   nGQnCqEeuiOG7uebeX/avru/jK/7GP5izEl7pn3ht+/R01WyQ8fYnuIy4
-   b/lLPg4d0WhKIHNcF46mBWZ2fZLjR7S+oJHeKmHQHtZUi4kAqrSaHJ47S
-   DWgCZQGEGNh8CV1eq8K31QpCI/LC2WRBpJnThRe7/xD+ihN8tSVqpkfBX
-   ceNc7uEZ8i6nCccFZCZqSzYE+uly1k9NDayqx305U1UcqkWY1CfY0oXJy
-   g==;
-X-CSE-ConnectionGUID: QC6DNq0SRDiYYkXjC9SOFA==
-X-CSE-MsgGUID: ecY7zWm0Sui84lVrKTdbDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="36015427"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="36015427"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 08:41:57 -0700
-X-CSE-ConnectionGUID: NA3R0DhuSFCI/FM+p7Hh9g==
-X-CSE-MsgGUID: CumHc+JeTxGqD70JdEQ5Qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="104864090"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 08:41:56 -0700
-Received: from [10.212.119.193] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.193])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4B7CA20CFEDC;
-	Wed, 11 Sep 2024 08:41:55 -0700 (PDT)
-Message-ID: <17676366-31b8-4c7c-b2e5-a91b054a5e7c@linux.intel.com>
-Date: Wed, 11 Sep 2024 11:41:54 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88812185954
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726069970; cv=fail; b=qALolj4XhX5yjivZStoXLGm93gL7lC5ZRky+gZA+YFYE3go5p8B864I8cB4NkMcwToZEm4uTJfuV6oV5lZ7obuo+QUbOaAvgebpvV6EaNJS2wpcUxJMsSvFW+xgSWvxXbE5mPi8u9m0uN/vUIiNcncIsBuL8uB6WBCWZeIfkYHo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726069970; c=relaxed/simple;
+	bh=s6vL1s0gHMJQunzvx0A8ckxcXM55wOSS0b14FnFhKg0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OuXphSBPY+56dRolxxMfCRkvUJ3C3hwBszxQuHc0pB+m6JbNe8RyAkTz3G0JhttYN6Kd3zfOdREIKq5VlgZLFceVnxBORmkKgDs7OrHpbxt8nppCS+XzbqOZdAxCPcHJgPPfUP1Nem+Q5iiYzB9ZWBZhsXs3ogQrCiWit70/AmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=vUGRq5o7; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=YbH8/Xn8; arc=fail smtp.client-ip=185.132.180.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
+	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BFS125012979;
+	Wed, 11 Sep 2024 16:42:07 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	dk201812; bh=G3TuO6/Dgep6K7+N3dydb/lL9+mHEQpsqLDss0nKBzk=; b=vUG
+	Rq5o7YAaIemzx2uRLcu8wEPEZqRfm4YQlLMGtJC4v+IgTPppVc3xgVxh0TQQKuRF
+	pRSIioelAY0OjMD+TuBteaMuTlLcxdK/O4yZqkFO+B+RF/xb1dM78itTyyV7w7yK
+	IjhcY5kDQOHuQQXIdUbhZz10vGo7KUBCqBf/g96xjBaAUhfh9xyasmpjJNnJTxV9
+	5XqZoFUUoxSgiwK98mBB+IgGmIvZ0YKGMuiddehiwRKC0xWeyXyDA6lMwtqIfhlK
+	Vb+HqZac9eST/lIitvdPROP8ozoOPrsZFJ3N/YOopqWGYz5s6O9mG8Y9sufNOmOw
+	XhUyuMIpJqXWuz6/0pA==
+Received: from hhmail04.hh.imgtec.org ([217.156.249.195])
+	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 41gewwbcb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 11 Sep 2024 16:42:06 +0100 (BST)
+Received: from HHMAIL04.hh.imgtec.org (10.100.10.119) by
+ HHMAIL04.hh.imgtec.org (10.100.10.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Wed, 11 Sep 2024 16:42:05 +0100
+Received: from CWXP265CU008.outbound.protection.outlook.com (40.93.68.4) by
+ email.imgtec.com (10.100.10.121) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37 via Frontend
+ Transport; Wed, 11 Sep 2024 16:42:05 +0100
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UY4sPPIrRRW199Fc9yuUvUVGzgkeqYUrUA2trDD6SxyAq4nnhD+QiBqOOM+qEcVsz7z8qRQ0dT6BxFNQ/q7yntEaJm386X0OHrfnGANfd8lNG8Bosg8LNAAV73kvzEA7z39423PBI4RnWcI+KlYtUpfVoGnVrH7vTvLjxzu/+GypCrLQE0Itnr1THwRQoYEWOL8YorCHhCluerlvtVv4rICUh5PwUjnowrXc6dNX/8FJ59XV2S1E49cViGllcpU53tqHECcnn7PaMamXjCcPDJJfk9/sE/196IxXxQKRJTu0Jh25hEWIgn1pICj5zXbVc1DDlXp1sD8KQYasOHNv0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G3TuO6/Dgep6K7+N3dydb/lL9+mHEQpsqLDss0nKBzk=;
+ b=mvXsarhqGVVOuPbuJ4lY6krtmvdqBipSQlgpvwo9cEln3/965trV3XmFp5r1kTclUG5uYjp/Us77x5HoyIsOu4bREQ2d1RAly7f+WVNj4yhtBa5kn7wP0OryMWZPzES0hKqtbs2XOcHcJ1NgmQyQiuMdzlqk8PwvL4SN0qxkuCSc32ZmH4OXgRco3HqCN/Z7pjHIiZiBqUKSNCAV9QrKMVOLedNx2e9aDiGyX/0DlJWSkuUs6irUcUbBIDmstCvAl2mnHOuPTViMUtKvOAbsOGgVcU+TiQBrAPHm+1zN3fuxh5Kze5LUpNE3RMv09Rh07TJCHZ/38OeFFn5iaohdHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
+ dkim=pass header.d=imgtec.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G3TuO6/Dgep6K7+N3dydb/lL9+mHEQpsqLDss0nKBzk=;
+ b=YbH8/Xn8BMuS3pneIpidcSu2Mn+OlqDGlwrw0Lzu5WXegQfEy/hQO0RJsSpqQo8bYbNYSfLTfH4HoHiLPLs+Zfu+/zWf087cr9LYnR6eY5u1ygdKGshDd6ZYRgBi5ugmnl0sVdwi2IFJVJO3Gzy+S2DvxQ8MbXVN2zfnW/icXkQ=
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
+ LO3P265MB2329.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:10b::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7939.26; Wed, 11 Sep 2024 15:42:01 +0000
+Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::8e9d:6b2f:9881:1e15%3]) with mapi id 15.20.7962.016; Wed, 11 Sep 2024
+ 15:42:01 +0000
+From: Matt Coster <Matt.Coster@imgtec.com>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC: Brendan King <Brendan.King@imgtec.com>,
+        Frank Binns
+	<Frank.Binns@imgtec.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] drm/imagination: Break an object reference loop
+Thread-Topic: [PATCH 0/2] drm/imagination: Break an object reference loop
+Thread-Index: AQHbBGElIsILCkyVDEG0AQHI7HqI2A==
+Date: Wed, 11 Sep 2024 15:42:01 +0000
+Message-ID: <dbfff3b2-84c7-400d-b305-64735193a948@imgtec.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO3P265MB2329:EE_
+x-ms-office365-filtering-correlation-id: dea2386d-20e3-4b72-75ae-08dcd2784798
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?citYd0l2UUR2cGE0Y2k4aURRcHAxbnJkTkJERUpHN0FHQ0tzRFZmZ3l6aXN1?=
+ =?utf-8?B?YzZGbEhGNTNTbUlLUjlVMUNBK3Y4a2o5MW1jdnlQQis4UnNuMnNUUEoybCtZ?=
+ =?utf-8?B?SDlzWDNRdXpOUjlnVUtuVFEvdjBHeEg1OHBuSmVpWTZWZ1A3MENRZ1hGamla?=
+ =?utf-8?B?aTY3eDBVK0VGYThNTzR5L1YwdE5MYmNWSlVPb3FNaGRhL3dXemViOEh3ZzZs?=
+ =?utf-8?B?cHVTSlJ2c052ZG8xMStBV25hSUdmMVJFOWs4Ly9sZGdqSGIxUUdBUVk3MGQz?=
+ =?utf-8?B?TXJ5bVVIUFJaT1lkeE03c1ZISHN6eVAyN3RHbEtpWnVOcjhHVzhiNjBEWWtx?=
+ =?utf-8?B?d1FXeHNKK2dOb2RiTnN0SzRPTkY3NEwvaWc3OGl1K2w2VUlud1ltUEpjYUJt?=
+ =?utf-8?B?ajkwa0c3OTVFRmpGZ000MFlXMnpseFprTllyNUtQWUs0a3BWY2Y1Y0JhbGlJ?=
+ =?utf-8?B?c1Z0RW91Mlc5eTJaYlIxZWxMYkRQcjVVdy9kTExCSlpJR3ZJcVVvbVhHcDFu?=
+ =?utf-8?B?S0R6bllreEpUR2pQaTFyMFB5c1IxUXVTWGVTU0cwZlFMMW5RU3kwNGtURHBj?=
+ =?utf-8?B?OVByMXlDNmM5bUNXY2hJUFU1WHU0YVBxRmdtYjJHMEs0RzdzZlIxUlBXRDdJ?=
+ =?utf-8?B?VjNrckZqbkgxSkdneDNreU8zR2RhWG9YZm02ZkdKbGY3K3g1WXNTMWp2ejBv?=
+ =?utf-8?B?ZFlFdm1lYXppZWNyQk01djU1bDZ6RFU4U2VxZ0tWc0FyT0JFaGpwc3VLWmxT?=
+ =?utf-8?B?NWt5U0NWcVdSckZ5TnN4aVJBRlhZdTR3b3NRY0tVMnRYWFJ3QzJxNjlISHFJ?=
+ =?utf-8?B?RWJMMHY3NjJQUEFyWUNrdXRORGZlc0N5NGJrM0h1SE4wR3ovVU8vTnhzS1Q4?=
+ =?utf-8?B?TEdpbnRWMWs0c3NkLytNdGhIOWNhdnJDQXRuK0NsaXNVZ1crbGlZSENFMW5Q?=
+ =?utf-8?B?TitKeW5FTXpNclB3eFJURmpYVXU0M29VaVZnSmY5eXpkYXR1V0xvanprZlNx?=
+ =?utf-8?B?Z21kRlNUektqMkphNzZNVG9RRUhUeHUvYjJVYTgwNld2WWFKWHcwMmZOUExa?=
+ =?utf-8?B?MGtZS3laOUI2Rk54TkhBR29icUUxNkRGamJ5ZzJkNktoek5RL25IZGFRNUtZ?=
+ =?utf-8?B?MVRjbHIrSFBidnZkZkxzbENjM0lRU1NHQWdvNnBLck13dkNKMWo5K2lpejlx?=
+ =?utf-8?B?cEpjKy9PSElEQ28yZTc4c0tKNUErY0JWd1ErMW9pakxEOXVuaVdBY1VCeit5?=
+ =?utf-8?B?c3pUYzdMcUsxa05zMG1WcjUyMmVpT3BsVnE4cjdBa3pSUjR0dVhRb25MVVdY?=
+ =?utf-8?B?YVpDL3hFNERKRU9WdTU2b3BFUHcrTzN1QzUxNTEvQ0pERVZSLzhFQzNVNEdP?=
+ =?utf-8?B?ZEFnYWE1RHNVeEROQlgvYWFDVEV6SFdOTUcxYnVBeUxIaG4xWngwd1hDcHpP?=
+ =?utf-8?B?dUExT3JiM1pBZmhwWCs3NlIxSUE0a3JkbEtUQWZyWkQ5UE1sSzZQb0UwdXAr?=
+ =?utf-8?B?WTd1dGViYTZrd1dxYXM3Vzk4M0lVc3h3NXo3S21hMEU1NnU3cC93WGh1T1No?=
+ =?utf-8?B?NTBLREZ6dUVMRmpOQ1hnN2dvUlJRTFI1SVkycW9MREtsQUNRekVHNFkxUEN5?=
+ =?utf-8?B?REk2ZmpVZkFSM2RleGZ0blRCbUdBWS9kcUZYdUI0bWFBZm5NTGZSei8zdy9o?=
+ =?utf-8?B?dGFVNHl0OUhzWTdiaGhMdldhei9HQzY1N0x3QnlMZS9qUFV1bUd6Zkl1VGdo?=
+ =?utf-8?B?ZHRuUlhSdWN1ZzhIU0ROUjRLVVBzRUZObVpiWEJMUnp2SmExck5WdnZhczBx?=
+ =?utf-8?B?M2sxcys3YUV0bitrNXM1L2ViVHJtOG5KWVg4NjdxcWpLOWx4L0w0QkhJR1JN?=
+ =?utf-8?B?RVB2cnFlVHkyaDZWMUhuSUp0QU9nUW80T3ZJTmxJVk8xNkE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aE1sMkhTbU1NeE1hMmkvNk4zZVRuK3pRK2pQV01kNFBhMjU5dklYTE9rc0pC?=
+ =?utf-8?B?US80SlJHMnc3MnRCUzJrWURvYU1vT3BNUjdGdGdwMU9iRlFPZkFyU2hkTVNP?=
+ =?utf-8?B?S2h6UWY0VFc3VU1yd1NTMGlJOVRWQXFIUjVadkMvQnJVZU1QakJ5b3pUSnBa?=
+ =?utf-8?B?QWloTExQU25KdVRObGRRMUN4TGxCaWJYaHhFMFREOHMya2k3RzFjRk45RjVR?=
+ =?utf-8?B?ckc0YWNsL1VxTWdTTW9uRkZFSEg4ang5cVFxTUFPYXFZVUhRUFNIQWdHY2dw?=
+ =?utf-8?B?SmkrSWZoRFJ5T3Zwc2lEVDlsK3h2eXkyeFpRYVJKTW8wZ3VyYTdKS1VHcnl4?=
+ =?utf-8?B?L21FQXNTZlFpdkgvTndmM1VBb08wM21QY0NMQWllaVZwTTU4d0lDcVhJUUxy?=
+ =?utf-8?B?OHQ4dytsV3o4UkNVN0o1VFlEdTJ0R295VGJBelBqMHErM0t1bmdGRXZFNFly?=
+ =?utf-8?B?TzA0eEpDUUJqL3p6eTgwcmNyWFRIYlFNOGpzT3VlT0Nxd2tzRTY3NGNHWUpN?=
+ =?utf-8?B?WFdjaURsR1BWQjRlUGlaZCsrR2hhTzNoZDBvMkFoUlhRdUNQb3ZkTjJ3aS93?=
+ =?utf-8?B?WllmNUl5UjduOUFGa1UyZTQvOHdadC83eUF2cVBSTnpjd29KSFZLTzdYdVdr?=
+ =?utf-8?B?eWZkNTc3dmthSHIvbFc2WlpIQUxiaXVmdml4NnM0Qzlpd2RmNzJlM3cxd01K?=
+ =?utf-8?B?Rm9nWGtJRXZSY0NxRlFORUhxYVYwc0E3cjJDZExkZmhhS3U1WnBMN3lYODhX?=
+ =?utf-8?B?NHlKMFB2dDM5RGhCb3JoV1p3V3lJMFhiTTRiKzBlR2tjUGJrTld3dlJ2VWNK?=
+ =?utf-8?B?ZXJBMGowK1NoeG5PNHpPcHJrOVNDSmhPS2pYcDJDeDBmeXNNMEFJcFpYeGVJ?=
+ =?utf-8?B?ZHNXdUM3TXhtTU51TTVzZ3FoUkZkS0RYMno3S1gyZkNObUQ2WEJkN2NoMTky?=
+ =?utf-8?B?WEs1U1ByYzB5anJCZUZDc3NLR05nZCtleFVHK3VoNEczTkNZRFQyd2ViVUFh?=
+ =?utf-8?B?T01UQUp2KzBUd0JmQ0dZQTlicFgvOGc3S1FRWU5hc0RKMHgzaVhZc2h0d1o2?=
+ =?utf-8?B?N0NtOUR1RnBSdXdNY2ZPdnhiOFVCTlgycVlPcndVQXh4ZVNSU0pCbEtnZlo5?=
+ =?utf-8?B?cTdKOHcyMmR1ekJpWHRlTjNOMlVDbExJTFhHV1lQZmE1dWlNbGdlV2VaSTAx?=
+ =?utf-8?B?UURjY3BYUkd1VUg2Nms2RmhmLzVCNysxcndrNHp1LzVydTB4bWd1dFRPNktY?=
+ =?utf-8?B?TWY2dUdKaXhpVEs5SHZ6SDBoakJTRHpBWDMxQVRndnNmN1JhY0w0MlRsRU5s?=
+ =?utf-8?B?UkZWUVFxMFg2Wkd0TEdEclVGVXZsb2VBMWxaS1IybTZuL2Z0cmhkQnZER3FR?=
+ =?utf-8?B?NGxaamgxV25CVFR5ZFdIUFBWTHI0eWhXWDdJTm02MTdabUNSbnVOYjRpTzRL?=
+ =?utf-8?B?RlpSOVRQdi9FWmtubkQxaFpTUm5UekVLS0doYVZwQko3aU1KMTE5N2lDYlkz?=
+ =?utf-8?B?cTRWM21FNmsydlQxcjNteWt1NjVzY09XUm9HYmdHK2FxdmU4YWpING5iLzg2?=
+ =?utf-8?B?R1lOV1NoOStDUnpReFJta0gxdmovdGJnWEFBTmFubmZmMThBWXlkRmtWTHAy?=
+ =?utf-8?B?MnZaY2phTlJyeVI0NUNrM2dLWkFrRVBQSzRkU0pOYlZCd1o1bHdtWm9oZ3ZV?=
+ =?utf-8?B?TXBMM1VsbUVHYnM4d2hzRE80WjQ4RVdOcWEyS042QmFtWlNIV2Vvb3NUWWpB?=
+ =?utf-8?B?N1pjMStackJBbWd5bmljSTlxVytYT3RwUjBlTDZBalA4V2FpOTFIcUU0SVpU?=
+ =?utf-8?B?MWVxNXZOZFJmTWFNK2doQ0FLdFpOTXRURVBXWE13eDJIKzBUdDhQampNdHFV?=
+ =?utf-8?B?Y3lLc0pQT2VTVzBuNldsZTlTMWdVeTFoVTk4N3ljR1RQQko0akdDVG1kZlI1?=
+ =?utf-8?B?MVJJQVNTVWhsMUxDVXVMUXArak5qY3hKWmhqTGNXdlpuRk5YYnVaUkNCcjNt?=
+ =?utf-8?B?NU13Sm9BeTRPVUZjUTZ3dDV1ZWJ2VEtYT1dlcll2WjNabTl1RFBFamdqQzVM?=
+ =?utf-8?B?WkU3TlNPN21ycEdJR1FnaWNnZXJmZ0VUMm52Q214UVc4cFh0Vm9IZFRUNkRO?=
+ =?utf-8?B?UU9nMGR2SG1RRTY2S3dJWlEyd3FXVWhIRnphbnVpdlBQMERiZHRmNXQwVW94?=
+ =?utf-8?B?Wnc9PQ==?=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------WrqmteKMb2UGEa0VDRFgfG16"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf env: Find correct branch counter info on hybrid
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
- adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: dea2386d-20e3-4b72-75ae-08dcd2784798
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 15:42:01.8614
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OUxCs/pIKKSeUR9rdw9G9XGB2Ps9QRrZyHt0TVEyG/t8260vtfd6H7CKztq3xGw/pot35UJXZGhNyH9TimEOgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO3P265MB2329
+X-OriginatorOrg: imgtec.com
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Authority-Analysis: v=2.4 cv=V7Ev0vni c=1 sm=1 tr=0 ts=66e1ba4f cx=c_pps a=6IdplsTJodF3+aqeaEJcqA==:117 a=6IdplsTJodF3+aqeaEJcqA==:17 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=EaEq8P2WXUwA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10
+ a=iqgTQx9cwIf3F_hPsnoA:9 a=QEXdDO2ut3YA:10 a=tLyVP-_u6bd0JCgZz4kA:9 a=FfaGCDsud1wA:10
+X-Proofpoint-ORIG-GUID: ajyFtsl_RsJdI38Yu5204Xwk2vIY2FkN
+X-Proofpoint-GUID: ajyFtsl_RsJdI38Yu5204Xwk2vIY2FkN
+
+--------------WrqmteKMb2UGEa0VDRFgfG16
+Content-Type: multipart/mixed; boundary="------------IwO0NUzmz2x2EJVOCK6OuP0y";
+ protected-headers="v1"
+From: Matt Coster <matt.coster@imgtec.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Brendan King <brendan.king@imgtec.com>,
+ Frank Binns <frank.binns@imgtec.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
  linux-kernel@vger.kernel.org
-References: <20240909184201.553519-1-kan.liang@linux.intel.com>
- <ZuGnCqBa4HZUzrmX@x1>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZuGnCqBa4HZUzrmX@x1>
+Message-ID: <dbfff3b2-84c7-400d-b305-64735193a948@imgtec.com>
+Subject: [PATCH 0/2] drm/imagination: Break an object reference loop
+
+--------------IwO0NUzmz2x2EJVOCK6OuP0y
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+
+When remaining resources are being cleaned up on driver close,
+outstanding VM mappings may result in resources being leaked, due
+to an object reference loop, as shown below, with each object (or
+set of objects) referencing the object below it:
+
+    PVR GEM Object
+    GPU scheduler "finished" fence
+    GPU scheduler "scheduled" fence
+    PVR driver "done" fence
+    PVR Context
+    PVR VM Context
+    PVR VM Mappings
+    PVR GEM Object
+
+The reference that the PVR VM Context has on the VM mappings is a
+soft one, in the sense that the freeing of outstanding VM mappings
+is done as part of VM context destruction; no reference counts are
+involved, as is the case for all the other references in the loop.
+
+To break the reference loop during cleanup, free the outstanding
+VM mappings before destroying the PVR Context associated with the
+VM context.
+
+This is facilitated by tracking the live contexts associated with each
+list, implemented in a separate patch to make the main patch cleaner
+and easier to grok.
+
+Brendan King (2):
+  drm/imagination: Add a per-file PVR context list
+  drm/imagination: Break an object reference loop
+
+ drivers/gpu/drm/imagination/pvr_context.c | 33 +++++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_context.h | 21 +++++++++++++++
+ drivers/gpu/drm/imagination/pvr_device.h  | 10 +++++++
+ drivers/gpu/drm/imagination/pvr_drv.c     |  3 +++
+ drivers/gpu/drm/imagination/pvr_vm.c      | 22 ++++++++++++---
+ drivers/gpu/drm/imagination/pvr_vm.h      |  1 +
+ 6 files changed, 86 insertions(+), 4 deletions(-)
 
 
+base-commit: 45c690aea8ee5b7d012cd593bd288540a4bfdbf0
+--=20
+2.46.0
 
-On 2024-09-11 10:19 a.m., Arnaldo Carvalho de Melo wrote:
-> On Mon, Sep 09, 2024 at 11:42:00AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> No event is printed in the "Branch Counter" column on hybrid machines.
->>
->> For example,
->>  $perf record -e "{cpu_core/branch-instructions/pp,cpu_core/branches/}:S"
->>  -j any,counter
->>  $perf report --total-cycles
-> 
-> So I tried this on an Intel Hybrid system, I start the TUI, then try 'B'
-> and, after applying your patch:
-> 
->   0.66%  67.8K  0.00%   75                    ┌─Branch counter abbr list────────────┐ibc_write+18]          libc.so.6
->   0.63%  65.4K  0.00%  106                  [p│                                     │r_active+159]          [kernel.kallsyms]
->   0.61%  63.2K  0.01%  175  [native_queued_spi│ The branch counter is not available.│in_lock_slowpath+528]  [kernel.kallsyms]
->   0.57%  58.4K  0.00%   39         [syscall_ex│Press any key...                     │ser_mode+109]          [kernel.kallsyms]
->   0.54%  55.6K  0.00%    1  [_IO_file_xsputn@@└─────────────────────────────────────┘BC_2.2.5+316]          libc.so.6
-> 
-> The perf.data was obtained from:
-> 
-> root@number:~# perf record -e "{cpu_core/branch-instructions/pp,cpu_core/branches/}:S" -j any,counter find /
-> 
-> And:
-> 
-> root@number:~# perf evlist --group 
-> {cpu_core/branch-instructions/pp,cpu_core/branches/}
-> dummy:u
-> root@number:~# 
-> 
-> Only mishap above we discussed already, the missing :S, and then:
-> 
-> root@number:~# perf evlist -v
-> cpu_core/branch-instructions/pp: type: 4 (cpu_core), size: 136, config: 0xc4 (branch-instructions), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|READ|PERIOD|BRANCH_STACK|IDENTIFIER, read_format: ID|GROUP|LOST, disabled: 1, freq: 1, enable_on_exec: 1, precise_ip: 2, sample_id_all: 1, exclude_guest: 1, branch_sample_type: ANY
+--------------IwO0NUzmz2x2EJVOCK6OuP0y--
 
-For a hybrid client, the "Branch Counter" feature is only supported
-starting from the just released Lunar Lake. Perf falls back to only
-"ANY" on your Raptor Lake.
+--------------WrqmteKMb2UGEa0VDRFgfG16
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-The "The branch counter is not available" message is expected.
+-----BEGIN PGP SIGNATURE-----
 
-Here is the perf evlist result from my Lunar Lake machine,
+wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZuG6SQUDAAAAAAAKCRB5vBnz2d5qsJsS
+AQDHgS3ykQAHgZsKipbrXpnJcEYsMJmErCE9LTZcM7vaYwD7BzrXZSWkd/NP2VHMe1nuAWqfGsn8
+m7aEzSWeisE9TQ0=
+=QjqD
+-----END PGP SIGNATURE-----
 
-#perf evlist -v
-cpu_core/branch-instructions/pp: type: 4 (cpu_core), size: 136, config:
-0xc4 (branch-instructions), { sample_period, sample_freq }: 4000,
-sample_type: IP|TID|TIME|READ|PERIOD|BRANCH_STACK|IDENTIFIER,
-read_format: ID|GROUP|LOST, disabled: 1, freq: 1, enable_on_exec: 1,
-precise_ip: 2, sample_id_all: 1, exclude_guest: 1, branch_sample_type:
-ANY|COUNTERS
-
-
-Thanks,
-Kan
-> cpu_core/branches/: type: 0 (PERF_TYPE_HARDWARE), size: 136, config: 0x400000004, sample_type: IP|TID|TIME|READ|PERIOD|BRANCH_STACK|IDENTIFIER, read_format: ID|GROUP|LOST, sample_id_all: 1, exclude_guest: 1, branch_sample_type: ANY
-> dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|IDENTIFIER, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-> root@number:~#
-> 
->         Version: Intel(R) Core(TM) i7-14700K
->         Voltage: 1.0 V
->         External Clock: 100 MHz
->         Max Speed: 8500 MHz
->         Current Speed: 3400 MHz
->         Status: Populated, Enabled
->         Upgrade: Socket LGA1700
-> 
-> What am I doing wrong not to get to see that "branch counter abbr list"
-> info to then check before/after your patch?
-> 
-> - Arnaldo
->  
->>  # Branch counter abbr list:
->>  # cpu_core/branch-instructions/pp = A
->>  # cpu_core/branches/ = B
->>  # '-' No event occurs
->>  # '+' Event occurrences may be lost due to branch counter saturated
->>  #
->>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles  Branch Counter
->>  # ...............  ..............  ...........  ..........  ..............
->>            44.54%          727.1K        0.00%           1   |+   |+   |
->>            36.31%          592.7K        0.00%           2   |+   |+   |
->>            17.83%          291.1K        0.00%           1   |+   |+   |
->>
->> The branch counter information (br_cntr_width and br_cntr_nr) in the
->> perf_env is retrieved from the CPU_PMU_CAPS. However, the CPU_PMU_CAPS
->> is not available on hybrid machines. Without the width information, the
->> number of occurrences of an event cannot be calculated.
->>
->> For a hybrid machine, the caps information should be retrieved from the
->> PMU_CAPS, and stored in the perf_env->pmu_caps.
->>
->> Add a perf_env__find_br_cntr_info() to return the correct branch counter
->> information from the corresponding fields.
->>
->> Fixes: 6f9d8d1de2c6 ("perf script: Add branch counters")
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>  tools/perf/builtin-script.c |  5 +++--
->>  tools/perf/util/annotate.c  |  5 +++--
->>  tools/perf/util/env.c       | 15 +++++++++++++++
->>  tools/perf/util/env.h       |  3 +++
->>  tools/perf/util/session.c   |  6 ++++--
->>  5 files changed, 28 insertions(+), 6 deletions(-)
->>
->> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
->> index dbe792b52c5c..a644787fa9e1 100644
->> --- a/tools/perf/builtin-script.c
->> +++ b/tools/perf/builtin-script.c
->> @@ -1241,10 +1241,11 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
->>  	}
->>  
->>  	if (PRINT_FIELD(BRCNTR)) {
->> -		unsigned int width = evsel__env(evsel)->br_cntr_width;
->> -		unsigned int i = 0, j, num, mask = (1L << width) - 1;
->>  		struct evsel *pos = evsel__leader(evsel);
->> +		unsigned int i = 0, j, num, mask, width;
->>  
->> +		perf_env__find_br_cntr_info(evsel__env(evsel), NULL, &width);
->> +		mask = (1L << width) - 1;
->>  		printed += fprintf(fp, "br_cntr: ");
->>  		evlist__for_each_entry_from(evsel->evlist, pos) {
->>  			if (!(pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS))
->> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
->> index 4990c70b1794..c6ebde9d40a8 100644
->> --- a/tools/perf/util/annotate.c
->> +++ b/tools/perf/util/annotate.c
->> @@ -333,14 +333,15 @@ static int symbol__account_br_cntr(struct annotated_branch *branch,
->>  {
->>  	unsigned int br_cntr_nr = evsel__leader(evsel)->br_cntr_nr;
->>  	unsigned int base = evsel__leader(evsel)->br_cntr_idx;
->> -	unsigned int width = evsel__env(evsel)->br_cntr_width;
->>  	unsigned int off = offset * evsel->evlist->nr_br_cntr;
->> -	unsigned int i, mask = (1L << width) - 1;
->>  	u64 *branch_br_cntr = branch->br_cntr;
->> +	unsigned int i, mask, width;
->>  
->>  	if (!br_cntr || !branch_br_cntr)
->>  		return 0;
->>  
->> +	perf_env__find_br_cntr_info(evsel__env(evsel), NULL, &width);
->> +	mask = (1L << width) - 1;
->>  	for (i = 0; i < br_cntr_nr; i++) {
->>  		u64 cntr = (br_cntr >> i * width) & mask;
->>  
->> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
->> index a459374d0a1a..1edbccfc3281 100644
->> --- a/tools/perf/util/env.c
->> +++ b/tools/perf/util/env.c
->> @@ -624,3 +624,18 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
->>  	free(cap_eq);
->>  	return NULL;
->>  }
->> +
->> +void perf_env__find_br_cntr_info(struct perf_env *env,
->> +				 unsigned int *nr,
->> +				 unsigned int *width)
->> +{
->> +	if (nr) {
->> +		*nr = env->cpu_pmu_caps ? env->br_cntr_nr :
->> +					  env->pmu_caps->br_cntr_nr;
->> +	}
->> +
->> +	if (width) {
->> +		*width = env->cpu_pmu_caps ? env->br_cntr_width :
->> +					     env->pmu_caps->br_cntr_width;
->> +	}
->> +}
->> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
->> index 2a2c37cc40b7..51b36c36019b 100644
->> --- a/tools/perf/util/env.h
->> +++ b/tools/perf/util/env.h
->> @@ -192,4 +192,7 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
->>  			     const char *cap);
->>  
->>  bool perf_env__has_pmu_mapping(struct perf_env *env, const char *pmu_name);
->> +void perf_env__find_br_cntr_info(struct perf_env *env,
->> +				 unsigned int *nr,
->> +				 unsigned int *width);
->>  #endif /* __PERF_ENV_H */
->> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
->> index b492300ec959..dbaf07bf6c5f 100644
->> --- a/tools/perf/util/session.c
->> +++ b/tools/perf/util/session.c
->> @@ -856,7 +856,6 @@ static void branch_stack__printf(struct perf_sample *sample,
->>  	struct branch_entry *entries = perf_sample__branch_entries(sample);
->>  	bool callstack = evsel__has_branch_callstack(evsel);
->>  	u64 *branch_stack_cntr = sample->branch_stack_cntr;
->> -	struct perf_env *env = evsel__env(evsel);
->>  	uint64_t i;
->>  
->>  	if (!callstack) {
->> @@ -900,8 +899,11 @@ static void branch_stack__printf(struct perf_sample *sample,
->>  	}
->>  
->>  	if (branch_stack_cntr) {
->> +		unsigned int br_cntr_width, br_cntr_nr;
->> +
->> +		perf_env__find_br_cntr_info(evsel__env(evsel), &br_cntr_nr, &br_cntr_width);
->>  		printf("... branch stack counters: nr:%" PRIu64 " (counter width: %u max counter nr:%u)\n",
->> -			sample->branch_stack->nr, env->br_cntr_width, env->br_cntr_nr);
->> +			sample->branch_stack->nr, br_cntr_width, br_cntr_nr);
->>  		for (i = 0; i < sample->branch_stack->nr; i++)
->>  			printf("..... %2"PRIu64": %016" PRIx64 "\n", i, branch_stack_cntr[i]);
->>  	}
->> -- 
->> 2.38.1
-> 
+--------------WrqmteKMb2UGEa0VDRFgfG16--
 
