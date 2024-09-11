@@ -1,83 +1,88 @@
-Return-Path: <linux-kernel+bounces-324959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE9497532B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D697532C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB00D1F26DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491901F272EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D31195980;
-	Wed, 11 Sep 2024 13:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wN4yr0/1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230D2188A05;
+	Wed, 11 Sep 2024 13:04:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E87D18EFC6;
-	Wed, 11 Sep 2024 13:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A5817F500
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059823; cv=none; b=mhbctEnmBPNe9ogE9u7rHEIdSRzrUSXZumX2E3CVXpxsvA6EFQ1Sn64Avb7vPL9bRp4cWjQwMmzS5IDfu8tr5e/pviZOxkJtRqMEchykpZ7ItrwHcrCfLM+z9vo9VRroDqOoyuI09ta2hbs9I51gDdEFp7MPbZoLnZdSyP1RXhw=
+	t=1726059844; cv=none; b=BPXrPkIhJCVtrFJJJMLKEG4kfQhwfxyD0iT54wI2DNeqx/BQmpJ4jZmx4nRTWBXHMKv1/0NFDCoU0DMR3FeMkXO4qA8YKkqZfyW36YeOrJ32Q3yiNtJnQJxgX5AsWLov/8KDPhpg1w6glAehikPo7Njt/u1YI/udktL9cJn9u34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059823; c=relaxed/simple;
-	bh=SA5WFFJN4ZIHVycL4iLocpXz1s6IKE1wCxyUUg5Dx50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smdI2QjtZo6Gv47tZjK22bZj36O/YU/ra3lHMf1fZ+geke3THhv6X6YQmGWYlVszg9Gv3wnkDTkmZhyEcBQQTy9VmTrJbyPL7MAcQVGZY1g4uBKYPlDasf7IIP68JGE/1OV8FG/YTXJqBpIwI6JqhKNn1WaxBiBwVg3X622mTAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wN4yr0/1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699BAC4CEC7;
-	Wed, 11 Sep 2024 13:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726059822;
-	bh=SA5WFFJN4ZIHVycL4iLocpXz1s6IKE1wCxyUUg5Dx50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wN4yr0/1YXa0VfPj9Belo9K7wOtKlma5gM1Od/VOoPZ4v95CHbgq/lgep1c6hJIq7
-	 987SZn0V0aFyyM0ieUOOKGDUQ97oL3GU74s62g56Fn4Ro7TcVk94mMSbewJDVQGA3i
-	 XLmOCCw6pSrFKUdFAiEsIoJlzO93O2m+2grq22Jw=
-Date: Wed, 11 Sep 2024 15:03:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Helge Deller <deller@gmx.de>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux@roeck-us.net
-Subject: Re: [PATCH 5.4 000/121] 5.4.284-rc1 review
-Message-ID: <2024091134-fanfare-nail-dce8@gregkh>
-References: <20240910092545.737864202@linuxfoundation.org>
- <72b133a6-c221-4906-9184-30b4e6ee4260@gmx.de>
+	s=arc-20240116; t=1726059844; c=relaxed/simple;
+	bh=59NNKj2Aff6CvAxFNMeXG3ODKc7xCJb0WTJTjX8MUBc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=csjAasnjXlqXa2Ra0K+xH2ySSod93jOYRrFRG6tnkBNNcmrUJ/Z0ZTqyWn8SKDFN8P92u4tpRyCQE47FnZRNnkvi5wehsJ0e4vflV2e2tA7a5sGMEjOQ2oiIq01inSIgnf0DAAZdS4q7VOYw68XpiS3wwP3A0pUhd4OA7VD8LC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a045d88853so121399405ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:04:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726059842; x=1726664642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pEWuHmSfY5aL9jwx3TogH+Y+4XLiXEd0WjEMQlUki/Y=;
+        b=C6Z40ja2zAo0qWeW5lXuNnwFjwj8rcKVV5fCiNJkauZJAmhXN2vKLITNHyIt7nE2V6
+         fv605zI0Sjg/InZEt3uGLsfsKtA//qylWi+l7Ni4TFYcYS8CEMFr9LHDYTZcPbSKYQZY
+         LS68YET8qijc7Xmvlu764vHsrcRH4zpvnl9lNxyJz9aup4z5Kfn8FCjLiwC7aQR/2V0i
+         9CgSWPHDLa0tUsYwUttoDWnUSDpUG42JQDeE6woGDtvRobUnKqTQLH9pP2s5GIMraIiB
+         we1W/kEDm8XkrQHQP+uNwmdeaPF47j5XMyxPgIiRm6Sfy09P0yOD8BuBePUN98i6JXwi
+         Cvng==
+X-Forwarded-Encrypted: i=1; AJvYcCXu8IiaR9amr2qfb71XBgtA6Xwq9xt7o1udNOynOTMTe5shdfxs/jTF2N89uDiD1DXUBsUFBrlAwCEvwxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpC7WsD5HjklQvFRodD+u+BNH7VSDSiYTTVWPdbZJinU5n2KKU
+	wFE5vd8CqpBlZ4zSQuefwxhH45uX5o7bs4Ed4FVsTInIaeij0e6EplMjip8WkBnaXCL6uYnURP6
+	VizSgWgxs4EDTOSxYcz0FPTSS+pqN2i+vVWWRSddaP+zCElf3bJC1Nk0=
+X-Google-Smtp-Source: AGHT+IE9hU37nbQq/8eq8xqqdwVrvZikDR/LS+COMZcGwPukBSI5AV0Kx2AUklYx0PUsy25r0XFviRE56/GDe4lOycr6742k/wSZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72b133a6-c221-4906-9184-30b4e6ee4260@gmx.de>
+X-Received: by 2002:a05:6e02:2166:b0:3a0:49da:8f6d with SMTP id
+ e9e14a558f8ab-3a0576ae034mr165020635ab.22.1726059842412; Wed, 11 Sep 2024
+ 06:04:02 -0700 (PDT)
+Date: Wed, 11 Sep 2024 06:04:02 -0700
+In-Reply-To: <a05c9ba4-d7e3-4c0b-859a-3f55ad6e594e@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c4bb0f0621d79f6f@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: alibuda@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 10, 2024 at 12:33:51PM +0200, Helge Deller wrote:
-> Hi Greg,
-> 
-> On 9/10/24 11:31, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.284 release.
-> > There are 121 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> The upstream commit 73cb4a2d8d7e0259f94046116727084f21e4599f
-> ("parisc: Use irq_enter_rcu() to fix warning at kernel/context_tracking.c:367")
-> was added in the last stable series to 5.4.283 and v4.19.321.
-> 
-> Since it breaks the build on parisc [1], could please you add a revert of that
-> patch to the current v5.4 and v4.19 series?
-> 
-> Thanks!
-> Helge
-> [1] https://lore.kernel.org/lkml/092aa55c-0538-41e5-8ed0-d0a96b06f32e@roeck-us.net/T/#m8657a387ec86f9a2af62380743718f72ef7619b5
-> 
+Hello,
 
-Now fixed, sorry for the delay.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-greg k-h
+Reported-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+Tested-by: syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         7e3e2c7f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f9a49f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=921accd5d8340211
+dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142d6100580000
+
+Note: testing is done by a robot and is best-effort only.
 
