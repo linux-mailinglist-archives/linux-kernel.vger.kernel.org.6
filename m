@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-325555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0EC975B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3F9975B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35DB1F238E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F921F236EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F81D1BAEF6;
-	Wed, 11 Sep 2024 20:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CAB1BAEE7;
+	Wed, 11 Sep 2024 20:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Atlb0zC7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7QxJN3i"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647FE1BA263;
-	Wed, 11 Sep 2024 20:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB721BA263;
+	Wed, 11 Sep 2024 20:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726084978; cv=none; b=mhhTGOvhLEGsGWSelRmm/f6r8oydtrJcP7B/oiBxU0oTn9jtUsDgWatnqA4Lq/PU2ODPPC5ljwRTmh2FzXBKN/gW3EhOcP67CFIRHPv3K40n8I8i/Np5a89OY6xSxL+Ll18opvrNkW+Jqh8PI9XjdgaRcHZj11Y29d/j2S31hUw=
+	t=1726084987; cv=none; b=MUiLynN2Y19f5eOLzz+YxxBXKaj4f1GsHCI/J8FX41fWZUznzK3PSI/RSggLsZoUheTNqHeRcp4vJdgA8DGsH0dpYk9jrU2zqgf1TlpLTeM+8aDWBMKr4DCdZC/4s0Qq2IPh/WimCjvP/tSbUwDQq21fJ+cc2FZEZJhltJrdJJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726084978; c=relaxed/simple;
-	bh=6FO12TjJJP9kj04dhDAJAMgLbw7O+WoKXIMLcn+B1sk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWDHCQWuFebnsJxY9x1i2FKzyfq/eo5uC3iTtuc4xX0sE403RWp+eaWwjthnGWTnMhIq8t4MqpdJdLfYb8Yokox5g8qw7FXU8JaEjleemLzj4GSWTme0J8VSJXRdRibiA2hqJ9/erk/w8Z7aP3tWB1YatuKoSiJ+8SGzkby24gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Atlb0zC7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BEmxqG025804;
-	Wed, 11 Sep 2024 20:02:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yT72m3xVy/MYYzNTuClbW+FS
-	Q/78XtzF54msLv157IE=; b=Atlb0zC78mbWy+jwn9lABh8xH/nLMu6AL4wio4uW
-	5QiGEUtwcE9W24iJXf3NrcA1YbJEdNBtso7UZUgEvgtYDlewjfSeUmAfWwG4RA8F
-	rlztao///tXlPuWGe4mqs6+aAOQJtwSZVazOdUZ6S7AQbD2h+1iqbBKSJBWNjUUq
-	dOS4EPo+raUkZC9G1v601B02As41piVaO9GEpMIhC7YFAI3em+TLkFRoOnAFUoE7
-	bAwvEk2s+Nzb000vksrkAr7tTNp98yBVnuwoh4ZxutvuX3MPG25gMjBFDP8rtTHg
-	PvKAcYdds6ia1tUIlNPJsIpuRpgk8BvhAh3xMkmNaVrrZA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41j6gmy457-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 20:02:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48BK2a3h029989
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 20:02:36 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Sep 2024 13:02:35 -0700
-Date: Wed, 11 Sep 2024 13:02:34 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>,
-        <andersson@kernel.org>, <simona@ffwll.ch>,
-        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
-        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_khsieh@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <quic_parellan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <quic_riteshk@quicinc.com>, <quic_vproddut@quicinc.com>
-Subject: Re: [PATCH 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
-Message-ID: <ZuH3WqMwn7fl3nhh@hu-bjorande-lv.qualcomm.com>
-References: <20240911100813.338-1-quic_mukhopad@quicinc.com>
- <20240911100813.338-6-quic_mukhopad@quicinc.com>
+	s=arc-20240116; t=1726084987; c=relaxed/simple;
+	bh=Ua2dyT0bhSolwHUdXhnJ62p4G9dhMQk2hp7qVP5oi2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eRWigY6vsBQjAXrwOz1kfZpgh6i4nQfbONZ8SWQUeplhYh3G33geis7lryhJ3a28nqZlfbI0JRhReRPw6wEjC6dU8KBBF2tBd7DX5cbBxA89Mq6zrm7IFC2PE8se7Nq5Wj5BD8+27+vuEpgTTW2rVtKeqjLY7kzY+HNSZmRWV5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7QxJN3i; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2705d31a35cso114382fac.0;
+        Wed, 11 Sep 2024 13:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726084985; x=1726689785; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HQHsFhjPJ4u+X/sv7+YjlA9uC7lJnoJfGgxEewlbqwE=;
+        b=R7QxJN3iZ7SUPQMLbjgQeTGh8yfky1ftIy6Keo/glCzRJi9Ec8pZdplkB+Cm8rqd9N
+         /oIjTyvOxgyeMaaG9i14SkKJhkb8pzZy2FiOR6keB7JMFcnRbghR6FYGcqT4QaQf8naM
+         ODolX9a4mdmXYZ8RCNsPp5Shjb6xhqPCnWOVHjD/s54RlnoOAyx+8tmMK/I4vqMZumGz
+         Nub1b/xFb3SlobWM5jhdctiOzteqn6nH1Rfji+12QKHy7lLZLpn175V6db5mLwEf7EpZ
+         C/lIE22croo76jS9liHStBRVj0w9VlPXGCYYDkvd2jycq/b+m0p0i2V4B9dmEMVh12h1
+         GjTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726084985; x=1726689785;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQHsFhjPJ4u+X/sv7+YjlA9uC7lJnoJfGgxEewlbqwE=;
+        b=Uvk0p3DcXDkJE8pFY/qVv7lyVYg7/t1cU7bWVB/j81xRWKSC2547TeBW7KCc6PgWeo
+         YipeK89EbOVKkXR3LUJuC0tHdsPE/DXDAIeYNiRhwNoKRzP7qPrxeUCECzP1Rjt9t1PK
+         n0/B3FcuayYqa/0+jVlwHF077ZjES3Y+ExNc0NfyGQtJHeQzNl9vEOWwKS6hrEpF91u3
+         lchDcI/zogZvMhmNoLXoJM5JIcc+rqXgNAoz+QBJpm8qi3sz38xmzb+Hp/PDekfRosaL
+         nHcgF0VHO7XyfYkYmmGyi+dG69C/STUuuD7wJacShgme7HNGgaC25/ocB+UuVwQ4yq7b
+         JcIw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8rq1IgHJCv25HUES5Q1ukTi63MUu7XQHxCEKjVkPHZvi76WMVrKBaVPgYHwF+nlw7+pNveiYVHaYUjKkn@vger.kernel.org, AJvYcCXrUKtokBPA25s317D8keQPNZBAmEaK60RuldopIrhlueSHWdHhTeuREcaJ7P0hg/WqLRpXgXsMBJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1tJTPEbgk/dBj+ZmitfbK/NCa/QKHTWksMF1l11cy8LJXUpU8
+	ZqsNyc8RjfqYVzH28aYx/FpbDi+AWTOf65B+0hfpU5HlKRh9LBdk
+X-Google-Smtp-Source: AGHT+IGoEN7tjp8D0vGuh4GjGOzfj9HpsxK+4aKeSYIebuZstvT9U6+BsV6Ie18HdRlFYsfu54Zeog==
+X-Received: by 2002:a05:6870:b296:b0:261:211:9d0d with SMTP id 586e51a60fabf-27c3f6a6e05mr399337fac.40.1726084984794;
+        Wed, 11 Sep 2024 13:03:04 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9d6fb1bsm2515215a34.48.2024.09.11.13.03.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 13:03:04 -0700 (PDT)
+Message-ID: <200ce66b-845f-4f20-8838-619646f5f44d@gmail.com>
+Date: Wed, 11 Sep 2024 15:03:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240911100813.338-6-quic_mukhopad@quicinc.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: k7CqOgarBHtkW6JvH3e5xL6jB1lUbbgV
-X-Proofpoint-GUID: k7CqOgarBHtkW6JvH3e5xL6jB1lUbbgV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- clxscore=1011 phishscore=0 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 mlxscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409110152
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs:fs:fixed some spelling mistakes in the bcachefs
+ coding style page
+To: Dennis Lam <dennis.lamerice@gmail.com>, kent.overstreet@linux.dev,
+ corbet@lwn.net
+Cc: linux-bcachefs@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240906195720.40315-1-dennis.lamerice@gmail.com>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <20240906195720.40315-1-dennis.lamerice@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 03:38:13PM +0530, Soutrik Mukhopadhyay wrote:
-> The Qualcomm SA8775P platform comes with a DisplayPort controller
-> with a different base offset than the previous SoCs,
-> add support for this in the DisplayPort driver.
-> 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Hello,
+
+On 9/6/24 14:57, Dennis Lam wrote:
 > ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index e1228fb093ee..e4954fd99eb0 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -118,6 +118,12 @@ struct msm_dp_desc {
->  	bool wide_bus_supported;
->  };
+
+
+Change the subject, it needs spaces to be readable:
+
+"docs: fs: fixed spelling mistakes [...]"
+
+Also, you need a body in the commit which includes an explanation of what
+the patch does (even if it is almost the same as the Subject) and your
+signature. See: https://docs.kernel.org/process/submitting-patches.html
+
+
+>  Documentation/filesystems/bcachefs/CodingStyle.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/filesystems/bcachefs/CodingStyle.rst b/Documentation/filesystems/bcachefs/CodingStyle.rst
+> index 0c45829a4899..b29562a6bf55 100644
+> --- a/Documentation/filesystems/bcachefs/CodingStyle.rst
+> +++ b/Documentation/filesystems/bcachefs/CodingStyle.rst
+> @@ -175,7 +175,7 @@ errors in our thinking by running our code and seeing what happens. If your
+>  time is being wasted because your tools are bad or too slow - don't accept it,
+>  fix it.
 >  
-> +static const struct msm_dp_desc sa8775p_dp_descs[] = {
-> +	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
-> +	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
+> -Put effort into your documentation, commmit messages, and code comments - but
+> +Put effort into your documentation, commit messages, and code comments - but
+>  don't go overboard. A good commit message is wonderful - but if the information
+>  was important enough to go in a commit message, ask yourself if it would be
+>  even better as a code comment.
+> @@ -183,4 +183,4 @@ even better as a code comment.
+>  A good code comment is wonderful, but even better is the comment that didn't
+>  need to exist because the code was so straightforward as to be obvious;
+>  organized into small clean and tidy modules, with clear and descriptive names
+> -for functions and variable, where every line of code has a clear purpose.
+> +for functions and variables, where every line of code has a clear purpose.
 
-Why is this list incomplete?
 
-Regards,
-Bjorn
+Thanks, Carlos
 
-> +	{}
-> +};
-> +
->  static const struct msm_dp_desc sc7180_dp_descs[] = {
->  	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
->  	{}
-> @@ -162,6 +168,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
->  };
->  
->  static const struct of_device_id dp_dt_match[] = {
-> +	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
->  	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
->  	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
->  	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
-> -- 
-> 2.17.1
-> 
 
