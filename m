@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-325744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B1C975DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:21:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3526A975DAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D413285A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:21:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CB31C21C9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F340E1BA894;
-	Wed, 11 Sep 2024 23:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C9A1BD501;
+	Wed, 11 Sep 2024 23:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAA+58B1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjuPVQZb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD741B9B45;
-	Wed, 11 Sep 2024 23:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC821BB6A0;
+	Wed, 11 Sep 2024 23:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726096837; cv=none; b=F7EzOOSQs55QtUHIEnNRI4Cxch12CFhx9AczGu236tUTmLQkDO88NjiYCF5vVo5epui0zNuf3yP4G+SHhVuNPgmzdV4cTu9jNDRRQnCrhVUgq2raXeAx5YrtkZNVUt7qNITK9Fanij1i7slsBeBrxtVfWakcn5hIRuxxV1tWtK4=
+	t=1726096845; cv=none; b=GxVeXkjU+Fq/atxevTIpORdL5qYf1TC8R+rtMjEvcy9RAP6Xq5q5dt+CwnUMmflrevHp+uxfyWZjIY25d0V9SYSHP2zg50hqIBTYX4T6mYBlMIi7qlnHymAusqdZgTZ449e9hCVOrknB1+9xbXE2GzBBuUDU+Z6nAXId+JCoAVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726096837; c=relaxed/simple;
-	bh=E6hbaUCATMi6KhHvTCaZEaoztd+MwFpjrHMdDITsagU=;
+	s=arc-20240116; t=1726096845; c=relaxed/simple;
+	bh=xoeaEsUH4Gbw86lnyllWO3ymn3uzNxvFhzCkvRXqd+U=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BgdvSiCpDQMylB+fls1W1MqOX03EcDFdpUXQv08J5mQUQnXEerrPGB2kYNgf0witpChVc8GQHtSo8Ar40Z9Ner/ScnRGO99VY8LrjtHtQRjbqbf1AHUMw6voEfazxpds/nJBZWIdwaaXc6ibCbxmyfbJhfalzkLLMPRILbxeb0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAA+58B1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5AA4C4CECD;
-	Wed, 11 Sep 2024 23:20:36 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=H3CRZCLXr5a6K71Khly5pi1FGOFP9PzyBkeTFE+QKbi31MBsIxsJyh9p2njVAS22clr7WndhJkyblcayAwGTd+lDXlUxC9dZyCiJEAfimnxSDvORhoniT+Ca84X8eV1NOH40qnAiPJsaX1+hPAyyqTKKXQqMW7X6u+M6w95zjO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjuPVQZb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C446C4CEC0;
+	Wed, 11 Sep 2024 23:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726096836;
-	bh=E6hbaUCATMi6KhHvTCaZEaoztd+MwFpjrHMdDITsagU=;
+	s=k20201202; t=1726096844;
+	bh=xoeaEsUH4Gbw86lnyllWO3ymn3uzNxvFhzCkvRXqd+U=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YAA+58B1+H0wqU1v/oDaC1nPADX0XOsZiwO+yJPrudC1kYNBJwFk0HxZuiK2Uv131
-	 5unFdwU7d0hISidlSjrBdVeLLtwyXnsaiNAxWvUaGcACRxfXXGE/52CtaB262uChWu
-	 Qjb1ow2IRnX5l9Ow3/zQ57yU0ClBuhncXro2EYKplOXiJLgtvx3JHBOCLiJUnXxA4r
-	 a4oqOgBppoBJxDPFOIkCUpvnJ0XFjmG6VWyjkgBB3jrIvcCLNoOwrWGqYoxWUq1XCs
-	 FhigSe2n8Sx8MKm4JEB5zwDNUkeyLExuGS1hXvCImjcNMBLGUFCmHBvHzZDcZBhUUk
-	 VtIWBl/OD/y4w==
+	b=ZjuPVQZbgIymAz3FeMIpwl3wl8mEpI+zZdL8Pm/UTJEego+gEOXwcJ1xU9ewzE+yD
+	 pZTM3HtdD7N7dBXe7LHPci0SgW0IaAzFjFJdtRP1n75l9Cu+DMEvVI9KuTdZipZoXd
+	 XQNmsuqbtXnH9Aig/LvKJbpGVbqtxZshG97bJ89aPdUOgh8WKO4H0DOJ10PpRWPMqK
+	 JE9PX2DgiJVtCru1RrwAaFjOo+IJpBmcUvkJKqoNleTbrRZbVX/WwqeaZCPx39N86y
+	 xT0SIZsSFUx4WpGSRyH/T1ccrTPwYVwwqyfbCMR8HWNs/3x3KZ6GUsCwOS/QnTiNOW
+	 XpJrjRYk3sPTQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E9E3806656;
-	Wed, 11 Sep 2024 23:20:39 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0263806656;
+	Wed, 11 Sep 2024 23:20:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: dsa: felix: ignore pending status of TAS module
- when it's disabled
+Subject: Re: [PATCH net-next 0/3] mptcp: fallback to TCP after 3 MPC drop +
+ cache
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172609683781.1105624.8461423176901679362.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 23:20:37 +0000
-References: <20240906093550.29985-1-xiaoliang.yang_1@nxp.com>
-In-Reply-To: <20240906093550.29985-1-xiaoliang.yang_1@nxp.com>
-To: Xiaoliang Yang <xiaoliang.yang_1@nxp.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
- alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, michael@walle.cc, linux-kernel@vger.kernel.org
+ <172609684550.1105624.18253068127743198847.git-patchwork-notify@kernel.org>
+Date: Wed, 11 Sep 2024 23:20:45 +0000
+References: <20240909-net-next-mptcp-fallback-x-mpc-v1-0-da7ebb4cd2a3@kernel.org>
+In-Reply-To: <20240909-net-next-mptcp-fallback-x-mpc-v1-0-da7ebb4cd2a3@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ dsahern@kernel.org, corbet@lwn.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  6 Sep 2024 17:35:50 +0800 you wrote:
-> The TAS module could not be configured when it's running in pending
-> status. We need disable the module and configure it again. However, the
-> pending status is not cleared after the module disabled. TC taprio set
-> will always return busy even it's disabled.
+On Mon, 09 Sep 2024 22:09:20 +0200 you wrote:
+> The SYN + MPTCP_CAPABLE packets could be explicitly dropped by firewalls
+> somewhere in the network, e.g. if they decide to drop packets based on
+> the TCP options, instead of stripping them off.
 > 
-> For example, a user uses tc-taprio to configure Qbv and a future
-> basetime. The TAS module will run in a pending status. There is no way
-> to reconfigure Qbv, it always returns busy.
+> The idea of this series is to fallback to TCP after 3 SYN+MPC drop
+> (patch 2). If the connection succeeds after the fallback, it very likely
+> means a blackhole has been detected. In this case (patch 3), MPTCP can
+> be disabled for a certain period of time, 1h by default. If after this
+> period, MPTCP is still blocked, the period is doubled. This technique is
+> inspired by the one used by TCP FastOpen.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,net] net: dsa: felix: ignore pending status of TAS module when it's disabled
-    https://git.kernel.org/netdev/net/c/70654f4c212e
+  - [net-next,1/3] mptcp: export mptcp_subflow_early_fallback()
+    https://git.kernel.org/netdev/net-next/c/65b02260a0e0
+  - [net-next,2/3] mptcp: fallback to TCP after SYN+MPC drops
+    https://git.kernel.org/netdev/net-next/c/6982826fe5e5
+  - [net-next,3/3] mptcp: disable active MPTCP in case of blackhole
+    https://git.kernel.org/netdev/net-next/c/27069e7cb3d1
 
 You are awesome, thank you!
 -- 
