@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-324726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E22C975031
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:53:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8614975033
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90AE21C222BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB511F27D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D009187353;
-	Wed, 11 Sep 2024 10:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3137618E752;
+	Wed, 11 Sep 2024 10:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUIZfbJ6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JeELEM0z"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71780187344
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B6618EFC6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726051927; cv=none; b=HL3vZVkruvO2hL4UpgP4jUcI/rYipr32t5TUpbMPTFROrXJyQBhDaYWFfm71SJR5HZZ0Dcm2v8JWv4SGCQBwKxrDEAr9+SXm+E9+dMMelGRa0x6vS5SFVIm4iSJMBG1CzI+iTSuy9OlE59jou/fLRp4ht6pVhfJcTqeyUiVj5Mg=
+	t=1726051930; cv=none; b=r5jSu3cfAP6Skv7ssGx393kjdI+44gtgy9dQwt5DMzMbi+ne3oQ9+v2jOtn9cLZWhUZWwaW25tD/bt2kODpFjBe8D7tLdCATFspMd8L76m3c+Gfmk8gRYIfQAwwJjJLBBapjnDaHtcDiYLculdmBlToLeU79CvdZXsKTEkaNf0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726051927; c=relaxed/simple;
-	bh=/G95g6Pv3hKsT3DAid4YKqoRSWpITBspQybTIEAK3g8=;
+	s=arc-20240116; t=1726051930; c=relaxed/simple;
+	bh=NpJXXj6GgzmJD9LH2XXjzk9upBAVJAEmtnSNBAz94kc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PVvaEYS4snJyaG7DmxW9W3RxTd754y4T5NZ9J0owas+FYU3dnirswzMYx3F5NC6OY/0cqA7MhLOe/RHKbI1N4aZ/jP1kJiGYFBFsf8kuk1Ih2BsKQMQbv/pO5mooUEUOInhxyCqXSy0TkVA22cDR1b9hlV1YXMWt8MKVC/UM+wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YUIZfbJ6; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=pbTvb/R9Z5hxYYmaIVYh19CjFTiKYqziiNldiak8dndC171jOEHQm6fRNsBQBEBhWpcirIQRYTOb1ANje/8YhKczSQnbacXMWOXQlJv2jUyPPvG+eyjKYdjzMicskKlnPA7IdKnN9aBeOwZmlyuatC5FF+LdZEtq4IG5kRLWHPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JeELEM0z; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20551e2f1f8so66189635ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:52:06 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-719232ade93so11086b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726051926; x=1726656726; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1726051929; x=1726656729; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lxB+6fvHWEXWAoAcmBCe/+3gaojpv5E5mRIj5J3oWjM=;
-        b=YUIZfbJ64Pi3l4ZGFwBrOmj0tRhOWvH5M7G4J4/QswyESJQj2MLvoHwrapWpgIoP9M
-         POwR4/dOwlYKX8533nmoAjd4vc1j7I+zihzaoGf6ze3dvB+szWlQV0Y/KSHE0i/t2uof
-         YuwGvX02sFkJyDqHG7FPMGXBXGkRsklbCcKWY=
+        bh=MOnoYB01CVn34qVTO0Wi7WMlpts2N+jH706yGUshpao=;
+        b=JeELEM0zpnOVOUNhhYhZueXUOXgc/NHyjkd18so5t6K6g2sDH51NH9LeVbpw+hwUEq
+         odG12osXO4gIJZVbsqloz6sjbJqUeQLj7fTjOfcmdcEwhPRPyc/3NC981sjQ/oBc+KcF
+         OY3Yv41Xlz3PHmHnphqyEazDVJQKCjrR3TF6g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726051926; x=1726656726;
+        d=1e100.net; s=20230601; t=1726051929; x=1726656729;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lxB+6fvHWEXWAoAcmBCe/+3gaojpv5E5mRIj5J3oWjM=;
-        b=imz0U/xn0+2DOqksJsAfoAtZ4TGkgsYzb/b6HcOlR4sVrbM5qS5ZspxXOUm/LW59Cr
-         gtbPcmeFdtp3qQsAcZMchsE0wx5pArrZkT60O2E+ttkh4FQ3xRz/eP/aSD+nJBecF6Gp
-         bMBnUxGY3G7s3QwUGDNvu7bYIf2TwBWWVh3TxaKEfHs5SqMpfO44H+YkEDUeRaCC0oXL
-         yGKtHjzlp4qrW7IlNXMsLcuvs9jV/W8QjgWXmWgY/2IxzTbg1yIbfPd19XUSLp+yxzkV
-         kvcJdhAtQutqLWYwtNjsuow9IILoM2plX2hPKOnFHk43EfPZjKvV636zyctgjxvIINz5
-         +OhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmQ46dcwN7rpNOT+TPogDz+NTipLsyiJx7ibSYugaZLoieWLDCqhqry/kEs75n4G6frI5mt9tje+wnczI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2bgZnhV5rtwsxVLcpXlfE91UYzsnrvO/r2f8MI+BQxYPFiQhD
-	ne/xRXYv9bNYSmiJ1ZK+s7D+CHtmCqOu/bs3g+/ukMwPYHrALMoBLqbqt9wgEg==
-X-Google-Smtp-Source: AGHT+IFTR5yrOi8klWJqx+NBpQgcvZapfM72vRbdkK7qyKiVUV1zLbAi0kvSlxVkP+q2NaVXR1gr5A==
-X-Received: by 2002:a17:902:d509:b0:205:5dfe:7d9 with SMTP id d9443c01a7336-2074c5e71fdmr49347935ad.19.1726051925359;
-        Wed, 11 Sep 2024 03:52:05 -0700 (PDT)
+        bh=MOnoYB01CVn34qVTO0Wi7WMlpts2N+jH706yGUshpao=;
+        b=wp3xEswh3gOOBtjf+qBES/VxlnNIDkgRsuQJiVPVSl7z2GoIsZh4ZAzVEZQUAccvBv
+         LS42xuZz5lrUnHwSxaRZ9MK+WTtTH059HQSiuV2/MuGbqfBI2OF2yIExcUF9g4ayx4HH
+         F9yhUm+0SFRrI+hEyKQEkytFaNniRqoMCn+6lBUgjSOOaX4WEYt9ykPuwhOesdkDGbuk
+         Mv9x7mlQRYuXjMqW6wQtGSfxUWlZLtibSSyiakr4xvan/3Pywz3rxRlDaCUMkkq837hj
+         oEqjXRPBBIsPFAcnIKIuI4yiY3w2fiK0457THZRqDWg7uWrYWO9n/KWgcCOsLh7j1tYz
+         TIPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw5Z9RdhNuXWutev6RqrMwbvBBDKg5DuenxmgWAJxwZ20hmJkRVIZuvSFaGde4D7z1wHdQu33xqRDw5tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9j/ND/OYMX1COtkJ0892zWMYhGJ7G1KlxqFDGifO9d2Qdn6P4
+	oGrXQDp/sXldz22rGhlUzyEtyHHgwvMlMrepMWF9UN3exsu65ysjc99XliXKSg==
+X-Google-Smtp-Source: AGHT+IEg8W15drzsQZ3XAibIoe6Uk9uFQemRLNOwGm8NTstfjakhVV4QW2T4x1pKLwY5Nwdep+zD6g==
+X-Received: by 2002:a05:6a21:168c:b0:1cf:2901:2506 with SMTP id adf61e73a8af0-1cf5e0f65cemr6315893637.14.1726051928367;
+        Wed, 11 Sep 2024 03:52:08 -0700 (PDT)
 Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:102f:d738:6069:fd4b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8242b3d13sm7147352a12.52.2024.09.11.03.52.02
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8242b3d13sm7147352a12.52.2024.09.11.03.52.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 03:52:04 -0700 (PDT)
+        Wed, 11 Sep 2024 03:52:07 -0700 (PDT)
 From: Fei Shao <fshao@chromium.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Fei Shao <fshao@chromium.org>,
-	Stephen Boyd <sboyd@kernel.org>,
 	"Rob Herring (Arm)" <robh@kernel.org>,
+	Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 1/8] dt-bindings: spmi: spmi-mtk-pmif: Add compatible for MT8188
-Date: Wed, 11 Sep 2024 18:51:06 +0800
-Message-ID: <20240911105131.4094027-2-fshao@chromium.org>
+Subject: [PATCH v2 2/8] dt-bindings: mailbox: mtk,adsp-mbox: Add compatible for MT8188
+Date: Wed, 11 Sep 2024 18:51:07 +0800
+Message-ID: <20240911105131.4094027-3-fshao@chromium.org>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
 In-Reply-To: <20240911105131.4094027-1-fshao@chromium.org>
 References: <20240911105131.4094027-1-fshao@chromium.org>
@@ -90,31 +90,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add compatible string for the SPMI block on MT8188 SoC, which is
-compatible with the one used on MT8195.
+Add compatible string for ADSP mailbox on MT8188 SoC, which is
+compatible with the one used on MT8186.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Fei Shao <fshao@chromium.org>
 ---
 
 (no changes since v1)
 
- Documentation/devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/mailbox/mtk,adsp-mbox.yaml   | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml b/Documentation/devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml
-index ac99883a3f29..7f0be0ac644a 100644
---- a/Documentation/devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml
-+++ b/Documentation/devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml
-@@ -25,6 +25,7 @@ properties:
-       - items:
-           - enum:
-               - mediatek,mt8186-spmi
-+              - mediatek,mt8188-spmi
-           - const: mediatek,mt8195-spmi
+diff --git a/Documentation/devicetree/bindings/mailbox/mtk,adsp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/mtk,adsp-mbox.yaml
+index 72c1d9e82c89..8a1369df4ecb 100644
+--- a/Documentation/devicetree/bindings/mailbox/mtk,adsp-mbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/mtk,adsp-mbox.yaml
+@@ -17,9 +17,15 @@ description: |
  
-   reg:
+ properties:
+   compatible:
+-    enum:
+-      - mediatek,mt8195-adsp-mbox
+-      - mediatek,mt8186-adsp-mbox
++    oneOf:
++      - enum:
++          - mediatek,mt8186-adsp-mbox
++          - mediatek,mt8195-adsp-mbox
++      - items:
++          - enum:
++              - mediatek,mt8188-adsp-mbox
++          - const: mediatek,mt8186-adsp-mbox
++
+ 
+   "#mbox-cells":
+     const: 0
 -- 
 2.46.0.598.g6f2099f65c-goog
 
