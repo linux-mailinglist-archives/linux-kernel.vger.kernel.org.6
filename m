@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-324087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DE69747C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587F29747C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AE3288739
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACFA288AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817121F957;
-	Wed, 11 Sep 2024 01:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BEC2A1A4;
+	Wed, 11 Sep 2024 01:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wzazf27c"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiqXp7pE"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDBF27456
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7A2224EF
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726018145; cv=none; b=rKxUdspybK0hJb51ZJQil4/GUl+Xqcef2t0fR8bTsTCwJ78ihBjAtrLbmKdB/rRoyg/pMsumm91VrvZdCz71vy6UyKjjmwqX5mm/2ygVyk0PEu8BLTl+azQttal71NcnZefwDsWpCN8rrgjd3I+rT6ehAm6G62L0MR4ZE60boSo=
+	t=1726018152; cv=none; b=lYkhyEFQvQG1T5mWiY4WzSvLhuYZ+4jKaUql3sK6+M3NgN/1jE/WbXXxXdn5Hj0R7Z4/JrkUSHAN4yhdUrSLc1rPLTqw1ID948WbympKMHhWqWO0v9koAFeYDyfyQQyxxwIpe8XjLLQP0bSQJcZ8X7Nfrv4RrgD0wNSpsL4o/5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726018145; c=relaxed/simple;
-	bh=PJUgH/3YsptpWume/J1fa/gE0z+jYCONzxEoAJ3q4S8=;
+	s=arc-20240116; t=1726018152; c=relaxed/simple;
+	bh=w4WjNTKo8YOTZ0nnY5vinap5dKv5B8g8jL9FHegwdvk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gnABOPzlnj//H0nuY3lvMi1A5Cx5il1rM/QE3NoQB6tUSaaJ4hFfNm5bLxXm3s3YO0GVYL5Rgs5EHfQLVu6ZDgB70cO9E7y8zQG0DgCq2pLJ0GYTED9KVzXX3Y6Y5ABelvTMJbW4MO5yjhyb7NHdW+pkDVNdzgqjA0fcN5FG+CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wzazf27c; arc=none smtp.client-ip=209.85.166.172
+	 MIME-Version; b=cJzlbC09hN3A2Q+imGsX4odZxApeiYhd8Vd+IlSASRjOiXfj/lPLn0p5KMPU2/ub02u6TN/fV3DLOjAddHLR4B4LETBWBBbrE7WRVXDslGooxPHNGM1EoPGtTl5tssP8BlnQwbttIniJpPU9m4F5v6RosGvhFgyOL4TcO0ukuRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiqXp7pE; arc=none smtp.client-ip=209.85.166.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39d30f0f831so20413505ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:29:03 -0700 (PDT)
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a043496fdeso19756925ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:29:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726018143; x=1726622943; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726018150; x=1726622950; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cvXBP2PrFyV1Cal0Ui5HcHENV6882J9Z6aJXmbvUT3o=;
-        b=Wzazf27cSJlUilspmlzwlNNkOheoFg/i1DTTohDMqRBeUguz4dwaQWWbk3Vy8DQhGQ
-         w+O9W6eWPu//L8HnsbAv8Jy8opaMD+5+syIScLG0yJhnSc6r/z3Qv+vsta3UV2fAPSAL
-         BZ6LCDy5KDdP+xYlEBGyZIk7L+rBZOP3uzLgG4Geg0yvcvfv93RrnbdFhucDzV+Rm9vH
-         GcYjC5QhDMbCwkOa4WAcd53fGDqTiepm2i80aYrqppEiIJ9PVx58iEAc8XdYPiMagfj6
-         fbf92dFCofWPvdpjKRJPRWcJciQIZagkFpQ8YT6W9HRMt6pO4jK1CMkxmeUsGi0zwKg7
-         sCoQ==
+        bh=T3LsMRu85yB/qOlSnmRAsRxtDcGqXg+1AwrMb5pI1nY=;
+        b=OiqXp7pE8JVW86ucCywEm3rC/UKBhH/gS3uMm6V6lPz43ThEBEXD6WUofqXroWFpUQ
+         5CZV4OlSdRAeFyLPNY4Jblw3qZ8VadYCAN5t2QjH9aUd/O4/VUXDoVKzmF6kx2kzYA54
+         1CCXP0aG8biTN5iupAQLDR2hgW88POgOAz++P7KTy4A0r+3PoVCZ54o13pQAlbVRQdWN
+         kZuB6p0r2g3sdWR/BpliczbNcPuWjonAUXDNXnytK/N8gxAzraEPDo9XkPLAfQMw26SX
+         mj5ZyucqGcZolzUnYGZrTreAi+o+MEv22qEGPAvunSIHFKrkye1jFaXphTqsDD8nfoAy
+         k5Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726018143; x=1726622943;
+        d=1e100.net; s=20230601; t=1726018150; x=1726622950;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cvXBP2PrFyV1Cal0Ui5HcHENV6882J9Z6aJXmbvUT3o=;
-        b=eM/KjHxlx6m7aVJncQtzvMgNS8pTMH9xLDAZIH1q1U8yTFXZFW6zqetX4wRE5d/LYU
-         V9vWKKM9Ai4W4RxhUPweCNbGBIVWN7RQ6pC3HCeH55oTjOD2uglXEM65rM6DGR1KMgCI
-         DPO4X8qVGIp/2e8rxdy7JDPkBrVQZaQkKUjZkY4PEnh0dENm1xY5xrCQd49J8PT2ZKti
-         uV2whzV2PWE+8aTSvMBY82og9jnfGwwMlyaD3upLRYlgcyqNzztR3KVx2aMEOxM+fxR4
-         vVabn6S3ebV5RkYhC24SYCUdzJX1rHWjv080UiJmjnKSjt59BcvhDwfw5ZHFwQTJXB5j
-         SoiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPjCzAHLmfjeRLH0lYHZpb23T6ZZvzdrLuE8JVxGfh3HlZitmVZjAFMSxlspO5GXBMtj54dJlPozjypqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNCbbawG/VCrKivT24D6f6krU0YUgVfhWgK3gCYkEGtG3vxKxT
-	kfrJI1LhDEfI6kyypKU9GaKGtx94i+48EBwlybQcdpFXoI+9m7Lh
-X-Google-Smtp-Source: AGHT+IHymlLUquvDYl1CwnfpjePEpWEUrFZNypsEld4HiY6mhZBV5FvwLlWZUcEkFcAnxqqih1PG7g==
-X-Received: by 2002:a05:6e02:1d94:b0:375:8b0e:4434 with SMTP id e9e14a558f8ab-3a04f0edba0mr191891795ab.16.1726018142952;
-        Tue, 10 Sep 2024 18:29:02 -0700 (PDT)
+        bh=T3LsMRu85yB/qOlSnmRAsRxtDcGqXg+1AwrMb5pI1nY=;
+        b=MSkJDfzn/4+Dxrm541tubcNB7crLZ4hmA+3skpaXHEkNiGkrTdBoj/4s5ptDY+bGSG
+         t3Omg6XUnIPb7Wnd/zgqdkfJJg74YRWrs7t8u0dSMqjzqjqP9j/lp+oAPkNtbZtytiQR
+         Dd0lL/AnzwzZKmzZsOvRX6K7/FJ10ogQEnjNVT2iMCkIvaz9Vht/ZX8v7A6zh0nVZW9w
+         yKB/Je4hUbKj2zwrgONOrS6fFbDwVTZuV05VABEyRZKwRx5xXwiYIf9I6AGsRTx5IFgk
+         hG4qmxf3BFnRwxQzJkurxc5mgJ/+PDWVuzj5MXSnEHuBbHHYg6NL98fvLs0X69j/fvMW
+         fQwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHJ6zqU34hqs3Gtshp8tIS51wXPK3aVRymARVs5+f+c+Ct1N34PeKgmkbX0du1xL7m0TJ2BF2rYqE3xyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb+sPBJfYKH5en2UevTvDguexEhYvrDFPuPlgEUPiAuoAlrtM+
+	P1GVuU27Al5GYEoE/BTL1J7iCQfH6BSZTjJcx2znQsOewm7J8Nl3
+X-Google-Smtp-Source: AGHT+IH3tx8lMHCc7+unvAj5udtcpFzie1RB7+MgSxm4JZnTaAsKyx3vroG72SZyZ+pVjJ6jy7L8Ew==
+X-Received: by 2002:a05:6e02:1b08:b0:39d:351a:d0a2 with SMTP id e9e14a558f8ab-3a0576bc30emr140299235ab.25.1726018150265;
+        Tue, 10 Sep 2024 18:29:10 -0700 (PDT)
 Received: from aford-System-Version.lan (c-75-72-166-104.hsd1.mn.comcast.net. [75.72.166.104])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d094561c8csm1917945173.62.2024.09.10.18.29.00
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d094561c8csm1917945173.62.2024.09.10.18.29.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 18:29:00 -0700 (PDT)
+        Tue, 10 Sep 2024 18:29:07 -0700 (PDT)
 From: Adam Ford <aford173@gmail.com>
 To: linux-phy@lists.infradead.org
 Cc: dominique.martinet@atmark-techno.com,
@@ -81,9 +81,9 @@ Cc: dominique.martinet@atmark-techno.com,
 	Lucas Stach <l.stach@pengutronix.de>,
 	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V7 1/5] phy: freescale: fsl-samsung-hdmi: Replace register defines with macro
-Date: Tue, 10 Sep 2024 20:28:07 -0500
-Message-ID: <20240911012838.944630-2-aford173@gmail.com>
+Subject: [PATCH V7 2/5] phy: freescale: fsl-samsung-hdmi: Simplify REG21_PMS_S_MASK lookup
+Date: Tue, 10 Sep 2024 20:28:08 -0500
+Message-ID: <20240911012838.944630-3-aford173@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240911012838.944630-1-aford173@gmail.com>
 References: <20240911012838.944630-1-aford173@gmail.com>
@@ -95,223 +95,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are 47 registers defined as PHY_REG_xx were xx goes from 00 to
-47.  Simplify this by replacing them all with a macro which is passed
-the register number to return the proper register offset.
+The value of 'S' is writen to two places, PHY_REG3[7:4] and
+PHY_REG21[3:0].  There is a lookup table which contains
+the value of PHY_REG3.  Rather than using a switch statement
+based on the pixel clock to search for the value of 'S' again,
+just shift the contents of PHY_REG3[7:4] >> 4 and place the value
+in PHY_REG21[3:0].  Doing this can eliminate an entire function.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
 Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 133 ++++++-------------
- 1 file changed, 43 insertions(+), 90 deletions(-)
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 39 ++------------------
+ 1 file changed, 4 insertions(+), 35 deletions(-)
 
 diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-index 9048cdc760c2..acea7008aefc 100644
+index acea7008aefc..4f6874226f9a 100644
 --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
 +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-@@ -14,76 +14,29 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- 
--#define PHY_REG_00		0x00
--#define PHY_REG_01		0x04
--#define PHY_REG_02		0x08
--#define PHY_REG_08		0x20
--#define PHY_REG_09		0x24
--#define PHY_REG_10		0x28
--#define PHY_REG_11		0x2c
--
--#define PHY_REG_12		0x30
--#define  REG12_CK_DIV_MASK	GENMASK(5, 4)
--
--#define PHY_REG_13		0x34
--#define  REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
--
--#define PHY_REG_14		0x38
--#define  REG14_TOL_MASK		GENMASK(7, 4)
--#define  REG14_RP_CODE_MASK	GENMASK(3, 1)
--#define  REG14_TG_CODE_HIGH_MASK	GENMASK(0, 0)
--
--#define PHY_REG_15		0x3c
--#define PHY_REG_16		0x40
--#define PHY_REG_17		0x44
--#define PHY_REG_18		0x48
--#define PHY_REG_19		0x4c
--#define PHY_REG_20		0x50
--
--#define PHY_REG_21		0x54
--#define  REG21_SEL_TX_CK_INV	BIT(7)
--#define  REG21_PMS_S_MASK	GENMASK(3, 0)
--
--#define PHY_REG_22		0x58
--#define PHY_REG_23		0x5c
--#define PHY_REG_24		0x60
--#define PHY_REG_25		0x64
--#define PHY_REG_26		0x68
--#define PHY_REG_27		0x6c
--#define PHY_REG_28		0x70
--#define PHY_REG_29		0x74
--#define PHY_REG_30		0x78
--#define PHY_REG_31		0x7c
--#define PHY_REG_32		0x80
-+#define PHY_REG(reg)		(reg * 4)
- 
-+#define REG12_CK_DIV_MASK	GENMASK(5, 4)
-+
-+#define REG13_TG_CODE_LOW_MASK	GENMASK(7, 0)
-+
-+#define REG14_TOL_MASK		GENMASK(7, 4)
-+#define REG14_RP_CODE_MASK	GENMASK(3, 1)
-+#define REG14_TG_CODE_HIGH_MASK	GENMASK(0, 0)
-+
-+#define REG21_SEL_TX_CK_INV	BIT(7)
-+#define REG21_PMS_S_MASK	GENMASK(3, 0)
- /*
-  * REG33 does not match the ref manual. According to Sandor Yu from NXP,
-  * "There is a doc issue on the i.MX8MP latest RM"
-  * REG33 is being used per guidance from Sandor
-  */
-+#define REG33_MODE_SET_DONE	BIT(7)
-+#define REG33_FIX_DA		BIT(1)
- 
--#define PHY_REG_33		0x84
--#define  REG33_MODE_SET_DONE	BIT(7)
--#define  REG33_FIX_DA		BIT(1)
--
--#define PHY_REG_34		0x88
--#define  REG34_PHY_READY	BIT(7)
--#define  REG34_PLL_LOCK		BIT(6)
--#define  REG34_PHY_CLK_READY	BIT(5)
--
--#define PHY_REG_35		0x8c
--#define PHY_REG_36		0x90
--#define PHY_REG_37		0x94
--#define PHY_REG_38		0x98
--#define PHY_REG_39		0x9c
--#define PHY_REG_40		0xa0
--#define PHY_REG_41		0xa4
--#define PHY_REG_42		0xa8
--#define PHY_REG_43		0xac
--#define PHY_REG_44		0xb0
--#define PHY_REG_45		0xb4
--#define PHY_REG_46		0xb8
--#define PHY_REG_47		0xbc
-+#define REG34_PHY_READY	BIT(7)
-+#define REG34_PLL_LOCK		BIT(6)
-+#define REG34_PHY_CLK_READY	BIT(5)
- 
- #define PHY_PLL_DIV_REGS_NUM 6
- 
-@@ -369,29 +322,29 @@ struct reg_settings {
- };
- 
- static const struct reg_settings common_phy_cfg[] = {
--	{ PHY_REG_00, 0x00 }, { PHY_REG_01, 0xd1 },
--	{ PHY_REG_08, 0x4f }, { PHY_REG_09, 0x30 },
--	{ PHY_REG_10, 0x33 }, { PHY_REG_11, 0x65 },
-+	{ PHY_REG(0), 0x00 }, { PHY_REG(1), 0xd1 },
-+	{ PHY_REG(8), 0x4f }, { PHY_REG(9), 0x30 },
-+	{ PHY_REG(10), 0x33 }, { PHY_REG(11), 0x65 },
- 	/* REG12 pixclk specific */
- 	/* REG13 pixclk specific */
- 	/* REG14 pixclk specific */
--	{ PHY_REG_15, 0x80 }, { PHY_REG_16, 0x6c },
--	{ PHY_REG_17, 0xf2 }, { PHY_REG_18, 0x67 },
--	{ PHY_REG_19, 0x00 }, { PHY_REG_20, 0x10 },
-+	{ PHY_REG(15), 0x80 }, { PHY_REG(16), 0x6c },
-+	{ PHY_REG(17), 0xf2 }, { PHY_REG(18), 0x67 },
-+	{ PHY_REG(19), 0x00 }, { PHY_REG(20), 0x10 },
- 	/* REG21 pixclk specific */
--	{ PHY_REG_22, 0x30 }, { PHY_REG_23, 0x32 },
--	{ PHY_REG_24, 0x60 }, { PHY_REG_25, 0x8f },
--	{ PHY_REG_26, 0x00 }, { PHY_REG_27, 0x00 },
--	{ PHY_REG_28, 0x08 }, { PHY_REG_29, 0x00 },
--	{ PHY_REG_30, 0x00 }, { PHY_REG_31, 0x00 },
--	{ PHY_REG_32, 0x00 }, { PHY_REG_33, 0x80 },
--	{ PHY_REG_34, 0x00 }, { PHY_REG_35, 0x00 },
--	{ PHY_REG_36, 0x00 }, { PHY_REG_37, 0x00 },
--	{ PHY_REG_38, 0x00 }, { PHY_REG_39, 0x00 },
--	{ PHY_REG_40, 0x00 }, { PHY_REG_41, 0xe0 },
--	{ PHY_REG_42, 0x83 }, { PHY_REG_43, 0x0f },
--	{ PHY_REG_44, 0x3E }, { PHY_REG_45, 0xf8 },
--	{ PHY_REG_46, 0x00 }, { PHY_REG_47, 0x00 }
-+	{ PHY_REG(22), 0x30 }, { PHY_REG(23), 0x32 },
-+	{ PHY_REG(24), 0x60 }, { PHY_REG(25), 0x8f },
-+	{ PHY_REG(26), 0x00 }, { PHY_REG(27), 0x00 },
-+	{ PHY_REG(28), 0x08 }, { PHY_REG(29), 0x00 },
-+	{ PHY_REG(30), 0x00 }, { PHY_REG(31), 0x00 },
-+	{ PHY_REG(32), 0x00 }, { PHY_REG(33), 0x80 },
-+	{ PHY_REG(34), 0x00 }, { PHY_REG(35), 0x00 },
-+	{ PHY_REG(36), 0x00 }, { PHY_REG(37), 0x00 },
-+	{ PHY_REG(38), 0x00 }, { PHY_REG(39), 0x00 },
-+	{ PHY_REG(40), 0x00 }, { PHY_REG(41), 0xe0 },
-+	{ PHY_REG(42), 0x83 }, { PHY_REG(43), 0x0f },
-+	{ PHY_REG(44), 0x3E }, { PHY_REG(45), 0xf8 },
-+	{ PHY_REG(46), 0x00 }, { PHY_REG(47), 0x00 }
- };
- 
- struct fsl_samsung_hdmi_phy {
-@@ -442,7 +395,7 @@ fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_samsung_hdmi_phy *phy,
- 	}
- 
- 	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
--	       phy->regs + PHY_REG_21);
-+	       phy->regs + PHY_REG(21));
+@@ -364,40 +364,6 @@ to_fsl_samsung_hdmi_phy(struct clk_hw *hw)
+ 	return container_of(hw, struct fsl_samsung_hdmi_phy, hw);
  }
  
+-static void
+-fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_samsung_hdmi_phy *phy,
+-				      const struct phy_config *cfg)
+-{
+-	u8 div = 0x1;
+-
+-	switch (cfg->pixclk) {
+-	case  22250000 ...  33750000:
+-		div = 0xf;
+-		break;
+-	case  35000000 ...  40000000:
+-		div = 0xb;
+-		break;
+-	case  43200000 ...  47500000:
+-		div = 0x9;
+-		break;
+-	case  50349650 ...  63500000:
+-		div = 0x7;
+-		break;
+-	case  67500000 ...  90000000:
+-		div = 0x5;
+-		break;
+-	case  94000000 ... 148500000:
+-		div = 0x3;
+-		break;
+-	case 154000000 ... 297000000:
+-		div = 0x1;
+-		break;
+-	}
+-
+-	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
+-	       phy->regs + PHY_REG(21));
+-}
+-
  static void
-@@ -469,7 +422,7 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
- 		break;
- 	}
- 
--	writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY_REG_12);
-+	writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY_REG(12));
- 
- 	/*
- 	 * Calculation for the frequency lock detector target code (fld_tg_code)
-@@ -489,11 +442,11 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
- 
- 	/* FLD_TOL and FLD_RP_CODE taken from downstream driver */
- 	writeb(FIELD_PREP(REG13_TG_CODE_LOW_MASK, fld_tg_code),
--	       phy->regs + PHY_REG_13);
-+	       phy->regs + PHY_REG(13));
- 	writeb(FIELD_PREP(REG14_TOL_MASK, 2) |
- 	       FIELD_PREP(REG14_RP_CODE_MASK, 2) |
- 	       FIELD_PREP(REG14_TG_CODE_HIGH_MASK, fld_tg_code >> 8),
--	       phy->regs + PHY_REG_14);
-+	       phy->regs + PHY_REG(14));
- }
- 
- static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
-@@ -503,7 +456,7 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
- 	u8 val;
- 
- 	/* HDMI PHY init */
--	writeb(REG33_FIX_DA, phy->regs + PHY_REG_33);
-+	writeb(REG33_FIX_DA, phy->regs + PHY_REG(33));
- 
- 	/* common PHY registers */
- 	for (i = 0; i < ARRAY_SIZE(common_phy_cfg); i++)
-@@ -511,14 +464,14 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
- 
- 	/* set individual PLL registers PHY_REG2 ... PHY_REG7 */
+ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
+ 					    const struct phy_config *cfg)
+@@ -466,7 +432,10 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
  	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
--		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG_02 + i * 4);
-+		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
+ 		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
  
- 	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
+-	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
++	/* High nibble of pll_div_regs[1] contains S which also gets written to REG21 */
++	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
++	       cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
++
  	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
  
--	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG_33);
-+	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
- 
--	ret = readb_poll_timeout(phy->regs + PHY_REG_34, val,
-+	ret = readb_poll_timeout(phy->regs + PHY_REG(34), val,
- 				 val & REG34_PLL_LOCK, 50, 20000);
- 	if (ret)
- 		dev_err(phy->dev, "PLL failed to lock\n");
+ 	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
 -- 
 2.43.0
 
