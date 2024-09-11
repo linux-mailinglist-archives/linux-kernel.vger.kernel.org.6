@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-325518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293A5975AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBEB975AB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4294F1C231D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9161B1C221F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448E31B9B47;
-	Wed, 11 Sep 2024 19:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12821B9B45;
+	Wed, 11 Sep 2024 19:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9lDfpTn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kwcgpc0/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4BA762EB;
-	Wed, 11 Sep 2024 19:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A3B1B1D53;
+	Wed, 11 Sep 2024 19:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726081519; cv=none; b=RQ0T98d7B62qt21IQSS4bK4gBevgKhwFBAfppVWS8mn5EHIZ6iglVyzRFU3/klqfcmc14XcEPY7Y1OQS4EHoc0Ju7UKyTOTsQcI1VfkC6iwtUwqsQPzo3J1XV0ay/5wS/dBlJdJlomx9X/x0/aHPLNMSJUJqNnSxAoDNCobl3Xs=
+	t=1726081880; cv=none; b=VA/epHtS6A51pxW5REEFCZK42cK2pxiKmdhMqZbHyozt0lQ+74XUnPTrNQGtVruunb9HklUQfSFzVjYLgvqe5LDOA0Ze3KunRaPAufC+l27xprMKZXPrEr7/+VaeZWUvMMXcSMpKzPqRcXBXxzu9zmPVIFP9+KjFsEyD9Ptc6vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726081519; c=relaxed/simple;
-	bh=0D6HKZtwwVTLn2g82F7IMTiNI9WZKYvVIf++vYQyoVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rfdU7ascJc3c3qeR3aBm/a3ebKBKy4CnMqx5i91CAvP9LniY0SFJjegDwj50C2aTT6L3JCOFuhT1A/v+vPh2ENCRZDxDTqGIYVSHMVSZcItWpvRLRMW0UplrgG8zCjiGT/R1oKTnihpJuAdes/5oRi6WyC3ey06Wim3fhOCE0Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9lDfpTn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE11CC4CEC0;
-	Wed, 11 Sep 2024 19:05:18 +0000 (UTC)
+	s=arc-20240116; t=1726081880; c=relaxed/simple;
+	bh=diP0SXIxkHbJydqL49v6X2gZprT1jmoY++ECoNAZWlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIUPTX2tpLI40W+qkF1AwPtkDSJ364v5ERdkbmzOaDaUJqK0wOC/gvPMNCsrDMmlOjHxJxD8XbCZSSGeEfMoPGKFIPooXaqULZVquPH8IgDWChmPDJ20Qbcp6vwOxxol5SJmDEuv7r2Ymn9gH7muim4PCsp9x3lHy772+iAXYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kwcgpc0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C7BAC4CEC7;
+	Wed, 11 Sep 2024 19:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726081519;
-	bh=0D6HKZtwwVTLn2g82F7IMTiNI9WZKYvVIf++vYQyoVA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=C9lDfpTn6FaD8EY3GnDtWdqF8qz5r5Y0ZkLfeM3C+5v1qNaMiVekK+llbVTW5pXQH
-	 NCqI5NOK6WpXnXyfyznbsIZ2bHxvpznh8mc2wGd0mMNHhAISGzPDJQB4wMbm9F1zJZ
-	 ORIC2zgNocbXuz0Dy3P0vzcUL+DuXvrAkrS7cMv6i7M6cly6rKoDiwOfJAOxNmPGQl
-	 PuGlR4lEhaqiymPFhpm8VYlxjNBstWt3npxeShaf/32cxUafNE3Xxk0cEUuE7eRvn9
-	 LIeUNGjtVaIZ1kzyhb8K0EylMHlDgZ9Ii8RiBf87+1yxCSa/kTz+Iozc2NIsUvit0/
-	 /c0V2Twcm/veA==
-Date: Wed, 11 Sep 2024 14:05:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: bhelgaas@google.com, mario.limonciello@amd.com,
-	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
-Message-ID: <20240911190516.GA644336@bhelgaas>
+	s=k20201202; t=1726081879;
+	bh=diP0SXIxkHbJydqL49v6X2gZprT1jmoY++ECoNAZWlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kwcgpc0/qVgRRBE0PDMC/mlecA+6Xpy+Z1z/GMj3zWR3csjY/LVSE1suhLCSR1zTN
+	 GNkSYvlPcXAZKaEcPepVmNVUDeCmglmOt4R+jSER55GRvuJ8q8Rh+FR5qGzMys/D5R
+	 YbQvSlnrVrCAHMUVXakxn0hB4B8m9ysc+VPvORX04lxfZ0hZJTKLYTCqUZfgf5jbrB
+	 I0fdCSQUIKavfN79+QPPEQmYM0E6OEkSNi2N2Ix/IRns55+iHll7Ns9qSlaHXpHBbQ
+	 QAiEkTZLDgip7u+M46vKirAh1zeD8OnVLElP0zgYv+ZecgaSV72ijYPXDxVinkUmDr
+	 LKaV8ykBIeKyw==
+Date: Wed, 11 Sep 2024 20:11:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] riscv: sophgo: Add pinctrl support for CV1800
+ series SoC
+Message-ID: <20240911-perfectly-buddhist-0c79aed7bb98@spud>
+References: <IA1PR20MB495374DB8C4208575AAC9675BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240909-prowler-renewal-0592d820ccca@spud>
+ <IA1PR20MB4953A0D6A2B73D03BF162671BB992@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <20240910-bust-mulled-e45f6f6ef29d@spud>
+ <IA1PR20MB495316205F5AC588867FA8E1BB9A2@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ffr1Bt9qHGZE+eZ/"
+Content-Disposition: inline
+In-Reply-To: <IA1PR20MB495316205F5AC588867FA8E1BB9A2@IA1PR20MB4953.namprd20.prod.outlook.com>
+
+
+--ffr1Bt9qHGZE+eZ/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240712062411.35732-1-kai.heng.feng@canonical.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
-> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
-> connected.
-> 
-> The following error message can be found during shutdown:
-> pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
-> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
-> pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
-> pcieport 0000:09:04.0:    [ 7] BadDLLP
-> 
-> Calling aer_remove() during shutdown can quiesce the error message,
-> however the spurious wakeup still happens.
-> 
-> The issue won't happen if the device is in D3 before system shutdown, so
-> putting device to low power state before shutdown to solve the issue.
-> 
-> I don't have a sniffer so this is purely guesswork, however I believe
-> putting device to low power state it's the right thing to do.
+On Wed, Sep 11, 2024 at 06:25:49AM +0800, Inochi Amaoto wrote:
+> On Tue, Sep 10, 2024 at 05:13:43PM GMT, Conor Dooley wrote:
+> > On Tue, Sep 10, 2024 at 06:24:34AM +0800, Inochi Amaoto wrote:
+> > > On Mon, Sep 09, 2024 at 03:41:10PM GMT, Conor Dooley wrote:
+> > > > On Sat, Aug 31, 2024 at 06:38:40AM +0800, Inochi Amaoto wrote:
+> > > > > Add basic pinctrl driver for Sophgo CV1800 series SoCs.
+> > > > > This patch series aims to replace the previous patch from Jisheng=
+ [1].
+> > > > > Since the pinctrl of cv1800 has nested mux and its pin defininati=
+on
+> > > > > is discrete, it is not suitable to use "pinctrl-single" to cover =
+the
+> > > > > pinctrl device.
+> > > > >=20
+> > > > > This patch require another patch [2] that provides standard attri=
+bute
+> > > > > "input-schmitt-microvolt"
+> > > > >=20
+> > > > > The v4 version is from [3]
+> > > >=20
+> > > > Which version of this ended up in linux-next? I see a link to v4 in
+> > > > what's been applied, but this v5 was sent before that code was
+> > > > committed.
+> > > >=20
+> > > > Either way, what's been applied and what's here produce warnings:
+> > > > cv1812h.dtsi:19.28-24.5: Warning (simple_bus_reg): /soc/pinctrl@300=
+8000: simple-bus unit address format error, expected "3001000"
+> > > > cv1800b.dtsi:18.28-23.5: Warning (simple_bus_reg): /soc/pinctrl@300=
+8000: simple-bus unit address format error, expected "3001000"
+> > > >=20
+> > > > It's just a copy-paste error I would imagine, but please send a fix.
+> > >=20
+> > > Yes, it is like some copy-paste error, I will fix it.
+> >=20
+> > I'd rather you had sent some follow-up patches, than rebase your tree at
+> > this point in the cycle. I assume you hadn't yet sent that stuff in a PR
+> > to Arnd?
+> >=20
+> Yes, the pinctrl dts needs binding header, which is taken by Linus.
+> So we hadn't sent them. This is why I sent a new version to fix this.
 
-My objection here is that we don't have an explanation of why this
-should matter or a pointer to any spec language about this situation,
-so it feels a little bit random.
+Oh, I'm surprised that you didn't get a shared branch from him for that
+to be honest.
 
-I suppose the problem wouldn't happen if AER interrupts were disabled?
-We already do disable them in aer_suspend(), but maybe that's not used
-in the shutdown path?
+--ffr1Bt9qHGZE+eZ/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-My understanding is that .shutdown() should turn off device interrupts
-and stop DMA.  So maybe we need an aer_shutdown() that disables
-interrupts?
+-----BEGIN PGP SIGNATURE-----
 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/pci/pci-driver.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index af2996d0d17f..4c6f66f3eb54 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
->  	if (drv && drv->shutdown)
->  		drv->shutdown(pci_dev);
->  
-> +	/*
-> +	 * If driver already changed device's power state, it can mean the
-> +	 * wakeup setting is in place, or a workaround is used. Hence keep it
-> +	 * as is.
-> +	 */
-> +	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
-> +		pci_prepare_to_sleep(pci_dev);
-> +
->  	/*
->  	 * If this is a kexec reboot, turn off Bus Master bit on the
->  	 * device to tell it to not continue to do DMA. Don't touch
-> -- 
-> 2.43.0
-> 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHrUgAKCRB4tDGHoIJi
+0s3xAP9ysBxOhYOGk3X0TcHnR9KorTtMFJdJOSbJAt+T6+oguwEArUUlgwxXzKR4
++g2VB215ZOfEiVyNDrbLaj9srEI0AAo=
+=yRNe
+-----END PGP SIGNATURE-----
+
+--ffr1Bt9qHGZE+eZ/--
 
