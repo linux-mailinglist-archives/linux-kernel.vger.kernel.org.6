@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-324371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA52974BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C515974BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DA2285FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F5461C2148C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2365313D539;
-	Wed, 11 Sep 2024 07:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993FC13C80E;
+	Wed, 11 Sep 2024 07:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iwYCyZRw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YCP2qb1P"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F5D13AD06;
-	Wed, 11 Sep 2024 07:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22487E107;
+	Wed, 11 Sep 2024 07:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040760; cv=none; b=hD90Uh47KRp23G/k0FqcXk5KhCitFcV8++FV34JTRoIle2GFxiJxXyjEQtsSMKDsJ+LYz2njpnOaqwuf7cL4dL5Ei0fUFO95nvhAA8jF6ihjy7hAHTWbueSdllQEK7956sRnNXSXFer4sOf/KmscJ4W2IFzAA2OIG5JRzjTzNoA=
+	t=1726040834; cv=none; b=IBBPCdFHahnP8+dODnViGa4rRvzkyn1H4oVjA+WbIUkPO2COQIvnfbnFjhZSc1S3FVvPmvVMWQRloo9u5KkNbwdlIePMkK9IrDGxwzO+iAZ+f4XjJ+KGYnHaoe2v6Zcc9zHxZuNwcCT0fIhIYDekdf6P/rsPEpQKS5UxXx9zmGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040760; c=relaxed/simple;
-	bh=E2t7Y8fUs8iygI4qmp0zAEqA/uoNNumg4kKQJC2Ab7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDXmzTpQD2VCXkGoDL9cfKqc0nSueP74xF4HaX3nXBE8NcLx+VQKR0EL8fwIyBcuoqVH/PUKz/XNOZdKWHdIcZD7sfRKd8n1pC9sY1RTthbOTeuusmrOJpC4qvQiAG5YS8tna6PHAnBLAkTTSPiytp4XUK4vD5RsGf2Eo0Or/3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iwYCyZRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 761C2C4CEC5;
-	Wed, 11 Sep 2024 07:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726040760;
-	bh=E2t7Y8fUs8iygI4qmp0zAEqA/uoNNumg4kKQJC2Ab7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwYCyZRwilrza2g+V5FcYcrKPo3jN/mf/4RilI8HiRPIBD/3KFpvrXt6ogwTOr7Xm
-	 s0ESu6W2YHkVJ4ip9y2a0cVswjspdsSK72iIXD/FDhCakAdZr4z3Yq2RiiqxB+W61+
-	 m/oHGaoX7rS6gLStZKWNPktLSYmgBm/+RSjoyyn8=
-Date: Wed, 11 Sep 2024 09:45:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] serial: qcom-geni: fix console corruption
-Message-ID: <2024091129-mayday-credible-c891@gregkh>
-References: <20240906131336.23625-1-johan+linaro@kernel.org>
- <ZuE2WkMMkdRDzRFQ@hovoldconsulting.com>
+	s=arc-20240116; t=1726040834; c=relaxed/simple;
+	bh=yxtwvMMr9SWwBpt9wWzm4OLa9DLuNdRcD/P8VKUpHiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NJcERPxQJvBKf+XxcEy77qayvqbjLwzPGBKtpVAjqK5DW7uZS5EWvceUdgCPYj6o5bCpJvXOK1ymgEs5dDv41DG61ECP2zXdNYMFTwm8HrPcHd1lb+5cAgvh4VeYpxXQHmuoBv3vNiOHvnhxzQ+DL5y21WzsTHfVcMxgz1YEO0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YCP2qb1P; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726040829;
+	bh=BBLiZ0Tzs2SAihySNrkfyO0VCU1stq6i+ktx423xcBs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YCP2qb1PsKqX8dy842ucaHIEZrSzgvyJXC2ZUiMU8hvXlEMGV3VJzDU++L4BEJ+HS
+	 T8kFqKaNGsOqoGv2oE7MVllfEKKtf+SlPfx7k6ML47fjVBu2+3fwli4GtiFLJiujgZ
+	 xe1y3WEppOXi9oVjGod8BRXBXtZ6pxEpcMYlUmmqZGGX4lzLzsUoxGmPym0Xs0t528
+	 gO4j2VaCmgovDA/9BgeNMwprLxzSQh298/0xcaQTju5x0iZHYWUrJIrEjYWklqt8jN
+	 eSGrTdbmOGQnRR0ottaDE48LdX70JVf6iFPib7AoyNhhisXSXlf61L82oHuu+AnoPO
+	 IxmOSSEwj5lLA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3Xhs45l5z4wbr;
+	Wed, 11 Sep 2024 17:47:09 +1000 (AEST)
+Date: Wed, 11 Sep 2024 17:47:08 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the vhost tree
+Message-ID: <20240911174708.5c52b33a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuE2WkMMkdRDzRFQ@hovoldconsulting.com>
+Content-Type: multipart/signed; boundary="Sig_/K+T6Tx1cxw3kNOlb//lQU6o";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Sep 11, 2024 at 08:19:06AM +0200, Johan Hovold wrote:
-> On Fri, Sep 06, 2024 at 03:13:28PM +0200, Johan Hovold wrote:
-> > This series is a follow-on series to the lockup fixes [1] that addresses
-> > a number of issues in the Qualcomm GENI console code, including corrupt
-> > console output during boot, which is a problem for automated CI testing.
-> 
-> > [1] https://lore.kernel.org/lkml/20240704101805.30612-1-johan+linaro@kernel.org/
-> > 
-> > Changes in v2
-> >  - determine poll timeout in set_termios() and avoid hard coding fifo
-> >    size in calculation
-> >  - move fifo drain helper under console ifdef to avoid an unused function
-> >    warning as reported by the kernel test robot
-> >  - drop a redundant active check from fifo drain helper
-> > 
-> > 
-> > Douglas Anderson (3):
-> >   soc: qcom: geni-se: add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
-> >   serial: qcom-geni: fix arg types for qcom_geni_serial_poll_bit()
-> >   serial: qcom-geni: introduce qcom_geni_serial_poll_bitfield()
-> > 
-> > Johan Hovold (5):
-> >   serial: qcom-geni: fix fifo polling timeout
-> >   serial: qcom-geni: fix false console tx restart
-> >   serial: qcom-geni: fix console corruption
-> >   serial: qcom-geni: disable interrupts during console writes
-> >   serial: qcom-geni: fix polled console corruption
-> 
-> Any chance we could these fixes into 6.12-rc1? 
+--Sig_/K+T6Tx1cxw3kNOlb//lQU6o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, let me catch up on patches today and tomorrow, have been traveling
-for conferences and have a few days reprieve before the next rounds...
+Hi all,
 
-thanks,
+The following commit is also in the mm-stable tree as a different commit
+(but the same patch):
 
-greg k-h
+  040b4f437e17 ("vduse: avoid using __GFP_NOFAIL")
+
+This is commit
+
+  955abe0a1b41 ("vduse: avoid using __GFP_NOFAIL")
+
+in the mm-stable tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/K+T6Tx1cxw3kNOlb//lQU6o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhSvwACgkQAVBC80lX
+0GxWAQgAhNFUxEaAWuoOCPujvUpX9MYocxo+NIaA9h9zlDIzMU/lnJGMGBxt+dhj
+e7N8g087JjV2sTgfgw1y9l4lqdZd4/ZaMVzKUB5vTP08X3p8nkJnNJb1zpP/5npy
+ShRoojfhN0uli1qzYb3BUHZSDkxfYmM8Fzxk+LboaM2KtgVpSgDxLIdTZCAbjVgr
+IbWgIkcqpPsXApYtN0KKGuH+FhZfqqg6lzQotnSnzTlu8BxZw4K3Sy7EItTLrbnq
+zB3slotSuyEhccNFVwpNHqIEg/N0hTUyWXCZE8LfdTExjUdMTaNbEzD0lgRLtAY3
+tXv94spfZ+9uQ4G3mQLcOqAc5P73zg==
+=vidA
+-----END PGP SIGNATURE-----
+
+--Sig_/K+T6Tx1cxw3kNOlb//lQU6o--
 
