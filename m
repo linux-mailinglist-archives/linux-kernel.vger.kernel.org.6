@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-325174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335899755EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D34BA975627
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66D82B2B6C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:42:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DDEB2BAB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4479B1A3A8E;
-	Wed, 11 Sep 2024 14:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA021A305F;
+	Wed, 11 Sep 2024 14:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RWkL5dP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3rjDxk1S"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D261714AC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FCD1A3030;
+	Wed, 11 Sep 2024 14:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065648; cv=none; b=nUTCzwlt5MvA6h5Sw9TfpgEGXRtfqiuXHk2eBM618M6p431lb9NMHVuhvipZtUpLlhxqcxHbXr0l4/SbPODfHtXImyPjRwjiiSUVLBc4bKwaM/MlbMqcuiVD+S14ztCpYqVGGhAFFEpuMWcVk0ZeCLFYctfNuudvcMqbKERTD04=
+	t=1726065678; cv=none; b=JFLgksTcGlY508HmkzJvzXD/3vScrORtqw3XorzcGAPZAt8pp9GTt1E7rbpPKK++fBohSBqFRtSqDrj9jkKW5pF/X5IcslFXy59TjMw2q/jBpDnQjEdENY+kzuJQgnc6G+bExApZqh86urBDWP+KHGhS+eCyIrj+ZphXxJf4vvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065648; c=relaxed/simple;
-	bh=Axiqh1nzBbK2Ig2WsrozBE8yrdfCB6PUjqJ9fD9Db2k=;
+	s=arc-20240116; t=1726065678; c=relaxed/simple;
+	bh=3Z/oed22zgRXX/UWxZEvfrVoDzpUzLNfFriEfxP+4+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCuvUmUCns7BGZ+oFlMmnX/S9+P3WBGZcUk1exdExqmybreaZ9DgwY/XWjeYbiRHRR0mm6t2wy9A1OD8uDMa6h09vbqqpE7tQTJGC9H0rbCbe+45AjQ3YutlF9boTOtdZp/ubr4LV/pJBoq8l9dkIFTpk3rZaySXRYIQ+I3dO3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=RWkL5dP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44ED8C4CEC0;
-	Wed, 11 Sep 2024 14:40:47 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RWkL5dP7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726065645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TJV7uvW8wxglOna89ziSDrdWLDv/dSzaNs29gG5bGs=;
-	b=RWkL5dP7s9ajBanZXSch1EXo4YCbeShCM/6dMiiTbOHPz+lbgTM1o7grU3tRKUMdsA/er1
-	2t6plwhsru5M+BFMBTnWJGkYkocRAgBKW2SjfOENJ5hPtCW6WTIOPLM9WPSaZMElRsYEbR
-	SjG++7t4630c9BEWiM4fesoQJ6+UQ1Q=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c02ef0b1 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 11 Sep 2024 14:40:43 +0000 (UTC)
-Date: Wed, 11 Sep 2024 16:40:41 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Aishwarya TCV <aishwarya.tcv@arm.com>, adhemerval.zanella@linaro.org,
-	linux-kernel@vger.kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH v2] selftests: vDSO: don't include generated headers for
- chacha test
-Message-ID: <ZuGr6S_At40u4WVY@zx2c4.com>
-References: <ZuGcQnzUev6eAy0w@zx2c4.com>
- <20240911133745.3124327-2-Jason@zx2c4.com>
- <8d4c1292-1e4d-4d11-b6c2-66dbb5aedb6d@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJSazqJlcBtMXp42snmPQVjnGc5z2ofBreRIioHY2M0NORJ3K/zU+mxowr2bRnj/GIFJ4VNzs8tCZA+Q2+7mpIC1gtU5xq2IxE8n9amQ/bYZtJaycAoPSxmV3Y5SH7z8hXpYxzAXpxKERQqd3FKD5/BxlrZtIOr4VL/VtDwh3XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3rjDxk1S; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=cwX/d7s8taJ27bBmNgSIlqFsFF6eCFJzdq+jAwfqESY=; b=3rjDxk1S1+AJVgfJlvcVlviosV
+	BOHjldbf7yHNBu81t5tp0U5jZGeD0DdqI86y4ED6PLUmTK1jiSMlDQgsuuPevhdlw60oOXn3d4lTm
+	fqvXubYxCqsNDlp0l+FIUb5IyD0QaMcy+kjtCzaD6WjyBXSXl+wdKeY8+MFhU88xtwA4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soOWl-007DaL-Mq; Wed, 11 Sep 2024 16:41:03 +0200
+Date: Wed, 11 Sep 2024 16:41:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	sudongming1@huawei.com, xujunsheng@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, jdamato@fastly.com,
+	horms@kernel.org, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 net-next 11/11] net: add ndo_validate_addr check in
+ dev_set_mac_address
+Message-ID: <a167de50-9759-4ba6-97a6-96cd6356fdc3@lunn.ch>
+References: <20240910075942.1270054-1-shaojijie@huawei.com>
+ <20240910075942.1270054-12-shaojijie@huawei.com>
+ <CAH-L+nP2oy4Haw1+8Jy3GGgphxBii8m2zD03FXbC0SeR7QdhQg@mail.gmail.com>
+ <dbc5f648-4fc0-48f6-be71-cbecd1f54522@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d4c1292-1e4d-4d11-b6c2-66dbb5aedb6d@sirena.org.uk>
+In-Reply-To: <dbc5f648-4fc0-48f6-be71-cbecd1f54522@huawei.com>
 
-On Wed, Sep 11, 2024 at 03:12:35PM +0100, Mark Brown wrote:
-> On Wed, Sep 11, 2024 at 03:36:32PM +0200, Jason A. Donenfeld wrote:
+> This patch may not work as expected.
 > 
-> > It's not correct to use $(top_srcdir) for generated header files, for
-> > builds that are done out of tree via O=, and $(objtree) isn't valid in
-> > the selftests context. Instead, just obviate the need for these
-> > generated header files by defining empty stubs in tools/include, which
-> > is the same thing that's done for rwlock.h.
-> 
-> ...
-> 
-> > I'll replace the broken commit with this one. I've verified the
-> > kselftests are fine now, particularly for kvm.
-> 
-> Did you also check perf?  For arm64 it uses the sysregs values though I
-> don't off hand know if that includes any of the generated values.  I
-> would expect that KVM will start breaking for arm64 at some point even
-> if it works for now, there was a desire to replace use of magic numbers
-> for registers in the tests with defines.
+> ndo_validate_addr() has only one parameter.
+> The sa parameter of the MAC address is not transferred to the function.
+> So ndo_validate_addr() checks the old MAC address, not the new MAC address.
 
-I just booted an arm64 VM and built perf with all the various options
-and such, and it works fine. Those header files in the fixup commit
-aren't seen by perf.
+Yes, i agree. The current API does not lend itself to validation
+before change.
 
-Jason
+> I haven't found a better way to fix it yet.
+
+Maybe in dev_set_mac_address(), make a copy of dev->dev_addr. Call
+ops->ndo_set_mac_address(). If there is no error call
+ndo_validate_addr(). If that returns an error, call
+ops->ndo_set_mac_address() again with the old MAC address, and then
+return the error from ndo_validate_addr().
+
+It is not great, but it is the best i can think of.
+
+Since this is not as simple i was expecting, feel free to drop it from
+your patchset, and submit it as a standalone patch.
+
+	Andrew
 
