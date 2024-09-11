@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-324400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB28974C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02688974C03
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BB51F253FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAA9286102
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C13153565;
-	Wed, 11 Sep 2024 08:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E5F140397;
+	Wed, 11 Sep 2024 08:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iCTgCMd/"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UjW021vy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0A214F10F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729F2143889
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041715; cv=none; b=tfvTrtvthEn/wVmH8vOaCfrqNmS0ubgOBUIeHm1C33mYEe1ZwvFhyJkzxcEQIfHOx6I/FBOhuRpWjtMUlcIPFhePSqoA0vk1N5ITtefm+78050RJYXQNntm4F7g8Q7x8X79amPpCd2RjUhvM4+4EEuI4tCZzwhYQI2YJXohEJ3k=
+	t=1726041763; cv=none; b=RQHALqjNCUapoLjL5FSBZbD38vjs+aZR4PQPEG/kYBaBzyYXoVs2tPM2VJ9PV+mhTmN4lj6KIr87ZuwfPKMsx6p0o8TWtuatZC4058BnIXA3YIEeCTWnhNgxQUQVsCMMIMjQZBL6urKz55Dhyi3yeQKHTG/Jv+/QEL3rLONiLVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041715; c=relaxed/simple;
-	bh=+9oLPzwFmt7zWv2BKmL5l8ncYG/9nKsygYhoxabtxq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j/KIPqc+P+VOkWfR8izjR7uFgIEAVJ1Cg2/JtgEch0Cp8O90/ldyh2f0YT7BIqAdpu2UqMJLDVo+rO+ZzfVez4DDwwjFTvi/y1Md2szeJNop8Dl4YcYXEB6cx+3TRbsO7s8gzECdWo02+sQQ5aaHgkTmrerIQ1WBiN/65ievGwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iCTgCMd/; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2053616fa36so19458175ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726041714; x=1726646514; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N472WaAGva/om+EmpOL8/0tMAMdGDFbzXUB7x5LuZYc=;
-        b=iCTgCMd/mLt1uDU3xWLawNuv15AcksAK+OO/X2gBmKEVB0ncFhXYtOUcR9f9RB7ZtV
-         U0pt7+9L8CJRjA3HQyQG7qXwPVHhNf89igFqprxfiMizNAd+aNYlfaB12gQgCh48+lJL
-         f2Wi95YDbQINeWafiSVfxtjxomR8Cuuczv7Nw=
+	s=arc-20240116; t=1726041763; c=relaxed/simple;
+	bh=SBqvxjgwuKxYi5tRyD56jhxnOgIIsD/rrS+45v5OEvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i5NErzJfOtB2gwEPnE2zalxmFweagGv0CM+ySX/XIJNgWzGVvGamtwYI8GZzogSxuPLSrqzXIU5QOk1PCEkFILho07xFBFirtaPdsAyvEXJUsLPZBOMuO7F3dsCJ2wro0Tc1mb7LkpCSN7/r+J6UDkjc+OVbW6egFB28u86MsEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UjW021vy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726041760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gMv5A1puR1PVSNKI7BtOx9/tBwsThWDT9tdVtzSjjWI=;
+	b=UjW021vyVYyvCW6kbyVOqie/UmLDEqFL5c7bPIqeXOGg5fxkMNjOrPlFDMGQpgS9jcdPGx
+	zvZja7cx7ZkbCDXPKFgBcqXH0cQ2tN4q5CAfW3NSE0X5fffz2fi0z5xuDLeb2XTXLU4EPP
+	cd3KTVHo3Ryaq214ijKC6q3LAewqBDA=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312-nkO02jE9PKOFbaDiNKoPRQ-1; Wed, 11 Sep 2024 04:02:39 -0400
+X-MC-Unique: nkO02jE9PKOFbaDiNKoPRQ-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6d9e31e66eeso222870477b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:02:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041714; x=1726646514;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726041758; x=1726646558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N472WaAGva/om+EmpOL8/0tMAMdGDFbzXUB7x5LuZYc=;
-        b=A2hZunS7Yo/jk26aaLNAGHAR5X/9jHMkqq/CDWY0RH3LNX0BOtrHu5Lca2ucZQN3tZ
-         EXpscmPdfvUoDDYhWzszQTuUlhJkEB68u4M0wGqcssN57Z7r9Gsepsc8FoJ8AoyJXPND
-         YjKnuuD/xqCiZdpCXcE2XEzw/yArs+8ga+3/PEkdLNJ9QkfGbxEHQ79uo23KrSZ98lNo
-         naIkmcrNBYkXu85eajYL5DTLLcEZfZjWLKqOWNFHzbdIUnd4ao0E8VgKWF2RhzqHl56Z
-         mZCCQuCljqISP7NV9AAi0lkGgM+OIXS5R5MB2Mh5uiRa3SYfYdJpvAZyMmoC79d5GtxK
-         D7UQ==
-X-Gm-Message-State: AOJu0YyW9vTdf5uDASxG7hXIa+f48pijKtmmMSQFD4DPofZXdyf7364y
-	EhgZjt+S7wlmWOPlV6h55P/M/3GQkqQXmTgVbn+3kSwj0nUkf5M14ojtLeoSrQ==
-X-Google-Smtp-Source: AGHT+IGHbMEPbCVtVRtVcnKyQtuM5pm2H1cCaakAItz+OaoQAJQjImfcc+jE52/MBJUCg9Eq+nMoaA==
-X-Received: by 2002:a17:902:e548:b0:205:8b84:d5ff with SMTP id d9443c01a7336-207521a5bd3mr24291325ad.26.1726041713657;
-        Wed, 11 Sep 2024 01:01:53 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:d828:3442:b431:2762])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e37922sm58737795ad.110.2024.09.11.01.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 01:01:53 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv3 6/6] zram: reshuffle zram_free_page() flags operations
-Date: Wed, 11 Sep 2024 17:01:14 +0900
-Message-ID: <20240911080130.3766632-7-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-In-Reply-To: <20240911080130.3766632-1-senozhatsky@chromium.org>
-References: <20240911080130.3766632-1-senozhatsky@chromium.org>
+        bh=gMv5A1puR1PVSNKI7BtOx9/tBwsThWDT9tdVtzSjjWI=;
+        b=kBM3JUBLGKewzAyQy6OVT6ZbfdxOwQhtzBcBh2SVrYjP4flM2XuV3nZTlSvaGSSXPl
+         yP/wJBYvbRkkyUV8nuSX7GcyGkAkQ0Tm1SfL9dw4m+QSFcd169Yqj5/CGxmI0uxXgy9S
+         ybaFQPHQyAkaIs+1Fava0WzLAsyKEgjWfEjciY+E6JCFcE5BPq/J7sWuaC+IwUUO848j
+         AATKXlMbSGMG03k3LQlZM2kgoumkDQap366E5KKSj2LlESpe1jOY28orFbhdHHymACl1
+         LlMGRbZjkUvo/nHJ8f3PRMw2sFAH3XN/9VeFm7JF0pH78J5cBhuGQfLjfDwE5DPNrzDN
+         xH0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwJDHNNtwutrE0b+6CwNEdByBZrHTf/TU4c87SNIsCxRNmYr0EKc7CpltrNk7t2tGl+ze82PxXkbmZ6Nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgeTJtcxo0je3+cT9fqO+zyRwDVYJ8P6DMybVVJ+FmxobMwUdW
+	Lkn/q6U9abUAg9e2LKITFZ8NoiMdtKVb60zhiGH/FF1vvkPAT+chGELgGx4h4EGE+lslpa5XaqR
+	hM0rqTq/ZZXUQzNCe0446EBvFD3/7YXZKOtQoWbO5j+hmp10e6AFbBfLjCTTQYLthQjOw5C9SZW
+	F29bZWoaEzEDVZ6kMzX0lSv/zTzQzUxeqHQOZ/
+X-Received: by 2002:a05:690c:4801:b0:6be:523:af4d with SMTP id 00721157ae682-6db44da271bmr185115187b3.11.1726041758673;
+        Wed, 11 Sep 2024 01:02:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJeejzNHOmqV77bv+PMzikwQtB8ZyHDG4/ZhkqhGXqCY1isJM+xkRb3k3F3/Fagm+Jpye9YalAIDnoFocfBjw=
+X-Received: by 2002:a05:690c:4801:b0:6be:523:af4d with SMTP id
+ 00721157ae682-6db44da271bmr185115007b3.11.1726041758352; Wed, 11 Sep 2024
+ 01:02:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240830105838.2666587-2-dtatulea@nvidia.com> <fb6b1d3d-c200-479a-941e-1b994757b049@nvidia.com>
+In-Reply-To: <fb6b1d3d-c200-479a-941e-1b994757b049@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 11 Sep 2024 10:02:02 +0200
+Message-ID: <CAJaqyWfVfOe7X-2Ku3VhuzPMdF6TGM63D5squ6Naw=6iUQdgDg@mail.gmail.com>
+Subject: Re: [PATCH vhost v2 0/7] vdpa/mlx5: Optimze MKEY operations
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Si-Wei Liu <si-wei.liu@oracle.com>, virtualization@lists.linux.dev, 
+	Gal Pressman <gal@nvidia.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Drop some redundant zram_test_flag() calls and re-order
-zram_clear_flag() calls.  Plus two small trivial coding
-style fixes.  No functional changes.
+On Mon, Sep 9, 2024 at 11:30=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+>
+>
+> On 30.08.24 12:58, Dragos Tatulea wrote:
+> > This series improves the time of .set_map() operations by parallelizing
+> > the MKEY creation and deletion for direct MKEYs. Looking at the top
+> > level MKEY creation/deletion functions, the following improvement can b=
+e
+> > seen:
+> >
+> > |-------------------+-------------|
+> > | operation         | improvement |
+> > |-------------------+-------------|
+> > | create_user_mr()  | 3-5x        |
+> > | destroy_user_mr() | 8x          |
+> > |-------------------+-------------|
+> >
+> > The last part of the series introduces lazy MKEY deletion which
+> > postpones the MKEY deletion to a later point in a workqueue.
+> >
+> > As this series and the previous ones were targeting live migration,
+> > we can also observe improvements on this front:
+> >
+> > |-------------------+------------------+------------------|
+> > | Stage             | Downtime #1 (ms) | Downtime #2 (ms) |
+> > |-------------------+------------------+------------------|
+> > | Baseline          | 3140             | 3630             |
+> > | Parallel MKEY ops | 1200             | 2000             |
+> > | Deferred deletion | 1014             | 1253             |
+> > |-------------------+------------------+------------------|
+> >
+> > Test configuration: 256 GB VM, 32 CPUs x 2 threads per core, 4 x mlx5
+> > vDPA devices x 32 VQs (16 VQPs)
+> >
+> > This series must be applied on top of the parallel VQ suspend/resume
+> > series [0].
+> >
+> > [0] https://lore.kernel.org/all/20240816090159.1967650-1-dtatulea@nvidi=
+a.com/
+> >
+> > ---
+> > v2:
+> > - Swapped flex array usage for plain zero length array in first patch.
+> > - Updated code to use Scope-Based Cleanup Helpers where appropriate
+> >   (only second patch).
+> > - Added macro define for MTT alignment in first patch.
+> > - Improved commit messages/comments based on review comments.
+> > - Removed extra newlines.
+> Gentle ping for the remaining patches in v2.
+>
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/block/zram/zram_drv.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index dab5f306af32..d54502457925 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1499,20 +1499,17 @@ static void zram_free_page(struct zram *zram, size_t index)
- #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
- 	zram->table[index].ac_time = 0;
- #endif
--	if (zram_test_flag(zram, index, ZRAM_IDLE))
--		zram_clear_flag(zram, index, ZRAM_IDLE);
-+
-+	zram_clear_flag(zram, index, ZRAM_IDLE);
-+	zram_clear_flag(zram, index, ZRAM_INCOMPRESSIBLE);
-+	zram_set_priority(zram, index, 0);
-+	zram_clear_flag(zram, index, ZRAM_PP_SLOT);
- 
- 	if (zram_test_flag(zram, index, ZRAM_HUGE)) {
- 		zram_clear_flag(zram, index, ZRAM_HUGE);
- 		atomic64_dec(&zram->stats.huge_pages);
- 	}
- 
--	if (zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
--		zram_clear_flag(zram, index, ZRAM_INCOMPRESSIBLE);
--
--	zram_set_priority(zram, index, 0);
--	zram_clear_flag(zram, index, ZRAM_PP_SLOT);
--
- 	if (zram_test_flag(zram, index, ZRAM_WB)) {
- 		zram_clear_flag(zram, index, ZRAM_WB);
- 		free_block_bdev(zram, zram_get_element(zram, index));
-@@ -1536,13 +1533,12 @@ static void zram_free_page(struct zram *zram, size_t index)
- 	zs_free(zram->mem_pool, handle);
- 
- 	atomic64_sub(zram_get_obj_size(zram, index),
--			&zram->stats.compr_data_size);
-+		     &zram->stats.compr_data_size);
- out:
- 	atomic64_dec(&zram->stats.pages_stored);
- 	zram_set_handle(zram, index, 0);
- 	zram_set_obj_size(zram, index, 0);
--	WARN_ON_ONCE(zram->table[index].flags &
--		~(1UL << ZRAM_UNDER_WB));
-+	WARN_ON_ONCE(zram->table[index].flags & ~(1UL << ZRAM_UNDER_WB));
- }
- 
- /*
--- 
-2.46.0.598.g6f2099f65c-goog
+Same here, this series is already in MST's branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/commit/?h=3Dv=
+host&id=3Dd424b079e243128383e88bee79f143ff30b4ec62
 
 
