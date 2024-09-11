@@ -1,131 +1,89 @@
-Return-Path: <linux-kernel+bounces-324937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CA09752EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:54:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15E19752F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9743284AA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3CA1F2499E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D5119259F;
-	Wed, 11 Sep 2024 12:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7F418FDC5;
+	Wed, 11 Sep 2024 12:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TxmN0lTK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dZgD4TQc"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5313AA3E;
-	Wed, 11 Sep 2024 12:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A1413AA3E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059275; cv=none; b=KUtVdYMbjphPfN1R6JaI9m+U9B4KwMRhiwHthYpYxVMq3UC/N1SWhHsf4ogeiC9X33gyLqLWIQSUjR7onCqeOgYTbn6b3C3g6kMONFYKAuytXkDE4bW7raMmspaPKzAdU6N/3NsUP4cqxlKKZ1uo8Y2/Pct7I3YQnlbFlZoOLeI=
+	t=1726059307; cv=none; b=eo8IfHyZ3bucPidPLLDKOoZ/x4/r8wonxzPKWAC8LXEUjsTD+kgHECM64Hz9BvrxvenXM/iS/WEcepUAUr2qle4SDhvZht6phva/SWtAK3MmfEtpZWeolwWX9BI8yx58y07SjsTMnnCRHBNADLWUOSL0t1+1/QYE1rcsn8+r7fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059275; c=relaxed/simple;
-	bh=gAmWUWLu5Kc7LOL3W8UeyCBstrlv8Yqg6dt+6uIMxbA=;
+	s=arc-20240116; t=1726059307; c=relaxed/simple;
+	bh=P2X2f/Vt21m4UEENdFSR9DCNS5Bzz8h38CsrE0XkktQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUyu6+36MK9x9kZjOZfvXAAOs7XqgHDhsIcirao3uOYw1FDJ9qxxX3QM+JIYCfwvDFKt1tAvGClUZxTB0sXMDzRJHXMG7fSnIjnJPusNFoarK+0wFDDEkoTxz3Vz0Rljjz49dvBeavFwni1vt4GV6U2HloYeT/KXrKu+aFuTnYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TxmN0lTK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFFCC4CEC5;
-	Wed, 11 Sep 2024 12:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726059274;
-	bh=gAmWUWLu5Kc7LOL3W8UeyCBstrlv8Yqg6dt+6uIMxbA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=U5Ba1/lM6Cf5MNKfb8FqbYFPgrZALXXKP3qsn7xXlx4z9dwYQQn1xn0X/guwGMSrgb/mx/1lRLEFF02h9gIoXCY+1sQu5w/Kw4XZURxIIENqkXAOvFDf4rSmv0XXHbgnxYprtyZy+2erY7iViTtTtIRIM+ZpSxrI+DVDEujtewA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dZgD4TQc; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726059297;
+	bh=P2X2f/Vt21m4UEENdFSR9DCNS5Bzz8h38CsrE0XkktQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TxmN0lTKPzrUgFH/wOiXmg+XtU1KsY4993sZ97jl9daVN4IA0XCKnlOFx7LW2t8lt
-	 u1EBtEDepj04DtWf2GOJe85xKcmMKu+eX/Zlg/cybz1li4IyiR1YroVtfJjH2p4261
-	 J9rMdQ1sAuOaccB4A+QU8T/Gjyqfg9D0mrgqOHrA=
-Date: Wed, 11 Sep 2024 14:54:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 6.1 000/192] 6.1.110-rc1 review
-Message-ID: <2024091115-aloe-stipend-ee06@gregkh>
-References: <20240910092557.876094467@linuxfoundation.org>
- <CA+G9fYufdd0MGMO1NbXgJwN1+wPHB24_Nrok9TMX=fYKXaxXLA@mail.gmail.com>
- <CA+G9fYv1yHoL9r7PkunHPNyPznLxfB9spSFbWvoFBBSwOYrT3g@mail.gmail.com>
+	b=dZgD4TQcl2yjaIbLz6I/my0M2Zm3WILSoj5NF6ugqLfl0YrZmxhcdmPYIJAMDkTf7
+	 XZ++yRQGoXbj6IfLmcRdZVUd7k+RP1E9wWWQQcqEelgDQA8ugwAlSegZmO4l0qKywz
+	 +zbgp7F0NbhHnhlpR2XNChseV2uGVU0o/+9rtYjx6KT+SOYVTZ1KDj9k+6pFKaJijk
+	 zPYdq+Opw3R4rg21BsTpwwT4eAtRMo8TKiX7gd0MGD90cXXZtYhar6NhFh5MEX6oNc
+	 FrQDYR9+1dIwu71vVGLJ5cD5M00o8eFf38Mjha8SJukO7/BDE/vJuuD5e74t/OHAU0
+	 xhfa0eUzBswbg==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AE0D717E121F;
+	Wed, 11 Sep 2024 14:54:56 +0200 (CEST)
+Date: Wed, 11 Sep 2024 08:54:54 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: reliably inform about DMA support for IOMMU
+Message-ID: <b33079e1-b370-4584-90db-2737f49b2751@notapiano>
+References: <7bbedc085ce87b121b9d0cb33eca8fba2fbdddbc.1726049194.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYv1yHoL9r7PkunHPNyPznLxfB9spSFbWvoFBBSwOYrT3g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7bbedc085ce87b121b9d0cb33eca8fba2fbdddbc.1726049194.git.leonro@nvidia.com>
 
-On Tue, Sep 10, 2024 at 08:05:27PM +0530, Naresh Kamboju wrote:
-> On Tue, 10 Sept 2024 at 18:24, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> >
-> > On Tue, 10 Sept 2024 at 15:36, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > This is the start of the stable review cycle for the 6.1.110 release.
-> > > There are 192 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.110-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> >
-> > The SuperH defconfig builds failed due to following build warnings / errors
-> > on the stable-rc linux-6.1.y.
-> >
-> > * SuperH, build
-> >   - gcc-8-defconfig
-> >   - gcc-11-shx3_defconfig
-> >   - gcc-11-defconfig
-> >   - gcc-8-shx3_defconfig
-> >
-> > Build log:
-> > --------
-> > In file included from  include/linux/mm.h:29,
-> >                  from  arch/sh/kernel/asm-offsets.c:14:
-> >  include/linux/pgtable.h: In function 'pmdp_get_lockless':
-> >  include/linux/pgtable.h:379:20: error: 'pmd_t' has no member named 'pmd_low'
-> >   379 |                 pmd.pmd_low = pmdp->pmd_low;
-> >       |                    ^
-> >  include/linux/pgtable.h:379:35: error: 'pmd_t' has no member named 'pmd_low'
-> >   379 |                 pmd.pmd_low = pmdp->pmd_low;
-> >       |                                   ^~
-> >
+On Wed, Sep 11, 2024 at 01:15:00PM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Anders bisected this down to,
-> # first bad commit:
->   [4f5373c50a1177e2a195f0ef6a6e5b7f64bf8b6c]
->   mm: Fix pmd_read_atomic()
->     [ Upstream commit 024d232ae4fcd7a7ce8ea239607d6c1246d7adc8 ]
+> If the DMA IOMMU path is going to be used, the appropriate check should
+> return that DMA is supported.
 > 
->   AFAICT there's no reason to do anything different than what we do for
->   PTEs. Make it so (also affects SH)
+> Fixes: b5c58b2fdc42 ("dma-mapping: direct calls for dma-iommu")
+> Closes: https://lore.kernel.org/all/181e06ff-35a3-434f-b505-672f430bd1cb@notapiano
+> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 
-Ok, I'm going to drop this series as it shouldn't be breaking builds :(
+Thank you for the quick patch. It fixes the reported issue.
 
-thanks,
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-greg k-h
+Thanks,
+Nícolas
 
