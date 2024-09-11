@@ -1,54 +1,52 @@
-Return-Path: <linux-kernel+bounces-325083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5359754D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25429754D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4071B24146
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F98A283032
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4291B19F12F;
-	Wed, 11 Sep 2024 13:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161FD18C91D;
+	Wed, 11 Sep 2024 13:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u7vhr9Px"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF93156C6C;
-	Wed, 11 Sep 2024 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RI3s4akc"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C181218858A;
+	Wed, 11 Sep 2024 13:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062955; cv=none; b=o4iaet3BFhW6QZVhREevCY1SmTgjAeEyOw3bVhVoLPPz7YjARpgyPPqEyk7fufjTPJTNaIhMxSFMxFB0O5WgMnPJEr6q+DS2c4pyDBXjnKebkGYZ27MHDzdmPrN6QoR9PIkYYGbpxFmo6paoOtSmIkQSSv3WRZHzX85kJowCobo=
+	t=1726063006; cv=none; b=lqJ0+RKs36Vug7yRMkqCptOwerSuy/k7JAhmMD4FNszuq5oLjLmGH67ldsJKrepbw6Gtv51l0Ao0mY/8Z8FhWUoow/eoAlkZT2tOH3KSMxfSub5zmdqNd8Dfhh4Nb4q/R1jn+XSadQEtdvVu7Bihd8y0Hmklo+deGlTcS8kfaI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062955; c=relaxed/simple;
-	bh=UwC8kaCVcmXjbd6pLkYBElYcedPsNinPtJpQLxzsBX4=;
+	s=arc-20240116; t=1726063006; c=relaxed/simple;
+	bh=rnG1XAmeLzZbIuNU9ea+WDg3olR8HLpIqPVclH6bgVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbmxiOy2+VIgJaP4TzrjRUJAwJGt9bavg1qoBbhbxuB80bJtwRqcQr/wylc466aZPXIfJqd015VZyx0AiOZHTBuBwAqexx0VKm2i9B0Tjvm+PguRayc8WA6aRmaF0peMGOdOxu/sNGJleqkVU+19wdEeSg68awPe1HW0fcmhmLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u7vhr9Px; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC673C4CEC0;
-	Wed, 11 Sep 2024 13:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726062955;
-	bh=UwC8kaCVcmXjbd6pLkYBElYcedPsNinPtJpQLxzsBX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u7vhr9PxvvlJ4OgB5Fdz/YCFWw1qZUI4wDj5+FuwALYIhmXu3TUfzoOL+7pTGN/Zz
-	 0PRZTQ135sJjOmY1s//90G3SQbByUio+0jK/LasLe0O0JPR658IHMySswjYNBlde1Y
-	 g57nZH3tmAPC4ohBZX/U5pQC86Hxm7J5b6ob6+lE=
-Date: Wed, 11 Sep 2024 15:55:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Steven Davis <goldside000@outlook.com>, hvaibhav.linux@gmail.com,
-	elder@kernel.org, vireshk@kernel.org, rmfrfs@gmail.com,
-	dtwlin@gmail.com, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: Fix capitalization and punctuation
- inconsistencies
-Message-ID: <2024091142-quill-tableful-3c3e@gregkh>
-References: <SJ2P223MB102660087EA9382BE5287FDBF7912@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
- <Zt7vVaxF2XP-_ZMA@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eyc8hgXnb7WFPk6fmr9N30eDZpevR0kGWh078CEYgmtATBiA/VC/2a7HUFbYVLofV3kvHVpPHnGG+urQFupWLWbgAxa5t0qoPy8IQxXf84FOE8TIhQoYkxXa1pcrUF9rFAY7BbU970YeCIn6HALwhz4+fK5nj8ogvi1c++qZUzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RI3s4akc; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=r6aQ1WXtd90PQJj++CLrWpIqL9HJXpQOp3tVxsDl4kM=;
+	b=RI3s4akcbf8yp+2cpfwaUslF/VK2Rnbq1mbn8+klN0IKet22OcDT00yClalGQJ
+	i/zkW/HOK/x4Lphtblb5P3hb/ErV6b96jLwBq59GGVQUH7tFfp7UYazOWqbOJXqM
+	aSKOqp4npC0fmQe89W6bDRq7GdWMKp38uhxTtbml1pkDY=
+Received: from localhost (unknown [120.26.85.94])
+	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wDXuJ1xoeFmm6+yDQ--.8490S2;
+	Wed, 11 Sep 2024 21:56:01 +0800 (CST)
+Date: Wed, 11 Sep 2024 21:56:01 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bcm-kernel-feedback-list@broadcom.com, florian.fainelli@broadcom.com,
+	james.quinlan@broadcom.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: brcmstb: Fix control flow issue
+Message-ID: <ZuGhcdPGCjhQKiii@iZbp1asjb3cy8ks0srf007Z>
+References: <20240911025058.51588-1-qianqiang.liu@163.com>
+ <20240911134436.GA628842@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,36 +55,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zt7vVaxF2XP-_ZMA@hovoldconsulting.com>
+In-Reply-To: <20240911134436.GA628842@bhelgaas>
+X-CM-TRANSID:_____wDXuJ1xoeFmm6+yDQ--.8490S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrW5Aw45ZF43CFW8Xw17Awb_yoW8XFyfpr
+	Z8Jay7AF4rtayYg39I9as5Xr1fuwsIyryqv3srKwnrZFnIvFyjg34FgFyFvrsFyr4kJr1j
+	yF17JF1DWF43KFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jSpB-UUUUU=
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRdXamXAo2U2GgAAsg
 
-On Mon, Sep 09, 2024 at 02:51:33PM +0200, Johan Hovold wrote:
-> On Sun, Sep 01, 2024 at 05:18:59PM -0400, Steven Davis wrote:
-> > There were a lot of inconsistencies in outputs and
-> > comments, some were properly formatted and
-> > capitalized, and some weren't. This patch resolves
-> > this by properly formatting the inconsistent comments
-> > and outputs.
-> > 
-> > Signed-off-by: Steven Davis <goldside000@outlook.com>
+On Wed, Sep 11, 2024 at 08:44:36AM -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 11, 2024 at 10:50:59AM +0800, Qianqiang Liu wrote:
+> > The type of "num_inbound_wins" is "u8", so the less-than-zero
+> > comparison of an unsigned value is never true.
+> 
+> I think this was fixed slightly differently but with the same effect;
+> please check this to make sure:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-brcmstb.c?h=controller/brcmstb#n1034
+> 
 > > ---
-> >  drivers/staging/greybus/arche-platform.c | 38 ++++++++++++------------
-> >  drivers/staging/greybus/authentication.c |  6 ++--
-> >  drivers/staging/greybus/bootrom.c        | 16 +++++-----
-> >  drivers/staging/greybus/light.c          | 26 ++++++++--------
-> >  drivers/staging/greybus/log.c            | 10 +++----
-> >  5 files changed, 48 insertions(+), 48 deletions(-)
-> 
-> I didn't have time to reply here before Greg picked this one up, but I'm
-> gonna ask for this one to be reverted.
-> 
-> The (core) greybus code uses lower case error messages so this patch is
-> introducing an inconsistency instead of addressing one.
-> 
-> I just sent a revert here:
-> 
-> 	https://lore.kernel.org/20240909124853.9213-1-johan@kernel.org
+> >  drivers/pci/controller/pcie-brcmstb.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> > index 55311dc47615..3e4572c3eeb1 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -1090,9 +1090,11 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+> >  	u32p_replace_bits(&tmp, 1, PCIE_MISC_MISC_CTRL_PCIE_RCB_64B_MODE_MASK);
+> >  	writel(tmp, base + PCIE_MISC_MISC_CTRL);
+> >  
+> > -	num_inbound_wins = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
+> > -	if (num_inbound_wins < 0)
+> > -		return num_inbound_wins;
+> > +	ret = brcm_pcie_get_inbound_wins(pcie, inbound_wins);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	num_inbound_wins = (u8)ret;
+> >  
+> >  	set_inbound_win_registers(pcie, inbound_wins, num_inbound_wins);
+> >  
+> > -- 
+> > 2.39.2
+> > 
 
-Thanks for that, sorry about missing that.
+Yes, they have the same effect.
 
-greg k-h
+-- 
+Best,
+Qianqiang Liu
+
 
