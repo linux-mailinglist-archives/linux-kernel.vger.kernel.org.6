@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-325072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A127097548D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783CD975470
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CE342837F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223A41F22158
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888BD154BE4;
-	Wed, 11 Sep 2024 13:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC09E19C556;
+	Wed, 11 Sep 2024 13:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9mLSEnF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fw1ZpkJi"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C984819F10A;
-	Wed, 11 Sep 2024 13:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78F71885B0
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062613; cv=none; b=fDEqzC8EZ4LD/JRrkn4ibJSO7vXnuQRkHuhqocr3nqvFrCRflvmy1bRClmPtEAscMvT2tPE3IVb/1fRc/sh35FlBdg3nVeuKktWJQzNiZ67hxbWpvnsNcL+aHOUrM4rwlyl5nPBAivBOwvq+CLWIJPvMdtOx3oOnXkaVGOhIcGo=
+	t=1726062526; cv=none; b=R56ctK4kAjEJJH/cjDhndaRc4VKup6F5TZDqFSL4pi3lLQOaxkUI0bN+gYrBsvGbrebAVytU3T0qqh/ZFuIsoHfCro8U9WQXAX/8yZplhXiWZvb+N8sVxNDdA6M8jKEA/95Fy/BjtKpdINMdVcejysebtcGhAeqU01rX+ICVgM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062613; c=relaxed/simple;
-	bh=wYsdocLzsrX8Sgm48gaz7cTnSul0At+itod/zabIoOU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=aBU9nf/9tzNwPwwxrSPC8ZUHPWq1i+XzTcZz9gVg1q/W2zL18ndg5i8G3+mR9iEWJ5Qqif6vPFrUmE7Ix+XPM/cgRk13+J69UsHugYeOqNd9jIsFKJjFruWs7Ae0UOmpaNO1o8KqN/D+3ruS186O+JJC4NBjlm5kInqlpDQ5MgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9mLSEnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B63C4CECE;
-	Wed, 11 Sep 2024 13:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726062613;
-	bh=wYsdocLzsrX8Sgm48gaz7cTnSul0At+itod/zabIoOU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=C9mLSEnFhr+nx8dP8a7N7jr4B5FWnpm1pNgKZbvRR/SAVMO5WwJhZagTfehif0eSW
-	 YdaOYbeguafk5SJQxOMB2uOmnPCMPLN1c1KC51RXMlJgBzYbRYDcAhZ9C19Na7B88H
-	 h0w/v5Q5iffhYd44cmR+3Vhczin2G/aLrnGh6XH3NldK97dywbEFp/dOroq5aPR25N
-	 Fnf0usfOFELuqbMvbbRyUGZAZQjrw1T4tRlBV5oLmgDXV6NCtSgEGGHLYt0G0pFxMf
-	 YBB2AyQoVWGCNd9naFhCBl4SQUQvNmgrHrsPCP3+904UONphV2x6VO7pyoSeBXs6ZH
-	 u/WTtJIdCVYVg==
-Date: Wed, 11 Sep 2024 08:50:12 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1726062526; c=relaxed/simple;
+	bh=CRRx7fOA/0xIBJgi4Y2qJuRGN5+stwLbzZrHZDnSfYw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pSq6jtHS+605F9XxHm4Cb7nwCUHdZX36khTTFyfe7ED7tS0fWtofx0O79z1h/1b6yUIPQGLMPrK7V8UzbJ5uieE+g8OUZlPO/3zd15PXjKjU8YDM1bTJTd/Wu+6LzvEV3rVNfS3gDGI+bXKcRP1WDCfkmt9ffLJ1gJh/HtA1WEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fw1ZpkJi; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so4684142a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726062524; x=1726667324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCx961giDzkawX4RkON4d9oRpJgphqstJWVnXbsVBFk=;
+        b=fw1ZpkJiGgOGFXTZvAHV2Q+mAb8XjCfou98XtSY+IJVVDc1ClDkJBEkTPhUtm9GidV
+         Fs1G5LDNUsv1t7OM3oaMyAs1vqmhK6gw7WblkpIR92NG7IwXeQr3Ng34DqyhWS2/YECD
+         XP+I0MZEX3Ve+spAdxMwmq4W2CJ+X1FNr8krMRMo8kAFdJDlEcTsgQS0JC2ZQ0CYL0zS
+         +hKOQ0dGGywsI/lCSiKGfSAfhrY/u+SqJSirWXEld3xrOR59br6pwY6FPJC1b7WreYQ2
+         G2xEvoum6TKVcNwO1Fhpf7fw7DSfYZjtb5HpYIDrq4tYJa+TxZ3msma+MRpj9FrhPFBZ
+         eO8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726062524; x=1726667324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jCx961giDzkawX4RkON4d9oRpJgphqstJWVnXbsVBFk=;
+        b=a52SMN83/DFFJ2oe/yV3dDEVV7DTRHmZRESStQlHZIHYR25t461OYFJas2nEvXH5v2
+         odj7vj1d6dz8cHbgCTeYYgnjWWzw6xiulhZG5piQNOxlM4R5YcE0hk2NSzeGYaXRKlVa
+         1j2Bt14pzi4gXKoME6+FVfhYCAGxPRDhgeyBP2U3FMueh4oLQ2EH5kR4BSWcL4hTVf0F
+         92al+5pt7ZmYhMt2sXLUr+iTV2YjorNb3LmQezDpt0JJsF7pmbDlwROUipMxBHhRSMlc
+         g3B/1FWgOxO0jYWPlGdRGYybI3DSj6j0eWMkfNKsfLdEHbwxKIM9Vvd74h3nkTQRt1SH
+         +OqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAqUVRcC6Gm+ceyTyuDLPg9NOSUhiEYgqC8qDULlx5N/ZDP/miSOKkq+5jqJp8IVwU+A2odTnG0I6jETI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhqDbs9Dq/gwKhiiFFq9SrXVz1ZSc1qzkAHMjuGE32lRpbgb3W
+	MnAYdfjTRC+lcL+Q4BMDvVzUAeFkyrlniKbClRnHRu5L+PaOYqBZK4UywZca
+X-Google-Smtp-Source: AGHT+IEEaBij1LC75ufDL1ammpPlxeRl+6VZZLpg5ZDFJiqcVeBdQwOQhSrfa0mDiJYnHvvijk98BA==
+X-Received: by 2002:a05:6a21:513:b0:1cf:337e:98f6 with SMTP id adf61e73a8af0-1cf5e13350amr4446721637.29.1726062523749;
+        Wed, 11 Sep 2024 06:48:43 -0700 (PDT)
+Received: from maloca.localdomain (d162-157-58-14.abhsia.telus.net. [162.157.58.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fc8d76sm2989232b3a.4.2024.09.11.06.48.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 06:48:43 -0700 (PDT)
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: =?UTF-8?q?Ma=C3=ADra=20Canal?= <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove myself as a VKMS maintainer
+Date: Wed, 11 Sep 2024 07:50:46 -0600
+Message-ID: <20240911135051.44579-1-rodrigosiqueiramelo@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tengfei Fan <quic_tengfan@quicinc.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
- kernel@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com>
-References: <20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com>
-Message-Id: <172606224532.90794.3646639531528428689.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] arm64: dts: qcom: Add support for the QCS9100
- SoC and board
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+I haven't been able to follow or review the work on the driver for a
+long time and I don't see the situation improving anytime soon. Hence,
+this commit removes me from the maintainers list.
 
-On Wed, 11 Sep 2024 19:10:54 +0800, Tengfei Fan wrote:
-> Add QCS9100 SoC ID and board device trees support.
-> QCS9100 is a variant of SA8775p, and they are fully compatible with each
-> other.
-> 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
-> Changes in v2:
-> - Add SoC binding for add QCS9100 Ride and QCS9100 Ride Rev3
-> - Update SoC binding patch commit message
-> - Add QCS9100 Ride and Ride Rev3 board device tree patches
-> - Link to v1: https://lore.kernel.org/r/20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com
-> 
-> ---
-> Tengfei Fan (4):
->       dt-bindings: arm: qcom,ids: add SoC ID for QCS9100
->       soc: qcom: socinfo: add QCS9100 ID
->       dt-bindings: arm: qcom: Document qcs9100-ride and qcs9100-ride Rev3
->       arm64: dts: qcom: qcs9100: Add support for the QCS9100 Ride and Ride Rev3 boards
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml |  8 ++++++++
->  arch/arm64/boot/dts/qcom/Makefile               |  2 ++
->  arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts    | 11 +++++++++++
->  arch/arm64/boot/dts/qcom/qcs9100-ride.dts       | 11 +++++++++++
->  drivers/soc/qcom/socinfo.c                      |  1 +
->  include/dt-bindings/arm/qcom,ids.h              |  1 +
->  6 files changed, 34 insertions(+)
-> ---
-> base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
-> change-id: 20240911-add_qcs9100_support-dbb22dd8b475
-> 
-> Best regards,
-> --
-> Tengfei Fan <quic_tengfan@quicinc.com>
-> 
-> 
-> 
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/qcs9100-ride-r3.dtb qcom/qcs9100-ride.dtb' for 20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com:
-
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: rsc@18200000: 'power-domains' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-
-
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 333ed0718175..1e6356a1b6c7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7346,7 +7346,6 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+ F:	drivers/gpu/drm/udl/
+ 
+ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+-M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+ M:	Maíra Canal <mairacanal@riseup.net>
+ R:	Haneen Mohammed <hamohammed.sa@gmail.com>
+ R:	Simona Vetter <simona@ffwll.ch>
+-- 
+2.46.0
 
 
