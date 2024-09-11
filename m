@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-324788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489DE9750DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:33:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08C49750E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5331C220EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8121F24E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B2E187337;
-	Wed, 11 Sep 2024 11:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A0C187327;
+	Wed, 11 Sep 2024 11:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJrC1mKu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFkpp55J"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FE13D984;
-	Wed, 11 Sep 2024 11:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D2D187329
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726054391; cv=none; b=jyXQL9UZK7SjuxM93oIXdKhFS28kofXAr4UUW4qe/ARHZC/4kgsTjv5Wc5SOg6Ucb2CkXo+oOldnIpPenJA6SyvuNjYYqQGzEMMkTEgIs143MWjVgzZnx0vm1EUc59lzUCrQZaZsF+QJKO9wzVjZMENMbgZs98PUNj+ml/QaOIw=
+	t=1726054406; cv=none; b=NuZ8NKIKIz5EIYOTzv4h1QjPfhER1nbmUyV3H/D7Y5mYAN4bH7aNABwzcMrm2gK0CL4E956cJeW7jAMNA9KpFRad57PNStW23ftMsnVWZFetzVXg1F09jjOQhYkI2bhSViM5I31EpsISEg8nSza/rppjqVK1vH3tQTBjA/95gpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726054391; c=relaxed/simple;
-	bh=d/6BYN/hz0vb6byjvWNc4phCG22oIwVbCnvyfL1nmP8=;
+	s=arc-20240116; t=1726054406; c=relaxed/simple;
+	bh=cM9An+lJrKf5fchTezFQIl5Mxbf04kjvGjWZErkcecY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u69PvsG3Xx8r+l1XcU1b84PZl4na24ocHk8Xx72drMWINrh5Zp3cgmNEM8O1lxNm9nyKRT9XFWv08wcyCFZGF/SUHn7sxyb/GurgoDZGsff1g318wFsrpij41yOXg3eJbgduFLUmIHitCul51jFtx+2BOpfnY6guRImOn1bst64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJrC1mKu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79ECC4CEC5;
-	Wed, 11 Sep 2024 11:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726054391;
-	bh=d/6BYN/hz0vb6byjvWNc4phCG22oIwVbCnvyfL1nmP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BJrC1mKuzmCf5h4ZN/N4P6hYPuKbfXWRIhz0oMROBeEZug+h/+T4pMtUcsWl7lkTX
-	 8To1SmRdKnLcEFd2JLUEET9DFIq7A/Hm1LW//VzLbYGoFXDbZezCETlCRMmSAky0su
-	 vrpjyzkqVZnYdsUJY3MFIrYJyiXQpSJDb4v5J+QPpS44wOQwMambL/KQrI7LiEHJG3
-	 vYmAWyrZKU07KfA1nPIQVwji9pk2vPfY30ktwgAqfk7jWt76BH+fxJZvtf7CLutq7n
-	 i0YqtLiubl8yuDc377zIFUzNZn+VaFDwdOJtUVYRFWk5uGQ/67UZhWPe1fI0C/A9Mq
-	 7GP4I/vtLMONw==
-Date: Wed, 11 Sep 2024 13:33:03 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 15/26] rust: alloc: implement `collect` for `IntoIter`
-Message-ID: <ZuF_76DHQRukLEMb@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-16-dakr@kernel.org>
- <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me>
- <ZuDiurdQfvmewzDh@pollux>
- <503abe24-fbac-440a-a063-fc30a2a6bd77@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNzXnaqHCsblSf9b7gicSYQgIQJUWvRNEvrgWFhSX8ks+s5tRJW7d86HkVM9cICMvRnVnUdtTVy9LXS1Y0R4RP9iS2dy8H+OIvxjQpbzC7v10Nx6SxzxDW2xVnX4nEobZYmhvwUQkA797Tk9kKdWGe4710v5gXSBDjXo8KA/qEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WFkpp55J; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53659c8d688so707825e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726054402; x=1726659202; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0GzAnTjhxYZKHt72GpqMtlHwxT7ETsaEqcjwqFxbdI=;
+        b=WFkpp55JtRzZOjAB/GYZzI/AAXoxYIdt5n7QKwndZHxWfIeb1swPv2Kx2JZzXojZSz
+         kuCDx+aZXjS5MdCh7FOKdRJGjoPH2CS6RoEk0UHhiKXhkhdAdIp6jGTv484CasUdkxsu
+         zC7jq+BNtr1pzEU9N71x1bdyICea94x//A92vVP4TI/hOxeA+3gDTziTPeWkNcKdSlBj
+         UuTF+7X9zO7fw55Fj7n157U35txDj2tP+4MfbapIbTqe1R+Qdo+Ol6bzwg4vK7zDMTLA
+         n96pt15m4K1eV0UDIs3GICG3TO/TKsW2BTCyDNsQpd+eCe7wciEAewHtTCoVEGstfwlP
+         QWMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726054402; x=1726659202;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K0GzAnTjhxYZKHt72GpqMtlHwxT7ETsaEqcjwqFxbdI=;
+        b=YBZkWgnCmvu0Z1bpFb4hkwAkepBAmAqNa6P1yRV1Tv2kr0VFiKJIXIO7eg8Qhj59dM
+         fkFHPjsXIM3DpGsLwJKp+cu2MEiThM+uR9eUkEmv+1ucYdNxDZft9/zhdLOZSO1yjzOY
+         Fw4Qk+FGgZcUm1wnVT1Kv5uGmemQzSq6QH+2pj5WnTJ/YPtdVpgwRCttZGutI5IOviaC
+         oAp4Ae1hHzJTDySl49dTyeJ+z5f76oIUAtPWbAnunOtvXnfzYZsQzHEzT4vw702bWGEz
+         /XM60jiOcoOXw7dA/6N/cg63WGhcrzXIzRzikTN5XpE3hy0io+ZzImj2Q/HLO5coiTP3
+         lDmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHlSfStzQE9kU4PxCsuX2IECCwZQqGEL41cbubWU81ffaoyAjv8+UEzdEbSJCCYZjfDmSUuLjIeyvwC4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR6tOwEsHfSZZjjm4p722YakVVnn1q6hwS6tVc1TRFd3L13oaU
+	Ng8bjWyxe/8GbdtdQ0ADqlKybEvPTSlZO1YBTJIMyZcTBGjRnogSFPU1D3ltyA0=
+X-Google-Smtp-Source: AGHT+IGJTJ4gfvXWiLZYGJnjq1U6O/nKro6eMFZ5KwjhG3ZDqLoxi5tKw42KVzSzIJdS3EXUUs0o+g==
+X-Received: by 2002:a05:6512:2250:b0:52f:cf2d:a1a0 with SMTP id 2adb3069b0e04-5366bb48a71mr2373288e87.26.1726054402046;
+        Wed, 11 Sep 2024 04:33:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cad44sm1548242e87.150.2024.09.11.04.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 04:33:21 -0700 (PDT)
+Date: Wed, 11 Sep 2024 14:33:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Sanyog Kale <sanyog.r.kale@intel.com>, 
+	linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, 
+	kernel@quicinc.com, quic_pkumpatl@quicinc.com
+Subject: Re: [PATCH v1 1/4] ASoC: dt-bindings: wcd938x-sdw: Add static
+ channel mapping support
+Message-ID: <iv2ajlr4qe7lcfwd7vwqsghxprpqz6r2nrvgmqmg6ryscgslqs@zb5nsyavuzej>
+References: <20240909105547.2691015-1-quic_mohs@quicinc.com>
+ <20240909105547.2691015-2-quic_mohs@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,65 +90,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <503abe24-fbac-440a-a063-fc30a2a6bd77@proton.me>
+In-Reply-To: <20240909105547.2691015-2-quic_mohs@quicinc.com>
 
-On Wed, Sep 11, 2024 at 08:53:24AM +0000, Benno Lossin wrote:
-> On 11.09.24 02:22, Danilo Krummrich wrote:
-> > On Tue, Sep 10, 2024 at 08:12:24PM +0000, Benno Lossin wrote:
-> >> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>> +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIter`.
-> >>> +    ///
-> >>> +    /// Currently, we can't implement `FromIterator`. There are a couple of issues with this trait
-> >>> +    /// in the kernel, namely:
-> >>> +    ///
-> >>> +    /// - Rust's specialization feature is unstable. This prevents us to optimze for the special
-> >>> +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
-> >>> +    /// - We also can't use `I::IntoIter`'s type ID either to work around this, since `FromIterator`
-> >>> +    ///   doesn't require this type to be `'static`.
-> >>> +    /// - `FromIterator::from_iter` does return `Self` instead of `Result<Self, AllocError>`, hence
-> >>> +    ///   we can't properly handle allocation failures.
-> >>> +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle additional allocation
-> >>> +    ///   flags.
-> >>> +    ///
-> >>> +    /// Instead, provide `IntoIter::collect`, such that we can at least convert a `IntoIter` into a
-> >>> +    /// `Vec` again.
-> >>
-> >> I think it's great that you include this in the code, but I don't think
-> >> that it should be visible in the documentation,
-> > 
-> > Why not? I think this information is valuable for users of this API.
+On Mon, Sep 09, 2024 at 04:25:44PM GMT, Mohammad Rafi Shaik wrote:
+> Add static channel mapping between master and slave rx/tx ports.
 > 
-> If you want to keep it, then I don't mind, but I would still move it
-> underneath `Examples` and add a section header `# Implementation
-> Details` or similar.
-
-Sure, we can do that.
-
-> 
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 > ---
-> Cheers,
-> Benno
+>  .../bindings/sound/qcom,wcd937x-sdw.yaml      | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
-> >> can you move it under
-> >> the `Examples` section and turn it into normal comments?
-> >>
-> >>> +    ///
-> >>> +    /// Note that `IntoIter::collect` doesn't require `Flags`, since it re-uses the existing backing
-> >>> +    /// buffer. However, this backing buffer may be shrunk to the actual count of elements.
-> >>> +    ///
-> >>> +    /// # Examples
-> >>> +    ///
-> >>> +    /// ```
-> >>> +    /// let v = kernel::kvec![1, 2, 3]?;
-> >>> +    /// let mut it = v.into_iter();
-> >>> +    ///
-> >>> +    /// assert_eq!(it.next(), Some(1));
-> >>> +    ///
-> >>> +    /// let v = it.collect(GFP_KERNEL);
-> >>> +    /// assert_eq!(v, [2, 3]);
-> >>> +    ///
-> >>> +    /// # Ok::<(), Error>(())
-> >>> +    /// ```
-> >>> +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> index d3cf8f59cb23..1db3c001ce98 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> @@ -58,6 +58,30 @@ properties:
+>      items:
+>        enum: [1, 2, 3, 4, 5]
+>  
+> +  qcom,tx-channel-mapping:
+> +    description: |
+> +      Specifies static channel mapping between slave and master tx port
+> +      channels.
+> +      In the order of slave port channels which is adc1, adc2, adc3, adc4,
+> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 8
+> +    maxItems: 13
+> +    items:
+> +      enum: [1, 2, 4, 8]
+> +
+> +  qcom,rx-channel-mapping:
+> +    description: |
+> +      Specifies static channels mapping between slave and master rx port
+> +      channels.
+> +      In the order of slave port channels, which is
+> +      hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 8
+> +    maxItems: 8
+> +    items:
+> +      enum: [1, 2, 4, 8]
+
+Can we please use sensible strings instead of a randomly-looking numbers?
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -74,6 +98,8 @@ examples:
+>              compatible = "sdw20217010a00";
+>              reg = <0 4>;
+>              qcom,rx-port-mapping = <1 2 3 4 5>;
+> +            qcom,rx-channel-mapping =  /bits/ 8 <0x01 0x02 0x01 0x01 0x02
+> +                                                 0x01 0x01 0x02>;
+>          };
+>      };
+>  
+> @@ -85,6 +111,8 @@ examples:
+>              compatible = "sdw20217010a00";
+>              reg = <0 3>;
+>              qcom,tx-port-mapping = <2 2 3 4>;
+> +            qcom,tx-channel-mapping = /bits/ 8 <0x01 0x02 0x01 0x01 0x02 0x04
+> +                                                0x04 0x08 0x01 0x02 0x04 0x8>;
+>          };
+>      };
+>  
+> -- 
+> 2.25.1
 > 
+
+-- 
+With best wishes
+Dmitry
 
