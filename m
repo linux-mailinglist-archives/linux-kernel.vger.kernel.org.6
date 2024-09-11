@@ -1,210 +1,165 @@
-Return-Path: <linux-kernel+bounces-325485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F3B975A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:21:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF57975A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68E061F24FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA92286F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1706B1B5EA5;
-	Wed, 11 Sep 2024 18:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eufO4dj4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9C61B78EB;
+	Wed, 11 Sep 2024 18:21:40 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684B21B3734;
-	Wed, 11 Sep 2024 18:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEFE19EEC8;
+	Wed, 11 Sep 2024 18:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078884; cv=none; b=aY8khMS6j4zHcOLT3Y3vQbwVQvL34c3BmI9bm2u350PQhM4DcUPiuNXJfLXz5SVyIZpipexOp/6z/w6ARpqkQOmhxufZWrNv6kFLAD0JCCjvRD+Okhh7qYhii8U+j2B8xgRTFfyCDpan5ySoU9gS2ROCWaD3qHwVZ0bFt1xpY+Q=
+	t=1726078900; cv=none; b=ADxxuzWT9kup5+yhfqr9bgy7WdBQdJg57MMADQ11vdPc8Sst1N2lMRHpBJcsn0+JQq55oD6sKqHCdtig5ePBU92NQwMjHv4Lpg9STS+e0grMY25piFwuZCXZYAnJ6ITAmRPKbwOtzguP6lI/QWpqNj1B42kYks1MTlPX61hc/TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078884; c=relaxed/simple;
-	bh=nMuSYTg4jXF6UeS8iQF2vdF2cdZq3UwftL469e8H+Ac=;
+	s=arc-20240116; t=1726078900; c=relaxed/simple;
+	bh=2cZas4SimbOELK54ILhf2k9/V2LxmAALpH5ubeNMXEs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJsbISTQpk77WXMqd7t2jiYT70Hex8J+y7LcTBjbfpzQ7emsYqujjDtiZas0ojzn9qymWgoUoTdTZ3jiTxrJ60U7K2qJ9x7ocPIj8iRn2shdBbK6PP0m7y8w8DjTUqJPuNxVYtziey9UC9+U2M18EyXZ1Sy0wfh+VWwKCPL5Xeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eufO4dj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5D4C4CEC0;
-	Wed, 11 Sep 2024 18:21:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726078884;
-	bh=nMuSYTg4jXF6UeS8iQF2vdF2cdZq3UwftL469e8H+Ac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eufO4dj4+kLUSwt1MV/NGWEz+Xf7pXrTI5EU5Ocw5+2w9L5l7d4i4OECrQFsexnOI
-	 RKyYKRBTMzNzb9VwVJdUv6wPOre9TRqjqlrfQrCRB/JJmMrxjvIV8O4+oP+OGiBghh
-	 HxTmuUGoKfWd4vrW5dE9hj33ltl8/44tbia4L/Kn86iEqS58+AXT/dBsCIlst/wXj0
-	 hrErNRNge3hPUhzmqUDF8yUYXz6lwVTpokVVYnIbStqVlQvPgU58cNOmm2I+fL1wMT
-	 ezb4dAZODs9fwdkLXPAroTOFE5VmqrnguCvVYpeJGWWZWnRzAVn/+Pw+VbicEsnV/I
-	 XmXMyXE0OHnmg==
-Date: Wed, 11 Sep 2024 19:21:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=kP/hclgiLFbxRWj91GNSHxe6sYCCLMux96HnYWTDvZ9NcocJKq5MrCWckIlfIN0+rhF6hZS2dNmpTyqSvL0GYdB/cUnozR6jSj1UIKg5oqxS3nCZlLjqPEGY6+EDB0qqzgw+lUkRDPPDYV6pzJKLGTkQBD/HD3VtyscqUWQhlGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB7BC4CEC0;
+	Wed, 11 Sep 2024 18:21:30 +0000 (UTC)
+Date: Wed, 11 Sep 2024 19:21:27 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3 SoCs
-Message-ID: <20240911-racism-playmaker-71cb87d1260f@spud>
-References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
- <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuHfp0_tAQhaymdy@arm.com>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+ <ZuDoExckq21fePoe@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uAiRD+oX7AmcgdlC"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuDoExckq21fePoe@ghost>
 
+On Tue, Sep 10, 2024 at 05:45:07PM -0700, Charlie Jenkins wrote:
+> On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
+> > * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
+> > > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
+> > > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
+> > > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > >> It's also unclear to me how we want this flag to interact with
+> > > > >> the existing logic in arch_get_mmap_end(), which attempts to
+> > > > >> limit the default mapping to a 47-bit address space already.
+> > > > >
+> > > > > To optimize RISC-V progress, I recommend:
+> > > > >
+> > > > > Step 1: Approve the patch.
+> > > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
+> > > > > Step 3: Wait approximately several iterations for Go & OpenJDK
+> > > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
 
---uAiRD+oX7AmcgdlC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Point 4 is an ABI change. What guarantees that there isn't still
+software out there that relies on the old behaviour?
 
-On Wed, Sep 11, 2024 at 10:00:25AM +0300, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->=20
-> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
->=20
-> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.ya=
-ml
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Do=
-cumentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> new file mode 100644
-> index 000000000000..8f78bce6470a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> +
-> +maintainers:
-> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,s32g-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  nxp,clksel:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Input clock selector. Choose between 0-SIRC and 2-FIRC.
-> +      The reason for these IDs not being consecutive is because
-> +      they are hardware coupled.
-> +    enum:
-> +      - 0  # SIRC
-> +      - 2  # FIRC
+> > > > I really want to first see a plausible explanation about why
+> > > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
+> > > > like all the other major architectures (x86, arm64, powerpc64),
+> > > 
+> > > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
+> > > configuration. We end up with a 47-bit with 16K pages but for a
+> > > different reason that has to do with LPA2 support (I doubt we need this
+> > > for the user mapping but we need to untangle some of the macros there;
+> > > that's for a separate discussion).
+> > > 
+> > > That said, we haven't encountered any user space problems with a 48-bit
+> > > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
+> > > approach (47 or 48 bit default limit). Better to have some ABI
+> > > consistency between architectures. One can still ask for addresses above
+> > > this default limit via mmap().
+> > 
+> > I think that is best as well.
+> > 
+> > Can we please just do what x86 and arm64 does?
+> 
+> I responded to Arnd in the other thread, but I am still not convinced
+> that the solution that x86 and arm64 have selected is the best solution.
+> The solution of defaulting to 47 bits does allow applications the
+> ability to get addresses that are below 47 bits. However, due to
+> differences across architectures it doesn't seem possible to have all
+> architectures default to the same value. Additionally, this flag will be
+> able to help users avoid potential bugs where a hint address is passed
+> that causes upper bits of a VA to be used.
 
-Could you please explain why, given both clocks must be provided by
-the hardware for there to be a choice, why choosing between them is a
-property of the hardware?
+The reason we added this limit on arm64 is that we noticed programs
+using the top 8 bits of a 64-bit pointer for additional information.
+IIRC, it wasn't even openJDK but some JavaScript JIT. We could have
+taught those programs of a new flag but since we couldn't tell how many
+are out there, it was the safest to default to a smaller limit and opt
+in to the higher one. Such opt-in is via mmap() but if you prefer a
+prctl() flag, that's fine by me as well (though I think this should be
+opt-in to higher addresses rather than opt-out of the higher addresses).
 
-> +
-> +  nxp,dividers:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      An array of two u32 elements, the former encoding DIV512,
-> +      the latter encoding DIV32. These are dividers that can be enabled
-> +      individually, or cascaded. Use 0 to disable the respective divider,
-> +      and 1 to enable it.
-
-Please explain to me what makes this a property of the hardware and how
-someone would go about choosing the divider settings for their hardware.
-
-> +    items:
-> +      - description: div512
-> +      - description: div32
-> +
-> +  clocks:
-> +    maxItems: 3
-
-I'd rather you provided an explicit items list here, explaining what
-each of the tree clocks do.
-
-Cheers,
-Conor.
-
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ipg
-> +      - const: sirc
-> +      - const: firc
-> +
-> +required:
-> +  - clock-names
-> +  - clocks
-> +  - compatible
-> +  - interrupts
-> +  - nxp,clksel
-> +  - nxp,dividers
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc0: rtc@40060000 {
-> +        compatible =3D "nxp,s32g-rtc";
-> +        reg =3D <0x40060000 0x1000>;
-> +        interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks =3D <&clks 54>,
-> +                 <&clks 55>,
-> +                 <&clks 56>;
-> +        clock-names =3D "ipg", "sirc", "firc";
-> +        nxp,clksel =3D <2>;
-> +        nxp,dividers =3D <1 0>;
-> +    };
-> --=20
-> 2.45.2
->=20
-
---uAiRD+oX7AmcgdlC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHfnwAKCRB4tDGHoIJi
-0nUtAQC6Vzg7zrmcJXz4U0qPYVpKASsHkOSEL6vnI/KceTRfjAD/SeL/IMgFUGqL
-shHO91YGqUhR6HdfM0WLmP+7Re9Q1w4=
-=6S9Q
------END PGP SIGNATURE-----
-
---uAiRD+oX7AmcgdlC--
+-- 
+Catalin
 
