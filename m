@@ -1,98 +1,83 @@
-Return-Path: <linux-kernel+bounces-324380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A4E974BD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B890974BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1881F25872
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD7E1F25D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB613D52B;
-	Wed, 11 Sep 2024 07:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5C13D539;
+	Wed, 11 Sep 2024 07:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="LBazfXtA"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rZgjrRME"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D727E13A265
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A7213C83D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041104; cv=none; b=WK7Gj//Rl4vxsVcZ1DQS17r6avsIhQ9JgO5YNXeDeQxJoJ79ebRETHJpvdILuOr27t5pTgxczNWSxjDtlDf9GsynMrTy+44LUxHhwx2GCqdNRS0coL6BAc/3zyiw9ITEjEqLpiPgoR17IGbcuE/fDUX1QbW+aTDYQ6rZdrv25Yw=
+	t=1726041139; cv=none; b=ofQcFITd6syoEvyBaAgKSQXqj37YPwh3DBFSJaj06JnPZQBLjJHVr0Uj1f0vDpPmw65i4kCV2rOsbJgS3XBhI4sZhNtPzOAKfECy7cXI5gYj/g1CRkBpllPl5X+b+EoXUUXnXrj9J1p3PjeMkUPCDZJdWVXmWb1/oZ3r1Mz0HQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041104; c=relaxed/simple;
-	bh=NKir++yKg6qIFt5diuBLaxpcrvVxtXH7i+aodtCpXo8=;
+	s=arc-20240116; t=1726041139; c=relaxed/simple;
+	bh=gySaOFRHBtcljdSeXk5NTlv58piwgRt6if/IxQF/UWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhOWK4eivInRX1FE63tYcY6SG8HO7l0TDjOl4j9Al4yqSE/z/nPBQomfIZ1QxGQIdR7LSE7pkgQ9W20dLW59mtRfCTdIm3YzpFtltn5ZbWvoRmmlMRlI9qWmxYVlER6hKJ+hQAl1hIH5va9VFhGZnFFNrSn/MaX/loG4FEZgiKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=LBazfXtA; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8ce5db8668so117921566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:51:42 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGReBgdlCIPHPzbkBkkzFJY7M1VahOPD916xdeWDsag8q9E1mqOuhlntLKrMzBe+Yp9lHD4hhrnCJ5TGJl/l+FPhxTb9a/lqSxnvnpUB3p7qq36qz7XywS3rQuoFee2uh0ydiwmnGaTENbkAUTAxYpP3SDmcuHqH67cefLGhO14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rZgjrRME; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso3559615e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726041101; x=1726645901; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EqhOEnN7I1NfnKs5yoj/51R0usVuimIfU3tAa/E8LUE=;
-        b=LBazfXtAk6QnKbefeuXr1ONUvktLdgW+HEExtCgob22xaO2TaRt42YRzgN+MSYjhps
-         Wng8VugBo7S8sohwOCO9IJzhLjVnvDwE0/X6rJlVXvGy0KiSVdDZG0RvbVj0n4kX52xA
-         fSfkIKuiY+S/Cg7nhBxQLYOGgZ1VPT3lE7wac=
+        d=google.com; s=20230601; t=1726041136; x=1726645936; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IxxfET3fM3V/9CRMIOk0EfCrmZYUH+MdAUwdBUw1Geo=;
+        b=rZgjrRMEpHCC1DfbkeUXitYL4PqDVOnM0Es1ujz7JkLEp2xy5xRJuDecgqWEOqG1wE
+         FMak6ehT8K5u+EqilCOjt21MOvj0peRFwubrtow3/g99xzCdn4emLmovXqtbatp7Bbp4
+         fzZ1BMzO1a6MaOEdtW9MF4NKz2HkwOP6g3dy0J1xNPQkv50wj28oKQNnIai9G+GMllr9
+         XTEeFUyZIZ+W2rRM3E+D5KfBHiygUHPOPyHM6rRJo/LE/7zDNkChjYNdTjooLQJybyLB
+         DLIkFtjxSrUxhw73+rcDV2vPTnQpaeHd6fOS+VK6BYO7XeLa5rzzaPMkjwZLjttqSraO
+         5h8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041101; x=1726645901;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqhOEnN7I1NfnKs5yoj/51R0usVuimIfU3tAa/E8LUE=;
-        b=MdaAAjTzaA+PN0xG8OMvkWodX5h3ilbUQ29gna1Bni+cXkGqqLP2ZTQeZOR0oFJPCk
-         CdTyrYGfOYwV5VCHIucJpbI27VGe5oLEnnTRJAkisE6DJrcD7wERrKKRAiedugVX+Xiz
-         J/DMRRvb5bVESeoCXjGK6FpUyAEhGIHjbgpybXG2qVFcD2uvxOqJaLb3Y33uOQzwwZwQ
-         SmWOyawTCa7l12EVkmNAyRwXrVn4MSzVoGIidQSjVbhZiSWVo90bAVnYTnmjBNlBnh36
-         dbpvj7e+MZVatwWYZXkefborVyUSmtShD3x+mM1TNkN0iYeBMQdKVcuzcuhMcytRGa5J
-         9Svw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF0FFh+clz3E9iTC6s32artX+nQ7cpBBA4A7Q8soXiUfrSd6g5mpu9mPj2s8QJAS+0Vo/QBeeUiH5mZPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLhCkNe+X3dZX7GJTq+DKIaHZ5l6/sSq3QmGBNEc03iESQ8x0a
-	09L8UTNYNA1oXr0kfZO/hITXB9yjqw0gNfNd+GfdjDFFKXrqgdhX2mR3igY3imI=
-X-Google-Smtp-Source: AGHT+IHfl4wUSekHQff7+1uJioix71uW7NP/VwOhy8UsjvFLMD59myAjxRkXduY2WsfEVdSUA5M/Sw==
-X-Received: by 2002:a17:906:7310:b0:a86:c372:14c3 with SMTP id a640c23a62f3a-a8ffadf0438mr308127066b.48.1726041100563;
-        Wed, 11 Sep 2024 00:51:40 -0700 (PDT)
-Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d556e8sm580483466b.204.2024.09.11.00.51.39
+        d=1e100.net; s=20230601; t=1726041136; x=1726645936;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IxxfET3fM3V/9CRMIOk0EfCrmZYUH+MdAUwdBUw1Geo=;
+        b=cR5n213k26rySb8CadasaxEIdkoaRDrthsvGfRqmbsBh5iwdxB33Qd/PrL9U2XLrbE
+         srFVWdos5GsmMwMA4uxCFB+pf2W7iPVB+CIHarXsET7PYvU3+f4ogDNGPkeeZKD9975K
+         hG3HK2uv7tshIJIMStqS7ghE1xaCkoZmInK5wCL2zsVNmab58kYZVRXt5k5CoueXoz+1
+         qAfDfXVrkG1bwSfHBL7AyqOh3SqdQLNUkao2uF6NX3npu6ZLgq6KDKnUXlCHlyNT0Ewe
+         dJoeQUPEGLDQ4jdSBNoYC4zGq2uJb/UjZMyIaO1qpRXfyhYOI6bkl6wuupDsqJkXXHFD
+         ZxuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjiwnXEldfzs0lR4NB4pAtoAVRtTkwgehF5xjtmqz+vNaJTcQbu71IxO/vTUAxGYpK+yg33ocyFZyxPes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDKn/4uCePgPV/sFhNeTJntzCCP2utgOpW2HB2PLKpQUi7INX+
+	BhuJz2QIuPLjwYIb6J85RlQ3N5k1HSD4ZaeauyLtDbZIVz/Ewt5eI0vjNUV6Rw==
+X-Google-Smtp-Source: AGHT+IH3vyKCf0knIMn61KvQCDAk4WW46zj0emh72vl4fMCsHLyzArOUiTDQfBxn8rt89/yvFSddxA==
+X-Received: by 2002:a05:600c:1ca7:b0:42c:baf1:4c7 with SMTP id 5b1f17b1804b1-42cbddb8169mr33274305e9.4.1726041135777;
+        Wed, 11 Sep 2024 00:52:15 -0700 (PDT)
+Received: from google.com (109.36.187.35.bc.googleusercontent.com. [35.187.36.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb179f8e3sm125126015e9.43.2024.09.11.00.52.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:51:40 -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:51:38 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v2 1/9] net: napi: Add napi_storage
-Message-ID: <ZuFMClzrGwDDFm01@LQ3V64L9R2.homenet.telecomitalia.it>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240908160702.56618-1-jdamato@fastly.com>
- <20240908160702.56618-2-jdamato@fastly.com>
- <20240909164039.501dd626@kernel.org>
+        Wed, 11 Sep 2024 00:52:15 -0700 (PDT)
+Date: Wed, 11 Sep 2024 08:52:11 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	kernel-team@android.com, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/2] ring-buffer/selftest: Verify the entire
+ meta-page padding
+Message-ID: <ZuFMK7yndArZo4pA@google.com>
+References: <20240910162335.2993310-1-vdonnefort@google.com>
+ <20240910162335.2993310-2-vdonnefort@google.com>
+ <20240910124541.23426cee@gandalf.local.home>
+ <14143861-bc16-47f4-ba8d-7d577e7a9dd0@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,94 +86,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909164039.501dd626@kernel.org>
+In-Reply-To: <14143861-bc16-47f4-ba8d-7d577e7a9dd0@linuxfoundation.org>
 
-On Mon, Sep 09, 2024 at 04:40:39PM -0700, Jakub Kicinski wrote:
-> On Sun,  8 Sep 2024 16:06:35 +0000 Joe Damato wrote:
-> > Add a persistent NAPI storage area for NAPI configuration to the core.
-> > Drivers opt-in to setting the storage for a NAPI by passing an index
-> > when calling netif_napi_add_storage.
+On Tue, Sep 10, 2024 at 12:49:58PM -0600, Shuah Khan wrote:
+> On 9/10/24 10:45, Steven Rostedt wrote:
 > > 
-> > napi_storage is allocated in alloc_netdev_mqs, freed in free_netdev
-> > (after the NAPIs are deleted), and set to 0 when napi_enable is called.
+> > Shuah,
+> > 
+> > Can you take this through your tree?
+> > 
+> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > 
-> >  enum {
-> > @@ -2009,6 +2019,9 @@ enum netdev_reg_state {
-> >   *	@dpll_pin: Pointer to the SyncE source pin of a DPLL subsystem,
-> >   *		   where the clock is recovered.
-> >   *
-> > + *	@napi_storage: An array of napi_storage structures containing per-NAPI
-> > + *		       settings.
+> I can take this through my tree.
 > 
-> FWIW you can use inline kdoc, with the size of the struct it's easier
-> to find it. Also this doesn't need to be accessed from fastpath so you
-> can move it down.
+> > 
+> > -- Steve
+> > 
+> > 
+> > On Tue, 10 Sep 2024 17:23:34 +0100
+> > Vincent Donnefort <vdonnefort@google.com> wrote:
+> > 
+> > > Improve the ring-buffer meta-page test coverage by checking for the
+> > > entire padding region to be 0 instead of just looking at the first 4
+> > > bytes.
+> > > 
+> > > Cc: Shuah Khan <skhan@linuxfoundation.org>
+> > > Cc: linux-kselftest@vger.kernel.org
+> > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 > 
-> > +/**
-> > + * netif_napi_add_storage - initialize a NAPI context and set storage area
-> > + * @dev: network device
-> > + * @napi: NAPI context
-> > + * @poll: polling function
-> > + * @weight: the poll weight of this NAPI
-> > + * @index: the NAPI index
-> > + */
-> > +static inline void
-> > +netif_napi_add_storage(struct net_device *dev, struct napi_struct *napi,
-> > +		       int (*poll)(struct napi_struct *, int), int weight,
-> > +		       int index)
-> > +{
-> > +	napi->index = index;
-> > +	napi->napi_storage = &dev->napi_storage[index];
-> > +	netif_napi_add_weight(dev, napi, poll, weight);
+> Vincent,
 > 
-> You can drop the weight param, just pass NAPI_POLL_WEIGHT.
+> Can you please rebase these on linux-kselftest next branch and
+> resend.  This patch doesn't apply.
 > 
-> Then -- change netif_napi_add_weight() to prevent if from
-> calling napi_hash_add() if it has index >= 0
+> Also please fix the subject to say:
 > 
-> > diff --git a/net/core/dev.c b/net/core/dev.c
-> > index 22c3f14d9287..ca90e8cab121 100644
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -6719,6 +6719,9 @@ void napi_enable(struct napi_struct *n)
-> >  		if (n->dev->threaded && n->thread)
-> >  			new |= NAPIF_STATE_THREADED;
-> >  	} while (!try_cmpxchg(&n->state, &val, new));
-> > +
-> > +	if (n->napi_storage)
-> > +		memset(n->napi_storage, 0, sizeof(*n->napi_storage));
-> 
-> And here inherit the settings and the NAPI ID from storage, then call
-> napi_hash_add(). napi_hash_add() will need a minor diff to use the
-> existing ID if already assigned.
-> 
-> And the inverse of that has to happen in napi_disable() (unhash, save
-> settings to storage), and __netif_napi_del() (don't unhash if it has
-> index).
-> 
-> I think that should work?
+> selfttests/ring-buffer
 
-I made the changes you suggested above yesterday and I had also
-renamed the struct to napi_config because I also liked that better
-than storage.
-
-I'll update the code to put the values in the napi_struct and copy
-them over as you suggested in your other message.
-
-That said: the copying thing is more of an optimization, so the
-changes I have should be almost (?) working and adding that copying
-of the values into the napi_struct should only be a performance
-thing and not a functionality/correctness thing.
-
-I say that because there's still a bug I'm trying to work out with
-mlx5 and it's almost certainly in the codepath Stanislav pointed out
-in his messages [1] [2]. Haven't had much time to debug it just yet,
-but I am hoping to be able to debug it and submit another RFC before
-the end of this week.
-
-FWIW: I too have fallen down this code path in mlx5 in the past for
-other reasons. It appears it is time to fall down it again.
-
-[1]: https://lore.kernel.org/netdev/Ztjv-dgNFwFBnXwd@mini-arch/
-[2]: https://lore.kernel.org/netdev/Zt94tXG_lzGLWo1w@mini-arch/
+Will do, but it depends linux-trace/ring-buffer/for-next which hasn't make it
+yet to linux-next.
 
