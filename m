@@ -1,110 +1,76 @@
-Return-Path: <linux-kernel+bounces-325134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45F597556C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEF9975568
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585AC1F27A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C2E28A7C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3C19E98B;
-	Wed, 11 Sep 2024 14:31:02 +0000 (UTC)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56BC19F128;
+	Wed, 11 Sep 2024 14:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aav5yp/z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF03185606;
-	Wed, 11 Sep 2024 14:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CCC19F103;
+	Wed, 11 Sep 2024 14:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065062; cv=none; b=KeKjVNi4LDOBe9pLnzGschQG6yPej/ipb6Qcvnlmk/ttdXg1nvVvls1AE5MDPAf4p240i4GUMbfyUGDtWuerR6TOO1KIMltf9JCE4NQgF/Zv4hGtABNwzslIfLnGPJ0CarGf2pmStb8dqSpKUDjaI1l5hC0knn+bf6T6LIgXTqo=
+	t=1726065014; cv=none; b=pWhJ1hXXYOQUcOIb+uXUkg7yQz9tHVtzUTnukpc7evYXQ3ruyOglHGVHCAeZSy2jKcTaujfjMC4HRLk97U+Z5FFnzm+LTRk5EdseYbrVeH8iH1OfUFgOO13HVMAo556ZLWbMJjNN3uO7cnPRv904lt+4KCXwP0ZSrP/qOFAXjz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065062; c=relaxed/simple;
-	bh=+0RRQI371JwlBeboT9GF49cq6sF+GAbP9dyGVitN45E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IaRxBqgPI64bEii9hDJhxysgLgHshZ4wBQhaHha00MZpNZDW4tLwL4mU862hV1JV7Yb6eGJTUTv4sHD/4oXrxv7+cawUReUDDW9mh8O7+U/QtqN4Hhw9rx+zhHySo8oKoD/SQzULzUzUXf4dcA5jO+FYKMCIc7lParG4LFAKkt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpsz2t1726064993t5ok0ar
-X-QQ-Originating-IP: P6ukSmdqm9PfLsf7wEuHBvtMtOeR6xq2pUfo5KSx/GY=
-Received: from fastnlp.. ( [202.120.234.41])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 11 Sep 2024 22:29:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3987430628644740193
-From: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-To: deller@gmx.de
-Cc: 21210240012@m.fudan.edu.cn,
-	21302010073@m.fudan.edu.cn,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kuninori.morimoto.gx@renesas.com,
-	laurent.pinchart@ideasonboard.com,
-	Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Subject: [PATCH] fbdev: pxafb: Fix use after free vulnerability in pxafb_driver Driver Due to Race Condition
-Date: Wed, 11 Sep 2024 22:29:52 +0800
-Message-Id: <20240911142952.833223-1-kxwang23@m.fudan.edu.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726065014; c=relaxed/simple;
+	bh=6LiCSAIZv03QojzXf4p7TyaubdkXIBUyuQTIEZdAj4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BN2DZkbZ1L0H2AQm261IXmo+oIfptFbN1Sqkisg7FjkF3Cjnm5n32cN9NhlranzrJ8DEGzkOnOBmQf1eE/j4ED+NxvFGzBFLPHH2c22rUh4AvC/9Mo8VPi/F8wcX0j4scYSrKvkBKBxh15WSdzTsMzXcti8tXcpuCyJHDidlXNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aav5yp/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DDDC4CEC0;
+	Wed, 11 Sep 2024 14:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726065013;
+	bh=6LiCSAIZv03QojzXf4p7TyaubdkXIBUyuQTIEZdAj4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Aav5yp/zlgyeuVZac5JtafGdmaLYLOIbxPesqS6hC+SQ9Cn5389MUvsJJdl//1JwL
+	 8/f/LlPdb5ZY4TyZM2UqEdaExMTUIXpFD8k+Ve+f2uQSIOq1lV/c61JJghsO6UCv96
+	 mOXizQekNePUISX717Z/SEU/9FGq5gd5AQ7ngsgi/RB+wzkNTwVBl2Aj30Iz2JvlNw
+	 N97EgolHmVT1KgQWXNbNezCrQH9P/s3hu7LQ95pClY8pozXDW+bHaF1w5KVuAcr9bd
+	 5ir9yr3Q/o23++KspfKBTdPOIWIi+EVWhpWSqUJ35dqOFP9nrU8H26lo5yEpfK3REw
+	 ZJoBTxKK4/MVg==
+Date: Wed, 11 Sep 2024 15:30:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, jacob.e.keller@intel.com,
+	sd@queasysnail.net, chunkeey@gmail.com
+Subject: Re: [PATCHv2 net-next] net: gianfar: fix NVMEM mac address
+Message-ID: <20240911143009.GA572255@kernel.org>
+References: <20240910220913.14101-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910220913.14101-1-rosenp@gmail.com>
 
-In the pxafb_probe function, it calls the pxafb_init_fbinfo function,
-after which &fbi->task is associated with pxafb_task. Moreover,
-within this pxafb_init_fbinfo function, the pxafb_blank function
-within the &pxafb_ops struct is capable of scheduling work.
+On Tue, Sep 10, 2024 at 03:09:13PM -0700, Rosen Penev wrote:
+> If nvmem loads after the ethernet driver, mac address assignments will
+> not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
+> case so we need to handle that to avoid eth_hw_addr_random.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>  v2: use goto instead of return
 
-If we remove the module which will call pxafb_remove to make cleanup,
-it will call unregister_framebuffer function which can call
-do_unregister_framebuffer to free fbi->fb through
-put_fb_info(fb_info), while the work mentioned above will be used.
-The sequence of operations that may lead to a UAF bug is as follows:
+Thanks for the update.
 
-CPU0                                                CPU1
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-                                   | pxafb_task
-pxafb_remove                       |
-unregister_framebuffer(info)       |
-do_unregister_framebuffer(fb_info) |
-put_fb_info(fb_info)               |
-// free fbi->fb                    | set_ctrlr_state(fbi, state)
-                                   | __pxafb_lcd_power(fbi, 0)
-                                   | fbi->lcd_power(on, &fbi->fb.var)
-                                   | //use fbi->fb
-
-Fix it by ensuring that the work is canceled before proceeding
-with the cleanup in pxafb_remove.
-
-Note that only root user can remove the driver at runtime.
-
-Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
----
- drivers/video/fbdev/pxafb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index 2ef56fa28aff..5ce02495cda6 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2403,6 +2403,7 @@ static void pxafb_remove(struct platform_device *dev)
- 	info = &fbi->fb;
- 
- 	pxafb_overlay_exit(fbi);
-+	cancel_work_sync(&fbi->task);
- 	unregister_framebuffer(info);
- 
- 	pxafb_disable_controller(fbi);
--- 
-2.25.1
-
+...
 
