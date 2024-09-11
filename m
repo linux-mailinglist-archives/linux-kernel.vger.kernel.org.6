@@ -1,286 +1,122 @@
-Return-Path: <linux-kernel+bounces-324345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F1D974B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:31:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A91974B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADB31F215A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353731F23416
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EB81428E3;
-	Wed, 11 Sep 2024 07:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B22116B391;
+	Wed, 11 Sep 2024 07:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBt8u00X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vrj47DI6"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2D16A33B;
-	Wed, 11 Sep 2024 07:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749E813AA3F;
+	Wed, 11 Sep 2024 07:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726039748; cv=none; b=aaKeiGa1FfBW3wff93AD2K6AE94tR7U8pJ9xiz+qyFg3qR5o7PRrDmG49UVfDqePNeUSxzLHfyGiMHObzkYrDeYkI/xckSjP163ZXEP9dEp9N5/HcYBAkOXQiH6sZW6SEKtwY92jIzuxOJcCWMj8S9Bo3p6kUxDl6UVJ7dzVG3o=
+	t=1726039742; cv=none; b=VQxvniTMnsESIoIxrYorjBi1vbmN5ErNAQQp4KD4gAr1fwNnn7CQi4SmsP9fTKoApcnaE8KEZ4RIqm8hQzttnEFnS/bBHAEPYcTzBBf6RS0qp1wZJCcN0JjTsITLnhhGS27hQhP98HELR0FUzb6m01utUCloZJ/bQY2Kw+ZGAqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726039748; c=relaxed/simple;
-	bh=KbUoUBvcWX9rFYePbVpImFGQLgDAvUmaqTioMBxsWfc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ndDq8LXdgx9bM5s4DkpeNoiLvh8xQmbSb9sOok4gpZYM2ROnENF23nfMZY2JlQ3Db0hLyDUp8BzfXuO6pUeU2gA6E9lq3ytYRdN8ItAtMQqtZi6jUjubbLYHZ7BNcFTCdqzNhxawXM7l1K66vBAywmXB3biBEFA9GshZFTb1Wpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBt8u00X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F26C4CEC6;
-	Wed, 11 Sep 2024 07:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726039747;
-	bh=KbUoUBvcWX9rFYePbVpImFGQLgDAvUmaqTioMBxsWfc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cBt8u00XQHt/nU03fXmbDp/LdHs0RRP/Ha6rtdbyOZsTsLCyETX1h8OiRxzc1V4Oy
-	 b1GUSuQ9TYd8oZLCtO29JEkzU3fl4spcbFOcbjiVkiciV2eAYK0oVMT32zvN859B/X
-	 b0lYN8vocfrbCssIc3bJAZvGm3ksNLShOacCrMaIEe2Mxp51Q2N6FKBHkB1mNSO5YQ
-	 FkaXcyEfeQBNbzOVCGFK6eaOX6+D96Ui5RWyHgNGCihBp4Q+hQLmYBg2SAG9P42V0q
-	 2vOmx7sFPK9MQbirI1uZA2ZSpPfmLY1JakQUTbf0cK8wEUg0xFQNLseSiO6ZNhriPx
-	 UZ3/jlnMkBSdQ==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75d044201so5752111fa.0;
-        Wed, 11 Sep 2024 00:29:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV9Riqx1iQ6yCg47lx7027wmadhbvUZrFkjQrdh1/3pNAlyl26+nWXAgDTOmX6/4vUARb0yisfI0cMpgz8=@vger.kernel.org, AJvYcCWXBind/CPa6B3lbvwoAy/W2Zl0vWT6XkhsccxPr4E/fTjiGr00XSpXqX/5r+g2xQXSXzm43JN/xoJ8CtVS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH7Qubf0Rflq4mE/l/h5lu349fayBVvWiTQXBbuAn4K/xNhUxL
-	1v5tFlJ9joyLhHjMZgn7Q5/m+rHIVfiHAVe1CcUNy/sSl06p5wESM1MmWQJpzIQj3VE8fKTO9dH
-	k5Tl9N9Cy6W360ZemssqCuF/XjYM=
-X-Google-Smtp-Source: AGHT+IHRZZMu7s1CwuHZGaWoY2UgPTfkO8OHLCmhRY0wGYeMecrs07iKYrpRq++AoCZwC3W5T4Utz6ngqDv8O7R6snE=
-X-Received: by 2002:a05:651c:1987:b0:2f7:5c20:5daf with SMTP id
- 38308e7fff4ca-2f772603a6cmr19792991fa.2.1726039746520; Wed, 11 Sep 2024
- 00:29:06 -0700 (PDT)
+	s=arc-20240116; t=1726039742; c=relaxed/simple;
+	bh=iakLmgvnukwcswtCPtzAFI8kmqeVXpVpTFw5LuQno+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YK4E3/EaoEEczSUyTtrkHRfRqrJ1OStAP6X2/5S2aBFNpXPvkomO2HqPavqCt5y3BJdE3HU3xfdLSaGLzZ52PEvLfr4fTceehUOErVf+d7o5cY+LNRohuZovepAGfz+/2oDFAOfhZ+ijRBH209hP+6mUQVS4s7+QQq6xcUzMc/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vrj47DI6; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718f28f77f4so1514910b3a.1;
+        Wed, 11 Sep 2024 00:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726039741; x=1726644541; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iakLmgvnukwcswtCPtzAFI8kmqeVXpVpTFw5LuQno+8=;
+        b=Vrj47DI69wXt3s3+got5Uem8XgP2dhjoA0vA9/owLpIS+m6vpnX5mv6ppYNxjWVTnw
+         pW1h/iQT3K2vUeqqDNCzw18NcYY3rgDFzYDY9N0+oSmJ21OvV9YcQaGno5OfPYYjgs3X
+         WzIYqAwNIGlQARMn9ABqBoekdYqAGGFPvtIONAe98ZZGEUjXj1PAUa/ytyJPYnTsuY7v
+         EMzBcSNjc+7mRz2yYvlMDmhV/UkNT1yU/GVkQFcuYBwsW6wFGT0pAfRIxy9RcK2gcuTH
+         76nlskKz6pbqFlz6ncEyHkOmtP5QsxBYrpB8x+eVGowkRKHRwayxggx613LpUR34CHlB
+         xeOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726039741; x=1726644541;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iakLmgvnukwcswtCPtzAFI8kmqeVXpVpTFw5LuQno+8=;
+        b=vYVfCGetlOE4BcptikLBYW35fzopJc3aUYdGuMUAQOELcN1dEf94EEujNfSHLhW9Ye
+         LbCorM1dlapCx69A/ah2AnvqDRvcPOeCgrHnYhjuDes10+JC7bExMT4pOzyn/REonogW
+         8qmzfnCvQnhVqNa163xOt6WEeSlfXbq67Rer++CXfa/bJNP2Mstk0E+onDbR+mLrYalk
+         y1EnNDdvD+T/XU5BvuAUrYt6ENZF9Lvzf5MDnemEkY5TxGkNWku+46NdoZcP2IHpbjIR
+         4SRCid7Bo3s6sDbzcsKpDoKsgipzo0PS7gyHx9PhSKm/PSyGK/Q3pL9J/9Z+T2T++xf9
+         fX1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2O6/5BU4BK2FUNrJPOrxyjJC7NHrnpA/92LXbyFaJyyZ66GuNmMy6ghMtxAPvvmbWH+Ty+qykQOw=@vger.kernel.org, AJvYcCXdtOdd6IVE3kmSwC0jKiRYyX1ZDLUhIvaKr8XasrLabdWPbw1M7UsHKNHGwDAgFL41pSnRh5QyYD32bIYs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6PEdgSvmDNsV9rZI8LKGW9+yhrUvAwtqIEaojUC6wWxiWWyWG
+	G6stKXLkOx4pV87h/ctLYG95Kq0+9nUe20cZK/23jg2LcwX9kHH9
+X-Google-Smtp-Source: AGHT+IFox3Oy37dkHcW4zCrbt+yyMH8RpvT5yN69nrUau6VYcU+/WxmcW11NcONfdC22LqiM/YfTyQ==
+X-Received: by 2002:a05:6a00:928c:b0:714:28c7:2455 with SMTP id d2e1a72fcca58-71916d950a2mr3374011b3a.6.1726039740385;
+        Wed, 11 Sep 2024 00:29:00 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909226fsm2475877b3a.98.2024.09.11.00.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 00:28:59 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id D27674A0EB87; Wed, 11 Sep 2024 14:28:47 +0700 (WIB)
+Date: Wed, 11 Sep 2024 14:28:47 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.l.liu@intel.com,
+	eric.auger@redhat.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, baolu.lu@linux.intel.com
+Subject: Re: [PATCH] Documentation: userspace-api: iommufd: Update
+ HWPT_PAGING and HWPT_NESTED
+Message-ID: <ZuFGr53PK3HvhRHl@archie.me>
+References: <20240910204111.7969-1-nicolinc@nvidia.com>
+ <ZuD8tsci0JPikUYL@archie.me>
+ <ZuEbir5Np3sUFkHz@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aowpzz4rbedjkwkl7b4a2f5pf2p5cgsu6knsgxnayckhbumxf3@aznrm7oliydb>
- <442e8058.43a4.191dea175d7.Coremail.3090101217@zju.edu.cn>
- <lnizw6jklneisxkhah7ezy4tcrn2wpm52ibh5euz7ipyfansde@kc4onuvrrmxr> <mesi5e46iumhgdbvzl2gfwdamtv34baydb5d4pmud4fu7n4dto@fewx4uzbtjl6>
-In-Reply-To: <mesi5e46iumhgdbvzl2gfwdamtv34baydb5d4pmud4fu7n4dto@fewx4uzbtjl6>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 11 Sep 2024 16:28:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATDVN9ukAJdztobZ=aMLvfgE_wW1N_gsB-x3OiRE-Jrog@mail.gmail.com>
-Message-ID: <CAK7LNATDVN9ukAJdztobZ=aMLvfgE_wW1N_gsB-x3OiRE-Jrog@mail.gmail.com>
-Subject: Re: External modules with O=... (was: Re: [PATCH] kbuild: Fix include
- path in scripts/Makefile.modpost)
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Jing Leng <3090101217@zju.edu.cn>, Michal Marek <michal.lkml@markovi.net>, 
-	Nick Desaulniers <ndesaulniers@google.com>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jing Leng <jleng@ambarella.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+bsyqXFVwMp8PLlE"
+Content-Disposition: inline
+In-Reply-To: <ZuEbir5Np3sUFkHz@nvidia.com>
+
+
+--+bsyqXFVwMp8PLlE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 11, 2024 at 1:36=E2=80=AFPM Lucas De Marchi
-<lucas.demarchi@intel.com> wrote:
->
-> On Tue, Sep 10, 2024 at 09:43:14PM GMT, Lucas De Marchi wrote:
-> >On Wed, Sep 11, 2024 at 09:10:09AM GMT, Jing Leng wrote:
-> >>>-----Original Messages-----
-> >>>From: "Lucas De Marchi" <lucas.demarchi@intel.com>
-> >>>Send time:Tuesday, 09/10/2024 22:00:29
-> >>>To: "Masahiro Yamada" <masahiroy@kernel.org>
-> >>>Cc: 3090101217@zju.edu.cn, "Michal Marek" <michal.lkml@markovi.net>, "=
-Nick
-> >>> Desaulniers" <ndesaulniers@google.com>, "Linux Kbuild mailing list" <=
-linux-kbuild@vger.kernel.org>, "Linux Kernel Mailing List" <linux-kernel@vg=
-er.kernel.org>, "Jing Leng" <jleng@ambarella.com>
-> >>>Subject: External modules with O=3D... (was: Re: [PATCH] kbuild: Fix i=
-nclude path in scripts/Makefile.modpost)
-> >>>
-> >>>Hi, I was pointed to this thread since I'm trying something similar
-> >>>in kmod's testsuite. See below.
-> >>>
-> >>>On Tue, May 24, 2022 at 02:52:45AM GMT, Masahiro Yamada wrote:
-> >>>>On Tue, May 17, 2022 at 7:51 PM <3090101217@zju.edu.cn> wrote:
-> >>>>>
-> >>>>> From: Jing Leng <jleng@ambarella.com>
-> >>>>>
-> >>>>> When building an external module, if users don't need to separate t=
-he
-> >>>>> compilation output and source code, they run the following command:
-> >>>>> "make -C $(LINUX_SRC_DIR) M=3D$(PWD)". At this point, "$(KBUILD_EXT=
-MOD)"
-> >>>>> and "$(src)" are the same.
-> >>>>>
-> >>>>> If they need to separate them, they run "make -C $(KERNEL_SRC_DIR)
-> >>>>> O=3D$(KERNEL_OUT_DIR) M=3D$(OUT_DIR) src=3D$(PWD)". Before running =
-the
-> >>>>> command, they need to copy "Kbuild" or "Makefile" to "$(OUT_DIR)" t=
-o
-> >>>>> prevent compilation failure.
-> >>>>>
-> >>>>> So the kernel should change the included path to avoid the copy ope=
-ration.
-> >>>>>
-> >>>>> Signed-off-by: Jing Leng <jleng@ambarella.com>
-> >>>>> ---
-> >>>>>  scripts/Makefile.modpost | 3 +--
-> >>>>>  1 file changed, 1 insertion(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
-> >>>>> index 48585c4d04ad..0273bf7375e2 100644
-> >>>>> --- a/scripts/Makefile.modpost
-> >>>>> +++ b/scripts/Makefile.modpost
-> >>>>> @@ -87,8 +87,7 @@ obj :=3D $(KBUILD_EXTMOD)
-> >>>>>  src :=3D $(obj)
-> >>>>>
-> >>>>>  # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
-> >>>>> -include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
-> >>>>> -             $(KBUILD_EXTMOD)/Kbuild, $(KBUILD_EXTMOD)/Makefile)
-> >>>>> +include $(if $(wildcard $(src)/Kbuild), $(src)/Kbuild, $(src)/Make=
-file)
-> >>>>>
-> >>>>>  # modpost option for external modules
-> >>>>>  MODPOST +=3D -e
-> >>>>> --
-> >>>>> 2.17.1
-> >>>>>
-> >>>>
-> >>>>
-> >>>>I do not think "M=3D$(OUT_DIR) src=3D$(PWD)" is the official way,
-> >>>>but this patch is a clean up.
-> >>>
-> >>>I tried what is in this patch and also tried to find an official way i=
-n
-> >>>the docs.
+On Tue, Sep 10, 2024 at 09:24:42PM -0700, Nicolin Chen wrote:
+> I've applied the diff to my local version and will respin another
+> version after collecting remarks from others.
 
-
-There is no official way.
-
-> >>>
-> >>>In kmod's testsuite we build dummy kernel modules to exercise the API.
-> >>>https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/tree/testsui=
-te/module-playground
-> >>>
-> >>>This works:
-> >>>     make -C /lib/modules/$(uname -r)/build M=3D$PWD
-> >>>
-> >>>This doesn't:
-> >>>     make -C /lib/modules/$(uname -r)/build M=3D$PWD O=3D/tmp/kmod_tes=
-t_modules
-
-
-
-O=3D points the output directory of the kernel,
-not the output directory of the external modules.
-
-
-/lib/modules/$(uname -r)/build
-is the clean source tree.
-
-/tmp/kmod_test_modules
-contains the build artifacts of vmlinux and
-in-tree modules.
-
-Then, the command you gave would work.
-
-
-
-
-
-
-> >>>
-> >>>I also tried the variants above with setting src, but all of them give
-> >>>me errors - I used 6.10 and 6.11-rc7 for these tests.
-> >>>
-> >>>Is there a way to do this?
-> >>>
-> >>>thanks
-> >>>Lucas De Marchi
-> >>>
-> >>>>
-> >>>>Applied to linux-kbuild. Thanks.
-> >>>>
-> >>>>
-> >>>>--
-> >>>>Best Regards
-> >>>>Masahiro Yamada
-> >>
-> >>Hi Masahiro,
-> >
-> >I guess you meant Lucas :)
-> >
-> >>
-> >>I think your intention is to separate the source code from the compiled=
- output.
-> >>The correct command should be:
-> >>   make -C /lib/modules/$(uname -r)/build src=3D$PWD M=3D/tmp/kmod_test=
-_modules
-> >
-> >oh, looks like this works. Apparently my mistake was trying to set O=3D
-> >like I normally do for in-tree modules.
->
-> spoke too early... It worked because I was in another machine pointing
-> to a 6.8 kernel. It seems like something broke between 6.9 and 6.10.
->
-> Running a quick bisect, it's pointing to this commit:
-> 9a0ebe5011f4 ("kbuild: use $(obj)/ instead of $(src)/ for common pattern =
-rules")
-
-
-Overriding 'src' from the command is not allowed. That's why.
-
-
-> Error like below:
->
-> $ make -j$(nproc) -C ~/p/linux-dim/src MddPWD/build srcx=3D$PWD
-> make: Entering directory '/home/ldmartin/p/linux-dim/src'
-> make[2]: *** No rule to make target '/home/ldmartin/p/kmod/testsuite/modu=
-le-playground/build/mod-simple.o', needed by '/home/ldmartin/p/kmod/testsui=
-te/module-playground/build/'.  Stop.
-> make[1]: *** [/home/ldmartin/p/linux-dim/src/Makefile:1922: /home/ldmarti=
-n/p/kmod/testsuite/module-playground/build] Error 2
-> make: *** [Makefile:240: __sub-make] Error 2
-> make: Leaving directory '/home/ldmartin/p/linux-dim/src'
-
-
-I suggested M=3Drelative-path + VPATH=3D
-but I do not know what you want to achieve.
-
-https://lore.kernel.org/linux-kbuild/CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7J=
-YuHTWzgGL2Zjg@mail.gmail.com/
-
-
-
-
-
-
-
-> Lucas De Marchi
->
-> >
-> >Thanks
-> >Lucas De Marchi
-> >
-> >>
-> >>You also can refer to:
-> >>   https://github.com/lengjingzju/cbuild-ng/blob/main/scripts/core/inc.=
-mod.mk
-> >>1. The complete command is as follows:
-> >>   make -C <Linux kernel source code directory> O=3D<Linux kernel compi=
-lation output directory> src=3D<Current driver module source code directory=
-> M=3D<Current driver module compilation output directory>
-> >>2. If the <Linux kernel source code directory> and the <Linux kernel co=
-mpilation output directory> are the same, <O=3Dxxx> can be omitted:
-> >>   make -C <Linux kernel source code directory> src=3D<Current driver m=
-odule source code directory> M=3D<Current driver module compilation output =
-directory>
-> >>2. If the <Current driver module source code directory> and the <Curren=
-t driver module compilation output directory> are the same, <src=3Dxxx> can=
- be omitted:
-> >>   make -C <Linux kernel source code directory> O=3D<Linux kernel compi=
-lation output directory> M=3D<Current driver module source code directory>
-> >>
-> >>Best Regards!
-> >>Jing Leng
-
-
+OK, thanks!
 
 --=20
-Best Regards
-Masahiro Yamada
+An old man doll... just what I always wanted! - Clara
+
+--+bsyqXFVwMp8PLlE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZuFGqwAKCRD2uYlJVVFO
+o/miAQDDyi62rowi/sUwnMvXfGllpnhSXAx5LswuPKFU/6HbbgD+JAv+CSyrdd6V
+9nVTuBTkoGvsr5MfVDav9vEN5jfDfgo=
+=6gHX
+-----END PGP SIGNATURE-----
+
+--+bsyqXFVwMp8PLlE--
 
