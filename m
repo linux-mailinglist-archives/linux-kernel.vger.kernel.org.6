@@ -1,80 +1,96 @@
-Return-Path: <linux-kernel+bounces-325482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746B8975A32
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:20:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23428975A37
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB9D1F25483
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:20:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B11C8B22B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2769C1B5314;
-	Wed, 11 Sep 2024 18:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GH4jGMHK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FAF1B581D;
+	Wed, 11 Sep 2024 18:20:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857601B1509;
-	Wed, 11 Sep 2024 18:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116421B1509
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078802; cv=none; b=BVfKoF3AMg6SZ28gfJsy+h1zVRRBlv4y6NDSXOJFnGhwt0Ii5QryVX3/pQBY9HmUdY2o0wCPydztpg9+Lo1Gu9aY9jIvuZXplACXwyYjaqbC38s70KbgmedZY1X/27I+k69QnS8jmay0Tron8nCwVsA9KsAFb2ls6nWvENnCHbA=
+	t=1726078851; cv=none; b=VtkxgvAAyWv+h+P7K7hbjGR6nr3wBcVPf6fTeaMFBE2PKYyQ50FT0mfrDdyCWKJkWOuZIVtLLNxqZHr7whrLkWmSlEDOiuKH4T0hCUGxZLptBmN8III3p6+kyMclhLgZao+/K9G1OL8bTCUX1tOPcdg0XmBJXxlRWjIxnOLc//8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078802; c=relaxed/simple;
-	bh=kWwM0yu77bo25m6/9DxRNtN6x6ZBKifWfjaOIV6g/6A=;
+	s=arc-20240116; t=1726078851; c=relaxed/simple;
+	bh=1H2EI+0GRLEB72QkBDvRPf0ONHR8qQk/RF3PuX0MaFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDgYnQzdMh/007+6l7VAEvvH/Ewm1ncwJR8wCUvPwSH4eCjhuhGR3/+z0KUx3JPsrbyOagKbEJuytYw8fwad7UydQlXtWt3lQ2Xlc0i4iSzV4pEanfzoAT300V/b8uSdsN95XYVoGS5eX7+ed9KJ7BSg58cn5LJ+J1Kgi5Nl6ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GH4jGMHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1150C4CEC0;
-	Wed, 11 Sep 2024 18:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726078802;
-	bh=kWwM0yu77bo25m6/9DxRNtN6x6ZBKifWfjaOIV6g/6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GH4jGMHKLdIstdn31ZIMQ9q+NlcHzj132r12QT6w95pfy7ckYLeuf61S90NA9B0JI
-	 fzWqTFo3BzSs7E3LwCoeQHlF5BR63jmfBpeUPn2+GdPDk9RM3R3Kvfmqg/u3nFDRCn
-	 tLeP81aEO5Qcm9xMib6R/X3O9NKo7iDFjmlEzotwGKkbWGllGa0D66TjMKYhyGzy6i
-	 61dS2gUhqNXGOEk21ZpjeNfwvOLwTKTanAXBaAbkcWj5Mj0s3Itlfkz+YoLXxbybK9
-	 6dbsWE5vE7hyVLuaAVn6Pmj8UdIzCi9iVTnj3rinXH5lFggEywg3O6I8XwPr7/U1Xd
-	 0GlD8iPlhQGWg==
-Date: Wed, 11 Sep 2024 11:20:00 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, Song Liu <song@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v2] module: Refine kmemleak scanned areas
-Message-ID: <ZuHfUMgpNyPwuGmQ@bombadil.infradead.org>
-References: <20240910073123.2362028-1-vdonnefort@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajkc4QPDnwvznP2IGwii16KMPYFQ2qUadYuoupjCwZV2+ZCX5DEKFjN+6cB1RGEyz10b6ceoKsOeRk827HUZTE0bQgoLORCVTn5H2C39U6HJabfyWiJC5uzj7pxoLlbdqDgbgwSsDnDanwCMmoJnbLl7kyOazQa4FprECG+DvBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soRxB-0005lj-Ri; Wed, 11 Sep 2024 20:20:33 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soRxA-007C5u-8v; Wed, 11 Sep 2024 20:20:32 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soRxA-001z2E-0X;
+	Wed, 11 Sep 2024 20:20:32 +0200
+Date: Wed, 11 Sep 2024 20:20:32 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Chris Snook <chris.snook@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, kernel@collabora.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: ethernet: ag71xx: Remove dead code
+Message-ID: <ZuHfcDLty0IULwdY@pengutronix.de>
+References: <20240911135828.378317-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240910073123.2362028-1-vdonnefort@google.com>
+In-Reply-To: <20240911135828.378317-1-usama.anjum@collabora.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2024 at 08:31:23AM +0100, Vincent Donnefort wrote:
-> commit ac3b43283923 ("module: replace module_layout with module_memory")
-> introduced a set of memory regions for the module layout sharing the
-> same attributes. However, it didn't update the kmemleak scanned areas
-> which intended to limit kmemleak scan to sections containing writable
-> data. This means sections such as .text and .rodata are scanned by
-> kmemleak.
+On Wed, Sep 11, 2024 at 06:58:27PM +0500, Muhammad Usama Anjum wrote:
+> The err variable isn't being used anywhere other than getting
+> initialized to 0 and then it is being checked in if condition. The
+> condition can never be true. Remove the err and deadcode.
 > 
-> Refine the scanned areas for modules by limiting it to MOD_TEXT and
-> MOD_INIT_TEXT mod_mem regions.
+> Move the rx_dropped counter above when skb isn't found.
 > 
-> CC: Song Liu <song@kernel.org>
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+ 
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Applied and pushed, thanks!
+Thank you!
 
-  Luis
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
