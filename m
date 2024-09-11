@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-324217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B52974995
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B6B974999
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF2028396B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8964A1F21C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E8D13D2B2;
-	Wed, 11 Sep 2024 05:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5BA143C77;
+	Wed, 11 Sep 2024 05:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IT3ofUeU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8+rr6Zq7"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L9fLRPya";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AFD16mbE"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFD18174E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED8C135A69
 	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726031638; cv=none; b=Ldub2nfEkon434MkVzQbswLOQibmQCCACBgOQ/UtlolGOuOZjYwmdRXDeHrIztGDWfMGaxz/iIDXItNaFGifudJc4BlPPwXin+GdJ+a4/P0zbOSqX6t9lkp77k7oBzjv5HUuBqDoLEXU5JXy+5zXzC1bh5npAnpNRdWAFL4PuiM=
+	t=1726031638; cv=none; b=VJeJ4pYWof9Ay7XXbwx+XVIY5IeIJ6pE3D6+HeWKVsHsrvaBNW3iQMNd6a1Nf3SNQlqV12wjbmJyhGhcsvMFW5lnJ2LJjCGjGG/FVOOj4phlCrUkuDqesUidQOaAPJzNpzpHyGbM+gBwIhfPVVRzLX4pq3DKUPJupacWehlEABo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726031638; c=relaxed/simple;
-	bh=avhPIsslozTS9vqIfiFf0QzVkFvw//68+ibKKgIAU8c=;
+	bh=Iu3t2ZvhGZM9V5B2n78D4EKuKhs3LJgqXVMR5djIgTU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LPZv0a62zW4FHzF/wV8MP/App8b0oadO7/bG+0b2zXW+8jSj3PGFKeqESLbot1QpXXvu1dlogs9elh2TaTJUsXBFwxdm6G/lLqWKSAwFf8XDMkSOopDpaOV9hV+e+4mhJeWFhOdxx2iCmJA7DRRGmaj6MG0VbgJLUlNG/dsDgsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IT3ofUeU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8+rr6Zq7; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=DLKyvoBUtnKeMGZc55NB3hn9iRu8fIKsMqHnBdp3oghpshidygpsS3KhlScwuiMjKcltlu019p6bVKZwXSnD/00fJL9c/GgZSNGDQyDNwO514DZgF+Qlqn372qulSSfpXvoheAJ0v/Ak7AO9r493An4abHT1ftZKLQzO5BquUUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L9fLRPya; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AFD16mbE; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Anna-Maria Behnsen <anna-maria@linutronix.de>
@@ -38,24 +38,24 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fC0f59bC3NttoHYilTyaZRvTfVq89aChhHzFQAJfHQY=;
-	b=IT3ofUeUobgaPJPhrnXCcNB+AaUmZiE5LCYIQzSK/nFmT9qTg3i3vpm/tevbAq73bFgNFS
-	vhLjeaz62CiUGEewl22UDUaak222MsnhLWytdg3mqWdoY1vbAkI1Nem9wrH0qxwtbCwbGE
-	TWt1mdMGfmpQu9mcbl1l/BoA1KqczYycRej0xaRUfM/Ev3XMHyLZT3yiGtd1vwm4iLlHta
-	XB7wiV/UKWwZB2eQMlp4MB3brGSO9QDt/AHcp5VB7anlcr/3vPaHUzCnEwSwy5k5j+sEFw
-	Udm16Yc5BVE6X0n8Xei9o1Nf3vIrkt7T59ylwVy+y7eX/XdGYd+RzRrMhkDjaw==
+	bh=bSVvJgxFrZ1dz8pJPoMJBQ5YpWwDGPyuOlPl0CM7qhs=;
+	b=L9fLRPyaXs4/x11oQ+mv1tmuOekPYxDufkhOvTYTdVprrcsTR/HOEctVjtODtRKclyI4Cc
+	BR79NdLGf61GxhVyLZoehzvKI19AFKh5AHGQIuqdz2ZZpC9KaYFYdZSNFbsJlZdoL2wF/5
+	Idw2crkmxEx51JS9pCMojsHC7mOPjSNLXaPWlCy3BrSLewewmMic6gJaFkM05QBKWObZoD
+	foHL7m7hrBVGm1AzxZdEW+LnMsOKo1HxngIlMWIbtYyElni8HQF2M0QW7avj8P6XtBdBHN
+	C4uxUokYv2zcxAuuDHajl7s2vD2G51PwrZzcB2+EMZSHRoYRHE3iov1ky+u6TA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1726031634;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fC0f59bC3NttoHYilTyaZRvTfVq89aChhHzFQAJfHQY=;
-	b=8+rr6Zq7ULBSeBAqVO9xPTPvtT2a+cBp67DKp+yL+JmARmcpk+MoUTB6gTePLeg174yt2Z
-	o89sjACC99WMi4Ag==
-Date: Wed, 11 Sep 2024 07:13:36 +0200
-Subject: [PATCH v2 10/15] checkpatch: Remove broken sleep/delay related
- checks
+	bh=bSVvJgxFrZ1dz8pJPoMJBQ5YpWwDGPyuOlPl0CM7qhs=;
+	b=AFD16mbEdPZnlXKye/ZCjg6YOji25EPUgGJdTP2f7huIwQmc7HO+i23XRQFOEwEWFmoR64
+	d1ft4kewo31+fqAw==
+Date: Wed, 11 Sep 2024 07:13:37 +0200
+Subject: [PATCH v2 11/15] regulator: core: Use fsleep() to get best sleep
+ mechanism
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-devel-anna-maria-b4-timers-flseep-v2-10-b0d3f33ccfe0@linutronix.de>
+Message-Id: <20240911-devel-anna-maria-b4-timers-flseep-v2-11-b0d3f33ccfe0@linutronix.de>
 References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
 In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
 To: Frederic Weisbecker <frederic@kernel.org>, 
@@ -72,140 +72,110 @@ To: Frederic Weisbecker <frederic@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, 
  Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
- Dwaipayan Ray <dwaipayanray1@gmail.com>
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-checkpatch.pl checks for several things related to sleep and delay
-functions. In all warnings the outdated documentation is referenced. All
-broken parts are listed one by one in the following with an explanation why
-this check is broken. For a basic background of those functions please also
-refere to the updated function descriptions of udelay(), nsleep_range() and
-msleep().
+_regulator_delay_helper() implements the recommondation of the outdated
+documentation which sleep mechanism should be used. There is already a
+function in place which does everything and also maps to reality called
+fsleep().
 
-Be aware: The change is done with a perl knowledge of the level "I'm able
-to spell perl".
+Use fsleep() directly.
 
-The following checks are broken:
-
-- Check: (! ($delay < 10) )
-  Message: "usleep_range is preferred over udelay;
-            see Documentation/timers/timers-howto.rst\n"
-  Why is the check broken: When it is an atomic context, udelay() is
-                           mandatory.
-
-- Check: ($min eq $max)
-  Message:  "usleep_range should not use min == max args;
-             see Documentation/timers/timers-howto.rst\n"
-  Why is the check broken: When the requested accuracy for the sleep
-                           duration requires it, it is also valid to use
-                           min == max.
-
-- Check: ($delay > 2000)
-  Message: "long udelay - prefer mdelay;
-            see arch/arm/include/asm/delay.h\n"
-  Why is the check broken: The threshold when to start using mdelay() to
-                           prevent an overflow depends on
-                           MAX_UDELAY_MS. This value is architecture
-                           dependent. The used value for the check and
-                           reference is arm specific. Generic would be 5ms,
-                           but this would "break" arm, loongarch and mips
-                           and also the arm value might "break" mips and
-                           loongarch in some configurations.
-
-- Check: ($1 < 20)
-  Message: "msleep < 20ms can sleep for up to 20ms;
-            see Documentation/timers/timers-howto.rst\n"
-  Why is the check broken: msleep(1) might sleep up to 20ms but only on a
-                           HZ=100 system. On a HZ=1000 system this will be
-                           2ms. This means, the threshold cannot be hard
-                           coded as it depends on HZ (jiffy granularity and
-                           timer wheel bucket/level granularity) and also
-                           on the required accuracy of the callsite. See
-                           msleep() and also the USLEEP_RANGE_UPPER_BOUND
-                           value.
-
-Remove all broken checks. Update checkpatch documentation accordingly.
-
-Cc: Andy Whitcroft <apw@canonical.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 ---
-v2: Rephrase commit message
+v2: Use fsleep() directly
 ---
- Documentation/dev-tools/checkpatch.rst |  6 ------
- scripts/checkpatch.pl                  | 34 ----------------------------------
- 2 files changed, 40 deletions(-)
+ drivers/regulator/core.c | 47 ++++-------------------------------------------
+ 1 file changed, 4 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index a9fac978a525..f5c27be9e673 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -466,12 +466,6 @@ API usage
-   **UAPI_INCLUDE**
-     No #include statements in include/uapi should use a uapi/ path.
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 7674b7f2df14..5d4cfb14fada 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2667,45 +2667,6 @@ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
+ 	return 0;
+ }
  
--  **USLEEP_RANGE**
--    usleep_range() should be preferred over udelay(). The proper way of
--    using usleep_range() is mentioned in the kernel docs.
+-/**
+- * _regulator_delay_helper - a delay helper function
+- * @delay: time to delay in microseconds
+- *
+- * Delay for the requested amount of time as per the guidelines in:
+- *
+- *     Documentation/timers/timers-howto.rst
+- *
+- * The assumption here is that these regulator operations will never used in
+- * atomic context and therefore sleeping functions can be used.
+- */
+-static void _regulator_delay_helper(unsigned int delay)
+-{
+-	unsigned int ms = delay / 1000;
+-	unsigned int us = delay % 1000;
 -
--    See: https://www.kernel.org/doc/html/latest/timers/timers-howto.html#delays-information-on-the-various-kernel-delay-sleep-mechanisms
+-	if (ms > 0) {
+-		/*
+-		 * For small enough values, handle super-millisecond
+-		 * delays in the usleep_range() call below.
+-		 */
+-		if (ms < 20)
+-			us += ms * 1000;
+-		else
+-			msleep(ms);
+-	}
 -
+-	/*
+-	 * Give the scheduler some room to coalesce with any other
+-	 * wakeup sources. For delays shorter than 10 us, don't even
+-	 * bother setting up high-resolution timers and just busy-
+-	 * loop.
+-	 */
+-	if (us >= 10)
+-		usleep_range(us, us + 100);
+-	else
+-		udelay(us);
+-}
+-
+ /**
+  * _regulator_check_status_enabled
+  *
+@@ -2760,7 +2721,7 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
+ 		s64 remaining = ktime_us_delta(end, ktime_get_boottime());
  
- Comments
- --------
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index ba3359bdd1fa..80497da4aaac 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6601,28 +6601,6 @@ sub process {
- 			}
+ 		if (remaining > 0)
+-			_regulator_delay_helper(remaining);
++			fsleep(remaining);
+ 	}
+ 
+ 	if (rdev->ena_pin) {
+@@ -2794,7 +2755,7 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
+ 		int time_remaining = delay;
+ 
+ 		while (time_remaining > 0) {
+-			_regulator_delay_helper(rdev->desc->poll_enabled_time);
++			fsleep(rdev->desc->poll_enabled_time);
+ 
+ 			if (rdev->desc->ops->get_status) {
+ 				ret = _regulator_check_status_enabled(rdev);
+@@ -2813,7 +2774,7 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
+ 			return -ETIMEDOUT;
  		}
+ 	} else {
+-		_regulator_delay_helper(delay);
++		fsleep(delay);
+ 	}
  
--# prefer usleep_range over udelay
--		if ($line =~ /\budelay\s*\(\s*(\d+)\s*\)/) {
--			my $delay = $1;
--			# ignore udelay's < 10, however
--			if (! ($delay < 10) ) {
--				CHK("USLEEP_RANGE",
--				    "usleep_range is preferred over udelay; see Documentation/timers/timers-howto.rst\n" . $herecurr);
--			}
--			if ($delay > 2000) {
--				WARN("LONG_UDELAY",
--				     "long udelay - prefer mdelay; see arch/arm/include/asm/delay.h\n" . $herecurr);
--			}
--		}
--
--# warn about unexpectedly long msleep's
--		if ($line =~ /\bmsleep\s*\((\d+)\);/) {
--			if ($1 < 20) {
--				WARN("MSLEEP",
--				     "msleep < 20ms can sleep for up to 20ms; see Documentation/timers/timers-howto.rst\n" . $herecurr);
--			}
--		}
--
- # check for comparisons of jiffies
- 		if ($line =~ /\bjiffies\s*$Compare|$Compare\s*jiffies\b/) {
- 			WARN("JIFFIES_COMPARISON",
-@@ -7079,18 +7057,6 @@ sub process {
- 			}
- 		}
+ 	trace_regulator_enable_complete(rdev_get_name(rdev));
+@@ -3741,7 +3702,7 @@ static int _regulator_do_set_voltage(struct regulator_dev *rdev,
+ 	}
  
--# check usleep_range arguments
--		if ($perl_version_ok &&
--		    defined $stat &&
--		    $stat =~ /^\+(?:.*?)\busleep_range\s*\(\s*($FuncArg)\s*,\s*($FuncArg)\s*\)/) {
--			my $min = $1;
--			my $max = $7;
--			if ($min eq $max) {
--				WARN("USLEEP_RANGE",
--				     "usleep_range should not use min == max args; see Documentation/timers/timers-howto.rst\n" . "$here\n$stat\n");
--			}
--		}
--
- # check for naked sscanf
- 		if ($perl_version_ok &&
- 		    defined $stat &&
+ 	/* Insert any necessary delays */
+-	_regulator_delay_helper(delay);
++	fsleep(delay);
+ 
+ 	if (best_val >= 0) {
+ 		unsigned long data = best_val;
 
 -- 
 2.39.2
