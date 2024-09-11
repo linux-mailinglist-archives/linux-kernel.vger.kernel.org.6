@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-325123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50A9975543
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:28:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D9197554D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB1A1C226EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC9228841E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484F619F12F;
-	Wed, 11 Sep 2024 14:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377071A2622;
+	Wed, 11 Sep 2024 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="xAQcDEpZ"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="MQVWXSeO"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667C919E973
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C7819E973
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726064877; cv=none; b=i1+MjlJ4GrPxq/NoBMEy16VXo/REuxPA4WZQPg9+dQhweeikPUtGpOxTyNEQX/ivHQs7Ya/CQ2qedeWfirPC5OENKYGZ3Kut5HQ+LcKACo8vCsew5WlZFu+RrKCMcYoRfC2n6wrTVY6MxCevpn8vZwC8+FEG6NsGFG1lb4IJRE0=
+	t=1726064886; cv=none; b=FB523NlCXfDtvgcC/gTEayZA6kssr629WdY6ltHyyVvZRSk0Pmu4JimsYvgd2/KBxJ6t2/bkxvVQ7mmknVONnjIOErfkwUDk8GdCTN6GzgufA+649vreQxciwSNTdLC/PxzAtNTwQtPXHO4il4iY6LCaFaw0IgMizys6giaA6+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726064877; c=relaxed/simple;
-	bh=lKm/kwthrWk+of54TAxNb7rE2mtE7ZvfrrXhQMNpFmY=;
+	s=arc-20240116; t=1726064886; c=relaxed/simple;
+	bh=bvB7UmeHkRb7yfH1nDvmOVlGFumWUUvfkn5d5HzsWdc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CshnavFBG714IAx0yZS8qT6Aa0rZ/7sASQRWifXyjHvK6aHYQ7K9BZKxUx5r12Dwm81rgiS/qhTJLpF7IIO888fb5B8+s3v4blZ8T5jz6ACrkmxIXjzPopXCRrUzwOml6nVzgYyOlcqbVGthkVCejgAFGqPlh34GAjdfnMt214s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=xAQcDEpZ; arc=none smtp.client-ip=209.85.216.68
+	 In-Reply-To:To:Cc; b=S4lEQ8GGOI6r5eHkZaIbTOk6svQlKQxbLi1LQ+d7XVN6GXEStaYXh7sfpMLD2DjB8f3vamwZllWR9KGQWwyB6dji1erbestsCvwJECKey6zr555YmmYJszc4KTWyGpK4/Hq0tQz3jynw2p9mBLga+86CLR6KyvmeI0zPH+cFW+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=MQVWXSeO; arc=none smtp.client-ip=209.85.215.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2d89229ac81so5392063a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:27:55 -0700 (PDT)
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-6bce380eb96so4178304a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726064875; x=1726669675; darn=vger.kernel.org;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726064884; x=1726669684; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YOaH7wUDUVg3jrdLcJDpY4x/GyOxkGNywptNXtNYkIM=;
-        b=xAQcDEpZfPCJIskIYUbFYT0Y0Ahj3NehbB2eQsJR/wbTvfcyMEKIsrF8SXS5aJxjZl
-         1gHkTww9T1rr7wFNGBz6nO8gRcv7iE4hS8qmvdePYy1LFbAEVqGM1D/kC8cwrkqv5ksb
-         eLtNxaeWgbDn+d03IbXuAMNP0MDBZAJ5u0tGrrIi0x+ywX+Pqd2fenn4hbi0ROv3r3De
-         ZOlb2GxxKUFoNNTKVF2RDz4GRT4I7sr+zsX+Pub4H9EOuHI6qWeesx5nNL9jio+xfF2Z
-         aBwQRCh3JM06VYOGNhZBG4G+ba8lp/esvsdaftY2XjUqredHSh1WGiswgxprg51nEg9w
-         bXoA==
+        bh=pHzBg2St8KC9MTBvt8ke8cxG8WKshDc3eLooksnIRmE=;
+        b=MQVWXSeOT9AiyD/ELIoVgfFucdYinm+P3mjoF8gwpmpfHm9RiS+TRyR53UNSAeJI6e
+         /v7XNFNs1PQq/Ab+Jy1Qd3OgCQcuhn3nQyNrOKa9CXZTXukRqYIJNs2JDgJnAR2H+LjM
+         LdcwbG27mVm6o7xI6ygnDpMJr9tjYjzgtsc+x9xC/KQd3dLsEImgTekzcX9x/AH5JX3X
+         YM4PyVk7p8M+yZXh4Y3RLFhYXAqiJ6XxOTZICDpDtDCsUMHPukBDwYwV128GGizAFsSK
+         +jITWG2nOF3cw/lpKat71e/B8CSZI78ZqtcA9opuk0zf61i3aFzNH5BggYv+EWFBdRWN
+         I95g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726064875; x=1726669675;
+        d=1e100.net; s=20230601; t=1726064884; x=1726669684;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YOaH7wUDUVg3jrdLcJDpY4x/GyOxkGNywptNXtNYkIM=;
-        b=C3ZIeX8dao3icAdep+5zelZuuZinzlPGylDUsr+eQqC+xPi2vR5rOBTuNvwMPM19YU
-         yXhiu9tKLIikiCcdXi+gAJjsoJd9MrcMDwXEPGScddNhfvTVeA/hOBnQXy7nuRWxmSbY
-         8QwZ9XP0NbsHqTwGpFiBAAMOKEe5xBBRF3Bmzm2DM7luiXOSSXrFvSn2zZRz/DAVnr0e
-         tBRGwRf3zno1Mg1BQI/qsBR0dlujaVosg024u3lz6QvySiDuXwntNuCLqF5PGixJkIhT
-         FWGYia+fjxW1af+5h2Rk8hfdXG63FyX3EC/MKajTDouSfquySHAI+QhIgJqix+hF10fO
-         9Nug==
-X-Gm-Message-State: AOJu0YwUbXMn3QIdVU6P8lTOtVaG7Kg8CVcoM8sXgwTAr3iAjFGVI8e4
-	7WkhiRvzo4CD6M5yT6glbezvPYjdGZ1OJ78KtcCNVmoAc7LBey9B8FY1HSCglA==
-X-Google-Smtp-Source: AGHT+IETD8NcWXEwrzRI7PfUQkX1aQcbeJI3Z+n8OukCsjjngyEPaWbX125rUDAAT6JvWnPjmRzDnw==
-X-Received: by 2002:a17:90a:8a15:b0:2d8:99c4:3cd9 with SMTP id 98e67ed59e1d1-2dad4de1392mr20248004a91.3.1726064874446;
-        Wed, 11 Sep 2024 07:27:54 -0700 (PDT)
+        bh=pHzBg2St8KC9MTBvt8ke8cxG8WKshDc3eLooksnIRmE=;
+        b=S06+kUfsKVWN5Qxjr+9/zOcTNCVokumrZFGxt85Z3qEnKL21IkIEBYoOifUf7QgzOh
+         CUMTrBqM9n/kB/bYB1bBGyG1spbf6fsKaYVnjZb/gr/kcl+6fnHsrUZVFAHelJWEepgp
+         0CFDCrHuojFX490KM+k++Qhh9/WjBufG1l//bD/fkVUfJRfR09IwXzVsow70cr+8DozJ
+         2yZxtE0bvwUQ3yuvMs191FdaSqZP0Ujz8CLxO7wnhyVRz1qyhEf3O2UPYuJZHivUTVNG
+         mrgSpL4oofRRGquZDQNXR20QdaxS/Fo8APv3CjLeFMgJNoSIiA3IjZzzIuACClsHSA2c
+         Mapw==
+X-Gm-Message-State: AOJu0Yyo/Os9dL2HHD26GbSSVdY+0naySd1QA14o1zQkhikisWM+Rmph
+	0I224XbYe37b6bd1VfgXY8DWZxFJPBuCtFBOiZlEi5N4Ejy78bTLAitfRTEZvg==
+X-Google-Smtp-Source: AGHT+IHrUIfQbv5AN7Xe8j4SPuyNBG/fmpYAyLy0qzTADvtIG9r/hxpLBd4G7kq++lMyZOfVqXoYCw==
+X-Received: by 2002:a05:6a21:a24c:b0:1c6:a65f:299 with SMTP id adf61e73a8af0-1cf5e0b0f15mr6316863637.21.1726064884284;
+        Wed, 11 Sep 2024 07:28:04 -0700 (PDT)
 Received: from [172.16.118.100] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe46c9sm10639116a91.11.2024.09.11.07.27.44
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe46c9sm10639116a91.11.2024.09.11.07.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 07:27:54 -0700 (PDT)
+        Wed, 11 Sep 2024 07:28:04 -0700 (PDT)
 From: Ayush Singh <ayush@beagleboard.org>
-Date: Wed, 11 Sep 2024 19:57:18 +0530
-Subject: [PATCH 1/8] rust: kernel: Add Platform device and driver
- abstractions
+Date: Wed, 11 Sep 2024 19:57:19 +0530
+Subject: [PATCH 2/8] dt-bindings: connector: Add MikorBUS connector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
+Message-Id: <20240911-mikrobus-dt-v1-2-3ded4dc879e7@beagleboard.org>
 References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
 In-Reply-To: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
 To: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org, 
@@ -98,453 +97,122 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Ayush Singh <ayush@beagleboard.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14880;
- i=ayush@beagleboard.org; h=from:subject:message-id;
- bh=zkzVPkQfS9LodBPXtJMr2bHYTVhX/BFEg3r5ta8DpxE=;
- b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm4ajV037slacrW67oDDENCopdqoaSn9E7y3hl3
- pM9wPh0T8KJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZuGo1QAKCRAFzvXHieVa
- dOYHD/wN0sTYbOCHvDxME4ZMoLGPRMqCTb20jASqA7kv2/98kyksK6fRt57d8xDjMebjJEMTP2o
- zSUbg2hJ+S1vJVaMOMR23MciQnzUZ46EBrYvobIUEsjnmXp2luajua1SbR99DuYEI7Gh99byLhX
- CUE4z6eqjEVsjp9LPaJjFlRKPm1dG77PJQMGBWh1RRUT6xEwDN5kcPjjfPQCVV2mo+KAMPXeLDp
- bHYVYpcmt+Vk89jH0Qq9hD4/knDp9Eoid/hmz6/0lsP1Ia6IVScDsJP1CQNb9x9yPHG7BNkxef6
- 0tdPDnETf636G4efv0UuuoFpfq4lm7txZBWJgnqdvmQmYLQjmVrdr0TRA22sNX6htvIB2jhPLn1
- niVYpkJjvpRlHw1F8oWzrVExalYu5tbVwlQdo4JVjnQO7Lywl2pDrL3CDxr06C2Sw4ZOXMnscdc
- SP9jBNLq2fHQUxGSuK6lXEdNfuHQ3nWc3T6/MYIL6NOviYOMZjPc+kHRl8nv48DpYha/Uy/ISBx
- A2Y92b5KeXXXtOcU4ElbvLOTLxWU7PoKRka6xzF/0OVmIj2sNPZSkIIajHjEAcYmel6/XjDW3PR
- ovh7Qj2JLU05teSMqCNe8yb2W7H4zmlTf31BvjMfjJ4mwcNX8zfRf3XQ86XGNbM+wdP3eEhIWww
- re7PSfNtMph7Esw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2947; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=bvB7UmeHkRb7yfH1nDvmOVlGFumWUUvfkn5d5HzsWdc=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm4ajVf1aUzhSg3g8lMTcWQQvps+sHJjBBiD7Xs
+ SrIX/+QkiiJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZuGo1QAKCRAFzvXHieVa
+ dHEkD/kBcosApl+NDTha5IyXyoMZ2/VMJYYb9jHEMuIeh0sCz4/R99nJGGDh1QqObyzxtd5TjNZ
+ sg7kEiloFxGZillTwOFtnKYZ0M+6+lMmKerv0eM0efboEmZ8AgGzlmRfsGQ3tWN80BWa1Lk35BI
+ aS8JZ4PU2OG6/eSuWgP4Ma1Jc6YjWaGM++dXij1XvDv+WEQdBVrKW000lbVH0gWzzvdlZyzVV+I
+ l9BbIpHSr+AThn5Ct78dRkKpqjpzMGfFI5JVfz17yhHQKv0JnTq7XkyC/Sdd1X9GIv3Ultsom9Q
+ l3ESMf3rJl2Ys6f7xGy7VCXJbcZdjP1xKnwLNPCz7DrcuGZt76AzJra2Ji9JD8HCMzwcdL7Izsg
+ vXKagN2tnyHM54Mjs815DpfzHGnQqRJ5c1+oU2kEbDbyH4mF9tAWoFYaTkUTU/hgOap8g1Rb2Uk
+ i0H0HztxWVxUvpbEofXHGeee14TxETeS4fsJSgRV0P8GmsoLnAFmWI8KrDvIfMH7hnMlfdNv0pB
+ yoM7SbVpDpbvkkC7Q3HaWThv9HSZX4klCgPk6RDanF+w/gFh6x9GrpKtBhascCz6Wcz6NbB8kAb
+ KEKPAO77QpY6/XEQKCd3TK0S4jSDxsfrpgm/J2SnLebG3ASfy+pGcrb7CMVK6NNkjMTZDbrTp8P
+ rEL5KP6r4Dc3g0g==
 X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
  fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-From: Fabien Parent <fabien.parent@linaro.org>
+Add DT bindings for mikroBUS interface. MikroBUS [0] is an open standard
+developed by MikroElektronika for connecting add-on boards to
+microcontrollers or microprocessors.
 
-Ports Platform device and driver abstractions from Fabien's tree [0].
+MikroBUS connector node will optionally act as nexus nodes for routing
+GPIOs and PWM.
 
-These abstractions do not depend on any generic driver registration and
-id table. Instead, the minimal abstractions have been implemented
-specifically for platform subsystem taking heavy inspiration from the
-existing phy device and driver abstractions.
+For GPIOs, the following pin numbering should be followed:
 
-[0]: https://github.com/Fabo/linux/commits/fparent/rust-platform
+  0: PWM
+  1: INT
+  2: RX
+  3: TX
+  4: SCL
+  5: SDA
+  6: MOSI
+  7: MISO
+  8: SCK
+  9: CS
+  10: RST
+  11: AN
 
-Signed-off-by: Fabien Parent <fabien.parent@linaro.org>
+For PWM, the PWM pin should be on channel 0.
+
+I am not quite sure how to deal with the nexus node properties
+(#gpio-cells, gpio-map, gpio-map-mask, gpio-map-pass-thru) since they
+seem to conflict with upstream gpio schema (gpio-controller is a
+dependency of #gpio-cells).
+
+[0]: https://www.mikroe.com/
+
 Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   1 +
- rust/kernel/platform.rs         | 380 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 382 insertions(+)
+ .../bindings/connector/mikrobus-connector.yaml     | 40 ++++++++++++++++++++++
+ MAINTAINERS                                        |  5 +++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ae82e9c941af..10cbcdd74089 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -16,6 +16,7 @@
- #include <linux/jiffies.h>
- #include <linux/mdio.h>
- #include <linux/phy.h>
-+#include <linux/platform_device.h>
- #include <linux/refcount.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index b5f4b3ce6b48..b3a318fde46c 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -42,6 +42,7 @@
- #[cfg(CONFIG_NET)]
- pub mod net;
- pub mod page;
-+pub mod platform;
- pub mod prelude;
- pub mod print;
- pub mod rbtree;
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+diff --git a/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml b/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
 new file mode 100644
-index 000000000000..de28429f5551
+index 000000000000..603e4627076c
 --- /dev/null
-+++ b/rust/kernel/platform.rs
-@@ -0,0 +1,380 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++#
++# Copyright (c) Ayush Singh <ayush@beagleboard.org>
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/connector/mikrobus-connector.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+//! Platform devices and drivers.
-+//!
-+//! Also called `platformdev`, `pdev`.
-+//!
-+//! C header: [`include/linux/platform_device.h`](../../../../include/linux/platform_device.h)
++title: mikroBUS add-on board socket
 +
-+use core::{marker::PhantomData, pin::Pin, ptr::addr_of_mut};
++maintainers:
++  - Ayush Singh <ayush@beagleboard.org>
 +
-+use macros::vtable;
++properties:
++  compatible:
++    const: mikrobus-connector
 +
-+use crate::{
-+    bindings, device,
-+    error::{from_result, Result},
-+    str::CStr,
-+    types::Opaque,
-+};
++required:
++  - compatible
 +
-+/// A platform device.
-+///
-+/// # Invariants
-+///
-+/// The field `ptr` is non-null and valid for the lifetime of the object.
-+#[repr(transparent)]
-+pub struct Device(Opaque<bindings::platform_device>);
++additionalProperties: true
 +
-+impl Device {
-+    /// Creates a new [`Device`] instance from a raw pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// For the duration of `'a`,
-+    /// - the pointer must point at a valid `platform_device`, and the caller
-+    ///   must be in a context where all methods defined on this struct
-+    ///   are safe to call.
-+    unsafe fn from_raw<'a>(ptr: *mut bindings::platform_device) -> &'a mut Self {
-+        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::platform_device`.
-+        let ptr = ptr.cast::<Self>();
-+        // SAFETY: by the function requirements the pointer is valid and we have unique access for
-+        // the duration of `'a`.
-+        unsafe { &mut *ptr }
-+    }
++examples:
++  - |
++    mikrobus_connector0: mikrobus-connector0 {
++      status = "okay";
++      compatible = "mikrobus-connector";
 +
-+    /// Returns id of the platform device.
-+    pub fn id(&self) -> i32 {
-+        let platformdev = self.0.get();
-+        // SAFETY: By the type invariants, we know that `self.ptr` is non-null and valid.
-+        unsafe { (*platformdev).id }
-+    }
-+}
-+
-+impl AsRef<device::Device> for Device {
-+    fn as_ref(&self) -> &device::Device {
-+        let platformdev = self.0.get();
-+        // SAFETY: By the type invariants, we know that `self.ptr` is non-null and valid.
-+        unsafe { device::Device::as_ref(addr_of_mut!((*platformdev).dev)) }
-+    }
-+}
-+
-+/// An adapter for the registration of a Platform driver.
-+struct Adapter<T: Driver> {
-+    _p: PhantomData<T>,
-+}
-+
-+impl<T: Driver> Adapter<T> {
-+    /// # Safety
-+    ///
-+    /// `pdev` must be passed by the corresponding callback in `platform_driver`.
-+    unsafe extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> core::ffi::c_int {
-+        from_result(|| {
-+            // SAFETY: This callback is called only in contexts
-+            // where we can exclusively access `platform_device` because
-+            // it's not published yet, so the accessors on `Device` are okay
-+            // to call.
-+            let dev = unsafe { Device::from_raw(pdev) };
-+            T::probe(dev)?;
-+            Ok(0)
-+        })
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// `pdev` must be passed by the corresponding callback in `platform_driver`.
-+    unsafe extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
-+        // SAFETY: This callback is called only in contexts
-+        // where we can exclusively access `platform_device` because
-+        // it's not published yet, so the accessors on `Device` are okay
-+        // to call.
-+        let dev = unsafe { Device::from_raw(pdev) };
-+        T::remove(dev);
-+    }
-+}
-+
-+/// Driver structure for a particular Platform driver.
-+///
-+/// Wraps the kernel's [`struct platform_driver`].
-+/// This is used to register a driver for a particular PHY type with the kernel.
-+///
-+/// # Invariants
-+///
-+/// `self.0` is always in a valid state.
-+///
-+/// [`struct platform_driver`]: srctree/include/linux/platform.h
-+#[repr(transparent)]
-+pub struct DriverVTable(Opaque<bindings::platform_driver>);
-+
-+// SAFETY: `DriverVTable` doesn't expose any &self method to access internal data, so it's safe to
-+// share `&DriverVTable` across execution context boundaries.
-+unsafe impl Sync for DriverVTable {}
-+
-+impl DriverVTable {
-+    /// Creates a [`DriverVTable`] instance from [`Driver`].
-+    ///
-+    /// This is used by [`module_platform_driver`] macro to create a static array of `phy_driver`.
-+    ///
-+    /// [`module_platform_driver`]: crate::module_platform_driver
-+    pub const fn new<T: Driver, const C: usize>(match_tbl: &'static DeviceIdTable<C>) -> Self {
-+        let drv = Opaque::new(bindings::platform_driver {
-+            probe: if T::HAS_PROBE {
-+                Some(Adapter::<T>::probe_callback)
-+            } else {
-+                None
-+            },
-+            __bindgen_anon_1: bindings::platform_driver__bindgen_ty_1 {
-+                remove: if T::HAS_REMOVE {
-+                    Some(Adapter::<T>::remove_callback)
-+                } else {
-+                    None
-+                },
-+            },
-+            driver: create_device_driver::<T, C>(match_tbl),
-+            // SAFETY: The rest is zeroed out to initialize `struct platform_driver`.
-+            ..unsafe { core::mem::MaybeUninit::<bindings::platform_driver>::zeroed().assume_init() }
-+        });
-+
-+        DriverVTable(drv)
-+    }
-+}
-+
-+const fn create_device_driver<T: Driver, const C: usize>(
-+    match_tbl: &'static DeviceIdTable<C>,
-+) -> bindings::device_driver {
-+    bindings::device_driver {
-+        name: T::NAME.as_char_ptr(),
-+        of_match_table: match_tbl.get(),
-+        // SAFETY: The rest is zeroed out to initialize `struct device_driver`.
-+        ..unsafe { core::mem::MaybeUninit::<bindings::device_driver>::zeroed().assume_init() }
-+    }
-+}
-+
-+/// A platform driver.
-+#[vtable]
-+pub trait Driver {
-+    /// The friendly name
-+    const NAME: &'static CStr;
-+
-+    /// Sets up device-specific structures during discovery.
-+    fn probe(_dev: &mut Device) -> Result;
-+
-+    /// Clean up device-specific structures during removal.
-+    fn remove(_dev: &mut Device);
-+}
-+
-+/// Registration structure for Platform driver.
-+///
-+/// Registers [`DriverVTable`] instance with the kernel. It will be unregistered when dropped.
-+///
-+/// # Invariants
-+///
-+/// The `driver` is currently registered to the kernel via `__platform_driver_register`.
-+pub struct Registration(Pin<&'static DriverVTable>);
-+
-+// SAFETY: The only action allowed in a `Registration` instance is dropping it, which is safe to do
-+// from any thread because `platform_drivers_unregister` can be called from any thread context.
-+unsafe impl Send for Registration {}
-+
-+impl Registration {
-+    /// Registers a Platform driver.
-+    pub fn new(drv: Pin<&'static DriverVTable>, m: &'static crate::ThisModule) -> Registration {
-+        unsafe {
-+            bindings::__platform_driver_register(drv.0.get(), m.0);
-+        }
-+
-+        Self(drv)
-+    }
-+}
-+
-+impl Drop for Registration {
-+    fn drop(&mut self) {
-+        unsafe { bindings::platform_driver_unregister(self.0 .0.get()) }
-+    }
-+}
-+
-+/// An identifier for Platform devices.
-+///
-+/// Represents the kernel's [`struct of_device_id`]. This is used to find an appropriate
-+/// Platform driver.
-+///
-+/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-+pub struct DeviceId(&'static CStr);
-+
-+impl DeviceId {
-+    /// A zeroed [`struct of_device_id`] used to signify end of of_device_id array.
-+    ///
-+    /// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-+    pub const ZERO: bindings::of_device_id = bindings::of_device_id {
-+        // SAFETY: The rest is zeroed out to initialize `struct of_device_id`.
-+        ..unsafe { core::mem::MaybeUninit::<bindings::of_device_id>::zeroed().assume_init() }
++      #gpio-cells = <2>;
++      gpio-map =
++      <0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
++      <2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
++      <4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
++      <6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
++      <8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
++      <10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
++      gpio-map-mask = <0xf 0x0>;
++      gpio-map-pass-thru = <0x0 0x1>;
 +    };
 +
-+    /// Create new instance
-+    pub const fn new(s: &'static CStr) -> Self {
-+        Self(s)
-+    }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0a3d9e17295a..0cc27446b18a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15429,6 +15429,11 @@ M:	Oliver Neukum <oliver@neukum.org>
+ S:	Maintained
+ F:	drivers/usb/image/microtek.*
+ 
++MIKROBUS CONNECTOR
++M:	Ayush Singh <ayush@beagleboard.org>
++S:	Maintained
++F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
 +
-+    const fn compatible(&self) -> [i8; 128] {
-+        let compatible = self.0.as_bytes_with_nul();
-+        let mut comp = [0i8; 128];
-+        let mut i = 0;
-+
-+        while i < compatible.len() {
-+            comp[i] = compatible[i] as _;
-+            i += 1;
-+        }
-+
-+        comp
-+    }
-+
-+    // macro use only
-+    #[doc(hidden)]
-+    pub const fn to_rawid(&self) -> bindings::of_device_id {
-+        let comp = self.compatible();
-+
-+        bindings::of_device_id {
-+            compatible: comp,
-+            // SAFETY: The rest is zeroed out to initialize `struct of_device_id`.
-+            ..unsafe { core::mem::MaybeUninit::<bindings::of_device_id>::zeroed().assume_init() }
-+        }
-+    }
-+}
-+
-+/// An array of identifiers for platform driver
-+#[repr(transparent)]
-+pub struct DeviceIdTable<const C: usize>([bindings::of_device_id; C]);
-+
-+impl<const C: usize> DeviceIdTable<C> {
-+    /// Create a new instance
-+    pub const fn new(ids: [bindings::of_device_id; C]) -> Self {
-+        Self(ids)
-+    }
-+
-+    /// Returns a raw pointer to static table.
-+    pub const fn get(&'static self) -> *const bindings::of_device_id {
-+        self.0.as_ptr()
-+    }
-+}
-+
-+// SAFETY: `DeviceIdTable` is only used in C side behind a *const pointer, and thus remains
-+// immutable and thus can be shared across execution context boundaries.
-+unsafe impl<const C: usize> Sync for DeviceIdTable<C> {}
-+
-+/// Declares a kernel module for Platform drivers.
-+///
-+/// This creates a static [`struct platform_driver`] and registers it. It also creates an array of
-+/// [`struct of_device_id`] for matching the driver to devicetree device.
-+///
-+/// [`struct platform_driver`]: srctree/include/linux/platform.h
-+/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-+///
-+/// # Examples
-+///
-+/// ```
-+/// # mod module_platform_driver_sample {
-+/// use kernel::c_str;
-+/// use kernel::platform::{self, DeviceId};
-+/// use kernel::prelude::*;
-+///
-+/// kernel::module_platform_driver! {
-+///     driver: PlatformSimple,
-+///     of_table: [DeviceId::new(c_str!("platform-simple"))],
-+///     name: "rust_sample_platform",
-+///     author: "Rust for Linux Contributors",
-+///     description: "Rust sample Platform driver",
-+///     license: "GPL",
-+/// }
-+///
-+/// struct PlatformSimple;
-+///
-+/// #[vtable]
-+/// impl platform::Driver for PlatformSimple {
-+///     const NAME: &'static CStr = c_str!("PlatformSimple");
-+/// }
-+/// # }
-+/// ```
-+///
-+/// This expands to the following code:
-+///
-+/// ```ignore
-+/// use kernel::c_str;
-+/// use kernel::platform::{self, DeviceId};
-+/// use kernel::prelude::*;
-+///
-+///
-+/// struct Module {
-+///     _reg: $crate::platform::Registration,
-+/// }
-+///
-+/// module! {
-+///     type: Module,
-+///     name: "rust_sample_platform",
-+///     author: "Rust for Linux Contributors",
-+///     description: "Rust sample Platform driver",
-+///     license: "GPL",
-+/// }
-+///
-+/// const _: () = {
-+///     static OF_TABLE: $crate::platform::DeviceIdTable = $crate::platform::DeviceIdTable<2>([
-+///         (DeviceId::new(c_str!("platform-simple"))).to_rawid(),
-+///         $crate::platform::DeviceId::ZERO,
-+///     ]);
-+///     static DRIVER: $crate::platform::DriverVTable =
-+///         $crate::platform::DriverVTable::new::<MikrobusDriver, 2>(&OF_TABLE);
-+///     impl $crate::Module for Module {
-+///         fn init(module: &'static ThisModule) -> Result<Self> {
-+///             let reg =
-+///                 $crate::platform::Registration::new(
-+///                     ::core::pin::Pin::static_ref(&DRIVER), module);
-+///             Ok(Module { _reg: reg })
-+///         }
-+///     }
-+/// }
-+///
-+/// struct PlatformSimple;
-+///
-+/// #[vtable]
-+/// impl platform::Driver for PlatformSimple {
-+///     const NAME: &'static CStr = c_str!("PlatformSimple");
-+/// }
-+/// ```
-+#[macro_export]
-+macro_rules! module_platform_driver {
-+    (@replace_expr $_t:tt $sub:expr) => {$sub};
-+
-+    (@count_devices $($x:expr),*) => {
-+        0usize $(+ $crate::module_platform_driver!(@replace_expr $x 1usize))*
-+    };
-+
-+    (driver: $driver:ident, of_table: [$($of_id:expr),+ $(,)?], $($f:tt)*) => {
-+        struct Module {
-+            _reg: $crate::platform::Registration,
-+        }
-+
-+        $crate::prelude::module! {
-+            type: Module,
-+            $($f)*
-+        }
-+
-+        const _: () = {
-+            // SAFETY: C will not read off the end of this constant since the last element is zero.
-+            static OF_TABLE: $crate::platform::DeviceIdTable<
-+                {$crate::module_platform_driver!(@count_devices $($of_id),+) + 1} > =
-+                $crate::platform::DeviceIdTable::new(
-+                    [$($of_id.to_rawid()),*, $crate::platform::DeviceId::ZERO]);
-+
-+            static DRIVER: $crate::platform::DriverVTable =
-+                $crate::platform::DriverVTable::new::<
-+                    $driver, {$crate::module_platform_driver!(@count_devices $($of_id),+) + 1}
-+                >(&OF_TABLE);
-+
-+            impl $crate::Module for Module {
-+                fn init(module: &'static ThisModule) -> Result<Self> {
-+                    let reg = $crate::platform::Registration::new(
-+                        ::core::pin::Pin::static_ref(&DRIVER), module);
-+                    Ok(Module { _reg: reg })
-+                }
-+            }
-+        };
-+    };
-+}
+ MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
+ M:	Luka Kovacic <luka.kovacic@sartura.hr>
+ M:	Luka Perkov <luka.perkov@sartura.hr>
 
 -- 
 2.46.0
