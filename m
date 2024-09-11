@@ -1,78 +1,71 @@
-Return-Path: <linux-kernel+bounces-328696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9761197877F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:07:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D0C97885F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DB4B25C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF9E1F284EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58B127B56;
-	Fri, 13 Sep 2024 18:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CDD4A2C;
+	Fri, 13 Sep 2024 19:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uwys8dWt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E7XlTsIB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAC1446AF;
-	Fri, 13 Sep 2024 18:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203813C8EA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250815; cv=none; b=uTzcv1DoTZYw254deMAV5BxPg3BW6R14+bcf9yfu/BKrUr7TaUANlPajNNUbnNNx5rk98OfqZZreeQ/OJlOY45Mfq23BwpT+jnrAQVCoT7elzOxGkqcER2swBBZbZMWzqRGCm2r+KZlhwFmPefQnBc0P1K14dc+y75IipELd/o4=
+	t=1726254096; cv=none; b=kxBKQ56EPaUAc3qLiurtCykH1PFYDL+OEaUfPvIelIPp9RbZTl3wA3iYV2uBhhXITGdESZtWS6KteYbLNcJYx8CwptUh2uEhuxlEK3iTTGC6mwBbCo08shsX4gbiBoPTWGbp+xn5/v0LgRsC4JKRQw4jkK65jonM9t3lMJU252c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250815; c=relaxed/simple;
-	bh=hODeVcKESQQ+bysOclnLLpr1fN1atctGk9DXPTCBdzQ=;
+	s=arc-20240116; t=1726254096; c=relaxed/simple;
+	bh=t7VhkvLXibw3ixPa5G4bQdOz2MuylOZhl3wA/pLMDmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eYKE7eH3i/og11sY2wLtjetVJSiekdreda7UIyCa7CxYvEQEYh+HVrrTSHBkSFxv7SW8/Jy39Vf1675i/4VopO4q350dMhpR/ykRAj6/Z1GrcrQ0dlfMaq9ZR5qSaI3+n/s7rJUDKjx4sJ4E80bWz7Djh0Y4PbZHFSW1lwUKIQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uwys8dWt; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726250815; x=1757786815;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hODeVcKESQQ+bysOclnLLpr1fN1atctGk9DXPTCBdzQ=;
-  b=Uwys8dWt1N3A0ACDaeP1lRnbwC+4Q5XZhqsWMyrhi//je9wqRpedEhN9
-   gNBjLMu2n1JlAFaKWy/79NqcVOlvKEKKwK6BZLQcz6iysImWrMISI8zd3
-   NxUZWiFx6aNDyqpDDKA8AYkcfN+EL7pu8ptJMajoe//8ViyGQtkq413ub
-   AYRtSk4TS6sDpLlqNewQ3GAoId5vfu7CIh6DpDhDltLMPz08GKo9olqiI
-   XOu9YoiUAuLTdY83etfomjG9kvSA6xmLPQJeG2holvjaVSqtfUYbx1JZl
-   TY+wdxTtClvSbQ82N2gE8CTYcl+M2XCXBv8uTC7tzMlR4dwyOmuwAdwi7
-   w==;
-X-CSE-ConnectionGUID: 9gKdYi1QSp6I/HdoaY5V9Q==
-X-CSE-MsgGUID: zqjLgIi8R4Gl/6STAKR0ew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25288281"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25288281"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:06:54 -0700
-X-CSE-ConnectionGUID: +/2pBTv9TBauH7SK5OAjeA==
-X-CSE-MsgGUID: oXgjKCtbQMOmA8rNxzioSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="98822694"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:06:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spAgy-00000008Nj4-3whr;
-	Fri, 13 Sep 2024 21:06:48 +0300
-Date: Fri, 13 Sep 2024 21:06:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 4/6] serial: 8250_exar: Replace custom EEPROM read
- with eeprom_93cx6
-Message-ID: <ZuR_OERZZY3QoAtH@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <78dead78311ea619e0be99cc32ee0df1610a480d.1726237379.git.pnewman@connecttech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cb2SvT+jkG91MNNycKX4vakWl3l5s4fVK1t1BLJjkybJKtrx6x3e94kKaVfZL5iFa2CFBOztplZw4MXq8lEl7qpoGO3aN3xZ0pn9wyeaeeXou0jEMy0T0prSQxyORxbCabIiBxJAaByA8JFrgkw+oCMg4gnFFqI4JbpD05048D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E7XlTsIB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726254093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5WUawk6UeQz1fgAqAjCjADByI3bac24dG1c8uUPGGkU=;
+	b=E7XlTsIBZWr4y1cHJzbuGJBEJNcOwj9OMOCGva/mM5Uliv/vbyMm0s+ZpQgAPD26FYM3lY
+	IspL25kvvPghS0i5+U+wG01tp2ijFoF2konPmNJ3POkgFOijpbbQwaTci5m1ZIwmkSxJOk
+	M/CyYGg6rRVr7kYY+WmNlz2eLqxkSN4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-230-hceF7FbvMV6F0nIyfMopfw-1; Fri,
+ 13 Sep 2024 15:01:32 -0400
+X-MC-Unique: hceF7FbvMV6F0nIyfMopfw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 36B081955F2C;
+	Fri, 13 Sep 2024 19:01:31 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.5])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C2EA1956088;
+	Fri, 13 Sep 2024 19:01:30 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id 610B7400E52F5; Wed, 11 Sep 2024 00:04:46 -0300 (-03)
+Date: Wed, 11 Sep 2024 00:04:46 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Leonardo Bras <leobras@redhat.com>, Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
+Message-ID: <ZuEIzngSx36Gx8l/@tpad>
+References: <Zp/k+rJuVV+EcXqL@tpad>
+ <20240905221908.1960-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,115 +74,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78dead78311ea619e0be99cc32ee0df1610a480d.1726237379.git.pnewman@connecttech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240905221908.1960-1-hdanton@sina.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Fri, Sep 13, 2024 at 10:55:41AM -0400, Parker Newman wrote:
-> From: Parker Newman <pnewman@connecttech.com>
+On Fri, Sep 06, 2024 at 06:19:08AM +0800, Hillf Danton wrote:
+> On Tue, 23 Jul 2024 14:14:34 -0300 Marcelo Tosatti <mtosatti@redhat.com>
+> > On Sat, Jun 22, 2024 at 12:58:08AM -0300, Leonardo Bras wrote:
+> > > The problem:
+> > > Some places in the kernel implement a parallel programming strategy
+> > > consisting on local_locks() for most of the work, and some rare remote
+> > > operations are scheduled on target cpu. This keeps cache bouncing low since
+> > > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+> > > kernels, even though the very few remote operations will be expensive due
+> > > to scheduling overhead.
+> > > 
+> > > On the other hand, for RT workloads this can represent a problem: getting
+> > > an important workload scheduled out to deal with remote requests is
+> > > sure to introduce unexpected deadline misses.
+> > 
+> > Another hang with a busy polling workload (kernel update hangs on
+> > grub2-probe):
+> > 
+> > [342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds.
+> > [342431.665458]       Tainted: G        W      X  -------  ---  5.14.0-438.el9s.x86_64+rt #1
+> > [342431.665488] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [342431.665515] task:grub2-probe     state:D stack:0     pid:24484 ppid:24455  flags:0x00004002
+> > [342431.665523] Call Trace:
+> > [342431.665525]  <TASK>
+> > [342431.665527]  __schedule+0x22a/0x580
+> > [342431.665537]  schedule+0x30/0x80
+> > [342431.665539]  schedule_timeout+0x153/0x190
+> > [342431.665543]  ? preempt_schedule_thunk+0x16/0x30
+> > [342431.665548]  ? preempt_count_add+0x70/0xa0
+> > [342431.665554]  __wait_for_common+0x8b/0x1c0
+> > [342431.665557]  ? __pfx_schedule_timeout+0x10/0x10
+> > [342431.665560]  __flush_work.isra.0+0x15b/0x220
 > 
-> Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
-> driver. This removes duplicate code and improves code readability.
+> The fresh new flush_percpu_work() is nop with CONFIG_PREEMPT_RT enabled, why
+> are you testing it with 5.14.0-438.el9s.x86_64+rt instead of mainline? Or what
+> are you testing?
+
+I am demonstrating a type of bug that can happen without Leo's patch.
+
+> BTW the hang fails to show the unexpected deadline misses.
+
+Yes, because in this case the realtime app with FIFO priority never
+stops running, therefore grub2-probe hangs and is unable to execute:
+
+> > [342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds
 > 
-> exar_ee_read() calls are replaced with eeprom_93cx6_read() or
-> eeprom_93cx6_multiread().
-> 
-> Link to discussion with Andy Shevchenko:
+> > [342431.665565]  ? __pfx_wq_barrier_func+0x10/0x10
+> > [342431.665570]  __lru_add_drain_all+0x17d/0x220
+> > [342431.665576]  invalidate_bdev+0x28/0x40
+> > [342431.665583]  blkdev_common_ioctl+0x714/0xa30
+> > [342431.665588]  ? bucket_table_alloc.isra.0+0x1/0x150
+> > [342431.665593]  ? cp_new_stat+0xbb/0x180
+> > [342431.665599]  blkdev_ioctl+0x112/0x270
+> > [342431.665603]  ? security_file_ioctl+0x2f/0x50
+> > [342431.665609]  __x64_sys_ioctl+0x87/0xc0
 
-(the above might need to be rephrased a bit, see below why)
+Does that make sense now?
 
-> Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel.com/
-
-Make it real tag by moving...
-
-> Note: Old exar_ee_read() and associated functions are removed in next
-> patch in this series.
-> 
-
-...somewhere here.
-
-> Signed-off-by: Parker Newman <pnewman@connecttech.com>
-
-...
-
->  #include <linux/property.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
-> +#include <linux/eeprom_93cx6.h>
-
-Keep it sorted.
-
-...
-
-> +static void exar_eeprom_93cx6_reg_read(struct eeprom_93cx6 *eeprom)
-> +{
-> +	struct exar8250 *priv = (struct exar8250 *)eeprom->data;
-
-Unneeded explicit cast.
-
-> +	u8 regb = exar_read_reg(priv, UART_EXAR_REGB);
-> +
-> +	// EECK and EECS always read 0 from REGB so only set EEDO
-
-Please, use C comment style as everywhere else in the file.
-
-> +	eeprom->reg_data_out = regb & UART_EXAR_REGB_EEDO;
-> +}
-
-...
-
-> +static void exar_eeprom_93cx6_reg_write(struct eeprom_93cx6 *eeprom)
-> +{
-> +	struct exar8250 *priv = (struct exar8250 *)eeprom->data;
-
-Unneeded cast from void *.
-
-> +	u8 regb = 0;
-> +
-> +	if (eeprom->reg_data_in)
-> +		regb |= UART_EXAR_REGB_EEDI;
-> +	if (eeprom->reg_data_clock)
-> +		regb |= UART_EXAR_REGB_EECK;
-> +	if (eeprom->reg_chip_select)
-> +		regb |= UART_EXAR_REGB_EECS;
-> +
-> +	exar_write_reg(priv, UART_EXAR_REGB, regb);
-> +}
-
-...
-
-> +       priv->eeprom.data = (void *)priv;
-
-Unneeded cast.
-
-...
-
-> +	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset,
-> +				(__le16 *)&osc_freq_le, 2);
-
-Okay, this should be done better I believe:
-
-	/* ...Find better names for variables... */
-	__le16 f[2];
-	u32 osc_freq;
-
-	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset, &freq, ARRAY_SIZE(freq));
-
-	osc_freq = le16_to_cpu(f[0]) | (le16_to_cpu(f[1]) << 16);
-	if (osc_freq == GENMASK(31, 0))
-		...
-
-	return osc_freq;
-
-(Also no need to break on 80 characters)
-
-> +	if (osc_freq_le == 0xFFFFFFFF)
->  		return -EIO;
-> 
-> +	return le32_to_cpu(osc_freq_le);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Thanks!
 
 
