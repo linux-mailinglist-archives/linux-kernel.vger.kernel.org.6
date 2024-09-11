@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-324067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277C297478B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:47:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D02D97478D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBF1C256AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:47:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758EF1F25EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D83125DB;
-	Wed, 11 Sep 2024 00:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D3125DB;
+	Wed, 11 Sep 2024 00:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YImhK7Ss"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i3GEDFb8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1003D7A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A213D7A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726015640; cv=none; b=IcN3qlAmJYx/ZFcgCoQII6RoXDmTh8KTr9NTXyQ65qWoEXWQPUq5LfqvA5Dy7erLHtGddW3j7K1f7FcSLZ4X96wF51AyyO/CfwPPYqVnUZVUReyw+CF9qNDAHG6sWUMS5oKd63MGZ18vahxC0ieFqnKBZSK8cxJ2YyAC1Ba8c6s=
+	t=1726015761; cv=none; b=U/lpnJ4vkRgNGdeduHPpKwDOLlzZQTakwubuhw1Hp4XYbBiE2A8ip/ZvhuzmWjbiV2NOxhQvlentXq3L+9X9QRVA21Tqefe6q49i6J0/79CRFAFFymCx7llDqbdiX/YJFCxd1bR62P6U50LftJNpmt9s8UTgrtVd70gs0nnYB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726015640; c=relaxed/simple;
-	bh=gS3ZxyAm+hyBT0ht4BjhvcwNhHhJsvyMv62jjgyUvR0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=cojcGdxwJyKURO0L6JlNvdO02bFpHotN6e8HCsgZ61QYZHxNDe1D/H+kvBsqNaJ8yMNQ50rVP48vECPNpcvgVVaCTkr9IWYSV2XV9TaZz4qdO7cn5nuICOwhP4yRnKs8fcCMHjKwQXPdjS8d4upIN5fiUt9NLf6j5Tr+H6aQWxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YImhK7Ss; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1726015761; c=relaxed/simple;
+	bh=6dx4d2v74Mf0ycAzE2+u+3055a+M6cEPMZhCvEw0xIk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RNywqdZDegQ37ygftyXXlURBU6tCUkOvnyLls+dw2LhJ6saPBjWccijxt7vSwnUv/hMmR3QUx/AXVqzgTXy23LauY0lF7HXFZ+6zpnWapUB02RHJdyX3mXPw9/MrNkRPcrBLapsVDlBNWGQUZqfoRzNg/eGL2kQjQuK6XgNVUyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i3GEDFb8; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726015639; x=1757551639;
+  t=1726015759; x=1757551759;
   h=date:from:to:cc:subject:message-id;
-  bh=gS3ZxyAm+hyBT0ht4BjhvcwNhHhJsvyMv62jjgyUvR0=;
-  b=YImhK7SsX3eMKNYIoSSXzMwtx9+mqvB0B2+vff9ULuzIquoJTqOuCDtO
-   kCc6JDnKrK/1TNRDJyRzZh9z+0BohOFjk9NWUjifZ4/WJBJizr1SZV7p2
-   kgqjnTtaJolN95Tgzjp2lhSBMPubVQ8mSkC7gmJYcdE8fJvWYeNVrucdo
-   zi8cWNrnyG1MLYDFWhwGZaoWXKD04WaBNMDUtvNGiaK/15Q3dSSrJyuAo
-   2gWyqx5XGk5v64+Ef+PIQIF/k6CWreFH559q7XVAUyFJXbAAoLpmIYZ5B
-   heXvMAA7l76DGdp1dN0qlCrqw+XqE95OYu3y6B+JAzEjdjfW8qtN5S732
+  bh=6dx4d2v74Mf0ycAzE2+u+3055a+M6cEPMZhCvEw0xIk=;
+  b=i3GEDFb8Dc2ECXj3KrCF8j4MdQeBJqCugaBw9d4w4mz7GdSZsxmn2WxM
+   YTSPXtyrWvHqoMSIdBYQdaG6j2hlgpGzKwbTQU5I7tcgOjNapm9YEIaB1
+   lCs5UqQQ0NO9/LErqWRS9e52ndgHPbqpYg2f1Z8QUwDm/ELPgjKvGbrUT
+   shdmIItp81FJ+7PhlQzPKCMuvKnTFHv0eraYiUmG/97baJFPfBZktQA8N
+   RKWJRV1ra419qV45b89m3rOmz2WigcfsY8Fm3YBEvNNcm2EIcGScm+p2M
+   oG2uVEGxsWnxqSWJrI9a+6CF5UG4FON4nekT1mN7nw+yZyKY6BnrQmy8+
    A==;
-X-CSE-ConnectionGUID: Xy37SqD1Tf6hO8F143OdqA==
-X-CSE-MsgGUID: vJgGQlOuSIG0N/iWYEWToA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="27714526"
+X-CSE-ConnectionGUID: OESfXECMRBa+z/2znHj75w==
+X-CSE-MsgGUID: OnX4e2gAQQ6ojmaz9lyl+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="13464629"
 X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="27714526"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:47:19 -0700
-X-CSE-ConnectionGUID: drcnZ7yGRziozlIb+wig5w==
-X-CSE-MsgGUID: yC7QFZ+/Ssa/I3mnWBuo6w==
+   d="scan'208";a="13464629"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:49:19 -0700
+X-CSE-ConnectionGUID: KE8AxvlET/iog4FKmtwVrg==
+X-CSE-MsgGUID: PA+t1UIWQsmG18nTMr+d1A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="67435638"
+   d="scan'208";a="71814562"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Sep 2024 17:47:18 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 10 Sep 2024 17:49:17 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1soBVr-0002sw-1N;
-	Wed, 11 Sep 2024 00:47:15 +0000
-Date: Wed, 11 Sep 2024 08:46:58 +0800
+	id 1soBXn-0002tE-1v;
+	Wed, 11 Sep 2024 00:49:15 +0000
+Date: Wed, 11 Sep 2024 08:48:33 +0800
 From: kernel test robot <lkp@intel.com>
 To: "x86-ml" <x86@kernel.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD REGRESSION
- 6cbbb91711c6b17da3802a3cf072d3311828ca33
-Message-ID: <202409110855.nvi2VykL-lkp@intel.com>
+Subject: [tip:timers/core] BUILD SUCCESS
+ 35b603f8a78b0bd51566db277c4f7b56b3ff6bac
+Message-ID: <202409110831.mvPymmRC-lkp@intel.com>
 User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,29 +73,16 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: 6cbbb91711c6b17da3802a3cf072d3311828ca33  sched/cpufreq: Use NSEC_PER_MSEC for deadline task
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+branch HEAD: 35b603f8a78b0bd51566db277c4f7b56b3ff6bac  ntp: Make sure RTC is synchronized when time goes backwards
 
-Error/Warning reports:
+elapsed time: 766m
 
-https://lore.kernel.org/oe-kbuild-all/202409110611.dmyDCkoe-lkp@intel.com
-
-Error/Warning: (recently discovered and may have been fixed)
-
-drivers/cpufreq/cppc_cpufreq.c:227:20: error: use of undeclared identifier 'NSER_PER_MSEC'
-drivers/cpufreq/cppc_cpufreq.c:229:3: error: member reference base type 'long' is not a structure or union
-
-Error/Warning ids grouped by kconfigs:
-
-recent_errors
-`-- riscv-allmodconfig
-    |-- drivers-cpufreq-cppc_cpufreq.c:error:member-reference-base-type-long-is-not-a-structure-or-union
-    `-- drivers-cpufreq-cppc_cpufreq.c:error:use-of-undeclared-identifier-NSER_PER_MSEC
-
-elapsed time: 999m
-
-configs tested: 112
+configs tested: 111
 configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
 tested configs:
 alpha                             allnoconfig   gcc-14.1.0
@@ -183,7 +170,6 @@ riscv                            allmodconfig   gcc-14.1.0
 riscv                             allnoconfig   clang-20
 riscv                            allyesconfig   gcc-14.1.0
 riscv                               defconfig   gcc-12
-s390                             allmodconfig   clang-20
 s390                             allmodconfig   gcc-14.1.0
 s390                              allnoconfig   clang-20
 s390                             allyesconfig   gcc-14.1.0
