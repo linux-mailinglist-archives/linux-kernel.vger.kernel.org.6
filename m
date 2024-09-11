@@ -1,249 +1,294 @@
-Return-Path: <linux-kernel+bounces-324579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B2A974E7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B9B974E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5D42873DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A60A1F230AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527E81714C7;
-	Wed, 11 Sep 2024 09:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00EE16EC1B;
+	Wed, 11 Sep 2024 09:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f3Q9dowB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RgHYE2iV"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2864F13D2B2;
-	Wed, 11 Sep 2024 09:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726046995; cv=fail; b=qNJ/Mm5DOxTR52ZcKcNkfIk/wVcG82L43VId3VhselL6KdYZRh2mWDKjoH05gjozuOOVUszavBm3egRGXwtwcgdN1Q+3sOQgRtYJfuCIpf/ohnMlEPBffI89FKzvjDtq98pGLfnZzkjIbvA38y3G3wn4874CiFKcLRYu50lT4Ww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726046995; c=relaxed/simple;
-	bh=uP/rWBz+s/fQTM7/H2Y3+gfIjE9weSn+Tk6lXZKwENE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iAc2io0RFu2yU+AqE+nqv20HV7jaGMEGUNuYmwu3YWvd7bjQ5H6vXQstBPPUP5UZ2blRwhAZlPodHyfPUkv4VowEss13/KknsSqUamZGYeO2z7kn/kodG8IhG1WwSgqKYfj7T9M5Z2bLfBlfWxqciF5ZCqhypfRhwKdpd9oiyDA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f3Q9dowB; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726046993; x=1757582993;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=uP/rWBz+s/fQTM7/H2Y3+gfIjE9weSn+Tk6lXZKwENE=;
-  b=f3Q9dowBD7hJqrcGgEq/KgETG1ku4taw9vK7987s4wt/0AktVAzI+7V9
-   TDcPj0Oz6cI7wu8PFa9a8tr8TAq8Ykggd5hbJFVUvM01s2TWV1XXG3wVL
-   uMYtTenpp2IyDP+kHYPb6fQ3K+XFsHdAFJL4nPZa5VgHOxAo11gml9COR
-   17pp9NVOR3wpCGlVHrdFTpJaSD96hSL5YvTsOU3Ec5OrVoygB7WnFwMLK
-   X0pPagoLozaC19iympL1KEcjC/Gy+lFIUDbThOwvMlDWLNHk9HvQTUED4
-   V8/A/xFbn8qghArluD3PvGMwnVNq2eNr4p3jeofTq/nPMeVJtc4iAX69v
-   A==;
-X-CSE-ConnectionGUID: DwKhMVR8Tl+FnIvhoO5+mA==
-X-CSE-MsgGUID: IzkF6yiLTPqZXznl1XrflQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="50247879"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="50247879"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 02:29:52 -0700
-X-CSE-ConnectionGUID: 0H+uG1cATP2o53GodQ5QlA==
-X-CSE-MsgGUID: YEnDfByXT+S48Z4+QNg2Gg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="98012972"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 02:29:52 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 02:29:51 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 02:29:51 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Sep 2024 02:29:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HqyTcnUp6Q7Q/VAEzx3+B5imkaOtpBzRVxA2qxK9lUTpahiBEXvB9kICaJg9ZENuRPKrh7iizBUyPjdiWrWdTYVl4T4lP9YjAnkufcMD2kOD1HTdPkPY09jnlL9HeIv9wn8uDlKpXKk6mwWLrvPu6ZifMWft2kBwn5KABn6IBHIoKthCGj/tyC30ip3bgxf97eb7p0LOk04V3wQuSM1m82OLAoOyjgIUppUJQKS+cjqtp+vpCi32WIg/TcIF+hPNBgDZPMeQaNWbejYQrgX1ZAYGmZMl6UbBUqoOFFRwyJeeZ5S4kJ883Dmr+M/epBberJU7pnpE13Ps8MLqfgtzag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hVHdAsBjcGS3l/exTjZLTXXVQ0BP7+p/BFdLIzCsEYk=;
- b=jTa7Cd0eKiMGE99MUMAyG9fSAlK9DaJ9kqOvWV6fMZcSGOI61HGyWzsIpaD2nOMdF1J2HUZIRdbGBmpgfABpYcjKGZSkNCBzgI61Zjet3sCJgmDIla+QYeCHJVNV1FWs4LavLwVvszrVfrW8NlSkrOZvk+bXzMbauZwVpE89BAY9DysTCLmPfKWf0uZei5O7+Jqg4lNcK57P4jMZsWuG4XFugfPJ0P3c81NfR7Sc3PUXM5h+E/ATPZ8Zj6jzFIi0Dzjd8CN1wROv9XjNbeJOhQOVsrroIHN5b4IB88N8rLkrK9Z82TgtDGW7dd0ZxTZzohaCQU3HsPVPK6rXiJ4M4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by IA1PR11MB6539.namprd11.prod.outlook.com (2603:10b6:208:3a1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
- 2024 09:29:49 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%5]) with mapi id 15.20.7918.024; Wed, 11 Sep 2024
- 09:29:49 +0000
-Message-ID: <26614b92-4d24-4aff-8fc3-25aa8ed83cb6@intel.com>
-Date: Wed, 11 Sep 2024 11:29:44 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: seeq: Fix use after free vulnerability in ether3
- Driver Due to Race Condition
-To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-CC: <wtdeng24@m.fudan.edu.cn>, <21210240012@m.fudan.edu.cn>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<edumazet@google.com>, <kuba@kernel.org>, <davem@davemloft.net>
-References: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0071.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:21::22) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F84F42056
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726047047; cv=none; b=R6LfESCHGpY5Ssqn0j4vkg+0WAv2RDdAkqG2SzP2HyVBPEL9AFdQG2BDqb4XHc82ON5I3fF2qQ+G8277vNGgcDhiMXMMwpyhVA8o/hkbNIOsC9kyCmlYjI1QM2GZqwwO16r414L83/kwg8YvbjupBwLafR+agwIo8ALvKjTnQ7c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726047047; c=relaxed/simple;
+	bh=2PaBkI0R5lLeVp6p2dH/xLId4x0A7so2AeTlfXbJP0U=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TVG8aEAUXpJLK0F5KmeRkV82vk8dfVkV2z0gCHzhzRJArL2j5sAabwPA6yC6ab9SYB9rwKQiFJ+ngspkJgwCIV8b15or3ViO4Sb2z7+uTFvl9RHlvYxj7prkBaTrMlBrXHx38V47pwMb4gYJP6dezIyfm9BnefxThXvhfhNe3rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RgHYE2iV; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d9353e1360so43208977b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726047044; x=1726651844; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h8P9fRb3EkrhUUvJp18ppHORqEKlJylySnTNQBBAPmg=;
+        b=RgHYE2iVrHTusAp9ElIc44xhTH/CfJTuwiKLOUbkOvmK8lBWazYkme5NUQ7fcAWhPy
+         nOuXxNmZBmghq2whD8YXyWiv7IJA++7SSm2zAM7jiTPTIGE1ZycH6hxt9+kqp7iZ6hXL
+         ANyq+a4SZRyQtGHCdz41WLaKAcEtzbCnTcOrcrEXWOQvJDYvSG1GMDXITVt7aA3wjxju
+         R06mNiek2yx57z/cgEH4f3CgXmeQIIdso2Vm+wHEZOTCda+kzv4QX9lG9MeKFdItePor
+         IBxVKKFH7dQGiqDxfr83+YxHx+30ETzj7s0uVp4PDhWk0FXxOuReiQdd2qh5TIs/CJoD
+         Uk9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726047044; x=1726651844;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h8P9fRb3EkrhUUvJp18ppHORqEKlJylySnTNQBBAPmg=;
+        b=bjGNsTRcHerkUcH8BztloGtifZIa93PEmoKoIDh5UUn0GGoc8CHPwFHnHfvNjmmT9G
+         zqUVsRE5qsgIkgxo2tCMrMLeRccyO40ZDb4NxX+Ua8hjWV5wC5jWsZBpDAhUSb5TG/qB
+         EHYgGabNzCJWBNczAKLTvgfKo89Z3tdduBR7F/vmuYreaYdKnIvQHAtY8NRMbWrti3Kt
+         9/ueDHiAnPbCtj/uXHhvJdMJ2+w6YUJ/OhTsUB8k3MwDaiIuuyIHmohA49BONHVPVbQK
+         xXM3dfF00A9rcklpyLwCVI3Gho1sNcfFD+6JdL+wObpaI4u/8XDg7BFjeZEJ7ts4b6dp
+         uAFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZUhxSmqxC34UnkIV1liKVcPM71ZiS+zpyz7YVklpMNp/V7LAuByx3y4xmCpavB2mFzctAFYNITiM1nUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgJFyyZIuMrCUdxlXoz3/dqNaxFJp8r4kds5qgW6XD9rRKZflR
+	Kh3rgFt84ssvrvWWHWD/mE3/WO+HBDaZV/7yh71uJWB5vICvN6Avll2JNjpCWgPWo+bWrgkJ6NS
+	zCTXCtZru8guwS+X+cg==
+X-Google-Smtp-Source: AGHT+IGFJzMtbH6bztpXDokzlEMqa87wZ0wTsQ3uWLqW9OgpdVO/LQvEq/lwGL5QyMWloPi5k3zXE+um8VY/kbR9
+X-Received: from vdonnefort.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2eea])
+ (user=vdonnefort job=sendgmr) by 2002:a25:d64e:0:b0:e03:3683:e67f with SMTP
+ id 3f1490d57ef6-e1d8c39e976mr2989276.5.1726047044436; Wed, 11 Sep 2024
+ 02:30:44 -0700 (PDT)
+Date: Wed, 11 Sep 2024 10:30:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|IA1PR11MB6539:EE_
-X-MS-Office365-Filtering-Correlation-Id: e33b3085-cc75-49c6-fa9d-08dcd2444892
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?d0JZV1JpS2RIQU1zN1RNOWZ5eXNUQzhvNDUyaDEvSjZwaXBhT0lDQmZvQ3RI?=
- =?utf-8?B?M2NsWkljTFdlSm1NQmQrejFXRzJDekVscVZ5K3N5UXRJODF0T000bHNKTEYy?=
- =?utf-8?B?NWw4eGttYnVOQU9mOVNOQ2JNNjVLRnVsUDExb212eWtldkxmc0hnRDVVcUV6?=
- =?utf-8?B?LzVkYWRTMkdRbktKSWRtZE9ONVE0bHNndjhFakpoa0hkL0NjVW5Xd25GZXRU?=
- =?utf-8?B?aHJGdHlDOXViSmNLVkZuNjZCd0NlK3F3bS82NVRtOVlKRXZ4Rld5UGdjWDFV?=
- =?utf-8?B?QXlkYWVwNUl6cE04aG5FZ2NDQWZaV2l0dXJzUEltNUVuWVpmRlFpR0k3b3BR?=
- =?utf-8?B?a1Jvb242UTNWdjRSdTd2OGo0a3VmeEpDSzNsVCtBeFBmVStmYWwxYWRpWkhy?=
- =?utf-8?B?MUtONDBPUUVCT05wTkV2OFVWck5oT3BnZ3RkbHJwSDNNTXhNNFlZckFFSkNz?=
- =?utf-8?B?NDE5Rjcwb1R3N0FhdXo2a00velBOMWFwSnJpT01pa3didmVVcWNxaGxid1Zx?=
- =?utf-8?B?cHdLZjhkVm1KY0cxVTAvZXhua3NQdlhmakNQSkhkZkZEYk1JcCtvQTI4Nnkw?=
- =?utf-8?B?a2J1REtVQ3JTWkI0Vyt1dnp0OWx5VWVINnR3bjRQamU2Zk5NaWROYjdzMHhI?=
- =?utf-8?B?TkpKazJCaVMzUG1BUkFtUDd0UVdHQUFDTmhwb3J5ZXRPOUYrbUM0dXkzNlpo?=
- =?utf-8?B?L0psOVhTcVJGZm85d1FRQ2tzOURzNEtXMDI2cHcyQlh2UFljengrdVIrWW41?=
- =?utf-8?B?Vk9mRDJGTDJ6M1Z5dWNPMlZKU0tTcEVyUkZ1QUtkWkNHZ3FCV0I5SXovOWxX?=
- =?utf-8?B?WkJ1RWdNUE1obkgwQXRQN0FPTm1zVlJaVm1jd2oyR1hNdlpOaUlOQU5oK1ha?=
- =?utf-8?B?Z0dJeGJUakZWSHBiRGg2V2ZYOFl6U0VvSzRpb2ttazNFZlJ5VDE2RGtlZSs3?=
- =?utf-8?B?T2d6akVUdEFtZEJ5aVExYjFVOUk2SHRleTJsVE5hVE9tTmVuUFVCOUpjK29w?=
- =?utf-8?B?QWJWVFZ5NnZ4VUpoWHhYOHpiakI3cTZNUmk5QkRkT1RXb3phUFZ4bGcrejFs?=
- =?utf-8?B?MUZXd0M0dWhFTUdVS1BSZzUyNnY1a2JGMnp5Q1NEUzFQOWpsUHB0Y0h5di9F?=
- =?utf-8?B?MkR2TEQxSStRWFQ5V0pMMmxCbVhVWDkxWFM1c1Y2Sll2SkhEM1dtWUJ4aEtR?=
- =?utf-8?B?R3FMck9QVVJyUEFTUTJDclc3NFdoWWlKY2lxcDdGZU1lMHdSWWFzWVR0dXlv?=
- =?utf-8?B?RXl6TEdjWW9qdHk3VHVSQ2IvMlRJZkhIQ2FndkY2eGJvVmw4anhEcGZPTVBI?=
- =?utf-8?B?WUFYQXAveWRFSm52WEIrMlMra0Nsc2tqbFNmcXNnc2V5cyttbVI3ZlVmZEdB?=
- =?utf-8?B?Qk5VYjlzeGhBd3h6S2xTTURkbTZMbGpyRTRPZlN3cllQZkNWS3kxV2RyYWZB?=
- =?utf-8?B?OEFTY2FNWEtBU1ZDSERCSitCM0g2S2NBbzM4UjhGTlA0dTNHbDNNaUtZWExT?=
- =?utf-8?B?eXk0dHpLWWdGUndWelJBRWswR3FabTF6a3NmejFsU212TGxaK1dEMVkrT0FW?=
- =?utf-8?B?RktmTmphNXFMOUhJS0FoMEM2MldJbVg2YURWeHU1V2Q4M3RzcVRYeGNLV09K?=
- =?utf-8?B?YzUxVGJlTG41T0ZkS3hQZUN1TnA4RE1CTHRuS3kwRm1iWFpaY1BlOWhLYU5R?=
- =?utf-8?B?TGpSUmhBYUFWemlHT2JhSkVyOWNla21LNHZERmZHT01aa0JEUkgwSSt5ZDcz?=
- =?utf-8?B?SFpJdGh3b0d3YWw4Z2dCQnJKMkY4NVdjREd2aFlCMzJqczZtUVJ5TjVGSnNv?=
- =?utf-8?B?Kzg5ZW5IN09qWndLNTVhdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NkdZVTRuL3BORTFuZjBzTjFPY1RCNitEMFNrSzVRazZJN203YTFFZXN0VW1z?=
- =?utf-8?B?enBMNWJuUXgrWFRvb2w5RHQzVHowMnlEZmxKSlM2eUEzL2FVSnVRNTEydkRQ?=
- =?utf-8?B?V29TcHBaaE9Zend4aWNNTzI1Y003WUZxM1BwZXZZMit2WXJycGtDOS9jajRq?=
- =?utf-8?B?Vm1UK0Jodit1a2NGcSsrci92UFE5cVFxUHJpQlY0S2lqMWNKb3JDMnIyUlNB?=
- =?utf-8?B?RmlPMWxKZTRaSkdCWkRwVUpxSTgydFV2RENMVGhlMHFhMVBDTkR6dUhPZkQw?=
- =?utf-8?B?Mm5xK0lNNjlyS1dDRkRwL0kwaVFwMWEySnJtQmwzbGpPc0VoT212a216Vlo2?=
- =?utf-8?B?QkE3OXdhNWE2OTJlYTJmOU53b3dxRTNlRHgyUFRWMmxyMCtsdDB2THArWjdh?=
- =?utf-8?B?c0dKSTZMbHpCVkNucVpBWGpIL0U4YVF3YXVzcFRZd1ZkYldhaktXVngrVVJi?=
- =?utf-8?B?WVVTTjlEK0Naak1FL21oRGFhZGptczRUdnNVelFXZWN0bDB6ZXZ4aG1aUUI1?=
- =?utf-8?B?TmlPL1NGcWhmY3U4cHZkaDlpdXMxTW5hYTVBK3U4L1FPTFVMbHp0UDNETDlS?=
- =?utf-8?B?alpySC90TzlQY1lTNjdGRGlQNG5sZkIxdG0wT2hQOFJXK0RwK010aFB4NGx4?=
- =?utf-8?B?NUFkYW40VDExUUlwc0JrTFZidFI0c3BrZUZmcW9pSmtpaHNMNUlvcVI5eFZV?=
- =?utf-8?B?M1d6NzVaejVvclQ0U1A5ei9Jc0ZzQ3ZRaVkyUWhuaVV6Q0llTzdrQW1VeUI0?=
- =?utf-8?B?ZnBMZGozWVhYNHh5YUtqTDRkdVMzSDRFSTc1TXIvclVkVExsQnBhOEF1bnY0?=
- =?utf-8?B?M0FySDh3VlpPRnBEV1hGREUyMlY5bElSdWJUMExlMWRaNDJaNjNMb0dtMmVD?=
- =?utf-8?B?dTFwTlViV0ZFQnM1V2I0L2dsZnhqcTRpSGhiV1NYTTcwNDNLbzlyOWtSSUVY?=
- =?utf-8?B?RUdyVnRUbEdodTFoTmNBeWFJUXdMeEF1MVZCTVRWWk9kZnI1THVLZnFHTWRK?=
- =?utf-8?B?OC9YWmR6NXVkNEtGZzNkcFRmelg3eUduVkVFVVZxS2U5Z3RrSXlkMFFOby8z?=
- =?utf-8?B?WFhGZE1Bc2FFSVVEZThxa05IM0hTOUlIbGZHcFpYS2t0THBYYWZYVW9sWmI4?=
- =?utf-8?B?c29hVEYzSFlRU1U5alVGeU9UMm5FNXVvK2Y3WFk3Q3B2dW5nZzVHVDRXaVZ2?=
- =?utf-8?B?SmE2cjhSbU5KZFpqWkxyay9lbUNCV0xkZEE2Q3l0b0pBOE9sa2xUSEo4cTZC?=
- =?utf-8?B?NHgwUVJlYm5GL3lNcEc2eUs5Z0N2K1NoMVcyZVQ0UVlFTlQ0TkxNWWVkWjMr?=
- =?utf-8?B?dTNKYTNoSXNZRE9hS3NTaUNiSXh2ekYyQTVqZ1RZQWRONVFPVDlwMHkwMHpa?=
- =?utf-8?B?WVgrTC90bVBmbUNGOSs1dmwvSHF3VjZWMWIvRHZjS2hyV1BSTSt3cGhYdnk4?=
- =?utf-8?B?UmhRb3hMeGYxNWhaVEZQY2tmWjVuOWkwR0pCM01vRDlMU0ZsVEVFa0VjQTJ1?=
- =?utf-8?B?RFZxSWxwb1lHYzRQallnOXFRLzJYeDV5ZGlUR2R4NklaWkUwcnI3TkJKcTlz?=
- =?utf-8?B?bmxwelp5ekR3R0pXSnRNaXNaS3dHNFh3SXg5TCsxN0todVNlTnR2M3FOczR3?=
- =?utf-8?B?cnBZdzRiVnNvV2Q4UW5KclpPR3F3M2diRVNNNFd0UERRZDZjQzVVZG5Zb3lU?=
- =?utf-8?B?ckR1WTBwYzJEOVhRN1RWRVFubjY0WGtJaG5uK1ZoZ0xoeGZxTXVSbmZPNUdw?=
- =?utf-8?B?cmpUbHBGeWkwRlI0MXFpdkRzK1BEY1JpL3drdXN1MVk5UXN4NlZoR3o0K3Fu?=
- =?utf-8?B?SXc1TmR4ajVMa3B1ZDNSV0lDWlNoM2VrdGFXbmk0bUMwRmxtWm40YnZYQmpQ?=
- =?utf-8?B?S05oczZDeHo1enltanJSR1hFNHh3NXVIVUU2RGxJejF2S2ZHZzdiYVNVMzVB?=
- =?utf-8?B?Q2lqSnRualRHampBT2hrTmFiWGFaNzZkbWhWS0hZajdUS2xYbmNVRXgzRW52?=
- =?utf-8?B?bkNveG9GTWk3bGdUNU8valVKMmkweU93YS9QekZQM3owYkcvVmxTay9uKzU3?=
- =?utf-8?B?bWFyQi9jYS9ObWhuNHRRd08rRThRd1lFd3lheGhEbkdQTjhoMkd4NXJXVE5o?=
- =?utf-8?B?RVJ6Y0d0V0VPQUo1Q1NQR25Jc0VzczVXRFl4eTNxM2E0QWhQa1lETGFadHlI?=
- =?utf-8?B?Nmc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e33b3085-cc75-49c6-fa9d-08dcd2444892
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 09:29:49.8503
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 56CdvTarfwRQ3m+rg41yRkpM5O48fu7u+20tvCODmr/pQCfKPBXhAZzAWKW96JOZlQAEc6IJz3WYUJ+yAlOEb9Ghza/+xk6+XoeuUlbuqkY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6539
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Message-ID: <20240911093029.3279154-1-vdonnefort@google.com>
+Subject: [PATCH 00/13] Tracefs support for pKVM
+From: Vincent Donnefort <vdonnefort@google.com>
+To: rostedt@goodmis.org, mhiramat@kernel.org, 
+	linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev
+Cc: kvmarm@lists.linux.dev, will@kernel.org, qperret@google.com, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	Vincent Donnefort <vdonnefort@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/9/24 19:58, Kaixin Wang wrote:
-> In the ether3_probe function, a timer is initialized with a callback
-> function ether3_ledoff, bound to &prev(dev)->timer. Once the timer is
-> started, there is a risk of a race condition if the module or device
-> is removed, triggering the ether3_remove function to perform cleanup.
-> The sequence of operations that may lead to a UAF bug is as follows:
-> 
-> CPU0                                    CPU1
-> 
->                        |  ether3_ledoff
-> ether3_remove         |
->    free_netdev(dev);   |
->    put_devic           |
->    kfree(dev);         |
->   |  ether3_outw(priv(dev)->regs.config2 |= CFG2_CTRLO, REG_CONFIG2);
->                        | // use dev
-> 
-> Fix it by ensuring that the timer is canceled before proceeding with
-> the cleanup in ether3_remove.
+The growing set of features supported by the hypervisor in protected
+mode necessitates debugging and profiling tools. Tracefs is the
+ideal candidate for this task:
 
-this code change indeed prevents UAF bug
-but as is, the CFG2_CTRLO flag of REG_CONFIG2 will be left in state "ON"
+  * It is simple to use and to script.
 
-it would be better to first turn the LED off unconditionally
+  * It is supported by various tools, from the trace-cmd CLI to the
+    Android web-based perfetto.
 
-> 
-> Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-> ---
->   drivers/net/ethernet/seeq/ether3.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/seeq/ether3.c b/drivers/net/ethernet/seeq/ether3.c
-> index c672f92d65e9..f9d27c9d6808 100644
-> --- a/drivers/net/ethernet/seeq/ether3.c
-> +++ b/drivers/net/ethernet/seeq/ether3.c
-> @@ -850,6 +850,7 @@ static void ether3_remove(struct expansion_card *ec)
->   	ecard_set_drvdata(ec, NULL);
->   
->   	unregister_netdev(dev);
-> +	del_timer_sync(&priv(dev)->timer);
->   	free_netdev(dev);
->   	ecard_release_resources(ec);
->   }
+  * The ring-buffer, where are stored trace events consists of linked
+    pages, making it an ideal structure for sharing between kernel and
+    hypervisor.
+
+This series introduces a method to create events and to generate them
+from the hypervisor (hyp_enter/hyp_exit given as an example) as well as
+a Tracefs user-space interface to read them.
+
+A presentation was given on this matter during the tracing summit in
+2022. [1]
+
+1. ring-buffer
+--------------
+
+To setup the per-cpu ring-buffers, a new interface is created:
+
+  ring_buffer_writer:	Describes what the kernel needs to know about the
+			writer, that is, the set of pages forming the
+			ring-buffer and a callback for the reader/head
+			swapping (enables consuming read)
+
+  ring_buffer_reader():	Creates a read-only ring-buffer from a
+			ring_buffer_writer.
+
+To keep the internals of `struct ring_buffer` in sync with the writer,
+the meta-page is used. It was originally introduced to enable user-space
+mapping of the ring-buffer [1]. In this case, the kernel is not the
+producer anymore but the reader. The function to read that meta-page is:
+
+  ring_buffer_poll_writer():
+			Update `struct ring_buffer` based on the writer
+			meta-page. Wake-up readers if necessary.
+
+The kernel has to poll the meta-page to be notified of newly written
+events.
+
+2. Tracefs interface
+--------------------
+
+The interface is a hypervisor/ folder at the root of the tracefs mount
+point.  This folder is like an instance and you'll find there a subset
+of the regular Tracefs user-space interface:
+
+  hypervisor/
+     buffer_size_kb
+     trace_clock
+     trace_pipe
+     trace_pipe_raw
+     trace
+     per_cpu/
+             cpuX/
+                 trace
+                 trace_pipe
+                 trace_pipe_raw
+     events/
+            hypervisor/
+                hyp_enter/
+                          enable
+                          id
+
+Behind the scenes, kvm/hyp_trace.c must rebuild the tracing hierarchy
+without relying on kernel/trace/trace.c. This is due to fundamental
+differences:
+
+  * Hypervisor tracing doesn't support trace_array's system-specific
+    features (snapshots, tracers, etc.).
+
+  * Logged event formats differ (e.g., no PID in hypervisor
+    events).
+
+  * Buffer operations require specific hypervisor interactions.
+
+3. Events
+---------
+
+In the hypervisor, "hyp events" can be generated with trace_<event_name>
+in a similar fashion to what the kernel does. They're also created with
+similar macros than the kernel (see kvm_hypevents.h)
+
+HYP_EVENT("foboar",
+	HE_PROTO(void),
+	HE_STRUCT(),
+	HE_ASSIGN(),
+	HE_PRINTK(" ")
+)
+
+Despite the apparent similarities with TRACE_EVENT(), those macros
+internally differs: they must be used in parallel between the hypervisor
+(for the writing part) and the kernel (for the reading part) which makes
+it difficult to share anything with their kernel counterpart.
+
+Also, events directory isn't using eventfs.
+
+4. Few limitations:
+-------------------
+
+Non consuming reading of the buffer isn't supported (i.e. cat trace ->
+-EPERM) due to current the lack of support in the ring-buffer meta-page.
+
+[1] https://tracingsummit.org/ts/2022/hypervisortracing/
+[2] https://lore.kernel.org/all/20240510140435.3550353-1-vdonnefort@google.com/
+
+Changes since RFC: https://lore.kernel.org/all/20240805173234.3542917-1-vdonnefort@google.com/
+
+  - hypervisor trace clock:
+     - mult/shift computed in hyp_trace.c.
+     - Update clock when it deviates from kernel boot clock.
+     - Add trace_clock file.
+     - Separate patch for better readability.
+
+  - Add a proper reset interface which does not need to teardown the
+    tracing buffers.
+
+  - Return -EPERM on trace access.
+
+  - Add per-cpu trace file.
+
+  - Automatically teardown and free the tracing buffer when it is empty,
+    without readers and not currently tracing.
+
+  - Show in buffer_size_kb if the buffer is loaded in the hypervisor or
+    not.
+
+  - Extend tests to cover reset and unload.
+
+  - CC timekeeping folks on relevant patches
+
+Vincent Donnefort (13):
+  ring-buffer: Check for empty ring-buffer with rb_num_of_entries()
+  ring-buffer: Introducing ring-buffer writer
+  ring-buffer: Expose buffer_data_page material
+  timekeeping: Add the boot clock to system time snapshot
+  KVM: arm64: Support unaligned fixmap in the nVHE hyp
+  KVM: arm64: Add clock support in the nVHE hyp
+  KVM: arm64: Add tracing support for the pKVM hyp
+  KVM: arm64: Add hyp tracing to tracefs
+  KVM: arm64: Add clock for hyp tracefs
+  KVM: arm64: Add raw interface for hyp tracefs
+  KVM: arm64: Add trace interface for hyp tracefs
+  KVM: arm64: Add support for hyp events
+  KVM: arm64: Add kselftest for tracefs hyp tracefs
+
+ arch/arm64/include/asm/kvm_asm.h              |   8 +
+ arch/arm64/include/asm/kvm_define_hypevents.h |  60 ++
+ arch/arm64/include/asm/kvm_hyp.h              |   1 -
+ arch/arm64/include/asm/kvm_hypevents.h        |  41 +
+ arch/arm64/include/asm/kvm_hypevents_defs.h   |  41 +
+ arch/arm64/include/asm/kvm_hyptrace.h         |  37 +
+ arch/arm64/kernel/image-vars.h                |   4 +
+ arch/arm64/kernel/vmlinux.lds.S               |  18 +
+ arch/arm64/kvm/Kconfig                        |   9 +
+ arch/arm64/kvm/Makefile                       |   2 +
+ arch/arm64/kvm/arm.c                          |   6 +
+ arch/arm64/kvm/hyp/hyp-constants.c            |   4 +
+ arch/arm64/kvm/hyp/include/nvhe/arm-smccc.h   |  13 +
+ arch/arm64/kvm/hyp/include/nvhe/clock.h       |  16 +
+ .../kvm/hyp/include/nvhe/define_events.h      |  21 +
+ arch/arm64/kvm/hyp/include/nvhe/trace.h       |  60 ++
+ arch/arm64/kvm/hyp/nvhe/Makefile              |   1 +
+ arch/arm64/kvm/hyp/nvhe/clock.c               |  49 +
+ arch/arm64/kvm/hyp/nvhe/events.c              |  35 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c                 |   2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c            |  85 ++
+ arch/arm64/kvm/hyp/nvhe/hyp.lds.S             |   4 +
+ arch/arm64/kvm/hyp/nvhe/mm.c                  |   2 +-
+ arch/arm64/kvm/hyp/nvhe/psci-relay.c          |  14 +-
+ arch/arm64/kvm/hyp/nvhe/switch.c              |   5 +-
+ arch/arm64/kvm/hyp/nvhe/trace.c               | 660 ++++++++++++
+ arch/arm64/kvm/hyp_events.c                   | 165 +++
+ arch/arm64/kvm/hyp_trace.c                    | 981 ++++++++++++++++++
+ arch/arm64/kvm/hyp_trace.h                    |  15 +
+ include/linux/ring_buffer.h                   | 108 +-
+ include/linux/timekeeping.h                   |   2 +
+ kernel/time/timekeeping.c                     |   4 +
+ kernel/trace/ring_buffer.c                    | 294 ++++--
+ tools/testing/selftests/hyp-trace/Makefile    |   6 +
+ tools/testing/selftests/hyp-trace/config      |   4 +
+ .../selftests/hyp-trace/hyp-trace-test        | 254 +++++
+ 36 files changed, 2932 insertions(+), 99 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kvm_define_hypevents.h
+ create mode 100644 arch/arm64/include/asm/kvm_hypevents.h
+ create mode 100644 arch/arm64/include/asm/kvm_hypevents_defs.h
+ create mode 100644 arch/arm64/include/asm/kvm_hyptrace.h
+ create mode 100644 arch/arm64/kvm/hyp/include/nvhe/arm-smccc.h
+ create mode 100644 arch/arm64/kvm/hyp/include/nvhe/clock.h
+ create mode 100644 arch/arm64/kvm/hyp/include/nvhe/define_events.h
+ create mode 100644 arch/arm64/kvm/hyp/include/nvhe/trace.h
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/clock.c
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/events.c
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/trace.c
+ create mode 100644 arch/arm64/kvm/hyp_events.c
+ create mode 100644 arch/arm64/kvm/hyp_trace.c
+ create mode 100644 arch/arm64/kvm/hyp_trace.h
+ create mode 100644 tools/testing/selftests/hyp-trace/Makefile
+ create mode 100644 tools/testing/selftests/hyp-trace/config
+ create mode 100755 tools/testing/selftests/hyp-trace/hyp-trace-test
+
+
+base-commit: 8d8d276ba2fb5f9ac4984f5c10ae60858090babc
+-- 
+2.46.0.598.g6f2099f65c-goog
 
 
