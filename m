@@ -1,70 +1,116 @@
-Return-Path: <linux-kernel+bounces-325065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC3497546F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:49:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B850A9754C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28ECD1C20F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2B4B23C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D38192B61;
-	Wed, 11 Sep 2024 13:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F3B19259F;
+	Wed, 11 Sep 2024 13:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CU0JyAfR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5DEXhlLe"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81961885B0;
-	Wed, 11 Sep 2024 13:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36A21714AC;
+	Wed, 11 Sep 2024 13:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062507; cv=none; b=eJi4VPBlDYhUOeZSSBGFleNur4diriNQKoPSj/ToKFjcsp2DPfxpbnlA9+VCgWc6kiJiSiz7ANyyj490csJ73ehRxQ/JQqDl82lv72lDTf/chL95Cyiwx/98bJM33twgdaGl0yNiAW2bfKx+oIB0sPRRJgFFpAGkSTDAZ5kb/zU=
+	t=1726062738; cv=none; b=WEbtAp8wae5t4E7MLD1It3aBfDjbsZXUdcp5gilsPiZxgVFFhz8sYRWZVBsxoNII7v+oWF/ZE6gBGLmkCz7YRHE1PsNVm0TgjO+YvcxoJlsGs+GADKhd34BEhbHoIWasQv6n671ef1U8O4xc89vZK/cywe1B1TsAaXVlC2c9lRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062507; c=relaxed/simple;
-	bh=uh6LHxig3a+PGw/odr//OTWW44M+/SfCRW//EmzuxDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cchk0b6QUs74GNo0lgblwwRYpWacRMtkwsd5M8CVX6+nFbE6yd++qTmWuyz7A3yR4UYA4I5YC1tbbRTKNGpZNnS4gQn7jJvgJmLyGm/+4KhcjsGqlzW22NQ++g3mDaDKUglaEUesMzxSfQhT+V8OJkQMha0g0ipiKMwKeEhNDWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CU0JyAfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB497C4CEC0;
-	Wed, 11 Sep 2024 13:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726062506;
-	bh=uh6LHxig3a+PGw/odr//OTWW44M+/SfCRW//EmzuxDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CU0JyAfRvLslWOXmzg5A9fs3ICIj4mLMLr6UO9Q0QiAzTizPcOTceYXHADkBc631x
-	 doJ5CEUbiX029D54ECpH1sQDVm1ixA1x5/j+kJs1dCgAl7BwPLL2mlM7i70QJ5nK9D
-	 E9cbZCiFWrv6YQ6iAcA659/+QsQH4PJ1GMnheke4=
-Date: Wed, 11 Sep 2024 15:48:23 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: abid-sayyad <sayyad.abid16@gmail.com>
-Cc: linux-staging@lists.linux.dev, philipp.g.hortmann@gmail.com,
-	guilherme@puida.xyz, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs:  Fix indenation and coding style
- issues in rtw_securtiy.h
-Message-ID: <2024091111-cheese-refuse-9b8b@gregkh>
-References: <20240911133549.2664372-1-sayyad.abid16@gmail.com>
+	s=arc-20240116; t=1726062738; c=relaxed/simple;
+	bh=UPnb5CwXN2BdNLF7oqXNvJIjcEvtnsHHPPV/LttT9vg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tvq4oH4a3tFNo3cqxPTGh/d5DyrGeC88M+DFrx6VL07Pa88yXlbtFHGK5u+JA1hh/ztrY5Pf5ArufYY1jU13faQTRHg0oNem++sjg14z/l10F6xaCaZt07WfroisbtyfOFx6H1W5Bt3pSJXj1WKv88raEeyJBto7vTbH/NtVREc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5DEXhlLe; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BAnBB0027599;
+	Wed, 11 Sep 2024 15:51:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=8x5WYgjMDMpnQ929UybthC
+	m8FyP9r1CPBj4apvbGduM=; b=5DEXhlLe3MNxVRexH5TEM92XsJG+4hQaC7cFr2
+	11eMEu2XF4qXgFkaPc6gx3VqbLgqRaPF1FNc5w8I0ihgbazWyu4DQ3ur3GQya/36
+	XF+xNhLDYi+ywRCTmwCPo8O97JwyAOjeu5xlWgj28kPyUIHvocm2u1z7/R60AUqO
+	Vy/jyvKrYS4KRCg9Yk1FjH6y7TeDuqoRkk+0GAnBNkP9r5nkFNJITXei7Gi+NnEh
+	GMEMiRmno+7uMjT23NpyFASdqz6MaBLarBgy34DetcJdnfBTDsd7Y81T1cWi9tdq
+	3Wh0SCGVJ0LwAowY1zLIqbesPIdRXjaV1wcZfe67sAm6h1eg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gy7sfggb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 15:51:35 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C5EE740045;
+	Wed, 11 Sep 2024 15:50:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9C631233FE4;
+	Wed, 11 Sep 2024 15:48:32 +0200 (CEST)
+Received: from localhost (10.48.86.208) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 11 Sep
+ 2024 15:48:32 +0200
+From: Hugues Fruchet <hugues.fruchet@foss.st.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ezequiel Garcia
+	<ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans
+ Verkuil <hverkuil-cisco@xs4all.nl>,
+        Fritz Koenig <frkoenig@chromium.org>,
+        Sebastian Fricke <sebastian.fricke@collabora.com>,
+        Daniel Almeida
+	<daniel.almeida@collabora.com>,
+        Andrzej Pietrasiewicz
+	<andrzej.p@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+CC: Hugues Fruchet <hugues.fruchet@foss.st.com>
+Subject: [PATCH 0/2] Add WebP support to hantro decoder
+Date: Wed, 11 Sep 2024 15:48:30 +0200
+Message-ID: <20240911134830.161091-1-hugues.fruchet@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911133549.2664372-1-sayyad.abid16@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Wed, Sep 11, 2024 at 07:05:50PM +0530, abid-sayyad wrote:
-> This patch improves the code readability and improves the presentation
-> makes it look less scattered.
-> 
-> Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+Add WebP image decoding support to stateless V4L2 VP8 decoder.
 
-Please use your name, not your email alias.
+Tested on STM32MP257F-EV1 evaluation board with GStreamer
+using an updated version of V4L2 VP8 stateless decoder element:
 
-thanks,
+wget https://www.gstatic.com/webp/gallery/1.webp
+gst-launch-1.0 filesrc location= 1.webp ! typefind ! v4l2slvp8dec ! imagefreeze num-buffers=20 ! waylandsink fullscreen=true
 
-greg k-h
+Hugues Fruchet (2):
+  media: uapi: add WebP VP8 frame flag
+  media: verisilicon: add WebP decoding support
+
+ .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst  | 3 +++
+ drivers/media/platform/verisilicon/hantro_g1_regs.h        | 1 +
+ drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c     | 7 +++++++
+ include/uapi/linux/v4l2-controls.h                         | 1 +
+ 4 files changed, 12 insertions(+)
+
+-- 
+2.25.1
+
 
