@@ -1,107 +1,210 @@
-Return-Path: <linux-kernel+bounces-325484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4B0975A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F3B975A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4F4286DDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68E061F24FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6D11B5802;
-	Wed, 11 Sep 2024 18:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1706B1B5EA5;
+	Wed, 11 Sep 2024 18:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvkhIGqz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eufO4dj4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6781B1509;
-	Wed, 11 Sep 2024 18:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684B21B3734;
+	Wed, 11 Sep 2024 18:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078858; cv=none; b=q3XffI319s79qkZGmOxNrv8ifXxpYIqg/iIzVxc5rvGNw1+whfd7J+E/Cem1GPJT4tfaemYZcwdn3t2XQZv8XtQvgUSoW0YUQoSs6b45ZAHXcRzCCmLdPuDy1pdvg05FvF6C2wQT1DRdOp1yw/Oc+tm5az5VGmDr3FcvS9bJtU8=
+	t=1726078884; cv=none; b=aY8khMS6j4zHcOLT3Y3vQbwVQvL34c3BmI9bm2u350PQhM4DcUPiuNXJfLXz5SVyIZpipexOp/6z/w6ARpqkQOmhxufZWrNv6kFLAD0JCCjvRD+Okhh7qYhii8U+j2B8xgRTFfyCDpan5ySoU9gS2ROCWaD3qHwVZ0bFt1xpY+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078858; c=relaxed/simple;
-	bh=U30uv7p7nuSQzeQzkIZzyrlb21RxZwIqgiZV1WNe7eU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Ly0w+eRtnzF5a0VFt9/UWsN24jXUxya5+7adO6i0LPTLeBcsFdMkWmoRipnNni5VT5a+7CrwO4BSRfJFrwqq4cSKU8bfoTOSYi8c9XIEzt7Zb3s/F/5zWVxkKfJTOSR+D2gK2bNuzncDeoZY6xvAXOFDLPDHLBSYyCAEhvlVKww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvkhIGqz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B214C4CEC0;
-	Wed, 11 Sep 2024 18:20:57 +0000 (UTC)
+	s=arc-20240116; t=1726078884; c=relaxed/simple;
+	bh=nMuSYTg4jXF6UeS8iQF2vdF2cdZq3UwftL469e8H+Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJsbISTQpk77WXMqd7t2jiYT70Hex8J+y7LcTBjbfpzQ7emsYqujjDtiZas0ojzn9qymWgoUoTdTZ3jiTxrJ60U7K2qJ9x7ocPIj8iRn2shdBbK6PP0m7y8w8DjTUqJPuNxVYtziey9UC9+U2M18EyXZ1Sy0wfh+VWwKCPL5Xeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eufO4dj4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B5D4C4CEC0;
+	Wed, 11 Sep 2024 18:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726078858;
-	bh=U30uv7p7nuSQzeQzkIZzyrlb21RxZwIqgiZV1WNe7eU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=bvkhIGqzb0exb8V9vdM+Pc6CrieYCFaibdoeXzCOXs/lh0eDb3ZJZdo7FcVsLlPUq
-	 41Hi4w6Dm4PVgSBZ9GHB9lbOz+fiGuWXbobEQTftNE+VO5OULaykqKfiKtAwZoktlq
-	 HF0Y5Tg2H8capiTIB8BC4lHfkaFA5GdURS5IOeo8jZhbMq+rh/aKlHZWAh0oztUl2Q
-	 UIDHCgL/8UhxkLsrFr5jRLgpZbP3FMBE1q/+ZoBxEi14923rIrvGKFt4XzQW5SQTcd
-	 5BcJn7oXv+mF2zgwDmO4BcMUDspsGEnl8hMN/gmElUtREtZjC2jucn6xrTgGfid98f
-	 OECwoumJ2B1lg==
-Date: Wed, 11 Sep 2024 20:20:55 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc: ". Benjamin Tissoires" <bentiss@kernel.org>, 
-    Douglas Anderson <dianders@chromium.org>, 
-    Hans de Goede <hdegoede@redhat.com>, Kenny Levinsen <kl@kl.wtf>, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: i2c-hid: ensure various commands do not interfere
- with each other
-In-Reply-To: <ZuHe2zkSbwyr5syK@google.com>
-Message-ID: <nycvar.YFH.7.76.2409112019460.31206@cbobk.fhfr.pm>
-References: <Zt9clAu04BinzIcd@google.com> <nycvar.YFH.7.76.2409111526450.31206@cbobk.fhfr.pm> <ZuHe2zkSbwyr5syK@google.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1726078884;
+	bh=nMuSYTg4jXF6UeS8iQF2vdF2cdZq3UwftL469e8H+Ac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eufO4dj4+kLUSwt1MV/NGWEz+Xf7pXrTI5EU5Ocw5+2w9L5l7d4i4OECrQFsexnOI
+	 RKyYKRBTMzNzb9VwVJdUv6wPOre9TRqjqlrfQrCRB/JJmMrxjvIV8O4+oP+OGiBghh
+	 HxTmuUGoKfWd4vrW5dE9hj33ltl8/44tbia4L/Kn86iEqS58+AXT/dBsCIlst/wXj0
+	 hrErNRNge3hPUhzmqUDF8yUYXz6lwVTpokVVYnIbStqVlQvPgU58cNOmm2I+fL1wMT
+	 ezb4dAZODs9fwdkLXPAroTOFE5VmqrnguCvVYpeJGWWZWnRzAVn/+Pw+VbicEsnV/I
+	 XmXMyXE0OHnmg==
+Date: Wed, 11 Sep 2024 19:21:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+Subject: Re: [PATCH 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3 SoCs
+Message-ID: <20240911-racism-playmaker-71cb87d1260f@spud>
+References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
+ <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uAiRD+oX7AmcgdlC"
+Content-Disposition: inline
+In-Reply-To: <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
 
-On Wed, 11 Sep 2024, Dmitry Torokhov wrote:
 
-> > > i2c-hid uses 2 shared buffers: command and "raw" input buffer for
-> > > sending requests to peripherals and read data from peripherals when
-> > > executing variety of commands. Such commands include reading of HID
-> > > registers, requesting particular power mode, getting and setting
-> > > reports and so on. Because all such requests use the same 2 buffers
-> > > they should not execute simultaneously.
-> > > 
-> > > Fix this by introducing "cmd_lock" mutex and acquire it whenever
-> > > we needs to access ihid->cmdbuf or idid->rawbuf.
-> > > 
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > 
-> > Thanks for the fix, Dmitry. Out of curiosity, did you find it by code 
-> > inspection, or have you actually seen it happening for real, making the 
-> > driver misbehave?
-> 
-> No, I have not observed this issue in the wild, that is why I di dnot
-> tag it explicitly for stable. 
+--uAiRD+oX7AmcgdlC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. I was asking whether I should rush it in still for 6.11, or 
-whether waiting for 6.12 merge window is sufficient.
+On Wed, Sep 11, 2024 at 10:00:25AM +0300, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>=20
+> This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
+>=20
+> Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> ---
+>  .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.ya=
+ml
+>=20
+> diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Do=
+cumentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> new file mode 100644
+> index 000000000000..8f78bce6470a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP S32G2/S32G3 Real Time Clock (RTC)
+> +
+> +maintainers:
+> +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,s32g-rtc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  nxp,clksel:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Input clock selector. Choose between 0-SIRC and 2-FIRC.
+> +      The reason for these IDs not being consecutive is because
+> +      they are hardware coupled.
+> +    enum:
+> +      - 0  # SIRC
+> +      - 2  # FIRC
 
-So I will send it to Linus for 6.12, but I still think tagging for stable 
-should probably be done.
+Could you please explain why, given both clocks must be provided by
+the hardware for there to be a choice, why choosing between them is a
+property of the hardware?
 
-> It came about when I was reviewing Goodix HID SPI driver, noticed that 
-> it was using a shared buffer, asked to and locking, and realized that 
-> I2C HID needed the same. And just got around to sending out the fix...
-> 
-> As far as I can see USB HID driver does not need it - it does not share
-> URBs but rather allocates new one for each request (via
-> usb_control_msg()).
+> +
+> +  nxp,dividers:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      An array of two u32 elements, the former encoding DIV512,
+> +      the latter encoding DIV32. These are dividers that can be enabled
+> +      individually, or cascaded. Use 0 to disable the respective divider,
+> +      and 1 to enable it.
 
-Indeed, USB HID is fine in that respect.
+Please explain to me what makes this a property of the hardware and how
+someone would go about choosing the divider settings for their hardware.
 
-Thanks a lot,
+> +    items:
+> +      - description: div512
+> +      - description: div32
+> +
+> +  clocks:
+> +    maxItems: 3
 
--- 
-Jiri Kosina
-SUSE Labs
+I'd rather you provided an explicit items list here, explaining what
+each of the tree clocks do.
 
+Cheers,
+Conor.
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ipg
+> +      - const: sirc
+> +      - const: firc
+> +
+> +required:
+> +  - clock-names
+> +  - clocks
+> +  - compatible
+> +  - interrupts
+> +  - nxp,clksel
+> +  - nxp,dividers
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    rtc0: rtc@40060000 {
+> +        compatible =3D "nxp,s32g-rtc";
+> +        reg =3D <0x40060000 0x1000>;
+> +        interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&clks 54>,
+> +                 <&clks 55>,
+> +                 <&clks 56>;
+> +        clock-names =3D "ipg", "sirc", "firc";
+> +        nxp,clksel =3D <2>;
+> +        nxp,dividers =3D <1 0>;
+> +    };
+> --=20
+> 2.45.2
+>=20
+
+--uAiRD+oX7AmcgdlC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHfnwAKCRB4tDGHoIJi
+0nUtAQC6Vzg7zrmcJXz4U0qPYVpKASsHkOSEL6vnI/KceTRfjAD/SeL/IMgFUGqL
+shHO91YGqUhR6HdfM0WLmP+7Re9Q1w4=
+=6S9Q
+-----END PGP SIGNATURE-----
+
+--uAiRD+oX7AmcgdlC--
 
