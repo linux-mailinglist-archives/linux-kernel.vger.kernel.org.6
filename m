@@ -1,151 +1,194 @@
-Return-Path: <linux-kernel+bounces-324379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04361974BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A4E974BD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374561C20898
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1881F25872
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E7913CFA1;
-	Wed, 11 Sep 2024 07:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB613D52B;
+	Wed, 11 Sep 2024 07:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uq34vW2h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="LBazfXtA"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D945413A3F7;
-	Wed, 11 Sep 2024 07:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D727E13A265
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041068; cv=none; b=cX7LyZAayxSAt6CZIkGHLih4ewofHcOIw1mObeYXGnJlH3VBOuoyjoPInMPNGBvgOk1kpOGffo50FNXryRGqD6HpUKoqOlNCtXgluRDPIKbPAUCOX5EsKQeGabfOV422i1a8fo2Z3Tjk7yR5Kww1Il02qmp2XqT1dD4WrlrCR+c=
+	t=1726041104; cv=none; b=WK7Gj//Rl4vxsVcZ1DQS17r6avsIhQ9JgO5YNXeDeQxJoJ79ebRETHJpvdILuOr27t5pTgxczNWSxjDtlDf9GsynMrTy+44LUxHhwx2GCqdNRS0coL6BAc/3zyiw9ITEjEqLpiPgoR17IGbcuE/fDUX1QbW+aTDYQ6rZdrv25Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041068; c=relaxed/simple;
-	bh=M9fkehi060zC3DImk/9ShDxtYwI5FbQzctu+1KRlBI8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P0MNgeiDuFETdc+LO8gRC+xvnOzmRoY082x5ymeeBq9o8ht6jeawc18MDgZevDAzu89wQmzC206hFwrlLdEhLo2DVGyxGBus23qxvOjyZVyPD5dVFsb9EPpmLSZ044URydYbyjQ7bGtxY83sZZFdTV74vhHRhjibQ2oQ0GsIhiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uq34vW2h; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726041067; x=1757577067;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=M9fkehi060zC3DImk/9ShDxtYwI5FbQzctu+1KRlBI8=;
-  b=Uq34vW2h8VSCkk0u+4388hHLn2D6Q7hR+9kBq7rK8UW0kPc5vg5QaoPZ
-   gK6sCxuSzIcgKUBHDG4lUAsnlfjIijHDxd8do5/HMJMGgkScpmcxm76JS
-   wfs2LcdsCrJMrx8APcP4fs/e/B4XjiAGxsiH0lG/eE2fpwpR4cKgcZyPi
-   hzzX/31PxPFRKcGyT0qleyn5PTQaPtQxe1GOacsjlyVCyY1/z1FYV7e88
-   sV8fBLWZmIK2JpSoBEq2PiHJhX7Jajbabz5mFvQuCFIABik3jainYuIqY
-   ygWzv9QrD2hV+eiXUlkcCYPBS9Rd6xNKx0eoB687bWDr8XjzujdowziyK
-   w==;
-X-CSE-ConnectionGUID: xisnIQS7QG+coeuEwxIDfQ==
-X-CSE-MsgGUID: /I2CEtdKTLGYW1i8ORBeUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24761681"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="24761681"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 00:51:06 -0700
-X-CSE-ConnectionGUID: ajRXdtpPQNKqOYG+oecUHg==
-X-CSE-MsgGUID: cFStQAe4QEW8m1wuEEJ7DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="66915156"
-Received: from lizhiqua-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 00:51:01 -0700
-Message-ID: <bf0a3891-f7b5-4a19-a86d-c115ab2d6b88@linux.intel.com>
-Date: Wed, 11 Sep 2024 15:50:59 +0800
+	s=arc-20240116; t=1726041104; c=relaxed/simple;
+	bh=NKir++yKg6qIFt5diuBLaxpcrvVxtXH7i+aodtCpXo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhOWK4eivInRX1FE63tYcY6SG8HO7l0TDjOl4j9Al4yqSE/z/nPBQomfIZ1QxGQIdR7LSE7pkgQ9W20dLW59mtRfCTdIm3YzpFtltn5ZbWvoRmmlMRlI9qWmxYVlER6hKJ+hQAl1hIH5va9VFhGZnFFNrSn/MaX/loG4FEZgiKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=LBazfXtA; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8ce5db8668so117921566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1726041101; x=1726645901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EqhOEnN7I1NfnKs5yoj/51R0usVuimIfU3tAa/E8LUE=;
+        b=LBazfXtAk6QnKbefeuXr1ONUvktLdgW+HEExtCgob22xaO2TaRt42YRzgN+MSYjhps
+         Wng8VugBo7S8sohwOCO9IJzhLjVnvDwE0/X6rJlVXvGy0KiSVdDZG0RvbVj0n4kX52xA
+         fSfkIKuiY+S/Cg7nhBxQLYOGgZ1VPT3lE7wac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726041101; x=1726645901;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EqhOEnN7I1NfnKs5yoj/51R0usVuimIfU3tAa/E8LUE=;
+        b=MdaAAjTzaA+PN0xG8OMvkWodX5h3ilbUQ29gna1Bni+cXkGqqLP2ZTQeZOR0oFJPCk
+         CdTyrYGfOYwV5VCHIucJpbI27VGe5oLEnnTRJAkisE6DJrcD7wERrKKRAiedugVX+Xiz
+         J/DMRRvb5bVESeoCXjGK6FpUyAEhGIHjbgpybXG2qVFcD2uvxOqJaLb3Y33uOQzwwZwQ
+         SmWOyawTCa7l12EVkmNAyRwXrVn4MSzVoGIidQSjVbhZiSWVo90bAVnYTnmjBNlBnh36
+         dbpvj7e+MZVatwWYZXkefborVyUSmtShD3x+mM1TNkN0iYeBMQdKVcuzcuhMcytRGa5J
+         9Svw==
+X-Forwarded-Encrypted: i=1; AJvYcCWF0FFh+clz3E9iTC6s32artX+nQ7cpBBA4A7Q8soXiUfrSd6g5mpu9mPj2s8QJAS+0Vo/QBeeUiH5mZPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLhCkNe+X3dZX7GJTq+DKIaHZ5l6/sSq3QmGBNEc03iESQ8x0a
+	09L8UTNYNA1oXr0kfZO/hITXB9yjqw0gNfNd+GfdjDFFKXrqgdhX2mR3igY3imI=
+X-Google-Smtp-Source: AGHT+IHfl4wUSekHQff7+1uJioix71uW7NP/VwOhy8UsjvFLMD59myAjxRkXduY2WsfEVdSUA5M/Sw==
+X-Received: by 2002:a17:906:7310:b0:a86:c372:14c3 with SMTP id a640c23a62f3a-a8ffadf0438mr308127066b.48.1726041100563;
+        Wed, 11 Sep 2024 00:51:40 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d556e8sm580483466b.204.2024.09.11.00.51.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 00:51:40 -0700 (PDT)
+Date: Wed, 11 Sep 2024 09:51:38 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v2 1/9] net: napi: Add napi_storage
+Message-ID: <ZuFMClzrGwDDFm01@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240908160702.56618-1-jdamato@fastly.com>
+ <20240908160702.56618-2-jdamato@fastly.com>
+ <20240909164039.501dd626@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@nvidia.com>,
- "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
- "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>,
- "dwmw2@infradead.org" <dwmw2@infradead.org>,
- "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "eric.auger@redhat.com" <eric.auger@redhat.com>,
- "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
- "mdf@kernel.org" <mdf@kernel.org>, "mshavit@google.com"
- <mshavit@google.com>,
- "shameerali.kolothum.thodi@huawei.com"
- <shameerali.kolothum.thodi@huawei.com>,
- "smostafa@google.com" <smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 17/19] iommu/arm-smmu-v3: Add
- arm_smmu_viommu_cache_invalidate
-To: Nicolin Chen <nicolinc@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>
-References: <cover.1724776335.git.nicolinc@nvidia.com>
- <4b61aba3bc6c1cce628d9db44d5b18ea567a8be1.1724776335.git.nicolinc@nvidia.com>
- <20240905162039.GT1358970@nvidia.com> <Ztnx0c4BpGt6umrM@nvidia.com>
- <20240905182148.GA1358970@nvidia.com>
- <BL1PR11MB52712F4AAF7D1388A080A49E8C9B2@BL1PR11MB5271.namprd11.prod.outlook.com>
- <ZuFEx7mp3v0/lY/g@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ZuFEx7mp3v0/lY/g@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909164039.501dd626@kernel.org>
 
-On 2024/9/11 15:20, Nicolin Chen wrote:
-> On Wed, Sep 11, 2024 at 06:25:16AM +0000, Tian, Kevin wrote:
->>> From: Jason Gunthorpe<jgg@nvidia.com>
->>> Sent: Friday, September 6, 2024 2:22 AM
->>>
->>> On Thu, Sep 05, 2024 at 11:00:49AM -0700, Nicolin Chen wrote:
->>>> On Thu, Sep 05, 2024 at 01:20:39PM -0300, Jason Gunthorpe wrote:
->>>>> On Tue, Aug 27, 2024 at 09:59:54AM -0700, Nicolin Chen wrote:
->>>>>
->>>>>> +static int arm_smmu_viommu_cache_invalidate(struct
->>> iommufd_viommu *viommu,
->>>>>> +                                           struct iommu_user_data_array
->>> *array)
->>>>>> +{
->>>>>> +       struct iommu_domain *domain =
->>> iommufd_viommu_to_parent_domain(viommu);
->>>>>> +
->>>>>> +       return __arm_smmu_cache_invalidate_user(
->>>>>> +                       to_smmu_domain(domain), viommu, array);
->>>>> I'd like to have the viommu struct directly hold the VMID. The nested
->>>>> parent should be sharable between multiple viommus, it doesn't make
->>>>> any sense that it would hold the vmid.
->>>>>
->>>>> This is struggling because it is trying too hard to not have the
->>>>> driver allocate the viommu, and I think we should just go ahead and do
->>>>> that. Store the vmid, today copied from the nesting parent in the vmid
->>>>> private struct. No need for iommufd_viommu_to_parent_domain(), just
->>>>> rework the APIs to pass the vmid down not a domain.
->>>> OK. When I designed all this stuff, we still haven't made mind
->>>> about sharing the s2 domain, i.e. moving the VMID, which might
->>>> need a couple of more patches to achieve.
->>> Yes, many more patches, and don't try to do it now.. But we can copy
->>> the vmid from the s2 and place it in the viommu struct during
->>> allocation time.
->>>
->> does it assume that a viommu object cannot span multiple physical
->> IOMMUs so there is only one vmid per viommu?
-> I think so. One the reasons of introducing vIOMMU is to maintain
-> the shareability across physical IOMMUs at the s2 HWPT_PAGING.
+On Mon, Sep 09, 2024 at 04:40:39PM -0700, Jakub Kicinski wrote:
+> On Sun,  8 Sep 2024 16:06:35 +0000 Joe Damato wrote:
+> > Add a persistent NAPI storage area for NAPI configuration to the core.
+> > Drivers opt-in to setting the storage for a NAPI by passing an index
+> > when calling netif_napi_add_storage.
+> > 
+> > napi_storage is allocated in alloc_netdev_mqs, freed in free_netdev
+> > (after the NAPIs are deleted), and set to 0 when napi_enable is called.
+> 
+> >  enum {
+> > @@ -2009,6 +2019,9 @@ enum netdev_reg_state {
+> >   *	@dpll_pin: Pointer to the SyncE source pin of a DPLL subsystem,
+> >   *		   where the clock is recovered.
+> >   *
+> > + *	@napi_storage: An array of napi_storage structures containing per-NAPI
+> > + *		       settings.
+> 
+> FWIW you can use inline kdoc, with the size of the struct it's easier
+> to find it. Also this doesn't need to be accessed from fastpath so you
+> can move it down.
+> 
+> > +/**
+> > + * netif_napi_add_storage - initialize a NAPI context and set storage area
+> > + * @dev: network device
+> > + * @napi: NAPI context
+> > + * @poll: polling function
+> > + * @weight: the poll weight of this NAPI
+> > + * @index: the NAPI index
+> > + */
+> > +static inline void
+> > +netif_napi_add_storage(struct net_device *dev, struct napi_struct *napi,
+> > +		       int (*poll)(struct napi_struct *, int), int weight,
+> > +		       int index)
+> > +{
+> > +	napi->index = index;
+> > +	napi->napi_storage = &dev->napi_storage[index];
+> > +	netif_napi_add_weight(dev, napi, poll, weight);
+> 
+> You can drop the weight param, just pass NAPI_POLL_WEIGHT.
+> 
+> Then -- change netif_napi_add_weight() to prevent if from
+> calling napi_hash_add() if it has index >= 0
+> 
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index 22c3f14d9287..ca90e8cab121 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -6719,6 +6719,9 @@ void napi_enable(struct napi_struct *n)
+> >  		if (n->dev->threaded && n->thread)
+> >  			new |= NAPIF_STATE_THREADED;
+> >  	} while (!try_cmpxchg(&n->state, &val, new));
+> > +
+> > +	if (n->napi_storage)
+> > +		memset(n->napi_storage, 0, sizeof(*n->napi_storage));
+> 
+> And here inherit the settings and the NAPI ID from storage, then call
+> napi_hash_add(). napi_hash_add() will need a minor diff to use the
+> existing ID if already assigned.
+> 
+> And the inverse of that has to happen in napi_disable() (unhash, save
+> settings to storage), and __netif_napi_del() (don't unhash if it has
+> index).
+> 
+> I think that should work?
 
-My understanding of VMID is something like domain id in x86 arch's. Is
-my understanding correct?
+I made the changes you suggested above yesterday and I had also
+renamed the struct to napi_config because I also liked that better
+than storage.
 
-If a VMID for an S2 hwpt is valid on physical IOMMU A but has already
-been allocated for another purpose on physical IOMMU B, how can it be
-shared across both IOMMUs? Or the VMID is allocated globally?
+I'll update the code to put the values in the napi_struct and copy
+them over as you suggested in your other message.
 
-Thanks,
-baolu
+That said: the copying thing is more of an optimization, so the
+changes I have should be almost (?) working and adding that copying
+of the values into the napi_struct should only be a performance
+thing and not a functionality/correctness thing.
+
+I say that because there's still a bug I'm trying to work out with
+mlx5 and it's almost certainly in the codepath Stanislav pointed out
+in his messages [1] [2]. Haven't had much time to debug it just yet,
+but I am hoping to be able to debug it and submit another RFC before
+the end of this week.
+
+FWIW: I too have fallen down this code path in mlx5 in the past for
+other reasons. It appears it is time to fall down it again.
+
+[1]: https://lore.kernel.org/netdev/Ztjv-dgNFwFBnXwd@mini-arch/
+[2]: https://lore.kernel.org/netdev/Zt94tXG_lzGLWo1w@mini-arch/
 
