@@ -1,279 +1,226 @@
-Return-Path: <linux-kernel+bounces-324942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264229752FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:57:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA3A975301
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC571286226
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B3D1F235B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595C47E591;
-	Wed, 11 Sep 2024 12:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4698193078;
+	Wed, 11 Sep 2024 12:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRKVGxEA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/Mq3A6M"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08E78C91;
-	Wed, 11 Sep 2024 12:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6563418C91D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059443; cv=none; b=FelRiLPswb5wH4aHVo/5hddYxRpRaMhiHNaUNrBNPI+eFWIdDLxjcWaQ3L0qMl/ais9rikvSDHYKELHvEooss+Bmb98r4wiM69cwl8h1Bpaoq35xfTw/sxjNYUA3YN1cH7PiSHWbDfQ9E201rZhJX5taE5a1ZAKjiwK0AUzJ7fw=
+	t=1726059467; cv=none; b=WLUzg2Ywof0pNBJJoX0Ku7FZvdFGyzi93lYmKZKRN8f+zVsPnJg8n8dYbWvIqeneMKr01ybgOOEauY1TgW5uBeRIsTiRuo7jDDhzK68+RHk7GO3oa1SKbj124F2PkY76fkUFqI0w3zFACggqlgA7m8NfVE2U+s4Mhi6wEmwXUq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059443; c=relaxed/simple;
-	bh=2uYErux0xJpA/1T0iGbYw7XfHtCwaGO7/nNTe1OkPJA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=otQ8X35+QbXMeP+vs1XSt639YG1iP+Us6kxkMvubeEchHezOrHz4ysLv2ZYhqvuFTyktQthuFgGag9jDz3Yq+lrQlH6eCX8F030fSjXaEym/XJiqycg8H8x51cCbv9H3c1s40Y/AF5eFb2YsMZ2ptEO1t/9+hBvFfrOtcUjD+3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRKVGxEA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390ADC4CEC5;
-	Wed, 11 Sep 2024 12:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726059443;
-	bh=2uYErux0xJpA/1T0iGbYw7XfHtCwaGO7/nNTe1OkPJA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pRKVGxEAptXyU3NeSVIpmAyz+xD8R3IPS+7KC5UMLdMHj2Xl3kABfKNbbwYCNYBwB
-	 4NhrUge5eV9zgVohPJyZYmA58Un2MKaS7mxcquU9VqaF8JNrrFcwP5boAFKHFN0EUS
-	 SFdCBNEfb/oAywh2gQ1TfCEL/0EweCGOjK35+X9exgkBjqpblEjoARI/QNw/cSw5Z8
-	 gZBdHg3juQumpwdEQW450oKm0m30jfdac2BoHl8yueEXqjjILYr1O2VoZoZcnt1CDL
-	 fv+4Yzb47skmceF0ybQYv5QINiaiIbCefbo3uC2xw5/dMhlDB/v0SrFAqOlGFaYNkd
-	 EYVeroRQctRFw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 11 Sep 2024 08:56:56 -0400
-Subject: [PATCH] timekeeping: move multigrain ctime floor handling into
- timekeeper
+	s=arc-20240116; t=1726059467; c=relaxed/simple;
+	bh=py2pD0Pq0vpzfrzDMAVzVk57MagcEqVYkZhs4XL3Rjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ODn7iOk5H+1Z4EHIHUc1v9hvmK041wBXdd50ZzridOEMRVJDCMNldDmb0Re3A0vxnYNqi6wzxrgKrGkCHOr/56pnZINppBj8YeapPdQ7WnDoYM3M7QO0TsmqMRjB3ia3+2i292awPsEHt9BusfJYtUJ91yHlhpgBaKnauYJ1GgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/Mq3A6M; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-846d414ea6bso1749437241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726059464; x=1726664264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2zaI7UZ7RWDNU7AWz06LrHmxPf0VmWUXHRPF7+e9M4=;
+        b=D/Mq3A6MFLMAS0c05Bq7ihiZ2x2pX0t/sTOs6neYrBtdcXaV7l+vkNQtJ63Uf9WKPM
+         C5L4CSwPZbPkwD1ZS//zFvIG7tip/nvvLPvwe/LzZYrcFHR/eQY0FNLLEoSvJQjpKtmb
+         NT4zZeh1246e9zXCgA76w4cSW2UQ589Z7eU29xL5m2Zb99XBXr5ZyVU+kI39KjtMmUX+
+         OxSnFfyINHuO0AoS0iP92W9VSHywbQjTJwrEWCXqNlt8Za9KTMuo2qT/B57YOvGGvQtH
+         rSHyOYT7Sed6ICHo1XzOf6pgwubyQVMRyz4Z4y5DE81OykrnlFPrJiCpYmUed+WDTFMO
+         gPrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726059464; x=1726664264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J2zaI7UZ7RWDNU7AWz06LrHmxPf0VmWUXHRPF7+e9M4=;
+        b=GDtoEGd5QyEQpMTumG/K08A5w9nBbfPfahAAFBuPjq2OrV9+gSyNrrZrDfixZiepnQ
+         7khxZ5AbOIQ8T9hbnQYTOG+ve5YPuldCbhrSDc6HxqKkns165M2Wcadkif9BE9R1Di0J
+         n3mrsTMlcV2wLNlsuMQ896kylHdBQiFkfs/0nxYKf+QR4azv3BMm1i8KCsUVz1tiJY/u
+         /B0YPEWOi+exMBfbT4uVBzLg7OlvzfXtagGuCFEpwsLjwfYikA5wx0hKA7kzEYCC1DDv
+         mUHKMkLWXL+epJbXo5YyxalaCCds3ZNRc1o2gRgUT06zNVZ06ACyt7MGNQQe62h3/P3r
+         TQ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHPvmoUdA+/AOi87f7q+WWTYJPh9ntWBjXU7QAbxFlN6W2/dDB7UmX3xCujYZMt4Beim6Nage1jMP4RI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Ka8bRYRCxoIJEfvZrVqhJXhpSlI35K/veqRHs/rykVJvYrbk
+	sf4/utSQiQ9CkfjUfOmrjxtS7I4NeKfAuSd14c0vgxOZci6AoPHCCTD8NqvmmlgfCfSXjkGiBmn
+	V7kmwWDZ/B8Q/cR5HP6H8Q9jZjJbEt86OGc0NsQ==
+X-Google-Smtp-Source: AGHT+IG4WUNGKSQ48Wdrr5DaQdJ2TLeXFlWcx8SVurf0AX9TOtlE6d7X1xwM0BWuWDG48CdJ6Uy1+Y3ww1VrqumTpHQ=
+X-Received: by 2002:a67:b918:0:b0:498:c4e5:bc4f with SMTP id
+ ada2fe7eead31-49bde1e349emr15829954137.17.1726059464250; Wed, 11 Sep 2024
+ 05:57:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJeT4WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0MD3dz0kszcVN1UIxMTAxPLNKPE1EQloOKCotS0zAqwQdGxtbUAhnV
- 0f1gAAAA=
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7291; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=2uYErux0xJpA/1T0iGbYw7XfHtCwaGO7/nNTe1OkPJA=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm4ZOsii7eT3QY1Kwg7pBG9oAl1KmNlaliybRt2
- a9wvDkJrdSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZuGTrAAKCRAADmhBGVaC
- FSh0EADMqI1KyXmZKYUO9IzGj3z5bKS2dZwn9V1wRQj2hQ3h7ISxen8D8yc5pVZ/soM6HrSfHdA
- hTqpFLwPNuRNXuCg7wjlUyWZsPCfOgb0Yfw9kyqr7ZdYRA6YsnWXTvhlvO7Ngq66f5W8DoT0j5o
- 1tcQdZSxmlIxQhjMJAfigMgrqEtAzvrb2fn88JGCv7kvbeEUizGl2TYAmSn3CdMcedVWQH4rjAD
- Ug58F1CGBSlwdv5Fc9iu15LYnL7Kld46gSJWwhqSTwPttWsO0e5X5X70pBNbx+pC82/VhCl9mW1
- NOXQs6xwEdNyenRc+knq2ShGm6qndxagR8QK9SqFV59Wchdwb2yxwx+shfxlgR8tvj2LTNeF/3K
- IF4SmXHu5RiKM16NR9GdhZjLgAsnim+POwT4ZWHOPkmS7flPkVsoekHq/uj8wzEFqccrA254bGq
- EUg6ONhq5dBQSA0QN56Gtjftt+yHcd0CZiCHDRNJOMsAbm14A1DNaHGXPoqDMMtAzQMVNeYsJbP
- fd7rR5fJmQnq5//QvSE7gec1Zk29Gd80L3nC991J1CJZkNNx0we2YHEdjVbtP+tydyEc3rcQZ4z
- +OHZzJlo0l++4S5CVtleqpjQuhkTkEIXTODo1Wg/slCypT/Njlj4ZUqTV/enYueW9Z/z1ExYe+i
- TGjyhZ3J3NML93A==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20240910092545.737864202@linuxfoundation.org>
+In-Reply-To: <20240910092545.737864202@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 11 Sep 2024 18:27:33 +0530
+Message-ID: <CA+G9fYsutqeYt4YZnEQR++7N6pmN4BqVnZLZgyKpCZm85y+-Ug@mail.gmail.com>
+Subject: Re: [PATCH 5.4 000/121] 5.4.284-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The kernel test robot reported a performance regression in some
-will-it-scale tests due to the multigrain timestamp patches. The data
-showed that coarse_ctime() was slowing down current_time(), which is
-called frequently in the I/O path.
+On Tue, 10 Sept 2024 at 15:30, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.4.284 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.4.284-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Add ktime_get_coarse_real_ts64_with_floor(), which returns either the
-coarse time or the floor as a realtime value. This avoids some of the
-conversion overhead of coarse_ctime(), and recovers some of the
-performance in these tests.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-The will-it-scale pipe1_threads microbenchmark shows these averages on
-my test rig:
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-	v6.11-rc7:			83830660 (baseline)
-	v6.11-rc7 + mgtime series:	77631748 (93% of baseline)
-	v6.11-rc7 + mgtime + this:	81620228 (97% of baseline)
+## Build
+* kernel: 5.4.284-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 310fd584bff35c61219eedf5a30224c65506d8af
+* git describe: v5.4.283-122-g310fd584bff3
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
+83-122-g310fd584bff3
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.sang@intel.com
-Suggested-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Arnd suggested moving this into the timekeeper when reviewing an earlier
-version of this series, and that turns out to be better for performance.
+## Test Regressions (compared to v5.4.282-135-g6561e7052c34)
 
-I'm not sure how this should go in (if acceptable). The multigrain
-timestamp patches that this would affect are in Christian's tree, so
-that may be best if the timekeeper maintainers are OK with this
-approach.
----
- fs/inode.c                  | 35 +++++++++--------------------------
- include/linux/timekeeping.h |  2 ++
- kernel/time/timekeeping.c   | 29 +++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+), 26 deletions(-)
+## Metric Regressions (compared to v5.4.282-135-g6561e7052c34)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 01f7df1973bd..47679a054472 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2255,25 +2255,6 @@ int file_remove_privs(struct file *file)
- }
- EXPORT_SYMBOL(file_remove_privs);
- 
--/**
-- * coarse_ctime - return the current coarse-grained time
-- * @floor: current (monotonic) ctime_floor value
-- *
-- * Get the coarse-grained time, and then determine whether to
-- * return it or the current floor value. Returns the later of the
-- * floor and coarse grained timestamps, converted to realtime
-- * clock value.
-- */
--static ktime_t coarse_ctime(ktime_t floor)
--{
--	ktime_t coarse = ktime_get_coarse();
--
--	/* If coarse time is already newer, return that */
--	if (!ktime_after(floor, coarse))
--		return ktime_get_coarse_real();
--	return ktime_mono_to_real(floor);
--}
--
- /**
-  * current_time - Return FS time (possibly fine-grained)
-  * @inode: inode.
-@@ -2285,10 +2266,10 @@ static ktime_t coarse_ctime(ktime_t floor)
- struct timespec64 current_time(struct inode *inode)
- {
- 	ktime_t floor = atomic64_read(&ctime_floor);
--	ktime_t now = coarse_ctime(floor);
--	struct timespec64 now_ts = ktime_to_timespec64(now);
-+	struct timespec64 now_ts;
- 	u32 cns;
- 
-+	ktime_get_coarse_real_ts64_with_floor(&now_ts, floor);
- 	if (!is_mgtime(inode))
- 		goto out;
- 
-@@ -2745,7 +2726,7 @@ EXPORT_SYMBOL(timestamp_truncate);
-  *
-  * Set the inode's ctime to the current value for the inode. Returns the
-  * current value that was assigned. If this is not a multigrain inode, then we
-- * just set it to whatever the coarse_ctime is.
-+ * set it to the later of the coarse time and floor value.
-  *
-  * If it is multigrain, then we first see if the coarse-grained timestamp is
-  * distinct from what we have. If so, then we'll just use that. If we have to
-@@ -2756,15 +2737,15 @@ EXPORT_SYMBOL(timestamp_truncate);
-  */
- struct timespec64 inode_set_ctime_current(struct inode *inode)
- {
--	ktime_t now, floor = atomic64_read(&ctime_floor);
-+	ktime_t floor = atomic64_read(&ctime_floor);
- 	struct timespec64 now_ts;
- 	u32 cns, cur;
- 
--	now = coarse_ctime(floor);
-+	ktime_get_coarse_real_ts64_with_floor(&now_ts, floor);
- 
- 	/* Just return that if this is not a multigrain fs */
- 	if (!is_mgtime(inode)) {
--		now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
-+		now_ts = timestamp_truncate(now_ts, inode);
- 		inode_set_ctime_to_ts(inode, now_ts);
- 		goto out;
- 	}
-@@ -2777,6 +2758,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 	cns = smp_load_acquire(&inode->i_ctime_nsec);
- 	if (cns & I_CTIME_QUERIED) {
- 		ktime_t ctime = ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERIED);
-+		ktime_t now = timespec64_to_ktime(now_ts);
- 
- 		if (!ktime_after(now, ctime)) {
- 			ktime_t old, fine;
-@@ -2797,10 +2779,11 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 			else
- 				fine = old;
- 			now = ktime_mono_to_real(fine);
-+			now_ts = ktime_to_timespec64(now);
- 		}
- 	}
- 	mgtime_counter_inc(mg_ctime_updates);
--	now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
-+	now_ts = timestamp_truncate(now_ts, inode);
- 	cur = cns;
- 
- 	/* No need to cmpxchg if it's exactly the same */
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index fc12a9ba2c88..9b3c957ab260 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -44,6 +44,7 @@ extern void ktime_get_ts64(struct timespec64 *ts);
- extern void ktime_get_real_ts64(struct timespec64 *tv);
- extern void ktime_get_coarse_ts64(struct timespec64 *ts);
- extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
-+extern void ktime_get_coarse_real_ts64_with_floor(struct timespec64 *ts, ktime_t floor);
- 
- void getboottime64(struct timespec64 *ts);
- 
-@@ -68,6 +69,7 @@ enum tk_offsets {
- extern ktime_t ktime_get(void);
- extern ktime_t ktime_get_with_offset(enum tk_offsets offs);
- extern ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs);
-+extern ktime_t ktime_get_coarse_with_floor_and_offset(enum tk_offsets offs, ktime_t floor);
- extern ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs);
- extern ktime_t ktime_get_raw(void);
- extern u32 ktime_get_resolution_ns(void);
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 5391e4167d60..56b979471c6a 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2394,6 +2394,35 @@ void ktime_get_coarse_real_ts64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
- 
-+/**
-+ * ktime_get_coarse_real_ts64_with_floor - get later of coarse grained time or floor
-+ * @ts: timespec64 to be filled
-+ * @floor: monotonic floor value
-+ *
-+ * Adjust @floor to realtime and compare that to the coarse time. Fill
-+ * @ts with the later of the two.
-+ */
-+void ktime_get_coarse_real_ts64_with_floor(struct timespec64 *ts, ktime_t floor)
-+{
-+	struct timekeeper *tk = &tk_core.timekeeper;
-+	unsigned int seq;
-+	ktime_t f_real, offset, coarse;
-+
-+	WARN_ON(timekeeping_suspended);
-+
-+	do {
-+		seq = read_seqcount_begin(&tk_core.seq);
-+		*ts = tk_xtime(tk);
-+		offset = *offsets[TK_OFFS_REAL];
-+	} while (read_seqcount_retry(&tk_core.seq, seq));
-+
-+	coarse = timespec64_to_ktime(*ts);
-+	f_real = ktime_add(floor, offset);
-+	if (ktime_after(f_real, coarse))
-+		*ts = ktime_to_timespec64(f_real);
-+}
-+EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_with_floor);
-+
- void ktime_get_coarse_ts64(struct timespec64 *ts)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
+## Test Fixes (compared to v5.4.282-135-g6561e7052c34)
 
----
-base-commit: 962e66693d6214b1d48f32f68ed002170a98f2c0
-change-id: 20240910-mgtime-e244049f2aea
+## Metric Fixes (compared to v5.4.282-135-g6561e7052c34)
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+## Test result summary
+total: 101817, pass: 83941, fail: 1379, skip: 16415, xfail: 82
 
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 133 total, 133 passed, 0 failed
+* arm64: 33 total, 31 passed, 2 failed
+* i386: 21 total, 15 passed, 6 failed
+* mips: 25 total, 25 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 30 total, 30 passed, 0 failed
+* riscv: 6 total, 6 passed, 0 failed
+* s390: 6 total, 6 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 29 total, 29 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
