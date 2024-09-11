@@ -1,142 +1,91 @@
-Return-Path: <linux-kernel+bounces-325197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F349975601
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:50:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354C3975604
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E45F1C26732
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673C51C26781
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECA61AAE37;
-	Wed, 11 Sep 2024 14:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953F11AAE3F;
+	Wed, 11 Sep 2024 14:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VH/SF1r+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7H7aD0/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C202B8F6C;
-	Wed, 11 Sep 2024 14:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A3C8F6C;
+	Wed, 11 Sep 2024 14:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726066178; cv=none; b=sfD1XziVX7pAz6dXmIV/ve6wDk1jpRjpNRTTwr/GPCbnUDKhBCMqaf0Rj0441Ravkt5nh3l78neN0EA2ykW8PRG5b/aWdM1SN6slJjm/FzY+T5IjyVZjwJ8Yfm/f21mOGkJITmKVvGFqPvMoXn8JkcketyYAomtxEcL+u1vAPRs=
+	t=1726066202; cv=none; b=YdVPvzN9d8iDzNFznXd/m40QNqN2yni9abSMNe1M8s36aXiyYtT5pwqNLJSeNM5964cM+cFMP0dplxeV0NoZ7VgUeOI/A1G9pTHOkT72Dw5y1IMi6ugsii/G+CExVoa0mKjGWysvLAFIS8oh1eK+Lf10OG9bv8jhOAZI2S5+0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726066178; c=relaxed/simple;
-	bh=2JdHIhcBYlO+XznGW1xNfxUvSnrmZ68daqxqk4z1Tx8=;
+	s=arc-20240116; t=1726066202; c=relaxed/simple;
+	bh=cB1B0m/qDw1LnDmVc7WFUJ6RzbWUKISTQB1rSlgyqKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ql/r9ng1cId0pT+4e0EguIk1j+dwmENlYQ0kUE78+WpR9eJAO+kaXTbAotAIGAbvSzMGggMYsOH4hPy8ji06hq45DHCqGYzjRhFnek/ayhQZpE2NXNklUGaYAgtk0Nht+xx/e7ce/6vlX+hAlVV4f8Vya4dHYaQJzUb8ea4dUIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VH/SF1r+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF1A9C4CEC0;
-	Wed, 11 Sep 2024 14:49:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVplKqKWzg00iD7Vok9mfL9y05gjGwFhvZXLI65cb0XLCpeRkWITUeMAzOFUjKqiDtx4OYRE5bTljBKwG4Usk3g03vjU7LNBvaM/QtJ9lV0L/GPjnYvcBMFC74FT+DScF1P9EgD1OUG/LGqJsNFp74mCEMzi+ddAsUiCgd9nUVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7H7aD0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FA8C4CEC0;
+	Wed, 11 Sep 2024 14:50:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726066177;
-	bh=2JdHIhcBYlO+XznGW1xNfxUvSnrmZ68daqxqk4z1Tx8=;
+	s=k20201202; t=1726066201;
+	bh=cB1B0m/qDw1LnDmVc7WFUJ6RzbWUKISTQB1rSlgyqKw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VH/SF1r+qzueFeFY91a/5Ugk2cBwOm1vAdHvoXS2owgWYZ0bvPhqQ5OENtkbgJqpT
-	 jMZM8l52luP0ltqb8TwjWwaN8rdL0KCviRwk11e2ukUdcjSgBQFrY8tycF5XHeSyaQ
-	 o/fIEyXjbmS3Yg1uj4pVs9q+ML+8Esi/zKI8F48nWX95awjMSJD2VgPp64pRx0651x
-	 ErqzO7JUsmENZhAFGj4YNZjeJf13GaoNIs1sTiqjfSwnao0Lyp3RnicUgjtmmdoOXK
-	 c9igHap2/BslYVdPGeLYo8jgcI83wRP3PsoQimPfM965LX0tihSEUuquYQvU9Y8gkZ
-	 tX2jM2ddx+RkQ==
-Date: Wed, 11 Sep 2024 15:49:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Doug Anderson <dianders@chromium.org>,
-	Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
-Message-ID: <04704b5d-ae3f-488f-91a5-acdbc993efc6@sirena.org.uk>
-References: <20240904090016.2841572-1-wenst@chromium.org>
- <20240904090016.2841572-10-wenst@chromium.org>
- <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
- <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
- <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com>
- <CAGXv+5HO=POHNL_tQHCsy+8=a0gPLMDVHcWMguferahVU+BnZA@mail.gmail.com>
- <CAD=FV=U2yDGv74GQWRQuHN9sjdY5iThqpH-br-jYXMkV1cujEg@mail.gmail.com>
- <ZuGrX67LzMe9S6ce@smile.fi.intel.com>
+	b=s7H7aD0/of8DxH8Ly5nlOkaVNyIvCPcMkWeHMmueIfANBXUIzbt/JGHxvAkCGV8e4
+	 p7um75/VFdygCHjnPz+hVuvQLlb5OoOdRd2DNy31KGK3OOB6lLMci7j3esJkMaSTKa
+	 ycRDUJB/AnG/uvYGl9GSbr3ENXhtLYMlda0fqScxxFtanyxjRvE3iLRtW+8RA5g1ce
+	 +f5/a/JJd0o9ZOy4DJlgHhVjwdXK/b8ZCQyI5jcOM9fhXJNgulwppXgnIk498VM7Jh
+	 IDEkiAFox5NWg99wZj+JPbKbmDawDQzbnTpuQfs2iDdjv8zf1KNBk3+JVbIBrzYV7+
+	 8mFLzhLJ1R8aw==
+Date: Wed, 11 Sep 2024 09:50:00 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] dt-bindings: memory-controllers: fsl,ifc: split
+ child node differences
+Message-ID: <172606619741.164780.12915573740224186957.robh@kernel.org>
+References: <20240909165358.2384975-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0YYjs5cw/PRZRTra"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuGrX67LzMe9S6ce@smile.fi.intel.com>
-X-Cookie: No Canadian coins.
+In-Reply-To: <20240909165358.2384975-1-Frank.Li@nxp.com>
 
 
---0YYjs5cw/PRZRTra
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 09 Sep 2024 12:53:57 -0400, Frank Li wrote:
+> ifc can connect nor, nand and fpag. Split "^.*@..." into "nand@..." and
+> "(flash|fpga|board-control|cpld)@..." to better describe the child's node
+> binding requirements.
+> 
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/memory-controller@1530000/nand@1,0:
+> 	failed to match any schema with compatible: ['fsl,ifc-nand']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v3 to v4
+> - add pattern property for fpga.
+> - fine tune commit message.
+> Change from v2 to v3
+> - add partition child node for nand
+> - Only partition property is used at ppc
+> Change from v1 to v2
+> - add address-cells and size-cells
+> ---
+>  .../memory-controllers/fsl/fsl,ifc.yaml       | 32 ++++++++++++++++---
+>  1 file changed, 27 insertions(+), 5 deletions(-)
+> 
 
-On Wed, Sep 11, 2024 at 05:38:23PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 10, 2024 at 05:30:07PM -0700, Doug Anderson wrote:
-> > On Thu, Sep 5, 2024 at 8:45=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org=
-> wrote:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> > > At least for one Chromebooks it's a bit more tricky because that one
-> > > HID-over-I2C component shares the same address as a non-HID one. We
-> > > currently have different SKU IDs and thus different device trees for
-> > > them, but we could make the prober work with this. It just has be able
-> > > to tell if the component it's currently probing needs the special
-> > > prober and is it responding correctly. This bit I need to think about.
-
-> > I guess Mark Brown also thought that there wouldn't be some magic
-> > register, but my gut still tells me that most i2c devices have some
-> > way to confirm that they are what you expect even if it's not an
-> > official "vendor" or "version" register. Some type of predictable
-> > register at a predictable location that you could use, at least if you
-> > knew all of the options that someone might stuff.
-
-> "most" is way too optimistic to say, I believe that not even close to maj=
-ority
-> of I=C2=B2C target devices they are not reliably discoverable.
-
-> That's the downside of non-discoverable busses like I=C2=B2C. Maybe I=C2=
-=B3C has
-> a mechanism for that, but I am not an expert, just wondering.
-
-There's no standard mechanism for I2C, however it is relatively common
-for devices to have some kind of ID registers.  This is especially true
-if you're confining yourself to a particular class of device, bigger and
-more modern devices are more likely to have this - if you want to pick
-your audio CODEC or touchscreen controller it's a lot more likely
-that'll work than something like a simple DAC or ADC for example.  You
-also have the different I2C addresses that vendors pick to help out.
-It's not an actual specified discovery mechanism, but practically
-speaking you probably can generalise some of the ID register probing.
-Though equally it's good practice for drivers to check this anyway so
-it's not clear how much benefit there is over just trying to run probe().
-
---0YYjs5cw/PRZRTra
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbhrfoACgkQJNaLcl1U
-h9CmRwf/VSzg1giqNuZPz5GoiuFRE5wHodDTSi786A/EN8dxvsAsG1ssePbuaBXk
-aO6EZG/ZWCFSvhHSt21PAqohQTFpQu+WAplJXngeufmeq6oPwGAGNRnSs/eaBByC
-NXANkH0haNf3iB4QxpVUmdNH2IApfpYzw++kDzZNP6TPnyfcmnSbWREl9qqird32
-b3PKovhh+VYtDavqXpT6PeQ9Ovl39KAD/wq3WyMzJo2Kjr8JPDZ6cmFj1BBnfUHg
-Ca6F0hXH0jyPfVDJQ8j7eeOXsRNpTK786YcsaGuRbSNetxZjYsYRY8UFzN1trP90
-i52gDob4jcrCTRHr5HUhK+SmvtMggw==
-=MIYK
------END PGP SIGNATURE-----
-
---0YYjs5cw/PRZRTra--
 
