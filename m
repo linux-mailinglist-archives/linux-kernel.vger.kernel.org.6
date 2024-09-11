@@ -1,196 +1,201 @@
-Return-Path: <linux-kernel+bounces-324343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA1D974B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B41974B4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CEC11C21A35
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C441F270F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DE9157480;
-	Wed, 11 Sep 2024 07:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88D13D88E;
+	Wed, 11 Sep 2024 07:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TABH0xkQ"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A9kfiGP1"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B1D156242
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3099C13CFAD
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726039736; cv=none; b=ctCK+k+fKNXvJcXda35DSFtOSkB2TdG43TjnXA2Ybme1yyPcRCL0oJGJlB0NQrqHmhAQll2bzs5MJvHkiot1UarOQSQajFtyr38gI8Qb2dyYfAoo1giexLC35+JLo7++FHqZ+fVMYON05cKmMMtsPZKHb5Eu8tqppoiq2KsHL+M=
+	t=1726039707; cv=none; b=aYPv5b9dwrxgqReZob0wy6sHKcRYgNliVz/4Lg1NH+6RuW/vTwEZizqQ+3rfNgTDbr62qTOzhE/xuTIprBGJ0k0mQ9399CgOFTDWlA2HhNnTNqe9e4bY2ijPZFQtBZubyhE8zdBc2zMzdu/der+KrxhAhzb0ehZud9a0OAhqPCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726039736; c=relaxed/simple;
-	bh=WH9TQBccmD+rZJ3vfv7UzS/68zcsvwxBedWHmlT4AQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ANOgWC5iA/BSPz157WyjwjF6U+5CEcN+o0Bt8KqmL8naWkNteHctNj6AZpVSKd6pbi1SHtxBycdVH5aYagE1jmneryhjWxTMQ+BP+aD0KGiORf/OsOmCuKExZzK7So2bu6oj5u55QgpQHx9dYMdZ0X6Tkl05KCgU4yLrBp1B3Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TABH0xkQ; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717849c0dcaso5991049b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726039734; x=1726644534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nwH4RxuOgmEV/VtpOzbgUmR2GAZBgupxo+TGOE0kG2U=;
-        b=TABH0xkQv6in//IFyVn0lYs0jXtmCKboHoSNTlboJKjsNKBjdHFEmxsDRgSLxAmpJd
-         55w8UvnZglGTJZ4mCXzisa8U0wmXXuf8ocz+qMMZRGw38Mi1dABJpmfNszoicEhPRw+v
-         q3erTAgniVJwjNmXSRSq+KGPNoIUZpc8rROT0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726039734; x=1726644534;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nwH4RxuOgmEV/VtpOzbgUmR2GAZBgupxo+TGOE0kG2U=;
-        b=fYE5hFrayvhQSqy3HK+LehMgbqQBQY33RzCfj56UtYXWFy6bO0K8sWGIjHkO4+Zkef
-         wmva9Dhc3IPW0X987CFVHslXmHxt/ghjiTwGvu9eWGVSsGFDIVzsIMSXAtskjmhzNKJ2
-         +JPwGbJ0oOlFlyt+nReZBItlOWvgN3H7iLNqfM7qtjYhsncHgIlrZn/yTttuQYjXUWpV
-         aCq1H8JjlrLl0B3+BOWWz6xyA9T79JcfFG/LGQwyxapBYXcm6OKshsvwdt59gT9P9+CI
-         OXFe/o+kyXvpp3pfI0q8QflHgAbmze9U4yBUeu5Pj/oX12q01UttSNI9Y8Oy+0iQd4oP
-         IlDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXH4dZqdbo7O/IpFoR/PwvRz7XMDXlDj3P4+YIVeQ7c18WKUze1sb0tcVnX+MSHiNScQdNJEtgAJMPen5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcTGLxbTLK4d3UPo0RJSVotzROBlTaJjUmvyjvo4XPEimM9zyA
-	NCzp/nOnQWiyAlL6ENQWEwHTnWkK87QrmpYc7XySsFWhM6pWHv6JV2pevVyTxA==
-X-Google-Smtp-Source: AGHT+IE516O5LzHPomwlShsfozQVhv9kW9/2NJZ52HjZuQpukTdS9x9UaAx49lZ9H3HGK77PP1P1/Q==
-X-Received: by 2002:a05:6a00:4b4c:b0:717:bce8:f8a9 with SMTP id d2e1a72fcca58-718d5dee47amr21431629b3a.1.1726039733865;
-        Wed, 11 Sep 2024 00:28:53 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8398:fe34:eba2:f301])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fe4e7esm2399415b3a.80.2024.09.11.00.28.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:28:53 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v7 10/10] arm64: dts: mediatek: mt8173-elm-hana: Mark touchscreens and trackpads as fail
-Date: Wed, 11 Sep 2024 15:27:48 +0800
-Message-ID: <20240911072751.365361-11-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-In-Reply-To: <20240911072751.365361-1-wenst@chromium.org>
-References: <20240911072751.365361-1-wenst@chromium.org>
+	s=arc-20240116; t=1726039707; c=relaxed/simple;
+	bh=APdJph7gaicjs+tOowsU3frR0yv8vE0vROecMhOCPmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j1Yg2MdPfIMiCu5vW2k1ZfFOQkkum4aEBoyoeyrfOQu8KbnwMvI6UFkBKE0ei5bshqY5IdcI6Q81fxgLWEbEf9Uf6k6ga17Fxxhh3gmIf4bBj263epNCM4UudQEmhp6k5mYUtfnIlJjHhRuz7sOldN+GLYc/4MFgZV+mY5kf2HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A9kfiGP1; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726039696; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=1FVrW79iD8OZdNUG6s51hH/WHjboDl1XekYbQsR2hew=;
+	b=A9kfiGP1OxeXSvsdvhRzzsICYzUuk1IXn3ahwQDVcY/EGBNWSepu73SrH6IOMUY0EZE5F8BA+XXGfmnCW0nhyaQ0PW0QkWc3CtkoQs7C+osmF8SBIElaLEdw7sXILm4e7BQsEYCfQ12utDSkDd2Y2K7gz7ExhE+G+/jcnBGeDG0=
+Received: from 30.221.129.31(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEmyeU6_1726039695)
+          by smtp.aliyun-inc.com;
+          Wed, 11 Sep 2024 15:28:15 +0800
+Message-ID: <6b8f2dee-12a7-4a8d-a67f-e4c67277d230@linux.alibaba.com>
+Date: Wed, 11 Sep 2024 15:28:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/1] ocfs2: reserve space for inline xattr before
+ attaching reflink tree
+To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+Cc: junxiao.bi@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
+ ocfs2-devel@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240910044045.257958-1-gautham.ananthakrishna@oracle.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240910044045.257958-1-gautham.ananthakrishna@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instead of having them all available, mark them all as "fail-needs-probe"
-and have the implementation try to probe which one is present.
 
-Also remove the shared resource workaround by moving the pinctrl entry
-for the trackpad interrupt line back into the individual trackpad nodes.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v6:
-None.
+On 9/10/24 12:40 PM, Gautham Ananthakrishna wrote:
+> One of our customers reported a crash and a corrupted ocfs2 filesystem.
+> The crash was due to the detection of corruption. Upon troubleshooting,
+> the fsck -fn output showed the below corruption
+> 
+> [EXTENT_LIST_FREE] Extent list in owner 33080590 claims 230 as the next free chain record,
+> but fsck believes the largest valid value is 227.  Clamp the next record value? n
+> 
+> The stat output from the debugfs.ocfs2 showed the following corruption
+> where the "Next Free Rec:" had overshot the "Count:" in the root metadata
+> block.
+> 
+>         Inode: 33080590   Mode: 0640   Generation: 2619713622 (0x9c25a856)
+>         FS Generation: 904309833 (0x35e6ac49)
+>         CRC32: 00000000   ECC: 0000
+>         Type: Regular   Attr: 0x0   Flags: Valid
+>         Dynamic Features: (0x16) HasXattr InlineXattr Refcounted
+>         Extended Attributes Block: 0  Extended Attributes Inline Size: 256
+>         User: 0 (root)   Group: 0 (root)   Size: 281320357888
+>         Links: 1   Clusters: 141738
+>         ctime: 0x66911b56 0x316edcb8 -- Fri Jul 12 06:02:30.829349048 2024
+>         atime: 0x66911d6b 0x7f7a28d -- Fri Jul 12 06:11:23.133669517 2024
+>         mtime: 0x66911b56 0x12ed75d7 -- Fri Jul 12 06:02:30.317552087 2024
+>         dtime: 0x0 -- Wed Dec 31 17:00:00 1969
+>         Refcount Block: 2777346
+>         Last Extblk: 2886943   Orphan Slot: 0
+>         Sub Alloc Slot: 0   Sub Alloc Bit: 14
+>         Tree Depth: 1   Count: 227   Next Free Rec: 230
+>         ## Offset        Clusters       Block#
+>         0  0             2310           2776351
+>         1  2310          2139           2777375
+>         2  4449          1221           2778399
+>         3  5670          731            2779423
+>         4  6401          566            2780447
+>         .......          ....           .......
+>         .......          ....           .......
+> 
+> The issue was in the reflink workfow while reserving space for inline xattr.
+> The problematic function is ocfs2_reflink_xattr_inline(). By the time this
+> function is called the reflink tree is already recreated at the destination
+> inode from the source inode. At this point, this function reserves space
+> space inline xattrs at the destination inode without even checking if there
+> is space at the root metadata block. It simply reduces the l_count from 243
+> to 227 thereby making space of 256 bytes for inline xattr whereas the inode
+> already has extents beyond this index (in this case upto 230), thereby causing
+> corruption.
+> 
+> The fix for this is to reserve space for inline metadata before the at the
+> destination inode before the reflink tree gets recreated. The customer has
+> verified the fix.
+> 
+> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
 
-Changes since v5:
-None.
+Fixes: ef962df057aa ("ocfs2: xattr: fix inlined xattr reflink")
+Cc: <stable@vger.kernel.org>
 
-Changes since v4:
-- Rebased
+> ---
+>  fs/ocfs2/refcounttree.c | 18 ++++++++++++++++++
+>  fs/ocfs2/xattr.c        | 11 +----------
+>  2 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index 3f80a56d0d60..c0edb32a7ff6 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -25,6 +25,7 @@
+>  #include "namei.h"
+>  #include "ocfs2_trace.h"
+>  #include "file.h"
+> +#include "symlink.h"
+>  
+>  #include <linux/bio.h>
+>  #include <linux/blkdev.h>
+> @@ -4182,6 +4183,23 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  		goto out_unlock;
+>  	}
+>  
+> +	if ((OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
+            ^ align it here, please.
 
-Changes since v3:
-- Also remove second source workaround, i.e. move the interrupt line
-  pinctrl entry from the i2c node back to the components.
+> +		(OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
+> +		/*
+> +		 * Adjust extent record count to reserve space for extended attribute.
+> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
+> +		 */
+> +		if (!(OCFS2_I(new_inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
+                    ^ ditto.
 
-Changes since v2:
-- Drop class from status
----
- arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi | 13 +++++++++++++
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi      |  4 ++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+And since there are many places access OCFS2_I(new_inode), I'd like
+define a variable for it. This can also make code in one line much
+shorter. e.g.
+struct ocfs2_inode_info *oi = OCFS2_I(inode);
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-index 8d1cbc92bce3..251e084bf7de 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm-hana.dtsi
-@@ -14,6 +14,7 @@ touchscreen2: touchscreen@34 {
- 		compatible = "melfas,mip4_ts";
- 		reg = <0x34>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/*
-@@ -26,6 +27,7 @@ touchscreen3: touchscreen@20 {
- 		reg = <0x20>;
- 		hid-descr-addr = <0x0020>;
- 		interrupts-extended = <&pio 88 IRQ_TYPE_LEVEL_LOW>;
-+		status = "fail-needs-probe";
- 	};
- 
- 	/* Lenovo Ideapad C330 uses G2Touch touchscreen as a 2nd source touchscreen */
-@@ -47,9 +49,12 @@ &i2c4 {
- 	trackpad2: trackpad@2c {
- 		compatible = "hid-over-i2c";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x2c>;
- 		hid-descr-addr = <0x0020>;
- 		wakeup-source;
-+		status = "fail-needs-probe";
- 	};
- };
- 
-@@ -74,3 +79,11 @@ pins_wp {
- 		};
- 	};
- };
-+
-+&touchscreen {
-+	status = "fail-needs-probe";
-+};
-+
-+&trackpad {
-+	status = "fail-needs-probe";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-index b4d85147b77b..eee64461421f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
-@@ -358,12 +358,12 @@ touchscreen: touchscreen@10 {
- &i2c4 {
- 	clock-frequency = <400000>;
- 	status = "okay";
--	pinctrl-names = "default";
--	pinctrl-0 = <&trackpad_irq>;
- 
- 	trackpad: trackpad@15 {
- 		compatible = "elan,ekth3000";
- 		interrupts-extended = <&pio 117 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
- 		reg = <0x15>;
- 		vcc-supply = <&mt6397_vgp6_reg>;
- 		wakeup-source;
--- 
-2.46.0.598.g6f2099f65c-goog
+> +			!(ocfs2_inode_is_fast_symlink(new_inode))) {
+> +			struct ocfs2_dinode *new_di = new_bh->b_data;
+> +			struct ocfs2_dinode *old_di = old_bh->b_data;
+> +			struct ocfs2_extent_list *el = &new_di->id2.i_list;
+> +			int inline_size = le16_to_cpu(old_di->i_xattr_inline_size);
+Add a blank line here.
+
+BTW, also cc lkml.
+
+Thanks,
+Joseph
+
+> +			le16_add_cpu(&el->l_count, -(inline_size /
+> +					sizeof(struct ocfs2_extent_rec)));
+> +		}
+> +	}
+> +
+>  	ret = ocfs2_create_reflink_node(inode, old_bh,
+>  					new_inode, new_bh, preserve);
+>  	if (ret) {
+> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+> index 3b81213ed7b8..a9f716ec89e2 100644
+> --- a/fs/ocfs2/xattr.c
+> +++ b/fs/ocfs2/xattr.c
+> @@ -6511,16 +6511,7 @@ static int ocfs2_reflink_xattr_inline(struct ocfs2_xattr_reflink *args)
+>  	}
+>  
+>  	new_oi = OCFS2_I(args->new_inode);
+> -	/*
+> -	 * Adjust extent record count to reserve space for extended attribute.
+> -	 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
+> -	 */
+> -	if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
+> -	    !(ocfs2_inode_is_fast_symlink(args->new_inode))) {
+> -		struct ocfs2_extent_list *el = &new_di->id2.i_list;
+> -		le16_add_cpu(&el->l_count, -(inline_size /
+> -					sizeof(struct ocfs2_extent_rec)));
+> -	}
+> +
+>  	spin_lock(&new_oi->ip_lock);
+>  	new_oi->ip_dyn_features |= OCFS2_HAS_XATTR_FL | OCFS2_INLINE_XATTR_FL;
+>  	new_di->i_dyn_features = cpu_to_le16(new_oi->ip_dyn_features);
 
 
