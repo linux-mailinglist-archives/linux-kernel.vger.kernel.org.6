@@ -1,190 +1,325 @@
-Return-Path: <linux-kernel+bounces-324077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AED9747AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:16:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C8B9747B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941931F25E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4409D1F27305
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F84D18EB0;
-	Wed, 11 Sep 2024 01:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B542273FE;
+	Wed, 11 Sep 2024 01:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHxwRuAL"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUrgw47o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E975A161
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726017378; cv=none; b=LZ0nmbztgLVrhWLH9nQCNL7Jf0E2ktA5cDTBGEt2j9PVxduf9CbtE9HWlUTlnxqM9MaJLHpBRivZxVLKSTraLyV7EHfjE3gblSRk8qBMs3ZS+SvEGb16dCykdwj/7LP7PRl7cfxfRDaNRhq+mz4yujWn7RLOT/GJslqJSYd/Jyg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726017378; c=relaxed/simple;
-	bh=OPRRU0IyZEvPaU1HJdzDb9TPAO1MfmEqI8IwAu6B11U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C/fgILkZqxL9BfN0x0uKAzWEd2JyvDV/Cgb/2tYT2b5jzCoiRQjC1eXBbauGNmxho4d3YgBuRLL1u3DL7lefwzOb/gLj0/HDGf7XKpuAW2VPjospZJtlq0nXluRLPh9iJDrZxGYFdAQ8ullF9JCgq1mDydWvlVteJmKn4kwVnNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHxwRuAL; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso4240357a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 18:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726017376; x=1726622176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nVqiUxsVb7vxvZzrSiSeI8t+eG1EK/BxIDvzNolJKEU=;
-        b=dHxwRuAL8U+qe6qPbmfoMPtzy29tUA34as7cx0ErwQchWgNxyrHbtSCQ4Vj6DCgUhq
-         BYmM1+a81YJ56PllaOA52nTgnJv7MLRu+jtZ4Bnr9p963OJiq785dEyE3+UY7nPWE20a
-         mz7PuzfRI8CxCsalNKMUZ0SQIPyk8zjxicT9i8Mrf5VxYTW5Xz79SfxUF+rsHOg3kDhS
-         JyGJty312LcOuFh/NKUbYcXlvRJBKI2E6+wmES2mjqAE1KCk6NG7nVCik9iFtXQlolEs
-         qQjeYOIhm5Rr90U8AHVkNEsxMJtd/zYa8K+H0QNXGCdBz0Rg43m75V9A0oyObU0VtmpO
-         nwgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726017376; x=1726622176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nVqiUxsVb7vxvZzrSiSeI8t+eG1EK/BxIDvzNolJKEU=;
-        b=DdLUbzzi4WUws1wvCZuoQOdtRKfKm3SaXuly3yT/LTCQnymLtPOYmafru/pQHpoofP
-         hKFJa6rWhb35aiVcie6+rDqxVQlfCrDXtYNd3CPk7AMtrPrjVqMbmv8OUtQSN/urHDVZ
-         X/nG+ZVKTLXT6RoXo6Jy5+1u7ZzSelfYJfYC2qw5tkQkXwRLy/TPP0LpC9TWJmzgYgo3
-         k2BwqltweImBrdUVu32zWOvjHxkSFFQAOy4uV9z0hUH9YPCa2zRhjIzltldL+hS/1KG3
-         mIYmd+L/X2v+vftkxp1YMAZJDTsvI1i9VbZVsYHko4UdPSUz+CZHt8PcL4XCnlPnNTtA
-         tIew==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tHzTvXcnCo9h/NH4RuKHKdBojsbv3/OpzTPcxhkFfIGzjmVPvgwNsl88IlANdJoKIhyGec6c0iMC5qI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM8sfO++M/hBfbJymN0r5BXvB+geYpz/PUlY+ENygN+erHFUf5
-	iVfwP6vX/eOCcpXPLHZAkBsWm91Q1s0v5x3Cl/d1y2QGTVswBYK429qpwXez8qy6LDVFUZUw9Et
-	cUymTMxN3cv63xIB8ZP4QhbytGh0=
-X-Google-Smtp-Source: AGHT+IEjBGIyK0K/tjlnfxCBOZturPb0CoCSRIRBiEsDUZRqprFH60pRY1NoYuyXhwgkJFvimfZmeqCrXV4/Iak55mc=
-X-Received: by 2002:a17:90b:2d92:b0:2d3:b438:725f with SMTP id
- 98e67ed59e1d1-2db4211cacfmr9006083a91.24.1726017376028; Tue, 10 Sep 2024
- 18:16:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AE32231C;
+	Wed, 11 Sep 2024 01:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726017492; cv=fail; b=V4zXF6SBZxLP+WuQ6dOfdKsEGcnF8Kt4pXx/4/uIYFmOu5jB4HAm1kXr+NJOy7hcxj6XbkXWPqdGoE5Mp6EoMvbmMTPH9dvBKYl0rbCrxSKD01LOOy1hVJbDFJixX4yeiH/mzqOPZOYQlqdk0hmO6MHTAK/zpu2xieFhD3LEroo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726017492; c=relaxed/simple;
+	bh=gAzgUeb6S9xnx2FY2kb7j+/7Ko1p4IuL1jZctBpY9ds=;
+	h=Message-ID:Date:Subject:References:From:To:CC:In-Reply-To:
+	 Content-Type:MIME-Version; b=MkcUmFSfsSYSMXZxrZC1vPxqcpm+ovsXi7NELrKm2ObOZcoJGSv57ZrQhD6crNKN7bZK10qv/qNlHNXQihTnvhAk44peJJ1hRcVwfGXgpVM9HtkO3KfvqS6SUaWvmyIx5ixH1hxoYm6anNFC2uiL4KzOM9jKBenIXs2nvLu8hSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUrgw47o; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726017491; x=1757553491;
+  h=message-id:date:subject:references:from:to:cc:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gAzgUeb6S9xnx2FY2kb7j+/7Ko1p4IuL1jZctBpY9ds=;
+  b=MUrgw47olW4ZxP8n0TrfTGhRGOvArv3kbmXKBxZUrdKXsodJ0ADKrbtg
+   0vizotGEp2t6NAEoNGG2Lphjy6nEpWHmOn/lO8pibFBcP4MM9A5h1a/xJ
+   y8fcUywwtgleE/wLt6hzddBkw5JE83BOgUA0yZZUSDnAndJl0FRXtERBa
+   m60X895vZuZ6cy2p46J8RR3F9yG36y0O9zz/Pj/bMi53BPU7dLkhpYixF
+   j9DcPLWYEFm+qlah3ZJVh+SVkUwecIguqlnI60cV3rdmt+41LCzwQXtJZ
+   +Hq5asT9QcYQfqjOfH1FLM06hm49z38Ri4c2DSNscLQAhz1FAXKJIATjd
+   w==;
+X-CSE-ConnectionGUID: S1yUXIA4TNqRUatgSxdfTw==
+X-CSE-MsgGUID: mhlhLsjWQxqTDXzHIs9uBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35366672"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="35366672"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 18:18:10 -0700
+X-CSE-ConnectionGUID: eyK9aJwGQfymjjuZJefUIw==
+X-CSE-MsgGUID: LMgaBEL8TbeVWcEzLTmVdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="71581727"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 18:18:10 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 18:18:09 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 18:18:08 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 18:18:08 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 18:18:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bveTk0+mE60bSMqKFjYMM9eCGDJI58uKVuzNZHiSifmqxW69g8MK1AnoowPaD6HxAai5IehZezuBWQQrPJGfDbnhdFGiXkCuOShERA6eJhnqI0iIAlUJocPrc6aD3cKVBbJ4GgSF3hxErJk24SgBBJVeSI86CnGnw1cxlBzAJgKp5g18YyAN2pWpUNfLpk4l0CK1NojE5RBPIMH5TtqICXPPta5mI2lttmmwRya+Ka6HBhHosNpYDmTpuDxddcqHcY2DdaZGjLrb+MgkDrKgHGee7eDvOqxA6YuiklL5bUrWpyCm5k9Wi+k78x8OyaCTBev5bQ9uHt+Gzz53cStPDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CfsnEy1qfnnUua5+s91EZEVt6FQOKDTn78HjFrd1tVM=;
+ b=Dus8nFrcfUJZgCrJdbJHdfb8xPQnCgnr0kiR0hL/slkQsH8wQo3ICRD9+ULEzuF0EIeFDLc6RIe+gTGb74SARufv241gGlIARzYPneOwA4z2CGokW+ZYimin2rPvHJ2x7AB2c3HaUX2Cvqg+xapmomAI2Of+zPU8+Ws4FA2BUqAlIkV7lPW3isVVYFnPBwazO3xWP0Y2Ef3Ty8zqt479u5ZZFxsHvrMH409QDtMQLZ25Vnji6BsKLlDKrElttJ0dgaw3DONaPKQ0fVhDImUuXmoliNSUVy9XlPo5lCapvgYkNeM4VtHMzT2fdnx2Zt0JhqrT3CsvOfQ7rFMz0y2O2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by SA1PR11MB6759.namprd11.prod.outlook.com (2603:10b6:806:25e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 01:18:01 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 01:18:01 +0000
+Message-ID: <8618bce9-8c76-4048-8264-dfd6afc82bc6@intel.com>
+Date: Wed, 11 Sep 2024 13:17:54 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
+ operand SEPT
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-10-rick.p.edgecombe@intel.com>
+ <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
+ <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
+ <Zt9kmVe1nkjVjoEg@google.com> <Zt9nWjPXBC8r0Xw-@google.com>
+ <72ef77d580d2f16f0b04cbb03235109f5bde48dd.camel@intel.com>
+ <Zt-LmzUSyljHGcMO@google.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Sean Christopherson <seanjc@google.com>, Rick P Edgecombe
+	<rick.p.edgecombe@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yuan Yao
+	<yuan.yao@intel.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	Yan Y Zhao <yan.y.zhao@intel.com>, "dmatlack@google.com"
+	<dmatlack@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>
+In-Reply-To: <Zt-LmzUSyljHGcMO@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0020.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::25) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910181544.214797-1-frieder@fris.de> <ZuDjAwPxHeJTvXAp@atmark-techno.com>
-In-Reply-To: <ZuDjAwPxHeJTvXAp@atmark-techno.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Tue, 10 Sep 2024 20:16:04 -0500
-Message-ID: <CAHCN7xJD8jsqyZX1JkWxrA84XkZ8YYN19hXW6KVe+jkOFugqrw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Extending PLL LUT for i.MX8MP Samsung HDMI PHY
-To: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Cc: Frieder Schrempf <frieder@fris.de>, Kishon Vijay Abraham I <kishon@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
-	Lucas Stach <l.stach@pengutronix.de>, Marco Felsch <m.felsch@pengutronix.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|SA1PR11MB6759:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3502bd71-90e5-47fd-13ab-08dcd1ff93f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YUxEVkg4MTNGZ0R4MklMa3k1bExMSzBxR1BJeUpUUDJieWNxMHFlcndTd2hm?=
+ =?utf-8?B?aDUxRUJhQ0xCbElId3NhU2VrbXZUdUR6Y052ckRhQUZJOXFVY3dzT0RoWHJ5?=
+ =?utf-8?B?WC9rcUt2R0Jvc0RteE1ndFNLbit1eGpRdlNqR1k3KzFMMFJYWCt3dDdkNWhk?=
+ =?utf-8?B?Wk9VdE5tcWxYY2phc25BYlgyVEJzQ1dEbHdWT1FxakhPU3Y5Rnc3NWR5K3lF?=
+ =?utf-8?B?NlhKT2RXaXVVYURUcVlLMFl3cWh0RDZ1Mm8zalBNY21zTGRkSEFQS09MUzZq?=
+ =?utf-8?B?SU9lWjd1aTJZL3JneWNjUmg3YmN0T2YwQXE4TjM4aFkrT3hKZTRWNG11TGdm?=
+ =?utf-8?B?MzI3MmRXZWljbzBtK2ZRakRJR0RUcDd5ZHVoOW1TNjVvaERFcTZNRWxnQnYx?=
+ =?utf-8?B?WlVuOXlVUDZwWHM3WUJRcTllcDZ1aFdmd2NtUXpBajZtcTRNQ0lHRFZZMlRC?=
+ =?utf-8?B?Ti96aDBIN0hMbTRTbjZlV2JmVEdVa1UyY3NUNVVZdG1UMVNURU9OR2sySURD?=
+ =?utf-8?B?UnB6NlJNRUpuVUIyUjZuajREUUpmMXJMQTBYaENrdUVZcmx3TDdjb3lzUUVq?=
+ =?utf-8?B?M3F0SHc4a2E0akhmWWdJb1BmUTFXSGRZL1I2czlVR2FJNGRTZmJ5RW1VVWNt?=
+ =?utf-8?B?Yk5YQ2YxM1ZnelNaeTUrTjZYR29hc0lXaHhPdzFOQzl2S2hSL21GR2djQVNP?=
+ =?utf-8?B?TnlnUkR6QmdtaE1xVFR0RzRRWkkvcVdldHNQaFJtL0c5aUt0UVRpeVNyb1JF?=
+ =?utf-8?B?ZjJpVEpRMVJYVzI5QUFpaG5IMlB3bVcwaGNKSm1mT0gzUTZMWlpKenV2UUVS?=
+ =?utf-8?B?M011YmhtYjRWZXZlc3E5Z0hwSVVQWXlJOTJIbTNNNGJ5N1BJSExCNGNKM1VE?=
+ =?utf-8?B?RHpIN1ZvZWVmMlhaUUxBUjd6NUU1RytaVWcwTG5TUnp3NVpQQ1pQdmtLbGlN?=
+ =?utf-8?B?bE9hcERqZitMZFJTdWkxTWdDRFMxT3Z4OUluS2tVQk5UR2pGL3NtVDVmR0lP?=
+ =?utf-8?B?RU1VVXVDakcrQlZ4UUl5RGpDV0JRZ1pSMlBvU1dqaFZVdnFJUnk4ckhCa0R1?=
+ =?utf-8?B?R1RTZm9OQUE5ZWpNdS9CYnpUaUhacExoRW1vZnFJaGJDL0xZUG02T1U4Ymgx?=
+ =?utf-8?B?eUQzc2Z6WFFZczE3dmNXQ3FkVXYvU3JIZ3dORnZ1ME1BYnMxcUgvc2xRZWRM?=
+ =?utf-8?B?TDhyYVZvOE4vd1pidWxWdzZlRTRta29zQkNXSitVektqMXFjM2ZqYWtweTBv?=
+ =?utf-8?B?OVRIUlJvQWR0aHpvM3QrZm45MmsxNXp0aUlqb2lqa0tsaDhqcnNScG1YNDlN?=
+ =?utf-8?B?cmRmZGJyNm9sNzdqcUd2L1dpaS9iMlk5UFBBRG95ZVQ1WnNlODcvZmZmNnAw?=
+ =?utf-8?B?TDZVYi9ua1ZxNDJjay93MFJZcmVyaisxd3kzTWUxM2VJbzJDWGNjS0U0Mmx6?=
+ =?utf-8?B?YThjSVRESXVxZ1BRZ2sySjdEc0ZtWGxlSkR1K0JDRHM5VFZxZHdqMFVtWldJ?=
+ =?utf-8?B?c2lSZEhzK3B1VW5WTVFWQ2lLM2NHcjdPYnJSTHBQZlpjTVhHNkVtSnNrd01t?=
+ =?utf-8?B?SWJIRDlNdFFYZ1pnOHlpODUyNDllOFBEZDY5QWU1REk2dHB6K0lDYW1WU1Nv?=
+ =?utf-8?B?SU9KOXhRcUpWNHBWUVpKK3pzY1hsd2RSVkRpWEZqV2hJYjE5VGlkYjkwUnFm?=
+ =?utf-8?B?aU1lRDBhUmpDTXZxT0I3WTJXdDVaZFFRVnlWcDJzL1c3bEFiS2hhWjIrRHow?=
+ =?utf-8?B?NzFMaXVONmkvTE9KMUhDOWxRMEMxMmRKMUViUVQ3M2pjcTRHTUhIalFhVTd1?=
+ =?utf-8?B?SFFuQnh4NDRLTmNOQ2d2dz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NDBPTSsvMFdnRzAzRDN6anFiTkFiMEZHQVlxR1Z4N0Y5QUF2ZlpJMXVuRlQ4?=
+ =?utf-8?B?ZTRKYVh6WERrTU51VGlNNmpqSzZzK3pvVExtVHhReEZNR3JOY3QzZGJsYWxJ?=
+ =?utf-8?B?YW5Yd2JzejFaTThMdk4wd1NpRXJ1K2FKWkRLWFpqZHlONlVxdFE2MWdZK3Y3?=
+ =?utf-8?B?TXRFcUF3YUJjaFdNVlVKWFNFSDFNUURsSHhBVG5XclN0aUJEQnFaRElGa2dI?=
+ =?utf-8?B?WENBTGcvYVMvRG42RS9nMjBYbDVZR200ZkNGTDg1TkRiQWpJaEthbkJLeEFt?=
+ =?utf-8?B?V09GYzhKbGJYWTR4WjlkS3d1bHB5UjJGTnZMS2xPdjcxZGY4YmhSVlc2ekE1?=
+ =?utf-8?B?YjBHL2RlaFFvV3lYeENTOFpzTWdFd1k0M1UxMFI4alpDUktwTmpGVERFR054?=
+ =?utf-8?B?dzQ0UW1nRWtzUTE1RDRHclRKeHpjSVFFS0tmaDJFVS9EcFplMWljV0dyUmdt?=
+ =?utf-8?B?bno5czlxRlhhczVxaUhvN0ZaMUlrMGh6VnBWYVE4eWJOemx3blUwNktGTTVE?=
+ =?utf-8?B?eWtDbERJUEloVVBud3JmSGxPTkg5dTlwVXBGOThEMkJzMUZwTDU4VUxXdnNB?=
+ =?utf-8?B?YkpndktwRDlONmx0T0tkQkVPTitjVGJlUzFGcXVwdmFickN6dUdFUzBjWkM3?=
+ =?utf-8?B?SFNZQmdFendDdVJzekxqdDdXdzByYUNMaWRjZmhGVFRSME9GYlZjUmdrb2tL?=
+ =?utf-8?B?M3NEZzh6am95bXRjVTJ4WXB0YVM2YUpsblhQWi9VZld3RzZKYUlXaGRsZWlS?=
+ =?utf-8?B?NEtiRnlaMjNJeVVDSzJSSithbzlTYjl4ZjV5am9HdG9mK1lYTHl3eXgxWkU4?=
+ =?utf-8?B?VkJNeC9YRGZ4N2pieTU3enNOdjc5MXc4Q0xMK2RNdzJnQmRMRHN2ckxHa05U?=
+ =?utf-8?B?UStlVlFOc1VXMytFeEk1clFNWXVYRXZqWUh6Rmc4d1hPTnFTcEhaWUdCK1BX?=
+ =?utf-8?B?alpFd1lwdGZLNTBsdGxqMlFDekUwaEo2dlh4SUpLS3U2aVd4bDF4eDJKaXRK?=
+ =?utf-8?B?bHNDdXFYdS91ZVhodGNPNWdDUE9ML1JVdnlqZVN5Ym5JMWE4KzlNWlNGU1Q0?=
+ =?utf-8?B?M1czbFNCUC9sdTVhcFNmTHdPTjMzOGNXczhmQXVBNk05N1QxL1JackwxNC9S?=
+ =?utf-8?B?d0dzNWpaenU3RkJmWTZtTElubjVnbld5N2VBRG1HY0tXa1g1eXJpQTZyWHp6?=
+ =?utf-8?B?YnA5MjArM0p2NkxjVU92cnpEeGlTMTJENmhNa082NDlGbStNUWIyOVVJWERu?=
+ =?utf-8?B?RnNtV1JIb24yc3RpL29TSjhvNkp2OEcvM0dIQlNOYUVKZEU3VnhPMGJuSnhL?=
+ =?utf-8?B?SHhmNy9PT0pZVVJIcEZ4RFJOM01JVk02d2FjQkhYR2JxTkZLUkJOMVpRcU0v?=
+ =?utf-8?B?SmpyUjF6VmIzNllJY01laVZ2QUtmU3pBRkRMTGNGWFdFcG5YV0NJaVlRVUg5?=
+ =?utf-8?B?MjhGUmFBbnBydjkyN0s3cVhOcnpXZm9IZU9DbE9obnMxQzdQS1RKVitSU09K?=
+ =?utf-8?B?cDlrdFJzZUY4ZmF3dW85cENEYUljNzh3VFNwSWZXTWE5WkdhUWNObjhIcnlN?=
+ =?utf-8?B?d1c1M1N4ck9LYU9ENDN0N3l5aWhDZVhNOHhKR2lzblhQeXV1NzE3b1hmdEJH?=
+ =?utf-8?B?TWF2TlBIMDFZc25Md052cEY0a3JJdmhwTVlHb1YvU3Nqa3FXSGYwUy9ocDJi?=
+ =?utf-8?B?dGF4MlN2Q3VPUVo4UlU3b2tjcWgzTUFHS3NMYTY1V0xubTQxcENkdm1jWk0w?=
+ =?utf-8?B?KzlvMzZUck5hNVlicmhIMEI0MHE3cWU2bGpyTkwrVkc0Ny8wS0xYdTZobkha?=
+ =?utf-8?B?VkRHMmFRTXRPemZTUFZEb2h1ZmJHSjM5cEpwa1Zjem9RZ1VpZTA4OVQ2RGJu?=
+ =?utf-8?B?RFBWaGZ3WGtHcS90T0Q4aktVOHNmVXNaMlhpMjlEYjgvZjdhUjR2M1Z0ekhn?=
+ =?utf-8?B?MkRKZEd1aWV0M05qU2hRYVNBV2ZJajUyR0lmR2JaMGRYa0tUbllNVHpMK1N2?=
+ =?utf-8?B?UEpHV3dES0o1WS95dXBFeHlhNzhMV0ZHK2FCYXlnT3ZibWZTWUpHakVZTEpC?=
+ =?utf-8?B?ZTF6NFA0ZXVjUS9XdWNrY2hWaGx1cFQ2bFZKeG5iejBBVS96bGVaci9oY0Jr?=
+ =?utf-8?Q?5vT5eZcdDKb0PxzgrpkbYGgSL?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3502bd71-90e5-47fd-13ab-08dcd1ff93f0
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 01:18:01.0524
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YADLg1apeiuh0yX7x0QaDaebmYtdH6xKvnJ67vKRVS+3BA8+f/UVmOeSJ7UE0Cu3wzHw/tRPdx3xrnmHog27Kw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6759
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 10, 2024 at 7:23=E2=80=AFPM Dominique Martinet
-<dominique.martinet@atmark-techno.com> wrote:
->
-> Frieder Schrempf wrote on Tue, Sep 10, 2024 at 08:14:51PM +0200:
-> > [2] https://codeberg.org/fschrempf/samsung-hdmi-phy-pll-calculator/src/=
-branch/main/pll.py
->
-> Great work! Thanks!
->
-> I was curious about the existing table entries, recomputing existing
-> values doesn't yield the same values. For example, the first entry is
-> {
->         .pixclk =3D 22250000,
->         .pll_div_regs =3D { 0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x80, 0x40 },
-> }
-> but computing it yields
-> {
->     .pixclk =3D 22250000,
->     .pll_div_regs =3D { 0xd1, 0x4a, 0xf0, 0xef, 0x10, 0x81, 0x40 },
-> }
->
-> I assume there just are multiple ways to generate the same frequencies,
-> which is fine in itself, but it'd be great to be able to "back-compute"
-> the entries as a sanity check.
->
-> I've played a bit with your script and spent more time on it than I'd
-> like to admit, but something like this seems to do the trick, plugging
-> in the regs from the kernel:
->
-> ---
-> pll =3D FractionalNPLL(freq_ref)
->
-> regs =3D [0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x80, 0x40]
-> # assume fractional
-> if not regs[0] & 0xD0:
->     print("reg[0] missing 0xD0")
->     sys.exit(1)
-> pll.freq_frac =3D True
-> pll.params["p"] =3D regs[0] & 0x2f
-> pll.params["m"] =3D regs[1]
-> pll.params["s"] =3D (regs[2] >> 4) + 1
-> pll.params["n2"] =3D ((regs[2] >> 3) & 0x1) + 1
-> pll.params["n"] =3D (regs[2] & 0x7) + 4
-> pll.params["lc"] =3D regs[3] & 0x7f
-> if regs[4] & 0x80:
->     pll.params["lc"] =3D - pll.params["lc"]
-> pll.params["k"] =3D regs[4] & 0x7f
-> pll.params["lc_s"] =3D regs[5] & 0x7f
-> pll.params["k_s"] =3D regs[6] & 0xbf
->
->
-> f_vco =3D int(pll.params["m"] * pll.f_ref / pll.params["p"])
-> if f_vco < 750000000 or f_vco > 3000000000:
->     print(f"f_vco {f_vco} out of range")
->     sys.exit(1)
-> f_calc =3D f_vco / pll.params["s"] / 5
-> pll.freq_int =3D round(f_calc)
-> print(f_calc)
-> sdc =3D pll.calc_sdc(pll.params)
-> frac =3D pll.calc_f_frac(sdc, pll.params)
-> print(frac)
-> freq =3D pll.freq_int + frac
-> print(freq)
-> pll.print_reg_driver_data(freq)
-> exit(0);
-> ---
-> yields this back (comments added manually)
-> ---
-> 22500000.0 (integer part)
-> -250000.0 (fractional part)
-> 22250000.0 (summed)
->
-> PHY Driver Table Entry:
-> {
->     .pixclk =3D 22250000.0,
->     .pll_div_regs =3D { 0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x81, 0x40 },
-> }
-> ---
->
-> so if I find some time I'll whip some loop to check all other values...
->
->
->
->
-> That aside, I see no problem with this, just one meta-comment about
-> adding a link to the script in an external repo: I see some other
-> drivers have python scripts in their trees e.g.
-> drivers/comedi/drivers/ni_routing/tools/*py
-> drivers/gpu/drm/ci/xfails/update-xfails.py
-> drivers/gpu/drm/msm/registers/gen_header.py
->
-> would it make sense to commit the script here instead of linking to a
-> repo that might be lost in the future?
->
-> I'm not quite sure what policy the linux repo has here, so leaving that
-> as an open question.
 
-Is there a reason this couldn't be coded in C and used to expand my
-integer calculator series?  With that, we could drop the lookup table.
+>> Host-Side (SEAMCALL) Operation
+>> ------------------------------
+>> The host VMM is expected to retry host-side operations that fail with a
+>> TDX_OPERAND_BUSY status. The host priority mechanism helps guarantee that at
+>> most after a limited time (the longest guest-side TDX module flow) there will be
+>> no contention with a guest TD attempting to acquire access to the same resource.
+>>
+>> Lock operations process the HOST_PRIORITY bit as follows:
+>>     - A SEAMCALL (host-side) function that fails to acquire a lock sets the lock’s
+>>     HOST_PRIORITY bit and returns a TDX_OPERAND_BUSY status to the host VMM. It is
+>>     the host VMM’s responsibility to re-attempt the SEAMCALL function until is
+>>     succeeds; otherwise, the HOST_PRIORITY bit remains set, preventing the guest TD
+>>     from acquiring the lock.
+>>     - A SEAMCALL (host-side) function that succeeds to acquire a lock clears the
+>>     lock’s HOST_PRIORITY bit.
+> 
+> *sigh*
+> 
+>> Guest-Side (TDCALL) Operation
+>> -----------------------------
+>> A TDCALL (guest-side) function that attempt to acquire a lock fails if
+>> HOST_PRIORITY is set to 1; a TDX_OPERAND_BUSY status is returned to the guest.
+>> The guest is expected to retry the operation.
+>>
+>> Guest-side TDCALL flows that acquire a host priority lock have an upper bound on
+>> the host-side latency for that lock; once a lock is acquired, the flow either
+>> releases within a fixed upper time bound, or periodically monitor the
+>> HOST_PRIORITY flag to see if the host is attempting to acquire the lock.
+>> "
+>>
+>> So KVM can't fully prevent TDX_OPERAND_BUSY with KVM side locks, because it is
+>> involved in sorting out contention between the guest as well. We need to double
+>> check this, but I *think* this HOST_PRIORITY bit doesn't come into play for the
+>> functionality we need to exercise for base support.
+>>
+>> The thing that makes me nervous about retry based solution is the potential for
+>> some kind deadlock like pattern. Just to gather your opinion, if there was some
+>> SEAMCALL contention that couldn't be locked around from KVM, but came with some
+>> strong well described guarantees, would a retry loop be hard NAK still?
+> 
+> I don't know.  It would depend on what operations can hit BUSY, and what the
+> alternatives are.  E.g. if we can narrow down the retry paths to a few select
+> cases where it's (a) expected, (b) unavoidable, and (c) has minimal risk of
+> deadlock, then maybe that's the least awful option.
+> 
+> What I don't think KVM should do is blindly retry N number of times, because
+> then there are effectively no rules whatsoever.  E.g. if KVM is tearing down a
+> VM then KVM should assert on immediate success.  And if KVM is handling a fault
+> on behalf of a vCPU, then KVM can and should resume the guest and let it retry.
+> Ugh, but that would likely trigger the annoying "zero-step mitigation" crap.
+> 
+> What does this actually mean in practice?  What's the threshold, 
 
-adam
-> --
-> Dominique
+FWIW, the limit in the public TDX module code is 6:
+
+   #define STEPPING_EPF_THRESHOLD 6   // Threshold of confidence in 	
+			detecting EPT fault-based stepping in progress
+
+We might be able to change it to a larger value though but we need to 
+understand why it is necessary.
+
+> is the VM-Enter
+> error uniquely identifiable, 
+
+When zero-step mitigation is active in the module, TDH.VP.ENTER tries to 
+grab the SEPT lock thus it can fail with SEPT BUSY error.  But if it 
+does grab the lock successfully, it exits to VMM with EPT violation on 
+that GPA immediately.
+
+In other words, TDH.VP.ENTER returning SEPT BUSY means "zero-step 
+mitigation" must have been active.  A normal EPT violation _COULD_ mean 
+mitigation is already active, but AFAICT we don't have a way to tell 
+that in the EPT violation.
+
+> and can KVM rely on HOST_PRIORITY to be set if KVM
+> runs afoul of the zero-step mitigation?
+
+I think HOST_PRIORITY is always set if SEPT SEAMCALLs fails with BUSY.
+
+> 
+>    After a pre-determined number of such EPT violations occur on the same instruction,
+>    the TDX module starts tracking the GPAs that caused Secure EPT faults and fails
+>    further host VMM attempts to enter the TD VCPU unless previously faulting private
+>    GPAs are properly mapped in the Secure EPT.
+> 
+> If HOST_PRIORITY is set, then one idea would be to resume the guest if there's
+> SEPT contention on a fault, and then _if_ the zero-step mitigation is triggered,
+> kick all vCPUs (via IPI) to ensure that the contended SEPT entry is unlocked and
+> can't be re-locked by the guest.  That would allow KVM to guarantee forward
+> progress without an arbitrary retry loop in the TDP MMU.
+
+I think this should work.
+
+It doesn't seem we can tell whether the zero step mitigation is active 
+in EPT violation TDEXIT, or when SEPT SEAMCALL fails with SEPT BUSY. 
+But when any SEPT SEAMCALL fails with SEPT BUSY, if we just kick all 
+vCPUs and make them wait until the next retry is done (which must be 
+successful otherwise it is illegal error), then this should handle both 
+contention from guest and the zero-step mitigation.
+
+> 
+> Similarly, if KVM needs to zap a SPTE and hits BUSY, kick all vCPUs to ensure the
+> one and only retry is guaranteed to succeed.
+
+Yeah seems so.
+
 
