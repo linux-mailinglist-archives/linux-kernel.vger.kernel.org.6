@@ -1,172 +1,175 @@
-Return-Path: <linux-kernel+bounces-325503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE673975A77
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D06975A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6978A1F23C6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54673287280
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D58C1B86D0;
-	Wed, 11 Sep 2024 18:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43061B9B46;
+	Wed, 11 Sep 2024 18:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+1qFSI4"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZdboSke0";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="YOOE5Zh2"
+Received: from a7-51.smtp-out.eu-west-1.amazonses.com (a7-51.smtp-out.eu-west-1.amazonses.com [54.240.7.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1574F1B4C4A;
-	Wed, 11 Sep 2024 18:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9C8187543;
+	Wed, 11 Sep 2024 18:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080017; cv=none; b=azb1fPFHMhCXn6i+Hhoa/8TtOROJf96a81M3o3naD7qphNAeWo+2FiyuXlEXhgrVQJBcp7bB1mfU8zzmV/xKw7Of1QvKz72ENMEqVB2SwMl+F13KdUHi8aXjtLJfALI+5XeR2ByAgvKxvT+6F8oif5lZRrrSsazPn1xXl67eYrQ=
+	t=1726080301; cv=none; b=Shm4crK1v8oZ7woWz4Ax6YcZ0TCGIvlseypLMpOChBXBhGYUmWceAJl5xJp54vgOIo6CHstE/WquCteuZXte9d28oXYq8xKuFp1UYAXQo8DYEvEarp+++h8//ZcWp+QoxJWSy6EeIu4eYhXDShyoEqWavjiZMXOykrOOtVwTX98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080017; c=relaxed/simple;
-	bh=7LZvl8bR4J5JCUKcVqkF7fXZODe/gIENMVevu9s2WTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oGNGNr23lMluykWlotnEvrIH0y20lBhloBYT4OuNgStHQON2moV6rAq84oPw0B5NBbh6xd3br7qmXY+lT8oXokKCn4sToSjizhIA77XWaQFVt2X6zx8h4bcYcAnhZpB1nMZwtA4mYkMeQJpZOZ5qLrSiudD/H3n3eLKL30LYHoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+1qFSI4; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7c1324be8easo917217a12.1;
-        Wed, 11 Sep 2024 11:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726080015; x=1726684815; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1+7p3Z5qCC26Ye8mLVaKGA4gMsf3x0zTnnTmPLOwPnE=;
-        b=i+1qFSI4gY676GNwveSu4V7ORnz6yXZTmQvdx4cK/sXoBOyrCHdXukbiV3+iGF2vCx
-         JtvB6a7ixrfy51KZAqH8HUBw/B5dfnYl7r/F6/zOsrudO7JyO8YvXZiWGZbZlcQbM8RZ
-         S1qNC8blUoQsJei5UK9ykRQCjjSJfhbgdKlPR8G6YbtGWZvdNwltGDuNG+zBBreiYlDe
-         G5x8L51uS+vM+qX6XyGoFZTg291f4InaoYaQVeyPGmUii+vUCmt1rKDUXBHbMO8uje+9
-         d0Q7gGDZ8Hby/J4J1Dcw6xG8LyaA9V5F2Dulb1ckJ9H4BQyp7UnUVsp5NO/Cp5KtDf/D
-         KPnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726080015; x=1726684815;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+7p3Z5qCC26Ye8mLVaKGA4gMsf3x0zTnnTmPLOwPnE=;
-        b=Zfyvxo0sGUxiKe6cxz0deVm9SixlrdwFhIZuKqFO4uNyTAF/ZBl+27cl5w8Bsga7m/
-         EXBK3BbOnxcs05Wj91NBLb6QqY9Y5u3HOpgG5mvMNxxaoFG/1L42kDthFplRcF2yjKbd
-         hzCss07Pi2mbcRoWXJFmmw1flcu3L7YqvfBMCN1rMkeAtkS/kcYOnMaqJmEDRTIUl8cs
-         kLKcnkOx4vVrosq269ifxAKIKK9o01grbyOG5QSJ9RT1NsUNTd1Pq8piao4maoRCKrCn
-         bqNMI99IOGg5zJl49RFV1V/Uqm7I0U7w9Pp9GEBFusd0FkVGDKOgbK5rTNor6aQbe69m
-         QJMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUae9TUCIjPUVHo0W+pcGMOvZYWPVQyTL3vZE/SdCO3JxBFW4Tm/WHndgIoqHnI3FnkNzaiqbGSD3UQ5UBK@vger.kernel.org, AJvYcCVIBKvGTTtxziesPcP9FJ2pXlKSq/rw9UQ1655mtrf5npn/f+t/iFOGVqj1InupdLfBsg18YigqfW8=@vger.kernel.org, AJvYcCVdQhGNLQ2uv5rcGD5winkTVSPovPuKHL/NRAzt4x2P76HVFEa7mc/CGNzeuHGTNddGGeubfCBC2Cks6AfWWaQ=@vger.kernel.org, AJvYcCVuaxwKtkPVJsQVI0oMDs2sHNWZvGHfNTHhHtD85KI+FqQDAxsQpjDVIa/ZfrQkk/dQ0ZoozYuoEIQJ@vger.kernel.org, AJvYcCXIcYvrXZD+wseqhNiZ3kmfV49P14JOqYyVsApwyTCznGW4HH+rz5U1JUkTePqnYJ4Duac4RnEE0569xg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/zFRjcrTw9/c8GA1H0F3AmgiseC6zEhNOVcUsPHjGW/v3IHqO
-	Zb7diNYCfInhlOHcfnf9PT3P4udcM1SMvTxcYs6vRBOyauHRZ83z
-X-Google-Smtp-Source: AGHT+IGWNpBp0JEJJKNe7VJxVt4ola9QUy4T9WHvT1vG5vjPcbQJy+069xnc1aIkGvbTJudOOVEgTw==
-X-Received: by 2002:a17:902:e80f:b0:205:5f95:c283 with SMTP id d9443c01a7336-2074c5d28d9mr77798925ad.4.1726080014877;
-        Wed, 11 Sep 2024 11:40:14 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b039539sm2541905ad.309.2024.09.11.11.40.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 11:40:14 -0700 (PDT)
-Message-ID: <a3849bc0-000a-4290-b2c3-71a50a750495@gmail.com>
-Date: Thu, 12 Sep 2024 02:40:09 +0800
+	s=arc-20240116; t=1726080301; c=relaxed/simple;
+	bh=CR2RtkO2BSHxVxQC+ucikk+G5Cf3fAmUmuV21ZYLYpo=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nAxf3t1iK1eLjveIkyRNTq3tX9g/wsFwmO7iprekiwlpyIcGZEMk1zVQT10LXcR1BJRkxVd6twon+e2WHMpEif3pwQqDXqVuJuFfX9NabZbH0q1JAD57FhLNbRMWO3QTcQ0MmutHHCpUH4zPv8F8h2IaX0YW13+sQiDZCNdg0f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZdboSke0; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=YOOE5Zh2; arc=none smtp.client-ip=54.240.7.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726080298;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding;
+	bh=CR2RtkO2BSHxVxQC+ucikk+G5Cf3fAmUmuV21ZYLYpo=;
+	b=ZdboSke0HhoFjztGdp5MMBrBds+Q2D4rn8RIvPzlJyYc72JFvemSvWIPnegYveWV
+	kRLfsV8a9fy6IBIXLbUmKsRr5xSSLa3BhAOhhvcQp9+uu4JBKpONs+9x8vqODZGlSLJ
+	FNuTX3RtY0LWK+YRTvBi0Gbo/ZWgl9kCHKlNibStQy3wwabHr0gWLckXFmb93F0KA8N
+	ra+mecnSwrH47FkzPGPvHJ4Dcmm7lQ7OPcO/awrl9UebjkQJyprrYw3vcj3hj1HD3Vo
+	Qrrj8czi0QuaB5IoqvCrNbdXffst+lwyb5rcdAuEKlvF/UvJbDjFVgr3qfDumsuW/VB
+	jw0FL3JxTg==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726080298;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=CR2RtkO2BSHxVxQC+ucikk+G5Cf3fAmUmuV21ZYLYpo=;
+	b=YOOE5Zh2+tRJtL0YwyNnu02LYplS1fSY+2THCVFX3YJCkr/Gpjv1xwPbaOFM9roA
+	6dKUEF7MtlPE4mrm7fF6t8KKdcq59nnGQvrmBxlD9OQooLeUZdk/iykdPPK2Q0JVSGe
+	+n4xsSIZwSh70UloGWi0VKQ6Oxze0XK6gEms+A90=
+Message-ID: <01020191e2672cd9-0b3804cc-def2-4dfb-aa44-8eddbd5e99fb-000000@eu-west-1.amazonses.com>
+Subject: Re: [PATCH 2/2] media: verisilicon: add WebP decoding support
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Fritz Koenig <frkoenig@chromium.org>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Wed, 11 Sep 2024 18:44:58 +0000
+In-Reply-To: <1d02cbe2797053c69ba9d7adb9c666ca221407e0.camel@collabora.com>
+References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
+	 <20240911135011.161217-3-hugues.fruchet@foss.st.com>
+	 <1d02cbe2797053c69ba9d7adb9c666ca221407e0.camel@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/22] dt-bindings: arm: cpus: Add Apple A7-A11 CPU cores
-Content-Language: en-MW
-To: Conor Dooley <conor@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-References: <20240911084353.28888-2-towinchenmi@gmail.com>
- <20240911084353.28888-3-towinchenmi@gmail.com>
- <20240911-unsuited-pranker-60a7d0b6caf9@spud>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20240911-unsuited-pranker-60a7d0b6caf9@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.51
 
-
-
-On 12/9/2024 02:16, Conor Dooley wrote:
-> On Wed, Sep 11, 2024 at 04:40:51PM +0800, Nick Chan wrote:
->> Add the following CPU cores:
->>
->> - apple,cyclone: A7 cores
->> - apple,typhoon: A8 cores
->> - apple,twister: A9 cores
->> - apple,hurricane-zephyr: A10 logical cores
->> - apple,monsoon: A11 performance cores
->> - apple,mistral: A11 efficiency cores
->>
->> In the Apple A10, there are physical performance-efficiency cores that
->> forms logical cores to software depending on the current p-state, and
->> only one type of core may be active at one time.
->>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
->> index f308ff6c3532..3959e022079f 100644
->> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
->> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
->> @@ -89,6 +89,12 @@ properties:
->>        - apple,blizzard
->>        - apple,icestorm
->>        - apple,firestorm
->> +      - apple,mistral
->> +      - apple,monsoon
->> +      - apple,hurricane-zephyr
->> +      - apple,twister
->> +      - apple,typhoon
->> +      - apple,cyclone
+Le mercredi 11 septembre 2024 à 13:58 -0400, Nicolas Dufresne a écrit :
+> Hi Hugues,
 > 
-> Same on this one, can you add these in alphanumerical order, even if the
-> existing 3 devices are not in it? You could take the opportunity to
-> reshuffle icestorm and firestorm while you're at it.
-(Same goes for the watchdog, pinctrl and cluster-cpufreq bindings)
-I am not actually sure what is the right thing to do here. It seems that
-these bindings are
-originally sorted using SoC types (desktop or mobile) and generations.
-But then again I have
-looked at some other in-tree bindings from asahi, and it seems to be a
-mix of alphabetical
-and logical sorting in the way mentioned above.
+> Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
+> > Add WebP picture decoding support to VP8 stateless decoder.
+> 
+> Unless when its obvious, the commit message should explain what is being
+> changed.
+> 
+> > 
+> > Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+> > ---
+> >  drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
+> >  drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
+> >  2 files changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > index c623b3b0be18..e7d4db788e57 100644
+> > --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > @@ -232,6 +232,7 @@
+> >  #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
+> >  #define G1_REG_ADDR_STR					0x030
+> >  #define G1_REG_ADDR_DST					0x034
+> > +#define G1_REG_ADDR_DST_CHROMA				0x038
+> >  #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
+> >  #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
+> >  #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
+> > diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > index 851eb67f19f5..c6a7584b716a 100644
+> > --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > @@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
+> >  
+> >  	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
+> >  	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
+> > +
+> > +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
+> > +		vdpu_write_relaxed(vpu, dst_dma +
+> > +				   ctx->dst_fmt.height * ctx->dst_fmt.width,
+> 
+> I'm not really not fan of that type of formula using padded width/height. Not
+> sure if its supported already, but if we have foreign buffers with a bigger
+> bytesperline, the IP may endup overwriting the luma. Please use the per-plane
+> bytesperline, we have v4l2-common to help with that when needed.
+> > +				   G1_REG_ADDR_DST_CHROMA);
+> 
+> I have a strong impression this patch is incomplete (not generic enough). The
+> documentation I have indicates that the resolution range for WebP can be
+> different for different synthesis. See swreg54 (0xd8), if bit 19 is set, then it
+> can support 16K x 16K resolution. There is no other way around that then
+> signalling explicitly at the format level that this is webp, since otherwise you
+> can't know from userspace and can't enumerate the different resolution. I'm
+> curious what is the difference at bitstream level, would be nice to clarify too.
 
-Maybe we can get some clarification from an Asahi Maintainer?
+I've also found that when the PP is used, you need to fill some extended
+dimension (SWREG92) with the missing bit of the width/height, as the dimension
+don't fit the usual register.
 
-For the soc-level machine compatibles though, I believe that should be
-retaining the logical
-order instead of trying to use alphabetical order.
+More notes, I noticed that WebP supports having a second frame for the alpha,
+similar to WebM Alpha, for that we expect 2 requests, so no issue on this front.
+WebP Loss-less is a completely different codec, and should have its own format.
+
+I think overall, from my read of the spec, that its normal VP8, but the
+resolution will exceed the normal one. We also can't always enable WebP, since
+it will break references.
+
+Nicolas
 
 > 
-> Cheers,
-> Conor.
+> On GStreamer side, the formats are entirely seperate, image/webp vs video/x-vp8
+> are the mime types. Seems a lot safe to keep these two as seperate formats. They
+> can certainly share the same stateless frame structure, with the additional flag
+> imho.
 > 
->>        - arm,arm710t
->>        - arm,arm720t
->>        - arm,arm740t
->> -- 
->> 2.46.0
->>
-
-Nick Chan
+> Nicolas
+> 
+> >  }
+> >  
+> >  int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+> > @@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+> >  		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
+> >  	if (hdr->lf.level == 0)
+> >  		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
+> > +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
+> > +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
+> >  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
+> >  
+> >  	/* Frame dimensions */
+> 
 
 
