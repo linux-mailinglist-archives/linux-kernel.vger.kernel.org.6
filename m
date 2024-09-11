@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-325181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323A49755DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCB39755F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EC931C230B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD601C26714
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326EC1A76AB;
-	Wed, 11 Sep 2024 14:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuRVAhNq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952F81B2EC2;
+	Wed, 11 Sep 2024 14:46:13 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8297D27713;
-	Wed, 11 Sep 2024 14:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A971B2EED;
+	Wed, 11 Sep 2024 14:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065934; cv=none; b=I/AxTagOVE2P5b8pchf7pPRvZ3LJwDRMf5OVpn6J5oZdKPJVdj3c+7Se6Qq/Xeq3TgzjOVPMNsArXWPvCV0TvkLSOo2Qko6UE3O3xAJjjYWQfu3ii8fU5E/lu0zbzwGPhX4rUMvx21CF+ncEsp7OYJMfaRTvkWIae1ZtBFTfIjE=
+	t=1726065973; cv=none; b=nNWqRV1+ipbYjT1F5nnHCsmqVzf5oOfARiz55Jf9ioCKC79lOx1luVH5iBqNl4U1BH0bpsOCe5JgcW9Jls7ZN7CvN5GRGee9E3i+/b75eHzJii8XDukNdbYVpK39ooRWZHSkRwtiWo1PPkCL89Fc5TCER0UKdZnMKYviSQT3QCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065934; c=relaxed/simple;
-	bh=z7r9sC95kQfnORF/MXv5p7BPRF1PGeUCRk6SxIm93dM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSnaJ1ZxCmLQhUmN6t6BdpKv5detD1uGRLajVEUcpDKm73QAtdNM3TFb0ndckUpxTwJAy8BfTZIyJ3K75B7mleW7Tjw13XoewikAkD9cSWeYWzFzZ4SUrPO8+fmcYN3hutHkp41Z3mSId0GMFqhfA5woWzn4uHlVtaMQ+AoMKro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuRVAhNq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5072C4CEC0;
-	Wed, 11 Sep 2024 14:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726065933;
-	bh=z7r9sC95kQfnORF/MXv5p7BPRF1PGeUCRk6SxIm93dM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BuRVAhNq/du/429/es1wHIju+QoyfEMgnVRRXB2SB3R1YYZmRvumNInoQhl+EGh3F
-	 aAy0rf7udbsPm/01hRaQlVIyr9fyTx2Fa7G9D7tw5I367TaTnjFrVrKCalHVl/pOwj
-	 0ebQ95MJH5jDueYktqOynfCCcumX+UZOnHGDmL4y6w9i1dgvRWZm0VshlvmoYexsVw
-	 kt7i8n4iMFOmaHe8EEhsR49Q5LaXOS8IwIbq5LV/Wp7JDGm7mXrIUbSNbRHOoWXwB3
-	 UUZzbk64u6b9HY/3RUN/gOsfcywF+u9NimnDVceh10mH4AdOInQmv5VsxJGUNhShHl
-	 tmkzcuxcze7dA==
-Date: Wed, 11 Sep 2024 09:45:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: hwmon: pmbus: add ti tps25990
- documentation
-Message-ID: <20240911144532.GA154835-robh@kernel.org>
-References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
- <20240909-tps25990-v1-1-39b37e43e795@baylibre.com>
- <3efbzcys4762rhx2h2cbhqvi6dgik7pfrxcziccdko34pb5z54@joodcym6c3s4>
- <1jzfofsvmh.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1726065973; c=relaxed/simple;
+	bh=L+Z2H0fAAAZo0EfWh0gQJc+aZFdSJqt0vRpgCHeZavg=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=t4cbJ9Qw7YOZJEDDEJagcp7fm0t84VJzI5PzJ0c5Dwsa/Tj5r5ltnbIlRf4iiecwj5irdDCrw9aGtpxhlfrob5ePW26pvoV1eU3XNdSe5NW0SKXjtzMa9+XGUyw1+S43ogI90e+LpsleCIu/mCYW4OZM0kpRWyNIyJgI9TgD/34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.106] (31.173.80.211) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 11 Sep
+ 2024 17:45:50 +0300
+Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+To: Jarkko Sakkinen <jarkko@kernel.org>, Roman Smirnov <r.smirnov@omp.ru>,
+	David Howells <dhowells@redhat.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>
+CC: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+References: <20240910111806.65945-1-r.smirnov@omp.ru>
+ <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+ <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
+ <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
+ <D43HH3XOAXFO.2MX7FA48VOLE9@kernel.org>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <85607ea7-a42a-1c7b-0722-e4b63a814385@omp.ru>
+Date: Wed, 11 Sep 2024 17:45:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1jzfofsvmh.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <D43HH3XOAXFO.2MX7FA48VOLE9@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/11/2024 14:26:16
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187687 [Sep 11 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 32 0.3.32
+ 766319f57b3d5e49f2c79a76e7d7087b621090df
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.80.211 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.80.211
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/11/2024 14:29:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/11/2024 1:02:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-gOn Tue, Sep 10, 2024 at 11:31:18AM +0200, Jerome Brunet wrote:
-> On Tue 10 Sep 2024 at 09:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
-> > On Mon, Sep 09, 2024 at 05:39:03PM +0200, Jerome Brunet wrote:
-> >> Add DT binding documentation for the Texas Instruments TPS25990 eFuse
-> >> 
-> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> >> ---
-> >>  .../bindings/hwmon/pmbus/ti,tps25990.yaml          | 73 ++++++++++++++++++++++
-> >>  1 file changed, 73 insertions(+)
-> >>
-> >
-> > A nit, subject: drop second/last, redundant "documentation". The
-> > "dt-bindings" prefix is already stating that these are bindings/docs.
-> > See also:
-> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> >
-> >> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
-> >> new file mode 100644
-> >> index 000000000000..e717942b3598
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
-> >> @@ -0,0 +1,73 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +
-> >
-> > Drop blank line.
-> >
-> >> +$id: http://devicetree.org/schemas/hwmon/pmbus/ti,tps25990.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Texas Instruments TPS25990 Stackable eFuse
-> >> +
-> >> +maintainers:
-> >> +  - Jerome Brunet <jbrunet@baylibre.com>
-> >> +
-> >> +description: |
-> >
-> > Do not need '|' unless you need to preserve formatting.
-> >
-> >> +  The TI TPS25990 is an integrated, high-current circuit
-> >> +  protection and power management device with PMBUS interface
+On 9/11/24 4:19 PM, Jarkko Sakkinen wrote:
 
-And wrap at 80.
+[...]
 
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: ti,tps25990
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  ti,rimon-milli-ohms:
-> >> +    description:
-> >> +      milli Ohms value of the resistance installed between the Imon pin
-> >> +      and the ground reference.
-> >
-> > Ohms is not enough? We don't have mOhm in property units.
-> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-> >
+>>>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
+>>>>> the kernel will first emit WARN and then have an oops because id_2 gets
+>>>>> dereferenced anyway.
+>>>>>
+>>>>> Found by Linux Verification Center (linuxtesting.org) with Svace static
+>>>>> analysis tool.
+>>>>
+>>>> Weird, I recall that I've either sent a patch to address the same site
+>>>> OR have commented a patch with similar reasoning. Well, it does not
+>>>> matter, I think it this makes sense to me.
+>>>>
+>>>> You could further add to the motivation that given the panic_on_warn
+>>>> kernel command-line parameter, it is for the best limit the scope and
+>>>> use of the WARN-macro.
+>>>
+>>>    I don't understand what you mean -- this version of the patch keeps
+>>> the WARN_ON() call, it just moves that call, so that the duplicate id_{0,1,2}
+>>> checks are avoided...
+>>
+>> I overlooked the code change (my bad sorry). Here's a better version of
+>> the first paragraph:
+>>
+>> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignores
+>> validation for id_2. Check nullity also for id_2."
+>>
+>> Yep, and it changes no situation with WARN_ON() macro for better or
+>> worse. It would logically separate issue to discuss and address so
+>> as far as I'm concerned, with this clarification I think the change
+>> makes sense to me.
 > 
-> Same discussion as we've had on the driver change.
-> At the moment Ohms is enough for the cases I've seen.
-> 
-> Will it be, not sure.
-> Using mOhms is' way to avoid "S**t, R is 80.2 Ohms, I
-> need another digit to not loose precision " kind of situation and
-> introduce a second property just for that.
-> 
-> No idea if Rimon will get that low. Probably not.
-> 
-> I'll switch to Ohms.
+> Actually explicitly stating that call paths leading to WARN_ON()
+> invocation are intact by the commit (as a reminder for future).
 
-You can can use "-micro-ohms" too. The reason we don't have every 
-possible unit is so we have everyone picking their own.
+   OK...
+   Do you still think the Fixes tag should be dropped (and thus the
+Reported-by tag would become unnecessary?)?
 
-Rob
+> BR, Jarkko
+
+MBR, Sergey
 
