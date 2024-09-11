@@ -1,155 +1,197 @@
-Return-Path: <linux-kernel+bounces-325645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4AF975C79
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:33:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A096975C7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760951F23C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:33:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A4C41C21C9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F1615350D;
-	Wed, 11 Sep 2024 21:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF431AE845;
+	Wed, 11 Sep 2024 21:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="rAjdXYQf"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/SYNjoe"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5786143C6C;
-	Wed, 11 Sep 2024 21:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA60149003;
+	Wed, 11 Sep 2024 21:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726090388; cv=none; b=fp6TzT56I0WQznUI0s8IFAaudVxAoIU7NmFvUFhjWVk+pUDR677V8+qJ7fDgx2SMWxiXE13phzZWF23J86pPkWiZAk2mtH6Cfl51WZ336NLVanueg0chZEDyus0yWpCY9LFLd3EPZ2lD9ysWWU8+H85VPFk/qUD4gkPtgIN6/Cc=
+	t=1726090512; cv=none; b=Z2gVU84iQxN2vdrgINJj91Ks9o3RecXLiKyedVhYhncMEADry24VK1mYmACFfga0ONvWlQP5BNBpEhq81aVr+Ob+6IbYJuW+ZMABeZ3ilL4knLEnxxOoPE2INCOXX7FzCEvbrxEAgQ6jiJIu9dgASc8vumOJiS6Md+hCGn8nxdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726090388; c=relaxed/simple;
-	bh=PnxYhyVNbyCOopm8g5LJu3HReBrjQHCQkN49t80pc7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rAbCnCNCdX4QVh3HkeO0VRKqpBEJ6dVv+x1OafAkMQ7s/0TTrcPkZWRwa5mI1IslPWf8bkhOGUf7D1N97qNuISlwj/BCtrlyXN5X7h+OrJCY3tOocn4yZ5g+eISZ1jDovlxwnuVE5vC/u9lEKHLEAhwyAJpPJq7Kh1kpw75SKl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=rAjdXYQf; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 0528988B67;
-	Wed, 11 Sep 2024 23:33:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1726090384;
-	bh=ddpYuBZRcEsA1dU6Hx5Ycr4lFfoUaN9MGd+rgWKCyPU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rAjdXYQf8csIxExtF5HSVODOC+fbUcTy+BlGK9xSTg3qNnhhx+tvnUK+7+nSOSvxO
-	 gqXVpcslSnYyieEZUVqygUdpTKRh7o9Zbn5QLd3n1y63d5gT/e1onmTWj3y8g6D0U7
-	 w+U5S98dA4m0C4lvw8TuwvY04MpZSXrI/mfdqAoxjg/1KHTrlFhXRrxzIRZHuWfD2L
-	 wSivy9tXoiqaWa86Rs91g33nsIdYb8owQ/bqAoQerTjWMUAKQA0Kl7ip0MmPpoF31j
-	 ps/2E1Y0rtG1B9hveMxKmfcjnpcNAobBSwq/GkKEAQSKC6W5RmI882incyoa68XRvL
-	 DUkIwdZPwgHKQ==
-Message-ID: <522db306-64b1-42f5-8446-e6dd56eea7ec@denx.de>
-Date: Wed, 11 Sep 2024 23:33:02 +0200
+	s=arc-20240116; t=1726090512; c=relaxed/simple;
+	bh=MydnGImg1onEloD9oWqIoE/nw9qPew4bJNLmTScXE4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uy9Q895lHbkgV6+Z50E+sN1R4O4ZKznCUBDIKAtAO/ru2LpSYpNnGccJ3oQKJ174PM+66yw6v+DeTQ3/GzJ8+439OAe7IACzTE6CA11Wy0P74k+Y9q3YurlAB5ojdvaGdbm3pzLoK+lLE5FQ2HIzXRTOQKClVKuZfvP8CqZ9hTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/SYNjoe; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d8a744aa9bso174224a91.3;
+        Wed, 11 Sep 2024 14:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726090510; x=1726695310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T+jEybtqgHr3PVAiuDdOVn7cuVbpZHXqKxPkgKvDJyU=;
+        b=I/SYNjoeNG7/IZc7B6pSAvtRuh1BPZy47GWxOSvs4ZV/26GliJa8h9hsZ3g6XNbDrT
+         hf+PlJbYaiXrIZ6V86bK6gXfG373IpocdmHzZ8H5nBMOwuKKj0a/yp3fiQA3xI25Rjdo
+         ELH+YXFXQE1f3DndXDSedSj61YowKJV2pFnwTtwDL8+ER16As4hRBbh7Y3VmidqHM+PP
+         56XKroPTDNKzbSF6q5CKLc2IGqGCbtTNZgluBBxPSH3XVUCM6r78a9Do63bycRNCSQkt
+         wpzujLxzfUF5CYbal/I9ZUKtrcW1W97Ow/k68mP6vA00EmHO/3XM+2/hAUdaRI94Vpv0
+         p5hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726090510; x=1726695310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T+jEybtqgHr3PVAiuDdOVn7cuVbpZHXqKxPkgKvDJyU=;
+        b=heHGPIGNaYDPbHe/E7HSlN8uVKcZsESD3csIaNYw/abyKyOfemuP9aOXJAYYTk6auz
+         BM0CtJGYhgcYAQMIt0p1Cn3sw9CD0KJaXh77N0XXrcdsUxynqIfp6w3kDBafpd6cm/Y3
+         lDKnwQwR+8dPMxRWq4Y1I0G+SVQEWQkl9NLzlm0fRCMnwz7hKja0E9NpXXPy+pWe8fSN
+         ECraOn1/JlJJaj9fTrafy/+E+irAJ+TkKX/4b0EMc6S/vhIfFUXKX1VWg5Kz3vMFwFie
+         DTi8SH7v5sl5gY96//UsN7k1WDMh2Asb7P2lpXH0LXQ7bXsgVhZ9A4/Fp02OfWGDGdui
+         jVtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuamRxlGhEC6T6ThsQFcwpEFjWhS/JWoVL1UOyVL9QWiMO1bu/dqSvdXDKr4YfahPbFBOQNM9kFtJFQKxIeqrKQRFh@vger.kernel.org, AJvYcCVvfGqB1sUq0N6g3hTJG7uV+0j7cjJ8gzRLBI6ZUP674agONvegdPm7QV9hID8458j2rlg=@vger.kernel.org, AJvYcCXtJzYdoXbGX5LiA79UrykwRISpS+gJrCoORIPgrCKCjX+rSSj2Hs2/MDiYie8axclqCKvdtO4vEwpHvHHg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtpXWMTWMpVsrIr0Z0g2mWiXq88M+yLkanIP4bVNBP21Wb6zZp
+	jV221u1JTlXkDGMnirmcoz88xCFMlUrN9rGoc8t/gSwID1GgLU2mpYkPLdfayXwsarWUOa+Pccn
+	8WDIEBLbj86HWtQJLs0BKf0bAnD0=
+X-Google-Smtp-Source: AGHT+IGpXC3R7Ca0taMUwh/MVl1yLymIr33cDWnZgZwGWtPi5Mtd23oK4XL2nH75+xxRhAVXb0qYJbp+sa10tNeg9ro=
+X-Received: by 2002:a17:90b:17c5:b0:2c4:b0f0:8013 with SMTP id
+ 98e67ed59e1d1-2db9ffbfbf2mr650796a91.11.1726090510597; Wed, 11 Sep 2024
+ 14:35:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] pwm: imx27: Add optional 32k clock for pwm in
- i.MX8QXP MIPI subsystem
-To: Frank Li <Frank.li@nxp.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- pratikmanvar09@gmail.com, francesco@dolcini.it, Liu Ying <victor.liu@nxp.com>
-References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
- <20240910-pwm-v3-3-fbb047896618@nxp.com>
- <40ecdbb2-8470-4e33-8a74-ccae6532174a@denx.de>
- <ZuILmHRO9rIXfxIm@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZuILmHRO9rIXfxIm@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20240906051205.530219-1-andrii@kernel.org> <20240906051205.530219-2-andrii@kernel.org>
+ <CAG48ez2hAQBj-VnimJBd3M-ioANVTk+ZQXYWD+j9G+ip2K_nfw@mail.gmail.com> <CAJuCfpFAvsMsBTBMaK5sHFkLQPrfE0nb401gEb2hmN2rbjza6g@mail.gmail.com>
+In-Reply-To: <CAJuCfpFAvsMsBTBMaK5sHFkLQPrfE0nb401gEb2hmN2rbjza6g@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 11 Sep 2024 14:34:58 -0700
+Message-ID: <CAEf4BzbzDjKbSZz4U+L_F3V-abXY3stgen2UhpQ1Tvba5owFcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce mmap_lock_speculation_{start|end}
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Jann Horn <jannh@google.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	mjguzik@gmail.com, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/24 11:28 PM, Frank Li wrote:
-> On Wed, Sep 11, 2024 at 10:31:40PM +0200, Marek Vasut wrote:
->> On 9/10/24 9:07 PM, Frank Li wrote:
->>> From: Liu Ying <victor.liu@nxp.com>
->>>
->>> PWM in i.MX8QXP MIPI subsystem needs the clock '32k'. Use it if the DTS
->>> provides that.
->>>
->>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>> Change from v2 to v3
->>> - use buck clk API
->>>
->>> Change from v1 to v2
->>> - remove if check for clk
->>> - use dev_err_probe
->>> - remove int val
->>> ---
->>>    drivers/pwm/pwm-imx27.c | 13 ++++++++++++-
->>>    1 file changed, 12 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
->>> index ce9208540f1b8..2a9fba6f9d0a8 100644
->>> --- a/drivers/pwm/pwm-imx27.c
->>> +++ b/drivers/pwm/pwm-imx27.c
->>> @@ -81,10 +81,11 @@
->>>    #define MX3_PWMPR_MAX			0xfffe
->>>    static const char * const pwm_imx27_clks[] = {"ipg", "per"};
->>> +static const char * const pwm_imx27_opt_clks[] = {"32k"};
->>>    #define PWM_IMX27_PER			1
->>>    struct pwm_imx27_chip {
->>> -	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks)];
->>> +	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks) + ARRAY_SIZE(pwm_imx27_opt_clks)];
->>>    	int clks_cnt;
->>>    	void __iomem	*mmio_base;
->>> @@ -371,6 +372,16 @@ static int pwm_imx27_probe(struct platform_device *pdev)
->>>    		return dev_err_probe(&pdev->dev, ret,
->>>    				     "getting clocks failed\n");
->>> +	for (i = 0; i < ARRAY_SIZE(pwm_imx27_opt_clks); i++)
->>> +		imx->clks[i + imx->clks_cnt].id = pwm_imx27_opt_clks[i];
->>> +
->>> +	ret = devm_clk_bulk_get_optional(&pdev->dev, ARRAY_SIZE(pwm_imx27_opt_clks),
->>> +					 imx->clks + imx->clks_cnt);
->>> +	if (ret)
->>> +		return dev_err_probe(&pdev->dev, ret, "get optional clocks failed\n");
->>> +
->>> +	imx->clks_cnt += ARRAY_SIZE(pwm_imx27_opt_clks);
->>> +
->>
->> This will succeed even if the regular PWM clock are invalid or not present,
->> wouldn't it? I don't think removing that protection is an improvement.
-> 
-> I have not touch regular PWM clock's code. Just add more optional clocks.
-> 
-> devm_clk_bulk_get(imx->clks);
-> devm_clk_bulk_get_optional(imx->clks + required_cnt);
-> 
-> so imx->clks have two part {required_part, optional_part};
-> 
-> require part is the same as the before. If it invalidate or not present,
-> driver will fail probe.
+On Mon, Sep 9, 2024 at 7:09=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Mon, Sep 9, 2024 at 5:35=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+> >
+> > On Fri, Sep 6, 2024 at 7:12=E2=80=AFAM Andrii Nakryiko <andrii@kernel.o=
+rg> wrote:
+> > > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, i=
+nt seq)
+> > > +{
+> > > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > > +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
+> > > +}
+> >
+> > A load-acquire can't provide "end of locked section" semantics - a
+> > load-acquire is a one-way barrier, you can basically use it for
+> > "acquire lock" semantics but not for "release lock" semantics, because
+> > the CPU will prevent reordering the load with *later* loads but not
+> > with *earlier* loads. So if you do:
+> >
+> > mmap_lock_speculation_start()
+> > [locked reads go here]
+> > mmap_lock_speculation_end()
+> >
+> > then the CPU is allowed to reorder your instructions like this:
+> >
+> > mmap_lock_speculation_start()
+> > mmap_lock_speculation_end()
+> > [locked reads go here]
+> >
+> > so the lock is broken.
+>
+> Hi Jann,
+> Thanks for the review!
+> Yeah, you are right, we do need an smp_rmb() before we compare
+> mm->mm_lock_seq with the stored seq.
+>
+> Otherwise reads might get reordered this way:
+>
+> CPU1                        CPU2
+> mmap_lock_speculation_start() // seq =3D mm->mm_lock_seq
+> reloaded_seq =3D mm->mm_lock_seq; // reordered read
+>                                  mmap_write_lock() // inc_mm_lock_seq(mm)
+>                                  vma->vm_file =3D ...;
+>                                  mmap_write_unlock() // inc_mm_lock_seq(m=
+m)
+> <speculate>
+> mmap_lock_speculation_end() // return (reloaded_seq =3D=3D seq)
+>
+> >
+> > >  static inline void mmap_write_lock(struct mm_struct *mm)
+> > >  {
+> > >         __mmap_lock_trace_start_locking(mm, true);
+> > >         down_write(&mm->mmap_lock);
+> > > +       inc_mm_lock_seq(mm);
+> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> > >  }
+> >
+> > Similarly, inc_mm_lock_seq(), which does a store-release, can only
+> > provide "release lock" semantics, not "take lock" semantics, because
+> > the CPU can reorder it with later stores; for example, this code:
+> >
+> > inc_mm_lock_seq()
+> > [locked stuff goes here]
+> > inc_mm_lock_seq()
+> >
+> > can be reordered into this:
+> >
+> > [locked stuff goes here]
+> > inc_mm_lock_seq()
+> > inc_mm_lock_seq()
+> >
+> > so the lock is broken.
+>
+> Ugh, yes. We do need smp_wmb() AFTER the inc_mm_lock_seq(). Whenever
 
-Ah, understood, thank you for clarifying.
+Suren, can you share with me an updated patch for mm_lock_seq with the
+right memory barriers? Do you think this might have a noticeable
+impact on performance? What sort of benchmark do mm folks use to
+quantify changes like that?
 
->> Also, it is not clear whether the 32kHz clock are really supplying the PWM,
->> see my comment on 1/3 in this series.
-> 
-> Yes, it is for pwm.
-Do the older SoCs (iMX8M or iMX6 or such) also need 32kHz clock for PWM?
-
-I think what I am asking is, what exactly does consume the 32kHz clock 
-in the PWM IP ?
+> we use inc_mm_lock_seq() for "take lock" semantics, it's preceded by a
+> down_write(&mm->mmap_lock) with implied ACQUIRE ordering. So I thought
+> we can use it but I realize now that this reordering is still
+> possible:
+> CPU1                        CPU2
+>                                  mmap_write_lock()
+>                                        down_write(&mm->mmap_lock);
+>                                        vma->vm_file =3D ...;
+>
+> mmap_lock_speculation_start() // seq =3D mm->mm_lock_seq
+> <speculate>
+> mmap_lock_speculation_end() // return (mm->mm_lock_seq =3D=3D seq)
+>
+>                                        inc_mm_lock_seq(mm);
+>                                  mmap_write_unlock() // inc_mm_lock_seq(m=
+m)
+>
+> Is that what you were describing?
+> Thanks,
+> Suren.
+>
+> >
+> > For "taking a lock" with a memory store, or "dropping a lock" with a
+> > memory load, you need heavier memory barriers, see
+> > Documentation/memory-barriers.txt.
 
