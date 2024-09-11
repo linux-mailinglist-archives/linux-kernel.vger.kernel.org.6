@@ -1,128 +1,129 @@
-Return-Path: <linux-kernel+bounces-324382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B890974BD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5B1974BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD7E1F25D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832461F25A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5C13D539;
-	Wed, 11 Sep 2024 07:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07E113D539;
+	Wed, 11 Sep 2024 07:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rZgjrRME"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGKYRqvC"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A7213C83D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AF713B5B7;
+	Wed, 11 Sep 2024 07:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041139; cv=none; b=ofQcFITd6syoEvyBaAgKSQXqj37YPwh3DBFSJaj06JnPZQBLjJHVr0Uj1f0vDpPmw65i4kCV2rOsbJgS3XBhI4sZhNtPzOAKfECy7cXI5gYj/g1CRkBpllPl5X+b+EoXUUXnXrj9J1p3PjeMkUPCDZJdWVXmWb1/oZ3r1Mz0HQk=
+	t=1726041126; cv=none; b=OrzWyk5V649xTcn4u1+VUZe/GidGetVy1ddaB6cA846JaGUAYwGvDpxCiNpUnhWScQ/6eTwbIStjQRHuROktkYrH9kXZ9rVuTiPWlQdYy+t97q22ovT1+XaG6ogj888l2+qfM5L9qF6bPOXnZ/e9q6XGceRpG3Ttn2iXeLeffbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041139; c=relaxed/simple;
-	bh=gySaOFRHBtcljdSeXk5NTlv58piwgRt6if/IxQF/UWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGReBgdlCIPHPzbkBkkzFJY7M1VahOPD916xdeWDsag8q9E1mqOuhlntLKrMzBe+Yp9lHD4hhrnCJ5TGJl/l+FPhxTb9a/lqSxnvnpUB3p7qq36qz7XywS3rQuoFee2uh0ydiwmnGaTENbkAUTAxYpP3SDmcuHqH67cefLGhO14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rZgjrRME; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso3559615e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:52:17 -0700 (PDT)
+	s=arc-20240116; t=1726041126; c=relaxed/simple;
+	bh=c6VlnkuDB7VPlVRoAL7PhSFawFbjpQIlhNJgWMHiP7E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P5HuaEQA5pN93+nQSNgGnNaZStYcorHwu0WAbEtOIwAHzVLG0f6AsK+l5NjT9omxVkE6cF7BOBd+iAIgtV3+ELdnue5tpEoDPxppy8igqjUn2b/nmsXFe8vJAsqYU+uW+bcBD0uIES2lUltOewqvy1RQFY/dRd9tRDTTcWctGsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGKYRqvC; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso10940310e87.2;
+        Wed, 11 Sep 2024 00:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726041136; x=1726645936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IxxfET3fM3V/9CRMIOk0EfCrmZYUH+MdAUwdBUw1Geo=;
-        b=rZgjrRMEpHCC1DfbkeUXitYL4PqDVOnM0Es1ujz7JkLEp2xy5xRJuDecgqWEOqG1wE
-         FMak6ehT8K5u+EqilCOjt21MOvj0peRFwubrtow3/g99xzCdn4emLmovXqtbatp7Bbp4
-         fzZ1BMzO1a6MaOEdtW9MF4NKz2HkwOP6g3dy0J1xNPQkv50wj28oKQNnIai9G+GMllr9
-         XTEeFUyZIZ+W2rRM3E+D5KfBHiygUHPOPyHM6rRJo/LE/7zDNkChjYNdTjooLQJybyLB
-         DLIkFtjxSrUxhw73+rcDV2vPTnQpaeHd6fOS+VK6BYO7XeLa5rzzaPMkjwZLjttqSraO
-         5h8g==
+        d=gmail.com; s=20230601; t=1726041123; x=1726645923; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5mGLOCnwkaWK/oS511bNCFB/e44jaVJMXFEk0X2Af6A=;
+        b=GGKYRqvCmcwtGbALjWSzXZ91fQru8TaGjiHJvWIAZpf9x04aAEl8ysh/pYT7N8VA3z
+         ueQtRGDP0v+dmZqUFoS8LOoPMfQ6eVNlZDv9nn5FW6vJk7UcYT2pBMt9EEmsUnNIsNw7
+         /WQT0B0tVIbqVzFTELwpiUs7f1J1H99CCzRKeS23LKGi1LMMxhDP7oGAJgilORXJMshS
+         s68rdBztURC1BiRt5+aajL5Rk2dKP6/uqMjMKZNtj2KYfsgI0oTuwPOIDQUNJiN7FdSX
+         JcyWN9hgmAhYbBO6D9JQMOp/y2DsA3+BoMP5QYLnynT/0UbgbhhGxwg+nBEv9d45i+zK
+         P6+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041136; x=1726645936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IxxfET3fM3V/9CRMIOk0EfCrmZYUH+MdAUwdBUw1Geo=;
-        b=cR5n213k26rySb8CadasaxEIdkoaRDrthsvGfRqmbsBh5iwdxB33Qd/PrL9U2XLrbE
-         srFVWdos5GsmMwMA4uxCFB+pf2W7iPVB+CIHarXsET7PYvU3+f4ogDNGPkeeZKD9975K
-         hG3HK2uv7tshIJIMStqS7ghE1xaCkoZmInK5wCL2zsVNmab58kYZVRXt5k5CoueXoz+1
-         qAfDfXVrkG1bwSfHBL7AyqOh3SqdQLNUkao2uF6NX3npu6ZLgq6KDKnUXlCHlyNT0Ewe
-         dJoeQUPEGLDQ4jdSBNoYC4zGq2uJb/UjZMyIaO1qpRXfyhYOI6bkl6wuupDsqJkXXHFD
-         ZxuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjiwnXEldfzs0lR4NB4pAtoAVRtTkwgehF5xjtmqz+vNaJTcQbu71IxO/vTUAxGYpK+yg33ocyFZyxPes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDKn/4uCePgPV/sFhNeTJntzCCP2utgOpW2HB2PLKpQUi7INX+
-	BhuJz2QIuPLjwYIb6J85RlQ3N5k1HSD4ZaeauyLtDbZIVz/Ewt5eI0vjNUV6Rw==
-X-Google-Smtp-Source: AGHT+IH3vyKCf0knIMn61KvQCDAk4WW46zj0emh72vl4fMCsHLyzArOUiTDQfBxn8rt89/yvFSddxA==
-X-Received: by 2002:a05:600c:1ca7:b0:42c:baf1:4c7 with SMTP id 5b1f17b1804b1-42cbddb8169mr33274305e9.4.1726041135777;
-        Wed, 11 Sep 2024 00:52:15 -0700 (PDT)
-Received: from google.com (109.36.187.35.bc.googleusercontent.com. [35.187.36.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb179f8e3sm125126015e9.43.2024.09.11.00.52.15
+        d=1e100.net; s=20230601; t=1726041123; x=1726645923;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5mGLOCnwkaWK/oS511bNCFB/e44jaVJMXFEk0X2Af6A=;
+        b=CyZkdgcB7LIpI1rl19kS0pDxk2h5WcDWRIAEnELEIzJ/6c9PRH3NOdPIoDsUENx9kr
+         VcYxtvvH+gUnK94kBss2w2NlCt8lU0nJgU/NiBuB5qsT+N4BXe38P6mq5xcgwQynGbLp
+         +9UdJBena0qA91OgmnKPNiXPVudyTkhTFS3Ytw7lclUFrJoPeNDYFKpVHEByRr1vVTBP
+         v+Cm2RogHbZeXA51kZCgsugHPewnbdXQV7UfePgdwJ8Pgdj8M3lm1107ZrqgsZ22+UJE
+         N2Ipx9+NVYuMt01ENEejIH4Je2aZrwmKRgJoBn9yTguYen4kMbagCG3SdN5gxLdjVUNw
+         Ogqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVg6MsxDYcQEdSGR1i6gzmPJ+8GYyYiPNO9srits6EhxO9KyblYDTZmt6RhileSlq+CkLFxy7n23/RIhpuJDG4=@vger.kernel.org, AJvYcCVqQnLMmgOJ7A9a/n16smf72E8uOPtYJ9jgws5PX6u3zU/4pK1zcPdub9HgzsXBV0hM1g0MpnsFZ/JekCK5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL9HOXhu5gtCH4sV1OEu27e9XwGEgqQv5CqYioBski2IMeJ2UW
+	dWVv88pEiCaUqtvi100Zs4SMcYdkwnNI42QwgpEFWNkhJRiAS3pQ
+X-Google-Smtp-Source: AGHT+IHlK1x/288tPyCeksFi0y4Qjn1N90VOfZFThJn6fo3CV2Yp83nkq4I+hoJMCqadnX13pQosoA==
+X-Received: by 2002:a05:6512:114f:b0:536:55cc:963e with SMTP id 2adb3069b0e04-536587f873bmr17003036e87.44.1726041122274;
+        Wed, 11 Sep 2024 00:52:02 -0700 (PDT)
+Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ceaf4fsm579313866b.152.2024.09.11.00.52.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:52:15 -0700 (PDT)
-Date: Wed, 11 Sep 2024 08:52:11 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	kernel-team@android.com, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/2] ring-buffer/selftest: Verify the entire
- meta-page padding
-Message-ID: <ZuFMK7yndArZo4pA@google.com>
-References: <20240910162335.2993310-1-vdonnefort@google.com>
- <20240910162335.2993310-2-vdonnefort@google.com>
- <20240910124541.23426cee@gandalf.local.home>
- <14143861-bc16-47f4-ba8d-7d577e7a9dd0@linuxfoundation.org>
+        Wed, 11 Sep 2024 00:52:01 -0700 (PDT)
+Message-ID: <895c9d2f81023b8fa88209b244209202ce202af5.camel@gmail.com>
+Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
+ ep93xx_div_recalc_rate()
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Nikita Shubin
+	 <nikita.shubin@maquefel.me>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
+	 <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Wed, 11 Sep 2024 09:52:28 +0200
+In-Reply-To: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
+References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14143861-bc16-47f4-ba8d-7d577e7a9dd0@linuxfoundation.org>
 
-On Tue, Sep 10, 2024 at 12:49:58PM -0600, Shuah Khan wrote:
-> On 9/10/24 10:45, Steven Rostedt wrote:
-> > 
-> > Shuah,
-> > 
-> > Can you take this through your tree?
-> > 
-> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 
-> I can take this through my tree.
-> 
-> > 
-> > -- Steve
-> > 
-> > 
-> > On Tue, 10 Sep 2024 17:23:34 +0100
-> > Vincent Donnefort <vdonnefort@google.com> wrote:
-> > 
-> > > Improve the ring-buffer meta-page test coverage by checking for the
-> > > entire padding region to be 0 instead of just looking at the first 4
-> > > bytes.
-> > > 
-> > > Cc: Shuah Khan <skhan@linuxfoundation.org>
-> > > Cc: linux-kselftest@vger.kernel.org
-> > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> Vincent,
-> 
-> Can you please rebase these on linux-kselftest next branch and
-> resend.  This patch doesn't apply.
-> 
-> Also please fix the subject to say:
-> 
-> selfttests/ring-buffer
+Hi Dan!
 
-Will do, but it depends linux-trace/ring-buffer/for-next which hasn't make it
-yet to linux-next.
+On Wed, 2024-09-11 at 10:39 +0300, Dan Carpenter wrote:
+> The psc->div[] array has psc->num_div elements.=C2=A0 These values come f=
+rom
+> when we call clk_hw_register_div().=C2=A0 It's adc_divisors and
+> ARRAY_SIZE(adc_divisors)) and so on.=C2=A0 So this condition needs to be =
+>=3D
+> instead of > to prevent an out of bounds read.
+>=20
+> Fixes: 9645ccc7bd7a ("ep93xx: clock: convert in-place to COMMON_CLK")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+
+> ---
+> =C2=A0arch/arm/mach-ep93xx/clock.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
+> index 85a496ddc619..e9f72a529b50 100644
+> --- a/arch/arm/mach-ep93xx/clock.c
+> +++ b/arch/arm/mach-ep93xx/clock.c
+> @@ -359,7 +359,7 @@ static unsigned long ep93xx_div_recalc_rate(struct cl=
+k_hw *hw,
+> =C2=A0	u32 val =3D __raw_readl(psc->reg);
+> =C2=A0	u8 index =3D (val & psc->mask) >> psc->shift;
+> =C2=A0
+> -	if (index > psc->num_div)
+> +	if (index >=3D psc->num_div)
+> =C2=A0		return 0;
+> =C2=A0
+> =C2=A0	return DIV_ROUND_UP_ULL(parent_rate, psc->div[index]);
+
+--=20
+Alexander Sverdlin.
+
 
