@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-324926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987B89752BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:45:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230F79752C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267201F241DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACA9282118
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315C718858A;
-	Wed, 11 Sep 2024 12:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893F618C91D;
+	Wed, 11 Sep 2024 12:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hz8Rupya"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VatFr+6A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A8B24A08;
-	Wed, 11 Sep 2024 12:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2CD185923
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726058685; cv=none; b=UevM97EXOiAD4jq4zcA80Tv/mJADtYiRBed4/q3pCiQ+yfXX1sHmnBxZayGVua68bgPeXVAU7hYUHbrY/+phu9KKmTFkPHL1WKDHDskHZ4H3wiJeH39j76whqZfTrvnZDOfE6GjoBTiXB3mJ+X6/M6e/O9qdePBoBBgkXwsqJ/0=
+	t=1726058817; cv=none; b=Weaixx8n/F4yc4ie55B0TGNPvg+iGnK/JNAAMCNNC9v+dALY1+xHrzAeZ4qzzRNOy1oTjNfNjRFQlmN/bt71nyHa9LQd3dszD/JalPGuMU/Dzxu4iqkJGnuMSK9ldxdWbcQlKdnCkrytYnkkWj4m346DEl6TGOA5a52cE9Ovh9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726058685; c=relaxed/simple;
-	bh=wAqGuvvGqbO55Yo+QzEmp24+Ib/odfN2T/Btz5ueTHE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nYpY+9QmFhJJGdgVbaBcrsMF/uP1TuV7IXBrNZ4ZC2APNO+ZrUtY9kGrvVB17ypuj2LxbvKqWHytRBFcJdyve5VBJKoVnegvWIiXCGmOhRu9GN2QvX3IUs6PUOj61WCPS7wdG1QIim1eR/YCJo9ph7ndCMWX3oMZKljeUiVrwo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hz8Rupya; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso34848715e9.2;
-        Wed, 11 Sep 2024 05:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726058682; x=1726663482; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LZwLFQBJrbFbsqZC7edL4g6mJGq/UozkTcAaIn3Kphw=;
-        b=hz8RupyagbGerRcv8a1UuEaS8Hs8aUknvaqRHTNvNPVI7vo9GY3p/89GmUlmxl2POv
-         xmMgzAkYkutAqlBUcYo1nXONniTkYF5et0W2BvOIjCxzRLCS6Igaz0qj9iBHWcf9faeq
-         4JZkXj4W9PCgZIdzJlZEMFjk75voDVBZ2WUmNhV7dbLL7T1owr5McXnhR8wzWiyJEioe
-         SZzTt+EvKSp+A0p7OkVB7lQ834PebM+nOI74AhgQVexFo2GGpuo4tyvHn/gjXYHu3LUE
-         YoHY4rbLOX5dXO4qgsPKcShVVtaNMHG8ZyVBjuzaHg/LuizxxBEHZriSlOQtyi/aHhd7
-         YHNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726058682; x=1726663482;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LZwLFQBJrbFbsqZC7edL4g6mJGq/UozkTcAaIn3Kphw=;
-        b=iRXouQbJ0aR0K5FPgyc/4axgPT0mjQ+GWoLhHbOOd5AtvskNTTSKo3QjitMOOUakTD
-         QQGs5qeOjndf/3M4dsurHPEWOmLw/1O9Mz7BP4hXjHJlKqT+KRXj7dMkbqnvvUmHkUoM
-         C7FM2T/MNiCut7EfiLEsCVLY3PCsblX1S/IttawhmgEjTzm11nCbrydgro1tJJYRUnLI
-         jgBkluvzRUC2vD/cRJoEuSgpntH5D5NBkP7TMdIeDeBewQCzu/3AdecRMZPpzDW0a+Kb
-         5323zO5dG2CGtHW2Pdubby53xcnbsPW9IFJpELVrVFTg25Wbh9dtOGirI1FTOxMaUfiR
-         h4QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDhCdF9WnCPlxWmg/WnP6dgoUNxBPkryzUKEiKXgFepNRynP2IOISE5CX3Z9u/rz40LdGhjsuw8NGHWwP@vger.kernel.org, AJvYcCXNu4pTqvxgQ94gUKBH9TQWgXhHtGcsQOMxZQgWMZ/96pGoUvVq3tfQ9i91lk2W0BklJz9KoIXvXPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3WuVUw9F3L8XXSvsvkniVje4IYiIN0U7AfJSKCrrMbTVeQFdV
-	x6D3oKqTvBkooVnXMAiOmnFROlP3y4kj8n/AEmUioxpfD2BgyRj0AubyQXGc
-X-Google-Smtp-Source: AGHT+IG0IgCJfySwnQ347sCXytkzXb5iTo/AY9vI25hVLlgnZ3SiDgOdJp9TnKw+Op+rExODDzRYww==
-X-Received: by 2002:adf:f6c1:0:b0:368:71bc:2b0c with SMTP id ffacd0b85a97d-378895c27a0mr10715747f8f.10.1726058681807;
-        Wed, 11 Sep 2024 05:44:41 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665108sm11472019f8f.28.2024.09.11.05.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 05:44:41 -0700 (PDT)
-Message-ID: <11d30fc473e6581bfcaa91d13ee5b5827c2801e9.camel@gmail.com>
-Subject: Re: [PATCH] clk: ep93xx: add module license
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Nikita Shubin
- <nikita.shubin@maquefel.me>,  linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 11 Sep 2024 14:44:49 +0200
-In-Reply-To: <20240911121909.2505018-1-arnd@kernel.org>
-References: <20240911121909.2505018-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1726058817; c=relaxed/simple;
+	bh=fNEw9q5L02wFt/SbtQ2tsftoa1czNPsPbeHhsyx+RmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+mFK10wF9okgYfSOMQSI3tIyqeGUjnw/wjAvFJgYnJCxeeu1Aef48N1/OF90Ea0TqspcoLY9qobVgZYOcObCdu8Tg0FhrnfPZaP7Iy2ZYm4GVixNACQ7dg5zyWxSgcaY3di45P/ZDgUtYLrpRRC82FjuLhysXQZDVLgft+0/Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VatFr+6A; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726058814; x=1757594814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fNEw9q5L02wFt/SbtQ2tsftoa1czNPsPbeHhsyx+RmE=;
+  b=VatFr+6AlA0CvxQzrgbweb6FX/opSOu06FPlR8gN5IeN4+KiiPQxXfFz
+   9GQa5yrIVBHDCsHzXLYM66t7BBFNZhO3bZWiDRexHLOENoVJFZTgr45Pm
+   IWs/5DCsnNnkjkyBg2zcRdZagWq/4hj38JlUR/ZjwZ4gM2jh0L0C7vMll
+   yCkMCkdPrOuus8d/87msQlznkP3Ie9WZvvCFW5ro8S7tgGYeeaWSI7Ct7
+   TR5pg2QEOjwwAjvEqtn8CpDmjbDD4pQhW5hiFCB8hggBicOtXeZNOnEY4
+   yALWMI7y+0SLmBCszrM/eGdIYamo9ezXWiomxiKqPLITavztm3jpwLOP7
+   Q==;
+X-CSE-ConnectionGUID: G7Ti4gVCS5S30eKJowtpEQ==
+X-CSE-MsgGUID: rV09t/0CTYW7dp05cPUR+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35447099"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="35447099"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 05:46:53 -0700
+X-CSE-ConnectionGUID: 59EqOoXQTnCHSJmxUJHkng==
+X-CSE-MsgGUID: lMreyNQYRj2UT0Z0kddTEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="71494827"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 11 Sep 2024 05:46:52 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1soMkD-0003ZC-2c;
+	Wed, 11 Sep 2024 12:46:49 +0000
+Date: Wed, 11 Sep 2024 20:46:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com, mst@redhat.com,
+	michael.christie@oracle.com, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v1 6/7] vhost: Add kthread support in function
+ vhost_worker_create
+Message-ID: <202409112050.3zbvpbyT-lkp@intel.com>
+References: <20240909013531.1243525-7-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909013531.1243525-7-lulu@redhat.com>
 
-Hi Arnd!
+Hi Cindy,
 
-On Wed, 2024-09-11 at 12:18 +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> When configured as a lodable module, this driver produces
-> a build time warning:
->=20
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/clk-ep93xx.o
->=20
-> All all three tags for license, author and description based
-> on the header.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+kernel test robot noticed the following build warnings:
 
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+[auto build test WARNING on mst-vhost/linux-next]
+[also build test WARNING on linus/master v6.11-rc7 next-20240910]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> ---
-> =C2=A0drivers/clk/clk-ep93xx.c | 4 ++++
-> =C2=A01 file changed, 4 insertions(+)
->=20
-> I had to add this to get a clean build with the ep93xx
-> series.
->=20
-> diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
-> index 4727c06a59ba..26317623d9d5 100644
-> --- a/drivers/clk/clk-ep93xx.c
-> +++ b/drivers/clk/clk-ep93xx.c
-> @@ -844,3 +844,7 @@ static struct auxiliary_driver ep93xx_clk_driver =3D =
-{
-> =C2=A0	.id_table	=3D ep93xx_clk_ids,
-> =C2=A0};
-> =C2=A0module_auxiliary_driver(ep93xx_clk_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Nikita Shubin <nikita.shubin@maquefel.me>");
-> +MODULE_DESCRIPTION("Clock control for Cirrus EP93xx chips");
+url:    https://github.com/intel-lab-lkp/linux/commits/Cindy-Lu/vhost-Add-a-new-module_param-for-enable-kthread/20240909-093852
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
+patch link:    https://lore.kernel.org/r/20240909013531.1243525-7-lulu%40redhat.com
+patch subject: [PATCH v1 6/7] vhost: Add kthread support in function vhost_worker_create
+config: arc-randconfig-001-20240911 (https://download.01.org/0day-ci/archive/20240911/202409112050.3zbvpbyT-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409112050.3zbvpbyT-lkp@intel.com/reproduce)
 
---=20
-Alexander Sverdlin.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409112050.3zbvpbyT-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+   drivers/vhost/vhost.c: In function 'vhost_worker_queue':
+   drivers/vhost/vhost.c:273:13: error: 'use_kthread' undeclared (first use in this function)
+     273 |         if (use_kthread) {
+         |             ^~~~~~~~~~~
+   drivers/vhost/vhost.c:273:13: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/vhost/vhost.c: In function 'vhost_workers_free':
+   drivers/vhost/vhost.c:805:13: error: 'use_kthread' undeclared (first use in this function)
+     805 |         if (use_kthread)
+         |             ^~~~~~~~~~~
+   drivers/vhost/vhost.c: In function 'vhost_worker_create':
+   drivers/vhost/vhost.c:986:13: error: 'use_kthread' undeclared (first use in this function)
+     986 |         if (use_kthread)
+         |             ^~~~~~~~~~~
+   drivers/vhost/vhost.c: In function 'vhost_free_worker':
+   drivers/vhost/vhost.c:1030:13: error: 'use_kthread' undeclared (first use in this function)
+    1030 |         if (use_kthread)
+         |             ^~~~~~~~~~~
+   drivers/vhost/vhost.c: In function 'vhost_worker_create':
+>> drivers/vhost/vhost.c:990:1: warning: control reaches end of non-void function [-Wreturn-type]
+     990 | }
+         | ^
+
+
+vim +990 drivers/vhost/vhost.c
+
+   983	
+   984	static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
+   985	{
+   986		if (use_kthread)
+   987			return vhost_worker_create_kthread(dev);
+   988		else
+   989			return vhost_worker_create_task(dev);
+ > 990	}
+   991	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
