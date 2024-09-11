@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-325568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E29975B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15B6975B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812581C20D22
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82451F2359A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83CF1BB68C;
-	Wed, 11 Sep 2024 20:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B201BB6A1;
+	Wed, 11 Sep 2024 20:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EmZaH6Ep"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ULp8K1/2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B37E583
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3A21885A8
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726085669; cv=none; b=Ksda0EGRCsAKc9uv4JTrwJApa/QJXkUMKpfdthBabGu7GEvF1hleFk3Vjh1WHCYshpDAsLbvj4DD6HoTdjue1A/t9u/k3wQusTCOz85Y5GdQCKq8i6E5DaMs7+I5vPkjYSkQM+hFPT7/fZ/gJgjB3oMeH+GjoqrGmmwhjTJ0Xmk=
+	t=1726085698; cv=none; b=ZMOOb5bK6l9FmKQWGFRUgYecIN+Iu3z4qaWLY0CCNn0t8GUkeHOWllW4H5qqDLFUlzvEqmqR3EmyTKsuiNkqJk6sDx2szt7jx88NfLFHXu/ZREXCPoF+7lDSCex3K2vonIHyuNqfXTMlhwXuUPML+FGm4cIl4waRB0BvXt7ycu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726085669; c=relaxed/simple;
-	bh=h2kKG31g+Hmx6tmmvHaeqz9ofEgVn9kMKUL7/hoWBa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAEZANj5vyGUiiur7+H/hsnHeMgYQv4GYjUUQtg85x1Wrnc80Oas5md4Iox8TxdxlWiPHeuA5OtXIYtfOmIUb23w+sGM2Z4JXUhxreiACHJKmqmVuu1Br6tzczik31xWXVkXzbXf83fw6b73Izo/N+6X8fn/GcGNp/Dd76k3ItA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EmZaH6Ep; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1726085698; c=relaxed/simple;
+	bh=OsSe0iXO1X2k004OCN4aio3yNszGQTd/Jn30DawwnG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=doyNBcw9QjZ9EQyueXOW4I31U+hRK1CyPmlRRvsxe2epi+VhOuhwMpBgiNp96f5V1m63GfTcCIKj275wMr6u6UYwjmW2oZp5UJhMfUxw+0dnbfTCahrMoVvAY5+wWUzoCE/ANYjd+fzIbLO6YpCTlIUmUFg0xOCT3oUeGAsRsJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ULp8K1/2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726085665;
+	s=mimecast20190719; t=1726085686;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/KXXJVpHBqZ8jkbmiTKtUQVPTfqELx0UeolsgQNEGcI=;
-	b=EmZaH6EpJLlM0M5vFiQlHFDr/pIfevrADJxNaXyZUtlh3QQmBGnjDirEpPkJveMLxFvcsB
-	/cQuLOFwAlpqd5r6xOVYakwvmhokZRnHBZNR41z/nVWxba3iVvIeYbi1kiqmik+kE/+whq
-	5zhk2Qj+nC+B5AvDICpVGHNptbT+gHw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-X6QncCq1PHOuVSxOccM3SA-1; Wed,
- 11 Sep 2024 16:14:22 -0400
-X-MC-Unique: X6QncCq1PHOuVSxOccM3SA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 532F21945109;
-	Wed, 11 Sep 2024 20:14:20 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.43])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E5A5D1956086;
-	Wed, 11 Sep 2024 20:14:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 11 Sep 2024 22:14:08 +0200 (CEST)
-Date: Wed, 11 Sep 2024 22:14:02 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Roman Kisel <romank@linux.microsoft.com>, akpm@linux-foundation.org,
-	apais@microsoft.com, benhill@microsoft.com, ebiederm@xmission.com,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev, workingjubilee@gmail.com
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240911201402.GB16757@redhat.com>
-References: <20240911144412.GA16954@redhat.com>
- <20240911174107.1217693-1-romank@linux.microsoft.com>
- <20240911195311.GA16757@redhat.com>
- <CAHk-=wjhqn+B85OA8pfLhckUXSwLtJzFq5JPO2cNNzhPN__HJQ@mail.gmail.com>
+	bh=OsSe0iXO1X2k004OCN4aio3yNszGQTd/Jn30DawwnG8=;
+	b=ULp8K1/2czBy0NT0y1F8nQbB3pfWveQFFbxeQoGUkBgKroHHA0+SXyW5VSpdVVGwtD4NXK
+	VuNR+qQRbU5IBLRIYGVWapYNgeS6s57mDMTnlErLZQ1Qpi3QW22uD0Wa4lwyv6TqDoFKEl
+	/I+iHAKCG3lWPxOdVxIT7WkmPda00ms=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-m8CIm6pSP52UXv8aaMoEtQ-1; Wed, 11 Sep 2024 16:14:42 -0400
+X-MC-Unique: m8CIm6pSP52UXv8aaMoEtQ-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a1d0b29198so96253785a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:14:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726085682; x=1726690482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OsSe0iXO1X2k004OCN4aio3yNszGQTd/Jn30DawwnG8=;
+        b=FGrEujogzbJkrGJGXgZOtllh+7zf1CamG9k74iLdtz5SZO6Dvd3/7PiSIgT5YKnTzd
+         7rDEj8sx3BO15RCVNpC2Cc/AhwcIQIY7AgBhuBhZlekLTnem8UaP5jxP+vH5Um7BmE15
+         r7X7P0NG2KMbPk9mp5dwjQavgjiDFCBZJrZm0AEwWcNnmYo5pzV4PsWiHn6LmnookJYz
+         Ue5nbEk1bgZi5iFwQv53SsuawbvUNz8tHnkx5AfWCubW5ooe8QhOa4UOctQnk7vkMmmd
+         oblEWlTh7nOGY5DrPRtlFgmFfXYMOVEOklziOs+SF94HipbUWgp0dOlpL9I6Lf7gJmUC
+         tFFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyimjntp8z/9cbRIDOKhnfl4rgP5/EpoMGMq9y5v2eG2Sr+9N+mS5OM4dEm2a7ukvklXtzbUobJ6rVhyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4y49HIE0HjzDdmyDVeEIAUnfrtTSOXHOuwpBQfNE0IK/ZsI41
+	I1BLbcuL7keGETCxt3j/O8d4plLoh5GjiAhqCeLNj9NPIj0hxzhflCEZe/tjjFicAvfTR8VFgd+
+	KD/sIcG52nPp2bcgPkuEox30WVIDOIrMogm3roKbodTpecuXEfGgyY9pQiLnBew+nHvy9m9GyfV
+	cEAoVyeYvUZYU5kD22TctLQXXWT6+isJyfYzGeqd92Id6t
+X-Received: by 2002:a05:620a:1996:b0:7a9:aa6c:f15d with SMTP id af79cd13be357-7a9e5f7aeccmr74774185a.58.1726085681698;
+        Wed, 11 Sep 2024 13:14:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYM9uFHo7eKZPOtqQHJZ2lGVoqcP+0rkdbBe7z/EI3IXviO6dh6tVJn98//HiyWnJ7GZ2OTU9TzgULozRBquw=
+X-Received: by 2002:a05:620a:1996:b0:7a9:aa6c:f15d with SMTP id
+ af79cd13be357-7a9e5f7aeccmr74770785a.58.1726085681232; Wed, 11 Sep 2024
+ 13:14:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjhqn+B85OA8pfLhckUXSwLtJzFq5JPO2cNNzhPN__HJQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <4b6aec51-dc23-4e49-86c5-0496823dfa3c@redhat.com>
+ <20240911142452.4110190-1-max.kellermann@ionos.com> <CA+2bHPb+_=1NQQ2RaTzNy155c6+ng+sjbE6-di2-4mqgOK7ysg@mail.gmail.com>
+ <CAKPOu+-Q7c7=EgY3r=vbo5BUYYTuXJzfwwe+XRVAxmjRzMprUQ@mail.gmail.com>
+ <CA+2bHPYYCj1rWyXqdPEVfbKhvueG9+BNXG-6-uQtzpPSD90jiQ@mail.gmail.com> <CAKPOu+9KauLTWWkF+JcY4RXft+pyhCGnC0giyd82K35oJ2FraA@mail.gmail.com>
+In-Reply-To: <CAKPOu+9KauLTWWkF+JcY4RXft+pyhCGnC0giyd82K35oJ2FraA@mail.gmail.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
+Date: Wed, 11 Sep 2024 16:14:14 -0400
+Message-ID: <CA+2bHPbMwsg8NkvW=FCSwCs9p2B0wBkrfW6AbPj+SOWNHAD45w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/ceph/quota: ignore quota with CAP_SYS_RESOURCE
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/11, Linus Torvalds wrote:
+On Wed, Sep 11, 2024 at 3:21=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
 >
-> On Wed, 11 Sept 2024 at 12:54, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> >         - please try to make your changelog more convincing. And in particular,
-> >           please explain why !!current->ptrace is not enough and this feature
-> >           needs the tracer's pid.
+> On Wed, Sep 11, 2024 at 8:04=E2=80=AFPM Patrick Donnelly <pdonnell@redhat=
+.com> wrote:
+> > CephFS has many components that are cooperatively maintained by the
+> > MDS **and** the clients; i.e. the clients are trusted to follow the
+> > protocols and restrictions in the file system. For example,
+> > capabilities grant a client read/write permissions on an inode but a
+> > client could easily just open any file and write to it at will. There
+> > is no barrier preventing that misbehavior.
 >
-> Oleg, I realize you like the simpler patch that only has that
-                  ^^^^^^^^
-No, no, I don't!!! ;)
+> To me, that sounds like you confirm my assumption on how Ceph works -
+> both file permissions and quotas. As a superuser (CAP_DAC_OVERRIDE), I
+> can write arbitrary files, and just as well CAP_SYS_RESOURCE should
+> allow me to exceed quotas - that's how both capabilities are
+> documented.
+>
+> > Having root on a client does not extend to arbitrary superuser
+> > permissions on the distributed file system. Down that path lies chaos
+> > and inconsistency.
+>
+> Fine for me - I'll keep my patch in our kernel fork (because we need
+> the feature), together with the other Ceph patches that were rejected.
 
-> "!!current->ptrace", but my point is that even that simpler patch is
-> simply WRONG, WRONG, WRONG.
+If you want to upstream this, the appropriate change would go in
+ceph.git as a new cephx capability (not cephfs capability) for the
+"mds" auth cap that would allow a client with root (or
+CAP_SYS_RESOURCE) to bypass quotas. I would support merging such a
+patch (and the corresponding userspace / kernel client changes).
 
-and I agree, agree, agree.
-
-> There is simply no valid situation where a "I have a tracer" is a good
-> thing to test for.
-
-Yes, yes, and that is why I added you/Eric to this discussion.
-
-I just tried to play fair. I just thought that I can't simply "nack" this
-change, because I can't explain why I didn't like the whole idea.
-
-Oleg.
+--=20
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
 
