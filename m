@@ -1,68 +1,86 @@
-Return-Path: <linux-kernel+bounces-325347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B896C975836
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFDA975833
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE85B278CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E2D1F257FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8068D1AE86C;
-	Wed, 11 Sep 2024 16:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC42F1AE870;
+	Wed, 11 Sep 2024 16:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiUzo0Vz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF92224CC;
-	Wed, 11 Sep 2024 16:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2375D224CC;
+	Wed, 11 Sep 2024 16:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726071697; cv=none; b=MAZ6/E3eiS8NRd6wFVGwbqgz2FyIwj5r5sk71WEBW3ngjNsM18sEcnEnotgPL/T6LTgewZ4NBK247xYnR3H4n/v6hIJQOXcRDeh6Sd+ovxcC+igFeatKnoOYbTdVsCHZbwBO3HngGghVHHWiB1KlzgzKL+pJhU56N7F/Z/PMT9o=
+	t=1726071743; cv=none; b=u7/Ov4d3W1yPOmJuAd5I6wCoohYuZmJRG2o+jlRLHpSHWJl+ezNfhShZc5ioisajWn58q7wxOaTsyCwhfUOzoYRZNFENtItm2RRXt7VY+od60J8pFnJz5uJF76BCUbFw2b9UhngUMxd18Q332YqaPJVe6C1yaQRlrRD+wgIg3Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726071697; c=relaxed/simple;
-	bh=hRR9dXMQ5Vo5rZtuvafz2w9lH+QJ9hDX119W4gRXFTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RZAzWT3/M+A6weEGDEoKgZlG8Lnnc18LmH56eM+dB7UdonATGmhxE7CQu7kLruXcqFWEp3zrmkKrsQf23yQREyLL/UoRWfXeky+lcnfGX7z58yYXAlzmOzvOXIu5yqvLYuJtM/mU/YhViZIfuEiPfK3Vwb7kxL5Ly9SgOuJsxCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC6BC4CEC0;
-	Wed, 11 Sep 2024 16:21:35 +0000 (UTC)
-Date: Wed, 11 Sep 2024 12:21:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- kernel-team@android.com, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RESEND 2/2] ring-buffer/selftest: Handle meta-page
- bigger than the system
-Message-ID: <20240911122138.1aa07f1c@gandalf.local.home>
-In-Reply-To: <2df38d7a-682e-4af5-be01-67adb6fdd5b0@linuxfoundation.org>
-References: <20240910162335.2993310-1-vdonnefort@google.com>
-	<20240910162335.2993310-3-vdonnefort@google.com>
-	<20240910124555.180428eb@gandalf.local.home>
-	<bf48db12-1e97-4690-b733-bad6b2363edb@linuxfoundation.org>
-	<2df38d7a-682e-4af5-be01-67adb6fdd5b0@linuxfoundation.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726071743; c=relaxed/simple;
+	bh=0PHSN8Z8Ga6gGdIabdpiB4yZj0UtQvwndVg/JTxkKRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCfTu4Ae3bHnWVngWV469Wpjkm+INMFaoTAL5/wgM2iiDoAppjfMxtuOa67tQNwn7959TdvwfH4qWM2ymBZEmMpzKBl3w2Fqrobum1exynR2BDcTfxzc/7wzyTyy6RuZOZ3Gr35yE735rHhvf2j0f/0asbD9SyjLvG+TYefjq9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiUzo0Vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892DFC4CEC0;
+	Wed, 11 Sep 2024 16:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726071742;
+	bh=0PHSN8Z8Ga6gGdIabdpiB4yZj0UtQvwndVg/JTxkKRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oiUzo0VzxBEmBrjNEbkYJsPAEc9eZi/N7P5Ft4A46hxB+62e9yeVJSe+q7pNvqPJu
+	 qHGrcPLCUlMk14RbTpDo82ZriZuNnyOhgfGz9wXKnFhpK59yA+0E+fNX+ORt4RECn6
+	 ObQr7aQSLZV8umuXOjvB5RUN0fHvWIeuw2YZaADTmEWoYdEgn/XJdm8A1arAEi1Xt3
+	 fxxuG0YbW2R+18NQoD/X1hsCB/vNaebltbuXq4N7yhcVUJ4U6+MvwdQbqFEag4mq/D
+	 mxp1DWpMV9LShCqi/4rPDuxfSatmdIyp4cX0+6Tgyj80jUoCj78qTI2h83hXVx52Kv
+	 rkppIBxiYH/0Q==
+Date: Wed, 11 Sep 2024 11:22:20 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jianping.Shen@de.bosch.com
+Cc: lars@metafoo.de, linux-iio@vger.kernel.org,
+	Christian.Lorenz3@de.bosch.com, Ulrike.Frauendorf@de.bosch.com,
+	linux-kernel@vger.kernel.org, jic23@kernel.org,
+	marcelo.schmitt1@gmail.com, Kai.Dolde@de.bosch.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	dima.fedrau@gmail.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: iio: imu: smi240: add Bosch smi240
+Message-ID: <172607173923.689453.12557027377891944945.robh@kernel.org>
+References: <20240910113650.4733-1-Jianping.Shen@de.bosch.com>
+ <20240910113650.4733-2-Jianping.Shen@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910113650.4733-2-Jianping.Shen@de.bosch.com>
 
-On Wed, 11 Sep 2024 10:07:40 -0600
-Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-> Once this is fixed:
+On Tue, 10 Sep 2024 13:36:49 +0200, Jianping.Shen@de.bosch.com wrote:
+> From: Shen Jianping <Jianping.Shen@de.bosch.com>
 > 
-> Steve, This is yours to take due to the dependency on linux-trace/ring-buffer/for-next
+> add devicetree binding for Bosch imu smi240.
+> The smi240 is a combined three axis angular rate and
+> three axis acceleration sensor module.
 > 
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> * The smi240 requires VDD and VDDIO
+> * Provides only spi interface.
+> 
+> Signed-off-by: Shen Jianping <Jianping.Shen@de.bosch.com>
+> ---
+>  .../bindings/iio/imu/bosch,smi240.yaml        | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+> 
 
-Thanks, I'll add it to my for-next queue.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
--- Steve
 
