@@ -1,80 +1,149 @@
-Return-Path: <linux-kernel+bounces-324455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87815974CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:31:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30117974CE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFB21F21C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7A21F28BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B78F13D2B2;
-	Wed, 11 Sep 2024 08:30:56 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28D841C6C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BD413A884;
+	Wed, 11 Sep 2024 08:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rBf1Yh/e"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79F1547FB
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726043455; cv=none; b=VMLJ/RJ6xRJ96PzRCJIU00qj/dv1VI9aZJMgtH7Peb7K/2AVb+mpdDsPwksdZOoH5+3/IXX8ZPBtw1xNl5/cyqhGBWKz8DwdETPhfDPXOwgQPIqbz18O7lgd/ByYFuZiuHA9wY1DDtcJ1ZiFI63gfP1QlkDzAKgMbXx5Uq7u7xQ=
+	t=1726044138; cv=none; b=McitdgUUBXmQLq35wGwH9zAbF49c/YRdi8ABuGigybke+JEsnYyGTCeBGDcN8RY6JaGAtDon6zSxDf3Ya8LmAcKvTaenHlTnHeqKeiGgF/x2nOv0AdakYruWDONmkclw/HwKj7nofwFqRw3aw5tbg2RWzCBdxo0P2Wyb6CuqmUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726043455; c=relaxed/simple;
-	bh=mcuUN4gbQxzej1JdBwLH5A+2jQGulNuhVQwWSE18QAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wz+JDZOOfdv9gAkb/fpitjejYcWes00RGcHJKEtxzcioDF41itobz66in8ukVzbA0qBUTeMcUsUAzja2LoxLOWQruw3RCcwJeVEqHXPIHzT9WXNvPn8O4G51xGvfp29ToCGFUA/36sU6AKCYj5bzf1RXbJURKAQW35VyL8632j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee266e15531bf3-53bfb;
-	Wed, 11 Sep 2024 16:30:43 +0800 (CST)
-X-RM-TRANSID:2ee266e15531bf3-53bfb
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.100])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee466e15526fd9-c14d9;
-	Wed, 11 Sep 2024 16:30:43 +0800 (CST)
-X-RM-TRANSID:2ee466e15526fd9-c14d9
-From: Ba Jing <bajing@cmss.chinamobile.com>
-To: linux-kernel@vger.kernel.org
-Cc: bajing@cmss.chinamobile.com
-Subject: [PATCH] testusb: Fix the cacography in testusb.c
-Date: Mon,  2 Sep 2024 22:32:02 +0800
-Message-Id: <20240902143202.6789-1-bajing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726044138; c=relaxed/simple;
+	bh=fup3GnKRyBMiAT4LRhFs5OgSepmfgKmHHL9BAt0JWeE=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=MVkY9g958PN/cSCdoiVh5v3KR8G5HSc3jXRrT162gd4GS0wkttZWNWt3J1lrwPzlgR7Tvtam7MbBosbKHbQbCMWgGKe8n0xv3eZcWfuNGPtqYy1sl6UYXtrETCtfFykaaoaGAWnkIojEtjLB/oa0ogBAygp+wWUOmt8I+2LHo/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rBf1Yh/e; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240911084209euoutp02f0be7d5c446d3d234bfad2e687122393~0I-2KfQwX2348023480euoutp02z
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:42:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240911084209euoutp02f0be7d5c446d3d234bfad2e687122393~0I-2KfQwX2348023480euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726044129;
+	bh=ggkQNgYbOJHbcRaxVEceS0e8VTxM2WSYALm+99ixdc0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=rBf1Yh/e/Y3fZOed9cwVwxc7QGeWCd1rqEWFTsDau5iKwcW2jAeSq8KZOmpFj7HO+
+	 f7Dv7FONjOITsP5C+wZOW2YkZbr33ZCegHJAKlWRBsV/bOXEulVjD7M+rQc5Lw6AN8
+	 MRhkt7V+2t+6Qq/Hh6RheAB/HJH1KblgyjOvHkxY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240911084208eucas1p1d30027de172edfb7a5584c314b60e34a~0I-17Vp7E1487214872eucas1p1C;
+	Wed, 11 Sep 2024 08:42:08 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id DF.F0.09875.0E751E66; Wed, 11
+	Sep 2024 09:42:08 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240911084208eucas1p2b924fb19b25b4b0ea4fb7a43574b582a~0I-1R_o1E2294722947eucas1p2o;
+	Wed, 11 Sep 2024 08:42:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240911084208eusmtrp176301cf2ac1c5f9d87d4ae14fa6fe455~0I-1RX1vQ2353523535eusmtrp1_;
+	Wed, 11 Sep 2024 08:42:08 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-4a-66e157e0c19a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 13.E9.19096.FD751E66; Wed, 11
+	Sep 2024 09:42:07 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240911084207eusmtip24c2f257f417c19635112c3cb81617d18~0I-1D8RKc0884508845eusmtip2a;
+	Wed, 11 Sep 2024 08:42:07 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 11 Sep 2024 09:42:06 +0100
+Date: Wed, 11 Sep 2024 09:28:51 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason
+	Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
+	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+Subject: Re: [PATCH 1/6] iommu/vt-d: Separate page request queue from SVM
+Message-ID: <20240911072851.bwxmmmaq7meqdo3k@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ef543342-561d-420d-a7a1-7d155e89ad79@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djP87oPwh+mGbRd07DYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
+	rowvQJMKZrFUvPi9kL2BcT1zFyMnh4SAicSVO9PYuhi5OIQEVjBK9L8+CeV8YZR4s2U6lPOZ
+	UeLwpL1MMC0P5/YzQySWM0pMWvmcCa6qa8oyqMxmRomlsxewgrSwCKhKHHg7HaydTUBH4vyb
+	O2DbRQTUJZoa94LtYBbYyCQx999hsISwgKfE8b9X2EFsXgEHiZuz17FB2IISJ2c+YQGxmYEG
+	Ldj9CSjOAWRLSyz/xwES5hRwluhcvhXqVEWJr4vvsUDYtRKnttyCik/nlJh8JQ3CdpF4tPM/
+	NDSEJV4d38IOYctInJ7cwwJym4TAZEaJ/f8+sEM4qxklljV+hZpkLdFy5QlUh6NEyzqQDRxA
+	Np/EjbeCEHfySUzaNp0ZIswr0dEmBFGtJrH63huWCYzKs5B8NgvJZ7MQPlvAyLyKUTy1tDg3
+	PbXYKC+1XK84Mbe4NC9dLzk/dxMjMHGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJMLbb3cvTYg3
+	JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFqEUyWiYNTqoFJbdLhVR/nPZXb
+	utQpz6vmbYLuwxD1E6sj5m5fz+DwSItB9JzX1oW9T77HfZuWMuelUlL+zCdC8d/0D806y3+z
+	PPJsE++p2D2LvJs2SjeprBEtvG4/v+eOa/0S97bJtd+F9x74W2qUW6T2bYLZsvUFX9f0bz79
+	3K9jIqOE5Rbbg37Kum/DP91Z4Gz4d3f2N5X05CCmI2sVvVrE2afdFFm5/uWSHzKdB7czfIw4
+	3rf+93mpiV6XWO6ysHxcmTHty5bbOcsVnpt83nesoWX6H73yfZnTYwVkt7xadbnM+uLTXS9+
+	8h+dpR28e/WCxH+SW1r/f03juMfH9X6vMM+nkiZ3TuXymZXfHq/VZDT+vnSq8xYlluKMREMt
+	5qLiRADIT/bGywMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7r3wx+mGazZZW2xeeJWNouJKycz
+	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
+	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
+	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlfgLYVzGKpePF7IXsD43rm
+	LkZODgkBE4mHc/vBbCGBpYwSq5orIOIyEhu/XGWFsIUl/lzrYuti5AKq+cgocePcRhYIZzOj
+	xIFJR1lAqlgEVCUOvJ3OBGKzCehInH9zB2yqiIC6RFPjXrBuZoGNTEDdTWBFwgKeEsf/XmEH
+	sXkFHCRuzl4HtaKJSWJq219WiISgxMmZT8A2MANNXbD7E1ARB5AtLbH8HwdImFPAWaJz+VYm
+	iFMVJb4uvscCYddKfP77jHECo/AsJJNmIZk0C2HSAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ
+	+bmbGIHRu+3Yzy07GFe++qh3iJGJg/EQowQHs5IIb7/dvTQh3pTEyqrUovz4otKc1OJDjKbA
+	sJjILCWanA9MH3kl8YZmBqaGJmaWBqaWZsZK4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTDl
+	vzn+k3PqP5+ZOflryjpfL90/3ygiR/fgHQ77mjsX/q3UtHgWvj/79Vzxc8qL736YV1hiFTzn
+	+Karill3bTWnP2yLX6LGvGWftX9K2rm4jboZ8SF2sQ9tX51N3H5Y5Vzie80XPzmPvv+2ratj
+	mfqN+dItBecSbzlvevKnf98fppk/TX27V86fa7Pi8s3k/HvS32ZuFP673VSAS69o/vbWfSbV
+	Za5e65t0U0QTtHp7/ApERf1mnZrcWmTo1fxJ4FPBleDTExPe+ZQqC8f97NhwffO+swdmxXG5
+	PJ/+69D66ykPNutOY18tuuqk87uIHzJnfszfcXvBAdZ+NqNXLc0m+UeWF7RndArOFjiwxepO
+	gxJLcUaioRZzUXEiAKytGlZnAwAA
+X-CMS-MailID: 20240911084208eucas1p2b924fb19b25b4b0ea4fb7a43574b582a
+X-Msg-Generator: CA
+X-RootMTR: 20240905032243eucas1p26088993e46d6e009768b661eb028dd40
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240905032243eucas1p26088993e46d6e009768b661eb028dd40
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+	<20240904-jag-iopfv8-v1-1-e3549920adf3@samsung.com>
+	<CGME20240905032243eucas1p26088993e46d6e009768b661eb028dd40@eucas1p2.samsung.com>
+	<ef543342-561d-420d-a7a1-7d155e89ad79@linux.intel.com>
 
-The word 'configuratiens' is wrong, so fix it.
+On Thu, Sep 05, 2024 at 11:18:39AM +0800, Baolu Lu wrote:
+> On 9/4/24 9:17 PM, Joel Granados via B4 Relay wrote:
+> > From: Joel Granados<j.granados@samsung.com>
+> > 
+> > IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM. Move
+> > all Page Request Queue (PRQ) functions that handle prq events to a new
+> > file in drivers/iommu/intel/prq.c. The page_req_des struct is made
+> > available in drivers/iommu/intel/iommu.h.
+> 
+> Above last sentence needs to be updated.
+oops. missed that. thx.
 
-Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
----
- tools/usb/testusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/usb/testusb.c b/tools/usb/testusb.c
-index cbaa1b9fdeac..1cc86da27a90 100644
---- a/tools/usb/testusb.c
-+++ b/tools/usb/testusb.c
-@@ -226,7 +226,7 @@ static int testdev_ifnum(FILE *fd)
- 
- 	/* the FunctionFS gadget can have the source/sink interface
- 	 * anywhere.  We look for an interface descriptor that match
--	 * what we expect.  We ignore configuratiens thou. */
-+	 * what we expect.  We ignore configurations thou. */
- 
- 	if (dev.idVendor == 0x0525 && dev.idProduct == 0xa4ac
- 	 && (dev.bDeviceClass == USB_CLASS_PER_INTERFACE
 -- 
-2.33.0
 
-
-
+Joel Granados
 
