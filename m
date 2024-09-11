@@ -1,268 +1,272 @@
-Return-Path: <linux-kernel+bounces-324175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F619748E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0ADF9748FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFD41F2724E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C311F26850
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AC513C810;
-	Wed, 11 Sep 2024 03:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C095E43155;
+	Wed, 11 Sep 2024 03:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="naKQ+KNy"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2047.outbound.protection.outlook.com [40.107.117.47])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KpDu5ZV9"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2C913B5BD
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726026242; cv=fail; b=G2QrgIBQhUFFk7YrHGwoGeVmz51J5imkmwN51icnDeYkPIHXxK+erdCxftUzMuN59RtxyVOkCxm76JNhAcpPTHTUxoE1eMt40/mYHwoh4WnTZeAVGz8FH0ybjCtRbjoMk54c30musff2lLpds9kw73ZnMgZzX/DYYELQInjvlFk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726026242; c=relaxed/simple;
-	bh=4b21qwXYmc6BNWSeLiCzttwLnHxTk3EYJG6mv1Wxsy0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qBmrpDTbifZIewcA+W7nuVMNctzMWI/5AnQ9o+V7DkqCoh797RhMWz7zRit5IBctyax2SkmCEMuvhjSxRFrtSmNAsNGMsTkwRdIgef0ccjO6IUGbhpK+TSatIbi6wFOMWgfl9GGYebJ9YAsIIecL9XpDUnNVuJ/JFZjv3/ScMm8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=naKQ+KNy; arc=fail smtp.client-ip=40.107.117.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rZgyVmNgmBfJ+7r3/AeKuDruuwGwjoo5+R/BipKBUnRqoISC3LRFlOwQcSpj0tIYx+gO1KY8+3ABMMmH41b8U43Rl9eI80x7BiDy3SnxQQV4XEF4vGxEVZGO31SSX1UruaCjxIJ3RZAAJKWcDLsTklvglaM9D3qLc/4qyCHcrEEfMwfdFqYl4dQTs/FQcrhY3j8AEvYTdPpHltPNixXEzdITdclg5H85nfmGzeih0f9g7Ykokm1dYqF8b43YxkRm+g8HyGTkhnoiJed/g87VEruCr8toUFeC9Zedxy5RsM0unV4Mr5fA1BHLSJuX18DBVEEYkwPjReBxJfEDjb5ltw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/598dfLJPy+7sPDqd8Q4BZGjCDpXKKLbaoHLDkGjkWk=;
- b=fYMiaqLP7sJ1DLz5VqnH3vnk7asm2w4OzLIpoFGCCrZ2MJ/i0FhpSpCSIH/1e80Odhw+R7fG0pgVMkQToQqvM+ShtBB8C8tAHacufswwI3JT2PZoGFep7Z49ts2jlsjCrxtAkdv0ptmrnOea725LIMiGC0Sx+Sj4YJS37nxnPdRff5D71agIyuNGpG+dJdQ+lm/WMHxIkXw8TDyjHzTMRplW4B33mO6fl3LVWYFgfatF54FZGrXRGZ3y1ZSh3WvNX7ea6ZBAxbTO3dTbxTtqruHnMCItddAG5bpD+Q79CvluX6vfbt/DOkF40FL22TuJBQA/QzKyszInNJ7/yyLgug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/598dfLJPy+7sPDqd8Q4BZGjCDpXKKLbaoHLDkGjkWk=;
- b=naKQ+KNy7lB0LmMIhSQv4chHha5Q13OASrIPMSfOm1cQsAujAEVXRVflXIRnrWeBQGUGdLU5B1vJr1Mg3npqRDTmIGy7zsvG5gSyfkaWr4wAtbOi4AK/ZASf7Jceux2P2UXHyrLBA+KCy7S5Z16PdIKb4wk+8k9LzUlB+ECv3+yCkHMq82QHZTZhKpFG+dCqR7kpRVp/dpmvJ66K95VIw1QbQESVc85GTKgVJE+Yeb+GjoOmBjY8niQqsvAKi5XcF5Tg7lqjcoiCYC9CnU3WT0x9ZoDJiMGYomxQJ9/VIYt6Z0SsI/Nctlplmb0Vijf5HJy1spcoieQZjPmt0gVIiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by JH0PR06MB6917.apcprd06.prod.outlook.com (2603:1096:990:67::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
- 2024 03:43:49 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%4]) with mapi id 15.20.7962.016; Wed, 11 Sep 2024
- 03:43:48 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Wu Bo <wubo.oduw@gmail.com>,
-	Wu Bo <bo.wu@vivo.com>
-Subject: [PATCH v2 13/13] f2fs: implement inline tail forward recovery
-Date: Tue, 10 Sep 2024 21:57:26 -0600
-Message-Id: <57e1dbb2f348ab61cbc82be7161d788a08b5fbed.1726024117.git.bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1726024116.git.bo.wu@vivo.com>
-References: <cover.1726024116.git.bo.wu@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:196::7) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112A941A84
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726027193; cv=none; b=EcdqJ9eo7UU5ibxBXaE1jRC3wFFs1VIxBpNdAGS9mYlbIpuzXhbrhB7jOEQ7qmy8KrpIeuMNU/FYbtLJqb4xtDnhb+MEU5q7M6u0Ml70hR/pphCOznDFSGkqmE2VIlaATvMPUAwu/5DkWMvGI7bgjDepYKoVSPoJjK+5KRmsw+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726027193; c=relaxed/simple;
+	bh=BkyVuy1DMd0+0Cu+W+kguPMC7bkjS+tU1h91mwd6p6c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=q88PhB/BSo5mUhJO3KZs7E0PqAJ+9vPsJ/yX5ot80yBbv44go3tyP/hS/cdKVLmPkQ04b6GDuf+VwUSL5SnY8Y3Tv3Gb6phyJP7kvoWdHIDg/wxoFujiLGGWJMqC+wGMECiQqhs+U5TZLMd+8ECXf4S1oA3WS0HATnj2U2BLQ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KpDu5ZV9; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726027188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rVMSz+tjhgWrKdhLZpdeKygpDaIpjPruMKweWTEuyWk=;
+	b=KpDu5ZV9l3F7vfbVU9PxqXAgjsTcEso1SQXpi9ySPHEZk4QAUb8LLDkBSO5O9G+0eZFNcg
+	WIScGNeBNOrsm+pYEAVKClfa4OHD8YO2EU/kc/D8muV8YfwVQOU5YGAenA2iut1VDQ2zYz
+	ADusUoZz62W4mDxWKScOcp/CBv4RwAg=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|JH0PR06MB6917:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0af2ed3b-d4ad-4a41-ebcf-08dcd213f211
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9Z14hrNdP5kQoHyEezs+IzxGoUduxWny3QmImpxu37CjUxFzwDFIq43eGACg?=
- =?us-ascii?Q?BQS+s2B0NeyYlQNgN6+CWzuud5DNB+aHR5FqXS7btXAZdQ43Um9JNzM5aWH5?=
- =?us-ascii?Q?zabBZyW191jYq9rpctpkgn6CEX+bbbJr3sbcrG09uYT3/hm8OLyzvOhWlVqE?=
- =?us-ascii?Q?rDp/o3AvVhSJD85x5fLa3KJwR0Z+a6iKdFQfvd07dFL5qqX8spw0anMcuxB/?=
- =?us-ascii?Q?0tS9Feem8Rb1X2LPttuxJc34RD+6K0B5vshm8RX6noF4Kkhffsuyv6N8pLPn?=
- =?us-ascii?Q?9o2ShU9DrVwbQB8ofAnOGGV+WkKVzRaH8X2gKeUN34HHlv9LajxqNNXCG6Zw?=
- =?us-ascii?Q?CCp0ugyH/gBbCXc487Vi6CQ5geeXHEROwZkGCVutDDt8h9/W/1CVlpMxWlIW?=
- =?us-ascii?Q?HwyTsikDZqSj8ExjieVY7JHHGAIjFzI/W751VNcKHlRw/IC1djU1P7Oh20qQ?=
- =?us-ascii?Q?CRY8Mcnnprygwk2eDXee3i2+AZ3k0TX0XB8Qznm+3QFrwlZZ2c34SHPkiiUl?=
- =?us-ascii?Q?YktcDJ4rsYeKFuov4sDsblBJbJ4p+SwbzuUjXbPdpDDlxj+T4jXjiBV3EBwA?=
- =?us-ascii?Q?3z9TcFfcTe7ZQY214KgIiPVc/JnFk2GzfKa7npTMfhDKJbyf7OM8iiXmNcyW?=
- =?us-ascii?Q?ykPD5rp9jhnsTmNR+Lx0vv9HEYtOgvfIKlNf3U+MAeMV079e720TfN+laWzx?=
- =?us-ascii?Q?p15TR1ERnsqlVSjpInvBanNll+jC+qGnzR9bfQ+Ni1n45pLndzS9BFUXh8dH?=
- =?us-ascii?Q?RiRda4sjpuuo3kSfbPpGG9ZfHzbtPEiVm5OWeLtCc51tfXU20Ark6K+P9SEA?=
- =?us-ascii?Q?MeGQ0IjTpPq6+F5tzOT37zjYagmBSWL4X2bnVtArwr0BMvOwhrtxGTM+Bg4p?=
- =?us-ascii?Q?jHp6mZtceoFzzcboA+cYLSBoXAkdoSPFtaYQoga7CMR/YbtzHydo5yo+vjp5?=
- =?us-ascii?Q?HvsxXgZmOYuCK1kJfMQ1vdqxbwCvm4yW6gmnZog6A4lZu4u7B4jt9MuouXMv?=
- =?us-ascii?Q?JZ2WG9iPPRnhbVKFOoAGzmjBYCJlTrttNQ158/vMCcOlND8o9yzxvKHwnPmL?=
- =?us-ascii?Q?3iHsXuq0M5jM9BPia5OyX2xfScEqILKaqYatfgjbfkp35/SK8yMvdGr4NUoW?=
- =?us-ascii?Q?YJ+ZPtgvKC/mHE1Ihnk4iVmPdsRummNWDnYvHjkwwaimOFOULiowv8Gt1RUv?=
- =?us-ascii?Q?psdAmcU1gmLWvvS+gSKv0GG84CuyOvA3ged6jQzmlPF1ulHyR+oyYa5Tcgwq?=
- =?us-ascii?Q?R5jK4Z2l4ShGmBHrKyJ1WdG7l/whGDyah/0a26ZqBmx3kDFFapInAR+mZt7u?=
- =?us-ascii?Q?zIRfsU7xzRfAVm66mMAplS7NRVJ/ybo6GBon8W8lJzbsOnZOURhsHRl0HCgF?=
- =?us-ascii?Q?wGTxIo0wkl+YpNoXDOZ7QD6lchZXIn/WW554dpKMoPlctk2Mmw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?czu8XGCwmSm2Vv/o6eGzVGOBRlIrmCGFMpH9UlB2aebllBZLndqvOPBifXLm?=
- =?us-ascii?Q?DO/EnS7orxqGh+0Iu0NHNHirHpYxkpyLyGv70qP0orcePqX3dF+LSX3fbsJd?=
- =?us-ascii?Q?v57yfEXkKIguKQ9+7VXRjJaFVzYZ5yMFTJk8ExcbdgdeMkbRufKsoMF+6TbQ?=
- =?us-ascii?Q?pw1pmnBiBWDlBtSKhK/f76DNmdIl+JpWcDhSP8SGI57MwvCetRAJH4AS5miC?=
- =?us-ascii?Q?LE0H7NSrQhMhBRI+fj9PrrlL3KaOIkA1/5ZwguzoY4AuxKHr/QoQuV+6GwQW?=
- =?us-ascii?Q?unINca7mxCKXgKf0xGkz+QWOldVoSTvyS2YY6/PWt5zjztqoj9+LIPlpGsjK?=
- =?us-ascii?Q?kjZ5TyXZPWBmj1V+8gKDbkaRdjZpIQMCYvCAoiT1h0kR4zljymy6NgCoczES?=
- =?us-ascii?Q?fzMRL3tsSlsB7wM7oM/R66HXZjyjA5/COprsw5ZOdIobD6qSTRb3lD1erzY4?=
- =?us-ascii?Q?0xrRLYcO2asgKYu5Q4Uz4W7PCc3otQxIfb3hKX55+0ydPSlRG4GSJBpzaXNA?=
- =?us-ascii?Q?1TmgpuGyD6WcznCd6y7mrto7ionLO/MvaSj/pUO+1PLMVxqSGP/vyJqZbviK?=
- =?us-ascii?Q?KB3hRHLjuKmbPBshBP50nffmQ/O/u7S+6NO/OaBHD2Dn8uEFxM1qvhxYN9zi?=
- =?us-ascii?Q?cgf2AZ9dpTmgQYqvSGEM6nVU+ucwL3VNL3Ui9y9rLIo24xt3vJKW+1gAI4FO?=
- =?us-ascii?Q?6EdqfHoFjtMZMN1m6TEMf/PIilE75RqxN/lmolx5yYOgH81DGdMXFegE0Uet?=
- =?us-ascii?Q?v+cgn6qk9rq7DV9qJkP9sDzitz5qq1lpj+L0PXRj3qEe/MRW85YqxPVZkEWV?=
- =?us-ascii?Q?XK66r6vTRcAcPAPm2/+bCjartrAh6JSdajPpZKJHO4JAGxwr+IWBRGu8RuR5?=
- =?us-ascii?Q?tC/30eeI3GAMOMFh6MjjuZFbIHe9WcO1sb9EskH90ejgcxJlacCnd5yYCF9J?=
- =?us-ascii?Q?HPHSXK4DaV4V1J51we5+Q8uOMNkboOuKLuW1heFlvSFar05ZeALZebTbSLhr?=
- =?us-ascii?Q?x2Px86NZmcNzVx8OHPeYzN8PlHDwQa53fzmn4KQORKfWz/UyTTUrV0yOfPgP?=
- =?us-ascii?Q?wr8XPUm0IGVPRBHPip6FyaEoqajX9I8ycS2hYRbWHrhNvRT+auy0izB/dH+r?=
- =?us-ascii?Q?7dO3bamKhFRlyqI1D1FXn0erT3K71N4pBXu2SE1yExPrK6Pb3ngKYgMrTefE?=
- =?us-ascii?Q?9Z71jHRcq/engCXv0h9j4Kx9suLhHR2h6pthqOSxsMRGxqXs1stBwcQt0qov?=
- =?us-ascii?Q?GG0mOhXzqmeVmlCvQoVC/fn01/ICF9f7JsHOtkX4znVUXKBrwclfP0nHjCKN?=
- =?us-ascii?Q?nEZhdjn5eu0NAG+sDF9NOX93rZBOfeNYvPHb+EFsqVIFeAvt2MDmQmgl8Knq?=
- =?us-ascii?Q?FPGNcUCya+o2hCsKYRP1SlaHW1MZ2GjFzy5J5IBgaKOAfmxkUkhBZ//hFPiF?=
- =?us-ascii?Q?wvXxopX31i1H3p/3L7Nyj0KX06QdEQryHJVcZnFBDaukSyjtH0OCROH3mQ9y?=
- =?us-ascii?Q?TYRte7Q5h8qzSMg0AW9rsOV/j1Fs356z2NNAkQOSGllYu4P9SbWoAXHhzeAG?=
- =?us-ascii?Q?2awPX4e/UtSyrrW97vIjij/PLK+c/h43O2AW4BF6?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0af2ed3b-d4ad-4a41-ebcf-08dcd213f211
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 03:43:48.8654
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ACRkSFC6+7TSsZkqWtLOu+LTU7rH5+DjtfkV7Twz8OuLjsTuOAU/02b8CU8gwllDyEB5bu3pQLzvihpVBeEl0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6917
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v2 2/3] block: fix ordering between checking
+ QUEUE_FLAG_QUIESCED and adding requests
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <ZuEUiScRwuXgIrC0@fedora>
+Date: Wed, 11 Sep 2024 11:59:08 +0800
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Muchun Song <songmuchun@bytedance.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AA8B604C-4CE6-435F-8D95-1E6B88EB2B68@linux.dev>
+References: <20240903081653.65613-1-songmuchun@bytedance.com>
+ <20240903081653.65613-3-songmuchun@bytedance.com>
+ <91ce06c7-6965-4d1d-8ed4-d0a6f01acecf@kernel.dk> <ZuEUiScRwuXgIrC0@fedora>
+To: Ming Lei <ming.lei@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-The recovery logic is similar to that of inline data, except that the
-inline tail may require recovery of some blocks. This is because the
-inline tail has a 16-size block address array, whereas inline data does
-not.
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- fs/f2fs/f2fs.h     |  1 +
- fs/f2fs/inline.c   | 51 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/recovery.c |  9 +++++++-
- 3 files changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f889d97209c7..7d5348e2127b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4217,6 +4217,7 @@ int f2fs_clear_inline_tail(struct inode *inode, bool force);
- int f2fs_try_convert_inline_dir(struct inode *dir, struct dentry *dentry);
- int f2fs_write_inline_data(struct inode *inode, struct page *page);
- int f2fs_recover_inline_data(struct inode *inode, struct page *npage);
-+int f2fs_recover_inline_tail(struct inode *inode, struct page *npage);
- struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
- 					const struct f2fs_filename *fname,
- 					struct page **res_page);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index c2f84f3dde67..76e0ff62be51 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -414,6 +414,57 @@ int f2fs_recover_inline_data(struct inode *inode, struct page *npage)
- 	return 0;
- }
- 
-+int f2fs_recover_inline_tail(struct inode *inode, struct page *npage)
+> On Sep 11, 2024, at 11:54, Ming Lei <ming.lei@redhat.com> wrote:
+>=20
+> On Tue, Sep 10, 2024 at 07:22:16AM -0600, Jens Axboe wrote:
+>> On 9/3/24 2:16 AM, Muchun Song wrote:
+>>> Supposing the following scenario.
+>>>=20
+>>> CPU0                                        CPU1
+>>>=20
+>>> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
+>>> blk_mq_run_hw_queue()                       =
+blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
+>>>    if (blk_queue_quiesced())   2) load         =
+blk_mq_run_hw_queues()
+>>>        return                                      =
+blk_mq_run_hw_queue()
+>>>    blk_mq_sched_dispatch_requests()                    if =
+(!blk_mq_hctx_has_pending()) 4) load
+>>>                                                           return
+>>>=20
+>>> The full memory barrier should be inserted between 1) and 2), as =
+well as
+>>> between 3) and 4) to make sure that either CPU0 sees =
+QUEUE_FLAG_QUIESCED is
+>>> cleared or CPU1 sees dispatch list or setting of bitmap of software =
+queue.
+>>> Otherwise, either CPU will not re-run the hardware queue causing =
+starvation.
+>>>=20
+>>> So the first solution is to 1) add a pair of memory barrier to fix =
+the
+>>> problem, another solution is to 2) use hctx->queue->queue_lock to =
+synchronize
+>>> QUEUE_FLAG_QUIESCED. Here, we chose 2) to fix it since memory =
+barrier is not
+>>> easy to be maintained.
+>>=20
+>> Same comment here, 72-74 chars wide please.
+>>=20
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index b2d0f22de0c7f..ac39f2a346a52 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -2202,6 +2202,24 @@ void blk_mq_delay_run_hw_queue(struct =
+blk_mq_hw_ctx *hctx, unsigned long msecs)
+>>> }
+>>> EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
+>>>=20
+>>> +static inline bool blk_mq_hw_queue_need_run(struct blk_mq_hw_ctx =
+*hctx)
+>>> +{
+>>> + 	bool need_run;
+>>> +
+>>> + 	/*
+>>> + 	 * When queue is quiesced, we may be switching io scheduler, or
+>>> + 	 * updating nr_hw_queues, or other things, and we can't run =
+queue
+>>> + 	 * any more, even blk_mq_hctx_has_pending() can't be called =
+safely.
+>>> + 	 *
+>>> + 	 * And queue will be rerun in blk_mq_unquiesce_queue() if it is
+>>> + 	 * quiesced.
+>>> + 	 */
+>>> + 	__blk_mq_run_dispatch_ops(hctx->queue, false,
+>>> +				  need_run =3D =
+!blk_queue_quiesced(hctx->queue) &&
+>>> + 				  blk_mq_hctx_has_pending(hctx));
+>>> + 	return need_run;
+>>> +}
+>>=20
+>> This __blk_mq_run_dispatch_ops() is also way too wide, why didn't you
+>> just break it like where you copied it from?
+>>=20
+>>> +
+>>> /**
+>>>  * blk_mq_run_hw_queue - Start to run a hardware queue.
+>>>  * @hctx: Pointer to the hardware queue to run.
+>>> @@ -2222,20 +2240,23 @@ void blk_mq_run_hw_queue(struct =
+blk_mq_hw_ctx *hctx, bool async)
+>>>=20
+>>> might_sleep_if(!async && hctx->flags & BLK_MQ_F_BLOCKING);
+>>>=20
+>>> - 	/*
+>>> - 	 * When queue is quiesced, we may be switching io scheduler, or
+>>> - 	 * updating nr_hw_queues, or other things, and we can't run =
+queue
+>>> - 	 * any more, even __blk_mq_hctx_has_pending() can't be called =
+safely.
+>>> - 	 *
+>>> - 	 * And queue will be rerun in blk_mq_unquiesce_queue() if it is
+>>> - 	 * quiesced.
+>>> - 	 */
+>>> - 	__blk_mq_run_dispatch_ops(hctx->queue, false,
+>>> - 		need_run =3D !blk_queue_quiesced(hctx->queue) &&
+>>> - 		blk_mq_hctx_has_pending(hctx));
+>>> + 	need_run =3D blk_mq_hw_queue_need_run(hctx);
+>>> + 	if (!need_run) {
+>>> + 		unsigned long flags;
+>>>=20
+>>> - 	if (!need_run)
+>>> - 		return;
+>>> + 	/*
+>>> + 	 * synchronize with blk_mq_unquiesce_queue(), becuase we check
+>>> + 	 * if hw queue is quiesced locklessly above, we need the use
+>>> + 	 * ->queue_lock to make sure we see the up-to-date status to
+>>> + 	 * not miss rerunning the hw queue.
+>>> + 	 */
+>>> + 	spin_lock_irqsave(&hctx->queue->queue_lock, flags);
+>>> + 	need_run =3D blk_mq_hw_queue_need_run(hctx);
+>>> + 	spin_unlock_irqrestore(&hctx->queue->queue_lock, flags);
+>>> +
+>>> + 	if (!need_run)
+>>> + 		return;
+>>> + 	}
+>>=20
+>> Is this not solvable on the unquiesce side instead? It's rather a =
+shame
+>> to add overhead to the fast path to avoid a race with something =
+that's
+>> super unlikely, like quisce.
+>=20
+> Yeah, it can be solved by adding synchronize_rcu()/srcu() in unquiesce
+> side, but SCSI may call it in non-sleepable context via =
+scsi_internal_device_unblock_nowait().
+
+Another approach will be like the fix for BLK_MQ_S_STOPPED (in patch 3),
+we could add a pair of mb into blk_queue_quiesced() and
+blk_mq_unquiesce_queue(). In which case, the fix will not affect any =
+fast
+path, only slow path need the barrier overhead.
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index b2d0f22de0c7f..45588ddb08d6b 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -264,6 +264,12 @@ void blk_mq_unquiesce_queue(struct request_queue =
+*q)
+                ;
+        } else if (!--q->quiesce_depth) {
+                blk_queue_flag_clear(QUEUE_FLAG_QUIESCED, q);
++               /*
++                * Pairs with the smp_mb() in blk_queue_quiesced() to =
+order the
++                * clearing of QUEUE_FLAG_QUIESCED above and the =
+checking of
++                * dispatch list in the subsequent routine.
++                */
++               smp_mb__after_atomic();
+                run_queue =3D true;
+        }
+        spin_unlock_irqrestore(&q->queue_lock, flags);
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index b8196e219ac22..7a71462892b66 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -628,7 +628,25 @@ void blk_queue_flag_clear(unsigned int flag, struct =
+request_queue *q);
+ #define blk_noretry_request(rq) \
+        ((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
+                             REQ_FAILFAST_DRIVER))
+-#define blk_queue_quiesced(q)  test_bit(QUEUE_FLAG_QUIESCED, =
+&(q)->queue_flags)
++
++static inline bool blk_queue_quiesced(struct request_queue *q)
 +{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_inode *ri = NULL;
-+	void *src_addr, *dst_addr;
-+	struct page *ipage;
++       /* Fast path: hardware queue is unquiesced most of the time. */
++       if (likely(!test_bit(QUEUE_FLAG_QUIESCED, &q->queue_flags)))
++               return false;
 +
-+	if (IS_INODE(npage))
-+		ri = F2FS_INODE(npage);
++       /*
++        * This barrier is used to order adding of dispatch list before =
+and
++        * the test of QUEUE_FLAG_QUIESCED below. Pairs with the memory =
+barrier
++        * in blk_mq_unquiesce_queue() so that dispatch code could =
+either see
++        * QUEUE_FLAG_QUIESCED is cleared or dispatch list is not  empty =
+to
++        * avoid missing dispatching requests.
++        */
++       smp_mb();
 +
-+	if (f2fs_has_inline_tail(inode) &&
-+			ri && (le32_to_cpu(ri->i_flags) & F2FS_INLINE_TAIL)) {
-+process_inline:
-+		if (!(ri->i_inline & F2FS_DATA_EXIST))
-+			return 0;
-+
-+		ipage = f2fs_get_node_page(sbi, inode->i_ino);
-+		if (IS_ERR(ipage))
-+			return PTR_ERR(ipage);
-+
-+		f2fs_wait_on_page_writeback(ipage, NODE, true, true);
-+
-+		src_addr = inline_data_addr(inode, npage);
-+		dst_addr = inline_data_addr(inode, ipage);
-+		memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
-+
-+		set_inode_flag(inode, FI_DATA_EXIST);
-+
-+		set_page_dirty(ipage);
-+		f2fs_put_page(ipage, 1);
-+		return 0;
-+	}
-+
-+	if (f2fs_has_inline_tail(inode)) {
-+		ipage = f2fs_get_node_page(sbi, inode->i_ino);
-+		if (IS_ERR(ipage))
-+			return PTR_ERR(ipage);
-+		f2fs_truncate_inline_inode(inode, ipage, 0);
-+		clear_inode_flag(inode, FI_INLINE_TAIL);
-+		f2fs_put_page(ipage, 1);
-+	} else if (ri && (le32_to_cpu(ri->i_inline) & F2FS_INLINE_TAIL)) {
-+		int ret;
-+
-+		ret = f2fs_truncate_blocks(inode,
-+				COMPACT_ADDRS_PER_INODE >> PAGE_SHIFT, false);
-+		if (ret)
-+			return ret;
-+		goto process_inline;
-+	}
-+	return 0;
++       return test_bit(QUEUE_FLAG_QUIESCED, &q->queue_flags);
 +}
- struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
- 					const struct f2fs_filename *fname,
- 					struct page **res_page)
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 9756f0f2b7f7..d73a557b82d9 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -645,9 +645,16 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto out;
- 	}
- 
-+	err = f2fs_recover_inline_tail(inode, page);
-+	if (err)
-+		goto out;
 +
- 	/* step 3: recover data indices */
- 	start = f2fs_start_bidx_of_node(ofs_of_node(page), inode);
--	end = start + ADDRS_PER_PAGE(page, inode);
-+	if (f2fs_has_inline_tail(inode))
-+		end = COMPACT_ADDRS_PER_INODE;
-+	else
-+		end = start + ADDRS_PER_PAGE(page, inode);
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- retry_dn:
--- 
-2.35.3
+ #define blk_queue_pm_only(q)   atomic_read(&(q)->pm_only)
+ #define blk_queue_registered(q)        test_bit(QUEUE_FLAG_REGISTERED, =
+&(q)->queue_flags)
+ #define blk_queue_sq_sched(q)  test_bit(QUEUE_FLAG_SQ_SCHED, =
+&(q)->queue_flags)
+
+Muchun,
+Thanks.
+
+>=20
+>=20
+> Thanks,
+> Ming
+
 
 
