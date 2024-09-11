@@ -1,85 +1,76 @@
-Return-Path: <linux-kernel+bounces-325392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119B6975916
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:12:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E20C975919
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB772889A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:12:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A123B21E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B07C1B29C9;
-	Wed, 11 Sep 2024 17:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5821B29C2;
+	Wed, 11 Sep 2024 17:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpnFAkMA"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QZEcnn40";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="b2ySp0oM"
+Received: from a7-47.smtp-out.eu-west-1.amazonses.com (a7-47.smtp-out.eu-west-1.amazonses.com [54.240.7.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C56742A94;
-	Wed, 11 Sep 2024 17:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51642A94;
+	Wed, 11 Sep 2024 17:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726074736; cv=none; b=SOAFWVWNKSlPnAw1QJDLNGb5K49TbvG2JxX/9+b6J9N+hgMhRWrWESipLxWQdX+wl+aUgoeVOxcdA3dUkLOpaMKERjmqvAfwTh4+0StWeoTATyw4rYRKocnYTWckuWtPzJn2ZAjaXBpgqHn/4lf3Gu+q+gtCPbDYa2GTtpVk1NU=
+	t=1726074782; cv=none; b=XIiyOtpN6aeOPdQbyOhTC9Pu15Qdi57DPjh0pH1Vtpy7DFm8KZhYPftHxD8XnsHb5B4l0VaVCxXbD43fsIu727HDPYztmtn3PmEY1RTHqS6U3EvyyRG9VJwYwokrtkQrnzDb83lKgdEKOC7tiPtJY0QTZ4bGizPVYlwcBBn0qAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726074736; c=relaxed/simple;
-	bh=28aqfpBmczL2qL3N4PcWXgfXmd+sa3neIRFO5MVhRbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NjT7pzZt8LkfjRBXOAGwlewanlcn8xP8v6qb3KS1Qpo8SG0VUzk/zQRTxOu3tH+t5/8ZY9fYc082qgROIhBPqsqjZw/n5G1hMK/36UxCjtH3sLlRlfZGk6GtCTdYaGU0ni9lWpODC98ZD9NcGPoMEgI/ersPLzhOfOMF/wvR8IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpnFAkMA; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7db19de6346so72166a12.2;
-        Wed, 11 Sep 2024 10:12:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726074734; x=1726679534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x6xlgjjvIv4Tu6d6E5+S2TBi3KJntXgaOfCvHBzY5Ik=;
-        b=CpnFAkMA6CdmnbRE17RdZCFNmnwFkPCCS+pKk/QgP8RFJ8n/KCB4WOAC6AjcBL/YBL
-         wmyeD6ExuWpcUtcYHdQIjmISmOyxCp7llOkV9zv+b+GNlW7xSk/wqqoF29B8//FJPDKg
-         +Fd/OgGi0hUD/pAFMRQKv+2KY8BXaBwJtitdZltRqCLq5sD78aKk2LvSA5ZG1/aKfudg
-         Wh7bXCHsMlUfVguvcwHt48NvXTSfZlXNAxeeeZroMdc8800kbPveQYh6wpoe/3o0b8Vs
-         FkrVIWV+5yqStx+xxOV0aAXJYbtxTPC68zUv8Egg5aNXyRcGNEDj4GQjGDD7hFp5Fap8
-         wpXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726074734; x=1726679534;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x6xlgjjvIv4Tu6d6E5+S2TBi3KJntXgaOfCvHBzY5Ik=;
-        b=wPvbv6nAYo0yDpZpja4FFGDylEn8YlJmO8cC/G6+YIob2EGvjwRdw2b0aEYsXa3ov1
-         mnxyQ91ShGNWDzkti6xSkfsfZFWTebfBW/SMgfNOwK7wq68To9NleSTeQ/t0Pi9kUc1Z
-         NCss++wJZgBGsVhkWyVN3UvnjtPAmKaLz2Of/ilnBDtUqG81s0oJmVUuc/9auSkJBRf/
-         K+vMCOjNdhjSuwemnFZ8G1tU7gRRGKhBNMxqPIoqoT2IHdUeSBZb0pOJr0eidtPdmhrj
-         udjXuQSXZa573Pyd2gUkUwEpzeE1K16FGETlZpjo1qncM5zFs3yxmlPytOc+ijGMntPw
-         lqrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa97xYqYOoTFIeXHzMia3D6RTbWRTkblKbjEl+IaeER9nLWQz6meKjUzyqt8YFke6noKhrQVDdLLCx/w==@vger.kernel.org, AJvYcCVxAXB7apKZPa/Vfm4X8bcnki/M51gCBOpUbOJOF13+ObK+K/CIt85yIoARhoU7Ooh+2A87j0zM9/BWOys=@vger.kernel.org, AJvYcCXFhY1oaITDOUPTnXJcxVe5dTxmQqu/wa0NqQxABlslT48iSpVQ350UkQ5vhQlOm7LDktzhKxPBrErb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+vL7XZ+CO11fiGAPUKKTJSBEO6AV2pshgd1qR6k/7TjSthpf2
-	ITMRJ8BUtJ1sCbSBKjHTAg/+cCbXV07cqAyGpZ2+IOS+d6OMgx/k
-X-Google-Smtp-Source: AGHT+IEd9DUYp7cewHHHvNv74waHQ4dQOFb6ONOUbfu4/MofpupHbJr5iv8/iTXTvi/uirT/M2eDAw==
-X-Received: by 2002:a05:6a21:e8f:b0:1cf:513f:f1cb with SMTP id adf61e73a8af0-1cf5e03398amr7177453637.4.1726074734275;
-        Wed, 11 Sep 2024 10:12:14 -0700 (PDT)
-Received: from fedora.. ([106.219.162.154])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c9b08sm3193102b3a.207.2024.09.11.10.12.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 10:12:13 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: vigneshr@ti.com,
-	s-vadapalli@ti.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com
-Cc: kishon@kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] PCI: dra7xx: Added error handling in probe function when devm_phy_get() fails
-Date: Wed, 11 Sep 2024 22:41:13 +0530
-Message-ID: <20240911171112.46322-2-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726074782; c=relaxed/simple;
+	bh=pY0QRPVSLQyOqdQm02m89lv3jyiXKxLhfdk4Z8VM6Bw=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eEr+v615GiY6KLVlOxoT4+XDo0aGJpmCA4O7IznV/RiSwyrFIZKPt2WDaFsdzw97ddANdnerI1uzkv9fJ9q+bqunYUIm3tmzh2gZy8+tn3ViM6paxpjW4rxTr5qjHzt+BunntT7Sg8DDMUm2v4k5SOfX59hi8q1iOE6xbcYUlOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QZEcnn40; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=b2ySp0oM; arc=none smtp.client-ip=54.240.7.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726074778;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding;
+	bh=pY0QRPVSLQyOqdQm02m89lv3jyiXKxLhfdk4Z8VM6Bw=;
+	b=QZEcnn40Vic/RkCuKPK1LG0d6+2GuxUxCMAWug1hgjltjiYHADj0ghfZksJMnMDL
+	IJvLsFkz9sL8HoP9cODS7qS14KAqFJac562uZTfUlM0/ZZpGF6neLiZ0tmob0OJWY3F
+	br78oKlouu2tqs/+sG4Efwv5tBXFsyR514Or8x8WF7lu+9tp0+Sf295BZkuEZzLugQE
+	hHRtuarJn5X8YJnAQUhnewL89juib8revxHIMQl5gC9IbPzsgFQl5XFKlChDNvBuuv7
+	SANobzIsm2KmlwrNQgedxZw2NnkkAqH2lkHmkqP0Ltoa83zcIB0YxHY1A+NDpEdGuAN
+	MPxOjL+vWQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726074778;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=pY0QRPVSLQyOqdQm02m89lv3jyiXKxLhfdk4Z8VM6Bw=;
+	b=b2ySp0oMmFJFKJq7Jl6wf2M2Ckz6imfBUfVim+b/0UtAfSFAE1gIJarN2FetMmak
+	mrfInnzCURLnBrkMbbwofS+JLMNP2Vcwn10l+LS3K6qaJqzpNjGR0Q9csvYNQF3eZK8
+	Nwchwv0b6nSixvqBReKBO5PtEqgZEhg7LrXyXRRs=
+Message-ID: <01020191e212f333-703af7d0-fc68-4f47-b55c-6c0c3de6708a-000000@eu-west-1.amazonses.com>
+Subject: Re: [PATCH 1/2] media: uapi: add WebP VP8 frame flag
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Fritz Koenig <frkoenig@chromium.org>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, 
+	Andrzej Pietrasiewicz <andrzej.p@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Wed, 11 Sep 2024 17:12:58 +0000
+In-Reply-To: <20240911135011.161217-2-hugues.fruchet@foss.st.com>
+References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
+	 <20240911135011.161217-2-hugues.fruchet@foss.st.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,36 +78,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.47
 
-While creation of device link, if devm_phy_get() function fails then it directly
-returns PTR_ERR without any cleanup of previous added device links.
-Added goto statement when devm_phy_get() fails, to handle the cleanup of already
-added device links.
+Hi Hugues,
 
-Fixes: 7a4db656a635 (PCI: dra7xx: Create functional dependency between PCIe and PHY)
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- drivers/pci/controller/dwc/pci-dra7xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
+> Add a flag indicating that VP8 bitstream is a WebP picture.
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 4fe3b0cb72ec..c329d107b811 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -762,8 +762,10 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
- 	for (i = 0; i < phy_count; i++) {
- 		snprintf(name, sizeof(name), "pcie-phy%d", i);
- 		phy[i] = devm_phy_get(dev, name);
--		if (IS_ERR(phy[i]))
--			return PTR_ERR(phy[i]);
-+		if (IS_ERR(phy[i])) {
-+			ret = PTR_ERR(phy[i]);
-+			goto err_link;
-+		}
- 
- 		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
- 		if (!link[i]) {
--- 
-2.46.0
+Sounds like there should be some code changes in GStreamer that you haven't
+disclosed. Mind sharing how this new uAPI is used ? I would also expect this
+commit message to give more insight on what is special about WebP that makes
+this flag required.
+
+I would also need some more API or documentation that explain how we can
+differentiate a upstream decoder that is capable of WebP decoding from one that
+does not. I wonder if it would not have been better to define a new format ?
+That being said, I haven't looked at all in the specification and only rely on
+your cover letter and patch series.
+
+Nicolas
+
+> 
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+> ---
+>  .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst      | 3 +++
+>  include/uapi/linux/v4l2-controls.h                             | 1 +
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> index 0da635691fdc..bb08aacddc9c 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+> @@ -1062,6 +1062,9 @@ FWHT Flags
+>      * - ``V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT``
+>        - 0x20
+>        - Sign of motion vectors when the alt frame is referenced.
+> +    * - ``V4L2_VP8_FRAME_FLAG_WEBP``
+> +      - 0x40
+> +      - Indicates that this frame is a WebP picture.
+>  
+>  .. c:type:: v4l2_vp8_entropy_coder_state
+>  
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 974fd254e573..e41b62f2cb2b 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1897,6 +1897,7 @@ struct v4l2_vp8_entropy_coder_state {
+>  #define V4L2_VP8_FRAME_FLAG_MB_NO_SKIP_COEFF	0x08
+>  #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_GOLDEN	0x10
+>  #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT	0x20
+> +#define V4L2_VP8_FRAME_FLAG_WEBP		0x40
+>  
+>  #define V4L2_VP8_FRAME_IS_KEY_FRAME(hdr) \
+>  	(!!((hdr)->flags & V4L2_VP8_FRAME_FLAG_KEY_FRAME))
 
 
