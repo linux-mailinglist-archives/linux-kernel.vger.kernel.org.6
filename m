@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-324377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2B4974BCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:48:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04361974BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA87B1F252E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374561C20898
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CB213D24C;
-	Wed, 11 Sep 2024 07:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E7913CFA1;
+	Wed, 11 Sep 2024 07:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gfcRmcKY";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="RDLkUYag"
-Received: from a7-50.smtp-out.eu-west-1.amazonses.com (a7-50.smtp-out.eu-west-1.amazonses.com [54.240.7.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uq34vW2h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E643CF6A;
-	Wed, 11 Sep 2024 07:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D945413A3F7;
+	Wed, 11 Sep 2024 07:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040926; cv=none; b=ojldZwouTfU6+Ett5POlw2sYYM43cY7QSF0W4DVqC1dxE85KtkgSlfB7J/s0lHJYGePvON27KN0cnE3S+cUHhavKe/E3VS6JQtHvtaUBKfFLO39Pzmgjp8XHP1FP6EmQGf/grEnYvBU2qPIkIi2mXhHolzkP9QGak/HTEwY4aqM=
+	t=1726041068; cv=none; b=cX7LyZAayxSAt6CZIkGHLih4ewofHcOIw1mObeYXGnJlH3VBOuoyjoPInMPNGBvgOk1kpOGffo50FNXryRGqD6HpUKoqOlNCtXgluRDPIKbPAUCOX5EsKQeGabfOV422i1a8fo2Z3Tjk7yR5Kww1Il02qmp2XqT1dD4WrlrCR+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040926; c=relaxed/simple;
-	bh=QZzlqQNzP6BYEm08sf/8gxgY9/9MBXoce+m3v5e46j0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tWFKySraObtjrWc6Tq/Dw5/eN/Ag+n0etn3A/mwhMCb2bUJYkWEaLVD7kPPLzQ12HdHps8Cuvy+cgq0XgsxB10kAjCEkiQquqGpfYI6/LIl9jcNuchaRVJ4Yr7RUnz4eThM+7fGUXg9wWR1dZthafuaKroBJIg5V7JPECr1RKe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gfcRmcKY; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=RDLkUYag; arc=none smtp.client-ip=54.240.7.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726040923;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=QZzlqQNzP6BYEm08sf/8gxgY9/9MBXoce+m3v5e46j0=;
-	b=gfcRmcKYk3aOU2YHCJ25TmGLGGPFcwTda8Ww0AO37TqNNVawzTrs0xAmsfUVXhJA
-	ZBGKK32ivqrfeEIE8+yR+diNDPh/hJjaxCU+91M3J/Pzd1eoG9gGSzMXbCqyMq31lcU
-	KSdCkCY/9wcICn9NETKdxlU+Xv2i06lK7Bu771Rf0e5E1oKFuyxdRAGTDYnlZ3e5gVr
-	na2OSSW2KnodJ+770FZuDL06QQnaBNl2ymFaQvwZ8eJnGi9SxDp26Zy+WKssiuYPZsb
-	s3a0X/5JjZKFgZKpPegRRwafPGb9p2TGpSfmBqWr54x918d87c/Z0p8agfhcCea4p8Z
-	qfcNXzPhwA==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726040923;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=QZzlqQNzP6BYEm08sf/8gxgY9/9MBXoce+m3v5e46j0=;
-	b=RDLkUYag4BqylbV6bGcG3ja+A8yMKbhNBKS+SeADKME7joIpnFLoWZoKqX43xc9+
-	jKw7uq7tuAVEHI1k2WiH48RiICmWhGH7MQE67Hjx783UKE+3Ds3OAq5WDCPnG9xNYA5
-	XdqvToUObEA9msA3hnnqkCyCLaP1/yul5R4K+xGE=
-Message-ID: <01020191e00e5b01-2762c208-54d4-459f-b81f-b9cfbf9bd569-000000@eu-west-1.amazonses.com>
-Date: Wed, 11 Sep 2024 07:48:42 +0000
+	s=arc-20240116; t=1726041068; c=relaxed/simple;
+	bh=M9fkehi060zC3DImk/9ShDxtYwI5FbQzctu+1KRlBI8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=P0MNgeiDuFETdc+LO8gRC+xvnOzmRoY082x5ymeeBq9o8ht6jeawc18MDgZevDAzu89wQmzC206hFwrlLdEhLo2DVGyxGBus23qxvOjyZVyPD5dVFsb9EPpmLSZ044URydYbyjQ7bGtxY83sZZFdTV74vhHRhjibQ2oQ0GsIhiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uq34vW2h; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726041067; x=1757577067;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=M9fkehi060zC3DImk/9ShDxtYwI5FbQzctu+1KRlBI8=;
+  b=Uq34vW2h8VSCkk0u+4388hHLn2D6Q7hR+9kBq7rK8UW0kPc5vg5QaoPZ
+   gK6sCxuSzIcgKUBHDG4lUAsnlfjIijHDxd8do5/HMJMGgkScpmcxm76JS
+   wfs2LcdsCrJMrx8APcP4fs/e/B4XjiAGxsiH0lG/eE2fpwpR4cKgcZyPi
+   hzzX/31PxPFRKcGyT0qleyn5PTQaPtQxe1GOacsjlyVCyY1/z1FYV7e88
+   sV8fBLWZmIK2JpSoBEq2PiHJhX7Jajbabz5mFvQuCFIABik3jainYuIqY
+   ygWzv9QrD2hV+eiXUlkcCYPBS9Rd6xNKx0eoB687bWDr8XjzujdowziyK
+   w==;
+X-CSE-ConnectionGUID: xisnIQS7QG+coeuEwxIDfQ==
+X-CSE-MsgGUID: /I2CEtdKTLGYW1i8ORBeUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24761681"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="24761681"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 00:51:06 -0700
+X-CSE-ConnectionGUID: ajRXdtpPQNKqOYG+oecUHg==
+X-CSE-MsgGUID: cFStQAe4QEW8m1wuEEJ7DQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="66915156"
+Received: from lizhiqua-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 00:51:01 -0700
+Message-ID: <bf0a3891-f7b5-4a19-a86d-c115ab2d6b88@linux.intel.com>
+Date: Wed, 11 Sep 2024 15:50:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +66,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v2] usb: musb: mediatek: Simplify code with
- dev_err_probe()
-To: Lin Ruifeng <linruifeng4@huawei.com>, b-liu@ti.com, 
-	gregkh@linuxfoundation.org, matthias.bgg@gmail.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-References: <20240907081351.19879-1-linruifeng4@huawei.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@nvidia.com>,
+ "will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+ "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>,
+ "dwmw2@infradead.org" <dwmw2@infradead.org>,
+ "shuah@kernel.org" <shuah@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "eric.auger@redhat.com" <eric.auger@redhat.com>,
+ "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
+ "mdf@kernel.org" <mdf@kernel.org>, "mshavit@google.com"
+ <mshavit@google.com>,
+ "shameerali.kolothum.thodi@huawei.com"
+ <shameerali.kolothum.thodi@huawei.com>,
+ "smostafa@google.com" <smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>
+Subject: Re: [PATCH v2 17/19] iommu/arm-smmu-v3: Add
+ arm_smmu_viommu_cache_invalidate
+To: Nicolin Chen <nicolinc@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <4b61aba3bc6c1cce628d9db44d5b18ea567a8be1.1724776335.git.nicolinc@nvidia.com>
+ <20240905162039.GT1358970@nvidia.com> <Ztnx0c4BpGt6umrM@nvidia.com>
+ <20240905182148.GA1358970@nvidia.com>
+ <BL1PR11MB52712F4AAF7D1388A080A49E8C9B2@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <ZuFEx7mp3v0/lY/g@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20240907081351.19879-1-linruifeng4@huawei.com>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ZuFEx7mp3v0/lY/g@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.11-54.240.7.50
 
-Il 07/09/24 10:13, Lin Ruifeng ha scritto:
-> The combination of dev_err() and the returned error code could be
-> replaced by dev_err_probe() in driver's probe function.
- >
+On 2024/9/11 15:20, Nicolin Chen wrote:
+> On Wed, Sep 11, 2024 at 06:25:16AM +0000, Tian, Kevin wrote:
+>>> From: Jason Gunthorpe<jgg@nvidia.com>
+>>> Sent: Friday, September 6, 2024 2:22 AM
+>>>
+>>> On Thu, Sep 05, 2024 at 11:00:49AM -0700, Nicolin Chen wrote:
+>>>> On Thu, Sep 05, 2024 at 01:20:39PM -0300, Jason Gunthorpe wrote:
+>>>>> On Tue, Aug 27, 2024 at 09:59:54AM -0700, Nicolin Chen wrote:
+>>>>>
+>>>>>> +static int arm_smmu_viommu_cache_invalidate(struct
+>>> iommufd_viommu *viommu,
+>>>>>> +                                           struct iommu_user_data_array
+>>> *array)
+>>>>>> +{
+>>>>>> +       struct iommu_domain *domain =
+>>> iommufd_viommu_to_parent_domain(viommu);
+>>>>>> +
+>>>>>> +       return __arm_smmu_cache_invalidate_user(
+>>>>>> +                       to_smmu_domain(domain), viommu, array);
+>>>>> I'd like to have the viommu struct directly hold the VMID. The nested
+>>>>> parent should be sharable between multiple viommus, it doesn't make
+>>>>> any sense that it would hold the vmid.
+>>>>>
+>>>>> This is struggling because it is trying too hard to not have the
+>>>>> driver allocate the viommu, and I think we should just go ahead and do
+>>>>> that. Store the vmid, today copied from the nesting parent in the vmid
+>>>>> private struct. No need for iommufd_viommu_to_parent_domain(), just
+>>>>> rework the APIs to pass the vmid down not a domain.
+>>>> OK. When I designed all this stuff, we still haven't made mind
+>>>> about sharing the s2 domain, i.e. moving the VMID, which might
+>>>> need a couple of more patches to achieve.
+>>> Yes, many more patches, and don't try to do it now.. But we can copy
+>>> the vmid from the s2 and place it in the viommu struct during
+>>> allocation time.
+>>>
+>> does it assume that a viommu object cannot span multiple physical
+>> IOMMUs so there is only one vmid per viommu?
+> I think so. One the reasons of introducing vIOMMU is to maintain
+> the shareability across physical IOMMUs at the s2 HWPT_PAGING.
 
-> Let's,
-> converting to dev_err_probe() to make code more simple.
+My understanding of VMID is something like domain id in x86 arch's. Is
+my understanding correct?
 
-Convert to dev_err_probe() to simplify the code.
+If a VMID for an S2 hwpt is valid on physical IOMMU A but has already
+been allocated for another purpose on physical IOMMU B, how can it be
+shared across both IOMMUs? Or the VMID is allocated globally?
 
-> 
-> Signed-off-by: Lin Ruifeng <linruifeng4@huawei.com>
-
-After which,
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+Thanks,
+baolu
 
