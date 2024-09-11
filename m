@@ -1,177 +1,194 @@
-Return-Path: <linux-kernel+bounces-324288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063FF974AB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C1B974ABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F7A1C218C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A72D1C218C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDFB1311AC;
-	Wed, 11 Sep 2024 06:56:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C14613C3F6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C86D13541B;
+	Wed, 11 Sep 2024 06:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GC4mXxVf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71A613AA3E;
+	Wed, 11 Sep 2024 06:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726037802; cv=none; b=YEppWFTN1vRlEu4IuT7EtgCGvHXHz9f3j83sFputFe+cwW+pS6pHEi3S21xFZVMgLMF0AdmZZ0pLrWvBsxyhEa5eFJo0YjJA6P2rdnzoWNh+HdiBG/I5f2/XLTTrf4DePW/Zd/+G50Cge/t2nrH9IwP7x1LSxNcB/18kMk6URcE=
+	t=1726037813; cv=none; b=EuIhVP9e7FDtAye8yEFu52CmgvkczKQAtGQjZhy9b0cvK/lKcy86jrwPF1+QsduTr8y1O89VjYAJKAR8E07/80yl2tuHfLcVNUp7FDZlwEDn+9X97RPdb96/Xqg6PJ+UWdM2JjTj4KHiHf0OlrzVVR/O/qzR4U1OLJuHa8hPDCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726037802; c=relaxed/simple;
-	bh=lv+fib3mtQD0w6eDiLk4K3STpScs2BIV+tEDwljlGU4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RD9C8l6QUAkLlt2YBD8QFQlCVIZhWDOEyrLXlZAkkbvVCpDRcczv4r2TOEK29YpxLdFdopcuA1VL0quktqdzZYaHhUxOywOxc6HQ6C2nvUN5IJNeqrOD1pVNW08ZR3D+DOUK1h8sOwMFAnVqSCpFtpOkY5B/0rypVLcLoFiZXyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FC911007;
-	Tue, 10 Sep 2024 23:57:09 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.31])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1A943F64C;
-	Tue, 10 Sep 2024 23:56:30 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	mark.rutland@arm.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	jglisse@google.com,
-	wangkefeng.wang@huawei.com,
-	ziy@nvidia.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v3 2/2] mm: Allocate THP on hugezeropage wp-fault
-Date: Wed, 11 Sep 2024 12:26:00 +0530
-Message-Id: <20240911065600.1002644-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911065600.1002644-1-dev.jain@arm.com>
-References: <20240911065600.1002644-1-dev.jain@arm.com>
+	s=arc-20240116; t=1726037813; c=relaxed/simple;
+	bh=5XHmeOafFEPb+83jR1scQUngvM06Zf6uSKB+LBJsZGc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dNjE2kDu1gmvkgLKINp4bQJcLEDWcYE+166cL1MztVJWqGBpGokMmIJRR9/Royvtn1kPaFMqc+8n+L5KVAkVbT829EM74HvC+3mdjUKuqMdC9LCqVA7l4or8HISIkfLVxKGfamP6ajKTBhQdVFHD3aacBKnv6iKwKxERaP9xIf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GC4mXxVf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B2UPkv025595;
+	Wed, 11 Sep 2024 06:56:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6/bkBr9Tx3/7BDAHIB2V2G
+	Gy6nmTSJTP79H8ggFV2lc=; b=GC4mXxVfznlM2BRJxBRa7ER9vp/dd5PtM4jkD0
+	JYNFwXL5huOWcBYhKTyoQ1QwumqmNfXxoiVsOhif/ZcAaOM34At81oqbMfEpMJZF
+	BahTgUyGo7EDluj3jeQXCS+4ZCfg3Xhnjxm/WLUsgDyP1PTSTJ7lx0GHPOyWrWJ8
+	aZmEegOamhm3aRfNsoPV2uZZs0ewf/qqSIp7VyXA+46e9wfEKA895pSua0py2EVm
+	agvYEuEmL9ncu7nBU7ypwPHMTOowhTum96r6rlK361PnVjSg0yMFg3Hi7u1Aqcai
+	dr7VeE44QG42iASOopkoeTy4y+7NQzYAHz04SISbiQ7zUMGA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy730nwe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 06:56:43 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48B6ufiI007829
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 06:56:41 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 23:56:38 -0700
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+Date: Wed, 11 Sep 2024 14:56:16 +0800
+Subject: [PATCH v2] dt-bindings: phy: Add QMP UFS PHY comptible for QCS8300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240911-qcs8300_ufs_phy_binding-v2-1-c801a2d27a84@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAA8/4WYC/z2NwQqDMBAFf0VybspGQ9We/I8iISarLrRRE5WK+
+ O9NpfQ4A2/ezgJ6wsDuyc48rhRocBHSS8JMr12HnGxklkIqoRSCTyYUGYBa2qDGflMNOUuu44W
+ 8ScAM86bJWVyPHlt6n+VHHbmnMA9+O49W8bW/Jsh/kxzNpJ/KzoH4KjhwC6hL3VoDkFfTQoacu
+ ZrhxerjOD7KenfqvQAAAA==
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_jingyw@quicinc.com>, Xin Liu <quic_liuxin@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726037798; l=3160;
+ i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
+ bh=6E11ti2Lz75Yu9od4zrxe9UYQq4yP0zh1Q49HV1v+aQ=;
+ b=SygEXo0n/hX7lHirmFjyKpA/ieT1v9RmC8rvld7rmFyqr6VeI9VtbQ9H7h/FMub/KW3s6mMPh
+ jyU4Kyb6LXNDFlkcd3FdelmjZMP4+Wkanw5uDEJZ9NKFjWt8JiOUsvI
+X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
+ pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: s3Nw7gUB9wv-FHyVVux_JP7QHa3fA3pb
+X-Proofpoint-GUID: s3Nw7gUB9wv-FHyVVux_JP7QHa3fA3pb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 adultscore=0 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409110051
 
-Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-replace it with a PMD-mapped THP. Change the helper introduced in the
-previous patch to flush TLB entry corresponding to the hugezeropage.
-In case of failure, fallback to splitting the PMD.
+From: Xin Liu <quic_liuxin@quicinc.com>
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
+Document the QMP UFS PHY compatible for Qualcomm QCS8300 to support
+physical layer functionality for UFS found on the SoC. Use fallback to
+indicate the compatibility of the QMP UFS PHY on the QCS8300 with that
+on the SA8775P.
+
+Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 ---
- mm/huge_memory.c | 52 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 3 deletions(-)
+Changes in v2:
+- decoupled from the original series.
+- Use fallback to indicate compatibility with SA8775P.
+- typo fixup
+- Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+---
+ .../bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml    | 46 ++++++++++++----------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b96a1ff2bf40..3e28946a805f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -987,16 +987,20 @@ static void __pmd_thp_fault_success_stats(struct vm_area_struct *vma)
- static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
- 			struct vm_area_struct *vma, unsigned long haddr)
- {
--	pmd_t entry;
-+	pmd_t entry, old_pmd;
-+	bool is_pmd_none = pmd_none(*vmf->pmd);
+diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+index f9cfbd0b2de6..626a2039e177 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+@@ -15,26 +15,31 @@ description:
  
- 	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
- 	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
- 	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
- 	folio_add_lru_vma(folio, vma);
-+	if (!is_pmd_none)
-+		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
- 	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
- 	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
- 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
--	mm_inc_nr_ptes(vma->vm_mm);
-+	if (is_pmd_none)
-+		mm_inc_nr_ptes(vma->vm_mm);
- }
+ properties:
+   compatible:
+-    enum:
+-      - qcom,msm8996-qmp-ufs-phy
+-      - qcom,msm8998-qmp-ufs-phy
+-      - qcom,sa8775p-qmp-ufs-phy
+-      - qcom,sc7180-qmp-ufs-phy
+-      - qcom,sc7280-qmp-ufs-phy
+-      - qcom,sc8180x-qmp-ufs-phy
+-      - qcom,sc8280xp-qmp-ufs-phy
+-      - qcom,sdm845-qmp-ufs-phy
+-      - qcom,sm6115-qmp-ufs-phy
+-      - qcom,sm6125-qmp-ufs-phy
+-      - qcom,sm6350-qmp-ufs-phy
+-      - qcom,sm7150-qmp-ufs-phy
+-      - qcom,sm8150-qmp-ufs-phy
+-      - qcom,sm8250-qmp-ufs-phy
+-      - qcom,sm8350-qmp-ufs-phy
+-      - qcom,sm8450-qmp-ufs-phy
+-      - qcom,sm8475-qmp-ufs-phy
+-      - qcom,sm8550-qmp-ufs-phy
+-      - qcom,sm8650-qmp-ufs-phy
++    oneOf:
++      - items:
++          - enum:
++              - qcom,qcs8300-qmp-ufs-phy
++          - const: qcom,sa8775p-qmp-ufs-phy
++      - enum:
++          - qcom,msm8996-qmp-ufs-phy
++          - qcom,msm8998-qmp-ufs-phy
++          - qcom,sa8775p-qmp-ufs-phy
++          - qcom,sc7180-qmp-ufs-phy
++          - qcom,sc7280-qmp-ufs-phy
++          - qcom,sc8180x-qmp-ufs-phy
++          - qcom,sc8280xp-qmp-ufs-phy
++          - qcom,sdm845-qmp-ufs-phy
++          - qcom,sm6115-qmp-ufs-phy
++          - qcom,sm6125-qmp-ufs-phy
++          - qcom,sm6350-qmp-ufs-phy
++          - qcom,sm7150-qmp-ufs-phy
++          - qcom,sm8150-qmp-ufs-phy
++          - qcom,sm8250-qmp-ufs-phy
++          - qcom,sm8350-qmp-ufs-phy
++          - qcom,sm8450-qmp-ufs-phy
++          - qcom,sm8475-qmp-ufs-phy
++          - qcom,sm8550-qmp-ufs-phy
++          - qcom,sm8650-qmp-ufs-phy
  
- static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
-@@ -1576,6 +1580,41 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
- 	spin_unlock(vmf->ptl);
- }
- 
-+static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	gfp_t gfp = vma_thp_gfp_mask(vma);
-+	struct mmu_notifier_range range;
-+	struct folio *folio;
-+	vm_fault_t ret = 0;
-+
-+	folio = pmd_thp_fault_alloc(gfp, vma, haddr, vmf->address);
-+	if (unlikely(!folio)) {
-+		ret = VM_FAULT_FALLBACK;
-+		goto out;
-+	}
-+
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-+				haddr + HPAGE_PMD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-+		goto release;
-+	ret = check_stable_address_space(vma->vm_mm);
-+	if (ret)
-+		goto release;
-+	map_pmd_thp(folio, vmf, vma, haddr);
-+	__pmd_thp_fault_success_stats(vma);
-+	goto unlock;
-+release:
-+	folio_put(folio);
-+unlock:
-+	spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+out:
-+	return ret;
-+}
-+
- vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- {
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-@@ -1588,8 +1627,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
- 
--	if (is_huge_zero_pmd(orig_pmd))
-+	if (is_huge_zero_pmd(orig_pmd)) {
-+		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
-+
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+
-+		/* Fallback to splitting PMD if THP cannot be allocated */
- 		goto fallback;
-+	}
- 
- 	spin_lock(vmf->ptl);
- 
+   reg:
+     maxItems: 1
+@@ -85,6 +90,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,msm8998-qmp-ufs-phy
++              - qcom,qcs8300-qmp-ufs-phy
+               - qcom,sa8775p-qmp-ufs-phy
+               - qcom,sc7180-qmp-ufs-phy
+               - qcom,sc7280-qmp-ufs-phy
+
+---
+base-commit: 100cc857359b5d731407d1038f7e76cd0e871d94
+change-id: 20240911-qcs8300_ufs_phy_binding-84640e3e7bb7
+
+Best regards,
 -- 
-2.30.2
+Jingyi Wang <quic_jingyw@quicinc.com>
 
 
