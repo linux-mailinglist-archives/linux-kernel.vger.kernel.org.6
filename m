@@ -1,110 +1,92 @@
-Return-Path: <linux-kernel+bounces-325630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F78F975C4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:14:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F852975C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07191F220FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:14:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A364B21EEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F5E153803;
-	Wed, 11 Sep 2024 21:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7683C185B45;
+	Wed, 11 Sep 2024 21:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="F3qYw2AT"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Kf261u0k"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73635143C6C;
-	Wed, 11 Sep 2024 21:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A173D3B8;
+	Wed, 11 Sep 2024 21:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726089259; cv=none; b=bUxeSp5oWVXuaP1w3TqNzUpr+JuVS1LePJffLD43CLWcNcEGwb+sP0fEuaPlNLjgdOYBAn1IvH8dHMnoyX+kGrdnpsUZ7aoSLXp//ugYXr7RqZ3bPQz4pzAJM0VkI/A2V+UWak2MIrSxCpa7Mbb7J3l1ynAG/Pm+CXp832cThLo=
+	t=1726089645; cv=none; b=TKyOAzed+YlH3/SyQn9V+qg1GskcMxJO//rO58Ldx3msfQNSkAw1RC2js9N+UoCiisMehYaB8BSVix8R3q+nsvU3Y1/4Be8rekdEAJQalfTfzxQDIY2lQHPexKPjHKZ3V65O6AMLI3kbtK+qSLHMb0qUXRBTb8ZmnBvVaW7DKqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726089259; c=relaxed/simple;
-	bh=/qqhuekgL5/2mokq09cTCap52gMtKBmQIhZInpvqgCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmkxd0kQ6+oy3ENeNTgnFug7fGOlcgeOS8mR7Itc9XyPdoiFHPFbUmIxRHCYvJoLInXCSvRYp46hMhuJS2bpcRGerzffW1XQcf4noVHDR3ZrNVgZUbjwEV2YkkxUKlqjY6TYTi/M0lJGg8eqvfPYgKa3MLFlpjMb7ALeDwygxIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=F3qYw2AT; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 93E85882B7;
-	Wed, 11 Sep 2024 23:14:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1726089256;
-	bh=5pX01IbUi1YPMQgRIwJR9xstxKGLbp3/uMr33+3I8GE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F3qYw2ATZApgZVcWZJqjO4g9PRXLYxrHEgq6O0FYzJh6+T0aICQAu0iiFkeaBZGBP
-	 JYmPRV2RCKkkqpW7HBk+P38bf5W+sSZRxmfI0dVNMR5p/3e9X79fvzT1ePIPOvrOj+
-	 5rejIWKHbsE53WaZXxnuhvnjDprKKovKyYC2VtG+HZLW5ja1grs2HyPmnzEKoZVfi+
-	 XLHJ0hF03+qK87qvymPD2nLAODlyAL/2JduLcX+vVJTMAsFIcXiJ8Y9SSLW0KSHRHC
-	 1u3NV9qTb5zyFBAedlzBinUqYFVXT1jLKOX/PjyL73cWGmEasg8Nb0TImNr5tIMd3c
-	 AY29ALjkkwB2g==
-Message-ID: <a34ae0b8-ff5c-415c-9d36-1f94fba99243@denx.de>
-Date: Wed, 11 Sep 2024 23:14:15 +0200
+	s=arc-20240116; t=1726089645; c=relaxed/simple;
+	bh=+kEoMhwLvy7MWALjn+C4G/QKDgdBbjTFEzXGfVxeOm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PdsdfdrqfRc0PPoh38CKIWsPvYvKCZih1QuHVotG0z4dG9ESPxJbwI6GR1b3NkyoJzaRP2NoFYCdwPmbu/FBRbPcb+H7ZTqBuanjAFqssd4LATHN7c2UZSjjWITL0IsPby7FxfpVeI1lhzDHW5wsQmWqgEl+4sccvFDWW3uB3vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Kf261u0k; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 66A1A44D53;
+	Wed, 11 Sep 2024 23:20:34 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Nuwmy7mKDAIr; Wed, 11 Sep 2024 23:20:33 +0200 (CEST)
+Date: Wed, 11 Sep 2024 21:20:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726089633; bh=+kEoMhwLvy7MWALjn+C4G/QKDgdBbjTFEzXGfVxeOm8=;
+	h=Date:From:To:Cc:Subject;
+	b=Kf261u0kqHxvVSi8YnbeR0wlyvc6ZivJ4ejV95VsW0Nv/usGVi1sd8rjElyehWB3T
+	 asAs7i/BoEjVfiPzuZ+BMTZoxOGNrMzR0KzCGYp9yOUHidLVxY/7cbWkiP7rBF41Ol
+	 R3YDiV56MHUa2IkmBzNPhKbYkfwBui2ilsl0LxA8uYQ9Oi9p70cZs9kmxz4nCAFPlT
+	 3zQCNz5XEQfcfyc4k8rcTV8ePmxHofI8p6CM6Z1qFpOuD9qAmdxK9JkoslWWEgHfX1
+	 R9BvAp1vRl7DUIC3IddlBjKtWuWqbd6JoAp6hpuET91E74c5ZT5ivLHqIHcLfbg5BH
+	 EEL0GNURA1eyQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Yao Zi <ziyao@disroot.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Possible misleading information in rockchip,rk3588-cru.yaml
+Message-ID: <ZuIJgiN2xp6oPrHD@pineapple>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: pwm: imx: Add optional clock '32k'
-To: Frank Li <Frank.li@nxp.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- pratikmanvar09@gmail.com, francesco@dolcini.it,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
- <20240910-pwm-v3-1-fbb047896618@nxp.com>
- <2ede9457-8102-47e4-86dd-5888b6e5b8e6@denx.de>
- <ZuIHLRhOjDOouWD7@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZuIHLRhOjDOouWD7@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/11/24 11:10 PM, Frank Li wrote:
-> On Wed, Sep 11, 2024 at 10:28:52PM +0200, Marek Vasut wrote:
->> On 9/10/24 9:07 PM, Frank Li wrote:
->>> The pwm in imx8qxp mipi subsystem require one extra '32k' clock. So
->>> increase maxItems for clock and clock-names.
->>
->> This mentions MIPI subsystem, but the IP in question here is PWM.
-> 
-> Here, mipi just name of subsystem, not related MIPI IP at all.
-> 
-> There are many IP in i.MX8QXP mipi subsystem, such as i2c, PWM, MIPI PHY,
-> MIPI controller, PLL, clock-gate, ...
-> 
->>
->> Are you sure the clock are assigned to the correct IP ?
->>
->> Shouldn't the clock be assigned to some MIPI IP instead ?
->>
-> 
-> Are both question still validate if treat 'mipi' just name of subsystem.
-> 
->> Could you please clarify this in the commit message ?
-> 
-> 'mipi' just name of subsystem because the major ip is for MIPI. is word
-> 'mipi-subsystem' better?
-Let's find out.
+Hi,
 
-What is the 32kHz clock used for in the PWM block ?
+rockchip,rk3588-cru.yaml, dt-binding for RK3588 clock and reset module,
+contains description of customized property "rockchip,grf",
+
+  rockchip,grf:
+    $ref: /schemas/types.yaml#/definitions/phandle
+    description: >
+      phandle to the syscon managing the "general register files". It is
+      used for GRF muxes, if missing any muxes present in the GRF will
+      not be available.
+
+But after doing some searching, I found that clk-rk3588.c actually
+defines no clock hardware with MUXGRF type. This is also true in in the
+vendor code[1], it seems there is actually no GRF mux on RK3588
+platform.
+
+Best regards,
+Yao Zi
+
+[1]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/drivers/clk/rockchip/clk-rk3588.c
 
