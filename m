@@ -1,123 +1,147 @@
-Return-Path: <linux-kernel+bounces-324244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221A5974A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C53974A18
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD01CB2513D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32DFB28859F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9664A8F;
-	Wed, 11 Sep 2024 06:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED974059;
+	Wed, 11 Sep 2024 06:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MezA2tSs"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFxIeYVn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D60D2AF18;
-	Wed, 11 Sep 2024 06:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B36F40849;
+	Wed, 11 Sep 2024 06:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726034667; cv=none; b=Kheos6foU5uV0M4Pobnwr93cDxL62fYjrK9dXFRzStdkILhgCjh+MfbsDP25lX7tyRyMzYYx87yULvKKH2t0VZuSxbFU3yd3HlYb+XlnxlVeGYny2YbNV32lfHlWWVzdPu+vFUL3p+qoEZCJWsynyZJpcdujvy7b46FWzwhzIjQ=
+	t=1726034709; cv=none; b=gJwjpz1jLVzx4UwW1FquxNp/Nx4NDAFlbRjT2D0K5O4Nu9Q6w7fy0ttzw+e5NBgMdTGCHRddQ722kdse3vXBNSyQGQVU2/GXf9bVB3dVTgxULZjelLCOF4mqu+LD1gi/DFHutdyPwMzJ/IY8tjLJjsa7opaTJCMFiJfvcDWleJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726034667; c=relaxed/simple;
-	bh=NGccEAzQho7RQQAZ1T44cZ7/ltWa9N79GNW5+mMbXC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OXw2coyrYHsf2VDhAPBMP6dfQZvFm38A4SObW9nq1iCz7cXUp7MRG88/R2q3edZNeHhosCW1Jdn8c16lrxoAuWPvmp8CKGe+shLb8eL1KO/HWnoNdGAQHZ6LNZism143oZkxFGIz3zyy+H5/i0j4/ArpPmBEeWYf3dbgc5Rkq/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MezA2tSs; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726034660;
-	bh=9AiLuBNs/7aC54Rkm+IEyIUtDABvpTmRemFLe/DNkpc=;
+	s=arc-20240116; t=1726034709; c=relaxed/simple;
+	bh=oS6W6RuD01zziSDUkNdAa9V8LFDpaby7DxbfQdP+WyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KeWmxVKfOpH+ngLpJlVKtI/zJkH6NMBbbuLR5SxIC5M6pD+bKmMQ5a3zRHrO2CDzRIZVmHigcDR+P8vCHM2TJmQxhQGmHx66xps8/yEktFXUqKr8oxs1v3ln8rFbTmyPia24G6Fc7aw6cAlTinBF56vxbinMWLHRZ3Lgkt4h6fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFxIeYVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29B1C4CEC5;
+	Wed, 11 Sep 2024 06:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726034708;
+	bh=oS6W6RuD01zziSDUkNdAa9V8LFDpaby7DxbfQdP+WyQ=;
 	h=Date:From:To:Cc:Subject:From;
-	b=MezA2tSsLIj4Crg7kfrq3FW/LYnC3ajf+7iFpeoUBAzxRWxPG3uNP09CrIwFLQWtj
-	 mpMGJuwqW1JWApIA2MgcHYHs9+p5EpURjo12OWxqL1dxUVXqwqcPiSL2TB9PhSYr2S
-	 Su+GrsbrcNn4GjRGggvov88r87g76FRbCoXbh4mRqWrHZdJjsrK888H3xNqVmcBW4b
-	 YGLJdfe98mgksJ2BQWhkKKfpdcxU6LkHxFNvC1WNeqdgXekDYhqVFnJyG7stBmW9Ff
-	 ncREL+A+nFrB9zEygqKzteu2lWoH/1AseJamhXqWv6qTIP9GnMdfeLrsobVIOmqsaZ
-	 tfai8Jwr9Vbog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3VQC6sHRz4wj1;
-	Wed, 11 Sep 2024 16:04:19 +1000 (AEST)
-Date: Wed, 11 Sep 2024 16:04:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk
- <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel
- <xen-devel@lists.xenproject.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the xen-tip tree
-Message-ID: <20240911160419.20aa64a3@canb.auug.org.au>
+	b=ZFxIeYVnrkP5hegcl50Fe4tO2Bl8UnO1W+s0h2TOgm6f18RWhlm5ejUcJ6GFsRQ/E
+	 QZjltk8XovkjcMBlKtadpgiQvmnrG+oa8NuFQ9qQY43rGyMWlc+SSWODNoHl+Csroz
+	 x8B27WAmyOcY53lcCJBolvzHMsLd+ftz7K6WodZcks1JPNeEBwV7XEY+jvuDzECL0Y
+	 DUk8L1KRKkBEVF+HvZbSlC0J7U6Xt+Ti6CG007xlhXGisYmtxWAxeS2roWUM4GiBX1
+	 Dgt+c7S3WHKJd+CGEQvvTp+HiKzYypAZRnhCr69kPOFvgQsbOTNpZV4a49mXrnehkA
+	 AQYha9KfPWrPA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1soGTm-000000005SH-3toq;
+	Wed, 11 Sep 2024 08:05:26 +0200
+Date: Wed, 11 Sep 2024 08:05:26 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] USB-serial updates for 6.12-rc1
+Message-ID: <ZuEzJgTKeD0RscpX@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/582N.9D4_/VhahkMF_TFUjA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/582N.9D4_/VhahkMF_TFUjA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-Hi all,
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
-After merging the xen-tip tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+are available in the Git repository at:
 
-In file included from arch/x86/kernel/jailhouse.c:17:
-arch/x86/include/asm/acpi.h:179:42: error: unknown type name 'acpi_physical=
-_address'
-  179 | extern void __iomem * (*acpi_os_ioremap)(acpi_physical_address phys,
-      |                                          ^~~~~~~~~~~~~~~~~~~~~
-arch/x86/include/asm/acpi.h:180:42: error: unknown type name 'acpi_size'
-  180 |                                          acpi_size size);
-      |                                          ^~~~~~~~~
-arch/x86/include/asm/acpi.h:181:35: error: unknown type name 'acpi_physical=
-_address'
-  181 | void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_=
-size size);
-      |                                   ^~~~~~~~~~~~~~~~~~~~~
-arch/x86/include/asm/acpi.h:181:63: error: unknown type name 'acpi_size'
-  181 | void __iomem *x86_acpi_os_ioremap(acpi_physical_address phys, acpi_=
-size size);
-      |                                                               ^~~~~=
-~~~~
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.12-rc1
 
-Caused by commit
+for you to fetch changes up to 4c0d9477ba69a417c698aec1d3012e188cf97add:
 
-  9adc485684da ("xen: allow mapping ACPI data using a different physical ad=
-dress")
+  USB: serial: kobil_sct: restore initial terminal settings (2024-08-26 15:29:27 +0200)
 
-I have used the xen-tip tree from next-20240910 for today.
+----------------------------------------------------------------
+USB-serial updates for 6.12-rc1
 
---=20
-Cheers,
-Stephen Rothwell
+Here are the USB-serial updates for 6.12-rc1, including:
 
---Sig_/582N.9D4_/VhahkMF_TFUjA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ - fix kobil_sct initial terminal settings
+ - set driver owner when registering drivers
 
------BEGIN PGP SIGNATURE-----
+All have been in linux-next with no reported issues.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhMuMACgkQAVBC80lX
-0Gx7DQf/RD962o1RDRkEQf9nkOtLj/Uiy/44PMz2jH50hkl9p1Ji6HGiCICqt7lR
-1kXYslR4yv9r0oywo/LaO3/pD+Q6QfgRXIrj8oLwVIVsErscyqBpDwoJI1pufupx
-q21+oHuYInRtSvLOgyDXZAJXeW6jIKumP8INzGJBCVYJhEN9OU1EEkr0tmK64Wh8
-4ZgiJsKsOOfI4B1u40oy0lnRzh2bXin4SdZHBtOIhxmAjrL50cB7aCVrtHG6ykEh
-xjic7GrimIgywqxSRf+1NkiHQa9B02tJzBIZwj+u5ldcHJ8TFnUQIKAmgVmQOsCl
-KbrtiDKRqhEiKVvoLVaj32FFzjLwTA==
-=8S/U
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Johan Hovold (1):
+      USB: serial: kobil_sct: restore initial terminal settings
 
---Sig_/582N.9D4_/VhahkMF_TFUjA--
+Krzysztof Kozlowski (2):
+      USB: serial: set driver owner when registering drivers
+      USB: serial: drop driver owner initialization
+
+ drivers/usb/serial/aircable.c          |  1 -
+ drivers/usb/serial/ark3116.c           |  1 -
+ drivers/usb/serial/belkin_sa.c         |  1 -
+ drivers/usb/serial/ch341.c             |  1 -
+ drivers/usb/serial/cp210x.c            |  1 -
+ drivers/usb/serial/cyberjack.c         |  1 -
+ drivers/usb/serial/cypress_m8.c        |  3 ---
+ drivers/usb/serial/digi_acceleport.c   |  2 --
+ drivers/usb/serial/empeg.c             |  1 -
+ drivers/usb/serial/f81232.c            |  2 --
+ drivers/usb/serial/f81534.c            |  1 -
+ drivers/usb/serial/ftdi_sio.c          |  1 -
+ drivers/usb/serial/garmin_gps.c        |  1 -
+ drivers/usb/serial/generic.c           |  1 -
+ drivers/usb/serial/io_edgeport.c       |  4 ----
+ drivers/usb/serial/io_ti.c             |  2 --
+ drivers/usb/serial/ipaq.c              |  1 -
+ drivers/usb/serial/ipw.c               |  1 -
+ drivers/usb/serial/ir-usb.c            |  1 -
+ drivers/usb/serial/iuu_phoenix.c       |  1 -
+ drivers/usb/serial/keyspan.c           |  4 ----
+ drivers/usb/serial/keyspan_pda.c       |  2 --
+ drivers/usb/serial/kl5kusb105.c        |  1 -
+ drivers/usb/serial/kobil_sct.c         |  4 +---
+ drivers/usb/serial/mct_u232.c          |  1 -
+ drivers/usb/serial/metro-usb.c         |  1 -
+ drivers/usb/serial/mos7720.c           |  1 -
+ drivers/usb/serial/mos7840.c           |  1 -
+ drivers/usb/serial/mxuport.c           |  1 -
+ drivers/usb/serial/navman.c            |  1 -
+ drivers/usb/serial/omninet.c           |  1 -
+ drivers/usb/serial/opticon.c           |  1 -
+ drivers/usb/serial/option.c            |  1 -
+ drivers/usb/serial/oti6858.c           |  1 -
+ drivers/usb/serial/pl2303.c            |  1 -
+ drivers/usb/serial/qcaux.c             |  1 -
+ drivers/usb/serial/qcserial.c          |  1 -
+ drivers/usb/serial/quatech2.c          |  1 -
+ drivers/usb/serial/safe_serial.c       |  1 -
+ drivers/usb/serial/sierra.c            |  1 -
+ drivers/usb/serial/spcp8x5.c           |  1 -
+ drivers/usb/serial/ssu100.c            |  1 -
+ drivers/usb/serial/symbolserial.c      |  1 -
+ drivers/usb/serial/ti_usb_3410_5052.c  |  2 --
+ drivers/usb/serial/upd78f0730.c        |  1 -
+ drivers/usb/serial/usb-serial-simple.c |  1 -
+ drivers/usb/serial/usb-serial.c        | 12 +++++++-----
+ drivers/usb/serial/usb_debug.c         |  2 --
+ drivers/usb/serial/visor.c             |  3 ---
+ drivers/usb/serial/whiteheat.c         |  2 --
+ drivers/usb/serial/wishbone-serial.c   |  1 -
+ drivers/usb/serial/xr_serial.c         |  1 -
+ drivers/usb/serial/xsens_mt.c          |  1 -
+ include/linux/usb/serial.h             |  7 +++++--
+ 54 files changed, 13 insertions(+), 78 deletions(-)
 
