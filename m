@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-325096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D499754F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:06:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970379754F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B30A1C22EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542CF2862E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E4219343B;
-	Wed, 11 Sep 2024 14:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C0319C553;
+	Wed, 11 Sep 2024 14:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iGjp5JS5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui2yWa6X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894C1224F6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81F83FB30;
+	Wed, 11 Sep 2024 14:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726063582; cv=none; b=GTvJqqf8lEPd0Os8k1PRseAcKW3q3myZEa/FLHFL+lCh+/aEGtK3zuZIKs9Ppz5pTuHpr+ChrpK3Fy8l+x+dCWVJLDlb9metXfVkl6TGQVErYF5Ex9GPtRLBOVRa11XveYqZZJjEgQHSj8kMIZKiHg0QX8pjczc2bbka1Kr6+CU=
+	t=1726063645; cv=none; b=E/XDH7Fod9M3nH1svMa4mSxz6AXDsApXEcVh4ImeGw4v0jtSLhtWsCH9mdFxXlk752XCIi/7p6Gk1KFiF/rRm1zgEb6auRgBkhI3gBG6bUwCCsFIha47x245/ltACHSHy1YrTjsjwQmZeHIOSOpxlk5KmF3hnEWyJwsea3icQBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726063582; c=relaxed/simple;
-	bh=EpoCUnv6j1hFtvDESsdaD++ReKUouR9Rg5dBkvMR4MU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G59z15dlGKz8IpzfRxVlx4r5/Im6DbcoM6y2uK+E2q0z3p+rw3OuLYx7F1ONxWUwtFcYz7UiBAz5HncJxMQgA/u9XT/Hu5/W0sFRriFiteZ++YhL7WMYMgdzEtH6LSaeYMDoPYpWlel34lIJJksVtq6qsxOzF1bT3trxGhBQG3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iGjp5JS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7F0CC4CEC0;
-	Wed, 11 Sep 2024 14:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726063582;
-	bh=EpoCUnv6j1hFtvDESsdaD++ReKUouR9Rg5dBkvMR4MU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iGjp5JS5DLmaVibB86CVIuOiGjqtFtbC81BEUduFu2DbQjstj0a7BrnoNDnEni0zx
-	 afv6ReYhxXUVVvE2xRTCRm8POUqPsKSHzC07DY5e3zKAbwRb1nPTY+7Xm+Unhmhf+5
-	 LQszooKIenh7IsGSxpZbRgqQYHH78DCSWpY1LWQ8=
-Date: Wed, 11 Sep 2024 16:06:19 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Cc: srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH 4/9] nvmem: layouts: add U-Boot env layout
-Message-ID: <2024091110-broiler-sensually-602d@gregkh>
-References: <20240902142952.71639-1-srinivas.kandagatla@linaro.org>
- <20240902142952.71639-5-srinivas.kandagatla@linaro.org>
- <2024090308-smasher-craftwork-0db5@gregkh>
- <ef6d4f332224bd7a8c1c4244047bf0ea@milecki.pl>
- <2024090303-provider-humbly-17e2@gregkh>
- <f4268b9f5ffc320320ef9a97902d3521@milecki.pl>
+	s=arc-20240116; t=1726063645; c=relaxed/simple;
+	bh=r0VvpXAuRXJx3vp8kOdxd9EfYvbZyCGak9YTxgXyHb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TFlmKhu9N5v3SGTbHFQs/NY2ibxnbOJ5g3Ji1L2idV5S+FJ9lDh+8gLWXz7MRFsnp+X/KARJoDaavmj4WeEgurKZoeC6pYculpjQITgR9hpYrkzmLS+gTwIB/TcjTE0K5JwI0eMS2SmpvuMPichnqEPvZVRPHlVVT/GW7SOoO00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ui2yWa6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF78C4CEC0;
+	Wed, 11 Sep 2024 14:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726063644;
+	bh=r0VvpXAuRXJx3vp8kOdxd9EfYvbZyCGak9YTxgXyHb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Ui2yWa6X7iHBcYX32/ca4LD22AvNygh2Ug4YOmwLYA9yyXx6mvGowmxulmtdIU2HZ
+	 W+eIT5oLdMpjIRTHHDNABHENAX4LrY3RvFufefCYRfDH8UKXZ0JmeI3PodOXZ4fu+r
+	 QIWBke5DZvVffSmhdVEaUwJmdixtmqDoRNoeWAiPv4ZgtS8AG/GjkL/sgWWoXLWBep
+	 foHnfwi4hoHXJOgofT1LDz+ndLl3HX4N/RRQW15jECNO8X/8vPLvxU+tFh+/Ac7MgK
+	 2oJU9c8wORLWW0N7a/mm88UM2faha4DMEe2cuF3WTLsD4OSUlCsaM4rVX3pZijbx3R
+	 c/iR8ZWcJNT/A==
+Date: Wed, 11 Sep 2024 09:07:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Qianqiang Liu <qianqiang.liu@163.com>
+Subject: Re: [PATCH v8 11/11] PCI: imx6: Add i.MX8Q PCIe root complex (RC)
+ support
+Message-ID: <20240911140721.GA630378@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4268b9f5ffc320320ef9a97902d3521@milecki.pl>
+In-Reply-To: <20240729-pci2_upstream-v8-11-b68ee5ef2b4d@nxp.com>
 
-On Tue, Sep 10, 2024 at 03:24:33PM +0200, Rafał Miłecki wrote:
-> On 2024-09-03 13:24, Greg KH wrote:
-> > On Tue, Sep 03, 2024 at 01:04:20PM +0200, Rafał Miłecki wrote:
-> > > Hi Greg,
-> > > 
-> > > On 2024-09-03 12:12, Greg KH wrote:
-> > > > On Mon, Sep 02, 2024 at 03:29:47PM +0100, srinivas.kandagatla@linaro.org
-> > > > wrote:
-> > > > > From: Rafał Miłecki <rafal@milecki.pl>
-> > > > >
-> > > > > U-Boot environment variables are stored in a specific format. Actual
-> > > > > data can be placed in various storage sources (MTD, UBI volume,
-> > > > > EEPROM,
-> > > > > NVRAM, etc.).
-> > > > >
-> > > > > Move all generic (NVMEM device independent) code from NVMEM device
-> > > > > driver to an NVMEM layout driver. Then add a simple NVMEM layout
-> > > > > code on
-> > > > > top of it.
-> > > > >
-> > > > > This allows using NVMEM layout for parsing U-Boot env data stored in
-> > > > > any
-> > > > > kind of NVMEM device.
-> > > > >
-> > > > > The old NVMEM glue driver stays in place for handling bindings in the
-> > > > > MTD context. To avoid code duplication it uses exported layout parsing
-> > > > > function. Please note that handling MTD & NVMEM layout bindings may be
-> > > > > refactored in the future.
-> > > > >
-> > > > > Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-> > > > > Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > > > ---
-> > > > >  MAINTAINERS                        |   1 +
-> > > > >  drivers/nvmem/Kconfig              |   3 +-
-> > > > >  drivers/nvmem/layouts/Kconfig      |  11 ++
-> > > > >  drivers/nvmem/layouts/Makefile     |   1 +
-> > > > >  drivers/nvmem/layouts/u-boot-env.c | 211
-> > > > > +++++++++++++++++++++++++++++
-> > > > >  drivers/nvmem/layouts/u-boot-env.h |  15 ++
-> > > > >  drivers/nvmem/u-boot-env.c         | 165 +---------------------
-> > > > >  7 files changed, 242 insertions(+), 165 deletions(-)
-> > > > >  create mode 100644 drivers/nvmem/layouts/u-boot-env.c
-> > > > >  create mode 100644 drivers/nvmem/layouts/u-boot-env.h
-> > > >
-> > > > This patch doesn't apply to my tree :(
-> > > >
-> > > > Also, if you generate patches with 'git format-patch -M' you can see
-> > > > when files move easier (if that's what happened here, hard to tell..)
-> > > 
-> > > It's because it was developed on top of "nvmem: u-boot-env: error if
-> > > NVMEM
-> > > device is too small" which you applied to the "char-misc-linus"
-> > > branch.
-> > > Perhaps you could push that fix ("error if...") to your both branches
-> > > somehow?
-> > 
-> > I can pull the char-misc-linus branch into my -next branch if that would
-> > help out here?  Give me a few days to let 0-day run on things to make
-> > sure they are all sane first.
+[+cc Qianqiang]
+
+On Mon, Jul 29, 2024 at 04:18:18PM -0400, Frank Li wrote:
+> From: Richard Zhu <hongxing.zhu@nxp.com>
 > 
-> FWIW I can confirm that
-> [PATCH 4/9] nvmem: layouts: add U-Boot env layout
-> [PATCH 5/9] MAINTAINERS: Update path for U-Boot environment variables YAML
-> apply cleanly on top of the "char-misc-next".
+> Implement i.MX8Q (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe RC support. While
+> the controller resembles that of iMX8MP, the PHY differs significantly.
+> Notably, there's a distinction between PCI bus addresses and CPU addresses.
+> 
+> Introduce IMX_PCIE_FLAG_CPU_ADDR_FIXUP in drvdata::flags to indicate driver
+> need the cpu_addr_fixup() callback to facilitate CPU address to PCI bus
+> address conversion according to "ranges" property.
 
-Ok, that worked, both now applied, thanks.
+> +static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
+> +{
+> +	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
+> +	struct dw_pcie_rp *pp = &pcie->pp;
+> +	struct resource_entry *entry;
+> +	unsigned int offset;
+> +
+> +	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
+> +		return cpu_addr;
+> +
+> +	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
+> +	offset = entry->offset;
+> +	return (cpu_addr - offset);
+> +}
 
-greg k-h
+I'm sure that with enough effort, we could prove "entry" cannot be
+NULL here, but I'm not sure I want to spend the effort, and we're
+going to end up with more patches like this:
+
+  https://lore.kernel.org/r/20240911125055.58555-1-qianqiang.liu@163.com
+
+I propose this minor change:
+
+  entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
+  if (!entry)
+    return cpu_addr;
+
+  return cpu_addr - entry->offset;
+
+I still think we should get rid of the .cpu_addr_fixup() callback if
+possible.  But that's a discussion for another day.
+
+Bjorn
 
