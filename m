@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-324365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3195974BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:42:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2928974BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99351B26082
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 584F4B21ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8FA41AAC;
-	Wed, 11 Sep 2024 07:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BBC137772;
+	Wed, 11 Sep 2024 07:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2Y9NEqcl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbS44RKB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GTLqK+Zx";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="hbJ7HBdK"
+Received: from a7-46.smtp-out.eu-west-1.amazonses.com (a7-46.smtp-out.eu-west-1.amazonses.com [54.240.7.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48C13C83D
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1502141AAC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040505; cv=none; b=lQr1VMv8ZbE0S3X9NaVceC4PtwFgjHrLyO6kLDLbpX/jFl7DWOtmhNOY2bZEM1gMLRyEsiTYEJb9mfMkM3NLvpkM9lmxCsZeqIIMySUFsvTc68V4i2d4Lu1DQpmoNEFLJ0qvtSgKRWQ2AJ1hYb/096jqwLgAdlpB8Qj8/S8incI=
+	t=1726040557; cv=none; b=XNXK1krMnJ9a/CehH2lRZYTeaT2eIEDcX6qEAowDA8JeLE60IA6YI1ppC/O/wpUzQrefrPTQY8Q2xFO2+CkslVc4VZsnm/eqHGHKL3onXA5kb6fTOWYnVIyPv/z3+OJqs9bbqIoWkmLC+nIJ6r5rYjPm0MgaJB6Q6rRsumfoFoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040505; c=relaxed/simple;
-	bh=lAU8+HOeecikhhDBSTKPSrwcQQ1cUPVSRefjJxTMne8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pPGs1tFL7gCggbx5GywVYQb+WFZAeXPrHHopKuhHipjnte92HmOxhjDVIpm98/Y0Mxm+eI31C6csa6IKumnTXlbuPiwV4pepJRbeJIRd0gnjVc1uDe+tkAdT66Z3Dq6Ais/UElFZT5xxlYCKaDbHgUP+1fAXfsOaMFDrlYRzjLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2Y9NEqcl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbS44RKB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726040501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1DBykUr9SDlwpv5CynH2sqJyTqVcYBrWcGijQsZAHKU=;
-	b=2Y9NEqclxnO9/vYIEQPOspvOO75Y4+jdFXX7SKnDHrqtJd3uUqSUddF1HjNXZB/ASvDAvS
-	U+Y0r/DWWdPv7h55LmMcfEZ/rd3fgtD5q2kFNbAGJRTwJ9N79u2/1IhCBPq+T7yk5Asl4O
-	hwlUOXi+kk7FhejBMi00fUZxD6IehWl1Aygm0XFLPzVU4MdGVlRU8vMnhSVhwJKeUnPxLw
-	++kRVZ+qUQdht34TlfM6rJOjw43Mlc53Z4V0BnhAi4xM+KIutR/13RuBpMjaKST4y63quo
-	JVXBmVBdkhOBKOBwZFhy58Y5pVE2GQopRxsT8+N7CWVQCMNittekMFnElKqC0w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726040501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1DBykUr9SDlwpv5CynH2sqJyTqVcYBrWcGijQsZAHKU=;
-	b=vbS44RKBM9Fj0j2iGrQ1X0Tpj2LyTgjc2/lwqwFhNXP/8W8jjzxWJg9PufqFz1GJ6V2hB2
-	/mdRI4TnR3gpQXCA==
-To: Joe Perches <joe@perches.com>, Frederic Weisbecker
- <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan
- Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Andy Whitcroft <apw@canonical.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>
-Subject: Re: [PATCH v2 10/15] checkpatch: Remove broken sleep/delay related
- checks
-In-Reply-To: <ba245a06048af9eee61cea8c8fb79a331900cc73.camel@perches.com>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-10-b0d3f33ccfe0@linutronix.de>
- <ba245a06048af9eee61cea8c8fb79a331900cc73.camel@perches.com>
-Date: Wed, 11 Sep 2024 09:41:41 +0200
-Message-ID: <875xr2eix6.fsf@somnus>
+	s=arc-20240116; t=1726040557; c=relaxed/simple;
+	bh=+z0iaYPRF8aOAeyudpMIOAITImEM365oGsItYDeMrNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LEyIr50F97shNbtp8KThBTl5W5GvbZ7jFDgnpCpaM8a44qoVPtM6KIiY9H1crmHhwjH67OIl4Y6J43O4vfaD0LC5g5x8adLoeW97pGKAcQlD5euaEhiFPr4P5CECGHRigA1y+40wjQEJX/nlYq9nIxXrqpIZOGTBt0iJDf25dRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GTLqK+Zx; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=hbJ7HBdK; arc=none smtp.client-ip=54.240.7.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726040554;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=+z0iaYPRF8aOAeyudpMIOAITImEM365oGsItYDeMrNE=;
+	b=GTLqK+Zxla3s5iAGSe/h9kxrPUSF87jCwiNhqceQcGgcSXvpl305psrUwII5SwKf
+	b24gxrEovDeflPUEpV1YVET4Ls0IBxHJo9ORtqxk838sOZrsK8AjSL9R0opIdKx1WMB
+	iTZBAayeKXwiqbZulfTtXKoqKahSzJPCaUNf0JUmhB7TQdTIQ+BpLOOHVu9/33/gsKK
+	Ez6U4I0w0VT/1uxv8DxSjCNzUmUNX0gPWCuFTVq0WIRgu0QoD/0q1NoSBvmocQJVQz3
+	8NE4JiZY1u9uci+sixDZINIEYt5O/OIK4XsrDtZpT8PqMNtlwFldLbtaouHBn8MCfFm
+	qu6rNL65gw==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726040554;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=+z0iaYPRF8aOAeyudpMIOAITImEM365oGsItYDeMrNE=;
+	b=hbJ7HBdKOzai+xLjoaWwAVtHEd+Wao7fakZkcpV33sHkzS3JaM6vVCgzN6mD97Jm
+	mVWtXv8wZyidNiSvh8UfItBq/8gnlS5oNFp+6HrWeDzrhpuz8oEzuBE9Fesx608DK1K
+	CYAuH00qqq+JkPU+I7knFpOtsiuJmnPf0dwiuxaU=
+Message-ID: <01020191e008baec-ca547413-aeba-4508-8a05-2c35b06150c2-000000@eu-west-1.amazonses.com>
+Date: Wed, 11 Sep 2024 07:42:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] drm/mediatek: dp: constify regmap_config
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org
+References: <20240908-regmap-config-const-v1-0-28f349004811@linaro.org>
+ <20240908-regmap-config-const-v1-4-28f349004811@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240908-regmap-config-const-v1-4-28f349004811@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.46
 
-Joe Perches <joe@perches.com> writes:
+Il 08/09/24 16:21, Krzysztof Kozlowski ha scritto:
+> Mark local static 'struct regmap_config' as const for safer and more
+> obvious code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> On Wed, 2024-09-11 at 07:13 +0200, Anna-Maria Behnsen wrote:
->> checkpatch.pl checks for several things related to sleep and delay
->> functions. In all warnings the outdated documentation is referenced. All
->> broken parts are listed one by one in the following with an explanation why
->> this check is broken. For a basic background of those functions please also
->> refere to the updated function descriptions of udelay(), nsleep_range() and
->> msleep().
->> 
->> Be aware: The change is done with a perl knowledge of the level "I'm able
->> to spell perl".
->> 
->> The following checks are broken:
->> 
->> - Check: (! ($delay < 10) )
->>   Message: "usleep_range is preferred over udelay;
->>             see Documentation/timers/timers-howto.rst\n"
->>   Why is the check broken: When it is an atomic context, udelay() is
->>                            mandatory.
->> 
->> - Check: ($min eq $max)
->>   Message:  "usleep_range should not use min == max args;
->>              see Documentation/timers/timers-howto.rst\n"
->>   Why is the check broken: When the requested accuracy for the sleep
->>                            duration requires it, it is also valid to use
->>                            min == max.
->
-> There is a runtime setup cost to use usleep_range.
-
-Sure, it's because of hrtimers. This is also documented in the new
-documentation.
-
-> I believe udelay should generally be used when there
-> is a specific microsecond time delay required.
-
-The aim of the whole series is to cleanup the outdated documentation of
-the usage of delay/sleep related functions. Please read the new
-documentation which is provided by the last patch of the queue, when to
-use which function. Also updated function descriptions itself contain
-important information about usage. If you have any concerns about
-correctness of the new documentation or if there is something missing,
-please let me know.
-
-As several comments in the kernel and also checkpatch contain several
-links to the outdated documentation file (which will be also moved to a
-more self explaining file name by the last patch), I need to update
-those places to be able to move the file. Also checkpatch.
-
->> 
->> - Check: ($delay > 2000)
->>   Message: "long udelay - prefer mdelay;
->>             see arch/arm/include/asm/delay.h\n"
->>   Why is the check broken: The threshold when to start using mdelay() to
->>                            prevent an overflow depends on
->>                            MAX_UDELAY_MS. This value is architecture
->>                            dependent. The used value for the check and
->>                            reference is arm specific. Generic would be 5ms,
->>                            but this would "break" arm, loongarch and mips
->>                            and also the arm value might "break" mips and
->>                            loongarch in some configurations.
->
-> It likely won't "break", just perhaps be inefficient.
-
-If running on loongarch with HZ>=1000 MAX_UDELAY_MS is 1. When keeping
-the above check, then there is the risk of an overflow. I'm not sure if
-an overflow is the same than beeing inefficient. Same for mips with HZ>=1000.
-
-When using the generic value of 5, also arm would have the risk of an
-overflow as MAX_UDELAY_MS for arm is 2.
-
-So my general questions here are:
-
-- What do you think about the change of this patch in general or do you
-  want to have things changed?
-- Should I only make changes to the commit message so that it's more clear?
-
-This would really much help me to make progress with this queue.
-
-Thanks a lot for your support!
-
-	Anna-Maria
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
