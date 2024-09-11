@@ -1,255 +1,235 @@
-Return-Path: <linux-kernel+bounces-324513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B22974D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:55:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13200974D8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9F95B26ECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3822B1C211FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BF3185E64;
-	Wed, 11 Sep 2024 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211E8183CD2;
+	Wed, 11 Sep 2024 08:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hgs55CtE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KhLxu08J"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD17183CAE;
-	Wed, 11 Sep 2024 08:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044760; cv=fail; b=j0/NGYq5v64WUVu3IoxELsgBx7P4QOEwColtL9HIMHrCN7DMzgwJsMdBMW6D/Hu32fqM3IOef7NZm5HBAPN+4VYFeR7f0mIlQ50yHt0MCfTrMbO95sdpR1TVigUccB9O7Psda8rKYQqEz4opg+HINnn+a9nkqbDfO9GBFJyORNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044760; c=relaxed/simple;
-	bh=EFe9xCfAjYXRur/KuuUXJUYmiI7DrZvWla/ncCxcLl0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SXdD1zHT4EQs241BdilyXrYqOSTW//kJp8UlNO9jCAa8bA54sccjwMBoVpzxMDnh1OE2l/ZlLPeEk24ywVhH0Ueq9Uu/PicAf+A8WaSLfmO82zhbWKyab/iEOJk1vq8gNZrRa6WegheEAQ0bBajlkgm1MgvS+0q2SQzYaAFgnHo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hgs55CtE; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726044759; x=1757580759;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=EFe9xCfAjYXRur/KuuUXJUYmiI7DrZvWla/ncCxcLl0=;
-  b=Hgs55CtER9F0LhoxlDl3/3dMztGrUKoPzbg5g76Mozki3B3YVIENqcNG
-   XvY29VvuwBVpoa9G9WhQDrjVajn6XtejcSiwpQz9fesI/4ZNzI2W4hGc4
-   TSYSCrybHY2JZRh/ReczkASnald99QdLVN53U0vxTOAj3hTmnRs5cz8Yf
-   zSmdEBRAG2aaD4EjMDYRr/7riLS6DxVGKk+CCW8NZMwKVB3H7xrAMAx4O
-   ZB20dXwBDLMAksGhIYVJiiICNf/jHpfRiExVO4ehOKMgpMzajKPlBlMzN
-   drYhDLqy1wHq864bPd1bDnNGyjCPZx8GW8IJnJb+lKkNsQFr9kFq8fG6A
-   A==;
-X-CSE-ConnectionGUID: bVV0FvXdRDu54oX+ILDLIw==
-X-CSE-MsgGUID: PuUQCHlCSbGSp4wXXdIqew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="28608544"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="28608544"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:52:38 -0700
-X-CSE-ConnectionGUID: w9oyzb5yS7iGoJUho87+rQ==
-X-CSE-MsgGUID: PMkqRC+tRgGBiyz48UkM3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="71436128"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 01:52:37 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 01:52:37 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 01:52:37 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Sep 2024 01:52:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JHzhPObcUdCDjOhZMW8pEEpUuHq/oQ4moY7FpMFm2YXbYLkG5hmOsDEucWR0ZZ/Lr7TSPleDG9CHpOD3yoPsgPrZcAIqxQt0/JC1cdR4hKbHeayByFy8zhN+3ltz6EsesOSEi4SsPbU9bTQkRokFK7Jks9Sh43up0cf5aZCEdSEL4Q1IFerMeGv0mMWyeGdD2WZPGvzuSw1evvKLX727u3hKrbb7VFu8UQap5Noax1sTjuYpOUR/kGG0e8vfOcZ82yXQr5BqPPr1e9LJ4gmG8wjf8d3Yz1QqtWpAwMUu2WClhxiM9XMBZ8HiHGWegmbEKXpp84s59UMuxzg13j48+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/uGq32DmBdg+sY2WWu7ab/5vl275H4dO/LTnb1GVm/Q=;
- b=dQDSAxg6JHYW8MA3CO1Wky3KT2XJvFXjH1ZQxIG8MqMwAuzH4zCbB3ty+yS9WP8L08tN6PeYGLTbL2LYZbkNrc45+9ZRTKXnaLZGnIhSer+9ZlNvG+DOtUAs69WlG//NPpkbJGWtUirpoMKNLDkupR/hpYEtEpXjp5h0wmgdY3Hp7oVsuA+GwRzWV2Nb0V6x4ol6fImsYYd2TpvA8rqZoZqYeKqGnEhPCJLGPvgyNywemzSXCs0aYt6gbUEYxuj7yU339Nd/34D1BppUMwJBdX3gOgSNcvh880dg8kl4p1t6OnrNSfECbznQnUNncWWzu4i+aDg/9OuSO/v4wy7k5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by DM6PR11MB4529.namprd11.prod.outlook.com (2603:10b6:5:2ae::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Wed, 11 Sep
- 2024 08:52:34 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.7918.024; Wed, 11 Sep 2024
- 08:52:34 +0000
-Date: Wed, 11 Sep 2024 16:52:23 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-CC: <seanjc@google.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<kai.huang@intel.com>, <dmatlack@google.com>, <isaku.yamahata@gmail.com>,
-	<yan.y.zhao@intel.com>, <nik.borisov@suse.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 05/21] KVM: VMX: Teach EPT violation helper about private
- mem
-Message-ID: <ZuFaR0xiGITjy0km@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-6-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240904030751.117579-6-rick.p.edgecombe@intel.com>
-X-ClientProxiedBy: SI1PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::14) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3C742AAD
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726044800; cv=none; b=dWmE4q3eek8AinkMtoT0RftfLd1fvCq7xg740Jad08SYjzBsFpbruzbwPx0vTm8cYFsOHeblyNliJg6V7e4e6u7jAyvlrbrBBnC9bwrQu0H3xbkWf0BM46nWFAtfjcZO8grzsBCuHIQPkIHyDeFbtB1yUZgxCxrocCdD/ex82U0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726044800; c=relaxed/simple;
+	bh=f4lmX0B4PuhD4wQo5tusCa+zQKAHTvZ5K163n1GznHo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YNmHNEokdhKWeOcy7GBbrcDSXa+DFhyubaUUqNeAAngdX/orKKzLVzxvGm4JrkYZevQPEfnP/lHg/2KG7Z/hwv8vcJTYz8/k0owmQJgBT2/ey9xV+5SoxjEG4fqCqBijO4EUqwFsWT2zUqqV+fsbzengr2rsqxkrSYzpLOZUQkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KhLxu08J; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 697EA4000D;
+	Wed, 11 Sep 2024 08:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726044795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IkZ/eUX+bVFf4ZddW9D89l8d/Vlvm0RSLbZpL6Tjyy0=;
+	b=KhLxu08Jlw9EKKJdScN1LasYVYqZk6HUWHLqbCmsYAaleaDzL+WmWK3AYWBzg8rxJkc2Ho
+	tRMc7KAvJI8IBJo0KZtRrfRAeowGy79cGjKODo9sw/1uWveK7ot8FI+T48hN74x7qAz8pK
+	ZVzziYm6t4BA2jRH0ZT+tfH21U8wJdv4lEoWrLLIsRXQXYt6fuFhIzFM9nfGz936R+4r8R
+	4wGUcj8UuwpnAb2U/8pz8AHy05VOuM24SmlptixVQz7GC8Pj6Wp64M1UvDuaDWMApwX+6W
+	jdova8DFr6L22Hl8Rn0BCNLs/d5Vz/zFA4YH/rmDnISypxy8Y1TQMBJD4VtSYw==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Wed, 11 Sep 2024 10:53:05 +0200
+Subject: [PATCH v2] mux: mmio: Add suspend and resume support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DM6PR11MB4529:EE_
-X-MS-Office365-Filtering-Correlation-Id: de6b075e-c479-497a-8735-08dcd23f1436
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hVef0H2qSWxGdq1P125Dy/d/wybWYmObkRUg/70efrMSp8kk+df8vLv7bfMn?=
- =?us-ascii?Q?WTPVqQwD9uG8USvz/J1LIf/n9yZbjiM3SOwkHH01BZddHpOsBCzAPowXAI74?=
- =?us-ascii?Q?Ppn8YlY+FOWknUZS3a2x79YSrng4fkRm8gAAyitNNtvu1NPEDDlY1zBx/I/r?=
- =?us-ascii?Q?MDaWPCUbKgctIPQsOhhP+O/BScYAsw2caB+n2M0kyTHOkHhibqomIrjMH0yW?=
- =?us-ascii?Q?yGLLqIP7kyZTdglg3yrG9T9l3sRwyI7H1RCHAemXNdnqJKiq/+ds6QVhMo4k?=
- =?us-ascii?Q?f+2XG/k9GAt1V/j/RXSWQljyyQtWlzykDlsjqG3LlJOu075EYxp+BXx8MTGn?=
- =?us-ascii?Q?8FHXlEjqp2M9TNaIAo99c4+5flVvmtsklTxmwSjDf+2uCmolAwuXhNUOk/Pq?=
- =?us-ascii?Q?yR8qPxQAa33XFOo+KyfrAR7BUilAAKJMq6k//U2WMfJROTQ0rEnvJUkHzNZe?=
- =?us-ascii?Q?fDCpGJmtZCKdgYSU2GA8GUH8vXIsBbNG12oQkdCqh3ufElUNWGYVcfRy8f9s?=
- =?us-ascii?Q?4u30AqMHY7g0kNPjuLe2ltyn4+Hh+czRe+vsBywQD1KDe4e2gaj83hY3BRNq?=
- =?us-ascii?Q?/OocRMgy9IVEJYtRSSEhD7uW56kSIlgiHPrnb1KvqwLR9BvH8G4Qv14K04pL?=
- =?us-ascii?Q?ZjvIHPnJy56KSN/yVS4iBtwGhLCJo6ASUsWMp9fYaCDoaBqzPKx77IffgA/D?=
- =?us-ascii?Q?tVlh7ZBSHZjF4F3fE9gig4/WsjkWrdifMxdU/oh5mYazpBiPmjCVJZszKM+3?=
- =?us-ascii?Q?PXhd2XKG4/GalyvlXt36zgSGVEsQR+7C2LXa1hyWkz00VQDfIVi10m+YGnDY?=
- =?us-ascii?Q?cTzETqAFnIIZLsVKuz8WacqkSDvbTRmuJL/LDn/YI7pdkSe43VewvHZX/+z5?=
- =?us-ascii?Q?aZSULitvzq3RL9GYqOjmadXV5kpmqCg5xienM7g3pRmseAsSCb82EkSJFbei?=
- =?us-ascii?Q?BIUgPrB2mnuycsRTyjAspqOEqMyDPASozjo/H4towieXYPKJ0E0FQ1ZhU+Gl?=
- =?us-ascii?Q?bjX6AjuBu3HfECiPbhan9L3qXc+BQTIEn9gCEOZJn5r+FlBx4XGNTnbA05bG?=
- =?us-ascii?Q?BF+cXBXlWrW5n46oy0AubZjRn88duqw49shOAOcRggIioxPlWK4Bg/cNABRQ?=
- =?us-ascii?Q?5ST4cRr8XCYw5l5W2WEeM1X0kmX6PFM7QjEgj6+m8Fmoe09t4u2lE/7gbBd3?=
- =?us-ascii?Q?e2lGzFkc8ddh0q+gEhHovCZAJ6yOE0zt2Cai22jEs1I103E4X5eONOg2sTab?=
- =?us-ascii?Q?o8UJaK2y5k87MapfYCwbJhQHGAb3GSMmLiqZpbTzhz60Efw47gSLl1uaat0z?=
- =?us-ascii?Q?UkM6xR0oVShjk8eAoJf76QepRLenZeD3OCtd/CnIKvMSNg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kCExLFJcPT/FTjbTlLRwCYwHy1QVuOAWf1Q8+dzunHuJnwdt00bAWYzPrZcu?=
- =?us-ascii?Q?C8mAJXkf9gcW41YD2COaC1rJa/sJydnoLQICLL/q+OkFJbLn6UbCXteV8ecs?=
- =?us-ascii?Q?j6qlHe0SXv1azMZLtt+16tpabCf1TvAdF+RJMlA8kRkzDL2BQpNgOZ4rgvVt?=
- =?us-ascii?Q?UHGgd9kNld08CiZPkrJw49Pi6hZGzfK/bDZLOw6VJ+cesv4hOgUmB3OQCdZw?=
- =?us-ascii?Q?gRSxvaH/Unmk2EYzVCoozwuxzVFBW6MhReuYur08RdAvrU44bEUEt2ubwAf0?=
- =?us-ascii?Q?TSYJdXQ1PE7Va8HIfeqGDHlQXWgMaoDuGVuUMrR+s7AwH48n6RRmA51m0D42?=
- =?us-ascii?Q?IcJG5XMQRywFZVTpwQp08NbB4KkxgIX+Op8mG6foGmk4bwAvlzfX35fhm/CN?=
- =?us-ascii?Q?XdOhHIywShcy1/G+JoePZvxm5/EbY8DGcvHol0wqyzd5UFrVHo8dm1SoM5VT?=
- =?us-ascii?Q?ZE/x6JD1U5JDpjNdZ99uM6ymUPfhhYEZm9nbNuwNJ/jgjsTD3KXUxA1YhEGn?=
- =?us-ascii?Q?ZL+ZYDje6sw9vTCmxpzPyUbkZ8aEf4N+W+e/0RApWLOqbEYh4yfAj6FFrtpq?=
- =?us-ascii?Q?Qcc0jy9gJPa8TsgDxfAn/K6gROo7yJ3syP2EUhwdZj5RnNz0iZu2fvXBmFVl?=
- =?us-ascii?Q?RdKNkFWvDy+wAbzMefp3r5ax40hJJthok81KKKziMjaElxWcPCX4LhsMsD2+?=
- =?us-ascii?Q?DSgfT88Pw6tt8opyHN3n6w2nTpkdprc1NyclWfbkcR62G5iYmhEns8nKTegL?=
- =?us-ascii?Q?uvy9CnPdOb8IIp68vsgL8glfg77Xeg93jZI5R9P2yTQR1gSE9+sJ3FsYIvF+?=
- =?us-ascii?Q?x28ka7qNYWCpFlDbcGdc6wR+GcF7YJeYtZJafcHQQgRu1Ytpx73/AWYhgz9B?=
- =?us-ascii?Q?wAEEbKVLs1AJcGwaFnyVlIQ1bnEdc6S4ktcCh7184VULu66sLmAU/Uz6RRGA?=
- =?us-ascii?Q?f1NWKaoJLRaFfPnDMqV0HQNx3vzg01EN6KR7YXbxZqRha53CWMn1ol8Uk63n?=
- =?us-ascii?Q?6uY5PnFip1DU3gDVW6E+ibzMxwNAhuV+vh4Dq/IW4LkkXlJVOVpndJJOn0ea?=
- =?us-ascii?Q?GTQ6j7Wvh/LabS4m9sPgwHmL7/4Eofoh9FBlwOzQ72R1ZyH61QWlCOGmrLz9?=
- =?us-ascii?Q?SmDNqJfG3PXsIGRs4i2gY2PWJghUU3fJJY1UITVRJohmmnilNkN95Gtj8IGR?=
- =?us-ascii?Q?PJ0W7imRA4OO8P664rujZnl11r+aP11W4UHL9zvwjfSj4S+9Kh90esmzLW0j?=
- =?us-ascii?Q?0to8ENIN3uiB+ke3UxL86HpXvqMTnzRiQn01BKMGufuUgZHshYj3q+yBMmqU?=
- =?us-ascii?Q?RS9pRltUroa/Pdtsn7KBLCSjschRKuAISnRJDOOVKUcuW7zjyBRPrvb+AlxB?=
- =?us-ascii?Q?Fk1YwbGg4AX9ruQ0AxGmfzjCWwLCYgKf9UxNGsfKBr8spLL+LXLrgLGOoY9P?=
- =?us-ascii?Q?BThiqGIu2DsyhijYMDcaTgiTOdlY9THlzSSR+2gBXGxaq/vddk28finVUtVI?=
- =?us-ascii?Q?G5Alpl4Trd9Bh65ahE+L0QcFbvTXNrSO0wefDN3ZfDU8HDV1lNkh6Wbdl121?=
- =?us-ascii?Q?jxPkQq/a3Rcfr0oKWTMWYPXgJTKhtiu70uYHP3aZ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: de6b075e-c479-497a-8735-08dcd23f1436
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 08:52:34.6809
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +iUQjz3RmvVYrp2JcgP/EboHPbLD042n6HJVQzRvqBiVB3MO1zz9XP0wvO2JpcZ3bIrJSk3s8Zni1e9vzm/XiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4529
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAHBa4WYC/4WOTQ6CMBCFr2K6dgy0hYUr72FYtDjIJLYlM0Awh
+ LvbcgGX3/vJe7sSZEJR98uuGFcSSjGDvl5UP7r4RqBXZqUrbau2NhCWDUKgBIyyBARZpinxDHY
+ wXjtjndFO5bZ3guDZxX4sfdEMRSrWxDjQdo4+u8wjyZz4e35Y66L+n1trqMA2uvFD0+awe/iU5
+ g/FW5+C6o7j+AEAU37Y2wAAAA==
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com, 
+ theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.12.0
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Tue, Sep 03, 2024 at 08:07:35PM -0700, Rick Edgecombe wrote:
->Teach EPT violation helper to check shared mask of a GPA to find out
->whether the GPA is for private memory.
->
->When EPT violation is triggered after TD accessing a private GPA, KVM will
->exit to user space if the corresponding GFN's attribute is not private.
->User space will then update GFN's attribute during its memory conversion
->process. After that, TD will re-access the private GPA and trigger EPT
->violation again. Only with GFN's attribute matches to private, KVM will
->fault in private page, map it in mirrored TDP root, and propagate changes
->to private EPT to resolve the EPT violation.
->
->Relying on GFN's attribute tracking xarray to determine if a GFN is
->private, as for KVM_X86_SW_PROTECTED_VM, may lead to endless EPT
->violations.
->
->Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
->Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
->Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->---
->TDX MMU part 2 v1:
-> - Split from "KVM: TDX: handle ept violation/misconfig exit"
->---
-> arch/x86/kvm/vmx/common.h | 13 +++++++++++++
-> 1 file changed, 13 insertions(+)
->
->diff --git a/arch/x86/kvm/vmx/common.h b/arch/x86/kvm/vmx/common.h
->index 78ae39b6cdcd..10aa12d45097 100644
->--- a/arch/x86/kvm/vmx/common.h
->+++ b/arch/x86/kvm/vmx/common.h
->@@ -6,6 +6,12 @@
-> 
-> #include "mmu.h"
-> 
->+static inline bool kvm_is_private_gpa(struct kvm *kvm, gpa_t gpa)
->+{
->+	/* For TDX the direct mask is the shared mask. */
->+	return !kvm_is_addr_direct(kvm, gpa);
->+}
->+
-> static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
-> 					     unsigned long exit_qualification)
-> {
->@@ -28,6 +34,13 @@ static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
-> 		error_code |= (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) ?
-> 			      PFERR_GUEST_FINAL_MASK : PFERR_GUEST_PAGE_MASK;
-> 
->+	/*
->+	 * Don't rely on GFN's attribute tracking xarray to prevent EPT violation
->+	 * loops.
->+	 */
+The status of each mux is read during suspend and stored in the private
+memory of the mux_chip.
+Then the state is restored during the resume.
 
-The comment seems a bit odd to me. We cannot use the gfn attribute from the
-attribute xarray simply because here we need to determine if *this access* is
-to private memory, which may not match the gfn attribute. Even if there are
-other ways to prevent an infinite EPT violation loop, we still need to check
-the shared bit in the faulting GPA.
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+In this second version, as discussed with Peter, everything is done in the
+mmio-mux driver.
+A mux_mmio_set() function was added, and used during suspend stage to get
+the status of the of the muxes.
+This status is stored in the private memory of the mux_chip.
+---
+Changes in v2:
+- Remove all modifications done in the mux subsystem
+- Add a mux_mmio_set()
+- Read the status of muxes during suspend and store in the private memory
+  of the mux_chip.
+- Use this status to restore muxes during resume.
+- Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
+---
+ drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 73 insertions(+), 9 deletions(-)
 
->+	if (kvm_is_private_gpa(vcpu->kvm, gpa))
->+		error_code |= PFERR_PRIVATE_ACCESS;
->+
-> 	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0);
-> }
-> 
->-- 
->2.34.1
->
->
+diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
+index 30a952c34365..30b84382637f 100644
+--- a/drivers/mux/mmio.c
++++ b/drivers/mux/mmio.c
+@@ -15,11 +15,25 @@
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+ 
++struct mux_mmio {
++	struct regmap_field **fields;
++	unsigned int *hardware_states;
++};
++
++static int mux_mmio_get(struct mux_control *mux, int *state)
++{
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
++	unsigned int index = mux_control_get_index(mux);
++
++	return regmap_field_read(mux_mmio->fields[index], state);
++}
++
+ static int mux_mmio_set(struct mux_control *mux, int state)
+ {
+-	struct regmap_field **fields = mux_chip_priv(mux->chip);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
++	unsigned int index = mux_control_get_index(mux);
+ 
+-	return regmap_field_write(fields[mux_control_get_index(mux)], state);
++	return regmap_field_write(mux_mmio->fields[index], state);
+ }
+ 
+ static const struct mux_control_ops mux_mmio_ops = {
+@@ -37,8 +51,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct regmap_field **fields;
+ 	struct mux_chip *mux_chip;
++	struct mux_mmio *mux_mmio;
+ 	struct regmap *regmap;
+ 	int num_fields;
+ 	int ret;
+@@ -69,12 +83,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 	}
+ 	num_fields = ret / 2;
+ 
+-	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
+-				       sizeof(*fields));
++	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
+ 	if (IS_ERR(mux_chip))
+ 		return PTR_ERR(mux_chip);
+ 
+-	fields = mux_chip_priv(mux_chip);
++	mux_mmio = mux_chip_priv(mux_chip);
++
++	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
++	if (IS_ERR(mux_mmio->fields))
++		return PTR_ERR(mux_mmio->fields);
++
++	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
++						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
++	if (IS_ERR(mux_mmio->hardware_states))
++		return PTR_ERR(mux_mmio->hardware_states);
+ 
+ 	for (i = 0; i < num_fields; i++) {
+ 		struct mux_control *mux = &mux_chip->mux[i];
+@@ -104,9 +126,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 			return -EINVAL;
+ 		}
+ 
+-		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
+-		if (IS_ERR(fields[i])) {
+-			ret = PTR_ERR(fields[i]);
++		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
++		if (IS_ERR(mux_mmio->fields[i])) {
++			ret = PTR_ERR(mux_mmio->fields[i]);
+ 			dev_err(dev, "bitfield %d: failed allocate: %d\n",
+ 				i, ret);
+ 			return ret;
+@@ -130,13 +152,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 
+ 	mux_chip->ops = &mux_mmio_ops;
+ 
++	dev_set_drvdata(dev, mux_chip);
++
+ 	return devm_mux_chip_register(dev, mux_chip);
+ }
+ 
++static int mux_mmio_suspend_noirq(struct device *dev)
++{
++	struct mux_chip *mux_chip = dev_get_drvdata(dev);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
++	unsigned int state;
++	int ret, i;
++
++	for (i = 0; i < mux_chip->controllers; i++) {
++		ret = mux_mmio_get(&mux_chip->mux[i], &state);
++		if (ret) {
++			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
++			return ret;
++		}
++
++		mux_mmio->hardware_states[i] = state;
++	}
++
++	return 0;
++}
++
++static int mux_mmio_resume_noirq(struct device *dev)
++{
++	struct mux_chip *mux_chip = dev_get_drvdata(dev);
++	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
++	int ret, i;
++
++	for (i = 0; i < mux_chip->controllers; i++) {
++		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
++		if (ret) {
++			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
++
+ static struct platform_driver mux_mmio_driver = {
+ 	.driver = {
+ 		.name = "mmio-mux",
+ 		.of_match_table	= mux_mmio_dt_ids,
++		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
+ 	},
+ 	.probe = mux_mmio_probe,
+ };
+
+---
+base-commit: caf614bf68351c7e9e38dd37e07539417c757813
+change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
+
 
