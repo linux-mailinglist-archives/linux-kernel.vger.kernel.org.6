@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-324871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394EF9751DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066229751E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA54287F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 306A01C22CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9059019C550;
-	Wed, 11 Sep 2024 12:19:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22A6192D70;
-	Wed, 11 Sep 2024 12:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA46018890B;
+	Wed, 11 Sep 2024 12:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxWCdQr2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E25142E9D;
+	Wed, 11 Sep 2024 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057170; cv=none; b=Aho0ol10fqC+JM4nrEpSwLpTvCMHeIWJdo2qEvpZfDldxPP4gfE5TyQY52eaAVYAe9t+ZkahX29md8LDgiRb5bBw38+w4VKJyeVydoZvNWTIXIvMblu+GIzaucxCEwuVrG1r+IijVcGN5qXsZfjK3Goe1tNKVe5a/e+BcFNwSB4=
+	t=1726057287; cv=none; b=pa6tHqpSMTswA89WmNS3CyNIuEEDR8DV8HGbmsDFLshNPRtvKwN09NgvJHx612jaPtVVHPZrLKiC6VWhjk6ypEijAb3rgNZzulNq54OXjEpnq3vvKCTylQMhrRqUXFi179LQ8dYEFxhbnq9JGLkidaEh8R7MjWNbZ6CmEtU+cio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057170; c=relaxed/simple;
-	bh=zjgTFkbhBZJgxzCKrV8cItHcbprgYE9tCUOWc6Nr870=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SlCNoFoKyHodU7PWTKb98tjiujcwQ9QObKsnywupWdw4ABQt7UpZlfVrZypdZq6tlrNq/tm9rRevj2+3Se48LOkJ+YfrPORuz2Wety2ZHbIuvRZZMhP5F7v1ngCBoTPJMoBZRnrk7Ds8nxMAWiUGZt+Z3S1lPjF/j7WX+WdOaxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6F90106F;
-	Wed, 11 Sep 2024 05:19:57 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 30F923F66E;
-	Wed, 11 Sep 2024 05:19:26 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	james.clark@linaro.org,
-	irogers@google.com,
-	asmadeus@codewreck.org
-Cc: nd@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH RESEND 2/2] perf stat: Stop repeating when ref_perf_stat() returns -1
-Date: Wed, 11 Sep 2024 13:19:19 +0100
-Message-Id: <20240911121919.4167483-3-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911121919.4167483-1-yeoreum.yun@arm.com>
-References: <20240911121919.4167483-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1726057287; c=relaxed/simple;
+	bh=zkDvPHD9waoczVeuUBXDcIZtXJB7vVQr6OpezhAsA7M=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kYXKVSn0rhbMdk1XCEdGlFIg4Rb/uCrsH66jVr6qTlfZAIbVh1oxszD3lPZvSGMf55Nnp3tJ/VVFnjofL3u4zcYiYtjHUD9Ks00AgRcXSh0XXAMNICGfTJ1aIhRYGHzbNa6qsyXlY3AKLrELlXCtuRtsR2wAqaeaIWCaYs8waPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxWCdQr2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE63C4CEC5;
+	Wed, 11 Sep 2024 12:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726057286;
+	bh=zkDvPHD9waoczVeuUBXDcIZtXJB7vVQr6OpezhAsA7M=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=OxWCdQr2Nm0/vPl2R1022IHDtP+rFkNsshVwj02hnbRH/pNEpV6Cc/TPmmT3kFB/D
+	 geRxpdp8cdVcFGXXGtixEaeD7RJHJjdhKakYPTnyOB2Cj5psLwbdq/c0wbT/3Inu2U
+	 bwZxhOZJL0KG9Fau8G/Wi3Il+NUoTgQe7vaP/+xNyQPU8Ivx4ars0WY44WSVmbs/38
+	 weCeT1zVccLLJSgUIW3fQbaWsVaeUprOJJQ6a0uHZ9CONHfhwLTsajOy8ujfA8UOuh
+	 cQzCth31qOT0Xs079KjOFEdTp529LUBIM0ooRVd3GHa7gPmNYJ9/qjh83A3SjgpIKP
+	 2C7Bxp3rF1K9Q==
+Date: Wed, 11 Sep 2024 14:21:24 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+    "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
+    "mripard@kernel.org" <mripard@kernel.org>, 
+    "airlied@gmail.com" <airlied@gmail.com>, 
+    "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+    "bentiss@kernel.org" <bentiss@kernel.org>, 
+    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>, 
+    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
+    Kerem Karabay <kekrby@gmail.com>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v5 0/10] Touch Bar support for T2 Macs
+In-Reply-To: <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Message-ID: <nycvar.YFH.7.76.2409111420040.31206@cbobk.fhfr.pm>
+References: <DD9C41AD-6543-47CE-8504-69E4992229B2@live.com> <MA0P287MB02176175318B96135BE3E320B8902@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Exit when run_perf_stat() returns an error to avoid continuously
-repeating the same error message. It's not expected that COUNTER_FATAL
-or internal errors are recoverable so there's no point in retrying.
+On Sat, 31 Aug 2024, Aditya Garg wrote:
 
-This fixes the following flood of error messages for permission issues,
-for example when perf_event_paranoid==3:
-  perf stat -r 1044 -- false
+> Hi Maintainers
+> 
+> It has been 2 weeks but I still haven't received a single reply on this 
+> version of the patch series. Consider this email as a friendly reminder.
 
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  (repeating for 1044 times).
+I think it makes most sense to take this whole set through hid.git, but 
+for that, I'd like to get Acked-by/Reviewed-by for patches 9 and 10 (drm 
+bits).
 
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
----
- tools/perf/builtin-stat.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Dave, Daniel, .. ?
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 954eb37ce7b8..18197ded88a7 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2875,7 +2875,10 @@ int cmd_stat(int argc, const char **argv)
- 			evlist__reset_prev_raw_counts(evsel_list);
+Thanks,
 
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1 && !interval) {
-+		if (status == -1)
-+			break;
-+
-+		if (forever && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+-- 
+Jiri Kosina
+SUSE Labs
 
 
