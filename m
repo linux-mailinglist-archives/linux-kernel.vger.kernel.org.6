@@ -1,191 +1,129 @@
-Return-Path: <linux-kernel+bounces-325159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6069755B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:38:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE7F9755A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70836B296C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C05288354
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E50E1A3AB0;
-	Wed, 11 Sep 2024 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57AD1A3052;
+	Wed, 11 Sep 2024 14:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="bdRSZxCq"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Robf0AoI"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005571A38DB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80E01AAE2E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065393; cv=none; b=MgXupUR2Bgu0zqjdixvjcf/CIjSl5zXeu+R31RKRkJrjddaimpIjKzj+/2QD/47LAne3+p1deU82F4X+9IkuDNjgDmFNNeWo99UwY+QN9wZ/WljJXBvG6m9BE9S/A4nP2z7iJfbBGyMxRhqbyVgLiDP9vR7Vw40StzkQ701u4bc=
+	t=1726065328; cv=none; b=MxnrNWO2xDrzr9c0ORlgwRStUmepFsPTIMLi34TQQysUAXQrZ74hI9fRzKezM14c0PBjdo1w0sTPM5Ze56sDLb9fUGw44jvFNY95meq/C4ZRgley9Q2dQPzzw6Ggly6zDCzs0dn8N90y3UfJoOLQkFIMv3AOAXTPjbKU7vvDb4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065393; c=relaxed/simple;
-	bh=P2Po9VCmI03gZ0twXQyW5372O49f3W9Nb89m5eShghU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r+WExVTrFoxH+qscQfQStqDDn+3tt7WvoPtpxL0nTKtPzZ9hSFWOKSdkD3yUoDlCBREQNHyyedf2B3W5y7HeL8ywsGUyxU7530cMVoXBiDkUMFls62pfx4dmKMU4sFnYQlVlwQ25q7lzk1wv43H/Cm9019sCMc0NtmCSimka4CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=bdRSZxCq; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1726065328; c=relaxed/simple;
+	bh=dn3E1OSWDZj5O8mccoBkEq8mmQ/0O63omvmxxrC2FR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tYD0627ThhuEghFF6HlKKZjb5oPM/ma55L6/+FayoU4KAYR/gE42UoMXUnSf3foTiX2TSGMOW340Akpz1qVNC6zXnty9QAZHeGWA+TarMUE4Qvho+ByrjB47+9dId1rpg9I8LEVg6QGlRnnzedvwIgcl/XqZ0ayagUrLpIVPf+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Robf0AoI; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e0402a98caso874214b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1726065392; x=1757601392;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OYjq6pbgVwn9b81T7cFK3VzB+SX95+WNYatfu9MFnys=;
-  b=bdRSZxCqD0WYVsMCBvCUst/PgIwV5OapUhsHbaPkeH3FLXksXezY+dtm
-   Q5UG4/YsHIpxn5rH0YmIzRgob1Ov6nHvq9itbnpsiqilYCrktUk4meH0P
-   STjlAa0lOk2O21z/IMAoR6pUTUY8yUq+KfGM4wMug3/QIfP5CYo156JON
-   s=;
-X-IronPort-AV: E=Sophos;i="6.10,220,1719878400"; 
-   d="scan'208";a="329955903"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 14:35:20 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:6114]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.5.52:2525] with esmtp (Farcaster)
- id 509ab7d1-9dbf-4d4d-b643-5a7e7b0c884b; Wed, 11 Sep 2024 14:35:18 +0000 (UTC)
-X-Farcaster-Flow-ID: 509ab7d1-9dbf-4d4d-b643-5a7e7b0c884b
-Received: from EX19D007EUB001.ant.amazon.com (10.252.51.82) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 11 Sep 2024 14:35:17 +0000
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19D007EUB001.ant.amazon.com (10.252.51.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 11 Sep 2024 14:35:17 +0000
-Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (10.253.79.181)
- by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34
- via Frontend Transport; Wed, 11 Sep 2024 14:35:14 +0000
-From: Fares Mehanna <faresx@amazon.de>
-To: 
-CC: <nh-open-source@amazon.com>, Fares Mehanna <faresx@amazon.de>, "Marc
- Zyngier" <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James Morse
-	<james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
-	<yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "Kemeng
- Shi" <shikemeng@huaweicloud.com>, =?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?=
-	<ptosi@google.com>, Ard Biesheuvel <ardb@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Javier Martinez Canillas <javierm@redhat.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Fuad Tabba <tabba@google.com>, Mark Brown
-	<broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>, Kristina Martsenko
-	<kristina.martsenko@arm.com>, Randy Dunlap <rdunlap@infradead.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, Jean-Philippe Brucker
-	<jean-philippe@linaro.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, "David
- Hildenbrand" <david@redhat.com>, Roman Kagan <rkagan@amazon.de>, "moderated
- list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
-	<linux-arm-kernel@lists.infradead.org>, "open list:KERNEL VIRTUAL MACHINE FOR
- ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>, open list
-	<linux-kernel@vger.kernel.org>, "open list:MEMORY MANAGEMENT"
-	<linux-mm@kvack.org>
-Subject: [RFC PATCH 0/7] support for mm-local memory allocations and use it
-Date: Wed, 11 Sep 2024 14:33:59 +0000
-Message-ID: <20240911143421.85612-1-faresx@amazon.de>
-X-Mailer: git-send-email 2.40.1
+        d=chromium.org; s=google; t=1726065326; x=1726670126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dNJmlJuaspo2SJylGvarXYbq/qh4LXZFb+SB568Vu00=;
+        b=Robf0AoIXTl6jJ/QFqCHIeG/rKoYFI9rNgQYpbXBwIgIagFH9Q0uSImhc+fCXMBiaH
+         wfX3qoqr+Ot0XPb//doLwNarS7fVYUtVxnukdzuCVIw4p/lldnbZlYotZSxS3+bEjGT/
+         e7GldmoguuoiDawsxeZnD7hG9zrcV+CvTYK7w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726065326; x=1726670126;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dNJmlJuaspo2SJylGvarXYbq/qh4LXZFb+SB568Vu00=;
+        b=ZguZMOdaHOdOIUy6JbyTTRJ9T/dxBAF8HwQ6PJ9M7zM1z3+pRRS7B/lVC8U/8Kyu7p
+         nCAIUZvSc94rsURqzbetM2sH0c5Mfy/9KbUkDIXkaNoZHEf98ktyQ16TjDO+FXvtlrFj
+         rDRoK5aLM1Zrr3E4rqChE7QfaGkKjhlu0acDRCVssdp+J1NUMTmmk9V4QJdJBKemCIHL
+         BSmnjOGnsQP6iIMCApskiWyUus36WFJKljv4UChujubMDebzPjmCUO3uNodUVRMgWgkk
+         RwFg4rFqrYn3xaEHbnVpUkmowpzfamuj3F60e/dlTK5Xa2h+qNtxljAxb25k0q+iqYq0
+         WvqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzgPFzy1JsykdINoZ03jOdjBl0ZOQbz1eZzveqeDko9a/ndIV0t8lPbUtO1Vk6ABIhsxTmrBB2pN8KU2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLHDcBz9+ex6VV7hgWSNZFoN1RLpvwu47hfqyH2J1MPv3nBhOl
+	LStYDLS07tyaJZajjjF7wl3eEaYS46SQOIXcOwM3/O+jovS8x2PHUcNhlj1gfg==
+X-Google-Smtp-Source: AGHT+IGME0UPIJahehavGen0dgvEatXYyewutMBmDSKHZzczItT4r7tLJ/JhZQ5wOmVfzQENAr9Cgw==
+X-Received: by 2002:a05:6870:e416:b0:261:1b66:5ab1 with SMTP id 586e51a60fabf-27c1b5811dcmr2051517fac.21.1726065325607;
+        Wed, 11 Sep 2024 07:35:25 -0700 (PDT)
+Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:102f:d738:6069:fd4b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbb5901sm46620a12.24.2024.09.11.07.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 07:35:24 -0700 (PDT)
+From: Fei Shao <fshao@chromium.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Fei Shao <fshao@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v3 6/8] arm64: dts: mediatek: mt8188: Add SPMI support for PMIC control
+Date: Wed, 11 Sep 2024 22:33:59 +0800
+Message-ID: <20240911143429.850071-7-fshao@chromium.org>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+In-Reply-To: <20240911143429.850071-1-fshao@chromium.org>
+References: <20240911143429.850071-1-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-In a series posted a few years ago [1], a proposal was put forward to allow the
-kernel to allocate memory local to a mm and thus push it out of reach for
-current and future speculation-based cross-process attacks.  We still believe
-this is a nice thing to have.
+Add SPMI node for PMIC control on MT8188 SoC.
 
-However, in the time passed since that post Linux mm has grown quite a few new
-goodies, so we'd like to explore possibilities to implement this functionality
-with less effort and churn leveraging the now available facilities.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Fei Shao <fshao@chromium.org>
+---
 
-An RFC was posted few months back [2] to show the proof of concept and a simple
-test driver.
+Changes in v3:
+- Remove leading zeros in spmi reg size
 
-In this RFC, we're using the same approach of implementing mm-local allocations
-piggy-backing on memfd_secret(), using regular user addresses but pinning the
-pages and flipping the user/supervisor flag on the respective PTEs to make them
-directly accessible from kernel.
-In addition to that we are submitting 5 patches to use the secret memory to hide
-the vCPU gp-regs and fp-regs on arm64 VHE systems.
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-The generic drawbacks of using user virtual addresses mentioned in the previous
-RFC [2] still hold, in addition to a more specific one:
-
-- While the user virtual addresses allocated for kernel secret memory are not
-  directly accessible by userspace as the PTEs restrict that, copy_from_user()
-  and copy_to_user() can operate on those ranges, so that e.g. the usermode can
-  guess the address and pass it as the target buffer for read(), making the
-  kernel overwrite it with the user-controlled content. Effectively making the
-  secret memory in the current implementation missing confidentiality and
-  integrity guarantees.
-
-In the specific case of vCPU registers, this is fine because the owner process
-can read and write to them using KVM IOCTLs anyway. But in the general case this
-represents a security concern and needs to be addressed.
-
-A possible way forward for the arch-agnostic implementation is to limit the user
-virtual addresses used for kernel to specific range that can be checked against
-in copy_from_user() and copy_to_user().
-
-For arch specific implementation, using separate PGD is the way to go.
-
-[1] https://lore.kernel.org/lkml/20190612170834.14855-1-mhillenb@amazon.de/
-[2] https://lore.kernel.org/lkml/20240621201501.1059948-1-rkagan@amazon.de/
-
-Fares Mehanna / Roman Kagan (2):
-  mseal: expose interface to seal / unseal user memory ranges
-  mm/secretmem: implement mm-local kernel allocations
-
-Fares Mehanna (5):
-  arm64: KVM: Refactor C-code to access vCPU gp-registers through macros
-  KVM: Refactor Assembly-code to access vCPU gp-registers through a
-    macro
-  arm64: KVM: Allocate vCPU gp-regs dynamically on VHE and
-    KERNEL_SECRETMEM enabled systems
-  arm64: KVM: Refactor C-code to access vCPU fp-registers through macros
-  arm64: KVM: Allocate vCPU fp-regs dynamically on VHE and
-    KERNEL_SECRETMEM enabled systems
-
- arch/arm64/include/asm/kvm_asm.h              |  50 ++--
- arch/arm64/include/asm/kvm_emulate.h          |   2 +-
- arch/arm64/include/asm/kvm_host.h             |  41 +++-
- arch/arm64/kernel/asm-offsets.c               |   1 +
- arch/arm64/kernel/image-vars.h                |   2 +
- arch/arm64/kvm/arm.c                          |  90 +++++++-
- arch/arm64/kvm/fpsimd.c                       |   2 +-
- arch/arm64/kvm/guest.c                        |  14 +-
- arch/arm64/kvm/hyp/entry.S                    |  15 ++
- arch/arm64/kvm/hyp/include/hyp/switch.h       |   6 +-
- arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h    |  10 +-
- .../arm64/kvm/hyp/include/nvhe/trap_handler.h |   2 +-
- arch/arm64/kvm/hyp/nvhe/host.S                |  20 +-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c            |   4 +-
- arch/arm64/kvm/reset.c                        |   2 +-
- arch/arm64/kvm/va_layout.c                    |  38 ++++
- include/linux/secretmem.h                     |  29 +++
- mm/Kconfig                                    |  10 +
- mm/gup.c                                      |   4 +-
- mm/internal.h                                 |   7 +
- mm/mseal.c                                    |  81 ++++---
- mm/secretmem.c                                | 213 ++++++++++++++++++
- 22 files changed, 559 insertions(+), 84 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+index 61530f8c5599..a826ca4d10e3 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+@@ -1306,6 +1306,18 @@ pwrap: pwrap@10024000 {
+ 			clock-names = "spi", "wrap";
+ 		};
+ 
++		spmi: spmi@10027000 {
++			compatible = "mediatek,mt8188-spmi", "mediatek,mt8195-spmi";
++			reg = <0 0x10027000 0 0xe00>, <0 0x10029000 0 0x100>;
++			reg-names = "pmif", "spmimst";
++			assigned-clocks = <&topckgen CLK_TOP_SPMI_M_MST>;
++			assigned-clock-parents = <&topckgen CLK_TOP_ULPOSC1_D10>;
++			clocks = <&infracfg_ao CLK_INFRA_AO_PMIC_AP>,
++				 <&infracfg_ao CLK_INFRA_AO_PMIC_TMR>,
++				 <&topckgen CLK_TOP_SPMI_M_MST>;
++			clock-names = "pmif_sys_ck", "pmif_tmr_ck", "spmimst_clk_mux";
++		};
++
+ 		infra_iommu: iommu@10315000 {
+ 			compatible = "mediatek,mt8188-iommu-infra";
+ 			reg = <0 0x10315000 0 0x1000>;
 -- 
-2.40.1
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+2.46.0.598.g6f2099f65c-goog
 
 
