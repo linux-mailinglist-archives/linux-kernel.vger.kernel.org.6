@@ -1,159 +1,99 @@
-Return-Path: <linux-kernel+bounces-324766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB82975099
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B1E975098
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B208283A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572111C2262F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77E9188013;
-	Wed, 11 Sep 2024 11:16:08 +0000 (UTC)
-Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC37F187352;
+	Wed, 11 Sep 2024 11:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt9tN10W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957407DA88
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31380153BC7;
+	Wed, 11 Sep 2024 11:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726053368; cv=none; b=cU1ID/pNrmrA+uFZF2F5DBKuFdMt4tT6XRLlAMD4/iVhFQ2wcGauhorXotCVhOhjxmaBogqq9Pa0NVd9s+oIXg+yDhB3fJxFZYPxd2JwpufMQ0D2VdkXa55MsMXc6WJjxuhuN5AB4YEZtQGLGiPRU2ilOWvvuA20pknbVc5/uw8=
+	t=1726053364; cv=none; b=eouZvgFeqjOxdKon6fDlcpRWosI0uJv/jzdmfaXQDZnlMRkezXImTSM6HFsgzVtFNBMUQSG/VL8/2f+jr/+3nRo0s8TS840bMePxoy+NdSjN4+PcBDiu28S9F1MS1Z2fmpU0Az0I3dKwg9o5LuVE1X3SQ4/d5185WwGEzah93u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726053368; c=relaxed/simple;
-	bh=6bkGPTgASUz7T7BijlfbTQLd05M+Z8oXh12xRDX2ozI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SWsYi+q8KL0814ipg2+9qGyIIwa6bb62DehbbebD0V4fS/YSAUblHHmAPAWnjHR8lDDiUXLNLTNl+fMUNG7DP+Q4YKqT5OSD0hI/J50KtiSjssN4znK25Xf0qzZ037eCwHO69xSmdnI+nJtHYsOULlM0fPQ7vv5NNTWSnIs1cio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.131])
-	by sina.com (10.185.250.22) with ESMTP
-	id 66E17BE700003615; Wed, 11 Sep 2024 19:15:54 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5570657602697
-X-SMAIL-UIID: ACB3667F41DC4FBA825760F89E1A6320-20240911-191554-1
-From: Hillf Danton <hdanton@sina.com>
-To: Michal Koutny <mkoutny@suse.com>
-Cc: Chen Ridong <chenridong@huawei.com>,
-	tj@kernel.org,
-	cgroups@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and cpu_hotplug_lock
-Date: Wed, 11 Sep 2024 19:15:42 +0800
-Message-Id: <20240911111542.2781-1-hdanton@sina.com>
-In-Reply-To: <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
-References: <20240817093334.6062-1-chenridong@huawei.com> <20240817093334.6062-2-chenridong@huawei.com>
+	s=arc-20240116; t=1726053364; c=relaxed/simple;
+	bh=eKrbjaomEDXQn1d+1L+LNn3HUG2MOI3OG6WLs28DAzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FYnGLqH+jtfcDsV0ejXhIzSQse8gXMJ/CzhmzMN15jthflwF1egc9RiBUENk9E9BjOCgpwPE4u6rojO2BnYtBZ/1ALn6lyVDg0LJ1479ueSBNPNoIZ+6cZgmK9la/FIVuB61d7ICBCqhguw6CbCIGQbqCCQ7jDBsP188dRO536k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt9tN10W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D87C4CEC5;
+	Wed, 11 Sep 2024 11:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726053363;
+	bh=eKrbjaomEDXQn1d+1L+LNn3HUG2MOI3OG6WLs28DAzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bt9tN10WpAwempYNP/4YfUhRmUL3d2fUlMV+8kh4Y9rjgoD9i8zXijycuK9Uoy1IV
+	 TBYSMwAutvstlJ/rR6nflCdeBac/aAFoCqyddErCMHJdbSevQrSd2iUnMcSpYynC1i
+	 4Im8tpAw10qgx7GIfLHg99+j5FutpHffCr1Ucg7fA+FINfFPPl/AFPnPz5fDX1xGtd
+	 EVyxYhxTNi7fGjNtha30Nrg/6gcFtM2MqQDLwgvFobjgacO6wT3epyUEnxguh9+gS7
+	 czAlALC7D1x7c3HKeyn81u58ALWZWuq5qSro8V2pdI8h6/09AfS5EMcRITisn+5dmG
+	 /9WJBKUQFijOQ==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Andrew Kreimer <algonell@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ Matthew Wilcox <willy@infradead.org>
+In-Reply-To: <20240910211302.8909-1-algonell@gmail.com>
+References: <20240910211302.8909-1-algonell@gmail.com>
+Subject: Re: [PATCH] ASoC: tlv320aic31xx: Fix typos
+Message-Id: <172605336126.29902.15923004900083559208.b4-ty@kernel.org>
+Date: Wed, 11 Sep 2024 12:16:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Mon, 9 Sep 2024 16:19:38 +0200 Michal Koutny <mkoutny@suse.com>
-> On Sat, Aug 17, 2024 at 09:33:34AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
-> > The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
-> > acquired in different tasks, which may lead to deadlock.
-> > It can lead to a deadlock through the following steps:
-> > 1. A large number of cpusets are deleted asynchronously, which puts a
-> >    large number of cgroup_bpf_release works into system_wq. The max_active
-> >    of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
-> >    cgroup_bpf_release works, and many cgroup_bpf_release works will be put
-> >    into inactive queue. As illustrated in the diagram, there are 256 (in
-> >    the acvtive queue) + n (in the inactive queue) works.
-> > 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
-> >    smp_call_on_cpu work into system_wq. However step 1 has already filled
-> >    system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
-> >    to wait until the works that were put into the inacvtive queue earlier
-> >    have executed (n cgroup_bpf_release), so it will be blocked for a while.
-> > 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
-> > 4. Cpusets that were deleted at step 1 put cgroup_release works into
-> >    cgroup_destroy_wq. They are competing to get cgroup_mutex all the time.
-> >    When cgroup_metux is acqured by work at css_killed_work_fn, it will
-> >    call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
-> >    However, cpuset_css_offline will be blocked for step 3.
-> > 5. At this moment, there are 256 works in active queue that are
-> >    cgroup_bpf_release, they are attempting to acquire cgroup_mutex, and as
-> >    a result, all of them are blocked. Consequently, sscs.work can not be
-> >    executed. Ultimately, this situation leads to four processes being
-> >    blocked, forming a deadlock.
-> >
-> > system_wq(step1)		WatchDog(step2)			cpu offline(step3)	cgroup_destroy_wq(step4)
-> > ...
-> > 2000+ cgroups deleted asyn
-> > 256 actives + n inactives
-> > 				__lockup_detector_reconfigure
-> > 				P(cpu_hotplug_lock.read)
-> > 				put sscs.work into system_wq
-> > 256 + n + 1(sscs.work)
-> > sscs.work wait to be executed
-> > 				warting sscs.work finish
-> > 								percpu_down_write
-> > 								P(cpu_hotplug_lock.write)
-> > 								...blocking...
-> > 											css_killed_work_fn
-> > 											P(cgroup_mutex)
-> > 											cpuset_css_offline
-> > 											P(cpu_hotplug_lock.read)
-> > 											...blocking...
-> > 256 cgroup_bpf_release
-> > mutex_lock(&cgroup_mutex);
-> > ..blocking...
+On Wed, 11 Sep 2024 00:12:41 +0300, Andrew Kreimer wrote:
+> Fix typos in comments.
 > 
-> Thanks, Ridong, for laying this out.
-> Let me try to extract the core of the deps above.
 > 
-> The correct lock ordering is: cgroup_mutex then cpu_hotplug_lock.
-> However, the smp_call_on_cpu() under cpus_read_lock may lead to
-> a deadlock (ABBA over those two locks).
-> 
-> This is OK
-> 	thread T					system_wq worker
-> 
-> 	  						lock(cgroup_mutex) (II)
-> 							...
-> 							unlock(cgroup_mutex)
-> 	down(cpu_hotplug_lock.read)
-> 	smp_call_on_cpu
-> 	  queue_work_on(cpu, system_wq, scss) (I)
-> 							scss.func
-> 	  wait_for_completion(scss)
-> 	up(cpu_hotplug_lock.read)
-> 
-> However, there is no ordering between (I) and (II) so they can also happen
-> in opposite
-> 
-> 	thread T					system_wq worker
-> 
-> 	down(cpu_hotplug_lock.read)
-> 	smp_call_on_cpu
-> 	  queue_work_on(cpu, system_wq, scss) (I)
-> 	  						lock(cgroup_mutex)  (II)
-> 							...
-> 							unlock(cgroup_mutex)
-> 							scss.func
-> 	  wait_for_completion(scss)
-> 	up(cpu_hotplug_lock.read)
-> 
-> And here the thread T + system_wq worker effectively call
-> cpu_hotplug_lock and cgroup_mutex in the wrong order. (And since they're
-> two threads, it won't be caught by lockdep.)
-> 
-Given no workqueue work executed without being dequeued, any queued work,
-regardless if they are more than 2048, that acquires cgroup_mutex could not
-prevent the work queued by thread-T from being executed, so thread-T can
-make safe forward progress, therefore with no chance left for the ABBA 
-deadlock you spotted where lockdep fails to work.
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tlv320aic31xx: Fix typos
+      commit: 69f3014248f0f10e24f07a66ae650061ecaf732b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
