@@ -1,137 +1,185 @@
-Return-Path: <linux-kernel+bounces-324768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561EC9750A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:17:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9A6975096
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1872628EE97
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C77BB2681C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD4A18754E;
-	Wed, 11 Sep 2024 11:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6057518593A;
+	Wed, 11 Sep 2024 11:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dIVYljLb"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g+9mKXIF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A66187342
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5367DA88
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726053386; cv=none; b=VnHvU06ZdBDwTjdMDAV08aJhAQ1VBv7R5QhusOsmlMzchjtxWahcfGXbNITiy/+hla35yv/fGxy1ai6f1qXb5ffIWT1AfCvtOVe9EaH+FXrj3xObDAdD+l9rKTLUXBIBzNuWveQ+0CKFRwQ817HruOyoFa4wUEgrX39Z6mxyAa8=
+	t=1726053356; cv=none; b=bpLcNKtzWWUy+T/3Nj2G/EJMeHsk3cEoE/3uQgU7plsO699wpYZLKKiJeqOiDACXBFuH54h8ginB1IeMqWwoShkL/cdJAGMKa1cs49pnxkoiDE5gWKOuCrplDGjLFO6rqkr2ogO9LJvzTn6sCGwe0dfVeRUlqu+TPK17bPqPIG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726053386; c=relaxed/simple;
-	bh=wTtci8eoVgZsRM2qXAmiFpLpC6jRu1ELaLXAPR2rZro=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=hRlsovQ8YNt/56LbKrdkjp+UMo8hKXfCu8yb/gYafOpPC2rpnTNULDqb/8ed2YLcvLIJ9BtUTFufmC/drKQGdvLUpjV5pZ04o1B2uzULFwqJ1pLksoX4f1tjozNwRXJHdpP4b5ZHTCQSqo91Q0cK8jJTWirl+jJwZxvetA0l6so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dIVYljLb; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d5235d1bcaso186600137b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726053383; x=1726658183; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rZeN3m7JwHd+aiSOQFFXykrHDvl9NFzT+dwyqVmXC5I=;
-        b=dIVYljLbDhJUYptPLiTqDqcC/sP1fKbYMXxWG82HHUpG8NBIgkjdLEGJXVUS0cJgjU
-         uj9GkUVOnSltYD1t2Pcgds+7L+l3IygfA5LNriyEsA6ubvdJUFkXSWj2xp2fv+AE3eIi
-         OL9UE8UxGfoSxLu8i6BCfjHiEsi3NeyfShVKcQbwMnVoHzk3VE3K4Il7nH4C2J+EZKZv
-         cGgZZWSK9px18piAf0U5hlbYL+cKbqZ8/+PktEU6ilSC2aX0SFfQ4fCScXye40xOEJxx
-         1ahZ0gV/3FnkMl6mHsuSiPFiZH8V+c5Reispc5GTek3oKh9MDSF6zokP8bS+TGCZpoLd
-         vI4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726053383; x=1726658183;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rZeN3m7JwHd+aiSOQFFXykrHDvl9NFzT+dwyqVmXC5I=;
-        b=RU5RIVcqbGn6i1JV0QRIVZ0jxPwDmZdQo7wjTnbqTfelvPlTkOb8mdPhX3R3OH4iq3
-         uaKOOUsIHEA/yo4pvwd2VHCnFayvW+ZkjlGF3vWV9Y7O2OaBng/gpTyTEStxKSbve48G
-         7cIQk5uqsLkAhjasOcFPanB+XY1se+V4swckZ7sFW4pNT9z4Amih22v9y9Qk5YXMGnLO
-         UA1k2hxvYL4LrAfpw4fb1TOSb1vfI3l2UkSfBoLpkt1T5GU3MB3ovM7Tun83UZ7SQsN0
-         i7LQA0UOh+5CsVunVikVO+z4kf1kGqCuKijdXyX72PIMpEXVgYATLNzO8Qq3WmXDeWT3
-         IqMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY6nZRriHV4nzEiDMXzKzAowDBJgagmjZzXBrZx+0Hx7PvtgE1dOoosF97wBVL/oTuvnT+lP5U6mzAEOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJc8vjneCVtCz7e8F8ErhvezKCkBi3//2Nc0JijiFWvZK6VgO5
-	Xpi9CtZXKkes3hs8qTVvj6k77LPFv2aYdLw0kUubjVOHT9epMlzcYlMzxpMcyH1NB0EM1NLIpKw
-	qB8UICGP42Q==
-X-Google-Smtp-Source: AGHT+IFLsShVm8R7NpJci0/1+sfejlskACPnpCLygmEyKH0O7KOx81HYO532YTKxSmiWzym78Cq5wyJCyqBjWg==
-X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:23ef:6338:5fb3:dbb0])
- (user=suleiman job=sendgmr) by 2002:a25:df4c:0:b0:e0b:f93:fe8c with SMTP id
- 3f1490d57ef6-e1d346b2ca3mr52914276.0.1726053383366; Wed, 11 Sep 2024 04:16:23
- -0700 (PDT)
-Date: Wed, 11 Sep 2024 20:15:22 +0900
-Message-Id: <20240911111522.1110074-1-suleiman@google.com>
+	s=arc-20240116; t=1726053356; c=relaxed/simple;
+	bh=zQwAEp+zV4klBBuiWd/m8n8HOGKjm9KSJPLeO28Ng0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SY/5CAqRscHUmpgsE1NiAumUPC0SrBsbAMenPmo3a+W/tFnU3qPEk1d7UxMeGNI9VF+9Y3Q/aNiJ2kTM4rGh1/zqxDC6ZitGGio2uQ4z66lM5qMwrXS0l6chKF4ae55OeZgMCzzFGQ58bGRaHkCNcwldU30S17Zzv9wutDDpi+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g+9mKXIF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B7JqCW028394;
+	Wed, 11 Sep 2024 11:15:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=Wp2GsN0eV/Isimo+fx+sy80p+eNfCNRoPfy1GC0
+	Wgj8=; b=g+9mKXIFOQ0UCLDq6HB3/Bzz7mILPqulbYX/HTPPt0Up6XiXH6yL4js
+	HlOLkq9ISsn6gF19d09SaLtO5v8BA0q28HZM44D2UKWaFwtuh61pdgcosS3srBpG
+	6aWiBjkp5UYEnxhiW563ufP+3npsV+rBSCm3OwJaOjvM+SOb7Zsp5TDJqbxTpZvO
+	1IxvFjIGV2i97mFd8JRAM3pHQCphIAiz9B6BSNSdPJ66h+oBEJArOJWdX77tKtCr
+	cD2Ap/96khxg7zr66o3dw4H5yugnCjiCWg4I9PtzykpXUn8lvMv2rXJZKg40xDgS
+	Hh8bagItolcIS1/3FLzRbfUygsNJEpQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyn1n2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 11:15:37 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48BBFbqG025638;
+	Wed, 11 Sep 2024 11:15:37 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyn1mu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 11:15:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48BAaIGw032103;
+	Wed, 11 Sep 2024 11:15:36 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h2nms01c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 11:15:36 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48BBFYVB51511696
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Sep 2024 11:15:34 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 58EC02004E;
+	Wed, 11 Sep 2024 11:15:34 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 418C320040;
+	Wed, 11 Sep 2024 11:15:31 +0000 (GMT)
+Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.43.116.75])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Sep 2024 11:15:30 +0000 (GMT)
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+To: bhe@redhat.com
+Cc: Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+Subject: [PATCH v2] kexec/crash: no crash update when kexec in progress
+Date: Wed, 11 Sep 2024 16:45:28 +0530
+Message-ID: <20240911111528.104303-1-sourabhjain@linux.ibm.com>
+X-Mailer: git-send-email 2.46.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LXb6hJqXbhDVpIsaY4eYybKBdraT82cB
+X-Proofpoint-ORIG-GUID: jLbe-4MlMbIJfO3TCUFPXY5Xfgyq3fnl
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Subject: [PATCH v2] sched: Don't try to catch up excess steal time.
-From: Suleiman Souhlal <suleiman@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, joelaf@google.com, 
-	vineethrp@google.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	ssouhlal@freebsd.org, Srikar Dronamraju <srikar@linux.ibm.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sean Christopherson <seanjc@google.com>, 
-	Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_12,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409110082
 
-When steal time exceeds the measured delta when updating clock_task, we
-currently try to catch up the excess in future updates.
-However, this results in inaccurate run times for the future things using
-clock_task, as they end up getting additional steal time that did not
-actually happen.
+The following errors are observed when kexec is done with SMT=off on
+powerpc.
 
-For example, suppose a task in a VM runs for 10ms and had 15ms of steal
-time reported while it ran. clock_task rightly doesn't advance. Then, a
-different taks runs on the same rq for 10ms without any time stolen in
-the host.
-Because of the current catch up mechanism, clock_sched inaccurately ends
-up advancing by only 5ms instead of 10ms even though there wasn't any
-actual time stolen. The second task is getting charged for less time
-than it ran, even though it didn't deserve it.
-This can result in tasks getting more run time than they should actually
-get.
+[  358.458385] Removing IBM Power 842 compression device
+[  374.795734] kexec_core: Starting new kernel
+[  374.795748] kexec: Waking offline cpu 1.
+[  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+[  374.935833] kexec: Waking offline cpu 2.
+[  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+snip..
+[  375.515823] kexec: Waking offline cpu 6.
+[  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+[  375.695836] kexec: Waking offline cpu 7.
 
-So, we instead don't make future updates pay back past excess stolen time.
+To avoid kexec kernel boot failure on PowerPC, all the present CPUs that
+are offline are brought online during kexec. For more information, refer
+to commit e8e5c2155b00 ("powerpc/kexec: Fix orphaned offline CPUs across
+kexec"). Bringing the CPUs online triggers the crash hotplug handler,
+crash_handle_hotplug_event(), to update the kdump image. Since the
+system is on the kexec kernel boot path and the kexec lock is held, the
+crash_handle_hotplug_event() function fails to acquire the same lock to
+update the kdump image, resulting in the error messages mentioned above.
 
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+To fix this, return from crash_handle_hotplug_event() without printing
+the error message if kexec is in progress.
+
+The same applies to the crash_check_hotplug_support() function. Return
+0 if kexec is in progress because kernel is not in a position to update
+the kdump image.
+
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: kexec@lists.infradead.org
+Cc: linuxppc-dev@ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org
+Reported-by: Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
 ---
-v2:
-- Slightly changed to simply moving one line up instead of adding
-  new variable.
 
-v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
+Changelog:
+
+Since v1:
+ - Keep the kexec_in_progress check within kexec_trylock() - Baoquan He
+ - Include the reason why PowerPC brings offline CPUs online
+   during the kexec kernel boot path - Baoquan He
+ - Rebased on top of #next-20240910 to avoid conflict with the patch below
+   https://lore.kernel.org/all/20240812041651.703156-1-sourabhjain@linux.ibm.com/T/#u
+
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/crash_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f3951e4a55e5..6c34de8b3fbb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -730,11 +730,11 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 	if (static_key_false((&paravirt_steal_rq_enabled))) {
- 		steal = paravirt_steal_clock(cpu_of(rq));
- 		steal -= rq->prev_steal_time_rq;
-+		rq->prev_steal_time_rq += steal;
- 
- 		if (unlikely(steal > delta))
- 			steal = delta;
- 
--		rq->prev_steal_time_rq += steal;
- 		delta -= steal;
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index c1048893f4b6..078fe5bc5a74 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -505,7 +505,8 @@ int crash_check_hotplug_support(void)
+ 	crash_hotplug_lock();
+ 	/* Obtain lock while reading crash information */
+ 	if (!kexec_trylock()) {
+-		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
++		if (!kexec_in_progress)
++			pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+ 		crash_hotplug_unlock();
+ 		return 0;
  	}
- #endif
+@@ -547,7 +548,8 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+ 	crash_hotplug_lock();
+ 	/* Obtain lock while changing crash information */
+ 	if (!kexec_trylock()) {
+-		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
++		if (!kexec_in_progress)
++			pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+ 		crash_hotplug_unlock();
+ 		return;
+ 	}
 -- 
-2.46.0.598.g6f2099f65c-goog
+2.46.0
 
 
