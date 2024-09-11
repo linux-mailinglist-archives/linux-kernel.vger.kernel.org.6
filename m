@@ -1,45 +1,63 @@
-Return-Path: <linux-kernel+bounces-324785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2C39750D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3615A9750DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED061C22A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B10B1C22E63
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E528187352;
-	Wed, 11 Sep 2024 11:31:23 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5412188A00;
+	Wed, 11 Sep 2024 11:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="h3P6VY4f"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E7314F100;
-	Wed, 11 Sep 2024 11:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E11186617;
+	Wed, 11 Sep 2024 11:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726054282; cv=none; b=lulZSmpmyJXg5o4kvfoIdJnYaHeKKFetXlT2sqWcSi3nvxoh9f5SqjPuUw/Lql7lCTUBmlfIAtFF60OIfTe1vTgfHwZsfXJ1cgbji6bps39YsF5q19vQZ1/d+7TrTTz1u/asNeUGHawW7HMH4oZzqDw5c7D51iVXXcpDRNisWyU=
+	t=1726054397; cv=none; b=e+peuCsniDfi9rpJNO0ybgIGfSC8R1KDeMfM3KLkO1NbjCv/nvqKz06tzyY/kKPZSMfK4Smxu3lXy7UF8bUDJLwFQwc9RRgojlPljiCDGBkGR4G2X3vCvgruE4+JGsFmDYTfDHL5TEt1ueAXpjH91WrUFcvXXNc/a3URT6ATfm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726054282; c=relaxed/simple;
-	bh=RNMWO2WtthbJKl9msB3Y5qZod76Z7zlwONaoHt/pM3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Gpie8H4BaAFtKEdM2ohbXV2dE3tsuESuzncgCY6cCOGcUDz6rc4G/wvd6UkBzoymOn/jIXB5HSEMzjRYhsngyCgJxGHXtle0hct7xIYQU00hnMkbWrMyOcRKfIenGRxIGDTKsGUfI30/W/CMLZlQeCbEUC95lk/CdtXvBG6Ohrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X3dfv3VlSz2Cp5l;
-	Wed, 11 Sep 2024 19:30:47 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D79FF14010C;
-	Wed, 11 Sep 2024 19:31:16 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 19:31:16 +0800
-Message-ID: <15d963c2-1854-4fb7-a7a4-d8ed8cafead3@huawei.com>
-Date: Wed, 11 Sep 2024 19:31:16 +0800
+	s=arc-20240116; t=1726054397; c=relaxed/simple;
+	bh=1+cazK5r20icjJcjvA5lxK9A8++aZTPBcRzHZht9EzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RM4AePho6lBu2FHVdWs/G78MbOSNzUvG3O5+mNArZSq3ZUG5gpTclL6XmRerijSt2AQngmeyiFf/jS2wFEAZH9nRjNMhDRH2+JrnLrn5o3W+Xx+6qsEQaNY8ktx9B/DkFgj6wFvsdZ7tU95dNw+ZoMZFxaIojl4OSopai+K0sEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=h3P6VY4f; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1726054396; x=1757590396;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=1+cazK5r20icjJcjvA5lxK9A8++aZTPBcRzHZht9EzM=;
+  b=h3P6VY4fHXpusKZywohzYSSYQy9BS4N/5vx5FbJsDg7VzTFzGkNt/xRW
+   X1RoXKl9b34Rd6ltXhc3EQPnolgouBxKMgSPhJvtMAkwX0Yeh7v0WK9wU
+   0wQ6AaOjIlnrbeSqITJuSIgI7g7LuuKnaCTXpcow4EdocqYmwXr6zkyBr
+   U=;
+X-IronPort-AV: E=Sophos;i="6.10,219,1719878400"; 
+   d="scan'208";a="758821177"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 11:31:48 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:55361]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.1.162:2525] with esmtp (Farcaster)
+ id 0ac9aa66-a400-4d40-aecd-781ffcb5e148; Wed, 11 Sep 2024 11:31:46 +0000 (UTC)
+X-Farcaster-Flow-ID: 0ac9aa66-a400-4d40-aecd-781ffcb5e148
+Received: from EX19D041EUB003.ant.amazon.com (10.252.61.118) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 11 Sep 2024 11:31:42 +0000
+Received: from [192.168.27.184] (10.1.212.24) by EX19D041EUB003.ant.amazon.com
+ (10.252.61.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 11 Sep 2024
+ 11:31:40 +0000
+Message-ID: <07b0b475-9f45-4476-a63d-291f940f9b4d@amazon.de>
+Date: Wed, 11 Sep 2024 13:31:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,108 +65,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v18 12/14] net: replace page_frag with
- page_frag_cache
-To: Paolo Abeni <pabeni@redhat.com>, <davem@davemloft.net>, <kuba@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
-	<alexander.duyck@gmail.com>, Ayush Sawal <ayush.sawal@chelsio.com>, Eric
- Dumazet <edumazet@google.com>, Willem de Bruijn
-	<willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, Ingo
- Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, John Fastabend
-	<john.fastabend@gmail.com>, Jakub Sitnicki <jakub@cloudflare.com>, David
- Ahern <dsahern@kernel.org>, Matthieu Baerts <matttbe@kernel.org>, Mat
- Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, Jamal
- Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri
- Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>,
-	<bpf@vger.kernel.org>, <mptcp@lists.linux.dev>
-References: <20240906073646.2930809-1-linyunsheng@huawei.com>
- <20240906073646.2930809-13-linyunsheng@huawei.com>
- <1884e171-cc87-4238-abd1-0f6be1e0b279@redhat.com>
+Subject: Re: [RFC PATCH 1/2] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs
+ support
+To: Yang Weijiang <weijiang.yang@intel.com>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <mlevitsk@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240509075423.156858-1-weijiang.yang@intel.com>
+From: Nikolas Wipper <nikwip@amazon.de>
 Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <1884e171-cc87-4238-abd1-0f6be1e0b279@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <20240509075423.156858-1-weijiang.yang@intel.com>
+X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
+ EX19D041EUB003.ant.amazon.com (10.252.61.118)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On 2024/9/10 22:04, Paolo Abeni wrote:
-> On 9/6/24 09:36, Yunsheng Lin wrote:
->> diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
->> index 49811c9281d4..6190d9bfd618 100644
->> --- a/net/ipv4/ip_output.c
->> +++ b/net/ipv4/ip_output.c
->> @@ -953,7 +953,7 @@ static int __ip_append_data(struct sock *sk,
->>                   struct flowi4 *fl4,
->>                   struct sk_buff_head *queue,
->>                   struct inet_cork *cork,
->> -                struct page_frag *pfrag,
->> +                struct page_frag_cache *nc,
->>                   int getfrag(void *from, char *to, int offset,
->>                       int len, int odd, struct sk_buff *skb),
->>                   void *from, int length, int transhdrlen,
->> @@ -1228,13 +1228,19 @@ static int __ip_append_data(struct sock *sk,
->>               copy = err;
->>               wmem_alloc_delta += copy;
->>           } else if (!zc) {
->> +            struct page_frag page_frag, *pfrag;
->>               int i = skb_shinfo(skb)->nr_frags;
->> +            void *va;
->>                 err = -ENOMEM;
->> -            if (!sk_page_frag_refill(sk, pfrag))
->> +            pfrag = &page_frag;
->> +            va = sk_page_frag_alloc_refill_prepare(sk, nc, pfrag);
->> +            if (!va)
->>                   goto error;
->>                 skb_zcopy_downgrade_managed(skb);
->> +            copy = min_t(int, copy, pfrag->size);
->> +
->>               if (!skb_can_coalesce(skb, i, pfrag->page,
->>                             pfrag->offset)) {
->>                   err = -EMSGSIZE;
->> @@ -1242,18 +1248,18 @@ static int __ip_append_data(struct sock *sk,
->>                       goto error;
->>                     __skb_fill_page_desc(skb, i, pfrag->page,
->> -                             pfrag->offset, 0);
->> +                             pfrag->offset, copy);
->>                   skb_shinfo(skb)->nr_frags = ++i;
->> -                get_page(pfrag->page);
->> +                page_frag_commit(nc, pfrag, copy);
->> +            } else {
->> +                skb_frag_size_add(&skb_shinfo(skb)->frags[i - 1],
->> +                          copy);
->> +                page_frag_commit_noref(nc, pfrag, copy);
->>               }
->> -            copy = min_t(int, copy, pfrag->size - pfrag->offset);
->> -            if (getfrag(from,
->> -                    page_address(pfrag->page) + pfrag->offset,
->> -                    offset, copy, skb->len, skb) < 0)
->> +
->> +            if (getfrag(from, va, offset, copy, skb->len, skb) < 0)
->>                   goto error_efault;
-> 
-> Should the 'commit' happen only when 'getfrag' is successful?
-> 
-> Similar question in the ipv6 code.
+T24gVGh1IE1heSAgOSwgMjAyNCBhdCAwOTo1NCBBTSBVVEMrMDIwMCwgWWFuZyBXZWlqaWFuZyB3
+cm90ZToKPiBFbmFibGUgS1ZNX3tHLFN9RVRfT05FX1JFRyB1QVBJcyBzbyB0aGF0IHVzZXJzcGFj
+ZSBjYW4gYWNjZXNzIEhXIE1TUiBvcgo+IEtWTSBzeW50aGV0aWMgTVNSIHRocm91Z2h0IGl0Lgo+
+IAo+IEluIENFVCBLVk0gc2VyaWVzIFsqXSwgS1ZNICJzdGVhbHMiIGFuIE1TUiBmcm9tIFBWIE1T
+UiBzcGFjZSBhbmQgYWNjZXNzCj4gaXQgdmlhIEtWTV97RyxTfUVUX01TUnMgdUFQSXMsIGJ1dCB0
+aGUgYXBwcm9hY2ggcG9sbHV0ZXMgUFYgTVNSIHNwYWNlCj4gYW5kIGhpZGVzIHRoZSBkaWZmZXJl
+bmNlIG9mIHN5bnRoZXRpYyBNU1JzIGFuZCBub3JtYWwgSFcgZGVmaW5lZCBNU1JzLgo+IAo+IE5v
+dyBjYXJ2ZSBvdXQgYSBzZXBhcmF0ZSByb29tIGluIEtWTS1jdXN0b21pemVkIE1TUiBhZGRyZXNz
+IHNwYWNlIGZvcgo+IHN5bnRoZXRpYyBNU1JzLiBUaGUgc3ludGhldGljIE1TUnMgYXJlIG5vdCBl
+eHBvc2VkIHRvIHVzZXJzcGFjZSB2aWEKPiBLVk1fR0VUX01TUl9JTkRFWF9MSVNULCBpbnN0ZWFk
+IHVzZXJzcGFjZSBjb21wbGllcyB3aXRoIEtWTSdzIHNldHVwIGFuZAo+IGNvbXBvc2VzIHRoZSB1
+QVBJIHBhcmFtcy4gS1ZNIHN5bnRoZXRpYyBNU1IgaW5kaWNlcyBzdGFydCBmcm9tIDAgYW5kCj4g
+aW5jcmVhc2UgbGluZWFybHkuIFVzZXJzcGFjZSBjYWxsZXIgc2hvdWxkIHRhZyBNU1IgdHlwZSBj
+b3JyZWN0bHkgaW4KPiBvcmRlciB0byBhY2Nlc3MgaW50ZW5kZWQgSFcgb3Igc3ludGhldGljIE1T
+Ui4KPiAKPiBbKl06Cj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwMjE5MDc0NzMz
+LjEyMjA4MC0xOC13ZWlqaWFuZy55YW5nQGludGVsLmNvbS8KPiAKPiBTdWdnZXN0ZWQtYnk6IFNl
+YW4gQ2hyaXN0b3BoZXJzb24gPHNlYW5qY0Bnb29nbGUuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFlh
+bmcgV2VpamlhbmcgPHdlaWppYW5nLnlhbmdAaW50ZWwuY29tPgoKSGF2aW5nIHRoaXMgQVBJLCBh
+bmQgc3BlY2lmaWNhbGx5IGhhdmluZyBhIGRlZmluaXRlIGt2bV9vbmVfcmVnIHN0cnVjdHVyZSAK
+Zm9yIHg4NiByZWdpc3RlcnMsIHdvdWxkIGJlIGludGVyZXN0aW5nIGZvciByZWdpc3RlciBwaW5u
+aW5nL2ludGVyY2VwdHMuCldpdGggb25lX3JlZyBmb3IgeDg2IHRoZSBBUEkgY291bGQgYmUgcGxh
+dGZvcm0gYWdub3N0aWMgYW5kIHBvc3NpYmxlIGV2ZW4KcmVwbGFjZSBNU1IgZmlsdGVycyBmb3Ig
+eDg2LiBJIGRvIGhhdmUgYSBjb3VwbGUgb2YgcXVlc3Rpb25zIGFib3V0IHRoZXNlCnBhdGNoZXMu
+Cgo+IC0tLQo+ICBhcmNoL3g4Ni9pbmNsdWRlL3VhcGkvYXNtL2t2bS5oIHwgMTAgKysrKysrCj4g
+IGFyY2gveDg2L2t2bS94ODYuYyAgICAgICAgICAgICAgfCA2MiArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspCj4gCj4g
+ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvdWFwaS9hc20va3ZtLmggYi9hcmNoL3g4Ni9p
+bmNsdWRlL3VhcGkvYXNtL2t2bS5oCj4gaW5kZXggZWYxMWFhNGNhYjQyLi5jYTJhNDdhODVmYTEg
+MTAwNjQ0Cj4gLS0tIGEvYXJjaC94ODYvaW5jbHVkZS91YXBpL2FzbS9rdm0uaAo+ICsrKyBiL2Fy
+Y2gveDg2L2luY2x1ZGUvdWFwaS9hc20va3ZtLmgKPiBAQCAtNDEwLDYgKzQxMCwxNiBAQCBzdHJ1
+Y3Qga3ZtX3hjcnMgewo+ICAJX191NjQgcGFkZGluZ1sxNl07Cj4gIH07Cj4gIAo+ICsjZGVmaW5l
+IEtWTV9YODZfUkVHX01TUgkJCSgxIDw8IDIpCj4gKyNkZWZpbmUgS1ZNX1g4Nl9SRUdfU1lOVEhF
+VElDX01TUgkoMSA8PCAzKQoKV2h5IGlzIHRoaXMgYSBiaXRmaWVsZD8gQXMgb3Bwb3NlZCB0byBq
+dXN0IGNvdW50aW5nIHVwPwoKI2RlZmluZSBLVk1fWDg2X1JFR19NU1IJCQkyCiNkZWZpbmUgS1ZN
+X1g4Nl9SRUdfU1lOVEhFVElDX01TUgkzCgo+ICsKPiArc3RydWN0IGt2bV94ODZfcmVnX2lkIHsK
+PiArCV9fdTMyIGluZGV4Owo+ICsJX191OCB0eXBlOwo+ICsJX191OCByc3ZkOwo+ICsJX191MTYg
+cnN2ZDE2Owo+ICt9OwoKVGhpcyBzdHJ1Y3QgaXMgb3Bwb3NpdGUgdG8gd2hhdCBvdGhlciBhcmNo
+aXRlY3R1cmVzIGRvLCB3aGVyZSB0aGV5IGhhdmUKYW4gYXJjaGl0ZWN0dXJlIElEIGluIHRoZSB1
+cHBlciAzMiBiaXRzLCBhbmQgdGhlIGxvd2VyIDMyIGJpdHMgYWN0dWFsbHkKaWRlbnRpZnkgdGhl
+IHJlZ2lzdGVyLiBUaGlzIHdvdWxkIHByb2JhYmx5IG1ha2Ugc2Vuc2UgZm9yIHg4NiB0b28sIHRv
+CmF2b2lkIGNvbmZsaWN0cyB3aXRoIG90aGVyIElEcyAoSSB0aGluayBNSVBTIGNvcmUgcmVnaXN0
+ZXJzIGNhbiBoYXZlIElEcwp3aXRoIHRoZSBsb3dlciAzMiBiaXRzIGFsbCB6ZXJvKSBzbyB0aGF0
+IHRoZSBJRHMgYXJlIGFjdHVhbGx5IHVuaXF1ZSwKcmlnaHQ/CgpCZXN0LApOaWtvbGFzCgoKCkFt
+YXpvbiBXZWIgU2VydmljZXMgRGV2ZWxvcG1lbnQgQ2VudGVyIEdlcm1hbnkgR21iSApLcmF1c2Vu
+c3RyLiAzOAoxMDExNyBCZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhydW5nOiBDaHJpc3RpYW4gU2NobGFl
+Z2VyLCBKb25hdGhhbiBXZWlzcwpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90dGVu
+YnVyZyB1bnRlciBIUkIgMjU3NzY0IEIKU2l0ejogQmVybGluClVzdC1JRDogREUgMzY1IDUzOCA1
+OTcK
 
-Good question.
-First of all, even it fails, the 'goto' will handle it correctly as the
-skb_shinfo(skb)->nr_frags is setup correctly.
-And then 'getfrag' being failure is an unlikely case, right?
-
-I thought about moving it when coding, but decided not to mainly get_page()
-is also called before 'getfrag' as above, and I guess 'getfrag' might
-involve memcpy'ing causing the cache eviction for the above data, so it
-might make sense to do the likely case before 'getfrag'.
-
-> 
-> Thanks,
-> 
-> Paolo
-> 
-> 
 
