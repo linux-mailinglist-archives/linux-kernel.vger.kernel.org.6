@@ -1,315 +1,249 @@
-Return-Path: <linux-kernel+bounces-325373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BD59758C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AC59758CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41891C22DE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376AA1F24616
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFFD1B1D50;
-	Wed, 11 Sep 2024 16:52:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2B3383B1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726073520; cv=none; b=N6/Bs2dFC2RVK5WBZQdTcgnWPvSG3jvE5K4VcgqykBOW/tBINjUPeToZ8u2mocekiu7c1O8dugTcoLMNLQZ/brC2ngszOj/ojBy4/Jey1HTiQl7wRkkLPwuZURMvaa1+0i8BWdd6jQWlOs8mC5teh3ggP6AN9cxXl185xwBqw7I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726073520; c=relaxed/simple;
-	bh=3SRg4k2U5UuQzivJn3CbEH/RRX41NPLzG5lh61ACe2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rn2/H/uGC8TJ4BWhQjkC7iar1KRMq9EavNBroeKmLKQxi4flLvefaK1QS2k6Baj3RWnlZ1IoSy9+TCPZuDaCJevGKMbBBDXVm/imgeDMvXnTCZf90gQIecSJnQtv6AL0U7eXUXuLef7IXEbI29HyYllIKG8EypxkW8fwH4tQpOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB8141007;
-	Wed, 11 Sep 2024 09:52:24 -0700 (PDT)
-Received: from [10.57.74.218] (unknown [10.57.74.218])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 228E43F66E;
-	Wed, 11 Sep 2024 09:51:51 -0700 (PDT)
-Message-ID: <63c3c6c3-cb16-4096-a067-ced25e916380@arm.com>
-Date: Wed, 11 Sep 2024 18:51:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36821B143E;
+	Wed, 11 Sep 2024 16:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgdbXaa6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EA64D8B9;
+	Wed, 11 Sep 2024 16:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726073689; cv=fail; b=pHbhLZ/XdDAKVezbPTrBKv55/sJ1n+TzvAD/iWY1AWGh2jPoX5utPPgn/UGl8qf/VXpcBRz0moBy5bjtDAEQTaEYrmGMSTgY7t2BIhIJvJK9RAH+DmrBs6LWyT7WWu3B1HM52jiBSz97HmSBSVYcXp/YvEaQqkMFEi85y/3bje0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726073689; c=relaxed/simple;
+	bh=yGa0zbcep2YL+lTeheGAmR/gBTAEHycm9HgpHA+OsGM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q9gH4JNUUxLl+ERaC8m03oWnk0U4wSj88BxKuutKNvw6WFRngVVN9ODWc+qRaSwU7ZwTNp2PRDYVELSlEgED0UFQu+Dih7aJmQVvsLx/67MPqFNSuFzXpvyPbJ0uN7J/UWPLPNJ1vJym33/UgxEdJCsJL1Y3EY17yIR1jE5jy0Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgdbXaa6; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726073688; x=1757609688;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yGa0zbcep2YL+lTeheGAmR/gBTAEHycm9HgpHA+OsGM=;
+  b=CgdbXaa6Casj1yTke1fkxunwwTXSRcEt/EH92mzyM9j/RuQrxNT2yUxk
+   Medv5goQRddpBrazVApJYJHxwvGQ2bX5G58SbHqbAGxDS24aPzog/Hx1x
+   Oxne9m5AzKm8QyqTlv2wNGSuTqTw3MR+T6ZTBb/wzXUWxMpa6/MYNRMjv
+   ZoAXMlTBvUEmcPIvK73xQjbUk5a17YHIgCKQ1QKwZna91PSJdahWiBjYE
+   Hqc5iVy8oSu3olVsmzRaX1op+xJeu03QhwOJy8cJW2ArVRWQfLGeuFbD4
+   GD7w+gQdHn8DKUJ+b/k1A3SRFn1AbEQHWxV7ToKh3QS37N92prj0i5RZr
+   w==;
+X-CSE-ConnectionGUID: 7txRwc7NTwuFCxj5uGKuTQ==
+X-CSE-MsgGUID: OiKZuUm+SZCMiXE2ALuPoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24428252"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="24428252"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 09:54:47 -0700
+X-CSE-ConnectionGUID: 1GJF6bGmT8Ck0PGAYDTrRw==
+X-CSE-MsgGUID: SDuzIsh5QIOYUG9MeLqSwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="72198361"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 09:54:47 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Sep 2024 09:54:46 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Sep 2024 09:54:46 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 09:54:46 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 11 Sep 2024 09:54:46 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hlyt0esc7txnmZ1aJeJQlJHFxDqZf6+g7upMLS616Z5Wq/qpWT1fc3+qJEBh0ptaN/wfOlq3P/m0j5PzO14YzAyovKhdjLhKAAQlExDLy0ZdsH/EF9df/voP5xU93NhJaxI/qjdoV7Fu9Y+tpUaKZblXeTNEkkG/GCoxv+j6lwri4ILk9Zzrwf7TBzWa2hcTbNR2FBaF5wZKczpSDqX0crzM7goffOyfK7CYZj2jPpxrmyfwmIi7Nq0Bhhi6dotEwhqVRDAsqH9biAM+gtlq4iDDvR8qg0LUxCHKgcEdHsFjNPKPL0nJWimBTu310n5I0fh1UJdEONIOR2WQhMw8Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3wUpoiTItb8NiSnEcdegQYahmQuRcbUQWD2uCsLuKcM=;
+ b=dpuvGMEGWl1RA4AeVReqW9B/Hf3aToLE+m8wgJrCXZfgg4HQzpfGb+n7b2F0/lljf0JJl0kChtRB4ISm2fpNtZVpS2DyHocmfewylLeZ2B6qseoa06K5b/wthIj22HMajyv6uVixpg4Bo6fZPh8pwuYQiJqBsBMes5UlmMBSjfh0zFyCKT2FrO4xYf7DdzDvW/BY449wWRfKxmOg1aG6AhbJUgTFBciEbTCAaqonjld+N/XNvkaHo0xy9l4n1vTBXJ8RheD9eV4nUyZKELp/s7R8G1qZSW8aOOYiDTuqsgTnBzFEKDRS55BIiR9xbouBzg3T/z62gFnf+Z159VHkiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CYYPR11MB8429.namprd11.prod.outlook.com (2603:10b6:930:c2::15)
+ by MW6PR11MB8409.namprd11.prod.outlook.com (2603:10b6:303:24c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Wed, 11 Sep
+ 2024 16:54:38 +0000
+Received: from CYYPR11MB8429.namprd11.prod.outlook.com
+ ([fe80::4f97:ad9d:79a9:899f]) by CYYPR11MB8429.namprd11.prod.outlook.com
+ ([fe80::4f97:ad9d:79a9:899f%4]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 16:54:38 +0000
+From: "Pucha, HimasekharX Reddy" <himasekharx.reddy.pucha@intel.com>
+To: Gui-Dong Han <hanguidong02@outlook.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "baijiaju1990@gmail.com"
+	<baijiaju1990@gmail.com>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>
+Subject: RE: [Intel-wired-lan] [PATCH v2] ice: Fix improper handling of
+ refcount in ice_dpll_init_rclk_pins()
+Thread-Topic: [Intel-wired-lan] [PATCH v2] ice: Fix improper handling of
+ refcount in ice_dpll_init_rclk_pins()
+Thread-Index: AQHa/hJyDFp9ie+S+kCRwGSOskH2nLJS2doQ
+Date: Wed, 11 Sep 2024 16:54:38 +0000
+Message-ID: <CYYPR11MB842927FFCC14C0B1B4F39534BD9B2@CYYPR11MB8429.namprd11.prod.outlook.com>
+References: <SY8P300MB0460F0F4B5D0BC6768DCA466C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
+In-Reply-To: <SY8P300MB0460F0F4B5D0BC6768DCA466C0932@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CYYPR11MB8429:EE_|MW6PR11MB8409:EE_
+x-ms-office365-filtering-correlation-id: db62c21f-f73d-4b9e-bfa8-08dcd2826c41
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?l5P/9XbpXfodzbvzjD5PEyaIE6ahyW+TEjPuZY6raPyI4leflyf0gRkE22Pv?=
+ =?us-ascii?Q?MKJ81PLulhjVgpfdvt8Z5KaSFn4cLc8ZBNTUl86KJFVVde0WaFM2S2OmoYiS?=
+ =?us-ascii?Q?LDCMKhaf/RwYUbi/HKrsyXKfhYcsxSUUjHaT/wjnW48B+29sqUVpSOkD9ey1?=
+ =?us-ascii?Q?LQmx+AArgD0eDkUwNJuEkYuo/q+n/xtXILy0x3I9cUBSzWf/SKAFjF7kn6Tz?=
+ =?us-ascii?Q?IubhNhNm2NEixoxElFNvJPEuxTcjBp/l6TWg+dIxwsldWoVHd1JZRliXVmrn?=
+ =?us-ascii?Q?KO8LEG9RWlM1iCDnylcAZAlbf7SzikMCAPtw0EXfREQwJjBzwWGnAoirJdgc?=
+ =?us-ascii?Q?D5j2izJfGB8/9pCB88JKgMNCvCyQgn4ofiU8CnMMweGCcNAk2+kRsPPgLlh1?=
+ =?us-ascii?Q?ZLTw8SU/zYFSG63X7Z7hSBlspfmUiVwAQWQH5pusqfve8mlJZz7nZy/RIMYZ?=
+ =?us-ascii?Q?Y3Qh05FhfOCH5NLBaV6gRcAbXc8VZkNKP++zk8XEXNiZuB8apX2lZDAyz+T2?=
+ =?us-ascii?Q?nVu2hEX27KE+Z51zLyJFW896HBiIimB6GKe8sgKKK1/dEF+7PJhK1JEdJ/Mn?=
+ =?us-ascii?Q?/oYXUkJ5qsrPRkHQivJEhEYhk8uvaNA2QJROwlz6l0t5bh+xr7u7NlDJoXvP?=
+ =?us-ascii?Q?auciUH3haR4RlJ1hP3rAph6aQB1udZzggJoHCjIN59bCZkebX1sm5R2Y2/H5?=
+ =?us-ascii?Q?ybC3uQwA2uW5DBfpzLfJ33qmqou4lYK7EpmgxjAIj0gEFuuSS9cxbMswGP0C?=
+ =?us-ascii?Q?FxhFi3+tDtyitc4jeD8jJshTq3MqMN9hmUgegTbryvB0dj+ysX9VmXkDZA3t?=
+ =?us-ascii?Q?7InHdXvxtCnzcTriPZ0+rTnsnwz5t3b4G9MXdkXt6Hnu837Syrpbvp6BKBbn?=
+ =?us-ascii?Q?F21dfpmurHj58s19gJbmbozG4Iz5TDYlLHbCIWmwnBLIRTPaRoIQnbKfsPVm?=
+ =?us-ascii?Q?AN5v0orAHopb6JG/klNIKz+o+U2Bhjb81CYDVKKX+v3s+ihqSdgBdO+8/hh/?=
+ =?us-ascii?Q?S3uVOxUHkqo3yphbGCrJbAGzqIYS7PjPBuylwtih/TV917FfNAhpDPRtWy6b?=
+ =?us-ascii?Q?zKzgPz0xNYYA5u5lK0C+hqIyP1QglMNai87R0n3/fDP6KHAfS+eDDNEObpmd?=
+ =?us-ascii?Q?9ge2UqUUphOUAd4EwadMoIxdEtLxPmYend8hcwC3uAfwaWF+f6Rk9mLrStJJ?=
+ =?us-ascii?Q?dv/+cPnFE21nXZLP8XhfUtTtDP+DVwqRSa1+6AyeYJpG4/kAeh3bItaGlDki?=
+ =?us-ascii?Q?MhZGDGCEsNNlP8WaHkXS5Z6L7BCkXjGLvZRnmtGME6FvoATyZkn78Iqqy7v8?=
+ =?us-ascii?Q?j6X/52z3U2SdQf/zG0Ot3iljk0xXFH7m0SD6nH3+U3OcRv/RAUJTJF4J2Ldq?=
+ =?us-ascii?Q?hGVc5jys0Lg+Zf5RpdLparU0hoQrbeGeJjgZSR+7HAoCYHXcFQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8429.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?rMHR9sre7wXNR1UdHE37BU4gAqotT/o9ZM+5+rRXXj8y2UC6S60yE8JQc4ha?=
+ =?us-ascii?Q?B6Ozm0DfcmfspQFoVc6wGh7LdoC435RDBLK/Rm4xAkqHnhaM8nomOTJTxlVb?=
+ =?us-ascii?Q?qgkfJYNDWO4+wbflh236IImtNnrhnEmDOUjt4PsKMncbBf8t0jFwAEfLUwMS?=
+ =?us-ascii?Q?VNtJjvGTDyRzZAj/p/7kBLkbRRAR43tigsf8ls9hG4zNQZaRI1UuRszFx8vH?=
+ =?us-ascii?Q?FXYgr1XwbSWheksrrlkAekX6aeoTaE/XdwmTHEvAaxi6cIJahOU1RJjygxPW?=
+ =?us-ascii?Q?eJ68oswIFH01pRLWbCTI/qRNrI7e5IRoNHHhdh/hCOhtfcuv8cbSssy4ucy4?=
+ =?us-ascii?Q?t14pKoCdhpW4CKcSd/6s+HhRb+nxiso/H+KEMUJi8V7+ADJRDOsBJCY7bR84?=
+ =?us-ascii?Q?lHbYOeGu+frkaBnsIyzndRY0/KcXVhQTm4Xrxs1d/RthM9uQKsWGpDvGyv6e?=
+ =?us-ascii?Q?PFOgCIObzMawrSoz+s6LUsaJgLH0LNfhb3SajwgEd+p+q2uXjMMonDzIs8n3?=
+ =?us-ascii?Q?qc1lgAmPR5sKc5QKoZnZTI7ANAkcWNh7RCAhRshIPnHyWsj2QheaChjBpvYA?=
+ =?us-ascii?Q?FefoVMlY2mFjLjHQtfohBupfkTQjhArTNBawDbB+gN2jm4NHFA6xcc+G/GYT?=
+ =?us-ascii?Q?oMMyqAr/samMiszqWuBS+vBwViJ5wVo/aSrquuRp36qiRV20KavkV4dGXd29?=
+ =?us-ascii?Q?mRu7EZ+A5Gil6Zl6nkKm4qZjTc4vFla/3HlnJV/8dxRbFi7Icazu6tAVC2yQ?=
+ =?us-ascii?Q?fOPaCR5pIprdRdPgagKD/pWcEEhYuGBz3hCKchi40BWdewRaJqTulZx0UpwE?=
+ =?us-ascii?Q?zCQnqBG9OAZ/j6twOLQHxnfC87shwUcVorgW0R+p44Ce/u+DqI9w2SebPQXy?=
+ =?us-ascii?Q?l0/H6lB+yEaQdwdAXKCRuCSKzEllWf3GEIRc9wwU/52cCwhxZ25EyVkRCZnz?=
+ =?us-ascii?Q?77Wyh0y5f57KtwdnMGG2rm5QagmpbnGfEJXrKHesNJM2WfA2rWN7OvkLHi3R?=
+ =?us-ascii?Q?wPEO9G1OqBSLfaXae59SjnVmt6UsVZZS9Oh/P4LgSG8bZ1UYJmOFkrL1G8zS?=
+ =?us-ascii?Q?x1j3ml/EQ7oKU2dPFwaNzxxwER36AkvPSlycLObrM+301EqMrl1uHYm5XETM?=
+ =?us-ascii?Q?KLoHQGlRzm8paCgse5+C+ar0YvWg0kKm7BeHYskXT+SijsVxe+xKlOSBxfYy?=
+ =?us-ascii?Q?LN0snJLMn8+RUGrSq+ed/LgVhrBw9oP9uDGo6BvsyBb46Qazb5cv9Po83iI9?=
+ =?us-ascii?Q?caDBbE2EFJ2OuEGfzF8u9Xfh892cE0oVL2FMLDrlLmL1w5H3Yu4ja/RWhsJf?=
+ =?us-ascii?Q?gcb0Wu0cK4BjR86D3//Lf2D3Sl7/T9YPspi5tCio8T0lfPvvERnx9FOF8lFh?=
+ =?us-ascii?Q?LhVXgcTBjTI57kqfoQv6r5n0NHOorpU/s6cxugR5JFM6HR04QpXZVSgBxNDf?=
+ =?us-ascii?Q?+DMZqvHE/lEGTEg+I4UariYvWSjCKTOhbrrpUVL6n1TqRVtsrcsMklxeSIPG?=
+ =?us-ascii?Q?bE0d21YPjnkyrFb0jTYIDupQxBmlDu502+XC45kqjbBCf+aRGYii65JiKa5J?=
+ =?us-ascii?Q?0slufIZZ6ChlUS8x7t2ukmHG+yJYNoY2cctO92ggpD2/etg3+Xdgv+CzByNh?=
+ =?us-ascii?Q?eg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] sched/fair: Rework feec() to use cost instead of
- spare capacity
-From: Pierre Gondois <pierre.gondois@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
- linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-4-vincent.guittot@linaro.org>
- <52274486-b385-4080-9938-399d601fe892@arm.com>
-Content-Language: en-US
-In-Reply-To: <52274486-b385-4080-9938-399d601fe892@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8429.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db62c21f-f73d-4b9e-bfa8-08dcd2826c41
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 16:54:38.3053
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IdEX6dfOMymrR9K2xzkricr3Pedt0d3WHg/Z7ioZnhu6bqevjcKlq+R87Zf/9BixUUijE/Ngr9LKT8ZME/cn7YxrVpb2FQx3RTaw0TmHh+fVETxRj+RgJZ+pzsKE0C5I
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8409
+X-OriginatorOrg: intel.com
 
-(edit)
-
-On 9/11/24 16:02, Pierre Gondois wrote:
-> Hello Vincent,
-> 
-> On 8/30/24 15:03, Vincent Guittot wrote:
->> feec() looks for the CPU with highest spare capacity in a PD assuming that
->> it will be the best CPU from a energy efficiency PoV because it will
->> require the smallest increase of OPP. Although this is true generally
->> speaking, this policy also filters some others CPUs which will be as
->> efficients because of using the same OPP.
->> In fact, we really care about the cost of the new OPP that will be
->> selected to handle the waking task. In many cases, several CPUs will end
->> up selecting the same OPP and as a result using the same energy cost. In
->> these cases, we can use other metrics to select the best CPU for the same
->> energy cost.
->>
->> Rework feec() to look 1st for the lowest cost in a PD and then the most
->> performant CPU between CPUs.
->>
->> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->> ---
->>    kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
->>    1 file changed, 244 insertions(+), 222 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index e67d6029b269..2273eecf6086 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
-> 
-> [snip]
-> 
->>    
->> -/*
->> - * compute_energy(): Use the Energy Model to estimate the energy that @pd would
->> - * consume for a given utilization landscape @eenv. When @dst_cpu < 0, the task
->> - * contribution is ignored.
->> - */
->> -static inline unsigned long
->> -compute_energy(struct energy_env *eenv, struct perf_domain *pd,
->> -	       struct cpumask *pd_cpus, struct task_struct *p, int dst_cpu)
->> +/*Check if the CPU can handle the waking task */
->> +static int check_cpu_with_task(struct task_struct *p, int cpu)
->>    {
->> -	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
->> -	unsigned long busy_time = eenv->pd_busy_time;
->> -	unsigned long energy;
->> +	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
->> +	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
->> +	unsigned long util_min = p_util_min;
->> +	unsigned long util_max = p_util_max;
->> +	unsigned long util = cpu_util(cpu, p, cpu, 0);
->> +	struct rq *rq = cpu_rq(cpu);
->>    
->> -	if (dst_cpu >= 0)
->> -		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
-> 
-> I think you should mention that the energy computation is not capped anymore.
-> It used to be:
-> pd_util: sum of the CPU's util for the pd considered, without task_util
-> pd_cap: sum of the CPU's capacity for the pd
-> 
-> (a)
-> busy_time = min(pd_cap, pd_util);
-> prev_energy = busy_time * OPP[prev_max_util].cost;
-> 
-> busy_time = min(pd_cap, pd_util + task_util);
-> new_energy = busy_time * OPP[new_max_util].cost;
-> 
-> delta_energy = new_energy - prev_energy;
-> 
-> Note that when computing busy_time, task_util is not capped to one CPU's
-> max_cap. This means that in empty pd, a task can 'steal' capacity from
-> CPUs during the energy computation.
-> Cf. [1]
-> 
-> and it is now:
-> (b)
-> delta_energy = task_util * OPP[new_max_util].cost;
-> delta_energy += pd_util * (OPP[new_max_util].cost - OPP[prev_max_util].cost);
-> 
-> Note that the busy_time (task_util + pd_util) is now not capped by anything.
-> 
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of G=
+ui-Dong Han
+> Sent: Tuesday, September 3, 2024 5:19 PM
+> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw <=
+przemyslaw.kitszel@intel.com>; davem@davemloft.net; edumazet@google.com; ku=
+ba@kernel.org; pabeni@redhat.com
+> Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; stable@vger.ker=
+nel.org; Gui-Dong Han <hanguidong02@outlook.com>; baijiaju1990@gmail.com; i=
+ntel-wired-lan@lists.osuosl.org
+> Subject: [Intel-wired-lan] [PATCH v2] ice: Fix improper handling of refco=
+unt in ice_dpll_init_rclk_pins()
+>
+> This patch addresses a reference count handling issue in the
+> ice_dpll_init_rclk_pins() function. The function calls ice_dpll_get_pins(=
+), which increments the reference count of the relevant resources. However,=
+ if the condition WARN_ON((!vsi || !vsi->netdev)) is met, the function curr=
+ently returns an error without properly releasing the > resources acquired =
+by ice_dpll_get_pins(), leading to a reference count leak.
+>
+> To resolve this, the check has been moved to the top of the function. Thi=
+s ensures that the function verifies the state before any resources are acq=
+uired, avoiding the need for additional resource management in the error pa=
+th.=20
+>
+> This bug was identified by an experimental static analysis tool developed=
+ by our team. The tool specializes in analyzing reference count operations =
+and detecting potential issues where resources are not properly managed.
+> In this case, the tool flagged the missing release operation as a potenti=
+al problem, which led to the development of this patch.
+>
+> Fixes: d7999f5ea64b ("ice: implement dpll interface to control cgu")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
 > ---
-> 
-> Not capping the task_util is discussed in [1][3] and [2] (at 21:15).
-> IIUC, UCLAMP_MAX tasks are the only case leveraging this. Indeed,
-> non-clamped tasks will not fit and be placed on a bigger CPU. Same for
-> UCLAMP_MIN tasks.
-> FWIU, not capping the utilization of tasks during the energy computation
-> allows to reflect that a task will (likely) run longer. However the
-> task's performance would likely decrease as the other tasks on the target
-> CPU are not taken into account (it is assumed the task to be placed will
-> receive the compute power it requires).
-> 
+> v2:
+> * In this patch v2, the check for vsi and vsi->netdev has been moved to t=
+he top of the function to simplify error handling and avoid the need for re=
+source unwinding.
+>   Thanks to Simon Horman for suggesting this improvement.
 > ---
-> Case A:
-> 
-> Assuming we have an empty system with:
-> - 4 little CPUs (max_capa=512, first OPP as [capa=256, cost=10])
-> - 2 big CPUs (max_capa=1024, first OPP as [capa=512, cost=10])
-> i.e. the first OPP of all the CPU consumes the same amount of energy.
-> And a task with: [UCLAMP_MIN=0, UCLAMP_MAX=10, util = 1000]
-> 
-> Then feec() would have no reason to prefer a big CPU over a little CPU,
-> even though the big CPU would provide more performance.
-> 
-> ---
-> Case B:
-> 
-> (This is not especially related to this patch.)
-> Another case that might be problematic:
-> - 4 little CPUs (max_capa=512, first OPP as [capa=256])
-> - 2 big CPUs (max_capa=1024, first OPP as [capa=512])
-> - little CPUs consume less than big CPUs, but the highest OPP
->     of the little CPUs consume more than the lowest of the big CPUs.
-> And tasks:
-> - 3 tasks with [UCLAMP_MIN=0, UCLAMP_MAX=10, util = 1000]
-> - 1 task with [UCLAMP_MIN=0, UCLAMP_MAX=1024, util = 50]
-> 
-> Then
-> - the 3 UCLAMP_MAX tasks will be placed on the little CPUs. Indeed,
->     due to the last patch of the serie, these tasks have now an opportunity
->     to run feec() and be placed on a more energy efficient CPU.
-> - the 'normal' task will be placed on a big CPU. Indeed, placing
->     it on a little CPU would raise the OPP of the little cluster.
-> 
-> This means that the 'normal' task is prevented to run the remaining little
-> CPU even though:
-> - the little CPU can provide the compute capacity
+>  drivers/net/ethernet/intel/ice/ice_dpll.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
 
-This behaviour is actually due to the little CPUs not being able to provide
-the compute capacity for the normal task without raising the OPP of the cluster.
-So this behaviour is expected.
+Tested-by: Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com> (A Co=
+ntingent worker at Intel)
 
-I am providing another case instead:
-Case B':
-- 4 little CPUs (max_capa=512, first OPP as [capa=256])
-- 2 big CPUs (max_capa=1024, first OPP as [capa=512])
-And tasks:
-- 4 tasks with [UCLAMP_MIN=0, UCLAMP_MAX=10, util = 1000]
-- 1 task with [UCLAMP_MIN=0, UCLAMP_MAX=1024, util = 50]
-
-The normal task will not fit any of the little CPU as the rq's UCLAMP_MAX
-value would raise from 10 to 1024. If I m not mistaken (this time), the
-normal task should be placed on a little CPU as:
-- it consumes less power
-- even though UCLAMP_MAX tasks consume the least power they can, it makes
-   other tasks consume more
-
-Theoretically, placing the 4 UCLAMP_MAX tasks on one little CPU and using
-another CPU for the normal task would:
-- consume less energy
-- satisfy the UCLAMP_MAX constraint
-even though the performance of the workload would be less. This is a bit
-hard to conceive for me.
-
-
-> - the little CPU would consume less energy
-> 
-> In other terms, using UCLAMP_MAX on some tasks makes the system consume
-> more energy.
-> 
-> ---
-> 
-> In my opinion, this last case comes from the difficulty of defining UCLAMP_MAX.
->   From sched-util-clamp.rst (about UCLAMP_MAX):
-> - Uclamp is a hinting mechanism that allows the scheduler to understand the
->     performance requirements and restrictions of the tasks
-> - The right way to view util clamp is as a mechanism to make request or hint on
->     performance constraints.
-> - some tasks should be restricted from consuming too
->     much resources and should not go above a specific performance point.
-> -
-> Another example is in Android where tasks are classified as background,
-> foreground, top-app, etc. Util clamp can be used to constrain how much
-> resources background tasks are consuming by capping the performance point they
-> can run at. This constraint helps reserve resources for important tasks, like
-> the ones belonging to the currently active app (top-app group). Beside this
-> helps in limiting how much power they consume. This can be more obvious in
-> heterogeneous systems (e.g. Arm big.LITTLE); the constraint will help bias the
-> background tasks to stay on the little cores which will ensure that:
-> 
->           1. The big cores are free to run top-app tasks immediately. top-app
->              tasks are the tasks the user is currently interacting with, hence
->              the most important tasks in the system.
->           2. They don't run on a power hungry core and drain battery even if they
->              are CPU intensive tasks.
-> -
-> For example, it can be handy to limit performance when running low on battery
-> or when the system wants to limit access to more energy hungry performance
-> levels when it's in idle state or screen is off.
-> 
-> """
-> This constraint helps reserve resources for important tasks, like
-> the ones belonging to the currently active app (top-app group).
-> """
-> It doesn't seem that UCLAMP_MAX does this. This looks more like bandwidth
-> control.
-> 
-> """
-> They don't run on a power hungry core and drain battery even if they
-> are CPU intensive tasks.
-> """
-> Avoiding mid/big CPUs could be done with tasksets,
-> 
-> I can understand that one might want to run a task at a higher OPP due to
-> timing constraints for instance. However I don't see why someone would want
-> to run a task at a lower OPP, regarding only the performance and not the
-> energy consumption. It thus means that UCLAMP_MAX is an energy hint rather
-> of a performance hint.
-> 
-> UCLAMP_MAX could be set for a task to make it spend less energy, but the
-> loss in performance would be unknown.
-> A case Hongyan mentioned in his uclamp sum aggregation serie [4] is that
-> an infinite task with [UCLAMP_MIN=0, UCLAMP_MAX=1, util = 1000] could fit
-> in a little CPU. The energy consumption would indeed be very low, but the
-> performance would also be very low.
-> 
-> With Hongyan's sum aggregation serie [5]:
-> - case B would not happen as the 'normal' task would not raise the OPP of
->     the whole cluster.
-
-Cf. above
-
-> - the 'infinite UCLAMP_MAX tasks' case would not happen as each task would
->     account for 1 util
-> - case A would still happen, but could be solved in any case.
-> 
-> I know Hongyan's patchset has already been discussed, but I still don't
-> understand why max aggregation is preferred over sum aggregation.
-> The definition of UCLAMP_MAX values seems clearer and in effect results in
-> a simpler implementation and less corner cases. In simple words:
-> "When estimating the CPU frequency to set, for this task,
-> account for at most X util."
-> rather than:
-> "When estimating the CPU frequency to set, the task with the highest
-> UCLAMP_MAX of the CPU will cap the requested frequency."
-> 
-> Note that actually I think it's a good idea to run feec() regularly
-> and to take into account other parameters like nr_running. I just think
-> that UCLAMP_MAX's max aggregation creates corner cases that are difficult
-> to solve altogether.
-> 
-> Thanks in advance for the time you will take answering,
-> Regards,
-> Pierre
-> 
-> [1] https://lore.kernel.org/all/20240606070645.3295-1-xuewen.yan@unisoc.com/
-> [2] https://www.youtube.com/watch?v=PHEBAyxeM_M
-> [3] https://lore.kernel.org/all/CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com/
-> [4] https://lore.kernel.org/all/b81a5b1c-14de-4232-bee9-ee647355dd8c@arm.com/
-> [5] https://lore.kernel.org/all/cover.1706792708.git.hongyan.xia2@arm.com/#t
-> 
 
