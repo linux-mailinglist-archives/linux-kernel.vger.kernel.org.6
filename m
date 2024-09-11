@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-325679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB00975D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:21:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123C7975D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5828A2847CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C431F22406
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CDB1BB68F;
-	Wed, 11 Sep 2024 22:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C221B251A;
+	Wed, 11 Sep 2024 22:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pMVATVqj"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ru1n3iJ/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4079D1B9B33
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1398224CF;
+	Wed, 11 Sep 2024 22:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093251; cv=none; b=eOcQOABbs/RR+OZjZnFtkCxiXoNG8SAW8WUbqu1Qd7qNuvX4284qRl3w+0/QwvCyR7mmXgn9XzgabzkP7jw6MA4c54t1UDL8c7VT/GzXHR0e5jc1sRsgME3FzkngXmcCmjAWgqJ/+Tdrv2J9xuD5PqE5puiF41f6cEayqMx8QF4=
+	t=1726093381; cv=none; b=PDItI7Cd7SGPMBgC65iBUIr8I8/KU5DbABkMXwLe/VSQUsMMsPGlBuQa/EoeFSb++RKLlKxYGZJsLqmAKxTEr0WHRFlZpFwx7fY9Y1dTQdkrxGvhxG/rWCKsz7068x/s+kkBikuGxPrGmZ/dvy08T8HgMAN71WMSF1QE4t4xvbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093251; c=relaxed/simple;
-	bh=At3KN1vJHe3HfQKgM616/sxJCeR4JS3rf/XzFOCz+Og=;
+	s=arc-20240116; t=1726093381; c=relaxed/simple;
+	bh=CeTttMY+Q4kBmD++wQT3MC8a2EQVjkLZY1H2aiNffnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GP0QXWUVbGcfef9lvFiHbdpWHSG5mZdu1BhUZCWNHNwfYN+hYT+PfoZW9LPxenh4+iqs4uprMIfSZQSqOoQ5MkuowJ9URFQ3CTeBfqPgv1NlpJh5jxZUqegJH8lIHus21Hqb33w3PQSsIDSAZFUZQJ9GPAzxQSQps8PoUPFl6fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pMVATVqj; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 11 Sep 2024 15:20:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726093246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+MlZ0mawDlEwUZp7Ryvv2HfbC6bAGFXeox7y/af6rjw=;
-	b=pMVATVqjn2sWMKvjniszDv5T2Of5AaOmG2EmPyXwBXqWjBIBYTzaorch1TZ51gv/2oBYMh
-	VdIiOs6cErsW9q1Z0utKsnhO0fR7HrZQo8hl4F+HRA88OxKe22o6LxP6pi5Bn3OPRsRLIa
-	lA5/saYfi/jNkOZZ5liAM1+3bHYLHkU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Omar Sandoval <osandov@osandov.com>, Chris Mason <clm@fb.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: optimize truncation of shadow entries
-Message-ID: <3xy45w5enrkvnyvxwufxfgzmpmii6au4o6wbepqkl5qfiygizc@2c4b7jcs676y>
-References: <20240911173801.4025422-1-shakeel.butt@linux.dev>
- <20240911173801.4025422-2-shakeel.butt@linux.dev>
- <20240911210824.GA117602@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgtLcQCiUAueI50Viu/LH1443+uiCtNML16vCjK+lsmZBU3Z14w6C2hBiYeesWqG4rjzjCTrGHaqw4/GnKmpOXu3ioyWpTzMJ5Fg/1SlxW0TmFRtavJCH7xuEcgp8LPZcreOliU2cOH65ZDCmizB4wXqPMC654Vym6/7zDK6OXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ru1n3iJ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C602C4CEC0;
+	Wed, 11 Sep 2024 22:23:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726093381;
+	bh=CeTttMY+Q4kBmD++wQT3MC8a2EQVjkLZY1H2aiNffnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ru1n3iJ/B8YJ1ZpgyY7IPBFRjhOFSewXm+3nGEPbUuOBmiMrGjYq2F/mpQA2TxToG
+	 fpljZNIoepfHYLq2EN5kI3d4T4LCCyjpNzyJOY5kgy5RoOygkrCa8mST66x1vNK/NP
+	 iHyqEoFEfqLFjM0kMM9B8ak0y9EAlthfn4+4qAzLeX+KoHAWlJLu+UNrJSVGirLU7E
+	 QQuTI4YAN6T9W1DmjiX/MtTNyjOothx/MqXh6vb1A7qmAUnIiclq/rvdg1RpskTB1X
+	 LByUYumU0YY6Wc7JI+n7ueaRFXSxbXtj1VIYc1U549v9P4WRf4X4tcwZQTKX2UZzXx
+	 4hBeueanl4QCw==
+Date: Wed, 11 Sep 2024 15:23:00 -0700
+From: Kees Cook <kees@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 4/5] alloc_tag: Track fixed vs dynamic sized kmalloc calls
+Message-ID: <202409111518.9D90EE197@keescook>
+References: <20240809072532.work.266-kees@kernel.org>
+ <20240809073309.2134488-4-kees@kernel.org>
+ <CAJuCfpFXTDnqZphJ1z37KkqMt5nuOqaoWMJMRBOkA8Dnf1Dh2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240911210824.GA117602@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFXTDnqZphJ1z37KkqMt5nuOqaoWMJMRBOkA8Dnf1Dh2g@mail.gmail.com>
 
-On Wed, Sep 11, 2024 at 05:08:24PM GMT, Johannes Weiner wrote:
-> On Wed, Sep 11, 2024 at 10:38:00AM -0700, Shakeel Butt wrote:
-> > The kernel truncates the page cache in batches of PAGEVEC_SIZE. For each
-> > batch, it traverses the page cache tree and collects the entries (folio
-> > and shadow entries) in the struct folio_batch. For the shadow entries
-> > present in the folio_batch, it has to traverse the page cache tree for
-> > each individual entry to remove them. This patch optimize this by
-> > removing them in a single tree traversal.
-> > 
-> > On large machines in our production which run workloads manipulating
-> > large amount of data, we have observed that a large amount of CPUs are
-> > spent on truncation of very large files (100s of GiBs file sizes). More
-> > specifically most of time was spent on shadow entries cleanup, so
-> > optimizing the shadow entries cleanup, even a little bit, has good
-> > impact.
-> > 
-> > To evaluate the changes, we created 200GiB file on a fuse fs and in a
-> > memcg. We created the shadow entries by triggering reclaim through
-> > memory.reclaim in that specific memcg and measure the simple truncation
-> > operation.
-> > 
-> >  # time truncate -s 0 file
-> > 
-> >               time (sec)
-> > Without       5.164 +- 0.059
-> > With-patch    4.21  +- 0.066 (18.47% decrease)
-> > 
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Thu, Aug 29, 2024 at 09:00:37AM -0700, Suren Baghdasaryan wrote:
+> On Fri, Aug 9, 2024 at 12:33 AM Kees Cook <kees@kernel.org> wrote:
+> [...]
+> > -#define kmem_cache_alloc(...)                  alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
+> > +#define kmem_cache_alloc(...)          alloc_hooks(kmem_cache_alloc_noprof(__VA_ARGS__))
 > 
-> Looks good to me. One thing that's a bit subtle is that the tree walk
-> assumes indices[] are ordered, such that indices[0] and indices[nr-1]
-> reliably denote the range of interest. AFAICS that's the case for the
-> current callers but if not that could be a painful bug to hunt down.
+> nit: seems like an unnecessary churn.
 
-The current callers use find_get_entries() and find_lock_entries() to
-fill up the indices array which provides this guarantee.
+Whoops, yes. This was left over from an earlier pass and I failed to get
+the whitespace correctly restored. I will fix this this.
+
+> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> > index 81e5f9a70f22..6d2cb72bf269 100644
+> > --- a/lib/alloc_tag.c
+> > +++ b/lib/alloc_tag.c
+> > @@ -78,6 +78,14 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
+> >
+> >         seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+> >         codetag_to_text(out, ct);
+> > +#ifdef CONFIG_SLAB_PER_SITE
+> > +       seq_buf_putc(out, ' ');
+> > +       seq_buf_printf(out, "size:%s(%zu) slab:%s",
+> > +                               tag->meta.sized == 0 ? "non-slab" :
+> 
+> "non-slab" term sounds overly specific and we might extend this to
+> some other allocations as well in the future. I would suggest
+> "unknown" instead.
+
+Heh, yeah. I went back and forth on the name for this and went with
+non-slab because we do know what it isn't. It's not some kind of
+unexpected state. Maybe "untracked", or "unsized", though both seem
+inaccurate from certain perspectives.
 
 > 
-> Assessing lowest and highest index in that first batch iteration seems
-> a bit overkill though. Maybe just a comment stating the requirement?
-
-I will add a comment in v2.
-
+> > +                                       tag->meta.sized == SIZE_MAX ? "dynamic" : "fixed",
+> > +                               tag->meta.sized == SIZE_MAX ? 0 : tag->meta.sized,
+> > +                               tag->meta.cache ? "ready" : "unused");
 > 
-> Otherwise,
-> 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> I don't see "struct alloc_meta" having a "cache" member...
 
-Thanks for the review.
+Oops, yes, as you found this should have been associated with the next
+patch that adds "cache".
+
+> Since you are changing the format of this file, you want to also bump
+> up the file version inside print_allocinfo_header().
+
+Okay, yeah. In that case I'll probably split the report into a separate
+patch after "cache" is added so there's only a single bump in allocinfo
+versioning.
+
+-- 
+Kees Cook
 
