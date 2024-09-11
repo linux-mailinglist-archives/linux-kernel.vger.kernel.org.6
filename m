@@ -1,104 +1,80 @@
-Return-Path: <linux-kernel+bounces-324784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4E59750D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:30:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59819750AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4221C22CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863FA1F232DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3BB187337;
-	Wed, 11 Sep 2024 11:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40617187321;
+	Wed, 11 Sep 2024 11:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jbsky.fr header.i=@jbsky.fr header.b="OekTVH/9"
-Received: from pmg.home.arpa (i19-les02-ix2-176-181-14-251.sfr.lns.abo.bbox.fr [176.181.14.251])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uidciKPx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07870185954;
-	Wed, 11 Sep 2024 11:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.181.14.251
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A1D185B47;
+	Wed, 11 Sep 2024 11:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726054237; cv=none; b=DincsF8L1bxxhs4hoqQKWA86HY8mw/Pt1KSiMV+qlSufvzL0S3Bc49x+ruFMu/KrNVypS1sknUp0NkymwHXJjokIt11VXZmj6qDQFLTb6vYgreYMgfuUVopRK5DU5NGGBmlQi1AQDUM5Q9XZA8AUbLh5h4Q6eRvpIA7yse4dLIM=
+	t=1726053850; cv=none; b=c1eU4LF9whbZrJHJAAqQQ9vnx6oyXNjsR56kOBjb+58PhEaAmLqCKVKwZ59gl3DTbpOTJp6uK+xhTdpTIb+Z5B8vImYo2VFBUBxoUogADhzR1CFxwsurc1Ga5N2d0T9hIeTODQjLv8hbtSapMLo5EY7gU+b5UwSy1a0ELZstGIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726054237; c=relaxed/simple;
-	bh=WCK5FI+80mUthsABAMMem19ibajtBlPK6xI5q5jaaT4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kFm6lYNGT5xWZLVzJ5Bi1bpX+XBwDBS7EPIuqr+4k+q9G9K4Rpi8paMZiipr4WMWIJHRqiQhlbM5DyWwDEWanzs4H+qx39JwuED0rIXHGUdE2q8U2McxEIiGD9MI6s7XxGFwuVALabSLf2Kv9qzt41Avl1+opod0wUGKXk6TeLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jbsky.fr; spf=pass smtp.mailfrom=jbsky.fr; dkim=pass (2048-bit key) header.d=jbsky.fr header.i=@jbsky.fr header.b=OekTVH/9; arc=none smtp.client-ip=176.181.14.251
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jbsky.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jbsky.fr
-Received: from pmg.home.arpa (localhost [127.0.0.1])
-	by pmg.home.arpa (Proxmox) with ESMTP id 34025223CA;
-	Wed, 11 Sep 2024 13:22:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jbsky.fr; h=cc
-	:cc:content-transfer-encoding:date:from:from:message-id
-	:mime-version:reply-to:subject:subject:to:to; s=pmg1; bh=TNpLvTy
-	A+susO36tSI+Z3LxDrONyGqbbgC4owiC0rDs=; b=OekTVH/94JsVN208BZ2/K4w
-	Q2Yi6viRnBlQiVp9k/2r+zpdk1o/SzWrrvhfIscmnD85Hh8mDgSuk7jxeC9A4Hl9
-	w2OIErK0tR77RCOc7gCVQCY1A6cYu5sitixSttfJiS1iSWSYH6R2FkVRtHTGDVRl
-	rYEnqSpW9GnGDJPcJNNuU4IkxkAW7HPQYdA4yE1JqZ8U8rorsOKx2EsPowPFBWAc
-	ZoPr0Nv+zg19p/o4lqy+U6f92Y8a3fkYWvEU9V9tmT6qf64f8ATk/5DJejtP0Tpl
-	FuRMSacx3+jS8e72dDA3iN2zvf2rIz/WF1Pnv+ML8Neh9WjghhhZwVypRr8r6wQ=
-	=
-From: Julien Blais <webmaster@jbsky.fr>
-To: thomas.petazzoni@bootlin.com,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Julien Blais <webmaster@jbsky.fr>
-Subject: [PATCH] mvneta: fix "napi poll" infinite loop
-Date: Wed, 11 Sep 2024 13:22:45 +0200
-Message-Id: <20240911112245.283832-1-webmaster@jbsky.fr>
+	s=arc-20240116; t=1726053850; c=relaxed/simple;
+	bh=hETZYrZMAcU1W8aWQ6w34cUawxYCAap2PBFy6x00HUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MXYHecDdRsAcEnUUK9w5t4HNpdGYBh6HPETJk81n+xxCf0KxADOg8E5QyUqlVNGMUMVVAO4xg/6/4gdScLxpnLmMAIF0ObP/0k/5oSmZzVS9RWgsctNWlINzYamle9Y2byUyBGa9XXjVuClTyr+BGr5I+elRIdQCfzsU8gsDPuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uidciKPx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AC0C4CEC5;
+	Wed, 11 Sep 2024 11:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726053850;
+	bh=hETZYrZMAcU1W8aWQ6w34cUawxYCAap2PBFy6x00HUs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uidciKPxbXjXn3gvVgBIknRVHUu2wdGjGVn0FPHdb8GHqItk/TUEXAbB0sTQLUtHs
+	 8Q7uil08XzkyyaDvfOBJVhfcOId0VxH8SqaL2mUnoJvCj5YhRAxZOmTOELmPjSLfLW
+	 AE9ceKt0PN6BLtN4hS3yVwWO1up9XF9RmaLoLvBJ1Q0i+vEKtp3l3FfdFeRiA4DJRV
+	 UrtOpSFbp9grug6r5hoLSn4UFzWHAK1b5/S3/i11kJBGy3/p9oHXR1oIEP5eG1DcfD
+	 AlWOdoNPgrZru4XsVeNiQwQvMPTDRwwCXy/WMsXlWqCJyw/zyjN8kdQsJX+Ut6R0Vk
+	 sQSgooZV5k8Yw==
+Message-ID: <707f8df3-096f-45e6-a37f-9d9d4ca259e1@kernel.org>
+Date: Wed, 11 Sep 2024 13:24:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: arm: qcom: Document qcs9100-ride and
+ qcs9100-ride Rev3
+To: Tengfei Fan <quic_tengfan@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240911-add_qcs9100_support-v2-0-e43a71ceb017@quicinc.com>
+ <20240911-add_qcs9100_support-v2-3-e43a71ceb017@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240911-add_qcs9100_support-v2-3-e43a71ceb017@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-In percpu mode, when there's a network load, one of the cpus can be
-solicited without having anything to process.
-If 0 is returned to napi poll, napi will ignore the next requests,
-causing an infinite loop with ISR handling.
+On 11.09.2024 1:10 PM, Tengfei Fan wrote:
+> Document qcs9100-ride and qcs9100-ride Rev3 is based on QCS9100 SoC.
+> 
+> QCS9100 is a IoT version of SA8775p, hence use the latter's compatible
+> string as fallback.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
 
-Without this change, patches hang around fixing the queue at 0 and
-the interrupt remains stuck on the 1st CPU.
-The percpu conf is useless in this case, so we might as well remove it.
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-Signed-off-by: Julien Blais <webmaster@jbsky.fr>
----
- drivers/net/ethernet/marvell/mvneta.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 3f124268b..8084b573e 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -3185,8 +3185,10 @@ static int mvneta_poll(struct napi_struct *napi, int budget)
- 	}
- 
- 	if (rx_done < budget) {
--		cause_rx_tx = 0;
--		napi_complete_done(napi, rx_done);
-+		if (rx_done)
-+			napi_complete_done(napi, rx_done);
-+		else
-+			napi_complete(napi);
- 
- 		if (pp->neta_armada3700) {
- 			unsigned long flags;
--- 
-2.30.2
-
-
-
---
-This e-mail and any attached files are confidential and may be legally privileged. If you are not the addressee, any disclosure, reproduction, copying, distribution, or other dissemination or use of this communication is strictly prohibited. If you have received this transmission in error please notify the sender immediately and then delete this mail.
-E-mail transmission cannot be guaranteed to be secure or error free as information could be intercepted, corrupted, lost, destroyed, arrive late or incomplete, or contain viruses. The sender therefore does not accept liability for any errors or omissions in the contents of this message which arise as a result of e-mail transmission or changes to transmitted date not specifically approved by the sender.
-If this e-mail or attached files contain information which do not relate to our professional activity we do not accept liability for such information.
-
+Konrad
 
