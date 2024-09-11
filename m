@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-324390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE013974BF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:59:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66CA974BF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B721C24AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D6C1F2296F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E557613D601;
-	Wed, 11 Sep 2024 07:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591C113C918;
+	Wed, 11 Sep 2024 08:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OOGMfHdD"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="vuYDUzua"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A1F39FE5
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0D01422C3;
+	Wed, 11 Sep 2024 08:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041536; cv=none; b=cJ3w7QUbF92XFZ4FKEpDAQOCJC1oi5FGy8WFTd1mxgHQOMMaM4E0q4sGbP105eSdUKFAcGYkLoPdMe/mBFnYba1xwt6wU4O5usBh9iT45r6Zu0t7L1k1f1faM8n1GAhkrJH0obcJG4tHmHoAegB8j4EXQ7We/3ZFtcR8Lh3fL+8=
+	t=1726041612; cv=none; b=qH/dUBWOgQYvE+33yeXrFBhEFcRW6qMQfuHq9zNIgt/Qra0cM/5L/vh6E4DwSxUiOOFS2ZF9ITRnpLch3DKUXIu09buItBME7DAmDpeiiz7Gvi+8AfWE2ch6xiJfuIDHqqQQR08kuBT3K69GLz74oVdF5xu6c0VBL5rZR6Wyhts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041536; c=relaxed/simple;
-	bh=4JsL+3kidMLwcsHvK4aaiB2YieNwR4iKsTqskubRSN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KQl9R1AOXW2BqjJCbFFd56QrmFZO3WmvIDEwQT7mm89ReEZDWFHiia9Q2kN3X8rx75BAc9ZkMeISy9Jf5OZMHJaJ+IQLKAd2rrVMlTsassZfwqcRMQYRUiaS+X4qanfUGhimcf5X2NpOaxp1c+nGwn4Czo6ycj8+DCOywdqiES0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OOGMfHdD; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so385432566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726041532; x=1726646332; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fJ1ASTjb5hX+WxeLuk9CuMjsO14cU8MsR1XGN8DocxE=;
-        b=OOGMfHdDL0m3wLA730I2sck5z1bRa80jVWLicohicti6n5DOhj/ixFO2fl1fKpokZI
-         yQ35gT5aQuJX4PHtlBK7xhyNZ+XppZHIiYxQQsatXZ2zVsfPVrVDbPALnR/3UfepYeUQ
-         iJNOQobyf/xm/ABieCVTZY3HlfTdPwvhegGZPEom6pIw1BgyxMm0vqFk5mNOZzbAKKxr
-         8TKvWedjydKbbCCdVOLc1GqkJhWev67OZUz4495y9SIHshsnZtknnNxa6RD08b8eGLds
-         giJYD5cn/Xa7wlveX9ooaa9m0HRx5TSt3ftdPmzApqBSwHJK/E3vK2O8WLfZ8V7vSjYT
-         j34A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041532; x=1726646332;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fJ1ASTjb5hX+WxeLuk9CuMjsO14cU8MsR1XGN8DocxE=;
-        b=kIIM9oLD+rmfc4Giaoacj/09zm09Z1cO3lItJyFDLIpZY1lsTacb3lDkKNh67LbY1G
-         u92JcrUa/AW+JqwlvUZUc29eiDiH75pcY0jlaU5Umuawfm1CKh01r5bp/BBKvg/UeGXM
-         ZFrvIDTj3NTE40/Tb/l7UqG2mm7pMP1cCrIXuo524gk6DzP51Jv0N71P/AbNJ8UJHREp
-         SYr6ViApLDsRpcnX/vT7Wh/LXNbNIvMeChLW77VeaF9nKaBPdIEIchN+oGAbhDBqJ3Y8
-         0NhS723t9eivVX4cs2SLHhHJKlK7vJ4D+qh4lVJhII3HHvOKFsY8JLCScr4qyxh/QWHx
-         MO1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9kKtr9TucjzjFyy2icLewu9HfBbN6cBaCvx/18oiRA2GPJvF6q/TOkTAjlCxlWpCHe5vArgN7NgGWeoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzKyGofWoRdeZ6PASmmUfrB0Z9/O0axx7IB8/OUdBN97BfoJ5V
-	1p1P+2i2Dk8KnAK7xL0ULDcOjnuHUcMLLJSoOART+0R+c56Ci5MpnIS90AOEyz0=
-X-Google-Smtp-Source: AGHT+IGnF/CsQo/WcRDi9WpPtWj+FwdgPhFRtkxX6764oM87KsqsNrUVS/Z8JoqJHtGZL8SF353yNQ==
-X-Received: by 2002:a17:907:7ea3:b0:a7a:b385:37c5 with SMTP id a640c23a62f3a-a8ffaac1fe4mr348902666b.17.1726041532422;
-        Wed, 11 Sep 2024 00:58:52 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a2b281sm588149466b.92.2024.09.11.00.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:58:51 -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:58:49 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-	Tony Lindgren <tony.lindgren@linux.intel.com>,
-	Yu Liao <liaoyu15@huawei.com>
-Subject: [GIT PULL] printk build fixup for 6.11
-Message-ID: <ZuFNuY0sGlrCgZpy@pathway.suse.cz>
+	s=arc-20240116; t=1726041612; c=relaxed/simple;
+	bh=oPG18xmyEbpeYNpPwEr62c/qRuxUvqXAcKt8PTuHMVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=grCL7YJbDFpjBvOjom8eDxBvHUvbhpP8kHLtGv0YrqQOVP5i87wjt0+D2iuOwMZxQ8v4aQv5Az/zxv2n2vhErr3ytkXdfulMs+epy16UNfoyyFenS1afIFs8QVFMdATecRJ1uWbHehap88qDiXsitzylbqBI2LxU/WQaQvFgjvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=vuYDUzua; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 56D14891D1;
+	Wed, 11 Sep 2024 10:00:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1726041609;
+	bh=T8m7rqONmu1nj7zPXVt0V0nx+eeqpOiL3Bn7hrcE2T8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vuYDUzuaP+dX3kBGMCIWuNLooj4i6AZCuHaXe8T0KJC3PPGBkUKP+JLTCDXl2mSYK
+	 KaItMW4LLCtRxRIW2Gf+e904JqBdCLcIN0bgQFQaAjZS4TaLhN/xAz4ZUqB6d55Yxl
+	 CvR5p6TFjeqpkAZClY8MuBiJrQvj35GIEx12WTg8XoNmKpxcABNh2oSLQgVB8IMC1/
+	 RLdxDRrWRCoan7QmJXsYLcbX1aZIrsrhESlyhrkKFHweGLSM/64/IbXuubnCp4iY4y
+	 GE52XJCFq1b+N5xm8vI8y/EfNZVXM/jqsqf2bVRYL1QJm2yY4a1cUgJe4KHKji4L6v
+	 MsgpLvFqSKkZA==
+Date: Wed, 11 Sep 2024 10:00:07 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jeongjun Park <aha310510@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+ ricardo@marliere.net, m-karicheri2@ti.com, n.zhandarovich@fintech.ru,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] net: hsr: prevent NULL pointer dereference in
+ hsr_proxy_announce()
+Message-ID: <20240911100007.31d600fc@wsk>
+In-Reply-To: <20240910191517.0eeaa132@kernel.org>
+References: <20240907190341.162289-1-aha310510@gmail.com>
+	<20240909105822.16362339@wsk>
+	<20240910191517.0eeaa132@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/=axxuq5oVPAOzcsO/ZIkebi";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi Linus,
+--Sig_/=axxuq5oVPAOzcsO/ZIkebi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-please pull a printk related build fix for 6.11 from
+Hi Jakub,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git tags/printk-for-6.11-fixup
+> On Mon, 9 Sep 2024 10:58:22 +0200 Lukasz Majewski wrote:
+> > > In the function hsr_proxy_annouance() added in the previous
+> > > commit 5f703ce5c981 ("net: hsr: Send supervisory frames to HSR
+> > > network with ProxyNodeTable data"), the return value of the
+> > > hsr_port_get_hsr() function is not checked to be a NULL pointer,
+> > > which causes a NULL pointer dereference.   =20
+> >=20
+> > Thank you for your patch.
+> >=20
+> > The code in hsr_proxy_announcement() is _only_ executed (the timer
+> > is configured to trigger this function) when hsr->redbox is set,
+> > which means that somebody has called earlier iproute2 command:
+> >=20
+> > ip link add name hsr1 type hsr slave1 lan4 slave2 lan5 interlink
+> > lan3 supervision 45 version 1 =20
+>=20
+> Are you trying to say the patch is correct or incorrect?
 
-=====================================
+I'm just trying to explain that this code (i.e.
+hsr_proxy_announcement()) shall NOT be trigger if the interlink port is
+not configured.
 
-- Fix build of serial_core as a module.
+Nonetheless the patch is correct - as it was pointed out that the return
+value is not checked.
 
-----------------------------------------------------------------
-Petr Mladek (1):
-      Merge branch 'for-6.11-fixup' into for-linus
+> The structs have no refcounting - should the timers be deleted with
+> _sync() inside hsr_check_announce()?
 
-Yu Liao (1):
-      printk: Export match_devname_and_update_preferred_console()
+The timers don't need to be conditionally enabled (and removed) as we
+discussed it previously (as they only do useful work when they are
+configured and almost take no resources when declared during the
+driver probe).
 
- kernel/printk/printk.c | 1 +
- 1 file changed, 1 insertion(+)
+Anyway:
+
+Acked-by: Lukasz Majewski <lukma@denx.de>
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/=axxuq5oVPAOzcsO/ZIkebi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmbhTgcACgkQAR8vZIA0
+zr3dPwgAng+gHjUeQPNfCu/asjj/O5Cu26VE3wTV8gFq7gEI5BP3fFGbBIbwql++
+RyEH/QaM3YbZ2UQBNX/p1Rdjyb0+Vh7MMUBFsbuXwA24I66vz744W5wN2ETe0N4P
+ErBF3GRSsXV1riZNUdi57PGoQIj+UBCHvpcXoHdM96QqVz9GM9i/mOyt+hfnR9sI
+r2Er1GwWNUAfZ+TOh+jqKiyDSbXXxyE9u5vniFP38pY5SSPNBheY0PyEWKtwszsw
+sqoaq+Pgpi8gGRY3AWRdiqvYNiADMkmbWK7kOf1R4293fk4Om/S7URkC6bo0NcdS
+YX8G71K2SUkzsIOB5bAvfx3CH6VY3w==
+=Mv6G
+-----END PGP SIGNATURE-----
+
+--Sig_/=axxuq5oVPAOzcsO/ZIkebi--
 
