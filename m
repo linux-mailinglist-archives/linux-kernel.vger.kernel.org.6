@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-324662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44DB974F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E2F974F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F831C21ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBDD1F260FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA89184547;
-	Wed, 11 Sep 2024 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddTDojby"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5D717C9B4;
+	Wed, 11 Sep 2024 10:15:20 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102B0184537;
-	Wed, 11 Sep 2024 10:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DDF7DA81
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049711; cv=none; b=WiQHSyOT/bP6JHbKPVZus542qui+SEI+Oj6paB8h0IRV2a5AyQUcaRcKzvz4Rk8BW0r/xF7EB484xAu39F0luRi5D8xn1m7fhyyG/PMtQkzZw2jYysTQEdrPACH1+iHOBtEcogXRpBRTS2UszuqB/4hiN2AuLuuXyVvPylbszXs=
+	t=1726049720; cv=none; b=sd88sd3MvXQCsSXKgps6EKQ0fhGLbtyxDJ4Op8uq5MD/jvfvN6tJDo0Ljpp9Nr2kJPslRLl1EB/R3y2wWUZpZ2egG+5MMAaCyqiTL+qbv80yXBDoGACPD55EjUFuWclbgirKJjFuUuUKGw79NJzlqs0ROhX0zU6Px0P4Va1p53M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049711; c=relaxed/simple;
-	bh=DAMKbgwWxd9dDYqi9WPl/GTEEQsd85DacUpoLmSVOZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bZQ5X9sNrkrqgWGcMC5m5o9nyoJCA9qG6EQO7EaIP5+z3keoB3K+YaSmB4oHwCJAwiyjxcLa5/GL6RlMa6WFPO1SLmAD1j08eMJ8zMmsHLnlRgaxyTv6mS/iJSp3zirfBeSSMuQPQn0Nji49iJdGx4OzYCR6arMpPRXqlMzTfzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddTDojby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EC7FC4CEC5;
-	Wed, 11 Sep 2024 10:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726049709;
-	bh=DAMKbgwWxd9dDYqi9WPl/GTEEQsd85DacUpoLmSVOZg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ddTDojbyulzML1RA6HLSZ4DBlpmiF41R9g7YepxZFw5bS0SegerVIwfh5grLsoDPC
-	 hnviQ+HkFDHnlwdLzneu3zu9auY06pcohfFBDcmDmCBPuDX5gecQqM0Ked/Vm4uClE
-	 tgDWfUoJGBVUH4LK3FMgSAkJUnKFNUJ6QQVvb87C2YHi6GS67AFEunRBY/jrmDDMCV
-	 cHKL8q640+eAZpRKXo8bTWmmE3hVMo7OHh9+BcnuDrHNjZqtfckjEZdGOg1+dTVv4E
-	 ZGtRDefg3bsJYtBCEvh78vtXobJibbcBLOC5WcpcbN5ZmfFv4CnTvTzDs7lizMJnFw
-	 oblCDvx8NtKNA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>
-Subject: [PATCH] dma-mapping: reliably inform about DMA support for IOMMU
-Date: Wed, 11 Sep 2024 13:15:00 +0300
-Message-ID: <7bbedc085ce87b121b9d0cb33eca8fba2fbdddbc.1726049194.git.leonro@nvidia.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726049720; c=relaxed/simple;
+	bh=6mdRgcOAOg38g4ar5fllj1hp6RTVqNRmiOIkG0FNL3s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gMX6C/YVA70GUfPjPDHd1GMFBWjmGal56wOJ8xYJvgCo9eFqp3NZv3BqBoc3zB3G8aL6gP/4tpN+hyImR5g/AGjHArOtjN7vaN+fA0B2IYv1zcidmTOXHNJ3wGE7FNL5FtsHWhT9OhVrv6AhxTw2MwhNbcOZskp3IuOM+X49Ymw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a049da92a2so135372055ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:15:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726049718; x=1726654518;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RtC9OfChq6fLiZ43IfxDHJnr4B5z+CtpRZkAroNJhDU=;
+        b=NFOzVpeewEWfRy00g0AeoPim17oSd5zxFEhDhGm5u6PqQQ/7U0lZXqbw9+jB8a+ifX
+         IQkeSQmF4hgUrJ2nK+Jyrjdoyz+N0Ezg+mcxVnPYIYB9tWJYCwIxlfTl2t9Fp4xarBVC
+         f2/nfwNJeVzyD0571uUQeFvQfSLJc7ijlcQDKO4QJk+Gn7Ca43neicAa4vGao3CgPXxx
+         Y/FHemnduvnKBYdbf7i/8k8lrHyFvQWQQf0uUc6gZKBOnyMy7XsyQ6xofKy/3ToqM9I0
+         +sLU+MU78NvEIn9Ol0q7KyLSf7BtlGUTNVoAv2xMHBt4+Qu+yrS7CejanGYtBLEhE8vV
+         D9mA==
+X-Gm-Message-State: AOJu0YzRRwaVeh/rGP28l/Y2PiYcWpZGqDaPa/gW7KWxtYYzbpnd5eP2
+	IBWOfeCXCHmDdj0Q5t3+0l+paiYg1pPbh04G49o2xA+1I652YXM92IwI1WsL9ca6yLUXYE3y3AR
+	9615Y3vhGyOb88kqFUWWNQ1jg7yGtlgxsvvJq/fJWoybT4fP0Qt3Bk9k=
+X-Google-Smtp-Source: AGHT+IEfDIXSIdAmhlko7tblts3VU/t0XjB0G5U8fNYnHVFdoJMIMgRaQQ05TTrZijQllyqsykhRPk94xoMqTVSylyNvhc13IUfo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:198b:b0:3a0:468c:8e2c with SMTP id
+ e9e14a558f8ab-3a0524a1ca8mr175880265ab.24.1726049718257; Wed, 11 Sep 2024
+ 03:15:18 -0700 (PDT)
+Date: Wed, 11 Sep 2024 03:15:18 -0700
+In-Reply-To: <0000000000000311430620013217@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000525c950621d544a1@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Leon Romanovsky <leonro@nvidia.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-If the DMA IOMMU path is going to be used, the appropriate check should
-return that DMA is supported.
+***
 
-Fixes: b5c58b2fdc42 ("dma-mapping: direct calls for dma-iommu")
-Closes: https://lore.kernel.org/all/181e06ff-35a3-434f-b505-672f430bd1cb@notapiano
-Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+Author: alibuda@linux.alibaba.com
+
+#syz test
+
+Make Lockdep happy with IPPROTO_SMC
+
 ---
- kernel/dma/mapping.c | 3 +++
- 1 file changed, 3 insertions(+)
+  net/smc/smc_inet.c | 17 ++++++++++++++++-
+  1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 1a7de37bd643..38d7b3239dbb 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -824,6 +824,9 @@ static int dma_supported(struct device *dev, u64 mask)
- 
- 	if (WARN_ON(ops && use_dma_iommu(dev)))
- 		return false;
+diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
+index bece346..281f0450 100644
+--- a/net/smc/smc_inet.c
++++ b/net/smc/smc_inet.c
+@@ -102,14 +102,29 @@
+  };
+  #endif /* CONFIG_IPV6 */
+
++static struct lock_class_key smc_clcsk_slock_keys[2];
++static struct lock_class_key smc_clcsk_keys[2];
 +
-+	if (use_dma_iommu(dev))
-+		return true;
- 	/*
- 	 * ->dma_supported sets the bypass flag, so we must always call
- 	 * into the method here unless the device is truly direct mapped.
--- 
-2.46.0
+  static int smc_inet_init_sock(struct sock *sk)
+  {
++   bool is_ipv6 = sk->sk_family == AF_INET6;
+     struct net *net = sock_net(sk);
++   int rc;
 
+     /* init common smc sock */
+     smc_sk_init(net, sk, IPPROTO_SMC);
+     /* create clcsock */
+-   return smc_create_clcsk(net, sk, sk->sk_family);
++   rc = smc_create_clcsk(net, sk, sk->sk_family);
++   if (rc)
++       return rc;
++
++   sock_lock_init_class_and_name(smc_sk(sk)->clcsk,
++                     is_ipv6 ? "slock-AF_INET6-SMC-CLCSK" : "slock-AF_INET-SMC-CLCSK",
++                     &smc_clcsk_slock_keys[is_ipv6],
++                     is_ipv6 ? "sk_lock-AF_INET6-SMC-CLCSK" : "sk_lock-AF_INET-SMC-CLCSK",
++                     &smc_clcsk_keys[is_ipv6]);
++
++   return 0;
+  }
+
+  int __init smc_inet_init(void)
+--
+1.8.3.1
 
