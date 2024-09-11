@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-324223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0E697499F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:17:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8592A9749A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E366BB253DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:17:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48806284B00
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4545475C;
-	Wed, 11 Sep 2024 05:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED7B57C9F;
+	Wed, 11 Sep 2024 05:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fCjZQbNk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYTfSlI2"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CC561FCF;
-	Wed, 11 Sep 2024 05:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9945464B;
+	Wed, 11 Sep 2024 05:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726031808; cv=none; b=g00V4/g5rYSoNFH/vq/XowsyGUUaq/O0O72HFzPO4LYU3SwRD6gXhE6HFuGdku+gxkqVLl8I4+JVwgN2VGyDUaknoG0Ldmz4JAGpV6nQ3nsK/g3KUdjFeLw34EIWrdlb7S+5po4MktOghBN9wNyERvk3CZr9flc+FUulW6mAZDI=
+	t=1726031887; cv=none; b=PumyrNRbM2EmhWdim1O9SHFeiJNsHwnAGYEQ3f9KeYcjP8FjeD00ouYC3P11StnLXsCI0Uf3vrvCiPSOsL+gRlkQa6jkEnrGIP1wzhsl59k4alcww5MAD3iD7nITRw2SCtaQrH6AL95LDfbrVcojA1+rfGpymFjo3r6DVw5Hifg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726031808; c=relaxed/simple;
-	bh=hYCJ0s6dm+F/sT8zwaT/MHfyuEhfjOX1lpSF/u10X9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XhrJo4gxln+hciODSCBT1XA3FKPHGeR6WRslmO7DIm1jpQN81yERwF+DF/Fj7lSMo32Au2M2lumJG3nmPNnma2x4GdY/8/if01h3DpBeTqVBy7cq7X2mWPvXoYwTae+2oOxzjyfQNCnvnSymE1ULTYn6g6fx05aR9N0fg9AS0tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fCjZQbNk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726031804;
-	bh=r8Dwz2/S4WQ7Z+JfjAm2fy++DGmK+OantWD8t5Cj9qI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fCjZQbNkUpRVJfNOjBFZWFFHQqLC9xLfqOKXXdbegp+DZqFh3EGlliF2keag8TFhQ
-	 MmQH2EmUbGWHaN1X6pyu6lj6gykOlPg9GdofLEvKxhpzP0u9rXrO+K1yjubmzZkkQw
-	 KMr49VqSUUUWclZiiW7buH3W3MG/AiNbRsX1gUAbzdou25HkQk5YTBIQoHvSZuft0E
-	 kPU/Ougrjy4opqPRWBO40D7P440Br81yKG7giuSUb0tJ6mKeS9XkKqgkpYj+pJAXN9
-	 v32DP0wQY6szaxtzWQhsz60hN9F3HkgDZjASi2igA92Ehqdc9CCLA2hTHcqikPUSJj
-	 041RZGCBmtAMw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3TMH2Xjpz4wc3;
-	Wed, 11 Sep 2024 15:16:43 +1000 (AEST)
-Date: Wed, 11 Sep 2024 15:16:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Peter Xu <peterx@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Subject: linux-next: manual merge of the tip tree with the mm tree
-Message-ID: <20240911151642.7f9d9e02@canb.auug.org.au>
+	s=arc-20240116; t=1726031887; c=relaxed/simple;
+	bh=HIl6FUMwsId7NWuqsLQb6qLx/lhvSz/FK61If7SUvoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UBsGQLEQjFTbg6+nEhsPy41Auj2kDOOaX/oOGmkWqJQCIB1wj4832TVupokrwbo9edG1pDoOljAIGYD1ORPQ6MaWz1Mmp2l1ELKv7+ory+9wvko8cjRgag2CDnlLa6IZhvq928iP5xro1O3yUU5YWinIsWJbqQP1vDwKVd9KtmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYTfSlI2; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc47abc040so55830875ad.0;
+        Tue, 10 Sep 2024 22:18:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726031886; x=1726636686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vPFFkBUH1KUQvGTAkddgh3AbnGWF386sDPxW9jKCyYA=;
+        b=jYTfSlI2MpNebT2QE+MWXan2aR/VWtRcTdYgENU0JFp/jI5FokAkMjDySER5csvtPO
+         z8139cwSSR9CF2HcqKXg0dtqKetZFTxEYvpFgVSt69/7rs32ghvhxosazCMGeFNuTAwR
+         6uSQjmjtvsPtDt5fHnL+ktj1udMuutuX/tQvNP1xo0JtXOFJAd4bgl6ZG+la2POpYobN
+         +3EsJTVbZrBgEbeic0EZ0VLElDiFMVUu2v1BVG7tUlCbgyJdBBRKUSnZfz008TxT6NVc
+         2SBXs0pf26DEYJqNBRb6m6jSUnv/7RkTvXX5lTk9yCk0o/5Q6N8oRU3tX55GR6ZTgydp
+         2XGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726031886; x=1726636686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vPFFkBUH1KUQvGTAkddgh3AbnGWF386sDPxW9jKCyYA=;
+        b=GuG8yjQhHejNTzLjkrigCSzBD7ZW1xJ6X7+JULZLIozZlIbbxIl2q5ghMc/122+nOO
+         rF+xX0Ec8dZQnAo72ZO770HciYMEJKLDdB58UsVHzjCYp6zSkWxoZ7+0jwDDhtxJlIBf
+         QnrZ+S82nD1ShFlC+LGBcAWDeaBK3BVaIzPAx31mTXixTUP5XndxR1GaYjIwvkhRmCnF
+         Qkp4Z+sz4fBrmOJq50QPbZeqxpJgU2CQsAwrGoAcXh1rNwxdhBb6wYWwHeBN1PNt3+7t
+         sz9NjNxJK/LmFYCQweDqQu0p93nlfWeQ6KspEzjqfZGoTrErQ+mlS1j63l23O/ZriRyQ
+         r5Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCVn2CogJsO7a+SkEipabkU3/tWMIR22jjsCpKRycdujodOJsUk0CHe8lLc/xrnabWXGKbNtibPe@vger.kernel.org, AJvYcCXffJwqqKVIWFyqqvQ1OZ9j+tf2Lipxcuy5IN8UtafNtw88ILohUcGXSM+xA78kfBdM3OazD2B0c/9QvJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn6JmSNUYsp+Gwvuitju//LpaZPmlJ6CAC2CuhQCII0RWNYokv
+	blg/WK2I3ZLLv1UQUnslLysJunEJLPxzHNeu7NmCM2tLQbpgEsOE
+X-Google-Smtp-Source: AGHT+IFIs42BaBHr5f6zXfAUHBDW+oglVKQHTCBImU/2pgw3MkM8yZdGXBV6oGVZLrxZQGsXtn/WcA==
+X-Received: by 2002:a17:903:247:b0:207:c38:9fd7 with SMTP id d9443c01a7336-2074c5f13f8mr38917615ad.22.1726031885488;
+        Tue, 10 Sep 2024 22:18:05 -0700 (PDT)
+Received: from kic-machine.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710e10eb4sm56252735ad.7.2024.09.10.22.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 22:18:04 -0700 (PDT)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ki.chiang65@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH 3/3] xhci: Don't perform Soft Retry for Etron xHCI host
+Date: Wed, 11 Sep 2024 13:17:13 +0800
+Message-Id: <20240911051716.6572-1-ki.chiang65@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YekzNBF1Px3tUXyM0AkJyLY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/YekzNBF1Px3tUXyM0AkJyLY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Since commit f8f80be501aa ("xhci: Use soft retry to recover faster from
+transaction errors"), unplugging USB device while enumeration results in
+errors like this:
 
-Hi all,
+[ 364.855321] xhci_hcd 0000:0b:00.0: ERROR Transfer event for disabled endpoint slot 5 ep 2
+[ 364.864622] xhci_hcd 0000:0b:00.0: @0000002167656d70 67f03000 00000021 0c000000 05038001
+[ 374.934793] xhci_hcd 0000:0b:00.0: Abort failed to stop command ring: -110
+[ 374.958793] xhci_hcd 0000:0b:00.0: xHCI host controller not responding, assume dead
+[ 374.967590] xhci_hcd 0000:0b:00.0: HC died; cleaning up
+[ 374.973984] xhci_hcd 0000:0b:00.0: Timeout while waiting for configure endpoint command
 
-Today's linux-next merge of the tip tree got a conflict in:
+Seems that Etorn xHCI host can not perform Soft Retry correctly, apply
+XHCI_NO_SOFT_RETRY quirk to disable Soft Retry and then issue is gone.
 
-  arch/arm64/Kconfig
+This patch depends on commit a4a251f8c235 ("usb: xhci: do not perform
+Soft Retry for some xHCI hosts").
 
-between commit:
+Fixes: f8f80be501aa ("xhci: Use soft retry to recover faster from transaction errors")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+---
+ drivers/usb/host/xhci-pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  02b4dd56f5ba ("mm/arm64: support large pfn mappings")
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index dda873f3fee7..19f120ed8dd3 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -399,6 +399,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
+ 		xhci->quirks |= XHCI_NO_RESET_DEVICE;
+ 		xhci->quirks |= XHCI_NO_BREAK_CTRL_TD;
++		xhci->quirks |= XHCI_NO_SOFT_RETRY;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_ETRON &&
+ 			pdev->device == PCI_DEVICE_ID_EJ188) {
+@@ -406,6 +407,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_BROKEN_STREAMS;
+ 		xhci->quirks |= XHCI_NO_RESET_DEVICE;
+ 		xhci->quirks |= XHCI_NO_BREAK_CTRL_TD;
++		xhci->quirks |= XHCI_NO_SOFT_RETRY;
+ 	}
+ 
+ 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
+-- 
+2.25.1
 
-from the mm tree and commit:
-
-  699fd9104967 ("arm64: Allow to enable PREEMPT_RT.")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-I wonder how this would have gone if the "select" statements had been
-sorted?
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/Kconfig
-index 3943898f62c9,e68ea648e085..000000000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -101,7 -99,7 +101,8 @@@ config ARM6
-  	select ARCH_SUPPORTS_NUMA_BALANCING
-  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK
-  	select ARCH_SUPPORTS_PER_VMA_LOCK
- +	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-+ 	select ARCH_SUPPORTS_RT
-  	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
-  	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
-  	select ARCH_WANT_DEFAULT_BPF_JIT
-
---Sig_/YekzNBF1Px3tUXyM0AkJyLY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhJ7oACgkQAVBC80lX
-0GyxHwgAl5Gyp31ixq5yQAP1KQYhU7p0PlHHTur7r+Xd1s843lEIlziiG8uJGegT
-2j8fLn39AsE+5Mg748z+TWl+z2OI1SDGa7Ieo0V05cwTGnkCXXBxu0wWFwluNo2P
-7Oen229G3rFtdqwUEVL97TkTgbYVmnBA+6pA+jpjZe6DUq35sKDepZ4Xx86I29lG
-eMveupzqwR8AyFjfJx8EiuXjhRBr8psqX5nPM3OciqJCgDTZP04cW072GzMGhsNC
-2xMQrrzEfN1wIWPTlxDI3Yf0b4884zLdVQrc4CE1RWwRJ6QIUFKrKo5iItlWee/j
-16FMQOk5E4q1cBdgEvwHiMdqbFLyqA==
-=gYCu
------END PGP SIGNATURE-----
-
---Sig_/YekzNBF1Px3tUXyM0AkJyLY--
 
