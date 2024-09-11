@@ -1,87 +1,173 @@
-Return-Path: <linux-kernel+bounces-324644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E02974F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:05:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9B7974F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFDF2882FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE771C21F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F66017F4F6;
-	Wed, 11 Sep 2024 10:05:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8974818130D;
+	Wed, 11 Sep 2024 10:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ECguBTxh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CQFRGP7r"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EA913A884
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAD713A884;
+	Wed, 11 Sep 2024 10:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049103; cv=none; b=EOnf7Rq3Rv0huoIrzbXuwaSkAzHnRIvS2FkETx/wpV0thhgnSv2CTU59/cuYUplAJ+o5DkMdiiSW2mFeuR8fRPSJrj93HEhYWaGQu04jtoxGv6LVOEPDXUx+fz0qKGcDOrsjKS91y1NFIPfB15EGcC5oc7R2gnkSM+moa2JG7Ug=
+	t=1726049181; cv=none; b=sJksjgtq87kUdnNLfF076NTE718lOUtwJWMRZJQGj8gKRSCvZRMl5EE+Fl018l8Va+LEjE5ZjnAWGQk+53wBV2SW/9NcDrCcG2tIoVemld13IEtovi5TtFyNL46IycikCgkaw/PhAJ3DrlappeITHp2J6lNWQ39QquFQ6KKTrHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049103; c=relaxed/simple;
-	bh=NF0h8nZdsL/Jn+JWd+qGplwElShfyzeI13id89sxNRA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HE/hwb249oJIphVkMiaMHUSwu3ZziLIXKNxVv9fZJE251tDpyftwT7DW+uHzbKY3hDU4a6kwq1H9bDwE0irinqGUUiCuqMygm9g11BnMYEA92FfVqD9S70hLJ0LEADtb+QROVnNRjXuB/yWzEn1srOFI3Io0VB58D6hKuINtayc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cea2c4e35so632007239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:05:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726049102; x=1726653902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWodEHvZnudDxKHGjfTvsvPA5yH1sv68ORQTfnTCblY=;
-        b=rxVxZTOcrjqYjG7BNvNfl7jG9SFpIHs6q0BP9L/nwU1aUp0H3loFhqzEG5VY9ltui3
-         JHjhpOCGqNwviTJjLCSBmS9EW9MEHHmxz5oiVWHtYGnyyql848NdGgAigShO1k7R1a64
-         7sxhVfHrXvdestILpeJIH1jNZYdL0+rNPBaUohXvloDitriZdguIw/Us5CdMZb6jwxwc
-         iE8oG+Ph2JL7x4jaXS5x4IAo2C8dMZ2TEICT61Jc5g/qNUjFpELSo7xq0adzjDqxDcGF
-         Zzzd4irFr0KSx4wgBr8H5Zew32zalvBkvsFR+OoKCekzoglstiJyNe/Jis5cSoapCu8+
-         H94g==
-X-Gm-Message-State: AOJu0YyA2+TZ8NlpbK2Uy190EL07dqT9shkpfx0UFz6kIn7MGeWgYPF9
-	Jm48MUXE0CYWr9gR1wSBPNtvFeKb7ekuCMbFk444yBT6b+CqttNj6RiuYea9QL06Ga4vnR6kmSX
-	tCOv/7pvK+Dl9E+Em8Lh4ZisZmApW95hc8lvBVtcYoexu4vppBHEBJkc=
-X-Google-Smtp-Source: AGHT+IFmrBEl8WNHhJgTXBi2PjUo39BS/LmzTPg9GzpjSyWsT/cDRqP6naCUgB+uQKY5H7aeksuQfoE7nOS5giw/GEAl/4Z7+Ya/
+	s=arc-20240116; t=1726049181; c=relaxed/simple;
+	bh=nFXFNYSYZ8RWMu53wCfEwEYMCYmdLxIZFBF71sHex0U=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=FKkznKsM/y+EVg7gXFPvtHgfWydSxS3X0LsQXJM/URLHj7ndGiTMPon45j7n3Ugyag0vW5IjJFp8X6Mn5iM6mjSWOS/tAil0yV+D9Nll3HK0DvVSwrxJ80c4AUnB5RyVmOiDm+1yU58Hy08+0LbgtbSLGpszmYWTiqujWei23qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ECguBTxh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CQFRGP7r; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 11 Sep 2024 10:06:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726049177;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=89fFTMjF07mIIdQIxSuCjEAL2qbIX0n67g5ZVggMHRo=;
+	b=ECguBTxhZY0l9LbdQMVfzlRInCRme3XtYHjzXfg8gPBS32bIk9wQlLRYPhXp7Z/vfpHeoJ
+	2tgKqnHl4sqVQunLeBzQlkMrar2aZccD8Hb4Y1WB5hkh+VekXlIqhUH/E8Fb20oxcJfqMs
+	9fwMQtey1J6F3AgNh51Me+6KZX4NGV0rUjeUhTLa0QABS/YFjBCUFZ1B0UqumMI4vkm547
+	huMbb8Cv2NLBwxROCUssnt2Cr24pbF5OaSKikfRl69SEcoq8412U86XonxQ0RTiOjYQqfM
+	C+7SnGTLDH6qBIAbh/kCOoGnjO280Al61dmnJwEjSprjEQMEXabmRkPaUfUuSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726049177;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=89fFTMjF07mIIdQIxSuCjEAL2qbIX0n67g5ZVggMHRo=;
+	b=CQFRGP7rUZOFLAem3/o/IulvQbj5Ja12vQ8TPTyauPpB74NNst2ZPh53q+oCZrBohxbm6C
+	tZn2V0t+HlAt8bBA==
+From: "tip-bot2 for Waiman Long" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] locking/rwsem: Move is_rwsem_reader_owned() and
+ rwsem_owner() under CONFIG_DEBUG_RWSEMS
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Waiman Long <longman@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240909182905.161156-1-longman@redhat.com>
+References: <20240909182905.161156-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13ad:b0:37a:7662:7591 with SMTP id
- e9e14a558f8ab-3a04f070a8bmr230266765ab.6.1726049101918; Wed, 11 Sep 2024
- 03:05:01 -0700 (PDT)
-Date: Wed, 11 Sep 2024 03:05:01 -0700
-In-Reply-To: <0d2576ae-f3c9-4700-8cdb-8957944093e6@kylinos.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000095c6290621d51f6f@google.com>
-Subject: Re: [syzbot] [udf?] KASAN: slab-out-of-bounds Read in
- udf_get_filelongad (2)
-From: syzbot <syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zhaomengmeng@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <172604917670.2215.16033363773535605001.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the locking/core branch of tip:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Commit-ID:     d00b83d416e73bc3fa4d21b14bec920e88b70ce6
+Gitweb:        https://git.kernel.org/tip/d00b83d416e73bc3fa4d21b14bec920e88b70ce6
+Author:        Waiman Long <longman@redhat.com>
+AuthorDate:    Mon, 09 Sep 2024 14:29:05 -04:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 10 Sep 2024 12:02:33 +02:00
 
-Reported-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
-Tested-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
+locking/rwsem: Move is_rwsem_reader_owned() and rwsem_owner() under CONFIG_DEBUG_RWSEMS
 
-Tested on:
+Both is_rwsem_reader_owned() and rwsem_owner() are currently only used when
+CONFIG_DEBUG_RWSEMS is defined. This causes a compilation error with clang
+when `make W=1` and CONFIG_WERROR=y:
 
-commit:         8d8d276b Merge tag 'trace-v6.11-rc6' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12416100580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10de7f29980000
+kernel/locking/rwsem.c:187:20: error: unused function 'is_rwsem_reader_owned' [-Werror,-Wunused-function]
+  187 | static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+      |                    ^~~~~~~~~~~~~~~~~~~~~
+kernel/locking/rwsem.c:271:35: error: unused function 'rwsem_owner' [-Werror,-Wunused-function]
+  271 | static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+      |                                   ^~~~~~~~~~~
 
-Note: testing is done by a robot and is best-effort only.
+Fix this by moving these two functions under the CONFIG_DEBUG_RWSEMS define.
+
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/r/20240909182905.161156-1-longman@redhat.com
+---
+ kernel/locking/rwsem.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index 33cac79..4b041e9 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -181,12 +181,21 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
+ 	__rwsem_set_reader_owned(sem, current);
+ }
+ 
++#ifdef CONFIG_DEBUG_RWSEMS
++/*
++ * Return just the real task structure pointer of the owner
++ */
++static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
++{
++	return (struct task_struct *)
++		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
++}
++
+ /*
+  * Return true if the rwsem is owned by a reader.
+  */
+ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+ {
+-#ifdef CONFIG_DEBUG_RWSEMS
+ 	/*
+ 	 * Check the count to see if it is write-locked.
+ 	 */
+@@ -194,11 +203,9 @@ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
+ 
+ 	if (count & RWSEM_WRITER_MASK)
+ 		return false;
+-#endif
+ 	return rwsem_test_oflags(sem, RWSEM_READER_OWNED);
+ }
+ 
+-#ifdef CONFIG_DEBUG_RWSEMS
+ /*
+  * With CONFIG_DEBUG_RWSEMS configured, it will make sure that if there
+  * is a task pointer in owner of a reader-owned rwsem, it will be the
+@@ -266,15 +273,6 @@ static inline bool rwsem_write_trylock(struct rw_semaphore *sem)
+ }
+ 
+ /*
+- * Return just the real task structure pointer of the owner
+- */
+-static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
+-{
+-	return (struct task_struct *)
+-		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
+-}
+-
+-/*
+  * Return the real task structure pointer of the owner and the embedded
+  * flags in the owner. pflags must be non-NULL.
+  */
 
