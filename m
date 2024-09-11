@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-324791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE329750E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2B69750EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E281C22C04
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238511F232F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB52C187FFF;
-	Wed, 11 Sep 2024 11:33:39 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0437518732C;
+	Wed, 11 Sep 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gr9Yifsz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E03118785F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BD515383B;
+	Wed, 11 Sep 2024 11:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726054419; cv=none; b=nYfWRNhI9XDe6z4XiVCxAMitY6/CzzVb0rFRThzP/rnFFWg3e64UsDHS0D0CZU0PGPmw8TlugmCPK7JOG2PD4F5bc95ANOLEZkr0wVi2cEq8hXJCSwdL4ggYvJHMhMJN/ViTyp2owSAyX2S+pZBCN78PvsNj79oYHi0oANgXccw=
+	t=1726054613; cv=none; b=mXptKiybKfAUpiMnFks+Tg5oztO4AAjG/UrB6JT9Lff/Xst179t5o7E1G/gap9DY4pkw0Oymb5l3rBpPruRiKPHWO3KOOcqF8Br52M60D9H/8GApeF1f7j8Sl8omoIaDEQhruEV6z0xfI2+OC3YnQLxiet2zwRiwkV43BR9U/0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726054419; c=relaxed/simple;
-	bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LSDXywGyHKbjL+c+7ZxWGj9HcNrWqwTWQ7GoR6xMoAkfJADFDf/1N44OqWZBgykI9FnvVK9tcwWRXHmVVQATsWnJmwlQtle7JVeb0+UbnI4okhUDpTUpFhyowvz+qg5S+PThsL0Oq1Am++X4J/gRp0ZU93XfMP6LdhckeixVuEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04c88a379so129222315ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:33:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726054417; x=1726659217;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-        b=D6V1qb4wrcJBB3BrecjHsgvwPU1EYM9kOxydon4bL7UXOaJByR5xr2diNBSF+hpPe4
-         7qJz7dHNpM1YpsB0PScUh7H3p8yqtUURqfm3AEKfaTyfNrgdPH9/vGqWImH4bgHow2Hm
-         g6hQtvjlMYy46yXHHj6ChgLLGapl7Q5nY8dSFU6IxCVrYCIxEyoIMXmmgd3TF/RfswRl
-         YirNDe2JHhU8ikIDeuH26ANE4Uojns9PzIvB/gDxGcKNTBZR/gwx4YoVu6MwcNKUQcXQ
-         ns1dMBUBQtA1kcvaPN82RILTy0ZjkSWwT2wtNeROZCOTzEm8RRrF4ogXG3Zwp8GETUMX
-         tPHA==
-X-Gm-Message-State: AOJu0Yy5mM4UdzRYi3+4TmVl0X/C0OkEFUldBcn/35uP4VJw+kef+xM4
-	Lxrj5nRmBl6kP9K/WVvtEkOWd4fjZ7DzTFWMLJ89NuoHcgNd9mndPeGdX6j+yI1kACvtstW2rsD
-	j01XHqQQB+O0XFX0RmVu6GXP66gcMJXzX9CiAf4ibfn4whCl9iFxJhG0=
-X-Google-Smtp-Source: AGHT+IGxiL1BSomS97kb8maKDRimV+P10VgKz1+cR0uw/i5hJsOKuh9cHVaH6oPWAiEAAkxp0e20IZ9Mu5j82dkbx2QP1Zl3GULe
+	s=arc-20240116; t=1726054613; c=relaxed/simple;
+	bh=uP/hcLJEZP/TJAHD54TuMyibOkB264Tk+1K+dnbHQNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L0t+ZO07gb1u3DAnlMk/vzqTZQKK1b73cfDBKF/Uhsr0NCCY/wafI5XMWh/vckoBvGMiKhOd6WmHbdSntC8rgKuS1lKefw0Ednwt4bwO8WIaPwXSaEnUC3L6ZHg0XY216kB/haE7Q6atEBRN3wa8jrQUMt5nMK1UaGd7MLIPY94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gr9Yifsz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E578EC4CEC5;
+	Wed, 11 Sep 2024 11:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726054612;
+	bh=uP/hcLJEZP/TJAHD54TuMyibOkB264Tk+1K+dnbHQNU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gr9Yifsz8Ksokkq8DxLzqU+ief/zlD3ncB1W0CSUW1Ex8Oe7yYEzr7Ld3BorBSYws
+	 mLuATJRkXdxu3wJTHiz6IO4CWufVt9sD0qZDsCW9m36XlyRBEoc9PUwnQCu/UCPUYa
+	 cqmzth7TEAFowygO75WfY6vFO/HQBilumcctC302/Zyq5cJuhoJgKmUYhtTS+LFeo3
+	 kNJrqs2k+CTnYmSEQP2pYu5qWGQx3AcUDE7TJuohKrN2i30v13ad12MXCyJSkztKiC
+	 X97AYfrohWXGAs/6g56Fj9Xbr7uDW2jS9VaPHRjjjooMdMCdrEN92QWxVKzuV/UOXf
+	 5mZ8JnISrwFKQ==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53654dbde59so802070e87.1;
+        Wed, 11 Sep 2024 04:36:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVJG3qb0JQBx3vhm4JZPnd8XOpjvWMOcZGMdvAqjSF5D6RPysbpUT7vvWxN2YRCS+VkxXEbB88uQ7YaSSYl@vger.kernel.org, AJvYcCWRVTo/BPTem9OOyKFb0Sd2XIKVC1NANgKnAVL307ojbdFOuR/HNEiX2i9+8O6Hd/I9nztppEbDRdw=@vger.kernel.org, AJvYcCX6JVCIWDFv/7j5gPAOVSdiSqkkkXrkfsmR+QxulI/iy0opxjCQhjHvu6wnkutQEBQnugPLCpmXlX/ZxSyz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlvn6tLZaEdaalj9khL0APzGPto0kUAWcsESDdmw8AEgHtu6SR
+	ioxNeRaH4Dq22Xqjx20DEeJQmUZB1sVYyxhcmHIZkIqRYKuNl+wKfIxNge6p9p/+n/1akbGnuk4
+	Q2lwdzNk1xtAoG/TzJ1Zs6XiTgM4=
+X-Google-Smtp-Source: AGHT+IHxLATiP9s2eKyDMW4ZO3zMT6QEFMY6J+Pt8BpxrhbUuRZHO7YwI9kdop2ZWM2lvEm9VX1t02p3BarDboW3dHk=
+X-Received: by 2002:a2e:888e:0:b0:2f4:1d7:e286 with SMTP id
+ 38308e7fff4ca-2f7726f8ac5mr19638101fa.18.1726054611617; Wed, 11 Sep 2024
+ 04:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170b:b0:3a0:452d:aaf7 with SMTP id
- e9e14a558f8ab-3a04f07e184mr224680335ab.11.1726054417097; Wed, 11 Sep 2024
- 04:33:37 -0700 (PDT)
-Date: Wed, 11 Sep 2024 04:33:37 -0700
-In-Reply-To: <0000000000000311430620013217@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006507230621d65c51@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240911112017.14427-1-3090101217@zju.edu.cn>
+In-Reply-To: <20240911112017.14427-1-3090101217@zju.edu.cn>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 11 Sep 2024 20:36:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARw7aRYEfAJsgctJQVhHvc711ARMZDCFAkHeqkRv5nncw@mail.gmail.com>
+Message-ID: <CAK7LNARw7aRYEfAJsgctJQVhHvc711ARMZDCFAkHeqkRv5nncw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Support separating source and output of the
+ external module
+To: Jing Leng <3090101217@zju.edu.cn>
+Cc: nathan@kernel.org, nicolas@fjasle.eu, corbet@lwn.net, 
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Sep 11, 2024 at 8:20=E2=80=AFPM Jing Leng <3090101217@zju.edu.cn> w=
+rote:
+>
+> Revert commit "9a0ebe5011f4", originally when compiling external modules,
+> the compiled output can be separated from the source code with the
+> following command:
+>     make -C <kernel_src> O=3D<kernel_out> src=3D<module_src> M=3D<module_=
+out>
+> It is used to https://github.com/lengjingzju/cbuild-ng (inc.mod.mk).
+>
+> But "src" is an internal variable, so this patch adds a variable "S"
+> which is specifically used to change the default value of "src".
+>
+> Fixes: 9a0ebe5011f4 ("kbuild: use $(obj)/ instead of $(src)/ for common p=
+attern rules")
+> Signed-off-by: Jing Leng <3090101217@zju.edu.cn>
 
-***
 
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-Author: alibuda@linux.alibaba.com
+NACK.
+
+Always sign, every time I receive a hack like this over and  over again.
 
 
-#syz test
-
+--=20
+Best Regards
+Masahiro Yamada
 
