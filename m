@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-325000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AEA975395
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:24:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845B8975391
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B384287D13
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66A01C22230
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACED01ACDF9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810221AC8B2;
 	Wed, 11 Sep 2024 13:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bui4WZRS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5E38U+n8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzG/QFrH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E911A3AB3;
-	Wed, 11 Sep 2024 13:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BBE1AB6CB;
+	Wed, 11 Sep 2024 13:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726060688; cv=none; b=MRslGkBw6C9VpZuG9Uac7preJa2WzRzeW+Ic6UDgzHjpGI8LZcLhX9Dn/HvEhdbd8TkOZZdWSGDLJ6qCyrJr/qB//lvvNyeu7ZqUqYqbyyiZJUKwNeHIiMEWDIvlrHoQRWFBJV0kpukQONIoGURGlL64azINypRDdi9kRXMLSgc=
+	t=1726060688; cv=none; b=pyF3kA6E7sNHj+iN3mv/v6eY2nl8GDLpojNpOmeLOmQWwQ/UUxnTMwx5CGFVAjR1s+RbMet+t4rKnb7+Z1XpuqAp15KXROS0p6Wmpu5WmGJJzik/g2siz7AG+SjLAAkpzpI3/ED78fHCF6BxDiaMjMX7JnSIKwGL3fr5ZWmREVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726060688; c=relaxed/simple;
-	bh=cg2PM211DmAM8vwNyyfctOBpXOxyEn3IDg9VxjRMYA0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mwi2OL3LZ6nuTtECuduQkeupUPnYQ+Zp1J7xZtX+w9ewj2+wbtMcEOVmDld64hPndaLTH3hQyqRXqK6xmgv4ADF6F0drGq+u3H0TGqFffnOZFAyXdeYj+K78hSnFwmtsC9CQ+Vj6iPpxhRKc+L/1nI9KP+daDFACNjToT9NqlZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bui4WZRS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5E38U+n8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726060680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WI2cVBehM4PSxc5rOEnLQmGjNkeoiI7dtjBCguJbkM0=;
-	b=bui4WZRSjaen6LSXlR60ad3uGIxj3a9CJ/f4590OmMxSmHvGAKXYwBWMBRM+zX5NIlw8LB
-	+Z14pHB2ipmWz8Dx9lvIRZrbskwPFkxCkiv/hOCG9yRYO3ACJwSRXf01nOHxsSk4z/LRWb
-	ijxOz+TzmknjWZCM2KvhaC0g/Y77uiBMxlD8hkdV352M/a9gK+mHvx4MvdfnImHuQICeUC
-	vy04SsZgMnScdhXWy96qkUkKCHmU/wZSJxhfgQpU3DD9YdTdzN3sGZiXR24y7nxiD0YKH7
-	JxiWhdlo4WwW8g5FvG8fmGiu7O5+gPYJ7bhjDUuGbyUV8o2xGA8fdRT+Ls6uQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726060680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WI2cVBehM4PSxc5rOEnLQmGjNkeoiI7dtjBCguJbkM0=;
-	b=5E38U+n8OGQsnDRDhQ/VQZJedSZYkMquasple8yZL5aP1SOiXlmzlA0gMRsSSdtHcoLbX2
-	n+DE3KOwPx0V4xCg==
-Date: Wed, 11 Sep 2024 15:17:57 +0200
-Subject: [PATCH 21/21] ntp: Move pps monitors into ntp_data
+	bh=/BcOlfsTNy3q9Ezx1F31k2kwS+FPzT/Ivyoxq9WYK1g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=PU4t5uoujaQWll7c4vNc3OIUZyJKOrZATkVg70Wd1l6GNte7uJ5+peLim9JY7oK/DVoLHtM+dwC4jlEzqk2oHfct0sY9Q1Qo7Errq4m5OZ9az9iTgaEGjC85USOY4cerRriMsw6fQBk+pDTiMRdhC0OyUZQMPBoBtWreYY+ue/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzG/QFrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D666C4CEC7;
+	Wed, 11 Sep 2024 13:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726060687;
+	bh=/BcOlfsTNy3q9Ezx1F31k2kwS+FPzT/Ivyoxq9WYK1g=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=QzG/QFrHPrzbLvNocCmWE6SzfiYTNUWzfjdUahpWef9dP1OdxRtkTzB2m9PLd8mj9
+	 vRvGjuI0CVJMK4M7S7/eksoIxAdLK4/xeVAZ9xXjtneaHnove1YennkyO0XVSYTEO0
+	 Lr55ftaRCsRHnX2o1xjQflOcp4KWn6hC3pK+C6W5WyXkzKrrL9zramtABU3AM/eRjs
+	 yes9nBX1BIBU5TrzpnfchrYmg5gK0XuVdRmxorU9HEayKINYaxgU3m17CBs8lqtl6G
+	 PWgZ9fXb0zGGi9Wg7LqTDtEwvWIHQpDDvLeSLEDdTBEfyB/HT6gnCEvmQKCf7K5EaF
+	 wzkrul+5nak/g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-21-2d52f4e13476@linutronix.de>
-References: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
-To: John Stultz <jstultz@google.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Miroslav Lichvar <mlichvar@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Christopher S Hall <christopher.s.hall@intel.com>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Sep 2024 16:18:04 +0300
+Message-Id: <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
+ <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Zaborowski" <andrew.zaborowski@intel.com>
+X-Mailer: aerc 0.18.2
+References: <20240910111806.65945-1-r.smirnov@omp.ru>
+ <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+ <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
+In-Reply-To: <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Tue Sep 10, 2024 at 8:38 PM EEST, Sergey Shtylyov wrote:
+> On 9/10/24 4:38 PM, Jarkko Sakkinen wrote:
+> [...]
+>
+> >> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parame=
+ters
+> >> the kernel will first emit WARN and then have an oops because id_2 get=
+s
+> >> dereferenced anyway.
+> >>
+> >> Found by Linux Verification Center (linuxtesting.org) with Svace stati=
+c
+> >> analysis tool.
+> >=20
+> > Weird, I recall that I've either sent a patch to address the same site
+> > OR have commented a patch with similar reasoning. Well, it does not
+> > matter, I think it this makes sense to me.
+> >=20
+> > You could further add to the motivation that given the panic_on_warn
+> > kernel command-line parameter, it is for the best limit the scope and
+> > use of the WARN-macro.
+>
+>    I don't understand what you mean -- this version of the patch keeps
+> the WARN_ON() call, it just moves that call, so that the duplicate id_{0,=
+1,2}
+> checks are avoided...
 
-Finalize the conversion from static variables to struct based data.
+I overlooked the code change (my bad sorry). Here's a better version of
+the first paragraph:
 
-No functional change.
+"find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignores
+validation for id_2. Check nullity also for id_2."
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
----
- kernel/time/ntp.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+Yep, and it changes no situation with WARN_ON() macro for better or
+worse. It would logically separate issue to discuss and address so
+as far as I'm concerned, with this clarification I think the change
+makes sense to me.
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index c3089d8be0f7..a2f57599a815 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -48,6 +48,10 @@
-  * @pps_intcnt:		PPS interval counter
-  * @pps_freq:		PPS frequency offset in scaled ns/s
-  * @pps_stabil:		PPS current stability in scaled ns/s
-+ * @pps_calcnt:		PPS monitor: calibration intervals
-+ * @pps_jitcnt:		PPS monitor: jitter limit exceeded
-+ * @pps_stbcnt:		PPS monitor: stability limit exceeded
-+ * @pps_errcnt:		PPS monitor: calibration errors
-  *
-  * Protected by the timekeeping locks.
-  */
-@@ -75,6 +79,10 @@ struct ntp_data {
- 	int			pps_intcnt;
- 	s64			pps_freq;
- 	long			pps_stabil;
-+	long			pps_calcnt;
-+	long			pps_jitcnt;
-+	long			pps_stbcnt;
-+	long			pps_errcnt;
- #endif
- };
- 
-@@ -110,15 +118,6 @@ static struct ntp_data tk_ntp_data = {
- 				   intervals to decrease it */
- #define PPS_MAXWANDER	100000	/* max PPS freq wander (ns/s) */
- 
--/*
-- * PPS signal quality monitors
-- */
--static long pps_calcnt;		/* calibration intervals */
--static long pps_jitcnt;		/* jitter limit exceeded */
--static long pps_stbcnt;		/* stability limit exceeded */
--static long pps_errcnt;		/* calibration errors */
--
--
- /*
-  * PPS kernel consumer compensates the whole phase error immediately.
-  * Otherwise, reduce the offset by a fixed factor times the time constant.
-@@ -204,10 +203,10 @@ static inline void pps_fill_timex(struct ntp_data *ntpdata, struct __kernel_time
- 		txc->jitter = ntpdata->pps_jitter / NSEC_PER_USEC;
- 	txc->shift	   = ntpdata->pps_shift;
- 	txc->stabil	   = ntpdata->pps_stabil;
--	txc->jitcnt	   = pps_jitcnt;
--	txc->calcnt	   = pps_calcnt;
--	txc->errcnt	   = pps_errcnt;
--	txc->stbcnt	   = pps_stbcnt;
-+	txc->jitcnt	   = ntpdata->pps_jitcnt;
-+	txc->calcnt	   = ntpdata->pps_calcnt;
-+	txc->errcnt	   = ntpdata->pps_errcnt;
-+	txc->stbcnt	   = ntpdata->pps_stbcnt;
- }
- 
- #else /* !CONFIG_NTP_PPS */
-@@ -935,7 +934,7 @@ static long hardpps_update_freq(struct ntp_data *ntpdata, struct pps_normtime fr
- 	/* Check if the frequency interval was too long */
- 	if (freq_norm.sec > (2 << ntpdata->pps_shift)) {
- 		ntpdata->time_status |= STA_PPSERROR;
--		pps_errcnt++;
-+		ntpdata->pps_errcnt++;
- 		pps_dec_freq_interval(ntpdata);
- 		printk_deferred(KERN_ERR "hardpps: PPSERROR: interval too long - %lld s\n",
- 				freq_norm.sec);
-@@ -954,7 +953,7 @@ static long hardpps_update_freq(struct ntp_data *ntpdata, struct pps_normtime fr
- 	if (delta > PPS_MAXWANDER || delta < -PPS_MAXWANDER) {
- 		printk_deferred(KERN_WARNING "hardpps: PPSWANDER: change=%ld\n", delta);
- 		ntpdata->time_status |= STA_PPSWANDER;
--		pps_stbcnt++;
-+		ntpdata->pps_stbcnt++;
- 		pps_dec_freq_interval(ntpdata);
- 	} else {
- 		/* Good sample */
-@@ -999,7 +998,7 @@ static void hardpps_update_phase(struct ntp_data *ntpdata, long error)
- 		printk_deferred(KERN_WARNING "hardpps: PPSJITTER: jitter=%ld, limit=%ld\n",
- 				jitter, (ntpdata->pps_jitter << PPS_POPCORN));
- 		ntpdata->time_status |= STA_PPSJITTER;
--		pps_jitcnt++;
-+		ntpdata->pps_jitcnt++;
- 	} else if (ntpdata->time_status & STA_PPSTIME) {
- 		/* Correct the time using the phase offset */
- 		ntpdata->time_offset = div_s64(((s64)correction) << NTP_SCALE_SHIFT,
-@@ -1064,7 +1063,7 @@ void __hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_t
- 
- 	/* Signal is ok. Check if the current frequency interval is finished */
- 	if (freq_norm.sec >= (1 << ntpdata->pps_shift)) {
--		pps_calcnt++;
-+		ntpdata->pps_calcnt++;
- 		/* Restart the frequency calibration interval */
- 		ntpdata->pps_fbase = *raw_ts;
- 		hardpps_update_freq(ntpdata, freq_norm);
-
--- 
-2.39.2
+BR, Jarkko
 
 
