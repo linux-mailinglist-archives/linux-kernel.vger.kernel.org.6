@@ -1,89 +1,216 @@
-Return-Path: <linux-kernel+bounces-325689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F616975D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AA0975D41
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358141F22C1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4761C21E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E811BBBE3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3F1BC066;
 	Wed, 11 Sep 2024 22:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eLTAOgnK"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRt2ljNa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89051A3047;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2690E1BBBE4;
 	Wed, 11 Sep 2024 22:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093842; cv=none; b=gBbsf2KyiaFSkKQKhBil9vPQjPzpFx/msmafQDyyGwmCGrqMt3FSy3jToEueCBQhMDdR36WCZxwQ7tLg9pSgpDgRX1N1gMM/WVWG50boEfihmp6/VewtIIo+0XMpnOZVHtt2wtkHeoOP232FhZDJXVwGa7mY1Rr3l8+gdO3TiAA=
+	t=1726093843; cv=none; b=Z4MNeJVMUoGQrQPb9vqX35ogagBWWKhnPNwGbO4Z3jQHimEh1JSc0IRQErrIy5TQ7ZeWKzIsllPjp4oMzL0Cjq36cfDOiFH3rdDcdwsjMbCEwvtvz5pRjEFxwt96i6EJ+1ufRP99X7MWami9Nsah1mBLmzl7d+X2G8DbkGKdDvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093842; c=relaxed/simple;
-	bh=npOevJMDfW/arh3BY6Od23R/CP3junI1c4HvN1FSpL4=;
+	s=arc-20240116; t=1726093843; c=relaxed/simple;
+	bh=WwOTVKODLlsieEew/9/eTn6ygyv4nmybvgfiewsHUcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IqqVkwyS6I17mDNA1ZW3CssdxIRKnlOtT48IS2GmtpikbSaoatxtjLTAXpoCgWr3ChdSOS3uA1DwFXXuqauFE71Az20lE0WGBJJ1xSXu1HeGgrPn7GXd6DlnhyFKQymGGYdHzSlqGDYNlm+xHQ00DPhFChTU2iXz1wOlXIvlDkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eLTAOgnK; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9ACB41BF204;
-	Wed, 11 Sep 2024 22:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726093839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qU4uYN5RMPRB/LA33aUfiA2ctd0kCy7zU3BPdp1ZL4=;
-	b=eLTAOgnK4EYIldY+QvnYQYy2sTaoqt5lefdcseKFntQT+ffxxiISq8axnZ3bneGGYqYe3R
-	6KkLyUDlWslhX6o/0bfuNw89vrmJuGnm5D5J3U8MSdTvnOGSXtC6f4MEj/4GXMn4RFdd+p
-	TKUNCh8sa7x34ixoUpLOpA6b2E8/2acNVfIjtOnICo1wSkhOAR+ZwnVpDvOeAVH9ilasRY
-	N6Qi6HswkU25Fwm6C1PywOdWDEpJKXuXeWLiThN09/WB8fMUVZlBZSi3YURUBgQHlb/6Tn
-	0wokkx/hNonyI6UdB4OgO15dm1muaVr7TFmHcYDz/qEN+NIxue/kIabG2rZJYw==
-Date: Thu, 12 Sep 2024 00:30:38 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: sun6i: disable automatic clock input switching
-Message-ID: <172609381393.1549758.1447288374525041880.b4-ty@bootlin.com>
-References: <20240730194905.2587202-1-mwalle@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvtTqPyXRdqlzfxAxMxJo+Eq+O8WjysIDGKh58m/FwNjHelO4tCz1nGeIz+WIfWEqGUykh9J9NKIChJY+ly7iZQEEUdRxvESe+YQpfxloLtB5/b9WbVe9EbqonPc0UaFzE8jmIf524l4aBfOX6F1S7hLQuHUpK1cDe5eJvCT2LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRt2ljNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98552C4CEC6;
+	Wed, 11 Sep 2024 22:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726093840;
+	bh=WwOTVKODLlsieEew/9/eTn6ygyv4nmybvgfiewsHUcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lRt2ljNawjLRvP1xHwUY0yv3IT4FjV2TPZwX7H05+br38UTe5ED8PEDv/WdFDYAtu
+	 5w4/hWH7WRayR1m9YhQe7NTnTAyXF1A/DPxLXdkGtUHnnQCptZ62gTzEBz1amNZAo1
+	 NjUNCe0SI8b6EY2SjOtUEViQXlhbskLlZsmDue1QsALVpDPPCnIA5MuGl0AI7AREpe
+	 /yvcp79v5i1jLBznkX2McANWnLKEE2YU3fsMT2mhNOzs6gnyAmiBxlfrnvgaoYW1zg
+	 shxMqjz63CIJcPI6sOIEXscIdDtoPHQ3FnMM17T9z3LSPf3UCU2eqMcoKqGSlhIuyq
+	 KGVy5dRKo/6XQ==
+Date: Wed, 11 Sep 2024 15:30:40 -0700
+From: Kees Cook <kees@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 5/5] slab: Allocate and use per-call-site caches
+Message-ID: <202409111523.AEAEE48@keescook>
+References: <20240809072532.work.266-kees@kernel.org>
+ <20240809073309.2134488-5-kees@kernel.org>
+ <CAJuCfpHOqKPzbbkULpWU5g1-8mTLXraQM4taHzajY_cJ-YFWgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240730194905.2587202-1-mwalle@kernel.org>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpHOqKPzbbkULpWU5g1-8mTLXraQM4taHzajY_cJ-YFWgQ@mail.gmail.com>
 
-On Tue, 30 Jul 2024 21:49:05 +0200, Michael Walle wrote:
-> The V3(s) will detect a valid external low frequency clock and if it is
-> not present will automatically switch to the internal one. This might
-> hide bugs and (hardware) configuration errors. It's even worse because
-> the internal RTC runs significantly slower (32.000Hz vs 32.768Hz).
-> Fortunately for us, the V3(s) has an (undocumented) bypass of this
-> switching and the driver already supports it by setting the
-> .has_auto_swt flag.
+On Thu, Aug 29, 2024 at 10:03:56AM -0700, Suren Baghdasaryan wrote:
+> On Fri, Aug 9, 2024 at 12:33 AM Kees Cook <kees@kernel.org> wrote:
+> >
+> > Use separate per-call-site kmem_cache or kmem_buckets. These are
+> > allocated on demand to avoid wasting memory for unused caches.
+> >
+> > A few caches need to be allocated very early to support allocating the
+> > caches themselves: kstrdup(), kvasprintf(), and pcpu_mem_zalloc(). Any
+> > GFP_ATOMIC allocations are currently left to be allocated from
+> > KMALLOC_NORMAL.
+> >
+> > With a distro config, /proc/slabinfo grows from ~400 entries to ~2200.
+> >
+> > Since this feature (CONFIG_SLAB_PER_SITE) is redundant to
+> > CONFIG_RANDOM_KMALLOC_CACHES, mark it a incompatible. Add Kconfig help
+> > text that compares the features.
+> >
+> > Improvements needed:
+> > - Retain call site gfp flags in alloc_tag meta field to:
+> >   - pre-allocate all GFP_ATOMIC caches (since their caches cannot
+> >     be allocated on demand unless we want them to be GFP_ATOMIC
+> >     themselves...)
 > 
-> [...]
+> I'm currently working on a feature to identify allocations with
+> __GFP_ACCOUNT known at compile time (similar to how you handle the
+> size in the previous patch). Might be something you can reuse/extend.
 
-Applied, thanks!
+Great, yes! I'd love to check it out.
 
-[1/1] rtc: sun6i: disable automatic clock input switching
-      https://git.kernel.org/abelloni/c/2cd71297070b
+> >   - Separate MEMCG allocations as well
+> 
+> Do you mean allocations with __GFP_ACCOUNT or something else?
 
-Best regards,
+I do, yes.
+
+> > +static void alloc_tag_site_init_early(struct codetag *ct)
+> > +{
+> > +       /* Explicitly initialize the caches needed to initialize caches. */
+> > +       if (strcmp(ct->function, "kstrdup") == 0 ||
+> > +           strcmp(ct->function, "kvasprintf") == 0 ||
+> > +           strcmp(ct->function, "pcpu_mem_zalloc") == 0)
+> 
+> I hope we can find a better way to distinguish these allocations.
+> Maybe have a specialized hook for them, like alloc_hooks_early() which
+> sets a bit inside ct->flags to distinguish them?
+
+That might be possible. I'll see how that ends up looking. I don't want
+to even further fragment the alloc_hooks_... variants.
+
+> 
+> > +               alloc_tag_site_init(ct, false);
+> > +
+> > +       /* TODO: pre-allocate GFP_ATOMIC caches here. */
+> 
+> You could pre-allocate GFP_ATOMIC caches during
+> alloc_tag_module_load() only if gfp_flags are known at compile time I
+> think. I guess for the dynamic case choose_slab() will fall back to
+> kmalloc_slab()?
+
+Right, yes. I'd do it like the size checking: if we know at compile
+time, we can depend on it, otherwise it's a run-time fallback.
+
+> 
+> > @@ -175,8 +258,21 @@ static bool alloc_tag_module_unload(struct codetag_type *cttype,
+> >
+> >                 if (WARN(counter.bytes,
+> >                          "%s:%u module %s func:%s has %llu allocated at module unload",
+> > -                        ct->filename, ct->lineno, ct->modname, ct->function, counter.bytes))
+> > +                        ct->filename, ct->lineno, ct->modname, ct->function, counter.bytes)) {
+> >                         module_unused = false;
+> > +               }
+> > +#ifdef CONFIG_SLAB_PER_SITE
+> > +               else if (tag->meta.sized) {
+> > +                       /* Remove the allocated caches, if possible. */
+> > +                       void *p = READ_ONCE(tag->meta.cache);
+> > +
+> > +                       WRITE_ONCE(tag->meta.cache, NULL);
+> 
+> I'm guessing you are not using try_cmpxchg() the same way you did in
+> alloc_tag_site_init() because a race with any other user is impossible
+> at the module unload time? If so, a comment mentioning that would be
+> good.
+
+Correct. It should not be possible. But yes, I will add a comment.
+
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index 855c63c3270d..4f01cb6dd32e 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -302,7 +302,20 @@ config SLAB_PER_SITE
+> >         default SLAB_FREELIST_HARDENED
+> >         select SLAB_BUCKETS
+> >         help
+> > -         Track sizes of kmalloc() call sites.
+> > +         As a defense against shared-cache "type confusion" use-after-free
+> > +         attacks, every kmalloc()-family call allocates from a separate
+> > +         kmem_cache (or when dynamically sized, kmem_buckets). Attackers
+> > +         will no longer be able to groom malicious objects via similarly
+> > +         sized allocations that share the same cache as the target object.
+> > +
+> > +         This increases the "at rest" kmalloc slab memory usage by
+> > +         roughly 5x (around 7MiB), and adds the potential for greater
+> > +         long-term memory fragmentation. However, some workloads
+> > +         actually see performance improvements when single allocation
+> > +         sites are hot.
+> 
+> I hope you provide the performance and overhead data in the cover
+> letter when you post v1.
+
+That's my plan. It's always odd choosing workloads, but we do seem to
+have a few 'regular' benchmarks (hackbench, kernel builds, etc). Is
+there anything in particular you'd want to see?
+
+> > +static __always_inline
+> > +struct kmem_cache *choose_slab(size_t size, kmem_buckets *b, gfp_t flags,
+> > +                              unsigned long caller)
+> > +{
+> > +#ifdef CONFIG_SLAB_PER_SITE
+> > +       struct alloc_tag *tag = current->alloc_tag;
+> > +
+> > +       if (!b && tag && tag->meta.sized &&
+> > +           kmalloc_type(flags, caller) == KMALLOC_NORMAL &&
+> > +           (flags & GFP_ATOMIC) != GFP_ATOMIC) {
+> 
+> What if allocation is GFP_ATOMIC but a previous allocation from the
+> same location (same tag) happened without GFP_ATOMIC and
+> tag->meta.cache was allocated. Why not use that existing cache?
+> Same if the tag->meta.cache was pre-allocated.
+
+Maybe I was being too conservative in my understanding -- I thought that
+I couldn't use those caches on the chance that they may already be full?
+Or is that always the risk, ad GFP_ATOMIC deals with that? If it would
+be considered safe attempt the allocation from the existing cache, then
+yeah, I can adjust this check.
+
+Thanks for looking these over!
+
+-Kees
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kees Cook
 
