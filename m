@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-325370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0479758B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:47:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9029758B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC34F1C22398
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA9D1C22EDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEB81B1417;
-	Wed, 11 Sep 2024 16:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="SW6kvqpg"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172811B12D6;
+	Wed, 11 Sep 2024 16:47:43 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8138619E999
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA383B1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726073214; cv=none; b=n6jmoIDUA4WIARPOtJbKl1EYhmiini1iwBELx9tWVhnc3IlI7jGCpXk1jG959R7HeIoLCX4UwNlBkLN6wulmyyWCV1SkjZkPJDRxzkodRPcRmuzk7tT8mVNeURUVBUg3aPFeKfs5om70AEBMr947wowRWLvtuYhWh6uD/BgTml8=
+	t=1726073262; cv=none; b=UTF+RLIfGUi7vK5UtFhIa9nBzw4xI8yz8/tXk1kx7kTNHSJRHYAn0SwDriWlzxTeFhixN+q3sdmBCbcb9pigrzIjExD5MbKrDekT2ZE4sgIs40RbCuPgC7WxYN0zrzdGOX/ZCg6a+3ihN+yKimHs6juU3mpJwsDK6W+TWmE9Qy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726073214; c=relaxed/simple;
-	bh=v5i3tcMXD82m2UtcDzrNr0/SxRvDW7RqJOHOWsWBNvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qId+saVWjuJypVKuMiz0iWTWrGSSuAlaUP9qZkX8zCSdeBYwicRUFa+nqdmn2VHVpaj2c9LHeGZr7vCcTJ3JVxaXM8L5WuLGaAEo+BpsnzB2cXEoP4hLU9j2tygUVhrIFXPzJ9FdvgeDPUVhqq38DB9AClf2GXZyV678v7FzfVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=SW6kvqpg; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9ac0092d9so2857085a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1726073211; x=1726678011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eZ0xCLn9RINPzVaUjP7gK7Lrf8o6X9P3y5mlw1qgCZo=;
-        b=SW6kvqpgAqxWEewPAt13NCBTz+cL30Kn3D304RqtXF48hL1GV/OVquO1DwIYP+EMDr
-         +Bn6AYM6HToh9isxoIG0KRltm7hZtDVm9kGUbrdJ1ODK5XOhLEzmxm3/GQeSZFVSNcle
-         aBgVh6UQvLuY9YvLbJgl6BZfiHoMV7IFtys6eogR9nuNmGZay+Qu3wFMOe1cb109lkIK
-         3v/zlU71for9pS+g1PCrqCIlE2r2q0kVF4YjAKS0BwWu+Znk1BWoh2YbE0cXUz1VMpsG
-         x4gcvmmCBG4L8Y6elb3j+xGA0uBSpecDM6ZgA2LAoeFmMuJMQXYF94s0LTzOcTqp9zhP
-         HKeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726073211; x=1726678011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZ0xCLn9RINPzVaUjP7gK7Lrf8o6X9P3y5mlw1qgCZo=;
-        b=fswIqB4aXEE0myBrfKatT9Dw0+emQFR2crjF+CbEQRa+5y5EbLRr9zhtIlKA8cUiTn
-         N5Q05AeleVyHmmcNaz40CD+6vYB4tPXL9rW2349gYZ762cPOfLp4HVEGKe+b5v6izXg6
-         ul1MVpBufFQK/uyoJje2arouCDOC0tkgyYbWU+AFZX7MUecfHrh3e1dL2KSuIaE1j1wg
-         cZq+abhEHEMym2vYage6B1wVLqZCBQ+as7uH3Xke7QnhNWLKJICkweXgAg7q0kbpFwh5
-         ouwZMjabUiGE3YWzw5XORiB2Zxh+KaJl+lbQ3Ttkm8M0hQpHAaY9WthmE/EjmnXB7MqL
-         erSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiTaF2Iv9ni/XDiM+av/eMvUZPPnWQo09esbWvgdIL5vzHNwr30UbVhDmo6Ms0ScBVsVUc3jbdIthUUXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXV8yeODOXRMYqicq7APXvhlssqF5DUhIfyQP8EY2MfBpY11rB
-	XENnVNLF0E4R/pe+JyP4Qn+UN3wEuRoys9j62EyiLanwhRRHWoKsbg0PPGdHHJk=
-X-Google-Smtp-Source: AGHT+IE8IioPFY0oap5Ik4qWQT8uxzCEi9QNcrxryw8pTyfDkJT+rrffjUq7GmwJA2oBINLwWFrFwg==
-X-Received: by 2002:a05:620a:40d6:b0:7a9:b618:16aa with SMTP id af79cd13be357-7a9e5ee5348mr3005085a.10.1726073211272;
-        Wed, 11 Sep 2024 09:46:51 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7a04667sm440189185a.75.2024.09.11.09.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 09:46:50 -0700 (PDT)
-Date: Wed, 11 Sep 2024 12:46:08 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
-	jgg@nvidia.com, peterx@redhat.com, david@redhat.com,
-	rientjes@google.com, fvdl@google.com, jthoughton@google.com,
-	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com,
-	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com,
-	muchun.song@linux.dev, mike.kravetz@oracle.com,
-	erdemaktas@google.com, vannapurve@google.com, qperret@google.com,
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org,
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev,
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com,
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com,
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com,
-	pgonda@google.com, oliver.upton@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-fsdevel@kvack.org
-Subject: Re: [RFC PATCH 04/39] mm: mempolicy: Refactor out
- policy_node_nodemask()
-Message-ID: <ZuHJUN4GDw7vU3Vv@PC2K9PVX.TheFacebook.com>
-References: <cover.1726009989.git.ackerleytng@google.com>
- <9831cfcc77e325e48ec3674c3a518bda76e78df5.1726009989.git.ackerleytng@google.com>
+	s=arc-20240116; t=1726073262; c=relaxed/simple;
+	bh=nIjt55cI5HHld4bPEuuMqaBZdpwKRDE1zo4psyvz9io=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=NvCavah5GiI7NmnPJ0cbAogdKsnJEwUHF7eMFhyR9RqpnoNpRA6gYBqcDxtiSJHd5BRyICu7SYi3LNiYTQ+VKe2bCMwMhOPcbKTpxg+jjDn4OozgOjsve3aw1td+hFMwYlpC0PHf0vUp5aXRnXs32wroGohDR5gLv6nNHsdvmy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-252-flUzNfMMM9ibaQjAN64BxA-1; Wed, 11 Sep 2024 17:47:38 +0100
+X-MC-Unique: flUzNfMMM9ibaQjAN64BxA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 11 Sep
+ 2024 17:46:51 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 11 Sep 2024 17:46:51 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent MAILHOL' <mailhol.vincent@wanadoo.fr>
+CC: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
+	<gustavoars@kernel.org>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] overflow: optimize struct_size() calculation
+Thread-Topic: [PATCH v2] overflow: optimize struct_size() calculation
+Thread-Index: AQHbAywJ58VR+K3+gU6+o+9bWfd3j7JSX6zQgAA/doCAAC1EAA==
+Date: Wed, 11 Sep 2024 16:46:51 +0000
+Message-ID: <43ac488d0a83486ca6d969643c7b531d@AcuMS.aculab.com>
+References: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
+ <01aa8bd408d04031941073b026f171fb@AcuMS.aculab.com>
+ <CAMZ6Rq+6EKoFEHMZhp_2dq2DPEP6zZgzDy0M3tegKK9wOphA6g@mail.gmail.com>
+In-Reply-To: <CAMZ6Rq+6EKoFEHMZhp_2dq2DPEP6zZgzDy0M3tegKK9wOphA6g@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9831cfcc77e325e48ec3674c3a518bda76e78df5.1726009989.git.ackerleytng@google.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Tue, Sep 10, 2024 at 11:43:35PM +0000, Ackerley Tng wrote:
-> This was refactored out of huge_node().
-> 
-> huge_node()'s interpretation of vma for order assumes the
-> hugetlb-specific storage of the hstate information in the
-> inode. policy_node_nodemask() does not assume that, and can be used
-> more generically.
-> 
-> This refactoring also enforces that nid default to the current node
-> id, which was not previously enforced.
-> 
-> alloc_pages_mpol_noprof() is the last remaining direct user of
-> policy_nodemask(). All its callers begin with nid being the current
-> node id as well. More refactoring is required for to simplify that.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+Li4uDQo+ID4gWzFdIEJvdGggdGhlICcrJyBhbmQgJyonIGhhdmUgZXh0cmEgY29kZSB0byBkZXRl
+Y3Qgb3ZlcmZsb3cgYW5kIHJldHVybg0KPiA+ICAgYSAnYmlnJyB2YWx1ZSB0aGF0IHdpbGwgY2F1
+c2Uga21hbGxvYygpIHRvIHJldHVybiBOVUxMLg0KPiA+IEkndmUgbm90IGxvb2tlZCBhdCB0aGUg
+Z2VuZXJhdGVkIGNvZGUgYnV0IGl0IGlzIGxpa2VseSB0byBiZSBob3JyaWQNCj4gPiAgIChlc3Bl
+Y2lhbGx5IHRoZSBjaGVjayBmb3IgbXVsdGlwbHkgb3ZlcmZsb3dpbmcpLg0KPiA+IEluIHRoaXMg
+Y2FzZSB0aGVyZSBhcmUgZW5vdWdoIGNvbnN0YW50cyB0aGF0IHRoZSBhbHRlcm5hdGl2ZSBjaGVj
+azoNCj4gPiAgICAgICAgIGlmIChjb3VudCA+IChNQVhfU0laRSAtIHNpemVvZiAoKnMpKSAvIHNp
+emVvZiAocy0+bWVtYmVyKSkNCj4gPiAgICAgICAgICAgICAgICAgc2l6ZSA9IE1BWF9TSVpFOw0K
+PiA+ICAgICAgICAgZWxzZQ0KPiA+ICAgICAgICAgICAgICAgICBzaXplID0gc2l6ZW9mICgqcykg
+KyBjb3VudCAqIHNpemVvZiAocy0+bWVtYmVyKTsNCj4gPiBpcyBmaW5lIGFuZCBvbmx5IGhhcyBv
+bmUgY29uZGl0aW9uYWwgaW4gaXQuDQo+ID4gSW4gc29tZSBjYXNlcyB0aGUgY29tcGlsZXIgbWF5
+IGFscmVhZHkga25vdyB0aGF0IHRoZSBjb3VudCBpcyBzbWFsbCBlbm91Z2guDQo+IA0KPiBJbmRl
+ZWQuIElmIGNvdW50IGlzIHNtYWxsIGVub3VnaCwgdGhlIGNvZGUgaXNuJ3QgdGhhdCBob3JyaWQu
+IElmIEkNCj4gdGFrZSB0aGlzIGV4YW1wbGU6DQo+IA0KPiAgIHNpemVfdCBmb28odTMyIGNvdW50
+KQ0KPiAgIHsNCj4gICAgICAgICAgIHJldHVybiBzdHJ1Y3Rfc2l6ZV90KHN0cnVjdCBzLCBmYW0s
+IGNvdW50KTsNCj4gICB9DQo+IA0KPiBJIGdvdCB0aGlzIGNvZGU6DQoNCldoYXQgaGFwcGVucyBp
+ZiB0aGUgZmxleC1hcnJheSBpcyBsYXJnZXIgdGhhbiAxIGJ5dGUgLSBzbyBhIG11bHRpcGx5IGlz
+IG5lZWRlZC4NClByb2JhYmx5IHdvcnRoIHRlc3Rpbmcgc29tZXRoaW5nIHRoYXQgaXNuJ3QgYSBw
+b3dlciBvZiAyLg0KQWxzbyBjaGVjayAzMmJpdCBhcmNocyAtZ29kYm9sdCBjYW4gaGVscC4NCg0K
+CURhdmlkDQoNCj4gDQo+ICAgMDAwMDAwMDAwMDAwMDAxMCA8Zm9vPjoNCj4gICAgIDEwOiAgIGYz
+IDBmIDFlIGZhICAgICAgICAgICAgIGVuZGJyNjQNCj4gICAgIDE0OiAgIDg5IGY4ICAgICAgICAg
+ICAgICAgICAgIG1vdiAgICAlZWRpLCVlYXgNCj4gICAgIDE2OiAgIDQ4IDgzIGMwIDEwICAgICAg
+ICAgICAgIGFkZCAgICAkMHgxMCwlcmF4DQo+ICAgICAxYTogICBlOSAwMCAwMCAwMCAwMCAgICAg
+ICAgICBqbXAgICAgMWYgPGZvbysweGY+DQoNCkFkZCAtZCB0byBvYmpkdW1wIHRvIGdldCB0aGUg
+cmVsb2NhdGlvbiBwcmludGVkLg0KKEkgdGhpbmsgdGhpcyBpcyBhIGJ1aWxkIHdoZXJlICdyZXQn
+IGlzbid0IGFsbG93ZWQgOi0pDQoNCglEYXZpZA0KDQo+IA0KPiBIZXJlLCBubyBTSVpFX01BWCBi
+ZWNhdXNlIHRoZSBtdWx0aXBsaWNhdGlvbiBjYW4gbm90IHdyYXBhcm91bmQNCj4gcmVnYXJkbGVz
+cyBvZiB0aGUgdmFsdWUgb2YgY291bnQuIEl0IGlzIG9ubHkgYWZ0ZXIgY2hhbmdpbmcgdGhlIHR5
+cGUNCj4gb2YgY291bnQgdG8gdTY0IHRoYXQgdGhlIGNvbXBpbGVyIHdpbGwgZW1pdCBhIGNvbXBh
+cmlzb246DQo+IA0KPiAwMDAwMDAwMDAwMDAwMDEwIDxmb28+Og0KPiAgIDEwOiAgIGYzIDBmIDFl
+IGZhICAgICAgICAgICAgIGVuZGJyNjQNCj4gICAxNDogICA0OCA4ZCA0NyAxMCAgICAgICAgICAg
+ICBsZWEgICAgMHgxMCglcmRpKSwlcmF4DQo+ICAgMTg6ICAgNDggODMgZmYgZjAgICAgICAgICAg
+ICAgY21wICAgICQweGZmZmZmZmZmZmZmZmZmZjAsJXJkaQ0KPiAgIDFjOiAgIDQ4IGM3IGMyIGZm
+IGZmIGZmIGZmICAgIG1vdiAgICAkMHhmZmZmZmZmZmZmZmZmZmZmLCVyZHgNCj4gICAyMzogICA0
+OCAwZiA0MyBjMiAgICAgICAgICAgICBjbW92YWUgJXJkeCwlcmF4DQo+ICAgMjc6ICAgZTkgMDAg
+MDAgMDAgMDAgICAgICAgICAgam1wICAgIDJjIDxmb28rMHgxYz4NCj4gDQo+IEZvciByZWZlcmVu
+Y2UsIHRoaXMgaXMgdGhlIGNvZGUgYWZ0ZXIgYXBwbHlpbmcgbXkgcGF0Y2gsIHdpdGggY291bnQg
+YXMgYSB1MzI6DQo+IA0KPiAgIDAwMDAwMDAwMDAwMDAwMTAgPGZvbz46DQo+ICAgICAxMDogICBm
+MyAwZiAxZSBmYSAgICAgICAgICAgICBlbmRicjY0DQo+ICAgICAxNDogICA4OSBmOCAgICAgICAg
+ICAgICAgICAgICBtb3YgICAgJWVkaSwlZWF4DQo+ICAgICAxNjogICBiYSAxMCAwMCAwMCAwMCAg
+ICAgICAgICBtb3YgICAgJDB4MTAsJWVkeA0KPiAgICAgMWI6ICAgNDggODMgYzAgMGMgICAgICAg
+ICAgICAgYWRkICAgICQweGMsJXJheA0KPiAgICAgMWY6ICAgNDggMzkgZDAgICAgICAgICAgICAg
+ICAgY21wICAgICVyZHgsJXJheA0KPiAgICAgMjI6ICAgNDggMGYgNDIgYzIgICAgICAgICAgICAg
+Y21vdmIgICVyZHgsJXJheA0KPiAgICAgMjY6ICAgZTkgMDAgMDAgMDAgMDAgICAgICAgICAgam1w
+ICAgIDJiIDxmb28rMHgxYj4NCj4gDQo+IGFuZCB3aXRoIGNvdW50IGFzIGEgdTY0Og0KPiANCj4g
+ICAwMDAwMDAwMDAwMDAwMDEwIDxmb28+Og0KPiAgICAgMTA6ICAgZjMgMGYgMWUgZmEgICAgICAg
+ICAgICAgZW5kYnI2NA0KPiAgICAgMTQ6ICAgNDggODMgYzcgMGMgICAgICAgICAgICAgYWRkICAg
+ICQweGMsJXJkaQ0KPiAgICAgMTg6ICAgNzIgMTEgICAgICAgICAgICAgICAgICAgamIgICAgIDJi
+IDxmb28rMHgxYj4NCj4gICAgIDFhOiAgIGI4IDEwIDAwIDAwIDAwICAgICAgICAgIG1vdiAgICAk
+MHgxMCwlZWF4DQo+ICAgICAxZjogICA0OCAzOSBjNyAgICAgICAgICAgICAgICBjbXAgICAgJXJh
+eCwlcmRpDQo+ICAgICAyMjogICA0OCAwZiA0MyBjNyAgICAgICAgICAgICBjbW92YWUgJXJkaSwl
+cmF4DQo+ICAgICAyNjogICBlOSAwMCAwMCAwMCAwMCAgICAgICAgICBqbXAgICAgMmIgPGZvbysw
+eDFiPg0KPiAgICAgMmI6ICAgNDggODMgYzggZmYgICAgICAgICAgICAgb3IgICAgICQweGZmZmZm
+ZmZmZmZmZmZmZmYsJXJheA0KPiAgICAgMmY6ICAgZTkgMDAgMDAgMDAgMDAgICAgICAgICAgam1w
+ICAgIDM0IDxmb28rMHgyND4NCj4gDQo+IFRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cyENCj4g
+DQo+IA0KPiBZb3VycyBzaW5jZXJlbHksDQo+IFZpbmNlbnQgTWFpbGhvbA0KDQotDQpSZWdpc3Rl
+cmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtl
+eW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
-
-> +/**
-> + * policy_node_nodemask(@mpol, @gfp_flags, @ilx, @nodemask)
-> + * @mpol: the memory policy to interpret. Reference must be taken.
-> + * @gfp_flags: for this request
-> + * @ilx: interleave index, for use only when MPOL_INTERLEAVE or
-> + *       MPOL_WEIGHTED_INTERLEAVE
-> + * @nodemask: (output) pointer to nodemask pointer for 'bind' and 'prefer-many'
-> + *            policy
-> + *
-> + * Returns a nid suitable for a page allocation and a pointer. If the effective
-> + * policy is 'bind' or 'prefer-many', returns a pointer to the mempolicy's
-> + * @nodemask for filtering the zonelist.
-
-Technically it's possible for nid to contain MAX_NUMNODES upon return
-if weighted interleave is used and the nodemask is somehow invalid
-(contains no nodes, including the local node). I would expect this to
-be indicative of a larger problem (i.e. should functionally never happen).
-
-Now that I'm looking at it, it's possible the weighted interleave path
-should default to returning numa_node_id() if node == MAX_NUMNODES, which
-would not require any changes to this patch.
-
-> + */
-> +int policy_node_nodemask(struct mempolicy *mpol, gfp_t gfp_flags,
-> +			 pgoff_t ilx, nodemask_t **nodemask)
-> +{
-> +	int nid = numa_node_id();
-> +	*nodemask = policy_nodemask(gfp_flags, mpol, ilx, &nid);
-> +	return nid;
-> +}
-> +
->  #ifdef CONFIG_HUGETLBFS
->  /*
->   * huge_node(@vma, @addr, @gfp_flags, @mpol)
 
