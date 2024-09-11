@@ -1,130 +1,193 @@
-Return-Path: <linux-kernel+bounces-324272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DF7974A7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:41:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC84974A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF38D1F26042
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E4C1F2680B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEEE7DA9E;
-	Wed, 11 Sep 2024 06:41:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E41081AC8;
+	Wed, 11 Sep 2024 06:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gXs1jg61"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC477DA6A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834622BAE3;
+	Wed, 11 Sep 2024 06:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726036880; cv=none; b=mtFEDfkg1APceNe96i9pwqdHmAgt/s1ISKcCx2wuvGesUmViqhmX4zjv3JeB/aEJ0H/LfOzCTSiw5ELLttoyBnvNxJkzulraOzq4aiSClkI3fRBUyCoAFg6wZ5kx+AHwSqXAoxrzZLZiGfdRVUL+bFg042/WkgjvtaJ9O5ORhpM=
+	t=1726036956; cv=none; b=IbLZbKHvcjMiE0xZkwmQ/e1sEgGJMM2qelGrv7lWi5HpoFdTHAVvI9DGUKcPc10tnaw5h1+oGV5EgTPv97Zu1bb9dWN8ngvKMptqv8vqXY2QX3F1v1Mx3z74Wk/sJ7+g4T4I53z83NLo6hoUDh95ECAEkV+dMtjzesXsOnwMSv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726036880; c=relaxed/simple;
-	bh=VNkBoTXDNpN2027vlm5qFF/ED/ecncxcAB8MPx/U4FE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eqSLi3A1iUYqL+XxTRLjFUPUhZ4imbuYDeCOEOXiw+tKiX1S0cMjsL+YrNlXgJ7hG9uyOLHQ65HJ6qxGPtPD4ybziqb9kbS79ADlcbYx8N67xKf9++vC1oNMALnrzLUJq4MVDQv/dI4vIzJSm8x9neFUD8uoFDMu+A4lur9O95M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 6C98CA13CC;
-	Wed, 11 Sep 2024 06:41:11 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id C031D20010;
-	Wed, 11 Sep 2024 06:41:07 +0000 (UTC)
-Message-ID: <ece8c4be2d489703fdd6962b16ed573d3b83cde0.camel@perches.com>
-Subject: Re: [PATCH v2 09/15] timers: Add a warning to usleep_range_state()
- for wrong order of arguments
-From: Joe Perches <joe@perches.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan
- Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Andy Whitcroft <apw@canonical.com>
-Date: Tue, 10 Sep 2024 23:41:06 -0700
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-9-b0d3f33ccfe0@linutronix.de>
-References: 
-	<20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
-	 <20240911-devel-anna-maria-b4-timers-flseep-v2-9-b0d3f33ccfe0@linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726036956; c=relaxed/simple;
+	bh=uaojO9GqqzmiZeiLvGMx4mp9pGLEMUMvpV91bs4aKp8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=bTaXeBlZso4JXIgYVibCmLvcOICBb2mPfFxMqFvqQjREeDwvdY7zfy5cwDYaDQFeTW8Mo8Uya11wR/rarZ4yvtBGGb606IqEOi2df3TxRD/aH7IDYkaOtYwkLcqQJDu0/WpZ6hSCN510o7X2On02wPZV78xMZWcWgjjDPsJ2LE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gXs1jg61; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B47epq028325;
+	Wed, 11 Sep 2024 06:42:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XoGYG4UIsvAMfmoeFuukCw
+	yIeurJJZ74L+K7BSzK+hw=; b=gXs1jg61d0BMCe8pVf4mJH3u+zMAgOHSZYe5ec
+	HX7qpQkOJcv2ivhOSu5XuDCZUmN0s1VZhcxlmJLLHuwxtwxFY6ufA+KZfxwvoU2W
+	isV67FhtXrYrhni7sA42KI+Uu424uC5xevFGK7Yguo4m9f2cjVX+RirnKRqHIBCA
+	BLqC73Fylruwy6VkyqbqbAJHB+RJCYG0Ye4o3an9FSH13jU2PlmIqatpVs2+yTqR
+	oAd9HnTauHF1A6JHwuTNqMk38d/QFz65GFwLNyFEpna2CSXEESZDQXnBiG+wkC2P
+	cItuWI1vyl4sj2NSnW1xqVyuAtCBRGG65RMuFReXpv3I1A9A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6e8hmh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 06:42:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48B6gFCm000898
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 06:42:15 GMT
+Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 10 Sep 2024 23:42:12 -0700
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+Date: Wed, 11 Sep 2024 14:41:43 +0800
+Subject: [PATCH v2] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
+ QCS8300 remoteproc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: C031D20010
-X-Rspamd-Server: rspamout07
-X-Stat-Signature: 783bwnbyyezakg956q7dsaaci3f5c9tf
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18J/SBHHjWAmsYASqJl7XOID6/WdwSSzDk=
-X-HE-Tag: 1726036867-640440
-X-HE-Meta: U2FsdGVkX1+Lbs5xr7fdN9Kg/Hf73qqwzXGaFL+/EanipoJuDJ8+MhYsj17VL/vepnJm78MXBljc3jEU8heDXbIx6DhsoVUKtsTUuVlHhcKDCcgwwYmLqnJIneIiES+DlFFPgOKOhsg0APzd0nbRSjALo+YL7LgJmVsAP/G5hOiI0RTHPSfM/Gd6dgYQK2h7VGgmrKPcZBgjxJco7RJfdR3IVCjIPKiFzafiOHT6BGVNM4Bg6/fD7l/k1YFS5wCG/krW7XSqZeJnP7BJy6ULDFExDyZaPsKy84JBvSWiNYIsXt6XTTM4192M2xSLcJcLyiN5DRHnjV/mBmWwZEdt5d+wAFCZxIWFc3kyy2LYRUp9xKAkam+DoNxw3DhkhrIFhjDhDOMKALtjfh1ZQPgqB/XOznwncDLHmO8wrVnXikL9y13IYtHl+tgO5deXqwAyGmQcvhURqIQyluXhDtTZ6g==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKY74WYC/z3NQQ6CMBCF4auQrq0ZKlVw5T0MIaUdYBJpoa1EQ
+ 7i7lRiX/1t8b2UBPWFg12xlHhcK5GwKcciYHpTtkZNJzQSIAqoc+KxDeQJoPI4u4uSdblqyhmz
+ PQUjTSllKec5ZAiaPHb12/F6nHihE59/715J/1x8LxZ8lS5HUozExEF9yDtwAqkp1RgNcbvOTN
+ Fl91G5k9bZtH51CI2fAAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_jingyw@quicinc.com>, Xin Liu <quic_liuxin@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726036932; l=2713;
+ i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
+ bh=uaojO9GqqzmiZeiLvGMx4mp9pGLEMUMvpV91bs4aKp8=;
+ b=lMp1SWL4+sqcvaKhHPF90ySXeCkLb/XBS5CWsqqsLakEB53xEy0uwS0CtccR73NBL2zZ7N0NH
+ Rv4JwG6dndzBxqGOgmjAdXVlZcN/A92XXWjMps1yU/1cXRGst3zDfVC
+X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
+ pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Tf7Xq9c9OOBsVdqJA6Dk-TLOUYIWPgyu
+X-Proofpoint-ORIG-GUID: Tf7Xq9c9OOBsVdqJA6Dk-TLOUYIWPgyu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409110049
 
-On Wed, 2024-09-11 at 07:13 +0200, Anna-Maria Behnsen wrote:
-> There is a warning in checkpatch script that triggers, when min and max
-> arguments of usleep_range_state() are in reverse order. This check does
-> only cover callsites which uses constants. Move this check into the code =
-as
-> a WARN_ON_ONCE() to also cover callsites not using constants and get rid =
-of
-> it in checkpatch.
+Document the components used to boot the ADSP, CDSP and GPDSP on the
+Qualcomm QCS8300 SoC. Use fallback to indicate the compatibility of the
+remoteproc on the QCS8300 with that on the SA8775P.
 
-I don't disagree that a runtime test is useful
-and relatively cost free.
+Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+---
+Changes in v2:
+- decoupled from the original series.
+- Use fallback to indicate compatibility with SA8775P.
+- Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
+---
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 28 +++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-But checkpatch is for patches.
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+index 7fe401a06805..44b5ed5b1c92 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
+@@ -15,12 +15,25 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - qcom,sa8775p-adsp-pas
+-      - qcom,sa8775p-cdsp0-pas
+-      - qcom,sa8775p-cdsp1-pas
+-      - qcom,sa8775p-gpdsp0-pas
+-      - qcom,sa8775p-gpdsp1-pas
++    oneOf:
++      - items:
++          - enum:
++              - qcom,qcs8300-adsp-pas
++          - const: qcom,sa8775p-adsp-pas
++      - items:
++          - enum:
++              - qcom,qcs8300-cdsp-pas
++          - const: qcom,sa8775p-cdsp0-pas
++      - items:
++          - enum:
++              - qcom,qcs8300-gpdsp-pas
++          - const: qcom,sa8775p-gpdsp0-pas
++      - enum:
++          - qcom,sa8775p-adsp-pas
++          - qcom,sa8775p-cdsp0-pas
++          - qcom,sa8775p-cdsp1-pas
++          - qcom,sa8775p-gpdsp0-pas
++          - qcom,sa8775p-gpdsp1-pas
+ 
+   reg:
+     maxItems: 1
+@@ -64,6 +77,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,qcs8300-adsp-pas
+             - qcom,sa8775p-adsp-pas
+     then:
+       properties:
+@@ -80,6 +94,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,qcs8300-cdsp-pas
+             - qcom,sa8775p-cdsp0-pas
+             - qcom,sa8775p-cdsp1-pas
+     then:
+@@ -99,6 +114,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,qcs8300-gpdsp-pas
+             - qcom,sa8775p-gpdsp0-pas
+             - qcom,sa8775p-gpdsp1-pas
+     then:
 
-There's no reason as far as I can tell to remove
-this source code test.
+---
+base-commit: 100cc857359b5d731407d1038f7e76cd0e871d94
+change-id: 20240910-qcs8300_remoteproc_binding-025db5585561
 
-Why make the test runtime only?
-
-
->=20
-> Cc: Andy Whitcroft <apw@canonical.com>
-> Cc: Joe Perches <joe@perches.com>
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> ---
->  kernel/time/sleep_timeout.c | 2 ++
->  scripts/checkpatch.pl       | 4 ----
-
->  2 files changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
-> index 21f412350b15..4b805d7e1903 100644
-> --- a/kernel/time/sleep_timeout.c
-> +++ b/kernel/time/sleep_timeout.c
-> @@ -364,6 +364,8 @@ void __sched usleep_range_state(unsigned long min, un=
-signed long max, unsigned i
->  	ktime_t exp =3D ktime_add_us(ktime_get(), min);
->  	u64 delta =3D (u64)(max - min) * NSEC_PER_USEC;
-> =20
-> +	WARN_ON_ONCE(max < min);
-> +
->  	for (;;) {
->  		__set_current_state(state);
->  		/* Do not return before the requested sleep time has elapsed */
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 39032224d504..ba3359bdd1fa 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -7088,10 +7088,6 @@ sub process {
->  			if ($min eq $max) {
->  				WARN("USLEEP_RANGE",
->  				     "usleep_range should not use min =3D=3D max args; see Documenta=
-tion/timers/timers-howto.rst\n" . "$here\n$stat\n");
-> -			} elsif ($min =3D~ /^\d+$/ && $max =3D~ /^\d+$/ &&
-> -				 $min > $max) {
-> -				WARN("USLEEP_RANGE",
-> -				     "usleep_range args reversed, use min then max; see Documentatio=
-n/timers/timers-howto.rst\n" . "$here\n$stat\n");
->  			}
->  		}
-> =20
->=20
+Best regards,
+-- 
+Jingyi Wang <quic_jingyw@quicinc.com>
 
 
