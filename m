@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-324107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC219747F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532DF9747FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B531C25A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16274282B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C847927446;
-	Wed, 11 Sep 2024 01:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB5125762;
+	Wed, 11 Sep 2024 01:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CyMl7f15"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IazZ/49A"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6032A8460;
-	Wed, 11 Sep 2024 01:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C118927446;
+	Wed, 11 Sep 2024 01:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726019624; cv=none; b=UywGRHje9jEfizoEIYo1D2Xd/MnPyPdySNyyVMQpujwfQRrV95dqA6anhA3fAVVZPaE7tgr4jzFhgXK3HNx7hEbDWK9+zfWHcfnlbq7zCEC57STCY8OAHzPJTZ63uowrd8PYsCqYSQDZhCSbx3yYXwxUjfYOcPZm/zBSyZ9GRb4=
+	t=1726019732; cv=none; b=bdLN7uuXpLtRjCpVcPvPs27h6v6bXXtshUPusw7aX5/RceQ3OoHnTPPZ62MtHJbLMTrfeDjnb48rtPTAjPY5La/vCgnH7ZwdOxTD8yTTaFqANaKAv7h6Q7wB6PiF6iwf92t5wlfLBbcOmkyNknF/X97p3BdgPlK3k3rR6ONjYQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726019624; c=relaxed/simple;
-	bh=hZDcR8PdFZWl+XiNt3aHWGr4+6Kem637UcITfbJ7k2U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=jfZIC8SlHbYCRhnMEhrIZ7rtSCSoLtekgKMppZXFOFFIA0sJRJS74JFLz5wjUzbwwPsDtEubTgG78qZIEaSwamIg0sOucvv4tl2otjCj9ZJxlFCcfumEC0ugP+DiMBC8fI5qsnUD6S0OkuS0GYZvs+beDXP4rxPzTRpvM+AUCqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CyMl7f15; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726019619; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	bh=hZDcR8PdFZWl+XiNt3aHWGr4+6Kem637UcITfbJ7k2U=;
-	b=CyMl7f15P0XVAAiuM7/uw5FPQUOjH2wO+9eu6cyzetO1IkSLPgovlzk498ulM2jng82DbqnxU73uhnsxwO1gLXcTPcO0Q+CO0/ShrSqII0TEGolo4y7gBSXMwld7MjNibmQk4KliMT4gEaPzbidTKEofZmraSiuz2wfXkFedTwQ=
-Received: from smtpclient.apple(mailfrom:liusong@linux.alibaba.com fp:SMTPD_---0WElvSs1_1726019617)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Sep 2024 09:53:38 +0800
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1726019732; c=relaxed/simple;
+	bh=8butQKKyRn3hnqeVHrgtVu+CTLHq0RkmOSFk94x8Guc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UuKsvg9r+PPTlBK77E2iIPAEvH1TuxlVJOtr0ETKBeMzAp1/chU+93nboXe7yJC51hLYUwokqFV6rw3CLCgakDeJmWQovhrWOxkDKmNPEMiQiRMGGhFsmkpHgOeIpOaQiA8m2l6EDjPUTMjiB868p2P1yk1MVt4HyM4VDnsl8uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IazZ/49A; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d8b96c18f0so4877322a91.2;
+        Tue, 10 Sep 2024 18:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726019729; x=1726624529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2eMvk/O7eAPCOv1mMP8o+KkhjDZ2EnCpGJ2GRMSBEiQ=;
+        b=IazZ/49AW9KJ07fnVqhdx1P9exhZYCT58kcWX276hE4TECvZvsmGbF4PM0sEK2g91T
+         gg9uce3d+8YTCQ7EksnCsm2y6R/Aqbmmu8JHLSa8ra9iQm5WQtzPeWO6L9BusIxL0hTI
+         Uyjy0liHrIaisQYtQIArKlm2Hzteql1jhzC9dH1kqkPobaXScclPzDvHKWoUOf1dfo+g
+         PELtgiF5AfKK3MLin/4A/oAvS8vO6sA4wWXM1VTihAQfcM299w9LPpjEy5rdn5tkedEm
+         9BT9NEc1SzZdhVV7mVJR12knUcCjAVuiU5iscs1ddjEVOHQ8fYJ8vSUc6h1aGPP4QCDm
+         q5vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726019729; x=1726624529;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2eMvk/O7eAPCOv1mMP8o+KkhjDZ2EnCpGJ2GRMSBEiQ=;
+        b=i+h5eiAlQ1vL814ZGPLNAHlseP/WVs4ghXYpmCZYj+50vEv9FsK5kTGAEPEbG4VSVh
+         rP1aG2JicX/JopK1sL4YQ7Sz8T0o3xA6Yd5NNgWDEz+x+pvJVHsgrmbKz8SHTEyUejbo
+         VdHhbLxsAxh8RYhfk0vBGsjV2Bzk63fyCIe9lMPacTUUg6I9qUlxYY9Ee4cmZvAQ8n6u
+         x+w8EvZXHp/MqmLMM9SiODEcWJVIHi2tYLIFzXskCiWhsi/4BUMnXbLkfQ3JoYVAttmF
+         WYADzJPijGe59atx5wr2KVmP8aWR+bbWbjq+Wo8J0nR6z5AlrbpmXBg94DOY98Kbvr5j
+         hSRA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8KNdsOQlKgB9YZSFW2/Z3xiyskNeXpJJcmwUH7ilLp4wmgqeHfWG2ffbsPlQOsfxnjYK1wukKlLI0XMMc@vger.kernel.org, AJvYcCWe4Bcjae7dw7MgHzeO09aG1FrRxdKgEEoImog4AOMl8JGpTASKt0oUDVWu5kKegMLO9NclGWsxSkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywith+6QQ81jgl/DzgOJn7GFCW1fC/2rHRkli+D8d51srNN3j7C
+	h8DNnMBgVoVEQZKJ6Aul2ajj3wVCulPGwfara4DcRmIjxOayOOtN
+X-Google-Smtp-Source: AGHT+IFMav+SiIWQSr/EKSXW8Qi/0IE0Jer5qrGzpap7wrxZT9TyB0UyNrcHPaRpf6qBdXupp/rYrw==
+X-Received: by 2002:a17:90a:fe06:b0:2d8:859b:931c with SMTP id 98e67ed59e1d1-2dad50f3eddmr22934298a91.33.1726019728877;
+        Tue, 10 Sep 2024 18:55:28 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db04507cb1sm7084986a91.33.2024.09.10.18.55.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 18:55:28 -0700 (PDT)
+Message-ID: <db636067-7995-48a9-9bf1-88f64389d701@gmail.com>
+Date: Wed, 11 Sep 2024 09:55:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFC PATCH] sched, cgroup: cgroup1 can also take the
- non-RUNTIME_INF min
-From: =?utf-8?B?5YiY5bWp?= <liusong@linux.alibaba.com>
-In-Reply-To: <ZuCe0U1Kwr0hYoOz@slm.duckdns.org>
-Date: Wed, 11 Sep 2024 09:53:27 +0800
-Cc: lizefan.x@bytedance.com,
- hannes@cmpxchg.org,
- =?utf-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- cgroups@vger.kernel.org,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation/mm: Translate physical_memory.rst to
+ Simplified Chinese
+To: Jonathan Corbet <corbet@lwn.net>, jiang.kun2@zte.com.cn,
+ alexs@kernel.org, siyanteng@loongson.cn, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <784F48E6-C07E-4A38-B45B-BD2D66677894@linux.alibaba.com>
-References: <20240910074832.62536-1-liusong@linux.alibaba.com>
- <ZuCe0U1Kwr0hYoOz@slm.duckdns.org>
-To: Tejun Heo <tj@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, xu.xin16@zte.com.cn,
+ he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn,
+ zhang.yunkai@zte.com.cn, Pengyu Zhang <zpenya1314@gmail.com>
+References: <20240904112020232OieLhsFZ_M10gBxJtUieP@zte.com.cn>
+ <87seu75gs6.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <87seu75gs6.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-> 2024=E5=B9=B49=E6=9C=8811=E6=97=A5 03:32=EF=BC=8CTejun Heo =
-<tj@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Tue, Sep 10, 2024 at 03:48:32PM +0800, Liu Song wrote:
->> For the handling logic of child_quota, there is no need to =
-distinguish
->> between cgroup1 and cgroup2, so unify the handling logic here.
->>=20
->> Signed-off-by: Liu Song <liusong@linux.alibaba.com>
->=20
-> It doens't make much sense to change the interface for cgroup1 at this
-> point. Let's please leave it as-is.
->=20
-> Thanks.
->=20
-> --=20
-> tejun
+On 9/11/24 5:40 AM, Jonathan Corbet wrote:
+> <jiang.kun2@zte.com.cn> writes:
+> 
+>> From: Yaxin Wang <wang.yaxin@zte.com.cn>
+>>
+>> This patch translates the "physical_memory.rst" document into
+>> Simplified Chinese to improve accessibility for Chinese-speaking
+>> developers and users.
+>>
+>> The translation was done with attention to technical accuracy
+>> and readability, ensuring that the document remains informative
+>> and useful in its translated form.
+>>
+>> Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
+> 
+> So I have a couple of simplified-Chinese translations (this one and
+> 20240830133230.7988-1-zpenya1314@gmail.com) sitting in my queue, but I
+> have no way to evaluate them for accuracy.  Is there anybody who can
+> help to review these?
+> 
+I will take this one.
 
-Hi
+20240830133230.7988-1-zpenya1314@gmail.com, I asked the author to resend
+his patch following the submit process. but didn't see the response..
 
-In scenarios involving secure shared containers (like Kata), where =
-containers are deployed
-on VMs and constrained by CPU runtime using quotas, the concept of vCPUs =
-comes into
-play.
+Thanks
 
-If the CPU limit set by Kubernetes is less than the actual number of =
-vCPUs, meaning the
-CPU count derived from the quota is less than the vCPU count, then when =
-a user runs lscpu
-inside the container, the reported CPU count will be greater than the =
-container's quota.
-
-If the user uses this reported count to calculate quota and attempts to =
-set it for their own
-sub-container, it will result in an error under cgroup1, whereas the =
-same operation will
-succeed under cgroup2. To avoid imposing extra learning costs on users, =
-unifying the
-handling logic in this regard is still beneficial.
-
-Thanks=
 
