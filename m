@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-325046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293A3975434
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:42:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDFD975435
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7961C227CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:42:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 407691C21B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3D519DFAC;
-	Wed, 11 Sep 2024 13:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BC619343B;
+	Wed, 11 Sep 2024 13:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mzLFhP7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZTGVg+f"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C5A192B96
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C318EFC6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061640; cv=none; b=MeF0/hgOb4ctBkn8+qsAeDWQUhhcGuOSb17prSA0cULPCyFumd5Hpd+pXWbfGmPhI/E+KDFE7A1RDY8w8GlKd5usnvR3OeWawN0AuBeKqfapvau1jwhSTgrJHQp48G9p7VLROogB/zFs+9RYd3GU26dI1o38oiff7jqhyQE9OcY=
+	t=1726061660; cv=none; b=qsuIjb6wF7AOvajhZsiZtClxXGZB904g7Cl+vtkB9ATfY4GdlKhnbycOKjJg4k5TZzqPzvNXTwn3GTxuhAY2LU0470ujApnid/6UWU5K3sVsbA/mKcTFPeZUk3pkceUsey++08PamTWcBm5mBYDMLrXC40VB7oLEHlYKz53PhoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061640; c=relaxed/simple;
-	bh=S+Ia/zxECBvBPZYwQIKdu5CtZUKuHOEcKkT7xlhAYjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCdB2tXqZvc3bwbzWkWrkbwqiK54huQUoBfVzj0MSdJlpxfrHjbLMO7seWwO+HaS6rUQ8jea6KJOyGotD/qy9Km5xrnKvAHoNSNRpIljbK+V20zDvFfoKwGpIluCfTLM4tG7uU/ZXIRStN9hT5gzs5EcybQpjLWUfQHOlQqpZao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=mzLFhP7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B63C4CEC5;
-	Wed, 11 Sep 2024 13:33:58 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mzLFhP7e"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726061636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BdM9xj7/mPtsf3ZvDEg8+iExeWNEsh58PhdMoqxt81E=;
-	b=mzLFhP7ezZ072V+0TpGvVp1gL+h6LWPX3kw73iT8QqIyuqc3gkc0zzzVqxfGBhIG1Wai7/
-	VE3AQX8GQIQhnQy5VjxKU1IVJF1DtH4qkyi6Mu2U4CMXD+ZzKE6ApD0nKuE9nfqn1W+/Me
-	P0L8r9qEUBD5o70FL+l4AnDiRZvNFAE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 544c4a20 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 11 Sep 2024 13:33:56 +0000 (UTC)
-Date: Wed, 11 Sep 2024 15:33:54 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Aishwarya TCV <aishwarya.tcv@arm.com>, adhemerval.zanella@linaro.org,
-	linux-kernel@vger.kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH] selftests: vDSO: don't include generated headers for
- chacha test
-Message-ID: <ZuGcQnzUev6eAy0w@zx2c4.com>
-References: <20240904155817.1153783-1-Jason@zx2c4.com>
- <fed980be-5082-4454-b696-6245d6a3d265@arm.com>
- <ZuEEIIV-J0mQVKE4@zx2c4.com>
- <974bdaba-6f99-4275-8b4e-f3e95d273ddd@sirena.org.uk>
- <ZuGRRp4j2qvUKxF7@zx2c4.com>
- <ZuGUpjOwE-f4YWUn@zx2c4.com>
+	s=arc-20240116; t=1726061660; c=relaxed/simple;
+	bh=RBB9U3nSPLz3LfWNIbVMmkPpgVDaDbv/tVjesy9aoLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iI8cpvnP8ROLeGfOujez4ql1/Hw2k9Ysnq8C3LWXIqVmgOL0JxiPjK0d/6B3ARyC6Yx1MrtFcZnlit2ouI5hcfIdvERb0y7IBKQXHXqRaTrtd6gjTdXNtk68CvpU71znsoCj7b5IWEMkq+ARXZEsNYfcRb0I6TsIYPHmIjAQGHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZTGVg+f; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so30296525e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726061657; x=1726666457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MB0Q4T2mdFiQdLaBYLJ1gGJlfUGPo6tiAGibjtaIGi0=;
+        b=PZTGVg+fELo5TFc9qka+BLEVeanCypHnsXqlaokB3090e5p+Bk8OB415RiFHKifsrQ
+         koR/kaRtDyWa/Ey95WyqjpBG7m32E/YdMnFXkfKHQLTYPUzb7l2aBd7aZCyKojS/KBAF
+         SN5WjUe5wgQeiLhEsXn92yEgqNjPWEBAuCVoZNZVefG6AufUdSQyWpMl2HeQMRRoxq3Z
+         9ixdkOWG04yJl4X+ecuKHuqyIjAy/5Yid1Uxidaes0C3bQgJJPGUi6oJI9PIegsI9wPq
+         /8NIAA2e64JECkN5xO6EhlVvSnfCA16hKUs31xWksaODRCbXH4MA7XxL2dF1wlCSGQZk
+         zWjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726061657; x=1726666457;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MB0Q4T2mdFiQdLaBYLJ1gGJlfUGPo6tiAGibjtaIGi0=;
+        b=TiaN4z4jiF1QRVeKiT/YRY8+g94eruCnNuLscbEh54RWTUGD+cKKnxpV06I1ATCmgT
+         kk2tl1RmmwujrVBzSfBjcXLNAMgMuiW896KmV+v1FHlsN2iAia6scYTjDBYPJirYnHhm
+         6uNOz4dgpz/9RlBrJFtQ2NOwdV7XW5ipyvPYVkhPP/0RrqIcWC4D/RUzQ19/vhHJmH7B
+         E5KdLIhO/dFxR/gQ79Iuld6OctEgL5MBBfHYsKP/Mwrl6PWQHkC4AuuCppUATRoRCOp/
+         QU26O0bukp2DtRCB1Ob9g1eb8a/7cSGeMJ1g6IaP0OCSfAWJVeGIYb8HbWfFpdkhnuZA
+         jFzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRqW17nrHOwgw+Baa2h/tIdoS/R1FDHvlJr70DwRfYrpuaK2zBl0AfDcZeTa+tUwwRe6i1MDAWkv1RuMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNLEJ1fhVI+14hEdNKqVG32050TMGXNr5/Z8txYANfAeoBIFB0
+	K8YdXcl3E/2UEQTU2xwkf084jvnMrYKcPq/8CZGcBmMYnajReJ8ioIe7VDMDTA4=
+X-Google-Smtp-Source: AGHT+IF98wgFgdZoL5ZA1kv4nH8IozI2BgdEwrj0ERU2Y51rnQyfegBRzlKUpQnoFwoGO41WvSg48w==
+X-Received: by 2002:a05:600c:511f:b0:42c:ba83:3f01 with SMTP id 5b1f17b1804b1-42cba834352mr63281025e9.8.1726061656786;
+        Wed, 11 Sep 2024 06:34:16 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21a4esm144532995e9.7.2024.09.11.06.34.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 06:34:16 -0700 (PDT)
+Message-ID: <f74e73b6-fa0a-4533-a9de-3c5dbc4399f3@linaro.org>
+Date: Wed, 11 Sep 2024 14:34:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZuGUpjOwE-f4YWUn@zx2c4.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf test: Silence perf check subcommand when not
+ supported
+To: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, acme@kernel.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+ hca@linux.ibm.com
+References: <20240911122850.926303-1-tmricht@linux.ibm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240911122850.926303-1-tmricht@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 03:01:26PM +0200, Jason A. Donenfeld wrote:
-> On Wed, Sep 11, 2024 at 02:47:02PM +0200, Jason A. Donenfeld wrote:
-> > On Wed, Sep 11, 2024 at 11:14:06AM +0100, Mark Brown wrote:
-> > > On Wed, Sep 11, 2024 at 04:44:48AM +0200, Jason A. Donenfeld wrote:
-> > > > On Tue, Sep 10, 2024 at 11:52:51PM +0100, Aishwarya TCV wrote:
-> > > > > make[4]: *** [Makefile:299:
-> > > > > /tmp/kci/linux/build/kselftest/kvm/aarch64/aarch32_id_regs.o] Error 1
-> > > > > make[4]: Leaving directory '/tmp/kci/linux/tools/testing/selftests/kvm'
-> > > 
-> > > > You sure this bisected right? That directory isn't related to the
-> > > > commit in question, I don't think...
-> > > 
-> > > I eyeballed it for Aishwarya and it looked related on first glance
-> > > (messing around with the generated headers), though looking again it's
-> > > only in the vDSO directory so shouldn't be messing up other
-> > > directories...
-> > 
-> > Okay, so... I reproduced the problem on linux-next. Then I reverted the
-> > commit and reproduced it again. Then just to be sure, I ran:
-> > 
-> >     $ git checkout v6.9 tools/testing/selftests/vDSO/
-> > 
-> > And then I reproduced the problem again.
-> > 
-> > So I think we can be somewhat certain the unrelated directory is indeed
-> > unrelated.
+
+
+On 11/09/2024 13:28, Thomas Richter wrote:
+> Perf subcommand check might not be supported and prints an
+> error message when used:
+
+Only in verbose mode though. Personally I don't like all the piping to 
+/dev/null in the tests because I have to go and remove them every time a 
+test fails, rather than just doing "-v". But as it's pretty much the 
+pattern used I suppose we should continue.
+
 > 
-> Ahhh, got it.
+>   # perf check feature -q libtraceevent
+>   perf: 'check' is not a perf-command. See 'perf --help'.
 > 
-> Running `$ rm tools/include/asm/sysreg-defs.h` fixes the problem. I'll
-> look into a fix this afternoon.
+>   Did you mean one of these?
+>          c2c
+>          sched
+>   #
+> 
+> Drop this error message, the return code is sufficient.
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> ---
+>   tools/perf/tests/shell/lib/probe_vfs_getname.sh | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> index 5c33ec7a5a63..697fbe296a62 100644
+> --- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> +++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+> @@ -32,7 +32,7 @@ skip_if_no_debuginfo() {
+>   # check if perf is compiled with libtraceevent support
+>   skip_no_probe_record_support() {
+>   	if [ $had_vfs_getname -eq 1 ] ; then
+> -		perf check feature -q libtraceevent && return 1
+> +		perf check feature -q libtraceevent >/dev/null 2>&1 && return 1
 
-I'll fix it up as follows:
+There's another of the same in tools/perf/tests/shell/test_task_analyzer.sh
 
-diff --git a/tools/include/asm/asm-offsets.h b/tools/include/generated/asm-offsets.h
-similarity index 100%
-rename from tools/include/asm/asm-offsets.h
-rename to tools/include/generated/asm-offsets.h
-diff --git a/tools/include/asm/cpucap-defs.h b/tools/include/generated/asm/cpucap-defs.h
-similarity index 100%
-rename from tools/include/asm/cpucap-defs.h
-rename to tools/include/generated/asm/cpucap-defs.h
-diff --git a/tools/include/asm/sysreg-defs.h b/tools/include/generated/asm/sysreg-defs.h
-similarity index 100%
-rename from tools/include/asm/sysreg-defs.h
-rename to tools/include/generated/asm/sysreg-defs.h
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 5bd30d745d42..86ebc4115eda 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -39,6 +39,7 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
+With that:
 
- $(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(SRCARCH)/vdso/vgetrandom-chacha.S
- $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
-+                                      -idirafter $(top_srcdir)/tools/include/generated \
-                                       -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
-                                       -D__ASSEMBLY__ -Wa,--noexecstack
-
+Reviewed-by: James Clark <james.clark@linaro.org>
 
