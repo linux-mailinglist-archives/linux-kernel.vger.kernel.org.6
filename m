@@ -1,89 +1,151 @@
-Return-Path: <linux-kernel+bounces-324640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150B8974F29
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6B2974F2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D0A288065
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B73F1F25D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888517DFFC;
-	Wed, 11 Sep 2024 10:00:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B752317C228;
+	Wed, 11 Sep 2024 10:00:37 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929A17E005
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59C14E2FA;
+	Wed, 11 Sep 2024 10:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726048805; cv=none; b=qMCn5vA85iFDz30bI8AAcTYRNzuT4JrlzRj7MkhgBfi1sCvq8yNRqbqyxsVxjPvbM/UBcc+V4iQUKyyeN+eSEgHTJ3MyBwp+24VlMDHC2YYmEAiN++gMcM75tanU6kIX7fa7ICi1c2/Yrl6nZ8MSEO0gS03VM7cGpmK8cYB01oY=
+	t=1726048837; cv=none; b=VUkPEUW+LzMAh0nOLRdFTIy1e5I61bbE9Fm9KgorZoDUhYJ2kLCPpA/mGzPeIxZbIT3HbYubvzIXWL2i1LiZ++mPvDdKstxktz563pUHCKOH4uwGB2iFnZSlaBhIn2a62uvic+aoFm+D0N51/80PIn0jtjAQ4HNyxi/OlXMHN5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726048805; c=relaxed/simple;
-	bh=OoSSIQ75dzcQSwQedpZ4mNlEi/G40UgPaQ+6mN9Xkuw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S9sbAYnkE55G0K1z+z+A5bB2KSCHgeEsEnw9pBrGoLhYg6SybWwbacgeA88AHbgilx6xRydd6WvzE+TeC+M952FxnGirlSqlvfhCBo4sdh+sqhyCxzrCDFinfPh0T5dHhGtuEJMQy5Sv/yB2q6k7c6BEp5M0Wd8SO+RrTyhA3tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82ce3316d51so658695039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:00:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726048803; x=1726653603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2GKodS67y3/WL2/PJ4/4RMpxQSMMiSDGT9gzV9p4GY=;
-        b=RuQtN6pxZJhxQiUfmPIO8PTOtEKjm9NczzmendjQCFHB6J1OC4cKZEnyGC48RJUCjo
-         Rg7K7pbjOu+7A+tnrjnsiCyH1RG9HPhVJZCF6PtvGUQGEW+sn20xo9A0rAnjnpDEQQXg
-         YpWvBv424q32h9tjJvBgm4YNF7/jsTf74iVg7czxomK63Mt90RacJCoO+PfPs9cWErXn
-         8sePpXB/8llOpdiIA6Z8Y2G7bb+I4hAidBhW5LwQFlNL1zPFwKc9PIHUNyvVFVHjU3Ay
-         skaggyaxjv905jKLH91t8RrAH/tPmDlkhqqnWT4nAAly/2QymCz0iW9wlnNVe5uw0eB6
-         FsTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCrjAcTfR4wRFBk7UVqOtDoNRpQoX4O3Q2/0MohTJJKceIwi6rirFtMesIgOgEDeMG13MJsYSKb00Gsq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwaj+GUjE56nH70I/lMPkbaHLOgejcjKaxAoHwCSIL+hjP6tPy
-	hBaLcSHh//CJh2cVWSBsOSVnttTK3+9/gvBBaRtlmc91shthpy7RL8Eu5TFA4ssAmmaC43U8y6O
-	6GK+fa9KiHvXXf0M+pg1N1HouvbLgbQYHyJIagEnUZcKos918v57rkgk=
-X-Google-Smtp-Source: AGHT+IE1rKmrzfzO0Sm+9IclnOAF3hU3jAHb/Nt748YJ/GmGwCI9MLlvKt0jQsTYRhJ5RzsUjGOaaGRaAEO9XqAg2jRAx9oMcvxb
+	s=arc-20240116; t=1726048837; c=relaxed/simple;
+	bh=1fAuAau3KeCX4d6czJwKqjuWe2UtNbEs6ol1CeoQCAw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YKEUzV0WqQKUYjelQ0tfaahsv2eVypRdyhWCeK/f+sSx+U3FBEhnw566cl5FyGpVttnep/KizVM+A7/F+2KQBj9HGQm/dQ+d7Hg7vFaSQRQaNGW8YlUIRDXyY1ah2zgxk0Agbp19H5jyRb3fWg5WEAP6xzEPLtIFQ02X4XgRaCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X3bfd3ZbQz69RR;
+	Wed, 11 Sep 2024 18:00:25 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9F92D1800D1;
+	Wed, 11 Sep 2024 18:00:31 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 11 Sep 2024 18:00:31 +0800
+Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
+ kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
+ Wed, 11 Sep 2024 18:00:31 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: James Clark <james.clark@linaro.org>
+CC: duchangbin <changbin.du@huawei.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+	<adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
+ Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH] perf ftrace: Detect whether ftrace is enabled on system
+Thread-Topic: [PATCH] perf ftrace: Detect whether ftrace is enabled on system
+Thread-Index: AQHbAzKr1ZAjTKZ7QkCmqTLETkKdPLJR0hoAgACKOgA=
+Date: Wed, 11 Sep 2024 10:00:31 +0000
+Message-ID: <526bf9fecede4effa859214683201518@huawei.com>
+References: <20240910033625.3569729-1-changbin.du@huawei.com>
+ <4fa0229e-630b-4b6e-8882-3d8a5793a9dd@linaro.org>
+In-Reply-To: <4fa0229e-630b-4b6e-8882-3d8a5793a9dd@linaro.org>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8756EA23FA9A584AABCFC1959882858F@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:29cf:b0:806:31ee:132 with SMTP id
- ca18e2360f4ac-82a961891c6mr2412517539f.4.1726048802876; Wed, 11 Sep 2024
- 03:00:02 -0700 (PDT)
-Date: Wed, 11 Sep 2024 03:00:02 -0700
-In-Reply-To: <2d1b512d-c591-46b4-8dce-9990f6154dc0@linux.alibaba.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c2bdc70621d50d50@google.com>
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: alibuda@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Wed, Sep 11, 2024 at 10:45:16AM +0100, James Clark wrote:
+>=20
+>=20
+> On 10/09/2024 04:36, Changbin Du wrote:
+> > To make error messages more accurate, this change detects whether ftrac=
+e is
+> > enabled on system by checking trace file "set_ftrace_pid".
+> >=20
+> > Before:
+> > ~ # perf ftrace
+> > failed to reset ftrace
+> >=20
+> > After:
+> > ~ # perf ftrace
+> > ftrace is not supported on this system
+> >=20
+> > Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> > ---
+> >   tools/perf/builtin-ftrace.c | 24 ++++++++++++++++++++++++
+> >   1 file changed, 24 insertions(+)
+> >=20
+> > diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> > index eb30c8eca488..e1dc2768bc0f 100644
+> > --- a/tools/perf/builtin-ftrace.c
+> > +++ b/tools/perf/builtin-ftrace.c
+> > @@ -1112,6 +1112,24 @@ static int parse_graph_tracer_opts(const struct =
+option *opt,
+> >   	return 0;
+> >   }
+> > +static bool is_ftrace_supported(void)
+> > +{
+> > +	char *file;
+> > +	bool supported =3D false;
+> > +
+> > +	file =3D get_tracing_file("set_ftrace_pid");
+> > +	if (!file) {
+> > +		pr_debug("cannot get tracing file set_ftrace_pid\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	if (!access(file, F_OK))
+> > +		supported =3D true;
+> > +
+> > +	put_tracing_file(file);
+> > +	return supported;
+> > +}
+> > +
+> >   enum perf_ftrace_subcommand {
+> >   	PERF_FTRACE_NONE,
+> >   	PERF_FTRACE_TRACE,
+> > @@ -1254,6 +1272,12 @@ int cmd_ftrace(int argc, const char **argv)
+> >   		goto out_delete_filters;
+> >   	}
+> > +	if (!is_ftrace_supported()) {
+> > +		pr_err("ftrace is not supported on this system\n");
+> > +		ret =3D -ENOTSUP;
+> > +		goto out_delete_filters;
+> > +	}
+> > +
+>=20
+> Very minor nit, but you could probably put this earlier next to
+> check_ftrace_capable(). It didn't look like it used any of the config or
+> parsing results.
+>
+Thansk, I will rebase this on perf-tools-next branch.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+> Either way:
+>=20
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
-failed to apply patch:
-checking file net/smc/smc_inet.c
-patch: **** unexpected end of file in patch
-
-
-
-Tested on:
-
-commit:         7e3e2c7f Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
-dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1699a477980000
-
+--=20
+Cheers,
+Changbin Du
 
