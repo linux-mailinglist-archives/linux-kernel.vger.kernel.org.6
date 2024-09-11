@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-325285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4294397576B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6EE97576D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094F8282BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A08F282692
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B2C1ABED6;
-	Wed, 11 Sep 2024 15:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9129187352;
+	Wed, 11 Sep 2024 15:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="X4fD2COp"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OqyltwHZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643A31E498;
-	Wed, 11 Sep 2024 15:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50E71779AE;
+	Wed, 11 Sep 2024 15:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726069492; cv=none; b=YKWYoSxq7t0wrOtUMN3jby4DpwpVEAfeV9dZ3BMm/F90dMY1sC8TII5FtEzF+MXLhiLlj0Gkw6KpmnezD3zjh6j26zgYaG7FYc/QcGxXEyc4Ql1BlbWwGfn2XZLDc5lkAri/QA7i21yzOCOUvGj7EGQ8v9IN4jAc7/u9GtSsVTU=
+	t=1726069501; cv=none; b=HeczhE7vCfwK8m5PwsV5xcYAjsSR9YsY8Pmdz4HzpVcnBrp4yUKKZQNY4b0YDBgwOZobxjxED2KPwRMW2EjC/NicGtQZ+k8nt68QahCdrWxGV9x4NbmVqJ1XlP7tCd2Y2SaRp+/kGEF19cLy/s9OBG4Dev7dYR4Lq6LaVciz2c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726069492; c=relaxed/simple;
-	bh=i9g1MHZOIqU5gpjiHW+mieXpOR1PWzNUM+FJdayIZeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2VLea1DdiGen3isF6cYhn11qYl/hRrtYRH+WlUSNOrCtKXf0hCgcVhKK8xYfzhQlAjB7mahW9p7r/S1tPYFPsRzDF85ARhKp7okxYx/JokyqK7G+OZJAo+M/khH/rYTNPyQY4cDDxW0NNdPBm7yR4VIgmq125O+qxtkdfOix9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=X4fD2COp; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1726069481;
-	bh=i9g1MHZOIqU5gpjiHW+mieXpOR1PWzNUM+FJdayIZeg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4fD2COpLqpKjGUyxSMROYBtMJI1pM+p82/yvxw9usiDmi/oF+yDFLKZ0C6W2ddgr
-	 PDa0VVgW24UmTEP4owCHJEGCA+SbhlA8JuYOdR43dIrW20A4P6fdY22zvhW2+IXOOy
-	 MvYTuijqBRVtRd8vGYYT6w0HjlflKiZMhwAIF4Fk=
-Date: Wed, 11 Sep 2024 17:44:40 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, Willy Tarreau <w@1wt.eu>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Paul E. McKenney" <paulmck@kernel.org>, shuah@kernel.org
-Subject: Re: [PATCH] selftests: kselftest: Use strerror() on nolibc
-Message-ID: <16611552-10d8-46d0-8163-460c0cbec2e5@t-8ch.de>
-References: <20240911044230.5914-1-zhangjiao2@cmss.chinamobile.com>
- <1c94b9bd-78d1-433a-959e-420a456bd40c@linuxfoundation.org>
+	s=arc-20240116; t=1726069501; c=relaxed/simple;
+	bh=z7gdWOnnIaBdb5pN5l9/fYMFqpIEyMtePLS53Ejt4hU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R7RWfqC45gR9VUuK4CNLkxxPjoqXcFZvgZSOKSapU9Lw4+IkdRb8vX3UtIa9YNnnWk3QV+Ityz/AM+0PyPG7kQMH8bWMMx9xPcob/RdQiX5GUUnpAwK8a7xHFZgJ44bShpJeD79T7FcX1qLoLj3DV+T6xQQPZhCCOHnnHRzxZok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OqyltwHZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BEmiYc011927;
+	Wed, 11 Sep 2024 15:44:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oJYh1r3IYXHSBmoqWsyfTxf514/ZwKXYpOzRhzGuJW0=; b=OqyltwHZpPBbIPIT
+	kcaYP6FQbP71/pfaGiSPMb6dlytozzW5NFxc/3ly3xgdvHb7+3FIMe0Z5wtc/9RQ
+	NGOCni3khY3zlUgQsIbdCOWGGOeFUjkTNNeJWi9VzUaGMep1g6iqmo41Y4ruvNUJ
+	od4YCCbyaXQv7JcEfTSAbWRc8n/yCNxlMlUY8u4KVa2IACtbmrPNlGjnSsIaZrkH
+	KBEOMHKp626YNwmHgOc0ylnJDgjufjAjCC3M+Ml4lh4XJfQ8FdDiKWLyzQxtyJnf
+	eR+cOXOnwuwJZ+U+ylv86gh3MCIxZU2HrkNWWiisXI//FMwV6fcDPKwsYXMirf8u
+	7fHVUg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy51a1r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 15:44:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48BFisut015094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 15:44:54 GMT
+Received: from [10.111.181.177] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Sep
+ 2024 08:44:53 -0700
+Message-ID: <6a7b60c4-379c-4251-a158-5d9986f37797@quicinc.com>
+Date: Wed, 11 Sep 2024 08:44:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c94b9bd-78d1-433a-959e-420a456bd40c@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add Snapdragon Devkit for
+ Windows
+To: Sibi Sankar <quic_sibis@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <robh+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <conor+dt@kernel.org>,
+        <abel.vesa@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240911073337.90577-1-quic_sibis@quicinc.com>
+ <20240911073337.90577-2-quic_sibis@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240911073337.90577-2-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QSfRdezNqAmv0dWTRDqbsfhg0VPqgaBW
+X-Proofpoint-GUID: QSfRdezNqAmv0dWTRDqbsfhg0VPqgaBW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 phishscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409110119
 
-Hi Shuah,
+On 9/11/2024 12:33 AM, Sibi Sankar wrote:
+> X1E001DE is the speed binned variant of X1E80100 that supports turbo
+> boost up to 4.3 Ghz.
 
-On 2024-09-11 09:36:50+0000, Shuah Khan wrote:
-> On 9/10/24 22:42, zhangjiao2 wrote:
-> > From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> > 
-> > Nolibc gained an implementation of strerror() recently.
-> > Use it and drop the ifndef.
-> > 
-> > Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> > ---
-> >   tools/testing/selftests/kselftest.h | 8 --------
-> >   1 file changed, 8 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-> > index e195ec156859..29fedf609611 100644
-> > --- a/tools/testing/selftests/kselftest.h
-> > +++ b/tools/testing/selftests/kselftest.h
-> > @@ -373,15 +373,7 @@ static inline __noreturn __printf(1, 2) void ksft_exit_fail_msg(const char *msg,
-> >   static inline __noreturn void ksft_exit_fail_perror(const char *msg)
-> >   {
-> > -#ifndef NOLIBC
-> >   	ksft_exit_fail_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
-> > -#else
-> > -	/*
-> > -	 * nolibc doesn't provide strerror() and it seems
-> > -	 * inappropriate to add one, just print the errno.
-> > -	 */
-> > -	ksft_exit_fail_msg("%s: %d)\n", msg, errno);
-> > -#endif
-> >   }
-> >   static inline __noreturn void ksft_exit_xfail(void)
+if you respin, s/Ghz/GHz/
+
 > 
-> Adding nolibc maintainers for review.
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Willy and Thomas, please review.
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index 5cb54d69af0b..6a8fc031e51f 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -1049,6 +1049,12 @@ properties:
+>                - qcom,sm8650-qrd
+>            - const: qcom,sm8650
+>  
+> +      - items:
+> +          - enum:
+> +              - qcom,x1e001de-devkit
+> +          - const: qcom,x1e001de
+> +          - const: qcom,x1e80100
+> +
+>        - items:
+>            - enum:
+>                - lenovo,thinkpad-t14s
 
-Acked-by: Thomas Weißschuh <linux@weissschuh.net>
-
-I did the same for another kselftests function when introducing
-strerror(). This one was apparently missed or didn't exist yet.
-
-
-Thomas
 
