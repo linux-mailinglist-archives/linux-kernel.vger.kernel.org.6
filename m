@@ -1,94 +1,83 @@
-Return-Path: <linux-kernel+bounces-324233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DC79749C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:27:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605C19749E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB021C21959
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F741F2258F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160AA51C4A;
-	Wed, 11 Sep 2024 05:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A2E51C4A;
+	Wed, 11 Sep 2024 05:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="JOKN0NyP"
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U0wJ+gFj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DDF6F2F3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D4922066
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726032453; cv=none; b=AiEpOTNoopLDnB2nXK2dO7lhsU0V2WGDTnLyW1GGj5zuxTimZyhoi8EaK+TGOks+kEF1L+JoA9hxhjx1+f2DYddMUfDNsZPZLl67ui6AKF7B6hXv4oJvyGuUFF1LU08/6eYkLwecBf7UY5DmJkpS2i5YMvP4MfSt50zR1LN8kSk=
+	t=1726033259; cv=none; b=X8c2euq2ORMReH2pjrLJZIPmUV/IomC9zVMz1+35Cpt8IILCXCdUCBXGXEX+HWgBJqDugvg4MTTYVOefwCUrU8CBQfjeNHR3Q4HBIjiIB1/ZMWn7STfIpZUC90ulJnTVr8950VHjLo66xkOLC/GeZncyOfekUmo/4M6f1ho//Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726032453; c=relaxed/simple;
-	bh=fFqmsRboEWRZwHkQtzKWfd655fCQNjGE32uImHwnfoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RaBg8TZV20Z+kGJIZPen3kMKiPF4vKLzaU8O6U7rIoC3kfDE+6rJ6VlYUVR4IbKh2F++nZ5CgrpBhnc7WBxVlVDOj5RcaLYb87ix0iQY3usTN8erHfhK8MSJf9L6nOrX741bwxl8FK0tyra/g4Z4wbwhUTYAWcVmYLwgyir1KmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=JOKN0NyP; arc=none smtp.client-ip=35.74.137.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
-Authentication-Results: gw2.atmark-techno.com;
-	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=JOKN0NyP;
-	dkim-atps=neutral
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by gw2.atmark-techno.com (Postfix) with ESMTPS id F3040948
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:27:30 +0900 (JST)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2070daaf8f1so44425335ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 22:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atmark-techno.com; s=google; t=1726032450; x=1726637250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Uj/IGL3QgYv6zsXXN0ddxeWgiJjwVJ25z60ECrnpg4=;
-        b=JOKN0NyPDoq0FIY9nCPDrZJIvutYhyu/wyKPHgXboeseSFxCYDL0fIoJ4r4dY9m9SY
-         Z/EJX2DOPhtwBSJhYjGIh/V8czetsI4VToeFUSAcxY6WzfTK6j3LmbFdGps0O3aqeg3L
-         3js/Vx5uF+8qdhxZLZ5bmGuo6AqpY3I7OidE5Xs8aG+4YNDiBzlzQXuyOVIlaOiffWVo
-         F7oMYxS6BOqJIz8qkMw2S/1lahTrsJrElYPUt37U35jmC1CkHzv94FSE2ZnNZ/CfX+mT
-         iir1SXrZobtwnrbFTozaQHGUkHD4UCuMRIbXWpbGhAMxn4bID+/nqN8ZCMeXqV8DHtVL
-         csCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726032450; x=1726637250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Uj/IGL3QgYv6zsXXN0ddxeWgiJjwVJ25z60ECrnpg4=;
-        b=HEjDlSx2SrnZVfQRU0AVGt0BqARpoTEzGEH2ALSW5J3uq+alF0Gbx1C+y1T1j2orjI
-         /gCNAPONPZRqHvssSJTaiqZ++7MbVl5wq6CafoQ4qoyhQdp33dzmqrXZtbpi+JtHtMoP
-         W+k3XkEDl13WcubR7vyiuohA60ao7lOpOjlE5beI9OYRYV1p3+k2M0PcYQTHMUdclpoQ
-         LwtWhDZhwmlg4ZE6vthYjh0tdD9sBMio2SvoaLjdG5rxfHEZVhchXiyZzeHPxHJ1CsDB
-         cbMmy5luRgN54/r0CRkODTlNSj8O84BfwR794GqaBadPc0Ku4Ifld9B7Q1NjGMqbjYD2
-         mQrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDn6sYVk3aTAWg5+xKRIKccV/+idDMqoz3bQKoXcjGc3mMPKU13luNmZshUMtxF3OpzeJ+2xDOQugYIyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL5+HQOedLLI8x9LsOQy3f3VXylzqENwxmetyz58JLDYFlhnON
-	oiaF2aHmbCwTxoWVNUK9ddgorTBHjO1QOVarHy98wQZ9NEq7nsLltYT8yxabXEYC58sMke96bdA
-	n64DGBUS0kzU/+WFbC2Cvsqt5H+EBvOfoDa4oxLD3skA4vdsD5cKpfCILhqDIef4=
-X-Received: by 2002:a17:902:d492:b0:206:9caf:1e00 with SMTP id d9443c01a7336-2074c5e11c5mr48674245ad.25.1726032449914;
-        Tue, 10 Sep 2024 22:27:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPUGzThfUzlWxMeUHpc1OnJoW4HlHkAf+m5Cm7pn1mQaYlB/gP65X++hlSKjwtRilI1kNH4w==
-X-Received: by 2002:a17:902:d492:b0:206:9caf:1e00 with SMTP id d9443c01a7336-2074c5e11c5mr48673895ad.25.1726032449486;
-        Tue, 10 Sep 2024 22:27:29 -0700 (PDT)
-Received: from localhost (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc014a58sm9511223a91.17.2024.09.10.22.27.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Sep 2024 22:27:29 -0700 (PDT)
-Date: Wed, 11 Sep 2024 14:27:17 +0900
-From: Dominique Martinet <dominique.martinet@atmark-techno.com>
-To: Adam Ford <aford173@gmail.com>
-Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com,
-	frieder.schrempf@kontron.de, aford@beaconembedded.com,
-	Sandor.yu@nxp.com, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 4/5] phy: freescale: fsl-samsung-hdmi: Use closest
- divider
-Message-ID: <ZuEqNVWSPXXR1YHM@atmark-techno.com>
-References: <20240911012838.944630-1-aford173@gmail.com>
- <20240911012838.944630-5-aford173@gmail.com>
+	s=arc-20240116; t=1726033259; c=relaxed/simple;
+	bh=KfAJtckaD6t8IGSFSxVgsxEymkRmCe4w3REfGus+RGA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W4id2T8A1O/qnjwHeJ8MVIJABam4tjTycCHI4eS8Kg1G/sWYIyIbtiGYcdND2LaKNxvvP0hHMr3mLvkn6al/tij16JM8KyMJUG2FEDw7CxO5RFYxU2O1hpvRkdjydWqmXmN60rePvqWgqNV/RuDJARIA7jhpLXATT5SA1DS0xWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U0wJ+gFj; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726033257; x=1757569257;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=KfAJtckaD6t8IGSFSxVgsxEymkRmCe4w3REfGus+RGA=;
+  b=U0wJ+gFjvIoh0tyvtCTxRhgkEUKUGRzcVWLwrkfmPLOmVcLVKX9pIHyg
+   jJFfGDUUTkuzJbvCdm2l4OctVnoBjsZYJOmraNvh4ETeXPbpIhSqN6WlB
+   BiRo5ALtmq0HEprRfSC4wMj8vo8CsaKMd8TC7U/DT4/9Qd6E9/tLnHg6N
+   xFa1f4T+cVJHZeCPrE1fq4xdQrlfI9kalQARf1+7eDND5X3xSBCzMw12m
+   BGwWJ33GmA1fz+Hc2o0lzcYhO1850emMqlBgR/hPweSYU6U2cCxqTB3by
+   AuFP6v1hmiCNn2T5uZwBTZtaX2gSAuESg5d+n5AXF59qc4uW54JtzxoK5
+   A==;
+X-CSE-ConnectionGUID: QlTDJ60PQayV0aKFNmrvbA==
+X-CSE-MsgGUID: iOXQI9hbRduBUhW/3cXPHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24750942"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="24750942"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 22:40:56 -0700
+X-CSE-ConnectionGUID: 5DAuK9D/Qjm+/pmx3hkAxg==
+X-CSE-MsgGUID: j/hCGuhTQS2C2v54ohRnaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="97953780"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 22:40:54 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: mawupeng <mawupeng1@huawei.com>
+Cc: <mhocko@suse.com>,  <akpm@linux-foundation.org>,
+  <mgorman@techsingularity.net>,  <dmaluka@chromium.org>,
+  <liushixin2@huawei.com>,  <wangkefeng.wang@huawei.com>,
+  <linux-mm@kvack.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, proc: collect percpu free pages into the free pages
+In-Reply-To: <26e53efe-7a54-499a-8d3f-345d29d90348@huawei.com> (mawupeng's
+	message of "Tue, 10 Sep 2024 20:11:36 +0800")
+References: <20240830014453.3070909-1-mawupeng1@huawei.com>
+	<87a5guh2fb.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<2ee7cb17-9003-482c-9741-f1f51f61ab4b@huawei.com>
+	<871q22hmga.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<193da117-30b8-425a-b095-6fd8aca1c987@huawei.com>
+	<ZtbERGm8CJsOwx73@tiehlicka>
+	<ed533d8b-40b7-447f-8453-e03b291340fa@huawei.com>
+	<ZtgMHFQ4NwdvL7_e@tiehlicka>
+	<26e53efe-7a54-499a-8d3f-345d29d90348@huawei.com>
+Date: Wed, 11 Sep 2024 13:37:21 +0800
+Message-ID: <87h6amwy26.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,112 +85,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240911012838.944630-5-aford173@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-Adam Ford wrote on Tue, Sep 10, 2024 at 08:28:10PM -0500:
-> Currently, if the clock values cannot be set to the exact rate,
-> the round_rate and set_rate functions use the closest value found in
-> the look-up-table.  In preparation of removing values from the LUT
-> that can be calculated evenly with the integer calculator, it's
-> necessary to ensure to check both the look-up-table and the integer
-> divider clock values to get the closest values to the requested
-> value.  It does this by measuring the difference between the
-> requested clock value and the closest value in both integer divider
-> calucator and the fractional clock look-up-table.
-> 
-> Which ever has the smallest difference between them is returned as
-> the closest rate.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+mawupeng <mawupeng1@huawei.com> writes:
 
-Thank you for the rework,
+> On 2024/9/4 15:28, Michal Hocko wrote:
+>> On Wed 04-09-24 14:49:20, mawupeng wrote:
+>>>
+>>>
+>>> On 2024/9/3 16:09, Michal Hocko wrote:
+>>>> On Tue 03-09-24 09:50:48, mawupeng wrote:
+>>>>>> Drain remote PCP may be not that expensive now after commit 4b23a68f=
+9536
+>>>>>> ("mm/page_alloc: protect PCP lists with a spinlock").  No IPI is nee=
+ded
+>>>>>> to drain the remote PCP.
+>>>>>
+>>>>> This looks really great, we can think a way to drop pcp before goto s=
+lowpath
+>>>>> before swap.
+>>>>
+>>>> We currently drain after first unsuccessful direct reclaim run. Is that
+>>>> insufficient?=20
+>>>
+>>> The reason i said the drain of pcp is insufficient or expensive is based
+>>> on you comment[1] :-=EF=BC=89. Since IPIs is not requiered since commit=
+ 4b23a68f9536
+>>> ("mm/page_alloc: protect PCP lists with a spinlock"). This could be much
+>>> better.
+>>>
+>>> [1]: https://lore.kernel.org/linux-mm/ZWRYZmulV0B-Jv3k@tiehlicka/
+>>=20
+>> there are other reasons I have mentioned in that reply which play role
+>> as well.
+>>=20
+>>>> Should we do a less aggressive draining sooner? Ideally
+>>>> restricted to cpus on the same NUMA node maybe? Do you have any specif=
+ic
+>>>> workloads that would benefit from this?
+>>>
+>>> Current the problem is amount the pcp, which can increase to 4.6%(24644=
+M)
+>>> of the total 512G memory.
+>>=20
+>> Why is that a problem?=20
+>
+> MemAvailable
+>               An estimate of how much memory is available for starting new
+>               applications, without swapping. Calculated from MemFree,
+>               SReclaimable, the size of the file LRU lists, and the low
+>               watermarks in each zone.
+>
+> The PCP memory is essentially available memory and will be reclaimed befo=
+re OOM.
+> In essence, it is not fundamentally different from reclaiming file pages,=
+ as both
+> are reclaimed within __alloc_pages_direct_reclaim. Therefore, why shouldn=
+'t it be
+> included in MemAvailable to avoid confusion.
+>
+> __alloc_pages_direct_reclaim
+>   __perform_reclaim
+>   if (!page && !drained)
+>     drain_all_pages(NULL);
+>
+>
+>> Just because some tools are miscalculating memory
+>> pressure because they are based on MemAvailable? Or does this lead to
+>> performance regressions on the kernel side? In other words would the
+>> same workload behaved better if the amount of pcp-cache was reduced
+>> without any userspace intervention?
 
-Reviewed-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Back to the original PCP cache issue.  I want to make sure that whether
+PCP auto-tuning works properly on your system.  If so, the total PCP
+pages should be less than the sum of the low watermark of zones.  Can
+you verify that first?
 
-> ---
-> V7:  Because of the previous patch refactoring, the flow of this patch
->      changed quite a bit to use more help functions and goto statements
->      to hopefully make the code flow better and improve comment
->      readability.  Because of the change, I removed s-o-b and r-b,
->      and t-b tags.
-> 
-> V6:  Simplify the calculation of the closest rate and fix
->      a situation where the integer divider values may not be properly
->      setup before they are used.
->      Fixup some comments
-> V5:  No Change
-> V4:  New to series
-> ---
->  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 40 ++++++++++++++------
->  1 file changed, 28 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> index 49317a96f767..67a28aac9c45 100644
-> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> @@ -577,6 +577,16 @@ static void fsl_samsung_hdmi_calculate_phy(struct phy_config *cal_phy, unsigned
->  	/* pll_div_regs 3-6 are fixed and pre-defined already */
->  }
->  
-> +static u32 fsl_samsung_hdmi_phy_get_closest_rate(unsigned long rate,
-> +						 u32 int_div_clk, u32 frac_div_clk)
-> +{
-> +	/* The int_div_clk may be greater than rate, so cast it and use ABS */
-> +	if (abs((long)rate - (long)int_div_clk) < (rate - frac_div_clk))
-> +		return int_div_clk;
-> +
-> +	return frac_div_clk;
-> +}
-> +
->  static long phy_clk_round_rate(struct clk_hw *hw,
->  			       unsigned long rate, unsigned long *parent_rate)
->  {
-> @@ -624,27 +634,33 @@ static int phy_clk_set_rate(struct clk_hw *hw,
->  		goto use_fract_div;
->  
->  	/*
-> -	 * If the rate from the fractional divder is not exact, check the integer divider,
-> +	 * If the rate from the fractional divider is not exact, check the integer divider,
->  	 * and use it if that value is an exact match.
->  	 */
->  	int_div_clk = fsl_samsung_hdmi_phy_find_pms(rate, &p, &m, &s);
-> +	fsl_samsung_hdmi_calculate_phy(&calculated_phy_pll_cfg, int_div_clk, p, m, s);
->  	if (int_div_clk == rate) {
-> -		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: integer divider rate = %u\n",
-> -				   int_div_clk);
-> -
-> -		fsl_samsung_hdmi_calculate_phy(&calculated_phy_pll_cfg, int_div_clk, p, m, s);
-> -		phy->cur_cfg  = &calculated_phy_pll_cfg;
-> -		return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
-> +		goto use_int_div;
->  	}
->  
->  	/*
-> -	 * If neither the fractional divder nor the integer divder can find an exact value
-> -	 * fall back to using the fractional divider
-> +	 * Compare the difference between the integer clock and the fractional clock against
-> +	 * the desired clock and which whichever is closest,
->  	 */
-> +	if (fsl_samsung_hdmi_phy_get_closest_rate(rate, int_div_clk,
-> +						  fract_div_phy->pixclk) == fract_div_phy->pixclk)
-> +		goto use_fract_div;
-> +
-> +use_int_div:
-> +	dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: integer divider rate = %u\n", int_div_clk);
-> +	phy->cur_cfg  = &calculated_phy_pll_cfg;
-> +	goto end;
-> +
->  use_fract_div:
-> -	phy->cur_cfg = fract_div_phy;
-> -	dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider rate = %u\n",
-> -			   phy->cur_cfg->pixclk);
-> +	 phy->cur_cfg = fract_div_phy;
-> +	 dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider rate = %u\n",
-> +		   phy->cur_cfg->pixclk);
-> +end:
->  	return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
->  }
->  
+--
+Best Regards,
+Huang, Ying
 
