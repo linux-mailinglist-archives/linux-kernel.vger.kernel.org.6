@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-325596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F695975BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AAE975BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8FD28316C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747E21C21CD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA42152166;
-	Wed, 11 Sep 2024 20:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96A114E2D6;
+	Wed, 11 Sep 2024 20:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVmv4llD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bP8akF4w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCA214D6E9;
-	Wed, 11 Sep 2024 20:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B25F7E583
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726087154; cv=none; b=UFYGEaF5DpHcdhPhCySzmDgdlsx2vbjC+z5fJNOSqZgAWE3DKYXqVTkiBWIYi2n5f4spiAXu7mBtTUuMQLAxYODJfkM0cZeocsYT173yVCavLT8tzOwAi8sjKp+IUOPQZVZ2fjiXlmewg7Hk6NcCVpYqxjyNlNohBzSdCG/khd0=
+	t=1726087304; cv=none; b=SRchkFm6OI9tbD4BP4gaY+L8Z4idkmzYmMvfPjhfKMWTbfEb5xTa1K96YKZgulNHR7b2DUvdJgLWMuVN0WnonaPijxPhXwtiX4aJDeoeT0xJm8esNc+gDGYuh4yZZcoq1fV/pMnhMAPT/4/pPQHI3AhHUnp31pm3MY/tVKNQPlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726087154; c=relaxed/simple;
-	bh=Mberz7bfJ+kTFhwQIpZlRnjeK14/N+gYa7oTCP9PYZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EoUCfW2FPi5gIAbPVuLdZ2SYzleXSyvJ01mWN4WtSnYjYqoh7o6R3u+qdbvpctQ3hw5TdaW0VB32aB2GxVJ2qWcclZ+Qerlm4M0e6OX38xbYTmHGC8r+hSZge4GY/I9Ymmn0F7rfXR4MLW91FD1tKoAiX4MspdnbmLbxDGYXVy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVmv4llD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 565BBC4CEC0;
-	Wed, 11 Sep 2024 20:39:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726087153;
-	bh=Mberz7bfJ+kTFhwQIpZlRnjeK14/N+gYa7oTCP9PYZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YVmv4llDlotli/qaNQE423/g+mtSD5D+Bg181sXfWKcIZpjyS0KoFAZJRI8qqm98e
-	 oiTYWwr9dOYzr066ODhxZ4bI4l3/9G5rv8ibkUmAVEkRXXydZXM0/P97PnZsacvclv
-	 2YuELeG/EFgE42ZIXbVd6V1nKjQVWHlcvpqqMakAKKK+CsC9H0MRkPtUotTrF2Z8yv
-	 qPWbS47dwCO5ScmUVPKkipmphtBhLJiVOgGlHflKknT2CMo/MhR8l8DQfKaBxa/4qA
-	 IJxFTsquVqEFgUmHSsU04P25DuWEYE6e2kKxFK5ab1YwhxYp3uSd1s9xz3ZGm4VZ3W
-	 1ucvv9mZc/sjQ==
-Date: Wed, 11 Sep 2024 21:39:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 000/186] 6.1.110-rc2 review
-Message-ID: <83678641-4183-46a3-b3a6-beb4b77a44a5@sirena.org.uk>
-References: <20240911130536.697107864@linuxfoundation.org>
+	s=arc-20240116; t=1726087304; c=relaxed/simple;
+	bh=freNg6X75VgqxHI3Km0VGAccedxAeb/2ONtdg8xG5yk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p8KZ1EfK3qCM0GW9J4tx9gjgl6P33gTjVIs1oewqpJm6D9Qv6QXGGLeabuSIkA1zRfSNQF84rHPJQ1LXoqSH3UpIZl5JpePzZdFnFho85hOqLQThojmzY1bOcUmzawr8NRCHGuvGzrgtZHqkMEEOuXzT5BCIWAyiNG5kWaCh6fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bP8akF4w; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726087303; x=1757623303;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=freNg6X75VgqxHI3Km0VGAccedxAeb/2ONtdg8xG5yk=;
+  b=bP8akF4w2WXE8rLOj3VJISRKnYuHmM0C88LNeySyjVW07F/0CoFyzLW1
+   elQGvcaAawLDrGVlZagtPVe+0qLHnupmukyAheKBha0s1+nW39J3EiWGn
+   Xvc/BNKfodCQXcaiBVd+4kU1t6UHH6hC13eUHk3uwnRmQ/ziQ2FveBkjq
+   nlVjsovECdemhgalGy1nsLEOebbHt+yEBLA7mLYgSggX5vjskmkfXq1xX
+   PJmfKcsO2rzi9t9aIoh1URp0jviRUe63517d/uZQFS1sdRCEyBc76p6jH
+   Xnv5HcMy2sPYgKa0yYj5uU8KNaf1g0sbRWnfXXQJMAkFL1azpRQUxaH8P
+   A==;
+X-CSE-ConnectionGUID: +l9sg6sMR7uHUAPtW9b+Xg==
+X-CSE-MsgGUID: hk9/2CgNQaOIxGMgQhIipQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28798090"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="28798090"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:41:42 -0700
+X-CSE-ConnectionGUID: /uNaH1bgQ0CODB78jzl6wA==
+X-CSE-MsgGUID: aww58p/lSjW/4eaUkpPzkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="71864557"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 11 Sep 2024 13:41:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 19928170; Wed, 11 Sep 2024 23:41:38 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier to print GUIDs
+Date: Wed, 11 Sep 2024 23:41:36 +0300
+Message-ID: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="87hyl+ldr732yaBs"
-Content-Disposition: inline
-In-Reply-To: <20240911130536.697107864@linuxfoundation.org>
-X-Cookie: No Canadian coins.
+Content-Transfer-Encoding: 8bit
 
+Replace the custom approach with the %pUl printk() format specifier.
+No functional change intended.
 
---87hyl+ldr732yaBs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tee/amdtee/core.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-On Wed, Sep 11, 2024 at 03:07:26PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.110 release.
-> There are 186 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+index e487231d25dc..d3201eff1b74 100644
+--- a/drivers/tee/amdtee/core.c
++++ b/drivers/tee/amdtee/core.c
+@@ -14,6 +14,7 @@
+ #include <linux/mm.h>
+ #include <linux/uaccess.h>
+ #include <linux/firmware.h>
++#include <linux/uuid.h>
+ #include "amdtee_private.h"
+ #include <linux/psp-tee.h>
+ 
+@@ -172,21 +173,11 @@ static int copy_ta_binary(struct tee_context *ctx, void *ptr, void **ta,
+ {
+ 	const struct firmware *fw;
+ 	char fw_name[TA_PATH_MAX];
+-	struct {
+-		u32 lo;
+-		u16 mid;
+-		u16 hi_ver;
+-		u8 seq_n[8];
+-	} *uuid = ptr;
+ 	int n, rc = 0;
++	guid_t uuid;
+ 
+-	n = snprintf(fw_name, TA_PATH_MAX,
+-		     "%s/%08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.bin",
+-		     TA_LOAD_PATH, uuid->lo, uuid->mid, uuid->hi_ver,
+-		     uuid->seq_n[0], uuid->seq_n[1],
+-		     uuid->seq_n[2], uuid->seq_n[3],
+-		     uuid->seq_n[4], uuid->seq_n[5],
+-		     uuid->seq_n[6], uuid->seq_n[7]);
++	import_guid(&uuid, ptr);
++	n = snprintf(fw_name, TA_PATH_MAX, "%s/%pUl.bin", TA_LOAD_PATH, &uuid);
+ 	if (n < 0 || n >= TA_PATH_MAX) {
+ 		pr_err("failed to get firmware name\n");
+ 		return -EINVAL;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---87hyl+ldr732yaBs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbh/+kACgkQJNaLcl1U
-h9CYFAf/RqJzJNKWlYg2Qu3kRieus0Gy6COpgGXXt2Km468k/iqiHR4s5XjBjlL4
-gqb6Kh8XoHDg1kXkw0rlJXOdZ3Kb9FFn8r8Jt/pLk7jLxPmHA4eHShuNQ7iMiIM2
-J8t7pmaqKk5VHf6szV1FjmHTkWbBfr/YiKP+abgCIPRmYFamaHSIIb2BXPNiuFV7
-l80h8jUQcECpIfCp3zk9KvBb8untqtSpSeIRNNM5xEDo/reRXmeiTG9nUuuLN0Jz
-c6i06BeKx5s7wOwEBfItCoz5ywVe9fs8/Jok9EkNgmRZRDJNMTHamU3F84UD3ZC5
-O+J+3YyGxf1U533Cevf/AkNJQPBlOQ==
-=LCUQ
------END PGP SIGNATURE-----
-
---87hyl+ldr732yaBs--
 
