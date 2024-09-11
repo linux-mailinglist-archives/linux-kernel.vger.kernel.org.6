@@ -1,112 +1,261 @@
-Return-Path: <linux-kernel+bounces-325582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2BA975BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEF8975BCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2D61C228F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624A12877A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172D71BBBD1;
-	Wed, 11 Sep 2024 20:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3914E2D6;
+	Wed, 11 Sep 2024 20:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohOFs31Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="uQmB+SkJ"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767B87E583;
-	Wed, 11 Sep 2024 20:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AF614D708;
+	Wed, 11 Sep 2024 20:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726086318; cv=none; b=PlWzVIWAc5nmt5ka3qQZotAXZJ2ZG2YUfl1rkdo8h/qbGUo2TaVpVoW7SbnWGi0Mn8vLGR1Jfq8PG68r3BS7hT3kcrOqBHJ7V0vMMOHmFIPjI4ZwWgnOwedoH/agf09Xvd1BmVX/GRgus50V5gq7/Rj2wzs1BNgB9W6uRaCcXFg=
+	t=1726086876; cv=none; b=e5855gybL+Q3ayrkJldd2TpwGW4UZ8tdXlleb7qj29Ao9BlfRgp20zsNrwPMoYjC7DD3juNJNJgMRGLmtw1XlttARkTC5M7+9Nsg6+zv4TKrgLt0JzxeeW2qSyQsTbEpSkKS2i1mtD/0638YTlb9hf2y1w2G7JWVkTD2U1qoFHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726086318; c=relaxed/simple;
-	bh=IJJdXeHVHtKkohEPXFg2xqIXxTb1Yt13CSpv4cNNAVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uv7T2SzibHww9QralFhI2W+qorBckcO0jhrp7iT3VBubvu+hs4K9Pe/Nyxv2zOJFM7NzSW0yx4TgpBvapeHWhomb93X9gf9g04n5VJ0FAirK6A0AgidEbbbyaoKP3/tL11FrFYnGvSknE5HcVPazhREaPz4NNs1LOvSbynhKMjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohOFs31Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85685C4CEC0;
-	Wed, 11 Sep 2024 20:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726086318;
-	bh=IJJdXeHVHtKkohEPXFg2xqIXxTb1Yt13CSpv4cNNAVI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ohOFs31ZjQq48m4Vi/IkZVgxBj0LFoYK8RYg+/do3hbfaL8eK218J4dOBSw4r7rfu
-	 SVsbXdHQdde1JuwyQsGUCBs6bAqjVEQko9KAVDGX9rp0TnzIOwJVZ8L4RTapZCZIGA
-	 WY2sSzf/Wq9plgkQUuATIoUnPDjpZBtRiX2Yc4TlFpOSE4rxrxtx+wIFtrwd9GClpG
-	 uv3f8a/3M66IqdUcTM2QgdLeuG/d8wPKiadws+labpS1cpduOqkqNmO2GTAJi6RwlB
-	 1U8kDkxuV79PlrXK7cwl5N/wDZn9nVMpa/Qy0LsS/2Byikq/ZDur7Fvb8T+F0nK//I
-	 TVseNudot497Q==
-Date: Wed, 11 Sep 2024 17:25:14 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: perf trace: substruct BTF based pretty printing
-Message-ID: <ZuH8qhuZB6mr9JvR@x1>
+	s=arc-20240116; t=1726086876; c=relaxed/simple;
+	bh=SsBgfJqZ7FjXY31Gt2Ke3cvZGSgY0FEC9iyAZTz9eFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z6oNMCdZK5BWAcXOt8sXIngkLZgkvA2+vbdF8Sm0iJ1atxnOhUf/7ovS23VF4OoiqTmUNCLF1IFkA3I8QbjvLug0l/M+OLga0jMcaF/Bg72Xs87HOvepRo/kz1K7sGgryY4Ogp2AoW+kS6OgFtKfvtg/EpawizScHCmMwdQGVww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=uQmB+SkJ; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 1AA9288AB1;
+	Wed, 11 Sep 2024 22:34:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1726086872;
+	bh=PWFsMLcUDDDxDl8hPygkD2SZfiSGqlgXqLg5FMn4wms=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uQmB+SkJtp3WzkgjzdhS66+GaBsr+i/lEkSjAm+AH4s/UdmZGRCuol40Annp6l29r
+	 ItFgZj8cVZjKj05ErR8bzN5i/yOsLWIGywX8xz7NFxERteeRlTFQwWjnoLp/iyI2OZ
+	 LaMbDi7kMDamr3Elizmr90wfnC40H9fPLZKOW45SdCXPs3BsuIqZ7hwvKxStzXkGql
+	 sDbTq736VCpvb4/GV3DcESJB+Ss6Be3OLtApEygVtG03TUia6216XPzV+TCNFUmCOp
+	 UBOFjpR7uRiiuR3bib2G8D4dfTmHVBklt149Np1sMysVHhxiFwFpXBXfRpFt5RsK2e
+	 oHJm/lWDTxZeg==
+Message-ID: <f42fefb6-2815-4f74-b403-fecd2aa79688@denx.de>
+Date: Wed, 11 Sep 2024 22:26:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+ francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
+ kernel@pengutronix.de, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
+ robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ ukleinek@kernel.org, xiaoning.wang@nxp.com
+References: <20240910152455.2425152-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240910152455.2425152-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi Howard,
+On 9/10/24 5:24 PM, Frank Li wrote:
 
-	Not really a requirement on you to do work, just a some notes to
-add to our discussion/experiment on using BTF to pretty print syscall
-(and tracepoints/whatever) arguments:
+Hi,
 
-root@number:~# perf trace -e setitimer -p 5444 |& head -5
-     0.000 ( 0.017 ms): Xwayland/5444 setitimer(value: (struct __kernel_old_itimerval){})                   = 0
-     0.050 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_old_itimerval){})                   = 0
-     0.142 ( 0.005 ms): Xwayland/5444 setitimer(value: (struct __kernel_old_itimerval){})                   = 0
-     0.174 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_old_itimerval){})                   = 0
-     0.293 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_old_itimerval){})                   = 0
-root@number:~# strace -e setitimer -p 5444 |& head -5
-strace: Process 5444 attached
-setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=5000}, it_value={tv_sec=0, tv_usec=5000}}, NULL) = 0
-setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=0}, it_value={tv_sec=0, tv_usec=0}}, NULL) = 0
-setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=5000}, it_value={tv_sec=0, tv_usec=5000}}, NULL) = 0
-setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=0}, it_value={tv_sec=0, tv_usec=0}}, NULL) = 0
-root@number:~# 
-root@number:~# 
-root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_enter_rseq/format 
-root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_enter_setitimer/format 
-	field:struct __kernel_old_itimerval * value;	offset:24;	size:8;	signed:0;
-print fmt: "which: 0x%08lx, value: 0x%08lx, ovalue: 0x%08lx", ((unsigned long)(REC->which)), ((unsigned long)(REC->value)), ((unsigned long)(REC->ovalue))
-root@number:~# pahole __kernel_old_itimerval
-struct __kernel_old_itimerval {
-	struct __kernel_old_timeval it_interval;         /*     0    16 */
-	struct __kernel_old_timeval it_value;            /*    16    16 */
+purely nitpicking further below, one quick question right below.
 
-	/* size: 32, cachelines: 1, members: 2 */
-	/* last cacheline: 32 bytes */
-};
+> This only resolves the issue when the PWM period is longer than 2us
+> (or <500KHz) because write register is not quick enough when PWM period is
+> very short.
 
-root@number:~# pahole -E __kernel_old_itimerval
-struct __kernel_old_itimerval {
-	struct __kernel_old_timeval {
-		/* typedef __kernel_long_t */ long int           tv_sec;                 /*     0     8 */
-		/* typedef __kernel_long_t */ long int           tv_usec;                /*     8     8 */
-	} it_interval; /*     0    16 */
-	struct __kernel_old_timeval {
-		/* typedef __kernel_long_t */ long int           tv_sec;                 /*    16     8 */
-		/* typedef __kernel_long_t */ long int           tv_usec;                /*    24     8 */
-	} it_value; /*    16    16 */
+You did mention the IPS bus is slow. Do I understand it correctly that 
+the IPS bus write takes about 1us ? Because of the PWM consumes a sample 
+every 2us and we need to write 2 samples to avoid FIFO underrun, then to 
+safely write those 2 samples, we need to be able to write 1 sample per 1 
+us into the FIFO ?
 
-	/* size: 32, cachelines: 1, members: 2 */
-	/* last cacheline: 32 bytes */
-};
+Also, would writing more samples help with such "fast" use cases ?
+Something like this:
 
-root@number:~#
+if (clkrate > 500000) {
+   // This usleep() could use some further improvement, e.g. calculate
+   // precise delay for the FIFO to get empty based on PWM clkrate
+   usleep(2 * 5); // wait 2us for each of the 4 samples in FIFO and a bit
+   // Now the FIFO is surely empty, write all four FIFO slots
+   writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+   writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+   writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+   writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+} else { // clock rate less than 500 kHz
+   // Do the workaround below
+   if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS
+     ...
+}
+
+> Reproduce steps:
+>    cd /sys/class/pwm/pwmchip1/pwm0
+>    echo 2000000000 > period     # It is easy to observe by using long period
+>    echo 1000000000 > duty_cycle
+>    echo 1 > enable
+>    echo  800000000 > duty_cycle # One full high plus will be seen by scope
+> 
+> Fixes: 166091b1894d ("[ARM] MXC: add pwm driver for i.MX SoCs")
+> Reviewed-by: Jun Li <jun.li@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v4 to v5
+> - fix typo PMW & If
+> - using imx->mmio_base + MX3_PWMSAR
+> 
+> Change from v3 to v4
+> - none, wrong bump version number
+> Change from v2 to v3
+> - simple workaround implement.
+> - add reproduce steps.
+> 
+> Change from v1 to v2
+> - address comments in https://lore.kernel.org/linux-pwm/20211221095053.uz4qbnhdqziftymw@pengutronix.de/
+>    About disable/enable pwm instead of disable/enable irq:
+>    Some pmw periphal may sensitive to period. Disable/enable pwm will
+> increase period, althouhg it is okay for most case, such as LED backlight
+> or FAN speed. But some device such servo may require strict period.
+> 
+> - address comments in https://lore.kernel.org/linux-pwm/d72d1ae5-0378-4bac-8b77-0bb69f55accd@gmx.net/
+>    Using official errata number
+>    fix typo 'filp'
+>    add {} for else
+> 
+> I supposed fixed all previous issues, let me know if I missed one.
+> ---
+>   drivers/pwm/pwm-imx27.c | 67 ++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 66 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+> index 253afe94c4776..713d368f03931 100644
+> --- a/drivers/pwm/pwm-imx27.c
+> +++ b/drivers/pwm/pwm-imx27.c
+> @@ -27,6 +27,7 @@
+>   #define MX3_PWMSR			0x04    /* PWM Status Register */
+>   #define MX3_PWMSAR			0x0C    /* PWM Sample Register */
+>   #define MX3_PWMPR			0x10    /* PWM Period Register */
+> +#define MX3_PWMCNR			0x14    /* PWM Counter Register */
+>   
+>   #define MX3_PWMCR_FWM			GENMASK(27, 26)
+>   #define MX3_PWMCR_STOPEN		BIT(25)
+> @@ -234,6 +235,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>   	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
+>   	unsigned long long c;
+>   	unsigned long long clkrate;
+> +	unsigned long flags;
+> +	int val;
+>   	int ret;
+>   	u32 cr;
+>   
+> @@ -274,7 +277,69 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>   		pwm_imx27_sw_reset(chip);
+>   	}
+>   
+> -	writel(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+> +	/*
+> +	 * This is a limited workaround. When the SAR FIFO is empty, the new
+> +	 * write value will be directly applied to SAR even the current period
+> +	 * is not over.
+> +	 *
+> +	 *           ─────────────────────┐
+> +	 * PWM OUTPUT                     │
+> +	 *                                └─────────────────────────
+> +	 *
+> +	 *           ┌──────────────────────────────────────────────┐
+> +	 * Counter   │       XXXXXXXXXXXXXX                         │
+> +	 *           └──────────────────────────────────────────────┘
+> +	 *                   ▲            ▲
+> +	 *                   │            │
+> +	 *                 New SAR      Old SAR
+> +	 *
+> +	 *           XXXX  Errata happen window
+> +	 *
+> +	 * If the new SAR value is less than the old one, and the counter is
+> +	 * greater than the new SAR value (see above diagram XXXX), the current
+> +	 * period will not flip the level. This will result in a pulse with a
+> +	 * duty cycle of 100%.
+> +	 *
+> +	 * Check new sar less than old sar and current counter is in errata
+
+Better do 's@\<sar\>@SAR@g' so all the instances of 'sar' in the text 
+are in uppercase. Currently, some are in lowercase and some are in 
+uppercase.
+
+> +	 * windows, write extra old sar into FIFO and new sar will effect at
+> +	 * next period.
+> +	 *
+> +	 * Sometime period is quite long, such as over 1 second. If add old sar
+> +	 * into FIFO unconditional, new sar have to wait for next period. It
+> +	 * may be too long.
+> +	 *
+> +	 * Turn off the interrupt to ensure that not irq and schedule happen
+
+IRQ, in uppercase.
+
+> +	 * during above operations. If any irq and schedule happen, counter
+> +	 * in PWM will be out of data and take wrong action.
+> +	 *
+> +	 * Add a safety margin 1.5us because it needs some time to complete
+> +	 * IO write.
+> +	 *
+> +	 * Use __raw_writel() to minimize the interval between two writes to
+> +	 * the SAR register to increase the fastest pwm frequency supported.
+
+PWM, in uppercase.
+
+> +	 * When the PWM period is longer than 2us(or <500KHz), this workaround
+
+kHz, kilo lowercase, Hz Hertz uppercase H lowercase z .
+
+Also fix in the commit message.
+
+> +	 * can solve this problem. No software workaround is available if PWM
+> +	 * period is shorter than IO write.
+> +	 */
+> +	c = clkrate * 1500;
+> +	do_div(c, NSEC_PER_SEC);
+> +
+> +	local_irq_save(flags);
+> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+> +	if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
+> +		val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
+
+I would put the comment below above this conditional statement.
+
+> +		if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
+> +		    /*
+> +		     * If counter is close to period, controller may roll over
+> +		     * when next IO write.
+> +		     */
+> +		    val + c >= period_cycles)
+> +			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+> +	}
+> +	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+> +	local_irq_restore(flags);
+> +
+>   	writel(period_cycles, imx->mmio_base + MX3_PWMPR);
+The patch looks good, the above are just trivial nitpicks.
+
+Thanks !
 
