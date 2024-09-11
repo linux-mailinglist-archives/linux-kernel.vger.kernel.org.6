@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-325044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20927975432
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:42:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB0A975433
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452521C20AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F2C1F218B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5837819343E;
-	Wed, 11 Sep 2024 13:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6CF41C92;
+	Wed, 11 Sep 2024 13:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cJl6WIRo"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boYdHUbu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD181885B0;
-	Wed, 11 Sep 2024 13:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4256B19C56A;
+	Wed, 11 Sep 2024 13:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061561; cv=none; b=E/mhRdQrEW9/aTvWZZn7h6U3XQJJ05xrH454epBbXoR1Prv3XR3GJfmiRKW7vdr2oyxg8leYVEti24qPi9JPMP0mUydggc5JIxFDVUyptp0hRur+p3CoHUMYWLdVzQxnzK+x2rPejdaA9VnxHhSUam+1WKNoBdlXmUeNPtbxGzo=
+	t=1726061597; cv=none; b=cExWqrGJ9hvAXQ8qphCj4Br6QbAT/uJeacQ5WTl6kjaUTQCAiog4KICc/K6JGVzQkOtZG+bZhqs5g80kvEr6+qc3Ld+7vp2yKgfdwDCwxREz6hmk1AR3u2NXATT+jWFnD+NozQ0LWLr5inL1eVzExvBmL+Pa0JsEyoC+xNHdMnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061561; c=relaxed/simple;
-	bh=ybheBVV603FTYOdWMtIr5GfQRMd5Q2wUV16BArMqNVo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uG7KU2r7IRATJdlT9PBUxFxkzjhcq9KZB+vKCUcB/6g7nD5or9DNUSKVGjQIfGCJN21KeYA3ertMcLWIEj9Fbbzr2QAWRVq5m2GVlfsdHUo2Y5wzj7aan7sRxAuTmhoT04+Xu/Es+PSUjSNi3bK8wNI4rGTe0SJubL8sdhwg0EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cJl6WIRo; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726061557; x=1726320757;
-	bh=Aw/QVQINynoS1n4l+50LTXZgDbgxxENr3OB8jCOzqlE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cJl6WIRoFO3p9/rUyKgmNd+yxgh0Ra24LWdX7Iq1RoxrJKhtGh7FtmdBPiJ1l4p15
-	 4a1LY9h6sXrGzdpiX+eTUdvsKQEQAvYJVhY9Hr/V7jQc/uTy5kP8jNoccNcpfL185t
-	 TOKBF6V78gsXPX3amf/PEATMLRYwKu6NehM5ftEy9c7vR8Cy00K1VBiYe+ZRcrhZLq
-	 QVQOZ56w9hiIIMbkIJLr50QsadIWEq4hAqx97SE1iPoZLOumDNaeEuE8gDPxIA03Xc
-	 qkIPuy1gXKB42GugN0L9UwSVAhFk8En+0dLvoJv9mw9kt5RnxFwkZ1oZsiXIoleCRm
-	 NW3Lk+lzIGxEA==
-Date: Wed, 11 Sep 2024 13:32:31 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 22/26] rust: alloc: implement `Cmalloc` in module allocator_test
-Message-ID: <bf158e23-4123-419b-a2ce-a27c4ea51219@proton.me>
-In-Reply-To: <ZuGNlFluwAmTG19R@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-23-dakr@kernel.org> <e3ccbf52-224e-4869-992b-4fcaa0ec3410@proton.me> <ZtD1TsGm0swi7gyv@pollux.localdomain> <ZuGNlFluwAmTG19R@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 90b55a6673420a147a5498f65a28e7d0f52158e1
+	s=arc-20240116; t=1726061597; c=relaxed/simple;
+	bh=2lv+5lYhuzm+zQ4KqafRaZzkxiF73mW2eFCeH+hVYc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NSGGl9N3mEer6gnvXSSpt0pkKj5ZHRgXBxAolJLV4jk+TAPNDusXMnJomtF7AFx8rPM01I8mIC4I90UKpn89f+CKlIIduw5+85Ec9o2mapOq7HW7gIt0SEUHPLeWxcOmu4WYFfIZ8bMjqES0ibzZxK2iqzncNyLbq5XYhxc4f9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boYdHUbu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20613C4CEC5;
+	Wed, 11 Sep 2024 13:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726061596;
+	bh=2lv+5lYhuzm+zQ4KqafRaZzkxiF73mW2eFCeH+hVYc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=boYdHUbu5J7IYfb3nkoBj5iuaT7RH3UghaPvZKU7l3OwD4f3hSf5DpiV0Izp+jXSp
+	 bZBFkrbbl+H/bNHlQLgxzPP+JAtGtOsqfrKqmtg6jcvt3utSCGZjXg3JU8I7uJpO1h
+	 3MDWVDzozhSolR5gQX7y2cVBZcogTl8eTPlqfhrZ9M8JMYghgrxaObHHUW6Z2D57uh
+	 5r5gb13oiWGklC8ukUa4r+zfjvsO7TOQuouOt+MsKoa7kuxu2FN79UfLSakuoXc1NO
+	 0vaXbdPEZkpyxk61F2w5QwNg0C0Eb3GYlq2k+x9SIAqcRZsW3lJrDqNX1gkmj/PwuO
+	 t3iNub38Y9ZVQ==
+Date: Wed, 11 Sep 2024 14:33:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Fuad Tabba <tabba@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Dave Martin <Dave.Martin@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Constrain the host to the maximum shared SVE
+ VL with pKVM
+Message-ID: <c504578e-a00a-4f8b-a7bd-329fac45aa5f@sirena.org.uk>
+References: <20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org>
+ <CA+EHjTzk6_hWFnrEiJVYZnY41qGORL7NQdV6S+cobDy+UcAR-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WUyamLlzWbeu17yh"
+Content-Disposition: inline
+In-Reply-To: <CA+EHjTzk6_hWFnrEiJVYZnY41qGORL7NQdV6S+cobDy+UcAR-Q@mail.gmail.com>
+X-Cookie: No Canadian coins.
 
-On 11.09.24 14:31, Danilo Krummrich wrote:
-> On Fri, Aug 30, 2024 at 12:25:27AM +0200, Danilo Krummrich wrote:
->> On Thu, Aug 29, 2024 at 07:14:18PM +0000, Benno Lossin wrote:
->>> On 16.08.24 02:11, Danilo Krummrich wrote:
->>>> +
->>>> +        if layout.size() =3D=3D 0 {
->>>> +            // SAFETY: `src` has been created by `Self::alloc_store_d=
-ata`.
->>>
->>> This is not true, consider:
->>>
->>>     let ptr =3D alloc(size =3D 0);
->>>     free(ptr)
->>>
->>> Alloc will return a dangling pointer due to the first if statement and
->>> then this function will pass it to `free_read_data`, even though it
->>> wasn't created by `alloc_store_data`.
->>> This isn't forbidden by the `Allocator` trait function's safety
->>> requirements.
->>>
->>>> +            unsafe { Self::free_read_data(src) };
->>>> +
->>>> +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling=
-(), 0));
->>>> +        }
->>>> +
->>>> +        let dst =3D Self::alloc(layout, flags)?;
->>>> +
->>>> +        // SAFETY: `src` has been created by `Self::alloc_store_data`=
-.
->>>> +        let data =3D unsafe { Self::data(src) };
->>>
->>> Same issue here, if the allocation passed in is zero size. I think you
->>> have no other choice than to allocate even for zero size requests...
->>> Otherwise how would you know that they are zero-sized.
->>
->> Good catch - gonna fix it.
->=20
-> Almost got me. :) I think the code is fine, callers are not allowed to pa=
-ss
-> pointers to `realloc` and `free`, which haven't been allocated with the s=
-ame
-> corresponding allocator or are dangling.
 
-But what about the example above (ie the `alloc(size =3D 0)` and then
-`free`)? I guess this all depends on how one interprets the term
-"existing, valid memory allocation". To me that describes anything an
-`Allocator` returns via `alloc` and `realloc`, including zero-sized
-allocations.
-But if you argue that those are not valid allocations from that
-allocator, then that is not properly documented in the safety
-requirements of `Allocator`.=20
+--WUyamLlzWbeu17yh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
----
-Cheers,
-Benno
+On Wed, Sep 11, 2024 at 01:02:16PM +0100, Fuad Tabba wrote:
+> On Tue, 10 Sept 2024 at 21:26, Mark Brown <broonie@kernel.org> wrote:
 
+> The crash is triggered by arch/arm64/kernel/fpsimd.c:487
+> (fpsimd_save_user_state(): if (WARN_ON(sve_get_vl() != vl)) ...) ,
+> which ends up issuing a SIGKILL.
+
+> The easiest way to consistently reproduce the crash is with a host and
+> a guest both running the sve stress test (the one in the arm64
+> selftests).
+
+Hrm, I'm not able to reproduce that...
+
+> I think the issue is that this patch doesn't cover all the cases that
+> are setting or assuming ZCR_ELx_LEN_MASK as the vector length.
+
+We can't ever assume that VL is ZCR_ELx_LEN_MASK since that might not be
+physically supported, and hopefully for a symmetric system the number
+read back from RDVL should end up being the same.  Though trying to make
+the change you suggested *is* triggering something which is fun.
+
+--WUyamLlzWbeu17yh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbhnBUACgkQJNaLcl1U
+h9B1hAf/du/x+QIH2lgq6henkrAWEvsLEHjzVm13lpNiqsq4RofNNu92Gs9aNBrP
+Vi3z+djDRcqJ2OqREdlWoCh6R0pRykFGghy3h+1FD7uieMFuexhj6uriHQesu43i
+eJRWWAXIWQjyUyBSdRLg2CLQp2HdS9IifZUjMuBm9/TsXhF9pOkDC4Cp2Oqxt/8D
+qN/57WsWJhQevmOw3ovbiHpw3fLmM0A7k+39p11sqbmJJjG9DYxXnqmpBKE1g57G
+AAYYa3FONI/yHpe53CAnRF73uDfZiLlWodYyyPWl7aeMRRZsj4Py6qnAyfXom9gM
+0otTPcsZfY894vc31qv3HezDPTG3cg==
+=Hk4P
+-----END PGP SIGNATURE-----
+
+--WUyamLlzWbeu17yh--
 
