@@ -1,174 +1,96 @@
-Return-Path: <linux-kernel+bounces-324916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC81797528F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D3697529F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8811C265F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EA91C26649
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0971F199FD1;
-	Wed, 11 Sep 2024 12:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iC020y9M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC19819C548
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39477187336;
+	Wed, 11 Sep 2024 12:38:06 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03142154C0B;
+	Wed, 11 Sep 2024 12:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726058191; cv=none; b=LBTfDG14FS44LadUKH2dGFdGpJLYLyqur6sOgDDjbX8sHtMQmwZraIRNBvyXPRvoSLN2EFCPzvVPq7huDUdjgTfl2eRf1ANbU8tTpEmfHBO6uhpD1jVjCzEgWBOzjQHckdYg7Uy2usyGnIC0GvM9lh3JQiGkvCLYAqibux/ueRM=
+	t=1726058285; cv=none; b=nSWMG2A7FAGAXunU5OyDdWlIAuZKx607zxKhBbdsj34aU3LK6f7+rIsVteQOw/DRUTiA4mtbUZMxR2uwNVoDCrlcnIkri/cX+VN2Jns8iiBvE1+fYF8Pwqf0SAhueReqIs3RmqUfGeMgKHc9qyC+4/Ekh7pQchO6qIpLoricSJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726058191; c=relaxed/simple;
-	bh=3IhIqKK6DZcrK93a/LW19tR/zAxUEMCG4f/GHKdzfT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xlw+3fmfRrXz04ZO1PR/GvnM4yFOE06OWG+9BDbxIV2zEwSrsiy5+/P4m3yPilR7YgLBmuPEctU+KVhiYoMd3nLcztCvORTeqKM1TXAaiQwMn6tnBeKxYGGYtfpX6xex1LQitGTkysdGW4KYwzbpi8nrUOjk5YDQJ1kXNEGpFq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iC020y9M; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726058188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=soY97vB1T+EQhAcbnY7ctp4CFdxOH/BAwVpD1gxBgB8=;
-	b=iC020y9MGmBRNEFlYyyX3sTNZA7YFGXxI0L3GzKvrLTgMdKRv0Y4DYV0hefQeI39HixJF4
-	U2OechSXKourigmBZd772gYxo5h4df8TYWsehpcVXJjVmq9dvrQ1c9Rh/to/D2qFqU/zxC
-	ZAahTEXn2VbAQfs4FvwClzpSw46bMiQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-356-IPZRCjI3P7KZn4Ns6Akx1Q-1; Wed, 11 Sep 2024 08:36:27 -0400
-X-MC-Unique: IPZRCjI3P7KZn4Ns6Akx1Q-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-374c35b8e38so2983121f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:36:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726058185; x=1726662985;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=soY97vB1T+EQhAcbnY7ctp4CFdxOH/BAwVpD1gxBgB8=;
-        b=OceOMAvuKZ5FOh8Yn+sxa0CdUt/F5nJZTz6XTqVDicY6jNJifB8PnawYHxC0sHnBLD
-         96B7QVKHi1gGli9QFH7CyMWJB6A8STOCvp+fJG35U2aerFuxvoLFtApWsfhnUpTDyfoO
-         wEZiDZ87Hzf1o21FiBTnIuV6DTfTY9e2MH06T1Y+ActZnXo62s5WTkwVE4/tjY4xM1cJ
-         GbR5ZKjDN4BfogOCjGqUT25iifzuMszSvLu6w1JRJquaz1CIKxwycGzTcIbBFSR0uIGa
-         9UyP1XCzLN7kuU+6cRr5u1b55B8jE+iwOMNW+NfTCOpDWYE24pJ973ykQuF/rvqa50i3
-         Hn7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUGjJFJvcsh/XryaXqcjLy8SRr+1RKjfWAG/Ld89vPmpDt09eo2xNpOD1y0PalJPU2oVcV7efI6m7qUIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1IONZ58+qlek0spocoU7NM8PsMpUrilZfGZppeYLAWaHI4o9r
-	2nXNFbrdc2Yn/TdWsySLASnnn6HARjXPVJ35w5nApLgXA9ywi1yz3TRzyW8VO2MDl024/ASR1AC
-	TDE0TtRZg1RXZY85jmSsAg1FBN8n7WlXbomQ1lLP0PWo74h4J6ZmjW42Ei8pwCw==
-X-Received: by 2002:a5d:6212:0:b0:368:31c7:19dd with SMTP id ffacd0b85a97d-378895b79e0mr11674134f8f.5.1726058185171;
-        Wed, 11 Sep 2024 05:36:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBdLnQ/OyBRIrSAY9ow4pHwnVRbMCnkH0wVZ+vTA2ZeKNB0dHL0bpG9yXqFoeKd7Be4plXew==
-X-Received: by 2002:a5d:6212:0:b0:368:31c7:19dd with SMTP id ffacd0b85a97d-378895b79e0mr11674112f8f.5.1726058184634;
-        Wed, 11 Sep 2024 05:36:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c700:7e00:c672:608:5b3e:df8c? (p200300cbc7007e00c67206085b3edf8c.dip0.t-ipconnect.de. [2003:cb:c700:7e00:c672:608:5b3e:df8c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3941sm11514826f8f.84.2024.09.11.05.36.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 05:36:24 -0700 (PDT)
-Message-ID: <a09336db-4405-4b24-8420-c3ae4a16f73c@redhat.com>
-Date: Wed, 11 Sep 2024 14:36:22 +0200
+	s=arc-20240116; t=1726058285; c=relaxed/simple;
+	bh=/ZReZPWOoxjjHH1YQ4ZtFsvN34/KSmLe/hRg2Y9bMLo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ttv492lu6Cbxxa6d7xs4UGfHVe5zlx5+rIMVc10aQgrjVH6yIb8wsiLFby41s16/JCLWgYITfkkN5bgpTreP2a6myvXoYqQXjRyRHs/uCCTwkGh3NDHf1lUISC//Noe9N3keA3x3ewTG1X678Ecg8b9mjHbPPrJXoniPsPEWjU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee866e18f25e2d-5ae61;
+	Wed, 11 Sep 2024 20:38:00 +0800 (CST)
+X-RM-TRANSID:2ee866e18f25e2d-5ae61
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee166e18f20e9f-cca1b;
+	Wed, 11 Sep 2024 20:38:00 +0800 (CST)
+X-RM-TRANSID:2ee166e18f20e9f-cca1b
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: mediatek: Remove redundant error message
+Date: Wed, 11 Sep 2024 20:37:51 +0800
+Message-Id: <20240911123751.2078-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm: Allocate THP on hugezeropage wp-fault
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240911065600.1002644-1-dev.jain@arm.com>
- <20240911065600.1002644-3-dev.jain@arm.com>
- <783a0d91-2910-4446-a979-c681dde402ec@redhat.com>
- <e160b45b-7220-47d0-83a3-9403ffb85bbe@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <e160b45b-7220-47d0-83a3-9403ffb85bbe@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
->>
->>>    }
->>>      static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>> @@ -1576,6 +1580,41 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
->>>        spin_unlock(vmf->ptl);
->>>    }
->>>    +static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf,
->>> unsigned long haddr)
->>
->> Is there a need to pass in "haddr" if we have the vmf?
-> 
-> Was passing it because it was getting used many times. But nowhere do vmf
-> and haddr get both passed in the codebase, so I'll drop it for
-> cleanliness and
-> consistency.
+In the function mt7986_afe_pcm_dev_probe, when get irq
+failed, the function platform_get_irq() logs an error
+message, so remove redundant one here.
 
-Yes, the masking is very cheap.
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+---
+ sound/soc/mediatek/mt7986/mt7986-afe-pcm.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c b/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
+index d400bea0e..7db090414 100644
+--- a/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
++++ b/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
+@@ -529,10 +529,9 @@ static int mt7986_afe_pcm_dev_probe(struct platform_device *pdev)
+ 
+ 	/* request irq */
+ 	irq_id = platform_get_irq(pdev, 0);
+-	if (irq_id < 0) {
+-		ret = irq_id;
+-		return dev_err_probe(dev, ret, "No irq found\n");
+-	}
++	if (irq_id < 0)
++		return irq_id;
++
+ 	ret = devm_request_irq(dev, irq_id, mt7986_afe_irq_handler,
+ 			       IRQF_TRIGGER_NONE, "asys-isr", (void *)afe);
+ 	if (ret)
 -- 
-Cheers,
+2.33.0
 
-David / dhildenb
+
 
 
