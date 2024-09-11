@@ -1,184 +1,109 @@
-Return-Path: <linux-kernel+bounces-325409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DCE975955
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:26:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C81797595B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAE51C2390B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157141F27F69
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52D51B3B0D;
-	Wed, 11 Sep 2024 17:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AF21B3B2B;
+	Wed, 11 Sep 2024 17:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RLTfxw5x"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rl5HHneR"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9141B29B9
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5073A1B29C1;
+	Wed, 11 Sep 2024 17:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726075586; cv=none; b=Yk57Q+J0W7n4eZZ0iMWib5nfYovqkaGvu0JV5hyB4EWb93VZ9U696fhPO+C1TSjYwne2I89etAdwcwgQju9PPrn1Hjqo3qeqQuvKGSD8izNlHPw3VLtGQCurlV8uwDvR6zn9jMGIEItcY78z33vKRm4Ib3nR5RtZBGESMe/3G0g=
+	t=1726075598; cv=none; b=qS6Ey6mZREPqJgmNa+Hqr291SWiiy4yP3jHGM1J0UDtY/J3nlMfcQ9ZpIYWG7W1k47PhSTmoCzLtP4X9hyCnI3nhcOLKxN4VtEmnZb8quyepKRI3e/OFtuSdSpv2GUlHEQqF3IK65+rLmNRjxup/8kGz/v3tEMmYtPlAETpz8D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726075586; c=relaxed/simple;
-	bh=j4LfUsx854x7YJ4n3qpUsMJcQSYqch/FDWG/7MZN6hg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dtoaObsLFYTTHmAWzh8rHGJahAmm+d20wHOFkI0hsRc2J9e8YEyOKrPG7rb24aMVZCCr9CraCvols2+eBDRBJOUZ8Q7MAcNvC2eudvV6fxhi8+wz5tmF/pNYAtLrrkLHqxpeIX4xxyS6dsSh4q/aJ0+XjPCdrvwK0VdPZgZa2pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RLTfxw5x; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so20881265e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726075581; x=1726680381; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLZX+SWdHz2tB91UF3usEBJbpzw/IHLAgfNzOfmxmj0=;
-        b=RLTfxw5xjaulz4Fgppqf+838Phf5Qm/KRabvOD/E4QrPBdfU1+YNeBVHUvfxC2kTac
-         FCdGG31ezs//EDw6jyo/9N1W765YOrbwgUddEjZJXjDLkWl0JMoF5SDGRgA8998AUg5W
-         Oy21iDDfyTzIi7pHTN5dFLzuab1m5D11aVKN3DaSyTzUXUvA/guIjWBKZBQVSqEonrgW
-         ewHURwuIM3mznE78SeGlpnOT9TfsIoE7EnYaKiaK9fiE++iQyn8q3r+Gm2yRZKXIcOoe
-         AI1krpr7+3DqzEsLlhIdKa3T5bbif4iwc7pL9PkANyR1O/QFVhmMGXgj/jVS/VzH9UJ/
-         TYbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726075581; x=1726680381;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLZX+SWdHz2tB91UF3usEBJbpzw/IHLAgfNzOfmxmj0=;
-        b=QQnwIQJ3uDwACDk8gBmmdS/2R6M65S6vzC3ZfQ0J9NEuo8otgAZBHHx3BW5hiFf5hK
-         lFokNdiLo12e8rskofyAbcUBLZoDiXLTbixIASKb101WQIP0am2ZW+ftNZ1HrddlEuFf
-         mgSNToaxxrV+hF9CWGLyppKeqyXZRkqufvrr1c9H8dbvraNxIlhAbCcJhWeKze/+HOnx
-         5hlJma1SYM5lj74CZ2E2AbiD0sUPN+Ly+TbL9WUsIqoQslYPve1JNetmENj3IpivVWDU
-         GC9ZSJFKGKArcz2556Gb3NaHuxUfSN6JGEqXgXs++HqM3PJLQpRjposWj6f5/Vtsfy6L
-         L59g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUfDXqkVTrqr29e0UDgKTiLnxvZ2REaeUy1jYZa6/+iakXzAt88gzkSa1YZrMRYxj4HvmTSdkAcj9MKaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPq1F9lecmzJvYvEIn9E87FEn1RVTAJzuvtbdmksNn7dd0IeIU
-	/01BbG+3oNo5xfdgxndglG4IMwrj+IqEwvSYmaB/81A2hOSzZMLCb60oM0PBKPg=
-X-Google-Smtp-Source: AGHT+IFkbjwusK7GBMy+uvOrk1ENPvXDg5jbLTlihJ6/ABtP7FGYUmy39dxdfPmSU+lvToCwURKoow==
-X-Received: by 2002:a05:600c:5123:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-42cdb4e6bbcmr2458165e9.1.1726075580979;
-        Wed, 11 Sep 2024 10:26:20 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:7388:2adc:a5d5:ff63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5a66475sm118471705e9.44.2024.09.11.10.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 10:26:20 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,  Jean Delvare
- <jdelvare@suse.com>,  Guenter Roeck <linux@roeck-us.net>,  Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
-  Jonathan Corbet <corbet@lwn.net>,  Delphine CC Chiu
- <Delphine_CC_Chiu@wiwynn.com>,  linux-hwmon@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: hwmon: pmbus: add ti tps25990
- documentation
-In-Reply-To: <20240911144532.GA154835-robh@kernel.org> (Rob Herring's message
-	of "Wed, 11 Sep 2024 09:45:32 -0500")
-References: <20240909-tps25990-v1-0-39b37e43e795@baylibre.com>
-	<20240909-tps25990-v1-1-39b37e43e795@baylibre.com>
-	<3efbzcys4762rhx2h2cbhqvi6dgik7pfrxcziccdko34pb5z54@joodcym6c3s4>
-	<1jzfofsvmh.fsf@starbuckisacylon.baylibre.com>
-	<20240911144532.GA154835-robh@kernel.org>
-Date: Wed, 11 Sep 2024 19:26:19 +0200
-Message-ID: <1j7cbiqeys.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1726075598; c=relaxed/simple;
+	bh=V/0J+gwv/n3AtLA+rJXg3PKb+fScaPY1w1sU6qEwptg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltGanLv0McXL/4RHUow0Chysr/OoqSInragxED8LwtcJGWFaNQLZV8GFfPurD21XLN1U8c/08hTrGvt9Nc8hVfGt6QepaNUpn0f/wjwbX1BqqGOdZWurdP01QGi13HNynoCqZOSDtzyQC2riDuzxGZPn5eQmzapLi7vL17qPwvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rl5HHneR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=JnKWS+Fj8X3K2J34ug0Ii1c0TCxXIH/EG4XIfAwIB2E=; b=Rl5HHneRL2ql7I9bnSjF5Il1aV
+	yKkRuMHXQPLwE61I9My+acCCMpPwxrquNO4a/KXcDTM/z+WeOTvo2Yw7kbQGdnKixCDOjWF+Ij412
+	SXP/J2HOU4gwgA0JtU2K7gs7DPOEM+jisycvjOd6aqNRgs6ufFOo/u1UcUf30D/opz1I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soR6l-007Emn-6K; Wed, 11 Sep 2024 19:26:23 +0200
+Date: Wed, 11 Sep 2024 19:26:23 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
+Message-ID: <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
 
-On Wed 11 Sep 2024 at 09:45, Rob Herring <robh@kernel.org> wrote:
+> +static int pci11x1x_pcs_read(struct mii_bus *bus, int addr, int devnum,
+> +			     int regnum)
+> +{
+> +	struct lan743x_adapter *adapter = bus->priv;
+> +
+> +	if (addr)
+> +		return -EOPNOTSUPP;
+> +
+> +	return lan743x_sgmii_read(adapter, devnum, regnum);
+> +}
 
-> gOn Tue, Sep 10, 2024 at 11:31:18AM +0200, Jerome Brunet wrote:
->> On Tue 10 Sep 2024 at 09:48, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> 
->> > On Mon, Sep 09, 2024 at 05:39:03PM +0200, Jerome Brunet wrote:
->> >> Add DT binding documentation for the Texas Instruments TPS25990 eFuse
->> >> 
->> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> >> ---
->> >>  .../bindings/hwmon/pmbus/ti,tps25990.yaml          | 73 ++++++++++++++++++++++
->> >>  1 file changed, 73 insertions(+)
->> >>
->> >
->> > A nit, subject: drop second/last, redundant "documentation". The
->> > "dt-bindings" prefix is already stating that these are bindings/docs.
->> > See also:
->> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->> >
->> >> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
->> >> new file mode 100644
->> >> index 000000000000..e717942b3598
->> >> --- /dev/null
->> >> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
->> >> @@ -0,0 +1,73 @@
->> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> >> +%YAML 1.2
->> >> +---
->> >> +
->> >
->> > Drop blank line.
->> >
->> >> +$id: http://devicetree.org/schemas/hwmon/pmbus/ti,tps25990.yaml#
->> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> >> +
->> >> +title: Texas Instruments TPS25990 Stackable eFuse
->> >> +
->> >> +maintainers:
->> >> +  - Jerome Brunet <jbrunet@baylibre.com>
->> >> +
->> >> +description: |
->> >
->> > Do not need '|' unless you need to preserve formatting.
->> >
->> >> +  The TI TPS25990 is an integrated, high-current circuit
->> >> +  protection and power management device with PMBUS interface
->
-> And wrap at 80.
->
->> >> +
->> >> +properties:
->> >> +  compatible:
->> >> +    const: ti,tps25990
->> >> +
->> >> +  reg:
->> >> +    maxItems: 1
->> >> +
->> >> +  ti,rimon-milli-ohms:
->> >> +    description:
->> >> +      milli Ohms value of the resistance installed between the Imon pin
->> >> +      and the ground reference.
->> >
->> > Ohms is not enough? We don't have mOhm in property units.
->> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
->> >
->> 
->> Same discussion as we've had on the driver change.
->> At the moment Ohms is enough for the cases I've seen.
->> 
->> Will it be, not sure.
->> Using mOhms is' way to avoid "S**t, R is 80.2 Ohms, I
->> need another digit to not loose precision " kind of situation and
->> introduce a second property just for that.
->> 
->> No idea if Rimon will get that low. Probably not.
->> 
->> I'll switch to Ohms.
->
-> You can can use "-micro-ohms" too. The reason we don't have every 
-> possible unit is so we have everyone picking their own.
+>  static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
+>  {
+> +	struct dw_xpcs *xpcs;
+>  	u32 sgmii_ctl;
+>  	int ret;
+>  
+> @@ -3783,8 +3823,17 @@ static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
+>  				  "SGMII operation\n");
+>  			adapter->mdiobus->read = lan743x_mdiobus_read_c22;
+>  			adapter->mdiobus->write = lan743x_mdiobus_write_c22;
+> -			adapter->mdiobus->read_c45 = lan743x_mdiobus_read_c45;
+> -			adapter->mdiobus->write_c45 = lan743x_mdiobus_write_c45;
+> +			if (adapter->is_sfp_support_en) {
+> +				adapter->mdiobus->read_c45 =
+> +					pci11x1x_pcs_read;
+> +				adapter->mdiobus->write_c45 =
+> +					pci11x1x_pcs_write;
 
-Noted. after discussing with Guenter, I'll use micro-ohms in the next
-version, not ohms
+As you can see, the naming convention is to put the bus transaction
+type on the end. So please name these pci11x1x_pcs_read_c45...
 
->
-> Rob
+Also, am i reading this correct. C22 transfers will go out a
+completely different bus to C45 transfers when there is an SFP?
 
--- 
-Jerome
+If there are two physical MDIO busses, please instantiate two Linux
+MDIO busses.
+
+    Andrew
+
+---
+pw-bot: cr
 
