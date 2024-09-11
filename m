@@ -1,94 +1,175 @@
-Return-Path: <linux-kernel+bounces-325428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF1F975993
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8D5975999
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F423284D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3E71F27CD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21941B5808;
-	Wed, 11 Sep 2024 17:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059F1B4C3F;
+	Wed, 11 Sep 2024 17:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="scgVzA4j"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="uOWoJovH"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2281B3728;
-	Wed, 11 Sep 2024 17:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55D21B3F02;
+	Wed, 11 Sep 2024 17:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726076309; cv=none; b=tzWHhJmNe8t5Pl2Xc8AvGI8Ld4c8POY9xK9EKXATAhIiUjOvjnBPiUzfohs96tlOjof6EuRp3XDgxh0I9QVSDhVZDYZmdI2ZlkgqfKm9Ue1UI9RdfioZjuPRNSf9oHCoPFrNrm384vCV+oOxwpksQh+r0aDTAXVt6QeiL+13MwU=
+	t=1726076327; cv=none; b=T2DkCk7wFQcwire4d7IYxjTncRbvU8AyFq60XNFek1gYKJTnZofX3mf7ds8grdXxEp95WFG3JE1JediMEYm0b2JYGkOco19zwGSR6M/iOhxDuQKobB0w+76Vk1mPJqDIbGzzoOrKL1trutjLGNzAXAL8l+lXN71BpBo1DwvIVok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726076309; c=relaxed/simple;
-	bh=BilNsUvJfRZ0GdxlYYKIIPGj12hj2YnO3i7QFGfJO+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B33369qskUARfPZnSyzAwLhMZLZbSf+lX53qqV0OwaKYpWcPPxkSSrtJrhwHtpGyYdGkP+NfsNlkAgafZoOr6ag6yQ/zzdedAjC1HZMunsjoLmEYu/81cdRkjb3cQDE1gy+AfXZtJB5wbhMXX5S60Ijvt1mDU3D2kGlaFEnW8c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=scgVzA4j; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=pmQK4YmD0F9VOqXDapzYiQ6/zLcJ+MuI1M7o/Ocw+q0=; b=sc
-	gVzA4jV5GDYK4pWVF+DbLlZDJsqnf+AafEjWVOUKghHkXhlchmQ30xu0g87FrthH9ufzoVEvkFWJP
-	RDoQdtBlTvVweqD2zFvxCvpeq/ikkSX+nS4OqPL7ewAbYjpSjVb+eDZxVvVZZB43IbEh7wp82RhJT
-	xAWChL0G0BS93+8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1soRII-007Esq-PH; Wed, 11 Sep 2024 19:38:18 +0200
-Date: Wed, 11 Sep 2024 19:38:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: Simon Horman <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"yuehaibing@huawei.com" <yuehaibing@huawei.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Petr Machata <petrm@nvidia.com>
-Subject: Re: [PATCH net-next v2 2/2] net: ethtool: Add support for writing
- firmware blocks using EPL payload
-Message-ID: <76d49fe4-e2b4-43c4-83f9-07796f47ae1d@lunn.ch>
-References: <20240910090217.3044324-1-danieller@nvidia.com>
- <20240910090217.3044324-3-danieller@nvidia.com>
- <20240911073234.GJ572255@kernel.org>
- <cb9d0196-5b91-486b-932e-e73a391fa609@lunn.ch>
- <DM6PR12MB4516864A308D5BDFF0021129D89B2@DM6PR12MB4516.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1726076327; c=relaxed/simple;
+	bh=g6+wyN8Kv5Lg1kJXHnvJ2PGU1BTcbfK2lJBeOQXoYLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IQ+sbmEE/fQ060biWj4fbT8cX/iVh8Dp0AnShT1IR9FlqlZEZuTQgwWQVsG3jGTdkaLM2gSPL2gMQWQeZCCQH20+AUe+HxsDNHxhsFLV/5Ycc/tjuHaletftIOhBrkNqQjXiMB6yEp5TBip9lEUTQKpF7YqH0c5S7bKbsdxW9a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=uOWoJovH; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1726076308; x=1726681108; i=deller@gmx.de;
+	bh=Qhy9k2xtEcQS4WXvB5kAB9HrzDAfqIQg4cyJSLNvgIw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uOWoJovHO0PwCl/t6NszViYCwzoizCkBGVaOZepPBzBGz/X74hm8CIRQuc/elyQH
+	 BBpkX1layM/JYbhNatsZgz42x/TnzhUtpV5qfkOlEhPPHys/VkJPmTE6Jm137DYl6
+	 QA+nCA6ExKb4zrCQzvgAcbIwjtwsQr5DiCWmQo9oHcf5Ut0MOsGBbTfi0+c+9yEuA
+	 v++3xmQ82YJecqOjvm6zkh5A6W19lZD7zhz7+vOv80v1KSoDPty01gnVRhLA3hFlw
+	 3ZLGFVLt8sW2oCNEJdgQWpUVVrYezess2l4U43KTdVBLQAJq6NELMhUuIwlhNGhSi
+	 ygDDg/qKXw97wuXTyg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MLzFr-1sWUo12IOv-00YVXu; Wed, 11
+ Sep 2024 19:38:28 +0200
+Message-ID: <7baab3f7-1185-473d-83a7-07ad49a4130a@gmx.de>
+Date: Wed, 11 Sep 2024 19:38:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM6PR12MB4516864A308D5BDFF0021129D89B2@DM6PR12MB4516.namprd12.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: pxafb: Fix use after free vulnerability in
+ pxafb_driver Driver Due to Race Condition
+To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
+Cc: 21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
+ laurent.pinchart@ideasonboard.com
+References: <20240911142952.833223-1-kxwang23@m.fudan.edu.cn>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240911142952.833223-1-kxwang23@m.fudan.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:b/076N8l5mKvA6rGlpJwUtQfa7bjpxKRI0K+1CtW0NBLZoABanL
+ gzKuY/7W/xm19/aa52igjIyyzatXEWfaeMpH30KFaLJtITdsmSPD1J4E9Aoes7OM2hYN07o
+ 5LGbmLbwWspSgZXpbFcxXpGevZu7dvlhAd9UfiOTmNoOT5nR3VPt41fbhaDM2+mHB1eK7L/
+ dsLyrOuOAMy26tthdpQ5g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9VSz81223XM=;1HqNObzETcvWvPnGGo5oqwhDhPl
+ KlnIV0Qt3ivvcYOfLBJ6zV4MlRuWB3PgrqF6ILjzub6FUeGS6DfnO2o1k82xlrCL3Ll4VgJ2h
+ lONxSKUQllsLDp6rrXObjZ/Oap+VPKF66FbEcpWG70ir4daC6eLt50J6iUG3LJWVdxQvxgaT2
+ Y0Qa3IAJZ7LtskRCPAVRANSNi4xxI0v0ALEcciw2p1RRQfP6hwmg/fgZ85JTETH13r8UkY1Mn
+ 465tOtU6EdcCpmZqQCZPpLd1zAlXlmSNsQ1de7Uddv0Q26kHhlJTelN4S8s2FEpynIAGlpB8s
+ UJEWLBeLkqS1MV7l+8iLzmJ4ZwcxackPlKcUtAq+chRZPjXOSOa/UdwEWTRyiovfTApTSW9Nd
+ zLChc7VLzODj4+mKtDT5fpUw6q/crmu5ySYMN4QxbUsDssYL0hyDXFf30MmHxSmVjRCpQ8Jlt
+ p8SoNBVfS1FBHjqlW39m8V3lIxuitQmtM0zFCcCIx7jdDFdj2jDea+GwHSgMNSmdZVf8NK2jc
+ l9P4QlyRZ+Cu2VD+aEiyXz+sAMzn/3UTRMMHdqb5A2UcIEZK5rX/hp4pcbQR1ZWJ0FT4LoUoD
+ afK2unhM6QHZYbE5KC8LxgO45QplWYtSWtSKNhy2u6VWEhRwYcTejr1ye/WR03uzpSRgYWO5O
+ CZcL6er0zF3lV6IO04of8DLyzHEv2pJRZrY59fWeerrm4accZxug/gjest+Tspn+6fIN9ABsa
+ +jhbGAETjiH+/ro6Ani2LMi1Du5WTCwP0bbtD0/V4KFvVuTTxuEZF4BLL7VvFBxipQwVs87HR
+ NbpPTMVyfXQWpnxw3big5PGw==
 
-> Hi Andrew,
-> 
-> In both cases we transfer the same size of data, which corresponds to the size of the firmware image, to the module.
-> Moreover, in both cases the same size of data is passing on the wire, which depends on the wire obligations.
-> 
-> But, instead of running #n "0103h: Write FW Block LPL" commands (see section 9.7.4 in CMIS 5.2) with up to 128 bytes, we are running #n/16 "0104h: Write FW Block EPL" commands (see section 9.7.5 in CMIS 5.2) with up to 2048 bytes.
-> That means that instead of processing #n commands and sending back to the core the status for each one, we do it for only #n/16.
+On 9/11/24 16:29, Kaixin Wang wrote:
+> In the pxafb_probe function, it calls the pxafb_init_fbinfo function,
+> after which &fbi->task is associated with pxafb_task. Moreover,
+> within this pxafb_init_fbinfo function, the pxafb_blank function
+> within the &pxafb_ops struct is capable of scheduling work.
+>
+> If we remove the module which will call pxafb_remove to make cleanup,
+> it will call unregister_framebuffer function which can call
+> do_unregister_framebuffer to free fbi->fb through
+> put_fb_info(fb_info), while the work mentioned above will be used.
+> The sequence of operations that may lead to a UAF bug is as follows:
+>
+> CPU0                                                CPU1
+>
+>                                     | pxafb_task
+> pxafb_remove                       |
+> unregister_framebuffer(info)       |
+> do_unregister_framebuffer(fb_info) |
+> put_fb_info(fb_info)               |
+> // free fbi->fb                    | set_ctrlr_state(fbi, state)
+>                                     | __pxafb_lcd_power(fbi, 0)
+>                                     | fbi->lcd_power(on, &fbi->fb.var)
+>                                     | //use fbi->fb
+>
+> Fix it by ensuring that the work is canceled before proceeding
+> with the cleanup in pxafb_remove.
+>
+> Note that only root user can remove the driver at runtime.
+>
+> Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
+> ---
+>   drivers/video/fbdev/pxafb.c | 1 +
+>   1 file changed, 1 insertion(+)
 
-O.K, thanks.
+I've added the patch to the fbdev git tree, but changed the title to:
+"fbdev: pxafb: Fix possible use after free in pxafb_task()"
 
-> The standard does not say anything about the I2C layer, but the
-> speedup doesn’t lie in that.
+Thanks!
+Helge
 
-What does your hardware do? Can it do 2048 byte I2C bus transfers? Or
-is it getting chopped up into smaller chunks?
-
-Thanks
-	Andrew
 
