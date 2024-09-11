@@ -1,297 +1,132 @@
-Return-Path: <linux-kernel+bounces-325397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C6A975925
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:16:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B577975929
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26271289BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0218E1F27786
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F331AED3F;
-	Wed, 11 Sep 2024 17:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B4F1B142E;
+	Wed, 11 Sep 2024 17:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5h/f8eP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qs45Z9y0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BA55FB8D;
-	Wed, 11 Sep 2024 17:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE5C5FB8D;
+	Wed, 11 Sep 2024 17:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726075009; cv=none; b=msGCjIHVZeoQwoslAQGin13tbeIvnNk3aKZAJjZXSd1hwTk/0egt/LIOK4RYNqNkh+/areof14TQKOkodE/N+tbrqf5Ww3yJ93X1wWyFoCp8NUnS5Uv9l4p+iliMvr4mZmGmW6q7eC+ITkdoLwfNrlS/c5NeWt4poiavKw/WkRc=
+	t=1726075048; cv=none; b=JMIGTibQYfKo7azPQuSC4Sr9jlbwVh820B308bZpt1dVEwlC8d93nYCEaLSSJo8mKYHj9llx4lqS44NdgdOlqryLPl/8dritzL39EFz+BaErRkeuEDLk2AGlIQzuCDxUW2ez09/w8Y1fAtuQlHvU2VUROg/GmTDrpQUw4m7hhoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726075009; c=relaxed/simple;
-	bh=gk0D7dk5m/BqadUrmqslhatWswvf3Qbg/fuZ/ZCamp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QRlNRl6NUJ8kE11CZ/gMG/cgL1gIAItdnVP01/bTgBQ5G1Ta2fll9ZNdlWjcXkiPIhdF49cq1pcBR0zNGVQnc7ym1lXtAAJCai8USluGRaEUswagI7aKYJS15EpfKdRsF9MeXx08ObRafhEYSFV7d49hT6wty5dcOigUhHeXFPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q5h/f8eP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E72AC4CEC0;
-	Wed, 11 Sep 2024 17:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726075009;
-	bh=gk0D7dk5m/BqadUrmqslhatWswvf3Qbg/fuZ/ZCamp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=q5h/f8ePlcZq4YataaiDmY/JwIgU8pNEogVkh08iVQsVbCcRKOBPSsUZVzacShRe+
-	 tx4nknFwAtamNixru3tZO6RZByE+ilXcczMCe1UVlieRro1JtFLDvAw2RlkPGHSkef
-	 kfb9ScC3CEO+XHHmjqxTFvDMChz2s/0nF+C2lkZdl+wW6FNIoSEC4fb/KaG2ZzyWcw
-	 fwC4SQXg69TLdPAgH4tTzPqwHXRFQgMGuV+wL310qR35Ygt5rDIoRdxYNSJ97HH78Q
-	 GGPVqx1opDEWVPeFg9GyeTd7Pt7G5y2rXP1N2lhSc1N+wPXd5MJwrNN7qAr7l1kOTh
-	 7tg/ywg2yVsIw==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Tao Chiu <andybnac@gmail.com>
-Cc: alexghiti@rivosinc.com, andy.chiu@sifive.com, aou@eecs.berkeley.edu,
- justinstitt@google.com, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- llvm@lists.linux.dev, mark.rutland@arm.com, mhiramat@kernel.org,
- morbo@google.com, nathan@kernel.org, ndesaulniers@google.com,
- palmer@dabbelt.com, palmer@rivosinc.com, paul.walmsley@sifive.com,
- puranjay@kernel.org, rostedt@goodmis.org, zong.li@sifive.com,
- yongxuan.wang@sifive.com
-Subject: Re: [PATCH v2 3/6] riscv: ftrace: prepare ftrace for atomic code
- patching
-In-Reply-To: <CAFTtA3PYsdSio0EqkUKQpyLiMuY9iynOdWQAkebAPjL6THEaMQ@mail.gmail.com>
-References: <87sev78dnz.fsf@all.your.base.are.belong.to.us>
- <ZuFteQ3t8K4h2-kJ@Andys-MacBook-Air.local>
- <87v7z2dzo6.fsf@all.your.base.are.belong.to.us>
- <CAFTtA3PYsdSio0EqkUKQpyLiMuY9iynOdWQAkebAPjL6THEaMQ@mail.gmail.com>
-Date: Wed, 11 Sep 2024 19:16:45 +0200
-Message-ID: <87r09qdsaq.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1726075048; c=relaxed/simple;
+	bh=5UYjBU3+9f00Np4eAEbrOzDEg12YW2NhV/ZLEb9TKVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UD09OiKZtH8TvxEEsnf+2fdottLYLw50s5mkf2r+odq9pz58oEjI+yxc0DUDoeTomSFIxQaW2K2+5TCIwyYqy52rXdvmcEbbqvdJtDehN0zGBJLgxIhHvI1m9QpkcVC6ABnxuzsKpyU4CMA8x2pTGIlqdeD/V/kmJTUpQiPn6ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qs45Z9y0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AoOBj7v9nDNKWYQoDY048eHpYi95ao0hxBfOBrjvCak=; b=qs45Z9y04KuW6iWKLiBjF3McLC
+	Z/wG2hq9fjVH5JvdGznc4BGIn3p9Xrc6VfWHVDh6khYfdENippiKCDA3pDac2m1LMhenISso4vi8U
+	rlU83UehjON5gTygZJdVz2T0UXxZcAiPN06/YYriWkSwEDkDaI4UZ2lT2Q/o7eN8sb3E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soQxu-007Eix-Ik; Wed, 11 Sep 2024 19:17:14 +0200
+Date: Wed, 11 Sep 2024 19:17:14 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 2/5] net: lan743x: Add support to
+ software-nodes for sfp
+Message-ID: <cb39041e-9b72-4b76-bfd7-03f825b20f23@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
 
-Tao Chiu <andybnac@gmail.com> writes:
+> diff --git a/drivers/net/ethernet/microchip/Kconfig b/drivers/net/ethernet/microchip/Kconfig
+> index 2e3eb37a45cd..9c08a4af257a 100644
+> --- a/drivers/net/ethernet/microchip/Kconfig
+> +++ b/drivers/net/ethernet/microchip/Kconfig
+> @@ -50,6 +50,8 @@ config LAN743X
+>  	select CRC16
+>  	select CRC32
+>  	select PHYLINK
+> +	select I2C_PCI1XXXX
+> +	select GP_PCI1XXXX
 
-> Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=
-=8811=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8810:37=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
->>
->> Andy Chiu <andybnac@gmail.com> writes:
->>
->> > On Wed, Aug 14, 2024 at 02:57:52PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
->> >> Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
->> >>
->> >> > Andy Chiu <andy.chiu@sifive.com> writes:
->> >> >
->> >> >> We use an AUIPC+JALR pair to jump into a ftrace trampoline. Since
->> >> >> instruction fetch can break down to 4 byte at a time, it is imposs=
-ible
->> >> >> to update two instructions without a race. In order to mitigate it=
-, we
->> >> >> initialize the patchable entry to AUIPC + NOP4. Then, the run-time=
- code
->> >> >> patching can change NOP4 to JALR to eable/disable ftrcae from a
->> >> >                                       enable        ftrace
->> >> >
->> >> >> function. This limits the reach of each ftrace entry to +-2KB disp=
-lacing
->> >> >> from ftrace_caller.
->> >> >>
->> >> >> Starting from the trampoline, we add a level of indirection for it=
- to
->> >> >> reach ftrace caller target. Now, it loads the target address from a
->> >> >> memory location, then perform the jump. This enable the kernel to =
-update
->> >> >> the target atomically.
->> >> >
->> >> > The +-2K limit is for direct calls, right?
->> >> >
->> >> > ...and this I would say breaks DIRECT_CALLS (which should be implem=
-ented
->> >> > using call_ops later)?
->> >>
->> >> Thinking a bit more, and re-reading the series.
->> >>
->> >> This series is good work, and it's a big improvement for DYNAMIC_FTRA=
-CE,
->> >> but
->> >>
->> >> +int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
->> >> +{
->> >> +    unsigned long distance, orig_addr;
->> >> +
->> >> +    orig_addr =3D (unsigned long)&ftrace_caller;
->> >> +    distance =3D addr > orig_addr ? addr - orig_addr : orig_addr - a=
-ddr;
->> >> +    if (distance > JALR_RANGE)
->> >> +            return -EINVAL;
->> >> +
->> >> +    return __ftrace_modify_call(rec->ip, addr, false);
->> >> +}
->> >> +
->> >>
->> >> breaks WITH_DIRECT_CALLS. The direct trampoline will *never* be within
->> >> the JALR_RANGE.
->> >
->> >
->> > Yes, it is hardly possible that a direct trampoline will be within the
->> > range.
->> >
->> > Recently I have been thinking some solutions to address the issue. One
->> > solution is replaying AUIPC at function entries. The idea has two side=
-s.
->> > First, if we are returning back to the second instruction at trap retu=
-rn,
->> > then do sepc -=3D 4 so it executes the up-to-date AUIPC. The other sid=
-e is
->> > to fire synchronous IPI that does remote fence.i at right timings to
->> > prevent concurrent executing on a mix of old and new instructions.
->> >
->> > Consider replacing instructions at a function's patchable entry with t=
-he
->> > following sequence:
->> >
->> > Initial state:
->> > --------------
->> > 0: AUIPC
->> > 4: JALR
->> >
->> > Step1:
->> > write(0, "J +8")
->> > fence w,w
->> > send sync local+remote fence.i
->> > ------------------------
->> > 0: J +8
->> > 4: JALR
->> >
->> > Step2:
->> > write(4, "JALR'")
->> > fence w,w
->> > send sync local+remote fence.i
->> > ------------------------
->> > 0: J +8
->> > 4: JALR'
->> >
->> > Step3:
->> > write(0, "AUIPC'")
->> > fence w,w
->> > send sync local+remote fence.i (to activate the call)
->> > -----------------------
->> > 0: AUIPC'
->> > 4: JALR'
->> >
->> > The following execution sequences are acceptable:
->> > - AUIPC, JALR
->> > - J +8, (skipping {JALR | JALR'})
->> > - AUIPC', JALR'
->> >
->> > And here are sequences that we want to prevent:
->> > - AUIPC', JALR
->> > - AUIPC, JALR'
->> >
->> > The local core should never execute the forbidden sequence.
->> >
->> > By listing all possible combinations of executing sequence on a remote
->> > core, we can find that the dangerous seqence is impossible to happen:
->> >
->> > let f be the fence.i at step 1, 2, 3. And let numbers be the location =
-of
->> > code being executed. Mathematically, here are all combinations at a si=
-te
->> > happening on a remote core:
->> >
->> > fff04 -- updated seq
->> > ff0f4 -- impossible, would be ff0f04, updated seq
->> > ff04f -- impossible, would be ff08f, safe seq
->> > f0ff4 -- impossible, would be f0ff04, updated seq
->> > f0f4f -- impossible, would be f0f08f (safe), or f0f0f04 (updated)
->> > f04ff -- impossible, would be f08ff, safe seq
->> > 0fff4 -- impossible, would be 0fff04, updated seq
->> > 0ff4f -- impossible, would be 0ff08f (safe), or 0ff0f04 (updated)
->> > 0f4ff -- impossible, would be 0f08ff (safe), 0f0f08f (safe), 0f0f0f04 =
-(updated)
->> > 04fff -- old seq
->> >
->> > After the 1st 'fence.i', remote cores should observe (J +8, JALR) or (=
-J +8, JALR')
->> > After the 2nd 'fence.i', remote cores should observe (J +8, JALR') or =
-(AUIPC', JALR')
->> > After the 3rd 'fence.i', remote cores should observe (AUIPC', JALR')
->> >
->> > Remote cores should never execute (AUIPC',JALR) or (AUIPC,JALR')
->> >
->> > To correctly implement the solution, the trap return code must match J=
-ALR
->> > and adjust sepc only for patchable function entries. This is undocumen=
-tly
->> > possible because we use t0 as source and destination registers for JALR
->> > at function entries. Compiler never generates JALR that uses the same
->> > register pattern.
->> >
->> > Another solution is inspired by zcmt, and perhaps we can optimize it if
->> > the hardware does support zcmt. First, we allocate a page and divide it
->> > into two halves. The first half of the page are 255 x 8B destination
->> > addresses. Then, starting from offset 2056, the second half of the page
->> > is composed by a series of 2 x 4 Byte instructions:
->> >
->> > 0:    ftrace_tramp_1
->> > 8:    ftrace_tramp_2
->> > ...
->> > 2040: ftrace_tramp_255
->> > 2048: ftrace_tramp_256 (not used when configured with 255 tramps)
->> > 2056:
->> > ld    t1, -2048(t1)
->> > jr    t1
->> > ld    t1, -2048(t1)
->> > jr    t1
->> > ...
->> > 4088:
->> > ld    t1, -2048(t1)
->> > jr    t1
->> > 4096:
->> >
->> > It is possible to expand to 511 trampolines by adding a page
->> > below, and making a load+jr sequence from +2040 offset.
->> >
->> > When the kernel boots, we direct AUIPCs at patchable entries to the pa=
-ge,
->> > and disable the call by setting the second instruction to NOP4. Then, =
-we
->> > can effectively enable/disable/modify a call by setting only the
->> > instruction at JALR. It is possible to utilize most of the current pat=
-ch
->> > set to achieve atomic patching. A missing part is to allocate and mana=
-ge
->> > trampolines for ftrace users.
->>
->> (I will need to digest above in detail!)
->>
->> I don't think it's a good idea to try to handle direct calls w/o
->> call_ops. What I was trying to say is "add the call_ops patch to your
->> series, so that direct calls aren't broken". If direct calls depend on
->> call_ops -- sure, no worries. But don't try to get direct calls W/O
->> call_ops. That's a whole new bag of worms.
->>
->> Some more high-level thoughts: ...all this to workaround where we don't
->> want the call_ops overhead? Is there really a use-case with a platform
->> that doesn't handle the text overhead of call_ops?
->
-> Sorry for making any confusions. I have no strong personal preference
-> on what we should do. Just want to have a technical discussion on what
-> is possible if we want to optimize code size.
+GP_ is odd. GPIO drivers usually use GPIO_. Saying that, GPIO_PCI1XXXX
+is not in 6.11-rc7. Is it in gpio-next?
 
-Understood! I'm -- as you know -- really eager to have a text patching
-mechanism that is not horrible. ;-) I'd rather wait with the text size
-optimizations.
+> +static void *pci1xxxx_perif_drvdata_get(struct lan743x_adapter *adapter,
+> +					u16 perif_id)
+> +{
+> +	struct pci_dev *pdev = adapter->pdev;
+> +	struct pci_bus *perif_bus;
+> +	struct pci_dev *perif_dev;
+> +	struct pci_dev *br_dev;
+> +	struct pci_bus *br_bus;
+> +	struct pci_dev *dev;
+> +
+> +	/* PCI11x1x devices' PCIe topology consists of a top level pcie
+> +	 * switch with up to four downstream ports, some of which have
+> +	 * integrated endpoints connected to them. One of the downstream ports
+> +	 * has an embedded single function pcie ethernet controller which is
+> +	 * handled by this driver. Another downstream port has an
+> +	 * embedded multifunction pcie endpoint, with four pcie functions
+> +	 * (the "peripheral controllers": I2C controller, GPIO controller,
+> +	 * UART controllers, SPIcontrollers)
+> +	 * The code below navigates the PCI11x1x topology
+> +	 * to find (by matching its PCI device ID) the peripheral controller
+> +	 * that should be paired to the embedded ethernet controller.
+> +	 */
+> +	br_dev = pci_upstream_bridge(pdev);
+> +	if (!br_dev) {
+> +		netif_err(adapter, drv, adapter->netdev,
+> +			  "upstream bridge not found\n");
+> +		return br_dev;
+> +	}
+> +
+> +	br_bus = br_dev->bus;
+> +	list_for_each_entry(dev, &br_bus->devices, bus_list) {
+> +		if (dev->vendor == PCI1XXXX_VENDOR_ID &&
+> +		    (dev->device & ~PCI1XXXX_DEV_MASK) ==
+> +		     PCI1XXXX_BR_PERIF_ID) {
+> +			perif_bus = dev->subordinate;
+> +			list_for_each_entry(perif_dev, &perif_bus->devices,
+> +					    bus_list) {
+> +				if (perif_dev->vendor == PCI1XXXX_VENDOR_ID &&
+> +				    (perif_dev->device & ~PCI1XXXX_DEV_MASK) ==
+> +				     perif_id)
+> +					return pci_get_drvdata(perif_dev);
+> +			}
+> +		}
+> +	}
 
-TL;DR -- your series is fine from my POV, but it's missing call_ops, so
-that it doesn't break direct calls.
+It would be good to have the PCI Maintainers review of this. Maybe
+pull this out into a patch of its own and Cc: Bjorn Helgaas
+<bhelgaas@google.com>
 
-I will take your patch series, and Puranjay's call_ops series see how
-they play together.
-
-We can discuss it at LPC next week!
-
-
-Cheers,
-Bj=C3=B6rn
+	Andrew
 
