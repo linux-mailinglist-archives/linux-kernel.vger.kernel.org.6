@@ -1,212 +1,193 @@
-Return-Path: <linux-kernel+bounces-324051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FBC97474D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9043297474E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4FB1F26EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:22:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01488B23E90
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC21B665;
-	Wed, 11 Sep 2024 00:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E56FD5;
+	Wed, 11 Sep 2024 00:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAJYtQne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="FtovG+4u"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C20F6FD5;
-	Wed, 11 Sep 2024 00:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE7D184D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726014146; cv=none; b=oEU4YCdJqP/55Au0k1ZTowQ1W/fY2Vkf+c60OeDUXgtG9oJREKhawBreHQu5X9tRIS5bwn1+Bk7coLxcqZV4Nov+Xd4W6sh7o8YRGx4L86MP/oceE3GrOGvVPF/x35ENig0EX47meShL3R5UIZxyjn02Bis0urSr5MBVR+6nwkU=
+	t=1726014233; cv=none; b=BOVehoYrpyBMwlTYXuqRXcxAlB1upf5dob8wXp4fKToWFz5nVzfc4ZRMz31hDzaVt9Vo8Aqh662J3kv4VfRDOEYj3t4su9cHvwjRxauuW3DeJ7Bq07+QCLCe54CgMAx4on12yE1XpzEZrt/L8Jjc+XNeCRfLr/efHwYZpPOltJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726014146; c=relaxed/simple;
-	bh=+LNBlMyxvbRaAdNBPQigbMl3HJSQC/MdjwNU5oKAVHk=;
+	s=arc-20240116; t=1726014233; c=relaxed/simple;
+	bh=cSBsfCHK9nPfzACDzVdM/MKB8zB/zy5hqepkOz5E+kM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SlRXU2BLvFpI1KbNPmW8nilt9sfrr/0zTmbRzawcs8xlBmCKwYr1h6rDy1HoorekiGl3m1S2pmWuyZsU+zWjudwcN6t27QiBC27+Bgw3EobtsKyjLW+nPsIBfw+sJDWVu6dJPx5B2wXfe797zP/it4FJxP9WNF/WAjr8YX1/bYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAJYtQne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5253FC4CEC3;
-	Wed, 11 Sep 2024 00:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726014146;
-	bh=+LNBlMyxvbRaAdNBPQigbMl3HJSQC/MdjwNU5oKAVHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAJYtQneMjP2OTggHTC04Y8ifcN8qpmSKrlfbNZBRBUS1YOLFp6Tw0Pg2M5ofNBON
-	 rgYZ3fTXmv6FWzOWn4J9+dHgLT1vyLVm558Q707l+6gTid+GW9xud7siZbunA3quaq
-	 4z2wymSbLAj9BrDwnxvuOinbbeY7gKYJigBbt3h+xqNP6CyEqwp8OmRBplnS8oBKLs
-	 iwOFz7AgmitwtSxMfd7S7YmGEkrQ2ZrJPxbdSFEVUF5R/6XMWhOEqF7hqdHO7RwLky
-	 2E7FnESyKsFOP9CC6nECWz1y7RiZs8dqbw3x9oKnKp05Fxc0W8rM4kx6vih2sF6O6F
-	 +yKnC5/hNir4w==
-Date: Wed, 11 Sep 2024 02:22:18 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 15/26] rust: alloc: implement `collect` for `IntoIter`
-Message-ID: <ZuDiurdQfvmewzDh@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-16-dakr@kernel.org>
- <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MG9M+rTw1+yNwVuWKoqdUhU+n/5TaHL3whSmcpFams3liS7tRsWaIM+EbqlARiZx4YNVHfnqKq6Xey/PIdSDsFKUIuH2t0O+ASL4ofS3wZyE4iD9ZQLSz9u7Ppeg1w0YCgXPqr9iN1NvrvIyIkxgz7ibQno7XlocYEpqf3y7T7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=FtovG+4u; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=FtovG+4u;
+	dkim-atps=neutral
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id 155B55D3
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:23:45 +0900 (JST)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-205428e6facso77350855ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atmark-techno.com; s=google; t=1726014224; x=1726619024; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xWAl5lGM4zIiLjsv0PKGGyk+U6ZWLatC9GMlGoP1sOY=;
+        b=FtovG+4uCHEpXUdDM8Vt89AQK3Ip8Kp2+uYX+9JopqABKP9cg6Magn+Dqv758pyrdU
+         U7D83AVVVyfXoWHBuCi2BPhofIn/eU/fSmWryVC/wLirdtcgaNiZmgE4wvRqZy2Fl12f
+         aBrMNYjoUs34f28yja4cqdt68VeJ5kslL1UWh9Vd5rEGgLzjzThQxdvVD6azvj4UdOkg
+         gLKkvA3jZmKdrUblec6uYqVG9k3ttsDNajZX148L0HyAqaq+Fxpm/IqsYkuq3ooBCcJJ
+         GovL6/FOEfHdJB/zYs+BwVw11wfuBxJ9kPlcMZSR09ZwbDZmIhWd4miV2S+/aTNOSFHW
+         +YHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726014224; x=1726619024;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xWAl5lGM4zIiLjsv0PKGGyk+U6ZWLatC9GMlGoP1sOY=;
+        b=soxDgQuRxZj5aCdv9FHdCcjN6fIHwFMM0MIov5PVPed6D0qNVHV3SJ+tIzoKzY125c
+         ilKYo3twt0izGokRDl+U51N4OPjGhiLognwrt5y8Ei2PMgbMEdNO6FnKg1WZnH2IEDH6
+         /WsJo73QXHoYkhJVqflVzrlGYeGq/7F03j8067tB2tjjnHiS56O14vI/R+aJUGBM94mP
+         +epWkuhMjZBaBRkunCV9Jx8bD5uLvwAIyz2j4MprJ9iS+lP7o/kGfiVQvP1tM3xoHaJj
+         qkGKafJuRZRVEdkYH925E84Vzw2dqQEJWI+qzEM2U7BtiX7M9kMzec6v0g1yNoNoRLuv
+         cLYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWso5uFv2U3ZgzeudiyFwmIJCzZlyPg2wy4miVDFqIok8cFih2bMfyAsEUJMhW8YC7LMv9yKRnB5y/flM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+kAc6gZZWGVI/8K4oL9LX9Ladjcc1i75y6B88HZFUA0Y8y6qG
+	FRmhFWtpuSDrzSyc9YeMCklNtJtzxPCj6wtphhL3IamFE6/TSEQj1Dh0CCXbWXZYNxftpnTDGIR
+	85ohrL6HWBQ1hgNO90ccuuzKtjoi5s9cKkSM0MAymEYjkdsim/I/N55uTvp8+exk=
+X-Received: by 2002:a17:903:41c3:b0:205:68a4:b2d9 with SMTP id d9443c01a7336-2074c70ec52mr32126195ad.48.1726014224075;
+        Tue, 10 Sep 2024 17:23:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6qhOJonASH42vWnoWDp8Di47y4f4/0X2Q+DYlOavyzi2Fm4h1OKvu1K9Sn/u2x1rhAnod7g==
+X-Received: by 2002:a17:903:41c3:b0:205:68a4:b2d9 with SMTP id d9443c01a7336-2074c70ec52mr32125895ad.48.1726014223636;
+        Tue, 10 Sep 2024 17:23:43 -0700 (PDT)
+Received: from localhost (178.101.200.35.bc.googleusercontent.com. [35.200.101.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2071a6109cfsm48806255ad.175.2024.09.10.17.23.42
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2024 17:23:43 -0700 (PDT)
+Date: Wed, 11 Sep 2024 09:23:31 +0900
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+To: Frieder Schrempf <frieder@fris.de>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	Vinod Koul <vkoul@kernel.org>, Adam Ford <aford173@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 0/2] Extending PLL LUT for i.MX8MP Samsung HDMI PHY
+Message-ID: <ZuDjAwPxHeJTvXAp@atmark-techno.com>
+References: <20240910181544.214797-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me>
+In-Reply-To: <20240910181544.214797-1-frieder@fris.de>
 
-On Tue, Sep 10, 2024 at 08:12:24PM +0000, Benno Lossin wrote:
-> On 16.08.24 02:10, Danilo Krummrich wrote:
-> > Currently, we can't implement `FromIterator`. There are a couple of
-> > issues with this trait in the kernel, namely:
-> > 
-> >   - Rust's specialization feature is unstable. This prevents us to
-> >     optimze for the special case where `I::IntoIter` equals `Vec`'s
-> >     `IntoIter` type.
-> >   - We also can't use `I::IntoIter`'s type ID either to work around this,
-> >     since `FromIterator` doesn't require this type to be `'static`.
-> >   - `FromIterator::from_iter` does return `Self` instead of
-> >     `Result<Self, AllocError>`, hence we can't properly handle allocation
-> >     failures.
-> >   - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle
-> >     additional allocation flags.
-> > 
-> > Instead, provide `IntoIter::collect`, such that we can at least convert
-> > `IntoIter` into a `Vec` again.
-> > 
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/alloc/kvec.rs | 78 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 78 insertions(+)
-> > 
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > index 3b79f977b65e..ad96f4c3af9e 100644
-> > --- a/rust/kernel/alloc/kvec.rs
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -681,6 +681,84 @@ impl<T, A> IntoIter<T, A>
-> >      fn as_raw_mut_slice(&mut self) -> *mut [T] {
-> >          ptr::slice_from_raw_parts_mut(self.ptr, self.len)
-> >      }
-> > +
-> > +    fn into_raw_parts(self) -> (*mut T, NonNull<T>, usize, usize) {
-> > +        let me = ManuallyDrop::new(self);
-> > +        let ptr = me.ptr;
-> > +        let buf = me.buf;
-> > +        let len = me.len;
-> > +        let cap = me.cap;
-> > +        (ptr, buf, len, cap)
-> > +    }
-> > +
-> > +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIter`.
-> > +    ///
-> > +    /// Currently, we can't implement `FromIterator`. There are a couple of issues with this trait
-> > +    /// in the kernel, namely:
-> > +    ///
-> > +    /// - Rust's specialization feature is unstable. This prevents us to optimze for the special
-> > +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
-> > +    /// - We also can't use `I::IntoIter`'s type ID either to work around this, since `FromIterator`
-> > +    ///   doesn't require this type to be `'static`.
-> > +    /// - `FromIterator::from_iter` does return `Self` instead of `Result<Self, AllocError>`, hence
-> > +    ///   we can't properly handle allocation failures.
-> > +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle additional allocation
-> > +    ///   flags.
-> > +    ///
-> > +    /// Instead, provide `IntoIter::collect`, such that we can at least convert a `IntoIter` into a
-> > +    /// `Vec` again.
-> 
-> I think it's great that you include this in the code, but I don't think
-> that it should be visible in the documentation,
+Frieder Schrempf wrote on Tue, Sep 10, 2024 at 08:14:51PM +0200:
+> [2] https://codeberg.org/fschrempf/samsung-hdmi-phy-pll-calculator/src/branch/main/pll.py
 
-Why not? I think this information is valuable for users of this API.
+Great work! Thanks!
 
-> can you move it under
-> the `Examples` section and turn it into normal comments?
-> 
-> > +    ///
-> > +    /// Note that `IntoIter::collect` doesn't require `Flags`, since it re-uses the existing backing
-> > +    /// buffer. However, this backing buffer may be shrunk to the actual count of elements.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let v = kernel::kvec![1, 2, 3]?;
-> > +    /// let mut it = v.into_iter();
-> > +    ///
-> > +    /// assert_eq!(it.next(), Some(1));
-> > +    ///
-> > +    /// let v = it.collect(GFP_KERNEL);
-> > +    /// assert_eq!(v, [2, 3]);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
-> > +        let (mut ptr, buf, len, mut cap) = self.into_raw_parts();
-> > +        let has_advanced = ptr != buf.as_ptr();
-> > +
-> > +        if has_advanced {
-> > +            // SAFETY: Copy the contents we have advanced to at the beginning of the buffer.
-> 
-> This first sentence should not be part of the SAFETY comment.
-> 
-> > +            // `ptr` is guaranteed to be between `buf` and `buf.add(cap)` and `ptr.add(len)` is
-> > +            // guaranteed to be smaller than `buf.add(cap)`.
-> 
-> This doesn't justify all the requirements documented in [1].
-> 
-> [1]: https://doc.rust-lang.org/core/ptr/fn.copy.html#safety
-> 
-> > +            unsafe { ptr::copy(ptr, buf.as_ptr(), len) };
-> > +            ptr = buf.as_ptr();
-> > +        }
-> > +
-> > +        // This can never fail, `len` is guaranteed to be smaller than `cap`.
-> > +        let layout = core::alloc::Layout::array::<T>(len).unwrap();
-> > +
-> > +        // SAFETY: `buf` points to the start of the backing buffer and `len` is guaranteed to be
-> > +        // smaller than `cap`. Depending on `alloc` this operation may shrink the buffer or leaves
-> > +        // it as it is.
-> > +        ptr = match unsafe { A::realloc(Some(buf.cast()), layout, flags) } {
-> > +            // If we fail to shrink, which likely can't even happen, continue with the existing
-> > +            // buffer.
-> > +            Err(_) => ptr,
-> > +            Ok(ptr) => {
-> > +                cap = len;
-> > +                ptr.as_ptr().cast()
-> > +            }
-> > +        };
-> > +
-> > +        // SAFETY: If the iterator has been advanced, the advanced elements have been copied to
-> > +        // the beginning of the buffer and `len` has been adjusted accordingly. `ptr` is guaranteed
-> > +        // to point to the start of the backing buffer. `cap` is either the original capacity or,
-> > +        // after shrinking the buffer, equal to `len`. `alloc` is guaranteed to be unchanged since
-> > +        // `into_iter` has been called on the original `Vec`.
-> 
-> Turn this into bullet points please.
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +        unsafe { Vec::from_raw_parts(ptr, len, cap) }
-> > +    }
-> >  }
-> > 
-> >  impl<T, A> Iterator for IntoIter<T, A>
-> > --
-> > 2.46.0
-> > 
-> 
+I was curious about the existing table entries, recomputing existing
+values doesn't yield the same values. For example, the first entry is
+{
+        .pixclk = 22250000,
+        .pll_div_regs = { 0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x80, 0x40 },
+}
+but computing it yields
+{
+    .pixclk = 22250000,
+    .pll_div_regs = { 0xd1, 0x4a, 0xf0, 0xef, 0x10, 0x81, 0x40 },
+}
+
+I assume there just are multiple ways to generate the same frequencies,
+which is fine in itself, but it'd be great to be able to "back-compute"
+the entries as a sanity check.
+
+I've played a bit with your script and spent more time on it than I'd
+like to admit, but something like this seems to do the trick, plugging
+in the regs from the kernel:
+
+---
+pll = FractionalNPLL(freq_ref)
+
+regs = [0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x80, 0x40]
+# assume fractional
+if not regs[0] & 0xD0:
+    print("reg[0] missing 0xD0")
+    sys.exit(1)
+pll.freq_frac = True
+pll.params["p"] = regs[0] & 0x2f
+pll.params["m"] = regs[1]
+pll.params["s"] = (regs[2] >> 4) + 1
+pll.params["n2"] = ((regs[2] >> 3) & 0x1) + 1
+pll.params["n"] = (regs[2] & 0x7) + 4
+pll.params["lc"] = regs[3] & 0x7f
+if regs[4] & 0x80:
+    pll.params["lc"] = - pll.params["lc"]
+pll.params["k"] = regs[4] & 0x7f
+pll.params["lc_s"] = regs[5] & 0x7f
+pll.params["k_s"] = regs[6] & 0xbf
+
+
+f_vco = int(pll.params["m"] * pll.f_ref / pll.params["p"])
+if f_vco < 750000000 or f_vco > 3000000000:
+    print(f"f_vco {f_vco} out of range")
+    sys.exit(1)
+f_calc = f_vco / pll.params["s"] / 5
+pll.freq_int = round(f_calc)
+print(f_calc)
+sdc = pll.calc_sdc(pll.params)
+frac = pll.calc_f_frac(sdc, pll.params)
+print(frac)
+freq = pll.freq_int + frac
+print(freq)
+pll.print_reg_driver_data(freq)
+exit(0);
+---
+yields this back (comments added manually)
+---
+22500000.0 (integer part)
+-250000.0 (fractional part)
+22250000.0 (summed)
+
+PHY Driver Table Entry:
+{
+    .pixclk = 22250000.0,
+    .pll_div_regs = { 0xd1, 0x4b, 0xf1, 0x89, 0x88, 0x81, 0x40 },
+}
+---
+
+so if I find some time I'll whip some loop to check all other values...
+
+
+
+
+That aside, I see no problem with this, just one meta-comment about
+adding a link to the script in an external repo: I see some other
+drivers have python scripts in their trees e.g.
+drivers/comedi/drivers/ni_routing/tools/*py
+drivers/gpu/drm/ci/xfails/update-xfails.py
+drivers/gpu/drm/msm/registers/gen_header.py
+
+would it make sense to commit the script here instead of linking to a
+repo that might be lost in the future?
+
+I'm not quite sure what policy the linux repo has here, so leaving that
+as an open question.
+-- 
+Dominique
 
