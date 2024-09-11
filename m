@@ -1,87 +1,140 @@
-Return-Path: <linux-kernel+bounces-325256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EDF9756FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E073975701
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A681C23033
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A36B28AE23
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60EE1AC436;
-	Wed, 11 Sep 2024 15:25:59 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB24C1ABECE;
+	Wed, 11 Sep 2024 15:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGrDlH6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92341AB6EF;
-	Wed, 11 Sep 2024 15:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7F41AAE24;
+	Wed, 11 Sep 2024 15:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726068359; cv=none; b=hTSEQDdGPynElhtCfGqSuELXdVMa8lMIOqjroO17to0ajYkCgHYo31mEoauJVV9apwGU4dJ8r35YkSLLSynejvXvZN5WaMwNWUuDHJFFbWUzGnKJ44bFlOyseqyPtPeYXxWoFE7+Chd8TDVVvTJnsbSJc4Q03zoahxJcn4uE+Vk=
+	t=1726068380; cv=none; b=Q3VtYKNTOxJyuMOqtAK2DKgc+Adp3KoOALb8Mi0lxBJZ7+0nsVQ+8RXSmdN/KkZkHQpGMMbKBHgGBpE9bSmDo3IbbMRR9r+Ir4JJXSb/Z76eIs4rW7yBfeNnm7i+ap85Z1VpwtpfYtbLULz3IQDTq1KahZC0JsjNMhNf3VaGg4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726068359; c=relaxed/simple;
-	bh=WAoc2RISsQrKbZgJ6XAWf0pR1Jdg8jts/oxYW6s/O1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tB7fPSyjVsWg+avTbhKsYT68O9wdE3++OE4GymzkZN9x9siQH1S0NfqOIyGsUibDZD2tNIlXFuIjOoLdkUAzk+/D276UNX38yfGl229zWc1J27E5yVTccn+kndp9h8gulejyaNjeU4ifZ0Ralp9QWSDGQGwANPSzqYaa5XaYm8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so266056266b.3;
-        Wed, 11 Sep 2024 08:25:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726068356; x=1726673156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WAoc2RISsQrKbZgJ6XAWf0pR1Jdg8jts/oxYW6s/O1E=;
-        b=oeoVBE1LgU62nFyyRLkF8Xu8x2lbe1P5U0B8dxwXSIYMqGeYb1avtP5pH8TPhC0Y/l
-         q1tR9ujQdx0goMrfeyRPV5+/3CwVEqaQgWfA8vw+q7qT3tbgRLk0ykR3hSPLDMAkjXZC
-         6IVKvNdERkMS+DLZMrPhh/1iE26qqE+G333WhGUVd+2CetI6zwWU3RwDNqiqDJAABR/r
-         1LeUzFPqaa+jZ/wPpXkHdezwLhKzBH/AcgweG0Yy6I3k1JoJ9LVVkGh5ukgVOSPsGak3
-         zpCU7U7JcouKpFq8jtjwqQksw0Rq0aPd62rt6dAC5fzf3kXJ/EKgnM7cbGSLv6Rz1z63
-         d4tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDgkSqzVOAYA68J8fhbyPPGUylCK2uvayTRHQHpQL3aKZhJtD4NkCu6Ta72WNbG6u26ZpRhipW@vger.kernel.org, AJvYcCWhKx5ps9czOvgFuMRG/vuk5tqUI6LeXMjGJx0A34dJroNXoeCFQ1WZ6WDDTETsQfNxnLbMpkao4NZUD3Q=@vger.kernel.org, AJvYcCX1hEwVrIUYYMLgAyw1gYswjK5VOX9tJMGemb2U94pNEOM7koHCOXxAGHsP+MlUKXJhuxEmO/3PBP5UkzmgyHFs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcoUnShp/fj/O0sYELKnqEWdcB+xLjSV40kXJ4W1In6AwZkLt9
-	hDJ4wsfnE3eYMr4y4ycUcSJgLxYFvIsQPHTMkFau1YgD4QIunend
-X-Google-Smtp-Source: AGHT+IHAztH4opqQG2DTsdHzLxdkUe6JGiqTpl6z8riTbqjrKOXzt7FVuvFYh+qdz/N1Ug8r91/MTA==
-X-Received: by 2002:a17:907:60c9:b0:a80:bf95:7743 with SMTP id a640c23a62f3a-a900474562emr332798666b.13.1726068355293;
-        Wed, 11 Sep 2024 08:25:55 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c624d4sm616997466b.112.2024.09.11.08.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 08:25:54 -0700 (PDT)
-Date: Wed, 11 Sep 2024 08:25:52 -0700
-From: Breno Leitao <leitao@debian.org>
-To: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, pablo@netfilter.org
-Cc: rbc@meta.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <20240911-weightless-maize-ferret-5c23e1@devvm32600>
-References: <20240909084620.3155679-1-leitao@debian.org>
+	s=arc-20240116; t=1726068380; c=relaxed/simple;
+	bh=sfAd1RJm9xWGep7rzAdDYP5SkbbDYA93DYShCFEOqsc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=bn5Sqt/oRqccExBmczIFFWI/5kQdl8rZD4WZZp0k8Togu+gXzNnsrbvVJhLFe4tbDXkEEelTa52RLrSo973VvkCqGSV0TBk4H46Sj466MeROeoSmS3SNGreXLNvwJeycS/ihqgcJIXDXW/UfimLTGPzrZ3GExcucr/0rPFJcNmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGrDlH6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D887C4CEC0;
+	Wed, 11 Sep 2024 15:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726068379;
+	bh=sfAd1RJm9xWGep7rzAdDYP5SkbbDYA93DYShCFEOqsc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=iGrDlH6XYuTyIqfvLgKyE3MMbL2FLiXoPJl51itJ/Pel+ywK9KLRiMCEXpubgtJTZ
+	 BOGI5yM+xWOnLvsUrPZ2Sh7H9jY5HMPbBxOdzc7pbJ23Gp2Zj7WTvfCsgLMYoGEhx3
+	 hUNRP1DXj/DQ9LrdhnNk4A7XrxBtQUsFFlS1NUUyjhWYi9XYdgU5HN7ZaXveM+ux/U
+	 2oqtB5WRHJJYnSedLO2NYXu/ReZlo47zq6UJPJPpPCVCdnI/PjUThUWLQCNSX51QVr
+	 KdhkYXu4/DPbpDtRW/hmaF+t1n17MMLExwsDesvW/n7P6nincMEG0AS/X6CLEbyvCp
+	 5ihwlFv/uP4DQ==
+Date: Wed, 11 Sep 2024 10:26:18 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909084620.3155679-1-leitao@debian.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, 
+ Derek Kiernan <derek.kiernan@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Alice Ryhl <aliceryhl@google.com>, Benno Lossin <benno.lossin@proton.me>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ robertcnelson@beagleboard.org, d-gole@ti.com, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ jkridner@beagleboard.org, Tero Kristo <kristo@kernel.org>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ rust-for-linux@vger.kernel.org, Gary Guo <gary@garyguo.net>, 
+ fabien.parent@linaro.org, Dragan Cvetic <dragan.cvetic@amd.com>, 
+ Andrew Davis <afd@ti.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Nishanth Menon <nm@ti.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ lorforlinux@beagleboard.org, Boqun Feng <boqun.feng@gmail.com>, 
+ Trevor Gross <tmgross@umich.edu>, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240911-mikrobus-dt-v1-2-3ded4dc879e7@beagleboard.org>
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-2-3ded4dc879e7@beagleboard.org>
+Message-Id: <172606837860.404675.7012990684888155394.robh@kernel.org>
+Subject: Re: [PATCH 2/8] dt-bindings: connector: Add MikorBUS connector
 
-Hello,
 
-On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
-> These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
-> Kconfigs user selectable, avoiding creating an extra dependency by
-> enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+On Wed, 11 Sep 2024 19:57:19 +0530, Ayush Singh wrote:
+> Add DT bindings for mikroBUS interface. MikroBUS [0] is an open standard
+> developed by MikroElektronika for connecting add-on boards to
+> microcontrollers or microprocessors.
+> 
+> MikroBUS connector node will optionally act as nexus nodes for routing
+> GPIOs and PWM.
+> 
+> For GPIOs, the following pin numbering should be followed:
+> 
+>   0: PWM
+>   1: INT
+>   2: RX
+>   3: TX
+>   4: SCL
+>   5: SDA
+>   6: MOSI
+>   7: MISO
+>   8: SCK
+>   9: CS
+>   10: RST
+>   11: AN
+> 
+> For PWM, the PWM pin should be on channel 0.
+> 
+> I am not quite sure how to deal with the nexus node properties
+> (#gpio-cells, gpio-map, gpio-map-mask, gpio-map-pass-thru) since they
+> seem to conflict with upstream gpio schema (gpio-controller is a
+> dependency of #gpio-cells).
+> 
+> [0]: https://www.mikroe.com/
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+> ---
+>  .../bindings/connector/mikrobus-connector.yaml     | 40 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  5 +++
+>  2 files changed, 45 insertions(+)
+> 
 
-Any other feedback regarding this change? This is technically causing
-user visible regression and blocks us from rolling out recent kernels.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thank you,
---breno
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/connector/mikrobus-connector.example.dtb: mikrobus-connector0: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240911-mikrobus-dt-v1-2-3ded4dc879e7@beagleboard.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
