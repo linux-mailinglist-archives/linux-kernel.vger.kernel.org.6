@@ -1,164 +1,77 @@
-Return-Path: <linux-kernel+bounces-324137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DB897484C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:45:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BEA974849
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB0EF1F25E37
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:45:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1421F24D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8386E381C4;
-	Wed, 11 Sep 2024 02:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11763A1CD;
+	Wed, 11 Sep 2024 02:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ql5IT/A+"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NzKCaIvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EC422331
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4F139FD9
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726022711; cv=none; b=EUahXQ3ll8jJQVLQVyLmjzpkDrWZNUd//Vk584mqggR2das2kxkQpMgqy4TypPpZBdfbolKLZ4Hwx/7NjSMx7cYMbIfZO/bTQLQ94RDvY4ToP7xpOgyLOuUB4dqLVyo7Zrc48dZ0M8cIlFmY3ggtuaroG62VnvzRXvaReFHkjPU=
+	t=1726022695; cv=none; b=Jlt5B4KBfX4IJ6bEjQpHn5sXI11qpIv8hNzLiDbU3wSNpMtaW/aWNECdYajq08XCsJe7EfaKm11urbmtjQ5ilIatjLCxeRMhKoxSDB4rhbYRKteq0H2nd4KXHhVy+4lraHBOenLUItMOIUbK8CT6ipSGp68KBY3FN43ihaWNGfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726022711; c=relaxed/simple;
-	bh=IPZupu1IxMFlRgI4XvH7OTS1Uw4WaTs+24VoYldLxQ8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ryvffJNFMCALF2mRoDmlq/kyTmFCJnzfYCT1bGHAsWFIIFT5zQ/mEXJQ12WnwkTbQeSHbAICs1SOln7VPPVxT/YzF+q2gwjUfk9x20Q1tZ2HalqD3xKY9IBEYYpplVWRgqw5P/Jj2p7t39ixgiSA4BbRkodxSrdsOAa308iHWYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ql5IT/A+; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726022707;
+	s=arc-20240116; t=1726022695; c=relaxed/simple;
+	bh=fAYFh8Hqx6fYD0xHOD8eU7oI6vInwmUAu/8HoLZRgJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPOJyxsEUjkSZa7thpsGMGrhLI+L4HUwkvlvbZwNUcCmXV893frtLywe/VRaSSVfoQ9JMCuM+GObWX8XnKwXR40M81+FxcmPpZVa/dkrJkENNg0bHVnNFRngoDTfhtUdqKd90bnF0t8ZIMO+rKcWTT/lPucV65zc21KsMvze9K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=NzKCaIvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE10FC4CEC3;
+	Wed, 11 Sep 2024 02:44:53 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NzKCaIvj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726022691;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xO6HzKLBsfhvbV1IWU4G41rw/zPu4FEgENww3budsbE=;
-	b=Ql5IT/A+axAiVlq60zdkh+6buhsXG9pcJ3oXG3Hk/lx0PmlQ29MGi4Mqky8z6s6QiBCZSo
-	h/z9mRvk4WVFyaJthrcYKFE+F8ZHTrnCj4VumLch+9mNSXGg4WAdfi/wTshcimBLuO3vH9
-	fAI6WRvE6crMaIF5mylrDu2kb423t48=
+	bh=fAYFh8Hqx6fYD0xHOD8eU7oI6vInwmUAu/8HoLZRgJA=;
+	b=NzKCaIvjJLjRia2VyChjtqE27VtTIK2s050caAx6Hk2ZhvNiA/0+UOJdFWb0zY4R3n/T3x
+	HCdcgDCGVBVAB/O6/UskHmIQ1XO+APXi8JtbasBoO2+cuQrhdI1foQz01a7zIebRuoe/lB
+	bfpf2Ezjr+LaRLclLswaQloWAgXNwjg=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e5f0da36 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 11 Sep 2024 02:44:50 +0000 (UTC)
+Date: Wed, 11 Sep 2024 04:44:48 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Aishwarya TCV <aishwarya.tcv@arm.com>
+Cc: adhemerval.zanella@linaro.org, linux-kernel@vger.kernel.org,
+	mark Brown <broonie@kernel.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: Re: [PATCH] selftests: vDSO: don't include generated headers for
+ chacha test
+Message-ID: <ZuEEIIV-J0mQVKE4@zx2c4.com>
+References: <20240904155817.1153783-1-Jason@zx2c4.com>
+ <fed980be-5082-4454-b696-6245d6a3d265@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 3/3] block: fix ordering between checking
- BLK_MQ_S_STOPPED and adding requests
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <db5193e8-5b8e-46f9-bbfc-a1821217f5a6@kernel.dk>
-Date: Wed, 11 Sep 2024 10:44:34 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- Ming Lei <ming.lei@redhat.com>,
- Yu Kuai <yukuai1@huaweicloud.com>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- stable@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5F47D277-09E0-44FA-9EBB-D69786714A59@linux.dev>
-References: <20240903081653.65613-1-songmuchun@bytedance.com>
- <20240903081653.65613-4-songmuchun@bytedance.com>
- <db5193e8-5b8e-46f9-bbfc-a1821217f5a6@kernel.dk>
-To: Jens Axboe <axboe@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fed980be-5082-4454-b696-6245d6a3d265@arm.com>
 
+On Tue, Sep 10, 2024 at 11:52:51PM +0100, Aishwarya TCV wrote:
+> make[4]: *** [Makefile:299:
+> /tmp/kci/linux/build/kselftest/kvm/aarch64/aarch32_id_regs.o] Error 1
+> make[4]: Leaving directory '/tmp/kci/linux/tools/testing/selftests/kvm'
 
+You sure this bisected right? That directory isn't related to the
+commit in question, I don't think...
 
-> On Sep 10, 2024, at 21:22, Jens Axboe <axboe@kernel.dk> wrote:
->=20
-> On 9/3/24 2:16 AM, Muchun Song wrote:
->> Supposing first scenario with a virtio_blk driver.
->>=20
->> CPU0                                                                =
-CPU1
->>=20
->> blk_mq_try_issue_directly()
->>    __blk_mq_issue_directly()
->>        q->mq_ops->queue_rq()
->>            virtio_queue_rq()
->>                blk_mq_stop_hw_queue()
->>                                                                    =
-virtblk_done()
->>    blk_mq_request_bypass_insert()                                     =
- blk_mq_start_stopped_hw_queues()
->>        /* Add IO request to dispatch list */   1) store               =
-     blk_mq_start_stopped_hw_queue()
->>                                                                       =
-         clear_bit(BLK_MQ_S_STOPPED)                 3) store
->>    blk_mq_run_hw_queue()                                              =
-         blk_mq_run_hw_queue()
->>        if (!blk_mq_hctx_has_pending())                                =
-             if (!blk_mq_hctx_has_pending())         4) load
->>            return                                                     =
-                 return
->>        blk_mq_sched_dispatch_requests()                               =
-             blk_mq_sched_dispatch_requests()
->>            if (blk_mq_hctx_stopped())          2) load                =
-                 if (blk_mq_hctx_stopped())
->>                return                                                 =
-                    return
->>            __blk_mq_sched_dispatch_requests()                         =
-                 __blk_mq_sched_dispatch_requests()
->>=20
->> Supposing another scenario.
->>=20
->> CPU0                                                                =
-CPU1
->>=20
->> blk_mq_requeue_work()
->>    /* Add IO request to dispatch list */       1) store            =
-virtblk_done()
->>    blk_mq_run_hw_queues()/blk_mq_delay_run_hw_queues()                =
- blk_mq_start_stopped_hw_queues()
->>        if (blk_mq_hctx_stopped())              2) load                =
-     blk_mq_start_stopped_hw_queue()
->>            continue                                                   =
-         clear_bit(BLK_MQ_S_STOPPED)                 3) store
->>        blk_mq_run_hw_queue()/blk_mq_delay_run_hw_queue()              =
-         blk_mq_run_hw_queue()
->>                                                                       =
-             if (!blk_mq_hctx_has_pending())         4) load
->>                                                                       =
-                 return
->>                                                                       =
-             blk_mq_sched_dispatch_requests()
->>=20
->> Both scenarios are similar, the full memory barrier should be =
-inserted between
->> 1) and 2), as well as between 3) and 4) to make sure that either CPU0 =
-sees
->> BLK_MQ_S_STOPPED is cleared or CPU1 sees dispatch list. Otherwise, =
-either CPU
->> will not rerun the hardware queue causing starvation of the request.
->>=20
->> The easy way to fix it is to add the essential full memory barrier =
-into helper
->> of blk_mq_hctx_stopped(). In order to not affect the fast path =
-(hardware queue
->> is not stopped most of the time), we only insert the barrier into the =
-slow path.
->> Actually, only slow path needs to care about missing of dispatching =
-the request
->> to the low-level device driver.
->=20
-> Again, this is way too wide, it's unreadable.
-
-OK. Will do.
-
-Muchun,
-Thanks.
-
->=20
-> Patch looks fine, though.
->=20
-> --=20
-> Jens Axboe
-
-
+Jason
 
