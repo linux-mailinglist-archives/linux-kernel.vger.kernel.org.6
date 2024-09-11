@@ -1,206 +1,141 @@
-Return-Path: <linux-kernel+bounces-325328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005439757E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF109757EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822CB1F23322
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12F22831D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5014C1ACDF5;
-	Wed, 11 Sep 2024 16:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0AE1ABEC0;
+	Wed, 11 Sep 2024 16:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zHeny3xr"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M6teSROF"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0915919CC05
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD50185927
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070619; cv=none; b=FDPehL59D55JrLcKlKZcGIk60QiZeSt3IL6JKBL7N+taSPjpCyD0yPDYE8xbGT6ZgPN5SnRc+tOHZac1pDkjv50og8OAbz8ghhX1vAy4l3cL6Axkj91aZ9rkkKSzOo5csKIaNkfvCuu5B422u7DTBlG80vpE5Ah6GiDODGy7ouU=
+	t=1726070729; cv=none; b=hCo/8v8s4V+duvtXnaqKM7w9QPmy9BRDD/AygaeIGzuAN5HgZSf+6dBGw9c8FpgmFAk+jXLs6m51nvds1zXJTfGLK0zLLBbTlIgf0uBjsSWNT8Sb+QmgmFQ4QZfwf5QN9S9O0J5Y9hqa6G1tbnBw/WbmZ2q9lobBToZPiCW2jEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070619; c=relaxed/simple;
-	bh=Sqm+BH1SNhGvp71DxcucSIKpift17cguAvvmLi/mmdA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HzwOItcHYynxFWPzpgvvR92ZhJI08XhEfyiWZXjGSZyQP56LKrNsrSHtIrEhoFT8Fc4ngqG7fDcwfOzRImHHiUgrfokxRMB022+AiNcyXeda6YOtrTeHczH1tynWlkxR1Yh09Va8zqiql8e9KMk9bn9IwPs8ip2GKJDXhs/yBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zHeny3xr; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6db791c42e3so91829997b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:03:37 -0700 (PDT)
+	s=arc-20240116; t=1726070729; c=relaxed/simple;
+	bh=vVZnPoaE4LggcEZLAPIaQZAUImydt4yJz2th7TcSAng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYte6hZcUr9vBzEFmI3vU7rpUegppj4Luq7gQT/zsT+dKsvOKXPIcqa8zm2sH5FQZOyTOHptLCRwlP640R/0VCpFB12YvjMh+DNlaWuX2c8wnLKy/AMps9RjAbxWrtX/dqTETJXD4dUCSLjnZe2WYFKkilN7+DHC57fh7knrTcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M6teSROF; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-82ceab75c05so172112839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726070617; x=1726675417; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2fsU6mKaWhb029bzTkMtAVltWrXCR6se7VysAYyqUYI=;
-        b=zHeny3xrwVgCrYgyTTsrv+cFnyrcVqebh8Woqet7ubIlpemv75wTSI0HtcLlRdW4oQ
-         c1dSNjYzhO06Y2FM8lL8IplQG2jdBpXS0evHzhGRY4NEmKPAkABOge4GI2LRKd1ChgXd
-         DFPh20Oz2cOlRhHv4rN1s7NSL3WsTT+mxJvMBdOmM441oiWFWuxnOyhA8Svg6Rf/RIuw
-         Tgl7jCcCAQ9dI4en0gZyiFagNbW+sw/0KtvpOckTwyqrL/kNg9MkUqM3vD7hbvMyaxHa
-         CKpACnXILSbNrXlJ0o47AqZwSrBTKg39bjTMSc5vr5iPQwAD2qlEObuVx8nHEt197o/Q
-         dMvg==
+        d=linuxfoundation.org; s=google; t=1726070727; x=1726675527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Iw9687spOPNQCPbJFKxHUyq06TwqtAPtEJ5vZKod8=;
+        b=M6teSROFNydjTBzX58tX+cL6vELBY8AUooloRjYO1frbc0Yvb852U6rxJs3v1uOtjl
+         4wXU/wx0bc+FITuU7fOg7TbrtXU0oLtNigAG1PeYxoDvPubS0ig9IB0CZxJePbRSUqnw
+         ZrPeHdJQ6s/L1hChXNbapujx+5cZdeS8crK5c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726070617; x=1726675417;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2fsU6mKaWhb029bzTkMtAVltWrXCR6se7VysAYyqUYI=;
-        b=fMvK+m4OgalaMNhUJdpD6pPADUtJHnfrz3tlALn9ulUwyDgOeTJlp/uenyMwQSjHs1
-         6qvR/5cYtdUyI6vi8c7uOFgfeINSX2DFJ05SNiTwrmOwCJCTkIL21Z3qZu8zsIizKfDx
-         X3Cjq2j3ifaQbzWomH/qFkAeiFAqKbeP19Lz3WIugF3H22W5LtpcKFGha2G2UfspP0Iv
-         rpNZnscOWwA23mrBy0S3WQJzvWbOwRGLZmsx4DNBbpxeTTQO1KzHFpQGBg1ic33pQ4hs
-         EpniDmk7tj5TVYoWGHRvOESCExaz/bqaAYksvuUsRACaFw9ovQ4WqyHcbIr2YtIjsoBl
-         2aHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2LGL974hz97/DkNQZRj+JfUMPdiFqOZO2fTf4eXW2t3LeWgr/N8Tg4arlzwzd2QhvodeXd9ALo6lnZvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxizd15pYZbV1JsmQl5NTj8+kOtfqGwhFxq5Oop55RKTWEH7GEj
-	LcyxMgcFTRNsaWIlwSFvn6hwLGi3cx5JhKAOmaMgOEDd9Esv2LwXTDJpd6L6a1IYg02VUXsZcIQ
-	pFg==
-X-Google-Smtp-Source: AGHT+IEYbBIjUHZHAzuiNIFVLNDkp0NrBNgU39tv+i/fHwdAPRddCvm1mDfZ2WUf973+kXGxTs82VlGfag0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:25c1:b0:6ad:feb0:d01c with SMTP id
- 00721157ae682-6db4515dc01mr7951917b3.3.1726070617071; Wed, 11 Sep 2024
- 09:03:37 -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:03:35 -0700
-In-Reply-To: <96b32724ad1ce9ac88abb209d196b01116536a61.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1726070727; x=1726675527;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5Iw9687spOPNQCPbJFKxHUyq06TwqtAPtEJ5vZKod8=;
+        b=PxUs5YL9tSIQa/LQoA3tvMElAZPT/Z+nWNjSpSmxrHAma0B7jN5Y1kTLTR0k1mNrh1
+         JWAtTARfkiD0iXiNmG1KIN3rD03YADl/hnzuAuf6XcVpy8PSkfB6myCw1ucPZwMlxQhW
+         kB3mWRNFcwUbS3k3oSuWHpg5HIYh+LfX1mshNXO7ZK6OmE+BIjss8uFR1R9rNfijpSIQ
+         672KpLNNgMQReoEAQW4H6h/i2R2DQc0xhL3TjMglZPuQDoD1H42tL+WCz9sdrCsqITjb
+         qMV9D2AjwYawuA/B5w0zPcH4P2w3FskUdkk8D8a8qjgBadpqDi6zORgiv6CRVR9Yat+O
+         S+MA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1MOjdDIFE4hb8SmOA0EBvI6cN9gj4p4uYgJNo5KIhTnD+V07Oy513J8jZG+aEi2QLJU+wxXulEYtX7TA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcY721tZ+M0bMgDxRkGt0Qc9lAEm20NT3w77bXccVrY1jWcOsB
+	3Q8gbVJTu0vXy8ab0HDCeWcwz9LjOCfj8LEr8NJMDvOuuRkOSqTUzGz9oxm/S+M=
+X-Google-Smtp-Source: AGHT+IGEh7vjg7kq8R20aGT4OVcirpJB3SMMzymLEMZ/gLxeZmcW+d+B8YzJGPUgnDl45eazKCfULw==
+X-Received: by 2002:a05:6e02:174b:b0:39b:640e:c5fa with SMTP id e9e14a558f8ab-3a04f0ce28cmr207759325ab.19.1726070727091;
+        Wed, 11 Sep 2024 09:05:27 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f8da6e4sm54775173.124.2024.09.11.09.05.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 09:05:26 -0700 (PDT)
+Message-ID: <67cac093-e50c-44d7-8cdf-16b6624765ee@linuxfoundation.org>
+Date: Wed, 11 Sep 2024 10:05:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-27-seanjc@google.com>
- <2e0f3fb63c810dd924907bccf9256f6f193b02ec.camel@redhat.com>
- <ZoxooTvO5vIEnS5V@google.com> <2e531204c32c05c96e852748d490424a6f69a018.camel@redhat.com>
- <ZqQ6DWUou8hvu0qE@google.com> <2d77b69729354b016eb76537523c9e32e7c011c5.camel@redhat.com>
- <ZrEvCc6yYdT-cHxD@google.com> <96b32724ad1ce9ac88abb209d196b01116536a61.camel@redhat.com>
-Message-ID: <ZuG_V9k8fbh8bKc5@google.com>
-Subject: Re: [PATCH v2 26/49] KVM: x86: Add a macro to init CPUID features
- that KVM emulates in software
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/2] ring-buffer/selftest: Verify the entire
+ meta-page padding
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ kernel-team@android.com, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240910162335.2993310-1-vdonnefort@google.com>
+ <20240910162335.2993310-2-vdonnefort@google.com>
+ <20240910124541.23426cee@gandalf.local.home>
+ <14143861-bc16-47f4-ba8d-7d577e7a9dd0@linuxfoundation.org>
+ <ZuFMK7yndArZo4pA@google.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZuFMK7yndArZo4pA@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-08-05 at 12:59 -0700, Sean Christopherson wrote:
-> > > And now we have:
-> > > 
-> > > kvm_cpu_cap_init_begin(CPUID_12_EAX);
-> > >  feature_scattered(SGX1);
-> > >  feature_scattered(SGX2);
-> > >  feature_scattered(SGX_EDECCSSA);
-> > > kvm_cpu_cap_init_end();
-> > 
-> > I don't love the syntax (mainly the need for a begin()+end()), but I'm a-ok
-> > getting rid of the @mask param/input.
-> > 
-> > What about making kvm_cpu_cap_init() a variadic macro, with the relevant features
-> > "unpacked" in the context of the macro?  That would avoid the need for a trailing
-> > macro, and would provide a clear indication of when/where the set of features is
-> > "initialized".
-> > 
-> > The biggest downside I see is that the last entry can't have a trailing comma,
-> > i.e. adding a new feature would require updating the previous feature too.
-> > 
-> > #define kvm_cpu_cap_init(leaf, init_features...)			\
-> > do {									\
-> > 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
-> > 	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
-> > 	u32 kvm_cpu_cap_virtualized= 0;					\
-> > 	u32 kvm_cpu_cap_emulated = 0;					\
-> > 	u32 kvm_cpu_cap_synthesized = 0;				\
-> > 									\
-> > 	init_features;							\
-> > 									\
-> > 	kvm_cpu_caps[leaf] = kvm_cpu_cap_virtualized;			\
-> > 	kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |			\
-> > 			       kvm_cpu_cap_synthesized);		\
-> > 	kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;			\
-> > } while (0)
-> > 
-> > 	kvm_cpu_cap_init(CPUID_1_ECX,
-> > 		VIRTUALIZED_F(XMM3),
-> > 		VIRTUALIZED_F(PCLMULQDQ),
-> > 		VIRTUALIZED_F(SSSE3),
-> > 		VIRTUALIZED_F(FMA),
-> > 		VIRTUALIZED_F(CX16),
-> > 		VIRTUALIZED_F(PDCM),
-> > 		VIRTUALIZED_F(PCID),
-> > 		VIRTUALIZED_F(XMM4_1),
-> > 		VIRTUALIZED_F(XMM4_2),
-> > 		EMULATED_F(X2APIC),
-> > 		VIRTUALIZED_F(MOVBE),
-> > 		VIRTUALIZED_F(POPCNT),
-> > 		EMULATED_F(TSC_DEADLINE_TIMER),
-> > 		VIRTUALIZED_F(AES),
-> > 		VIRTUALIZED_F(XSAVE),
-> > 		// DYNAMIC_F(OSXSAVE),
-> > 		VIRTUALIZED_F(AVX),
-> > 		VIRTUALIZED_F(F16C),
-> > 		VIRTUALIZED_F(RDRAND),
-> > 		EMULATED_F(HYPERVISOR)
-> > 	);
+On 9/11/24 01:52, Vincent Donnefort wrote:
+> On Tue, Sep 10, 2024 at 12:49:58PM -0600, Shuah Khan wrote:
+>> On 9/10/24 10:45, Steven Rostedt wrote:
+>>>
+>>> Shuah,
+>>>
+>>> Can you take this through your tree?
+>>>
+>>> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>>
+>> I can take this through my tree.
+>>
+>>>
+>>> -- Steve
+>>>
+>>>
+>>> On Tue, 10 Sep 2024 17:23:34 +0100
+>>> Vincent Donnefort <vdonnefort@google.com> wrote:
+>>>
+>>>> Improve the ring-buffer meta-page test coverage by checking for the
+>>>> entire padding region to be 0 instead of just looking at the first 4
+>>>> bytes.
+>>>>
+>>>> Cc: Shuah Khan <skhan@linuxfoundation.org>
+>>>> Cc: linux-kselftest@vger.kernel.org
+>>>> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+>>
+>> Vincent,
+>>
+>> Can you please rebase these on linux-kselftest next branch and
+>> resend.  This patch doesn't apply.
+>>
+>> Also please fix the subject to say:
+>>
+>> selfttests/ring-buffer
 > 
-> Hi,
-> 
-> This is no doubt better than using '|'.
-> 
-> I still strongly prefer my version, because I don't really like the fact that
-> _F macros have side effects, and yet passed as parameters to the
-> kvm_cpu_cap_init function/macro.
-> 
-> Basically an unwritten rule, which I consider very important and because of which
-> I raised my concerns over this patch series is that if a function has side effects,
-> it should not be used as a parameter to another function, instead, it should be 
-> called explicitly on its own.
+> Will do, but it depends linux-trace/ring-buffer/for-next which hasn't make it
+> yet to linux-next.
 
-Splitting hairs to some degree, but the above suggestion is distinctly different
-than passing the _result_ of a function call as a parameter to another function.
-The actual "call" happens within the body of kvm_cpu_cap_init().  
+In which case it has to go through tracing tree.
 
-This is effectively the same as passing a function pointer to a helper, and that
-function pointer implementation having side effects, which is quite common in the
-kernel and KVM, e.g. msr_access_t, rmap_handler_t, tdp_handler_t, gfn_handler_t,
-on_lock_fn_t, etc.
+Steve, This is yours to take due to the dependency on linux-trace/ring-buffer/for-next
 
-I 100% agree that it's unusual and subtle to essentially have a variable number
-of function pointers, but I don't see it as being an inherently bad pattern,
-especially since it is practically impossible to misuse _because_ the macro
-unpacks the "calls" at compile time.
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-IMO, the part that is most gross is the macros operating on local variables, but
-that behavior exists in all ideas we've discussed, probably because I'm pretty
-sure it's unavoidable unless we do something even worse (way, waaaaay worse).
+thanks,
+-- Shuah
 
-E.g. we could add 32 versions of kvm_cpu_cap_init() that invoke pairs of parameters
-and pass in the variables
-
-  fn1(f1, virtualized, emulated, synthesized)
-  fn2(f2, virtualized, emulated, synthesized)
-  fn3(f3, virtualized, emulated, synthesized)
-  ...
-  fnN(fN, virtualized, emulated, synthesized)
-
-and
-
-  kvm_cpu_cap_init19(CPUID_1_ECX,
-	F, XMM3,
-	F, PCLMULQDQ,
-	F, SSE3,
-	...
-	EMULATED_F, HYPERVISOR
-  );
-
-But that's beyond horrific :-)
-
-> If you strongly prefer the variadic macro over my begin/end API, I can live with
-> that though, it is still better than '|'ing a mask with functions that have side
-> effects.
 
