@@ -1,147 +1,224 @@
-Return-Path: <linux-kernel+bounces-324275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FED974A85
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA66974B20
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB121F26C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:43:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70B39B20E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A3E7E583;
-	Wed, 11 Sep 2024 06:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZriODaia"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7034136341;
+	Wed, 11 Sep 2024 07:20:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE6513541B;
-	Wed, 11 Sep 2024 06:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F756742
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726036991; cv=none; b=SKfDU0VmdOJsWf/2PblxZ4pTkQeNG8EAtqy0fN8fu2eouN0zP6msQv0A9UjVyKzAHdKoIourXgQDSdaN8tglMLbcQNwnCm84m4jhrC1TOj+cLhE2xI09lwEnjqAuh3YlWrLDk6wA88/M3FJkaHQh1OY3OLlRm8Es9jeeEI8kAD8=
+	t=1726039233; cv=none; b=pGJr6skMXsHViyWCvwEQKTmNI2TxNXVRmEd34ivFUxZzuPbxymafKZMDCzcHSvHTnqHiw8WPH6t6XsMoxpShXXkATEnsBpwZNQeTmMgSniSDshQPgUb+rjE1IPWY7VIpv0SmOapM2vXVZXUvQgM+FZ2I7X6yXRrTjXhJ1iUnG4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726036991; c=relaxed/simple;
-	bh=fW349gFSmtmLbIcFEoePaAvvBOhxAa3lXYuq7nC8458=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+NxcRIlHl4D9VaT60oQVX+Mm+3XGmn/OesSHN5kGToCHuMCgj4WQDrRrPZ7Lgpov0uV0WZ4go1QXQ89XPGpFgRGdUk5erG8fnY3icZKL1WHTFfZreJiBpMIZhWY6YTC+FQeB5lt9qNq/UVGGxEcaxVWasLGzsLwMeLmWXnJ3Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZriODaia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C57C4CEC5;
-	Wed, 11 Sep 2024 06:43:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726036990;
-	bh=fW349gFSmtmLbIcFEoePaAvvBOhxAa3lXYuq7nC8458=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZriODaiaPIl3YmlfALtDDV9MtOoPQ2CI8bck7GjCppeuzeavHzbXYLLlog0xliiD5
-	 vvf1/2CCdaV7QJ4D+PTYjiSw0I4DJlrkcPwZB7QEs8f9TbbJNNpG4J8xrkRHVvI509
-	 kFKhpDb2bJUi/iv97ROEZbmnPRXwcMeduQcZZUNFHI84rPgK3Rn2E3zW2guDsGD6tF
-	 zWCGm1DJ7HpGKJH7n/ebQnqRLTMKtaHOvmSUd0d+FLvHnB9XpcNrCGYUDq5n3/v8ns
-	 FOdkDnfMBYWagsOxrFiQAvD0ZDFquB+1trV84+CIg7uylzr6JiGflFouF+Q0ujY30A
-	 RsFgDoQ3rFPIA==
-Date: Wed, 11 Sep 2024 09:43:05 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	regressions@lists.linux.dev, kernelci@lists.linux.dev,
-	kernel@collabora.com
-Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default ops
-Message-ID: <20240911064305.GD4026@unreal>
-References: <cover.1721818168.git.leon@kernel.org>
- <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org>
- <181e06ff-35a3-434f-b505-672f430bd1cb@notapiano>
+	s=arc-20240116; t=1726039233; c=relaxed/simple;
+	bh=JspO6/jSEEYfqh/bh9JZfnlJBoC1NsmXyP/j0gMOlQk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iUGn4ke9w/TyraHlyroqwrt4L7DVqdlJPmjtJM7lgAL3LqDUKeCRANl2/tD2woDvJ2i2VhE378+JFTemNGC04DM+2aLvkXJaNa2+/wMvjzJx22yjEOKOYM3uM8MNfbNPXYknvBuPjJIreIAAY1T1hbniYBvZ9Wn/B2zYBZQyn+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 1A5EEA13ED;
+	Wed, 11 Sep 2024 06:44:16 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id A103720023;
+	Wed, 11 Sep 2024 06:44:12 +0000 (UTC)
+Message-ID: <ba245a06048af9eee61cea8c8fb79a331900cc73.camel@perches.com>
+Subject: Re: [PATCH v2 10/15] checkpatch: Remove broken sleep/delay related
+ checks
+From: Joe Perches <joe@perches.com>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan
+ Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
+ J. Wysocki" <rafael@kernel.org>, Andy Whitcroft <apw@canonical.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>
+Date: Tue, 10 Sep 2024 23:44:11 -0700
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-10-b0d3f33ccfe0@linutronix.de>
+References: 
+	<20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+	 <20240911-devel-anna-maria-b4-timers-flseep-v2-10-b0d3f33ccfe0@linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <181e06ff-35a3-434f-b505-672f430bd1cb@notapiano>
+X-Rspamd-Queue-Id: A103720023
+X-Rspamd-Server: rspamout03
+X-Stat-Signature: 9rsi9yqmc3da51cjgb43ecr369br8thb
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX18z0g6H2mqJH6XSheGkgCK8oJ/9O7nhJhg=
+X-HE-Tag: 1726037052-310822
+X-HE-Meta: U2FsdGVkX19Mpi5qFPtYacXkcHMQF0UQup160biEztXoYF5/xgH49zJlzDi89ghHw9JNJnnaP1SS1WWlmIinLutWuMuiFC+YwbdwoCzDLVI2ZcbYHDFu2MUrg+gk1EcWDG26PEiRu6qq4Si6fyri16lkXp3Pe8mzQfyPRyx6VGOJKxlt+vuK8ebYyBNh12FFHSBtMXRwSv4EkfktNRl6hTT85T8Wq0Q8WkgNUz53hKUubfa4BNKEqPu2gtGaJlugt7lGIwAJNcOlGHBlBGrES+GCGcL31b09EgsrsW+AYPjEd26FqI2UQqCLNWQUnDfemsbBXBOUj4cvJeLzt6sauC8lYn52Tr+X78YXXiz0NVbW8sEO70KqI6kdXrQwLAGT1ZAunqyXeLpqh1+Ib0T0ITAKqNxsR246UJ0sKoPLxR5DxDjoBZstp9rHCuLTRpwVxlqQ1/Qww6RE7JyEDDrUxwyG9odpR4KgPN4vmJCGVRylf8Laefvw+uLnQ/E9+pJjXUp6WZ60E+ivJwy8/6KuL/kYaWHopEnA
 
-On Tue, Sep 10, 2024 at 03:01:05PM -0400, Nícolas F. R. A. Prado wrote:
-> On Wed, Jul 24, 2024 at 09:04:49PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Most of the arch DMA ops (which often, but not always, involve
-> > some sort of IOMMU) are using the same DMA operations, but for all
-> > modern platforms dma-iommu implementation is really matters.
-> > 
-> > So let's make sure to call them directly without need to perform
-> > function pointers dereference.
-> > 
-> > During system initialization, the arch can set its own DMA and in such
-> > case, the default DMA operations will be overridden.
-> > 
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > Signed-off-by: Leon Romanovsky <leon@kernel.org>
-> 
-> Hi,
-> 
-> KernelCI has identified another regression originating from this patch. It
-> affects the same platforms:
-> * sc7180-trogdor-kingoftown
-> * sc7180-trogdor-lazor-limozeen
-> 
-> But this time the issue is that the venus video codecs are failing to probe as
-> indicated by the DT kselftest:
-> 
->   not ok 184 /soc@0/video-codec@aa00000
->   ok 185 /soc@0/video-codec@aa00000/opp-table # SKIP
->   not ok 186 /soc@0/video-codec@aa00000/video-decoder
->   not ok 187 /soc@0/video-codec@aa00000/video-encoder
-> 
-> The kernel logs show the error:
-> 
->   qcom-venus aa00000.video-codec: probe with driver qcom-venus failed with error -5
-> 
-> A quick ftrace run showed that the error comes from dma_set_mask_and_coherent()
-> in venus_probe():
-> 
->   7)               |  venus_probe() {
->   ...
->   7)               |    dma_set_mask() {
->   7)               |      dma_supported() {
->   7)   0.989 us    |        dma_direct_supported(); /* = 0x0 */
->   7)   2.864 us    |      } /* dma_supported = 0x0 */
->   7)   4.636 us    |    } /* dma_set_mask = -5 */
-> 
-> For comparison, here is the ftrace run with the commit reverted:
-> 
->   7)               |  venus_probe() {
->   ...
->   7)   1.093 us    |    dma_set_mask(); /* = 0x0 */
->   7)   1.041 us    |    dma_set_coherent_mask(); /* = 0x0 */
-> 
-> The issue is still present as of next-20240909 and reverting this commit fixes
-> it.
-> 
-> Happy to provide any other details necessary.
+On Wed, 2024-09-11 at 07:13 +0200, Anna-Maria Behnsen wrote:
+> checkpatch.pl checks for several things related to sleep and delay
+> functions. In all warnings the outdated documentation is referenced. All
+> broken parts are listed one by one in the following with an explanation w=
+hy
+> this check is broken. For a basic background of those functions please al=
+so
+> refere to the updated function descriptions of udelay(), nsleep_range() a=
+nd
+> msleep().
+>=20
+> Be aware: The change is done with a perl knowledge of the level "I'm able
+> to spell perl".
+>=20
+> The following checks are broken:
+>=20
+> - Check: (! ($delay < 10) )
+>   Message: "usleep_range is preferred over udelay;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When it is an atomic context, udelay() is
+>                            mandatory.
+>=20
+> - Check: ($min eq $max)
+>   Message:  "usleep_range should not use min =3D=3D max args;
+>              see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: When the requested accuracy for the sleep
+>                            duration requires it, it is also valid to use
+>                            min =3D=3D max.
 
-Thanks for the report, I'm looking into it. However, it is unclear to me
-why my patch is causing this issue. The change in dma_supported() should
-produce WARN_ON [1] if new path is taken, otherwise, we return to
-previous behavior.
+There is a runtime setup cost to use usleep_range.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/kernel/dma/mapping.c#n822
+I believe udelay should generally be used when there
+is a specific microsecond time delay required.
 
-> 
-> Please add
-> Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
-> when fixing this.
-> 
-> #regzbot introduced: next-20240822..20240823
-> #regzbot title: Venus codec probe regression for sc7180 platforms in dma_set_mask_and_coherent()
-> 
-> Thanks,
-> Nícolas
+>=20
+> - Check: ($delay > 2000)
+>   Message: "long udelay - prefer mdelay;
+>             see arch/arm/include/asm/delay.h\n"
+>   Why is the check broken: The threshold when to start using mdelay() to
+>                            prevent an overflow depends on
+>                            MAX_UDELAY_MS. This value is architecture
+>                            dependent. The used value for the check and
+>                            reference is arm specific. Generic would be 5m=
+s,
+>                            but this would "break" arm, loongarch and mips
+>                            and also the arm value might "break" mips and
+>                            loongarch in some configurations.
+
+It likely won't "break", just perhaps be inefficient.
+
+> - Check: ($1 < 20)
+>   Message: "msleep < 20ms can sleep for up to 20ms;
+>             see Documentation/timers/timers-howto.rst\n"
+>   Why is the check broken: msleep(1) might sleep up to 20ms but only on a
+>                            HZ=3D100 system. On a HZ=3D1000 system this wi=
+ll be
+>                            2ms. This means, the threshold cannot be hard
+>                            coded as it depends on HZ (jiffy granularity a=
+nd
+>                            timer wheel bucket/level granularity) and also
+>                            on the required accuracy of the callsite. See
+>                            msleep() and also the USLEEP_RANGE_UPPER_BOUND
+>                            value.
+>=20
+> Remove all broken checks. Update checkpatch documentation accordingly.
+>=20
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+> v2: Rephrase commit message
+> ---
+>  Documentation/dev-tools/checkpatch.rst |  6 ------
+>  scripts/checkpatch.pl                  | 34 ----------------------------=
+------
+>  2 files changed, 40 deletions(-)
+>=20
+> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-t=
+ools/checkpatch.rst
+> index a9fac978a525..f5c27be9e673 100644
+> --- a/Documentation/dev-tools/checkpatch.rst
+> +++ b/Documentation/dev-tools/checkpatch.rst
+> @@ -466,12 +466,6 @@ API usage
+>    **UAPI_INCLUDE**
+>      No #include statements in include/uapi should use a uapi/ path.
+> =20
+> -  **USLEEP_RANGE**
+> -    usleep_range() should be preferred over udelay(). The proper way of
+> -    using usleep_range() is mentioned in the kernel docs.
+> -
+> -    See: https://www.kernel.org/doc/html/latest/timers/timers-howto.html=
+#delays-information-on-the-various-kernel-delay-sleep-mechanisms
+> -
+> =20
+>  Comments
+>  --------
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index ba3359bdd1fa..80497da4aaac 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -6601,28 +6601,6 @@ sub process {
+>  			}
+>  		}
+> =20
+> -# prefer usleep_range over udelay
+> -		if ($line =3D~ /\budelay\s*\(\s*(\d+)\s*\)/) {
+> -			my $delay =3D $1;
+> -			# ignore udelay's < 10, however
+> -			if (! ($delay < 10) ) {
+> -				CHK("USLEEP_RANGE",
+> -				    "usleep_range is preferred over udelay; see Documentation/timers=
+/timers-howto.rst\n" . $herecurr);
+> -			}
+> -			if ($delay > 2000) {
+> -				WARN("LONG_UDELAY",
+> -				     "long udelay - prefer mdelay; see arch/arm/include/asm/delay.h\=
+n" . $herecurr);
+> -			}
+> -		}
+> -
+> -# warn about unexpectedly long msleep's
+> -		if ($line =3D~ /\bmsleep\s*\((\d+)\);/) {
+> -			if ($1 < 20) {
+> -				WARN("MSLEEP",
+> -				     "msleep < 20ms can sleep for up to 20ms; see Documentation/time=
+rs/timers-howto.rst\n" . $herecurr);
+> -			}
+> -		}
+> -
+>  # check for comparisons of jiffies
+>  		if ($line =3D~ /\bjiffies\s*$Compare|$Compare\s*jiffies\b/) {
+>  			WARN("JIFFIES_COMPARISON",
+> @@ -7079,18 +7057,6 @@ sub process {
+>  			}
+>  		}
+> =20
+> -# check usleep_range arguments
+> -		if ($perl_version_ok &&
+> -		    defined $stat &&
+> -		    $stat =3D~ /^\+(?:.*?)\busleep_range\s*\(\s*($FuncArg)\s*,\s*($Fun=
+cArg)\s*\)/) {
+> -			my $min =3D $1;
+> -			my $max =3D $7;
+> -			if ($min eq $max) {
+> -				WARN("USLEEP_RANGE",
+> -				     "usleep_range should not use min =3D=3D max args; see Documenta=
+tion/timers/timers-howto.rst\n" . "$here\n$stat\n");
+> -			}
+> -		}
+> -
+>  # check for naked sscanf
+>  		if ($perl_version_ok &&
+>  		    defined $stat &&
+>=20
+
 
