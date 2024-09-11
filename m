@@ -1,76 +1,51 @@
-Return-Path: <linux-kernel+bounces-324763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B95975094
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:15:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0178E975091
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7391F22370
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB00828ED4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2255D186E52;
-	Wed, 11 Sep 2024 11:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DVMATNxF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C33185E73
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D772185E73;
+	Wed, 11 Sep 2024 11:14:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DA5185B69
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726053292; cv=none; b=jq6UWP1ZEHQ2LbvGI+7OM8FpF/eTzkcyG/3uRD2k7DzNw3VZSjR1HbK8efvS5/yxxnLtrl2CMEoL93u1E5VOMspYYnD7NsG0l011yplTFnYbrml00ZqIdxncgmhHZZl1iXDBVx6ns+gTcsfqlI/2tdIIoWMdzuTfZprLsxKXXxc=
+	t=1726053262; cv=none; b=cQSLs8Oj5HGnVEXszWrA5y1i58KbvSfI8E/rndp7bxoiPCOF49/U3EMixYj+/7ntW/hq3rMqg4eRx3Htgy+pziriKVFgrJD+6EaB7d+uZQzQIaJ42JhrI8QYLe5CWqqA3fhDi8OjQZkKEpnINTQCLaXZwxd5rPIaOJ3K2ecZjhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726053292; c=relaxed/simple;
-	bh=BqmxWsUGpfUEobiPJB0THI7iakdvlX0ThUxWPLdaaW8=;
+	s=arc-20240116; t=1726053262; c=relaxed/simple;
+	bh=6g+bYsg0zkFkyI0B3OG7QNql4JmjFdrtCC86J0V6p1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iew6hnoDlgMxWqkXQ9wTRsDyRkPKoDYGoaK8zyezj8ktgfqzZvkxDnViJLJbb/Z0/iNg9tgh/jg9Jkl3tDGlqiCPRErAZpjz7E+/gSr4CvsUhdPiwXBYqdqwbnk/zFLRGVi3XjlwLmaZR+bGg6z9n+kZ1XCGzkuuxEXgOYAtuZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DVMATNxF; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726053291; x=1757589291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BqmxWsUGpfUEobiPJB0THI7iakdvlX0ThUxWPLdaaW8=;
-  b=DVMATNxF1NcdAhtDDbukmVUSW7/JRytteXuvri1FLicWG9rYMi2+i0TP
-   oG1ryZYU3FndVX3F3YCcJ7+hAE5e/457ZTMX5Iq/1aDSOw7ttUxIKz+E/
-   zovL0YhdJVHlgUT2aDNau4zzA0mq8KN+mMr4K68D+AP9aOoi6FbXex9mm
-   +Tr2xCSw8bvCMEKCAnbzCNlXianmOnUYTUnR2LwqIUDMgdjRcUh9d+VkT
-   a0L+2dkAxYC4w8mVFfMGTo0PjxztI+CJFVWlnw3nEN+SSI0KtKADwzkLG
-   /U83J0b0YcEpwE5hwzb00hCFFbxQ5dWA0nGJyz2D/6wf9q0z/wKrxIMdn
-   Q==;
-X-CSE-ConnectionGUID: 4dob10rEQpCgT1NUKoEzKA==
-X-CSE-MsgGUID: sgdRkHC6SrOpeYcoCZ9Z7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24385328"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="24385328"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 04:14:50 -0700
-X-CSE-ConnectionGUID: cQlyxEGaROSubZX6BH/QFw==
-X-CSE-MsgGUID: r4n+UmWTQC6Cgo166HJTQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="67284394"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 11 Sep 2024 04:14:49 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soLJ7-0003RI-30;
-	Wed, 11 Sep 2024 11:14:45 +0000
-Date: Wed, 11 Sep 2024 19:13:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com, mst@redhat.com,
-	michael.christie@oracle.com, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v1 2/7] vhost: Add kthread support in function
- vhost_worker_queue()
-Message-ID: <202409111842.o3eEppU6-lkp@intel.com>
-References: <20240909013531.1243525-3-lulu@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5+iSjMleCNPxXZuM+wZH+vM/ShgeQ7wkh3MBffTPk71Fkn7xIRg7XCZnCh1T2jkFkTvyrBdvGZzv0DFVy9sepxnuObRy/ug7bWu4NlmcPEW8Zj+ZBAa0R9jnXotofPbH9+Qu+YrLSclFoxpXgkUwcbINfQQSkR8+osezFDeG/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 853211007;
+	Wed, 11 Sep 2024 04:14:49 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F4BF3F64C;
+	Wed, 11 Sep 2024 04:14:18 -0700 (PDT)
+Date: Wed, 11 Sep 2024 12:14:13 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Constrain the host to the maximum shared SVE
+ VL with pKVM
+Message-ID: <ZuF7hUU1xn/Em9QJ@e133380.arm.com>
+References: <20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,71 +54,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909013531.1243525-3-lulu@redhat.com>
+In-Reply-To: <20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org>
 
-Hi Cindy,
+On Tue, Sep 10, 2024 at 09:21:17PM +0100, Mark Brown wrote:
+> When pKVM saves and restores the host floating point state on a SVE system
+> it programs the vector length in ZCR_EL2.LEN to be whatever the maximum VL
+> for the PE is but uses a buffer allocated with kvm_host_sve_max_vl, the
+> maximum VL shared by all PEs in the system. This means that if we run on a
+> system where the maximum VLs are not consistent we will overflow the buffer
+> on PEs which support larger VLs.
+> 
+> Since the host will not currently attempt to make use of non-shared VLs fix
+> this by explicitly setting the EL2 VL to be the maximum shared VL when we
+> save and restore. This will enforce the limit on host VL usage. Should we
+> wish to support asymmetric VLs this code will need to be updated along with
+> the required changes for the host, patches have previously been posted:
+> 
+>   https://lore.kernel.org/r/20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org
+> 
+> Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kvm/hyp/include/hyp/switch.h | 2 +-
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 7 ++++---
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index f59ccfe11ab9..ab1425baf0e9 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -339,7 +339,7 @@ static inline void __hyp_sve_save_host(void)
+>  	struct cpu_sve_state *sve_state = *host_data_ptr(sve_state);
+>  
+>  	sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
+> -	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl), SYS_ZCR_EL2);
+>  	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+>  			 &sve_state->fpsr,
+>  			 true);
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index f43d845f3c4e..90ff79950912 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -45,10 +45,11 @@ static void __hyp_sve_restore_host(void)
+>  	 * the host. The layout of the data when saving the sve state depends
+>  	 * on the VL, so use a consistent (i.e., the maximum) host VL.
+>  	 *
+> -	 * Setting ZCR_EL2 to ZCR_ELx_LEN_MASK sets the effective length
+> -	 * supported by the system (or limited at EL3).
+> +	 * Note that this constrains the PE to the maximum shared VL
+> +	 * that was discovered, if we wish to use larger VLs this will
+> +	 * need to be revisited.
+>  	 */
+> -	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl), SYS_ZCR_EL2);
+>  	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+>  			    &sve_state->fpsr,
+>  			    true);
+> 
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240910-kvm-arm64-limit-guest-vl-d5fba0c7cc7b
+> 
+> Best regards,
+> -- 
 
-kernel test robot noticed the following build errors:
+It's a shame that the allocation logic lives somewhere far far away,
+so the code here needs to "guess" a consistent correct bounding VL for
+the host here.  If there's a change of policy later on, someone may
+need to remember to fix both places.
 
-[auto build test ERROR on mst-vhost/linux-next]
-[also build test ERROR on linus/master v6.11-rc7 next-20240910]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Just a thought, but is there a way of getting the relevant bits of
+logic at least into the same file?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cindy-Lu/vhost-Add-a-new-module_param-for-enable-kthread/20240909-093852
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
-patch link:    https://lore.kernel.org/r/20240909013531.1243525-3-lulu%40redhat.com
-patch subject: [PATCH v1 2/7] vhost: Add kthread support in function vhost_worker_queue()
-config: arc-randconfig-001-20240911 (https://download.01.org/0day-ci/archive/20240911/202409111842.o3eEppU6-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409111842.o3eEppU6-lkp@intel.com/reproduce)
+Cheers
+---Dave
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409111842.o3eEppU6-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/vhost/vhost.c: In function 'vhost_worker_queue':
->> drivers/vhost/vhost.c:272:13: error: 'use_kthread' undeclared (first use in this function)
-     272 |         if (use_kthread) {
-         |             ^~~~~~~~~~~
-   drivers/vhost/vhost.c:272:13: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +/use_kthread +272 drivers/vhost/vhost.c
-
-   268	
-   269	static void vhost_worker_queue(struct vhost_worker *worker,
-   270				       struct vhost_work *work)
-   271	{
- > 272		if (use_kthread) {
-   273			vhost_work_queue_kthread(worker, work);
-   274		} else {
-   275			vhost_worker_queue_task(worker, work);
-   276		}
-   277	}
-   278	bool vhost_vq_work_queue(struct vhost_virtqueue *vq, struct vhost_work *work)
-   279	{
-   280		struct vhost_worker *worker;
-   281		bool queued = false;
-   282	
-   283		rcu_read_lock();
-   284		worker = rcu_dereference(vq->worker);
-   285		if (worker) {
-   286			queued = true;
-   287			vhost_worker_queue(worker, work);
-   288		}
-   289		rcu_read_unlock();
-   290	
-   291		return queued;
-   292	}
-   293	EXPORT_SYMBOL_GPL(vhost_vq_work_queue);
-   294	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
