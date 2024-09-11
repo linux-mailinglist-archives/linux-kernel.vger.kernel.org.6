@@ -1,76 +1,60 @@
-Return-Path: <linux-kernel+bounces-324897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B115975247
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:32:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8346A97527B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9018A1C22263
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD081C26309
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AD719F482;
-	Wed, 11 Sep 2024 12:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DXsvZCPq"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972D719F128;
+	Wed, 11 Sep 2024 12:31:59 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422EE19E963;
-	Wed, 11 Sep 2024 12:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1004B1A4E65;
+	Wed, 11 Sep 2024 12:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057803; cv=none; b=FyyXHwI2Yk4vg9ezvVosHcKWc7hor7pVj2AEBnLyC6UvW8xV/VYhW/47yigxLTEDzwoI06AybAb+1xjz5D9kLELXBM8Tv1/gFyh4xTlIC3f6Y0Z1RtmCVbIhCUbNMBGtETZSd94OoZQnELHdvfNnkdLd/K6gyzajFYYhU/nVRvY=
+	t=1726057919; cv=none; b=et4ysBSWCTvfQReO9ggh6wfsCHmCee/WYlcUTqghdLEfEIO9GxwKJGhhlY2Dho7TBoa+efgWzPvQmDlePFk5EPXnuV6PJCUdsOcNoPELYVVyqHorEgcf6Z2TwUgmTcsuiidMA5iF1JPsXlpQQSodEGjiIQLzYA8RnH7Kp+wBjMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057803; c=relaxed/simple;
-	bh=PiygWBMWWgmiBJlhMmEQ0JypGcuuZJZ1K9IpKWur6s8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kcm1tJZYkV0ajhfPg8IlrNr4rZtp76cepkvbGia7e5qKLMjue6QO4lGRWBA1SJHeKa9vRJOMG61sgxCuDcQVTeld8wxgJvaQnmFK4QqvC8ulqbfBzqCts1J7cn+vyWhB//SbeY95pRdpz6Y72+oM1Qw3W9woOyZPgvh9jkAYyWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DXsvZCPq; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726057801; x=1757593801;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PiygWBMWWgmiBJlhMmEQ0JypGcuuZJZ1K9IpKWur6s8=;
-  b=DXsvZCPqJxaqvezyGvUIy7EaiDeQMuIVPoLaD+48VYGpvMY73H3kaj8p
-   0wPx7CXpk29LGdxvADoJfjw20wLzqxlZRL5LAVC2DCXc510O1j0TwSXIj
-   Ql2VlbOnA8d+WMsGkwpoGcQulneyl/Qvqy/c2+QezezxkamyHnyOgVUbE
-   x3qzy56DxvnIoykw34oMImCVcpXBuN7UjDh9GUjFESEQrpBE449aAbL+l
-   atApXjQsESvQq4+0TIR6drYElZPdVWvH/OxpL2l+DHqLmsAKJJpFC9OZA
-   a3kJn0LCAAl8NExcZgpFn/970+XI1ontZBvjpv1J0pqF2vX8msMUYlwQD
-   Q==;
-X-CSE-ConnectionGUID: 9vUpuscIQ26YBlU3BRadaQ==
-X-CSE-MsgGUID: rcOEGGVATUaFBm20lYIsUg==
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="32269432"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 05:29:58 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Sep 2024 05:29:23 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 11 Sep 2024 05:29:20 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH 3/3] ASoC: atmel: mchp-pdmc: Retain Non-Runtime Controls
-Date: Wed, 11 Sep 2024 15:29:09 +0300
-Message-ID: <20240911122909.133399-4-andrei.simion@microchip.com>
+	s=arc-20240116; t=1726057919; c=relaxed/simple;
+	bh=5h+KprFeInb15D7Ak0CKlRDmGyk19qjtw15wRdc0M/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OODJDKRsk0WV0cACZDUCC8qOLESOpsXdhnUJdfrfYq08VgfTmYIGlzghmmyRdYz7wFJ/BWvONdrtgXK4NYZXwHFtpNMvfyD4EafyP8BP+7HSayi7f311Q5QoJqfx8GpreBHhspvRg0JmGLahVPc2O2jL+yfxh1BE0JfuN7TntYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X3fZz2ZFHz9v7NN;
+	Wed, 11 Sep 2024 20:12:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 55D88140580;
+	Wed, 11 Sep 2024 20:31:49 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwD3hy+ijeFmnHu1AA--.60036S4;
+	Wed, 11 Sep 2024 13:31:48 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: dhowells@redhat.com,
+	dwmw2@infradead.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 12/14] PGP: Provide a key type for testing PGP signatures
+Date: Wed, 11 Sep 2024 14:29:09 +0200
+Message-Id: <20240911122911.1381864-13-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911122909.133399-1-andrei.simion@microchip.com>
-References: <20240911122909.133399-1-andrei.simion@microchip.com>
+In-Reply-To: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
+References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,180 +62,317 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:LxC2BwD3hy+ijeFmnHu1AA--.60036S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxtrW5XrWkWr1xtFW8ZFyfXrb_yoWfXr43pF
+	yFkrWrtFy8Jrn7C3y3AayfWwnYkr40yry3G3ySqw1jy39rWwn7GrZ2yF1kKF98tw4kZ3yr
+	A3yYva4Uu3WDtrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+	WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
+	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
+	07Ud5rcUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGbg-HQH5AAAsr
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+From: David Howells <dhowells@redhat.com>
 
-Avoid removing these controls, as doing so can cause issues if the stream
-is initiated from another control. Ensure these controls remain intact when
-the stream is started or finished. Instead of removing them, return an
--EBUSY error code to indicate that the controller is busy, especially when
-the audio filter and the SINC filter are in use.
+Provide a key type for testing the PGP signature parser.  It is given a
+non-detached PGP message as payload:
 
-[andrei.simion@microchip.com: Reword the commit title and the commit
-message. Adapt the code from kernel v6.1 -> v6.6 -> latest kernel version.]
+	keyctl padd pgp_test a @s <content.txt.gpg
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+A suitable message can be generated like this:
+
+	echo "This is a test attached-signed content" >content.txt
+	gpg --compress-algo=none -s content.txt
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- sound/soc/atmel/mchp-pdmc.c | 78 ++++++++++++++++---------------------
- 1 file changed, 34 insertions(+), 44 deletions(-)
+ crypto/asymmetric_keys/Kconfig        |  15 +++
+ crypto/asymmetric_keys/Makefile       |   2 +
+ crypto/asymmetric_keys/pgp_library.c  |  64 +++++++++++++
+ crypto/asymmetric_keys/pgp_test_key.c | 131 ++++++++++++++++++++++++++
+ crypto/asymmetric_keys/pgplib.h       |  16 ++++
+ 5 files changed, 228 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/pgp_test_key.c
 
-diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
-index d97d153ee375..758b3c550b97 100644
---- a/sound/soc/atmel/mchp-pdmc.c
-+++ b/sound/soc/atmel/mchp-pdmc.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <linux/spinlock.h>
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index c69bfdc022c0..d28b9593a70d 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -119,4 +119,19 @@ config PGP_KEY_PARSER
+ 	  for key data and provides the ability to instantiate a crypto key
+ 	  from a public key packet found inside the blob.
  
- #include <sound/core.h>
- #include <sound/dmaengine_pcm.h>
-@@ -113,6 +114,7 @@ struct mchp_pdmc_chmap {
- 
- struct mchp_pdmc {
- 	struct mic_map channel_mic_map[MCHP_PDMC_MAX_CHANNELS];
-+	spinlock_t busy_lock;		/* lock protecting busy */
- 	struct device *dev;
- 	struct snd_dmaengine_dai_dma_data addr;
- 	struct regmap *regmap;
-@@ -124,6 +126,7 @@ struct mchp_pdmc {
- 	int mic_no;
- 	int sinc_order;
- 	bool audio_filter_en;
-+	u8 busy:1;
- };
- 
- static const char *const mchp_pdmc_sinc_filter_order_text[] = {
-@@ -167,10 +170,19 @@ static int mchp_pdmc_sinc_order_put(struct snd_kcontrol *kcontrol,
- 		return -EINVAL;
- 
- 	val = snd_soc_enum_item_to_val(e, item[0]) << e->shift_l;
--	if (val == dd->sinc_order)
++config PGP_TEST_KEY
++	tristate "PGP testing key type"
++	depends on SYSTEM_DATA_VERIFICATION
++	depends on PGP_KEY_PARSER=y
++	help
++	  This option provides a type of key that can be loaded up from a
++	  PGP message - provided the message is signed by a loaded key.  If
++	  it is, the PGP wrapper is discarded and reading the key returns
++	  just the payload.  If it isn't, adding the key will fail with an
++	  error.  If the key used for signature verification isn't in the
++	  built-in or secondary keyring, adding a key will succeed but this
++	  fact will be signaled through a debug message in the kernel log.
 +
-+	spin_lock(&dd->busy_lock);
-+	if (dd->busy) {
-+		spin_unlock((&dd->busy_lock));
-+		return -EBUSY;
-+	}
-+	if (val == dd->sinc_order) {
-+		spin_unlock((&dd->busy_lock));
- 		return 0;
-+	}
- 
- 	dd->sinc_order = val;
-+	spin_unlock((&dd->busy_lock));
- 
- 	return 1;
- }
-@@ -193,10 +205,18 @@ static int mchp_pdmc_af_put(struct snd_kcontrol *kcontrol,
- 	struct mchp_pdmc *dd = snd_soc_component_get_drvdata(component);
- 	bool af = uvalue->value.integer.value[0] ? true : false;
- 
--	if (dd->audio_filter_en == af)
-+	spin_lock(&dd->busy_lock);
-+	if (dd->busy) {
-+		spin_unlock((&dd->busy_lock));
-+		return -EBUSY;
-+	}
-+	if (dd->audio_filter_en == af) {
-+		spin_unlock((&dd->busy_lock));
- 		return 0;
-+	}
- 
- 	dd->audio_filter_en = af;
-+	spin_unlock((&dd->busy_lock));
- 
- 	return 1;
- }
-@@ -379,52 +399,10 @@ static const struct snd_kcontrol_new mchp_pdmc_snd_controls[] = {
- 	},
- };
- 
--static int mchp_pdmc_close(struct snd_soc_component *component,
--			   struct snd_pcm_substream *substream)
--{
--	return snd_soc_add_component_controls(component, mchp_pdmc_snd_controls,
--					      ARRAY_SIZE(mchp_pdmc_snd_controls));
--}
--
--static int mchp_pdmc_open(struct snd_soc_component *component,
--			  struct snd_pcm_substream *substream)
--{
--	int i;
--
--	/* remove controls that can't be changed at runtime */
--	for (i = 0; i < ARRAY_SIZE(mchp_pdmc_snd_controls); i++) {
--		const struct snd_kcontrol_new *control = &mchp_pdmc_snd_controls[i];
--		struct snd_ctl_elem_id id;
--		int err;
--
--		if (component->name_prefix)
--			snprintf(id.name, sizeof(id.name), "%s %s", component->name_prefix,
--				 control->name);
--		else
--			strscpy(id.name, control->name, sizeof(id.name));
--
--		id.numid = 0;
--		id.iface = control->iface;
--		id.device = control->device;
--		id.subdevice = control->subdevice;
--		id.index = control->index;
--		err = snd_ctl_remove_id(component->card->snd_card, &id);
--		if (err < 0)
--			dev_err(component->dev, "%d: Failed to remove %s\n", err,
--				control->name);
--	}
--
--	return 0;
--}
--
- static const struct snd_soc_component_driver mchp_pdmc_dai_component = {
- 	.name = "mchp-pdmc",
- 	.controls = mchp_pdmc_snd_controls,
- 	.num_controls = ARRAY_SIZE(mchp_pdmc_snd_controls),
--	.open = &mchp_pdmc_open,
--	.close = &mchp_pdmc_close,
--	.legacy_dai_naming = 1,
--	.trigger_start = SND_SOC_TRIGGER_ORDER_LDC,
- };
- 
- static const unsigned int mchp_pdmc_1mic[] = {1};
-@@ -587,6 +565,13 @@ static int mchp_pdmc_hw_params(struct snd_pcm_substream *substream,
- 			cfgr_val |= MCHP_PDMC_CFGR_BSSEL(i);
- 	}
- 
-+	/*
-+	 * from these point forward, we consider the controller busy, so the
-+	 * audio filter and SINC order can't be changed
-+	 */
-+	spin_lock(&dd->busy_lock);
-+	dd->busy = 1;
-+	spin_unlock((&dd->busy_lock));
- 	for (osr_start = dd->audio_filter_en ? 64 : 8;
- 	     osr_start <= 256 && best_diff_rate; osr_start *= 2) {
- 		long round_rate;
-@@ -1099,6 +1084,7 @@ static int mchp_pdmc_probe(struct platform_device *pdev)
- 	 */
- 	dd->audio_filter_en = true;
- 	dd->sinc_order = 3;
-+	spin_lock_init(&dd->busy_lock);
- 
- 	dd->addr.addr = (dma_addr_t)res->start + MCHP_PDMC_RHR;
- 	platform_set_drvdata(pdev, dd);
-@@ -1143,6 +1129,10 @@ static void mchp_pdmc_remove(struct platform_device *pdev)
- {
- 	struct mchp_pdmc *dd = platform_get_drvdata(pdev);
- 
-+	spin_lock(&dd->busy_lock);
-+	dd->busy = 0;
-+	spin_unlock((&dd->busy_lock));
++	  This is intended for testing the PGP parser.
 +
- 	if (!pm_runtime_status_suspended(dd->dev))
- 		mchp_pdmc_runtime_suspend(dd->dev);
+ endif # ASYMMETRIC_KEY_TYPE
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index e7ff01997eb2..507a78f9a0a1 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -89,3 +89,5 @@ obj-$(CONFIG_PGP_KEY_PARSER) += pgp_key_parser.o
+ pgp_key_parser-y := \
+ 	pgp_public_key.o \
+ 	pgp_signature.o
++
++obj-$(CONFIG_PGP_TEST_KEY) += pgp_test_key.o
+diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_keys/pgp_library.c
+index a9708ccbcb81..ff4bb52790dd 100644
+--- a/crypto/asymmetric_keys/pgp_library.c
++++ b/crypto/asymmetric_keys/pgp_library.c
+@@ -544,3 +544,67 @@ int pgp_parse_sig_params(const u8 **_data, size_t *_datalen,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pgp_parse_sig_params);
++
++#if IS_ENABLED(CONFIG_PGP_TEST_KEY)
++
++/**
++ * pgp_parse_literal_data - Parse basic params from a PGP literal data packet
++ * @data: Content of packet
++ * @datalen: Length of packet remaining
++ * @p: The basic parameters
++ *
++ * Parse the basic parameters from a PGP literal data packet [RFC 9580: 5.9]
++ * that are needed to work out what form the data is in and where it is.
++ *
++ * Returns 0 if successful or a negative error code.
++ */
++int pgp_parse_literal_data(const u8 *data, size_t datalen,
++			   struct pgp_literal_data_parameters *p)
++{
++	unsigned int tmp;
++
++	pr_devel("-->%s(,%zu,,)\n", __func__, datalen);
++
++	if (datalen < 6)
++		goto too_short;
++	datalen -= 6;
++
++	p->format = *data++;
++	switch (p->format) {
++	case PGP_LIT_FORMAT_BINARY:
++	case PGP_LIT_FORMAT_TEXT:
++	case PGP_LIT_FORMAT_TEXT_UTF8:
++		break;
++	default:
++		pr_debug("Literal data packet with unhandled format %02x\n",
++			 p->format);
++		return -EBADMSG;
++	}
++
++	p->filename_len = *data++;
++	p->filename_offset = 2;
++	if (datalen < p->filename_len)
++		goto too_short;
++	data += p->filename_len;
++	datalen -= p->filename_len;
++
++	tmp  = *data++ << 24;
++	tmp |= *data++ << 16;
++	tmp |= *data++ << 8;
++	tmp |= *data++;
++	p->time = tmp;
++
++	p->content_offset = 6 + p->filename_len;
++	p->content_len = datalen;
++
++	pr_devel("%x,%u,%x,%u\n",
++		 p->format, p->filename_len, p->time, p->content_len);
++	return 0;
++
++too_short:
++	pr_debug("Literal data packet too short\n");
++	return -EBADMSG;
++}
++EXPORT_SYMBOL_GPL(pgp_parse_literal_data);
++
++#endif /* CONFIG_PGP_TEST_KEY */
+diff --git a/crypto/asymmetric_keys/pgp_test_key.c b/crypto/asymmetric_keys/pgp_test_key.c
+new file mode 100644
+index 000000000000..80ab72ed09b9
+--- /dev/null
++++ b/crypto/asymmetric_keys/pgp_test_key.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Testing module to load key from trusted PGP message
++ *
++ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#define pr_fmt(fmt) "PGPtest: "fmt
++#include <linux/key.h>
++#include <linux/key-type.h>
++#include <linux/cred.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/verification.h>
++#include <keys/user-type.h>
++#include <keys/system_keyring.h>
++#include <crypto/pgp.h>
++
++#include "pgp_parser.h"
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("PGP testing key type");
++
++struct pgp_test_parse_context {
++	struct pgp_parse_context pgp;
++	struct pgp_literal_data_parameters params;
++	const void *content;
++};
++
++static int pgp_test_parse_data(struct pgp_parse_context *context,
++			       enum pgp_packet_tag type,
++			       u8 headerlen,
++			       const u8 *data,
++			       size_t datalen)
++{
++	struct pgp_test_parse_context *ctx =
++		container_of(context, struct pgp_test_parse_context, pgp);
++	int ret;
++
++	kenter("");
++
++	ret = pgp_parse_literal_data(data, datalen, &ctx->params);
++	if (ret == 0)
++		ctx->content = data + ctx->params.content_offset;
++	return ret;
++}
++
++/*
++ * Instantiate a PGP wrapped and validated key.
++ */
++static int pgp_test_instantiate(struct key *key,
++				struct key_preparsed_payload *prep)
++{
++	struct pgp_test_parse_context p;
++	const void *saved_prep_data;
++	size_t saved_prep_datalen;
++	const struct cred *cred = current_cred();
++	int ret;
++
++	kenter("");
++
++	memset(&p, 0, sizeof(p));
++	p.pgp.types_of_interest = (1 << PGP_PKT_LITERAL_DATA);
++	p.pgp.process_packet = pgp_test_parse_data;
++	ret = pgp_parse_packets(prep->data, prep->datalen, &p.pgp);
++	if (ret < 0) {
++		kleave(" = %d [parse]", ret);
++		return ret;
++	}
++
++	if (!p.params.content_len) {
++		kleave(" = -ENODATA [no literal data");
++		return -ENODATA;
++	}
++
++	ret = verify_pgp_signature(p.content, p.params.content_len,
++				   prep->data, prep->datalen,
++				   VERIFY_USE_SECONDARY_KEYRING,
++				   VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
++	if (ret < 0 && cred->session_keyring) {
++		ret = verify_pgp_signature(p.content, p.params.content_len,
++					   prep->data, prep->datalen,
++					   cred->session_keyring,
++					   VERIFYING_UNSPECIFIED_SIGNATURE,
++					   NULL, NULL);
++		if (ret < 0)
++			goto error;
++
++		pr_warn("PGP message doesn't chain back to a trusted key\n");
++	}
++
++	saved_prep_data = prep->data;
++	saved_prep_datalen = prep->datalen;
++	prep->data = p.content;
++	prep->datalen = p.params.content_len;
++	ret = generic_key_instantiate(key, prep);
++	prep->data = saved_prep_data;
++	prep->datalen = saved_prep_datalen;
++error:
++	kleave(" = %d", ret);
++	return ret;
++}
++
++/*
++ * user defined keys take an arbitrary string as the description and an
++ * arbitrary blob of data as the payload
++ */
++static struct key_type key_type_pgp_test = {
++	.name			= "pgp_test",
++	.instantiate		= pgp_test_instantiate,
++	.revoke			= user_revoke,
++	.destroy		= user_destroy,
++	.describe		= user_describe,
++	.read			= user_read,
++};
++
++/*
++ * Module stuff
++ */
++static int __init pgp_key_init(void)
++{
++	return register_key_type(&key_type_pgp_test);
++}
++
++static void __exit pgp_key_cleanup(void)
++{
++	unregister_key_type(&key_type_pgp_test);
++}
++
++module_init(pgp_key_init);
++module_exit(pgp_key_cleanup);
+diff --git a/crypto/asymmetric_keys/pgplib.h b/crypto/asymmetric_keys/pgplib.h
+index 25191cea33a4..9c852256d1c9 100644
+--- a/crypto/asymmetric_keys/pgplib.h
++++ b/crypto/asymmetric_keys/pgplib.h
+@@ -56,3 +56,19 @@ struct pgp_sig_parameters {
  
+ extern int pgp_parse_sig_params(const u8 **_data, size_t *_datalen,
+ 				struct pgp_sig_parameters *p);
++
++#if IS_ENABLED(CONFIG_PGP_TEST_KEY)
++
++struct pgp_literal_data_parameters {
++	enum pgp_literal_data_format format : 8;
++	u8 filename_len;
++	u8 filename_offset;
++	u8 content_offset;
++	u32 content_len;
++	u32 time;
++};
++
++extern int pgp_parse_literal_data(const u8 *data, size_t datalen,
++				  struct pgp_literal_data_parameters *p);
++
++#endif /* CONFIG_PGP_TEST_KEY */
 -- 
 2.34.1
 
