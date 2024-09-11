@@ -1,329 +1,190 @@
-Return-Path: <linux-kernel+bounces-325310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100A79757CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986E59757B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9300B26E56
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B971F21CFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233FC1AB523;
-	Wed, 11 Sep 2024 15:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0890C1AE870;
+	Wed, 11 Sep 2024 15:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WTsO4iRI"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1P7TMwJ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826783E479;
-	Wed, 11 Sep 2024 15:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070147; cv=fail; b=JRaczdd1q1iPhd46zuzBdw8sI4zs0lPpcPoCGQi5JELh/ED9oPHZiDKPHTi6nire7nAmL/VxXQbl3O4pTnzuUnK4pgRrIBxwE2IJXsT/RQzfxWn9Ck1vEc1ltcIBQpMe4WLP4hd9DJi+Kz4K3ZEuBilpi+IwIwcNm3O8xELuDn0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070147; c=relaxed/simple;
-	bh=92tEq0JoWbd2HJKIktZnhMRIvO9azk3lOH6zZHUC08Q=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=L+WOOjPUIdxyS6t2RQg9nIYK6+jIjPdPl6IXdGE6GX5y3MZ9ztrKZlYl4IrWjOhWI/wRgkB9KvRT2D+rOCk/h/IkZRK+0eKe8c6vMODk4nRy1sFAGZc9KBsWUatNL4VG8eiJG0gFyEuD6+UdxJQkEMu1V5aIjmb/0FXFbLa0Ezg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WTsO4iRI; arc=fail smtp.client-ip=40.107.223.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YjS3TElegacB7izjh1MwXF9ybvNneHSG3JCY7OVd0WCqX/ZJPyKevFLkSysC8dPZ9anSlyRzqRrBeQ1l+pZAwPMvkbzHolSYLZir+bIZilkiB8HwrrgzsHfeB8d/PjnwWgrCzaZFjbw17fI9LszWebSKNKd7mpmbdhnifLcp8PaJCMLKGCbaISF2tqZcabFS/dDCwmMOKsRHFIqjuq0S7YtEbIDnJWnlZwLW5FWQclymmiyzm/sVO70vh4OBPsayM4zMaDxknx0QrrpemQyJ2jrPvgDLhgw/7/jezmIK6t9P6Q5TCD+pQukWTOBmwZuN8x0Y18YBrwTUgCWp0GARTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y9HXpSoz/mXwSfPk2Oa3SypMZPm6cFqdnerBic4dLkM=;
- b=Va6ADIAXZK/CpAtcbpW+ewLOO26YOh802RqEldFNdN7VwPfcqH9nlQE36SyLquRKWS7SmydeAMzup3YrUzZuNo6K4J9HnMAN+/oQjycNbt56X3SwnTKZ6d+xGPGrapgSG8VKiCrhNbavmb8nulHGtiAH7az44gTuK6rUsweHrzAAsAbbvtHWNLnAjv8sBUiIEuUirM43DQWeMu5UYQGnOl+8aVYloByeV1S1sQ53HcXHkLiT05/ibSzFRq2GIOf5hV/kyGfeWk9eah1kJ64UlVQWdBHiqzViE0RLcdPWtAH4TG7QIIJhhKlTR0xs9rmhPg1oI34IziObEbvvT+SJkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y9HXpSoz/mXwSfPk2Oa3SypMZPm6cFqdnerBic4dLkM=;
- b=WTsO4iRIXBsCZFnbLKAG0104u4/b3kGMZ82ZRHMDjePEhv3OhZZVUaal5aGmqUnQmIHetrh7TFPXwiPqwYHca5C15qiQrbpeZeZqAGjY9aaMNhF5ROifl151tUoqNvlHIeEBuZ3hp5hSuA6KChtMQ0Phmnjt/gPbpxzp7pjzEsrGHSpjLjdBgalbCHjpPx+3LX8dlBXI61TbdiLtien542ySJyAeQbmCRuyW/OR9IGYPeTVFFwXnN5EMRcGX3yyq6fUTrPX0FZlAiytOlc1SSAAlCRh02/skzBYShlqt55tTI84oxlmaTxAq6NoIE9XczgklM4lyqxc5/5cFDLCKhg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
- by CH2PR12MB4248.namprd12.prod.outlook.com (2603:10b6:610:7a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Wed, 11 Sep
- 2024 15:55:42 +0000
-Received: from CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
- ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
- 15:55:40 +0000
-From: KobaK <kobak@nvidia.com>
-To: Matt Ochs <mochs@nvidia.com>,
-	James Morse <james.morse@arm.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH V5] acpi/prmt: find block with specific type
-Date: Wed, 11 Sep 2024 23:55:36 +0800
-Message-ID: <20240911155536.3900579-1-kobak@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::34) To CY8PR12MB8297.namprd12.prod.outlook.com
- (2603:10b6:930:79::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123401AE84D;
+	Wed, 11 Sep 2024 15:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726070186; cv=none; b=DeXKcwJQ7Y7PG6F1/fl6lFcdYXa+iUsUjCJg1bK8SZoRH4CY+CwgukVxm1voodMFDLiAH4n3NioydMsobfWT9Tj+xFwekUpMZs7E5woCJ7RaJMGAfJK1hDQS3+lVSIbEIfztv0XdkYPI4Q52v2/pA4qfNWDNMI2D8zIU3Y2AI4A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726070186; c=relaxed/simple;
+	bh=Dxod+zYmhRxDadQPuCZp+2EDvtcNQw3ZAxVfQZkt2TI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/MN0jQa+u4M0WYRILAkLKa0eis8WFL6L97bdDtD2PR/mTvMQ5K8nWNP+G52RcrHUF1avcmLRKZ0wAiCFqs/58RdZgBrRhEBFbihGEOZPuWw4ts4QfUVUwfwTxKv8m6lOcopKZhsYPpMI4qV1iflpor0YhToTG8ZxZtwJkkMJQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1P7TMwJ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-717911ef035so5361037b3a.3;
+        Wed, 11 Sep 2024 08:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726070184; x=1726674984; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jljrGYOdYNtWhSCPWEj0dAzhk8I277dPvpWRqGcz7w4=;
+        b=P1P7TMwJZ6T0ZkWm7OTjWOFDcwqncJ4V8Ectj5JEY8XAsZsLqRrK78nCupo3QExeVq
+         Z0749tIMh1kisLzJTxcjdGEzFQTSTFmn8wMr0NY8MtDzKd+K0ODxhmcEn/Ep+unuKKBW
+         CxPJUwPidmVNi5ds/q+0tuJqwlyi9XhHO6A7ZhelyhgLGoKcCdnfOhPDOVfYLrHyAmG4
+         GfWsT8ybLT/oWtCbmJEJZjhjHiHgrXUl+e/iDF6y+WWw+Hseu2SmRqGE8mTZG4+gWgHg
+         EEjt4TumjXDhW3xlHoKA5PjQM+DK7eDGQ7crkDvP/mpd/qsB4B16Se8wPHczP0QvB99n
+         pA4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726070184; x=1726674984;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jljrGYOdYNtWhSCPWEj0dAzhk8I277dPvpWRqGcz7w4=;
+        b=K6uICjBjk+oKNXh5EVUn7bOBvCNRgEqlwJon+zGcsGUW5wr+/rASR7n1gT9yQnDOEa
+         Jrzel7YUXySnJuavz922h5PAAPKYCWrxWVz1HdmprAFmhFoyV5PWy5m9hahG1eCVmofa
+         Be5m76yCkDwf9uCFrYRC4vm8fDqKMdvIFgCvrPX+QrDtNylZu1hOg6ZWbKmP0Uq+nkKX
+         m5yHWlGizOX+YuhYrhpPxSJ64bLmxGBGklw3nbZW1CnOu4cbd/s0wV76Jfyg+EVz9Jb/
+         85OHUc7ELzlq2XSQqLAXU2y9yDg8tAqnuvnfcYGZa08xf5k9an2YRzB0aYdW64hsw7E2
+         aB9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUe/PrWpY2MEoBtNEKp6mrmp3/zH9qCKKLNQHVwFmzxmK4feiI0Fj9YQ/YzfMSi6mcJgqeGG+yiv15+iIc=@vger.kernel.org, AJvYcCX+p2BUsEjwcdvXs+R05wNIstNtX0FZnNzVw6hNQWdLGCI07FC6F+GDyRenZKHBRJoqNwHlnB8RBjZkrrrISOdN6g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrFVAx1u6NJw6YV813Q2ZvOErwbEfJUVdco0uKQWUJJvfU9S+T
+	1PHJfQpTFCmC5HCL89NzpxHWA8v+wR/6Ucb9pYKyCrQ+bppcKn2R1ZkbxdfQUHZst0g+y4hTX3m
+	6DuxuT9XtpId+hL1mL7pUbkaLCGk=
+X-Google-Smtp-Source: AGHT+IGC7L1OFokQK9VoCCn4nPJx/6KFr122GwJ9dQE8hx9Mhb36sXjrE5JVsdVSMMQE0+6RpFj6xHYNV6lbGIOcOlo=
+X-Received: by 2002:a05:6a21:1796:b0:1cf:3177:54 with SMTP id
+ adf61e73a8af0-1cf5e176fbcmr6792708637.42.1726070184198; Wed, 11 Sep 2024
+ 08:56:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|CH2PR12MB4248:EE_
-X-MS-Office365-Filtering-Correlation-Id: e51d4cc9-aed6-41cc-d64c-08dcd27a2f83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eYHXtClJvNJ5s81sy380EFSia+DlEmDC7f5mq+TWReYi3dFYJxLLUidQD3ul?=
- =?us-ascii?Q?uZyyKfofmiC3BVJzW5j9lVewo32clOy1Zig61CREbhKMsNGZuXDvEKI9Z6ho?=
- =?us-ascii?Q?jv4ys7RNIRfv6GTQtXBihiQ0OsdIQOORsbzfpX9UsGJ+01bRa12qHmYl0fTd?=
- =?us-ascii?Q?F5FlLa3uLxIrB2zOFzxytCHsBdhLS7MOhoouCazNhkd/rjXKADa7K3HwZfMs?=
- =?us-ascii?Q?vMHD4uPVYlg/8b/4mXa2e/FDtwx9gDCZSO5FGwJeTDr1/YrMz+e2taoowFj9?=
- =?us-ascii?Q?cKaKMIkHcJIXzS9do573gFNQOtMdzY8Xk5CAArSYfEabNtYdyUoypVrdU+Wy?=
- =?us-ascii?Q?KohE9rccvtGn8WwdLo4C2mlqBTweNTmhx/fFf7dmNXRahFJjKyHRLIJ/pI1d?=
- =?us-ascii?Q?0F8Ns7zO6p1SXR8RPhKM7zYT8y4W5ytWvFlcYhClcTEnJFdCeCZ88E4QGqTD?=
- =?us-ascii?Q?Ro1Nx53iQwNygny4syIMnmmX8ZuRZ7qAwSe0ghIQLnHoHq6ZgdSLVrg2B/Cz?=
- =?us-ascii?Q?12c1ciiWrCYk7sp3ilmYyNKgiyxewM9SAAttXkf5I8WDWauScsLw065AbO7d?=
- =?us-ascii?Q?+Oj2CKrdXsM0KGMwKy1b7AC/K9fpz/pXkeLFihohzIFmx6uMMGQRpUFXC6ya?=
- =?us-ascii?Q?Gmhnv7RVFsn4FYI08RqZWZpqXJWiqpcmolWIPIXWgBdFZo/V9PA7YUr5Ibu+?=
- =?us-ascii?Q?7cLWR070XMHJ31n3PQ7mBFMTQv3nEurb2uNVDj2NZF0uMwbZgEC3cbApkk0Q?=
- =?us-ascii?Q?D+rE3FYDfckxGpgpPmiVko1YP56hBpyYJi+dJuz+3nGRPU5AgTR7YbDMNn5Y?=
- =?us-ascii?Q?3luTu2gEGUj98LLCQASD8P1NceUsPDf8+2EWeE5MwwF0SzZUFH+Xe7lKVJ3c?=
- =?us-ascii?Q?GoApK23LheKXEKreAD36wrp7SfhKqAxHS1M1rp1/Mz1wp+VIgnukqEJKLMvd?=
- =?us-ascii?Q?COZhx1cijO+gSEwnlaITAEP8eA0jqQlh9smxew943ZAGtpn49rC1zMNfafCW?=
- =?us-ascii?Q?YRWwRhVRdebKLUTfwa/TxrIZoqPb3E+6fGieR6nXvEXA9a+RsTHiZT1naSFV?=
- =?us-ascii?Q?mOMtbvHphDylRqxomioWBh8XIClp8kDfRg70+tD9qkKjJLLsP3szxjUbLj//?=
- =?us-ascii?Q?T86XBvCaKeM3yQApJwF0lZQNeTJSxuk+sk5ObQelK+Ugho+jGv6wMk+p9e8i?=
- =?us-ascii?Q?prGyZdUGJhukLe83Jv0epZTdRSczu3uUiPf5Q8hZqB7YmmuKqQIaPq7WsIRp?=
- =?us-ascii?Q?Yx0bpzmSoOwBS6MTKOYEasRiszRRZkTML248o/U5IfxqFC3d+SGIbjHqxohd?=
- =?us-ascii?Q?fHMCVucncNdBvxccgzZx1zWptR91bF8gIZaSz/R78TBRFQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?W4JWsbvPo02PMmaWAJ6GryoHsvJi/msCtrehKqVEAlLaKeW5lOoy+AJC/ody?=
- =?us-ascii?Q?ibJ4NLvxGa6Cn3/rk0vzk7KMYp/iYgfKuGHbEa+Zqx65qFBMq/qSKEuzCf1o?=
- =?us-ascii?Q?511ytuOakZBX6V7eOlMEFkL9U4vLwlwVvWWngwvSegt1oEafvOvj0ucjqQvx?=
- =?us-ascii?Q?jvMah+2tus/d32dXui9QDl+7aDTdEeP64SntqSESna6DZBNbYD1zgLCr/qxN?=
- =?us-ascii?Q?d8XsFbAeIQ+YJY47mQYJLHrYRdPLw4pC7XqIIhApTbwDAgOUlJLPfSD5cfd2?=
- =?us-ascii?Q?unwO4rI7D7xA/xIHXKRGR5WTdjCYfLr3VMEfB7OXy5AJDP0qxJAU9qeaUTzg?=
- =?us-ascii?Q?mrzDfuue6S1c6asrnZqUpdwfDALXuAmtart141A9tSR6WZ8YFa5EyrWn7jGv?=
- =?us-ascii?Q?8tIr0K++Z6DZIENb/bX9tFwodlZMXwm8SBgcGI9WJaOe+eTUvclVSQiqthFv?=
- =?us-ascii?Q?px4vJtt3Si70MibBYpngkZsalAcTp0WLdbvYjCLEZ58qatMBhXUN7yLG4SUk?=
- =?us-ascii?Q?eTgPJ7eCsn/W5RzJtIL33tWdq2rGX5vJhayT1hhutB8X82s7Fp68rk3qCLxg?=
- =?us-ascii?Q?0kDLgag2g6rOBBjRtKzj2Q1YYa2vhJvc4x7YL9NDpjIov7EWItbTNdLanioi?=
- =?us-ascii?Q?RrLlX+WGGYZdUhTol6lAYB4rlCAobfBC0wrh+j03apdoXuPQXcZdkq26aPnF?=
- =?us-ascii?Q?Nk33MWMvV6Qe6pJixlndhJU7B/EvDUl2dXesa1PDSSGruMYVBYfjF2bg9vRZ?=
- =?us-ascii?Q?Re7DpNfMd31w/DSMmZg6V/HPYB2k/E8Dnnh3MPmWvC4Kb7f8bzcJAjRQuxCl?=
- =?us-ascii?Q?IkTPCLwPA5eEqpf4EQ9H3d/SRXN+hEBeybRS9ngDHmT3fdCFnJHQkmwpLkT3?=
- =?us-ascii?Q?5Xa3l1C9IPc1QiDBqQGEjY9LLytj+e2kdZaL/GBRHUYXso54qbn/B6yPflL+?=
- =?us-ascii?Q?kyNhFm84+sGFIu23FEWA/ELjpQXoJ+MBTeJeBbUXE3pc2ijzrm7CUojD4Okt?=
- =?us-ascii?Q?ERtUfBcqJI8kKPhTrQuami+tbaCC18NUEzqH24PXFgIW2yEwe74Gw6CZDMjf?=
- =?us-ascii?Q?tngZrzGMT508dM6l3Ke8DhFPFZ3E5bKGBNBL1NslaiehWH+ybJudY8KnCcs+?=
- =?us-ascii?Q?i/2T0j5UaF3PtiyU7UEnDL4Z1R82t0gMumcR5suriI70G74k1xOKRjk/990k?=
- =?us-ascii?Q?aE/NtPIg3fHxuvPFUJF/yQmbYnfd/5OVD6WkIrDOFEovSDFP6zu+DfK4mSy4?=
- =?us-ascii?Q?ojc0leOIGlgLJIFnS4kir7L1kQ9u9HokRpvMwl2FAgpMvJN3zp/qzDS/iKI9?=
- =?us-ascii?Q?OQ2t1vPprwwuLjLToPWtFBKfLj1yNSGDmEp7enk2Cv3+Ur+VLR3fzoba178e?=
- =?us-ascii?Q?2ulCPWGtRr6LcGjRVd6/z/51k7jO/2ee4e2uM4mWjFh2VprsetPQu1+7eis4?=
- =?us-ascii?Q?Tlx0scJppZsNxlnhct7uvrsljpASWEKAWedWFnlnVz5fb9DYt4DmXlQxnZpU?=
- =?us-ascii?Q?c9X+fzsU4/xA3DVKhGYIzwM5Gw29ElRkt3uvpylI2Bk+Jnw5VNvbRSFpGOCO?=
- =?us-ascii?Q?inQC6u646lr8KX/ufoKq/PdZR/BMjRymHvCQznuh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e51d4cc9-aed6-41cc-d64c-08dcd27a2f83
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 15:55:40.8196
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wy6iTgPkVlLytX8viYDMCaI1M4VKt4vtnxBuoRFEHkmbGKi1w8NRedja46eRqXKwhTJLm1D6oyp9QHMwsWH5KQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4248
+References: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
+In-Reply-To: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Wed, 11 Sep 2024 17:55:46 +0200
+Message-ID: <CAHaCkmejAaxvx_N9L1_uS5JpToLfBXPzGqs3C=8-Diy__=1sJA@mail.gmail.com>
+Subject: Re: [PATCH] tools: drop nonsensical -O6
+To: Sam James <sam@gentoo.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-PRMT needs to find the correct type of block to
-translate the PA-VA mapping for EFI runtime services.
+Looks good to me.
+Reviewed-by: Jesper Juhl <jesperjuhl76@gmail.com>
 
-The issue arises because the PRMT is finding a block of
-type EFI_CONVENTIONAL_MEMORY, which is not appropriate for
-runtime services as described in Section 2.2.2 (Runtime
-Services) of the UEFI Specification [1]. Since the PRM handler is
-a type of runtime service, this causes an exception
-when the PRM handler is called.
-
-    [Firmware Bug]: Unable to handle paging request in EFI runtime service
-    WARNING: CPU: 22 PID: 4330 at drivers/firmware/efi/runtime-wrappers.c:341
-        __efi_queue_work+0x11c/0x170
-    Call trace:
-      __efi_queue_work+0x11c/0x170
-      efi_call_acpi_prm_handler+0x68/0xd0
-      acpi_platformrt_space_handler+0x198/0x258
-      acpi_ev_address_space_dispatch+0x144/0x388
-      acpi_ex_access_region+0x9c/0x118
-      acpi_ex_write_serial_bus+0xc4/0x218
-      acpi_ex_write_data_to_field+0x168/0x218
-      acpi_ex_store_object_to_node+0x1a8/0x258
-      acpi_ex_store+0xec/0x330
-      acpi_ex_opcode_1A_1T_1R+0x15c/0x618
-      acpi_ds_exec_end_op+0x274/0x548
-      acpi_ps_parse_loop+0x10c/0x6b8
-      acpi_ps_parse_aml+0x140/0x3b0
-      acpi_ps_execute_method+0x12c/0x2a0
-      acpi_ns_evaluate+0x210/0x310
-      acpi_evaluate_object+0x178/0x358
-      acpi_proc_write+0x1a8/0x8a0 [acpi_call]
-      proc_reg_write+0xcc/0x150
-      vfs_write+0xd8/0x380
-      ksys_write+0x70/0x120
-      __arm64_sys_write+0x24/0x48
-      invoke_syscall.constprop.0+0x80/0xf8
-      do_el0_svc+0x50/0x110
-      el0_svc+0x48/0x1d0
-      el0t_64_sync_handler+0x15c/0x178
-      el0t_64_sync+0x1a8/0x1b0
-
-Find a block with specific type to fix this.
-prmt find a block with EFI_RUNTIME_SERVICES_DATA for prm handler and
-find a block with EFI_RUNTIME_SERVICES_CODE for prm context.
-If no suitable block is found, a warning message will be prompted
-but the procedue continues to manage the next prm handler.
-However, if the prm handler is actullay called without proper allocation,
-it would result in a failure during error handling.
-
-By using the correct memory types for runtime services,
-Ensure that the PRM handler and the context are
-properly mapped in the virtual address space during runtime,
-preventing the paging request error.
-
-[1] https://uefi.org/sites/default/files/resources/UEFI_Spec_2_10_Aug29.pdf
-
-Fixes: cefc7ca46235 ("ACPI: PRM: implement OperationRegion handler for the PlatformRtMechanism subtype")
-Signed-off-by: KobaK <kobak@nvidia.com>
-Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
----
-V2:
-1. format the changelog and add more about error handling.
-2. replace goto
-V3: Warn if parts of handler are missed during va-pa translating.
-V4: Fix the 0day
-V5: Fix typo and pr_warn warning
----
- drivers/acpi/prmt.c | 49 +++++++++++++++++++++++++++++++--------------
- 1 file changed, 34 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index c78453c74ef5..cd4a7f5491d6 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -72,15 +72,17 @@ struct prm_module_info {
- 	struct prm_handler_info handlers[] __counted_by(handler_count);
- };
- 
--static u64 efi_pa_va_lookup(u64 pa)
-+static u64 efi_pa_va_lookup(u64 pa, u32 type)
- {
- 	efi_memory_desc_t *md;
- 	u64 pa_offset = pa & ~PAGE_MASK;
- 	u64 page = pa & PAGE_MASK;
- 
- 	for_each_efi_memory_desc(md) {
--		if (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)
-+		if ((md->type == type) &&
-+			(md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)) {
- 			return pa_offset + md->virt_addr + page - md->phys_addr;
-+		}
- 	}
- 
- 	return 0;
-@@ -148,9 +150,18 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
- 		th = &tm->handlers[cur_handler];
- 
- 		guid_copy(&th->guid, (guid_t *)handler_info->handler_guid);
--		th->handler_addr = (void *)efi_pa_va_lookup(handler_info->handler_address);
--		th->static_data_buffer_addr = efi_pa_va_lookup(handler_info->static_data_buffer_address);
--		th->acpi_param_buffer_addr = efi_pa_va_lookup(handler_info->acpi_param_buffer_address);
-+		th->handler_addr =
-+			(void *)efi_pa_va_lookup(handler_info->handler_address, EFI_RUNTIME_SERVICES_CODE);
-+		th->static_data_buffer_addr =
-+			efi_pa_va_lookup(handler_info->static_data_buffer_address, EFI_RUNTIME_SERVICES_DATA);
-+		th->acpi_param_buffer_addr =
-+			efi_pa_va_lookup(handler_info->acpi_param_buffer_address, EFI_RUNTIME_SERVICES_DATA);
-+
-+		if (!th->handler_addr || !th->static_data_buffer_addr || !th->acpi_param_buffer_addr)
-+			pr_warn(
-+				"Idx: %llu, Parts of handler(GUID: %pUL) are missed, handler_addr %p, data_addr %p, param_addr %p",
-+				cur_handler, &th->guid, th->handler_addr,
-+				(void *)th->static_data_buffer_addr, (void *)th->acpi_param_buffer_addr);
- 	} while (++cur_handler < tm->handler_count && (handler_info = get_next_handler(handler_info)));
- 
- 	return 0;
-@@ -250,8 +261,16 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
- 
- 		handler = find_prm_handler(&buffer->handler_guid);
- 		module = find_prm_module(&buffer->handler_guid);
--		if (!handler || !module)
--			goto invalid_guid;
-+		if (!handler || !module) {
-+			buffer->prm_status = PRM_HANDLER_GUID_NOT_FOUND;
-+			return AE_OK;
-+		}
-+
-+		if (!handler->handler_addr || !handler->static_data_buffer_addr ||
-+			!handler->acpi_param_buffer_addr) {
-+			buffer->prm_status = PRM_HANDLER_ERROR;
-+			return AE_OK;
-+		}
- 
- 		ACPI_COPY_NAMESEG(context.signature, "PRMC");
- 		context.revision = 0x0;
-@@ -274,8 +293,10 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
- 	case PRM_CMD_START_TRANSACTION:
- 
- 		module = find_prm_module(&buffer->handler_guid);
--		if (!module)
--			goto invalid_guid;
-+		if (!module) {
-+			buffer->prm_status = PRM_HANDLER_GUID_NOT_FOUND;
-+			return AE_OK;
-+		}
- 
- 		if (module->updatable)
- 			module->updatable = false;
-@@ -286,8 +307,10 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
- 	case PRM_CMD_END_TRANSACTION:
- 
- 		module = find_prm_module(&buffer->handler_guid);
--		if (!module)
--			goto invalid_guid;
-+		if (!module) {
-+			buffer->prm_status = PRM_HANDLER_GUID_NOT_FOUND;
-+			return AE_OK;
-+		}
- 
- 		if (module->updatable)
- 			buffer->prm_status = UPDATE_UNLOCK_WITHOUT_LOCK;
-@@ -302,10 +325,6 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
- 	}
- 
- 	return AE_OK;
--
--invalid_guid:
--	buffer->prm_status = PRM_HANDLER_GUID_NOT_FOUND;
--	return AE_OK;
- }
- 
- void __init init_prmt(void)
--- 
-2.43.0
-
+On Sun, 8 Sept 2024 at 20:47, Sam James <sam@gentoo.org> wrote:
+>
+> -O6 is very much not-a-thing. Really, this should've been dropped
+> entirely in 49b3cd306e60b9d889c775cb2ebb709f80dd8ae9 instead of just
+> passing it for not-Clang.
+>
+> Just collapse it down to -O3, instead of "-O6 unless Clang, in which case
+> -O3".
+>
+> GCC interprets > -O3 as -O3. It doesn't even interpret > -O3 as -Ofast,
+> which is a good thing, given -Ofast has specific (non-)requirements for
+> code built using it. So, this does nothing except look a bit daft.
+>
+> Remove the silliness and also save a few lines in the Makefiles accordingly.
+>
+> Signed-off-by: Sam James <sam@gentoo.org>
+> ---
+> I promise I'm not completely humourless, but given it's caused
+> actual workarounds to be added for Clang, I don't think this is worth keeping.
+>
+> Plus it sort of propagates a silly myth that -O6 does anything.
+>
+>  tools/lib/api/Makefile     | 4 ----
+>  tools/lib/subcmd/Makefile  | 4 +---
+>  tools/lib/symbol/Makefile  | 4 ----
+>  tools/perf/Makefile.config | 6 +-----
+>  4 files changed, 2 insertions(+), 16 deletions(-)
+>
+> diff --git a/tools/lib/api/Makefile b/tools/lib/api/Makefile
+> index 044860ac1ed1c..7f6396087b467 100644
+> --- a/tools/lib/api/Makefile
+> +++ b/tools/lib/api/Makefile
+> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+>  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -fPIC
+>
+>  ifeq ($(DEBUG),0)
+> -ifeq ($(CC_NO_CLANG), 0)
+>    CFLAGS += -O3
+> -else
+> -  CFLAGS += -O6
+> -endif
+>  endif
+>
+>  ifeq ($(DEBUG),0)
+> diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+> index b87213263a5e0..6717b82fc5876 100644
+> --- a/tools/lib/subcmd/Makefile
+> +++ b/tools/lib/subcmd/Makefile
+> @@ -38,10 +38,8 @@ endif
+>
+>  ifeq ($(DEBUG),1)
+>    CFLAGS += -O0
+> -else ifeq ($(CC_NO_CLANG), 0)
+> -  CFLAGS += -O3
+>  else
+> -  CFLAGS += -O6
+> +  CFLAGS += -O3
+>  endif
+>
+>  # Treat warnings as errors unless directed not to
+> diff --git a/tools/lib/symbol/Makefile b/tools/lib/symbol/Makefile
+> index 13d43c6f92b4a..426b845edfacc 100644
+> --- a/tools/lib/symbol/Makefile
+> +++ b/tools/lib/symbol/Makefile
+> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
+>  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu11 -U_FORTIFY_SOURCE -fPIC
+>
+>  ifeq ($(DEBUG),0)
+> -ifeq ($(CC_NO_CLANG), 0)
+>    CFLAGS += -O3
+> -else
+> -  CFLAGS += -O6
+> -endif
+>  endif
+>
+>  ifeq ($(DEBUG),0)
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index fa679db61f622..5d6b08a896150 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -238,11 +238,7 @@ endif
+>
+>  ifeq ($(DEBUG),0)
+>  CORE_CFLAGS += -DNDEBUG=1
+> -ifeq ($(CC_NO_CLANG), 0)
+> -  CORE_CFLAGS += -O3
+> -else
+> -  CORE_CFLAGS += -O6
+> -endif
+> +CORE_CFLAGS += -O3
+>  else
+>    CORE_CFLAGS += -g
+>    CXXFLAGS += -g
+> --
+> 2.46.0
+>
+>
 
