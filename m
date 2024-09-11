@@ -1,60 +1,76 @@
-Return-Path: <linux-kernel+bounces-324909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6DD975277
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:35:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4F9975254
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B32BEB28D12
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55C221F277A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0328619F10A;
-	Wed, 11 Sep 2024 12:31:56 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1459A19CC08;
+	Wed, 11 Sep 2024 12:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Kru/eQBk"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B802F188A14;
-	Wed, 11 Sep 2024 12:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094F1192B9F;
+	Wed, 11 Sep 2024 12:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057915; cv=none; b=RyY2XN4Aj4h0s/3+Pp/Dm0yZVatW5ctmlGvndSYOY+/K6SIJIfrDmdGtLwPwlufbVpBX/WZ2EGhyfJX/qrbXlGXZUUOf6U8AC+6yyzZs78artwujsz8AbWsxIr0ikCcwMLjo0CaSpQ1gQVihqF8uuzlhtAeLZrXlfow/EXrAQ9U=
+	t=1726057815; cv=none; b=D5fStNVL0yfa0FRLk8+fUiBeWkqZ2TPrFwoJ0yUBLmsMAk9JUmU48Ea/bOYbSHgLU2cmnETjuYe+0IkXeKcLYGoWbqVsW2cBR5wUGhigjAdQZI4aLoOchN1fvIyaUNZvA/OpWK9jnGliz4xRa2ASX5v44jIrz4YsJeu9ONCDfz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057915; c=relaxed/simple;
-	bh=2KIlpazax1UQiWf3Y3CqCE/n7smW3FLZV6HkbuAAgcQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TE4HR7CBmO2i2I5KURn4LZxMwf59uY2juWr2dJvspKl1k9/ZzgWBibTGsx/OMQ/CqxgRTxS4d0gdXyswzy8742PAhsN+g5mZCDy6M1ihbM8gwrZT8jL+3Itm1ZxERL+N59T4wxT4xEmYRxWhagOCoEBwW27dtugrNozKCa2HIyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X3fSH1TtHz9v7JT;
-	Wed, 11 Sep 2024 20:06:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 762B8140B08;
-	Wed, 11 Sep 2024 20:31:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3hy+ijeFmnHu1AA--.60036S3;
-	Wed, 11 Sep 2024 13:31:43 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: dhowells@redhat.com,
-	dwmw2@infradead.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 11/14] verification: introduce verify_pgp_signature()
-Date: Wed, 11 Sep 2024 14:29:08 +0200
-Message-Id: <20240911122911.1381864-12-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1726057815; c=relaxed/simple;
+	bh=TxWkOdseiNx1bafVcVq7iqdfmlO4X8zdBrM+WKyic7w=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KSZsPDTr5Y9q50DPTM59JoTFUnMCVVo0mnWTpbxFv18WSJvVokkwR4ZFjyAGNwsrcE5DP/F6DvDwk7ufmPdq8BASsLOWRegaC+2BOe/ED14NQUFlW55lFfOl+YHO3dXdMhNvkh+Vf2DBRBK544B2didkRmZ1MgnysITubNv8/pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Kru/eQBk; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726057813; x=1757593813;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TxWkOdseiNx1bafVcVq7iqdfmlO4X8zdBrM+WKyic7w=;
+  b=Kru/eQBkePBS2sgtOSfuHlWurKFLZTri/MWt1p+TtoTNnTInlGWw1PY+
+   p3XkKMOdNsByOgpBiJ1qEAlgIIXGDDT2dyU8JUR9kZuaa5leCMSSX+cxN
+   F9zIOd3ihTKhFQdIxoESf+zyNFvgX5mKvQT+BRSWrmmuRxURJQGe43cAK
+   Z3zTR/yCeBlZPVL63iMqeCrxd4S9wK6RFjPCWDCLIPvrIr1eWh3IHOY/u
+   5n/lm/woD8R/O1jl8gyQRvyAJtCBd76zozUcXryckmfWyRjXF11KmPH62
+   Cl4GVqnMSyKvYGWqBZ/PaSW+ZoypG95DB2Q4dou4vrdekoUZZHeqleM7D
+   g==;
+X-CSE-ConnectionGUID: TYXepcQqR+aekZWbFABIig==
+X-CSE-MsgGUID: h6+wpwAeSbmE8OyH4DEEtQ==
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="31538368"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 05:30:13 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Sep 2024 05:29:20 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 11 Sep 2024 05:29:17 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
+	<andrei.simion@microchip.com>
+Subject: [PATCH 2/3] ASoC: atmel: mchp-pdmc: Add snd_soc_dai_driver name
+Date: Wed, 11 Sep 2024 15:29:08 +0300
+Message-ID: <20240911122909.133399-3-andrei.simion@microchip.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
-References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240911122909.133399-1-andrei.simion@microchip.com>
+References: <20240911122909.133399-1-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,160 +78,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwD3hy+ijeFmnHu1AA--.60036S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF1kGF4kCF15JFyUJF4fZrb_yoWrCrWDpF
-	nYvF4FvFy3Arn7Aay3Ga13Z3WrGrn5Kw17X3sFk3ZxXF97X3ZFyw4rKF4YqrW5C34UZrWF
-	9rZ2qFy3Cw1DJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
-	07jb9NsUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBGbg-PsH0QAAsS
+Content-Type: text/plain
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
-Introduce verify_pgp_signature() to verify PGP signatures from detached
-data. It can be used by kernel subsystems (e.g. IMA).
+Set snd_soc_dai_driver name to improve controller's display of the DAI
+name.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 ---
- certs/system_keyring.c       | 71 ++++++++++++++++++++++++++++++++++++
- include/linux/verification.h | 23 ++++++++++++
- 2 files changed, 94 insertions(+)
+ sound/soc/atmel/mchp-pdmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 9de610bf1f4b..f132773c6096 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -16,6 +16,7 @@
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
-+#include <crypto/pgp.h>
+diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
+index 7a5585839c1d..d97d153ee375 100644
+--- a/sound/soc/atmel/mchp-pdmc.c
++++ b/sound/soc/atmel/mchp-pdmc.c
+@@ -777,6 +777,7 @@ static const struct snd_soc_dai_ops mchp_pdmc_dai_ops = {
+ };
  
- static struct key *builtin_trusted_keys;
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-@@ -418,6 +419,76 @@ int verify_pkcs7_signature(const void *data, size_t len,
- }
- EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
- 
-+#ifdef CONFIG_PGP_KEY_PARSER
-+/**
-+ * verify_pgp_signature - Verify a PGP-based signature on system data.
-+ * @data: The data to be verified (must be provided).
-+ * @len: Size of @data.
-+ * @raw_pgp: The PGP message that is the signature.
-+ * @pgp_len: The size of @raw_pgp.
-+ * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-+ *					(void *)1UL for all trusted keys,
-+					(void *)2UL for platform keys).
-+ * @usage: The use to which the key is being put.
-+ * @view_content: Callback to gain access to content.
-+ * @ctx: Context for callback.
-+ */
-+int verify_pgp_signature(const void *data, size_t len,
-+			 const void *raw_pgp, size_t pgp_len,
-+			 struct key *trusted_keys,
-+			 enum key_being_used_for usage,
-+			 int (*view_content)(void *ctx,
-+					     const void *data, size_t len,
-+					     size_t asn1hdrlen),
-+			 void *ctx)
-+{
-+	struct pgp_sig_verify *pgp_ctx;
-+	int ret;
-+
-+	if (!data || !len)
-+		return -EINVAL;
-+
-+	pgp_ctx = pgp_sig_parse(raw_pgp, pgp_len);
-+	if (IS_ERR(pgp_ctx))
-+		return PTR_ERR(pgp_ctx);
-+
-+	if (!trusted_keys) {
-+		trusted_keys = builtin_trusted_keys;
-+	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
-+#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-+		trusted_keys = secondary_trusted_keys;
-+#else
-+		trusted_keys = builtin_trusted_keys;
-+#endif
-+	} else if (trusted_keys == VERIFY_USE_PLATFORM_KEYRING) {
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+		trusted_keys = platform_trusted_keys;
-+#else
-+		trusted_keys = NULL;
-+#endif
-+		if (!trusted_keys) {
-+			ret = -ENOKEY;
-+			pr_devel("PGP platform keyring is not available\n");
-+			goto error;
-+		}
-+	}
-+
-+	/* The data should be detached - so we need to supply it. */
-+	if (pgp_sig_add_data(pgp_ctx, data, len)) {
-+		pr_err("Failed to supply data for PGP signature\n");
-+		ret = -EBADMSG;
-+		goto error;
-+	}
-+
-+	ret = pgp_sig_verify(pgp_ctx, trusted_keys);
-+error:
-+	pgp_sig_verify_cancel(pgp_ctx, false);
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(verify_pgp_signature);
-+
-+#endif /* CONFIG_PGP_KEY_PARSER */
- #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
- 
- #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index cb2d47f28091..e1a3b9424b67 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -63,6 +63,29 @@ extern int verify_pkcs7_message_sig(const void *data, size_t len,
- 							size_t asn1hdrlen),
- 				    void *ctx);
- 
-+#ifdef CONFIG_PGP_KEY_PARSER
-+extern int verify_pgp_signature(const void *data, size_t len,
-+				const void *raw_pgp, size_t pgp_len,
-+				struct key *trusted_keys,
-+				enum key_being_used_for usage,
-+				int (*view_content)(void *ctx,
-+						const void *data, size_t len,
-+						size_t asn1hdrlen),
-+				void *ctx);
-+#else
-+static inline int verify_pgp_signature(const void *data, size_t len,
-+				const void *raw_pgp, size_t pgp_len,
-+				struct key *trusted_keys,
-+				enum key_being_used_for usage,
-+				int (*view_content)(void *ctx,
-+						const void *data, size_t len,
-+						size_t asn1hdrlen),
-+				void *ctx)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif /* CONFIG_PGP_KEY_PARSER */
-+
- #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
- extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
- 				   struct key *trusted_keys,
+ static struct snd_soc_dai_driver mchp_pdmc_dai = {
++	.name	= "mchp-pdmc",
+ 	.capture = {
+ 		.stream_name	= "Capture",
+ 		.channels_min	= 1,
 -- 
 2.34.1
 
