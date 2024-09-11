@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-324074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93CE9747A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D1F9747AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E731F271DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EF21C25A3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8A324B4A;
-	Wed, 11 Sep 2024 01:11:56 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6986B1863E;
-	Wed, 11 Sep 2024 01:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE0E1CF92;
+	Wed, 11 Sep 2024 01:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPBlga5U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60BB18C3E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726017116; cv=none; b=uSSFBydprmnPtStWxA2hhwALE+d1sTtY6nOnlHTiW09EMWMkXtvj3PH4ynHvhgDA1qaabqklUsbB5an3QVP92tyD7eYG1XxsGS1qmLsmWx0z1VMFct+r+4XkhI/Ex5L99ufE3Svg+oirzDnYefB2ckH7bMLu0qQwsMuqpevSlQQ=
+	t=1726017295; cv=none; b=NfYGEg6nf/CRZa14F72r/y13EQANE9MAuNgDkyABzOeCqDuqA81JNEEkfMTtSMqkx2syTrf5PUzynte2A98ZKiHIsZaRSvzQtY8mmDQsXHsKuzV15bkr0kwGQo2WzSO/U9YSXftPR2wW5W2DIQJ/Le4W3nIxgoUFNzENAkR3+FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726017116; c=relaxed/simple;
-	bh=4UkBtnv9a/TGy0y71S+5dvnPht/Z/AzRZEcT5PGhZFA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=LAHkXEnqDeD9l3qQdmRIjQ68iA85lIA8w4Bz5pTqDaOF2N+fX7TfcaWRixbBTa4vzwg+i2JWFgG3UBtxn/giJq9WkY4VFYPg5w1YK6VSsuOTgGR/XWGEXOcuIw3++5XH9KKGABE6phIRCBy5VDDjy97pLr9Uto8GR+Ygfyc/2IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from 3090101217$zju.edu.cn ( [119.131.118.192] ) by
- ajax-webmail-mail-app2 (Coremail) ; Wed, 11 Sep 2024 09:10:09 +0800
- (GMT+08:00)
-Date: Wed, 11 Sep 2024 09:10:09 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Jing Leng" <3090101217@zju.edu.cn>
-To: "Lucas De Marchi" <lucas.demarchi@intel.com>
-Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
-	"Michal Marek" <michal.lkml@markovi.net>,
-	"Nick Desaulniers" <ndesaulniers@google.com>,
-	"Linux Kbuild mailing list" <linux-kbuild@vger.kernel.org>,
-	"Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-	"Jing Leng" <jleng@ambarella.com>
-Subject: Re: External modules with O=... (was: Re: [PATCH] kbuild: Fix
- include path in scripts/Makefile.modpost)
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240625(a75f206e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
-In-Reply-To: <aowpzz4rbedjkwkl7b4a2f5pf2p5cgsu6knsgxnayckhbumxf3@aznrm7oliydb>
-References: <aowpzz4rbedjkwkl7b4a2f5pf2p5cgsu6knsgxnayckhbumxf3@aznrm7oliydb>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1726017295; c=relaxed/simple;
+	bh=JkxPpkKyaZKOXFrI24q959UCrQqUzmaM/yQpsNcLszg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WSeUhg0WTi3w/YfqLT2my2ZxLh6mNjg8/pXDoi5ij7axEv9YOa6rWlBsM4awGuM6zxD8QRefXhXmu6FAx9YHx+fslaI0NW6JD/01rwp/JFAQXxx/QlXj/BcEMV9OZW+RTPC2Z3sc8FUd3sUO1hOYAWfzLdFeWAClAM8WGFV2GFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPBlga5U; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726017294; x=1757553294;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=JkxPpkKyaZKOXFrI24q959UCrQqUzmaM/yQpsNcLszg=;
+  b=YPBlga5U8QIH7gO/y9gx/26029aE0hWjaImOAi9hDdZXDn2giBisgxue
+   Bep+uOntJLAiMiFFar3rfGxCxTDt4LVuKshJlvN27qykG6s6uHXn2etxz
+   GUXaEU35p7bsWbpJKwNb00LVilbdfFobnQx4TOMdTEPE+xKtU38r8QhA6
+   VzFpyYC8ORrGypqYNPsLetxy7n1FAmLdng2PdRvSCzM6wcPQRJS0RrUVv
+   a60H8fBmY7RwCr4F0c0zajm6RDX0aahMy8LuJ38jykjNXLP/5Hx4/FqBX
+   mJp21ifUpGfULWAOpvz5Fu9LgQ3qiUkYG14GkLBrvZsmsBBTvPaFV12K5
+   g==;
+X-CSE-ConnectionGUID: tMtW34F4TVWuGFp9Xn8o0g==
+X-CSE-MsgGUID: xQ0M/MqERe+CYMGDDEw3oQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24734651"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="24734651"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 18:14:54 -0700
+X-CSE-ConnectionGUID: mv52wyQ6Q1CkL26nnumGDw==
+X-CSE-MsgGUID: Zq5A12oTRx+hGKeSn+Izlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="71353115"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 18:14:51 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+  kunit-dev@googlegroups.com,  "Linux ARM"
+ <linux-arm-kernel@lists.infradead.org>,  "open list"
+ <linux-kernel@vger.kernel.org>,  "Anders Roxell"
+ <anders.roxell@linaro.org>,  "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>,  "Bjorn Helgaas"
+ <bhelgaas@google.com>,  "David Gow" <davidgow@google.com>
+Subject: Re: Kunit: kernel/resource.c: In function 'gfr_start':
+ include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use
+ in this function)
+In-Reply-To: <aaee4ddb-68a8-42ae-bb68-11ef991ada1c@app.fastmail.com> (Arnd
+	Bergmann's message of "Mon, 09 Sep 2024 20:20:23 +0000")
+References: <CA+G9fYtNY+S0Ls2f3atJS_Y9Nh3V01EKO5jbPtVYbgch0TYsFA@mail.gmail.com>
+	<aaee4ddb-68a8-42ae-bb68-11ef991ada1c@app.fastmail.com>
+Date: Wed, 11 Sep 2024 09:11:18 +0800
+Message-ID: <87plpbvvt5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <442e8058.43a4.191dea175d7.Coremail.3090101217@zju.edu.cn>
-X-Coremail-Locale: en_US
-X-CM-TRANSID:by_KCgCXGovy7eBmPkg2AA--.5785W
-X-CM-SenderInfo: qtqziiyqrsilo62m3hxhgxhubq/1tbiAwQRBWbCCEQBMAAgsq
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=ascii
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiTHVjYXMgRGUgTWFyY2hpIiA8
-bHVjYXMuZGVtYXJjaGlAaW50ZWwuY29tPgo+IFNlbmQgdGltZTpUdWVzZGF5LCAwOS8xMC8yMDI0
-IDIyOjAwOjI5Cj4gVG86ICJNYXNhaGlybyBZYW1hZGEiIDxtYXNhaGlyb3lAa2VybmVsLm9yZz4K
-PiBDYzogMzA5MDEwMTIxN0B6anUuZWR1LmNuLCAiTWljaGFsIE1hcmVrIiA8bWljaGFsLmxrbWxA
-bWFya292aS5uZXQ+LCAiTmljawo+ICBEZXNhdWxuaWVycyIgPG5kZXNhdWxuaWVyc0Bnb29nbGUu
-Y29tPiwgIkxpbnV4IEtidWlsZCBtYWlsaW5nIGxpc3QiIDxsaW51eC1rYnVpbGRAdmdlci5rZXJu
-ZWwub3JnPiwgIkxpbnV4IEtlcm5lbCBNYWlsaW5nIExpc3QiIDxsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnPiwgIkppbmcgTGVuZyIgPGpsZW5nQGFtYmFyZWxsYS5jb20+Cj4gU3ViamVjdDog
-RXh0ZXJuYWwgbW9kdWxlcyB3aXRoIE89Li4uICh3YXM6IFJlOiBbUEFUQ0hdIGtidWlsZDogRml4
-IGluY2x1ZGUgcGF0aCBpbiBzY3JpcHRzL01ha2VmaWxlLm1vZHBvc3QpCj4gCj4gSGksIEkgd2Fz
-IHBvaW50ZWQgdG8gdGhpcyB0aHJlYWQgc2luY2UgSSdtIHRyeWluZyBzb21ldGhpbmcgc2ltaWxh
-cgo+IGluIGttb2QncyB0ZXN0c3VpdGUuIFNlZSBiZWxvdy4KPiAKPiBPbiBUdWUsIE1heSAyNCwg
-MjAyMiBhdCAwMjo1Mjo0NUFNIEdNVCwgTWFzYWhpcm8gWWFtYWRhIHdyb3RlOgo+ID5PbiBUdWUs
-IE1heSAxNywgMjAyMiBhdCA3OjUxIFBNIDwzMDkwMTAxMjE3QHpqdS5lZHUuY24+IHdyb3RlOgo+
-ID4+Cj4gPj4gRnJvbTogSmluZyBMZW5nIDxqbGVuZ0BhbWJhcmVsbGEuY29tPgo+ID4+Cj4gPj4g
-V2hlbiBidWlsZGluZyBhbiBleHRlcm5hbCBtb2R1bGUsIGlmIHVzZXJzIGRvbid0IG5lZWQgdG8g
-c2VwYXJhdGUgdGhlCj4gPj4gY29tcGlsYXRpb24gb3V0cHV0IGFuZCBzb3VyY2UgY29kZSwgdGhl
-eSBydW4gdGhlIGZvbGxvd2luZyBjb21tYW5kOgo+ID4+ICJtYWtlIC1DICQoTElOVVhfU1JDX0RJ
-UikgTT0kKFBXRCkiLiBBdCB0aGlzIHBvaW50LCAiJChLQlVJTERfRVhUTU9EKSIKPiA+PiBhbmQg
-IiQoc3JjKSIgYXJlIHRoZSBzYW1lLgo+ID4+Cj4gPj4gSWYgdGhleSBuZWVkIHRvIHNlcGFyYXRl
-IHRoZW0sIHRoZXkgcnVuICJtYWtlIC1DICQoS0VSTkVMX1NSQ19ESVIpCj4gPj4gTz0kKEtFUk5F
-TF9PVVRfRElSKSBNPSQoT1VUX0RJUikgc3JjPSQoUFdEKSIuIEJlZm9yZSBydW5uaW5nIHRoZQo+
-ID4+IGNvbW1hbmQsIHRoZXkgbmVlZCB0byBjb3B5ICJLYnVpbGQiIG9yICJNYWtlZmlsZSIgdG8g
-IiQoT1VUX0RJUikiIHRvCj4gPj4gcHJldmVudCBjb21waWxhdGlvbiBmYWlsdXJlLgo+ID4+Cj4g
-Pj4gU28gdGhlIGtlcm5lbCBzaG91bGQgY2hhbmdlIHRoZSBpbmNsdWRlZCBwYXRoIHRvIGF2b2lk
-IHRoZSBjb3B5IG9wZXJhdGlvbi4KPiA+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IEppbmcgTGVuZyA8
-amxlbmdAYW1iYXJlbGxhLmNvbT4KPiA+PiAtLS0KPiA+PiAgc2NyaXB0cy9NYWtlZmlsZS5tb2Rw
-b3N0IHwgMyArLS0KPiA+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0
-aW9ucygtKQo+ID4+Cj4gPj4gZGlmZiAtLWdpdCBhL3NjcmlwdHMvTWFrZWZpbGUubW9kcG9zdCBi
-L3NjcmlwdHMvTWFrZWZpbGUubW9kcG9zdAo+ID4+IGluZGV4IDQ4NTg1YzRkMDRhZC4uMDI3M2Jm
-NzM3NWUyIDEwMDY0NAo+ID4+IC0tLSBhL3NjcmlwdHMvTWFrZWZpbGUubW9kcG9zdAo+ID4+ICsr
-KyBiL3NjcmlwdHMvTWFrZWZpbGUubW9kcG9zdAo+ID4+IEBAIC04Nyw4ICs4Nyw3IEBAIG9iaiA6
-PSAkKEtCVUlMRF9FWFRNT0QpCj4gPj4gIHNyYyA6PSAkKG9iaikKPiA+Pgo+ID4+ICAjIEluY2x1
-ZGUgdGhlIG1vZHVsZSdzIE1ha2VmaWxlIHRvIGZpbmQgS0JVSUxEX0VYVFJBX1NZTUJPTFMKPiA+
-PiAtaW5jbHVkZSAkKGlmICQod2lsZGNhcmQgJChLQlVJTERfRVhUTU9EKS9LYnVpbGQpLCBcCj4g
-Pj4gLSAgICAgICAgICAgICAkKEtCVUlMRF9FWFRNT0QpL0tidWlsZCwgJChLQlVJTERfRVhUTU9E
-KS9NYWtlZmlsZSkKPiA+PiAraW5jbHVkZSAkKGlmICQod2lsZGNhcmQgJChzcmMpL0tidWlsZCks
-ICQoc3JjKS9LYnVpbGQsICQoc3JjKS9NYWtlZmlsZSkKPiA+Pgo+ID4+ICAjIG1vZHBvc3Qgb3B0
-aW9uIGZvciBleHRlcm5hbCBtb2R1bGVzCj4gPj4gIE1PRFBPU1QgKz0gLWUKPiA+PiAtLQo+ID4+
-IDIuMTcuMQo+ID4+Cj4gPgo+ID4KPiA+SSBkbyBub3QgdGhpbmsgIk09JChPVVRfRElSKSBzcmM9
-JChQV0QpIiBpcyB0aGUgb2ZmaWNpYWwgd2F5LAo+ID5idXQgdGhpcyBwYXRjaCBpcyBhIGNsZWFu
-IHVwLgo+IAo+IEkgdHJpZWQgd2hhdCBpcyBpbiB0aGlzIHBhdGNoIGFuZCBhbHNvIHRyaWVkIHRv
-IGZpbmQgYW4gb2ZmaWNpYWwgd2F5IGluCj4gdGhlIGRvY3MuCj4gCj4gSW4ga21vZCdzIHRlc3Rz
-dWl0ZSB3ZSBidWlsZCBkdW1teSBrZXJuZWwgbW9kdWxlcyB0byBleGVyY2lzZSB0aGUgQVBJLgo+
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS91dGlscy9rZXJuZWwva21vZC9rbW9kLmdp
-dC90cmVlL3Rlc3RzdWl0ZS9tb2R1bGUtcGxheWdyb3VuZAo+IAo+IFRoaXMgd29ya3M6Cj4gCW1h
-a2UgLUMgL2xpYi9tb2R1bGVzLyQodW5hbWUgLXIpL2J1aWxkIE09JFBXRAo+IAo+IFRoaXMgZG9l
-c24ndDoKPiAJbWFrZSAtQyAvbGliL21vZHVsZXMvJCh1bmFtZSAtcikvYnVpbGQgTT0kUFdEIE89
-L3RtcC9rbW9kX3Rlc3RfbW9kdWxlcwo+IAo+IEkgYWxzbyB0cmllZCB0aGUgdmFyaWFudHMgYWJv
-dmUgd2l0aCBzZXR0aW5nIHNyYywgYnV0IGFsbCBvZiB0aGVtIGdpdmUKPiBtZSBlcnJvcnMgLSBJ
-IHVzZWQgNi4xMCBhbmQgNi4xMS1yYzcgZm9yIHRoZXNlIHRlc3RzLgo+IAo+IElzIHRoZXJlIGEg
-d2F5IHRvIGRvIHRoaXM/Cj4gCj4gdGhhbmtzCj4gTHVjYXMgRGUgTWFyY2hpCj4gCj4gPgo+ID5B
-cHBsaWVkIHRvIGxpbnV4LWtidWlsZC4gVGhhbmtzLgo+ID4KPiA+Cj4gPi0tIAo+ID5CZXN0IFJl
-Z2FyZHMKPiA+TWFzYWhpcm8gWWFtYWRhCgpIaSBNYXNhaGlybywKCkkgdGhpbmsgeW91ciBpbnRl
-bnRpb24gaXMgdG8gc2VwYXJhdGUgdGhlIHNvdXJjZSBjb2RlIGZyb20gdGhlIGNvbXBpbGVkIG91
-dHB1dC4KVGhlIGNvcnJlY3QgY29tbWFuZCBzaG91bGQgYmU6IAogICAgbWFrZSAtQyAvbGliL21v
-ZHVsZXMvJCh1bmFtZSAtcikvYnVpbGQgc3JjPSRQV0QgTT0vdG1wL2ttb2RfdGVzdF9tb2R1bGVz
-CgpZb3UgYWxzbyBjYW4gcmVmZXIgdG86CiAgICBodHRwczovL2dpdGh1Yi5jb20vbGVuZ2ppbmd6
-anUvY2J1aWxkLW5nL2Jsb2IvbWFpbi9zY3JpcHRzL2NvcmUvaW5jLm1vZC5tayAKMS4gVGhlIGNv
-bXBsZXRlIGNvbW1hbmQgaXMgYXMgZm9sbG93czoKICAgIG1ha2UgLUMgPExpbnV4IGtlcm5lbCBz
-b3VyY2UgY29kZSBkaXJlY3Rvcnk+IE89PExpbnV4IGtlcm5lbCBjb21waWxhdGlvbiBvdXRwdXQg
-ZGlyZWN0b3J5PiBzcmM9PEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBzb3VyY2UgY29kZSBkaXJlY3Rv
-cnk+IE09PEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBjb21waWxhdGlvbiBvdXRwdXQgZGlyZWN0b3J5
-PgoyLiBJZiB0aGUgPExpbnV4IGtlcm5lbCBzb3VyY2UgY29kZSBkaXJlY3Rvcnk+IGFuZCB0aGUg
-PExpbnV4IGtlcm5lbCBjb21waWxhdGlvbiBvdXRwdXQgZGlyZWN0b3J5PiBhcmUgdGhlIHNhbWUs
-IDxPPXh4eD4gY2FuIGJlIG9taXR0ZWQ6CiAgICBtYWtlIC1DIDxMaW51eCBrZXJuZWwgc291cmNl
-IGNvZGUgZGlyZWN0b3J5PiBzcmM9PEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBzb3VyY2UgY29kZSBk
-aXJlY3Rvcnk+IE09PEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBjb21waWxhdGlvbiBvdXRwdXQgZGly
-ZWN0b3J5PgoyLiBJZiB0aGUgPEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBzb3VyY2UgY29kZSBkaXJl
-Y3Rvcnk+IGFuZCB0aGUgPEN1cnJlbnQgZHJpdmVyIG1vZHVsZSBjb21waWxhdGlvbiBvdXRwdXQg
-ZGlyZWN0b3J5PiBhcmUgdGhlIHNhbWUsIDxzcmM9eHh4PiBjYW4gYmUgb21pdHRlZDoKICAgIG1h
-a2UgLUMgPExpbnV4IGtlcm5lbCBzb3VyY2UgY29kZSBkaXJlY3Rvcnk+IE89PExpbnV4IGtlcm5l
-bCBjb21waWxhdGlvbiBvdXRwdXQgZGlyZWN0b3J5PiBNPTxDdXJyZW50IGRyaXZlciBtb2R1bGUg
-c291cmNlIGNvZGUgZGlyZWN0b3J5PgoKQmVzdCBSZWdhcmRzIQpKaW5nIExlbmc=
+Hi, Arnd,
+
+"Arnd Bergmann" <arnd@arndb.de> writes:
+
+> On Mon, Sep 9, 2024, at 20:00, Naresh Kamboju wrote:
+>> The arm kunit builds failed on the Linux next-20240909 due to following
+>> build warnings / errors with gcc-13 and clang-19 with extra Kconfigs
+>>
+>>   CONFIG_OF_KUNIT_TEST=y
+>>   CONFIG_KASAN=y
+>>   CONFIG_KUNIT=y
+>>   CONFIG_KUNIT_ALL_TESTS=y
+>>
+>> First seen on next-20240909
+>>   Good: next-20240906
+>>   BAD:  next-20240909
+>>
+>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>
+>
+> This patch below addresses the build regression, not sure if that
+> is what we want.
+>
+>         Arnd
+>
+>>From 39601b1274354c710368f5cf40fe9e32540f7591 Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Mon, 9 Sep 2024 13:10:21 +0000
+> Subject: [PATCH] resource, kunit: add sparsemem dependency
+>
+> The testcase now selects CONFIG_GET_FREE_REGION, but that
+> is only available for sparsemem configurations:
+>
+> WARNING: unmet direct dependencies detected for GET_FREE_REGION
+>   Depends on [n]: SPARSEMEM [=n]
+>   Selected by [m]:
+>   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+> In file included from include/linux/ioport.h:15,
+>                  from kernel/resource.c:15:
+> kernel/resource.c: In function 'gfr_start':
+> include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
+>   101 | # define PHYSMEM_END    ((1ULL << MAX_PHYSMEM_BITS) - 1)
+> kernel/resource.c:1874:57: note: in expansion of macro 'PHYSMEM_END'
+>  1874 |                 end = min_t(resource_size_t, base->end, PHYSMEM_END);
+>       |                                                         ^~~~~~~~~~~
+>
+> It may be better to extend this to non-sparsemem, but a Kconfig
+> dependency is the easiest way to address the build failure at the
+> moment.
+>
+> Fixes: e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index b986050fc7e0..4c081a28fe96 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2632,6 +2632,7 @@ config HASH_KUNIT_TEST
+>  config RESOURCE_KUNIT_TEST
+>  	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
+>  	depends on KUNIT
+> +	depends on SPARSEMEM
+>  	default KUNIT_ALL_TESTS
+>  	select GET_FREE_REGION
+>  	help
+
+Thanks for the fixing patch.  I think that this is caused by merge
+conflict.
+
+For the fix, IMHO, resource kunit test may be used on architectures with
+SPARSEMEM=n.  I have a fix patch in,
+
+https://lore.kernel.org/linux-mm/87wmjkyshl.fsf@yhuang6-desk2.ccr.corp.intel.com/
+
+--
+Best Regards,
+Huang, Ying
 
