@@ -1,183 +1,263 @@
-Return-Path: <linux-kernel+bounces-324268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B478974A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E283974A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9D91F26364
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C7F1F2744D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596A1770ED;
-	Wed, 11 Sep 2024 06:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E569E7E110;
+	Wed, 11 Sep 2024 06:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DadZcGix"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RVDS4oEv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F5057CB6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D452BAE3;
+	Wed, 11 Sep 2024 06:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726036488; cv=none; b=ahwzeUhzlkZ6fqkkBrhKJ3K9w8UCaQBIYRkpsqmxJ0TJkxLZPaNt/O4NDyLbjZzGV9VVXmgsCn3e08sWsCu5uSX38JF/rJu/5CPyf8fvVgUp64DFrVaC0UpQ+yGec+WxtpxZF/pB8ojzSykMWUEZIZL7y6ja4UT03b0XMfBSn3Y=
+	t=1726036855; cv=none; b=j3fXtEfAhYdCCa4G5NtzolkZPEy0XvIoexIHm5hjY9AJO86FoUOEpMEjxrYQzSRh1AKQVDw4No9RL5ZHTLMJvEHPjIXZgLJ2Dyx2NckzXJ/RLb0dxYvulOllnI1fcFUXMHXZpMyRpmRXHXEzHee8MIJQoNga8T0nCNuv545rdUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726036488; c=relaxed/simple;
-	bh=sT5eyXboXZg+xIE27KznIQJRMPL6IiO/nGVWqOw+9T0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uM03LWcMo7qkEt5kwczUASp9clXtdsL3C0MO2AKIJTif5cKSDwzfb9rZJ2PchIgFrrO6IDato6S01i6fWxTcfyKrxSJb7wA4qHbxof+1Do9a8PTLTzGctPvZ/T/UjPlX8DilMXnE3JeMexALsyJh88dr25JIEDuikqRfib6bH7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DadZcGix; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726036487; x=1757572487;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=sT5eyXboXZg+xIE27KznIQJRMPL6IiO/nGVWqOw+9T0=;
-  b=DadZcGix7wLN3ueBQavIj0ZjEsf+RUJoSQdh2kv8Ecl3AlqUdITjiVuC
-   6w9r0/g0W9Dy0bkRR8a8JDNr82whQGPGJU+NgcHhR/1YlJCZH282s/Wgn
-   b/8pJ5CdbEkv23p5a5UX8vRizBVg45otXBLVFVqwIjo0xLDt73rn22OJU
-   CCUxADi1sCi+iT6j0jVF3kyfEaK4jZavnF5hcLZ9LMpRuwJvK4fH5guw+
-   2NdFKBThLcTr/iH2PtPhAweDKg7MD+Kdi7EeVN9Aqtx/LXqjnQBv04Gvq
-   SDV418OLfgdPrwkIaQDd9dYi04J3S4ceVEf5eNV1uwAu7JS7dU+MO/h26
-   w==;
-X-CSE-ConnectionGUID: gIyJMdJYRI+IbrRs70y/KA==
-X-CSE-MsgGUID: q3q/4uObTeyug37f8RNUDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35387241"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="35387241"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 23:34:35 -0700
-X-CSE-ConnectionGUID: GpWB5Bj6TnOew1SjPnyDGg==
-X-CSE-MsgGUID: zha2c3k7T+mBf6LaasCxcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="67550107"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 10 Sep 2024 23:34:33 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soGvv-000380-00;
-	Wed, 11 Sep 2024 06:34:31 +0000
-Date: Wed, 11 Sep 2024 14:33:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: drivers/tty/mips_ejtag_fdc.c:343:32: error: incompatible pointer
- types passing 'const char **' to parameter of type 'const u8 **' (aka 'const
- unsigned char **')
-Message-ID: <202409111435.RTzhB8Te-lkp@intel.com>
+	s=arc-20240116; t=1726036855; c=relaxed/simple;
+	bh=HTyrCGRnO8IJ/YTMkc28EzUOnC2WB0EPA29mlwsPQiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KyL86akzPqWjDk8eJteMG5NQoLOQedkf85hUprrFHxyygPDWX7qXrxOJXk3SXbLlHsLM5SzO6sjM6fWU7wg2R3PvUNa3RrNkT+08hjCfpxvhQdOhmffMD+XXfTWsekFUKxpTbN1zovNqsEI42j4b4wKlgeJ408Im01+oy1XgNjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RVDS4oEv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726036849;
+	bh=r1awy6sqi3TYaGOEqCF8Y53VqhxPh2kIlkOVwdfOF2g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RVDS4oEvOWs4uKVWMKCksiDJBcoLFEa2g/EX0bYzqD9seCM+uHFyVsTf6ITb2kOr4
+	 Yl6ek/KeFIRGphrOWVBbWiByHTVv/gusiDIIWNEv33OwFr2PmfZcf29r7eKFWnpAo6
+	 4JnARRXb3L/LZoDANWEtaHDNDGe0upEdAIq8Cf0u9aLtrBFpkiTNIW4oslE6K3CpO6
+	 MThfcEa7/u8b8fITonnRNCVXsvD6HoD567gfzoHypjeVBjRWulCjR+D7eUwBwzHudM
+	 algRftsLrtVzGqUxB77OD5oxK0QmFqWY1Y/mFAUgdOSg8/REjDoqZ47Yt0+Ol12TTH
+	 msI4IqwGfSUdQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3WDH6g1bz4wc1;
+	Wed, 11 Sep 2024 16:40:46 +1000 (AEST)
+Date: Wed, 11 Sep 2024 16:40:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chen Yu
+ <yu.c.chen@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the sched-ext tree with the tip tree
+Message-ID: <20240911164046.2c97e2b7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/s.quQoGObOJ+Xl/v8R8Iq2j";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Jiri,
+--Sig_/s.quQoGObOJ+Xl/v8R8Iq2j
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+Hi all,
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8d8d276ba2fb5f9ac4984f5c10ae60858090babc
-commit: ce7cbd9a6c81b5fc899bbc730072a1bddeae5d0d tty: mips_ejtag_fdc: use u8 for character pointers
-date:   9 months ago
-config: mips-randconfig-r051-20240911 (https://download.01.org/0day-ci/archive/20240911/202409111435.RTzhB8Te-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409111435.RTzhB8Te-lkp@intel.com/reproduce)
+Today's linux-next merge of the sched-ext tree got conflicts in:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409111435.RTzhB8Te-lkp@intel.com/
+  kernel/sched/fair.c
+  kernel/sched/syscalls.c
 
-All errors (new ones prefixed by >>):
+between commits:
 
->> drivers/tty/mips_ejtag_fdc.c:343:32: error: incompatible pointer types passing 'const char **' to parameter of type 'const u8 **' (aka 'const unsigned char **') [-Werror,-Wincompatible-pointer-types]
-                   word = mips_ejtag_fdc_encode(&buf_ptr, &buf_len, 1);
-                                                ^~~~~~~~
-   drivers/tty/mips_ejtag_fdc.c:216:57: note: passing argument to parameter 'ptrs' here
-   static struct fdc_word mips_ejtag_fdc_encode(const u8 **ptrs,
-                                                           ^
-   drivers/tty/mips_ejtag_fdc.c:1224:31: error: incompatible pointer types passing 'const char *[1]' to parameter of type 'const u8 **' (aka 'const unsigned char **') [-Werror,-Wincompatible-pointer-types]
-           word = mips_ejtag_fdc_encode(bufs, &kgdbfdc_wbuflen, 1);
-                                        ^~~~
-   drivers/tty/mips_ejtag_fdc.c:216:57: note: passing argument to parameter 'ptrs' here
-   static struct fdc_word mips_ejtag_fdc_encode(const u8 **ptrs,
-                                                           ^
-   2 errors generated.
+  84d265281d6c ("sched/pelt: Use rq_clock_task() for hw_pressure")
+  5d871a63997f ("sched/fair: Move effective_cpu_util() and effective_cpu_ut=
+il() in fair.c")
 
+from the tip tree and commit:
 
-vim +343 drivers/tty/mips_ejtag_fdc.c
+  96fd6c65efc6 ("sched: Factor out update_other_load_avgs() from __update_b=
+locked_others()")
 
-4cebec609aea6df James Hogan 2015-01-29  299  
-4cebec609aea6df James Hogan 2015-01-29  300  /* Low level console write shared by early console and normal console */
-4cebec609aea6df James Hogan 2015-01-29  301  static void mips_ejtag_fdc_console_write(struct console *c, const char *s,
-4cebec609aea6df James Hogan 2015-01-29  302  					 unsigned int count)
-4cebec609aea6df James Hogan 2015-01-29  303  {
-4cebec609aea6df James Hogan 2015-01-29  304  	struct mips_ejtag_fdc_console *cons =
-4cebec609aea6df James Hogan 2015-01-29  305  		container_of(c, struct mips_ejtag_fdc_console, cons);
-4cebec609aea6df James Hogan 2015-01-29  306  	void __iomem *regs;
-4cebec609aea6df James Hogan 2015-01-29  307  	struct fdc_word word;
-4cebec609aea6df James Hogan 2015-01-29  308  	unsigned long flags;
-4cebec609aea6df James Hogan 2015-01-29  309  	unsigned int i, buf_len, cpu;
-4cebec609aea6df James Hogan 2015-01-29  310  	bool done_cr = false;
-4cebec609aea6df James Hogan 2015-01-29  311  	char buf[4];
-4cebec609aea6df James Hogan 2015-01-29  312  	const char *buf_ptr = buf;
-4cebec609aea6df James Hogan 2015-01-29  313  	/* Number of bytes of input data encoded up to each byte in buf */
-4cebec609aea6df James Hogan 2015-01-29  314  	u8 inc[4];
-4cebec609aea6df James Hogan 2015-01-29  315  
-4cebec609aea6df James Hogan 2015-01-29  316  	local_irq_save(flags);
-4cebec609aea6df James Hogan 2015-01-29  317  	cpu = smp_processor_id();
-4cebec609aea6df James Hogan 2015-01-29  318  	regs = cons->regs[cpu];
-4cebec609aea6df James Hogan 2015-01-29  319  	/* First console output on this CPU? */
-4cebec609aea6df James Hogan 2015-01-29  320  	if (!regs) {
-4cebec609aea6df James Hogan 2015-01-29  321  		regs = mips_cdmm_early_probe(0xfd);
-4cebec609aea6df James Hogan 2015-01-29  322  		cons->regs[cpu] = regs;
-4cebec609aea6df James Hogan 2015-01-29  323  	}
-4cebec609aea6df James Hogan 2015-01-29  324  	/* Already tried and failed to find FDC on this CPU? */
-4cebec609aea6df James Hogan 2015-01-29  325  	if (IS_ERR(regs))
-4cebec609aea6df James Hogan 2015-01-29  326  		goto out;
-4cebec609aea6df James Hogan 2015-01-29  327  	while (count) {
-4cebec609aea6df James Hogan 2015-01-29  328  		/*
-4cebec609aea6df James Hogan 2015-01-29  329  		 * Copy the next few characters to a buffer so we can inject
-4cebec609aea6df James Hogan 2015-01-29  330  		 * carriage returns before newlines.
-4cebec609aea6df James Hogan 2015-01-29  331  		 */
-4cebec609aea6df James Hogan 2015-01-29  332  		for (buf_len = 0, i = 0; buf_len < 4 && i < count; ++buf_len) {
-4cebec609aea6df James Hogan 2015-01-29  333  			if (s[i] == '\n' && !done_cr) {
-4cebec609aea6df James Hogan 2015-01-29  334  				buf[buf_len] = '\r';
-4cebec609aea6df James Hogan 2015-01-29  335  				done_cr = true;
-4cebec609aea6df James Hogan 2015-01-29  336  			} else {
-4cebec609aea6df James Hogan 2015-01-29  337  				buf[buf_len] = s[i];
-4cebec609aea6df James Hogan 2015-01-29  338  				done_cr = false;
-4cebec609aea6df James Hogan 2015-01-29  339  				++i;
-4cebec609aea6df James Hogan 2015-01-29  340  			}
-4cebec609aea6df James Hogan 2015-01-29  341  			inc[buf_len] = i;
-4cebec609aea6df James Hogan 2015-01-29  342  		}
-4cebec609aea6df James Hogan 2015-01-29 @343  		word = mips_ejtag_fdc_encode(&buf_ptr, &buf_len, 1);
-4cebec609aea6df James Hogan 2015-01-29  344  		count -= inc[word.bytes - 1];
-4cebec609aea6df James Hogan 2015-01-29  345  		s += inc[word.bytes - 1];
-4cebec609aea6df James Hogan 2015-01-29  346  
-4cebec609aea6df James Hogan 2015-01-29  347  		/* Busy wait until there's space in fifo */
-70f041b6e1ff508 James Hogan 2015-04-28  348  		while (__raw_readl(regs + REG_FDSTAT) & REG_FDSTAT_TXF)
-4cebec609aea6df James Hogan 2015-01-29  349  			;
-70f041b6e1ff508 James Hogan 2015-04-28  350  		__raw_writel(word.word, regs + REG_FDTX(c->index));
-4cebec609aea6df James Hogan 2015-01-29  351  	}
-4cebec609aea6df James Hogan 2015-01-29  352  out:
-4cebec609aea6df James Hogan 2015-01-29  353  	local_irq_restore(flags);
-4cebec609aea6df James Hogan 2015-01-29  354  }
-4cebec609aea6df James Hogan 2015-01-29  355  
+from the sched-ext tree.
 
-:::::: The code at line 343 was first introduced by commit
-:::::: 4cebec609aea6dff23e67a42b6516d852fa87d07 TTY: Add MIPS EJTAG Fast Debug Channel TTY driver
+I fixed it up (I used the latter version of kernel/sched/fair.c and see
+below) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
 
-:::::: TO: James Hogan <james.hogan@imgtec.com>
-:::::: CC: Ralf Baechle <ralf@linux-mips.org>
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --cc kernel/sched/syscalls.c
+index cb03c790c27a,7ecade89eada..000000000000
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@@ -258,6 -258,126 +258,28 @@@ int sched_core_idle_cpu(int cpu
+ =20
+  #endif
+ =20
++ #ifdef CONFIG_SMP
++ /*
++  * Load avg and utiliztion metrics need to be updated periodically and be=
+fore
++  * consumption. This function updates the metrics for all subsystems exce=
+pt for
++  * the fair class. @rq must be locked and have its clock updated.
++  */
++ bool update_other_load_avgs(struct rq *rq)
++ {
++ 	u64 now =3D rq_clock_pelt(rq);
++ 	const struct sched_class *curr_class =3D rq->curr->sched_class;
++ 	unsigned long hw_pressure =3D arch_scale_hw_pressure(cpu_of(rq));
++=20
++ 	lockdep_assert_rq_held(rq);
++=20
+++	/* hw_pressure doesn't care about invariance */
++ 	return update_rt_rq_load_avg(now, rq, curr_class =3D=3D &rt_sched_class)=
+ |
++ 		update_dl_rq_load_avg(now, rq, curr_class =3D=3D &dl_sched_class) |
+ -		update_hw_load_avg(now, rq, hw_pressure) |
+++		update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure) |
++ 		update_irq_load_avg(rq, 0);
++ }
+ -
+ -/*
+ - * This function computes an effective utilization for the given CPU, to =
+be
+ - * used for frequency selection given the linear relation: f =3D u * f_ma=
+x.
+ - *
+ - * The scheduler tracks the following metrics:
+ - *
+ - *   cpu_util_{cfs,rt,dl,irq}()
+ - *   cpu_bw_dl()
+ - *
+ - * Where the cfs,rt and dl util numbers are tracked with the same metric =
+and
+ - * synchronized windows and are thus directly comparable.
+ - *
+ - * The cfs,rt,dl utilization are the running times measured with rq->cloc=
+k_task
+ - * which excludes things like IRQ and steal-time. These latter are then a=
+ccrued
+ - * in the IRQ utilization.
+ - *
+ - * The DL bandwidth number OTOH is not a measured metric but a value comp=
+uted
+ - * based on the task model parameters and gives the minimal utilization
+ - * required to meet deadlines.
+ - */
+ -unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+ -				 unsigned long *min,
+ -				 unsigned long *max)
+ -{
+ -	unsigned long util, irq, scale;
+ -	struct rq *rq =3D cpu_rq(cpu);
+ -
+ -	scale =3D arch_scale_cpu_capacity(cpu);
+ -
+ -	/*
+ -	 * Early check to see if IRQ/steal time saturates the CPU, can be
+ -	 * because of inaccuracies in how we track these -- see
+ -	 * update_irq_load_avg().
+ -	 */
+ -	irq =3D cpu_util_irq(rq);
+ -	if (unlikely(irq >=3D scale)) {
+ -		if (min)
+ -			*min =3D scale;
+ -		if (max)
+ -			*max =3D scale;
+ -		return scale;
+ -	}
+ -
+ -	if (min) {
+ -		/*
+ -		 * The minimum utilization returns the highest level between:
+ -		 * - the computed DL bandwidth needed with the IRQ pressure which
+ -		 *   steals time to the deadline task.
+ -		 * - The minimum performance requirement for CFS and/or RT.
+ -		 */
+ -		*min =3D max(irq + cpu_bw_dl(rq), uclamp_rq_get(rq, UCLAMP_MIN));
+ -
+ -		/*
+ -		 * When an RT task is runnable and uclamp is not used, we must
+ -		 * ensure that the task will run at maximum compute capacity.
+ -		 */
+ -		if (!uclamp_is_used() && rt_rq_is_runnable(&rq->rt))
+ -			*min =3D max(*min, scale);
+ -	}
+ -
+ -	/*
+ -	 * Because the time spend on RT/DL tasks is visible as 'lost' time to
+ -	 * CFS tasks and we use the same metric to track the effective
+ -	 * utilization (PELT windows are synchronized) we can directly add them
+ -	 * to obtain the CPU's actual utilization.
+ -	 */
+ -	util =3D util_cfs + cpu_util_rt(rq);
+ -	util +=3D cpu_util_dl(rq);
+ -
+ -	/*
+ -	 * The maximum hint is a soft bandwidth requirement, which can be lower
+ -	 * than the actual utilization because of uclamp_max requirements.
+ -	 */
+ -	if (max)
+ -		*max =3D min(scale, uclamp_rq_get(rq, UCLAMP_MAX));
+ -
+ -	if (util >=3D scale)
+ -		return scale;
+ -
+ -	/*
+ -	 * There is still idle time; further improve the number by using the
+ -	 * IRQ metric. Because IRQ/steal time is hidden from the task clock we
+ -	 * need to scale the task numbers:
+ -	 *
+ -	 *              max - irq
+ -	 *   U' =3D irq + --------- * U
+ -	 *                 max
+ -	 */
+ -	util =3D scale_irq_capacity(util, irq, scale);
+ -	util +=3D irq;
+ -
+ -	return min(scale, util);
+ -}
+ -
+ -unsigned long sched_cpu_util(int cpu)
+ -{
+ -	return effective_cpu_util(cpu, cpu_util_cfs(cpu), NULL, NULL);
+ -}
++ #endif /* CONFIG_SMP */
++=20
+  /**
+   * find_process_by_pid - find a process with a matching PID value.
+   * @pid: the pid in question.
+
+--Sig_/s.quQoGObOJ+Xl/v8R8Iq2j
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhO24ACgkQAVBC80lX
+0GxAcQf9EMQmK2Gl0YcQlnzjI/Psp/DRLAJEfhhW1gu9TFJFG3phn2Qsmpq3LAKB
+ZYDFeVi9CEQ18VzKoi5LRTqomjmpfrlfoy2rTkIrL9/dR9xA3TBK6hWuVpVxHW5v
+yeLMzO76UemKiX9F2HgUEMaf6/B1bm96zthzFPAJN3DM8FR8PK+iTeMgLEOGAlR+
+qQ5etf8wtrrn1eYZLVzMSET/n86l/nnY/cYiHof67G1OlM6kQCD5MHsrGsXiFdl7
+j7okeuaEhJi95KqFTX7pXx9mK7h+NZPK/Mxe+UTVkXXIkDm4cy+TIc3zVeFJmdkl
+UTxjRL29Om7zSsk2wjU2d2E2Db/ORg==
+=py34
+-----END PGP SIGNATURE-----
+
+--Sig_/s.quQoGObOJ+Xl/v8R8Iq2j--
 
