@@ -1,126 +1,117 @@
-Return-Path: <linux-kernel+bounces-324642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C133C974F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F46974F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699611F25B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:02:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85794B21232
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A27D17F500;
-	Wed, 11 Sep 2024 10:02:00 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EA11822F8;
+	Wed, 11 Sep 2024 10:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EJbIgNXH"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AB27EEFD;
-	Wed, 11 Sep 2024 10:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5614E2FA;
+	Wed, 11 Sep 2024 10:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726048920; cv=none; b=MyRgoAPmy8m+rNcpcugak4riU50ZrS3ujDYTLEafQg/jvlRgwPT6E11mf5rJuyfUuB70i+BGvEujWsSVIJrAQxXPgPBedalbb/35BzMj2NOhK4BJexgGF3qkt5tLBxueuL/RfWh8laLeiFhUP0sMhGieDnlwu/90rwqAKWa4ViM=
+	t=1726049059; cv=none; b=RMLf9EphmbKIW7ljlek1vJR69yNxly1hddSYvPKlzc1m12TRMuYyLEX15utIQkI3gYdsZ4D2g0nsMVbQIwoL9mkWJAMD60gScHCjS/d4cwZpI3BTg9Z2ByQS/LKsj7J7JFLMW5ECYRP0osrhE7rwLdCUXJAz3C5BOEv9vzdU5LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726048920; c=relaxed/simple;
-	bh=UE0KjRZuEn9CBgYcJ8bjJcQoFjDrcUC81utne6Te6YY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N0o5f6cCu/Fn91YKaURk+B/XzScLBXJ5lw6ngmh1K0Tpvw0FPlHALKwzS5aiAN5fqw4OjZ130uq+S5N1zEGdahdEDY15deQmS4WcVPgVWF8ARLBhKvBkH6rA97cfvNCo+OD/bWpLICosVIutdSCi0pNA2ihrCZaKMil9yAsws34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X3bgg6brbz1SB81;
-	Wed, 11 Sep 2024 18:01:19 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id C580E180042;
-	Wed, 11 Sep 2024 18:01:49 +0800 (CST)
-Received: from M910t.huawei.com (10.110.54.157) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 11 Sep 2024 18:01:48 +0800
-From: Changbin Du <changbin.du@huawei.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
- Kan" <kan.liang@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@huawei.com>
-Subject: [PATCH v2] perf ftrace: Detect whether ftrace is enabled on system
-Date: Wed, 11 Sep 2024 18:01:26 +0800
-Message-ID: <20240911100126.900779-1-changbin.du@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726049059; c=relaxed/simple;
+	bh=7y7xPgYKXb3zcEsuhLID+clTD9U4En7/zdAsEwy/mzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHBqevbrJFyh9cafGzW3iVcgv3hyI2lZo9OyLAcyBwMRbS3OCInljWNwusd1ySlqWzuUZMSrcdNUtkp0HTbjUDFM5U5lbkSKglwtYFlqyct+qBITOeRT+1YTmyZ3Qx3FzG2WhRWNhN8YH+LNBZnXZ0V7RI6AI9YcLYxhn7w8bZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EJbIgNXH; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DF0F820005;
+	Wed, 11 Sep 2024 10:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726049048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MzoGSD5CTrrPugX53bwAOAggDXMY+GDBbkq/c3bB/8E=;
+	b=EJbIgNXHSg5OfozjhGgyoq/eGmGMCMtRsGIr/1632K5nT4vXYSUzie3Kt7h8rFtoMlK4Nb
+	04h53Xw/NmeqU1PWJXF1wA9amyho/B8zg9G1NTY7jfly7jGZ59HbH8LqhKe+iXRPX65mSa
+	ylpga52zbMMghGTvjJpx/YVOeR6FjBFZRue8zGuDraQousuJHcKA5CiGqrrhfm0s8Xf+Ze
+	NsMHtJXWqKM0tjH/BcUTKVB02Xa0IW1sJF1c4ee627D6ZlxPLomzSCftyYwHSpsHyltd68
+	nBjavjMDB2OZE1j80da6WbcaES+IM4Ae4IQyRFfrZxiD5V4zqEaFj5F2vlYJZQ==
+Date: Wed, 11 Sep 2024 12:04:06 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>
+Cc: christophe.leroy@csgroup.eu, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
+Message-ID: <20240911120406.123aa4d4@fedora.home>
+In-Reply-To: <000000000000d3bf150621d361a7@google.com>
+References: <000000000000d3bf150621d361a7@google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100011.china.huawei.com (7.221.188.204)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-To make error messages more accurate, this change detects whether ftrace is
-enabled on system by checking trace file "set_ftrace_pid".
+Hi,
 
-Before:
-~ # perf ftrace
-failed to reset ftrace
+On Wed, 11 Sep 2024 01:00:23 -0700
+syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com> wrote:
 
-After:
-~ # perf ftrace
-ftrace is not supported on this system
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a9b1fab3b69f Merge branch 'ionic-convert-rx-queue-buffers-..
+> git tree:       net-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1193c49f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bb7bc7980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b0a100580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/0459f959b12d/disk-a9b1fab3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/337f1be5353b/vmlinux-a9b1fab3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0e3701969c4a/bzImage-a9b1fab3.xz
+> 
+> The issue was bisected to:
+> 
+> commit 17194be4c8e1e82d8b484e58cdcb495c0714d1fd
+> Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Date:   Wed Aug 21 15:10:01 2024 +0000
+> 
+>     net: ethtool: Introduce a command to list PHYs on an interface
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1034a49f980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1234a49f980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1434a49f980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
+> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
 
-Signed-off-by: Changbin Du <changbin.du@huawei.com>
+I'm currently investigating this. I couldn't reproduce it though, even
+with the C reproducer, although this was on an arm64 box. I'll give it
+a try on x86_64 with the provided .config, see if I can figure out
+what's going on, as it looks like the ethnl_phy_start() doesn't get
+called.
 
-v2: rebase on perf-tools-next.
----
- tools/perf/builtin-ftrace.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Thanks,
 
-diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-index 88a87bf387d2..abcdc49b7a98 100644
---- a/tools/perf/builtin-ftrace.c
-+++ b/tools/perf/builtin-ftrace.c
-@@ -80,6 +80,24 @@ static bool check_ftrace_capable(void)
- 	return false;
- }
- 
-+static bool is_ftrace_supported(void)
-+{
-+	char *file;
-+	bool supported = false;
-+
-+	file = get_tracing_file("set_ftrace_pid");
-+	if (!file) {
-+		pr_debug("cannot get tracing file set_ftrace_pid\n");
-+		return false;
-+	}
-+
-+	if (!access(file, F_OK))
-+		supported = true;
-+
-+	put_tracing_file(file);
-+	return supported;
-+}
-+
- static int __write_tracing_file(const char *name, const char *val, bool append)
- {
- 	char *file;
-@@ -1583,6 +1601,11 @@ int cmd_ftrace(int argc, const char **argv)
- 	if (!check_ftrace_capable())
- 		return -1;
- 
-+	if (!is_ftrace_supported()) {
-+		pr_err("ftrace is not supported on this system\n");
-+		return -ENOTSUP;
-+	}
-+
- 	ret = perf_config(perf_ftrace_config, &ftrace);
- 	if (ret < 0)
- 		return -1;
--- 
-2.34.1
-
+Maxime
 
