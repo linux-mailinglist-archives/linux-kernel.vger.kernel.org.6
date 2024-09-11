@@ -1,225 +1,311 @@
-Return-Path: <linux-kernel+bounces-325156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352359755A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FF09755B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98691B290F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259D8281B87
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD31ABEA5;
-	Wed, 11 Sep 2024 14:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207BF1A38DB;
+	Wed, 11 Sep 2024 14:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="co0Ulp5A"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="nI2L2RIe"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0633F1AB536
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7921A3035
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065331; cv=none; b=r2dsLjh2LUdXTYZYrao3vQSO/QgRGyL4Fk31emYxHakRigIUDg4UGwQjc7NUp63axB1RlJBYuG17dBxLG/Gb7gO6Jaz18cnRu0LKbWjPHR5xcC/yTCifzss+8/RkW44r/sUf4S6lxiHt7z0XsqBVbN6brr6Q9NWLi/CfKIPgZ28=
+	t=1726065420; cv=none; b=NX+5BC6GXhy/jpLLomu3Ebm//xYNVwnsU9DKIpRAUgf2QA0fq2z8NJknERx1tYGKJJt17Jq+IaE643eS5ZPoR9mnvoX3jD/tBoQ7E5VjKaNNKHw2cJZQO+LReg4LOjIcs6dnvzsM5V1qub83sEdrdlgh06LbqYNoYKiMqddTqsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065331; c=relaxed/simple;
-	bh=AjMlsJy9+TPD7Xb3eSta7m5LxVV8cDiIB0vj6OtI2xI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hUpKsy6xUTFs0PmrETSpUz4OKU7Xri6End49pTgcdyYO1siLogVU/166AbN0mUb3qA5Kft8FWSA61cAHmyGhrf8CQKRU/lUFKg/NjmlrkvKKtWp+7EvO9KLamVIOjC66MawjQtay5XrQZuM5Jd6Ai2M44TCtJZpOgFneEFGmvFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=co0Ulp5A; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-27beb2496f4so854393fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:35:28 -0700 (PDT)
+	s=arc-20240116; t=1726065420; c=relaxed/simple;
+	bh=IIAVkvLaIFvLB0z2Wa6dsujKRjAOpbGd0p7bW6r9E64=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SXBY4TbR0cGNodCJXZ5uru0ZMMu/3KtfZTJ0k45vvCLogOLZ/OtrjG8dZ3P37XZuC5qIUkDyMXccdEKgPTMUtsotz/nIU8AnHTpsI4AY3oaoNdcwOt51K3IhCsUr1lrza9vU6cb9aX1gN0/UylWob8ftZYXefvMTWGsM75dA/Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=nI2L2RIe; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726065328; x=1726670128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RMA2TvApaDTXXGS5nmqA51iitinMolQ+6wWJX3y5BMY=;
-        b=co0Ulp5AgBxA0IaQrTinvWKzgn6MGiJmfR6O1Uyw1lyfbhuUrnXJD+wcmp7segIwCy
-         6guwmDXtNavRt6hRjJQPno2JJBdk2OCRcYqkYulMbE2vWGyWUokmHe7G6UvtMJf7Gwcn
-         J53SvZYpmLhp45RXz7js6lkUM4CfWHjCusEms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726065328; x=1726670128;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RMA2TvApaDTXXGS5nmqA51iitinMolQ+6wWJX3y5BMY=;
-        b=jfGumTO5+gVFvloy+S36wDrDhvR44iuAxYOUlC4A2rMWd6T3KHiC4sPfSnj2pwzi4k
-         YsRGl4uRS92rXxmnTM2/TsHTIhwACZIcx5BFIlcaIEubThJUKg8k1Skw8SROcwL/6gsY
-         BozAHgzs4KUVvcMa9bSgPESVR+UhK2smRiG/RdqLLYJtv0dnGOg1FyoILkpg6gHln5Bt
-         uwJUKQSPyS9O2Q/C4WXqxFyrvCnQsiBqwpK7xCya+XyH3nu7ipsXAhT1QGmLBG0g1mG4
-         o3uRrHTFCWPIOQxMTb6ZE4ohU25egTiQeUJgSuAHyB5sftAdzF0+n8AiRrII0P90x7q7
-         Kvyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOjgcA2xAmXAmZdG0oAsZ/alGNFWnsCTcPDwy8b4DKxmNcwp9mBdvDYY3/CxeQZPxq+/NpS5IYNzRKh7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiuI0CziJnHbCzDrlTdyyU5dDybflHxAxbQoAiPEqQ8faHmBMe
-	CiG3+beU6DyBLrFzYVvGOITrSsz38DrxZl5ZGR5Giid00vlzh5AsD/v0J2cR/I7cOUei2DDxodn
-	gRA==
-X-Google-Smtp-Source: AGHT+IGh2PWgPSU6BdEEz5hfgfCNNula9mOJg1NHDihIHWnwxKEijWaa+jCqU93yQyerjX21e/lgUg==
-X-Received: by 2002:a05:6870:4723:b0:277:c28c:147e with SMTP id 586e51a60fabf-27b82ed0f49mr16843837fac.21.1726065328099;
-        Wed, 11 Sep 2024 07:35:28 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:102f:d738:6069:fd4b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbb5901sm46620a12.24.2024.09.11.07.35.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 07:35:27 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Fei Shao <fshao@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 7/8] arm64: dts: mediatek: mt8188: Add audio support
-Date: Wed, 11 Sep 2024 22:34:00 +0800
-Message-ID: <20240911143429.850071-8-fshao@chromium.org>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-In-Reply-To: <20240911143429.850071-1-fshao@chromium.org>
-References: <20240911143429.850071-1-fshao@chromium.org>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1726065419; x=1757601419;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=M6VWy3IvZCNc4zvvTM+7ldu6BbKiq6bFPxrlGyI8xuQ=;
+  b=nI2L2RIemjQ39cae4IPqUUN+CGTZvgKt8PtQB9fLkLsv7cnssx7n3sjm
+   iElBk5IVs4lli1HAPAvpOQnOSJM+WhM0Deflx2zcwcF6zwdXSJKSnz7ON
+   /JudbHObmhFQtoL4GBu3WPBsBcMSBhPmMBM878vnNsV8ORnn4wOGE8/US
+   k=;
+X-IronPort-AV: E=Sophos;i="6.10,220,1719878400"; 
+   d="scan'208";a="679649476"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 14:35:48 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.43.254:50131]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.39.168:2525] with esmtp (Farcaster)
+ id ce0e4cf6-8c87-42ac-ae89-33a20b34e603; Wed, 11 Sep 2024 14:35:46 +0000 (UTC)
+X-Farcaster-Flow-ID: ce0e4cf6-8c87-42ac-ae89-33a20b34e603
+Received: from EX19D007EUA004.ant.amazon.com (10.252.50.76) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 11 Sep 2024 14:35:42 +0000
+Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
+ EX19D007EUA004.ant.amazon.com (10.252.50.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 11 Sep 2024 14:35:41 +0000
+Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (10.253.79.181)
+ by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34
+ via Frontend Transport; Wed, 11 Sep 2024 14:35:39 +0000
+From: Fares Mehanna <faresx@amazon.de>
+To: 
+CC: <nh-open-source@amazon.com>, Fares Mehanna <faresx@amazon.de>, Roman Kagan
+	<rkagan@amazon.de>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>,
+	=?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?= <ptosi@google.com>, Ard Biesheuvel
+	<ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Javier Martinez
+ Canillas" <javierm@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Fuad Tabba
+	<tabba@google.com>, Mark Brown <broonie@kernel.org>, Joey Gouly
+	<joey.gouly@arm.com>, Kristina Martsenko <kristina.martsenko@arm.com>, "Randy
+ Dunlap" <rdunlap@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>, "Mike Rapoport (IBM)"
+	<rppt@kernel.org>, David Hildenbrand <david@redhat.com>, "moderated
+ list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
+	<linux-arm-kernel@lists.infradead.org>, "open list:KERNEL VIRTUAL MACHINE FOR
+ ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>, open list
+	<linux-kernel@vger.kernel.org>, "open list:MEMORY MANAGEMENT"
+	<linux-mm@kvack.org>
+Subject: [RFC PATCH 1/7] mseal: expose interface to seal / unseal user memory ranges
+Date: Wed, 11 Sep 2024 14:34:00 +0000
+Message-ID: <20240911143421.85612-2-faresx@amazon.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240911143421.85612-1-faresx@amazon.de>
+References: <20240911143421.85612-1-faresx@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Add following nodes to support audio enablement on MT8188 SoC:
-- sound card
-- audio controller (AFE)
-- audio DSP and its associated mailboxes
+To make sure the kernel mm-local mapping is untouched by the user, we will seal
+the VMA before changing the protection to be used by the kernel.
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
+This will guarantee that userspace can't unmap or alter this VMA while it is
+being used by the kernel.
+
+After the kernel is done with the secret memory, it will unseal the VMA to be
+able to unmap and free it.
+
+Unseal operation is not exposed to userspace.
+
+Signed-off-by: Fares Mehanna <faresx@amazon.de>
+Signed-off-by: Roman Kagan <rkagan@amazon.de>
 ---
+ mm/internal.h |  7 +++++
+ mm/mseal.c    | 81 ++++++++++++++++++++++++++++++++-------------------
+ 2 files changed, 58 insertions(+), 30 deletions(-)
 
-(no changes since v2)
-
-Changes in v2:
-- Replace hardcoded AFE reset ID with correct definition
-
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 96 ++++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index a826ca4d10e3..6327e1006de8 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -429,6 +429,11 @@ psci {
- 		method = "smc";
- 	};
+diff --git a/mm/internal.h b/mm/internal.h
+index b4d86436565b..cf7280d101e9 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1501,6 +1501,8 @@ bool can_modify_mm(struct mm_struct *mm, unsigned long start,
+ 		unsigned long end);
+ bool can_modify_mm_madv(struct mm_struct *mm, unsigned long start,
+ 		unsigned long end, int behavior);
++/* mm's mmap write lock must be taken before seal/unseal operation */
++int do_mseal(unsigned long start, unsigned long end, bool seal);
+ #else
+ static inline int can_do_mseal(unsigned long flags)
+ {
+@@ -1518,6 +1520,11 @@ static inline bool can_modify_mm_madv(struct mm_struct *mm, unsigned long start,
+ {
+ 	return true;
+ }
++
++static inline int do_mseal(unsigned long start, unsigned long end, bool seal)
++{
++	return -EINVAL;
++}
+ #endif
  
-+	sound: sound {
-+		mediatek,platform = <&afe>;
-+		status = "disabled";
-+	};
-+
- 	thermal_zones: thermal-zones {
- 		cpu-little0-thermal {
- 			polling-delay = <1000>;
-@@ -1349,6 +1354,97 @@ scp: scp@10500000 {
- 			interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
- 		};
+ #ifdef CONFIG_SHRINKER_DEBUG
+diff --git a/mm/mseal.c b/mm/mseal.c
+index 15bba28acc00..aac9399ffd5d 100644
+--- a/mm/mseal.c
++++ b/mm/mseal.c
+@@ -26,6 +26,11 @@ static inline void set_vma_sealed(struct vm_area_struct *vma)
+ 	vm_flags_set(vma, VM_SEALED);
+ }
  
-+		afe: audio-controller@10b10000 {
-+			compatible = "mediatek,mt8188-afe";
-+			reg = <0 0x10b10000 0 0x10000>;
-+			assigned-clocks = <&topckgen CLK_TOP_A1SYS_HP>;
-+			assigned-clock-parents =  <&clk26m>;
-+			clocks = <&clk26m>,
-+				 <&apmixedsys CLK_APMIXED_APLL1>,
-+				 <&apmixedsys CLK_APMIXED_APLL2>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV0>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV1>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV2>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV3>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV9>,
-+				 <&topckgen CLK_TOP_A1SYS_HP>,
-+				 <&topckgen CLK_TOP_AUD_INTBUS>,
-+				 <&topckgen CLK_TOP_AUDIO_H>,
-+				 <&topckgen CLK_TOP_AUDIO_LOCAL_BUS>,
-+				 <&topckgen CLK_TOP_DPTX>,
-+				 <&topckgen CLK_TOP_I2SO1>,
-+				 <&topckgen CLK_TOP_I2SO2>,
-+				 <&topckgen CLK_TOP_I2SI1>,
-+				 <&topckgen CLK_TOP_I2SI2>,
-+				 <&adsp_audio26m CLK_AUDIODSP_AUDIO26M>,
-+				 <&topckgen CLK_TOP_APLL1_D4>,
-+				 <&topckgen CLK_TOP_APLL2_D4>,
-+				 <&topckgen CLK_TOP_APLL12_CK_DIV4>,
-+				 <&topckgen CLK_TOP_A2SYS>,
-+				 <&topckgen CLK_TOP_AUD_IEC>;
-+			clock-names = "clk26m",
-+				      "apll1",
-+				      "apll2",
-+				      "apll12_div0",
-+				      "apll12_div1",
-+				      "apll12_div2",
-+				      "apll12_div3",
-+				      "apll12_div9",
-+				      "top_a1sys_hp",
-+				      "top_aud_intbus",
-+				      "top_audio_h",
-+				      "top_audio_local_bus",
-+				      "top_dptx",
-+				      "top_i2so1",
-+				      "top_i2so2",
-+				      "top_i2si1",
-+				      "top_i2si2",
-+				      "adsp_audio_26m",
-+				      "apll1_d4",
-+				      "apll2_d4",
-+				      "apll12_div4",
-+				      "top_a2sys",
-+				      "top_aud_iec";
-+			interrupts = <GIC_SPI 822 IRQ_TYPE_LEVEL_HIGH 0>;
-+			power-domains = <&spm MT8188_POWER_DOMAIN_AUDIO>;
-+			resets = <&watchdog MT8188_TOPRGU_AUDIO_SW_RST>;
-+			reset-names = "audiosys";
-+			mediatek,infracfg = <&infracfg_ao>;
-+			mediatek,topckgen = <&topckgen>;
-+			status = "disabled";
-+		};
++static inline void clear_vma_sealed(struct vm_area_struct *vma)
++{
++	vm_flags_clear(vma, VM_SEALED);
++}
 +
-+		adsp: adsp@10b80000 {
-+			compatible = "mediatek,mt8188-dsp";
-+			reg = <0 0x10b80000 0 0x2000>,
-+			      <0 0x10d00000 0 0x80000>,
-+			      <0 0x10b8b000 0 0x100>,
-+			      <0 0x10b8f000 0 0x1000>;
-+			reg-names = "cfg", "sram", "sec", "bus";
-+			assigned-clocks = <&topckgen CLK_TOP_ADSP>;
-+			clocks = <&topckgen CLK_TOP_ADSP>,
-+				 <&topckgen CLK_TOP_AUDIO_LOCAL_BUS>;
-+			clock-names = "audiodsp", "adsp_bus";
-+			mboxes = <&adsp_mailbox0>, <&adsp_mailbox1>;
-+			mbox-names = "rx", "tx";
-+			power-domains = <&spm MT8188_POWER_DOMAIN_ADSP>;
-+			status = "disabled";
-+		};
+ /*
+  * check if a vma is sealed for modification.
+  * return true, if modification is allowed.
+@@ -117,7 +122,7 @@ bool can_modify_mm_madv(struct mm_struct *mm, unsigned long start, unsigned long
+ 
+ static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 		struct vm_area_struct **prev, unsigned long start,
+-		unsigned long end, vm_flags_t newflags)
++		unsigned long end, vm_flags_t newflags, bool seal)
+ {
+ 	int ret = 0;
+ 	vm_flags_t oldflags = vma->vm_flags;
+@@ -131,7 +136,10 @@ static int mseal_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 		goto out;
+ 	}
+ 
+-	set_vma_sealed(vma);
++	if (seal)
++		set_vma_sealed(vma);
++	else
++		clear_vma_sealed(vma);
+ out:
+ 	*prev = vma;
+ 	return ret;
+@@ -167,9 +175,9 @@ static int check_mm_seal(unsigned long start, unsigned long end)
+ }
+ 
+ /*
+- * Apply sealing.
++ * Apply sealing / unsealing.
+  */
+-static int apply_mm_seal(unsigned long start, unsigned long end)
++static int apply_mm_seal(unsigned long start, unsigned long end, bool seal)
+ {
+ 	unsigned long nstart;
+ 	struct vm_area_struct *vma, *prev;
+@@ -191,11 +199,14 @@ static int apply_mm_seal(unsigned long start, unsigned long end)
+ 		unsigned long tmp;
+ 		vm_flags_t newflags;
+ 
+-		newflags = vma->vm_flags | VM_SEALED;
++		if (seal)
++			newflags = vma->vm_flags | VM_SEALED;
++		else
++			newflags = vma->vm_flags & ~(VM_SEALED);
+ 		tmp = vma->vm_end;
+ 		if (tmp > end)
+ 			tmp = end;
+-		error = mseal_fixup(&vmi, vma, &prev, nstart, tmp, newflags);
++		error = mseal_fixup(&vmi, vma, &prev, nstart, tmp, newflags, seal);
+ 		if (error)
+ 			return error;
+ 		nstart = vma_iter_end(&vmi);
+@@ -204,6 +215,37 @@ static int apply_mm_seal(unsigned long start, unsigned long end)
+ 	return 0;
+ }
+ 
++int do_mseal(unsigned long start, unsigned long end, bool seal)
++{
++	int ret;
 +
-+		adsp_mailbox0: mailbox@10b86000 {
-+			compatible = "mediatek,mt8188-adsp-mbox", "mediatek,mt8186-adsp-mbox";
-+			reg = <0 0x10b86100 0 0x1000>;
-+			interrupts = <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH 0>;
-+			#mbox-cells = <0>;
-+		};
++	if (end < start)
++		return -EINVAL;
 +
-+		adsp_mailbox1: mailbox@10b87000 {
-+			compatible = "mediatek,mt8188-adsp-mbox", "mediatek,mt8186-adsp-mbox";
-+			reg = <0 0x10b87100 0 0x1000>;
-+			interrupts = <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH 0>;
-+			#mbox-cells = <0>;
-+		};
++	if (end == start)
++		return 0;
 +
- 		adsp_audio26m: clock-controller@10b91100 {
- 			compatible = "mediatek,mt8188-adsp-audio26m";
- 			reg = <0 0x10b91100 0 0x100>;
++	/*
++	 * First pass, this helps to avoid
++	 * partial sealing in case of error in input address range,
++	 * e.g. ENOMEM error.
++	 */
++	ret = check_mm_seal(start, end);
++	if (ret)
++		goto out;
++
++	/*
++	 * Second pass, this should success, unless there are errors
++	 * from vma_modify_flags, e.g. merge/split error, or process
++	 * reaching the max supported VMAs, however, those cases shall
++	 * be rare.
++	 */
++	ret = apply_mm_seal(start, end, seal);
++
++out:
++	return ret;
++}
++
+ /*
+  * mseal(2) seals the VM's meta data from
+  * selected syscalls.
+@@ -256,7 +298,7 @@ static int apply_mm_seal(unsigned long start, unsigned long end)
+  *
+  *  unseal() is not supported.
+  */
+-static int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
++static int __do_mseal(unsigned long start, size_t len_in, unsigned long flags)
+ {
+ 	size_t len;
+ 	int ret = 0;
+@@ -277,33 +319,12 @@ static int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
+ 		return -EINVAL;
+ 
+ 	end = start + len;
+-	if (end < start)
+-		return -EINVAL;
+-
+-	if (end == start)
+-		return 0;
+ 
+ 	if (mmap_write_lock_killable(mm))
+ 		return -EINTR;
+ 
+-	/*
+-	 * First pass, this helps to avoid
+-	 * partial sealing in case of error in input address range,
+-	 * e.g. ENOMEM error.
+-	 */
+-	ret = check_mm_seal(start, end);
+-	if (ret)
+-		goto out;
+-
+-	/*
+-	 * Second pass, this should success, unless there are errors
+-	 * from vma_modify_flags, e.g. merge/split error, or process
+-	 * reaching the max supported VMAs, however, those cases shall
+-	 * be rare.
+-	 */
+-	ret = apply_mm_seal(start, end);
++	ret = do_mseal(start, end, true);
+ 
+-out:
+ 	mmap_write_unlock(current->mm);
+ 	return ret;
+ }
+@@ -311,5 +332,5 @@ static int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
+ SYSCALL_DEFINE3(mseal, unsigned long, start, size_t, len, unsigned long,
+ 		flags)
+ {
+-	return do_mseal(start, len, flags);
++	return __do_mseal(start, len, flags);
+ }
 -- 
-2.46.0.598.g6f2099f65c-goog
+2.40.1
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
