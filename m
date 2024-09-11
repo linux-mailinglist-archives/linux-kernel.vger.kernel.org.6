@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-325307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D459757A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:54:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA2D9757AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47861C261D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C10A1F23D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2C61B29D8;
-	Wed, 11 Sep 2024 15:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D9A187336;
+	Wed, 11 Sep 2024 15:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O53vvKAD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBWv22ZG"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED61A3021;
-	Wed, 11 Sep 2024 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA32192D86;
+	Wed, 11 Sep 2024 15:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726069960; cv=none; b=XCk9prNel3Qe3dWDyXr0UnUK7KI4rl50966zawUykHhaSJh763SlXkFKdBNBOr+dP4pMrWOoo4ozSqeOkZZ7agsKAjyqMxDpiK8K+0plSJCF0lwJbjzPOayp6fR6zdBpL9NSvTnHjWFO5uPD7Q6pKj3Lp9b8KPbq0yOQ8LWReeo=
+	t=1726070062; cv=none; b=mLp/fwNR0lnjIBEZv2Uukh12r6aKCHuDvwdNvbKjzabSQteYLMJoGJeU6yCVoD5hyEWutG4BU9a6gON8VqxoxD1Xm/rXYqlj+UEottXiZpV0aLUUAjYnIFHN8LAGWu9kX3yVMtUTlIFzL9KZNZosLpLqaaAtBRmicsBs0Zcebuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726069960; c=relaxed/simple;
-	bh=EaRo3nIvBeULRRnHqzUQ05tQMRJjg5ALvOAHP3Y91Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vEw9Nth+L713nkl1c9jVpJ60ipZsin3k2nzg2nLY3ai36+oXNu18T20/zpDGFEz5bnlttU7c6BQ+JYdNUTL5DBc3X4mY1+pzb2jHX19gs33W6/h4Z6ZOW6FqKPgu2fSsn7bsBLIEdYIHfzKkrvxgp/58eL3vXUWj9rC9zYIXI5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O53vvKAD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B5FC4CED0;
-	Wed, 11 Sep 2024 15:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726069959;
-	bh=EaRo3nIvBeULRRnHqzUQ05tQMRJjg5ALvOAHP3Y91Qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O53vvKADVc2odhiedKGSyCanEhIgja3ljEd9a2PgKFVz2pWndZITepiIts4ziDx1J
-	 3vQaiVIX9SMnsdq7USKWHNw4CTlX51WtDUbg0nWokkrY6JOQNptxJAibuMydppfz08
-	 qwf1cQOhkPD/Q3TwL+scqChMY8uwLCwMw27awSUFEnrBrNyE7sTpF+GvwEtYZiTYn5
-	 jotU1ukSAd/CkMYs9Q9xWU/TI1IbI22GFBDkLLDPPLEO/AmSu0HOec7XH+yDnE810R
-	 QENQWKkuOOSUtuCRf23z/zGiekAJe1BxlxCyjaFgAxoYvMu6ul46En1jO9AozQ0P3f
-	 IHfFsgI9dD48w==
-Date: Wed, 11 Sep 2024 16:52:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 5.15 000/212] 5.15.167-rc2 review
-Message-ID: <090abdd1-bd82-483e-8d51-fef56c8039ee@sirena.org.uk>
-References: <20240911130535.165892968@linuxfoundation.org>
+	s=arc-20240116; t=1726070062; c=relaxed/simple;
+	bh=ZkB3CWsdIJOZ4M4galTAh3aYUNJfnGGRA3TBjTjVxio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MP7YADq/MVXZmfdRzchoIqHuXbOoQj6eN7l82tveiMzgex084WgfDup79zJ4JzWa+w/pMIG/VG2AsW56wkwzaIXfCxo5S8tRS7GuYwGbRscyzTwHE13zFiwSRDihbyxEnfGpaV0A31EiyHENYeoJo+iPfOan3FHALws3qALpCI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBWv22ZG; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-206e614953aso213665ad.1;
+        Wed, 11 Sep 2024 08:54:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726070061; x=1726674861; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPhqrR+rUKLY9Ke/C76E17iBv1z5TKbqfgaCfQBPdgE=;
+        b=PBWv22ZGpDdMCFytpq8zTvU43mgPd7CW3QFrQcI4rpAXI7zlIbxcE2f3fEUOgraWuZ
+         WrPwOrZz2+Rd1hY3rtzIILGrYXep97Cpx0WN9sK1oRbyZTYB/6Ws2y3GuXVGKnwex09A
+         shvVxTvScqbtsTOgKHKaWLkURwHT4s4ePS6+XkKBRMP6qYfygT+txzpJsN/YpLNmmr5k
+         H32Mz5N5b+7wzafop55RqbvDvhp1SCQzPn2qyrlSIn3WBcVwbc6v2UHuRd+yW4JS+awz
+         Mu4P+QwO7WVPUqsm69edhLROy+KGwKGpJdWQCznvV29gh6kg+iAeBzUPX9ILpYiqXrS4
+         NIOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726070061; x=1726674861;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PPhqrR+rUKLY9Ke/C76E17iBv1z5TKbqfgaCfQBPdgE=;
+        b=LXzFvE29dzhzk/Y53lbYV+fCCtkxUfMbWYoeRoGDl7VHHN5LW9k3ODCoe63vYkHqiZ
+         yF/y2I+jpYoxGpHTi/GIqHa5nR7CTDlrS4/znvkd7HtUC+Ca4Epez2W9pPeYvREiGidD
+         K56cd5jIs8Uv5HHXJvJJpisb1bI/ieqA0YydzFIbm/THYA89tGR8+LzaKOJUC5pUgAOu
+         nyoX29iFqLxrLbsGw6675yFXYx2TfYqinBfCY/c5XecmaYraPUg5JC/lmwzc4JlMDy0F
+         1JshRf6L6fmYS3s3zacHW69cJ8i0TGxl5ZRPifXhM/OnK3ZdTb9zctXyry23XB4yYPDf
+         CC6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXoxIb49mnnlnk2WlFIGhgOedMW8cqvqluQ16a2umdS+WVwXFRWO57F2mATye9xgiE4g0vA6CJmSHrr4sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0aN/n0Y9BQoCJxx7jzY9hQn3Bbs4UaFzoZZKpQIoMi30YaAvZ
+	P6GiTQug12PR9W5bhI+gyR1lloAvMCzCPHVNZnx2vReppK7BKvT1661LlSlLwgpxcT7W9m0Ky9W
+	CnyzFFVIfOIECo858+aGzTg2tDWk=
+X-Google-Smtp-Source: AGHT+IFRcM3zM6MOhmIE7dVzBD5H48pHxY7bqxvSLeqzD9ebgH+YW7mvcY8RKA6RvREhtYueCMyCfFWipm+OqkOm+dc=
+X-Received: by 2002:a17:902:ea08:b0:205:7db3:fdd1 with SMTP id
+ d9443c01a7336-2074c6240c5mr60051715ad.36.1726070060455; Wed, 11 Sep 2024
+ 08:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ahH29RshIXgcaMP2"
-Content-Disposition: inline
-In-Reply-To: <20240911130535.165892968@linuxfoundation.org>
-X-Cookie: No Canadian coins.
+References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com> <20240911154820.2846187-12-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240911154820.2846187-12-andriy.shevchenko@linux.intel.com>
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Wed, 11 Sep 2024 17:53:44 +0200
+Message-ID: <CAHaCkmd_HWCgyfiAV56VgENgMaS3kG9cz5CPrUzyiVoy0y1oBg@mail.gmail.com>
+Subject: Re: [PATCH v1 11/12] i2c: isch: Prefer to use octal permission
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Personally I find this to be *less* readable, but maybe that's just me.
 
---ahH29RshIXgcaMP2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Sep 11, 2024 at 03:07:08PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.167 release.
-> There are 212 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---ahH29RshIXgcaMP2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbhvMAACgkQJNaLcl1U
-h9ASrwf/deW7IhEH0alp/BDC60u+MfVsjYsjFvv/Z2BSfgEr9c5wsxj9u2jBzfCD
-oUVkf5bv1+JQYiITy6RpqWOF0yozP9IpSt7Zv4+VH4wVz9zCrtp7toORL3+qfiI3
-NL8Zduflu+lkO0AzVmTpPY3NX51Yb1NKikT8/ywcRhKp+OqhZMVfW5OXjaCcmn+3
-20M7bvQOMTQeavHTaxMlptsDP8WADAJPn4Qsi6bhHbuiBrucwHsYJTw12Gi0FjvO
-32qz6x99exo1Gt+/nd+nQYViCBtF1M526M+8c38rnw8ufKvq03I2OxFhMGoU+XAB
-KlgcG5uOW3z/gxTm5xQwKanPa3xLfA==
-=peKz
------END PGP SIGNATURE-----
-
---ahH29RshIXgcaMP2--
+On Wed, 11 Sept 2024 at 17:51, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Octal permissions are preferred over the symbolics ones
+> for readbility. This ceases warning message pointed by checkpatch.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/i2c/busses/i2c-isch.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-isch.c b/drivers/i2c/busses/i2c-isch.c
+> index 8fa48a346e12..a6aa28000568 100644
+> --- a/drivers/i2c/busses/i2c-isch.c
+> +++ b/drivers/i2c/busses/i2c-isch.c
+> @@ -49,7 +49,7 @@ struct sch_i2c {
+>  };
+>
+>  static int backbone_speed = 33000; /* backbone speed in kHz */
+> -module_param(backbone_speed, int, S_IRUSR | S_IWUSR);
+> +module_param(backbone_speed, int, 0600);
+>  MODULE_PARM_DESC(backbone_speed, "Backbone speed in kHz, (default = 33000)");
+>
+>  static inline u8 sch_io_rd8(struct sch_i2c *priv, unsigned int offset)
+> --
+> 2.43.0.rc1.1336.g36b5255a03ac
+>
+>
 
