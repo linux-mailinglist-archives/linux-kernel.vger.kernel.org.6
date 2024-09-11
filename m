@@ -1,83 +1,58 @@
-Return-Path: <linux-kernel+bounces-325624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066C8975C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:08:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633C1975C3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6ADD281EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 957F41C21F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CF71531E8;
-	Wed, 11 Sep 2024 21:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA571BA87E;
+	Wed, 11 Sep 2024 21:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="oGUAiKjq"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWTQvgYX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32CB143C5A
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 21:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164D714F132;
+	Wed, 11 Sep 2024 21:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726088913; cv=none; b=jMq3QK3kheOmzEuDXfzYju6s0Hq875mtAwU47BGGRggYpKaL4FWAy8OwWW65H8Mne+/E3FUgA3TOhFxuCGNP5xg9OqL1OcIaertOuWzLm97F/aHe57YkO7wH2jL4HTOScKEOvxCnkx71vRvaJW9KedF66xIVQUa8/tOtEoW6tMM=
+	t=1726088931; cv=none; b=HdSEl9mRO888xJaE4BiHV9w22Lb8IJlc+IfvMs3dZZWLpkQfn/q4o8UHHuIP1j9XKhXQUFCEO1BiLGQ6UQwXZHBJz+5hL1KcIUjoWZW9xczqQJ9+9Alhcgqg+n1RykURtXtFjLNuMj6amIDRy4HUSJ48Mo3dZDSCgdnXrUw64l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726088913; c=relaxed/simple;
-	bh=W4HvhM49Z3WHkmOQeWgblqJfbVbjDnc5OxJk1ek1N8I=;
+	s=arc-20240116; t=1726088931; c=relaxed/simple;
+	bh=Yq5DwLNoDoEmAmclkRLNu5BQeMSQf6MxRyplYJiqxEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFvGaDU9vj3h+gqWFconLxWXEe2W9jSNBynPPjUvLzw37hTdqN5W9nyn2baiXk3e8cHkVqp3DDFTLMHmlcKY73YqKLAhB1IgAag+Qemrh4yN4QndxAQE/oo7NyhfUTIgOwIK2apH/BHcxOk05eOmITSdkhkNBZ1yJMZExxuHtx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=oGUAiKjq; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6c524b4a3aeso1673486d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1726088909; x=1726693709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1q9C8g+7qPjQQ1WU75uSsRI/cAkAobRA9aew6drCVM=;
-        b=oGUAiKjqHGB3CGv8lc94GlGzzJl/DOqGpC8dt2P+Vxl3Q0UZEVYzpP6HSYCmBC/TCr
-         XvROiTnC6a3DpnU8D/nfKeBCTIWqZ43y+jYVJnitPcey/PBXRR4v8QC0XC0Syk5jdl52
-         /QvsoeHNLtDEcCLuyI/BnrSE7PnoWnM7Pdj0P9Jn4Fx3vIKVk7Y/FSsfBq6fIglsynWs
-         p+Ke+nKuxoEJ01R9Re/eWTWsHBwiGHOGKCTmfKNvio550PVefWIwHv6KlICd61wwHNqJ
-         q1XgiDOzsY4OMY7SBk37fXnUDHD4waCONRPC/I2iM62j3ORdIvpPaisteUuohlkgyDUW
-         l01g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726088909; x=1726693709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S1q9C8g+7qPjQQ1WU75uSsRI/cAkAobRA9aew6drCVM=;
-        b=lPjvMYE9BnCis7kpFr7FfbACUoZrYHxQ1XdP7OEWd2dUOsWLxyAOMlK0GwmdIRKD10
-         X42MEgyAXWyY35IHHxSgXQ00JLk9/m3JZZiT3G4zLgy4SCM7O0z99cGMAkBvgDh2BwJS
-         eeyoI/ThJayXIzw4LZVbgEQzPQsIyH4pk33ptLCtxIQrq20NGySfPrW+34WfBLH5KnDk
-         0JHfu/WlDgRdBWL6RhScnlarRY3g5kpcBZwL/NZBkmnpiVQxAQAnBHr8zqdYiMRBG86r
-         f5jBT6cjsWX9aJ/gngokTQa5beTZwO29fZ8+BS6pTGciwYK+Pz5uklokvDgjj+Gx7sE5
-         lY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6AVUP7h9/7ijS1KON5eHeC18iltgCTBE/XIayZuXVKSOom0RjaaUMgSrKsBkJ8MrmwbsD/NhMlXF0jCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ5j8+dYLw70exw6fl7SLrJnaPhe87+V/tL9ul6x3b8gYSgeQU
-	t70j7y88+1SGOl+yfRYI0gpHn9S8TfgNkWanJZkRepb+Z1h+3vqjOAtfii1CXMA=
-X-Google-Smtp-Source: AGHT+IFm928y7rO/WdV4f77rZlTCrW5iXX2snnA//hZsOeffSuUjI+t6T/ZJjtq7H1MGKY7sJbbXHA==
-X-Received: by 2002:a05:6214:320f:b0:6bf:7bcd:78e3 with SMTP id 6a1803df08f44-6c573530335mr11513076d6.29.1726088909368;
-        Wed, 11 Sep 2024 14:08:29 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53432954fsm45931186d6.25.2024.09.11.14.08.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 14:08:28 -0700 (PDT)
-Date: Wed, 11 Sep 2024 17:08:24 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Omar Sandoval <osandov@osandov.com>, Chris Mason <clm@fb.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: optimize truncation of shadow entries
-Message-ID: <20240911210824.GA117602@cmpxchg.org>
-References: <20240911173801.4025422-1-shakeel.butt@linux.dev>
- <20240911173801.4025422-2-shakeel.butt@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQnzfG3qIPiwrZspoC38yhOR9/Va6jPUgmoiJgreOOU5NuytNErqGUt215JcmC9xx47tGuggaKi+rE8v7FpaXsrfAy1q3mG+dzrP8xu/qa7eKjJnonFCcLyYhAVnLAR+9hGvwH2BHiV/hYA6B5fejQx2VVX3bRJ6p/DHo6LXXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWTQvgYX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07419C4CEC0;
+	Wed, 11 Sep 2024 21:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726088930;
+	bh=Yq5DwLNoDoEmAmclkRLNu5BQeMSQf6MxRyplYJiqxEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWTQvgYXHks9kd8DRb4CA3zzz/e7YyEkw9PcrqtDLIzSwNrdEh/twqoDNUjzxAPty
+	 uPfma4vlRy6IjZhBK0RvwIZgz9GZ4K8XemB/sjPA+eFb68flycBttPsXsrdY8efbWI
+	 SdFAgXeIKreWrEznqHtwzARwZD8hS4iTi/WJpgeeXEUMsEozpBOhqm9M96VlsPfwAK
+	 mz4+DvTvQ5sZNzAQ+oARggoNhp0Nd0pW8fJKoiHekdnnPRiD4nexPjh4cBdpyhURxX
+	 iIaqakaCkt5+5KW8+svjtZ+v7/zNUSw6tP7oFZ84C40KgIAjieU5lTpi7OL7E42BNl
+	 Pk/JbA3NuBuEQ==
+Date: Wed, 11 Sep 2024 14:08:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
+	linux-arch@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 2/3] btf: move pahole check in scripts/link-vmlinux.sh to
+ lib/Kconfig.debug
+Message-ID: <20240911210848.GA2659844@thelio-3990X>
+References: <20240911110401.598586-1-masahiroy@kernel.org>
+ <20240911110401.598586-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,45 +61,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911173801.4025422-2-shakeel.butt@linux.dev>
+In-Reply-To: <20240911110401.598586-2-masahiroy@kernel.org>
 
-On Wed, Sep 11, 2024 at 10:38:00AM -0700, Shakeel Butt wrote:
-> The kernel truncates the page cache in batches of PAGEVEC_SIZE. For each
-> batch, it traverses the page cache tree and collects the entries (folio
-> and shadow entries) in the struct folio_batch. For the shadow entries
-> present in the folio_batch, it has to traverse the page cache tree for
-> each individual entry to remove them. This patch optimize this by
-> removing them in a single tree traversal.
+On Wed, Sep 11, 2024 at 08:03:57PM +0900, Masahiro Yamada wrote:
+> When DEBUG_INFO_DWARF5 is selected, pahole 1.21+ is required to enable
+> DEBUG_INFO_BTF.
 > 
-> On large machines in our production which run workloads manipulating
-> large amount of data, we have observed that a large amount of CPUs are
-> spent on truncation of very large files (100s of GiBs file sizes). More
-> specifically most of time was spent on shadow entries cleanup, so
-> optimizing the shadow entries cleanup, even a little bit, has good
-> impact.
+> When DEBUG_INFO_DWARF4 or DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is selected,
+> DEBUG_INFO_BTF can be enabled without pahole installed, but a build error
+> will occur in scripts/link-vmlinux.sh:
 > 
-> To evaluate the changes, we created 200GiB file on a fuse fs and in a
-> memcg. We created the shadow entries by triggering reclaim through
-> memory.reclaim in that specific memcg and measure the simple truncation
-> operation.
+>     LD      .tmp_vmlinux1
+>   BTF: .tmp_vmlinux1: pahole (pahole) is not available
+>   Failed to generate BTF for vmlinux
+>   Try to disable CONFIG_DEBUG_INFO_BTF
 > 
->  # time truncate -s 0 file
+> We did not guard DEBUG_INFO_BTF by PAHOLE_VERSION when previously
+> discussed [1].
 > 
->               time (sec)
-> Without       5.164 +- 0.059
-> With-patch    4.21  +- 0.066 (18.47% decrease)
+> However, commit 613fe1692377 ("kbuild: Add CONFIG_PAHOLE_VERSION")
+> added CONFIG_PAHOLE_VERSION at all. Now several CONFIG options, as
+> well as the combination of DEBUG_INFO_BTF and DEBUG_INFO_DWARF5, are
+> guarded by PAHOLE_VERSION.
 > 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> The remaining compile-time check in scripts/link-vmlinux.sh now appears
+> to be an awkward inconsistency.
+> 
+> This commit adopts Nathan's original work.
+> 
+> [1]: https://lore.kernel.org/lkml/20210111180609.713998-1-natechancellor@gmail.com/
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Looks good to me. One thing that's a bit subtle is that the tree walk
-assumes indices[] are ordered, such that indices[0] and indices[nr-1]
-reliably denote the range of interest. AFAICS that's the case for the
-current callers but if not that could be a painful bug to hunt down.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Assessing lowest and highest index in that first batch iteration seems
-a bit overkill though. Maybe just a comment stating the requirement?
-
-Otherwise,
-
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+> 
+>  lib/Kconfig.debug       |  3 ++-
+>  scripts/link-vmlinux.sh | 12 ------------
+>  2 files changed, 2 insertions(+), 13 deletions(-)
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 5e2f30921cb2..eff408a88dfd 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -379,12 +379,13 @@ config DEBUG_INFO_BTF
+>  	depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED
+>  	depends on !GCC_PLUGIN_RANDSTRUCT || COMPILE_TEST
+>  	depends on BPF_SYSCALL
+> +	depends on PAHOLE_VERSION >= 116
+>  	depends on !DEBUG_INFO_DWARF5 || PAHOLE_VERSION >= 121
+>  	# pahole uses elfutils, which does not have support for Hexagon relocations
+>  	depends on !HEXAGON
+>  	help
+>  	  Generate deduplicated BTF type information from DWARF debug info.
+> -	  Turning this on expects presence of pahole tool, which will convert
+> +	  Turning this on requires presence of pahole tool, which will convert
+>  	  DWARF type info into equivalent deduplicated BTF type info.
+>  
+>  config PAHOLE_HAS_SPLIT_BTF
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index cfffc41e20ed..53bd4b727e21 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -111,20 +111,8 @@ vmlinux_link()
+>  # ${1} - vmlinux image
+>  gen_btf()
+>  {
+> -	local pahole_ver
+>  	local btf_data=${1}.btf.o
+>  
+> -	if ! [ -x "$(command -v ${PAHOLE})" ]; then
+> -		echo >&2 "BTF: ${1}: pahole (${PAHOLE}) is not available"
+> -		return 1
+> -	fi
+> -
+> -	pahole_ver=$(${PAHOLE} --version | sed -E 's/v([0-9]+)\.([0-9]+)/\1\2/')
+> -	if [ "${pahole_ver}" -lt "116" ]; then
+> -		echo >&2 "BTF: ${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.16"
+> -		return 1
+> -	fi
+> -
+>  	info BTF "${btf_data}"
+>  	LLVM_OBJCOPY="${OBJCOPY}" ${PAHOLE} -J ${PAHOLE_FLAGS} ${1}
+>  
+> -- 
+> 2.43.0
+> 
 
