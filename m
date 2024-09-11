@@ -1,155 +1,269 @@
-Return-Path: <linux-kernel+bounces-325753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34075975DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:44:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4B8975DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5945F1C222FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876C0285097
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9FC1A3047;
-	Wed, 11 Sep 2024 23:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFE41BA868;
+	Wed, 11 Sep 2024 23:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="XcEOl5XW"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPJI9msS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C79186E2C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D310386126;
+	Wed, 11 Sep 2024 23:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726098276; cv=none; b=l62C1XB9giDIgV3RmVh+mSt5kEll9k4xp0g96NyI9ptkWuIb4mMVui4GS9YtO0WLFOonp6CIZmJ1iLVcAkvpOExkithKDGm+DL0rZH3CgOTgZbaHv+KuYBcvt84kFOXhPY3oNzhKS+BimA0YUNC3KtOFVQMxCy5m5SZE1M4UAGs=
+	t=1726098572; cv=none; b=Zx2CCAy6NgZSvO8WwqUPDsw0QuQrdjM7+CzJqOBK3HKLtbpoa2tq91/LrBQXARd/+alYMzQsWfmqVyNMaTLkdSu6tZewA/IqBCOBsbrIOXhHunUOESyAWoj1Jv4EjGXETvfzT+rnGiHa1C0d2EKQ4oM6WUu3VMiXGiuEHHVqCDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726098276; c=relaxed/simple;
-	bh=y2VXaeJJxVoGvguqe8WDtlnLzOelU9lMxIjVbY1WZ6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNOLDk10nUxZxFz0EOQ8p1uf0R7vnJUFvlT0IJ23rIj1/TtmUYL4TyAlvH/T/C7uipdlBOmCwJENnyMrvYYc4XvyhkvuECpwfBsiKaU9H0wEXsnd7whAY2ugQL6EkfaknHyrGFzXf78fMmkZF5sF5xyClVnLrBDuMbHBAtkmbjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=XcEOl5XW; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48BNi5BY2640137
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 11 Sep 2024 16:44:06 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48BNi5BY2640137
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024081601; t=1726098247;
-	bh=Gg6xQY5ra1K8phmbiZHoNGy2VSSxwc5nYjsqFC3Pg4Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XcEOl5XW9ADrF1o4FFLpCrZ7Pr02ZVSj0744ToAzev7PTHY7c2dJ4VJTkllky/l5y
-	 tFJEb22xwyas25ISzHvPfK/VDWIqYYRz83NBK16GhGzpZ320/8MnrSqAQCfbKTxXVl
-	 Ex85UTHpjw48N0BV4i7x5U9dw9hhIpt+1ti+Kt5yco6akn8Q6WOv55jE6vZgQ9BBH5
-	 ifGOsXMDqmUdYxrBrvgPrjSfPqkykUs6usGZVQ01EAhWIshNzvw4MMxaNjqhJq3Zm3
-	 UQ1wITxCwYYMH0++9trCG7y/aWRhhPCSnaO+CbP2WkKdurB6fT5fTuMaVqHBd78wZG
-	 ky7QMWE5dbxBw==
-Message-ID: <9efbfb57-d454-4bad-bdb8-e3000b6ba0ce@zytor.com>
-Date: Wed, 11 Sep 2024 16:44:05 -0700
+	s=arc-20240116; t=1726098572; c=relaxed/simple;
+	bh=sMCUlAfMkrhguEU3xLJqnBvQY1HzIxj4u+AORh90ylc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KmsfxaFZsalr8O6JkrP3dnWgaRlyV8c+0EZ+9mZYEyv3W7PiW4KgY3jd4hzK111o1WkXqqkSyIvi0T6w2tJyB/n9PSOQoKjS00Fq4rFqbu31sb+kZs5oIjep/cSo3924IcAIoDiUfyjDQLbq/6cPqxv478K77W3GLI3i3ddXwD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPJI9msS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62972C4CEC0;
+	Wed, 11 Sep 2024 23:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726098572;
+	bh=sMCUlAfMkrhguEU3xLJqnBvQY1HzIxj4u+AORh90ylc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XPJI9msSHZk0Qxp9qJH5Xhcv/zRgComwoMEbxAmaNnkVdjokXBld3+XhdlG6AJeoQ
+	 pFV4AE9oAZ/8vKvFVzpYD3BqreNQYo6UdfZr0+7AzXEBtIqNRXuALFvGEdGHAw9ia6
+	 zLFs9QIj0o9ofbUQp6FL8tU4Sx10BgQE14XKsCR0Su4z2nWBpG6PyCbhUMkmS6te65
+	 qf2qEZcdgDCJ3o6twaccCHSWh6aiI4FNEpIxLJoiCmVWVhc3sWWVVzBDLiOs2gBQTU
+	 dIvAgcgoRpvSOkrzCtCw4mjM4y+FkxpZHEoWrHkw7ACAlBxZKDTyABYUMTVQE+U64G
+	 4USMNJhIvk4sg==
+Date: Thu, 12 Sep 2024 08:49:26 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v13 00/20] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-Id: <20240912084926.6d4c5768a538fb5946e31bda@kernel.org>
+In-Reply-To: <20240911092434.76e33f1f44b077fd706f4520@kernel.org>
+References: <172398527264.293426.2050093948411376857.stgit@devnote2>
+	<20240911092434.76e33f1f44b077fd706f4520@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
- #CP
-To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org
-References: <20240911231929.2632698-1-xin@zytor.com>
- <04674df0-a026-42d1-aacf-293f3018329f@citrix.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <04674df0-a026-42d1-aacf-293f3018329f@citrix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/11/2024 4:35 PM, Andrew Cooper wrote:
-> On 12/09/2024 12:19 am, Xin Li (Intel) wrote:
->> The WFE, i.e., WAIT_FOR_ENDBRANCH, bit in the augmented CS of FRED
->> stack frame is set to 1 in missing-ENDBRANCH #CP exceptions.
->>
->> The CPU will generate another missing-ENDBRANCH #CP if the WFE bit
->> is left as 1, because the indirect branch tracker will be set in
->> the WAIT_FOR_ENDBRANCH state upon completion of the following ERETS
->> instruction and the CPU will restart from the IP that just caused a
->> previous missing-ENDBRANCH #CP.
->>
->> Clear the WFE bit to avoid dead looping in missing-ENDBRANCH #CP.
->>
->> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+On Wed, 11 Sep 2024 09:24:34 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> Let me gently ping :)
 > 
-> Ah - good.  Finally some evidence that this hole in CET has been plugged
-> by FRED.
-> 
-> However, I'd suggest describing it differently.
+> Let me check it should be rebased on tracing/for-next again. But basically
+> this should be the same...
 
-Yep, it's a much better story including historical issues with IDT.
+I found a build error on riscv. Let me fix that.
 
-I will use it as the comment above ibt_clear_fred_wfe() in the next
-iteration, but keep the change log.  Is it okay?
+Thanks,
 
 > 
+> On Sun, 18 Aug 2024 21:47:53 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 > 
-> By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
+> > Hi,
+> > 
+> > Here is the 13th version of the series to re-implement the fprobe on
+> > function-graph tracer. The previous version is;
+> > 
+> > https://lore.kernel.org/all/172000134410.63468.13742222887213469474.stgit@devnote2/
+> > 
+> > This version is based on v6.11-rc3.
+> > In this version, I added a bugfix as [1/20], which should go to urgent
+> > branch, and dropped the performance improvement patch which was introduced
+> > in v12 because I found that does not work with new kernel.
+> > 
+> > Overview
+> > --------
+> > This series rewrites the fprobe on this function-graph.
+> > The purposes of this change are;
+> > 
+> >  1) Remove dependency of the rethook from fprobe so that we can reduce
+> >    the return hook code and shadow stack.
+> > 
+> >  2) Make 'ftrace_regs' the common trace interface for the function
+> >    boundary.
+> > 
+> > 1) Currently we have 2(or 3) different function return hook codes,
+> >  the function-graph tracer and rethook (and legacy kretprobe).
+> >  But since this  is redundant and needs double maintenance cost,
+> >  I would like to unify those. From the user's viewpoint, function-
+> >  graph tracer is very useful to grasp the execution path. For this
+> >  purpose, it is hard to use the rethook in the function-graph
+> >  tracer, but the opposite is possible. (Strictly speaking, kretprobe
+> >  can not use it because it requires 'pt_regs' for historical reasons.)
+> > 
+> > 2) Now the fprobe provides the 'pt_regs' for its handler, but that is
+> >  wrong for the function entry and exit. Moreover, depending on the
+> >  architecture, there is no way to accurately reproduce 'pt_regs'
+> >  outside of interrupt or exception handlers. This means fprobe should
+> >  not use 'pt_regs' because it does not use such exceptions.
+> >  (Conversely, kprobe should use 'pt_regs' because it is an abstract
+> >   interface of the software breakpoint exception.)
+> > 
+> > This series changes fprobe to use function-graph tracer for tracing
+> > function entry and exit, instead of mixture of ftrace and rethook.
+> > Unlike the rethook which is a per-task list of system-wide allocated
+> > nodes, the function graph's ret_stack is a per-task shadow stack.
+> > Thus it does not need to set 'nr_maxactive' (which is the number of
+> > pre-allocated nodes).
+> > Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
+> > Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
+> > their register interface, this changes it to convert 'ftrace_regs' to
+> > 'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
+> > so users must access only registers for function parameters or
+> > return value. 
+> > 
+> > Design
+> > ------
+> > Instead of using ftrace's function entry hook directly, the new fprobe
+> > is built on top of the function-graph's entry and return callbacks
+> > with 'ftrace_regs'.
+> > 
+> > Since the fprobe requires access to 'ftrace_regs', the architecture
+> > must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
+> > CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
+> > entry callback with 'ftrace_regs', and also
+> > CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
+> > return_to_handler.
+> > 
+> > All fprobes share a single function-graph ops (means shares a common
+> > ftrace filter) similar to the kprobe-on-ftrace. This needs another
+> > layer to find corresponding fprobe in the common function-graph
+> > callbacks, but has much better scalability, since the number of
+> > registered function-graph ops is limited.
+> > 
+> > In the entry callback, the fprobe runs its entry_handler and saves the
+> > address of 'fprobe' on the function-graph's shadow stack as data. The
+> > return callback decodes the data to get the 'fprobe' address, and runs
+> > the exit_handler.
+> > 
+> > The fprobe introduces two hash-tables, one is for entry callback which
+> > searches fprobes related to the given function address passed by entry
+> > callback. The other is for a return callback which checks if the given
+> > 'fprobe' data structure pointer is still valid. Note that it is
+> > possible to unregister fprobe before the return callback runs. Thus
+> > the address validation must be done before using it in the return
+> > callback.
+> > 
+> > Download
+> > --------
+> > This series can be applied against the ftrace/for-next branch in
+> > linux-trace tree.
+> > 
+> > This series can also be found below branch.
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+> > 
+> > Thank you,
+> > 
+> > ---
+> > 
+> > Masami Hiramatsu (Google) (20):
+> >       tracing: fgraph: Fix to add new fgraph_ops to array after ftrace_startup_subops()
+> >       tracing: Add a comment about ftrace_regs definition
+> >       tracing: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
+> >       function_graph: Pass ftrace_regs to entryfunc
+> >       function_graph: Replace fgraph_ret_regs with ftrace_regs
+> >       function_graph: Pass ftrace_regs to retfunc
+> >       fprobe: Use ftrace_regs in fprobe entry handler
+> >       fprobe: Use ftrace_regs in fprobe exit handler
+> >       tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
+> >       tracing: Add ftrace_fill_perf_regs() for perf event
+> >       tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+> >       bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
+> >       ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+> >       fprobe: Rewrite fprobe on function-graph tracer
+> >       tracing: Fix function timing profiler to initialize hashtable
+> >       tracing/fprobe: Remove nr_maxactive from fprobe
+> >       selftests: ftrace: Remove obsolate maxactive syntax check
+> >       selftests/ftrace: Add a test case for repeating register/unregister fprobe
+> >       Documentation: probes: Update fprobe on function-graph tracer
+> >       fgraph: Skip recording calltime/rettime if it is not nneeded
+> > 
+> > 
+> >  Documentation/trace/fprobe.rst                     |   42 +
+> >  arch/arm64/Kconfig                                 |    2 
+> >  arch/arm64/include/asm/ftrace.h                    |   47 +
+> >  arch/arm64/kernel/asm-offsets.c                    |   12 
+> >  arch/arm64/kernel/entry-ftrace.S                   |   32 +
+> >  arch/arm64/kernel/ftrace.c                         |   20 +
+> >  arch/loongarch/Kconfig                             |    4 
+> >  arch/loongarch/include/asm/ftrace.h                |   32 -
+> >  arch/loongarch/kernel/asm-offsets.c                |   12 
+> >  arch/loongarch/kernel/ftrace_dyn.c                 |   10 
+> >  arch/loongarch/kernel/mcount.S                     |   17 -
+> >  arch/loongarch/kernel/mcount_dyn.S                 |   14 
+> >  arch/powerpc/Kconfig                               |    1 
+> >  arch/powerpc/include/asm/ftrace.h                  |   15 
+> >  arch/powerpc/kernel/trace/ftrace.c                 |    2 
+> >  arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
+> >  arch/riscv/Kconfig                                 |    3 
+> >  arch/riscv/include/asm/ftrace.h                    |   26 -
+> >  arch/riscv/kernel/ftrace.c                         |   17 +
+> >  arch/riscv/kernel/mcount.S                         |   24 -
+> >  arch/s390/Kconfig                                  |    3 
+> >  arch/s390/include/asm/ftrace.h                     |   39 +
+> >  arch/s390/kernel/asm-offsets.c                     |    6 
+> >  arch/s390/kernel/mcount.S                          |    9 
+> >  arch/x86/Kconfig                                   |    4 
+> >  arch/x86/include/asm/ftrace.h                      |   37 +
+> >  arch/x86/kernel/ftrace.c                           |   50 +-
+> >  arch/x86/kernel/ftrace_32.S                        |   15 
+> >  arch/x86/kernel/ftrace_64.S                        |   17 -
+> >  include/linux/fprobe.h                             |   57 +-
+> >  include/linux/ftrace.h                             |  136 ++++
+> >  kernel/trace/Kconfig                               |   23 +
+> >  kernel/trace/bpf_trace.c                           |   19 -
+> >  kernel/trace/fgraph.c                              |  127 +++-
+> >  kernel/trace/fprobe.c                              |  638 ++++++++++++++------
+> >  kernel/trace/ftrace.c                              |   10 
+> >  kernel/trace/trace.h                               |    6 
+> >  kernel/trace/trace_fprobe.c                        |  147 ++---
+> >  kernel/trace/trace_functions_graph.c               |   10 
+> >  kernel/trace/trace_irqsoff.c                       |    6 
+> >  kernel/trace/trace_probe_tmpl.h                    |    2 
+> >  kernel/trace/trace_sched_wakeup.c                  |    6 
+> >  kernel/trace/trace_selftest.c                      |   11 
+> >  lib/test_fprobe.c                                  |   51 --
+> >  samples/fprobe/fprobe_example.c                    |    4 
+> >  .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
+> >  .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
+> >  47 files changed, 1168 insertions(+), 630 deletions(-)
+> >  create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+> > 
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
 > 
-> But, in original CET under IDT delivery, any transfer for
-> interrupt/exception/etc that does not change privilege will clobber the
-> WFE state because MSR_{U,S}_CET.WFE is intentionally set by microcode so
-> as to expect to find an ENDBR at the interrupt/exception/syscall entrypoint.
 > 
-> In practice, this means interrupts and exceptions hitting the kernel, or
-> user interrupts, loose the WFE state of the interrupted context.  And
-> yes, this means that a well timed interrupt (to the precise instruction
-> boundary) will let an attacker sneak a bad function pointer past the
-> CET-IBT enforcement.
-> 
-> In FRED, the WFE state of the interrupted context (even if it is the
-> same privilege) is preserved and restored, in order to close this hole.
-> 
-> Therefore, the intentional #CP selfchecks need to clear WFE when they
-> are deemed to have succeeded, now that FRED is causing the state not to
-> get lost.
-> 
-> ~Andrew
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
