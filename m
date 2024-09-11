@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-324739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B085975049
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:57:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39C597504B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72F129022B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711141F2A015
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A874185B4A;
-	Wed, 11 Sep 2024 10:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8A4185B7B;
+	Wed, 11 Sep 2024 10:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="esdDKz+F"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r8wmYRra"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640E93BBEB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A197DA83
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726052212; cv=none; b=XTKAoQFrJuY2bu/9AikAREoiuR1Yg7CL9BMvLPxgDJ4AwPw3eGHM85/htoUMJaS1hOKO2NGxZE3UWBSktcWF8PUqfgmGBrKdiIriYD/elMQlimzLAZgyRfUlsNG7XAvmLSLeBmqo8TjexoPDkzZ49aHjIhH16RktXc3+GGGk34Y=
+	t=1726052237; cv=none; b=QgNZkyL9G6Hlqu+XNlpyOJ7Urfe9iVtuxgoc29c/tFopqNFVko+PrAV52ddDgRH4dsiXGDckeCWQ1Bkz8FVMFmmzohwKAxBwiDYFgFMynWQeyl8JUQ2H5i2dm1QCEPd5MJ/yEJ/UL8OYvAd5pnBiFkNvsozWJHfID9D48Xl3oG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726052212; c=relaxed/simple;
-	bh=yMM35HUT7miV6QtJLuFsWwf5iXiMbNclaktulBrMxBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itlQU/s0b/et/Gegk5Wz6j0IwzmsIdy/RUgsrP9ow7JM/Cfy3ASom+h93Rmp+cWbOJY/wWFVjqzVT0sTiP/QBvNZpQVY3+SM8uNxMvMZTaqzuRJIxo96Uiey/gFnPb0RJriiSObzJgRTcLha82hNQ2gdyVpjSkkwkhw23VLa8a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=esdDKz+F; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-846cfc2f010so1646883241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:56:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726052210; x=1726657010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yMM35HUT7miV6QtJLuFsWwf5iXiMbNclaktulBrMxBI=;
-        b=esdDKz+FLLnnv+74bU0OZyTntKH9JmUujHJVdGmj8eiIGqnzdJXUZ/GIi6wzTRdLX3
-         rPPBIY0TqziqyApGiPLVnJIzc3aPYvkpBAhYb+P2bgAcLMyWhzfh865WKA310ZQs4/fc
-         T7/m82ZXTIV6pmkmxdbFDq4cgl+3u0Fqb3aDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726052210; x=1726657010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yMM35HUT7miV6QtJLuFsWwf5iXiMbNclaktulBrMxBI=;
-        b=W/L5pl4HvyExnDSrGdqRQP4jOoOiEpJjCv/0pk0hNoCVxdrP5X09XV/3baL2WW1srP
-         pDMcXzyAbCF3z8PArSfm4yBahtkzGYgxU1q8e0vsayPDwgQAOo+d0c05QbRaXB0doAAx
-         93cDCvy7cRUmOEEbgdyHIqWKIQFdG5T4zTQk5ONxORjSf9HR5y03L+X53AbKwJaxbcLm
-         8KWItU48NUu+2dLvqInzA+WtogVFBz3d+OrCimAIolEr2QnmAq66bj8xpGqoAC2QgYnv
-         m5HX3TTBBOvgU9YqsTG8znr/PXVCM++/qsQeXstQoLFETzOzqgnLL7lVIdppVvBeDt3I
-         p1gA==
-X-Forwarded-Encrypted: i=1; AJvYcCVltgZvXzhbV76YvcA6KnU/1oDTQtWXtCxgaKqAioimAhVTEa//EgeoCYpWJ7tXrwJFRqswXA/XPaiY3+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz78J642QEzNOv4dPTOfg5SQ23pZaW8idwKVY9CDLXVjZ1+l0ip
-	ruL9+YH3L2s+ZuSOQH96ejB12MqBDQRyrEWUasxk0qQKarzFjPeIkC4ZHF1sZDIJsPyGFiT5Pui
-	rsQ==
-X-Google-Smtp-Source: AGHT+IHoXCB5sOaUVW90htVtctuPx0e/6u5mOk2K/eW6R/+Kqu1/bGZpnGpHlfMx1MSI/pApYfw6aA==
-X-Received: by 2002:a05:6102:a53:b0:49c:8d2:8ec with SMTP id ada2fe7eead31-49c08d2146fmr7053406137.3.1726052209878;
-        Wed, 11 Sep 2024 03:56:49 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8489acacce5sm947398241.24.2024.09.11.03.56.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 03:56:49 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-49bd2b37fe9so1843536137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:56:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMcnNpubNBUgMBh5Un+a1uGaxXo3/aSw8O8YqCIqBFHskYbwJ17PtSgQ3npX+afUvXk2BtYew8TQ/vsxM=@vger.kernel.org
-X-Received: by 2002:a67:ff82:0:b0:49b:f255:1779 with SMTP id
- ada2fe7eead31-49bf2551aa2mr6702532137.12.1726052208866; Wed, 11 Sep 2024
- 03:56:48 -0700 (PDT)
+	s=arc-20240116; t=1726052237; c=relaxed/simple;
+	bh=18ZNckk6FjR7ip7D+UJz4KPDfiLlRhGGvbomCsn0jI0=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=kxbM9V/iTFID6NNMAanaHwp7T7B3sy1wpV3xlTwVBsMdpcJKUJyiNWO1mfuTQDV5xCmzJCvWZOIoyCYN3oUUMnndaUsviOytJ4VJ3DLujdQGjmF4ejPQLDSeSkkR2tdvpu1Rrr3HkipQngI+uD3drfP6iZRWMra4MvnIfaP+mMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r8wmYRra; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240911105712euoutp01196e62db60317b167313a015ece02423~0K1xMGW4E2299022990euoutp01f
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:57:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240911105712euoutp01196e62db60317b167313a015ece02423~0K1xMGW4E2299022990euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726052232;
+	bh=Hl+GFYWFhkSr8PV50aJtpBPf4Ss06AJQHxeDfZs8vwg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=r8wmYRraV8y6URB9hpR6bgyJOiVLGRQynMu6QrRvetUaaeMwE90xKxHzCcd+Q2mXW
+	 Gg0XRdMFMQC/5wrrwa26MQK9nQPy+VOxVOcRNLxvJQGDI8mzI4dr49vtT2DAgAPuXA
+	 5Bq+sNPfYJXRM1dwX9VoJRpgAU4/H+tHCifQH6Lc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240911105712eucas1p1d0781938f6b9436240ce394d36c4f4f3~0K1wwsBbk2148121481eucas1p19;
+	Wed, 11 Sep 2024 10:57:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 76.10.09624.88771E66; Wed, 11
+	Sep 2024 11:57:12 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240911105711eucas1p103b9e37bfc58347a06d84d0800a9558e~0K1wVC5o81277312773eucas1p1n;
+	Wed, 11 Sep 2024 10:57:11 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240911105711eusmtrp152f1912db32208c1cd93a16aa20b7bcf~0K1wUMuCV0922709227eusmtrp1V;
+	Wed, 11 Sep 2024 10:57:11 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-84-66e17788dce8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id A4.51.19096.78771E66; Wed, 11
+	Sep 2024 11:57:11 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240911105711eusmtip16f7e83687e99ba68f50ae70048bdc1ba~0K1wJdjEK2589425894eusmtip1j;
+	Wed, 11 Sep 2024 10:57:11 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 11 Sep 2024 11:57:01 +0100
+Date: Wed, 11 Sep 2024 12:56:57 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason
+	Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
+	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
+ and iopf is active
+Message-ID: <20240911105657.iesajd4d5va3wc5y@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909111535.528624-1-fshao@chromium.org> <20240909111535.528624-6-fshao@chromium.org>
- <01020191e0b103c3-00fad6e7-f81f-4a76-a75f-1420574f71df-000000@eu-west-1.amazonses.com>
-In-Reply-To: <01020191e0b103c3-00fad6e7-f81f-4a76-a75f-1420574f71df-000000@eu-west-1.amazonses.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Wed, 11 Sep 2024 18:56:11 +0800
-X-Gmail-Original-Message-ID: <CAC=S1ng5+K5Rn7b6XVfm6rcJnBH4Ggm8vybSSeRgDX2tdv-VDw@mail.gmail.com>
-Message-ID: <CAC=S1ng5+K5Rn7b6XVfm6rcJnBH4Ggm8vybSSeRgDX2tdv-VDw@mail.gmail.com>
-Subject: Re: [PATCH 05/13] arm64: dts: mediatek: mt8188: Add missing GCE clock names
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7od5Q/TDFZcYLHYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
+	royZF+ILXnBXTG5/zNrAeJizi5GTQ0LAROL86xnMXYxcHEICKxgllnb8Y4RwvjBKnL3Szgrh
+	fGaUuLbkEztMy9MXj1hAbCGB5YwSGxvt4YqWX/4F1b6ZUWLq7PXMIFUsAqoSzbu+gnWzCehI
+	nH9zBywuIqAu0dS4lw2kgVlgI5PE3H+HwRLCAgkSM/+eYQKxeQUcJD5+f8gOYQtKnJz5BGw1
+	M9CgBbs/ATVzANnSEsv/cYCEOQWcJf5Ob2SGuFRR4uvieywQdq3EqS23mEB2SQhM55Ro2tgE
+	VeQicfPJSyYIW1ji1fEtUG/KSJye3MMC0TCZUWL/vw/sEM5qRolljV+hOqwlWq48gepwlOj7
+	3M0EcpGEAJ/EjbeCEIfySUzaNp0ZIswr0dEmBFGtJrH63huWCYzKs5C8NgvJa7MQXlvAyLyK
+	UTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/dxMjMG2d/nf80w7Gua8+6h1iZOJgPMQowcGsJMLb
+	b3cvTYg3JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFqEUyWiYNTqoHJpFu/
+	81Piyr5VzG32KVWh6qWyyz5dPWXd1DM/ceNs12Nf1r2cxKu3M1X12bR4r4+tiQ+XbTFrM1k4
+	fWnbxPcr/rS1fbqoNP/Wn+j6958Xtc04rfZiNlf+E9l5xnp8wrYhtttPzue92FMiMyfoLde8
+	gCWJRRo675kSMjcXBjNPq+fe1bHg9+QTRRcqpU0tz96QfXD4QlJc5QLjhw45HrbyC11eBha+
+	SCq5Liny3e2ExmLL7j6Jigbvvwt+hnytZ/8aUFhd6sRfYnx7Kef+q0nndx6azsa9OSH+Vl/V
+	J4Gq31xnjnNP3hds+KsofWXOzXfPw9ewFFxeJfEhW2nugtcu9f4Ze3S2HF/i6xsr/6RKiaU4
+	I9FQi7moOBEAKZ2OrMoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xu7rt5Q/TDHZ+UrXYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
+	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyZF+ILXnBXTG5/zNrAeJiz
+	i5GTQ0LAROLpi0csXYxcHEICSxkl/r48zASRkJHY+OUqK4QtLPHnWhcbRNFHRomra5ZBdWxm
+	lDh77TALSBWLgKpE866v7CA2m4COxPk3d5hBbBEBdYmmxr1g3cwCG5kkbpxrAlshLJAgMfPv
+	GTCbV8BB4uP3h+wQU5uYJNrXvGeBSAhKnJz5BMxmBpq6YPcnoEkcQLa0xPJ/HCBhTgFnib/T
+	G5khTlWU+Lr4HguEXSvx+e8zxgmMwrOQTJqFZNIshEkLGJlXMYqklhbnpucWG+kVJ+YWl+al
+	6yXn525iBEbvtmM/t+xgXPnqo94hRiYOxkOMEhzMSiK8/Xb30oR4UxIrq1KL8uOLSnNSiw8x
+	mgLDYiKzlGhyPjB95JXEG5oZmBqamFkamFqaGSuJ87JdOZ8mJJCeWJKanZpakFoE08fEwSnV
+	wFSvoSy3dFmi4uEJHbpP7vpvfy04O7qwRy/ESNi7VPO5pRTrRYbdJ3ae2O2oujsoYeqLfSvb
+	OSpmHbyttUv9undKcbheeduSNX8KWZ98OrvCPMbbmmv1EsF26R2W8ixr7l5LjvO6xMbq98c2
+	3uqE5qX1jR9nMZxIKNq8uUVxndrODofO7+trlhSLP58ZkMwTd8bod0b0gmxOCYt+Axbf9FvH
+	FihKZNm0RfXvNDXlcFnx4ZnvpAAD7b5bDaXbXaQFrJaKTO7+P22iR+Jprdy9GjkcmxiFl+xv
+	+PjS+aFT280H/emCchv9jOqqZ6acFf2yY9XSw11PLxVKPd6QrhOcvHWC37t929OT/m1+mX9k
+	tRJLcUaioRZzUXEiAJYauZhnAwAA
+X-CMS-MailID: 20240911105711eucas1p103b9e37bfc58347a06d84d0800a9558e
+X-Msg-Generator: CA
+X-RootMTR: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+	<20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
+	<CGME20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118@eucas1p2.samsung.com>
+	<c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
 
-On Wed, Sep 11, 2024 at 6:46=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 09/09/24 13:14, Fei Shao ha scritto:
-> > Add the missing clock-names property for GCE nodes to fix errors from
-> > `make CHECK_DTBS=3Dy mediatek/mt8188-evb.dtb`.
->
-> I've sent a patch [1] relaxing the requirement for clock-names in the bin=
-ding.
-> There's no reason to make clock-names mandatory, as there is and there al=
-ways
-> will be one single clock for each GCE mailbox - and also the driver is no=
-t
-> trying to get the clock by name, but rather gets the clock at index 0 any=
-way.
->
-> Please drop this patch.
+On Thu, Sep 05, 2024 at 11:30:05AM +0800, Baolu Lu wrote:
+> On 9/4/24 9:17 PM, Joel Granados via B4 Relay wrote:
+> > From: Joel Granados<j.granados@samsung.com>
+> > 
+> > iommu_report_device_fault expects a pasid array to have an
+> > iommu_attach_handle when a fault is detected.
+> 
+> The iommu_attach_handle is expected only when an iopf-capable domain is
+> attached to the device or PASID. The iommu_report_device_fault() treats
+> it as a fault when a fault occurs, but no iopf-capable domain is
+> attached.
+> 
+> > Add this handle when the
+> > replacing hwpt has a valid iommufd fault object. Remove it when we
+> > release ownership of the group.
+> 
+> The iommu_attach_handle is managed by the caller (iommufd here for
+> example). Therefore, before iommu_attach_handle tries to attach a domain
+> to an iopf-capable device or pasid, it should allocate the handle and
+> pass it to the domain attachment interfaces.
+What do you mean here?
+1. Do you want to move the iommufd_init_pasid_array call up to
+iommufd_hwpt_replace_device?
+2. Do you want to move it further up to iommufd_device_do_replace?
 
-Acknowledged. I'll drop this in the next revision.
+Note that all this implemented on a call to replace HWPT. So a
+non-iopf-capable VFIO_DEVICE_ATTACH_IOMMUFD_PT ioctl has already been
+completed before the one that calls iommufd_device_do_replace.
 
-Thanks,
-Fei
+> Conversely, the handle can
+> only be freed after the domain is detached.
+Do you have a function in specific where you would put the free handle
+logic?
+
+Best
+
+-- 
+
+Joel Granados
 
