@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-324856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E38F97519F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE969751A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91044289994
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDAE81C214EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5488A189F2D;
-	Wed, 11 Sep 2024 12:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RSAfgosv"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79B51891A9;
-	Wed, 11 Sep 2024 12:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC89190671;
+	Wed, 11 Sep 2024 12:13:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395B187342;
+	Wed, 11 Sep 2024 12:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056749; cv=none; b=BFIJHQER2+36I5hheBYHIQ7ARNm6P8eu3xMdYh2z/C3wGGK6OmcuS2NXfUZ2uxHYrrkH1p2eEfZUOwjdi8VIavheG5KD8t5xtSb9ZBFV1Gi0ATNMfN3Cy8qZdqpnXGXTlxsWoASRdu0WU/55nMKq5j8SAjgWBfKytpRpCmCvHxw=
+	t=1726056828; cv=none; b=ZIxHMLi3RbXDLa7Kh2JQWnRjuT0aA0DXKa8HyrEl9/a2yBEsd9Rbyv/hQne+se1usL++3PavyPCdW/FHJHws2GPNasyPx8zs+PcYcH5e9M1TlbdAsh3kTg4VL3unse66CYRJo/7MBIl1HUwQepvrM3jj2y4XXnmSKR1kl3zzbWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056749; c=relaxed/simple;
-	bh=cSCzmdNsxwCze2MNd8Y3FRZkMMVzVlJgnJPwxFkrP9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oB0ssybptswTfKLo++b1ZjU9TINDz6Ho1/IvZUwr8ZttFYI/yo/eHeM1qCN3ytB9zeypq+46CjBc+0p6nGqehGlk5CRYITvhJrXJe0aBIhiiSVd2bef2YGOprzQs3c1wjfmh+X6fB8eHEcmcsGaHH499aZC88gsQMigUbd6jDMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RSAfgosv; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=yNsNUIh7Z32QBJGGMFVvTAKKOX0vPwFSxf2ClIPyrEc=;
-	b=RSAfgosvE/k6YmHb+X1z8imyHhXXTmvp/d2nKVSFt6s2STOs3JhNL8Ap+d5kPr
-	WFnIWcCzb9NytNXBmRR9Ke+de5khtVWrUk2MyoGzBhhnsXChgA5Ve3tRMqyZYQI0
-	HNQlAnjMCrmIZhv7sZnx3gl0Vn4qc4jIi5T2Qi70ggrF8=
-Received: from localhost (unknown [120.26.85.94])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnj2IFieFmfO6VFQ--.4817S2;
-	Wed, 11 Sep 2024 20:11:50 +0800 (CST)
-Date: Wed, 11 Sep 2024 20:11:49 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: amergnat@baylibre.com, angelogioacchino.delregno@collabora.com,
-	lgirdwood@gmail.com, matthias.bgg@gmail.com,
-	linux-sound@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: mt8365: Fix using uninitialized value "i2s_data"
- issue
-Message-ID: <ZuGJBQA90j1UB9En@iZbp1asjb3cy8ks0srf007Z>
-References: <20240911001516.47268-1-qianqiang.liu@163.com>
- <9ea8731a-7888-40a2-a183-4598884bbb27@sirena.org.uk>
- <ZuGAwQGPWdpO1-G9@iZbp1asjb3cy8ks0srf007Z>
- <eb21bcab-333d-4ab3-9222-058764ced720@sirena.org.uk>
- <ZuGG3jk6oqq7sUMw@iZbp1asjb3cy8ks0srf007Z>
- <8d921122-7271-451a-8bcb-83a1066b7b87@sirena.org.uk>
+	s=arc-20240116; t=1726056828; c=relaxed/simple;
+	bh=jx5Wlnh9G6QigmBJO1dFY8YiPBCehSxeoR4AHtmUFcc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D5tgSk9noNXtoPlg8Yfl/dFM7XlXhxRJL2oAq29ufLqfZssP555ydzqmodcQAz+N6KpbQtxUOZ+5IAeHPgZnWZrq+IRkA59NR87sIiIwiQJvIN7fwGpI1ZKeCeQqhdcRLGs6IqpL5LfcoaNEoed6jO0DkNNrAmJL8bFEHZXGh+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4CCA1007;
+	Wed, 11 Sep 2024 05:14:15 -0700 (PDT)
+Received: from [10.57.76.6] (unknown [10.57.76.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 336653F66E;
+	Wed, 11 Sep 2024 05:13:45 -0700 (PDT)
+Message-ID: <948daae7-8d94-4d44-93e7-1764f6500be6@arm.com>
+Date: Wed, 11 Sep 2024 13:13:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d921122-7271-451a-8bcb-83a1066b7b87@sirena.org.uk>
-X-CM-TRANSID:_____wDnj2IFieFmfO6VFQ--.4817S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIPl1UUUUU
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwdXamVOGQ7YCgABs6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] perf: arm-ni: Fix an NULL vs IS_ERR() bug
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <04d6ccc3-6d31-4f0f-ab0f-7a88342cc09a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 01:07:52PM +0100, Mark Brown wrote:
-> On Wed, Sep 11, 2024 at 08:02:38PM +0800, Qianqiang Liu wrote:
+On 2024-09-11 8:39 am, Dan Carpenter wrote:
+> The devm_ioremap() function never returns error pointers, it returns a
+> NULL pointer if there is an error.
+
+Ah, this code went through a few evolutions, and apparently I missed 
+that devm_ioremap() and devm_ioremap_resource() helpfully have different 
+behaviour, urgh. Thanks Dan!
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/perf/arm-ni.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> > How about this new patch:
-> 
-> That looks good, thanks but an equivalent patch has already been sent
-> and is in my queue:
-> 
->     https://lore.kernel.org/r/20240911111317.4072349-1-usama.anjum@collabora.com
-
-OK, got it, thanks!
-
--- 
-Best,
-Qianqiang Liu
-
+> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+> index b72df3aea93e..90fcfe693439 100644
+> --- a/drivers/perf/arm-ni.c
+> +++ b/drivers/perf/arm-ni.c
+> @@ -603,8 +603,8 @@ static int arm_ni_probe(struct platform_device *pdev)
+>   	 */
+>   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>   	base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	if (!base)
+> +		return -ENOMEM;
+>   
+>   	arm_ni_probe_domain(base, &cfg);
+>   	if (cfg.type != NI_GLOBAL)
 
