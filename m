@@ -1,125 +1,184 @@
-Return-Path: <linux-kernel+bounces-325456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FAE9759E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:04:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28799759E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D708B22787
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB3B1F2476D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11191B142E;
-	Wed, 11 Sep 2024 18:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D1A1B5339;
+	Wed, 11 Sep 2024 18:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FaG389XW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDFWnCCv"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97F72AEF1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AA52AEF1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726077860; cv=none; b=ogt8I/zC/Kx0Xuhqnl6DaOPKzgejAxVAqjHW5ecIk8n/p62aX6vH+bmrneyHZtoXMkdd/I0ursoDbwReNWgLSc/gXkuti/Cr6BOQODn8CjANNzBZH4nUyRtQVF90xXmhfoSFStJ7tRiIqJ4tAFhCXq4oWkl+AYZkQmZLZgKsnVc=
+	t=1726077846; cv=none; b=OW+X4qiYpzLQA1pSvsgBpLw9ifQZ7YxFl9wFcUw0QeZ/qXj4XXOKHIyhsRklH3bSsGA5xIYcPOStx45GIuQhCvIJNJVY4BWCjivk/C1iQocO2/ofZbJYB8Jsx/UTpzVcnFWwHDPzKOVqfWW/7m4Qwxnpq1XYc/1nYESbeTaTeC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726077860; c=relaxed/simple;
-	bh=2xOHoF8thTJ3GUjh87u0t/cWagcW7jtsz01Vn56SM+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9y4qegJFgGmyUbK/Cdc6pG6swOb+sjOKQJvfMWxUlGkY6bKjEVTmnHUKGdfvzrsVaXLic5zop8L29LEPyJN0wgox+QuIH12oAoazdp+lr7dlCTfaj8y30qF149MfjbBbNyjJVkkO0Y7YUPvxClC9Nq8+MAssTEfdo6sWH0rh+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FaG389XW; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1726077846; c=relaxed/simple;
+	bh=Rw0HYoUjUK+L3ACEPUXcViiOi8IqipyTgLTRVmCtdpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nq+6lthm17wMKGYKQAL3J8CgtmBXANH09uvLpC/sU3Q+BRmqvsOXDHwSp8KPAuIWfccJxsyJaH74+jhIM/FF4o6lO/3eiMvcZ1d7KZCi7saXxrfkYCHQmuFqeb+iB2X7PT6FNP6g1abTcdQ+aLrorpU97YFkAH18HDOi+Qzsf70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDFWnCCv; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726077857;
+	s=mimecast20190719; t=1726077843;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2xOHoF8thTJ3GUjh87u0t/cWagcW7jtsz01Vn56SM+Y=;
-	b=FaG389XWVtgTrCw8eKbspxUebtcAQsm+2I90joEuYuptYG9uqFsS03cQrPEVJw3/5ZQ8dR
-	YpY/x9To1RtD1frUVVUB2wn1JeflnED+xZ/4UZ4NI38H1Z+K7cJzTa7zcx7gMDZPFkfhRY
-	6gJzPbwYKbA5lCv6lxCUY5vcFRGxQ3s=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=IH+Ib1b5pn8WaOZaeFGsrZvEitMV86mg5/DLE/udy2g=;
+	b=bDFWnCCvvB60JQIRd+w42qxJQafJJc+vmo8olrGucJc1mjdLWnW7ymL8y5l5ign2jf3yGq
+	E6VQOoyHCQgCVQVEAfHyREat8MCx5MXy4jqB5nmgBajJ6FS3IWZCDP5ELKXWAFVQYaaA4m
+	3b47tpxqH0POARh6rIyEtUhQ85i8WO4=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-204-N6teuNWINPOqXIV1nf4Low-1; Wed, 11 Sep 2024 14:04:16 -0400
-X-MC-Unique: N6teuNWINPOqXIV1nf4Low-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a9a6634b08so15535785a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:04:16 -0700 (PDT)
+ us-mta-410-xv1J0IjSMzKSwS2dZrQb8w-1; Wed, 11 Sep 2024 14:04:02 -0400
+X-MC-Unique: xv1J0IjSMzKSwS2dZrQb8w-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8a7463c3d0so6176266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:04:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726077856; x=1726682656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2xOHoF8thTJ3GUjh87u0t/cWagcW7jtsz01Vn56SM+Y=;
-        b=ZkP7NSjn7CWR88L+KcewIm5vIxzbiL1BOlMQVNNy1wkQVTrmfKUjuFhHEh1KfNWJrn
-         8VRH4VzgRPom2famszep654XqDsReS+7GqbXbNBznzqKZ6a9R97JoowljHKRlOaLyPYU
-         sLlqPhHSKrmziPhSa6o3271VXIXHwYu5KmI0HcW6ghFSIS118948kaMWhOcQcuETbbKA
-         1FkUiIldSydB7EkRucxqf57x2KCMyUd6+lEqmR5L6whh4jDixtRmnGnobs9rEq9+6mw4
-         cNcgmpKO4eYvJJ8a8U+pnSGpg/YkeeAmN/FiJMT8wNRDtrLxcvtNkn32bOQQgQVdgW4F
-         xxPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDGGrdDbdwTbi+d7r2eTZ5yKEY3zbVDxAmJk0Hn6cY/Jd0mIY1l2rvy/vSxERSTRgdX24Udczt7+Mw89A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3xzlGKDHi8vXRuIfwulySRe0M0lw57A4L48ljdiw94BR7VG0Z
-	mVTYH/3uSDH6URAXHgRRqWHQIrFwwhCkI3DfeC2c8ptdQ+oCWeoTUjM8/1iSeILNxkTX96RR7CD
-	2lM01JSYxiXFfSblywkr+wuD+qFalZ0OoKcgCbRqkoigfUJ1hnwUK+8eB3vMUVilU4liqDEP0gZ
-	dbkNCgBT0sUt/zkt58DFyp9BcDOB2u88Eil3S7
-X-Received: by 2002:a05:620a:2a08:b0:7a9:b928:5362 with SMTP id af79cd13be357-7a9e60bb946mr33362285a.17.1726077856161;
-        Wed, 11 Sep 2024 11:04:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOpsqs+dX0NjYLBNxcVRIIXvqV1z8VwH0tp118Z9B9RFh9BkGtU4S/d/XePBzURIlqO1bNg42AHvijqbUzRcc=
-X-Received: by 2002:a05:620a:2a08:b0:7a9:b928:5362 with SMTP id
- af79cd13be357-7a9e60bb946mr33356485a.17.1726077855646; Wed, 11 Sep 2024
- 11:04:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726077841; x=1726682641;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IH+Ib1b5pn8WaOZaeFGsrZvEitMV86mg5/DLE/udy2g=;
+        b=VKKQM1gVLVgmEyih200X2j85f/KJmms+SQvWMLuA2QohZZXiqjRfYavUqOaPkOGBZI
+         En2BE/UsArd203AzmZA4RNHtxJALQfbIWO/Ub3DAdG6jY1N+DOKhCMfV+5eXF4xA03ke
+         txICZbpDl01lUTxa4VbBe2gZ9CxJph12fIcPW3ZhhWGcgG5NgUGDeswetn3U6G57yWoC
+         l++rybnIFhSZhBx8HQuskfbfICW5Nr2SH8i34+LZHI5yhOhzt8/PXQGHVtxvE2xwqrWF
+         HAVUGTxPrPp3duDtQGByJgZ3LmYevB/RXJTbe/sYHVV+U/kTz5ctEw3PXYjUgo2VqRUc
+         QQ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXhKy5ADULt55pNQ2qAV6NRFrtVKaMyjd57qTi4hL4CQb/HNiu1frsyAcOF0+upKnoy10ulZb87zNqnDJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8CpUeSLiEt6oUAEUyJ3ES9xZiGp1mWWzm/AWK3tUXz6Gntir1
+	6ec+yQzjss+dhRQ/Kl3g8CZYoR3ajPaPNDmVMRHjy8vF46dAl8jYCteD2Bczn5ZC8N3CKlM85O7
+	yOlg5eDWnUR9s7jGNbXAqVDRUgMOhnfQ5csz5qDY7EIRbfntWdUENxskE8jHNZw==
+X-Received: by 2002:a17:907:3e1d:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a902966f459mr27778166b.59.1726077840912;
+        Wed, 11 Sep 2024 11:04:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGiOUHQziAMSw1ySVvdKoiB3VewkXKRFTMsAed1ndUNhLmUSoKhACnYsZh/d6DuW5PXkj6CQ==
+X-Received: by 2002:a17:907:3e1d:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a902966f459mr27774766b.59.1726077840333;
+        Wed, 11 Sep 2024 11:04:00 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a079bcsm638970366b.83.2024.09.11.11.03.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 11:03:59 -0700 (PDT)
+Message-ID: <bfd0243f-9159-4397-9f8a-e26372ce85a5@redhat.com>
+Date: Wed, 11 Sep 2024 20:03:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4b6aec51-dc23-4e49-86c5-0496823dfa3c@redhat.com>
- <20240911142452.4110190-1-max.kellermann@ionos.com> <CA+2bHPb+_=1NQQ2RaTzNy155c6+ng+sjbE6-di2-4mqgOK7ysg@mail.gmail.com>
- <CAKPOu+-Q7c7=EgY3r=vbo5BUYYTuXJzfwwe+XRVAxmjRzMprUQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+-Q7c7=EgY3r=vbo5BUYYTuXJzfwwe+XRVAxmjRzMprUQ@mail.gmail.com>
-From: Patrick Donnelly <pdonnell@redhat.com>
-Date: Wed, 11 Sep 2024 14:03:49 -0400
-Message-ID: <CA+2bHPYYCj1rWyXqdPEVfbKhvueG9+BNXG-6-uQtzpPSD90jiQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/ceph/quota: ignore quota with CAP_SYS_RESOURCE
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hotfix 6.11 v2 3/3] minmax: reduce min/max macro expansion
+ in atomisp driver
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Richard Narron <richard@aaazen.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S . Miller"
+ <davem@davemloft.net>, Arnd Bergmann <arnd@kernel.org>,
+ Linus Torvalds <torvalds@linuxfoundation.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-mm@kvack.org,
+ Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
+ stable@vger.kernel.org
+References: <cover.1726074904.git.lorenzo.stoakes@oracle.com>
+ <b38d8936eaddd524d19823f7429138e2ef24e0d1.1726074904.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <b38d8936eaddd524d19823f7429138e2ef24e0d1.1726074904.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 11:23=E2=80=AFAM Max Kellermann
-<max.kellermann@ionos.com> wrote:
->
-> On Wed, Sep 11, 2024 at 5:03=E2=80=AFPM Patrick Donnelly <pdonnell@redhat=
-.com> wrote:
-> > Just because the client cooperatively maintains the quota limits with
-> > the MDS does not mean it can override the quota in a distributed
-> > system.
->
-> I thought Ceph's quotas were implemented only on the client, just like
-> file permissions. Is that not correct? Is there an additional
-> server-side quota check? In my tests, I never saw one; it looked like
-> I could write arbitrary amounts of data with my patch.
+Hi,
 
-CephFS has many components that are cooperatively maintained by the
-MDS **and** the clients; i.e. the clients are trusted to follow the
-protocols and restrictions in the file system. For example,
-capabilities grant a client read/write permissions on an inode but a
-client could easily just open any file and write to it at will. There
-is no barrier preventing that misbehavior.
+On 9/11/24 7:51 PM, Lorenzo Stoakes wrote:
+> Avoid unnecessary nested min()/max() which results in egregious macro
+> expansion. Use clamp_t() as this introduces the least possible expansion.
+> 
+> Not doing so results in an impact on build times.
+> 
+> This resolves an issue with slackware 15.0 32-bit compilation as reported
+> by Richard Narron.
+> 
+> Presumably the min/max fixups would be difficult to backport, this patch
+> should be easier and fix's Richard's problem in 5.15.
+> 
+> Reported-by: Richard Narron <richard@aaazen.com>
+> Closes: https://lore.kernel.org/all/4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com/
+> Fixes: 867046cc7027 ("minmax: relax check to allow comparison between unsigned arguments and signed constants")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Having root on a client does not extend to arbitrary superuser
-permissions on the distributed file system. Down that path lies chaos
-and inconsistency.
+Thanks, patch looks good to me:
 
---=20
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  .../staging/media/atomisp/pci/sh_css_frac.h   | 26 ++++++++++++++-----
+>  1 file changed, 19 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> index b90b5b330dfa..8ba65161f7a9 100644
+> --- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> +++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
+> @@ -32,12 +32,24 @@
+>  #define uISP_VAL_MAX		      ((unsigned int)((1 << uISP_REG_BIT) - 1))
+> 
+>  /* a:fraction bits for 16bit precision, b:fraction bits for ISP precision */
+> -#define sDIGIT_FITTING(v, a, b) \
+> -	min_t(int, max_t(int, (((v) >> sSHIFT) >> max(sFRACTION_BITS_FITTING(a) - (b), 0)), \
+> -	  sISP_VAL_MIN), sISP_VAL_MAX)
+> -#define uDIGIT_FITTING(v, a, b) \
+> -	min((unsigned int)max((unsigned)(((v) >> uSHIFT) \
+> -	>> max((int)(uFRACTION_BITS_FITTING(a) - (b)), 0)), \
+> -	  uISP_VAL_MIN), uISP_VAL_MAX)
+> +static inline int sDIGIT_FITTING(int v, int a, int b)
+> +{
+> +	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
+> +
+> +	v >>= sSHIFT;
+> +	v >>= fit_shift > 0 ? fit_shift : 0;
+> +
+> +	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
+> +}
+> +
+> +static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
+> +{
+> +	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
+> +
+> +	v >>= uSHIFT;
+> +	v >>= fit_shift > 0 ? fit_shift : 0;
+> +
+> +	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
+> +}
+> 
+>  #endif /* __SH_CSS_FRAC_H */
+> --
+> 2.46.0
+> 
 
 
