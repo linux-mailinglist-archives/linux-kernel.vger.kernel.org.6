@@ -1,186 +1,121 @@
-Return-Path: <linux-kernel+bounces-324542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF96F974DFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:08:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D5E974E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799E9280FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8FB3B2591B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3309183CAB;
-	Wed, 11 Sep 2024 09:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146FD1714C7;
+	Wed, 11 Sep 2024 09:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Bcyec3xS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="VSToC9qg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pyM/1Hx2"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04B185958
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22B15445B;
+	Wed, 11 Sep 2024 09:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726045641; cv=none; b=eAtZhoMxenEaJwPnj4Bx/+kzXxozXnQCxM7olEt1dmQ2nvNnTdMLDoOAeaqangH8KFyV57pnlwqnx2R3oZ+OLaHfMkuirednE4DoMQplQ1ryDRbiD+G1z3HhjRC4I5v53TARk2CksY7OKl7I5sUw781D3wvv/v/uvIl2KS18mOk=
+	t=1726045800; cv=none; b=Inz9aNrXmqdy079DGXC4wyFgLc9HkZz1PUPtve5fxlUvTEW2eyzFNooOt3I4UaTuk+6ikzTg5TfVQT4P83WjBN4vDJPeMrDCGtKqbg7+nQsP92qYwzhyMrcs/2e08sqWt5RflXEajJv6oWRhZTo30jksjj9I9Xv3ecj+Pdqc7EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726045641; c=relaxed/simple;
-	bh=fsAgJwHDEr+KSiZVY7zNR69LYpXgTK/JWvq+XG0/C90=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BRM0VocU3x7FqWXl5GHa1UjFtiNfmJ9SVGwq00LYzeLeWwf3NvbHVP9q9hwyJL858NvOfS1Ve2rAR4yv6+jsISSouxVWRCpZcMbtNMK7cEn4VvejviBYKKgJlvhWfZGt/VArOEFJrQtbcj7KLyanUCwqh6EC8gb3ONXCwngol0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Bcyec3xS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374d29ad870so4041678f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:07:19 -0700 (PDT)
+	s=arc-20240116; t=1726045800; c=relaxed/simple;
+	bh=NLKG1s/hUkeFO5n+Xk3s9RxQzmTdBz11N2y/DRJ0aNY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mFYKF7C9iA4OPbaALVhfSiNAHhocaBC50rSXyjeMf9bqwtTB1nxnjhCgqDpn4T6IvABe5rGmSKYlKE8N7wcA4cdXegLv5bnMFlWgx2psFsPB5ONK8U94g1AmuBirZj4xaUHwTKNgO9r+6/txhCU3gblwCJRAbzKNb5LX+cbpuVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=VSToC9qg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pyM/1Hx2 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726045638; x=1726650438; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jCc0Pk2LOqnsy/+/LSMn62Y8h7zBYg5YqPDf8fsQKV4=;
-        b=Bcyec3xSjXWOirZTSimPyFOlVWr5X1V7ZGTTDFi8TyEpvHiWa2KAOMyVF/mGRToHNn
-         Fk6/Ngc71gTYjBjhsoD/Ppsqqf5Vzzn1KcQYs7hpogrRhR+/fvVzkfHZ6+3mDQiHhX/g
-         9rvh3uKmeavsvnwHr5xQD2Uvr5CGprsiuPIkWITMy/tMinfe4XYqhIvcf/eIc2qIa/mU
-         Wme2Gx/UuoAI8jdI2rjTWoOBwuaFIlfl28s9zut0ReZuVSLaj7Ed+otWBdJdnMUvWeEt
-         4TpJrlV3dHWs2vzxZfWWDiFASQ4GaZKGTCPVDFK1t/IO19tUTcIevdEL1k6qI57y4YYH
-         r66Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726045638; x=1726650438;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jCc0Pk2LOqnsy/+/LSMn62Y8h7zBYg5YqPDf8fsQKV4=;
-        b=IX1X11f88VvMiJn5IiVajTKmfd3lyhCa5+wV6EHQfDqV/eBvcE69eJmUIl6yTp2NhK
-         k7H/h5Spu9oE/TaPelplvSslnwdSgXlSigQ925GNSlzTos2yk6+IjSTNGZCkXHXxr2Dg
-         w3XHhDIZuI2KH0U1ndXBDbQV4VsDuQ+HQIbhqD7M3kkoUXCJ7+nPzM/2J8X81zTpNGtK
-         Viv18Rizi+oTVpauCA+RWCqUexfcwShTr+d1b6MYoLCb4gTjrMX3GIimtvkEZW9czmOr
-         SuK79IJTU5juNQJTOVL1LfD/fKIwkvYQuXxMtwMuQTDzLJVHBZ04yEAXrFEmaz502orn
-         9CSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbalMKxI+J6yxMacuPkkp9T0uoqd97KmgVag5zANOnYCIekHofAqe02ZtbQppVbmfXGXl71AEpQmaPyLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYAm4Nx9C9WxXj7V9Y7RusFOS2fIJ0CJ7luI9Z6th8OkANTu4g
-	m+/TnrHiNUoz/WdwzD/iR4JlmMojyT+ZDqk8/Dvq7Li5NyPa+88QfK/qxVlf32k=
-X-Google-Smtp-Source: AGHT+IFJwkKixqpXEm2xArUQ1OkvCV/poaUEEYvKfjUZu2BNNxkQ+lrjF/R37qM92DDtapB4I33fng==
-X-Received: by 2002:a5d:4742:0:b0:374:ae04:c7c5 with SMTP id ffacd0b85a97d-378896a3f84mr10416096f8f.36.1726045636808;
-        Wed, 11 Sep 2024 02:07:16 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:5389:6cf0:60c4:3842])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895649b88sm11029201f8f.6.2024.09.11.02.07.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 02:07:13 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 11 Sep 2024 11:07:04 +0200
-Subject: [PATCH v2 2/2] firmware: qcom: scm: fall back to kcalloc() for no
- SCM device bound
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1726045796; x=1757581796;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=46BgWppNkiqJDwiFsXyHMRlvMd8GEeUp7NfKnafeDJY=;
+  b=VSToC9qg/ZXMcfkUTqvWWEYmhAQUp+H3A2HofGUPFooQgFoEq1PlClct
+   8CLU/gy+Lrlvys+txergLOHbYSumijTnKoVGyWPj0RQpm/H57lkGMV9zM
+   Nzll+3EiAWHmJG//x6bc0JEhQJMS6I13jHDo7YcYgm3MGcJ5iJmgNhgdC
+   t7b1YeHpKB90AunOTBwWT9cy0i6tvKJ39nVuFAdCzEgXv4NE7uix8YLwl
+   6CBTs02dhZm0c9Rmf/XxMGIHvzWd6L9LO89h0Mllb/EZT/atJbvkpuAky
+   NvzI8rOPKz57M4CEs3EG+O7m1qNWcQUrnScYWQXQPwMkL0iav3lm2g599
+   w==;
+X-CSE-ConnectionGUID: BRp+yKMETcCYzRy79kGrag==
+X-CSE-MsgGUID: Ov0NP05AR56ASAjbVxLv6g==
+X-IronPort-AV: E=Sophos;i="6.10,219,1719871200"; 
+   d="scan'208";a="38883263"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 11 Sep 2024 11:09:53 +0200
+X-CheckPoint: {66E15E61-6-22BB8E18-F5F6D0B4}
+X-MAIL-CPID: 606A30203632BA081BF7836B0F65C595_5
+X-Control-Analysis: str=0001.0A782F22.66E15E61.00F3,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E10F5161641;
+	Wed, 11 Sep 2024 11:09:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1726045789; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=46BgWppNkiqJDwiFsXyHMRlvMd8GEeUp7NfKnafeDJY=;
+	b=pyM/1Hx2Ruyerl531K/uGxitlN1sNGAAsErzBneWKqgofj8FKDtbkSWi3DeBExzB7uOMxe
+	pfNpxYr/3pLTXLbsrQiChlrG3UHe6yGvMrJSoTpvs1o0ZforZgdfvdSiCLK/b9N2Tk443A
+	Frgc56EMfNHZDVUkRmPg6k1w42oE/580Lvgk6p9fD6Q4ekBj04wYnlJQRkh+im0G2gb2B0
+	C99L8WfkjujKzwbHM6Xy7EPCwz2a/oPkZ1uWyZgsIv71lbXTCDiBFj4cb4KnoX7uAvjJv0
+	qb+GQLz41sQB/63fXaSQ26BEo1oWE6AWiXlmICj0HnGKwnx757H8qfGKpTMPdw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] mmc: core: Use dev_err_probe for deferred regulators
+Date: Wed, 11 Sep 2024 11:09:09 +0200
+Message-Id: <20240911090910.3060749-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-tzmem-null-ptr-v2-2-7c61b1a1b463@linaro.org>
-References: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
-In-Reply-To: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Andrew Halaney <ahalaney@redhat.com>, 
- Elliot Berman <quic_eberman@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Rudraksha Gupta <guptarud@gmail.com>, 
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2802;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=v/CIUywqSceQ2rIapI5Q0gb6HopYTWHqEOvnqJ6sKv8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm4V28fuMz92TseSVRgJfF+UHFGJzElcDOSNQCO
- SZ89F2PcjGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZuFdvAAKCRARpy6gFHHX
- ciH4D/47tqKjsTOtsjc4ifXbdBdTE6rbhHX4WNqPncJgG/x7WOmCr8cOKraTmovFh7WBEp4XtGd
- m3FMWntz4ZfQuDQ+bVuBq3/NaNPfHw3SLPEpmsgIE84cM+gICyg+jyWtIF2/WTKnqW78m8eBXeg
- rk8ZbPQCD1/uz/Q2JUM75m0S604eTWSuupnDenebLow7Z0SyohIS426HnhB67ONrLzOPerNU+/1
- dm4DlRmCMrVuLNvHdJFaOwLClinUZWAsEHmUbcVa5rQd14neHehgUfDsJWWcw5npMMYKx8h9ydh
- QA4DFg+ENCxkkYQCbcoLX8x409oNPYme6te2/v0UZMt3+rYYt3cPjEfRG5q4ML7kAZi87suxKZX
- gMazBZZy7PP9VAo1pM2su5KFjKtzbJgX86sqS9dNJcG1j7JOLNZNw69neFIioDZ8FITttoDM5d/
- 25uBWy+eRkYPL3UkN4nirf3Th731N1sDgx50p6MMfaCOjohi0J5eh6Jirme+Wr7FvZLT4VQ3AIe
- rM3ymCq9xyRKS/8AhBFB03YrB3GfG4D6GZ2BhvVzt9mJCr9EtavROX5UFs1zLqqxhlrUamCGvka
- AKeJ7GUajeaOugzDkY+AAu1JB4KDnbxdBowEFre1mZWAZuOVnGitj/NP7WnwovixpZ5wzc2SiSg
- RpR4A7qMPuLUJ4w==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In case vmmc or vqmmc regulator is not available yet, use dev_err_probe
+in order to set a deferred probe reason. This is a helpful hint in
+/sys/kernel/debug/devices_deferred
 
-Older platforms don't have an actual SCM device tied into the driver
-model and so there's no struct device which to use with the TZ Mem API.
-We need to fall-back to kcalloc() when allocating the buffer for
-additional SMC arguments on such platforms which don't even probe the SCM
-driver and never create the TZMem pool.
-
-Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
-Reported-by: Rudraksha Gupta <guptarud@gmail.com>
-Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
-Tested-by: Rudraksha Gupta <guptarud@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ drivers/mmc/core/regulator.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/qcom/qcom_scm-smc.c b/drivers/firmware/qcom/qcom_scm-smc.c
-index 2b4c2826f572..88652c38c9a0 100644
---- a/drivers/firmware/qcom/qcom_scm-smc.c
-+++ b/drivers/firmware/qcom/qcom_scm-smc.c
-@@ -147,6 +147,15 @@ static int __scm_smc_do(struct device *dev, struct arm_smccc_args *smc,
- 	return 0;
- }
+diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
+index 005247a49e51b..01747ab1024ec 100644
+--- a/drivers/mmc/core/regulator.c
++++ b/drivers/mmc/core/regulator.c
+@@ -255,7 +255,9 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
  
-+static void smc_args_free(void *ptr)
-+{
-+	if (likely(qcom_scm_get_tzmem_pool()))
-+		qcom_tzmem_free(ptr);
-+	else
-+		kfree(ptr);
-+}
+ 	if (IS_ERR(mmc->supply.vmmc)) {
+ 		if (PTR_ERR(mmc->supply.vmmc) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++			return dev_err_probe(dev, -EPROBE_DEFER,
++					     "vmmc regulator not available\n");
 +
-+DEFINE_FREE(smc_args, void *, if (!IS_ERR_OR_NULL(_T)) smc_args_free(_T));
+ 		dev_dbg(dev, "No vmmc regulator found\n");
+ 	} else {
+ 		ret = mmc_regulator_get_ocrmask(mmc->supply.vmmc);
+@@ -267,7 +269,9 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
  
- int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 		   enum qcom_scm_convention qcom_convention,
-@@ -155,7 +164,7 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 	struct qcom_tzmem_pool *mempool = qcom_scm_get_tzmem_pool();
- 	int arglen = desc->arginfo & 0xf;
- 	int i, ret;
--	void *args_virt __free(qcom_tzmem) = NULL;
-+	void *args_virt __free(smc_args) = NULL;
- 	gfp_t flag = atomic ? GFP_ATOMIC : GFP_KERNEL;
- 	u32 smccc_call_type = atomic ? ARM_SMCCC_FAST_CALL : ARM_SMCCC_STD_CALL;
- 	u32 qcom_smccc_convention = (qcom_convention == SMC_CONVENTION_ARM_32) ?
-@@ -173,9 +182,20 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
- 		smc.args[i + SCM_SMC_FIRST_REG_IDX] = desc->args[i];
+ 	if (IS_ERR(mmc->supply.vqmmc)) {
+ 		if (PTR_ERR(mmc->supply.vqmmc) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++			return dev_err_probe(dev, -EPROBE_DEFER,
++					     "vqmmc regulator not available\n");
++
+ 		dev_dbg(dev, "No vqmmc regulator found\n");
+ 	}
  
- 	if (unlikely(arglen > SCM_SMC_N_REG_ARGS)) {
--		args_virt = qcom_tzmem_alloc(mempool,
--					     SCM_SMC_N_EXT_ARGS * sizeof(u64),
--					     flag);
-+		/*
-+		 * Older platforms don't have an entry for SCM in device-tree
-+		 * and so no device is bound to the SCM driver. This means there
-+		 * is no struct device for the TZ Mem API. Fall back to
-+		 * kcalloc() on such platforms.
-+		 */
-+		if (mempool)
-+			args_virt = qcom_tzmem_alloc(
-+					mempool,
-+					SCM_SMC_N_EXT_ARGS * sizeof(u64),
-+					flag);
-+		else
-+			args_virt = kcalloc(SCM_SMC_N_EXT_ARGS, sizeof(u64),
-+					    flag);
- 		if (!args_virt)
- 			return -ENOMEM;
- 
-
 -- 
-2.43.0
+2.34.1
 
 
