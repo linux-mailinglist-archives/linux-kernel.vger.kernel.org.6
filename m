@@ -1,109 +1,166 @@
-Return-Path: <linux-kernel+bounces-324520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365DC974DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D6F974DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2AC4282DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B691C22001
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE38154BE4;
-	Wed, 11 Sep 2024 08:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D009115B155;
+	Wed, 11 Sep 2024 08:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yJJeMvMi"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GKZiL4Ky";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KqlpHbP/"
+Received: from a7-45.smtp-out.eu-west-1.amazonses.com (a7-45.smtp-out.eu-west-1.amazonses.com [54.240.7.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7C01552F6
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E81552F6;
+	Wed, 11 Sep 2024 08:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726045001; cv=none; b=OxjxWiZDuVS2io3O6uE9Dqp11vapmUstvrftXAo1K4MJ1c+qLuFrJwllIM1/vHXaxEJMHECo8bIAmpX5tjU/UOsryHINPcdPyvWhelCNpNVgwCXlzYvm5m35ffIMd5i6ZR7mh6WdA4Y9pUaN5VAfZqpF3hnsn72AhkqDkJSV1Ak=
+	t=1726045049; cv=none; b=Iw9+2CxEvAUG7c52aogwIqiAuyg3qDy2uaEE5F6x4ysF4v6JoBj8dAtPXcCwpsRl2eYdN8EifQH+wExWeyNwJgmin4lr4srfessgdAiNhyAiChcwa17IDb9arbNZUB8hHhS9O1qwmQYsavYQ2jn0/ODpRzwjVA6UAO0hD3xwQGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726045001; c=relaxed/simple;
-	bh=aP7IhXRVz6iKbZ3mQ8dTFLf6Q7UElVuMGXexy6aKLDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8KxafGkTDJKZOnboi7tGMj5TSCxgiFgYX9S3y8MF3ELomYhFSIsMLWozRUD0F088ScdMFTaLVa27MvRmrUOhi6AgF2+V7n6Ne1gGnYoTqlEkJH2onvCzU0sSaFIoYEGz5+9MH9WZlsxrCUNWUIND63zAoKAGbctBVqHHLKjg2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yJJeMvMi; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-535694d67eeso693043e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726044998; x=1726649798; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GHT6/vvjElcN24XJx2jBathBZNoc8HfAFHwmAmE1np4=;
-        b=yJJeMvMiecPse3BnCA+suTfvGoVMUydGQNgrngedYA73jLZJFu7oqNlhA2C3b42jBT
-         bhgyDrPta17rQtrvVXhp+k+nPVa//wTeG3RrIcCw7WOH+w0rtPmDui5QypvEZ5stDdvf
-         qGLYVi7Q+WAxeJvRj6AqhRij5T74jPDbJzbMxVUhIGGeGLpcEZF6Mthtocwn0MZY/xud
-         3tUkEd0cUawUnC+Lwak+0RaTOg7f3c63Fim7TcfUc8+qhQA+XpShTyu1Lw4e4BrRsbk1
-         QBaR0sMWv6TotVuen1RVHrhAm4e6LdgNSONScEPikGRZamhqOwl3Bh1VL7wPdzM2TC6n
-         D/2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726044998; x=1726649798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GHT6/vvjElcN24XJx2jBathBZNoc8HfAFHwmAmE1np4=;
-        b=mCGDBnRP6Lim7Tl4YD5EnIphytS3IwlLPT1TlhR9cb4Uv9/8NsDFsuXzPhU5ri0i6x
-         QaqfZ7ZpWblu2V69/eYP1pqtX1k6+nAIKWliz+SWwYAc+0u5nPXsVUaf1tdFtTlzhi3r
-         uFfKtzTQDeziQN5q+WZjqw4vvhFuapRDS7nPX3ghChdEhiR+X3abw6IoGnWi25Rm2eHp
-         YLwt7AKbJwSi3SDyJVpPDIwgeqb27tIm4TRvCHXBHcJCcr1y5UiDDLslTG5eR5Ow9AQ6
-         2FxujiORgnjNlF8WGn9QeIKs6WwGyQDfUEeCbIbLfiUOs4LZI/2hiNvlZzm2nzX0N4O4
-         t55Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzsDPh7GZYqxAcXgvP2O7QOaJykEincnNJG3FBJCW+soAw0hZB84x8balvvMUvHRU94UQ2qG9QDYdpDbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEIMHB7u4Fdd1E0DkDgeMYdUNvdEavbD8X2O4wvRtaHEXTpaVR
-	Qb9ILtvX82/OTUGPaivJ3Z5ikRzwtIycs4QUL5/9ENrWyyzf+7tbbKVNFmorGjE=
-X-Google-Smtp-Source: AGHT+IF2tpFKGlAXrKvwxqDPIwjevDQmSakJN0nAUDP6pJ1nObUY+pgWNPR4/mHRoFdNp3Q4T16JCA==
-X-Received: by 2002:a05:6512:2355:b0:52f:c281:72de with SMTP id 2adb3069b0e04-5366ba30771mr1919414e87.15.1726044997672;
-        Wed, 11 Sep 2024 01:56:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cabd2sm1527171e87.143.2024.09.11.01.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 01:56:37 -0700 (PDT)
-Date: Wed, 11 Sep 2024 11:56:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: ipq6018: add 1.2GHz CPU
- Frequency
-Message-ID: <uaplmcbkdw5ol5y7y4odrskc3anoix6ayckiboyrfahantwarh@qxg5vnytud5p>
-References: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
- <20240911021025.17283-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1726045049; c=relaxed/simple;
+	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QhPMMP/P/2avCM/w3Zl2QszXSr+K8BxKRue+77Czr81x7epVai1A7OwuvxmJg8zpSvhwTT6DAxyfp74C9c9BoiZv/X11rftLCaKu1PYC3h0wRbQzrb/J/AaDhVgN0MGkeQZ4N2lP8rOdq5zlbqGx0OqfOtgWdLrKVPZzZrq/Eis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GKZiL4Ky; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=KqlpHbP/; arc=none smtp.client-ip=54.240.7.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726045045;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
+	b=GKZiL4KyR58cJt4OY+aZDZOLi65aOmKRZvOAG3xMT3ATB5DEDXIWmUy+1g3+Ksdf
+	98DT5E0Of/U2ImWQvw6iY9kBCtyVl3vdXgvaFG8yqo4rTpVUFIP7nmbch6JKaYhKoMj
+	XEl5blNzzjzGV/fnH1LQgf+Wl2/sbwrUyj2AQlYgKFIRmw5MUSEWc6h8+AbW69Gb1DP
+	yq3utQvp9NmrcWVAOfq7hynkAjPhsLXG8gXDOjzsQYdFydRSV+r0M+5Jp64gKng7Trz
+	O1CE7dpBJTu5hBoLPbx/DJsGxGTbWUvIrSMF7otdVOOrqW/3ZLwO7/FEenBlYabNVq0
+	nWdE51ULGQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726045045;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
+	b=KqlpHbP/rdRsMMbXy8JfQzgiNCwzQ1fOPsccG3WEIOos+ICBS8IKxeC2DT8kvgir
+	6n/jghADEdbJNp4neaLu+f16flvIMRehDAa/ps+yjgEEviCLA0ZJqanL4pipewwIlKD
+	Haf7MlcWKpG8C5R17b5cm/TtxqLwSZsTdVbWhj38=
+Message-ID: <01020191e04d4237-204596e1-6cc1-491c-a60f-de3917af7d42-000000@eu-west-1.amazonses.com>
+Date: Wed, 11 Sep 2024 08:57:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911021025.17283-1-amadeus@jmu.edu.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
+To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+References: <20240910143245.5282-1-pablo.sun@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240910143245.5282-1-pablo.sun@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.45
 
-On Wed, Sep 11, 2024 at 10:10:25AM GMT, Chukun Pan wrote:
-> > opp-supported-hw is selected for all IPQ6000. Please add more details
-> > here. Is 1.2 GHz really to be enabled for all IPQ6000?
+Il 10/09/24 16:32, Pablo Sun ha scritto:
+> Enable the Mali Valhall GPU on Genio 1200 EVK by providing regulator
+> supply settings and enable the GPU node.
 > 
-> The 1.2GHz frequency is available only if the fuse is IPQ6000.
-> I will try to add more details.
+> In addition, set the GPU related regulator voltage range:
+> 
+> 1. Set the recommended input voltage range of DVDD_GPU to (0.546V-0.787V),
+>     based on Table 5-3 of MT8395 Application Processor Datasheet.
+>     The regulator mt6315_7_vbuck1("Vgpu") connects to the DVDD_GPU input.
+> 2. Set the input voltage of DVDD_SRAM_GPU, supplied by
+>     mt6359_vsram_others_ldo_reg, to 0.75V and set it always on for GPU SRAM.
+> 
+> This patch is tested by enabling CONFIG_DRM_PANFROST and
+> on Genio 1200 EVK it probed with following dmesg:
+> 
+> ```
+> panfrost 13000000.gpu: clock rate = 700000092
+> panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x1 status 0x0
+> panfrost 13000000.gpu: features: 00000000,000019f7,
+> 	               issues: 00000001,80000400
+> panfrost 13000000.gpu: Features: L2:0x07120206 Shader:0x00000000
+>                         Tiler:0x00000809 Mem:0x301
+> 		       MMU:0x00002830 AS:0xff JS:0x7
+> panfrost 13000000.gpu: shader_present=0x50045 l2_present=0x1
+> [drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
+> ```
+> 
+> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> ---
+>   .../boot/dts/mediatek/mt8395-genio-1200-evk.dts  | 16 ++++++++++++++--
+>   1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+> index a06610fff8ad..9b7850b0b9b4 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+> @@ -194,6 +194,11 @@ eth_phy0: eth-phy0@1 {
+>   	};
+>   };
+>   
+> +&gpu {
+> +	mali-supply = <&mt6315_7_vbuck1>;
+> +	status = "okay";
+> +};
+> +
+>   &i2c0 {
+>   	clock-frequency = <400000>;
+>   	pinctrl-0 = <&i2c0_pins>;
+> @@ -407,6 +412,13 @@ &mt6359_vrf12_ldo_reg {
+>   	regulator-always-on;
+>   };
+>   
+> +/* for GPU SRAM */
+> +&mt6359_vsram_others_ldo_reg {
+> +	regulator-always-on;
 
-You can respond here and post new iteration once we settle on something.
+No, that's not good. Like that, the GPU VSRAM will be subject to current leakage.
 
-> 
-> Thanks,
-> Chukun
-> 
-> -- 
-> 2.25.1
-> 
+Remove the regulator-always-on property.
+The right way of doing that is to add the vgpu to the mfg0's domain supply and
+vsram to mfg1; that way all of the GPU regulators will be off at PM suspend time.
 
--- 
-With best wishes
-Dmitry
+> +	regulator-min-microvolt = <750000>;
+> +	regulator-max-microvolt = <750000>;
+> +};
+> +
+>   &mt6359codec {
+>   	mediatek,mic-type-0 = <1>; /* ACC */
+>   	mediatek,mic-type-1 = <3>; /* DCC */
+> @@ -839,8 +851,8 @@ regulators {
+>   			mt6315_7_vbuck1: vbuck1 {
+>   				regulator-compatible = "vbuck1";
+>   				regulator-name = "Vgpu";
+> -				regulator-min-microvolt = <300000>;
+> -				regulator-max-microvolt = <1193750>;
+> +				regulator-min-microvolt = <546000>;
+
+I'm okay with this constraint but are you sure that MTK-SVS won't go any lower
+than 0.546V?
+
+Cheers,
+Angelo
+
+> +				regulator-max-microvolt = <787000>;
+>   				regulator-enable-ramp-delay = <256>;
+>   				regulator-allowed-modes = <0 1 2>;
+>   			};
+
+
 
