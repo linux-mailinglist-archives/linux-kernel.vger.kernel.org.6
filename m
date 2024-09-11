@@ -1,176 +1,157 @@
-Return-Path: <linux-kernel+bounces-325147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37EB975593
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:35:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CAF9755A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDF6288364
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA031F22659
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBA41A3021;
-	Wed, 11 Sep 2024 14:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431C71AAE12;
+	Wed, 11 Sep 2024 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XmcuRJcN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGrHBvHW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C32185606
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134A31A76D2;
+	Wed, 11 Sep 2024 14:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065305; cv=none; b=hQBj8NHQIbF+ddni7vRkbuaMMmgbvRERsgOW8innZizGEWJNijQD66JIninrP7h7Xm9X0r+2TUm3fEGEYfGvwa92G5xEin/l2HSeSXOZ5+XE5ZpmUT64ubjXMDluSMewUWjLnwAmw4Q0QDkBdJ8gRK8JFVpyCzHTr5VlLSEPOBk=
+	t=1726065323; cv=none; b=OE7UYFka9cEE0mcfKriOJytoSpj9BbloFiugGsdXnlzTFaNE8krNDe2x2tK07KTAuF7UmOEBaxGaN3FeOqzgWi4jkdJFOZ/KOWBeYXVq2KmDwKHGGRv21DvdAHI8eMo9RL0ASH1M7L0XIuqNGh4Wi25DbzipawIMFOW5wmQXjLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065305; c=relaxed/simple;
-	bh=v9fVORhT6WEBOV50bgrsA/Vtx4HPmTUbPL0CYJSZVgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eNiAK3qofQLUIcn1adpd1vNyCXmdUCYLo66JjNGW9zk16BuV0RIYWcERq6Jm4woFhmVJ6W0Qpa2UGWKclfnf1GsSkGxBxa27gVTnCa1n43nUfxOs3JrpFKaiC6iqZtSVdGA0cs/psDQbfqbP2WZl71awLprm0Wli/MCUGVfMIl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XmcuRJcN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726065301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PF/0q5orqycLDyFBmSuytp8djSJ4rgjRkbyNMLkxAWQ=;
-	b=XmcuRJcNHJfvuCE37YDFhNG59x4hRuyPGIP4MdQ8zvDM5jX89IL/Uo/4utjp/4pvDyuUTK
-	im2EUDC9MiWmwHBkZY+etI6ZyqaQm1eKvuq6JV7z6/Fi+xmyumNzQbxyPtKgTB10FModpM
-	h9QxOXGLXvKIETE0JxLdl0nj+TA71V8=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-vCc6NmzsOqSAPSvyzESXJQ-1; Wed, 11 Sep 2024 10:35:00 -0400
-X-MC-Unique: vCc6NmzsOqSAPSvyzESXJQ-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-45687583c67so112874421cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:35:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726065300; x=1726670100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PF/0q5orqycLDyFBmSuytp8djSJ4rgjRkbyNMLkxAWQ=;
-        b=aoHsHc14WMsyAWklV4Bdc3PNp4OGk78m7skvlrgN48Z0APQWbNojYCFd3MXOG0ARGy
-         4yjld1uwlTBsjJbWwx0buzahoFNFPzgNsfswqxnje59ITrAhsfxZQzXj21SdRFPC5KN3
-         90KLxCVI624BpINzKPk58diKED5uwmY2oVF2zkG1GCebJ1Rpi2HYDQ/TMz72dHoFAOvC
-         F2mzG/5pnj/HuSmfl9PScFjTHKWDFEziGi4DRBWIHM5mRza+r4XkKtFpjWMZeSiByvuN
-         M/vZVfk9wVY9yFCMtWUG0A1IqyBAJTtKu79m7xvaYiW/ZXA9GRuYH36kCyPio4cS6q/A
-         RxSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTeCSiVO1lJPPUYGKOheWxs5yTraH8GCCi80AaKXwXNonMxKE/0OGUYh30djNocZmGW9fS62cW/50uhxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsPSpoVQoxkLQkNWbuHVauj8q6icV5PM1wXEZ9BK5TKwN9nSoL
-	AWCyApkF6Vf4iLPc38GGIQfvrIpeQE6Khe97fSdZA29cHArKDht3FGacLP/a/As2MdyWfBiFv5t
-	dn2qbNuAGGllJogWuD00T130aXAf/fCKA//78ubi3aUxG1Wr9ufaA1Q6iAjnEYQ==
-X-Received: by 2002:a05:622a:651:b0:458:4323:d7b3 with SMTP id d75a77b69052e-4584323d91emr68257541cf.34.1726065300160;
-        Wed, 11 Sep 2024 07:35:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFngkfkq1nQs7Kv0mNC7ulS6e7nNeL51I8RbbZOuMP/jFQHPk0ALPxgHZnZfq+Gumf6CJkjkA==
-X-Received: by 2002:a05:622a:651:b0:458:4323:d7b3 with SMTP id d75a77b69052e-4584323d91emr68257071cf.34.1726065299714;
-        Wed, 11 Sep 2024 07:34:59 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822e61a77sm41722191cf.20.2024.09.11.07.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 07:34:58 -0700 (PDT)
-Date: Wed, 11 Sep 2024 10:34:54 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Gavin Shan <gshan@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
-Message-ID: <ZuGqjiYZA33lUS5z@x1n>
-References: <20240826204353.2228736-8-peterx@redhat.com>
- <ZtVwLntpS0eJubFq@yzhao56-desk.sh.intel.com>
- <Ztd-WkEoFJGZ34xj@x1n>
- <20240909152546.4ef47308e560ce120156bc35@linux-foundation.org>
- <Zt96CoGoMsq7icy7@x1n>
- <20240909161539.aa685e3eb44cdc786b8c05d2@linux-foundation.org>
- <Zt-N8MB93XSqFZO_@x1n>
- <Zt+0UTTEkkRQQza0@yzhao56-desk.sh.intel.com>
- <ZuA4ivNcz0NwOAh5@x1n>
- <ZuD9l6D6XuAUb4tP@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1726065323; c=relaxed/simple;
+	bh=zZVJ/jn55FdYP64LtELXOS80f+yzBjWduO1V5u3oLxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TqBFKVMX6DZWGV3ij6RWJtIp/66rpkqtj02P7QdEi6R5zW1UuHYGMQ5aPR0NtWm0vIbpiwIIr2Mb2/DU4gemncRD58rVsOHEdX7UPtVYYCO0MqH1SNfkimZn3uwdnOad2tNqJAJg5xFvHcY9ZUxtRLK3OaxUlR8cRUdy/1yBF4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGrHBvHW; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726065322; x=1757601322;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zZVJ/jn55FdYP64LtELXOS80f+yzBjWduO1V5u3oLxk=;
+  b=mGrHBvHWqTW1Klm/iS0SzIaEATh33WObPAwKyL0SpFMxyZzmPRe4kNNe
+   csGzswMih8HG5X578/P56KDkV8svqogNWn03R2nkXHuowCpQAXEN5OKeX
+   Mtb4t+ftu+kQ1gxtw9FFrF99X/vgaSgDUzSJ1gHmoaACdHvL00Ui2rUQu
+   9FDtuElGAdRNLE98UQnqxzRkcuswTD/p/moFql495mv+fln9Lrci+kd1T
+   04UQ6yUsib+yDNUH2XZVX7G/TaPrMZ0wKYysYG05bPhLMe0H7jXENv2+C
+   t5JMQc58UJCgFpER/C4YFtE2LSP13U0IYIeqTbWh+fjPaEk1n9w7z1rOT
+   A==;
+X-CSE-ConnectionGUID: oLixXibFTp+abo+Vn2wPfw==
+X-CSE-MsgGUID: ibbiAeM7SXumME4jPZT/1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42384881"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="42384881"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:35:21 -0700
+X-CSE-ConnectionGUID: 9NB8H6ayTn6Q2ECakrgXog==
+X-CSE-MsgGUID: WVpFtfsPR6CVhSVVGDJIEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="67327019"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:35:21 -0700
+Received: from [10.212.119.193] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.193])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 8698620CFED7;
+	Wed, 11 Sep 2024 07:35:20 -0700 (PDT)
+Message-ID: <7730b925-eb2c-4908-9c48-e016701f2901@linux.intel.com>
+Date: Wed, 11 Sep 2024 10:35:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZuD9l6D6XuAUb4tP@yzhao56-desk.sh.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [peterz-queue:perf/core] [perf/x86/rapl] 90942140bb:
+ UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c
+To: Peter Zijlstra <peterz@infradead.org>,
+ kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <202409111521.c7c6d56f-lkp@intel.com>
+ <20240911094536.GP4723@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240911094536.GP4723@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 10:16:55AM +0800, Yan Zhao wrote:
-> On Tue, Sep 10, 2024 at 08:16:10AM -0400, Peter Xu wrote:
-> > On Tue, Sep 10, 2024 at 10:52:01AM +0800, Yan Zhao wrote:
-> > > Hi Peter,
-> > 
-> > Hi, Yan,
-> > 
-> > > 
-> > > Not sure if I missed anything.
-> > > 
-> > > It looks that before this patch, pmd/pud are alawys write protected without
-> > > checking "is_cow_mapping(vma->vm_flags) && pud_write(pud)". pud_wrprotect()
-> > > clears dirty bit by moving the dirty value to the software bit.
-> > > 
-> > > And I have a question that why previously pmd/pud are always write protected.
-> > 
-> > IIUC this is a separate question - the move of dirty bit in pud_wrprotect()
-> > is to avoid wrongly creating shadow stack mappings.  In our discussion I
-> > think that's an extra complexity and can be put aside; the dirty bit will
-> > get recovered in pud_clear_saveddirty() later, so it's not the same as
-> > pud_mkclean().
-> But pud_clear_saveddirty() will only set dirty bit when write bit is 1.
 
-Yes, it's because x86 wants to avoid unexpected write=0 && dirty=1 entries,
-because it can wrongly reflect a shadow stack mapping.  Here we cannot
-recover the dirty bit if set only if write bit is 1 first.
 
+On 2024-09-11 5:45 a.m., Peter Zijlstra wrote:
+> On Wed, Sep 11, 2024 at 04:32:13PM +0800, kernel test robot wrote:
+>>
+>>
+>> Hello,
+>>
+>> kernel test robot noticed "UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c" on:
+>>
+>> commit: 90942140bb6cc7e9a41d5927c7617ee522896f7a ("perf/x86/rapl: Move the pmu allocation out of CPU hotplug")
+>> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git perf/core
+>>
+>> in testcase: boot
+>>
+>> compiler: clang-18
+>> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+>>
+>> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>>
+>>
+>> +-----------------------------------------------------------+------------+------------+
+>> |                                                           | c206df6d69 | 90942140bb |
+>> +-----------------------------------------------------------+------------+------------+
+>> | UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c | 0          | 12         |
+>> +-----------------------------------------------------------+------------+------------+
+>>
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <oliver.sang@intel.com>
+>> | Closes: https://lore.kernel.org/oe-lkp/202409111521.c7c6d56f-lkp@intel.com
+>>
+>>
+>> [   22.115286][    T1] ------------[ cut here ]------------
+>> [   22.115957][    T1] UBSAN: array-index-out-of-bounds in arch/x86/events/rapl.c:685:3
 > 
-> > 
-> > AFAIU pmd/pud paths don't consider is_cow_mapping() because normally we
-> > will not duplicate pgtables in fork() for most of shared file mappings
-> > (!CoW).  Please refer to vma_needs_copy(), and the comment before returning
-> > false at last.  I think it's not strictly is_cow_mapping(), as we're
-> > checking anon_vma there, however it's mostly it, just to also cover
-> > MAP_PRIVATE on file mappings too when there's no CoW happened (as if CoW
-> > happened then anon_vma will appear already).
-> > 
-> > There're some outliers, e.g. userfault protected, or pfnmaps/mixedmaps.
-> > Userfault & mixedmap are not involved in this series at all, so let's
-> > discuss pfnmaps.
-> > 
-> > It means, fork() can still copy pgtable for pfnmap vmas, and it's relevant
-> > to this series, because before this series pfnmap only exists in pte level,
-> > hence IMO the is_cow_mapping() must exist for pte level as you described,
-> > because it needs to properly take care of those.  Note that in the pte
-> > processing it also checks pte_write() to make sure it's a COWed page, not a
-> > RO page cache / pfnmap / ..., for example.
-> > 
-> > Meanwhile, since pfnmap won't appear in pmd/pud, I think it's fair that
-> > pmd/pud assumes when seeing a huge mapping it must be MAP_PRIVATE otherwise
-> > the whole copy_page_range() could be already skipped.  IOW I think they
-> > only need to process COWed pages here, and those pages require write bit
-> > removed in both parent and child when fork().
-> Is it also based on that there's no MAP_SHARED huge DEVMAP pages up to now?
+> That is:
+> 
+> 		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
+> 
+> Which is scaled like:
+> 
+> 	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
+> 
+> And that isn't new in that patch, just moved around.
+>
 
-Correct.
+The error commit is still the old one which doesn't include the fix of
+the issue reported by Dhananjay.
+https://lore.kernel.org/lkml/88fa2064-c054-4833-872c-0cf5ff1e3609@amd.com/
+
+I think it should be the same issue.
+
+> Kan, as it happens these two patches got zapped by Ingo because they
+> conflict with that rapl patch from perf/urgent and he merged perf/urgent
+> into perf/core.
+> 
+> I was going to rebase these two patches on top, but given the above, can
+> you have a look instead?
+> 
+> 
+
+Sure, I will work with Oliver on the issue, and resend the patch to
+support rapl.
 
 Thanks,
-
--- 
-Peter Xu
-
+Kan
 
