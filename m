@@ -1,147 +1,92 @@
-Return-Path: <linux-kernel+bounces-324245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C53974A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD999974A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32DFB28859F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC501C23757
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ED974059;
-	Wed, 11 Sep 2024 06:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFxIeYVn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B36F40849;
-	Wed, 11 Sep 2024 06:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBDD7DA93;
+	Wed, 11 Sep 2024 06:35:13 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5182BAE3;
+	Wed, 11 Sep 2024 06:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726034709; cv=none; b=gJwjpz1jLVzx4UwW1FquxNp/Nx4NDAFlbRjT2D0K5O4Nu9Q6w7fy0ttzw+e5NBgMdTGCHRddQ722kdse3vXBNSyQGQVU2/GXf9bVB3dVTgxULZjelLCOF4mqu+LD1gi/DFHutdyPwMzJ/IY8tjLJjsa7opaTJCMFiJfvcDWleJE=
+	t=1726036513; cv=none; b=aPbKaeP4MVT6zS2vJICJJOsgxCueyz2Qz4X5+4ZjpT2kgi7j7zvNRI4qybbtkQwkAc+iBH3p3fxrY81MbcW/Mm2EVnQ0tlD7hPpMppzkLUrjgAlkuOTXZSBFvQ2VGttM46hoUeFNhK/IOSuNxW1NaoFiB3LAclALBCBeXYz4QlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726034709; c=relaxed/simple;
-	bh=oS6W6RuD01zziSDUkNdAa9V8LFDpaby7DxbfQdP+WyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KeWmxVKfOpH+ngLpJlVKtI/zJkH6NMBbbuLR5SxIC5M6pD+bKmMQ5a3zRHrO2CDzRIZVmHigcDR+P8vCHM2TJmQxhQGmHx66xps8/yEktFXUqKr8oxs1v3ln8rFbTmyPia24G6Fc7aw6cAlTinBF56vxbinMWLHRZ3Lgkt4h6fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFxIeYVn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29B1C4CEC5;
-	Wed, 11 Sep 2024 06:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726034708;
-	bh=oS6W6RuD01zziSDUkNdAa9V8LFDpaby7DxbfQdP+WyQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZFxIeYVnrkP5hegcl50Fe4tO2Bl8UnO1W+s0h2TOgm6f18RWhlm5ejUcJ6GFsRQ/E
-	 QZjltk8XovkjcMBlKtadpgiQvmnrG+oa8NuFQ9qQY43rGyMWlc+SSWODNoHl+Csroz
-	 x8B27WAmyOcY53lcCJBolvzHMsLd+ftz7K6WodZcks1JPNeEBwV7XEY+jvuDzECL0Y
-	 DUk8L1KRKkBEVF+HvZbSlC0J7U6Xt+Ti6CG007xlhXGisYmtxWAxeS2roWUM4GiBX1
-	 Dgt+c7S3WHKJd+CGEQvvTp+HiKzYypAZRnhCr69kPOFvgQsbOTNpZV4a49mXrnehkA
-	 AQYha9KfPWrPA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1soGTm-000000005SH-3toq;
-	Wed, 11 Sep 2024 08:05:26 +0200
-Date: Wed, 11 Sep 2024 08:05:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] USB-serial updates for 6.12-rc1
-Message-ID: <ZuEzJgTKeD0RscpX@hovoldconsulting.com>
+	s=arc-20240116; t=1726036513; c=relaxed/simple;
+	bh=1VKqkrnmDAcEEEvDJ1qM2+gPceUM2kDlEd+u4SanOf8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I6AJ4rUmgl+Nb1vlp5MZ5BLJP+3x9sMv7PieI8q2mVLCAW4VvacvETsoNoDn7PojLq45Ew3663JMYpa/0foHqmMYIaw+/Ixb4qvjO02HOsg3KNV6NtXFBgvcqAfiWKdXrqsq4KE+lKPfeyM6k1/VWIwPYBDuC8Q5sNUc2kGijIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766e13a11683-1c689;
+	Wed, 11 Sep 2024 14:35:00 +0800 (CST)
+X-RM-TRANSID:2ee766e13a11683-1c689
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee166e13a13661-b812f;
+	Wed, 11 Sep 2024 14:35:00 +0800 (CST)
+X-RM-TRANSID:2ee166e13a13661-b812f
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] selftests: kselftest: Use strerror() on nolibc
+Date: Wed, 11 Sep 2024 12:42:30 +0800
+Message-Id: <20240911044230.5914-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+Nolibc gained an implementation of strerror() recently.
+Use it and drop the ifndef.
 
-are available in the Git repository at:
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ tools/testing/selftests/kselftest.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.12-rc1
+diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+index e195ec156859..29fedf609611 100644
+--- a/tools/testing/selftests/kselftest.h
++++ b/tools/testing/selftests/kselftest.h
+@@ -373,15 +373,7 @@ static inline __noreturn __printf(1, 2) void ksft_exit_fail_msg(const char *msg,
+ 
+ static inline __noreturn void ksft_exit_fail_perror(const char *msg)
+ {
+-#ifndef NOLIBC
+ 	ksft_exit_fail_msg("%s: %s (%d)\n", msg, strerror(errno), errno);
+-#else
+-	/*
+-	 * nolibc doesn't provide strerror() and it seems
+-	 * inappropriate to add one, just print the errno.
+-	 */
+-	ksft_exit_fail_msg("%s: %d)\n", msg, errno);
+-#endif
+ }
+ 
+ static inline __noreturn void ksft_exit_xfail(void)
+-- 
+2.33.0
 
-for you to fetch changes up to 4c0d9477ba69a417c698aec1d3012e188cf97add:
 
-  USB: serial: kobil_sct: restore initial terminal settings (2024-08-26 15:29:27 +0200)
 
-----------------------------------------------------------------
-USB-serial updates for 6.12-rc1
-
-Here are the USB-serial updates for 6.12-rc1, including:
-
- - fix kobil_sct initial terminal settings
- - set driver owner when registering drivers
-
-All have been in linux-next with no reported issues.
-
-----------------------------------------------------------------
-Johan Hovold (1):
-      USB: serial: kobil_sct: restore initial terminal settings
-
-Krzysztof Kozlowski (2):
-      USB: serial: set driver owner when registering drivers
-      USB: serial: drop driver owner initialization
-
- drivers/usb/serial/aircable.c          |  1 -
- drivers/usb/serial/ark3116.c           |  1 -
- drivers/usb/serial/belkin_sa.c         |  1 -
- drivers/usb/serial/ch341.c             |  1 -
- drivers/usb/serial/cp210x.c            |  1 -
- drivers/usb/serial/cyberjack.c         |  1 -
- drivers/usb/serial/cypress_m8.c        |  3 ---
- drivers/usb/serial/digi_acceleport.c   |  2 --
- drivers/usb/serial/empeg.c             |  1 -
- drivers/usb/serial/f81232.c            |  2 --
- drivers/usb/serial/f81534.c            |  1 -
- drivers/usb/serial/ftdi_sio.c          |  1 -
- drivers/usb/serial/garmin_gps.c        |  1 -
- drivers/usb/serial/generic.c           |  1 -
- drivers/usb/serial/io_edgeport.c       |  4 ----
- drivers/usb/serial/io_ti.c             |  2 --
- drivers/usb/serial/ipaq.c              |  1 -
- drivers/usb/serial/ipw.c               |  1 -
- drivers/usb/serial/ir-usb.c            |  1 -
- drivers/usb/serial/iuu_phoenix.c       |  1 -
- drivers/usb/serial/keyspan.c           |  4 ----
- drivers/usb/serial/keyspan_pda.c       |  2 --
- drivers/usb/serial/kl5kusb105.c        |  1 -
- drivers/usb/serial/kobil_sct.c         |  4 +---
- drivers/usb/serial/mct_u232.c          |  1 -
- drivers/usb/serial/metro-usb.c         |  1 -
- drivers/usb/serial/mos7720.c           |  1 -
- drivers/usb/serial/mos7840.c           |  1 -
- drivers/usb/serial/mxuport.c           |  1 -
- drivers/usb/serial/navman.c            |  1 -
- drivers/usb/serial/omninet.c           |  1 -
- drivers/usb/serial/opticon.c           |  1 -
- drivers/usb/serial/option.c            |  1 -
- drivers/usb/serial/oti6858.c           |  1 -
- drivers/usb/serial/pl2303.c            |  1 -
- drivers/usb/serial/qcaux.c             |  1 -
- drivers/usb/serial/qcserial.c          |  1 -
- drivers/usb/serial/quatech2.c          |  1 -
- drivers/usb/serial/safe_serial.c       |  1 -
- drivers/usb/serial/sierra.c            |  1 -
- drivers/usb/serial/spcp8x5.c           |  1 -
- drivers/usb/serial/ssu100.c            |  1 -
- drivers/usb/serial/symbolserial.c      |  1 -
- drivers/usb/serial/ti_usb_3410_5052.c  |  2 --
- drivers/usb/serial/upd78f0730.c        |  1 -
- drivers/usb/serial/usb-serial-simple.c |  1 -
- drivers/usb/serial/usb-serial.c        | 12 +++++++-----
- drivers/usb/serial/usb_debug.c         |  2 --
- drivers/usb/serial/visor.c             |  3 ---
- drivers/usb/serial/whiteheat.c         |  2 --
- drivers/usb/serial/wishbone-serial.c   |  1 -
- drivers/usb/serial/xr_serial.c         |  1 -
- drivers/usb/serial/xsens_mt.c          |  1 -
- include/linux/usb/serial.h             |  7 +++++--
- 54 files changed, 13 insertions(+), 78 deletions(-)
 
