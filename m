@@ -1,63 +1,73 @@
-Return-Path: <linux-kernel+bounces-325302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8099757A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:54:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CA4975796
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16764B2A88F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F66F1F27F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D0C1AC881;
-	Wed, 11 Sep 2024 15:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3B81AB6DA;
+	Wed, 11 Sep 2024 15:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx7ylrO7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Wuc/sGyS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5701BA882;
-	Wed, 11 Sep 2024 15:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F75C185954;
+	Wed, 11 Sep 2024 15:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726069725; cv=none; b=BP1fNgW35U0Wn+rtJ1PvyrEUXUe/f4LnIfFS1tASKaEUT/4JU1bZHI8RBFDiFEIgKuVOgWiAG2HCd5Nb+44zFK+R9PlS1v4TfRJZPNTd3SaemhehvHFMowi3Yh/MqtBExeXq53L4LUgrERgwoAlZwXdizrmmMbmALKYk3HWibT4=
+	t=1726069758; cv=none; b=d5cF4oEsk3gY/Dt1nrUqIME3kR1RaKPPsfvlaw0phczMH2VInfr9n99xBeglKTSc0eiPi6Gf7GJm+kMHKs7YUyExXuPXvseSfRmhmGzH339zV902p3taYzLiQqbT4k510IxTwKMfJcJme9/QFRzuiklefX/AlCTQqbxT8aRCx/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726069725; c=relaxed/simple;
-	bh=uKOBO3/ZEvAfJ8xxHMEtIC+7uc2GWc7wTO6wZWMjJwE=;
+	s=arc-20240116; t=1726069758; c=relaxed/simple;
+	bh=jvJrBcnk+D8yfH+0FQrinizcg59VFH4KplTPztnryN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1309bUVCQbunyeBbrcodGfoK5osdLC9tvRfw0r3u3hW+DrpSe5wT1VJkUDk6BJokUigEL2SBGsoknSbCrA+XAG0G9HIqlkOXzMdqFirgqzhg3XI3BP/rDY2PKQPyUJSDx/ohBEQUnHysLM17Jt2G0mkOGMTNcUmZGx+KVIqR2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx7ylrO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D4CC4CEC5;
-	Wed, 11 Sep 2024 15:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726069724;
-	bh=uKOBO3/ZEvAfJ8xxHMEtIC+7uc2GWc7wTO6wZWMjJwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jx7ylrO7GicKxEMBRKdsbV9GwJdEsgS1Yzv+NfWMmJFjAgaOT+NelR4YTO29UEW0y
-	 maGyviVKZiZ0fiPBEvrrijPPYBkI3JU4tIeGpVhCkaQ3BLxNRsvpOwrN5c3cr0FvzE
-	 5iN8P27396QSAZSJrke2llN2zG+mlywiaSyomDYnHqleowoPdKeiw3ZMEu7luGKVnA
-	 pD3vGOAMmBSrYOWAuPGsKjG+o5kD6PmT78DVNjQBJeigkzAiUvU8an9MtXWGBXz0OJ
-	 yFirHTwnJhFD5pTb5HUUy/BNRkQ4NGYuGL0H3qOuroHvVc8NaBhL+zXm/DEg9k5/Hs
-	 Lzcc9fnBIfOeg==
-Date: Wed, 11 Sep 2024 12:48:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Sam James <sam@gentoo.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] tools: drop nonsensical -O6
-Message-ID: <ZuG72Y_7XRkedEBz@x1>
-References: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
- <Zt9zoVFkFaCDwJ36@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxeVznSjZOWVt24BCtzBjMsu1Uv/FckEASRW7+SQzy3aVjnKuwYOTb5MqK2+aeiaF8dm0OtXMUvlW2b3Z4M4C63Qk8AMfmc4XUgRYBK61NHHCzeQImhitPyRbNQcx5iuC7OEjhLfzYHBNuE4pUAk+xBhcJoBxaOCJCkwl3cx4ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Wuc/sGyS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=t6UG7PLdbkoosunbZul9Kx6uV/hzSw/RTZj0KodJ6ls=; b=Wuc/sGySYMF45bcq3U9BoGJBhg
+	udLHtgMRTDcvtuEAtsLTSvF9hsBCKouVn6Q6JbA2IDlDcRjw1u3NHuPCsCGn9NQiQXDnzrUhCIFf0
+	f0dF9JkCMoeDZ6tn+UAq6FnjDI7HLZvB/alVkHI8L0hBkWCdtbwTd8KP+bWjHJG/mC2c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soPaP-007E9Y-JU; Wed, 11 Sep 2024 17:48:53 +0200
+Date: Wed, 11 Sep 2024 17:48:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+	Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/8] mikrobus: Add mikrobus driver
+Message-ID: <2a1155b4-f158-4cdd-ad3b-82d4a1841245@lunn.ch>
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +76,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zt9zoVFkFaCDwJ36@google.com>
+In-Reply-To: <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
 
-On Mon, Sep 09, 2024 at 03:16:01PM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> On Sun, Sep 08, 2024 at 07:46:41PM +0100, Sam James wrote:
-> > -O6 is very much not-a-thing. Really, this should've been dropped
-> > entirely in 49b3cd306e60b9d889c775cb2ebb709f80dd8ae9 instead of just
-> > passing it for not-Clang.
-> > 
-> > Just collapse it down to -O3, instead of "-O6 unless Clang, in which case
-> > -O3".
-> > 
-> > GCC interprets > -O3 as -O3. It doesn't even interpret > -O3 as -Ofast,
-> > which is a good thing, given -Ofast has specific (non-)requirements for
-> > code built using it. So, this does nothing except look a bit daft.
-> > 
-> > Remove the silliness and also save a few lines in the Makefiles accordingly.
-> > 
-> > Signed-off-by: Sam James <sam@gentoo.org>
-> 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -610,6 +610,23 @@ config MARVELL_CN10K_DPI
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called mrvl_cn10k_dpi.
+>  
+> +menuconfig MIKROBUS
+> +	tristate "Module for instantiating devices on mikroBUS ports"
+> +	help
+> +	  This option enables the mikroBUS driver. mikroBUS is an add-on
 
-Thanks, applied to perf-tools-next,
+You are missing
 
-- Arnaldo
+        depends on RUST
+
+	Andrew
 
