@@ -1,288 +1,142 @@
-Return-Path: <linux-kernel+bounces-324472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E49E974CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:42:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871AE974CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1413287F49
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:42:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6ED1C220F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D18217A596;
-	Wed, 11 Sep 2024 08:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09A4155759;
+	Wed, 11 Sep 2024 08:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0y/KHYd6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="znAiGBFr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lp/Lu+uf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736C81547CF;
-	Wed, 11 Sep 2024 08:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6188C13C9D3;
+	Wed, 11 Sep 2024 08:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044109; cv=none; b=hWw0JAHdCq2AosQxx2JKGUoFTrhcH4dYsjKsFyjgQGdl84DbpoaFaIaS5G7+hlxlHHjWg+D1Gv5ayk2tljB/0y52ju5AXY9i5v7eTSHU3zyGOqVAE/OMATsE4BXHJbIM7dLqHGcp/9ftDGNwAK4QZyfFQhmxrY0AjMfjI8+Rm08=
+	t=1726044205; cv=none; b=aTtuOmu6A7rh0RjdvnrSUwVtmjxj0hplu6tI2cAHTzzESyIRGOk9Q1lmzMrwbMz2wVYLH9kFJE5FWnzofq0RlIJIthwuEhuP6YN4wdhXKhZakqLwqctMVMnZ8gnEWH2LxVYgf2DXws3DsIeG31DGOnNrnAVHSOvRbZEXsxDCL6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044109; c=relaxed/simple;
-	bh=Tx4/pT8qFSodepQPWKDasNYG6F57zRV9CLJDkS7Vo6s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K54PncNiJHK7Pg06ZgS3hnlABTtEAagw2c/iZRQ0Sxgx1MeijC4p4BNoJ7XYiQPpGms9bsyFmEdPNSglVFgAYP8c/17Ez7/Elzlinl3Gxv8EXjqDxm6DqbEo2YXJbe0WjgjEg9nAazF1fevoyUvHi5KwZN4LxIspcGU+eLBvA0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0y/KHYd6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=znAiGBFr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Florian Kauer <florian.kauer@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726044105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XVxu958V8507cUbid7tMca8UQrmhre2RgIlcswCFXZM=;
-	b=0y/KHYd6eL31QtaCLofVoBHCCNTZjp4GGUt2xkddH8E94D4/HNJH8f87O4v2B1lZngGo6w
-	u0gdl9tjaCRTXRsXYRnIsnBJVsmEvkaf0U/0CIakKS33UI7udBnI9wBKUK/9TBeynqrfrb
-	UGi6koDxFC+Hlj+ADqBNMmVRSTyIZuwlZup5GzAisJIW7vc43Zb99uCw5bKTkSofPb1wH2
-	tgGHD6JxlNADDqEjsu4pZHWLF+tJSKkEzLAi7cgaRr2rJJ7302eJTzcHHaR8qpcvIp3j9V
-	k48nphriOLtklBKMyevpkpaRNcLEWZvv5Ta0UbNuBVcl2aT39JyMggRiQ8UHbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726044105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XVxu958V8507cUbid7tMca8UQrmhre2RgIlcswCFXZM=;
-	b=znAiGBFrvXDxMThShtSpJRsee4RLO0O1d01pXPWZfw6t9uca41sdQrnDIHtaAIOb+08jve
-	XZx7yUGDHW4e78CA==
-Date: Wed, 11 Sep 2024 10:41:19 +0200
-Subject: [PATCH net v4 2/2] bpf: selftests: send packet to devmap redirect
- XDP
+	s=arc-20240116; t=1726044205; c=relaxed/simple;
+	bh=pSQDs7KMoH7HaIy4NIvWWkshPAjMFbu930zgWis30To=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FIqD91GcSk0R0TKYA6LfwP6E/eWIzoaaI1lE7RR+ppW9o3w+bAqgK3TJxzCrat/S485vFpqoQYDIz2PucfuT4cgHHGzg5hgjCu0/lNWWbgEZw1acuQc2oW+7poUlfNf4hYvOqnr+TcMxu0qweDn/hPUgkxDyk0Dr/sylq3c1Y6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lp/Lu+uf; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726044203; x=1757580203;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=pSQDs7KMoH7HaIy4NIvWWkshPAjMFbu930zgWis30To=;
+  b=lp/Lu+ufTVJ2fMnvi6D/6A1TTjEYOZxgOdkWAs1tLf0OUfi/wBeWFSQ4
+   ql3qPkKn105smUzLk6YUje4B8H41/GyF1uulkMyvcPQrcS7iKG4kZ4z4V
+   LWuzUL2ZS1KFL6vgh0rBThiURdmztCp9lYkzNM93oiKxtlF47MkW3R6px
+   T8DSTo0hSOTkuf1+6MJNQGAkC2qyee26xqAkQmMeHUGuHYYXftldDgG21
+   xhT6hOMFNNprmoXb7LDbS6msEQ5ng5sIUC0myrRNYmZ8z/lvM84utiHHL
+   XZPBxgsaXMkmGy7/UkTtjczUM84MPuk0tGMczmiF0djqT9SGdcnejyI3q
+   g==;
+X-CSE-ConnectionGUID: FxdYNn3iRnyDo3J9ALKePw==
+X-CSE-MsgGUID: Mcpz0y4jT3e9Msj+8HAgEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24700046"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="24700046"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:43:23 -0700
+X-CSE-ConnectionGUID: ssBJW64jSTeZXEl5I3m4lg==
+X-CSE-MsgGUID: ZAxfyomMSEOqQal2KBgxSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="66929497"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.149])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:43:18 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Simona Vetter
+ <simona.vetter@ffwll.ch>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Dave Airlie <airlied@redhat.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr?=
+ =?utf-8?Q?=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ DRM XE List <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the drm-intel
+ tree
+In-Reply-To: <20240911135249.543da06a@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240906131502.7a7d1962@canb.auug.org.au>
+ <20240911135249.543da06a@canb.auug.org.au>
+Date: Wed, 11 Sep 2024 11:43:15 +0300
+Message-ID: <87ed5qk2cc.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-devel-koalo-fix-ingress-ifindex-v4-2-5c643ae10258@linutronix.de>
-References: <20240911-devel-koalo-fix-ingress-ifindex-v4-0-5c643ae10258@linutronix.de>
-In-Reply-To: <20240911-devel-koalo-fix-ingress-ifindex-v4-0-5c643ae10258@linutronix.de>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, 
- =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, 
- David Ahern <dsahern@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>, 
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>, 
- linux-kselftest@vger.kernel.org, 
- Florian Kauer <florian.kauer@linutronix.de>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6428;
- i=florian.kauer@linutronix.de; h=from:subject:message-id;
- bh=Tx4/pT8qFSodepQPWKDasNYG6F57zRV9CLJDkS7Vo6s=;
- b=owEBbQKS/ZANAwAKATKF5IolV+EkAcsmYgBm4VfDjrVIdwzowFeCGWyOJilwgiz3LaBHH9Oe4
- km9RQ3PhV2JAjMEAAEKAB0WIQSG5cmCLvpm5t9g7UUyheSKJVfhJAUCZuFXwwAKCRAyheSKJVfh
- JPdrEADTv/J5QaUU+9btNzGizLZ03zAO5etez+MpKfSj0sXsDLYWQHkjB9ERjVOi0gEYWUrf/dw
- ohISsRRknlyCucP/VVf8yK5VmibGeeiu53b2H406nvPZ8dT8LoqW3rH5AcFFNCM7V5Ed0cEl+jc
- Di0/pwdhUBp9OYfLi4vs1v0ssPBUYIJ9CnZihd52Jo/89fl1ZPFLHljzU2Kq3W9eGE9fjniHq/9
- 5S3IgCNBn2jMk1sbx3McLEYX4f+AigCT3XNhHsdd3mVOrP6TTbV21eOihnC37mthaPFTCwIPsO9
- VrFQ9hHQhNFma400UhGSeJwKUs8QaTS5jiDxRMLw27fTnvaCqDkCOs2R6IBXZKeaoL8UuLXOcZr
- H8UYoF083e9uv2/n1aUFtqEULV0BXTvP3lDVW6gIyKJMHOzORK+pDtmO3pKmuobXrCQnSvzt6uQ
- UP9mqq8Mv06BrmW2fnvln0rlxVytx5SsIfdP7sGaOy1uguYcPtbUUY+3ZmSZaYAKNhO1Xx7sHCB
- WE2nCPAhUO9lymz4wlrtOG2Zp7PW+duXtOEJ+v45UjOODIFWc9JQt3g249ClIR41pv5pHzwsYAi
- ajpZ9DOQMyaaSDL4cdai0vCB4xKuh/LqVlFdD1B/dROHcFbNtAl5/8tAqsX3wqptAlzDW0E6MpG
- JAnhqZP2vbkX6kg==
-X-Developer-Key: i=florian.kauer@linutronix.de; a=openpgp;
- fpr=F17D8B54133C2229493E64A0B5976DD65251944E
+Content-Type: text/plain
 
-The current xdp_devmap_attach test attaches a program
-that redirects to another program via devmap.
+On Wed, 11 Sep 2024, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> On Fri, 6 Sep 2024 13:15:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Today's linux-next merge of the drm-xe tree got a conflict in:
+>> 
+>>   drivers/gpu/drm/xe/display/xe_display.c
+>> 
+>> between commit:
+>> 
+>>   11d0613af7c5 ("drm/i915/display: include drm/drm_probe_helper.h where needed")
+>> 
+>> from the drm-intel tree and commit:
+>> 
+>>   87d8ecf01544 ("drm/xe: replace #include <drm/xe_drm.h> with <uapi/drm/xe_drm.h>")
+>> 
+>> from the drm-xe tree.
+>> 
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>> 
+>> -- 
+>> Cheers,
+>> Stephen Rothwell
+>> 
+>> diff --cc drivers/gpu/drm/xe/display/xe_display.c
+>> index 303d00b99a68,75736faf2a80..000000000000
+>> --- a/drivers/gpu/drm/xe/display/xe_display.c
+>> +++ b/drivers/gpu/drm/xe/display/xe_display.c
+>> @@@ -10,8 -10,7 +10,8 @@@
+>>   
+>>   #include <drm/drm_drv.h>
+>>   #include <drm/drm_managed.h>
+>>  +#include <drm/drm_probe_helper.h>
+>> - #include <drm/xe_drm.h>
+>> + #include <uapi/drm/xe_drm.h>
+>>   
+>>   #include "soc/intel_dram.h"
+>>   #include "i915_drv.h"		/* FIXME: HAS_DISPLAY() depends on this */
+>
+> This is now a conflict between the drm-intel and drm trees.
 
-It is, however, never executed, so do that to catch
-any bugs that might occur during execution.
+I backmerged drm-next to drm-intel-next, resolving the conflict.
 
-Also, execute the same for a veth pair so that we
-also cover the non-generic path.
-
-Warning: Running this without the bugfix in this series
-will likely crash your system.
-
-Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
----
- .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
- 1 file changed, 108 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-index ce6812558287..b4f6718cf7eb 100644
---- a/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-+++ b/tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <arpa/inet.h>
- #include <uapi/linux/bpf.h>
- #include <linux/if_link.h>
-+#include <network_helpers.h>
-+#include <net/if.h>
- #include <test_progs.h>
- 
- #include "test_xdp_devmap_helpers.skel.h"
-@@ -17,7 +20,7 @@ static void test_xdp_with_devmap_helpers(void)
- 		.ifindex = IFINDEX_LO,
- 	};
- 	__u32 len = sizeof(info);
--	int err, dm_fd, map_fd;
-+	int err, dm_fd, dm_fd_redir, map_fd;
- 	__u32 idx = 0;
- 
- 
-@@ -25,14 +28,11 @@ static void test_xdp_with_devmap_helpers(void)
- 	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
- 		return;
- 
--	dm_fd = bpf_program__fd(skel->progs.xdp_redir_prog);
--	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
-+	dm_fd_redir = bpf_program__fd(skel->progs.xdp_redir_prog);
-+	err = bpf_xdp_attach(IFINDEX_LO, dm_fd_redir, XDP_FLAGS_SKB_MODE, NULL);
- 	if (!ASSERT_OK(err, "Generic attach of program with 8-byte devmap"))
- 		goto out_close;
- 
--	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
--	ASSERT_OK(err, "XDP program detach");
--
- 	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_dm);
- 	map_fd = bpf_map__fd(skel->maps.dm_ports);
- 	err = bpf_prog_get_info_by_fd(dm_fd, &info, &len);
-@@ -47,6 +47,23 @@ static void test_xdp_with_devmap_helpers(void)
- 	ASSERT_OK(err, "Read devmap entry");
- 	ASSERT_EQ(info.id, val.bpf_prog.id, "Match program id to devmap entry prog_id");
- 
-+	/* send a packet to trigger any potential bugs in there */
-+	char data[10] = {};
-+	DECLARE_LIBBPF_OPTS(bpf_test_run_opts, opts,
-+			    .data_in = &data,
-+			    .data_size_in = 10,
-+			    .flags = BPF_F_TEST_XDP_LIVE_FRAMES,
-+			    .repeat = 1,
-+		);
-+	err = bpf_prog_test_run_opts(dm_fd_redir, &opts);
-+	ASSERT_OK(err, "XDP test run");
-+
-+	/* wait for the packets to be flushed */
-+	kern_sync_rcu();
-+
-+	err = bpf_xdp_detach(IFINDEX_LO, XDP_FLAGS_SKB_MODE, NULL);
-+	ASSERT_OK(err, "XDP program detach");
-+
- 	/* can not attach BPF_XDP_DEVMAP program to a device */
- 	err = bpf_xdp_attach(IFINDEX_LO, dm_fd, XDP_FLAGS_SKB_MODE, NULL);
- 	if (!ASSERT_NEQ(err, 0, "Attach of BPF_XDP_DEVMAP program"))
-@@ -124,6 +141,88 @@ static void test_xdp_with_devmap_frags_helpers(void)
- 	test_xdp_with_devmap_frags_helpers__destroy(skel);
- }
- 
-+static void test_xdp_with_devmap_helpers_veth(void)
-+{
-+	struct test_xdp_with_devmap_helpers *skel = NULL;
-+	struct bpf_prog_info info = {};
-+	struct bpf_devmap_val val = {};
-+	struct nstoken *nstoken = NULL;
-+	__u32 len = sizeof(info);
-+	int err, dm_fd, dm_fd_redir, map_fd, ifindex_dst;
-+	__u32 idx = 0;
-+
-+	SYS(out_close, "ip netns add testns");
-+	nstoken = open_netns("testns");
-+	if (!ASSERT_OK_PTR(nstoken, "setns"))
-+		goto out_close;
-+
-+	SYS(out_close, "ip link add veth_src type veth peer name veth_dst");
-+	SYS(out_close, "ip link set dev veth_src up");
-+	SYS(out_close, "ip link set dev veth_dst up");
-+
-+	val.ifindex = if_nametoindex("veth_src");
-+	ifindex_dst = if_nametoindex("veth_dst");
-+	if (!ASSERT_NEQ(val.ifindex, 0, "val.ifindex") ||
-+	    !ASSERT_NEQ(ifindex_dst, 0, "ifindex_dst"))
-+		goto out_close;
-+
-+	skel = test_xdp_with_devmap_helpers__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_xdp_with_devmap_helpers__open_and_load"))
-+		goto out_close;
-+
-+	dm_fd_redir = bpf_program__fd(skel->progs.xdp_redir_prog);
-+	err = bpf_xdp_attach(val.ifindex, dm_fd_redir, XDP_FLAGS_DRV_MODE, NULL);
-+	if (!ASSERT_OK(err, "Attach of program with 8-byte devmap"))
-+		goto out_close;
-+
-+	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_dm);
-+	map_fd = bpf_map__fd(skel->maps.dm_ports);
-+	err = bpf_prog_get_info_by_fd(dm_fd, &info, &len);
-+	if (!ASSERT_OK(err, "bpf_prog_get_info_by_fd"))
-+		goto out_close;
-+
-+	val.bpf_prog.fd = dm_fd;
-+	err = bpf_map_update_elem(map_fd, &idx, &val, 0);
-+	ASSERT_OK(err, "Add program to devmap entry");
-+
-+	err = bpf_map_lookup_elem(map_fd, &idx, &val);
-+	ASSERT_OK(err, "Read devmap entry");
-+	ASSERT_EQ(info.id, val.bpf_prog.id, "Match program id to devmap entry prog_id");
-+
-+	/* attach dummy to other side to enable reception */
-+	dm_fd = bpf_program__fd(skel->progs.xdp_dummy_prog);
-+	err = bpf_xdp_attach(ifindex_dst, dm_fd, XDP_FLAGS_DRV_MODE, NULL);
-+	if (!ASSERT_OK(err, "Attach of dummy XDP"))
-+		goto out_close;
-+
-+	/* send a packet to trigger any potential bugs in there */
-+	char data[10] = {};
-+	DECLARE_LIBBPF_OPTS(bpf_test_run_opts, opts,
-+			    .data_in = &data,
-+			    .data_size_in = 10,
-+			    .flags = BPF_F_TEST_XDP_LIVE_FRAMES,
-+			    .repeat = 1,
-+		);
-+	err = bpf_prog_test_run_opts(dm_fd_redir, &opts);
-+	ASSERT_OK(err, "XDP test run");
-+
-+	/* wait for the packets to be flushed */
-+	kern_sync_rcu();
-+
-+	err = bpf_xdp_detach(val.ifindex, XDP_FLAGS_DRV_MODE, NULL);
-+	ASSERT_OK(err, "XDP program detach");
-+
-+	err = bpf_xdp_detach(ifindex_dst, XDP_FLAGS_DRV_MODE, NULL);
-+	ASSERT_OK(err, "XDP program detach");
-+
-+out_close:
-+	if (nstoken)
-+		close_netns(nstoken);
-+	SYS_NOFAIL("ip netns del testns");
-+
-+	test_xdp_with_devmap_helpers__destroy(skel);
-+}
-+
- void serial_test_xdp_devmap_attach(void)
- {
- 	if (test__start_subtest("DEVMAP with programs in entries"))
-@@ -134,4 +233,7 @@ void serial_test_xdp_devmap_attach(void)
- 
- 	if (test__start_subtest("Verifier check of DEVMAP programs"))
- 		test_neg_xdp_devmap_helpers();
-+
-+	if (test__start_subtest("DEVMAP with programs in entries on veth"))
-+		test_xdp_with_devmap_helpers_veth();
- }
+Thanks,
+Jani.
 
 -- 
-2.39.2
-
+Jani Nikula, Intel
 
