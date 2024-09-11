@@ -1,254 +1,165 @@
-Return-Path: <linux-kernel+bounces-324860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801ED9751AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DAC9751AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A5F1C229F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74C921C227B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0FE1779AE;
-	Wed, 11 Sep 2024 12:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55CE189BBD;
+	Wed, 11 Sep 2024 12:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="nl6gX6a8"
-Received: from qs51p00im-qukt01071502.me.com (qs51p00im-qukt01071502.me.com [17.57.155.5])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rgnrr0z6"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A3318E36E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505B2187FE3
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056927; cv=none; b=fGlrnoQM4SPiLn9Sp9aPBXutJdOGlLk8EFLgPpIhssm022shNmfN9LBgDcVgIrCCCSFIYm3twJvBlwDAxAia6ZNUh5KFtMEDamYY/FeefkCmc35Pc1zSFB5DM4CAr2jTgl6195IlCSZXy+l6ocnMnY3qeidLyCjhIpzIzGuk+P0=
+	t=1726056919; cv=none; b=ByWauWxvLL5E388CA4uWmR1AvimqOtqQdTDZg5ABH4A3KR4qLlwdf3iPb0Lh65KiPEKBXc9i3R3L87IHSrIAc34O8YbzySe5SWp3+DSLPT4qhE7cmg2ArQTX17Frutfl2/skKivXM8x4Yhp1WOro0MOqj1ivzNUA1EHNc3+86DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056927; c=relaxed/simple;
-	bh=uvBoEJkZPMzyJY7fNpBdAjA0QoUIlWc+SNmkMyLKgLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PgiZbkFMY3al3ZkWNfOiMk/94pFbJnhnKgkVapeWM+WJWUGVTK32VWBTsQuGZS/dD/n1T1cEHguPBj1gZxh80yQ1of+2BEv/YO5fm0k0lIn+Ur0L/tFQPfTHQ1B1z7I9rer/Xg5a3EbNQeG4JdhRQJLDu1fScIXzI+v22FtWxUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=nl6gX6a8; arc=none smtp.client-ip=17.57.155.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726056924;
-	bh=mJlRX5g2zaG0MjZJ0FgGPU46Ka9U2vJBRMtqv60HUcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=nl6gX6a8Or3CYv+xGVRogzvx62ADgQCxshMMOyl+F7R5zWIMMc61zC9UcJqmxmoH0
-	 7bZJsNJ94N3tjX+zcHiBeJmG3fAQHs6t57pxk2y/zss/tzGtZR3eF0a78g5Bo6hEdh
-	 uJdmlxQxHfSvHYm1CDV2E/TVqz1HA7LRED85xr1IR1r5ROhi11GA+UQJj4nSR/HMCJ
-	 5Z4hmaPiOYyzsK8d3SvdsB+gezQa4pOO/tLUiOCxB0sRvMP8elO7j43vyycU7TW7It
-	 4q17nVQgZacy8dACvRCSbh80uMYnS/Qkc36uceYOmplUrrNptIC8KSBdWFZUj6oZP6
-	 5NjbzjJVKnq1Q==
-Received: from [192.168.1.26] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01071502.me.com (Postfix) with ESMTPSA id D215666803FE;
-	Wed, 11 Sep 2024 12:15:16 +0000 (UTC)
-Message-ID: <11576596-f0e4-4e88-a200-ed22b86d5974@icloud.com>
-Date: Wed, 11 Sep 2024 20:14:48 +0800
+	s=arc-20240116; t=1726056919; c=relaxed/simple;
+	bh=0bDf8RZWSXS8lmxyCpGBe1Jk8Eaw6bPgGk3l0o6yPzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2oicgj41ygojbjYdBRe133m2DVSiLGcZ3hRTubdhPtRg7nJaGylo0QCmh4mKncngiDy3TMC+xpOTrXi4OwVH9ve/rEaIJjpa60N2U+vg94L2Ylx0cnruqkywZ8PeYqjVP0jm26j3c6KcWVeyPv9NOUJogCm0Q4jZvBEcUVb4os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rgnrr0z6; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 34F7D4000C;
+	Wed, 11 Sep 2024 12:15:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726056908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PdhTEPQQk02wc+pOBZoyGtVA8GtF9vfPKRysImY6ZaU=;
+	b=Rgnrr0z6fQ4IXXpeAwlVOJw9IQV5uo3s7kGx7MGqe0XxySTghtLtsUwwyffeG5+kAfPN1w
+	XwYpwJ7F5C+qWnGh9gDEFQiNd+T3TGBQHG6uSThhdbgeZSwFbljyu8VylR9GhXVHHuurq/
+	DNuHyzKtx7pdxEp7gm8FkHcBN8sIqYkedYiuDyAeVp/qqsBAbuDXyRvnFI/tRM0NwOigeW
+	6K/BgHyLFKrBRuIXtOUCo28AMImZ+m022ddbE9jnnZspRRmyh8TwBWR+rBvFN9NBAx2vfU
+	vtSndq4owKg6nn750jcrjJpOs//P0ZNWSfD5mO7Q7unTt5D4QMOGt3tGJC1lKw==
+Date: Wed, 11 Sep 2024 14:15:05 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Maira Canal <mairacanal@riseup.net>
+Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run,
+	thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
+	seanpaul@google.com
+Subject: Re: [PATCH] MAINTAINERS: Add myself as VKMS Maintainer
+Message-ID: <ZuGJyfhkQe93jKlz@louis-chauvet-laptop>
+Mail-Followup-To: Maira Canal <mairacanal@riseup.net>,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run,
+	thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
+	seanpaul@google.com
+References: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
+ <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
- device_for_each_child()
-To: Dan Williams <dan.j.williams@intel.com>,
- quic_zijuhu <quic_zijuhu@quicinc.com>, Ira Weiny <ira.weiny@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Timur Tabi <timur@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
- <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
- <2024090531-mustang-scheming-3066@gregkh>
- <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
- <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
- <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
- <e7e6ea66-bcfe-4af4-9f82-ae39fef1a976@icloud.com>
- <66e06d66ca21b_3264629448@dwillia2-xfh.jf.intel.com.notmuch>
- <66e08f9beb6a2_326462945d@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <66e08f9beb6a2_326462945d@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: UC_ONF6QW8nNb7s75RrcWy0ShHB2d9R8
-X-Proofpoint-GUID: UC_ONF6QW8nNb7s75RrcWy0ShHB2d9R8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_12,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 spamscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0 phishscore=0
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2409110092
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 2024/9/11 02:27, Dan Williams wrote:
-> Dan Williams wrote:
-> [..]
->> So, while regionB would be the next decoder to allocate after regionC is
->> torn down, it is not a free decoder while decoderC and regionC have not been
->> reclaimed.
+Le 10/09/24 - 15:57, Maira Canal a écrit :
+> On 9/10/24 12:10, Louis Chauvet wrote:
+> > I've been actively working on VKMS to provide new features and
+> > participated in reviews and testing. To help Maìra with her work, add
+> > myself as co-maintainer of VKMS.
+> > 
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > 
-> The "simple" conversion is bug compatible with the current
-> implementation, but here's a path to both constify the
-> device_find_child() argument, *and* prevent unwanted allocations by
-> allocating decoders precisely by id.  Something like this, it passes a
-> quick unit test run:
+> Acked-by: Maíra Canal <mairacanal@riseup.net>
 > 
+> Please, check the procedures to apply for commit rights in drm-misc and
+> apply it. This way you will be able to commit your patches.
 
-sounds good.
+Thanks for your support!
 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 1d5007e3795a..749a281819b4 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -1750,7 +1750,8 @@ static int cxl_decoder_init(struct cxl_port *port, struct cxl_decoder *cxld)
->  	struct device *dev;
->  	int rc;
->  
-> -	rc = ida_alloc(&port->decoder_ida, GFP_KERNEL);
-> +	rc = ida_alloc_max(&port->decoder_ida, CXL_DECODER_NR_MAX - 1,
-> +			   GFP_KERNEL);
->  	if (rc < 0)
->  		return rc;
->  
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 21ad5f242875..1f7b3a9ebfa3 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -794,26 +794,16 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
->  	return rc;
->  }
->  
-> -static int match_free_decoder(struct device *dev, void *data)
-> +static int match_decoder_id(struct device *dev, void *data)
->  {
->  	struct cxl_decoder *cxld;
-> -	int *id = data;
-> +	int id = *(int *) data;
->  
->  	if (!is_switch_decoder(dev))
->  		return 0;
->  
->  	cxld = to_cxl_decoder(dev);
-> -
-> -	/* enforce ordered allocation */
-> -	if (cxld->id != *id)
-> -		return 0;
-> -
-> -	if (!cxld->region)
-> -		return 1;
-> -
-> -	(*id)++;
-> -
-> -	return 0;
-> +	return cxld->id == id;
->  }
->  
->  static int match_auto_decoder(struct device *dev, void *data)
-> @@ -840,16 +830,29 @@ cxl_region_find_decoder(struct cxl_port *port,
->  			struct cxl_region *cxlr)
->  {
->  	struct device *dev;
-> -	int id = 0;
-> -
->  	if (port == cxled_to_port(cxled))
->  		return &cxled->cxld;
->  
->  	if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags))
->  		dev = device_find_child(&port->dev, &cxlr->params,
->  					match_auto_decoder);
-> -	else
-> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
-> +	else {
-> +		int id, last;
-> +
-> +		/*
-> +		 * Find next available decoder, but fail new decoder
-> +		 * allocations if out-of-order region destruction has
-> +		 * occurred
-> +		 */
-> +		id = find_first_zero_bit(port->decoder_alloc,
-> +					 CXL_DECODER_NR_MAX);
-> +		last = find_last_bit(port->decoder_alloc, CXL_DECODER_NR_MAX);
-> +
-> +		if (id >= CXL_DECODER_NR_MAX ||
-> +		    (last < CXL_DECODER_NR_MAX && id != last + 1))
-> +			return NULL;
+I just checked the rules to become a commiter, and it requires at least 10 
+non-trivial patches, so I can't apply right now.
 
-Above finding logic seems wrong.
-what about below one ?
+Few months ago, you seemed interested in merging few patchs from [1] ([2] 
+is the last iteration and can be applied on drm-misc/drm-misc-next, and 
+I just ran few igt tests, they pass), can you do it so I can apply to be a 
+commiter? Thanks a lot!
 
- last = find_last_bit(port->decoder_alloc, CXL_DECODER_NR_MAX);
+[1]: https://lore.kernel.org/all/c83255f4-745e-43e6-98e0-2e89c31d569a@igalia.com/
+[2]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/ 
 
- if (last >= CXL_DECODER_NR_MAX)
-    id = 0;
- else if (last + 1 < CXL_DECODER_NR_MAX)
-    id = last + 1;
- else
-    return NULL;
-
-> +		dev = device_find_child(&port->dev, &id, match_decoder_id);
-> +	}
->  	if (!dev)
->  		return NULL;
->  	/*
-> @@ -943,6 +946,9 @@ static void cxl_rr_free_decoder(struct cxl_region_ref *cxl_rr)
->  
->  	dev_WARN_ONCE(&cxlr->dev, cxld->region != cxlr, "region mismatch\n");
->  	if (cxld->region == cxlr) {
-> +		struct cxl_port *port = to_cxl_port(cxld->dev.parent);
-> +
-> +		clear_bit(cxld->id, port->decoder_alloc);
->  		cxld->region = NULL;
->  		put_device(&cxlr->dev);
->  	}
-> @@ -977,6 +983,7 @@ static int cxl_rr_ep_add(struct cxl_region_ref *cxl_rr,
->  	cxl_rr->nr_eps++;
->  
->  	if (!cxld->region) {
-> +		set_bit(cxld->id, port->decoder_alloc);
->  		cxld->region = cxlr;
->  		get_device(&cxlr->dev);
->  	}
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 9afb407d438f..750cd027d0b0 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -578,6 +578,9 @@ struct cxl_dax_region {
->  	struct range hpa_range;
->  };
->  
-> +/* Max as of CXL 3.1 (8.2.4.20.1 CXL HDM Decoder Capability Register) */
-> +#define CXL_DECODER_NR_MAX 32
-> +
->  /**
->   * struct cxl_port - logical collection of upstream port devices and
->   *		     downstream port devices to construct a CXL memory
-> @@ -591,6 +594,7 @@ struct cxl_dax_region {
->   * @regions: cxl_region_ref instances, regions mapped by this port
->   * @parent_dport: dport that points to this port in the parent
->   * @decoder_ida: allocator for decoder ids
-> + * @decoder_alloc: decoder busy/free (@cxld->region set) bitmap
->   * @reg_map: component and ras register mapping parameters
->   * @nr_dports: number of entries in @dports
->   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
-> @@ -611,6 +615,7 @@ struct cxl_port {
->  	struct xarray regions;
->  	struct cxl_dport *parent_dport;
->  	struct ida decoder_ida;
-> +	DECLARE_BITMAP(decoder_alloc, CXL_DECODER_NR_MAX);
->  	struct cxl_register_map reg_map;
->  	int nr_dports;
->  	int hdm_end;
-
+> Thanks for volunteering!
+> 
+> Best Regards,
+> - Maíra
+> 
+> > ---
+> > Hi everyone,
+> > 
+> > This series [1] has been waiting for a while now, it was proposed first in
+> > February. The first iterations had few reactions (thanks to Arthur, Pekka,
+> > Maìra, ...), but since v8 (in May) no major issues were reported, Maìra
+> > seemed satisfied, and only minor cosmetic changes were reported. Two other
+> > series ([2] and [3]), that I submitted first in May, did not have receive
+> > any reactions.
+> > 
+> > In addition, there is also some significant addition to VKMS being
+> > proposed, such as ConfigFS support, and without a clear maintainer having
+> > the time to review and approve these changes, these changes have very
+> > little changes to get in.
+> > 
+> > VKMS is not a fundamental driver for "normal" Linux users, but I had some
+> > feedback from userspace developpers that VKMS could be a very good testing
+> > tool if only it had more features (I think P0xx formats were asked to
+> > test HDR for example). This could also help to detect issues in DRM core
+> > by emulating a wide range of configurations.
+> > 
+> > I believe the only active maintainer is Maìra, but as she's mentioned before,
+> > she doesn't have much time to work on VKMS. So, I'd like to volunteer as a
+> > maintainer. I have plenty of time to dedicate to VKMS.
+> > 
+> > I hope I've gained enough understanding of VKMS to be helful with this role.
+> > I am eager to move forward and improve this subsystem. I've also talked to Sean
+> > about this, and he agrees that it would be good if I could commit code to
+> > drm-misc.
+> > 
+> > [1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/
+> > [2]: https://lore.kernel.org/all/20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com/
+> > [3]: https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
+> > ---
+> >   MAINTAINERS | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 10430778c998b57944c1a6c5f07d676127e47faa..62f10356e11ab7fa9c8f79ba63b335eb6580d0a8 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -7340,6 +7340,7 @@ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+> >   M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> >   M:	Melissa Wen <melissa.srw@gmail.com>
+> >   M:	Maíra Canal <mairacanal@riseup.net>
+> > +M:	Louis Chauvet <louis.chauvet@bootlin.com>
+> >   R:	Haneen Mohammed <hamohammed.sa@gmail.com>
+> >   R:	Daniel Vetter <daniel@ffwll.ch>
+> >   L:	dri-devel@lists.freedesktop.org
+> > 
+> > ---
+> > base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+> > change-id: 20240910-vkms-maintainer-7b3d2210cc1b
+> > 
+> > Best regards,
 
