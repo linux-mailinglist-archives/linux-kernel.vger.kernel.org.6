@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-325592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E143A975BD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:35:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AF9975BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281671C21F1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:35:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12ADB2151E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AE914A61B;
-	Wed, 11 Sep 2024 20:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="kyD3opri"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDD21BB69A;
-	Wed, 11 Sep 2024 20:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2692214D6E9;
+	Wed, 11 Sep 2024 20:34:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491D613B284;
+	Wed, 11 Sep 2024 20:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726086880; cv=none; b=EfriqOWEGa940Yvtf/FJG1DKKi0k+ewpmJiwVC5AHtdqmDb2Cbj+DQshyYkYUKkTjK2bW9m9zgN6Kh5sykWdPV3PsPhY9b40XqQsuhzwEH2z67DbYsdai1lqG6XJAmPVOx5rhIclPFV1Zy8Gdu4fnZjsejL+IdbRRIiGqV57Sng=
+	t=1726086873; cv=none; b=tF7P7i1ZNLemDfrQ8qd1j88o4ZCfkWelh/CxNUOWzimHJhmzNWnxcJV/1PiE22K3bdefevNGiWfnNHgN/C8Je4+pULF98TTUnfqx+RzAhKljIAyKARA5eJuorDoFAhYQW68wHPQy6b4pcOPyQxqEMYgI+A3nDnJisjEdzBkvA0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726086880; c=relaxed/simple;
-	bh=gEudtiPCzCxVqopBXaUE/SMC6Te12ig5VrFW1mJA2L0=;
+	s=arc-20240116; t=1726086873; c=relaxed/simple;
+	bh=VOxBUeeLidkTRUpcglXaVU1jliuf+MIXQC9LD2HePFQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWzA4D82OK6UISPOMTP0CWniuWtaIzr1Hn4O6OP/mzM9kxWTsKrW5m4csjPPf1Xj1uDWaEv5fJWGl/p/adSDoWFlLizZJeeq9q1deFdYnON2vZAnHMpZlZDmrNTDDL/tyqZb7YabD7n1IrejpekAVHnEqDtb2G0lmoLabGeJp8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=kyD3opri; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 7A4CC88A0D;
-	Wed, 11 Sep 2024 22:34:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1726086876;
-	bh=Ok+BUDNrfexcljnvB4T1qmpytCr6OBWgfdYb5mlMJSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kyD3opri7Bs+bmNEaHbYZKs6HiNYTJNVNJehYTgQIoTnR4//QQ2hiznLOmkgZWzc5
-	 FX5wurs8IWh0ByqSbp1GmGLmqRTqr4xCSQ9ZyuSjUsSCga0f27mL3UzBDTW6BfXSVR
-	 UEDw2LIc8IuMVVBj7pvaaFiv3+qp21DMnrxJoh+LFoY1pmk//lwT7CRaY2STIoSDMY
-	 FyzbLlY7rkdzLwbA7e7Fcl+YVWNdFobpZk20Mef72rSOoN5XlEITke61iZtj53z1IM
-	 0thot4wtoK7PEn2QOGCn4yzWjmJRYT5bvv6R3AjI+1tmXODSZtCw4NseKFV0mkP/SP
-	 ctqlqCsrQrkYw==
-Message-ID: <40ecdbb2-8470-4e33-8a74-ccae6532174a@denx.de>
-Date: Wed, 11 Sep 2024 22:31:40 +0200
+	 In-Reply-To:Content-Type; b=iEVv/Qq5U4PGnfPBWugs3ExTLCrAp4kid3hM57X9zJHP0ltkHRmrzeecGGOMaQCLc8LQIXYBOk0OupmjWp5uXZymtf2oTCunyBvUYqhgNaxeeGjD27xZ4XVd6+puqFaeqtPPbI4n0J7c/Hes7Vf67Ob5t8aMV1A7cEwDIE8CFiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCD9D1007;
+	Wed, 11 Sep 2024 13:34:53 -0700 (PDT)
+Received: from [10.57.50.223] (unknown [10.57.50.223])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C8713F66E;
+	Wed, 11 Sep 2024 13:34:21 -0700 (PDT)
+Message-ID: <6e4a4605-f6c5-4948-ac38-c4ddf4990754@arm.com>
+Date: Wed, 11 Sep 2024 21:34:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,85 +41,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] pwm: imx27: Add optional 32k clock for pwm in
- i.MX8QXP MIPI subsystem
-To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, pratikmanvar09@gmail.com,
- francesco@dolcini.it, Liu Ying <victor.liu@nxp.com>
-References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
- <20240910-pwm-v3-3-fbb047896618@nxp.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
+ <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240728184551.42133-1-qyousef@layalina.io>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240910-pwm-v3-3-fbb047896618@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240728184551.42133-1-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 9/10/24 9:07 PM, Frank Li wrote:
-> From: Liu Ying <victor.liu@nxp.com>
+On 7/28/24 19:45, Qais Yousef wrote:
+> Improve the interaction with cpufreq governors by making the
+> cpufreq_update_util() calls more intentional.
 > 
-> PWM in i.MX8QXP MIPI subsystem needs the clock '32k'. Use it if the DTS
-> provides that.
+> At the moment we send them when load is updated for CFS, bandwidth for
+> DL and at enqueue/dequeue for RT. But this can lead to too many updates
+> sent in a short period of time and potentially be ignored at a critical
+> moment due to the rate_limit_us in schedutil.
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v2 to v3
-> - use buck clk API
+> For example, simultaneous task enqueue on the CPU where 2nd task is
+> bigger and requires higher freq. The trigger to cpufreq_update_util() by
+> the first task will lead to dropping the 2nd request until tick. Or
+> another CPU in the same policy triggers a freq update shortly after.
 > 
-> Change from v1 to v2
-> - remove if check for clk
-> - use dev_err_probe
-> - remove int val
-> ---
->   drivers/pwm/pwm-imx27.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
+> Updates at enqueue for RT are not strictly required. Though they do help
+> to reduce the delay for switching the frequency and the potential
+> observation of lower frequency during this delay. But current logic
+> doesn't intentionally (at least to my understanding) try to speed up the
+> request.
 > 
-> diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
-> index ce9208540f1b8..2a9fba6f9d0a8 100644
-> --- a/drivers/pwm/pwm-imx27.c
-> +++ b/drivers/pwm/pwm-imx27.c
-> @@ -81,10 +81,11 @@
->   #define MX3_PWMPR_MAX			0xfffe
->   
->   static const char * const pwm_imx27_clks[] = {"ipg", "per"};
-> +static const char * const pwm_imx27_opt_clks[] = {"32k"};
->   #define PWM_IMX27_PER			1
->   
->   struct pwm_imx27_chip {
-> -	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks)];
-> +	struct clk_bulk_data clks[ARRAY_SIZE(pwm_imx27_clks) + ARRAY_SIZE(pwm_imx27_opt_clks)];
->   	int clks_cnt;
->   	void __iomem	*mmio_base;
->   
-> @@ -371,6 +372,16 @@ static int pwm_imx27_probe(struct platform_device *pdev)
->   		return dev_err_probe(&pdev->dev, ret,
->   				     "getting clocks failed\n");
->   
-> +	for (i = 0; i < ARRAY_SIZE(pwm_imx27_opt_clks); i++)
-> +		imx->clks[i + imx->clks_cnt].id = pwm_imx27_opt_clks[i];
-> +
-> +	ret = devm_clk_bulk_get_optional(&pdev->dev, ARRAY_SIZE(pwm_imx27_opt_clks),
-> +					 imx->clks + imx->clks_cnt);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "get optional clocks failed\n");
-> +
-> +	imx->clks_cnt += ARRAY_SIZE(pwm_imx27_opt_clks);
-> +
+> To help reduce the amount of cpufreq updates and make them more
+> purposeful, consolidate them into these locations:
+> 
+> 1. context_switch()
+> 2. task_tick_fair()
+> 3. sched_balance_update_blocked_averages()
+> 4. on sched_setscheduler() syscall that changes policy or uclamp values
+> 5. on check_preempt_wakeup_fair() if wakeup preemption failed
+> 6. on __add_running_bw() to guarantee DL bandwidth requirements.
+> 
 
-This will succeed even if the regular PWM clock are invalid or not 
-present, wouldn't it? I don't think removing that protection is an 
-improvement.
-
-Also, it is not clear whether the 32kHz clock are really supplying the 
-PWM, see my comment on 1/3 in this series.
+Actually now reading that code again reminded me, there is another
+iowait boost change for intel_pstate.
+intel_pstate has either intel_pstate_update_util() or
+intel_pstate_update_util_hwp().
+Both have
+	if (smp_processor_id() != cpu->cpu)
+		return;
+Now since we move that update from enqueue to context_switch() that will
+always be false.
+I don't think that was deliberate but rather to simplify intel_pstate
+synchronization, although !mcq device IO won't be boosted which you
+could argue is good.
+Just wanted to mention that, doesn't have to be a bad, but surely some
+behavior change.
 
