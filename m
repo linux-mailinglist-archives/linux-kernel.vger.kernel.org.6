@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-325514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0B0975AA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3DA975AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7F1F23453
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071DD1F23F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412641B5804;
-	Wed, 11 Sep 2024 19:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1A1B4C46;
+	Wed, 11 Sep 2024 19:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOckHCbl"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZEob9S6l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4BD762EB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970329406
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726081301; cv=none; b=J/pnV8FQ1O0yJeccW2UUZ5R5eXx0m42QZNVYXKR2FRnluv52bq1V2gH4j/o3qnw/3kdfd1pYSXoFzen3KzVXIAAuBfVuK+S75gzj0jWeJulOfFBx8vBagnWNW94sZoDINkGMKByRLkgq33MfYB0Ak+nB1XsOd0rR2/CTmWiZ0yU=
+	t=1726081340; cv=none; b=FwhGpWi5kcSV4hKu8G7m2L7R1O4CAp5NlYgNd541gqPnQ+BX0zunbcpB9RXO+dPxjI5M6Ss6o3qZEFY8yihjwiLzyrS7xdv1H14RfrcCP2Ezg9fzUHU6GzFGQhar87uKbYbm2fzoXkODSOj+NvdQmuXKfmL8jicelIB8sSB07qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726081301; c=relaxed/simple;
-	bh=kH3LuToOHa6db3WM2nZY+JYRpzIzkBdEitM5B9H22Rk=;
+	s=arc-20240116; t=1726081340; c=relaxed/simple;
+	bh=OqRWlctVLRA+Uc0IjBjKd06kZ/Gl2JOSWteQyBo8hS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mI22kqeMvnbEn/PH1LWPRTSIlEAnJ7zcBUa26Le7GdSU9j06mJD2FJtczaXf8SJSkaEJZgV54CstcDfApumjqmhJ4b+qtvSNQQtdZRHcOkriIRJCJRfi+b4j4460lIbOZlxrtEhzD5opEEEPOvmDjeMWUxHUTsYXdZnOvqiaLrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GOckHCbl; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365928acd0so165402e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726081298; x=1726686098; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWLfBvU9thbiDwhY0G6uXsn1HToOTkJx1+aOpLmvWp0=;
-        b=GOckHCblGkRklTosyMy3byELv9kFRRM6na76FI4BpVDmiei8psfuVB61wvMjpd5Ixy
-         E5/g8bO3UMpt2VHClrWBaC0b8Z5QH/jaGD68rviwsZ7DxUmo0lMCSQdy1t1Lvzl5J3Vf
-         l4NDEGftOFLFeLOxZYnKB9pk0Tc9XUSBEr7W8y/+RcVGx4Ei/SXZo/SGyDNBBo8UVpJD
-         hYEizM70jlHleSHZMErKzaMfKxI2iG20n5VNg4n0TEI/n/bz1deBgbn+NTtntN42PkEQ
-         SXYW2f1kzSQwG9GldVkTZq+2zM7w79CBiIREJVfa6u+WEbCtQdUuVekYMdNJjwPT953I
-         ma5Q==
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgrwOjVVzW6IvM5prkc7AZ4hfCvvGrvcYubX97Y/EXxpyS4+7tovKuRDik8f2vZAFbDR/oLvsqKbvivX6d4hMcAhpX+EHYpeuHs6ADomGpe5VI22EFk3xSuhv44hM906N8/nrK+KPMz4PFzk7Z0gCpe9aEVAepMiMcHVK9Qi73M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZEob9S6l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726081337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e7bU+mVDP6egUv5mM9Pjy0JHa4eeEo68KAivXsZTIBo=;
+	b=ZEob9S6lm16Ltwkt8KGvgheKz7DAfzHprPpP4Yz7E9niT1XuBPKNttQSnGTvrx5nmePR+x
+	aHpDSSVhpiWB/ioLGoNmZsDSEMTzF1nRlBZtf0kOdKyHm/iDhTH+IEVZlHS0gJCvO1PlEe
+	zpWwHtrFcRnXLhObSa0UsXxBP4jxYV0=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-619-xq0FDl8bPT6m-LT3yPo1lg-1; Wed, 11 Sep 2024 15:02:15 -0400
+X-MC-Unique: xq0FDl8bPT6m-LT3yPo1lg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb6ed7f9dso579355e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:02:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726081298; x=1726686098;
+        d=1e100.net; s=20230601; t=1726081333; x=1726686133;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gWLfBvU9thbiDwhY0G6uXsn1HToOTkJx1+aOpLmvWp0=;
-        b=WhErs93RdPYmvRRRtSbrHXZ7uQdhPreXbyL+6ckZkFNlPZ8DBUDtoUlNVn/eLC6TlV
-         4OlyiIrwdJSxz15Cn5LfMx0yHOL1vDV93ZaMyrFDDIgmPIZFaXU2xNUudSTLlQVSm9H4
-         kD4PnCbQ6XfeyXAXMuw3gI9P4G/AJakrDcEjU4SteWf5qL3rf02koX3gtCFZJUGRmgsW
-         N9XaO93Ndoapm3hBiuiAuXY1kKQvb/jFRKX3/6XIyT5+b569r030XwzJ6DGCjCIx1On8
-         Xq1lyguR7sD1upz9RDC1+YxmRSfxX7dkqBT/P0xGHgAF0TpXNo8XiqGfiWpddsweO3fY
-         NBbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTJjkNZYTEBWaN8Yr2ExH4/2rg+dpk00kU6KDgfwh/FlCHkMV+OV8O3j+rdyBo/TCWV1QUM1B7sR+C+Tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw32u+flYdJPv28FZv2xCxcmZl6eT6caHAhIiRPE2Aw0efO5ZUe
-	/+TecouqjC31LY9ebumuMDy8npkZ+CaqKonS50ZF4nqdKNHSLRlb3IvAyOfEsMo=
-X-Google-Smtp-Source: AGHT+IGvUrY0NXLE2kfEi1SjtrIlfxaP29Ud499f9t88oQIMLSOo2+1mSb0m/gpMYrvrvoW7C3IPNQ==
-X-Received: by 2002:a05:6512:e99:b0:52e:9f6b:64 with SMTP id 2adb3069b0e04-53678fc2279mr203397e87.34.1726081296949;
-        Wed, 11 Sep 2024 12:01:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90c306sm1653668e87.245.2024.09.11.12.01.36
+        bh=e7bU+mVDP6egUv5mM9Pjy0JHa4eeEo68KAivXsZTIBo=;
+        b=a2AiGO6X6hhCtduRd3kNw7HxBbQCu1nSkMaDxxVoVQ1scN2jX38bdMDPekk2StWBqW
+         2miivv/pJzUiB9nnV328JhQRscsHj0VXNAtpl4GyNPh4MiJa4cOoyV3vZ0WPIVW0au1X
+         LbGmVUvpBQ5jfuNjyHHCzJ6LgGfFsBOUASTJJBj9KSZrkh41PDmaTiL/+rH1FVWOs2HB
+         fN/pLMM3WtW6i5wehqfAFP6/P1lEqhkpjO+B7aWC5TTYS5mSZ//GB5JeuOljDflxJyBy
+         BK6y/GRriaFPOFvODm8S0aInKXXO0hqsMSYZ/vxPkQ61z3OBI6q2/s2r0RaupSl66C6f
+         0TxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOLxrUXFp6acr3+H8K7OM9x2GLOwapsag5dDm7DxZLcno04VaxCU9NJrft5bFa1bMZu3UZByVmgc7n5Pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYPbIAugnkyzOyIRDX7UYY0g9z9o7YCgG2J63arB/2aZ6k746F
+	UTuoK54IWEdpkJlzu2zD6SzMrggq49CkQ9zXIRpvtq3OEXo+Hk0gjLJMX09gMbx73oKOKz5i15e
+	MApfdhZXxHILq1fDXlzNW7UPAtLOdKDlcnUxXmqXl04ybVBXGkGnWSjGF/BHWRw==
+X-Received: by 2002:a05:600c:3551:b0:42c:af5f:c00c with SMTP id 5b1f17b1804b1-42cdb54b242mr4969185e9.21.1726081333302;
+        Wed, 11 Sep 2024 12:02:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4ivWpS+X29Q7R9vEaleEKcy9+v90NgsupdcOLk9j2tmo8P8MX/7b3+Rk8xJX92zcVMmn5kw==
+X-Received: by 2002:a05:600c:3551:b0:42c:af5f:c00c with SMTP id 5b1f17b1804b1-42cdb54b242mr4968785e9.21.1726081332434;
+        Wed, 11 Sep 2024 12:02:12 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:552:d9bb:9070:1995:8d82:f57f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5a66475sm120162365e9.44.2024.09.11.12.02.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 12:01:36 -0700 (PDT)
-Date: Wed, 11 Sep 2024 22:01:34 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] phy: qcom: qmp-usb: fix NULL-deref on runtime suspend
-Message-ID: <zvy3mvgvkhrey3qcj4m3mgfs7apinsr6t2zo5afjjxpijhs7ig@tzv7fe47bodk>
-References: <20240911115253.10920-1-johan+linaro@kernel.org>
+        Wed, 11 Sep 2024 12:02:11 -0700 (PDT)
+Date: Wed, 11 Sep 2024 15:02:04 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mike Christie <michael.christie@oracle.com>
+Cc: Cindy Lu <lulu@redhat.com>, jasowang@redhat.com,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Subject: Re: [RESEND PATCH v1 0/7]vhost: Add support of kthread API
+Message-ID: <20240911150013-mutt-send-email-mst@kernel.org>
+References: <20240909020138.1245873-1-lulu@redhat.com>
+ <20240910032825-mutt-send-email-mst@kernel.org>
+ <85fb3a90-fbf4-4925-8b53-197f3faa574d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,22 +90,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911115253.10920-1-johan+linaro@kernel.org>
+In-Reply-To: <85fb3a90-fbf4-4925-8b53-197f3faa574d@oracle.com>
 
-On Wed, Sep 11, 2024 at 01:52:49PM GMT, Johan Hovold wrote:
-> When working on suspend support for Qualcomm platforms like x1e80100, I
-> ran into a NULL-pointer dereference in one of the QMP drivers. Turns out
-> this issue has since been reproduced in two more drivers.
-> 
-> Johan
-
-For the series:
+On Wed, Sep 11, 2024 at 11:20:30AM -0500, Mike Christie wrote:
+> If people are ok with something similar as in this patchset where
+> we have both vhost_tasks and kthreads, then I can send something.
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+It would be better, as you say, to modify the vhost_task code so it can
+emulate the kthread behavior. However, given that apparently some users
+are unhappy, what you describe would be a good stopgap solution
+until we have that.
 
+The main difficulty seems to be to describe what the
+behaviour is, exactly, so userspace can make informed
+decisions on what to use.
 
 -- 
-With best wishes
-Dmitry
+MST
+
 
