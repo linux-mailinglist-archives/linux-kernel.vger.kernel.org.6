@@ -1,271 +1,137 @@
-Return-Path: <linux-kernel+bounces-324742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A6A975053
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:58:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3714D97504F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9921F2A203
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:58:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D35290260
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3F8186287;
-	Wed, 11 Sep 2024 10:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9B81547CF;
+	Wed, 11 Sep 2024 10:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/vzH32w"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmNE7nNr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA27185B4A;
-	Wed, 11 Sep 2024 10:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAD5185B67;
+	Wed, 11 Sep 2024 10:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726052328; cv=none; b=XbBKNHw4pnuiKYJfverV6rE4FQ2qRLpgc/kQnvxa9TVk256Dm/9mWwuiw9nQw6atuGbKJs+K8RfpZ/cSLe5hKZZZKFqOPtzOFaokMmpuFG8z9ji3JweF3N8lPl1YwC23iK77crnbYiya/OjgoFIEMFhYsa4rzHJeLh5oEnKJWco=
+	t=1726052264; cv=none; b=deOEKL833xxUx8Ep5y5AnwJLAm6vGJIYBWDiKmMk34fqj9n/5ZS0TdiFMHBLb7UBWjHhXKaysG7HYt+LojDZ4tzKKjBDiKUEuc74Rws68HErGbAf/v8KKyY37o40UXwa0wcObvVhr4R6WzgJReCxfBRorPBkng5SR0sgCNLm3UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726052328; c=relaxed/simple;
-	bh=Pw98yjqyvgV0j0EI3KPYWSSdOG7a3DjJHciP2zL4naI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KjRNFL5be4auCtY1jxcMaT7DLEq3XdD3672bzZlm1uz5Jwae0jXxFc5C+lMbSzv7QxLOkZNpODQ8/SmEcVB+PJJq1MYobiYZALblS606FTAD1P6R9rcuzG+AhBEPQwVw1mr0Sp2OT/pFMj09bJ4HbS+kZFxKFL/03R7HfSQp+L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/vzH32w; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718e1ce7e84so3403619b3a.1;
-        Wed, 11 Sep 2024 03:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726052326; x=1726657126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y7Wq0ojhg4OlKZWObqNyEMqFiHsGaFxKZnwTSD+aecE=;
-        b=G/vzH32wl0y46zndg9qNbdlW+JzPrsHrvjHu5OQrgzs9OnA0Qk0/jUVmYkEvQDBtAh
-         bFTu+CafoXsCqGuwWTh3up0Z1ODWFUNVxkaaIRYjzFuHwB8vD3fApkf2bX4GgPWR66l5
-         XGUzv+anQBH6Neqg3pBmErFY4hJToGoc9KyuGa8uFY3RySUONYbcn2DiMBtFAMUSde+f
-         pPPV1Y+c5l0peS7fUiiywVLlxSIq/OdLMamABf4W12SNANA4DT8Ho9B9eAjG++fUSBZe
-         UxjtSFe0Y65jEK7Eg9rDHqOz+JxCOrUQM46ZjVkej/+H5j0c4z4nrMvp/SUAC0NIDlDY
-         vVrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726052326; x=1726657126;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y7Wq0ojhg4OlKZWObqNyEMqFiHsGaFxKZnwTSD+aecE=;
-        b=e7H0/HqLQJ/N22Z+tYv8SgasUAX2lHdqH7kanBCNdlZmyATqmK+jwrx5VdllG9PIRI
-         lrh01NgQJToxMRo77Wv59L4nMgclOQf6wCH/z0dYzHCsDMyt4hp/3Sl4UBJQ8WTMfx1a
-         LAedtPd7KD0osRJmbnC/Cyd6BA/f1UIyoKIUTLUfSOLhVx7iVAnjlAODV8nbJ6VQkGJt
-         NFYWdJCH68CxfqRHgGoN+TXGbYrtQumJ/wt4DdJ47u/NkL46Iq06u3HS7AtW6DpsveNy
-         s3l8IOvL4l1jARG4lfBy3bHlE7Hjl2y2pl9A6jldzfB+gMtthQqlsI2tVI/HoxmCNmjw
-         /ePA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6ObIAuRw7cNPWYUvIEF4JtJzdmBu3DzjJyTODqFRJSKTdi+Do1HVsXDGC46a9v4iVjpGbtKrszC4Y+09v/MVkLTv@vger.kernel.org, AJvYcCVz8STzYUbv1J59SRLygykQKqLCiATjmVa5ALaA6LFJCyLLMVB74wmJcjMJyhJgYPl/wGs7gqKYZ2B05QU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx45i5GspFPjHq5D09GZskab+eElR5nvhW00OSrxccrGhn4/KKm
-	ZC+btI4Ks2ACKozBmP7viteCnCX9KaIQoRMXC8UCV1c8vimolPaj
-X-Google-Smtp-Source: AGHT+IFXRIkDYXeweCuIJfGLn2HYm5191miDB4YjHLUhLcLcNRniPgRSA5iz617KUqpt/gEh00OviQ==
-X-Received: by 2002:a05:6a00:181e:b0:717:9154:b5d6 with SMTP id d2e1a72fcca58-718d5ee032emr20084562b3a.22.1726052326133;
-        Wed, 11 Sep 2024 03:58:46 -0700 (PDT)
-Received: from localhost.localdomain (1-171-31-75.dynamic-ip.hinet.net. [1.171.31.75])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d8242b3d13sm7158307a12.52.2024.09.11.03.58.42
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 11 Sep 2024 03:58:45 -0700 (PDT)
-From: Andy Chiu <andybnac@gmail.com>
-To: bjorn@kernel.org
-Cc: alexghiti@rivosinc.com,
-	andy.chiu@sifive.com,
-	aou@eecs.berkeley.edu,
-	justinstitt@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	mark.rutland@arm.com,
-	mhiramat@kernel.org,
-	morbo@google.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	palmer@dabbelt.com,
-	palmer@rivosinc.com,
-	paul.walmsley@sifive.com,
-	puranjay@kernel.org,
-	rostedt@goodmis.org,
-	zong.li@sifive.com,
-	Andy Chiu <andybnac@gmail.com>,
-	yongxuan.wang@sifive.com
-Subject: Re: [PATCH v2 3/6] riscv: ftrace: prepare ftrace for atomic code patching
-Date: Wed, 11 Sep 2024 18:57:17 +0800
-Message-Id: <ZuFteQ3t8K4h2-kJ@Andys-MacBook-Air.local>
-X-Mailer: git-send-email 2.39.3 (Apple Git-145)
-In-Reply-To: <87sev78dnz.fsf@all.your.base.are.belong.to.us>
-References: <87sev78dnz.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1726052264; c=relaxed/simple;
+	bh=KNrTDepDPuGxtTmBbgCKo0Gtxg+JrP7T4JGklJVrrOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWP8gR4IT7aQlXPcUmbIjhbrTMLNIsMhfNzDAUZiKOTxeS/SeNlCnUx1E8tTswLnxd4ImMlSI4g0q2iUT4eMQmoOIkLe7+e0IWt8nZ6a89MOeb4gwY4BipE5RfLjxAhWSNUFWYb+Ree0EEgLQXxl6aIBanFQG6QqUmE9z5wpV60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmNE7nNr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBF7C4CEC5;
+	Wed, 11 Sep 2024 10:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726052263;
+	bh=KNrTDepDPuGxtTmBbgCKo0Gtxg+JrP7T4JGklJVrrOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PmNE7nNrQZr1i8uI6cLz5m+pKTG2pNQh1ygtOLlaWJxKqBhz0ii0bv6RLnD1uC/FP
+	 gqE3zUJUWqpwn1Mf1L6w8Gk3pfd5kzNdxyF7XudoPiIhlWrJ1jNlJvRBKgTLPd1c0H
+	 TCuSiXDuhePum7noQxWMzK/FPzR1jfFy44q45bxsRM+MUl5t+tBlxk+RUXV7uuwUgL
+	 p1Gfm+MtA9ihcuDxSVQsZC6R+F/2puuN5sPxPnLKEkwdqv7ewxUg8+SRLUvgVaEvaQ
+	 /FAoaA6yHtoH+OOOC/gn6CQ0VVFLlxcn+ax/Sj1TSLv7tjxSJCrbq+d90swYMrT37s
+	 efMijMQK3C/3A==
+Date: Wed, 11 Sep 2024 12:57:39 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tommy Huang <tommy_huang@aspeedtech.com>
+Cc: brendan.higgins@linux.dev, benh@kernel.crashing.org, joel@jms.id.au, 
+	andrew@codeconstruct.com.au, wsa@kernel.org, linux-i2c@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v3] i2c: aspeed: Update the stop sw state when the bus
+ recovery occurs
+Message-ID: <yoqhvha64bir33hcq6tlcehkusxu2b45w3ut4pzmvrot6bl63a@y3xn2xdespcu>
+References: <20240911093951.1674824-1-tommy_huang@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911093951.1674824-1-tommy_huang@aspeedtech.com>
 
-On Wed, Aug 14, 2024 at 02:57:52PM +0200, Björn Töpel wrote:
-> Björn Töpel <bjorn@kernel.org> writes:
+Hi,
+
+On Wed, Sep 11, 2024 at 05:39:51PM GMT, Tommy Huang wrote:
+> When the i2c bus recovery occurs, driver will send i2c stop command
+> in the scl low condition. In this case the sw state will still keep
+> original situation. Under multi-master usage, i2c bus recovery will
+> be called when i2c transfer timeout occurs. Update the stop command
+> calling with aspeed_i2c_do_stop function to update master_state.
 > 
-> > Andy Chiu <andy.chiu@sifive.com> writes:
-> >
-> >> We use an AUIPC+JALR pair to jump into a ftrace trampoline. Since
-> >> instruction fetch can break down to 4 byte at a time, it is impossible
-> >> to update two instructions without a race. In order to mitigate it, we
-> >> initialize the patchable entry to AUIPC + NOP4. Then, the run-time code
-> >> patching can change NOP4 to JALR to eable/disable ftrcae from a
-> >                                       enable        ftrace
-> >
-> >> function. This limits the reach of each ftrace entry to +-2KB displacing
-> >> from ftrace_caller.
-> >>
-> >> Starting from the trampoline, we add a level of indirection for it to
-> >> reach ftrace caller target. Now, it loads the target address from a
-> >> memory location, then perform the jump. This enable the kernel to update
-> >> the target atomically.
-> >
-> > The +-2K limit is for direct calls, right?
-> >
-> > ...and this I would say breaks DIRECT_CALLS (which should be implemented
-> > using call_ops later)?
+> Fixes: f327c686d3ba ("i2c: aspeed: added driver for Aspeed I2C")
 > 
-> Thinking a bit more, and re-reading the series.
-> 
-> This series is good work, and it's a big improvement for DYNAMIC_FTRACE,
-> but
-> 
-> +int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
-> +{
-> +	unsigned long distance, orig_addr;
-> +
-> +	orig_addr = (unsigned long)&ftrace_caller;
-> +	distance = addr > orig_addr ? addr - orig_addr : orig_addr - addr;
-> +	if (distance > JALR_RANGE)
-> +		return -EINVAL;
-> +
-> +	return __ftrace_modify_call(rec->ip, addr, false);
-> +}
-> +
-> 
-> breaks WITH_DIRECT_CALLS. The direct trampoline will *never* be within
-> the JALR_RANGE.
 
+the blank line in between tags (Fixes and the rest) needs to be
+removed.
 
-Yes, it is hardly possible that a direct trampoline will be within the
-range.
+No worries, I will take care of it before merging.
 
-Recently I have been thinking some solutions to address the issue. One
-solution is replaying AUIPC at function entries. The idea has two sides.
-First, if we are returning back to the second instruction at trap return,
-then do sepc -= 4 so it executes the up-to-date AUIPC. The other side is
-to fire synchronous IPI that does remote fence.i at right timings to
-prevent concurrent executing on a mix of old and new instructions.
- 
-Consider replacing instructions at a function's patchable entry with the
-following sequence:
-
-Initial state:
---------------
-0: AUIPC
-4: JALR
-
-Step1:
-write(0, "J +8")
-fence w,w
-send sync local+remote fence.i
-------------------------
-0: J +8
-4: JALR
-
-Step2:
-write(4, "JALR'")
-fence w,w
-send sync local+remote fence.i
-------------------------
-0: J +8
-4: JALR'
-
-Step3:
-write(0, "AUIPC'")
-fence w,w
-send sync local+remote fence.i (to activate the call)
------------------------
-0: AUIPC'
-4: JALR'
-
-The following execution sequences are acceptable:
-- AUIPC, JALR
-- J +8, (skipping {JALR | JALR'})
-- AUIPC', JALR'
-
-And here are sequences that we want to prevent:
-- AUIPC', JALR
-- AUIPC, JALR'
-
-The local core should never execute the forbidden sequence.
-
-By listing all possible combinations of executing sequence on a remote
-core, we can find that the dangerous seqence is impossible to happen:
-
-let f be the fence.i at step 1, 2, 3. And let numbers be the location of
-code being executed. Mathematically, here are all combinations at a site
-happening on a remote core:
-
-fff04 -- updated seq
-ff0f4 -- impossible, would be ff0f04, updated seq
-ff04f -- impossible, would be ff08f, safe seq
-f0ff4 -- impossible, would be f0ff04, updated seq
-f0f4f -- impossible, would be f0f08f (safe), or f0f0f04 (updated)
-f04ff -- impossible, would be f08ff, safe seq
-0fff4 -- impossible, would be 0fff04, updated seq
-0ff4f -- impossible, would be 0ff08f (safe), or 0ff0f04 (updated)
-0f4ff -- impossible, would be 0f08ff (safe), 0f0f08f (safe), 0f0f0f04 (updated)
-04fff -- old seq
-
-After the 1st 'fence.i', remote cores should observe (J +8, JALR) or (J +8, JALR')
-After the 2nd 'fence.i', remote cores should observe (J +8, JALR') or (AUIPC', JALR')
-After the 3rd 'fence.i', remote cores should observe (AUIPC', JALR')
-
-Remote cores should never execute (AUIPC',JALR) or (AUIPC,JALR')
-
-To correctly implement the solution, the trap return code must match JALR
-and adjust sepc only for patchable function entries. This is undocumently
-possible because we use t0 as source and destination registers for JALR
-at function entries. Compiler never generates JALR that uses the same
-register pattern.
-
-Another solution is inspired by zcmt, and perhaps we can optimize it if
-the hardware does support zcmt. First, we allocate a page and divide it
-into two halves. The first half of the page are 255 x 8B destination
-addresses. Then, starting from offset 2056, the second half of the page
-is composed by a series of 2 x 4 Byte instructions:
-
-0:	ftrace_tramp_1
-8:	ftrace_tramp_2
-...
-2040:	ftrace_tramp_255
-2048:	ftrace_tramp_256 (not used when configured with 255 tramps)
-2056:
-ld	t1, -2048(t1)
-jr	t1
-ld	t1, -2048(t1)
-jr	t1
-...
-4088:
-ld	t1, -2048(t1)
-jr	t1
-4096:
-
-It is possible to expand to 511 trampolines by adding a page
-below, and making a load+jr sequence from +2040 offset.
-
-When the kernel boots, we direct AUIPCs at patchable entries to the page,
-and disable the call by setting the second instruction to NOP4. Then, we
-can effectively enable/disable/modify a call by setting only the
-instruction at JALR. It is possible to utilize most of the current patch
-set to achieve atomic patching. A missing part is to allocate and manage
-trampolines for ftrace users.
+Meantime, Brendan, Benjamin, Joel, any comment on this change?
 
 Thanks,
-Andy
+Andi
+
+> Cc: <stable@vger.kernel.org> # v4.13+
+> Signed-off-by: Tommy Huang <tommy_huang@aspeedtech.com>
+> ---
+>  drivers/i2c/busses/i2c-aspeed.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+> index ce8c4846b7fa..2a03a221e2dd 100644
+> --- a/drivers/i2c/busses/i2c-aspeed.c
+> +++ b/drivers/i2c/busses/i2c-aspeed.c
+> @@ -170,6 +170,13 @@ struct aspeed_i2c_bus {
+>  
+>  static int aspeed_i2c_reset(struct aspeed_i2c_bus *bus);
+>  
+> +/* precondition: bus.lock has been acquired. */
+> +static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus)
+> +{
+> +	bus->master_state = ASPEED_I2C_MASTER_STOP;
+> +	writel(ASPEED_I2CD_M_STOP_CMD, bus->base + ASPEED_I2C_CMD_REG);
+> +}
+> +
+>  static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
+>  {
+>  	unsigned long time_left, flags;
+> @@ -187,7 +194,7 @@ static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
+>  			command);
+>  
+>  		reinit_completion(&bus->cmd_complete);
+> -		writel(ASPEED_I2CD_M_STOP_CMD, bus->base + ASPEED_I2C_CMD_REG);
+> +		aspeed_i2c_do_stop(bus);
+>  		spin_unlock_irqrestore(&bus->lock, flags);
+>  
+>  		time_left = wait_for_completion_timeout(
+> @@ -390,13 +397,6 @@ static void aspeed_i2c_do_start(struct aspeed_i2c_bus *bus)
+>  	writel(command, bus->base + ASPEED_I2C_CMD_REG);
+>  }
+>  
+> -/* precondition: bus.lock has been acquired. */
+> -static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus)
+> -{
+> -	bus->master_state = ASPEED_I2C_MASTER_STOP;
+> -	writel(ASPEED_I2CD_M_STOP_CMD, bus->base + ASPEED_I2C_CMD_REG);
+> -}
+> -
+>  /* precondition: bus.lock has been acquired. */
+>  static void aspeed_i2c_next_msg_or_stop(struct aspeed_i2c_bus *bus)
+>  {
+> -- 
+> 2.25.1
+> 
 
