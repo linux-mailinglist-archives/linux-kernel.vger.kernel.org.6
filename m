@@ -1,133 +1,95 @@
-Return-Path: <linux-kernel+bounces-325618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1DB975C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D98F975C25
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E052831A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:58:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2401F23367
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E8714A096;
-	Wed, 11 Sep 2024 20:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82A314EC56;
+	Wed, 11 Sep 2024 21:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HO0dSFfS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwSaH4z5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F6A3D3B8;
-	Wed, 11 Sep 2024 20:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BBA5337F;
+	Wed, 11 Sep 2024 21:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726088297; cv=none; b=P4G+oHjfXsKgVC6mCgYh/ynNOio3/b+5mzsMUjdOPNV1Sn/D6CDda9NFqpnjzIkLGBQOMpjdDFsiSK9ROiHD0k4LHgDx7df0QLyB8Pqjma6ZyksYtxat7YmvDpA/f69LNseEU5wX7vdAp0CrrMkOrv93jG/bjZ5PbV/oNQDjMHI=
+	t=1726088564; cv=none; b=oOwFIaRHN1DVc10237TtdmCe0e5h9W2VhqwxZMJ1o2kcYf5/Gr165sgGHSIgjD7KbENVqMPMUUTCI6pO4amGPKFh3WWRNeEZpnUXpwjpUygnYlvI1qVPSwD9BqH+J0GW6mPmFCKD0GUkXwFb4ZxAklimROpvb9TvVMz7Be89imU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726088297; c=relaxed/simple;
-	bh=ifYxx9yM5OozO+q5D68dkhpbrsx2JgswURgb4jr2F6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IamlpphyMJVD28/fBnTHKnz+vjzJgSO3XjXRjGKYETObc2QpflDMMPjHWUM+srk6VJBf357a02lldkon039AbxSer3TJjsQv6zzMndLgV71oIvF/l0Bun38MGokCyqTdooImJ4U98P5PpH1WBGQwowYZQtlx3LQJZNtdNYgr7Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HO0dSFfS; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726088296; x=1757624296;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ifYxx9yM5OozO+q5D68dkhpbrsx2JgswURgb4jr2F6s=;
-  b=HO0dSFfS0s1q6GhikUODwxk7E3DAOyI5vgkWGKEFG6Te6QfmVfoVdGFt
-   t37GpfcRBuPYWA6l0r47YDVqFmDxk54KryptMKZj6dgxsr1a80ZSyoRpc
-   xVCCsciW8wIZvVkXXTejyhEgNIgh9nMtS0lIZdwx/fQL9Y+zvESi5Libc
-   m7n/GnbKH/zT8tzIIYiXmmU8Gz4RdOdM77jDMQoADv0Is824JaHQFbIDl
-   yK4/0XR7zIABKPOgEmXpYUiMf+0ENBhnlahPGFSPIAcKRiscsDYQQhrTO
-   WKb8aqTiyWqLt3gwO3ylASkrKylZcOirT8AsQwoR9TJhls7FShGFM7nrO
-   g==;
-X-CSE-ConnectionGUID: Z2xaJy5JR8O25hhHdhYTMA==
-X-CSE-MsgGUID: pophI8uUQY2kGXuBLNcF1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24783392"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="24783392"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:58:15 -0700
-X-CSE-ConnectionGUID: O5zZLpXERzucJJw2Wc0+BQ==
-X-CSE-MsgGUID: 6vHkGi8kTOG8LoXdoQAtag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="98325363"
-Received: from rchernet-mobl4.amr.corp.intel.com (HELO [10.125.108.13]) ([10.125.108.13])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:58:15 -0700
-Message-ID: <2878ef8c-6ceb-4530-956e-92cc3504f9f3@intel.com>
-Date: Wed, 11 Sep 2024 13:58:13 -0700
+	s=arc-20240116; t=1726088564; c=relaxed/simple;
+	bh=JvlZjDzoLcyEYkVOzAptDUtLhc4EYmZCUaQ/PncJGJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTY5JLEG/FUZrZavkvbxgEJMOzFhGiD0bKrfwLMij/kdKkYw5j10k0JYcvkBuNHSTmaYRVV+KpJdK5LlI45XVffzukTXVOqqo7E9Drk9i/xsc1XomarNnjV1tQiTx6PtWv+Lnylzy2akcXplCTb7RF67Xboau4oPyhSSeWzDhxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwSaH4z5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32A30C4CEC0;
+	Wed, 11 Sep 2024 21:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726088563;
+	bh=JvlZjDzoLcyEYkVOzAptDUtLhc4EYmZCUaQ/PncJGJo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwSaH4z5zQEe0oLzCpZz0q0QWeFI7jwJjv+MruU+YxtT0v4LHdiU+6aZ1seFWDc/S
+	 VCopgRY0OoilssTwQgXqyEwESGU69mjiUQeH+WLTXI8ryVtz70SORvZDxUEPKqe8+D
+	 mCt2jjoHhR+gS1gPfk9R3rJa1A7SP0LhZOpy7tVwX9puN6Xmu/gStYzPzpzZGV75yZ
+	 aqI8Qd4bjSLcYTUXPCIH6twbGTqYYuOIvF4WGTwvew7OTcmv7m4waxt72kOOHl5EzP
+	 o+mbjlGOSSI9m0ngdPdNWVm0ibkjwnBqi9lJcap141oNjTUCRba8pKQCIq5i/7APBw
+	 is9UUBVzPXB2w==
+Date: Wed, 11 Sep 2024 14:02:41 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org,
+	linux-arch@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>,
+	linux-kernel@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 1/3] btf: remove redundant CONFIG_BPF test in
+ scripts/link-vmlinux.sh
+Message-ID: <20240911210241.GA2305132@thelio-3990X>
+References: <20240911110401.598586-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: idxd: Add a new IAA device ID on Panther Lake
- family platforms
-To: Fenghua Yu <fenghua.yu@intel.com>, Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-References: <20240911204512.1521789-1-fenghua.yu@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240911204512.1521789-1-fenghua.yu@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911110401.598586-1-masahiroy@kernel.org>
 
-
-
-On 9/11/24 1:45 PM, Fenghua Yu wrote:
-> A new IAA device ID, 0xb02d, is introduced across all Panther Lake family
-> platforms. Add the device ID to the IDXD driver.
+On Wed, Sep 11, 2024 at 08:03:56PM +0900, Masahiro Yamada wrote:
+> CONFIG_DEBUG_INFO_BTF depends on CONFIG_BPF_SYSCALL, which in turn
+> selects CONFIG_BPF.
 > 
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> When CONFIG_DEBUG_INFO_BTF=y, CONFIG_BPF=y is always met.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
-> Hi, Vinod,
 > 
-> This patch is applied cleanly on the next branch in the dmaengine repo.
+>  scripts/link-vmlinux.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The next branch already includes a few new DSA/IAA device IDs in IDXD
-> driver.
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index bd196944e350..cfffc41e20ed 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -288,7 +288,7 @@ strip_debug=
+>  vmlinux_link vmlinux
+>  
+>  # fill in BTF IDs
+> -if is_enabled CONFIG_DEBUG_INFO_BTF && is_enabled CONFIG_BPF; then
+> +if is_enabled CONFIG_DEBUG_INFO_BTF; then
+>  	info BTFIDS vmlinux
+>  	${RESOLVE_BTFIDS} vmlinux
+>  fi
+> -- 
+> 2.43.0
 > 
-> Please check the patches and the reasons why the new IDs should be added:
-> https://lore.kernel.org/lkml/20240828233401.186007-1-fenghua.yu@intel.com/
-> 
->  drivers/dma/idxd/init.c | 2 ++
->  include/linux/pci_ids.h | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 0f693b27879c..3ae494a7a706 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -78,6 +78,8 @@ static struct pci_device_id idxd_pci_tbl[] = {
->  	{ PCI_DEVICE_DATA(INTEL, IAX_SPR0, &idxd_driver_data[IDXD_TYPE_IAX]) },
->  	/* IAA on DMR platforms */
->  	{ PCI_DEVICE_DATA(INTEL, IAA_DMR, &idxd_driver_data[IDXD_TYPE_IAX]) },
-> +	/* IAX PTL platforms */
-> +	{ PCI_DEVICE_DATA(INTEL, IAX_PTL, &idxd_driver_data[IDXD_TYPE_IAX]) },
-
-Use IAA going forward?
-
->  	{ 0, }
->  };
->  MODULE_DEVICE_TABLE(pci, idxd_pci_tbl);
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 8139231d0e86..e598d6ff58bf 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -3117,6 +3117,7 @@
->  #define PCI_DEVICE_ID_INTEL_HDA_CNL_H	0xa348
->  #define PCI_DEVICE_ID_INTEL_HDA_CML_S	0xa3f0
->  #define PCI_DEVICE_ID_INTEL_HDA_LNL_P	0xa828
-> +#define PCI_DEVICE_ID_INTEL_IAX_PTL	0xb02d
-
-What is using this devid beyond the driver that needs pci_ids.h addition?
-
->  #define PCI_DEVICE_ID_INTEL_S21152BB	0xb152
->  #define PCI_DEVICE_ID_INTEL_HDA_BMG	0xe2f7
->  #define PCI_DEVICE_ID_INTEL_HDA_PTL	0xe428
 
