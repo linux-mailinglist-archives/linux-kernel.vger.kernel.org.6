@@ -1,235 +1,128 @@
-Return-Path: <linux-kernel+bounces-324514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13200974D8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FBC974D8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3822B1C211FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435B4286DEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211E8183CD2;
-	Wed, 11 Sep 2024 08:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F7B14EC46;
+	Wed, 11 Sep 2024 08:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KhLxu08J"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GDzrFMoW"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3C742AAD
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E0C186609
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044800; cv=none; b=dWmE4q3eek8AinkMtoT0RftfLd1fvCq7xg740Jad08SYjzBsFpbruzbwPx0vTm8cYFsOHeblyNliJg6V7e4e6u7jAyvlrbrBBnC9bwrQu0H3xbkWf0BM46nWFAtfjcZO8grzsBCuHIQPkIHyDeFbtB1yUZgxCxrocCdD/ex82U0=
+	t=1726044814; cv=none; b=QifLadeyZ0OjhD/2QPESvDQpJaidzZxqwifzKPLWkkQX19YUnExtaKIdOWt2H99RCCEEZEKcTAhJJyQaxOnSQtEN++U7I28iuh4I76R2s3eDlrlhHpsfz5G5WJH8R35wse4ffRKfMG5eUnXmXsySoiQyuqKzEqQeMXSeF7ktdqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044800; c=relaxed/simple;
-	bh=f4lmX0B4PuhD4wQo5tusCa+zQKAHTvZ5K163n1GznHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YNmHNEokdhKWeOcy7GBbrcDSXa+DFhyubaUUqNeAAngdX/orKKzLVzxvGm4JrkYZevQPEfnP/lHg/2KG7Z/hwv8vcJTYz8/k0owmQJgBT2/ey9xV+5SoxjEG4fqCqBijO4EUqwFsWT2zUqqV+fsbzengr2rsqxkrSYzpLOZUQkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KhLxu08J; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 697EA4000D;
-	Wed, 11 Sep 2024 08:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726044795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IkZ/eUX+bVFf4ZddW9D89l8d/Vlvm0RSLbZpL6Tjyy0=;
-	b=KhLxu08Jlw9EKKJdScN1LasYVYqZk6HUWHLqbCmsYAaleaDzL+WmWK3AYWBzg8rxJkc2Ho
-	tRMc7KAvJI8IBJo0KZtRrfRAeowGy79cGjKODo9sw/1uWveK7ot8FI+T48hN74x7qAz8pK
-	ZVzziYm6t4BA2jRH0ZT+tfH21U8wJdv4lEoWrLLIsRXQXYt6fuFhIzFM9nfGz936R+4r8R
-	4wGUcj8UuwpnAb2U/8pz8AHy05VOuM24SmlptixVQz7GC8Pj6Wp64M1UvDuaDWMApwX+6W
-	jdova8DFr6L22Hl8Rn0BCNLs/d5Vz/zFA4YH/rmDnISypxy8Y1TQMBJD4VtSYw==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Wed, 11 Sep 2024 10:53:05 +0200
-Subject: [PATCH v2] mux: mmio: Add suspend and resume support
+	s=arc-20240116; t=1726044814; c=relaxed/simple;
+	bh=8eph8ZoPw5th/a4Boxem+pbq7rjO0PIK4L5g+jysul8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HJwOQ0xGUzYWATV9yg7U/EUDf37Dm8FEdFB4loO2LL76k09MoCMmjAgpQyv7tT0lSiVTugOm501za6meNZjssYu1c8dMioYQldDsshcetGE9PIsYSOrmSE49hkAl6yXoIvKZNdn7kLg71jWwJiwHkzKilEcuWpjlz4JtzPXIc7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GDzrFMoW; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726044809; x=1726304009;
+	bh=V1DaypacfHgH30QcZbTBIVISoAMB3BZmyLTSZgD+fCw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=GDzrFMoWBDrZGpotXcDnsUADzacYIMxuQESVwPdEnbILhv+MrEfGbM2iPOlAnhi8p
+	 cyYQ29nONdVLSiyaVRhfwMWLMmko4GVgj31fKRBEW5Yzz/jKR0fG+wXYX0rZvZg973
+	 IE02FI6O70Wi7e+bpSDTte51pmWoxjPZPFTAo8Mxsrl9dyqFM6T3pI4TQXLPgeBUX1
+	 YE/DtvwGliwkcluG5rRFki75XIuOXjMGcxicDzBnMiiArFI0MAtUNqQketzaHu4TXQ
+	 58slCmqVi2ueGwiA0HwJNxvOu03MFH4R330Fr9XA+siVOPnRY6duu3BdJ2yB8dt1Lx
+	 p91iRDCqSke0w==
+Date: Wed, 11 Sep 2024 08:53:24 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 15/26] rust: alloc: implement `collect` for `IntoIter`
+Message-ID: <503abe24-fbac-440a-a063-fc30a2a6bd77@proton.me>
+In-Reply-To: <ZuDiurdQfvmewzDh@pollux>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-16-dakr@kernel.org> <747b8c1c-cb7b-422e-b6a0-ea863cc37f0a@proton.me> <ZuDiurdQfvmewzDh@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6f7b7bfdbfdcc7f366fd5b4e594634851cf4cf85
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAHBa4WYC/4WOTQ6CMBCFr2K6dgy0hYUr72FYtDjIJLYlM0Awh
- LvbcgGX3/vJe7sSZEJR98uuGFcSSjGDvl5UP7r4RqBXZqUrbau2NhCWDUKgBIyyBARZpinxDHY
- wXjtjndFO5bZ3guDZxX4sfdEMRSrWxDjQdo4+u8wjyZz4e35Y66L+n1trqMA2uvFD0+awe/iU5
- g/FW5+C6o7j+AEAU37Y2wAAAA==
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com, 
- theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.12.0
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The status of each mux is read during suspend and stored in the private
-memory of the mux_chip.
-Then the state is restored during the resume.
+On 11.09.24 02:22, Danilo Krummrich wrote:
+> On Tue, Sep 10, 2024 at 08:12:24PM +0000, Benno Lossin wrote:
+>> On 16.08.24 02:10, Danilo Krummrich wrote:
+>>> +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoI=
+ter`.
+>>> +    ///
+>>> +    /// Currently, we can't implement `FromIterator`. There are a coup=
+le of issues with this trait
+>>> +    /// in the kernel, namely:
+>>> +    ///
+>>> +    /// - Rust's specialization feature is unstable. This prevents us =
+to optimze for the special
+>>> +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
+>>> +    /// - We also can't use `I::IntoIter`'s type ID either to work aro=
+und this, since `FromIterator`
+>>> +    ///   doesn't require this type to be `'static`.
+>>> +    /// - `FromIterator::from_iter` does return `Self` instead of `Res=
+ult<Self, AllocError>`, hence
+>>> +    ///   we can't properly handle allocation failures.
+>>> +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` ca=
+n handle additional allocation
+>>> +    ///   flags.
+>>> +    ///
+>>> +    /// Instead, provide `IntoIter::collect`, such that we can at leas=
+t convert a `IntoIter` into a
+>>> +    /// `Vec` again.
+>>
+>> I think it's great that you include this in the code, but I don't think
+>> that it should be visible in the documentation,
+>=20
+> Why not? I think this information is valuable for users of this API.
 
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
-In this second version, as discussed with Peter, everything is done in the
-mmio-mux driver.
-A mux_mmio_set() function was added, and used during suspend stage to get
-the status of the of the muxes.
-This status is stored in the private memory of the mux_chip.
----
-Changes in v2:
-- Remove all modifications done in the mux subsystem
-- Add a mux_mmio_set()
-- Read the status of muxes during suspend and store in the private memory
-  of the mux_chip.
-- Use this status to restore muxes during resume.
-- Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
----
- drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 73 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-index 30a952c34365..30b84382637f 100644
---- a/drivers/mux/mmio.c
-+++ b/drivers/mux/mmio.c
-@@ -15,11 +15,25 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- 
-+struct mux_mmio {
-+	struct regmap_field **fields;
-+	unsigned int *hardware_states;
-+};
-+
-+static int mux_mmio_get(struct mux_control *mux, int *state)
-+{
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
-+
-+	return regmap_field_read(mux_mmio->fields[index], state);
-+}
-+
- static int mux_mmio_set(struct mux_control *mux, int state)
- {
--	struct regmap_field **fields = mux_chip_priv(mux->chip);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
- 
--	return regmap_field_write(fields[mux_control_get_index(mux)], state);
-+	return regmap_field_write(mux_mmio->fields[index], state);
- }
- 
- static const struct mux_control_ops mux_mmio_ops = {
-@@ -37,8 +51,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct regmap_field **fields;
- 	struct mux_chip *mux_chip;
-+	struct mux_mmio *mux_mmio;
- 	struct regmap *regmap;
- 	int num_fields;
- 	int ret;
-@@ -69,12 +83,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 	}
- 	num_fields = ret / 2;
- 
--	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
--				       sizeof(*fields));
-+	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
- 	if (IS_ERR(mux_chip))
- 		return PTR_ERR(mux_chip);
- 
--	fields = mux_chip_priv(mux_chip);
-+	mux_mmio = mux_chip_priv(mux_chip);
-+
-+	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->fields))
-+		return PTR_ERR(mux_mmio->fields);
-+
-+	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
-+						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->hardware_states))
-+		return PTR_ERR(mux_mmio->hardware_states);
- 
- 	for (i = 0; i < num_fields; i++) {
- 		struct mux_control *mux = &mux_chip->mux[i];
-@@ -104,9 +126,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
- 
--		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
--		if (IS_ERR(fields[i])) {
--			ret = PTR_ERR(fields[i]);
-+		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
-+		if (IS_ERR(mux_mmio->fields[i])) {
-+			ret = PTR_ERR(mux_mmio->fields[i]);
- 			dev_err(dev, "bitfield %d: failed allocate: %d\n",
- 				i, ret);
- 			return ret;
-@@ -130,13 +152,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 
- 	mux_chip->ops = &mux_mmio_ops;
- 
-+	dev_set_drvdata(dev, mux_chip);
-+
- 	return devm_mux_chip_register(dev, mux_chip);
- }
- 
-+static int mux_mmio_suspend_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	unsigned int state;
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_get(&mux_chip->mux[i], &state);
-+		if (ret) {
-+			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
-+			return ret;
-+		}
-+
-+		mux_mmio->hardware_states[i] = state;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mux_mmio_resume_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
-+		if (ret) {
-+			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
-+
- static struct platform_driver mux_mmio_driver = {
- 	.driver = {
- 		.name = "mmio-mux",
- 		.of_match_table	= mux_mmio_dt_ids,
-+		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
- 	},
- 	.probe = mux_mmio_probe,
- };
+If you want to keep it, then I don't mind, but I would still move it
+underneath `Examples` and add a section header `# Implementation
+Details` or similar.
 
 ---
-base-commit: caf614bf68351c7e9e38dd37e07539417c757813
-change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+Cheers,
+Benno
 
-Best regards,
--- 
-Thomas Richard <thomas.richard@bootlin.com>
+>> can you move it under
+>> the `Examples` section and turn it into normal comments?
+>>
+>>> +    ///
+>>> +    /// Note that `IntoIter::collect` doesn't require `Flags`, since i=
+t re-uses the existing backing
+>>> +    /// buffer. However, this backing buffer may be shrunk to the actu=
+al count of elements.
+>>> +    ///
+>>> +    /// # Examples
+>>> +    ///
+>>> +    /// ```
+>>> +    /// let v =3D kernel::kvec![1, 2, 3]?;
+>>> +    /// let mut it =3D v.into_iter();
+>>> +    ///
+>>> +    /// assert_eq!(it.next(), Some(1));
+>>> +    ///
+>>> +    /// let v =3D it.collect(GFP_KERNEL);
+>>> +    /// assert_eq!(v, [2, 3]);
+>>> +    ///
+>>> +    /// # Ok::<(), Error>(())
+>>> +    /// ```
+>>> +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
 
 
