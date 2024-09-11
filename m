@@ -1,149 +1,230 @@
-Return-Path: <linux-kernel+bounces-325342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BBE975815
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:19:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6F975821
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96373B26856
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633031C26097
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BD21AE845;
-	Wed, 11 Sep 2024 16:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4451AE053;
+	Wed, 11 Sep 2024 16:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B/MlVmZh"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CX03Q/vW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52749187336
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04DB187336;
+	Wed, 11 Sep 2024 16:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726071548; cv=none; b=aVYeI0VNNOO+9VJqSaJbP26OnisosZzJ8hyXf/Xm536smGKLug/0wlTD0j2RLwofVKx0X8tOmDj5WbPhwvC5uR1ne2s3dy/aHFh3hENQj9dHkW84+2Y9Vtw2gCqpf9ogHVvMfL10tw9LBRoEzx63ZnJ7stGvAtNaP0cGJQhduCQ=
+	t=1726071608; cv=none; b=QYc388wQxYvfF1sdRGMmbwd+juTmCPeL+KBdot+SmL63pySEMHx7o1m6wavxao3nkjgz593ZkfMotAI1oA4J1Y0TElTWNFOsfhG/uNDAkNUjcZjHVWDWqe27IJhveTqPBBTYoRQBh0VI5Qv4TYmK4PwrMMwwXJlacYYXyw34zk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726071548; c=relaxed/simple;
-	bh=j92VXawQX8WzgcuqvPeKn8SFNLPiwFWfUHFdzldq4Iw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pFRS+PFD0fpqwzG4RmrpEh/BQ7DEAsLJtNltCfLgwDrNn3mQn7/2Pzv1ib0Ks1zNu9VIb0U9fZ1lmC9qftej6XHsU7l/ndBFCAFg53iW/5pb1isuOuHKJZmlNaa/CZ1A/yHVe8IOsdNhVuQkVa/dc4qGWOG+y+iRkIUVtWP06Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B/MlVmZh; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7d4fc4652f6so78704a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726071546; x=1726676346; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y/QSsEQGGdeieAAmaVdQ5+5sF3iFYqq1ut09SVrphzA=;
-        b=B/MlVmZhtrKSNr48QJU688Pz0KL4YbpJp/IPTznTCm1ZPDZvYNtGxfyolyITyuDdTW
-         WAdF/FUqHeVFIs5mMgGMC5yLCoLClv3DOAaHNCLzeXL637pVr4Wb0ToP5MMC6DNzf8Iq
-         hNtuS0k2/1jwsk3u80T26DkWblcy3USkIpjucOoUB2/7CfJvGbtSXyvHcbZc9eSTbmms
-         JeXkW72XsYOi8bzzS4iAeIfuhkshTKDoxqQOGIV0RpT+ERduvMd/9aWi0t1B6qDnoIGZ
-         qSIphIU+ltSr+hKyY6kmnJ1vS+TKQpEVUA95bpcxnPhVIZPlaOK7Hn+dyNadrfaypJUW
-         aGNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726071546; x=1726676346;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y/QSsEQGGdeieAAmaVdQ5+5sF3iFYqq1ut09SVrphzA=;
-        b=m/DsHCzQBBdwqmzLbkYZv/SXADN9Zo3sE0DEBs36zcAWcLzjxWe5vxhsF6zoGok9FS
-         KBaChmadQFBhsY49J7LniGN39t4a5BB7C4JeCRs8GCkS5zCHGYOlKXc4BEJv/ts3xLNf
-         3ARkTmKlYxVvuCvPm58mIAkYAwo9jqiwzkmpYp2cwObf3rP/L7kjeZpn4xsIN96kSheN
-         i5yC9QK42t1utLlvdqEfqc18BzS6i3qBXFppyNmDCfDz9+d6WygySqGAwY+QYwoOjNRI
-         cHb9ZKQg7jWBh2Kw55eDFTAuP+3dUGb1DsWU1nfYscEOkbi5lcSAAq5qhzdX1qZDpSF/
-         fP1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUu7hhdGSiCzsWiPjBJwevX6BAwwrXX5HofjuAnQFP6jVW2OpZJ8XY5LUHE3dxoUOkxV8sGKAZn+/SAIrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5tOWraWDcXqBE5BkFclKJN/hf7vVL8m7zk8SnTlXrY+uGlnow
-	nJb02NcaGP4LQXk1lMVpv04PsaPv6F1UEpyKOJ1r1ZLmZkzlRVkaH87jJwU/Ir9Fkpg2YSOXbNA
-	78w==
-X-Google-Smtp-Source: AGHT+IF1eyVHmrdR0suwJU7aJ9NfHqMoPPNxOdM9LJ9lqscolThGIJSPyFurGdsG0uQxxZ9hll9ugl5Y4Zc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:51e:b0:702:ab97:b7aa with SMTP id
- 41be03b00d2f7-7db205edb42mr51a12.7.1726071546302; Wed, 11 Sep 2024 09:19:06
- -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:19:04 -0700
-In-Reply-To: <d3895e03-bdfc-4f2a-a1c4-b2c95a098fb5@intel.com>
+	s=arc-20240116; t=1726071608; c=relaxed/simple;
+	bh=MBGdQo2cBzmQK5M6W3GuoGffk8uzIWlhJSuZ4hN+u7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMRqJQVx+3gHlIbFjdmI2sHVO74ndkGTyZqr6ARL3QkB7dmlfzspDo9whnV5UEvUdn3rW8gEstQROPu2hmhSwdcLEf/7j0b2qRhhVpolGFCNzfN9XDHaGs5HyQZOCeUBzH+JUQYbx2M53Rnc+S6ZF88UupI1kpoGVrOUUcEF2Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CX03Q/vW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC3AC4CEC0;
+	Wed, 11 Sep 2024 16:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726071607;
+	bh=MBGdQo2cBzmQK5M6W3GuoGffk8uzIWlhJSuZ4hN+u7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CX03Q/vWDL6sfqLkIhCmNQu4tlxVAzqtioclDDC23UWWYH16+6YvRKAzePazsK9k/
+	 jjkdOLxx0jhzgxljymjBj7QwXW4U9hsCgBhSNdWjyWeMf2cymxBpRsDkViuS/THChX
+	 agGMwnAUcCKTJiWuly2T8keBonwb3Qw8ukkkz4dGPkheo4Z3oHFl/u/yEu0LTglcIZ
+	 Vj/8OCW36YoK5C57JHcS7bpvPfWzv6UsPnBCIaAklGrVWxhoYeiH9maF4048Eff4+o
+	 fW73n+IA9k/T6KGT3uPNiPlgKe7UlIZHOMAZqfaX70g7tLW6XDCsCny4oaKUm3aOj2
+	 m6YjieCzAVJ/Q==
+Date: Wed, 11 Sep 2024 09:20:05 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <20240911162005.2zbgqrxs3vbjatsv@treble>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <ZuGav4txYowDpxqj@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1724837158.git.legion@kernel.org> <cover.1725622408.git.legion@kernel.org>
- <6c158a14-ba01-4146-9c6c-8e4c035dd055@intel.com> <ZttwkLP74TrQgVtL@google.com>
- <d3895e03-bdfc-4f2a-a1c4-b2c95a098fb5@intel.com>
-Message-ID: <ZuHC-G575S4A-S_m@google.com>
-Subject: Re: [PATCH v6 0/6] x86/tdx: Allow MMIO instructions from userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Alexey Gladkov <legion@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-coco@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Yuan Yao <yuan.yao@intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>, 
-	Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, decui@microsoft.com, 
-	John.Starks@microsoft.com, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZuGav4txYowDpxqj@pathway.suse.cz>
 
-On Wed, Sep 11, 2024, Dave Hansen wrote:
-> On 9/6/24 14:13, Sean Christopherson wrote:
-> > Ditto for what behavior is supported/allowed.  The kernel could choose to disallow
-> > userspace MMIO entirely, limit what instructions are supported, etc, in the name
-> > of security, simplicity, or whatever.   Doing so would likely cause friction with
-> > folks that want to run their workloads in an SNP/TDX VM, but that friction is very
-> > much with the guest kernel, not with KVM.
+Hi Petr,
+
+Thank you for trying it out and doing the research to compare it with
+kpatch-build.
+
+On Wed, Sep 11, 2024 at 03:27:27PM +0200, Petr Mladek wrote:
+> Without -ffunction-sections -fdata-sections:
 > 
-> I think by "guest kernel" you really mean "x86 maintainers".  Thanks for
-> throwing us under the bus, Sean. ;)
-
-Heh, I would argue that you tried to push me under the bus, but I'm slippery fast
-and danced out of the way, and you got hit instead :-D
-
-> I do agree with you, though.  In the process of taking the VMM out of
-> the TCB, confidential computing has to fill the gap with _something_ and
-> that something is usually arch-specific code in the guest kernel.
+> 	$> time make -j8
+> 	real    0m58.719s
+> 	user    3m25.925s
+> 	sys     0m21.895s
 > 
-> By dragging the KVM folks in here, I was less asking what KVM does per
-> se and more asking for some advice from the experienced VMM folks.
+> With -ffunction-sections -fdata-sections:
 > 
-> > FWIW, emulating MMIO that isn't controlled by the kernel gets to be a bit of a
-> > slippery slope, e.g. there are KVM patches on the list to support emulating AVX
-> > instructions[*].  But, a major use case of any hypervisor is to lift-and-shift
-> > workloads, and so KVM users, developers, and maintainers are quite motivated to
-> > ensure that anything that works on bare metal also works on KVM.
+> 	$> time make -j8
+> 	real    13m28.126s
+> 	user    15m43.944s
+> 	sys     0m29.142s
+
+That's bad.  We should figure out where those bottlenecks are in the
+toolchain.  I know objtool definitely needs improvements there.
+
+For kpatch-build, the production kernel is built *without*
+-ffunction-sections and -fdata-sections.  Then those flags get manually
+added to CLAGS by kpatch-build for the comparison builds.
+
+We rely on ccache to speed up the repeat builds during development.
+
+Maybe we should do that here as well: only add those flags temporarily
+during the klp-build.  That approach seems to work fine for kpatch, as
+optimizations are unaffected.
+
+> One obvious area is the support of more architectures. I guess that
+> this  code supports only x86_64 at the moment. While kPatch supports
+> x86_64, ppc64, and s390. I wonder how complicated it would be to
+> support more architectures.
+
+We'll find out soon, as I plan to start work on powerpc once x86 is
+done.
+
+I suspect most of the effort is in the objtool port.  However, I believe
+it doesn't need the full objtool reverse-engineering functionality, as
+it can just calculate the checksum for each instruction in order,
+without needing the control flow graph.  So it may be considerably
+easier than a full objtool port.
+
+Even if the checksum feature isn't 100% accurate, "almost perfect" is
+good enough (see below).
+
+> Also I tried to compare how kPatch and this code do the binary diff
+> and found the following:
 > 
-> Do you have a link for that AVX discussion?  I searched a bit but came
-> up empty.
+>   a) It seems that kPatch compares the assembly by "memcmp" while
+>      klp-build uses checksum. This looks good.
 
-Gah, of course I forgot to paste the link.
+Yes.
 
-https://lore.kernel.org/all/20240820230431.3850991-1-kbusch@meta.com
+>   b) Both tools have hacks for many special sections and details.
+>      I am not sure objtool handles all cases which are handled
+>      by kPatch.
+> 
+>      For example, it seems that kPatch ignores changes in line numbers
+>      generated by some macros, see kpatch_line_macro_change_only().
+>      I can't find a counter part in objtool.
 
-> The slippery slope is precisely what I'm worried about.  I suspect the
-> AVX instructions are a combination of compilers that are increasingly
-> happy to spit out AVX and users who just want to use whatever the
-> compiler spits out on "pointers" in their apps that just happen to be
-> pointed at MMIO.
+See scripts/livepatch/adjust-patch-lines which adds #line macros to the
+source patch to fix the line count to match the original.  This is both
+easier and a lot more robust than the kpatch way of trying to detect it
+in the binary.
 
-Yep.  Based on the original report[*], it sounds like the userspace program is
-doing a memcpy(), so it's hard to even argue that userspace is being silly.
+>   c) It seems that kPatch contains quite complicated code to correlate
+>      symbols.
+> 
+>      For example, it correlates local variables by comparing
+>      functions which reference them, see
+>      kpatch_correlate_static_local_variables().
 
-[*] https://lore.kernel.org/kvm/20240304145932.4e685a38.alex.williamson@redhat.com
+Figuring out how to disambiguate the correlation of static local
+variables which have the same name is on the TODO list for klp-build.  I
+hope to come up with a simpler solution than what kpatch does.
 
-> But before we start digging in to avoid the slippery slope, we really do
-> need to know more about the friction.  Who are we causing it for and how
-> bad is it for them?
+For example, detect when a changed function uses a duplicate-named
+static local variable and require the user to manually correlate the
+variable somehow.
 
-This type of issue will most likely show up in the form of an end customer moving
-their workload into a TDX/SNP VM, and that workload crashing despite working just
-fine when run in a regular VM.
+>      Or kPatch tries to correlate optimized .cold, and .part
+>      variants of the code via the parent code, see
+>      kpatch_detect_child_functions()
+>
+>      While klp-build seems to correlate symbols just be comparing
+>      the demangled/stripped names, see correlate_symbols().
+>      This seems to be quite error prone.
+>
+>      I actually do not understand how klp-build compares symbols
+>      with the same demangled/stripped names. I probably missed
+>      a trick somewhere.
 
-One "answer" could be to tell users that they need to recompile with AVX+
-explicitly disabled, but that's an answer that will make everyone unhappy.  E.g.
-customers won't like recompiling, CSPs don't like unhappy customers, and CSPs and
-hardware vendors don't want their CoCo solutions to be hard(er) to adopt.
+A ".cold" variant is considered part of the "parent" function which
+jumps to it.  When the checksums are calculated in validate_branch(),
+objtool sees the parent jumping to the child, so the child instructions
+contribute to the parent's checksum.
+
+When the parent's checksum changes, that will be detected.  The ".cold"
+variant will be seen as a new function which is needed by the changed
+parent and will be added to the patch file.
+
+At least that's how it works in theory, I need to test this :-)
+
+
+For standalone mangled functions such as .part which are not branched to
+by parent functions:
+
+While the correlation uses the demangled names without the suffix, it
+also takes into account what file they belong to, by looking at what
+FILE symbol they are beneath in the symbol table.  It also takes the
+function order into account.
+
+Since they're static functions, there can't be more than one function
+with the same name, though there might be more than one version of it
+(e.g., one mangled and one non-mangled).  This can change between the
+orig and patched versions, but the function comparisons will detect
+all this on the binary level.
+
+While this strategy isn't theoretically bulletproof, it always works in
+practice.  Which is good enough.
+
+
+In the end, there are two hypothetical modes of silent failure with
+regard to the correlation and comparison of functions:
+
+  1) Marking a function changed that hasn't changed.  This is mostly
+     harmless, as it results in a function getting patched
+     unnecessarily.
+
+  2) Missing a changed function.  This is obviously bad.
+
+Unless there's a bug, neither of these happens in practice.  Regardless,
+it must be stressed that klp-build is not a toy and the patch author
+must always confirm the printed list of changed/added functions matches
+exactly what they expect.  And of course they must test it.
+
+> Do not get me wrong. I do not expect that the upstream variant would
+> be feature complete from the beginning. I just want to get a picture
+> how far it is. The code will be maintained only when it would have
+> users. And it would have users only when it would be comparable or
+> better then kPatch.
+
+I agree it needs to be fully functional before merge, but only for x86.
+
+Red Hat (and Meta?) will start using it as soon as x86 support is ready,
+because IBT/LTO support is needed, which kpatch-build can't handle.
+
+Then there will be an intermediate period where both kpatch-build and
+klp-build are used and supported, until the other arches get ported
+over.
+
+So I think this should be merged once the x86 support is complete, as it
+will have users immediately for those who are running on x86 with IBT
+and/or LTO.
+
+-- 
+Josh
 
