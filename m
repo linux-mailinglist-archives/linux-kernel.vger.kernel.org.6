@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-324105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5829747F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:48:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DA79747F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591671C25CD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37250288B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AEA2574B;
-	Wed, 11 Sep 2024 01:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29022032A;
+	Wed, 11 Sep 2024 01:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hi/SRwpE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qSkTsaeI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9B38460;
-	Wed, 11 Sep 2024 01:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D38460;
+	Wed, 11 Sep 2024 01:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726019299; cv=none; b=jNehfqXIzhEhvu2BMO1Nhc5auxlDLNqz1UrPF6Tn89UKixUo0A3n5S2Q6Knsf36i04J2trpM7PRXSoF200TDJ0dR0bTmoK2VQU6udiYEBN4jidVn7Lw39CWnPAm6p5OWTUktQTr8L7q5ooPv7k+9BBi6uOCr7c4P9axcChjOvt0=
+	t=1726019505; cv=none; b=dADAgGwmNI3vYnNgNC5TaB339wlIwP8jC1ILvV/ZoCv82HBCHp3s/8+QFUiKf8G3PFJQX9hgbMzML0j+0vqsOiz3Jaj6ICadpt3xB4jr4ED6unVzRkWZnuFItn5yRqigZDdy7uVDia4JUVJzEGY6adyDc8+Ayvi2L0x+5KTG7Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726019299; c=relaxed/simple;
-	bh=wu9D8GMK4xddW2kkLvlhjUZNk9I/s0JwheSYbmR6ou8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ijTY6iK7gdBY9zp0FPKbjKjIDdezukquG2j3VGsN8yeXXFBTEI4Ab5osIUWOXrgIZ+pIn7wf+sv4/EhZvOshCz+XU8YxuhMU5Rsv62fkKHz2FgvlRi7GSRlRKjXjq4sstMijmrBkdNr/wfnqAoDKHRZgvetd8mEkEo94D8mQCgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hi/SRwpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB910C4CEC3;
-	Wed, 11 Sep 2024 01:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726019298;
-	bh=wu9D8GMK4xddW2kkLvlhjUZNk9I/s0JwheSYbmR6ou8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Hi/SRwpE36fpJCz5j0QZeerRwMyGw8YcM4mHzTNV9DzlCQVEIrPbUrFapPuMDfsL1
-	 PjOhgRNIZpqc7dbSW3bhabapqo7858L8HAXpBJ31uEmhvGIwexGQwOwzeWnB1KbqEI
-	 g/Ae43cGsNYAu+x6wWKKxvaFmApbwOr0+X0nkVPSru57gzR4zkk74GA7DMMdqfTzU1
-	 WVjnsSTnPulUaa71RCxtOnQNMFcpWLd/ablF7ka91Frdt4HP7PIIzq1eD+nnXuK+RD
-	 p3eEylvuL/fvXMPh5DFeR2ycjBnMoOthaR2Hm0H4o+kkGODMb1eyxyahpi1hJUCt9k
-	 zNFL5RXOzg+Kw==
-Message-ID: <2fba030d-bd24-4a3d-852e-e10a484feaaf@kernel.org>
-Date: Wed, 11 Sep 2024 09:48:10 +0800
+	s=arc-20240116; t=1726019505; c=relaxed/simple;
+	bh=1HGn3uyC8ElQZ5IOXvOPGHbQrRBeNXmGjRsj8x3CtwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMaWbEKRR2YmsY4Hh+IUC++ersXm3tV/XEMGc3hanUvx71tJCu6P8fu6HPgCN/Wm5g1osIEpB9NkfmIcqIptLz/6+QfXWSWzo8IPIpuOwYoo5oe7WBcUOZyKJgqCcDxnvHZPptTFA5ZEfdaChphL3RaKUESwCCAZ6lC6RLXSPSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qSkTsaeI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726019500;
+	bh=1HGn3uyC8ElQZ5IOXvOPGHbQrRBeNXmGjRsj8x3CtwQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qSkTsaeIggzSUHcRQN8wPjl2718WiRC7mpGclAm7NXhIJ/jcJ/Sk7tDhELcm4RsBd
+	 9lm5uXNrf/0VjXtiUnfNeMLmmRvJoNLRIauZks10rG0olP30WLw0KgWoVqzIehjz/F
+	 MkWmR+EUu29DqQ6dHZwv3JsUAgWuGwNdIv3KpYD/CckYMIYCgehRousd7K09tGTNUz
+	 bijxZtnoPVGPyVhK/FaKGsKTLhtNmMFEbaFVEOVIYNgaO6ymkMEfcbuefHJYaeS5s7
+	 JkyBILIhowkFwS7cRiedVMLGlMHo36uZhg7b+otTEKv68Ri1INS8roasan1LBNhfYI
+	 zD4/2cO+Wttlg==
+Received: from [192.168.1.90] (unknown [188.27.55.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D2B4F17E0E57;
+	Wed, 11 Sep 2024 03:51:39 +0200 (CEST)
+Message-ID: <33d4f09b-8490-41f2-92ac-b39949e89e62@collabora.com>
+Date: Wed, 11 Sep 2024 04:51:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +56,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, brauner@kernel.org, jack@suse.cz, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-To: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
-References: <000000000000b90a8e061e21d12f@google.com>
+Subject: Re: [PATCH v6 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <324b12ea-805a-499c-909d-3723f0bca7cb@collabora.com>
+ <1796743.esFFXGZ24q@diego> <26154114.p16igRAIYV@diego>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <000000000000b90a8e061e21d12f@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <26154114.p16igRAIYV@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+On 9/10/24 11:49 PM, Heiko Stübner wrote:
+> Am Dienstag, 10. September 2024, 18:39:54 CEST schrieb Heiko Stübner:
+>> Am Dienstag, 10. September 2024, 17:41:42 CEST schrieb Cristian Ciocaltea:
+>>> On 9/10/24 6:21 PM, Heiko Stübner wrote:
+>>>> Am Dienstag, 10. September 2024, 17:07:57 CEST schrieb Heiko Stübner:
+>>>>> Am Freitag, 6. September 2024, 03:17:42 CEST schrieb Cristian Ciocaltea:
+>>>>>> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+>>>>>> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+>>>>>> Samsung IP block.
+>>>>>>
+>>>>>> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+>>>>>> without audio, CEC or any of the HDMI 2.1 specific features.
+>>>>>>
+>>>>>> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+>>>>>> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+>>>>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>>>
+>>>>> I had switched from the v3 to this v6 in my playground-kernel today,
+>>>>> with v3 I've never seen those, but now with v6 I have gotten multiple
+>>>>> times:
+>>>>>
+>>>>> [  805.730608] Internal error: synchronous external abort: 0000000096000010 [#1] PREEMPT SMP
+>>>>> [  805.739764] Modules linked in: snd_soc_simple_card crct10dif_ce snd_soc_simple_card_utils panthor drm_gpuvm drm_exec fuse
+>>>>> [  805.752031] CPU: 3 UID: 0 PID: 775 Comm: Xorg Not tainted 6.11.0-rc7-00099-g459302f1f908-dirty #934
+>>>>> [  805.762143] Hardware name: Theobroma Systems RK3588-Q7 SoM on Haikou devkit (DT)
+>>>>> [  805.770407] pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>>> [  805.778186] pc : regmap_mmio_read32le+0x8/0x20
+>>>>> [  805.783155] lr : regmap_mmio_read+0x44/0x70
+>>>>> [  805.787828] sp : ffff80008293b830
+>>>>> [  805.791516] x29: ffff80008293b830 x28: ffff80008293bce8 x27: ffff0001f20ab080
+>>>>> [  805.799495] x26: ffff800081139500 x25: 0000000000000000 x24: 0000000000000010
+>>>>> [  805.807472] x23: 0000000000000000 x22: ffff0001f5a4b400 x21: ffff80008293b8c4
+>>>>> [  805.815450] x20: 0000000000000968 x19: ffff0001f5a27a80 x18: 0000000000000070
+>>>>> [  805.823428] x17: 0002441400000005 x16: 000004650441043c x15: 0438000008980804
+>>>>> [  805.831406] x14: 07d8089807800780 x13: 0438000008980804 x12: ffff800081133630
+>>>>> [  805.839384] x11: 0002441400000005 x10: 000004650441043c x9 : ffff800081a59000
+>>>>> [  805.847361] x8 : 07d8089807800780 x7 : 0000000000000000 x6 : ffff0001f5b453c0
+>>>>> [  805.855339] x5 : ffff800080750dc0 x4 : 0000000000000968 x3 : 0000000000000968
+>>>>> [  805.863316] x2 : ffff800080751520 x1 : 0000000000000968 x0 : ffff800083b20968
+>>>>> [  805.871294] Call trace:
+>>>>> [  805.874012]  regmap_mmio_read32le+0x8/0x20
+>>>>> [  805.878588]  _regmap_bus_reg_read+0x6c/0xac
+>>>>> [  805.883262]  _regmap_read+0x60/0xd8
+>>>>> [  805.887159]  _regmap_update_bits+0xf4/0x140
+>>>>> [  805.891832]  regmap_update_bits_base+0x64/0xa0
+>>>>> [  805.896797]  dw_hdmi_qp_bridge_atomic_enable+0x134/0x220
+>>>>> [  805.902734]  drm_atomic_bridge_chain_enable+0x54/0xc8
+>>>>> [  805.908380]  drm_atomic_helper_commit_modeset_enables+0x194/0x280
+>>>>> [  805.915190]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+>>>>> [  805.921125]  commit_tail+0xa0/0x1a0
+>>>>> [  805.925021]  drm_atomic_helper_commit+0x17c/0x1b0
+>>>>> [  805.930276]  drm_atomic_commit+0xb8/0x100
+>>>>> [  805.934754]  drm_atomic_connector_commit_dpms+0xe0/0x110
+>>>>> [  805.940690]  drm_mode_obj_set_property_ioctl+0x1c0/0x420
+>>>>> [  805.946626]  drm_connector_property_set_ioctl+0x3c/0x68
+>>>>> [  805.952465]  drm_ioctl_kernel+0xc0/0x130
+>>>>> [  805.956846]  drm_ioctl+0x214/0x4a0
+>>>>> [  805.960643]  __arm64_sys_ioctl+0xac/0xf8
+>>>>> [  805.965025]  invoke_syscall+0x48/0x104
+>>>>> [  805.969214]  el0_svc_common.constprop.0+0x40/0xe0
+>>>>> [  805.974470]  do_el0_svc+0x1c/0x28
+>>>>> [  805.978171]  el0_svc+0x34/0xe0
+>>>>> [  805.981582]  el0t_64_sync_handler+0x120/0x12c
+>>>>> [  805.986449]  el0t_64_sync+0x190/0x194
+>>>>> [  805.990540] Code: d503201f d503201f f9400000 8b214000 (b9400000)
+>>>>>
+>>>>> I guess that might be some clocking issue?
+>>>>
+>>>> Forgot to add, this happens when the display has blanked and then is
+>>>> supposed to unblank again.
+>>>
+>>> Hmm, I've never encountered this while testing with my v6.11-rc1 based
+>>> tree.  What is your current kernel base?  Did you change it while
+>>> switching from v3 to v6?
+>>>
+>>> I'll rebase my tree onto latest linux-next and see if I can reproduce.
+>>
+>> The setup is 6.11-rc7 with your hdmi series + my wip dsi + X11 running
+>> on top.
+>>
+>> At some point after being idle a while this blanks the display, which will
+>> probably turn off clocks and such. After moving the mouse or just
+>> doing anything else that unblanks the display, that splat happens.
+>>
+>> Apart from updating mesa from 24.2.0 to 24.2.2 I haven't changed
+>> anything in my test-setup so far.
+> 
+> So now I've re-tested all :-) ... test scenario was that I reverted the v6
+> patches and then applied the older versions (and fixed up the dts if
+> needed wrt the vo{1}-grf thing). So now really only the hdmi driver
+> changed. So I booted, waited for the display to blank and hit reboot
+> on the serial console:
+> 
+> - v3 console output turned back on and rebooted fine
+> - v4 console output turned back on and rebooted fine
+> - v5 hit the error from above
+> - v6 hit the error from above
+> 
+> So something between v4 and v5 seems to cause the hickup.
 
-On 2024/7/26 15:54, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14955423980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e3f4ec8ccf7c/disk-1722389b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f19bcd908282/vmlinux-1722389b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d93604974a98/bzImage-1722389b.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/e0d10e1258f5/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 58 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 58 Comm: kworker/1:2 Not tainted 6.10.0-syzkaller-12562-g1722389b0d86 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-> Workqueue: events destroy_super_work
-> RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-> Code: 74 19 e8 86 d5 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
-> RSP: 0018:ffffc9000133fb30 EFLAGS: 00010246
-> RAX: 0000000000000002 RBX: 1ffff11005324477 RCX: ffff8880163f5a00
-> RDX: 0000000000000000 RSI: ffffffff8c3f9540 RDI: ffff888029922350
-> RBP: 0000000000000167 R08: ffffffff82092061 R09: 1ffffffff1cbbbd4
-> R10: dffffc0000000000 R11: fffffbfff1cbbbd5 R12: dffffc0000000000
-> R13: 1ffff1100532446a R14: ffff888029922350 R15: ffff888029922350
-> FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055557c167738 CR3: 000000007ada8000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
->   destroy_super_work+0xec/0x130 fs/super.c:282
->   process_one_work kernel/workqueue.c:3231 [inline]
->   process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->   worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Thanks a lot for taking the time to bisect it!  This is indeed a clock
+related regression introduced by the recent changes around scrambling.
 
+I couldn't initially reproduce because I had the HDMI0 PHY clock provider
+enabled, required to verify the high TMDS clock ratio and scrambling setup
+in 4K@60Hz display mode.  Without that clock provider enabled, the PHY
+eventually enters runtime PM suspend state, which for some reason causes
+the splat when trying to access the LINK_CONFIG0 register.
+
+To unblock the series, I would consider dropping the scrambling support for
+now, as it turned to be far more complicated to have it properly handled
+than I initially assumed.  Will move this to a separate WIP patch in my dev
+tree, along the vop2 improvements for display modes handling, and resubmit
+as soon as I get this work in a better shape.
 
