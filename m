@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-324141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58337974856
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4432A974861
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1EE2B24B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:49:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2DF2B246BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0BA2B9BB;
-	Wed, 11 Sep 2024 02:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619922A8D0;
+	Wed, 11 Sep 2024 02:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPsBjSly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NaCs+Yz/"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C560161;
-	Wed, 11 Sep 2024 02:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F08161
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726022982; cv=none; b=cOEJk+RhPHel9IL1kVP5sKO8NKAto4zFhGI3cTqmRlVQRIf0Tq69kPFHsSxGFGrWD1LtS4fYWUlbo9kvf3KDGwilgcxlVN4woeFHMxcOMKwSuqjkDkSQugFmnOw+VffiROomp5drLho737sXl6XXnQuPhaKKdwDYVk7Lz+x56tk=
+	t=1726023370; cv=none; b=PYhP38Oetgbmiz09U1m/XRuE8jbeXT37YvCKVd8Z/90wG4cM7HLsvO3RPRtiW5S+ccwzp/KJUQObo+nAJwGTLaa2yJeEJaLll7gPqDeYCWbs2Ac9RpGvOfIT5pT4fPawzZMMv0LuGH1CM5jAkzB4LLItohGob0NkhxJkl2pgGsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726022982; c=relaxed/simple;
-	bh=bF4oV0nKbMeRxZj7ImVrHIdlrJsuV8VUv4ujLjPK4c4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LONFXKNHE/qOQcKIibrkLOhSSVpYQDya4fKAOfncjXwnbsVTklSciV1d/13QlOgG+bnv9Ko5u8jwG6JpRVKLbwXMYT1dYf7f+Z8c+v6BC/2gPkCN2Rhk9wA/xDkLULCnhohJShW2RnLzuCwzOWutXBZ0BePGC6i3srO3aL492+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPsBjSly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EF3C4CEC3;
-	Wed, 11 Sep 2024 02:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726022982;
-	bh=bF4oV0nKbMeRxZj7ImVrHIdlrJsuV8VUv4ujLjPK4c4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=KPsBjSlyKgVbaZFX07Bi6d/goO2GxexzXKLtoMRRmcpeoeXCPzP774XsIFxbpOnP+
-	 PIm7lVZR2HFf+q5k567hrJ5joVwbWCHlAHXBu0A+i0DUOrzmZ0dXyKnbH4IgT4zajH
-	 XWgrqUTbOYBCbj0wFDGmgwVS/aBGbb6FBF0+Rw21W5+WP73ac6M2YIN21RdKNX0/Hn
-	 xXU2dYmP41WbcSzhM2KWHAmWyDwVNUT0ZOqPvMFZ0qVNcliVKgwqur3c4uvaRspNMQ
-	 rDNE22D9nMnuE+A1I+58mEXtAq1H41vt1ZRT74sckWFERkaZ37LP+WUIbW514aE/Fj
-	 PWrN9HfZ4BlZA==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Tue, 10 Sep 2024 19:53:16 -0700
-Subject: [PATCH v2] arm64: Allow packing uncompressed images into distro
- packages
+	s=arc-20240116; t=1726023370; c=relaxed/simple;
+	bh=t56H1BupMRoI2IQEY+UqEN+q8cTmpxwrJ0A8fPca7Es=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IO4YLXIvTJYlCzXf6RE9i/0bR8vjQ1yy3jTm81iUfIy1eNYKSj0qJroNup3YIS2Go/AZKf5gxEDcG85UQ0As95d/r/chKHE0GP1XZBptZCQjbk29LFkipeHqRmIM3Os+ADFnJNvyYd5lKnt7H3ny1zFD58OTiTBeyO1vRPac/NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NaCs+Yz/; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20536dcc6e9so39854635ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726023368; x=1726628168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOIzLUnnpZTrZLa69kfeGABac8EpornaY5X97Bc8fdM=;
+        b=NaCs+Yz/D5c14PRFGm28Qpiy8r0jWb/Z2qQA1i3qigvqn52KVGncbvLQxY1Dc/AbXY
+         v+Z6eQklo8/CGPyTB6/iAQ2VPAGBTtpbwjj9TsBXX46ZQ2wKLivBiNrlqpay+fpsbkdX
+         t5wJbwW6lb+acNKZgBlNicAos/7z5n/lsG2no=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726023368; x=1726628168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WOIzLUnnpZTrZLa69kfeGABac8EpornaY5X97Bc8fdM=;
+        b=G4N4Zo1SNcRHX5cipSMmxrCeISrLGHVAXVwTgPzZW2fNbOKVd3bXN29kIlTxmbUjKg
+         BVIb5/BTh2HISkWU59hWNUmMrB22DLpP81lMyl6q5XtcjLt2YPEQbhUHWg+0GeX1jtuy
+         FOs0N11AeUXNy7N8/ISWZA2jvXf2u8vMKCLntCndhY6Og4Q7zJJv2QMZgHrKkipM9XNq
+         bBf/RNN+L5xuK93j4iMcjToXe4nr2w772fHmelfdpvby0f/lcuNyHQa3MleT73l5UH1f
+         PjpdGqGuURwJ9fjv/cf5JjTpd3mHBgQpVcySwhrLXLkbkdqKaGSVygQumXknMPlnP8iR
+         1lHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAW9LT/ihL8I8n2s7A5aNMwZ+BPk2uu/UWerrEdSIPFEpdXAIwSNs77nLLrFli4EkU9dQLdOtcMVqyO5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVPPq33bKvT9blOq4QE2NDz2R6v8TQsLL0sNcQXobjz3WVZasA
+	EbRRu64nETkrjup6HOB3kgc4FFPiz3dhHE5Lrnr8FOZiVsFMyFl+gCTXsOZHmA==
+X-Google-Smtp-Source: AGHT+IEh+zUENKlHwTqqvMCLXHJPeHfx8bc+42zpBFb1EgLg0Uh6wz0DEozMg7IfOwpfpIC3HXlFdw==
+X-Received: by 2002:a17:902:d50a:b0:205:8b9e:965f with SMTP id d9443c01a7336-2074c5f974dmr32242815ad.31.1726023368412;
+        Tue, 10 Sep 2024 19:56:08 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:ab54:b18d:dd53:2da1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710f32dbasm54738295ad.279.2024.09.10.19.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 19:56:07 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH] zram: free secondary algorithms names
+Date: Wed, 11 Sep 2024 11:54:56 +0900
+Message-ID: <20240911025600.3681789-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABsG4WYC/42NQQ6CMBBFr0K6dgwlSlpX3sOwqNMRJsYWO0I0h
- Ls7cgKX7+f/9xcjVJjEnKrFFJpZOCeFZlcZHELqCTgqm6ZuDrWzHqaE+TEWEqEIkeVVMowB76E
- nARdD64+eYuudUYX2bvze9JdOedB+Lp/tbba/9E/xbMECuoCI7oqewvk5MXLCvY5Mt67rF0hQL
- fvKAAAA
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, 
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1673;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=MrV3DTe1I/Mq8IiG+MCg4vdZxH24zTV3GQvQhnWmX6I=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBm4QYjyua5RITv0VOVy7VAeQ4Aok86nofTge7xL
- CnkNTtRHQeJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZuEGIxUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcVOrhAAlmP/znChC53rICaPQT5g236Owtvh8FkPrPW1nhY
- +S6hvWSKBsYPR3TN30uEFnOMCBkLIyumShBKJnYnScJJHVXkOIzllh/haPS+vAiqG58TgQZGBR5
- 6YTSUEL4l6sK2tfF+9FoHojMpueQfCFInUvfQDu+PXka3/oyy3Q6RZEr8uxYbe9OYj92iPLCSPP
- YyEJminFv5Sk6DLCe/a02mmvdzkp4/Kcki/+rc2K53Rbv8AVdVRzY+FOmZ1pIg0mfhOFjb2nojQ
- VYOkKWk3jHtB7IV6enxpg+p5CzJgaePrqD9zfYA2mN1GvUn/sHWtVBJ3miPp3AthbIVm77+6VNV
- iiaFn+T646l0st2eQlvJjZ2lB3Nt9Tfl6GDm/16+Eagn/1GtGk17993CfEqO7B2PQ+IUhbTTBv5
- 674gTkJpXoL3QIkGKQjPchTtY9lKnKffKoh+PWKST/EnrkWi9DJGT78jiLAAwLcel0iV1fbP66G
- EkFSf5wjtEYG1PRv4dIDRv3gNOgwWBrNDcHFWYxP41gu3iZuYAqtcCjqdr+TFOkPAr4FC1Pqivc
- 63qxzoT8SG2tlSywJ0J/aLwi+3Jv0Nq4CzUBZkdpOBg8OC1wLn6alxr8I4xwBtjwapQFfRDPPbx
- yhftgCrCWN5BVDQpszOk855IvmYz/RsqzEFRs+Xfiqdk=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+Content-Transfer-Encoding: 8bit
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+We need to kfree() secondary algorithms names when reset
+zram device that had multi-streams, otherwise we leak memory.
 
-The distro packages (deb-pkg, pacman-pkg, rpm-pkg) are generated using
-the compressed kernel image, which means that the kernel once installed
-can not be booted with systemd-boot.
-
-This differs from the packages generated by the distros themselves,
-which uses the uncompressed image.
-
-Use the newly introduced CONFIG_COMPRESSED_INSTALL option to allow
-selection of which version of the kernel image should be packaged into
-the distro packages.
-
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+Fixes: 001d92735701 ("zram: add recompression algorithm sysfs knob")
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
-Changes in v2:
-- Restore the install-specific handling to retain the behavior of
-  installing the uncompressed "Image" under CONFIG_EFI_ZBOOT=y &&
-  CONFIG_COMPRESSED_INSTALL=n.
-- Link to v1: https://lore.kernel.org/r/20240819-uncompressed-distro-packages-v1-1-c8accc8bc9ea@quicinc.com
----
- arch/arm64/Makefile | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/block/zram/zram_drv.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index f6bc3da1ef11..3d9752e56109 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -166,9 +166,13 @@ BOOT_TARGETS	:= Image vmlinuz.efi image.fit
- PHONY += $(BOOT_TARGETS)
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index f8206ba6cbbb..ee2a279c5f25 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -2115,6 +2115,13 @@ static void zram_destroy_comps(struct zram *zram)
+ 		zram->num_active_comps--;
+ 	}
  
- ifeq ($(CONFIG_EFI_ZBOOT),)
--KBUILD_IMAGE	:= $(boot)/Image.gz
-+  ifeq ($(CONFIG_COMPRESSED_INSTALL),y)
-+    KBUILD_IMAGE := $(boot)/Image.gz
-+  else
-+    KBUILD_IMAGE := $(boot)/Image
-+  endif
- else
--KBUILD_IMAGE	:= $(boot)/vmlinuz.efi
-+  KBUILD_IMAGE := $(boot)/vmlinuz.efi
- endif
++	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
++		if (!zram->comp_algs[prio])
++			continue;
++		kfree(zram->comp_algs[prio]);
++		zram->comp_algs[prio] = NULL;
++	}
++
+ 	zram_comp_params_reset(zram);
+ }
  
- all:	$(notdir $(KBUILD_IMAGE))
-
----
-base-commit: 469f1bad3c1c6e268059f78c0eec7e9552b3894c
-change-id: 20240819-uncompressed-distro-packages-8da6959ed698
-
-Best regards,
 -- 
-Bjorn Andersson <quic_bjorande@quicinc.com>
+2.46.0.598.g6f2099f65c-goog
 
 
