@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-324133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29F7974840
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:41:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FCE97483F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7842883FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3E42885E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE9937171;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4762D7B8;
 	Wed, 11 Sep 2024 02:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="Ty0RCFD1"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2040.outbound.protection.outlook.com [40.107.255.40])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="lAkmnFyF"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2050.outbound.protection.outlook.com [40.107.255.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA22A8D0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CA029CFB
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726022502; cv=fail; b=ojy/BYW0mRBH+6llVbTugLMZPRA0Iae6OI7cOAwv4Vgphxujq7cc0gy4MQUI9Cp6WCqEwLDpJr2HC/du1FL2KP1393nMzjE4ZDNLHsgho2H3vY0i33JMpLMa4y+YswBTLLnC1KGTtjt3WGR+fY1icbM0jC0pQYb8STAlbD/Tidw=
+	t=1726022502; cv=fail; b=O/QT1n9SU9Q+AP2Id9chXvJgGx9zIvtm91Sz/GK3L4UKGDaItdbOfa0kqt++8i3aIerzxirGc++1+aO/ZT7pSAsYgMA96ybvs6JTXzHgCpnroJS+fXrY2y24MzyNGQrN4R/La664PhGH3hK/8dVnIaZKXw6ZowLB2UOBkncka6Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726022502; c=relaxed/simple;
-	bh=dXbb7+L3QzCgaspUV8CYJDqChAQZNHvDcQsdiQisK0s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f19AIb0mk5xB3gFm2BprEOAIH9RRYzBOjWnJKscHI/rw74FxJhRp1b/FmRgtGbhmAyOcvKZnWKaePd8SsAyIps/1ETfja77ujuIrHdWlC3zulVcWMISsPpt2jjI+9FPF1YCoRLDq3QJFTiIee18kA1n4QemxyCJIlmmH9hW9bRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=Ty0RCFD1; arc=fail smtp.client-ip=40.107.255.40
+	bh=982MIbF+pMVHCSMMq1eTqq1jWSKMfZek8pJsqns7mS0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LD5ULP3uObaPajWu0isEA4Sl5b7Xxk/hWgsuHYrh04Z70ewCFUfNKzCGXw8ppkNDl4dEkW5LBnFwov5RGOaL8yYoTt+8v7OSNdAuDIRX8iaXA/u0O1oqAkcsD9I1cq6bOjNBZVeM5CqwGcc3VmKfnOShBvnpynf8njOhWwtqnH8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=lAkmnFyF; arc=fail smtp.client-ip=40.107.255.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JTEiSCvSeGuyknEF1qi4gDkqp6gEBnRa1FcTPOKLXj/xe8+hkIxcFc10BZt0UHg0iVn/rpc/mBH2HCFKPgbNrNfWP4BJJz1ffNH7F/kjhg3IIktptbsuCbi4tDqKJRh/PZwkqvP/K+54G11uUo5A+EORagaI5WIFGDDU5HMaYgR2htfNLhwPdyillbEVozQSDtff4B8BK1+JwiNNAuXZZLLSbqmudobPIKHquAtjV3+phJb1RQg5WBgQyW4JRx14j5EwH+uFF4X6nfWS/pEdmd8hqWoB8yICfCfhw0aF3D+1COZj1GOUf7XbUfb5A+aZC/M9C3EV8dXLkOAVzGs9kA==
+ b=YgUII3xOxDwmYFBa8feTkvll0vul0ENwAGPseGWlp8gsrcC+MR1WX53W1jSVF4luwL7kzTYv9VA/jKYnwBaKfAkd/+jJNxfvQ3Q6Z0ABY7Nfz4QF90nlDtNdOgHzSdC8LI8TAB0YpRdopt4t7Q9UZk+oJFwBBrnLbBnXZxwLVU4Tgl8QMDEsE2DFGz+1r6jCGl5z/559ShI5K3pGk15vMwN6r7HU0K2fS/OlvC89uJxJ3VR6Pq/BOUotQm+4WZDlSKo+Vleytn/Q4kq0gE2llkk65tWtbIFjpZE0yJ/+aq6obMnu2/3YGThfE5cYt3MRtYZ8qJWHsWVXXVN2DHz6Ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q9oclsWyfE1RckQagOejlQqJpLIxCW1Wl2J22LW9tQA=;
- b=nqCtz/ggfMHCVhXyzM0W5hsbD0NokMzjGfYWFYTodC3oqMA8ywxw01awwQOxLE4UVQRf/sxjnw/kYsiIB1DlsDa2yv0WNrTBNhJjw7cEr8DhG9khfNQjh6UhhLnu2ofCoN3i28pug+X5Gcym7o69OO2Ypo9pdebpG6JdI5NZpPyLKB1vjw+J5VTLAugtazid4iumPIRNnJ3drOMAne6eM313C25SvDtG+CzHlRz+lhcdAxpRokkTLRhAANbspcaIyTlL339fsLCh9HUU/pscws+HIFbGz0QT7dOb+5+S5da6SuDqiVbIbTheTjoKyezx4vr0ZIZbapVndWx60KNY5g==
+ bh=3oJi5Tsc5XQZVx6Qgy+PcZpLe/on1RX6iAt1S6MS0Co=;
+ b=PNWc52zZse7MTLVXGr5rs532G55TCA+SKCfFAuVFZKzUwoTJaqSZ8ManRSiUQM1v15krWU/Um+fjZx670pg6vbTAXJOTdBChoCymKKKX+vGehU6AWoEstHDn0AT9Ec5MidaNparsR1dcmVAofwM0S8f12lVgUGBNF+DGenGPfDkEBfDYiXa36L/DvrtoG1oZ2DEEAboT+64gX5Nmg9M10QMs/u4cMWs5AqKtZ+apXVUZfek0zwRjKd6OKPaHsN8BtYmxUs3Sr/ynyRbrQ3rJeECfD39+dQF9o8UwunH0Ql7/keLPFwCvaGcSy251ZLUahCRDJYpAhIKYTvc915Ja/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  58.252.5.68) smtp.rcpttodomain=kernel.org smtp.mailfrom=oppo.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q9oclsWyfE1RckQagOejlQqJpLIxCW1Wl2J22LW9tQA=;
- b=Ty0RCFD1AJhWTIVA5PRYZlQCmaB7E1TkiibaBs11x4ds/wkirIXgInwi+7SKekOTdyur7J4RlS1YdKltZCh5jB/Tye8/Qf4kqwrHzum2G0BiiHwG7r9sopwlY7noznHKzDW0lcUg2PvOo2NDhLyUB3MlOgaLOzn8XGN+wIFr8Ac=
-Received: from PUZP153CA0016.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::18)
- by SEYPR02MB7518.apcprd02.prod.outlook.com (2603:1096:101:1d4::5) with
+ bh=3oJi5Tsc5XQZVx6Qgy+PcZpLe/on1RX6iAt1S6MS0Co=;
+ b=lAkmnFyFHN6qunTaO6LXl/nBVy5YS8jkN/TOCPGvnYcDmIyUDVqvjIlJ3dDhzESuQdcl6EnDoRo9+LzEOc/LdOd5mhKQGZwCcdbdZ7S8F5+/msx3AwSQwDhvW9YwZd3QWwa05V7hcAax7fdQsvxYQXLULmeLNNeApImEC7FE6Vk=
+Received: from PUZP153CA0004.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::16)
+ by SEZPR02MB5781.apcprd02.prod.outlook.com (2603:1096:101:43::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
- 2024 02:41:33 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Wed, 11 Sep
+ 2024 02:41:34 +0000
 Received: from HK2PEPF00006FB5.apcprd02.prod.outlook.com
- (2603:1096:301:c2:cafe::8) by PUZP153CA0016.outlook.office365.com
- (2603:1096:301:c2::18) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:1096:301:c2:cafe::5c) by PUZP153CA0004.outlook.office365.com
+ (2603:1096:301:c2::16) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.6 via Frontend
- Transport; Wed, 11 Sep 2024 02:41:33 +0000
+ Transport; Wed, 11 Sep 2024 02:41:34 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
  smtp.mailfrom=oppo.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=oppo.com;
@@ -63,19 +64,21 @@ Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
 Received: from mail.oppo.com (58.252.5.68) by
  HK2PEPF00006FB5.mail.protection.outlook.com (10.167.8.11) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 11 Sep 2024 02:41:32 +0000
+ 15.20.7918.13 via Frontend Transport; Wed, 11 Sep 2024 02:41:34 +0000
 Received: from cndgdcavdu0c-218-29.172.16.40.114 (172.16.40.118) by
  mailappw30.adc.com (172.16.56.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 10:41:16 +0800
+ 15.1.2507.39; Wed, 11 Sep 2024 10:41:23 +0800
 From: <liuderong@oppo.com>
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
 	liuderong <liuderong@oppo.com>
-Subject: [PATCH v1 0/2] f2fs: modify the calculation method of mtime
-Date: Wed, 11 Sep 2024 10:40:19 +0800
-Message-ID: <1726022421-58677-1-git-send-email-liuderong@oppo.com>
+Subject: [PATCH v1 1/2] f2fs: remove unused parameters
+Date: Wed, 11 Sep 2024 10:40:20 +0800
+Message-ID: <1726022421-58677-2-git-send-email-liuderong@oppo.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1726022421-58677-1-git-send-email-liuderong@oppo.com>
+References: <1726022421-58677-1-git-send-email-liuderong@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,71 +91,153 @@ X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|SEYPR02MB7518:EE_
-X-MS-Office365-Filtering-Correlation-Id: eef89567-f0b8-4e14-b92a-08dcd20b3f72
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|SEZPR02MB5781:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3204d60e-e623-4ad3-ebc0-08dcd20b4027
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QBT8x2oBUUo2omxmVn8559Z4K0/9jUvrQhAwjVXy74AZMO8ilYLDC+/O+k4d?=
- =?us-ascii?Q?ar20jvLgjcoVz75awbp/czobNMOsdecTRxKjkQr4wXTqeP7kTZoVWHQy1Cez?=
- =?us-ascii?Q?QVwe/TRl60zKr6m0UMKzzPGyYRyb6WdZJbPf7YPhePtxFNcrq0hGoG8SUFT5?=
- =?us-ascii?Q?4/8f8SXCLrIpwMQfaU7IdPRL7irz0CI3w+Dk5Q4X0EfXzRek+FJOeoj0+cuh?=
- =?us-ascii?Q?CHs3pec/ZkTz6lb9QDqcebjDdKu2ZSeG4tk/X54RThA/waHIi5wpn9uiVUNf?=
- =?us-ascii?Q?RrIx3lkeJcar/B5yF+hNiIirLTrFGo82yExwOAcqAJcMTJvkQLl76VmscfC0?=
- =?us-ascii?Q?MHfCMmJNs0lHQjikwMDIIi0T3Kyaba4japCEbw6A4pd/e3Iu+li2ZrDca8AW?=
- =?us-ascii?Q?5qcBkW8DJClPNU/b4OWKdDwh3RLNcNaCzn85YZRUm/seH8icqaWOj6IfR6gl?=
- =?us-ascii?Q?0nF/ns1+VGlL2D5quRBr3yTbI0qYT5QfvY8lX39LPXyEQQHL60/1oNsZCQsv?=
- =?us-ascii?Q?dHCRPgMfkaFwy++JbrrJZlETPPya7KsEU/BQgRW6lWmertP9h7E0P2sJk1aR?=
- =?us-ascii?Q?XKcB+3dD0H6ABUB+s9pMPSK7kK/wP2z9Xqr3yyWKIaQorB7G6615ZFdyylfI?=
- =?us-ascii?Q?DSaGM4mUXT3crPoOgZOQSWEefbkGWEXKDAHkj+EUj3GQHjLsr/l3qt9Y5I5+?=
- =?us-ascii?Q?IO5j3UvHkLGKKfBU6E2PRMJpD2pg+GOQiEHAn3Apk6og9vjlcc37Zf9uHp6m?=
- =?us-ascii?Q?eOYJJ/FoJ+ycGnXc2eku7bU5dPX/5IlwlW/+O+IgIHCJcGapye0KzY7OUtBd?=
- =?us-ascii?Q?DBmKaLdx56wdAkJ6St7Ga7PNPkCYV5dAaGtfw85QcqevCDfEp8wC7YvOyGgZ?=
- =?us-ascii?Q?98zV2KKBSQUL7zo86hoqjqsE29vszDsjwqOB0KBieJUyYGSpWdMDhNysUz/Q?=
- =?us-ascii?Q?OVquJWgMPv5VGdJm5qsS1Zhr2FLaHN5dkRW/YmkGB3Z8Gzjgf2VdcbHzwUWt?=
- =?us-ascii?Q?QQCHOkrwm9JFYPNz4qPd/d/0ueRBWygHDwVdaHwgf/IUy4JzvJhtLyn34aSq?=
- =?us-ascii?Q?UCW6hV5v1CBUZixHXYqM6c/XhljmSSJtoyK3F5dc0euRS2wHd5c5/YhuU5tt?=
- =?us-ascii?Q?aRSRSXw8Gwumzk19fWRQg86GnunFpM9vswsg3QxeLylDpBj3sldKAGWH2Ykp?=
- =?us-ascii?Q?sN0Y193kneOsJfEg6TpU1a1HdgpUz8DQQG6Z1OXQ5pgq2J5UjKBp/8f8RYxP?=
- =?us-ascii?Q?8AgJatAfsfZ4xdOLQejbmLxWkfrrTqxBuyU/G6Yrq3ZahdgeEGsIOwos6W8y?=
- =?us-ascii?Q?wfef2B0pdC2RnICIfup11zyLWED0OEtHlnwVbzMqqpAE+qajlPHaPDwdq68u?=
- =?us-ascii?Q?B3M34dYHUXPFG+BJSHG+K1qC8et19RsoTzGNCPtcE0+ej95vrQ4kVkKuFIax?=
- =?us-ascii?Q?ij7jBzeefTjS3+6+A30oYhEyds9ss+/e?=
+	=?us-ascii?Q?nAT8u8J/TbHzL5aZQdDe9nVEVsJElWLLw1to2yjgXeUelZ4sc87a3zzlmfDQ?=
+ =?us-ascii?Q?Skai/K6WesaUD1aeHwIXDddYcmfGz2BjRm6LswCydhUkvFr1ynOb8woSdxGj?=
+ =?us-ascii?Q?UlENCKHxYywMyNsPv/CuZjfmfGkNwONlJ2DDN6HRKKvu6BTfDJ98M8Nswv9E?=
+ =?us-ascii?Q?SVGTOD/SGzcRtYNV/SVbOxlxspyLHqms7xNXso/fTH5vA/79dY/Q43ln4sjr?=
+ =?us-ascii?Q?ywHwad1UcevLeQEThUMhmmzUNm4LlCUYZCjdb0Don4aw1sHVRTQaFEWGis4F?=
+ =?us-ascii?Q?6j3xnfRCKqq7/m690O8/bnGNGxsEEQeFQxnTjXS6bZMiYu1Dwv70Y4W2DXY8?=
+ =?us-ascii?Q?dvlNs5b+criNvxqsiozKLf9AgsUsDFrJ2BpG1c9zgNvzbpS+J2m1R4vQwbmi?=
+ =?us-ascii?Q?RqHv9xPXFJl+koWWUMPmpAflcgJFsGE4eBzR54vHitymdJPpCx0SeGeJ8Tyo?=
+ =?us-ascii?Q?SHLez0mxJ1PvhhLubvFs0W5/eDM7ccYcqRS43Im8nJtTGekx5HethDfIrQS4?=
+ =?us-ascii?Q?ocVaa2WVaveZWgs0NpCxU1ulsMm8rFbCdCXOzoGDSP0jk4DiEQX4Z5LtjDwc?=
+ =?us-ascii?Q?TZEmgUv78njUml3GCWUfdS7j5FeBhObfvOdMRccpiNUKSgPBM3Xi5K/puaML?=
+ =?us-ascii?Q?F9FN4Qa70FLl0uVvAlwwy8FxkoMX+ewKY6K/CxYjSJ43gHEg1DZDtZS2opGv?=
+ =?us-ascii?Q?ugNAXIgBM4TzYJBLxca4AFjWKp3pw9VBe9NaBHqMSLqh+Ekl69/Ia3iLRLyv?=
+ =?us-ascii?Q?di3KNikYWbz7zaMyEbRj26CgocBLVZ9L/NDGLPAatoAesLSeIA5Ch5zYo52z?=
+ =?us-ascii?Q?SOBueTk0BHtfP3KS8F+m6XciqBhYrOJeV7EDJ3bTPfmpV6kNE5RpiJGKXJyF?=
+ =?us-ascii?Q?mnuejGiU/aKPqX+JbLRLg0K0h5XKzOoCRPSNOlt+M0r7L/0mGJZZEVGVE9A4?=
+ =?us-ascii?Q?NRGsNzLvcfdsZHXg+McusLRTZ/5Seq/F9eH7ZHHgpEdxhiGR3yTP5q2pRAN/?=
+ =?us-ascii?Q?JOdhW2QX8u7IhcqEYxXcX3D92Rjpx1fbjbNWXgNt+9MEJhCB20kGSSazTul4?=
+ =?us-ascii?Q?wHqfewvFSVKtkzBf135H0DHWBy+QqH6kO7JKFB9GQDwh8oYP+AWveARoK3Zg?=
+ =?us-ascii?Q?oKZ5p9ngaE8s2/AZRHIpBmfcsI+KS9Ex/qDDjtZEFJ20qlGuE9YEukNUnXH5?=
+ =?us-ascii?Q?sDLmwC/VOkxzQoEKHPuLrSks6ZkkQq9ckMLm3Vdq6ETtLgOELQOrhZ3rr8TR?=
+ =?us-ascii?Q?OKgxwh4k0Z8tS0NdjzJ77MGtcxeNsA7EDH0LteFGvCAtZQ/ghp8D1kFsRuLe?=
+ =?us-ascii?Q?meuOv8i2HIzgDYiMBPgojSMvFBD4/Y2FYW04WRL8+PF6n5+7RTfG8qNFpiSn?=
+ =?us-ascii?Q?fv4KEo/g8o2gE7nIInJ0UE3wN8PSBcRzISD6SlxN1mAUpZs22hCRxxeZQjsu?=
+ =?us-ascii?Q?zqZ9hZ6NyLH5JUWOysAT+VTUbpbm3YSe?=
 X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 02:41:32.9005
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 02:41:34.0880
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eef89567-f0b8-4e14-b92a-08dcd20b3f72
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3204d60e-e623-4ad3-ebc0-08dcd20b4027
 X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB5.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB7518
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB5781
 
 From: liuderong <liuderong@oppo.com>
 
-In cost-benefit GC algorithm, mtime will affect
-the selection of victim segment.For a large section,
-mtime should be the mean value of valid segments,
-in order to select correct victim segment,
-it needs to modify the calculation method of mtime.
+Remove unused parameter segno from f2fs_usable_segs_in_sec.
 
-liuderong (2):
-  f2fs: remove unused parameters
-  f2fs: introduce get_section_mtime
+Signed-off-by: liuderong <liuderong@oppo.com>
+---
+ fs/f2fs/f2fs.h    | 3 +--
+ fs/f2fs/gc.c      | 6 +++---
+ fs/f2fs/segment.c | 3 +--
+ fs/f2fs/segment.h | 4 ++--
+ 4 files changed, 7 insertions(+), 9 deletions(-)
 
- fs/f2fs/f2fs.h    |  5 +++--
- fs/f2fs/gc.c      | 21 +++++----------------
- fs/f2fs/segment.c | 52 +++++++++++++++++++++++++++++++++++++++++++++------=
--
- fs/f2fs/segment.h |  4 ++--
- 4 files changed, 55 insertions(+), 27 deletions(-)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ac19c61..4dcdcdd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3759,8 +3759,7 @@ void f2fs_destroy_segment_manager_caches(void);
+ int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint);
+ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
+                        enum page_type type, enum temp_type temp);
+-unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
+-                       unsigned int segno);
++unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
+ unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
+                        unsigned int segno);
 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 724bbcb..6299639 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -339,7 +339,7 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sb=
+i, unsigned int segno)
+        unsigned char age =3D 0;
+        unsigned char u;
+        unsigned int i;
+-       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi, s=
+egno);
++       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi);
+
+        for (i =3D 0; i < usable_segs_per_sec; i++)
+                mtime +=3D get_seg_entry(sbi, start + i)->mtime;
+@@ -1707,7 +1707,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sb=
+i,
+         */
+        if (f2fs_sb_has_blkzoned(sbi))
+                end_segno -=3D SEGS_PER_SEC(sbi) -
+-                                       f2fs_usable_segs_in_sec(sbi, segno)=
+;
++                                       f2fs_usable_segs_in_sec(sbi);
+
+        sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
+
+@@ -1881,7 +1881,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_=
+control *gc_control)
+
+        total_freed +=3D seg_freed;
+
+-       if (seg_freed =3D=3D f2fs_usable_segs_in_sec(sbi, segno)) {
++       if (seg_freed =3D=3D f2fs_usable_segs_in_sec(sbi)) {
+                sec_freed++;
+                total_sec_freed++;
+        }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 78c3198..6627394 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -5381,8 +5381,7 @@ unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_i=
+nfo *sbi,
+        return BLKS_PER_SEG(sbi);
+ }
+
+-unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
+-                                       unsigned int segno)
++unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi)
+ {
+        if (f2fs_sb_has_blkzoned(sbi))
+                return CAP_SEGS_PER_SEC(sbi);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index bfc01a5..9e61ded 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -430,7 +430,7 @@ static inline void __set_free(struct f2fs_sb_info *sbi,=
+ unsigned int segno)
+        unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+        unsigned int start_segno =3D GET_SEG_FROM_SEC(sbi, secno);
+        unsigned int next;
+-       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi, segno);
++       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi);
+
+        spin_lock(&free_i->segmap_lock);
+        clear_bit(segno, free_i->free_segmap);
+@@ -464,7 +464,7 @@ static inline void __set_test_and_free(struct f2fs_sb_i=
+nfo *sbi,
+        unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+        unsigned int start_segno =3D GET_SEG_FROM_SEC(sbi, secno);
+        unsigned int next;
+-       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi, segno);
++       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi);
+
+        spin_lock(&free_i->segmap_lock);
+        if (test_and_clear_bit(segno, free_i->free_segmap)) {
 --
 2.7.4
 
