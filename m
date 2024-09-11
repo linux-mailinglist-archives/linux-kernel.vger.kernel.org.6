@@ -1,298 +1,231 @@
-Return-Path: <linux-kernel+bounces-324305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C72974AE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBADE974AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198FE1C220B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:03:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A15D1F26751
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01713D246;
-	Wed, 11 Sep 2024 07:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA67213AD26;
+	Wed, 11 Sep 2024 07:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="hxk5H/Gr"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="eirPgQsT"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2062.outbound.protection.outlook.com [40.107.21.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A09513C9CD
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726038122; cv=none; b=jM1G2KQ7siPtpvLQMQiKGtbv9dmV3wuchc4MGEVpLDl9AG/mPnV10O5ku34+3FhxInI+OJL2/U6uKU4M7WykEboQDuapTYV8XqMkZjUFVEsnra60I7v9DHzcFAlJW63MKo7Y/J2E+zqzIRZe/La2rybAIX5XhNnv/g2/djJenMo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726038122; c=relaxed/simple;
-	bh=pz7krZ8wMSk7Ke0O+ezk2e0YvBH+msboaVIphWHVHpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HI/CZLLi2jMGahL1CaHRExhm/PwyEI5YLO9kvrmfpGfRs3w3USurDHt80DTVXg5OIEl9kZqDvga4UZyv8VoBX5fI6D0UXNRBXxpwzJIPTTtxSwdtRdNOcCwyWPgxFw4Zw2X1mXrdVxGXpfTTPnbagY2LhPna9D2jijAgeoLyAJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=hxk5H/Gr; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 781F93F626
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726038117;
-	bh=2MDAdU1s0LLARJ1hj7uSFye2HOBfsOuBYx1euCTHn94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=hxk5H/Grb5UQvScJmXFLw6n6+6qeDjCBOufXH6auZrXK6eNC8ORzj9ah3b5xbD6jL
-	 BA5tDFf5sxyFpXLB39cKLg3oDkbov1AvnDAiZ+pItiC/DI/IJ2NH/jAINAOI2H9fvV
-	 sjb/dHavmkSWpGgKNCQDLK8o1ys1XOzb2ZuHqtLt98hTGdZYdTnpnmC4r4yX8LlJRh
-	 xDA9pAmjnKEEk7zBgPUXSr0jv5Ylv1wHDt0CogK8meu1dBUO8WakaYQ7jCWwsKrsoj
-	 nidltxk0qYBPskuaEUU4balYCspzc052wONdWNOGf9SYfWGaInHkhvozzIw5wc2P8m
-	 kPhNuplC/6zPQ==
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb080ab53so26482445e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:01:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726038116; x=1726642916;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2MDAdU1s0LLARJ1hj7uSFye2HOBfsOuBYx1euCTHn94=;
-        b=JwQXw5r/z2EhxJJJeGMHciLELLHiDDKyB8Z/fEHyL/tGhQ3tmzp5NeYjORINM5SbEQ
-         RqYJqX0Gmkgkk9avZuSgnOUxOSuq/eUI+nl4Q67LCOV0wsS0+I02A8/Fxc4v5HBtU6Rx
-         naGa5PUhvwskTd2oYMGnj60jTlnXOuzltpCTaFivupD7N3k1txsHgj/lnaP8Mq+PwToi
-         QyUpg4S2Vh3gsarCX8qWEcBAXYY9qR3Sxx3EDyeAPfdt/5xPLAcBg/9Lc4BeZZbwfGpW
-         pEm6LITWRMF/aEOGINMc0GJaxjODJsM9JqpaLyk9ZpjeJpdkRN90y6eQ5owT7f3kDEYr
-         dhPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUITRu6QGycI862UoMylJEH12mXDFCDBeHMjdy4tA5FH1tysuF+AVbot0IGv93moaMsDdZMWGyn4tAomJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Rwl/NiunesYvkUcOQ2c82CndW+K5kvEjTKKm+20d+58cK6kR
-	Z4nK2JdkkO15zV3gah1nm7535sr8HdS5YKY5RnQ9GnHm31bxXkFITS8g3fyKSm65WW8w65vLUIv
-	hRlwyLoL0NA3dZ/geUARc6j6KsDWoATRQkgXNIdfJz/sFNoQ9QPYUWeQyxPP1//ytanYdnXTRg8
-	RwvcsEkcU0CWlyegAE1dhKMaLQDzzCT4Zm40Xne3duUsTaMKc+uGtI
-X-Received: by 2002:a05:600c:1c10:b0:42c:bdb0:c61e with SMTP id 5b1f17b1804b1-42cbdb0c782mr44486475e9.13.1726038116495;
-        Wed, 11 Sep 2024 00:01:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH12JTQ1rISeGOg4bZB9Lr9U/QDrVPYDIFdxnWBB8u5zG2QSONx1ZcSzOWwG1KCjkMNASPelQQrLxdZe4rpGBU=
-X-Received: by 2002:a05:600c:1c10:b0:42c:bdb0:c61e with SMTP id
- 5b1f17b1804b1-42cbdb0c782mr44486125e9.13.1726038115991; Wed, 11 Sep 2024
- 00:01:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2615F78C6C;
+	Wed, 11 Sep 2024 07:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726038152; cv=fail; b=Y9CmdrA0qfhLwACOiN513kB9CuUbDrm3dZRGHaIz/ghU2vqPiWuUXjWrF+F9vGShDBTVokVFBPVy4+htzDUe0FEwgdPGG1SKZmX77eOwplc+XmjG9ElOZ8r51k17iK2Ys6ZAHiaAWsP2sqUNwWJwJW9riUHomlvn2ii4HTqysmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726038152; c=relaxed/simple;
+	bh=ehEwbj+taaCYWCz48M9VvX0HllB95+WU1YBIg41p4xQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qwiv5GvPG/SjMgMnXktNKaerU4CGm3Qr8rRxZOLHbnlBzyDJ36HubO1QnG91FP+mb/LcKcJ64YTNomuUokrQ47bRxYJSpnBIGDISxoRreLQZsWUJq2V3erDq1vCc9HJHkn5GgUZEGYqDvTzoccPzW5UMvl/tvMf+/JLwBcSMKRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=eirPgQsT; arc=fail smtp.client-ip=40.107.21.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gujUhvKmsEgkG4VVIuZfYfAUQTpD5myv357vorQ7BNiMMRTwv1d+5d1pxplySMcVgiWuKi3JeOWADH/D8VxGfM99iOReOpDbhSEtK0YZnZTEsbZS3XZfPCafnN6eZX7x0UxO95STx19DQBnxrZ/YZIKYJREJJyAD3gKr4cUoP0ue3POw7/94mfQFcfQ4COTEbTXJ2avJDesJxZjA7XYlqg7YptSzGz1RcL8gCjUtm7dm5pqdKbe0KtPrCc5XnDp/lNNav6ngP0uV+TyEc5rwnwNEtKRvJ/yUNeqGx98HKglLkFGaG1+FDmyOT4jstGpiDaWNk9aNfenQImLG8711xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ehEwbj+taaCYWCz48M9VvX0HllB95+WU1YBIg41p4xQ=;
+ b=fyJIPtazRvw75355XAqtvMGgZrlmUQR099qJHerdo558stHitrcLIkjYcsN4j/3R9TTKxATHHcRXCUln5txDnxC4n+JWPsveWCPka1E1zD2Q2+UkssI76uq4FH99XUZ472Wbn1MnkgiwDjhb8s1YQapVKmOPaNcIU/BUxnO3ODUK2c30e5hZRXM8dMm48dUAd+C6qzXglFbzkjx1fTA5tmGSW5gaBRsRaXiJmKY0SotBS3aasewYFnXjPo/G2ifjnyGCAp3dmmsz4D4GEDB0haNrYQnmI/RKqo2uFkK1XBKDELl7ob5ctw8zJgoa1R6+gA3TB+R3RrZgF/xA04syag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ehEwbj+taaCYWCz48M9VvX0HllB95+WU1YBIg41p4xQ=;
+ b=eirPgQsTcWUhjH3Qkr2VRmN529yF8BwzBxiP7xh77Em/edL3ax8Lk86fvPwgbYSCsN1f2E6yDnSgy8AkOuln4Ryn7mf/A3a0/6rRwz+1GJcq0a4SWtUqD9onTnggNTwryOuynD4xcX1vyNbgtF0BDbItKl1Z2/kj+1DPfJXw1ixq1YE/WxXe8eafn+MWyAQBPM1PEL2/cHCMeKKSB7l3TnSqP0k06ApgWo4XqUk+xSSrpBUithFFu9IUCr/1Jh5CbRKjJfy1oIpf47w8WVhKs9sfm9yAmdl11Eab0qaBO7v6+lzpvNwKmTPaM/NZWitObTrfzs33LZ54I3tisTqkZQ==
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
+ by DU0PR10MB6755.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:473::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 07:02:25 +0000
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8198:b4e0:8d12:3dfe]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8198:b4e0:8d12:3dfe%4]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 07:02:25 +0000
+From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
+To: "longman@redhat.com" <longman@redhat.com>, "axboe@kernel.dk"
+	<axboe@kernel.dk>
+CC: "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>, "Schmidt, Adriaan"
+	<adriaan.schmidt@siemens.com>, "Bezdeka, Florian"
+	<florian.bezdeka@siemens.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "asml.silence@gmail.com"
+	<asml.silence@gmail.com>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "dqminh@cloudflare.com" <dqminh@cloudflare.com>
+Subject: Re: [PATCH v3 2/2] io_uring/io-wq: inherit cpuset of cgroup in io
+ worker
+Thread-Topic: [PATCH v3 2/2] io_uring/io-wq: inherit cpuset of cgroup in io
+ worker
+Thread-Index: AQHbA6SU7psinHbY70Kphop1exYxy7JRSlQAgADffgA=
+Date: Wed, 11 Sep 2024 07:02:25 +0000
+Message-ID: <4eddbc8f761c113fb098b81ed4c542827664abb3.camel@siemens.com>
+References: <20240910171157.166423-1-felix.moessbauer@siemens.com>
+	 <20240910171157.166423-3-felix.moessbauer@siemens.com>
+	 <1589cf94-6d27-4575-bcea-e36c3667b260@redhat.com>
+In-Reply-To: <1589cf94-6d27-4575-bcea-e36c3667b260@redhat.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.46.4-2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|DU0PR10MB6755:EE_
+x-ms-office365-filtering-correlation-id: 0dc45317-8012-4170-e43c-08dcd22fb133
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?S2UwWFFBdlpHeHB1VGxhREVtZTRZakE2czNqeGVqR29BaFhMS2VzaWh1a0Zz?=
+ =?utf-8?B?bWVDcWJSVkpjbTFQbnBVd3g3T29pY0hxY0dQazhxRzhQTWdVaUk3T0xhVmht?=
+ =?utf-8?B?elZTVDI2QkE1ZUF5UlFjS1o2V0cvdXJlV3hEb1FtWHBPNW02a2RzZC9TdmVH?=
+ =?utf-8?B?bURwdnZuZE1tN3MwR2puSndnQVJkSUlBK2Q3LytnczEycXhxZFNyU25rakw2?=
+ =?utf-8?B?T0laWmlxeXc4ZHk4Nm5Sd01ESVk1REhkenFUcFNYckNwTWpNdTE4NG5xRnVN?=
+ =?utf-8?B?S2Y4L0FYWjV0elJSMlpTSU8zdkRiZHd3WnRQM2twY3pYMHFlWmJkNDNzeE14?=
+ =?utf-8?B?bDYzY0VIem5yZDZ6akhnalE1Y0R1RkttNjZtVDRsM0Rtcy9TUnBlV252NGpM?=
+ =?utf-8?B?MTNxS3FYUXcwazZkU2doM3VPUW83U1J0Vk1XNVIzUWxFU0R2SXBaU2JLZ21N?=
+ =?utf-8?B?WnpSdlVkWHo0TWtVUkdNajJzS3hZY0g2dkcvM2NCdklxNFc4a3BWOE90TzJi?=
+ =?utf-8?B?MjNEa2RTdDNkbnBWem1UY2l5Sjk5K21BNVFISU9jTzdiNEVMMjFCK01mZjJh?=
+ =?utf-8?B?blVWcms0b2xGUm5lVTFsTmNDL05BclA4dVR3bE5uT2hXY3QwUEpsM09Bak1P?=
+ =?utf-8?B?NkJ0MjVESzRqRkxZME9QLzRDNXBmNkY5bXNwZUJOdWlCOEpuc1F4ZG5Sa2c0?=
+ =?utf-8?B?NnQxZ2tLSGVCQm9jMXNpY3hJRWR1a2w2VWFzelNydGgwRHhURU9NcGZsQUF4?=
+ =?utf-8?B?eFVDSFNMNVdMdmNWMG1UWXd5QUIwc01mTGplK0FnRldxZ09ORDlwazZnTjAr?=
+ =?utf-8?B?Q2RPTVFERFY0TW4yYVZER090b1BwNkwwWGJManppblp6WDBLbll4S1N3UThP?=
+ =?utf-8?B?MHhQVWpTRjYwM0pabWh2TmwzK254eEtTOFpONDRvMHdKczVVT0owWnVVMllO?=
+ =?utf-8?B?SnhiUGhTYkJ6U21nd2JBOE4wb25DcW53NUtLUWVXTEtsZTZ4cnBzZ3FjbkU5?=
+ =?utf-8?B?Y1lGaVVmQ2N5bEcwS3diTCsxeDFxRno5ZFdwV0twdFpvYzNLVWpZeGVJa012?=
+ =?utf-8?B?Mk54NDF5MmZZOVU2bTJBWTVFWVphdDZsM2M1UUU1ZE1ZVVhKRHUzLy85ekhF?=
+ =?utf-8?B?RUM1NkYxdjZ5enh4dFl4aW1oMjU4eGVJYVhJQm92ZXBqZmRoTjdFRTZSbHFh?=
+ =?utf-8?B?WHppRVN1VDJIaFBKcE5HbGxLVzVFb0dvRnM1L1RlVE40dDlVR20rUHdydHZh?=
+ =?utf-8?B?QkZGaUNJOVMvMjZYRmxkYU9MQkJCNnorMkh1RXpzU3VEemJrOGxIb05peExH?=
+ =?utf-8?B?VGJpT0RIMzRaZXBod254ZGtVQ3RvUE84eXZQV2hkZVdoVWYyaXhveW1xcDN0?=
+ =?utf-8?B?ZE5IRFQvTVRlUmNMdG9wdkpYcHd3N1hHNGwzbEE0dXRJN0lpOXhBYW9hQ2lp?=
+ =?utf-8?B?QzdOeXpPMFBkSXZDVnlWMjNtZkhDTkRaMnJkMUtTSG9Ndnk3RUszY1d3WHBC?=
+ =?utf-8?B?WGZmZDU4dFR6RCtvOU5LOURFcWZKWWswTU1xUnZ1WkpFUHJqRXF1OVlNSEdB?=
+ =?utf-8?B?N0NIb3B5NDIxaUxYaVl6SzlHOWlNM2V1eUtvczJ1RkNlRkVIRFZDRndTck1k?=
+ =?utf-8?B?cW9XVGhlVVluUkhodStkMkxZZmNUeEZUOUtTcHZaeWd3ZGt5dGFvaUNvMFBQ?=
+ =?utf-8?B?R3BIc3F6dEkyWTdBYVFBN1NEdnoza1YvenNJcFdmTDhhZkZEMUtjcE8vRFJF?=
+ =?utf-8?B?TkN3NlhKWDN6UTRHZE1uelBsKzNEWU9BbFNZeFQ2S2MwdVhZV2RwdEg1K29v?=
+ =?utf-8?B?Z25wdGJuWCtIZ1JUR3VrUDlLcFNNVnBKbitkbzAzYmUxajRRajdYUTEzUldW?=
+ =?utf-8?B?NmpGcEwwSHJtTkszVEwwQlEvTkFnYSt4TFBaN05HNEdlZ1E9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RmFGb1dibTlsSm81R1Q2TC92VTdESHhIdGJudTJiL2hEU0hvaExsdWVPc3Z2?=
+ =?utf-8?B?UFN5MW1RY0s1SE01Zk9UV1hvcWw0eHQ0bzYwWGpEYS83YVlsNytDNGRvek4x?=
+ =?utf-8?B?UzFMWWdFeXNRRzErMFFFeEhJbDlxTFU1bldvdHFkRE02TGo4RkIxWHBTMVRa?=
+ =?utf-8?B?OGhVTHp3aHRVSVZ5dHNaU3BXK0ZRRmRQNG9XOGJEMGpLcTY1VzZvYXZWUGNa?=
+ =?utf-8?B?WHJ5UEIxaVdCOG10NG5DUGRhMzkvem5tamJ6SThBSHpWQVJsUjhneUVqcXhI?=
+ =?utf-8?B?M1VSSGJPNEFtdHIycnpVUmdlTlRwM1VpVkdxU1NjZDNtcjRQNytQRisvaE1z?=
+ =?utf-8?B?Tmt2R0pJUlF6Tk9VMTFnOTB5NkZYOUNVeFhGS21UWkJNd1orYXRadDh4Z3BS?=
+ =?utf-8?B?NTNTYTRZL3g2aUdmZU5iQ0k3cDNRenp4SS9QQ2ZETk9PTlcyMEpqK1B2Qi9u?=
+ =?utf-8?B?Y25VUDRKbjlKRDJweDE3bzN3RVhLVlVzL1FGWHQ2TEpPYjVreDZaRklIaVhX?=
+ =?utf-8?B?QUpGaDVZUFZnWnlzb09DKy80b1NEU2h1dHNuc1IyVjRLMHBzZzJxZHFxZWtL?=
+ =?utf-8?B?akNmWTVzWU5NTGVDRnNxRnlqU2ZQdVM0eHlGbFVrSVZCVjhrQ2Z0RFNESDIz?=
+ =?utf-8?B?Ynh4ekpNeHVvQUtQZkpJUjBpVXQrcytIcVlyWm0vVjZGM0F5ak9jZG16SHJ6?=
+ =?utf-8?B?MXRIWHVXS3BEOWRYWHBHeEQ3Yi8wR2xjbGs5V2pHR3NtZ2NOUUo1b2pYU3o5?=
+ =?utf-8?B?dllwQ2lyUzI2UVRQd05NckJuVWxnWWROcStycVlYbXIrQnJSRDd5WGJSMU5O?=
+ =?utf-8?B?U3FFU09MbysyOXZUbUpRVUlqa3kyTkNCM0lPM1JrcEptaHVVa0M3elh6Vmlw?=
+ =?utf-8?B?WGNPdkxMK2VFajlJRGtyakVBaURZMEhScVN1VEdCM3grSEdaZ0wxOUsxYUtZ?=
+ =?utf-8?B?UUtaSDZzVUlLWjkvS2dMMC9EUWVWVmJSWU16cEIvUGFDUElGVTU5emt4dTJT?=
+ =?utf-8?B?cmVJSnoxa01qc1lFZDlkRmVCSFRVUUUwK2ZjeUpqdi9TZy9ySVhlaE1ndmY1?=
+ =?utf-8?B?SUIwckpwbnNCNENsSitmQ21ZWTArMVZVY3Bpeis1a1RTQWtvUHpiM09sWFAz?=
+ =?utf-8?B?V2JZclNsd0ExS2xFbE9QY2NmREV3ZWhDbU1LTk8zUjZLeG1Jc0pnRWZtZmxJ?=
+ =?utf-8?B?YXdQc2xTd3grSHd1dGFCUjZLZzN5RXhZMXFNUCtIbGFaRmQzM3FLeFJDZ1E1?=
+ =?utf-8?B?QWJVRW55UWRneFR3dG1TQ1RLMlJXZHdyeUxjNWtQbmdCTkNhYWtUdW5lMG5P?=
+ =?utf-8?B?dE8yN2hFYVV5VWVrQ01TM3htaGNiRFR2UDNUS0d1anRiRURJRGpqOThjaEox?=
+ =?utf-8?B?c2dEMXI3TWZRQkI0ODJNU3kzMDNjb3hRVTA3emo5ZVYrS0hLQzNwMlhHS01I?=
+ =?utf-8?B?dk01ZHlhd0YxbkszeFg2QldKNkdiWVphNWxDTUV6ZGh2VGtIaS9RNEdMaWYw?=
+ =?utf-8?B?UUo0aUcwbVFhdk9pRlVKeWh3Y0lhVEpnVUV3NzVJS05hYVAyQStuMzllT1hi?=
+ =?utf-8?B?MnBWQnNSYnlKRkNYeG9NcjF4WjJkOUsvaWhuVCtzMDA5WFg0TGhUTVpaRUZT?=
+ =?utf-8?B?TlZBZkVFV2tvcmdxTUJ5SnRTdHJyUXA4WjdBVFNITUluRlVybmJza2h3ZFNT?=
+ =?utf-8?B?alB3VHc4VlZORnYxUzBDU29NTUN2Mkh5czlCRWhkc1U0WVJyT3Y5MXFTWWVV?=
+ =?utf-8?B?dFArMW1zTWR0ZDAxVTlscHlsYzZEK1hvV3ZOYXplRWM4cG1BTTAxQXlQdTVH?=
+ =?utf-8?B?RUEyMUZMemx1Zy9MVU5PbjVnSndQd0htMU1WU3A2STBlZStRN2l3TVdCYjRQ?=
+ =?utf-8?B?L3I4NW5hT2RXWWlxQytSUW13aHVIRjZKTzRuclNTeXJ6aVJtMTFjWEdIcS9C?=
+ =?utf-8?B?OGl5NUNVSkRZRkN4RXY2c2x3OGwyblVzbVBud1ZlVWpncXMyOXc4emxPQlND?=
+ =?utf-8?B?Z0h0bmNBREpGcmRMQUNSTHJRc2pEQVFsTlRlV1MxSkx4U25yVUtMOHVYa1dl?=
+ =?utf-8?B?d0svNHBFT3d6VEkxWW5wdHlMQVRXZWYvOWtkbFY0NVpSb010SUFUTHBvSHI1?=
+ =?utf-8?B?SjJZSmgvWldJbXJTUGFTQmN0dVd2eG1YejlJVitNbHl1MkpoUjEvVnRRalJ6?=
+ =?utf-8?B?Wkovd3IrME03b1ZDeSs1ZmY2WnJoeTJIa2NKdUlhR1h4RVZWcVVhd1dzQmpr?=
+ =?utf-8?Q?tgP3Wpwi5xgYKvxa63mlVPVZ+2jeZLca3ZSDTXfNAA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6C1156DCCBE44B4E911FD3C5E06129D9@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906083539.154019-1-en-wei.wu@canonical.com>
- <8707a2c6-644d-4ccd-989f-1fb66c48d34a@gmail.com> <CAMqyJG0FcY0hymX6xyZwiWbD8zdsYwWG7GMu2zcL9-bMkq-pMw@mail.gmail.com>
- <038166f4-9c47-4017-9543-4b4a5ca503f5@gmail.com>
-In-Reply-To: <038166f4-9c47-4017-9543-4b4a5ca503f5@gmail.com>
-From: En-Wei WU <en-wei.wu@canonical.com>
-Date: Wed, 11 Sep 2024 15:01:45 +0800
-Message-ID: <CAMqyJG0-35Phq1i3XkTyJfjzk07BNuOvPyDpdbFECzbEPHp_ig@mail.gmail.com>
-Subject: Re: [PATCH net] r8169: correct the reset timing of RTL8125 for
- link-change event
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: nic_swsd@realtek.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kuan-ying.lee@canonical.com, 
-	kai.heng.feng@canonical.com, me@lagy.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc45317-8012-4170-e43c-08dcd22fb133
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 07:02:25.7834
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: riwgLFzmcDGTLV6Mms0xSn7Zx6LT+WzKyRmn7XYbHDUj6fs52D84H360RPIjt/ga7FKkDimQEXfNNETNFH31qL9odw2EbJCT7C4Ko9Uq/1A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6755
 
-> What is the link partner in your case?
-My link partner is FS S3900-48T4S switch.
-
->  If you put a simple switch in between, does this help?
-I just put a simple D-link switch in between with the original kernel,
-the issue remains (re-plugging it after 3 seconds).
-
-> It makes more the impression that after 3s of link-down the chip (PHY?)
-> transitions to a mode where it doesn't wake up after re-plugging the cabl=
-e.
-I've done a ftrace on the r8169.ko and the phy driver (realtek.ko),
-and I found that the phy did wake up:
-
-   kworker/u40:4-267   [003]   297.026314: funcgraph_entry:
-       |      phy_link_change() {
-3533    kworker/u40:4-267   [003]   297.026315: funcgraph_entry:
- 6.704 us   |        netif_carrier_on();
-3534    kworker/u40:4-267   [003]   297.026322: funcgraph_entry:
-            |        r8169_phylink_handler() {
-3535    kworker/u40:4-267   [003]   297.026322: funcgraph_entry:
- 0.257 us   |          rtl_link_chg_patch();
-3536    kworker/u40:4-267   [003]   297.026324: funcgraph_entry:
- 4.026 us   |          netif_tx_wake_queue();
-3537    kworker/u40:4-267   [003]   297.026328: funcgraph_entry:
-            |          phy_print_status() {
-3538    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
- 0.245 us   |            phy_duplex_to_str();
-3539    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
- 0.240 us   |            phy_speed_to_str();
-3540    kworker/u40:4-267   [003]   297.026329: funcgraph_entry:
-+ 12.798 us  |            netdev_info();
-3541    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
-+ 14.385 us  |          }
-3542    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
-+ 21.217 us  |        }
-3543    kworker/u40:4-267   [003]   297.026343: funcgraph_exit:
-+ 28.785 us  |      }
-
-So I doubt that the issue isn't necessarily related to the ALDPS,
-because the PHY seems to have woken up.
-
-After looking at the reset function (plus the TX queue issue
-previously reported by the user) , I'm wondering if the problem is
-related to DMA:
-static void rtl_reset_work(struct rtl8169_private *tp) {
-    ....
-    for (i =3D 0; i < NUM_RX_DESC; i++)
-         rtl8169_mark_to_asic(tp->RxDescArray + i);
-    ....
-}
-
-On Wed, 11 Sept 2024 at 01:06, Heiner Kallweit <hkallweit1@gmail.com> wrote=
-:
->
-> On 09.09.2024 07:25, En-Wei WU wrote:
-> > Hi Heiner,
-> >
-> > Thank you for the quick response.
-> >
-> > On Sat, 7 Sept 2024 at 05:17, Heiner Kallweit <hkallweit1@gmail.com> wr=
-ote:
-> >>
-> >> On 06.09.2024 10:35, En-Wei Wu wrote:
-> >>> The commit 621735f59064 ("r8169: fix rare issue with broken rx after
-> >>> link-down on RTL8125") set a reset work for RTL8125 in
-> >>> r8169_phylink_handler() to avoid the MAC from locking up, this
-> >>> makes the connection broken after unplugging then re-plugging the
-> >>> Ethernet cable.
-> >>>
-> >>> This is because the commit mistakenly put the reset work in the
-> >>> link-down path rather than the link-up path (The commit message says
-> >>> it should be put in the link-up path).
-> >>>
-> >> That's not what the commit message is saying. It says vendor driver
-> >> r8125 does it in the link-up path.
-> >> I moved it intentionally to the link-down path, because traffic may
-> >> be flowing already after link-up.
-> >>
-> >>> Moving the reset work from the link-down path to the link-up path fix=
-es
-> >>> the issue. Also, remove the unnecessary enum member.
-> >>>
-> >> The user who reported the issue at that time confirmed that the origin=
-al
-> >> change fixed the issue for him.
-> >> Can you explain, from the NICs perspective, what exactly the differenc=
-e
-> >> is when doing the reset after link-up?
-> >> Including an explanation how the original change suppresses the link-u=
-p
-> >> interrupt. And why that's not the case when doing the reset after link=
--up.
-> >
-> > The host-plug test under original change does have the link-up
-> > interrupt and r8169_phylink_handler() called. There is not much clue
-> > why calling reset in link-down path doesn't work but in link-up does.
-> >
-> > After several new tests, I found that with the original change, the
-> > link won't break if I unplug and then plug the cable within about 3
-> > seconds. On the other hand, the connections always break if I re-plug
-> > the cable after a few seconds.
-> >
-> Interesting finding. 3 seconds sounds like it's unrelated to runtime pm,
-> because this has a 10s delay before the chip is transitioned to D3hot.
-> It makes more the impression that after 3s of link-down the chip (PHY?)
-> transitions to a mode where it doesn't wake up after re-plugging the cabl=
-e.
->
-> Just a wild guess: It may be some feature like ALDPS (advanced link-down
-> power saving). Depending on the link partner this may result in not wakin=
-g
-> up again, namely if the link partner uses ALDPS too.
-> What is the link partner in your case? If you put a simple switch in betw=
-een,
-> does this help?
->
-> In the RTL8211F datasheet I found the following:
->
-> Link Down Power Saving Mode.
-> 1: Reflects local device entered Link Down Power Saving Mode,
-> i.e., cable not plugged in (reflected after 3 sec)
-> 0: With cable plugged in
->
-> This is a 1Gbps PHY, but Realtek may use the same ALDPS mechanism with th=
-e
-> integrated PHY of RTL8125. The 3s delay described there perfectly matches
-> your finding.
->
-> > With this new patch (reset in link-up path), both of the tests work
-> > without any error.
-> >
-> >>
-> >> I simply want to be convinced enough that your change doesn't break
-> >> behavior for other users.
-> >>
-> >>> Fixes: 621735f59064 ("r8169: fix rare issue with broken rx after link=
--down on RTL8125")
-> >>> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
-> >>> ---
-> >>>  drivers/net/ethernet/realtek/r8169_main.c | 11 +++++------
-> >>>  1 file changed, 5 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/=
-ethernet/realtek/r8169_main.c
-> >>> index 3507c2e28110..632e661fc74b 100644
-> >>> --- a/drivers/net/ethernet/realtek/r8169_main.c
-> >>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
-> >>> @@ -590,7 +590,6 @@ struct rtl8169_tc_offsets {
-> >>>  enum rtl_flag {
-> >>>       RTL_FLAG_TASK_ENABLED =3D 0,
-> >>>       RTL_FLAG_TASK_RESET_PENDING,
-> >>> -     RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE,
-> >>>       RTL_FLAG_TASK_TX_TIMEOUT,
-> >>>       RTL_FLAG_MAX
-> >>>  };
-> >>> @@ -4698,8 +4697,6 @@ static void rtl_task(struct work_struct *work)
-> >>>  reset:
-> >>>               rtl_reset_work(tp);
-> >>>               netif_wake_queue(tp->dev);
-> >>> -     } else if (test_and_clear_bit(RTL_FLAG_TASK_RESET_NO_QUEUE_WAKE=
-, tp->wk.flags)) {
-> >>> -             rtl_reset_work(tp);
-> >>>       }
-> >>>  out_unlock:
-> >>>       rtnl_unlock();
-> >>> @@ -4729,11 +4726,13 @@ static void r8169_phylink_handler(struct net_=
-device *ndev)
-> >>>       if (netif_carrier_ok(ndev)) {
-> >>>               rtl_link_chg_patch(tp);
-> >>>               pm_request_resume(d);
-> >>> -             netif_wake_queue(tp->dev);
-> >>> -     } else {
-> >>> +
-> >>>               /* In few cases rx is broken after link-down otherwise =
-*/
-> >>>               if (rtl_is_8125(tp))
-> >>> -                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_NO_QU=
-EUE_WAKE);
-> >>> +                     rtl_schedule_task(tp, RTL_FLAG_TASK_RESET_PENDI=
-NG);
-> >>> +             else
-> >>> +                     netif_wake_queue(tp->dev);
-> >>
-> >> This call to netif_wake_queue() isn't needed any longer, it was introd=
-uced with
-> >> the original change only.
-> >>
-> >>> +     } else {
-> >>>               pm_runtime_idle(d);
-> >>>       }
-> >>>
-> >>
-> >
-> > CC. Martin Kj=C3=A6r J=C3=B8rgensen  <me@lagy.org>, could you kindly te=
-st if
-> > this new patch works on your environment? Thanks!
-> >
-> > En-Wei,
-> > Best regards.
->
+T24gVHVlLCAyMDI0LTA5LTEwIGF0IDEzOjQyIC0wNDAwLCBXYWltYW4gTG9uZyB3cm90ZToNCj4g
+DQo+IE9uIDkvMTAvMjQgMTM6MTEsIEZlbGl4IE1vZXNzYmF1ZXIgd3JvdGU6DQo+ID4gVGhlIGlv
+IHdvcmtlciB0aHJlYWRzIGFyZSB1c2VybGFuZCB0aHJlYWRzIHRoYXQganVzdCBuZXZlciBleGl0
+IHRvDQo+ID4gdGhlDQo+ID4gdXNlcmxhbmQuIEJ5IHRoYXQsIHRoZXkgYXJlIGFsc28gYXNzaWdu
+ZWQgdG8gYSBjZ3JvdXAgKHRoZSBncm91cCBvZg0KPiA+IHRoZQ0KPiA+IGNyZWF0aW5nIHRhc2sp
+Lg0KPiANCj4gVGhlIGlvLXdxIHRhc2sgaXMgbm90IGFjdHVhbGx5IGFzc2lnbmVkIHRvIGEgY2dy
+b3VwLiBUbyBiZWxvbmcgdG8gYSANCj4gY2dyb3VwLCBpdHMgcGlkIGhhcyB0byBiZSBwcmVzZW50
+IHRvIHRoZSBjZ3JvdXAucHJvY3Mgb2YgdGhlIA0KPiBjb3JyZXNwb25kaW5nIGNncm91cCwgd2hp
+Y2ggaXMgbm90IHRoZSBjYXNlIGhlcmUuDQoNCkhpLCB0aGFua3MgZm9yIGp1bXBpbmcgaW4uIEFz
+IHNhaWQsIEknbSBub3QgdG9vIGZhbWlsaWFyIHdpdGggdGhlDQppbnRlcm5hbHMgb2YgdGhlIGlv
+IHdvcmtlciB0aHJlYWRzLiBOb25ldGhlbGVzcywgdGhlIGtlcm5lbCBwcmVzZW50cw0KdGhlIGNn
+cm91cCBhc3NpZ25tZW50IHF1aXRlIGNvbnNpc3RlbnRseS4gVGhpcyBob3dldmVyIGNvbnRyYWRp
+Y3RzIHlvdXINCnN0YXRlbWVudCBmcm9tIGFib3ZlLiBFeGFtcGxlOg0KDQpwaWQgICAgIHRpZA0K
+NjQ4NDYwICA2NDg0NjAgIFNDSEVEX09USEVSICAgMjAgIFMgICAgMCAgMC0xICAuL3Rlc3Qvd3Et
+YWZmLnQNCjY0ODQ2MCAgNjQ4NDYxICBTQ0hFRF9PVEhFUiAgIDIwICBTICAgIDEgIDEgICAgaW91
+LXNxcC02NDg0NjANCjY0ODQ2MCAgNjQ4NDYyICBTQ0hFRF9PVEhFUiAgIDIwICBTICAgIDAgIDAg
+ICAgaW91LXdyay02NDg0NjENCg0KV2hlbiBJIG5vdyBjaGVjayB0aGUgY2dyb3VwLnByb2NzLCBJ
+IGp1c3Qgc2VlIHRoZSA2NDg0NjAsIHdoaWNoIGlzDQpleHBlY3RlZCBhcyB0aGlzIHRoZSBwcm9j
+ZXNzICh3aXRoIGl0cyBtYWluIHRocmVhZCkuIENoZWNraW5nDQpjZ3JvdXAudGhyZWFkcyBzaG93
+cyBhbGwgdGhyZWUgdGlkcy4NCg0KV2hlbiBjaGVja2luZyB0aGUgb3RoZXIgd2F5IHJvdW5kLCBJ
+IGdldCB0aGUgc2FtZSBpbmZvcm1hdGlvbjoNCiRjYXQgL3Byb2MvNjQ4NDYwL3Rhc2svNjQ4NDYx
+L2Nncm91cCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCjA6Oi91c2VyLnNsaWNl
+L3VzZXItMTAwMC5zbGljZS9zZXNzaW9uLTEuc2NvcGUNCiRjYXQgL3Byb2MvNjQ4NDYwL3Rhc2sv
+NjQ4NDYyL2Nncm91cCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCjA6Oi91c2Vy
+LnNsaWNlL3VzZXItMTAwMC5zbGljZS9zZXNzaW9uLTEuc2NvcGUNCg0KTm93IEknbSB3b25kZXJp
+bmcgaWYgaXQgaXMganVzdCBwcmVzZW50ZWQgaW5jb3JyZWN0bHksIG9yIGlmIHRoZXNlDQp0YXNr
+cyBpbmRlZWQgYmVsb25nIHRvIHRoZSBtZW50aW9uZWQgY2dyb3VwPw0KDQo+IE15IHVuZGVyc3Rh
+bmRpbmcgaXMNCj4gdGhhdCB5b3UgYXJlIGp1c3QgcmVzdHJpY3RpbmcgdGhlIENQVSBhZmZpbml0
+eSB0byBmb2xsb3cgdGhlIGNwdXNldA0KPiBvZiANCj4gdGhlIGNvcnJlc3BvbmRpbmcgdXNlciB0
+YXNrIHRoYXQgY3JlYXRlcyBpdC4gVGhlIENQVSBhZmZpbml0eQ0KPiAoY3B1bWFzaykgDQo+IGlz
+IGp1c3Qgb25lIG9mIHRoZSBtYW55IHJlc291cmNlcyBjb250cm9sbGVkIGJ5IGEgY2dyb3VwLiBU
+aGF0DQo+IHByb2JhYmx5IA0KPiBuZWVkcyB0byBiZSBjbGFyaWZpZWQuDQoNClRoYXQncyBjbGVh
+ci4gTG9va2luZyBhdCB0aGUgYmlnZ2VyIHBpY3R1cmUsIEkgd2FudCB0byBlbnN1cmUgdGhhdCB0
+aGUNCmlvIHdvcmtlcnMgZG8gbm90IGJyZWFrIG91dCBvZiB0aGUgY2dyb3VwIGxpbWl0cyAoSSBj
+YWxsZWQgaXQgImFtYmllbnQiDQpiZWZvcmUsIHNpbWlsYXIgdG8gdGhlIGNhcGFiaWxpdGVzKSwg
+YmVjYXVzZSB0aGlzIGJyZWFrcyB0aGUgaXNvbGF0aW9uDQphc3N1bXB0aW9uLiBJbiBvdXIgY2Fz
+ZSwgd2UgYXJlIG1vc3RseSBpbnRlcmVzdGVkIGluIG5vdCBsZWF2aW5nIHRoZQ0KY3B1c2V0LCBh
+cyB3ZSB1c2UgdGhhdCB0byBwZXJmb3JtIHN5c3RlbSBwYXJ0aXRpb25pbmcgaW50byByZWFsdGlt
+ZSBhbmQNCm5vbiByZWFsdGltZSBwYXJ0cy4NCg0KPiANCj4gQmVzaWRlcyBjcHVtYXNrLCB0aGUg
+Y3B1c2V0IGNvbnRyb2xsZXIgYWxzbyBjb250cm9scyB0aGUgbm9kZSBtYXNrIG9mDQo+IHRoZSBt
+ZW1vcnkgbm9kZXMgYWxsb3dlZC4NCg0KWWVzLCBhbmQgdGhhdCBpcyBlc3BlY2lhbGx5IGltcG9y
+dGFudCBhcyBzb21lIG1lbW9yeSBjYW4gYmUgImNsb3NlciIgdG8NCnRoZSBJT3MgdGhhbiBvdGhl
+cnMuDQoNCkJlc3QgcmVnYXJkcywNCkZlbGl4DQoNCi0tIA0KU2llbWVucyBBRywgVGVjaG5vbG9n
+eQ0KTGludXggRXhwZXJ0IENlbnRlcg0KDQoNCg==
 
