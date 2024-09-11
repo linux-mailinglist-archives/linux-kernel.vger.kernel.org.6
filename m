@@ -1,157 +1,207 @@
-Return-Path: <linux-kernel+bounces-325153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CAF9755A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B9F9755AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA031F22659
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:36:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E081F2536E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431C71AAE12;
-	Wed, 11 Sep 2024 14:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFDD1A38EB;
+	Wed, 11 Sep 2024 14:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGrHBvHW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2WADTme2"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134A31A76D2;
-	Wed, 11 Sep 2024 14:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC3A19F126
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065323; cv=none; b=OE7UYFka9cEE0mcfKriOJytoSpj9BbloFiugGsdXnlzTFaNE8krNDe2x2tK07KTAuF7UmOEBaxGaN3FeOqzgWi4jkdJFOZ/KOWBeYXVq2KmDwKHGGRv21DvdAHI8eMo9RL0ASH1M7L0XIuqNGh4Wi25DbzipawIMFOW5wmQXjLU=
+	t=1726065391; cv=none; b=I8AO0Ho/n7nAlCfaLiV1wBkPndzfLngHchlmCWcaU9L0MVYJ9FW1QZN0ggIfnOO4EWHMNurkAdrtvOsx4r6Af7v8O08VPrsovcUwALk3yDJ1FssU5Ki/d+D/dUe6/rIQ3XUa891ffY5aI2tFX5D2tbnll5ylMY4rN24R2IsNtY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065323; c=relaxed/simple;
-	bh=zZVJ/jn55FdYP64LtELXOS80f+yzBjWduO1V5u3oLxk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TqBFKVMX6DZWGV3ij6RWJtIp/66rpkqtj02P7QdEi6R5zW1UuHYGMQ5aPR0NtWm0vIbpiwIIr2Mb2/DU4gemncRD58rVsOHEdX7UPtVYYCO0MqH1SNfkimZn3uwdnOad2tNqJAJg5xFvHcY9ZUxtRLK3OaxUlR8cRUdy/1yBF4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGrHBvHW; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726065322; x=1757601322;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zZVJ/jn55FdYP64LtELXOS80f+yzBjWduO1V5u3oLxk=;
-  b=mGrHBvHWqTW1Klm/iS0SzIaEATh33WObPAwKyL0SpFMxyZzmPRe4kNNe
-   csGzswMih8HG5X578/P56KDkV8svqogNWn03R2nkXHuowCpQAXEN5OKeX
-   Mtb4t+ftu+kQ1gxtw9FFrF99X/vgaSgDUzSJ1gHmoaACdHvL00Ui2rUQu
-   9FDtuElGAdRNLE98UQnqxzRkcuswTD/p/moFql495mv+fln9Lrci+kd1T
-   04UQ6yUsib+yDNUH2XZVX7G/TaPrMZ0wKYysYG05bPhLMe0H7jXENv2+C
-   t5JMQc58UJCgFpER/C4YFtE2LSP13U0IYIeqTbWh+fjPaEk1n9w7z1rOT
-   A==;
-X-CSE-ConnectionGUID: oLixXibFTp+abo+Vn2wPfw==
-X-CSE-MsgGUID: ibbiAeM7SXumME4jPZT/1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42384881"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="42384881"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:35:21 -0700
-X-CSE-ConnectionGUID: 9NB8H6ayTn6Q2ECakrgXog==
-X-CSE-MsgGUID: WVpFtfsPR6CVhSVVGDJIEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="67327019"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 07:35:21 -0700
-Received: from [10.212.119.193] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.193])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8698620CFED7;
-	Wed, 11 Sep 2024 07:35:20 -0700 (PDT)
-Message-ID: <7730b925-eb2c-4908-9c48-e016701f2901@linux.intel.com>
-Date: Wed, 11 Sep 2024 10:35:19 -0400
+	s=arc-20240116; t=1726065391; c=relaxed/simple;
+	bh=jmgy6ePhB7bLDBpTd81J0tiVbuti6trYQHnkM+1M0mE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MkKvYPOOj8JCI4brBdDclxngRi15c/gJRAj8nlcfgNJjh+3t863yGHwYD4EGzuw4/Ot+6yK4q7UrCmnn0eoCW21HV4uxitR2xGRBrK2UxGch2f8M9XZ7+m+FN53PklIZuyLglUzmVJ9yiZYQ+/xw81LVhOY82ZXepKUfRhFKJBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2WADTme2; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d904fe9731so3391579a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:36:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726065388; x=1726670188; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rTR8YGAn/aAtZT0hzqf25aT4TpKY7n5RE/q8NR1IC4=;
+        b=2WADTme2a7B10jjNHTQZmMCG4anY4k7jNsFCvlqgqnnH8s6/qpsevn6GBkTkNAqfCf
+         ped2DJPu492yZStQMuvGhrmaEkInKckFKDO8DU80tHinIJ1DpIkN84F1L/1NgdZNb8Jj
+         8MZi7xqxjEYoFw/FbVVCFG1i8zVWo3KSNwEQ7Mw6yGcjhdMN+1gNibheX2WvV4F5ajeA
+         BZmzWpLXl1V0hVZ5F1Cw+57+0NCEQNdxUB2ACfqSZyxY1k0m5Oh0bWcPB2GChWHI4g7L
+         0+2oTD+bv/sj+e54ws0jQX9oBNE8ZvPH6KWfolzRvsFxSF1pxWBAJElkOarCG59hk2OH
+         ymNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726065388; x=1726670188;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rTR8YGAn/aAtZT0hzqf25aT4TpKY7n5RE/q8NR1IC4=;
+        b=fnKrHfv0wPYc6ohVKm96dIUhd9UpfmXmoEypak/uUW2ltEtTzHATaFMFD7zffrmLcW
+         lo2nDZPsDVC1UiCdcAHloSFU0c2s9NbcPsJdk4J5eNvy7kwmSMgswWsb2NbiT54gHzgO
+         q0DpE1nhRhspa8ZVg5PvyOwltMLfZECf6/uQCjY3YcIgjbK0nmKu30EwnH6GNzx394Ya
+         KcHAnZ3MK1IKB2f8QTS0wSgvcm7/dO410IFyorS3diCXYK5+2oXJ6s3JaVixuXTEJRWX
+         QWY+tQoqMRXn7q8RN9V8/KfipGpo3rNil2EDXPm23ug8kp9s7xCH1yknVgFAz9N3Lv+W
+         dKmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW28YgTTw00TLT7WJACtOeJdTDgjSLjYOhnJbqfuvcV/uL6qX4PtjqNI8BsJHeo852WoxNmPMJ4flZiU90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnro0r8KEgszpl2ft4qO0kVW5ENFemzbQ7/AaIUroWu/BNXmPd
+	LlzZU+KBaxPHmR7Y+XM8K1khdfYlWTQ97TiePsLb1kEycnipUktmtELPOWLp87EQqMrMFM5SkCS
+	HsQ==
+X-Google-Smtp-Source: AGHT+IGHWdcYX1NkcVg1OQeMu4hjtViqzfIsCNlewZ9TUR7AJ+hEpfLh5HL5P11rsM9OQjoLPY9X/txlPPE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:c405:b0:207:50e2:f54 with SMTP id
+ d9443c01a7336-20750e20f6emr3336845ad.1.1726065388259; Wed, 11 Sep 2024
+ 07:36:28 -0700 (PDT)
+Date: Wed, 11 Sep 2024 07:36:26 -0700
+In-Reply-To: <07b0b475-9f45-4476-a63d-291f940f9b4d@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [peterz-queue:perf/core] [perf/x86/rapl] 90942140bb:
- UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c
-To: Peter Zijlstra <peterz@infradead.org>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <202409111521.c7c6d56f-lkp@intel.com>
- <20240911094536.GP4723@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240911094536.GP4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240509075423.156858-1-weijiang.yang@intel.com> <07b0b475-9f45-4476-a63d-291f940f9b4d@amazon.de>
+Message-ID: <ZuGpJtEPv1NtdYwM@google.com>
+Subject: Re: [RFC PATCH 1/2] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
+From: Sean Christopherson <seanjc@google.com>
+To: Nikolas Wipper <nikwip@amazon.de>
+Cc: Yang Weijiang <weijiang.yang@intel.com>, pbonzini@redhat.com, mlevitsk@redhat.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Sep 11, 2024, Nikolas Wipper wrote:
+> On Thu May  9, 2024 at 09:54 AM UTC+0200, Yang Weijiang wrote:
+> > Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access HW MSR or
+> > KVM synthetic MSR throught it.
+> > 
+> > In CET KVM series [*], KVM "steals" an MSR from PV MSR space and access
+> > it via KVM_{G,S}ET_MSRs uAPIs, but the approach pollutes PV MSR space
+> > and hides the difference of synthetic MSRs and normal HW defined MSRs.
+> > 
+> > Now carve out a separate room in KVM-customized MSR address space for
+> > synthetic MSRs. The synthetic MSRs are not exposed to userspace via
+> > KVM_GET_MSR_INDEX_LIST, instead userspace complies with KVM's setup and
+> > composes the uAPI params. KVM synthetic MSR indices start from 0 and
+> > increase linearly. Userspace caller should tag MSR type correctly in
+> > order to access intended HW or synthetic MSR.
+> > 
+> > [*]:
+> > https://lore.kernel.org/all/20240219074733.122080-18-weijiang.yang@intel.com/
+> > 
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Having this API, and specifically having a definite kvm_one_reg structure 
+> for x86 registers, would be interesting for register pinning/intercepts.
+> With one_reg for x86 the API could be platform agnostic and possible even
+> replace MSR filters for x86.
 
+I don't follow.  MSR filters let userspace intercept accesses for a variety of
+reasons, these APIs simply provide a way to read/write a register value that is
+stored in KVM.  I don't see how this could replace MSR filters.  
 
-On 2024-09-11 5:45 a.m., Peter Zijlstra wrote:
-> On Wed, Sep 11, 2024 at 04:32:13PM +0800, kernel test robot wrote:
->>
->>
->> Hello,
->>
->> kernel test robot noticed "UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c" on:
->>
->> commit: 90942140bb6cc7e9a41d5927c7617ee522896f7a ("perf/x86/rapl: Move the pmu allocation out of CPU hotplug")
->> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git perf/core
->>
->> in testcase: boot
->>
->> compiler: clang-18
->> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
->>
->> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>
->>
->> +-----------------------------------------------------------+------------+------------+
->> |                                                           | c206df6d69 | 90942140bb |
->> +-----------------------------------------------------------+------------+------------+
->> | UBSAN:array-index-out-of-bounds_in_arch/x86/events/rapl.c | 0          | 12         |
->> +-----------------------------------------------------------+------------+------------+
->>
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <oliver.sang@intel.com>
->> | Closes: https://lore.kernel.org/oe-lkp/202409111521.c7c6d56f-lkp@intel.com
->>
->>
->> [   22.115286][    T1] ------------[ cut here ]------------
->> [   22.115957][    T1] UBSAN: array-index-out-of-bounds in arch/x86/events/rapl.c:685:3
+> I do have a couple of questions about these patches.
 > 
-> That is:
+> > ---
+> >  arch/x86/include/uapi/asm/kvm.h | 10 ++++++
+> >  arch/x86/kvm/x86.c              | 62 +++++++++++++++++++++++++++++++++
+> >  2 files changed, 72 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> > index ef11aa4cab42..ca2a47a85fa1 100644
+> > --- a/arch/x86/include/uapi/asm/kvm.h
+> > +++ b/arch/x86/include/uapi/asm/kvm.h
+> > @@ -410,6 +410,16 @@ struct kvm_xcrs {
+> >  	__u64 padding[16];
+> >  };
+> >  
+> > +#define KVM_X86_REG_MSR			(1 << 2)
+> > +#define KVM_X86_REG_SYNTHETIC_MSR	(1 << 3)
 > 
-> 		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
-> 
-> Which is scaled like:
-> 
-> 	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
-> 
-> And that isn't new in that patch, just moved around.
->
+> Why is this a bitfield? As opposed to just counting up?
 
-The error commit is still the old one which doesn't include the fix of
-the issue reported by Dhananjay.
-https://lore.kernel.org/lkml/88fa2064-c054-4833-872c-0cf5ff1e3609@amd.com/
+Hmm, good question.  This came from my initial sketch, and it would seem that I
+something specific in mind since starting at (1 << 2) is oddly specific, but for
+the life of me I can't remember what the plan was.  Best guest is that I was
+leaving space for '0' and '1' to be regs and sregs?  But that still doesn't
+explain/justify using a bitfield.
 
-I think it should be the same issue.
+[*] https://lore.kernel.org/all/ZjLE7giCsEI4Sftp@google.com
 
-> Kan, as it happens these two patches got zapped by Ingo because they
-> conflict with that rapl patch from perf/urgent and he merged perf/urgent
-> into perf/core.
 > 
-> I was going to rebase these two patches on top, but given the above, can
-> you have a look instead?
+> #define KVM_X86_REG_MSR			2
+> #define KVM_X86_REG_SYNTHETIC_MSR	3
 > 
+> > +
+> > +struct kvm_x86_reg_id {
+> > +	__u32 index;
+> > +	__u8 type;
+> > +	__u8 rsvd;
+> > +	__u16 rsvd16;
+> > +};
 > 
+> This struct is opposite to what other architectures do, where they have
+> an architecture ID in the upper 32 bits, and the lower 32 bits actually
+> identify the register. This would probably make sense for x86 too, to
+> avoid conflicts with other IDs (I think MIPS core registers can have IDs
+> with the lower 32 bits all zero) so that the IDs are actually unique,
+> right?
 
-Sure, I will work with Oliver on the issue, and resend the patch to
-support rapl.
+It's not the opposite, it's just missing fields for the arch and the size.  Ugh,
+the size is unaligned.  That's annoying.  Something like this?
 
-Thanks,
-Kan
+struct kvm_x86_reg_id {
+	__u32 index;
+	__u8  type;
+	__u8  rsvd;
+	__u8  rsvd4:4;
+	__u8  size:4;
+	__u8  x86;
+}
+
+Though looking at this with fresh eyes, I don't think the above structure should
+be exposed to userspace.  Userspace will only ever want to encode a register; the
+exact register may not be hardcoded, but I would expect the type to always be
+known ahead of time, if not outright hardcoded.  The struct is really only useful
+for the kernel, e.g. to easily switch on the type, extract the index, etc.
+
+As annoying as it can be for a human to decipher the final value, the arm64/riscv
+approach of providing builders is probably the way to go, though I think x86 can
+be much simpler (less stuff to encode).
+
+Oh!  Another thing I think we should do is make KVM_{G,S}ET_ONE_REG 64-bit only
+so that we don't have to deal with 32-bit vs. 64-bit GPRs.  32-bit userspace
+would need to manually encode the register id, but I have no problem making life
+difficult for such setups.  Or KVM could reject the ioctl for .compat_ioctl(),
+but that seems unnecessary.
+
+E.g. since IIUC switch() and if() statements are off-limits in uapi headers...
+
+#define KVM_X86_REG_TYPE_MSR	2ull
+
+#define KVM_x86_REG_TYPE_SIZE(type) 						\
+{(										\
+	__u64 type_size = type;							\
+										\
+	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
+		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
+		     0;								\
+	type_size;								\
+})
+
+#define KVM_X86_REG_ENCODE(type, index)				\
+	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
+
+#define KVM_X86_REG_MSR(index) KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
 
