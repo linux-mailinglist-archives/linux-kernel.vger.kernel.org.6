@@ -1,264 +1,150 @@
-Return-Path: <linux-kernel+bounces-325266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F11975730
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:32:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B75975732
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5300B1C21E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:32:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBDC1C21CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871A81AB6FD;
-	Wed, 11 Sep 2024 15:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F161AB511;
+	Wed, 11 Sep 2024 15:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLuxYG2o"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KGZn7xcs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666CC186E57
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFF83E479;
+	Wed, 11 Sep 2024 15:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726068761; cv=none; b=OJ4X0ykkIVnl7SZSYC7Mm7Hru5XBWO/q2XjEiSKQPe8QqRolV+O+aaUwEfykANdAeUyxxgWYsXFLFS5jo/6zYpYN4g1Czn/ddIae5IAEk/zMYQx/yl3MVWZ7u1+vFO+NNizgWMVUu/Lm2Xr3spf3YDiahO3JFW+37zVIrGwuDRU=
+	t=1726068778; cv=none; b=nfX3VLrtvHTYgvY5MQUSUZvCJ3LjGvsBmDJU/xqpIxrXDbd285MEogPV/+5Blbi55JQzoMDDMuwO+aHRe/mbzIkI2GwTkrAevlVwfrITNq5yyJAttXlKR3m75VfhazFbBbSQZ/wcvkaWf6Fxb1qBik4RM8y/wZVwCvrqa/J2M1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726068761; c=relaxed/simple;
-	bh=n/THAopzoKNb9ho6jlx1u+EKvseKQuYpJqcPQgFMlqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfYTnO1P3j7dGTftYOQwF1qknkSisrCNuqkAdUqWhC0YrkxeR1QlO2PFBHwcOBbp0NcKft3ZDySUC+EcMbUG1hNrTIcalogR9RVFstRLoHoSP7etkNbEXTLTjO6BH0xHftWEiqnBXLDkrV7QEXzPeLlIO4dXEZb+rUSzt8nuWsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLuxYG2o; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718da0821cbso4492567b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726068759; x=1726673559; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JUnLTmnkKuTjduDvDakmnEv59zQ17ggV64w/1jebL68=;
-        b=TLuxYG2o17aScjBLybw279ioBxR58blaPAE4nIApf+9a9PaFvqMsxOQat190ivSi8v
-         jD4fkfx0tFXfTEbM2/2K3x4Nob2Kymauq4QdP4f6lXfgwarMubQKd/4yKbNeVO+/zfIu
-         VExs1w+kS0bOVwSvjcSNWBD1d3RJxgqgcu3VvRTen+cnLjtjnsCV4ELJxCRVPGseKNh7
-         c1pDkFcTFDcjfr0LpyPJCVupp1NACHgEZHRg8o1uhN0JwLnh2X4S1qMI8y8qkjCFCDW8
-         a2z7sF3ruBXWYnC3TJyJSY4n+CzhlPgVGnvS5ByCIv0ogdwfrfnA4z48YOp/TXFaXP8g
-         EnwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726068759; x=1726673559;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JUnLTmnkKuTjduDvDakmnEv59zQ17ggV64w/1jebL68=;
-        b=oqEPhDzIIWCwFkpZztfCikOaSOVjVFuOq73/Z8W+mBIdivDh9QBJYx2OBJ88HJchDH
-         VXBSI7KnwQFeBJ/yuVqU6tQbowr/5Biouc0Ck8kuAmiJkOH7qFNGGbzlE14i/+I2UV+y
-         Bm71Xt5drrbdOK3QEge4GAD6eyHCMClboT9pB1gADWhJi0lR1ApPHMEZmGbnM5lZrWD0
-         kC2Cei1fYSKe9zFhC3xqcSOX8yAllYVcNbnLQqZ4ua6FVXL9mQI+N0ioEpIItb0tlqyt
-         UQXrqdlbV9obQK03FYiMzJ8Znf/X64auKggT43vJhoTFWFON5qg7KmCeJVjGkJGjsrHl
-         GsDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsSJAg7KNil+IhKUwlsRsSi6AStdK8NHH/qOZ0+Hi6EzuTNT9lTto1Mcp4yVgKWBtAno14fOGgqDRFYT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn9JiYGYy32Y0pw8S80NAHnaGgfAgMXKoH3p+OxyFPyytZWzug
-	vzne8dO5uMjJmiMhbhjZHAq6fiK/y1nqhtcWkuFeVEcAQ8Sik/YSWPVSoupCGQ==
-X-Google-Smtp-Source: AGHT+IEgOgO8muSou4mMHOAUIftNXmTF9h5ug/uQEGPL0Bqkvr313ObMh3MqMwuRezxyzZzkjOshzA==
-X-Received: by 2002:a05:6a00:4fc3:b0:717:fd98:4a6 with SMTP id d2e1a72fcca58-718e3fc0534mr21290930b3a.11.1726068758507;
-        Wed, 11 Sep 2024 08:32:38 -0700 (PDT)
-Received: from thinkpad ([120.60.130.207])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fdf67b0sm108896a12.79.2024.09.11.08.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 08:32:38 -0700 (PDT)
-Date: Wed, 11 Sep 2024 21:02:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, vkoul@kernel.org,
-	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com,
-	lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-Message-ID: <20240911153228.7ajcqicxnu2afhbp@thinkpad>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-9-quic_qianyu@quicinc.com>
- <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
- <20240827165826.moe6cnemeheos6jn@thinkpad>
- <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+	s=arc-20240116; t=1726068778; c=relaxed/simple;
+	bh=Mm5d6vwEESIrnh2GCyhQU9uzmhx0W/dg1WNHEvGLAjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l0HRu9fwp9DoTOtL0DYNfSp2Li+wwfVPxtiDd8IRqiJClO/rGvX07My66JjIqZX8N21W86kumpmEjjere4XnQxt1ccioZKYW1LU+msINNP/0RlnOdM1bR6UCO7lfxJGz1xLdJAbNLERvWzPjCc6c78cEHLyS47CU03iXWruQn/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KGZn7xcs; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726068777; x=1757604777;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Mm5d6vwEESIrnh2GCyhQU9uzmhx0W/dg1WNHEvGLAjM=;
+  b=KGZn7xcskXqejD7rEG9f48OIvEJuDxZ7PZi0l+SHmy8VIblgSVB/2Q5m
+   ahWfaf8ExFdRjn0T7kBNU+wp4RjjpIzaxWukoWGdGqdP0xVq4bNf2r/Er
+   gxYl5S1jpXzvPA9P9VKtNQZ45RUNbvchVyIG+fqtwn2gTOcph/gPorCYu
+   uyziFnMFb/zxdapl4PSPr6pP+h7TOxA4BDHV0cEyJmA8gdYOTfTc1PGi1
+   TMvVPHOnEyzkB9STlOMzvMIUH6K9le31EDhg7FzhV2RtQvhzBq8WP8SaI
+   P9MImc2h/SP1PBMI8mml7ePmCvWAK+ffYsLKBU978Bq94twSkQVa+qRZw
+   A==;
+X-CSE-ConnectionGUID: YHP6WygST5yFWCbGH9gXOw==
+X-CSE-MsgGUID: Fna8fR2ES3WvasPsTlHL1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28654615"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="28654615"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 08:32:56 -0700
+X-CSE-ConnectionGUID: ubfERYFIRMWRNKZmP8lyzQ==
+X-CSE-MsgGUID: 7ghLNCtxQKCbqMnIE/oCDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="71540436"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 08:32:55 -0700
+Received: from [10.212.119.193] (kliang2-mobl1.ccr.corp.intel.com [10.212.119.193])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 8DD5720CFEDB;
+	Wed, 11 Sep 2024 08:32:54 -0700 (PDT)
+Message-ID: <ba2bdc06-a63b-478b-b29f-15d093125d83@linux.intel.com>
+Date: Wed, 11 Sep 2024 11:32:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the tip tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240911153854.240bbc1f@canb.auug.org.au>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240911153854.240bbc1f@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
+Hi Stephen,
+
+On 2024-09-11 1:38 a.m., Stephen Rothwell wrote:
+> Hi all,
 > 
-> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
-> > On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
-> > > On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
-> > > > On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
-> > > > support to use 3.3v, 3.3v aux and 12v regulators.
-> > > First of all, I don't see corresponding bindings change.
-> > > 
-> > > Second, these supplies power up the slot, not the host controller
-> > > itself. As such these supplies do not belong to the host controller
-> > > entry. Please consider using the pwrseq framework instead.
-> > > 
-> > Indeed. For legacy reasons, slot power supplies were populated in the host
-> > bridge node itself until recently Rob started objecting it [1]. And it makes
-> > real sense to put these supplies in the root port node and handle them in the
-> > relevant driver.
-> > 
-> > I'm still evaluating whether the handling should be done in the portdrv or
-> > pwrctl driver, but haven't reached the conclusion. Pwrctl seems to be the ideal
-> > choice, but I see a few issues related to handling the OF node for the root
-> > port.
-> > 
-> > Hope I'll come to a conclusion in the next few days and will update this thread.
-> > 
-> > - Mani
-> > 
-> > [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
-> Hi Mani, do you have any updates?
+> After merging the tip tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
 > 
+> kernel/events/core.c: In function 'perf_event_setup_cpumask':
+> kernel/events/core.c:14012:13: warning: the comparison will always evaluate as 'true' for the address of 'thread_sibling' will never be NULL [-Waddress]
+> 14012 |         if (!topology_sibling_cpumask(cpu)) {
 
-I'm working with Bartosz to add a new pwrctl driver for rootports. And we are
-debugging an issue currently. Unfortunately, the progress is very slow as I'm on
-vacation still.
+The perf_event_init_cpu() may be invoked at the early boot stage, while
+the topology_*_cpumask hasn't been initialized yet. The check is to
+specially handle the case.
 
-Will post the patches once it got resolved.
+X86 uses a per-cpu cpumask pointer, which could be NULL at the early
+boot stage. However, it looks like ARM uses a global variable, which
+never be NULL. If so, I think we should check whether it's empty.
 
-- Mani
+The below patch should fix it (Only test on X86).
 
-> Thanks,
-> Qiang
-> > 
-> > > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > > > ---
-> > > >   drivers/pci/controller/dwc/pcie-qcom.c | 52 +++++++++++++++++++++++++-
-> > > >   1 file changed, 50 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > index 6f953e32d990..59fb415dfeeb 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > @@ -248,6 +248,8 @@ struct qcom_pcie_cfg {
-> > > >          bool no_l0s;
-> > > >   };
-> > > > 
-> > > > +#define QCOM_PCIE_SLOT_MAX_SUPPLIES                    3
-> > > > +
-> > > >   struct qcom_pcie {
-> > > >          struct dw_pcie *pci;
-> > > >          void __iomem *parf;                     /* DT parf */
-> > > > @@ -260,6 +262,7 @@ struct qcom_pcie {
-> > > >          struct icc_path *icc_cpu;
-> > > >          const struct qcom_pcie_cfg *cfg;
-> > > >          struct dentry *debugfs;
-> > > > +       struct regulator_bulk_data slot_supplies[QCOM_PCIE_SLOT_MAX_SUPPLIES];
-> > > >          bool suspended;
-> > > >          bool use_pm_opp;
-> > > >   };
-> > > > @@ -1174,6 +1177,41 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
-> > > >          return !!(val & PCI_EXP_LNKSTA_DLLLA);
-> > > >   }
-> > > > 
-> > > > +static int qcom_pcie_enable_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       struct dw_pcie *pci = pcie->pci;
-> > > > +       int ret;
-> > > > +
-> > > > +       ret = regulator_bulk_enable(ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                                   pcie->slot_supplies);
-> > > > +       if (ret < 0)
-> > > > +               dev_err(pci->dev, "Failed to enable slot regulators\n");
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > > +static void qcom_pcie_disable_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       regulator_bulk_disable(ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                              pcie->slot_supplies);
-> > > > +}
-> > > > +
-> > > > +static int qcom_pcie_get_slot_supplies(struct qcom_pcie *pcie)
-> > > > +{
-> > > > +       struct dw_pcie *pci = pcie->pci;
-> > > > +       int ret;
-> > > > +
-> > > > +       pcie->slot_supplies[0].supply = "vpcie12v";
-> > > > +       pcie->slot_supplies[1].supply = "vpcie3v3";
-> > > > +       pcie->slot_supplies[2].supply = "vpcie3v3aux";
-> > > > +       ret = devm_regulator_bulk_get(pci->dev, ARRAY_SIZE(pcie->slot_supplies),
-> > > > +                                     pcie->slot_supplies);
-> > > > +       if (ret < 0)
-> > > > +               dev_err(pci->dev, "Failed to get slot regulators\n");
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > >   static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >   {
-> > > >          struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > @@ -1182,10 +1220,14 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > > 
-> > > >          qcom_ep_reset_assert(pcie);
-> > > > 
-> > > > -       ret = pcie->cfg->ops->init(pcie);
-> > > > +       ret = qcom_pcie_enable_slot_supplies(pcie);
-> > > >          if (ret)
-> > > >                  return ret;
-> > > > 
-> > > > +       ret = pcie->cfg->ops->init(pcie);
-> > > > +       if (ret)
-> > > > +               goto err_disable_slot;
-> > > > +
-> > > >          ret = phy_set_mode_ext(pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
-> > > >          if (ret)
-> > > >                  goto err_deinit;
-> > > > @@ -1216,7 +1258,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
-> > > >          phy_power_off(pcie->phy);
-> > > >   err_deinit:
-> > > >          pcie->cfg->ops->deinit(pcie);
-> > > > -
-> > > > +err_disable_slot:
-> > > > +       qcom_pcie_disable_slot_supplies(pcie);
-> > > >          return ret;
-> > > >   }
-> > > > 
-> > > > @@ -1228,6 +1271,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
-> > > >          qcom_ep_reset_assert(pcie);
-> > > >          phy_power_off(pcie->phy);
-> > > >          pcie->cfg->ops->deinit(pcie);
-> > > > +       qcom_pcie_disable_slot_supplies(pcie);
-> > > >   }
-> > > > 
-> > > >   static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-> > > > @@ -1602,6 +1646,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> > > >                          goto err_pm_runtime_put;
-> > > >          }
-> > > > 
-> > > > +       ret = qcom_pcie_get_slot_supplies(pcie);
-> > > > +       if (ret)
-> > > > +               goto err_pm_runtime_put;
-> > > > +
-> > > >          ret = pcie->cfg->ops->get_resources(pcie);
-> > > >          if (ret)
-> > > >                  goto err_pm_runtime_put;
-> > > > --
-> > > > 2.34.1
-> > > > 
-> > > 
-> > > -- 
-> > > With best wishes
-> > > Dmitry
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2766090de84e..fc0c17e57c86 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -14000,7 +14000,8 @@ static void perf_event_setup_cpumask(unsigned
+int cpu)
+ 	 * The perf_online_<domain>_masks includes the first CPU of each domain.
+ 	 * Always uncondifionally set the boot CPU for the
+perf_online_<domain>_masks.
+ 	 */
+-	if (!topology_sibling_cpumask(cpu)) {
++	if (cpu == get_boot_cpu_id() &&
++	    (!topology_sibling_cpumask(cpu) ||
+cpumask_empty(topology_sibling_cpumask(cpu)))) {
+ 		for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE;
+scope++) {
+ 			pmu_cpumask = perf_scope_cpumask(scope);
+ 			if (WARN_ON_ONCE(!pmu_cpumask))
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+Should I send the above as a separate patch to fix it?
+
+Thanks,
+Kan
+
+>       |             ^
+> In file included from include/linux/topology.h:30,
+>                  from include/linux/gfp.h:8,
+>                  from include/linux/xarray.h:16,
+>                  from include/linux/list_lru.h:14,
+>                  from include/linux/fs.h:13,
+>                  from kernel/events/core.c:11:
+> include/linux/arch_topology.h:78:19: note: 'thread_sibling' declared here
+>    78 |         cpumask_t thread_sibling;
+>       |                   ^~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+> 
 
