@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-324767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F5697509D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04429750A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FBBDB2739E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38121C220A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8DF188A05;
-	Wed, 11 Sep 2024 11:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C821862AE;
+	Wed, 11 Sep 2024 11:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="entOCY4g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="BV1MDXxP"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6675F186E54;
-	Wed, 11 Sep 2024 11:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726053372; cv=none; b=cAdMQ0sqeSaAQifH2iudbuCnPpNH5yxP2VC7CtIeZtrYXe4WdP2UsbL5oDaZaYYmxgOJ23uwX2Z62XFwm75YWfYmzxoNyCqHakaxOjGkJFyldx9aNbmvDELz6f4oX1az+ADzPJQtfGYkdICyoqZh5g7C1/d7J0bqr7GrkGYrKVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726053372; c=relaxed/simple;
-	bh=+9YGffMsMXeBQxGd6pj0nRY4lcme7KcL7cz/QhK3qLE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JjEPODcnCvTRijWsd/6i/uU06yIkjvdj3MmZap2v6VKQZoEb5o/AVS5kJesH88ZM/WXljdOncK29Z1wzj0Tt8unAnl157N7pqTQDVCsvle8+ENHogjqYf7HTWFty42f4PxExTbU6dnGvuxxComGrIMENytsL3/5QONh+2yOyxNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=entOCY4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E99C4CED0;
-	Wed, 11 Sep 2024 11:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726053371;
-	bh=+9YGffMsMXeBQxGd6pj0nRY4lcme7KcL7cz/QhK3qLE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=entOCY4gxiGfMjOTEplOiIV50YZLhSpYJf+hbp+c1rABmMT8Fm3JOA37NN6sWNVre
-	 ZiCQyRkTnBvSabXXl/xDp/6mq3TS0GUp1aLmuKqBStcOE7TqXw4sa+CB/JISz1ETQr
-	 KFYuSXdZsPegF4t0jD9fPEAkk0/QC2+6SVNucBtB9RHRtfNUs2XviYE2KnIyQ9doVQ
-	 g3l5PnlzSjHzjd6WinytjPvfuz127sPh3yked0uNggqBaZAM34i2cKmNXIJoI5O6Ed
-	 qumfgrZmbYVV/a6/E0G4Y7eAGiTKQCNnZMpPikXvcJ8LoUwRMGfwuJ8eZlDF4nG1P2
-	 JoHwd/2hQ86hQ==
-From: Mark Brown <broonie@kernel.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240909-regulator-const-v1-0-8934704a5787@linaro.org>
-References: <20240909-regulator-const-v1-0-8934704a5787@linaro.org>
-Subject: Re: [PATCH 00/17] regulator: Few constifications of static data
-Message-Id: <172605336975.30061.1450890402175817381.b4-ty@kernel.org>
-Date: Wed, 11 Sep 2024 12:16:09 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D97C14F100;
+	Wed, 11 Sep 2024 11:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726053600; cv=pass; b=XM35IIEhcuXk5ywm2rPFAWrtlT9bJMTaUKPbriO9GJTqgCPj8GNHROlTkBURBQRVhZ64n7nk/l2s69xggZu24KhE2pBH0jXDK/J1ooSenPhBi4/Ivr6t1WaMteSGPNsd4rWviqn8iLqARuMCLq9klWESn97geehyNLoNBapohg4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726053600; c=relaxed/simple;
+	bh=IU+R0CDTCyZqNwl1hdQaiSBG4BL59OeQElu9XV83p/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YKV4W2lIwSieIppEl4UdZCK2nFCbchFwtzLZ5rQM/C+ZxQXLiR8/ykdPNPKt6MM5Uk0AYPx476ZWZ8Q82KCq5Y928L+umSQsh1arFITggXZf5rgVKieMHuppE9CB/SJrecegDm28oCfm+/H+zZ4vAOP+xGtMa6qkbH8fxPncvUY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=BV1MDXxP; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726053582; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gtHCduAs0xH/UsmlvJTZxWSwcDh7rvNe8NLgCwDIT0HGhB4ElFNDTM1KXskMXPiSsI/pIOMcw8zuh4zTQNO17QbvugHwIZBXrg5YQO1ZEH2jszG/4GheGr6ULF2Ozq79eD95YBO4VxoxBDXuqnRrQ7aXEwUNAEw86GooK6VIhDk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726053582; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4MMnUNTpU/jZwAUKT3bq/cNuDEDn9rEShm45TOlyucU=; 
+	b=YuS3YpBAuK1iBJck3lxKKLPXS0CFUMRN2pNGxnRdImR0ShEMe8fXqOglUBysF0CRHGnRblqAHtvGuWwMnRRxCyYFHZZnPhLXQYhIK6AXaiftRusxlPPhz7LR8etHwh8GpYaa9/JGbnfWy5G6XJooIXhAtdOp1ieNj6rVY1YG0/0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726053582;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=4MMnUNTpU/jZwAUKT3bq/cNuDEDn9rEShm45TOlyucU=;
+	b=BV1MDXxPk0aQrE6zjowsc+fpQiJVfBR4Mc0mEc+d0mXyfCaoaUD22CuD1W2BTGN3
+	bNj7r6OWWjTpo3Ox9Yi0GcdQni/NqJ8hDKxYaXeDKhjtGLUfGlDTpiPncGlV6EuttoQ
+	H42PWjKb37oBNV48M4fsmvYPWz4yviPc4DkGetko=
+Received: by mx.zohomail.com with SMTPS id 1726053580250115.83142773790291;
+	Wed, 11 Sep 2024 04:19:40 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Nicolas Belin <nbelin@baylibre.com>
+Cc: kernel@collabora.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] ASoc: mediatek: mt8365: Print the ret value
+Date: Wed, 11 Sep 2024 16:19:09 +0500
+Message-Id: <20240911111917.4091809-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, 09 Sep 2024 15:51:11 +0200, Krzysztof Kozlowski wrote:
-> Few cleanups (safer code), built tested.  Last two patches should
-> probably be tested.
-> 
-> Best regards,
-> Krzysztof
-> 
+Print the ret value otherwise it is just being set without ever getting
+used. The author may have missed printing it.
 
-Applied to
+Fixes: 1bf6dbd75f76 ("ASoc: mediatek: mt8365: Add a specific soundcard for EVK")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+If it isn't useful, the ret value assignment statement can be removed.
+---
+ sound/soc/mediatek/mt8365/mt8365-mt6357.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[01/17] regulator: da9052: Constify static data
-        commit: 9653007e7d878609be205ced4803ca57be341845
-[02/17] regulator: da9055: Constify static data
-        commit: dfa9e708c63e7833c61f551069d3ff4b03af7895
-[03/17] regulator: da9063: Constify static data
-        commit: 0601c1e5c4a1162c909675233645889237b003a2
-[04/17] regulator: da9121: Constify static data
-        commit: b3f1e8e32ef579907fe0c0c9c102bb13883454d6
-[05/17] regulator: da9211: Constify static data
-        (no commit info)
-[06/17] regulator: hi6421: Constify static data
-        commit: b94afa51cad448d7d9bcb600ce267153132369ad
-[07/17] regulator: hi6421v600: Constify static data
-        commit: 5ec424afc95ab2490ae28b3e7756e6e9b271a5f0
-[08/17] regulator: tps65023: Constify static data
-        commit: 7fb636dc26d6fc532fbc96fc74847afedc128154
-[09/17] regulator: max77826: Drop unused 'rdesc' in 'struct max77826_regulator_info'
-        commit: 653976707d03f9c8e07f1c7733f27c89a1d5eb1c
-[10/17] regulator: max77826: Constify static data
-        commit: 96d7ee7cb01203ae0b6078631738754424d89cf8
-[11/17] regulator: mtk-dvfsrc: Constify static data
-        commit: 90b94a05b6cd54b6ae65d09df86d7b602a228ae1
-[12/17] regulator: pcap: Constify static data
-        commit: 7f1bfca46b1524a774d03eccd8042935c453843a
-[13/17] regulator: pfuze100: Constify static data
-        commit: 6f4fd2b8a5c08656d293ed491335747ff3d34104
-[14/17] regulator: qcom-refgen: Constify static data
-        commit: 7eb5d065ec6725d7da9a4f7ba71b6ff4aaf7eb42
-[15/17] regulator: hi6421v530: Drop unused 'eco_microamp'
-        commit: e9c7ff34c26d009c2f7c3d51236ed5a808dbc0d7
-[16/17] regulator: hi6421v530: Use container_of and constify static data
-        commit: 7dd36b3287182bc889953f7741bdcef037109210
-[17/17] regulator: max77650: Use container_of and constify static data
-        commit: c4d6a804713ac080841d1711a98ae1a6ecaede38
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/sound/soc/mediatek/mt8365/mt8365-mt6357.c b/sound/soc/mediatek/mt8365/mt8365-mt6357.c
+index fef76118f8010..412f5fdd8fc52 100644
+--- a/sound/soc/mediatek/mt8365/mt8365-mt6357.c
++++ b/sound/soc/mediatek/mt8365/mt8365-mt6357.c
+@@ -258,8 +258,8 @@ static int mt8365_mt6357_gpio_probe(struct snd_soc_card *card)
+ 							   mt8365_mt6357_pin_str[i]);
+ 		if (IS_ERR(priv->pin_states[i])) {
+ 			ret = PTR_ERR(priv->pin_states[i]);
+-			dev_warn(card->dev, "No pin state for %s\n",
+-				 mt8365_mt6357_pin_str[i]);
++			dev_warn(card->dev, "No pin state(%d) for %s\n",
++				 ret, mt8365_mt6357_pin_str[i]);
+ 		} else {
+ 			ret = pinctrl_select_state(priv->pinctrl,
+ 						   priv->pin_states[i]);
+-- 
+2.39.2
 
 
