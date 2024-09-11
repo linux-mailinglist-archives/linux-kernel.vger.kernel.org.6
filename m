@@ -1,190 +1,311 @@
-Return-Path: <linux-kernel+bounces-325313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986E59757B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 330669757B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B971F21CFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59971F259FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0890C1AE870;
-	Wed, 11 Sep 2024 15:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2382A1ABED6;
+	Wed, 11 Sep 2024 15:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1P7TMwJ"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pp3b2RfD"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123401AE84D;
-	Wed, 11 Sep 2024 15:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FDD187336
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070186; cv=none; b=DeXKcwJQ7Y7PG6F1/fl6lFcdYXa+iUsUjCJg1bK8SZoRH4CY+CwgukVxm1voodMFDLiAH4n3NioydMsobfWT9Tj+xFwekUpMZs7E5woCJ7RaJMGAfJK1hDQS3+lVSIbEIfztv0XdkYPI4Q52v2/pA4qfNWDNMI2D8zIU3Y2AI4A=
+	t=1726070177; cv=none; b=FKXHWVXSYeg9FlXHp4TVPROgmbXnR5KPE4SLBOb5dTW8Gdrn7NLpcM4sdtEJJEgpIpdYCKcrOObJmxsZr+0YWR9L0aAyDyh8JvPf/oCC82MH2SaE+WqHA4ii4IUdRToROWP33XdcNIA3ujxp2HVN5WbijzndhsOzkm/84rs70bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070186; c=relaxed/simple;
-	bh=Dxod+zYmhRxDadQPuCZp+2EDvtcNQw3ZAxVfQZkt2TI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/MN0jQa+u4M0WYRILAkLKa0eis8WFL6L97bdDtD2PR/mTvMQ5K8nWNP+G52RcrHUF1avcmLRKZ0wAiCFqs/58RdZgBrRhEBFbihGEOZPuWw4ts4QfUVUwfwTxKv8m6lOcopKZhsYPpMI4qV1iflpor0YhToTG8ZxZtwJkkMJQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1P7TMwJ; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-717911ef035so5361037b3a.3;
-        Wed, 11 Sep 2024 08:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726070184; x=1726674984; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jljrGYOdYNtWhSCPWEj0dAzhk8I277dPvpWRqGcz7w4=;
-        b=P1P7TMwJZ6T0ZkWm7OTjWOFDcwqncJ4V8Ectj5JEY8XAsZsLqRrK78nCupo3QExeVq
-         Z0749tIMh1kisLzJTxcjdGEzFQTSTFmn8wMr0NY8MtDzKd+K0ODxhmcEn/Ep+unuKKBW
-         CxPJUwPidmVNi5ds/q+0tuJqwlyi9XhHO6A7ZhelyhgLGoKcCdnfOhPDOVfYLrHyAmG4
-         GfWsT8ybLT/oWtCbmJEJZjhjHiHgrXUl+e/iDF6y+WWw+Hseu2SmRqGE8mTZG4+gWgHg
-         EEjt4TumjXDhW3xlHoKA5PjQM+DK7eDGQ7crkDvP/mpd/qsB4B16Se8wPHczP0QvB99n
-         pA4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726070184; x=1726674984;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jljrGYOdYNtWhSCPWEj0dAzhk8I277dPvpWRqGcz7w4=;
-        b=K6uICjBjk+oKNXh5EVUn7bOBvCNRgEqlwJon+zGcsGUW5wr+/rASR7n1gT9yQnDOEa
-         Jrzel7YUXySnJuavz922h5PAAPKYCWrxWVz1HdmprAFmhFoyV5PWy5m9hahG1eCVmofa
-         Be5m76yCkDwf9uCFrYRC4vm8fDqKMdvIFgCvrPX+QrDtNylZu1hOg6ZWbKmP0Uq+nkKX
-         m5yHWlGizOX+YuhYrhpPxSJ64bLmxGBGklw3nbZW1CnOu4cbd/s0wV76Jfyg+EVz9Jb/
-         85OHUc7ELzlq2XSQqLAXU2y9yDg8tAqnuvnfcYGZa08xf5k9an2YRzB0aYdW64hsw7E2
-         aB9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/PrWpY2MEoBtNEKp6mrmp3/zH9qCKKLNQHVwFmzxmK4feiI0Fj9YQ/YzfMSi6mcJgqeGG+yiv15+iIc=@vger.kernel.org, AJvYcCX+p2BUsEjwcdvXs+R05wNIstNtX0FZnNzVw6hNQWdLGCI07FC6F+GDyRenZKHBRJoqNwHlnB8RBjZkrrrISOdN6g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrFVAx1u6NJw6YV813Q2ZvOErwbEfJUVdco0uKQWUJJvfU9S+T
-	1PHJfQpTFCmC5HCL89NzpxHWA8v+wR/6Ucb9pYKyCrQ+bppcKn2R1ZkbxdfQUHZst0g+y4hTX3m
-	6DuxuT9XtpId+hL1mL7pUbkaLCGk=
-X-Google-Smtp-Source: AGHT+IGC7L1OFokQK9VoCCn4nPJx/6KFr122GwJ9dQE8hx9Mhb36sXjrE5JVsdVSMMQE0+6RpFj6xHYNV6lbGIOcOlo=
-X-Received: by 2002:a05:6a21:1796:b0:1cf:3177:54 with SMTP id
- adf61e73a8af0-1cf5e176fbcmr6792708637.42.1726070184198; Wed, 11 Sep 2024
- 08:56:24 -0700 (PDT)
+	s=arc-20240116; t=1726070177; c=relaxed/simple;
+	bh=5MNG4HOkOTF6AKS6N4c5zwJ4wQrJIxGKiYo6sqenF3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bBDzraXlEztvU8rlrpgOpPE0m9qSjCVJCDtdfFveIXDMjXkHC3MM507e3GiBeIVBEx7dbrgMskJPxSWhA12klHUq4G3Q3JAmNTVUzihT4nq0vANjUFYYbNVCk/j1uxvexdeHL5pd3ecnnDODWFFfMAtiGgkl0kFsyVceaKsM4Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pp3b2RfD; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ceb00673-8151-49b0-b36b-75b5dc402041@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726070168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J8NaUEcC/jxxHDpfZXwZPhCuZ+KZJ7rMZcv9TtycY/A=;
+	b=pp3b2RfDorR3bidkDidzDEAsRCIsQ8XomPytKNyTz1OX51OQ38KYet0NW7ZYJk/L3oLSV4
+	wwVbtho6SIUpIIx2MkEYIvaLfqHEstRyLspm/kVEOMdRiGRZIS1dvDpnK63s8i9g6BLjLv
+	Wt9q/n1hhgyyLuksA9ylb2cUeR/pDR8=
+Date: Wed, 11 Sep 2024 16:56:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
-In-Reply-To: <4f01524fa4ea91c7146a41e26ceaf9dae4c127e4.1725821201.git.sam@gentoo.org>
-From: Jesper Juhl <jesperjuhl76@gmail.com>
-Date: Wed, 11 Sep 2024 17:55:46 +0200
-Message-ID: <CAHaCkmejAaxvx_N9L1_uS5JpToLfBXPzGqs3C=8-Diy__=1sJA@mail.gmail.com>
-Subject: Re: [PATCH] tools: drop nonsensical -O6
-To: Sam James <sam@gentoo.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH net-next 1/2] octeontx2-af: Knobs for NPC default rule
+ counters
+To: Linu Cherian <lcherian@marvell.com>, davem@davemloft.net,
+ sgoutham@marvell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: gakula@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+References: <20240911143303.160124-1-lcherian@marvell.com>
+ <20240911143303.160124-2-lcherian@marvell.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240911143303.160124-2-lcherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Looks good to me.
-Reviewed-by: Jesper Juhl <jesperjuhl76@gmail.com>
-
-On Sun, 8 Sept 2024 at 20:47, Sam James <sam@gentoo.org> wrote:
->
-> -O6 is very much not-a-thing. Really, this should've been dropped
-> entirely in 49b3cd306e60b9d889c775cb2ebb709f80dd8ae9 instead of just
-> passing it for not-Clang.
->
-> Just collapse it down to -O3, instead of "-O6 unless Clang, in which case
-> -O3".
->
-> GCC interprets > -O3 as -O3. It doesn't even interpret > -O3 as -Ofast,
-> which is a good thing, given -Ofast has specific (non-)requirements for
-> code built using it. So, this does nothing except look a bit daft.
->
-> Remove the silliness and also save a few lines in the Makefiles accordingly.
->
-> Signed-off-by: Sam James <sam@gentoo.org>
+On 11/09/2024 15:33, Linu Cherian wrote:
+> Add devlink knobs to enable/disable counters on NPC
+> default rule entries.
+> 
+> Introduce lowlevel variant of rvu_mcam_remove/add_counter_from/to_rule
+> for better code reuse, which assumes necessary locks are taken at
+> higher level.
+> 
+> Sample command to enable default rule counters:
+> devlink dev param set <dev> name npc_def_rule_cntr value true cmode runtime
+> 
+> Sample command to read the counter:
+> cat /sys/kernel/debug/cn10k/npc/mcam_rules
+> 
+> Signed-off-by: Linu Cherian <lcherian@marvell.com>
 > ---
-> I promise I'm not completely humourless, but given it's caused
-> actual workarounds to be added for Clang, I don't think this is worth keeping.
->
-> Plus it sort of propagates a silly myth that -O6 does anything.
->
->  tools/lib/api/Makefile     | 4 ----
->  tools/lib/subcmd/Makefile  | 4 +---
->  tools/lib/symbol/Makefile  | 4 ----
->  tools/perf/Makefile.config | 6 +-----
->  4 files changed, 2 insertions(+), 16 deletions(-)
->
-> diff --git a/tools/lib/api/Makefile b/tools/lib/api/Makefile
-> index 044860ac1ed1c..7f6396087b467 100644
-> --- a/tools/lib/api/Makefile
-> +++ b/tools/lib/api/Makefile
-> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
->  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu99 -U_FORTIFY_SOURCE -fPIC
->
->  ifeq ($(DEBUG),0)
-> -ifeq ($(CC_NO_CLANG), 0)
->    CFLAGS += -O3
-> -else
-> -  CFLAGS += -O6
-> -endif
->  endif
->
->  ifeq ($(DEBUG),0)
-> diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-> index b87213263a5e0..6717b82fc5876 100644
-> --- a/tools/lib/subcmd/Makefile
-> +++ b/tools/lib/subcmd/Makefile
-> @@ -38,10 +38,8 @@ endif
->
->  ifeq ($(DEBUG),1)
->    CFLAGS += -O0
-> -else ifeq ($(CC_NO_CLANG), 0)
-> -  CFLAGS += -O3
->  else
-> -  CFLAGS += -O6
-> +  CFLAGS += -O3
->  endif
->
->  # Treat warnings as errors unless directed not to
-> diff --git a/tools/lib/symbol/Makefile b/tools/lib/symbol/Makefile
-> index 13d43c6f92b4a..426b845edfacc 100644
-> --- a/tools/lib/symbol/Makefile
-> +++ b/tools/lib/symbol/Makefile
-> @@ -31,11 +31,7 @@ CFLAGS := $(EXTRA_WARNINGS) $(EXTRA_CFLAGS)
->  CFLAGS += -ggdb3 -Wall -Wextra -std=gnu11 -U_FORTIFY_SOURCE -fPIC
->
->  ifeq ($(DEBUG),0)
-> -ifeq ($(CC_NO_CLANG), 0)
->    CFLAGS += -O3
-> -else
-> -  CFLAGS += -O6
-> -endif
->  endif
->
->  ifeq ($(DEBUG),0)
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index fa679db61f622..5d6b08a896150 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -238,11 +238,7 @@ endif
->
->  ifeq ($(DEBUG),0)
->  CORE_CFLAGS += -DNDEBUG=1
-> -ifeq ($(CC_NO_CLANG), 0)
-> -  CORE_CFLAGS += -O3
-> -else
-> -  CORE_CFLAGS += -O6
-> -endif
-> +CORE_CFLAGS += -O3
->  else
->    CORE_CFLAGS += -g
->    CXXFLAGS += -g
-> --
-> 2.46.0
->
->
+>   .../net/ethernet/marvell/octeontx2/af/rvu.h   |   8 +-
+>   .../marvell/octeontx2/af/rvu_devlink.c        |  32 +++++
+>   .../ethernet/marvell/octeontx2/af/rvu_npc.c   | 132 ++++++++++++++++--
+>   .../marvell/octeontx2/af/rvu_npc_fs.c         |  36 ++---
+>   4 files changed, 171 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> index 43b1d83686d1..fb4b88e94649 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
+> @@ -526,6 +526,7 @@ struct rvu {
+>   	struct mutex		alias_lock; /* Serialize bar2 alias access */
+>   	int			vfs; /* Number of VFs attached to RVU */
+>   	u16			vf_devid; /* VF devices id */
+> +	bool			def_rule_cntr_en;
+>   	int			nix_blkaddr[MAX_NIX_BLKS];
+>   
+>   	/* Mbox */
+> @@ -961,7 +962,11 @@ void rvu_npc_disable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
+>   void rvu_npc_enable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
+>   void rvu_npc_update_flowkey_alg_idx(struct rvu *rvu, u16 pcifunc, int nixlf,
+>   				    int group, int alg_idx, int mcam_index);
+> -
+> +void __rvu_mcam_remove_counter_from_rule(struct rvu *rvu, u16 pcifunc,
+> +					 struct rvu_npc_mcam_rule *rule);
+> +void __rvu_mcam_add_counter_to_rule(struct rvu *rvu, u16 pcifunc,
+> +				    struct rvu_npc_mcam_rule *rule,
+> +				    struct npc_install_flow_rsp *rsp);
+>   void rvu_npc_get_mcam_entry_alloc_info(struct rvu *rvu, u16 pcifunc,
+>   				       int blkaddr, int *alloc_cnt,
+>   				       int *enable_cnt);
+> @@ -986,6 +991,7 @@ void npc_set_mcam_action(struct rvu *rvu, struct npc_mcam *mcam,
+>   void npc_read_mcam_entry(struct rvu *rvu, struct npc_mcam *mcam,
+>   			 int blkaddr, u16 src, struct mcam_entry *entry,
+>   			 u8 *intf, u8 *ena);
+> +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable);
+>   bool is_cgx_config_permitted(struct rvu *rvu, u16 pcifunc);
+>   bool is_mac_feature_supported(struct rvu *rvu, int pf, int feature);
+>   u32  rvu_cgx_get_fifolen(struct rvu *rvu);
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+> index 7498ab429963..9c26e19a860b 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+> @@ -1238,6 +1238,7 @@ enum rvu_af_dl_param_id {
+>   	RVU_AF_DEVLINK_PARAM_ID_DWRR_MTU,
+>   	RVU_AF_DEVLINK_PARAM_ID_NPC_MCAM_ZONE_PERCENT,
+>   	RVU_AF_DEVLINK_PARAM_ID_NPC_EXACT_FEATURE_DISABLE,
+> +	RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
+>   	RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
+>   };
+>   
+> @@ -1358,6 +1359,32 @@ static int rvu_af_dl_npc_mcam_high_zone_percent_validate(struct devlink *devlink
+>   	return 0;
+>   }
+>   
+> +static int rvu_af_dl_npc_def_rule_cntr_get(struct devlink *devlink, u32 id,
+> +					   struct devlink_param_gset_ctx *ctx)
+> +{
+> +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
+> +	struct rvu *rvu = rvu_dl->rvu;
+> +
+> +	ctx->val.vbool = rvu->def_rule_cntr_en;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rvu_af_dl_npc_def_rule_cntr_set(struct devlink *devlink, u32 id,
+> +					   struct devlink_param_gset_ctx *ctx,
+> +					   struct netlink_ext_ack *extack)
+> +{
+> +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
+> +	struct rvu *rvu = rvu_dl->rvu;
+> +	int err;
+> +
+> +	err = npc_config_cntr_default_entries(rvu, ctx->val.vbool);
+> +	if (!err)
+> +		rvu->def_rule_cntr_en = ctx->val.vbool;
+> +
+> +	return err;
+> +}
+> +
+>   static int rvu_af_dl_nix_maxlf_get(struct devlink *devlink, u32 id,
+>   				   struct devlink_param_gset_ctx *ctx)
+>   {
+> @@ -1444,6 +1471,11 @@ static const struct devlink_param rvu_af_dl_params[] = {
+>   			     rvu_af_dl_npc_mcam_high_zone_percent_get,
+>   			     rvu_af_dl_npc_mcam_high_zone_percent_set,
+>   			     rvu_af_dl_npc_mcam_high_zone_percent_validate),
+> +	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
+> +			     "npc_def_rule_cntr", DEVLINK_PARAM_TYPE_BOOL,
+> +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
+> +			     rvu_af_dl_npc_def_rule_cntr_get,
+> +			     rvu_af_dl_npc_def_rule_cntr_set, NULL),
+>   	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
+>   			     "nix_maxlf", DEVLINK_PARAM_TYPE_U16,
+>   			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+> index 97722ce8c4cb..a766870520b3 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
+> @@ -2691,6 +2691,51 @@ void npc_mcam_rsrcs_reserve(struct rvu *rvu, int blkaddr, int entry_idx)
+>   	npc_mcam_set_bit(mcam, entry_idx);
+>   }
+>   
+> +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable)
+> +{
+> +	struct npc_install_flow_rsp rsp = { 0 };
+> +	struct npc_mcam *mcam = &rvu->hw->mcam;
+> +	struct rvu_npc_mcam_rule *rule;
+> +	int blkaddr;
+> +
+> +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
+> +	if (blkaddr < 0)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&mcam->lock);
+> +	list_for_each_entry(rule, &mcam->mcam_rules, list) {
+> +		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
+> +			continue;
+> +		if (!rule->default_rule)
+> +			continue;
+> +		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
+> +			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
+> +						       rule, &rsp);
+> +			if (rsp.counter < 0) {
+> +				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
+> +					__func__, rsp.counter);
+> +				break;
+> +			}
+> +			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
+> +						    rule->entry, rsp.counter);
+> +		}
+> +
+> +		if (enable && rule->has_cntr) /* Reset counter before use */ {
+> +			rvu_write64(rvu, blkaddr,
+> +				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
+> +			continue;
+> +		}
+> +
+> +		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
+> +			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
+> +							    rule);
+> +		}
+> +	}
+> +	mutex_unlock(&mcam->lock);
+> +
+> +	return 0;
+> +}
+> +
+>   int rvu_mbox_handler_npc_mcam_alloc_entry(struct rvu *rvu,
+>   					  struct npc_mcam_alloc_entry_req *req,
+>   					  struct npc_mcam_alloc_entry_rsp *rsp)
+> @@ -2975,9 +3020,9 @@ int rvu_mbox_handler_npc_mcam_shift_entry(struct rvu *rvu,
+>   	return rc;
+>   }
+>   
+> -int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
+> -			struct npc_mcam_alloc_counter_req *req,
+> -			struct npc_mcam_alloc_counter_rsp *rsp)
+> +static int __npc_mcam_alloc_counter(struct rvu *rvu,
+> +				    struct npc_mcam_alloc_counter_req *req,
+> +				    struct npc_mcam_alloc_counter_rsp *rsp)
+>   {
+>   	struct npc_mcam *mcam = &rvu->hw->mcam;
+>   	u16 pcifunc = req->hdr.pcifunc;
+> @@ -2998,7 +3043,6 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
+>   	if (!req->contig && req->count > NPC_MAX_NONCONTIG_COUNTERS)
+>   		return NPC_MCAM_INVALID_REQ;
+>   
+> -	mutex_lock(&mcam->lock);
+>   
+>   	/* Check if unused counters are available or not */
+>   	if (!rvu_rsrc_free_count(&mcam->counters)) {
+> @@ -3035,12 +3079,27 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
+>   		}
+>   	}
+>   
+> -	mutex_unlock(&mcam->lock);
+
+There is mutex_unlock() left in this function in error path of
+rvu_rsrc_free_count(&mcam->counters)
+
+>   	return 0;
+>   }
+>   
+> -int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
+> -		struct npc_mcam_oper_counter_req *req, struct msg_rsp *rsp)
+> +int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
+> +			struct npc_mcam_alloc_counter_req *req,
+> +			struct npc_mcam_alloc_counter_rsp *rsp)
+> +{
+> +	struct npc_mcam *mcam = &rvu->hw->mcam;
+> +	int err;
+> +
+> +	mutex_lock(&mcam->lock);
+> +
+> +	err = __npc_mcam_alloc_counter(rvu, req, rsp);
+> +
+> +	mutex_unlock(&mcam->lock);
+> +	return err;
+> +}
+> +
+> +static int __npc_mcam_free_counter(struct rvu *rvu,
+> +				   struct npc_mcam_oper_counter_req *req,
+> +				   struct msg_rsp *rsp)
+>   {
+>   	struct npc_mcam *mcam = &rvu->hw->mcam;
+>   	u16 index, entry = 0;
+> @@ -3050,7 +3109,6 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
+>   	if (blkaddr < 0)
+>   		return NPC_MCAM_INVALID_REQ;
+>   
+> -	mutex_lock(&mcam->lock);
+>   	err = npc_mcam_verify_counter(mcam, req->hdr.pcifunc, req->cntr);
+>   	if (err) {
+>   		mutex_unlock(&mcam->lock);
+
+And here it's even visible in the chunk..
+
+> @@ -3077,10 +3135,66 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
+>   					      index, req->cntr);
+>   	}
+>   
+> -	mutex_unlock(&mcam->lock);
+>   	return 0;
+>   }
+>   
+
 
