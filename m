@@ -1,123 +1,88 @@
-Return-Path: <linux-kernel+bounces-324812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB4F975141
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306DA975143
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84051F2872E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99F8282376
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1D7185B6F;
-	Wed, 11 Sep 2024 11:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C313188A1C;
+	Wed, 11 Sep 2024 11:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3LCIl0B"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fh34XySv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF29187355
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C35187861;
+	Wed, 11 Sep 2024 11:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726055740; cv=none; b=FecntWYxetFlvNgQDTGMnnPz4YScUo+Bot2wfKTI57WhqfAgzrUM0sXEYtd60ABW+Y5dd5Chc9LhkdnODIxEjKCNAwY3+Hsn4FAA2gtVJRnDH+dMcy4qC/Q3dGG2T7qv+XMLi7mOEZHCySMLLWSm9jbehKzqio+iqBzWBo5HOoI=
+	t=1726055756; cv=none; b=UZqF5uG+l+S211zZojha4l2ZH59RTQs5Sqjmo3lXSs0WOiCS8vK+/8LoavIfTe3J1BIgmn/BFIjddTeSqlNjqBFzaPbA400JQbBXlaerGCCwSuJvS5JGXoI6pvYlPm6NGajBaD/56UJhXZAC90/XKGMAlrNoC6ggIp+eY92er/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726055740; c=relaxed/simple;
-	bh=Zn3zRJvXUaDfbrJCNeevk0c7vO7Dfl2QKD/gE4nDtVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PRWANxGlLnZ0A99DUALzK28D/77ASS/hGmh2rwfWbnIp5vn/BAhm4uONwDS4WeQHWsxUzKesREH9q4jXrrtkGb2oVuEP1phtf2bCcJgKfQvYGgVnFoAUvTmw3Fnc413HvkEHTZZxn+SUGEumWrK3yJnJfV5g0VzbwJ3tBZSy8o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3LCIl0B; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356bb55224so7854578e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726055737; x=1726660537; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=w9xRxPXR7MYLf3EpSXwpqv7QhwbhzS7poxIdBzlqzpo=;
-        b=d3LCIl0BCOpeAcajH7zj8bv9FfXZtYUuLvfmzF5DJ/gUwcZzryX5tVFQ57kt4xHHbp
-         B1JvVQssow8FbYUOCHymnwQGdLEDU3ClHQ0YA+wwIDEmiEJu477tjAXRtot4ZOLXoS4M
-         GOiSkmhfyC3VaOr8CYCgLtgbTakYR7mXBvSDTMWZz1vo/4LTa8XKoJl2xHGlL0rvUPj9
-         1yQQzZ0uaOXLdo9tXLZngea31qbtzXObnG9pBBwNjMrkhuJcdJ4oF7Xka7XSulDxSWmi
-         0w/P5ziwBQ0rBKFl88/iZUsFIZ8BbTvjVptN9nxZsuqN9U9+MUy4H84V34EAvPr3vDpD
-         7GaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726055737; x=1726660537;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9xRxPXR7MYLf3EpSXwpqv7QhwbhzS7poxIdBzlqzpo=;
-        b=Yv0droESA8k4ju4xmTEw1W7K93vFpA6RgJRn/AUq1X5roudbo1rLRLRVGSiIy/QfAF
-         g5TSG2WEdWd6oIyYF9CsneIhLBGDKPaMc98fsTf+zj8dPHAFEMgOimwtSgbSGwPDQldo
-         vrS21od8vIjxCRPNv96qR2/AH1fAz6e7dKKjA/v9ThS1AHhuXlo8vocxZDtFh4FOEvjt
-         OJpgn/dsGsuQ8bxe1ADGQ+eM6vmZb4BKkCprn2hqyxOA7h7NaP0Rc1+VlX3H/UUsdS0D
-         T/SrYyFf+LFkJTc4a3wTY1XsLA7R8Bm6xlALk1ckuSiwJ/11hUvNTDv1fltJkpW/7Iij
-         iQFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+S225Pcf0844iwFf23nZ/fkLUYKBZJtmkVFnyvWv2oCuBxQyMZBFIe4OD5lcavifzYx8qetNbi5VUF7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Ym48xv+H3mQO48aTqaz78M87urKesp4RVQzlX2+9ztFY49Pd
-	8JRSvz6cvlu3/bDdxNYkjkdS4A5ceKJrqMGsf4pst8SgXKZOFcDEY7HLEhdmUgA=
-X-Google-Smtp-Source: AGHT+IHMGJNyPUGz02EM1TBSiYL2OAdcojSToq3FajDA4bNtBXDFAOhbR/GKBAMhNG+aMlDMEcrs7w==
-X-Received: by 2002:a05:6512:3510:b0:535:6033:265f with SMTP id 2adb3069b0e04-5365881027emr7647509e87.58.1726055736272;
-        Wed, 11 Sep 2024 04:55:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f903cbasm1538550e87.203.2024.09.11.04.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 04:55:35 -0700 (PDT)
-Date: Wed, 11 Sep 2024 14:55:34 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Elliot Berman <quic_eberman@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Andrew Halaney <ahalaney@redhat.com>, Rudraksha Gupta <guptarud@gmail.com>, 
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/2] firmware: qcom: scm: fall back to kcalloc() for no
- SCM device bound
-Message-ID: <azkfnnz3pmabhnongejtomab7ytoshpdyoutyawf3j6lodmbog@q3ywqp377p4b>
-References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
- <20240909-tzmem-null-ptr-v1-2-96526c421bac@linaro.org>
- <20240909131842193-0700.eberman@hu-eberman-lv.qualcomm.com>
- <CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com>
- <CAMRc=MefTjz=h6jzE5vE-yaHnyM601Ts8XYZqEYnOsidfQEavA@mail.gmail.com>
+	s=arc-20240116; t=1726055756; c=relaxed/simple;
+	bh=BKZfmwCItsZ9kqea9hvrdqX3cRkygRWMUnFXWOAjBXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYSCJ6DfWUIqQ2MuXtRpu0okAgXWcEI1i0L94gSPBuYLZ+hpmEAJyVvGMTyvzUs05nsTqQZJptZRR7WWQxn3RhyDyXfKdrUxz/NWbgIzQnkTFjdGCADx1soyyi6Tga3Pr9TPvhspFvCad26BraEHuJUoN7+/NBUwXTaZ1j+i9Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fh34XySv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD534C4CEC5;
+	Wed, 11 Sep 2024 11:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726055756;
+	bh=BKZfmwCItsZ9kqea9hvrdqX3cRkygRWMUnFXWOAjBXQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fh34XySvZGhwXcO/P1MQqhz01AZ1NWivyD7MJ+aPsEvfKnK7WNzeSmPEvtAQe+sr5
+	 njevjvE+NAT1YVph11YeFQN3bBr6Ta5TgVfVBZJlB9emWk4KGsNJ+TIJEnYFb92uJr
+	 3XemSPu583iVRto9pNs4dTdYYl7pEGWcDeTcgj+z9AIHESbD01S7lZqAgCTmh2elES
+	 j6ks6dil1JFwSRX1E1+ysSQm3n7Qt+D6xgaG2nWX/MRvnhXTrPEgbgAy2nM8rvZgDD
+	 ezMFxjUKIbM1jGX/8kBdf/s5wi/yANnuqYx9k6g0C540WGT6pqJUxkZZnpMARofvuH
+	 uyhp/nYbVebYw==
+Message-ID: <61611bc5-6a4c-4c4b-9088-b0f00c4894a2@kernel.org>
+Date: Wed, 11 Sep 2024 14:55:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MefTjz=h6jzE5vE-yaHnyM601Ts8XYZqEYnOsidfQEavA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 3/5] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+To: MD Danish Anwar <danishanwar@ti.com>, robh@kernel.org,
+ jan.kiszka@siemens.com, dan.carpenter@linaro.org, r-gunasekaran@ti.com,
+ saikrishnag@marvell.com, andrew@lunn.ch, javier.carrasco.cruz@gmail.com,
+ jacob.e.keller@intel.com, diogo.ivo@siemens.com, horms@kernel.org,
+ richardcochran@gmail.com, pabeni@redhat.com, kuba@kernel.org,
+ edumazet@google.com, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240911081603.2521729-1-danishanwar@ti.com>
+ <20240911081603.2521729-4-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240911081603.2521729-4-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 01:41:58PM GMT, Bartosz Golaszewski wrote:
-> On Tue, Sep 10, 2024 at 1:06 PM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > >
-> > > I'm a little concerned about this check. I didn't think making SCM calls
-> > > without the SCM device probed was possible until this report. We do
-> > > worry about that in the downstream kernel. So, I'm not sure if this
-> > > scenario is currently possible in the upstream kernel.
-> >
-> > MSM8960 and MSM8660 don't have SCM devices. For MSM8960 it should be
-> > trivial to get it, c&p from apq8064 should. For MSM8660 it might be a
-> > bit harder. But even if we add such nodes, we shouldn't break existing
-> > DT files.
-> >
+
+
+On 11/09/2024 11:16, MD Danish Anwar wrote:
+> Add support for offloading HSR port-to-port frame forward to hardware.
+> When the slave interfaces are added to the HSR interface, the PRU cores
+> will be stopped and ICSSG HSR firmwares will be loaded to them.
 > 
-> I'm wondering about how to approach an eventual refactoring and I'm
-> thinking that for platforms that are known to have DTs out there
-> without the node, we could exceptionally instantiate the SCM device
-> when the module is loaded? And then modify the driver to require the
-> provider to have an actual struct device attached.
+> Similarly, when HSR interface is deleted, the PRU cores will be
+> restarted and the last used firmwares will be reloaded. PRUeth
+> interfaces will be back to the last used mode.
+> 
+> This commit also renames some APIs that are common between switch and
+> hsr mode with '_fw_offload' suffix.
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
-Might make sense. We should be able to test in on APQ8060 = MSM8660.
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
