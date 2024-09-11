@@ -1,165 +1,229 @@
-Return-Path: <linux-kernel+bounces-324859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DAC9751AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:15:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767629751B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74C921C227B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8221C229F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55CE189BBD;
-	Wed, 11 Sep 2024 12:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A02187338;
+	Wed, 11 Sep 2024 12:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Rgnrr0z6"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GoDD4cxU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505B2187FE3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9451779AE
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056919; cv=none; b=ByWauWxvLL5E388CA4uWmR1AvimqOtqQdTDZg5ABH4A3KR4qLlwdf3iPb0Lh65KiPEKBXc9i3R3L87IHSrIAc34O8YbzySe5SWp3+DSLPT4qhE7cmg2ArQTX17Frutfl2/skKivXM8x4Yhp1WOro0MOqj1ivzNUA1EHNc3+86DA=
+	t=1726056980; cv=none; b=N0bIDzeMwNfhvwE1QW45tgrKpTO9hziVKauZF6UP7vksTGEbHHR84ThJeiMSi+a7szcjBhzxEeo1bPOj6h/tv2m4NsJLlv/8Ngozib5BLXY1XBKvGEr6i4171sNzBUlPnjiw4pFRXSRB+WOkJ47+3Ok0K3s1u1Iry5nIN1SdZE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056919; c=relaxed/simple;
-	bh=0bDf8RZWSXS8lmxyCpGBe1Jk8Eaw6bPgGk3l0o6yPzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2oicgj41ygojbjYdBRe133m2DVSiLGcZ3hRTubdhPtRg7nJaGylo0QCmh4mKncngiDy3TMC+xpOTrXi4OwVH9ve/rEaIJjpa60N2U+vg94L2Ylx0cnruqkywZ8PeYqjVP0jm26j3c6KcWVeyPv9NOUJogCm0Q4jZvBEcUVb4os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Rgnrr0z6; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 34F7D4000C;
-	Wed, 11 Sep 2024 12:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726056908;
+	s=arc-20240116; t=1726056980; c=relaxed/simple;
+	bh=eoJfABtYqMvLlN9x7GOSU6I15AplIKK3khXoF1GL8AY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IbFloNEoNW1pN6IjaR03F+A17iY6eh+FAGwzcNK6suhbGb+c/BniICqhr+LgSeVZxCpH2Zl2Iu5QgnDrtCgv9IQgP4ZflDOlQiaSRJTFw6DvkPXCb2BQuroLFrqaiGqk8Bnn5r/vuoUaMuaKXQmyJh9D98xsFGhGSD3Kh5iJMwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GoDD4cxU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726056977;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PdhTEPQQk02wc+pOBZoyGtVA8GtF9vfPKRysImY6ZaU=;
-	b=Rgnrr0z6fQ4IXXpeAwlVOJw9IQV5uo3s7kGx7MGqe0XxySTghtLtsUwwyffeG5+kAfPN1w
-	XwYpwJ7F5C+qWnGh9gDEFQiNd+T3TGBQHG6uSThhdbgeZSwFbljyu8VylR9GhXVHHuurq/
-	DNuHyzKtx7pdxEp7gm8FkHcBN8sIqYkedYiuDyAeVp/qqsBAbuDXyRvnFI/tRM0NwOigeW
-	6K/BgHyLFKrBRuIXtOUCo28AMImZ+m022ddbE9jnnZspRRmyh8TwBWR+rBvFN9NBAx2vfU
-	vtSndq4owKg6nn750jcrjJpOs//P0ZNWSfD5mO7Q7unTt5D4QMOGt3tGJC1lKw==
-Date: Wed, 11 Sep 2024 14:15:05 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Maira Canal <mairacanal@riseup.net>
-Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run,
-	thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
-	seanpaul@google.com
-Subject: Re: [PATCH] MAINTAINERS: Add myself as VKMS Maintainer
-Message-ID: <ZuGJyfhkQe93jKlz@louis-chauvet-laptop>
-Mail-Followup-To: Maira Canal <mairacanal@riseup.net>,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run,
-	thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
-	seanpaul@google.com
-References: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
- <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
+	bh=VwQ3vlWoVxvl74dbWTtkNwifYV2roKP6SQNjP0xDYZU=;
+	b=GoDD4cxUDsno7glnbuQ6xw41o0Oqs6phS7Tey4FuZVxFPU8dPoXfyBxnHaA7aYy2sr3hVG
+	GGinDZjBKgnkd3nAefgpGJcc36hdEaJOP0cbrIbUyFm2U1KtcbRD6fhmo7/ZXqaBmnqhwU
+	/vpu4b+nEN1hW2mc0M8nBTrkFTQZLm8=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-59-t-uRWgJANX6rBMLXVAuKdw-1; Wed, 11 Sep 2024 08:16:16 -0400
+X-MC-Unique: t-uRWgJANX6rBMLXVAuKdw-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c25e0a50bfso4743317a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:16:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726056975; x=1726661775;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwQ3vlWoVxvl74dbWTtkNwifYV2roKP6SQNjP0xDYZU=;
+        b=I46qqBS74Lpq/+wK3SzgsY+LCK18s3XVyJkjBMJ4lbrLKF0hHu8w+SqfSnoAyieceU
+         MHAY8uSZrARGz0LKDiKUMhEDFwgKOJ0f6UzJf7AaFLtqzBsvgq2avAdv3qbjmGpBhIRO
+         pwZMFPAOqVTcHflQml3znKiiKJZQ98PGK7BoC8PF4k0UOrwS6JCBmbIq8KrtKkzIRBuW
+         ljzgk1iNt0YW+R9cK26/rubAPuAfyqOuP6c+pEZFxGoffanUFVSkVQAQVxdTI3/2HJWW
+         yTIrWE+KNYPXgMJEEBWsbWNQPI/pVsx3Q3khD0EBsCvmbW7WSogoxKeTyI3Xh5fVA3vR
+         lAWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe1m/8esIV0bzjUVe8DvrkW3y+uA9WmmU0zSTp7LO7zD3GeowX2qUj/S+1oqeW83iyFg5ha0eTRhXoLMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO0lEeG8VrSvYpfcFYSy/lLZNLeXMqXEWnr/Ln7GRsOUdAUSt0
+	GzwwwWVh65w1k3jwg/ArDOED6yPbEVB0LPfuPzLDd5DnX0Oc1T8h/IMPwFIf4Q6hEsX5qdWbMjf
+	TP0YIn3vZ1LJlsenjoZGEfFBuCYxWWuE6GZs/H+jPcgVyCFDg9eVjEE2GCu6suQ==
+X-Received: by 2002:a05:6402:360c:b0:5c0:bba5:60d2 with SMTP id 4fb4d7f45d1cf-5c3dc7a1cb6mr12697033a12.21.1726056974688;
+        Wed, 11 Sep 2024 05:16:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxzXIn8XOPpBJr8Jixmc7y00/vhUtIqpGesUYgpfj+7qRi00gLt3n1xfQeW8GFdI5o/04x3w==
+X-Received: by 2002:a05:6402:360c:b0:5c0:bba5:60d2 with SMTP id 4fb4d7f45d1cf-5c3dc7a1cb6mr12697001a12.21.1726056974076;
+        Wed, 11 Sep 2024 05:16:14 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd466dcsm5355311a12.24.2024.09.11.05.16.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 05:16:13 -0700 (PDT)
+Message-ID: <20e04024-ee86-4be3-9945-bf1c5148b9ae@redhat.com>
+Date: Wed, 11 Sep 2024 14:16:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
-X-GND-Sasl: louis.chauvet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] HID: i2c-hid: ensure various commands do not interfere
+ with each other
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Jiri Kosina <jikos@kernel.org>, ". Benjamin Tissoires" <bentiss@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>, Kenny Levinsen <kl@kl.wtf>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <Zt9clAu04BinzIcd@google.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <Zt9clAu04BinzIcd@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 10/09/24 - 15:57, Maira Canal a écrit :
-> On 9/10/24 12:10, Louis Chauvet wrote:
-> > I've been actively working on VKMS to provide new features and
-> > participated in reviews and testing. To help Maìra with her work, add
-> > myself as co-maintainer of VKMS.
-> > 
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Hi,
+
+On 9/9/24 10:37 PM, Dmitry Torokhov wrote:
+> i2c-hid uses 2 shared buffers: command and "raw" input buffer for
+> sending requests to peripherals and read data from peripherals when
+> executing variety of commands. Such commands include reading of HID
+> registers, requesting particular power mode, getting and setting
+> reports and so on. Because all such requests use the same 2 buffers
+> they should not execute simultaneously.
 > 
-> Acked-by: Maíra Canal <mairacanal@riseup.net>
+> Fix this by introducing "cmd_lock" mutex and acquire it whenever
+> we needs to access ihid->cmdbuf or idid->rawbuf.
+
+Typo: s/idid/ihid/
+
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/hid/i2c-hid/i2c-hid-core.c | 42 +++++++++++++++++++-----------
+>  1 file changed, 27 insertions(+), 15 deletions(-)
 > 
-> Please, check the procedures to apply for commit rights in drm-misc and
-> apply it. This way you will be able to commit your patches.
+> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> index 632eaf9e11a6..2f8a9d3f1e86 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+> @@ -105,6 +105,7 @@ struct i2c_hid {
+>  
+>  	wait_queue_head_t	wait;		/* For waiting the interrupt */
+>  
+> +	struct mutex		cmd_lock;	/* protects cmdbuf and rawbuf */
+>  	struct mutex		reset_lock;
+>  
+>  	struct i2chid_ops	*ops;
+> @@ -220,6 +221,8 @@ static int i2c_hid_xfer(struct i2c_hid *ihid,
+>  static int i2c_hid_read_register(struct i2c_hid *ihid, __le16 reg,
+>  				 void *buf, size_t len)
+>  {
+> +	guard(mutex)(&ihid->cmd_lock);
+> +
+>  	*(__le16 *)ihid->cmdbuf = reg;
+>  
+>  	return i2c_hid_xfer(ihid, ihid->cmdbuf, sizeof(__le16), buf, len);
+> @@ -252,6 +255,8 @@ static int i2c_hid_get_report(struct i2c_hid *ihid,
+>  
+>  	i2c_hid_dbg(ihid, "%s\n", __func__);
+>  
+> +	guard(mutex)(&ihid->cmd_lock);
+> +
+>  	/* Command register goes first */
+>  	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+>  	length += sizeof(__le16);
+> @@ -342,6 +347,8 @@ static int i2c_hid_set_or_send_report(struct i2c_hid *ihid,
+>  	if (!do_set && le16_to_cpu(ihid->hdesc.wMaxOutputLength) == 0)
+>  		return -ENOSYS;
+>  
+> +	guard(mutex)(&ihid->cmd_lock);
+> +
+>  	if (do_set) {
+>  		/* Command register goes first */
+>  		*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+> @@ -384,6 +391,8 @@ static int i2c_hid_set_power_command(struct i2c_hid *ihid, int power_state)
+>  {
+>  	size_t length;
+>  
+> +	guard(mutex)(&ihid->cmd_lock);
+> +
+>  	/* SET_POWER uses command register */
+>  	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+>  	length = sizeof(__le16);
+> @@ -440,25 +449,27 @@ static int i2c_hid_start_hwreset(struct i2c_hid *ihid)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Prepare reset command. Command register goes first. */
+> -	*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+> -	length += sizeof(__le16);
+> -	/* Next is RESET command itself */
+> -	length += i2c_hid_encode_command(ihid->cmdbuf + length,
+> -					 I2C_HID_OPCODE_RESET, 0, 0);
+> +	scoped_guard(mutex, &ihid->cmd_lock) {
+> +		/* Prepare reset command. Command register goes first. */
+> +		*(__le16 *)ihid->cmdbuf = ihid->hdesc.wCommandRegister;
+> +		length += sizeof(__le16);
+> +		/* Next is RESET command itself */
+> +		length += i2c_hid_encode_command(ihid->cmdbuf + length,
+> +						 I2C_HID_OPCODE_RESET, 0, 0);
+>  
+> -	set_bit(I2C_HID_RESET_PENDING, &ihid->flags);
+> +		set_bit(I2C_HID_RESET_PENDING, &ihid->flags);
+>  
+> -	ret = i2c_hid_xfer(ihid, ihid->cmdbuf, length, NULL, 0);
+> -	if (ret) {
+> -		dev_err(&ihid->client->dev,
+> -			"failed to reset device: %d\n", ret);
+> -		goto err_clear_reset;
+> -	}
+> +		ret = i2c_hid_xfer(ihid, ihid->cmdbuf, length, NULL, 0);
+> +		if (ret) {
+> +			dev_err(&ihid->client->dev,
+> +				"failed to reset device: %d\n", ret);
+> +			break;
+> +		}
+>  
+> -	return 0;
+> +		return 0;
+> +	}
+>  
+> -err_clear_reset:
+> +	/* Clean up if sending reset command failed */
+>  	clear_bit(I2C_HID_RESET_PENDING, &ihid->flags);
+>  	i2c_hid_set_power(ihid, I2C_HID_PWR_SLEEP);
+>  	return ret;
+> @@ -1200,6 +1211,7 @@ int i2c_hid_core_probe(struct i2c_client *client, struct i2chid_ops *ops,
+>  	ihid->is_panel_follower = drm_is_panel_follower(&client->dev);
+>  
+>  	init_waitqueue_head(&ihid->wait);
+> +	mutex_init(&ihid->cmd_lock);
+>  	mutex_init(&ihid->reset_lock);
+>  	INIT_WORK(&ihid->panel_follower_prepare_work, ihid_core_panel_prepare_work);
+>  
 
-Thanks for your support!
-
-I just checked the rules to become a commiter, and it requires at least 10 
-non-trivial patches, so I can't apply right now.
-
-Few months ago, you seemed interested in merging few patchs from [1] ([2] 
-is the last iteration and can be applied on drm-misc/drm-misc-next, and 
-I just ran few igt tests, they pass), can you do it so I can apply to be a 
-commiter? Thanks a lot!
-
-[1]: https://lore.kernel.org/all/c83255f4-745e-43e6-98e0-2e89c31d569a@igalia.com/
-[2]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/ 
-
-> Thanks for volunteering!
-> 
-> Best Regards,
-> - Maíra
-> 
-> > ---
-> > Hi everyone,
-> > 
-> > This series [1] has been waiting for a while now, it was proposed first in
-> > February. The first iterations had few reactions (thanks to Arthur, Pekka,
-> > Maìra, ...), but since v8 (in May) no major issues were reported, Maìra
-> > seemed satisfied, and only minor cosmetic changes were reported. Two other
-> > series ([2] and [3]), that I submitted first in May, did not have receive
-> > any reactions.
-> > 
-> > In addition, there is also some significant addition to VKMS being
-> > proposed, such as ConfigFS support, and without a clear maintainer having
-> > the time to review and approve these changes, these changes have very
-> > little changes to get in.
-> > 
-> > VKMS is not a fundamental driver for "normal" Linux users, but I had some
-> > feedback from userspace developpers that VKMS could be a very good testing
-> > tool if only it had more features (I think P0xx formats were asked to
-> > test HDR for example). This could also help to detect issues in DRM core
-> > by emulating a wide range of configurations.
-> > 
-> > I believe the only active maintainer is Maìra, but as she's mentioned before,
-> > she doesn't have much time to work on VKMS. So, I'd like to volunteer as a
-> > maintainer. I have plenty of time to dedicate to VKMS.
-> > 
-> > I hope I've gained enough understanding of VKMS to be helful with this role.
-> > I am eager to move forward and improve this subsystem. I've also talked to Sean
-> > about this, and he agrees that it would be good if I could commit code to
-> > drm-misc.
-> > 
-> > [1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/
-> > [2]: https://lore.kernel.org/all/20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com/
-> > [3]: https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
-> > ---
-> >   MAINTAINERS | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 10430778c998b57944c1a6c5f07d676127e47faa..62f10356e11ab7fa9c8f79ba63b335eb6580d0a8 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -7340,6 +7340,7 @@ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
-> >   M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> >   M:	Melissa Wen <melissa.srw@gmail.com>
-> >   M:	Maíra Canal <mairacanal@riseup.net>
-> > +M:	Louis Chauvet <louis.chauvet@bootlin.com>
-> >   R:	Haneen Mohammed <hamohammed.sa@gmail.com>
-> >   R:	Daniel Vetter <daniel@ffwll.ch>
-> >   L:	dri-devel@lists.freedesktop.org
-> > 
-> > ---
-> > base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-> > change-id: 20240910-vkms-maintainer-7b3d2210cc1b
-> > 
-> > Best regards,
 
