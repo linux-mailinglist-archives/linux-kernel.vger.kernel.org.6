@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-325471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE7975A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:09:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADDA975A04
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70B1DB24C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBD92B23325
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33551BA273;
-	Wed, 11 Sep 2024 18:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB51B81A5;
+	Wed, 11 Sep 2024 18:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bI6YsDOg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kngk4mkE"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6ED1B9B58
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A0A1B7917
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078033; cv=none; b=Sg9AXMN2FI27ClR38CSntLfohrAFQC4X/H3Ny+unZEa8cH4b1lkAD1GxLk1Xd3uZeGsW5nVdfglfFsrUwxTxhA2EusxiOQl3YQFh/vddpqUsh3OkJ0mYLu+FkILVReejHa2lJ0dowoktJHIQn2eZf8bp91V2eMLRglwT57uDx0s=
+	t=1726078026; cv=none; b=gGgi/qTiKQZgMsmGP2YHI/HhMD0B4p8zmK5oria3K0Anqy5hZeg5xeDGV9XYudpVJRRoM8G+bXsbYrkCFSJFEeTde13yveajM2ZxPP0FgLSOxAYVuAs3sZtA9+OZn6n8SfZXZvcClNRKDVHpC8efb1c+/T9FX/bYO7a6433Oo0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078033; c=relaxed/simple;
-	bh=wJ/1h/qDCV16AsynIfa1nL0nOvreN+hu2psBTFBTGxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PHuRZd335Ohpc/HJWClHx2Atyijsd/psA6WZihpbBx3ywXHboxU9o+z+Uylu4/eoHpOLagGNe8/gbjYxvkyIOF6l5er4luxrItZ4WYeM8jzlZRRRnuoKtGuwGw4rXpPNidoeqrpCFB/0pXpQI9dmRJt17Z6yITfQTE3TyAOlEXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bI6YsDOg; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726078032; x=1757614032;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=wJ/1h/qDCV16AsynIfa1nL0nOvreN+hu2psBTFBTGxs=;
-  b=bI6YsDOgAYzKofdGt8IcRfmFKUur8T5CON0gcwq6/0tp381bNEAMcB9R
-   YOnDNnwDSpNEX7KBypmoa1osIS8+BeOSbe+MRO+DS5b01d2mpFC7MfLab
-   VA+T4f/hf2UkTj3EW0tSk2dbaRlmI4iNJCikPx/ncyDFpQDL0N8pfEVc/
-   nBELs7zCs6Vorvtuguzcws1gD7eDnslEK/K9ZkAuKx4zTsSyIXA02mgSI
-   ZEiMTrjMvV8bj1AqBjJVDAbiQhaeJuzH5E0zl6hibCIgP5GzA9H3cECo6
-   VwvFjPAJLRnUlPrlxLyVEFBkDbydCPmGkNxnzpkEm5WB+nAm8NHiVydZn
-   g==;
-X-CSE-ConnectionGUID: wqSJXOcbSIeOd7TI+64mvw==
-X-CSE-MsgGUID: RkEKKjpFRAqJyAgqzOSMdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25032034"
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="25032034"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 11:07:11 -0700
-X-CSE-ConnectionGUID: lQaSQIxJTwe8pi/2kazLbw==
-X-CSE-MsgGUID: IYF8BHDXR5qN/sc/E1N1lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
-   d="scan'208";a="67678654"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Sep 2024 11:07:09 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soRkB-0003yg-16;
-	Wed, 11 Sep 2024 18:07:07 +0000
-Date: Thu, 12 Sep 2024 02:06:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: drivers/comedi/drivers/comedi_8254.c:139:31: sparse: sparse: cast to
- restricted __le16
-Message-ID: <202409120105.yV1KBe45-lkp@intel.com>
+	s=arc-20240116; t=1726078026; c=relaxed/simple;
+	bh=796S0cNdnh8oAQWxAJn+p7s2+6LsALkFJDkxmyN5jTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a31SDGIU5OzFq1l11GGoaDwF3bDummledms1EUDDFxaxsloInhb4VUpfgTAY8qEY0Qnrg+cO8es79klG2VLr/BM8tCGXuILY9v65xKdYgBTqnxY311yO9ys5R8c7kbBROTkSxDIJkdq0HRnGtNhAOLta4/jgtNxIK6Upw0MfteI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kngk4mkE; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-206aee4073cso1582995ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726078024; x=1726682824; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e29IJe4OX+PU/C1llRpEcZxaInprrHCDy7EtqfxxcvM=;
+        b=kngk4mkEFpeDwZGfdq95C+caF/uxrsjtXYuhkRivXzhnq+E5vA1T+kA6emjs+g6Yev
+         3Aj7w9h3l1I9ylpORi70KoVE+A+S5tYwrD5ZuPgM7MhKmmeIGJnvuwgq4bPVLfY2Y+cS
+         jUsMjEQVZw4J3NrIub5YuLuz4+VRx7lTUn3CtTE2q7ZcCEt+jjovX2BkJ+HNN97lT08F
+         /sHub8Xp27Nu2r9WRDtOeyB2HBz/oqiXcmyFMOaEwKNEUYyV+3wnPZ1mXV9e7Tz7x+xz
+         TsFxQt//1mZnH93+RUeS6Zqh3+o15JeMqo9gVKmzZVA8klq4JsvHQyMXGabYZXQeAn0I
+         tLyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726078024; x=1726682824;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e29IJe4OX+PU/C1llRpEcZxaInprrHCDy7EtqfxxcvM=;
+        b=iXF2k+FQgDPjx6NDLTmv34rItFDpHdCIlWDIRWgnNu/W9hKwpZSSqS0YtsLOEkVI6D
+         1AEXIBLcjh/QYabZUKho9vXdp2AXcTzdsPOKViQ7CqU0RdDNTXvwSQbGQU/eFwy1EkEv
+         ZsSDmWRZp4XS5RyO71ceUBNR/5YYmRd4e8Dfv6d/jMHT1MtX2YuD+E6IGeG3RDJQGplW
+         x3pfW2L2YE01G836KafbbL5EaW/D4fGY5kmsLTWGvu5tKp+idjRnWUwAD+0WfCWA3xai
+         SHQaH08KtjqOogO+t+xbQHjiUox6td4s+FRQL+46bN/F4az6dwTc4wGyq8qBRPkHxBZW
+         6+dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZqgHR0uURVJbT6ljXlV7wPSlhgpfR2DWJpEnsRo+9h2ICawRQUuFMezfZMrPrkIii2oRTssIzbkk9x9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMhw83e3IqW8/EwbL7TMkduyw+LnH8s0linX/MjmR7EeJ0PwoQ
+	hZhTCV+biytCKQJX8N9gtQZ+vGjxa4bNTUz4u6tuXHc6IiYkE5an
+X-Google-Smtp-Source: AGHT+IFITG48RrTVtlAYkqFPSN+jaMNopNFWs8XCJNmEJah9MxoHDRjZ/nXArmhftcSKD7KDHO/qJg==
+X-Received: by 2002:a17:902:d4c9:b0:202:435b:211a with SMTP id d9443c01a7336-2076e3086damr3184355ad.12.1726078023664;
+        Wed, 11 Sep 2024 11:07:03 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe9d98sm2326285ad.202.2024.09.11.11.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 11:07:02 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: Laurent.pinchart@ideasonboard.com,
+	patrik.r.jakobsson@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date: Wed, 11 Sep 2024 23:36:50 +0530
+Message-ID: <20240911180650.820598-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   8d8d276ba2fb5f9ac4984f5c10ae60858090babc
-commit: 98a15816636044f25be4644db2a3e09fad68aaf7 Revert "comedi: add HAS_IOPORT dependencies"
-date:   1 year ago
-config: m68k-randconfig-r113-20240911 (https://download.01.org/0day-ci/archive/20240912/202409120105.yV1KBe45-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240912/202409120105.yV1KBe45-lkp@intel.com/reproduce)
+Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+monitor HDMI information is available after EDID is parsed. Additionally
+rewrite the code the code to have fewer indentation levels.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409120105.yV1KBe45-lkp@intel.com/
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+Changes in v2:
+    - Use drm_edid instead of edid
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/comedi/drivers/comedi_8254.c:139:31: sparse: sparse: cast to restricted __le16
->> drivers/comedi/drivers/comedi_8254.c:139:31: sparse: sparse: cast to restricted __le16
->> drivers/comedi/drivers/comedi_8254.c:139:31: sparse: sparse: cast to restricted __le16
->> drivers/comedi/drivers/comedi_8254.c:139:31: sparse: sparse: cast to restricted __le16
-   drivers/comedi/drivers/comedi_8254.c: note: in included file (through arch/m68k/include/asm/io.h, include/linux/io.h):
-   arch/m68k/include/asm/io_mm.h:164:21: sparse: sparse: Using plain integer as NULL pointer
-   arch/m68k/include/asm/io_mm.h:164:21: sparse: sparse: Using plain integer as NULL pointer
-   arch/m68k/include/asm/io_mm.h:164:21: sparse: sparse: Using plain integer as NULL pointer
-   arch/m68k/include/asm/io_mm.h:164:21: sparse: sparse: Using plain integer as NULL pointer
-   arch/m68k/include/asm/io_mm.h:164:21: sparse: sparse: Using plain integer as NULL pointer
+Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvipin76@gmail.com/
+---
+ drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-vim +139 drivers/comedi/drivers/comedi_8254.c
-
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  121  
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  122  static unsigned int __i8254_read(struct comedi_8254 *i8254, unsigned int reg)
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  123  {
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  124  	unsigned int reg_offset = (reg * i8254->iosize) << i8254->regshift;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  125  	unsigned int val;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  126  
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  127  	switch (i8254->iosize) {
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  128  	default:
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  129  	case I8254_IO8:
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  130  		if (i8254->mmio)
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  131  			val = readb(i8254->mmio + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  132  		else
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  133  			val = inb(i8254->iobase + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  134  		break;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  135  	case I8254_IO16:
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  136  		if (i8254->mmio)
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  137  			val = readw(i8254->mmio + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  138  		else
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23 @139  			val = inw(i8254->iobase + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  140  		break;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  141  	case I8254_IO32:
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  142  		if (i8254->mmio)
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  143  			val = readl(i8254->mmio + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  144  		else
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  145  			val = inl(i8254->iobase + reg_offset);
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  146  		break;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  147  	}
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  148  	return val & 0xff;
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  149  }
-d42b5211d861f1 drivers/staging/comedi/drivers/comedi_8254.c H Hartley Sweeten 2015-02-23  150  
-
-:::::: The code at line 139 was first introduced by commit
-:::::: d42b5211d861f1077869e9133efa19297a6f152b staging: comedi: comedi_8254: introduce module for 8254 timer support
-
-:::::: TO: H Hartley Sweeten <hsweeten@visionengravers.com>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+index 2d95e0471291..701f8bbd5f2b 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+@@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
+ {
+ 	struct gma_encoder *gma_encoder = gma_attached_encoder(connector);
+ 	struct mid_intel_hdmi_priv *hdmi_priv = gma_encoder->dev_priv;
+-	struct edid *edid = NULL;
++	const struct drm_edid *drm_edid;
++	int ret;
+ 	enum drm_connector_status status = connector_status_disconnected;
+ 
+-	edid = drm_get_edid(connector, connector->ddc);
++	drm_edid = drm_edid_read_ddc(connector, connector->ddc);
++	ret = drm_edid_connector_update(connector, drm_edid);
+ 
+ 	hdmi_priv->has_hdmi_sink = false;
+ 	hdmi_priv->has_hdmi_audio = false;
+-	if (edid) {
+-		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+-			status = connector_status_connected;
+-			hdmi_priv->has_hdmi_sink =
+-						drm_detect_hdmi_monitor(edid);
+-			hdmi_priv->has_hdmi_audio =
+-						drm_detect_monitor_audio(edid);
+-		}
+-		kfree(edid);
++	if (ret)
++		return status;
++
++	if (drm_edid_is_digital(drm_edid)) {
++		status = connector_status_connected;
++		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
++		hdmi_priv->has_hdmi_audio = connector->display_info.has_audio;
+ 	}
++	drm_edid_free(drm_edid);
++
+ 	return status;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
