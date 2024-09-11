@@ -1,74 +1,87 @@
-Return-Path: <linux-kernel+bounces-324109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7419747FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:55:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0252C974801
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766C61F275C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352F61C2546A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0142C859;
-	Wed, 11 Sep 2024 01:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A4E27446;
+	Wed, 11 Sep 2024 01:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJOcBqdp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B5E2C190
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fk/uFrpl"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA7C225D7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726019740; cv=none; b=ChebcqCsWgzQD9Vw67CdOIrsohgLzso89CmQTf3oqVxmBRODBNGhsvHPMNCMDKZFlb5jnQ8xfvztvGvMeY5YA6xYT3xHZIaoygzqJWRx6OFb7H+KGl1SoAg2FM4tMgHbVKl+bpP4JTkw51uctrVynrivsRGOROUY4Cw1CxQuibY=
+	t=1726019912; cv=none; b=TJI16eaYzipjsaNbBB3WLLnJB6c/8xbwpV1qeP6O65H+hDZGlR0q9QEsLgfZTQRiq6+9hGvM41QVh7xdZoCkyISAulWAPN/Oj3DFD1qyUW3yRj4aijaD18syX5PE94yeej6Tfk2jdkTTArUGYRkS6pwT0fFttVmox9i+kWZ7+kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726019740; c=relaxed/simple;
-	bh=u22K8r9foXtr+7paujcJ/ApAdSro5EUyd4uHs8UiTWQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VBGjauWO3O9Nrv4e9CDWD5oTZiC9HyC6iRppKTrs6OETF1qA6hAjhFzqCdOBXHlqDhukCc5Qhgtk0wA4uyEKtAbSwVvMAdtk1TQ6R/6q3bHMIB7nn0bWwcippz/JzV+YXf9Ug58pNJLHgtk4lKOvZz6bezPnJu4Y2o7reug9fVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJOcBqdp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1339C4CEC3;
-	Wed, 11 Sep 2024 01:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726019739;
-	bh=u22K8r9foXtr+7paujcJ/ApAdSro5EUyd4uHs8UiTWQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=UJOcBqdpkhjNEjtwPeckjcZkC5vhfqQnSNXYggtTurPkk4ulDm6K/ywpk2BP8qG9v
-	 TsjjVAi+sIN7mGof9s76EgdHXonMAriDBjllSzcvwkUBaGiTM6qRK/r/B3bS34aLft
-	 Uz8w2/NpnTkysQV85tc9fUItZJCZ07T9KE+7Ix5qR0NjsGOQBtWG3KccglccbWHEmi
-	 phgR7AN0QyeBqN3cj8H4kYfmQ4zP3ycrxuGCNdpQf9V0Zm8wXmx7GyXoXLFXX1iGn9
-	 fisjVjxDoMnIMffVbD0mlM99dU07mQKY2F60zTw1orXPcCEh/LfOQPaTdU4wjzaLkr
-	 tikzNZNDMBGzA==
-Message-ID: <380e8cb7-b3b8-4634-9e61-1b622d2bcf45@kernel.org>
-Date: Wed, 11 Sep 2024 09:55:34 +0800
+	s=arc-20240116; t=1726019912; c=relaxed/simple;
+	bh=0EFMw3SRkvYMgNTA7vSI8wJ9KODSpg0kCS9jWVoDcmQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JXGRFKOYeIw1ByxHElTMfpv9laFA7CUacMtIfTKearUB8WdQWcbbH0iQrt5UIySpK6B+KPBX11CyXaACOjORiLmFZzHzw1oRXX4qLv5UxrfppB1V8Z6ujc6NkHZrXVxNLIucA2XFDlUlnwiXHoXvNCnMEyXLTotrs5dH//nabPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fk/uFrpl; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=J6AXG
+	gTxHDU2guXI/u7d3q2TLw5oNU6irbtQtNAV3lo=; b=fk/uFrplVHi/4SGiYsrCX
+	igCN4lDO63uqq3f1s/FAQKXHMjIpKdYa6NWchDq3P6Wy5s3GBX5go3M1zqpdx3ix
+	IvZIq8xMqKRJEKYHUGWoQNuOBA/R9+Q4tiUJxgqyxyr/ur9Xu6MyNfWy3ENxNVic
+	Cf+Lhnga5qRG+zMTiUMpP4=
+Received: from iZbp1asjb3cy8ks0srf007Z.. (unknown [120.26.85.94])
+	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wAHDtws+eBmy2yaDQ--.33363S2;
+	Wed, 11 Sep 2024 09:58:05 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH] fs/ntfs3: Remove the unnecessary 'if' statement
+Date: Wed, 11 Sep 2024 09:57:54 +0800
+Message-Id: <20240911015753.49513-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: remove redundant i_ext.len set to
- zero
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20240909164535.1926830-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240909164535.1926830-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHDtws+eBmy2yaDQ--.33363S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrCw4fCF15tryfWryDCr13twb_yoWxArb_Ja
+	42kF4rK3Z8J3WI93Z5Kr4YgrWqqFW8tFnYvw1xtF95Cr45tF45Xa4qqrs5AF4ag3yDZFZr
+	G3srCFW7A3W5CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_db1UUUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLxlXamVOGP6WDgABsf
 
-On 2024/9/10 0:45, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Removed a redundant code to set i_ext.len to zero.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+The 'asize' was already checked to be less than SIZEOF_RESIDENT.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+ fs/ntfs3/record.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Thanks,
+diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
+index 427c71be0f08..0f400366231d 100644
+--- a/fs/ntfs3/record.c
++++ b/fs/ntfs3/record.c
+@@ -268,10 +268,6 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
+ 
+ 	/* Check size of attribute. */
+ 	if (!attr->non_res) {
+-		/* Check resident fields. */
+-		if (asize < SIZEOF_RESIDENT)
+-			return NULL;
+-
+ 		t16 = le16_to_cpu(attr->res.data_off);
+ 		if (t16 > asize)
+ 			return NULL;
+-- 
+2.39.2
+
 
