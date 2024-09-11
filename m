@@ -1,186 +1,164 @@
-Return-Path: <linux-kernel+bounces-325232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D709397568C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 529D4975685
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080431C22A74
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B0A1C221B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545CF1AB538;
-	Wed, 11 Sep 2024 15:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51561A38CF;
+	Wed, 11 Sep 2024 15:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kN1SQopp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XCql8XUa"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="roEqgBCF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dXwlQbnH"
 Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F139A64A8F;
-	Wed, 11 Sep 2024 15:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8869D64A8F;
+	Wed, 11 Sep 2024 15:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726067593; cv=none; b=XHftsZzoreHV1NYNxwUMTOODmmAM1RyNbY6ID2uCtxJIGfDgaRnXK7oksF1f/a9fZz1C39hWpPnfA315U5Qaj1PkHCWfxf6fz3nsRcyIjqteSiw9wqmYmmr6IIRaCyEV7G3AO2OO5CGMaoWhTkz0arirZW13XLsu+NrmpOO7Kqo=
+	t=1726067580; cv=none; b=V+An42MDm/u9Z+HjfWOXuh6OdfzVIAksdFwAXGdrSyRvKfY4aNtH8Htw+zv8HcULpx3Be28WnZMApaahXCeYjA9+uN1hmveKWpzQPidzfDhm89v2A8MDJjKhl/nCXxEjGsPmUIlexZnbCv7VHvqJhfhuh4dIK+2U7pfNVMQs1Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726067593; c=relaxed/simple;
-	bh=WYSo2PbdmOt952RgPLexG7kR5bugRClHNNEt8x7IqTE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MCuHtNNbdIZHGmCKD1cfAOepU9qgCU91EzkLNnEnSU2avmBNqNnumfyUZG+takBTLEJj3KlDYEfN3ydQ/5FRX+Ciusn43BxeUJKVsAdZIoxAz69wONCR10q/vroc0q4LxdKxDHjKiI76la8LbVyaHY0jMqbooqK9D+mijTLaw4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kN1SQopp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XCql8XUa; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1088E1380199;
-	Wed, 11 Sep 2024 11:13:11 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 11 Sep 2024 11:13:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726067591;
-	 x=1726153991; bh=W3/bFLF5GPmG/oJuoeXrc+CcLB5pp1RgCukpWqx8NY4=; b=
-	kN1SQoppsrfhQ1aKwXkZbakGlLdt9X7n0Qpj/jN4UR1Y3eNgfSXpaqnXU2jvT2SO
-	CkKtJctqSn1epUMSsgTMq94lbckLuTjWebG421B1IDhx+wTpY91SAQbai5EzqCLj
-	R95I9h/Oyrbf0WnPZczXlzIg7iR9OZRJOQVGeLeTXeijjQZUN9pssjm0tQL1Ck4j
-	zmCdVn/KgcSUzh3PEDQzQyXH51CECcn0v6jPm0mQP/MY+7V5gk0nq6+l3gCmtc/g
-	ty+HY7W6MR9EvZlDKxtvn7S6GuJIvWJn5pCaHnSKZaMQioVWClMCwcd/dkDHZESD
-	MQC/E8Utlc7jhB8oJkSUEQ==
+	s=arc-20240116; t=1726067580; c=relaxed/simple;
+	bh=MeKwSewEniQVg0QWYqtdDkP3SMlDxjYZOntP0TJPLu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9bpdoaz4cLwXD0yceVORIENr8EIcxjTWelYVoxkOENruKjT3eLW30W9wPzgLj38tEoY0QWgE8DBwa47KziLvOAcEZNzeqb+qnKheFSfY3S1zHG/GZNuL0EjiiS9Xjwiha+JuXG8GaAX8MushDdqVGFdM7qEDKzmjiP1Zi1qWSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=roEqgBCF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dXwlQbnH; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id B7C7513801A0;
+	Wed, 11 Sep 2024 11:12:57 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 11 Sep 2024 11:12:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1726067577; x=
+	1726153977; bh=hX37uCQOGVhHQTqeJ5W0AwuwfpJ/xp+m2JV1xJw815k=; b=r
+	oEqgBCFzNOLtDfQGW/GXoy+5xnao/YniwORdsTn+73sly+TADa7x9z2WIRIGgJtd
+	CI6Q9jjctdZX5Ggma7DBgg2Ge29yzRKFlUlo0mn/JdLabLGc2Nzi7n+84wRUCiyX
+	FCYMRHZ+tDLhYHvxec4+86gZpoz5fzFi4LKiYy3ZIpJya4X9ENPXa6qZun2BMqKe
+	Fk+hdazoSMsjgYR8ffQkvBwUiKLScClOS+DXc7nln9fbZ2/tT43i3pw5mRhcMai9
+	C2heJUwX8O/yuHFV2kyPuejMmttrw5K4tFuRvr12uhnSxxk0N9bD2u5mJnJeTFbQ
+	MqrW9Tv6xSlWAtlsgQKzw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726067591; x=
-	1726153991; bh=W3/bFLF5GPmG/oJuoeXrc+CcLB5pp1RgCukpWqx8NY4=; b=X
-	Cql8XUardaZ101GAHySvPbidSWgvrUhHQTCY77YF3/JUkwctwdWEm38bkCyLGtt/
-	8J16Bl06FqQMUJtlhObOyitk5m7QP44iPGfGHHv0aKH/ADQhxP5Aiy6+CoohSNhJ
-	Rhh4Auxf90Hnlp1iddYVLU6hc1fMMYmgb2+cmg3Fjo/WnIAeHVoCzZhj1YgNYPcr
-	1ohJKWJiuShFO5wslaYiWy/j2dw0LyVqm9nBXt8d//9b1SRq9ZTSl3YOskUEJXlB
-	nwUS/fpAc5NQ4sli8XBxEYlbcPYALdQSiG546mzXcfi7kXY6pJzGjqIFv6FqVOCf
-	5cJTRRRLjcMtic9xhj/4A==
-X-ME-Sender: <xms:hrPhZv7WKy14IaSXDvrB34WD0cgYbD5Ijoe3JWsHr6GlacVyDBKooA>
-    <xme:hrPhZk7a8Fxhynsc8w8RlayRPVgkEYNKUatMkcijCIuyuLVk0jSfOdBnS-5RByWau
-    RcFm8SjrTnUKfsMc_o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgkeegucetufdoteggodetrfdotf
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1726067577; x=1726153977; bh=hX37uCQOGVhHQTqeJ5W0AwuwfpJ/
+	xp+m2JV1xJw815k=; b=dXwlQbnHnqW82aserxKQOHu6CC/l6KILIh3WzGYHszp+
+	KQjQDPIAFdx/Nr1aIB//MG/2TZbk+UfXWcUFhrhv3SRHEMiOKE0tLf5s2TuVF+iz
+	cQ6YCNgOQT8iLAGSO0ll1lLylyQv8+wb5gSLK2jSx9EckabSYQp7KWo1hl7g+KKc
+	P50/Kr+3bWVvxApyXfgwA6qED1IIre0Un3ZJ06diqDeOvyuSQjXqStKsVwAfzMNm
+	QiqTW/4OYReg87v948Sq9Zm8Zgluarbb1zdGCySeo3/dgaOOAMUsppaVkePZhmVG
+	h/7qHEsCZB7/ihR6E7+BuZuqnoWdRCxyKq0ttQHpbA==
+X-ME-Sender: <xms:ebPhZrK2lC9H9VJhvFrKok2GHgjXqbgJclaEn7JCEz7KAfgghXuKWA>
+    <xme:ebPhZvLRg-4yuUZBpHcqlYZLl3cT98t9_jRa9F6A6a5xIRiy9Qg2KTFWv2FCEhKJo
+    5xouG40l11Biir4aWU>
+X-ME-Received: <xmr:ebPhZjsoOFtadSgQGFiwsXMrt434uNpqI2PU6FPqGubqr0ewwU0g28TZLqeHpX1M60L-ob2r4oLJ_Pj8meOKZIZjXwhiRXNzLw4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgkeehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphifmhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsohhunhgusehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhpihesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdifrghttghhughoghesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehhshifvggvthgvnhesvhhishhiohhnvghnghhrrghvvghr
-    shdrtghomh
-X-ME-Proxy: <xmx:hrPhZmdf99FfYnKem1AvJRPrIWg_fpZhxEh7VXJW1DiQT-3DEsIlAw>
-    <xmx:hrPhZgKV4S-Tu8NFrkX1SKt93sCnq7evJA8rGaJW17oS2EqYyvfRuA>
-    <xmx:hrPhZjICCGVAAUPix4F6pKGjdQzOYquZK8famopAqgECfsZSkw7yfA>
-    <xmx:hrPhZpx3YBmlZtpGZtemz01LfUC4tyicKeisD-A40BaSPyvkkrpYOg>
-    <xmx:h7PhZgqUnZj763mof6oSn8RoTf9JC4c3LkDlkkuvY8-Y5nodlrUuSzYN>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C2F2D222006F; Wed, 11 Sep 2024 11:13:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghm
+    ohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrg
+    htthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeu
+    udekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopeef
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvg
+    hlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqshhouhhnugesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:ebPhZkaPVdAwyqP_NGvtUOhaWP5j5XBEDu6Rt36wpI9sKJKhX8HoFw>
+    <xmx:ebPhZiap8pd-OdKolsh_yqj5O-8r3pg8V7jWFCy6NiJ2NdIhGnfEwQ>
+    <xmx:ebPhZoDFOBpO_e2kF6Vpq0h_jwdm0RAMrfxpPzDeePowo6n8U5FkTA>
+    <xmx:ebPhZgapOrD1isfzS5cqga3v_srS7VeLA50ZyeHJAAOSU7SA5HKqvg>
+    <xmx:ebPhZiFbJJWduIfSYCnxs1eNc67pRdOwnZcTgIUGetXhNA4v_UZYMqaK>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Sep 2024 11:12:56 -0400 (EDT)
+Date: Thu, 12 Sep 2024 00:12:53 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 0/2] firewire: core: optimize for concurrent calls of
+ fw_iso_context_flush_completions()
+Message-ID: <20240911151253.GA167609@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20240909140018.65289-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 11 Sep 2024 15:12:49 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nikita Shubin" <nikita.shubin@maquefel.me>,
- "Andy Shevchenko" <andy.shevchenko@gmail.com>
-Cc: "Hartley Sweeten" <hsweeten@visionengravers.com>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Lukasz Majewski" <lukma@denx.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Andy Shevchenko" <andy@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Sebastian Reichel" <sre@kernel.org>,
- "Rob Herring" <robh+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>,
- "Guenter Roeck" <linux@roeck-us.net>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Mark Brown" <broonie@kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Damien Le Moal" <dlemoal@kernel.org>,
- "Sergey Shtylyov" <s.shtylyov@omp.ru>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Liam Girdwood" <lgirdwood@gmail.com>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Ralf Baechle" <ralf@linux-mips.org>, "Aaron Wu" <Aaron.Wu@analog.com>,
- "Lee Jones" <lee@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- "Niklas Cassel" <cassel@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-spi@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
- linux-input@vger.kernel.org, linux-sound@vger.kernel.org,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Andrew Lunn" <andrew@lunn.ch>
-Message-Id: <cff6b9b6-6ede-435a-9271-829fde82550d@app.fastmail.com>
-In-Reply-To: <0e3902c9a42b05b0227e767b227624c6fe8fd2bb.camel@maquefel.me>
-References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
- <CAHp75Veusv=f6Xf9-gL3ctoO5Njn7wiWMw-aMN45KbZ=YB=mQw@mail.gmail.com>
- <0e3902c9a42b05b0227e767b227624c6fe8fd2bb.camel@maquefel.me>
-Subject: Re: [PATCH v12 00/38] ep93xx device tree conversion
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909140018.65289-1-o-takashi@sakamocchi.jp>
 
-On Mon, Sep 9, 2024, at 09:02, Nikita Shubin wrote:
-> On Mon, 2024-09-09 at 11:49 +0300, Andy Shevchenko wrote:
->> On Mon, Sep 9, 2024 at 11:12=E2=80=AFAM Nikita Shubin via B4 Relay
->> <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
->> >=20
->> > The goal is to recieve ACKs for all patches in series to merge it
->> > via Arnd branch.
->> >=20
->> > It was decided from the very beginning of these series, mostly
->> > because
->> > it's a full conversion of platform code to DT and it seemed not
->> > convenient to maintain compatibility with both platform and DT.
->> >=20
->> > Following patches require attention from Stephen Boyd or clk
->> > subsystem:
->>=20
->> Does it mean you still have a few patches without tags?
->> What are their respective numbers?
->
-> The clk is the last one as i think, all others can be ACKed by
-> Alexander or by Arnd himself.
+Hi,
 
-I've merged the series into the for-next branch of the arm-soc
-tree now. The timing isn't great as I was still waiting for
-that final Ack, but it seem better to have it done than to keep
-respinning the series.
+On Mon, Sep 09, 2024 at 11:00:16PM +0900, Takashi Sakamoto wrote:
+> Hi,
+> 
+> It seems to be the last week for v6.12 development. I realize it
+> unpreferable to propose intrusive changes, however I also realized that
+> there is a room to refactor core functions in respect to handler of work
+> item for isochronous context for the next merge window...
+> 
+> This series of changes refactors the core function to call
+> fw_iso_context_flush_completions() from the work item. It optimizes some
+> event waiting and mediation of concurrent calls as well.
+> 
+> Takashi Sakamoto (2):
+>   firewire: core: move workqueue handler from 1394 OHCI driver to core
+>     function
+>   firewire: core: use mutex to coordinate concurrent calls to flush
+>     completions
+> 
+>  drivers/firewire/core-iso.c | 31 ++++++++-------
+>  drivers/firewire/core.h     |  5 ---
+>  drivers/firewire/ohci.c     | 78 +++++++------------------------------
+>  include/linux/firewire.h    |  1 +
+>  4 files changed, 31 insertions(+), 84 deletions(-)
 
-I won't send it with the initial pull requests this week
-but hope to send this one once I get beck from LPC, provided
-there are no surprises that require a rebase.
+I realized that the above changes have unpreferable effects to the behaviour
+for user space interface. The changes allow to call the handler of
+isochronous context again to drain the rest of packet buffer after calling
+the handler at first due to processing the interrupt flag of 1394 OHCI IT/IR
+descriptor. As a result, it is possible to enqueue two iso_interrupt events
+for user space applications in the bottom half of hardIRQ. However, this is
+against the description in UAPI header:
 
-     Arnd
+```
+$ cat include/uapi/linux/firewire-cdev.h
+...
+ * struct fw_cdev_event_iso_interrupt - Sent when an iso packet was completed
+...
+ * This event is sent when the controller has completed an &fw_cdev_iso_packet
+ * with the %FW_CDEV_ISO_INTERRUPT bit set, when explicitly requested with
+ * %FW_CDEV_IOC_FLUSH_ISO, or when there have been so many completed packets
+ * without the interrupt bit set that the kernel's internal buffer for @header
+ * is about to overflow.  (In the last case, ABI versions < 5 drop header data
+ * up to the next interrupt packet.)
+```
+
+As a bottom half of hardIRQ, the work item should enqueue a single event
+associated to the interrupt event. The rest of packet buffer should be
+handled in the bottom half of next hardIRQ unless in the path of
+FW_CDEV_ISO_INTERRUPT.
+
+Let me revert these changes later.
+
+
+Regards
+
+Takashi Sakamoto
 
