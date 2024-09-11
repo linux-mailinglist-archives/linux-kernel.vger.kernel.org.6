@@ -1,224 +1,130 @@
-Return-Path: <linux-kernel+bounces-324475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B45974CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:43:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB80974CD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88FC288421
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B371F28964
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02EC1714C7;
-	Wed, 11 Sep 2024 08:42:49 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1FE155A52;
+	Wed, 11 Sep 2024 08:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIHMZPMH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4B114EC59;
-	Wed, 11 Sep 2024 08:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2FA1552EE;
+	Wed, 11 Sep 2024 08:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044169; cv=none; b=tYvZaUV8N6kxiygft9oINVcRt7RgkTry+y+eSoFiKyKCn3IvcxJnRz0zPAWtkbuRZbSh89EXpgNp5kxaH/i6bPKczwMPMzi8EvAz/VynHIOU6nxujB1OulbirQa3YLyIQNM4vuHfg/h7olA+m2grtVSra9j1XN9AR84BDB5hmvU=
+	t=1726044003; cv=none; b=A7A3jFF1wWUR/RwwXDX4wSyweU/YLoIQltpu8p7+ZjdqAqlOaZ0zDqrRooS3Y5HB/rIs3TfInRZtHmkOiug1YoWrENmjnKZ5Qr+HeJwzAiPZCbJh9Oxx2WW7+nUdsWFno9n7aXXxBCDTbSipJ/HhQe4AecelQ13XlSycgrMzuKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044169; c=relaxed/simple;
-	bh=U5lA6wGd2xUw0oRNlV91E1CWc2oKWpZQp5MExak2cXg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ILiuNghLm6aJi0QKXqIHc5hqfx8sd4+POZHuOaGrChpZz1uG2BmikHSjOntBOOTIE03g4/9adG61sOtY2RsQOLQf5PvmXr1rqOD39lY0YZD8sSVnWmiD58+h/uCIgk88am7J4tCt16793TOossTypD3EC99AgmRmlJtR7tq0cj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 48B8g3RB042756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 11 Sep 2024 16:42:03 +0800 (+08)
-	(envelope-from hongchi.peng@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X3YwB5yBQz7ZMtj;
-	Wed, 11 Sep 2024 16:42:02 +0800 (CST)
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 16:42:02 +0800
-Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
- (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
- Transport; Wed, 11 Sep 2024 16:42:02 +0800
-From: Kimriver Liu <kimriver.liu@siengine.com>
-To: <jarkko.nikula@linux.intel.com>
-CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
-        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kimriver.liu@siengine.com>
-Subject: [PATCH v9] i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
-Date: Wed, 11 Sep 2024 16:39:45 +0800
-Message-ID: <69401183add8f79ee98b84c91983204df753a3e6.1726043461.git.kimriver.liu@siengine.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726044003; c=relaxed/simple;
+	bh=pjO1Xtf6xnRkbXFbIjBTuXviXNMS0tKSzaObW+4ZC7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPO1m0vzNJdE8SBwGCgFAcLKthbZC3PIEE0iEBFFH8IuEij415yMgS0l99TGa+iK0kifcZ+J5MmyBoXzvdn/WzPL9sPo7CNVabb60RAxI9I2ZxJaxAXHqqL8poL4FCoo0Acb4V5ivfhL1RjwkDBBhS8HpsaDgWXO/HX+8e+Bv/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIHMZPMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5B5C4CEC5;
+	Wed, 11 Sep 2024 08:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726044003;
+	bh=pjO1Xtf6xnRkbXFbIjBTuXviXNMS0tKSzaObW+4ZC7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nIHMZPMHgLqvhkvMaUIDgL4SPTwrQl/xGvDNj7oZSiYr5bmStobHLtdTGzRUWcYDS
+	 S7KbJ+otJ0Gs+Y+S17HxwGgUTnIuZRvqoCXQh9iuR1BDq9ZuIgya7IrI+P6bNxSX4j
+	 zedzenrt2du+vvw7VK90tnuQiBjJcRkA0TGKCI7vVbdabgfbYAUnMpHZZK9TFbM6Lz
+	 CLt42Ph9wSAHcoPsLQl+1V6ZkeE0ROQTGEZCFjQYg1VYbEdVdNJRUMMrczDkUkrtZ5
+	 glUCXb8V7Nobzi3AY2bIv2K4oLWjjYXe84Awzf0luUBeQW3t0vvAl+tb8OOMTNs1cu
+	 RiutmvM4IeHQg==
+Date: Wed, 11 Sep 2024 09:39:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+c229849f5b6c82eba3c2@syzkaller.appspotmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: Re: [PATCH net] net: hsr: Fix null-ptr-deref in hsr_proxy_announce
+Message-ID: <20240911083958.GC678243@kernel.org>
+References: <0000000000000d402f0621c44c87@google.com>
+ <tencent_CF67CC46D7D2DBC677898AEEFBAECD0CAB06@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 48B8g3RB042756
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_CF67CC46D7D2DBC677898AEEFBAECD0CAB06@qq.com>
 
-It was observed that issuing ABORT bit (IC_ENABLE[1]) will not
-work when IC_ENABLE is already disabled.
++ Jeongjun Park, syzbot+c229849f5b6c82eba3c2
 
-Check if ENABLE bit (IC_ENABLE[0]) is disabled when the controller
-is holding SCL low. If ENABLE bit is disabled, the software need
-to enable it before trying to issue ABORT bit. otherwise,
-the controller ignores any write to ABORT bit.
+On Tue, Sep 10, 2024 at 10:50:40PM +0800, Edward Adam Davis wrote:
+> The NULL pointer is interlink, return by hsr_port_get_hsr(), before using it,
+> it is necessary to add a null pointer check.
+> 
+> [Syzbot reported]
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+> CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.11.0-rc6-syzkaller-00180-g4c8002277167 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+> Workqueue: netns cleanup_net
+> RIP: 0010:send_hsr_supervision_frame+0x37/0xa90 net/hsr/hsr_device.c:290
+> Code: 53 48 83 ec 38 48 89 54 24 30 49 89 f7 49 89 fd 48 bb 00 00 00 00 00 fc ff df e8 54 a0 f9 f5 49 8d 6d 18 48 89 e8 48 c1 e8 03 <80> 3c 18 00 74 08 48 89 ef e8 7b e6 60 f6 48 8b 6d 00 4d 89 fc 49
+> RSP: 0018:ffffc90000007a70 EFLAGS: 00010206
+> RAX: 0000000000000003 RBX: dffffc0000000000 RCX: ffff88801ced3c00
+> RDX: 0000000000000100 RSI: ffffc90000007b40 RDI: 0000000000000000
+> RBP: 0000000000000018 R08: ffffffff8b995013 R09: 1ffffffff283c908
+> R10: dffffc0000000000 R11: ffffffff8b99ec30 R12: ffff888065030e98
+> R13: 0000000000000000 R14: ffff888065030cf0 R15: ffffc90000007b40
+> FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f76c4f21cf8 CR3: 000000000e734000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  hsr_proxy_announce+0x23a/0x4c0 net/hsr/hsr_device.c:420
+>  call_timer_fn+0x18e/0x650 kernel/time/timer.c:1792
+>  expire_timers kernel/time/timer.c:1843 [inline]
+>  __run_timers kernel/time/timer.c:2417 [inline]
+>  __run_timer_base+0x66a/0x8e0 kernel/time/timer.c:2428
+>  run_timer_base kernel/time/timer.c:2437 [inline]
+>  run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2447
+>  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+>  
+> Fixes: 5f703ce5c98 ("net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data")
+> Reported-by: syzbot+c229849f5b6c82eba3c2@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 
-These kernel logs show up whenever an I2C transaction is
-attempted after this failure.
-i2c_designware e95e0000.i2c: timeout waiting for bus ready
-i2c_designware e95e0000.i2c: timeout in disabling adapter
+Hi Edward,
 
-The patch can be fix the controller cannot be disabled while
-SCL is held low in ENABLE bit is already disabled.
+Thanks for your patch. I agree that it is correct.  But I also believe that
+it duplicates a slightly earlier patch by Jeongjun Park.
 
-Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
-Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+- [PATCH net] net: hsr: prevent NULL pointer dereference in hsr_proxy_announce()
+  https://lore.kernel.org/all/20240907190341.162289-1-aha310510@gmail.com/
 
----
-V8->V9:
-	1. update commit messages and comments
-	2. add Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-	3. add fixes tag
-	4. change function i2c_dw_is_master_idling to i2c_dw_is_controller_active
-	5. update subject as: fix controller is holding SCL low while ENABLE bit is disabled
-V7->V8:
-	1. calculate this delay based on the actual speed in use
-	  fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz))
-	2. add Reviewed-by: Mika Westerberg<mika.westerberg@linux.intel.com>
-V6->V7:
-	1. add Subject versioning [PATCH v7]
-	2. change fsleep(25) to usleep_range(25, 250)
-	3. Add macro definition DW_iC_ENABLE_ENABLE to fix compile errors
-	  | Reported-by: kernel test robot <lkp@intel.com>
-	  | Closes:https://lore.kernel.org/oe-kbuild-all/202409082011.9JF6aYsk-lkp@intel.com/
-	4. base: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=master
-V5->V6: restore i2c_dw_is_master_idling() function checking
-V4->V5: delete master idling checking
-V3->V4:
-	1. update commit messages and add patch version and changelog
-	2. move print the error message in i2c_dw_xfer
-V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
-V1->V2: used standard words in function names and addressed review comments
+Unfortunately we don't seem to have a "duplicate" state in patchwork,
+so I'll go for "rejected".
 
-link to V1:
-https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
----
- drivers/i2c/busses/i2c-designware-common.c | 14 +++++++++
- drivers/i2c/busses/i2c-designware-core.h   |  1 +
- drivers/i2c/busses/i2c-designware-master.c | 35 ++++++++++++++++++++++
- 3 files changed, 50 insertions(+)
+It also seems that there are duplicate syzbot reports for this problem [1][2]
+I will attempt to mark [2] as a duplicate of [1].
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index e8a688d04aee..48b8d1c1080c 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -441,6 +441,7 @@ int i2c_dw_set_sda_hold(struct dw_i2c_dev *dev)
- 
- void __i2c_dw_disable(struct dw_i2c_dev *dev)
- {
-+	struct i2c_timings *t = &dev->timings;
- 	unsigned int raw_intr_stats;
- 	unsigned int enable;
- 	int timeout = 100;
-@@ -453,6 +454,19 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
- 
- 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
- 	if (abort_needed) {
-+		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-+			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-+			/*
-+			 * Wait 10 times the signaling period of the highest I2C
-+			 * transfer supported by the driver (for 400KHz this is
-+			 * 25us) to ensure the I2C ENABLE bit is already set
-+			 * as described in the DesignWare I2C databook.
-+			 */
-+			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
-+			/* Keep ENABLE bit is already set before Setting ABORT.*/
-+			enable |= DW_IC_ENABLE_ENABLE;
-+		}
-+
- 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
- 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
- 					       !(enable & DW_IC_ENABLE_ABORT), 10,
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index e9606c00b8d1..e45daedad967 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -109,6 +109,7 @@
- 						 DW_IC_INTR_RX_UNDER | \
- 						 DW_IC_INTR_RD_REQ)
- 
-+#define DW_IC_ENABLE_ENABLE			BIT(0)
- #define DW_IC_ENABLE_ABORT			BIT(1)
- 
- #define DW_IC_STATUS_ACTIVITY			BIT(0)
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index c7e56002809a..ee870ca39c83 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -253,6 +253,31 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
- 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
- }
- 
-+/*
-+ * This functions waits controller idling before disabling I2C
-+ * When the controller is not in the IDLE state,
-+ * MST_ACTIVITY bit (IC_STATUS[5]) is set.
-+ * Values:
-+ * 0x1 (ACTIVE): Controller not idle
-+ * 0x0 (IDLE): Controller is idle
-+ * The function is called after returning the end of the current transfer
-+ * Returns:
-+ * Return 0 as controller IDLE
-+ * Return a negative errno as controller ACTIVE
-+ */
-+static int i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
-+{
-+	u32 status;
-+
-+	regmap_read(dev->map, DW_IC_STATUS, &status);
-+	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-+		return 0;
-+
-+	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-+			!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-+			1100, 20000);
-+}
-+
- static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
- {
- 	u32 val;
-@@ -788,6 +813,16 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 		goto done;
- 	}
- 
-+	/*
-+	 * This happens rarely (~1:500) and is hard to reproduce. Debug trace
-+	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-+	 * if disable IC_ENABLE.ENABLE immediately that can result in
-+	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low. Check if
-+	 * controller is still ACTIVE before disabling I2C.
-+	 */
-+	if (i2c_dw_is_controller_active(dev))
-+		dev_err(dev->dev, "controller active\n");
-+
- 	/*
- 	 * We must disable the adapter before returning and signaling the end
- 	 * of the current transfer. Otherwise the hardware might continue
+[1] https://syzkaller.appspot.com/bug?extid=02a42d9b1bd395cbcab4
+[2] https://syzkaller.appspot.com/bug?extid=c229849f5b6c82eba3c2
+
 -- 
-2.17.1
-
+pw-bot: rejected
 
