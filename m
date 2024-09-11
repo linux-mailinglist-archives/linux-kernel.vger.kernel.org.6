@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-324439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04079974C78
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:21:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5D7974C7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE11B1F275CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D87287CAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D001547F0;
-	Wed, 11 Sep 2024 08:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E214EC56;
+	Wed, 11 Sep 2024 08:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="bsQ9z0S+"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEEb50lc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A81465B8;
-	Wed, 11 Sep 2024 08:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD822143878;
+	Wed, 11 Sep 2024 08:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726042812; cv=none; b=ezOU72Lc0TRm320V+u/m7Ilkcbcrubp3QZRu5xH2Ieeaz6QkMzKT2bxRDSDcX0/OBCWAnx6rkkiI5f3rs7keaCXyNxwBP2aTBJM/tS4dHE7pDCMqqhBJ8t+O7xLKYhBeIoUV301RnJDdH55T5/Z33DCmhZYa03PE3CLL6Ks83n8=
+	t=1726042907; cv=none; b=jBaVAfCShqkt12oZe89mMsjvTG8dg5BCeK5nN2D/xiqBktcdParGBHNilWdOcVKk+1lZurvoJyGqZipddU1VNKabvJ48fotG5Yx3GD9wPUxR7WNgeHtMi0DR/MkXXyGgOYrXs7KjoczR+bq/xeooKWC2fIsm34CqvzaUTqSKip8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726042812; c=relaxed/simple;
-	bh=GdYBPsKDHeufKmodYCKe7FXkkVMFNJ7DeZ/JN+gbZMY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DJbMmgsA5qiuzK+LXNlia9gFitqtzj4Wbphy5t7BI7OggOLbzjH/B1UWol4eLkq+ld9v4lurlOMiHM35lzYJ9bi8dwFld3tJ+C6pREphl/KXP+II+AwM4IGWP534ZtAZOk1RxOu4Z3WkOxSg2cPsh0CtZbWlOblAdvzEzVOQqfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=bsQ9z0S+; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=F7yJ655Km2+rNMGGl0IszJ/m1hy6CjgJoVZwzGAbMHg=; b=bsQ9z0S+sH97Kc839K0iUN661j
-	B8EepZNc/vUSIigG6gRwm3ZlMYXMPaVOwcJz/M5I7J6y6xBblXPUAamcdsNkQUOvslfRNIVAX6Gm3
-	e1Ut/OrhQAg8c/1VmhwOCqC0ak4V5RF3qFHJgDUqlH/1hQpt8jPqQkBeibwrfgtT76+/oJbB4pTuJ
-	dAy/69lQ8fTk6+cpLU6CpedHp2ljrF9aRbZZM9ryQhmwT6VpKbNzLlMeKN20AjGoxWqS5bii+u0Nq
-	YW7Vh8u62jg1RaVex91DD6XbX0Ndz8nsAoIBF2U8AU1++GJpo7UjaUCYAlt1rIadfE7TDNkTxn6pT
-	SoX48Jyw==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1soIa8-000Er2-Bs; Wed, 11 Sep 2024 10:20:08 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1soIa7-000DUx-23;
-	Wed, 11 Sep 2024 10:20:08 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,  linux-rtc@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
-In-Reply-To: <202409101939448128973d@mail.local> (Alexandre Belloni's message
-	of "Tue, 10 Sep 2024 21:39:44 +0200")
-References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
-	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
-	<202409101939448128973d@mail.local>
-Date: Wed, 11 Sep 2024 10:20:07 +0200
-Message-ID: <87mske7gaw.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1726042907; c=relaxed/simple;
+	bh=d9CWkENHYECimcCbv2Nzyo7IuDqs8fs5iCgcTQ1TaBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8ICvCDy/pgxcrI+aAR6HZFOWidDnnbBqb5SKDf61sDRmf/mnywytE+QlLbjYKlbMDxMyEWyHB6BhGo8/Poh9dS4UYEr1RwFyvTOSPaOgpyh3ItzIa+C3clvTpTWneUzWxjdKmXkrhY+zA5eGPPtCKmgENDuWJPCJV5MOQeBuTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEEb50lc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C168C4CEC5;
+	Wed, 11 Sep 2024 08:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726042907;
+	bh=d9CWkENHYECimcCbv2Nzyo7IuDqs8fs5iCgcTQ1TaBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rEEb50lcAVIJ9JW+AO5gZKSU35/2LW/DZyBcLvVVPyNMoBn8seX5VYnngPNZh5HwQ
+	 F2AoQwNVp1VmLmQmaPojWfEFPCtigb9IaIftEfQUvReVHrAetnZAV8SvTr76TkaKyM
+	 oE39prU0u0/l5j5kDqCRYeiq5HL7/0wfWulrnTCvsPr+57kNNUNFPktbdBo/Tr9aAJ
+	 ANonIlnq20kycEzN97nGcRSGdJ90e7usr5kJg/aBcF8FWFMbROa8hcZHjfBprUIeJs
+	 SAKy9ViDlsdrdxKi9YXFLb1EipOCea9Hs1mcOQTEPA71oW1f6yUg7S24meJqg1fSTp
+	 OChWbYvzEw8Bw==
+Date: Wed, 11 Sep 2024 09:21:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, Jeongjun Park <aha310510@gmail.com>,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	ricardo@marliere.net, m-karicheri2@ti.com,
+	n.zhandarovich@fintech.ru, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+02a42d9b1bd395cbcab4@syzkaller.appspotmail.com,
+	Edward Adam Davis <eadavis@qq.com>,
+	syzbot+c229849f5b6c82eba3c2@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] net: hsr: prevent NULL pointer dereference in
+ hsr_proxy_announce()
+Message-ID: <20240911082142.GA678243@kernel.org>
+References: <20240907190341.162289-1-aha310510@gmail.com>
+ <20240909105822.16362339@wsk>
+ <20240910191517.0eeaa132@kernel.org>
+ <20240911100007.31d600fc@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27394/Tue Sep 10 10:30:36 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911100007.31d600fc@wsk>
 
-Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
++ Edward Adam Davis, syzbot+c229849f5b6c82eba3c2
 
-> Hello Esben,
->
-> On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
->> The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
->> interrupt when frequency output is not enabled.
->> 
->> The device-tree bindings should ensure that interrupt and clock output is
->> not enabled at the same time.
->
-> Ideally, we would get a pinmuxing part in the driver to ensure this ;)
+On Wed, Sep 11, 2024 at 10:00:07AM +0200, Lukasz Majewski wrote:
+> Hi Jakub,
+> 
+> > On Mon, 9 Sep 2024 10:58:22 +0200 Lukasz Majewski wrote:
+> > > > In the function hsr_proxy_annouance() added in the previous
+> > > > commit 5f703ce5c981 ("net: hsr: Send supervisory frames to HSR
+> > > > network with ProxyNodeTable data"), the return value of the
+> > > > hsr_port_get_hsr() function is not checked to be a NULL pointer,
+> > > > which causes a NULL pointer dereference.    
+> > > 
+> > > Thank you for your patch.
+> > > 
+> > > The code in hsr_proxy_announcement() is _only_ executed (the timer
+> > > is configured to trigger this function) when hsr->redbox is set,
+> > > which means that somebody has called earlier iproute2 command:
+> > > 
+> > > ip link add name hsr1 type hsr slave1 lan4 slave2 lan5 interlink
+> > > lan3 supervision 45 version 1  
+> > 
+> > Are you trying to say the patch is correct or incorrect?
+> 
+> I'm just trying to explain that this code (i.e.
+> hsr_proxy_announcement()) shall NOT be trigger if the interlink port is
+> not configured.
+> 
+> Nonetheless the patch is correct - as it was pointed out that the return
+> value is not checked.
+> 
+> > The structs have no refcounting - should the timers be deleted with
+> > _sync() inside hsr_check_announce()?
+> 
+> The timers don't need to be conditionally enabled (and removed) as we
+> discussed it previously (as they only do useful work when they are
+> configured and almost take no resources when declared during the
+> driver probe).
+> 
+> Anyway:
+> 
+> Acked-by: Lukasz Majewski <lukma@denx.de>
 
-I hope we can leave this as future work :)
+Thanks,
 
->> +static int isl12022_rtc_read_alarm(struct device *dev,
->> +				   struct rtc_wkalrm *alarm)
->> +{
->> +	struct rtc_time *const tm = &alarm->time;
->> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
->> +	struct regmap *regmap = isl12022->regmap;
->> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
->> +	int ret, yr, i;
->> +
->> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
->> +			       buf, sizeof(buf));
->> +	if (ret) {
->> +		dev_err(dev, "%s: reading ALARM registers failed\n",
->> +			__func__);
->
-> I don't really like those error messages because there is nothing the
-> user can actually do apart from trying again and this bloats the
-> kernel.
+Like Jakub I was a little confused about the intent of your previous
+comment, but it is clear now.
 
-Ok. Maybe keep it as dev_dbg() then?
->
->> +	/* The alarm doesn't store the year so get it from the rtc section */
->> +	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
->> +	if (ret) {
->> +		dev_err(dev, "%s: reading YR register failed\n", __func__);
->
-> Ditto
+It seems that along the way the patch got marked as rejected, presumably on
+the basis of earlier discussion in this thread. But that seems
+inappropriate now, so let me see if this will bring it back under
+consideration.
 
-Ditto.
+pw-bot: under-review
 
->> +	isl12022->rtc = rtc;
->>  
->>  	rtc->ops = &isl12022_rtc_ops;
->>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
->>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
->>  
->> +	if (client->irq > 0) {
->> +		ret = isl12022_setup_irq(isl12022, client->irq);
->
-> You can't do this in probe, the RTC lifecycle is longer than the linux
-> system. Or said differently: "oh no, my linux has rebooted and now I
-> lost my future alarm" ;)
+For reference, the same change was also submitted as:
+- [PATCH net] net: hsr: Fix null-ptr-deref in hsr_proxy_announce
+  https://lore.kernel.org/all/tencent_CF67CC46D7D2DBC677898AEEFBAECD0CAB06@qq.com/
 
-Oh.
+I will attempt to somehow mark that as a duplicate in patchwork.
 
-We do need to setup the irq here, so I assume you mean I need to drop
-the part of _setup_irq() that clears alarm registers.
+It also seems that there are duplicate syzbot reports for this problem [1][2]
+I will also attempt to mark [2] as a duplicate of [1].
 
-And I guess we need to enable irq in probe as well. At least if/when an
-alarm is set. I think it should be safe to enable irq unconditionally in
-_probe()...
-
->> +		if (ret)
->> +			return ret;
->> +	} else {
->> +		clear_bit(RTC_FEATURE_ALARM, rtc->features);
->> +	}
->> +
->>  	return devm_rtc_register_device(rtc);
->>  }
-
-/Esben
+[1] https://syzkaller.appspot.com/bug?extid=02a42d9b1bd395cbcab4
+[2] https://syzkaller.appspot.com/bug?extid=c229849f5b6c82eba3c2
 
