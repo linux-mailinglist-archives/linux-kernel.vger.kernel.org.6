@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-324279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7622974A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360DF974A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A86C286977
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E033B1F276E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 06:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D881AC8;
-	Wed, 11 Sep 2024 06:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB7113C3D3;
+	Wed, 11 Sep 2024 06:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAtxeU2f"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YAhp+rC0"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162AF127E18
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BD136338
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726037174; cv=none; b=hPHsdVmzXdmmBLfl5Qv8KQSBBkwROqFq0K4MunTzEcPyKAdFGBTTwkrQ+DkKBYCWDKWzQOnwnakKdrxx8J7XIsXn12GHd1TkT6wOHBJ5YBv0rwVHgmhuQYyUy6dP5YeqiElJb4tzv9Lw4L8R3J4QJ5DNSEOunQeefv+39A2d8rM=
+	t=1726037178; cv=none; b=cYpdXQPHYsuYGH/1qw5O/3jGu4kd8Bm1mY2QgS92un6FFWxOaVlWO57mgdu5tm+Et6/9MVZqFZ5qalyP2Rs35xa91j8o3jBoMPshjaCofkFo4MC43jEfJwjcxObKmf/bV5QVnE5z4WTNcqkisyVKM3T1pPbHE2KjAXitIP/Z/XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726037174; c=relaxed/simple;
-	bh=ZHBD5nxjCn39VoHzOY+ge2IVDv8unPJPEMRErbHaUA4=;
+	s=arc-20240116; t=1726037178; c=relaxed/simple;
+	bh=spRk1KgMCNNaHSmFuRFHc+16C4JN3bxZV6odFONV/Uw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZxdBD4Fj4rijmXAOCDoNi6JB0mopBObor5bN83s5L8FydpCyJQ6rN5CNrZvNsDsSIzb+L5LIfI0EdsXPgUWfFSfVTOHPNal8YYOP5yRgsBvWFZh58UjvGSYeXgY9fQkH7lXyZDYySgrLnVWwvn5HFtguQzQNxk6479Hcr9jzO+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAtxeU2f; arc=none smtp.client-ip=198.175.65.12
+	 MIME-Version; b=H4RK89VP5qcCAcQNmJgQtXgpzfxrPwa6PoaTyuxUHfACflr7el+GdNFl46nBkjL/QePTD4+oKaV02hAZWnRwzvGW4uoHt3plfqXnGInbNfLbyt/cXNWNjIY5HFtMNgjd0T+bZ/C5fblY7UQR6fwJ+nPk5H7vUMU5HpWDNgrBgzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YAhp+rC0; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726037173; x=1757573173;
+  t=1726037176; x=1757573176;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ZHBD5nxjCn39VoHzOY+ge2IVDv8unPJPEMRErbHaUA4=;
-  b=mAtxeU2f8Z7WmpquHWY4nyvM1zqRIlqVBl49pGlAl5nPXPdlfSbdv/+M
-   iVjgPTQvxuzlyZYljW594Jgel6PO1SteSfp74AcjfwDE9JbvAECLNZukv
-   btTJu2Zo9qeQRvqlhjlzmdrrILhyp8H/olExK9B0wwyaH+yE/ZYtNXw8r
-   2I8tTZ3m3HrDZTZBxIP7JzXRBwTL2CaGQ4hS6iamYjLA6QwIjbDc3UWh+
-   sW2oxqIxZr24oE0RGsoz8X2+00p3zeJ35hYcfmO7LVECPVl0yh0Dj9pOr
-   Rxxn+Yk7t7bQfQsDaGZTWuzzqaPRp5DoJB4U+6I8K3GjwdDIHqBWTaAlH
-   Q==;
-X-CSE-ConnectionGUID: D4TUMG7lTlSUbwFk9MpS3g==
-X-CSE-MsgGUID: mCbQPIbHSgirw1c+H4EPZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="36173029"
+  bh=spRk1KgMCNNaHSmFuRFHc+16C4JN3bxZV6odFONV/Uw=;
+  b=YAhp+rC0hG3OevF7ddcm0cTK3KWJCPHwd4E14L4cKM0pZevAhbqdwvWc
+   +QKajrSY6loRxZW20N8/cMD3MreJVqGSYrjM84gAdy7rtOJZtluecFvK4
+   5+S7YHJMLFQ4RO7H3Pk65NValRiMro+MbltqCxeKRdVdoRzPlk89AcCQz
+   brAHgV0wlpJMxAXKg+yMA7nE+iaS7vnJo7ehUpNRk45nqk7Tw/U2nxICS
+   EVksxm/EQN7ac/lG3hqfox7kjs1iNzB6nslYcDEG6Gz3s4HWO97QFNDx3
+   glZ2ZBFND/1BzQ+QqtvLZ5YS/9/WRYKuy/LEuRUCGYpN8Maso4KjGMscn
+   A==;
+X-CSE-ConnectionGUID: 8Izt4nHdQ+eZlj+q0z0koQ==
+X-CSE-MsgGUID: mNMGoDDgRYma3vYkRfX+Ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="36173051"
 X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="36173029"
+   d="scan'208";a="36173051"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 23:46:11 -0700
-X-CSE-ConnectionGUID: v543qwycT2WvE2geGxwVvA==
-X-CSE-MsgGUID: Ll8xYtUdRRW3q2YxBIkspA==
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 23:46:12 -0700
+X-CSE-ConnectionGUID: tvwWZ/Y9QRKy+QIHoKa/xw==
+X-CSE-MsgGUID: V2Tkj4x9QrGrTc/GWUmeNQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="67771506"
+   d="scan'208";a="67771512"
 Received: from feng-clx.sh.intel.com ([10.239.159.50])
-  by orviesa007.jf.intel.com with ESMTP; 10 Sep 2024 23:46:00 -0700
+  by orviesa007.jf.intel.com with ESMTP; 10 Sep 2024 23:46:05 -0700
 From: Feng Tang <feng.tang@intel.com>
 To: Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -79,9 +79,9 @@ Cc: linux-mm@kvack.org,
 	kasan-dev@googlegroups.com,
 	linux-kernel@vger.kernel.org,
 	Feng Tang <feng.tang@intel.com>
-Subject: [PATCH v2 4/5] mm/slub: Improve redzone check and zeroing for krealloc()
-Date: Wed, 11 Sep 2024 14:45:34 +0800
-Message-Id: <20240911064535.557650-5-feng.tang@intel.com>
+Subject: [PATCH v2 5/5] mm/slub, kunit: Add testcase for krealloc redzone and zeroing
+Date: Wed, 11 Sep 2024 14:45:35 +0800
+Message-Id: <20240911064535.557650-6-feng.tang@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240911064535.557650-1-feng.tang@intel.com>
 References: <20240911064535.557650-1-feng.tang@intel.com>
@@ -93,118 +93,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For current krealloc(), one problem is its caller doesn't pass the old
-request size, say the object is 64 bytes kmalloc one, but caller may
-only requested 48 bytes. Then when krealloc() shrinks or grows in the
-same object, or allocate a new bigger object, it lacks this 'original
-size' information to do accurate data preserving or zeroing (when
-__GFP_ZERO is set).
+Danilo Krummrich raised issue about krealloc+GFP_ZERO [1], and Vlastimil
+suggested to add some test case which can sanity test the kmalloc-redzone
+and zeroing by utilizing the kmalloc's 'orig_size' debug feature.
 
-Thus with slub debug redzone and object tracking enabled, parts of the
-object after krealloc() might contain redzone data instead of zeroes,
-which is violating the __GFP_ZERO guarantees. Good thing is in this
-case, kmalloc caches do have this 'orig_size' feature. So solve the
-problem by utilize 'org_size' to do accurate data zeroing and preserving.
+It covers the grow and shrink case of krealloc() re-using current kmalloc
+object, and the case of re-allocating a new bigger object.
+
+[1]. https://lore.kernel.org/lkml/20240812223707.32049-1-dakr@kernel.org/
 
 Suggested-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Feng Tang <feng.tang@intel.com>
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 ---
- mm/slub.c | 54 ++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 16 deletions(-)
+Hi Danilo,
 
-diff --git a/mm/slub.c b/mm/slub.c
-index c1796f9dd30f..e0fb0a26c796 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4717,33 +4717,51 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+I keep your Reviewed-By tag, as I think this v2 mostly changes what kmalloc
+slab to be used. Let me know if you want it dropped, thanks.
+
+ lib/slub_kunit.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+index 6e3a1e5a7142..b3d158f38b98 100644
+--- a/lib/slub_kunit.c
++++ b/lib/slub_kunit.c
+@@ -186,6 +186,47 @@ static void test_leak_destroy(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, 1, slab_errors);
+ }
+ 
++static void test_krealloc_redzone_zeroing(struct kunit *test)
++{
++	u8 *p;
++	int i;
++	struct kmem_cache *s = test_kmem_cache_create("TestSlub_krealloc", 64,
++				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
++
++	p = __kmalloc_cache_noprof(s, GFP_KERNEL, 48);
++	memset(p, 0xff, 48);
++
++	kasan_disable_current();
++	OPTIMIZER_HIDE_VAR(p);
++
++	/* Test shrink */
++	p = krealloc(p, 40, GFP_KERNEL | __GFP_ZERO);
++	for (i = 40; i < 64; i++)
++		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
++
++	/* Test grow within the same 64B kmalloc object */
++	p = krealloc(p, 56, GFP_KERNEL | __GFP_ZERO);
++	for (i = 40; i < 56; i++)
++		KUNIT_EXPECT_EQ(test, p[i], 0);
++	for (i = 56; i < 64; i++)
++		KUNIT_EXPECT_EQ(test, p[i], SLUB_RED_ACTIVE);
++
++	validate_slab_cache(s);
++	KUNIT_EXPECT_EQ(test, 0, slab_errors);
++
++	memset(p, 0xff, 56);
++	/* Test grow with allocating a bigger 128B object */
++	p = krealloc(p, 112, GFP_KERNEL | __GFP_ZERO);
++	for (i = 0; i < 56; i++)
++		KUNIT_EXPECT_EQ(test, p[i], 0xff);
++	for (i = 56; i < 112; i++)
++		KUNIT_EXPECT_EQ(test, p[i], 0);
++
++	kfree(p);
++	kasan_enable_current();
++	kmem_cache_destroy(s);
++}
++
+ static int test_init(struct kunit *test)
  {
- 	void *ret;
- 	size_t ks;
-+	int orig_size = 0;
-+	struct kmem_cache *s;
+ 	slab_errors = 0;
+@@ -208,6 +249,7 @@ static struct kunit_case test_cases[] = {
+ 	KUNIT_CASE(test_kmalloc_redzone_access),
+ 	KUNIT_CASE(test_kfree_rcu),
+ 	KUNIT_CASE(test_leak_destroy),
++	KUNIT_CASE(test_krealloc_redzone_zeroing),
+ 	{}
+ };
  
--	/* Check for double-free before calling ksize. */
-+	/* Check for double-free. */
- 	if (likely(!ZERO_OR_NULL_PTR(p))) {
- 		if (!kasan_check_byte(p))
- 			return NULL;
--		ks = ksize(p);
-+
-+		s = virt_to_cache(p);
-+		orig_size = get_orig_size(s, (void *)p);
-+		ks = s->object_size;
- 	} else
- 		ks = 0;
- 
--	/* If the object still fits, repoison it precisely. */
--	if (ks >= new_size) {
--		/* Zero out spare memory. */
--		if (want_init_on_alloc(flags)) {
--			kasan_disable_current();
-+	/* If the object doesn't fit, allocate a bigger one */
-+	if (new_size > ks)
-+		goto alloc_new;
-+
-+	/* Zero out spare memory. */
-+	if (want_init_on_alloc(flags)) {
-+		kasan_disable_current();
-+		if (orig_size < new_size)
-+			memset((void *)p + orig_size, 0, new_size - orig_size);
-+		else
- 			memset((void *)p + new_size, 0, ks - new_size);
--			kasan_enable_current();
--		}
-+		kasan_enable_current();
-+	}
- 
--		p = kasan_krealloc((void *)p, new_size, flags);
--		return (void *)p;
-+	if (slub_debug_orig_size(s) && !is_kfence_address(p)) {
-+		set_orig_size(s, (void *)p, new_size);
-+		if (s->flags & SLAB_RED_ZONE && new_size < ks)
-+			memset_no_sanitize_memory((void *)p + new_size,
-+						SLUB_RED_ACTIVE, ks - new_size);
- 	}
- 
-+	p = kasan_krealloc((void *)p, new_size, flags);
-+	return (void *)p;
-+
-+alloc_new:
- 	ret = kmalloc_node_track_caller_noprof(new_size, flags, NUMA_NO_NODE, _RET_IP_);
- 	if (ret && p) {
- 		/* Disable KASAN checks as the object's redzone is accessed. */
- 		kasan_disable_current();
--		memcpy(ret, kasan_reset_tag(p), ks);
-+		if (orig_size)
-+			memcpy(ret, kasan_reset_tag(p), orig_size);
- 		kasan_enable_current();
- 	}
- 
-@@ -4764,16 +4782,20 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
-  * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
-  * __GFP_ZERO is not fully honored by this API.
-  *
-- * This is the case, since krealloc() only knows about the bucket size of an
-- * allocation (but not the exact size it was allocated with) and hence
-- * implements the following semantics for shrinking and growing buffers with
-- * __GFP_ZERO.
-+ * When slub_debug_orig_size() is off, krealloc() only knows about the bucket
-+ * size of an allocation (but not the exact size it was allocated with) and
-+ * hence implements the following semantics for shrinking and growing buffers
-+ * with __GFP_ZERO.
-  *
-  *         new             bucket
-  * 0       size             size
-  * |--------|----------------|
-  * |  keep  |      zero      |
-  *
-+ * Otherwise, the original allocation size 'orig_size' could be used to
-+ * precisely clear the requested size, and the new size will also be stored
-+ * as the new 'orig_size'.
-+ *
-  * In any case, the contents of the object pointed to are preserved up to the
-  * lesser of the new and old sizes.
-  *
 -- 
 2.34.1
 
