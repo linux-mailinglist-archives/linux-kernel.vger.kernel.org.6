@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-324517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570B8974D96
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F51974DA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177B02836BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBE0286605
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7096F13D26B;
-	Wed, 11 Sep 2024 08:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8046A185922;
+	Wed, 11 Sep 2024 08:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GnJrQka7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j4S315vw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qxJ7sSCP"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768ED15EFB9;
-	Wed, 11 Sep 2024 08:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C00183CC1
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044885; cv=none; b=t3/5cETZi0cpTsLR+UJrmRwyCnIu/Lee6IJU/+d5S9bNdkzsizPx6yx5rqalCeuO739sr7cxdFKwAJX4miD5m5K2J2npHqh6CZNysZt3rNL/KoHaTArYIbRANhzK5aF4DfPZjlPFlJK3liZgVe0ktnv6qjl/ebmSaJFNP6siLCo=
+	t=1726044931; cv=none; b=g9Xqm4tAeC/ZhAwbW4jPnprCdPcVjFtS7x0zSvuYq44e6nV6xn0gc+exTHxqQ/8ygDepJxJCbw5VOHz5muko64Ysg1MWFwestDTqXZYUdKba4J8n8P6SoaPYNY5RDpeP7U7S6Z4BU1Lhy4FWLQDeM9gHBDLvuMC/iR4hAJtHOa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044885; c=relaxed/simple;
-	bh=Ia5lmZBVLJrbaO6z3AnbdyZ8EauRGs2je4iFnOPryh4=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Cv/id2FyEAu4Eqj29Qs/ybukB2NyOoVDEww4JdBzVf3L4E28nF/vrOv/qMglWBCYe3Sii6RSjRCXqgb/yZHqcDvn0XV7fhlR+6UNadc86w5DdExxy0HoiVtXsaLa3Cu84W/j+vPJEWyAmAkd8XOm7TvE2gOg2TLbra6TYGzvNDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GnJrQka7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j4S315vw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726044882;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SIWotiYC5Y4E+rxhEG44q+nipjMbhXVcKsGP/nRiJ24=;
-	b=GnJrQka7HOInLWqWmsZ6qkHZ0W9Rj5dZZExzd3hvgYSTK0fpI6HL+0e8KjAHudy4kDjpxy
-	MxIz+brSXXuagOpfEkXDNNkCPqTiYMqQyMdXfccDcKB9KUouBqPqqXeBfWK2oP4fISlU1D
-	n7AtQv7jfK6LRL3xox/WnFCE+IqlAe5Nr7QiRLB8dInilr6U+fR3EEC0kioII5QUxv/OrA
-	bfM4Y+wwYlukjtl0dI4jtS6L4NSDu8+9hgWnwvEtB8lvYDpdJ/wNRYat1t5TGQGxPyyKTr
-	nfL+jZkLYyW8//Xd3ldFa7ks7tDPyswjuMy4A0qsev4HdZy8NG4iD90mbry+tA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726044882;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SIWotiYC5Y4E+rxhEG44q+nipjMbhXVcKsGP/nRiJ24=;
-	b=j4S315vwGFT9faWUP5mefHu/YN3jS/hgY1kW7RTFqW5uO+/pVR6eg/jbfC3j3aPFnwNw84
-	ZxIn8qa5KOliF0Cg==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, David Gow
- <davidgow@google.com>, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com
-Subject: Re: [PATCH 3/3] debugobjects: Use hlist_cut_number() to optimize
- performance and improve readability
-In-Reply-To: <85a8aa26-f135-fdde-fadf-c2b38a563805@huawei.com>
-References: <20240904134152.2141-1-thunder.leizhen@huawei.com>
- <20240904134152.2141-4-thunder.leizhen@huawei.com> <87jzfkbrgf.ffs@tglx>
- <5333927d-3f21-b7cc-8c57-6e21f1b4a3e5@huawei.com> <87bk0vbumx.ffs@tglx>
- <85a8aa26-f135-fdde-fadf-c2b38a563805@huawei.com>
-Date: Wed, 11 Sep 2024 10:54:41 +0200
-Message-ID: <878qvya7u6.ffs@tglx>
+	s=arc-20240116; t=1726044931; c=relaxed/simple;
+	bh=80etI6IOGYnYy3S48QUWp5RLlOnW9UqPR0o2rxDl47Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKSVj1DoA1z1IkBLvpZ49vsiWhdOV0+j03+BQVlZK3llFzfLSjFsxqKmhl5wy01y93qLeLAVaCTdACLsshBzQdkL0dgdNB15I0ZlIW024+tyFIieBv3yPZSjIrrMmPzmIvLXWOxV1DrY4wwuEriD7adn8g7V+YWUGXLV+t7JicI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qxJ7sSCP; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so2257462e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726044928; x=1726649728; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7g/Bl6lBC/cRuXNn+LW0zFsoslcjYTly3MsBdR/C+U=;
+        b=qxJ7sSCP0/f7fFvRhmhaUp561iNFVQTKSbg8IPzT/ufsAjdbgSCulgL+tQjh8X1wDX
+         j6YPJlwfzfnoXWWo9GpABAdrB2h3/W4lTVmjeqo7OpauahB8X/UbgMn+vz+b2RBsq7nB
+         OjNEOMyCb0w9xrIiOsaj8zwuHxWNc51dFqyShaUgF0WUEemfYS8ZKQf+uCUZCdAA3/cr
+         j1YiKAVplwHwpJpOfDhVkgvgwrmG4lTJWtuvS9IIzhhGbrSe4frB521FYuibwZQP4Jmh
+         FRtRiGYDISWHeXhjUSGmopJIQnxHxjkIylbwlC1G2g+KlI+orDf1Uf2V2Eg4YwcwO55n
+         qIYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726044928; x=1726649728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M7g/Bl6lBC/cRuXNn+LW0zFsoslcjYTly3MsBdR/C+U=;
+        b=HmiwbaMeSiXNnM6msaOkPsBl/EykRj0ezh22v1L8smYIdnfhlIBh++4EhmUDyYPpvv
+         2zWBrfGOMJBa1X3S3egK2FzeI3DxOpIibPWl23u4CSuItN8QECHc8hQWSJoeaMV1GwY/
+         xjHII8qBlSoa3Sv/0RRx6eXcBXZHkMGG1rIykU0kBDRKd7D9IFmtBg23EPACYLWydzCu
+         V82CGFBib/H+ug7pxLhhk7+KuD2LbjlH33ILggw+yNN/eGLXuoBKeesN05AACfjGvvhr
+         bY+NLxrIc5tg9cv8Hzc75OCipXoB+cXN0XExNlKx9dFkB90KdXwabGf/f1bqVhmT6ceX
+         6EHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHq6jcDefZ/0aHfFlPRk/rXDm8gB0ZxHaJpT3HWQFWI+WRuXqU8dApxRCiJVWyveLXK8sDVOBdlOknBmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGIkMF+h+8xuYn3yD8Pr+Mc5wiLblCiGUBIgJ9mNXSIA+heAhw
+	i5e1Zq/sa5a16WTIi0gfzClSbUZVoJp1lD8hFDROMPXwkFNPfFU8B0kcEI0+lmg=
+X-Google-Smtp-Source: AGHT+IH+Dzjozd3OlATo0a9sgQDCf790CbejQFcEZWABh2pvl4N1FguMPA5NKsNPpodVdT4PlWx09A==
+X-Received: by 2002:a05:6512:6cf:b0:52c:850b:cfc6 with SMTP id 2adb3069b0e04-536587f5c84mr11715382e87.38.1726044926949;
+        Wed, 11 Sep 2024 01:55:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f905a06sm1490865e87.241.2024.09.11.01.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 01:55:26 -0700 (PDT)
+Date: Wed, 11 Sep 2024 11:55:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Suraj Jaiswal <jsuraj@qti.qualcomm.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>, 
+	"Suraj Jaiswal (QUIC)" <quic_jsuraj@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	"bhupesh.sharma@linaro.org" <bhupesh.sharma@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, kernel <kernel@quicinc.com>
+Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for
+ multiple descriptors
+Message-ID: <spwi3an6viosg4p3bnufpqah4uevzbncka6s6rvlqm3rhsszhz@fi2he6vsviyl>
+References: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+ <yy2prsz3tjqwjwxgsrumt3qt2d62gdvjwqsti3favtfmf7m5qs@eychxx5qz25f>
+ <CYYPR02MB9788D9D0D2424B4F8361A736E79A2@CYYPR02MB9788.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CYYPR02MB9788D9D0D2424B4F8361A736E79A2@CYYPR02MB9788.namprd02.prod.outlook.com>
 
-On Wed, Sep 11 2024 at 15:44, Leizhen wrote:
-> On 2024/9/10 19:44, Thomas Gleixner wrote:
->> That minimizes the pool lock contention and the cache foot print. The
->> global to free pool must have an extra twist to accomodate non-batch
->> sized drops and to handle the all slots are full case, but that's just a
->> trivial detail.
->
-> That's great. I really admire you for completing the refactor in such a
-> short of time.
+On Tue, Sep 10, 2024 at 03:43:23PM GMT, Suraj Jaiswal wrote:
+> 
+> 
+> -----Original Message-----
+> From: Andrew Halaney <ahalaney@redhat.com> 
+> Sent: Wednesday, September 4, 2024 3:47 AM
+> To: Suraj Jaiswal (QUIC) <quic_jsuraj@quicinc.com>
+> Cc: Vinod Koul <vkoul@kernel.org>; bhupesh.sharma@linaro.org; Andy Gross <agross@kernel.org>; Bjorn Andersson <andersson@kernel.org>; Konrad Dybcio <konrad.dybcio@linaro.org>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley <conor+dt@kernel.org>; Alexandre Torgue <alexandre.torgue@foss.st.com>; Jose Abreu <joabreu@synopsys.com>; Maxime Coquelin <mcoquelin.stm32@gmail.com>; netdev@vger.kernel.org; linux-arm-msm@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com; Prasad Sodagudi <psodagud@quicinc.com>; Rob Herring <robh@kernel.org>; kernel <kernel@quicinc.com>
+> Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for multiple descriptors
+> 
+> WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
+> 
+> On Mon, Sep 02, 2024 at 03:24:36PM GMT, Suraj Jaiswal wrote:
+> > Currently same page address is shared
+> > between multiple buffer addresses and causing smmu fault for other 
+> > descriptor if address hold by one descriptor got cleaned.
+> > Allocate separate buffer address for each descriptor for TSO path so 
+> > that if one descriptor cleared it should not clean other descriptor 
+> > address.
+> 
+> I think maybe you mean something like:
+> 
+>     Currently in the TSO case a page is mapped with dma_map_single(), and then
+>     the resulting dma address is referenced (and offset) by multiple
+>     descriptors until the whole region is programmed into the descriptors.
+> 
+>     This makes it possible for stmmac_tx_clean() to dma_unmap() the first of the
+>     already processed descriptors, while the rest are still being processed
+>     by the DMA engine. This leads to an iommu fault due to the DMA engine using
+>     unmapped memory as seen below:
+> 
+>     <insert splat>
+> 
+>     You can reproduce this easily by <reproduction steps>.
+> 
+>     To fix this, let's map each descriptor's memory reference individually.
+>     This way there's no risk of unmapping a region that's still being
+>     referenced by the DMA engine in a later descriptor.
+> 
+> That's a bit nitpicky wording wise, but your first sentence is hard for me to follow (buffer addresses seems to mean descriptor?). I think showing a splat and mentioning how to reproduce is always a bonus as well.
 
-The trick is to look at it from the data model and not from the
-code. You need to sit down and think about which data model is required
-to achieve what you want. So the goal was batching, right?
+Please fix your email client. It is impossible to understand where is
+your answer and where comes the quoted text by Andrew. Use text emails,
+text quotation (single '>') and no Outlook splat at the top of the email
+("Original Message" with all the emails, etc).
 
-That made it clear that the global pools need to be stacks of batches
-and never handle single objects because that makes it complex. As a
-consequence the per cpu pool is the one which does single object
-alloc/free and then either gets a full batch from the global pool or
-drops one into it. The rest is just mechanical.
-
-> But I have a few minor comments.
-> 1. When kmem_cache_zalloc() is called to allocate objs for filling,
->    if less than one batch of objs are allocated, all of them can be
->    pushed to the local CPU. That's, call pcpu_free() one by one.
-
-If that's the case then we should actually immediately give them back
-because thats a sign of memory pressure.
-
-> 2. Member tot_cnt of struct global_pool can be deleted. We can get it
->    simply and quickly through (slot_idx * ODEBUG_BATCH_SIZE). Avoid
->    redundant maintenance.
-
-Agreed.
-
-> 3. debug_objects_pool_min_level also needs to be adjusted accordingly,
->    the number of batches of the min level.
-
-Sure. There are certainly more problems with that code. As I said, it's
-untested and way to big to be reviewed. I'll split it up into more
-manageable bits and pieces.
-
-Thanks,
-
-        tglx
+-- 
+With best wishes
+Dmitry
 
