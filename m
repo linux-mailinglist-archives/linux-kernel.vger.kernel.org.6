@@ -1,286 +1,355 @@
-Return-Path: <linux-kernel+bounces-324303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBE5974AE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC66974AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F8EB211BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEFB1F27314
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E351558B7;
-	Wed, 11 Sep 2024 07:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A6E13BC26;
+	Wed, 11 Sep 2024 07:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mVNMw7Q+"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2060.outbound.protection.outlook.com [40.107.96.60])
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="lCJ03m1w"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2131.outbound.protection.outlook.com [40.107.22.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB26F7E111;
-	Wed, 11 Sep 2024 07:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A6713B5B7
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726038069; cv=fail; b=inpEyomPq0GPv3tDPKWcxvd2R+PqhgfWwx+LCkFT5jEXuR17Z2Gmda+RM+B4ZJnstpW2qu9h+ixsiUNdsS6eCSP5GWkvFOPHuU4fGZBqrdUHeANcPCBkPP7hcYrLD+nCnepd3NERZi1E2tzP+R+nUXR2dsG+YIgpSIxVSOMpUJE=
+	t=1726038088; cv=fail; b=Bb+MYJwDCEhz/j2iUuYZnlpQTv0y7JIu1L7KQpyz/y1BORhYPZXuorOifdzqoDjOKGOhusBQCXc6RsY+hdXwWHFrlvvc3xUp1cBaagXP4NcKZ1HGenWQd+2irF6DZ2XncgiualIoOCAPeckMLvNm9AgKqgfVUCxi9E+qkd9luVI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726038069; c=relaxed/simple;
-	bh=eW8rl99AqbBPiVub+zqsuiMZnL7cSC9M/N/Vmov5k3Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cJ+mnXnYCai9sQu1mqKIG01tRhJK8t+5EFAZOpk7bZ0eyo5IV1gv1yB9tjL3KdtaoG7q/LGjsYfxyYoFQqlledBUQBpqwLX1Js176T/j3CJJkyGkQWHlc3mgbMfsqR8qesMthBdGiTkzz9zeN4UVeAjfBOnWes/5URPKNj/Izmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mVNMw7Q+; arc=fail smtp.client-ip=40.107.96.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1726038088; c=relaxed/simple;
+	bh=UVuTHVOozly6EUg0BnhzAXVSGP1y/PgkkBGC+30E/kM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rd/o6eB/Y9za7aPWfbUJZ6sPS7r+YxN7tzem7NgjhuHA7D4l0r/58e+NIb9MSkrXWqYXSZps+PhGCtkM26R9RQCI1BPo8vJh7eVoA0Fw15Ibmu1hfjmNK+CyZsIwbeFmmTFMwPdheuDHO56TtFYyH4BI42lgS7bVVdxp3AMN848=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=lCJ03m1w; arc=fail smtp.client-ip=40.107.22.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tTrC2uKJcJWX0orvjoHsz/j/sVRz6zVcVn58RlkRhrtLc/6xmP/4Cs+DfPFo96UPZfbCTq3F2uG2keEvo2oFL5IMYUi8caz1zTqbsUYPSFYhw6STXKEAFPjkqeD0L1UjaC2Awq8Db5RkqhCBb71clTnHj8smfwSS98y56VXsWdMH85cp5nJufju98VNkY8r8CFQsFNDQSOD39I63L8hAVDlDM2DPTS6wuG5UNtIQ8+bq7lpRd7vpQqGM5jISrgDET9L6QiLDBhDPePtFkXml2hxFX3vDnNMQoo0b3XVlDuoZ1Jt21TYlDglpdmHI6I+BmaKS2W38A4MzjH62CaH6qA==
+ b=zKQYpH/GyBwvogH9PYPx45eTGM0GGoCpfl2142L7dVKs+wvPnUfJD0YhjRgLbCsdFWZGRjcPDZWNXjyUZ+mrzxGGD8f6+Dqqq251fKKU5CscYeq/iIGIiVYR8QBG6/U9UvcrbnjXXzoT0WTpxFmBDD9KIDubJ0jQrrGlKUpaTSuGMfihc44dRLprEDtP8xZkbH9xes1+TGuJF5WzLuqkmg2RxxO7pKpHceeBLHG9lwpXc600QGuxIjOfeB/FAAclhQe2AIbL9+aeFYgKINXv/X1Ehb3KIdANIXNK0jpPsXchhxekUEDKgg0uxjWDE1QIt+mhYA7XOHnmf6GPX0ACpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g2OlENML/mAKRCYJvJQtzaQ4FAOvpLg4aaexgR+pKBs=;
- b=XttqbmAQFM0SQr3SjfYQMjBxHL66cirwIFncgjfCMLH3IMqFZDlc7x5RpCloRxDvgcnsCh+0PhmI5uULGWxVb+GJZHGRRiXDG5dJY1kH4gXunaxMnU3mE+csvjLjyXlZPwgO9PEw4UvAMBUnv1n29Wa30VeV04gFdlbJxw8bnH5QWm27Kp8aVprwoEX8+dvab9saeWlkjjPY8gTlwhiIVa7g4NYmOcXDbogxg+/NW7mCPqYdt/hAOWmEWJyLSBZaf2OdoNHT1OjC3DbdisUSkLaJfni/t2sLWWcGsyFkwQjhvy6DbtIHuGZqWab6IGcSTHtpTIgBjbCmYbl7UUoOcQ==
+ bh=2AKq3LFXcydHWQzVBi/TqJI9X4ArJOPi0fZu7AjuPFQ=;
+ b=ff82ZgvR+XQ9kOS/XYf7O+8+zuoF+jQmnyro9brVhsMyz5OIS2WoS5go6yR5ndW94mYsfNyqgqjIhkENDRkl6VIAWKzPpCT6yFSV4uyOmbwPGw//YPKfzVXv4O1HcvXnEf00hv54xE9yZCsOnMOxfsOUspalYE3OK4DbhDR92unhtBA51wPYuA7VWR51mk996tw+aFr5bfyZRQHriXW8KqviIpabRBOZ7QxcmcNwbsKJrF945cf7dXXdacu99c+IPflTykOmTUOZdgO4ZVwic45NkS6c7rxE67MZxf2yFhqiwbteV5C/mMPGlahQfCqX/2Trdcb/9h07FuKpoWkYKg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g2OlENML/mAKRCYJvJQtzaQ4FAOvpLg4aaexgR+pKBs=;
- b=mVNMw7Q+j5kHEi6JFMOS6+44EMVaZPonVLz4aWP5vbLnxLl4FLrbiAYPOZznY0J+qJjxQHzk+KG6rAas7NLvWlAs/gdEBIvxyyE2v2Hg3QwHJNo+MAkrRApp8G60/y/a+U7n13krLSftTxl0KS6aW0jkPqAcR5gmpiX6PpD+Gso=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by SA3PR12MB8048.namprd12.prod.outlook.com (2603:10b6:806:31e::6) with
+ bh=2AKq3LFXcydHWQzVBi/TqJI9X4ArJOPi0fZu7AjuPFQ=;
+ b=lCJ03m1wx5UDCtzPU9ooHYt9baKtcWs6KuULUyGr0GNPFWpFopyu+DnluMOF/j/t7WeO+3NN9OGx3TvlsBHlcdgppSQ4FevNzzmmo9By7rdz+dk444DFoytlXo/21c/k0GcNhZ6FHiBMIaczAavhOmYmJ9iy7botpc/96emY3Mc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by GV2PR10MB6233.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:78::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Wed, 11 Sep
- 2024 07:01:04 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%5]) with mapi id 15.20.7939.017; Wed, 11 Sep 2024
- 07:01:04 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "Katakam,
- Harini" <harini.katakam@amd.com>
-CC: Andy Chiu <andy.chiu@sifive.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>, Ariane
- Keller <ariane.keller@tik.ee.ethz.ch>, Daniel Borkmann
-	<daniel@iogearbox.net>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Simek, Michal"
-	<michal.simek@amd.com>
-Subject: RE: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet
- count overflow
-Thread-Topic: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet
- count overflow
-Thread-Index: AQHbAw1QlhWoNsDZ7EOtVdYAw5Ers7JSJksQ
-Date: Wed, 11 Sep 2024 07:01:04 +0000
-Message-ID:
- <MN0PR12MB5953E38D1EEBF3F83172E2EEB79B2@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <20240909230908.1319982-1-sean.anderson@linux.dev>
-In-Reply-To: <20240909230908.1319982-1-sean.anderson@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|SA3PR12MB8048:EE_
-x-ms-office365-filtering-correlation-id: f4762534-0a05-4a43-88d3-08dcd22f8086
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?W2aKWDcqOcLCS9Ul1slRIMZdZTMsZoacAORZY8gHsfX6VuphbHMjRafTj60t?=
- =?us-ascii?Q?cO5f0T9gHUjTZeVE89r7p8eDUSKKlsaBRa/h3KNsPtGZW9KQuLslEM8va4A7?=
- =?us-ascii?Q?kt3PJqUOQBFOeVPnBCkH488bynA8qg2/WUO7c2sSPM/J/AsYau+tbx8oX6Bb?=
- =?us-ascii?Q?XWW5mrzlguuNJcFylAvs0t3fUatHFxvYWVBxOUaIapoJx0r70TwI09S7e7mC?=
- =?us-ascii?Q?Br5V8YXi1q+r2e4QeH2ualaEp4vuSjyrSluEEtV1OLWVgeJWn6fpocKwihbn?=
- =?us-ascii?Q?ULrITZXixPO4K4btTVXyD+N1Rc1geoeMW59+sidHtH5KLayPviZoIJIlDWpt?=
- =?us-ascii?Q?TXd3J6ivipnHs00gM8Cc+OBxTOHOzyaPbNsUQWT6OLHq9hs496zOpAAJxjR6?=
- =?us-ascii?Q?AvrhmDzJjvQKaLc9Yb/hM7OnEDsGbQWMiBOoKCKZbl2/iTDFVzdCgz/h+0JW?=
- =?us-ascii?Q?NSc/U0XQBBPvcYJQ4pKNt3qGnMz0MNnmLAPUODx6HRDIP22kKX9Z4PlugXgx?=
- =?us-ascii?Q?Au+CSWfRGg38ltaw/15jB0DMftH001liAeTTLKR+r24MPJ4d77l9IHEY2xtF?=
- =?us-ascii?Q?Q9WvLXDYR0tafMzg1NlES7xAE7i/6Gw1c0oYKxI556+SroE46Qid1YqZcaPL?=
- =?us-ascii?Q?uxsMsMh0ShD3dmhVnUZS8EFPzBRxZA0K+q6i08HgXtgvfmCRu27VVtBCMNtF?=
- =?us-ascii?Q?tQQ0uuNsGik+way4Dg+SAZhh+6h2OwdvKjwq2Vy8/lpO8FkONA0xBpncxD27?=
- =?us-ascii?Q?YQjx4ZWNL2XfE6Ze4+enWCOin8brI2b/AdDhviZoHj6nOIkmZXDAyXS2Nwrp?=
- =?us-ascii?Q?bIzKV1a/n96G4fC5HwwnwKsyyEzy3g5AeUY2fGJHHOAr98edwAN6baZ7iBvb?=
- =?us-ascii?Q?JAfDEV7aEaEzEh58m8rGTrKkgSszGhGbC3Uu9vcDiOx7TzmdSy9/u1AGhWdU?=
- =?us-ascii?Q?1H+nsi05/qXAD6tjqgSljqJnKOsv5F3KDaFad0BbAr2hxR2UjbaW7SFsgubi?=
- =?us-ascii?Q?qZPLVxCwQfj69rCSwwH+Y6NFAPQy9wdh9wFIdEdLw9oBB3JbxmgzG7gDa0ki?=
- =?us-ascii?Q?yJ58EM5wXoT6d6WE7dtAAdQ5wi6HCfe4LBiL6/Y7soiWhYP9kDkhX/2U/wBV?=
- =?us-ascii?Q?Vjbjg/wDF6aPY8J6KQro7xI2/gIL6kjYAo/OO0zfPT9SF6Fx5caS81PmqOKG?=
- =?us-ascii?Q?9KAiS0/C6H0LpSHI5+l8HTFtuMdEmPsAFqeUiSTpkQ82NOrf0qHIFRbnXyI8?=
- =?us-ascii?Q?GdjKuwbKhCiNkaf1BPD6bs6smyB42lu7VYK/cTNws81mUa5EWuiSkpDQqTVk?=
- =?us-ascii?Q?+KTw7fkd6hAobAh7/0Rx2wZtYOe257BQgU8d2Sm2SsDb3wmTX4XS+Or9RrC9?=
- =?us-ascii?Q?Y3jNzKmMqVOw+l7+6UVlS1cvMyjGJiUztD0U/Uj/iywfdvWC/KwMWmz8K6/B?=
- =?us-ascii?Q?6iQ5NQBUMso=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Nd5luaYB6i4Ga8gMCR9A5+h13SFoJCoiRIertbOmSLyk744np51gQorZqpWk?=
- =?us-ascii?Q?bYoOOBv6DdGCGTHF18GzSmj96DTnqcUyzP3JJKbhGCutIxcPp+IvXuhltrID?=
- =?us-ascii?Q?z3hheEJtDYBPROGuGdiJwLGIyHZ4hELPp12yU6a7db0/r0xpsfwUj7Oh9Uer?=
- =?us-ascii?Q?SwTt/zXF2Zd+DmVfZgj2Mqa+JgCvO3v7/mI4MxOd0HSMNrsPGZdW7x6wQsIN?=
- =?us-ascii?Q?kkhRPxx5U9AgUkF9Qu548VKQ9jcWevMwcRFzG5/F271CinEm9j+JnpYIgvNe?=
- =?us-ascii?Q?adV4qXHwzF+7OMiNZff0QnW9d2gGxMKi2+bjMG/It3WMRGU+ibFDNdAI15Rg?=
- =?us-ascii?Q?i2EWElsCnWGKmI5zm+vISSVRQqXSpl2H6vF7zNPRC7zhqwmJR+3472wSdDgE?=
- =?us-ascii?Q?XYHV8obWRyVd4H/846Ri+ZcwnBLvA+nvX3Gfpjyoq6P9yhtKQFvODLMlJ+8w?=
- =?us-ascii?Q?qCL8dUxlnl1pVb1NTgUZddaa8qgTq7ORbHbdF3F8uaZusEySEsCEoiukTpgm?=
- =?us-ascii?Q?oM7MDu7reiEqMNoPWPzcomFB/bc4G527nT9qyoTiyka1OIJiBZdF0aMInjrv?=
- =?us-ascii?Q?UN9Ugoth1EkE+FLXEkBghR7BHM9qkYh8tGbib8QGLC4cZcBdQTvMRdA47zES?=
- =?us-ascii?Q?YyIZWi6suudeu1CWNUny9tIQnl9QZsxSFo18QHUpxHBYoWX1EdShlJpFw8R/?=
- =?us-ascii?Q?pE9F1m1eiovqEMvnoWS0k3bNZV0cMt1L1t1tj9VH5eSdiDr++XltM7BezLbV?=
- =?us-ascii?Q?QczuHkwpp2ZyDSkBsLEOHZS20IOo3IdDvXMLT0U/jAPtnmz1lKBEONtzj6sX?=
- =?us-ascii?Q?D3jV5GqiLAyz7NBJvui76kvu6c6r9YzBrkxoqk2P4XEGBG52mFbebHhJloLT?=
- =?us-ascii?Q?aVqvxUXHHJPSoRTK99NfaegpyHmgAJCJhaDoTmIZVix6N/20+XCDWdCeoOaQ?=
- =?us-ascii?Q?uX3Cg/JkKl9cYGAQOc+ujWDJwSRs+sp1t7E2x0iXpiQIRcg25qULGs7wQjki?=
- =?us-ascii?Q?0EZu+vmNtY2yhIixFwsRG/aozkJXMbeb075PutXgAlzTSanXB2dAZkLSrGdd?=
- =?us-ascii?Q?qeMS6RhfsmdPosamp9SgH+6wu1sAdL/hXXjIkA9RtpqmqN5N4nz/m/wOW5j3?=
- =?us-ascii?Q?v+a2L5KUtsGS7lPeCUV5O3CP1y0dojQiNt9ccj1i1hrqhVf7uY2nldCultP0?=
- =?us-ascii?Q?n98HC/SPzAMM7KpUgf55y7QSFM5u+lg5qnNryi46XlDw0izrhLKx0DgYKl9n?=
- =?us-ascii?Q?gJWzDD4pwuRCXk12RGjk6jTt7EW5vE028vXGMza5kYLKcN1yonRqh28TMBZc?=
- =?us-ascii?Q?WyRM6KqDjKYmMIjcUTTOBnichhsIS4goeyvLndcg6NPoRbIZ9/nlN/tZ/NO8?=
- =?us-ascii?Q?oTusqkjVWD34CW18bq/P8nnaZVjrsbtLXZ4BXw+9PPPIlbgBXzdK+8moaM9d?=
- =?us-ascii?Q?5lf3neD6xhf5c4utv1eOAMom7mdQB6nyDvcjDEY6afz816w8Tbhx0oOwqeKg?=
- =?us-ascii?Q?+Jrs9C5w4B9Atf/rtR70A4n4wlM1nwLPWAdQnwSjRMH1HTVMErrpcmXIZ7k7?=
- =?us-ascii?Q?aWC7GeDwJ8urNqQWj/U=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Wed, 11 Sep
+ 2024 07:01:14 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%4]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 07:01:14 +0000
+Message-ID: <bbf4ec7e-ef77-485b-b748-4bb3a6baba59@kontron.de>
+Date: Wed, 11 Sep 2024 09:01:13 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 3/5] xphy: freescale: fsl-samsung-hdmi: Support dynamic
+ integer
+To: Adam Ford <aford173@gmail.com>, linux-phy@lists.infradead.org
+Cc: dominique.martinet@atmark-techno.com, linux-imx@nxp.com,
+ festevam@gmail.com, aford@beaconembedded.com, Sandor.yu@nxp.com,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Marco Felsch <m.felsch@pengutronix.de>, Lucas Stach
+ <l.stach@pengutronix.de>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org
+References: <20240911012838.944630-1-aford173@gmail.com>
+ <20240911012838.944630-4-aford173@gmail.com>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <20240911012838.944630-4-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0163.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a2::9) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|GV2PR10MB6233:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b382162-855b-44b4-3a97-08dcd22f86ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cVlYcmtqSVdyNmx3cUpvOS96a1pEcE52M1h1bkExS1ZPaXJ6eldHY1pFZlpn?=
+ =?utf-8?B?OFZmNFErRjEwcWJpTldTZnAwckRoUDdGVDRhV0ZtcWlBTHBYL2RpaXU2ODR6?=
+ =?utf-8?B?TEkvdzBvUDNpOEZzVzF2d25iRlh4ZytGVXZHVjY5VG95VVd1eVQvSWpKVnhL?=
+ =?utf-8?B?OEN6eXFVMkdCQ1ZKZ1NhQmpGNllCY0ZvOXZYWkRXZ1BSbmlmNTdLQ25tems5?=
+ =?utf-8?B?bDVIeUhFWVZRMzdDUzFnUUlxRE1lTENPR1ZDLzNGY2FzeFVpUlhhWXNCSWdZ?=
+ =?utf-8?B?UDNhU2Y3ODdHSTVmbVdRdTZ0cTFrcXhrVU1EM0hMNGpNK29vRDlmSExBdUtX?=
+ =?utf-8?B?b2NYVlFHd3hpUHQ3MXM3VGQ3SWJHNVlSdnN5R0NndXFrMGNOQXBmVFlwdDFH?=
+ =?utf-8?B?RDlseFhoRm5VYmpEakIwL0hJZkVnRE9JaGNESFdrQ2JrNHFKN3kvVERXd2dQ?=
+ =?utf-8?B?ZzFIOWhYTFJzZ1QvRE5TT0w2by85cXNMSXFIUXNhbnVLb1J0T1dXdUI4dWVi?=
+ =?utf-8?B?OWJTZk1VaHlkNC9XR2RpZGZnOWJTRm03a1dwdmN2TlJBSXZjQWYzY05aMk5O?=
+ =?utf-8?B?alZvUi9PcU03R3RFeG9TTzZmL2tnWHVpOVVQOXV5V3dJckFFQm1nYnkvWFJV?=
+ =?utf-8?B?aDkzcE5EcXM1ZE9FbkwrMjY0ZURuM0NLbXBqMWYydys3TThjMjA1L3l6Z25I?=
+ =?utf-8?B?ZHB6R3BBOGFGWHlUSFhjMFVxVzZrdHhyTTN5VEI5bTMzeG5HSG9jQWJQU2pP?=
+ =?utf-8?B?UGRpbXpFU3NRNjRTaG1TYmR1WW1xK3BIMU9ROUdyQ3J0ajBPc25JUTRja0s2?=
+ =?utf-8?B?WkpDTUJMRFRvbFBzR1hEZzRDR0JPR3dESFBIOHh3cC9JaXJuN3BGZkhzK0U3?=
+ =?utf-8?B?UnBscEg4SEh1NmdVSytjUjBNZmNGbVRzcUs0NXlQMWMvazFpZERTOUNaM0c0?=
+ =?utf-8?B?cW9jcFo5OVhDUFRYOWtEZFVwZ2s2SCtKK0N6bXVjTExKK2hKYVNUeTkvVlF4?=
+ =?utf-8?B?T3RsSnlCd1BmdjBqUUdURnBnb3haUEdseTlDSEZaQTdURkpoelJUSzA1ZGlV?=
+ =?utf-8?B?ejVxSndkL0lTUDArOFZoWXRvTXd4NUdmVnFTTmk4ZjNGWHZpMzUvS2lFZHhR?=
+ =?utf-8?B?YjhmMk5WbElrVnM4QWVxNHpnT2xGNW5BUFdyT1hWN1ljQ2xxcWxlQVh4VXkx?=
+ =?utf-8?B?anVGRXVZSStoTU9qYmlrdXU4ejI5ajRKU1JhUFFkdDVvalhkN3VncS9GMGV0?=
+ =?utf-8?B?bkRxazlKU1BGK2piNVRXN1BHcXp4Tk1Jb0x6K3l6d0V6NlB5d3NiN096c0xn?=
+ =?utf-8?B?dU5OalptV0s5U0VXVHVmNTFWdGp4RlAyZndxUzA5R2U0ZVZQeEEvcW1nNytJ?=
+ =?utf-8?B?RURKcGtWdHZjWU1SOXdoWk1VVjl1clF2NWhHK0NYZUdSRHJUSWcyTUFUc2Zr?=
+ =?utf-8?B?K1J2Z0J4T2gwNEZmNGd6MnpyM3lZS201aGd2QzBwQm1TRnU1RjcvT2ZBV28z?=
+ =?utf-8?B?UEtJSVhiQ0U2a0pnTnpzeTVjeUQ2T2FYRTVvYURFVlRvMFo3QW5WaU12a3dR?=
+ =?utf-8?B?Nk44NzVhVjgxMVh6R1BieGMyRDJubnZtUjN3THVnRHNwOENySkFVRUhtZFNI?=
+ =?utf-8?B?WVk3K1B5eG1LTVNMU3VpdllZcjhEMWt0dGZOWENTYXZGNnVscFcrK2xxbFVy?=
+ =?utf-8?B?OUp0dFYreWdLbURUVjZaWE1ha3o1YVdmeXVxSThjMWtWWTlERXdHUENzeHBB?=
+ =?utf-8?B?d21SYnZwMlIxeWswUGV4enRlTUVFamtKRVgvVWUwREszNWNsVWh3NzVhWFpn?=
+ =?utf-8?B?b2JTMW1uL0hyZDhxTE1YUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Vm9FRFZJOWhxWW03MVFtbVp4cWl6ZkQxM2FoZnVNK1dNaHRTcUV5c29kNzNM?=
+ =?utf-8?B?QnRYNUp6SEwwTmhzL2c2Q1cwaFlRRm90TzE1cnZuZ2VGeVdPd0xqMi9QMHEy?=
+ =?utf-8?B?cGU0UEFza3p4Tnp4MXFkanFzS3BtUE1CVW1XMzNjRlNqQ1hxTlIyNFNDT1Mr?=
+ =?utf-8?B?R01xMTd5UzNJZkJtTWNkSlp1cFdpcUxrQ203emgvMzMzbkRxa2h6U2RkVU5v?=
+ =?utf-8?B?ZnkwOXBRTGcrRGhxcEZyWGJIRDYrWTI0Y0c4aVk2VzNhRE93WVN4bThNNzJ1?=
+ =?utf-8?B?MmNlZENYZFJjb3NkV0FYTi9ORWF2TTFSQ2J6aWs1NkZ2WjJkeWtTNWt1UmtR?=
+ =?utf-8?B?c0RIOVQ4VXpPTmZrWHhoZHR6Qm13MVV3SVRBc3RhMEw1akxaT2Q4MUdLcjcv?=
+ =?utf-8?B?SVE2OGJITnVXa3UwS0tObnFnSGYxeXVnQk8vZmhpRWdhUysybWdSUC9kYTFY?=
+ =?utf-8?B?KzRETlhWVWFoZVh3VE9IMjZIbUllcUIrWmR1R0RrUVJWMEJ3MUVWODUzNU1T?=
+ =?utf-8?B?Rmd5U0FMUythRUVwa3JXZTBSVi9qVzhhampMVDNUeDZxL0xrWG1PT041eGYz?=
+ =?utf-8?B?bHNXdDlIYUFldzNhRHA5NzNpNnlwa1BqL3ppVXBOVy9FcFpXWnZxVkI2TW9i?=
+ =?utf-8?B?VWgwZEltdHBZS3lKWUVJU1E0UlYyMUp4ZUVUSks4RG9ONmYrOVRZdnNKbnBD?=
+ =?utf-8?B?RnRBNDFWdEJtdnVqQ09kbUFTb2NlM2ZROEhNTWxuekRTL3ZSN1dzdFdla1BT?=
+ =?utf-8?B?M1IwY2pnM0hhWUdnMXZpNXpiZTQ4NWJ0dTBvVDRZdXZwdDdSdzJ5WEdGM2x3?=
+ =?utf-8?B?eEZNZVdMaG5tdWx2R0RMRTdKdGh0cU1mVVlQYlcrQ2I1bEhKd01RQnU1eTNq?=
+ =?utf-8?B?eXQydGpwU2VYSVh3Q1pCS3BwRzNKay9OSk10U3ROOUZJbG9PV0tVTnNRUThu?=
+ =?utf-8?B?cVFWU3lGN2ZYdmthdFVZcXh4TTNWK3lFcit2YTE3M01LajZvQ0RhU0tiVzFt?=
+ =?utf-8?B?bmZZTTg2NlBsR2ZKRFl5OUpwTXo5b0ZZeExvYk9HY2l4a2o4RzhOb3RBV0tH?=
+ =?utf-8?B?NURTVWYwbTdJbHRnUHpyOVN3Vnc2cW9EU3dhYW9DMEFtaHJhZlhMWGc1NlNI?=
+ =?utf-8?B?WTgyZEZNZ29zdzc0ZDh4RWtOdDhucHM2anVXWXBCMXdydFFiblBFYXhNODhs?=
+ =?utf-8?B?dHhvVkNPS2VXMmJpQlk2YnZuYnBWdmF4TzhWb0JtNUdyWFFyZGFhQXFRclNP?=
+ =?utf-8?B?MGliZE01NHVZalZEWGMwOFNDb1luL3lUa1dqR01BdWg0NmFWU0lmNGlsRW1n?=
+ =?utf-8?B?WGE3bEdaS3NwTFNyem1YVHBEWWRwOVFEbWVmOHh1ek1FaXd6ckRhemsvYUxL?=
+ =?utf-8?B?R0k3Yi9Bb3dUNmFNMDF1L2hEZXA0NHdheDFXVStlUEg0bERuWU9nbkkxK2lo?=
+ =?utf-8?B?aGxwMkxCa1ZCNVY3a01iL1M3TzN5ZnpZUTRNK2lBQzFkQ25CY2c2RWt2b1lu?=
+ =?utf-8?B?czRPbTNRdFdYcWN0THJCTVBLakRFTURYcnFmeTRTK2J3OTEzVzY4aGJ6MzhC?=
+ =?utf-8?B?Y2x6ZUNhUVNnRmR1bzFlckVNdkYrV0phcU9IcC9oQkNkNGpNMS9FQStobU0w?=
+ =?utf-8?B?Yy9DN3JXSDhtTmxtN1BYeExYQlM2aHpyQ0huWERtN1FFOWd1OWhQdWlqZU9T?=
+ =?utf-8?B?T25tRmM3V285VE1ISlZxYlpIUk5Tcmc2VEkrd1RGbldna3RDTlI0OEswdE95?=
+ =?utf-8?B?Z3o3UnVUL3hJcWw1cUJ3cGhNdjVhaWR2THFURk9ydWFQT0tUYmpQWUJBbzBh?=
+ =?utf-8?B?cnE1em9qUXBMV2F1SGtxWDYyNi8vSjY2VzcreEgrV1BRU2tIRDc2UCtrL0pq?=
+ =?utf-8?B?OWluMU9reUkzdDQrbmZsNlJ2Z3JlVnFSdVJDVm9FQmk5M09rOWNGQUo1bXJj?=
+ =?utf-8?B?dUhWekJNRmRWQm1oVnM1Ni83SzBOVTNUUDlMUVVMZDRqMmp4TEUzUnRuQ09S?=
+ =?utf-8?B?eGVPYjhMcWVRdlRUeG1uLzVOVFRSTTJpd21hcjU5blNOM2N0ZlNBLy9NY1gz?=
+ =?utf-8?B?QnBqdUlaWDFJRnh2NTRHdytKdnlyajJMTEFJUUlIZ1NWbTFYbDk5RFlTdmF2?=
+ =?utf-8?B?dm03WkVlNUFkRU5rNVAzRkFjMVpIRkhTSldyYWNFSE5QdnJtMWx6ZlFHMDNF?=
+ =?utf-8?B?Unc9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b382162-855b-44b4-3a97-08dcd22f86ac
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4762534-0a05-4a43-88d3-08dcd22f8086
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 07:01:04.0812
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 07:01:14.6158
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7IW1T7F6Qc+7lvXVyxeqWajTsLeSZZGJ0J52M2I5kp9YsF3kIBhFDEog/S7H69WQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8048
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D1Y5k/2tw408755Vd8r66w3QLw7aDLgCIPrp06NrRgnJPCcY0s1fh+ZSJvlu+6HbRZjgBxv1TYIlxHwX/6XfObFTM8oBTkE00DgXJl8ja3U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6233
 
-> -----Original Message-----
-> From: Sean Anderson <sean.anderson@linux.dev>
-> Sent: Tuesday, September 10, 2024 4:39 AM
-> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; David S .
-> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
-> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
-> netdev@vger.kernel.org
-> Cc: Andy Chiu <andy.chiu@sifive.com>; linux-kernel@vger.kernel.org; Simon
-> Horman <horms@kernel.org>; Ariane Keller <ariane.keller@tik.ee.ethz.ch>;
-> Daniel Borkmann <daniel@iogearbox.net>; linux-arm-
-> kernel@lists.infradead.org; Simek, Michal <michal.simek@amd.com>; Sean
-> Anderson <sean.anderson@linux.dev>
-> Subject: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet c=
-ount
-> overflow
->=20
-> If coalece_count is greater than 255 it will not fit in the register and
-> will overflow. This can be reproduced by running
->=20
->     # ethtool -C ethX rx-frames 256
->=20
-> which will result in a timeout of 0us instead. Fix this by clamping the
-> counts to the maximum value.
-After this fix - what is o/p we get on rx-frames read? I think silent clamp=
-ing is not a great=20
-idea and user won't know about it.  One alternative is to add check in set_=
-coalesc=20
-count for valid range? (Similar to axienet_ethtools_set_ringparam so that u=
-ser is notified=20
-for incorrect range)
+On 11.09.24 3:28 AM, Adam Ford wrote:
+> There is currently a look-up table for a variety of resolutions.
+> Since the phy has the ability to dynamically calculate the values
+> necessary to use the intger divider which should allow more
 
->=20
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ether=
-net
-> driver")
+                       ^ integer
+
+> resolutions without having to update the look-up-table.
+> 
+> If the lookup table cannot find an exact match, fall back to the
+> dynamic calculator of the integer divider.
+> 
+> Previously, the value of P was hard-coded to 1, this required an
+> update to the phy_pll_cfg table to add in the extra value into the
+> table, so if the value of P is calculated to be something else
+> by the PMS calculator, the calculated_phy_pll_cfg structure
+> can be used instead without having to keep track of which method
+> was used.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 > ---
->=20
-> Changes in v2:
-> - Use FIELD_MAX to extract the max value from the mask
-> - Expand the commit message with an example on how to reproduce this
->   issue
->=20
->  drivers/net/ethernet/xilinx/xilinx_axienet.h      | 5 ++---
->  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++--
->  2 files changed, 8 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> index 1223fcc1a8da..54db69893565 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> @@ -109,11 +109,10 @@
->  #define XAXIDMA_BD_CTRL_TXEOF_MASK	0x04000000 /* Last tx packet
-> */
->  #define XAXIDMA_BD_CTRL_ALL_MASK	0x0C000000 /* All control bits
-> */
->=20
-> -#define XAXIDMA_DELAY_MASK		0xFF000000 /* Delay timeout
-> counter */
-> -#define XAXIDMA_COALESCE_MASK		0x00FF0000 /* Coalesce
-> counter */
-> +#define XAXIDMA_DELAY_MASK		((u32)0xFF000000) /* Delay
-> timeout counter */
+> V7:  Refactored much of the code to create smaller helper functions
+>      to eliminate redundant code and improve code flow and comment
+>      readability.   Any t-b and s-o-b tags removed due to the
+>      extent of the changes.
+> 
+> V6:  Fix comment typos and remove an unnecesary extra calculation
+>      by using the cached value.
+> V5:  No Change
+> V4:  No Change
+> V3:  Change size of pll_div_regs to include PHY_REG01 (P)
+>      Create calculated_phy_pll_cfg to containe the values
+>      Eliminate the PMS calculation from fsl_samsung_hdmi_phy_configure
+>      Make the LUT primary and fall back to integer calculator in
+>      phy_clk_round_rate.
+>      Check the range right away to ensure it's reaonsable rather than
+>      trying to find a clock only to learn it's outside the range.
+>      Overall added notes and comments where stuff may not be intuitive.
+> 
+> V2:  Update phy_clk_round_rate and phy_clk_set_rate to both support
+>      the integer clock PMS calculator.
+> ---
+>  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 371 +++++++++++++------
+>  1 file changed, 265 insertions(+), 106 deletions(-)
+> 
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> index 4f6874226f9a..49317a96f767 100644
+[...]
+> +
+> +	/* The ref manual states the values of 'P' range from 1 to 11 */
+> +	for (_p = 1; _p <= 11; ++_p) {
+> +		for (_s = 1; _s <= 16; ++_s) {
+> +			u64 tmp;
+> +			u32 delta;
+> +
+> +			/* s must be one or even */
+> +			if (_s > 1 && (_s & 0x01) == 1)
+> +				_s++;
+> +
+> +			/* _s cannot be 14 per the TRM */
+> +			if (_s == 14)
+> +				continue;
+> +
+> +			/*
+> +			 * TODO: Ref Manual doesn't state the range of _m
+> +			 * so this should be further refined if possible.
+> +			 * This range was set based on the original values
+> +			 * in the lookup table
+> +			 */
+> +			tmp = (u64)fout * (_p * _s);
+> +			do_div(tmp, 24 * MHZ);
+> +			_m = tmp;
+> +			if (_m < 0x30 || _m > 0x7b)
+> +				continue;
+> +
+> +			/*
+> +			 * Rev 2 of the Ref Manual states the
+> +			 * VCO can range between 750MHz and
+> +			 * 3GHz.  The VCO is assumed to be
 
-Adding typecast here looks odd. Any reason for it?=20
-If needed we do it in specific case where it is required.
+                                ^ whitespace
 
-> +#define XAXIDMA_COALESCE_MASK		((u32)0x00FF0000) /*
-> Coalesce counter */
->=20
->  #define XAXIDMA_DELAY_SHIFT		24
-> -#define XAXIDMA_COALESCE_SHIFT		16
->=20
->  #define XAXIDMA_IRQ_IOC_MASK		0x00001000 /* Completion
-> intr */
->  #define XAXIDMA_IRQ_DELAY_MASK		0x00002000 /* Delay
-> interrupt */
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 9eb300fc3590..89b63695293d 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -252,7 +252,9 @@ static u32 axienet_usec_to_timer(struct axienet_local
-> *lp, u32 coalesce_usec)
->  static void axienet_dma_start(struct axienet_local *lp)
+> +			 * is assumed to be (M * f_ref) / P,
+
+                           ^ duplicate "is assumed to be"
+
+> +			 * where f_ref is 24MHz.
+> +			 */
+> +			tmp = (u64)_m * 24 * MHZ;
+> +			do_div(tmp, _p);
+> +			if (tmp < 750 * MHZ ||
+> +			    tmp > 3000 * MHZ)
+> +				continue;
+> +
+> +			/* Final frequency after post-divider */
+> +			do_div(tmp, _s);
+> +
+> +			delta = abs(fout - tmp);
+> +			if (delta < min_delta) {
+> +				best_p = _p;
+> +				best_s = _s;
+> +				best_m = _m;
+> +				min_delta = delta;
+> +				best_freq = tmp;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (best_freq) {
+> +		*p = best_p;
+> +		*m = best_m;
+> +		*s = best_s;
+> +	}
+> +
+> +	return best_freq / 5;
+> +}
+> +
+[...]
+>  
+>  static int phy_clk_set_rate(struct clk_hw *hw,
+>  			    unsigned long rate, unsigned long parent_rate)
 >  {
->  	/* Start updating the Rx channel control register */
-> -	lp->rx_dma_cr =3D (lp->coalesce_count_rx <<
-> XAXIDMA_COALESCE_SHIFT) |
-> +	lp->rx_dma_cr =3D FIELD_PREP(XAXIDMA_COALESCE_MASK,
-> +				   min(lp->coalesce_count_rx,
-> +
-> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->  			XAXIDMA_IRQ_IOC_MASK |
-> XAXIDMA_IRQ_ERROR_MASK;
->  	/* Only set interrupt delay timer if not generating an interrupt on
->  	 * the first RX packet. Otherwise leave at 0 to disable delay interrupt=
-.
-> @@ -264,7 +266,9 @@ static void axienet_dma_start(struct axienet_local
-> *lp)
->  	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
->=20
->  	/* Start updating the Tx channel control register */
-> -	lp->tx_dma_cr =3D (lp->coalesce_count_tx <<
-> XAXIDMA_COALESCE_SHIFT) |
-> +	lp->tx_dma_cr =3D FIELD_PREP(XAXIDMA_COALESCE_MASK,
-> +				   min(lp->coalesce_count_tx,
-> +
-> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->  			XAXIDMA_IRQ_IOC_MASK |
-> XAXIDMA_IRQ_ERROR_MASK;
->  	/* Only set interrupt delay timer if not generating an interrupt on
->  	 * the first TX packet. Otherwise leave at 0 to disable delay interrupt=
-.
-> --
-> 2.35.1.1320.gc452695387.dirty
+>  	struct fsl_samsung_hdmi_phy *phy = to_fsl_samsung_hdmi_phy(hw);
+> -	int i;
+> +	const struct phy_config *fract_div_phy;
+> +	u32 int_div_clk;
+> +	u16 m;
+> +	u8 p, s;
+>  
+> -	for (i = ARRAY_SIZE(phy_pll_cfg) - 1; i >= 0; i--)
+> -		if (phy_pll_cfg[i].pixclk <= rate)
+> -			break;
+> +	/* Search the fractional divider lookup table */
+> +	fract_div_phy = fsl_samsung_hdmi_phy_lookup_rate(rate);
+>  
+> -	if (i < 0)
+> -		return -EINVAL;
+> +	/* If the rate is an exact match, use that value */
+> +	if (fract_div_phy->pixclk == rate)
+> +		goto use_fract_div;
 
+Actually I don't really like the jump here and the even more extensive
+jumping in the next patch.
+
+Why not simply create another function and do "return use_fract_div()"
+here and below at the end of phy_clk_set_rate().
+
+>  
+> -	phy->cur_cfg = &phy_pll_cfg[i];
+> +	/*
+> +	 * If the rate from the fractional divder is not exact, check the integer divider,
+> +	 * and use it if that value is an exact match.
+> +	 */
+> +	int_div_clk = fsl_samsung_hdmi_phy_find_pms(rate, &p, &m, &s);
+> +	if (int_div_clk == rate) {
+> +		dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: integer divider rate = %u\n",
+> +				   int_div_clk);
+> +
+> +		fsl_samsung_hdmi_calculate_phy(&calculated_phy_pll_cfg, int_div_clk, p, m, s);
+> +		phy->cur_cfg  = &calculated_phy_pll_cfg;
+> +		return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
+> +	}
+>  
+> +	/*
+> +	 * If neither the fractional divder nor the integer divder can find an exact value
+
+                                     ^ divider              ^ divider
+
+> +	 * fall back to using the fractional divider
+> +	 */
+> +use_fract_div:
+> +	phy->cur_cfg = fract_div_phy;
+> +	dev_dbg(phy->dev, "fsl_samsung_hdmi_phy: using fractional divider rate = %u\n",
+> +			   phy->cur_cfg->pixclk);
+>  	return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
+>  }
+>  
 
