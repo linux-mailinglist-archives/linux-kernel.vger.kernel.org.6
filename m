@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-325479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D579975A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:17:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB460975A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C24283972
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375D4B22E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F231B5802;
-	Wed, 11 Sep 2024 18:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ABF1B6521;
+	Wed, 11 Sep 2024 18:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6kVKLTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rKuo1xxl"
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2102AE69;
-	Wed, 11 Sep 2024 18:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5167192D74
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078613; cv=none; b=corI9hh6TKvkyIcYnmyyCiNhsg08x1uMEhARRaV3A7rpT77Dvrc2Dou/CDIMicX75DswAAZdoTt9YhRYd27S+8GfHbWgDHyrV+3XxWA9/lFNjG2BO5jQxqZtyoANFMkX/u+5Z65Tf6WtHN+FwyJuuwHmzkR/R2fHkfjBZ3XsbkY=
+	t=1726079121; cv=none; b=mHsKpx/BWBIBhNgjxfHHQTZ0qjGE7kh+4YUMZoiDnUE0HR8YN63xa9w6lFYv+01bVZthhpIWWbUMbQ8FqtZbVBT6D0yIWvEGV3bLQRknPf+0avVvfF/6WikDuQPZ4dJOzwb2KANfY5qVyoQ99nJgHOG4e/A1Mmg9GBE0ZU8HgOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078613; c=relaxed/simple;
-	bh=2WLks7SvKZsD8qY0K5DGpgThg0QOUsVgaH+AVcSCuZ4=;
+	s=arc-20240116; t=1726079121; c=relaxed/simple;
+	bh=Iv7X5S71r9G8/8xCax5nJjG2CNB8/rQcjQXAMuNXl+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkEgXdpexVtJxJD+wWsPAqXAfc7dILZfd+z6OlVaPR5uhWM4rTCiHVBcUGPtPG7OPDZ7pbGqaHBJlcFSEJT6aKClM/hx1/OjWS62fXTEfLTlR4lVwAI6jFMExkOtd8fm4yHroyz50PVgBSKEDESjWZYLrKhmcGAf3cx8N7jUKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6kVKLTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E10DC4CEC0;
-	Wed, 11 Sep 2024 18:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726078612;
-	bh=2WLks7SvKZsD8qY0K5DGpgThg0QOUsVgaH+AVcSCuZ4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tq1xKQrdt6ht+bsdxGvFMe9YgL745YuPuFkFwJfukxp3cZutzf5Obn9hLNFHm8sEmKIZetiRismUazR9JggQNrcOtpIw3eWGH0AnWCw2MgqGq6bUy3hYPZG/sLXjrz+kez+rnz17Shh7Uzy1npZ+tpznMFN49emh3o7QTDfq4Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rKuo1xxl; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X3pgs0CMCzXH1;
+	Wed, 11 Sep 2024 20:17:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726078632;
+	bh=2VJrSaRcSGNHnP75mgU3Crci81AkrircpLyaN62nmUE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N6kVKLTcUyEhLq60+Bu71/FOPUgUnd/3uVU9+zg/KWFdg/XKHnqUtwAsQU+CZahvK
-	 XeW4ZBFzF7i7DyLn6rnEq/N+nFUGew/Wr9JeZkbI1Hwifm9gCwACc2S39Z2o6T0oR8
-	 o3BBv4qFju8ZaN5yDJ8SVL4cf3aAaAaj3L5SS2y1xVE2JiP4I1bjbomSGrF9zHtuxc
-	 mvp78gwIjqU5K3tKzvLGN1UEVC+oAurbFu8msnbL7jtXmm6SHULzZ/dLs00Cvhr3P8
-	 GYtLPF1osJV2R0vWYjMYD/UIuPJYE4x0Bq4Np41EJNpvwMgZ1v9bxa6Fq1dsIal+u0
-	 hAOkwz4QHfE4w==
-Date: Wed, 11 Sep 2024 19:16:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH 01/22] dt-bindings: arm: cpus: Add Apple A7-A11 CPU cores
-Message-ID: <20240911-unsuited-pranker-60a7d0b6caf9@spud>
-References: <20240911084353.28888-2-towinchenmi@gmail.com>
- <20240911084353.28888-3-towinchenmi@gmail.com>
+	b=rKuo1xxlqeWVXz6ApHqUCrGp3w15gL0PNnZpT//NwiuTTPeN91YRkh4uAcKy269vk
+	 TDHwGnSdeK4bYWP0MHroX/UK6Ork+jTHv07FgZPgG5+BboRnpcFSOdQyrCoN+XIOZX
+	 MkCYLnA4y8XMFjm14OG6db/bKOJ0LmJkeLhMdxuM=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X3pgr0xH1zWmB;
+	Wed, 11 Sep 2024 20:17:12 +0200 (CEST)
+Date: Wed, 11 Sep 2024 20:17:04 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] landlock: Signal scoping support
+Message-ID: <20240911.BieLu8DooJiw@digikod.net>
+References: <cover.1725657727.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kRgKl5kbZDK9Drdm"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240911084353.28888-3-towinchenmi@gmail.com>
+In-Reply-To: <cover.1725657727.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
+We should also have the same tests as for scoped_vs_unscoped variants.
+I renamed them from the abstract unix socket patch series, please take a
+look:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
---kRgKl5kbZDK9Drdm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll send more reviews tomorrow and I'll fix most of them in my -next
+branch (WIP), except for the hook_file_send_sigiotask tests and these
+scoped_vs_unscoped variants that you should resolve.
 
-On Wed, Sep 11, 2024 at 04:40:51PM +0800, Nick Chan wrote:
-> Add the following CPU cores:
->=20
-> - apple,cyclone: A7 cores
-> - apple,typhoon: A8 cores
-> - apple,twister: A9 cores
-> - apple,hurricane-zephyr: A10 logical cores
-> - apple,monsoon: A11 performance cores
-> - apple,mistral: A11 efficiency cores
->=20
-> In the Apple A10, there are physical performance-efficiency cores that
-> forms logical cores to software depending on the current p-state, and
-> only one type of core may be active at one time.
->=20
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentat=
-ion/devicetree/bindings/arm/cpus.yaml
-> index f308ff6c3532..3959e022079f 100644
-> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
-> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-> @@ -89,6 +89,12 @@ properties:
->        - apple,blizzard
->        - apple,icestorm
->        - apple,firestorm
-> +      - apple,mistral
-> +      - apple,monsoon
-> +      - apple,hurricane-zephyr
-> +      - apple,twister
-> +      - apple,typhoon
-> +      - apple,cyclone
-
-Same on this one, can you add these in alphanumerical order, even if the
-existing 3 devices are not in it? You could take the opportunity to
-reshuffle icestorm and firestorm while you're at it.
-
-Cheers,
-Conor.
-
->        - arm,arm710t
->        - arm,arm720t
->        - arm,arm740t
-> --=20
-> 2.46.0
->=20
-
---kRgKl5kbZDK9Drdm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHejgAKCRB4tDGHoIJi
-0qtrAP9mosjJDbC2I6BNOh+pl8pwNtuuAdaaLzRXYbWgpVbFTgEAksy/FkAHoBDo
-CD9iyuKIeMmgB/bQPjosE8IoLjHCyw4=
-=DTFO
------END PGP SIGNATURE-----
-
---kRgKl5kbZDK9Drdm--
+On Fri, Sep 06, 2024 at 03:30:02PM -0600, Tahera Fahimi wrote:
+> This patch series adds scoping mechanism for signals.
+> Closes: https://github.com/landlock-lsm/linux/issues/8
+> 
+> Problem
+> =======
+> 
+> A sandboxed process is currently not restricted from sending signals
+> (e.g. SIGKILL) to processes outside the sandbox since Landlock has no
+> restriction on signals(see more details in [1]).
+> 
+> A simple way to apply this restriction would be to scope signals the
+> same way abstract unix sockets are restricted.
+> 
+> [1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> 
+> Solution
+> ========
+> 
+> To solve this issue, we extend the "scoped" field in the Landlock
+> ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
+> field to specify that a ruleset will deny sending any signals from
+> within the sandbox domain to its parent(i.e. any parent sandbox or
+> non-sandbox processes).
+> 
+> Example
+> =======
+> 
+> Create a sansboxed shell and pass the character "s" to LL_SCOPED:
+> LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
+> Try to send a signal(like SIGTRAP) to a process ID <PID> through:
+> kill -SIGTRAP <PID>
+> The sandboxed process should not be able to send the signal.
+> 
+> Previous Versions
+> =================
+> v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
+> v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
+> v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
+> 
+> Tahera Fahimi (6):
+>   landlock: Add signal scoping control
+>   selftest/landlock: Signal restriction tests
+>   selftest/landlock: Add signal_scoping_threads test
+>   selftest/landlock: Test file_send_sigiotask by sending out-of-bound
+>     message
+>   sample/landlock: Support sample for signal scoping restriction
+>   landlock: Document LANDLOCK_SCOPED_SIGNAL
+> 
+>  Documentation/userspace-api/landlock.rst      |  22 +-
+>  include/uapi/linux/landlock.h                 |   3 +
+>  samples/landlock/sandboxer.c                  |  17 +-
+>  security/landlock/fs.c                        |  17 +
+>  security/landlock/fs.h                        |   6 +
+>  security/landlock/limits.h                    |   2 +-
+>  security/landlock/task.c                      |  59 +++
+>  .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
+>  .../testing/selftests/landlock/scoped_test.c  |   2 +-
+>  9 files changed, 486 insertions(+), 13 deletions(-)
+>  create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
+> 
+> -- 
+> 2.34.1
+> 
 
