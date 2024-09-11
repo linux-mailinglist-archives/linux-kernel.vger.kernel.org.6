@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-324209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0E897498A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:14:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5352797498C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EDA01F21569
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6D4285E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4297DA68;
-	Wed, 11 Sep 2024 05:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49854137C37;
+	Wed, 11 Sep 2024 05:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZSgFm+O+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T/kCTsfY"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1nxeDVLn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0M+ZH50y"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85C2558B7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F81D5A117
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726031634; cv=none; b=rOND8DT0N0Ai6+GSPlnVjziIhITO2a/m0e9q8Lk9DQMg1EpUiYSk+DbVZwQlLvSujpwSlE+0xw72P2/b4CRlYC0+wyiYgKuDxWcF6fz0mH9u+inoEssuNGxXdvpQrRKw1nS2wat6zu3zacltbEhQfjdyN607Ify3srOodL8U2lE=
+	t=1726031636; cv=none; b=FZ0r2zrlPmLiAe5JHw4e+BdPFYG/MJPAM9M9zBCSkeNSGMeCvgsfaRo0r8JEjoCTF7Y7xj5dU75soXPihPGpYVtCxh6v1MEXseUwslZyeesPmSPTyYZjTaHvaNNwRhY2YyjGdesz3cE4Ed5xMmAIPmqSl9aM/IFlI6dyk169NS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726031634; c=relaxed/simple;
-	bh=eWl5OokrWCLk5+ZNm9+QPwTpkCmLx1Qmlf54JGzmflQ=;
+	s=arc-20240116; t=1726031636; c=relaxed/simple;
+	bh=LfK+R+ftP6sokQ0GJlGESgvoBcdHOQjPW0DWwh/C9AI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gcYDgbI0IaHLXS62PJCu1YrWNHTDdubRYPteeCB9ruHE0i7z4UdauGQ72A2MzMnAOkz3QnwWjhL2oQqgI1BuuF+d4G58zaj/7o6hXQ7B7VT9iHC8SKP1DTp71fgwMzKBrgyWM13XJWhRvxYYR7I3cXQpumQk2pIsl0IHp3uKkEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZSgFm+O+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T/kCTsfY; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=PHen3joBceRAurM0DfnBsImwlT86ZbSdO5nlNQWi0DSRusmu5EWBjNOI90yb7fXCbtlN1BYsW0JSdWuDCeJVHhaccLrpegu9Y8ySvQg6b4RRjnHaCEJ5hBwsgsE4oz9zDqdkNHrOSvL4+esNosn2Y6QoFZ+5ZJJuXhY+AHOAawU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1nxeDVLn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0M+ZH50y; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Anna-Maria Behnsen <anna-maria@linutronix.de>
@@ -38,24 +38,24 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s+Doq4e/xcT9xXHQDOTyJ76uKwGRsxonwhuTH5qPvAk=;
-	b=ZSgFm+O+CqyVdxMB8YR9cIIVdXH1gEJBt1Od++tlWbRrXtniAHe3OvSL1fvB/+rxdPkr1h
-	Euh/w+wT+m1oqOVGp5koPYVud+WeFzlYl2FU1qWAw6ZRyrI3mPTRXA7IAS++TrybLRUx50
-	Uf3YuM7iEwOFGNj5nnO8gFjCP2acp5ZQMpiivR0qXh9PtUsXg0GlXpUG4lbiih/QZdMgaq
-	3z/Uj/tYnqGxMi87HShe8iVlQWxQUToUCpL3mjx5APZMb5+uLabY3bWmE65P4Dby/AWzLe
-	9jVX5qhI2koBD34N6MLJBmGWZh7SDR1tHRfqdlYGuseGoe00TPBMFEL/lgheQQ==
+	bh=/qfn40Y/k109wQ4LtwO3H/8C6z24lcBDehQDK7V1Sj4=;
+	b=1nxeDVLnHU+gFSNUEpCjBMcbigE191YYo1hVm/7vNthUtyhXyqyzWFXRL+m/DdMs6dNR0w
+	RbOOm30VlPab92EwXSMye5u8tE1gtoSOpBJm2RFl2WJKf7JEt5ofRd1MbitIDXQt4pRBwm
+	RrFG6Vf7mNLFwLbkdK3uwJPX1p7CrTGTbpuoCIrFKe0j8lAhZQAXunfqosMlq/n/44MIxX
+	DUV8m1eTPSpnrqriKO+YsLr/DOQ6sOE4DiNTyxnjoq2pc3cmd0MYVYxvbUsL13VJxk1hQD
+	SdYE8p3ytNsQXGTbppzJBWZt7okvDiB9mesYvr0v76v98sHsAQay3C49L3lB9g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1726031631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=s+Doq4e/xcT9xXHQDOTyJ76uKwGRsxonwhuTH5qPvAk=;
-	b=T/kCTsfY7MMMyUgG3RG7PqyYm+S6IkB+UCUU7TktXO5B/ooZjEkyp6P8JmMiBkdm/OdNCX
-	eCO4rIgzsMJjPEDw==
-Date: Wed, 11 Sep 2024 07:13:29 +0200
-Subject: [PATCH v2 03/15] timers: Update schedule_[hr]timeout*() related
- function descriptions
+	bh=/qfn40Y/k109wQ4LtwO3H/8C6z24lcBDehQDK7V1Sj4=;
+	b=0M+ZH50yw//HJTG8q9IdLUSDvkth/ozPO2TyySSGXJTqaBIKgSPIz8uv63Rzq2PA8umwvn
+	2mntOTl1vFQnJbBg==
+Date: Wed, 11 Sep 2024 07:13:30 +0200
+Subject: [PATCH v2 04/15] timers: Rename usleep_idle_range() to
+ usleep_range_idle()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,141 +64,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-devel-anna-maria-b4-timers-flseep-v2-3-b0d3f33ccfe0@linutronix.de>
+Message-Id: <20240911-devel-anna-maria-b4-timers-flseep-v2-4-b0d3f33ccfe0@linutronix.de>
 References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
 In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
 To: Frederic Weisbecker <frederic@kernel.org>, 
  Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>
 Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev, 
+ linux-mm@kvack.org, SeongJae Park <sj@kernel.org>
 
-schedule_timeout*() functions do not have proper kernel-doc formatted
-function descriptions. schedule_hrtimeout() and schedule_hrtimeout_range()
-have a almost identical description.
+usleep_idle_range() is a variant of usleep_range(). Both are using
+usleep_range_state() as a base. To be able to find all the related
+functions in one go, rename it usleep_idle_range() to usleep_range_idle().
 
-Add missing function descriptions. Remove copy of function description and
-add a pointer to the existing description instead.
+No functional change.
 
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: damon@lists.linux.dev
+Cc: linux-mm@kvack.org
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: SeongJae Park <sj@kernel.org>
 ---
-v2: New in v2
+v2: Fix typos in commit message
 ---
- kernel/time/sleep_timeout.c | 66 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 41 insertions(+), 25 deletions(-)
+ include/linux/delay.h | 2 +-
+ mm/damon/core.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
-index 78b2e7e30b1e..560d17c30aa5 100644
---- a/kernel/time/sleep_timeout.c
-+++ b/kernel/time/sleep_timeout.c
-@@ -110,8 +110,17 @@ signed long __sched schedule_timeout(signed long timeout)
- EXPORT_SYMBOL(schedule_timeout);
- 
- /*
-- * We can use __set_current_state() here because schedule_timeout() calls
-- * schedule() unconditionally.
-+ * __set_current_state() can be used in schedule_timeout_*() functions, because
-+ * schedule_timeout() calls schedule() unconditionally.
-+ */
-+
-+/**
-+ * schedule_timeout_interruptible - sleep until timeout (interruptible)
-+ * @timeout: timeout value in jiffies
-+ *
-+ * See schedule_timeout() for details.
-+ *
-+ * Task state is set to TASK_INTERRUPTIBLE before starting the timeout.
-  */
- signed long __sched schedule_timeout_interruptible(signed long timeout)
- {
-@@ -120,6 +129,14 @@ signed long __sched schedule_timeout_interruptible(signed long timeout)
+diff --git a/include/linux/delay.h b/include/linux/delay.h
+index ff9cda975e30..2bc586aa2068 100644
+--- a/include/linux/delay.h
++++ b/include/linux/delay.h
+@@ -68,7 +68,7 @@ static inline void usleep_range(unsigned long min, unsigned long max)
+ 	usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
  }
- EXPORT_SYMBOL(schedule_timeout_interruptible);
  
-+/**
-+ * schedule_timeout_killable - sleep until timeout (killable)
-+ * @timeout: timeout value in jiffies
-+ *
-+ * See schedule_timeout() for details.
-+ *
-+ * Task state is set to TASK_KILLABLE before starting the timeout.
-+ */
- signed long __sched schedule_timeout_killable(signed long timeout)
+-static inline void usleep_idle_range(unsigned long min, unsigned long max)
++static inline void usleep_range_idle(unsigned long min, unsigned long max)
  {
- 	__set_current_state(TASK_KILLABLE);
-@@ -127,6 +144,14 @@ signed long __sched schedule_timeout_killable(signed long timeout)
+ 	usleep_range_state(min, max, TASK_IDLE);
  }
- EXPORT_SYMBOL(schedule_timeout_killable);
- 
-+/**
-+ * schedule_timeout_uninterruptible - sleep until timeout (uninterruptible)
-+ * @timeout: timeout value in jiffies
-+ *
-+ * See schedule_timeout() for details.
-+ *
-+ * Task state is set to TASK_UNINTERRUPTIBLE before starting the timeout.
-+ */
- signed long __sched schedule_timeout_uninterruptible(signed long timeout)
- {
- 	__set_current_state(TASK_UNINTERRUPTIBLE);
-@@ -134,9 +159,15 @@ signed long __sched schedule_timeout_uninterruptible(signed long timeout)
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 7a87628b76ab..94fe2f1f9b0e 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -1887,7 +1887,7 @@ static void kdamond_usleep(unsigned long usecs)
+ 	if (usecs > 20 * USEC_PER_MSEC)
+ 		schedule_timeout_idle(usecs_to_jiffies(usecs));
+ 	else
+-		usleep_idle_range(usecs, usecs + 1);
++		usleep_range_idle(usecs, usecs + 1);
  }
- EXPORT_SYMBOL(schedule_timeout_uninterruptible);
  
--/*
-- * Like schedule_timeout_uninterruptible(), except this task will not contribute
-- * to load average.
-+/**
-+ * schedule_timeout_idle - sleep until timeout (idle)
-+ * @timeout: timeout value in jiffies
-+ *
-+ * See schedule_timeout() for details.
-+ *
-+ * Task state is set to TASK_IDLE before starting the timeout. It is similar to
-+ * schedule_timeout_uninterruptible(), except this task will not contribute to
-+ * load average.
-  */
- signed long __sched schedule_timeout_idle(signed long timeout)
- {
-@@ -151,6 +182,9 @@ EXPORT_SYMBOL(schedule_timeout_idle);
-  * @delta:	slack in expires timeout (ktime_t)
-  * @mode:	timer mode
-  * @clock_id:	timer clock to be used
-+ *
-+ * Details are explained in schedule_hrtimeout_range() function description as
-+ * this function is commonly used.
-  */
- int __sched schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
- 					   const enum hrtimer_mode mode, clockid_t clock_id)
-@@ -236,26 +270,8 @@ EXPORT_SYMBOL_GPL(schedule_hrtimeout_range);
-  * @expires:	timeout value (ktime_t)
-  * @mode:	timer mode
-  *
-- * Make the current task sleep until the given expiry time has
-- * elapsed. The routine will return immediately unless
-- * the current task state has been set (see set_current_state()).
-- *
-- * You can set the task state as follows -
-- *
-- * %TASK_UNINTERRUPTIBLE - at least @timeout time is guaranteed to
-- * pass before the routine returns unless the current task is explicitly
-- * woken up, (e.g. by wake_up_process()).
-- *
-- * %TASK_INTERRUPTIBLE - the routine may return early if a signal is
-- * delivered to the current task or the current task is explicitly woken
-- * up.
-- *
-- * The current task state is guaranteed to be TASK_RUNNING when this
-- * routine returns.
-- *
-- * Returns: 0 when the timer has expired. If the task was woken before the
-- * timer expired by a signal (only possible in state TASK_INTERRUPTIBLE) or
-- * by an explicit wakeup, it returns -EINTR.
-+ * See schedule_hrtimeout_range() for details. @delta argument of
-+ * schedule_hrtimeout_range() is set to 0 and has therefore no impact.
-  */
- int __sched schedule_hrtimeout(ktime_t *expires, const enum hrtimer_mode mode)
- {
+ /* Returns negative error code if it's not activated but should return */
 
 -- 
 2.39.2
