@@ -1,192 +1,213 @@
-Return-Path: <linux-kernel+bounces-325616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC47A975C0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04130975C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83AE71F23830
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8496A1F23B9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD8C14900E;
-	Wed, 11 Sep 2024 20:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88E14B09C;
+	Wed, 11 Sep 2024 20:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XAO0s1ms"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gJJp6SL6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F357813C9D9;
-	Wed, 11 Sep 2024 20:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726087876; cv=none; b=P3G68M49AkDf986+5uMtvWKYlgPNbrgBkFtvnAJDc3FOukO0jDILq8ec3RE9XF/7T4bZUKCqw+YC8h4MSqjx40KZAZtEjIFr9yRzOCy3KStB3AZaorLH4/c2Tv1WoB/kdceNTgyYmC7xlPMDEhTjQF5cU7YjrdLqI5Rrj8Qzv4g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726087876; c=relaxed/simple;
-	bh=IP8lI/rrAeh2EHOlKZ1+1zFyQWdnSzxjXXK+KAZU1O4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoIfRVNOpG3ImOD1FOGoK4Psxiut5Ow020Z7IzPivju7jyVAN5sJ+ugVDnNKJidcBfjNzxKX1Aw0RbhA2d0sJFtsQijBLK7Iu6r6lJC+npvDMkLU1Pwj4Gd1U7EVNMBh9KFgA83HoHcCcxwvkkm5jrX8cjslQCoo0Ga+rKsxupc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XAO0s1ms; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726087875; x=1757623875;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IP8lI/rrAeh2EHOlKZ1+1zFyQWdnSzxjXXK+KAZU1O4=;
-  b=XAO0s1msAgyqoGF2OXUkhXUfJ40imSIwqieXnyqX7ngu3ZooKovRU5F6
-   Ar5KInyBk7B0cSQ+eyvPrlKfhwSq70k3SjFBs/8vk5I7qmJ2EIjHF9b0G
-   0EShGicTOTOpIFYaPTG7S4JrD8Gn5VvbTucRvGoHFf80++hnEwtK5NVlj
-   IiQh+Ftjw5Lt+WHrup2oU62OlkQsiOqXZDeCc34PHEnb2OtAk86/VYCaE
-   SMb1oH9+8befnki7mFK2htFmrFi8q8swqfuC3saHZMSmHMl0AV/Z6c3ho
-   aqb98DqEitnePlRbcskHY/TBUV2As+OLPfqW3BXSLtTpKNhEaiAgF5kN4
-   g==;
-X-CSE-ConnectionGUID: kgHy/i7yQDmtS1ehdFxJVA==
-X-CSE-MsgGUID: Y5C0fV0PSVCFIdl0Ebw4hg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42388243"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="42388243"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:51:14 -0700
-X-CSE-ConnectionGUID: KtGL8BexT72upTZUnjIZ2Q==
-X-CSE-MsgGUID: WYFxQdR7R06EEI/Grtd6FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="68264385"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:51:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1soUIw-00000007iXa-0ZGg;
-	Wed, 11 Sep 2024 23:51:10 +0300
-Date: Wed, 11 Sep 2024 23:51:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
-Message-ID: <ZuICvRjM4TqozL_X@smile.fi.intel.com>
-References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
- <20240503143303.15bf82bc@SWDEV2.connecttech.local>
- <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
- <20240906095141.021318c8@SWDEV2.connecttech.local>
- <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
- <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
- <ZtsU0nfAFssevmmz@smile.fi.intel.com>
- <20240906143851.21c97ef9@SWDEV2.connecttech.local>
- <Zt7IonZIYgBqjvy7@smile.fi.intel.com>
- <20240911133848.2cbb1834@SWDEV2.connecttech.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1093D3B8;
+	Wed, 11 Sep 2024 20:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726088027; cv=fail; b=TfD8I3c/Er2ZzWIM1QIFZQXropOgoByze9bAFVC41c1HMdLHeF98hqDSEbaR1XJxAVywS/V+oaY+6Q4wv6im4jPclrOiYKMoVY4a+TsFq8o2/Ex5bU6bR8SiHP34OCqYEB0KvSXC7lCq2MJhd2lJq0vCRwuB/P3POdUvtX59zx0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726088027; c=relaxed/simple;
+	bh=+j8E1FEwbJaTQDvzOhxoy/0B0Y0xm24kRcGwlAUSPa8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwNuxPWn4rsi2V1Hn/ZUTJphK+W4KQne7JSs7r83j2u9ToSlK+4kNRe4Ziq5rs4SFqsObkf20opIsyH1wSOEL6bEkglJfg7BhbgfziFqv72B1XuZ11quxJVPM5VdQPHrPkROnQJFSFI+lnSRRCujsScZ1do/FERvZfOIqu/1DQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gJJp6SL6; arc=fail smtp.client-ip=40.107.94.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CJwG/DSb98NRIDAkqRU/IdBvgQermmCtcJMrS2jE+P7hH5DOSXw0qOAHzRrsQQNGm0LKaAt2UjUQMvHs7TwrLhcuGsgSQPsTkOT4foM7k9MlP86N+fKxxWhvBS61FT2LNGh0raHy8RUe95GBhYjP4sLIX4um/h0fzjuNHsKOi0nHVBnsLP9oMQDM40FidnzIgC5t0jQVDPTQWRWuF9toUjxVgr6ws9kj9Yl2RtE6OpprDUAFPOvvVrC0URXnVsnhrkv5Ab/b7I8Vily2Kbc+QV/CDrit9QWiJtqH2eiNW849HDnP/yRnwfJz2F+SD0U+DAsTPi1niC0NcGTB4yZXaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TaXM7S7gQWj86txDDKWL7MAi/O5PFPORnmDcqUPABfU=;
+ b=oWhP62IxkY39y+qT2tan0v+C1mBU+Ag7zXldqfmbI2vuZ6gDHg8PAzdY0BiGryyF/XiMGxI5bGaw/CROjqerSbjD8da3Gdy0oH4kYuIH9NnAXOv7oHJT+1ZdwGzeXNN1oLDEAFOaE7zzJSBW8+HckzVsUwWU2++bcxVJzXfG/SH3XJSwH+Aia0a8ONwqNIhJ7/lnPcW5UOdoO9MadlZPpeseXkJ5zyGrPiRbh0k0xg2NKSczh4BvlfEvUtxZXGN2L7ZhcjNkYM+bQVrFzJIn0nEs7Wjn/7rKa+elDGxyvEXw2nXoVd9B3JEPUXuz9bqJVZ7fuh85NJfEZoXvztZzfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TaXM7S7gQWj86txDDKWL7MAi/O5PFPORnmDcqUPABfU=;
+ b=gJJp6SL6VJOFnNPJ8INnw8q4vho73OKB9YeqvKSzcxiZFYOavC4SHn4fc6YrQo2hTvF7VUisECf8HP+VmUpC4bsGKBsYntc7qEUYxtKNm9fZ1sxA+v5pnMWup3i4ppI6OTTOLRB7u64zxT/jekHy3jQRHy3JUNui0MYvI9+whuHjoY0d6+fLF8Fp7boGtZjjijZhX+nXfDaBvh3cQY/ZWe/iP2moHieFJclFYRwIWLZrj8HbEl+He5m1UNEWs6AN/XQA0qLjXCeGacbPeECgWV3oGdZiMfcwPriwkxEv0FJioSU1vkvuEY4QjBThCnLi1GnzorkzKj3cN5E3RzzgJA==
+Received: from SJ0PR03CA0119.namprd03.prod.outlook.com (2603:10b6:a03:333::34)
+ by SA1PR12MB7038.namprd12.prod.outlook.com (2603:10b6:806:24d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Wed, 11 Sep
+ 2024 20:53:42 +0000
+Received: from SJ5PEPF00000205.namprd05.prod.outlook.com
+ (2603:10b6:a03:333:cafe::8d) by SJ0PR03CA0119.outlook.office365.com
+ (2603:10b6:a03:333::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Wed, 11 Sep 2024 20:53:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF00000205.mail.protection.outlook.com (10.167.244.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Wed, 11 Sep 2024 20:53:42 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 11 Sep
+ 2024 13:53:20 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 11 Sep
+ 2024 13:53:20 -0700
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 11 Sep 2024 13:53:16 -0700
+Date: Wed, 11 Sep 2024 13:53:16 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
+	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>
+Subject: Re: [PATCH v2 17/19] iommu/arm-smmu-v3: Add
+ arm_smmu_viommu_cache_invalidate
+Message-ID: <ZuIDPGue40n02kFE@nvidia.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <4b61aba3bc6c1cce628d9db44d5b18ea567a8be1.1724776335.git.nicolinc@nvidia.com>
+ <20240905162039.GT1358970@nvidia.com>
+ <Ztnx0c4BpGt6umrM@nvidia.com>
+ <20240905182148.GA1358970@nvidia.com>
+ <BL1PR11MB52712F4AAF7D1388A080A49E8C9B2@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <ZuFEx7mp3v0/lY/g@nvidia.com>
+ <BN9PR11MB5276EBE0F714CF3EF0DAEDEC8C9B2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240911133848.2cbb1834@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <BN9PR11MB5276EBE0F714CF3EF0DAEDEC8C9B2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000205:EE_|SA1PR12MB7038:EE_
+X-MS-Office365-Filtering-Correlation-Id: 250959df-9181-47a2-bd65-08dcd2a3d1e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jWt/AvqR5xt4FBRNtFd1wD+Zo9gBy3ZvQwAgfK4U1SmgkpMfx5RCJlEvU826?=
+ =?us-ascii?Q?ovmqGJY15HSUhVGg700NyAEOJ6dwB1mvLXLbpON/YneF/6U2sFFOPreIPb8o?=
+ =?us-ascii?Q?090dFDFfmf6kVv95tZzz9WaRrGzWmHCAUwK+tWViZRNIc19ZCXlF6ix/xj5p?=
+ =?us-ascii?Q?xAYGxMjYjP0TBddiqYB7fadGtZ9DHLbKiDrBWs2SY4TiIcvHtJG2qgN70tCE?=
+ =?us-ascii?Q?H2f5NV9JOKT6haiUePYwiVnmvGl/hdNsHgcEcpHH2u6I5vSrlQfFClzf20d1?=
+ =?us-ascii?Q?YnK78TH4XCpjoUde67BdsP4EP0rDMo1gOrJ7PnAVQJqc+/3pttJfbFlTWEVY?=
+ =?us-ascii?Q?I7b/YPyY2CLBi6Vh0rBuY0CQwWhIf2Cs+0Ybv875PlRKS/PTs3rLunxBIgIa?=
+ =?us-ascii?Q?Q4TiUgRtxOQ/GI9S9iAVMmjoTQDPjDH4GwlUG67Web9jHRLnx1+0emfAKPk6?=
+ =?us-ascii?Q?oeKHUVZs2retUOuHHnTxF4pn7CGgGGci+rDbrNIDW4PZXvEV5i7hpdrvisA3?=
+ =?us-ascii?Q?lTw3406ti1gtc/3lNT2nlk+uySiPEUyfr02o+R+JMZmcTMUtVG2c6whZ4230?=
+ =?us-ascii?Q?imF2xDxJHup707TdXCigjqdWnSDWBFngN3jj+Eo3/Q6X+8iIWXe+AI64sHZq?=
+ =?us-ascii?Q?rjt25t9TW+nf5PjWQRJY+ntlp15x7c9PQ5z1rEFtF54wVGmdYg70MIEHNJ0C?=
+ =?us-ascii?Q?NJGAivNpzNCVOGRO1RhLam7ppmPtnR4w1ruLmOEPDkp0aq38m4gEJv8VkdkB?=
+ =?us-ascii?Q?54W7Dp8Ai9YfLG2EnMAPU3WCmkq3mnZy/vvS9bZUXJ7MoDvDpf/XL8pSDVIA?=
+ =?us-ascii?Q?SB4xQZYZp9DcBkcWhhsvgB1cjNqT+IJ5LFZjZArYEYfrt6bMdQZs/mCeMno3?=
+ =?us-ascii?Q?0seEpITtBFlN+ZllIqXs+TJcbcYegavaXp7vd3ynquubnNSyAiSSD+8KQine?=
+ =?us-ascii?Q?mxLkE9qSMzjGSYHbE4ClF4FdlQ5ZOQ8fxaASKAes9dv2FD+HEg55Qy+j1gNS?=
+ =?us-ascii?Q?zokW8XTN1Wey/kOZo4cjNWWz/HbAAHUfgZq22MgNNoPiA/IuIMY8zwCUuA+F?=
+ =?us-ascii?Q?zEpW/uFrdKYP0iXdK3aB9Jk/tToAdPbS/33QuCD7JZCs2940D02eczZMtmKo?=
+ =?us-ascii?Q?zMwayWIrisdNXC+OG4YiFzOcldV+hdPKtQ2Mdbjm+5FWAOzNX1rqa0L/uyLK?=
+ =?us-ascii?Q?4WCtLB2aJ5y79ZRWvlDZXyLlP1YNlhr270IG4MsrFLyZ1McvBNMDdRw2Wxm+?=
+ =?us-ascii?Q?XLyiNSrwdvoPrQwCgJDL+VEbv7sUhQk+Bpt1d6M9qariausScUejjENkhrPb?=
+ =?us-ascii?Q?eovULywuXdTIrzbeZy1BamRChs0SFZ4m1qo34qv3mt9Omd95K58SDKBX6uFC?=
+ =?us-ascii?Q?Qw5EEWWg8nL87m/EbIrt5zQ8OIM91yZ5V5ie1ZZ9Q1LFGMzOPaxCX541TZ4w?=
+ =?us-ascii?Q?mqc96ZVOd9Oob1o/mz4h5VfpRnX90OVE?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 20:53:42.2582
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 250959df-9181-47a2-bd65-08dcd2a3d1e7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000205.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7038
 
-On Wed, Sep 11, 2024 at 01:38:48PM -0400, Parker Newman wrote:
-> On Mon, 9 Sep 2024 13:06:26 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 06, 2024 at 02:38:51PM -0400, Parker Newman wrote:
-> > > On Fri, 6 Sep 2024 17:42:26 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
-> > > > > On Fri, 6 Sep 2024 17:24:44 +0300
-> > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
-> > > > > > > On Fri, 6 Sep 2024 15:46:51 +0300
-> > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
-
-...
-
-> > > > > > > > Sorry for blast from the past, but I have some instersting information
-> > > > > > > > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
-> > > > > > > > used from others via software nodes, can you consider updating your code
-> > > > > > > > to replace custom bitbanging along with r/w ops by the instantiating the
-> > > > > > > > respective drivers?
-> > > > > > >
-> > > > > > > Hi Andy,
-> > > > > > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
-> > > > > > > They have a dedicated "EEPROM interface" which is accessed by the
-> > > > > > > REGB (0x8E) register. It is a very simple bit-bang interface though,
-> > > > > > > one bit per signal.
-> > > > > > >
-> > > > > > > I guess in theory I could either add  GPIO wrapper to toggle these bits
-> > > > > > > and use the spi-gpio driver but I am not sure if that really improves things?
-> > > > > > > Maybe using the spi-bitbang driver directly is more appropriate?
-> > > > > > > What do you think?
-> > > > > >
-> > > > > > Yes, spi-bitbang seems better in this case.
-> > > > >
-> > > > > I will try to make some time to implement this... Or if someone else from the
-> > > > > community wants to take this on in the mean time I am certainly happy to test
-> > > > > and help out!
-> > > >
-> > > > Sure, I shared this thought due to having lack of time to look myself,
-> > > > but I prepared the above mentioned drivers to make them work in this case.
-> > > > (If you are curios, see the Git history for the last few releases with
-> > > >  --author="Andy Shevchenko")
+On Wed, Sep 11, 2024 at 08:13:01AM +0000, Tian, Kevin wrote:
+> > > > Yes, many more patches, and don't try to do it now.. But we can copy
+> > > > the vmid from the s2 and place it in the viommu struct during
+> > > > allocation time.
 > > > >
 > > >
-> > > Looking into it a bit more I think we could just use the eeprom_93cx6
-> > > driver without any SPI layer. Just need to add simple register_read()
-> > > and register_write() functions to read/write the REB register.
-> > >
-> > > That should be a pretty easy change to make, I can try to make that
-> > > change soon unless anyone has any objections to that method?
+> > > does it assume that a viommu object cannot span multiple physical
+> > > IOMMUs so there is only one vmid per viommu?
 > >
-> > Thank you, this is pretty wonderful news!
+> > I think so. One the reasons of introducing vIOMMU is to maintain
+> > the shareability across physical IOMMUs at the s2 HWPT_PAGING.
 > >
 > 
-> I have this mostly working however there is one issue. The eeprom_93cx6
-> driver doesn't seem to discard the "dummy bit" the 93C46 EEPROM outputs
-> between the writing of the op-code/address to the EEPROM and the reading
-> of the data from the EEPROM.
-> 
-> More info can be found on page 6 of the AT93C46 datasheet. I see similar
-> notes in other 93C46/93C56/93C66 datasheets.
-> Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
-> 
-> In summary the read operation for the AT93C46 EEPROM is:
-> Write to EEPROM :	110[A5-A0]	(9 bits)
-> Read from EEPROM: 	0[D15-D0]	(17 bits)
-> 
-> Where 110 is the READ OpCode, [A5-A0] is the address to read from,
-> 0 is a "dummy bit" and then [D15-D0] is the actual data.
-> 
-> I am seeing the "correct" values being read from the EEPROM when using the
-> eeprom_93cx6 driver but they are all shifted right by one because the
-> dummy 0 bit is not being discarded.
-> 
-> The confusing part is the eeprom_93cx6 driver has behaved the same since
-> at least 2009 and half a dozen or so other drivers use it. I am not sure
-> if they just work around and/or live with this bug or if they have
-> different HW that handles the extra dummy bit?
+> I don't quite get it. e.g. for intel-iommu the S2 domain itself can
+> be shared across physical IOMMUs
 
-I briefly looked at a few users and it seems to me:
-1) either the Atmel chip has different HW protocol;
-2) or all of them handle that in HW transparently to SW.
+SMMU does the same, but needs a VMID per pSMMU to tag that S2
+domain:
 
-> I am hesitant to "fix" the eeprom_93cx6 driver and potentially break the
-> other users of it. I could add a flag to the eeprom_93cx6 struct to work
-> around this issue... Unless anyone else has some ideas or input?
+vIOMMU0 (VMIDx of pSMMU0) -> shared S2
+vIOMMU1 (VMIDy of pSMMU1) -> shared S2
 
-In my opinion the 93c46 needs an additional configuration setting (in the
-respective data structure) and some code to implement what you need here.
+Note: x and y might be different.
 
-But yes, let's wait a bit for other opinions...
+> then what is the problem
+> preventing a vIOMMU object using that S2 to span multiple IOMMUs?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Jason previously suggested the way of implementing multi-vIOMMU
+in a VMM to be one vIOMMU object representing a vIOMMU instance
+(of a physical IOMMU) in the VM. So, it'd be only one VMID per
+one vIOMMU object.
 
+Sharing one vIOMMU object on the other hand needs the vIOMMU to
+hold a list of VMIDs for all (or attached?) physical IOMMUs. This
+would change what a vIOMMU object represents.
 
+> Probably there is a good reason e.g. for simplification or better
+> aligned with hw accel stuff. But it's not explained clearly so far.
+
+I will try emphasizing that in the next version, likely in the
+rst file that I am patching for HWPT_PAGING/NESTED at this point.
+
+Thanks
+Nicolin
 
