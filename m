@@ -1,319 +1,494 @@
-Return-Path: <linux-kernel+bounces-325220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CCA975659
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:04:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5EB975637
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FC9283659
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:04:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57334B2C869
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781913D984;
-	Wed, 11 Sep 2024 15:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A7D1AAE24;
+	Wed, 11 Sep 2024 14:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhnC7tz7"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WgdE71rm"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010034.outbound.protection.outlook.com [52.101.69.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A16038DE1;
-	Wed, 11 Sep 2024 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726067042; cv=none; b=NMOaNT8+QWyYjebjVPs+SGIjgQf2I1rLZebfkOuMaxHU9DBSpqE+PZxiutSw+Qwx84wgBCimuCPns2zYuDztpvZw1rwCLFRliYTK+cyHfqjJ1IaYp8vX8NJKidZn4FE7jt0ID85bY/Vg/cqNrFSKLPTwzdubF85QM1cO1Nf/a14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726067042; c=relaxed/simple;
-	bh=ypMnOp61n8Gx9VHy/03XF4NXk3UFkB12wmroUy5FVPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q0fG58Ikrg6PjbbPASc3vO+0dXqxHkb1cH5X1oa2ET0Rpk0ntKzUknHwumCGF7hMJLopI6UVrJwXB7qA9sys9jLoOdNyvcQM8QUTLp1N10v7zUusAX4n23DNKE0fhXzEvByenaQ3P/j9C1iwO6wE7h7VepHITFIMw4q5F+GazvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BhnC7tz7; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db9f7969fdso10027587b3.0;
-        Wed, 11 Sep 2024 08:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726067040; x=1726671840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=moeq6ger2QwGp9K4wxCsV0yx2pNLlzVd93ofj9YZDVs=;
-        b=BhnC7tz7+AXpg/T/s76XX4L1IptDOmKvDg8U3S59ICO9jDbecTBEdpogQpgp/oe2nO
-         fdndm8vko6PIFoxAuuG0BelILRu/9nsOnYDw5KH1ud60c4qxZNfLPcFvcw5Nsjv9tx1I
-         c61Au9Nl0LMTuRqXoX73mOKzLAexSAmjcks4SnnJ5w8ePHyfggdJmao6Qc2FRM1Dd0am
-         Wj64oL6ASiWFI/AGwVhaTwo07V40QQCBaiVS7S251RpSSNg0KCtsEyklcjBgCq0SgVB+
-         DTXykLEqggg2WzSb7TidRO0UqrGxjGDFQ2+Lu/nPRcklXubDxcei6M2BXwUBaL9R15qb
-         rUDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726067040; x=1726671840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=moeq6ger2QwGp9K4wxCsV0yx2pNLlzVd93ofj9YZDVs=;
-        b=jIEUrLRrS96toVh/r93STm4pkIGlSR/ivmoR2rths0jh0LW5B37OhdDZElpJFedYIG
-         7UBIvh5v4NC2Pq6unjF+E9pRukxRXfCsMa7p/DWtwr5KaOphvfcBAbyYwQYGqLMna/h9
-         +EOH0ZQ1gnnBALLwiFp8RJyzcDIncnu2PFgU5FdZjF3TtAxgtZ4e9/HK3Tvfx5wuYECe
-         Q6DN15Ljjl5noj4xLhi6U9KMtujVL6K/444UaHO62UGGQe8A4gaG6wnOWLMvTha3ClhM
-         zy7jBMryFh4sqBvW4wwo849MjSur/wWnynPXNkFDe1eGktGrEiWrlGQCu0LdFYX/b2lM
-         0Z6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6a67treKtZEWKKnjsxGkbK3e9DoQSYyvv0C5lZ3ehh6F3O3jEYMkCSN6oFBurG13mZ1jhczl6iU4snZk=@vger.kernel.org, AJvYcCXLqxARNF7ScDhe1+kZw94xYCBqHUUTV5KkkkLZlM4Jt6dgDK8G91mCf9aKwWOUbmirWWSiuv3cTW4KepOZjI/Ti80f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz67t8l8qekIHpp/z5GiLaGhpVEW50D+nZZ5Oibe7HnLVKb2nVU
-	qGQFtPqbwkhX7tbyruUin4U5n6l+W173+48gimg8DcoierJ9HFicq3VsEht3GrvYI1opPpBJ8At
-	nWoWCHpAc7Z6d+I+CQJO5vbS6YBk=
-X-Google-Smtp-Source: AGHT+IGw8eA4GFtgyE1g5jRpuRKwNZBgjoAHs4DBVwEvLjX64XRsY3nA8+nR4YbzJWguT2BgXKBEY8IJTXyZH4aameQ=
-X-Received: by 2002:a05:690c:498c:b0:6d6:afe9:d818 with SMTP id
- 00721157ae682-6db9535bab1mr55661257b3.6.1726067039593; Wed, 11 Sep 2024
- 08:03:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2661AB52D;
+	Wed, 11 Sep 2024 14:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726066603; cv=fail; b=e5w9iPDEiW2nq4iGHHbzUVozvHmFPhmdU7a6rdlUNt28xxlp0//L4vomtAaNUPwTT1GaGlJU5YEvuxbMDw+ffciztSv6WJXiWQVOjbY55ZVq9nCO8LbVHH+8gk6VAw2wt/iiWGMYeZeMM22faWoUjLPwFjrwJggYo9EJXPn5Hjc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726066603; c=relaxed/simple;
+	bh=0B+gQ1Wt8U9F3T1qa0kmhhYFRAjDNshLcox5dHRsnw4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=n+bMDD4m3rSfyi26eirKeLc7lopg3R1oK9OK6caPQWPb0AKh5lAIeTKtAjk5B+YdZvn0MV5ZEV6FmCBrf9B8mr3dmFs/xZVx2ZIa9Fl2uwlvpa0UJJPKSoaUyzKl1LtOKhGIT8ZPmuQzJAmo6xJUvX4emi3qMyIboBDiSCFGcxE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WgdE71rm; arc=fail smtp.client-ip=52.101.69.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cNXS3dcQ7D7G5WA969qFaBss1GOzOCvq6JFcktGGNSrAQRsoLgWxdXyyLSiHwKIPKTX/AYEfQeAVPyCFi3VZFMD701JBYTwTI+7E7/IoLLqUj2ruH4WvHSRk2ZV2WJtZE7VEojlE4+jUuRxiGNSCi3k5t/MLXOYk5TfOzawnL3G5CEM72yQSpfzmYSBE/ARo6ZpgYrzniVgVBKIPc2UnNPaFf06GmgHW1GQ81ZFE7UJJHlh9n2urozDWSDXBIKQjqHVBD5Y6HpEmP/l+2rywQg43E2glLW/2GOPO1CQLTptXbKHR2UipjpDNJte6ygCPcF9jORhHqxXKRu7Od5bOXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MKlIXy5cda8nttwEHoqNfWUY3wPS8P4zTBgTD2YFM5E=;
+ b=UkRe6CtNQXRX/bgT3yLuaNBFn3VSRzICKJcTARIm7+eCgqUCccPGDU48Z/Eg3K6iz/8hOh9qmA5O0UDP35umx/fIhIKrW5Pz7abAIud8+xq9pNJ6FUXWovXRNXutMSCcTxCt+16gJkW6EmAL14ohEN0vE/ERdcr0dCR21MFK5cK7lSwfBrWD849OI2+r6mrCoW2V4ucUyvOtIGzwk5gikiTtwahHNzs+q76H2U8SKnhBw5qPQ1STvusHIAHTDUtYvoJNP6nrrBZjex2shZ6hBtYrHp/VBHbWJnXYrjNbdd/GwpviZb0BqTLa04IomiKD1febNAaAegqi3GK3stGGeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MKlIXy5cda8nttwEHoqNfWUY3wPS8P4zTBgTD2YFM5E=;
+ b=WgdE71rmmeBmk4k/g4bj4GKOBBibB5+jpy53q7AZRA5p2B5CRfvvda5JPVJjEnd6cNwwd4T7/0i2TsghV39HA9g/SuJ1jH5LXdrurbV9bQvdkWcrv4YfTE87J7MtjvGnFIf7uBHyBgdw6AX1V6uAtkpmnH3/MI7fG/p1br0P2mqXwRY7acm9cV1D4ZerYrObBI828l6drq/J4EnlQNYEuAh9VkgxVqCc+5TAwY87CmYSG4iFWeQYheVEo/X4GxZ1yj0yrGywjd4By5FcN/s8DEvuv1ZN7qE+6e8QnS7m73WnAoPLF81+iqsDw93I/kyG5NOPXhLG1N5g3sMrVl2poQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
+ by AM7PR04MB6838.eurprd04.prod.outlook.com (2603:10a6:20b:10a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 14:56:37 +0000
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb]) by VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::3a57:67cf:6ee0:5ddb%6]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 14:56:36 +0000
+From: carlos.song@nxp.com
+To: andi.shyti@kernel.org,
+	aisheng.dong@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	frank.li@nxp.com
+Cc: linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] i2c: imx-lpi2c: add target mode support
+Date: Wed, 11 Sep 2024 23:05:37 +0800
+Message-Id: <20240911150537.192570-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P192CA0022.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e1::20) To VI1PR04MB5005.eurprd04.prod.outlook.com
+ (2603:10a6:803:57::30)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87sev78dnz.fsf@all.your.base.are.belong.to.us>
- <ZuFteQ3t8K4h2-kJ@Andys-MacBook-Air.local> <87v7z2dzo6.fsf@all.your.base.are.belong.to.us>
-In-Reply-To: <87v7z2dzo6.fsf@all.your.base.are.belong.to.us>
-From: Tao Chiu <andybnac@gmail.com>
-Date: Wed, 11 Sep 2024 23:03:48 +0800
-Message-ID: <CAFTtA3PYsdSio0EqkUKQpyLiMuY9iynOdWQAkebAPjL6THEaMQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] riscv: ftrace: prepare ftrace for atomic code patching
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: alexghiti@rivosinc.com, andy.chiu@sifive.com, aou@eecs.berkeley.edu, 
-	justinstitt@google.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, mark.rutland@arm.com, mhiramat@kernel.org, 
-	morbo@google.com, nathan@kernel.org, ndesaulniers@google.com, 
-	palmer@dabbelt.com, palmer@rivosinc.com, paul.walmsley@sifive.com, 
-	puranjay@kernel.org, rostedt@goodmis.org, zong.li@sifive.com, 
-	yongxuan.wang@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5005:EE_|AM7PR04MB6838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24b5026e-4bd5-4b2a-a63c-08dcd271ef0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xDc4dFlUNGuoC0RMraPpsc+/mBoUnaMk/32D5uIA7tVLiJMNniqxrE1JLj7b?=
+ =?us-ascii?Q?AhGA8vJZAZEccsv4ffUqEfTWjGKRAOxxOI4+04pKhSM9jhR1d2Fu1hANphEP?=
+ =?us-ascii?Q?oZziJilwPXBCGiUe7pkycdY25Vn38ilHbhWQ7UigYqG/7pP2RvkTf3RpQRZO?=
+ =?us-ascii?Q?0oIvAqirDrPwiOihleMeGqCn0buBZcoDYCt4zC4WgCaylJo0dMHap98n46lw?=
+ =?us-ascii?Q?r5ZzpKto0AHnffc1owd4AUpMtGkSZRG16Ntc3hf+XUIEilB0nKa6FgouJA1n?=
+ =?us-ascii?Q?5u/z2AakcBBfE8XlwXhWaUOR8b+tPAAy6rf2PL3zZP82h1mkAkUphICBrL/N?=
+ =?us-ascii?Q?BG4ie/YRxk6l4PQE2IIYTBmsZd/ARNj8vZKjGcTuoFgF6dbF9KY+/Fw0cKAo?=
+ =?us-ascii?Q?WEklR35B8N85vmdLHk+vbeLrvqoWRj1D01vTMKKhbMYZtKKNa0iwbG+I1nmc?=
+ =?us-ascii?Q?pBlaWuDvMWhHR+ut5tCQkjyIUwQq5OJFCdJeLpfl0+Ty+XX90gLgqbHU2UIb?=
+ =?us-ascii?Q?iqwQ8Q27OEwwH/im5JcAca1XIhVWINzaAEmgs00CUECCPU6XlkjpV3ym10PZ?=
+ =?us-ascii?Q?OX3cpcqmYCZFEfh0sDVLWYk3KcXjHbif0Qs7GXlffM209mB+pItQ9exya3ik?=
+ =?us-ascii?Q?B+QdvJTD3jL/HaIRfEYgjfHpGoKOE2OClhZXGDhcRudqm4wIpZlDdVVcu3PV?=
+ =?us-ascii?Q?OXorNblAtluDYDgGJ8HL9icvghi2mhr9jtqF3rfjJyhi+ct3K4GPy4qQkMmY?=
+ =?us-ascii?Q?WKvyIpeoHKUSg3IGYCYLWBTqpK5YXoYr8LRDrlRATy76khURp8CuJupWJ/RT?=
+ =?us-ascii?Q?reCsVAfMjzsXjdETeJgjA9bvA0Akt1XiT/uL7OuKP9AtibaqvlwCcwd6P1H+?=
+ =?us-ascii?Q?JQVFcWLZ2C4S1SB56uyRZRsLFtkpCn5T13aebwhvUBZQZ4QLKrY+TJvGkqxB?=
+ =?us-ascii?Q?vp324mApq6/5KbcHXPVN9l1/Ixv1mnwIi5duCuSgy+bOiHn490L43JWP40Ak?=
+ =?us-ascii?Q?GA9UZKwCY8pUC0GfKEwvnmJ+LfufjtATRkPSCBSx7aKkvCC/lurauxcwi2zP?=
+ =?us-ascii?Q?gXQAOIa7n1T/kIUA6yxKbYU56RyDpNWJWADpNAA197xILNmmYiOuNPI9D7iw?=
+ =?us-ascii?Q?ggLiZzwjJU6mQrrrxJPOuVvXKEic9HVrpuPVPX/O3zN5rLKxS2qXAVzc/Vzl?=
+ =?us-ascii?Q?gn8fC+KXanG2WCn9o571gc+0XQ0on3VpYuURUflJ2ax57U8zX0M0IdAxCj7a?=
+ =?us-ascii?Q?9tp1Beh2e5cjy0ciu4lr3Dty3Ltykd1auV8JtTpU6gJR6WGLxEHw7GMgRwQP?=
+ =?us-ascii?Q?JD++70b+xw7wKdHMF0KGppGIHo4cJj/XbaZcZAbI0tyWc1F6m5t3hWQk8gnU?=
+ =?us-ascii?Q?WF/N0FYTVQeSZOmwLn4YGep/wMUZeqL4C3g3iX/QGo2h4p85zQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bk2Z1e7Z0otmzx6mHELSEwVEhpB7yRvzxt/dt212vZHfG78kMKHZg6p+Pzty?=
+ =?us-ascii?Q?uYsAlhLMNjr+3aC/F2jBh4qjQKQse/1gvMuP+UUzuqOEypn44yf69RP0Iaht?=
+ =?us-ascii?Q?Fx5rjZpaMVGi8yjxH0nKpHM04mU80ZtJaCgbHyyiStz1E8tTcReVuMshQm/0?=
+ =?us-ascii?Q?CZqPyyvfYwIQk2jDos3igEYDH+AjSU70+moedq1Lu761HsdsYPm+6Rfv2ifz?=
+ =?us-ascii?Q?NH+ZiRLXWUV+olmVHnAXZznOG4UwnNxHqb+/RwzvR5QZyUyf89es9QGC/bgi?=
+ =?us-ascii?Q?0HQQ6EX+yg9p8DKly4NWAYdPH/3B2tPtDxMNgcPe7N80iTO6uOqON4wP4qUR?=
+ =?us-ascii?Q?spP3x3sHrr6pPdoRh4TecF0HGj8jwr5ZmM444vMXKKxCEyrnEAbYEZy9D9B7?=
+ =?us-ascii?Q?ivM26oEw3PGyq/GlzMb1nVb15t8vqhvtPaIV2YT7CWCTH0S5MxIQjpMBdxyn?=
+ =?us-ascii?Q?iGxIMQYQRxXQIRNWmLCWUp2j8sk5hml0qoK1+ea+5Agc4Dw3+CoGUVBhZ2R5?=
+ =?us-ascii?Q?DMzhDfCCiAu7wkV9s/BKkKR/+IEuxK3vztyPQvzXw1/ll2LlvtJECzd7kBq4?=
+ =?us-ascii?Q?GTv+VDBTzVDXbztr4Iu8z0IPCmWTQJFXyNghIuyZUFxcEPsrihG2//lRjeBx?=
+ =?us-ascii?Q?SzXqVgGeuWoVg73LXH6Rk7DElndA9eqDaIs1l/tUi1JsIvxLZUI35Wzfkiyl?=
+ =?us-ascii?Q?TGJzSQog+kogqojvBQd3w9LVn62v8IjAsPhKel6hOgMtfXhVeOLwqYy4tPWa?=
+ =?us-ascii?Q?JqGmGToXpkyLLk4RQtfk+OoVfBulBbcS0aPkb+L20HOQQTSS8k402XLIfKPd?=
+ =?us-ascii?Q?UsdXGQtsVOYu11tfWAJWikOo6AxYh9wok5huMdx9F/qKJNWXna+X25TP4ke9?=
+ =?us-ascii?Q?IaBWemW+kXCuVtYaZeoi32XN7tn8kejguRguGhSgHMIEX0Ch0KqSCDe0bPMl?=
+ =?us-ascii?Q?mexZhNYEmWZhoJDdknw148DM24ry/mQ4Lhr5K+x9BdvDWXX+IvapIQk4IFsm?=
+ =?us-ascii?Q?NlP4ZOBC7TTbWH2c4TJSQXbpa0s2wsjImbTA9swWkTvEpbSZjOWzP5y8Y7WB?=
+ =?us-ascii?Q?hza14nw+GWmq45HCQRK5bigvBqUp47R/cqoDNxQuerIJ9N7UZsZbvUGfeolW?=
+ =?us-ascii?Q?0gFRXfUaN0Fi8/2IvqrZUUqeFzjC4CQSbTeh5UPEnxHHpI+iR+crYlfsAujp?=
+ =?us-ascii?Q?2i/F4TuwDVXLFVdQqxS1Qr7gPmGUAzjqVhHUDj9KxzjYC6fU98CZU/i8bmqi?=
+ =?us-ascii?Q?iXsTmSSb1MpLOm1AEuUwTIroI+UWPnc2Jssz5U36XY3k4cG0Tt8svkzb3iLB?=
+ =?us-ascii?Q?hGLjXU0LRmA54oina31yL2DgdQzdbOTutndE2JY4yKJ7N612JwZ+Vvnb+7kG?=
+ =?us-ascii?Q?L5X+r0AIKLe2qOpop2bii9skubUq/K369zP8b88S66C6qjg31Eaglyd7flL6?=
+ =?us-ascii?Q?QF8yTjZF/BGLMc3J9MeFkfwGlIfcUAZ+Z5LlDtBspieH4TwaHa4CdkQKoAqE?=
+ =?us-ascii?Q?K1qX6ytu3iFPpSM4cGmOYQXq8I26sMvds71DNml8uMNOovunkj/tYzfZ9Qnd?=
+ =?us-ascii?Q?LDYEw6B8oMugAWIz3y5KBmygCqTBjuTKtcATInmc?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24b5026e-4bd5-4b2a-a63c-08dcd271ef0f
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 14:56:36.7881
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IygUhVq/gqRh14rVFf4O34yLgeRlmdy3YLL21W12Nn3e8Tuwb9QpdGKhkuL8+gf7yIpDv1QlExnWVgXnMqSenA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6838
 
-Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=881=
-1=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8810:37=E5=AF=AB=E9=81=93=EF=
-=BC=9A
+From: Carlos Song <carlos.song@nxp.com>
 
->
-> Andy Chiu <andybnac@gmail.com> writes:
->
-> > On Wed, Aug 14, 2024 at 02:57:52PM +0200, Bj=C3=B6rn T=C3=B6pel wrote:
-> >> Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org> writes:
-> >>
-> >> > Andy Chiu <andy.chiu@sifive.com> writes:
-> >> >
-> >> >> We use an AUIPC+JALR pair to jump into a ftrace trampoline. Since
-> >> >> instruction fetch can break down to 4 byte at a time, it is impossi=
-ble
-> >> >> to update two instructions without a race. In order to mitigate it,=
- we
-> >> >> initialize the patchable entry to AUIPC + NOP4. Then, the run-time =
-code
-> >> >> patching can change NOP4 to JALR to eable/disable ftrcae from a
-> >> >                                       enable        ftrace
-> >> >
-> >> >> function. This limits the reach of each ftrace entry to +-2KB displ=
-acing
-> >> >> from ftrace_caller.
-> >> >>
-> >> >> Starting from the trampoline, we add a level of indirection for it =
-to
-> >> >> reach ftrace caller target. Now, it loads the target address from a
-> >> >> memory location, then perform the jump. This enable the kernel to u=
-pdate
-> >> >> the target atomically.
-> >> >
-> >> > The +-2K limit is for direct calls, right?
-> >> >
-> >> > ...and this I would say breaks DIRECT_CALLS (which should be impleme=
-nted
-> >> > using call_ops later)?
-> >>
-> >> Thinking a bit more, and re-reading the series.
-> >>
-> >> This series is good work, and it's a big improvement for DYNAMIC_FTRAC=
-E,
-> >> but
-> >>
-> >> +int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
-> >> +{
-> >> +    unsigned long distance, orig_addr;
-> >> +
-> >> +    orig_addr =3D (unsigned long)&ftrace_caller;
-> >> +    distance =3D addr > orig_addr ? addr - orig_addr : orig_addr - ad=
-dr;
-> >> +    if (distance > JALR_RANGE)
-> >> +            return -EINVAL;
-> >> +
-> >> +    return __ftrace_modify_call(rec->ip, addr, false);
-> >> +}
-> >> +
-> >>
-> >> breaks WITH_DIRECT_CALLS. The direct trampoline will *never* be within
-> >> the JALR_RANGE.
-> >
-> >
-> > Yes, it is hardly possible that a direct trampoline will be within the
-> > range.
-> >
-> > Recently I have been thinking some solutions to address the issue. One
-> > solution is replaying AUIPC at function entries. The idea has two sides=
-.
-> > First, if we are returning back to the second instruction at trap retur=
-n,
-> > then do sepc -=3D 4 so it executes the up-to-date AUIPC. The other side=
- is
-> > to fire synchronous IPI that does remote fence.i at right timings to
-> > prevent concurrent executing on a mix of old and new instructions.
-> >
-> > Consider replacing instructions at a function's patchable entry with th=
-e
-> > following sequence:
-> >
-> > Initial state:
-> > --------------
-> > 0: AUIPC
-> > 4: JALR
-> >
-> > Step1:
-> > write(0, "J +8")
-> > fence w,w
-> > send sync local+remote fence.i
-> > ------------------------
-> > 0: J +8
-> > 4: JALR
-> >
-> > Step2:
-> > write(4, "JALR'")
-> > fence w,w
-> > send sync local+remote fence.i
-> > ------------------------
-> > 0: J +8
-> > 4: JALR'
-> >
-> > Step3:
-> > write(0, "AUIPC'")
-> > fence w,w
-> > send sync local+remote fence.i (to activate the call)
-> > -----------------------
-> > 0: AUIPC'
-> > 4: JALR'
-> >
-> > The following execution sequences are acceptable:
-> > - AUIPC, JALR
-> > - J +8, (skipping {JALR | JALR'})
-> > - AUIPC', JALR'
-> >
-> > And here are sequences that we want to prevent:
-> > - AUIPC', JALR
-> > - AUIPC, JALR'
-> >
-> > The local core should never execute the forbidden sequence.
-> >
-> > By listing all possible combinations of executing sequence on a remote
-> > core, we can find that the dangerous seqence is impossible to happen:
-> >
-> > let f be the fence.i at step 1, 2, 3. And let numbers be the location o=
-f
-> > code being executed. Mathematically, here are all combinations at a sit=
-e
-> > happening on a remote core:
-> >
-> > fff04 -- updated seq
-> > ff0f4 -- impossible, would be ff0f04, updated seq
-> > ff04f -- impossible, would be ff08f, safe seq
-> > f0ff4 -- impossible, would be f0ff04, updated seq
-> > f0f4f -- impossible, would be f0f08f (safe), or f0f0f04 (updated)
-> > f04ff -- impossible, would be f08ff, safe seq
-> > 0fff4 -- impossible, would be 0fff04, updated seq
-> > 0ff4f -- impossible, would be 0ff08f (safe), or 0ff0f04 (updated)
-> > 0f4ff -- impossible, would be 0f08ff (safe), 0f0f08f (safe), 0f0f0f04 (=
-updated)
-> > 04fff -- old seq
-> >
-> > After the 1st 'fence.i', remote cores should observe (J +8, JALR) or (J=
- +8, JALR')
-> > After the 2nd 'fence.i', remote cores should observe (J +8, JALR') or (=
-AUIPC', JALR')
-> > After the 3rd 'fence.i', remote cores should observe (AUIPC', JALR')
-> >
-> > Remote cores should never execute (AUIPC',JALR) or (AUIPC,JALR')
-> >
-> > To correctly implement the solution, the trap return code must match JA=
-LR
-> > and adjust sepc only for patchable function entries. This is undocument=
-ly
-> > possible because we use t0 as source and destination registers for JALR
-> > at function entries. Compiler never generates JALR that uses the same
-> > register pattern.
-> >
-> > Another solution is inspired by zcmt, and perhaps we can optimize it if
-> > the hardware does support zcmt. First, we allocate a page and divide it
-> > into two halves. The first half of the page are 255 x 8B destination
-> > addresses. Then, starting from offset 2056, the second half of the page
-> > is composed by a series of 2 x 4 Byte instructions:
-> >
-> > 0:    ftrace_tramp_1
-> > 8:    ftrace_tramp_2
-> > ...
-> > 2040: ftrace_tramp_255
-> > 2048: ftrace_tramp_256 (not used when configured with 255 tramps)
-> > 2056:
-> > ld    t1, -2048(t1)
-> > jr    t1
-> > ld    t1, -2048(t1)
-> > jr    t1
-> > ...
-> > 4088:
-> > ld    t1, -2048(t1)
-> > jr    t1
-> > 4096:
-> >
-> > It is possible to expand to 511 trampolines by adding a page
-> > below, and making a load+jr sequence from +2040 offset.
-> >
-> > When the kernel boots, we direct AUIPCs at patchable entries to the pag=
-e,
-> > and disable the call by setting the second instruction to NOP4. Then, w=
-e
-> > can effectively enable/disable/modify a call by setting only the
-> > instruction at JALR. It is possible to utilize most of the current patc=
-h
-> > set to achieve atomic patching. A missing part is to allocate and manag=
-e
-> > trampolines for ftrace users.
->
-> (I will need to digest above in detail!)
->
-> I don't think it's a good idea to try to handle direct calls w/o
-> call_ops. What I was trying to say is "add the call_ops patch to your
-> series, so that direct calls aren't broken". If direct calls depend on
-> call_ops -- sure, no worries. But don't try to get direct calls W/O
-> call_ops. That's a whole new bag of worms.
->
-> Some more high-level thoughts: ...all this to workaround where we don't
-> want the call_ops overhead? Is there really a use-case with a platform
-> that doesn't handle the text overhead of call_ops?
+LPI2C support master controller and target controller enabled
+simultaneously. Both controllers share same SDA/SCL lines and
+interrupt source but has separate control and status registers.
+Even if target mode is enabled, LPI2C can still work normally
+as master controller at the same time.
 
-Sorry for making any confusions. I have no strong personal preference
-on what we should do. Just want to have a technical discussion on what
-is possible if we want to optimize code size.
+This patch supports basic target data read/write operations in
+7-bit target address. LPI2C target mode can be enabled by using
+I2C slave backend. I2C slave backend behave like a standard I2C
+client. For simple use and test, Linux I2C slave EEPROM backend
+can be used.
 
->
-> Maybe I'm missing context here... but I'd say, let's follow what arm64
-> did (but obviously w/o the BL direct call optimization, and always jump
-> to a trampoline -- since that's not possible with RISC-V branch length),
-> and just do the call_ops way.
->
-> Then, as a second step, and if there are platforms that care, think
-> about a variant w/o call_ops.
->
-> Or what I wrote in the first section:
->
-> 1. Keep this patch set
-> 2. ...but add call_ops to it, and require call_ops for direct calls.
->
-> Just my $.02.
->
->
-> Bj=C3=B6rn
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
+---
+Change for V3:
+- According to Andi's suggestion, enrich this patch commit log.
+  No code change.
+Change for V2:
+- remove unused variable 'lpi2c_imx' in lpi2c_suspend_noirq.
+---
+ drivers/i2c/busses/i2c-imx-lpi2c.c | 252 ++++++++++++++++++++++++++++-
+ 1 file changed, 248 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+index f2bbd9898551..2d68faf6847e 100644
+--- a/drivers/i2c/busses/i2c-imx-lpi2c.c
++++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+@@ -43,6 +43,20 @@
+ #define LPI2C_MTDR	0x60	/* i2c master TX data register */
+ #define LPI2C_MRDR	0x70	/* i2c master RX data register */
+ 
++#define LPI2C_SCR	0x110	/* i2c target contrl register */
++#define LPI2C_SSR	0x114	/* i2c target status register */
++#define LPI2C_SIER	0x118	/* i2c target interrupt enable */
++#define LPI2C_SDER	0x11C	/* i2c target DMA enable */
++#define LPI2C_SCFGR0	0x120	/* i2c target configuration */
++#define LPI2C_SCFGR1	0x124	/* i2c target configuration */
++#define LPI2C_SCFGR2	0x128	/* i2c target configuration */
++#define LPI2C_SAMR	0x140	/* i2c target address match */
++#define LPI2C_SASR	0x150	/* i2c target address status */
++#define LPI2C_STAR	0x154	/* i2c target transmit ACK */
++#define LPI2C_STDR	0x160	/* i2c target transmit data */
++#define LPI2C_SRDR	0x170	/* i2c target receive data */
++#define LPI2C_SRDROR	0x178	/* i2c target receive data read only */
++
+ /* i2c command */
+ #define TRAN_DATA	0X00
+ #define RECV_DATA	0X01
+@@ -76,6 +90,42 @@
+ #define MDER_TDDE	BIT(0)
+ #define MDER_RDDE	BIT(1)
+ 
++#define SCR_SEN		BIT(0)
++#define SCR_RST		BIT(1)
++#define SCR_FILTEN	BIT(4)
++#define SCR_RTF		BIT(8)
++#define SCR_RRF		BIT(9)
++#define SCFGR1_RXSTALL	BIT(1)
++#define SCFGR1_TXDSTALL	BIT(2)
++#define SCFGR2_FILTSDA_SHIFT	24
++#define SCFGR2_FILTSCL_SHIFT	16
++#define SCFGR2_CLKHOLD(x)	(x)
++#define SCFGR2_FILTSDA(x)	((x) << SCFGR2_FILTSDA_SHIFT)
++#define SCFGR2_FILTSCL(x)	((x) << SCFGR2_FILTSCL_SHIFT)
++#define SSR_TDF		BIT(0)
++#define SSR_RDF		BIT(1)
++#define SSR_AVF		BIT(2)
++#define SSR_TAF		BIT(3)
++#define SSR_RSF		BIT(8)
++#define SSR_SDF		BIT(9)
++#define SSR_BEF		BIT(10)
++#define SSR_FEF		BIT(11)
++#define SSR_SBF		BIT(24)
++#define SSR_BBF		BIT(25)
++#define SSR_CLEAR_BITS	(SSR_RSF | SSR_SDF | SSR_BEF | SSR_FEF)
++#define SIER_TDIE	BIT(0)
++#define SIER_RDIE	BIT(1)
++#define SIER_AVIE	BIT(2)
++#define SIER_TAIE	BIT(3)
++#define SIER_RSIE	BIT(8)
++#define SIER_SDIE	BIT(9)
++#define SIER_BEIE	BIT(10)
++#define SIER_FEIE	BIT(11)
++#define SIER_AM0F	BIT(12)
++#define SASR_READ_REQ	0x1
++#define SLAVE_INT_FLAG	(SIER_TDIE | SIER_RDIE | SIER_AVIE | \
++						SIER_SDIE | SIER_BEIE)
++
+ #define I2C_CLK_RATIO	2
+ #define CHUNK_DATA	256
+ 
+@@ -134,6 +184,7 @@ struct lpi2c_imx_struct {
+ 	struct i2c_bus_recovery_info rinfo;
+ 	bool			can_use_dma;
+ 	struct lpi2c_imx_dma	*dma;
++	struct i2c_client	*target;
+ };
+ 
+ static void lpi2c_imx_intctrl(struct lpi2c_imx_struct *lpi2c_imx,
+@@ -958,9 +1009,57 @@ static int lpi2c_imx_xfer(struct i2c_adapter *adapter,
+ 	return (result < 0) ? result : num;
+ }
+ 
+-static irqreturn_t lpi2c_imx_isr(int irq, void *dev_id)
++static irqreturn_t lpi2c_imx_target_isr(struct lpi2c_imx_struct *lpi2c_imx,
++					   u32 ssr, u32 sier_filter)
++{
++	u8 value;
++	u32 sasr;
++
++	/* Arbitration lost */
++	if (sier_filter & SSR_BEF) {
++		writel(0, lpi2c_imx->base + LPI2C_SIER);
++		return IRQ_HANDLED;
++	}
++
++	/* Address detected */
++	if (sier_filter & SSR_AVF) {
++		sasr = readl(lpi2c_imx->base + LPI2C_SASR);
++		if (SASR_READ_REQ & sasr) {
++			/* Read request */
++			i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_READ_REQUESTED, &value);
++			writel(value, lpi2c_imx->base + LPI2C_STDR);
++			goto ret;
++		} else {
++			/* Write request */
++			i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_WRITE_REQUESTED, &value);
++		}
++	}
++
++	if (sier_filter & SSR_SDF) {
++		/* STOP */
++		i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_STOP, &value);
++	}
++
++	if (sier_filter & SSR_TDF) {
++		/* Target send data */
++		i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_READ_PROCESSED, &value);
++		writel(value, lpi2c_imx->base + LPI2C_STDR);
++	}
++
++	if (sier_filter & SSR_RDF) {
++		/* Target receive data */
++		value = readl(lpi2c_imx->base + LPI2C_SRDR);
++		i2c_slave_event(lpi2c_imx->target, I2C_SLAVE_WRITE_RECEIVED, &value);
++	}
++
++ret:
++	/* Clear SSR */
++	writel(ssr & SSR_CLEAR_BITS, lpi2c_imx->base + LPI2C_SSR);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t lpi2c_imx_master_isr(struct lpi2c_imx_struct *lpi2c_imx)
+ {
+-	struct lpi2c_imx_struct *lpi2c_imx = dev_id;
+ 	unsigned int enabled;
+ 	unsigned int temp;
+ 
+@@ -980,6 +1079,119 @@ static irqreturn_t lpi2c_imx_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t lpi2c_imx_isr(int irq, void *dev_id)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = dev_id;
++	u32 ssr, sier_filter;
++	unsigned int scr;
++
++	if (lpi2c_imx->target) {
++		scr = readl(lpi2c_imx->base + LPI2C_SCR);
++		ssr = readl(lpi2c_imx->base + LPI2C_SSR);
++		sier_filter = ssr & readl(lpi2c_imx->base + LPI2C_SIER);
++		if ((scr & SCR_SEN) && sier_filter)
++			return lpi2c_imx_target_isr(lpi2c_imx, ssr, sier_filter);
++		else
++			return lpi2c_imx_master_isr(lpi2c_imx);
++	} else {
++		return lpi2c_imx_master_isr(lpi2c_imx);
++	}
++}
++
++static void lpi2c_imx_target_init(struct lpi2c_imx_struct *lpi2c_imx)
++{
++	int temp;
++
++	/* reset target module */
++	writel(SCR_RST, lpi2c_imx->base + LPI2C_SCR);
++	writel(0, lpi2c_imx->base + LPI2C_SCR);
++
++	/* Set target addr */
++	writel((lpi2c_imx->target->addr << 1), lpi2c_imx->base + LPI2C_SAMR);
++
++	writel(SCFGR1_RXSTALL | SCFGR1_TXDSTALL, lpi2c_imx->base + LPI2C_SCFGR1);
++
++	/*
++	 * set SCFGR2: FILTSDA, FILTSCL and CLKHOLD
++	 *
++	 * FILTSCL/FILTSDA can eliminate signal skew. It should generally be
++	 * set to the same value and should be set >= 50ns.
++	 *
++	 * CLKHOLD is only used when clock stretching is enabled, but it will
++	 * extend the clock stretching to ensure there is an additional delay
++	 * between the target driving SDA and the target releasing the SCL pin.
++	 *
++	 * CLKHOLD setting is crucial for lpi2c target. When master read data
++	 * from target, if there is a delay caused by cpu idle, excessive load,
++	 * or other delays between two bytes in one message transmission. so it
++	 * will cause a short interval time between the driving SDA signal and
++	 * releasing SCL signal. Lpi2c master will mistakenly think it is a stop
++	 * signal resulting in an arbitration failure. This issue can be avoided
++	 * by setting CLKHOLD.
++	 *
++	 * In order to ensure lpi2c function normally when the lpi2c speed is as
++	 * low as 100kHz, CLKHOLD should be set 3 and it is also compatible with
++	 * higher clock frequency like 400kHz and 1MHz.
++	 */
++	temp = SCFGR2_FILTSDA(2) | SCFGR2_FILTSCL(2) | SCFGR2_CLKHOLD(3);
++	writel(temp, lpi2c_imx->base + LPI2C_SCFGR2);
++
++	/*
++	 * Enable module:
++	 * SCR_FILTEN can enable digital filter and output delay counter for LPI2C
++	 * target mode. So SCR_FILTEN need be asserted when enable SDA/SCL FILTER
++	 * and CLKHOLD.
++	 */
++	writel(SCR_SEN | SCR_FILTEN, lpi2c_imx->base + LPI2C_SCR);
++
++	/* Enable interrupt from i2c module */
++	writel(SLAVE_INT_FLAG, lpi2c_imx->base + LPI2C_SIER);
++}
++
++static int lpi2c_imx_reg_target(struct i2c_client *client)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(client->adapter);
++	int ret;
++
++	if (lpi2c_imx->target)
++		return -EBUSY;
++
++	lpi2c_imx->target = client;
++
++	ret = pm_runtime_resume_and_get(lpi2c_imx->adapter.dev.parent);
++	if (ret < 0) {
++		dev_err(&lpi2c_imx->adapter.dev, "failed to resume i2c controller");
++		return ret;
++	}
++
++	lpi2c_imx_target_init(lpi2c_imx);
++
++	return 0;
++}
++
++static int lpi2c_imx_unreg_target(struct i2c_client *client)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(client->adapter);
++	int ret;
++
++	if (!lpi2c_imx->target)
++		return -EINVAL;
++
++	/* Reset target address. */
++	writel(0, lpi2c_imx->base + LPI2C_SAMR);
++
++	writel(SCR_RST, lpi2c_imx->base + LPI2C_SCR);
++	writel(0, lpi2c_imx->base + LPI2C_SCR);
++
++	lpi2c_imx->target = NULL;
++
++	ret = pm_runtime_put_sync(lpi2c_imx->adapter.dev.parent);
++	if (ret < 0)
++		dev_err(&lpi2c_imx->adapter.dev, "failed to suspend i2c controller");
++
++	return ret;
++}
++
+ static int lpi2c_imx_init_recovery_info(struct lpi2c_imx_struct *lpi2c_imx,
+ 				  struct platform_device *pdev)
+ {
+@@ -1055,6 +1267,8 @@ static u32 lpi2c_imx_func(struct i2c_adapter *adapter)
+ static const struct i2c_algorithm lpi2c_imx_algo = {
+ 	.master_xfer	= lpi2c_imx_xfer,
+ 	.functionality	= lpi2c_imx_func,
++	.reg_slave	= lpi2c_imx_reg_target,
++	.unreg_slave	= lpi2c_imx_unreg_target,
+ };
+ 
+ static const struct of_device_id lpi2c_imx_of_match[] = {
+@@ -1205,9 +1419,39 @@ static int __maybe_unused lpi2c_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
++static int lpi2c_suspend_noirq(struct device *dev)
++{
++	int ret;
++
++	ret = pm_runtime_force_suspend(dev);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int lpi2c_resume_noirq(struct device *dev)
++{
++	struct lpi2c_imx_struct *lpi2c_imx = dev_get_drvdata(dev);
++	int ret;
++
++	ret = pm_runtime_force_resume(dev);
++	if (ret)
++		return ret;
++
++	/*
++	 * If i2c module powered down in system suspend, register
++	 * value will lose. So reinit target when system resume.
++	 */
++	if (lpi2c_imx->target)
++		lpi2c_imx_target_init(lpi2c_imx);
++
++	return 0;
++}
++
+ static const struct dev_pm_ops lpi2c_pm_ops = {
+-	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				      pm_runtime_force_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(lpi2c_suspend_noirq,
++				      lpi2c_resume_noirq)
+ 	SET_RUNTIME_PM_OPS(lpi2c_runtime_suspend,
+ 			   lpi2c_runtime_resume, NULL)
+ };
+-- 
+2.34.1
+
 
