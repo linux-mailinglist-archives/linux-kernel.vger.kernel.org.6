@@ -1,127 +1,276 @@
-Return-Path: <linux-kernel+bounces-324424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9132974C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:15:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A48974C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279E31C22047
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4C02862D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7824713D524;
-	Wed, 11 Sep 2024 08:15:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A16813B7AE
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1959143875;
+	Wed, 11 Sep 2024 08:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C/aNJF02"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A75913D510;
+	Wed, 11 Sep 2024 08:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726042530; cv=none; b=R59AyNhLWwkFRjOOFpDnQVe9hOjJnuJDYh8EeJDFCcgXmIDMxlxNWIcV3sCQxSww8HsBjIAKh8oKOHbIz24KBhb7hQcNk1QFw4SP15u+ElWrPGWcsJ4IktpeA8iq35amNr/M1Qtmz2Tx5+yK/qrjtEAMP8voofeA672naN6710c=
+	t=1726042592; cv=none; b=jc4s2YY1e096vPExUSf24Q1n3q4QkVqhLOzH1ov7UQU6KHn2IWh1qq8CgkYRGQ0OXq/wQTQghoXRTdvLz4qhwvHNCYFldDQaVv9J5qWyFBy39OJMNfbiT32AwozP/JgdDm59GrYnBvb/J/umhPe5pKW08veLDDQ5TyKAwGg64lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726042530; c=relaxed/simple;
-	bh=iqfPFe/4M5rHQHCFh6x3OrxC00dP11v4QtCNE39YNds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qHE+25bQ4s6vYJ4DSgFmY40LVvbEG5jA2ElYFhzcWDHaDL9AoHXFfiZTjfb9M+G5MKlGcPoCIQA9OTM3cKfIDkVGcxR4y1isYQgR/8MukZ5BIy//nS4YWkaf87ubKjQJPhs6ylkAQ10qqQ8U8m6An1t1B6LNzpzSoYvUnSJk9EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E7AE1007;
-	Wed, 11 Sep 2024 01:15:57 -0700 (PDT)
-Received: from [10.57.50.106] (unknown [10.57.50.106])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A83AF3F66E;
-	Wed, 11 Sep 2024 01:15:26 -0700 (PDT)
-Message-ID: <f9d838d5-6b3d-4e7c-9bf6-cb2935320467@arm.com>
-Date: Wed, 11 Sep 2024 09:15:24 +0100
+	s=arc-20240116; t=1726042592; c=relaxed/simple;
+	bh=xORRYaOI65Nln4gdGbFiF+cXnA6mtFGHnoEkL0is48w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KE77bvzynfBjoX7nqFfSm/vNzHaaSv8GcnRMhE0Tzax9b47HgUaTZ/rbd5pGBk6oo0zMWPvmZGPQcUCjYsY7/x6upYfBF479TVcTEAuZWjneNCQG6jmpFYwHS8U+h77q6cRFVglmDf9Z6PLF0oaRr5pYOf9FMYRaH/uqkEiNgGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C/aNJF02; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48B8G6SK044012;
+	Wed, 11 Sep 2024 03:16:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726042566;
+	bh=d1PHMLAifrqnQnQ87o9A1quYM6RpIYl7JQF3tGF2juY=;
+	h=From:To:CC:Subject:Date;
+	b=C/aNJF02QDNKp8cyqP46TX+Kn59xWo1EH70RsZGtfk7GlsqOWR4H9yB2lQrO4iH5j
+	 aG7dq7226MCHZx+Ows3DctFRNKb90M5NdnY2GjmlqOhUvdrVjCN5eVir8987jHkNrs
+	 Bg+PwMO+vsOJ3nHWl3nY7irFC6FWZHdEfuW5VZ28=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48B8G6qU092044;
+	Wed, 11 Sep 2024 03:16:06 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 11
+ Sep 2024 03:16:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 11 Sep 2024 03:16:05 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48B8G5bn011414;
+	Wed, 11 Sep 2024 03:16:05 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 48B8G4Es032107;
+	Wed, 11 Sep 2024 03:16:05 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <robh@kernel.org>, <jan.kiszka@siemens.com>, <dan.carpenter@linaro.org>,
+        <r-gunasekaran@ti.com>, <saikrishnag@marvell.com>, <andrew@lunn.ch>,
+        <javier.carrasco.cruz@gmail.com>, <jacob.e.keller@intel.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>,
+        <richardcochran@gmail.com>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v6 0/5] Introduce HSR offload support for ICSSG
+Date: Wed, 11 Sep 2024 13:45:58 +0530
+Message-ID: <20240911081603.2521729-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip:sched/core 69/70] drivers/cpufreq/cppc_cpufreq.c:227:20:
- error: use of undeclared identifier 'NSER_PER_MSEC'
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- x86@kernel.org, Peter Zijlstra <peterz@infradead.org>
-References: <202409110611.dmyDCkoe-lkp@intel.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <202409110611.dmyDCkoe-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 9/10/24 23:20, kernel test robot wrote:
-> Hi Christian,
-> 
-> FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-> head:   6cbbb91711c6b17da3802a3cf072d3311828ca33
-> commit: b3a47ff095544af206b8885391a7bad662d06a57 [69/70] cpufreq/cppc: Use NSEC_PER_MSEC for deadline task
-> config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240911/202409110611.dmyDCkoe-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409110611.dmyDCkoe-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409110611.dmyDCkoe-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> drivers/cpufreq/cppc_cpufreq.c:227:20: error: use of undeclared identifier 'NSER_PER_MSEC'
->      227 |                 .sched_runtime  = NSER_PER_MSEC,
->          |                                   ^
->>> drivers/cpufreq/cppc_cpufreq.c:229:3: error: member reference base type 'long' is not a structure or union
->      228 |                 .sched_deadline = 10 * NSEC_PER_MSEC
->          |                                        ~~~~~~~~~~~~~
->      229 |                 .sched_period   = 10 * NSEC_PER_MSEC,
->          |                 ^~~~~~~~~~~~~
->    2 errors generated.
-> 
-> 
-> vim +/NSER_PER_MSEC +227 drivers/cpufreq/cppc_cpufreq.c
-> 
->    215	
->    216	static void __init cppc_freq_invariance_init(void)
->    217	{
->    218		struct sched_attr attr = {
->    219			.size		= sizeof(struct sched_attr),
->    220			.sched_policy	= SCHED_DEADLINE,
->    221			.sched_nice	= 0,
->    222			.sched_priority	= 0,
->    223			/*
->    224			 * Fake (unused) bandwidth; workaround to "fix"
->    225			 * priority inheritance.
->    226			 */
->  > 227			.sched_runtime	= NSER_PER_MSEC,
+Hi All,
+This series introduces HSR offload support for ICSSG driver. To support HSR
+offload to hardware, ICSSG HSR firmware is used.
 
-Sorry, seems I enabled the module, but didn't actually build modules
-before sending it out, anyway this should be s/NSER/NSEC
+This series introduces,
+1. HSR frame offload support for ICSSG driver.
+2. HSR Tx Packet duplication offload
+3. HSR Tx Tag and Rx Tag offload
+4. Multicast filtering support in HSR offload mode.
+5. Dependencies related to IEP.
 
->    228			.sched_deadline = 10 * NSEC_PER_MSEC
-and this is missing a comma.
-Peter do you mind fixing that up for me?
+HSR Test Setup:
+--------------
 
--->8--
+     ___________           ___________           ___________
+    |           | Link AB |           | Link BC |           |
+  __|   AM64*   |_________|   AM64    |_________|   AM64*   |___
+ |  | Station A |         | Station B |         | Station C |   |
+ |  |___________|         |___________|         |___________|   |
+ |                                                              |
+ |______________________________________________________________|
+                            Link CA
+ *Could be any device that supports two ethernet interfaces.
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index aff25b598ec4..1a5ad184d28f 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -224,8 +224,8 @@ static void __init cppc_freq_invariance_init(void)
-                 * Fake (unused) bandwidth; workaround to "fix"
-                 * priority inheritance.
-                 */
--               .sched_runtime  = NSER_PER_MSEC,
--               .sched_deadline = 10 * NSEC_PER_MSEC
-+               .sched_runtime  = NSEC_PER_MSEC,
-+               .sched_deadline = 10 * NSEC_PER_MSEC,
-                .sched_period   = 10 * NSEC_PER_MSEC,
-        };
-        int ret;
+Steps to switch to HSR frame forward offload mode:
+-------------------------------------------------
+Example assuming eth1, eth2 ports of ICSSG1 on AM64-EVM
+
+  1) Enable HSR offload for both interfaces
+      ethtool -K eth1 hsr-fwd-offload on
+      ethtool -K eth1 hsr-dup-offload on
+      ethtool -K eth1 hsr-tag-ins-offload on
+      ethtool -K eth1 hsr-tag-rm-offload on
+
+      ethtool -K eth2 hsr-fwd-offload on
+      ethtool -K eth2 hsr-dup-offload on
+      ethtool -K eth2 hsr-tag-ins-offload on
+      ethtool -K eth2 hsr-tag-rm-offload on
+
+  2) Create HSR interface and add slave interfaces to it
+      ip link add name hsr0 type hsr slave1 eth1 slave2 eth2 \
+    supervision 45 version 1
+
+  3) Add IP address to the HSR interface
+      ip addr add <IP_ADDR>/24 dev hsr0
+
+  4) Bring up the HSR interface
+      ip link set hsr0 up
+
+Switching back to previous mode:
+--------------------------------
+  1) Delete HSR interface
+      ip link delete hsr0
+
+  2) Disable HSR port-to-port offloading mode, packet duplication
+      ethtool -K eth1 hsr-fwd-offload off
+      ethtool -K eth1 hsr-dup-offload off
+      ethtool -K eth1 hsr-tag-ins-offload off
+      ethtool -K eth1 hsr-tag-rm-offload off
+
+      ethtool -K eth2 hsr-fwd-offload off
+      ethtool -K eth2 hsr-dup-offload off
+      ethtool -K eth2 hsr-tag-ins-offload off
+      ethtool -K eth2 hsr-tag-rm-offload off
+
+Testing the port-to-port frame forward offload feature:
+-----------------------------------------------------
+  1) Connect the LAN cables as shown in the test setup.
+  2) Configure Station A and Station C in HSR non-offload mode.
+  3) Configure Station B is HSR offload mode.
+  4) Since HSR is a redundancy protocol, disconnect cable "Link CA",
+     to ensure frames from Station A reach Station C only through
+     Station B.
+  5) Run iperf3 Server on Station C and client on station A.
+  7) Check the CPU usage on Station B.
+
+CPU usage report on Station B using mpstat when running UDP iperf3:
+-------------------------------------------------------------------
+
+  1) Non-Offload case
+  -------------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.50    0.00  3.52  29.15    0.00    0.00   66.83
+    0  0.00   0.00  0.00    0.00  7.00  58.00    0.00    0.00   35.00
+    1  0.00   0.00  0.99    0.00  0.99   0.00    0.00    0.00   98.02
+
+  2) Offload case
+  ---------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.00    0.00  0.50   0.00    0.00    0.00   99.50
+    0  0.00   0.00  0.99    0.00  0.00   0.00    0.00    0.00   99.01
+    1  0.00   0.00  0.00    0.00  0.00   0.00    0.00    0.00  100.00
+
+Note:
+1) At the very least, hsr-fwd-offload must be enabled.
+   Without offloading the port-to-port offload, other
+   HSR offloads cannot be enabled.
+
+2) hsr-tag-ins-offload and hsr-dup-offload are tightly coupled in
+   the firmware implementation. They both need to be enabled / disabled
+   together.
+
+Changes from v5 to v6:
+*) Dropped ndo_set_features API as asked by Roger.
+*) Modified emac_ndo_fix_features as asked by Roger Quadros
+<rogerq@kernel.org>
+
+Changes from v4 to v5:
+*) Fixed warning reported by kernel test robot [0].
+
+Changes from v3 to v4:
+*) Simplified ndo_set_features() implementation as suggested by Roger Quadros
+<rogerq@kernel.org>
+*) Maintained 80 character limit per line wherever possible.
+*) Returning -EOPNOTSUPP whenever offloading is not possible.
+*) Changed dev_dbg() prints to netdev_dbg() as suggested by Alexander
+Lobakin <aleksander.lobakin@intel.com>
+*) Squashed patch [1] and [2] together as hsr tag ins is dependent on hsr
+tx duplication. Also didn't add Roger's RB tag from patch [2] as the patch
+is now merged with [1] in patch 4/5.
+*) Implemented emac_ndo_fix_features() to make sure NETIF_F_HW_HSR_DUP is
+enabled / disabled with NETIF_F_HW_HSR_TAG_INS as suggested by Roger
+Quadros <rogerq@kernel.org>
+*) Added Roger's RB tag to patch 5/5.
+*) Modified commit message of patch 3/5 to state that driver will be back
+to previously used mode once HSR is disabled.
+
+Changes from v2 to v3:
+*) Renamed APIs common to switch and hsr modes with suffix _fw_offload.
+*) Returning EOPNOTSUPP in prueth_hsr_port_link() as suggested by
+   Andrew Lunn <andrew@lunn.ch>
+*) Dropped unneccassary dev_err prints and changed dev_err to dev_dbg
+   where applicable.
+*) Renamed NETIF_PRUETH_HSR_OFFLOAD to NETIF_PRUETH_HSR_OFFLOAD_FEATURES
+   to make it clear it is a collection of features, not an alias for one
+   feature.
+*) Added Kernel doc entries for @hsr_members and @is_hsr_offload_mode as
+   suggested by Simon Horman <horms@kernel.org>
+*) Dropped patch [3] as it is no longer needed in this series. It is
+   already merged to net/main by commit [4].
+*) Collected Reviewed-by tag from Roger Quadros <rogerq@kernel.org> for
+   PATCH 1/6 and PATCH 2/6.
+*) Added if check for current mode before calling __dev_mc_unsync as
+   suggested by Roger Quadros <rogerq@kernel.org>
+*) Updated commit message of PATCH 6/6 to describe handling of duplicate
+   discard in the driver.
+
+Changes from v1 to v2:
+*) Modified patch 2/7 to only contain code movement as suggested by
+   Dan Carpenter <dan.carpenter@linaro.org>
+*) Added patch 3/7 by splitting it from 2/6 as the patch is not part of
+   code movement done in patch 2/7.
+*) Rebased on latest net-next/main.
+
+v1: https://lore.kernel.org/all/20240808110800.1281716-1-danishanwar@ti.com/
+v2: https://lore.kernel.org/all/20240813074233.2473876-1-danishanwar@ti.com
+v3: https://lore.kernel.org/all/20240828091901.3120935-1-danishanwar@ti.com/
+v4: https://lore.kernel.org/all/20240904100506.3665892-1-danishanwar@ti.com/
+v5: https://lore.kernel.org/all/20240906111538.1259418-1-danishanwar@ti.com/
+
+[0] https://lore.kernel.org/all/202409061658.vSwcFJiK-lkp@intel.com/
+[1] https://lore.kernel.org/all/20240828091901.3120935-5-danishanwar@ti.com/
+[2] https://lore.kernel.org/all/20240828091901.3120935-7-danishanwar@ti.com/
+[3] https://lore.kernel.org/all/20240813074233.2473876-2-danishanwar@ti.com/
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=e846be0fba85
+
+MD Danish Anwar (4):
+  net: ti: icss-iep: Move icss_iep structure
+  net: ti: icssg-prueth: Stop hardcoding def_inc
+  net: ti: icssg-prueth: Add support for HSR frame forward offload
+  net: ti: icssg-prueth: Add multicast filtering support in HSR mode
+
+Ravi Gunasekaran (1):
+  net: ti: icssg-prueth: Enable HSR Tx duplication, Tx Tag and Rx Tag
+    offload
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c      |  72 -------
+ drivers/net/ethernet/ti/icssg/icss_iep.h      |  73 ++++++-
+ .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |  18 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.c  |  22 ++-
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 185 +++++++++++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +
+ 8 files changed, 290 insertions(+), 92 deletions(-)
+
+
+base-commit: f3b6129b7d252b2fbdcac2e0005abc6804dc287c
+-- 
+2.34.1
 
 
