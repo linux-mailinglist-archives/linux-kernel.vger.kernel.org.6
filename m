@@ -1,235 +1,145 @@
-Return-Path: <linux-kernel+bounces-324198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8628897496E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACBE974976
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0061C24ED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CA8288875
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FC34AEF4;
-	Wed, 11 Sep 2024 05:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B651461FCF;
+	Wed, 11 Sep 2024 05:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmcbyhzS"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8qyxDdK"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E401B748A;
-	Wed, 11 Sep 2024 05:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E7558BC;
+	Wed, 11 Sep 2024 05:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726030922; cv=none; b=f3Wv4eIJNNRCRvIjhgoV1+0R/IjxTA0/r5ZT0gKNwoxIYuPOtk9EtUHpNbWg3Qo3pRDiRveL/flVPpY3yFQCWIQkt8FioTuVfgntL8xU/09rFH6CvtiSbSsPaMQbpSikDVRcUdrFvuZHJAW0i17j82WW0xgABVUIEWKQpuB6GOc=
+	t=1726031297; cv=none; b=BG2n367pPz3+c5O7DkTZ3hR/v2dvqvR/b8zEQ0iU+J1yKuRHPBq3pdSkQAxtiHlh8ozA36j97PBgI13/S2Oghh+/9WUWMvhawBs6ycR5v2dkmNWjf4fBVaNJJ5TowZEzfkMfygeS6deShu1aWTY6vdBjYbTjQKWIxHX99zHWql0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726030922; c=relaxed/simple;
-	bh=GR03gk6l/4yIvEanNyYHAWaaQVnuLtoTZlnpwAHeNro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTTyWXJXzVmrwpmt2D5sQVNH86AGE9u/rLzpkf0i+0LpoYjB/qQR48dYmdYLlkJ6mLRnnBeL38Pl5S7IbWsP4lsypOuF9+ZjzPQGw8y5H3p3M81bB+r6GL2yDYwBtOQHe32cP5smSvCz6+AiU5VxRcQMLTYBIXy8PhGEQ3qFBB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmcbyhzS; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1726031297; c=relaxed/simple;
+	bh=AwzBXZIzFQKKCdF7T+KzC877Td4dtULqKAPc7SXlFYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IrQw5vnjgT/3Y25o5jnrFR3WT5rvT5n+HEHPAckeBTjqX/kTYTvaMRUOqPcDUCcfG0/woBXTIZa5W1Woif/k6wfUdgdDVabt/1XS6uQIQ3rCXoMbmPoLWvxEP4AiLhnj/1Xa6J2jg/caPVz8RrgeijVntnU5JAzc9Te+8gjxpp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8qyxDdK; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e663fso1841851a12.1;
-        Tue, 10 Sep 2024 22:02:00 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso1919776a12.1;
+        Tue, 10 Sep 2024 22:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726030919; x=1726635719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3y9WGvN4gCJZlWmeipDMEUKxZ6qFuoA/tJ0u/3oEbPE=;
-        b=DmcbyhzSzA7Zu2FuJgknXaOPDwW1NLRQI/UEdGyENMkyZdxxmpjOv2P2xzIXucnUd3
-         r72hXYuYN809ny76vQcXmtUDVjggk26jHyiEYD5/SehoR+t3Jh88hElhEHEAZFzuio2t
-         vwUrd+xhBD6lhtUeD7/9JNONn+dS+ktejj3P9RGEjdj7Qz+bLX0683tFsFBIqdirOrFF
-         7NStCEJovLNPZdYp+dxgbXyrLNmbdIXs+rymNRWPtdiJTclrm71xT4gckLAQ9oS4DmQx
-         ar42eftQEckd4mSBnEe5JCUcE22HHQ8J6HcZ0E5o00SSNhcZfMnu28OGGRdb+I4crGxV
-         G9Kw==
+        d=gmail.com; s=20230601; t=1726031295; x=1726636095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FJNquf2p9Vd205iSBUl3QuEluAS8I7046ZFy2HBvaPU=;
+        b=N8qyxDdKfuxFPctX5kJzB6grL2nkK6hwJj6GdhWWG9fpZuxGZxAFJPk9zeVnNB9GRa
+         xrbPsmJKQvk6TJKcSmgjMR5PFyD3G6QcXpO6jrfHYTLjsT9/zMjSKSI6VEeJ/cw26L5c
+         sZDLQhjuxU66eNNkRA7QoEumV6QD8UC73fLlzN0xcxkVlIfPDgv4fbS8ENTfkw7R+jJY
+         zzUBT2K8Vhwk3D0CUTMZuIEdazHmx35w2YeELIe+OUSAQtd8Do8sLJrPvjq6WQ6LpLRl
+         k1hBYX4XjQASf6iyOhFsYVvdBTsGrBL6QJcE/kOL4hDTnseXionhUTdTlBfDsfP2G16m
+         SeOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726030919; x=1726635719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3y9WGvN4gCJZlWmeipDMEUKxZ6qFuoA/tJ0u/3oEbPE=;
-        b=wMMc3ACtbfj6i7xMIj0jyebFF6XTmJLdgpYJkZPNwykwjq7oFKb9nvRk4m9fyBJPA/
-         y0ecgYQf9s+qV0dMpSzLC46UChFf9ETK/D9wEhbGrlVRCaLmP/mWuq3ajqgpBS/2y6KH
-         ITlBgwBjHKpX1Ub9ajaMKYkCtKe+jLfhP83RCRUsqsGCqrlijdNJxNWOFEjLWX2HcAF5
-         smL0PpPX98IMg1dWFXBZX5O8z2T+h31dnj85WlKqzNixiRZ/9HCGUHKjE8DqOBp4C8sN
-         mRDGNAz2tAXKLbVMPQ/YaouExjdl9Zce1U9EjL194a27lVkv/zwAsd0sWI5E+jS+s5I/
-         yKoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUP++yJCU4ABJEoe30kGXrZnWoHTSAp4N2nx4N3pcT4rO77kJ5qGW538RnCUrKIw7sjCg1FLKHPSU+l8lw=@vger.kernel.org, AJvYcCWQu+c0dK/onu5OBl7QkjWEsa1DqZ1cOy42+TUtjTgas9Fm9WltLWurjCvNfD+zIBARd6UoYZ35bDA+yoiJ0ynKFq0l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVakl5z5GTfNLUpahzcQepdmQYNhT3QqGOrfK8uXk7wN5ThOqp
-	6WYIo6RBBmex6OAQi29yREuAX2mbvXpDLpxDr/DuNQ5SKFM8/o2dd72rKAbteuQw/cYPe8LOvDc
-	i6tPGibja4wjkGs3D5t9SzCYcQ5M=
-X-Google-Smtp-Source: AGHT+IFv4KG/qOrb+mXNnO6ScWxmZtswlWxiJPynO52N6MZsl01Dtqkf5+8xYwDe1BBhNQOy4dVhYsUFA60FsJQinjc=
-X-Received: by 2002:a05:6402:2345:b0:5c2:5c56:c31b with SMTP id
- 4fb4d7f45d1cf-5c40bc5cc87mr1215565a12.30.1726030918048; Tue, 10 Sep 2024
- 22:01:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726031295; x=1726636095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FJNquf2p9Vd205iSBUl3QuEluAS8I7046ZFy2HBvaPU=;
+        b=S6k4hIIW8geaoRuMLovvn2LAVoziL5+GK+kJunlX84L4xmyL0JKWk708jTcfXjustn
+         eA9CoGPSjh2yR1mxLoS6/IJ4QCLpJAC218w2uYY9ep1T8Cn0KMaZMZoqcg/gn5KEoeOI
+         Ggg+0b7/kR+u3BtHAr+AXYdVcXcjshT2/IY6H7ptF8q3wqRNW/akKmhzzyLv82yeIGqo
+         QbjEDrPzINXOQBWnI3pwJPiah+StfQmLFN9NBYBZQKjjq2uoS1S+5dpP2/9rk6I3uiS9
+         6Ddc2oUMujeQPJ2FyMpsdoOHqSRZnAMJ9TcBx+bFMxLy4Se1ItggKhf4oMibBGLX3dLy
+         jGtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0D2zoIq0Ad93aV6HjqHFw85iMgiAhbthzs6ORs3GyBnDW90ITikNEQqE45BDlFi1oQoRcWmbhhEWJFYIWAMv/rkU=@vger.kernel.org, AJvYcCX4raU3SBvmV78EbwgA1bqVv4UAgAC3RgAQ9S++VUZyEtVd9TWuNGw4XoL5FcfnlnB+pBuzbkVx8GPdbf8=@vger.kernel.org, AJvYcCX6XYVLgg9jYjjkF0PKzldgnjZqTAGTOJWrqNBEBmsxdSS53UO9zg9cRbZcyH2tJdFExUcHMMJSCQzVRIbn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2+XrNZdJq5cbmxW929UEPNLOifE5uvH5h+kI30eTyrEy/ejG
+	Ge6qdNWTPc7qPhaB2yrOV2y/BHkFT36uRWerriAMBRUrYaOYJs+A
+X-Google-Smtp-Source: AGHT+IGHyQ/thpVPHpLlMROm5PaaH2JXUVeTNkTbxO/M3qZ9x2+zgfugUFwAwVylRL4VZAW3TYD2Yg==
+X-Received: by 2002:a05:6a20:c6cd:b0:1cf:4d21:f4c1 with SMTP id adf61e73a8af0-1cf5e094debmr3981813637.19.1726031294830;
+        Tue, 10 Sep 2024 22:08:14 -0700 (PDT)
+Received: from nick-mbp.ust.hk (wf121-022.ust.hk. [175.159.121.22])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-719090d11e6sm2156984b3a.205.2024.09.10.22.08.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 22:08:14 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v5 0/3] tty: serial: samsung: Serial fixes for Apple A7-A11 SoCs
+Date: Wed, 11 Sep 2024 13:02:10 +0800
+Message-ID: <20240911050741.14477-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908142544.1409032-1-dolinux.peng@gmail.com>
- <20240909110415.33cb5f22@gandalf.local.home> <CAErzpmtJHhZpFg0sHtffexM0Lu6y2xzbVZ1SXGxKob_Dz0+Bfw@mail.gmail.com>
- <20240910125033.0a3986fa@gandalf.local.home>
-In-Reply-To: <20240910125033.0a3986fa@gandalf.local.home>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 11 Sep 2024 13:01:32 +0800
-Message-ID: <CAErzpmtz185jYSzVcDCFiVwB5b9J7nBQB-_=j7Q4_TxwjRwpTg@mail.gmail.com>
-Subject: Re: [RFC PATCH] function_graph: Support recording and printing the
- function return address
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 12:50=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Tue, 10 Sep 2024 14:15:39 +0800
-> Donglin Peng <dolinux.peng@gmail.com> wrote:
-> > > >
-> > > > See below logs with both funcgraph-retval and funcgraph-retaddr ena=
-bled.
-> > > >
-> > > > 4)               |  load_elf_binary() { /* A=3Dbprm_execve+0x249/0x=
-600 */
-> > >
-> > > I wonder if we should make this look more like the function tracer wh=
-en it
-> > > shows the parent. That is:
-> > >
-> > >   4)               |  load_elf_binary() { /* <-bprm_execve+0x249/0x60=
-0 */
-> >
-> > Nice, Is it necessary to add a prefix letter for the return value? For
-> > example, when
-> >  both funcgraph-retval and funcgraph-retaddr are enabled, like this:
-> >
-> >          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 V=
-=3D0x0 */
->
-> How about:
->
-> >          avc_policy_seqno(); /* <-selinux_file_permission+0x107/0x140 r=
-et=3D0x0 */
->
-> As "ret" is more obvious than "V".
+Hi,
 
-I agree, and will modify it, thanks.
+This series fixes issues with serial on A7-A11 SoCs. The changes do not
+seem to affect existing M1 and up users so they can be applied
+unconditionally.
 
->
-> >
-> > >
-> > > > 4)               |    load_elf_phdrs() { /* A=3Dload_elf_binary+0x8=
-4/0x1730 */
-> > > > 4)               |      __kmalloc_noprof() { /* A=3Dload_elf_phdrs+=
-0x4a/0xb0 */
-> > > > 4) + 47.910 us   |        __cond_resched(); /* V=3D0x0 A=3D__kmallo=
-c_noprof+0x28c/0x390 */
-> > > > 4) ! 204.142 us  |      } /* __kmalloc_noprof V=3D0xffff888201e32c0=
-0 */
-> > > > 4)               |      kernel_read() { /* A=3Dload_elf_phdrs+0x6c/=
-0xb0 */
-> > > > 4)               |        rw_verify_area() { /* A=3Dkernel_read+0x2=
-b/0x50 */
-> > > > 4)               |          security_file_permission() {
-> > > > 4)               |            selinux_file_permission() { /* A=3Dse=
-curity_file_permission+0x26/0x40 */
-> > > > 4)               |              __inode_security_revalidate() { /* =
-A=3Dselinux_file_permission+0x6d/0x140 */
-> > > > 4)   1.182 us    |                __cond_resched(); /* V=3D0x0 A=3D=
-__inode_security_revalidate+0x5f/0x80 */
-> > > > 4)   4.138 us    |              } /* __inode_security_revalidate V=
-=3D0x0 */
-> > > > 4)   1.513 us    |              avc_policy_seqno(); /* V=3D0x0 A=3D=
-selinux_file_permission+0x107/0x140 */
-> > > > 4) + 12.133 us   |            } /* selinux_file_permission V=3D0x0 =
-*/
-> > > > 4) + 39.834 us   |          } /* security_file_permission V=3D0x0 *=
-/
-> > > > 4) + 42.710 us   |        } /* rw_verify_area V=3D0x0 */
-> > > >
->
-> > > > +#ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> > > >  /* Function call entry */
-> > > >  FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
-> > > >
-> > > > @@ -79,6 +80,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph=
-_ent_entry,
-> > > >       F_STRUCT(
-> > > >               __field_struct( struct ftrace_graph_ent,        graph=
-_ent       )
-> > > >               __field_packed( unsigned long,  graph_ent,      func =
-           )
-> > > > +             __field_packed( unsigned long,  graph_ent,      retad=
-dr         )
-> > > >               __field_packed( int,            graph_ent,      depth=
-           )
-> > > >       ),
-> > > >
-> > >
-> > > Let's make this a new event, so that when this option is not enabled,=
- we
-> > > don't waste the ring buffer. For function tracing, every element adde=
-d to
-> > > the event will add megabytes extra to the ring buffer.
-> > >
-> > > It should be possible to switch what event gets created at the time o=
-f the
-> > > trace. Even calling different functions to do it.
-> >
-> > Sounds good, we may create a new event as follows:
-> >
-> > struct ftrace_graph_ent {
-> > unsigned long func; /* Current function */
-> > unsigned long retaddr;
-> > int depth;
-> > } __packed;
-> >
-> > FTRACE_ENTRY_PACKED(funcgraph_retaddr_entry, ftrace_graph_ent_readdr_en=
-try,
-> >
-> > TRACE_GRAPH_RETADDR_ENT,
-> >
-> > F_STRUCT(
-> > __field_struct( struct ftrace_graph_retaddr_ent, graph_retaddr_ent )
-> > __field_packed( unsigned long, graph_retaddr_ent, func )
-> > __field_packed( unsigned long, graph_retaddr_ent, retaddr )
-> > __field_packed( int, graph_retaddr_ent, depth )
-> > ),
-> >
-> > F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth)
->
-> Why not add the ret in the printk?
->
->   F_printk("--> %ps (%d) <-%ps", (void *)__entry->func, __entry->depth, (=
-void *)__entry->retaddr)
->
-> Then user space parsing tools could use this by default, when it doesn't
-> know how to parse it.
+Firstly, these SoCs require 32-bit writes on the serial port. This only
+manifested in earlycon as reg-io-width in device tree is consulted for
+normal serial writes.
 
-Thanks, I will modify it.
+Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+enable. Accessing these bits in addition to the original RXTO and RXTO
+enable bits will allow serial rx to work correctly on those SoCs.
 
->
-> > );
-> >
-> > If we were to introduce another new feature such as funcgraph-args whic=
-h
-> > adds a `ftrace_regs` to the `ftrace_graph_ent`, would it be necessary t=
-o
-> > create yet another new event?
->
-> Probably yes.
->
-> >
-> >  In the scenario where both funcgrah-retaddr and funcgraph-args are ena=
-bled,
-> > it is possible that an additional new event may also be required.
->
-> Yes, that would likely be another event.
->
-> -- Steve
+Changes in v5:
+  - Convert existing APPLE_S5L_* entries to use GENMASK() macro in
+    addition to BIT(), as suggested by Andi.
+
+Changes in v4:
+  - Removed fake Reviewed-by tag added by accident... need to stop
+    making stupid mistakes that wastes everyone's time. The remaining
+    Reviewed-by is real as far as I am aware.
+
+Changes in v3:
+  - v2 did not declare itself as v2 in subject line... resend as v3.
+
+Changes in v2:
+  - Mention A7-A11 in the comment about changing register accesses to
+    MMIO32.
+
+  - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+    entries for consistency.
+
+v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towinchenmi@gmail.com
+v2: https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towinchenmi@gmail.com
+v3: https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towinchenmi@gmail.com
+v4: https://lore.kernel.org/linux-samsung-soc/20240909084222.3209-1-towinchenmi@gmail.com/
+
+Nick Chan
+
+---
+Nick Chan (3):
+  tty: serial: samsung: Use bit manipulation macros for APPLE_S5L_*
+  tty: serial: samsung: Fix A7-A11 serial earlycon SError
+  tty: serial: samsung: Fix serial rx on Apple A7-A9
+
+ drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+ include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+ 2 files changed, 30 insertions(+), 16 deletions(-)
+
+
+base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
+-- 
+2.46.0
+
 
