@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-324360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CE0974BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:40:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D03974BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C171C255E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:40:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72BC8B2539B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE811420B6;
-	Wed, 11 Sep 2024 07:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E5013C9CB;
+	Wed, 11 Sep 2024 07:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6+kTvrZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EV2U67S6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A61A13D52B;
-	Wed, 11 Sep 2024 07:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C77139FE5;
+	Wed, 11 Sep 2024 07:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726040408; cv=none; b=e+trRcMlbnyuH8TJ1Lpx8Q4ky2c7BtM+fbay87hR1mSwDW4EFg4Ocsfe34xTx3tbY96yuq7QvwK3QITLmTKhEk+mLmC8jTMypMSsIJgJcokwUuxi61oGxls4IXo9WMRe4oPzoJIq2WVUQQsgddoTbN+8piH/oSlpqyz2KIyRQFA=
+	t=1726040429; cv=none; b=Cw6qp8XuSZ02pzuK7d228hWXRrZ+KcKoSaw3i7G0s/8kYHvfjTjEJ19F2w5movAjkHqZYCu8bxYSdufB9aLWjcu7aTZO1so37ZKClGCayOP4qfsccLKhZfpbsz+AKviNAE925L8OltGhLPO78GhUUbBNWjIjtkuRRRAlvNL5Jlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726040408; c=relaxed/simple;
-	bh=z1b6pVa9eOEfyu40NGxDNSnXinjavrHxuv1qkW3GbrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Am/tpuAGoDWhBmaghpBmWc0wHgg8e2PQaDDcT7im9kVeX+mahNGl5GkRMOokxknd1/6DAk1vdSmZjWw1Ds0V6oqtnzVxeeqH4ieW5amoD2g+ZvpUFenxuvmPkHMS8IUWRiyjfdJ4g6TQRXwQVov8yK+x1LR4Khh/blGaWMETLz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6+kTvrZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C6CC4CEC5;
-	Wed, 11 Sep 2024 07:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726040407;
-	bh=z1b6pVa9eOEfyu40NGxDNSnXinjavrHxuv1qkW3GbrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T6+kTvrZAyfVT0Fr/VAiUShNjAwuC9B2choCKXVSsuoob9cexbdlh1zGin9hSIGgi
-	 RJITnbAq98KwaUHfqYkjvYJ/IvV7brxszWX5GqUvc/uelH8IE+R5n8TZR5AcYBz4Vs
-	 QFi/0BuWRN3cIXEg25H72dAsPMV7gtH4FDrSmsDJQOBKuMOkAshrtje6TQYHfAxAgH
-	 5phm+38PJSlayeVg0wE753BEf7Fu17FbuKl1V66jJFqd4WYGOlvybD+F0L9JoEFMo6
-	 0LzQ9xXxME9frdBF7BKAE2oQSdNQ+V0Wo56IuP67NE+hSd/idmZM79HWQdk4nK6E5C
-	 b7xoSQEci/xAg==
-Date: Wed, 11 Sep 2024 08:40:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Joe Damato <jdamato@fastly.com>,
-	srk@ti.com, vigneshr@ti.com, danishanwar@ti.com,
-	pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH net-next v4 5/6] net: ethernet: ti: cpsw_ale: add
- policer/classifier helpers and setup defaults
-Message-ID: <20240911074001.GM572255@kernel.org>
-References: <20240910-am65-cpsw-multi-rx-v4-0-077fa6403043@kernel.org>
- <20240910-am65-cpsw-multi-rx-v4-5-077fa6403043@kernel.org>
+	s=arc-20240116; t=1726040429; c=relaxed/simple;
+	bh=eEurGc0lzelkzKE7Y4tAt7yqOWfvypBsiNPtTeh+2nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iOzEmXfw9MhaxrrsEn3hAJrIWvj76sF1QRdbfGnr7Jcx2E9TMjwCAd80z/DLP52M4ow/OH5wR3wbw6OXMIu43CbeI1oYTxVxUsrypTQ3LXQtzkyNNagQj+Y51mK7Iy8jtSFBg9cXH2WLhhTedxY/MZZuBIr31b6kUqexNl0cEFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EV2U67S6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726040424;
+	bh=gXQ/Rhu2tRAqzXn9dgKji/sX/U2W16S/vzVPUrY0w+g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EV2U67S6HA3f3oWC5tO9vRRhc6OAoieWmoDQ72uuqBVYQtnmVYizeMyzFzf7OQkfh
+	 Yxdi/fDxO0PjYWE2buCR0Q5H6iM7Ywe6CUlUwP0k040AjzI84MwcqsHReg6+Xz1bV1
+	 MxG1+BI9FyOGUqs2LOBMXaYJMNHpL+g/FP8WjqGQuI+9eadjhQSgI7utTqA/6ISzIK
+	 LcVPkhk5puUlIf9JjsOO+UB4wP/g4rV9COFUmiX0tDzH/siOtXv2vzLwe+eVisB5U9
+	 5xQ31qWOTTy6MHBfaPBmowIeIG6cJ06oQvFhJJ0lxEB0JEe3ZH36MiDJ5mxy6nr3Hb
+	 t1N69JU5HCizQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3XY35S0Xz4x42;
+	Wed, 11 Sep 2024 17:40:23 +1000 (AEST)
+Date: Wed, 11 Sep 2024 17:40:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the cgroup tree
+Message-ID: <20240911174023.0d0d9a15@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-am65-cpsw-multi-rx-v4-5-077fa6403043@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/eF9JH.c8hEHu9V6CsM9tr=j";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 10, 2024 at 12:24:02PM +0300, Roger Quadros wrote:
-> The Policer registers in the ALE register space are just shadow registers
-> and use an index field in the policer table control register to read/write
-> to the actual Polier registers.
-> Add helper functions to Read and Write to Policer registers.
-> 
-> Also add a helper function to set the thread value to classifier/policer
-> mapping. Any packet that first matches the classifier will be sent to the
-> thread (flow) that is set in the classifier to thread mapping table.
-> If not set then it goes to the default flow.
-> 
-> Default behaviour is to have 8 classifiers to map 8 DSCP/PCP
-> priorities to N receive threads (flows). N depends on number of
-> RX channels enabled for the port.
-> As per the standard [1] User prioritie 1 (Background) and 2 (Spare) have
-> lower priority than the user priority 0 (default). User priority 1 being
-> of the lowest priority.
-> 
-> [1] IEEE802.1D-2004, IEEE Standard for Local and metropolitan area networks
-> Table G-2 - Traffic type acronyms
-> Table G-3 - Defining traffic types
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+--Sig_/eF9JH.c8hEHu9V6CsM9tr=j
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Hi all,
 
+The following commits are also in the mm tree as different commits
+(but the same patches):
+
+  af000ce85293 ("cgroup: Do not report unavailable v1 controllers in /proc/=
+cgroups")
+  3c41382e920f ("cgroup: Disallow mounting v1 hierarchies without controlle=
+r implementation")
+  659f90f863a6 ("cgroup/cpuset: Expose cpuset filesystem with cpuset v1 onl=
+y")
+
+These are commits
+
+  a378d53133d3 ("cgroup: do not report unavailable v1 controllers in /proc/=
+cgroups")
+  36bf4ad72e18 ("cgroup: disallow mounting v1 hierarchies without controlle=
+r implementation")
+  3055c9be424d ("cgroup/cpuset: expose cpuset filesystem with cpuset v1 onl=
+y")
+
+in the mm-unstable branch of the mm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eF9JH.c8hEHu9V6CsM9tr=j
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhSWcACgkQAVBC80lX
+0GwBfQf/U3v+ii9s3XwCnWruhhZLZP/0s4FHdGqw/vZJpIFXFPK65YmBd8nBods7
+40erEH04m0pOxhimxVlYqpGI/v3+GQ84zx34ridDMgzKaWVGEMgxrzwqYo25Q1bo
+0NjrPFqIDSncMVBWD9iJGXRd/hq+aabtlhI7Qcf1B16UXri45/1wj6YNfuxq6INc
+SmJK27a2yQZyaeRBO/ptsw296ZNFds677DSmTNX076hetSRc/cVTzq2Zf4y0xd13
+q4G8IBM0mCi14Pss0kQi3muISusN5jJmglVphsYCRfQag971FaNeugBAM2PzEu1E
+3X5b5TgOprcar2uZKnvQFEom68sH3Q==
+=G/KL
+-----END PGP SIGNATURE-----
+
+--Sig_/eF9JH.c8hEHu9V6CsM9tr=j--
 
