@@ -1,201 +1,208 @@
-Return-Path: <linux-kernel+bounces-324745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFDB97505B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7160B97505F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3524328CF26
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AFB1F22146
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060E3184551;
-	Wed, 11 Sep 2024 11:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB69186287;
+	Wed, 11 Sep 2024 11:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8JOiQgd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="ngualw4h"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F51415383B;
-	Wed, 11 Sep 2024 11:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43BC183087
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726052587; cv=none; b=KRUNTIptoZs/cuJEfn07+lVjztAlKm8+Q53uunuruNjddpyuLRsGJtrYZBjMLUNokhQIETN0xK6yGE+cra8dMKe04qkV8RvsA20rzv/3wISjMOw96yWh5xCpGgZ6pdlOW8rW8pZG5W/AwPaBER7rkEO7gB1iOCbLeqcQY85/Eqs=
+	t=1726052615; cv=none; b=BnUAaGUwxsbDbHb+dG2s3a8ZHSkVGaCJQldOizFEELWvlX5YGWBC22uA3goVqoLu7cpQsvU21BQQvAkywLqm/KHjv8iyVqsObGruaUWqqjS2iadXGj7W4z1dWj5SLRHdpcVstuUlDRHQf3X5RPgj/5xhG5CkB1D9DG67Hg9Ch1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726052587; c=relaxed/simple;
-	bh=30PyCaGPw86nPfq4/D2gDA2paLlWYzbM2d1hzDaciZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=la1tU4sVcdoKTEJfZVdHuN5ld7UFvjz9/csIit9idhJUHkad+DOytz7SJWHtp1S2ZtAn3uKcppg25aisAi7p4LMhUj7Kc+USVwmXWnC6eNiRMCR852f10CQCOVrZADsrHBvpuvBdrPbVPia9nuPi2AIDf2YqocQLIk4e5Pl1lGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8JOiQgd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9DAC4CEC5;
-	Wed, 11 Sep 2024 11:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726052586;
-	bh=30PyCaGPw86nPfq4/D2gDA2paLlWYzbM2d1hzDaciZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H8JOiQgdNrhOJwCp2OCKdb3xqA+Z8hWOwHlps5zaVb2y2DDyVGpvhfVo/BCA7FFzt
-	 aX1QcdwxSaMgBeC55TEo7fm00U7cxqxox4Npi+ispeSFMibD/9ECY5tAi5GzTW/q2V
-	 Nxh4SioLfHXSYjaytl5r1RkyW+VqAYhaDkbWX/v4T1qu9OudYtsqPbabpqhshduAoq
-	 mzOmWrARD73NhUnPkGVoaZk+XwnVR0fIT5/Q+2JA9saxnZ4oZZdrSi4bidV1sCZXjP
-	 UFLqYOm9GvWWtDkOLDMrCa+T7aSicaJjOcDVzJwNeXxZA2Viei8Aaj3hQAQSvL2rtO
-	 jnioDidiQ4RVw==
-Date: Wed, 11 Sep 2024 13:02:59 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <ZuF444VO8gK8l7UR@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-10-dakr@kernel.org>
- <0146cb78-5a35-4d6b-bc75-fed1fc0c270c@proton.me>
- <ZuCEneJeXcRo5qs8@pollux>
- <19d81a27-9600-4990-867c-624104e3ad83@proton.me>
- <ZuDVekRzfeBkWmKz@pollux>
- <77b91448-a21e-4e1b-9a8e-3d2052d79a78@proton.me>
+	s=arc-20240116; t=1726052615; c=relaxed/simple;
+	bh=ORjVOdeptDBmaHaEY2r7GosRGBJcUlHe/3hAQlnOrz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NqSkROfcS50P1SwOqWBqKAJ5tHMXsNvcmLqxhPNdOXTnEtwP//dcaUL1HLsMein8PfcCpEvIHCLzCCHZ2ZOdqPMDZa9ByKS9RW1In2hFcakVPWPIRmOYesW6z47k/ndupWjEnf7YDesGoAufG40z/7Y+844Px8w/RvlxJ4dved4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=ngualw4h; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6d3f4218081so63966677b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 04:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1726052611; x=1726657411; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AxDPM9JMquUGtRkhciAkGUBMtgFCHGxBT/7mvWlerhM=;
+        b=ngualw4hRVF5ZCmEB3N3M78txTOX1Bo9ezNLhw422P3AxqnpuyNRSoYu0ieVmcjvbC
+         xIbE9Q4M9t8OYJZ/N8jqgKmTb7yU6DT4KEWIExqsiSBeCHYtAIH46HDBmtBLfi4n/+dt
+         1gt5CPm4nQDX75VaXsi2wh2FPyXHN2rsubJ6d7ctLumCK0Y7erBLRZ3uVSLFtn5FSjlb
+         TSwBLJAOoLqecXUDCrrhQuyqJjOXjBfY1VBKONUqQzBDh+2hz57NbvaKLhhpHDjVzpoY
+         ag57Xr+7eBS+2HDSyAlbMdDsMJ6+0mCwU8Pyc+AYLUFeWpyWtQfdYOytBNPKC+Lk7QRW
+         4O5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726052611; x=1726657411;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AxDPM9JMquUGtRkhciAkGUBMtgFCHGxBT/7mvWlerhM=;
+        b=FGBy12Fcuc3vQ8sWZZWmOsGKGfntRELyY+Xw/RMO/uI8OPiKZlLnFGem0bm9kEeTZj
+         lOdwPzS6Kwou3nEpXive4KRKjVHSyf36KXNba2RJYp0rN2l5MF0Tq4ixtsvLcJYzBCN/
+         7x6CIk2N3cWPG1m51XqNvn7fkO+jb71j3p2z4A1Tr2Iv9fqnhepnFl9kLUvrGzqEZGv+
+         Ns/OWVlhLTDJLF1H+GK4P1Eq2MrpGfU/n4ICLf2ZSAlDLWlRf2g80yaK1dIIHRS//2c9
+         HMEJh9B4txnUYdTrv4qc4Iu70Z/JHBT/EhXNGfF7N+u3gLD4uTHcxlt10yPyaoAj3Zg2
+         VtQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU74B28c1sowH6x+Cs3iziHZIjxCIvJYZdYIhqTbFPN5SDKILBpjsfMRDaX/znO0qtsNR62CvyBo4x3Qh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkoFPUyqHDgLTSkuakUwN0Qeye0C/XLM/BlcC+aWBiPogqWsFH
+	yaFr0cjirs3MqFONlf0UzA+DjVZCfkolTyqm0BsTop4HRrn/mseC3C+N+mGX4zYA2k+br81LLA9
+	DG5IWTw==
+X-Google-Smtp-Source: AGHT+IEksBAtqNIVyEeMs9l3E8i8FNYnoZY0XPPufsecc+4JGJPiqW+9JP8Cs7vP2yaYj7j9QgBnUA==
+X-Received: by 2002:a05:690c:4445:b0:6b1:2825:a3e2 with SMTP id 00721157ae682-6db451667e9mr179156077b3.44.1726052611525;
+        Wed, 11 Sep 2024 04:03:31 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db96501f0bsm6580827b3.80.2024.09.11.04.03.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 04:03:31 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1a9e4fa5aaso6439874276.2;
+        Wed, 11 Sep 2024 04:03:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRTbL+SfiiK/1yRyb+nuP5z57TWL+k7TH9KropMU5FwMfOggMIxWTHIbLKhuTfp/T2QrejL+iPASGnLk/o@vger.kernel.org, AJvYcCVU41OMxDOdEWr13nu0a6vPTYznnyCMvLqC8B+GXadVACcgafLNrds8vzYfV/JiaoNyLd8jP7zs15PM@vger.kernel.org, AJvYcCWff63YrzReDk33mnnQnh+pRwPqlaM7cIJyniuqy4Qd5GOkR2nEjYu+fadtGbXf2ZJ0CPU/SpYbGMoRY3c=@vger.kernel.org
+X-Received: by 2002:a05:6902:2e11:b0:e11:698f:8843 with SMTP id
+ 3f1490d57ef6-e1d349cf097mr17492302276.44.1726052610124; Wed, 11 Sep 2024
+ 04:03:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77b91448-a21e-4e1b-9a8e-3d2052d79a78@proton.me>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net> <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+ <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
+ <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com> <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
+In-Reply-To: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Wed, 11 Sep 2024 13:03:18 +0200
+X-Gmail-Original-Message-ID: <CAAObsKAigVVFWuoATTBWbCEfwg0RRHXa=Ehw2OQJyug6EdCDnA@mail.gmail.com>
+Message-ID: <CAAObsKAigVVFWuoATTBWbCEfwg0RRHXa=Ehw2OQJyug6EdCDnA@mail.gmail.com>
+Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 11, 2024 at 08:36:38AM +0000, Benno Lossin wrote:
-> On 11.09.24 01:25, Danilo Krummrich wrote:
-> > On Tue, Sep 10, 2024 at 07:49:42PM +0000, Benno Lossin wrote:
-> >> On 10.09.24 19:40, Danilo Krummrich wrote:
-> >>> On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
-> >>>> On 16.08.24 02:10, Danilo Krummrich wrote:
-> >>>>> +/// # Examples
-> >>>>> +///
-> >>>>> +/// ```
-> >>>>> +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
-> >>>>> +///
-> >>>>> +/// assert_eq!(*b, 24_u64);
-> >>>>> +/// # Ok::<(), Error>(())
-> >>>>> +/// ```
-> >>>>> +///
-> >>>>> +/// ```
-> >>>>> +/// # use kernel::bindings;
-> >>>>> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
-> >>>>> +/// struct Huge([u8; SIZE]);
-> >>>>> +///
-> >>>>> +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
-> >>>>> +/// ```
-> >>>>
-> >>>> It would be nice if you could add something like "KBox can't handle big
-> >>>> allocations:" above this example, so that people aren't confused why
-> >>>> this example expects an error.
-> >>>
-> >>> I don't think that's needed, it's implied by
-> >>> `SIZE == bindings::KMALLOC_MAX_SIZE + 1`.
-> >>>
-> >>> Surely, we could add it nevertheless, but it's not very precise to just say "big
-> >>> allocations". And I think this isn't the place for lengthy explanations of
-> >>> `Kmalloc` behavior.
-> >>
-> >> Fair point, nevertheless I find examples a bit more useful, when the
-> >> intention behind them is not only given as code.
-> >>
-> >>>>> +///
-> >>>>> +/// ```
-> >>>>> +/// # use kernel::bindings;
-> >>>>> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
-> >>>>> +/// struct Huge([u8; SIZE]);
-> >>>>> +///
-> >>>>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
-> >>>>> +/// ```
-> >>>>
-> >>>> Similarly, you could then say above this one "Instead use either `VBox`
-> >>>> or `KVBox`:"
-> >>>>
-> >>>>> +///
-> >>>>> +/// # Invariants
-> >>>>> +///
-> >>>>> +/// The [`Box`]' pointer is always properly aligned and either points to memory allocated with `A`
-> >>>>
-> >>>> Please use `self.0` instead of "[`Box`]'".
-> >>>>
-> >>>>> +/// or, for zero-sized types, is a dangling pointer.
-> >>>>
-> >>>> Probably "dangling, well aligned pointer.".
-> >>>
-> >>> Does this add any value? For ZSTs everything is "well aligned", isn't it?
-> >>
-> >> ZSTs can have alignment and then unaligned pointers do exist for them
-> >> (and dereferencing them is UB!):
-> > 
-> > Where is this documented? The documentation says:
-> > 
-> > "For operations of size zero, *every* pointer is valid, including the null
-> > pointer. The following points are only concerned with non-zero-sized accesses."
-> > [1]
-> 
-> That's a good point, the documentation looks a bit outdated. I found
-> this page in the nomicon: https://doc.rust-lang.org/nomicon/vec/vec-zsts.html
-> The first iterator implementation has an alignment issue. (Nevertheless,
-> that chapter of the nomicon is probably useful to you, since it goes
-> over implementing `Vec`, but maybe you already saw it)
-> 
-> > [1] https://doc.rust-lang.org/std/ptr/index.html
-> 
-> Might be a good idea to improve/complain about this at the rust project.
+On Thu, Jun 13, 2024 at 11:38=E2=80=AFPM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Hi,
+>
+> On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
+> > On Thu, Jun 13, 2024 at 11:24=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizos=
+o.net> wrote:
+> > > On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Sebastian Reichel
+> > > <sebastian.reichel@collabora.com> wrote:
+> > > > On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
+> > > > > IOMMUs with multiple base addresses can also have multiple power
+> > > > > domains.
+> > > > >
+> > > > > The base framework only takes care of a single power domain, as s=
+ome
+> > > > > devices will need for these power domains to be powered on in a s=
+pecific
+> > > > > order.
+> > > > >
+> > > > > Use a helper function to stablish links in the order in which the=
+y are
+> > > > > in the DT.
+> > > > >
+> > > > > This is needed by the IOMMU used by the NPU in the RK3588.
+> > > > >
+> > > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > > > > ---
+> > > >
+> > > > To me it looks like this is multiple IOMMUs, which should each get
+> > > > their own node. I don't see a good reason for merging these
+> > > > together.
+> > >
+> > > I have made quite a few attempts at splitting the IOMMUs and also the
+> > > cores, but I wasn't able to get things working stably. The TRM is
+> > > really scant about how the 4 IOMMU instances relate to each other, an=
+d
+> > > what the fourth one is for.
+> > >
+> > > Given that the vendor driver treats them as a single IOMMU with four
+> > > instances and we don't have any information on them, I resigned mysel=
+f
+> > > to just have them as a single device.
+> > >
+> > > I would love to be proved wrong though and find a way fo getting
+> > > things stably as different devices so they can be powered on and off
+> > > as needed. We could save quite some code as well.
+> >
+> > FWIW, here a few ways how I tried to structure the DT nodes, none of
+> > these worked reliably:
+> >
+> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
+devices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1=
+163
+> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-su=
+bnodes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1162
+> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
+devices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
+> > https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-=
+iommus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L2669
+> >
+> > I can very well imagine I missed some way of getting this to work, but
+> > for every attempt, the domains, iommus and cores were resumed in
+> > different orders that presumably caused problems during concurrent
+> > execution fo workloads.
+> >
+> > So I fell back to what the vendor driver does, which works reliably
+> > (but all cores have to be powered on at the same time).
+>
+> Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
+> only one iommu node in that. I would have expected a test with
+>
+> rknn {
+>     // combined device
+>
+>     iommus =3D <&iommu1>, <&iommu2>, ...;
+> };
 
-Well, my point is how do we know? There's no language specification and the
-documentation is (at least) ambiguous.
+You are right, I'm afraid I lost those changes...
 
-> 
-> >>     #[repr(align(64))]
-> >>     struct Token;
-> >>
-> >>     fn main() {
-> >>         let t = 64 as *mut Token;
-> >>         let t = unsafe { t.read() }; // this is fine.
-> >>         let t = 4 as *mut Token;
-> >>         let t = unsafe { t.read() }; // this is UB, see below for miri's output
-> >>     }
-> >>
-> >> Miri complains:
-> >>
-> >>     error: Undefined Behavior: accessing memory based on pointer with alignment 4, but alignment 64 is required
-> >>      --> src/main.rs:8:22
-> >>       |
-> >>     8 |     let t = unsafe { t.read() }; // this is UB, see below for miri's output
-> >>       |                      ^^^^^^^^ accessing memory based on pointer with alignment 4, but alignment 64 is required
-> >>       |
-> >>       = help: this indicates a bug in the program: it performed an invalid operation, and caused Undefined Behavior
-> >>       = help: see https://doc.rust-lang.org/nightly/reference/behavior-considered-undefined.html for further information
-> >>       = note: BACKTRACE:
-> >>       = note: inside `main` at src/main.rs:8:22: 8:30
-> > 
-> > `read` explicitly asks for non-null and properly aligned even if `T` has size
-> > zero.
+> Otherwise I think I would go with the schema-subnodes variant. The
+> driver can initially walk through the sub-nodes and collect the
+> resources into the main device, so on the driver side nothing would
+> really change. But that has a couple of advantages:
+>
+> 1. DT and DT binding are easier to read
+> 2. It's similar to e.g. CPU cores each having their own node
+> 3. Easy to extend to more cores in the future
+> 4. The kernel can easily switch to proper per-core device model when
+>    the problem has been identified
 
-I mentioned this because for `read` it's explicitly documented.
+You mean having subnodes containing the different resources that a
+core uses such as clocks, memory resources, power domain, etc? The
+problem with that is that the existing code in the kernel assumes that
+those resources are directly within a device node. Or do you suggest
+something else?
 
-However, the nomicon also says "This is possibly needless pedantry because
-ptr::read is a noop for a ZST, [...]".
+Thanks,
 
-> 
-> Dereferencing (ie `*t`) also requires that (I just didn't do it, since
-> then the `Token` must implement `Copy`).
-
-Again, how do you know? The documentation isn't clear about it.
-
-> 
-> ---
-> Cheers,
-> Benno
-> 
+Tomeu
 
