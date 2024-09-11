@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-325520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5231A975AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:13:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68837975ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1CE41F240EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:13:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12EB1B223E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B98F1BA27E;
-	Wed, 11 Sep 2024 19:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D91BA284;
+	Wed, 11 Sep 2024 19:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+oqQtNu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcaeIvus"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D06B1B1D53;
-	Wed, 11 Sep 2024 19:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D12C224CC;
+	Wed, 11 Sep 2024 19:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726081977; cv=none; b=X+4LmAvuEMs+ZDL31zf6X1R1SxuUXjMJ+HmJri+6L2ZzRLQncjA8Ll5HmTXaWvNh1/jjo9RZToDb9m6I4EkJpMM99aNb+ZlYJXPe+q8uvi/WEYDlKD5RXJ0vjZ6Tq7Ih6w/QeYeIKFipH1ysc9Jf7LspBsh1jZZQRgLHzEgliKk=
+	t=1726082158; cv=none; b=kL5j3fSndgBcIjxtK/z/lmsE2DkYCL3mj7VCNrYi6ggUAZbY1tzK91bIsSLhfhi0q35l0DmXKh9vUQQE+a5J1v/zxkEBAIHF24/9LTJyt+V5ZCpw9Ajat3TiA0Ze+KVPPF28LX1hyJvYf69wdBayxnktx7B/4His85HOjbcq9O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726081977; c=relaxed/simple;
-	bh=6a4hc9aWv1YiaHMYn7m1GwNtCFl+AUMEaP4xnDmR/U4=;
+	s=arc-20240116; t=1726082158; c=relaxed/simple;
+	bh=f5rad1ySYqHXSjFfBwKfxHb+fDtmkXvdG7RtWBDNqQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LX7EgLu36N6ySxPd9KU2jjyr/wlzgdaAPmp0Bo0n9IUac+3YcDqca1SvgjR+JShbYwPyTph3WikrWWT6GGgpl/gYzLgDYAuKf6aV1WuaiykilQqi9jglAldtk093S/Tk7vWCTpQ1ikrqYXce6BYlgATLpLTKjvc1g2VJHi3usE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+oqQtNu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CEFCC4CEC0;
-	Wed, 11 Sep 2024 19:12:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HjvjQMkad6P88qIk9TODk3N73UOifg+CXVlgwP+e+Y3+fq+tdgYwW8JhxHZ2DS/XTts9q+aFhtr2Psq0ulexOxRzysQTRxRtcNd0jZYy7Y2i1IUJfaoM+DZ2mHCUkEYekY3hcyYM2dZkxfYToZVfXewHFt4ZB9ZiRjX5Bvi6Ly0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcaeIvus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86485C4CEC0;
+	Wed, 11 Sep 2024 19:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726081977;
-	bh=6a4hc9aWv1YiaHMYn7m1GwNtCFl+AUMEaP4xnDmR/U4=;
+	s=k20201202; t=1726082157;
+	bh=f5rad1ySYqHXSjFfBwKfxHb+fDtmkXvdG7RtWBDNqQ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t+oqQtNu8MHsW+4lDH5CczAZ04A/VXuFdbTm1HfARCFfFhpfWChx24WuCz3ymakAs
-	 r9B/yp7tAqTJY8hqFgFgVO/DUtpChYGoXrWNY+kkhxCr4kxKjUWosiQeN0xtyWfdwa
-	 OmvtFpyeIFLuMnzv4celKXK8mbMhNWRS8qr0DBUfybrbbrdRQHPm8NRdCl5a8tS0BJ
-	 UIQOiJk1I96ZzzdzQVrkqMRZBFgG5ZYQXxPFLs2oT/DteOMcWpO9F7103houFDP9ue
-	 A3iI0IuNTgCGI6OyYyB9wbzBZRX02osDkurQlG9gp78EUjX+/AEba+dxOCpGYmOXC6
-	 wyMm44IrZJ7hA==
-Date: Wed, 11 Sep 2024 20:12:52 +0100
+	b=FcaeIvusKXC5Ef1u/zeIHV+Hh9ASPqp/JPPe2lfXfShUmDrKxVoMoCQOx9rfNf3gw
+	 Diko6VFo+E1gTq2cG3pNz+MKiDKennENbYaQHn2G807iEBUUz+aSTtbJe1NaGLC1Ik
+	 9ZScwQdbr3ceqRzHLBiJp0YQMK1fQs5fAhmfr44/Pj5lFZeJbd/kgmhw4wPtDhk0Oa
+	 nfqy/blckDg4LuFhNLGisV6lXc4otouffVTXhrIvsqSgHfQRyzr8IMLPr52DCqGZrr
+	 F/RIGZ6UYF8ANFHqH6SGBr+PD0co+4unt4dF+3BY0M9q6k0Rs6QCAwS6MD6Cwr5xmz
+	 hgPNtoctRmWLQ==
+Date: Wed, 11 Sep 2024 20:15:53 +0100
 From: Conor Dooley <conor@kernel.org>
 To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Auchter <michael.auchter@ni.com>, linux-iio@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: dac: adi,ad56xx: Fix duplicate
- compatible strings
-Message-ID: <20240911-ruined-embellish-07ca645075b2@spud>
-References: <20240910234440.1045098-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: rtc: Drop non-trivial duplicate compatibles
+Message-ID: <20240911-cornhusk-labrador-1c2bfa4def8b@spud>
+References: <20240910234431.1043923-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,37 +57,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hxIJYbNzdbJjsrRN"
+	protocol="application/pgp-signature"; boundary="tlJ4mE5bzP/uerQp"
 Content-Disposition: inline
-In-Reply-To: <20240910234440.1045098-1-robh@kernel.org>
+In-Reply-To: <20240910234431.1043923-1-robh@kernel.org>
 
 
---hxIJYbNzdbJjsrRN
+--tlJ4mE5bzP/uerQp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 06:44:39PM -0500, Rob Herring (Arm) wrote:
-> adi,ad5686.yaml and adi,ad5696.yaml duplicate all the I2C device
-> compatible strings with the exception of "adi,ad5337r". Since
-> adi,ad5686.yaml references spi-peripheral-props.yaml, drop the I2C
-> devices from it making it only SPI devices. Update the titles to make
-> the distinction clear.
+On Tue, Sep 10, 2024 at 06:44:31PM -0500, Rob Herring (Arm) wrote:
+> Several compatibles documented in trivial-rtc.yaml are documented
+> elsewhere and are not trivial, so drop them.
 >=20
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---hxIJYbNzdbJjsrRN
+--tlJ4mE5bzP/uerQp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHrtAAKCRB4tDGHoIJi
-0slYAP4426dhakOXo0ghGVRtf5Ey0VLk30rAY5BPl1zAHVIroAEAuVvfZmHVZz8h
-hXNgs47Ldw0d6Cd/U3w+EcuA9+0cZQI=
-=xVmK
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHsaQAKCRB4tDGHoIJi
+0lqYAQCeWL+RatiMKrcHYjc4J9gGihRTlK/Cv9pH9MlZ0agjtAEA+L43PIrIW2q0
+g137a794Zt7r7pdlJwdAU363E4obNw0=
+=dPoc
 -----END PGP SIGNATURE-----
 
---hxIJYbNzdbJjsrRN--
+--tlJ4mE5bzP/uerQp--
 
