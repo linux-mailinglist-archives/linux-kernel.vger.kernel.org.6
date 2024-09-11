@@ -1,270 +1,210 @@
-Return-Path: <linux-kernel+bounces-324157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E599797489C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD649748A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9071F26AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B7C1C24C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3D73FBB3;
-	Wed, 11 Sep 2024 03:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED61A3BBDE;
+	Wed, 11 Sep 2024 03:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Md7bxa0p"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="CTnssbu3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E//nWLKo"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBFD282EE;
-	Wed, 11 Sep 2024 03:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B3E225D7;
+	Wed, 11 Sep 2024 03:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726025169; cv=none; b=iNeGfd5dGPB2dvNQPrFPpFlyuEVugv0mgJgEXubEJWfBvUL5QmWWqSKSQ2/qPH20tfnnZww1kH57T2DbtKOYq7ilC725N6lBnXxpIzY+12QjH/YO/cR7fQPbp1bSrmpvUWlvCPutmbS0uzpQhFY8rJt8xx2xd/GZ2qAo9D+ZHBI=
+	t=1726025511; cv=none; b=JldarTqvi+WYfLf3fjvORP4s819YtWe+dNJNcbki0C6eMqZF9i6DkkcWlBmRATB/QDhlBr/h0l2fSjikeX6SlxBGE9TW7sP3uWapKZDhH1jhtCOFqRMinnQ5Y1Qqm8u9N/IJIMGkyfDdIN2mxcU2CHub4hlMXzgbGU4KyFkD6gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726025169; c=relaxed/simple;
-	bh=9iVG5ANw0tv40iwbOJMp2Z8mcvfOVbsWS0Y5OJSrvUM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pd/i2lArwPYhpHs/DZWwldA5+cKMKhvJ9dMPj1Hix2Ip27P2uGaNht4dDEm2/MgqcRcb3GKc0bi8wMmGrK5VGNVE33dEHv/CNg4REmept4EuehwnLLLEedBXrzsUtNR2mz96XcsQoyeuw/V3P/oVCF8aR39Lukt+gNVAere5ND0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Md7bxa0p; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 90eb7eac6fed11efb66947d174671e26-20240911
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=M7PNOHSKrYvHhP6Orsr+BtKgtk6bwXfb0FUKcwyBpD0=;
-	b=Md7bxa0puKqqpr+8L1FBfYNLYSBKsBhHBBOvDx1+wg8p7erjcn7l2iaJLZwq9uk7ezOrvPeq6QTUtI1NItKvvwI7ONTAIyPqSjyrx87dMPjNXc44cTtaUD2va+OPpz1pMJUl539HpFZp3AvrciyMVcrlBiTlpWl8XV9OI5rNjCg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:5074788f-9cb4-48b2-948e-db751426adaf,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:24d8c5bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 90eb7eac6fed11efb66947d174671e26-20240911
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <chunhui.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1122315246; Wed, 11 Sep 2024 11:26:00 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 11 Sep 2024 11:25:58 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 11 Sep 2024 11:25:58 +0800
-From: Chunhui Li <chunhui.li@mediatek.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<wsd_upstream@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>, Petr Pavlu
-	<petr.pavlu@suse.com>, kernel test robot <lkp@intel.com>, Xion Wang
-	<xion.wang@mediatek.com>
-Subject: [PATCH v4 1/1] module: abort module loading when sysfs setup suffer errors
-Date: Wed, 11 Sep 2024 11:28:02 +0800
-Message-ID: <20240911032802.22413-2-chunhui.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240911032802.22413-1-chunhui.li@mediatek.com>
-References: <20240911032802.22413-1-chunhui.li@mediatek.com>
+	s=arc-20240116; t=1726025511; c=relaxed/simple;
+	bh=fh2mQQHN0+JyXsYmenNkWGkkjGx3ocELSgZ/ZIqwhUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=We89M14djEJdth07Zh2LWKq2yEW9PDowJoyaPuxn4Ri1yU0BuY04H9+2TweXsnpjymGcVUuo2ksNF5sjJawvErS4DlDdhF+D6mM40OdPzT4xNNx7NgMPcrqKoJ2T/fwPGQTNb3283auoMbBEZoHoskwBozuDxWvnph6yazJ23Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=CTnssbu3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E//nWLKo; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1BB4511400BB;
+	Tue, 10 Sep 2024 23:31:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 10 Sep 2024 23:31:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1726025507;
+	 x=1726111907; bh=dvDVMkbr7rfR+VCNGEE7NMGR6SEz2dyK7e21kWURShA=; b=
+	CTnssbu3B6AtV3bXj661ntr/y/rpB6O/OZ45GMLskMx4TyAEliyU8GSs14vITv4W
+	TrH8fzyrI4mvjdE13BEq0qI0wfiodvMqDofQzAlbifl9tSzWyQFWuZnpWVhSodos
+	my5TLcq6QTJaO5KjwzBKLb1G8w7KMvczjMgFjk7EJsNIKAuQTVKdsgW+kkgxGB6S
+	UqUAT0tp8uTfbxekCz98Uo7d6b41LMgwMQaiIGx1EyH8TCQ8vlJ3zMka8Fmqj322
+	cl3+owVuIwTT2WKAZ9oN8h16PnzRCcO5Hy/leziW0fUgkJdLnlSXj4wDCeSKRNdP
+	K/9bZ/ua6/aw05zKP89EIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726025507; x=
+	1726111907; bh=dvDVMkbr7rfR+VCNGEE7NMGR6SEz2dyK7e21kWURShA=; b=E
+	//nWLKoadYIePtJ3R+0d8frhqggwmLTDQNZAWUveLZc7cvfea1Mlv8+qiLF2i/5A
+	Q96SnL2EOuMq4So4VZyoF2A0geWZ0nkSTX9BwAwJbu7B281npUMILl6KHwLMwCWv
+	LQdXIP4YdyyXaKvDj9SIUS/IhHJvY3c2llVe4xX3C6go9Y7KkdFAlOw/bS1yyY+/
+	ZVbvcVnH6XZcGfwJQfrQOxt8oMzeZxqHvNEUv735NIscPpHaTlmJdlQP8vUIrghC
+	2HHlNtX7tiT5Pra2fhEgwzvMIoaKnNXeYXh2sXj6jLRtQYOz/fZZ4lQNNtZZDgBN
+	o/ocqKwGGwbOYJmb0okTQ==
+X-ME-Sender: <xms:Ig_hZgc-UibDzIpSgn1os821_tjPU_6mtuPws7Z3S33H5keeFQ1yNg>
+    <xme:Ig_hZiPPKL3gSzA_gy5XtCVqBysTLlaRZPOckL2wKNOU1s49HB5MRBYPL1-W5UkEI
+    0ehz6voKQ6AaPxGOw>
+X-ME-Received: <xmr:Ig_hZhj8HXoIG3s1CG7eEdDT_WgN_3ifMlELoT6y3obuMu7W5v7mf8zn3vMAeKnrnccq03F4tUVCo5aKK8uJbDoTXMaTrHOMTv1tJlHd1V2cLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejtddgjedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdljedtmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgestheksfdttddtjeenucfhrhhomhepffgrnhhivghlucgiuhcuoegugihuse
+    gugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpedtgfeuueeukeeikefgieeukeff
+    leetkeekkeeggeffvedtvdejueehueeuleefteenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggprhgt
+    phhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrihhird
+    hnrghkrhihihhkohesghhmrghilhdrtghomhdprhgtphhtthhopegrlhgvgigvihdrshht
+    rghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegvugguhiiikeejse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhope
+    grshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomh
+    dprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:Ig_hZl9SRWqJlxlQUmUvRc9-qKX-cHiiTlyT7g_3S90qiOE53EhD6g>
+    <xmx:Ig_hZsswXRUWAiEu-0LeBecg-chMObhr5fITv0QDA2dcNs3JaPbwJg>
+    <xmx:Ig_hZsHEjlg0Et9_0xlHeRwDC0zg8UBO_lacLrbyzWyLv16sz9bf9Q>
+    <xmx:Ig_hZrO9GCydkYdnqRAAtx4KSUAmLq6uG5z4ZQSe-YhFn8a3_9Zt1w>
+    <xmx:Iw_hZtMMXVUBcRodGF11Hrlx4FwGUkDjkkqX_TKsNzhLxHq-m46M2PUq>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 10 Sep 2024 23:31:44 -0400 (EDT)
+Date: Tue, 10 Sep 2024 21:31:43 -0600
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, LKML <linux-kernel@vger.kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH bpf-next] bpf: ringbuf: Support consuming
+ BPF_MAP_TYPE_RINGBUF from prog
+Message-ID: <cz7qwrujjiunv3yydkfamfm5mkis5xdy4vg4odwatchjoaoolk@zzithxrzdxkv>
+References: <18a9ddacc99bb95e9802f8ad1e81214433df496c.1725929645.git.dxu@dxuuu.xyz>
+ <CAADnVQKyfZ2-qCvmqG8z919ggdOszEjTs04H=cTGOZTi-zhx7Q@mail.gmail.com>
+ <CAEf4Bza5Fiw2rZ5T7=zRwVk1Ct1Mgm7Gpa8w+NJVPZf8keY_9Q@mail.gmail.com>
+ <vru2zgphyfywjcqikolwotsfun2bgtrnfmwvfls5ra4tznsydr@46w5rq7gqepz>
+ <4ec8e15b-c44b-41d7-b337-32d17306d67b@app.fastmail.com>
+ <CAEf4BzbHqKD87KTSmFUMokXEaAa70xNs96QqfWBHjFbuE5PL=w@mail.gmail.com>
+ <rsdwvah5ov3itchsgkwgleihswoycoal5vjbeql2wbqoz5noiz@myk2atnnjaub>
+ <CAEf4BzbKoyja2ErsusUcK8YaS1Rqm0VmBzwsNtQtM1-XHDhD7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <CAEf4BzbKoyja2ErsusUcK8YaS1Rqm0VmBzwsNtQtM1-XHDhD7g@mail.gmail.com>
 
-When insmod a kernel module, if fails in add_notes_attrs or
-add_sysfs_attrs such as memory allocation fail, mod_sysfs_setup
-will still return success, but we can't access user interface
-on android device.
+On Tue, Sep 10, 2024 at 05:39:55PM GMT, Andrii Nakryiko wrote:
+> On Tue, Sep 10, 2024 at 4:44 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> > On Tue, Sep 10, 2024 at 03:21:04PM GMT, Andrii Nakryiko wrote:
+> > > On Tue, Sep 10, 2024 at 3:16 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On Tue, Sep 10, 2024, at 2:07 PM, Daniel Xu wrote:
+> > > > > On Tue, Sep 10, 2024 at 01:41:41PM GMT, Andrii Nakryiko wrote:
+> > > > >> On Tue, Sep 10, 2024 at 11:36 AM Alexei Starovoitov
+> > > > [...]
+> > > > >
+> > > > >>
+> > > > >> Also, Daniel, can you please make sure that dynptr we return for each
+> > > > >> sample is read-only? We shouldn't let consumer BPF program ability to
+> > > > >> corrupt ringbuf record headers (accidentally or otherwise).
+> > > > >
+> > > > > Sure.
+> > > >
+> > > > So the sample is not read-only. But I think prog is prevented from messing
+> > > > with header regardless.
+> > > >
+> > > > __bpf_user_ringbuf_peek() returns sample past the header:
+> > > >
+> > > >         *sample = (void *)((uintptr_t)rb->data +
+> > > >                            (uintptr_t)((cons_pos + BPF_RINGBUF_HDR_SZ) & rb->mask));
+> > > >
+> > > > dynptr is initialized with the above ptr:
+> > > >
+> > > >         bpf_dynptr_init(&dynptr, sample, BPF_DYNPTR_TYPE_LOCAL, 0, size);
+> > > >
+> > > > So I don't think there's a way for the prog to access the header thru the dynptr.
+> > > >
+> > >
+> > > By "header" I mean 8 bytes that precede each submitted ringbuf record.
+> > > That header is part of ringbuf data area. Given user space can set
+> > > consumer_pos to arbitrary value, kernel can return arbitrary part of
+> > > ringbuf data area, including that 8 byte header. If that data is
+> > > writable, it's easy to screw up that header and crash another BPF
+> > > program that reserves/submits a new record. User space can only read
+> > > data area for BPF ringbuf, and so we rely heavily on a tight control
+> > > of who can write what into those 8 bytes.
+> >
+> > Ah, ok. I think I understand.
+> >
+> > Given this and your other comments about rb->busy, what about enforcing
+> > bpf_user_ringbuf_drain() NAND mmap? I think the use cases here are
+> > different enough where this makes sense.
+> 
+> You mean disabling user-space mmap()? TBH, I'd like to understand the
+> use case first before we make such decisions. Maybe what you need is
+> not really a BPF ringbuf? Can you give us a bit more details on what
+> you are trying to achieve?
 
-Patch for make mod_sysfs_setup can check the error of
-add_notes_attrs and add_sysfs_attrs
+BPF cpumap, under the hood, has one MPSC ring buffer (ptr_ring) for each
+entry in the cpumap. When a prog redirects to an entry in the cpumap,
+the machinery queues up the xdp frame onto the destination CPU ptr_ring.
+This can occur on any cpu, thus multi-producer. On processing side,
+there is only the kthread created by the cpumap entry and bound to the
+specific cpu that is consuming entries. So single consumer.
 
-Fixes: db939b519bea ("Module section offsets in /sys/module")
-Fixes: 6d76013381ed ("Add /sys/module/name/notes")
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409010016.3XIFSmRA-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202409072018.qfEzZbO7-lkp@intel.com/
-Signed-off-by: Xion Wang <xion.wang@mediatek.com>
-Signed-off-by: Chunhui Li <chunhui.li@mediatek.com>
----
- kernel/module/sysfs.c | 63 ++++++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 21 deletions(-)
+Goal is to track the latency overhead added from ptr_ring and the
+kthread (versus softirq where is less overhead). Ideally we want p50,
+p90, p95, p99 percentiles.
 
-diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
-index 26efe1305c12..456358e1fdc4 100644
---- a/kernel/module/sysfs.c
-+++ b/kernel/module/sysfs.c
-@@ -69,12 +69,13 @@ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
- 	kfree(sect_attrs);
- }
- 
--static void add_sect_attrs(struct module *mod, const struct load_info *info)
-+static int add_sect_attrs(struct module *mod, const struct load_info *info)
- {
- 	unsigned int nloaded = 0, i, size[2];
- 	struct module_sect_attrs *sect_attrs;
- 	struct module_sect_attr *sattr;
- 	struct bin_attribute **gattr;
-+	int ret;
- 
- 	/* Count loaded sections and allocate structures */
- 	for (i = 0; i < info->hdr->e_shnum; i++)
-@@ -85,7 +86,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.bin_attrs[0]);
- 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
- 	if (!sect_attrs)
--		return;
-+		return -ENOMEM;
- 
- 	/* Setup section attributes. */
- 	sect_attrs->grp.name = "sections";
-@@ -103,8 +104,10 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 		sattr->address = sec->sh_addr;
- 		sattr->battr.attr.name =
- 			kstrdup(info->secstrings + sec->sh_name, GFP_KERNEL);
--		if (!sattr->battr.attr.name)
-+		if (!sattr->battr.attr.name) {
-+			ret = -ENOMEM;
- 			goto out;
-+		}
- 		sect_attrs->nsections++;
- 		sattr->battr.read = module_sect_read;
- 		sattr->battr.size = MODULE_SECT_READ_SIZE;
-@@ -113,13 +116,15 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	}
- 	*gattr = NULL;
- 
--	if (sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp))
-+	ret = sysfs_create_group(&mod->mkobj.kobj, &sect_attrs->grp);
-+	if (ret)
- 		goto out;
- 
- 	mod->sect_attrs = sect_attrs;
--	return;
-+	return 0;
- out:
- 	free_sect_attrs(sect_attrs);
-+	return ret;
- }
- 
- static void remove_sect_attrs(struct module *mod)
-@@ -158,15 +163,12 @@ static void free_notes_attrs(struct module_notes_attrs *notes_attrs,
- 	kfree(notes_attrs);
- }
- 
--static void add_notes_attrs(struct module *mod, const struct load_info *info)
-+static int add_notes_attrs(struct module *mod, const struct load_info *info)
- {
- 	unsigned int notes, loaded, i;
- 	struct module_notes_attrs *notes_attrs;
- 	struct bin_attribute *nattr;
--
--	/* failed to create section attributes, so can't create notes */
--	if (!mod->sect_attrs)
--		return;
-+	int ret;
- 
- 	/* Count notes sections and allocate structures.  */
- 	notes = 0;
-@@ -176,12 +178,12 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
- 			++notes;
- 
- 	if (notes == 0)
--		return;
-+		return 0;
- 
- 	notes_attrs = kzalloc(struct_size(notes_attrs, attrs, notes),
- 			      GFP_KERNEL);
- 	if (!notes_attrs)
--		return;
-+		return -ENOMEM;
- 
- 	notes_attrs->notes = notes;
- 	nattr = &notes_attrs->attrs[0];
-@@ -201,19 +203,23 @@ static void add_notes_attrs(struct module *mod, const struct load_info *info)
- 	}
- 
- 	notes_attrs->dir = kobject_create_and_add("notes", &mod->mkobj.kobj);
--	if (!notes_attrs->dir)
-+	if (!notes_attrs->dir) {
-+		ret = -ENOMEM;
- 		goto out;
-+	}
- 
--	for (i = 0; i < notes; ++i)
--		if (sysfs_create_bin_file(notes_attrs->dir,
--					  &notes_attrs->attrs[i]))
-+	for (i = 0; i < notes; ++i) {
-+		ret = sysfs_create_bin_file(notes_attrs->dir, &notes_attrs->attrs[i]);
-+		if (ret)
- 			goto out;
-+	}
- 
- 	mod->notes_attrs = notes_attrs;
--	return;
-+	return 0;
- 
- out:
- 	free_notes_attrs(notes_attrs, i);
-+	return ret;
- }
- 
- static void remove_notes_attrs(struct module *mod)
-@@ -223,9 +229,15 @@ static void remove_notes_attrs(struct module *mod)
- }
- 
- #else /* !CONFIG_KALLSYMS */
--static inline void add_sect_attrs(struct module *mod, const struct load_info *info) { }
-+static inline int add_sect_attrs(struct module *mod, const struct load_info *info)
-+{
-+	return 0;
-+}
- static inline void remove_sect_attrs(struct module *mod) { }
--static inline void add_notes_attrs(struct module *mod, const struct load_info *info) { }
-+static inline int add_notes_attrs(struct module *mod, const struct load_info *info)
-+{
-+	return 0;
-+}
- static inline void remove_notes_attrs(struct module *mod) { }
- #endif /* CONFIG_KALLSYMS */
- 
-@@ -385,11 +397,20 @@ int mod_sysfs_setup(struct module *mod,
- 	if (err)
- 		goto out_unreg_modinfo_attrs;
- 
--	add_sect_attrs(mod, info);
--	add_notes_attrs(mod, info);
-+	err = add_sect_attrs(mod, info);
-+	if (err)
-+		goto out_del_usage_links;
-+
-+	err = add_notes_attrs(mod, info);
-+	if (err)
-+		goto out_unreg_sect_attrs;
- 
- 	return 0;
- 
-+out_unreg_sect_attrs:
-+	remove_sect_attrs(mod);
-+out_del_usage_links:
-+	del_usage_links(mod);
- out_unreg_modinfo_attrs:
- 	module_remove_modinfo_attrs(mod, -1);
- out_unreg_param:
--- 
-2.45.2
+To do this, we need to track every single entry enqueue time as well as
+dequeue time - events that occur in the tail are quite important.
 
+Since ptr_ring is also a ring buffer, I thought it would be easy,
+reliable, and fast to just create a "shadow" ring buffer. Every time
+producer enqueues entries, I'd enqueue the same number of current
+timestamp onto shadow RB. Same thing on consumer side, except dequeue
+and calculate timestamp delta.
+
+I was originally planning on writing my own lockless ring buffer in pure
+BPF (b/c spinlocks cannot be used w/ tracepoints yet) but was hoping I
+could avoid that with this patch.
+
+About disabling user-space mmap: yeah, that's what I was suggesting. I
+think it'd be a bit odd if you wanted BPF RB to support consumption from
+both userspace && prog at the same time. And since draining from prog is
+new functionality (and thus the NAND isn't a regression), you could
+relax the restriction later without issues.
 
