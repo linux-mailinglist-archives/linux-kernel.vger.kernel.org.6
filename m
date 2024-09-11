@@ -1,135 +1,249 @@
-Return-Path: <linux-kernel+bounces-325054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C303975451
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D604975453
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9F9FB299EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED371F20C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719291A76A6;
-	Wed, 11 Sep 2024 13:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953CE1AAE0A;
+	Wed, 11 Sep 2024 13:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="oIPjnjA3"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUKcm5co"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BB21A4AD7;
-	Wed, 11 Sep 2024 13:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C7F1A7AF6
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061939; cv=none; b=lrV6lA+84x6irTfCa+sDBKe9BcJDdXzwHPH+29fBYxo79EVf8oO9rh9agv+nT5a4nIITsD8Trte2T48VEdSRrDZBpDc88zEMnP6rGDqDNPO0nK4gCrspYHoplyS3l/nsIHk68YMjqq0vBn1bUKGmpQzaMevR5DW6jHf7lTZMDXE=
+	t=1726061992; cv=none; b=C3wMxjQTM2Q5OVTpx4hlHtv+P+Myq9eiHAers3Oi/Yd8ncCYvIU/p7EShDJr7EPwH3beTHwPc4Ex8GlLZC348/UgZ1HjOghZW2ZuhJoyfUAKUiPdBimW+jd/RwJdqr2A1VSGRRD3IDAH7nFgVegMA8q73EaNI0HqsfE88J6Bz/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061939; c=relaxed/simple;
-	bh=TGjzub4d1zJGsXqoeyoF/a9/VWPt+phm9V/ukmlIKvw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nflokhWwHGn6ZOzffYIrdvQ7AmA8P8YP4djrageOFwdQ7XWoo0KFaAdtGl5Krvp4VmlK0NcmOGlHGn4heAZN5eKJXImtd6o1s3qPhKCzLxM5GZpV5JIvt2XSwTClda0LjiYAb2uolNuS82suOOC2smyEKDO9wKPCTsNMIiJ8Gr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=oIPjnjA3; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1726061936;
-	bh=/x6ppqNQQLzdvBUIltgwblDbEd/NsLYvkwyhRq8ySOg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=oIPjnjA38dDfnNUU0Rs/abozRGK9t9kzNcCWqs5zkrEw2u4QwGt3vFSpn0kotBm8X
-	 fivnKpkEy/q9VIrQ4TVvIWeyCWERZBfrVvamUQzRqxJXXE/ps5sAChCuugQudut2zk
-	 DVgLI54TE1CBwlW9mpADteXyPpiwyWh5AMK6K8+zAbXoPZkgJcSleQSG3qGcaJyJXX
-	 A5ciDIpzEWsP5XUlIHYqj38DukHhKGL3HyneCvdybHcxtCNddxIqe5i6i2FP5wwBY7
-	 57TlSw4u4a4SBXs0AeeOR/Okf9JAYihkTJfD71w2XroNa0syJ2Nx+YmIr7sD2bhmLV
-	 DphJhs7LqH5rg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1726061992; c=relaxed/simple;
+	bh=j0hfvJ4Zgr0nQD+pP1C+IElAPHeSAWmAVfVG9dK27pI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEibig82aFO1Ro76lwJQG9KNHCKzFVc57kROVC5LgbS2ewi00/9r5FdNJsSo04ol0f4UBwRzrHkpAJ3vP5Y4D4Q8EqLVe2LgAwJeO6BK+lH/O2wGH3dVv9dirsPgw2bScQOaeeUh9pLots9ZM248U4dKj9Nj+uFi8juEybh7dn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUKcm5co; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726061990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VvwU4cqki9TtrB27KP2JwOIZHnNDzLJG2G+q3XLkyHM=;
+	b=HUKcm5co2WarBqourRdgYPRyx2ePdmgk6nHOu+zuIWVnQWkJKW03jUmppY6ND1apjX5HLE
+	IPgYBdjluimvw8y3djuVIGO+Egz8eO+ee58EV+QxNm557SOk0xlaSazKXQUcCB0v6UE5uq
+	IeM+AKGVwklK2RUoIU6qH+tfqeNxLwU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-116-VyqdG2tONZesNhXAM0qVnw-1; Wed,
+ 11 Sep 2024 09:39:47 -0400
+X-MC-Unique: VyqdG2tONZesNhXAM0qVnw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3hVm0rPLz4x8Q;
-	Wed, 11 Sep 2024 23:38:55 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>
-Cc: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
- <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge
- Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich
- Felker <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
- Christoph Hellwig <hch@infradead.org>, Michal Hocko <mhocko@suse.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, Chris Torek
- <chris.torek@gmail.com>, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-abi-devel@lists.sourceforge.net
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
- 47 bits
-In-Reply-To: <CAMuHMdURgy6NPthHhfOv_h=C_gw2hEpnGQ7iBGoDE=ZazUPRHA@mail.gmail.com>
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
- <87zfol468z.fsf@mail.lhotse> <Zt9HboH/PmPlRPmH@ghost>
- <1aca8e4c-1c12-4624-a689-147ff60b75d6@csgroup.eu>
- <CAMuHMdURgy6NPthHhfOv_h=C_gw2hEpnGQ7iBGoDE=ZazUPRHA@mail.gmail.com>
-Date: Wed, 11 Sep 2024 23:38:55 +1000
-Message-ID: <8734m6s428.fsf@mail.lhotse>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 96CDF1955F45;
+	Wed, 11 Sep 2024 13:39:43 +0000 (UTC)
+Received: from [10.2.16.53] (unknown [10.2.16.53])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 57EFB19560AB;
+	Wed, 11 Sep 2024 13:39:38 +0000 (UTC)
+Message-ID: <c2776802-1136-405f-a172-2996fafd3780@redhat.com>
+Date: Wed, 11 Sep 2024 09:39:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 1/4] Introducing qpw_lock() and per-cpu queue &
+ flush work
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org
+References: <20240622035815.569665-1-leobras@redhat.com>
+ <20240622035815.569665-2-leobras@redhat.com>
+ <f69793ab-41c3-4ae2-a8b1-355e629ffd0b@redhat.com> <ZuFD8bR01GhPbPH6@LeoBras>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZuFD8bR01GhPbPH6@LeoBras>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
-> Hi Christophe,
+On 9/11/24 03:17, Leonardo Bras wrote:
+> On Wed, Sep 04, 2024 at 05:39:01PM -0400, Waiman Long wrote:
+>> On 6/21/24 23:58, Leonardo Bras wrote:
+>>> Some places in the kernel implement a parallel programming strategy
+>>> consisting on local_locks() for most of the work, and some rare remote
+>>> operations are scheduled on target cpu. This keeps cache bouncing low since
+>>> cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+>>> kernels, even though the very few remote operations will be expensive due
+>>> to scheduling overhead.
+>>>
+>>> On the other hand, for RT workloads this can represent a problem: getting
+>>> an important workload scheduled out to deal with some unrelated task is
+>>> sure to introduce unexpected deadline misses.
+>>>
+>>> It's interesting, though, that local_lock()s in RT kernels become
+>>> spinlock(). We can make use of those to avoid scheduling work on a remote
+>>> cpu by directly updating another cpu's per_cpu structure, while holding
+>>> it's spinlock().
+>>>
+>>> In order to do that, it's necessary to introduce a new set of functions to
+>>> make it possible to get another cpu's per-cpu "local" lock (qpw_{un,}lock*)
+>>> and also the corresponding queue_percpu_work_on() and flush_percpu_work()
+>>> helpers to run the remote work.
+>>>
+>>> On non-RT kernels, no changes are expected, as every one of the introduced
+>>> helpers work the exactly same as the current implementation:
+>>> qpw_{un,}lock*()        ->  local_{un,}lock*() (ignores cpu parameter)
+>>> queue_percpu_work_on()  ->  queue_work_on()
+>>> flush_percpu_work()     ->  flush_work()
+>>>
+>>> For RT kernels, though, qpw_{un,}lock*() will use the extra cpu parameter
+>>> to select the correct per-cpu structure to work on, and acquire the
+>>> spinlock for that cpu.
+>>>
+>>> queue_percpu_work_on() will just call the requested function in the current
+>>> cpu, which will operate in another cpu's per-cpu object. Since the
+>>> local_locks() become spinlock()s in PREEMPT_RT, we are safe doing that.
+>>>
+>>> flush_percpu_work() then becomes a no-op since no work is actually
+>>> scheduled on a remote cpu.
+>>>
+>>> Some minimal code rework is needed in order to make this mechanism work:
+>>> The calls for local_{un,}lock*() on the functions that are currently
+>>> scheduled on remote cpus need to be replaced by qpw_{un,}lock_n*(), so in
+>>> RT kernels they can reference a different cpu. It's also necessary to use a
+>>> qpw_struct instead of a work_struct, but it just contains a work struct
+>>> and, in PREEMPT_RT, the target cpu.
+>>>
+>>> This should have almost no impact on non-RT kernels: few this_cpu_ptr()
+>>> will become per_cpu_ptr(,smp_processor_id()).
+>>>
+>>> On RT kernels, this should improve performance and reduce latency by
+>>> removing scheduling noise.
+>>>
+>>> Signed-off-by: Leonardo Bras <leobras@redhat.com>
+>>> ---
+>>>    include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 88 insertions(+)
+>>>    create mode 100644 include/linux/qpw.h
+>>>
+>>> diff --git a/include/linux/qpw.h b/include/linux/qpw.h
+>>> new file mode 100644
+>>> index 000000000000..ea2686a01e5e
+>>> --- /dev/null
+>>> +++ b/include/linux/qpw.h
+>>> @@ -0,0 +1,88 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +#ifndef _LINUX_QPW_H
+>>> +#define _LINUX_QPW_H
+>>> +
+>>> +#include "linux/local_lock.h"
+>>> +#include "linux/workqueue.h"
+>>> +
+>>> +#ifndef CONFIG_PREEMPT_RT
+>>> +
+>>> +struct qpw_struct {
+>>> +	struct work_struct work;
+>>> +};
+>>> +
+>>> +#define qpw_lock(lock, cpu)					\
+>>> +	local_lock(lock)
+>>> +
+>>> +#define qpw_unlock(lock, cpu)					\
+>>> +	local_unlock(lock)
+>>> +
+>>> +#define qpw_lock_irqsave(lock, flags, cpu)			\
+>>> +	local_lock_irqsave(lock, flags)
+>>> +
+>>> +#define qpw_unlock_irqrestore(lock, flags, cpu)			\
+>>> +	local_unlock_irqrestore(lock, flags)
+>>> +
+>>> +#define queue_percpu_work_on(c, wq, qpw)			\
+>>> +	queue_work_on(c, wq, &(qpw)->work)
+>>> +
+>>> +#define flush_percpu_work(qpw)					\
+>>> +	flush_work(&(qpw)->work)
+>>> +
+>>> +#define qpw_get_cpu(qpw)					\
+>>> +	smp_processor_id()
+>>> +
+>>> +#define INIT_QPW(qpw, func, c)					\
+>>> +	INIT_WORK(&(qpw)->work, (func))
+>>> +
+>>> +#else /* !CONFIG_PREEMPT_RT */
+>>> +
+>>> +struct qpw_struct {
+>>> +	struct work_struct work;
+>>> +	int cpu;
+>>> +};
+>>> +
+>>> +#define qpw_lock(__lock, cpu)					\
+>>> +	do {							\
+>>> +		migrate_disable();				\
+>>> +		spin_lock(per_cpu_ptr((__lock), cpu));		\
+>>> +	} while (0)
+>>> +
+>>> +#define qpw_unlock(__lock, cpu)					\
+>>> +	do {							\
+>>> +		spin_unlock(per_cpu_ptr((__lock), cpu));	\
+>>> +		migrate_enable();				\
+>>> +	} while (0)
+>> Why there is a migrate_disable/enable() call in qpw_lock/unlock()? The
+>> rt_spin_lock/unlock() calls have already include a migrate_disable/enable()
+>> pair.
+> This was copied from PREEMPT_RT=y local_locks.
 >
-> On Tue, Sep 10, 2024 at 11:21=E2=80=AFAM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->> >>> diff --git a/include/uapi/linux/personality.h b/include/uapi/linux/p=
-ersonality.h
->> >>> index 49796b7756af..cd3b8c154d9b 100644
->> >>> --- a/include/uapi/linux/personality.h
->> >>> +++ b/include/uapi/linux/personality.h
->> >>> @@ -22,6 +22,7 @@ enum {
->> >>>     WHOLE_SECONDS =3D         0x2000000,
->> >>>     STICKY_TIMEOUTS =3D       0x4000000,
->> >>>     ADDR_LIMIT_3GB =3D        0x8000000,
->> >>> +   ADDR_LIMIT_47BIT =3D      0x10000000,
->> >>>   };
->> >>
->> >> I wonder if ADDR_LIMIT_128T would be clearer?
->> >>
->> >
->> > I don't follow, what does 128T represent?
->>
->> 128T is 128 Terabytes, that's the maximum size achievable with a 47BIT
->> address, that naming would be more consistant with the ADDR_LIMIT_3GB
->> just above that means a 3 Gigabytes limit.
+> In my tree, I see:
 >
-> Hence ADDR_LIMIT_128TB?
+> #define __local_unlock(__lock)					\
+> 	do {							\
+> 		spin_unlock(this_cpu_ptr((__lock)));		\
+> 		migrate_enable();				\
+> 	} while (0)
+>
+> But you are right:
+> For PREEMPT_RT=y, spin_{un,}lock() will be defined in spinlock_rt.h
+> as rt_spin{un,}lock(), which already runs migrate_{en,dis}able().
+>
+> On the other hand, for spin_lock() will run migrate_disable() just before
+> finishing the function, and local_lock() will run it before calling
+> spin_lock() and thus, before spin_acquire().
+>
+> (local_unlock looks like to have an unnecessary extra migrate_enable(),
+> though).
+>
+> I am not sure if it's actually necessary to run this extra
+> migrate_disable() in local_lock() case, maybe Thomas could help us
+> understand this.
+>
+> But sure, if we can remove this from local_{un,}lock(), I am sure we can
+> also remove this from qpw.
 
-Yes it should be 128TB. Typo by me.
+I see. I believe the reason for this extra migrate_disable/enable() is 
+to protect the this_cpu_ptr() call to prevent switching to another CPU 
+right after this_cpu_ptr() but before the migrate_disable() inside 
+rt_spin_lock(). So keep the migrate_disable/enable() as is.
 
-cheers
+Cheers,
+Longman
+
 
