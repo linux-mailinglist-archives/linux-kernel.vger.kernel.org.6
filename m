@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-325570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DEA975B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:15:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F93A975B9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEB3B246FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527E21C22013
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977B01BB69F;
-	Wed, 11 Sep 2024 20:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1571BA883;
+	Wed, 11 Sep 2024 20:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oc1UXcoQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DZuNbBg7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCA31BB684;
-	Wed, 11 Sep 2024 20:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2891BA870;
+	Wed, 11 Sep 2024 20:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726085698; cv=none; b=Qq5HSHsMgvK1VAVDynLL1g8n5CNwMSgGfMoPgDNrp7t73uJ3LfCzpgwGJRRSTvCoXEFzZaLf60E7CrlX8I6zmL4AzSoPGuTVB88Oc1XotgKgq+iP0yiwK9kUgt64pxpB/EGiroBX8SjoZv9xOoaB0IFII7b1HYS2+yMPtcSJkjU=
+	t=1726085950; cv=none; b=si9Ewy0nl4SoARMFhnsBqEtBxxAr21r5igxbPVpTpa+aagdgUQrzKcNn62KyYFbxce1lOgQ5G9FOxkCDsN7Vt0KRicQ2GXMOb2pFE8dCEZCzlFmidieXf/a8pTsjC9BdEe86ktG8p9i0+8LP9Y4vfo4LzINK4ES0eaEqzEZcqnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726085698; c=relaxed/simple;
-	bh=tTzueqvJZSwNGtAUxZsJa3Qkf8M9iYbOpXyKF9YvBIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCIOUty4HbOePzHDt7hawrzBXGYQgxcIVRmErmBO6zgBvl5Dwk6MEW0BviKRrweosnFYa7kP2J8c8k6U51VSC/obPMLt0CdjL+FC8yLOcVZ3nx9VpwtLM+rlolpctr8BktSg6gdXTQRROYOYMYTO72MIjp477frjS5TY8L+IOls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oc1UXcoQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC7BC4CEC0;
-	Wed, 11 Sep 2024 20:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726085697;
-	bh=tTzueqvJZSwNGtAUxZsJa3Qkf8M9iYbOpXyKF9YvBIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oc1UXcoQikN7QJc8eJ+K9TOkXKU+4cSkUrBKXBjBLVfNhBRw3u9UNHTBbt4oHhVmV
-	 FQ3yNVv5tZkwU7laOglXcL4bUI08tF6LRxqbEldDho8b0N9Sy18pG9hMV5N1r+GVMJ
-	 124vk+S7H/9BrcsfIZtPz6Qa91Bo+sQH2FiFhlJs=
-Date: Wed, 11 Sep 2024 22:14:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.15 000/212] 5.15.167-rc2 review
-Message-ID: <2024091145-pavilion-probing-04e8@gregkh>
-References: <20240911130535.165892968@linuxfoundation.org>
- <9bbb8370-758a-46bf-a01d-7e4d4f3c3a68@linuxfoundation.org>
+	s=arc-20240116; t=1726085950; c=relaxed/simple;
+	bh=l8yHxAlMYNR9kG0WkxQc19S1j5Kp7mzF6oAmQxgelvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mm0yfjldMvVmId1t3HFk4uvl6cJEAunxoPKjyNOUH4jVgZ1TB1AY64W5SNuyvzJASI4FLO1FZIRn9GJC3RbqiAPUr8ouEHxj3xgINKEWghhrt4gEmFSzo1DJGBfRFOti6LbAGB33ThPWxXqF3LQg02IPZADAHEbSpjUZd7hkaIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DZuNbBg7; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726085948; x=1757621948;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l8yHxAlMYNR9kG0WkxQc19S1j5Kp7mzF6oAmQxgelvU=;
+  b=DZuNbBg7pGBzLYuU/qaDwCLTqVt9whReuwEIBViqus8OZx3JnFreEpvj
+   ILImMkdL1pBM65Qdtcy9gfRT9gfoNrwNlXqvbQXr6CIliCV0C65MFoEpU
+   SaAs9UMrBV/V+2ogawqAM+OPWVPYIF4Mb65Hj65JXAUUsVia/psp9Ob6m
+   A3n6i13Kue8nqt+DJSqcnAF4/k34VCILAddJUqULGD0BtK8ITg5V3RqRZ
+   GoQZsZjvpnoAYC7PrRWZxB1rwnHUIOvYtrrntzLMaNjmPNZYSNrJBWoP6
+   3+T9AplFZ7aQZKjmwTCHmAAplD3gJZGWRF1Zx3/OmU8lXwU1YZ4HwVmWU
+   w==;
+X-CSE-ConnectionGUID: o7UIi0LOQeecbIwA7RuZSw==
+X-CSE-MsgGUID: TZTXMGF1SRCRRI18niq63g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28796156"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="28796156"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:19:07 -0700
+X-CSE-ConnectionGUID: 3Ok5t5IRTz6Tt+Ae4VGs1g==
+X-CSE-MsgGUID: cNMCzwM9Q/O9Bn+pjYOIfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="71860339"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 11 Sep 2024 13:19:06 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 86D4A170; Wed, 11 Sep 2024 23:19:04 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] hwmon: (sch5636) Print unknown ID in error string via %*pE
+Date: Wed, 11 Sep 2024 23:19:03 +0300
+Message-ID: <20240911201903.2886874-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bbb8370-758a-46bf-a01d-7e4d4f3c3a68@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 11:25:32AM -0600, Shuah Khan wrote:
-> On 9/11/24 07:07, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.167 release.
-> > There are 212 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri, 13 Sep 2024 13:05:05 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.167-rc2.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> All good without the iio/adc/ad7606 commit
+Instead of custom approach this allows to print escaped strings
+via %*pE extension. With this the unknown ID will be printed
+as a string. Nonetheless, leave hex values to be printed as well.
 
-Great, thanks for testing!
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/hwmon/sch5636.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/hwmon/sch5636.c b/drivers/hwmon/sch5636.c
+index 6e6d54158474..a4b05ebb0546 100644
+--- a/drivers/hwmon/sch5636.c
++++ b/drivers/hwmon/sch5636.c
+@@ -416,8 +416,7 @@ static int sch5636_probe(struct platform_device *pdev)
+ 	id[i] = '\0';
+ 
+ 	if (strcmp(id, "THS")) {
+-		pr_err("Unknown Fujitsu id: %02x%02x%02x\n",
+-		       id[0], id[1], id[2]);
++		pr_err("Unknown Fujitsu id: %3pE (%3ph)\n", id, id);
+ 		err = -ENODEV;
+ 		goto error;
+ 	}
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
