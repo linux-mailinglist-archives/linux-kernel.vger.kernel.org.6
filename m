@@ -1,954 +1,233 @@
-Return-Path: <linux-kernel+bounces-324048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562BA974736
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:18:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD2A974738
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783961C2441F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4F9DB22113
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2041C69D;
-	Wed, 11 Sep 2024 00:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1028379C2;
+	Wed, 11 Sep 2024 00:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kil2ANAC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+nuF1nz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAEE1863E;
-	Wed, 11 Sep 2024 00:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726013925; cv=none; b=YN+oQYcbYUWCxXN7VvyWwPFAtleAAVCIt7q02ZXD/WPMKZtwvGqkDhEQbidrR1PJ7vue+4etpRDcfOMT7/HoNbX/qTJJc4ffWcw4x7RRkPTPlXXQHqxYmchCEB9PiQpuA7fwUxxo/KQDkMlRA1Yy4saVooYP3/uyqk8PvCtbWL4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726013925; c=relaxed/simple;
-	bh=ohmx+Ws6ohPf6DzhdjN28YtnUqehxRZ5XMwSM74FQok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BicxqSqwbcTYHayjasya3S6e/A9x3vVM72u54bXtuetI/iwKOQ9lRVQ+ho4fFOVwvrbXgwSYaR5KRsEmuyk0vgQrNRj2dKwtwfSppwInLWveuK7gtMFtligXh78B/YrhYOLe6BL5WsLQpADhLpQPLewpO4MawqFquUFPY+hKvGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kil2ANAC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B91C4CEC3;
-	Wed, 11 Sep 2024 00:18:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726013925;
-	bh=ohmx+Ws6ohPf6DzhdjN28YtnUqehxRZ5XMwSM74FQok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kil2ANACWRa9Yo/uJLW9bMfuYnycUq7TxmSzNeatYQxQbuWg2sunJ8Z/in5rkwzUY
-	 6ZFvE8C9y+u8zrT/edUpidE+3ODPx9oFnWF4eqCqLvsahztnQk8BFAsRHEmywu8k49
-	 txfaqjEGDoO2MedEoeYdXNPwx+MlZgF9aD8Ss/ECM49pLiSlx+qZJqz5dkLAG4a5Tx
-	 3oA9awL8HFSddh+u4oRp7ZczjNNxXObAOHDW7eYM9K08x8+zBI1VcQ6UPNNM+Y1tGP
-	 75zHf2KPjweV93nGu/CVW6Eih9zHJLszhfS/5EPpXci2OP2H9HqCPB2DaXhX4MiKUI
-	 MYAKI0x6OQGBw==
-Date: Wed, 11 Sep 2024 02:18:37 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 13/26] rust: alloc: implement kernel `Vec` type
-Message-ID: <ZuDh3arCtEK66uxB@pollux>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-14-dakr@kernel.org>
- <fe19f450-ddb4-4f50-a016-9f213b22f633@proton.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D82EBE;
+	Wed, 11 Sep 2024 00:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726013966; cv=fail; b=XyhTMlAg1UUycNA9lYp1UZlxNPIjt/9DGMHJgRMFUdBXhC01jGLa3JBM/lk22A38LgoaZptX8OrbsbCKQEf1c2rjhuZLXo8NtcmL1aAmHKQIRWsVtsuk325fkvMPgPfWuWV7vGdGHoIiD5kmqRXOqTpxyCCjp20G3/H4IRCBfcM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726013966; c=relaxed/simple;
+	bh=eJZBNjxynvJ0Egs3DPJKPijsBGhU6x7lBfApuYKrwNU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eOvFarQ6BUmx11yfBZjBHieOpBDBrVvVEMmnWsyncAJl1oBYt9ovc94N6fmiDW//o8NHOyo39TRyDt1hifSe7SG1VDjbDZ3/+3i7CDCObX7KR2uPhVfu0rHk6cI7QXbTkpflmHgoPlLRorRLwi//2Y/EFsLSa6u1f+yNVhrIOHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+nuF1nz; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726013965; x=1757549965;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=eJZBNjxynvJ0Egs3DPJKPijsBGhU6x7lBfApuYKrwNU=;
+  b=W+nuF1nzVs6rpgT9Hbduq+f7jlUnpDh64cApRVvLjtL42cZz1A3c4fFi
+   ZyLHNXqx4Hvq0Bg/2T9OjRXOK9Cl8X4Y0EWJkW1hhXz6WVc5LhgQTNFeE
+   GrNJPNIlMKEJTgTkoFSq6NEEEtYgwgXaenF41BjzYkZBw5qRTiLgdoeMe
+   P2Eesuc5cFa6q3w02JHxeyWQI3MhYtKipu1GdOmuu61J3jX1S9udWoHit
+   bIHGNRBHYrTLHAWlf/y4/326tIcS/9WvEXXDZMGNYt2cEnQBQmAHr1LnC
+   X5urw6ik7UYu5kC+uEw3c3MZmhCHd/mPOD7KoAtl71dd6mN+/VslFOjBK
+   w==;
+X-CSE-ConnectionGUID: 9bJu8p5CTkmhg3yguNPtaA==
+X-CSE-MsgGUID: +Aflsc4URaKus0eFQefM1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24612104"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="24612104"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:19:24 -0700
+X-CSE-ConnectionGUID: dD7KgOaOQj24wB0lN7Dt+w==
+X-CSE-MsgGUID: qnc7bT0vSay00bGvVaRQdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="104659361"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 17:19:23 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 17:19:23 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 17:19:23 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 17:19:23 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 17:19:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hUHy+4+aeo+ntJv1GtLfpEYZOgiMvxSfUiH7xhOtHldpKqLRXcdXeds/Y3s/+Bp2lK3aYrYYeO24yrzEjKbYiMOmatpVZwBg9T5ZbDSJU2DERcTomfk0SOmwgCyLEFdXalfLcsAE3oB/vzwI9UpyD7T993QBQv22iB5F1ZKUOyBwMfuiQwhcfaqxUKqsZmf4NwjpJ0oOAwFZtiS+EENVId9yo30V+MQ8AasCCh2TLG1Muv7exc86XNNxwwlJg4tzpB6z3IknUzg2RnIIbYljnURLCnbsxrWHAivbpFAstAYDHAVxT2S141mU3MzG7y/WnwnGF6lp1szZxOd0ivkalQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eJZBNjxynvJ0Egs3DPJKPijsBGhU6x7lBfApuYKrwNU=;
+ b=IFBtwH1DSGO838QmEnD4h6nAZLlIlrI/OmBh6kvqZ+Bo0Yv8OdL85wLNjw2hf4IsacH8OtASc4hYw8YBAfYPdxUJ8FmCa0JE1Wa4994vcpq5iV5ZkW/+Yy3X8Hfx5IRvqY5pnbTIrP68vJOO6W505m6S+uL3XZ0wpH/js4idK6kNighF6pd6xI+4iaLg9NHlC4J0QHBed2Dpl1nFM7Ln+KG5YxCZSKOvKE907SZm1ibCYjPWg1ADKRD5TWXaELB+RmjmpDyJbiwHtO/ERPfQXHSzm2uhXIvhQwe5met3A7uUrYbSHuG6bJOVK84Y1DvzODBR1+4H2KzRauTbx/Tvog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by IA1PR11MB6148.namprd11.prod.outlook.com (2603:10b6:208:3ec::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Wed, 11 Sep
+ 2024 00:19:20 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.7939.017; Wed, 11 Sep 2024
+ 00:19:20 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
+CC: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "nik.borisov@suse.com"
+	<nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, "Huang,
+ Kai" <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
+	<isaku.yamahata@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 16/21] KVM: TDX: Premap initial guest memory
+Thread-Topic: [PATCH 16/21] KVM: TDX: Premap initial guest memory
+Thread-Index: AQHa/neylxoaYrTILUWaulhlDyL5EbJQ2kkAgADpRIA=
+Date: Wed, 11 Sep 2024 00:19:20 +0000
+Message-ID: <32a4ef78dcdfc45b7fae81ceb344afaf913c9e4b.camel@intel.com>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+	 <20240904030751.117579-17-rick.p.edgecombe@intel.com>
+	 <6d0198fc-02ba-4681-8332-b6c8424eec59@redhat.com>
+In-Reply-To: <6d0198fc-02ba-4681-8332-b6c8424eec59@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA1PR11MB6148:EE_
+x-ms-office365-filtering-correlation-id: 11c902c7-32c0-4f56-b363-08dcd1f761b4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?V2RnODVJMzVnMm9hVWl6NHM5dTJ4MTNBUHg0VDhuSzVnL2lmSVNNeGpZQ3lZ?=
+ =?utf-8?B?cHhycDdMc3NkeUJSRFdydlVQaHNDY2dkNktYR1VBMllpdG1PU3A2WUdlN0V3?=
+ =?utf-8?B?MGxieHBURWlHTEhMM0hsZmp2cDFPenhpc0p6dnBtMlR3UUlqakwwL0ZFQWpo?=
+ =?utf-8?B?THIyS3V5U0IxclF2N3dzZ1d6bzRWT2tUTUJwTUgzQlU4SWNqSng3YWxPcXJw?=
+ =?utf-8?B?Rnp4TlRLZjlrZ2E5cDNQaTdTbkN5Y041NkdGK0Rab1dvbXArQ253TUphNTZY?=
+ =?utf-8?B?aVlJeHk1dXpYUGZXT09IRThsbWVQQW52bElTenRmQ2JuUEc0Y25ML3NvR0o4?=
+ =?utf-8?B?SUNySWpOMUFaNHpPbWNWNlJ3TUtvU2NtYmFTaGU4OVU1dmtob0toMWtrUGhI?=
+ =?utf-8?B?SFpRSnByaFVSdWdMUFZBUjZQNlBnc2tWZTc2RHJPblZKcDBiV0NRNCtTMWd1?=
+ =?utf-8?B?b0pVb2luTFVBeHp2QUxhbkR4R2wxbHlGSHVSdmFtdDlFL042cTBVN3IrRnV2?=
+ =?utf-8?B?L2ZYUzMrMkVHMGs1UTVyd1c0b1NYRDZqaFl5amdKRFNNU1BJT3RiQUxWejBN?=
+ =?utf-8?B?OENjZlRDcUJxMHBEcis3VzZubkRSVy9rbmxNbWpUNDNobFlLWGIrZWo1K3FN?=
+ =?utf-8?B?Zk9NcDZ5RlFINlZMMTR4ajFvdzhCUElsV21FcUdUNTlOeVEzSUxSdU9ucVZa?=
+ =?utf-8?B?RzVzZG96ZS93UUdXaEQ1cEdFSklKOEUrQ2Z1TStoN05XNVhUd1N4clBtYjEr?=
+ =?utf-8?B?aStpZzNNZ1dMZERhQUxmaUNrZ1NhZmhkSnRnck8xTERvdVYzRVBVMDBRTUVC?=
+ =?utf-8?B?WDlEbjFDNlNnUjlWK05CZWlPZGRQTDh0cXN1UUI5RTZqZVoxaWZvYVBJVUJG?=
+ =?utf-8?B?blRTOFhJK0NGL1ZuNlRkYVJVWHhQY3BvVGd6Zm5FVXovbDJBcUZUcFdIeDFT?=
+ =?utf-8?B?WVhNekVsRWxOVWM5RXorVk1VS2lXRVpMSyswaDFiNzFzM2s4OEl1VzhxaVRu?=
+ =?utf-8?B?MkU3R0FhZk5BeTYwTFMrSFYrdTRLSy9LT01GWm9ldGNKNkd0ME16Nm9idERr?=
+ =?utf-8?B?THhZQUpyS09RZzVoY3hrMEJjanROL3VGOXZweis3OVI0dUJXR3c4clQwM0Zr?=
+ =?utf-8?B?VVUrT3F2YVFzdFNGZGYremNYeDlnblJWK3NyVDhnYzJlVG5Rcm5hMk45WkMr?=
+ =?utf-8?B?VStoc1ArcWc1MmNVMWlScWZIMzUyODJUeEErQWRzTE5tZ3FxM3Zac0QxWHQ1?=
+ =?utf-8?B?L2VvUEY0YlJ0SWhZdzVFOW9QMVhvL0FQb2hIZXUzU1hBVGN6K1RMRHJLZDVR?=
+ =?utf-8?B?TEluVFhCUDZUZ1Z5cVUyK3FSWjJJY3FWUU9SYXRoU1RnaHMwckZjcDg4dWlD?=
+ =?utf-8?B?Yys5SE4xOEIzRGxUVHo2dlhLSDN6VEg2VGpqU3pyNVlNdUZONjk5OU14UUdD?=
+ =?utf-8?B?S3VXWjN5UXJBbVliOHZ6WWgyM05mOFpoVHI1amIrdVdOL3kwclhsWHliUWpy?=
+ =?utf-8?B?TkFsMC83UWo3Q042K0lOTFZUOTNpLzZMSldNWHBVdDJBUmM4WmFnNVZyeTQz?=
+ =?utf-8?B?dDRFbkUvYS9hL1NCN0tJWkdsRzByOGRwYXo0ZFNxWjJSMk1wRzdiNlJJdlVL?=
+ =?utf-8?B?c2J6YW9Qc3FTUXpjNkg3SEdVS3o5YzZZWjhYNm1zMGRtc0FMUDl0RWJ5S1ZQ?=
+ =?utf-8?B?ZkFsM3R0eWI1elhPUiszMW9tNzMreXZ6cENOVWNWUWRJdHpzNmI5Z2V3UDBW?=
+ =?utf-8?B?NWpLRjcxNXBIV2tka2tpd0YzaFhSazV6R2RGQSt1bjhkeDFKVHVYRlZWSklx?=
+ =?utf-8?B?OG1pemRUYUZmcER2RUdVUDlFVE1IU1BRY25DdnV1WnhsQkVhdjZUTnRpc2w5?=
+ =?utf-8?B?S3FjNk0wWUM2b1dOZXRVbjFHT3g5bENDWHZmT0pGNkJWNWc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NFQ5bUp2QVJPTFdIdDRTaTZIQk5PeFRXaGFYaytGWjJGQUtPQWhCTWdBU1pK?=
+ =?utf-8?B?K1dYclRveGVkQ0hJZUxWZTFsdzg0eEs5VUhLMUNqajhCUGxNNzhnQ25XT0Jo?=
+ =?utf-8?B?VmM3d29JWUN1TVRjMmp5d2Mwbi9QcnBCU2hlbWFSK3FzOHpXUkFxOGl2enl4?=
+ =?utf-8?B?VmE4OS84QWpJZXBwMUZhekFPVDdnMUtGS2JqTy9EVTNQT0xlRTlXSVpWSDVY?=
+ =?utf-8?B?dUEzMzg5RC9rMFBFZFRVSGRqcGUzQlM3WjFINi9TN0kwRkcvbXhrWG5kV2Fl?=
+ =?utf-8?B?UWQ1R0FjZzExRi9jNTVibVNXa2htS0QwNE5MbEpFV1NEREJoQURXeDI1L0Ro?=
+ =?utf-8?B?Rm5EMmpueVl0SVlNMnN6MlFyVE81UG9rclVmeWJUV0M1TGdzYjgyNlVjSk1I?=
+ =?utf-8?B?OWVNdnpsWFUvZGlZbnY3ODNlRGhDaUlXTzdnR1djc2g4aFNvQXZGMVBvWmZp?=
+ =?utf-8?B?K0RlMVg4eE9PZjBYYWNxbllCZ1pubUJwR29GOXdEV2h2Ym1reStZeC8xUEI2?=
+ =?utf-8?B?NVJhQ2RibFFiN2NLOSs2OVJBbndQRHcrQWVtNGNkV1VtYnJHSHdqbzZZdlBL?=
+ =?utf-8?B?OHd3a28yeHczNGJtTllXUC9yNTJLTkZpUE5rdzZpcmZJcVhoVVIzNDZkQWZ5?=
+ =?utf-8?B?RDc3ckFQL1p4QXFhWlNFY0dwRWdzTGhHd1lXWjhyYkdCaFFjaWpaUjlWNEQz?=
+ =?utf-8?B?SHNGN1AyVlFkV2xFdm9QZjh1OGRYeWJYTmdNVUs3Z1V6azBzU0Q0UkF4ZFlm?=
+ =?utf-8?B?Q2lXYU1DMWVJTWx5bGxRUllXQjZaLzBEbkZEWUZDZnl2N0p4NktGWXA2OWdR?=
+ =?utf-8?B?RktHaU16Uk5IQlpJN1pROVgzYnlyV2IrdW1yaWNlMUcyQWY2RUNKazZCeUs3?=
+ =?utf-8?B?MDFoYjY0aENuSFNVaktnSkRZemNRdWx6VVVldWtNcTJzNVNPOVY5S0RrQnRT?=
+ =?utf-8?B?VmZlMkltbHV5NE5pWlh5OCtISG96SmJzRXNLQ2NDakhQeFZvR083eXQ1MzlQ?=
+ =?utf-8?B?UHYrY1F5KzNqTHJoK0lCU1l4TEpQN1U4dHFoMVo5aExQU2g3MExZWm9FdTNo?=
+ =?utf-8?B?V2pEQjQ3eWxUV1I5cm8zSnpxZVpqMXQ4ZjhHYUVjSXd0dVdvZDY4dFN3Zkty?=
+ =?utf-8?B?bHRhVzdJblF4ODZvTVVseW5ONXNlZ01KZWlFanNTcjFFWE1uRnJZOFFUbi9y?=
+ =?utf-8?B?UkZTOG5sVUkrbDdYMTVQZVlLZlhsWHlqUXpPN3BTWHZBRy9PZWxPbjBJRlhi?=
+ =?utf-8?B?a3J3OFZadkxJSzlLa0hzM0xOcUlkR2c3enRvQzFSeU10ejRDdnlWQzJOZGla?=
+ =?utf-8?B?b0pSdnczd1ZEZU50c2QrMllnMUFvTWtKVnFsNHE0eWZxbEw4K2o2eE9CdE10?=
+ =?utf-8?B?Mk90bHN3K0pZSzFBTzJXU2hjeDM5Qmw2dnovUmNGT1VjOWtycVVZeHN3cGJV?=
+ =?utf-8?B?SHpNNjkxTWhOTjNnaGZKYWpCb2QrZy9Gc1Jmaks3N0NxamdkbHRpaS85cXVz?=
+ =?utf-8?B?Mit4RUcvYU5ScTJpbnFBQ2NHV3BpRmZjNVZFVVZYcUYxdk5wckNkSVNobElP?=
+ =?utf-8?B?MUlOcTNnbFFSNjdOWjJyUXFsS1FQcW55YUcyK2kvMnlJdnhXdmxRYjFKdHBG?=
+ =?utf-8?B?YnJEcFpIOTFuZXpabU1sMVhQajR5VVBsa2RBb3BZc0JkTDNLUlVrZy90V3NG?=
+ =?utf-8?B?bDZ0NmVoaFNoUG9hM3NDMk1zKzAwbUdUV3k3N0poS3p2T2hIUW5UU1ZHNnc3?=
+ =?utf-8?B?czdZSjFIY0oza1BvUGxPMnEzQW1MajY3aVpXazQvV1dkK3JrVWw0dDBOdmJJ?=
+ =?utf-8?B?bzYrWUZwMUs2bVF2cm1jcXM3MEkzaE1WTWNTaFNBT1pmSlRSN3RKVkNPKzB1?=
+ =?utf-8?B?Z1ZoYTR4ckpGbmhUZXc0bStUQVB0bVVkOVNmZ2Z4SFhpQ1orOGpWSVBWMlJK?=
+ =?utf-8?B?UHVoeElPRXNjQ0xVRlpiMmU0QVYrYldnek05OXdkNkthRksrVlBRRHd6NzJl?=
+ =?utf-8?B?a1Jrdm1ISmNBQXVReU1ibk9KZVozOU9sM3RTa0JxaDlPZ3Nhdm1SSlBYSjhu?=
+ =?utf-8?B?MkVaTVR6cHI0ZzBKYktXMmgybGl4S0srY2JaQXVGM0sxeW14K1RUTUpuVm1Q?=
+ =?utf-8?B?LzRuWUdJN3V0SzdaM1ozeXhvcWc1bnhFbTN5eW11ZlpKS3RWR0VteW8yTkJ4?=
+ =?utf-8?Q?8E3eleqiiMzyUt3lJkdAAfA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3DB9417FD2F83743A1DC5F1538B33F02@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe19f450-ddb4-4f50-a016-9f213b22f633@proton.me>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11c902c7-32c0-4f56-b363-08dcd1f761b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 00:19:20.5589
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: X2k4jNoSTje2OOQHpmXLl5IKmSSL+UwdQ+zSbuFbBT+qzS+PTcrzb8WRHkhXv0IFMQdvCLfbkhqwCWMrOTwyCmy/mO4fFnJK0YSrtp0U/UE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6148
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 10, 2024 at 07:32:06PM +0000, Benno Lossin wrote:
-> On 16.08.24 02:10, Danilo Krummrich wrote:
-> > `Vec` provides a contiguous growable array type (such as `Vec`) with
-> 
-> "`Vec` [...] such as `Vec`"? What do you want to say? I think without
-> the parenthesis it works better.
-> 
-> > contents allocated with the kernel's allocators (e.g. `Kmalloc`,
-> > `Vmalloc` or `KVmalloc`).
-> > 
-> > In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
-> 
-> I would add "stdlib" after "Rust's".
-> 
-> > kernel's GFP flags for all appropriate functions, always reports
-> > allocation failures through `Result<_, AllocError>` and remains
-> > independent from unstable features.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/alloc.rs      |   6 +
-> >  rust/kernel/alloc/kvec.rs | 629 ++++++++++++++++++++++++++++++++++++++
-> >  rust/kernel/prelude.rs    |   2 +-
-> >  3 files changed, 636 insertions(+), 1 deletion(-)
-> >  create mode 100644 rust/kernel/alloc/kvec.rs
-> > 
-> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> > index d248390345ec..e88c7e10ee9b 100644
-> > --- a/rust/kernel/alloc.rs
-> > +++ b/rust/kernel/alloc.rs
-> > @@ -5,6 +5,7 @@
-> >  #[cfg(not(any(test, testlib)))]
-> >  pub mod allocator;
-> >  pub mod kbox;
-> > +pub mod kvec;
-> >  pub mod vec_ext;
-> > 
-> >  #[cfg(any(test, testlib))]
-> > @@ -18,6 +19,11 @@
-> >  pub use self::kbox::KVBox;
-> >  pub use self::kbox::VBox;
-> > 
-> > +pub use self::kvec::KVVec;
-> > +pub use self::kvec::KVec;
-> > +pub use self::kvec::VVec;
-> > +pub use self::kvec::Vec;
-> > +
-> >  /// Indicates an allocation error.
-> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> >  pub struct AllocError;
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > new file mode 100644
-> > index 000000000000..89afc0f25bd4
-> > --- /dev/null
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -0,0 +1,629 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Implementation of [`Vec`].
-> > +
-> > +use super::{AllocError, Allocator, Box, Flags};
-> > +use core::{
-> > +    fmt,
-> > +    marker::PhantomData,
-> > +    mem::{ManuallyDrop, MaybeUninit},
-> > +    ops::Deref,
-> > +    ops::DerefMut,
-> > +    ops::Index,
-> > +    ops::IndexMut,
-> > +    ptr::NonNull,
-> > +    slice,
-> > +    slice::SliceIndex,
-> > +};
-> > +
-> > +/// Create a [`Vec`] containing the arguments.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let mut v = kernel::kvec![];
-> > +/// v.push(1, GFP_KERNEL)?;
-> > +/// assert_eq!(v, [1]);
-> > +///
-> > +/// let mut v = kernel::kvec![1; 3]?;
-> > +/// v.push(4, GFP_KERNEL)?;
-> > +/// assert_eq!(v, [1, 1, 1, 4]);
-> > +///
-> > +/// let mut v = kernel::kvec![1, 2, 3]?;
-> > +/// v.push(4, GFP_KERNEL)?;
-> > +/// assert_eq!(v, [1, 2, 3, 4]);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +#[macro_export]
-> > +macro_rules! kvec {
-> 
-> Do we only want to support creating `KVec` via a macro?
-
-Yes, needing such a macro for any other allocator is rather unlikely.
-
-> 
-> > +    () => (
-> > +        {
-> > +            $crate::alloc::KVec::new()
-> > +        }
-> > +    );
-> 
-> Why do you have parenthesis and braces? IIRC just braces/parenthesis or
-> brackets should be enough.
-> 
-> > +    ($elem:expr; $n:expr) => (
-> > +        {
-> > +            $crate::alloc::KVec::from_elem($elem, $n, GFP_KERNEL)
-> 
-> Hmm, could it be that one might want to use `kvec!` without
-> `GFP_KERNEL`?
-> Or add additional flags, eg __GFP_ZERO?
-
-Pretty unlikely, I'd say. __GFP_ZERO in particular wouldn't make much sense,
-since the macro enforces initialization anyways.
-
-Maybe something like GFP_ATOMIC, but I expect this to be uncommon enough to not
-consider this for this macro for now.
-
-> 
-> If you think that supporting this is not immediately necessary or if
-> this is too much for this patchset, then we can also postpone it (maybe
-> it could be a good-first-issue). Do you keep a list of future
-> improvements for the new allocator API somewhere? If not, then I think
-> we should create one (best place would be the issue tracker on GH).
-
-I would only add it if it turns out to be a common need. As mentioned, I don't
-expect it to be.
-
-I'd rather keep issues in the source tree. For instance, DRM has them in
-'/Documentation/gpu/todo.rst'.
-
-> 
-> > +        }
-> > +    );
-> > +    ($($x:expr),+ $(,)?) => (
-> > +        {
-> > +            match $crate::alloc::KBox::new_uninit(GFP_KERNEL) {
-> > +                Ok(b) => Ok($crate::alloc::KVec::from($crate::alloc::KBox::write(b, [$($x),+]))),
-> > +                Err(e) => Err(e),
-> > +            }
-> > +        }
-> > +    );
-> > +}
-> > +
-> > +/// The kernel's [`Vec`] type.
-> > +///
-> > +/// A contiguous growable array type with contents allocated with the kernel's allocators (e.g.
-> > +/// `Kmalloc`, `Vmalloc` or `KVmalloc`), written `Vec<T, A>`.
-> 
-> New folks might get confused as to which allocator they should choose.
-> Do we have a sensible default for `Vec`?
-
-Then they should read the documentation about the kernel's allocators. We
-already link them in rust/kernel/alloc/allocator.rs.
-
-> If yes, then we at least should document that here. We might also want
-> to make it the default value for the generic parameter.
-> This is also a good idea for `Box`.
-
-If we really want a default it should be `Kmalloc`, but I really think we should
-force people to make an explicit decision and think about it and don't just go
-with whatever default.
-
-It makes it also easier to grep for things. :)
-
-> 
-> > +///
-> > +/// For non-zero-sized values, a [`Vec`] will use the given allocator `A` for its allocation. For
-> > +/// the most common allocators the type aliases `KVec`, `VVec` and `KVVec` exist.
-> > +///
-> > +/// For zero-sized types the [`Vec`]'s pointer must be `dangling_mut::<T>`; no memory is allocated.
-> > +///
-> > +/// Generally, [`Vec`] consists of a pointer that represents the vector's backing buffer, the
-> > +/// capacity of the vector (the number of elements that currently fit into the vector), it's length
-> > +/// (the number of elements that are currently stored in the vector) and the `Allocator` type used
-> > +/// to allocate (and free) the backing buffer.
-> > +///
-> > +/// A [`Vec`] can be deconstructed into and (re-)constructed from it's previously named raw parts
-> > +/// and manually modified.
-> > +///
-> > +/// [`Vec`]'s backing buffer gets, if required, automatically increased (re-allocated) when elements
-> > +/// are added to the vector.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// The [`Vec`] backing buffer's pointer is always properly aligned and either points to memory
-> > +/// allocated with `A` or, for zero-sized types, is a dangling pointer.
-> 
-> Just use `self.ptr` instead of "backing buffer".
-> 
-> > +///
-> > +/// The length of the vector always represents the exact number of elements stored in the vector.
-> 
-> Same here, `self.len`.
-> 
-> > +///
-> > +/// The capacity of the vector always represents the absolute number of elements that can be stored
-> 
-> Ditto.
-> 
-> > +/// within the vector without re-allocation. However, it is legal for the backing buffer to be
-> > +/// larger than `size_of<T>` times the capacity.
-> > +///
-> > +/// The `Allocator` type `A` of the vector is the exact same `Allocator` type the backing buffer was
-> > +/// allocated with (and must be freed with).
-> 
-> Please turn this into a bullet-point list.
-
-Is this a rule? Do we want to make it one?
-
-> 
-> > +pub struct Vec<T, A: Allocator> {
-> > +    ptr: NonNull<T>,
-> > +    /// Represents the actual buffer size as `cap` times `size_of::<T>` bytes.
-> > +    ///
-> > +    /// Note: This isn't quite the same as `Self::capacity`, which in contrast returns the number of
-> > +    /// elements we can still store without reallocating.
-> > +    ///
-> > +    /// # Invariants
-> > +    ///
-> > +    /// `cap` must be in the `0..=isize::MAX` range.
-> > +    cap: usize,
-> > +    len: usize,
-> > +    _p: PhantomData<A>,
-> > +}
-> > +
-> > +/// Type alias for `Vec` with a `Kmalloc` allocator.
-> 
-> Can you turn these into links?
-> 
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let mut v = KVec::new();
-> > +/// v.push(1, GFP_KERNEL)?;
-> > +/// assert_eq!(&v, &[1]);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KVec<T> = Vec<T, super::allocator::Kmalloc>;
-> > +
-> > +/// Type alias for `Vec` with a `Vmalloc` allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let mut v = VVec::new();
-> > +/// v.push(1, GFP_KERNEL)?;
-> > +/// assert_eq!(&v, &[1]);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type VVec<T> = Vec<T, super::allocator::Vmalloc>;
-> > +
-> > +/// Type alias for `Vec` with a `KVmalloc` allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let mut v = KVVec::new();
-> > +/// v.push(1, GFP_KERNEL)?;
-> > +/// assert_eq!(&v, &[1]);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KVVec<T> = Vec<T, super::allocator::KVmalloc>;
-> > +
-> > +// SAFETY: `Vec` is `Send` if `T` is `Send` because `Vec` owns its elements.
-> > +unsafe impl<T, A> Send for Vec<T, A>
-> > +where
-> > +    T: Send,
-> > +    A: Allocator,
-> > +{
-> > +}
-> > +
-> > +// SAFETY: `Vec` is `Sync` if `T` is `Sync` because `Vec` owns its elements.
-> > +unsafe impl<T, A> Sync for Vec<T, A>
-> > +where
-> > +    T: Sync,
-> > +    A: Allocator,
-> > +{
-> > +}
-> > +
-> > +impl<T, A> Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    #[inline]
-> > +    fn is_zst() -> bool {
-> > +        core::mem::size_of::<T>() == 0
-> > +    }
-> > +
-> > +    /// Returns the number of elements that can be stored within the vector without allocating
-> > +    /// additional memory.
-> > +    pub fn capacity(&self) -> usize {
-> > +        if Self::is_zst() {
-> > +            usize::MAX
-> > +        } else {
-> > +            self.cap
-> > +        }
-> > +    }
-> > +
-> > +    /// Returns the number of elements stored within the vector.
-> > +    #[inline]
-> > +    pub fn len(&self) -> usize {
-> > +        self.len
-> > +    }
-> > +
-> > +    /// Forcefully sets `self.len` to `new_len`.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// - `new_len` must be less than or equal to [`Self::capacity`].
-> > +    /// - If `new_len` is greater than `self.len`, all elements within the interval
-> > +    ///   [`self.len`,`new_len`] must be initialized.
-> > +    #[inline]
-> > +    pub unsafe fn set_len(&mut self, new_len: usize) {
-> 
-> Can you add a `debug_assert!(new_len < self.cap)`
-> 
-> > +        self.len = new_len;
-> > +    }
-> > +
-> > +    /// Returns a slice of the entire vector.
-> > +    ///
-> > +    /// Equivalent to `&s[..]`.
-> > +    #[inline]
-> > +    pub fn as_slice(&self) -> &[T] {
-> > +        self
-> > +    }
-> > +
-> > +    /// Returns a mutable slice of the entire vector.
-> > +    ///
-> > +    /// Equivalent to `&mut s[..]`.
-> > +    #[inline]
-> > +    pub fn as_mut_slice(&mut self) -> &mut [T] {
-> > +        self
-> > +    }
-> > +
-> > +    /// Returns a mutable raw pointer to the vector's backing buffer, or, if `T` is a ZST, a
-> > +    /// dangling raw pointer.
-> > +    #[inline]
-> > +    pub fn as_mut_ptr(&self) -> *mut T {
-> > +        self.ptr.as_ptr()
-> > +    }
-> > +
-> > +    /// Returns a raw pointer to the vector's backing buffer, or, if `T` is a ZST, a dangling raw
-> > +    /// pointer.
-> > +    #[inline]
-> > +    pub fn as_ptr(&self) -> *const T {
-> > +        self.as_mut_ptr()
-> > +    }
-> > +
-> > +    /// Returns `true` if the vector contains no elements, `false` otherwise.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = KVec::new();
-> > +    /// assert!(v.is_empty());
-> > +    ///
-> > +    /// v.push(1, GFP_KERNEL);
-> > +    /// assert!(!v.is_empty());
-> > +    /// ```
-> > +    #[inline]
-> > +    pub fn is_empty(&self) -> bool {
-> > +        self.len() == 0
-> > +    }
-> > +
-> > +    /// Creates a new, empty Vec<T, A>.
-> > +    ///
-> > +    /// This method does not allocate by itself.
-> > +    #[inline]
-> > +    pub const fn new() -> Self {
-> > +        Self {
-> > +            ptr: NonNull::dangling(),
-> > +            cap: 0,
-> > +            len: 0,
-> > +            _p: PhantomData::<A>,
-> > +        }
-> > +    }
-> > +
-> > +    /// Returns a slice of `MaybeUninit<T>` for the remaining spare capacity of the vector.
-> 
-> Returns 
-
-Hm?
-
-> 
-> > +    pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
-> > +        // SAFETY: The memory between `self.len` and `self.capacity` is guaranteed to be allocated
-> > +        // and valid, but uninitialized.
-> > +        unsafe {
-> > +            slice::from_raw_parts_mut(
-> > +                self.as_mut_ptr().add(self.len) as *mut MaybeUninit<T>,
-> > +                self.capacity() - self.len,
-> > +            )
-> > +        }
-> 
-> There are two `unsafe` operations in this block, please split it into
-> two blocks.
-> 
-> > +    }
-> > +
-> > +    /// Appends an element to the back of the [`Vec`] instance.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = KVec::new();
-> > +    /// v.push(1, GFP_KERNEL)?;
-> > +    /// assert_eq!(&v, &[1]);
-> > +    ///
-> > +    /// v.push(2, GFP_KERNEL)?;
-> > +    /// assert_eq!(&v, &[1, 2]);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
-> > +        Vec::reserve(self, 1, flags)?;
-> > +        let s = self.spare_capacity_mut();
-> > +        s[0].write(v);
-> 
-> The slice access will check the size, I don't know if it will be
-> optimized out, if not, I would use a raw pointer here instead.
-> 
-> > +
-> > +        // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
-> > +        // by 1. We also know that the new length is <= capacity because of the previous call to
-> > +        // `reserve` above.
-> > +        unsafe { self.set_len(self.len() + 1) };
-> > +        Ok(())
-> > +    }
-> > +
-> > +    /// Creates a new [`Vec`] instance with at least the given capacity.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let v = KVec::<u32>::with_capacity(20, GFP_KERNEL)?;
-> > +    ///
-> > +    /// assert!(v.capacity() >= 20);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError> {
-> > +        let mut v = Vec::new();
-> > +
-> > +        Self::reserve(&mut v, capacity, flags)?;
-> > +
-> > +        Ok(v)
-> > +    }
-> > +
-> > +    /// Pushes clones of the elements of slice into the [`Vec`] instance.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = KVec::new();
-> > +    /// v.push(1, GFP_KERNEL)?;
-> > +    ///
-> > +    /// v.extend_from_slice(&[20, 30, 40], GFP_KERNEL)?;
-> > +    /// assert_eq!(&v, &[1, 20, 30, 40]);
-> > +    ///
-> > +    /// v.extend_from_slice(&[50, 60], GFP_KERNEL)?;
-> > +    /// assert_eq!(&v, &[1, 20, 30, 40, 50, 60]);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), AllocError>
-> > +    where
-> > +        T: Clone,
-> > +    {
-> > +        self.reserve(other.len(), flags)?;
-> > +        for (slot, item) in core::iter::zip(self.spare_capacity_mut(), other) {
-> > +            slot.write(item.clone());
-> > +        }
-> > +
-> > +        // SAFETY: We just initialised the `other.len()` spare entries, so it is safe to increase
-> > +        // the length by the same amount. We also know that the new length is <= capacity because
-> > +        // of the previous call to `reserve` above.
-> 
-> Please use a bullet point list and avoid natural language filler words.
-> 
-> > +        unsafe { self.set_len(self.len() + other.len()) };
-> > +        Ok(())
-> > +    }
-> > +
-> > +    /// Creates a Vec<T, A> from a pointer, a length and a capacity using the allocator `A`.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// If `T` is a ZST:
-> > +    ///
-> > +    /// - `ptr` must be a dangling pointer.
-> > +    /// - `capacity` must be zero.
-> 
-> When `T` is a ZST, `into_raw_parts` returns `usize::MAX` for `capacity`,
-> so one can't just pipe its output to this function? That seems strange.
-> 
-> Also below you discard the value of `capacity`, when `T` is a ZST, so I
-> think you can just remove this line.
-> 
-> > +    /// - `length` must be smaller than or equal to `usize::MAX`.
-> 
-> This is always true.
-> 
-> > +    ///
-> > +    /// Otherwise:
-> > +    ///
-> > +    /// - `ptr` must have been allocated with the allocator `A`.
-> > +    /// - `ptr` must satisfy or exceed the alignment requirements of `T`.
-> > +    /// - `ptr` must point to memory with a size of at least `size_of::<T>` times the `capacity`
-> > +    ///    bytes.
-> 
-> Just write "`size_of::<T>() * capacity` bytes".
-> 
-> > +    /// - The allocated size in bytes must not be larger than `isize::MAX`.
-> 
-> Should we make this a safety requirement of `Allocator`? I think this is
-> generally the maximum size other allocated things can have anyways.
-
-
-
-> 
-> > +    /// - `length` must be less than or equal to `capacity`.
-> > +    /// - The first `length` elements must be initialized values of type `T`.
-> > +    ///
-> > +    /// It is also valid to create an empty `Vec` passing a dangling pointer for `ptr` and zero for
-> > +    /// `cap` and `len`.
-> 
-> Can you make this last sentence part of the `if` chain that you have
-> above (ie the one started with "If `T` is a ZST:").
-
-But `T` isn't necessarily a ZST, but it may be.
-
-> 
-> 
-> Just to experiment with the suggestion from Kangrejos to use Rust as the
-> language for safety documentation, here is what it could look like (we
-> should discuss it more before we start using it):
-> 
->     /// # Safety
->     ///
->     /// ```ignore
->     /// assert!(ptr.is_aligned_to(align_of::<T>()));
->     /// assert!(!ptr.is_null());
->     /// assert!(length <= capacity);
->     /// if capacity != 0 && size_of::<T>() != 0 {
->     ///     assert!(A::did_allocate(ptr));
->     ///     assert!(size_of::<T>() * capacity <= A::layout_of(ptr).len());
->     ///     assert!(is_initialized(ptr::slice_from_raw_parts(ptr, length)));
->     /// }
->     /// ```
-> 
-> I really like how this looks! We might want to add labels/names to each
-> of the conditions and then one could use those in the justifications. A
-> tool could then read those and match them to the requirements of the
-> unsafe operation.
-
-I need to think about this a bit more, but at a first glance I think I like it.
-
-The tool would ideally be the compiler itself...
-
-> 
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = kernel::kvec![1, 2, 3]?;
-> > +    /// v.reserve(1, GFP_KERNEL)?;
-> > +    ///
-> > +    /// let (mut ptr, mut len, cap) = v.into_raw_parts();
-> > +    ///
-> > +    /// // SAFETY: We've just reserved memory for another element.
-> > +    /// unsafe { ptr.add(len).write(4) };
-> > +    /// len += 1;
-> > +    ///
-> > +    /// // SAFETY: We only wrote an additional element at the end of the `KVec`'s buffer and
-> > +    /// // correspondingly increased the length of the `KVec` by one. Otherwise, we construct it
-> > +    /// // from the exact same raw parts.
-> > +    /// let v = unsafe { KVec::from_raw_parts(ptr, len, cap) };
-> > +    ///
-> > +    /// assert_eq!(v, [1, 2, 3, 4]);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> 
-> Please reorder the sections to be `# Examples` followed by `# Safety`.
-> 
-> > +    pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Self {
-> > +        let cap = if Self::is_zst() { 0 } else { capacity };
-> > +
-> > +        Self {
-> > +            // SAFETY: By the safety requirements, `ptr` is either dangling or pointing to a valid
-> > +            // memory allocation, allocated with `A`.
-> > +            ptr: unsafe { NonNull::new_unchecked(ptr) },
-> > +            cap,
-> > +            len: length,
-> > +            _p: PhantomData::<A>,
-> > +        }
-> > +    }
-> > +
-> > +    /// Consumes the `Vec<T, A>` and returns its raw components `pointer`, `length` and `capacity`.
-> > +    ///
-> > +    /// This will not run the destructor of the contained elements and for non-ZSTs the allocation
-> > +    /// will stay alive indefinitely. Use [`Vec::from_raw_parts`] to recover the [`Vec`], drop the
-> > +    /// elements and free the allocation, if any.
-> > +    pub fn into_raw_parts(self) -> (*mut T, usize, usize) {
-> > +        let me = ManuallyDrop::new(self);
-> > +        let len = me.len();
-> > +        let capacity = me.capacity();
-> > +        let ptr = me.as_mut_ptr();
-> > +        (ptr, len, capacity)
-> > +    }
-> > +
-> > +    /// Ensures that the capacity exceeds the length by at least `additional`
-> > +    /// elements.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let mut v = KVec::new();
-> > +    /// v.push(1, GFP_KERNEL)?;
-> > +    ///
-> > +    /// v.reserve(10, GFP_KERNEL)?;
-> > +    /// let cap = v.capacity();
-> > +    /// assert!(cap >= 10);
-> > +    ///
-> > +    /// v.reserve(10, GFP_KERNEL)?;
-> > +    /// let new_cap = v.capacity();
-> > +    /// assert_eq!(new_cap, cap);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError> {
-> > +        let len = self.len();
-> > +        let cap = self.capacity();
-> > +
-> > +        if cap - len >= additional {
-> > +            return Ok(());
-> > +        }
-> > +
-> > +        if Self::is_zst() {
-> > +            // The capacity is already `usize::MAX` for SZTs, we can't go higher.
-> 
-> Typo: SZTs -> ZSTs
-> 
-> > +            return Err(AllocError);
-> > +        }
-> > +
-> > +        // We know `cap` is <= `isize::MAX` because of it's type invariant. So the multiplication by
-> 
-> "it's type invariant" -> "type invariants of Self"
-> 
-> > +        // two won't overflow.
-> > +        let new_cap = core::cmp::max(cap * 2, len.checked_add(additional).ok_or(AllocError)?);
-> > +        let layout = core::alloc::Layout::array::<T>(new_cap).map_err(|_| AllocError)?;
-> > +
-> > +        // We need to make sure that `ptr` is either NULL or comes from a previous call to
-> > +        // `realloc_flags`. A `Vec<T, A>`'s `ptr` value is not guaranteed to be NULL and might be
-> > +        // dangling after being created with `Vec::new`. Instead, we can rely on `Vec<T, A>`'s
-> > +        // capacity to be zero if no memory has been allocated yet.
-> > +        let ptr = if cap == 0 {
-> > +            None
-> > +        } else {
-> > +            Some(self.ptr.cast())
-> > +        };
-> > +
-> > +        // SAFETY: `ptr` is valid because it's either `None` or comes from a previous call to
-> > +        // `A::realloc`. We also verified that the type is not a ZST.
-> > +        let ptr = unsafe { A::realloc(ptr, layout, flags)? };
-> > +
-> > +        self.ptr = ptr.cast();
-> > +
-> > +        // INVARIANT: `Layout::array` fails if the resulting byte size is greater than `isize::MAX`.
-> > +        self.cap = new_cap;
-> > +
-> > +        Ok(())
-> > +    }
-> > +}
-> > +
-> > +impl<T: Clone, A: Allocator> Vec<T, A> {
-> > +    /// Extend the vector by `n` clones of value.
-> 
-> value -> `value`
-> 
-> > +    pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> Result<(), AllocError> {
-> > +        if n == 0 {
-> > +            return Ok(());
-> > +        }
-> > +
-> > +        self.reserve(n, flags)?;
-> > +
-> > +        let spare = self.spare_capacity_mut();
-> > +
-> > +        for item in spare.iter_mut().take(n - 1) {
-> > +            item.write(value.clone());
-> > +        }
-> > +
-> > +        // We can write the last element directly without cloning needlessly.
-> > +        spare[n - 1].write(value);
-> > +
-> > +        // SAFETY: `self.reserve` not bailing out with an error guarantees that we're not
-> > +        // exceeding the capacity of this `Vec`.
-> 
-> This safety comment needs to be improved, how about using bullet points:
-> - `self.len() + n < capacity` due to the call to reserve above,
-> - the loop and the line above initialized the next `n` elements.
-> 
-> > +        unsafe { self.set_len(self.len() + n) };
-> > +
-> > +        Ok(())
-> > +    }
-> > +
-> > +    /// Create a new `Vec<T, A> and extend it by `n` clones of `value`.
-> > +    pub fn from_elem(value: T, n: usize, flags: Flags) -> Result<Self, AllocError> {
-> > +        let mut v = Self::with_capacity(n, flags)?;
-> > +
-> > +        v.extend_with(n, value, flags)?;
-> > +
-> > +        Ok(v)
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Drop for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    fn drop(&mut self) {
-> > +        // SAFETY: We need to drop the vector's elements in place, before we free the backing
-> > +        // memory.
-> > +        unsafe {
-> > +            core::ptr::drop_in_place(core::ptr::slice_from_raw_parts_mut(
-> 
-> You are using `core::ptr` a bunch, consider using it, then you don't
-> need to write the prefix `core::`.
-> 
-> > +                self.as_mut_ptr(),
-> > +                self.len,
-> > +            ))
-> > +        };
-> > +
-> > +        // If `cap == 0` we never allocated any memory in the first place.
-> > +        if self.cap != 0 {
-> > +            // SAFETY: `self.ptr` was previously allocated with `A`.
-> > +            unsafe { A::free(self.ptr.cast()) };
-> > +        }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A, const N: usize> From<Box<[T; N], A>> for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    fn from(b: Box<[T; N], A>) -> Vec<T, A> {
-> > +        let len = b.len();
-> > +        let ptr = Box::into_raw(b);
-> > +
-> > +        unsafe { Vec::from_raw_parts(ptr as _, len, len) }
-> 
-> Missing SAFETY comment.
-> 
-> > +    }
-> > +}
-> > +
-> > +impl<T> Default for KVec<T> {
-> > +    #[inline]
-> > +    fn default() -> Self {
-> > +        Self::new()
-> > +    }
-> > +}
-> > +
-> > +impl<T: fmt::Debug, A: Allocator> fmt::Debug for Vec<T, A> {
-> > +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-> > +        fmt::Debug::fmt(&**self, f)
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Deref for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Target = [T];
-> > +
-> > +    #[inline]
-> > +    fn deref(&self) -> &[T] {
-> > +        // SAFETY: The memory behind `self.as_ptr()` is guaranteed to contain `self.len`
-> > +        // initialized elements of type `T`.
-> > +        unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> DerefMut for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    #[inline]
-> > +    fn deref_mut(&mut self) -> &mut [T] {
-> > +        // SAFETY: The memory behind `self.as_ptr()` is guaranteed to contain `self.len`
-> > +        // initialized elements of type `T`.
-> > +        unsafe { slice::from_raw_parts_mut(self.as_mut_ptr(), self.len) }
-> > +    }
-> > +}
-> > +
-> > +impl<T: Eq, A> Eq for Vec<T, A> where A: Allocator {}
-> > +
-> > +impl<T, I: SliceIndex<[T]>, A> Index<I> for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Output = I::Output;
-> > +
-> > +    #[inline]
-> > +    fn index(&self, index: I) -> &Self::Output {
-> > +        Index::index(&**self, index)
-> > +    }
-> > +}
-> > +
-> > +impl<T, I: SliceIndex<[T]>, A> IndexMut<I> for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    #[inline]
-> > +    fn index_mut(&mut self, index: I) -> &mut Self::Output {
-> > +        IndexMut::index_mut(&mut **self, index)
-> > +    }
-> > +}
-> > +
-> > +macro_rules! __impl_slice_eq {
-> 
-> I wouldn't begin this macro with `__`, it is already private.
-> 
-> > +    ([$($vars:tt)*] $lhs:ty, $rhs:ty $(where $ty:ty: $bound:ident)?) => {
-> 
-> You don't use the optional `where` part in the code below, if you don't
-> use it later, then remove it (if you do use it later, I would move it
-> into that patch).
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +        impl<T, U, $($vars)*> PartialEq<$rhs> for $lhs
-> > +        where
-> > +            T: PartialEq<U>,
-> > +            $($ty: $bound)?
-> > +        {
-> > +            #[inline]
-> > +            fn eq(&self, other: &$rhs) -> bool { self[..] == other[..] }
-> > +        }
-> > +    }
-> > +}
-> > +
-> > +__impl_slice_eq! { [A1: Allocator, A2: Allocator] Vec<T, A1>, Vec<U, A2> }
-> > +__impl_slice_eq! { [A: Allocator] Vec<T, A>, &[U] }
-> > +__impl_slice_eq! { [A: Allocator] Vec<T, A>, &mut [U] }
-> > +__impl_slice_eq! { [A: Allocator] &[T], Vec<U, A> }
-> > +__impl_slice_eq! { [A: Allocator] &mut [T], Vec<U, A> }
-> > +__impl_slice_eq! { [A: Allocator] Vec<T, A>, [U] }
-> > +__impl_slice_eq! { [A: Allocator] [T], Vec<U, A> }
-> > +__impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, [U; N] }
-> > +__impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, &[U; N] }
-> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> > index d5f2fe42d093..80223cdaa485 100644
-> > --- a/rust/kernel/prelude.rs
-> > +++ b/rust/kernel/prelude.rs
-> > @@ -14,7 +14,7 @@
-> >  #[doc(no_inline)]
-> >  pub use core::pin::Pin;
-> > 
-> > -pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, VBox};
-> > +pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, KVVec, KVec, VBox, VVec};
-> > 
-> >  #[doc(no_inline)]
-> >  pub use alloc::vec::Vec;
-> > --
-> > 2.46.0
-> > 
-> 
+T24gVHVlLCAyMDI0LTA5LTEwIGF0IDEyOjI0ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOgo+
+IE9uIDkvNC8yNCAwNTowNywgUmljayBFZGdlY29tYmUgd3JvdGU6Cj4gPiArc3RhdGljIGludCB0
+ZHhfbWVtX3BhZ2VfcmVjb3JkX3ByZW1hcF9jbnQoc3RydWN0IGt2bSAqa3ZtLCBnZm5fdCBnZm4s
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZW51bSBwZ19sZXZlbCBsZXZlbCwga3ZtX3Bm
+bl90Cj4gPiBwZm4pCj4gPiArewo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGt2bV90ZHggKmt2
+bV90ZHggPSB0b19rdm1fdGR4KGt2bSk7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqAvKiBSZXR1
+cm5pbmcgZXJyb3IgaGVyZSB0byBsZXQgVERQIE1NVSBiYWlsIG91dCBlYXJseS4gKi8KPiA+ICvC
+oMKgwqDCoMKgwqDCoGlmIChLVk1fQlVHX09OKGxldmVsICE9IFBHX0xFVkVMXzRLLCBrdm0pKSB7
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdGR4X3VucGluKGt2bSwgcGZuKTsK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVJTlZBTDsKPiA+ICvC
+oMKgwqDCoMKgwqDCoH0KPiAKPiBTaG91bGQgdGhpcyAiaWYiIGFscmVhZHkgYmUgcGFydCBvZiBw
+YXRjaCAxNCwgYW5kIGluIAo+IHRkeF9zZXB0X3NldF9wcml2YXRlX3NwdGUoKSByYXRoZXIgdGhh
+biB0ZHhfbWVtX3BhZ2VfcmVjb3JkX3ByZW1hcF9jbnQoKT8KCkhtbSwgbWFrZXMgc2Vuc2UgdG8g
+bWUuIFRoYW5rcy4K
 
