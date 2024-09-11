@@ -1,77 +1,110 @@
-Return-Path: <linux-kernel+bounces-324885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C9B975217
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF3A975221
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FA11F23132
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:28:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7702814C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C381F199948;
-	Wed, 11 Sep 2024 12:27:59 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719D9192D66
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A0618E36E;
+	Wed, 11 Sep 2024 12:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="Svz5UkDh"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F7751C4A;
+	Wed, 11 Sep 2024 12:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057679; cv=none; b=icA+T2pAUuCgXpN/hEccw7fgC43bf6KZZmMMqjJJtUnkQObg0cuPgH1/om1DMDQYs/thQ3kRYbsSeiIrQOkXet+8VutpfcUMR7sikJ6rqly23g3elSGpbcwFBcB1M41LojGzCgKPIq4k+FxYhIR2GVC0LQocsIJPOijEnqoCkRw=
+	t=1726057730; cv=none; b=RdABEJL5Io0/3ZxIGvzqJ/bq+Kw4ainl1hownhrul/vUyXpYwesunRxGqh/1wNgY2ryRZZw2mNI6nU4N6cRf3fnv26lni0Q2fEItEKk+uvhql/t9AT6gi3PMalvFPfMtNqbQ2h7RPYq+fiZvB/5r4Eu9EV9OZb+C6goklH+2H2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057679; c=relaxed/simple;
-	bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uEgXke4Ht5mU6pNShHb15aTjN80EKcJUwlv6wkEg1T0C+XHybl3HxKMx+4uXpR3PZclQuagb7ENBcxcSxKOaYr7kiOda4a94guRP0GSD/EEfIdSNOWj8+EI11WM3YUcqmn9rijsQ7PoahD4IUSHyp0JJpi1+RKuc0X1kFXTdEqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso126093735ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:27:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726057676; x=1726662476;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-        b=i2uDazTww3Ue4ZK36ZOlgoTFgP7m3B//xqYdY2T2NWyEJlN1NZdC7xAknFRaBumNPJ
-         vrAmZGXmdwDAmEdMGJTWs8jjW7rG0wIC+gBH+5UnPrVcmxEd6m4NJr2S2ySgdddUAdN+
-         sihSVVudPaHWF0xnMbE+KhWtoSXi6NSVrgTQrk8iulFL8P1VcQ4jBeUJojBtp3xzIJfa
-         lJMLRMOrendp7IG1G9Wd4uyVsPjHAC7PZP47IIBSAkS8UKkE/KYEgMMOatI1G7Zbb3Om
-         UEAbD/30ePPUbSCdN9tHo6Qp3P7zCeFXOVBMsJ0sCJm+GYwYrwnI8PiKhCwWCGnMnM6D
-         lvww==
-X-Gm-Message-State: AOJu0YxADxWZIHaWno0M2eAX2Dg/E8dKg/PMOgEDbd3nFW+mJEtQHhaD
-	4Oa5bFVvLtpzS+h7yEES3J52InazCTRscJ4JFbOeWuu9F2rRAUS8lqyFd3FUmV8SxSlElf7xsSw
-	G8v8EWwULUxQA+dH8Ns7udVa+huIwWm2y5XQe1fswePzJhi20d5OrKVE=
-X-Google-Smtp-Source: AGHT+IFMZkCrVMOd7BzX3ng/7DCa3afbgnZoYPifmZWoi1S5vKSHGGwboAcfxkGlx3jpFQlKBVfN6U3zdpSXLhhwMEBgVyCAaJTj
+	s=arc-20240116; t=1726057730; c=relaxed/simple;
+	bh=5Jr/ZMMR4Lqqr8IqNaSbYFH3ltNNkjiFdDGhsaK2DoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMhlcOcV6WT4H7KsBVUGUJfPPoXUZ9kNeabGw9xdPqppmNqdNeeaXG4UCUvFu6RqaB2aVo+jfpPWyRBmJVASVS0NTQ2aryrqdlj0wC4vyJrJPkGCXysorrr4dkn+EsgppyxW91HE+EHgmgQidls50CQ7LmSof+n+ZAvrPIPSdgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=Svz5UkDh; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from bigfoot-server-storage.classfun.cn (unknown [124.72.163.173])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id D806678906;
+	Wed, 11 Sep 2024 20:28:37 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn D806678906
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1726057722;
+	bh=84RhzK7ckLC2VZH9E5EktRcm76BXvzf4lS+tQumGGhY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Svz5UkDhInjSesuI1QpGpTdb90UvxkZhY9KLpoL1u4PyeroG1IfbVM/wX2sJnO+0F
+	 vPTK6mQqo4OpBrbalaF1aP/3bvRqsmXrcmNxCsCXXE5afLGXwFo4+DrWdZy40adLlb
+	 DVwA9sVmVzieEr1Zh4w5H5MAmuU4KSrzvB/yQraw=
+From: Junhao Xie <bigfoot@classfun.cn>
+To: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Junhao Xie <bigfoot@classfun.cn>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Add support for Ariaboard Photonicat RK3568
+Date: Wed, 11 Sep 2024 20:28:07 +0800
+Message-ID: <20240911122809.1789778-2-bigfoot@classfun.cn>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c9:b0:39d:24db:d50d with SMTP id
- e9e14a558f8ab-3a04f069c65mr203471905ab.1.1726057676675; Wed, 11 Sep 2024
- 05:27:56 -0700 (PDT)
-Date: Wed, 11 Sep 2024 05:27:56 -0700
-In-Reply-To: <0000000000000311430620013217@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae2b0a0621d71ef2@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Add dts for Ariaboard Photonicat RK3568.
 
-***
+This series bring support for:
+* Debug UART
+* SDIO QCA9377 WiFi and Bluetooth
+* M.2 E-Key PCIe WiFi and Bluetooth
+* M.2 B-Key USB Modem WWAN
+* Ethernet WAN Port
+* MicroSD Card slot
+* eMMC
+* HDMI Output
+* Mali GPU
+* USB Type-A
 
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-Author: alibuda@linux.alibaba.com
+Changed from v1:
+- move some general nodes (firmware, ramoops, reboot-mode) to rk356x.dtsi
+- gmac1 change to phy-mode rgmii-id
+- corrected some regulator to be closer to schematics
+- rename rk3568-ariaboard-photonicat.dts to rk3568-photonicat.dts
+https://lore.kernel.org/lkml/20240904111456.87089-1-bigfoot@classfun.cn/
 
+Changed from v2:
+- remove unused headers
+- corrected some regulator to be closer to schematics
+- remove usb_host1_ohci, usb_host1_ehci, usb2phy1_host that have no connection
+https://lore.kernel.org/lkml/20240906045706.1004813-1-bigfoot@classfun.cn/
 
-#syz test
+Junhao Xie (3):
+  dt-bindings: vendor-prefixes: Add prefix for Ariaboard
+  dt-bindings: arm: rockchip: Add Ariaboard Photonicat RK3568
+  arm64: dts: rockchip: add dts for Ariaboard Photonicat RK3568
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3568-photonicat.dts   | 586 ++++++++++++++++++
+ 4 files changed, 594 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+
+-- 
+2.46.0
+
 
