@@ -1,99 +1,77 @@
-Return-Path: <linux-kernel+bounces-324115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D0B974811
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:10:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD628974812
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCA2287BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:10:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC35B246EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F104838DE5;
-	Wed, 11 Sep 2024 02:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285B52E64A;
+	Wed, 11 Sep 2024 02:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2a+dj/D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S10nq36g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591FE2D057;
-	Wed, 11 Sep 2024 02:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895B12CCAA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726020634; cv=none; b=bfSQN5rHaJZ12mslTLMGeSDcnUrlTm/Sg+waU3U3HplLMYxbAuzAMYR2LOKXZesF+G0sroNkzOZt00z2gZY0k33+K34VruJsj/s+itx+dRi44xkNbIvdJtspV+yyXyXf2VrmISaUWdKxLbDtI8t+lHK/95l1y9MnUz5IQ+hcq1s=
+	t=1726020701; cv=none; b=D6h0fG5Jfj4hc1Oy5u3NayWNQF+Ks+dqtIZGSKSF1wsf2XWUDX7PvsFko1B85rMVNHeI7HoaAMPB7CCbW6ZkG6K59sIPU+EMKNVf3ksGgfFvx+THKdgEpQ2wngcxkX/aL2ujv8TISylXEeJ2NiuKJw4aeI83Lq9nha9SVGGBlrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726020634; c=relaxed/simple;
-	bh=Zu1/LbO49FyicMhfQbc0Lv7MfnCbRbL3IWMUf0NfjRQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hNoX/yPKxdGrAAG+T9hKvZixVS1WLOZ2JL0PvrqLglsJxb2mbIji7pFe4yob3XzsNzpueRPsc9t5mGqQk+do0ywZT3qGWg3pOblYVFotA64Q6aIo14XFdwhFGmIemWz5VAxDPg6X30YDEdiyPrJCc4y/A+bUEblFbnqSNSgQZuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2a+dj/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D8C4CED0;
-	Wed, 11 Sep 2024 02:10:34 +0000 (UTC)
+	s=arc-20240116; t=1726020701; c=relaxed/simple;
+	bh=1mJdaCMQ/y+9vZRgUVNXZFTQ16s9zRPE93MsE9D4JL8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=igYEdXhzeg1APjPKXVmxnxeAfdoOy9lCYLQ/dvtwXAFFMy9GDhTS0sD3fIAkoFz9x47+JRFNyMP/RIzTa+UGbizDOUTFGi8fU8A9vTE4d+AF4kQ4ohMKZeKnPSEHhvun7MbMLgkM4ExBZ6nvSXhKqoj7NIw9Be6l8NNqFRsbUaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S10nq36g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E37C4CEC3;
+	Wed, 11 Sep 2024 02:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726020634;
-	bh=Zu1/LbO49FyicMhfQbc0Lv7MfnCbRbL3IWMUf0NfjRQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=m2a+dj/Dpf8ecsbdrC44MyOBFVa29zYmdFZMfIz0txvDObjSvg+yHA1C/z561+3Rn
-	 8c4SalYq71hKedWROhw1sWXiQLuFCcmVAhY80z0zz9sKwJ0gU17v3Vz5PITntP2+mj
-	 VUiy2K+glHXoScoEbAKx2JY60dFavO2mitmkmtSUz7NAj2A97YfWLpGCm6a22raI3K
-	 RHACB4BhCKCNJ3MHylv+i8k7+cfzjcs2nDmARn0EbCLokEUyHjzkOlFJXayGm8ApLK
-	 DevMPv2qJMbm1/rK9LGsEjaM7OC7NXoJ6+V38dLM4sRi4VD4eBrATuwMlkZkdJHOzj
-	 dySMLA8pSx1XQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 72C3A3822FA4;
-	Wed, 11 Sep 2024 02:10:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726020701;
+	bh=1mJdaCMQ/y+9vZRgUVNXZFTQ16s9zRPE93MsE9D4JL8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=S10nq36gUFpRFz3NpLdrRMYVvlcP/anrrOBUYn3SJTrfQDFMdjUQax/lY+8fTF7NE
+	 wpk0hItcbiw+qZv7WuNqwxdxK6nNARI+R4QkAimP5bEJGGLjLaSg/cCCT+bWm+B/N7
+	 fBLzre7IeZyPBxBXsNqWgEwi5/loELUswEw12RQl2fy0E1ciF3nlrLaN0LWiMLp/oY
+	 Pn6Cq56b0NDM3JxNb3wxVSg8z4G79fRyf5UNbo+W2cz7ucFbQDpwHlIjkaplFiIPHx
+	 TyEAYOLpwxWC69D9QVQ674aF8H2EhmcQDvRogVRhgqFyxAAabhMZ8XYKosvXBrFvJF
+	 4LWJpuYDdVA5g==
+Message-ID: <31db09a9-cd34-431b-8e16-31b06785430a@kernel.org>
+Date: Wed, 11 Sep 2024 10:11:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/4] net: xilinx: axienet: Partial checksum
- offload improvements
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172602063500.461532.10717864634728070031.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 02:10:35 +0000
-References: <20240909161016.1149119-1-sean.anderson@linux.dev>
-In-Reply-To: <20240909161016.1149119-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: radhey.shyam.pandey@amd.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- michal.simek@amd.com
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH v2 2/7] f2fs: introduce
+ migration_window_granularity
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20240909221946.2004046-1-daeho43@gmail.com>
+ <20240909221946.2004046-2-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240909221946.2004046-2-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  9 Sep 2024 12:10:12 -0400 you wrote:
-> Partial checksum offload is not always used when it could be. Enable it
-> in more cases.
+On 2024/9/10 6:19, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Changes in v2:
-> - Set RXCSUM in features
-> - Expand commit message with testing methodology
+> We can control the scanning window granularity for GC migration. For
+> more frequent scanning and GC on zoned devices, we need a fine grained
+> control knob for it.
 > 
-> [...]
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-Here is the summary with links:
-  - [net-next,v2,1/4] net: xilinx: axienet: Remove unused checksum variables
-    https://git.kernel.org/netdev/net-next/c/b1e455cd864c
-  - [net-next,v2,2/4] net: xilinx: axienet: Enable NETIF_F_HW_CSUM for partial tx checksumming
-    https://git.kernel.org/netdev/net-next/c/dd28f4c0e81f
-  - [net-next,v2,3/4] net: xilinx: axienet: Set RXCSUM in features
-    https://git.kernel.org/netdev/net-next/c/06c069ff2f70
-  - [net-next,v2,4/4] net: xilinx: axienet: Relax partial rx checksum checks
-    https://git.kernel.org/netdev/net-next/c/736f0c7a8ec2
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
 
