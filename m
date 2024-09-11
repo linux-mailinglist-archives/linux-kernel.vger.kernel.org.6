@@ -1,185 +1,130 @@
-Return-Path: <linux-kernel+bounces-324392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C09974BF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E8F974BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09006B24866
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93A441C25C81
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E26143C5A;
-	Wed, 11 Sep 2024 08:00:26 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2060D558BB;
+	Wed, 11 Sep 2024 08:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqYaD6S+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86113A409
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1486443144
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041626; cv=none; b=cIviDoV+H4xKJ/ZMZGZ5gzAqsc7Hvc9gQckxBNqKVD2hggBYIwR34H0Hd5H8h7p5CJJ2rIPgOOPqJTXeLYaoikA5KeBB8SOJ6ghBWAsJIapf9Z1eYnXZAGh9+gGK39q+yvh3NuqXB7OgbepWDcBvGKgQjc8mZdygEGyXpji1xD8=
+	t=1726041685; cv=none; b=ouc2pIIN9ocwhqMsjg2lbdQaO6fW0R+Rum1T7GQQsaHk0Mf1/+dh75/4RhAZroVfXuwNgORF3XjFiFsGPYkBLFbIYLsXrphl4FPUy2hhsbajnyi1LGZUp4ZFATLFDGSFZLVKdAxN6iOcmQ3adKZnMr88EnwofUN65eJdRL88t/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041626; c=relaxed/simple;
-	bh=XzSL3uEl42kiOW8dM1fvjQp68nYNKVjZnTaYr0q36HY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VLJKab7TCIh2c1Mo0E4OH+cRkG8kX/hKtpfhRhzzMBPpxck/L2ZcTTu4R6GZouTGsGUocA52yoe55Y3e6J+JKK+DUDyfcrX0HrRruqEfLDIsX6JILv6oB4PxSpKKVqdfrBamX9iVtSOlSSAWltD2AQoIT2YqyAA4nzK+r0qd5OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82cdb749559so807031839f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:00:24 -0700 (PDT)
+	s=arc-20240116; t=1726041685; c=relaxed/simple;
+	bh=S7YFPOr47KnzpX+EfvhDAL9kUueFzGcx6/bEZmJEe1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VtUTJqfXgwFHjiyUvlUy9bb+CdJ9wJbds8g/0pisTiUg1CN1Q2dO9PGmZ93906rrjj6MOwBiAeVkAzswltJ7LkCPN/9BUJ/N6qMiKadKcn+15TitzgkqnHLheKpJIfe9MOAgXEug7OfAaFpxVS693bI+A5ovRPB58qqyXCYRfGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aqYaD6S+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726041681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7YFPOr47KnzpX+EfvhDAL9kUueFzGcx6/bEZmJEe1U=;
+	b=aqYaD6S+mMFk6vP2IFPcNZvdjVWtp2RMlujHgZZk0bCRA3KKnOJH4h79cXji4onl3oZk46
+	ey5jjC8Q1/FoJH3t3k0NtGScnpY5bkDwzhlUmBIYFhK4Iqlhb6NT/sPqkQ16DH8Nkuijnb
+	4+FC7MX5HWg8gTZk8vij4GwFEiQwlSE=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-WMeAjus1OYKTMxmNTJxQqQ-1; Wed, 11 Sep 2024 04:01:20 -0400
+X-MC-Unique: WMeAjus1OYKTMxmNTJxQqQ-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6d9e31e66eeso222851307b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:01:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041623; x=1726646423;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t/voDSYt1SzgZmPZGI/JD1Kv6UKBK/sFWlozCEYhxZo=;
-        b=DqHrY1fbK+j257H2fPla7uFUOb57cKoVrxyYT4/Kko4AwnAnTVMOmwqzLjwqvC7XTV
-         hnuVByqX2urLSfpSuhOnnwP8bvjY8AlZxqMINppUV/NagzmAyfhz1n22PletiPOjFdKL
-         p48RP4UERFJWSMu7X/paxQMZXCJLreY8x38i35DGycsURdg/THmtxKvU3iEQGDERS8G7
-         dYKPqZYp1z26K0u4KAL9joywMpqMAFuPZW2pDYr0xwLtKRhz+bdXXY9xmOK/LqyX9h6u
-         f5zUlOyI/OaVsS6F1zkTalYKy9qyciyQN4WTOcIZ2Qd9QHrhvqZR8gJXIOJ947FAciuR
-         R0Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUDHpH6J2W9H84LJA2iuuN+ZtgcKs2TqDDgp40ISpdazVxGVi5P3Jj4+On4CyoTz61MkvfrjiVokAsY4dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3OskRtfOsMYC1RQX3korJe9XC2Qadpf7DAYS7sSrY2eBD3Sud
-	I54El9kyhoawZDMjqILQQvK+swCdiKfrIUPMuULlIMh+7CNVsY+FbDMnjpeZy02zzS27VL/Tniy
-	Enc2cyDDMSh70WURI48xaG1mxY6vrud3t/zcUlb1mLEw+x4Axs1a56EM=
-X-Google-Smtp-Source: AGHT+IEdYwRaPQ3xaDCxB93TJRyXKBW/rUBEIjOkjQ4K/N7y3zfKBL6k20KH4paA6orRPIMqJO+gRCD+4MKzLU4adaLxatvgY3DK
+        d=1e100.net; s=20230601; t=1726041680; x=1726646480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S7YFPOr47KnzpX+EfvhDAL9kUueFzGcx6/bEZmJEe1U=;
+        b=aIXifVk22+Zwzh/W8RpT78C3Sx8vtqv/8qAo8hwQdQztUIWZ1M+eo+bAovzwiCl8FX
+         T59VTPOG8h2U8/53sE3IJkbv95fn0Iwvw+8OOmlzS2joYtjuADYhRBHTZ7w9vOpQ0dF1
+         X9MJVrjd1+933kuZz9guaMGDibSyxsi1ANV7pxiuOGEuk0Wp7CehLIEQLGXWeFOCKaES
+         e+h8A6w6p0cx6X3FvOlQi1DYo9jSgFZ8W+Oe5c4L00KrNeMUpkNclscxTsNpDucz55+g
+         VrZtWYVe0AQuiAH1F+szTJcPNst4r1zsqy2iJc640Rx9X6FlczF5zjPoyATpfjwdGYJB
+         clzg==
+X-Forwarded-Encrypted: i=1; AJvYcCW411QQvrVM+kbkjRprfIXxAQpAkzylHVgGOXUfaec0KWg5ILVsEOJ7WiqsuHxjQnmgkEJoQ/J0cDEoXoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcrsv8u+WGaXo8L5sD9OSRG7/jdGvdZ1dr04UCVDS4+iXadgPU
+	Yup05PGtoUCmu7piVOj/uQnt0UBt2PA9AL0E0Aav+M2K5NoGeFGYsWWR3umTZxaZPEFdtPpYTG+
+	53qoEPzL1OyDG/3Q1G2Kq7Txq6uQ4E5cRepwammRnb5u0j8elkQDf1l634OgUiP3jg9mPUszdak
+	nl7uHSSq7tWMchO0Ys/G/jH6iRYu6+n8X5yUlT
+X-Received: by 2002:a05:690c:6512:b0:64a:3e36:7fd1 with SMTP id 00721157ae682-6db44d9e360mr200120217b3.10.1726041680280;
+        Wed, 11 Sep 2024 01:01:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGycL15wVUOnoLYy7HKMCqM5sIYCNMn+FEaCTz3f8kQpDk/ygjQU73LezZOKgf3VnEGDHaAdRqQdFmHRUiFMw=
+X-Received: by 2002:a05:690c:6512:b0:64a:3e36:7fd1 with SMTP id
+ 00721157ae682-6db44d9e360mr200119947b3.10.1726041679985; Wed, 11 Sep 2024
+ 01:01:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:27c2:b0:82a:539b:9838 with SMTP id
- ca18e2360f4ac-82a9a256c42mr2089226839f.5.1726041623342; Wed, 11 Sep 2024
- 01:00:23 -0700 (PDT)
-Date: Wed, 11 Sep 2024 01:00:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3bf150621d361a7@google.com>
-Subject: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
-From: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>
-To: christophe.leroy@csgroup.eu, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20240816090159.1967650-1-dtatulea@nvidia.com> <20240816090159.1967650-2-dtatulea@nvidia.com>
+ <c59afb55-78b1-48b3-bafa-646b8499bf1c@nvidia.com>
+In-Reply-To: <c59afb55-78b1-48b3-bafa-646b8499bf1c@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 11 Sep 2024 10:00:44 +0200
+Message-ID: <CAJaqyWcEt7=3j2uoToZH=no-gPvRsXwW7RLtFcbD7_-nQ0Dqyw@mail.gmail.com>
+Subject: Re: [PATCH mlx5-vhost v2 01/10] net/mlx5: Support throttled commands
+ from async API
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	virtualization@lists.linux-foundation.org, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Leon Romanovsky <leonro@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Sep 9, 2024 at 11:33=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+>
+>
+> On 16.08.24 11:01, Dragos Tatulea wrote:
+> > Currently, commands that qualify as throttled can't be used via the
+> > async API. That's due to the fact that the throttle semaphore can sleep
+> > but the async API can't.
+> >
+> > This patch allows throttling in the async API by using the tentative
+> > variant of the semaphore and upon failure (semaphore at 0) returns EBUS=
+Y
+> > to signal to the caller that they need to wait for the completion of
+> > previously issued commands.
+> >
+> > Furthermore, make sure that the semaphore is released in the callback.
+> >
+> > Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> > Cc: Leon Romanovsky <leonro@nvidia.com>
+> > Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+> Same reminder as in v1: Tariq is the maintainer for mlx5 so his review
+> also counts as Acked-by.
+>
 
-syzbot found the following issue on:
+Not sure if it was the case when you send the mail, but this series is
+already in the maintainer's branch:
+* https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/
+* https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/commit/?h=
+=3Dvhost&id=3D691fd851e1bc8ec043798e1ab337305e6291cd6b
 
-HEAD commit:    a9b1fab3b69f Merge branch 'ionic-convert-rx-queue-buffers-..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1193c49f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bb7bc7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b0a100580000
+Thanks!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0459f959b12d/disk-a9b1fab3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/337f1be5353b/vmlinux-a9b1fab3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0e3701969c4a/bzImage-a9b1fab3.xz
-
-The issue was bisected to:
-
-commit 17194be4c8e1e82d8b484e58cdcb495c0714d1fd
-Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date:   Wed Aug 21 15:10:01 2024 +0000
-
-    net: ethtool: Introduce a command to list PHYs on an interface
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1034a49f980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1234a49f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1434a49f980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
-
-------------[ cut here ]------------
-refcount_t: decrement hit 0; leaking memory.
-WARNING: CPU: 0 PID: 5227 at lib/refcount.c:31 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-Modules linked in:
-CPU: 0 UID: 0 PID: 5227 Comm: syz-executor281 Not tainted 6.11.0-rc6-syzkaller-01235-ga9b1fab3b69f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-Code: b2 00 00 00 e8 e7 09 e1 fc 5b 5d c3 cc cc cc cc e8 db 09 e1 fc c6 05 56 d4 4f 0b 01 90 48 c7 c7 c0 3b 60 8c e8 f7 2d a3 fc 90 <0f> 0b 90 90 eb d9 e8 bb 09 e1 fc c6 05 33 d4 4f 0b 01 90 48 c7 c7
-RSP: 0018:ffffc900033ff048 EFLAGS: 00010246
-RAX: 033d767773c83300 RBX: ffff88802f8d0664 RCX: ffff8880506e0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffffffff8155b372 R09: 1ffff1101710519a
-R10: dffffc0000000000 R11: ffffed101710519b R12: ffff88802f8d0620
-R13: 0000000000000000 R14: ffff88802f8d0664 R15: dffffc0000000000
-FS:  00005555884f4380(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055c9aad930a8 CR3: 0000000052acc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_dec include/linux/refcount.h:336 [inline]
- refcount_dec include/linux/refcount.h:351 [inline]
- ref_tracker_free+0x6af/0x7e0 lib/ref_tracker.c:236
- netdev_tracker_free include/linux/netdevice.h:4057 [inline]
- netdev_put include/linux/netdevice.h:4074 [inline]
- ethnl_parse_header_dev_put net/ethtool/netlink.h:271 [inline]
- ethnl_phy_done+0x6f/0x100 net/ethtool/phy.c:238
- genl_done+0x136/0x210 net/netlink/genetlink.c:1043
- netlink_dump+0x9b2/0xd80 net/netlink/af_netlink.c:2370
- __netlink_dump_start+0x5a2/0x790 net/netlink/af_netlink.c:2440
- genl_family_rcv_msg_dumpit net/netlink/genetlink.c:1076 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1192 [inline]
- genl_rcv_msg+0x88c/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7cf874a219
-Code: 48 83 c4 28 c3 e8 e7 18 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff97db218 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007ffff97db3e8 RCX: 00007f7cf874a219
-RDX: 0000000000000000 RSI: 0000000020001900 RDI: 0000000000000003
-RBP: 00007f7cf87bc610 R08: 00007ffff97db3e8 R09: 00007ffff97db3e8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffff97db3d8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
