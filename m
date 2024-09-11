@@ -1,164 +1,190 @@
-Return-Path: <linux-kernel+bounces-324076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D1F9747AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEE79747AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EF21C25A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947331F2626C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE0E1CF92;
-	Wed, 11 Sep 2024 01:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC261EB46;
+	Wed, 11 Sep 2024 01:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPBlga5U"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="S4tYH/XU"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2084.outbound.protection.outlook.com [40.107.255.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60BB18C3E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726017295; cv=none; b=NfYGEg6nf/CRZa14F72r/y13EQANE9MAuNgDkyABzOeCqDuqA81JNEEkfMTtSMqkx2syTrf5PUzynte2A98ZKiHIsZaRSvzQtY8mmDQsXHsKuzV15bkr0kwGQo2WzSO/U9YSXftPR2wW5W2DIQJ/Le4W3nIxgoUFNzENAkR3+FY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726017295; c=relaxed/simple;
-	bh=JkxPpkKyaZKOXFrI24q959UCrQqUzmaM/yQpsNcLszg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WSeUhg0WTi3w/YfqLT2my2ZxLh6mNjg8/pXDoi5ij7axEv9YOa6rWlBsM4awGuM6zxD8QRefXhXmu6FAx9YHx+fslaI0NW6JD/01rwp/JFAQXxx/QlXj/BcEMV9OZW+RTPC2Z3sc8FUd3sUO1hOYAWfzLdFeWAClAM8WGFV2GFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPBlga5U; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726017294; x=1757553294;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=JkxPpkKyaZKOXFrI24q959UCrQqUzmaM/yQpsNcLszg=;
-  b=YPBlga5U8QIH7gO/y9gx/26029aE0hWjaImOAi9hDdZXDn2giBisgxue
-   Bep+uOntJLAiMiFFar3rfGxCxTDt4LVuKshJlvN27qykG6s6uHXn2etxz
-   GUXaEU35p7bsWbpJKwNb00LVilbdfFobnQx4TOMdTEPE+xKtU38r8QhA6
-   VzFpyYC8ORrGypqYNPsLetxy7n1FAmLdng2PdRvSCzM6wcPQRJS0RrUVv
-   a60H8fBmY7RwCr4F0c0zajm6RDX0aahMy8LuJ38jykjNXLP/5Hx4/FqBX
-   mJp21ifUpGfULWAOpvz5Fu9LgQ3qiUkYG14GkLBrvZsmsBBTvPaFV12K5
-   g==;
-X-CSE-ConnectionGUID: tMtW34F4TVWuGFp9Xn8o0g==
-X-CSE-MsgGUID: xQ0M/MqERe+CYMGDDEw3oQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24734651"
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="24734651"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 18:14:54 -0700
-X-CSE-ConnectionGUID: mv52wyQ6Q1CkL26nnumGDw==
-X-CSE-MsgGUID: Zq5A12oTRx+hGKeSn+Izlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="71353115"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 18:14:51 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
-  kunit-dev@googlegroups.com,  "Linux ARM"
- <linux-arm-kernel@lists.infradead.org>,  "open list"
- <linux-kernel@vger.kernel.org>,  "Anders Roxell"
- <anders.roxell@linaro.org>,  "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>,  "Bjorn Helgaas"
- <bhelgaas@google.com>,  "David Gow" <davidgow@google.com>
-Subject: Re: Kunit: kernel/resource.c: In function 'gfr_start':
- include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use
- in this function)
-In-Reply-To: <aaee4ddb-68a8-42ae-bb68-11ef991ada1c@app.fastmail.com> (Arnd
-	Bergmann's message of "Mon, 09 Sep 2024 20:20:23 +0000")
-References: <CA+G9fYtNY+S0Ls2f3atJS_Y9Nh3V01EKO5jbPtVYbgch0TYsFA@mail.gmail.com>
-	<aaee4ddb-68a8-42ae-bb68-11ef991ada1c@app.fastmail.com>
-Date: Wed, 11 Sep 2024 09:11:18 +0800
-Message-ID: <87plpbvvt5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6E61863E;
+	Wed, 11 Sep 2024 01:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726017258; cv=fail; b=fKpYSJ+86CMjBh8OE6YMFt90uj7NZPA6H8iU0jEGHcRdJrLMPsnbt7DoA+3C9MzjmkmRpHn3sY+T+2nzX9m9MY/MFb0kLuIo01XOOn7vKwHRsGoh+xoNzdsHCSvwjc8CFjz9TZu1r6kKbELvrYovieS8WdXJv58h+88PEFORIQs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726017258; c=relaxed/simple;
+	bh=+shNCQ6x4pTRE4v1lC+G/8bduxdHLLbT8jRprZ9KvXU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=s1oCSadHXZdZ+DMV1/WJAORFmFqK2Ll4SlJShSLHl4YVUOXZWPyPt8NS/QaR0CsEB39Wy7RTCnRICiliJ8yuxCAm3evfdZkVgo3Hd3QzuoP7FiQDiSG7BV0wTQr4p+3EPfwKT9M2dcDU4oYwgn6qV1IcKyRzY0nIK9UT6EmP2sQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=S4tYH/XU; arc=fail smtp.client-ip=40.107.255.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ozJPvGDt4oKeAkE7Nx+V+GAO57FrzWWmzR4nElui/oOSz+iuJhe9EBz2lHrXcqa5XqnHYOZLp9jpXlduZ3iF86Jv33Sc3+nUL804niTFRMzfSdKW1fp46bQLOQcVgKlvMy+YUFeiIzGw+Le/t7V/ZKEium5MNJrU3gIXDZWomjAh5xeVkmSeAFJUmYxkrzTPmjwTFxJpA8eSvapvWjN+IAcTY4or37dimtbFHMgLQf2Yn4QPHsg1njbBameKKtg0VHEBrhB6VopF59yrN74PfvLKOElQH8Vdwz3z2va4TKxwCpYribT47mn8KhkPYuFXaimOfRLdV5EuW4DQobY0Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2WIOrKozJslxUsEyfmHB7zyrcPVx+EC8nM7bCYNLj4Q=;
+ b=oM1WmyYCQ9nB9N1S2L560Ta22B2d/hWOOFm0QGOVefODq+Zsd3J9yLkqp04Eb7/qyHE9OfLSiydms8G/FimNLCU10KeL3uvl3sZG8ZQbO7+a7RyIZRpZHFl7bnRwju/eGBABz8pHlIhNNAEmeX0csO+ooKY89TKZBi8EnyyOor7iVF4klx6QPmhozNqzYjg0NUQJf13zpuimX6/PT2h8z/V0rw4lp+E/t24S0Ng5TN7E1qAdid/7v3l0S3vQCvnqb07DHpU0ak9svumLVsHova3GW8RKuZ8RXTvY7/rzkBWRY0+9cLEZR92TNbuBpGOSvvwuEalX07dsSVSWo5CyHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2WIOrKozJslxUsEyfmHB7zyrcPVx+EC8nM7bCYNLj4Q=;
+ b=S4tYH/XUek0HoI9H4EikTDj/xfy8Nmkm/edsgKOafYe3rz/bsqTmG7ODrSsiX47nALeW35NG9rDWBVeOwdJptOzL9qSmeqK0HGreCFBmOThAqmJdxn4gH6OiECkDxPkcCyl97UhsvXj8pYd4y3iAou1IrxUQzqYDrk2fzZQyiFqV6zIHkqpfv8KRSYSF0Nqi1lktA2Ipm9KC4oPk6vHgJe4kbGb80QMULFzqWm7tRQ9BgGAxh0gt+hdUvQgmSBlNBhBeq9fA3LPtliCu19oZeZwquUrhG5OzfWb2CfOcdbN1i+m8HeI9r/rGfWgfk83Y+gG20cMMq6Z2XBamAahxFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
+ by TYZPR06MB6916.apcprd06.prod.outlook.com (2603:1096:405:42::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 01:14:14 +0000
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 01:14:13 +0000
+Message-ID: <4a308d13-932a-494e-b116-12e442a6352d@vivo.com>
+Date: Wed, 11 Sep 2024 09:14:10 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: remove redundant if overhead
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240910143945.1123-1-justinjiang@vivo.com>
+ <ZuBtvW9TWCnHte4V@casper.infradead.org>
+From: zhiguojiang <justinjiang@vivo.com>
+In-Reply-To: <ZuBtvW9TWCnHte4V@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0126.apcprd02.prod.outlook.com
+ (2603:1096:4:188::11) To JH0PR06MB6849.apcprd06.prod.outlook.com
+ (2603:1096:990:47::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|TYZPR06MB6916:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21cf5b41-6527-4fa0-a1d3-08dcd1ff0c1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|43062017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXAwTmxjZnRhTHpNc2IyeU9UeENqYnV4djdMVW5uRVZwNnh4V3AzYXU2YXFN?=
+ =?utf-8?B?ZnF2dzdnZ3E3WmVnYjNLdGdhQ25yNFJ4L3pUOXdpeVpXc3RoaWNzeFFtSjdV?=
+ =?utf-8?B?dzBaWTRMS2lNaWhUSDlIazJWbEE2aStobVBIVjBlbWpBRUdNU05nMjhqVFFs?=
+ =?utf-8?B?OGV4NWRDVkFJVUpLWWxNZzVibkRaNVhOL2RwVDZId0wya0wvZjFqNDd6KzQ0?=
+ =?utf-8?B?YVY4QXVEeGJJOFZSOTZnT1FpRkN0Tk1mc0tpdnphaTh3bEtwdW5wTE52c0NM?=
+ =?utf-8?B?cGlRODhZQnVPM05ZSDZDd2JSckozN216dFdyVHRpa0JGK1p5SGRpK2Erczk0?=
+ =?utf-8?B?WHNheTZuK1VONng0UWtrTGZSNjZoTHcvcnRydFRNQzBSbm1iNncwbGVra1h6?=
+ =?utf-8?B?U2drVCs4UDRpTlhsZ21YcHhwUklubkVYa0ljeVFUOXF2aWpIVUxMS0NzNlFR?=
+ =?utf-8?B?Tm1UYjJyRjgzSjI1WW9QRlBERTBEaEhYZ2tybjhSc3BOczlWb0I2eHJzVzd3?=
+ =?utf-8?B?RVBlQnhyMTFEdklMdzNuL291dk9HV0d0MEF4VVc4L25VcUZLbzc0ZWlUbVV5?=
+ =?utf-8?B?MnpQUWRhZmV2RU9pTUZrWlNWSWx1alZINFQzUlJEY08razltOGwveVNQNGZu?=
+ =?utf-8?B?MVM5anh4ZHVIQXMrTkxyVklGUHkwQWgzUGVrMkxKWCsyUk4yb2VhajBIUmhO?=
+ =?utf-8?B?SFYvSCs0TkVOZTJmSlV4bGFPQ1k4TkRJcHV0Wm8vZy9nbTdKdyswUXF5c1Q5?=
+ =?utf-8?B?OTlpeFFkSlFiWWxvdTRKQUlWcUhrNHk4TmtnVFpyd1Rrak1JVjgzK3hVcDJO?=
+ =?utf-8?B?LzhYZDFOV3hWcUlRMnllTTUzeWs4cFNjcmhQMXlYVmJoWVlYZ1h2cjNzSTZF?=
+ =?utf-8?B?RFRnN0pJdlpjYmF3cmRHejQzUDNJRkdHangrL1VqWWdWK0JiTVlDL2ZySGVq?=
+ =?utf-8?B?b0JjMEVOMUxHSE84NFlEUFdrU1NscHlaL1ZSNHpyL21ZbDhDMHhiV2xhWmZa?=
+ =?utf-8?B?TW02VDJUZHd3R1o0UWxaT0xYOGpPL3A4cG1KSU81WUc1TEFOS0R1bEhmTFZM?=
+ =?utf-8?B?TWZaTnBrbC9OUDIyWWtMVzJjYnNRSWg4TS85MWh3aU9rVkJZRit4Uk91MTNU?=
+ =?utf-8?B?MzNla0N2YU5iRjROdTM1d3JZSkhIRHgxQ0ZnaWlPbkZhSHg3YzFSdVh5RWt1?=
+ =?utf-8?B?RENLckVFaFE4MWdtTzZQaWUycmpXYTA2dlJOOUJBWU5wcU5vK0tmVS9jRXlF?=
+ =?utf-8?B?amtNUmEya1o4NW8yN2JoVlhZaHZmeXhlYjd0UGk0dUUrWmRwdmxXd1o3SzY5?=
+ =?utf-8?B?Zml0RWpqalIvZmVzNmdEWlpENnVpWDF5cUhPdGFrM0dBbUVoY0pIQm1aRjNj?=
+ =?utf-8?B?MVhNNXlQaUZIbHdER0NsYWNqUlZkWTNMbmszeGtPemdEZ0FyaTNTOGFXa1U5?=
+ =?utf-8?B?L2J3aCtqRWMwV3hLa1A5eWhETTIreGsybm5HU2t1UkpFaGhIZmk0OElrN1NG?=
+ =?utf-8?B?czhRN05ud3ZhY3FOTzRoLy9wVFdDaXFXRzhzU1FhNmFwZFRpOUczWkVLUEIx?=
+ =?utf-8?B?VGkwWTlpRnBNazNkNjZHR3o3OWpuSkNDd1ZkQWEzeCtYZEViL0ExbXFxMjBl?=
+ =?utf-8?B?dllWTWNIQTVYRi9WNmxkVFlJRXY5UnYwZGh5WkRFUjV6ZzBLdTIrMXUxRlV0?=
+ =?utf-8?B?WitPMCtGeEtYcTRudGo0OFREL0pod1M5U2FrV05heW8raUlwejBqbTZWNW1v?=
+ =?utf-8?B?elNOdlBlVGtDQzh3cWh2bHk5cVdpb3gyKzdOdzB1UzdhekdYeUw1UDdITUYx?=
+ =?utf-8?B?NnVEaVlzWWF4UDc1VkxvQkhQWEpYQmM2T0QzUEJIaFI4SjdNS2haR2ttcU9j?=
+ =?utf-8?B?bXNKMnhwRVRneU56T2JRVFZQSkhlSUR0YW9GcTBsSjcrZnc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(43062017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T1pUaTlNVUJYN3d1UWRCN05FUGlBOVdCUmJCQmN2OHFMNE4zTFU0cVZlMGli?=
+ =?utf-8?B?azlkT1RrcTM4b1ZTcjFEZ0JtbFM0YkQzRTE2eldLWGcydW4xYUx0czM0bEp3?=
+ =?utf-8?B?V3FQV0xYNHlUOVNRRnFCbVRKV2drQWFLK0hsVWhKSzJBSURDSjUyMGwveUM4?=
+ =?utf-8?B?MVh3QXJGbzc2K3pMeUFkdUN0N2dGQ2FUSFpmOWQ5UGJSNmxtRmpzVFRuaFNW?=
+ =?utf-8?B?eEZKbWtMY1ZpdFFjelBJT2U1RFNON0ZlOFh0VnlrVStaN2ZjZ2JNZW5KYmtE?=
+ =?utf-8?B?MDJtc2JkWWJ3WjgrTVpKNngwU081Mm9uK2xjNXFHeVpDSHNmcm5DOE5lMEVh?=
+ =?utf-8?B?S2NjK2w2TnVncm1ES01hY0RqV2JkWGxxTnU3ak8yOVRjT3REU3Q4Sm56TXc2?=
+ =?utf-8?B?WlhDRm1ZcVB1d2llcWFZM3QxKzdaTWZOb3JRTEU0cEprOHJ1aEhZVWtDNzJj?=
+ =?utf-8?B?WXFoTUlkbGlZMS9qak1KaTVGWFFOWlMyaHNJVVMzQUppQTFFQXR3dWc3ZW5W?=
+ =?utf-8?B?Sk1YSWRHdlJTUW1qa3Z4ZWVqY041TGdleFk0Slk2WUlHb29jUkN0amVWazlR?=
+ =?utf-8?B?MmNwaGNoTEFiZFI4VWZOOERNc3UvSy9Db0U2cEVpNkw4SzdDY3ZFT2dkZHE2?=
+ =?utf-8?B?RHRiT2x1M2pZUmRTTmd4TmpOOExqYVZIUnBOa3ppNHpYeHo5aUtBSWxTcEl4?=
+ =?utf-8?B?MWZnYzZpMGxiYVhnQWM4L0txUUR3K0FLUk5heUNhQjBEMDBOSUVaUW1zNko3?=
+ =?utf-8?B?b3BZcVBITW8xZTcyZEZOUFI5M3NSbHoyQVlCQ2FkdVduSXY4RGQ4VEtHZENQ?=
+ =?utf-8?B?WXJLUHVTSUV6bkN6T2ZING5uVDZzZ2tHV0Zwbm03V0pSdTNwNTJTczRpdmVX?=
+ =?utf-8?B?aXJZdDNkb3loYlArYkFzSnovaHVVVHphcWs4Y1RPWkNFeWRZSXdiY3VGQStF?=
+ =?utf-8?B?UTI5S3g1R1I3RFJNVkNHMm5yeS84ZzJic3I3VTNqWnFYOW96bTlqQ3BRS1cv?=
+ =?utf-8?B?R2VRWTMxT1pwd21FN1hiSXExVHhhVWtsT3hPc1lreWU1OUhaeHc5SU1hRmRX?=
+ =?utf-8?B?QjRNcGtBeU02aThkVzk0TmI1Mlc0ZHQzNlJxbW1yS2tuN3daeTN2a3pmNFN0?=
+ =?utf-8?B?TWV6cGpsL1VOMitSKzZuUDcwd2FJbDI4V0dQd2Qvbng2djlncCs3aDlJNzdm?=
+ =?utf-8?B?bDFtWGprK1h2Y3doWTJod2R2ckdyN3padThwejJzeDhCS09CaHNlNFpHdWc2?=
+ =?utf-8?B?cFNTZXJSUUh2alM4WWJMcy9WS1NEMnlVQlJRbWVzNzU0VlczeDlWcEZVdDVu?=
+ =?utf-8?B?K3kzZ2F3dFp0VVY3M2dFV2FOTVFBR0JvUldPUFljN2FWbnpxcGpZY0RNMjNi?=
+ =?utf-8?B?TERGbHZvc0doaVIyYjIyR2R3bDgyZE9GaWNISWlIaW5URXJXV0RpdG92dnNl?=
+ =?utf-8?B?ZWF3c0dqVDVXZmhQbUJ3a3d6cjB1SVl4ampSQS9nV1pBRWhTQThDTERrUG5T?=
+ =?utf-8?B?aU1sUkFpdG1VV0tERmk3OXozUFpkYlJXMU92S2RUcGdrb3JKRXU0VWd2MFor?=
+ =?utf-8?B?aThxZGF1SFVIOExEL2wwbzB4bUNkS3pwaGlDM1JCRk1jQ0lJRmFXTFZyYmRO?=
+ =?utf-8?B?aW1qRGpOajVCZHBSVDZzTjZDYlZQU2NtRzRPSVVvem9JV05VTHRNMGxXYzV6?=
+ =?utf-8?B?UGlDU1d4ejRGOUlYWXBBZTh6RkgwdXJyTWpMUERuellSaVZXbVFSZmhBME5Z?=
+ =?utf-8?B?cnR6ekFzb3VMVWovNXZvL0htVVZRN1dQMCt2VTlkZHNxRmlhR1B0UlcvUjIr?=
+ =?utf-8?B?M2hCQWxCczZlanZNS0E3S2NPUTV2eTc0cXNmTEs2OFRsejA5SzNpdW9zeDBZ?=
+ =?utf-8?B?KzZjM2Y5RENnb3YvVkRLNGNHbkc2Yll5WTEzMmNIeDZndFBqTENjOFE3QkJH?=
+ =?utf-8?B?UTFIeW5zRGhKNHlTRzMvUHE0VFlSMmgwQVRySXFseUtYRnB3aHNhM3IwYUxC?=
+ =?utf-8?B?RzAwSHBUMW1XUWM2N3dMYm53emE1OGV3K001Yng2MFhkVFJ1cWlwb3htb3kw?=
+ =?utf-8?B?M3AxODViYmZiaDA1bUgzSTllWEpQaHE2ZnlYd2toUnNQRkU2dUowRG1SMUxv?=
+ =?utf-8?Q?/VlW+m0j/l6AHTbCakPPG+CvU?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21cf5b41-6527-4fa0-a1d3-08dcd1ff0c1e
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 01:14:13.1740
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dCoyKig7w+4hmrft2GXdbLaT9gscCaY593+jUw8wADEh0oBvNAVaEOBVGI3vzO0QSu9cpljMqKw1JHavD2oyWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6916
 
-Hi, Arnd,
 
-"Arnd Bergmann" <arnd@arndb.de> writes:
 
-> On Mon, Sep 9, 2024, at 20:00, Naresh Kamboju wrote:
->> The arm kunit builds failed on the Linux next-20240909 due to following
->> build warnings / errors with gcc-13 and clang-19 with extra Kconfigs
->>
->>   CONFIG_OF_KUNIT_TEST=y
->>   CONFIG_KASAN=y
->>   CONFIG_KUNIT=y
->>   CONFIG_KUNIT_ALL_TESTS=y
->>
->> First seen on next-20240909
->>   Good: next-20240906
->>   BAD:  next-20240909
->>
->> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>
->
-> This patch below addresses the build regression, not sure if that
-> is what we want.
->
->         Arnd
->
->>From 39601b1274354c710368f5cf40fe9e32540f7591 Mon Sep 17 00:00:00 2001
-> From: Arnd Bergmann <arnd@arndb.de>
-> Date: Mon, 9 Sep 2024 13:10:21 +0000
-> Subject: [PATCH] resource, kunit: add sparsemem dependency
->
-> The testcase now selects CONFIG_GET_FREE_REGION, but that
-> is only available for sparsemem configurations:
->
-> WARNING: unmet direct dependencies detected for GET_FREE_REGION
->   Depends on [n]: SPARSEMEM [=n]
->   Selected by [m]:
->   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-> In file included from include/linux/ioport.h:15,
->                  from kernel/resource.c:15:
-> kernel/resource.c: In function 'gfr_start':
-> include/linux/mm.h:101:35: error: 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
->   101 | # define PHYSMEM_END    ((1ULL << MAX_PHYSMEM_BITS) - 1)
-> kernel/resource.c:1874:57: note: in expansion of macro 'PHYSMEM_END'
->  1874 |                 end = min_t(resource_size_t, base->end, PHYSMEM_END);
->       |                                                         ^~~~~~~~~~~
->
-> It may be better to extend this to non-sparsemem, but a Kconfig
-> dependency is the easiest way to address the build failure at the
-> moment.
->
-> Fixes: e2941fe697c8 ("resource, kunit: add test case for region_intersects()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index b986050fc7e0..4c081a28fe96 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2632,6 +2632,7 @@ config HASH_KUNIT_TEST
->  config RESOURCE_KUNIT_TEST
->  	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
->  	depends on KUNIT
-> +	depends on SPARSEMEM
->  	default KUNIT_ALL_TESTS
->  	select GET_FREE_REGION
->  	help
-
-Thanks for the fixing patch.  I think that this is caused by merge
-conflict.
-
-For the fix, IMHO, resource kunit test may be used on architectures with
-SPARSEMEM=n.  I have a fix patch in,
-
-https://lore.kernel.org/linux-mm/87wmjkyshl.fsf@yhuang6-desk2.ccr.corp.intel.com/
-
---
-Best Regards,
-Huang, Ying
+在 2024/9/11 0:03, Matthew Wilcox 写道:
+> On Tue, Sep 10, 2024 at 10:39:45PM +0800, Zhiguo Jiang wrote:
+>> Remove redundant if judgment overhead.
+> It's not redundant; it avoids dirtying the cacheline if the folio
+> is already marked as dirty.
+Ok, Is it necessary to add comments here to explain and avoid readers'
+misunderstandings? E.g. 'Avoid dirtying the cacheline if the folio is
+already marked as dirty.'
+>>   bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
+>>   {
+>> -	if (!folio_test_dirty(folio))
+>> -		return !folio_test_set_dirty(folio);
+>> -	return false;
+>> +	return !folio_test_set_dirty(folio);
+>>   }
+Thanks
+Zhiguo
 
