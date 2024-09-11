@@ -1,192 +1,279 @@
-Return-Path: <linux-kernel+bounces-325090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3A69754E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:00:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CB89754E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E075B2796D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:00:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEE8DB23ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EE019CC2D;
-	Wed, 11 Sep 2024 13:59:21 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51B719C564
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F84193092;
+	Wed, 11 Sep 2024 14:03:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E69187353
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726063161; cv=none; b=nIJG2FoRyVQl6KkwL3ZkH8xHotNBbX382g83rs26kxojzjpO4MyyrrqHFWFgw+S/J+PnWi1K1H2BNzfly3gp/W4gdP2tBabUuEjjipVsw+WrJ+TMb+7IriCNvZfqEn8hmmth4b9lLthbIRkTMUEt4J12kGUytBAgz9Dff2Ktbe4=
+	t=1726063388; cv=none; b=r8xLImmK+44VgPNPyIM01ximCHryOjMhg3o8FTwZMebjyNvRUjkhSIn3jow2R2X3xUat6LU0W+xTdwHCrjxKnkmdaGRlziznFDd9UaV5LFZjCPGEFy7hbdTd5v1T3mb0107XIEdmLyF3neh0t2zLwqw3r8L7a1pQs1cszvhKl3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726063161; c=relaxed/simple;
-	bh=j/IOnyIDuox47ClSTUNzfwKZIVR3liYG+wB+hgxQfss=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=a26SLnEJh704A8nCi4WEE+qV0pCHvMnwppGRNzNBrNgwyVKYW9ZohZWJtAwPQ/TnQOII4KYIZqjexirp6MoTwL7sJV8s0pwT9ZcIvONlJOcxenLMfP84G9r8b4bBSy7Ww2z0QdLvBcODQQMADjqYGxPi5EGO3VOEE0Iho87jcCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a04c905651so94911405ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:59:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726063159; x=1726667959;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iyFSjWPsVOn4jot16e15VF13cbZtKB2RZwrXgLJVpIs=;
-        b=QqkE56rnc1IzEAJPgLTd2n0Q7euZiSoJVOKdH5Ncp3b9NMyZMko4FTyL7XWQYDFvyF
-         8kuR4NaXX2oW47QI9cTbHxxpuE7Oq23UgQtylxtvlCbZipAGtvpJHxNx0O3+M7Jp/iyD
-         WMJmnK8JSHHG4NWll5SoSAxZ5UcYY49iaA2wC6e6NbAfSIw6OkBRND9Bt1GjieuSWPrn
-         6skYpOgsTsZwvuZPZ0lXyGud6/2PxvBrU7XU0H1wCRJSfSzQS/Uof/u8+IMGB50hsvQv
-         znZVozFxK9djzKOpPlnsSLDs3IqvDWNzQt3l0604lOoIEhwNpVnFR7twI3R5GcFdvl47
-         f1cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC2wB5OFxo7aTu/rLj09fVb8REb+Y8GKW2iMcyNk1MtZ/6PCcT8AiMyi4k0uKmRYg09Couv9eAPdwu4yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJPf/vzxW/lVEpss03yAJ9F5lg1ECWPC7GBsgEpi85zvzQQQaV
-	rTpHJ/+HoPHiD24IzITZCsF4JpUnA/e77R1akQGcmCNrDX0BiPRLFSBOGrI9O4J31kunuQPzSWr
-	J4KO345AktgjpdkdZqd+4+N9BexJPwNzFCJQLOqabxyvkSiZZggiuQ4w=
-X-Google-Smtp-Source: AGHT+IHCax3tASed1rU34Ah0qudPhtB1RGSc/HnK4mmJeBkYaGKzhZbvAr1AsvbFj/vUqH+9+0fmI1tVQH2fBKH4vnx7i7z5uKRB
+	s=arc-20240116; t=1726063388; c=relaxed/simple;
+	bh=lSLK95eQ5zd6nCz0OA3UzoXkRZ8ZkdonIEHxa4KZwqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LwKMyF8zCBAVTDgbIjbtdLysT94hn3/JkErRJ+VZGEHauKM2MF4iLUIEZSwkbOCreni64ymHQVkUgyyRnlqKP4WTJpJ/S4m1ExjZI5pYPMLAhp2bL5HKS7FljOMyl4/G+e0ttTwDLc9gKsMlHqfwHc8Zpv4zKNnzqJYSAnymE4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 050861007;
+	Wed, 11 Sep 2024 07:03:34 -0700 (PDT)
+Received: from [10.57.74.218] (unknown [10.57.74.218])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6750B3F73B;
+	Wed, 11 Sep 2024 07:03:01 -0700 (PDT)
+Message-ID: <52274486-b385-4080-9938-399d601fe892@arm.com>
+Date: Wed, 11 Sep 2024 16:02:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b27:b0:3a0:4c75:3aed with SMTP id
- e9e14a558f8ab-3a04f0ee4c4mr216510885ab.25.1726063158765; Wed, 11 Sep 2024
- 06:59:18 -0700 (PDT)
-Date: Wed, 11 Sep 2024 06:59:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007038c00621d865b7@google.com>
-Subject: [syzbot] [usb?] INFO: task hung in adu_release
-From: syzbot <syzbot+b67c1b86d4e644a5cb6d@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] sched/fair: Rework feec() to use cost instead of
+ spare capacity
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-4-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20240830130309.2141697-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hello Vincent,
 
-syzbot found the following issue on:
+On 8/30/24 15:03, Vincent Guittot wrote:
+> feec() looks for the CPU with highest spare capacity in a PD assuming that
+> it will be the best CPU from a energy efficiency PoV because it will
+> require the smallest increase of OPP. Although this is true generally
+> speaking, this policy also filters some others CPUs which will be as
+> efficients because of using the same OPP.
+> In fact, we really care about the cost of the new OPP that will be
+> selected to handle the waking task. In many cases, several CPUs will end
+> up selecting the same OPP and as a result using the same energy cost. In
+> these cases, we can use other metrics to select the best CPU for the same
+> energy cost.
+> 
+> Rework feec() to look 1st for the lowest cost in a PD and then the most
+> performant CPU between CPUs.
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
+>   1 file changed, 244 insertions(+), 222 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e67d6029b269..2273eecf6086 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
 
-HEAD commit:    9c0c11bb87b0 xhci: support setting interrupt moderation IM..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a0189f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a1ccb5ad00c3ba6
-dashboard link: https://syzkaller.appspot.com/bug?extid=b67c1b86d4e644a5cb6d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ae6ffb980000
+[snip]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d41cb6c3e427/disk-9c0c11bb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1beec7548c8b/vmlinux-9c0c11bb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/66b2bb190ac1/bzImage-9c0c11bb.xz
+>   
+> -/*
+> - * compute_energy(): Use the Energy Model to estimate the energy that @pd would
+> - * consume for a given utilization landscape @eenv. When @dst_cpu < 0, the task
+> - * contribution is ignored.
+> - */
+> -static inline unsigned long
+> -compute_energy(struct energy_env *eenv, struct perf_domain *pd,
+> -	       struct cpumask *pd_cpus, struct task_struct *p, int dst_cpu)
+> +/*Check if the CPU can handle the waking task */
+> +static int check_cpu_with_task(struct task_struct *p, int cpu)
+>   {
+> -	unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
+> -	unsigned long busy_time = eenv->pd_busy_time;
+> -	unsigned long energy;
+> +	unsigned long p_util_min = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MIN) : 0;
+> +	unsigned long p_util_max = uclamp_is_used() ? uclamp_eff_value(p, UCLAMP_MAX) : 1024;
+> +	unsigned long util_min = p_util_min;
+> +	unsigned long util_max = p_util_max;
+> +	unsigned long util = cpu_util(cpu, p, cpu, 0);
+> +	struct rq *rq = cpu_rq(cpu);
+>   
+> -	if (dst_cpu >= 0)
+> -		busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b67c1b86d4e644a5cb6d@syzkaller.appspotmail.com
+I think you should mention that the energy computation is not capped anymore.
+It used to be:
+pd_util: sum of the CPU's util for the pd considered, without task_util
+pd_cap: sum of the CPU's capacity for the pd
 
-INFO: task syz.0.63:3967 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc6-syzkaller-g9c0c11bb87b0 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.63        state:D stack:27872 pid:3967  tgid:3961  ppid:3214   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0xcda/0x2f80 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6621
- usb_kill_urb.part.0+0x1ca/0x250 drivers/usb/core/urb.c:713
- usb_kill_urb+0x83/0xa0 drivers/usb/core/urb.c:702
- adu_abort_transfers drivers/usb/misc/adutux.c:129 [inline]
- adu_release_internal drivers/usb/misc/adutux.c:302 [inline]
- adu_release+0x545/0x720 drivers/usb/misc/adutux.c:331
- __fput+0x408/0xbb0 fs/file_table.c:422
- task_work_run+0x14e/0x250 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xaa3/0x2b30 kernel/exit.c:882
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1031
- get_signal+0x25fb/0x2770 kernel/signal.c:2917
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x147/0x260 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6e0ed1cef9
-RSP: 002b:00007f6e0e71b0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f6e0eed62e8 RCX: 00007f6e0ed1cef9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f6e0eed62e8
-RBP: 00007f6e0eed62e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6e0eed62ec
-R13: 0000000000000000 R14: 00007ffcc5944490 R15: 00007ffcc5944578
- </TASK>
+(a)
+busy_time = min(pd_cap, pd_util);
+prev_energy = busy_time * OPP[prev_max_util].cost;
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff88ebb660 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff88ebb660 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff88ebb660 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6626
-2 locks held by getty/2606:
- #0: ffff888108adf0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900000432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc8/0x1490 drivers/tty/n_tty.c:2211
-1 lock held by syz.0.63/3967:
- #0: ffffffff89ad3688 (adutux_mutex){+.+.}-{3:3}, at: adu_release+0xcf/0x720 drivers/usb/misc/adutux.c:323
-2 locks held by syz.0.110/4656:
- #0: ffffffff899affb0 (minor_rwsem){++++}-{3:3}, at: usb_open+0x27/0x2f0 drivers/usb/core/file.c:38
- #1: ffffffff89ad3688 (adutux_mutex){+.+.}-{3:3}, at: adu_open+0x5d/0x820 drivers/usb/misc/adutux.c:236
-2 locks held by syz.0.110/4657:
- #0: ffffffff899affb0 (minor_rwsem){++++}-{3:3}, at: usb_open+0x27/0x2f0 drivers/usb/core/file.c:38
- #1: ffffffff89ad3688 (adutux_mutex){+.+.}-{3:3}, at: adu_open+0x5d/0x820 drivers/usb/misc/adutux.c:236
-2 locks held by syz.0.110/4658:
- #0: ffffffff899affb0 (minor_rwsem){++++}-{3:3}, at: usb_open+0x27/0x2f0 drivers/usb/core/file.c:38
- #1: ffffffff89ad3688 (adutux_mutex){+.+.}-{3:3}, at: adu_open+0x5d/0x820 drivers/usb/misc/adutux.c:236
+busy_time = min(pd_cap, pd_util + task_util);
+new_energy = busy_time * OPP[new_max_util].cost;
 
-=============================================
+delta_energy = new_energy - prev_energy;
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc6-syzkaller-g9c0c11bb87b0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xf0c/0x1240 kernel/hung_task.c:379
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x1a/0x20 drivers/acpi/processor_idle.c:111
+Note that when computing busy_time, task_util is not capped to one CPU's
+max_cap. This means that in empty pd, a task can 'steal' capacity from
+CPUs during the energy computation.
+Cf. [1]
 
+and it is now:
+(b)
+delta_energy = task_util * OPP[new_max_util].cost;
+delta_energy += pd_util * (OPP[new_max_util].cost - OPP[prev_max_util].cost);
+
+Note that the busy_time (task_util + pd_util) is now not capped by anything.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Not capping the task_util is discussed in [1][3] and [2] (at 21:15).
+IIUC, UCLAMP_MAX tasks are the only case leveraging this. Indeed,
+non-clamped tasks will not fit and be placed on a bigger CPU. Same for
+UCLAMP_MIN tasks.
+FWIU, not capping the utilization of tasks during the energy computation
+allows to reflect that a task will (likely) run longer. However the
+task's performance would likely decrease as the other tasks on the target
+CPU are not taken into account (it is assumed the task to be placed will
+receive the compute power it requires).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+---
+Case A:
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Assuming we have an empty system with:
+- 4 little CPUs (max_capa=512, first OPP as [capa=256, cost=10])
+- 2 big CPUs (max_capa=1024, first OPP as [capa=512, cost=10])
+i.e. the first OPP of all the CPU consumes the same amount of energy.
+And a task with: [UCLAMP_MIN=0, UCLAMP_MAX=10, util = 1000]
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Then feec() would have no reason to prefer a big CPU over a little CPU,
+even though the big CPU would provide more performance.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+---
+Case B:
 
-If you want to undo deduplication, reply with:
-#syz undup
+(This is not especially related to this patch.)
+Another case that might be problematic:
+- 4 little CPUs (max_capa=512, first OPP as [capa=256])
+- 2 big CPUs (max_capa=1024, first OPP as [capa=512])
+- little CPUs consume less than big CPUs, but the highest OPP
+   of the little CPUs consume more than the lowest of the big CPUs.
+And tasks:
+- 3 tasks with [UCLAMP_MIN=0, UCLAMP_MAX=10, util = 1000]
+- 1 task with [UCLAMP_MIN=0, UCLAMP_MAX=1024, util = 50]
+
+Then
+- the 3 UCLAMP_MAX tasks will be placed on the little CPUs. Indeed,
+   due to the last patch of the serie, these tasks have now an opportunity
+   to run feec() and be placed on a more energy efficient CPU.
+- the 'normal' task will be placed on a big CPU. Indeed, placing
+   it on a little CPU would raise the OPP of the little cluster.
+
+This means that the 'normal' task is prevented to run the remaining little
+CPU even though:
+- the little CPU can provide the compute capacity
+- the little CPU would consume less energy
+
+In other terms, using UCLAMP_MAX on some tasks makes the system consume
+more energy.
+
+---
+
+In my opinion, this last case comes from the difficulty of defining UCLAMP_MAX.
+ From sched-util-clamp.rst (about UCLAMP_MAX):
+- Uclamp is a hinting mechanism that allows the scheduler to understand the
+   performance requirements and restrictions of the tasks
+- The right way to view util clamp is as a mechanism to make request or hint on
+   performance constraints.
+- some tasks should be restricted from consuming too
+   much resources and should not go above a specific performance point.
+-
+Another example is in Android where tasks are classified as background,
+foreground, top-app, etc. Util clamp can be used to constrain how much
+resources background tasks are consuming by capping the performance point they
+can run at. This constraint helps reserve resources for important tasks, like
+the ones belonging to the currently active app (top-app group). Beside this
+helps in limiting how much power they consume. This can be more obvious in
+heterogeneous systems (e.g. Arm big.LITTLE); the constraint will help bias the
+background tasks to stay on the little cores which will ensure that:
+
+         1. The big cores are free to run top-app tasks immediately. top-app
+            tasks are the tasks the user is currently interacting with, hence
+            the most important tasks in the system.
+         2. They don't run on a power hungry core and drain battery even if they
+            are CPU intensive tasks.
+-
+For example, it can be handy to limit performance when running low on battery
+or when the system wants to limit access to more energy hungry performance
+levels when it's in idle state or screen is off.
+
+"""
+This constraint helps reserve resources for important tasks, like
+the ones belonging to the currently active app (top-app group).
+"""
+It doesn't seem that UCLAMP_MAX does this. This looks more like bandwidth
+control.
+
+"""
+They don't run on a power hungry core and drain battery even if they
+are CPU intensive tasks.
+"""
+Avoiding mid/big CPUs could be done with tasksets,
+
+I can understand that one might want to run a task at a higher OPP due to
+timing constraints for instance. However I don't see why someone would want
+to run a task at a lower OPP, regarding only the performance and not the
+energy consumption. It thus means that UCLAMP_MAX is an energy hint rather
+of a performance hint.
+
+UCLAMP_MAX could be set for a task to make it spend less energy, but the
+loss in performance would be unknown.
+A case Hongyan mentioned in his uclamp sum aggregation serie [4] is that
+an infinite task with [UCLAMP_MIN=0, UCLAMP_MAX=1, util = 1000] could fit
+in a little CPU. The energy consumption would indeed be very low, but the
+performance would also be very low.
+
+With Hongyan's sum aggregation serie [5]:
+- case B would not happen as the 'normal' task would not raise the OPP of
+   the whole cluster.
+- the 'infinite UCLAMP_MAX tasks' case would not happen as each task would
+   account for 1 util
+- case A would still happen, but could be solved in any case.
+
+I know Hongyan's patchset has already been discussed, but I still don't
+understand why max aggregation is preferred over sum aggregation.
+The definition of UCLAMP_MAX values seems clearer and in effect results in
+a simpler implementation and less corner cases. In simple words:
+"When estimating the CPU frequency to set, for this task,
+account for at most X util."
+rather than:
+"When estimating the CPU frequency to set, the task with the highest
+UCLAMP_MAX of the CPU will cap the requested frequency."
+
+Note that actually I think it's a good idea to run feec() regularly
+and to take into account other parameters like nr_running. I just think
+that UCLAMP_MAX's max aggregation creates corner cases that are difficult
+to solve altogether.
+
+Thanks in advance for the time you will take answering,
+Regards,
+Pierre
+
+[1] https://lore.kernel.org/all/20240606070645.3295-1-xuewen.yan@unisoc.com/
+[2] https://www.youtube.com/watch?v=PHEBAyxeM_M
+[3] https://lore.kernel.org/all/CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com/
+[4] https://lore.kernel.org/all/b81a5b1c-14de-4232-bee9-ee647355dd8c@arm.com/
+[5] https://lore.kernel.org/all/cover.1706792708.git.hongyan.xia2@arm.com/#t
 
