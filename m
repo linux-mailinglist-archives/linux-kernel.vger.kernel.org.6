@@ -1,77 +1,106 @@
-Return-Path: <linux-kernel+bounces-324678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90B3974FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87744974FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2961C2233E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C1E1C224D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F4184537;
-	Wed, 11 Sep 2024 10:22:33 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0F4183CBC;
+	Wed, 11 Sep 2024 10:23:39 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A49915DBB3
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ECE17DFFC
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726050152; cv=none; b=IFrxDMJb7LFmZ5ajpjCXunDMRpaTP77s4sDvjpX4s7TuDebd8PN0EkUpeS8WyVDbE99JFXhF5yAjcMNjPYcuugy7L+lGEbY+xfkJ2UpaB5EfQxHdBXXiechwBeIENb2HwT7C/u5cj/HReT+0qVJaOQaiQ7FwfGHHXgeipwlLCos=
+	t=1726050219; cv=none; b=Qx4UtHlFiZzT2UiW1KO+v2o2oARS2fK87ylY0vGre1F5pHgM1xXQOOEJnEk+RMH2yiwW7H/mtnMo1CnCvhYqOjI9OtwXs0NeCb78yNbG7HMDmx408odcYiuj2dSHftaSOMg8RPv/BjpbKI6GVIu+NN9bVMuXQu89Znj3zmrNcB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726050152; c=relaxed/simple;
-	bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tNphcpP8HuE3gXSJbVUAvgYSB2rseEU249wDI9yrsQNUH61a+4AE5cH7419TF6q0MKA3BRxd8LBzrj3ZOwG9O6KOlRz7Uiset9K2slv5jdjAT71qvZiYgEED6R9Nnnx/2YF+Aqxp8ANitvoMDKRxg7s4KK5cbTsFdgLylcUnYHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04a91237dso27589015ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:22:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726050150; x=1726654950;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IzlrtpBuUEkl2AS/wbJLfkdZ5Y9XzjMa60wQk2jqqfM=;
-        b=EJH7yFw2//UhHPh/PiCTWygZpSDymQLmU6WKcGGISYEqUVg/+EjZb6OOdQ4LiXWg6B
-         TdJvCWhH9L6hm99g00DqgTEzkeuw9wqFXmV0bh5sy+SNgAcg3kDXuPwylZbHHxotrSuu
-         DetC8AOSQSoWn/gHfYplYp9u5bcQaS/nn8/cA4EJyhR/jfDk/25GocVEjFosqzFrvEyj
-         QmvVwVsygAm0dICn4H5ssEGxcVN10zxzLh0s6kdWHgyUaQuOTjROh6LnAsOK+vqD1tCp
-         UVuQ8lmxRMIkCJlKziPLN79v3XjP2iQ4NFSm6BbkdqgM+cLF3o8ty3XINpw67XIKqvf6
-         5q2A==
-X-Gm-Message-State: AOJu0YyNMZrS1JcXdE2j2epS4VO1tQPEnF1k1Q30obPU+8JLRgtiWZJ7
-	YOgOSWhVXEb2XNf8g119xE81Nu5sSZnEXdKtkiKdnOYXQ3+9G8RZ56FThiggYY0qyaXJDUTU8g4
-	z6Kd78kZMCbMmwkyYYs0SrGltiGzLJDSrYKKNFIXTSvcmt+m2hUUuoGg=
-X-Google-Smtp-Source: AGHT+IGkpVy78FQlvPwLfEPm/ABeErvuswk9+9wiF4XROyJoEVDf+9hEK7Pb9xirFs5qeyezeCoGgDkEUhmzFDUP6+RtqbOiMrjX
+	s=arc-20240116; t=1726050219; c=relaxed/simple;
+	bh=RjkFVTihyDMf4i/BX/SS17HHOjg0Vnw9Qb6XkSUBQmE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ilYXtBi8z/5zfhUkPIlhkHPWOW4hszUaFTmIixxpP4T1WQsYwCpWG+81ScsSFtFcB4bolJSp1t6yL0J6ETW07Wnx0aB8uMB9vkriymY1mTkVLOnM1APr0KIugMJZExSzt/JSZwk6Kx/y8jW4/lCvYfhcB65BfmqyyHG3Nh/Oqzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-320-hEjlClOWPyiYxr_y0pLaIQ-1; Wed, 11 Sep 2024 11:23:29 +0100
+X-MC-Unique: hEjlClOWPyiYxr_y0pLaIQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 11 Sep
+ 2024 11:22:44 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 11 Sep 2024 11:22:44 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Kees Cook
+	<kees@kernel.org>
+CC: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] overflow: optimize struct_size() calculation
+Thread-Topic: [PATCH v2] overflow: optimize struct_size() calculation
+Thread-Index: AQHbAywJ58VR+K3+gU6+o+9bWfd3j7JSX6zQ
+Date: Wed, 11 Sep 2024 10:22:44 +0000
+Message-ID: <01aa8bd408d04031941073b026f171fb@AcuMS.aculab.com>
+References: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
+In-Reply-To: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca05:0:b0:39b:3e01:cbd4 with SMTP id
- e9e14a558f8ab-3a0742302e7mr28840545ab.14.1726050150623; Wed, 11 Sep 2024
- 03:22:30 -0700 (PDT)
-Date: Wed, 11 Sep 2024 03:22:30 -0700
-In-Reply-To: <0000000000000311430620013217@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000017bcd70621d55e56@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDEwIFNlcHRlbWJlciAyMDI0IDAzOjUwDQo+
+IA0KPiBJZiB0aGUgb2Zmc2V0b2YoKSBvZiBhIGdpdmVuIGZsZXhpYmxlIGFycmF5IG1lbWJlciAo
+ZmFtKSBpcyBzbWFsbGVyDQo+IHRoYW4gdGhlIHNpemVvZigpIG9mIHRoZSBjb250YWluaW5nIHN0
+cnVjdCwgdGhlbiB0aGUgc3RydWN0X3NpemUoKQ0KPiBtYWNybyByZXBvcnRzIGEgc2l6ZSB3aGlj
+aCBpcyB0b28gYmlnLg0KPiANCj4gVGhpcyBvY2N1cnMgd2hlbiB0aGUgdHdvIGNvbmRpdGlvbnMg
+YmVsb3cgYXJlIG1ldDoNCj4gDQo+ICAgLSB0aGVyZSBhcmUgcGFkZGluZyBieXRlcyBhZnRlciB0
+aGUgcGVudWx0aW1hdGUgbWVtYmVyICh0aGUgbWVtYmVyDQo+ICAgICBwcmVjZWRpbmcgdGhlIGZh
+bSkNCj4gICAtIHRoZSBhbGlnbm1lbnQgb2YgdGhlIGZhbSBpcyBsZXNzIHRoYW4gb3IgZXF1YWwg
+dG8gdGhlIHBlbnVsdGltYXRlDQo+ICAgICBtZW1iZXIncyBhbGlnbm1lbnQNCj4gDQo+IEluIHRo
+YXQgY2FzZSwgdGhlIGZhbSBvdmVybGFwcyB3aXRoIHRoZSBwYWRkaW5nIGJ5dGVzIG9mIHRoZQ0K
+PiBwZW51bHRpbWF0ZSBtZW1iZXIuIFRoaXMgYmVoYXZpb3VyIGlzIG5vdCBjYXB0dXJlZCBpbiB0
+aGUgY3VycmVudA0KPiBzdHJ1Y3Rfc2l6ZSgpIG1hY3JvLCBwb3RlbnRpYWxseSByZXN1bHRpbmcg
+aW4gYW4gb3ZlcmVzdGltYXRlZCBzaXplLg0KLi4uDQo+IENoYW5nZSBzdHJ1Y3Rfc2l6ZSgpIGZy
+b20gdGhpcyBwc2V1ZG8gY29kZSBsb2dpYzoNCj4gDQo+ICAgc2l6ZW9mKHN0cnVjdCBzKSArIHNp
+emVvZigqcy5mYW0pICogcy5jb3VudA0KPiANCj4gdG8gdGhhdCBwc2V1ZG8gY29kZSBsb2dpYzoN
+Cj4gDQo+ICAgbWF4KHNpemVvZihzdHJ1Y3QgcyksIG9mZnNldG9mKHN0cnVjdCBzLCBmYW0pICsg
+c2l6ZW9mKCpzLmZhbSkgKiBzLmNvdW50KQ0KDQpZb3UgYXJlIGFkZGluZyBhIHRoaXJkIGNvbXBh
+cmlzb24gWzFdIHRvIGV2ZXJ5IGNhbGwgLSBldmVuIHRob3VnaCBtb3N0IGRvbid0DQpuZWVkIGl0
+IGFuZCB0aGUgbWVtb3J5IHNhdmluZyBpcyBtYXJnaW5hbCBhdCBiZXN0Lg0KVGhlIHRvdGFsIGNv
+ZGUgc2l6ZSBpbmNyZWFzZSBjb3VsZCBlYXNpbHkgZXhjZWVkIGFueSBzYXZpbmdzLg0KDQpXaXRo
+IGNhcmUgeW91IG9ubHkgZG8gdGhlIG1heCgpIHdoZW4gc2l6ZW9mKHN0cnVjdCkgIT0gb2Zmc2V0
+b2YoKSBidXQgSSBkb3VidA0KdGhlIGNvbXBsZXhpdHkgaXMgd29ydGggaXQuDQoNClsxXSBCb3Ro
+IHRoZSAnKycgYW5kICcqJyBoYXZlIGV4dHJhIGNvZGUgdG8gZGV0ZWN0IG92ZXJmbG93IGFuZCBy
+ZXR1cm4NCiAgYSAnYmlnJyB2YWx1ZSB0aGF0IHdpbGwgY2F1c2Uga21hbGxvYygpIHRvIHJldHVy
+biBOVUxMLg0KSSd2ZSBub3QgbG9va2VkIGF0IHRoZSBnZW5lcmF0ZWQgY29kZSBidXQgaXQgaXMg
+bGlrZWx5IHRvIGJlIGhvcnJpZA0KICAoZXNwZWNpYWxseSB0aGUgY2hlY2sgZm9yIG11bHRpcGx5
+IG92ZXJmbG93aW5nKS4NCkluIHRoaXMgY2FzZSB0aGVyZSBhcmUgZW5vdWdoIGNvbnN0YW50cyB0
+aGF0IHRoZSBhbHRlcm5hdGl2ZSBjaGVjazoNCglpZiAoY291bnQgPiAoTUFYX1NJWkUgLSBzaXpl
+b2YgKCpzKSkgLyBzaXplb2YgKHMtPm1lbWJlcikpDQoJCXNpemUgPSBNQVhfU0laRTsNCgllbHNl
+DQoJCXNpemUgPSBzaXplb2YgKCpzKSArIGNvdW50ICogc2l6ZW9mIChzLT5tZW1iZXIpOw0KaXMg
+ZmluZSBhbmQgb25seSBoYXMgb25lIGNvbmRpdGlvbmFsIGluIGl0Lg0KSW4gc29tZSBjYXNlcyB0
+aGUgY29tcGlsZXIgbWF5IGFscmVhZHkga25vdyB0aGF0IHRoZSBjb3VudCBpcyBzbWFsbCBlbm91
+Z2guDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkg
+Um9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlv
+biBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-***
-
-Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
-Author: alibuda@linux.alibaba.com
-
-
-#syz test
 
