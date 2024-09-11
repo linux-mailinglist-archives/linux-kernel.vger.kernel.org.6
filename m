@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-324508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7CB974D82
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:53:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF50974D86
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7F31C24A7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9761F21B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C10178396;
-	Wed, 11 Sep 2024 08:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rhsSsMhw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95EE17CA0A;
+	Wed, 11 Sep 2024 08:51:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5BB153BE8;
-	Wed, 11 Sep 2024 08:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA6E154C0B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726044627; cv=none; b=C5JwVb7tcpwKvDIzQPIETJrw+TWJAbtqHmHUvh87iaDsH1onOJ9obyWq4T+x0o5fEgKcf75qM/drhib2i0aBhGWHFhaN+sflaFcgArOiZo/pUfzog3gHIv0dMnCFeiwBRbmjEhAlfG42ubHZr6ZIBkUoIHFWH99x0TPJCPpscuY=
+	t=1726044701; cv=none; b=lqV3ibfRdSjvWZr7IMcYzKIAUjvVcAuqzNN+6hm38OKsZzUELcO7S60MHUyBdLPYRXq80Yv+u/b5MRymrtjiv5LWBq6kHju33Yv0Ip1MmoNU7I1tPbD/eBQbuLCHp1MVfXsZaNLcJ/ilvw3xar+L3K/EwFA569v/c8MzZ2htyuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726044627; c=relaxed/simple;
-	bh=me5e7I5tQPw8veUZJwu13VUQhEb78fKv3wggn7e87LM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tm5mpfmIYHyt2/TvsQLKtnky9D/QLp4QL9Rhwu16ySFM0gLGyhwMuITiK685D1XcsBNIjItWEpItSV7yZlr0Mh4ErmDt1+X8ZPXpeBOnRtQ1KnRF2BInRcvXYjZHNmAISIsoGv5jEJt1MN5KK64vfEsnOP/QjL7bmZ4+315vc0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rhsSsMhw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AMIUOK004560;
-	Wed, 11 Sep 2024 08:50:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=gAZkRRJoVvFwd
-	vmSptJKmbdeOFyVBUaFLcjNIa6pCuE=; b=rhsSsMhwqVPEa8wx7qgQ1yvuoq+nK
-	nPtAg8OeBtqf6PYVtAaYcZyTaq26nRqfaQXKhJimFzuJ6UmZdSeZ5C8x3y3KBoNa
-	/hnhuis4xh8nygdEnicf1LQseflgb13t7DRHz5ZKkbC00gqO3GLyxXtLFAZcCG/1
-	l/n+03AwFf/tOLWgi9KBGk6+QfH4RgQo3MA8ZTzmIsVpQhMvFbZm5iNNLs9n7YJx
-	Ye9mrp7wFC3ftX3GROQrkk8jYmEQRRrcgu+IwQyaxvp8tuQM5KocpIDcOMzu89Sh
-	BtZlqtDNvndX1vX3qUmPpsVEpB7Q4aJmQSccObufA2RzcJHjrKNby3Vag==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gegwvhqk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 08:50:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48B6QNbx003123;
-	Wed, 11 Sep 2024 08:50:20 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15u0fns-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 08:50:20 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48B8oGeW55378188
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 11 Sep 2024 08:50:17 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D583D2004E;
-	Wed, 11 Sep 2024 08:50:16 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 90FC820043;
-	Wed, 11 Sep 2024 08:50:16 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 11 Sep 2024 08:50:16 +0000 (GMT)
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Shuah Khan <shuah@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, Jens Remus <jremus@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [PATCH 2/2] selftests: vDSO: fix vdso_config for s390
-Date: Wed, 11 Sep 2024 10:50:15 +0200
-Message-ID: <20240911085015.3581722-3-hca@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240911085015.3581722-1-hca@linux.ibm.com>
-References: <20240911085015.3581722-1-hca@linux.ibm.com>
+	s=arc-20240116; t=1726044701; c=relaxed/simple;
+	bh=UpX/Ypj/LsvICi5sJpIThh5Z3znBn+6SGKm9oQeNnCs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DACqdQaop81gRHPNX6RZ8MykZ3Pio6e2iOXpawRE4jRHiYxPExyYI42EwQFBc6bxZ0Rrfp2wgsSCJwEAS+qcKidvpVbi58cOmVFO66vHOX8wGBukxG5fGn1Sxcn62UpRGWJKC2gxEEazAs49DVxABieYHV0D38c5RFfHnOMgYeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1soJ4c-0005b9-8W
+	for linux-kernel@vger.kernel.org; Wed, 11 Sep 2024 10:51:38 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1soJ4b-00766b-RE
+	for linux-kernel@vger.kernel.org; Wed, 11 Sep 2024 10:51:37 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 81401338195
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:51:37 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 2612F33818B;
+	Wed, 11 Sep 2024 08:51:35 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id d96d89aa;
+	Wed, 11 Sep 2024 08:51:34 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Wed, 11 Sep 2024 10:51:30 +0200
+Subject: [PATCH] can: m_can: m_can_chip_config(): mask timestamp wraparound
+ IRQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -8vW4LDJFun_ZYAYg8cmREy-UJNXcKz5
-X-Proofpoint-ORIG-GUID: -8vW4LDJFun_ZYAYg8cmREy-UJNXcKz5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-10_12,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=606
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409110064
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240911-can-m_can-mask-timestamp-wraparound-irq-v1-1-0155b70dc827@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIABJa4WYC/x2NywrCMBAAf6Xs2YUkVlF/RUTWZNVFkqa79QGl/
+ 27oZWAuMzMYq7DBqZtB+SMmQ2niNx3EJ5UHo6TmEFzo3dF7jFQwX1eSvXCSzDZRrvhVqqTDuyQ
+ UHTFtKeyj6w+3XYJWq8p3+a2n82VZ/rBM1A15AAAA
+X-Change-ID: 20240911-can-m_can-mask-timestamp-wraparound-irq-d3a26c048b5d
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jake Hamby <Jake.Hamby@Teledyne.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-88a27
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1470; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=DKq5RRZE6rNCXS6lWV7Nl0shThePckArACpC86ox004=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm4VoTvcq5yFs0zgIL9NmNQnc4kLwOU7k5UmjAV
+ Y9YuRjqquSJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZuFaEwAKCRAoOKI+ei28
+ b/yLCACCnLhTA69iLmUao9WSyWl7UhUaGBG+qFpNBPKjSb3lmkpXovSNmxoY1LOxcSnpzde7Jzr
+ Roz33x+Td5bdbBm+CRkSSAItzCKSLR/H397B0BLe0KdBjfMv7BeQchPg7QymKdUt+kpOI47L84+
+ 1ym2nGcaM/Fmv3Gr7XaIoyFVM8SKCApSp3sPDGqmZutIp6+J2hXqTM9veSC5Z5wqlxUaT9Y8Vu1
+ /plpq/pU7NLWzCA6UAsOek4rUQyLYUTPS5SLLHl8Ljk1N6lKu3YpiXy76H0v7CrF4s3jxuD0urc
+ IE0tdsk65xCW7/Jr2doXEomwXtpnXwv9yHNQ+Gf3kipGgrwp
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Running vdso_test_correctness on s390x (aka s390 64 bit) emits a warning:
+From: Jake Hamby <Jake.Hamby@Teledyne.com>
 
-Warning: failed to find clock_gettime64 in vDSO
+On the Microchip SAMA7G54 MPU the IR_TSW (timestamp wraparound) fires
+at about 1 Hz, but the driver doesn't care about it. Add it to the
+list of interrupts to disable in m_can_chip_config to reduce unneeded
+wakeups.
 
-This is caused by the "#elif defined (__s390__)" check in vdso_config.h
-which the defines VDSO_32BIT.
-
-If __s390x__ is defined also __s390__ is defined. Therefore the correct
-check must make sure that only __s390__ is defined.
-
-Therefore add the missing !defined(__s390x__). Also use common
-__s390x__ define instead of __s390X__.
-
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Jake Hamby <Jake.Hamby@Teledyne.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 ---
- tools/testing/selftests/vDSO/vdso_config.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hello,
 
-diff --git a/tools/testing/selftests/vDSO/vdso_config.h b/tools/testing/selftests/vDSO/vdso_config.h
-index 740ce8c98d2e..722260f97561 100644
---- a/tools/testing/selftests/vDSO/vdso_config.h
-+++ b/tools/testing/selftests/vDSO/vdso_config.h
-@@ -25,11 +25,11 @@
- #define VDSO_VERSION		1
- #define VDSO_NAMES		0
- #define VDSO_32BIT		1
--#elif defined (__s390__)
-+#elif defined (__s390__) && !defined(__s390x__)
- #define VDSO_VERSION		2
- #define VDSO_NAMES		0
- #define VDSO_32BIT		1
--#elif defined (__s390X__)
-+#elif defined (__s390x__)
- #define VDSO_VERSION		2
- #define VDSO_NAMES		0
- #elif defined(__mips__)
+this hunk was originally part of Jake's original patch
+
+| https://patch.msgid.link/DM8PR14MB5221D9DD3A7F2130EF161AF7EF9E2@DM8PR14MB5221.namprd14.prod.outlook.com
+
+I've split it into a separate patch.
+
+regards,
+Marc
+---
+ drivers/net/can/m_can/m_can.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index 012c3d22b01dd3d8558f2a40448770ca1da1aa1e..a7b3bc439ae596527493a73d62b4b7a120ae4e49 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -1434,7 +1434,8 @@ static int m_can_chip_config(struct net_device *dev)
+ 
+ 	/* Disable unused interrupts */
+ 	interrupts &= ~(IR_ARA | IR_ELO | IR_DRX | IR_TEFF | IR_TFE | IR_TCF |
+-			IR_HPM | IR_RF1F | IR_RF1W | IR_RF1N | IR_RF0F);
++			IR_HPM | IR_RF1F | IR_RF1W | IR_RF1N | IR_RF0F |
++			IR_TSW);
+ 
+ 	err = m_can_config_enable(cdev);
+ 	if (err)
+
+---
+base-commit: f3b6129b7d252b2fbdcac2e0005abc6804dc287c
+change-id: 20240911-can-m_can-mask-timestamp-wraparound-irq-d3a26c048b5d
+
+Best regards,
 -- 
-2.43.0
+Marc Kleine-Budde <mkl@pengutronix.de>
+
 
 
