@@ -1,214 +1,193 @@
-Return-Path: <linux-kernel+bounces-324702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C336974FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:41:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B030974FF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8121C22A72
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF6D28CE18
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D093A185E64;
-	Wed, 11 Sep 2024 10:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C322183CDC;
+	Wed, 11 Sep 2024 10:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/WdMfc0"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="efsCWfON"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010018.outbound.protection.outlook.com [52.101.228.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD30183CDC;
-	Wed, 11 Sep 2024 10:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726051276; cv=none; b=g8W2rfdM2YP00d0Uz5xiE/OzthDbHGBweDKx6RfDDY8gTAbLfsvGAKCno/XcOflG+PRgOikq8L8cAbChonMIGFqBxG9YAwnQsnJGPgJTsMJR4+4frftwRTAkEit96f6Ya9w8Gds0ZnL0fpMfNKLWbP54MC+PKy/dshghvxD62fo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726051276; c=relaxed/simple;
-	bh=Y25nuwt5Otrb49AxY8SF8uz2V3mapMpkR6GGCfrXIaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l2YW59iZmAVDl6zcQYKlJQUG+40F+f3q25nEHhAOLz0wMl7ffA3zmiRQjAypyc1SMqkL0UZlyaL2kRfJlfJpxbfVvAseB40QI2Zaw/G4g0M7+NJFLIF7P8RnUfdPVnM5sQ37MQExQkpsw6yAcUR7xgfdjACnVfxf+sz4r6TOZPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/WdMfc0; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9aec89347so224111085a.0;
-        Wed, 11 Sep 2024 03:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726051272; x=1726656072; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1edNQlk5ea4r0KquDgZgNfAFToaTDxkGFM4S8J4/mCg=;
-        b=g/WdMfc0NSiVah7szHplF+CtgSTeL0bFD5vX/xt7zohW6NTixdlDVcl8q7Xm7e8Ihb
-         1MBYgYh9hKR7Z9ijKuuDiq7wL6OOVZmLMPzNamLDWgP9Dy8jp0eA2ZjbIZSH6u7bBWWF
-         oC3OKuAx7xCPtDknkgcm6o7mqnk1edv6p9fc/mPexAyQ9I1TGgTlvv6yw+KZLNYl2BvX
-         uZwwIcuhsf6YE/mMkPmC8+kNQXJmTjWlwxwUKMv3DpZ7KMsN0WT+wElzoLyvh7uH5xv5
-         hLyEAJM6sA4VQk/SUQs8eF1BJPSVejmoYflLDFvi/CZWA3LzjrZT2zcMKfc3OeJjh3ya
-         ERdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726051272; x=1726656072;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1edNQlk5ea4r0KquDgZgNfAFToaTDxkGFM4S8J4/mCg=;
-        b=Wn91JsAFhc+cAVFtx3M9b716nEJgKhf9Os4cos6OGIMUdtCuIYu9Yk2APVbLPZC07A
-         B2i+0lcxfC72M9dQtRPLkegwtRdbI3F7Fmdl1RnX/mGzTFwLhDxYnW8jn4n9hvkP6H9N
-         qN2HQKc5WiH5zCtaIkMK1IsErSYJhTh5lvRhbgk7l6wG3TFLHHP83oEIbTqwmoPzmVnh
-         ALVY7rX47idF468fYtlctEsTa8F8PQKJrvqPpHsMu7L/KgWaMQFR9EMD7EGQNTXM76PP
-         9nyFfz/MYiGDm+BtRNRsGfTV3rcA9j+GF+OY3goUTOrqL4MWTD+yEODWOz0OmFrPKn04
-         uUiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnr7IcmEfB3YYGVOy1FUXkiW+noQ+t5s2vTroMYLVVuxdRinnvfAxDQ8+sj0qqy72YzKCbdVcm8qwzoig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJw12CV40bk1DdvTcrkY4uKCoT0Mus9pvFOc9t/5LryFOuRrqW
-	rVDfdP1emj9U7Mt+BlC64nENlsc0Vfs26R60QvwfGVeOn7Gg5asWwZeyKA==
-X-Google-Smtp-Source: AGHT+IEAJQ13VovN3MOTS+6Hjw3x8lAetl1VfnJ5y1/hS1UwpDsIO/+d03FxCjNQtSx+nHmHmIIoDA==
-X-Received: by 2002:a05:620a:294c:b0:7a3:51ed:38b5 with SMTP id af79cd13be357-7a99727cb11mr3087991685a.0.1726051272264;
-        Wed, 11 Sep 2024 03:41:12 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-001.fbsv.net. [2a03:2880:20ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a79455b1sm407594885a.19.2024.09.11.03.41.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 03:41:11 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: linux-efi@vger.kernel.org,
-	devel@edk2.groups.io,
-	kexec@lists.infradead.org
-Cc: ardb@kernel.org,
-	ebiederm@xmission.com,
-	bhe@redhat.com,
-	vgoyal@redhat.com,
-	tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	leitao@debian.org,
-	rmikey@meta.com,
-	gourry@gourry.net,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-Date: Wed, 11 Sep 2024 11:41:08 +0100
-Message-ID: <20240911104109.1831501-1-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD3239AEB;
+	Wed, 11 Sep 2024 10:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726051346; cv=fail; b=HuVmV3lwsQSlSJ9XKq+DaBl6DNI508iwWLR2Ef3JKYu1JCEnXH40OXAe4BszkHrI0RBPBc2edh2gC3ggWxHj1OrMi9IdvB/REwHgiHG+GU1Az4JjcPzFD6hMGeoFvdqiUZ+OOFb6oE3dAySgCVA9Ezme6f82fNaASIpC9tb8c2U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726051346; c=relaxed/simple;
+	bh=sxadQpVgZJCgqOD+rNGmdEVWjTF9MwLjpfbPgXZ5BKs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qil9bqPHVzxm6BYNFDieL+bFczPIRSntQh7k2vN+e6GAzvdXj4ES0pYzn2Lp6GbVkQbPcpJCln+i3xMVscpK3omdH+F4pd+zq1NOlyX177H5oo8eRE3UoxaF9ZMUNQ8/mnjKFSCxwCw53VL3fggvmYCbw9yaClyRtsVjpb7FLlg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=efsCWfON; arc=fail smtp.client-ip=52.101.228.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r6C4T5agUCwJWNFO/l4RwaDPcHN/2Xmv2/ZRgDJ9KvdrSXg5CnVq69gljEzTujrOuxhL/2F/prEXNjPcFqNvIvvDY6qluFiNT1vykkW5kXSjpNzv5LKsw4aCT35tKUOS/OnARmkxp0jLw8jRzUN+ePsyDntiSI/4xTf7JYzPgUuNlixEFooQOlgynT6dYjlUM2P2ThMxfgx9NMTyBRKoKGFjlLdKXl0OTjH3mTosLBh4EGEO8/Vzs7TqA83RLevaKynYBjGRtB4N99n65rvdUMjs/wlroBhUqIaqNiW1jKK/rGIomkUEQPPw4N3jVlWGKCNnOW5fpz4O7j6+XoZrEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y38BczweV50JGeLxW5/itw9Ypt3IdL0GlvHmAW1aeDM=;
+ b=Hp8Rfg4TOpGExzE5lWGnvwlo1H9U06L2aB3eDaURLz5x3JKY6o0qILH7g4ht1ZeMLxU/d2U/SckqxyegRHS4rlK1htJhOtMGCSTPwwqqkL0rVtJlNforD9g6oMJBGy2iJojOalteOJsjPsnszONbpH63dqKroPj6x642GXKE8CZCjqfRFM1hsNXaoFdiHr9CTVR7oJAEoiZDa9RecfQ0L0u430h4vbB07GrDkPQnARU8gVG72oZn2JquXMpX/RpArzwXMJn+tR1SRCEOI4HtoegueAGOgdZFPPAxwXLYhp58laZqXnY6MOqfY4pZ+UGZf3p8puF3FMt+ivIcnknPPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y38BczweV50JGeLxW5/itw9Ypt3IdL0GlvHmAW1aeDM=;
+ b=efsCWfONNty7SqrFXlNx491Es1JENQ+g+oGFYttseFhHv8WlUlGij5jmuCUx/L9X/+7TqEC98hkh2daKCBo8VZVZtJ2mGWhWAv1fdNGHYS/eqNYRl5I75TQ+xGbiJdr2maCurLPV8/1Gr1mFweY2A/6ljhfyIu6AR8DS8hI2qVs=
+Received: from TYYPR01MB7024.jpnprd01.prod.outlook.com (2603:1096:400:dc::9)
+ by OSZPR01MB8548.jpnprd01.prod.outlook.com (2603:1096:604:18d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 10:42:18 +0000
+Received: from TYYPR01MB7024.jpnprd01.prod.outlook.com
+ ([fe80::39ac:b8e5:61e:8037]) by TYYPR01MB7024.jpnprd01.prod.outlook.com
+ ([fe80::39ac:b8e5:61e:8037%3]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 10:42:18 +0000
+From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
+CC: Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck
+	<wim@linux-watchdog.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Subject: RE: linux-next: build failure after merge of the watchdog tree
+Thread-Topic: linux-next: build failure after merge of the watchdog tree
+Thread-Index: AQHbBAbhL4ip24uQK0ynRtwhjUDNZbJSZktQ
+Date: Wed, 11 Sep 2024 10:42:18 +0000
+Message-ID:
+ <TYYPR01MB702455E1EC2DC714B41490B7AA9B2@TYYPR01MB7024.jpnprd01.prod.outlook.com>
+References: <20240911145543.270c9c9c@canb.auug.org.au>
+In-Reply-To: <20240911145543.270c9c9c@canb.auug.org.au>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYYPR01MB7024:EE_|OSZPR01MB8548:EE_
+x-ms-office365-filtering-correlation-id: 6c41ea90-19f1-456f-5a78-08dcd24e686b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?N6tb4KSQ1lvghgQx0MVXgSq00XJbNI4/8y3OlS9v2eWy8J4ZfyB4ZZQgk/EM?=
+ =?us-ascii?Q?WP2HPF7qb3LjH3gNfTKK29dkPvg2bjb97z9PEa4X7SMvnUxLv6AQbV94uKCi?=
+ =?us-ascii?Q?L41oZXIFSLXZH19TWsAITfJr5QaOdR4ma68sH1wfk4xscAwDE1eJlvRTNivS?=
+ =?us-ascii?Q?nUY1FtlUdwzQUflhvhTmZobQcVN6jdR9atEGGhEwupWa80ZAemwxo0kI/K5v?=
+ =?us-ascii?Q?vRYNh6yGhBkPRAiSNnnKp/pPrdG14FfHUrAxmKB3EBmcBp/vMmhPhPCrC5kw?=
+ =?us-ascii?Q?/xLlRClopXkVlC/60GbmsGhPbI+v6OHbWslFVfpYbARVoqthdkOJLXqnydGr?=
+ =?us-ascii?Q?2xZySNmfmA4X2B4s+nLHq/VfAsJNRZE/fIXuUzIbFCr3rhtM2ocx974cNWyn?=
+ =?us-ascii?Q?nSAsYwaUBpb54WMOiTHW6xIE9AEPD6T4JWsTo+Yw0DDirJnb5nv04MdDGleN?=
+ =?us-ascii?Q?w+mOS4uAfZi43nWjmHNBEVyapWAuPFJuY8st0aTbSCEIpdYP5ynJgGZivy+9?=
+ =?us-ascii?Q?TzVwxNMQ4BLzCYURYu4g0lTs9ULT1jJS+MKrlmEFn7VH86Z+yzc3MYeFAiwh?=
+ =?us-ascii?Q?L2+RX40b/zjxOJCDn0nW36TrQ6qFAu9T5YE/QqfHpDcEoMk+xTT7UXS48zLL?=
+ =?us-ascii?Q?yZKMqT2F6fxkcIBTkSOsKJiMJCpYcVEZ47EpYiGz4uIJSANXFP0YT1lLblyi?=
+ =?us-ascii?Q?aqwLTd8Vjq6oXNKmugOTJ4K7F7XPG05eY47wUjftkl49LKtMA0+LTFHYG1m7?=
+ =?us-ascii?Q?Kcrs84eGny6+Q3l/gCopGzldpAImBGHWpYTFmq9H6Y3soTANNjqf4HAZ2mK6?=
+ =?us-ascii?Q?Wf0l54I61KkOzLz8QqCE/KyI51qg563T0r8DzeQeiyaLfE671wcmGbjoVD/9?=
+ =?us-ascii?Q?LitMioGNn10qq6pETLLhBu6DjzpDmmRjFJWe91hGFlvno1Kdix0KDfVrBdJt?=
+ =?us-ascii?Q?4kjMJv7he3p0Br2A6DoHJURRxtdgJhT3cBVOoomEBfC86JNRPdzB4qgZqRx2?=
+ =?us-ascii?Q?UZCPP7myquz3iBsbHkOJGRZDDuPJ4zh4Itq0Adn3GBvZ3QkbA/zwpoi4FRZ1?=
+ =?us-ascii?Q?VMffAyMKa6k8u9CoPq1yilJ2cfz6iU4waL+JiD8jvJP2nDG2/5tpyUM5SrRb?=
+ =?us-ascii?Q?lD71pxyFLrq/betWH+kJGrnNCMSHUNyE6tk4JlC3kUZIro7K4aKhfDR58ul9?=
+ =?us-ascii?Q?et7slYMkaEZiDTJt42gmcCKp49xInXzDBYNf8VXrJQXiTw3DLscGywJjZvgR?=
+ =?us-ascii?Q?HtG5GKe0agk3NSSBSAZc8H8VDU8prcBY0xmIHXtn01zm1RzfELCTMltOEpt0?=
+ =?us-ascii?Q?avKHkC05oOrjj2w7l2gzm0FaCt0SYKyYtqm6GmWncwZQwbKQSQnrLYuvz56C?=
+ =?us-ascii?Q?6aslnchRwUYW9oanOyrysm96VfuAdBVNM2iLfizGFL4sZBo+4g=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB7024.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?qTXQJUuw5GouxDmCnENB71tumN5gnvWe4PtOn6ii9SXG8EAFULRrlpSq0MQb?=
+ =?us-ascii?Q?+VCZpWfUbJyucSnLrzybqp7woEzCYSUK2czqPUh3sXNyPXgYdAklzDsW68IB?=
+ =?us-ascii?Q?6kN/FG/OjI5A+7JbUEgTxC4VaYqm3T8ApefiJQnEtW8hdeOISliJLydpLiJB?=
+ =?us-ascii?Q?/UhHD9R/ALvtFdNCCEhytmFXEtGa/xh3pw7NT2ksmS+6tt7SGsNFOAohsoWO?=
+ =?us-ascii?Q?VZ87Q5Cn7diVnDTWi3QjmahkRkDE0bSPRo0xe3SqzblbyC0Z3S+39uQPiHJn?=
+ =?us-ascii?Q?RQOHZDWKo+I+076mM/jtGJk3oR2aerUfpM7l29Kje2ijJELZwJLMGXwG5z9d?=
+ =?us-ascii?Q?Ip6Z/YpH93h9jo7Oa+IACPF1JE/DFCtMmoWdTIwisXujvgr1I/FcWmcoNsni?=
+ =?us-ascii?Q?f2XpAo0E9w6FTvpUacn8X0Xa52iDgfTEGRrmKhZglrdpdtcnbfxX791leUfR?=
+ =?us-ascii?Q?NE46sAg+xpCxWAS8zKxndXE76At4lQSEaj2TC8BpALMzA0Ez4/TbFWRB73el?=
+ =?us-ascii?Q?Gtlc9pNKeQWO7fjKiNHnFH/f2ii9a4kBJLCau5WrdSG9euWGt3BPudZRzxAH?=
+ =?us-ascii?Q?lXUki419tc0GuwpdvV5rzIaBpUXKz0SD/slw2SnMRRNo6sVnZTHzVL00Ld+Y?=
+ =?us-ascii?Q?KK1b4xEkTWCcYieYKh4sJ4KSSX0zRZhYxF6UA6ihWdEeaWWrmvJpiCRs3feH?=
+ =?us-ascii?Q?gWaux3vvWtIHKZmo0xfrLDPbyAsbBfnK5f4aWpAbQ73hzCTJCIUMhwzTENtd?=
+ =?us-ascii?Q?bA3BQXkVJq5PCnobpnf95iXPDrHpr3rmasMMQoaeMZf9X65wwuUkIvx3XzCU?=
+ =?us-ascii?Q?hA6lr5jhXfAV4QwfTpfDYkjtTqqSy2PVu592vmuJH8zAmVloTjfhHxldx8ga?=
+ =?us-ascii?Q?P0OhQnMZ7XbMDMiYuLemIgMrYyR4zqaCSOiQZMe+BcU2SQcdZ8nYBOXMBwGl?=
+ =?us-ascii?Q?1ZV4yBHMqsS3KIGol6+7F/7QwyzRDpPE76l82x/kyghyk5JJfxov556j/UFl?=
+ =?us-ascii?Q?bhp0Z74+1ApHyRa10vHnWv64S45FUtRYJPRSMAiBoI5vkCHbk7PkIWdlEPyM?=
+ =?us-ascii?Q?XjGqD+zt0g83JaMGy47skP5X9oxFz8WJdyRpyBIUdnJNkYxNoh2jUHCfPVx2?=
+ =?us-ascii?Q?Tz6C5BiasVbfNjTQ6CwADOiSR0RhV0aMvktoNpueQ/RTt5+c6rkygLqW8bUa?=
+ =?us-ascii?Q?fXAt0NFxdE0b8hrYqPu8w++51IPJC6MR15WOJ/Q3Ja8fcJTMzPzfBl5iZXRM?=
+ =?us-ascii?Q?3x51TEeTFDzckvoU8TPB6jorjVxCd8K2K3iXoDTzF4Ior5OVbfUqU9aGg1Pr?=
+ =?us-ascii?Q?k9p7uPCgSvVf48g7OhBwFG4WaW3riUKsHgthKeAUC8AmPdLYxc4bj7RMG0ly?=
+ =?us-ascii?Q?80hjIjjtjWpUJK6u+NE1l5fVRdcvybvo59eFIkR/WM5sduwfo48DUXa0ADjZ?=
+ =?us-ascii?Q?RwEx9NceQwMqxHoRvpcOWP2l2JJRm/rKIJRV4+BIhV1hbb8HdA+dguH5HbaQ?=
+ =?us-ascii?Q?QGTms0/GnSCyEZiM9Eofi2R/SBn+fKOE/Wk2Zl2NTW73BraAMq8ohwtT9Zju?=
+ =?us-ascii?Q?OK80kvQBc99Gdc6pJkj9pZ+ejLKVUimQxDoPOFdVh2PdS7QOV+bEPkg5nhlC?=
+ =?us-ascii?Q?GU8YPDLtUbHKyYTgGt7y9ak=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB7024.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c41ea90-19f1-456f-5a78-08dcd24e686b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 10:42:18.0595
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CfoeDLlf+CDApcEtBZtQFllfxego3TGK8jWCkn+rElKAt87O6KlpcNdRZYLnx+oc1921VWjZjVR2oNZA3Ha283PY5wsEWenf7GWhwZzYPiKDvbkLyYgmcnwzpajl72Cu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8548
 
-Looking at the TPM spec [1]
+Hi Stephen,
 
-If the ACPI TPM2 table contains the address and size of the Platform
-Firmware TCG log, firmware “pins” the memory associated with the
-Platform FirmwareTCG log, and reports this memory as “Reserved” memory
-via the INT 15h/E820 interface.
+Can you please point me to the watchdog tree.
 
-It looks like the firmware should pass this as reserved in e820 memory
-map. However, it doesn't seem to. The firmware being tested on is:
-dmidecode -s bios-version
-edk2-20240214-2.el9
+Cheers,
+Prabhakar
 
-When this area is not reserved, it comes up as usable in
-/sys/firmware/memmap. This means that kexec, which uses that memmap
-to find usable memory regions, can select the region where efi.tpm_log
-is and overwrite it and relocate_kernel.
-
-Having a fix in firmware can be difficult to get through. As a secondary
-fix, this patch marks that region as reserved in e820_table_firmware if it
-is currently E820_TYPE_RAM so that kexec doesn't use it for kernel segments.
-
-[1] https://trustedcomputinggroup.org/wp-content/uploads/PC-ClientPlatform_Profile_for_TPM_2p0_Systems_v49_161114_public-review.pdf
-
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- arch/x86/include/asm/e820/api.h | 2 ++
- arch/x86/kernel/e820.c          | 6 ++++++
- arch/x86/platform/efi/efi.c     | 9 +++++++++
- drivers/firmware/efi/tpm.c      | 2 +-
- include/linux/efi.h             | 7 +++++++
- 5 files changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/api.h
-index 2e74a7f0e935..4e9aa24f03bd 100644
---- a/arch/x86/include/asm/e820/api.h
-+++ b/arch/x86/include/asm/e820/api.h
-@@ -16,6 +16,8 @@ extern bool e820__mapped_all(u64 start, u64 end, enum e820_type type);
- 
- extern void e820__range_add   (u64 start, u64 size, enum e820_type type);
- extern u64  e820__range_update(u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
-+extern u64  e820__range_update_firmware(u64 start, u64 size, enum e820_type old_type,
-+					enum e820_type new_type);
- extern u64  e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type);
- extern u64  e820__range_update_table(struct e820_table *t, u64 start, u64 size, enum e820_type old_type, enum e820_type new_type);
- 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 4893d30ce438..912400161623 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -538,6 +538,12 @@ u64 __init e820__range_update_table(struct e820_table *t, u64 start, u64 size,
- 	return __e820__range_update(t, start, size, old_type, new_type);
- }
- 
-+u64 __init e820__range_update_firmware(u64 start, u64 size, enum e820_type old_type,
-+				       enum e820_type new_type)
-+{
-+	return __e820__range_update(e820_table_firmware, start, size, old_type, new_type);
-+}
-+
- /* Remove a range of memory from the E820 table: */
- u64 __init e820__range_remove(u64 start, u64 size, enum e820_type old_type, bool check_type)
- {
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 88a96816de9a..aa95f77d7a30 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -171,6 +171,15 @@ static void __init do_add_efi_memmap(void)
- 	e820__update_table(e820_table);
- }
- 
-+/* Reserve firmware area if it was marked as RAM */
-+void arch_update_firmware_area(u64 addr, u64 size)
-+{
-+	if (e820__get_entry_type(addr, addr + size) == E820_TYPE_RAM) {
-+		e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-+		e820__update_table(e820_table_firmware);
-+	}
-+}
-+
- /*
-  * Given add_efi_memmap defaults to 0 and there is no alternative
-  * e820 mechanism for soft-reserved memory, import the full EFI memory
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index e8d69bd548f3..8e6e7131d718 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -60,6 +60,7 @@ int __init efi_tpm_eventlog_init(void)
- 	}
- 
- 	tbl_size = sizeof(*log_tbl) + log_tbl->size;
-+	arch_update_firmware_area(efi.tpm_log, tbl_size);
- 	memblock_reserve(efi.tpm_log, tbl_size);
- 
- 	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
-@@ -107,4 +108,3 @@ int __init efi_tpm_eventlog_init(void)
- 	early_memunmap(log_tbl, sizeof(*log_tbl));
- 	return ret;
- }
--
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 6bf3c4fe8511..9c239cdff771 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1371,4 +1371,11 @@ extern struct blocking_notifier_head efivar_ops_nh;
- void efivars_generic_ops_register(void);
- void efivars_generic_ops_unregister(void);
- 
-+#ifdef CONFIG_X86_64
-+void __init arch_update_firmware_area(u64 addr, u64 size);
-+#else
-+static inline void __init arch_update_firmware_area(u64 addr, u64 size)
-+{
-+}
-+#endif
- #endif /* _LINUX_EFI_H */
--- 
-2.43.5
-
+> -----Original Message-----
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Sent: Wednesday, September 11, 2024 5:56 AM
+> To: Wim Van Sebroeck <wim@iguana.be>
+> Cc: Guenter Roeck <linux@roeck-us.net>; Prabhakar Mahadev Lad
+> <prabhakar.mahadev-lad.rj@bp.renesas.com>; Wim Van Sebroeck <wim@linux-
+> watchdog.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>;
+> Linux Next Mailing List <linux-next@vger.kernel.org>
+> Subject: linux-next: build failure after merge of the watchdog tree
+>=20
+> Hi all,
+>=20
+> After merging the watchdog tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/watchdog/rzv2h_wdt.o
+>=20
+> Caused by commit
+>=20
+>   f6febd0a30b6 ("watchdog: Add Watchdog Timer driver for RZ/V2H(P)")
+>=20
+> I have used the watchdog tree from next-20240910 for today.
+>=20
+> --
+> Cheers,
+> Stephen Rothwell
 
