@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-324715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A8297500A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:48:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D7397500D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72EB1C21C9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0706E286C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A723183CCD;
-	Wed, 11 Sep 2024 10:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C188C186E52;
+	Wed, 11 Sep 2024 10:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kmbDiOe9"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="enTUBv7+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34210184548
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0A186604;
+	Wed, 11 Sep 2024 10:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726051723; cv=none; b=gBagW8q9TxueksRk1adg4p0mIPqYyc/ngQh9rwRWudhI6kjL9w8OOh7rk3Rj5e/xq+qLHetglX1g+GAWkzI3Tkwiok77jRCRYumBX1nE6Et2bubIszTD3q3D/dLe5dddp3VZp11vPfX0KviCpug0Ssw+DEdikPfyjY2/nDW0mXk=
+	t=1726051727; cv=none; b=nyrrqc+2PlucrVhEYeWJpBH5jefXpnBYGy7/nif4/OFJbVk/Y1s+j+46RJMrjErHcTtR8unO9jB5NoIUTKaTdgfUsTtQzSdAu5zrSxirDwSy1AtdjDz6RSv7XEm6F5uCdErv3vRD/8pQveqOyaD/IivfQ/xyEus9JtAjmWvx0d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726051723; c=relaxed/simple;
-	bh=DaYoPeJg9shuCtx4J1jS+goJUrZrFxkVlSXl6dreLv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fD4zEZrWuz17sXQkpnhoYaAinbIasmVchUcO/Tuyry6CdeCxD23MsvpKVANvQH5HvRv4b4cTd3VyWtL7wIg+b/TdvAYnsrlejYm5PwfyfdufN7jqf/JLrLQi/HYGhwvSyosEmlDroAHJRyNMwsETfw+Hjjc5FyQheDMcNdI61ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kmbDiOe9; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so20936101fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726051719; x=1726656519; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xfOyw78Q7NNMTmln4lOFjsc2BJzJJyhZKXZ24axVdKQ=;
-        b=kmbDiOe9yuyvgoiqx/32ejPtvqGWjZURAKk6YLMJe2daVekcyqVMOXpN5MFA2mzKLb
-         4dWwgsEiXKy0spk6c3pNMLDb7Z7a+HMrX7cmf6PxI+hzhAQbyZlUCrNH8XvFl22Ons9B
-         rl83cQPlu6fFE/zPtUFKlLOupfaz6AADsDiSx0HTpyK0k4MoTLyn7XiSMaCaN7yWW/HT
-         w2cBj1RKz4GLwjeCt+dhJZXA0fiktrYdsS76rxFl3PTnFQgds3IcNwnyEStyPo8wG96s
-         KdZPgpAn86cwn2aEMVTeQP7iywE1c6bvC/ooHwY3a6d4sSuEsmpQC4FT5M6WwiRoFpTh
-         jcvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726051719; x=1726656519;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xfOyw78Q7NNMTmln4lOFjsc2BJzJJyhZKXZ24axVdKQ=;
-        b=YKYDvlLvcNYcbXNyCwa32Bu7sMsVugQr7DiwVptYU9LZ8qe2esDrnNZdKYlMEMzIFt
-         3O1wQPz0rxHX2CxjD+HRb/Ao7reXogWptdhBu2n+wLoOaYxB/DZpbkcqja8YjBf8lTpT
-         pI3T6E7mYeQMqDT4piZNVJT2yWyFOzqYD0B6AnhJq89PsY+EWzXLG+qhvN+aa6q4IN3f
-         zdmOOBlaRrnmtP2jyME6VxhfkXzqbYgNyNzrbVuz//f5SeEcDIUuvuAB7IKzag6IBdCz
-         d9Yc2EjVQFYB72OE+nxMLJSlPlP5TChpoSGlbgEUoaOpNRlzd3hEPWQXH8sNYlZlZWCu
-         0Fvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHM7dIkj2m8erLa7ZfpDKB1dMVORWrgMqwT6xfAX8A7O/4UiSF4MJ6uQV0G7CXznLs2ytiWJxwPNNU+9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8xf8Y86QpF66aOSiiHLaZ9X3lc6iMzGKL10HbcKOm1r2LtSU
-	IPgCE3PfDCi2ltSMy/vK4hU52cZCG8Kqh0ZLuLqLbzApYaN7VdBBlrghai69t3Y=
-X-Google-Smtp-Source: AGHT+IFmPMxpL0sfW2aEQVWqW2rvHHyXYZsNZluRoWH8pk2J0ZkdsSyNGv+Nxad6h/EbFiV9iGvsOg==
-X-Received: by 2002:a05:6512:1107:b0:52e:be84:225c with SMTP id 2adb3069b0e04-53673b6b445mr1852457e87.33.1726051718895;
-        Wed, 11 Sep 2024 03:48:38 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f870baasm1520467e87.96.2024.09.11.03.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 03:48:38 -0700 (PDT)
-Date: Wed, 11 Sep 2024 13:48:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Stephan Gerhold <stephan.gerhold@kernkonzept.com>, Danila Tikhonov <danila@jiaxyga.com>, 
-	Adam Skladowski <a39.skl@gmail.com>, Vladimir Lypak <vladimir.lypak@gmail.com>, 
-	Andrew Halaney <ahalaney@redhat.com>, Odelu Kukatla <quic_okukatla@quicinc.com>, 
-	Mike Tipton <quic_mdtipton@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 2/2] interconnect: qcom: add QCS8300 interconnect
- provider driver
-Message-ID: <3xjvx2kwrlruhhxw4aald26qjf5fzikay2ypzr3mwv75mlmf5q@lmn2o64npfg2>
-References: <20240910101013.3020-1-quic_rlaggysh@quicinc.com>
- <20240910101013.3020-3-quic_rlaggysh@quicinc.com>
+	s=arc-20240116; t=1726051727; c=relaxed/simple;
+	bh=AaZvyqHwMXiBX+LwSYencAjZ0+qqLO1QCkQFGzaOexM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SGT/uhV3j7U7Lz7xohejeDtM4jqE3novmCshZrVl1OjciiP6rgg7O1bZE9CBAUWedV+rKsC1K8/RJPgu//SbambQBEBZq3OSuCm3IqdBOONmw95Z5HLElwIDCeq0kM9FD6c+vqqrjppeQZ8PEg/r+YvEYWQuLcwNF5Kx5l1unt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=enTUBv7+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726051722;
+	bh=AaZvyqHwMXiBX+LwSYencAjZ0+qqLO1QCkQFGzaOexM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=enTUBv7+2Ju9v9VTVs0ZVI961x7jld+5EEMiSHxeTofT8X05VBlQSLUEfXb1Af3ic
+	 jseKlO9ivrK2vXNhcxARE6eCmlGYGuAAd7aZx2se7PLuN+S7ke0eeuj8vReJLJtwlY
+	 XzZb42vyXrYAngc28pv2zpNGZTL+3FZoVTuvmDZ7nIN79HYIhWVAm3g+pj+7xjLCvp
+	 hr+Gu8zJTN9ST2A/KMmTVQAGpxYAR34iJxVdoLsG4I0xdnaYCsahuOIJJGIrbQ+UkB
+	 ykteGdvXFiYmY/EmedlxZDoYt0rI87okUYevG6a6zMjmk3Vs+LzWmn5A5FIyOUrfmG
+	 XUAAMJ8d1S2Eg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3ckG5FvKz4x7G;
+	Wed, 11 Sep 2024 20:48:38 +1000 (AEST)
+Date: Wed, 11 Sep 2024 20:48:37 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the watchdog tree
+Message-ID: <20240911204837.6320d8d2@canb.auug.org.au>
+In-Reply-To: <TYYPR01MB702455E1EC2DC714B41490B7AA9B2@TYYPR01MB7024.jpnprd01.prod.outlook.com>
+References: <20240911145543.270c9c9c@canb.auug.org.au>
+	<TYYPR01MB702455E1EC2DC714B41490B7AA9B2@TYYPR01MB7024.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910101013.3020-3-quic_rlaggysh@quicinc.com>
+Content-Type: multipart/signed; boundary="Sig_/_pXQ_k.aeNFkxKEjK73kxP.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 10, 2024 at 10:10:13AM GMT, Raviteja Laggyshetty wrote:
-> Add driver for the Qualcomm interconnect buses found in QCS8300
-> based platforms. The topology consists of several NoCs that are
-> controlled by a remote processor that collects the aggregated
-> bandwidth for each master-slave pairs.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> ---
->  drivers/interconnect/qcom/Kconfig   |   11 +
->  drivers/interconnect/qcom/Makefile  |    2 +
->  drivers/interconnect/qcom/qcs8300.c | 2088 +++++++++++++++++++++++++++
->  drivers/interconnect/qcom/qcs8300.h |  177 +++
->  4 files changed, 2278 insertions(+)
->  create mode 100644 drivers/interconnect/qcom/qcs8300.c
->  create mode 100644 drivers/interconnect/qcom/qcs8300.h
+--Sig_/_pXQ_k.aeNFkxKEjK73kxP.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The driver looks pretty close to sa8775p one. Would it make sense to
-have a single driver instead? Or would it complicate things
-significantly?
+Hi Prabhakar,
 
--- 
-With best wishes
-Dmitry
+On Wed, 11 Sep 2024 10:42:18 +0000 Prabhakar Mahadev Lad <prabhakar.mahadev=
+-lad.rj@bp.renesas.com> wrote:
+>
+> Can you please point me to the watchdog tree.
+
+Sure:
+
+The master branch of
+git://www.linux-watchdog.org/linux-watchdog-next.git
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_pXQ_k.aeNFkxKEjK73kxP.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbhdYUACgkQAVBC80lX
+0Gw4mQf/QQ4K2DZ8TZIPHqNCDvAJVEqobNuZoIjvl2KwmjggFDD/eo+Dnm6SCtLd
+TArzaG+aZsTRgkFW3chkCfTnEkwAi0ZTaoRp9e3VNVrslyhu/8BbS61LUktp5vXp
+IZg89v3X0/h78qjJTg8zRGc4Q15K3dXfbkw6/ZuNnLrjqo0r+QD+ZsjF6d8gFBDs
+oatmcTGIFFU2sMOI6mW5Ud2+ee2D7SelO307iTndG/xR+Qyi8HUupoEn6dbU5yu0
+kWXQ593ICjKby3DG/3YSlO4e6fH4fL5jEYPXmmtMsYlGdL9Y0A04AvRtlmtlVWz/
+5KV7EnX5AIHVKCpBbmorNQUXufrkrw==
+=6q4b
+-----END PGP SIGNATURE-----
+
+--Sig_/_pXQ_k.aeNFkxKEjK73kxP.--
 
