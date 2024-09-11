@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-324131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FCE97483F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:41:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F42974841
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3E42885E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:41:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91FDAB24DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4762D7B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DB3225D7;
 	Wed, 11 Sep 2024 02:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="lAkmnFyF"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2050.outbound.protection.outlook.com [40.107.255.50])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="s9Y77h2/"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2056.outbound.protection.outlook.com [40.107.117.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CA029CFB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CF529CEB
 	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.50
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726022502; cv=fail; b=O/QT1n9SU9Q+AP2Id9chXvJgGx9zIvtm91Sz/GK3L4UKGDaItdbOfa0kqt++8i3aIerzxirGc++1+aO/ZT7pSAsYgMA96ybvs6JTXzHgCpnroJS+fXrY2y24MzyNGQrN4R/La664PhGH3hK/8dVnIaZKXw6ZowLB2UOBkncka6Y=
+	t=1726022502; cv=fail; b=W3wPETXGfNDfzkX+/W4zjtRPEs4TwM4B8b7BpqcWrGknrN/2GOgJMKsNCtrHVwpiUSg2xnhcCpBsrBlenQKOCVEjuCBbCaRF0SG7zqCKmv91sgfiyRidzKPDk/Ku7UZ8fIBVu10hRKqbNrcPDXWRJqryyhrjjTcuqhsW6TDGaOo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726022502; c=relaxed/simple;
-	bh=982MIbF+pMVHCSMMq1eTqq1jWSKMfZek8pJsqns7mS0=;
+	bh=w3GHT+r0yhFCgHhp4yUfZUFNui60a7QEFKQ1FFh9Z5s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LD5ULP3uObaPajWu0isEA4Sl5b7Xxk/hWgsuHYrh04Z70ewCFUfNKzCGXw8ppkNDl4dEkW5LBnFwov5RGOaL8yYoTt+8v7OSNdAuDIRX8iaXA/u0O1oqAkcsD9I1cq6bOjNBZVeM5CqwGcc3VmKfnOShBvnpynf8njOhWwtqnH8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=lAkmnFyF; arc=fail smtp.client-ip=40.107.255.50
+	 MIME-Version:Content-Type; b=tQg0lJzkI/G+tRvyh5LKNBpMcldN49DDakg5XiHb00VJfL+egFu/mfmX9EXPFbzhUmA9DeE9p+uRR7Ho96B05ZQDePWg2iDxzAOaYGl3iazxReAwqi7KqB5Q7QeOQdg6NSV6ebbNxtJXfbR72ex1LF9nLqM/UpmTXTFZ5mwKc8c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=s9Y77h2/; arc=fail smtp.client-ip=40.107.117.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YgUII3xOxDwmYFBa8feTkvll0vul0ENwAGPseGWlp8gsrcC+MR1WX53W1jSVF4luwL7kzTYv9VA/jKYnwBaKfAkd/+jJNxfvQ3Q6Z0ABY7Nfz4QF90nlDtNdOgHzSdC8LI8TAB0YpRdopt4t7Q9UZk+oJFwBBrnLbBnXZxwLVU4Tgl8QMDEsE2DFGz+1r6jCGl5z/559ShI5K3pGk15vMwN6r7HU0K2fS/OlvC89uJxJ3VR6Pq/BOUotQm+4WZDlSKo+Vleytn/Q4kq0gE2llkk65tWtbIFjpZE0yJ/+aq6obMnu2/3YGThfE5cYt3MRtYZ8qJWHsWVXXVN2DHz6Ng==
+ b=JU0UuocYzQOm8QVaZ1/dp0L8VhYsxpnwWAumIQt6cXxvaoti8akmELlf5JxTIgjIIOtuKtFjIBcat/6B2qmUdRPBbN/vgMn1rzwP8MT2/sV3yrKadgKSNY6+lckmhUy9OlIt6NaoWlMry4BIWU/vEjHv6PSOwXudkQhIlQ9o8Djkb86diu+VcLd9qcp87URQH3MGCerZyuIxvwhIAjciMZEljiaZMxAQtX5T4hNaClFptEi88JEZQELDnfpJb7DWusY189OpyOI+wJ7Ur24DniNaZwufb88SZybmeTE8/Vt8TSQ5133Z664pPPeAFolkyHoAj3zZs1E98YrMSbObKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3oJi5Tsc5XQZVx6Qgy+PcZpLe/on1RX6iAt1S6MS0Co=;
- b=PNWc52zZse7MTLVXGr5rs532G55TCA+SKCfFAuVFZKzUwoTJaqSZ8ManRSiUQM1v15krWU/Um+fjZx670pg6vbTAXJOTdBChoCymKKKX+vGehU6AWoEstHDn0AT9Ec5MidaNparsR1dcmVAofwM0S8f12lVgUGBNF+DGenGPfDkEBfDYiXa36L/DvrtoG1oZ2DEEAboT+64gX5Nmg9M10QMs/u4cMWs5AqKtZ+apXVUZfek0zwRjKd6OKPaHsN8BtYmxUs3Sr/ynyRbrQ3rJeECfD39+dQF9o8UwunH0Ql7/keLPFwCvaGcSy251ZLUahCRDJYpAhIKYTvc915Ja/Q==
+ bh=Zjw6lNrkHqxAcHM/EvPPACPcjY3WtCNIKjnebRZcGI4=;
+ b=IOJ3aEx29DrxaH1U7wcetV4EgnoSkz+ixJ/ZrJ2oUsMpchbmydfeBsxPn1LiMiBrcNBaadggbGlZrtwey35IdKTdYIJfeRNNaGohSvg+7TyqGMwx7Ehe4ua9KEokdshG84Is9Kimp41GV+bhJygoMLhRJosTLzVSbXt4LPJ6w6Bl0QjgB5KnT6iZZ29HI0GpMpyZiCWLj0uef1+uQfBYaWflsTHzrtWhRMT2d4EImBCq15NduGMKhK1n4agR5GYInRAZ1l8uOtxPvOvWc1t0M5HKdUIz1HunqNUmKnxwCcgkQ3jDy87Bj7cJIMijiT9i9TLlAo4MLuTHOpHwqCJa+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  58.252.5.68) smtp.rcpttodomain=kernel.org smtp.mailfrom=oppo.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3oJi5Tsc5XQZVx6Qgy+PcZpLe/on1RX6iAt1S6MS0Co=;
- b=lAkmnFyFHN6qunTaO6LXl/nBVy5YS8jkN/TOCPGvnYcDmIyUDVqvjIlJ3dDhzESuQdcl6EnDoRo9+LzEOc/LdOd5mhKQGZwCcdbdZ7S8F5+/msx3AwSQwDhvW9YwZd3QWwa05V7hcAax7fdQsvxYQXLULmeLNNeApImEC7FE6Vk=
-Received: from PUZP153CA0004.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::16)
- by SEZPR02MB5781.apcprd02.prod.outlook.com (2603:1096:101:43::10) with
+ bh=Zjw6lNrkHqxAcHM/EvPPACPcjY3WtCNIKjnebRZcGI4=;
+ b=s9Y77h2/PvJsLq17UdiwUiHuccYmpYGdxaMzZolsRVv3UMZptxyVkZeh8A84R4QPovDCD40YnAncOWmfBXhlYQS7/NM8Way5G3qR6Wp9SrQqV4m9/OWknWzjdtJih4tOaGrxg/cy56Z+i7WisPAegYHk9VsPUVnf3LhGuMwbL50=
+Received: from PUZP153CA0010.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::15)
+ by KL1PR02MB6569.apcprd02.prod.outlook.com (2603:1096:820:ee::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Wed, 11 Sep
- 2024 02:41:34 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Wed, 11 Sep
+ 2024 02:41:35 +0000
 Received: from HK2PEPF00006FB5.apcprd02.prod.outlook.com
- (2603:1096:301:c2:cafe::5c) by PUZP153CA0004.outlook.office365.com
- (2603:1096:301:c2::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.6 via Frontend
- Transport; Wed, 11 Sep 2024 02:41:34 +0000
+ (2603:1096:301:c2:cafe::41) by PUZP153CA0010.outlook.office365.com
+ (2603:1096:301:c2::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.7 via Frontend
+ Transport; Wed, 11 Sep 2024 02:41:35 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
  smtp.mailfrom=oppo.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=oppo.com;
@@ -68,14 +68,14 @@ Received: from mail.oppo.com (58.252.5.68) by
 Received: from cndgdcavdu0c-218-29.172.16.40.114 (172.16.40.118) by
  mailappw30.adc.com (172.16.56.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 10:41:23 +0800
+ 15.1.2507.39; Wed, 11 Sep 2024 10:41:26 +0800
 From: <liuderong@oppo.com>
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
 	liuderong <liuderong@oppo.com>
-Subject: [PATCH v1 1/2] f2fs: remove unused parameters
-Date: Wed, 11 Sep 2024 10:40:20 +0800
-Message-ID: <1726022421-58677-2-git-send-email-liuderong@oppo.com>
+Subject: [PATCH v1 2/2] f2fs: introduce get_section_mtime
+Date: Wed, 11 Sep 2024 10:40:21 +0800
+Message-ID: <1726022421-58677-3-git-send-email-liuderong@oppo.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1726022421-58677-1-git-send-email-liuderong@oppo.com>
 References: <1726022421-58677-1-git-send-email-liuderong@oppo.com>
@@ -91,153 +91,203 @@ X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
 Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|SEZPR02MB5781:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3204d60e-e623-4ad3-ebc0-08dcd20b4027
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB5:EE_|KL1PR02MB6569:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cf1c12e-1b5a-4414-2120-08dcd20b409f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nAT8u8J/TbHzL5aZQdDe9nVEVsJElWLLw1to2yjgXeUelZ4sc87a3zzlmfDQ?=
- =?us-ascii?Q?Skai/K6WesaUD1aeHwIXDddYcmfGz2BjRm6LswCydhUkvFr1ynOb8woSdxGj?=
- =?us-ascii?Q?UlENCKHxYywMyNsPv/CuZjfmfGkNwONlJ2DDN6HRKKvu6BTfDJ98M8Nswv9E?=
- =?us-ascii?Q?SVGTOD/SGzcRtYNV/SVbOxlxspyLHqms7xNXso/fTH5vA/79dY/Q43ln4sjr?=
- =?us-ascii?Q?ywHwad1UcevLeQEThUMhmmzUNm4LlCUYZCjdb0Don4aw1sHVRTQaFEWGis4F?=
- =?us-ascii?Q?6j3xnfRCKqq7/m690O8/bnGNGxsEEQeFQxnTjXS6bZMiYu1Dwv70Y4W2DXY8?=
- =?us-ascii?Q?dvlNs5b+criNvxqsiozKLf9AgsUsDFrJ2BpG1c9zgNvzbpS+J2m1R4vQwbmi?=
- =?us-ascii?Q?RqHv9xPXFJl+koWWUMPmpAflcgJFsGE4eBzR54vHitymdJPpCx0SeGeJ8Tyo?=
- =?us-ascii?Q?SHLez0mxJ1PvhhLubvFs0W5/eDM7ccYcqRS43Im8nJtTGekx5HethDfIrQS4?=
- =?us-ascii?Q?ocVaa2WVaveZWgs0NpCxU1ulsMm8rFbCdCXOzoGDSP0jk4DiEQX4Z5LtjDwc?=
- =?us-ascii?Q?TZEmgUv78njUml3GCWUfdS7j5FeBhObfvOdMRccpiNUKSgPBM3Xi5K/puaML?=
- =?us-ascii?Q?F9FN4Qa70FLl0uVvAlwwy8FxkoMX+ewKY6K/CxYjSJ43gHEg1DZDtZS2opGv?=
- =?us-ascii?Q?ugNAXIgBM4TzYJBLxca4AFjWKp3pw9VBe9NaBHqMSLqh+Ekl69/Ia3iLRLyv?=
- =?us-ascii?Q?di3KNikYWbz7zaMyEbRj26CgocBLVZ9L/NDGLPAatoAesLSeIA5Ch5zYo52z?=
- =?us-ascii?Q?SOBueTk0BHtfP3KS8F+m6XciqBhYrOJeV7EDJ3bTPfmpV6kNE5RpiJGKXJyF?=
- =?us-ascii?Q?mnuejGiU/aKPqX+JbLRLg0K0h5XKzOoCRPSNOlt+M0r7L/0mGJZZEVGVE9A4?=
- =?us-ascii?Q?NRGsNzLvcfdsZHXg+McusLRTZ/5Seq/F9eH7ZHHgpEdxhiGR3yTP5q2pRAN/?=
- =?us-ascii?Q?JOdhW2QX8u7IhcqEYxXcX3D92Rjpx1fbjbNWXgNt+9MEJhCB20kGSSazTul4?=
- =?us-ascii?Q?wHqfewvFSVKtkzBf135H0DHWBy+QqH6kO7JKFB9GQDwh8oYP+AWveARoK3Zg?=
- =?us-ascii?Q?oKZ5p9ngaE8s2/AZRHIpBmfcsI+KS9Ex/qDDjtZEFJ20qlGuE9YEukNUnXH5?=
- =?us-ascii?Q?sDLmwC/VOkxzQoEKHPuLrSks6ZkkQq9ckMLm3Vdq6ETtLgOELQOrhZ3rr8TR?=
- =?us-ascii?Q?OKgxwh4k0Z8tS0NdjzJ77MGtcxeNsA7EDH0LteFGvCAtZQ/ghp8D1kFsRuLe?=
- =?us-ascii?Q?meuOv8i2HIzgDYiMBPgojSMvFBD4/Y2FYW04WRL8+PF6n5+7RTfG8qNFpiSn?=
- =?us-ascii?Q?fv4KEo/g8o2gE7nIInJ0UE3wN8PSBcRzISD6SlxN1mAUpZs22hCRxxeZQjsu?=
- =?us-ascii?Q?zqZ9hZ6NyLH5JUWOysAT+VTUbpbm3YSe?=
+	=?us-ascii?Q?JHZG4qwN1TRuXn1PbV319MNMaypnYEd1ZEBIIS1mtO0nBG39i9u29MJH3pGk?=
+ =?us-ascii?Q?xy7401Dz2EhgcavMH9xwc6vD89yai3DNNHh4pZTWu9qUkc5Qyru560TKQWbj?=
+ =?us-ascii?Q?hJ/kmArpMoXwibShr0c5Ii+n6kFgrFMyxZ3Bn5SiVUCjwED0N06pbbjdb2WQ?=
+ =?us-ascii?Q?QtzOLc3ShHCKurwjf0p77y4ZJ+VsCWhEIshya5bJCIPrGnGTtY2DCkZKS8de?=
+ =?us-ascii?Q?bbRqtjyKT5RukbNsXZb87YPWYzJ1Iv7paO5MRd4h7WHDbg5whDIPYvlr1MtL?=
+ =?us-ascii?Q?XFvJbAB2AciegR0nqvxEya4xJSXX4DQHu0fjhxRMkOo42HOgeSqCZx3ldKYl?=
+ =?us-ascii?Q?XOWRPydkCFDqyIWGlb6OIXS6iIIRqFOqnm2w6+dj1XSiTS+HIrDjH4XbOVPC?=
+ =?us-ascii?Q?sUuyRWkZn2o0hi14ZDH53TjLprvsxCmJ4bLr6pvvQFIP62xE9is/ZlYl41Yy?=
+ =?us-ascii?Q?yvSgYyRZelrzgdgEY1T4lCjyGrXWr6ce8ThIIpnCs7JP66DK1NvaAh5Qcgwo?=
+ =?us-ascii?Q?6M0Fhh4WbZ2xEYTvrUgKm0gmTq1Zpgkf3a/tVkJ5a02ROBPjSslfadp4gU1T?=
+ =?us-ascii?Q?KvgYa/h+yvH4M+7UUHPw3pi3Pctlvi22UYhd85OqUo04Sp2nnWayaXAD5uF0?=
+ =?us-ascii?Q?k/9Dh+T2fRvqMZD8gqds6YBG68BIEvxhBziChjcuGtc3v4G1P+gTYCmqEFJk?=
+ =?us-ascii?Q?1BoSfdw9SZNwHRYvMFl2bYYbVrrGRniXo8uEhB7asAypYEr9LFszJA51ijFW?=
+ =?us-ascii?Q?RgVyMyuzWilWP6FQcQzrhRZnpvj84BbBOLluxoizs+s64cXpCNBj076yjZ/v?=
+ =?us-ascii?Q?D4WuO7a+OaCwIo2xXKX20eCC2PSmzzFia+bRx8+qumRZi0gwkzU7UchEiv5b?=
+ =?us-ascii?Q?MawF6JUNm3VaX82zkSHhP9bkiJIoRfhx99BYqqmi2T0hLhwHawf/w+Kbc6cp?=
+ =?us-ascii?Q?HFen6hJufIX4eAtvFQ2Y59EMZ2grVf5u7agZHtATdaicthHxFfWb9wSdEoCc?=
+ =?us-ascii?Q?Au7weDr5X/dRjyipkEB3pvvg3WMJCq2V8bodp+sL19xDyZSJnyVo+X7DNuYf?=
+ =?us-ascii?Q?KK0pJ+ydllw0EYF5gfJlftzq2+ToWAUAWuIKUSrJIOiMN7aBkILcjUwsvkyX?=
+ =?us-ascii?Q?ff/PVaHhzZq+V9VL5db5bqPEhckWWmlai7v1FXX79LTvPAgJEiYfZeZU1Rdt?=
+ =?us-ascii?Q?HvTruYcx17wdG/Tn6kmOU9qm6PUEh9coTNK/b6akgxIsJk/vVIkCOab24wM1?=
+ =?us-ascii?Q?HKewMR/u62bIK1BSbCdzEVT2JEKLp0E0Uq8SR0ridWOzTnB/Xjl50SpdJRPN?=
+ =?us-ascii?Q?KNvWbVlgP4YvIFvTjNqHBdLSI1y3ASN9GIyxgx3cMDZSNiPO5wlyqAigXiCJ?=
+ =?us-ascii?Q?SJMhm01jlAdkOBUTYwfwE/D8floA4Ckf445oqtrYorIcPmjjh3UgRc23+Krx?=
+ =?us-ascii?Q?fbicyClx2S8ysxwG5KKkmSFCplTi94aE?=
 X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 02:41:34.0880
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 02:41:34.8692
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3204d60e-e623-4ad3-ebc0-08dcd20b4027
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf1c12e-1b5a-4414-2120-08dcd20b409f
 X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB5.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB5781
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6569
 
 From: liuderong <liuderong@oppo.com>
 
-Remove unused parameter segno from f2fs_usable_segs_in_sec.
+When segs_per_sec is larger than 1, section may contain free segments,
+mtime should be the mean value of each valid segments,
+so introduce get_section_mtime to exclude free segments in a section.
 
 Signed-off-by: liuderong <liuderong@oppo.com>
 ---
- fs/f2fs/f2fs.h    | 3 +--
- fs/f2fs/gc.c      | 6 +++---
- fs/f2fs/segment.c | 3 +--
- fs/f2fs/segment.h | 4 ++--
- 4 files changed, 7 insertions(+), 9 deletions(-)
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/gc.c      | 15 ++-------------
+ fs/f2fs/segment.c | 49 ++++++++++++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 48 insertions(+), 18 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ac19c61..4dcdcdd 100644
+index 4dcdcdd..d6adf0f 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3759,8 +3759,7 @@ void f2fs_destroy_segment_manager_caches(void);
- int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint);
- enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-                        enum page_type type, enum temp_type temp);
--unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
--                       unsigned int segno);
-+unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
+@@ -3762,6 +3762,8 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_i=
+nfo *sbi,
+ unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
  unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
                         unsigned int segno);
++unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
++                       unsigned int segno);
 
+ #define DEF_FRAGMENT_SIZE      4
+ #define MIN_FRAGMENT_SIZE      1
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 724bbcb..6299639 100644
+index 6299639..03c6117 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -339,7 +339,7 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sb=
-i, unsigned int segno)
+@@ -332,20 +332,14 @@ static unsigned int check_bg_victims(struct f2fs_sb_i=
+nfo *sbi)
+ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int seg=
+no)
+ {
+        struct sit_info *sit_i =3D SIT_I(sbi);
+-       unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+-       unsigned int start =3D GET_SEG_FROM_SEC(sbi, secno);
+        unsigned long long mtime =3D 0;
+        unsigned int vblocks;
         unsigned char age =3D 0;
         unsigned char u;
-        unsigned int i;
--       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi, s=
-egno);
-+       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi);
+-       unsigned int i;
+        unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi);
 
-        for (i =3D 0; i < usable_segs_per_sec; i++)
-                mtime +=3D get_seg_entry(sbi, start + i)->mtime;
-@@ -1707,7 +1707,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sb=
-i,
-         */
-        if (f2fs_sb_has_blkzoned(sbi))
-                end_segno -=3D SEGS_PER_SEC(sbi) -
--                                       f2fs_usable_segs_in_sec(sbi, segno)=
-;
-+                                       f2fs_usable_segs_in_sec(sbi);
+-       for (i =3D 0; i < usable_segs_per_sec; i++)
+-               mtime +=3D get_seg_entry(sbi, start + i)->mtime;
++       mtime =3D get_section_mtime(sbi, segno);
+        vblocks =3D get_valid_blocks(sbi, segno, true);
+-
+-       mtime =3D div_u64(mtime, usable_segs_per_sec);
+        vblocks =3D div_u64(vblocks, usable_segs_per_sec);
 
-        sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
+        u =3D BLKS_TO_SEGS(sbi, vblocks * 100);
+@@ -485,10 +479,7 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
+                                struct victim_sel_policy *p, unsigned int s=
+egno)
+ {
+        struct sit_info *sit_i =3D SIT_I(sbi);
+-       unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+-       unsigned int start =3D GET_SEG_FROM_SEC(sbi, secno);
+        unsigned long long mtime =3D 0;
+-       unsigned int i;
 
-@@ -1881,7 +1881,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_=
-control *gc_control)
-
-        total_freed +=3D seg_freed;
-
--       if (seg_freed =3D=3D f2fs_usable_segs_in_sec(sbi, segno)) {
-+       if (seg_freed =3D=3D f2fs_usable_segs_in_sec(sbi)) {
-                sec_freed++;
-                total_sec_freed++;
+        if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+                if (p->gc_mode =3D=3D GC_AT &&
+@@ -496,9 +487,7 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
+                        return;
         }
+
+-       for (i =3D 0; i < SEGS_PER_SEC(sbi); i++)
+-               mtime +=3D get_seg_entry(sbi, start + i)->mtime;
+-       mtime =3D div_u64(mtime, SEGS_PER_SEC(sbi));
++       mtime =3D get_section_mtime(sbi, segno);
+
+        /* Handle if the system time has changed by the user */
+        if (mtime < sit_i->min_mtime)
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 78c3198..6627394 100644
+index 6627394..b63f35fa 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -5381,8 +5381,7 @@ unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_i=
-nfo *sbi,
-        return BLKS_PER_SEG(sbi);
+@@ -5389,6 +5389,49 @@ unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_=
+info *sbi)
+        return SEGS_PER_SEC(sbi);
  }
 
--unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
--                                       unsigned int segno)
-+unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi)
- {
-        if (f2fs_sb_has_blkzoned(sbi))
-                return CAP_SEGS_PER_SEC(sbi);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index bfc01a5..9e61ded 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -430,7 +430,7 @@ static inline void __set_free(struct f2fs_sb_info *sbi,=
- unsigned int segno)
-        unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
-        unsigned int start_segno =3D GET_SEG_FROM_SEC(sbi, secno);
-        unsigned int next;
--       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi, segno);
-+       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi);
++unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
++       unsigned int segno)
++{
++       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi);
++       unsigned int secno =3D 0, start =3D 0;
++       struct free_segmap_info *free_i =3D FREE_I(sbi);
++       unsigned int valid_seg_count =3D 0;
++       unsigned long long mtime =3D 0;
++       unsigned int i;
++
++       if (segno =3D=3D NULL_SEGNO)
++               return 0;
++
++       secno =3D GET_SEC_FROM_SEG(sbi, segno);
++       start =3D GET_SEG_FROM_SEC(sbi, secno);
++
++       for (i =3D 0; i < usable_segs_per_sec; i++) {
++               /* for large section, only check the mtime of valid segment=
+s */
++               if (__is_large_section(sbi)) {
++                       spin_lock(&free_i->segmap_lock);
++                       if (test_bit(start + i, free_i->free_segmap)) {
++                               mtime +=3D get_seg_entry(sbi, start + i)->m=
+time;
++                               valid_seg_count++;
++                       }
++                       spin_unlock(&free_i->segmap_lock);
++               } else {
++                       mtime +=3D get_seg_entry(sbi, start + i)->mtime;
++               }
++       }
++
++       if (__is_large_section(sbi)) {
++               if (!valid_seg_count)
++                       goto out;
++               mtime =3D div_u64(mtime, valid_seg_count);
++       } else {
++               mtime =3D div_u64(mtime, usable_segs_per_sec);
++       }
++
++out:
++       return mtime;
++}
++
+ /*
+  * Update min, max modified time for cost-benefit GC algorithm
+  */
+@@ -5402,13 +5445,9 @@ static void init_min_max_mtime(struct f2fs_sb_info *=
+sbi)
+        sit_i->min_mtime =3D ULLONG_MAX;
 
-        spin_lock(&free_i->segmap_lock);
-        clear_bit(segno, free_i->free_segmap);
-@@ -464,7 +464,7 @@ static inline void __set_test_and_free(struct f2fs_sb_i=
-nfo *sbi,
-        unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
-        unsigned int start_segno =3D GET_SEG_FROM_SEC(sbi, secno);
-        unsigned int next;
--       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi, segno);
-+       unsigned int usable_segs =3D f2fs_usable_segs_in_sec(sbi);
+        for (segno =3D 0; segno < MAIN_SEGS(sbi); segno +=3D SEGS_PER_SEC(s=
+bi)) {
+-               unsigned int i;
+                unsigned long long mtime =3D 0;
 
-        spin_lock(&free_i->segmap_lock);
-        if (test_and_clear_bit(segno, free_i->free_segmap)) {
+-               for (i =3D 0; i < SEGS_PER_SEC(sbi); i++)
+-                       mtime +=3D get_seg_entry(sbi, segno + i)->mtime;
+-
+-               mtime =3D div_u64(mtime, SEGS_PER_SEC(sbi));
++               mtime =3D get_section_mtime(sbi, segno);
+
+                if (sit_i->min_mtime > mtime)
+                        sit_i->min_mtime =3D mtime;
 --
 2.7.4
 
