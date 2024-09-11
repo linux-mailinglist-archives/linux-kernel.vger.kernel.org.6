@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-324521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D6F974DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:58:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31592974DB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B691C22001
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:57:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A7DB23F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D009115B155;
-	Wed, 11 Sep 2024 08:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3E52F9E;
+	Wed, 11 Sep 2024 08:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GKZiL4Ky";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KqlpHbP/"
-Received: from a7-45.smtp-out.eu-west-1.amazonses.com (a7-45.smtp-out.eu-west-1.amazonses.com [54.240.7.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="brrVM2Lp"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E81552F6;
-	Wed, 11 Sep 2024 08:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5765154BE3
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726045049; cv=none; b=Iw9+2CxEvAUG7c52aogwIqiAuyg3qDy2uaEE5F6x4ysF4v6JoBj8dAtPXcCwpsRl2eYdN8EifQH+wExWeyNwJgmin4lr4srfessgdAiNhyAiChcwa17IDb9arbNZUB8hHhS9O1qwmQYsavYQ2jn0/ODpRzwjVA6UAO0hD3xwQGU=
+	t=1726045151; cv=none; b=GTB1lu4f4hkjuxO+f6jXBPR3OEQc2FVaqHqIH+dAQytl7tvhvz4aqxOFSOAa7IuLCG/d9eAWYE/7GrHLlBZmdhQeC5fXmnj37RHtsBuFOo8KyYIMlnRxdLubZ1o07F/5Toxsgh9WCI7B/MtzXCzmVaxPGmDvm58TfY8FqX9MWN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726045049; c=relaxed/simple;
-	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QhPMMP/P/2avCM/w3Zl2QszXSr+K8BxKRue+77Czr81x7epVai1A7OwuvxmJg8zpSvhwTT6DAxyfp74C9c9BoiZv/X11rftLCaKu1PYC3h0wRbQzrb/J/AaDhVgN0MGkeQZ4N2lP8rOdq5zlbqGx0OqfOtgWdLrKVPZzZrq/Eis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GKZiL4Ky; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=KqlpHbP/; arc=none smtp.client-ip=54.240.7.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726045045;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
-	b=GKZiL4KyR58cJt4OY+aZDZOLi65aOmKRZvOAG3xMT3ATB5DEDXIWmUy+1g3+Ksdf
-	98DT5E0Of/U2ImWQvw6iY9kBCtyVl3vdXgvaFG8yqo4rTpVUFIP7nmbch6JKaYhKoMj
-	XEl5blNzzjzGV/fnH1LQgf+Wl2/sbwrUyj2AQlYgKFIRmw5MUSEWc6h8+AbW69Gb1DP
-	yq3utQvp9NmrcWVAOfq7hynkAjPhsLXG8gXDOjzsQYdFydRSV+r0M+5Jp64gKng7Trz
-	O1CE7dpBJTu5hBoLPbx/DJsGxGTbWUvIrSMF7otdVOOrqW/3ZLwO7/FEenBlYabNVq0
-	nWdE51ULGQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726045045;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=vUvKnbq/uwwFGfQegRdJ5dmxcL0H9quwOS+8xA7iEFY=;
-	b=KqlpHbP/rdRsMMbXy8JfQzgiNCwzQ1fOPsccG3WEIOos+ICBS8IKxeC2DT8kvgir
-	6n/jghADEdbJNp4neaLu+f16flvIMRehDAa/ps+yjgEEviCLA0ZJqanL4pipewwIlKD
-	Haf7MlcWKpG8C5R17b5cm/TtxqLwSZsTdVbWhj38=
-Message-ID: <01020191e04d4237-204596e1-6cc1-491c-a60f-de3917af7d42-000000@eu-west-1.amazonses.com>
-Date: Wed, 11 Sep 2024 08:57:25 +0000
+	s=arc-20240116; t=1726045151; c=relaxed/simple;
+	bh=RXcUU9kvB/0Lyk/xqe7Tia35vTzjcbYYrmrNIZh3fNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWTsdZqPjW8enHeS2nfE/tu9Ecqa8XX8JmRgaRhZMzHAyU2/4TImu36J3f9Mdwzmok85drCkIOefkgg86Ib8uJfF7dnVWxNxAGITy7Agw/dsnPVp04GjkuGI+BqIAIqUDzZ8mhn/XfF0MV55CKykrBR244seVpw14rhfivdfvPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=brrVM2Lp; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5365b6bd901so5838521e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726045148; x=1726649948; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBnIbKIrzLr2LRaTxm32XswuLSx/2Q2zvIDfhd4W5ss=;
+        b=brrVM2Lpz6dLkz8rpr4Hl0y8iNW2JW1VF6uDvhsDgzTeKg2Ynt7GklrQO3k075J/FN
+         MNzLmiQKDfOr9bjbOJqIi/jC4ieMMbC2LlaVuAlg0SHJK016tmT0PcMiDmgadwOq0HJc
+         aNGLOPaRGa6XV3NjSBCl0KNBO6pvXEnzvcJaQSU0J6maMvHVNpESrMlfq/kPU27XsRX4
+         KVhIs1DDsxzVgP3oAaWQA0wLb57UJTA2qVNtpwpTL/hbJCPxtsIfbZLGXb+FCWIEggh1
+         uQV/ZdBF7Qunm0cxo7FhgdFcKhIEDYqY2oxnabD6U0j3Ypp2tpyPvj0CMtfJ/b7fIira
+         Uxdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726045148; x=1726649948;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBnIbKIrzLr2LRaTxm32XswuLSx/2Q2zvIDfhd4W5ss=;
+        b=pOTV68OTnKirYN7PgJAUB0UxWa+64Qd7izsKy4zXkDjnuAnmvCL0dwwCbAcOKUnbj4
+         uCn1NyRieM3uWXrc3QKWxy7v2mUfA51FRJO+4tXCrmlzIG/5MXKvXRjKX04GDFQQJKfT
+         25ZUHi/Sr0lZy/YgzYXZoo3nFk/V1ZqMb6J2EsIsrW43m4V5ai0StAEzmcD21bNgyrLr
+         Ix3U8cr5zlqLuUupWEaA6+vRnbEYun4c01klLUXm6zuvL5Q/kkOI7Ssl1Ccb+vk2rdQV
+         Q8jU+b3tkoaaT/p5TmHs8yztGugm5bDcZtPtd76YWTpxjbogxm9/mI+npPQeaflbu2BP
+         V/QA==
+X-Forwarded-Encrypted: i=1; AJvYcCXViPE7gA65JFPFbmdnAiIFwHa34BFGKe/EKTo47fleqONz97x+mFOyKw+xd4lp5fs9vLkY128nP4DYXqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+GNJE3c6yEU+4fgpzYFXEQCYRDwVIP6gf44Z0YT2z1WmxtvR4
+	f7ANBGN1iOwsk67KW7SY1RGl/e6bLdWLyf4Vnbft1I9Q7p4d7ASsqhpEsu+WYCo=
+X-Google-Smtp-Source: AGHT+IHp+NhjW4PX/mPJqKBq2KEi3a8zecCL6S3kVYpsYCxT3jOueJVqY771ut2JA1TGcENNWw+qOg==
+X-Received: by 2002:a05:6512:230f:b0:530:c212:4a5a with SMTP id 2adb3069b0e04-536587b424bmr9836628e87.22.1726045147412;
+        Wed, 11 Sep 2024 01:59:07 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f903b10sm1547415e87.189.2024.09.11.01.59.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 01:59:07 -0700 (PDT)
+Date: Wed, 11 Sep 2024 11:59:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <quic_kdybcio@quicinc.com>
+Subject: Re: [PATCH RFC v2] soc: qcom: llcc: Use designated initializers for
+ LLC settings
+Message-ID: <6zxji5toy6mfqvjkq5qyj5m6znmjve6wxh74dxeetj3ragr5r3@dycjj3ihcw22>
+References: <20240910-topic-llcc_unwrap-v2-1-f0487c983373@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-References: <20240910143245.5282-1-pablo.sun@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240910143245.5282-1-pablo.sun@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.11-54.240.7.45
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910-topic-llcc_unwrap-v2-1-f0487c983373@quicinc.com>
 
-Il 10/09/24 16:32, Pablo Sun ha scritto:
-> Enable the Mali Valhall GPU on Genio 1200 EVK by providing regulator
-> supply settings and enable the GPU node.
+On Tue, Sep 10, 2024 at 05:01:39PM GMT, Konrad Dybcio wrote:
+> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > 
-> In addition, set the GPU related regulator voltage range:
+> The current way of storing the configuration is very much
+> unmaintainable. Convert the data to use designated initializers to make
+> it easier both to understand and add/update the slice configuration
+> data.
 > 
-> 1. Set the recommended input voltage range of DVDD_GPU to (0.546V-0.787V),
->     based on Table 5-3 of MT8395 Application Processor Datasheet.
->     The regulator mt6315_7_vbuck1("Vgpu") connects to the DVDD_GPU input.
-> 2. Set the input voltage of DVDD_SRAM_GPU, supplied by
->     mt6359_vsram_others_ldo_reg, to 0.75V and set it always on for GPU SRAM.
-> 
-> This patch is tested by enabling CONFIG_DRM_PANFROST and
-> on Genio 1200 EVK it probed with following dmesg:
-> 
-> ```
-> panfrost 13000000.gpu: clock rate = 700000092
-> panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x1 status 0x0
-> panfrost 13000000.gpu: features: 00000000,000019f7,
-> 	               issues: 00000001,80000400
-> panfrost 13000000.gpu: Features: L2:0x07120206 Shader:0x00000000
->                         Tiler:0x00000809 Mem:0x301
-> 		       MMU:0x00002830 AS:0xff JS:0x7
-> panfrost 13000000.gpu: shader_present=0x50045 l2_present=0x1
-> [drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
-> ```
-> 
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > ---
->   .../boot/dts/mediatek/mt8395-genio-1200-evk.dts  | 16 ++++++++++++++--
->   1 file changed, 14 insertions(+), 2 deletions(-)
+> I put this as RFC, since this makes the file gia-nor-mous.. However, I
+> don't think it's feasible to try and update these values based on
+> available information if the developer needs to count commas in the C89
+> notation..
+> ---
+> Changes in v2:
+> - Drop parameters that default to = 0 / = false (except .cache_mode, TBD)
+> - Fix up 8150 GPUHTW being out of style
+> - Trim leading zeroes in hex, make all hex uniformly lowercase
+> - Link to v1: https://lore.kernel.org/r/20240907-topic-llcc_unwrap-v1-1-cc6479a15ac3@quicinc.com
+> ---
+>  drivers/soc/qcom/llcc-qcom.c | 2644 +++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 2375 insertions(+), 269 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> index a06610fff8ad..9b7850b0b9b4 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> @@ -194,6 +194,11 @@ eth_phy0: eth-phy0@1 {
->   	};
->   };
->   
-> +&gpu {
-> +	mali-supply = <&mt6315_7_vbuck1>;
-> +	status = "okay";
-> +};
-> +
->   &i2c0 {
->   	clock-frequency = <400000>;
->   	pinctrl-0 = <&i2c0_pins>;
-> @@ -407,6 +412,13 @@ &mt6359_vrf12_ldo_reg {
->   	regulator-always-on;
->   };
->   
-> +/* for GPU SRAM */
-> +&mt6359_vsram_others_ldo_reg {
-> +	regulator-always-on;
 
-No, that's not good. Like that, the GPU VSRAM will be subject to current leakage.
+Manually checked several, but not all table entries.
 
-Remove the regulator-always-on property.
-The right way of doing that is to add the vgpu to the mfg0's domain supply and
-vsram to mfg1; that way all of the GPU regulators will be off at PM suspend time.
-
-> +	regulator-min-microvolt = <750000>;
-> +	regulator-max-microvolt = <750000>;
-> +};
-> +
->   &mt6359codec {
->   	mediatek,mic-type-0 = <1>; /* ACC */
->   	mediatek,mic-type-1 = <3>; /* DCC */
-> @@ -839,8 +851,8 @@ regulators {
->   			mt6315_7_vbuck1: vbuck1 {
->   				regulator-compatible = "vbuck1";
->   				regulator-name = "Vgpu";
-> -				regulator-min-microvolt = <300000>;
-> -				regulator-max-microvolt = <1193750>;
-> +				regulator-min-microvolt = <546000>;
-
-I'm okay with this constraint but are you sure that MTK-SVS won't go any lower
-than 0.546V?
-
-Cheers,
-Angelo
-
-> +				regulator-max-microvolt = <787000>;
->   				regulator-enable-ramp-delay = <256>;
->   				regulator-allowed-modes = <0 1 2>;
->   			};
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
+-- 
+With best wishes
+Dmitry
 
