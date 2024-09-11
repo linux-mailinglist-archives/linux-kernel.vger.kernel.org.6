@@ -1,123 +1,71 @@
-Return-Path: <linux-kernel+bounces-325722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9789975D7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F65975D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53F7AB25329
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A61B1C2277D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DFA1BF33D;
-	Wed, 11 Sep 2024 22:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072291BC07B;
+	Wed, 11 Sep 2024 22:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IcHEw9JU"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOTBOtIz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01391BF325
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628031BA294;
+	Wed, 11 Sep 2024 22:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726095383; cv=none; b=KFLSTKtcOqKoPsYiMj163CiHbdyBUkx1fYlHEWijEcH47l8DhrctyrZJttcZZU1si8/YrS3bEHmn5E1JE1ef7v+y6do2oCzBAmd5yd44DMuIi/+CUZN923zeIMtZQGciLPvatG8oR2gI20RshfG4Z0PbiJR2TSf2dKwogYVjrOU=
+	t=1726095554; cv=none; b=uS8dJ3bOrt8sroT2VzU0n9aIDl7QEEL/+SURa+qMnMBd/+iWawFeFJ/epCJ+WiKIsfcE8Cs7CUoOaV/12Kf9YGsdLFm+IfI4Jr7gEqyXYyDwF3TtmfrtdIvBJt+9LDI4yyKQGRTwciB9Z7iuh/HmhG1ZztvreXqT/3Q869VzqQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726095383; c=relaxed/simple;
-	bh=ipxZRueJPfM2kml61M9W8yJZ32U+VLyyM0JqXDqlqBc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k4uirgKJOEvaoZEu0kDmMwBSVNqwp1lbJ/CUuOhcIKaWheUibKidKVL2ST9VxNv2b3I+yoQ3xji6SWsGn8yJq4Hhv1j3yzyx5trbe5MofiH4HNdu4H1lKuconZ3QkI21VC3TPeTWQ/neeZYZjNDk0OS6QOWQWwkxxmItnh4+IyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IcHEw9JU; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1a7fd2eb36so867824276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726095381; x=1726700181; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBS3D2KdJA6HsOBF2WNnyBQbckZXPd9OPRyAx0Hk9Is=;
-        b=IcHEw9JUhC0FwVkiG9HCZEMnNg+R8OBzt9NCj2Yn961V2AbK7m2xy5tuzPpUPDAQcL
-         xHeLT5XTZHJCItV206li6cgDf7Y9K77jo4pjmaj7g61lmUR/sr4egSG7BUCvzWKG20wn
-         RMDds6WjQpalefCM0SrHvY+x1aU7VXPoQrFgiHabE0/RjwSypjA3Geukf6It4u0mOftx
-         KB2DU5wt6YISZjw1AN9iSkVfiaUH/EgArtJM9qdJft1I3jGS+cEgoVDpBRhLIXRx7k/b
-         MgU74wBI1hwfxrziGqIexIhC10fZBXUi2KOXbacgni2f419VEVbPc+DlL6lnbgt0b48V
-         O4Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726095381; x=1726700181;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBS3D2KdJA6HsOBF2WNnyBQbckZXPd9OPRyAx0Hk9Is=;
-        b=XTTknprspVnptaqan8joLHLPW7/mqVkwHpqLyu1wyax/qF4hvZYsyjjx1Ng2/DuzhP
-         xp3Gov+4O3kCbL6HCG6yWH8rBxuDpF1eZsGmTNePjfPhqnrMUCO81K97C1FqmCQAUIpC
-         hCVsefeJKOMbPk2SuaRWOHWBWxeoJxqvcoqeoggyuSmaydPyGW7hR4LE+qTv8ooSZuNB
-         X42NESCh69gDLdHjmJRTgc18HjttEetFRlZ3cn6vTr4otOlXy8+dHDKLX+I657xEfaLb
-         w5RRD5QcUz/DKpMnZeSNHvAcfCoeBuyF2Y+i2qy0viMghJimyS/UsH0YomaYDP8YZgrO
-         FP+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUHmHq+fgIHJd0Bzld/FrNTl3FYBMcCdvnAbIgCTiD6l7RxrN+XckkxBtxy9vYZXDwh5NasGtMC34lsafk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdL000ZBRT40+vI7CD1gT8aUefVR5/29uRFm1LDUdwWpbKJp58
-	ePtJiZrQUgZwMazsTKkqPPNE5WyFWE5roDWVvoXO6t3qlazuPK9YDt3U9HdRHw8I2IqtzJpGHtq
-	Ziw==
-X-Google-Smtp-Source: AGHT+IEoqmUAJ1tvpPAJVzioyGi+fn8A8xKnd0a1Zk3H0MPaPxV6IznaYWnB2Res1beHC7Hgla2hvlhylw8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:2946:0:b0:e13:e775:5a3c with SMTP id
- 3f1490d57ef6-e1d9db9e484mr1092276.2.1726095380603; Wed, 11 Sep 2024 15:56:20
- -0700 (PDT)
-Date: Wed, 11 Sep 2024 15:56:19 -0700
-In-Reply-To: <20240911222433.3415301-6-coltonlewis@google.com>
+	s=arc-20240116; t=1726095554; c=relaxed/simple;
+	bh=84PJn/d6I3AuEiKoOZrQVc/IzbNYCuP+fQcUfAk+Ahg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pyqpi6pmGlyPP8T5DrRPvmUBy84kYAWqlSsvEGA+YPgN3K4OVNdGUKFEAzfUHr4AnMMUGLLcTt++m7tWQXMa695CUOdmtUaEEa4HYqHkIOk39QxXl6DLZPYHwlrNYKuN5/DxgMkBeSBHyPzCDNd9fTjMtoYgTz0PVOLDNWu+IAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOTBOtIz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9884AC4CEC0;
+	Wed, 11 Sep 2024 22:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726095554;
+	bh=84PJn/d6I3AuEiKoOZrQVc/IzbNYCuP+fQcUfAk+Ahg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HOTBOtIzsGhew4x/uGucD5xC6ERlwFvWVp+mvASVcenfiD5Pyl/l7q4Hq4V9+E0Ku
+	 AHt3Mgtz9EWofe07m6v9WA/ZzNJ+bNRIYc0xiCiXM7QHFvjI/9bEFzJSpLdrZAIN7n
+	 ihMUP2QIXCCICfdChUywQPBkx0r90xQ020s69qPpzvRYxj+ntcti7zAr1SRuMGQuE/
+	 Aj4Ns0RYcgOsKCb3dIpf6E4phDjy86FXwRnnOrKs63Cb6VtF5b9O8sEPzg2DS76Oae
+	 s/kTrrWsbnQXvw9JCtViR/+h7waVHGsagVN8C93rNun19i5r419CyG7u6HKs9hmvvB
+	 bGupZualD9Ddg==
+Date: Wed, 11 Sep 2024 15:59:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <andrew@lunn.ch>
+Cc: Divya Koppera <divya.koppera@microchip.com>,
+ <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+ <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Cable Diagnostics for
+ lan887x
+Message-ID: <20240911155912.1c36cf3c@kernel.org>
+In-Reply-To: <20240909114339.3446-1-divya.koppera@microchip.com>
+References: <20240909114339.3446-1-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240911222433.3415301-1-coltonlewis@google.com> <20240911222433.3415301-6-coltonlewis@google.com>
-Message-ID: <ZuIgE2-GElzSGztH@google.com>
-Subject: Re: [PATCH v2 5/5] perf: Correct perf sampling with guest VMs
-From: Sean Christopherson <seanjc@google.com>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Will Deacon <will@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024, Colton Lewis wrote:
-> Previously any PMU overflow interrupt that fired while a VCPU was
-> loaded was recorded as a guest event whether it truly was or not. This
-> resulted in nonsense perf recordings that did not honor
-> perf_event_attr.exclude_guest and recorded guest IPs where it should
-> have recorded host IPs.
-> 
-> Rework the sampling logic to only record guest samples for events with
-> exclude_guest clear. This way any host-only events with exclude_guest
-> set will never see unexpected guest samples. The behaviour of events
-> with exclude_guest clear is unchanged.
+On Mon, 9 Sep 2024 17:13:39 +0530 Divya Koppera wrote:
+> Add support for cable diagnostics in lan887x PHY.
+> Using this we can diagnose connected/open/short wires and
+> also length where cable fault is occurred.
 
-Nit, "with exclude_guest clear" is easy to misread as simply "with exclude_guest"
-(I did so at least three times).  Maybe 
-
-  The behavior of exclude_guest=0 events is unchanged.
-
-or
-
-  The behavior of events without exclude_guest is unchanged.
-
-I think it's also worth explicitly calling out that events that are configured
-to sample both host and guest may still be prone to misattributing a PMI that
-arrived in the host as a guest event, depending on the KVM arch and/or vendor
-behavior.
+Hi Andrew, is this one in your review queue by any chance? :)
 
