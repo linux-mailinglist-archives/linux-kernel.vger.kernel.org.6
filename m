@@ -1,187 +1,209 @@
-Return-Path: <linux-kernel+bounces-325738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC186975D98
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:09:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4460975D9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677F52857DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE821F238C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F4E4F8BB;
-	Wed, 11 Sep 2024 23:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27991474C5;
+	Wed, 11 Sep 2024 23:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmzsuzHv"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nS7V2OXO"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5232F30;
-	Wed, 11 Sep 2024 23:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726096147; cv=none; b=ZndmM5Rf5BSMBf1HEHorso2H48IxUi4mBP2MsjhaBTsec1+RwDmYApbruQEehHWJ/Is4vlehWDxFEoodp9zAF4s4Ki2k/6KacWMlcRB2XaEAmdIRumc+nJuGDT5U2X3rZFATtwK9ek0HBw9V8atrpssvav8iTJPzYWToaufN7gg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726096147; c=relaxed/simple;
-	bh=p24kuALb+FG8YQuEcIZoujnRVAslQjvHFviywETxW1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=An4lYzambqO+xi8lgNK3zvaLbU0l2AOja/D9cfJtKHABMZaArDaNdTCK5ah5vQXQTghemGddw3N/McI66M0WfuIOTVP/vEymGkXgfUeI0PHfr02U6cBWmaks9m+N25M55a9Yw73LMFbWYKD/nGX8uwqvWw7gIhvF+5MI0DOZ9b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmzsuzHv; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d877e9054eso242031a91.3;
-        Wed, 11 Sep 2024 16:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726096145; x=1726700945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+MlP7oJ5M6c/yucbQWoK+I4lVCxaQaoagzwBt4NfHEY=;
-        b=EmzsuzHvFNEKxEgH01Ww49RVwsdA7g4FYnFGStgE4uLOoe9mtEQw9DrpIvRQ97fLdz
-         2EhFguaUMXIj2W5w/UPk1w/mUx+WP4HsSGaAX8pRqrKKfd5Wna5Y9BO26CThFIRoHRuJ
-         37NzQHK5kD5C9g/aqOQBtb6PxGOe6NW54KViqsnT1KSaKPxdq4aJJv3H5WrVHdop41JZ
-         xIrDgxs9gaA4WKderSScrEawERrS0q4/BfAO3t+h1ztoLHtp24tn3AXSjmNig+t4gl3P
-         cEmglk08hxRnCOc0iEli8JFYiMaPjIQx1LdlA7OPw/TB41BbtYThcmCj4dT57Q823yrE
-         AEmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726096145; x=1726700945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+MlP7oJ5M6c/yucbQWoK+I4lVCxaQaoagzwBt4NfHEY=;
-        b=dyzERZtg4EWUV5WZpQATWzgEaFBN5Z7o0g/Jj0gUPFG8wnPhXR9nbcAvzEhkD5+VT6
-         j3xrWW2Bvb7WQJO5zSUWvVTyouimQD1biq926DP66b+I1qpgC8GRUaqCBOGADBksYrIS
-         yKtzWRu6f0Iifi8XP+/POZu0SzfXk9/h3RVLnkYNRrznHcNo5QJ2l9y2P4ojEw08N8O2
-         THdW++qyhlAktBsooAOO99tcEPy2L5474Gy/+I/hLGupWNUJSjh/uRCjOogHmF+SuKvS
-         uzK+6ucWfcqrSv25T4ekOfTiMjwuQn3yH1dRH2g8NicPoCcELEbODNsBdo+RjjNgT9Kt
-         57kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAhjd/VVQ2FkenMZA2Vli5njCu1EvKhdBucxFr7zQqwkEWrAaFZGyCvReepidOArNImuPFZnxV4jcAR8N0JSnF6BBb@vger.kernel.org, AJvYcCVZb+Mw2tgOfxkwf8wDM15ergkgNFAmcsHZofMSuGzQ7vqXwNI7W8sT5V4dZFulu3BUm6SMpdnVH3bpjw/X@vger.kernel.org, AJvYcCWdtcBP0/NLT8IeXdO8LmpVAGk+ZutbFPDhnDuO28tMYcQOFSjbhkdM4sQ8BTaTLgjfhDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywNvn+QaK/xRf5kRSDEz40emW5Revd120lxPrXovvhn2afzAyb
-	DGaX8VdQrquMpwQ+guG5+ouagiSFkC5KJLoFagS2J3QlCM1YqGe3olWYs4MRFzlXeWGzPtSSG4J
-	eWM8Iyj0QN1gZv5XSAQmAK5Z+G7Q=
-X-Google-Smtp-Source: AGHT+IErDGlO3QfmC/bCljTP5Yl+jxppb6u5ajt/5AHexXT74blBUjsTtAiIp3upUCN4ne53tTyObwraG52RmAp5L/s=
-X-Received: by 2002:a17:90a:a78e:b0:2d8:a350:683a with SMTP id
- 98e67ed59e1d1-2db9ffb49e9mr882459a91.19.1726096145515; Wed, 11 Sep 2024
- 16:09:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A02F30;
+	Wed, 11 Sep 2024 23:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726096269; cv=fail; b=YqVkRm/Tp8upgn5OZulHhzlwZuLbAAODYF6iUjqri8ebznEp4yA/QQeY+Lerwe8aD5QqC2C9DFQwcm12p5Y9SU9q/uQIhOdneKuIgcNmQlk8lvKpuCqn8Duju6JieyJ2psIMECoIom6yGV/rquMzwpprHCgntGyrkdIXSQwcNcU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726096269; c=relaxed/simple;
+	bh=TVoSEceCTcr6AbxpwFE/Kgy6mYFmhooJNeoiO8Xg5v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hPfHMixEOV1GLvZElhAV12qwfr0mv1tqF9LDx3J9M5A4ZoGymTZv4rfxDeyi5+3622oZEiUNpZoxRABc5NLXbtPDLn9XTAFbM0ZOJIefG0hteSG8SASl5oeTbvgi7Irc/QslgwCG+d+x2OtWvvj4zadgDU7KgW0Ord01rXxxjXA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nS7V2OXO; arc=fail smtp.client-ip=40.107.220.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=thXYvIFY6VULVj+MQy8t14NMA49s83nEc0uQKon2jagCCQipRy3hs9o1JDfXGjcYb8/gzvzToAAnBWAH+dnc1RKH45h+UQPrDYiQlA1AGvj53cUB1G3S3iyTWkakvQTYEuasitj7xx0fbGYTbzrffmBTR0vPSaeuYiYiAf6yWJNTEcBIIb2e6AdxgU6esdirBQlWZODAPmTvXm1dSXOVKl2XBkp63LRGtNFhibEMN9PXF/6lXme9jcgZ7PJmkQ/23fixoqwGa9Ui+di10HJ9Yys+4xiHhFwhntOFLvleXq3jPUkzZXCrqqV2Bw4iCJ3Bua9VHxxsr50a5AJ+8soMZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZwdybH+0u71gR6wb+2rwJCGVEVo7moC/RrPGAXOl4HQ=;
+ b=iOkTyVMWXeqlOFjpHVP/EKQ+vO3pCBtoFamrMMye5XSKYFaLWXHu/hqgPQuHBmbap0cd40rdvErS5ucZJi5A+vI4uvvh+x5PCQn4uLXM+Tk64ALyaKQXu3bCrwdbOReW7RmIg4/HTHbpeiGaq6eWQ5MZxywwW5FH6KGv0j324cRtC6hh6JpPWKINKZBLNir8TurVi6il5A6gu0sachPg/7jfFIAIAuedifqzF1VKulAg5tAkOqhm39bx6R9yamT+hikmG9jB4gAWm6+ZDlVgPwKeVU6g0mUnlTLIeAPxhVULUEzXiyEEww294YAxkqSqwQdj5xGK4bBfIvccqqXydg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZwdybH+0u71gR6wb+2rwJCGVEVo7moC/RrPGAXOl4HQ=;
+ b=nS7V2OXOH+lYYW1zL3+oJMWASVkyhAH+8IvTqn8AYUiOx/AJBSXqsCZEbBSjhZTNESEeSy2fo2koZdmhEBO9hXIU4Nnzj5h6n1TVILnUbrVnEn643uLmDJyDFYkEhRUvoFj9mQNn8WmZqk1xS1ngAj61Qheshe/+ucp54Klklz85YzGddFGUZTcDtPbQ5+t952GkXr+KI3C37k5otTgs4FDT7FmelhHL5IoIK2oQQz+5b9cba6oT9WnTE17VASrPOd/F3siEMrLhVj91jRbmVmdsisPxUR3xpo+kTwbjPKJ67gQbMHYxC0WCyB98bxBO3kHIBCPoxVtQ3w/zW3Zy8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by LV3PR12MB9143.namprd12.prod.outlook.com (2603:10b6:408:19e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 23:11:05 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%5]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
+ 23:11:05 +0000
+Date: Wed, 11 Sep 2024 20:11:03 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com
+Subject: Re: [PATCH v2 10/19] iommufd/viommu: Add vdev_id helpers for IOMMU
+ drivers
+Message-ID: <20240911231103.GR58321@nvidia.com>
+References: <cover.1724776335.git.nicolinc@nvidia.com>
+ <6ccdfb27c7aa5a5bb7e153165cf90114cae4687c.1724776335.git.nicolinc@nvidia.com>
+ <20240905161415.GS1358970@nvidia.com>
+ <ZtnwG/Kmaf+fZFAv@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtnwG/Kmaf+fZFAv@nvidia.com>
+X-ClientProxiedBy: YQBP288CA0021.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6a::8) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909201652.319406-1-mathieu.desnoyers@efficios.com>
- <CAEf4BzaOh6+G3qkPjW7HYkMBhys+=WU=d3cErnm8ykTt2W3y5g@mail.gmail.com> <d294fc4c-45c1-49ec-98e3-5b42b7ab3b4b@efficios.com>
-In-Reply-To: <d294fc4c-45c1-49ec-98e3-5b42b7ab3b4b@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 11 Sep 2024 16:08:53 -0700
-Message-ID: <CAEf4BzZrN3moj2_JCGcc5z+LQeWUvGtx1e3J4c7tQtJyQE=3PA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] tracing: Allow system call tracepoints to handle page faults
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|LV3PR12MB9143:EE_
+X-MS-Office365-Filtering-Correlation-Id: 972aa42c-3f37-4be7-2663-08dcd2b70313
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?C6cIYr2k+ZoyPUibJ6cPiSzAiSvPGuvyuNmwBDbfLVnj48TedDi9YWLGcOsS?=
+ =?us-ascii?Q?mhU/LPXaBmQ8jcwAlHYnlWg7II28p1tRn+HDzd0wfgTxbzzD/qDYk/YLm1Ai?=
+ =?us-ascii?Q?jevYfLOTxYBmVHEx4rJUa/+WcEy8KOeCx4cURGv9cQu8jXNL4Ps1AgrP9ry1?=
+ =?us-ascii?Q?5APvQOPrr2Ov2ZNqzz/2h9Lg+MIK03yrzlshbU9l/lvLxwRiq2VI8hov+DDe?=
+ =?us-ascii?Q?u8PD6mcH/EzPH4Abyom/eUD1QlIrceoQ1faDI9hmFjmjZqY+aTXoTaQDNcuT?=
+ =?us-ascii?Q?i1O/be++2ASgjafpf3xNebVjoOROVki6DzYZFSw3ApLDDe7D9pxMJRUTBo2o?=
+ =?us-ascii?Q?QxzAppZEq9eVVzGm7uDQVrxPCl8zZTQCjciFAU+oRgmg9FVNOdbIRwcuw5Ub?=
+ =?us-ascii?Q?HaeOfy96OxwnBgdHZDOOjMYYKWGImYhv0kW7F61NwFeN1IloAWaHvLwRIh1H?=
+ =?us-ascii?Q?NHUZxmmS+oWR1CH81Oe2wD6XmhmC6QmSBs+EjCSjsJUbau1qO3kOZB+bFK0E?=
+ =?us-ascii?Q?vabDEXh4geLIifceIiTZkQJSK3PS9EJaqAv6hUmSvpfFKhcRZBdkvisBr2Te?=
+ =?us-ascii?Q?kUWUCs8BjOPTxX8zYWhgVyGmbbKK9q6VWJu5cafoASyruFVj9M8WkvX7KQKf?=
+ =?us-ascii?Q?h5dUyPa92j94cOxOQDwr7ii2iuxAWWEzRa7MuhbnLG7fr97qcpjCbCzeiBLW?=
+ =?us-ascii?Q?wGmZSHyPfb3ZjsCF3f+Gj2hkpWNuaI3fgkg9/mP4UOB3HPKED/tsuUbVVHWq?=
+ =?us-ascii?Q?VIO90nk/ISBwt1NOxsi7Ofm0+LIdA5okTbU8YkZIjEWUTS+DAmPlhqV4UCwO?=
+ =?us-ascii?Q?u1Pp95CcrcOgLvPzhT56/449nFqliyEcF3AB0cS3GsppzYFGc0mweWeyoODF?=
+ =?us-ascii?Q?lx9uH/dAJhUGvJ0f90wjTJjim0KDJmxW9c0cM/SXlUyLcBrmd0R+y4XLIopy?=
+ =?us-ascii?Q?W9Q9lq0IO97q5t3T7QxJ3SX2+icjPWVppAMMjk+nt+kt4bcCskD5hnKScDeX?=
+ =?us-ascii?Q?ORQd4bdCVS77je1f1aK3JyRoz2ozidfrdgIkKc9dnFFIfcCA/hRCRtT9YsbC?=
+ =?us-ascii?Q?u7uo1n4s+zEoVtO9rspiB1S96W2Qiq5d4kN8uuQqO3Zla+bCfLKb0eaxvZQl?=
+ =?us-ascii?Q?tDNty5RUvF41btehJSaPLNCD+UHzOBucPhti8j1bUFuPvx02Nkv+MlAy6xuB?=
+ =?us-ascii?Q?BLnFnZy5GUL3IC4HoXVDppL4kwFENjD3rYOJbVG1CRxOH1OlUQgba32VIrd4?=
+ =?us-ascii?Q?pMRJAmWZWIev9ObgVZhpvlU88OhmM3pqWJc4TfAMq8kGhdZZWieA0rnl2ENr?=
+ =?us-ascii?Q?sKa6nfH3QvbMxOJD/EeziihHl5xz6XrhVk4kzZJPrqt8Ew=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DW6rqVAwq1rxvE3zbx524UVienbcH87tW0uyCkziN40RISsS2KrvjhVVKSm+?=
+ =?us-ascii?Q?IMovDdApEW1Z6Xi3kJgKqkTN+aALSPZSWUsRyd1csECXyZaMJ0T+sVBXkHq1?=
+ =?us-ascii?Q?w2+azJKoomKG/YGPq2nFjtIwhvY/i83SPBVXryBq6zFg3FC6af0fOZnDhWQv?=
+ =?us-ascii?Q?DJfcI3WKafx6fozNbU/37pwkwuW5rBbW+UwJp+zdE9UcAoQqpRZ88RmJgGBG?=
+ =?us-ascii?Q?7QKgsJeK26BrkxT3NUBqbKHrUS0rC0hHNcA192Yrwyp18/33p8+WEn3NbhL8?=
+ =?us-ascii?Q?XQGLTN+/IyZl47PgrhTJ5+13EhlHdnHCWeTUo1AUTLlceW5Rtg5mpCghbf/7?=
+ =?us-ascii?Q?6t0iV4q7rmH7O1466JRzuBvCe9ET3WvaZ2LTVWtIq6oVm80yg8Vvbtdonuev?=
+ =?us-ascii?Q?RRFQ9R19LRdee/m0zsFSuDhx4O9+AvPH7TcWKcQPaOrSg8Yij6lSZ+wwvj+u?=
+ =?us-ascii?Q?LF4jb1FmyJxBM7A+Cq0Fhs8LR8BSMtW8ClmFXunWbGqa+/yx/d7gbglIlvu9?=
+ =?us-ascii?Q?+Kd0VqFfvNgWkVYv30sLPEvfZ1FoDi+0+igWRoGV7Tarsx+3+qDP1s7M7P7O?=
+ =?us-ascii?Q?PG/Cx5wDy3mxC6mS8xL/Skh2tQVH7sO7cKzbTjmcwm5vCzgSY8Ozff9ehqlV?=
+ =?us-ascii?Q?XGHF6JjF+RibiuiWdGUAm9bZzvdTUex9RJ9OT5q/YwePERPYH+/xBZKV/ASG?=
+ =?us-ascii?Q?SKcksOzt4y4OrjKuhEvpGL/ub4f8bWXonQ2YZqA47R9f4tsEscksD55DaMAT?=
+ =?us-ascii?Q?MbdrOeiEd56KiI7gNTsklIhq77CYGO8lV6/mfzNRUZA0L1IrsBLIXBFeApuU?=
+ =?us-ascii?Q?rOK+t/cPti/Jj5WDlxc0TpbaH0qT8XSHjStarpLun/EPrdihxSNfRfYuFcOO?=
+ =?us-ascii?Q?kGpEVQjJpJAJFmfHkcpjNUoz8dOX6NK07ZVRyNUz5X5uxqRZPOo1MxawpFLZ?=
+ =?us-ascii?Q?QcynJIZN1fhzBiD76CaFrEcB0MpC/u29O//c6gfiXTjyRPr7Wg3Y3o0sK0sw?=
+ =?us-ascii?Q?pR8MoxeC2lYYJI+MRPUtMkgJqZgqL//nNDDr63KtAW40DeZauHkcU0yyOv/9?=
+ =?us-ascii?Q?AtB8b8hQY4r/RipAABiMiqC1d+Oacgs3zQh6lLQjagKCOMDwkwytXIYhUo6a?=
+ =?us-ascii?Q?V01pCsU9c0DBMNNhIfxMO+kUXaoiMSQ2Ftn+ko7TpEyh6vnp8AXi9B81C65h?=
+ =?us-ascii?Q?Zn4UiM40TzJ8xY3Tfc4/+AcVjppYHqDRij3Itq2+RSDjgpQCfnyiUBpOyfo3?=
+ =?us-ascii?Q?sXC0odypAXCWBxl+7CKgfWvee32RyzsWkmJTTXM1ztEweEeQBaf+jlXJmQb7?=
+ =?us-ascii?Q?2iVl/EkqBTqshnb4d0RH8tk1I7FXAcXdz5lq9GhlnagD2dcvUMtVIv6bCRGR?=
+ =?us-ascii?Q?MC7SpGcK1Ny+gtJKtMSr0+tNzGXzhuK4v7FLyqYIU4hOCahREAQnWGqeypJR?=
+ =?us-ascii?Q?0wy6G3PJBM07FiFLPBQXS0CQUHpx/iqkWlz0cvFj52bAH0LEzwWfjBGi1je7?=
+ =?us-ascii?Q?zTtJFOx2zOFQAeKiv9TNrbgm6xhXdoVua9pADuSr50i4lgF2Tu0PQ/0xCu7z?=
+ =?us-ascii?Q?DnDL2MkI7G9Yzc9+KhUSYaa+h7togMGoka5rwbqN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 972aa42c-3f37-4be7-2663-08dcd2b70313
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 23:11:05.4114
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +7NbMEOFlwNIxCNx6yP3/rbbFcNQB/8wtGKk3QbTeyLitXIBITGqZ+emdwYZlxp6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9143
 
-On Mon, Sep 9, 2024 at 5:36=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-09-09 19:53, Andrii Nakryiko wrote:
-> > On Mon, Sep 9, 2024 at 1:17=E2=80=AFPM Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >>
-> >> Wire up the system call tracepoints with Tasks Trace RCU to allow
-> >> the ftrace, perf, and eBPF tracers to handle page faults.
-> >>
-> >> This series does the initial wire-up allowing tracers to handle page
-> >> faults, but leaves out the actual handling of said page faults as futu=
-re
-> >> work.
-> >>
-> >> This series was compile and runtime tested with ftrace and perf syscal=
-l
-> >> tracing and raw syscall tracing, adding a WARN_ON_ONCE() in the
-> >> generated code to validate that the intended probes are used for raw
-> >> syscall tracing. The might_fault() added within those probes validate
-> >> that they are called from a context where handling a page fault is OK.
-> >>
-> >> For ebpf, this series is compile-tested only.
-> >
-> > What tree/branch was this based on? I can't apply it cleanly anywhere I=
- tried...
->
-> This series was based on tag v6.10.6
->
+On Thu, Sep 05, 2024 at 10:53:31AM -0700, Nicolin Chen wrote:
+> On Thu, Sep 05, 2024 at 01:14:15PM -0300, Jason Gunthorpe wrote:
+> > On Tue, Aug 27, 2024 at 09:59:47AM -0700, Nicolin Chen wrote:
+> > > Driver can call the iommufd_viommu_find_device() to find a device pointer
+> > > using its per-viommu virtual ID. The returned device must be protected by
+> > > the pair of iommufd_viommu_lock/unlock_vdev_id() function.
+> > > 
+> > > Put these three functions into a new viommu_api file, to build it with the
+> > > IOMMUFD_DRIVER config.
+> > > 
+> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > > ---
+> > >  drivers/iommu/iommufd/Makefile     |  2 +-
+> > >  drivers/iommu/iommufd/viommu_api.c | 39 ++++++++++++++++++++++++++++++
+> > >  include/linux/iommufd.h            | 16 ++++++++++++
+> > >  3 files changed, 56 insertions(+), 1 deletion(-)
+> > >  create mode 100644 drivers/iommu/iommufd/viommu_api.c
+> > 
+> > I still think this is better to just share the struct content with the
+> > driver, eventually we want to do this anyhow as the driver will
+> > want to use container_of() techniques to reach its private data.
+> 
+> In my mind, exposing everything to the driver is something that
+> we have to (for driver-managed structures) v.s. we want to...
+> Even in that case, a driver actually only need to know the size
+> of the core structure, without touching what's inside(?).
+> 
+> I am a bit worried that drivers would abuse the content in the
+> core-level structure.. Providing a set of API would encourage
+> them to keep the core structure intact, hopefully..
 
-Didn't find 6.10.6, but it applied cleanly to 6.10.3. I tested that
-BPF parts work:
+This is always a tension in the kernel. If the core apis can be nice
+and tidy then it is a reasonable direction
 
-Tested-by: Andrii Nakryiko <andrii@kernel.org> # BPF parts
+But here I think we've cross some threshold where the APIs are
+complex, want to be inlined and really we just want to expose data not
+APIs to drivers.
 
-> Sorry I should have included this information in patch 0.
->
-> Thanks,
->
-> Mathieu
->
-> >
-> >>
-> >> This series replaces the "Faultable Tracepoints v6" series found at [1=
-].
-> >>
-> >> Thanks,
-> >>
-> >> Mathieu
-> >>
-> >> Link: https://lore.kernel.org/lkml/20240828144153.829582-1-mathieu.des=
-noyers@efficios.com/ # [1]
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Alexei Starovoitov <ast@kernel.org>
-> >> Cc: Yonghong Song <yhs@fb.com>
-> >> Cc: Paul E. McKenney <paulmck@kernel.org>
-> >> Cc: Ingo Molnar <mingo@redhat.com>
-> >> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> >> Cc: Mark Rutland <mark.rutland@arm.com>
-> >> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> >> Cc: Namhyung Kim <namhyung@kernel.org>
-> >> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> >> Cc: bpf@vger.kernel.org
-> >> Cc: Joel Fernandes <joel@joelfernandes.org>
-> >> Cc: linux-trace-kernel@vger.kernel.org
-> >>
-> >> Mathieu Desnoyers (8):
-> >>    tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
-> >>    tracing/ftrace: guard syscall probe with preempt_notrace
-> >>    tracing/perf: guard syscall probe with preempt_notrace
-> >>    tracing/bpf: guard syscall probe with preempt_notrace
-> >>    tracing: Allow system call tracepoints to handle page faults
-> >>    tracing/ftrace: Add might_fault check to syscall probes
-> >>    tracing/perf: Add might_fault check to syscall probes
-> >>    tracing/bpf: Add might_fault check to syscall probes
-> >>
-> >>   include/linux/tracepoint.h      | 87 +++++++++++++++++++++++++------=
---
-> >>   include/trace/bpf_probe.h       | 13 +++++
-> >>   include/trace/define_trace.h    |  5 ++
-> >>   include/trace/events/syscalls.h |  4 +-
-> >>   include/trace/perf.h            | 43 ++++++++++++++--
-> >>   include/trace/trace_events.h    | 61 +++++++++++++++++++++--
-> >>   init/Kconfig                    |  1 +
-> >>   kernel/entry/common.c           |  4 +-
-> >>   kernel/trace/trace_syscalls.c   | 36 ++++++++++++--
-> >>   9 files changed, 218 insertions(+), 36 deletions(-)
-> >>
-> >> --
-> >> 2.39.2
->
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
->
+> > No need for this lock, xa_load is rcu safe against concurrent writer
+> 
+> I see iommufd's device.c and main.c grab xa_lock before xa_load?
+
+That is not to protect the xa_load, it is to protect the lifetime of
+pointer it returns
+
+Jason
 
