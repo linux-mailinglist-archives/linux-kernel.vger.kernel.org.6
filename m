@@ -1,168 +1,121 @@
-Return-Path: <linux-kernel+bounces-325659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4159975CD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:01:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5145C975CDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B530284282
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:01:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06AD81F2258A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C94149E03;
-	Wed, 11 Sep 2024 22:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60679185B50;
+	Wed, 11 Sep 2024 22:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CypJFGqa"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tE2eLl+H"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903F1224CF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F6A14E2DF
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726092079; cv=none; b=nNDbCUA/1+PTwHEzD35WUOYq6yBslkUCq/7znZmlLdNvi6LVDdXi2uQTrLHz4LehbQblSuXi9nbYeR0tqAVARVX+Vi9uB3X5Of8kjBH7LVVFpgKD7D4hQ1Av235wfaqqrJ7d/A14t7wg9fLinanTpD/PH1ztkP0NYWxOBEeStpc=
+	t=1726092102; cv=none; b=qdsSXoFfVqtC3IDLeRaZux4YDLxAX+HdcbtAoQICF8FErhX2HR0B9h+0z2sOHlHM8ulnC2DuL4G25JQ0qhK6HapUFR2BA0rVblyOZameZIX5Wmzh96pA33KBxhruIlygErcz5XuBeeUdWMkXWmSdmW5bz+XjFH+s2ycc3R4VSs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726092079; c=relaxed/simple;
-	bh=WHWAxhL/sOi76XZ+st7kSN1TPk8HaONO076qZDSjwi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tkpK/E8jpju/9YMOASc8eWIatEYpD6sl0Q6OwbQ9gWmuu+Yovj9pvwURDjSMFKVy7klcW7A1SSG7CXqcppxkOkQxg02UhB8wsEe+IF3Q/whpU9Q9MDyApwjULxPqld+CASIffcS7IDFzTTM8St9B/Eg25pqsrcOnW+Kb5uuKdO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=CypJFGqa; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-710d77380cdso137981a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:01:17 -0700 (PDT)
+	s=arc-20240116; t=1726092102; c=relaxed/simple;
+	bh=Agciipw5hWkC4EpzVmCjBUgtbk1AQ5kWWqM/SSA0exk=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=J7s2jnWH+nwH1K4Zb/GszXfanqjODVo+zTY/zBBO7drhmnGfrsvZvHhfHpF3o7w/8TedtRCSYHCxvreDGR9mZxFdnntGAmlTYa+H19XWHlQp2rgk/hnLIU2qqQ2TEeIYkFWhgqvxQmfkl8JI7d4afWpmPnJ8nTibKKCMeuBbWeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tE2eLl+H; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d7124938d1so14257637b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1726092076; x=1726696876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wpTO1ZtWohsTUam39DUlK/kEZKoTBomHvwfluVfCVWE=;
-        b=CypJFGqa8ULqjF2FVgqcabPPi4E6PO4Sp3VODwFkFgotKLt442ytbkWkfCxAI/VdIm
-         aaWPTi4otuSszGExuKl4/sD/gQfFGYiVVIuyuirJHCo2C7PkisZk2sd6rjpIYLfdLocf
-         7saBlwN99wLbTanTSyTzh4vo652PJqTIBKBcI=
+        d=google.com; s=20230601; t=1726092100; x=1726696900; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q13JQ4aJstpTY70GjrenWYuGyd1pnSkxKkLl8Jd4LLI=;
+        b=tE2eLl+HXo3H6oZbJnL998LFc8kJQ8Iyhs6fxaXP7Wy4z+bq87DM7WD21u/O3arYql
+         yGM1u+QACFLyRzgEZ3UvSCe650KX7q1PEh4JwSkUWwiaAWt72e6hZgfbSJvyNwp40QST
+         dp9wXVmyUmd7SdJviNN0orJKif009zsbl1ka2OzDyGXU7ZaL2dgvV8MFg2Y2p5mC2kLo
+         1WZIDYHGPD2gMxfzUNy1+jmnnoKPS0olJx9KBDqONpNxqELCabNXseHlH/tA3ALywS8y
+         tqydpkhwSkWgSpsH3SwZZPZ4hPr6FI/D0LghwRnBRPBmf5IrGYyOH55LkfHGxwMq+nX+
+         zWFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726092076; x=1726696876;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wpTO1ZtWohsTUam39DUlK/kEZKoTBomHvwfluVfCVWE=;
-        b=ETdM+1S/wQxT5KrYVSSia/cJohHbGGT/AfrhtqeRYVL/SPTaAquKKdAPc8QiQ8RtLV
-         +eCl/x2hndbjqnnt6CKpEccryPUJdllJ9VI0eNZ+VO/lKdXH36HiEcOAXDvtpIp6z3i2
-         WsZYZlE2YiXkaW8IZb7XkV9473RlXo+mBkgs5kMfP7Gk/PVealR143ie/cGbx5lOvqA5
-         hBnZGoNzva8HcLQSg+Wg0deDQYsLni9iV+j6uimiy8dXx96oXH2a3ZZ19HXj1C7+utIT
-         mv32sFrOyLKElPfQhJxDRMLvXcTvm9zPlBIjE/M1DKpzx6XhicJxE7RBoWPwB4FOneCB
-         azgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpjwCFh9NhQrUoCNI3Yu3nGOLyYYXmSF78n3BLj5RfsVCPtz1l8UJiYm6dRp+nw75lY3cb0LQMBwt6zxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq6rSkMoLOiHA4Ks5VdRFGKgYuoqfwaKPY+DwfDz5iN7ArLN1W
-	kdQts3kDc4vdIdV0EmZ5ijpgdw+J45qwfTC2mlK2veRv6XxSpJis8lK944Vmcg==
-X-Google-Smtp-Source: AGHT+IGcq0VLXlxF61pCe/n1Slm7dUYAjtelbS+SsQ2Mv7wAQkXWRDY1eZrlYz7NXhQ5SOoB6bkZ5g==
-X-Received: by 2002:a05:6830:280d:b0:710:eb9a:f8e3 with SMTP id 46e09a7af769-7110950299dmr972474a34.5.1726092076456;
-        Wed, 11 Sep 2024 15:01:16 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53477c9c2sm46777986d6.130.2024.09.11.15.01.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 15:01:15 -0700 (PDT)
-Message-ID: <2bb3a405-cb6b-4033-99f4-ecd25ffc095d@broadcom.com>
-Date: Wed, 11 Sep 2024 15:01:13 -0700
+        d=1e100.net; s=20230601; t=1726092100; x=1726696900;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q13JQ4aJstpTY70GjrenWYuGyd1pnSkxKkLl8Jd4LLI=;
+        b=M6qKynKUPgLHK9Gq0j6lKbCD+6UGpnSvd3QF7L0nhnsH8THHgVkXJqMi7PYvs4madZ
+         DFBAny+G9tED6u8lgo6/lv1Sbi3d0e3nahyQ3lSbCxaLcx3NJJaPKZ0fnSqYifk2k0AN
+         yOMVZ2X8se1PLploXhbkI0zDU/Z5PdBOz3ITMKyA0k4aSY7x3sY85V2OjP3AQ88XaEqv
+         ckleQ5GE/kJPxYqdjghVHZ2nB1v7dERGk8JRSdz0pvh3UY4+D/HDbJCWyexrpHJLgZrd
+         fw/1K+B02gO2xmdg+XzORAlYJwsrZbVdftAWlEAEiskPGd/2Hlsj5ZgHCgVOaVaiPd0Q
+         fL8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOs0f+/SlDL2yA4HOO/3zbYcTmO9lBJOSe+/scrz5w+PNrGqfiozVV0VaVl35dZlfr8bC6WNDuoyPmnDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykmi5UXKbrdZNf+HKaAzKolIWqvHNy+nNXga5jlP1FCxQKWjME
+	6GmCXxYfK8PWis89IjjDtt5sMUZ5bKXT3+29EfDqFuWA+oPts2JnTVk22Ess2NRywjZl3GOTHkt
+	9NmD/KRGGTNNL892C8lcIfw==
+X-Google-Smtp-Source: AGHT+IEh6F4b46/1LwAS/WUGX/NAwM3UP2BxZSsRe7RROOaYU54OCz40zI1kT+hftf0HBDiAU78eGBwhCC/X5Gc0CA==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6902:1743:b0:e03:3cfa:1aa7 with
+ SMTP id 3f1490d57ef6-e1d9db9e1b8mr1014276.1.1726092099527; Wed, 11 Sep 2024
+ 15:01:39 -0700 (PDT)
+Date: Wed, 11 Sep 2024 22:01:38 +0000
+In-Reply-To: <Ztl-AjEEbIbX4lnm@gmail.com> (message from Ingo Molnar on Thu, 5
+ Sep 2024 11:46:42 +0200)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: rp2: Fix reset with non forgiving PCIe host bridges
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-serial@vger.kernel.org, Kevin Cernekee <cernekee@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- "open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>
-References: <20240906225435.707837-1-florian.fainelli@broadcom.com>
- <CA+-6iNxYwyfATMUq+nJfH_a08tdx_HT3k_d0fNS8f8-khghTfQ@mail.gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <CA+-6iNxYwyfATMUq+nJfH_a08tdx_HT3k_d0fNS8f8-khghTfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Message-ID: <gsntr09pdf3x.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH 2/5] perf: Hoist perf_instruction_pointer() and perf_misc_flags()
+From: Colton Lewis <coltonlewis@google.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: kvm@vger.kernel.org, oliver.upton@linux.dev, seanjc@google.com, 
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	will@kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
+	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	naveen@kernel.org, hca@linux.ibm.com, gor@linux.ibm.com, 
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On 9/11/24 14:47, Jim Quinlan wrote:
-> On Fri, Sep 6, 2024 at 6:54 PM Florian Fainelli
-> <florian.fainelli@broadcom.com> wrote:
->>
->> The write to RP2_GLOBAL_CMD followed by an immediate read of
->> RP2_GLOBAL_CMD in rp2_reset_asic() is intented to flush out the write,
->> however by then the device is already in reset and cannot respond to a
->> memory cycle access.
->>
->> On platforms such as the Raspberry Pi 4 and others using the
->> pcie-brcmstb.c driver, any memory access to a device that cannot respond
->> is met with a fatal system error, rather than being substituted with all
->> 1s as is usually the case on PC platforms.
->>
->> Swapping the delay and the read ensures that the device has finished
->> resetting before we attempt to read from it.
->>
->> Fixes: 7d9f49afa451 ("serial: rp2: New driver for Comtrol RocketPort 2 cards")
->> Suggested-by: Jim Quinlan <james.quinlan@broadcom.com>
->> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
->> ---
->>   drivers/tty/serial/rp2.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/rp2.c b/drivers/tty/serial/rp2.c
->> index 4132fcff7d4e..8bab2aedc499 100644
->> --- a/drivers/tty/serial/rp2.c
->> +++ b/drivers/tty/serial/rp2.c
->> @@ -577,8 +577,8 @@ static void rp2_reset_asic(struct rp2_card *card, unsigned int asic_id)
->>          u32 clk_cfg;
->>
->>          writew(1, base + RP2_GLOBAL_CMD);
->> -       readw(base + RP2_GLOBAL_CMD);
->>          msleep(100);
->> +       readw(base + RP2_GLOBAL_CMD);
-> 
-> Since the assumed purpose of the readw() was to flush the writew(),
-> would it make sense to add a barrier after the writew()?
+Ingo Molnar <mingo@kernel.org> writes:
 
-AFAICT there is one which is implied within the name, as it is not a 
-_relaxed() variant. Did you mean a different sort of barrier to be used?
--- 
-Florian
+> * Colton Lewis <coltonlewis@google.com> wrote:
 
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -6915,6 +6915,16 @@ void perf_unregister_guest_info_callbacks(struct  
+>> perf_guest_info_callbacks *cbs)
+>>   EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
+>>   #endif
+
+>> +unsigned long perf_misc_flags(unsigned long pt_regs *regs)
+>> +{
+>> +	return perf_arch_misc_flags(regs);
+>> +}
+>> +
+>> +unsigned long perf_instruction_pointer(unsigned long pt_regs *regs)
+>> +{
+>> +	return perf_arch_instruction_pointer(regs);
+>> +}
+
+> What's an 'unsigned long pt_regs' ??
+
+That is fixed in a later commit. I will correct this one also.
+
+> Thanks,
+
+> 	Ingo
 
