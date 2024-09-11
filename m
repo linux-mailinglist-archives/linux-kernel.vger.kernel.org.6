@@ -1,60 +1,76 @@
-Return-Path: <linux-kernel+bounces-324908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7B7975276
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:35:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7648B975240
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE321C26072
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2730E1F239ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB55719EEA1;
-	Wed, 11 Sep 2024 12:31:55 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2593188A14;
+	Wed, 11 Sep 2024 12:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Kefj+On9"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDC6190675;
-	Wed, 11 Sep 2024 12:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD0519E981;
+	Wed, 11 Sep 2024 12:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057915; cv=none; b=X832yxv8x59BgC4mrL/FeS2V2j1BdiHoayZjggpjJVZLvJOgv/LiYKsaJwFx9t/c+shFWranNt/ojeZcxvtse2BZ6BbHJikmclFaKrZ1GYgHDKwo4hpEcc/hzixeAIQHKTKNcaQgmtXeW0ld8wn8XLjezExfBIZQl1pUNk17rwo=
+	t=1726057801; cv=none; b=LXSs/AQGlFdNnMSfRnjfxVzylAH+6ueSE/9gM6euoVKqLXg/pQYOkBMi5LrO+7ldD/2WNa6uOeNexefWF6MEdvilViDujYd2ox9zqNVOI7/PCdUAvMihUiPEwAfat2w5tkOtnFOeDoFoyzJ9zXYHCMQwLSRp0pNw3PxNjVvDUm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057915; c=relaxed/simple;
-	bh=fKPBAd7EgzmecWQuOmZuawdzDkVqpzhqT1bVYZNDujw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=boxRD/qMzv+uqNUH4OwrsQ/0t/PlZsV8VQZ4vE5p1SEEAV9J2iG3Drq23anUWZk5FqQzi5rLww3IJnl4CEq8k5R7az70YcDZHNQxBM8JPTVgyoGJGdzKpzdXL4i3esskceiIsjqao/G/fgBS33DkrLW90NFJawLx/QCv+JAKFLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X3fZv4jMnz9v7NF;
-	Wed, 11 Sep 2024 20:12:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id A8426140B03;
-	Wed, 11 Sep 2024 20:31:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3hy+ijeFmnHu1AA--.60036S2;
-	Wed, 11 Sep 2024 13:31:37 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: dhowells@redhat.com,
-	dwmw2@infradead.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 10/14] KEYS: Calculate key digest and get signature of the key
-Date: Wed, 11 Sep 2024 14:29:07 +0200
-Message-Id: <20240911122911.1381864-11-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1726057801; c=relaxed/simple;
+	bh=otB2gyp0DjafuKuP6eN9+hCMx0oFkm3tLV8V7z0L5wk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EZCGQ5Gr2zEX4r0fQ/soRqnaQwC2NJ6PDEtE+hRiXT+ORtGp17SpUBNdS1Cz3bdjcVFEtnHBZFLPq3owawLlSO2su234XSux5F3nwKAOInE5OoE/S/3JqtW2DDJD6ty5LziXbbGCReA+y4QrtDaHheS9VqXcqyWHn0jPwH9jZRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Kefj+On9; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726057799; x=1757593799;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=otB2gyp0DjafuKuP6eN9+hCMx0oFkm3tLV8V7z0L5wk=;
+  b=Kefj+On9wIgYy5WLKoquKHOgKhMFz9cDDqv4VqyeDYL/xotdtcJEGdJu
+   6VoRalIHkDWqt7tJ+JCH9xcfgPx8Nge5Mzn91QEhGZFmvmDSuPoyV25vi
+   X8KpwbaoCeqB9Bg8ixRC091wuH1CrZvlMEkllWNB4oUbnD0KuYXqGBO9s
+   /A4Zf2nYpql0h27tXOUE0ipdqWYHwGs3mQk0J9WTuyKdM5AqdWaPb93Df
+   5RDrBN8b9nuQaKXLEIi7l2Zz4QE5XRvb3GnDswcJp/zref08yz/qEtAz/
+   hbR9Si0w0lOIjDa7X1ph/QwHNMuzC00mwUP1QYOMkMVunyc7wTEitbyod
+   A==;
+X-CSE-ConnectionGUID: 9vUpuscIQ26YBlU3BRadaQ==
+X-CSE-MsgGUID: icmd1AtdT1CZxL1xIvnPOg==
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="32269431"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 05:29:57 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Sep 2024 05:29:17 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 11 Sep 2024 05:29:14 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
+	<andrei.simion@microchip.com>
+Subject: [PATCH 1/3] ASoC: atmel: mchp-pdmc: Improve maxburst calculation for better performance
+Date: Wed, 11 Sep 2024 15:29:07 +0300
+Message-ID: <20240911122909.133399-2-andrei.simion@microchip.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
-References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240911122909.133399-1-andrei.simion@microchip.com>
+References: <20240911122909.133399-1-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,167 +78,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwD3hy+ijeFmnHu1AA--.60036S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXrW7Zw1DGr1UWry7CFW7urg_yoWrZr43pF
-	WrKryftrW5Krn2ka98Jw4xu3yF9348Cw1fK34Skw1a93sYqr1UCay09F1jgF98GFykAryr
-	AFWqyFWa9r1DZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-	F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7Cj
-	xVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
-	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
-	6r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2
-	IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGbg-HQH4wAAss
+Content-Type: text/plain
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
-Calculate the digest of the signature, according to the RFC 9580 section
-5.2.4, get the last suitable signature with types 0x10 (Generic
-certification of a User ID and Public-Key packet) or 0x13 (Positive
-certification of a User ID and Public Key packet), and store it in the
-asym_auth field of the key payload, so that it is available for validating
-a restriction on a keyring.
+Improve the DMA descriptor calculation by dividing the period size by the
+product of sample size and DMA chunk size, rather than just DMA chunk size.
+Ensure that all DMA descriptors start from a well-aligned address to
+improve the reliability and efficiency of DMA operations and avoid
+potential issues related to misaligned descriptors.
 
-Type 0x10 is included despite not giving the strongest trust guarantees,
-since it is the one used by most common PGP implementations (including
-gpg).
+[andrei.simion@microchip.com: Adjust the commit title. Reword the commit
+message. Add MACROS for each DMA size chunk supported by mchp-pdmc.
+Add DMA_BURST_ALIGNED preprocesor function to check the alignment of the
+DMA burst.]
 
-The rationale of taking the last signature is that, if there are multiple
-signatures, that would be of a different issuer (not a self-signature),
-that likely has more chances to be useful for the restriction verification.
-If there is one (the self-signature), that will be used.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 ---
- crypto/asymmetric_keys/pgp_public_key.c | 81 +++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ sound/soc/atmel/mchp-pdmc.c | 39 ++++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 11 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pgp_public_key.c b/crypto/asymmetric_keys/pgp_public_key.c
-index 22f4a40c7eb7..2dc8b5d321e9 100644
---- a/crypto/asymmetric_keys/pgp_public_key.c
-+++ b/crypto/asymmetric_keys/pgp_public_key.c
-@@ -14,6 +14,7 @@
- #include <keys/asymmetric-parser.h>
- #include <crypto/hash.h>
- #include <crypto/public_key.h>
-+#include <crypto/pgp.h>
- 
- #include "pgp_parser.h"
- 
-@@ -56,6 +57,8 @@ struct pgp_key_data_parse_context {
- 	size_t raw_fingerprint_len;
- 	const char *user_id;
- 	size_t user_id_len;
-+	const char *key_pkt;
-+	size_t key_pkt_len;
- };
- 
- /*
-@@ -216,6 +219,12 @@ static int pgp_process_public_key(struct pgp_parse_context *context,
- 		return -EBADMSG;
- 	}
- 
-+	/* Pointer refers to data being processed. */
-+	if (type == PGP_PKT_PUBLIC_KEY) {
-+		ctx->key_pkt = data;
-+		ctx->key_pkt_len = datalen;
-+	}
-+
- 	pub = kzalloc(sizeof(*pub), GFP_KERNEL);
- 	if (!pub)
- 		return -ENOMEM;
-@@ -306,6 +315,77 @@ pgp_key_generate_id(struct pgp_key_data_parse_context *ctx)
- 	return NULL;
- }
+diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
+index 260074018da9..7a5585839c1d 100644
+--- a/sound/soc/atmel/mchp-pdmc.c
++++ b/sound/soc/atmel/mchp-pdmc.c
+@@ -90,6 +90,15 @@
+ #define MCHP_PDMC_DS_NO			2
+ #define MCHP_PDMC_EDGE_NO		2
  
 +/*
-+ * Calculate the digest of the signature according to the RFC 9580, section
-+ * 5.2.4 (packet types 0x10 and 0x13).
++ * ---- DMA chunk size allowed ----
 + */
-+static int pgp_key_add_sig_data(struct pgp_key_data_parse_context *ctx,
-+				struct pgp_sig_verify *sig_ctx)
-+{
-+	loff_t offset = 0;
-+	u8 *data;
++#define MCHP_PDMC_DMA_8_WORD_CHUNK			8
++#define MCHP_PDMC_DMA_4_WORD_CHUNK			4
++#define MCHP_PDMC_DMA_2_WORD_CHUNK			2
++#define MCHP_PDMC_DMA_1_WORD_CHUNK			1
++#define DMA_BURST_ALIGNED(_p, _s, _w)		!(_p % (_s * _w))
 +
-+	if (!ctx->key_pkt_len || !ctx->user_id_len)
-+		return 0;
-+
-+	/* 0x99 + key pkt len + key pkt + 0xb4 + user ID len + user ID */
-+	data = kmalloc(1 + sizeof(u16) + ctx->key_pkt_len +
-+		       1 + sizeof(u32) + ctx->user_id_len, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data[offset++] = 0x99;
-+	data[offset++] = ctx->key_pkt_len >> 8;
-+	data[offset++] = ctx->key_pkt_len;
-+
-+	memcpy(data + offset, ctx->key_pkt, ctx->key_pkt_len);
-+	offset += ctx->key_pkt_len;
-+
-+	if (pgp_sig_get_version(sig_ctx) == PGP_SIG_VERSION_4) {
-+		data[offset++] = 0xb4;
-+		data[offset++] = ctx->user_id_len >> 24;
-+		data[offset++] = ctx->user_id_len >> 16;
-+		data[offset++] = ctx->user_id_len >> 8;
-+		data[offset++] = ctx->user_id_len;
-+	}
-+
-+	memcpy(data + offset, ctx->user_id, ctx->user_id_len);
-+	offset += ctx->user_id_len;
-+
-+	pgp_sig_add_data(sig_ctx, data, offset);
-+	kfree(data);
-+	return 0;
-+}
-+
-+static struct public_key_signature *
-+pgp_key_get_sig(struct key_preparsed_payload *prep,
-+		struct pgp_key_data_parse_context *ctx)
-+{
-+	struct public_key_signature *sig = NULL;
-+	struct pgp_sig_verify *sig_ctx;
-+	bool keep_sig = false;
-+	int ret;
-+
-+	sig_ctx = pgp_sig_parse(prep->data, prep->datalen);
-+	if (IS_ERR(sig_ctx))
-+		return NULL;
-+
-+	ret = pgp_key_add_sig_data(ctx, sig_ctx);
-+	if (ret < 0)
-+		goto out;
-+
-+	sig = pgp_sig_get_sig(sig_ctx, true);
-+	if (IS_ERR(sig)) {
-+		sig = NULL;
-+		goto out;
-+	}
-+
-+	keep_sig = true;
-+out:
-+	pgp_sig_verify_cancel(sig_ctx, keep_sig);
-+	return sig;
-+}
-+
- /*
-  * Attempt to parse the instantiation data blob for a key as a PGP packet
-  * message holding a key.
-@@ -370,6 +450,7 @@ static int pgp_key_parse(struct key_preparsed_payload *prep)
- 	prep->payload.data[asym_subtype] = &public_key_subtype;
- 	prep->payload.data[asym_key_ids] = pgp_key_generate_id(&ctx);
- 	prep->payload.data[asym_crypto] = ctx.pub;
-+	prep->payload.data[asym_auth] = pgp_key_get_sig(prep, &ctx);
- 	prep->quotalen = 100;
+ struct mic_map {
+ 	int ds_pos;
+ 	int clk_edge;
+@@ -511,15 +520,18 @@ static u32 mchp_pdmc_mr_set_osr(int audio_filter_en, unsigned int osr)
  	return 0;
+ }
+ 
+-static inline int mchp_pdmc_period_to_maxburst(int period_size)
++static inline int mchp_pdmc_period_to_maxburst(int period_size, int sample_size)
+ {
+-	if (!(period_size % 8))
+-		return 8;
+-	if (!(period_size % 4))
+-		return 4;
+-	if (!(period_size % 2))
+-		return 2;
+-	return 1;
++	int p_size = period_size;
++	int s_size = sample_size;
++
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_PDMC_DMA_8_WORD_CHUNK))
++		return MCHP_PDMC_DMA_8_WORD_CHUNK;
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_PDMC_DMA_4_WORD_CHUNK))
++		return MCHP_PDMC_DMA_4_WORD_CHUNK;
++	if (DMA_BURST_ALIGNED(p_size, s_size, MCHP_PDMC_DMA_2_WORD_CHUNK))
++		return MCHP_PDMC_DMA_2_WORD_CHUNK;
++	return MCHP_PDMC_DMA_1_WORD_CHUNK;
+ }
+ 
+ static struct snd_pcm_chmap_elem mchp_pdmc_std_chmaps[] = {
+@@ -547,14 +559,18 @@ static int mchp_pdmc_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned int channels = params_channels(params);
+ 	unsigned int osr = 0, osr_start;
+ 	unsigned int fs = params_rate(params);
++	int sample_bytes = params_physical_width(params) / 8;
++	int period_bytes = params_period_size(params) *
++		params_channels(params) * sample_bytes;
++	int maxburst;
+ 	u32 mr_val = 0;
+ 	u32 cfgr_val = 0;
+ 	int i;
+ 	int ret;
+ 
+-	dev_dbg(comp->dev, "%s() rate=%u format=%#x width=%u channels=%u\n",
++	dev_dbg(comp->dev, "%s() rate=%u format=%#x width=%u channels=%u period_bytes=%d\n",
+ 		__func__, params_rate(params), params_format(params),
+-		params_width(params), params_channels(params));
++		params_width(params), params_channels(params), period_bytes);
+ 
+ 	if (channels > dd->mic_no) {
+ 		dev_err(comp->dev, "more channels %u than microphones %d\n",
+@@ -608,7 +624,8 @@ static int mchp_pdmc_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	mr_val |= FIELD_PREP(MCHP_PDMC_MR_SINCORDER_MASK, dd->sinc_order);
+ 
+-	dd->addr.maxburst = mchp_pdmc_period_to_maxburst(snd_pcm_lib_period_bytes(substream));
++	maxburst = mchp_pdmc_period_to_maxburst(period_bytes, sample_bytes);
++	dd->addr.maxburst = maxburst;
+ 	mr_val |= FIELD_PREP(MCHP_PDMC_MR_CHUNK_MASK, dd->addr.maxburst);
+ 	dev_dbg(comp->dev, "maxburst set to %d\n", dd->addr.maxburst);
  
 -- 
 2.34.1
