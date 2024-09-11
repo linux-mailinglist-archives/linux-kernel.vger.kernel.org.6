@@ -1,272 +1,180 @@
-Return-Path: <linux-kernel+bounces-324229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF2C9749B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:21:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B05D9749B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17C0282529
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806731F26D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6B15B1FB;
-	Wed, 11 Sep 2024 05:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F035454277;
+	Wed, 11 Sep 2024 05:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p/6TrfyO"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="WqKnPAnk"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A541F951
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D878F1F951
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 05:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726032073; cv=none; b=PXj8/BuH/J+ezYi0l50KBzvZsZ4VjpJHuyQzGY4JJuEH+a2WSbcjoP31oojXF2LIEqzabIUxurC/A/fD4E9a29wZe5652gC8bryrdKme4EWTEaQYnuV5tIZZZpNHsVmtfEcnnKw/34Nw98t71xS+R7V2or6D08f9c34UbCLm9f4=
+	t=1726032208; cv=none; b=UgtjjbzGXObGLFsj0e8wXI/5xFAvF2phHQ0sGGmqEC79m7BmcYqFt6ht5wGSPz6tVtn6aepUZ1JskPvGiG6R0FUjEmjbT0DeNHMaLvRzRvQYqB1cZc14BDD5syn+VUKyK1htPYsSEcrrnG6z+rWiZOv8ileGiI6rnpg2Zeg+Uz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726032073; c=relaxed/simple;
-	bh=HJlpz8eduYiyw8yyvJNhR+nu02+JfJVfh/68TFMzlPg=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=cD91Z1wWLGCaBCR1JMBzW5EM5ZpqA50NTl4kSaOBeaElR7c127vy22BmtFlxxZ48trJXZlCW8/9kYE38/JmwqCzh+qqCx+uVxeiFxG4YsNrYiLPdXjCMGnSaQ+eb/bXjlmMAyV2bhG0HvlDAHhxxZn9InVirQyBQXm2M68ae+yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p/6TrfyO; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726032068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1IbthqVd0Y1HGEHfUp7IhQWZyBV6AeAPAti9kFjOXTU=;
-	b=p/6TrfyOdz5bPa6WQHxmu5CrSrzWuD58AHrK4GL6TaXF7zIyNDidvBfFMjFvw0fjEMFWbB
-	5D/70SbNDh5UHHQPaylSqV8cjcePsGHKqrL5P/jcn7NB2rinYtC5tzXKRKO7xUY764X/Te
-	dYyL4fjw/KvIp2itN9TmQHps3CDGE8Q=
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
+	s=arc-20240116; t=1726032208; c=relaxed/simple;
+	bh=eflwuOZhvkiGaNR7e8aONxG1bPI2oO3GTM2HcdkH7j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDW3uYi7p3VSteQzIL4pSJwFSC9qYVzotff4brjUxDpNXNAAoASV+T2J/x6SaT5WEySo5Z/C8W+0zj8c2kK83PuBY94lTHG5OQ50Xh/8pl0s8Bdi3b5NB3vXWdLn9/NslQqmQebWuqWWsms+ewG35BG/jFhQwYFGf2eDzsENbP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=WqKnPAnk; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=WqKnPAnk;
+	dkim-atps=neutral
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id E5E8A92D
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:23:25 +0900 (JST)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2d87b7618d3so1839225a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 22:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atmark-techno.com; s=google; t=1726032205; x=1726637005; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rKrvLsgg5fFp1W35lEovNaFCVsL+TLW+LTBGqI9Hx0=;
+        b=WqKnPAnkDJUJyPp17EB4j+4ZEr5zuYAW8nDjlBX8l4Lv7+BeBufwJ9xUFbN/coBLg2
+         JeKybIkEbB1PAKCr5YVzjz03RKE8SxrhY3OW+Hh/cfXf2sby3k9h+gxU8EeToyGQqhkM
+         QuzulxQEcM8mEP8mX8xTPba2h4broZ7lroj6TF0YfX87c6o1xpk7ZJjufxVo0mZaSF8r
+         i8EK/Tx/U+N1rXUDJOfMythNWAu9OzSUcvWmzdJ9mpWSczPZaufAFZnAXr16dIPMI0Po
+         R9o/FlRGviTvrvuYL6vdmdreUyUa/Q43RegjqH7//qOJoNQ0p979aVSqwQ8DBWxxF2P8
+         NGag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726032205; x=1726637005;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4rKrvLsgg5fFp1W35lEovNaFCVsL+TLW+LTBGqI9Hx0=;
+        b=IAhs6ndrlD0dT1PuNVB7DR1XcHFwa9XUkGZ8xPnTelm5YTdtdpCQUNBhLGoiA0wqVP
+         DEbsaTK0wJhhKBL29YD1PMvCNpvMcnqwLm9OZlRIk3c+h0woyU4ZEO2lulfoTHOzmm14
+         WmlGYXYr+5TVM13CH2PY6Jp56XqTpWjrCBDwj3UCk7t1zoyWAqQlhD/nUcFpBO7mMBNW
+         JStrMhnUCYixBZStZxowWueXyw8QW7aW216GUsP2JwnWST+tjd9++wKOcClfwTc2CVf7
+         PwK6R95oQOpdS++GNyL7gFGcGJ7V8HlsVKiBYybYLwadHHozrtNPKU56VVLXf7xpjSLZ
+         Nu6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQOHmoH8wOyyuWgZ8Av5wGfKRlSjitgZq+QLKEiEIWJOflziaoXrJ2kPyY+O0dD/fNQK3VdoeuJjURi5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylY/cXtGb0sm4BhXWQJ9pEQ0pmszEJMRGuoZo2L/lkodiwQApW
+	x/NE3N+pkRjbEa7VMYMhOAcGduZYZmGtR5xTS7DI74AxnjTY0L/qwCiYJVr0oTNhj0Jn7xGCB9T
+	mCF1g7zrX0NzDn02kOwNq+oEmgzUCBnKpDX4CBhUAF44lpE/rPIepRiyx0ZRlmWo=
+X-Received: by 2002:a17:90a:983:b0:2d8:8fe9:b015 with SMTP id 98e67ed59e1d1-2db83083512mr2250652a91.39.1726032204918;
+        Tue, 10 Sep 2024 22:23:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqQIj3JaREdQYsYKYcmjKKHJ7g+pWzJk50vdT2Uw6ikKf2ECT/imB6goWf1DaHFPrCOuXZ1A==
+X-Received: by 2002:a17:90a:983:b0:2d8:8fe9:b015 with SMTP id 98e67ed59e1d1-2db83083512mr2250625a91.39.1726032204512;
+        Tue, 10 Sep 2024 22:23:24 -0700 (PDT)
+Received: from localhost (117.209.187.35.bc.googleusercontent.com. [35.187.209.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc0213a7sm9600929a91.18.2024.09.10.22.23.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Sep 2024 22:23:24 -0700 (PDT)
+Date: Wed, 11 Sep 2024 14:23:12 +0900
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com,
+	frieder.schrempf@kontron.de, aford@beaconembedded.com,
+	Sandor.yu@nxp.com, Marco Felsch <m.felsch@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 2/5] phy: freescale: fsl-samsung-hdmi: Simplify
+ REG21_PMS_S_MASK lookup
+Message-ID: <ZuEpQLcDQ8pgMTUB@atmark-techno.com>
+References: <20240911012838.944630-1-aford173@gmail.com>
+ <20240911012838.944630-3-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 2/3] block: fix ordering between checking QUEUE_FLAG_QUIESCED and adding requests
-Date: Wed, 11 Sep 2024 13:20:28 +0800
-Message-Id: <12E43452-371C-495D-B06A-DC2DA92CE0E8@linux.dev>
-References: <AA8B604C-4CE6-435F-8D95-1E6B88EB2B68@linux.dev>
-Cc: Jens Axboe <axboe@kernel.dk>, Muchun Song <songmuchun@bytedance.com>,
- Yu Kuai <yukuai1@huaweicloud.com>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-In-Reply-To: <AA8B604C-4CE6-435F-8D95-1E6B88EB2B68@linux.dev>
-To: Ming Lei <ming.lei@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240911012838.944630-3-aford173@gmail.com>
 
+Adam Ford wrote on Tue, Sep 10, 2024 at 08:28:08PM -0500:
+> The value of 'S' is writen to two places, PHY_REG3[7:4] and
+> PHY_REG21[3:0].  There is a lookup table which contains
+> the value of PHY_REG3.  Rather than using a switch statement
+> based on the pixel clock to search for the value of 'S' again,
+> just shift the contents of PHY_REG3[7:4] >> 4 and place the value
+> in PHY_REG21[3:0].  Doing this can eliminate an entire function.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
+Reviewed-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
 
-> On Sep 11, 2024, at 11:59, Muchun Song <muchun.song@linux.dev> wrote:
->=20
-> =EF=BB=BF
->=20
->> On Sep 11, 2024, at 11:54, Ming Lei <ming.lei@redhat.com> wrote:
->>=20
->>> On Tue, Sep 10, 2024 at 07:22:16AM -0600, Jens Axboe wrote:
->>> On 9/3/24 2:16 AM, Muchun Song wrote:
->>>> Supposing the following scenario.
->>>>=20
->>>> CPU0                                        CPU1
->>>>=20
->>>> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
->>>> blk_mq_run_hw_queue()                       blk_queue_flag_clear(QUEUE_=
-FLAG_QUIESCED)   3) store
->>>>   if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->>>>       return                                      blk_mq_run_hw_queue()=
-
->>>>   blk_mq_sched_dispatch_requests()                    if (!blk_mq_hctx_=
-has_pending()) 4) load
->>>>                                                          return
->>>>=20
->>>> The full memory barrier should be inserted between 1) and 2), as well a=
-s
->>>> between 3) and 4) to make sure that either CPU0 sees QUEUE_FLAG_QUIESCE=
-D is
->>>> cleared or CPU1 sees dispatch list or setting of bitmap of software que=
-ue.
->>>> Otherwise, either CPU will not re-run the hardware queue causing starva=
-tion.
->>>>=20
->>>> So the first solution is to 1) add a pair of memory barrier to fix the
->>>> problem, another solution is to 2) use hctx->queue->queue_lock to synch=
-ronize
->>>> QUEUE_FLAG_QUIESCED. Here, we chose 2) to fix it since memory barrier i=
-s not
->>>> easy to be maintained.
->>>=20
->>> Same comment here, 72-74 chars wide please.
->>>=20
->>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>> index b2d0f22de0c7f..ac39f2a346a52 100644
->>>> --- a/block/blk-mq.c
->>>> +++ b/block/blk-mq.c
->>>> @@ -2202,6 +2202,24 @@ void blk_mq_delay_run_hw_queue(struct blk_mq_hw_=
-ctx *hctx, unsigned long msecs)
->>>> }
->>>> EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
->>>>=20
->>>> +static inline bool blk_mq_hw_queue_need_run(struct blk_mq_hw_ctx *hctx=
-)
->>>> +{
->>>> +    bool need_run;
->>>> +
->>>> +    /*
->>>> +     * When queue is quiesced, we may be switching io scheduler, or
->>>> +     * updating nr_hw_queues, or other things, and we can't run queue
->>>> +     * any more, even blk_mq_hctx_has_pending() can't be called safely=
-.
->>>> +     *
->>>> +     * And queue will be rerun in blk_mq_unquiesce_queue() if it is
->>>> +     * quiesced.
->>>> +     */
->>>> +    __blk_mq_run_dispatch_ops(hctx->queue, false,
->>>> +                  need_run =3D !blk_queue_quiesced(hctx->queue) &&
->>>> +                  blk_mq_hctx_has_pending(hctx));
->>>> +    return need_run;
->>>> +}
->>>=20
->>> This __blk_mq_run_dispatch_ops() is also way too wide, why didn't you
->>> just break it like where you copied it from?
->>>=20
->>>> +
->>>> /**
->>>> * blk_mq_run_hw_queue - Start to run a hardware queue.
->>>> * @hctx: Pointer to the hardware queue to run.
->>>> @@ -2222,20 +2240,23 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *=
-hctx, bool async)
->>>>=20
->>>> might_sleep_if(!async && hctx->flags & BLK_MQ_F_BLOCKING);
->>>>=20
->>>> -    /*
->>>> -     * When queue is quiesced, we may be switching io scheduler, or
->>>> -     * updating nr_hw_queues, or other things, and we can't run queue
->>>> -     * any more, even __blk_mq_hctx_has_pending() can't be called safe=
-ly.
->>>> -     *
->>>> -     * And queue will be rerun in blk_mq_unquiesce_queue() if it is
->>>> -     * quiesced.
->>>> -     */
->>>> -    __blk_mq_run_dispatch_ops(hctx->queue, false,
->>>> -        need_run =3D !blk_queue_quiesced(hctx->queue) &&
->>>> -        blk_mq_hctx_has_pending(hctx));
->>>> +    need_run =3D blk_mq_hw_queue_need_run(hctx);
->>>> +    if (!need_run) {
->>>> +        unsigned long flags;
->>>>=20
->>>> -    if (!need_run)
->>>> -        return;
->>>> +    /*
->>>> +     * synchronize with blk_mq_unquiesce_queue(), becuase we check
->>>> +     * if hw queue is quiesced locklessly above, we need the use
->>>> +     * ->queue_lock to make sure we see the up-to-date status to
->>>> +     * not miss rerunning the hw queue.
->>>> +     */
->>>> +    spin_lock_irqsave(&hctx->queue->queue_lock, flags);
->>>> +    need_run =3D blk_mq_hw_queue_need_run(hctx);
->>>> +    spin_unlock_irqrestore(&hctx->queue->queue_lock, flags);
->>>> +
->>>> +    if (!need_run)
->>>> +        return;
->>>> +    }
->>>=20
->>> Is this not solvable on the unquiesce side instead? It's rather a shame
->>> to add overhead to the fast path to avoid a race with something that's
->>> super unlikely, like quisce.
->>=20
->> Yeah, it can be solved by adding synchronize_rcu()/srcu() in unquiesce
->> side, but SCSI may call it in non-sleepable context via scsi_internal_dev=
-ice_unblock_nowait().
->=20
-> Another approach will be like the fix for BLK_MQ_S_STOPPED (in patch 3),
-> we could add a pair of mb into blk_queue_quiesced() and
-> blk_mq_unquiesce_queue(). In which case, the fix will not affect any fast
-> path, only slow path need the barrier overhead.
-
-I misunderstood Jens=E2=80=99s question. I think Ming is right.
-This approach only tries to reduce the overhead as=20
-much
-as possible even for slow path compared to=20
-spinlock_based approach.=20
-Not solving the problem only from the unquiesce side.
-
-Muchun,
-Thanks.
-
->=20
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index b2d0f22de0c7f..45588ddb08d6b 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -264,6 +264,12 @@ void blk_mq_unquiesce_queue(struct request_queue *q)
->                ;
->        } else if (!--q->quiesce_depth) {
->                blk_queue_flag_clear(QUEUE_FLAG_QUIESCED, q);
-> +               /*
-> +                * Pairs with the smp_mb() in blk_queue_quiesced() to orde=
-r the
-> +                * clearing of QUEUE_FLAG_QUIESCED above and the checking o=
-f
-> +                * dispatch list in the subsequent routine.
-> +                */
-> +               smp_mb__after_atomic();
->                run_queue =3D true;
->        }
->        spin_unlock_irqrestore(&q->queue_lock, flags);
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index b8196e219ac22..7a71462892b66 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -628,7 +628,25 @@ void blk_queue_flag_clear(unsigned int flag, struct r=
-equest_queue *q);
-> #define blk_noretry_request(rq) \
->        ((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
->                             REQ_FAILFAST_DRIVER))
-> -#define blk_queue_quiesced(q)  test_bit(QUEUE_FLAG_QUIESCED, &(q)->queue_=
-flags)
+> ---
+>  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 39 ++------------------
+>  1 file changed, 4 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> index acea7008aefc..4f6874226f9a 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -364,40 +364,6 @@ to_fsl_samsung_hdmi_phy(struct clk_hw *hw)
+>  	return container_of(hw, struct fsl_samsung_hdmi_phy, hw);
+>  }
+>  
+> -static void
+> -fsl_samsung_hdmi_phy_configure_pixclk(struct fsl_samsung_hdmi_phy *phy,
+> -				      const struct phy_config *cfg)
+> -{
+> -	u8 div = 0x1;
+> -
+> -	switch (cfg->pixclk) {
+> -	case  22250000 ...  33750000:
+> -		div = 0xf;
+> -		break;
+> -	case  35000000 ...  40000000:
+> -		div = 0xb;
+> -		break;
+> -	case  43200000 ...  47500000:
+> -		div = 0x9;
+> -		break;
+> -	case  50349650 ...  63500000:
+> -		div = 0x7;
+> -		break;
+> -	case  67500000 ...  90000000:
+> -		div = 0x5;
+> -		break;
+> -	case  94000000 ... 148500000:
+> -		div = 0x3;
+> -		break;
+> -	case 154000000 ... 297000000:
+> -		div = 0x1;
+> -		break;
+> -	}
+> -
+> -	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK, div),
+> -	       phy->regs + PHY_REG(21));
+> -}
+> -
+>  static void
+>  fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
+>  					    const struct phy_config *cfg)
+> @@ -466,7 +432,10 @@ static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy *phy,
+>  	for (i = 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+>  		writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i * 4);
+>  
+> -	fsl_samsung_hdmi_phy_configure_pixclk(phy, cfg);
+> +	/* High nibble of pll_div_regs[1] contains S which also gets written to REG21 */
+> +	writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
+> +	       cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
 > +
-> +static inline bool blk_queue_quiesced(struct request_queue *q)
-> +{
-> +       /* Fast path: hardware queue is unquiesced most of the time. */
-> +       if (likely(!test_bit(QUEUE_FLAG_QUIESCED, &q->queue_flags)))
-> +               return false;
-> +
-> +       /*
-> +        * This barrier is used to order adding of dispatch list before an=
-d
-> +        * the test of QUEUE_FLAG_QUIESCED below. Pairs with the memory ba=
-rrier
-> +        * in blk_mq_unquiesce_queue() so that dispatch code could either s=
-ee
-> +        * QUEUE_FLAG_QUIESCED is cleared or dispatch list is not  empty t=
-o
-> +        * avoid missing dispatching requests.
-> +        */
-> +       smp_mb();
-> +
-> +       return test_bit(QUEUE_FLAG_QUIESCED, &q->queue_flags);
-> +}
-> +
-> #define blk_queue_pm_only(q)   atomic_read(&(q)->pm_only)
-> #define blk_queue_registered(q)        test_bit(QUEUE_FLAG_REGISTERED, &(q=
-)->queue_flags)
-> #define blk_queue_sq_sched(q)  test_bit(QUEUE_FLAG_SQ_SCHED, &(q)->queue_f=
-lags)
->=20
-> Muchun,
-> Thanks.
->=20
->>=20
->>=20
->> Thanks,
->> Ming
->=20
->=20
+>  	fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
+>  
+>  	writeb(REG33_FIX_DA | REG33_MODE_SET_DONE, phy->regs + PHY_REG(33));
 
