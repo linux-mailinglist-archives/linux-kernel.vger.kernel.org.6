@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-325143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B93E97558B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:34:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4302E975595
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF21C287B14
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:34:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4553B23AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E29A1A305B;
-	Wed, 11 Sep 2024 14:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E871A38CA;
+	Wed, 11 Sep 2024 14:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="XASmBJNI"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ldf4FPf0"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8860419F11A;
-	Wed, 11 Sep 2024 14:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030741A3047
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065227; cv=none; b=IqM+0OV3XGJ1FPCBdjGHv7Qt9u/ZWsbWu82F4tS0G3ZKkHda+RaWRdAUtl9YA1BcYBM1px7/LqLUZGcnzPG1Irc2Ez8wRFi3x9PEIKz2IWhiSEJYEUeAKEy46eGI7eRHNjirI8AQXaSRZkC8jIMpv4wOCkutcDIaGmgnQcTTL70=
+	t=1726065311; cv=none; b=fanjK1IHyCcbonRHnQ1QQZKAcDCkj9MdCXWPFOu+g87WHHnF48R0D1VDWMWDDw4EL9JPsifaAWv0j+vRSYw0sR3obL3Lv6AQVOE6GwksfJ8uaxmEGEeir1xLmRlyCZ/ioybFdo27X8CUEbLum8t22R5B60TS0O3ZOihHHjP3sYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065227; c=relaxed/simple;
-	bh=cTq59fKknZo6/3zJq/ZND3TnlYCF5u7hEwQ1lBeaz/s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d5dpw3rtsXoafhiazk/DrXURwV5PCqibRh9bxiG18VRvCjhJV+DF++C57fh8tahBcQZkLdDmLlFTqXjRDc2JLheB2IYTqmoEwQ2i69FZ/xpl7pNSnxeQbfdyPy6MDuDR/e2r6mj2OOWA5rA7oq1cqFHDRvl/AyG5wol3l/O8ptA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=XASmBJNI; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BBquwr017464;
-	Wed, 11 Sep 2024 07:33:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
-	MaFMsB3rP+eExC6zKaD1XI91+5WTcvC0HwdkmVfPsQ=; b=XASmBJNIpfzmX7XKk
-	9XjNWyClpLHjSqQdmwNIEDQ9qMO848NFxdaRrhKwW3KPBI+j3NBZljAFYjx4xmXg
-	vUvSrjO+K0v63B7NDpqLObCuGHAMVqw1gauTSpqcK7LTYhzMKqFmBolnAgNZB9b8
-	D6cSssW5CxOwPSZJSeCsDjrEMa4T8G53EI2u6wNG9Kbm5siH4N3R+3zt64uWrHv2
-	P0G44S+CFYlgbcYX3xzj6jV/41dcWJ3aTqB5e17DwpoiGrER6gTyPKXMHY1ZH5fD
-	Q4srPsW43+tC8gnyzLvO+Fw5iiZsiIJyENZiVV25ehfac0bI3lPZwWu0t1XWOW8v
-	kXANA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 41k17vjxsr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 07:33:33 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 11 Sep 2024 07:33:32 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 11 Sep 2024 07:33:32 -0700
-Received: from virtx40.. (unknown [10.28.34.196])
-	by maili.marvell.com (Postfix) with ESMTP id 0F8163F7041;
-	Wed, 11 Sep 2024 07:33:28 -0700 (PDT)
-From: Linu Cherian <lcherian@marvell.com>
-To: <davem@davemloft.net>, <sgoutham@marvell.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <gakula@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        Linu Cherian
-	<lcherian@marvell.com>
-Subject: [PATCH net-next 2/2] octeontx2-af: debugfs: Add Channel info to RPM map
-Date: Wed, 11 Sep 2024 20:03:03 +0530
-Message-ID: <20240911143303.160124-3-lcherian@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240911143303.160124-1-lcherian@marvell.com>
-References: <20240911143303.160124-1-lcherian@marvell.com>
+	s=arc-20240116; t=1726065311; c=relaxed/simple;
+	bh=oA+Zg55StLoXWwRyu7Zm1+vMebrND50A4Qx2oAA2CD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfcp6neiM6trBmwiiqqZXtiwYpWWJiwg8HHm/sg+vPgbeBoDc5cIiraqCr2kUvY6jxGtl3vvgLijgBxqilycYAbo0JDPZAafXzaHThEt5f4G17IR9/a+Ob35NAXNhwfmmOtpS1feJRjAKBWNUByrczfXChV+zVytU97LqJZ8lk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ldf4FPf0; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-710d5d9aac1so953850a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726065309; x=1726670109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xR9XIjn3y1OmGn7jK9qX2NGw0TdqrgFrmLU/vrD2/WM=;
+        b=Ldf4FPf0DVeZPSK1HqvxdCKgYS6Bx2di3QJKfLma5GZWz3Mc8Sm3KgaczS11GB2WQE
+         f52CSyO12LvyLGTbsmdfBIgfo45eMmFP+jGFS4CGdn8d4emTzHD8uH5s25WeeiixMoGi
+         xUJiYk7DefMYcjJAw2RPUCi/TNbHYiV2KapVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726065309; x=1726670109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xR9XIjn3y1OmGn7jK9qX2NGw0TdqrgFrmLU/vrD2/WM=;
+        b=ucAtbyqL+LXHXE/5f8Il+M5LwMYYpGd48/zNBkfMi1uPaUR3WVl2rJ0Y/88tgddzC/
+         0Me9JntFZyN/6TGvp419CoR8YAL47TaA/GZWFXb8Tmhxe2nyaFC9jwYaPVMcVcT0l7y/
+         yG6JIglkkSTOQZvVdhYujq/ZdTTVXh80AsZxBSUSCDDvyIaBDAf2CCGm6WffYgmbNsn6
+         QDNhIC+hwjFImYUyENb5emIlbLrCGGacNQB7l+dzqpQED0hofvreNb7rOl/4qbCWmIYq
+         W2U6dZ60NXIu+dYyw0LecmsX4oFkUFcmVFQuvD/+J4UME7ogXtz4lve710OLKRJGhYv/
+         A3ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUesnM1Pgk8OebeJVRkd/9U8ROFfWtzWAkv4rrhnDwr//ggw/37Gd+5Ax3wFJUiA8mqViTH+jpvtlIGiU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1X4lDUi10EnEMZx21lOnfgx8FUINDk+Tyr/YhyA+ubczvePVZ
+	Rpr7aSjjbXhjfCYMGQEN7sZo6BPSiR8hSo3/mhkwFDsG10HIor4+uO30EjMSXQ==
+X-Google-Smtp-Source: AGHT+IGhvCaoigjEidnBcIxaoN8ZPYvAnGVEtA0q3Dv/8v++g5bmQqxojewOStqK0G2ypMFUcUBfqg==
+X-Received: by 2002:a05:6830:7105:b0:709:396c:c465 with SMTP id 46e09a7af769-710fe72f964mr2599321a34.18.1726065308786;
+        Wed, 11 Sep 2024 07:35:08 -0700 (PDT)
+Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:102f:d738:6069:fd4b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbb5901sm46620a12.24.2024.09.11.07.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 07:35:08 -0700 (PDT)
+From: Fei Shao <fshao@chromium.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Fei Shao <fshao@chromium.org>,
+	Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v3 0/8] Add platform supports to MediaTek MT8188 SoC
+Date: Wed, 11 Sep 2024 22:33:53 +0800
+Message-ID: <20240911143429.850071-1-fshao@chromium.org>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,68 +87,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: CIHb6iJ3Uy0aIUFDd5T9YIQuDhlV0uPm
-X-Proofpoint-ORIG-GUID: CIHb6iJ3Uy0aIUFDd5T9YIQuDhlV0uPm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Display channel info in the RPM map debugfs output.
+Hi all,
 
-With this, cat /sys/kernel/debug/cn10k/rvu_pf_rpm_map
-would display channel number for each device in addition to
-the existing data.
+This series is a subset of the previous series [v1], focusing on
+enabling few platform functionalities on MediaTek MT8188 SoC, including:
+- CPU performance controller
+- IOMMU / SMI / LARB
+- PWM for display backlight
+- SPMI for PMIC control
+- audio
+- socinfo
 
-Sample output:
-PCI dev         RVU PF Func     NIX block       rpm     LMAC    CHAN
-0002:02:00.0    0x400           NIX0            rpm0    LMAC0   256
+along with the corresponding binding changes (acked in the previous series).
 
-Signed-off-by: Linu Cherian <lcherian@marvell.com>
----
- .../net/ethernet/marvell/octeontx2/af/rvu_debugfs.c   | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+[v1]: https://lore.kernel.org/all/20240909111535.528624-1-fshao@chromium.org/
+[v2]: https://lore.kernel.org/all/20240911105131.4094027-1-fshao@chromium.org/
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-index 4a4ef5bd9e0b..87ba77e5026a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-@@ -838,10 +838,10 @@ RVU_DEBUG_FOPS(rsrc_status, rsrc_attach_status, NULL);
- 
- static int rvu_dbg_rvu_pf_cgx_map_display(struct seq_file *filp, void *unused)
- {
-+	char cgx[10], lmac[10], chan[10];
- 	struct rvu *rvu = filp->private;
- 	struct pci_dev *pdev = NULL;
- 	struct mac_ops *mac_ops;
--	char cgx[10], lmac[10];
- 	struct rvu_pfvf *pfvf;
- 	int pf, domain, blkid;
- 	u8 cgx_id, lmac_id;
-@@ -852,7 +852,7 @@ static int rvu_dbg_rvu_pf_cgx_map_display(struct seq_file *filp, void *unused)
- 	/* There can be no CGX devices at all */
- 	if (!mac_ops)
- 		return 0;
--	seq_printf(filp, "PCI dev\t\tRVU PF Func\tNIX block\t%s\tLMAC\n",
-+	seq_printf(filp, "PCI dev\t\tRVU PF Func\tNIX block\t%s\tLMAC\tCHAN\n",
- 		   mac_ops->name);
- 	for (pf = 0; pf < rvu->hw->total_pfs; pf++) {
- 		if (!is_pf_cgxmapped(rvu, pf))
-@@ -876,8 +876,11 @@ static int rvu_dbg_rvu_pf_cgx_map_display(struct seq_file *filp, void *unused)
- 				    &lmac_id);
- 		sprintf(cgx, "%s%d", mac_ops->name, cgx_id);
- 		sprintf(lmac, "LMAC%d", lmac_id);
--		seq_printf(filp, "%s\t0x%x\t\tNIX%d\t\t%s\t%s\n",
--			   dev_name(&pdev->dev), pcifunc, blkid, cgx, lmac);
-+		sprintf(chan, "%d",
-+			rvu_nix_chan_cgx(rvu, cgx_id, lmac_id, 0));
-+		seq_printf(filp, "%s\t0x%x\t\tNIX%d\t\t%s\t%s\t%s\n",
-+			   dev_name(&pdev->dev), pcifunc, blkid, cgx, lmac,
-+			   chan);
- 
- 		pci_dev_put(pdev);
- 	}
+Regards,
+Fei
+
+Changes in v3:
+- Remove leading zeros in spmi reg size
+
+Changes in v2:
+- Replace hardcoded AFE reset ID with correct definition
+- Added socinfo nodes in v2
+
+Fei Shao (8):
+  dt-bindings: spmi: spmi-mtk-pmif: Add compatible for MT8188
+  dt-bindings: mailbox: mtk,adsp-mbox: Add compatible for MT8188
+  arm64: dts: mediatek: mt8188: Add CPU performance controller for
+    CPUFreq
+  arm64: dts: mediatek: mt8188: Add SMI/LARB/IOMMU support
+  arm64: dts: mediatek: mt8188: Add PWM nodes for display backlight
+  arm64: dts: mediatek: mt8188: Add SPMI support for PMIC control
+  arm64: dts: mediatek: mt8188: Add audio support
+  arm64: dts: mediatek: mt8188: Add socinfo nodes
+
+ .../bindings/mailbox/mtk,adsp-mbox.yaml       |  12 +-
+ .../bindings/spmi/mtk,spmi-mtk-pmif.yaml      |   1 +
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 321 ++++++++++++++++++
+ 3 files changed, 331 insertions(+), 3 deletions(-)
+
 -- 
-2.34.1
+2.46.0.598.g6f2099f65c-goog
 
 
