@@ -1,79 +1,73 @@
-Return-Path: <linux-kernel+bounces-325455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28799759E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28569759E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB3B1F2476D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EA71F24939
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D1A1B5339;
-	Wed, 11 Sep 2024 18:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125E21B3734;
+	Wed, 11 Sep 2024 18:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDFWnCCv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="FhIx/nO1"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AA52AEF1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3855F2CCAA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726077846; cv=none; b=OW+X4qiYpzLQA1pSvsgBpLw9ifQZ7YxFl9wFcUw0QeZ/qXj4XXOKHIyhsRklH3bSsGA5xIYcPOStx45GIuQhCvIJNJVY4BWCjivk/C1iQocO2/ofZbJYB8Jsx/UTpzVcnFWwHDPzKOVqfWW/7m4Qwxnpq1XYc/1nYESbeTaTeC4=
+	t=1726077956; cv=none; b=YjeR7E43CJ5UwGFTpbM0oHclBDI5nhYyPtTVtdfQx2NC61lU81pXLfrsW1TCPhS7cyC3IeBU6sNJ8YKnKOafn0RPrCab/ZeuSWUS1deQyZ4NzmiFeKNTww1tl9y7Y9wanRleUx9CRkUlBLSh/fNrQOTn1WPMEvy27lF5Z2Y8wMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726077846; c=relaxed/simple;
-	bh=Rw0HYoUjUK+L3ACEPUXcViiOi8IqipyTgLTRVmCtdpY=;
+	s=arc-20240116; t=1726077956; c=relaxed/simple;
+	bh=78931USUkSOlqGnmgmQGJYTIhjGkoMBJ0hWB/dF0QEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nq+6lthm17wMKGYKQAL3J8CgtmBXANH09uvLpC/sU3Q+BRmqvsOXDHwSp8KPAuIWfccJxsyJaH74+jhIM/FF4o6lO/3eiMvcZ1d7KZCi7saXxrfkYCHQmuFqeb+iB2X7PT6FNP6g1abTcdQ+aLrorpU97YFkAH18HDOi+Qzsf70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDFWnCCv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726077843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IH+Ib1b5pn8WaOZaeFGsrZvEitMV86mg5/DLE/udy2g=;
-	b=bDFWnCCvvB60JQIRd+w42qxJQafJJc+vmo8olrGucJc1mjdLWnW7ymL8y5l5ign2jf3yGq
-	E6VQOoyHCQgCVQVEAfHyREat8MCx5MXy4jqB5nmgBajJ6FS3IWZCDP5ELKXWAFVQYaaA4m
-	3b47tpxqH0POARh6rIyEtUhQ85i8WO4=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-410-xv1J0IjSMzKSwS2dZrQb8w-1; Wed, 11 Sep 2024 14:04:02 -0400
-X-MC-Unique: xv1J0IjSMzKSwS2dZrQb8w-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8a7463c3d0so6176266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:04:02 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Uz02b0I2zLoXvStJEwrC1zSGdnHqZKWWgVuOExiGcS3ZDtwFY55OQM/Z3cua3KP8Zk5/2PzvYdswZ8JsW7vy0ZEguTkxlvtPH7hPv4tc8qwzYXe/YLi+z68yeq50CJ4K7oT8QyGhJrfGfV8gFeBC4HlItCep0N3rphEA1x0kT50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=FhIx/nO1; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-7d50532d335so100031a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 11:05:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726077954; x=1726682754; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JPdsxUdu3ZLqIS+/4uXoHqqeUOuJq80zG19Uh2siaVM=;
+        b=FhIx/nO1qbChPP4IiBJ8eNHfmB7nKkmkA6UYhGFgb3RRLdMC8rLK+h10qjZcGuHScI
+         d6S51d4APmlVquIUPl4EXrk2EjnxFkmPogyjZ22iDAsxHgSNVGGNmALpZOZQN/MFqucL
+         bBifN7FP8KY0MnOZSw+pMqsbFQOep66IxPFYDZNPcB1PDqz8n2Kdn7I8EfxHWUidC5rI
+         mZiRMJfcVF4SiM7f4RS/CgwA+TJZsVRtjOjIV5neEg9qAvfQBaVziJqmklYczkfQr8ZY
+         pxgqcjSYJsWUKmSDMDlSRE9EOt/lGyH+InItmkBsf+eQhab4lkGNOCrAfAyZ45M62SeG
+         Z9mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726077841; x=1726682641;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726077954; x=1726682754;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IH+Ib1b5pn8WaOZaeFGsrZvEitMV86mg5/DLE/udy2g=;
-        b=VKKQM1gVLVgmEyih200X2j85f/KJmms+SQvWMLuA2QohZZXiqjRfYavUqOaPkOGBZI
-         En2BE/UsArd203AzmZA4RNHtxJALQfbIWO/Ub3DAdG6jY1N+DOKhCMfV+5eXF4xA03ke
-         txICZbpDl01lUTxa4VbBe2gZ9CxJph12fIcPW3ZhhWGcgG5NgUGDeswetn3U6G57yWoC
-         l++rybnIFhSZhBx8HQuskfbfICW5Nr2SH8i34+LZHI5yhOhzt8/PXQGHVtxvE2xwqrWF
-         HAVUGTxPrPp3duDtQGByJgZ3LmYevB/RXJTbe/sYHVV+U/kTz5ctEw3PXYjUgo2VqRUc
-         QQ/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhKy5ADULt55pNQ2qAV6NRFrtVKaMyjd57qTi4hL4CQb/HNiu1frsyAcOF0+upKnoy10ulZb87zNqnDJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8CpUeSLiEt6oUAEUyJ3ES9xZiGp1mWWzm/AWK3tUXz6Gntir1
-	6ec+yQzjss+dhRQ/Kl3g8CZYoR3ajPaPNDmVMRHjy8vF46dAl8jYCteD2Bczn5ZC8N3CKlM85O7
-	yOlg5eDWnUR9s7jGNbXAqVDRUgMOhnfQ5csz5qDY7EIRbfntWdUENxskE8jHNZw==
-X-Received: by 2002:a17:907:3e1d:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a902966f459mr27778166b.59.1726077840912;
-        Wed, 11 Sep 2024 11:04:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGiOUHQziAMSw1ySVvdKoiB3VewkXKRFTMsAed1ndUNhLmUSoKhACnYsZh/d6DuW5PXkj6CQ==
-X-Received: by 2002:a17:907:3e1d:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a902966f459mr27774766b.59.1726077840333;
-        Wed, 11 Sep 2024 11:04:00 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a079bcsm638970366b.83.2024.09.11.11.03.59
+        bh=JPdsxUdu3ZLqIS+/4uXoHqqeUOuJq80zG19Uh2siaVM=;
+        b=P4yFzA0TD9W0FE8BlaOicA3N2wpH3mZgZsrvwty0HpB1OPHTQchOwQARXQhaOm28iA
+         5ErXZMkTfNOv0aqLGumuiwgvfgoLAMzqh+zTN1GVYwj9ub+Kgc0FfFyqyfR1DuoupVgS
+         5OsQswCsNsqE0h7O5Ab374zDfPhHJJbG10hMlty26xvg7pCrhEbF061IKB8pTfcTwWly
+         CD99XNDPCP7YmPIwBl8znYslaYjpBp8jha3+UMyNbwPpYO5BSVpHvmzWF4utUZ/9OeAc
+         y8ebtPozeFhkY5jyNw5+L+ZIZX3AstrflYsw0AvEWcRwLioTilGQIWdmYTC6aJ5/Itzr
+         Schg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6A3Ez8PYeCW2YqhrBkn41RZAgovvPwbm0MKTZDJreqmTo6UWMgBA+axeKEg+4s/UAgT3lEu1kAgcOvNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbuEgWYXpkujYjBABkThq+DLs8FDyGqR/v1NVpG5ToWrN6/s3J
+	i4GYIdcXpTNe63SJrLPjQ7i3P/YRnrkARPI41cLQ7a7Gsmm4slWB+TAkOS8sgA==
+X-Google-Smtp-Source: AGHT+IHJfl0jqiL9U3myZiASEiYJyc6sHjUAZZiTehS6OzcD8jJ66gAgSfHPxeYKVEGFaegklSLYhQ==
+X-Received: by 2002:a05:6a21:3982:b0:1cf:2438:c9e3 with SMTP id adf61e73a8af0-1cf75ec5c7cmr151962637.16.1726077954392;
+        Wed, 11 Sep 2024 11:05:54 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c37efsm3247602b3a.187.2024.09.11.11.05.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 11:03:59 -0700 (PDT)
-Message-ID: <bfd0243f-9159-4397-9f8a-e26372ce85a5@redhat.com>
-Date: Wed, 11 Sep 2024 20:03:58 +0200
+        Wed, 11 Sep 2024 11:05:54 -0700 (PDT)
+Message-ID: <ba9a5ae8-c5af-4045-9e22-28363dc94d42@beagleboard.org>
+Date: Wed, 11 Sep 2024 23:35:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,104 +75,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix 6.11 v2 3/3] minmax: reduce min/max macro expansion
- in atomisp driver
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Narron <richard@aaazen.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S . Miller"
- <davem@davemloft.net>, Arnd Bergmann <arnd@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-mm@kvack.org,
- Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
- stable@vger.kernel.org
-References: <cover.1726074904.git.lorenzo.stoakes@oracle.com>
- <b38d8936eaddd524d19823f7429138e2ef24e0d1.1726074904.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <b38d8936eaddd524d19823f7429138e2ef24e0d1.1726074904.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/8] rust: kernel: Add Platform device and driver
+ abstractions
+Content-Language: en-US
+To: Danilo Krummrich <dakr@kernel.org>, Ayush Singh <ayushdevel1325@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
+ jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+ Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
+ <2024091106-scouring-smitten-e740@gregkh>
+ <bd542178-af1c-439d-bde4-9865cf6c853c@gmail.com>
+ <16d70285-cbec-4378-98eb-b522a0efbbe6@kernel.org>
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <16d70285-cbec-4378-98eb-b522a0efbbe6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On 9/11/24 23:09, Danilo Krummrich wrote:
 
-On 9/11/24 7:51 PM, Lorenzo Stoakes wrote:
-> Avoid unnecessary nested min()/max() which results in egregious macro
-> expansion. Use clamp_t() as this introduces the least possible expansion.
-> 
-> Not doing so results in an impact on build times.
-> 
-> This resolves an issue with slackware 15.0 32-bit compilation as reported
-> by Richard Narron.
-> 
-> Presumably the min/max fixups would be difficult to backport, this patch
-> should be easier and fix's Richard's problem in 5.15.
-> 
-> Reported-by: Richard Narron <richard@aaazen.com>
-> Closes: https://lore.kernel.org/all/4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com/
-> Fixes: 867046cc7027 ("minmax: relax check to allow comparison between unsigned arguments and signed constants")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
+> On 9/11/24 5:52 PM, Ayush Singh wrote:
+>> Sure, can you provide me a link to patches or maybe the branch 
+>> containing that work? I also think it would be good to have the link 
+>> in Zulip discussion for Platform Device and Driver.
+>
+> Sure, please see [1]. But please be aware that I plan to rework some 
+> parts
+> before sending out the next version.
+>
+> [1] https://github.com/Rust-for-Linux/linux/tree/staging/rust-device
 
 
+Maybe the branch is just out of date? It still contains the generic 
+structures for IdArray, IdTable and RawDeviceId.
+
+Has something changed since the discussion here [0]?
 
 
-> ---
->  .../staging/media/atomisp/pci/sh_css_frac.h   | 26 ++++++++++++++-----
->  1 file changed, 19 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> index b90b5b330dfa..8ba65161f7a9 100644
-> --- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> +++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> @@ -32,12 +32,24 @@
->  #define uISP_VAL_MAX		      ((unsigned int)((1 << uISP_REG_BIT) - 1))
-> 
->  /* a:fraction bits for 16bit precision, b:fraction bits for ISP precision */
-> -#define sDIGIT_FITTING(v, a, b) \
-> -	min_t(int, max_t(int, (((v) >> sSHIFT) >> max(sFRACTION_BITS_FITTING(a) - (b), 0)), \
-> -	  sISP_VAL_MIN), sISP_VAL_MAX)
-> -#define uDIGIT_FITTING(v, a, b) \
-> -	min((unsigned int)max((unsigned)(((v) >> uSHIFT) \
-> -	>> max((int)(uFRACTION_BITS_FITTING(a) - (b)), 0)), \
-> -	  uISP_VAL_MIN), uISP_VAL_MAX)
-> +static inline int sDIGIT_FITTING(int v, int a, int b)
-> +{
-> +	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
-> +
-> +	v >>= sSHIFT;
-> +	v >>= fit_shift > 0 ? fit_shift : 0;
-> +
-> +	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
-> +}
-> +
-> +static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
-> +{
-> +	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
-> +
-> +	v >>= uSHIFT;
-> +	v >>= fit_shift > 0 ? fit_shift : 0;
-> +
-> +	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
-> +}
-> 
->  #endif /* __SH_CSS_FRAC_H */
-> --
-> 2.46.0
-> 
+[0]: 
+https://lore.kernel.org/rust-for-linux/2024062031-untracked-opt-3ff1@gregkh/
+
+
+Ayush Singh
 
 
