@@ -1,51 +1,86 @@
-Return-Path: <linux-kernel+bounces-324620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E39974EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01075974EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCEFB24794
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC8EC28319D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC971741E8;
-	Wed, 11 Sep 2024 09:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0909178396;
+	Wed, 11 Sep 2024 09:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dpk/DtQf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBVCN2aB"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29E17DFE8;
-	Wed, 11 Sep 2024 09:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6754114F105;
+	Wed, 11 Sep 2024 09:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047809; cv=none; b=t2AKANYnaP5G/i/1iHp3/wZxEhQIeU/HsuHsK6u6PwqrRo2hwSOLAYcoOunl4VWNiRq3PfmgobdS9XKLpauFw8X06EeGZ3d+e9nIJtPf+s2EtBLjR89E8Y+1Fk1/6ec5ccXo2YB3Mx7xZjH3GBQARJxrc4bEJmdaVKVpUj0Tfhc=
+	t=1726047842; cv=none; b=eyFCXqi+yMwTMVHUtZJTE5QihrULJlNI+io2DbC+R+agD+iu57hZru4HE6oXsNox0EVaZYcPPW2Fcktb8xr4gRWZKoVGubBY8lFuYp3chvnMEgbjcB/vRG9WGJNjn6sM3ycL6IJtN2FI/VselYalqJDjiFeqtMyogQvBL+qhNO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047809; c=relaxed/simple;
-	bh=EWMOQDrgbdeHEFspLRojh7jCLMPwWmpwnLfye5ARu2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyzBAEctDSrbfiiSX/pBuH0hA3PcdLsu1bJqTJwfknBIA1043R0ILwHGEkeDY5gzxOvxsqSgCLxBdjTwOkiLED3tAQHgA1dJAgCKmEhe8H6l5Zn5W80a4e0wYPHUB/LmLKdSkkuWzmVqTWg6MBTTPTEPuAok+1q4NBIVpE2adSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dpk/DtQf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA2BC4CEC5;
-	Wed, 11 Sep 2024 09:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726047809;
-	bh=EWMOQDrgbdeHEFspLRojh7jCLMPwWmpwnLfye5ARu2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dpk/DtQfRV52ayuDT/7sejXVknvjwZbM/9rHMDYCo+YywoHLw9wBnRsXtYQX9s2so
-	 oC/bCfpttyotj4Mu2DPx/FrcNZhUY2L5jF1e7k4WR9Ksgy51XnYCqynNwex1Ec/yf4
-	 BaTXLCic3qTKy7xxW+NQJtcwQFnzBJwI7Fyuwk6Y=
-Date: Wed, 11 Sep 2024 11:43:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Dan Williams <dan.j.williams@intel.com>,
+	s=arc-20240116; t=1726047842; c=relaxed/simple;
+	bh=Upu3RSMMQXqVbQkLU8A4pW+vF+nso3kCAcQkkCqDWa8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFLCmgCdbMLoGHrermbJfqermPrSdQI1HjN/3xfi7xJBUeVGba9EXPiTAnf+2VM1NWH6I9HhofMeYV9KoLzg0Osdi2xcYOWHQbZBvhCYMekpiHDdj/MihgIpy8c36SVFmaDMdBpZqCDx7GtZ2KRBzQbtxpJ6i7aZ8SQmT7aWV/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBVCN2aB; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5353cd2fa28so8012924e87.3;
+        Wed, 11 Sep 2024 02:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726047837; x=1726652637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vK4hXm3cLDT7VU3thxO/xWMzCFk73a3C3JCmK+dAb1c=;
+        b=NBVCN2aBo28aSOgQapOYOMBZQhP1+Zgnvh3tMKAd7ghGbwRde6niPmrTeDyMBceQHp
+         GYG3CSzaOQwr+XPViuVyXa65NXUWQwJgsn8MwyJk5dJJs1UbZEDnPeTLh+5hyydQ70Ay
+         chZJE9C5GkM3xNXCpC3FMoeLw5pca0nGBcwXV02BdSeoB1wYcfH7jP7jUbZ374EAHOEd
+         7Yucwa8Vq4t5HvwXEPPkm7zsANxG5RF22YXKsLMPEGBovOSN20OddYvg/2Vvhjc+FfPu
+         /ycmcNf/BxXmgDAfXaEL9g7ItXb+UxPt+0eR+3xkbBWtG9yLjpLydZS2/YNCNPO5rpZr
+         Lhfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726047837; x=1726652637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vK4hXm3cLDT7VU3thxO/xWMzCFk73a3C3JCmK+dAb1c=;
+        b=ADiGNfTMWTWbN1SWwg/AuXY3suclcXn3OwFbNIg7X76ZH2xafXOx2IRq4WpNPqbVVC
+         S7FILaBqEwpXsW+wiYIygjcz4h68B+nW730ApJgmC3OBojY5MsqrrpqmYJDL+IiJtGc2
+         TVMv6ESeKkfFx9SRlmMEYGbBlppSTUkQdn2KN0lXI2otLBNBflD3D7HCgIWtjsnUyTAZ
+         ljkjERoWGWhe+cuMKkd2ocY74WpQZsU3LQIePtkXPL3Pvn9cDiPrhXx9L9zvIFB7BmxQ
+         fyQQ6lBxL0EWpnc7nJ0uufFI/nogMQaMHvw4lx/SEnhbi+RaiNWPIFL24Ru/CP0AJGsc
+         mRVw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5f4xIXVSWnQjkqBR5vLUPRyEoow7OxoQiWNQi5C3ExCD1nV2ivZIKLd5dY4T2Tk/H9Ktf@vger.kernel.org, AJvYcCXFYsaEOW1sZR084UMcwVpfLUG2lvJ6dmh4YtZER+GzyDInDfzrk0PEvWaa2JDkkrF+UBg5uZ+Hm8cIVZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOoED8QksE8UuuopgNryfvtKUSUVPC7F8lpovn4Ob8ujijykUq
+	sy6I1tTBMlCJ0bGkCK7fKjD/drDEx2EAUPiLo1dd1a4wepFTolFtgRbMMw==
+X-Google-Smtp-Source: AGHT+IHbQwlRNKAug8LWOfz3XOOyd8OsiWy7fGS3gti0cKlOImM2McqhQVBhgn/SJBfyvhTr8TQh6A==
+X-Received: by 2002:a05:6512:4024:b0:536:553f:3ef6 with SMTP id 2adb3069b0e04-536587b034dmr11385493e87.18.1726047837179;
+        Wed, 11 Sep 2024 02:43:57 -0700 (PDT)
+Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f868e60sm1510053e87.38.2024.09.11.02.43.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 02:43:56 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 11 Sep 2024 11:43:54 +0200
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [regression] frozen usb mouse pointer at boot
-Message-ID: <2024091128-imperial-purchase-f5e7@gregkh>
-References: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <ZuFmWuUK8POsihzf@pc636>
+References: <20240820155935.1167988-1-urezki@gmail.com>
+ <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,128 +89,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
+In-Reply-To: <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
 
-On Wed, Sep 11, 2024 at 09:55:03AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> Hi, Thorsten here, the Linux kernel's regression tracker.
+On Tue, Sep 10, 2024 at 08:42:54AM -0700, Paul E. McKenney wrote:
+> On Tue, Aug 20, 2024 at 05:59:35PM +0200, Uladzislau Rezki (Sony) wrote:
+> > Add a kvfree_rcu_barrier() function. It waits until all
+> > in-flight pointers are freed over RCU machinery. It does
+> > not wait any GP completion and it is within its right to
+> > return immediately if there are no outstanding pointers.
+> > 
+> > This function is useful when there is a need to guarantee
+> > that a memory is fully freed before destroying memory caches.
+> > For example, during unloading a kernel module.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> I noticed a report about a linux-6.6.y regression in bugzilla.kernel.org
-> that appears to be caused by this commit from Dan applied by Greg:
+> As a follow-on patch, once kvfree_rcu_barrier() is accepted into
+> mainline, should we add a call to kvfree_rcu_barrier() to the
+> rcu_barrier_throttled() function in kernel/rcu/tree.c?
 > 
-> 15fffc6a5624b1 ("driver core: Fix uevent_show() vs driver detach race")
-> [v6.11-rc3, v6.10.5, v6.6.46, v6.1.105, v5.15.165, v5.10.224, v5.4.282,
-> v4.19.320]
+> This would allow the do_rcu_barrier module parameter to be used to clear
+> out kfree_rcu() as well as call_rcu() work.  This would be useful to
+> people running userspace benchmarks that cause the kernel to do a lot
+> of kfree_rcu() calls.  Always good to avoid messing up the results from
+> the current run due to deferred work from the previous run.  Even better
+> would be to actually account for the deferred work, but do_rcu_barrier
+> can help with that as well.  ;-)
 > 
-> The reporter did not check yet if mainline is affected; decided to
-> forward the report by mail nevertheless, as the maintainer for the
-> subsystem is also the maintainer for the stable tree. ;-)
-> 
-> To quote from https://bugzilla.kernel.org/show_bug.cgi?id=219244 :
+> Thoughts?
+>
+Makes sense. To be make sure that all objects are flushed. And as you
+mentioned it is good to have it for benchmarking as a return to a baseline
+point.
 
-This is very odd, because:
+One issue is probably a "name" which would be common for both:
 
-> > The symptoms of this bug are as follows:
-> > 
-> > - After booting (to the graphical login screen) the mouse pointer
-> > would frozen and only after unplugging and plugging-in again the usb
-> > plug of the mouse would the mouse be working as expected.
-> > - If one would log in without fixing the mouse issue, the mouse
-> > pointer would still be frozen after login.
-> > - The usb keyboard usually is not affected even though plugged into
-> > the same usb-hub - thus logging in is possible.
-> > - The mouse pointer is also frozen if the usb connector is plugged
-> > into a different usb-port (different from the usb-hub)
-> > - The pointer is moveable via the inbuilt synaptics trackpad
+rcu_barrier()
+kvfree_rcu_barrier()
 
-The patch from Dan should only affect when the module is unloaded, not
-when the device is removed.
+i mean /sys/module/rcutree/parameters/do_rcu_barrier. From how i
+would see it, it is supposed to trigger just rcu_barrier() API.
 
-And it should not diferenciate between device types (i.e. mouse,
-keyboard, etc.) as it affects ALL devices in the system.
-
-> > The kernel log shows almost the same messages (not sure if the
-> > differences mean anything in regards to this bug) for the initial
-> > recognizing the mouse (frozen mouse pointer) and the re-plugged-in mouse
-> > (and subsequently moveable mouse pointer):
-> > 
-> > [kernel] [    8.763158] usb 1-2.2.1.2: new low-speed USB device number 10 using xhci_hcd
-> > [kernel] [    8.956028] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
-> > [kernel] [    8.956036] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-> > [kernel] [    8.956039] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
-> > [kernel] [    8.956041] usb 1-2.2.1.2: Manufacturer: Microsoft 
-> > [kernel] [    8.963554] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0002/input/input18
-> > [kernel] [    8.964417] hid-generic 0003:045E:00CB.0002: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
-> > 
-> > [kernel] [   31.258381] usb 1-2.2.1.2: USB disconnect, device number 10
-> > [kernel] [   31.595051] usb 1-2.2.1.2: new low-speed USB device number 16 using xhci_hcd
-> > [kernel] [   31.804002] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
-> > [kernel] [   31.804010] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-> > [kernel] [   31.804013] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
-> > [kernel] [   31.804016] usb 1-2.2.1.2: Manufacturer: Microsoft 
-> > [kernel] [   31.812933] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0004/input/input20
-> > [kernel] [   31.814028] hid-generic 0003:045E:00CB.0004: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
-> > 
-> > Differences:
-> > 
-> > ../0003:045E:00CB.0002/input/input18 vs ../0003:045E:00CB.0004/input/input20
-
-That's normal, just a different name for the device, they are always
-dynamic.
-
-> > and
-> > 
-> > hid-generic 0003:045E:00CB.0002 vs hid-generic 0003:045E:00CB.0004
-
-Again, different device names, all should be fine.
-
-> > The connector / usb-port was not changed in this case!
-> > 
-> > 
-> > The symptoms of this bug have been present at one point in the
-> > recent
-> > past, but with kernel v6.6.45 (or maybe even some version before that)
-> > it was fine. But with 6.6.45 it seems to be definitely fine.
-> > 
-> > But with v6.6.46 the symptoms returned. That's the reason I
-> > suspected
-> > the kernel to be the cause of this issue. So I did some bisecting -
-> > which wasn't easy because that bug would often times not appear if the
-> > system was simply rebooted into the test kernel.
-> > As the bug would definitely appear on the affected kernels (v6.6.46
-> > ff) after shutting down the system for the night and booting the next
-> > day, I resorted to simulating the over-night powering-off by shutting
-> > the system down, unplugging the power and pressing the power button to
-> > get rid of residual voltage. But even then a few times the bug would
-> > only appear if I repeated this procedure before booting the system again
-> > with the respective kernel.
-> > 
-> > This is on a Thinkpad with Kaby Lake and integrated Intel graphics. 
-> > Even though it is a laptop, it is used as a desktop device, and the
-> > internal battery is disconnected, the removable battery is removed as
-> > the system is plugged-in via the power cord at all times (when in use)!
-> > Also, the system has no power (except for the bios battery, of
-> > course)
-> > over night as the power outlet is switched off if the device is not in use.
-> > 
-> > Not sure if this affects the issue - or how it does. But for
-> > successful bisecting I had to resort to the above procedure.
-> > 
-> > Bisecting the issue (between the release commits of v6.6.45 and
-> > v6.6.46) resulted in this commit [1] being the probable culprit.
-> > 
-> > I then tested kernel v6.6.49. It still produced the bug for me. So I
-> > reverted the changes of the assumed "bad commit" and re-compiled kernel
-> > v6.6.49. With this modified kernel the bug seems to be gone.
-
-This is odd.
-
-Does the latest 6.10.y release also show this problem?
-
-I can't duplicate this here, and it's the first I've heard of it (given
-that USB mice are pretty popular, I would suspect others would have hit
-it as well...)
-
-thanks,
-
-greg k-h
+--
+Uladzislau Rezki
 
