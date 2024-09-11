@@ -1,202 +1,144 @@
-Return-Path: <linux-kernel+bounces-324595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4DA974E95
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42CA974E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD4E1C21F76
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B74289503
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2853C181BA8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAFE18592F;
 	Wed, 11 Sep 2024 09:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="LZ2kboV8"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uK60i7nN"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4188F42056;
-	Wed, 11 Sep 2024 09:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17417C21B;
+	Wed, 11 Sep 2024 09:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726047171; cv=none; b=LgcoM8AcTVMr5yxrteNtt9SwL3Y9KTZgI/m9oqEnyHWk6Al4+C73KvxasfCNfkQhH8X/7YAtHrThTFLuDKrgi+VpIgvZTbzer4bhYbk0hZEj0mjRzU9HrzGSz8vdD46/i1jVoGmJVtUUJpv+1BPPcLtylNRR27kL9CpbFgYSybo=
+	t=1726047173; cv=none; b=Yd9rZNEpqUGvr1TmwBOeuKRRK6FSrSW+LR8vnLZQd8TgPGtoGJqdvT2qNFwkKZpeGkcxqE/G4DdKu6YVXrSHrXJQ531113WYvWqqSH5p7v9ktmCevByWm7b193yBTiRY7XE5E4AI3jq1SEDpDoFUU/B9PifKC4oFzRjjlLSknsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726047171; c=relaxed/simple;
-	bh=UCWIcT1hicw3QKAr268MAqhOpZGRQBG4qEvdkbj8Ntw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7rODuo88XnEpX+jsqRuhkOci5vtNV7VoyvddwqS6vswrspSoq3mV17+e+F7eawGSs5q2H9ZnnM1ev9jT4nPrTGYuqWVP46MYjtVO7Vx1fE+de4rIdJhQ7/+kHAXYmW1wVSYqmzCQ3wexEPu9yLJcqdblUdO3hkW9Co4gHGKlw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=LZ2kboV8; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id EEDDE1F9ED;
-	Wed, 11 Sep 2024 11:32:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1726047158;
-	bh=WD/CfXAsNipf8GFvUMfBefQPXJHaGOD1RCoYpzcJRgI=;
-	h=Received:From:To:Subject;
-	b=LZ2kboV8K52uCcCi1w0wkCP7VL+tcUeHmxIcb/8R3w4s5AgunVTu60MMziss2hlOS
-	 MDrjjoGc4SUfrI8X4w3FDGLVwmVq7sdcemGBA480wvCTiqCVhiHMpKq72RUBp3OFiv
-	 AkEXcz2cVA2sxFJY9S42aEKPjTk2BADg6ewKmnoHu/yD0TLVlYldfDkAqq6U+udCye
-	 EMQtAS4YzbU/2yUHi15DVwvQYDYm1COx9Ky3gpkJxEk9oQxaY3lRXoFKgUkW4pZhDG
-	 8F1UE1lHYyFvG2TEyzmGLL3UK4oIszJAeMXQl20NxmnfKSdIdWuz5hjdLzY8HjPm2y
-	 ypuzWZfcA0u2A==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 8FFE97F96B; Wed, 11 Sep 2024 11:32:37 +0200 (CEST)
-Date: Wed, 11 Sep 2024 11:32:37 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: David Lin <yu-hao.lin@nxp.com>, l.stach@pengutronix.de
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com
-Subject: Re: [PATCH] wifi: mwifiex: fix firmware crash for AP DFS mode
-Message-ID: <ZuFjtc70r6CGbzcW@gaggiata.pivistrello.it>
-References: <20240830080719.826142-1-yu-hao.lin@nxp.com>
+	s=arc-20240116; t=1726047173; c=relaxed/simple;
+	bh=bZ0GiGRefmi0Uyt4MyuRgUCJ9BimgVExP7271wvtOOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jzkHcq+7Kmx8JNAcSt/YZ9002Z31MNCIJDE/WrEP3gSAFG4ySXRdDx0qvBACOsLdornp3rw9AJx/cN8yNqVXD6vT4oLLcJfeMh9jr+CMtLIQqE2M1tZ5+o7FKFJjfJd7annPsrzznp6wJ2fye5H/Qlru1/MkxOj04x8FYPrEqD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uK60i7nN; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726047167; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YkVOUfuexb9zXWhceRcyWqd+dl3lU8/cr/JNYHTEx/Q=;
+	b=uK60i7nNRO9MbneOiglLLexDze0ZhlfLcsF6SdYZo5q4Kdf9AwOY9h+sZcuHf/UX335CY8GGCyyEV5CJzJajg5LES++b/roRPnYGhUmOJ3MNXxtMffFTT4N87XmrgtHLVFmFt1RFoNOThzI/sqtlyK72U6oxBmZ3IwVW8HVifuY=
+Received: from 30.221.145.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEnSDCq_1726047165)
+          by smtp.aliyun-inc.com;
+          Wed, 11 Sep 2024 17:32:46 +0800
+Message-ID: <19ffac65-8e1f-431e-a6bd-f942a4b908fe@linux.alibaba.com>
+Date: Wed, 11 Sep 2024 17:32:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830080719.826142-1-yu-hao.lin@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Josef Bacik <josef@toxicpanda.com>, Joanne Koong <joannelkoong@gmail.com>,
+ Dave Chinner <david@fromorbit.com>
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+ <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-+Lucas (in case he missed this patch)
+Hi all,
 
-On Fri, Aug 30, 2024 at 04:07:19PM +0800, David Lin wrote:
-> Firmware crashes when AP works on a DFS channel and radar detection occurs.
-> This patch fixes the issue, also add "fake_radar_detect" entry to mimic
-> radar detection for testing purpose.
-
-Do we want such kind of "fake" code in the driver?
-
-I do not agree that we mix an actual bug fix with additional testing code,
-and if I understand correctly the commit message this is what we are doing
-here.
-
-BTW, I think you should elaborate more in the commit message
-"This patch fixes the issue" to allow this patch to be reviewed.
-
-With that said I had a quick look at the patch, I think that those points need
-to be clarified before I can look more into it.
-
+On 6/4/24 3:27 PM, Miklos Szeredi wrote:
+> On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 > 
-> Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> ---
->  drivers/net/wireless/marvell/mwifiex/11h.c    | 56 +++++++++++++++----
->  .../net/wireless/marvell/mwifiex/cfg80211.c   | 50 ++++++++---------
->  .../net/wireless/marvell/mwifiex/cfg80211.h   |  4 +-
->  .../net/wireless/marvell/mwifiex/debugfs.c    | 42 ++++++++++++++
->  drivers/net/wireless/marvell/mwifiex/decl.h   |  1 +
->  drivers/net/wireless/marvell/mwifiex/main.h   |  1 +
->  6 files changed, 115 insertions(+), 39 deletions(-)
+>> IIUC, there are two sources that may cause deadlock:
+>> 1) the fuse server needs memory allocation when processing FUSE_WRITE
+>> requests, which in turn triggers direct memory reclaim, and FUSE
+>> writeback then - deadlock here
 > 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/11h.c b/drivers/net/wireless/marvell/mwifiex/11h.c
-> index b90f922f1cdc..e7e7a154831f 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/11h.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/11h.c
-> @@ -7,7 +7,7 @@
->  
->  #include "main.h"
->  #include "fw.h"
-> -
-> +#include "cfg80211.h"
->  
->  void mwifiex_init_11h_params(struct mwifiex_private *priv)
->  {
-> @@ -220,8 +220,11 @@ int mwifiex_11h_handle_chanrpt_ready(struct mwifiex_private *priv,
->  				cancel_delayed_work_sync(&priv->dfs_cac_work);
->  				cfg80211_cac_event(priv->netdev,
->  						   &priv->dfs_chandef,
-> -						   NL80211_RADAR_DETECTED,
-> +						   NL80211_RADAR_CAC_ABORTED,
->  						   GFP_KERNEL);
-> +				cfg80211_radar_event(priv->adapter->wiphy,
-> +						     &priv->dfs_chandef,
-> +						     GFP_KERNEL);
->  			}
->  			break;
->  		default:
-> @@ -244,9 +247,16 @@ int mwifiex_11h_handle_radar_detected(struct mwifiex_private *priv,
->  
->  	mwifiex_dbg(priv->adapter, MSG,
->  		    "radar detected; indicating kernel\n");
-> -	if (mwifiex_stop_radar_detection(priv, &priv->dfs_chandef))
-> -		mwifiex_dbg(priv->adapter, ERROR,
-> -			    "Failed to stop CAC in FW\n");
-> +
-> +	if (priv->wdev.cac_started) {
-> +		if (mwifiex_stop_radar_detection(priv, &priv->dfs_chandef))
-> +			mwifiex_dbg(priv->adapter, ERROR,
-> +				    "Failed to stop CAC in FW\n");
-> +		cancel_delayed_work_sync(&priv->dfs_cac_work);
-> +		cfg80211_cac_event(priv->netdev, &priv->dfs_chandef,
-> +				   NL80211_RADAR_CAC_ABORTED, GFP_KERNEL);
-> +	}
-> +
->  	cfg80211_radar_event(priv->adapter->wiphy, &priv->dfs_chandef,
->  			     GFP_KERNEL);
->  	mwifiex_dbg(priv->adapter, MSG, "regdomain: %d\n",
-> @@ -267,27 +277,53 @@ void mwifiex_dfs_chan_sw_work_queue(struct work_struct *work)
->  	struct mwifiex_uap_bss_param *bss_cfg;
->  	struct delayed_work *delayed_work = to_delayed_work(work);
->  	struct mwifiex_private *priv =
-> -			container_of(delayed_work, struct mwifiex_private,
-> -				     dfs_chan_sw_work);
-> +		container_of(delayed_work, struct mwifiex_private,
-> +			     dfs_chan_sw_work);
-> +	struct mwifiex_adapter *adapter = priv->adapter;
-> +
-> +	if (mwifiex_del_mgmt_ies(priv))
-> +		mwifiex_dbg(adapter, ERROR,
-> +			    "Failed to delete mgmt IEs!\n");
->  
->  	bss_cfg = &priv->bss_cfg;
->  	if (!bss_cfg->beacon_period) {
-> -		mwifiex_dbg(priv->adapter, ERROR,
-> +		mwifiex_dbg(adapter, ERROR,
->  			    "channel switch: AP already stopped\n");
-This change of adding `struct mwifiex_adapter *adapter` and refactoring the
-related code is 100% fine, but mixing it here is just making the review work
-more complex.
+> Yep, see the folio_wait_writeback() call deep in the guts of direct
+> reclaim, which sleeps until the PG_writeback flag is cleared.  If that
+> happens to be triggered by the writeback in question, then that's a
+> deadlock.
 
-> +
-> +	if (priv->uap_stop_tx) {
-> +		if (!netif_carrier_ok(priv->netdev))
+After diving deep into the direct reclaim code, there are some insights
+may be helpful.
 
-is this if needed? why? can't you just call netif_carrier_on() in every case?
+Back to the time when the support for fuse writeback is introduced, i.e.
+commit 3be5a52b30aa ("fuse: support writable mmap") since v2.6.26, the
+direct reclaim indeed unconditionally waits for PG_writeback flag being
+cleared.  At that time the direct reclaim is implemented in a two-stage
+style, stage 1) pass over the LRU list to start parallel writeback
+asynchronously, and stage 2) synchronously wait for completion of the
+writeback previously started.
 
-> +			netif_carrier_on(priv->netdev);
+This two-stage design and the unconditionally waiting for PG_writeback
+flag being cleared is removed by commit 41ac199 ("mm: vmscan: do not
+stall on writeback during memory compaction") since v3.5.
+
+Though the direct reclaim logic continues to evolve and the waiting is
+added back, now the stall will happen only when the direct reclaim is
+triggered from kswapd or memory cgroup.
+
+Specifically the stall will only happen in following certain conditions
+(see shrink_folio_list() for details):
+1) kswapd
+2) or it's a user process under a non-root memory cgroup (actually
+cgroup_v1) with GFP_IO permitted
+
+Thus the potential deadlock does not exist actually (if I'm not wrong) if:
+1) cgroup is not enabled
+2) or cgroup_v2 is actually used
+3) or (memory cgroup is enabled and is attached upon cgroup_v1) the fuse
+server actually resides under the root cgroup
+4) or (the fuse server resides under a non-root memory cgroup_v1), but
+the fuse server advertises itself as a PR_IO_FLUSHER[1]
 
 
-> +		mwifiex_wake_up_net_dev_queue(priv->netdev, adapter);
-> +		priv->uap_stop_tx = false;
-> +	}
->  }
-> diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> index 722ead51e912..c5e8f12da0ae 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> @@ -1892,6 +1882,20 @@ static int mwifiex_cfg80211_change_beacon(struct wiphy *wiphy,
->  	return 0;
->  }
->  
-> +/* cfg80211 operation handler for change_beacon.
-> + * Function retrieves and sets modified management IEs to FW.
-> + */
-> +static int mwifiex_cfg80211_change_beacon(struct wiphy *wiphy,
-> +					  struct net_device *dev,
-> +					  struct cfg80211_ap_update *params)
-> +{
-> +	int ret;
-> +
-> +	ret = mwifiex_cfg80211_change_beacon_data(wiphy, dev, &params->beacon);
-> +
-> +	return ret;
+Then we could considering adding a new feature bit indicating that any
+one of the above condition is met and thus the fuse server is safe from
+the potential deadlock inside direct reclaim.  When this feature bit is
+set, the kernel side could bypass the temp page copying when doing
+writeback.
 
-just return mwifiex_cfg80211_change_beacon_data(wiphy, dev, &params->beacon);
 
+As for the condition 4 (PR_IO_FLUSHER), there was a concern from
+Miklos[2].  I think the new feature bit could be disabled by default,
+and enabled only when the fuse server itself guarantees that it is in a
+safe distribution condition.  Even when it's enabled either by a mistake
+or a malicious fuse server, and thus causes a deadlock, maybe the
+sysadmin could still abort the connection through the abort sysctl knob?
+
+
+Just some insights and brainstorm here.
+
+
+[1] https://lore.kernel.org/all/Zl4%2FOAsMiqB4LO0e@dread.disaster.area/
+[2]
+https://lore.kernel.org/all/CAJfpegvYpWuTbKOm1hoySHZocY+ki07EzcXBUX8kZx92T8W6uQ@mail.gmail.com/
+
+
+
+-- 
+Thanks,
+Jingbo
 
