@@ -1,146 +1,86 @@
-Return-Path: <linux-kernel+bounces-324687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CC1974FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:33:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800C1974FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A312834EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:33:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34DB51F22A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AB7184530;
-	Wed, 11 Sep 2024 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWdqkLdr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90BC177992;
+	Wed, 11 Sep 2024 10:34:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732C87DA83;
-	Wed, 11 Sep 2024 10:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364FA29422
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726050781; cv=none; b=bNCBnhA0n6MIlbVXxHkAY4IZ9ogVLkC4jB0/q36pzJsxyr50PphuwCFFbabCxZEnfEFM8LP8Gox30d/7HUIaEXlxlwhgaotTGGAL47MuWmAHC86qPFKmvkiMSMhF5gnLg+0iChfpsJxIWt2HyMFd7HbyaBzER8dpypmL4EkQJT0=
+	t=1726050844; cv=none; b=RWgYo88XzghSINhBCcIG6fjcbDc31jsBHTZDtJHiuKHHlKcPC81zgdfdxRu0GVsPmlhd5Yp/Xb5VAOUFWR8Of7JYVO9Af3BbsNGDsGiRdU1ZKzX3NmkL6AoLW/8t2cVcuZuGtmPpxFAnaUZLwLwyn/FUkpGKuzwxL8aF2S+W1S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726050781; c=relaxed/simple;
-	bh=L3DfyRJyMBTh2hMe73ZBoYLf1innUkJOSEQ3kjB6jvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AY8KDNviOpWEL9rKKYhf56KrgUbmxoHRNyoK83vXEdslgPRKWG5WD+2/BJVazci4Ov6iS0rbn0PS9sCjH3h/e9rZ0JT5Cs7GY7Ch+wEn4MXvLuvrhcVWFXSqvBsJy2iu0a4XXqYr+9xhlc1Q0l30ZEMD1Ce2m6xGzknPDXKXl1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWdqkLdr; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726050780; x=1757586780;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=L3DfyRJyMBTh2hMe73ZBoYLf1innUkJOSEQ3kjB6jvE=;
-  b=AWdqkLdrms3vrxz6hKXFxqg60oyutQYgxeXvBg2bjy66dX/pBTTn3/3g
-   wmsSElbOcNEc11jhYXXKxsG1KYM0NPHTTOsW6cjFfcwCCzQF3LHCM7Og7
-   WuVWzXyXNcADUaIuVq5ZzOucH9bxXC4aCruwps7b11CpateESy0e9Z48h
-   xlxeSa/uJnh0BGEA2A/EVlH0zWMFPrqhWo8mUIhXUia5kgaLKw4MQDBI5
-   GBVshgXbXt4+5Bi5NYUCuOda4ZvfXy0fZ7giioJU5tNCodMdeUD9vdZco
-   rJITHU2O2sBYTWAZfJM6zNFy1bVPsyWEYzkad307Eyj58QBwJIiLL1GDC
-   Q==;
-X-CSE-ConnectionGUID: +ooEyTE+QNCtTj4ouIZ+cg==
-X-CSE-MsgGUID: ZyxP779+T4iRdg0TY8WSrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="50255157"
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="50255157"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 03:32:59 -0700
-X-CSE-ConnectionGUID: BNEu4AC2T/CJ3e9psPx4QQ==
-X-CSE-MsgGUID: 0lOjmVLITqO33NbgMFbjmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
-   d="scan'208";a="72125867"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO [10.245.244.58]) ([10.245.244.58])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 03:32:53 -0700
-Message-ID: <5c309853-c82c-475e-b8c2-fcdcfde20efc@linux.intel.com>
-Date: Wed, 11 Sep 2024 13:33:01 +0300
+	s=arc-20240116; t=1726050844; c=relaxed/simple;
+	bh=GfInJLZO+l2V9f9F5JX7mQ7Zsc3sn0BVJvG5EHNWULM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cnbN4bSN/RpBn+y7a0GDNex56HP3j2dDgnYKIiRyk2CsC+JxwI8JllwLJqv0YbEylTVN8pBby+dpOF8XQH9w3/4wknnNNIimeN0e4/n1nXONZjYsb7KL5FrizMxo9PAwBtxRHIwW+wjXvto0OKPwgJaGno2KGuvSNOTTsFbwdHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a045e7ed57so119159595ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:34:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726050842; x=1726655642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0YszWmwrafKAbx7c9Nk15oYSA/tkkBSpy3uyJtq1uw=;
+        b=Thd02D9JI+FQ8bdDluneisNAlit8/nF6zugu41Bk+KWNrYPDbYOCKNOkOqrMlVLCZi
+         YAlTOPu9pt1X/gRK2+NMugkVgW1ChurFNPzjJOTJeTvLgWIReJSH8oJBEeMQBtr9y0bN
+         uOCpXQ1cP0nNdQZJIQeAzFxMuo/ZnjfxRs5pR99dqeba/8Uu+zw4YV0dZsLJMlkWMOC7
+         UlxI0+XsL3Uy52VjKCkFm5LohtZiu/5ekZy1aWJ7slg03wXpq85RIqHNnJ/8dcJ5gSq0
+         UqJy+qhmvzorSj6kcWR7d1kv9O6BumhqefLzbsoB3H3R2vRZx/5HfDO3FsT6NjDWHCC3
+         IGRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWF9ZxwyZw4K3KIZSu2mKxh9qEQeDaD4VGwh482b6X08EeL3drYg1xtPWFOxw0Vk7tY96zoD0MmcEff7uA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBrh6G8cXWopZOzTeTxfaN822WfO4Yan/ZZ3KnkgWslB6OtQ5n
+	022XQheM1SZ6/Z4QxtUvoxh1h9mEng6MKlxjYQm301TudkzymJJCNveWiV6xqeaFnlPmVu9IurC
+	0Vo6jzSvGav6V9e4CcJxAcqfGRSSExaDQTPqh7r17D9xYTMzlUKxRZ7A=
+X-Google-Smtp-Source: AGHT+IGJWAkSA6BF+agMTBNiZm6AoqrujdhO6JeJwFJF608nhPTmarRZZcaZ387z/1dVMoafDE3zrpiiV7VRUYfshd/Qk/d/zTIR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] ALSA: pcm: add more sample rate definitions
-To: Takashi Iwai <tiwai@suse.de>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Cezary Rojewski <cezary.rojewski@intel.com>,
- Liam Girdwood <liam.r.girdwood@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
- <20240905-alsa-12-24-128-v1-1-8371948d3921@baylibre.com>
- <1ab3efaa-863c-4dd0-8f81-b50fd9775fad@linux.intel.com>
- <87ed5q4kbe.wl-tiwai@suse.de>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <87ed5q4kbe.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1388:b0:39f:7a74:e6d2 with SMTP id
+ e9e14a558f8ab-3a05685615bmr145725565ab.3.1726050842156; Wed, 11 Sep 2024
+ 03:34:02 -0700 (PDT)
+Date: Wed, 11 Sep 2024 03:34:02 -0700
+In-Reply-To: <59cf8d3e-2e3a-4ff3-93f5-216fa6052a66@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004fb6420621d587e1@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_lock (8)
+From: syzbot <syzbot+51cf7cc5f9ffc1006ef2@syzkaller.appspotmail.com>
+To: alibuda@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/09/2024 12:21, Takashi Iwai wrote:
->> Wondering if this is backwards compatible with the alsa-lib definitions,
->> specifically the topology parts which did unfortunately have a list of
->> rates that will map to a different index now:
->>
->>
->> typedef enum _snd_pcm_rates {
->> 	SND_PCM_RATE_UNKNOWN = -1,
->> 	SND_PCM_RATE_5512 = 0,
->> 	SND_PCM_RATE_8000,
->> 	SND_PCM_RATE_11025,
->> 	SND_PCM_RATE_16000,
->> 	SND_PCM_RATE_22050,
->> 	SND_PCM_RATE_32000,
->> 	SND_PCM_RATE_44100,
->> 	SND_PCM_RATE_48000,
->> 	SND_PCM_RATE_64000,
->> 	SND_PCM_RATE_88200,
->> 	SND_PCM_RATE_96000,
->> 	SND_PCM_RATE_176400,
->> 	SND_PCM_RATE_192000,
->> 	SND_PCM_RATE_CONTINUOUS = 30,
->> 	SND_PCM_RATE_KNOT = 31,
->> 	SND_PCM_RATE_LAST = SND_PCM_RATE_KNOT,
->> } snd_pcm_rates_t;
-> 
-> As far as I understand correctly, those rate bits used for topology
-> are independent from the bits used for PCM core, although it used to
-> be the same.  Maybe better to rename (such as SND_TPLG_RATE_*) so that
-> it's clearer only for topology stuff.
+Hello,
 
-Even if we rename these in alsa-lib we will need translation from
-SND_TPLG_RATE_ to SND_PCM_RATE_ in kernel likely?
+syzbot tried to test the proposed patch but the build/boot failed:
 
-The topology files are out there and this is an ABI...
+net/smc/smc_inet.c:127:44: error: no member named 'clcsk' in 'struct smc_sock'
 
-> But it'd be better if anyone can double-check.
 
-Since the kernel just copies the rates bitfield, any rate above 11025
-will be misaligned and result broken setup.
+Tested on:
 
-> 
-> 
-> thanks,
-> 
-> Takashi
+commit:         7e3e2c7f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
+dashboard link: https://syzkaller.appspot.com/bug?extid=51cf7cc5f9ffc1006ef2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11cda477980000
 
--- 
-Péter
 
