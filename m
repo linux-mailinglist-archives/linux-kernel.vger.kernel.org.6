@@ -1,150 +1,87 @@
-Return-Path: <linux-kernel+bounces-325673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F62D975CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:19:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706DB975D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DA37B24786
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:18:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F249AB2464C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5969B1BA27A;
-	Wed, 11 Sep 2024 22:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA85C1BAEDE;
+	Wed, 11 Sep 2024 22:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aB3Ma8tT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HzbCbUIk"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73C478C9D;
-	Wed, 11 Sep 2024 22:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240AE78C9D;
+	Wed, 11 Sep 2024 22:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093125; cv=none; b=TvjiIzIqJHsF+AOFP0LJjfcKbGVOmbU1RdbbMg5AKfgng+j/Gpd4C2CQ+6owcsNpOVCnHevrV3IJ7ajTCPrX4V/96av5u3BWfvXtI20q1V+rfZJjIYVF46C0KhGUGHCIqL0OPHSVWR15ofLMSAk2A3x9nQ3w2KwJ7GPGH8DV9os=
+	t=1726093131; cv=none; b=dJ+FC5mo71RN67BbtNX0OeTg43Cdv3f6lLEu6Nbz/oHnreFuI/yL4DXAXny8N2e0083GXxXVP9qliGzJFVf7O5lA+12abfYIsLSNELL7nZEPCE9hGrw/GjjLxn3IASLEVF1OXYfeJ7HC3sQX+O4z9GJpK8GlbwnWXKO9D6bTNWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093125; c=relaxed/simple;
-	bh=+6cSwg/X+10bSLWe5d2NRG2QHpKGwxHJCNr4zPB6bv0=;
+	s=arc-20240116; t=1726093131; c=relaxed/simple;
+	bh=kQNcGWIa5M3+tm+zvFWQO2+mOcbgUyVxV/BKfptYkL8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXx7WIE5RGjwfhUopN7V4qJdkGuTEQp0z4jGCucy9xm5mbAWEDxr2NzX0tnCcKhMoeMp6TgnW676s3sAJ2W6ubPg0lkiFA9TFh1yE5VGDdyiOu5+alpysZJWReOL/IJeOopYRXdGRx5ZJau+SxyoBhlHW7iwUSW/jK+qDdF3rAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aB3Ma8tT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 253D7C4CEC0;
-	Wed, 11 Sep 2024 22:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726093125;
-	bh=+6cSwg/X+10bSLWe5d2NRG2QHpKGwxHJCNr4zPB6bv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aB3Ma8tTz5vz736fDP2NRhsK/Krhq65bIP1s3XKcy/ZS2XrRJkCXJSvScSICyZizS
-	 muZy8dHDlOoJcut6QFbUEcLvIAhBUGZzOWdfN/Er19/ztR7mZTI3D1DI9Fm2hpuzCV
-	 WmMhZhImMWkLdp8cVGqV44FcSVvarYZ05TLA7q1rDTZ+ZCMRTd8mSjgamQSRNl8APm
-	 S6DlgGDQ6xF+kerYWM6O1lE4fZ/ru5lUBwr85S3GLJJGL4J4WFusfnhABorwb6tmY1
-	 o1kJKdxZBY/rS7OUOKLWsvQUo58EuJaKPsliABRdDAC2Y168a0oRry2qSD1X3/UlYb
-	 AIZ7RyMJo2pgw==
-Date: Wed, 11 Sep 2024 15:18:44 -0700
-From: Kees Cook <kees@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
-	jvoisin <julien.voisin@dustri.org>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 3/5] codetag: Introduce codetag_early_walk()
-Message-ID: <202409111518.FFAD85919@keescook>
-References: <20240809072532.work.266-kees@kernel.org>
- <20240809073309.2134488-3-kees@kernel.org>
- <CAJuCfpHLD=rK_xPpZ89t+E=S77dr=0Gq7+L9BLkojiqN+TC0FQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbxXKjCppjvOE5LK966c5uDh8HMf9x4ZITTGyD4yIxPPXEsFRZkE3t8wrlfNJe6A4em46MMvsA3LoXoWWB18CFdvWaPWOHlFb23+abcH0vmsy2ZU7yg2ytX/0p9s2eJTxmdqY18wig7lZYjcLTnF5Z9OYsxJnIBaEKWZ/UDV1eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HzbCbUIk; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8333C40002;
+	Wed, 11 Sep 2024 22:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726093127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/U/3mlXLwF6tyfk+FnzzPWhR0uUNH6dDPGh56N0AT/4=;
+	b=HzbCbUIkEO39bnfhQwbigDbrueacubYc2w7PFbzd7IgxLNq9o8yQd9QqzcCG2zDARhHxPt
+	7p29XXAN4m7RCtoTcnydpRqhyBXIZb1kaxDfwzDwbRYwhP9D5rIwMuYw3KGa0zJGhjKnoq
+	0LfaYY8D79ee17tbTLJSn3WZ54SJuwvivTmrFl4IW+Z1e+KlQjwmMULqxk5jGGuzjuUujb
+	rYElcdysRVG+myZRZ1d6u67rdJuaEbqr2i/tFEg3R/gWw5g/tvLD6hXSKXgAfSt/6pNFKG
+	PDvN8eKBXXQ15MO5btlANFeUHpeJVQI51YcFr74t4yGhc0kPQugiPsZOIIFgRg==
+Date: Thu, 12 Sep 2024 00:18:46 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: rtc: sprd,sc2731-rtc: convert to YAML
+Message-ID: <172609305460.1547920.7738628328338166199.b4-ty@bootlin.com>
+References: <ZolsyEC8eeJWNIb6@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpHLD=rK_xPpZ89t+E=S77dr=0Gq7+L9BLkojiqN+TC0FQ@mail.gmail.com>
+In-Reply-To: <ZolsyEC8eeJWNIb6@standask-GA-A55M-S2HP>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Thu, Aug 29, 2024 at 08:39:29AM -0700, Suren Baghdasaryan wrote:
-> On Fri, Aug 9, 2024 at 12:33 AM Kees Cook <kees@kernel.org> wrote:
-> >
-> > In order to process builtin alloc_tags much earlier during boot (before
-> > register_codetag() is processed), provide codetag_early_walk() that
-> > perform a lockless walk with a specified callback function. This will be
-> > used to allocate required caches that cannot be allocated on demand.
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> > Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> > Cc: linux-mm@kvack.org
-> > ---
-> >  include/linux/codetag.h |  2 ++
-> >  lib/codetag.c           | 16 ++++++++++++++++
-> >  2 files changed, 18 insertions(+)
-> >
-> > diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-> > index c2a579ccd455..9eb1fcd90570 100644
-> > --- a/include/linux/codetag.h
-> > +++ b/include/linux/codetag.h
-> > @@ -64,6 +64,8 @@ void codetag_lock_module_list(struct codetag_type *cttype, bool lock);
-> >  bool codetag_trylock_module_list(struct codetag_type *cttype);
-> >  struct codetag_iterator codetag_get_ct_iter(struct codetag_type *cttype);
-> >  struct codetag *codetag_next_ct(struct codetag_iterator *iter);
-> > +void codetag_early_walk(const struct codetag_type_desc *desc,
-> > +                       void (*callback)(struct codetag *ct));
-> >
-> >  void codetag_to_text(struct seq_buf *out, struct codetag *ct);
-> >
-> > diff --git a/lib/codetag.c b/lib/codetag.c
-> > index ef7634c7ee18..9d563c8c088a 100644
-> > --- a/lib/codetag.c
-> > +++ b/lib/codetag.c
-> > @@ -154,6 +154,22 @@ static struct codetag_range get_section_range(struct module *mod,
-> >         };
-> >  }
-> >
-> > +void codetag_early_walk(const struct codetag_type_desc *desc,
-> > +                       void (*callback)(struct codetag *ct))
-> > +{
-> > +       struct codetag_range range;
-> > +       struct codetag *ct;
-> > +
-> > +       range = get_section_range(NULL, desc->section);
-> > +       if (!range.start || !range.stop ||
-> > +           range.start == range.stop ||
-> > +           range.start > range.stop)
-> > +               return;
+On Sat, 06 Jul 2024 18:11:52 +0200, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC2731 RTC bindings to DT schema.
+> Rename file to match compatible.
 > 
-> I think this check can be simplified to:
 > 
->         if (!range.start || range.start >= range.stop)
->                 return;
-> 
-> nit: Technically (!range.start) should also never trigger. In a valid
-> image these symbols are either missing (range.start == range.stop ==
-> NULL) or both are defined and (range.start < range.stop).
 
-Yeah, all true. I was mainly copying all the checks that existed in the
-"slow path" version.
+Applied, thanks!
 
-I will adjust this for the next version.
+[1/1] dt-bindings: rtc: sprd,sc2731-rtc: convert to YAML
+      https://git.kernel.org/abelloni/c/adab39e1f482
+
+Best regards,
 
 -- 
-Kees Cook
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
