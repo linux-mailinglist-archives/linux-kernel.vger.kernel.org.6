@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-325178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1139755D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:44:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6DC9755EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603EB1C22D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:44:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39363B2C960
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3939B1A0716;
-	Wed, 11 Sep 2024 14:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F031A01C6;
+	Wed, 11 Sep 2024 14:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KoqC8DEK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BgwxafNM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NykAzLAG"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D848F156993
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42B1156993
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065878; cv=none; b=U5s5NSwtZARUY/wKkV0ly/GZmxdJwJJebVXICkpQnFoy7QD3z1epE8ifyPXfVGy0h0EI0l+GoJQqsZ7tKrOyL+61eeBQl3a+Z5Wclrg2PNGtNS10K4uiUeUZHGH3/Cw89vbS/wn33PiKD3WLNjH6RtZ0vY/7/OtLexPnTuRCBgc=
+	t=1726065888; cv=none; b=RSDdSbaSmHOyEIaUXAyKXXr1ZUP6xGwDhZhvxodrygbNKJXKIFbg4i9+8sveyb8QLKkzOmo4ACv8caiJdIY9ZjT2Z6Z5Of+5/Lq3/GQ76WLL/SJeJrRdH+6oP0Y5OsstfvYVx8zgNO1sYow/8qNLb406LQCKmGGA1Xq9BWQ8EiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065878; c=relaxed/simple;
-	bh=4kIT1B0JWX+pVn86U88ODnkmGN/w1KmWISdgfzBd3iU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEHAPtlyKW8mjb4wTyQ9iw+zEWJCW7gm3nNK2hk/fZ7tYYLQtq0CZV8fmpeIiOZ0fbBy+ANOGy67I7hNaqQEUB5M8DsPixQ340Y+/mE57+qln+Tp0fVNssZzEAWn0B0Ogz1Pz4fzUkhkosVufjtnNTMLs3PmRFDBttm3Pc1jRx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KoqC8DEK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726065875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=af/nBiUfHse3CRbP2Tt5RMMzbsiKe+R9DpXW2Bslduo=;
-	b=KoqC8DEKzB0BM+2Ta7CbNqiG5ZKC1DTn/+Vb/jbkiDWm48pMYkk5bSuAeB65bHzZeHe+kX
-	BIk6hHfUqKdI035a2YkKZc2QPOFLQ8SSnliPIfobqS5cfWfMIFosfruFGd+qZWTa2CEL3x
-	TpterLAPVOGktrPV4OPnotTXEZoEqD8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-fvx_2VdrPcy2HipLIe3Jew-1; Wed,
- 11 Sep 2024 10:44:32 -0400
-X-MC-Unique: fvx_2VdrPcy2HipLIe3Jew-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C801E1955D4B;
-	Wed, 11 Sep 2024 14:44:29 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.229])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A7FBA19560AD;
-	Wed, 11 Sep 2024 14:44:25 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 11 Sep 2024 16:44:18 +0200 (CEST)
-Date: Wed, 11 Sep 2024 16:44:13 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: akpm@linux-foundation.org, apais@microsoft.com, benhill@microsoft.com,
-	ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-	ssengar@microsoft.com, sunilmut@microsoft.com,
-	torvalds@linux-foundation.org, vdso@hexbites.dev,
-	workingjubilee@gmail.com
-Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
- FS
-Message-ID: <20240911144412.GA16954@redhat.com>
-References: <20240909193725.GD14058@redhat.com>
- <20240910154035.1204504-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1726065888; c=relaxed/simple;
+	bh=2odF99ee1cMXzMIBgWrtpiE+8wSE5xsuhArLITMhHjU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Z5Sq0eTdW3R+Ys/RdXLQERbMWEoxBrunZz8ToQBp7+7BUu2Jy0wE5VQ2dq/ShQnNho5bFUCd0iGj4+nE8lhlpMadrD/34rrj7BU4UQmLempr1VQ5cLZ0y6Y7FVhOy7Qki/8eG0K+LdRqAhJpxXmhyOWkDgf/cTTQ7zaV+zROj90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BgwxafNM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NykAzLAG; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id BCF72138015F;
+	Wed, 11 Sep 2024 10:44:45 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 11 Sep 2024 10:44:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726065885;
+	 x=1726152285; bh=2Ng/bXiCXjVjtyMJeROcRRqL/fQsE7Mfw13aZjFqLzA=; b=
+	BgwxafNM5bKX3Ce/U0F6WZ+aC5o5sjz4OMh15+TTzPfa0YCiPmEK6cR2kao8bmWQ
+	aBh4d34vXfH4Yfc/8b9atNR0DXwzsrw5eQPFF5k1l5DkcvroDhaJQa4CGoukUtM7
+	k7wFXBCu46sNDgYH6hJ/v6HjWXHs0oI2cyCcUEvLdTr2oJHY7iBDjdvZaHwuZpLf
+	97Z6SdsHOBRoSWwo2jaXBuwUGMluy9rGXbJJ3PSuHgghCQv21a06YxPxtU5zVaeT
+	HKA+iE6/WNnHX6L5ZZC/Xi2xym07F2sUSHanuyY4a8wwL2ze5tyRshWbXNCd1629
+	xJG4egfKjuGRR5y2lWXpgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726065885; x=
+	1726152285; bh=2Ng/bXiCXjVjtyMJeROcRRqL/fQsE7Mfw13aZjFqLzA=; b=N
+	ykAzLAGujHi/rvqJ8EyJAfxN9i0jeUnDXGdJ2GyMS6i6hRarnwUefd8RJjm1PnB3
+	4CSi6jWDGoFnNeOtyF0ni9DZzmqNGXXLu4creP5L97eoWa9snxW//gsH9Uic+QZ8
+	7FOvD0DbBqGpzdE6wGnPxpP/0U6r3UOSpwAcV4MuSZEZcWQ2eEUZRX/7SxUQ2I19
+	zLSd5w7dFVhrFpBg4Y3wz0iisDYc+UTmzKbeivDNSeYYFAZyOixWOz1rZk9PGykq
+	QjYb4jHDBcx+o/ri38d5kWpOi9fo/+3n5rLZqdnFdR8rUM4egAvWxbzOLtbWLo5A
+	0yVvZhuzjC1Yxg7AsfokQ==
+X-ME-Sender: <xms:3azhZmcWYMzkxBe_L5peqV-q_7TkG-pMXZ4RXgt0o_fhgtyjzoB91w>
+    <xme:3azhZgMw9Jm_APNWZ-ATsKY91_Ad5IKSQXU331WNdT560KR6StrUeeloWJGJuR_PM
+    jUfJbUT6_KtfvRzMzk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejuddgjeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghrihhsthhirghnrdhmrghruhhssh
+    hisegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgt
+    ohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvg
+    hnshdrfihikhhlrghnuggvrheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:3azhZnh7P8Sh9kqIr6wiFh_Ri79ju2rS5FEf4YHj9ETHcpcSrmh4Rw>
+    <xmx:3azhZj_OeL_d4IK3MaTSHwqV8Ev8lETu2y9LBWt9vySol0FOD8u8mg>
+    <xmx:3azhZisvFBCMbrAivJwZCCqy1nkxHDSOkmAVRFb3LT89wa_XETKT2A>
+    <xmx:3azhZqFTg0Fr2mT-4a02yWunZLZM1b-wsr7clrUzWFOWp4VxE_fH5Q>
+    <xmx:3azhZkUbEq0qNZqzXCTwneM8X9DWUt1ARtMjQk4JivN3k8GmmEsd9QCU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 51A3A2220071; Wed, 11 Sep 2024 10:44:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910154035.1204504-1-romank@linux.microsoft.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Date: Wed, 11 Sep 2024 14:44:25 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Sudeep Holla" <sudeep.holla@arm.com>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Cristian Marussi" <cristian.marussi@arm.com>,
+ "Jens Wiklander" <jens.wiklander@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <0ae7475f-f53a-45e3-a484-667820042724@app.fastmail.com>
+In-Reply-To: <ZuGl3v0y4SYR1np7@bogus>
+References: <20240909110938.247976-1-arnd@kernel.org> <ZuGl3v0y4SYR1np7@bogus>
+Subject: Re: [PATCH] firmware: arm_ffa: avoid string-fortify warningn in export_uuid()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-We certainly can't understand each other. At least, I certainly can't.
-
-On 09/10, Roman Kisel wrote:
+On Wed, Sep 11, 2024, at 14:14, Sudeep Holla wrote:
+> On Mon, Sep 09, 2024 at 11:09:24AM +0000, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> Copying to a 16 byte structure into an 8-byte struct member
+>> causes a compile-time warning:
+>> 
+>> In file included from drivers/firmware/arm_ffa/driver.c:25:
+>> In function 'fortify_memcpy_chk',
+>>     inlined from 'export_uuid' at include/linux/uuid.h:88:2,
+>>     inlined from 'ffa_msg_send_direct_req2' at drivers/firmware/arm_ffa/driver.c:488:2:
+>> include/linux/fortify-string.h:571:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>>   571 |                         __write_overflow_field(p_size_field, size);
+>>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> 
+>> Use a union for the conversion instead and make sure the byte order
+>> is fixed in the process.
+>> 
 >
-> On 09/09, Oleg wrote:
->
+> Thanks for spotting and fixing the issue. I tested enabling
+> CONFIG_FORTIFY_SOURCE but couldn't hit this with gcc 13 and clang 20
 
-> > Yet another thing in this discussion I can't understand... sorry, I tried.
-> > You do not need to teach, say, gdb to recognize this pattern. You can just do
-> >
-> > 	$ gdb -ex 'b please_insert_the_breakpoint_here' ...
-> >
-> > Nevermind, as I have already said you can safely ignore me. I still do not
-> > see any "real" use-case for breakpoint_if_debugging(), but I guess that is
-> > due to my ignorance and lack of imagination.
->
-> I've started this so let me butt in and take up the gaunlet.
->
-> Lambda's would be the most prominent example to me[1]. The toolchain
-> doesn't give them the user-accesible type and the name as it does for
-> the functions.
+Unfortunately I also don't have a reproducer at the moment,
+but I know it was from a randconfig build with gcc-14.2. I tried
+another few hundred randconfigs now with my patch reverted but it
+didn't come back. I assume it only shows up in rare combinations
+of some options,
 
-And?
+Do you have any additional information on the endianess question?
+Is this arm_ffa firmware code supposed to work with big-endian
+kernels?
 
-Once again, what I tried to suggest is a single "nop" function,
-"void please_insert_the_breakpoint_here()" which simply does asm("ret") and
+> Also do you want this sent as fix on top of my FF-A PR now or after -rc1 ?
 
-	#define breakpoint_if_debugging()	\
-		please_insert_the_breakpoint_here()
+Earlier would be better I think. I usually have one set of
+bugfixes before rc1 even if it doesn't make it into the
+first set of branches.
 
-Or, to make it more cheap,
-
-	#define breakpoint_if_debugging()	\
-		asm volatile ("call please_insert_the_breakpoint_here" : ASM_CALL_CONSTRAINT);
-
-so that compiler will know that breakpoint_if_debugging() doesn't change the regs.
-
-Again, again, I am not saying that this is necessarily the best solution.
-Just I fail to understand your email, sorry.
-
-Oleg.
-
+      Arnd
 
