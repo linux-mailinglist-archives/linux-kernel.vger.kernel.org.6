@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-325567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE8B975B66
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E29975B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456392836D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812581C20D22
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782621BB696;
-	Wed, 11 Sep 2024 20:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83CF1BB68C;
+	Wed, 11 Sep 2024 20:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lzTdpMTX"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EmZaH6Ep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490AB1B9B45
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B37E583
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726085541; cv=none; b=l+XugzhfLVLacEbC3KyROS1VVaBnrxmB9thcbYvzXyV2bkpLrvyhEAZE7V4rJRFU1WyifOTml8UabZkvxtOhcliC87HoFoi1tRQVwRFrpmJNwJF7w00NPZPFdm3Tc55omrmTcnvzqaYmeE3pOVptJigPTiwdU0z6dOGEls4syag=
+	t=1726085669; cv=none; b=Ksda0EGRCsAKc9uv4JTrwJApa/QJXkUMKpfdthBabGu7GEvF1hleFk3Vjh1WHCYshpDAsLbvj4DD6HoTdjue1A/t9u/k3wQusTCOz85Y5GdQCKq8i6E5DaMs7+I5vPkjYSkQM+hFPT7/fZ/gJgjB3oMeH+GjoqrGmmwhjTJ0Xmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726085541; c=relaxed/simple;
-	bh=uTVy0H/9nrR2sptTBciRNjASgqccjEA9yYDlS8MCbeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L3FQerjqZB5DMMQfPjYBZM5Y5dh/XJR6PIatJCV1tLSBNQef9DfDCFTYgz4co5Sm1z8+zWV9i5+cvOBhHjJBw5nYfITw0aYNjrH3dFMcvAJOZ6VKvJ22KLXQp1mBQAOjNCRTalQVnhjnt8VUn1dUoqV3gadKGFXxm7pF24qwh2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lzTdpMTX; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53658f30749so239346e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726085538; x=1726690338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTVy0H/9nrR2sptTBciRNjASgqccjEA9yYDlS8MCbeM=;
-        b=lzTdpMTX/0vx16Yjt76H0MxuZUNuw6J+UCzWDUJvM3cysCe7O1/EB5/SM1H5gysthR
-         l9/lNkDNmfYr1A6O+GHSD5m/u8CoJ1akW7U7KfeIvC87lLtBY4jiIm9KDWEsvL6LHJYC
-         patFd2XwSzSw+gLnROy2hXWjW71axmBKrnbe41tLdKoUFfDQg4JMbetAApwAN+pk/NQg
-         nfPO4mLiP8QduYH8w6XUhBtsR4O+Q/aVoBFx8WPS2brF7Xdz0pA/9ROzNeS4fW+jsYko
-         D7CaPJCrWM5fYhL5b6k97PpCYGe0yhUoHymk7p1QFcG86gecbbShOX6Q1SMrHRbW9FgR
-         Jf4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726085538; x=1726690338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTVy0H/9nrR2sptTBciRNjASgqccjEA9yYDlS8MCbeM=;
-        b=TgKMYakpRU2f9U+XphjcqC2mdd6cyt3upB95L5zQtU6BRxms/7x1u7Xl5BqtbtjOyc
-         2mgA0wsjQARKJB3DPFdCqCp+uDMxDxJzT5CzVUMc5L3mTcjpWQJPNakf5ikSrWow7yym
-         cxOAaZ9nGSverLQpMUglV37NAlvnX2tPEPo/laN18K29kvRF9VveE5hdkZCYmu9ibXxS
-         c2ua5ahDEaJSJnks+U0/LnNao3eIryGu3p8c84pjcmTybO7rgsxqH2vJofzAZKkTvKGe
-         DLdYWr493nmBp9ruchmEUvkcckDTeH4x5AzFPhJZ2J1j1I1i6IuQRC8gCzIzVv9678j4
-         omFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWczURA7ijKbsG8Q5UUZ20GX3uTvVXV0C2BXblOzWI6Sby0lF3KaQfwYAOm4WjfnLUhLwEBQMbthSUoTAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEPaZaRXrL7m/HC7lmKS0zYcCNgjewI3DHKRv5vS5PifDgaCiF
-	A3MQ+ZJqIrPEck8xHQcUeLaMPufvwNKHY/jykUS1dws+4vKBQx98fm9gNZeqAUJyl8WuhZFlV5F
-	vzk6Behcelwg7P6Yga840COEA8ffQoAVXOVHwQtSiV9Ty3ZZmxFs=
-X-Google-Smtp-Source: AGHT+IEdnmRQdJnZf50tlj7/hoA7Gw8t8SJc1icGuYV7aI91C5kPb50//JTyOTMS9OtmqW8cf4sljGOvSoiSNkTugvQ=
-X-Received: by 2002:a05:6512:4020:b0:533:40dc:8248 with SMTP id
- 2adb3069b0e04-53678fab5c1mr315676e87.11.1726085537318; Wed, 11 Sep 2024
- 13:12:17 -0700 (PDT)
+	s=arc-20240116; t=1726085669; c=relaxed/simple;
+	bh=h2kKG31g+Hmx6tmmvHaeqz9ofEgVn9kMKUL7/hoWBa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAEZANj5vyGUiiur7+H/hsnHeMgYQv4GYjUUQtg85x1Wrnc80Oas5md4Iox8TxdxlWiPHeuA5OtXIYtfOmIUb23w+sGM2Z4JXUhxreiACHJKmqmVuu1Br6tzczik31xWXVkXzbXf83fw6b73Izo/N+6X8fn/GcGNp/Dd76k3ItA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EmZaH6Ep; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726085665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/KXXJVpHBqZ8jkbmiTKtUQVPTfqELx0UeolsgQNEGcI=;
+	b=EmZaH6EpJLlM0M5vFiQlHFDr/pIfevrADJxNaXyZUtlh3QQmBGnjDirEpPkJveMLxFvcsB
+	/cQuLOFwAlpqd5r6xOVYakwvmhokZRnHBZNR41z/nVWxba3iVvIeYbi1kiqmik+kE/+whq
+	5zhk2Qj+nC+B5AvDICpVGHNptbT+gHw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-X6QncCq1PHOuVSxOccM3SA-1; Wed,
+ 11 Sep 2024 16:14:22 -0400
+X-MC-Unique: X6QncCq1PHOuVSxOccM3SA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 532F21945109;
+	Wed, 11 Sep 2024 20:14:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.43])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E5A5D1956086;
+	Wed, 11 Sep 2024 20:14:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 11 Sep 2024 22:14:08 +0200 (CEST)
+Date: Wed, 11 Sep 2024 22:14:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Roman Kisel <romank@linux.microsoft.com>, akpm@linux-foundation.org,
+	apais@microsoft.com, benhill@microsoft.com, ebiederm@xmission.com,
+	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
+	sunilmut@microsoft.com, vdso@hexbites.dev, workingjubilee@gmail.com
+Subject: Re: [PATCH 1/1] ptrace: Get tracer PID without reliance on the proc
+ FS
+Message-ID: <20240911201402.GB16757@redhat.com>
+References: <20240911144412.GA16954@redhat.com>
+ <20240911174107.1217693-1-romank@linux.microsoft.com>
+ <20240911195311.GA16757@redhat.com>
+ <CAHk-=wjhqn+B85OA8pfLhckUXSwLtJzFq5JPO2cNNzhPN__HJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-5-2d52f4e13476@linutronix.de>
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-5-2d52f4e13476@linutronix.de>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 11 Sep 2024 13:12:05 -0700
-Message-ID: <CANDhNCpnBMZkp9TUca8OEYKS=ECE516Y9DMy28SrcAstYB0iqg@mail.gmail.com>
-Subject: Re: [PATCH 05/21] ntp: Convert functions with only two states to bool
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Miroslav Lichvar <mlichvar@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Christopher S Hall <christopher.s.hall@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjhqn+B85OA8pfLhckUXSwLtJzFq5JPO2cNNzhPN__HJQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Wed, Sep 11, 2024 at 6:18=E2=80=AFAM Anna-Maria Behnsen
-<anna-maria@linutronix.de> wrote:
+On 09/11, Linus Torvalds wrote:
 >
-> From: Thomas Gleixner <tglx@linutronix.de>
+> On Wed, 11 Sept 2024 at 12:54, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> >         - please try to make your changelog more convincing. And in particular,
+> >           please explain why !!current->ptrace is not enough and this feature
+> >           needs the tracer's pid.
 >
-> is_error_status() and ntp_synced() return whether a state is set or
-> not. Both functions use unsigned int for it even if it would be a perfect
-> job for a bool.
->
-> Use bool instead of unsigned int. And while at it, move ntp_synced()
-> function to the place where it is used.
->
-> No functional change.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Oleg, I realize you like the simpler patch that only has that
+                  ^^^^^^^^
+No, no, I don't!!! ;)
 
-Acked-by: John Stultz <jstultz@google.com>
+> "!!current->ptrace", but my point is that even that simpler patch is
+> simply WRONG, WRONG, WRONG.
 
-thanks
--john
+and I agree, agree, agree.
+
+> There is simply no valid situation where a "I have a tracer" is a good
+> thing to test for.
+
+Yes, yes, and that is why I added you/Eric to this discussion.
+
+I just tried to play fair. I just thought that I can't simply "nack" this
+change, because I can't explain why I didn't like the whole idea.
+
+Oleg.
+
 
