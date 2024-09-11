@@ -1,113 +1,128 @@
-Return-Path: <linux-kernel+bounces-325529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360C3975ADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A39D975AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C3D1C222F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7B51C223A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545F41BA27A;
-	Wed, 11 Sep 2024 19:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B6F1BA29D;
+	Wed, 11 Sep 2024 19:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="KDJgk4Ny"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQRD3JR/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12DA58AC4
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35D1B9B3E;
+	Wed, 11 Sep 2024 19:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726083123; cv=none; b=CYFQJAgO6OZqlQ+OziSevmyXuEXZsVzV912NcLeIsOwaECR0bQUISYUqscNXgf2RZPbJU1vC2FfhR/YPIxJ+r9zP4IG9LtU9PVaXe7V70S8fFm3wNq4wNO5OuCNaYJJ5befhZZT8xGB/ZCfdcDTVmTi+TsJ0sT55J+y9EfC3y44=
+	t=1726083397; cv=none; b=GSNNtop0Al/EqPJ1qKg+J/hn/h6tPXZqiqezu++7e6rwRKN6j+EYaQ7twqkTdVG3rPUJOcal4a56zFJS5SHFjU8crAGzQOBvvV0PG5sZXLWA1nMTUwZsqUsC210IBexSSiP5n0CST6cVpgaHkBSWYqISsQG9kRl6XSiWz5NHVKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726083123; c=relaxed/simple;
-	bh=07yVX+a5HKymQT/kEVbwRWOHz7xK4lZuHdWBrjAUKc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NRWdA7f7XfU6MyayiDCVEmr/jNxJWJQeQcBF4EZPxLvNjy9ofkPb8dK7ilW+M9NeqAwy7n49E7TULc5AXVNxp4uDJLIBWwDEbUM1LBz3IoIZ9sCy4Mfuu1MSeyf0WejkWdAkNf9C0IucPqlBMtCsKqXD3cZj3hzT723lnmJB7Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=KDJgk4Ny; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82d07f32eeaso6869739f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1726083121; x=1726687921; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gtmb2W0kiaRq3w+FhsyuW0F/eW+GNWteDIgqlZPPh+o=;
-        b=KDJgk4NymABHJOwXLAXqZzFOgL03V3mwrRZ3+KfC8lU7+MNXGzvsJD0IVfvkEVf5/o
-         5PehWh+xnakWAk0cftdNY5DPDgXM7x64mSKaucHKDwY+Yc/kcwzMkbCZ+1Lo2L9OEdiq
-         FQqWYM69BaK/Byi0FcAwzrrv1R/k6EUCYekWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726083121; x=1726687921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gtmb2W0kiaRq3w+FhsyuW0F/eW+GNWteDIgqlZPPh+o=;
-        b=eN43TeowdFntwS5HF71qBVl6n6VT0onK2qC4nfDNRSCV8LwPef0VsafoMssqGZdwsL
-         40cN/cNcpH+PBFRWUpe1TP3IP/fl59NxbiGN2DpTpFh0V/qArzZtpUsd3KX/sk4R55eh
-         vqUKOffmjH1WJTLqy5MMXkvzXvdlCkV5UGKfzJE3zzQaeoEGv4QnTFIbc3mmiREEeMWt
-         mcQ5qeORcFfx5tvsKxbKy+hviz3J71Ubui2cIsVW/6WiON8kpdG57ZDhZpIF3YJShtf7
-         a7UI+HO3Bq6UDt0RamM5GBLMiZEvWlHzSV8dA0gluDN+fDaIK99JVmfGIr+w3vMzORLe
-         RfJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYuF9FSCBt6RzM27NKCZCjecXIzDaelnyjEipG5leD7a1hgbQMuxMcQZvFjfEpKyxqf3SRbPLc+MPvkrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwax0K+8RDux4jYbYzXt6i3K8G56ueSAhrGkwpc4+SNJ2yxAj7
-	VpGme87cStJj5urx3tq0P2W6SlWO2D299ZD1T0qIBbubKyiVbwtDdAneozs+vA==
-X-Google-Smtp-Source: AGHT+IH61wJeAaDsZVI0UulLG1dxqR8dVtT/hu5F4TWg8gxDaOsHx00AEczVpQO1l7iNb6Sv8R042Q==
-X-Received: by 2002:a05:6602:6c14:b0:82a:34da:72f7 with SMTP id ca18e2360f4ac-82d1fa93764mr101635039f.16.1726083120696;
-        Wed, 11 Sep 2024 12:32:00 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.70])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f433dc4sm159871173.25.2024.09.11.12.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 12:32:00 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 11 Sep 2024 13:31:58 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/375] 6.10.10-rc1 review
-Message-ID: <ZuHwLtRJkij6oz15@fedora64.linuxtx.org>
-References: <20240910092622.245959861@linuxfoundation.org>
+	s=arc-20240116; t=1726083397; c=relaxed/simple;
+	bh=0rTXAnkbeVMZLqqOWPrpVcS7QLv6ho2JIs7Kpx74QEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKeifXnC5SKw2vmX2IZuneq1kvMlg/KOmyfB/2pKFQqvnNuzrh96SOhtPcmI97DLmmWZkappzdHfiZ9peCHRtsFsbd4+qYa3+Wg02KZFxJiACF2yAzTfcyEJAx9gXsXEDeIM4HUpvdddDrCZiXvnSGYsE0lUKJjl/jtCzZ4N0Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQRD3JR/; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726083396; x=1757619396;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0rTXAnkbeVMZLqqOWPrpVcS7QLv6ho2JIs7Kpx74QEo=;
+  b=CQRD3JR/6pAJ9jvI+JqJ214IBNsaD5pXQvXmhZG2ht7p+GfViGXAAMzW
+   BiKNxictq1QBvV+5EzHArLNUq7qJEoPC+tdG2OnMlzEt6pO0ZGZ6sQGZf
+   kKFkLcV4+XXJ+yUc/G8APYzfF1Rj/I+rDBWa0svYSacTODtl4HLeU2AVv
+   tZzkeVRGYcvYyRaaNUxnI39PeRiDY30y1Pgi1fILOaszASpTSjW/cauBf
+   R4mtgk+q2BOc7vMvyOInH8/FmXstFdB9TXjFweLbNJ9MGCp7IScR1vx+J
+   yoGkfWVra/X/Q5hqlZWJwkV/f7XBqL3j1YslKTjtO1sEB7yt+ufBvxzcV
+   Q==;
+X-CSE-ConnectionGUID: qQUOOMC6SaGSoNz4AzMxiA==
+X-CSE-MsgGUID: fHGrsoWiSe25Oev0bTTi6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28792088"
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="28792088"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 12:36:34 -0700
+X-CSE-ConnectionGUID: HsO557M6SXmQrxiSzEE9mw==
+X-CSE-MsgGUID: IRXwOdXRR5SFcSMATx0+Rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,220,1719903600"; 
+   d="scan'208";a="67307582"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 11 Sep 2024 12:36:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0DA20170; Wed, 11 Sep 2024 22:36:30 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH net-next v1 1/1] net: ks8851: use %*ph to print small buffer
+Date: Wed, 11 Sep 2024 22:36:30 +0300
+Message-ID: <20240911193630.2884828-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 10, 2024 at 11:26:37AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.10 release.
-> There are 375 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Use %*ph format to print small buffer as hex string.
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/net/ethernet/micrel/ks8851_common.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+diff --git a/drivers/net/ethernet/micrel/ks8851_common.c b/drivers/net/ethernet/micrel/ks8851_common.c
+index 7fa1820db9cc..a07ffc53da64 100644
+--- a/drivers/net/ethernet/micrel/ks8851_common.c
++++ b/drivers/net/ethernet/micrel/ks8851_common.c
+@@ -215,22 +215,6 @@ static void ks8851_init_mac(struct ks8851_net *ks, struct device_node *np)
+ 	ks8851_write_mac_addr(dev);
+ }
+ 
+-/**
+- * ks8851_dbg_dumpkkt - dump initial packet contents to debug
+- * @ks: The device state
+- * @rxpkt: The data for the received packet
+- *
+- * Dump the initial data from the packet to dev_dbg().
+- */
+-static void ks8851_dbg_dumpkkt(struct ks8851_net *ks, u8 *rxpkt)
+-{
+-	netdev_dbg(ks->netdev,
+-		   "pkt %02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x\n",
+-		   rxpkt[4], rxpkt[5], rxpkt[6], rxpkt[7],
+-		   rxpkt[8], rxpkt[9], rxpkt[10], rxpkt[11],
+-		   rxpkt[12], rxpkt[13], rxpkt[14], rxpkt[15]);
+-}
+-
+ /**
+  * ks8851_rx_pkts - receive packets from the host
+  * @ks: The device information.
+@@ -296,8 +280,7 @@ static void ks8851_rx_pkts(struct ks8851_net *ks, struct sk_buff_head *rxq)
+ 
+ 				ks->rdfifo(ks, rxpkt, rxalign + 8);
+ 
+-				if (netif_msg_pktdata(ks))
+-					ks8851_dbg_dumpkkt(ks, rxpkt);
++				netif_dbg(ks, pktdata, ks->netdev, "pkt %12ph\n", &rxpkt[4]);
+ 
+ 				skb->protocol = eth_type_trans(skb, ks->netdev);
+ 				__skb_queue_tail(rxq, skb);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
