@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-324814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2C5975145
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6677197514F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36FB41C22B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23577285EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A489C188019;
-	Wed, 11 Sep 2024 11:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F251885A3;
+	Wed, 11 Sep 2024 11:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMzzZvuX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NgiVlHBD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106A9183CB1;
-	Wed, 11 Sep 2024 11:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF81187553;
+	Wed, 11 Sep 2024 11:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726055829; cv=none; b=tZVRFyNJnl7tfJDhdojE+xFfREncYMexhrdvAnQ2NneARd0gbya5QRWcZnmQ83rLeCjuICInwoEXAE3/JgE4SvHzN4FeNZq1A6JUz09UbYBbbRqK+wDvzrE/Xo18wR5gZ58RGdC8Oxnf7+za4uApwzFMvTLps37knq7cVgak8oQ=
+	t=1726055943; cv=none; b=riVEm+vgttquU1XM9k2o9guNl4kIj4hJcQG9HGbcPIgUnDQ20hxNmrKJe8sa/YNHOYNB3E+JtjnOkmBdL1dR4Enq4Zpvnu2Dq+1nx5c9tvTsswcceLdJTAIZf/kjwRAOr+nbpd1Q/GOuOIeT6gWYmuZ0H2WO59ujGC59+MYSJAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726055829; c=relaxed/simple;
-	bh=XGH4fqWa/9fWdPNDRDACY+LXke8v6guB2qi3oabmQF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CzOhAyx+bD+Ex6FiDXxzyIHVXOSH7j8/joQt3ebTPG7pbK7jwji2yPXyhnCS1bvLHQo1Kbc/xf5HdjQIsUd+xTXJY8jVmle4g9B7lBxvXa4QwykDodBLw90oIasYxdfT5/pzULxixZSXPpJw+T7nY3dbVzAucz4jy5GmzlWAzvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMzzZvuX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C4FC4CEC5;
-	Wed, 11 Sep 2024 11:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726055828;
-	bh=XGH4fqWa/9fWdPNDRDACY+LXke8v6guB2qi3oabmQF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lMzzZvuXiwrJkp4QF0vVgrilLLXBTS92zyBUiZqrEwTtuCn4oOOEvJqmlvSJt5x3e
-	 WUJR3hU9WWoiiD4BmDOBM52axdUjkWVLy0Wdu41UG3Cwl5dQekHCaBa/6H0OBrYlrt
-	 9Hu3TXHP+OgVOLJ58X2eG+CNeSLzCVi1Qm49Rka1N/vD2HnSsRMnJoyJckMxrUdJza
-	 2ipRDR7Sd/91FNKmTQ3b2MysLmiURnScL6R0GtOKaElBrQvWjUkURP5QVllruE4CzK
-	 89UzLLXbiu0/NLnq2VW4E9OZtjBfna72VcOhUZTQM7yKmi7EfWJ5NPG4NCklg71P9+
-	 QX3t10OYEugIw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1soLyR-000000002zM-16i7;
-	Wed, 11 Sep 2024 13:57:27 +0200
-Date: Wed, 11 Sep 2024 13:57:27 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] phy: qcom: qmp-usb: move driver data initialisation
- earlier
-Message-ID: <ZuGFpx3VZOGP-6Ii@hovoldconsulting.com>
-References: <20240911115253.10920-1-johan+linaro@kernel.org>
- <20240911115253.10920-5-johan+linaro@kernel.org>
+	s=arc-20240116; t=1726055943; c=relaxed/simple;
+	bh=P1RFG+COQDtA1pGNcFVUGHHXZDNGjOQ7cuBsZtBRVVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OACVxES5sMM+OBzaLXyKl7T+Z1Y2bOFfcNijGENIpMNjMu0fJvSiZHFyFuuAAS3J1k8PPv6+UWicfnKR3bXEoMiw8Bbl4lTeVlF/j8x6Ibk+DreO2/OA+86EKvYuRhZUzmuDKuTfaHkHHxnNQiPm8TkfK8EqXpeXzI8DgNxeKKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NgiVlHBD; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726055942; x=1757591942;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P1RFG+COQDtA1pGNcFVUGHHXZDNGjOQ7cuBsZtBRVVc=;
+  b=NgiVlHBDE4s4dcqp/Kdii7HW75hN/31/5k8E7DIVoZkVoTQniRXic2e8
+   FglZj4YYfHijxQ8DxUbidwaZuXRuRbcyFVsiFt7cEw618YYw16LQhVGzJ
+   nPP3ydsFqktUw8diofqXZCg6hf60N+bn8JX66FkYkVB+ahasfyeiOOlum
+   nwd/p0sweRe1Otptkg7/C844IFxlauA6ljjJL3D1t14TGEPGuS3m4Tu5a
+   7t5tcUZjQDNHrcboaDTBEg3zsDOj951CIDyPjWjzYGDcTvEDmwo4svwQj
+   4toM2xDWE8FG+DaIaHRZ1a/qWfrLZtMVV3GoNQ64lwFopI2fw2yVXF+uT
+   w==;
+X-CSE-ConnectionGUID: r28rj4QqRxmMZOpWJw8vxA==
+X-CSE-MsgGUID: E9o1dO3tR9ijdDL9zFiydA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35417198"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="35417198"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 04:59:01 -0700
+X-CSE-ConnectionGUID: iICmPkN4THC05jr9iTmW9A==
+X-CSE-MsgGUID: yVXssQLqSlqGSV+Tpt/uDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="67292706"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.254])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 04:58:59 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.intel.com,
+	bard.liao@intel.com
+Subject: [PATCH v2 00/14] soundwire: mipi-disco: add partial SoundWire Disco 2.1
+Date: Wed, 11 Sep 2024 19:58:13 +0800
+Message-ID: <20240911115827.233171-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911115253.10920-5-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 01:52:53PM +0200, Johan Hovold wrote:
-> Commit 44aff8e31080 ("phy: qcom-qmp-combo: clean up probe
-> initialisation") removed most users of the platform device driver data,
-> but mistakenly also removed the initialisation despite the data still
-> being used in the runtime PM callbacks.
+This patch series adds partial support for the SoundWire Disco 2.1.
 
-Perhaps the copy/paste error in Subject can be fixed when applying. The
-summary was supposed to say:
+v2:
+ - use mipi_device_property_read_bool() to get "mipi-sdw-sdca-interrupt-register-list"
 
-	phy: qcom: qmp-combo: move driver data initialisation earlier
 
-and nothing else.
+Pierre-Louis Bossart (14):
+  soundwire: mipi_disco: add MIPI-specific property_read_bool() helpers
+  soundwire: optimize sdw_stream_runtime memory layout
+  soundwire: optimize sdw_master_prop
+  soundwire: optimize sdw_bus structure
+  soundwire: optimize sdw_slave_prop
+  soundwire: optimize sdw_dp0_prop
+  soundwire: optimize sdw_dpn_prop
+  soundwire: mipi-disco: remove DPn audio-modes
+  soundwire: mipi-disco: add error handling for property array read
+  soundwire: mipi_disco: add support for clock-scales property
+  soundwire: mipi-disco: add support for peripheral channelprepare
+    timeout
+  soundwire: mipi-disco: add comment on DP0-supported property
+  soundwire: mipi-disco: add new properties from 2.0 spec
+  soundwire: mipi-disco: add support for DP0/DPn 'lane-list' property
 
-Johan
+ drivers/soundwire/mipi_disco.c | 144 +++++++++++++++++++-----
+ include/linux/soundwire/sdw.h  | 200 +++++++++++++++------------------
+ 2 files changed, 206 insertions(+), 138 deletions(-)
+
+-- 
+2.43.0
+
 
