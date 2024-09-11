@@ -1,213 +1,118 @@
-Return-Path: <linux-kernel+bounces-324465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E26E974CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:36:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBB8974CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A1FBB25E69
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849A71C20AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D9816F8E9;
-	Wed, 11 Sep 2024 08:35:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC9D155738;
+	Wed, 11 Sep 2024 08:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="ThBWrKYL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C1316DC12
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726043753; cv=none; b=LfelyCZxSz7FKvt697uUThTjfO7beuyK255QHKnjwTSwIr2vdqMweV5e+s8Vzxh0xjpHtO3ryEVRD3NdGPGKu+dW5I+o5FF22uqNk4Vngj1NfvyIcHFRLxLCex2FuZ3u3kMEL43fOSZKlMnLfXjqN3v2+Gcxzp1LL+2q5TZbeeU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726043753; c=relaxed/simple;
-	bh=vi6ucJQyh1SziQ4nbh4q8HN3DFL1YqUMlKaTP+VcH1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UPKDeS6iQel05jy5H/pPykiN4ybleRvorbHnWgCGjnUZplV4OLcmIqyTkMFw7OFF/2XnSbQNclBR6HjgQNimM8gZhtc+7DSNq8L0snOPimkyDrzEXCX1aYQwqf+EghVuMBoRejjkjmMGD3ObRQ9u3TEf+ANFIsr8we5cnyYm514=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X3YkW1f0CzmYWg;
-	Wed, 11 Sep 2024 16:33:39 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5B84618006C;
-	Wed, 11 Sep 2024 16:35:42 +0800 (CST)
-Received: from thunder-town.china.huawei.com (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 16:35:41 +0800
-From: Zhen Lei <thunder.leizhen@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
-	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH v3 3/3] debugobjects: Reduce contention on pool lock in fill_pool()
-Date: Wed, 11 Sep 2024 16:35:21 +0800
-Message-ID: <20240911083521.2257-4-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 2.37.3.windows.1
-In-Reply-To: <20240911083521.2257-1-thunder.leizhen@huawei.com>
-References: <20240911083521.2257-1-thunder.leizhen@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1381531E8;
+	Wed, 11 Sep 2024 08:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726043805; cv=pass; b=PUJac3EKzmmVLwx8mrNP4FAMkTTy8CA5MJ+Dv+Tx501qOp4Zxv1Noj8cacsDymlGMI1sSmy8eUN2ImBdAUltQEIbKSRtibuoFrvHa2+W/YkCajQGyVmN7S26zx6H3sHpELObXp8ZP92lN7K0P7fxnaOj5dnjcEriOi7lo5ivGCs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726043805; c=relaxed/simple;
+	bh=CisOF+GzloX2ELLDfmetlehnk05LJsWU/x4Br/cJY5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qwj0gxVIBVlajLZdj41QAt2st2g2BuGpgHWArzRaMNEdoVsxhxaimCeV7l8RIf5XTjdQhXYaWb4XPM8fEhwzaZbg3DzmgtpjMy+rk2+7PS4Y+kIsfNqa69MgD2R9dSSVMc/xdxObFku7qrg7BpESfb/4pmsYxYuDa+fvzrwgNQ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=ThBWrKYL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726043782; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TIDGdcdMMfBpc3GHbU4HsJZjhc84rJnvMihZNDhRlLz0ZnDlnRBbV3jBBVzHA8tSwthmFj6xJquZAd0Fr0OhsPPMh5cPIry7w9oZMNuzcT0gg8Cj88I2qpQCYBdLsJiz8tKi5HSMKdIfG86DRhLil1ptb6wV+BDX2CdbNFqIsIM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726043782; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mT3ADEMXwV/Ibk5Ee+fwaO68r9xxRfMHx8SLf6Y/bbY=; 
+	b=bG7/b18qTJfrInI0H64mfKIG3XrP9/+zBZ9NwrjVWWbRM/yvFCt8W37AjVlYe2Lmi16/3iLFKBjLOzTJy8boBYjpcdHNBsAtYcY/kqnphah7P/twS/uYxu9gnbtBG01gVaXsH8XucatAq4Ho3jboGcA1zklsmWrfxdYa0NKjWTg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726043782;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=mT3ADEMXwV/Ibk5Ee+fwaO68r9xxRfMHx8SLf6Y/bbY=;
+	b=ThBWrKYLX5PZ30+1eyNiC+HqemAmvx0PJ6nvsfCKx71okggGmjGioItyiudqEuXJ
+	1bV39Fm/MsFwdlI7SBqIl15mqZD2hqUTnA5gmpwZ19j3x+QeAeMMUqVXnqCL3ld1xom
+	UdHqI7gjZZm2w8ia/INBZ9g9LDRrFHhShXeFEr7Y=
+Received: by mx.zohomail.com with SMTPS id 1726043780360437.0100803082877;
+	Wed, 11 Sep 2024 01:36:20 -0700 (PDT)
+Message-ID: <6c6e00fd-334c-41ae-963c-eeffb368b727@collabora.com>
+Date: Wed, 11 Sep 2024 10:36:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: verisilicon: av1: Fix reference video buffer
+ pointer assignment
+To: Nicolas Dufresne <nicolas@ndufresne.ca>, ezequiel@vanguardiasur.com.ar,
+ p.zabel@pengutronix.de, mchehab@kernel.org, heiko@sntech.de,
+ hverkuil-cisco@xs4all.nl
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+References: <01020191dc45365b-26b103cd-153a-4b74-a663-ed7beecc1713-000000@eu-west-1.amazonses.com>
+ <10f107089cf679bcabd03e49fc469bb89518deeb.camel@ndufresne.ca>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <10f107089cf679bcabd03e49fc469bb89518deeb.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf100006.china.huawei.com (7.185.36.228)
 
-If the conditions for starting fill are met, it means that all cores that
-call fill() later are blocked until the first core completes the fill
-operation.
 
-Since it is low cost to move a set of free nodes from list obj_to_free
-into obj_pool, once it is necessary to fill, trying to move regardless
-of whether the context is preemptible. To reduce contention on pool
-lock, use atomic operation to test state. Only the first comer is allowed
-to try. If the last comer finds that someone is already trying, it will
-give up.
+Le 10/09/2024 à 21:44, Nicolas Dufresne a écrit :
+> Hi,
+>
+> Le mardi 10 septembre 2024 à 14:10 +0000, Benjamin Gaignard a écrit :
+>> Always get new destination buffer for reference frame because nothing
+>> garanty the one set previously is still valid or unused.
+> Mind documenting here which tests got fixed with this change ?
 
-Scenarios that use allocated node filling can also be applied lockless
-mechanisms, but slightly different. The global list obj_to_free can only
-be operated exclusively by one core, while kmem_cache_zalloc() can be
-invoked by multiple cores simultaneously. Use atomic counting to mark how
-many cores are filling, to reduce atomic write conflicts during check. In
-principle, only the first comer is allowed to fill, but there is a very
-low probability that multiple comers may fill at the time.
+Only one from chromium test suite:
+https://chromium.googlesource.com/chromium/src/media/+/refs/heads/main/test/data/test-25fps.av1.ivf
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- lib/debugobjects.c | 79 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 56 insertions(+), 23 deletions(-)
+Fluster AV1 score remains unchanged.
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 19a91c6bc67eb9c..568aae9cd9c3c4f 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -125,14 +125,10 @@ static const char *obj_states[ODEBUG_STATE_MAX] = {
- 	[ODEBUG_STATE_NOTAVAILABLE]	= "not available",
- };
- 
--static void fill_pool(void)
-+static void fill_pool_from_freelist(void)
- {
--	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
-+	static unsigned long state;
- 	struct debug_obj *obj;
--	unsigned long flags;
--
--	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
--		return;
- 
- 	/*
- 	 * Reuse objs from the global obj_to_free list; they will be
-@@ -141,25 +137,53 @@ static void fill_pool(void)
- 	 * obj_nr_tofree is checked locklessly; the READ_ONCE() pairs with
- 	 * the WRITE_ONCE() in pool_lock critical sections.
- 	 */
--	if (READ_ONCE(obj_nr_tofree)) {
--		raw_spin_lock_irqsave(&pool_lock, flags);
--		/*
--		 * Recheck with the lock held as the worker thread might have
--		 * won the race and freed the global free list already.
--		 */
--		while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
--			obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
--			hlist_del(&obj->node);
--			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
--			hlist_add_head(&obj->node, &obj_pool);
--			WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
--		}
--		raw_spin_unlock_irqrestore(&pool_lock, flags);
-+	if (!READ_ONCE(obj_nr_tofree))
-+		return;
-+
-+	/*
-+	 * Prevent the context from being scheduled or interrupted after
-+	 * setting the state flag;
-+	 */
-+	guard(irqsave)();
-+
-+	/*
-+	 * Avoid lock contention on &pool_lock and avoid making the cache
-+	 * line exclusive by testing the bit before attempting to set it.
-+	 */
-+	if (test_bit(0, &state) || test_and_set_bit(0, &state))
-+		return;
-+
-+	guard(raw_spinlock)(&pool_lock);
-+	/*
-+	 * Recheck with the lock held as the worker thread might have
-+	 * won the race and freed the global free list already.
-+	 */
-+	while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
-+		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-+		hlist_del(&obj->node);
-+		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
-+		hlist_add_head(&obj->node, &obj_pool);
-+		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
- 	}
-+	clear_bit(0, &state);
-+}
-+
-+static void fill_pool(void)
-+{
-+	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
-+	static atomic_t cpus_allocating;
- 
- 	if (unlikely(!obj_cache))
- 		return;
- 
-+	/*
-+	 * Avoid allocation and lock contention when another CPU is already
-+	 * in the allocation path.
-+	 */
-+	if (atomic_read(&cpus_allocating))
-+		return;
-+
-+	atomic_inc(&cpus_allocating);
- 	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
- 		struct debug_obj *new, *last = NULL;
- 		HLIST_HEAD(freelist);
-@@ -174,14 +198,14 @@ static void fill_pool(void)
- 				last = new;
- 		}
- 		if (!cnt)
--			return;
-+			break;
- 
--		raw_spin_lock_irqsave(&pool_lock, flags);
-+		guard(raw_spinlock_irqsave)(&pool_lock);
- 		hlist_splice_init(&freelist, &last->node, &obj_pool);
- 		debug_objects_allocated += cnt;
- 		WRITE_ONCE(obj_pool_free, obj_pool_free + cnt);
--		raw_spin_unlock_irqrestore(&pool_lock, flags);
- 	}
-+	atomic_dec(&cpus_allocating);
- }
- 
- /*
-@@ -600,6 +624,15 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket
- 
- static void debug_objects_fill_pool(void)
- {
-+	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
-+		return;
-+
-+	/* Try reusing objects from obj_to_free_list */
-+	fill_pool_from_freelist();
-+
-+	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
-+		return;
-+
- 	/*
- 	 * On RT enabled kernels the pool refill must happen in preemptible
- 	 * context -- for !RT kernels we rely on the fact that spinlock_t and
--- 
-2.34.1
-
+>
+>> Fixes: 727a400686a2 ("media: verisilicon: Add Rockchip AV1 decoder")
+>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> ---
+>>   .../media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c    | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>> index 372dfcd0fcd9..2b9a1047479c 100644
+>> --- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>> +++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
+>> @@ -161,8 +161,7 @@ static int rockchip_vpu981_av1_dec_frame_ref(struct hantro_ctx *ctx,
+>>   		av1_dec->frame_refs[i].timestamp = timestamp;
+>>   		av1_dec->frame_refs[i].frame_type = frame->frame_type;
+>>   		av1_dec->frame_refs[i].order_hint = frame->order_hint;
+>> -		if (!av1_dec->frame_refs[i].vb2_ref)
+>> -			av1_dec->frame_refs[i].vb2_ref = hantro_get_dst_buf(ctx);
+>> +		av1_dec->frame_refs[i].vb2_ref = hantro_get_dst_buf(ctx);
+> Good catch, would still be nice to improve the commit message.
+>
+> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>
+>>   
+>>   		for (j = 0; j < V4L2_AV1_TOTAL_REFS_PER_FRAME; j++)
+>>   			av1_dec->frame_refs[i].order_hints[j] = frame->order_hints[j];
+>
 
