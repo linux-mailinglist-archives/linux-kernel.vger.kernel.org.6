@@ -1,156 +1,122 @@
-Return-Path: <linux-kernel+bounces-325364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E897897589D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEEB9758A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6C512816EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D3C1C22F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACC51AE872;
-	Wed, 11 Sep 2024 16:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678B01AED32;
+	Wed, 11 Sep 2024 16:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLDELWl2"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOXF8KE/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DACF19AA4E;
-	Wed, 11 Sep 2024 16:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4589383B1;
+	Wed, 11 Sep 2024 16:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726072646; cv=none; b=JOJhCsFab8ljJSPyUyiY4jSCHzdygFGm+ufjQzs4LXnOAEyqNO87+pm6HWJapy1IBbqN/Ir6gokdd7RTjLOnKyRgvAld41gUqSFUWbmR6X6J+EQI95hy7mSPa7gcJrBScruChMXitnLXuXrRJpsQgir0jLF4gUF05HEzIDv4hy8=
+	t=1726072992; cv=none; b=E6bHSmGi/Ovo1pTEkKKjD/T/EshZcdyx/f9UCXMe+Oq1t6mKE/wCHQ6gRqk1Yg6MeeB0hQ7NoMVfUDwQZ6V6GUeisaDUs+TMkyOC533sCLenlgtgv5KToBAVa0assIA4SegRhDd3TxGSbWUxlqKNUVB/XwWhdGim49Tn4oD5nh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726072646; c=relaxed/simple;
-	bh=9eK0yHEDauIWsVSgY9SqhfVJCOquv7paPpwYwu69AA4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m7fxMqcT7MH8pzTr4zQVa7NUkC7BS8slU6GB12jH2NThLTQM8QcrlZ5URhG7bSyFI+Zii2Z6ff06nvjUrDpczjmvjd9RCmEds76fU1+s7bre5VeHNnJ0yaoujv5eT3OR6ULo0SXdPT6qy0fymMVN6tng7jnN7pthH11gexYdbRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLDELWl2; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2057835395aso586545ad.3;
-        Wed, 11 Sep 2024 09:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726072645; x=1726677445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=90TMb1/MbVS5WiGMgu7GUWPEif7p2vMbBbdE9JcSnoA=;
-        b=BLDELWl2W9vVu6LNK/qnuJo8gYpBUPNtz3RXp2w+K6xtwv5DAahHPQHaTxWI6bx3BQ
-         it9658F+BsaumFwDilnU8+CsXefvEza8n64GmhauBTXFn1HrDzqih67DJAJMKvnCAje+
-         KqUuB9oCusKjeVjKh1NHTChl8r9lhJQgpMIB9l9C4YZu8u96797pR7cRgpc3yVbj7jnE
-         5xqEFqx3bgttSmzcNbTTQpkA7agkpYmtfAUnxISi/dt4EP0vJSSRAVz33nNwBGVN2hI8
-         qMPNK6JWYjM/4b5ZCcWT2BxEjjNjtKPbXTCqK9ufuS683Eenla2s6T39KmgfpLh35Lrg
-         zwtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726072645; x=1726677445;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90TMb1/MbVS5WiGMgu7GUWPEif7p2vMbBbdE9JcSnoA=;
-        b=ZcX2e9kfF/GmIX29avehQDfx0ETyPIYw+ZOnhQ3jD9Cl099hqeF9xfcqucLS1Kb1Jg
-         qWhtDtmGUiZIWkIp0p3MAiBImdy50hUiFqNDT4DAMZdjQujws5ZSTJAjS5kGdSulQv5o
-         N47fRgoYZ++0fJQyM0GzTulxa9sZOVhLXBUksSz5ktfUz2hTM7yHPh1W9zE120+zCzIo
-         Xqbtd+Si62KoWEP67K78cUtVI+DRg1W/dXifHXqxXWL7gB8TEIN960g2BPZRLzR+90zW
-         AXnaa1hImz01mM1lei5GZD0uB1V8JBpuUTwKcKTo0rnoJ2pWFb7sQCYPZCzQdvp7r+F/
-         8svQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6rpBMZh9oaBjVol3KZFgRvEuKBnF4K6T5GdZFqj1TNN64VdGahAge1war2wmu79sfeVP+g8fiYk8nEg4=@vger.kernel.org, AJvYcCXcmnRHks51XNcht/O1CPLJs6nS2LUU3iDF9tsfDwzLPixeJG8IQqXlPl2q46qamt08zHtwP4wN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPWDDTTcbvSAXT1cwV9QHXNMwh6tzs2Zidgs8CL3RpBfeKuQUM
-	+8v+g973i5hjjMQsy8G8QTKkG4zCaasVmDU2M7cBHKdjTjb8QojA
-X-Google-Smtp-Source: AGHT+IFRWs5tDpCZz4ebtck/HzGJhZ2Sstm9Pf2WqLdLZ9Lh6Mhx5HhRBLNVUk+FbghPJ9dfL6+I4Q==
-X-Received: by 2002:a17:902:ecca:b0:207:14d1:8270 with SMTP id d9443c01a7336-20752195bd6mr57744205ad.16.1726072644731;
-        Wed, 11 Sep 2024 09:37:24 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd86csm1598095ad.131.2024.09.11.09.37.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 09:37:24 -0700 (PDT)
-Message-ID: <52f297b2-62c4-4e53-8b82-a87f29394d6a@gmail.com>
-Date: Wed, 11 Sep 2024 09:37:22 -0700
+	s=arc-20240116; t=1726072992; c=relaxed/simple;
+	bh=yTKnHqS1TKRvdn3M9rhyopTwDU3fOvUVzJwOO+EdAtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuwbcpvqCdROaPcZM7V8T25bH0MBMGNopElcdQb64sJ8kiisdY8QAS4hW4/ua53ZKHejZCsnZxwLHTvSzmsQQqFDZzN0vwcLkYORdk/4DFeaVmZb3iEgQGd13owjj8DzK20rN0XUSTDwuk+zdfZnVTyk2C9KLb7r81xNCKv/BEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOXF8KE/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40056C4CEC0;
+	Wed, 11 Sep 2024 16:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726072992;
+	bh=yTKnHqS1TKRvdn3M9rhyopTwDU3fOvUVzJwOO+EdAtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MOXF8KE/pKP7RXSarojs2m5au1NmcyVwVZ10aZAdoDnuhx73kL+agBCqsbt70vWqy
+	 FxnILXCWb6lFjORI0Tajl5TxMjjJlZ+JccS/7ZMW537o0oaxSkUq03GPde2j7aSrjX
+	 O299goJCyjLDVhEIDy7DkhQc3H/lHW5xecAxcFm8oFgGutPIk16SLMpGpnV7/Aljhu
+	 x8HZc8Dii8YDIkHj9WPiEzC0+ighozBN9VvCkg3P3Z33BpKfgaG2uMHnBwqK7Ao7JT
+	 VfWa+07yNJTYH5yYGESB7CA0RPl467enwJ0ZjPlI6hGMzcmtF3cHE6dTZdQ9M7o84J
+	 ZriUEyZ5CwcVQ==
+Date: Wed, 11 Sep 2024 11:43:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mikisabate@gmail.com>
+Cc: saravanak@google.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/of: Improve documentation on match string
+Message-ID: <20240911164311.GA775781-robh@kernel.org>
+References: <20240910142422.341672-1-mikisabate@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 5.4 000/121] 5.4.284-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240911130518.626277627@linuxfoundation.org>
-Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240911130518.626277627@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240910142422.341672-1-mikisabate@gmail.com>
 
-
-
-On 9/11/2024 6:07 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.284 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Sep 10, 2024 at 04:24:22PM +0200, Miquel Sabaté Solà wrote:
+> The description of the function now explicitly states that it's
+> an *exact* match for the given string (i.e. not a submatch). It also
+> better states all the possible return values.
 > 
-> Responses should be made by Fri, 13 Sep 2024 13:05:00 +0000.
-> Anything received after that time might be too late.
+> Moreover, this commit also makes sure that -ENODATA is returned if
+> prop->length is zero, just like it's done in other functions such as
+> 'of_property_read_string'.
+
+'also' in a commit message is a sign this should be 2 commits. However, 
+more below.
+
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.284-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
+> Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
+> ---
+>  drivers/of/property.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 > 
-> thanks,
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 164d77cb9445..1ff51d93178f 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -452,12 +452,17 @@ EXPORT_SYMBOL_GPL(of_property_read_string);
 > 
-> greg k-h
+>  /**
+>   * of_property_match_string() - Find string in a list and return index
+> - * @np: pointer to node containing string list property
+> + * @np: pointer to the node containing the string list property
+>   * @propname: string list property name
+> - * @string: pointer to string to search for in string list
+> + * @string: pointer to the string to search for in the string list
+>   *
+> - * This function searches a string list property and returns the index
+> - * of a specific string value.
+> + * Search for an exact match of string in a device node property which is a
+> + * list of strings.
+> + *
+> + * Return: the index of the first occurrence of the string on success, -EINVAL
+> + * if the property does not exist, -ENODATA if the property does not have a
+> + * value, and -EILSEQ if the string is not null-terminated within the length of
+> + * the property data.
+>   */
+>  int of_property_match_string(const struct device_node *np, const char *propname,
+>  			     const char *string)
+> @@ -469,7 +474,7 @@ int of_property_match_string(const struct device_node *np, const char *propname,
+> 
+>  	if (!prop)
+>  		return -EINVAL;
+> -	if (!prop->value)
+> +	if (!prop->value || !prop->length)
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+This is redundant. If length is 0, then 'end' will be equal to p and 
+we'll return -ENODATA.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
-
+>  		return -ENODATA;
+> 
+>  	p = prop->value;
+> --
+> 2.46.0
+> 
 
