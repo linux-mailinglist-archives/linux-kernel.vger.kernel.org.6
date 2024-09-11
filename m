@@ -1,268 +1,140 @@
-Return-Path: <linux-kernel+bounces-324873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235B79751E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E3D9751EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1871F22398
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B31701F2231D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3A188A05;
-	Wed, 11 Sep 2024 12:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1237188A1C;
+	Wed, 11 Sep 2024 12:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="IU9RW3mI";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bK5KFEC2"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O59TEY/a"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9730142E9D;
-	Wed, 11 Sep 2024 12:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5E9176FD2;
+	Wed, 11 Sep 2024 12:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057317; cv=none; b=Vhsgg1OSClHGHlmdDeHdfIh/MfSeUaWTsOQnawFYIt4HA1T5t3jffOe5mCFXKdUlRjZRCVn2BmMb9yUW5A75Ho/t4FN0giBMRI/WU/kLW664n4z/ficXKbmrSCTu4+0wLKlnT8A4SNZFl4epHklA+bysDKa/+EQKIU3urGVmhUk=
+	t=1726057360; cv=none; b=XRExmrpoKOVFWWpOQP+13RMzzupBQtRIrquAr/AProaJZEe3jUr+S3egoshIabk9pqgr9zJMffjn76cCmklfKHB01FWaWQd3AtKbbDzvj6OS41/HH2aNYPaOD+2gPDvQi+5ZyI9pMNmEBUqjJuJV3e6TXrDYOs7q/o1pThCBW+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057317; c=relaxed/simple;
-	bh=I3CU6vqBc1DNQE9kRbWBsirZu84BFe/dOVd+LtekJ3A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q7HsVC9VCzv7JWUdUhjglTYrTHQtB6iFTog0LF9Rz6KQ80YyUr84hub3ec/q5w6rfMmIFfDJ9TXTIDiOlHQ3vSOtsL04HqAhGOZiqR1XzqgEyB9w4ND6moelf+lq+qMrvBOUMAhf83IUcVJAGJY2320NoxEyoWBCC2t60DyUSp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=IU9RW3mI; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=bK5KFEC2; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726057315;
-	bh=I3CU6vqBc1DNQE9kRbWBsirZu84BFe/dOVd+LtekJ3A=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=IU9RW3mI9R8zl/C99P+Gku9V5E5D6jugg9pGgd538R18GP5eHl/P/5S0OV8hn5wTt
-	 8Rn0SisJ9RMtCf9QOpJ1+Wsk0+GSblPXUcB22RySZFy/uTIj5lgib8weTFlM7zuoLj
-	 s1hBTaD1ixlph9CBeFkMAyBjLPGoQKghPJ/IR36U=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 206781286B94;
-	Wed, 11 Sep 2024 08:21:55 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id Mqnf5WyWn0IY; Wed, 11 Sep 2024 08:21:54 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726057314;
-	bh=I3CU6vqBc1DNQE9kRbWBsirZu84BFe/dOVd+LtekJ3A=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=bK5KFEC2xXZMxT0KBb4+57Tt+JHEd4w2ElYK5ZNJAL4GnrBiCkCkJIxurXqFzDfhd
-	 8/utvLgx12JT3SAiX0ijQieoSY8SrR9/LAexq81C/QXrYqtTXLB5gAewCJwPiliuyj
-	 6kSL0camRQrz5IiG1SCvAuh1RMry2oDDhMaGs+Ac=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 27AE31286A12;
-	Wed, 11 Sep 2024 08:21:54 -0400 (EDT)
-Message-ID: <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, Jarkko Sakkinen
-	 <jarkko@kernel.org>, Linux regressions mailing list
-	 <regressions@lists.linux.dev>
-Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Pengyu Ma <mapengyu@gmail.com>
-Date: Wed, 11 Sep 2024 08:21:52 -0400
-In-Reply-To: <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
-	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
-	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
-	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
-	 <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
-	 <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
-	 <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1726057360; c=relaxed/simple;
+	bh=blFGFyAduLWx63BOYMp1KN1TLMQWpesxNpbWCDDui8k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LRp6DkPBFHzmPyV8sNOB7OnfynsxutSnp2J7iWjJL3SjSfAZESBj/1+SI5x2IKI8a0i8IxeqMvxEWWWLb4Bttvu2W5GszizjKgiQ2sxi1nnXJeP+2wJcgCQTzkoj9LfMuSpykua0Afm2DGf7ApfADrXjAACSiNFHXVIpoiJgbgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O59TEY/a; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DBB96240008;
+	Wed, 11 Sep 2024 12:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726057349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xC4ofXG4/VRyxZNU6w0RPA76zhDL5g9ioT3bWLFNSKs=;
+	b=O59TEY/aTxwdzRjOHhVFLiaIaWb9tqPBEUz3Eu8ESQWyGvkQT24fwuPuGoHQTNQNlSNmfR
+	SYONoKTYmpoomKHCGyIQQiExRV0YgXMm5eYg/+WgUbsPtTBF0jjRgMb+d4rz/sQriflbYM
+	h+0t12Ntx8yFKbxfBOoolRUFMEYSIZPTUXQ6vehwwXZoXWII6+vEnADDZ6A6Wnb9bCLQHH
+	Y2jQpTOcZDFNnLA7I2xyGmhrCxAX3MoWXEN5Kr/do9LX4Rq0GlEOEGMWfQUi6+nubiwOeA
+	JusI7+JIYwYt8g9ysCy5PatCHrZq+gkCertXM4FJxy1qu7qXo7i9a3dyIrUcPQ==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Wed, 11 Sep 2024 14:22:04 +0200
+Subject: [PATCH ethtool-next v2] ethtool: Add missing clause 33 PSE manual
+ description
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240911-fix_missing_doc-v2-1-e2eade6886b9@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAGuL4WYC/3WNwQqDMBBEf0X23JQkGIs99T+KiCarLmi2JEEs4
+ r835N7jMG/enBAxEEZ4VicE3CkS+xz0rQK7DH5GQS5n0FLX0mgpJjr6jWIkP/eOrWgGiRMaZer
+ WQl59AmakGN+AaUnMq/B4JOhyu1BMHL7lbleF+WvelVCibYx9OBwnK/E1MqeV/N3yBt11XT/10
+ ya4vgAAAA==
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 2024-09-11 at 10:53 +0200, Roberto Sassu wrote:
-> On Tue, 2024-09-10 at 16:28 +0300, Jarkko Sakkinen wrote:
-> > On Tue Sep 10, 2024 at 3:57 PM EEST, James Bottomley wrote:
-> > > On Tue, 2024-09-10 at 15:48 +0300, Jarkko Sakkinen wrote:
-> > > > On Tue Sep 10, 2024 at 3:39 PM EEST, Jarkko Sakkinen wrote:
-> > > > > On Tue Sep 10, 2024 at 12:05 PM EEST, Roberto Sassu wrote:
-> > > > > > On Tue, 2024-09-10 at 11:01 +0200, Linux regression
-> > > > > > tracking
-> > > > > > (Thorsten
-> > > > > > Leemhuis) wrote:
-> > > > > > > Hi, Thorsten here, the Linux kernel's regression tracker.
-> > > > > > > 
-> > > > > > > James, Jarkoo, I noticed a report about a regression in
-> > > > > > > bugzilla.kernel.org that appears to be caused by this
-> > > > > > > change of
-> > > > > > > yours:
-> > > > > > > 
-> > > > > > > 6519fea6fd372b ("tpm: add hmac checks to
-> > > > > > > tpm2_pcr_extend()")
-> > > > > > > [v6.10-rc1]
-> > > > > > > 
-> > > > > > > As many (most?) kernel developers don't keep an eye on
-> > > > > > > the bug
-> > > > > > > tracker,
-> > > > > > > I decided to forward it by mail. To quote from
-> > > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=219229 :
-> > > > > > > 
-> > > > > > > > When secureboot is enabled,
-> > > > > > > > the kernel boot time is ~20 seconds after 6.10 kernel.
-> > > > > > > > it's ~7 seconds on 6.8 kernel version.
-> > > > > > > > 
-> > > > > > > > When secureboot is disabled,
-> > > > > > > > the boot time is ~7 seconds too.
-> > > > > > > > 
-> > > > > > > > Reproduced on both AMD and Intel platform on ThinkPad
-> > > > > > > > X1 and
-> > > > > > > > T14.
-> > > > > > > > 
-> > > > > > > > It probably caused autologin failure and micmute led
-> > > > > > > > not
-> > > > > > > > loaded on AMD platform.
-> > > > > > > 
-> > > > > > > It was later bisected to the change mentioned above. See
-> > > > > > > the
-> > > > > > > ticket for
-> > > > > > > more details.
-> > > > > > 
-> > > > > > Hi
-> > > > > > 
-> > > > > > I suspect I encountered the same problem:
-> > > > > > 
-> > > > > > https://lore.kernel.org/linux-integrity/b8a7b3566e6014ba102ab98e10ede0d574d8930e.camel@huaweicloud.com/
-> > > > > > 
-> > > > > > Going to provide more info there.
-> > > > > 
-> > > > > I suppose you are going try to acquire the tracing data I
-> > > > > asked?
-> > > > > That would be awesome, thanks for taking the troube.  Let's
-> > > > > look
-> > > > > at the data and draw conclusions based on that.
-> > > > > 
-> > > > > Workaround is pretty simple: CONFIG_TCG_TPM2_HMAC=n to the
-> > > > > kernel
-> > > > > configuration disables the feature.
-> > > > > 
-> > > > > For making decisions what to do with the  we are talking
-> > > > > about ~2
-> > > > > week window estimated, given the Vienna conference slows
-> > > > > things
-> > > > > down, so I hope my workaround is good enough before that.
-> > > > 
-> > > > I can enumerate three most likely ways to address the issue:
-> > > > 
-> > > > 1. Strongest: drop from defconfig.
-> > > > 2. Medium: leave to defconfig but add an opt-in kernel command-
-> > > > line
-> > > >    parameter.
-> > > > 3. Lightest: if we can based on tracing data nail the
-> > > > regression in
-> > > >    sustainable schedule, fix it.
-> > > 
-> > > Actually, there's a fourth: not use sessions for the PCR extend
-> > > (if
-> > > we'd got the timings when I asked, this was going to be my
-> > > suggestion
-> > > if they came back problematic).  This seems only to be a problem
-> > > for
-> > > IMA measured boot (because it does lots of extends).  If
-> > > necessary this
-> > > could even be wrapped in a separate config or boot option that
-> > > only
-> > > disables HMAC on extend if IMA (so we still get security for
-> > > things
-> > > like sd-boot)
-> > 
-> > I can buy that but with a twist that make it an opt-in kernel
-> > command
-> > line option. We don't want to take already existing functionality
-> > away
-> > from those who might want to use it (given e.g. hardening
-> > requirements),
-> > and with that basis opt-in (by default disabled) would be more
-> > balanced
-> > way to address the issue.
-> > 
-> > Please do a send a patch!
-> 
-> I made few measurements. I have a Fedora 38 VM with TPM passthrough.
-> 
-> Kernels: 6.11-rc2+ (guest), 6.5.0-45-generic (host)
-> 
-> QEMU:
-> 
-> rc  qemu-kvm                                          1:4.2-
-> 3ubuntu6.27
-> ii  qemu-system-x86                                   1:6.2+dfsg-
-> 2ubuntu6.22
-> 
-> 
-> TPM2_PT_MANUFACTURER:
->   raw: 0x49465800
->   value: "IFX"
-> TPM2_PT_VENDOR_STRING_1:
->   raw: 0x534C4239
->   value: "SLB9"
-> TPM2_PT_VENDOR_STRING_2:
->   raw: 0x36373000
->   value: "670"
-> 
-> 
-> No HMAC:
-> 
-> # tracer: function_graph
-> #
-> # CPU  DURATION                  FUNCTION CALLS
-> # |     |   |                     |   |   |   |
->  0)               |  tpm2_pcr_extend() {
->  0)   1.112 us    |    tpm_buf_append_hmac_session();
->  0) # 6360.029 us |    tpm_transmit_cmd();
->  0) # 6415.012 us |  }
-> 
-> 
-> HMAC:
-> 
-> # tracer: function_graph
-> #
-> # CPU  DURATION                  FUNCTION CALLS
-> # |     |   |                     |   |   |   |
->  1)               |  tpm2_pcr_extend() {
->  1)               |    tpm2_start_auth_session() {
->  1) * 36976.99 us |      tpm_transmit_cmd();
->  1) * 84746.51 us |      tpm_transmit_cmd();
->  1) # 3195.083 us |      tpm_transmit_cmd();
->  1) @ 126795.1 us |    }
->  1)   2.254 us    |    tpm_buf_append_hmac_session();
->  1)   3.546 us    |    tpm_buf_fill_hmac_session();
->  1) * 24356.46 us |    tpm_transmit_cmd();
->  1)   3.496 us    |    tpm_buf_check_hmac_response();
->  1) @ 151171.0 us |  }
+Add missing descriptions for clause 33 options and return values for
+the show-pse and set-pse commands.
 
-Well, unfortunately, that tells us that it's the TPM itself that's
-taking the time processing the security overhead.  The ordering of the
-commands in tpm2_start_auth_session() shows
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Changes in v2:
+- Rebase on top of ethtool-next
+- Link to v1: https://lore.kernel.org/r/20240520-fix_missing_doc-v1-1-965c7debfc0e@bootlin.com
+---
+ ethtool.8.in | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
- 37ms for context restore of null key
- 85ms for start session with encrypted salt
-  3ms to flush null key
------
-125ms
+diff --git a/ethtool.8.in b/ethtool.8.in
+index 5b8b8d6..bf8af57 100644
+--- a/ethtool.8.in
++++ b/ethtool.8.in
+@@ -540,6 +540,8 @@ ethtool \- query or control network driver and hardware settings
+ .I devname
+ .RB [ podl\-pse\-admin\-control
+ .BR enable | disable ]
++.RB [ c33\-pse\-admin\-control
++.BR enable | disable ]
+ .HP
+ .B ethtool \-\-flash\-module\-firmware
+ .I devname
+@@ -1792,6 +1794,21 @@ status depend on internal PSE state machine and automatic PD classification
+ support. It corresponds to IEEE 802.3-2018 30.15.1.1.3
+ (aPoDLPSEPowerDetectionStatus) with potential values being
+ .B disabled, searching, delivering power, sleep, idle, error
++.TP
++.B c33-pse-admin-state
++This attribute indicates the operational status of c33 PSE functions, which
++can be modified using the
++.B c33-pse-admin-control
++parameter. It corresponds to IEEE 802.3-2022 30.9.1.1.2 (aPSEAdminState),
++with potential values being
++.B enabled, disabled
++.TP
++.B c33-pse-power-detection-status
++This attribute indicates the power detection status of the c33 PSE. The
++status depend on internal PSE state machine and automatic PD classification
++support. It corresponds to IEEE 802.3-2022 30.9.1.1.5
++(aPSEPowerDetectionStatus) with potential values being
++.B disabled, searching, delivering power, test, fault, other fault
+ .RE
+ 
+ .RE
+@@ -1803,6 +1820,10 @@ Set Power Sourcing Equipment (PSE) parameters.
+ .A2 podl-pse-admin-control \ enable disable
+ This parameter manages PoDL PSE Admin operations in accordance with the IEEE
+ 802.3-2018 30.15.1.2.1 (acPoDLPSEAdminControl) specification.
++.TP
++.A2 c33-pse-admin-control \ enable disable
++This parameter manages c33 PSE Admin operations in accordance with the IEEE
++802.3-2022 30.9.1.2.1 (acPSEAdminControl) specification.
+ 
+ .RE
+ .TP
 
-If we context save the session, we'd likely only bear a single 37ms
-cost to restore it (replacing the total 125ms).  However, there's
-nothing we can do about the extend execution going from 6ms to 24ms, so
-I could halve your current boot time with security enabled (it's
-currently 149ms, it would go to 61ms, but it's still 10x slower than
-the unsecured extend at 6ms)
+---
+base-commit: b3ee7c0fa87032dec614dcc716c08a3b77d80fb0
+change-id: 20240520-fix_missing_doc-6a0efe51549c
 
-James
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
 
