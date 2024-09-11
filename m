@@ -1,62 +1,67 @@
-Return-Path: <linux-kernel+bounces-324843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE1975174
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:08:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8BB975175
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6E51F21B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237791F225A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C07187FE1;
-	Wed, 11 Sep 2024 12:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B0187869;
+	Wed, 11 Sep 2024 12:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PilP3+G6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1KDYyBq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22B973477;
-	Wed, 11 Sep 2024 12:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021B873477;
+	Wed, 11 Sep 2024 12:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056514; cv=none; b=fQ3Pg0C6vPswU2MDG0thOoSLsj0ki7NiM+Yq0/yD64zKJF5cUCan4EselVMNWGh+CRiigQbUvdPZ9tnDPohTQyiyvnKBFKsC2DtyBogh5XTwwiB8rLdbd0YJ7JghYgJOJZ5pijUta+nmNCbwLFJzGVrZQUGZol9lyq6Bk3Eg93I=
+	t=1726056535; cv=none; b=dLBEGNEaeRgm1IGCTu8qdu8rYCvEjOVnOfKTvew16GSHvYwuWcAcjvzg88hB7B8hqssZsl8FBtYpDb33k0mj2O5UtdLK9VFWsCmOnc2O7T32ds5TMPRVcBQdUU+4bnvAY98EsmWI7HH4sik3e6r4jtpArwe7Dfi2OB+JjSOy5c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056514; c=relaxed/simple;
-	bh=QLNnXWWCJuxLHShYf3yyFq9X0ONNT3DDkry63vs9LW8=;
+	s=arc-20240116; t=1726056535; c=relaxed/simple;
+	bh=w/tDZv4M/XcKS4q0HA8T/eO5qRUpw6WhnQbqCTdFFvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZ+0m4LVEtJNZCc66TTx04nT/HIAW6DZiqdwNP+rioJPtpVyA2WgmwKHSK8+B1iKTyaB30G8y2jbOvChOFWKNzYiW2lhNCokjs7FMTuNVR57VyU9WoeXiqEI9cPbnhuaR0rimnXROIkraUGIS7AEf1hH7GZdSaqL2go9xFlvQVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PilP3+G6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UcnSSS5sRbFX0joRIuOGLRbcv8l/EOFUaWyvL+VtAak=; b=PilP3+G6Zom03ujXLIAxQBJ/qi
-	/6aw+pkStQIo1qMMhJxujyZfFPK0z5YQHk0Uph41N6mBmv1UJXV0iXemI8DWq87SwkGjX+OfmGJnN
-	ycxd9PeRJPsxEm5vdG+vZGeOlVG61teU6iM1/Kg4RPqEBBY+2B04yf193PWjgYrw4URc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1soM8x-007CXl-Dx; Wed, 11 Sep 2024 14:08:19 +0200
-Date: Wed, 11 Sep 2024 14:08:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfjr3LbUnI5W92or7YBRWU53mi/kaVNf7+h8xmWiQqd5B+heskRXBlpVC8tNYVyJvvvXQL6WJiBzsjeWMP2fyVHxw6pCEz+uqW3/BV6U9CEiXyPP0eftRIZq6Bwu8x46eC6Lwtde5yxaQYCo8Ub8nRcLbHQnCKm2pCLTIHYY8eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1KDYyBq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A77BC4CEC5;
+	Wed, 11 Sep 2024 12:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726056534;
+	bh=w/tDZv4M/XcKS4q0HA8T/eO5qRUpw6WhnQbqCTdFFvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d1KDYyBql2g0tmnA4tajxcg2o9MFrW6hOdI5jmJVDR9RivGjEV2MZcIT7bp88c29f
+	 ov/M8bP8IDDX9wM8N+wBoYsalVsh6p5vMcorq11vr/deYqq+74Cd0cgdo+zSPT6uSd
+	 K5LsIBliXj81sT/gm6Zyi90gWZsWZ6yQCWW8mg4Y9X94wWOcdrWWJSqyfn3uJTjDdL
+	 rUaweht1UGI0aUDuRb4PVgkxN34gASe2taDRPz5ONXxdZw/+c6QxXPDVyeHZi142h4
+	 mNfJvEg9LQ+veMNU2eOMgZxD1Pgd0N4eCMbDoHX9liKoFFlS//pD3upQ++iAb3B/3r
+	 RdaYsLpd/1i+w==
+Date: Wed, 11 Sep 2024 14:08:47 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	netdev@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 12/15] iopoll/regmap/phy/snd: Fix comment referencing
- outdated timer documentation
-Message-ID: <0a7f2282-cbd0-4f27-bfe4-30b0c1a4705b@lunn.ch>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-12-b0d3f33ccfe0@linutronix.de>
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuan Yao <yuan.yao@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>,
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
+	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] x86/tdx: Fix "in-kernel MMIO" check
+Message-ID: <ZuGITwFiv5X3wg0y@example.org>
+References: <cover.1724837158.git.legion@kernel.org>
+ <cover.1725622408.git.legion@kernel.org>
+ <398de747c81e06be4d3f3602ee11a7e2881f31ed.1725622408.git.legion@kernel.org>
+ <24ec1497-af03-4e65-abb4-db89590fb28e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,35 +70,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-12-b0d3f33ccfe0@linutronix.de>
+In-Reply-To: <24ec1497-af03-4e65-abb4-db89590fb28e@intel.com>
 
-On Wed, Sep 11, 2024 at 07:13:38AM +0200, Anna-Maria Behnsen wrote:
-> Function descriptions in iopoll.h, regmap.h, phy.h and sound/soc/sof/ops.h
-> copied all the same outdated documentation about sleep/delay function
-> limitations. In those comments, the generic (and still outdated) timer
-> documentation file is referenced.
+On Tue, Sep 10, 2024 at 12:54:19PM -0700, Dave Hansen wrote:
+> On 9/6/24 04:49, Alexey Gladkov wrote:
+> > +static inline bool is_kernel_addr(unsigned long addr)
+> > +{
+> > +	return (long)addr < 0;
+> > +}
+> > +
+> >  static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  {
+> >  	unsigned long *reg, val, vaddr;
+> > @@ -434,6 +439,11 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  			return -EINVAL;
+> >  	}
+> >  
+> > +	if (!user_mode(regs) && !is_kernel_addr(ve->gla)) {
+> > +		WARN_ONCE(1, "Access to userspace address is not supported");
+> > +		return -EINVAL;
+> > +	}
 > 
-> As proper function descriptions for used delay and sleep functions are in
-> place, simply update the descriptions to reference to them. While at it fix
-> missing colon after "Returns" in function description and move return value
-> description to the end of the function description.
+> Should we really be open-coding a "is_kernel_addr" check?  I mean,
+> TASK_SIZE_MAX is there for a reason.  While I doubt we'd ever change the
+> positive vs. negative address space convention on 64-bit, I don't see a
+> good reason to write a 64-bit x86-specific is_kernel_addr() when a more
+> generic, portable and conventional idiom would do.
+
+I took arch/x86/events/perf_event.h:1262 as an example. There is no
+special reason in its own function.
+
+> So, please use either a:
 > 
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-sound@vger.kernel.org
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> ---
-> v2: Add cleanup of usage of 'Returns' in function description
-> ---
->  include/linux/iopoll.h | 52 +++++++++++++++++++++++++-------------------------
->  include/linux/phy.h    |  9 +++++----
+> 	addr < TASK_SIZE_MAX
+> 
+> check, or use fault_in_kernel_space() directly.
 
-For the phy.h parts:
+I'll use fault_in_kernel_space() since SEV uses it. Thanks.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+-- 
+Rgrds, legion
 
-    Andrew
 
