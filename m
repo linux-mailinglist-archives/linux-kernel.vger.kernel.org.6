@@ -1,150 +1,102 @@
-Return-Path: <linux-kernel+bounces-324947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624B5975310
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:59:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5291997530F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B66BB2A748
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EA01282B9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDF11940B2;
-	Wed, 11 Sep 2024 12:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E4019C54E;
+	Wed, 11 Sep 2024 12:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="VepjVBko"
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHsEyEmp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240ED1885B4;
-	Wed, 11 Sep 2024 12:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B3F18F2DF;
+	Wed, 11 Sep 2024 12:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726059530; cv=none; b=sr5XK3ehd+mKGeZ/pynPblP1R3IlHdI7pzYPZL399MXhw+1aCTufSM8u+VArdrHF2LXbzG/AsGHbAZZnWWaFTrpkiV1sTB6Lp03XHrNoyY35u/uzvjIw/8m+m6KDB2Ric7jZybCFS5IDggxFVHyVJzerBChOqJ0NkT0L5/rhF0g=
+	t=1726059558; cv=none; b=jKCm5E4SBUkbf7dwcJTzNWB4IggU1L4PJYhF2OylgnGR+7EAkxfnoHw2YPw/OTNap5t/1HKcv0zCUVDEdSel/t7gwDcd0wzR4yTjlt5ByKTM7M8mS9rrLF3nAgeJ6ZgXeFi48O7rqBTIksCkZBEosqV9fH1ve83tFKVMRROoiZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726059530; c=relaxed/simple;
-	bh=sFSDhVHyWubHq285UfVdEgDt9J2WxtbLEEQB4iHlfn8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sMxYV2Sa71gM1oMc1yflzMVaEbgZyPgxTVMJk2Wq+vVAVRakkAOBuFn8bRKhoDmR9Rsty+xyZPQSHlxMcixtfOQvSbRxJnXU8jlU6ya/HVSb1hXU+yxtDp5xE1hwFVYMacudB9EFyVTeo2tmFeo+5c+ISaeK79VSKYa+Ck+z05g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=VepjVBko; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1726059509; bh=sFSDhVHyWubHq285UfVdEgDt9J2WxtbLEEQB4iHlfn8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VepjVBkoYroeW66fT/oDII4FCr899MvoG8ubwqOAols6PhvRjHkF+w+BzByn8tUO8
-	 BAJGMWH5ZYzU59dPTe5Ly9G3WmXrkAMpJLZP9lyUDFgul/YwHYjJ74aN73OTCP8Z+v
-	 iPJt+VDqUo6PMGqyKVusDB5OCkITa9uJDUc4NsJg=
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Wed, 11 Sep 2024 14:58:28 +0200 (CEST)
-From: Thomas Martitz <tmartitz-oss@avm.de>
-To: Roopa Prabhu <roopa@nvidia.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: jnixdorf-oss@avm.de,
-	Thomas Martitz <tmartitz-oss@avm.de>,
-	bridge@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] net: bridge: drop packets with a local source
-Date: Wed, 11 Sep 2024 14:58:17 +0200
-Message-ID: <20240911125820.471469-1-tmartitz-oss@avm.de>
+	s=arc-20240116; t=1726059558; c=relaxed/simple;
+	bh=8agYiCTVQpE8G2w0lJqMut2X09xN00wnGksfG2F1d4c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Qepd2NQr1pLyTbvY97TjACsgt/WzwPMnIiKw4TC6zFDDPGKX5PqVYmN2XcWMwPfTUIYrVeub4y1qG0DCTvJofUqisYDHDNL0pwp9Zn1A16R4uGWDxB5xlXXqpq7TEHE3yxS8KBIDCLodCIBT7LxL2hAOi00tI/is+rKRuzxw/CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHsEyEmp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34004C4CEC6;
+	Wed, 11 Sep 2024 12:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726059557;
+	bh=8agYiCTVQpE8G2w0lJqMut2X09xN00wnGksfG2F1d4c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=fHsEyEmpYEKOdHNCIiYXtk6L/dWrBOyXAVzVTycQdaJSjxU2xvvMRgTcDM6t3qZn0
+	 OgM3LCIBnjVQNGNxeruc5fA3Vtoq5fuLacPnDQq7ZvLpZcYA+iygsbPpIYvAncl/iF
+	 9ECBeseGR+z1o0boswggHuXuyeSc9/ulWOCqLWK0bYGNQyHTm9ZU2jorupbzbvjM7M
+	 symiPWLVItoQ3zXHfughfpGYlpO5baQ71WkpjQDMaSBS59o2zzcopOJbB2YR5NjtGT
+	 bSTelR4gTefm1OVNtVmmu66UgQUzSFpGOjzT3Pqy7lbIRonB5HL4FK6BViNp9MSqzp
+	 AHkmodUGC+1XA==
+From: Mark Brown <broonie@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ venkataprasad.potturu@amd.com, cristian.ciocaltea@collabora.com, 
+ Syed.SabaKareem@amd.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240911093554.2076872-1-Vijendar.Mukunda@amd.com>
+References: <20240911093554.2076872-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 1/2] ASoC: amd: acp: remove MODULE_ALIAS for legacy
+ machine driver
+Message-Id: <172605955493.57388.7500481938110885017.b4-ty@kernel.org>
+Date: Wed, 11 Sep 2024 13:59:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-purgate-ID: 149429::1726059508-E4599885-C19FD759/0/0
-X-purgate-type: clean
-X-purgate-size: 3382
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Currently, there is only a warning if a packet enters the bridge
-that has the bridge's or one port's MAC address as source.
+On Wed, 11 Sep 2024 15:05:53 +0530, Vijendar Mukunda wrote:
+> As module device table added for AMD legacy machine driver, MODULE_ALIAS
+> is not required. Remove MODULE_ALIAS for AMD legacy machine driver.
+> 
+> 
 
-Clearly this indicates a network loop (or even spoofing) so we
-generally do not want to process the packet. Therefore, move the check
-already done for 802.1x scenarios up and do it unconditionally.
+Applied to
 
-For example, a common scenario we see in the field:
-In a accidental network loop scenario, if an IGMP join
-loops back to us, it would cause mdb entries to stay indefinitely
-even if there's no actual join from the outside. Therefore
-this change can effectively prevent multicast storms, at least
-for simple loops.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
----
- net/bridge/br_fdb.c   |  4 +---
- net/bridge/br_input.c | 17 ++++++++++-------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+Thanks!
 
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index c77591e63841..e33b2583e129 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -900,9 +900,7 @@ void br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
- 	if (likely(fdb)) {
- 		/* attempt to update an entry for a local interface */
- 		if (unlikely(test_bit(BR_FDB_LOCAL, &fdb->flags))) {
--			if (net_ratelimit())
--				br_warn(br, "received packet on %s with own address as source address (addr:%pM, vlan:%u)\n",
--					source->dev->name, addr, vid);
-+			return;
- 		} else {
- 			unsigned long now = jiffies;
- 			bool fdb_modified = false;
-diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-index ceaa5a89b947..06db92d03dd3 100644
---- a/net/bridge/br_input.c
-+++ b/net/bridge/br_input.c
-@@ -77,7 +77,7 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
- {
- 	struct net_bridge_port *p = br_port_get_rcu(skb->dev);
- 	enum br_pkt_type pkt_type = BR_PKT_UNICAST;
--	struct net_bridge_fdb_entry *dst = NULL;
-+	struct net_bridge_fdb_entry *fdb_src, *dst = NULL;
- 	struct net_bridge_mcast_port *pmctx;
- 	struct net_bridge_mdb_entry *mdst;
- 	bool local_rcv, mcast_hit = false;
-@@ -108,10 +108,14 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
- 				&state, &vlan))
- 		goto out;
- 
--	if (p->flags & BR_PORT_LOCKED) {
--		struct net_bridge_fdb_entry *fdb_src =
--			br_fdb_find_rcu(br, eth_hdr(skb)->h_source, vid);
--
-+	fdb_src = br_fdb_find_rcu(br, eth_hdr(skb)->h_source, vid);
-+	if (fdb_src && test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
-+		/* Spoofer or short-curcuit on the network. Drop the packet. */
-+		if (net_ratelimit())
-+			br_warn(br, "received packet on %s with own address as source address (addr:%pM, vlan:%u)\n",
-+				p->dev->name, eth_hdr(skb)->h_source, vid);
-+		goto drop;
-+	} else if (p->flags & BR_PORT_LOCKED) {
- 		if (!fdb_src) {
- 			/* FDB miss. Create locked FDB entry if MAB is enabled
- 			 * and drop the packet.
-@@ -120,8 +124,7 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
- 				br_fdb_update(br, p, eth_hdr(skb)->h_source,
- 					      vid, BIT(BR_FDB_LOCKED));
- 			goto drop;
--		} else if (READ_ONCE(fdb_src->dst) != p ||
--			   test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
-+		} else if (READ_ONCE(fdb_src->dst) != p) {
- 			/* FDB mismatch. Drop the packet without roaming. */
- 			goto drop;
- 		} else if (test_bit(BR_FDB_LOCKED, &fdb_src->flags)) {
--- 
-2.46.0
+[1/2] ASoC: amd: acp: remove MODULE_ALIAS for legacy machine driver
+      commit: bacae49eccb9a3acaf74fc275893abc26c0420b5
+[2/2] ASoC: amd: acp: remove MODULE_ALIAS for sof based generic machine driver
+      commit: 0b0aa67baa8904e3c1e13be48a2ca125f59ead3d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
