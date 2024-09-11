@@ -1,226 +1,154 @@
-Return-Path: <linux-kernel+bounces-325508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BF4975A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D797975A8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E76287206
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DDF1C22BF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672D51BA874;
-	Wed, 11 Sep 2024 18:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E4815E5B8;
+	Wed, 11 Sep 2024 18:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m78bhn4H"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWVFt+KF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0021B9B58;
-	Wed, 11 Sep 2024 18:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A008B1B533C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080448; cv=none; b=Prul6UFsR71TxhoTjKMhfb9Ge8dbCUln+lXKRUK294Vtv4LLv3R85kHAOG8UyoYs1t0mosoZ3ZR0bnMo84cMyBRP5qp5hO8rKalNiQpdxgDYZietuwt6SdJTUFExgz3oA2j5j9T3aZA06ZTyeXhawXIipy8QhmhuyDV1LMVx20A=
+	t=1726080566; cv=none; b=IBBl3mf/S+56pbF/9iVwyXwfuzB8Euy8+LDBsIt3sbMSWR74T6B9uudnQWj9IEdFqhENiPe43bP6ZMPujUtSseOK6vmcjb0e/YmFNeaPx8f3OFAO9uD2X6vy8HaXh8XD5xypMgIJB6ICMiF7suRKEjrR5dBNP7i/kFVOhBZfXSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080448; c=relaxed/simple;
-	bh=g1wKLq6EZVzIY+jjtq31yNBD0OEGVAAlGiGuJ4FjodA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VY+tezW6uHGhTAkcC60RDls9o9V0SmmEnDME68FBLX2sEN5y9AoyMuJTU0M3XUbOKoRUI6/zgR7QSPfSi9l+gQFXQapxN9dU9SULr0Xlo4DPof2Zwx5JGLRr3fJHaupiVMKYsfLxuNi8YLzhhKjKNlS2zQbqumrroV/bxyVemx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m78bhn4H; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5356bb55224so167735e87.0;
-        Wed, 11 Sep 2024 11:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726080444; x=1726685244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9fewwl+lFoaJ2FBbeLyQj39EYVP4HCmDCuF5Re12r5s=;
-        b=m78bhn4Huuc3RghchgacuBDhvpXroLJlb88RMjyJjMFnOHIu3UztD82B5Z4pRL65Pn
-         PlVGbY7jhrPspaunB+adv+1nENe4z/+78UmPZT28eFuaZPH3xp2hv9UQelUk9IfrbVHW
-         8/XTfc0oX3PLoRxkK+XdNa2g8cHQZAeH7vVrKuxRcdlGOEY0rDXpTb4sLr0t75dvm5R2
-         0vYB8iVN5KOobH4WYLgoaz/8AhIh4sS2K8jyKTMJ0D2KD+BJiSyRbd6NuTUkj9ZLPnBO
-         PWYYsl5GUkmlDQ3v8sZPAAb6DX1WRmK9bbdZ1AzmhSHMrggI0EWj+HIdz1VAQESVA5Cy
-         0xwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726080444; x=1726685244;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9fewwl+lFoaJ2FBbeLyQj39EYVP4HCmDCuF5Re12r5s=;
-        b=KOLJ/4SnzdDr0lH9KisONdKXcrZUqBc9vj6hXuJFPXnSyGiklefabQinC0+Ln6nQlT
-         ySp1u8WcKsglbRhs0DNXizi5UBMHLGJwKGpdgYwp78IAAJnIoAyKuT4DFgpuKWEYKMot
-         m3Hk7UPg/kAfmthAHacGjsik+DBPciG8DaMhfS2VPXi6hM7Eq9cub250TZO+qh6rruAm
-         CWpXABOmrgyGUSiHqNcfF5WvB0Xz/X+pqd/8scP2Sd/JCBwM0XHArQ5spNovxRl6kZ2v
-         g99TrbUBs3cKIIbwiHTy+6UicD0uU4ZwhhSr9D+XARfaaC3jbG4UsrE9yr7U8Al1DXjQ
-         5Znw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoyPI5YnPzJ0Vu+MGyXz0088nU7xfTwVikkIwE+dHF6Y+rWKoeQYUpjO0VniJDPblYOhLNfKbFGsOrz0I2@vger.kernel.org, AJvYcCUye04XOStBEnjdLM2EVzem/GYAKM8+a/vFPCELc+q1xaJH/ERLpeoNQr1jQVfEupoC1IidNuLX+wfTUQdC@vger.kernel.org, AJvYcCXiYoheGawCWH2z4L+9cOES6nNzrPlDz5q2e+Vza2Ynm4JV+LkHrc/h/eEJDeXNLHMuf1BlLht+OjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCCiimecGBVS04QiQBB3KEb248QwwX6lOCX/2wL1N3L0NK3Iu7
-	k15Zq7XXVPW+tocSSgrnTW6qFUll51tj2uZn8g4ZpdEHjE0xumtA
-X-Google-Smtp-Source: AGHT+IEmC7BC2TuOTOPFoYXjgiONufb+BKVRN5oCB9gLhz95XL5udTn4Yjj2M7EVU/OSD0jfXkKRRg==
-X-Received: by 2002:a05:6512:12c8:b0:533:46cc:a71e with SMTP id 2adb3069b0e04-53678fec522mr210325e87.54.1726080443614;
-        Wed, 11 Sep 2024 11:47:23 -0700 (PDT)
-Received: from localhost ([185.195.191.165])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d531sm1671429e87.267.2024.09.11.11.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 11:47:23 -0700 (PDT)
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Maciej Sosnowski <maciej.sosnowski@intel.com>,
-	Haavard Skinnemoen <haavard.skinnemoen@atmel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	dmaengine@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not idle error
-Date: Wed, 11 Sep 2024 21:46:10 +0300
-Message-ID: <20240911184710.4207-3-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240911184710.4207-1-fancer.lancer@gmail.com>
-References: <20240911184710.4207-1-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1726080566; c=relaxed/simple;
+	bh=QkRTtUH1Qx9EeNdcC4BeO8C9YO9X21MwlKIOOxowpH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnHh+HWBXJg+aoub/rzO6D1xzT/UMiQolLq59NLO4k+U7AIkZftfatTf9Wigq3ahSdkgsN0ovIuLG1eIr3j8GgUq5/yUlf2bCF7XKulRXrcNajbbUz7ioruZRAX0xIexHLzMocT9gkSZBc2+zfvmY59l5o0ae6L3jQMwx9cySrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWVFt+KF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B53C3C4CEC7;
+	Wed, 11 Sep 2024 18:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726080566;
+	bh=QkRTtUH1Qx9EeNdcC4BeO8C9YO9X21MwlKIOOxowpH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWVFt+KFkvJ29ZRJipd0lZwZzachVDhgX5+tZy23VA7Hy3sVMVbH8qs8r5Kf7vuj6
+	 EpZyfGLlne914dT5Uhsi89Yi3I7IZNSu8nkVGYXocmS/KlNZdVljnzgjk8RyfjjA++
+	 8OySos9fOL6fHpgrKGXHvjgTJG1gIGVlGD/6vOs6u382xxJyAcbE3IoDGZaHJH5UwW
+	 p2ae4WaH4+KrZrAnOjum7QzlMbhUt+ze/6NglQNUmrvEc9aaF98/kNMtukacKkw7B+
+	 Krx6X9NCKXVc8sl6oG9UT3vdU856r6OA8aj5w9MPNJmkY0GyiCOsafy/G/QBDcF3d/
+	 WSGk/Fw94ApgA==
+Date: Wed, 11 Sep 2024 19:49:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "Yu, Yu-cheng" <yu-cheng.yu@intel.com>,
+	"Yang, Weijiang" <weijiang.yang@intel.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"bp@alien8.de" <bp@alien8.de>, "rppt@kernel.org" <rppt@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>
+Subject: Re: [PATCH] x86/shstk: Free the thread shadow stack before
+ disassociating from the mm
+Message-ID: <ed4bccc1-add2-49fd-8c46-505f0e493fc7@sirena.org.uk>
+References: <20240910-x86-fix-shstk-leak-v1-1-43cef0c56b75@kernel.org>
+ <d4c68681d9e72a5b841bbbb1af1606b382079ad6.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Cca5Ht1IQtErMzzx"
+Content-Disposition: inline
+In-Reply-To: <d4c68681d9e72a5b841bbbb1af1606b382079ad6.camel@intel.com>
+X-Cookie: No Canadian coins.
 
-If a client driver gets to use the DW DMAC engine device tougher
-than usual, with occasional DMA-transfers termination and restart, then
-the next error can be randomly spotted in the system log:
 
-> dma dma0chan0: BUG: XFER bit set, but channel not idle!
+--Cca5Ht1IQtErMzzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For instance that happens in case of the 8250 UART port driver handling
-the looped back high-speed traffic (in my case > 1.5Mbaud) by means of the
-DMA-engine interface.
+On Wed, Sep 11, 2024 at 06:01:00PM +0000, Edgecombe, Rick P wrote:
+> On Tue, 2024-09-10 at 23:56 +0100, Mark Brown wrote:
 
-The error happens due to the two-staged nature of the DW DMAC IRQs
-handling procedure and due to the critical section break in the meantime.
-In particular in case if the DMA-transfer is terminated and restarted:
-1. after the IRQ-handler submitted the tasklet but before the tasklet
-   started handling the DMA-descriptors in dwc_scan_descriptors();
-2. after the XFER completion flag was detected in the
-   dwc_scan_descriptors() method, but before the dwc_complete_all() method
-   is called
-the error denoted above is printed due to the overlap of the last transfer
-completion and the new transfer execution stages.
+> > When using shadow stacks the kernel will transparently allocate a shadow
+> > stack for each thread. The intention is that this will be freed when the
+> > thread exits but currently this doesn't actually happen. The deallocation
+> > is done by shstk_free() which is called from exit_thread() and has a guard
+> > to check for !tsk->mm due to the use of vm_unmap(). This doesn't actually
+> > do anything since in do_exit() we call exit_mm() prior to thread_exit() and
+> > exit_mm() disassociates the task from the mm and clears tsk->mm. The result
+> > is that no shadow stacks will be freed until the process exits, leaking
+> > memory for any process which creates and destroys threads.
 
-There are two places need to be altered in order to fix the problem.
-1. Clear the IRQs in the dwc_chan_disable() method. That will prevent the
-   dwc_scan_descriptors() method call in case if the DMA-transfer is
-   restarted in the middle of the two-staged IRQs-handling procedure.
-2. Move the dwc_complete_all() code to being executed inseparably (in the
-   same atomic section) from the DMA-descriptors scanning procedure. That
-   will prevent the DMA-transfer restarts after the DMA-transfer completion
-   was spotted but before the actual completion is executed.
+...
 
-Fixes: 69cea5a00d31 ("dmaengine/dw_dmac: Replace spin_lock* with irqsave variants and enable submission from callback")
-Fixes: 3bfb1d20b547 ("dmaengine: Driver for the Synopsys DesignWare DMA controller")
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/dma/dw/core.c | 54 ++++++++++++++++++++-----------------------
- 1 file changed, 25 insertions(+), 29 deletions(-)
+> > It is entirely possible I am missing something here, I don't have a
+> > system that allows me to test shadow stack support directly and have
+> > only checked this by inspection and tested with my arm64 GCS series.
+> > If this makes sense it'll need to become a dependency for GCS.
 
-diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
-index af1871646eb9..fbc46cbfe259 100644
---- a/drivers/dma/dw/core.c
-+++ b/drivers/dma/dw/core.c
-@@ -143,6 +143,12 @@ static inline void dwc_chan_disable(struct dw_dma *dw, struct dw_dma_chan *dwc)
- 	channel_clear_bit(dw, CH_EN, dwc->mask);
- 	while (dma_readl(dw, CH_EN) & dwc->mask)
- 		cpu_relax();
-+
-+	dma_writel(dw, CLEAR.XFER, dwc->mask);
-+	dma_writel(dw, CLEAR.BLOCK, dwc->mask);
-+	dma_writel(dw, CLEAR.SRC_TRAN, dwc->mask);
-+	dma_writel(dw, CLEAR.DST_TRAN, dwc->mask);
-+	dma_writel(dw, CLEAR.ERROR, dwc->mask);
- }
- 
- /*----------------------------------------------------------------------*/
-@@ -259,34 +265,6 @@ dwc_descriptor_complete(struct dw_dma_chan *dwc, struct dw_desc *desc,
- 	dmaengine_desc_callback_invoke(&cb, NULL);
- }
- 
--static void dwc_complete_all(struct dw_dma *dw, struct dw_dma_chan *dwc)
--{
--	struct dw_desc *desc, *_desc;
--	LIST_HEAD(list);
--	unsigned long flags;
--
--	spin_lock_irqsave(&dwc->lock, flags);
--	if (dma_readl(dw, CH_EN) & dwc->mask) {
--		dev_err(chan2dev(&dwc->chan),
--			"BUG: XFER bit set, but channel not idle!\n");
--
--		/* Try to continue after resetting the channel... */
--		dwc_chan_disable(dw, dwc);
--	}
--
--	/*
--	 * Submit queued descriptors ASAP, i.e. before we go through
--	 * the completed ones.
--	 */
--	list_splice_init(&dwc->active_list, &list);
--	dwc_dostart_first_queued(dwc);
--
--	spin_unlock_irqrestore(&dwc->lock, flags);
--
--	list_for_each_entry_safe(desc, _desc, &list, desc_node)
--		dwc_descriptor_complete(dwc, desc, true);
--}
--
- /* Returns how many bytes were already received from source */
- static inline u32 dwc_get_sent(struct dw_dma_chan *dwc)
- {
-@@ -303,6 +281,7 @@ static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
- 	struct dw_desc *child;
- 	u32 status_xfer;
- 	unsigned long flags;
-+	LIST_HEAD(list);
- 
- 	spin_lock_irqsave(&dwc->lock, flags);
- 	status_xfer = dma_readl(dw, RAW.XFER);
-@@ -341,9 +320,26 @@ static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
- 			clear_bit(DW_DMA_IS_SOFT_LLP, &dwc->flags);
- 		}
- 
-+		/*
-+		 * No more active descriptors left to handle. So submit the
-+		 * queued descriptors and finish up the already handled ones.
-+		 */
-+		if (dma_readl(dw, CH_EN) & dwc->mask) {
-+			dev_err(chan2dev(&dwc->chan),
-+				"BUG: XFER bit set, but channel not idle!\n");
-+
-+			/* Try to continue after resetting the channel... */
-+			dwc_chan_disable(dw, dwc);
-+		}
-+
-+		list_splice_init(&dwc->active_list, &list);
-+		dwc_dostart_first_queued(dwc);
-+
- 		spin_unlock_irqrestore(&dwc->lock, flags);
- 
--		dwc_complete_all(dw, dwc);
-+		list_for_each_entry_safe(desc, _desc, &list, desc_node)
-+			dwc_descriptor_complete(dwc, desc, true);
-+
- 		return;
- 	}
- 
--- 
-2.43.0
+> The common cleanup case is via deactivate_mm()->shstk_free(), which happens when
+> the MM is still attached. But there is also an exit_thread() caller in the fork
+> failure patch (see copy_process()).
 
+Ah, yes - glad I was missing something!  I saw exit_thread() doing the
+right thing in the error paths but not deactivate_mm().
+
+> A quick search through the arm series and I don't see deactivate_mm()
+> implementation, and instead a separate cleanup solution. Could that be the
+> reason why you saw the leak on arm? Considering the trickiness of the auto
+> allocated shadow stacks lifecycle, I think it would be great if all the
+> implementations had common logic. If possible at least.
+
+Yes, it's because we don't have a deactivate_mm() implementation and I
+didn't add one (or lost it at some point), effectively this patch is
+just adding deactivate_mm() by another name.  The hook being a macro
+definition in the header caught me out I think, I was probably just
+using regular grep not git grep when I went looking.
+
+I was actually considering what some factoring out might look like in
+the context of the clone3() work, as incremental work on top of landing
+the ABI so we try to avoid introducing yet more rounds of discussion to
+delay that.  map_shadow_stack() as well.
+
+> BTW, two more notes on this whole area:
+> 1. 99% sure glibc has some tests that catch leaks like hypothesized here, by
+> watching for memory grown after repeated thread exits. IIRC I introduced a
+> shadow stack leak at some point during development that failed the test.
+
+Guess how this was noticed!  It's tst-create-detached.c, with IIRC
+tweaks to the environment (I think it was turning overcommit off was the
+main thing) to make the test actually detect something itself.
+
+> 2. Weijiang (CCed) is working on a fix for case in the opposite direction. An
+> error path that attempts to free the shadow stack twice and triggers a warning.
+
+Ack.
+
+--Cca5Ht1IQtErMzzx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbh5jAACgkQJNaLcl1U
+h9AZBwf+NTIYpD24UCRf8TQhSUE6wuwUyCXKvX75CO1oLQTUF7bTpIuOjPhkTEjC
+mvL6MPtj5xhUnu8O583VTkZNCXLdSRr3j+06xI9WqqGpW0d8eplS94NjL4QQCOxL
+/SWXmjGXa2VHokVSCsHkW6B+kh0ZrtRZ5KrH9WPshDcIcZ5gwAOg1WzxuNwYCzsV
+/9zyGAMxoZ258YZm922+radIUUYqnqDPoH0BGstDG2I7pRQJRHSR/WwFd7d3wF0D
+tXSVVtvRKbs9WmpECAwjpByCbsx0BMOJ3DdvSGiuuSCrVqvMbsOFRa5RXm0pwfCr
+OOq4GZrcrhfQp8D94+Cs8No+SZVfVg==
+=jHwk
+-----END PGP SIGNATURE-----
+
+--Cca5Ht1IQtErMzzx--
 
