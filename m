@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-324876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACFD9751F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:23:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985469751F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8EF6283075
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDB41F2315B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6EB188A05;
-	Wed, 11 Sep 2024 12:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ACC188A05;
+	Wed, 11 Sep 2024 12:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="SzJcLeoD"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J9ydOwuf"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA57142E9D;
-	Wed, 11 Sep 2024 12:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6E176ADE;
+	Wed, 11 Sep 2024 12:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057414; cv=none; b=SVFEHQU4gOj8w6ORyghvOFsj9vrpsQiblS943jHsjtwQJzGVZEsAm24KmYxKDowa1Ys3WpPOmyMNqoAPScWTwBMiH0j4ul1F+U0cp0ZNWJpd1+jQcmQKaaMNqGs2g1DbteHV+AWG7z1oj5Xj1sl6TdhUNj+FmI9xm3D3WBlrunA=
+	t=1726057462; cv=none; b=DtUKJa+p1+1BkRAegGPLqedXbCGJrkZ4oGDDrR24vgMUI3HoWK2TsrusSU0Pjp8yT/2hLk73e3t+bWTREnwYbaj9STdyn5owGPxyWhTF1/gOhqCK2hqnG89E6nkvglbTBFRlP1fV8krKFi3emdAO6vdL5uIcD+uDitUFlgjY11Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057414; c=relaxed/simple;
-	bh=DqLXaji5lH2QLr1w3bBVF9EeaBQoVRIIV8XgFCrhhSU=;
+	s=arc-20240116; t=1726057462; c=relaxed/simple;
+	bh=vykp/COQSuC0iRIyod7tMW/tf1kgydXeoxCSGp8qusg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYoV0jWbxCTkm9qrsBY9keWUu4P2+pYBPOw/p0FJHaos/OIF9CTQH/8xxzVf0zVncfACQk/8xFIXLv4+lsWlDZFBpDYJiUAZMw20Xla23cLdEo4VdOdYJ3AWykYVZJZryt34sJQvfmY9jylg2vuzhqEov5B4Rzx9rqpXSwnoMnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=SzJcLeoD; arc=none smtp.client-ip=217.72.192.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1726057373; x=1726662173; i=christian@heusel.eu;
-	bh=RbCZJv4mBL/FdxnaNMh7aE8UT2XZ+9DcRN+xckpQNFA=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SzJcLeoDouLb30yUDu1WGSZQZ2qUMLw7dwbpnk3BoisqnIUfsoKkkXXh1Aq2Sqe+
-	 huWQBCv8SJSDUvZbiqzCx46S5uPyfgfZjEXSmh8Jcu+uUOuB+PQREHh21SHff23L9
-	 hPPt2JTD5K7oHd/+FClidkm8P04MhAGihenIgHtWFcf3P+g50V7HjruLJEBa6i50s
-	 d7bN+0e+g//hJCfFoxAkqn071AqoH0WfUrUpaPenhzqiNE5oY2MiBY1SlRPTg2AsZ
-	 tCamF6hFu094X+yaLPW5KcdBTyeTJuwmf62h1X0SwUtegLTbidtqxm4zI7VcvnCCR
-	 ub9cDVZYWJWpq1ctXw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue109
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1N63NW-1rvKyb2gDw-016eUN; Wed, 11
- Sep 2024 14:22:53 +0200
-Date: Wed, 11 Sep 2024 14:22:51 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/375] 6.10.10-rc1 review
-Message-ID: <3b946649-8204-487f-a173-968288701eb5@heusel.eu>
-References: <20240910092622.245959861@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fb+Jdx+J5MwHNM3QwUzxGXmZGue0l5gT9VCBklJXIZghl2iEr6UQW4RWZxdAM8xx/DbJ6gpDusn6m1iXlBg01AU5WeNUbnh4ezqid1GFevIg6RgsPieS09QYu3NaOMSiF0YlPIaln2BwFu+mejaoNYlFPF0VriUY7gi92YtR8Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J9ydOwuf; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 261BE20008;
+	Wed, 11 Sep 2024 12:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726057458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hToyTi8tUgnygES2FIa6FjNWyHF6eOXU9sPatFP3iwI=;
+	b=J9ydOwufTsH1adx9Ap49i5Fk3qfM/2wtdaqUMMupoYiEu4ah7MkyLDR3yMC9Mhe09K5kCa
+	PMYOOoljX35onCXuu0n/NYkTcGjrbJ7aCQ+TQIpfCK0KXujWVEbUvMfI2kiA+g+TMiOrho
+	IzEd6RGY348ZcnWb0qliSXt1yJk8CQwwgba/C6vsn7sGGIEuOkv4WaHaHCzZNBRjSYVcOU
+	gZeBHi7M5TG5gW+jz8moGR9VZxh+wy66V2WkwQz3HYkiE1u12lQucnTUnYiqbhFdXWL+HV
+	40GVF6xRhgAI/aZ1ccEUOhy7uZu3m55fniOUMhj4elZdfs9g+oRq1tZ0q49MdQ==
+Date: Wed, 11 Sep 2024 14:24:17 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+Message-ID: <20240911122417388bd35c@mail.local>
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+ <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+ <202409101939448128973d@mail.local>
+ <87mske7gaw.fsf@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xj3xznqvjwvwf5ri"
-Content-Disposition: inline
-In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
-X-Provags-ID: V03:K1:pwWXrMZdMBs8R7+3b19VMLK4MTTYGRQ6OAp/y/uiyC4MP6CRHJK
- M9HgXC6fSe1G1Z26g9QSf5ovz/K/eRIsX4cmzg69dbkYO9lcC6YSQf0GBb8JcV4mQsMca58
- A/jeEmgPk/Y0et+Xg8BA/8hVXqJ6yF17oYdCkilzF//Ia9yqp9+ZqhTk8LT8V8Z09wvwPzl
- EhwljWsxlcW8tZO0UOlog==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qdiBTps56VA=;WwdF3rOZGzIVencPwdm+ae/8St3
- rQx4D0SZsv0M6hBYUi+pD/7QFCFgZAVCLLl6HECcJHmAuetXdVR1qKeS+z4Wrl44P2BqiHDbE
- ibCkxR8xI/cAXQYi8FXWE0r3+1OTrm3zfdO1b21VtD7S/uodoRPcQPfRp1S26Y9VWpb+FFw0T
- F3TUmGtuu8Bd2zbRcTeKA3N9F705dMOWVL7Mdt6s+kMyxM9YXvdDz9eEr3Nwqdndw4+t+gfxR
- KTJOHhYxAGLg4H0q+gnrRzp12Ly7wF8n8GjiHLrkLRXHt0EW9jVKIQsQ1X4k8Ea/BrtARrHaG
- VGYBoD32F9/44GtodwmdlgA7q3s0+tIlBitSeWx+j2/kaMRxOANqwDWmBRAgRCqUUjiEb+r+3
- XjXsFu01uFjR0+NJQuwNDTP5gHrN0JWGgoLYa1u0EINLk5R0PfTbkmktazMwAwM/X/m/+RGRc
- 5PN82i8i4XnkVbXBpdBgfhqEJ2yhos9kmTqlRMz9pg2p3nWXIH4WeAC2FR+U8B8QTejc6nmoA
- 6YI3U9gc6IsH1C5eGPf7uxtkaDQ+V9/4KgFu5vNyVCdPV3G0lzT0TuwWhbFUW0UPcyn0J/16k
- Ka1+lfHXDSTTgOORiEPT31P0gXoV25XowLwJGX61c834wkYSB5X+j9r7wBV/r8BSkMUiAhFBA
- er0dG192fL6f0T3HGv8vC4X9/zwC7OnVyYMP79ShKpTRm5EPInsr8+0zA4NZ9YAtNMRy559v5
- O3mxSzBTqlPrqnvyXrSfwocpDowX3hxoQ==
-
-
---xj3xznqvjwvwf5ri
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87mske7gaw.fsf@geanix.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 24/09/10 11:26AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.10 release.
-> There are 375 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> Anything received after that time might be too late.
+On 11/09/2024 10:20:07+0200, Esben Haabendal wrote:
+> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+> 
+> > Hello Esben,
+> >
+> > On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
+> >> The ISL12022 RTC has a combined INT/fOUT pin, which can be used for alarm
+> >> interrupt when frequency output is not enabled.
+> >> 
+> >> The device-tree bindings should ensure that interrupt and clock output is
+> >> not enabled at the same time.
+> >
+> > Ideally, we would get a pinmuxing part in the driver to ensure this ;)
+> 
+> I hope we can leave this as future work :)
 
-Tested-by: Christian Heusel <christian@heusel.eu>
+Sure.
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
-Steam Deck (LCD varian).
+> 
+> >> +static int isl12022_rtc_read_alarm(struct device *dev,
+> >> +				   struct rtc_wkalrm *alarm)
+> >> +{
+> >> +	struct rtc_time *const tm = &alarm->time;
+> >> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> >> +	struct regmap *regmap = isl12022->regmap;
+> >> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+> >> +	int ret, yr, i;
+> >> +
+> >> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+> >> +			       buf, sizeof(buf));
+> >> +	if (ret) {
+> >> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+> >> +			__func__);
+> >
+> > I don't really like those error messages because there is nothing the
+> > user can actually do apart from trying again and this bloats the
+> > kernel.
+> 
+> Ok. Maybe keep it as dev_dbg() then?
 
---xj3xznqvjwvwf5ri
-Content-Type: application/pgp-signature; name="signature.asc"
+This is fine, there are other I didn't point out.
 
------BEGIN PGP SIGNATURE-----
+> >
+> >> +	/* The alarm doesn't store the year so get it from the rtc section */
+> >> +	ret = regmap_read(regmap, ISL12022_REG_YR, &yr);
+> >> +	if (ret) {
+> >> +		dev_err(dev, "%s: reading YR register failed\n", __func__);
+> >
+> > Ditto
+> 
+> Ditto.
+> 
+> >> +	isl12022->rtc = rtc;
+> >>  
+> >>  	rtc->ops = &isl12022_rtc_ops;
+> >>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> >>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
+> >>  
+> >> +	if (client->irq > 0) {
+> >> +		ret = isl12022_setup_irq(isl12022, client->irq);
+> >
+> > You can't do this in probe, the RTC lifecycle is longer than the linux
+> > system. Or said differently: "oh no, my linux has rebooted and now I
+> > lost my future alarm" ;)
+> 
+> Oh.
+> 
+> We do need to setup the irq here, so I assume you mean I need to drop
+> the part of _setup_irq() that clears alarm registers.
 
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmbhi5sACgkQwEfU8yi1
-JYXI8Q//W/7liD0ogMri/rAvtFFbKCn7QDvcrh4woZm6IbHnQjnhixVbn2uenOGg
-DAqMpAy2VTI6nTOhELAHsnm68V0gwHbGUXqq8Z8+spYJOq55SmhFqlcEVGwQXs/o
-WROGpfGsltMVILxk2cNlTC3zAWIvf6IcHI1XSih1AVJxXXlZHM5HNVJcwghXt5jg
-h9CSksSOB21jWVlbFvRGzPGC0byaA4f9187D3GLy85XUTNB3TroQGcwatrhaPPBD
-S+GBIYsqtnvgOH9KEm7xrY/nQWLXgFuzq5GS7S+i7br0QwOuw337PUCKSi24TwE/
-Evin9Fj0vgRsvFnCBTc6D4wGUZA6QnZpRhSkAEuqWIFc6XBqtn3KG8pQhgXJvYVu
-Tyh4rdZnoy3xnrzqZT4vtNcuVlr4Hva9QnwPUAOhO3JXah/JitD8HXVwrH4DxGii
-w8tkdLI5tUV1GuiiFn4bdgEXNtKHjwiyt4i3rvNLfOtTBnlQbyMkKwd2yHrCzfMs
-JNQc5FAk+pVKhUnOeSybY0BkD9ebSeb5fKfK9Mxd9SLGT1TbnbfqyyxAZGMCy1Vu
-iBHyOCfBAihNVGrrReyUP9qdU5FYmE6UCfsJlzWyCrJQkBaI+fkMyDaji6ALKUk+
-zWCIUZNmgzF8cMSCkhVDyY7KN30+2yunhJsqQHDPPA6EPqMt/88=
-=rjMj
------END PGP SIGNATURE-----
+Yes, this is the main problematic part. The other one being disabling
+the IRQ output when in battery backup mode as this will surely prevent
+wakeup of some devices.
 
---xj3xznqvjwvwf5ri--
+> 
+> And I guess we need to enable irq in probe as well. At least if/when an
+> alarm is set. I think it should be safe to enable irq unconditionally in
+> _probe()...
+
+I guess you mean requesting the interrupt on the SoC side. Enabling the
+RTC interrupt should be left untouched in the probe.
+
+
+> 
+> >> +		if (ret)
+> >> +			return ret;
+> >> +	} else {
+> >> +		clear_bit(RTC_FEATURE_ALARM, rtc->features);
+> >> +	}
+> >> +
+> >>  	return devm_rtc_register_device(rtc);
+> >>  }
+> 
+> /Esben
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
