@@ -1,203 +1,159 @@
-Return-Path: <linux-kernel+bounces-324045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8B2974731
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB665974730
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA001F26FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DA328624E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCF4111AD;
-	Wed, 11 Sep 2024 00:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09A863B9;
+	Wed, 11 Sep 2024 00:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3VVcoqy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="a3eZSySl"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C101847C
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0D7EBE;
+	Wed, 11 Sep 2024 00:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726013839; cv=none; b=T/+piwfuO1+med3jNn7ZPYvDBALIrnJtKGXKoa+gIGFiQNx9hk+/py4mYzUHkAm7cEfCl3pOVxLQobKRSPm1WSOge+SOncisMFStsPqshJu37TKP0PHjP5qX5BlmfnvI2aU/SDtQwJT/o27uVl/dF4g0PawQdH7PPKmMlQxZ5QA=
+	t=1726013837; cv=none; b=hxfpgVx0QLTpCo8ANfa9XrIkTdwS4DZTPP2EO+n7YEwaKl1Ob/BJTaj9fuc+pnL7ezBNDswzg6AlCHDaFqEtZbbyUuL3SMHQb5JMKbNhjNpcKx7wbTRTSAUzK05Gx/gsSq8eKv04gNkiy9e6CavvDrsZTQGsJ+oQzmeJyyEGzIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726013839; c=relaxed/simple;
-	bh=taI0rcWXXCmc2AhVBzDAxhNnX3r+FcRqTMVNUJ8Xh20=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=CR/uHa8Lcl7sgLeMEWOuognqM0AG+A6JTPiWIIx0ARvf4nSAYUofCpHY8N9IBMso/357aAcUpDdIb3SzqLKVe1AEb7qEuesm8H+tNav6P6aD/g9aNm2ZPt7+gwHH0GAhUqM6ElGDhrH4/YIfcz/dCyjHbnUN7yaXUeQQbn2KXsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3VVcoqy; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726013838; x=1757549838;
-  h=date:from:to:cc:subject:message-id;
-  bh=taI0rcWXXCmc2AhVBzDAxhNnX3r+FcRqTMVNUJ8Xh20=;
-  b=g3VVcoqy23MWN86wHKSkGvJkkZ6FFQYSf8wAE5hGLuvP3pAP1pf+Z0Hl
-   XzQB0HhnsZgt0HoWM2/5ra2bzgDFavEDjLSGoohv7roBwD0mSY1C0yLXT
-   8zpfHy0GYbDq7EXo2YGX6/PPbSckHJZOhx4uCKMqUKE/dkAaVPNs2XlzA
-   SWqJih0bnYA8oTJ6w1VB+YDJbojkjsKZ4osajBaILo/aeqa7yL8psGZJ+
-   6E3pB/h9+gzJUy0/hRvHfrBzu/fmtFnob/fzuUm63VnVPrDctUNwu361y
-   RcDD4Djp5jCduniH2cYDVvCPRyUVY38b8F8BNbA7f2ZkirCVsGAriS54k
-   A==;
-X-CSE-ConnectionGUID: SFzgcP0QRCS4RgU7q5zdkw==
-X-CSE-MsgGUID: iqnVy7yKR1C3PGgvvF+pOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="50203739"
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="50203739"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:17:17 -0700
-X-CSE-ConnectionGUID: NATkwL0gS2uUhidj+T5BNQ==
-X-CSE-MsgGUID: aHNZoEmDRSSiJfzlmF8ZTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
-   d="scan'208";a="67251788"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Sep 2024 17:17:16 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soB2o-0002rU-2B;
-	Wed, 11 Sep 2024 00:17:14 +0000
-Date: Wed, 11 Sep 2024 08:16:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/urgent] BUILD SUCCESS
- 1d7f856c2ca449f04a22d876e36b464b7a9d28b6
-Message-ID: <202409110844.UBp58zeZ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1726013837; c=relaxed/simple;
+	bh=BYzWPhWbZ5AJad5Uxdm18cFl6WCX0WmPKaMV6WUroww=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L4MCWuRlZVJswTE/Zoq/K+RldAclKTckjQdIuVWidF0HJP4r8WYYcpfl7LwEECNMwqbaRC+PH3CQj6txraSHWLIWDnKFwTK5KTPhMoWdA9YYm0KJ0liMih7jRQ+tEqAgZtgV87V53Dt12lIO5Z7N4McCOZDiFkywKmxe1y2IURA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=a3eZSySl; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726013836; x=1757549836;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=I76F7c150W4LR2B0J953rkue5lkGVCE1RnkJN1D2pZk=;
+  b=a3eZSySlqud0NaWSyUdJVdcvESqDskOXeKbbT+uvXc+7+jKhGDrUfq0B
+   mo6suIc3K5zR/O/M+rTwjbxO1htaQQcMnnw/3Lcs/fYSxMBACRYANrea1
+   murow5r888HGAAgN4nEGdcU4SvP1+jUtwh4R/SbBZWyL/g/7lIOWy9hrU
+   k=;
+X-IronPort-AV: E=Sophos;i="6.10,218,1719878400"; 
+   d="scan'208";a="452721937"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 00:17:10 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:8428]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.152:2525] with esmtp (Farcaster)
+ id a6c5571e-3fa2-4822-ab9e-52f5220bb29a; Wed, 11 Sep 2024 00:17:09 +0000 (UTC)
+X-Farcaster-Flow-ID: a6c5571e-3fa2-4822-ab9e-52f5220bb29a
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 11 Sep 2024 00:17:08 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.20) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 11 Sep 2024 00:17:06 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <rao.shoaib@oracle.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8811381d455e3e9ec788@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in unix_stream_read_actor (2)
+Date: Tue, 10 Sep 2024 17:16:58 -0700
+Message-ID: <20240911001658.27733-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <1b494cee-560c-48f0-99d7-60561c91b4f1@oracle.com>
+References: <1b494cee-560c-48f0-99d7-60561c91b4f1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D032UWA001.ant.amazon.com (10.13.139.62) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
-branch HEAD: 1d7f856c2ca449f04a22d876e36b464b7a9d28b6  jump_label: Fix static_key_slow_dec() yet again
+From: Shoaib Rao <rao.shoaib@oracle.com>
+Date: Tue, 10 Sep 2024 16:42:33 -0700
+> On 9/10/2024 3:59 PM, Kuniyuki Iwashima wrote:
+> > From: Shoaib Rao <rao.shoaib@oracle.com>
+> > Date: Tue, 10 Sep 2024 15:30:08 -0700
+> >> My fellow engineer let's first take a breath and calm down. We both are
+> >> trying to do the right thing. Now read my comments below and if I still
+> >> don't get it, please be patient, maybe I am not as smart as you are.
+> >>
+> >> On 9/10/2024 2:53 PM, Kuniyuki Iwashima wrote:
+> >>> From: Shoaib Rao <rao.shoaib@oracle.com>
+> >>> Date: Tue, 10 Sep 2024 13:57:04 -0700
+> >>>> The commit Message:
+> >>>>
+> >>>> syzbot reported use-after-free in unix_stream_recv_urg(). [0]
+> >>>>
+> >>>> The scenario is
+> >>>>
+> >>>>      1. send(MSG_OOB)
+> >>>>      2. recv(MSG_OOB)
+> >>>>         -> The consumed OOB remains in recv queue
+> >>>>      3. send(MSG_OOB)
+> >>>>      4. recv()
+> >>>>         -> manage_oob() returns the next skb of the consumed OOB
+> >>>>         -> This is also OOB, but unix_sk(sk)->oob_skb is not cleared
+> >>>>      5. recv(MSG_OOB)
+> >>>>         -> unix_sk(sk)->oob_skb is used but already freed
+> >>>
+> >>> How did you miss this ?
+> >>>
+> >>> Again, please read my patch and mails **carefully**.
+> >>>
+> >>> unix_sk(sk)->oob_sk wasn't cleared properly and illegal access happens
+> >>> in unix_stream_recv_urg(), where ->oob_skb is dereferenced.
+> >>>
+> >>> Here's _technical_ thing that you want.
+> >>
+> >> This is exactly what I am trying to point out to you.
+> >> The skb has proper references and is NOT de-referenced because
+> >> __skb_datagram_iter() detects that the length is zero and returns EFAULT.
+> > 
+> > It's dereferenced as UNIXCB(skb).consumed first in
+> > unix_stream_read_actor().
+> > 
+> 
+> That does not matter as the skb still has a refernce. That is why I 
+> asked you to print the reference count.
 
-elapsed time: 812m
+It does matter.  Please read carefully again...
 
-configs tested: 111
-configs skipped: 3
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> > Then, 1 byte of data is copied without -EFAULT because
+> > unix_stream_recv_urg() always passes 1 as chunk (size) to
+> > recv_actor().
+> 
+> Can you verify this because IIRC it is not de-refernced. AFAIK, KASAN 
+> does nothing that would cause returning EFAULT and if KASAN does spot 
+> this illegal access why is it not pancing the system or producing a report.
+> 
+> This is where we disagree.
 
-tested configs:
-alpha                             allnoconfig   gcc-14.1.0
-alpha                            allyesconfig   clang-20
-alpha                               defconfig   gcc-14.1.0
-arc                              allmodconfig   clang-20
-arc                               allnoconfig   gcc-14.1.0
-arc                              allyesconfig   clang-20
-arc                                 defconfig   gcc-14.1.0
-arm                              allmodconfig   clang-20
-arm                               allnoconfig   gcc-14.1.0
-arm                              allyesconfig   clang-20
-arm                       aspeed_g4_defconfig   gcc-14.1.0
-arm                                 defconfig   gcc-14.1.0
-arm                      footbridge_defconfig   gcc-14.1.0
-arm                            hisi_defconfig   gcc-14.1.0
-arm                           imxrt_defconfig   gcc-14.1.0
-arm                            mmp2_defconfig   gcc-14.1.0
-arm                        realview_defconfig   gcc-14.1.0
-arm                         s5pv210_defconfig   gcc-14.1.0
-arm                       spear13xx_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   gcc-14.1.0
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240911   gcc-12
-i386         buildonly-randconfig-002-20240911   gcc-12
-i386         buildonly-randconfig-003-20240911   gcc-12
-i386         buildonly-randconfig-004-20240911   gcc-12
-i386         buildonly-randconfig-005-20240911   gcc-12
-i386         buildonly-randconfig-006-20240911   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240911   gcc-12
-i386                  randconfig-002-20240911   gcc-12
-i386                  randconfig-003-20240911   gcc-12
-i386                  randconfig-004-20240911   gcc-12
-i386                  randconfig-005-20240911   gcc-12
-i386                  randconfig-006-20240911   gcc-12
-i386                  randconfig-011-20240911   gcc-12
-i386                  randconfig-012-20240911   gcc-12
-i386                  randconfig-013-20240911   gcc-12
-i386                  randconfig-014-20240911   gcc-12
-i386                  randconfig-015-20240911   gcc-12
-i386                  randconfig-016-20240911   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          atari_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                           ip32_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-openrisc                          allnoconfig   clang-20
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-12
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   clang-20
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-12
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                   currituck_defconfig   gcc-14.1.0
-powerpc                       maple_defconfig   gcc-14.1.0
-powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
-powerpc                     rainier_defconfig   gcc-14.1.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-12
-s390                             allmodconfig   gcc-14.1.0
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-12
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-12
-sh                          sdk7780_defconfig   gcc-14.1.0
-sh                           se7206_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-12
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-20
-um                               allyesconfig   clang-20
-um                                  defconfig   gcc-12
-um                             i386_defconfig   gcc-12
-um                           x86_64_defconfig   gcc-12
-x86_64                           alldefconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                                  kexec   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-x86_64                               rhel-8.3   gcc-12
-xtensa                            allnoconfig   gcc-14.1.0
+The returned value from recv_actor() was exact 1 when KASAN was off.
+It was -EFAULT only when KASAN was on.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Anyway, -EFAULT is not that important and I'm not so interested in how
+KASAN triggers that.  What's important is the fact that the first UAF
+is UNIXCB() and the bug happens before that.
+
+[...]
+> > Note this is on top of net-next where no additional refcnt is taken
+> > for OOB
+
+Also in my patch:
+
+  The recent commit 8594d9b85c07 ("af_unix: Don't call skb_get() for OOB
+  skb.") uncovered the issue.
 
