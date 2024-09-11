@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-325412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C81797595B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:27:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6527975959
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157141F27F69
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBE11C21211
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AF21B3B2B;
-	Wed, 11 Sep 2024 17:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434A91B4C56;
+	Wed, 11 Sep 2024 17:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Rl5HHneR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YT2+92VT"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5073A1B29C1;
-	Wed, 11 Sep 2024 17:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642D51B375B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726075598; cv=none; b=qS6Ey6mZREPqJgmNa+Hqr291SWiiy4yP3jHGM1J0UDtY/J3nlMfcQ9ZpIYWG7W1k47PhSTmoCzLtP4X9hyCnI3nhcOLKxN4VtEmnZb8quyepKRI3e/OFtuSdSpv2GUlHEQqF3IK65+rLmNRjxup/8kGz/v3tEMmYtPlAETpz8D8=
+	t=1726075589; cv=none; b=nnEt+izIY9E+pJDxzZtAzOPGzBVxFqMZYT9LErXJxYvbFebac+1FtuHfmAl8RGXO0ZzF3UYmC4QVo6r+yc47/bgIJqrOC4P6b6jDxMCF8k2Zuauj9hCkpsiLouzKetteN9Pd3ORHE0EOHqLlBeTotK0okNGuy1gYee5zdVi9gFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726075598; c=relaxed/simple;
-	bh=V/0J+gwv/n3AtLA+rJXg3PKb+fScaPY1w1sU6qEwptg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltGanLv0McXL/4RHUow0Chysr/OoqSInragxED8LwtcJGWFaNQLZV8GFfPurD21XLN1U8c/08hTrGvt9Nc8hVfGt6QepaNUpn0f/wjwbX1BqqGOdZWurdP01QGi13HNynoCqZOSDtzyQC2riDuzxGZPn5eQmzapLi7vL17qPwvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Rl5HHneR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=JnKWS+Fj8X3K2J34ug0Ii1c0TCxXIH/EG4XIfAwIB2E=; b=Rl5HHneRL2ql7I9bnSjF5Il1aV
-	yKkRuMHXQPLwE61I9My+acCCMpPwxrquNO4a/KXcDTM/z+WeOTvo2Yw7kbQGdnKixCDOjWF+Ij412
-	SXP/J2HOU4gwgA0JtU2K7gs7DPOEM+jisycvjOd6aqNRgs6ufFOo/u1UcUf30D/opz1I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1soR6l-007Emn-6K; Wed, 11 Sep 2024 19:26:23 +0200
-Date: Wed, 11 Sep 2024 19:26:23 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
-	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
-Message-ID: <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+	s=arc-20240116; t=1726075589; c=relaxed/simple;
+	bh=9//KDvyuxplwL9Zi1v0mRliwQlC7afyYXuWA9OrtvW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cU+U5kFVsg1CvJoVfHRFkCWXdFM6LsCE36VkZavO5Z49WIFOPH1SG1nKf62TZpkXuMMOyMvkThB6iTeQM/S7uNc34EEVRa663QZ42RyU/ZmfpOJ+v7+ZPblBQtOuKT1n07+Ul6A87P24VPIF6tN9MJhFnj/2y2kSVUg3Dt9CRJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YT2+92VT; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82aa3f65864so1584439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:26:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726075586; x=1726680386; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2estjfu4vr9z4sdfFnffmLrkqEpyju416gUzpXqiGYE=;
+        b=YT2+92VTcCCf75PSnOaeR4AZrfFAD+a+m5xiJ2utY3SD7J1HY1Z2HlnGX2hULSSpAH
+         f3c4LQ4r7d97eK8fE323VgcoNU5gdoN6G8NgQeMfEbTtV/qIyF6AVm2SiLWKB0QFC47U
+         5ljEA8kRzecAov6AnmLjH/E9ZsDUH1fmDGKLE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726075586; x=1726680386;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2estjfu4vr9z4sdfFnffmLrkqEpyju416gUzpXqiGYE=;
+        b=IHmDctJ/VQLJiS9bLnT0nKUUXtMk6YZS4K3EXCcaj3NkMjwPUaZzXcJEviEw+8CBnR
+         fW8W4EonUYBMpID0Y6IazpFeIRiBhZAcBTdRvsfmg8aDAFisjg0B99wM9c7iJY2ewIN/
+         1ttLXNYWfL+z4m6gxoOt232rW1XhgT7Tb56PhYRzBgg+fmujRXy2bD84skKeWoDa0LPZ
+         S9m4ywmvHEQh7IE+Km1fTL3z9ul1xJFgqyULPY+WqLJxAvt2lZqqhUtdAnhS6TFIputp
+         Jw+QfuMk/UFs1sQ77etgMPUoFiQjMJVxys3GONbwiZ3iLAAUA+Dsd9g1Js/gUY5mUQHQ
+         GOTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsUVtmahdq7pb82lRF8nHs5ErrXEJL7JY/xlqwZHOzQ4hJF4/F9TM+FU48iMOnaifqNmzghC2ArAXGY4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSNApYjPMYMQMakUlOquCoESs3iV+oyOswcam+MM30rFdVsYBP
+	MZD1jQM1+ABEM5xVh3UrGWU5SgHCZH6oyRZZ6kgQSGTXfGdRpuoKNH7C4ub2Aow=
+X-Google-Smtp-Source: AGHT+IHht8VaGNScxJ6V1eZ0F9zhycM4mZpeGgCpP59HyZkJsYU+EMu7GQCOHk5/26BckyfsFLyfYw==
+X-Received: by 2002:a05:6602:6d8b:b0:82a:a4e7:5544 with SMTP id ca18e2360f4ac-82d1f8e18c6mr33726239f.9.1726075586482;
+        Wed, 11 Sep 2024 10:26:26 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f56a21csm96914173.37.2024.09.11.10.26.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 10:26:26 -0700 (PDT)
+Message-ID: <4de97bb9-0791-42ea-8cb2-7fb5a24be832@linuxfoundation.org>
+Date: Wed, 11 Sep 2024 11:26:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/185] 5.10.226-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240911130529.320360981@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240911130529.320360981@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> +static int pci11x1x_pcs_read(struct mii_bus *bus, int addr, int devnum,
-> +			     int regnum)
-> +{
-> +	struct lan743x_adapter *adapter = bus->priv;
-> +
-> +	if (addr)
-> +		return -EOPNOTSUPP;
-> +
-> +	return lan743x_sgmii_read(adapter, devnum, regnum);
-> +}
+On 9/11/24 07:07, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.226 release.
+> There are 185 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 13 Sep 2024 13:05:03 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.226-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
->  static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
->  {
-> +	struct dw_xpcs *xpcs;
->  	u32 sgmii_ctl;
->  	int ret;
->  
-> @@ -3783,8 +3823,17 @@ static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
->  				  "SGMII operation\n");
->  			adapter->mdiobus->read = lan743x_mdiobus_read_c22;
->  			adapter->mdiobus->write = lan743x_mdiobus_write_c22;
-> -			adapter->mdiobus->read_c45 = lan743x_mdiobus_read_c45;
-> -			adapter->mdiobus->write_c45 = lan743x_mdiobus_write_c45;
-> +			if (adapter->is_sfp_support_en) {
-> +				adapter->mdiobus->read_c45 =
-> +					pci11x1x_pcs_read;
-> +				adapter->mdiobus->write_c45 =
-> +					pci11x1x_pcs_write;
+All good without the iio/adc/ad7606 commit
 
-As you can see, the naming convention is to put the bus transaction
-type on the end. So please name these pci11x1x_pcs_read_c45...
+Compiled and booted on my test system. No dmesg regressions.
 
-Also, am i reading this correct. C22 transfers will go out a
-completely different bus to C45 transfers when there is an SFP?
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-If there are two physical MDIO busses, please instantiate two Linux
-MDIO busses.
+thanks,
+-- Shuah
 
-    Andrew
 
----
-pw-bot: cr
 
