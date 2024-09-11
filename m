@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-324653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BE7974F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:09:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2EB974F5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748501C20B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F91C21253
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D7B187341;
-	Wed, 11 Sep 2024 10:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F01714C0;
+	Wed, 11 Sep 2024 10:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QwrYMkfG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lahY+rCF"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C021714C0;
-	Wed, 11 Sep 2024 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424F41822F8
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049332; cv=none; b=Lrl8M4vEcfqYnG5uQ38WlkY80pt1UMbh58Sw6z2iSH9DEjYyXJeVupfw2KE+m48oibbUl7hhXGhDA5hZn61hoVlqfQMIGohQPsHSB3isy3jGUr54JOBxu0VjWpgj2dVvzuLJWODwM//0PwKCliM1QILeXT8/cbe0ZZUcp7BicsQ=
+	t=1726049335; cv=none; b=dF39H+yKexvApnvK61SyVftY5OfVOGZcqc3pkGZOPzOfzql5MX+/N3XZGC3+Ucgg1LK/OgHdIFOkrL52IcFG5Hkwnhjy7g5HMGMGcDeC7vkOvfzQwDSRLI8rDe6E78aw4TqiSRasEp5OfiZVuKCO75Df0kbla3vda8v2qOd7tWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049332; c=relaxed/simple;
-	bh=qTJ82PQjLvL8u2V4TMNByXMBYT7qRQANe3FkGeSvNzE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=tkKCpuV3v2SFGm48yAC9z3QqkaG1koKN5pMpm4oqCv2gpiWZdj9sdDN2vgEWpzLQLoV5TowZST5mPJNvndqGC03XeBkIIQLUlZbrvJ28xzvpjljjoSCHbeh5iJJZYcf1+5ohT+Fp/lVBeeq1zpMEPfBoeR183uzpKBtA5iWhKi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QwrYMkfG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B3jAVl020308;
-	Wed, 11 Sep 2024 10:08:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=Px7rKOdAod4MFc+KpUi3fQucCOz5Bl9/HE5U/ALqwTk=; b=Qw
-	rYMkfGU+xZGCpauf4CM6q9+WLC32IPWa8KVpb6lD4iYeSVtcxc3m2mv2LH4EOwxR
-	Nr9XQe+bRaJ5ndjWsyUbWQHpLZPnHbCJCGuVr41TTh0KFUuHCv4pNc4KGG/g9n4f
-	OocmZPNsGEbyEciuPTpf6eIybOpVFyvWdyCf9nXO2ZOKs8wOE7sVzDWE7s9A/HfZ
-	LFCDXJeefiILozAE61/OCKTfUezY35qJVRrIpbXefS23nsFDz9aWfPmP4e81qZb+
-	2xgccjat7a/fB30rugOp3qWMqgcUuwvbSL5o6OQyuQMuMVrnQJwJnkJMUHN+rFcV
-	ABjjVumKUMy/cQpL5sRQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41he5e0d83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 10:08:25 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48BA8L74019431;
-	Wed, 11 Sep 2024 10:08:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 41h168s1su-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 11 Sep 2024 10:08:21 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48BA8KYG019406;
-	Wed, 11 Sep 2024 10:08:20 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 48BA8KDl019399;
-	Wed, 11 Sep 2024 10:08:20 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
-	id 9AFED5000B9; Wed, 11 Sep 2024 15:38:18 +0530 (+0530)
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org,
-        andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org,
-        abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org,
-        quic_parellan@quicinc.com, quic_bjorande@quicinc.com
-Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
-Subject: [PATCH 4/5] dt-bindings: display: msm: dp-controller: document SA8775P compatible
-Date: Wed, 11 Sep 2024 15:38:12 +0530
-Message-Id: <20240911100813.338-5-quic_mukhopad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240911100813.338-1-quic_mukhopad@quicinc.com>
-References: <20240911100813.338-1-quic_mukhopad@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: y2Pajn2Dckseyp9GTtxXsy4aOi6IOds4
-X-Proofpoint-GUID: y2Pajn2Dckseyp9GTtxXsy4aOi6IOds4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409110074
+	s=arc-20240116; t=1726049335; c=relaxed/simple;
+	bh=9p4+hZQjh71lVxuvzfXMO5h2mg2JsxoLOa6VRFSlmYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oaLeXnVeZONPajeCpZjMrCqLIJ2ytEjCTfZG52NlAbDFD/KavBkni8I2aRvMZdSyO7SK+t9sXnXUC9ov3UOwnsI7rR6N9Gi7l2kx8mO/o+lTztzeiWABzUXoGTKhD0s6Ydut9FS34Jl7aR4zqNsyEdKgGoj2RtqxLiY3yB7YxgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lahY+rCF; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso1995345a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726049331; x=1726654131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B9hdLYUUwjUF1hpY600kXGnyLYC/hudZ8vg3i7Z84wI=;
+        b=lahY+rCFdc/x5Z1c4MUKDG+FGYDkd8Xuf4qKowNyZJgaLwDs2Ij0l+836HiKYVTrbi
+         8PQ1TlVs/kJ3ZPd1N7ZeQvVJ+b25CyeSZqsY5r21xit5OjAP8UhN7lCgk39Ju0mXWSLM
+         xn/Wi6IMvDjaNtqMQzFySFyAMOQt8pt8dkYHNkzimz7wUxeWEjMFLVepohFqf9rx0diB
+         +z++oS8ZZpDtvMkaM7oC0N7M23ZMwaMX++F/nD18i5ilxGL1yE6IjYMegXFJ7jc7vFkw
+         vgXYIgWYUFk6wA8b0ePzSqvZMixeIusKiE7OzHynJnmjCmP9UXWRMzcI6RxYVNZwY77Y
+         jGpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726049331; x=1726654131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9hdLYUUwjUF1hpY600kXGnyLYC/hudZ8vg3i7Z84wI=;
+        b=etJEkt9peszkK9m5sNpl//ApGbGTkNDwDRVxrzaPNRRKSPKzsGzjUaJ7m5nrv00iv2
+         ZmR3/JWxOh5+i0IFXCBxdsXIovTBOX8/Y7WRmcvBv4/OqG+W9TuFgBxqgLFvDPx/wKu0
+         SpSY1O++1lHx28fI6RmvO3EWGrJej9YM6+d91E212IlDJM5HVNz/iUC8GgKvaBA0zC+t
+         5DYkU6DOhulEIvUUF2WJZMLBMdzYgoL/BktJ54joUDuTJMevXsHEjqJYwpsvFgJRiGG5
+         P3qmkVcwqY0tWNuxNVqiN4roiCIwineD+WfAdJEPQe43ZP6/KEJO4K8/CY6QBfwsFK0i
+         J98A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ESWsgTXOFpwQjPj6Qc3VynB1BPKlhXozaKorgB1ZyePa5HkviWNn2oPhD1n3KBYOy0fqFzF8sbYTN6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjGs4JOi4u+ra28mU6vyfxmR089mGl4VKrtXA2isrglzkTqDuq
+	/ABwdfjDy2alnU+bo+TMaR43wWJVpotXL730Tu9y+m4VmqD/rBqbOu4yH6/a/JGgvBD71UIGBiW
+	Ar7UUM/2rWyjRIVLQRUSjwQUK7PDziQinPFdc
+X-Google-Smtp-Source: AGHT+IFkRabYBVWE7beqKCTPtmzMJTAcAA4DOyN0ipywboc72PB58+sFy/RcmZ1ciMDzBl90IvVFngE+dsyhyzBF+LQ=
+X-Received: by 2002:a05:6402:5ca:b0:5be:eaf1:807d with SMTP id
+ 4fb4d7f45d1cf-5c40bc5ba38mr1201960a12.29.1726049330681; Wed, 11 Sep 2024
+ 03:08:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <000000000000d3bf150621d361a7@google.com> <20240911120406.123aa4d4@fedora.home>
+In-Reply-To: <20240911120406.123aa4d4@fedora.home>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 11 Sep 2024 12:08:36 +0200
+Message-ID: <CANn89iJBFiHzMPCXyDB4=MAvE0OY5izFUzHxb3cnRzTRr=M3yA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>, 
+	christophe.leroy@csgroup.eu, davem@davemloft.net, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add compatible string for the DisplayPort controller found on the
-Qualcomm SA8775P platform.
+On Wed, Sep 11, 2024 at 12:04=E2=80=AFPM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Wed, 11 Sep 2024 01:00:23 -0700
+> syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com> wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    a9b1fab3b69f Merge branch 'ionic-convert-rx-queue-buffe=
+rs-..
+> > git tree:       net-next
+> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1193c49f980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D37742f4fda0=
+d1b09
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3De9ed4e4368d45=
+0c8f9db
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14bb7bc79=
+80000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D17b0a100580=
+000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/0459f959b12d/d=
+isk-a9b1fab3.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/337f1be5353b/vmli=
+nux-a9b1fab3.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/0e3701969c4a=
+/bzImage-a9b1fab3.xz
+> >
+> > The issue was bisected to:
+> >
+> > commit 17194be4c8e1e82d8b484e58cdcb495c0714d1fd
+> > Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > Date:   Wed Aug 21 15:10:01 2024 +0000
+> >
+> >     net: ethtool: Introduce a command to list PHYs on an interface
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1034a49f=
+980000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1234a49f=
+980000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1434a49f980=
+000
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
+> > Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on=
+ an interface")
+>
+> I'm currently investigating this. I couldn't reproduce it though, even
+> with the C reproducer, although this was on an arm64 box. I'll give it
+> a try on x86_64 with the provided .config, see if I can figure out
+> what's going on, as it looks like the ethnl_phy_start() doesn't get
+> called.
 
-Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
----
- Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Make sure to have in your .config
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-index 97993feda193..a212f335d5ff 100644
---- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-@@ -17,6 +17,7 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
-+          - qcom,sa8775p-dp
-           - qcom,sc7180-dp
-           - qcom,sc7280-dp
-           - qcom,sc7280-edp
--- 
-2.17.1
-
+CONFIG_REF_TRACKER=3Dy
+CONFIG_NET_DEV_REFCNT_TRACKER=3Dy
+CONFIG_NET_NS_REFCNT_TRACKER=3Dy
 
