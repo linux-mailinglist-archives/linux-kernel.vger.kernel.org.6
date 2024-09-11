@@ -1,96 +1,181 @@
-Return-Path: <linux-kernel+bounces-325074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B6F975499
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1DE97549E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F04283B97
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801E31F27742
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6947C19CC29;
-	Wed, 11 Sep 2024 13:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4DF19F105;
+	Wed, 11 Sep 2024 13:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgekGbm2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JfmXO2cA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B917541C92;
-	Wed, 11 Sep 2024 13:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C0219E96A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 13:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062668; cv=none; b=EwzNatdgTuR31bLVOErrkNTCtlfPuAq0Hc8YPODjYTa6CMOsDWmRGsz3hRv0yGOT4IN+BjJQJKtVMPX8vV1rKwvH9y/AXNd4kdS8T2ceFB8CBgBu2LJ1EcCby8JoXV5rOHipH1Wmlhd/zu5PocRKSoJLXbaO0Zeal7AebR05tlQ=
+	t=1726062675; cv=none; b=h2MjaDA4KDVdwJb0wa0wDyd7Jk4Hk9U6X/KXQL17oyzDrD7M5QsSFnwYXQExlUFs+g5DRTe2+CYUZo+SvklCInZ2qPyOGhpYfhp8+CTRbfRkyd/KPjut6guOvAkY29TxoYYDc7D4dEyDlv/lzJpw1vjrWLx1edPhZrAFwo3Z6lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062668; c=relaxed/simple;
-	bh=sqiAFvJyvBydyX2PQqSGhbwmVyTlE6DwwppgmxO1SYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tyWDtTGjz4ErlzxirR/MrnAobIdrtVPrQQJlIa9+zAP7N769Vk3FlaTIOMcNhwrmCfGKDcGGK/LSuIFVuWFUAfwddcD/5OAGPDNr7q3eUGCaXrme4/UebNcHcmqXAeO6JZqvSMuE6laJwTkLXUytOwCsgSTBGbtGBi0lRkcpmwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgekGbm2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38210C4CEC0;
-	Wed, 11 Sep 2024 13:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726062668;
-	bh=sqiAFvJyvBydyX2PQqSGhbwmVyTlE6DwwppgmxO1SYc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TgekGbm2kRixRT5JRuTmWkxeg+wBT8vV8t4oVGXsLGJxHTrlm4vSE3/hxh0cMxnv4
-	 ZUk27HfAVz9RoS7R4i5Htaj927Gnv9HYkUViPvqdeKX5QE4eEpUotXCbgQauSJcs2e
-	 Ek0IJQiBaHWM3p4TXk2261NbuCeAmmLGFfStG047O5MwuONF5KO91TceXcriRus04F
-	 9J4T2L4mZFyN04olpGALsh0Q60bGO8BLXB2TDiNnqVFduSkhJAzl1Ky2y+yZ7jvyOL
-	 vBIRXQPOYAAxpXAoPgg021OSBEMyd5euk6DEOxnOtzXicq/ZD+RFHVHeQGR6NMSfVJ
-	 eqAQTBRFMZPQA==
-Date: Wed, 11 Sep 2024 08:51:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Message-ID: <20240911135106.GA629136@bhelgaas>
+	s=arc-20240116; t=1726062675; c=relaxed/simple;
+	bh=3yTd4KdOimHVV/proQ9mzWYCXCNziTwu1Bk0UDD58V0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M2hsCrVd8ch9XyN+d5C1aVMqdWkrm4zeBhFvBTD6Hl7yg7tlk8wzeI12vlR5u6ufEF4sFtqbtO7qrLqeqYrOk7N3vHjZv3sxN5ZlMZhbp0VmbtHY6nUXtz9ZKLExLs3CeqW4YqYZIhXWUaPLM1dTW7IPlapA/PxOdPEugou9ZE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JfmXO2cA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726062673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+GQVE2uuyEK3/RgorpZcN0UGcAeWWEStHDF6T/3/l8s=;
+	b=JfmXO2cABQOV4fUtpJOVa84E2NpBJ8K/VP+J7zpNMNtClHqu2v/j5rG8o0JgWxX8RFUV5Q
+	cTTiYprEt6MxT4Sulb4zIlRW4Npr1iSeL+O53TswaNsmg02VFGgmEbMmBsIOzozsor9sM9
+	rNaj3CjsOt9DqZQHq6g8LpEeX++4kg0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-358-X-BZ9MF3OZSn9-pbLKELZg-1; Wed, 11 Sep 2024 09:51:11 -0400
+X-MC-Unique: X-BZ9MF3OZSn9-pbLKELZg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb33e6299so26125815e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 06:51:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726062670; x=1726667470;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+GQVE2uuyEK3/RgorpZcN0UGcAeWWEStHDF6T/3/l8s=;
+        b=AeXLq+mUMIQkcnxvUgKWlOnKQOc+nvfOi7RxtFzftxGuupYjAmP32U6eBxYC8/qgdP
+         UD0LPcq92OU4iymS2KlX3yvyqsq7GHKnaQPoJNsZot6wxgss2Rua6Y1Zgi8AsUcVb7Z/
+         /8F97mJotb5k3LS+CnQhhKoyqCq+rjk4oH35/FqZzVFT/Zpnmq/IZ4+MlxP9UiDpTf4b
+         +AuNn6PflcIT/cNC9lXmDfTEXf4NxFT73Pme2M6QRVmeUdght/jWXIVOQH1kjZ1BR6JW
+         oOeLONKIgqzm9ilzhkE2tjVolbrevb3MbS8QGgZ5jxDuhLhb08OYiPWrNFcxFhApQgSW
+         UzFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcksphVH/ZYDwP4miuGgPtRS+WUOOdcWgvXKuYj3NcY53k6YkE+oUvHQuqqed3W/+CwoUdPXD5zUKE/+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKnf+f1baiXYRe5NfJq4aLXxYXacygFWhW1R5ROEPmh8Jc6yaV
+	xHVQ9rP8FS1p801sEGVFB1V3yQ8R7cnt0q3A8QvBYX1nq6JKr439pw6IXPp45SqSStWXWsz8SBl
+	aU0Q9yYhI3+uZ/Oy+lDEQdL9HAg8u6AUkR7uTIhXnr1TNj9hbDPet3JFi0AEv6Q==
+X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr100376835e9.28.1726062670566;
+        Wed, 11 Sep 2024 06:51:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFO3J09RP97kvF5YQ4SiyKLFil9vmlggk+kexCDdJuut3M2X4IPjV14jpq8cTqkCN/51S4QQQ==
+X-Received: by 2002:a05:600c:3b9a:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42caf060aa3mr100376375e9.28.1726062669558;
+        Wed, 11 Sep 2024 06:51:09 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb21a5csm143859255e9.6.2024.09.11.06.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 06:51:08 -0700 (PDT)
+Date: Wed, 11 Sep 2024 15:51:08 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v9 01/12] acpi/ghes: add a firmware file with HEST
+ address
+Message-ID: <20240911155108.190f0fdf@imammedo.users.ipa.redhat.com>
+In-Reply-To: <34dd38395f29f57a19aef299bafdff9442830ed3.1724556967.git.mchehab+huawei@kernel.org>
+References: <cover.1724556967.git.mchehab+huawei@kernel.org>
+	<34dd38395f29f57a19aef299bafdff9442830ed3.1724556967.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zsb_1YDo96J_AGkI@hovoldconsulting.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 22, 2024 at 11:07:33AM +0200, Johan Hovold wrote:
-> On Tue, Jul 23, 2024 at 05:13:28PM +0200, Johan Hovold wrote:
-> > Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
-> > dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
-> > bindings, which results in DT checker warnings like:
-> > 
-> > 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-> >         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
-> > 
-> > Note that this property has been part of the Qualcomm PCIe bindings
-> > since 2018 and would need to be deprecated rather than simply removed if
-> > there is a desire to replace it with 'vpcie3v3' which is used for some
-> > non-Qualcomm controllers.
-> > 
-> > Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Sun, 25 Aug 2024 05:45:56 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Store HEST table address at GPA, placing its content at
+> hest_addr_le variable.
 > 
-> Can someone pick this one up for 6.11?
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-I applied this to pci/dt-bindings for v6.12.
+This looks good to me.
 
-v6.11 is possible but we'd need a bit of a story to justify it.
-756485bfbb85 appeared in v6.9, and the commit log says it fixes a DT
-checker warning, which don't make it sound like this is urgent.  Is
-there more to it that would make this v6.11 material?
+in addition to this, it needs a patch on top to make sure
+that we migrate hest_addr_le.
+See a08a64627b6b 'ACPI: Record the Generic Error Status Block address'
+and fixes on top of that for an example.
 
-Bjorn
+> ---
+> 
+> Change from v8:
+> - hest_addr_lr is now pointing to the error source size and data.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c         | 15 +++++++++++++++
+>  include/hw/acpi/ghes.h |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index e9511d9b8f71..529c14e3289f 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -30,6 +30,7 @@
+>  
+>  #define ACPI_GHES_ERRORS_FW_CFG_FILE        "etc/hardware_errors"
+>  #define ACPI_GHES_DATA_ADDR_FW_CFG_FILE     "etc/hardware_errors_addr"
+> +#define ACPI_HEST_ADDR_FW_CFG_FILE          "etc/acpi_table_hest_addr"
+>  
+>  /* The max size in bytes for one error block */
+>  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
+> @@ -367,11 +368,22 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
+>  
+>      acpi_table_begin(&table, table_data);
+>  
+> +    int hest_offset = table_data->len;
+> +
+>      /* Error Source Count */
+>      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+>      build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
+>  
+>      acpi_table_end(linker, &table);
+> +
+> +    /*
+> +     * tell firmware to write into GPA the address of HEST via fw_cfg,
+> +     * once initialized.
+> +     */
+> +    bios_linker_loader_write_pointer(linker,
+> +                                     ACPI_HEST_ADDR_FW_CFG_FILE, 0,
+> +                                     sizeof(uint64_t),
+> +                                     ACPI_BUILD_TABLE_FILE, hest_offset);
+>  }
+>  
+>  void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+> @@ -385,6 +397,9 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>      fw_cfg_add_file_callback(s, ACPI_GHES_DATA_ADDR_FW_CFG_FILE, NULL, NULL,
+>          NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
+>  
+> +    fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
+> +        NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
+> +
+>      ags->present = true;
+>  }
+>  
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 674f6958e905..28b956acb19a 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -63,6 +63,7 @@ enum {
+>  };
+>  
+>  typedef struct AcpiGhesState {
+> +    uint64_t hest_addr_le;
+>      uint64_t ghes_addr_le;
+>      bool present; /* True if GHES is present at all on this board */
+>  } AcpiGhesState;
+
 
