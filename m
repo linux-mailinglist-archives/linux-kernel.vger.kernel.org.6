@@ -1,197 +1,92 @@
-Return-Path: <linux-kernel+bounces-324150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CFD974872
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AB9974877
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 05:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF56C288F0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:07:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006671C24F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8C0381AA;
-	Wed, 11 Sep 2024 03:07:15 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F199939FE4;
+	Wed, 11 Sep 2024 03:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkc5suz4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB6C282F7;
-	Wed, 11 Sep 2024 03:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443B13BBC1;
+	Wed, 11 Sep 2024 03:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726024034; cv=none; b=SPiSIICAi8rUuMW8rLrOSVQn2+y2ID5V4exlOFdto1Tl0ISo0CRxh/lFrEJlxnuuaURenhjUfV+JgoTx9PDcbg2P42TajB0OT3dxJ92EmteSeg7Sb6wgb3qavcvmBWLEBcbyUiGvYPgywf8l089Ljke7Bp5EosdklEZvCZb8U2Y=
+	t=1726024131; cv=none; b=hJMOcxHegayJVKWAQmnLCrSs5dV8uaU2xljkjebwtGOEjW+HGw/8kX6rIw2yWLcz50/8MS048opqP2MnIuBjhOKPPsNkKixu/D5beGuT94yn2TjDhwFFW5ngdMFxtxhaTuCPTk8IZyEVaAWvYlwY37xr43PLG9PAjSOmt9ii1mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726024034; c=relaxed/simple;
-	bh=940mgBJmC6hbA6r1sSviHQQZ1ds93etAldQvIvPZcbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HQ5Ch6CwG/50Mgty0dgMBEzPvfDo3S8jw+xk83GAMGtlWB522DBx9bcQOIBl9E6y80NTSR01loxUmYY5anRTzSIBSx0pYwq4dXFIp2BP0rpr+YQ1BmrX7rMFanTMr0rpE8n0i2vNRebPbTgepaJVttUxa+ksXUjGQakuXWgmRnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X3QST5v5mzyRRM;
-	Wed, 11 Sep 2024 11:06:01 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 46D811402E2;
-	Wed, 11 Sep 2024 11:07:08 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 11 Sep 2024 11:06:58 +0800
-Message-ID: <f96eda54-9fb1-31a0-b138-cde0716f11f1@huawei.com>
-Date: Wed, 11 Sep 2024 11:06:57 +0800
+	s=arc-20240116; t=1726024131; c=relaxed/simple;
+	bh=HEMopyFpUu8HJoyo6/3G/2qXbBjpHn1icDfAGuvUUL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mTQQs2IANhDdrRI4tnAkmEHnz/GL+7HURzCeRNYGIDyWadwPAGGC7KBCdf5EgQFbOpf9ldcUREzj4S0SV9AnrMTNP3aWYn2+J9SMKxyUzi0l2WA9VkzCzmm1E7Nyx4rFc+DZZSmBFFcEiQ/qVQT8HVYSkPQtFoKdGWI9mkM/cwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkc5suz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27DB3C4CEC3;
+	Wed, 11 Sep 2024 03:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726024130;
+	bh=HEMopyFpUu8HJoyo6/3G/2qXbBjpHn1icDfAGuvUUL8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qkc5suz42b+1q4lA5Sqr8EwF3Ml5GipTiZT9ykooM+Qp6DW2VLa1KT4ftQQlZdoYh
+	 eicfVfZC4fP1MFHxQ6yFV03y6qrOy0JmuZSyISJI4NmA3EzoH6SD0yj/4kQnMeXbRc
+	 urCd2KR9gdyU5JTSNuXDoKxkI8ej6MyEX6AaLfbV9AkXGM9ndJsOh1IzCNLhk+Vk9R
+	 i6Pu1aB9D97WUkhiBfwOAKdMCw939M2g5HIhImKk3TqNLyhqbWo1apohvoVdp3skWL
+	 eTI5CAYdElaDC5EhA9lhWnY9oRhZADU123CiIcWp2PsKB3JSFPH6wd+HVV82ufZ7R5
+	 BXLMgs+IdLr+g==
+Date: Tue, 10 Sep 2024 20:08:48 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Zetao <lizetao1@huawei.com>
+Cc: <mchehab@kernel.org>, <florian.fainelli@broadcom.com>, <andrew@lunn.ch>,
+ <olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
+ <samuel@sholland.org>, <heiko@sntech.de>, <yisen.zhuang@huawei.com>,
+ <salil.mehta@huawei.com>, <hauke@hauke-m.de>,
+ <alexandre.torgue@foss.st.com>, <joabreu@synopsys.com>,
+ <mcoquelin.stm32@gmail.com>, <wellslutw@gmail.com>,
+ <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>,
+ <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
+ <ruanjinjie@huawei.com>, <hverkuil-cisco@xs4all.nl>,
+ <u.kleine-koenig@pengutronix.de>, <jacky_chou@aspeedtech.com>,
+ <jacob.e.keller@intel.com>, <linux-media@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 00/10] net: Convert using
+ devm_clk_get_enabled()/devm_clk_get_optional_enabled()
+Message-ID: <20240910200848.0b028720@kernel.org>
+In-Reply-To: <20240907031926.3591353-1-lizetao1@huawei.com>
+References: <20240907031926.3591353-1-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] arm64: uprobes: Simulate STP for pushing fp/lr into user
- stack
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
-	<oleg@redhat.com>, <peterz@infradead.org>, <ast@kernel.org>,
-	<puranjay@kernel.org>, <andrii@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-References: <20240910060407.1427716-1-liaochang1@huawei.com>
- <CAEf4BzZ3trjMWjvWX4Zy1GzW5RN1ihXZSnLZax7V-mCzAUg2cg@mail.gmail.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <CAEf4BzZ3trjMWjvWX4Zy1GzW5RN1ihXZSnLZax7V-mCzAUg2cg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sat, 7 Sep 2024 11:19:16 +0800 Li Zetao wrote:
+> v1 -> v2:
+>   1) Patch 5 optimizes the check and adds commit information for easier
+>   inspection.
+>   2) It is no longer necessary to use clk, so delete the clk member of
+>   the spl2sw_common structure.
+>   3) Remove patches 11 and 12, they should be sent to wireless-next
+>   individually
 
-
-在 2024/9/11 4:54, Andrii Nakryiko 写道:
-> On Mon, Sep 9, 2024 at 11:14 PM Liao Chang <liaochang1@huawei.com> wrote:
->>
->> This patch is the second part of a series to improve the selftest bench
->> of uprobe/uretprobe [0]. The lack of simulating 'stp fp, lr, [sp, #imm]'
->> significantly impact uprobe/uretprobe performance at function entry in
->> most user cases. Profiling results below reveals the STP that executes
->> in the xol slot and trap back to kernel, reduce redis RPS and increase
->> the time of string grep obviously.
->>
->> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
->>
->> Redis GET (higher is better)
->> ----------------------------
->> No uprobe: 49149.71 RPS
->> Single-stepped STP: 46750.82 RPS
->> Emulated STP: 48981.19 RPS
->>
->> Redis SET (larger is better)
->> ----------------------------
->> No uprobe: 49761.14 RPS
->> Single-stepped STP: 45255.01 RPS
->> Emulated stp: 48619.21 RPS
->>
->> Grep (lower is better)
->> ----------------------
->> No uprobe: 2.165s
->> Single-stepped STP: 15.314s
->> Emualted STP: 2.216s
->>
->> Additionally, a profiling of the entry instruction for all leaf and
->> non-leaf function, the ratio of 'stp fp, lr, [sp, #imm]' is larger than
->> 50%. So simulting the STP on the function entry is a more viable option
->> for uprobe.
->>
->> In the first version [1], it used a uaccess routine to simulate the STP
->> that push fp/lr into stack, which use double STTR instructions for
->> memory store. But as Mark pointed out, this approach can't simulate the
->> correct single-atomicity and ordering properties of STP, especiallly
->> when it interacts with MTE, POE, etc. So this patch uses a more complex
-> 
-> Does all those effects matter if the thread is stopped after
-> breakpoint? This is pushing to stack, right? Other threads are not
-> supposed to access that memory anyways (not the well-defined ones, at
-> least, I suppose). Do we really need all these complications for
-
-I have raised the same question in my reply to Mark. Since the STP
-simulation focuses on the uprobe/uretprob at function entry, which
-push two registers onto *stack*. I believe it might not require strict
-alignment with the exact property of STP. However, as you know, Mark
-stand by his comments about STP simulation, which is why I send this
-patch out. Although the gain is not good as the uaccess version, it
-still offer some better result than the current XOL code.
-
-> uprobes? We use a similar approach in x86-64, see emulate_push_stack()
-> in arch/x86/kernel/uprobes.c and it works great in practice (and has
-
-Yes, I've noticed the X86 routine. Actually. The CPU-specific difference
-lies in Arm64 CPUs with PAN enabled. Due to security reasons, it doesn't
-support STP (storing pairs of registers to memory) when accessing userpsace
-address. This leads to kernel has to use STTR instructions (storing single
-register to unprivileged memory) twice, which can't meet the atomicity
-and ordering properties of original STP at userspace. In future, if Arm64
-would add some instruction for storing pairs of registers to unprivileged
-memory, it ought to replace this inefficient approach.
-
-> been for years by now). Would be nice to keep things simple knowing
-> that this is specifically for this rather well-defined and restricted
-> uprobe/uretprobe use case.
-> 
-> Sorry, I can't help reviewing this, but I have a hunch that we might
-> be over-killing it with this approach, no?
-
-This approach fails to obtain the max benefit from simuation indeed.
-
-> 
-> 
->> and inefficient approach that acquires user stack pages, maps them to
->> kernel address space, and allows kernel to use STP directly push fp/lr
->> into the stack pages.
->>
->> xol-stp
->> -------
->> uprobe-nop      ( 1 cpus):    1.566 ± 0.006M/s  (  1.566M/s/cpu)
->> uprobe-push     ( 1 cpus):    0.868 ± 0.001M/s  (  0.868M/s/cpu)
->> uprobe-ret      ( 1 cpus):    1.629 ± 0.001M/s  (  1.629M/s/cpu)
->> uretprobe-nop   ( 1 cpus):    0.871 ± 0.001M/s  (  0.871M/s/cpu)
->> uretprobe-push  ( 1 cpus):    0.616 ± 0.001M/s  (  0.616M/s/cpu)
->> uretprobe-ret   ( 1 cpus):    0.878 ± 0.002M/s  (  0.878M/s/cpu)
->>
->> simulated-stp
->> -------------
->> uprobe-nop      ( 1 cpus):    1.544 ± 0.001M/s  (  1.544M/s/cpu)
->> uprobe-push     ( 1 cpus):    1.128 ± 0.002M/s  (  1.128M/s/cpu)
->> uprobe-ret      ( 1 cpus):    1.550 ± 0.005M/s  (  1.550M/s/cpu)
->> uretprobe-nop   ( 1 cpus):    0.872 ± 0.004M/s  (  0.872M/s/cpu)
->> uretprobe-push  ( 1 cpus):    0.714 ± 0.001M/s  (  0.714M/s/cpu)
->> uretprobe-ret   ( 1 cpus):    0.896 ± 0.001M/s  (  0.896M/s/cpu)
->>
->> The profiling results based on the upstream kernel with spinlock
->> optimization patches [2] reveals the simulation of STP increase the
->> uprobe-push throughput by 29.3% (from 0.868M/s/cpu to 1.1238M/s/cpu) and
->> uretprobe-push by 15.9% (from 0.616M/s/cpu to 0.714M/s/cpu).
->>
->> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
->> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
->> [2] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@huawei.com/
->>
->> Signed-off-by: Liao Chang <liaochang1@huawei.com>
->> ---
->>  arch/arm64/include/asm/insn.h            |  1 +
->>  arch/arm64/kernel/probes/decode-insn.c   | 16 +++++
->>  arch/arm64/kernel/probes/decode-insn.h   |  1 +
->>  arch/arm64/kernel/probes/simulate-insn.c | 89 ++++++++++++++++++++++++
->>  arch/arm64/kernel/probes/simulate-insn.h |  1 +
->>  arch/arm64/kernel/probes/uprobes.c       | 21 ++++++
->>  arch/arm64/lib/insn.c                    |  5 ++
->>  7 files changed, 134 insertions(+)
->>
-> 
-> [...]
-> 
-> 
-
+In addition to Christophe's suggestions the patches didn't get ingested
+correctly into patchwork, due to the quick repost of:
+https://lore.kernel.org/all/20240907031009.3591057-1-lizetao1@huawei.com/
+without bumping the patch version...
 -- 
-BR
-Liao, Chang
+pw-bot: cr
 
