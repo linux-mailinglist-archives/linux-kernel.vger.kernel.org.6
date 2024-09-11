@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-325517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB60975AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293A5975AAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2FB28195E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:03:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4294F1C231D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7011B9B31;
-	Wed, 11 Sep 2024 19:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448E31B9B47;
+	Wed, 11 Sep 2024 19:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="px+f6i1w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9lDfpTn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26111199FB1;
-	Wed, 11 Sep 2024 19:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4BA762EB;
+	Wed, 11 Sep 2024 19:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726081424; cv=none; b=oblp6H/ymT6q7KDqmVJitRFCjUnr5w8doldXm0g5VNuYjtfcoJ7OYCr9Rj/vtd8GFYw8IE9EZfDTnfBv2KuZW46WOxl0r65y3kkWOmKt6+BkaXXsNchGTVzabPO/IyMuyGTPKpUA1GZOtsy9GJxtwtDOnQGdJd2JH5uRO82JIvg=
+	t=1726081519; cv=none; b=RQ0T98d7B62qt21IQSS4bK4gBevgKhwFBAfppVWS8mn5EHIZ6iglVyzRFU3/klqfcmc14XcEPY7Y1OQS4EHoc0Ju7UKyTOTsQcI1VfkC6iwtUwqsQPzo3J1XV0ay/5wS/dBlJdJlomx9X/x0/aHPLNMSJUJqNnSxAoDNCobl3Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726081424; c=relaxed/simple;
-	bh=cB5xxdOkS/VgO4fhlPuNrAiLm1l6EjiFx7cfT9LsvZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFW2B9CB4Y7SY1ShrWZV8PGqhc3K5yUqmxDCdUe4/A5TKVohNaoHdA8RGenukhtFNhBqHbQSnm4DNdaH7i3bG8uiT2aQCzsJmtmjQTZ5FL172uDKejiMyWqh1w1+XWrAzi5ipPu0SHD4mdAMAUeeDEdfrX44RTNEtiVRi3oCpLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=px+f6i1w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D026C4CEC0;
-	Wed, 11 Sep 2024 19:03:43 +0000 (UTC)
+	s=arc-20240116; t=1726081519; c=relaxed/simple;
+	bh=0D6HKZtwwVTLn2g82F7IMTiNI9WZKYvVIf++vYQyoVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rfdU7ascJc3c3qeR3aBm/a3ebKBKy4CnMqx5i91CAvP9LniY0SFJjegDwj50C2aTT6L3JCOFuhT1A/v+vPh2ENCRZDxDTqGIYVSHMVSZcItWpvRLRMW0UplrgG8zCjiGT/R1oKTnihpJuAdes/5oRi6WyC3ey06Wim3fhOCE0Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9lDfpTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE11CC4CEC0;
+	Wed, 11 Sep 2024 19:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726081423;
-	bh=cB5xxdOkS/VgO4fhlPuNrAiLm1l6EjiFx7cfT9LsvZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=px+f6i1wB0leHSMFk18jANYt5VSiaKjHG2LM++WUQE0EmHiHYVKKaKNKHBnIVH2u4
-	 w+9bIzAB6hP4E69WyGRva5039xj77vz9VT9R1jJec8Y/FILpow6ZWau3AnLnOQkSQt
-	 yTkPUTtqdmK6uuVYY1in2ZLA1J5e4fMjIhAm/bWmFgI8zsKUd4+tBmhuUh6P++fbkm
-	 QPGGUg4vMxl546foxICVTeZrK/hl9LXIM+svuhyuodCXQnxVIrd2m7SJv4LkGHhv2y
-	 KDoxrbWkZv/IIu1Yo6O4HLf4EAMciwEOAIhADRUZKHYpvkT8mzM/d7wWkdtTSYhpqP
-	 eFlqlguYPMedA==
-Date: Wed, 11 Sep 2024 09:03:42 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the sched-ext tree with the tip tree
-Message-ID: <ZuHpjntxhary-X8q@slm.duckdns.org>
-References: <20240911164046.2c97e2b7@canb.auug.org.au>
+	s=k20201202; t=1726081519;
+	bh=0D6HKZtwwVTLn2g82F7IMTiNI9WZKYvVIf++vYQyoVA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=C9lDfpTn6FaD8EY3GnDtWdqF8qz5r5Y0ZkLfeM3C+5v1qNaMiVekK+llbVTW5pXQH
+	 NCqI5NOK6WpXnXyfyznbsIZ2bHxvpznh8mc2wGd0mMNHhAISGzPDJQB4wMbm9F1zJZ
+	 ORIC2zgNocbXuz0Dy3P0vzcUL+DuXvrAkrS7cMv6i7M6cly6rKoDiwOfJAOxNmPGQl
+	 PuGlR4lEhaqiymPFhpm8VYlxjNBstWt3npxeShaf/32cxUafNE3Xxk0cEUuE7eRvn9
+	 LIeUNGjtVaIZ1kzyhb8K0EylMHlDgZ9Ii8RiBf87+1yxCSa/kTz+Iozc2NIsUvit0/
+	 /c0V2Twcm/veA==
+Date: Wed, 11 Sep 2024 14:05:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: bhelgaas@google.com, mario.limonciello@amd.com,
+	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
+Message-ID: <20240911190516.GA644336@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,39 +56,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911164046.2c97e2b7@canb.auug.org.au>
+In-Reply-To: <20240712062411.35732-1-kai.heng.feng@canonical.com>
 
-On Wed, Sep 11, 2024 at 04:40:46PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
+> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+> connected.
 > 
-> Today's linux-next merge of the sched-ext tree got conflicts in:
+> The following error message can be found during shutdown:
+> pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
+> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
+> pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
+> pcieport 0000:09:04.0:    [ 7] BadDLLP
 > 
->   kernel/sched/fair.c
->   kernel/sched/syscalls.c
+> Calling aer_remove() during shutdown can quiesce the error message,
+> however the spurious wakeup still happens.
 > 
-> between commits:
+> The issue won't happen if the device is in D3 before system shutdown, so
+> putting device to low power state before shutdown to solve the issue.
 > 
->   84d265281d6c ("sched/pelt: Use rq_clock_task() for hw_pressure")
->   5d871a63997f ("sched/fair: Move effective_cpu_util() and effective_cpu_util() in fair.c")
-> 
-> from the tip tree and commit:
-> 
->   96fd6c65efc6 ("sched: Factor out update_other_load_avgs() from __update_blocked_others()")
-> 
-> from the sched-ext tree.
-> 
-> I fixed it up (I used the latter version of kernel/sched/fair.c and see
-> below) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
+> I don't have a sniffer so this is purely guesswork, however I believe
+> putting device to low power state it's the right thing to do.
 
-I pulled tip/sched/core and resolved the conflict the same way. Will follow
-up with a minor cleanup patch.
+My objection here is that we don't have an explanation of why this
+should matter or a pointer to any spec language about this situation,
+so it feels a little bit random.
 
-Thanks.
+I suppose the problem wouldn't happen if AER interrupts were disabled?
+We already do disable them in aer_suspend(), but maybe that's not used
+in the shutdown path?
 
--- 
-tejun
+My understanding is that .shutdown() should turn off device interrupts
+and stop DMA.  So maybe we need an aer_shutdown() that disables
+interrupts?
+
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/pci/pci-driver.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index af2996d0d17f..4c6f66f3eb54 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
+>  	if (drv && drv->shutdown)
+>  		drv->shutdown(pci_dev);
+>  
+> +	/*
+> +	 * If driver already changed device's power state, it can mean the
+> +	 * wakeup setting is in place, or a workaround is used. Hence keep it
+> +	 * as is.
+> +	 */
+> +	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
+> +		pci_prepare_to_sleep(pci_dev);
+> +
+>  	/*
+>  	 * If this is a kexec reboot, turn off Bus Master bit on the
+>  	 * device to tell it to not continue to do DMA. Don't touch
+> -- 
+> 2.43.0
+> 
 
