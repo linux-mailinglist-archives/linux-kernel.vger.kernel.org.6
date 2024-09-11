@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-324387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D09A974BE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:55:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BEE974BE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197F1B21708
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBABE1C25126
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15A13A884;
-	Wed, 11 Sep 2024 07:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA2213D8AC;
+	Wed, 11 Sep 2024 07:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jf7mYAfT"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="SsYm+jLk"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC5133086
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AC113CFA1;
+	Wed, 11 Sep 2024 07:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041299; cv=none; b=KdmnPmSVceu9Ilu4MAVSKoRqmgSiHtxUaQ2SohB93+Rsny3d+vN6Z88gLbdzP1d94NbXF7QHF8wcygbgK68/62yhD6Vzu515o0bABHcYwsY/OM8uj26VvzfIjSpkjXHXIF6ks997UvSd4qb7/xYfRjj+1/IWGPRItErVB0Qh3jI=
+	t=1726041313; cv=none; b=VbFJYfvKYCd+HIG5S7bsginiQx0aUSpwciZok/aSUmnRtA/6AEpsUA9uFqRSyartcVKxi0Q6Ll1n3+Q4tTYXGzWzzkS0pMXP3GuslqC4A60bOUrFCEodyRNaJoCjsondCM30yeTexBGPyfYIQAh2tOblvKU/iJv82d7fhx/KkPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041299; c=relaxed/simple;
-	bh=FCNL3enQMB9b9oZ6WMqPum3crBISQcFGFq3X5va//7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=q8ikoyp3jdVdG1IWe1KZbU+8bIwOPlM28FC4bA1Ri8WioRrcT/RiuYQyEjAs9MiFZYcuNVUtGgAUtdvxtBydMCG7HpJhODjyvupBpQWnHBfiA1gjAVp9ujiuq59IjRrc9WXOexbctwxOwXQbDWLrk/G+4yNRcYmS20gHYp4J4SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jf7mYAfT; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cc8782869so11282105e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726041297; x=1726646097; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J6g1B5VNTS3oGUnmfFgas2SEgEdUHJ25qE4oeaeVF28=;
-        b=Jf7mYAfTK+7+nLfpBRrzt0teLyOUOBMRtPJ/i1G7CgGswcZhh463d3hCCkYh5M567s
-         p6GEiQUSDDt7Uo7ywZ6VogEQKaOA1vfDtuAYqBAs/qHXPveUcBkXipIzoqO50ZYwbxKP
-         4ox9vNR6RWmXfvM7p2xN7QferFy5wu0d03IrFWNdIWuf6wqdtewS4MXsN6hBdb606mS3
-         XByXBe99T7wxDTiconDnKE4JHTP/7PEPqCJ4PIrz+sU7R6+Gs0t7jSY9zqMA8CsY1/6L
-         PwYGVg8RwY8dUp4aAwNTDROesiBEZXLzcdqDseEwFz/4HcoV4rblNAnfn8513YNYs0Rg
-         0Yig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041297; x=1726646097;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J6g1B5VNTS3oGUnmfFgas2SEgEdUHJ25qE4oeaeVF28=;
-        b=UZjKvMQdBOlklA1Baq64Q4GNROTHyc4JTZjxFCzsJA3rczwdQVs2NpmKUuhdZnqFl8
-         4HQqquwmQfCTfWd0duPIuBuGstvPAcWjm/jNGYY0rA/NVuzsqVs9QgtexCBYv6aD6OpF
-         TEm3XthDNwrKMKiGlFCitC3KVjyrMD26BmBHyQFPhY1+mDHUHiBCW+SA+bRTnKXwQ3mE
-         dv+4ytq0lP/3PunMvBdArkX2ScEIm9I1tP+2K704N44rNLDKUSahuhRcrstfwWKWISkO
-         7FAm0V2ROKZyG7M27/4Ljis7lPPqmTUNDiY5od09o/onkIkVydYngEx1G/1ts4Wo+spt
-         Y0sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUh57rInKrrkInJmU5Jlsd+S1jLsQd68Wav7jPod94OQeLzZUoP9VXyBkeAaJ6RT3MzHuUV97oymrlhf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAc16jW5m99W8xQLjspJkQFurpEKzo/7mgPsfy+SCPF3msUkHq
-	ZMQCuz2YnKTgGQzkLeV4LyT8/CyRYJLvOeVqAumvKd+xQgy64APAoC45FAw/UuA=
-X-Google-Smtp-Source: AGHT+IGMaGtd5pusGWK5gC/LDrjf44vrtvtmz1nIDEiCzD9gkk+z8vd9V1M7P304PtExRrT4QkP1sw==
-X-Received: by 2002:a05:600c:1906:b0:42c:bae0:f066 with SMTP id 5b1f17b1804b1-42ccd325863mr17424475e9.13.1726041296559;
-        Wed, 11 Sep 2024 00:54:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc137556esm42959305e9.1.2024.09.11.00.54.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 00:54:56 -0700 (PDT)
-Date: Wed, 11 Sep 2024 10:54:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: Jagath Jog J <jagathjog1996@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iio: bmi323: fix reversed if statement in
- bmi323_core_runtime_resume()
-Message-ID: <273b8f96-0d32-4913-bc6b-e91b391e7d7c@stanley.mountain>
+	s=arc-20240116; t=1726041313; c=relaxed/simple;
+	bh=EA2tEPCTXn6CLL+yTzdOoB+ZdBX9EA2j8pmKlZ6sF5c=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Cc:Content-Type; b=DP7mph7Ta/OFjvq8BhlG8ptN2uOFXJ+vmOZP741K3VvIDn15umyaezvCh+j8/0Ea85zTx9U4lSqdxuL06czD4vFTOTOM2MWUTIl7CPSa3NFyCA2v+612igzOL+5W4ppK03S0+B4Ui1KUg+lznjxHl4zFbdJi4CHc94bDxyGyMVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=SsYm+jLk; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Subject:Reply-To:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=fV7E5LQGvZ58qV7zl++1wTRM8EAH4UQbWhnGhcyslZw=; t=1726041311;
+	x=1726473311; b=SsYm+jLkKj9sbF44XD1kH/M4WsDSGW7Dg0G6JMeF9LrFxd4uJ6THLDRO/hHw9
+	auy/McHCDfzcs7a/N4YociK29sdweHkweMbzPWX1Z6RmPTiMSo8yArTY8Mm9YleblBIwwke7C/imE
+	D+Lj7DZ6uro0gEUMckwNjnO/1xdeTWQvTvCRFJCC2NHcSMr+wYRvJcHz3uWGahtJ5qywIAqgoZe/2
+	N60gbMqRoOSnTKrKv0mutnyXvbqjUA2M2znz/6vyMLNWh08yawapEily/EKOSZLlLwtAO/nzNUcgg
+	OV4ACW8ZkPuIfXj/N8Z1ibT7Cl9US3IFcz9+jo6rP3PMIzfkQg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1soIBr-0004CD-UF; Wed, 11 Sep 2024 09:55:04 +0200
+Message-ID: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
+Date: Wed, 11 Sep 2024 09:55:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2efd1dd8-5a4f-4df0-8acf-972c91b7c9a0@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: [regression] frozen usb mouse pointer at boot
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1726041311;adc16418;
+X-HE-SMSGID: 1soIBr-0004CD-UF
 
-This reversed if statement means that the function just returns success
-without writing to the registers.
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-Fixes: 16531118ba63 ("iio: bmi323: peripheral in lowest power state on suspend")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/iio/imu/bmi323/bmi323_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I noticed a report about a linux-6.6.y regression in bugzilla.kernel.org
+that appears to be caused by this commit from Dan applied by Greg:
 
-diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
-index d415b6542089..a56259c6434e 100644
---- a/drivers/iio/imu/bmi323/bmi323_core.c
-+++ b/drivers/iio/imu/bmi323/bmi323_core.c
-@@ -2232,7 +2232,7 @@ static int bmi323_core_runtime_resume(struct device *dev)
- 	 * after being reset in the lower power state by runtime-pm.
- 	 */
- 	ret = bmi323_init(data);
--	if (!ret)
-+	if (ret)
- 		return ret;
- 
- 	/* Register must be cleared before changing an active config */
--- 
-2.45.2
+15fffc6a5624b1 ("driver core: Fix uevent_show() vs driver detach race")
+[v6.11-rc3, v6.10.5, v6.6.46, v6.1.105, v5.15.165, v5.10.224, v5.4.282,
+v4.19.320]
 
+The reporter did not check yet if mainline is affected; decided to
+forward the report by mail nevertheless, as the maintainer for the
+subsystem is also the maintainer for the stable tree. ;-)
+
+To quote from https://bugzilla.kernel.org/show_bug.cgi?id=219244 :
+
+> The symptoms of this bug are as follows:
+> 
+> - After booting (to the graphical login screen) the mouse pointer
+> would frozen and only after unplugging and plugging-in again the usb
+> plug of the mouse would the mouse be working as expected.
+> - If one would log in without fixing the mouse issue, the mouse
+> pointer would still be frozen after login.
+> - The usb keyboard usually is not affected even though plugged into
+> the same usb-hub - thus logging in is possible.
+> - The mouse pointer is also frozen if the usb connector is plugged
+> into a different usb-port (different from the usb-hub)
+> - The pointer is moveable via the inbuilt synaptics trackpad
+> 
+> 
+> The kernel log shows almost the same messages (not sure if the
+> differences mean anything in regards to this bug) for the initial
+> recognizing the mouse (frozen mouse pointer) and the re-plugged-in mouse
+> (and subsequently moveable mouse pointer):
+> 
+> [kernel] [    8.763158] usb 1-2.2.1.2: new low-speed USB device number 10 using xhci_hcd
+> [kernel] [    8.956028] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
+> [kernel] [    8.956036] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+> [kernel] [    8.956039] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
+> [kernel] [    8.956041] usb 1-2.2.1.2: Manufacturer: Microsoft 
+> [kernel] [    8.963554] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0002/input/input18
+> [kernel] [    8.964417] hid-generic 0003:045E:00CB.0002: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
+> 
+> [kernel] [   31.258381] usb 1-2.2.1.2: USB disconnect, device number 10
+> [kernel] [   31.595051] usb 1-2.2.1.2: new low-speed USB device number 16 using xhci_hcd
+> [kernel] [   31.804002] usb 1-2.2.1.2: New USB device found, idVendor=045e, idProduct=00cb, bcdDevice= 1.04
+> [kernel] [   31.804010] usb 1-2.2.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+> [kernel] [   31.804013] usb 1-2.2.1.2: Product: Microsoft Basic Optical Mouse v2.0 
+> [kernel] [   31.804016] usb 1-2.2.1.2: Manufacturer: Microsoft 
+> [kernel] [   31.812933] input: Microsoft  Microsoft Basic Optical Mouse v2.0  as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2.2/1-2.2.1/1-2.2.1.2/1-2.2.1.2:1.0/0003:045E:00CB.0004/input/input20
+> [kernel] [   31.814028] hid-generic 0003:045E:00CB.0004: input,hidraw1: USB HID v1.11 Mouse [Microsoft  Microsoft Basic Optical Mouse v2.0 ] on usb-0000:00:14.0-2.2.1.2/input0
+> 
+> Differences:
+> 
+> ../0003:045E:00CB.0002/input/input18 vs ../0003:045E:00CB.0004/input/input20
+> 
+> and
+> 
+> hid-generic 0003:045E:00CB.0002 vs hid-generic 0003:045E:00CB.0004
+> 
+> 
+> The connector / usb-port was not changed in this case!
+> 
+> 
+> The symptoms of this bug have been present at one point in the
+> recent
+> past, but with kernel v6.6.45 (or maybe even some version before that)
+> it was fine. But with 6.6.45 it seems to be definitely fine.
+> 
+> But with v6.6.46 the symptoms returned. That's the reason I
+> suspected
+> the kernel to be the cause of this issue. So I did some bisecting -
+> which wasn't easy because that bug would often times not appear if the
+> system was simply rebooted into the test kernel.
+> As the bug would definitely appear on the affected kernels (v6.6.46
+> ff) after shutting down the system for the night and booting the next
+> day, I resorted to simulating the over-night powering-off by shutting
+> the system down, unplugging the power and pressing the power button to
+> get rid of residual voltage. But even then a few times the bug would
+> only appear if I repeated this procedure before booting the system again
+> with the respective kernel.
+> 
+> This is on a Thinkpad with Kaby Lake and integrated Intel graphics. 
+> Even though it is a laptop, it is used as a desktop device, and the
+> internal battery is disconnected, the removable battery is removed as
+> the system is plugged-in via the power cord at all times (when in use)!
+> Also, the system has no power (except for the bios battery, of
+> course)
+> over night as the power outlet is switched off if the device is not in use.
+> 
+> Not sure if this affects the issue - or how it does. But for
+> successful bisecting I had to resort to the above procedure.
+> 
+> Bisecting the issue (between the release commits of v6.6.45 and
+> v6.6.46) resulted in this commit [1] being the probable culprit.
+> 
+> I then tested kernel v6.6.49. It still produced the bug for me. So I
+> reverted the changes of the assumed "bad commit" and re-compiled kernel
+> v6.6.49. With this modified kernel the bug seems to be gone.
+> 
+> Now, I assume the commit has a reason for being introduced, but
+> maybe
+> needs some adjusting in order to avoid this bug I'm experiencing on my
+> system.
+> Also, I can't say why the issue appeared in the past even without
+> this
+> commit being present, as I haven't bisected any kernel version before
+> v6.6.45.
+> 
+> 
+> [1]:
+> 
+> 4d035c743c3e391728a6f81cbf0f7f9ca700cf62 is the first bad commit
+> commit 4d035c743c3e391728a6f81cbf0f7f9ca700cf62
+> Author: Dan Williams <dan.j.williams@intel.com>
+> Date:   Fri Jul 12 12:42:09 2024 -0700
+> 
+>     driver core: Fix uevent_show() vs driver detach race
+>     
+>     commit 15fffc6a5624b13b428bb1c6e9088e32a55eb82c upstream.
+>     
+>     uevent_show() wants to de-reference dev->driver->name. There is no clean
+
+See the ticket for more details. Note, you have to use bugzilla to reach
+the reporter, as I sadly[1] can not CCed them in mails like this.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+[1] because bugzilla.kernel.org tells users upon registration their
+"email address will never be displayed to logged out users"
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 4d035c743c3e391728a6f81cbf0f7f9ca700cf62
+#regzbot from: brmails+k
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219244
+#regzbot title: driver core: frozen usb mouse pointer at boot
+#regzbot ignore-activity
 
