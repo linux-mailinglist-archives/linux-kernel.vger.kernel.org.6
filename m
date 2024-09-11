@@ -1,197 +1,98 @@
-Return-Path: <linux-kernel+bounces-325251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B989756E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:22:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EA49756E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E15301C23BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:22:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B860282261
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A091AB6DD;
-	Wed, 11 Sep 2024 15:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4698A1AB6F0;
+	Wed, 11 Sep 2024 15:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="J1lAfLJZ"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010044.outbound.protection.outlook.com [52.101.69.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="fj3W9Whh"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ACF1A3052;
-	Wed, 11 Sep 2024 15:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726068117; cv=fail; b=QztkTjjjw3OA+JZB5zf2quE5f708s7NuePBpNZtT4yI1bTq37r0yIpVFfs0x9l0rb3OCJU1dEL/9dsZHmob95/5MsCm77Wh3hupuZrOdAc8ijD6Y3AZnIcq5y15/SZ/F2OQhqq3O2PgdNsKRhYMXCrL50JtSKAXQK0fzhA7PeAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726068117; c=relaxed/simple;
-	bh=GUAmsP4+4yMGrmXacX8ccG2r9H1Syn9P0fXtMAR/WD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YBvPSyN8dshVETXqTup8chC/Ei0/uL9VTh92C6RSyePYOevk0czS9LM9KJHX1xPQR/dwrvj4ZD5bMj0D1Bdae+YIII4sWRjHq4jTjsyst23hTX5k8G4COpXBtqSRSzLbs3fql1jwx3rXt45H1djUkrNTHzCaF5yIAW34o2YbFnU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=J1lAfLJZ; arc=fail smtp.client-ip=52.101.69.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LgqBotqk1wfcvEQVGijHMY5kjgk+M0U69sYE2JOC6+0IfssDBrlPjuClNY6WnF8GsqraAyHmWC2Ecu8b4ONisY6PxVHOUVx82BvTTDqbELkkUWNTe2khTJ1Xa2yTz2i9q3gODYi/tTOlJVaetHPXc7pvG7qewe3YQMlYFccoO4bFdGtBpVc42EMa2zTSvJVScGrpJ9DwLJFRlHM8MSfVaAhy/rr8sXSe8FQ/YyY3/s1bgHMSktgsVqwANsNKiXzwP/pCVgY9CbgFp/uHosps0A+J7v58yCua2e5D25coJRxlHyKTFvSnAY7o0A6qZZcP3XbI3RS/+/h+jGDhCPGcYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DhVW1w/uJGpi35S0gJPo3ndGluyyAvvsJswmyfeJjRM=;
- b=tGb0Ib4Pm4WMIpuPjdY0xjIV9iYBWd4mMZIVq19SWO+XM9uGkzPxK7NglkKSms73ivIyClZZhmOyKNQWeGxX11R87W4j3q3eOZWx4pG56yEXO7E0LRYAAfEwhkOTqcarbeFAJlC+AzDp7/57BYpdk9Z9OeGa7eAoJj/ar7/WstfNq9YYnV2E5JvI0if8e74sSIY7bvYHEQsYUX3soWqcHe+BMB+k5lqkanAQHYi4ywLaqBnx6IWkUBGd+8ZJU2Ms3NrvvTaGPmTMvtmoSR/aATJ+YDl6Ij7jbVcOoGRetHfBBxW/y0ZSgi6SxEDyCicXATVeOFTZI2cLGCPwwXV6aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DhVW1w/uJGpi35S0gJPo3ndGluyyAvvsJswmyfeJjRM=;
- b=J1lAfLJZEaac9dnbxKBMZG5JzmhK4qlonN2RlqBPbd2CZp9l7ixT+9CnU04hSX+NmH5xic2X7JSmkaOHYVIccEgZfWscjYVZlv0fs4qAUTGSpZXg0XjnbhaUKBKxSJzzAPG9tshmo3CGoLshBQ+9kC3G2voDGKZ04QsX5qXCAuWlOCtOIZryP92eEoCBSeaOFWZdorsbBvkFbrbEpCzCwKhWQ1I6BGgNwo4CdDUoJ3xjiDmIhAI2prNt95EuPaIfv4uRtazqm6ou+ig89+CMByVlG3ZluS3dmZ/IfP/cZLPhiW1UUznbuJ+CMX48icZu8KIXdPzZay9NkZ0qXzxHvQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10798.eurprd04.prod.outlook.com (2603:10a6:150:213::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Wed, 11 Sep
- 2024 15:21:52 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
- 15:21:51 +0000
-Date: Wed, 11 Sep 2024 11:21:43 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Qianqiang Liu <qianqiang.liu@163.com>, hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	linux-pci@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: imx6: Fix a "Null pointer dereference" issue
-Message-ID: <ZuG1h664NeJ/X0ZS@lizhi-Precision-Tower-5810>
-References: <20240911125055.58555-1-qianqiang.liu@163.com>
- <20240911141658.GA632894@bhelgaas>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911141658.GA632894@bhelgaas>
-X-ClientProxiedBy: SJ0PR05CA0044.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8961AAE3F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 15:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726068209; cv=none; b=MR6F1lQcGmfSwEB76eJ4KNsJ9ztld+uMHTVqVu8CxQi6UeeVW0zODBojNfEbWZnzVP/yLG5G7Oj7TaDOIhwLRLCPCGk5HbmyQVlFhlr6Dpc1vo5R/yjqVLwY5l06T6FgDYan70L8IVJ3dgAUvnjxeOR9Ag3DyiQfkAK6Sj2/CI0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726068209; c=relaxed/simple;
+	bh=yEPIVWHJksNfAyZJoUCmfdgswGdbRYfUnspCXGCDCzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9a/YmmipwXIynPFo9faJM+eYw1uD66tpjBIzi/XzHKNhduQPaGQ0NIqkUv5Jed4cUSw3EpSZ8cFi3oCq/uHjbJ/s6HcYBkyY7nsQPIdFEBdMTpkTxJ+xCbaWVrkItbQBX+cnj97VBvITbt4JcEzymPYtatt5M76I82OWfyF75Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=fj3W9Whh; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aa086b077so657195466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 08:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1726068206; x=1726673006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yEPIVWHJksNfAyZJoUCmfdgswGdbRYfUnspCXGCDCzQ=;
+        b=fj3W9WhhuQ18wLNZ3h3db1D3O4Rl9rtMKdU/kPGO8mffEBx9Lwi0dSEhpnlhNG6yA0
+         uXR8w72PWx8B6+Z2JEiVxOP+8SXP9Bj0JfjoIB+RIa1bNfwg06V57L0LP/KFIv+KoRVB
+         fy3NGi95tD0yOPVlBCzXgYPdP4p+BRZ23YQdw+IGJTUKBhYtFwXwRe9E0gH6dh1kAYp9
+         lA9zctTL7tBoWZOvF9x3Qvza8hIMjO7YmP1CXfbqyZvQWEEQXW02strt28jA84RzdHl9
+         phpp655THdveQGZln1LDZ3qrRjTqgUlCRnphthczVEdYnGYX0w9z4RbpUh64wdcepAG0
+         snSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726068206; x=1726673006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yEPIVWHJksNfAyZJoUCmfdgswGdbRYfUnspCXGCDCzQ=;
+        b=rK4MTkdawByflpKe2jZLiqa66BzMlVu6ly54aR3myYh3Znh+1xEsM05Iw1lVt0yp3R
+         7oViVqoj/C6rbcYUpLuMevcAb/DgAtRLfxIhD3La4NZ2t6pwubTr2CZVZln7tytPJeil
+         dKQ3UTM+EPDNkXzvRGRgdJ8IuwCzGSLhYAF3k1EPcCIGmvzB2ZWxNM/pfM0fmTyUufwl
+         Z2AAsCh4QJfNNOcPNbuTbrOWtyUO8iC1GkgQOUQ4fgDo2QFQuISFV5mX4zb+FJmYhxNc
+         SpUdyL+DG52g2ICEuAlj6j7l6Rx+fneoMf3dqDQqNlYCB71aaOKOcjoFxpsz8LZ4tLzA
+         IjfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWanZ6AtCB2uwasZWPAyw9XxZVy7oxRvG6DFAIDYxAFVU0rSpss2lWJrMNr6zu2RoVt4tXMTq8aPDTAxqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzENoCYe8bDEmVr4XE25jDtmaiSuLiFL26S8lwpSJbbvVbSLF9E
+	kLtFzCgC13Q4vLCwpT3W34NjhoW7/810h82tPgpoPa4N0PXF8rhCEYLi+XTOdRqDL1Mp8sYS9v7
+	sMxupDNXlh3VlzecyVRjo7AoQGH4t+UlCnrLAfg==
+X-Google-Smtp-Source: AGHT+IG3YArllaY/GK0GZj4baDciccbr8DI6d5miMc1e+2B2NMRo4xv6Kl8dn2rxcEBTUrtsc8XXDrjnLLV0jQ5GXXo=
+X-Received: by 2002:a17:907:6eaa:b0:a80:f6a0:9c3c with SMTP id
+ a640c23a62f3a-a8ffa838d8cmr470205066b.0.1726068205386; Wed, 11 Sep 2024
+ 08:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10798:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc28d30e-6211-4364-400d-08dcd27575e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5J4hxfgERgTLgoRYz8tPKqonSogfZ1lgQJ1gue2n2FYcsum+HbsYMenXdAKy?=
- =?us-ascii?Q?V2M351azkiaK41no9Q5AmmoVkopZO+3Ub9WyrtILExcMiXXRr8qjqIrbvdxd?=
- =?us-ascii?Q?RQGZAahaevHmggHYuBCE8wo3jGT8S5TZQTB7YaXaokIazfyH1Q4UJdvXm9Vv?=
- =?us-ascii?Q?KPTbvCiFY98SGX8qUdc1lQQ+ShqV1uQS+LHYsfM+jaZnEvXVMVUWa74H508a?=
- =?us-ascii?Q?YHQMFtNrVYiQpmywv+5n+NiXr4A+nwomn3P3Cg1Z0EaPTGqDavQ1cPNdmc4m?=
- =?us-ascii?Q?9PRUMQ3ueXu4UmJXmKiKMAunnocA7H/kmSilqkdf49L6PYfDy9ou6jkP+mTc?=
- =?us-ascii?Q?fcrARzG0+7cAdNGscPuBPkzbbjGladR9No569oL6Viq+GYDzz1VN1B471L+g?=
- =?us-ascii?Q?yJH0RxGTxrCDmjFHu2II7Z0+U9Qh+hgiAxA0f7vW23vuo6hM3I2LXMjWI3Qg?=
- =?us-ascii?Q?s7q8SKNMc1MQJvyB3bybZZTXQ/x/K75A742tspnthDdOargFGh2Kww8j7JYk?=
- =?us-ascii?Q?S4S7yxOtER84f/eZgi/GYie5lnjk7s5UIyD8c59rbYFkRAPfCR1NQVoMp2Qw?=
- =?us-ascii?Q?RHgyaiEEauNHxN1yOCKNekn5gFQKdMT2SrgUeAAU0SRy0USLTtGi9DumGB5I?=
- =?us-ascii?Q?ncMRRfYnAyUbeO2828V8oePeXzAiJjqs4VbS55eRot4w8noCR8aW/skvJiiz?=
- =?us-ascii?Q?DYiiidvOmZZ2dJ2AHSdfRh7XZZ8bGoyqKLu4r2ACbZWy+qGej3FxM0bQC2Am?=
- =?us-ascii?Q?wOe9uPgo4Y0NTZJpSXsVf1mTOoPZvGLMNzmV5QARX5kHyQEyPZ3vWLogekym?=
- =?us-ascii?Q?nbzLjehgcCGXn1f6wjC9jB7AZg++B4OctuwpFwk/2X42XlMR9s3xujyTycEy?=
- =?us-ascii?Q?FNY/bgjtWy6OwN45nKgrH44gv2OSt8358zqb2rkkBqvp/TWM/2w/1DJPh6HA?=
- =?us-ascii?Q?RfRWcH766SBuG27i1RA3iQkmtn1jaEGU3cir0DUN0prUB0Uvzk7fbZHPY/sr?=
- =?us-ascii?Q?vwPqKcSsMwz+VSIUjsq62eMiW6WsjD4XmGHHZ7lgufaXt/EDBamMd8MWAsXN?=
- =?us-ascii?Q?wVCeXUoCZuMX+fvmBjRogRQxWzrmRjyoHZlZOApBZDUHXxCvMKLl/CVezyZI?=
- =?us-ascii?Q?YXyvcQnt9kYIGfpVBbyI5rhYqRhaO2DwVfkk3HgRigmTAWH5wF5macBJR2FP?=
- =?us-ascii?Q?SObC4zTWMBuTwsPjNbO9AlpRg2IdbHFwJ5q/i/cwZhv8bjmXF54o4OCemW1C?=
- =?us-ascii?Q?j4PhP2XmewYUjV/PBr3Dmc4Hv3xhltYdSyPSEc15M8zH5Z7ptTF91fQKWnJy?=
- =?us-ascii?Q?3MoEZFAX5sXPNBL7P7OZYGGZWVVTdN+hlmCBLVNB+YrEg8u7wxlyvXxYvy0c?=
- =?us-ascii?Q?pZ0ZUc//2MVDa5cW5InufXUQFynM+oTdc6r1HXSq7gjTmqrZvQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DVhMCH6SdQ4qQy/46rmHkHWxdSWRvAkloDAvEj+vqbMysoE0ZrLVeh1ndQFL?=
- =?us-ascii?Q?Ftyke/UByYVMpPhkh3Y5foG7ODXqjYwgExP9uXoMk91V5OfOJui/lhaLVwsw?=
- =?us-ascii?Q?6Me1NptgYtftyJGE9z80s/QVAnmpeXvKgqZlgrHShcaNuABWOj+3/hQRkQyp?=
- =?us-ascii?Q?fDvD77/ekGnH9Rp2IpzVIkeqjUblWEsg1bAQ0An40pRVAxRqCFEAXI+wqDzT?=
- =?us-ascii?Q?wKxqHnk5CAtmxgdGB9SkAk9lOUm89+bl06d+jcgc5e137H/JXkV5oc/NtMij?=
- =?us-ascii?Q?WhvV6yIZEEZyXJuVYh8uikO2TkjhCTKLlikMfhtQRSoGnVGxmZhbYLi90IBc?=
- =?us-ascii?Q?e3K3v2tGCvtb92bGOnqcoo1ZmhLsvkC0CtuRg5E9VZ2ziXYJt4dtv08BMbqs?=
- =?us-ascii?Q?0IhSogszj6PiPPrVee87uZrkXctci3SUBwZbLu5WgoEcJj4Y7z5KF4JIF1rT?=
- =?us-ascii?Q?CAjWbRDeRR8BU553VG7gDq7l72vRJKqxe8Wu2UZCeqbbjHikdj6o95saHnit?=
- =?us-ascii?Q?mbmuIYlu3f4fKzITZgA59Umqy+X+QsrmIDPWiXduLvadWrjpur4hpGcagDGb?=
- =?us-ascii?Q?u6vIYgNP1CpTaIwOiNsHsP0vqpDCyYRaY0N1NQHyH8+Mv3icEAZQbc3c7125?=
- =?us-ascii?Q?Z8wgeX4i202C3vGlDBgmML+iZ8Y4zFvUtUdXCo1nrXteTk+VBTnE1IxOE9wk?=
- =?us-ascii?Q?m2yPOaHWNCIxVviUFy+aacHulEwrxT6aat0fmBhSIfDWxmG4p5xTaSzA2qkR?=
- =?us-ascii?Q?tfTvodLzEzLWP0g0Z9qCvMmju+41hKUTjkblvkX32HLDSyUe8MJO2c3T5fK5?=
- =?us-ascii?Q?im3rdun2jaY9RMRfrTHcplZ9hpEBUn95KUN3p0b3mJd9rJ0HuGw671HGZSXT?=
- =?us-ascii?Q?IAnvX3be18QCPSdcqNIW2fh9HvmNitEwO6skO29VxQbONt+tjOuHboWDXiNf?=
- =?us-ascii?Q?7rEeY+ISsV2BezuMSHOmeTlE/oWHK15eyXzfiY3LVURQoyPwXSFzfCIZNJC/?=
- =?us-ascii?Q?Na5bOfkBnIb8i0wlwk7KJZ+UjPvVYqW/GOD7vhpb1v2nCoDVnvsEHg7yMpyX?=
- =?us-ascii?Q?bpBEdnuWG7ga36qNdwrN8s4Gg/M0STV0318JjPK1TjDqmGzU/fud+gjt/veZ?=
- =?us-ascii?Q?kFxhNBIzgMn0ymlyaypHkF9YQaf9A3B4jCgo4JUS7XiBGz59vqbiG7lMsAQ3?=
- =?us-ascii?Q?AhHbG8qwL02F0CbF765hdU51zbPEJsrrx31Fom9TGFj5oBXKiq8PJ9crDy7A?=
- =?us-ascii?Q?zQPFHh1fHVf5FyMa8CgmfUnl5ZV0BNVCvyl4K/MO38UCJspvYThMQkfYygjX?=
- =?us-ascii?Q?LD838IL4h7px2Khj5orZgBHlRM176+soGQiz/34ZPp+O46IZKJ7WEUOrU+Rk?=
- =?us-ascii?Q?mG43T//mOqmoEpM3vSf6Ma7YzWdWUcs5HjD0Ql0CWQ6MwTPgZ9pBqQE4euEy?=
- =?us-ascii?Q?omuI/pyhhTAI7Ud+v7qvpaOtKLxeN6nygkgZj1LFRzOMm1xGC0QN+nI1BZU8?=
- =?us-ascii?Q?l560MZV/dFfnrpECfBh4OY60qo2TvdcbnDYrDwhXqPQol5hLxF4oMHepPtas?=
- =?us-ascii?Q?I4SgaWSqclHLkk1JpLSMdquQ9WGD3AqeYuSwdXH1?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc28d30e-6211-4364-400d-08dcd27575e4
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 15:21:51.2213
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FWvf4HPnwJwgBjjEfvhb7IlkobKHtOgkhDymyQUTQC9Z0wjB/yluK92mNUgKSEF8QhU1lI+V6H9t5J/GG04kfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10798
+References: <4b6aec51-dc23-4e49-86c5-0496823dfa3c@redhat.com>
+ <20240911142452.4110190-1-max.kellermann@ionos.com> <CA+2bHPb+_=1NQQ2RaTzNy155c6+ng+sjbE6-di2-4mqgOK7ysg@mail.gmail.com>
+In-Reply-To: <CA+2bHPb+_=1NQQ2RaTzNy155c6+ng+sjbE6-di2-4mqgOK7ysg@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 11 Sep 2024 17:23:14 +0200
+Message-ID: <CAKPOu+-Q7c7=EgY3r=vbo5BUYYTuXJzfwwe+XRVAxmjRzMprUQ@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/ceph/quota: ignore quota with CAP_SYS_RESOURCE
+To: Patrick Donnelly <pdonnell@redhat.com>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 11, 2024 at 09:16:58AM -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 11, 2024 at 08:50:57PM +0800, Qianqiang Liu wrote:
-> > The "resource_list_first_type" function may return NULL, which
-> > will make "entry->offset" dereferences a NULL pointer.
-> >
-> > Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> > ---
-> >  drivers/pci/controller/dwc/pci-imx6.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> > index 0dbc333adcff..04e90ba4e7d6 100644
-> > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > @@ -1017,13 +1017,14 @@ static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
-> >  	struct imx_pcie *imx_pcie = to_imx_pcie(pcie);
-> >  	struct dw_pcie_rp *pp = &pcie->pp;
-> >  	struct resource_entry *entry;
-> > -	unsigned int offset;
-> > +	unsigned int offset = 0;
-> >
-> >  	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_CPU_ADDR_FIXUP))
-> >  		return cpu_addr;
-> >
-> >  	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> > -	offset = entry->offset;
-> > +	if (entry)
-> > +		offset = entry->offset;
-> >
-> >  	return (cpu_addr - offset);
-> >  }
->
-> I made the edit I proposed here:
-> https://lore.kernel.org/r/20240911140721.GA630378@bhelgaas
->
-> Please double-check it at:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=c2699778e6be
+On Wed, Sep 11, 2024 at 5:03=E2=80=AFPM Patrick Donnelly <pdonnell@redhat.c=
+om> wrote:
+> Just because the client cooperatively maintains the quota limits with
+> the MDS does not mean it can override the quota in a distributed
+> system.
 
-It is good.
-Frank
+I thought Ceph's quotas were implemented only on the client, just like
+file permissions. Is that not correct? Is there an additional
+server-side quota check? In my tests, I never saw one; it looked like
+I could write arbitrary amounts of data with my patch.
 
+Max
 
