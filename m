@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-325687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A63975D38
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F616975D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A1EB2465B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358141F22C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402541B655A;
-	Wed, 11 Sep 2024 22:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E811BBBE3;
+	Wed, 11 Sep 2024 22:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T09dSuDV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eLTAOgnK"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9E7224CF;
-	Wed, 11 Sep 2024 22:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89051A3047;
+	Wed, 11 Sep 2024 22:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726093830; cv=none; b=XCq8s2MfDXS1Txki2kA3S5KpXtMO4OkSosWIoxaEIAHAG3Y7ISOIunWAXVFqo0F5WUCIgsSPR/1iySCQhNTkdpdhbBWrR19Qd10dBC46S132yAWxOP9yUBvE2D+JSx0ELumX2N6iIEuSgDbH5I5zERLQ2fzbpQCWE9lvyrpzgtI=
+	t=1726093842; cv=none; b=gBbsf2KyiaFSkKQKhBil9vPQjPzpFx/msmafQDyyGwmCGrqMt3FSy3jToEueCBQhMDdR36WCZxwQ7tLg9pSgpDgRX1N1gMM/WVWG50boEfihmp6/VewtIIo+0XMpnOZVHtt2wtkHeoOP232FhZDJXVwGa7mY1Rr3l8+gdO3TiAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726093830; c=relaxed/simple;
-	bh=9CY7jtiBhyePSX79v/9ohwRq9HgavX2rGlMwlGxscd0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=gJftPhebrXFbcQyYKsk/goN4n3aiki1+kJjLirbsjgzckVUgGTG/k4lnxn95PQlY44PAuvMMd3MGD1BoxfC5Ogio0vHoiV7JitpaiAVr4vrGsvReEj+PyKMBAVTGsw7GilwD/YFOBfVqDeiY6yoqrH8T3IM88sfrIObl9I+GUTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T09dSuDV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE67C4CEC0;
-	Wed, 11 Sep 2024 22:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726093829;
-	bh=9CY7jtiBhyePSX79v/9ohwRq9HgavX2rGlMwlGxscd0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=T09dSuDVfXTXLXyPX/PYSlJS8rQOJqPKUmkttN7s8u3oHDbkVQ+UZ+a/MjQHUxb1m
-	 4kmJUapHfZwGp7rnxo+fASXtisrz2Qus1BnysPIxZc1qtKKuF90EzUp3Dnj/MnqvAI
-	 IxKpQ8BXd0i4d4d0GXlT0+RIIjtyl4IwPiem3eYVC/AoCpkugMRp9EZ+aS9/QXfZZQ
-	 /JFM1jSgKg4BVozTUgWOgHKhGZWEqIb8QTYA7zmOYOtPGTtkPWUz57MpbGoWwwQ0Vd
-	 vaF8rfYo23jDH+3o+m/+0lZKMknDyP0aM1JBOJPHZZjPQ4xvo2XMiy4fnyiHnJvCoI
-	 d42Ij0O3OJCEQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E373806656;
-	Wed, 11 Sep 2024 22:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726093842; c=relaxed/simple;
+	bh=npOevJMDfW/arh3BY6Od23R/CP3junI1c4HvN1FSpL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqqVkwyS6I17mDNA1ZW3CssdxIRKnlOtT48IS2GmtpikbSaoatxtjLTAXpoCgWr3ChdSOS3uA1DwFXXuqauFE71Az20lE0WGBJJ1xSXu1HeGgrPn7GXd6DlnhyFKQymGGYdHzSlqGDYNlm+xHQ00DPhFChTU2iXz1wOlXIvlDkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eLTAOgnK; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9ACB41BF204;
+	Wed, 11 Sep 2024 22:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726093839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8qU4uYN5RMPRB/LA33aUfiA2ctd0kCy7zU3BPdp1ZL4=;
+	b=eLTAOgnK4EYIldY+QvnYQYy2sTaoqt5lefdcseKFntQT+ffxxiISq8axnZ3bneGGYqYe3R
+	6KkLyUDlWslhX6o/0bfuNw89vrmJuGnm5D5J3U8MSdTvnOGSXtC6f4MEj/4GXMn4RFdd+p
+	TKUNCh8sa7x34ixoUpLOpA6b2E8/2acNVfIjtOnICo1wSkhOAR+ZwnVpDvOeAVH9ilasRY
+	N6Qi6HswkU25Fwm6C1PywOdWDEpJKXuXeWLiThN09/WB8fMUVZlBZSi3YURUBgQHlb/6Tn
+	0wokkx/hNonyI6UdB4OgO15dm1muaVr7TFmHcYDz/qEN+NIxue/kIabG2rZJYw==
+Date: Thu, 12 Sep 2024 00:30:38 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Michael Walle <mwalle@kernel.org>
+Cc: linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: sun6i: disable automatic clock input switching
+Message-ID: <172609381393.1549758.1447288374525041880.b4-ty@bootlin.com>
+References: <20240730194905.2587202-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/3] selftests: mptcp: misc. small fixes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172609383002.1065358.12169361654383136843.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 22:30:30 +0000
-References: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-In-Reply-To: <20240910-net-selftests-mptcp-fix-install-v1-0-8f124aa9156d@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730194905.2587202-1-mwalle@kernel.org>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 10 Sep 2024 21:06:35 +0200 you wrote:
-> Here are some various fixes for the MPTCP selftests.
-> 
-> Patch 1 fixes a recently modified test to continue to work as expected
-> on older kernels. This is a fix for a recent fix that can be backported
-> up to v5.15.
-> 
-> Patch 2 and 3 include dependences when exporting or installing the
-> tests. Two fixes for v6.11-rc1.
+On Tue, 30 Jul 2024 21:49:05 +0200, Michael Walle wrote:
+> The V3(s) will detect a valid external low frequency clock and if it is
+> not present will automatically switch to the internal one. This might
+> hide bugs and (hardware) configuration errors. It's even worse because
+> the internal RTC runs significantly slower (32.000Hz vs 32.768Hz).
+> Fortunately for us, the V3(s) has an (undocumented) bypass of this
+> switching and the driver already supports it by setting the
+> .has_auto_swt flag.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net,1/3] selftests: mptcp: join: restrict fullmesh endp on 1st sf
-    https://git.kernel.org/netdev/net/c/49ac6f05ace5
-  - [net,2/3] selftests: mptcp: include lib.sh file
-    https://git.kernel.org/netdev/net/c/1a5a2d19e827
-  - [net,3/3] selftests: mptcp: include net_helper.sh file
-    https://git.kernel.org/netdev/net/c/c66c08e51b55
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] rtc: sun6i: disable automatic clock input switching
+      https://git.kernel.org/abelloni/c/2cd71297070b
+
+Best regards,
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
