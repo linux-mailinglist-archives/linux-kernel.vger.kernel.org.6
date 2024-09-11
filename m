@@ -1,94 +1,170 @@
-Return-Path: <linux-kernel+bounces-324061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D8F97476A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:31:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333E897476D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DEB1F27491
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:31:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96AB9B2414B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181211F949;
-	Wed, 11 Sep 2024 00:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEC3C147;
+	Wed, 11 Sep 2024 00:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upZpSiaF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlfAGEOa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670D1EB46;
-	Wed, 11 Sep 2024 00:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3DFAD5E;
+	Wed, 11 Sep 2024 00:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726014669; cv=none; b=sKMPcB714JMd/9oiVbys0MOGam0AD2uqc7Al2a6e40xsmg75jWotFZaqFqvAiNdLqJcFmgUZL0gOkQ1izDh0IUFEcjDcPcjo5CKLARRepYEE0RHuq3avDnikm9i9khZjmpgGCEsh1ypT4VIy1ff8fZXvRb5hjrRcNa/zZ5kXKqs=
+	t=1726015008; cv=none; b=hWkQcHxd72ptBiVgozQEqXOHHQeBJMTWU4XLKoDHYRdsC9o4mCaCXuFIkkB8IoaWnzY0E4imyxrr6F0OUPNoUuiwnu6brMVe9stLK/VCe6zb1g9hLXbf0EYOTX2gOYZFPtzB8VmxrvH9RSS7irIYbBUqx+z1qIJdFMQLbZDai58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726014669; c=relaxed/simple;
-	bh=Z8Y1o4USv4zU13o7Hk4ZltRPpoaxe1EAHR2t4Z2JbWM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Euc/vlkbX2TLkKyreUSqkdeY89X01VqkOv14p6I74zqXqn7MJNSqYvh9ZhnNXlWylS2lku4gpSpLa2K3RkMp51dOIhrqU39/n/gV9kA5WltEd9VNun0VfKU4M0FQnmDXLzyqqy6Q2X5Yewtzc2sQ4yCUvx7hzxBpELijxDP0SrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upZpSiaF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA700C4CEC3;
-	Wed, 11 Sep 2024 00:31:08 +0000 (UTC)
+	s=arc-20240116; t=1726015008; c=relaxed/simple;
+	bh=lVIXiehzAanvFHirmdt6NzjYfXl6qFXb+nmuhJdAX4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXLPDYMFN6I6Asx8Qt1cD4UFM4zkzKICzvGQ72jzwnM4JOcIYiLNg3EppAYdEyi6WlELpCS55DCtC3XU5iVOtpS3SJ9XtgEpt8OfZwOWiLofcsqB49iHD3yzGmrpN5wax/ug89tADzXqTuThJU5V5wkf45sYbfQBkyzmldw4aeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlfAGEOa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC997C4CEC3;
+	Wed, 11 Sep 2024 00:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726014669;
-	bh=Z8Y1o4USv4zU13o7Hk4ZltRPpoaxe1EAHR2t4Z2JbWM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=upZpSiaFs6zRP/GuKngaDysGKRE1qIazioYelEJHDOHQz6fU2BHM/iLo0eK3NQ6+V
-	 PVmQM3D+fX77ARHPhuCdPdgQufd+jTngOkgF74sSFM8D/9DnBJ+1NkbD+hzYhgUasf
-	 lZmm2MSX0b4FIlJgztRYYMqwODIyzflwhbOLLU/gZ+20TvSU2evmesWXc7f2aIw0/4
-	 sFBpZMVDi1TbEU9JViuC9J753ubo917g5zziETH6R/1yxV6R5h5AyiORfPokkNmB3l
-	 zWIjZpffnFt/Y6WBxTL8hdZ96ziSiIiQB35yJ5MzdZ25BxjjLOjVZJRpHvzv98QgLz
-	 jLfwpHCD045vQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34A573822FA4;
-	Wed, 11 Sep 2024 00:31:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726015007;
+	bh=lVIXiehzAanvFHirmdt6NzjYfXl6qFXb+nmuhJdAX4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QlfAGEOaz1hBI8fLcdxGf9dVkxeYse+IDiAxi0LmabNTkIfIVm+0fOKT2wyWdiQPC
+	 usIFQemfDKDnxK9U8Db37DnK8v075gNcjZqDqgS7wZS2p0gnzZHP8Xx68oGtEdhIqE
+	 uJbYaTOx+uMbe/3kOQL++3W4ipWbJU/K9V5ruIktOVd/3qGdknZbQ+7qU9ToYuSmox
+	 c33Hqa4BuFlGnZZvDa5fXhH9GEcXtquvA//tlKjpR2bjrWhaQwyI01xixN8WIaAt69
+	 78pLggOBY/yC7ZfRzDhbIElKJ0LuZq1WQghgT/sUWn641t632srqQm2753L1LjIXEc
+	 XsJFsYRFL/B1Q==
+Date: Tue, 10 Sep 2024 17:36:47 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: David Laight <David.Laight@aculab.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] overflow: optimize struct_size() calculation
+Message-ID: <202409101729.C242EEC@keescook>
+References: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 1/1] net: dsa: microchip: update tag_ksz masks for
- KSZ9477 family
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172601466999.440312.11137610546994338908.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 00:31:09 +0000
-References: <20240909134301.75448-1-vtpieter@gmail.com>
-In-Reply-To: <20240909134301.75448-1-vtpieter@gmail.com>
-To: Pieter <vtpieter@gmail.com>
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- pieter.van.trappen@cern.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+In-Reply-To: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  9 Sep 2024 15:42:59 +0200 you wrote:
-> From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+On Tue, Sep 10, 2024 at 11:49:52AM +0900, Vincent Mailhol wrote:
+> If the offsetof() of a given flexible array member (fam) is smaller
+> than the sizeof() of the containing struct, then the struct_size()
+> macro reports a size which is too big.
 > 
-> Remove magic number 7 by introducing a GENMASK macro instead.
-> Remove magic number 0x80 by using the BIT macro instead.
+> This occurs when the two conditions below are met:
 > 
-> Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+>   - there are padding bytes after the penultimate member (the member
+>     preceding the fam)
+>   - the alignment of the fam is less than or equal to the penultimate
+>     member's alignment
 > 
-> [...]
+> In that case, the fam overlaps with the padding bytes of the
+> penultimate member. This behaviour is not captured in the current
+> struct_size() macro, potentially resulting in an overestimated size.
+> 
+> Below example illustrates the issue:
+> 
+>   struct s {
+>   	u64 foo;
+>   	u32 count;
+>   	u8 fam[] __counted_by(count);
+>   };
+> 
+> Assuming a 64 bits architecture:
+> 
+>   - there are 4 bytes of padding after s.count (the penultimate
+>     member)
+>   - sizeof(struct s) is 16 bytes
+>   - the offset of s.fam is 12 bytes
+>   - the alignment of s.fam is 1 byte
+> 
+> The sizes are as below:
+> 
+>    s.count	current struct_size()	actual size
+>   -----------------------------------------------------------------------
+>    0		16			16
+>    1		17			16
+>    2		18			16
+>    3		19			16
+>    4		20			16
+>    5		21			17
+>    .		.			.
+>    .		.			.
+>    .		.			.
+>    n		sizeof(struct s) + n	max(sizeof(struct s),
+> 					    offsetof(struct s, fam) + n)
+> 
+> Change struct_size() from this pseudo code logic:
+> 
+>   sizeof(struct s) + sizeof(*s.fam) * s.count
+> 
+> to that pseudo code logic:
+> 
+>   max(sizeof(struct s), offsetof(struct s, fam) + sizeof(*s.fam) * s.count)
+> 
+> Here, the lowercase max*() macros can cause struct_size() to return a
+> non constant integer expression which would break the DEFINE_FLEX()
+> macro by making it declare a variable length array. Because of that,
+> use the unsafe MAX() macro only if the expression is constant and use
+> the safer max() otherwise.
+> 
+> Reference: ISO/IEC 9899:2018 §6.7.2.1 "Structure and union specifiers" ¶18
+> 
+> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> ---
+> 
+> I also tried to think of whether the current struct_size() macro could
+> be a security issue.
+> 
+> The only example I can think of is if someone manually allocates the
+> exact size but then use the current struct_size() macro.
+> 
+> For example (reusing the struct s from above):
+> 
+>   u32 count = 5;
+>   struct s *s = kalloc(offsetof(typeof(*s), fam) + count);
+>   s->count = count;
+>   memset(s, 0, struct_size(s, fam, count)); /* 4 bytes buffer overflow */
+> 
+> If we have concerns that above pattern may actually exist, then this
+> patch should also go to stable. I personally think that the above is a
+> bit convoluted and, as such, I only suggest this patch to go to next.
 
-Here is the summary with links:
-  - [net-next,1/1] net: dsa: microchip: update tag_ksz masks for KSZ9477 family
-    https://git.kernel.org/netdev/net-next/c/3f464b193d40
+Yeah, this "over-estimation" has come up before, and my thinking as been
+that while the above situation is certainly possible (but unlikely),
+I've worried that the reverse situation (after this patch) is
+potentially worse, where we allocate very precisely, but then manually
+index too far:
 
-You are awesome, thank you!
+	struct s *s = kmalloc(struct_size(s, fam, count), gfp);
+	typeof(*s->fam) *element;
+	element = (void *)s + sizeof(*s);
+	for (i = 0; i < count; i++)
+		element[i] = ...;
+
+And for a max 7 byte savings, I'm concerned we can get bit much worse in
+the above situation. It *should* be unlikely, but I've especially seen a
+lot of manually calculated games especially for structs that have
+effectively multiple trailing flexible arrays (wifi likes to do this,
+for example).
+
+So while I don't have very concrete evidence, my sensation is that we're
+in a more defensive position leaving it over-estimated.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Kees Cook
 
