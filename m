@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-325315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAAE59757C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:59:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240099757BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3832FB2C7AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF78528C0E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD201AC8B2;
-	Wed, 11 Sep 2024 15:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5584F1AE86F;
+	Wed, 11 Sep 2024 15:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVuUOR3z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSbZqsXQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F401A304E;
-	Wed, 11 Sep 2024 15:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEAD1A304E;
+	Wed, 11 Sep 2024 15:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070224; cv=none; b=EFqlR+rWYC4PKRhOT5Lj4os/xqb6t03kQvSOhkg7RvzKhm4ADY31+5lQjlgxH8l5WrojWl4ZzH5L/oZi72CnbPRI0kmxLlhICMo4qT/D8ErIqKHp4f5al3A3kdIiQ4jL9YWjyWsLBDfaSPTNY5q+McIbQU4oi1CKDG+W1p8v2sg=
+	t=1726070228; cv=none; b=qmCXdum4Be9C8Tap2L6VHlbiqwBFrcGuYGNwEhAamS4GS0CkIMPBqGjynZwaTk2nf/2ilhIubRJusj521Fcrp2xrOB5I7NNwOkpz+VKhBQjgTOyVuZece55bmN1SFljExtMEQxMHZbd/jn2vv4ZKuu8PHCeyw/jZg9Ui/nMnyYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070224; c=relaxed/simple;
-	bh=U3AaWtUbGFR9tt01UqvoLSbhbgiM9cu0hXA9w9pTxMY=;
+	s=arc-20240116; t=1726070228; c=relaxed/simple;
+	bh=nF/c18D09Y46sCdwrFKtfmx8kDiDbxV17SDMLV7V/L8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZd3H45A6lhaWYWN94pS0n//0uWijYxvN7EkqJZ2BSKxJ7keH+lhBRm2DVNrvdPNbSuW+8MmNOEJEebJYbEEY606bMGCyv07s472qvpMGRwCk0afythbH7Wr6R7ITjL7BIRtAjv2iQv0XhzzSEss33tYs9ToFTyPYVipZnyhpOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVuUOR3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26408C4CEC5;
-	Wed, 11 Sep 2024 15:57:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyHkrEJdH6B/xCxkBdUukzFTT4t/T/xU1Rm0iY8RveJEKv1bxrkSNjJPK/hdAT/ddRTr0ZeesNDYOW9LVH+tcm838M19LA+5K6DSVXXXqeo5TY9wGU7gdmEa7rOrq/noMjVg0+wAm0Xa8u+nB1NFgmiP/VzihYkdlLnepYPV1IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSbZqsXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E1C2C4CEC0;
+	Wed, 11 Sep 2024 15:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726070222;
-	bh=U3AaWtUbGFR9tt01UqvoLSbhbgiM9cu0hXA9w9pTxMY=;
+	s=k20201202; t=1726070228;
+	bh=nF/c18D09Y46sCdwrFKtfmx8kDiDbxV17SDMLV7V/L8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nVuUOR3zcp0K2TQ64jt0KVoWQLJWGIi6bI7pE+kHMq4MMQVj30SdoL/8weXYQbqrd
-	 1PHQ6EO4N+HTLR2FVcZzNMMHChEjTTcayHHWWXSjxEkIxoMNmHpKMPgsBYzwXgVa4T
-	 UREoHnVUYlv1o3Ks67jb291evfLnEKzIc5e8z6IqpDSnQiiBsB1iqtKSvWohTr/Bml
-	 zckLzn+iL1ed1ykSHIcuDIWSTmPDEglB7gwOvvP5+cBTUpAf54Rw/5NS23UJ5LRoVc
-	 RqTl0XDlGXqOdMEaFapNzIwqpHxyxWcu+raUfS6x5043M81YJNIEVjCTjfaroUxYo0
-	 0A4reAZJhYdow==
-Date: Wed, 11 Sep 2024 12:56:59 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: namhyung@kernel.org, irogers@google.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] perf mem: Fix missed p-core mem events on ADL and RPL
-Message-ID: <ZuG9ywKpzDE953RD@x1>
-References: <20240905170737.4070743-1-kan.liang@linux.intel.com>
- <20240905170737.4070743-2-kan.liang@linux.intel.com>
- <ZtoHgMqNhnDdvAIi@x1>
- <1a339858-74a3-414a-9fc1-bef47c513728@linux.intel.com>
- <ZtsO-v3pUVezKBgE@x1>
- <8644996b-33d6-4eee-890c-f23a3c830b77@linux.intel.com>
- <ZttgvduaKsVn1r4p@x1>
- <eafb8f49-2396-4652-a74e-882b4066790e@linux.intel.com>
+	b=MSbZqsXQZvxGgXr7EMhs3k8GTYGyywHC84W9sj1TjYH8RMZGFoqM6+plv6qYKV3HZ
+	 pS6kfpCHlmoV4B+sjBZ4uwr9LaHRu5Mt/kD+ZwONUHx3KGyyrpf8Xa8WDuCoGTSXrS
+	 8qZLfV9R21YSnNKTlzsisFjw+a6taz1fqVMP2kjEUOILsMNhu6X7qr+1RuuX1eFryg
+	 yghG2INw1jKbRRHHcQn+vnmlBVAlqYZftGFjBxSFcRlthZyVc2BG1zZMcq/SMLP12P
+	 rb7U7vopaKPOe0vDpzyrDhbp8IaXAOAx+j7vhxf6Jd/MYZ8K3lX3nnsjoRwbYojnfs
+	 yHpsnfl1fLMaw==
+Date: Wed, 11 Sep 2024 17:57:04 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tommy Huang <tommy_huang@aspeedtech.com>
+Cc: brendan.higgins@linux.dev, benh@kernel.crashing.org, joel@jms.id.au, 
+	andrew@codeconstruct.com.au, wsa@kernel.org, linux-i2c@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v3] i2c: aspeed: Update the stop sw state when the bus
+ recovery occurs
+Message-ID: <ljwz3zv7sakhqoeuceewmnk34igo2srfhtmbhhxqel3tgvqvou@wpvqldtoq6st>
+References: <20240911093951.1674824-1-tommy_huang@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +60,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eafb8f49-2396-4652-a74e-882b4066790e@linux.intel.com>
+In-Reply-To: <20240911093951.1674824-1-tommy_huang@aspeedtech.com>
 
-On Sun, Sep 08, 2024 at 04:30:44PM -0400, Liang, Kan wrote:
-> 
-> 
-> On 2024-09-06 4:06 p.m., Arnaldo Carvalho de Melo wrote:
-> > On Fri, Sep 06, 2024 at 12:08:52PM -0400, Liang, Kan wrote:
-> >> On 2024-09-06 10:17 a.m., Arnaldo Carvalho de Melo wrote:
-> >>> On Thu, Sep 05, 2024 at 03:47:03PM -0400, Liang, Kan wrote:
-> >>>> On 2024-09-05 3:33 p.m., Arnaldo Carvalho de Melo wrote:
-> >>>>> But can we reconstruct the events relationship (group, :S, etc) from
-> >>>>> what we have in the perf.data header?
-> > 
-> >>>> Do you mean show the group relation in the perf evlist?
-> > 
-> >>>> $perf mem record sleep 1
-> >>>> [ perf record: Woken up 1 times to write data ]
-> >>>> [ perf record: Captured and wrote 0.027 MB perf.data (10 samples) ]
-> > 
-> >>>> $perf evlist -g
-> >>>> cpu_atom/mem-loads,ldlat=30/P
-> >>>> cpu_atom/mem-stores/P
-> >>>> {cpu_core/mem-loads-aux/,cpu_core/mem-loads,ldlat=30/}
-> >>>> cpu_core/mem-stores/P
-> >>>> dummy:u
-> > 
-> >>>> The -g option already did it, although the group modifier looks lost.
-> > 
-> >>> Right, I can reproduce that, but I wonder if we shouldn't make this '-g'
-> >>> option the default?
-> > 
-> >> I think the evlist means a list of events. Only outputting the events
-> >> makes sense to me.
-> >> With -g, the extra relationship information is provided.
-> > 
-> > At first 'perf evlist' showing just the events present in the perf.data
-> > file seems enough, and maybe it should continue like that.
-> > 
-> > It is just that this relationship is so critical that not showing it by
-> > default looks suboptimal :-\
-> > 
-> > Perhaps we should add some warning at the end mentioning the special
-> > relationships present and suggest using '-g' to see it?
-> > 
-> 
-> Agree, and we already did a similar hint for tracepoint events.
-> 
-> Here is the patch to add a hint for '-g'.
-> https://lore.kernel.org/lkml/20240908202847.176280-1-kan.liang@linux.intel.com/
+Hi Tommy,
 
-Thanks for doing that, patch applied!
+On Wed, Sep 11, 2024 at 05:39:51PM GMT, Tommy Huang wrote:
+> When the i2c bus recovery occurs, driver will send i2c stop command
+> in the scl low condition. In this case the sw state will still keep
+> original situation. Under multi-master usage, i2c bus recovery will
+> be called when i2c transfer timeout occurs. Update the stop command
+> calling with aspeed_i2c_do_stop function to update master_state.
+> 
+> Fixes: f327c686d3ba ("i2c: aspeed: added driver for Aspeed I2C")
+> 
+> Cc: <stable@vger.kernel.org> # v4.13+
+> Signed-off-by: Tommy Huang <tommy_huang@aspeedtech.com>
 
-- Arnaldo
+merged to i2c/i2c-host-fixes.
+
+Thanks,
+Andi
 
