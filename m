@@ -1,298 +1,315 @@
-Return-Path: <linux-kernel+bounces-325167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B6D9755BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E9F975591
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69066B29DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCD6281973
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B431F1AB6F0;
-	Wed, 11 Sep 2024 14:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC871A38CF;
+	Wed, 11 Sep 2024 14:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="gF2Df1yP"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cJc0332n"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CF31AB6CA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94271A302C;
+	Wed, 11 Sep 2024 14:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726065488; cv=none; b=i1lKdrGIGrXMxIMfitNvsUzmLSQbXEC8vaSMwYlsYeY4TO+bGhmrkNwU36XlrnQFaTcMyqmb/ZhcplyUa7+lADxffRprbzcstpq3V4XaomjH+e4vYzS5ryKkGvgaoWISl3SSYLcZSErHQ0ENyK7fu0FlRT1kGbEVOOkv1cWzluw=
+	t=1726065264; cv=none; b=iokmq8FW0GYwPHR6uWFWjDC2Gv1R+qsl/CR3dT1QMBFtRBLM9QZ3pfqxZ4989AU1HWHxIPL7R6R1i+F4rRmVEf2lKs1OP4rjWEAuYHmYB7fIIMjNYy6qMN04gv1/adCIJHLL9m76cGYI6pVErVEvdrqE1i+clsyynAJWS1dw460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726065488; c=relaxed/simple;
-	bh=bcE5zfmXJa4poSgksIzijifRjEkiDBngz9LK8nPfx6g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KQ2dA5hEZv6JBL2MIhjOUWMkdgEogcXJikYPsx/pHU5o11g7DjDhHGPFK/CUs31kQemu6wKXX1QvS6+YRdh/5u+2nrtg6+LcGAZmvddZGa5FO+pCSxE8AEM0/+Z0eoepd6QpjNaKj6lw9eQ0PbtpDxaoECojEFzzTOqtYm9PRxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=gF2Df1yP; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1726065485; x=1757601485;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Hqkci3dj0GUqOn7J4NBabiUfpbZVZgBkN05sOca7hnY=;
-  b=gF2Df1yPfZ7Th3kcqBzgCRzqU9NQ9p2PfOHxIUPRwjeRda/6lRFTIzqX
-   2eyd40Vcq0n2XL1hzeJ/t5GCA9zBaqV5oedVhlPwrgEfQP5ny4xU6mScb
-   NUFSXZsw+6A63f3wmAH7UtbSj55cBEda3TGjWSiJZQIVvgdGB6s4AB40B
-   U=;
-X-IronPort-AV: E=Sophos;i="6.10,220,1719878400"; 
-   d="scan'208";a="329956973"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 14:38:05 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:41644]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.25.181:2525] with esmtp (Farcaster)
- id 4f621809-6571-476e-b300-f14101ba8a55; Wed, 11 Sep 2024 14:38:03 +0000 (UTC)
-X-Farcaster-Flow-ID: 4f621809-6571-476e-b300-f14101ba8a55
-Received: from EX19D007EUA001.ant.amazon.com (10.252.50.133) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 11 Sep 2024 14:38:00 +0000
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19D007EUA001.ant.amazon.com (10.252.50.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 11 Sep 2024 14:37:59 +0000
-Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (10.253.79.181)
- by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34
- via Frontend Transport; Wed, 11 Sep 2024 14:37:56 +0000
-From: Fares Mehanna <faresx@amazon.de>
-To: 
-CC: <nh-open-source@amazon.com>, Fares Mehanna <faresx@amazon.de>, "Marc
- Zyngier" <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James Morse
-	<james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
-	<yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "Kemeng
- Shi" <shikemeng@huaweicloud.com>, =?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?=
-	<ptosi@google.com>, Ard Biesheuvel <ardb@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Javier Martinez Canillas <javierm@redhat.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Fuad Tabba <tabba@google.com>, Mark Brown
-	<broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>, Kristina Martsenko
-	<kristina.martsenko@arm.com>, Randy Dunlap <rdunlap@infradead.org>, "Bjorn
- Helgaas" <bhelgaas@google.com>, Jean-Philippe Brucker
-	<jean-philippe@linaro.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, "David
- Hildenbrand" <david@redhat.com>, Roman Kagan <rkagan@amazon.de>, "moderated
- list:KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)"
-	<linux-arm-kernel@lists.infradead.org>, "open list:KERNEL VIRTUAL MACHINE FOR
- ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>, open list
-	<linux-kernel@vger.kernel.org>, "open list:MEMORY MANAGEMENT"
-	<linux-mm@kvack.org>
-Subject: [RFC PATCH 7/7] arm64: KVM: Allocate vCPU fp-regs dynamically on VHE and KERNEL_SECRETMEM enabled systems
-Date: Wed, 11 Sep 2024 14:34:06 +0000
-Message-ID: <20240911143421.85612-8-faresx@amazon.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240911143421.85612-1-faresx@amazon.de>
-References: <20240911143421.85612-1-faresx@amazon.de>
+	s=arc-20240116; t=1726065264; c=relaxed/simple;
+	bh=kGMNMbsdtI/Td/R/etzIT6Mtsyt0uxPTgnh5Weutbqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NY/OYUw0HaSF/SDQxCvn9uSjb9RYFjXM4iGdSGUN5CYdP42JesrnsORxM9iVD92rHlZRnwMbgJ2j3GtnapnEeAYLV1B8DA+laBoRr6dRYkh/MuX5N4D7tz3YHvk31xLTRJdSItpHEf+HitHNSq+Wk4QIJ4StPUG7UbXEmdiG1Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cJc0332n; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48BEYCjh127054;
+	Wed, 11 Sep 2024 09:34:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726065252;
+	bh=GheB2vtmOOF3bRfgJtOuX0KHFhkymAURM8K2SnfqvzM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cJc0332nQibh/bKf+ifGu8Rxe4Bo7v+WOhwvRFeIkqqSQkurAhd4RLRvgqdDnV5LD
+	 riIew3NhuLe9pUpAesi0d9/JWLcV6mo5jd2U7/sF4Th4HnSl0dz40RhOBlM4ynp/ua
+	 7v74iTgLVpRqvLEtPTKqoyfoi6thGyRZijo8XBC4=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48BEYCIa001968
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 11 Sep 2024 09:34:12 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 11
+ Sep 2024 09:34:11 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 11 Sep 2024 09:34:11 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48BEYBxa083039;
+	Wed, 11 Sep 2024 09:34:11 -0500
+Message-ID: <9c5e5c33-9fac-4240-8e30-de401e781324@ti.com>
+Date: Wed, 11 Sep 2024 09:34:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mmc: sdhci_am654: Add
+ sdhci_am654_start_signal_voltage_switch
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240906175032.1580281-1-jm@ti.com>
+ <068093ed-1ab5-40d6-b709-cd6810825ba3@intel.com>
+ <cce6ec2f-3293-4f08-a965-76dece0ddfab@ti.com>
+ <b154b9b3-cb74-4a51-953c-d4328f992898@intel.com>
+ <091d7920-e197-4e14-af0c-8932af92a9dd@ti.com>
+ <a1370ddf-febd-40fd-8f17-bc70e7fa850c@intel.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <a1370ddf-febd-40fd-8f17-bc70e7fa850c@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Similar to what was done in this commit:
-  "arm64: KVM: Allocate vCPU gp-regs dynamically on VHE and KERNEL_SECRETMEM enabled systems"
+Hi Adrian,
 
-We're moving fp-regs to dynamic memory for systems supporting VHE and compiled
-with KERNEL_SECRETMEM support. Otherwise, we will use the "fp_regs_storage"
-struct embedded in the vCPU context.
+On 9/11/24 12:17 AM, Adrian Hunter wrote:
+> On 11/09/24 02:22, Judith Mendez wrote:
+>> Hi Adrian,
+>>
+>> On 9/10/24 12:10 PM, Adrian Hunter wrote:
+>>> On 10/09/24 17:30, Judith Mendez wrote:
+>>>> Hi Adrian,
+>>>>
+>>>> On 9/9/24 1:26 AM, Adrian Hunter wrote:
+>>>>> On 6/09/24 20:50, Judith Mendez wrote:
+>>>>>> The sdhci_start_signal_voltage_switch function sets
+>>>>>> V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
+>>>>>> V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
+>>>>>> edge or pos edge of clock.
+>>>>>>
+>>>>>> Due to some eMMC and SD failures seen across am62x platform,
+>>>>>> do not set V1P8_SIGNAL_ENA by default, only enable the bit
+>>>>>> for devices that require this bit in order to switch to 1v8
+>>>>>> voltage for uhs modes.
+>>>>>>
+>>>>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>>>>> ---
+>>>>>>     drivers/mmc/host/sdhci_am654.c | 86 ++++++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 86 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+>>>>>> index 0aa3c40ea6ed8..fb6232e56606b 100644
+>>>>>> --- a/drivers/mmc/host/sdhci_am654.c
+>>>>>> +++ b/drivers/mmc/host/sdhci_am654.c
+>>>>>> @@ -155,6 +155,7 @@ struct sdhci_am654_data {
+>>>>>>         u32 tuning_loop;
+>>>>>>       #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>>>>>> +#define SDHCI_AM654_QUIRK_SET_V1P8_ENA BIT(1)
+>>>>>
+>>>>> It would be better for the quirk to represent the deviation
+>>>>> from normal i.e.
+>>>>>
+>>>>> #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+>>>>>
+>>>>>>     };
+>>>>>>       struct window {
+>>>>>> @@ -356,6 +357,79 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
+>>>>>>         sdhci_set_clock(host, clock);
+>>>>>>     }
+>>>>>>     +int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc,
+>>>>>> +                        struct mmc_ios *ios)
+>>>>>
+>>>>> Simpler to call sdhci_start_signal_voltage_switch() for the normal
+>>>>> case e.g.
+>>>>
+>>>> This is simpler, so sure will use thanks.
+>>>>
+>>>>>
+>>>>> static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>>> {
+>>>>>       struct sdhci_host *host = mmc_priv(mmc);
+>>>>>       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>>>       struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>>>>>
+>>>>>
+>>>>>       if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
+>>>>>           ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
+>>>>>           ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>           if (ret < 0) {
+>>>>>               pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>>>>>                   mmc_hostname(mmc));
+>>>>>               return -EIO;
+>>>>>           }
+>>>>>           return 0;
+>>>>>       }
+>>>>>
+>>>>>       return sdhci_start_signal_voltage_switch(mmc, ios);
+>>>>> }
+>>>>>
+>>>>>> +{
+>>>>>> +    struct sdhci_host *host = mmc_priv(mmc);
+>>>>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>>>> +    struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>>>>>> +    u16 ctrl;
+>>>>>> +    int ret;
+>>>>>> +
+>>>>>> +    if (host->version < SDHCI_SPEC_300)
+>>>>>> +        return 0;
+>>>>>> +
+>>>>>> +    switch (ios->signal_voltage) {
+>>>>>> +    case MMC_SIGNAL_VOLTAGE_330:
+>>>>>> +        if (!(host->flags & SDHCI_SIGNALING_330))
+>>>>>> +            return -EINVAL;
+>>>>>> +
+>>>>>> +        ctrl &= ~SDHCI_CTRL_VDD_180;
+>>>>>> +        sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>>>> +
+>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>> +            if (ret < 0) {
+>>>>>> +                pr_warn("%s: Switching to 3.3V signalling voltage failed\n",
+>>>>>> +                    mmc_hostname(mmc));
+>>>>>> +                return -EIO;
+>>>>>> +            }
+>>>>>> +        }
+>>>>>> +
+>>>>>> +        usleep_range(5000, 5500);
+>>>>>> +
+>>>>>> +        ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>>>>> +        if (!(ctrl & SDHCI_CTRL_VDD_180))
+>>>>>> +            return 0;
+>>>>>> +
+>>>>>> +        pr_warn("%s: 3.3V regulator output did not become stable\n",
+>>>>>> +            mmc_hostname(mmc));
+>>>>>> +
+>>>>>> +        return -EAGAIN;
+>>>>>> +
+>>>>>> +    case MMC_SIGNAL_VOLTAGE_180:
+>>>>>> +        if (!(host->flags & SDHCI_SIGNALING_180))
+>>>>>> +            return -EINVAL;
+>>>>>> +
+>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>> +            ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>> +            if (ret < 0) {
+>>>>>> +                pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>>>>>> +                    mmc_hostname(mmc));
+>>>>>> +                return -EIO;
+>>>>>> +            }
+>>>>>> +        }
+>>>>>> +
+>>>>>> +        if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_SET_V1P8_ENA) {
+>>>>>> +            ctrl |= SDHCI_CTRL_VDD_180;
+>>>>>> +            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>>>> +
+>>>>>> +            ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>>>>> +            if (ctrl & SDHCI_CTRL_VDD_180)
+>>>>>> +                return 0;
+>>>>>> +
+>>>>>> +            pr_warn("%s: 1.8V regulator output did not become stable\n",
+>>>>>> +                mmc_hostname(mmc));
+>>>>>> +
+>>>>>> +            return -EAGAIN;
+>>>>>> +        }
+>>>>>> +        return 0;
+>>>>>> +
+>>>>>> +    default:
+>>>>>> +        return 0;
+>>>>>> +    }
+>>>>>> +}
+>>>>>> +
+>>>>>>     static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
+>>>>>>     {
+>>>>>>         writeb(val, host->ioaddr + reg);
+>>>>>> @@ -801,6 +875,8 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>>>>>>                         struct sdhci_am654_data *sdhci_am654)
+>>>>>>     {
+>>>>>>         struct device *dev = &pdev->dev;
+>>>>>> +    struct device_node *np = dev->of_node;
+>>>>>> +    struct device_node *node;
+>>>>>>         int drv_strength;
+>>>>>>         int ret;
+>>>>>>     @@ -844,6 +920,15 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>>>>>>         if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
+>>>>>>             sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
+>>>>>>     +    node = of_parse_phandle(np, "vmmc-supply", 0);
+>>>>>> +
+>>>>>> +    if (node) {
+>>>>>> +        node = of_parse_phandle(np, "vqmmc-supply", 0);
+>>>>>> +
+>>>>>> +        if (!node)
+>>>>>> +            sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SET_V1P8_ENA;
+>>>>>> +    }
+>>>>>
+>>>>> It would be simpler without 'np' and 'node'.  Not sure
+>>>>> what the rule is meant to be, but it could be something like:
+>>>>>
+>>>>>       if (of_parse_phandle(dev->of_node, "vmmc-supply", 0) &&
+>>>>>           of_parse_phandle(dev->of_node, "vqmmc-supply", 0)
+>>>>>           sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
+>>>>
+>>>> My issue with this is that I also need the quirk (SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) for eMMC. DT node for eMMC does
+>>>> not include vmmc and vqmmc supplies. That is why I had the quirk logic
+>>>> inverted.
+>>>
+>>> Ideally there would be a more direct way to distinguish eMMC, but
+>>> otherwise, having both supplies or neither would be:
+>>>
+>>>      if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
+>>>          !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
+>>>          sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
+>>
+>>
+>> Not sure I love the double NOT, but ok, I can use this, will fix for v2.
+> 
+> It could use a comment, including about the eMMC thing.
 
-Accessing fp-regs embedded in the vCPU context without de-reference is done as:
-add     \regs, \ctxt, #offsetof(struct kvm_cpu_context, fp_regs_storage)
 
-Accessing the dynamically allocated fp-regs with de-reference is done as:
-ldr     \regs, [\ctxt, #offsetof(struct kvm_cpu_context, fp_regs)]
+Sure, will add. Thanks.
 
-Signed-off-by: Fares Mehanna <faresx@amazon.de>
----
- arch/arm64/include/asm/kvm_host.h | 16 ++++++++++++++--
- arch/arm64/kernel/image-vars.h    |  1 +
- arch/arm64/kvm/arm.c              | 29 +++++++++++++++++++++++++++--
- arch/arm64/kvm/va_layout.c        | 23 +++++++++++++++++++----
- 4 files changed, 61 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index e8ed2c12479f..4132c57d7e69 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -550,7 +550,9 @@ struct kvm_cpu_context {
- 	u64	spsr_irq;
- 	u64	spsr_fiq;
- 
--	struct user_fpsimd_state fp_regs;
-+	struct user_fpsimd_state *fp_regs;
-+	struct user_fpsimd_state fp_regs_storage;
-+	struct secretmem_area *fp_regs_area;
- 
- 	u64 sys_regs[NR_SYS_REGS];
- 
-@@ -968,7 +970,17 @@ static __always_inline struct user_pt_regs *ctxt_gp_regs(const struct kvm_cpu_co
- 	return regs;
- }
- #define vcpu_gp_regs(v)		(ctxt_gp_regs(&(v)->arch.ctxt))
--#define ctxt_fp_regs(ctxt)	(&(ctxt).fp_regs)
-+
-+static __always_inline struct user_fpsimd_state *ctxt_fp_regs(const struct kvm_cpu_context *ctxt)
-+{
-+	struct user_fpsimd_state *fp_regs = (void *) ctxt;
-+	asm volatile(ALTERNATIVE_CB("add %0, %0, %1\n",
-+				    ARM64_HAS_VIRT_HOST_EXTN,
-+				    kvm_update_ctxt_fp_regs)
-+		    : "+r" (fp_regs)
-+		    : "I" (offsetof(struct kvm_cpu_context, fp_regs_storage)));
-+	return fp_regs;
-+}
- #define vcpu_fp_regs(v)		(ctxt_fp_regs(&(v)->arch.ctxt))
- 
- /*
-diff --git a/arch/arm64/kernel/image-vars.h b/arch/arm64/kernel/image-vars.h
-index e3bb626e299c..904573598e0f 100644
---- a/arch/arm64/kernel/image-vars.h
-+++ b/arch/arm64/kernel/image-vars.h
-@@ -87,6 +87,7 @@ KVM_NVHE_ALIAS(kvm_update_va_mask);
- KVM_NVHE_ALIAS(kvm_get_kimage_voffset);
- KVM_NVHE_ALIAS(kvm_compute_final_ctr_el0);
- KVM_NVHE_ALIAS(kvm_update_ctxt_gp_regs);
-+KVM_NVHE_ALIAS(kvm_update_ctxt_fp_regs);
- KVM_NVHE_ALIAS(spectre_bhb_patch_loop_iter);
- KVM_NVHE_ALIAS(spectre_bhb_patch_loop_mitigation_enable);
- KVM_NVHE_ALIAS(spectre_bhb_patch_wa3);
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 7542af3f766a..17b42e9099c3 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -477,6 +477,14 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 		if (!vcpu->arch.ctxt.regs_area)
- 			return -ENOMEM;
- 		vcpu->arch.ctxt.regs = vcpu->arch.ctxt.regs_area->ptr;
-+
-+		pages_needed = (sizeof(*vcpu_fp_regs(vcpu)) + PAGE_SIZE - 1) / PAGE_SIZE;
-+		vcpu->arch.ctxt.fp_regs_area = secretmem_allocate_pages(fls(pages_needed - 1));
-+		if (!vcpu->arch.ctxt.fp_regs_area) {
-+			err = -ENOMEM;
-+			goto free_vcpu_ctxt;
-+		}
-+		vcpu->arch.ctxt.fp_regs = vcpu->arch.ctxt.fp_regs_area->ptr;
- 	}
- 
- 	/* Set up the timer */
-@@ -504,8 +512,10 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 	return kvm_share_hyp(vcpu, vcpu + 1);
- 
- free_vcpu_ctxt:
--	if (kvm_use_dynamic_regs())
-+	if (kvm_use_dynamic_regs()) {
- 		secretmem_release_pages(vcpu->arch.ctxt.regs_area);
-+		secretmem_release_pages(vcpu->arch.ctxt.fp_regs_area);
-+	}
- 	return err;
- }
- 
-@@ -524,8 +534,10 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
- 	kvm_vgic_vcpu_destroy(vcpu);
- 	kvm_arm_vcpu_destroy(vcpu);
- 
--	if (kvm_use_dynamic_regs())
-+	if (kvm_use_dynamic_regs()) {
- 		secretmem_release_pages(vcpu->arch.ctxt.regs_area);
-+		secretmem_release_pages(vcpu->arch.ctxt.fp_regs_area);
-+	}
- }
- 
- void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu)
-@@ -2729,12 +2741,25 @@ static int init_hyp_hve_mode(void)
- 		per_cpu(kvm_host_data, cpu).host_ctxt.regs = kvm_host_data_regs;
- 	}
- 
-+	/* Allocate fp-regs */
-+	for_each_possible_cpu(cpu) {
-+		void *kvm_host_data_regs;
-+
-+		kvm_host_data_regs = kzalloc(sizeof(struct user_fpsimd_state), GFP_KERNEL);
-+		if (!kvm_host_data_regs) {
-+			err = -ENOMEM;
-+			goto free_regs;
-+		}
-+		per_cpu(kvm_host_data, cpu).host_ctxt.fp_regs = kvm_host_data_regs;
-+	}
-+
- 	return 0;
- 
- free_regs:
- 	for_each_possible_cpu(cpu) {
- 		kfree(per_cpu(kvm_hyp_ctxt, cpu).regs);
- 		kfree(per_cpu(kvm_host_data, cpu).host_ctxt.regs);
-+		kfree(per_cpu(kvm_host_data, cpu).host_ctxt.fp_regs);
- 	}
- 
- 	return err;
-diff --git a/arch/arm64/kvm/va_layout.c b/arch/arm64/kvm/va_layout.c
-index fcef7e89d042..ba1030fa5b08 100644
---- a/arch/arm64/kvm/va_layout.c
-+++ b/arch/arm64/kvm/va_layout.c
-@@ -185,10 +185,12 @@ void __init kvm_update_va_mask(struct alt_instr *alt,
- 	}
- }
- 
--void __init kvm_update_ctxt_gp_regs(struct alt_instr *alt,
--				    __le32 *origptr, __le32 *updptr, int nr_inst)
-+static __always_inline void __init kvm_update_ctxt_regs(struct alt_instr *alt,
-+							__le32 *origptr,
-+							__le32 *updptr,
-+							int nr_inst, u32 imm)
- {
--	u32 rd, rn, imm, insn, oinsn;
-+	u32 rd, rn, insn, oinsn;
- 
- 	BUG_ON(nr_inst != 1);
- 
-@@ -198,7 +200,6 @@ void __init kvm_update_ctxt_gp_regs(struct alt_instr *alt,
- 	oinsn = le32_to_cpu(origptr[0]);
- 	rd = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RD, oinsn);
- 	rn = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RN, oinsn);
--	imm = offsetof(struct kvm_cpu_context, regs);
- 
- 	insn = aarch64_insn_gen_load_store_imm(rd, rn, imm,
- 					       AARCH64_INSN_SIZE_64,
-@@ -208,6 +209,20 @@ void __init kvm_update_ctxt_gp_regs(struct alt_instr *alt,
- 	updptr[0] = cpu_to_le32(insn);
- }
- 
-+void __init kvm_update_ctxt_gp_regs(struct alt_instr *alt,
-+				    __le32 *origptr, __le32 *updptr, int nr_inst)
-+{
-+	u32 offset = offsetof(struct kvm_cpu_context, regs);
-+	kvm_update_ctxt_regs(alt, origptr, updptr, nr_inst, offset);
-+}
-+
-+void __init kvm_update_ctxt_fp_regs(struct alt_instr *alt,
-+				    __le32 *origptr, __le32 *updptr, int nr_inst)
-+{
-+	u32 offset = offsetof(struct kvm_cpu_context, fp_regs);
-+	kvm_update_ctxt_regs(alt, origptr, updptr, nr_inst, offset);
-+}
-+
- void kvm_patch_vector_branch(struct alt_instr *alt,
- 			     __le32 *origptr, __le32 *updptr, int nr_inst)
- {
--- 
-2.40.1
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+> 
+>>
+>> Thanks for your suggestion!
+>>
+>> ~ Judith
+>>
+>>>
+>>>
+>>>>
+>>>> This patch fixes timing issues with both eMMC and SD. (:
+>>>>
+>>>> ~ Judith
+>>>>
+>>>>
+>>>>>
+>>>>>> +
+>>>>>>         sdhci_get_of_property(pdev);
+>>>>>>           return 0;
+>>>>>> @@ -940,6 +1025,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>>>>>>             goto err_pltfm_free;
+>>>>>>         }
+>>>>>>     +    host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
+>>>>>>         host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>>>>>>           pm_runtime_get_noresume(dev);
+>>>>>>
+>>>>>> base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
+>>>>>
+>>>>>
+>>>>
+>>>
+>>
+> 
 
 
