@@ -1,69 +1,75 @@
-Return-Path: <linux-kernel+bounces-324537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFFC974DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF96F974DFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0778F28774E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799E9280FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3B017C7C9;
-	Wed, 11 Sep 2024 09:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3309183CAB;
+	Wed, 11 Sep 2024 09:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mLVOyi+Q"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Bcyec3xS"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC217A583
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04B185958
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726045631; cv=none; b=seTuRMgzwpUZfaP11ZvNzm6kxp+92GuVewaJ6dKpcdBjcxocC9K8PUAfQLcnhh1BVAckefq5PUSKyWq1KSOe09mJZ4IG3amoF15ge33zJGfRNEJ3H8XMTuowz8TrgFMrAc4P3auorXvf4Dc0SJL4VNhYvZv37Aq44KgZCfIpaGo=
+	t=1726045641; cv=none; b=eAtZhoMxenEaJwPnj4Bx/+kzXxozXnQCxM7olEt1dmQ2nvNnTdMLDoOAeaqangH8KFyV57pnlwqnx2R3oZ+OLaHfMkuirednE4DoMQplQ1ryDRbiD+G1z3HhjRC4I5v53TARk2CksY7OKl7I5sUw781D3wvv/v/uvIl2KS18mOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726045631; c=relaxed/simple;
-	bh=g9teW8e2aWqsDywkQoHu+NGEG3Q+tuV4lpr44qK8yGM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IJfvPvaBathEy+WkryQYqXPWQ2bRPh61CdeLq6YcUwCI9mXsHc1vD6wARpglyFePcuvp1FNcPao4UKUOMYu20QfgyEehRSu6yOd1x2QXIBVMDBKJxU1HVZpsOj5SmTt/+kQRlsUrp379Qnearl2JvGDXohBXA6zHaXhzSqcxGwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mLVOyi+Q; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-201d5af11a4so69261025ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:07:09 -0700 (PDT)
+	s=arc-20240116; t=1726045641; c=relaxed/simple;
+	bh=fsAgJwHDEr+KSiZVY7zNR69LYpXgTK/JWvq+XG0/C90=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BRM0VocU3x7FqWXl5GHa1UjFtiNfmJ9SVGwq00LYzeLeWwf3NvbHVP9q9hwyJL858NvOfS1Ve2rAR4yv6+jsISSouxVWRCpZcMbtNMK7cEn4VvejviBYKKgJlvhWfZGt/VArOEFJrQtbcj7KLyanUCwqh6EC8gb3ONXCwngol0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Bcyec3xS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374d29ad870so4041678f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726045629; x=1726650429; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LHQzU6voJbzXuiTDRaTgUllQ8sZpGhRSONHnUPaSmxM=;
-        b=mLVOyi+Q/ULvhuh+/D4U8gqIdUssM63VTXSaMMVKGRHCFcEbetWsXIpGOaZ/QwyZvP
-         qlpu9WqyrYhXIcpIK0ML703+/67LTRTIPo56o48b7DwEB4QIKjsLtULjCP9Qo6Alb/Oi
-         Lhnnk/L2iR7a3NQKMIcrstjQdkEHOGkzBStjU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726045629; x=1726650429;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726045638; x=1726650438; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LHQzU6voJbzXuiTDRaTgUllQ8sZpGhRSONHnUPaSmxM=;
-        b=aeQ1NiA74gzdu5VXcbZJGEnaG+JZBNDybcr1kY67wCLarvQNiE8Pes3yBcSKjuWoKW
-         F34r6mfchRvR7GDcJCaDooBcsWgehh9NibeAmTNcfEdntT2JMPykBMMEUEvrOyzb1n8O
-         RT1lnWD4iVsj9jHSxPqckm81u3FaLcVcw1n2NNRXHGpEuBeRMDVulDoGdL36iRJ3ZH/O
-         zalC7EEmDBSdzH0tJFp+Ls29wUwXEW/LBYYKfsDeH1wXLrZtSc7oydmr1jT0LeV25sRU
-         0OVoGw4czDy0t6YM/thk1N3zC64rI2JJite+9D1jUHG0FWv+RZJhQi1JKgHtk+8qVtp+
-         /JCg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Xr3bHn9d+67HWosKbbi5WLu9Sh2RVP15eHPMPoaQsHrQv6CWhICIrjTIX9Z7fJ2Nhw+uw9swWV36Uo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg8lGo1LeACT0FXtUbHl7qBP2SpU7/vjf7gF0UlWZEHf7tLTXB
-	TNZN9rJJvN7OGq6HFC1KFKAJLoxwwm3D9o39snQHBGMEUXCeX3Sk/WK/Plkshg==
-X-Google-Smtp-Source: AGHT+IGAqhBnf0SV+Z4g8R5aeEMdIP4KrSDUmh2/nEUjwoIAX+w20TRCdHvWil8SF4ixwWnbOny16Q==
-X-Received: by 2002:a17:903:2406:b0:206:b04e:71b3 with SMTP id d9443c01a7336-2074c6e1110mr61414455ad.51.1726045628992;
-        Wed, 11 Sep 2024 02:07:08 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (30.191.80.34.bc.googleusercontent.com. [34.80.191.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20710eeb39asm59572495ad.154.2024.09.11.02.07.07
+        bh=jCc0Pk2LOqnsy/+/LSMn62Y8h7zBYg5YqPDf8fsQKV4=;
+        b=Bcyec3xSjXWOirZTSimPyFOlVWr5X1V7ZGTTDFi8TyEpvHiWa2KAOMyVF/mGRToHNn
+         Fk6/Ngc71gTYjBjhsoD/Ppsqqf5Vzzn1KcQYs7hpogrRhR+/fvVzkfHZ6+3mDQiHhX/g
+         9rvh3uKmeavsvnwHr5xQD2Uvr5CGprsiuPIkWITMy/tMinfe4XYqhIvcf/eIc2qIa/mU
+         Wme2Gx/UuoAI8jdI2rjTWoOBwuaFIlfl28s9zut0ReZuVSLaj7Ed+otWBdJdnMUvWeEt
+         4TpJrlV3dHWs2vzxZfWWDiFASQ4GaZKGTCPVDFK1t/IO19tUTcIevdEL1k6qI57y4YYH
+         r66Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726045638; x=1726650438;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jCc0Pk2LOqnsy/+/LSMn62Y8h7zBYg5YqPDf8fsQKV4=;
+        b=IX1X11f88VvMiJn5IiVajTKmfd3lyhCa5+wV6EHQfDqV/eBvcE69eJmUIl6yTp2NhK
+         k7H/h5Spu9oE/TaPelplvSslnwdSgXlSigQ925GNSlzTos2yk6+IjSTNGZCkXHXxr2Dg
+         w3XHhDIZuI2KH0U1ndXBDbQV4VsDuQ+HQIbhqD7M3kkoUXCJ7+nPzM/2J8X81zTpNGtK
+         Viv18Rizi+oTVpauCA+RWCqUexfcwShTr+d1b6MYoLCb4gTjrMX3GIimtvkEZW9czmOr
+         SuK79IJTU5juNQJTOVL1LfD/fKIwkvYQuXxMtwMuQTDzLJVHBZ04yEAXrFEmaz502orn
+         9CSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbalMKxI+J6yxMacuPkkp9T0uoqd97KmgVag5zANOnYCIekHofAqe02ZtbQppVbmfXGXl71AEpQmaPyLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYAm4Nx9C9WxXj7V9Y7RusFOS2fIJ0CJ7luI9Z6th8OkANTu4g
+	m+/TnrHiNUoz/WdwzD/iR4JlmMojyT+ZDqk8/Dvq7Li5NyPa+88QfK/qxVlf32k=
+X-Google-Smtp-Source: AGHT+IFJwkKixqpXEm2xArUQ1OkvCV/poaUEEYvKfjUZu2BNNxkQ+lrjF/R37qM92DDtapB4I33fng==
+X-Received: by 2002:a5d:4742:0:b0:374:ae04:c7c5 with SMTP id ffacd0b85a97d-378896a3f84mr10416096f8f.36.1726045636808;
+        Wed, 11 Sep 2024 02:07:16 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:5389:6cf0:60c4:3842])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895649b88sm11029201f8f.6.2024.09.11.02.07.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 02:07:08 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Wed, 11 Sep 2024 09:07:03 +0000
-Subject: [PATCH v2] arm64: dts: mt8183: Add encoder node
+        Wed, 11 Sep 2024 02:07:13 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Sep 2024 11:07:04 +0200
+Subject: [PATCH v2 2/2] firmware: qcom: scm: fall back to kcalloc() for no
+ SCM device bound
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,73 +78,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-venc-v2-1-5566c07756fd@chromium.org>
-X-B4-Tracking: v=1; b=H4sIALZd4WYC/y3Myw7CIBCF4VdpZi2GwVasK9/DdGG4lFkUzKBE0
- /DuYnX5n5x8K2TH5DKcuxXYFcqUYgu168CEW5ydINsalFS9HOUoiotG9FoORnvvB3uEdr2z8/T
- amOvUOlB+JH5vasHv+gdQ/oCCAoVFbb0dD2jN6WICp4Weyz7xDFOt9QPFUVXEmwAAAA==
-X-Change-ID: 20240909-venc-4705c7fff5d6
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
+Message-Id: <20240911-tzmem-null-ptr-v2-2-7c61b1a1b463@linaro.org>
+References: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
+In-Reply-To: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Elliot Berman <quic_eberman@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Rudraksha Gupta <guptarud@gmail.com>, 
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2802;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=v/CIUywqSceQ2rIapI5Q0gb6HopYTWHqEOvnqJ6sKv8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBm4V28fuMz92TseSVRgJfF+UHFGJzElcDOSNQCO
+ SZ89F2PcjGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZuFdvAAKCRARpy6gFHHX
+ ciH4D/47tqKjsTOtsjc4ifXbdBdTE6rbhHX4WNqPncJgG/x7WOmCr8cOKraTmovFh7WBEp4XtGd
+ m3FMWntz4ZfQuDQ+bVuBq3/NaNPfHw3SLPEpmsgIE84cM+gICyg+jyWtIF2/WTKnqW78m8eBXeg
+ rk8ZbPQCD1/uz/Q2JUM75m0S604eTWSuupnDenebLow7Z0SyohIS426HnhB67ONrLzOPerNU+/1
+ dm4DlRmCMrVuLNvHdJFaOwLClinUZWAsEHmUbcVa5rQd14neHehgUfDsJWWcw5npMMYKx8h9ydh
+ QA4DFg+ENCxkkYQCbcoLX8x409oNPYme6te2/v0UZMt3+rYYt3cPjEfRG5q4ML7kAZi87suxKZX
+ gMazBZZy7PP9VAo1pM2su5KFjKtzbJgX86sqS9dNJcG1j7JOLNZNw69neFIioDZ8FITttoDM5d/
+ 25uBWy+eRkYPL3UkN4nirf3Th731N1sDgx50p6MMfaCOjohi0J5eh6Jirme+Wr7FvZLT4VQ3AIe
+ rM3ymCq9xyRKS/8AhBFB03YrB3GfG4D6GZ2BhvVzt9mJCr9EtavROX5UFs1zLqqxhlrUamCGvka
+ AKeJ7GUajeaOugzDkY+AAu1JB4KDnbxdBowEFre1mZWAZuOVnGitj/NP7WnwovixpZ5wzc2SiSg
+ RpR4A7qMPuLUJ4w==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Add encoder node.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-According to
-https://lore.kernel.org/all/184d895c-239e-3f23-970e-6a9563235cd9@gmail.com/,
-the encoder node of MT8183 should be added only after its dependency has
-been accepted. Add the encoder node in this patch.
----
-Changes in v2:
-- Fix typo in dts 
-- Rename clock-names to venc_sel to match dt-bindings
-- Remove deprecated property: mediatek,larb
-- Link to v1: https://lore.kernel.org/r/20240910-venc-v1-1-d17dfd931dc8@chromium.org
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Older platforms don't have an actual SCM device tied into the driver
+model and so there's no struct device which to use with the TZ Mem API.
+We need to fall-back to kcalloc() when allocating the buffer for
+additional SMC arguments on such platforms which don't even probe the SCM
+driver and never create the TZMem pool.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index fbf145639b8c90b2c69da1cb4bac4f61ca7a1c9e..d33c0e4fdfc1132463c1d8f058a791fb2b06579c 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -1965,6 +1965,23 @@ larb4: larb@17010000 {
- 			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
- 		};
+Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+Tested-by: Rudraksha Gupta <guptarud@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/qcom/qcom_scm-smc.c b/drivers/firmware/qcom/qcom_scm-smc.c
+index 2b4c2826f572..88652c38c9a0 100644
+--- a/drivers/firmware/qcom/qcom_scm-smc.c
++++ b/drivers/firmware/qcom/qcom_scm-smc.c
+@@ -147,6 +147,15 @@ static int __scm_smc_do(struct device *dev, struct arm_smccc_args *smc,
+ 	return 0;
+ }
  
-+		vcodec_enc: vcodec@17020000 {
-+			compatible = "mediatek,mt8183-vcodec-enc";
-+			reg = <0 0x17020000 0 0x1000>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_LOW>;
-+			iommus = <&iommu M4U_PORT_VENC_REC>,
-+				 <&iommu M4U_PORT_VENC_BSDMA>,
-+				 <&iommu M4U_PORT_VENC_RD_COMV>,
-+				 <&iommu M4U_PORT_VENC_CUR_LUMA>,
-+				 <&iommu M4U_PORT_VENC_CUR_CHROMA>,
-+				 <&iommu M4U_PORT_VENC_REF_LUMA>,
-+				 <&iommu M4U_PORT_VENC_REF_CHROMA>;
-+			mediatek,scp = <&scp>;
-+			power-domains = <&spm MT8183_POWER_DOMAIN_VENC>;
-+			clocks = <&vencsys CLK_VENC_VENC>;
-+			clock-names = "venc_sel";
-+		};
++static void smc_args_free(void *ptr)
++{
++	if (likely(qcom_scm_get_tzmem_pool()))
++		qcom_tzmem_free(ptr);
++	else
++		kfree(ptr);
++}
 +
- 		venc_jpg: jpeg-encoder@17030000 {
- 			compatible = "mediatek,mt8183-jpgenc", "mediatek,mtk-jpgenc";
- 			reg = <0 0x17030000 0 0x1000>;
++DEFINE_FREE(smc_args, void *, if (!IS_ERR_OR_NULL(_T)) smc_args_free(_T));
+ 
+ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
+ 		   enum qcom_scm_convention qcom_convention,
+@@ -155,7 +164,7 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
+ 	struct qcom_tzmem_pool *mempool = qcom_scm_get_tzmem_pool();
+ 	int arglen = desc->arginfo & 0xf;
+ 	int i, ret;
+-	void *args_virt __free(qcom_tzmem) = NULL;
++	void *args_virt __free(smc_args) = NULL;
+ 	gfp_t flag = atomic ? GFP_ATOMIC : GFP_KERNEL;
+ 	u32 smccc_call_type = atomic ? ARM_SMCCC_FAST_CALL : ARM_SMCCC_STD_CALL;
+ 	u32 qcom_smccc_convention = (qcom_convention == SMC_CONVENTION_ARM_32) ?
+@@ -173,9 +182,20 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
+ 		smc.args[i + SCM_SMC_FIRST_REG_IDX] = desc->args[i];
+ 
+ 	if (unlikely(arglen > SCM_SMC_N_REG_ARGS)) {
+-		args_virt = qcom_tzmem_alloc(mempool,
+-					     SCM_SMC_N_EXT_ARGS * sizeof(u64),
+-					     flag);
++		/*
++		 * Older platforms don't have an entry for SCM in device-tree
++		 * and so no device is bound to the SCM driver. This means there
++		 * is no struct device for the TZ Mem API. Fall back to
++		 * kcalloc() on such platforms.
++		 */
++		if (mempool)
++			args_virt = qcom_tzmem_alloc(
++					mempool,
++					SCM_SMC_N_EXT_ARGS * sizeof(u64),
++					flag);
++		else
++			args_virt = kcalloc(SCM_SMC_N_EXT_ARGS, sizeof(u64),
++					    flag);
+ 		if (!args_virt)
+ 			return -ENOMEM;
+ 
 
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240909-venc-4705c7fff5d6
-
-Best regards,
 -- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+2.43.0
 
 
