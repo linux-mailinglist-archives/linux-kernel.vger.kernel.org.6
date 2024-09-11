@@ -1,170 +1,165 @@
-Return-Path: <linux-kernel+bounces-324637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D404A974F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:56:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09286974F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4031F251D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:56:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA671C213D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A79717C7CA;
-	Wed, 11 Sep 2024 09:55:52 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165D3176FB4;
+	Wed, 11 Sep 2024 09:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EhHpxbGB"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94414153820;
-	Wed, 11 Sep 2024 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5807A16EB76
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726048551; cv=none; b=PEGtF4e5WsnM8T9sHSHxvsFI71cqHZQH8mqX0iCUQi44P7BPCAQYRHfRNq4B6fj+7txw/oivCorwa1vTIsM13OLtSOM8yvJ6BFSq7eiRL5bIZsKhNIpI3YgrgXO2VzyZePrxpnVvPAKX84TGUoJULWLa64fK9eaK2Cho3WFPGrY=
+	t=1726048585; cv=none; b=WhIS1ZBlPiVKJ5CsVUiU9Q6awHO0/czw0nUOODLXQ05BPBaiDs1Wl8ig8KrNEnh6qLI3ERVaSUiZhk4O+9IF15AAParncE6uCtFZEcZlJpwEj5Qbh3ae62S2WZh5/u+i4ZsWWjEUaBRSDGqMuT0gt502mYlLU+9ab9h6qxr6tcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726048551; c=relaxed/simple;
-	bh=pqsQYybeyYCDsOvPt+6+YrugYdGqWC0sdV8avoQ+enI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ei93sPu6LVS7IYKBtF+IHxyFZDWvj0a08cknQnxkfFrVon52kE5+/1KuSNSasBLnmWWb7aY1KOleJuRW2Fd89NAVqGcueNH00cljrhXI8ThfBpldqLj5vr8mDVip13rWbyb4+6eDcRHNIEJfkEauOb6wWpBOB1yjivur6V8xIlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X3b6p2b2xz9v7NP;
-	Wed, 11 Sep 2024 17:36:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id BDCC61404A8;
-	Wed, 11 Sep 2024 17:55:35 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAnazIOaeFmhK2zAA--.63556S2;
-	Wed, 11 Sep 2024 10:55:35 +0100 (CET)
-Message-ID: <34c4c5b31e795144a6fdd258c99ce3da89c97c03.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
- davem@davemloft.net, linux-kernel@vger.kernel.org,
- keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
- zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,  adrian@suse.de, ro@suse.de
-Date: Wed, 11 Sep 2024 11:55:23 +0200
-In-Reply-To: <ZuBi56VwWxxX2Ce5@earth.li>
-References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
-	 <ZsNf1VdfkHqD8R4Q@earth.li>
-	 <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
-	 <ZsSkTs4TFfx2pK8r@earth.li>
-	 <a9502b8097841c36ca13871b22149eadd3fde355.camel@huaweicloud.com>
-	 <6c7e34b65d73e9fa2ba0fd39b357b9eb42ee0449.camel@huaweicloud.com>
-	 <ZuBi56VwWxxX2Ce5@earth.li>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1726048585; c=relaxed/simple;
+	bh=qjEpByA7Sb0I/5DTU4GOC+I5E8r9O5cBqNNoqQO8JqU=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=ZiF6e5UIluOLK7rgOnF8kelbX0LP7RLKNXoENZ2mvSrnH7QhoW7A/m3Mp9/7d1hqE2xeGmshgaznA99nm6bO/iRCNzZU5rMF8YXlivNx9Y3sYDvDG3PbIHzQi/v87Cd8UueS2IQB9ruhksZ1JGNwjb5vgrsqhRCEjofox+Wu3Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EhHpxbGB; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240911095621euoutp020f3331fc4aa1c42560709af68c64d17b~0KAo17VIc1273812738euoutp02C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:56:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240911095621euoutp020f3331fc4aa1c42560709af68c64d17b~0KAo17VIc1273812738euoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726048581;
+	bh=7gSIKq38cGh5HnYUHVL1uTkp91XiKw9BT2R8CsE4/L8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=EhHpxbGB29x92ZOyVQDei972Y6vaX4nMmt6Z5I6r5X8ECjzXoCOEuovg4NtJ/s0iW
+	 aSXOiOiIAt6t1G55BpbDZs69Zgjogkayxo4sMmBs94MY2T1MXE2XUkBArJSmMJU17i
+	 v/8c4sO6e8CHeJViAJlZwXUoB80J2Tebc+jg9RGw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240911095617eucas1p2caef7baa4ab55c035db99a4ba2299373~0KAlZNYJ50282402824eucas1p2m;
+	Wed, 11 Sep 2024 09:56:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 26.22.09875.14961E66; Wed, 11
+	Sep 2024 10:56:17 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240911095617eucas1p15694fa081b821731195ab83be0d5059a~0KAk4vakW3099330993eucas1p18;
+	Wed, 11 Sep 2024 09:56:17 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240911095617eusmtrp28d2c72ca41aec85374693fd2f11c47fb~0KAk38gCq1237312373eusmtrp2K;
+	Wed, 11 Sep 2024 09:56:17 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-1b-66e169412d0c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 16.87.19096.14961E66; Wed, 11
+	Sep 2024 10:56:17 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240911095616eusmtip1b6f37cb2b00a5589c731aec12f50d28f~0KAkkfCrV2760627606eusmtip1G;
+	Wed, 11 Sep 2024 09:56:16 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 11 Sep 2024 10:56:16 +0100
+Date: Wed, 11 Sep 2024 11:55:44 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason
+	Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
+	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
+ and iopf is active
+Message-ID: <20240911095544.4ad3u6jxgsdsymhj@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAnazIOaeFmhK2zAA--.63556S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4xKr4fWFWDZw1kuF4Durg_yoW5Zryxpa
-	y8JF1YyFZ5Jwn7AF1vyw1DCFWYy39rJF15Xwn8J348Crn0qFya9F1xKFW5u3s8Wr1xGw1j
-	vrW3J3y3W3s8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBGbg-HQFrQAAsg
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGKsWRmVeSWpSXmKPExsWy7djP87qOmQ/TDLZ/1bTYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oLpuU1JzMstQifbsE
+	roybW66xFUzkrNh3bwJTA+NW9i5GTg4JAROJEwsOMHYxcnEICaxglGjuPcYMkhAS+MIocfMo
+	E0TiM6PE/h/zGGE63hzuhupYzijRvuMoM1zVkQvvWCDaNzNKLDzrDGKzCKhKbLi6hgnEZhPQ
+	kTj/5g7YChEBdYmmxr1sIM3MAhuZJOb+OwyWEBZIkJj59wxQAwcHr4CDxNU/YSBhXgFBiZMz
+	n4DNZwaas2D3JzaQEmYBaYnl/zhAwpwCzhJ/pzcyQxyqKPF18T0WCLtW4tSWW2DfSAjM55T4
+	3rCHDSLhIrH55xMmCFtY4tXxLdBwkZH4v3M+VMNkoPf/fWCHcFYzSixr/ArVYS3RcuUJVIej
+	RN/nbrCjJQT4JG68FYQ4lE9i0rbpzBBhXomONiGIajWJ1ffesExgVJ6F5LVZSF6bhfDaAkbm
+	VYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIFJ6/S/4192MC5/9VHvECMTB+MhRgkOZiUR
+	3n67e2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTAr7
+	hKez+d3v5Jv4p1fl2pKvS77NNvlTvPBNSYyRu7fhPNmLDNH8ArXrruk2FHvXrH7fKv+Fxf3P
+	R+k/vs6pUae3P/vAGVRv+OU6k6ntv5+Hbt3hWcwhni1XvJBb/Kpml8b6v22rXzjabfjws7ZZ
+	U0OoUbf4SdKUjfFJP4MFRQx1/L0jV05rcL9o3+1zqy9eLVVhwpnoZpXoXhFPzYNmJ83q5etX
+	TuPiX5vBPklt5kEjudLmZumtk8x3ycQunhQeUjjtYn7LDuPLx8zmuWWe4X6w26P731HVjhOW
+	U+TXBouaK20R5MxUdNDOZRE3P/Xy4tedLp+klj9y7+l+/yJz/vySxaJf/i92Fbyw4+JTJZbi
+	jERDLeai4kQAJpFIyMkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xu7qOmQ/TDO5cZbPYPHErm8XElZOZ
+	LX59sbDYf/Abq8XMGScYLTpnb2C3WPp2K7vF5V1z2CwOfnjCatFyx9SBy+PJwXlMHmvmrWH0
+	2LxCy2PxnpdMHud2nGf32LSqk81j3slAjxebZzJ6fN4k57H1822WAK4oPZui/NKSVIWM/OIS
+	W6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYybW66xFUzkrNh3bwJTA+NW
+	9i5GTg4JAROJN4e7GbsYuTiEBJYySry8sIUVIiEjsfHLVShbWOLPtS42iKKPjBKP1k9kA0kI
+	CWxmlPi8ShHEZhFQldhwdQ0TiM0moCNx/s0dZhBbREBdoqlxL1gzs8BGJokb55rAioQFEiRm
+	/j0DZHNw8Ao4SFz9EwaxoIlJon3NexaQGl4BQYmTM5+A2cxAQxfs/sQGUs8sIC2x/B8HSJhT
+	wFni7/RGZohDFSW+Lr7HAmHXSnz++4xxAqPwLCSTZiGZNAth0gJG5lWMIqmlxbnpucVGesWJ
+	ucWleel6yfm5mxiBsbvt2M8tOxhXvvqod4iRiYPxEKMEB7OSCG+/3b00Id6UxMqq1KL8+KLS
+	nNTiQ4ymwKCYyCwlmpwPTB55JfGGZgamhiZmlgamlmbGSuK8bFfOpwkJpCeWpGanphakFsH0
+	MXFwSjUwhU4QfWresJYhudPm/UppTg/pDQbrjxTa/fkdLe3e1vakIfxJmNq8/JQ2fTv/9s/X
+	jm9hC2Sc6nkmP//mBKek4wxrgkJ8v3SpSTxdG7ZCZ4dz0fkt6XFyn/UDE7pfHtBWO+a484wc
+	r3qobM7060dfLLtdaN3e9GzLo4dPzO5/bem7yhPzy/Cq4NW/5/7keTB5eqv3796T8jfiNQtb
+	7k1Z3iVrVa64nMyqbotyr3nQ/6Uh4eDp1m0/5VyWZmR6JeQKT3jPJvKh7wO/v65S25LiGac+
+	snPE3f1VwNQkMd/b1T52w6PHE+QMAhboVj098MjLuy7d48eX1yujfF9csdW13aTemBl05pXv
+	mtCHwY+UWIozEg21mIuKEwEDWx2AZgMAAA==
+X-CMS-MailID: 20240911095617eucas1p15694fa081b821731195ab83be0d5059a
+X-Msg-Generator: CA
+X-RootMTR: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+	<20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
+	<CGME20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118@eucas1p2.samsung.com>
+	<c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
 
-On Tue, 2024-09-10 at 16:16 +0100, Jonathan McDowell wrote:
-> On Tue, Sep 10, 2024 at 04:51:22PM +0200, Roberto Sassu wrote:
-> > On Tue, 2024-09-10 at 16:36 +0200, Roberto Sassu wrote:
-> > > On Tue, 2024-08-20 at 15:12 +0100, Jonathan McDowell wrote:
-> > > > On Mon, Aug 19, 2024 at 05:15:02PM +0200, Roberto Sassu wrote:
-> > > > > On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
-> > > > > > On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
-> > > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > >=20
-> > > > > > > Support for PGP keys and signatures was proposed by David lon=
-g time ago,
-> > > > > > > before the decision of using PKCS#7 for kernel modules signat=
-ures
-> > > > > > > verification was made. After that, there has been not enough =
-interest to
-> > > > > > > support PGP too.
-> > > > > >=20
-> > > > > > You might want to update the RFC/bis references to RFC9580, whi=
-ch was
-> > > > > > published last month and updates things.
-> > > > >=20
-> > > > > Yes, makes sense (but probably isn't too much hassle to support m=
-ore
-> > > > > things for our purposes?)
-> > > >=20
-> > > > I'm mostly suggesting that the comments/docs point to the latest
-> > > > standard rather than the draft version, not changing to support the=
- new
-> > > > v6 keys.
-> > > >=20
-> > > > > > Also, I see support for v2 + v3 keys, and this doesn't seem lik=
-e a good
-> > > > > > idea. There are cryptographic issues with fingerprints etc ther=
-e and I
-> > > > > > can't think of a good reason you'd want the kernel to support t=
-hem. The
-> > > > > > same could probably be said of DSA key support too.
-> > > > >=20
-> > > > > Uhm, if I remember correctly I encountered some old PGP keys used=
- to
-> > > > > verify RPM packages (need to check). DSA keys are not supported, =
-since
-> > > > > the algorithm is not in the kernel.
-> > > >=20
-> > > > I would question the benefit gained from using obsolete key/signatu=
-re
-> > > > types for verification (I was involved in the process of Debian dro=
-pping
-> > > > them back in *2010* which was later than it should have been). Drop=
-ping
-> > > > the code for that path means a smaller attack surface/maintenance
-> > > > overhead for something that isn't giving a benefit.
-> > >=20
-> > > Removed support for v3 PGP signatures... but that broke openSUSE
-> > > Tumbleweed.
->=20
-> Is this a signature from a v3 key, or a v3 signature? Unfortunately
-> there are implementations which will issue a v3 signature even from a v4
-> key; IIRC this ambiguity has been cleared up in the updated RFC.
+On Thu, Sep 05, 2024 at 11:30:05AM +0800, Baolu Lu wrote:
+> On 9/4/24 9:17 PM, Joel Granados via B4 Relay wrote:
+> > From: Joel Granados<j.granados@samsung.com>
+> > 
+> > iommu_report_device_fault expects a pasid array to have an
+> > iommu_attach_handle when a fault is detected.
+> 
+> The iommu_attach_handle is expected only when an iopf-capable domain is
+> attached to the device or PASID. The iommu_report_device_fault() treats
+> it as a fault when a fault occurs, but no iopf-capable domain is
+> attached.
+I don't follow. The way that I read it: if the pasid_array x-array does
+not have an iommu_attach_handle indexed by either fault->prm.pasid or
+IOMMU_NO_PASID, it will follow the err_bad_iopf and return -EINVAL
+(please correct me if I'm wrong). So the iommu_attach_handle is *always*
+expected.
 
-Yes, it looks a v3 signature from a v4 key.
+Would it be more clear for it to be:
+"""
+The iommu_report_device_fault function expects the pasid_array x-array
+to have an iommu_attach_handle indexed by a PASID. Add one indexed with
+IOMMU_NO_PASID when the replacing HWPT has a valid iommufd fault object.
+Remove it when we release ownership of the group.
+"""
 
+best
 
-> > > [  295.837602] PGPL: Signature packet with unhandled version 3
-> >=20
-> > To add more context, this patch set adds the ability to the kernel to
-> > verify the PGP signature of RPM packages against Linux distributions
-> > PGP keys.
->=20
-> > The purpose of this is to verify the authenticity of such RPM packages,
-> > and to extract from them file digests, which are in turn used as
-> > reference values for integrity check (appraisal) with IMA.
->=20
-> I don't believe allowing a v3 *key* gives a useful verification that is
-> worth supporting. However unfortunately I think it sounds like support
-> for v3 signatures from v4 keys is necessary.
+-- 
 
-Yes, after re-adding support for v3 signatures, openSUSE Tumbleweed is
-back to normal, does IMA appraisal with RPM packages.
-
-Thanks
-
-Roberto
-
+Joel Granados
 
