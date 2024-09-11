@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-324442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF4F974C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:23:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512DA974C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580931C20AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:23:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB861C242E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9C9154C05;
-	Wed, 11 Sep 2024 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Xj3wITdQ"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A80F2C859;
-	Wed, 11 Sep 2024 08:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196414D456;
+	Wed, 11 Sep 2024 08:14:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFAA64A8F;
+	Wed, 11 Sep 2024 08:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726042978; cv=none; b=W64LCSb/6BppAf29m77vXksEj6KQu7taGDH6NfiIMR/9gH/dTjsn7CTU7Um00Oq4qvMAbofllwjurQFUHMXjecHARTtY6+jcSSCNDAGWMeA/y9n6+/R7vcf87SMlGdxjRa5ebvQoXb7BAxajzwTS9p+HEdYtGUdmCV/wiMY7xyc=
+	t=1726042494; cv=none; b=Oe6BoxkK+h6YDYIeNwcoiwDQVhIl959HMqbraA5JTcSG4hC5A2mMBbUosnXR7UcuSB6w+CDhvNYmQEq3kGGVJY5bCfmeq3ZXKTT6GXsSBVU2RfpbX+th42Hmc36z9fKRnmHHEl7SnCQNS7WUnFNurEM39QC3vq6Amdgb3Qbtzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726042978; c=relaxed/simple;
-	bh=9ncGzqtpiWgjyq35hElyjIoVwEnaH+a6wWns+spW8Jc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nb0qw9JeRHxVT4sJHflPpajsNeIJwAgRdxji25tch1JnH9JZ4btAxsU9GCIG+l/SDzeEAEdynEg2R8WqXcmvltwamoZ9bZ8Ypz7OH8QdQBoE6MhC2srAm7XEAl1HN564uE2pjJK27UFIagoHGyi2S13mOie4reR6Ug8qYwbot3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=Xj3wITdQ; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:51a0:0:640:3bf:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 0B9F4614F7;
-	Wed, 11 Sep 2024 11:14:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NEer0R0Of8c0-w1ouJzf4;
-	Wed, 11 Sep 2024 11:14:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1726042464; bh=9ncGzqtpiWgjyq35hElyjIoVwEnaH+a6wWns+spW8Jc=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=Xj3wITdQtKiEe4f6xbwAU/AQXN4qH3xLcTgo3KdQhAp8z/Ex0Rr5FZN2z772f8Zqg
-	 wZNpHTyJR5/gX5XPOW2tUKLZKtqo8zOho31m913ek4l458jxaTCu06wFgJWvnBIB0P
-	 YGrMumDa9SgVDO5G1sqB5QFjy1tijTyltW/7Oabo=
-Authentication-Results: mail-nwsmtp-smtp-production-main-23.myt.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
-Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
- ep93xx_div_recalc_rate()
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Alexander Sverdlin
-	 <alexander.sverdlin@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
-	 <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Wed, 11 Sep 2024 11:14:23 +0300
-In-Reply-To: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1726042494; c=relaxed/simple;
+	bh=lk81Xyb6sjUQMBo9+yiVeJMpHclNk7u2HMNWphdknXU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z5Wg1gGNhsVcLG/AdMiqvudYGtHFH9SpTMF0ZkHFadfCGkSLibSxw8avNxblHUvfxvnINb/KDKz4P0MLdlJlRf4h4+L3b3y2FU7Rf9c0oxEk+TwlrBkgJ+wcMCh/Nxw0xWj8oHcn3ybj8nMzQmP9G7ZfdMPqpF3fkAbrJazZlRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B01161007;
+	Wed, 11 Sep 2024 01:15:19 -0700 (PDT)
+Received: from [10.1.27.34] (unknown [10.1.27.34])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D24D3F66E;
+	Wed, 11 Sep 2024 01:14:47 -0700 (PDT)
+Message-ID: <1e55f148-37d8-4fbe-b863-d604fdfaafaf@arm.com>
+Date: Wed, 11 Sep 2024 09:14:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] perf cs-etm: Don't flush when packet_queue fills up
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
+ scclevenger@os.amperecomputing.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
+ <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240905105043.160225-1-james.clark@linaro.org>
+ <20240905105043.160225-2-james.clark@linaro.org>
+ <5a0d9510-eccb-4074-964e-ae068b4ee31e@arm.com>
+Content-Language: en-US
+In-Reply-To: <5a0d9510-eccb-4074-964e-ae068b4ee31e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dan!
 
-Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
 
-Alexander, Arnd
+On 9/10/2024 9:28 PM, Leo Yan wrote:
+> On 9/5/2024 11:50 AM, James Clark wrote:
+> 
+> [...]
+> 
+>> cs_etm__flush(), like cs_etm__sample() is an operation that generates a
+>> sample and then swaps the current with the previous packet. Calling
+>> flush after processing the queues results in two swaps which corrupts
+>> the next sample. Therefore it wasn't appropriate to call flush here so
+>> remove it.
+> 
+> In the cs_etm__sample(), if the period is not overflow, it is not necessarily
+> to generate instruction samples and copy back stack entries. This is why we
+> want to call cs_etm__flush() to make sure the last packet can be recorded
+> properly for instruction sample with back stacks.
+> 
+> We also need to take account into the case for the end of the session - in
+> this case we need to generate samples for the last packet for complete info.
+> 
+> I am wandering should we remove the cs_etm__packet_swap() from cs_etm__sample()?
 
-unfortunately, the ep93xx DT conversion series is also affected by this
-bug.
+Sorry for typo. I meant to remove the cs_etm__packet_swap() from cs_etm__flush().
 
-On Wed, 2024-09-11 at 10:39 +0300, Dan Carpenter wrote:
-> The psc->div[] array has psc->num_div elements.=C2=A0 These values come
-> from
-> when we call clk_hw_register_div().=C2=A0 It's adc_divisors and
-> ARRAY_SIZE(adc_divisors)) and so on.=C2=A0 So this condition needs to be
-> >=3D
-> instead of > to prevent an out of bounds read.
->=20
-> Fixes: 9645ccc7bd7a ("ep93xx: clock: convert in-place to COMMON_CLK")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0arch/arm/mach-ep93xx/clock.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-
-> ep93xx/clock.c
-> index 85a496ddc619..e9f72a529b50 100644
-> --- a/arch/arm/mach-ep93xx/clock.c
-> +++ b/arch/arm/mach-ep93xx/clock.c
-> @@ -359,7 +359,7 @@ static unsigned long
-> ep93xx_div_recalc_rate(struct clk_hw *hw,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 val =3D __raw_readl(p=
-sc->reg);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 index =3D (val & psc->=
-mask) >> psc->shift;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index > psc->num_div)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index >=3D psc->num_div)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return DIV_ROUND_UP_ULL(p=
-arent_rate, psc->div[index]);
-
+Thanks,
+Leo
 
