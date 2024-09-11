@@ -1,126 +1,310 @@
-Return-Path: <linux-kernel+bounces-324565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC729974E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1895E974E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0A81C26ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:16:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6273EB28682
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A149F1862BE;
-	Wed, 11 Sep 2024 09:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0C71714C7;
+	Wed, 11 Sep 2024 09:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GHqv+usZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SHdDFhO5"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C498185938;
-	Wed, 11 Sep 2024 09:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088691741FA;
+	Wed, 11 Sep 2024 09:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726046077; cv=none; b=u5vTuRAC0XaWO4DRqbXMcbfv+YdgQmVVONJFKBz+pjSpv7pqwcM+ZOpRLxOCon3SgpOfU/lYFZzdeTnzLXCKG0vNMlH2iP/7UIvW7Db+PSbOVygTJgBG4t25OctpHxiGrMvRAJavfmks/HOxo1na936H5hMpl3UVWQ2SYnvCZt0=
+	t=1726046109; cv=none; b=iuSu11KNmFR5QD6pCcGIU2MzVdrngGwrYyNCNeHIBUsbzSGCtMzXRYVMm+Qjz/YrYXt7Sxm156UvWlTFD4I0IJzqG+8bPmiP+2pzVtUeZO7iPW0OO8lHJeK16yzPmZXmoaAFdZ0d9pzW7RVS3taAOdw7qoVBwfaL8raVPjgwQL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726046077; c=relaxed/simple;
-	bh=YLU4xzSaV42y4wECNalFYkcBZIdqUSsMI9mUG/G/+Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGY7Qxw3hMHW/bAKO0k1NcoaB2EfB0kSJOi0vVZwMuSH/F2FR5X0pJPZ84W1lospjhLJ9DgI3p8AGkWLA5S3rL+2ETVkn33GgijXTXdwZOa81wK8mf7mcd7Q5cHMpsZjcVTJEjLH6G0v8o+jhl731+DRPomwGWwqamD+6GoAb0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GHqv+usZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YZTQe0B0n8FuRrxJpiUXr7v6VvkARClaJnOd8Pt9hP0=; b=GHqv+usZjCCjfPqau/Mw1miyWp
-	DDbS9Qoh9AIE0FNUSqscDxcMvgQo3KZ7PlbEvbe8mA2OV8YEbnkJq8CU2GRqBGpfvkDEpTvRrQsbQ
-	BG/xZVMp+sf/oK2PuUcuhnc64mCQQEpoNk8YyqIa237oSg0M5xw0Ld6cmpfNlclJx4wEiD43Fg7BM
-	BI9DD0AU/cZneEzFGrj0x2CjYYZ1tgJ2bb5XB4Wb0TN9+JHXxHsjZIjrs0+9BvhLr2nPRwOxayRqX
-	HeDxTolunFj72ZZQTWkBsJ9eVvkqvG0bFsyaYIHbLwku7Sf2c/jfEXzqI3XDdzKutNNQ3gZMn5WC8
-	8RqgE5Qw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1soJQl-00000007hlo-1S1h;
-	Wed, 11 Sep 2024 09:14:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CA98E300729; Wed, 11 Sep 2024 11:14:30 +0200 (CEST)
-Date: Wed, 11 Sep 2024 11:14:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip:sched/core 69/70] drivers/cpufreq/cppc_cpufreq.c:227:20:
- error: use of undeclared identifier 'NSER_PER_MSEC'
-Message-ID: <20240911091430.GN4723@noisy.programming.kicks-ass.net>
-References: <202409110611.dmyDCkoe-lkp@intel.com>
- <f9d838d5-6b3d-4e7c-9bf6-cb2935320467@arm.com>
+	s=arc-20240116; t=1726046109; c=relaxed/simple;
+	bh=EzOgyENAkSRDLS0/Rm6Wrv/w/unR8WK6P/9IJOPE5jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2LJS88Mp0VuQyVbtqaTlRFUCsITwyHEQJ69bSrf856G5+Knw1dpJjjc1oBC62eM1NRCJcjma31ANrjHjEN17HxJw2EyxjKn3v0SWiipTq9KIwUpnUBYqbXFe+hY+E2WxIHEqULxgbabThYuFIc70Lfo+FK3aVtheKC2UJhnhis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SHdDFhO5; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B2uVu5001140;
+	Wed, 11 Sep 2024 09:15:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=1
+	AYToqwqpaAF12l4NLq3V5bnkBKyKRlPqzOnNsbo3vU=; b=SHdDFhO5iOY449uLO
+	SoLejLPIsi8XHtddR49wTz7I+G2hoaDEEHnte851xTKajn6wjTQU5EtkTuPuY1BT
+	vZ/IsWyTJ0xzCUCXsx+bq4Pb2Iq8EParLDs7tsmsjDui0AZYm9ys47FpdcYmeRH3
+	sg7QvBUowLZO9M0NyhAKzAw59i8+cNQ5HFN4bFFACY2CjLe16c3z1Cbhp554zmN4
+	RMBJRmQMY0e4e0wn8R/1XuxIkTKq4PrG27VX/O1JeCo/Oii1q1GP9Cbd/ektz5Ng
+	EDODh2thO+sKarGLkw8FkkkubqhxnmF87VaW6SOrLgU6/fbZo/HLahqV4F8qQY+8
+	ERPzg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8qcu0n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 09:15:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48B9Exlg011193;
+	Wed, 11 Sep 2024 09:14:59 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8qcu0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 09:14:59 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48B6dC9R032418;
+	Wed, 11 Sep 2024 09:14:59 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41h1j0rjcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 09:14:59 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48B9EtRl49545680
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Sep 2024 09:14:55 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 06C5120043;
+	Wed, 11 Sep 2024 09:14:55 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD29820040;
+	Wed, 11 Sep 2024 09:14:54 +0000 (GMT)
+Received: from [9.152.212.137] (unknown [9.152.212.137])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Sep 2024 09:14:54 +0000 (GMT)
+Message-ID: <1d7f3b7b-9edc-4d90-955c-9345428563f1@linux.ibm.com>
+Date: Wed, 11 Sep 2024 11:14:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9d838d5-6b3d-4e7c-9bf6-cb2935320467@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux next breaks s390 test cases perf test vfs_getname
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+References: <3f5eeb1b-6679-4ff5-8046-0cbe1b6e4ba8@linux.ibm.com>
+ <ZuCrCRfUi6QiRV_3@x1>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <ZuCrCRfUi6QiRV_3@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 19WviOqQnj0tpOAmAJ2eKy4IBH_lXDI8
+X-Proofpoint-ORIG-GUID: Tsv9tpkwrl800sBx7zw_XxXpUnnhSzUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-10_12,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 clxscore=1011 mlxlogscore=999 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409110068
 
-On Wed, Sep 11, 2024 at 09:15:24AM +0100, Christian Loehle wrote:
-> On 9/10/24 23:20, kernel test robot wrote:
-> > Hi Christian,
-> > 
-> > FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-> > head:   6cbbb91711c6b17da3802a3cf072d3311828ca33
-> > commit: b3a47ff095544af206b8885391a7bad662d06a57 [69/70] cpufreq/cppc: Use NSEC_PER_MSEC for deadline task
-> > config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240911/202409110611.dmyDCkoe-lkp@intel.com/config)
-> > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240911/202409110611.dmyDCkoe-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202409110611.dmyDCkoe-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >>> drivers/cpufreq/cppc_cpufreq.c:227:20: error: use of undeclared identifier 'NSER_PER_MSEC'
-> >      227 |                 .sched_runtime  = NSER_PER_MSEC,
-> >          |                                   ^
-> >>> drivers/cpufreq/cppc_cpufreq.c:229:3: error: member reference base type 'long' is not a structure or union
-> >      228 |                 .sched_deadline = 10 * NSEC_PER_MSEC
-> >          |                                        ~~~~~~~~~~~~~
-> >      229 |                 .sched_period   = 10 * NSEC_PER_MSEC,
-> >          |                 ^~~~~~~~~~~~~
-> >    2 errors generated.
-> > 
-> > 
-> > vim +/NSER_PER_MSEC +227 drivers/cpufreq/cppc_cpufreq.c
-> > 
-> >    215	
-> >    216	static void __init cppc_freq_invariance_init(void)
-> >    217	{
-> >    218		struct sched_attr attr = {
-> >    219			.size		= sizeof(struct sched_attr),
-> >    220			.sched_policy	= SCHED_DEADLINE,
-> >    221			.sched_nice	= 0,
-> >    222			.sched_priority	= 0,
-> >    223			/*
-> >    224			 * Fake (unused) bandwidth; workaround to "fix"
-> >    225			 * priority inheritance.
-> >    226			 */
-> >  > 227			.sched_runtime	= NSER_PER_MSEC,
+On 9/10/24 22:24, Arnaldo Carvalho de Melo wrote:
+> On Tue, Sep 10, 2024 at 02:05:42PM +0200, Thomas Richter wrote:
+>> Arnaldo,
+>>
+>> On linux-next
+>> commit a68080e1a21b ("perf test vfs_getname: Look for alternative line where to collect the pathname")
+>> breaks the following tests on s390:
+>>
+>>  # perf test vfs_getname
+>>  85: Add vfs_getname probe to get syscall args filenames             : FAILED!
+>>  87: Use vfs_getname probe to get syscall args filenames             : FAILED!
+>> 120: Check open filename arg using perf trace + vfs_getname          : FAILED!
+>>
+>> I used the linux next kernel from yesterdays build on s390 and the corresponding
+>> perf tools also built from that kernel repository:
+>>  # uname -a
+>>  Linux a35lp62.lnxne.boe 6.11.0-20240909.rc7.git205.100cc857359b.300.fc40.s390x+next #1 SMP Mon Sep  9 20:05:44 CEST 2024 s390x GNU/Linux
+>>  # perf -v
+>>  perf version 6.11.0-20240909.rc7.git205.100cc857359b.300.fc40.s390x+next
+>>  #
+>>
+>> The root cause is a changed regular expression. Before the change the command
+>> extracts this line and strips everything after the line number:
+>>  # perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
+>>  79     result->uptr = filename;
+>>  # perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;' | \
+>>          sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/'
+>>  79
+>>  # perf probe -q "vfs_getname=getname_flags:79 pathname=result->name:string"
+>>  # echo $?
+>>  0
+>>  # perf probe -l
+>>   probe:vfs_getname    (on getname_flags:79@fs/namei.c with pathname)
+>>  # perf probe -d '*'
+>>  Removed event: probe:vfs_getname
+>>  #
+>>
+>> With your changes the result is slightly different. The first part still matches the
+>> same line:
+>>  #perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*='
+>>  79     result->uptr = filename;
+>> but the sed command does not return the proper line number:
+>>  # perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*=' | \
+>>         sed -r "s/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*=/\1/"
+>>  79 filename;
+>>  #
+>> The filename; is not stripped and the perf probe command looks like
+>>  # perf probe -q "vfs_getname=getname_flags:79 filename; pathname=result->name:string"
+>>  # echo $?
+>>  254
+>>  # perf probe -l
+>>  # perf probe  "vfs_getname=getname_flags:79 filename; pathname=result->name:string"
+>>  Failed to find the location of the 'filename;' variable at this address.
+>>  Perhaps it has been optimized out.
+>>  Use -V with the --range option to show 'filename;' location range.
+>>   Error: Failed to add events.
+>>  # 
+>>
+>>
+>> The issue is that trailing equal sign (=) in the regular expression:
+>>  + result_filename_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*"
+>>  + line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_filename_re=" | \
+>>                  sed -r "s/$result_filename_re=/\1/")
+>>                                               ^--------here-----
+>> which prevents word filename; from being stripped away.
+>> I wonder if this works on x86_64 platforms and if we need a archtecture specific
 > 
-> Sorry, seems I enabled the module, but didn't actually build modules
-> before sending it out, anyway this should be s/NSER/NSEC
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~#
+> root@x1:~# uname -a
+> Linux x1 6.10.8-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Sep  4 21:41:11 UTC 2024 x86_64 GNU/Linux
+> root@x1:~#
 > 
-> >    228			.sched_deadline = 10 * NSEC_PER_MSEC
-> and this is missing a comma.
-> Peter do you mind fixing that up for me?
+> I forgot to mention the kernel version wher I did that a68080e1a21b
+> patch, but IIRC it was a recent, locally built kernel (not a distro
+> kernel, but with the fedora, probably 39, config):
+> 
+> kernel="/boot/vmlinuz-6.11.0-rc5+"
+> 
+> But even with the distro kernel I'm getting the same results:
+> 
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~# perf test getname
+>  91: Add vfs_getname probe to get syscall args filenames             : Ok
+>  93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 126: Check open filename arg using perf trace + vfs_getname          : Ok
+> root@x1:~# 
+> 
+> With my changes, i.e. what is in perf-tools-next now:
+> 
+> root@x1:~# perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
+>          	result->uptr = filename;
+> root@x1:~#
+> 
+> So no line number to be found:
+> 
+> root@x1:~# perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;'
+> perf probe -L getname_flags 2>&1 | grep -E 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/'
+>          	result->uptr = filename;
+> root@x1:~#
+> 
+> Then, with the change in place:
+> 
+> The first part continues not to find the info:
+> 
+> root@x1:~# perf probe -L getname_flags| grep -E '[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*='
+> root@x1:~#
+> 
+> Then it falls back to the new way of finding where to put the probe:
+> 
+> root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re=" 
+> root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" 
+>      73  	result->aname = NULL;
+> root@x1:~#
+> 
+> Yeah, that = shouldn't be there
+> 
+> root@x1:~# perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/"
+> 73
+> root@x1:~# line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
+> root@x1:~# echo $line
+> 73
+> root@x1:~#
+> 
+> Can you try with the patch below, that ending '=' is noise :-\
+> 
+> - Arnaldo
+> 
+> From 9ccaf9a0ebcff9b4c45c34d92ca97be9926da636 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Tue, 10 Sep 2024 17:18:26 -0300
+> Subject: [PATCH 1/1] perf test shell probe_vfs_getname: Remove extraneous '='
+>  from probe line number regex
+> 
+> Thomas reported the vfs_getname perf tests failing on s/390, it seems it
+> was just to some extraneous '=' somehow getting into the regexp, remove
+> it, now:
+> 
+>   root@x1:~# perf test getname
+>    91: Add vfs_getname probe to get syscall args filenames             : Ok
+>    93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+>   126: Check open filename arg using perf trace + vfs_getname          : Ok
+>   root@x1:~#
+> 
 
-I'll fix it up. I need to rebase sched/core anyway.
+I applied your patch to linux-next kernel and it works:
 
-Thanks!
+# ./perf test vfs
+ 85: Add vfs_getname probe to get syscall args filenames             : Ok
+ 87: Use vfs_getname probe to get syscall args filenames             : Ok
+120: Check open filename arg using perf trace + vfs_getname          : Ok
+#
+
+When I remove your patch the error shows up again:
+
+# git reset --hard HEAD^
+HEAD is now at 6708132e80a2 Add linux-next specific files for 20240910
+# ./perf test vfs
+ 85: Add vfs_getname probe to get syscall args filenames             : FAILED!
+ 87: Use vfs_getname probe to get syscall args filenames             : FAILED!
+120: Check open filename arg using perf trace + vfs_getname          : FAILED!
+]# 
+
+Your have my Tested-by:
+Thanks a lot for your help.
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
+
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+
 
