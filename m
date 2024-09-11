@@ -1,82 +1,78 @@
-Return-Path: <linux-kernel+bounces-325500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C4C975A6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0EA975A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3CFA1C22925
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9F61C23341
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4678F1B5EC8;
-	Wed, 11 Sep 2024 18:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520291B4C4A;
+	Wed, 11 Sep 2024 18:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eEWEsaCo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ0vavJ4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B152187543;
-	Wed, 11 Sep 2024 18:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52FA187543
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726079468; cv=none; b=X8wL7aQYyWcUq4/+ZV6I6RdOohWKuo8GX1SBVgObT12XqzbLpLZERwXCKt0+kx42TTnNkdUaFSaaO1OajkgYJOuIR/vcKwgT52DR9TbuZgWBjHddKr42gEJmrG3yfnhX1CFLRcws8Y2XADf0EDXwZ1sfvmtcNXIbmAd8PFO0gDg=
+	t=1726079460; cv=none; b=MuI7ZISG+r+fD7zQCaVhGTmIC7hoY++vgswGkavX5V9ZO3/aT24Mu1fm2k1246t691yqqV7TzPc9Zoavx6d5OtwNXWzRgahO/2/pOgWerEFg0icoNf6jNRfMdygHxye9n/csHyjRpiIaAnL195O0RZsFakDkZYnh5qzM4nlW50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726079468; c=relaxed/simple;
-	bh=9GbEkYaK2KLMKmCPSjnFwdCcc83zPWOsh2WBi8jguNo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iDby6fma8pf/+e1dkr5OhK5bybqlRY88ORiiYX4osjPJpDMNHFnL4Oes8I0lJSEdyeK7TsTyhFDecGGopwh/Cuy3Giz+qCLgBUCKvCvxHeRxjcfYMMdr8hnMYJGHOL8rNoFXHrCtn3YFBy6RJA0PU9InLP/I8CV5Hv2DF9+sgfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eEWEsaCo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE916C4CECC;
-	Wed, 11 Sep 2024 18:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1726079468;
-	bh=9GbEkYaK2KLMKmCPSjnFwdCcc83zPWOsh2WBi8jguNo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eEWEsaCoLDGp07eCS8AzhgGcIS9zzyBVIr+7YlUrpVsSOcLu4oZDLh6YClobfWqWz
-	 T6TjSsIh7DNd7hWenv4B39dMBd6O5YNISXZWNK93DeTNmA8swzjGo58FABLvYMYRWG
-	 163frHHJnZ1jSbF8wyCeJnjQn0rZ9w1PfAITiG+o=
-Date: Wed, 11 Sep 2024 11:30:51 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the cgroup tree
-Message-Id: <20240911113051.edc63e55b012b9833553b6b7@linux-foundation.org>
-In-Reply-To: <20240911174023.0d0d9a15@canb.auug.org.au>
-References: <20240911174023.0d0d9a15@canb.auug.org.au>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726079460; c=relaxed/simple;
+	bh=PJu19hHRtBZxiY71l+HTEvh4vWY6Vbzn9N0RtMa9Em8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=P0zftf3gAvLOEpo8MaOMZALbFpKl5mhUMbbmTxuzbgyBEV7kqq3R6YYGMIgoN1pLaCyqHYeG31aM3qo70U7ljhd0aRcnAn0LnLNtIU4wJJQvzoiX0NrmP1XUbHQM8X9xppn5lCk4tg2slvll2QGm7lV1V2fxix1No0fhcr9WRqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ0vavJ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE63C4CEC0;
+	Wed, 11 Sep 2024 18:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726079460;
+	bh=PJu19hHRtBZxiY71l+HTEvh4vWY6Vbzn9N0RtMa9Em8=;
+	h=Subject:From:In-Reply-To:References:Date:To:List-Id:Cc:From;
+	b=EZ0vavJ4S+kyuOk4960uPV7NkQH3zQ5QtMD7xoAFxITYoBQKHLRW0w13gzg+3twW3
+	 tbM+bmS6/khiUVIQCFMg+P5STS9QCAFkPqFnX0VKPZIOqdrJhirgqryR9l8GfkBUFl
+	 Os+QZmmAgbNMl6f5uuZ6QBSFMMIskEysEkKeZHYpMH07H6JASxqpAitJaOAOktkBML
+	 er5V85NJcwlKj1M5LPxv+qIzCulgaPmnNT7ZUeTGPON8ju0F/aD7vtLG6rkvI+giQX
+	 jlVuKFuAjcveaAxr+p9xQhGiWpKC/bAbUItawr3NesIL8DtDSzR43rQF2rabPUzKGl
+	 vDud/VQY+Y7uQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE3233806656;
+	Wed, 11 Sep 2024 18:31:02 +0000 (UTC)
+Subject: Re: [GIT PULL] ARM: SoC fixes for 6.11, part 3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <58c9776e-0e3a-4b00-bea8-47a7bcf2af37@app.fastmail.com>
+References: <58c9776e-0e3a-4b00-bea8-47a7bcf2af37@app.fastmail.com>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <58c9776e-0e3a-4b00-bea8-47a7bcf2af37@app.fastmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/arm-fixes-6.11-3
+X-PR-Tracked-Commit-Id: 0e7af99aef5f58b4bae00e45fd1c2626a987f7bb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 77f587896757708780a7e8792efe62939f25a5ab
+Message-Id: <172607946129.1012158.17735590154685557004.pr-tracker-bot@kernel.org>
+Date: Wed, 11 Sep 2024 18:31:01 +0000
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 11 Sep 2024 17:40:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+The pull request you sent on Wed, 11 Sep 2024 15:08:02 +0000:
 
-> Hi all,
-> 
-> The following commits are also in the mm tree as different commits
-> (but the same patches):
-> 
->   af000ce85293 ("cgroup: Do not report unavailable v1 controllers in /proc/cgroups")
->   3c41382e920f ("cgroup: Disallow mounting v1 hierarchies without controller implementation")
->   659f90f863a6 ("cgroup/cpuset: Expose cpuset filesystem with cpuset v1 only")
-> 
-> These are commits
-> 
->   a378d53133d3 ("cgroup: do not report unavailable v1 controllers in /proc/cgroups")
->   36bf4ad72e18 ("cgroup: disallow mounting v1 hierarchies without controller implementation")
->   3055c9be424d ("cgroup/cpuset: expose cpuset filesystem with cpuset v1 only")
-> 
-> in the mm-unstable branch of the mm tree.
-> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/arm-fixes-6.11-3
 
-OK, thanks, I'll drop those from mm-unstable.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/77f587896757708780a7e8792efe62939f25a5ab
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
