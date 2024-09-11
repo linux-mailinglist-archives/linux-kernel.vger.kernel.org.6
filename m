@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-325371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9029758B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:47:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB19758B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA9D1C22EDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EF41C22E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172811B12D6;
-	Wed, 11 Sep 2024 16:47:43 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E281B1507;
+	Wed, 11 Sep 2024 16:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GbCiEzb1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AA383B1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6467383B1;
+	Wed, 11 Sep 2024 16:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726073262; cv=none; b=UTF+RLIfGUi7vK5UtFhIa9nBzw4xI8yz8/tXk1kx7kTNHSJRHYAn0SwDriWlzxTeFhixN+q3sdmBCbcb9pigrzIjExD5MbKrDekT2ZE4sgIs40RbCuPgC7WxYN0zrzdGOX/ZCg6a+3ihN+yKimHs6juU3mpJwsDK6W+TWmE9Qy8=
+	t=1726073290; cv=none; b=sBKHKKyoeofghj1h44JpDdcjqaIvMiStmAdQCVjDsNikGB+yQBsU/kXnlAvchrnTVg9WQShrk9dA42du7KQ9cxMNo4hG5t49NZdsjmViviTFjkAGiZwidiXV8+2EefaxN6eIl0+KIAyf16uVwpgfQ9SdR4Hzxqk60AAj1ZaGppg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726073262; c=relaxed/simple;
-	bh=nIjt55cI5HHld4bPEuuMqaBZdpwKRDE1zo4psyvz9io=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=NvCavah5GiI7NmnPJ0cbAogdKsnJEwUHF7eMFhyR9RqpnoNpRA6gYBqcDxtiSJHd5BRyICu7SYi3LNiYTQ+VKe2bCMwMhOPcbKTpxg+jjDn4OozgOjsve3aw1td+hFMwYlpC0PHf0vUp5aXRnXs32wroGohDR5gLv6nNHsdvmy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-252-flUzNfMMM9ibaQjAN64BxA-1; Wed, 11 Sep 2024 17:47:38 +0100
-X-MC-Unique: flUzNfMMM9ibaQjAN64BxA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 11 Sep
- 2024 17:46:51 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 11 Sep 2024 17:46:51 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent MAILHOL' <mailhol.vincent@wanadoo.fr>
-CC: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
-	<gustavoars@kernel.org>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] overflow: optimize struct_size() calculation
-Thread-Topic: [PATCH v2] overflow: optimize struct_size() calculation
-Thread-Index: AQHbAywJ58VR+K3+gU6+o+9bWfd3j7JSX6zQgAA/doCAAC1EAA==
-Date: Wed, 11 Sep 2024 16:46:51 +0000
-Message-ID: <43ac488d0a83486ca6d969643c7b531d@AcuMS.aculab.com>
-References: <20240910024952.1590207-1-mailhol.vincent@wanadoo.fr>
- <01aa8bd408d04031941073b026f171fb@AcuMS.aculab.com>
- <CAMZ6Rq+6EKoFEHMZhp_2dq2DPEP6zZgzDy0M3tegKK9wOphA6g@mail.gmail.com>
-In-Reply-To: <CAMZ6Rq+6EKoFEHMZhp_2dq2DPEP6zZgzDy0M3tegKK9wOphA6g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1726073290; c=relaxed/simple;
+	bh=da3t3pKkN1QkjPOVrBC4tfTfhtmmdBt9/lF4oKQitWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=STBc8iE57y2JNzfJsGtvprQC2TBDrzuw6O8+xOqrTNAicuq8EtFJjQGp/Rpl5tIiNgtSvQOTOiByme6pbZKGkS73lHNB1c4IkOhnzxcWYDQfssZB5ec4zypCy5mkBnZmNG1TAswZTyr4X7SmJfz1SolV+GXetSnPxlYF1nDjt2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GbCiEzb1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QEqqui/EvuUcb5mzxZw+mL+6qk7m/Nc8BxnYEiw/05E=; b=GbCiEzb1nKJah1ADUAvlTj7gxg
+	ZITITZNPcH4FbGeeJCu3J0NQW9IogztPiqpodmZdT8Z44YWM8jVE6Eu2fwu2F2/24MyF9KGj8bXYT
+	g+q9nZFRe5CsCH1HSH7xm6kzuLrhcjtMRajp0L/JG4cYKM5CpGCQCMMdlgyDSbCHpRgY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soQVZ-007EXD-0q; Wed, 11 Sep 2024 18:47:57 +0200
+Date: Wed, 11 Sep 2024 18:47:57 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tarun Alle <tarun.alle@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V3] net: phy: microchip_t1: SQI support for
+ LAN887x
+Message-ID: <a7e330fd-9000-4b23-bec6-ae2bbfe487a9@lunn.ch>
+References: <20240911131124.203290-1-tarun.alle@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911131124.203290-1-tarun.alle@microchip.com>
 
-Li4uDQo+ID4gWzFdIEJvdGggdGhlICcrJyBhbmQgJyonIGhhdmUgZXh0cmEgY29kZSB0byBkZXRl
-Y3Qgb3ZlcmZsb3cgYW5kIHJldHVybg0KPiA+ICAgYSAnYmlnJyB2YWx1ZSB0aGF0IHdpbGwgY2F1
-c2Uga21hbGxvYygpIHRvIHJldHVybiBOVUxMLg0KPiA+IEkndmUgbm90IGxvb2tlZCBhdCB0aGUg
-Z2VuZXJhdGVkIGNvZGUgYnV0IGl0IGlzIGxpa2VseSB0byBiZSBob3JyaWQNCj4gPiAgIChlc3Bl
-Y2lhbGx5IHRoZSBjaGVjayBmb3IgbXVsdGlwbHkgb3ZlcmZsb3dpbmcpLg0KPiA+IEluIHRoaXMg
-Y2FzZSB0aGVyZSBhcmUgZW5vdWdoIGNvbnN0YW50cyB0aGF0IHRoZSBhbHRlcm5hdGl2ZSBjaGVj
-azoNCj4gPiAgICAgICAgIGlmIChjb3VudCA+IChNQVhfU0laRSAtIHNpemVvZiAoKnMpKSAvIHNp
-emVvZiAocy0+bWVtYmVyKSkNCj4gPiAgICAgICAgICAgICAgICAgc2l6ZSA9IE1BWF9TSVpFOw0K
-PiA+ICAgICAgICAgZWxzZQ0KPiA+ICAgICAgICAgICAgICAgICBzaXplID0gc2l6ZW9mICgqcykg
-KyBjb3VudCAqIHNpemVvZiAocy0+bWVtYmVyKTsNCj4gPiBpcyBmaW5lIGFuZCBvbmx5IGhhcyBv
-bmUgY29uZGl0aW9uYWwgaW4gaXQuDQo+ID4gSW4gc29tZSBjYXNlcyB0aGUgY29tcGlsZXIgbWF5
-IGFscmVhZHkga25vdyB0aGF0IHRoZSBjb3VudCBpcyBzbWFsbCBlbm91Z2guDQo+IA0KPiBJbmRl
-ZWQuIElmIGNvdW50IGlzIHNtYWxsIGVub3VnaCwgdGhlIGNvZGUgaXNuJ3QgdGhhdCBob3JyaWQu
-IElmIEkNCj4gdGFrZSB0aGlzIGV4YW1wbGU6DQo+IA0KPiAgIHNpemVfdCBmb28odTMyIGNvdW50
-KQ0KPiAgIHsNCj4gICAgICAgICAgIHJldHVybiBzdHJ1Y3Rfc2l6ZV90KHN0cnVjdCBzLCBmYW0s
-IGNvdW50KTsNCj4gICB9DQo+IA0KPiBJIGdvdCB0aGlzIGNvZGU6DQoNCldoYXQgaGFwcGVucyBp
-ZiB0aGUgZmxleC1hcnJheSBpcyBsYXJnZXIgdGhhbiAxIGJ5dGUgLSBzbyBhIG11bHRpcGx5IGlz
-IG5lZWRlZC4NClByb2JhYmx5IHdvcnRoIHRlc3Rpbmcgc29tZXRoaW5nIHRoYXQgaXNuJ3QgYSBw
-b3dlciBvZiAyLg0KQWxzbyBjaGVjayAzMmJpdCBhcmNocyAtZ29kYm9sdCBjYW4gaGVscC4NCg0K
-CURhdmlkDQoNCj4gDQo+ICAgMDAwMDAwMDAwMDAwMDAxMCA8Zm9vPjoNCj4gICAgIDEwOiAgIGYz
-IDBmIDFlIGZhICAgICAgICAgICAgIGVuZGJyNjQNCj4gICAgIDE0OiAgIDg5IGY4ICAgICAgICAg
-ICAgICAgICAgIG1vdiAgICAlZWRpLCVlYXgNCj4gICAgIDE2OiAgIDQ4IDgzIGMwIDEwICAgICAg
-ICAgICAgIGFkZCAgICAkMHgxMCwlcmF4DQo+ICAgICAxYTogICBlOSAwMCAwMCAwMCAwMCAgICAg
-ICAgICBqbXAgICAgMWYgPGZvbysweGY+DQoNCkFkZCAtZCB0byBvYmpkdW1wIHRvIGdldCB0aGUg
-cmVsb2NhdGlvbiBwcmludGVkLg0KKEkgdGhpbmsgdGhpcyBpcyBhIGJ1aWxkIHdoZXJlICdyZXQn
-IGlzbid0IGFsbG93ZWQgOi0pDQoNCglEYXZpZA0KDQo+IA0KPiBIZXJlLCBubyBTSVpFX01BWCBi
-ZWNhdXNlIHRoZSBtdWx0aXBsaWNhdGlvbiBjYW4gbm90IHdyYXBhcm91bmQNCj4gcmVnYXJkbGVz
-cyBvZiB0aGUgdmFsdWUgb2YgY291bnQuIEl0IGlzIG9ubHkgYWZ0ZXIgY2hhbmdpbmcgdGhlIHR5
-cGUNCj4gb2YgY291bnQgdG8gdTY0IHRoYXQgdGhlIGNvbXBpbGVyIHdpbGwgZW1pdCBhIGNvbXBh
-cmlzb246DQo+IA0KPiAwMDAwMDAwMDAwMDAwMDEwIDxmb28+Og0KPiAgIDEwOiAgIGYzIDBmIDFl
-IGZhICAgICAgICAgICAgIGVuZGJyNjQNCj4gICAxNDogICA0OCA4ZCA0NyAxMCAgICAgICAgICAg
-ICBsZWEgICAgMHgxMCglcmRpKSwlcmF4DQo+ICAgMTg6ICAgNDggODMgZmYgZjAgICAgICAgICAg
-ICAgY21wICAgICQweGZmZmZmZmZmZmZmZmZmZjAsJXJkaQ0KPiAgIDFjOiAgIDQ4IGM3IGMyIGZm
-IGZmIGZmIGZmICAgIG1vdiAgICAkMHhmZmZmZmZmZmZmZmZmZmZmLCVyZHgNCj4gICAyMzogICA0
-OCAwZiA0MyBjMiAgICAgICAgICAgICBjbW92YWUgJXJkeCwlcmF4DQo+ICAgMjc6ICAgZTkgMDAg
-MDAgMDAgMDAgICAgICAgICAgam1wICAgIDJjIDxmb28rMHgxYz4NCj4gDQo+IEZvciByZWZlcmVu
-Y2UsIHRoaXMgaXMgdGhlIGNvZGUgYWZ0ZXIgYXBwbHlpbmcgbXkgcGF0Y2gsIHdpdGggY291bnQg
-YXMgYSB1MzI6DQo+IA0KPiAgIDAwMDAwMDAwMDAwMDAwMTAgPGZvbz46DQo+ICAgICAxMDogICBm
-MyAwZiAxZSBmYSAgICAgICAgICAgICBlbmRicjY0DQo+ICAgICAxNDogICA4OSBmOCAgICAgICAg
-ICAgICAgICAgICBtb3YgICAgJWVkaSwlZWF4DQo+ICAgICAxNjogICBiYSAxMCAwMCAwMCAwMCAg
-ICAgICAgICBtb3YgICAgJDB4MTAsJWVkeA0KPiAgICAgMWI6ICAgNDggODMgYzAgMGMgICAgICAg
-ICAgICAgYWRkICAgICQweGMsJXJheA0KPiAgICAgMWY6ICAgNDggMzkgZDAgICAgICAgICAgICAg
-ICAgY21wICAgICVyZHgsJXJheA0KPiAgICAgMjI6ICAgNDggMGYgNDIgYzIgICAgICAgICAgICAg
-Y21vdmIgICVyZHgsJXJheA0KPiAgICAgMjY6ICAgZTkgMDAgMDAgMDAgMDAgICAgICAgICAgam1w
-ICAgIDJiIDxmb28rMHgxYj4NCj4gDQo+IGFuZCB3aXRoIGNvdW50IGFzIGEgdTY0Og0KPiANCj4g
-ICAwMDAwMDAwMDAwMDAwMDEwIDxmb28+Og0KPiAgICAgMTA6ICAgZjMgMGYgMWUgZmEgICAgICAg
-ICAgICAgZW5kYnI2NA0KPiAgICAgMTQ6ICAgNDggODMgYzcgMGMgICAgICAgICAgICAgYWRkICAg
-ICQweGMsJXJkaQ0KPiAgICAgMTg6ICAgNzIgMTEgICAgICAgICAgICAgICAgICAgamIgICAgIDJi
-IDxmb28rMHgxYj4NCj4gICAgIDFhOiAgIGI4IDEwIDAwIDAwIDAwICAgICAgICAgIG1vdiAgICAk
-MHgxMCwlZWF4DQo+ICAgICAxZjogICA0OCAzOSBjNyAgICAgICAgICAgICAgICBjbXAgICAgJXJh
-eCwlcmRpDQo+ICAgICAyMjogICA0OCAwZiA0MyBjNyAgICAgICAgICAgICBjbW92YWUgJXJkaSwl
-cmF4DQo+ICAgICAyNjogICBlOSAwMCAwMCAwMCAwMCAgICAgICAgICBqbXAgICAgMmIgPGZvbysw
-eDFiPg0KPiAgICAgMmI6ICAgNDggODMgYzggZmYgICAgICAgICAgICAgb3IgICAgICQweGZmZmZm
-ZmZmZmZmZmZmZmYsJXJheA0KPiAgICAgMmY6ICAgZTkgMDAgMDAgMDAgMDAgICAgICAgICAgam1w
-ICAgIDM0IDxmb28rMHgyND4NCj4gDQo+IFRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cyENCj4g
-DQo+IA0KPiBZb3VycyBzaW5jZXJlbHksDQo+IFZpbmNlbnQgTWFpbGhvbA0KDQotDQpSZWdpc3Rl
-cmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtl
-eW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+> +	/* Keep inliers and discard outliers */
+> +	for (int i = ARRAY_SIZE(rawtable) / 5;
+> +	     i < ARRAY_SIZE(rawtable) / 5 * 4; i++)
+> +		sqiavg += rawtable[i];
+> +
+> +	/* Get SQI average */
+> +	sqiavg /= 120;
 
+120?
+
+Isn't that ARRAY_SIZE(rawtable) / 5 * 4 - ARRAY_SIZE(rawtable) / 5 
+
+Please think about the comments being given. I said you should not
+assume 200, but use ARRAY_SIZE, so it is possible to change the size
+of the array and not get buffer overruns etc. So you need to review
+all the code.
+
+Better still, change it to 50 and make sure you get sensible values
+from it. The accuracy won't be as good, but i would expect it to be
+still about right. But with the current code, i guess you get 7 no
+matter what the actual quality is.
+
+This is a general principle in C code, and coding in general. Don't
+scatter the same knowledge repeatedly everywhere, because it makes it
+error prone to change. You have to find and change them all, rather
+than just one central value.
+
+    Andrew
+
+---
+pw-bot: cr
 
