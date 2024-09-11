@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-324383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2A0974BDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE100974BDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A272B217EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30A09B212D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 07:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A36713DDC2;
-	Wed, 11 Sep 2024 07:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP7X5r83"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1886B13D539;
+	Wed, 11 Sep 2024 07:53:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214CD2C190;
-	Wed, 11 Sep 2024 07:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1C953E15
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041160; cv=none; b=SxIXiUyamGXWx5EkhviQJ9v1m8SC06NHClCW7J94mdKe7FIj9Q+Mo58zK+cIZqugxMclSQjwHg1ch5PhX3jgu+2Okm5Gl7l346+Brah5pm2+8XxnDoqNABjXulbmUPRrnPFuW5LmveswVFBr1CMWX4EmoH0ZeeeuCZhPvo3hEE4=
+	t=1726041228; cv=none; b=TLCegNRLy5v/QLYFejqS7BCQms4gjxb651/MUhNHKCXO7VlLuJO+zUTCZmybkYt6Y0L2ayLvoirMpQymDhTQsJl2VXtYjT/nt6iraKVmIPXKsM675UuANdWCdhaXIXi8LcaHQq6UsmzIJszAiBjAPsyfUywqm9kREnzsTiRPGHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041160; c=relaxed/simple;
-	bh=UI29GiP/BTLgiRbNSRwQ6gBKRktbmqpd0ppzqV8JY2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=hdIgMaXY2UpmUia318eZRxRPicDKu0uNzsdT1aUChupOzI1PSAi/AmLu44mlSRev/+/dXohoXMLdfi7wcrUpyAmSzwLsbak+atMr7irWNup1AIs9eTAUJ6drun5UWQpImF7oLOGB/mAXxDvS3HUEakIqaFc6LPL2XNYwujZIxEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP7X5r83; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d64b27c45so408631866b.3;
-        Wed, 11 Sep 2024 00:52:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726041157; x=1726645957; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIm4Dw5q7Rs9OaJTn4hnJUtrKFl6GJTKrB6nNZ9HBHY=;
-        b=RP7X5r830dtNm+kY4G1SPatf61FPZmZVGxLzQZ8FhRBMXltzbB/y1SLV98B8HueAqK
-         VLmqn9Hfg1uumuCndfXsxdblRN3q7i8X2g4ziRGewfNPe7KTFhm9lK2OUH5dzP3t+DId
-         jnAD1QYOVJ09Tx6UmELtpyfl7yWV+JvTu7rgeTz1EeOike9tkOGZ7lbN0bl7qz+feooK
-         vyMg3kXsDkJ2pw25tVFLsTyWCrh6SAUZA8Uc5yIaxhte6kUegQoH+jDRzR7dd4Rt6t6a
-         DhX2sgCvTu7tmlE+NEB9k2OwAIJjwi8mKHK1GgJeoyxvUIbmlUQFyUI239zJg9VeBtc0
-         g6RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726041157; x=1726645957;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YIm4Dw5q7Rs9OaJTn4hnJUtrKFl6GJTKrB6nNZ9HBHY=;
-        b=DhN8CeRyFMyFXdxsffDCDLbp/FYS1SPyCODtKXtisZMIaf8kIWIZ4/+YgxOTojgKuz
-         7AIzjwJk9xZMqoB2HbfPurjoUOhLE4qGgXViZ4OgnkTf+a3aNTB2V2eVP56G+Mb4oRAc
-         Eu0j2T4eM9TQ+BHoO+v80yu6etw4nJIJlkm0v9IjRNAav91g78CWlOSxN+Zd+GXICJLv
-         p/X3E/iTmtAnHeSO0MZWs8zOlxDNTSVI85OaNGJmiHJWlumG8pjMc9ymw1IG5IHTKB4e
-         yY6fWNM4AMDzHJX0jJPWm2d5s2UcvscaR6AIeGHaRg1dh6KhfBhh52ak37tdti5B7IcX
-         zQuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Hp5pi9g++CMdCNAEvyPrmnQeU5nQ0lm6oLkW8vv/v1EB0ytLcmkedMwzBtYwJhJHKjULPqkO@vger.kernel.org, AJvYcCVEga6xpLW0Le4woiHEXx1xwW+kOSVc8rJi6Adte5/vKHUGtCuhWjTlAhKvGP9hHYZZmq65V9VpPFXhFq4=@vger.kernel.org, AJvYcCW+B6Y0xzV+l9Zs1sLZzFCWD17i6eCP4DWeZiL9k3WbMGjmPPjaz78d1WYONMr+F44KJOByXxJSPVUH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz81NzZTyz7VQ1s5tTQJK729m0KmBbZKS5I15MkUihM8U4iQI+h
-	CQ8pjEB1fwvic2wGZs5ii0o+ducWxJiUnd1jLPQoz7dfggRv0guR
-X-Google-Smtp-Source: AGHT+IF3r5SvX0o26mmTqhW1R6mkJkUFdnD/jtn0nOQQaVNIrITpcYaKVGaWDQVKtiA548yW/02BsA==
-X-Received: by 2002:a17:906:d554:b0:a8f:f799:e7d4 with SMTP id a640c23a62f3a-a8ffae21979mr289611966b.59.1726041157120;
-        Wed, 11 Sep 2024 00:52:37 -0700 (PDT)
-Received: from foxbook (bff5.neoplus.adsl.tpnet.pl. [83.28.43.5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25952671sm580707166b.68.2024.09.11.00.52.36
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 11 Sep 2024 00:52:36 -0700 (PDT)
-Date: Wed, 11 Sep 2024 09:52:33 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: ki.chiang65@gmail.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
-Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
-Message-ID: <20240911095233.3e4d734d@foxbook>
-In-Reply-To: <20240911051716.6572-2-ki.chiang65@gmail.com>
+	s=arc-20240116; t=1726041228; c=relaxed/simple;
+	bh=uQI95tHOIeg8jtsOx70gTQ2n+CCT9VUFkY/haJdXKQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJh0xT7cjt4B6WFQj98PCdCXg7Xd1yh0kMXsDGmU7doOn19otuysXP8V3x6Rbp52fE8fc2WtPRsbi8OJneP6RJrIHC2LriHWun3rpOI8RdnoS35CpJqZFCU1BAEaIIKV0NJvn+IttrermBM/lFoaNyApk1WbLCpFkmtFdoBR7Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soIAQ-0004xJ-Kf; Wed, 11 Sep 2024 09:53:34 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soIAN-0075Pj-R6; Wed, 11 Sep 2024 09:53:31 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1soIAN-001qDC-2N;
+	Wed, 11 Sep 2024 09:53:31 +0200
+Date: Wed, 11 Sep 2024 09:53:31 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Qianqiang Liu <qianqiang.liu@163.com>, chris.snook@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ag71xx: remove dead code path
+Message-ID: <ZuFMe-WoIIwr8E1o@pengutronix.de>
+References: <20240910152254.21238-1-qianqiang.liu@163.com>
+ <196dc563-85ec-491d-8e2e-8749f3b07ff4@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <196dc563-85ec-491d-8e2e-8749f3b07ff4@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
-
-> This happens when the xHCI driver enqueue a control TD (which cross
-> over the Link TRB between two ring segments, as shown) in the endpoint
-> zero's transfer ring. Seems the Etron xHCI host can not perform this
-> TD correctly, causing the USB transfer error occurred, maybe the upper
-> driver retry that control-IN request can solve problem, but not all
-> drivers do this.
+On Tue, Sep 10, 2024 at 05:58:22PM +0200, Andrew Lunn wrote:
+> On Tue, Sep 10, 2024 at 11:22:54PM +0800, Qianqiang Liu wrote:
+> > The 'err' is always zero, so the following branch can never be executed:
+> > if (err) {
+> > 	ndev->stats.rx_dropped++;
+> > 	kfree_skb(skb);
+> > }
+> > Therefore, the 'if' statement can be removed.
 > 
-> |     |
-> -------
-> | TRB | Setup Stage
-> -------
-> | TRB | Link
-> -------
-> -------
-> | TRB | Data Stage
-> -------
-> | TRB | Status Stage
-> -------
-> |     |
+> This code was added by Oleksij Rempel <o.rempel@pengutronix.de>. It is
+> good to Cc: him, he might have useful comments.
 
-I wonder about a few things.
+Yes, please.
 
-1. What are the exact symptoms, besides Ethernet driver errors?
-Any errors from xhci_hcd? What if dynamic debug is enabled?
+> Your changed does look correct, but maybe ret was actually supposed to
+> be set somewhere? Is there an actual bug hiding here somewhere?
 
-2. How did you determine that this is the exact cause?
+Hm, let's see... this issue existed in the openwrt code and I didn't
+spotted it by upstreaming.
 
-3. Does it happen every time when a Link follows Setup, or only
-randomly and it takes lots of control transfers to trigger it?
+The only place which may fail in this part is napi_build_skb(), we will
+need to count it probably with rx_errors++.
 
-4. How is it even possible? As far as I see, Linux simply queues
-three TRBs for a control URB. There are 255 slots in a segemnt,
-so exactly 85 URBs should fit, and then back to the first slot.
+I'm ok with this patch, it can be reworked to use rx_errors++ on
+napi_build_skb() instead or this can be done in a separate patch.
+
+If you like to keep this patch as is, here is my:
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+Thank you!
 
 Regards,
-Michal
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
