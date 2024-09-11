@@ -1,178 +1,153 @@
-Return-Path: <linux-kernel+bounces-325633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A6E975C5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:26:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13B3975C60
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FF61C22507
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53C7CB230AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FED415B155;
-	Wed, 11 Sep 2024 21:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CA7186E4F;
+	Wed, 11 Sep 2024 21:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4yGDUrO"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V5rihcsw"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3F23D3B8;
-	Wed, 11 Sep 2024 21:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B071547C6;
+	Wed, 11 Sep 2024 21:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726090014; cv=none; b=pGfN5+p596PNyrL+vQcICwC4EvKFtbtE2XFY4LsWvMkqoK0qM9IN98wqkLLDfsHX6QwgK88zsrcm2N4kI5bTZaBvxN712pv25hoJybIjHLRqN9bdwdjoECm1N1EUEKnrdaYUpixkJiJH6Bi2pKzAUqxgJSD3PmVUpuNO9MaKUo8=
+	t=1726090047; cv=none; b=XUvnTtzhdatb5VhLzvmm+EAyyoIXfxtXtLVF4DlTnHOi+qqnAjukqs6SvicYVWhE36R/oqPrn04D01rv6OyAPNDPiLQ7WzUurIWZIzVkwb8kWrutcGiMl+18XnBEItwwCWV6gm411IRnz3M/3JUtp8SVLD/FL8kX5uW1owLZ/FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726090014; c=relaxed/simple;
-	bh=qxmwKIKZZVH0IEXWiQwUCTvUGTIMoGFuw3rr4W/Y/I0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qa0ScIVyU+qmxR9SKwdKcHIVUKfTQ6avlFdR744Xya496yJAKqxYj8I7hVxgxb5mta4xD6/TcUp2Cfi+Zhpd0FPy5zZyqQMgG4qF3tKAFAJgqC2wWXpbbLlzdbm8/ebkWUoi4qSPbKhTJmknIAH/mSvFTepUJkwF1qBCpuTSBuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4yGDUrO; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-535694d67eeso253803e87.0;
-        Wed, 11 Sep 2024 14:26:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726090011; x=1726694811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqtRh/pJ/kG5Ee3Qg3j3oLtps4VUqaM2CM4az1A8dtU=;
-        b=R4yGDUrORiuusEmgJ892Gtc1j2MrvfpX6WP9FUB7PJQtlDrcYgWgqAvEdBa0RvGeOD
-         HrESLNFEnRbLwzS8zZgUGDyzlFzs6tPR9/AbLpBCpD2ksHtHv0GwPVy0+J8+kA/Gi+/8
-         MFsv1C9j7Xw0HZze/f2w30T3svAAWTVTcTRP79bLmTqWw/koJqZohLizPmSxzZakoJCV
-         03ahKm+xxVrYhG2y05nwz1oUoZb5lFPhKY3C65dv+lzsHaf460oHFs79ZLGYWzcdBBSf
-         9lc8rm4hvRuT/PCU4PDk6ZDP4/EgrMeJGFVhKhB8AHG6HwVgSy8KAKPNTf+QhaNDip0v
-         e2hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726090011; x=1726694811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sqtRh/pJ/kG5Ee3Qg3j3oLtps4VUqaM2CM4az1A8dtU=;
-        b=SWXLTIaTM1bfbywkg9fDfw4IJyNgn64hQlq7LoQW89GmNRHuTS6Z084uso8ekNkFKR
-         2llWtpqeRh3hqICZPibTdXeovSUywtjgRlG+dvpaCKsJmkfYH6YkBvw/UtxgJAKc/bIS
-         Hmn/NuUyfjscLhjbw7FKOnfLX0CpEglTnjZrsVddfNJQnvjb+X31M6qT+dHowhUQ1rPX
-         puVuC2DilfATpuPpBZH9GZUo3cVAG475NsdkyLMDGnjZfzNFm8ZdLiBFGs3v6fWVg950
-         Z1lGtI3AMc4wlQuUF2x6oAg10iteHFlr9pePFzGP4jrtN4G6HuNFNwR9YuK1dZt9ZzKK
-         EFQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZN11RdrWLYJDk4wVtKOJpR6CAv1WFc3LMqwOX457Is7S8n3jkhn9s9GgUmF8dOwjw/7FyFMuk7fvg5eg5@vger.kernel.org, AJvYcCXzg98YYY7Qz4GLWUIF2dbzeKGT8IgQE5m5krikrdP0sm7D2iK+i5RbwBwJD4xF27IyjsieH9FbouFN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb726cf4/Pte35Tjl2WCMOn7k0c55iqnH1DxvCMHt8osiDx7dL
-	J9oHox9olWnV9hU3dXfjwIUJqGZW6sdoML/m0GqB4eJG1ZJEhkwzbw0SpZuQVxwbwapUjNmVY07
-	hyhS+euHlsm4ou1SCwxQTo5XCgGQOiuGYjBM=
-X-Google-Smtp-Source: AGHT+IFC8+ySnmybQlygTyoRyhYMxq7uAqdH0Tu9Gl/JShGnHyNqwXrbsLhR7L3k9aYMEkxezsOAaYTLJ7OjHjnL66A=
-X-Received: by 2002:a05:6512:12cb:b0:52f:27e:a82e with SMTP id
- 2adb3069b0e04-5367909dca5mr192274e87.21.1726090010686; Wed, 11 Sep 2024
- 14:26:50 -0700 (PDT)
+	s=arc-20240116; t=1726090047; c=relaxed/simple;
+	bh=89blPC3dZuKgy5q8no/pKywqZp4n4DCqCipntkVeVPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HJ1/SvcwLHZjIK1uj4g82PTCrRozI9MFhcF6yOGNZeeowuNp1SOLz2mpsRwkO5UiMOVIic/wYHWAfwjoReoMfk8ZGkIpR9Td4fidVt1FV0Wfr+TIvVTdWVBU7mBBgJTx/MX/L6Q8G6pwTDQzp5B+V+Iq4/fzYVm0LRvyyQSQWt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V5rihcsw; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F9841C0002;
+	Wed, 11 Sep 2024 21:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726090037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=101PaTxq6DmgGCqwL9QuDGATpVsTFmA7gnEaLtO+Q/w=;
+	b=V5rihcswJGwKhyg7kJXY+O9CZpOtxKu2YMrmJucei5k9Ln3S74adlXQCjr8+SWT8WeFKFH
+	VH9VowshvxNByKpto/sCCS1pMAQf+VesZGDyf8RE33/7nYM/cMVaShrHmcLYk8ileXbDvB
+	NaQlB70zPkJWjPSi2THJri3umjzLvjV9BE2ZkDXBk5SuyWwavMyF22TOGTO9y1QhQlMlcq
+	KvL/8fYiUfS6NXDsg1xk3DUS29W+Jj5adlqWY1+c43HRisgOKfLUWPHIA18MDLIr1ZPKDG
+	Qhr5/uBWqlAiqqGCb/5PVQH7vSNeAqVskt3E3JxxkvlpBNSnYXI4fTJQcNJ0xw==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH net-next 0/7] Allow controlling PHY loopback and isolate modes
+Date: Wed, 11 Sep 2024 23:27:04 +0200
+Message-ID: <20240911212713.2178943-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910151418.1233049-2-u.kleine-koenig@baylibre.com>
-In-Reply-To: <20240910151418.1233049-2-u.kleine-koenig@baylibre.com>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 11 Sep 2024 16:26:39 -0500
-Message-ID: <CAH2r5mu_PT+34JqL7O6yqfDua=6NNU+AP4+n56FJSc1X5Rpp3Q@mail.gmail.com>
-Subject: Re: [PATCH] smb3: Fix complilation for gcc9
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Steve French <sfrench@samba.org>, Enzo Matsumiya <ematsumiya@suse.de>, 
-	Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-this looks like it doesn't apply anymore due to changes in "smb:
-client: compress: LZ77 code improvements cleanup"
+Hello everyone,
 
-Let me know if you see any problems building the current for-next
+This series brings support for controlling the isolation and loopback
+modes for PHY devices, through a netlink interface.
 
-13b68d44990d (HEAD -> for-next, origin/for-next) smb: client:
-compress: LZ77 code improvements cleanup
-1dcb0b607b9b smb: client: insert compression check/call on write requests
-ee71379301eb smb3: mark compression as CONFIG_EXPERIMENTAL and fix
-missing compression operation
+The isolation support work is made in preparation for the support of
+interfaces that posesses multiple PHYs attached to the same MAC, on the
+same MII bus. In this configuration, the isolation mode for the PHY is
+used to avoid interferences on the MII bus, which doesn't support
+multidrop topologies.
 
-Enzo,
-Is it easier for you to update patch 1 and 3, to make it smaller so
-you don't have to add code in patch 1 that you remove in patch 3?
-Also let me know if other patches to try?
+This mode is part of the 802.3 spec, however rarely used. It was
+discovered that some PHYs don't implement that mode correctly, and will
+continue being active on the MII interface when isolated. This series
+supports that case, and flags the LXT973 as having such a broken
+isolation mode. The Marvell 88x3310/3340 PHYs also don't support this
+mdoe, and are also flagged accordingly.
 
-On Tue, Sep 10, 2024 at 10:14=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> Compiling an x86_64 allmodconfig on Ubuntu 20.04.6 using gcc Ubuntu
-> 9.4.0-1ubuntu1~20.04.2) 9.4.0 fails as follows:
->
->         $ make fs/smb/client/compress/lz77.o
->         ...
->           CC [M]  fs/smb/client/compress/lz77.o
->         In file included from fs/smb/client/compress/lz77.c:10:
->         fs/smb/client/compress/lz77.h: In function =E2=80=98__count_commo=
-n_bytes=E2=80=99:
->         fs/smb/client/compress/lz77.h:220:1: error: no return statement i=
-n function returning non-void [-Werror=3Dreturn-type]
->           220 | }
->               | ^
->         cc1: all warnings being treated as errors
->         make[5]: *** [scripts/Makefile.build:244: fs/smb/client/compress/=
-lz77.o] Error 1
->         make[4]: *** [scripts/Makefile.build:485: fs/smb/client] Error 2
->         make[3]: *** [scripts/Makefile.build:485: fs/smb] Error 2
->         make[2]: *** [scripts/Makefile.build:485: fs] Error 2
->         make[1]: *** [Makefile:1926: .] Error 2
->         make: *** [Makefile:224: __sub-make] Error 2
->
-> That compiler seems to know about __has_builtin but not to have
-> __builtin_ctzll. In that case fall back to the implementation that is
-> also active in the #ifndef __has_builtin case.
->
-> Fixes: 0fa8d04ff36d ("smb3: mark compression as CONFIG_EXPERIMENTAL and f=
-ix missing compression operation")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
-> Hello,
->
-> feel free to squash this into the original commit.
->
-> Best regards
-> Uwe
->
->  fs/smb/client/compress/lz77.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/fs/smb/client/compress/lz77.h b/fs/smb/client/compress/lz77.=
-h
-> index 3d0d3eaa8ffb..4fb939296f39 100644
-> --- a/fs/smb/client/compress/lz77.h
-> +++ b/fs/smb/client/compress/lz77.h
-> @@ -200,10 +200,8 @@ static __always_inline long lz77_copy(u8 *dst, const=
- u8 *src, size_t count)
->
->  static __always_inline unsigned int __count_common_bytes(const unsigned =
-long diff)
->  {
-> -#ifdef __has_builtin
-> -#  if __has_builtin(__builtin_ctzll)
-> +#if defined(__has_builtin) && __has_builtin(__builtin_ctzll)
->         return (unsigned int)__builtin_ctzll(diff) >> 3;
-> -#  endif
->  #else
->         /* count trailing zeroes */
->         unsigned long bits =3D 0, i, z =3D 0;
->
-> base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
-> --
-> 2.45.2
->
->
+The main part needed for the upcomping multi-PHY support really is the
+internal kernel API to support this.
 
+The second part of the series (patches 5, 6 and 7) focus on allowing
+userspace to control that mode. The only real benefit of controlling this
+from userspace is to make it easier to find out if this mode really
+works or not on the PHY being used.
 
---=20
+This relies on a new set of ethtool_phy_ops, set_config and get_config,
+to toggle these modes.
+
+The loopback control from that API is added as it fits the API
+well, and having the ability to easily set the PHY in MII-loopback
+mode is a helpful tool to have when bringing-up a new device and
+troubleshooting the link setup.
+
+The netlink API is an extension of the existing PHY_GET, reporting 2 new
+attributes (one for isolate, one for loopback). A PHY_SET command is
+introduced as well, allowing to configure the loopback and isolation.
+
+All in all, the userspace part is a bonus here, let me know if you think
+is just doesn't make sense, although the loopback feature can be useful
+and sent as a standalone series. In such case, I'll include the kernel-only
+support for isolation (so, patches 1 to 5) as part of the multi-PHY
+support series when it comes out.
+
 Thanks,
 
-Steve
+Maxime
+
+Maxime Chevallier (7):
+  net: phy: allow isolating PHY devices
+  net: phy: Allow flagging PHY devices that can't isolate their MII
+  net: phy: lxt: Mark LXT973 PHYs as having a broken isolate mode
+  net: phy: marvell10g: 88x3310 and 88x3340 don't support isolate mode
+  net: phy: introduce ethtool_phy_ops to get and set phy configuration
+  net: ethtool: phy: allow reporting and setting the phy isolate status
+  netlink: specs: introduce phy-set command along with configurable
+    attributes
+
+ Documentation/netlink/specs/ethtool.yaml     | 20 +++++
+ Documentation/networking/ethtool-netlink.rst |  2 +
+ drivers/net/phy/lxt.c                        |  2 +
+ drivers/net/phy/marvell10g.c                 |  2 +
+ drivers/net/phy/phy.c                        | 59 +++++++++++++
+ drivers/net/phy/phy_device.c                 | 89 ++++++++++++++++++--
+ include/linux/ethtool.h                      |  8 ++
+ include/linux/phy.h                          | 26 ++++++
+ include/uapi/linux/ethtool_netlink.h         |  3 +
+ net/ethtool/netlink.c                        |  8 ++
+ net/ethtool/netlink.h                        |  1 +
+ net/ethtool/phy.c                            | 75 +++++++++++++++++
+ 12 files changed, 289 insertions(+), 6 deletions(-)
+
+-- 
+2.46.0
+
 
