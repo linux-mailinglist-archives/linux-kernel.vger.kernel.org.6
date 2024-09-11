@@ -1,137 +1,217 @@
-Return-Path: <linux-kernel+bounces-324406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E020974C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:04:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673DB974C07
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082941F225C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EB31F253FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 08:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D969B154BE2;
-	Wed, 11 Sep 2024 08:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAED13CFA1;
+	Wed, 11 Sep 2024 08:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iW+18ofi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oEhHuqsJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D871531C0;
-	Wed, 11 Sep 2024 08:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2844513AD18;
+	Wed, 11 Sep 2024 08:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726041845; cv=none; b=rWw+ItHI9PDniIAmcNhkTeaP/AQjzbouir0krxrRDDqgDpSfD9jspDbbZ7K+g6za5pjkK6+OI0dx98thVlv8EkThNwDs68bwdRE0+s57/t4zGxgMHLxpv7k1JZ5Erq5QlMpf4oMCjJ/+GdZRc5YojQf4PVS4/50fH8eL14N5k0w=
+	t=1726041815; cv=none; b=cIwSnZtinUkpgeuUPUfyygL98cO35vcAbYCwh4bBr6W5IXzDjTh/eN0l27CqTYzatsvFUhCCfEJ4PTgxppa0UoZrh1EYknLF8ePxeK8UblILtsKMhBNcaCySAruX11U7VEFlOmeyxY5KlPzf0u+DMLocHC+2/f6BH/fLv7ou0PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726041845; c=relaxed/simple;
-	bh=9LMPBFHBmI2pNsDc7zTQIx2uOLxBF/cUr6rQIxaHPfk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=fsTBqBruZgERlHUT4BmWhUVauUPtG/p03BXr7BDOaw3YSPa8gxikJZ2QMqaqQtuu65ZLcxqr+olKs6+KNARJwHiVg/TWbBY2ukrNANyni28rxKk4qc0gG42CS4ZrqcPJ8ZSCLG4rcpXwzfv+rnRTCmZY4NAkcLauoHjZ/7OZT4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iW+18ofi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48B3YqDX009985;
-	Wed, 11 Sep 2024 08:03:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NxlQ+Hq3hVqGI9HW/vC4wp2VYNEZtbj7JnSa9ge4xIM=; b=iW+18ofi72VwxmcT
-	NqLEp6B9ScpZi8Vze3uj7DLRm6ekdTm0pfu0fyCRdSbWeuSnNd8RBGNSkVgR7WEW
-	iLPQoIWUmX1T/CVVqagcnEkNIIsT9xW0CjipexwjNUD5SqoLAbHgLxVXNw7eb+vY
-	QE4dGJA7qd0A9eBNuoUMctmwOYgHPenOO8xqHMj6vQCakNtv0mv1/4yIdjtb4H4A
-	oV6QVqbx7Y43FrN8kZhtsCH3zsHjYULQJpFyLt3ySq2xaSgF6iiCvfRlvi6ENSd7
-	P8COn75UsBTQ6bJimvnthOoAksZofdBQDzJEvVYZ6AQ1vpsJeNaWNpIOa4iUvxJC
-	SXap0g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy5nrtet-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 08:03:58 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48B83udu002666
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 08:03:56 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Sep 2024 01:03:52 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Wed, 11 Sep 2024 16:03:18 +0800
-Subject: [PATCH v2 4/4] dt-bindings: soc: qcom,aoss-qmp: Document the
- QCS8300 AOSS channel
+	s=arc-20240116; t=1726041815; c=relaxed/simple;
+	bh=x2N6ahkVP2f1wV4kYKI9LoSxAZjIok/l/sgL/e6mnwU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ExwRJGKA5vvFZAemAxpNKTqwQMlUOON9hVfgU9UsMdlAVqwwxZz1O/rA2A1ybzqx7rtH1ScJhglMDZBpImPZlbJAsFPTMbJH1wrvYa9kiYgDjKuez+K/ygvw4Jf8uN0x9bpM44cMxiOQVFJVEfJKILZ01M6Rzmw673wlM/6oaJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oEhHuqsJ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726041813; x=1757577813;
+  h=message-id:date:mime-version:from:subject:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=x2N6ahkVP2f1wV4kYKI9LoSxAZjIok/l/sgL/e6mnwU=;
+  b=oEhHuqsJeH07354aDOO1wjK9ibDd5/fq8Po8Wu2vZk23s8ULoQRMu49f
+   4624nBr1Wi8c1eXxPeE0yXidY8O562BKN4bqHsYSMJjhw1A/oBu9lqAOb
+   IPkw/7sRelPESZEIJmxY7bN5HquURH2oeSYIhmwjqCb07e6nmZn8cOmOj
+   QC0mGGoUI4lgw3TTXaw/LNJ/32d4FD2HGkoTgL47G+NuSd1pdZ4TAciWd
+   PCK3uyxCX+cbq2IfAwW+ONXxZVuplhaWANp6SSAMvJHh2tPFu9vcvDC1h
+   fvMSFE96n6DL3Rt7VGlI02IEeBmWSf5qSFDFV/Wd2idaUt6GZ1xAOObVY
+   Q==;
+X-CSE-ConnectionGUID: LTNkMtTnS46VZ2+WtB8/ww==
+X-CSE-MsgGUID: r9rXifMeQceAC53wKXYDQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="24321004"
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="24321004"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:03:32 -0700
+X-CSE-ConnectionGUID: rTrbspWIRIKFiyPoDmfQNg==
+X-CSE-MsgGUID: LPJ0WJG/RKGAcLZcWsc0RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,219,1719903600"; 
+   d="scan'208";a="97989653"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 01:03:27 -0700
+Message-ID: <b13bcf7c-4d03-4b7d-8509-cebb64297a86@intel.com>
+Date: Wed, 11 Sep 2024 11:03:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240911-qcs8300_binding-v2-4-de8641b3eaa1@quicinc.com>
-References: <20240911-qcs8300_binding-v2-0-de8641b3eaa1@quicinc.com>
-In-Reply-To: <20240911-qcs8300_binding-v2-0-de8641b3eaa1@quicinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>,
-        Kyle Deng <quic_chunkaid@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726041817; l=923;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=QeU1ZLPa1r4D33EohTZDFi9CbLL8pYsC6S/b8s2r2s0=;
- b=RF5Iv0KIcWAAQXWlno4rikHsmMjSf4ZDQDyg9mqw/sywAwNX9RDRF6hdQFJ5sXj2zbS+TZECW
- RAhEP47gHfGD5LRViK+hzMjCh/LXCc06sau+vKjb5vBgQLsoEB5apEx
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ImOvviEPZo0EvaqJXQpTE38b-E4DYred
-X-Proofpoint-ORIG-GUID: ImOvviEPZo0EvaqJXQpTE38b-E4DYred
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- spamscore=0 malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409110060
+User-Agent: Mozilla Thunderbird
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v6 1/8] perf: support specify vdso path in cmdline
+To: Changbin Du <changbin.du@huawei.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Hui Wang <hw.huiwang@huawei.com>
+References: <20240725021549.880167-1-changbin.du@huawei.com>
+ <20240725021549.880167-2-changbin.du@huawei.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240725021549.880167-2-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Kyle Deng <quic_chunkaid@quicinc.com>
+On 25/07/24 05:15, Changbin Du wrote:
+> The vdso dumped from process memory (in buildid-cache) lacks debugging
+> info. To annotate vdso symbols with source lines we need specify a
+> debugging version.
+> 
+> For x86, we can find them from your local build as
+> arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may reside in
+> /lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that
+> the buildid has to match.
+> 
+> $ sudo perf record -a
+> $ sudo perf report --objdump=llvm-objdump \
+>   --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+> 
+> Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+> __vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+> Percent│       movq    -48(%rbp),%rsi
+>        │       testq   %rax,%rax
+>        │     ;               return vread_hvclock();
+>        │       movq    %rax,%rdx
+>        │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+>        │     ↑ js      eb
+>        │     ↑ jmp     74
+>        │     ;               ts->tv_sec = vdso_ts->sec;
+>   0.02 │147:   leaq    2(%rbx),%rax
+>        │       shlq    $4, %rax
+>        │       addq    %r10,%rax
+>        │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+>   9.38 │152:   movl    (%r10),%ecx
+> 
+> When doing cross platform analysis, we also need specify the vdso path if
+> we are interested in its symbols.
+> 
+> v2: update documentation.
+> 
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> ---
+>  tools/perf/Documentation/perf-annotate.txt |  3 +
+>  tools/perf/Documentation/perf-c2c.txt      |  3 +
+>  tools/perf/Documentation/perf-inject.txt   |  3 +
+>  tools/perf/Documentation/perf-report.txt   |  3 +
+>  tools/perf/Documentation/perf-script.txt   |  3 +
+>  tools/perf/Documentation/perf-top.txt      |  3 +
+>  tools/perf/builtin-annotate.c              |  2 +
+>  tools/perf/builtin-c2c.c                   |  2 +
+>  tools/perf/builtin-inject.c                |  2 +
+>  tools/perf/builtin-report.c                |  2 +
+>  tools/perf/builtin-script.c                |  2 +
+>  tools/perf/builtin-top.c                   |  2 +
+>  tools/perf/util/disasm.c                   |  7 +-
+>  tools/perf/util/symbol.c                   | 82 +++++++++++++++++++++-
+>  tools/perf/util/symbol_conf.h              |  5 ++
+>  15 files changed, 119 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
+> index b95524bea021..4b6692f9a793 100644
+> --- a/tools/perf/Documentation/perf-annotate.txt
+> +++ b/tools/perf/Documentation/perf-annotate.txt
+> @@ -58,6 +58,9 @@ OPTIONS
+>  --ignore-vmlinux::
+>  	Ignore vmlinux files.
+>  
+> +--vdso=<vdso1[,vdso2]>::
+> +	Specify vdso pathnames. You can specify up to two for multiarch-support.
+> +
+>  --itrace::
+>  	Options for decoding instruction tracing data. The options are:
+>  
 
-Document the Always-On Subsystem side channel on the Qualcomm QCS8300
-platform for communication with client found on the SoC such as
-remoteprocs.
+<SNIP>
 
-Signed-off-by: Kyle Deng <quic_chunkaid@quicinc.com>
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+> index b10b7f005658..e0aa657e6ca0 100644
+> --- a/tools/perf/builtin-annotate.c
+> +++ b/tools/perf/builtin-annotate.c
+> @@ -742,6 +742,8 @@ int cmd_annotate(int argc, const char **argv)
+>  		   "file", "vmlinux pathname"),
+>  	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
+>  		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
+> +	OPT_CALLBACK(0, "vdso", NULL, "vdso1[,vdso2]", "vdso pathnames",
+> +		     parse_vdso_pathnames),
+>  	OPT_BOOLEAN('l', "print-line", &annotate_opts.print_lines,
+>  		    "print matching source lines (may be slow)"),
+>  	OPT_BOOLEAN('P', "full-paths", &annotate_opts.full_path,
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-index 7afdb60edb22..6f5c2609e82a 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-@@ -25,6 +25,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - qcom,qcs8300-aoss-qmp
-           - qcom,qdu1000-aoss-qmp
-           - qcom,sa8775p-aoss-qmp
-           - qcom,sc7180-aoss-qmp
+<SNIP>
 
--- 
-2.25.1
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index e10558b79504..7e26d5215640 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -16,6 +16,7 @@
+>  #include "debug.h"
+>  #include "disasm.h"
+>  #include "dso.h"
+> +#include "vdso.h"
+>  #include "env.h"
+>  #include "evsel.h"
+>  #include "map.h"
+> @@ -1126,7 +1127,7 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
+>  	if (pos && strlen(pos) < SBUILD_ID_SIZE - 2)
+>  		dirname(build_id_path);
+>  
+> -	if (dso__is_kcore(dso))
+> +	if (dso__is_kcore(dso) || dso__is_vdso(dso))
+
+Sorry for very long delay.
+
+This patch (probably this bit here) breaks annotation of vdso.
+To allow for bisection, you need to arrange changes so that each
+patch leaves things in a working state.
+
+However, I disagree with adding --vdso option since with just
+patch 8 alone, it would be possible to do:
+
+  perf buildid-cache --remove /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+  perf buildid-cache --add /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+
+and same of vdso32.
+
+That would leave the buildid-cache containing only the debug versions,
+which would mean you will only get the debug versions, and it would only
+need to be done once per kernel instead of having to add --vdso to
+every perf command.
 
 
