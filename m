@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-324036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87114974713
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:00:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD9197471A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48285288F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E41C2546D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFF3EEC0;
-	Wed, 11 Sep 2024 00:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE9010F2;
+	Wed, 11 Sep 2024 00:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5QQZxt7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TAd7y5hE"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527010E5;
-	Wed, 11 Sep 2024 00:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19E382
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726012833; cv=none; b=XWkV0u5v0dGCVqebrqa41x4XMpsUnQwDcgDjdh4BDKJKLiDySk9NLmb/2pzheGjCW2soBgw3p+1J2kXTACjE3tpeNPmvBTAAZ1mCv7JPk91NDwhvCEWyzB2cojxQQhqht4J7Wun7thNPaAOGwQ4bUeEVmPY8DsF0rBaT1eKHots=
+	t=1726013255; cv=none; b=uOCC+/KqRHRG0Bsv2oOSS/YhlNVu2NUVrspDtFvsijbafwme4Z+qrTVwn4HPjLM+xU8SfhlDo0greegw/hxbKokr+PJPsixcM6vvxfwch44JleYmjAvkT5+J3G9b/6AHT2prX3aAWZOnGvcqaeZ7tr8yk23J2tA8itIZEmkOO1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726012833; c=relaxed/simple;
-	bh=PrllVenTkXG1LRXFMbPHq/EknXpdKOkrNpY9A9ODrhs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=H4YNFeACOg2YI+xLvpsMy6W0Em72TPJLHER5l1CEEr/nakvOw9UfZeMtqRPArjKK4j7JsT2WlZXUdCgTA3P0HC2nSrSjxJ4kdbnj3qUrViGaYzyNs51aQvzGp2C2dAmGr/hITG3VJcy0WksajDFa5OmG4x46DVxGbw8MxeCYdgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5QQZxt7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F522C4CEC3;
-	Wed, 11 Sep 2024 00:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726012833;
-	bh=PrllVenTkXG1LRXFMbPHq/EknXpdKOkrNpY9A9ODrhs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=b5QQZxt7hIiiicmg74JHniPK5mJNMKwxRyUcu5glJXPhlsYf7c80qHLXupIKhjgeA
-	 uDjJZqOiyg3JEHgAb60iul0YzvHvTeIdBIkVuEkjM62LHRhXYhdrkK9+dfC00zpEHs
-	 G9+hnu6ShKEefQR9HXoaoKLfdsv7YffSs2hn6hv5pWbTKpHQ4P3zxsNX2icDkr0tqQ
-	 d9c2GNJBhNIHbcK1DsQZI+TyogJMMHANoYso/0Wf6jVegmaaJoOArolks1dCf6K4L0
-	 wPdxyvh631AJkRkhFQSXD79vTbtuAQHPy08A8PYzG0K75kalGZRPrMYHNBiGM1pE9j
-	 dcMgj7ym2uF/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DE83822FA4;
-	Wed, 11 Sep 2024 00:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726013255; c=relaxed/simple;
+	bh=1+qPxl5D5ppd0QzY1M0HT/kSWhasZOugCZph3VHfXU8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cJjRISmKef2SwE8MQcEC4mijZQqPioHLflcE1K38EQF7RNbb5hv65b3Uqr233rDcI97d7feD4dS1ix7CAHS4iS294rKi6AUJjoeNRx1nKJSToPCmfBc6K6n2W9RNfLzIHV1nJh4BnCHvM/qjRbF6h2Nr8HXb5FVawNSlqKZbEQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TAd7y5hE; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d6b2b9a534so37920647b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726013253; x=1726618053; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oIOVlzzVlgTSeq1zrmd8MwSGHLUCIbq3yQPopLfuC8A=;
+        b=TAd7y5hETUt5FxKDUEEujVrMxnoazncymWvHkvlcWrMKkLl1MnYcwaXr5IA59eB/qC
+         AnqAfb15jOxsbHC6KGsyf+5wLJ9jov69xkj40tqpYHRfiPPJ2iNFyN99ak95A3sWRExu
+         PcHx2qB3B3Kd72B9racl39foAHAeN+n1qdOCBlJfQZhY88bC3GBjl17Hlm5bYC9MZyzH
+         wBAvqm5upH1+/X0VEzsIhkj1Rj2AfXf/AU+3UEGXTUzD7yucU9cTrQpkvksjXzpxThbS
+         MJrLXI52hzGXceLJJgtBSPJd6nUZod81bIaeK5CCUEPDreM/sLk+kwJgHeZpH1mZAa6l
+         /SeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726013253; x=1726618053;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oIOVlzzVlgTSeq1zrmd8MwSGHLUCIbq3yQPopLfuC8A=;
+        b=VzVG4L4J809/BlE9vjk2Bf7XEtxv1vNoJiIEQr44c4geYZEW3VBvwI5gTzGUDCPBgj
+         NUCg2qznGrWZ0JGKaB42ou5XRC4ewhdIwComwLGhcjKBhcF9d9byNNt7e6vnOZs574gb
+         PgHaPejlGuBO9uaGZvShUac1ywRIS1Ti0+bYiDyyKAaEUkAeQWfqQGbBKvkpVhSIz3pn
+         w2vCavzQN6UQtzqiIsVPiQy+qCiwvaVlO4SQg7uqbUWZ/bh9iUNIDxArmlN24Q0tDKCr
+         Z4uSJumq3ard1821XbDOOU5UGruSGzx84xTEfWm3DA+zpWgvRpElsKjE8iJYu0jf6gD2
+         TrQA==
+X-Gm-Message-State: AOJu0YxOpex/hDLOVbOu6PzzHC0Jblp2Zph0gAOCbUmsjrhPjwSLScuE
+	iwAC7rycnpV7N8L32EaGk33STVG1OtrAgrdIph3mFg3s42Uy3CQw1qbdrbE7Zd2a8nhotOgSdpi
+	cYA==
+X-Google-Smtp-Source: AGHT+IF7pSolH1dn9rq6YdhPYaWXBgpvjKt5kuCXOUTmXvZHBfJW0RXJoqxHwCVJhF9SP9tGgTU3Kq5F9vE=
+X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
+ (user=amitsd job=sendgmr) by 2002:a05:690c:2c12:b0:66a:764f:e57f with SMTP id
+ 00721157ae682-6dba6e28b59mr187237b3.7.1726013253367; Tue, 10 Sep 2024
+ 17:07:33 -0700 (PDT)
+Date: Tue, 10 Sep 2024 17:07:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] selftests: net: csum: Fix checksums for packets with
- non-zero padding
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172601283427.434372.5027969398518197276.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Sep 2024 00:00:34 +0000
-References: <20240906210743.627413-1-sean.anderson@linux.dev>
-In-Reply-To: <20240906210743.627413-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, willemb@google.com,
- linux-kernel@vger.kernel.org, shuah@kernel.org,
- linux-kselftest@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Message-ID: <20240911000715.554184-1-amitsd@google.com>
+Subject: [RFC 0/2]  Add support for "pd-timers" DT property in TCPM
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com, 
+	Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+USB PD specification defines a bunch of timers that can have a range
+of acceptable values instead of specific values. These values have to
+be tuned based on the platform. However, TCPM currently sets them to
+a default value without providing a mechanism to set platform specific
+values.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This patchset adds a new DT property called "pd-timers" to allow users
+to define platform specific values.
 
-On Fri,  6 Sep 2024 17:07:43 -0400 you wrote:
-> Padding is not included in UDP and TCP checksums. Therefore, reduce the
-> length of the checksummed data to include only the data in the IP
-> payload. This fixes spurious reported checksum failures like
-> 
-> rx: pkt: sport=33000 len=26 csum=0xc850 verify=0xf9fe
-> pkt: bad csum
-> 
-> [...]
+Amit Sunil Dhamne (2):
+  dt-bindings: connector: Add property to set pd timer values
+  usb: typec: tcpm: Add support for pd-timers DT property
 
-Here is the summary with links:
-  - [net] selftests: net: csum: Fix checksums for packets with non-zero padding
-    https://git.kernel.org/netdev/net/c/e8a63d473b49
+ .../bindings/connector/usb-connector.yaml     |  23 ++++
+ drivers/usb/typec/tcpm/tcpm.c                 | 110 +++++++++++++++---
+ include/dt-bindings/usb/pd.h                  |   8 ++
+ 3 files changed, 123 insertions(+), 18 deletions(-)
 
-You are awesome, thank you!
+
+base-commit: f299cd11f7539482e87b2d2d527968a26b33f0ec
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0.598.g6f2099f65c-goog
 
 
