@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-324570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D1D974E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:20:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98848974E68
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 11:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75736B222E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5A11F270B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 09:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678E8154C05;
-	Wed, 11 Sep 2024 09:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E0A15DBB3;
+	Wed, 11 Sep 2024 09:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZ7lhHnY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EoA3XYGQ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56F245C18;
-	Wed, 11 Sep 2024 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8114AD0A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726046391; cv=none; b=cLQ173CvUJyZCPcLGMSd3ihG+9rHr8yXjbvkhpPxC9YSON+EEI+2/RnCxp5nixXGGfrex2J9o4c1Ig/PVKuuFLI2U2Ae/OkZ2Mmd46FhRGBPik0nnZsQggrHmYRGe/3tDs7Xy1Pvuqs+r9mcv2/7KBPoU9EbRExIwhTriFxxBf8=
+	t=1726046445; cv=none; b=q70FIMGaunk633asdr5Vm9qMqmffVzqDPJ714EWeSCwcD8CaZxnfwThfYJDp4Nh3dqIQhBaxKCrW7XoJKmd3L73aYKJaoBERvsNFxu5Jtfrlce1Ti9qaUJu7HyJOGqz20Uz9H6RNO961Wkio4BO5w5b9W5t2nrVMgWZobctw9EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726046391; c=relaxed/simple;
-	bh=YIPXFHme4bb0LyUF6DXb594WmeqHfsWlheFR9Mb1vKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sH657NQwJ1dKzuhLg+O9n1m4rL/nyLIgselpyklyHjMTy13D4P+bDgaMrz0ixeHstNO7dCpD2lY0rPb1oUpzChfYOX5TdPWcYPKj+c3i24RhG/gVaPqLv4xEDXmGhwViRAA90Yv2fseatKeZNEFNr8Zrwyf5xvsDNB7xwKbpAig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZ7lhHnY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E65C4CEC5;
-	Wed, 11 Sep 2024 09:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726046391;
-	bh=YIPXFHme4bb0LyUF6DXb594WmeqHfsWlheFR9Mb1vKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jZ7lhHnYuj6Oc9oHUmyP/6O2rq2J9TWxatpLyhsYsyA7wh2VjZcUG/xYtyuWyNj2J
-	 1DBbj7J8tnqZlqCQIccsoPdZzKF1Esqre+azlwWyErUif7ZufNeE287JFLgiGdkFbE
-	 X7iCJyJXjEFxr4cozpiMtdw0Nw8+oXsl1sA5l91B6UD66EBvpoPRcGcjefcxymiNFS
-	 KV95UWav+BMht5vk5bfUPo7865h+7j4u/l5FCxyAgstQfEbXhHd8OtjKaBQIqD3BQz
-	 A5uLCAGqh1ND5IwsvEXIGcSdbqWu9FOGrJtFjrwmVBjTzophths4GfISNILUDlmx50
-	 bH7eIx4N23cvQ==
-Date: Wed, 11 Sep 2024 11:19:47 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Robert Richter <rric@kernel.org>
-Subject: Re: [PATCH v7 1/2] i2c: octeon: refactor common i2c operations
-Message-ID: <5qafqlqdcm5jsynyqumzfhzqpkaog55muytcdwqlhebcnt5rgg@oxdv6yfid42a>
-References: <20240620041746.3315255-1-aryan.srivastava@alliedtelesis.co.nz>
- <20240620041746.3315255-2-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1726046445; c=relaxed/simple;
+	bh=llbHvM2NSh1y9Ktj1BqB84u7m73YqVAzvlKA403MUSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ilDMQQ7U5N39F987dP8dwXXxbmIsp4jkHgmkuWZEfH5hCeWAWPiaHNgN8+6l4qQ3ZxD5S32zmBwXvi5G4kdDXdGuARXGpMTcGU+wjreJ9yh8NeDMUxtK8bB/QMOFfOr7VBPI2z5gsEAluGu71BJanVKOyI7hyEY14ufxa7F98cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EoA3XYGQ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365a9574b6so7623576e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:20:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726046441; x=1726651241; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llbHvM2NSh1y9Ktj1BqB84u7m73YqVAzvlKA403MUSs=;
+        b=EoA3XYGQoUzq6UBlaZg/vUeRaVVz32ALIMyUCn/kDhEMhJud/hQOh6/uT950heDPHt
+         wfuKeGSQmEoUHHWmq9Ezvk86/6xqQCqtHP1fF7pjB2lK7mrO2bqJHPGGueWq+hStiTRM
+         gHAJaMpVt1oKVSltp6MozltsGIszBDXRYSD8lnNX/AwfraU5DEOW1uZXRcxivTSirZcv
+         1MteqQcgWQ0YpQISI0C8GlOcdDDHrmwkdjCe7MYIl91ik6OPvNpnV3zRbkuLy2Zw96aA
+         uUgDjuaV7cIluDXGBSul9lyrCufYWCVI7bT/1nXVnuDlCOrOXk6TJ2CtViewkgh9XCGz
+         eq2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726046441; x=1726651241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=llbHvM2NSh1y9Ktj1BqB84u7m73YqVAzvlKA403MUSs=;
+        b=vxa7Bhc17dhK+kIIe9YezHWaw+TyMhVaGk+oFjjfoLm8fYUwQjy8v4DFagjjPQWNOW
+         iu+Fkz+QqwMry3pmBQXk67/jBqeBuF3ncytncrI8yB4DmdAUJSYjtBP+LqdBTHunBLJN
+         OGseeRCd0maUmnHnDrYZlkfb63tQF96YPLusbyNJk9BP8hmTXjt7wK+E+X4GUvkTiqd1
+         4FMgJ4lJZwVYJRBmX1C0HZ+0l/exMFd1umfPbN++av+k/nuW4TTJ6tu5jVhwwQ2YgshV
+         sqQAfZTIbfm5T21Sp9ntTQNcf7a1nK73GdXu883+4p+pu6OHiLC9Rkjom5DgLRdoele9
+         hPLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Rt5uDlRiQEKNBz14J6FEJilthZFW/x/Jbe79vG9gZ9br4QvAvM0LXoNzuyGiolxqehgoO9xP2DPrTaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy5pHCs0wdwDszkNLeWXhdtr9JhvtPzwDTH7wIeeAq08GXkjfv
+	s/blaXSyCh6v3i4iWb8lsOke1Yy8qno6HwcBt7INAWld9+7Xc+KqHd9LUfTbjmrnMMKwB6EBTtg
+	NvVEAtgufYuWdybZhZL9H3GgabQPkhBDA86pf
+X-Google-Smtp-Source: AGHT+IGLDjUNO1VR1Yljd5LCgc0RmDQJRXz4f3BqsbUQD+9Uc9X/sCaJ33fwYmRs04iln/kcXAKuf8+0IQ+O/NHhl9w=
+X-Received: by 2002:a05:6512:1245:b0:536:54bd:8374 with SMTP id
+ 2adb3069b0e04-53658818949mr10161474e87.60.1726046440484; Wed, 11 Sep 2024
+ 02:20:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620041746.3315255-2-aryan.srivastava@alliedtelesis.co.nz>
+References: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+ <CANn89iKxDzbpMD6qV6YpuNM4Eq9EuUUmrms+7DKpuSUPv8ti-Q@mail.gmail.com>
+ <20240911103322.20b7ff57@fedora.home> <20240911103744.251b0246@fedora.home>
+In-Reply-To: <20240911103744.251b0246@fedora.home>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 11 Sep 2024 11:20:29 +0200
+Message-ID: <CANn89iKCj086chL-1fCR62H1Aq3qJ9MWsBapr=za8VSB4uPq2g@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ethtool: phy: Check the req_info.pdn field
+ for GET commands
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>, 
+	Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>, 
+	=?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>, 
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, 
+	Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Romain Gantois <romain.gantois@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Aryan,
+On Wed, Sep 11, 2024 at 10:37=E2=80=AFAM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Wed, 11 Sep 2024 10:33:22 +0200
+> Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+>
+>
+> > Sorry for asking that, but I missed the report from this current patch,
+> > as well as the one you're referring to. I've looked-up the netdev
+> > archive and the syzbot web interface [1] and found no reports for both
+> > issues. I am clearly not looking at the right place, and/or I probably
+> > need to open my eyes a bit more.
+>
+> Heh my bad, I just received the report in question. Looks like you are
+> getting these before I do :)
 
-...
+I triage the reports, to avoid flooding mailing list with duplicates,
+and possibly catch very serious security bugs.
 
-> +/* Construct and send i2c transaction core cmd for read ops */
-> +static int octeon_i2c_hlc_read_cmd(struct octeon_i2c *i2c, struct i2c_msg msg, u64 cmd)
-> +{
-> +	u64 ext = 0;
-> +
-> +	if (octeon_i2c_hlc_ext(i2c, msg, &cmd, &ext))
-> +		octeon_i2c_writeq_flush(ext, i2c->twsi_base + SW_TWSI_EXT(i2c));
-> +
-
-What I meant last time is that there is still a change here. I
-understand the common parts you addressed in my previous review,
-but you're still missing this...
-
-> +	return octeon_i2c_hlc_cmd_send(i2c, cmd);
-> +}
-> +
->  /* high-level-controller composite write+read, msg0=addr, msg1=data */
->  static int octeon_i2c_hlc_comp_read(struct octeon_i2c *i2c, struct i2c_msg *msgs)
->  {
-> @@ -499,26 +543,8 @@ static int octeon_i2c_hlc_comp_read(struct octeon_i2c *i2c, struct i2c_msg *msgs
->  	/* A */
->  	cmd |= (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
->  
-> -	if (msgs[0].flags & I2C_M_TEN)
-> -		cmd |= SW_TWSI_OP_10_IA;
-> -	else
-> -		cmd |= SW_TWSI_OP_7_IA;
-> -
-> -	if (msgs[0].len == 2) {
-> -		u64 ext = 0;
-> -
-> -		cmd |= SW_TWSI_EIA;
-> -		ext = (u64)msgs[0].buf[0] << SW_TWSI_IA_SHIFT;
-> -		cmd |= (u64)msgs[0].buf[1] << SW_TWSI_IA_SHIFT;
-> -		octeon_i2c_writeq_flush(ext, i2c->twsi_base + SW_TWSI_EXT(i2c));
-> -	} else {
-> -		cmd |= (u64)msgs[0].buf[0] << SW_TWSI_IA_SHIFT;
-> -	}
-> -
-> -	octeon_i2c_hlc_int_clear(i2c);
-> -	octeon_i2c_writeq_flush(cmd, i2c->twsi_base + SW_TWSI(i2c));
-
-... this! While I don’t know the hardware internals, this is a
-logical change that requires justification, especially when
-compared to what you’ve described in the commit message.
-
-Andi
-
-> -	ret = octeon_i2c_hlc_wait(i2c);
-> +	/* Send core command */
-> +	ret = octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
->  	if (ret)
->  		goto err;
+I usually wait for some consistent signal like a repro, so that a
+single email is sent to the list.
 
