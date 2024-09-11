@@ -1,269 +1,247 @@
-Return-Path: <linux-kernel+bounces-324058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FAA974763
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:30:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049B9974764
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB5D287874
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A1E2877BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 00:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83176B660;
-	Wed, 11 Sep 2024 00:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F2FBA20;
+	Wed, 11 Sep 2024 00:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d47z4UP6"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eJrOEYop"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413823A0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 00:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726014626; cv=none; b=Bb0VfWnMmn3dFBszhYBE2gsENrzBHvBFQ3vGn/c9RGPPOllf+J1aP9Y4a9KjnGGd/0MSKOggJMAlA28Pp5BPTYia8am0Biy0JUhHOz3Vp+tAHQtt8BPq5Gow9gXZ/u0G7d4FWGAiaPcu1kJO450H7swv6CscMZ1jCntWzOZmiaY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726014626; c=relaxed/simple;
-	bh=CWQ3FKYSH0+6wrCe/fWknwQLJk3iFkVwYWj/rMRRcdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=igkFoRX2ZgVBw/wHzHOOq1bSpjFxig20ebRE6zS7E4Lqjefum7ekeMlJpvowsu9dbH9yu+agQony6OKFJ428ivdPauyiAgu5S1zpCGd2pqNs1pK3dYgdmbaPj+B0DY6ngTgta/4Y6OPz4ZiIR52vDxSI3homJY0FFctduI6fLKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d47z4UP6; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a9aa913442so261584485a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726014621; x=1726619421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XXQuFZTJ8lIqW5Ag+qwYyd702ndWzlmLQdZRxiEWDFg=;
-        b=d47z4UP6QaOZHbSEsVgb18qlWuK32dHd1sPOWYBSNSfiuBpZDAgnKoSRoBK9mZ+cXi
-         g5iNtjRBg65wMOl23qmowr57D6hbNjAy4HlAJVd8pH5T5wpwq9r3+LMmUOfpHXKF7tQL
-         5MPy75VbMe7OXHB9X6vdVgq6ntlkWqpiCYbZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726014621; x=1726619421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XXQuFZTJ8lIqW5Ag+qwYyd702ndWzlmLQdZRxiEWDFg=;
-        b=IshKC4f17sQqHuDlnYylD74mQzRpqhmLFwpN/CDWPyFkM+XkI7DeoVMwoMxVJ8k4CP
-         +Ih04GyeVXu4GBwmu4CRnRipVpGauo23GjK7EfKOdfN0H9vdpWj4z4gqjNWI0H7b/HJh
-         8HYrrQgOkeJMr61acNxtefd+y16R1PgV8Srk+K1OQfDqlbGkiMJvTWxIxvY//9mEpGtD
-         8quljrJOvw5G92vyfN+GDrWy1GDI2gwyUQ9gxGx0Ex00Q6ewan+zOnbQACh/QqPJ1oBZ
-         5De50Jl9TLxhMYeL5Kdhu9E1uA0T/y3W2CHq3EWwfUp0n9Q9xeXySzGvqmsZr435C8Vv
-         72Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnULbyDez66FLs/RvV2msUUKBFFmr5V6nm/6AhwnhYKn69oMti+aZDknoEVkY7N7m/qOg9anksITkKqH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL69wKyD8XTTTuyA4+SM6Tn419sIByMcO/36aR0cc8rJh/axis
-	yu7+KTf2L67lCkcYcql6iAXaSWKMrlBo8HZB8GxfaWcm6wSRibHM0q3qJvOO8ko/54cYxm0UlfU
-	=
-X-Google-Smtp-Source: AGHT+IFw9F194FWU/zzoYyiBguZZ+nIlqRbpT7Pco7Pm8wcJM7fiVfXg79M62UZQv89Af1tT3XgrQQ==
-X-Received: by 2002:a05:620a:3727:b0:7a9:c146:a9eb with SMTP id af79cd13be357-7a9c146af12mr605690385a.20.1726014621388;
-        Tue, 10 Sep 2024 17:30:21 -0700 (PDT)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com. [209.85.219.44])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a79972e3sm358520585a.68.2024.09.10.17.30.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Sep 2024 17:30:20 -0700 (PDT)
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6c54a5fbceeso17386616d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 17:30:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeO5rS/Yod23pEGQvAq5Ta6WFM1+uF7MMGXRMNliA1qOt5ibjOTYx/HreknfBiKWwWu6ZkpF3UrV34/uY=@vger.kernel.org
-X-Received: by 2002:a05:6214:5b06:b0:6c5:52d5:bbd0 with SMTP id
- 6a1803df08f44-6c552d5bbf8mr80721586d6.32.1726014619235; Tue, 10 Sep 2024
- 17:30:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD18182C5;
+	Wed, 11 Sep 2024 00:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726014648; cv=fail; b=t6GqMoL1a/EBSFI9MtboBnF0kMpxebTUWoQU6AfijVZImtN7D2RmAxo4q8Sz7+aJwiIPE45/u9W8fDYLel7VqouDoVthTf2EwuuU1m4vnrB/O2Js5oV/LX9LNBZvMNloNd9h5Noce9Rg+J/7HAgBHwrIt7Ysbq9ZvRlxKyAtgSA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726014648; c=relaxed/simple;
+	bh=hQvA1V25yHCM3RMXkfpr11gLJ0dsqJaCicBcSavN+Vc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=t2b1SZvcpFZkuUbvYKNjjVdnmPUYZhQA/T1Zm111f8Y+JbtwVw9LbMV7xDU0J7VTYdzhG6dZw+TKU9338GKEf0qtrYSGl4P22AXk6lqimXrNvQlZqK7PNa4tqiaVC4Zhj5XB2VN66AXwLR2i1ovXLcpujv4fI4Hl9qjMFUbRfSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eJrOEYop; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726014646; x=1757550646;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=hQvA1V25yHCM3RMXkfpr11gLJ0dsqJaCicBcSavN+Vc=;
+  b=eJrOEYopE6dzQZJsQD1T+WFJbu5K+aSNl3OYNxEmtmRPkBNeHkfDoAt8
+   HRqmijJMqIftRxA+CBk054HnjD6wpirJVxKlBwMNlzfIZsP04dSt8qcUy
+   K/GOl+DmN0cZBCMt8cbJixYzDguKKA/Tfrwyz4PT3iLrQELAJhxonIhh6
+   chrl89yRNTG5B5OoJhyfwGRKjTnq205ldxV77drb6v9x4a1H/EM0d4P7j
+   2gyxFaakyt7mBa2eV/W1rMTBo6/jQpMP+1Glo7DN//D7eFhNvOMFA7wSG
+   IkJ3LalE8FRSK4vI1xz3Xff6CQWxPjbRj3xz1Lxs82L7PygPTKyIgB++t
+   g==;
+X-CSE-ConnectionGUID: qp41HNzFQpyj9CaKhZ1Bbw==
+X-CSE-MsgGUID: 0X5uKJtISTywipCD7zjJbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11191"; a="35464753"
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="35464753"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2024 17:30:44 -0700
+X-CSE-ConnectionGUID: AEieED/mRUm0z88+KudKjQ==
+X-CSE-MsgGUID: mEXdJWnUSluFfNk5t4Zlgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,218,1719903600"; 
+   d="scan'208";a="71997822"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Sep 2024 17:30:44 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Sep 2024 17:30:43 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Sep 2024 17:30:43 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Sep 2024 17:30:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dsQv70/A40H1d0MgoCVJmkp8fmX2kHnmUZshy+sr5lZqQPPIm0+dSVZ4FigvUaSJ02NshaWLXt2lXKX1zkAYl7bizZ1+giDIr8slvtZExksO58tvewxpHzifa32kCVVY48oSEMrlFsSi0wFqlDB0luwc8GQSH/AhH9ezDh+bT4jeA+MNu1qBdA3Ym2treWw6xYwPTHAGGyGAWvJRYf+Cw1Ch4h6Q2RCX/gGvOEGLde5ZLndQKf1JQa1zbCiSsa+9MMPieuprnQseIdLeEPTPQNxge0sufuv2MCYlEgvkAH3FUOr3VtbrSIsLwDdnTk0vD7TChC8/rlwjKGGNsBFLEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hQvA1V25yHCM3RMXkfpr11gLJ0dsqJaCicBcSavN+Vc=;
+ b=aZQZQ9NgChz6JcI6lT99KMti6D6uKKPP1IySs6INoN1KzXQxJPC9ZqRPOPxzwN4+6qpFj+matmO3uw/6PYgITyKpjpDQAYWpg9fpFTiOxo8ftkAgb8ET1WmNvPyioGI3fUeYN+S76UANXlIw2lzxnaz1GFs1w5LGt4W5NXgcdMMEfgxwA50nW8WIdRZIH2msyD9CaYHo6YJWCnPrD26mw0bAeO2DnODUQef7NGiOzTfKHyfL0VM0oloV+4uURCcpCd2b9ZEYujuF5Cv2/kFLnFg19pet5hkKPahc/hF77lSZcXVb4MnW4hCsq6cBhjmmUaRsTgQk/dOZfo5YoeMfHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by IA0PR11MB7936.namprd11.prod.outlook.com (2603:10b6:208:3dd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Wed, 11 Sep
+ 2024 00:30:40 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.7939.017; Wed, 11 Sep 2024
+ 00:30:40 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
+CC: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "nik.borisov@suse.com"
+	<nik.borisov@suse.com>, "dmatlack@google.com" <dmatlack@google.com>, "Huang,
+ Kai" <kai.huang@intel.com>, "isaku.yamahata@gmail.com"
+	<isaku.yamahata@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 16/21] KVM: TDX: Premap initial guest memory
+Thread-Topic: [PATCH 16/21] KVM: TDX: Premap initial guest memory
+Thread-Index: AQHa/neylxoaYrTILUWaulhlDyL5EbJQ4UMAgADldQA=
+Date: Wed, 11 Sep 2024 00:30:40 +0000
+Message-ID: <2f311f763092f6e462061f6cd55b8633379486bc.camel@intel.com>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+	 <20240904030751.117579-17-rick.p.edgecombe@intel.com>
+	 <09df9848-b425-4f8b-8fb5-dcd6929478de@redhat.com>
+In-Reply-To: <09df9848-b425-4f8b-8fb5-dcd6929478de@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA0PR11MB7936:EE_
+x-ms-office365-filtering-correlation-id: be108937-e46d-4b27-8921-08dcd1f8f72e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?cURhS3FvSlN4UGwwUUlHMXJHZUdWNDQ3MDd6Qi9hendTRmNwSVZKb3hhR3lV?=
+ =?utf-8?B?M0YwazBaZVJPTHZ5OWpxYklNY3lvSUVoeGJmNHFkWHFjZGpBOE5Zc2ptZlU2?=
+ =?utf-8?B?Y2o0SU1NZTdteTJHNFhsbFFUeEprREoyZElpN21XUlZTamFhaWw2Vlc0eFJB?=
+ =?utf-8?B?OG81eUJIdmJwY3EwUVNneEpQSTR1U05jK2R5clByUnNwdXdTYzViOGd1QS84?=
+ =?utf-8?B?cklhazdmYjdvSVNpL3Y4UWF0WXlDSXdyZXdxeEVYdDlxZzNFR01LQUVRMm1k?=
+ =?utf-8?B?M3Jab0I4ZFd6OXBGU2NQMGxSOVdNaUtuMVJ3eXc1c0lYTTEwRUZYeHN3SHI5?=
+ =?utf-8?B?Qk9tdVFWZHYrdHZ5bDhiOENvZC9meG9EcjQ5c1dxSHZvRUNqUkFDOHlYcXNR?=
+ =?utf-8?B?Q09CK09tRk9KWHZtQ3pNcGRReVgxbk5aaGRXbHQxOFFNMkdWZUpKYUFJOXFz?=
+ =?utf-8?B?U3ZTb29HQS82ZWNnTFFjR2Mvbk12Rm9kUkR4Q0FoMGlXQTBjenM0YTUwMUVU?=
+ =?utf-8?B?UkNIYUZSVEJUdzZQYTYzQU5QZGYxUEFjVFZNR28vdTliMzB0d0VwcXd3VEg1?=
+ =?utf-8?B?YkVYZ1UwOHU0ZWcyNVpNU216SUd0MklKUEJoakdBOFpXZ1FOWnYvencrUkdZ?=
+ =?utf-8?B?RVFtb0tZSGFsamdUTktlblBYMEZvZ0w4R0ZiNFBmL0pPWHhpVld6c2VrbUx1?=
+ =?utf-8?B?MDlRUms2OStTMVo2U1B0aHZGRzdGeWZPb2F3SElpSzZEQy9EY2daY3lMWE5l?=
+ =?utf-8?B?MUxvSkRoSWdrYVlGaE05eHhtVm1wUG9zbHB6RDNJMldUZm5RKzV6aFp6eGll?=
+ =?utf-8?B?SjlkUFIrcE5MMnBndnNhRk5Ld1NpN1NINmJ5NGROMDdDdkRjZFhzc1lMdEhK?=
+ =?utf-8?B?Q0hKblVRS1RleHg2LytXaDVXc0YxUDhEUFJZcEoyWHJ5dmZwUzY1c2dsZkFG?=
+ =?utf-8?B?TjRyK01mNElkdjFCeGRLa3BkbmM2Z3ZNZ05uczVFcjVvT3NkR0NORFB4eFZn?=
+ =?utf-8?B?KzZmWllyS3ZLZG9kY0ZjN0JmTkV6ZUhBbHROUUNWOG5MUXMwUzlhTXl2c1ZP?=
+ =?utf-8?B?eWhJZldWRmVaV1Zjc2EwdXcwNkp4b3lZYTBRNGkycEsxTGlmM3kzb2V2c3d3?=
+ =?utf-8?B?WDZtS1BxdjB0S2VEZW5TcnI1eHBZNVloUHRiWm4yTVBKU1Z4YUw4Qm1xWk9L?=
+ =?utf-8?B?RUplNm81Mll4bVh4L05Ra3B1VVpuVkExbXRrOTRzYlNMdW5zak9mUXZRZkZL?=
+ =?utf-8?B?ZnRWTFFOM1RVZzNvbW9GcGZ3REhrWWNkWlVlY2tMUHVydHd6OWJPWkxFVnA0?=
+ =?utf-8?B?NDU5VUhwakRYck5CNDFMSGZaMkhicllZTkZRdjNYVldvbWhzbE00U2pab2F6?=
+ =?utf-8?B?eHRWbGNvcGZVUTFjd0ZFckxYTjNNV3l1R0VVRlhHaGUrWHFmUi9QdHhPMlFr?=
+ =?utf-8?B?Z0ltWEYyRnZMTk9hc2NzRDAwRHpVaGpMbU14RytKdnVBb0gyL054UFNBN2hE?=
+ =?utf-8?B?eS92NXhnbUtVa3hmNVBVNUhFbU0wVmRUMTk4R2w4VVpxNWQxb2FBWlA2VXcr?=
+ =?utf-8?B?WWRlVkVDZ0dabnpWVzZsTklna3pYZjdGRVNZOWFTRFkwL0VCcytFVEZiWXUz?=
+ =?utf-8?B?UWYrV3pzckRJcDBkZkllcm1BWmNVMWMxSGhUODFZSTMrZ0RMcElRRHQ0WlJV?=
+ =?utf-8?B?Q2R5ZEw3QXVBQ3hKK1NMVGl4OFdpNm45Z0N6cXNtaUczOEFSL2I2bGxibUtE?=
+ =?utf-8?B?YlFETHhzb1NlVjFBcTAzQTZOY2g5UkVxTU5qbCs1c1U3TGFaRUhIc2tXeXBK?=
+ =?utf-8?B?WDQ2Q2ZhWlRzdHhJQWltaSsyK1dOK0FwT3QvTktOS2xZNllHS1oxeFE5dUtF?=
+ =?utf-8?B?c21QZENIS0NWSVRyYmtRVmNHUGRONHliVUFvRktsQlViYWc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K3VqcEYzdEpNdzJOU2RRTCtLSEpOWU1EazBwSStPN0w4L0JTVGtlc2VOdE1Z?=
+ =?utf-8?B?SHltNjU0OUV5cGNrdnIzVmJhZDROWjg0YmRORFc5blFWcE5pZ2V4QkoyekFL?=
+ =?utf-8?B?Uy83RWZ0Q2xCZW1zS2lmbXI3dkZPK1V5NWFHSURJNk1zcit6Skl5ckpJSHpY?=
+ =?utf-8?B?a3F3TUNuTjZVVEI5L2VCSmszMFpPTExoelVrZVlRWHR2dmlrRkptTDR5STFp?=
+ =?utf-8?B?MUNBbWNHeXZSZFNHbkdEbEE2bmE1dXRLbkdsdndkdjAvcHZiQ3JQYTB3cElH?=
+ =?utf-8?B?M2FYeTkrTDNBMGh1d3FIMDh1a3pGQUVSVTJVTkJ5ak9HdnhYS012YkJEWDVz?=
+ =?utf-8?B?am5lRkMxazVTTkxRc0ZXTDhhWHp3ajlkL0V5eHhHWmlTMWQ2M09aRmZ1U1FE?=
+ =?utf-8?B?Wjh6clNrem1Cc2E4YXZDa0txV0dTVE4rclVkQzJUbXlLL1lZK2QvMVFabXEz?=
+ =?utf-8?B?L3NvZlJtYzloUlRGZHhxb3FZWW4vUUFraXZjaUFqMC9HQ3NRRDh5ekdYNUdk?=
+ =?utf-8?B?L3A4dW1QMVdPa0hUWlJXc3JVS0E5MU1ubjdhMkVHNDBDdForWDZWS09KWWsv?=
+ =?utf-8?B?VlBuR2QvRWRPbXd0OVF6ZU1QNDJ6a245YnJTUk9lVVhHR1lETVoxKzhHV25t?=
+ =?utf-8?B?MCtsdWMwU2w3QmRVZ2N4QVRLdWZncjB4a2ZZUFR3bFVlT295NGsxbjF5QkZ5?=
+ =?utf-8?B?UDdIcDB4ZGZaMkUyeTJ0ZzZ2cDJaZzdpM2F5ZWVyWkRxV2FSbkFJM1R0ZWlv?=
+ =?utf-8?B?WmU4K3RxcFhOeit4aGYxbXZWSHpHNnJQcU5Rb3ZpWDdnVWVXSXhMY3Z0YUxY?=
+ =?utf-8?B?WFBxTHIrOE8wclh1YndWRFdUa1pkdXdYNlVma1YwL2J1elpLZ0xxcDJoZnp2?=
+ =?utf-8?B?ZStpeDU3ejFEa3lvbUZldFJhcmNkcW1vemFkRjlPdnJ4QVM0ZDFCT1FwSm9D?=
+ =?utf-8?B?OW1sMmRSWFlneFRNbUxCLzJnS2U2ZU5OZkF4VUFDSWRLaldETFlRUFBSL1Bq?=
+ =?utf-8?B?RjFaNTg3N1Zpelo4Wkk1UnozUExudDVOL0lRNjZMQ25uVm1vS2pIemd3Yzhs?=
+ =?utf-8?B?Unc5WFhoN09YNEtTYmhFRTdQaHZ6OGNFTVo5ZmJ2VkZRQTRhQXJiK29MekZO?=
+ =?utf-8?B?UE9jMmZxaEtDRUU0a3RjaDlxZXd1TEpESjhMdS9nQkJwYWxpWFd5aXVMNmRJ?=
+ =?utf-8?B?aEl3WnVIaUwyRUwxTHJ1YXVLQ3FxUDRmMTJFVlNnZzZlZFZWSVgzbklQMkdQ?=
+ =?utf-8?B?ZHFvZ3dBR0lvZGs5SDdaMlRIazBkOXp0Vm5qTUVnUTk2VXdGRFRIZm9CZHl4?=
+ =?utf-8?B?WENYTW9RcFZGa3BqVUhDZEVwOXJrMm95bzZyVDNLelg4dCtEb1U4Q3k2UVJk?=
+ =?utf-8?B?YnRoZ05BOXZaa3BobE9BaDRkNEhkZWRjWlZGM3NsdWJWL3FpT3lEYU9iaDFt?=
+ =?utf-8?B?UlV3cldUT05kZEZGdFdXL0hmNXpjdGFRcS83OVV4bUNYQTNNeXl3UEc4YjU2?=
+ =?utf-8?B?WkVtazBaN0FlV3JUK3RIQmlOekhvNUZpcENZRUpXb2lTMDI2bHdwQmtyV2FJ?=
+ =?utf-8?B?V2c0SzAxSHVBMXRIbDJqUjY2L3NNMTVQSVEyemRrUE9xTmxQMzBFc2hsV0ZD?=
+ =?utf-8?B?ZDRRWlpEM1F4WWRFY0IzaGEzZzQ2bkw3TGVoN2pZcUdxMGlReXMxak5Ga3dN?=
+ =?utf-8?B?RDJNU1ArQjhjSmxNdjZNMHhodnVLWC9xR2ZhNTNRUHhLWHBHKzROZFhFM3dh?=
+ =?utf-8?B?bDllWFVNTjEvQlRZWWM0UXZnSkNIK0o4NlpqaW5tRzhrd2ZsaFFYTzdld0dY?=
+ =?utf-8?B?Uk1HSEdGckcrZEI0a2Z3SWhZYkVNVXROajV2bFArQU05V2FrZW5ESUVCNXZh?=
+ =?utf-8?B?VUpJYS92N01sZU16enZiN24xZmYzRzhkRkdHa3IzdHFhTzFlaE5lTS9UOFRQ?=
+ =?utf-8?B?SmdlMXdSekpzNWtBZUZjbXMxSzdtbjRDRkZqNkZtSS9tUExRQytWelZpVGxq?=
+ =?utf-8?B?YkFOUVU4REZUSzY0ZHpGM09YeWdIUDU1MDNuM3dEbFIvM3JERGJvcTdBU2pk?=
+ =?utf-8?B?QjJmQWpHdHlkMmVieDJkSkgvbk1WT1R0ZFhheHFjV29LY3Q0b25DWGJ5K1V6?=
+ =?utf-8?B?OEJMR1VGbUNscTBmZnVkZDA5UjhzeTJFcjhpUHlMSTlZN2l2dnF4azVYRHhK?=
+ =?utf-8?Q?x3/DlnFfKdSgQzIY+F93e7w=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <88CE69C573A57749B32B71C0AD21A04F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904090016.2841572-1-wenst@chromium.org> <20240904090016.2841572-10-wenst@chromium.org>
- <CAD=FV=UGOz3Xzg7reJKP=tA1LqTxszv5w-CL9krmoXQtXdJLaQ@mail.gmail.com>
- <CAGXv+5F27K76t=ht5v75jKsNF-J+C0r5+m=czHz6PtV3t5DxcQ@mail.gmail.com>
- <CAD=FV=XVrAdQN8p9QJtt3Ah_YQAG7Y-D4wDx8_+qb1EGN7+Uig@mail.gmail.com> <CAGXv+5HO=POHNL_tQHCsy+8=a0gPLMDVHcWMguferahVU+BnZA@mail.gmail.com>
-In-Reply-To: <CAGXv+5HO=POHNL_tQHCsy+8=a0gPLMDVHcWMguferahVU+BnZA@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 10 Sep 2024 17:30:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U2yDGv74GQWRQuHN9sjdY5iThqpH-br-jYXMkV1cujEg@mail.gmail.com>
-Message-ID: <CAD=FV=U2yDGv74GQWRQuHN9sjdY5iThqpH-br-jYXMkV1cujEg@mail.gmail.com>
-Subject: Re: [PATCH v6 09/12] i2c: of-prober: Add regulator support
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be108937-e46d-4b27-8921-08dcd1f8f72e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2024 00:30:40.8723
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5HEuGohvzsLfCvhOIwrnlCkZ0lnQJUqvwd64cVMGOPHAjFn3KYDfLOvfcGLHDqLie1BZ3z7lvMySoF53q1KnqavWpmITFDUGPVnjJmbYHXE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7936
+X-OriginatorOrg: intel.com
 
-Hi,
-
-On Thu, Sep 5, 2024 at 8:45=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> wr=
-ote:
->
-> > > IIUC we could have the "options" data structure have much more board
-> > > specific information:
-> > >
-> > >   - name of node to fetch resources (regulator supplies and GPIOs) fr=
-om
-> > >   - names of the resources for the node given from the previous item
-> > >   - delay time after each resource is toggled
-> > >   - polarity in the case of GPIOs
-> > >   - prober callback to do power sequencing
-> > >
-> > > The "resource collection" step would use the first two items to retri=
-eve
-> > > the regulator supplies and GPIOS instead of the bulk APIs used right =
-now.
-> > >
-> > > The power sequencing callback would use the resources combined with t=
-he
-> > > given delays to enable the supplies and toggle the GPIOs.
-> > >
-> > > For now I would probably only implement a generic one regulator suppl=
-y
-> > > plus one GPIO helper. That is the common case for touchscreens and
-> > > trackpads connected over a ribbon cable.
-> > >
-> > > Does that sound like what you have in mind?
-> >
-> > I guess I'd have to see how the code looks to know for sure, but if I
-> > understand it sounds a little awkward. Specifically, the "options"
-> > sound like they might become complicated enough that you're inventing
-> > your own little programming language (with delays, abilities to drive
-> > pins low and high, abilities to turn on/off clocks, and abilities to
-> > turn off/on regulators) and then probers need to code up their
-> > programs in this language. You also need to handle undoing things
-> > properly if there is a failure in the middle. Like your "program"
-> > would look like this (obviously you'd have to play with enums more,
-> > but you get the idea):
-> >
-> > {
-> >    { OPCODE_TURN_REGULATOR_ON, "vdd" },
-> >    { OPCODE_DELAY, 10 },
-> >    { OPCODE_GPIO_ASSERT, "reset" },
-> >    { OPCODE_DELAY, 5 },
-> >    { OPCODE_GPIO_DEASSERT "reset" },
-> >    { OPCODE_DELAY, 100 },
-> >    { OPCODE_TURN_REGULATOR_ON, "vddIO" },
-> > }
-> >
-> > Why not just expect the board probers to write C code to turn things
-> > on before looking for i2c devices, then provide helpers to the C code?
-> >
-> > So there wouldn't be some generic "resource collection" API, but you'd
-> > provide a helper to make it easy to grab regulators from one of the
-> > nodes by name. If you think bulk enabling regulators is common then
-> > you could make a helper that grabs all of the regulators from a node
-> > in a way that is consistent with the bulk APIs, but I wouldn't expect
-> > every driver to use that since devices I've seen expect regulators to
-> > be enabled in a very specific order even if they don't need a delay
-> > between them.
-> >
-> > I wouldn't expect a "collect all GPIOs" API because it seems really
-> > weird to me that we'd ever want to jam multiple GPIOs in a state
-> > without knowing exactly which GPIO was what and asserting them in the
-> > right sequence.
->
-> So I'm slightly confused, as it sounds like at this point the i2c prober
-> would be litter more than just a framework, and the heavy lifting is to
-> be all done by callbacks provided by the board-specific driver?
->
-> So the framework becomes something like:
->
-> 1. find i2c bus node
-> 2. call provided callback with i2c bus node to gather resources;
->    let callback handle specifics
-> 3. call provided callback to enable resources
-> 4. for each i2c component, call provided callback to probe
-
-I don't think I'd do it as callbacks but just have the HW prober call
-the functions directly. AKA, instead of doing:
-
-  i2c_of_probe_component(dev, "touchscreen", ts_opts, ts_callbacks);
-
-Do:
-
-  grab_touchscreen_resources(...);
-  power_on_touchscreens(...);
-  i2c_of_probe_component(...);
-  power_off_touchscreen(...);
-  release_touchscreen_resources(...);
-
-Obviously I'm spitballing here, though. Without writing the code it's
-hard for me to know that my proposal would be better, but my gut tells
-me that trying to write something overly generic with lots of options
-/ callbacks would be more confusing.
-
-
->   If the probe succeeded:
->
->     5. call provided callback for early release of resources (GPIOs)
->     6. set "status" to "okay"
->     7. call provided callback for late release of resources (regulators)
->
->   Otherwise at the end of the loop
->
-> 8. release resources
->
-> The current code can be reworked into helpers for steps 2, 3, 5, 7 for
-> the single regulator single GPIO case.
->
-> > > This next item would be a later enhancement (which isn't implemented =
-in
-> > > this series anyway):
-> > >
-> > >   - optional prober callback that does actual probing
-> > >
-> > > In our case it would only be used for cases where an HID-over-I2C
-> > > component shares the same address as a non-HID one, and some extra
-> > > work is needed to determine which type it is. I still need to think
-> > > about the structure of this.
-> >
-> > IMO _that_ would be a great option to the i2c prober. It feels like
-> > you could have an optional register read that needs to match to have
-> > the i2c prober succeed. Most people would leave it blank (just the i2c
-> > device existing is enough) but probably a single register read would
-> > be enough to confirm you got the right device. Most i2c devices have
-> > some sort of "version" / "vendor" / "id" type register somewhere.
->
-> At least for the stuff that we have (touchscreens and trackpads) such
-> registers typically don't exist, unless it's an HID-over-I2C device,
-> in which case there's the standard HID descriptor at some address.
-> But, yeah, reading the HID descriptor was the use case I had in mind.
->
-> At least for one Chromebooks it's a bit more tricky because that one
-> HID-over-I2C component shares the same address as a non-HID one. We
-> currently have different SKU IDs and thus different device trees for
-> them, but we could make the prober work with this. It just has be able
-> to tell if the component it's currently probing needs the special
-> prober and is it responding correctly. This bit I need to think about.
-
-I guess Mark Brown also thought that there wouldn't be some magic
-register, but my gut still tells me that most i2c devices have some
-way to confirm that they are what you expect even if it's not an
-official "vendor" or "version" register. Some type of predictable
-register at a predictable location that you could use, at least if you
-knew all of the options that someone might stuff.
-
-For instance, in elan trackpads you can see elan_i2c_get_product_id().
-That just reads a location (ETP_I2C_UNIQUEID_CMD =3D 0x0101) that could
-theoretically be used to figure out (maybe in conjunction with other
-registers) that it's an elan trackpad instead of an i2c-hid one. You'd
-have to (of course) confirm that an i2c-hid device wouldn't somehow
-return back data from this read that made it look like an elan
-trackpad, but it feels like there ought to be some way to figure it
-out with a few i2c register reads.
-
-...that being said, I guess my original assertion that you might be
-able to figure out with a simple register read was naive and you'd
-actually need a function (maybe as a callback) to figure this out.
-
-
--Doug
+T24gVHVlLCAyMDI0LTA5LTEwIGF0IDEyOjQ5ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiA5LzQvMjQgMDU6MDcsIFJpY2sgRWRnZWNvbWJlIHdyb3RlOg0KPiA+IEZyb206IElzYWt1
+IFlhbWFoYXRhIDxpc2FrdS55YW1haGF0YUBpbnRlbC5jb20+DQo+ID4gDQo+ID4gVXBkYXRlIFRE
+WCdzIGhvb2sgb2Ygc2V0X2V4dGVybmFsX3NwdGUoKSB0byByZWNvcmQgcHJlLW1hcHBpbmcgY250
+IGluc3RlYWQNCj4gPiBvZiBkb2luZyBub3RoaW5nIGFuZCByZXR1cm5pbmcgd2hlbiBURCBpcyBu
+b3QgZmluYWxpemVkLg0KPiA+IA0KPiA+IFREWCB1c2VzIGlvY3RsIEtWTV9URFhfSU5JVF9NRU1f
+UkVHSU9OIHRvIGluaXRpYWxpemUgaXRzIGluaXRpYWwgZ3Vlc3QNCj4gPiBtZW1vcnkuIFRoaXMg
+aW9jdGwgY2FsbHMga3ZtX2dtZW1fcG9wdWxhdGUoKSB0byBnZXQgZ3Vlc3QgcGFnZXMgYW5kIGlu
+DQo+ID4gdGR4X2dtZW1fcG9zdF9wb3B1bGF0ZSgpLCBpdCB3aWxsDQo+ID4gKDEpIE1hcCBwYWdl
+IHRhYmxlIHBhZ2VzIGludG8gS1ZNIG1pcnJvciBwYWdlIHRhYmxlIGFuZCBwcml2YXRlIEVQVC4N
+Cj4gPiAoMikgTWFwIGd1ZXN0IHBhZ2VzIGludG8gS1ZNIG1pcnJvciBwYWdlIHRhYmxlLiBJbiB0
+aGUgcHJvcGFnYXRpb24gaG9vaywNCj4gPiDCoMKgwqDCoMKgIGp1c3QgcmVjb3JkIHByZS1tYXBw
+aW5nIGNudCB3aXRob3V0IG1hcHBpbmcgdGhlIGd1ZXN0IHBhZ2UgaW50bw0KPiA+IHByaXZhdGUN
+Cj4gPiDCoMKgwqDCoMKgIEVQVC4NCj4gPiAoMykgTWFwIGd1ZXN0IHBhZ2VzIGludG8gcHJpdmF0
+ZSBFUFQgYW5kIGRlY3JlYXNlIHByZS1tYXBwaW5nIGNudC4NCj4gPiANCj4gPiBEbyBub3QgbWFw
+IGd1ZXN0IHBhZ2VzIGludG8gcHJpdmF0ZSBFUFQgZGlyZWN0bHkgaW4gc3RlcCAoMiksIGJlY2F1
+c2UgVERYDQo+ID4gcmVxdWlyZXMgVERILk1FTS5QQUdFLkFERCgpIHRvIGFkZCBhIGd1ZXN0IHBh
+Z2UgYmVmb3JlIFREIGlzIGZpbmFsaXplZCwNCj4gPiB3aGljaCBjb3BpZXMgcGFnZSBjb250ZW50
+IGZyb20gYSBzb3VyY2UgcGFnZSBmcm9tIHVzZXIgdG8gdGFyZ2V0IGd1ZXN0IHBhZ2UNCj4gPiB0
+byBiZSBhZGRlZC4gSG93ZXZlciwgc291cmNlIHBhZ2UgaXMgbm90IGF2YWlsYWJsZSB2aWEgY29t
+bW9uIGludGVyZmFjZQ0KPiA+IGt2bV90ZHBfbWFwX3BhZ2UoKSBpbiBzdGVwICgyKS4NCj4gPiAN
+Cj4gPiBUaGVyZWZvcmUsIGp1c3QgcHJlLW1hcCB0aGUgZ3Vlc3QgcGFnZSBpbnRvIEtWTSBtaXJy
+b3IgcGFnZSB0YWJsZSBhbmQNCj4gPiByZWNvcmQgdGhlIHByZS1tYXBwaW5nIGNudCBpbiBURFgn
+cyBwcm9wYWdhdGlvbiBob29rLiBUaGUgcHJlLW1hcHBpbmcgY250DQo+ID4gd291bGQgYmUgZGVj
+cmVhc2VkIGluIGlvY3RsIEtWTV9URFhfSU5JVF9NRU1fUkVHSU9OIHdoZW4gdGhlIGd1ZXN0IHBh
+Z2UgaXMNCj4gPiBtYXBwZWQgaW50byBwcml2YXRlIEVQVC4NCj4gDQo+IFN0YWxlIGNvbW1pdCBt
+ZXNzYWdlOyBzcXVhc2hpbmcgYWxsIG9mIGl0IGludG8gcGF0Y2ggMjAgaXMgYW4gZWFzeSBjb3Ag
+DQo+IG91dC4uLg0KDQpBcmgsIHllcyB0aGlzIGhhcyBkZXRhaWxzIHRoYXQgYXJlIG5vdCByZWxl
+dmFudCB0byB0aGUgcGF0Y2guDQoNClNxdWFzaGluZyBpdCBzZWVtcyBmaW5lLCBidXQgSSB3YXNu
+J3Qgc3VyZSBhYm91dCB3aGV0aGVyIHdlIGFjdHVhbGx5IG5lZWRlZCB0aGlzDQpucl9wcmVtYXBw
+ZWQuIEl0IHdhcyBvbmUgb2YgdGhlIHRoaW5ncyB3ZSBkZWNpZGVkIHRvIHB1bnQgYSBkZWNpc2lv
+biBvbiBpbiBvcmRlcg0KdG8gY29udGludWUgb3VyIGRlYmF0ZXMgb24gdGhlIGxpc3QuIFNvIHdl
+IG5lZWQgdG8gcGljayB1cCB0aGUgZGViYXRlIGFnYWluLg0K
 
