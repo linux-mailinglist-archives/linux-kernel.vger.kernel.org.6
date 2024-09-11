@@ -1,117 +1,87 @@
-Return-Path: <linux-kernel+bounces-324643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F46974F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E02974F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85794B21232
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEFDF2882FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EA11822F8;
-	Wed, 11 Sep 2024 10:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EJbIgNXH"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F66017F4F6;
+	Wed, 11 Sep 2024 10:05:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5614E2FA;
-	Wed, 11 Sep 2024 10:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EA913A884
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726049059; cv=none; b=RMLf9EphmbKIW7ljlek1vJR69yNxly1hddSYvPKlzc1m12TRMuYyLEX15utIQkI3gYdsZ4D2g0nsMVbQIwoL9mkWJAMD60gScHCjS/d4cwZpI3BTg9Z2ByQS/LKsj7J7JFLMW5ECYRP0osrhE7rwLdCUXJAz3C5BOEv9vzdU5LQ=
+	t=1726049103; cv=none; b=EOnf7Rq3Rv0huoIrzbXuwaSkAzHnRIvS2FkETx/wpV0thhgnSv2CTU59/cuYUplAJ+o5DkMdiiSW2mFeuR8fRPSJrj93HEhYWaGQu04jtoxGv6LVOEPDXUx+fz0qKGcDOrsjKS91y1NFIPfB15EGcC5oc7R2gnkSM+moa2JG7Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726049059; c=relaxed/simple;
-	bh=7y7xPgYKXb3zcEsuhLID+clTD9U4En7/zdAsEwy/mzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aHBqevbrJFyh9cafGzW3iVcgv3hyI2lZo9OyLAcyBwMRbS3OCInljWNwusd1ySlqWzuUZMSrcdNUtkp0HTbjUDFM5U5lbkSKglwtYFlqyct+qBITOeRT+1YTmyZ3Qx3FzG2WhRWNhN8YH+LNBZnXZ0V7RI6AI9YcLYxhn7w8bZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EJbIgNXH; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF0F820005;
-	Wed, 11 Sep 2024 10:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726049048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MzoGSD5CTrrPugX53bwAOAggDXMY+GDBbkq/c3bB/8E=;
-	b=EJbIgNXHSg5OfozjhGgyoq/eGmGMCMtRsGIr/1632K5nT4vXYSUzie3Kt7h8rFtoMlK4Nb
-	04h53Xw/NmeqU1PWJXF1wA9amyho/B8zg9G1NTY7jfly7jGZ59HbH8LqhKe+iXRPX65mSa
-	ylpga52zbMMghGTvjJpx/YVOeR6FjBFZRue8zGuDraQousuJHcKA5CiGqrrhfm0s8Xf+Ze
-	NsMHtJXWqKM0tjH/BcUTKVB02Xa0IW1sJF1c4ee627D6ZlxPLomzSCftyYwHSpsHyltd68
-	nBjavjMDB2OZE1j80da6WbcaES+IM4Ae4IQyRFfrZxiD5V4zqEaFj5F2vlYJZQ==
-Date: Wed, 11 Sep 2024 12:04:06 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>
-Cc: christophe.leroy@csgroup.eu, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
-Message-ID: <20240911120406.123aa4d4@fedora.home>
-In-Reply-To: <000000000000d3bf150621d361a7@google.com>
-References: <000000000000d3bf150621d361a7@google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726049103; c=relaxed/simple;
+	bh=NF0h8nZdsL/Jn+JWd+qGplwElShfyzeI13id89sxNRA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HE/hwb249oJIphVkMiaMHUSwu3ZziLIXKNxVv9fZJE251tDpyftwT7DW+uHzbKY3hDU4a6kwq1H9bDwE0irinqGUUiCuqMygm9g11BnMYEA92FfVqD9S70hLJ0LEADtb+QROVnNRjXuB/yWzEn1srOFI3Io0VB58D6hKuINtayc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cea2c4e35so632007239f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 03:05:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726049102; x=1726653902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HWodEHvZnudDxKHGjfTvsvPA5yH1sv68ORQTfnTCblY=;
+        b=rxVxZTOcrjqYjG7BNvNfl7jG9SFpIHs6q0BP9L/nwU1aUp0H3loFhqzEG5VY9ltui3
+         JHjhpOCGqNwviTJjLCSBmS9EW9MEHHmxz5oiVWHtYGnyyql848NdGgAigShO1k7R1a64
+         7sxhVfHrXvdestILpeJIH1jNZYdL0+rNPBaUohXvloDitriZdguIw/Us5CdMZb6jwxwc
+         iE8oG+Ph2JL7x4jaXS5x4IAo2C8dMZ2TEICT61Jc5g/qNUjFpELSo7xq0adzjDqxDcGF
+         Zzzd4irFr0KSx4wgBr8H5Zew32zalvBkvsFR+OoKCekzoglstiJyNe/Jis5cSoapCu8+
+         H94g==
+X-Gm-Message-State: AOJu0YyA2+TZ8NlpbK2Uy190EL07dqT9shkpfx0UFz6kIn7MGeWgYPF9
+	Jm48MUXE0CYWr9gR1wSBPNtvFeKb7ekuCMbFk444yBT6b+CqttNj6RiuYea9QL06Ga4vnR6kmSX
+	tCOv/7pvK+Dl9E+Em8Lh4ZisZmApW95hc8lvBVtcYoexu4vppBHEBJkc=
+X-Google-Smtp-Source: AGHT+IFmrBEl8WNHhJgTXBi2PjUo39BS/LmzTPg9GzpjSyWsT/cDRqP6naCUgB+uQKY5H7aeksuQfoE7nOS5giw/GEAl/4Z7+Ya/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-Received: by 2002:a05:6e02:13ad:b0:37a:7662:7591 with SMTP id
+ e9e14a558f8ab-3a04f070a8bmr230266765ab.6.1726049101918; Wed, 11 Sep 2024
+ 03:05:01 -0700 (PDT)
+Date: Wed, 11 Sep 2024 03:05:01 -0700
+In-Reply-To: <0d2576ae-f3c9-4700-8cdb-8957944093e6@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000095c6290621d51f6f@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: slab-out-of-bounds Read in
+ udf_get_filelongad (2)
+From: syzbot <syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zhaomengmeng@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On Wed, 11 Sep 2024 01:00:23 -0700
-syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com> wrote:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a9b1fab3b69f Merge branch 'ionic-convert-rx-queue-buffers-..
-> git tree:       net-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1193c49f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bb7bc7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b0a100580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/0459f959b12d/disk-a9b1fab3.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/337f1be5353b/vmlinux-a9b1fab3.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0e3701969c4a/bzImage-a9b1fab3.xz
-> 
-> The issue was bisected to:
-> 
-> commit 17194be4c8e1e82d8b484e58cdcb495c0714d1fd
-> Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Date:   Wed Aug 21 15:10:01 2024 +0000
-> 
->     net: ethtool: Introduce a command to list PHYs on an interface
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1034a49f980000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1234a49f980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1434a49f980000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
+Reported-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
+Tested-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
 
-I'm currently investigating this. I couldn't reproduce it though, even
-with the C reproducer, although this was on an arm64 box. I'll give it
-a try on x86_64 with the provided .config, see if I can figure out
-what's going on, as it looks like the ethnl_phy_start() doesn't get
-called.
+Tested on:
 
-Thanks,
+commit:         8d8d276b Merge tag 'trace-v6.11-rc6' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12416100580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10de7f29980000
 
-Maxime
+Note: testing is done by a robot and is best-effort only.
 
