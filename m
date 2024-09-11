@@ -1,172 +1,147 @@
-Return-Path: <linux-kernel+bounces-325510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976CF975A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:49:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9499A975A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A23C1F24474
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91C71C22B6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348831B7902;
-	Wed, 11 Sep 2024 18:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7157F1B9B5E;
+	Wed, 11 Sep 2024 18:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jq0Ta0lF"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="HJDZdiRF"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1B215E5B8;
-	Wed, 11 Sep 2024 18:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F2C12EBEA;
+	Wed, 11 Sep 2024 18:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080575; cv=none; b=Rr7rimNtW29qT3CL8z9S9p3MAEPKoiYoHfTIT9ooL2fiRF0vI86FG2rOz0z4Uhud1u8E8cooU5EzaK8GRDPNKG5BLF8+ghXJcuAThcGL+gLyHJoiY1ZvpEr7YkgaNo4axe+FicnA8vJiTeIACT7KU5ONUwPVQvZmm/5wA5st9UM=
+	t=1726080833; cv=none; b=JHamt9EOfDJ4UnkJI53TaHUqhaFtSXC9ax6sErvlWxszRSYQyNAgDqOIxOxmV4t4GsA70z+1uPdrrp6Pr9v1pb+5aO7zqZX6JH9kpfhcrgQOcO9ya+UZG3E9hcyWWG2TktA17Um2067V5YSi0K7PMF5ykqzToTlHrWKxCwveCS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080575; c=relaxed/simple;
-	bh=T66dp24AzjefhwfW1RczRPfd7+nb/I9+zQXFrOxli7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3erQBhMnNb9cTE89HHsLsZJNcD1yWgV8vp224MB+EOdNmJcs76W7HCaCR7bWz9Lc2iR/CSRYgyXucPcZ66QWrSbByU81BTTh95dgf6fU7I6+r2ViWpTCnfKT9l8QIDU1KWT7WXyzoWq8o342oYZ00h83JBgaO6WuZSbmJ9xCNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jq0Ta0lF; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2055f630934so1659155ad.1;
-        Wed, 11 Sep 2024 11:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726080573; x=1726685373; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0TkHtqPbdlcbDhsAgIpZTSjTvi+92a07vd3QkuC55Tk=;
-        b=Jq0Ta0lFHaZwGT7Y0kTyz6UmFpCijWMxNXSB8buRbn06QF0Vc6AUvXk087rS9eibNr
-         yMFzn5gXivq/qwmZuGz+XTcy1ix8uaYqGucw1e0h/WuDC2ml/t5G36uwp5avO5A1ithN
-         SBSwhVA7ggpnoCIIJMHVEGFt0y/2HI+xJiua9R5SJ6BB4tHTrsUb28vwi6GPVPs50FN0
-         RTz37g8HH00dFafwj553w/Nzg7aVRx6RJH9KIrskR4gNdX1KQSo3UdU+jt9fy2qB2dRs
-         DW3aox50FJ7HY0R1ORFvEV7qh8jHHX64whtZeEHx0Tw7qzaEl5Eu5htZoEc884gSp2ZY
-         OGNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726080573; x=1726685373;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0TkHtqPbdlcbDhsAgIpZTSjTvi+92a07vd3QkuC55Tk=;
-        b=c5JZOifEude/nxhMeHpHLlZpBxtM+scunBLFeOe4TRS4OMlgJTBPtwh5fdhPTa7Bbw
-         AU/RYe3taRtGn2tkBnhW6t52iuxnP+aON5nCpDa0ccjF4KPqS4KRJaobKHMeY7AkStRp
-         w0NObe9QAfbYqhTwLI5L6/aBfLsaHsP2cvD6jk8wWzSr6isZan6wr8cl4ozo6PIYfFz0
-         /AmK8T8+vwq74dreE3k8hDbGBR5byZ6drCrw5y5V4pPtOOkEUN/V818IbZiIES6Ikg7z
-         RGw5SwcqmxR+7f8ke+swKso99eWZunCAGNjeqTUxAF0MSF9S08c4kLLRRAYVQqk5Qu6o
-         n4Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFYztHxeNGJnxTrqaqkbUEb7cr6kod0GUNkmUPNRFcZMtrf9klsuK7DBTa61Sfh4djqjJ/v8Om1wc58+c=@vger.kernel.org, AJvYcCXg1oe3dyZClJXTuMU/3zEfz4KYjbC/qRTpcOwFt+jITsJvGplQP2ElvygAnwMv2dOk9NGC2hpY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAguo2/ns3n446gbDwHEq/Sq2yXd4gQIumurDwpIEZw8q7w+Ss
-	KkPwfuc8FftVWcuYLQUOIxmoAYKmdyURK1pXRmpORwuJUzKcbbY=
-X-Google-Smtp-Source: AGHT+IG/AWJKd5HM7CJCBqbMq0zLQul7juhrQIaXgzqktDsTLlkZewVwfXtccotJ+ou9IVAb+UaN6A==
-X-Received: by 2002:a17:902:ec88:b0:206:dc2a:232c with SMTP id d9443c01a7336-2076e32fa72mr4669725ad.15.1726080573371;
-        Wed, 11 Sep 2024 11:49:33 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b009742sm2629335ad.263.2024.09.11.11.49.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 11:49:32 -0700 (PDT)
-Date: Wed, 11 Sep 2024 11:49:32 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Qianqiang Liu <qianqiang.liu@163.com>, davem@davemloft.net,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: check the return value of the copy_from_sockptr
-Message-ID: <ZuHmPBpPV7BxKrxB@mini-arch>
-References: <20240911050435.53156-1-qianqiang.liu@163.com>
- <CANn89iKhbQ1wDq1aJyTiZ-yW1Hm-BrKq4V5ihafebEgvWvZe2w@mail.gmail.com>
- <ZuFTgawXgC4PgCLw@iZbp1asjb3cy8ks0srf007Z>
- <CANn89i+G-ycrV57nc-XrgToJhwJuhuCGtHpWtFsLvot7Wu9k+w@mail.gmail.com>
- <ZuHMHFovurDNkAIB@pop-os.localdomain>
- <CANn89iJkfT8=rt23LSp_WkoOibdAKf4pA0uybaWMbb0DJGRY5Q@mail.gmail.com>
- <ZuHU0mVCQJeFaQyF@pop-os.localdomain>
+	s=arc-20240116; t=1726080833; c=relaxed/simple;
+	bh=2eWulHbrslLH7unscxNUS7ux6ddpJhYik4GRKwf6Lfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u65CzK8Su6ctdZnU+lHroAIMEVbVCsz7qmc6UMIP08BlgLJpazmogfLfDAZuSvDRAFY/1vPDUbq608rRv+NY/8x938VTLopNKQ6cVuugY7lOebLtlD6F4ZZC1l6PsTBYhe7i1hfBYJbHAigfMnve3aKAqjAhty5EiCmKufh6s0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=HJDZdiRF; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1726080818; x=1726685618; i=deller@gmx.de;
+	bh=RAeWmAP3CL6OPacnXksWF2kShTXW4DW4MGJ08mgAvig=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HJDZdiRFFaCWzMERovSmESRTtVIqcgeWeEzi70aZ/S0ZwwzMnj2vGC1Vg+1segFx
+	 7FndCBD0j1OmW2xU1oDxknevRFBPMk52TVsh2dW4NAi5FBTso3OpH8faa/+nFLfom
+	 Iw+1qul8qny8wDSt21o7WZ+StYCIe3Tomo4NUlCSAwzJmfm5esE59imLgV2p6s1ra
+	 d3/zycEmqlEPUuC6Mn7QjV6Dl5hnougjl1qbuAdkEO9LKzk7lsdpwAVFFyyD0Uw+Q
+	 h07yjmmMfJMmsy/3bFKIIJT1lA3ZwWGwDRv+JgDgSbE76fKVLsTk/AsiW5T+Dl/Wt
+	 6N8u7gPBYv9Dp7hDSQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M26r3-1sqOHT0Jqb-00A5EP; Wed, 11
+ Sep 2024 20:53:38 +0200
+Message-ID: <466fd103-0f09-484f-85ca-3a76af074981@gmx.de>
+Date: Wed, 11 Sep 2024 20:53:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZuHU0mVCQJeFaQyF@pop-os.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] video: fbdev: Fix a typo
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+References: <20240911182503.3600-1-algonell@gmail.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240911182503.3600-1-algonell@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bQat50RglNLMaBz6IIm3J3R2rNcu3r52S6Pl0xxl1cteAp5Viup
+ THc/kbcNeKEOctjzHARJBkwnI3rrRCaZgnpNFPveS8fKOYr/mxf5fXAyFJHXl1j115C9nrM
+ zwm0ugzRlECYm3LOq+zKAki5GB1DE33qjh1CS8M/jI+SmTLR3V5FWmGKouEfZQsUSz7zCIX
+ 6eNmphJ+GfLvAe81GzHWA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RiN6x8TT1Xw=;icW6K4VPNDutPh6K2ruukh7vOUe
+ GTAaTCepcytGS8BJttTg+WOIKvL8/stSaWwUhDl6UhTwX/x9gQxJWHuQRlMk0TaAr3pP1ZxEL
+ Tqhr+/SLt00rwLn6IS1UFn6C6vKoaOd9EOZlnHIeN5/8og7yweoXFIAcYcYaMzxlzsAhoGDyy
+ 1URffqt2wha6GJGKtTyZJ3xFmXQKjPuwJOyu3SN8MrxDp//HUpMhxmb7f0RGD9Wfj6gQt3twu
+ RSjnAwI9AnhzYxd1AR0T/O1gAN6vTfGDUpKqkJBP+nA2mm58vOTFaXDK5KiRgvCUHYNOsDDoO
+ +u++Lxx4GCaSoSkPFrxnf8F2IJT5miQ0EB8Na5cOZmz4pw3qfSenwNluIqtLNt12jeqlGc9KA
+ 0YALSCganpQDiH3UGyV2xmbyxprfhBU8ZTDya2ZSyZ985n6Xvm6uoXDc0FVWfUJnlzWp48DEo
+ g3ijAgSNBFgecTufwQQPyDsmDJoTjIrnpD51Cq33pzSzR09gPcTkWK97Ei4ls8GZKvfTZeaoo
+ 4QMXiuUC1/QHG/JEmUXfjicKZiDLuP5Vcl3vpzgVqf6QCCEyVV2BjTUFXEE2JyaC7++jkgZeb
+ hlmAsohqaExAtrhEVZQjxIFazbBpMUodDFAqQZubuR+LM5QqfK9e5AmrY5O4PdgWrV6mxCTXR
+ +WP7atQBaLVrYPBf8JuoWujf3AcxWB2GJB5QBb+dp7rSU60U0x0RFZz9BngwLLWPBdUsIEtm3
+ fKv8N5CY0kIA50BIGwb5/UcYo9cc75Rw88B8d4ki30VRJLa0aOR6yKy4BnfDNtk5pRile9drr
+ VjpWoaMQqod1Y5ngx1Hthujg==
 
-On 09/11, Cong Wang wrote:
-> On Wed, Sep 11, 2024 at 07:15:27PM +0200, Eric Dumazet wrote:
-> > On Wed, Sep 11, 2024 at 6:58 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> > >
-> > > On Wed, Sep 11, 2024 at 11:12:24AM +0200, Eric Dumazet wrote:
-> > > > On Wed, Sep 11, 2024 at 10:23 AM Qianqiang Liu <qianqiang.liu@163.com> wrote:
-> > > > >
-> > > > > > I do not think it matters, because the copy is performed later, with
-> > > > > > all the needed checks.
-> > > > >
-> > > > > No, there is no checks at all.
-> > > > >
-> > > >
-> > > > Please elaborate ?
-> > > > Why should maintainers have to spend time to provide evidence to
-> > > > support your claims ?
-> > > > Have you thought about the (compat) case ?
-> > > >
-> > > > There are plenty of checks. They were there before Stanislav commit.
-> > > >
-> > > > Each getsockopt() handler must perform the same actions.
-> > >
-> > >
-> > > But in line 2379 we have ops->getsockopt==NULL case:
-> > >
-> > > 2373         if (!compat)
-> > > 2374                 copy_from_sockptr(&max_optlen, optlen, sizeof(int));
-> > > 2375
-> > > 2376         ops = READ_ONCE(sock->ops);
-> > > 2377         if (level == SOL_SOCKET) {
-> > > 2378                 err = sk_getsockopt(sock->sk, level, optname, optval, optlen);
-> > > 2379         } else if (unlikely(!ops->getsockopt)) {
-> > > 2380                 err = -EOPNOTSUPP;         // <--- HERE
-> > > 2381         } else {
-> > > 2382                 if (WARN_ONCE(optval.is_kernel || optlen.is_kernel,
-> > > 2383                               "Invalid argument type"))
-> > > 2384                         return -EOPNOTSUPP;
-> > > 2385
-> > > 2386                 err = ops->getsockopt(sock, level, optname, optval.user,
-> > > 2387                                       optlen.user);
-> > > 2388         }
-> > >
-> > > where we simply continue with calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
-> > > which actually needs the 'max_optlen' we copied via copy_from_sockptr().
-> > >
-> > > Do I miss anything here?
-> > 
-> > This is another great reason why we should not change current behavior.
-> 
-> Hm? But the current behavior is buggy?
-> 
-> > 
-> > err will be -EOPNOTSUPP, which was the original error code before
-> > Stanislav patch.
-> 
-> You mean we should continue calling BPF_CGROUP_RUN_PROG_GETSOCKOPT()
-> despite -EFAULT?
-> 
-> > 
-> > Surely the eBPF program will use this value first, and not even look
-> > at max_optlen
-> > 
-> > Returning -EFAULT might break some user programs, I don't know.
-> 
-> As you mentioned above, other ->getsockopt() already returns -EFAULT, so
-> what is breaking? :)
-> 
-> > 
-> > I feel we are making the kernel slower just because we can.
-> 
-> Safety and correctness also matter.
+On 9/11/24 20:24, Andrew Kreimer wrote:
+> Fix a typo in comments.
+>
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+>   drivers/video/fbdev/omap2/omapfb/dss/hdmi.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you explain what is not correct?
+applied.
 
-Calling BPF_CGROUP_RUN_PROG_GETSOCKOPT with max_optlen=0 should not be
-a problem I think? (the buffer simply won't be accessible to the bpf prog)
+Thanks!
+Helge
+
 
