@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-324836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8E6975166
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCB0975168
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C875C28B0BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9A51F264D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD27318785F;
-	Wed, 11 Sep 2024 12:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05805192B84;
+	Wed, 11 Sep 2024 12:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BzUB+j4V"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8573251C4A;
-	Wed, 11 Sep 2024 12:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Hco7YKrU"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D9613AA3E;
+	Wed, 11 Sep 2024 12:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726056199; cv=none; b=Cs9Nf1KSDeCV6h/U93kdTmJclubxL3E+Hky2W+pyyjOpsyQukE2hnAcBqxq2Z3GeyEy6V5RrxOv7pusQChQZJ9oy5pre899LreXaCpix1LKlLemdh13aVTW6lM6TMRkfGmaV8o1m9mDVze0O4wRCleuoAsyrHFUW/m5WRX5IRKo=
+	t=1726056212; cv=none; b=i299KGUj19Sv7m4yOkZO3T3kY5+1PZIMrQPaJMUcMdkrFIi/H1uMcWRZhmfqLZlIc8Zrp5gYaBX2KGI/j+fW4fR4VMO6rXls8v0Qh0T/LCyQ60jCgBDItW5aIQM5xR14QIZS8Z2L9NCgQj+wIJD9BX+7TMhFllTA29bmaHBDmLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726056199; c=relaxed/simple;
-	bh=RRWxLgszYAt2RDmKsJ8aH9d/Tr9vyeupDgydeQ5ejhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOnGbd37Lc8d8mWpGaPWAJnnK00aOXDvcAtP6T0zxaWROFi/8r7h+yqqZbVr0MVLhVZHx9YWTVPM5ISRLOeZ/h7yOENO27PRIGZBubNmDAv+1KLw6YmurNTNN8hoQl6gkTv0JkZFstaW1YUhXxKaOOe4PC5gbGrioaC+eMsAIzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BzUB+j4V; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=LreFkTuW7liUdQSgQl8JsUo6bkRPZ76VmfyP6CVpOVQ=;
-	b=BzUB+j4Vd55Bon2kvkuyeDzgyMsy6J424AkxqX+QcdeMCP0OY1mg9w4TkrEzJ8
-	BeHbCm1vV/54NOrMrUsHLVJvsWZIbr2LELQFsn//VeUMht/h6TsNMDQ7Rd69HhBF
-	/B1FEE5s/vctB8RhAwG42FzXvaeAQBrLQpQrn8pGvG5ZE=
-Received: from localhost (unknown [120.26.85.94])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wBnSp_ehuFmOiukDQ--.6702S2;
-	Wed, 11 Sep 2024 20:02:38 +0800 (CST)
-Date: Wed, 11 Sep 2024 20:02:38 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: amergnat@baylibre.com, angelogioacchino.delregno@collabora.com,
-	lgirdwood@gmail.com, matthias.bgg@gmail.com,
-	linux-sound@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: mt8365: Fix using uninitialized value "i2s_data"
- issue
-Message-ID: <ZuGG3jk6oqq7sUMw@iZbp1asjb3cy8ks0srf007Z>
-References: <20240911001516.47268-1-qianqiang.liu@163.com>
- <9ea8731a-7888-40a2-a183-4598884bbb27@sirena.org.uk>
- <ZuGAwQGPWdpO1-G9@iZbp1asjb3cy8ks0srf007Z>
- <eb21bcab-333d-4ab3-9222-058764ced720@sirena.org.uk>
+	s=arc-20240116; t=1726056212; c=relaxed/simple;
+	bh=to/dI+U8c82M6OElNphf9TFg4NuIv4FJo3rnED38GM0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qyo6R6X+0OrSonWS/Zz/d5FwTsrO2hwVNIC3KZvoI1aJx3d1VpAr6HxcObhAefsxD5YDL8RPtGgTkKUx4NRU0njWLWmMw7OgNmjtalwp8tyuC7Rw8ROdSHzUtXJp6bOMt/+l7DASv2+ohPk1OpqRNcUlRP7NapiFOFidYEHOnzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Hco7YKrU; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726056179; x=1726660979; i=markus.elfring@web.de;
+	bh=to/dI+U8c82M6OElNphf9TFg4NuIv4FJo3rnED38GM0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Hco7YKrUwUPLHLTI+twaLWbzmwXkV0mINsS6UdWH0Ao4XcME4uYbNUftJ3kU1pHV
+	 3TnV+338SIWsnrYLfBGOePElSld13/qNvlJzwiGtQ3iGlpC+H7hbOvZM7TyhO7fll
+	 j6Igv1gKAJbFpN3QKa0DoYV8pdLnS8gvG7G0jL1s1BVle1excKCC5rDKt/mV5bfOz
+	 uvSA1U51+g6XacpRV91OjjW5OTJibj9W/f6N4h3/N6zkoGazT0xycNsGIfmfsW0ZA
+	 q7TFkNuWXMuarFC58jEqaiUmN3y9MLvljDU9RCR47gd9+K6X1cWrd2Up2l+TQ8H9R
+	 y8sK5w41dgaVC01TgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mq182-1sBDbl0Two-00cfwJ; Wed, 11
+ Sep 2024 14:02:59 +0200
+Message-ID: <ba285b99-96a6-4fbf-b72e-b264a300ce6f@web.de>
+Date: Wed, 11 Sep 2024 14:02:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb21bcab-333d-4ab3-9222-058764ced720@sirena.org.uk>
-X-CM-TRANSID:_____wBnSp_ehuFmOiukDQ--.6702S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF1rJFykGry7Jr15Cw4Uurg_yoW8XrWDp3
-	4ktan2kFyqqr4jyrsrur1UtasIk3y3JFZrWay7Jw12yFy3ur4a9Fn2kas0kFWvqrnaywnF
-	qrW2qr9xJrZ5A3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jcdbbUUUUU=
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRQJXamXAo2LUZAACss
+User-Agent: Mozilla Thunderbird
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Will Deacon <will@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
+Subject: Re: [PATCH 8/9] accel/rocket: Add job submission IOCTL
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240612-6-10-rocket-v1-8-060e48eea250@tomeuvizoso.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gBOc2VelSGYN7vMulw3gUfHiDfi7Fce6hUGRA3ig0e7CkPk7ctW
+ 02fliq1YqKL5NKGvp3rgm2vGCmn6B7aS1N/nr+h0YbeeRcbBWnwr7+rO2Hwhq057gL31eNi
+ LR1cvkK0e+qFvnrh0GnTB7rpMSh2/emhZOdJ2z2xi7Ae1r7gPW55kJ+Yp8MMxUhxUlDXyUk
+ vYuXx5zKe7w6f1ZlWKmSg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kwUCKjmSRow=;GXfTPl9KFQxzuxjHbnw0svEf0G3
+ Uctcq9Kr/ho6Y0LyjZNPPDYlzYjtlry3asr8W82jx14bpGu3jCx2WlCJNwLO0/RybxYvHtqyt
+ 0eJR2xvpk1mD3BfD6ES4G4nPghEA0Xe0VmyS/bOP3h7e5ccgwFG6rh5+NcRay3ifHOEpc2dJq
+ 3lz97Wz4Jwb+bX9qUxV2p21EKo0fk/MGTTw+ic/kF7yL3Hj0qMX55emMFpldoG2w1wb3XZSas
+ NTbXmQfGKosykNVgoNLaRCy92S00vVSewSAIGc7NLaQksiPebe2x0I0CrEBOSyFKCiJ1lRKHs
+ sXoJDShFfVErAk+ftvVPr/5f+uwSALx5Rn4ga/tYXitIuOicPsv9lctt2RJvUUeu7CopQY/J7
+ x3Gm3cmwjHVs4GpfTV5F3yUxpiX6gHTwl420nPg98AEQKnlw+9G56/eEv/UOYcHYRq3Plq8xo
+ 3BzcllAiZYFg/2VEUN85RXJ8nvHYIV6O2UPR0dIeVS97RQfqr5ZDQ58q/KjOl2l2TTgvLYDwo
+ 9z08q7kvWwjdKsZp7dfTFcdDRsL54w4z7bFZ9Pri6T9YrKUSbIdKGaElp2z7CW+1e4YP0L3Zz
+ RkpV3P0IioN2RRARyS9Q4KgwspVFg+nS7lYw/QAgc2hYLa4ve7+kGrWH+XeYK99OXePLIThWj
+ oIhQy4AkUaIfiAw2vIr5HWObE/R3WDhulqPh2xWizhETqAPkKZJbRPr6v/yopUUdtUnQB9Kwg
+ 3id6Oi229ubAiXjr8QtfEw3lsksciZSnl8UuBNhEEOYXyXsNd/B84HnV1Z6/QUqaoKJRztkHQ
+ Al0RJc+9fpFxCgs5ckOfnE1w==
 
-On Wed, Sep 11, 2024 at 12:41:15PM +0100, Mark Brown wrote:
-> On Wed, Sep 11, 2024 at 07:36:33PM +0800, Qianqiang Liu wrote:
-> > On Wed, Sep 11, 2024 at 11:52:58AM +0100, Mark Brown wrote:
-> > > On Wed, Sep 11, 2024 at 08:15:17AM +0800, Qianqiang Liu wrote:
-> 
-> > > >  	spin_lock_irqsave(&afe_priv->afe_ctrl_lock, flags);
-> 
-> > > > +	if (!i2s_data) {
-> > > > +		spin_unlock_irqrestore(&afe_priv->afe_ctrl_lock, flags);
-> > > > +		return;
-> > > > +	}
-> 
-> > > Why would we look up i2s_data without the lock, take the lock, then
-> > > check if we actually found it?  That doesn't seem right.
-> 
-> > Just check the "i2s_data" is NULL or not.
-> 
-> That doesn't address my question at all.
+=E2=80=A6
+> +++ b/drivers/accel/rocket/rocket_job.h
+> @@ -0,0 +1,49 @@
+=E2=80=A6
+> +#ifndef __ROCKET_JOB_H__
+> +#define __ROCKET_JOB_H__
+=E2=80=A6
 
-How about this new patch:
+I suggest to omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
-diff --git a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-index 3482d8f8b4e7..11b9a5bc7163 100644
---- a/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-+++ b/sound/soc/mediatek/mt8365/mt8365-dai-i2s.c
-@@ -465,13 +465,16 @@ void mt8365_afe_set_i2s_out_enable(struct mtk_base_afe *afe, bool enable)
- 	int i;
- 	unsigned long flags;
- 	struct mt8365_afe_private *afe_priv = afe->platform_priv;
--	struct mtk_afe_i2s_priv *i2s_data;
-+	struct mtk_afe_i2s_priv *i2s_data = NULL;
- 
- 	for (i = 0; i < DAI_I2S_NUM; i++) {
- 		if (mt8365_i2s_priv[i].adda_link)
- 			i2s_data = afe_priv->dai_priv[mt8365_i2s_priv[i].id];
- 	}
- 
-+	if (!i2s_data)
-+		return;
-+
- 	spin_lock_irqsave(&afe_priv->afe_ctrl_lock, flags);
- 
- 	if (enable) {
-
--- 
-Best,
-Qianqiang Liu
-
+Regards,
+Markus
 
