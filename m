@@ -1,123 +1,183 @@
-Return-Path: <linux-kernel+bounces-325376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6310C9758D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:56:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360669758D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDFABB26FC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE7B1C22F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A5C1B142E;
-	Wed, 11 Sep 2024 16:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD061B1D60;
+	Wed, 11 Sep 2024 16:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="AdYjW2vZ"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeCFVeoa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A90383B1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28CB383B1;
+	Wed, 11 Sep 2024 16:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726073749; cv=none; b=fe7wc1nzpqoBIIz6BSI98Q8cKu1gRVQURSoRp5gc7A2UNAGfhGVgNf4YGseEhKnwrkYH4i2MjRo2wuWrYBt9xAsUtCitW2tQGYwi9qUCmdwio480RHeW7vnKq1tA3QM3qSQRBy3TRKCmg+i7hwV7cC7BEACUiakqDOhg8BQCKkA=
+	t=1726073773; cv=none; b=aHR78Miiy2jRtq0rP1TYqXi+Y+gzdoNDPZlViyPGDLPZ2X0qcb0qnphQP29o3N5GUKU15GRfJQixOML2CBdDsArKVz5Z2Gg7CTkUjzFv6x1axGBCBgWZWpHCmTX9saVmCbmlNrl7GMaISOV1c6aK6AUA5bnEnwvoGhg/sSWS5V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726073749; c=relaxed/simple;
-	bh=upjVQvBHFLKvH6/nR76ihRbNNYVq/nTkGK5Go2fEf0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ruZ0Kk5Wqmemjik1PFgiuyelODwl9hHL0Q7j4ytQJyEhmyxV0CddGMVxY8QGnOFXj+mBRnHHoOX5G90IBk7p3FhjtDgPtHyK14/UXzMktJ26JjL44mPeCbxF2TL/sDDrxN2uWEspgiZlU/kQbPsM5p2LC3BAOfIumNuptGQBMGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=AdYjW2vZ; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e049185cfeso10225b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1726073747; x=1726678547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=71kMJfnqMi6GcSxoRHCfWVH1SbLPDeS4BbpEwTiguGY=;
-        b=AdYjW2vZWCf0pqhB7xAp3uoYYDpp0QQvnJbgrXRTmrNy71FrMrrCl0KgBEO35gyqyr
-         jY1+MNRolYjNF1lt96oNMLbuOGH+jc5PXgZqAFc1kDiXzTMP3dCw4rTTrdLlJi52wGBL
-         6evfGwVeA5TVlrtPGykCBKLYNURAt6oPAQ0Jg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726073747; x=1726678547;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=71kMJfnqMi6GcSxoRHCfWVH1SbLPDeS4BbpEwTiguGY=;
-        b=Z4xTTkRHHEs2yae/PnRUBmN8OP5dbWtMn+xp2UIATWS0jazdhfBy25wlp9b3iaUnPS
-         S47YF9nAAiYCLRgwir0KsfqJPeHVkjicAC7JKy0RXzK+5Vy/p1EdZWb+BeGl+ZkPSdc9
-         sXYHRSWCp0JG/kAVZMmtJFXbZp3/EA7vSL2GWZ5q35lrkfu7GmkWagMsyGxdII/tC8bF
-         epCfd5Shi4Iqzwz7BPUi0UrIq7v8dn8HyDw20/8EgY/6WGwIbDajJyLd7KNERVUBXqFk
-         YLotT3oWOU7MirmBsBBGu5Or3MoTXEkzFIP5i2USzs66wu0K473arkzOyy4FFlNocq6u
-         lcFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQXYoWTRnEclaxbaoKOzCYOlaAeyh0+9w3AR+feUfOL51cUxocFuFtRjRGJmcJedPZgN611OPx6ZKkgPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf4hl9ni5146DDfawz9hog0bC61YlVCS/MjKEwnBNiFsxXeUxZ
-	e1lgpqFIgolUb8XzNzTge6DLIPM/BpnpkL7EzooxFcx5GzhwgdVWmMETLljZLao=
-X-Google-Smtp-Source: AGHT+IGbyMLLP31vLuaB4sqWmb1kSxOxuK7mSa0lgQKxNiArEKoQm8OVlmJBkqsDSeFjMCa3+PJTAQ==
-X-Received: by 2002:a05:6830:270e:b0:711:3ed:88d0 with SMTP id 46e09a7af769-7110957144emr157996a34.30.1726073746602;
-        Wed, 11 Sep 2024 09:55:46 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:9198:79cc:8e64:e479? ([2603:8080:7400:36da:9198:79cc:8e64:e479])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9d5deb5sm2351506a34.38.2024.09.11.09.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 09:55:46 -0700 (PDT)
-Message-ID: <4f6db868-d1e8-42b5-92ad-ae22331f5bd1@digitalocean.com>
-Date: Wed, 11 Sep 2024 11:55:44 -0500
+	s=arc-20240116; t=1726073773; c=relaxed/simple;
+	bh=w5rs/PwnbnPH2WJmKYV5ErVySmPazQWq1znvo203RuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUmLwscyItJQk/AJ/H8Z0xJKWRb1Y+3WY8n6QR98drZ6GZvPOx9IDNiktoZf4VZ/942VLT9GxZFPngS81fWixc+CfrOUzU0EYle3QuBELyt3kyceXOUtEG86GQvAaLmLiRK1ik/BLRXxliEu3pQR0tpfNoE2KaAbWGFL0kY1QLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeCFVeoa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51077C4CEC0;
+	Wed, 11 Sep 2024 16:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726073772;
+	bh=w5rs/PwnbnPH2WJmKYV5ErVySmPazQWq1znvo203RuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EeCFVeoaqIsPDBQE0cuwny/rnaq2ePK5Qk/s92YTROQQkNHM3nIIgPkWFjDz3zOFN
+	 +kfwYV41jho7WPj91L7xWWcJyQdU/33R/YufgZn0ub4Hu7LnArHcDvURjfwIncfBCG
+	 /tzYMkDsUzfLpyd13oJaQ64AjE6+O5BKxZTtXvRBONR/bEqqk/FdUmRQvAQ/dH8u+o
+	 6FrP/IHp4X4CMlqT++SutuJkcb0Mj8j9p/9b4sZh6me2iEqDtaznp80ghjoBSRuZQo
+	 zLHFq2vmhlLj2vg5gtLKmeqflGz+1t5yRTINirAxAuKjXQ3+DlENvGm1zwavw1RJiC
+	 GtvjUhjQsy1uQ==
+Date: Wed, 11 Sep 2024 11:56:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>
+Subject: Re: [PATCH v2 -next 01/11] dt-bindings: interrupt-controller: Add
+ bcm2712 MSI-X DT bindings
+Message-ID: <20240911165611.GA897131-robh@kernel.org>
+References: <20240910151845.17308-1-svarbanov@suse.de>
+ <20240910151845.17308-2-svarbanov@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Properly initialize speed/duplex and remove vDPA
- config updates
-To: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, dtatulea@nvidia.com,
- shannon.nelson@amd.com, sashal@kernel.org, alvaro.karsz@solid-run.com,
- christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com, bilbao@vt.edu,
- xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com, eperezma@redhat.com,
- cratiu@nvidia.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
- <20240910022843-mutt-send-email-mst@kernel.org>
- <CACGkMEscQWywn67yN7fAaRdWkOZV80RryCvyf_02RDWjrKZMwA@mail.gmail.com>
-Content-Language: en-US
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-In-Reply-To: <CACGkMEscQWywn67yN7fAaRdWkOZV80RryCvyf_02RDWjrKZMwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910151845.17308-2-svarbanov@suse.de>
 
-Hello,
+On Tue, Sep 10, 2024 at 06:18:35PM +0300, Stanimir Varbanov wrote:
+> Adds DT bindings for bcm2712 MSI-X interrupt peripheral controller.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+>  .../brcm,bcm2712-msix.yaml                    | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> new file mode 100644
+> index 000000000000..2b53dfa7c25e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2712-msix.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom bcm2712 MSI-X Interrupt Peripheral support
+> +
+> +maintainers:
+> +  - Stanimir Varbanov <svarbanov@suse.de>
+> +
+> +description: >
 
-On 9/10/24 10:42 PM, Jason Wang wrote:
-> On Tue, Sep 10, 2024 at 2:29 PM Michael S. Tsirkin <mst@redhat.com> wrote:
->> On Wed, Sep 04, 2024 at 10:11:13AM -0500, Carlos Bilbao wrote:
->>> From: Carlos Bilbao <cbilbao@digitalocean.com>
->>>
->>> Initialize speed and duplex for virtio_net_config to UNKNOWN (mlx5_vdpa
->>> vDPA devices currently do not support VIRTIO_NET_F_SPEED_DUPLEX). Remove
->>> ioctl VHOST_VDPA_SET_CONFIG and its related logic as it is not supported;
->>> see: https://docs.oasis-open.org/virtio/virtio/v1.3/virtio-v1.3.html
->>>
->>> Carlos:
->>>   vdpa/mlx5: Set speed and duplex of vDPA devices to UNKNOWN
->>>   vdpa: Remove ioctl VHOST_VDPA_SET_CONFIG per spec compliance
->> This will need a rebase. Will apply once you post one.
->> Thanks!
-> Note that I think patch 2 is probably not right as we indeed allow
-> config write for some device.
+Don't need '>' here.
 
+> +  This interrupt controller is used to provide interrupt vectors to the
+> +  generic interrupt controller (GIC) on bcm2712. It will be used as
+> +  external MSI-X controller for PCIe root complex.
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: brcm,bcm2712-mip
+> +
+> +  reg:
+> +    items:
+> +      - description: base registers address
+> +      - description: pcie message address
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
 
-I'll rebase patch 1 and drop patch 2.
+What goes in these cells?
 
+But really, what interrupts does an MSI controller handle? Or are we 
+just putting "interrupt-controller" in here so that kernel handles this 
+with IRQCHIP_DECLARE()?
 
->
-> Thanks
->
+> +
+> +  msi-controller: true
 
-Thanks, Carlos
+Drop and use 'unevaluatedProperties'.
 
+> +
+> +  "#msi-cells":
+> +    enum: [0]
+
+const: 0
+
+> +
+> +  msi-ranges: true
+
+Drop.
+
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - msi-controller
+> +  - msi-ranges
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    axi {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        msi-controller@1000130000 {
+> +            compatible = "brcm,bcm2712-mip";
+> +            reg = <0x10 0x00130000 0x00 0xc0>,
+> +                  <0xff 0xfffff000 0x00 0x1000>;
+> +            msi-controller;
+> +            #msi-cells = <0>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +            msi-ranges = <&gicv2 GIC_SPI 128 IRQ_TYPE_EDGE_RISING 64>;
+> +        };
+> +    };
+> -- 
+> 2.35.3
+> 
 
