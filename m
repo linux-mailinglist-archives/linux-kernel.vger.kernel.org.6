@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-324874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB089751EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EACFD9751F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0953728247F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8EF6283075
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AE91885B4;
-	Wed, 11 Sep 2024 12:22:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D47176FD2
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6EB188A05;
+	Wed, 11 Sep 2024 12:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="SzJcLeoD"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA57142E9D;
+	Wed, 11 Sep 2024 12:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057347; cv=none; b=M/3k4PWLeEr2iJLAn8LtJ0i85bFb4/Dxkm0hu6wBIQqvWQe17KiC0bU8caMOL0MAJEY9WhqmJI9ddLGjFz1UXhFEzk1kMKDCDbckMDsjfixH/1T0c8GReS5ywjmBPZ9oO97BtywjGSOac4I8aeMBi7iWPhneDea0YfjFkWMVZow=
+	t=1726057414; cv=none; b=SVFEHQU4gOj8w6ORyghvOFsj9vrpsQiblS943jHsjtwQJzGVZEsAm24KmYxKDowa1Ys3WpPOmyMNqoAPScWTwBMiH0j4ul1F+U0cp0ZNWJpd1+jQcmQKaaMNqGs2g1DbteHV+AWG7z1oj5Xj1sl6TdhUNj+FmI9xm3D3WBlrunA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057347; c=relaxed/simple;
-	bh=v42Sj9D6OaSFuhsPueUxpnxKAyovlkCpVn2GHtI5AkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M8QVgjTdL2xxmpeBiTRuPEtYywtCaoSk3RysBYDDxewIm5mTo+2gCNfSMcUMqXCIZvrqJgnNlb+ijgnO317yyh45M53oD2nALMZ9CAaU2aSdIhVyoQS1yp9r97qxVOiqnqRzVmItSVSoMQbdAenFfbF1fKkIQr3BzKWLgVykmXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3122F1007;
-	Wed, 11 Sep 2024 05:22:55 -0700 (PDT)
-Received: from [10.162.40.31] (e116581.arm.com [10.162.40.31])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ABBB3F66E;
-	Wed, 11 Sep 2024 05:22:16 -0700 (PDT)
-Message-ID: <a068f1b4-8167-4f1d-ac60-9cb9de19a80b@arm.com>
-Date: Wed, 11 Sep 2024 17:52:13 +0530
+	s=arc-20240116; t=1726057414; c=relaxed/simple;
+	bh=DqLXaji5lH2QLr1w3bBVF9EeaBQoVRIIV8XgFCrhhSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYoV0jWbxCTkm9qrsBY9keWUu4P2+pYBPOw/p0FJHaos/OIF9CTQH/8xxzVf0zVncfACQk/8xFIXLv4+lsWlDZFBpDYJiUAZMw20Xla23cLdEo4VdOdYJ3AWykYVZJZryt34sJQvfmY9jylg2vuzhqEov5B4Rzx9rqpXSwnoMnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=SzJcLeoD; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1726057373; x=1726662173; i=christian@heusel.eu;
+	bh=RbCZJv4mBL/FdxnaNMh7aE8UT2XZ+9DcRN+xckpQNFA=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SzJcLeoDouLb30yUDu1WGSZQZ2qUMLw7dwbpnk3BoisqnIUfsoKkkXXh1Aq2Sqe+
+	 huWQBCv8SJSDUvZbiqzCx46S5uPyfgfZjEXSmh8Jcu+uUOuB+PQREHh21SHff23L9
+	 hPPt2JTD5K7oHd/+FClidkm8P04MhAGihenIgHtWFcf3P+g50V7HjruLJEBa6i50s
+	 d7bN+0e+g//hJCfFoxAkqn071AqoH0WfUrUpaPenhzqiNE5oY2MiBY1SlRPTg2AsZ
+	 tCamF6hFu094X+yaLPW5KcdBTyeTJuwmf62h1X0SwUtegLTbidtqxm4zI7VcvnCCR
+	 ub9cDVZYWJWpq1ctXw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue109
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1N63NW-1rvKyb2gDw-016eUN; Wed, 11
+ Sep 2024 14:22:53 +0200
+Date: Wed, 11 Sep 2024 14:22:51 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/375] 6.10.10-rc1 review
+Message-ID: <3b946649-8204-487f-a173-968288701eb5@heusel.eu>
+References: <20240910092622.245959861@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: Abstract THP allocation
-To: Kefeng Wang <wangkefeng.wang@huawei.com>, akpm@linux-foundation.org,
- david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com, ziy@nvidia.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240911065600.1002644-1-dev.jain@arm.com>
- <20240911065600.1002644-2-dev.jain@arm.com>
- <170988b0-db8a-4612-a70c-b20ea2d4c020@huawei.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <170988b0-db8a-4612-a70c-b20ea2d4c020@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xj3xznqvjwvwf5ri"
+Content-Disposition: inline
+In-Reply-To: <20240910092622.245959861@linuxfoundation.org>
+X-Provags-ID: V03:K1:pwWXrMZdMBs8R7+3b19VMLK4MTTYGRQ6OAp/y/uiyC4MP6CRHJK
+ M9HgXC6fSe1G1Z26g9QSf5ovz/K/eRIsX4cmzg69dbkYO9lcC6YSQf0GBb8JcV4mQsMca58
+ A/jeEmgPk/Y0et+Xg8BA/8hVXqJ6yF17oYdCkilzF//Ia9yqp9+ZqhTk8LT8V8Z09wvwPzl
+ EhwljWsxlcW8tZO0UOlog==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qdiBTps56VA=;WwdF3rOZGzIVencPwdm+ae/8St3
+ rQx4D0SZsv0M6hBYUi+pD/7QFCFgZAVCLLl6HECcJHmAuetXdVR1qKeS+z4Wrl44P2BqiHDbE
+ ibCkxR8xI/cAXQYi8FXWE0r3+1OTrm3zfdO1b21VtD7S/uodoRPcQPfRp1S26Y9VWpb+FFw0T
+ F3TUmGtuu8Bd2zbRcTeKA3N9F705dMOWVL7Mdt6s+kMyxM9YXvdDz9eEr3Nwqdndw4+t+gfxR
+ KTJOHhYxAGLg4H0q+gnrRzp12Ly7wF8n8GjiHLrkLRXHt0EW9jVKIQsQ1X4k8Ea/BrtARrHaG
+ VGYBoD32F9/44GtodwmdlgA7q3s0+tIlBitSeWx+j2/kaMRxOANqwDWmBRAgRCqUUjiEb+r+3
+ XjXsFu01uFjR0+NJQuwNDTP5gHrN0JWGgoLYa1u0EINLk5R0PfTbkmktazMwAwM/X/m/+RGRc
+ 5PN82i8i4XnkVbXBpdBgfhqEJ2yhos9kmTqlRMz9pg2p3nWXIH4WeAC2FR+U8B8QTejc6nmoA
+ 6YI3U9gc6IsH1C5eGPf7uxtkaDQ+V9/4KgFu5vNyVCdPV3G0lzT0TuwWhbFUW0UPcyn0J/16k
+ Ka1+lfHXDSTTgOORiEPT31P0gXoV25XowLwJGX61c834wkYSB5X+j9r7wBV/r8BSkMUiAhFBA
+ er0dG192fL6f0T3HGv8vC4X9/zwC7OnVyYMP79ShKpTRm5EPInsr8+0zA4NZ9YAtNMRy559v5
+ O3mxSzBTqlPrqnvyXrSfwocpDowX3hxoQ==
 
 
-On 9/11/24 16:22, Kefeng Wang wrote:
->
->
-> On 2024/9/11 14:55, Dev Jain wrote:
->> In preparation for the second patch, abstract away the THP allocation
->> logic present in the create_huge_pmd() path, which corresponds to the
->> faulting case when no page is present.
->>
->> There should be no functional change as a result of applying
->> this patch.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
->>   1 file changed, 67 insertions(+), 43 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 67c86a5d64a6..b96a1ff2bf40 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -943,47 +943,88 @@ unsigned long thp_get_unmapped_area(struct file 
->> *filp, unsigned long addr,
->>   }
->>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
->>   -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
->> -            struct page *page, gfp_t gfp)
->> +static struct folio *pmd_thp_fault_alloc(gfp_t gfp, struct 
->> vm_area_struct *vma,
->> +                     unsigned long haddr, unsigned long addr)
->>   {
->> -    struct vm_area_struct *vma = vmf->vma;
->> -    struct folio *folio = page_folio(page);
->> -    pgtable_t pgtable;
->> -    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
->> -    vm_fault_t ret = 0;
->> +    const int order = HPAGE_PMD_ORDER;
->
-> Maybe move vma_thp_gfp_mask() into this function too.
+--xj3xznqvjwvwf5ri
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's better, thanks.
->
->> +    struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, 
->> true);
->>   -    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->> +    if (unlikely(!folio)) {
->> +        count_vm_event(THP_FAULT_FALLBACK);
->> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->> +        goto out;
->> +    }
->>   +    VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
->>       if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
->>           folio_put(folio);
->>           count_vm_event(THP_FAULT_FALLBACK);
->>           count_vm_event(THP_FAULT_FALLBACK_CHARGE);
->> -        count_mthp_stat(HPAGE_PMD_ORDER, 
->> MTHP_STAT_ANON_FAULT_FALLBACK);
->> -        count_mthp_stat(HPAGE_PMD_ORDER, 
->> MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->> -        return VM_FAULT_FALLBACK;
->> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
->> +        count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->> +        goto out;
->
-> We need to return NULL here as folio not set to null,
+On 24/09/10 11:26AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.10 release.
+> There are 375 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
+> Anything received after that time might be too late.
 
-My bad for assuming that folio_put() also sets folio to NULL. I read
-through the code path for that and I guess it does not. Thanks.
->
->>       }
->>       folio_throttle_swaprate(folio, gfp);
->>   -    pgtable = pte_alloc_one(vma->vm_mm);
->> -    if (unlikely(!pgtable)) {
->> -        ret = VM_FAULT_OOM;
->> -        goto release;
->> -    }
->> -
->> -    folio_zero_user(folio, vmf->address);
->> +    folio_zero_user(folio, addr);
->>       /*
->>        * The memory barrier inside __folio_mark_uptodate makes sure that
->>        * folio_zero_user writes become visible before the set_pmd_at()
->>        * write.
->>        */
->>       __folio_mark_uptodate(folio);
->> +out:
->> +    return folio;
->> +}
->> +
+Tested-by: Christian Heusel <christian@heusel.eu>
+
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
+Steam Deck (LCD varian).
+
+--xj3xznqvjwvwf5ri
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmbhi5sACgkQwEfU8yi1
+JYXI8Q//W/7liD0ogMri/rAvtFFbKCn7QDvcrh4woZm6IbHnQjnhixVbn2uenOGg
+DAqMpAy2VTI6nTOhELAHsnm68V0gwHbGUXqq8Z8+spYJOq55SmhFqlcEVGwQXs/o
+WROGpfGsltMVILxk2cNlTC3zAWIvf6IcHI1XSih1AVJxXXlZHM5HNVJcwghXt5jg
+h9CSksSOB21jWVlbFvRGzPGC0byaA4f9187D3GLy85XUTNB3TroQGcwatrhaPPBD
+S+GBIYsqtnvgOH9KEm7xrY/nQWLXgFuzq5GS7S+i7br0QwOuw337PUCKSi24TwE/
+Evin9Fj0vgRsvFnCBTc6D4wGUZA6QnZpRhSkAEuqWIFc6XBqtn3KG8pQhgXJvYVu
+Tyh4rdZnoy3xnrzqZT4vtNcuVlr4Hva9QnwPUAOhO3JXah/JitD8HXVwrH4DxGii
+w8tkdLI5tUV1GuiiFn4bdgEXNtKHjwiyt4i3rvNLfOtTBnlQbyMkKwd2yHrCzfMs
+JNQc5FAk+pVKhUnOeSybY0BkD9ebSeb5fKfK9Mxd9SLGT1TbnbfqyyxAZGMCy1Vu
+iBHyOCfBAihNVGrrReyUP9qdU5FYmE6UCfsJlzWyCrJQkBaI+fkMyDaji6ALKUk+
+zWCIUZNmgzF8cMSCkhVDyY7KN30+2yunhJsqQHDPPA6EPqMt/88=
+=rjMj
+-----END PGP SIGNATURE-----
+
+--xj3xznqvjwvwf5ri--
 
