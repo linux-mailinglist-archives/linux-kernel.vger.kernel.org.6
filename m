@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-325537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A0A975AFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF60975AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 21:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB791C22805
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61241F222F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C581BC078;
-	Wed, 11 Sep 2024 19:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE51B1BA292;
+	Wed, 11 Sep 2024 19:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KDJGtqkh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="oPUhtJgW"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97931BAEFF
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D9658AC4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726083815; cv=none; b=c+X+Og3twpQuWpkWTYln7hI025Gez/mUW3QczcBTzYNXVft/R7Df956EWDLyHylVwgzHY6HgTE0eOklanzFb2RXrYxl3/3fUO9hm/t+dZaWBnx1RuHp2AdQ6ffwwcjraxZrj3EaqZqqK+L+d/Ii/tgAb9DlwnM7onejv4f5TybM=
+	t=1726083895; cv=none; b=BiA69MI5ElUrnZ/O2HA5hX0mUl41w/Nlhkntla/Vw/aw8oY1vvwQQBUFa5oUbAbT0WZNblcgH21IaEPZsnaHvvYjH3BuH3nAsPRkYvTEYnLwtoGonbeHyEDvbEHGgsRg+PuRX3xJnk9CcDgYTkawIXqublNYGPSyRRvVEGSShiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726083815; c=relaxed/simple;
-	bh=ePfUocyP7grZ5CDYVXoBDNFKwP41bxMPDU//9kt//Gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hFKXG9kYWPhl1A4jqFcqf76st+MI8u1fv/gDRNsChLhQVK6Qwg6ZsiGzI7SeiaNS7zM3KF0LeQom6fjQ62t23CkDNiOSl15n/nvEBnmRsy3pRyKPuIYLcnaDHGhkeH38GavUVPWji11Bh0jBVpekKz6/LNKLrYcPfXUhGxutpYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KDJGtqkh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726083813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/RZ3edwXcia6MZkZjPsBRO16l+GEAsyaTjIaabh2Mx0=;
-	b=KDJGtqkhC7JlK0uQYHqAywnovr4teJylXn3OW4Pgj2TMQ0Q4hvvnmOsPnsAtwi7WJYayrQ
-	o4wHJ0rWldd4eD71CGSTnAwwO5JIHvdCqZJD4Tlf+4/KjzTVOnEcMXD65QSZCyxb4BF/by
-	LXMVljreCpOYTFOLisbr9ktNbTizNss=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-Vl4PSZm0M46c4jBtI8fjnw-1; Wed,
- 11 Sep 2024 15:43:29 -0400
-X-MC-Unique: Vl4PSZm0M46c4jBtI8fjnw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 861721956089;
-	Wed, 11 Sep 2024 19:43:26 +0000 (UTC)
-Received: from bcodding.csb.redhat.com (unknown [10.22.48.7])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 16B8B1956086;
-	Wed, 11 Sep 2024 19:43:21 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Neil Brown <neilb@suse.de>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Ahring Oder Aring <aahringo@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev
-Subject: [PATCH v1 4/4] exportfs: Remove EXPORT_OP_ASYNC_LOCK
-Date: Wed, 11 Sep 2024 15:43:00 -0400
-Message-ID: <0a114db814fec3086f937ae3d44a086f13b8de26.1726083391.git.bcodding@redhat.com>
-In-Reply-To: <cover.1726083391.git.bcodding@redhat.com>
-References: <cover.1726083391.git.bcodding@redhat.com>
+	s=arc-20240116; t=1726083895; c=relaxed/simple;
+	bh=iX2/6uqDcu3Mpbov1GZGhyrk+ldXJe7rjOmo7wN9xJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rurKlh5r7or3BbJi3jdvDOD7zqfvqeB0qugJovtl4H6Vw/duC6Unu8Q/BnDXEBSV5jXw0xi4xqS+v/xqIHqmxcZhFbrPU5Ki966wlcYE6BVN43bYYxuy3yqVrpEP8zSlFzFhcmXwm8JB5GpLdQG4qxHSBYc0lvMyaLbcRvjxZgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=oPUhtJgW; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-535dc4ec181so148438e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 12:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726083891; x=1726688691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iX2/6uqDcu3Mpbov1GZGhyrk+ldXJe7rjOmo7wN9xJE=;
+        b=oPUhtJgW72DFsvcxfq6qTOPY0jHHEWS8f4ks64qhgoJ8lMlHAVswyCnKjUn4c/igfT
+         5feHCXzYY/6BeLRQdevNMao+CQQZ/bEsKKZomZRSEQB01NWSIbQNvDaHU3zLMg7M5yzp
+         QhKj0PST/jScP0IZQl/HnEKsx//2x/vbzjM+dUIAr4JFzn4QkQjKpVdjxXLxai/2Dqu6
+         So1kabDRZIUUb8hCRYccTu5ORC7IIdSrzd2YlGquSHk4UhuWqDJZRRYUibNjwUIiTAWD
+         vk0zh6Zv0LdPtEFEWuWpvo46o1hcaT932+rBGyiXhGqDD0L3vXr0zVa8jykQjYRxVmaV
+         8Mqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726083891; x=1726688691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iX2/6uqDcu3Mpbov1GZGhyrk+ldXJe7rjOmo7wN9xJE=;
+        b=hALPIbAEtfR/dhljcmyiI6+vkN7bS6xGWUh1V3yj1pusEK7ciLIQerMb9H6qIbrCiw
+         vC+52F4zbctWWqMq+x+mEeNJF7Uqj4nTL0p4jz1cbozCj2Pukn24YJdJbtivbM+1dcWT
+         e6MJIbbJNeL8Ijhv+VGnd2N0i4m9cB8uF/RYcFj7SpQl6920NrfVG//RQnRSU08U1BJm
+         l4D5eWRDuVmrEBkWRPju/3nA93TvrjhWBKiA4/ePrQ8KTIYRMUPCFQQ879A6bO2HLMGb
+         XtvnLR25zc/kkEJQpdkgKf5rN6PqZTDXGQD029dPbKASTi2uXiJDKcKc8Vs/rvF9WPiB
+         7/Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdzNDvb2VrrElwa0Xlh49Ee8VDibBUH0W4XaMsEVOIanNprmlqVOf5WfQ3HJq2aso3XChzBHKij+w/HuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA0R30AC8B1Hg3MF4yJ7qbUIgA4qJKM8DgFQpE1qDqO4tLMxX/
+	8iXxhWBxOL6yLlIDxrDTH9iRGspSLj3XUylTR2/JRxYuIwqdisWQwjJn0Ge8RgrVCvChWYUOHyU
+	CwvBWxXU3IoG5bYxy7uZqvVV3bN0MsGE0I7EDGQ==
+X-Google-Smtp-Source: AGHT+IHJe7IBf1mnGcxNjZMLDWuTxex6Xp388Wa37v4XPXlkFAFCtyeaIqHtO6tuKDzt+nOMAZu2BIytbGtgjmmufEg=
+X-Received: by 2002:a05:6512:224f:b0:52f:c13f:23d2 with SMTP id
+ 2adb3069b0e04-53678fbf051mr343572e87.25.1726083890589; Wed, 11 Sep 2024
+ 12:44:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org>
+ <20240909-tzmem-null-ptr-v1-2-96526c421bac@linaro.org> <20240909131842193-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com>
+ <CAMRc=MefTjz=h6jzE5vE-yaHnyM601Ts8XYZqEYnOsidfQEavA@mail.gmail.com> <8d9fde52-2582-499f-a971-e9aa46b23fa2@gmail.com>
+In-Reply-To: <8d9fde52-2582-499f-a971-e9aa46b23fa2@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Sep 2024 21:44:39 +0200
+Message-ID: <CAMRc=Mf110U72BtFT7ewQhB_+-Da1NNZ0kNNQOA2dx9QQ2-iHg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] firmware: qcom: scm: fall back to kcalloc() for no
+ SCM device bound
+To: Rudraksha Gupta <guptarud@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Andrew Halaney <ahalaney@redhat.com>, 
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that GFS2 and OCFS2 are signalling async ->lock() support with
-FOP_ASYNC_LOCK and checks for support are converted, we can remove
-EXPORT_OP_ASYNC_LOCK.
+On Wed, Sep 11, 2024 at 8:01=E2=80=AFPM Rudraksha Gupta <guptarud@gmail.com=
+> wrote:
+>
+> > I'm wondering about how to approach an eventual refactoring and I'm
+> > thinking that for platforms that are known to have DTs out there
+> > without the node, we could exceptionally instantiate the SCM device
+> > when the module is loaded? And then modify the driver to require the
+> > provider to have an actual struct device attached.
+>
+>
+> I'm happy to help test these changes if you'd like!
+>
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
----
- Documentation/filesystems/nfs/exporting.rst |  7 -------
- fs/gfs2/export.c                            |  1 -
- fs/ocfs2/export.c                           |  1 -
- include/linux/exportfs.h                    | 13 -------------
- 4 files changed, 22 deletions(-)
+Thanks! In any case, this series should still be merged to not break
+existing users (even if the kcalloc() fallback will be removed once we
+do the refactoring).
 
-diff --git a/Documentation/filesystems/nfs/exporting.rst b/Documentation/filesystems/nfs/exporting.rst
-index f04ce1215a03..de64d2d002a2 100644
---- a/Documentation/filesystems/nfs/exporting.rst
-+++ b/Documentation/filesystems/nfs/exporting.rst
-@@ -238,10 +238,3 @@ following flags are defined:
-     all of an inode's dirty data on last close. Exports that behave this
-     way should set EXPORT_OP_FLUSH_ON_CLOSE so that NFSD knows to skip
-     waiting for writeback when closing such files.
--
--  EXPORT_OP_ASYNC_LOCK - Indicates a capable filesystem to do async lock
--    requests from lockd. Only set EXPORT_OP_ASYNC_LOCK if the filesystem has
--    it's own ->lock() functionality as core posix_lock_file() implementation
--    has no async lock request handling yet. For more information about how to
--    indicate an async lock request from a ->lock() file_operations struct, see
--    fs/locks.c and comment for the function vfs_lock_file().
-diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
-index d418d8b5367f..3334c394ce9c 100644
---- a/fs/gfs2/export.c
-+++ b/fs/gfs2/export.c
-@@ -190,6 +190,5 @@ const struct export_operations gfs2_export_ops = {
- 	.fh_to_parent = gfs2_fh_to_parent,
- 	.get_name = gfs2_get_name,
- 	.get_parent = gfs2_get_parent,
--	.flags = EXPORT_OP_ASYNC_LOCK,
- };
- 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 96b684763b39..b95724b767e1 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -280,5 +280,4 @@ const struct export_operations ocfs2_export_ops = {
- 	.fh_to_dentry	= ocfs2_fh_to_dentry,
- 	.fh_to_parent	= ocfs2_fh_to_parent,
- 	.get_parent	= ocfs2_get_parent,
--	.flags		= EXPORT_OP_ASYNC_LOCK,
- };
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index 893a1d21dc1c..1ab165c2939f 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -250,19 +250,6 @@ struct export_operations {
- 	unsigned long	flags;
- };
- 
--/**
-- * exportfs_lock_op_is_async() - export op supports async lock operation
-- * @export_ops:	the nfs export operations to check
-- *
-- * Returns true if the nfs export_operations structure has
-- * EXPORT_OP_ASYNC_LOCK in their flags set
-- */
--static inline bool
--exportfs_lock_op_is_async(const struct export_operations *export_ops)
--{
--	return export_ops->flags & EXPORT_OP_ASYNC_LOCK;
--}
--
- extern int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid,
- 				    int *max_len, struct inode *parent,
- 				    int flags);
--- 
-2.44.0
-
+Bart
 
