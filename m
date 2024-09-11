@@ -1,258 +1,102 @@
-Return-Path: <linux-kernel+bounces-325352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EF697584E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA68C975855
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB071C2342F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087AB1C25D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C3E1AED24;
-	Wed, 11 Sep 2024 16:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2361AE87D;
+	Wed, 11 Sep 2024 16:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JsBGly/s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHSRHY9i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB51AB6C7
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71181AB6C7;
+	Wed, 11 Sep 2024 16:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726071901; cv=none; b=pojxdPMiCtsFeG1SdQgYGUwPBsp6zQAE1tfIJBy1h+2kdpJ8uBc9fe83hjRjnAb5MJdf3tHisxExa4Vb9lvbhpt8Okd/D2OuaEBPDDQm4S86sQ71ZaSSh09Wd2R62wMjZohSfIguEPiTBUJdzDuWIT4QUhzmtcfPrSFOMB/vY9o=
+	t=1726071908; cv=none; b=FQMunuUWEM+LO/ZdLqAmoHaqsjZQb9/MC4N9qN8c5nu2fmaEnOGfsQerWDdJsfjYpQtyF5tnQvdhOxLidUTHQV6BK04iOrBBNtQxT3o/y00rzotnJqxJvzvnYLYA1c0k9wtxs7H66O3IkWP7sN9on6GbY92+kcQ6L8D4nQuQpGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726071901; c=relaxed/simple;
-	bh=1bcQW7c1jxdlfBunQ6YWyGYMwuwT68C1Dp4B2rFeirs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tz0Y+p+cUNPgIIkgiPrV/faRV54Bd2EmwnOSl63CpSQn9eWrOzFKebsNt5n0HkLFFzehxlLeZ2yeMzgrElmS27+YVEbQZ6WTW7ehmsuwCFyUeG8EYDABk0B4tBAmSc2/2aAkebwrV5wSMs+p5nnVNICNiCOCQsgWGlpxDicrhdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JsBGly/s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726071898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NPuIsJ7LH/NryQa0KHKubTcC5NBQjBwl3HztcdDab5w=;
-	b=JsBGly/sa/jNAApO/gyHOID2EsyBEo6MSf/zJbRnJpyjuBUYdRWsyKvF6SVERhzkRHIf4C
-	Ai3L9o2p5+3fbQBcAXAkwZU47pgrn6d52oiMVsuoFxgbDKukBj3q/aEI45E9vg7miPUT99
-	/c4n1rbq9rFzeYtSNWuAuogCE+KsSpw=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-J0-qKdqTPyqMvSmdem3vqg-1; Wed, 11 Sep 2024 12:24:57 -0400
-X-MC-Unique: J0-qKdqTPyqMvSmdem3vqg-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-535681e6f8eso6528191e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:24:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726071896; x=1726676696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NPuIsJ7LH/NryQa0KHKubTcC5NBQjBwl3HztcdDab5w=;
-        b=EysfadH2GAEiu3SvF+nbiHOlsbTeccQCvUw9wrz1Vy1MmkKxkKYcLulshs8eHbV3TS
-         mHn2jg/F2AOHebHAKfcicS4M3SbD6kyjnGkzBBlZdCQDUTdo6sHNHHX+9PDC4GfsoXqN
-         so7lTx6IMEcX04z7j/us2TKRoSztIgLEK+5gu5ghff+Do6Baj4ZjHri7wcoA73jsSBFS
-         fLAwHMxr1i64rVvNwM1QfUjeBLNIbjhBbkUanMEytz32GOvzQ+m6WzdO4J+X+jjXuzMR
-         lDWsbhR0T7V2pwXTW//zjTaLinmNoJoxq2DM5uA+J2YNcC6GHJckWdM0jOBmI4hcKRlu
-         1dFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdNaLw56uc4BHefegOrcR8cL/c2hdq94nnUUW8qQoPzmdvZAXMUN+R/arD/HwVmNJbunPP4AWR1RdtlCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPu0IMFgezKPKz/IfkCqoS+QSgHd7CuC5Bx9WLfUrzISdFVU9z
-	af7TH9yRl+BCGVHsvGVUKCsE4aHqHTU3pF7DtbZLtQE9Q8iMkaeY/g0doZIrg+wLzn9lXfFBzQX
-	SpgexC7jmLgPy1TBrZVx99TuZFMVQ0fOaEQ1Jqzv9Z4ey8D/Gghe5j3E/zf0Ylw==
-X-Received: by 2002:a05:6512:1283:b0:52c:e0fb:92c0 with SMTP id 2adb3069b0e04-536587c8177mr12892282e87.34.1726071896004;
-        Wed, 11 Sep 2024 09:24:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHG/2rhUxgQSM96b6JP5Itt5QRcGCTl4PERNI00A/LttGPDuJaR7APim2eBySdgsSLLCiwQCw==
-X-Received: by 2002:a05:6512:1283:b0:52c:e0fb:92c0 with SMTP id 2adb3069b0e04-536587c8177mr12892232e87.34.1726071895341;
-        Wed, 11 Sep 2024 09:24:55 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d3597asm629355766b.186.2024.09.11.09.24.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 09:24:54 -0700 (PDT)
-Message-ID: <181dec64-5906-4cdd-bb29-40bc7c02d63e@redhat.com>
-Date: Wed, 11 Sep 2024 18:24:54 +0200
+	s=arc-20240116; t=1726071908; c=relaxed/simple;
+	bh=XWHADCr8omiqP2wVZEhuJvFyNvK2LLZ7pwzQDUatkpw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mfU1XOplimhWFoUN3dXeRvJvZMewfcBL7Bz2ygY4KeMWgHWuchnJsIg3Uaazfz0/7DmqKp3LKeizjIBDiiY0B+P0o2qZZQN3nGUMyPjidKmTWjPkzmy93m+P48Y91bDyi0R2NUaghPKlokhR/aHesowoy5liSTuAKumkLgoImC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHSRHY9i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35997C4CECC;
+	Wed, 11 Sep 2024 16:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726071908;
+	bh=XWHADCr8omiqP2wVZEhuJvFyNvK2LLZ7pwzQDUatkpw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RHSRHY9iV7Gz6JpCKm0cvhgC4Lv8KKCMsiPR/nDbrm8EPOaLET5UC+UKAO8MBs4bE
+	 INUDc6A6BTGDoYEBsHyBB71MsKa3Yh1I1+yABdSobrIX1LKsI0kksC3ynkvjJke451
+	 /0WdCFw1B+H7rMfG86t4aBtGaXsxzMJSI97LxmS68aar8nGPHyYCtnYmmisDmNXsrJ
+	 SpLId4VZTeW5JwHXJgWoEyrnH3u7K3o0ZQq44sJX18p6EVkWLdsY8NU7zvj3Bx/TiE
+	 p2aHuRH53bC9qyQAn2Rk+mCvnTsowK2DBr+cr9A9/OrrtiA8B57twdjx6gulDhiAMu
+	 44VLuOpMcsdCg==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, wenst@chromium.org, Wei Fang <wei.fang@nxp.com>
+Cc: aisheng.dong@nxp.com, linux-kernel@vger.kernel.org, imx@lists.linux.dev
+In-Reply-To: <20240911120338.526384-1-wei.fang@nxp.com>
+References: <20240911120338.526384-1-wei.fang@nxp.com>
+Subject: Re: [PATCH] regulator: core: fix the broken behavior of
+ regulator_dev_lookup()
+Message-Id: <172607190695.111510.14458343975352541206.b4-ty@kernel.org>
+Date: Wed, 11 Sep 2024 17:25:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix 6.11] minmax: reduce egregious min/max macro
- expansion
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Narron <richard@aaazen.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S . Miller"
- <davem@davemloft.net>, Arnd Bergmann <arnd@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-mm@kvack.org, stable@vger.kernel.org
-References: <20240911153457.1005227-1-lorenzo.stoakes@oracle.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240911153457.1005227-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Hi Lorenzo,
-
-On 9/11/24 5:34 PM, Lorenzo Stoakes wrote:
-> Avoid nested min()/max() which results in egregious macro expansion.
+On Wed, 11 Sep 2024 20:03:38 +0800, Wei Fang wrote:
+> The behavior of regulator_dev_lookup() for non-DT way has been broken
+> since the commit b8c325545714 ("regulator: Move OF-specific regulator
+> lookup code to of_regulator.c").
 > 
-> This issue was introduced by commit 867046cc7027 ("minmax: relax check to
-> allow comparison between unsigned arguments and signed constants") [2].
+> Before the commit, of_get_regulator() was used to get the regulator,
+> which returns NULL if the regulator is not found. So the regulator
+> will be looked up through regulator_lookup_by_name() if no matching
+> regulator is found in regulator_map_list.
 > 
-> Work has been done to address the issue of egregious min()/max() macro
-> expansion in commit 22f546873149 ("minmax: improve macro expansion and type
-> checking") and related, however it appears that some issues remain on more
-> tightly constrained systems.
-> 
-> Adjust a few known-bad cases of deeply nested macros to avoid doing so to
-> mitigate this. Porting the patch first proposed in [1] to Linus's tree.
-> 
-> Running an allmodconfig build using the methodology described in [2] we
-> observe a 35 MiB reduction in generated code.
-> 
-> The difference is much more significant prior to recent minmax fixes which
-> were not backported. As per [1] prior these the reduction is more like 200
-> MiB.
-> 
-> This resolves an issue with slackware 15.0 32-bit compilation as reported
-> by Richard Narron.
-> 
-> Presumably the min/max fixups would be difficult to backport, this patch
-> should be easier and fix's Richard's problem in 5.15.
-> 
-> [0]:https://lore.kernel.org/all/b97faef60ad24922b530241c5d7c933c@AcuMS.aculab.com/
-> [1]:https://lore.kernel.org/lkml/5882b96e-1287-4390-8174-3316d39038ef@lucifer.local/
-> [2]:https://lore.kernel.org/linux-mm/36aa2cad-1db1-4abf-8dd2-fb20484aabc3@lucifer.local/
-> 
-> Reported-by: Richard Narron <richard@aaazen.com>
-> Closes: https://lore.kernel.org/all/4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com/
-> Fixes: 867046cc7027 ("minmax: relax check to allow comparison between unsigned arguments and signed constants")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> [...]
 
-Thank you for your patch.
+Applied to
 
-I must say that I'm not a fan of that this is patching 3 totally
-unrelated files here in a single patch.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-This is e.g. going to be a problem if we need to revert one of
-the changes because of regressions...
+Thanks!
 
-So I would prefer this to be split into 3 patches.
+[1/1] regulator: core: fix the broken behavior of regulator_dev_lookup()
+      commit: a1d12410d9b1ecff87d39f80b0d1cec895012ffa
 
-One review comment for the atomisp bits inline / below.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> ---
->  drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  2 +-
->  .../staging/media/atomisp/pci/sh_css_frac.h   | 26 ++++++++++++++-----
->  include/linux/skbuff.h                        |  6 ++++-
->  3 files changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-> index e809f91c08fb..8b431f90efc3 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-> @@ -23,7 +23,7 @@
->  /* The PacketOffset field is measured in units of 32 bytes and is 3 bits wide,
->   * so the maximum offset is 7 * 32 = 224
->   */
-> -#define MVPP2_SKB_HEADROOM	min(max(XDP_PACKET_HEADROOM, NET_SKB_PAD), 224)
-> +#define MVPP2_SKB_HEADROOM	clamp_t(int, XDP_PACKET_HEADROOM, NET_SKB_PAD, 224)
-> 
->  #define MVPP2_XDP_PASS		0
->  #define MVPP2_XDP_DROPPED	BIT(0)
-> diff --git a/drivers/staging/media/atomisp/pci/sh_css_frac.h b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> index b90b5b330dfa..a973394c5bc0 100644
-> --- a/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> +++ b/drivers/staging/media/atomisp/pci/sh_css_frac.h
-> @@ -32,12 +32,24 @@
->  #define uISP_VAL_MAX		      ((unsigned int)((1 << uISP_REG_BIT) - 1))
-> 
->  /* a:fraction bits for 16bit precision, b:fraction bits for ISP precision */
-> -#define sDIGIT_FITTING(v, a, b) \
-> -	min_t(int, max_t(int, (((v) >> sSHIFT) >> max(sFRACTION_BITS_FITTING(a) - (b), 0)), \
-> -	  sISP_VAL_MIN), sISP_VAL_MAX)
-> -#define uDIGIT_FITTING(v, a, b) \
-> -	min((unsigned int)max((unsigned)(((v) >> uSHIFT) \
-> -	>> max((int)(uFRACTION_BITS_FITTING(a) - (b)), 0)), \
-> -	  uISP_VAL_MIN), uISP_VAL_MAX)
-> +static inline int sDIGIT_FITTING(short v, int a, int b)
-> +{
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-drivers/staging/media/atomisp/pci/isp/kernels/s3a/s3a_1.0/ia_css_s3a.host.c
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-calls this with ia_css_3a_config.af_fir1_coef / .af_fir2_coef
-as first argument those are of the ia_css_s0_15 type which is:
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-/* Signed fixed point value, 0 integer bits, 15 fractional bits */
-typedef s32 ia_css_s0_15;
-
-please replace the "short v" with "int v" 
-
-I think that you can then also replace clamp_t() with clamp()
-
-
-> +	int fit_shift = sFRACTION_BITS_FITTING(a) - b;
-> +
-> +	v >>= sSHIFT;
-> +	v >>= fit_shift > 0 ? fit_shift : 0;
-> +
-> +	return clamp_t(int, v, sISP_VAL_MIN, sISP_VAL_MAX);
-> +}
-> +
-> +static inline unsigned int uDIGIT_FITTING(unsigned int v, int a, int b)
-> +{
-> +	int fit_shift = uFRACTION_BITS_FITTING(a) - b;
-> +
-> +	v >>= uSHIFT;
-> +	v >>= fit_shift > 0 ? fit_shift : 0;
-> +
-> +	return clamp_t(unsigned int, v, uISP_VAL_MIN, uISP_VAL_MAX);
-> +}
-
-Regular clamp() should work here ? all parameters are already
-unsigned ints.
-
-Regards,
-
-Hans
-
-
-
-
-> 
->  #endif /* __SH_CSS_FRAC_H */
-> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> index 29c3ea5b6e93..d53b296df504 100644
-> --- a/include/linux/skbuff.h
-> +++ b/include/linux/skbuff.h
-> @@ -3164,7 +3164,11 @@ static inline int pskb_network_may_pull(struct sk_buff *skb, unsigned int len)
->   * NET_IP_ALIGN(2) + ethernet_header(14) + IP_header(20/40) + ports(8)
->   */
->  #ifndef NET_SKB_PAD
-> -#define NET_SKB_PAD	max(32, L1_CACHE_BYTES)
-> +#if L1_CACHE_BYTES < 32
-> +#define NET_SKB_PAD	32
-> +#else
-> +#define NET_SKB_PAD	L1_CACHE_BYTES
-> +#endif
->  #endif
-> 
->  int ___pskb_trim(struct sk_buff *skb, unsigned int len);
-> --
-> 2.46.0
-> 
+Thanks,
+Mark
 
 
