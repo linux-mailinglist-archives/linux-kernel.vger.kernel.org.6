@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel+bounces-325008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08CA9753DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:28:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46989753DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2991A1C21613
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80B62B2A4A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20501A3041;
-	Wed, 11 Sep 2024 13:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C00A1A38DB;
+	Wed, 11 Sep 2024 13:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="viJs73MB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD2mCaFU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374EE190667;
-	Wed, 11 Sep 2024 13:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D74190667;
+	Wed, 11 Sep 2024 13:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726061082; cv=none; b=TTuoG5US63f1YQK1dOE31iZGWzKakSbb9iGvx+rxfk+lcrePBJFIRGWqUjbYhaY4p0BuAOlG5EgWCfty4fuup8Yfm/xUp2Z/l115nUl4q0vjKc1G4J55wgEjNdR/MwpjnZYKTs6s6m3qJDIJEan/Dk5LuxXpCoxHaD1gUF9XriI=
+	t=1726061123; cv=none; b=sHlFhzEFyj1/KR8okyzDFOkckoXWtUNWurgTVjodAxvzA0b5KVifxK7nllljSMDsZy3mNblkjaHad4QXu35xL5qIiAijVlcD7XPx1q54poeIEvYA+x9NC5I/Gq95fAHcOm/Yf+Euy+HiQI/2tjzyYh7IS0xKc0CRYwt8WS5wrX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726061082; c=relaxed/simple;
-	bh=0rLIMi6iPg52caMXkRzgxW+7Gt8Yg29GRT2WxbllgWA=;
+	s=arc-20240116; t=1726061123; c=relaxed/simple;
+	bh=k5YPF6kGF8BqiPNEKQ5nlgqmQy5tRXcTGJJ7u+mTjyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GhMKm1zICISAwK4hUHL7A07EFqnUuD59hqIHGlCK8rAzuL8Dq8+1wF0vDp69lC+HPFsakIk6ZJpaS7eA1ofRPqGIgggsbgE/kNwl/E2WxD1NiN/SbNyO5Ij+Dmc52P6HFFDOHxYMKXn2RMsyk/cdC/XefYWeEir1QznFQFG5Hhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=viJs73MB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D3DBC4CEC5;
-	Wed, 11 Sep 2024 13:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726061080;
-	bh=0rLIMi6iPg52caMXkRzgxW+7Gt8Yg29GRT2WxbllgWA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpsY40KnUOpxDPIzjoASFehkMUtoDi1fmGxxU8xp2Q/yil31u5nDGmqMklArlR6Hb5pQ9csPC3JUC2omQqhRPFU4+iNctCkhwLmAR4b+bydZZqo5m2A+8OKWr+WU5Ukxd0VWpPN/aQrJjRR41YTRNimpY+hkFe49H1ZJ+46ltE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD2mCaFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC21C4CEC5;
+	Wed, 11 Sep 2024 13:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726061123;
+	bh=k5YPF6kGF8BqiPNEKQ5nlgqmQy5tRXcTGJJ7u+mTjyo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=viJs73MBfFrWOql6ZVKPqc7UmfUeyzizGpmKivWxT108wFP5FczuA+tW/HMkDOSCF
-	 1HWwFm/Ctuh7RW9Xr222ojqcsJ5uAn/vKHO/5OCFN3FXPSOOl+AAbkuz+Y2gREJeUH
-	 or+CxznzPz2wqw22QoSJcrmBGe0scqBtcYVDZaws=
-Date: Wed, 11 Sep 2024 15:24:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] USB-serial fixes for 6.12-rc1-2
-Message-ID: <2024091114-duplex-grit-f5a7@gregkh>
-References: <ZuEz67ehYXIG8AXB@hovoldconsulting.com>
+	b=CD2mCaFUMJ889pUmwOMM5zeXqToz4b5yModnE68iNxNSVWYNTpFDnraC6k6Bc0IuJ
+	 wgTPLW5Z+36yghUzTQVlPUaN0f+YO+caIIiIcs7NNlfzTmRwESQa6i7jZXKEpNgqCn
+	 9Cy9DTq5vZAQPPqn/HyMDdJqP9hlI05sc8sGK4AY0IMonS/97fMJBndyW5TwoYnTQq
+	 fUtgEMaUvonT1tRwtxvdZ1CoS3Yse5Xq41H0X+OW+UpTa2Gr+7kP9V5z85P/FCOJK2
+	 xexOW0l3IJKjiVFR5HQeD4bWgvByU/aRHM7LQf56FDXfJnqWC5NieW0Fh7RN5oqMkX
+	 3msHdyvxilVYw==
+Date: Wed, 11 Sep 2024 16:25:17 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-next 3/9] RDMA/hns: Fix cpu stuck caused by printings
+ during reset
+Message-ID: <20240911132517.GH4026@unreal>
+References: <20240906093444.3571619-1-huangjunxian6@hisilicon.com>
+ <20240906093444.3571619-4-huangjunxian6@hisilicon.com>
+ <20240910130946.GA4026@unreal>
+ <4c202653-1ad7-d885-55b7-07c77a549b09@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,20 +60,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuEz67ehYXIG8AXB@hovoldconsulting.com>
+In-Reply-To: <4c202653-1ad7-d885-55b7-07c77a549b09@hisilicon.com>
 
-On Wed, Sep 11, 2024 at 08:08:43AM +0200, Johan Hovold wrote:
-> The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+On Wed, Sep 11, 2024 at 09:34:19AM +0800, Junxian Huang wrote:
 > 
->   Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
 > 
-> are available in the Git repository at:
+> On 2024/9/10 21:09, Leon Romanovsky wrote:
+> > On Fri, Sep 06, 2024 at 05:34:38PM +0800, Junxian Huang wrote:
+> >> From: wenglianfa <wenglianfa@huawei.com>
+> >>
+> >> During reset, cmd to destroy resources such as qp, cq, and mr may
+> >> fail, and error logs will be printed. When a large number of
+> >> resources are destroyed, there will be lots of printings, and it
+> >> may lead to a cpu stuck. Replace the printing functions in these
+> >> paths with the ratelimited version.
+> > 
+> > At lease some of them if not most should be deleted.
+> > 
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.12-rc1-2
+> Hi Leon,I wonder if there is a clear standard about whether printing
+> can be added?
 
-I've pulled this into my usb-next branch as it's too late for 6.11.
+I don't think so, but there are some guidelines that can help you to do it:
+1. Don't print error messages in the fast path.
+2. Don't print error messages if other function down in the stack already
+   printed it.
+3. Don't print error messages if it is possible to trigger them from
+unprivileged user.
+...
 
-thanks,
-
-greg k-h
+> 
+> Thanks,
+> Junxian
+> 
+> > Thanks
 
