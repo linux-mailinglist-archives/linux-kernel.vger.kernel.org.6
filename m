@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-325505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F886975A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:45:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E4A975A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF0641F23C2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:45:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E652B24F18
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916151B78E8;
-	Wed, 11 Sep 2024 18:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64881B78F6;
+	Wed, 11 Sep 2024 18:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jbsky.fr header.i=@jbsky.fr header.b="tIqmMOVm"
-Received: from pmg.home.arpa (i19-les02-ix2-176-181-14-251.dsl.dyn.abo.bbox.fr [176.181.14.251])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+1Q7FJ/"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81F37DA66;
-	Wed, 11 Sep 2024 18:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.181.14.251
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688C71A304A;
+	Wed, 11 Sep 2024 18:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726080327; cv=none; b=E3YigIFgdyjredhf7oCCuv6bOdHp7JtHgpN8oFI7iHv8neEnUqilQmruMhoORAkbSXPywtSiHDRvgD8KhVUuurEDblWQLW96fjoTDObxNlYlAsMTgdaba2nowdtYfYkjao8Lo4Fu+UzO19RYV4E+r8D6kLUNcAzuRLkwwl1SH20=
+	t=1726080444; cv=none; b=VEeSN2VOJdK+vUw/BszGME4KETOP4Ym6V+oh/Eb5lw9Gg+niHwu2Y5iwof6X9yQmCJP4HV2vGnr/EdCDrdwgzDwZP6s+tNIfTj5L6MlMs+qsMUeknAYrJdp2TXDiXAF4lEDlkIawDRNtuITWAvkolJL1459+uD7vCvC/crrGj4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726080327; c=relaxed/simple;
-	bh=gW5j0ruWh8TrtaENG4c/a09DC6UAyDssRURGEh0kYgo=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=B7GktIPiC8rz5JVEJe3DVYoXadPZC3Dsh45Jn0Ug9ssETX9uYA8Oz467vh6hYCUmWgLAqCr3DWvFM44rc0jAAy3qQVJ2I2Ynydnilf4sSIPW8xKfn8o58tinEk78LryODKE9IKdiikq2IxXuL76N61MqYrQJ2+o7NzMv41Inmvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jbsky.fr; spf=pass smtp.mailfrom=jbsky.fr; dkim=pass (2048-bit key) header.d=jbsky.fr header.i=@jbsky.fr header.b=tIqmMOVm; arc=none smtp.client-ip=176.181.14.251
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jbsky.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jbsky.fr
-Received: from pmg.home.arpa (localhost [127.0.0.1])
-	by pmg.home.arpa (Proxmox) with ESMTP id 8AEDC223CD;
-	Wed, 11 Sep 2024 20:45:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jbsky.fr; h=cc
-	:content-transfer-encoding:content-type:content-type:date:from
-	:from:in-reply-to:message-id:mime-version:references:reply-to
-	:subject:subject:to:to; s=pmg1; bh=gW5j0ruWh8TrtaENG4c/a09DC6UAy
-	DssRURGEh0kYgo=; b=tIqmMOVmXKn8bY/6hEOL9C47CSHY/Mh8dpAXP21pdcDi2
-	BrFZKHfAux+XZaXHLU2nY24rA4x9hV48lUaSH1sC1zEFiCFEfyae8rnWVFtZ0mXa
-	OUT+21Dp/eXbOv4RfMuveWUujX4bh+OnJRSL7zBXWrXYcfFVmVVOZqPLFIuIED0i
-	FH07l//gnHSjsXp7wb6HukfQA/Pk8R1HN2P9yTObzGA8xWPDMFeWZoYCXVaVV0tb
-	kembyrYYT/bfiP1z6AYRH5Hi1WoeuCxBzo4f5zIp/7G5mXYJN5w46ooSQYgcrLC5
-	PHJ/ZoGonXhLs5vMKRrZC46N1BLaIFl9xIMKn/7Sw==
-Subject: Re: [PATCH v2] mvneta: fix "napi poll" infinite loop
-To: thomas.petazzoni@bootlin.com, davem@davemloft.net, kuba@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240911112846.285033-1-webmaster@jbsky.fr>
-From: Julien Blais <webmaster@jbsky.fr>
-Message-ID: <dfdc195c-eaca-fdd2-5540-d4029bddd465@jbsky.fr>
-Date: Wed, 11 Sep 2024 20:45:18 +0200
+	s=arc-20240116; t=1726080444; c=relaxed/simple;
+	bh=XR5bzqdsJrDGK0v+QIt30Cp8anjKu0R3ZiJNTyZu2i0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sPlYbelvej1+4vLQ2ILiLT7i+8dQqrXwvYngWWuGD6DOaq9kbxjq5j+ma5A5VGN/GMaok/YN2I2Y6h9uqshR+DAYGtwuH040TfkHWGhfeNCfzTbbocMrPMRXTlZLaW2H67LLUV0Bn6dz4XsbZwA1WHBwTkxq0R3tQslTkW7d1UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+1Q7FJ/; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f763e9e759so1750791fa.3;
+        Wed, 11 Sep 2024 11:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726080440; x=1726685240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUguyS99D1KssLyBrohTuPk7R4iOV771bg153OXzj+0=;
+        b=R+1Q7FJ/tZnVIP3IsK65r5adSVzYVJWHLzhhU4pyxH9su+6biYs4t18PRMK2FCXJY4
+         uJSoR2eVzQYBntdoBcwwPYqzd0MpOk9k8eo8GJR0/fYI+wUmvr+45+BtdBz2KwCQOe9U
+         UxUmm6BXqIM8UP6PTYYRdCD/mB2a9qNAEAyEe2Q836aATHdaDyBo6yqHNfOnVtASESmu
+         HTSqMKfpCVbSqKAtl8efb28AzNjzqHWwA0jP0kJVYrJ6QJ0PJducw5BYKNA083v9g1Zq
+         +igNV2haAKC0uk8fjGIP0egX5bMsYFPtit16mGndgbkjYJUI316zbvvdCOQDLBYBW7eV
+         b5Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726080440; x=1726685240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUguyS99D1KssLyBrohTuPk7R4iOV771bg153OXzj+0=;
+        b=wDwEG/OYh1GLCF4GohDPcKZOFIh0i01h67DP7IUAo0i1WqGlnnAjhemQTB8uGC6DVX
+         VWZ1wZMzGh38wJfmR5pUq3iEkEp+Humbpc58BJ0YEN2Cx8g6FnyenZJwg7Bel7+OoGe7
+         D1MKy2UZ8nM430bBkZre769btzRATfhTaN9C1ZOhGpDK3venW+QzcoVwI1CIHxyB+0MA
+         h3FCzAylreFPqS9uEpw19eCd9aI+ARbsFxvdGBtuRq+abXvooP6EH3Gy7rTZISDp6BRx
+         XtAs1MXl/o9dD2EkPQK6itV6MK8qvljPoozM5HmDbN+Fx6ugBdpIERAid6BzzZnU+/nW
+         vmYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4/rJT1uDiGVUUrf7y87T1nrhJTSqhzGBwI0y5MnZ6Qyi4G4MvppuUS9y61cHvUBECyDdIPHx1XEMg+aea@vger.kernel.org, AJvYcCVOGDrnX6W0Rrz8FhqsxgNnpzZasSdNJd3Auj+Q1oxRNhk525GuQShEcvv8yFc2wv1fK60vNb9LbzM=@vger.kernel.org, AJvYcCVjEiaV4T0PrXmjuHxN83PyXy4CV9WrA1Fz27TloFCiQJnRiVPx28aKei/uigD2imvHrDJX/zJZ95teAb1T@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIpX46g3JJYMB/SVlQyWT2ExSOb3lX/BMjPDGvtrbCfdjMonyC
+	tB8OqpAqQOi+dMAVUUloaKHw5n4eCzGLzQQu1SascqqweAuKyU7QCwCpvQ==
+X-Google-Smtp-Source: AGHT+IEN8qOWgpIUkneWFcMdaZkuGXDQ1bjzD47XBVL43ns9lB6yuwQOtgmGbuGBgCf463X68Y3xuA==
+X-Received: by 2002:a05:651c:547:b0:2f5:a29:5a42 with SMTP id 38308e7fff4ca-2f787dc3dc3mr1298031fa.14.1726080439438;
+        Wed, 11 Sep 2024 11:47:19 -0700 (PDT)
+Received: from localhost ([185.195.191.165])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bffc9edsm16547671fa.39.2024.09.11.11.47.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 11:47:18 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Viresh Kumar <vireshk@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	dmaengine@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] dmaengine: dw: Fix sys freeze and XFER-bit set error for UARTs
+Date: Wed, 11 Sep 2024 21:46:08 +0300
+Message-ID: <20240911184710.4207-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240911112846.285033-1-webmaster@jbsky.fr>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 
-Hello,
+The main goal of the series is to fix the DW DMAC driver to be working
+better with the serial 8250 device driver implementation. In particular it
+was discovered that there is a random system freeze (caused by a
+deadlock) and an occasional "BUG: XFER bit set, but channel not idle"
+error printed to the log when the DW APB UART interface is used in
+conjunction with the DW DMA controller. Although I guess the problem can
+be found for any 8250 device using DW DMAC for the Tx/Rx-transfers
+execution. Anyway this short series contains two patches fixing these
+bugs. Please see the respective patches log for details.
 
-Maxime, you've enlightened me, yes, what I've committed is useless as
-it's dealt with further on.
+Link: https://lore.kernel.org/dmaengine/20240802080756.7415-1-fancer.lancer@gmail.com/
+Changelog RFC:
+- Add a new patch:
+  [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not idle error
+  fixing the "XFER bit set, but channel not idle" error.
+- Instead of just dropping the dwc_scan_descriptors() method invocation
+  calculate the residue in the Tx-status getter.
 
-Anyway, I can't reproduce it, I was on the wrong track.
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>
+Cc: dmaengine@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Yes, for my next commit I'll test the mail so as not to have this
-“disclamer” anymore.
+Serge Semin (2):
+  dmaengine: dw: Prevent tx-status calling DMA-desc callback
+  dmaengine: dw: Fix XFER bit set, but channel not idle error
 
-Thanks for your feedback!
+ drivers/dma/dw/core.c | 144 ++++++++++++++++++++++--------------------
+ 1 file changed, 75 insertions(+), 69 deletions(-)
 
-All the best,
-
-Julien Blais
-
-
-
---
-This e-mail and any attached files are confidential and may be legally privileged. If you are not the addressee, any disclosure, reproduction, copying, distribution, or other dissemination or use of this communication is strictly prohibited. If you have received this transmission in error please notify the sender immediately and then delete this mail.
-E-mail transmission cannot be guaranteed to be secure or error free as information could be intercepted, corrupted, lost, destroyed, arrive late or incomplete, or contain viruses. The sender therefore does not accept liability for any errors or omissions in the contents of this message which arise as a result of e-mail transmission or changes to transmitted date not specifically approved by the sender.
-If this e-mail or attached files contain information which do not relate to our professional activity we do not accept liability for such information.
+-- 
+2.43.0
 
 
