@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-324079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A79A9747B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:21:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44DF9747B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 03:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF0E1F271B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:21:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 587F8B23879
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 01:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D7118EB0;
-	Wed, 11 Sep 2024 01:21:30 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098711F957;
+	Wed, 11 Sep 2024 01:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dWeyKDWx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD56210F1
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 01:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF322066;
+	Wed, 11 Sep 2024 01:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726017690; cv=none; b=WiSJFMCXL4u5f+jMYimI86a84c83yF4hHDWBoUmJNKAnuDVrh+O0QdoLv0LC0nIFhYfm40UbaBVKsfqQgXiUWjfpOmIwxKl8bnGEDWLh3dsTxvQseoQ/t9GCXUsD+6YYLibYb9YIYxps8aB2NwtrZNWxfLxfJb9yv7JO25uCSDM=
+	t=1726017803; cv=none; b=KLpqeXwix6IKdi+H5s4fIp5z4NB5vxQzxtZssmkK8y2U3DB9TCXzLTJ0UOcwiGGjI7lstSUnwksz2JtaziyFSxsrkTad9KgklMWIY/axpOpeKkZmmfodOHiUGy73MTcx1CApXA7LnmL6qOIvzMxG8CHJdPFtXNM9cQpCTG6a6rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726017690; c=relaxed/simple;
-	bh=2ptKXj98s3AyyUEKQQAGiup8IlooiiTOEZfb8MOfFmg=;
-	h=Subject:From:To:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dSZ4zJYdDDH7ogEbhrl8InID57t07b3TALF/2UqUFfKD9OSM8p9QTAFA3aa9fateWbaUQTaUXgVJchTR3L8G8rWm5YpPOjlMaGO6tQdQzSB1039XkYA8ugGF6BLopVPA6nrXGsh8EhNjcU25XGNAq9M/5lYRZ84VxweuDkzesF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X3N6w0QdrzyRfj;
-	Wed, 11 Sep 2024 09:20:40 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5DA421400E3;
-	Wed, 11 Sep 2024 09:21:25 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+	s=arc-20240116; t=1726017803; c=relaxed/simple;
+	bh=GWr1APE3OKHNDJ8KWun788EsfhIPmqbACTws0TsCJ6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LsbefkR4vlJPRgzp7yoMDerzU6A0BHfuJkGRmJz5o1U2A3dnP0Z4jqsGDklZSB5GvoGeVyZyAw87i4H0Dm+7OlIxuXCubxntnqUl7KW7kfbE6y5aiaKZJj+4+OJk1CDKRKAQ1H/AYuAtQ64A/zwJno6NIHtP9JOz9wnG8nDunaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dWeyKDWx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48AEwfEd031364;
+	Wed, 11 Sep 2024 01:23:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=FBe+iw4+aUVovaCbM6zF6r
+	crhWc3B9d03B5Xg5mwDBk=; b=dWeyKDWx4m7S80899UdjSXID0jIk6rNmuaD51s
+	zDkr97KZCjvuuGs2AG/ESyCEIO+9zZ+Rk0AMhunovvr1v3m8j3aywriVuTlLpgZ9
+	5eSbjZi32DWSIulxMhDhpYKS7JuxXm+m63MzuYF6f2ZU7CE3tnTXMa18LIE9jQpE
+	tRet0VtqlS0gB3R5CajmN7/8jofxRgnnfrCb8hfpgsHm6KxmepNcJ8FnyBUdr9E7
+	YPlzAcWXUHqSPs+FAXgnI5wcvw5Ca1MpBO+S6El14aaaK6fAoAPz/2NQPP+i4pM5
+	pr8JPEq0DRedxXuR/2ebjfu5sj0Gan4qOJJ0GxasgCe71ZwQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy517s2a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 01:23:17 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48B1NGkw012848
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Sep 2024 01:23:16 GMT
+Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 11 Sep 2024 09:21:24 +0800
-Subject: Re: [PATCH v2 4/6] debugobjects: Don't start fill if there are
- remaining nodes locally
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <20240904133944.2124-1-thunder.leizhen@huawei.com>
- <20240904133944.2124-5-thunder.leizhen@huawei.com>
- <336109d9-2eea-4d67-ee22-ed218b9504c3@huawei.com>
- <7613ce35-0c65-341f-c6ed-412de79890e6@huawei.com> <87ed5tchc6.ffs@tglx>
- <87bk0xc9iy.ffs@tglx> <32bd93ec-747f-b5a1-917f-f885b87600a5@huawei.com>
- <8bc3ebed-f092-6842-bd8b-a8b4b1b30cf1@huawei.com>
-Message-ID: <263b875c-7485-1331-fec5-ff492a295d62@huawei.com>
-Date: Wed, 11 Sep 2024 09:21:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ 15.2.1544.9; Tue, 10 Sep 2024 18:23:12 -0700
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: [PATCH v4 0/1] arm64: dts: qcom: Add coresight components for x1e80100
+Date: Wed, 11 Sep 2024 09:22:53 +0800
+Message-ID: <20240911012254.2198067-1-quic_jiegan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8bc3ebed-f092-6842-bd8b-a8b4b1b30cf1@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ztFUuv6KZJQxhynGH061Ov0nQHSyN3uZ
+X-Proofpoint-GUID: ztFUuv6KZJQxhynGH061Ov0nQHSyN3uZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=579 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409110009
 
+Add coresight components for x1e80100. This change includes CTI,
+dummy sink, dynamic Funnel, Replicator, STM, TPDM, TPDA and TMC ETF.
 
+Change in V2:
+Check the dtb with dtbs_check W=1, and fix the warnings for
+the change.
 
-On 2024/9/10 23:29, Leizhen (ThunderTown) wrote:
-> 
-> 
-> On 2024/9/9 21:51, Leizhen (ThunderTown) wrote:
->> +static void fill_pool(void)
->> +{
->> +	gfp_t gfp = __GFP_HIGH | __GFP_NOWARN;
->> +	static atomic_t cpus_allocating;
->>  
->>  	if (unlikely(!obj_cache))
->>  		return;
->>  
->> +	/*
->> +	 * Avoid allocation and lock contention when
->> +	 *
->> +	 *   - the CPU local pool has at least 2 objects left
->> +	 *   - another CPU is already in the allocation path
->> +	 *   - the global pool has not reached the critical level yet
->> +	 */
->> +	if (this_cpu_read(percpu_obj_pool.obj_free) > 1 && atomic_read(&cpus_allocating) &&
-> 
-> I rethink that 'cpus_allocating' and 'percpu_obj_pool.obj_free > 1' should be
-> contradictory. We can only choose one of them. If 'cpus_allocating' can work,
-> there's no need for another. Since I had no way to prove that 'cpus_allocating'
+https://lore.kernel.org/linux-arm-msm/20240827072724.2585859-1-quic_jiegan@quicinc.com/
 
-Sorry, I mistyped in a hurry yesterday, and it's 'percpu_obj_pool.obj_free > 1'
-that should be deleted.
+Change in V3:
+Disable two TPDM devices, that will break the booting of the secure device.
+Tested with commercial product.
 
+https://lore.kernel.org/linux-arm-msm/20240905103825.2154633-1-quic_jiegan@quicinc.com/
 
-> would work, I removed it in V3.
-> 
->> +	    READ_ONCE(obj_pool_free) > (debug_objects_pool_min_level / 2))
->> +		return;
->> +
->> +	atomic_inc(&cpus_allocating);
->>  	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
->>  		struct debug_obj *new[ODEBUG_BATCH_SIZE];
->>  		int cnt;
-> 
+Changes in V4:
+1. Sort the properties with alphabet order.
+2. Fix format issue(add a new line between last property and the
+following subnode).
+
+Jie Gan (1):
+  arm64: dts: qcom: Add coresight nodes for x1e80100
+
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1456 ++++++++++++++++++++++++
+ 1 file changed, 1456 insertions(+)
 
 -- 
-Regards,
-  Zhen Lei
+2.34.1
+
 
