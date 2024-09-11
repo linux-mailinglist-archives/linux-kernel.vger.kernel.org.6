@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-325447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCC09759CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A43CD9759D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FA781C230A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:53:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC251C22FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8981B654F;
-	Wed, 11 Sep 2024 17:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A981B532B;
+	Wed, 11 Sep 2024 17:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksZUs4N3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C9pV6sfQ";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Dea6c8bw"
+Received: from a7-47.smtp-out.eu-west-1.amazonses.com (a7-47.smtp-out.eu-west-1.amazonses.com [54.240.7.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182CD192D74;
-	Wed, 11 Sep 2024 17:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E834199FB1;
+	Wed, 11 Sep 2024 17:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726077146; cv=none; b=R+n5cY5uUS919z/F0u2tNCDsj6/+va28nK1SbbLIFo+E3eXWkPdxxH4/7untY7qpz9NVP6soucomXVZYw4mC5R0+lnrrPivme/4Yn5imqkbWBG2sryIaW+Yhkppl1Z3pt+Zs6Pzi5OTt0p1VAxlzXZ29YgqJhgGgdvwqh8vh49U=
+	t=1726077516; cv=none; b=W9/xh9N7a7H8OxwPajxFGYYCdaqdqX+NzNZTAh0Mx63Ci2mqIHxmFhm1nvwr1kytIj5m+4xmQOOBArfrGBU5iBzLnQ/wszoIETZOt7J6xx9y3I/M0/W4QiEV/wQSRNd4A9L5qseeEcY4UhzSpEaee6lWxYHhq7jOmZPU0riXYXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726077146; c=relaxed/simple;
-	bh=Zd6WplPm4FdAwcsrLGkFduGLP4308+2slC70Hs9tLg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYpAFwx1TRAyoksglIoeq/HDwD83b/v9HCSxt+KrRyqAtro6YVidXNyqZ1U9gP/y5yk5pBDGzFtk8DtqgiTvFHYFKuZISm2jVvadMDu0/lrxUTyY9gXqToGP3z3zj14cm6YQkhfoo95X7UEEmVH5y0Z11JlbTwhdUQqtlzlmkdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksZUs4N3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECAFC4CEC0;
-	Wed, 11 Sep 2024 17:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726077145;
-	bh=Zd6WplPm4FdAwcsrLGkFduGLP4308+2slC70Hs9tLg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ksZUs4N3xj+8zFHMoJFOBd7dVLSIU2EXO7cxO8YDdt08Tt6hvWEPqDNDy1aNntc+N
-	 R7hNC93oiiFigHPxurbx1Sl5K678I9bnxaDr55bA9ANLCGUu1ARx5O53BWVlxN3rzv
-	 Y/4OCiu9XBwl3kVPyfThQ6vcd1qFLOLyNIC9iKSkfPdi0FOfYtVLk/WYwMLuZsxhg1
-	 l1p1QXxnSJAHAF2mB8ppukhxX/g1TWGVSemCmuayt+Tc8tPbzi+ADRoMkBxqwN18lF
-	 kPbgD1QvjSxlAjLi8qI+y97T+ztu8+zfOnMjW7Pqb1mnJeI8uKHQ/xrPFb8Spr+QcL
-	 eM6B4qDV6Rfrg==
-Date: Wed, 11 Sep 2024 18:52:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH 02/22] dt-bindings: watchdog: apple,wdt: Add A7-A11
- compatibles
-Message-ID: <20240911-chaplain-cargo-29a12b6257cf@spud>
-References: <20240911084353.28888-2-towinchenmi@gmail.com>
- <20240911084353.28888-4-towinchenmi@gmail.com>
+	s=arc-20240116; t=1726077516; c=relaxed/simple;
+	bh=Ff7iKYGlVbSF6DaBm7NIGdh6zqbmjk/yg4IdTPwheH4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ytuz1GzhvxFUuNLlnEOtwgwvSRdSEENB0SQljFLMjF3QQStR9D2GyOJIYalxHBw8vU2RZX8XXjHGHkYU55EUlTgGgR4ip0uOy+Y2142FOlAeUg2jkF8xW4E9Cwu0BtcCWJuMigvEUmUbhwhHQ/XAphdGgjhCO4JBlAOEbyV52/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C9pV6sfQ; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=Dea6c8bw; arc=none smtp.client-ip=54.240.7.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726077512;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding;
+	bh=Ff7iKYGlVbSF6DaBm7NIGdh6zqbmjk/yg4IdTPwheH4=;
+	b=C9pV6sfQVXSGatsOQqSuHHwpjU0dTUvKvV+FxPj/M7VSmvIpmSwYLjTGu8K4UyYk
+	zzsaesoy7vV8ZUKoJ2HQv6NLqiKT6EHdOKNcdpkl2cZ8NYknDicb8GCyERkgTcCLjXi
+	8VBAfwAQHXwT2kvNH0dkIVbEwBr2HPP5M3HOv8DllDXf/Opwh8X/ZOvlaxjzQUdfQ7+
+	Ld66pbRPvHqVpH1/nnTMewbHNFyBhwMkf6b5DIsU8KkQi/UE6sKf47T7Ptdpq6MkaEJ
+	50tXsU9lE3+tNga34Whl9gWC1Cj/Y7ZctqS6PhL5kbZtIt/bxa7aczkhbqrkNUFOEyr
+	3Jyjnw6YkA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726077512;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=Ff7iKYGlVbSF6DaBm7NIGdh6zqbmjk/yg4IdTPwheH4=;
+	b=Dea6c8bwybcfPEkvDfnN8zkAeoxP8bVAbVlGPXoD4oEt0HJXnwznYzbZIKWkTh/h
+	rGEpZhd8TA9agWOX7RhALKQEzqOa+u48NW4nbqM4mapYZaloCdhvcqjBu1fP242FMwe
+	cLQearfBp8Feug5ABkN/EADr03eBxGSHN6arKXgU=
+Message-ID: <01020191e23cab4b-5c86e038-d835-4dca-8dcb-1936066c488e-000000@eu-west-1.amazonses.com>
+Subject: Re: [PATCH 2/2] media: verisilicon: add WebP decoding support
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Fritz Koenig <frkoenig@chromium.org>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, 
+	Andrzej Pietrasiewicz <andrzej.p@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Wed, 11 Sep 2024 17:58:32 +0000
+In-Reply-To: <20240911135011.161217-3-hugues.fruchet@foss.st.com>
+References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
+	 <20240911135011.161217-3-hugues.fruchet@foss.st.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UtKeLkBPSdSPElNM"
-Content-Disposition: inline
-In-Reply-To: <20240911084353.28888-4-towinchenmi@gmail.com>
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.11-54.240.7.47
 
+Hi Hugues,
 
---UtKeLkBPSdSPElNM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
+> Add WebP picture decoding support to VP8 stateless decoder.
 
-On Wed, Sep 11, 2024 at 04:40:52PM +0800, Nick Chan wrote:
-> The blocks on A7-A11 SoCs are compatible with the existing driver so
-> add their per-SoC compatibles.
->=20
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Unless when its obvious, the commit message should explain what is being
+changed.
+
+> 
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
 > ---
->  Documentation/devicetree/bindings/watchdog/apple,wdt.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/watchdog/apple,wdt.yaml b/=
-Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
-> index 21872e15916c..310832fa8c28 100644
-> --- a/Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
-> @@ -16,6 +16,11 @@ properties:
->    compatible:
->      items:
->        - enum:
-> +          - apple,s5l8960x-wdt
-> +          - apple,t7000-wdt
-> +          - apple,s8000-wdt
-> +          - apple,t8010-wdt
-> +          - apple,t8015-wdt
+>  drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
+>  drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> index c623b3b0be18..e7d4db788e57 100644
+> --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> @@ -232,6 +232,7 @@
+>  #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
+>  #define G1_REG_ADDR_STR					0x030
+>  #define G1_REG_ADDR_DST					0x034
+> +#define G1_REG_ADDR_DST_CHROMA				0x038
+>  #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
+>  #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
+>  #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
+> diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> index 851eb67f19f5..c6a7584b716a 100644
+> --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> @@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
+>  
+>  	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
+>  	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
+> +
+> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
+> +		vdpu_write_relaxed(vpu, dst_dma +
+> +				   ctx->dst_fmt.height * ctx->dst_fmt.width,
 
-Can you sort these alphanumerically please?
+I'm not really not fan of that type of formula using padded width/height. Not
+sure if its supported already, but if we have foreign buffers with a bigger
+bytesperline, the IP may endup overwriting the luma. Please use the per-plane
+bytesperline, we have v4l2-common to help with that when needed.
+> +				   G1_REG_ADDR_DST_CHROMA);
 
->            - apple,t8103-wdt
->            - apple,t8112-wdt
->            - apple,t6000-wdt
-> --=20
-> 2.46.0
->=20
+I have a strong impression this patch is incomplete (not generic enough). The
+documentation I have indicates that the resolution range for WebP can be
+different for different synthesis. See swreg54 (0xd8), if bit 19 is set, then it
+can support 16K x 16K resolution. There is no other way around that then
+signalling explicitly at the format level that this is webp, since otherwise you
+can't know from userspace and can't enumerate the different resolution. I'm
+curious what is the difference at bitstream level, would be nice to clarify too.
 
---UtKeLkBPSdSPElNM
-Content-Type: application/pgp-signature; name="signature.asc"
+On GStreamer side, the formats are entirely seperate, image/webp vs video/x-vp8
+are the mime types. Seems a lot safe to keep these two as seperate formats. They
+can certainly share the same stateless frame structure, with the additional flag
+imho.
 
------BEGIN PGP SIGNATURE-----
+Nicolas
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHY0wAKCRB4tDGHoIJi
-0oB7AP4nPUdE2hLxQvPrgfSUTa+W6kRQafRVnC9Sscs8KWngrgD/dkTUKW+0h9Sr
-m4X7I3w4VfdUTNfdPFzUo60kkgCNCQg=
-=IbZW
------END PGP SIGNATURE-----
+>  }
+>  
+>  int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+> @@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+>  		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
+>  	if (hdr->lf.level == 0)
+>  		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
+> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
+> +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
+>  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
+>  
+>  	/* Frame dimensions */
 
---UtKeLkBPSdSPElNM--
 
