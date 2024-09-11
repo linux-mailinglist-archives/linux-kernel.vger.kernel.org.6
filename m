@@ -1,109 +1,133 @@
-Return-Path: <linux-kernel+bounces-325473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500C9975A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0042975A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C34728C78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C18B1C21BCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2B41B29DE;
-	Wed, 11 Sep 2024 18:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0379B1B5339;
+	Wed, 11 Sep 2024 18:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2qvIMzY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQianliv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82B61A7AD2;
-	Wed, 11 Sep 2024 18:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DECD2CCAA;
+	Wed, 11 Sep 2024 18:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726078199; cv=none; b=hb+5zprp3WTQMCAHNh3Qnh+czpOFB6kkoJYPCaS5hTbVoWHOIreaqefd7PQgitwKuND4OpG6VW7Vx8MBu9HinTOJxGBUaG6Uhj5nVpMTtmkKIvVZDEw5xM15WvX9eCykWvPP4JR6vX79//NzfJuko1yp+Y3aFkG8GgWy7UJj2Yk=
+	t=1726078245; cv=none; b=e1dJ49b759h/fOZh4adqex+Jz7J4wTpPs9Y4XHf59ru03Lm2D82gF/eDC0r9T+66FRKIcQrN0SvAMsl2ecz43nMWuNEtlz9UX3kNjwCPpjWBHXxafxaaME+71fllk8JtcnlrBLzRHpaJCtyVuY6Ck97uX3dsvqr/K0jIlcuzzYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726078199; c=relaxed/simple;
-	bh=t70OeUTPl2Hdc8vLGhMSBtVwCkdkMR0JsnyjS2GNsAc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bNgFmKr6PS+Ex4q0cfaYEangxskjp2hXQS7D/3885YldgZ/gYDODrmlqYH7n5aFZUEQ1S/SG8lcRPbOC9/N4+rMBsygxLFlNsojt/a5xJJKuOdp29GzHg3dXOREYcfuF8N8q4TUmyFmwKtOdT5RsVelvhdwUWmh7s5wUK/0XC1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2qvIMzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC9FC4CEC0;
-	Wed, 11 Sep 2024 18:09:56 +0000 (UTC)
+	s=arc-20240116; t=1726078245; c=relaxed/simple;
+	bh=R8TDDE5JNXK8OC+GW4QHvppH3MOK1tDMKuVK8Q3Th8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TH+Juxa5kpBVhT3MF7blYkCtdzKQssRrAsnwkE0cQHB6xLPG1LEkaM4ZBoHe+fkrugci6F/sT8bLybVjghcafg5wV2hX6uq8/v7hPjMCOpY6tQFWfxif4QZ5+v9io8yCIMNsEgEr3dCuKNseBMd0dDx1A+B+r1m4Ofh2M9y9VF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQianliv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54593C4CEC0;
+	Wed, 11 Sep 2024 18:10:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726078199;
-	bh=t70OeUTPl2Hdc8vLGhMSBtVwCkdkMR0JsnyjS2GNsAc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=q2qvIMzYmdwsOs/n5Y9KRsjyYolmc+I+asb8nY4g+jh9t4K8HMgVQ4c3t02X2UxwW
-	 Wx9E5Pb8uTCiXd+NUd/ucIsuB4h3UXgqys2jgIIQh+JHUnuiV7ZXtlU7LMhgXwOO/M
-	 5SQzYsOxfWM9rbz+DdmGx0JoiVgorZy3n1u4GbGpiJ8ruUTvhbd8FgACUyftHzh3TR
-	 3Dxo1PFFp95CBfspFYF6p0aaaMg8bAsmBivqueyPczALrh2rBhABPcdFnbYKQm0fQq
-	 AhYmaHgDzIsDglr/5IafcOx2w7bfIuJ/GpXz1qEKB5oezpA3CU/snUCJwLsm2Gl3ea
-	 sFLBOplnrJ42w==
-From: Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: kernel@sberdevices.ru, oxffffaa@gmail.com, Stable@vger.kernel.org
-In-Reply-To: <20240911142425.598631-1-avkrasnov@salutedevices.com>
-References: <20240911142425.598631-1-avkrasnov@salutedevices.com>
-Subject: Re: [PATCH v1] ASoC: meson: axg-card: fix 'use-after-free'
-Message-Id: <172607819595.127216.9881900790170289531.b4-ty@kernel.org>
-Date: Wed, 11 Sep 2024 19:09:55 +0100
+	s=k20201202; t=1726078244;
+	bh=R8TDDE5JNXK8OC+GW4QHvppH3MOK1tDMKuVK8Q3Th8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PQianlivyLxNU8resVBv3Z/zEvOCWopMq7HYhRwv29K1xM6tMLBDgh993nz2/oIbi
+	 o+Jndg5VkeSWrTPgUJ3viMJP3gM7ohovSMVdtALEo1ysr5eWxjYV2ciBScRsOZ+rYh
+	 x1KaMeYQlOaXeH59KJnjbwZekxUkPyNfj5Iyb97+/YCqQQPtrORt2G0iZjPVmcR0ir
+	 hydM/v6DdJwwXytRfz3WR5OplTLLbGS/93YGBUpfxzES2nFZQ4uN7jmfj278o/rCS0
+	 o/Pxf5byK0k1yup7jFYPvKccbggNI/6eS0nMyqazSi3f2WZ3dxbqPWnh4/p+A4PYuR
+	 j+w/qhg3UrBpw==
+Date: Wed, 11 Sep 2024 19:10:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH 03/22] dt-bindings: cpufreq: apple,cluster-cpufreq: Add
+ A10 compatible
+Message-ID: <20240911-armless-waving-4aa6d754f68f@spud>
+References: <20240911084353.28888-2-towinchenmi@gmail.com>
+ <20240911084353.28888-5-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UP0hu8KK5KxLZHX0"
+Content-Disposition: inline
+In-Reply-To: <20240911084353.28888-5-towinchenmi@gmail.com>
 
-On Wed, 11 Sep 2024 17:24:25 +0300, Arseniy Krasnov wrote:
-> Buffer 'card->dai_link' is reallocated in 'meson_card_reallocate_links()',
-> so move 'pad' pointer initialization after this function when memory is
-> already reallocated.
-> 
-> Kasan bug report:
-> 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in axg_card_add_link+0x76c/0x9bc
-> Read of size 8 at addr ffff000000e8b260 by task modprobe/356
-> 
-> [...]
 
-Applied to
+--UP0hu8KK5KxLZHX0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Wed, Sep 11, 2024 at 04:40:53PM +0800, Nick Chan wrote:
+> The block found on the Apple A10 SoC is compatible with the
+> existing driver so just add its per-SoC compatible.
+>=20
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  .../devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml    | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpuf=
+req.yaml b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.=
+yaml
+> index 76cb9726660e..e0d1a9813696 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
+> +++ b/Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
+> @@ -24,7 +24,9 @@ properties:
+>                - apple,t8112-cluster-cpufreq
+>            - const: apple,cluster-cpufreq
+>        - items:
+> -          - const: apple,t6000-cluster-cpufreq
+> +          - enum:
+> +              - apple,t8010-cluster-cpufreq
+> +              - apple,t6000-cluster-cpufreq
 
-Thanks!
+Alphanumerical order please, if/when you're resending.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-[1/1] ASoC: meson: axg-card: fix 'use-after-free'
-      commit: 4f9a71435953f941969a4f017e2357db62d85a86
+>            - const: apple,t8103-cluster-cpufreq
+>            - const: apple,cluster-cpufreq
+> =20
+> --=20
+> 2.46.0
+>=20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--UP0hu8KK5KxLZHX0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHdHgAKCRB4tDGHoIJi
+0skcAQDtQ82Bn9KiflukV0Y0rWGpCmsNimvhc7fKKTMqqrPeSQD/VNWhWNXMSzOY
+guQoHBGfymqS99Rchv4YjvXioOxe3gI=
+=3+QK
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--UP0hu8KK5KxLZHX0--
 
