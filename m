@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-325361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217F4975894
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FE397586B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFCC31F224F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7251C23351
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B79A1AE864;
-	Wed, 11 Sep 2024 16:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE721AED24;
+	Wed, 11 Sep 2024 16:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="jlnAjPsg"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="w/27mDo8"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAF9157A5C;
-	Wed, 11 Sep 2024 16:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51501AED29
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 16:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726072542; cv=none; b=LtTPKMyDN1E9Kz6DBq0ehsEj2icpeErrFZ+n7Ho1Y6ZB6tvfNNmEGBbOwHhU6WDKV1oJbH9qL/AkXVuF6omkGDxyDRuVqO4RjD4LzzDYXvNqIViwVwBaHoWkj9Lx93Jid0YkJ72kVCQve4M7BrZsiyOH3uCTR6rVMHHP+6YmCVI=
+	t=1726072099; cv=none; b=PU9cy9+T9rlqSxqV7w5ax84jpJ6A1XGI2kKbjwSs9C5+wxxUS2p1AHp9Thp+9I9UbPZ0yzdjnLHiPlqgTKlCKkB32Qz4HoIkn9b1gYedRTp7Nct0dPbiJA38gHcklQbIDetFdgbExBnpaWDU0QSpNbdQqx97+Peg+ZETF/cQXBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726072542; c=relaxed/simple;
-	bh=jVWLJNJvpEN9e3zz9iqEToW+PGIpKGy1T0EKWJUXGx8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Tj31WzlxpSGaMYr3QllNtJkNIT3MDpvzYEjxYOa580IzJMnaa9tNHQVSnkUo4btOMi9jaCYfk2Z3zBriuphkcsZVraFmB3oD4u+VctARk5dXaGRPjD3UiT7FkFlllAfTnCrSwAIdDcAUF4hCv8vGN+dO8vF4Cw289tQFzO69L+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=jlnAjPsg; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-33.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-33.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:3dad:0:640:7b05:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 4697A61B2A;
-	Wed, 11 Sep 2024 19:28:05 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-33.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 3SmF5L02OKo0-i0P6dBhR;
-	Wed, 11 Sep 2024 19:28:04 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1726072084; bh=jVWLJNJvpEN9e3zz9iqEToW+PGIpKGy1T0EKWJUXGx8=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=jlnAjPsgktdlCyxm5Rg2u+j7zitMs5z0r4JnxHxZZOdupLi1DUvF4XOy5Qf2BaLjW
-	 viH9I04ENeFRbIw7bef94hXUruKQQ0pU0zM17CRTqIVPH5Wqy78FyW/0gj/uNljohV
-	 KWUiEkeH4TVIBmiqFk66SuYx5xDAOuMd+YHV1hN4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-33.iva.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <ddf9785a0b6e8ddee0de327423cefb22d7aac71b.camel@maquefel.me>
-Subject: Re: [PATCH] ep93xx: clock: Fix off by one in
- ep93xx_div_recalc_rate()
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, Arnd Bergmann
-	 <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
-	 <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Wed, 11 Sep 2024 19:28:03 +0300
-In-Reply-To: <548605182873dadad9ee33dc6ed70e0eba4bf495.camel@gmail.com>
-References: <a05454f8-e409-4f60-93f7-6aa2ea0a2a23@stanley.mountain>
-	 <246de2986dce9d867894bb006a1b2b3601e94a4e.camel@maquefel.me>
-	 <a1ceab99-f26c-4edb-8f72-12abf20eec9f@app.fastmail.com>
-	 <548605182873dadad9ee33dc6ed70e0eba4bf495.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1726072099; c=relaxed/simple;
+	bh=tzTpPj6JB+OGJA5fajUvUDBqkigFVyaXVi86a5AhPe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JZQiyfD2HVh43s1FcNwpUaTHRpwdPdABB7zvY9Sy1aCK72WrTtpPD2Sy7PTblIgEUSFDmWzz/26t1dl5xCcKwBsrdKvN0SQmxTM7PAmFKOcEFNwr8L8jtYgh60RmUz93hP/pJZnJuci2/5hai+mk7Qv+pFDqh9pkqBApxzo8iAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=w/27mDo8; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82ceab75c27so185097739f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 09:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726072097; x=1726676897; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=var502O8AdEcPofnm3n0MJMBP1NCf8qy9e9DtiMVmWk=;
+        b=w/27mDo8Tjyr7ktZ/rxJSgyRxb7SH4BZvtnkXmFXPJDmLowh2LTb2NvySGSVjIa4mE
+         aOzyDFZtPY2MM1mfUUkV+q3Pshr7bwyQCs0g3yMjl2aYjdI3UHwpKNghR/jFGxasMlm8
+         fsZNcZaHe24gCTWYuEf4Xt8TsgVACtxT8xdKd6O8HL/0gC07R5DWBPOGQJLQBJ1q0877
+         0OvU9sw5JuMpbthCB1B9nE25yrKNBQtF8fFFstO5uMku2eIgLUHNFc8dEQ4d3Ic86aSh
+         zyB47aIRFanV+2+Wja2MOdAgybpjlKC7QdFAL8asYDpqI2X2JDv+bTInmKZPrU1W4XT2
+         5M1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726072097; x=1726676897;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=var502O8AdEcPofnm3n0MJMBP1NCf8qy9e9DtiMVmWk=;
+        b=rcqxJrDc7mAeG1g4jg7Lov4sw6BUy9Zss95YdINekiBQ26C/ND7HUHu+Ad/IoPYoQH
+         Vv/hYwyhLXQMjnvGtv38yg6WfZzXT5qaMNkGcNDXlQDsi0N6/vFM+xCT/ePuJwOUNUx5
+         FwotE+jHEs+JnhLNf6uHFEyEnczJfjfLywdWBfW0nJ196P7D+czu7uGgadfHs2qisNxC
+         93DuPCH29tVH6kbDms+2x96YSAorwr54cPUp/A2lNIJ6WPWxAbmmSbl0Qs0pm0iFphx7
+         4LzGm4VWAZdy6qPmkblv6Zq4YHSHkLFSURiRcN61IzSAv4tedI8ZIqR5ERVktfGaumBU
+         El9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnkxeVdw2ULRboJ7e//7ftNDmpmw5K9g93M3UfLpmFEqssuo0TWVfx0z3eW8pi3v9NTmpp7LVTxgYVFLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL0LMYiw/BtnB1v0QMuxPxUOqb7hiogWvzjXsfC9C9LOHVRMCE
+	VIcBsnNeIa+Zd9MmiNOndQ5N4cTaxC8xePBbRDjJKiZANbHw9wrC7KTM26zOqyU=
+X-Google-Smtp-Source: AGHT+IEOAHWAK6/GldVHC+a73yGd6kwIS+31Iy8D7c2tKpxIayyx3VhAXsleXj/4G1VFA/tiJKjY6w==
+X-Received: by 2002:a05:6602:2b11:b0:82a:971d:b4a0 with SMTP id ca18e2360f4ac-82d1f978fd6mr21465139f.13.1726072095997;
+        Wed, 11 Sep 2024 09:28:15 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82aa77b292bsm276246139f.47.2024.09.11.09.28.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 09:28:15 -0700 (PDT)
+Message-ID: <2a424df7-8114-477e-ab5c-484d2ed8d9a4@kernel.dk>
+Date: Wed, 11 Sep 2024 10:28:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 0/2] io_uring/io-wq: respect cgroup cpusets
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: stable@vger.kernel.org, asml.silence@gmail.com,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ cgroups@vger.kernel.org, dqminh@cloudflare.com, longman@redhat.com,
+ adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com
+References: <20240911162316.516725-1-felix.moessbauer@siemens.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240911162316.516725-1-felix.moessbauer@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Alexander, Arnd,
+On 9/11/24 10:23 AM, Felix Moessbauer wrote:
+> Hi,
+> 
+> as discussed in [1], this is a manual backport of the remaining two
+> patches to let the io worker threads respect the affinites defined by
+> the cgroup of the process.
+> 
+> In 6.1 one worker is created per NUMA node, while in da64d6db3bd3
+> ("io_uring: One wqe per wq") this is changed to only have a single worker.
+> As this patch is pretty invasive, Jens and me agreed to not backport it.
+> 
+> Instead we now limit the workers cpuset to the cpus that are in the
+> intersection between what the cgroup allows and what the NUMA node has.
+> This leaves the question what to do in case the intersection is empty:
+> To be backwarts compatible, we allow this case, but restrict the cpumask
+> of the poller to the cpuset defined by the cgroup. We further believe
+> this is a reasonable decision, as da64d6db3bd3 drops the NUMA awareness
+> anyways.
+> 
+> [1] https://lore.kernel.org/lkml/ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk
 
-On Wed, 2024-09-11 at 16:59 +0200, Alexander Sverdlin wrote:
-> Hi Arnd, Nikita,
->=20
-> On Wed, 2024-09-11 at 14:54 +0000, Arnd Bergmann wrote:
-> > On Wed, Sep 11, 2024, at 08:14, Nikita Shubin wrote:
-> > > Hi Dan!
-> > >=20
-> > > Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> > >=20
-> > > Alexander, Arnd
-> > >=20
-> > > unfortunately, the ep93xx DT conversion series is also affected
-> > > by this
-> > > bug.
-> >=20
-> > Here is what I did now:
-> >=20
-> > 1. applied Dan's patch on a new branch
-> > 2. applied the DT conversion series on top of that,
-> > =C2=A0=C2=A0 removing that file.
-> > 3. applied the first patch (with minor context changes)
-> > =C2=A0=C2=A0 in drivers/clk/clk-ep93xx.c again, along with
-> > =C2=A0=C2=A0 the MODULE_LICENSE fix I did.
-> > 4. finally, merged the entire branch into my for-next
-> > =C2=A0=C2=A0 branch so it actually makes it into linux-next
-> >=20
-> > My plan now is to keep the branch in linux-next for at
-> > least a week and send all the other pull requests for
-> > the merge window first. If no other problems show up
-> > (either with this branch or my other 6.12 contents),
-> > I hope to send it all later in the merge window. If
-> > something goes wrong, I'll send only the bugfix as part
-> > of my first fixes branch for 6.12 and we'll defer the
-> > DT conversion once more.
-> >=20
-> > I should have merged it earlier, but wasn't sure about
-> > interdependencies with the parts that already got merged
-> > elsewhere and with the comments about DTC warnings.
-> >=20
-> > From what I can tell, the current state is as good as
-> > it gets, as we'll always get more comments or conflicts
-> > with new reversions of the series. Let's hope we can
-> > address any other issues on top of what I've merged
-> > now and stop rebasing.
->=20
-> thanks Arnd for resolving this finally and Nikita for
-> your relentless efforts!
->=20
-> PS. I've archived Subject patch now in soc patchwork
-> (because I think I've messed up the author info, but
-> all of this seems to be obsolete now)
->=20
+The upstream patches are staged for 6.12 and marked for a backport, so
+they should go upstream next week. Once they are upstream, I'll make
+sure to check in on these on the stable front.
 
-thank you for your work and support!
-
+-- 
+Jens Axboe
 
