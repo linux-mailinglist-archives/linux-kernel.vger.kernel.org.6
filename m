@@ -1,98 +1,80 @@
-Return-Path: <linux-kernel+bounces-324113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679F2974809
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:09:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E887397482C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 04:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032D42878B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:09:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75672B23652
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 02:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5759329422;
-	Wed, 11 Sep 2024 02:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xHQzXUfb"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2882BAEF;
+	Wed, 11 Sep 2024 02:17:47 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FFE224FA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 02:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6329422;
+	Wed, 11 Sep 2024 02:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726020554; cv=none; b=UkDQYFF9ZhiNGyJM9WgyMYMZL3vyuzngz/imG3mdZDYjzGUqdaPGmbZwVYI+ghcPQ1p29g8Tu4drrt18rfhBd44rewmIyjBRbgEILhcwCEBEsXhsX11gx8xmDXIE3CJBldAaaC0PbGOqKW8QvH9qM1LDkOoaoT41HA0pBCMxQdQ=
+	t=1726021067; cv=none; b=gaCKW4uLH0nozpCC/MkgBHDK0cNzjrUZ1wC7fmB1tt4ZHVHl8o/KF5VWnYM0muvLY0jxePhwoLwzWK2YbNoFmJieeQFvf7iFLc/tiyTnE0SvnM35u8/s6ApxfEm/hUOEVSEobkgLyYhrmpg4mitUbiuBuvQtNpi5j8/H8UzxKYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726020554; c=relaxed/simple;
-	bh=iQlQrTJQia2JgU8Qufh9nal7DLq0rJTRGcYdptadpl4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eQOSUuugz/mQpCuD1M/YFx27csocqgXLBy481WQ9aLrKyFMPbV1cQnq22bNCF6I43MEhlWPNoKZtnPhEu3WeAHlCYDBQWpatySfuGjjiMID36fY/eTNUvRXvE6Pib8iX9FRLEMVoCDpv4W7wxz/sk/vSk9KaKKMbdg5JHT5sKzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xHQzXUfb; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d3e062dbeeso8713517b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Sep 2024 19:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726020552; x=1726625352; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4nPCvZ685cbKQNaJC1VFqgp1Patwk81JBkoDokDez0k=;
-        b=xHQzXUfbcNdE1I58YayWQAc7GE1y1piwdmKUFX4hxl5PUlGqE4RaZZwMXnj6m7/TAf
-         E6FiAV9Z3V7ztFVYjoY5wufdGwNANH+5B7Mac5ov9TebprnNTo3sWRK1uhZ0z/WZ/c5w
-         RFkYD6xHzTdyJkVF0210LrZkAoetPlhlmQvcI+MsjNH2/Pk8aU66Zaso1gsefY9PzB6K
-         rExFr3MuxEwFhDdnophWiGZOB2tH+hg2lqQl/UVNwhlK5XLboTWlfq98RXkLSQXkieH9
-         o7dPiDgrH+pRpFgSSsTKZTvDomYwx/wOmXbh+Oxr+rLzipMkc648XPF/a0qaeIHdF8Xq
-         zqdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726020552; x=1726625352;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4nPCvZ685cbKQNaJC1VFqgp1Patwk81JBkoDokDez0k=;
-        b=xUCpjQb0Wn9AkPejlXqzku3Ix55vwxmN2EIAQ2pz7wj88Q3kQLySRGo+A4uPtOqNoI
-         8pyc2fZ4dZXfwDB2T1BpzUX3Oky9qrn7zgakr0rxWHyRy5pLtsl2tTa0PF2y2aW2kz1L
-         WPo85DzNnbxfzNZNIRVBuj1GI8pl3Lw7VXr/8phLhpqo2MElzJK8NXc7dGunScorwkf3
-         yqGYXnwFIKq01gMkdSTUpgRwf5dAMLIwx4oQT0ro+Erfano6CtKUgpeK8RIncwe9Lei+
-         fCgrCUZclW2CU1B9lHzyO/5t2m3DWNHWf1uKZjSg4gLD7TveE9E/Yob0YXjg2F7OYYJN
-         PwWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1+DCLDizGiHh6YtYr2gVdLjwmpgN5hVTNuL/4pa8yZ9DOAU16jNYGGoeYSrc3lesIVhEyRl7bN4ETGaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWDNtLVGIcyH1+br/L3gN6c+D2gB3IsiFzeWRCDOwyfodC56l7
-	x2RfoP+Jr/4YE+zOKndSen1JXX3kDRCfKKq06xTWxWuW9IuOHsSk7GaNmGJ70RPSgAiSxc1wHRZ
-	mqw==
-X-Google-Smtp-Source: AGHT+IH10mEZy0dtLg6fETqh3d/Na00T0EQdYiXfNHYGJNKi6sJ4CZ4q1YG4Yve6iXZ2lLdXuELY0c1L8L0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:20a0:b0:6db:7f4d:f79f with SMTP id
- 00721157ae682-6db951c4d86mr1224397b3.0.1726020552438; Tue, 10 Sep 2024
- 19:09:12 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 10 Sep 2024 19:09:10 -0700
+	s=arc-20240116; t=1726021067; c=relaxed/simple;
+	bh=0x/nYsvJB5SusdTXecLpy6Cie3u1cVXOtJvPmzCGgW8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cFVDJ0Rl5LsjKuDEf63AQf+YTTutGSP3gC3PMyNX2gW8NyaTwG8/K69nmYA6xzZnTocqxzPo3dfMH1lq1ljhbZkn45SLw8FfPR/M1yPbhhKHmIPE2uLgA5l74K6m2yWJkmkMmNqNGFduGvCLG633lbROylWk9HbLtJLdTYq67CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [58.61.141.10])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 8C78F7E0126;
+	Wed, 11 Sep 2024 10:10:28 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: dmitry.baryshkov@linaro.org
+Cc: amadeus@jmu.edu.cn,
+	andersson@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: ipq6018: add 1.2GHz CPU Frequency
+Date: Wed, 11 Sep 2024 10:10:25 +0800
+Message-Id: <20240911021025.17283-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
+References: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
-Message-ID: <20240911020910.1856089-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2024.09.11 - CANCELED
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCTR9MVhpISEpPQkIdGhhLTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0pVSktZV1kWGg8SFR0UWUFZT0tIVUpLSUJNSEpVSktLVUtZBg
+	++
+X-HM-Tid: 0a91ded8b14d03a2kunm8c78f7e0126
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Eww*SjI5PykUPiw0KEIY
+	Mz8aCh9VSlVKTElNS0lLTUlCT0JIVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWU5D
+	VU1KVUpPSlVKS1lXWQgBWUFKTk1ONwY+
 
-PUCK is canceled for tomorrow, please use the time to catch up on sleep, prep
-for LPC and/or KVM Forum, or read through the flurry of RFCs that always seem
-to precede LPC and KVM Forum :-)
+> opp-supported-hw is selected for all IPQ6000. Please add more details
+> here. Is 1.2 GHz really to be enabled for all IPQ6000?
 
-PUCK is also canceled for the next two weeks, again for LPC and KVM Forum.
+The 1.2GHz frequency is available only if the fuse is IPQ6000.
+I will try to add more details.
 
-Time:     6am PDT
-Video:    https://meet.google.com/vdb-aeqo-knk
-Phone:    https://tel.meet/vdb-aeqo-knk?pin=3003112178656
+Thanks,
+Chukun
 
-Calendar: https://calendar.google.com/calendar/u/0?cid=Y182MWE1YjFmNjQ0NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
-Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l986SngGlhPH?resourcekey=0-FDy0ykM3RerZedI8R-zj4A&usp=drive_link
+-- 
+2.25.1
 
-Future Schedule:
-Sept 11th - Canceled
-Sept 18th - Canceled
-Sept 25th - Canceled
 
