@@ -1,123 +1,170 @@
-Return-Path: <linux-kernel+bounces-325423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AB7975984
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFF0975987
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 19:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991B31F21CCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA5D1F2322D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 17:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9A71B4C29;
-	Wed, 11 Sep 2024 17:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806AB1B3F20;
+	Wed, 11 Sep 2024 17:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miLmdgGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYn4k6wC"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA2E1AE852;
-	Wed, 11 Sep 2024 17:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F461AE852
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726076144; cv=none; b=XtvlNr2FJbhlzGR7vUKSPMOlRp8tFYqzQRc0enfspGmpHFPhWdumr2kiyk4P3wiXudLSBprNqACx6LNeBkL00/+1aVtIUtnRUH9pJNyTy5Wo4YO2IqZV4p1zCfa8ZXRd+RpcZgixcmiYZG8Vmu860hhKgY2xehS9W7olRnIrw0c=
+	t=1726076158; cv=none; b=pUT/ouG+C7xZeKeZ3eTxX0DgPB139dlDGYaVRyrOgduODGEAXkZLtO1YCrJQHZgP9Rdj+CmnEFryY89t00M0DbuX+b+L4AabYvrwkXor8ghp65L/X5D/tWAuDrFR42MmQOCMXX3JqmQ9aDcaYm9nZsGzAACuwddxIvoF0HbnEyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726076144; c=relaxed/simple;
-	bh=YbkFZVRnO7z0xDZitZm29si1xpSBine6L+hGh61wN1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rgg2N+y1g0KC9V24EXWMfslTmL/6cKHCqhA/5/a9BSGbKqMcOHP711XDQ1uwBLsY8bmXxezlrgEqYS7zh4uX9jnikVbIBRqpZjp76I4uZO1BDnNJ01lIEEUybrf7c9RLlLBTtaGamiDYyiOxYfNmEiqsSQRN0xHMBw+U5BC/YqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miLmdgGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195EAC4CEC0;
-	Wed, 11 Sep 2024 17:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726076143;
-	bh=YbkFZVRnO7z0xDZitZm29si1xpSBine6L+hGh61wN1U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=miLmdgGorlsJh0FQ94RmjTjwSf0/zRABbJ94KLqEmEDIjjdPPXJ34x69OvXCpI9nx
-	 Yxf0CufuinCFr8VaPmOMhDerDsA8hp49UbpnvvfTAUO0R/mssnjDuPOnfVPMsHdwkZ
-	 dmZzUnDLnYY54Wh9WNmYqdfFXYkSkwYzpYoj4W3xgZjzJx/RJjVKlhhbmnaDvQJRzU
-	 PhAPSO4s0fMSwLMAC5lFT22m3syGPJVsOVCuRr41760TEVausfkYOezblo9RkM0xHz
-	 E9v9kAHilNC13DoR/thFVknR2PQsN7/Os4jOIpTQbQECNMdmjxxaKZTPRv47DUpjmM
-	 Ii9Du3WxbVnaw==
-Date: Wed, 11 Sep 2024 19:35:35 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ayush Singh <ayush@beagleboard.org>, fabien.parent@linaro.org,
-	d-gole@ti.com, lorforlinux@beagleboard.org,
-	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
-	Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/8] rust: kernel: Add Platform device and driver
- abstractions
-Message-ID: <ZuHU5yrJUOKnJGrB@pollux>
-References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
- <20240911-mikrobus-dt-v1-1-3ded4dc879e7@beagleboard.org>
- <2024091106-scouring-smitten-e740@gregkh>
+	s=arc-20240116; t=1726076158; c=relaxed/simple;
+	bh=K3Ucla6qHWdsNk6bbDi2C9tCMIqfaV06d3MCVH//ehI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y6YbOmUWPc3lGLbhr4bWNkWIT8iBgh8Ka7k/KTA5IbY1Y1qdGZoQ3pUpRZS9dXhJZR4OzQpobDFzT5qi4P3hv0iP2ZYiMK/i/NndNjZ0hatv0JYnpXwRM0h2tkA0S2HX7bSA46lzq5TSHiV15wyrQd4H7Ywv1ThQ+hgNmmEePtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYn4k6wC; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2da4e84c198so55890a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726076157; x=1726680957; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+zugMFoquGTXa/VfqrdIPbdRGro0VHIjtqIBxGTLnU=;
+        b=AYn4k6wCGx+gdP4Jo+FRr/6+tK1OUl0OfWeAUSatHy0CsQaGByd8UMoMbVncJgtOUI
+         9oDJJpgH6/V4owhH523FFkvQG0tdCowAEKWy4O6xcblFDOpCt0+S5gSbTnQH9QYa82Jv
+         7tgnGgKDFjLxkRkBPhZwT5tGoXslKIGsqoD0Ul0+BcvWyXTd4UKpsv67lWVPloOXYfUP
+         34/JXf76ZqdW78fDdzrVfdb33Q7UEqZnolNFXM3rFAC0k3mBgcahmuy1ltsDu7kLdgMp
+         i/RLJMNI1KZ8XOJMetbfbk2s0BlMdyDQyeDzRAKrg/NItofxh4KU1kwisQ1vZwjVENWf
+         TgLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726076157; x=1726680957;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J+zugMFoquGTXa/VfqrdIPbdRGro0VHIjtqIBxGTLnU=;
+        b=XGt1hQJfE1vq/QYJSk0T9o3H+1ZYaUrIW4mL/DhYwR7dfbIy96cqtetTrBiv/yAkw1
+         SQpjouik3d/mEjDdaIPoIEmh/uFJ30lf+DJlqGRsuEsNXEXEIuTlDp8IJeTZZrCMoYmv
+         /RLhkIH86EPI+lW1ESrpZhV5Z/9pVwTGLcsXSSCFX6rd0txFFJZE+dgR+SjQ2H6H8XH6
+         afE1oB/BfJYYuBND38Oxf+xRX6/8dW5Zb4jaoq3ax897/Y7tndTf+wg8yHid79VG13yn
+         b/VmtDJ+8TEbLD6JA19/HkgQjF1gunKaQ8U/soI0XHNxcLBlAjYvzX/fGa/buv5NS++z
+         hScA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxCcSf5RUwIfc/0srP29rh3IMOIJkuJVE6pZHb1oATKMRYzvkEqjwW2SFyiCJcxG0f8UOdZXwwtmAXuEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh9MFCA9qAf6xiZxIS7VGQc9O4z+cMQ+ktU/bK/8q+uRHWoXJK
+	gdfQ/29OSXESVZYWOqCzqQqe65kZmj57htnCBTKtbWSovJXP/YXsYJhdKgYS6/pbp2m1pXencj7
+	ZV3AxMzbk+Hb0uLg8DbuwkwyWyqs=
+X-Google-Smtp-Source: AGHT+IGmCpPj+I32nVJBJWnsPgRGIwZW08YCd5TauOT9KzvM3pY9ncXxsjRUyjSchdeuMp3HLi2SRenTt9L9UoAjmUg=
+X-Received: by 2002:a17:90b:3696:b0:2d3:dca0:89b7 with SMTP id
+ 98e67ed59e1d1-2daffa3a9d4mr15698133a91.3.1726076156520; Wed, 11 Sep 2024
+ 10:35:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024091106-scouring-smitten-e740@gregkh>
+References: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
+In-Reply-To: <20240903020857.3250038-1-xiaolei.wang@windriver.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Date: Wed, 11 Sep 2024 19:35:44 +0200
+Message-ID: <CAH9NwWczgAmgRbHiKD1614Yc1fAXRYV2ZDUeuEunPDUcRmPwgA@mail.gmail.com>
+Subject: Re: [PATCH v3] drm/etnaviv: Request pages from DMA32 zone on addressing_limited
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: sui.jingfeng@linux.dev, l.stach@pengutronix.de, 
+	linux+etnaviv@armlinux.org.uk, airlied@gmail.com, daniel@ffwll.ch, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 11, 2024 at 04:56:14PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Sep 11, 2024 at 07:57:18PM +0530, Ayush Singh wrote:
-> > +/// An identifier for Platform devices.
-> > +///
-> > +/// Represents the kernel's [`struct of_device_id`]. This is used to find an appropriate
-> > +/// Platform driver.
-> > +///
-> > +/// [`struct of_device_id`]: srctree/include/linux/mod_devicetable.h
-> > +pub struct DeviceId(&'static CStr);
-> > +
-> > +impl DeviceId {
-> 
-> <snip>
-> 
-> I appreciate posting this, but this really should go on top of the
-> device driver work Danilo Krummrich has been doing.
+Am Di., 3. Sept. 2024 um 04:09 Uhr schrieb Xiaolei Wang
+<xiaolei.wang@windriver.com>:
+>
+> Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
+> and since all vivante GPUs in the system will share the same
+> DMA constraints, move the check of whether to get a page from
+> DMA32 to etnaviv_bind().
+>
+> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
+> Suggested-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 
-If everyone agrees, I'd offer to just provide platform device / driver
-abstractions with my next patch series. This way you don't need to worry
-about aligning things with the rest of the abstractions yourself and throughout
-potential further versions of the series.
+Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-Just be aware that I probably won't get to work on it until after LPC.
+> ---
+>
+> change log
+>
+> v1:
+>   https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.2018783-1-xiaolei.wang@windriver.com/
+>
+> v2:
+>   Modify the issue of not retaining GFP_USER in v1 and update the commit log.
+>
+> v3:
+>   Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+> instead of
+>   "priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"
+> and move the check of whether to get a page from DMA32 to etnaviv_bind().
+>
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 +++++++++-
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> index 6500f3999c5f..8cb2c3ec8e5d 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -536,7 +536,15 @@ static int etnaviv_bind(struct device *dev)
+>         mutex_init(&priv->gem_lock);
+>         INIT_LIST_HEAD(&priv->gem_list);
+>         priv->num_gpus = 0;
+> -       priv->shm_gfp_mask = GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+> +       priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+> +
+> +       /*
+> +        * If the GPU is part of a system with DMA addressing limitations,
+> +        * request pages for our SHM backend buffers from the DMA32 zone to
+> +        * hopefully avoid performance killing SWIOTLB bounce buffering.
+> +        */
+> +       if (dma_addressing_limited(dev))
+> +               priv->shm_gfp_mask |= GFP_DMA32;
+>
+>         priv->cmdbuf_suballoc = etnaviv_cmdbuf_suballoc_new(drm->dev);
+>         if (IS_ERR(priv->cmdbuf_suballoc)) {
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index 7c7f97793ddd..5e753dd42f72 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+>         if (ret)
+>                 goto fail;
+>
+> -       /*
+> -        * If the GPU is part of a system with DMA addressing limitations,
+> -        * request pages for our SHM backend buffers from the DMA32 zone to
+> -        * hopefully avoid performance killing SWIOTLB bounce buffering.
+> -        */
+> -       if (dma_addressing_limited(gpu->dev))
+> -               priv->shm_gfp_mask |= GFP_DMA32;
+> -
+>         /* Create buffer: */
+>         ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
+>                                   PAGE_SIZE);
+> --
+> 2.25.1
+>
 
-> He and I spent a
-> lot of time working through this this past weekend (well, him talking
-> and explaining, and me asking too many stupid questions...)
-> 
-> I think what he has will make the platform driver/device work simpler
-> here, and I'll be glad to take it based on that, this "independent" code
-> that doesn't interact with that isn't the best idea overall.
-> 
-> It also will properly handle the "Driver" interaction as well, which we
-> need to get right, not a one-off like this for a platform driver.
-> Hopefully that will not cause much, if any, changes for your use of this
-> in your driver, but let's see.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+
+-- 
+greets
+--
+Christian Gmeiner, MSc
+
+https://christian-gmeiner.info/privacypolicy
 
