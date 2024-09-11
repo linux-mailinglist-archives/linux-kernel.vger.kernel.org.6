@@ -1,200 +1,213 @@
-Return-Path: <linux-kernel+bounces-325321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7C09757D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E93319757D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F3D628D70F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D4B28D744
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF261AC428;
-	Wed, 11 Sep 2024 16:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D11C19CC15;
+	Wed, 11 Sep 2024 16:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TOLlQ6kb"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQ+dVKZz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B6A3EA76;
-	Wed, 11 Sep 2024 16:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726070531; cv=fail; b=AE4ST+1du3l9OPOvpJ4nrslKgCNBg99VTg4KF64UHI9gFI6BfDgP0+Z31zgoPGxf75UN3F2/6o/D/1Q3DPdkmPlApbEUivpBzM0moyyy8aUSuy75agVde/9S+CGNT+gFvd3dL2xwtNh6P6wde8/KuQNbTMCOvXBPEy5TttwI+hU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726070531; c=relaxed/simple;
-	bh=WArCZcXogjj7bPI2/sFFG/zseLUFPy05bQqaT9bH0tU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=apvTOV/VEumM5pezQ05+RLAVepVSvqvwZQxV1RiX8cNgN66p+j7TkcR2ysFpPlft2lJaD83cTSxJnIQmKy0IVRU5HEFeMbIsbkwO3dR9qEOmZHWzpefgPy3hWk7ESKGjNGi9s/lVYy8cOtVAPLg7uvZTh+iTIlL5TA13Zk3ygXg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TOLlQ6kb; arc=fail smtp.client-ip=40.107.223.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kaDoW+wrcJdbslG6fzt/FDF6qnJfA64CgFyE9EFFwwJSNoBq7VwX3MnQENUFMdKcqvJG3jHjP3YMLfOWu+5cZRIvrdmXL6QprZhYOfaRIoZwkhFWBQQYDA7T+Chf9d37W5+E/Mf7lL1rEx06HqODIQeMCMLC7Sbe1yWZt2GKlLzHGoq2cK5fX9Cs5683Uyx0xi4yTD/a1BUSeWhNyeEpk/BrUgdVp6th3n7/1NGq3XitVeVf4ejGnx3XWJug0N/FpZ56H4tHE6AJzqwVIcKR44lvSdew27OfOHq9DUDUwr8wqaeJfkHRXumd+5wZBgo8I7oRnPhckMiYfq73V2womQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RzbtIllT9/C+h9HXxgImQ9zeAcU3cwI1OHsDEVi1jYg=;
- b=PszpzzcdaM8p/FGJGrdh3vkDaK72Qs0aiZf9fdrzBZHyiy+r0OY9+cmc25NVdqM65Vhepu852a6M51WtbTi8475P5H0Dk5jBRxc6fYn6+mJi/S2jJJ8a5uNW7cyNRuavl7g7e2q0ypY/x4aHsp1rNGTCc6p2negvxzDfSHwxEZ28F4oe65mgtk+/2d19eXyB/yQ3ie991rOSZLZ0omGlk6wnwfMEdui3wR0GHGqlGBEaPc7+L6vownlkIpohXoFUgBB0gfyztspyDBb+cINSuy7zYSo3/OlFxmg24hWZvFCsjrde/ArJJ/Sw3UbZmWuXjuVNuh/jXVt6EqhfGWknmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RzbtIllT9/C+h9HXxgImQ9zeAcU3cwI1OHsDEVi1jYg=;
- b=TOLlQ6kbGTAwneB+jLq7gEUYR+X/ld9nuifFkKvhcIwqfdKeG62p3b1n17IcvYZVTTWoBI8xV4hTy9Ys+wvhfVkHkVoY6YQ4ZiOiHXzavb+4aE5vVZ65i3xBIVeVQ6Nn0HzdoKkDin7khQwKHyiXwUt2UN9b/WO7ICXPIYkT+Bo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SJ0PR12MB6805.namprd12.prod.outlook.com (2603:10b6:a03:44f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Wed, 11 Sep
- 2024 16:02:07 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7939.022; Wed, 11 Sep 2024
- 16:02:06 +0000
-Message-ID: <0af7ec21-d470-4efe-98ec-9b4879575478@amd.com>
-Date: Wed, 11 Sep 2024 11:02:03 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq/amd-pstate-ut: Fix an "Uninitialized variables"
- issue
-To: Qianqiang Liu <qianqiang.liu@163.com>, ray.huang@amd.com,
- gautham.shenoy@amd.com, perry.yuan@amd.com
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240910233923.46470-1-qianqiang.liu@163.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240910233923.46470-1-qianqiang.liu@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0151.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::6) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D573EA76;
+	Wed, 11 Sep 2024 16:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726070557; cv=none; b=eUVJnCu2vc4ySmkfdAEkMhWz7anijKrFNbL/u/wfg4jyBlIKD18g3Pcr2U/JYkhQ9hivEMJ1MOmTswn+7ao10dNnAZR7/n7VdAfirsn75GRAbfOh6B8a8bpphJFuzAI3BO39xW8lv/46fKO7yIzed3O3LNfuRPDX1DhGnF7gY14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726070557; c=relaxed/simple;
+	bh=r6QvD9FhdepOvEr/WYVOCreI6UHgbVKov3rOcox8K/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pv7ce8524yQqViuZBZLCuonD3A3Ny/3QmBGvnkuSVuHMd2ojocQljAc/+RaNAsGlngPYPyWSG1t//Xl7TDtBlh7k0FUB+xA7V1Ozyc0SGE85xPk87FfMqUC/skGbWvtUr/40YmacM6WSAUmPXhp4Yq0ATiTdRg+POiIxxeh+4Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQ+dVKZz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20551e2f1f8so185635ad.2;
+        Wed, 11 Sep 2024 09:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726070555; x=1726675355; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Z0fJcZaNKVfL/yQSd38wTgSdKg5EJ3kwsSWPUkjqWI=;
+        b=XQ+dVKZzN6WXgMnPrIJQn90OkDcK9TFJS7Ydbk40/RUSTdZgaksqZSSSmHmz+c4m7P
+         Zol++4QypuKKl++CpNCunQQ9Xh3ExmKaFuGHj6bdB42Z5lAmIKeBdO38W7l95+i3JsDh
+         yJHhqRH0ZreyG4rB/fyzwXumb3YdjBTbHtKV8+rCOszv4nmc4cmM2IIv7+czvGbpKTI8
+         6ONDQp9ylbVx0hNf/NcmnhTa1OrztY9toHtieJ7QtsMgmbDa9rPeLa3O8ByNuPqNfSzU
+         OubuTs3KKX3mYinmMvhfFZ81PNZDPAMXDAM/K6RaMHH4ip44FquqI5Aswb6tehoakIGW
+         67Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726070555; x=1726675355;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Z0fJcZaNKVfL/yQSd38wTgSdKg5EJ3kwsSWPUkjqWI=;
+        b=HymMC9j56KeRO+l1zEgTIo/20cTILGGKe6g6Z7mVWW2fWMDzNYhAQ3/HTV2XBTZ/g8
+         L5ZAu3faa4r2QDkroRCbWTiEP8zPH9yBG/BFw926PRLKR3KvRW86XUphhfGBhDRPnqnr
+         lxOOXlWItQyCZIgvVmYh6o58P27IBj47z0/lEaBwN3yVl8mMELgHJbsgGlESFnKXDuoY
+         rpTvhQ/O4PKEOn7bFOfOjGxY4XooSplcWSG2h6/3MJJtvuKxYoDDbQt8SVG4EG6Y86Cm
+         bO+ajxKoqy6h31nGC23ygorPHxPW03A2OdfSGdtaKTYXmPR+Ht0j7+3LnKtdv/E0JxYP
+         Nbyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUH/6Ay0z/TH/5rOrobLSVS/JhrrZ0Xk9oXYrrOwgaJJTGP7Qr4t9/sV0XOV8cBhsxH9CMCW39SLsp6Zsmo@vger.kernel.org, AJvYcCXWMUbPKTry2HnQhx3JaU6Oraab3vXxSAuVDJjuk5GSdIMPvTuieEBmzzHPdUenRR9HNrrbIJbJ0aPtak11IOE=@vger.kernel.org, AJvYcCXYXcMkN5Ne0ou/+yb9YeDWVsUbbyWecGpy1IgxhkZ8DVr2GMNqrWHrH6ayYUyvW9m+vbjgOYSfL7jz@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfj9wIox5BFLKOgoP5Z6uK8/Fg9PeZLguGorY7uzEYzC/6uZR4
+	xVjsJYaNBVCMOto6qX20C/FvE4qoLwFGFBMOZwk1eg87p9d8FvOP
+X-Google-Smtp-Source: AGHT+IGZA2nrfaml+dTZzjUl09CuZgnx91GaM4wHlkcWfHL3Y2AjUxvNpFV+qA7OepeOAbrY+ZUjvQ==
+X-Received: by 2002:a17:902:c946:b0:205:7f87:ba3e with SMTP id d9443c01a7336-2074c5e4cf2mr73320825ad.13.1726070554257;
+        Wed, 11 Sep 2024 09:02:34 -0700 (PDT)
+Received: from [172.16.118.100] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af252e2sm1398935ad.6.2024.09.11.09.02.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 09:02:33 -0700 (PDT)
+Message-ID: <ecd1fff8-9c15-496a-982f-36e6c58e906a@gmail.com>
+Date: Wed, 11 Sep 2024 21:32:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ0PR12MB6805:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75ec58da-182a-4901-ce58-08dcd27b1580
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGFHaTlUQ3ltVGo3Ymh0NndCVHZiUEhQZUxDblJqMGtSYzNVU0dPZzFiOGNF?=
- =?utf-8?B?YjE5b01pRzVsVkx1UjVycWZGOFBWY1RsV01GOWtLMWh3YVhCbVNlaDVNU1JS?=
- =?utf-8?B?SFlsOTNRRWxrR2ZsS0RTZlc4cFZuZlZJUWdVOG1mNlBSVERXckJKL3k0UFZz?=
- =?utf-8?B?eTlFcTNBcmsxYWR2azYzYXY4NUxjZXpLSkRwekg3UDRPc3BoL203TTdyQUoz?=
- =?utf-8?B?ejByTWhVbGZ6ejl4aXV5clVvTThFL21iUnBXOFV2UlJoSmRuM0hPQ2xVczJW?=
- =?utf-8?B?a1pSOGYvdm02UVdoc3MwdWtSTTJta0VDRGx3clZPT3dhd3lHL2JhaHhBSkFE?=
- =?utf-8?B?LzBsYnNvQWQ4Y2pabkFVU3d3ZzFLMjdlT0VycjdkUHQreE1KeDBWUFFoN0w5?=
- =?utf-8?B?UTU1YVVNL3pSRnA5aWNrZloxcW9qd2dnQW1hdnVlQlo2NmFPOGMrTEk2b2Nj?=
- =?utf-8?B?V0QrUnhxZ2huSFlCSDRKaEVRS0thdnlYSWRNSWt1aVJmbnk1VjNOWTJNR2V3?=
- =?utf-8?B?bWVnQndJM0tWR1BKbjhKelRaR2k2TkYxTDFQTjBQTjY5RWdxdStsamNUWGtN?=
- =?utf-8?B?TjlTV05LdVdpZlBZUXowSmlmQWc2ZTVlc0RPNVJWc1owWVBrQ05VNXJ5T3My?=
- =?utf-8?B?aSs5RFdXT3ArQisyZUpBd0hTV3IzTmV2bGRtRTlReHJ5QzlmZVVuNmNQOG9G?=
- =?utf-8?B?c0g1REtPajd1MnNKRFE5b3JVejJpTS9rSWxEQ3duZGwranZhc3dTYW9HM2JT?=
- =?utf-8?B?T21jeGo5MFFHNEQ0aHpWbG56U1pOdHRlMDk0djZ0TGppeGRsekVlUldZZE9Y?=
- =?utf-8?B?QVcrdEV0WU1lWFBlbEQySmJqLzBadzZmZ1hvTTMyeWMrZ0RBRHU3dVd3SHgx?=
- =?utf-8?B?aUl6SUs5RU9VS2Y2UHorOXdQSWwxMkJXelZCay9aeU5HSVRqS0FWUVUyeDNJ?=
- =?utf-8?B?TmtGb1pHV1NsOVNaV3lUdlBscGxjRzR5SHlwYUVPVkNxWjlRTTlJKzh6Tk1j?=
- =?utf-8?B?TEt4ZGVpNUlPUVFxRHUrWGZsTGQ5dHIvU3RlYVA4bmFTKzVyV25MRFkxK2wr?=
- =?utf-8?B?REluV0R3aE5nMzZhWTJTTWZSU3FEUnlReXFXZmxndTc1aFk1RUtjRzdqUHFX?=
- =?utf-8?B?K3FCU2hNOFNaZGRZMXJsaTlhc3JHdmswbXYwaTNUaHVHdDhLWE9senFtcnQx?=
- =?utf-8?B?SHZwTTRVdkZITnJQWm05QUNEMDlselk5VjBLM0xZUTI0YUtVZ0dMUHUvL1Ur?=
- =?utf-8?B?K0d6bGN4RGhpT3Q5blphaVNUdlpMV3FuOXBJNXpsOUxDdzRBRDE0TFNySGlC?=
- =?utf-8?B?SUk0UjlSMzJtZkQ0NnA0cWJnYnA3TGRML2pBQmtMcnlBWUlMKzR6cGtLdlFv?=
- =?utf-8?B?aXF1Wmw0U2paMXU3TW13bmFkeXRMUW9tWWp6akNOazR3ZDJsQy9pRjcwbDBS?=
- =?utf-8?B?VGNLNHJkSUQyaFVJVU9vSkQ1Z2txM3RORDdMWnNPYVgzMnNzWlAvMWFLSUNp?=
- =?utf-8?B?RnJTbHhMSUhGeDlDbi9OSEdtKzU3ZVJTNkVCaTdNS0lVdzVtbjhQVndpdTli?=
- =?utf-8?B?bmZ0dEFSandOcStqcEQvZDBaMDBLbHFxMzVDSkhpdnNndzM0dEFvZHlkODZK?=
- =?utf-8?B?a29HMHhtYlU3dGxlUjZMakJ6VndrcWZRZktvdDZ0MERLdS84SjdSQjR3NGg2?=
- =?utf-8?B?UXJoZlU2SWhCaEczTU0rMVNWekROQkg5TnFYajVMbFp2cWZzbS9Dc2dGcHp2?=
- =?utf-8?B?RVdQSi93RG0zOXdOSy9zam1yaG5iS0VieVBhNDVZY2lxUGFtK292WlJnQjk3?=
- =?utf-8?B?Y2JFc3BEOWNGSVJ5QWEyQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WTYvZEpoeEs2YThMVnFiOWlrNGNyL040anVNTklia2JFaE85d25sdlFyWlNO?=
- =?utf-8?B?WUNOY2RGaUx1c1V0dUdCSWt2MVFTUlY0L1drb2NRa3p4NkgrMVdSVS9EMHRY?=
- =?utf-8?B?Rjc3bjUyM3ZhRDhZck1tOHRoMmFtb29QUGVGNHZWdGVZY0VBRVpEMGdiMDBm?=
- =?utf-8?B?aGRiSzFuYWU5WHZzb0NtMHE1Vjlzbzk2dHlPb05FU3Vtb2ppSDI2TTVuYWpo?=
- =?utf-8?B?VmpaU1lPd1VzZHFXa0ZsMmVwNHlDV0FWR2xieHpTLzFsVWJ4K0M4SXc2S2c0?=
- =?utf-8?B?U1ZHR3grYkx0Sm9TaVZISWZ1REtrbHhXaXVQV09KWmwvYUQzTkFIODlIU2R5?=
- =?utf-8?B?L00xbTRvQjVnS3RuWTdtbHM3cjlycEowYUxrV3NlQ200MG9zdmtoZmFFOW1B?=
- =?utf-8?B?bXZGMFhhVjh4S2JDcU16bk9YOE1BV1VlU21ZYk12dEtDREhOZU5nQmhRTUxS?=
- =?utf-8?B?cTlnR25BaTY1ZkVyOXE5Y09iOWlrc3pRbkNuRWhqNVJLeTFmSFJUWFFLWm13?=
- =?utf-8?B?S2I0Q1RmdEMySUJaOHRaR0JPc0JqMUo2cHVoZG1RMklJZzM1eFBybUdGZjdN?=
- =?utf-8?B?WmtmRmZxZ3FjT01aUnNrUUZXWDRHQ2xDem1oaCs5R3RnNjU2MjBlRWlpYmRW?=
- =?utf-8?B?UDU0QVplYjY3YmI3YmJxMmxDcTFXNmFIaFdua2J2VThYaDk0NHhvamlGVHFS?=
- =?utf-8?B?RXBrZ240c1AzUm1EWDdKaEN6aXB5MWUzMUt3cnhDN244Z2VaKzhGdFh0WlZq?=
- =?utf-8?B?VUJhaTVnRndLa2Q1R1JYSHE4blh4elBSVnBQbVU5UzM1cmVOQndkK2hNazZn?=
- =?utf-8?B?K2VtSkw1MDkzV0pIVGg1UlMwdTNOZEhPNGZDT2hIMjVMZDBMUjFick9hWWtU?=
- =?utf-8?B?bCtTQjBLU2VuOG0yZDE3ZC9Wb2JkVlRkOFlUM3h2VUVCaU0zM1AxaTdDSFhr?=
- =?utf-8?B?NmY1RlFkenpXZHQ3cjRZVWhsZUNweFU4Tkt2MExuWWxHVnBUWVErSjgxWjE4?=
- =?utf-8?B?aS80WjE1WnZUN211QTZnNURJa2RJbVh0WU9HTDBzejNma1BQRUU3QjZodjdG?=
- =?utf-8?B?eFRXeGFXdlRlUlJPYVVXVHdwNlBHSEJJbDRPWU4vb0lINmp4elZkdzlDUlRq?=
- =?utf-8?B?dS84dXNvdWVkR096VEQrSlhsWXFHUk5RSWx3dDJCbFVsMkE3aTNJWTRQei9x?=
- =?utf-8?B?RXY2ZU40QzRDQStsbUt4cXd6SXBSMHRUSm5oWXlQS1FWMWVmcnYzbk9mQm5P?=
- =?utf-8?B?VnBCL1lVQ2lCbDhzb25QTnlxciszaW1oYnBiWlZZUFcycDVYUGhHNXVIQTJK?=
- =?utf-8?B?SGtOWW02QW9nV1hlcFlHek5yTncvdmlpeVJLbDZQSXlXK3JaaytPb2NFcHoy?=
- =?utf-8?B?QTR2cTVnaWhCd3BqenQydTN2TTQ5ZUpTQWpaenhNQ1U2WVVwWGZMTG14NUxy?=
- =?utf-8?B?S1JZeDdVaGJoTzBOaEtka1ovVk5NcUUwa0xhWW03VjRyQWFuMWZIbXpWaGQ3?=
- =?utf-8?B?Y2xZcEZXVDJXN2hJWXZHeHNHNmlTdENVWnhURWdhUWpRZy84ZzhzUjRreXdt?=
- =?utf-8?B?OTdQa2sxUkQzcTcycXNRMDM1dXJ4UWQrQVJkTFBpTFdBaW5wRE5mb3FlRkh5?=
- =?utf-8?B?dW9SQlA3ZjhXUURjNjgybWQ5dTlqWlZUS1F2ZHhKaHQ2d1d0TVUzVGtCTlhJ?=
- =?utf-8?B?RmZIZjNrTHF0UEh6cjZOUmtvWm5aVWpBaEpNTlpFTEE1ZWNXa3prZVFjaFNt?=
- =?utf-8?B?dlRCVEw0YldFQTVFR0ZpSjc4VFJuT092SnhOYmx3REZ0OHgzWjVpY1IzZDh4?=
- =?utf-8?B?OGtCMEZqVk5mQkt4ZGlWS3ZPTTNGTU51US9HYXJWdTdTTjdhakZVTkwyVkpH?=
- =?utf-8?B?TiswUitHa1pFdjFRdWZKK3dVc2pGVHlTWWtuOUZ4WUlTVEU4dTM2aERWZkMz?=
- =?utf-8?B?amczeEN0NGxDTkJQSTBaVlcySWxYQWU4SDBDa252aGM1endXYjVMVWhOZmhn?=
- =?utf-8?B?Yzc5RjVOOFA0bXdzWG16V0o0WG1INklsQyt0UHZJYlVYUEk5S0hmT05INjhI?=
- =?utf-8?B?Mlo2K0wra3hOT0F6UkpWdmUyMk96bnJFODlFZjU4M0VQVnJCbTFCaSs3cHFj?=
- =?utf-8?Q?abAfT1MLmUG3TLgRQn0RH5CGv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75ec58da-182a-4901-ce58-08dcd27b1580
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2024 16:02:06.4978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PBTYB4MKQuBgEHbeIkdZA/XSL3Gf52O+6Lzd974YB5N2tWXNb1hEOuKCIQzhrIuYUp2wRCKIfWfvtGUyiG52Bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6805
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] mikrobus: Add mikrobus driver
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ayush Singh <ayush@beagleboard.org>
+Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
+ jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+ Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
+ <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
+ <2024091144-glitzy-kindly-fa74@gregkh>
+From: Ayush Singh <ayushdevel1325@gmail.com>
+In-Reply-To: <2024091144-glitzy-kindly-fa74@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/10/2024 18:39, Qianqiang Liu wrote:
-> Using uninitialized value "mode2" when calling "amd_pstate_get_mode_string".
-> Set "mode2" to "AMD_PSTATE_DISABLE" by default.
-> 
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> ---
->   drivers/cpufreq/amd-pstate-ut.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-> index c291b3dbec38..f66701514d90 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -270,7 +270,7 @@ static int amd_pstate_set_mode(enum amd_pstate_mode mode)
->   
->   static void amd_pstate_ut_check_driver(u32 index)
->   {
-> -	enum amd_pstate_mode mode1, mode2;
-> +	enum amd_pstate_mode mode1, mode2 = AMD_PSTATE_DISABLE;
->   	int ret;
->   
->   	for (mode1 = AMD_PSTATE_DISABLE; mode1 < AMD_PSTATE_MAX; mode1++) {
+On 9/11/24 20:27, Greg Kroah-Hartman wrote:
 
-Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+> On Wed, Sep 11, 2024 at 07:57:20PM +0530, Ayush Singh wrote:
+>> A simple platform driver for now that does nothing. This is required
+>> because without a platform driver, the mikrobus_gpio0 nexus node cannot
+>> be used.
+>>
+>> In future, this driver will also allow for dynamic board detection using
+>> 1-wire eeprom in new mikrobus boards.
+>>
+>> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+>> ---
+>>   MAINTAINERS              |  1 +
+>>   drivers/misc/Kconfig     | 17 +++++++++++++++++
+>>   drivers/misc/Makefile    |  1 +
+>>   drivers/misc/mikrobus.rs | 32 ++++++++++++++++++++++++++++++++
+>>   4 files changed, 51 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 0cc27446b18a..d0c18bd7b558 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15433,6 +15433,7 @@ MIKROBUS CONNECTOR
+>>   M:	Ayush Singh <ayush@beagleboard.org>
+>>   S:	Maintained
+>>   F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+>> +F:	drivers/misc/mikrobus.rs
+>>   
+>>   MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
+>>   M:	Luka Kovacic <luka.kovacic@sartura.hr>
+>> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+>> index 3fe7e2a9bd29..30defb522e98 100644
+>> --- a/drivers/misc/Kconfig
+>> +++ b/drivers/misc/Kconfig
+>> @@ -610,6 +610,23 @@ config MARVELL_CN10K_DPI
+>>   	  To compile this driver as a module, choose M here: the module
+>>   	  will be called mrvl_cn10k_dpi.
+>>   
+>> +menuconfig MIKROBUS
+>> +	tristate "Module for instantiating devices on mikroBUS ports"
+>> +	help
+>> +	  This option enables the mikroBUS driver. mikroBUS is an add-on
+>> +	  board socket standard that offers maximum expandability with
+>> +	  the smallest number of pins. The mikroBUS driver instantiates
+>> +	  devices on a mikroBUS port described by identifying data present
+>> +	  in an add-on board resident EEPROM, more details on the mikroBUS
+>> +	  driver support and discussion can be found in this eLinux wiki :
+>> +	  elinux.org/Mikrobus
+> So you want to be a bus?  Or just a single driver?  I'm confused, what
+> exactly is this supposed to do?
+>
+> If a bus, great, let's tie into the proper driver core bus code, don't
+> "open code" all of that, as that's just going to make things messier and
+> harder to work overall in the end.
+>
+> If a single driver, why is it called "bus"?  :)
+>
+> thanks,
+>
+> greg k-h
 
-Much appreciated.  I needed to redo the PR for 6.12 and I added this as 
-well.
+
+Well, mikroBUS [0] is the name of the socket standard. It is basically a 
+group of following pins:
+
+Analog - AN
+Reset - RST
+SPI Chip Select - CS
+SPI Clock - SCK
+SPI Master Input Slave Output - MISO
+SPI Master Output Slave Input - MOSI
+VCC-3.3V power - +3.3V
+Reference Ground - GND
+PWM - PWM output
+INT - Hardware Interrupt
+RX - UART Receive
+TX - UART Transmit
+SCL - I2C Clock
+SDA - I2C Data
++5V - VCC-5V power
+GND - Reference Ground
+
+
+I do not think it would qualify as as a "bus" in the Linux driver sense. 
+Especially with the devicetree based approach here which applies overlay 
+directly to the actual uart/i2c/spi controllers and basically not 
+interact with the mikroBUS node much.
+
+
+The driver is here to enable the following:
+
+1. Enable dynamic board detection using 1-wire eeprom on some addon boards.
+
+2. Provide sysfs entry for runtime board adding/removal
+
+3. Enable using mikrobus connector node as nexus node for GPIO (not 
+having a platform driver makes any driver trying to use the connector as 
+nexus node go into deffered probing state).
+
+
+For this patch series, the driver is mostly here due to point 3. 
+Basically a stub.
+
+
+[0]: https://www.mikroe.com/mikrobus
+
+Ayush Singh
 
 
