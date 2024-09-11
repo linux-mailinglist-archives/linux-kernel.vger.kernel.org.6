@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-325073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C3A975494
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B6F975499
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 15:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A38C71C212FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F04283B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573819AD6E;
-	Wed, 11 Sep 2024 13:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6947C19CC29;
+	Wed, 11 Sep 2024 13:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfonS4uG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgekGbm2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDD18593F;
-	Wed, 11 Sep 2024 13:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B917541C92;
+	Wed, 11 Sep 2024 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726062638; cv=none; b=K0SegHNKIOnQzsP9FKu0nA4Tcn3H/16w5Z1GvxzCnfGNKVRm2vV4BwZe+WFziM883kBj+9o3vmxN+wVeSEbdd4RJe47G+d2rjE1GzW+sRw65sREoMbKikuZRTF/eJK0OEjOqJglisdgsBczLeZI7EY3i5BGU9upARKeEivR4an0=
+	t=1726062668; cv=none; b=EwzNatdgTuR31bLVOErrkNTCtlfPuAq0Hc8YPODjYTa6CMOsDWmRGsz3hRv0yGOT4IN+BjJQJKtVMPX8vV1rKwvH9y/AXNd4kdS8T2ceFB8CBgBu2LJ1EcCby8JoXV5rOHipH1Wmlhd/zu5PocRKSoJLXbaO0Zeal7AebR05tlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726062638; c=relaxed/simple;
-	bh=j6g3n6ztpZlP10F3yPeE6CvPv6QkWwHvhtKHzXMVn2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msv26mw3VPGZt5/LvFg2taEAWwUEx0ERejVE96EWq97kf1uumTbQ+36Xl9SqzO7pmVt5cTMT8QU5W6wUXhSG+vkFh5Dh8QNWBhrsGExdct8m1XjCpF9S6UgOPSjFlOFQeU+x0cvVlm4nDsTwRqVMk7ghkyv67CuJsimrabk9tGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfonS4uG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C3AC4CEC0;
-	Wed, 11 Sep 2024 13:50:37 +0000 (UTC)
+	s=arc-20240116; t=1726062668; c=relaxed/simple;
+	bh=sqiAFvJyvBydyX2PQqSGhbwmVyTlE6DwwppgmxO1SYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tyWDtTGjz4ErlzxirR/MrnAobIdrtVPrQQJlIa9+zAP7N769Vk3FlaTIOMcNhwrmCfGKDcGGK/LSuIFVuWFUAfwddcD/5OAGPDNr7q3eUGCaXrme4/UebNcHcmqXAeO6JZqvSMuE6laJwTkLXUytOwCsgSTBGbtGBi0lRkcpmwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgekGbm2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38210C4CEC0;
+	Wed, 11 Sep 2024 13:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726062637;
-	bh=j6g3n6ztpZlP10F3yPeE6CvPv6QkWwHvhtKHzXMVn2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TfonS4uGyBE2rJqMkVBvyBLj+X+lKerJnjvCJKY8IkDlwe9W9ZS501Oa438JkOaee
-	 YCiCGL3w+L+Kdc9dUNH/Ts1zRZJQIjxxHLYe9fO6B2j8RhT0/h+VEoAu5h09zAstVa
-	 fGqY/jaPWA6yyWUpfa/IKMzg+bKviOLvF+2n6fkp5MevWYlzBAKvp5exyb/BX6Yx0/
-	 RWqUOrIaRxk3wqwSji4nm0Ar6A4dQ6Ss3PMJe1P2jURdNB4a0AxNrIkQ4C+D+q7Wq2
-	 YYD1sfsn25B9d4fevHJZvGXcAW6VFBxMaSp179AbvUaS9Mj/p84PqQrZxn/srxRx+E
-	 o8Jgu4a5r/rkA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1soNkF-000000006D9-3UJt;
-	Wed, 11 Sep 2024 15:50:56 +0200
-Date: Wed, 11 Sep 2024 15:50:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] USB-serial fixes for 6.12-rc1-2
-Message-ID: <ZuGgPxNo6BMryM-c@hovoldconsulting.com>
-References: <ZuEz67ehYXIG8AXB@hovoldconsulting.com>
- <2024091114-duplex-grit-f5a7@gregkh>
+	s=k20201202; t=1726062668;
+	bh=sqiAFvJyvBydyX2PQqSGhbwmVyTlE6DwwppgmxO1SYc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TgekGbm2kRixRT5JRuTmWkxeg+wBT8vV8t4oVGXsLGJxHTrlm4vSE3/hxh0cMxnv4
+	 ZUk27HfAVz9RoS7R4i5Htaj927Gnv9HYkUViPvqdeKX5QE4eEpUotXCbgQauSJcs2e
+	 Ek0IJQiBaHWM3p4TXk2261NbuCeAmmLGFfStG047O5MwuONF5KO91TceXcriRus04F
+	 9J4T2L4mZFyN04olpGALsh0Q60bGO8BLXB2TDiNnqVFduSkhJAzl1Ky2y+yZ7jvyOL
+	 vBIRXQPOYAAxpXAoPgg021OSBEMyd5euk6DEOxnOtzXicq/ZD+RFHVHeQGR6NMSfVJ
+	 eqAQTBRFMZPQA==
+Date: Wed, 11 Sep 2024 08:51:06 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
+Message-ID: <20240911135106.GA629136@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +64,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024091114-duplex-grit-f5a7@gregkh>
+In-Reply-To: <Zsb_1YDo96J_AGkI@hovoldconsulting.com>
 
-On Wed, Sep 11, 2024 at 03:24:35PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Sep 11, 2024 at 08:08:43AM +0200, Johan Hovold wrote:
-> > The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+On Thu, Aug 22, 2024 at 11:07:33AM +0200, Johan Hovold wrote:
+> On Tue, Jul 23, 2024 at 05:13:28PM +0200, Johan Hovold wrote:
+> > Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
+> > dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
+> > bindings, which results in DT checker warnings like:
 > > 
-> >   Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+> > 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+> >         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
 > > 
-> > are available in the Git repository at:
+> > Note that this property has been part of the Qualcomm PCIe bindings
+> > since 2018 and would need to be deprecated rather than simply removed if
+> > there is a desire to replace it with 'vpcie3v3' which is used for some
+> > non-Qualcomm controllers.
 > > 
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.12-rc1-2
+> > Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > 
-> I've pulled this into my usb-next branch as it's too late for 6.11.
+> Can someone pick this one up for 6.11?
 
-Yes, I assumed so (and referred to 6.12 in the tag and Subject).
+I applied this to pci/dt-bindings for v6.12.
 
-Thanks.
+v6.11 is possible but we'd need a bit of a story to justify it.
+756485bfbb85 appeared in v6.9, and the commit log says it fixes a DT
+checker warning, which don't make it sound like this is urgent.  Is
+there more to it that would make this v6.11 material?
 
-Johan
+Bjorn
 
