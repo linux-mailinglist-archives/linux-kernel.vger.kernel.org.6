@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-325126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91F3975550
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDCC975552
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 16:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0821C233BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CEE0289462
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1171519E976;
-	Wed, 11 Sep 2024 14:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51A11A302A;
+	Wed, 11 Sep 2024 14:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="qaU6KKEV"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="vn0v9lkK"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B0219E999
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B60C19F104
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 14:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726064896; cv=none; b=VnbJrNbNtIzydFfOlK6QFs4Hnuvlk07Mt20DXPTYkRwvJbJCt4U8naT0GJNShesRMaC5zpfP8SpSoXYsBIqBt2o3yd3r+LbHECIlydHmIFU298nldES8+IoXE1sEmEh94eQAVjsktEUtMjNEuhV0f0Z8YRKrM+0PMldd7M/YAsw=
+	t=1726064906; cv=none; b=p6wAuTJ4co0wU5cohbreynWIjkzw7qUf/SWXalRlKpWAUx/yGwEQ/uH9DJ0VJ3etsmjVTC+OV/brn9C0Vopel9xaXAux/OeRlbmtNZxYwYw7QROJLcSd0rERxCCobonddbh1M9PZjV9EX/xxt4/OSKDsnxEKC4mmyHrr7lsKhGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726064896; c=relaxed/simple;
-	bh=aIC1K2aHkAKySeXczfO9TX+qUogWDRqxMHBmhbZrBWs=;
+	s=arc-20240116; t=1726064906; c=relaxed/simple;
+	bh=HWiHF2WJQe2aKVEi4bYz2zUblPTZngMcMUJTSZsaE0Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WCwgz/ZgTHgc1stiM5XSAaC/XBhzwBvd5oaYkyybay7CHXZsHT5kAPkFiucxOBQM02B+6l3s+bN5Nvej3kSvqyU3pw26aWCaTgP4MiIUaRjIaDxYqFZg0v0ZZDnxumNAMGuH/UDaNye2Pmy2E6jJW4wDOp3M05l1lqvnisKAc0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=qaU6KKEV; arc=none smtp.client-ip=209.85.215.194
+	 In-Reply-To:To:Cc; b=mub7IlRMtEtYhNHgAVN/B52jT0ej7HcRZli0WSS2K4yn4TZrzXmHCi3eLF+rwyhUEgmIhj/v5B0a8PWNAMoqY2XEzSi5KTv/76woD2sY1jlw5jP1xC2pzr6DAuUJobC2twSIVgUYzTnKW4zy9+DrWwsPk5qAhfONjoV5sN4SFr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=vn0v9lkK; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7d4f8a1626cso5372898a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:14 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6bce380eb96so4178525a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 07:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726064894; x=1726669694; darn=vger.kernel.org;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726064904; x=1726669704; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oJxb1Dd/nqjN3jOGEzjCvMjgouASIZ/qDf2nqdmTCpQ=;
-        b=qaU6KKEV3gORa25JaQg99csgvb85OgGk/ntEVTML+L6tTpn+hsPsfItlR1/5+mpW69
-         ty6IWbfoCkf3XoBVxjks8XoDsB6M/O1RlRZJD+J+fewMxevUTiUB+JjNnDovQJ+hF2qm
-         awFR4JNxTqD7uN1CHJXOVbUiq0ZA98WAqsYYEj/kpMIkRCtxANnwBFVfkxfTCh2utkhY
-         JOhwLl7CjBFJvj4u7jB2M5NxcT6q4fkyMzL7JoKoguhJs4EbuFT22Hb2xtnlmi/hd/Gq
-         aenhfO/oiNfACPVFr6K5iA688iwqBfQWUR7VRnR9W3ruFlreoV2pY7Dc8XWIvQ4eXgoY
-         6VKQ==
+        bh=A/s/yZ/fu2RctQDsUCSBTBJSbx0ktmemPNhPcRZ3o84=;
+        b=vn0v9lkKxmnPgdwpQBYwQXDtO8Vk54POEe75A0+cDkVKqpdDLSGjSVq5IfC/5OeRga
+         5arMILcAp7xZcO7dZ+kPyNS/mqz6ShmzqXUcZIU7bEF6b/LCLrQNcO6xaN9BeGPLtS/S
+         VU3Ny/ojEvBIO7/1UQgehK9A7h5+KsLAtNlJc8RLHslIEZmVjY0hSLDFb5XWYQ2pfTPC
+         HGfaJz4Vo3SnAoR1mQwgU/Kslr6yC6AeBoJvndvBotV78cO82QoTMnYOK3Evy1TFDPZ8
+         koJQFv/XiQ0IcA+CDgIEZiadepThPP/94hPaFC+GSsrgVQAEBC/5eI7Ol6qCvIUoPwkA
+         hNEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726064894; x=1726669694;
+        d=1e100.net; s=20230601; t=1726064904; x=1726669704;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oJxb1Dd/nqjN3jOGEzjCvMjgouASIZ/qDf2nqdmTCpQ=;
-        b=J9AOMdB0CjB1ZVsw5/PeoxzI88xzpQQlBQYgtk3oR8XaZ/bSOv3Vc6UHlAaqcQ88oR
-         cZfZHBGeb6/5A833ftjAKABiBQTjv7EpKjMVuquNsa17w3iqp2YP7NSACNHudCnEBMvf
-         tT5kHMdi0cgA9SWoT20QSL2OwjKlp599ODdz6rqcQC0SS7Q7xO+r/hQMs3obW2sTaqQs
-         EW3u3hBqIb4EHk1jPJ7hBhdwcqG3Eu58/AJ8NJZqHdd/eTucIKyYTdzkVtELh0BxACL6
-         6PvezJlp+69xwOcWk2Qv7GjqkFu4krvSvyko7TaeFjWqlDKwyTPMZ0/V2dlBVXn0przT
-         rNHA==
-X-Gm-Message-State: AOJu0Yy4zCZayixJt2AgqkC8lZn6n6O7ByZWMiBicaGh4rIKswFTUwz8
-	DSIcp0xcdvEIkN0WrF1QFj1qGx0pPk3Hvuk/lOY1WDyQqZbMnfkSrVeyFaLUaA==
-X-Google-Smtp-Source: AGHT+IHE/LplC/CkwydHVCAYEN6XSx/BzJK9oOj9hYZByiPJ0HRu5OTmb9W9Vhmyyzp/B1ZaF4eEjQ==
-X-Received: by 2002:a05:6a21:2d84:b0:1cf:506f:9d3a with SMTP id adf61e73a8af0-1cf5e1d0c8fmr6113767637.46.1726064893948;
-        Wed, 11 Sep 2024 07:28:13 -0700 (PDT)
+        bh=A/s/yZ/fu2RctQDsUCSBTBJSbx0ktmemPNhPcRZ3o84=;
+        b=gTOx1VUjrys7WEc64RDRKhMtmHf1cyjujMux9vMSs3wwt9giDee2dPwqZWgujEJqwG
+         2w4G3UB0/z+NusKgdOriL2jJdFiD0AME8YuqHEtWzUskPe/WTykaLGmNhAOAogl8BJNO
+         pc4LrHx69pGOdr/PUIJa9Fqe37VH9ugoXSp3vmZpBv7MvoeT5q/rN6n8evO+7hGzERMG
+         djcwbCA4isUVr4BuJ9Do9BjpUIj2mSKA0nc/okPa3nvgvQhJ5QfSK/PUsKqW3sheBE2c
+         XWDUTS7m/Cf+lDNMht9rBJFCX/VXRSlnIqGfQaTB8zD/1pGRQOWgY/cQ7Sdm8XY1+BkL
+         /HCA==
+X-Gm-Message-State: AOJu0YwqvKeukCAm2F9tFgIEaz8Wvk1pMGPBEwMBadh+f50NDR6HPdQB
+	BWiUim9FO8QVGW5SIVYM4Reys3v1H61/OE30x83iPSrY0QWemX9IpedRc3pp4nSiIpnPK6TKjoG
+	VOA==
+X-Google-Smtp-Source: AGHT+IHqbcVmiVTlA06ObWdR+F5XvbTWf7muQ3N8Ww5HkEnHAHU/xiG/nzHYw5l3NU9MDeCyRLMFog==
+X-Received: by 2002:a05:6a21:392:b0:1cf:5b31:313a with SMTP id adf61e73a8af0-1cf5e0307abmr6964576637.1.1726064903886;
+        Wed, 11 Sep 2024 07:28:23 -0700 (PDT)
 Received: from [172.16.118.100] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe46c9sm10639116a91.11.2024.09.11.07.28.04
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe46c9sm10639116a91.11.2024.09.11.07.28.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 07:28:13 -0700 (PDT)
+        Wed, 11 Sep 2024 07:28:23 -0700 (PDT)
 From: Ayush Singh <ayush@beagleboard.org>
-Date: Wed, 11 Sep 2024 19:57:20 +0530
-Subject: [PATCH 3/8] mikrobus: Add mikrobus driver
+Date: Wed, 11 Sep 2024 19:57:21 +0530
+Subject: [PATCH 4/8] dts: ti: k3-am625-beagleplay: Enable mikroBUS
+ connector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
+Message-Id: <20240911-mikrobus-dt-v1-4-3ded4dc879e7@beagleboard.org>
 References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
 In-Reply-To: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
 To: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org, 
@@ -97,125 +99,141 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Ayush Singh <ayush@beagleboard.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3469; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=aIC1K2aHkAKySeXczfO9TX+qUogWDRqxMHBmhbZrBWs=;
- b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm4ajWa7wjGCZ2pwHW97n8mcSyzAy8uGIDEWwCe
- PlMnb28cjuJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZuGo1gAKCRAFzvXHieVa
- dGtwD/wK0GDxUstHZk9/X3B2dO3mcSFAHK2I87pzLlM/z9OLe1Oh9Bvxa7pIm/b34irjEaCKPZB
- 0weGY8nzbMXoshz0VVrhsDP2cgDhQ2+jnn5bhrLdW5fSpjwmncQCiE6SY9UhC7+YSPotD0/Wgvu
- oe91TYvLZ7hBpbJceOOXCCnQI5bLGsuO1wVGXUmnXLdhfA/7/+Uaa7LG2uiHpziq2blWQLxgWpe
- NfNfzXIBZ6WxeyIG7es4PMSHV7cNxOeAqvI+N451kdxz4/0lXFQeTP6tuSxiL0GbFC/TUSFchas
- 3w7XuaEgSQebABxomUtx67jw9V3TRhg31f2Vwp2yr9SaGyL7dzhFQnpy78D0KNitbhicVlpCvxP
- 4OpAqS+KDs1+6McuHpMavxF1XIoctnOuBgUi4Vd0oIwhxMQkS6EOnbHuhNVo6Mul2A5LW47SVIt
- 3BC/4tbB/+pglWxsY9H5XkYmU4cAsFp3f5Wk7XbgQLUj0RrkOParX2gY3Yd8Bi/QlsH9lgKE9jr
- 7Iun31RsKGi/Fv6/yrUUZpIeGjUvzRVXkG0qqCEYpW3wqT5+VkVb6lF6XEhP3zyFxg/VGA995sP
- +byFalejshGQE4aYErw2Owqwah7UzhA0cTC0TOq9Pk5yK+uve4o2yqDNAdK9Eo30G60g968rdY4
- sniJ3PiTe5qhtUg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3276; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=HWiHF2WJQe2aKVEi4bYz2zUblPTZngMcMUJTSZsaE0Q=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBm4ajWkpgjyK7LlSpg2LopLy7iLx8obVKJNlLKZ
+ dqK5lpf5bCJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZuGo1gAKCRAFzvXHieVa
+ dArQD/0cse1NKul+tL5kOruOFAWZtNGBnbuu+u6HIMhf3idPcHz4n+624u4dth5lMwH+LVbonM9
+ MKxD0IofozpkpcwyrQc4DZmNfBChTUC+jZnLLX/x2o7exEzKztzjdRQjsgZ4IyRcQWjQgPs2NSY
+ zCKDpadPvWuglY0yebGCXcbnKOw7K8wA2wdYRkCW+NpD9CVakgLJM/NUg05GEpf7or5Ib7iUyf5
+ KCO+F68jDmUydpfuHgBV1+KfQFWITIHGIXjZcFTGvbA9jUDZ5A7m+kGian3NjLe26nydRlEVz1t
+ pRwNNiS2ntjL5KkUsEYixV0njFr+Fw//KUifbsahi+pqTd4lekZUgJd9P9zep1oWJuDJwERr+zJ
+ 5iSMCIPd0JE/eW95LMlv3FFxuKae+ve4E2yvNQnV9i0MJNWCzrZ8fmXjRxDyImBN8xPo2SvUNzi
+ bIEhmNg45+aepELQJlpPFV91NebGxPhRDmJLyYL/OqtqHySSIC7RWuToNfwQgr51YtwIyooPi8e
+ 4ZLXaoTyc6OLH0qExlcQtKV4i7CdchkszcBpe2vLSHksT80h+kqYQFNoEvbMFzL1WMcK5Q52XQs
+ uM/dUEsgIojcEUmRYvxV2xDd43+qrG3coLEITTl8zM3Xrcx5lMqijI5WU/God4DqY4Oy6t7mfkw
+ fZS+H0hdlS2SjJg==
 X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
  fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-A simple platform driver for now that does nothing. This is required
-because without a platform driver, the mikrobus_gpio0 nexus node cannot
-be used.
-
-In future, this driver will also allow for dynamic board detection using
-1-wire eeprom in new mikrobus boards.
+Add mikroBUS connector support for Beagleplay. Acts as a nexus node for
+gpios. Allows defining GPIOS relative to the connector. The pin
+numbering is as follows:
+  0: PWM
+  1: INT
+  2: RX
+  3: TX
+  4: SCL
+  5: SDA
+  6: MOSI
+  7: MISO
+  8: SCK
+  9: CS
+  10: RST
+  11: AN
 
 Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- MAINTAINERS              |  1 +
- drivers/misc/Kconfig     | 17 +++++++++++++++++
- drivers/misc/Makefile    |  1 +
- drivers/misc/mikrobus.rs | 32 ++++++++++++++++++++++++++++++++
- 4 files changed, 51 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 53 +++++++++++++++++++++++---
+ 1 file changed, 47 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0cc27446b18a..d0c18bd7b558 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15433,6 +15433,7 @@ MIKROBUS CONNECTOR
- M:	Ayush Singh <ayush@beagleboard.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
-+F:	drivers/misc/mikrobus.rs
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+index 70de288d728e..628bcfcc4651 100644
+--- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
++++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+@@ -227,6 +227,21 @@ simple-audio-card,codec {
+ 		};
+ 	};
  
- MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
- M:	Luka Kovacic <luka.kovacic@sartura.hr>
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3fe7e2a9bd29..30defb522e98 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -610,6 +610,23 @@ config MARVELL_CN10K_DPI
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called mrvl_cn10k_dpi.
++	mikrobus_connector0: mikrobus-connector0 {
++		status = "disabled";
++		compatible = "mikrobus-connector";
++
++		#gpio-cells = <2>;
++		gpio-map =
++		<0 0 &main_gpio1 11 0>, <1 0 &main_gpio1 9 0>,
++		<2 0 &main_gpio1 24 0>, <3 0 &main_gpio1 25 0>,
++		<4 0 &main_gpio1 22 0>, <5 0 &main_gpio1 23 0>,
++		<6 0 &main_gpio1 7 0>, <7 0 &main_gpio1 8 0>,
++		<8 0 &main_gpio1 14 0>, <9 0 &main_gpio1 13 0>,
++		<10 0 &main_gpio1 12 0>, <11 0 &main_gpio1 10 0>;
++		gpio-map-mask = <0xf 0x0>;
++		gpio-map-pass-thru = <0x0 0x1>;
++	};
+ };
  
-+menuconfig MIKROBUS
-+	tristate "Module for instantiating devices on mikroBUS ports"
-+	help
-+	  This option enables the mikroBUS driver. mikroBUS is an add-on
-+	  board socket standard that offers maximum expandability with
-+	  the smallest number of pins. The mikroBUS driver instantiates
-+	  devices on a mikroBUS port described by identifying data present
-+	  in an add-on board resident EEPROM, more details on the mikroBUS
-+	  driver support and discussion can be found in this eLinux wiki :
-+	  elinux.org/Mikrobus
+ &main_pmx0 {
+@@ -394,6 +409,25 @@ AM62X_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (B15) UART0_RTSn.I2C3_SDA */
+ 		>;
+ 	};
+ 
++	mikrobus_i2c_pins_gpio: mikrobus-i2c-gpio-pins {
++		pinctrl-single,pins = <
++			AM62X_IOPAD(0x01d0, PIN_INPUT, 7) /* (A15) UART0_CTSn.GPIO1_22 */
++			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (B15) UART0_RTSn.GPIO1_23 */
++		>;
++	};
 +
++	mikrobus_pwm_pins_default: mikrobus-pwm-default-pins {
++		pinctrl-single,pins = <
++			AM62X_IOPAD(0x01a4, PIN_INPUT, 2) /* (B20) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
++		>;
++	};
 +
-+	  Say Y here to enable support for this driver.
++	mikrobus_pwm_pins_gpio: mikrobus-pwm-gpio-pins {
++		pinctrl-single,pins = <
++			AM62X_IOPAD(0x01a4, PIN_INPUT, 7) /* (B20) MCASP0_ACLKX.GPIO1_11 */
++		>;
++	};
 +
-+	  To compile this code as a module, chose M here: the module
-+	  will be called mikrobus.ko
+ 	mikrobus_uart_pins_default: mikrobus-uart-default-pins {
+ 		pinctrl-single,pins = <
+ 			AM62X_IOPAD(0x01d8, PIN_INPUT, 1) /* (C15) MCAN0_TX.UART5_RXD */
+@@ -401,6 +435,13 @@ AM62X_IOPAD(0x01dc, PIN_OUTPUT, 1) /* (E15) MCAN0_RX.UART5_TXD */
+ 		>;
+ 	};
+ 
++	mikrobus_uart_pins_gpio: mikrobus-uart-gpio-pins {
++		pinctrl-single,pins = <
++			AM62X_IOPAD(0x01d8, PIN_INPUT, 7) /* (C15) MCAN0_TX.GPIO1_24 */
++			AM62X_IOPAD(0x01dc, PIN_INPUT, 7) /* (E15) MCAN0_RX.GPIO1_25 */
++		>;
++	};
 +
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index a9f94525e181..86ea188e3cf9 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -72,3 +72,4 @@ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
- obj-$(CONFIG_NSM)		+= nsm.o
- obj-$(CONFIG_MARVELL_CN10K_DPI)	+= mrvl_cn10k_dpi.o
- obj-y				+= keba/
-+obj-$(CONFIG_MIKROBUS)		+= mikrobus.o
-diff --git a/drivers/misc/mikrobus.rs b/drivers/misc/mikrobus.rs
-new file mode 100644
-index 000000000000..a52268efd71b
---- /dev/null
-+++ b/drivers/misc/mikrobus.rs
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0
+ 	mikrobus_spi_pins_default: mikrobus-spi-default-pins {
+ 		pinctrl-single,pins = <
+ 			AM62X_IOPAD(0x01b0, PIN_INPUT, 1) /* (A20) MCASP0_ACLKR.SPI2_CLK */
+@@ -804,10 +845,8 @@ it66121_out: endpoint {
+ };
+ 
+ &main_i2c3 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mikrobus_i2c_pins_default>;
+ 	clock-frequency = <400000>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &main_spi2 {
+@@ -876,9 +915,7 @@ &main_uart1 {
+ };
+ 
+ &main_uart5 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mikrobus_uart_pins_default>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &main_uart6 {
+@@ -925,3 +962,7 @@ &mcasp1 {
+ 	       0 0 0 0
+ 	>;
+ };
 +
-+//! MikroBUS driver
-+
-+use kernel::c_str;
-+use kernel::platform::{self, DeviceId};
-+use kernel::prelude::*;
-+
-+kernel::module_platform_driver! {
-+    driver: MikrobusDriver,
-+    of_table: [DeviceId::new(c_str!("mikrobus-connector"))],
-+    name: "mikrobus",
-+    author: "Ayush Singh <ayush@beagleboard.org>",
-+    description: "MikroBUS connector Driver",
-+    license: "GPL",
-+}
-+
-+struct MikrobusDriver;
-+
-+#[vtable]
-+impl platform::Driver for MikrobusDriver {
-+    const NAME: &'static CStr = c_str!("MikroBUS");
-+
-+    fn probe(_dev: &mut platform::Device) -> Result {
-+        pr_debug!("Mikrobus Driver (probe)\n");
-+        Ok(())
-+    }
-+
-+    fn remove(_dev: &mut platform::Device) {
-+        pr_debug!("Mikrobus Driver (remove)\n");
-+    }
-+}
++&ecap2 {
++	status = "okay";
++};
 
 -- 
 2.46.0
