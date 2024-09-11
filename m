@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-325614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABCC975C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:46:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E16975C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 22:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0496528963C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:46:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F13B4B22A27
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0FC1BBBF2;
-	Wed, 11 Sep 2024 20:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53A41487CD;
+	Wed, 11 Sep 2024 20:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kIynpaYu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhAXULVu"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E8F14F13E;
-	Wed, 11 Sep 2024 20:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93301558BB;
+	Wed, 11 Sep 2024 20:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726087494; cv=none; b=eSuzIaDJ15EEWYMAk7gHX5mV8v8+CNDnbdi2FtbwbiVOCzE2Z5Ky4SYkIOfwf3c4LQQj7PrhznPjbIOm/U8/YY/fMkVSN6Y6crGxZNZeq6mh7HPQ7YbuzQqV7XRgwmupEhTILt9fkOhHpgXkul8/Rx27YjFIllerkECERoofcTM=
+	t=1726087810; cv=none; b=mXYd5yvlUnsetzVFsSjufaNjATXMxJB8ifr/lFNNXgxoGcQQbpykydRDghrvyMU4wYaJ6a1tvmn+a6wXRHlbU4UApYrbAwAGjrF4kDn9uEGmdp4MpDNrP+XrA7L+Aa1hRAW48nPAvq7nQq8xlqaPejUInJ3djnVIf1sAfstS2i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726087494; c=relaxed/simple;
-	bh=6vNFb7HWgfUgk50jvJhXChPC/H6FA227ImHnku7m1oU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oDLGqQHxfiC3nSqdTeNKCMUSWbQYCoiaW6TE5eTvh7Zbm9cM7MBt3BTn3rrgnuBuToaE9r4JdmRURD7Qzql1jUgPYf+xpBlrOwsQ3ExFAUwZpEd8EtHw1WctRX9G2XxfprHX+q36g/gRI5TcrNL3vaq3vQOd+HxVIqqiK2/VpVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kIynpaYu; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726087493; x=1757623493;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6vNFb7HWgfUgk50jvJhXChPC/H6FA227ImHnku7m1oU=;
-  b=kIynpaYux+zxBiRb+iZAJ8UymfJ/fRLbVFp7giKPtw7+ahBEe7MWwT+V
-   xGUjyJbBOo5WFJ5/V4qyeM4jsa2KGwLhgTproKhNJtkKNz/Hu3WRsvjHa
-   O0raE7RIavFF66+gcZTqZifJ2KUisjBz4PV8hJoXC+fI8yM+6CAQgh7/S
-   H2/2KcO81NcEjMTWe13y2b9Gm3HutcmGrQ9MAEWF8GcDWajnb01zbSwiT
-   2m+CRjbvTacup6bnBgLL9i0BjJecOe277qSUtiDR128zXFRYbqBp0hJrY
-   bRRAZow0TL66qvqgMn0VvsJ9pBLkE5H+NHJnxhIQ2LcjVWdayLCJcO4VC
-   A==;
-X-CSE-ConnectionGUID: ksXcyAOpQxCdiZf+LwCFEw==
-X-CSE-MsgGUID: QOUrIyYjS2iTrQ7hwEDdog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="36048673"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="36048673"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 13:44:53 -0700
-X-CSE-ConnectionGUID: ivmzS7tgTH2/ypVd3DzZAQ==
-X-CSE-MsgGUID: lwBwUDeOQcSWdypnDOqqjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="67992557"
-Received: from fyu1.sc.intel.com ([172.25.103.126])
-  by orviesa007.jf.intel.com with ESMTP; 11 Sep 2024 13:44:52 -0700
-From: Fenghua Yu <fenghua.yu@intel.com>
-To: "Vinod Koul" <vkoul@kernel.org>,
-	"Dave Jiang" <dave.jiang@intel.com>
-Cc: dmaengine@vger.kernel.org,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH] dmaengine: idxd: Add a new IAA device ID on Panther Lake family platforms
-Date: Wed, 11 Sep 2024 13:45:12 -0700
-Message-Id: <20240911204512.1521789-1-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.37.1
+	s=arc-20240116; t=1726087810; c=relaxed/simple;
+	bh=5KbxmBEX9+53j/8stCzz/f86DO6BaQlRPGV8VaRClEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FFxlBVp6OEzeuwzjzyUuROEj2jRzxKSKEU9oPY8aB5xvdL+j3t9uQeRZA6NUTyQqWLaJMlYUVDsDZ+jwlBNegnUXv6trG/2mOhNwn5coJl4WA+AIUEWozX8P8gXl+Nsb0fdRonFVhAUPkZpSz65C8tNejk2+qD/bFH5XsVnO2g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhAXULVu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cd46f3ac9so1699985e9.3;
+        Wed, 11 Sep 2024 13:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726087807; x=1726692607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCpSNY/fcLx6RtHV3fgxenagEPpv9Gy+adzBp1Qz8Lw=;
+        b=OhAXULVuwHolNw8QDCDhrd1eeGQ6NNdkbodUqf1BitJtgCVGzK4UFnG9XQuzZZL+fV
+         JpFTt/PriXGET0/C/grGovtgbS90tBgYkw9Uy5znCMrBfjWzxhcodGZ8C8Txoks6EDhK
+         SuIfj+o4tEEMFj8Le2LZpePKEf1qSp3LQpd1js0Kw12c/udY/Vx6cb9dcXN4h+aMdmiI
+         cA+04Wiz6YFQpQzb5oJtcleCYOFKNkEsXywIRC619f5W2tzYcKz3tQ4AIm1pjyIKeIIY
+         m1RY6jz3ixA7eqWv1mGt/LsfhkqvRBw9PJoyOUyvWDrsxZxzJ/69MxhVDAjAT0iymdll
+         GNbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726087807; x=1726692607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dCpSNY/fcLx6RtHV3fgxenagEPpv9Gy+adzBp1Qz8Lw=;
+        b=jnfmaBnctJpz1Gsya5EP6QP9ligRO9ahaJ9gxFM8og3m5CRVYTFF36arYeIxMW8g7L
+         ZZ4k7z5j+fJtg1u/QZkYBoblEfMKyhXKjAcNJRb/Y0gJ0U7OffIuXmVVQCUz71lmeqLH
+         UV0zpccHr84Fja0Nl0l4QJyFGXewE9IUxmlCHunyuKNGU1pSowZJst7KfNgJbS+LUqPD
+         EAh9YI9LN2dsgtsPkpVt2lM8+LbkfA6t320z2heacFiidxGJHQwhTbDVAgNMYMODan6d
+         QLGPc7F88hFW8IdZiVuJT6s0NUnQvNlRTRXu6kXmXK5fIrrs+e+zX7pOBPN8fAlp92aH
+         mG1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/TiPCjHcc3cSYe1ERZoFCzw3LAa4e74TcwNT3gxOfJ61xkPOxR3N31O5wxgPidg5cMGmB/AV9Qh4Izk3N@vger.kernel.org, AJvYcCXFJqnY5C4vomGRS2lFAtdPzOV/QbjU8ZfG69zepqWblmAiwYhux6zdcvOOYV2HeBE6WeSpM49Y8ucy@vger.kernel.org
+X-Gm-Message-State: AOJu0YycEq4Hciw60X3T3ie+7RQq8JoEp9VFOIjzyPArlFRvno+QDbAT
+	fd3XRBKtckCZfny+l0oRtx8zjIkZz0eVbVYR05OTyxyBxl9zBJorGzxABw==
+X-Google-Smtp-Source: AGHT+IGlzzF0GjCq9Jt0TGiDnSu7egPhKvCLVBvmjTBQkG0dpiNbS3jxM9Nj4mGLqjtQ/L0rf3GULQ==
+X-Received: by 2002:a05:600c:46c5:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-42cdb538cb5mr5435175e9.4.1726087806419;
+        Wed, 11 Sep 2024 13:50:06 -0700 (PDT)
+Received: from localhost.localdomain ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de4b9sm12445941f8f.111.2024.09.11.13.50.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 13:50:06 -0700 (PDT)
+From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
+To: robh@kernel.org
+Cc: saravanak@google.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
+Subject: [PATCH v2] drivers/of: Improve documentation for match_string
+Date: Wed, 11 Sep 2024 22:49:38 +0200
+Message-ID: <20240911204938.9172-1-mikisabate@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-A new IAA device ID, 0xb02d, is introduced across all Panther Lake family
-platforms. Add the device ID to the IDXD driver.
+The description of the function now explicitly states that it's
+an *exact* match for the given string (i.e. not a submatch). It also
+better states all the possible return values.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
 ---
-Hi, Vinod,
+ drivers/of/property.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-This patch is applied cleanly on the next branch in the dmaengine repo.
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 164d77cb9445..d66ea8a83562 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -452,12 +452,17 @@ EXPORT_SYMBOL_GPL(of_property_read_string);
 
-The next branch already includes a few new DSA/IAA device IDs in IDXD
-driver.
-
-Please check the patches and the reasons why the new IDs should be added:
-https://lore.kernel.org/lkml/20240828233401.186007-1-fenghua.yu@intel.com/
-
- drivers/dma/idxd/init.c | 2 ++
- include/linux/pci_ids.h | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 0f693b27879c..3ae494a7a706 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -78,6 +78,8 @@ static struct pci_device_id idxd_pci_tbl[] = {
- 	{ PCI_DEVICE_DATA(INTEL, IAX_SPR0, &idxd_driver_data[IDXD_TYPE_IAX]) },
- 	/* IAA on DMR platforms */
- 	{ PCI_DEVICE_DATA(INTEL, IAA_DMR, &idxd_driver_data[IDXD_TYPE_IAX]) },
-+	/* IAX PTL platforms */
-+	{ PCI_DEVICE_DATA(INTEL, IAX_PTL, &idxd_driver_data[IDXD_TYPE_IAX]) },
- 	{ 0, }
- };
- MODULE_DEVICE_TABLE(pci, idxd_pci_tbl);
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 8139231d0e86..e598d6ff58bf 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -3117,6 +3117,7 @@
- #define PCI_DEVICE_ID_INTEL_HDA_CNL_H	0xa348
- #define PCI_DEVICE_ID_INTEL_HDA_CML_S	0xa3f0
- #define PCI_DEVICE_ID_INTEL_HDA_LNL_P	0xa828
-+#define PCI_DEVICE_ID_INTEL_IAX_PTL	0xb02d
- #define PCI_DEVICE_ID_INTEL_S21152BB	0xb152
- #define PCI_DEVICE_ID_INTEL_HDA_BMG	0xe2f7
- #define PCI_DEVICE_ID_INTEL_HDA_PTL	0xe428
--- 
-2.37.1
+ /**
+  * of_property_match_string() - Find string in a list and return index
+- * @np: pointer to node containing string list property
++ * @np: pointer to the node containing the string list property
+  * @propname: string list property name
+- * @string: pointer to string to search for in string list
++ * @string: pointer to the string to search for in the string list
+  *
+- * This function searches a string list property and returns the index
+- * of a specific string value.
++ * Search for an exact match of string in a device node property which is a
++ * string of lists.
++ *
++ * Return: the index of the first occurrence of the string on success, -EINVAL
++ * if the property does not exist, -ENODATA if the property does not have a
++ * value, and -EILSEQ if the string is not null-terminated within the length of
++ * the property data.
+  */
+ int of_property_match_string(const struct device_node *np, const char *propname,
+ 			     const char *string)
+--
+2.46.0
 
 
