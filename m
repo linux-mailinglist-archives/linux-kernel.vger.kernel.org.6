@@ -1,138 +1,102 @@
-Return-Path: <linux-kernel+bounces-324906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1964497526B
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364E397526D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 14:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9521F22709
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF26F28AB62
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76BF18A6A0;
-	Wed, 11 Sep 2024 12:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB7419E97B;
+	Wed, 11 Sep 2024 12:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4A6vh6c"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ayVjDTRz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E38E185B7A;
-	Wed, 11 Sep 2024 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE7519E80F;
+	Wed, 11 Sep 2024 12:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726057886; cv=none; b=lNF371zEOiBS/a3UwYA24px8jnyTheSLl9ZTDlkRkcz9FZv3BPb+WE3Orfo7U4l+Xy89cZ2AgkcNoXjuLZtvpcnuAj+bZEXgcLlCL4lf2g1l/DwOCfvwmSYCcxOJyb2NUw7RHXOHtU59y04fEf2zWYzYWYxuIlzCqTEYhBrGbvg=
+	t=1726057890; cv=none; b=DQGHAwSnnWI1/orIEQI9lLELhtYqIwS/Hu1moyWgQkqLa2On2IZZlqL1zL0Lr5gNgtIHGjBlP3yir2WLzI6EajrovjFkIEIzbsDSxmPf1aaaD4OnDFHeqrWazlZY/D+iq86UML0uG4M2cyFL61m9rNklUAulwSvtqf/f4MhF1zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726057886; c=relaxed/simple;
-	bh=eU3oOgqP7mozRvjpQC5rfw+p/h07bXakoBco4xUGrec=;
+	s=arc-20240116; t=1726057890; c=relaxed/simple;
+	bh=Fdj0q0pVD/ggTHM+Ik2S/NvfwPTQ8AAyOcVULW9PyVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruCPtIe3XNrL9rwGHlI67L5lk2nN7hovMBrUwaAzWq/6UNiDsW8h328SM/nYNwhlDGnXYTnpwDODfHUhWXOj4xotOiSmoh82mg5tXUg8X1hSe7E5sWcwEqyTZhsPV5ZJWd+N5RwymtF6HQN86RzTFl/V0k+f8uIa7U61QZgrrtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4A6vh6c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27802C4CEC5;
-	Wed, 11 Sep 2024 12:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726057883;
-	bh=eU3oOgqP7mozRvjpQC5rfw+p/h07bXakoBco4xUGrec=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHH8xS3N6rv4o5IaVEw7qzzheXsCSqx42nUOeGPPpaf/6sUhvlu8qoAUmWo2zXYJxIvS7+QkwCujz3qelJ4wmLDGoANwwUCronkrZksZ/RJWkNyaUlhPiQoI5mT0VncoS4NSLFr+Wv3kcYDbQlEz06TNTxXXYZRqBKiicvT5wxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ayVjDTRz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D761DC4CEC5;
+	Wed, 11 Sep 2024 12:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726057889;
+	bh=Fdj0q0pVD/ggTHM+Ik2S/NvfwPTQ8AAyOcVULW9PyVs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T4A6vh6cbK6ZufKbZhNi3k1K95qYH460093V3SDwP3w3NF0b1mDzp9VAZ1trcsTaf
-	 HPYAU/BozaKvBziW+zGOBpW8jWVHUzaUILaPCAFaWiUwMlRnYSfMrYSBVopGX0WKka
-	 oDG2/p0IJAZuyOy1jiJWFNNy7f85NoRWCDus+XlOiqLkwpalyOsz6deVpSKVRDah39
-	 SpekqTn+vU3RCz0IjjNRDzSNc7p3HrP+Z8dQK8h6ySFLB6yLW3t0BmGig7p54AqLLi
-	 fz5pGEMUZ0KCNRudvLF8WbmUscL/Ig2eHHhGDIvbLxNaIqQr80RuExsjsWDVcF4Wjc
-	 vNv9Cp51/3Dpw==
-Date: Wed, 11 Sep 2024 14:31:16 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 22/26] rust: alloc: implement `Cmalloc` in module
- allocator_test
-Message-ID: <ZuGNlFluwAmTG19R@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org>
- <20240816001216.26575-23-dakr@kernel.org>
- <e3ccbf52-224e-4869-992b-4fcaa0ec3410@proton.me>
- <ZtD1TsGm0swi7gyv@pollux.localdomain>
+	b=ayVjDTRz6hgaLP0bob5pmAAi5bmpANJE/YTTIfCCz7FoFJJkabeYrkTlo205lNaHe
+	 ZftpOfexRw3cV1FhK50YbS1uxkAGjB2ZcAvWRgb/uut69eeRwuKFaDk/vxxZn/Tb3A
+	 xSpkq4nvgYbRX0XJY41QKVhJUgHpVlMtlOPF4+v4=
+Date: Wed, 11 Sep 2024 14:31:26 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>
+Cc: vkoul@kernel.org, yung-chuan.liao@linux.intel.com,
+	pierre-louis.bossart@linux.intel.com,
+	krzysztof.kozlowski@linaro.org, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH stable-6.10 regression] Revert "soundwire: stream: fix
+ programming slave ports for non-continous port maps"
+Message-ID: <2024091130-detail-remix-34f7@gregkh>
+References: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
+ <febaa630-7bf4-4bb8-8bcf-a185f1b2ed65@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZtD1TsGm0swi7gyv@pollux.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <febaa630-7bf4-4bb8-8bcf-a185f1b2ed65@linux.intel.com>
 
-On Fri, Aug 30, 2024 at 12:25:27AM +0200, Danilo Krummrich wrote:
-> On Thu, Aug 29, 2024 at 07:14:18PM +0000, Benno Lossin wrote:
-> > On 16.08.24 02:11, Danilo Krummrich wrote:
-> > 
-> > > +
-> > > +        if layout.size() == 0 {
-> > > +            // SAFETY: `src` has been created by `Self::alloc_store_data`.
-> > 
-> > This is not true, consider:
-> > 
-> >     let ptr = alloc(size = 0);
-> >     free(ptr)
-> > 
-> > Alloc will return a dangling pointer due to the first if statement and
-> > then this function will pass it to `free_read_data`, even though it
-> > wasn't created by `alloc_store_data`.
-> > This isn't forbidden by the `Allocator` trait function's safety
-> > requirements.
-> > 
-> > > +            unsafe { Self::free_read_data(src) };
-> > > +
-> > > +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
-> > > +        }
-> > > +
-> > > +        let dst = Self::alloc(layout, flags)?;
-> > > +
-> > > +        // SAFETY: `src` has been created by `Self::alloc_store_data`.
-> > > +        let data = unsafe { Self::data(src) };
-> > 
-> > Same issue here, if the allocation passed in is zero size. I think you
-> > have no other choice than to allocate even for zero size requests...
-> > Otherwise how would you know that they are zero-sized.
+On Tue, Sep 10, 2024 at 04:02:29PM +0300, Péter Ujfalusi wrote:
+> Hi,
 > 
-> Good catch - gonna fix it.
-
-Almost got me. :) I think the code is fine, callers are not allowed to pass
-pointers to `realloc` and `free`, which haven't been allocated with the same
-corresponding allocator or are dangling.
-
-> 
+> On 10/09/2024 15:40, Peter Ujfalusi wrote:
+> > The prop->src_dpn_prop and prop.sink_dpn_prop is allocated for the _number_
+> > of ports and it is forced as 0 index based.
 > > 
+> > The original code was correct while the change to walk the bits and use
+> > their position as index into the arrays is not correct.
+> > 
+> > For exmple we can have the prop.source_ports=0x2, which means we have one
+> > port, but the prop.src_dpn_prop[1] is accessing outside of the allocated
+> > memory.
+> > 
+> > This reverts commit 6fa78e9c41471fe43052cd6feba6eae1b0277ae3.
+> 
+> I just noticed that Krzysztof already sent the revert patch but it is
+> not picked up for stable-6.10.y
+> 
+> https://lore.kernel.org/lkml/20240909164746.136629-1-krzysztof.kozlowski@linaro.org/
+
+Is this in Linus's tree yet?  That's what we are waiting for.
+
+> > Cc: stable@vger.kernel.org # 6.10.y
+> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
 > > ---
-> > Cheers,
-> > Benno
+> > Hi,
 > > 
-> > > +
-> > > +        // SAFETY: `src` has previously been allocated with this `Allocator`; `dst` has just been
-> > > +        // newly allocated. Copy up to the smaller of both sizes.
-> > > +        unsafe {
-> > > +            ptr::copy_nonoverlapping(
-> > > +                src.as_ptr(),
-> > > +                dst.as_ptr().cast(),
-> > > +                cmp::min(layout.size(), data.size),
-> > > +            )
-> > > +        };
-> > > +
-> > > +        // SAFETY: `src` has been created by `Self::alloc_store_data`.
-> > > +        unsafe { Self::free_read_data(src) };
-> > > +
-> > > +        Ok(dst)
-> > >      }
-> > >  }
-> > > --
-> > > 2.46.0
-> > > 
-> > 
+> > The reverted patch causes major regression on soundwire causing all audio
+> > to fail.
+> > Interestingly the patch is only in 6.10.8 and 6.10.9, not in mainline or linux-next.
+
+Really?  Commit ab8d66d132bc ("soundwire: stream: fix programming slave
+ports for non-continous port maps") is in Linus's tree, why isn't it
+being reverted there first?
+
+confused,
+
+greg k-h
 
