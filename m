@@ -1,344 +1,153 @@
-Return-Path: <linux-kernel+bounces-324718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-324734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0CF975019
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A70975040
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 12:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F6711F23EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FAA290211
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 10:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EBA185B7B;
-	Wed, 11 Sep 2024 10:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uoOmm6lt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7OsnQ5Sb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uoOmm6lt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7OsnQ5Sb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F2C186287;
+	Wed, 11 Sep 2024 10:52:51 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5AB17C7C4;
-	Wed, 11 Sep 2024 10:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C664917C7C4
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 10:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726051866; cv=none; b=kreD72Y/FN7FcfzA0frwqsJEUaE+B4oqsij8/A6LGmw9lQ8K0Xd9LVRuD+cA2EAOmEyMDrWfSvuPGZ5R4f5SNMvcqcvXu4CvLSpxmTOBM4JoXCY7ccF0M7JSow/IgRE04Q67p591jNKXCN875w78OK6Ne7RrSyYju1sVsBj8cDc=
+	t=1726051971; cv=none; b=liMHKkcx1RGeVM9SP9jofEbDcNtlv1K+W8FkTUmBfCgE3O2C+1p1PEOyolRXY5Ezr4IzYIA1HuLs3NbAiFyysMC0Ur6+4WplBgDAn2qQvIaJ88plnGUG1DBeIPXwDZwT1QIb4MpdfCMxcqkYBWV2CTXnrE6JPRfXcOubvjD8hsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726051866; c=relaxed/simple;
-	bh=59OoxN2UfcHWYq9M32SpCEYr6MC7UkMNpZgsxhmbJEI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PeUeNq5UOrQ5tWFaHnwrWSvHqdLe8XSP9FAxi4U5EIbsiRKU5F6hM79t2B+mz5FtYFjx9raYhLxf6MQs0MeC0/J49D7SVoJS797sA8miM092zvJcIrCNkkcH0l5A51uDD7ERpAeY1J1CLhCdkUXTTXtXOkgSLX08RW0DEmFo+AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uoOmm6lt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7OsnQ5Sb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uoOmm6lt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7OsnQ5Sb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B8FD1F8A4;
-	Wed, 11 Sep 2024 10:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726051862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STGQgyxEWXdGki+5SoAJLkc59klgP1DdJuVzZjNLYwc=;
-	b=uoOmm6ltDGmAl/NOXkBNQN8qaPHDc1mDuOPvRgOPvJ5naXMWKEAJMp5ACJbrRgn6eY1Sla
-	C0fpdRw+/sobb6Nt3/hh5BDGk6ly+fIJKdTjja47KRVs6NiS0MZ/TwftoLY7I8Z7D2vH/I
-	mZDXSw+dNG/g5sA5/BAThU0RGW62Zw8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726051862;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STGQgyxEWXdGki+5SoAJLkc59klgP1DdJuVzZjNLYwc=;
-	b=7OsnQ5Sb3Qmqw6ysBNT3UxzUh5K9K0tQ6XaJnjD6w8eOfy+NKBnyjTVhvxhdM2QkcR5jOO
-	r5DEM72nOt36+FBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726051862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STGQgyxEWXdGki+5SoAJLkc59klgP1DdJuVzZjNLYwc=;
-	b=uoOmm6ltDGmAl/NOXkBNQN8qaPHDc1mDuOPvRgOPvJ5naXMWKEAJMp5ACJbrRgn6eY1Sla
-	C0fpdRw+/sobb6Nt3/hh5BDGk6ly+fIJKdTjja47KRVs6NiS0MZ/TwftoLY7I8Z7D2vH/I
-	mZDXSw+dNG/g5sA5/BAThU0RGW62Zw8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726051862;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STGQgyxEWXdGki+5SoAJLkc59klgP1DdJuVzZjNLYwc=;
-	b=7OsnQ5Sb3Qmqw6ysBNT3UxzUh5K9K0tQ6XaJnjD6w8eOfy+NKBnyjTVhvxhdM2QkcR5jOO
-	r5DEM72nOt36+FBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEA5D13ABD;
-	Wed, 11 Sep 2024 10:51:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S1YEORV24WaXDQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 11 Sep 2024 10:51:01 +0000
-Date: Wed, 11 Sep 2024 12:51:49 +0200
-Message-ID: <87y13y31kq.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: =?ISO-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 01/13] ALSA: pcm: add more sample rate definitions
-In-Reply-To: <5c309853-c82c-475e-b8c2-fcdcfde20efc@linux.intel.com>
-References: <20240905-alsa-12-24-128-v1-0-8371948d3921@baylibre.com>
-	<20240905-alsa-12-24-128-v1-1-8371948d3921@baylibre.com>
-	<1ab3efaa-863c-4dd0-8f81-b50fd9775fad@linux.intel.com>
-	<87ed5q4kbe.wl-tiwai@suse.de>
-	<5c309853-c82c-475e-b8c2-fcdcfde20efc@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1726051971; c=relaxed/simple;
+	bh=t+oWOl4YBiTCEHWcFOwzcj7P1DA7i/iyrk8eb2HIakA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J+kllXxKdRm6LH/34JI8kyEhAUPMdXARQih0BdrK7NHrxr0l6wAMYE3kEukvqSebpuoyM2YCvzaOioknkaB+V8nIWqMguWDO0WfQGbYix1ZzVnnffyynLyIE3znawPAeOPtR9Y5ASMi6Lwf/ig21Q33nEa7mdUgOmGKT10QbmyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X3cnk1rXkzyRLW;
+	Wed, 11 Sep 2024 18:51:38 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 26086140156;
+	Wed, 11 Sep 2024 18:52:45 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 11 Sep 2024 18:52:44 +0800
+Message-ID: <170988b0-db8a-4612-a70c-b20ea2d4c020@huawei.com>
+Date: Wed, 11 Sep 2024 18:52:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,baylibre.com,perex.cz,suse.com,cirrus.com,opensource.cirrus.com,gmail.com,kernel.org,intel.com,linaro.org,csie.org,sholland.org,vger.kernel.org,alsa-project.org,lists.infradead.org,lists.linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: Abstract THP allocation
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <willy@infradead.org>, <kirill.shutemov@linux.intel.com>
+CC: <ryan.roberts@arm.com>, <anshuman.khandual@arm.com>,
+	<catalin.marinas@arm.com>, <cl@gentwo.org>, <vbabka@suse.cz>,
+	<mhocko@suse.com>, <apopple@nvidia.com>, <dave.hansen@linux.intel.com>,
+	<will@kernel.org>, <baohua@kernel.org>, <jack@suse.cz>,
+	<mark.rutland@arm.com>, <hughd@google.com>, <aneesh.kumar@kernel.org>,
+	<yang@os.amperecomputing.com>, <peterx@redhat.com>, <ioworker0@gmail.com>,
+	<jglisse@google.com>, <ziy@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>
+References: <20240911065600.1002644-1-dev.jain@arm.com>
+ <20240911065600.1002644-2-dev.jain@arm.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240911065600.1002644-2-dev.jain@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-On Wed, 11 Sep 2024 12:33:01 +0200,
-Péter Ujfalusi wrote:
+
+
+On 2024/9/11 14:55, Dev Jain wrote:
+> In preparation for the second patch, abstract away the THP allocation
+> logic present in the create_huge_pmd() path, which corresponds to the
+> faulting case when no page is present.
 > 
-> On 11/09/2024 12:21, Takashi Iwai wrote:
-> >> Wondering if this is backwards compatible with the alsa-lib definitions,
-> >> specifically the topology parts which did unfortunately have a list of
-> >> rates that will map to a different index now:
-> >>
-> >>
-> >> typedef enum _snd_pcm_rates {
-> >> 	SND_PCM_RATE_UNKNOWN = -1,
-> >> 	SND_PCM_RATE_5512 = 0,
-> >> 	SND_PCM_RATE_8000,
-> >> 	SND_PCM_RATE_11025,
-> >> 	SND_PCM_RATE_16000,
-> >> 	SND_PCM_RATE_22050,
-> >> 	SND_PCM_RATE_32000,
-> >> 	SND_PCM_RATE_44100,
-> >> 	SND_PCM_RATE_48000,
-> >> 	SND_PCM_RATE_64000,
-> >> 	SND_PCM_RATE_88200,
-> >> 	SND_PCM_RATE_96000,
-> >> 	SND_PCM_RATE_176400,
-> >> 	SND_PCM_RATE_192000,
-> >> 	SND_PCM_RATE_CONTINUOUS = 30,
-> >> 	SND_PCM_RATE_KNOT = 31,
-> >> 	SND_PCM_RATE_LAST = SND_PCM_RATE_KNOT,
-> >> } snd_pcm_rates_t;
-> > 
-> > As far as I understand correctly, those rate bits used for topology
-> > are independent from the bits used for PCM core, although it used to
-> > be the same.  Maybe better to rename (such as SND_TPLG_RATE_*) so that
-> > it's clearer only for topology stuff.
+> There should be no functional change as a result of applying
+> this patch.
 > 
-> Even if we rename these in alsa-lib we will need translation from
-> SND_TPLG_RATE_ to SND_PCM_RATE_ in kernel likely?
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>   mm/huge_memory.c | 110 +++++++++++++++++++++++++++++------------------
+>   1 file changed, 67 insertions(+), 43 deletions(-)
 > 
-> The topology files are out there and this is an ABI...
-> 
-> > But it'd be better if anyone can double-check.
-> 
-> Since the kernel just copies the rates bitfield, any rate above 11025
-> will be misaligned and result broken setup.
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 67c86a5d64a6..b96a1ff2bf40 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -943,47 +943,88 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>   }
+>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>   
+> -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+> -			struct page *page, gfp_t gfp)
+> +static struct folio *pmd_thp_fault_alloc(gfp_t gfp, struct vm_area_struct *vma,
+> +					 unsigned long haddr, unsigned long addr)
+>   {
+> -	struct vm_area_struct *vma = vmf->vma;
+> -	struct folio *folio = page_folio(page);
+> -	pgtable_t pgtable;
+> -	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+> -	vm_fault_t ret = 0;
+> +	const int order = HPAGE_PMD_ORDER;
 
-Yep, I noticed it now, too.
+Maybe move vma_thp_gfp_mask() into this function too.
 
-Below is the fix patch, totally untested.
-It'd be appreciated if anyone can test it quickly.
+> +	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
+>   
+> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+> +	if (unlikely(!folio)) {
+> +		count_vm_event(THP_FAULT_FALLBACK);
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+> +		goto out;
+> +	}
+>   
+> +	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>   	if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
+>   		folio_put(folio);
+>   		count_vm_event(THP_FAULT_FALLBACK);
+>   		count_vm_event(THP_FAULT_FALLBACK_CHARGE);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> -		return VM_FAULT_FALLBACK;
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> +		goto out;
 
+We need to return NULL here as folio not set to null,
 
-thanks,
-
-Takashi
-
--- 8< --
-From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH] ALSA: pcm: Fix breakage of PCM rates used for topology
-
-It turned out that the topology ABI takes the standard PCM rate bits
-as is, and it means that the recent change of the PCM rate bits would
-lead to the inconsistent rate values used for topology.
-
-This patch reverts the original PCM rate bit definitions while adding
-the new rates to the extended bits instead.  This needed the change of
-snd_pcm_known_rates, too.  And this also required to fix the handling
-in snd_pcm_hw_limit_rates() that blindly assumed that the list is
-sorted while it became unsorted now.
-
-Fixes: 090624b7dc83 ("ALSA: pcm: add more sample rate definitions")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- include/sound/pcm.h     | 35 ++++++++++++++++++-----------------
- sound/core/pcm_misc.c   | 18 ++++++++++--------
- sound/core/pcm_native.c | 10 +++++++---
- 3 files changed, 35 insertions(+), 28 deletions(-)
-
-diff --git a/include/sound/pcm.h b/include/sound/pcm.h
-index c993350975a9..824216799070 100644
---- a/include/sound/pcm.h
-+++ b/include/sound/pcm.h
-@@ -109,23 +109,24 @@ struct snd_pcm_ops {
- #define SNDRV_PCM_RATE_5512		(1U<<0)		/* 5512Hz */
- #define SNDRV_PCM_RATE_8000		(1U<<1)		/* 8000Hz */
- #define SNDRV_PCM_RATE_11025		(1U<<2)		/* 11025Hz */
--#define SNDRV_PCM_RATE_12000		(1U<<3)		/* 12000Hz */
--#define SNDRV_PCM_RATE_16000		(1U<<4)		/* 16000Hz */
--#define SNDRV_PCM_RATE_22050		(1U<<5)		/* 22050Hz */
--#define SNDRV_PCM_RATE_24000		(1U<<6)		/* 24000Hz */
--#define SNDRV_PCM_RATE_32000		(1U<<7)		/* 32000Hz */
--#define SNDRV_PCM_RATE_44100		(1U<<8)		/* 44100Hz */
--#define SNDRV_PCM_RATE_48000		(1U<<9)		/* 48000Hz */
--#define SNDRV_PCM_RATE_64000		(1U<<10)	/* 64000Hz */
--#define SNDRV_PCM_RATE_88200		(1U<<11)	/* 88200Hz */
--#define SNDRV_PCM_RATE_96000		(1U<<12)	/* 96000Hz */
--#define SNDRV_PCM_RATE_128000		(1U<<13)	/* 128000Hz */
--#define SNDRV_PCM_RATE_176400		(1U<<14)	/* 176400Hz */
--#define SNDRV_PCM_RATE_192000		(1U<<15)	/* 192000Hz */
--#define SNDRV_PCM_RATE_352800		(1U<<16)	/* 352800Hz */
--#define SNDRV_PCM_RATE_384000		(1U<<17)	/* 384000Hz */
--#define SNDRV_PCM_RATE_705600		(1U<<18)	/* 705600Hz */
--#define SNDRV_PCM_RATE_768000		(1U<<19)	/* 768000Hz */
-+#define SNDRV_PCM_RATE_16000		(1U<<3)		/* 16000Hz */
-+#define SNDRV_PCM_RATE_22050		(1U<<4)		/* 22050Hz */
-+#define SNDRV_PCM_RATE_32000		(1U<<5)		/* 32000Hz */
-+#define SNDRV_PCM_RATE_44100		(1U<<6)		/* 44100Hz */
-+#define SNDRV_PCM_RATE_48000		(1U<<7)		/* 48000Hz */
-+#define SNDRV_PCM_RATE_64000		(1U<<8)		/* 64000Hz */
-+#define SNDRV_PCM_RATE_88200		(1U<<9)		/* 88200Hz */
-+#define SNDRV_PCM_RATE_96000		(1U<<10)	/* 96000Hz */
-+#define SNDRV_PCM_RATE_176400		(1U<<11)	/* 176400Hz */
-+#define SNDRV_PCM_RATE_192000		(1U<<12)	/* 192000Hz */
-+#define SNDRV_PCM_RATE_352800		(1U<<13)	/* 352800Hz */
-+#define SNDRV_PCM_RATE_384000		(1U<<14)	/* 384000Hz */
-+#define SNDRV_PCM_RATE_705600		(1U<<15)	/* 705600Hz */
-+#define SNDRV_PCM_RATE_768000		(1U<<16)	/* 768000Hz */
-+/* extended rates */
-+#define SNDRV_PCM_RATE_12000		(1U<<17)	/* 12000Hz */
-+#define SNDRV_PCM_RATE_24000		(1U<<18)	/* 24000Hz */
-+#define SNDRV_PCM_RATE_128000		(1U<<19)	/* 128000Hz */
- 
- #define SNDRV_PCM_RATE_CONTINUOUS	(1U<<30)	/* continuous range */
- #define SNDRV_PCM_RATE_KNOT		(1U<<31)	/* supports more non-continuous rates */
-diff --git a/sound/core/pcm_misc.c b/sound/core/pcm_misc.c
-index 5588b6a1ee8b..4f556211bb56 100644
---- a/sound/core/pcm_misc.c
-+++ b/sound/core/pcm_misc.c
-@@ -494,18 +494,20 @@ EXPORT_SYMBOL(snd_pcm_format_set_silence);
- int snd_pcm_hw_limit_rates(struct snd_pcm_hardware *hw)
- {
- 	int i;
-+	unsigned int rmin, rmax;
-+
-+	rmin = UINT_MAX;
-+	rmax = 0;
- 	for (i = 0; i < (int)snd_pcm_known_rates.count; i++) {
- 		if (hw->rates & (1 << i)) {
--			hw->rate_min = snd_pcm_known_rates.list[i];
--			break;
--		}
--	}
--	for (i = (int)snd_pcm_known_rates.count - 1; i >= 0; i--) {
--		if (hw->rates & (1 << i)) {
--			hw->rate_max = snd_pcm_known_rates.list[i];
--			break;
-+			rmin = min(rmin, snd_pcm_known_rates.list[i]);
-+			rmax = max(rmax, snd_pcm_known_rates.list[i]);
- 		}
- 	}
-+	if (rmin > rmax)
-+		return -EINVAL;
-+	hw->rate_min = rmin;
-+	hw->rate_max = rmax;
- 	return 0;
- }
- EXPORT_SYMBOL(snd_pcm_hw_limit_rates);
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 7461a727615c..5e1e6006707b 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -2418,13 +2418,17 @@ static int snd_pcm_hw_rule_sample_bits(struct snd_pcm_hw_params *params,
- 	return snd_interval_refine(hw_param_interval(params, rule->var), &t);
- }
- 
--#if SNDRV_PCM_RATE_5512 != 1 << 0 || SNDRV_PCM_RATE_768000 != 1 << 19
-+#if SNDRV_PCM_RATE_5512 != 1 << 0 || SNDRV_PCM_RATE_192000 != 1 << 12 ||\
-+	SNDRV_PCM_RATE_128000 != 1 << 19
- #error "Change this table"
- #endif
- 
-+/* NOTE: the list is unsorted! */
- static const unsigned int rates[] = {
--	5512, 8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000,
--	88200, 96000, 128000, 176400, 192000, 352800, 384000, 705600, 768000,
-+	5512, 8000, 11025, 16000, 22050, 32000, 44100,
-+	48000, 64000, 88200, 96000, 176400, 192000, 352800, 384000, 705600, 768000,
-+	/* extended */
-+	12000, 24000, 128000
- };
- 
- const struct snd_pcm_hw_constraint_list snd_pcm_known_rates = {
--- 
-2.43.0
-
+>   	}
+>   	folio_throttle_swaprate(folio, gfp);
+>   
+> -	pgtable = pte_alloc_one(vma->vm_mm);
+> -	if (unlikely(!pgtable)) {
+> -		ret = VM_FAULT_OOM;
+> -		goto release;
+> -	}
+> -
+> -	folio_zero_user(folio, vmf->address);
+> +	folio_zero_user(folio, addr);
+>   	/*
+>   	 * The memory barrier inside __folio_mark_uptodate makes sure that
+>   	 * folio_zero_user writes become visible before the set_pmd_at()
+>   	 * write.
+>   	 */
+>   	__folio_mark_uptodate(folio);
+> +out:
+> +	return folio;
+> +}
+> +
 
