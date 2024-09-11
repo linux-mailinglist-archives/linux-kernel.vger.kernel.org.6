@@ -1,178 +1,112 @@
-Return-Path: <linux-kernel+bounces-325491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F755975A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:24:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BC1975A5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 20:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CEA288ECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:24:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C13A6B22E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 18:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09791B6554;
-	Wed, 11 Sep 2024 18:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893D1BA26A;
+	Wed, 11 Sep 2024 18:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHlaPI+C"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avqJjFg4"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967FA1AC89C;
-	Wed, 11 Sep 2024 18:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FC11B655A;
+	Wed, 11 Sep 2024 18:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726079070; cv=none; b=Wxy0viSoZebgcK9LflNAlZd8W888GH19prQqxK27aIedBCLIY80mSJASiZwkDzJ4tZch2RIu7krOJSbNT6Lgdk91l4sFze/pbjtiyVmKlDrlnx2UKd9SYYcBIPcqjweI/b7j7/kQwrU9Z+Jb9ChKWPOSlXK0A/YzgitT627tUh0=
+	t=1726079123; cv=none; b=NKSEOvs4PaP/0C26aa+8Il+ySOlIZm8ApJexgzojlwKSltBN9jrGUX7a5Q7alfL7AlOsv1nBmeTJ2LBnEP6QdKg0YnEWuw6audrSeN4Pra0CG/rHUiEQdrgmL7eA3hjqGO7hF9kukuMAOMVjTaadvVDJWLPGDbHxMfnWpCk71I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726079070; c=relaxed/simple;
-	bh=cvqiyYpTKj6QlDq2ScTGcOqG00swdPqmgk62cIeBpTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LyAUhMFhJ3Tyjbov+XmMJdmLfDo8zMCWrsw95BAw1ljF4e2wnaeQ7xdTxtxR1KY4h173e5lxMwKJdM+31B03GHfQhMpkctKvnG7qI70KZAk/pkijWq8RH6aU61Um3AFnxXPXlwqqvEu1uUFIHGO3x/FG0DQYpgWHW4YGl21E65w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHlaPI+C; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1726079123; c=relaxed/simple;
+	bh=ZFbm6RvuGzyg/OXzLGx4dFjmyQYMdMuowComNjj6Bbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NuyI+Sz/Z7mBnGkHu+k1j3wZfbJQy/sff3Oknh3+gIjuDs613g5rDBM3cb9td8YKlm4uJYmQVpBvWeTZNtXbKZOeM+6lZhJzNwaeWL+BZlJEkF0gKhVcSv0suXjhpXRNQnMOZZrAfF+Wk4IwKVBIKdvHAcfpVQ2ZyUnUdYg5Qek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avqJjFg4; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20688fbaeafso2353255ad.0;
-        Wed, 11 Sep 2024 11:24:28 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so532655e9.1;
+        Wed, 11 Sep 2024 11:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726079068; x=1726683868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WfIVDRWLb0U29G6Ld/L8UCYuhUrTw/kzrAPqO0NhGVg=;
-        b=eHlaPI+CudYfBLlHbCgc/9e31kTQa79XczLn7NMaNARYvC9WdSB0kljI1s2Yn5WMMO
-         YckvwlPiir4IQlMRWJIk/ahnLbVozMe+DrmOGUUi96/RzNFEX1v04cfXL9WgRw6SzWFk
-         ShiZbITsTd87DyvzY1vAEBNyEt7cUI1oBBvVX4UF3+OeD3wYBaYMsK38z3PdBf44J/KE
-         mW37V90PuImMBIhnwzJfoXcISYil5vgSrux6Cg+gof+8GOdiZZsguTjdSWHY8fsMXze3
-         1KVBs/XcfKumXaFnit35HqBLeO94glIrUCF2K0vKcBlpxIF0diUoVEGfElyvrriR98L9
-         TDQg==
+        d=gmail.com; s=20230601; t=1726079121; x=1726683921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxR+vNB93ufPg0Y1ZRk8v4VwhhNXPxM1gxuKsa+d6/0=;
+        b=avqJjFg4O4NdBLdgSPIBByggRc6VkPGcarvqwNd+yq2tWrnVbolb/ulrzn+dz1mlJX
+         Jx36PQOFsMXZTQrTIhwHNNGPP4kfWa8CuE03mcuqxku4NN/PIVA4u/ZGNFeetZ3qJrPQ
+         mqar0m0V+eDucVKdgEWVSM2nh4Tpbvapqbv/VxXGLbQS1UHGtM/UOBqIpNESvwzWheXJ
+         icqSMfs4vhs8wDwDpfrKOsyolM/MDemBz06HJ2kjnp5y2x+oqvZVgG9zh3PAk4efNBZX
+         9hgI3Hg9dlDjwzpkRMC1hL+xzXb0HuBEJtyV9QZLNpHVOE0BH2XOKmwVKoWaX5gAsnee
+         m4lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726079068; x=1726683868;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfIVDRWLb0U29G6Ld/L8UCYuhUrTw/kzrAPqO0NhGVg=;
-        b=kbQHcWFLoyFYMrLZHLavnkwHvYF7uSBRsicI3ZjP4ujV3APR8CG2QL8GKDSygOr9GI
-         wrm8U2UstHxV1YWHeqdTUMwIS1Y0Qa4j38uGqu/2Y+EIWBX8/Cx3jEuqMEg9ULPxOF98
-         Pt5NYKP2BrObaWVs1nbXGLwbdy60dY2RfkfzMA33NwKntN6gy39a0qM6Fn06xy1XPksG
-         gTQYtAbPhI/fDKYBWIuTRE8C/mUyyrpi1mw0wmKp0VR0cxueWCVySmsj/0bzeUp5N+Ro
-         pFuS7FvXXyLbAClIMh6gMg7Yip0YznsCjI9newZwS+c2y3sBVBXUEFs0MzOfKKyRS6J/
-         aR/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5u0e//QwiC3Izv67q7f3F1VHZK/n1dLZe0dO4+e9qy7m3JxlooqqxV4v/Q0IgQm9pWmNNXzx7Au/fGkAH@vger.kernel.org, AJvYcCUEyX5WeuBvpEShS/VFkWwsbapCsCLMnB1rfLaZbzojcKMTzC4VqAMo5PsmOJd4iVKQg6vzCIoOi50=@vger.kernel.org, AJvYcCUoLqgRnVxpNq8qL7UHvyjRvKIEeMlijoCxqT3IE48skLNV16PbZvAwdh3FtCh1KV+kGr6ByYPPMsHA7A==@vger.kernel.org, AJvYcCWTH3PcRI/SqTQjP0Rn0NdABAugsOQ3dXORJxSbEN4IjL8Xed3RsI+OiIReCjGQad9xVbir+qr9o2ox09t2X9A=@vger.kernel.org, AJvYcCXTOAp9B8A18GpiBnA6R9bMWeybyEwgPPSZ4fKXCA6aqNk0qVqRSrf8eXP+twxgOq4SpiqQW3bfVoL5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm5bNHzZzEwsS3AqCj5OL7xAXFE6yf6gOYP+MW47p0E/INiOHv
-	UEOXSxWM0vh5Fd8iODCbbCmLgDdLvUT78xdELaEaIUDPqSd1Ctzm
-X-Google-Smtp-Source: AGHT+IHHxXX5UoA4CTDu4tCRimM4Z3eVy1fID6lUB3MJ7mTupdKsilagtwt1uZjUhm4aOyBQP08guA==
-X-Received: by 2002:a17:903:41cb:b0:205:6a9b:7e3e with SMTP id d9443c01a7336-2076e45ad89mr3273875ad.56.1726079067573;
-        Wed, 11 Sep 2024 11:24:27 -0700 (PDT)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe9e12sm2443985ad.200.2024.09.11.11.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Sep 2024 11:24:27 -0700 (PDT)
-Message-ID: <fae6aad7-de6a-49ba-acf4-e1aa93baad2e@gmail.com>
-Date: Thu, 12 Sep 2024 02:24:22 +0800
+        d=1e100.net; s=20230601; t=1726079121; x=1726683921;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TxR+vNB93ufPg0Y1ZRk8v4VwhhNXPxM1gxuKsa+d6/0=;
+        b=QHfsKnp3e98dSNxAK9vxN5g+HRi3foWk08iqc84aGvplbQst1WY0uTuAHlLc1iYC6l
+         ehmDqJPV8XQKfEWl287idp1w+ZKTbxoqpkF5ognmko4c1YIUtVczqv8lAdzyphjTZ7WH
+         QYvEMZW6Vw+88mjvSh/qXyu5uUeh2aStinHgD4BnVpfVG4ZvwLMaflbPiNW0so19uTVr
+         lyn0ju7FAVRzK4fKLMnb9VYjIBW2QURQCdm6P8wVSPTBuMbRE+eD/uF2agEuySQoy9B4
+         kEEj/TYFqSah98uziNRFL/6q0WtNbpqjQzlmCpwG3IWyWdRRza5exRLjuXcDdsil2ai2
+         k+0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAc2fgLeU9+IgFdOsDuNweuU9SEusRkFcQtvrEwQnCim40xYCtscGQIegLh1yd6T/TSNt2hQYAKCKjrx8=@vger.kernel.org, AJvYcCVEEBDcaMv+TbkdN9DQ6lm4r/6tu3gh4ep9X1jozZEvtWDLL8imjoney8MfHDo0Q6914C4VC9isSX364sko@vger.kernel.org, AJvYcCVxV3Sl5YIhmLQJlGhARptqKggoKIwaNcNdsNlcaA4dbQ9WkjbsMEXQyVKCvScifZ8I3Gqbi0tMyGfi3bbrVMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZR+Uv8LpJcQhcHZ0d+geGPdM9Kk5ZuBTHKhB6pFTYPDBIACd5
+	CekxAwAyBFXAglQg0tRzDiVXQGFnXmQ5RI+COO6KtqqrESz93bzI
+X-Google-Smtp-Source: AGHT+IG6EBJS+D/O14RGqyVdq3Z1OqN0oOzz6xJGseNGrMXdlv0fn7sOAFcf/NaC2Z7Gh++8z1XETA==
+X-Received: by 2002:a05:600c:45cf:b0:42c:a802:540a with SMTP id 5b1f17b1804b1-42cdb511f33mr3768055e9.7.1726079119903;
+        Wed, 11 Sep 2024 11:25:19 -0700 (PDT)
+Received: from void.void ([141.226.10.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb099acf6sm146736855e9.9.2024.09.11.11.25.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 11:25:19 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Helge Deller <deller@gmx.de>
+Cc: linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] video: fbdev: Fix a typo
+Date: Wed, 11 Sep 2024 21:24:37 +0300
+Message-ID: <20240911182503.3600-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/22] dt-bindings: arm: apple: Add A7 devices
-Content-Language: en-MW
-To: Conor Dooley <conor@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-References: <20240911084353.28888-2-towinchenmi@gmail.com>
- <20240911084353.28888-7-towinchenmi@gmail.com>
- <20240911-similarly-paragraph-0ca7a1d566c3@spud>
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20240911-similarly-paragraph-0ca7a1d566c3@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Fix a typo in comments.
 
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 12/9/2024 02:13, Conor Dooley wrote:
-> On Wed, Sep 11, 2024 at 04:40:55PM +0800, Nick Chan wrote:
->> This adds the following apple,s5l8960x platforms:
->>
->> - iPhone 5s
->> - iPad Air (1)
->> - iPad Mini 2
->> - iPad Mini 3
->>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  .../devicetree/bindings/arm/apple.yaml        | 26 ++++++++++++++++++-
->>  1 file changed, 25 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
->> index 883fd67e3752..3c81008f0e96 100644
->> --- a/Documentation/devicetree/bindings/arm/apple.yaml
->> +++ b/Documentation/devicetree/bindings/arm/apple.yaml
->> @@ -12,7 +12,14 @@ maintainers:
->>  description: |
->>    ARM platforms using SoCs designed by Apple Inc., branded "Apple Silicon".
->>  
->> -  This currently includes devices based on the "M1" SoC:
->> +  This currently includes devices based on the "A7" SoC:
->> +
->> +  - iPhone 5s
->> +  - iPad Air (1)
->> +  - iPad Mini 2
->> +  - iPad Mini 3
->> +
->> +  Devices based on the "M1" SoC:
->>  
->>    - Mac mini (M1, 2020)
->>    - MacBook Pro (13-inch, M1, 2020)
->> @@ -65,6 +72,23 @@ properties:
->>      const: "/"
->>    compatible:
->>      oneOf:
->> +      - description: Apple A7 SoC based platforms
->> +        items:
->> +          - enum:
->> +              - apple,j71  # iPad Air (Wi-Fi)
->> +              - apple,j72  # iPad Air (Cellular)
->> +              - apple,j73  # iPad Air (Cellular, China)
->> +              - apple,j85  # iPad mini 2 (Wi-Fi)
->> +              - apple,j85m # iPad mini 3 (Wi-Fi)
->> +              - apple,j86  # iPad mini 2 (Cellular)
->> +              - apple,j86m # iPad mini 3 (Cellular)
->> +              - apple,j87  # Apple iPad Mini 2 (Cellular, China)
->> +              - apple,j87m # Apple iPad Mini 3 (Cellular, China)
->> +              - apple,n51  # iPhone 5s (GSM)
->> +              - apple,n53  # iPhone 5s (LTE)
->> +          - const: apple,s5l8960x
-> 
-> Is the "x" here a wildcard?
-No. This is part of the SoC ID. This is the legacy naming from when Apple
-used Samsung SoCs for iPhones and iPods, and every SoC would have an ID
-beginning with "s5l", and ending with a "x". Apple A7 is last SoC to use
-this legacy naming scheme.
-
-> 
->> +          - const: apple,arm-platform
->> +
->>        - description: Apple M1 SoC based platforms
->>          items:
->>            - enum:
->> -- 
->> 2.46.0
->>
-
-Nick Chan
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h b/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
+index 9a7253355f6d..cdb1dedca492 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
++++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi.h
+@@ -351,7 +351,7 @@ struct omap_hdmi {
+ 	bool audio_configured;
+ 	struct omap_dss_audio audio_config;
+ 
+-	/* This lock should be taken when booleans bellow are touched. */
++	/* This lock should be taken when booleans below are touched. */
+ 	spinlock_t audio_playing_lock;
+ 	bool audio_playing;
+ 	bool display_enabled;
+-- 
+2.46.0
 
 
