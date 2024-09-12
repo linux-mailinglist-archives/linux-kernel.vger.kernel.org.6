@@ -1,93 +1,117 @@
-Return-Path: <linux-kernel+bounces-326732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCDC976C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:41:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA32976C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7982285B41
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2161C2362E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694391B374D;
-	Thu, 12 Sep 2024 14:41:26 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8B41B4C21;
+	Thu, 12 Sep 2024 14:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Sy3Jg3KR"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509101AD25D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340C71AD25D;
+	Thu, 12 Sep 2024 14:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152086; cv=none; b=FLyh/TkbKp0EE38+15kiaby477iyxLDya4Nx6UYbXGBkh4bgJDft1rzOdCUs+hJNPVwFyd2895J+ESizPlfaUBlDodLqPPqsEoQfoH6+WkZovh6H2Nn0Gkz0ZH7OD2zetZlk5U986TN0r9um0qhiT3bz+8yUJM0m3gZEXLHGeVc=
+	t=1726152129; cv=none; b=QKGIOdBUl9FZGHewWEahhONqcIllxhGe49hitJQiodTft/J35ndn25/0QZSh9OrPU+irAnMpEN2xdB/5L+26QsHKGGn7mDy7Sf2uq87J+8xQAS6huAkFj7we98C/dDPZNLZFbljqNP/t0RfdTsq7VbV+xT993w189J2MaSf+9gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152086; c=relaxed/simple;
-	bh=eFo8M1L8R7wjkPEig4kgYKYx7zNgDhbmpnAZ+9y3Vmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FpsfoW8KcldE2WMnN/ReJIg6OZVJ5IG+xR6joAVGn1E0rKNi/wZEZ+mtaEFDc4e1p5jxU97e6ygcs+rGvqPEqPGGZ+bAYB7yhdW8sPe6qfP0JcI05+6RO/VMn/k4rg1Y4Eog3vWmrQf6m82YEMdwD5KTy+3PI4Hsisc1tFbeVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 0b7c55c8-7115-11ef-812b-005056bdd08f;
-	Thu, 12 Sep 2024 17:41:07 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 1/1] i2c: synquacer: Fix clock rate retrieval code
-Date: Thu, 12 Sep 2024 17:41:05 +0300
-Message-ID: <20240912144105.1555624-1-andy.shevchenko@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726152129; c=relaxed/simple;
+	bh=T+OWrNoIs5BCtbUkYQfXZniHPmlZ45gy1qVQ3T0ew6I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jb4rc/y9jLfKiJhzmMP6opxy0sT1lCHd57O16Tr/Pk/7btFXl2opaLiN1TqZEC0QRhwgwI3a/tCOSlsOiAWT47a/LNH/rnPYfPmVzqthCPwKBlvuSf4pFIvuufF4Q4OutLlat6CLfHAE0YuDF3yo3eMHjD6wzPQybuLNxWB9F8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Sy3Jg3KR; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CBd5o9001157;
+	Thu, 12 Sep 2024 09:41:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=4+PRiUSNYnock2lwwj
+	VFDAM/iZwI9ar50XC9d7K15I0=; b=Sy3Jg3KRAg+9dhN1sIKxW4Kzjdw1AzdtBv
+	eDprWWHIrVfzNVFe42Hrxo/0/g8IoW6YZQz4KqwIBxIFp8m3IVIQD8ZqGAX7Lc7Y
+	kI6jecGBdnok/1omq9+htpV6pV7FWGNBWsQPI+TkUASJCDHaalUPP96akDDS+8V2
+	r+tEANyzuBNjzp4DvuvUmAuKLDFf3TtTlTG0/KtGgJuL66TIWpLPXZJbaaO5eULf
+	4yJ9+ahevAJVaU/7JEGP94NnOAo0D3PV3CpQQg5SApyEwb6XpP+P2qHDQpBAFNlz
+	RQrZ0KKLmQu+4f3VIalgmNTEfWTyhh+8+vKyPfWBrWnpvn4vIEyQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41gm7x5h6e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 09:41:50 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Sep
+ 2024 15:41:46 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 12 Sep 2024 15:41:46 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 1C89982024A;
+	Thu, 12 Sep 2024 14:41:46 +0000 (UTC)
+Date: Thu, 12 Sep 2024 15:41:45 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+CC: <linux-sound@vger.kernel.org>, <vkoul@kernel.org>, <vinod.koul@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <bard.liao@intel.com>
+Subject: Re: [PATCH v2 00/14] soundwire: mipi-disco: add partial SoundWire
+ Disco 2.1
+Message-ID: <ZuL9qSMTG8rBr680@opensource.cirrus.com>
+References: <20240911115827.233171-1-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240911115827.233171-1-yung-chuan.liao@linux.intel.com>
+X-Proofpoint-GUID: 1SNr4TgtuVXos-nIPVrDfdEDZUmzXtTr
+X-Proofpoint-ORIG-GUID: 1SNr4TgtuVXos-nIPVrDfdEDZUmzXtTr
+X-Proofpoint-Spam-Reason: safe
 
-With the devm_clk_get_enabled() the probe will fail on the systems
-that have no clock provided, such as ACPI-based ones.
+On Wed, Sep 11, 2024 at 07:58:13PM +0800, Bard Liao wrote:
+> This patch series adds partial support for the SoundWire Disco 2.1.
+> 
+> v2:
+>  - use mipi_device_property_read_bool() to get "mipi-sdw-sdca-interrupt-register-list"
+> 
+> 
+> Pierre-Louis Bossart (14):
+>   soundwire: mipi_disco: add MIPI-specific property_read_bool() helpers
+>   soundwire: optimize sdw_stream_runtime memory layout
+>   soundwire: optimize sdw_master_prop
+>   soundwire: optimize sdw_bus structure
+>   soundwire: optimize sdw_slave_prop
+>   soundwire: optimize sdw_dp0_prop
+>   soundwire: optimize sdw_dpn_prop
+>   soundwire: mipi-disco: remove DPn audio-modes
+>   soundwire: mipi-disco: add error handling for property array read
+>   soundwire: mipi_disco: add support for clock-scales property
+>   soundwire: mipi-disco: add support for peripheral channelprepare
+>     timeout
+>   soundwire: mipi-disco: add comment on DP0-supported property
+>   soundwire: mipi-disco: add new properties from 2.0 spec
+>   soundwire: mipi-disco: add support for DP0/DPn 'lane-list' property
+> 
+>  drivers/soundwire/mipi_disco.c | 144 +++++++++++++++++++-----
+>  include/linux/soundwire/sdw.h  | 200 +++++++++++++++------------------
+>  2 files changed, 206 insertions(+), 138 deletions(-)
+> 
 
-    synquacer_i2c SCX0003:00: error -ENOENT: failed to get and enable clock
-    synquacer_i2c SCX0003:00: probe with driver synquacer_i2c failed with error -2
+Series looks good to me:
 
-Fix this by switching to devm_clk_get_optional_enabled() in conjunction with NULL
-check, so we won't overwrite the clock rate from the property.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Fixes: 55750148e559 ("i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()")
-Reported-by: Ard Biesheuvel <ardb@kernel.org>
-Closes: https://lore.kernel.org/r/CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com
-Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/i2c/busses/i2c-synquacer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
-index 4eccbcd0fbfc..49d01fa8fb4e 100644
---- a/drivers/i2c/busses/i2c-synquacer.c
-+++ b/drivers/i2c/busses/i2c-synquacer.c
-@@ -550,12 +550,12 @@ static int synquacer_i2c_probe(struct platform_device *pdev)
- 	device_property_read_u32(&pdev->dev, "socionext,pclk-rate",
- 				 &i2c->pclkrate);
- 
--	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
-+	pclk = devm_clk_get_optional_enabled(&pdev->dev, "pclk");
- 	if (IS_ERR(pclk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(pclk),
- 				     "failed to get and enable clock\n");
--
--	i2c->pclkrate = clk_get_rate(pclk);
-+	if (pclk)
-+		i2c->pclkrate = clk_get_rate(pclk);
- 
- 	if (i2c->pclkrate < SYNQUACER_I2C_MIN_CLK_RATE ||
- 	    i2c->pclkrate > SYNQUACER_I2C_MAX_CLK_RATE)
--- 
-2.46.0
-
+Thanks,
+Charles
 
