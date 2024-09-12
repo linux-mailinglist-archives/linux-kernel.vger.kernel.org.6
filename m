@@ -1,171 +1,189 @@
-Return-Path: <linux-kernel+bounces-326519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF60976956
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF28397695B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679C0B2453F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E66B24556
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C61A42DA;
-	Thu, 12 Sep 2024 12:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568C21A4F06;
+	Thu, 12 Sep 2024 12:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFfh1/y/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLjFVlzq"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486619F42D;
-	Thu, 12 Sep 2024 12:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8681A3AAF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145033; cv=none; b=C9B3cFGw8/vb15yYDFAlYza7uTIWZTg503Zufyx52zf6uudNbuSaK/hPEE5swEO0WEALk0iUAegSvZX3S7BYnTzrFa7izPI2XoDJb6xsJ8GrevU8TVn7q61Qm1q9BpFnSvwgnUkfC/z5vkwm+9ZC6j6BJcNEux/+qRtBEerM/RA=
+	t=1726145056; cv=none; b=FhwRn50aeO7NCDxhQDt9GH3Mf33xO7DVJgMxu8wr0ZpzlAh3y2FhouwQU/M1SNwn0EqFp8076uXDb+DdiGyR4CUKse0ExIB+Z5mNTkJDkPEE+Wyp33lKZ446EF+PCIv8gRpd6J89f0+MO7+TuRszuhrZMKz8JrP5tGj2baggKZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145033; c=relaxed/simple;
-	bh=IDkxlvm6XZtP/KDhyz89G+TMnQ4CIX8A9FuQEJL5VmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8ZF4SimLevwc4p0IG1tbcp8JUCRhRMejLxdA4pJvZrg7rwzjj+F+FA9jcwzCG+7npcacq5IT/9qvfJFV07irgT5AstgOGjFLusq3rLLMQr3SAiT8wb/OVSfu2raywGkeql9DuNSfNr9tKd95llC7hJAkUWaJ/z7vdIU8dGiVNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFfh1/y/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726145032; x=1757681032;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IDkxlvm6XZtP/KDhyz89G+TMnQ4CIX8A9FuQEJL5VmU=;
-  b=mFfh1/y/ySrxEKXmtrlSFx10yGWWwDsU2IkAuM6BVNURPF6yRcFRwLPv
-   ExwgWAdMnFmzPaRpHEWe1InXa5+Rmzp7rPJCv0GdDhf/R6/AaxSbXzsdm
-   dNPDJujqrDghq9zhtBZ3GrEMCJdZl8heeguYvqt3KZY14h0sS0CwsMiHq
-   M6204FPIu6z16PIu0nXQ9zjhmMMIS60byVqsMDZbfkutfcOTxLf0ndyER
-   BnbqFo5uYCflZjK2s8eSB4YVM+MAAshdZKJyAfJSZg+nB9plVEoQeAlbK
-   tz7Y0jB69JAPx+ra02xeUw0peWWkvJiLv0jgPX5qiynGNvmku/x4udy5d
-   w==;
-X-CSE-ConnectionGUID: cZ0QDl8HQESlh+6a7tNdVQ==
-X-CSE-MsgGUID: 9y4KksxgQZO/9wqGB5cfCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25189029"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="25189029"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:43:51 -0700
-X-CSE-ConnectionGUID: op32tmxCSjatLMdfJRaPeQ==
-X-CSE-MsgGUID: QRSUhwtVTfGvAHGGi5e5Cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="67988731"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa006.jf.intel.com with SMTP; 12 Sep 2024 05:43:48 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 12 Sep 2024 15:43:46 +0300
-Date: Thu, 12 Sep 2024 15:43:46 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: Re: [PATCH v5] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Message-ID: <ZuLiAsliEq66XjYP@kuha.fi.intel.com>
-References: <20240912074132.722855-1-lk@c--e.de>
+	s=arc-20240116; t=1726145056; c=relaxed/simple;
+	bh=0urSazZdA3Q//+hFIfRp0TDi61MzX9DROm8rbQ4pKxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gZ7k6nc/jdTFBxM6Q1nUDR5SR+plbbXlS2X+Vun44J2Fo5GFR3i1Fu3CtbyINo6tOWblUv2FqFrViGy9OcA4JqplVMPc5haj2zqL4eTZ8jW+u73htqzt3GbIQQFMSn9UM0LFL9NfFSYeCAlC8PZ7EE9Bx8fQOq87pNEUhqYLKYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aLjFVlzq; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75d529b49so534961fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726145053; x=1726749853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yMaEX9I1RQP11LCLQlJt88Oo9tTkzQ2nXArFlvuYAlk=;
+        b=aLjFVlzq80G5RBCxwLW8/Ae8vLJOM6/Aja+kr5SbATUI8/llKfH+0eo4c0as3CQie0
+         whXSoXmIaSV7bhQWL6UxhymQZcHGXdhcGcq5P52SikXRT2tlAEtoxHAQY5ZmPIjCAqP1
+         At8HS5ovffbvraafIW6xhZKEDrsYurmUJyP8CrvjYO6kDM9/519ulp40niocedjI4dfl
+         aovjnlsXszh165U5g4soLNSXs0G8GjXiuL7zU0jOobFEmi6/qzEWDvACKqrL2FqxStdw
+         YoTmDOPzrystC1feTkwic5kcdWKk+16ogv9QwZDJsxlVzav8RUyFfCw5BwVIGsYlVTCU
+         42Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726145053; x=1726749853;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yMaEX9I1RQP11LCLQlJt88Oo9tTkzQ2nXArFlvuYAlk=;
+        b=tAV89qrw5eXT0XwRUN7W+L7q5k1NEOl2Imcsd3CRVCgOqzms8EJ94D/58D7fymiVf8
+         Ob39eZlpCvzAkuilthrws1Qn4xFeylpvutN0Gf5BTyccgZK43LrrX9SQvUYbyEmTtU4z
+         fCVjE3DGq9jib4Fhgeq9MJqA4NydbxtnpJVwXzeyXz7mFPA4KrE7/ntBe2Aqv/w8z+aq
+         2U0TGe3uGdMedlpjON0t1YCc+6DNE1i3WENKL+cG5f8lohOengCMg5/CzAWfIge9A6SC
+         KSNGpnK+tJ1NYo8fY7607U5K6YzrIGERhIOkqMoamnHvjHCxgp202Dn3BWO2nnxPtvp8
+         ZS6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzX4oCCKs/bfTuGieBDW6jCvLJ4OOv0OcSt6YK/tlLAIjxw4znvePNTSvikIujgqz1f/olP4rDKA9Bzi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxN+ey/ir+qcxFBo2nvzLozwsuBLaXwXQjoE83SI2VY0v8Z021
+	nZN4vmAM4sMV3/OjqqYRhqyc5hqmpFJx55rwt4KGNvad07oUj9Fr5pva2RCtqxc=
+X-Google-Smtp-Source: AGHT+IEsQyCCvQn8ayp0ihr0+sIEfLHDRxRsCTv6scTqDFj5NaZm60IwE+Ob1juIBiajON1Byw0mdw==
+X-Received: by 2002:a2e:a983:0:b0:2f7:66ce:a319 with SMTP id 38308e7fff4ca-2f787f4a5d2mr4217221fa.9.1726145052973;
+        Thu, 12 Sep 2024 05:44:12 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cb73esm1904592e87.174.2024.09.12.05.44.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 05:44:12 -0700 (PDT)
+Message-ID: <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
+Date: Thu, 12 Sep 2024 15:44:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912074132.722855-1-lk@c--e.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+ <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 09:41:32AM +0200, Christian A. Ehrhardt wrote:
-> If the busy indicator is set, all other fields in CCI should be
-> clear according to the spec. However, some UCSI implementations do
-> not follow this rule and report bogus data in CCI along with the
-> busy indicator. Ignore the contents of CCI if the busy indicator is
-> set.
-> 
-> If a command timeout is hit it is possible that the EVENT_PENDING
-> bit is cleared while connector work is still scheduled which can
-> cause the EVENT_PENDING bit to go out of sync with scheduled connector
-> work. Check and set the EVENT_PENDING bit on entry to
-> ucsi_handle_connector_change() to fix this.
-> 
-> Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
-> This ensures that the command is cancelled even if ->sync_control
-> returns an error (most likely -ETIMEDOUT).
-> 
-> Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-> Bisected-by: Christian Heusel <christian@heusel.eu>
-> Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-> Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+Hi Bryan.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  V1 -> V2: Split out the ucsi_acpi.c part
->  V2 -> V3: Dropped the ucsi_acpi.c part due to conflicts
->  V3 -> V4: Additional fix for command cancelling
->  V4 -> V5: Rebased onto usb-next
+On 9/12/24 14:41, Bryan O'Donoghue wrote:
+> On 12/09/2024 09:22, Vladimir Zapolskiy wrote:
+>>> +
+>>> +  vdda-phy-supply:
+>>> +    description:
+>>> +      Phandle to a regulator supply to PHY core block.
+>>> +
+>>> +  vdda-pll-supply:
+>>> +    description:
+>>> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
+>>> +
+>>
+>> Here the supplies should be split into ones, which are specific to CSI
+>> blocks,
+>> and I believe they shall be set as optional.
 > 
->  drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+> In principle I agree with that, each CSIPHY should have its own vdda-phy
+> and vdda-pll regulator specified.
 > 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 35dce4057c25..e0f3925e401b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -38,6 +38,10 @@
->  
->  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
->  {
-> +	/* Ignore bogus data in CCI if busy indicator is set. */
-> +	if (cci & UCSI_CCI_BUSY)
-> +		return;
-> +
->  	if (UCSI_CCI_CONNECTOR(cci))
->  		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
->  
-> @@ -103,15 +107,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
->  		return -EINVAL;
->  
->  	ret = ucsi->ops->sync_control(ucsi, command);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = ucsi->ops->read_cci(ucsi, cci);
-> -	if (ret)
-> -		return ret;
-> +	if (ucsi->ops->read_cci(ucsi, cci))
-> +		return -EIO;
->  
->  	if (*cci & UCSI_CCI_BUSY)
->  		return ucsi_run_command(ucsi, UCSI_CANCEL, cci, NULL, 0, false) ?: -EBUSY;
-> +	if (ret)
-> +		return ret;
->  
->  	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
->  		return -EIO;
-> @@ -1197,6 +1199,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
->  
->  	mutex_lock(&con->lock);
->  
-> +	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-> +		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-> +			     __func__);
-> +
->  	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
->  
->  	ret = ucsi_send_command_common(ucsi, command, &con->status,
-> -- 
-> 2.43.0
+> In practice though I don't believe its necessary, below.
+> 
+>> The proposed names are:
+>>
+>> vdda-phy-01-supply
+>> vdda-pll-01-supply
+>> vdda-phy-23-supply
+>> vdda-pll-23-supply
+>> vdda-phy-46-supply
+>> vdda-pll-46-supply
+>> vdda-phy-57-supply
+>> vdda-pll-57-supply
+> 
+> In principle, you're right, we need to expand the name set here.
+> 
+>> I understand that what I ask is much more clumsy, and it could be seen
+>> even as
+>> unneeded, however it'll be the right set of properties to describe the
+>> CAMSS IP
+>> in this respect
+> I think the following naming would be better as it matches the
+> power-grid naming in the docs.
+> 
+> csiphyX-vdda-phy-supply
+> csiphyX-vdda-pll-supply
 
--- 
-heikki
+I have no opinion about the names, any reason for name selection is
+good for me.
+
+> =>
+> 
+> // voltage domain = vdd_a_csi_01_09 = regulator l1e
+> csiphy0-vdda-phy-supply = <&vreg_l1e_0p9>;
+> 
+> // voltage domain = vdd_a_csi_01_1p2 = regulator l3e
+> csiphy0-vdda-pll-supply = <&vreg_l3e_1p2>;
+> 
+> //
+> csiphy1-vdda-phy-supply = <&vreg_l1e_0p9>;
+> csiphy1-vdda-pll-supply = <&vreg_l3e_1p2>;
+> 
+> Where X indicates the CSIPHY number.
+> 
+> So in fact, in practice we don't need to differentiate these entries.
+> 
+> Checking x1e80100 ...
+
+Checking some particular board, right?
+
+> csiphy0
+> 
+> vdda-phy-supply = <&vreg_l2c_0p9>;
+> vdda-pll-supply = <&vreg_l1c_1p2>;
+> 
+> This is also the case for csiphy 1/2/4
+> 
+> So, I _don't_ believe this is work we need to do, since its the same
+> regulator for each PHY.
+
+This is board specific, and even if the separation is not needed on the boards
+you have just checked, still it may be needed on some boards, which are not yet
+checked/not yet known.
+
+It's needed to make the best predictions about all possible usage of hardware,
+fortunately it's easy in this particular case, and it's trivial to correct it now
+than on some day later on.
+
+--
+Best wishes,
+Vladimir
 
