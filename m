@@ -1,71 +1,118 @@
-Return-Path: <linux-kernel+bounces-326570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E926976A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A61976A3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6BF9B22208
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C919B22A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00191A2567;
-	Thu, 12 Sep 2024 13:15:13 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004861A7262;
+	Thu, 12 Sep 2024 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0nWqzBk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009FF1A7262;
-	Thu, 12 Sep 2024 13:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9E11712;
+	Thu, 12 Sep 2024 13:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146913; cv=none; b=CsNY96ioVcaxL5JQ0at4Y2AffDOoNB2jIypKuDcbnpOe7nL7/N3PxaDbR7Q/TdD8d0qMVhZ+m7oZka0ZUxvfZJdxjTTget3F3rg2FK5NlbfGvGDZ1xM9cVC67BQEghqIAyNiW57HuRye+Rs3lMKBptBRUVbDsijJfa+yCg8MMfw=
+	t=1726146954; cv=none; b=NoA25bg1MeB4AlOwJ4e7QbNfCxEB9ihPBV/wbGEmm4JYChnUMDIApyHGWmWhVnt9TGJZUNQSphQxZln1fQt92gFwpRPd0BDFOI8gtlVz6YjlL7LcKKjT9bpE6hl3g6qlsrvzWNbPrsPvWdsbcnMAOPk9SAz3skntOz7xASXAYQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146913; c=relaxed/simple;
-	bh=8FwGi51IJYvy5gcceZmNn4qu12uowoQwGBJfuAgu/ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssa3zbRdbB1rXi1TQpRJdcRibht2t8lyIP8HjvIXjW8p8xj0+NSfT8OI47IINv6WDsiL33YRBQyZVqm4idR4dedrCoDQTDTabWJsvEYQfBlTkG7nAAs0lQbXe7PKC4Z7wDJp+yzCd3dJ+MkONBaS0HDXCN3ay5eVpizYoYaXu2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 276EA227AAF; Thu, 12 Sep 2024 15:15:07 +0200 (CEST)
-Date: Thu, 12 Sep 2024 15:15:06 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, kbusch@kernel.org,
-	hch@lst.de, sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH RFC 1/4] block: Make bdev_can_atomic_write() robust
- against mis-aligned bdev size
-Message-ID: <20240912131506.GA29641@lst.de>
-References: <20240903150748.2179966-1-john.g.garry@oracle.com> <20240903150748.2179966-2-john.g.garry@oracle.com>
+	s=arc-20240116; t=1726146954; c=relaxed/simple;
+	bh=Mbc7VcX998xWkc6JZN8LW23ul8vOtaHFcVt8+WMqKFg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=J0z2vFHQRCNh6HaGrjA5hurtPl8hWjPvsHH8k3PtCXBFOVR6fGgBCKnX2m3mFMWGMHN6WDLMuUsUJh571iWV0lhL0+vDQ3R9m02SkbtG60iunh7hV49uYzh2Zv7FDCYHavJCuM7S5PMufiwI19ckAA+xZaBwuWWqcEG0C3GlBRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0nWqzBk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C90C4CEC3;
+	Thu, 12 Sep 2024 13:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726146954;
+	bh=Mbc7VcX998xWkc6JZN8LW23ul8vOtaHFcVt8+WMqKFg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=B0nWqzBkx03CCcx2KhnpvJlz4SRqvZUVJ5NrLouCXukJGXgAw71v9z/sq8D6Ac6vh
+	 D6i5OZ7wPzKDWSFhdHgWw3ddqc7jU0rVrThe576K+ngsDbQaPltAWreRtbDdWdhuMq
+	 Uy5SU0rEANZF/e48B6iRrFtORC1ZbPxRsXcbMnBKq+blF9ZiEvjRzUcz/jIpmQ1Bbf
+	 UiH/8zBm8liC4MkOUJDbtWC/wxuiCjc1E0fNGKurALPhfmcRw3SPZjp0gU5FLKcwrC
+	 e56l7JvUUsYcw39bg/zzUy+XLG2jydcpwk5O4aqvmz5obu08Cdmm4G7cIujkhhRIKq
+	 rZS5QIwAKClqg==
+Date: Thu, 12 Sep 2024 08:15:52 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240903150748.2179966-2-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Matteo Martelli <matteomartelli3@gmail.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Alisa-Dariana Roman <alisadariana@gmail.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Dumitru Ceclan <mitrutzceclan@gmail.com>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+ Marius Cristea <marius.cristea@microchip.com>, linux-iio@vger.kernel.org, 
+ Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240912121609.13438-2-ramona.nechita@analog.com>
+References: <20240912121609.13438-1-ramona.nechita@analog.com>
+ <20240912121609.13438-2-ramona.nechita@analog.com>
+Message-Id: <172614695270.3185531.17275124785979190338.robh@kernel.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: iio: adc: add a7779 doc
 
-On Tue, Sep 03, 2024 at 03:07:45PM +0000, John Garry wrote:
-> For bdev file operations, a write will be truncated when trying to write
-> past the end of the device. This could not be tolerated for an atomic
-> write.
+
+On Thu, 12 Sep 2024 15:15:45 +0300, Ramona Alexandra Nechita wrote:
+> Add dt bindings for AD7779 8-channel, simultaneous sampling ADC
+> family with eight full Σ-Δ ADCs on chip and ultra-low input
+> current to allow direct sensor connection.
 > 
-> Ensure that the size of the bdev matches max atomic write unit so that this
-> truncation would never occur.
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> 
 
-But we'd still support atomic writes for all but the last sectors of
-the device?  Isn't this really an application problem?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-If not supporting atomic writes at all for unaligned devices is the right
-thing to do, we'll need to clearly document this somewhere.  Any maybe
-also add a pr_once to log a message?
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7779.example.dtb: adc@0: Unevaluated properties are not allowed ('vref-supply' was unexpected)
+	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7779.example.dtb: adc@0: 'oneOf' conditional failed, one must be fixed:
+	'interrupts' is a required property
+	'interrupts-extended' is a required property
+	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240912121609.13438-2-ramona.nechita@analog.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
