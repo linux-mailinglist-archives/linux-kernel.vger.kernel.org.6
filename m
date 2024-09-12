@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-325945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26EF976012
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 948DF97601B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89B01F239DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462481F23AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA6D189533;
-	Thu, 12 Sep 2024 04:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB0F188907;
+	Thu, 12 Sep 2024 04:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qldQ8c97"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eyjbzGUw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39680188A1D;
-	Thu, 12 Sep 2024 04:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F0CA47;
+	Thu, 12 Sep 2024 04:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726116041; cv=none; b=feQ7/knnz/ei/5SDAr7gqIvhu3ylbrXKL5IGE+81FPucX5K7kaH4VD6hycdi/XUz6GvkVYMLGmO/wjW/E8wqZ1rgM+vOTeX9wW04a3kdMh1fSz0b5Csz+wfEfRO4X3+2sQTZ4u/D+p+wyM2JWD/xKgixEa4aTEOK/XnYAl499Bw=
+	t=1726116099; cv=none; b=sY5lZqI8LkCxEUuIRil3TGhxXSbxFhAm5COjNnURaNHjXk46GLz7YmodwfzFvkFzBJd+70bRUlJdwLP3X5OafFr1gR5MQmVf65zweYBuEerZQJDe7XdNHol1LYCaxr1fbAmwxjnMkVjscgrJl9Ok0S+Wm8axxzK9WRvEH/HqcSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726116041; c=relaxed/simple;
-	bh=tBsh/iJwjoN+p4Zef+hkQBecRmEQZ+LHbAZVofoTLOM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tCGLFau4Wezu3dpz1qbOy51XhACBqjpNktZHab/0NYW72pZmOXGe3iA7GdmJ1cGOpyHoazCo7PRBKe3gpCAXcU/LAU2h5ijSQ1atyO3AStsCcPH+UR+nOK/0G4Re4PEAERIqoiFJ2zJjPlZKqdN2Lkmx0+vZh5wCy0oUlyZq0eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qldQ8c97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3D6C4CEC3;
-	Thu, 12 Sep 2024 04:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726116040;
-	bh=tBsh/iJwjoN+p4Zef+hkQBecRmEQZ+LHbAZVofoTLOM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qldQ8c97DVfPRq9YxbFgOKVpp+eoXdRjsKhxzZYjjyxAf/cVznEJyIHdtDB0amJKZ
-	 hC6MhyBuBy6PXxqpYAMi6vJjsQuqoxcrFBc1QMSRvftQlVeRaf6F5ktxC3IE/ys/Yd
-	 558NoqPkQhmZXcFDAPveZRuUNBZZc/b7eJpadPpEQqW1wsWVXTcDLEqSRUKh59vMCk
-	 dhBKqvMDYAeCWQrVCfThRgdzSe/5rEvugHFK5Q6xjQvawM9v8ulP2A9qzB2t12h7pz
-	 giM3KJEMwwrI1NOAQol/w6gHs0ssLKAqdbCNwhCpJs1Yypl0zYSh018mJIClcwpoAW
-	 hNaQRq1gEX9qQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2683806656;
-	Thu, 12 Sep 2024 04:40:42 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726116099; c=relaxed/simple;
+	bh=J+voR34oci4p2IIVjc3qd0YparHlcuZTim//SkaanKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOkjP5rKW3CGq9iEWpUhjU73FfevahILjZE5PkGo4w1MHbX9HBUprzzZWQr836g7A4YJxh/ASz5FrnXVso1T+oJNEqTJqShTdoEbHOmv3IoqaWXbXH7ksaj3nM1+sZdm9bU2a9w09LicGtz449AvUufGebfNkD6tA3v3i1n9yyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eyjbzGUw; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726116097; x=1757652097;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J+voR34oci4p2IIVjc3qd0YparHlcuZTim//SkaanKw=;
+  b=eyjbzGUwP1GKQ4eBBwoFd2UzDTWgN9y9cHylvnUaRFDhoggC7u8yj3GU
+   VcjG9T0Q0uXyOfeynrEZXqS8QmVFPiwo/fNKqfMhPi1zIXyAf53r8K1X4
+   3wvCPRQ+BfiNFGVQPbjteD1H1o/I7BDb5tjtqYLEdkXLeUb3ykbMWdhMh
+   4hxvypnE5s4n/CDcssRmSqoZr6vaELGTRV/p1LHy2cDcEJkPyuimVKAPG
+   vSvp+3M26ZWEgoe8YA13UGxDKqAZAkfn102Hs5kDNJO/H+CD+7NOGIYp7
+   xAeansf3aj18fWGBclmc8O7lj4zYJNunoUS2ixDrK6PEq8jhFNZnSmAHV
+   w==;
+X-CSE-ConnectionGUID: 2VkQ9vXvSrakro1FHA+pfw==
+X-CSE-MsgGUID: X6bj7WsBTJinA+bvPauhkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25051008"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="25051008"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 21:41:36 -0700
+X-CSE-ConnectionGUID: CwOQcPi0Rqy9ZzuC58xUVQ==
+X-CSE-MsgGUID: bv3X29aXRbWeaiGw38nICg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="67822998"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 11 Sep 2024 21:41:32 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sobe6-0004XK-1J;
+	Thu, 12 Sep 2024 04:41:30 +0000
+Date: Thu, 12 Sep 2024 12:41:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Bogdan Hamciuc <bogdan.hamciuc@nxp.com>,
+	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+Subject: Re: [PATCH 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+Message-ID: <202409121103.EX9BTDFT-lkp@intel.com>
+References: <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v8 00/14] Add support for OPEN Alliance 10BASE-T1x
- MACPHY Serial Interface
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172611604180.1162260.8588009974357818564.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Sep 2024 04:40:41 +0000
-References: <20240909082514.262942-1-Parthiban.Veerasooran@microchip.com>
-In-Reply-To: <20240909082514.262942-1-Parthiban.Veerasooran@microchip.com>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
- anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, andrew@lunn.ch, corbet@lwn.net,
- linux-doc@vger.kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, horatiu.vultur@microchip.com,
- ruanjinjie@huawei.com, steen.hegelund@microchip.com, vladimir.oltean@nxp.com,
- parthiban.veerasooran@microchip.com, masahiroy@kernel.org,
- alexanderduyck@fb.com, krzk+dt@kernel.org, robh@kernel.org,
- rdunlap@infradead.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
- UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
- Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
- Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
- linux@bigler.io, markku.vorne@kempower.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911070028.127659-3-ciprianmarian.costea@oss.nxp.com>
 
-Hello:
+Hi Ciprian,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+kernel test robot noticed the following build warnings:
 
-On Mon, 9 Sep 2024 13:55:00 +0530 you wrote:
-> This patch series contain the below updates,
-> - Adds support for OPEN Alliance 10BASE-T1x MACPHY Serial Interface in the
->   net/ethernet/oa_tc6.c.
->   Link to the spec:
->   -----------------
->   https://opensig.org/download/document/OPEN_Alliance_10BASET1x_MAC-PHY_Serial_Interface_V1.1.pdf
-> 
-> [...]
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on robh/for-next arm64/for-next/core linus/master v6.11-rc7 next-20240911]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Here is the summary with links:
-  - [net-next,v8,01/14] Documentation: networking: add OPEN Alliance 10BASE-T1x MAC-PHY serial interface
-    https://git.kernel.org/netdev/net-next/c/b3e33f2c54c6
-  - [net-next,v8,02/14] net: ethernet: oa_tc6: implement register write operation
-    https://git.kernel.org/netdev/net-next/c/aa58bec064ab
-  - [net-next,v8,03/14] net: ethernet: oa_tc6: implement register read operation
-    https://git.kernel.org/netdev/net-next/c/375d1e0278cc
-  - [net-next,v8,04/14] net: ethernet: oa_tc6: implement software reset
-    https://git.kernel.org/netdev/net-next/c/1f9c4eed9c11
-  - [net-next,v8,05/14] net: ethernet: oa_tc6: implement error interrupts unmasking
-    https://git.kernel.org/netdev/net-next/c/86c03a0f07f4
-  - [net-next,v8,06/14] net: ethernet: oa_tc6: implement internal PHY initialization
-    https://git.kernel.org/netdev/net-next/c/8f9bf857e43b
-  - [net-next,v8,07/14] net: phy: microchip_t1s: add c45 direct access in LAN865x internal PHY
-    https://git.kernel.org/netdev/net-next/c/18a918762fab
-  - [net-next,v8,08/14] net: ethernet: oa_tc6: enable open alliance tc6 data communication
-    https://git.kernel.org/netdev/net-next/c/f845a027de66
-  - [net-next,v8,09/14] net: ethernet: oa_tc6: implement transmit path to transfer tx ethernet frames
-    https://git.kernel.org/netdev/net-next/c/53fbde8ab21e
-  - [net-next,v8,10/14] net: ethernet: oa_tc6: implement receive path to receive rx ethernet frames
-    https://git.kernel.org/netdev/net-next/c/d70a0d8f2f2d
-  - [net-next,v8,11/14] net: ethernet: oa_tc6: implement mac-phy interrupt
-    https://git.kernel.org/netdev/net-next/c/2c6ce5354453
-  - [net-next,v8,12/14] net: ethernet: oa_tc6: add helper function to enable zero align rx frame
-    https://git.kernel.org/netdev/net-next/c/afd42170c8a6
-  - [net-next,v8,13/14] microchip: lan865x: add driver support for Microchip's LAN865X MAC-PHY
-    https://git.kernel.org/netdev/net-next/c/5cd2340cb6a3
-  - [net-next,v8,14/14] dt-bindings: net: add Microchip's LAN865X 10BASE-T1S MACPHY
-    https://git.kernel.org/netdev/net-next/c/ac49b950bea9
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-rtc-add-schema-for-NXP-S32G2-S32G3-SoCs/20240911-150205
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20240911070028.127659-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
+config: sh-randconfig-r073-20240912 (https://download.01.org/0day-ci/archive/20240912/202409121103.EX9BTDFT-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409121103.EX9BTDFT-lkp@intel.com/reproduce)
 
-You are awesome, thank you!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409121103.EX9BTDFT-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/rtc/rtc-s32g.c:668:34: warning: 'rtc_dt_ids' defined but not used [-Wunused-const-variable=]
+     668 | static const struct of_device_id rtc_dt_ids[] = {
+         |                                  ^~~~~~~~~~
+
+
+vim +/rtc_dt_ids +668 drivers/rtc/rtc-s32g.c
+
+   667	
+ > 668	static const struct of_device_id rtc_dt_ids[] = {
+   669		{.compatible = "nxp,s32g-rtc" },
+   670		{ /* sentinel */ },
+   671	};
+   672	
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
