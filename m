@@ -1,207 +1,191 @@
-Return-Path: <linux-kernel+bounces-326859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8226A976DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:31:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72771976DCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F2C1C239DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BEE285812
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7D1B9833;
-	Thu, 12 Sep 2024 15:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18C91B9832;
+	Thu, 12 Sep 2024 15:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yzc4bnlQ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2084.outbound.protection.outlook.com [40.107.237.84])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="K8X2v6ld"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C091B12F6;
-	Thu, 12 Sep 2024 15:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C044C8F;
+	Thu, 12 Sep 2024 15:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155061; cv=fail; b=emYWGUSsMLVKdpSURuMqFVK4mvSY8sG6soqpWa9SpS581L5D0JhbeEreviASiSx1fVApoaiNAGC+7l7uxkpcQWxyh/vQJ5mwXs16YjaZQah2PfnYfQBMSrFgD9JtVLYSduc8G90x2lUrJQBGln9uYuWGnnCsEQ/nOKPJlumumAU=
+	t=1726155112; cv=pass; b=ma3+/wEosPeX3zQzKSEnxC68TRihUhOcXmA9SRauuwE6lhtfT8zgm29vPqEGskXWM9mGey6UypiVeUyvorz5zzuDemu0yFJVPeMNlOlOdN3GdxgE5vzHBnn4w5jBBG9ja0e4LTdE1NJmtsp17ZLtyqvLa1Xxv++P7+SA69Gc1os=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155061; c=relaxed/simple;
-	bh=6dPSip1KxfMPGFf2Z9WNW0Hs4EJUKoHzXmcCOZn0w1g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FymS3bAWfNevwdMYn8P8PwmJTXRhj2y0zhYRKL6lrWC2TKQ2i6eQBBC0aMOSMUyZOIN6nzM78WcnZ0m8q9FD0yhOnDKlXixbY6g5vSSXWzqmaFsES/vAZLT2pxQ3h64bGSUaggyC1uD8xUWJCCMzvB9Oq4bAB5Tqmtt6jIupPJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yzc4bnlQ; arc=fail smtp.client-ip=40.107.237.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VjIM6fVaTmVQ1urC3MxteQsLV8MZ1rRmP1P9NvjA/UkCoHGeUYZ/5gbTOGadY68paxJcmikB806OMoyynmBxxwxl+08umOL5Jdo7/DdhP+EoWm3YdpxODXK/UJxnJTDQUDJIT1a1Xcw6zGyP2mcBAvlNLTFdhcPZWzAAGvoP4YJIZ7SNdzN5v550wqq+f5FzJneoBpx8ROJqJXhktovb1NmeQkl0z3aY2utRID97/ZX45r8pG3C60c3DxokRkN1JW8r8JG5W0l0oyRRY+LEABSPufH9TnkyvO8wr3WZDV4u1tIWnT6EUh04O+LX2jzQeAeO8N/crOtN/1FlWSAY4nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZUsym6SE1GhguGfItHdHa8XLBuSjeQEhPeYIpsvoO4=;
- b=tWK/0Qkm+eDSKOBm6TDCMtg4Fb+Kh5SqhWMpgEdmA9XUfpbDs/rqdsVdYAeUG94AYC8Ohg8mxT2VGyNTJPAIJO8ky4MKUigqz5HpKlnu+o8wZlQT0QUPsOOuwLCwUvDCLmgyqTaJUp04nJL+xyE74JRe3YB9XXtUbCMt+z/Ap0y/IqjYxUzAL+OGG8g62aqoB7g7l8Sr7bkBD+xQPpEn2AXNsm9NMSm3iwATeFihKOe729+wVaweaLpHKs8c0lbJruMOIE5VoguntXGPewyDlLr5zxGakUe3liYB/4Wtm9VU4SDIACtXTuD4da5A+5S+dfxYT+OTqAKNdZu1fRnpxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zZUsym6SE1GhguGfItHdHa8XLBuSjeQEhPeYIpsvoO4=;
- b=yzc4bnlQ5BRfqf/bvdRZoo2P6fhPWchuUvUhXI+L/V8OsiVHH7ddrHwxx6fIXWGIExq7nA6xzsIQJY/QtncaTs9qxacUQu3IwxD2JhRMg4CsFEPbu0t+XYMm4aWnz0lq2dhz+rxZQg+/5XiQFqznnLA4x9ACT5jAbey8nP7Xxj4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by DS0PR12MB6629.namprd12.prod.outlook.com (2603:10b6:8:d3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Thu, 12 Sep
- 2024 15:30:57 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%7]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
- 15:30:57 +0000
-Message-ID: <b3ecf961-c399-43b2-a8b3-6b5ed664db27@amd.com>
-Date: Thu, 12 Sep 2024 21:00:49 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86/amd: pmf: Add quirk for TUF Gaming A14
-Content-Language: en-US
-To: aln8 <aln8un@gmail.com>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, luke@ljones.dev,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240912073601.65656-1-aln8un@gmail.com>
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-In-Reply-To: <20240912073601.65656-1-aln8un@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0171.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:de::14) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+	s=arc-20240116; t=1726155112; c=relaxed/simple;
+	bh=/ayxcgN01zXL94O1IKevl/0D45Irwt/+UChGAHvQ3m0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EfhgyVYK3tEYSxAgQFn483x7LWpabjbDoqoUs5o3xlIg4sid2RK7Gd7WLwH+ym3U6obZA7r2xSpbkKfLO3QzXPMmGyCiadECmuCfnRCmsD1q98QIwmG+3Slbwf75TgdAt/wt+s5LRMbeTpB9eLaSZZgI+KU9Tj66sPeQuH42zLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=K8X2v6ld; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726155101; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QtUiDmtRqijCE0ndDFf52cBBR3ZcTFXQvpljq9B4dpqan2FsORJDPaHjSfRwM7mkiP+epUfbm9oCBth0XkUQ6/TnRcwzyS0+FlGoBz85sYaqZQqYJHLK4pnrn6Z6rPoxTh2U0dpWTC+peg2TRsCtKfMcwdznVphEHPMT9HgseUQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726155101; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=; 
+	b=JEGYyfybs0AEWhb2QvivZ6jBJxkoty6Sb6tl1Au5Xd3oAVTFGGZh7I/QWq/9c0HZqC2cYd+sSuVjLbeypaPuxvjx40mX92vM+Dcptb2KTFRkbfY1bktbyeNmztcan/Xr8zTi4f5ncJyN0h3WhrvZVGYB+ZsOBg+7oktPPxp3AO0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726155101;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=;
+	b=K8X2v6ld2tDd8Fiz/uDyO2Rq37IrbfycayZlI4mP+ZqQdd2DKnaL+2h6nulbXUgc
+	fBEcs+t1AoK+dlJ9E6rMsvViFrzKFgu5cStIx9R8dlguTgpMjDr6HJDltLpjzrAwO4V
+	13/DAkNEtB4eXfOl1JPbZGJhubfVV8tPkDGzflSE=
+Received: by mx.zohomail.com with SMTPS id 1726155099067152.57015306927974;
+	Thu, 12 Sep 2024 08:31:39 -0700 (PDT)
+Message-ID: <cfeb02df9a3f34b3509b26c40a90799aecf22fb9.camel@collabora.com>
+Subject: Re: [PATCH] mailbox, remoteproc: omap2+: fix compile testing
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Arnd Bergmann <arnd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+ Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+ <mathieu.poirier@linaro.org>, Hari Nagalla <hnagalla@ti.com>,  Andrew Davis
+	 <afd@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Date: Thu, 12 Sep 2024 16:31:35 +0100
+In-Reply-To: <20240909203825.1666947-1-arnd@kernel.org>
+References: <20240909203825.1666947-1-arnd@kernel.org>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|DS0PR12MB6629:EE_
-X-MS-Office365-Filtering-Correlation-Id: 896be18b-b327-4779-6f65-08dcd33fe56c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NzNzRTZMVE5ud3MzT1RuUi9PdjB5SjRhZGJPRUQ1cy84SlZsMmZGb2VaUWUw?=
- =?utf-8?B?MVVmdzArbVJQU3dVZHpsMGhPT25MTkpxaFpwR3NxQzAyOWJIYzk3aThpdG80?=
- =?utf-8?B?OVVGZXhqcVpsaGc5em1kMUYvZ0dLUWpCWnQ2TnpLcllBa1UvWmVHWEUvdjRE?=
- =?utf-8?B?dVdsbGJJN0tXNGd6cjJ2RUJIZGdSalVJdFRORCtzZ1d5akN5aG9oTHBvd3dY?=
- =?utf-8?B?M1VtYnpWQ1BxYTdjRThrU1ZjZ29xSmlFU095QVFhSFRhWVUyWnFWWmZlcHE4?=
- =?utf-8?B?REtuVDhraFNJUnRBR1JZUmM3emx0ZTRNYzAwd3JYeU9UVEM3NEpTcjJuRUVB?=
- =?utf-8?B?eG4wQnhyNWJYRWVTejE1aTVjdC8ycGh2Y0NPMlRyYUdPRVAvTjdyTEQ2QmFk?=
- =?utf-8?B?cHg1RXZwTTNXRUdibUdtNmZBNEF5dGYyUjVLRHVZQ0d6Uk4yYUx4bDRVVUt6?=
- =?utf-8?B?V0xUQzk4M3BNY21aY0EzT3BWbW5RNS9Nd3M1TW1xVy9CUEw1cDBaaG1VMm5k?=
- =?utf-8?B?SHBYSXNOYVh3T0h5UXFqNnRCUDdMWEQzY3JtV0k5S2M5WHcwYWxBSjVNRG5Q?=
- =?utf-8?B?YjVZVVZUbWp1UE9Qa0FYNGo4MXRwbmxVSVpTWlA2K1czajdoTXcxa3NDeGw5?=
- =?utf-8?B?Mm1sTGJRWU53blk5SUtYK1g2L1RqMERCRWFKMzJ5UE9Ld3pzaFdWNU5ldVhU?=
- =?utf-8?B?djlzd09MNjRuak8yT0pNRldlZ3h0Z3QzQnp0NDJ4eTNnNUFlaXM3VWM2YzFN?=
- =?utf-8?B?YjVPSXlHNHhzZnIwZm0xeXg5L0FTZFlsNzFMcVJDNTcvTVcvbkVWdkluYnJv?=
- =?utf-8?B?ZDlsaCsrMXRWd2ZsR1h1TFZRZEh0cUx3c0doMWtCTUZ3WTVLa01NQVBZRUo3?=
- =?utf-8?B?S0VYdkxMcEhNdGtMOXdqT1FqM3R1bEtvd2FRZk9ySEVBaklySWpENDluSXlo?=
- =?utf-8?B?QWJJeVJJbGhlcUJnbFhrRitQU0pSbElvTnhINWpSVW9CRE5TR0tDVXhRSkJs?=
- =?utf-8?B?MUNZcElOMng5MHBTNnV1cHR0cUpmSkdrZDJ5d0ZJeTVaYVVKMjV1QlFXQ2FI?=
- =?utf-8?B?blFTTy9JV3UzSjhFWFBGZ3o4WFVFY29yQzlwRkp6Q1BHS3pNaG9oWUVXam52?=
- =?utf-8?B?R1dxM3U3RlpwREhaTkJkWll4S2cyTld4b1VMajkzeVZrbTdzOC9adkFnVlpW?=
- =?utf-8?B?SEVpUStpN2VxMktSd29MVkNjd2prUmVDZHhpU09iUDdmQUV4SGtGbi9BWXlD?=
- =?utf-8?B?OHg1U3hZdUlOY0lySUk1cExza3dnR01DVlBIVjVIcWRpNzNaRmxJdlg5d2dP?=
- =?utf-8?B?Rk5qb0MrQ0pPeVY4ZWY4R3BuQlpuc0gvc2JLdGxRMU1URW15K0Y5ejVKbE5o?=
- =?utf-8?B?Z2drOHV6MXcvTTlNaGJjZ05PZXZPY2taanArZyt1Ui9HRlVaV0tMbkc4eWRr?=
- =?utf-8?B?ZHIvNENNZzRRbjZ2Ump2akhVV2I4OU42Z1hnUnlhSFF3WXByRU9oNE9wcU01?=
- =?utf-8?B?aXZmZzFiVVp1akZ2NjV0NlhFTFhiYXZuYy9DMmRpaDYzTENhVVUzdnRqOTgz?=
- =?utf-8?B?bWpDM0hQVlpJWUVZdkF6UmUzRUNqbVd4VXZWZG82Uk9xdHc0NC90ampVWnhh?=
- =?utf-8?B?dEtIK2NTNTF4YTdHUzdpSDEvYWRtbklFaitOeHlvTzNMeHZnREhlYy84NU00?=
- =?utf-8?B?cS8rL3JDTEE0dTBoWFMxK1F2dE9rQWE0NHhoRGFIc0ZFQ2pDNHhPanVNLzhn?=
- =?utf-8?B?UGMxdWU0TUFLd2huWW56VTNvZmdwOUF6Z1h4Zk9PR2FpTDltRlhCZ1J3Mkov?=
- =?utf-8?B?NUdVWG5hZDVSL0FWVStoQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXBFK0JZVHZIMnRQWTU2YUY3OHArRnVqYzlVV25ZaE5rQ1NUTnlFd21uSUQ2?=
- =?utf-8?B?NkYvanZlN3UzSzF3bkx6cEFVeC84VnpZMFhIR0hiT2hzTXRxNDFvS1QyTi9n?=
- =?utf-8?B?MVhqWjE0ak1vVm1vZTBTSS9hdS81aDM2akhkQWZuSExHM0Q2SHFNTU9PNVdk?=
- =?utf-8?B?ckdWalMraHRyVFBYQXAzcWUxM0tPQzlsc0FiMGM2anJHdGluaVZoV1BVSjd3?=
- =?utf-8?B?Z2Q3N0hDZlFZRThLdmkzTndEWnZ3aW5vK0VQQ2h4NHU1V2JLYVp2bUM0bEVn?=
- =?utf-8?B?ZjZFWjcwYXBWQzZveHV0UVA2Q05sOWpPek5zOEo5dStKdGZEcnkwWmJyV2tC?=
- =?utf-8?B?NmdwVTZmR1lBckNjU1NFQUwySnJPSEJvakhxOVZIV2FaM1hNZXVQd2lieW4x?=
- =?utf-8?B?K3ZMTkwwSkxhbkk1aHdRb1p4YlFsMXVKdmRPNTUzcDVkZzVNYytXVy9sUGVs?=
- =?utf-8?B?eksvbHJZZ1N1Z0d2L1BFZzIxcVl1ZWhMK09OYko1MlJWZDJ4YnVtOHg0dWhZ?=
- =?utf-8?B?Q1AyTXgzZmRzL2dBRVVQYnFIcGs4SlFWRTJJVnYwSkh0UWlMWjdIa0pCUllr?=
- =?utf-8?B?Lzl4NjF3N0VyNDhKdnhjbEZ1b3VBV2R4S1A3aEVoelFxNmYyejBGVUkxRDJN?=
- =?utf-8?B?cGJCNnJnRURsM2cwWjlPd3c5Yk9GU1lHc09DMmpmVmhUL0NEZlZsM3M4WDdx?=
- =?utf-8?B?S1VWZkdPU00zWXN4VTFoaVlSaDNycmRNY01OR3ExT25BK1BYVElzbGJXVmR3?=
- =?utf-8?B?SUp4QWNRd1BoMDhuMlF5Q1JvZWNvS1krenlwdGE2L3lXT3lGRVhMWEdqV0hW?=
- =?utf-8?B?c0o0cy9lQzYxQnZYWmNqZm1GUzhFUUswL2xyOFppY05JQnhlZEdocSt6dkxG?=
- =?utf-8?B?bFBzeUVKdGNTcmRoVmJnYUhXbFoycVpxN2dVZDJOUUR0NUxBTFowTysyUENL?=
- =?utf-8?B?amRuQlE5N3BtOEpmQXp0dk1tUDRFUHRhN0pWRmNwQXdncVhpdG8yVTd0U3hq?=
- =?utf-8?B?TWMyVDdyUEwyZjUyS1ZWc3dvYVJyOVBrYS8waUVSY2NsSXVERm83c0pqTEcv?=
- =?utf-8?B?YmVDR2pYV1h1OVhNaTlSSzh5ZTMyNmFiSTU1VS9LcWdUZHhDS1lUU1drT3ZL?=
- =?utf-8?B?cjJKeU4xSENYSHhxajBoYVF3dkpjWG5RMExURFprVDIxOERScHR5S0phSzQ1?=
- =?utf-8?B?Ulo5NGpLSEQrV2VMeitCZXJyTzUybXZQVjJkdXpGMG9HS29Ed3k4ZHoxQ283?=
- =?utf-8?B?aDZXZTBrTUpRdy9wU3F1b3pXRUU3RnZYL0dXdEJjOERYajBFZ0xkYW9pTXMw?=
- =?utf-8?B?S0hwY1hncVBtWHozUzFPZnNkSHUxVWYvN2hyUThKTndaZ3k4VVFldHEySy9N?=
- =?utf-8?B?VlAwR2RWdU53TjFJOEJaS2JCR2dQUnkxbmVEdzVpSG1TSkIyb2VpS1I3OGlI?=
- =?utf-8?B?WS9jY09CaFg2dlI5dUY2M09IZkZ4OWQyQkl2Tmh2blpseVlMUHBUZWhIdHcz?=
- =?utf-8?B?SGtSUzlPUWRFT3hKQk55L3IxRFZLSU9ld09UK1ZNK0k0K3plMndGaFRRb2s1?=
- =?utf-8?B?SFh0UXlEZFJnaTNxVW1LTHNjZGJRSytPRHY3elNGQTFmbDFXdG1GUy9sN0oy?=
- =?utf-8?B?YzJ6R1Rta1dZSVFjTXJiZWJ3S0NiNjQzTWoweGQxVmFzU0N1REp6MFFKVlBW?=
- =?utf-8?B?QzdaVFNMRytnUzVMei94VVNQVFRRbENScjk4dlN2KzlzcjduNXEvZ2VDelR2?=
- =?utf-8?B?ZThONERKT1dqQnY4ZUFhTExLNkgyUmlJZk5sMklTbEVlaVl2YVBqTWNEL3kv?=
- =?utf-8?B?N0ZzVzZKRVp3UlNBZlNZUGcrakZUYXdIK09Jejhtb3o2M3VrSFBLSTMrLzZl?=
- =?utf-8?B?MW1HM1QwdWpWZ2dQc04xR2hUejlsb0VvaGhSdERERHdyTVE2ZFFlS3JQcXFQ?=
- =?utf-8?B?Z05ZYzRQaCszWGlXSXFlYU5XUVh5NzVnU2M5c0x0UkpiMHNVR0g2anJhT2Rs?=
- =?utf-8?B?SmE1QXk4ZjZ1SVEvWDdVQkdCQzRFcS9XSHBXZEpUUkZkS3RWREtZUUw4RXBm?=
- =?utf-8?B?MkFjdGpMZ1FHa0xXNURWN1FWQ2E3ckJvMXU2Zm1ib2I5REl3Q3hpV1dFRzd3?=
- =?utf-8?Q?O69hOO0c9KYGpO1JlYS0JoTcX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 896be18b-b327-4779-6f65-08dcd33fe56c
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 15:30:57.0770
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h8Bkwi+P2pHnX+BFROr8wnyKSXs1UbhJ1RoELmswcRbDvJYoYAdEgDgVZI12HU2JSgDJtFkiqQP6dihU8q2d6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6629
+X-ZohoMailClient: External
 
-
-
-On 9/12/2024 13:06, aln8 wrote:
-> The ASUS TUF Gaming A14 has the same issue as the ROG Zephyrus G14
-> where it advertises SPS support but doesn't use it.
-> 
-> Signed-off-by: aln8 <aln8un@gmail.com>
-
-Thank you for the patch. Looks good to me.
-
-Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-
+On Mon, 2024-09-09 at 20:38 +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Selecting CONFIG_OMAP2PLUS_MBOX while compile testing
+> causes a build failure:
+>=20
+> WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+> =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
+> =C2=A0 Selected by [m]:
+> =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 ||
+> COMPILE_TEST [=3Dy])
+>=20
+> Using 'select' to force-enable another subsystem is generally
+> a mistake and causes problems such as this one, so change the
+> three drivers that link against this driver to use 'depends on'
+> instead, and ensure the driver itself can be compile tested
+> regardless of the platform.
+>=20
+> When compile-testing without CONFIG_TI_SCI_PROTOCOL=3Dm, there
+> is a chance for a link failure, so add a careful dependency
+> on that.
+>=20
+> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in
+> function `k3_m4_rproc_probe':
+> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined
+> reference to `devm_ti_sci_get_by_phandle'
+>=20
+> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for
+> M4F subsystem")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> v1 -> v2: Change to FA401W so full series models will get the fix.
-> ---
->  drivers/platform/x86/amd/pmf/pmf-quirks.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> index 48870ca52..7cde5733b 100644
-> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> +++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> @@ -37,6 +37,14 @@ static const struct dmi_system_id fwbug_list[] = {
->  		},
->  		.driver_data = &quirk_no_sps_bug,
->  	},
-> +	{
-> +		.ident = "ASUS TUF Gaming A14",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
-> +		},
-> +		.driver_data = &quirk_no_sps_bug,
-> +	},
->  	{}
->  };
->  
+> =C2=A0drivers/mailbox/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 2 +-
+> =C2=A0drivers/mailbox/omap-mailbox.c |=C2=A0 2 +-
+> =C2=A0drivers/remoteproc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++++------
+> =C2=A03 files changed, 6 insertions(+), 8 deletions(-)
+>=20
+
+Looks good to me:
+
+Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
+
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 4eed97295927..ecaf78beb934 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -73,7 +73,7 @@ config ARMADA_37XX_RWTM_MBOX
+> =C2=A0
+> =C2=A0config OMAP2PLUS_MBOX
+> =C2=A0	tristate "OMAP2+ Mailbox framework support"
+> -	depends on ARCH_OMAP2PLUS || ARCH_K3
+> +	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
+> =C2=A0	help
+> =C2=A0	=C2=A0 Mailbox implementation for OMAP family chips with hardware
+> for
+> =C2=A0	=C2=A0 interprocessor communication involving DSP, IVA1.0 and
+> IVA2 in
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-
+> mailbox.c
+> index 7a87424657a1..6797770474a5 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -603,7 +603,7 @@ static struct platform_driver omap_mbox_driver =3D
+> {
+> =C2=A0	.driver	=3D {
+> =C2=A0		.name =3D "omap-mailbox",
+> =C2=A0		.pm =3D &omap_mbox_pm_ops,
+> -		.of_match_table =3D
+> of_match_ptr(omap_mailbox_of_match),
+> +		.of_match_table =3D omap_mailbox_of_match,
+> =C2=A0	},
+> =C2=A0};
+> =C2=A0module_platform_driver(omap_mbox_driver);
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 0f0862e20a93..62f8548fb46a 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -330,8 +330,7 @@ config STM32_RPROC
+> =C2=A0config TI_K3_DSP_REMOTEPROC
+> =C2=A0	tristate "TI K3 DSP remoteproc support"
+> =C2=A0	depends on ARCH_K3
+> -	select MAILBOX
+> -	select OMAP2PLUS_MBOX
+> +	depends on OMAP2PLUS_MBOX
+> =C2=A0	help
+> =C2=A0	=C2=A0 Say m here to support TI's C66x and C71x DSP remote
+> processor
+> =C2=A0	=C2=A0 subsystems on various TI K3 family of SoCs through the
+> remote
+> @@ -343,8 +342,8 @@ config TI_K3_DSP_REMOTEPROC
+> =C2=A0config TI_K3_M4_REMOTEPROC
+> =C2=A0	tristate "TI K3 M4 remoteproc support"
+> =C2=A0	depends on ARCH_K3 || COMPILE_TEST
+> -	select MAILBOX
+> -	select OMAP2PLUS_MBOX
+> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST &&
+> TI_SCI_PROTOCOL=3Dn)
+> +	depends on OMAP2PLUS_MBOX
+> =C2=A0	help
+> =C2=A0	=C2=A0 Say m here to support TI's M4 remote processor subsystems
+> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
+> processor
+> @@ -356,8 +355,7 @@ config TI_K3_M4_REMOTEPROC
+> =C2=A0config TI_K3_R5_REMOTEPROC
+> =C2=A0	tristate "TI K3 R5 remoteproc support"
+> =C2=A0	depends on ARCH_K3
+> -	select MAILBOX
+> -	select OMAP2PLUS_MBOX
+> +	depends on OMAP2PLUS_MBOX
+> =C2=A0	help
+> =C2=A0	=C2=A0 Say m here to support TI's R5F remote processor subsystems
+> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
+> processor
+
 
