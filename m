@@ -1,192 +1,276 @@
-Return-Path: <linux-kernel+bounces-326938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D05976ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A45B976ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8511C23A4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:34:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2131282439
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DA018FDD7;
-	Thu, 12 Sep 2024 16:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EDA18787F;
+	Thu, 12 Sep 2024 16:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZX3mVhST"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vhV80Pif"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12C118732B;
-	Thu, 12 Sep 2024 16:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18B514EC51
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158868; cv=none; b=k+9gK+SQOluPyw6Lgdl3cfG0bcIVvd6ZDo4DF2Tws+w87SziGMxg5ghsT5s5LKu5bMirRMI9tXVCY8LKA+uqGT8od7OHiFbIJsn12sUpQVQijIkgtIGZeguKHY5/ZCUOVBONVhwpQUSg3hWCDXYFhi92wqqoPmVfv3CNwZ1hy60=
+	t=1726158936; cv=none; b=OHPfbRtPVIKDHGoZ5GquZJRhY9JtQco40kV1X2ZdB85wmxIFHc8IfSPyWTMniK0ERXif+58dHfTP9BIgGukb9MBwSXiegyQ83yXP5f08ARo2XHAXTynchOVKFzTsvv8PpRf1YuiZSjJthHW4oNVYP0BdMv789UrTro56BeL6LO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158868; c=relaxed/simple;
-	bh=iEPQ8zzcorMOzRJBRTf9fmKdtL3HliGfxkfxfwUJNsE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tMjvSI9C/734oMVtw9ULpuMF19Bt9SD2oDkuFPRsqHXovQS80r7/zxKRV7JCM/9S39ooTDqrh3t0qNWyIMmfe6Pn9kijmqb9ZACQL4n0x8v0J4KObdWI4Avx9/ok1/rECCTCsR8gb063At5BolLKsPLK4PEZsDzLd3NhxZztMks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZX3mVhST; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1004574a12.2;
-        Thu, 12 Sep 2024 09:34:26 -0700 (PDT)
+	s=arc-20240116; t=1726158936; c=relaxed/simple;
+	bh=WYu+xq7+UmmQf6tUX7l9OJFcpWz8QtQPNxlo5qmQdXk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dbKrYpvlRy2JNgmMPg6TrjVOBexX+3yaKh/YSXjCoH/+0rM6i8qvcWkTy87hbgSLsGZvDvW2JIB5se/MF3dVCfPobdp6xquaZl+RBB0vR4MR6bOlu3msMvJy5tR0JDQ9NdrnDBzsDl8P4CpH5x5Zs9opmhPkoGmKTeVrwiaGJJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vhV80Pif; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so188537266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726158866; x=1726763666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=547bd2aXINcYH9WA1WmShRDK1C+/D+Dc9zpQGWKFd5Y=;
-        b=ZX3mVhSTNul+S9ewxKBmEjhwoCdPOFDy9tnAux4z3nxB5uLmLwZo+oxUs1z8LgDXOe
-         07NXBulfWwJt2YJrIyWtrQiF5e2hjDtS0fCQB3dSkIUsFHXxtC94NIRS9siwIO+vAODo
-         m+YdU4OewZJrSW1zRwvwC/FKPCbd1Rdh1aYfnvI0bDWC4FTKxDk5mgT43JSjZFbyVdBS
-         g2ZPdWLfyjMtnTmemArQGcTIaVaOCgaJo3OfZDQvOjMdr3YkyhVpPfWhGckr49kpXImc
-         O5RwNIncJlKtYGpex8a/UdA9sFArqKDVOCS2f0Ob/7F/jcGwWSi/9wIaSa+HJeorVWqS
-         TCaQ==
+        d=google.com; s=20230601; t=1726158933; x=1726763733; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cEVUvvG1KmX1Ra9d8MhbpcG7EMxrmMhoef191BfBjSw=;
+        b=vhV80PifMd3V6T5muWdMLI7qXGujWvNj/NCCkJ34Me+Yqv/8/BPsot68vvjmh9GFai
+         WfaKcm90UN4TeohptAljsj4jI1chAlBzun+uX/vAUek6m2RnFJ1UKRqnC+hnEApy+5qv
+         s/R6/5PLKVy0D9gFk4RsLHBc3lJKTdqw+w6tiOyKRbN5rxsfZBp27B89aa7Kiew0Hpqn
+         JiorHjkM48olkqRo8O09Ef/NUxVrg6PmRnADsw6zQfQk4zY8qD4EJcHJseU9RB7eon2m
+         2LAnwacLWY9gXhEYLExGwScVqC7rK3pr/jsGpQM+9NNqfglMeadAKmo8JyKytuidksd7
+         cGgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726158866; x=1726763666;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726158933; x=1726763733;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=547bd2aXINcYH9WA1WmShRDK1C+/D+Dc9zpQGWKFd5Y=;
-        b=V2nSK6uR0AnkTKs7knrVfS+MCLQJztv3DDJmOVHXg4m5+tupOXHUrEQJfPSrreC3ws
-         d9/26WM+Nn5o6DviBhKh9VIJXXscBrGgRSvIae0H6LdYdzNDtMmVB1n5dfl8nq3PTs73
-         O1GDx13B0Y8vpN3DUs0J87uZTGaEutc5Q7FCTLU0behFu1pOM6BArN99Wowo8xrtZRoF
-         9q/kDuAeOMswdjsLCl5ZVnMqimTzsiLX6oOFxrkqVqcrYEIBRbwhkY5o01URVBTO0p2a
-         k2GtzcObpAXFfo+4IhEI72AZupxT4Mozf04UBZkhGaFwhpTr+5Hi58JYz5zGDvL/mbsX
-         Im2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqrqRl4R1p3MVWcH45T+btLgLee/3Me1JM0UB8ENNBO1Mvtf/7VhqZdsc4q00XNTcXFHchnpI9cJpP@vger.kernel.org, AJvYcCW7U9+DTvQ+XPaGJZ01yB1PD1j74m7z+x/j3ZgpDDELWJ+2or/B4qkCceCDI/sVZqH9WeJSkrh0diysPZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOTZ33ru+JzalBj16N722xCxV1NCeLNApZ26MwI2mVr7bruk4C
-	0Stw1qzmazIN+Qs8LGSuWNTWkfm7fJ74novaWDcvaVjV3fPlBVHY
-X-Google-Smtp-Source: AGHT+IGahJU9/cTFpSeTVZNaeztxiBF+TKN2FP5ccEkm/2ol42zS2uyvp62hTojCAi3Bh1dsNdkbIA==
-X-Received: by 2002:a05:6a21:164e:b0:1cf:4dc3:a89e with SMTP id adf61e73a8af0-1cf75c7e8a6mr4320859637.9.1726158865858;
-        Thu, 12 Sep 2024 09:34:25 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fc8459sm4769040b3a.24.2024.09.12.09.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 09:34:25 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: colin.i.king@gmail.com,
-	kees@kernel.org,
-	gustavo@embeddedor.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] usb: iowarrior: fix infoleak in iowarrior_read()
-Date: Fri, 13 Sep 2024 01:34:13 +0900
-Message-Id: <20240912163413.10019-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=cEVUvvG1KmX1Ra9d8MhbpcG7EMxrmMhoef191BfBjSw=;
+        b=IhwvpoTon+KsbQzwLvCqbV6o2Q0EMw+emGZpIBHKPzF5r04SALjYXcE2Ra6kanGlIi
+         TWh5HRC/pTyG+zileN30WdnyH/1Cl41AsFcr7kZh3P9ff8rH7KxKNPOhNfiuCno2Ym1W
+         BPB4LIVwTRiGvJpZiRY0zxgo8IUXuLaNQPOVMn7gxeFpxhOHTN0tr4bbTXSyrq03CQoE
+         mnQvnoTvKcUmmUm6A4StPszq0Nj6SROg7flgXj+FNSeyEWniz3oEGLEgz0HgEGCNMenn
+         5hrOebEj1DL5T419tLRVmcDSBFWSSKzFVOCHXG+cCK4JStg9kGdd6FZJRzZJ5CGY7XMZ
+         6sjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNEeZdRgvjNDi0j3afiQVTXEaFjExk4vWXarFkFEoH/CtvU+r9PR9QykrFnjIhL2Vl8xkTUINBFMheoa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXr6nDBAkFXfkptniSsctqirR7V1m2eXTx7srXfDT0TyyWVMGO
+	OGO3cpU8Po+ENuFm5RBgSPJ/96gN5a/jqR7KlSH6U/tNFPYP1DyX6kkGm/8cplwfDhn1gFA5/0u
+	FHFqFBmYy/csG0d5LaDpD86p9IvpZbnQXMzx2
+X-Google-Smtp-Source: AGHT+IGI7m76/LA64GipDBeubzsm690oF6m54ARaFG68ADy3ndZrFU0qgn8wLThA9VxGlQ7C8CyVbCvFEHoiZts1nes=
+X-Received: by 2002:a17:906:6a29:b0:a89:ffd0:352f with SMTP id
+ a640c23a62f3a-a902960abcbmr347873766b.48.1726158931902; Thu, 12 Sep 2024
+ 09:35:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <172547884995.206112.808619042206173396.stgit@firesoul>
+ <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
+ <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
+ <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
+ <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org>
+In-Reply-To: <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 12 Sep 2024 09:34:54 -0700
+Message-ID: <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
+Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
+ root flush
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	mfleming@cloudflare.com, Nhat Pham <nphamcs@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The dev->read_queue buffer memory allocated from iowarrior_probe is
-allocated in an uninitialized state, and it is possible to copy the
-uninitialized memory area to the user buffer through iowarrior_read.
+>
+> [..]
+> >>
+> >> My userspace readers (of /sys/fs/cgroup/*/*/memory.stat) are primarily
+> >> cadvisor and systemd, which doesn't need this accuracy.
+> >>
+> >> Can you explain your userspace use-case that need this accuracy?
+> >
+> >
+> > Please look at the commit log of this patch [1] that removed
+> > stats_flush_ongoing (the one in Fixes).
+> >
+> > [1]https://lore.kernel.org/lkml/20231129032154.3710765-6-yosryahmed@google.com/
+> >
+>
+> I think I understand the inaccuracy concern now.  So, it is the 2 second
+> periodic flush that is the concern.  That can cause up-to 2 seconds old
+> data to be read by userspace, when read contend with ongoing root
+> flusher (if it doesn't wait for the flush).  I agree, that 2 sec old
+> data is too inaccurate.
 
-This has a risk of leaking important information, and even if it is
-modified to initialize to NULL bytes when allocating memory, there is
-no significant change in performance, so I think it is appropriate to
-allocate memory through kcalloc instead of kmalloc_array.
+Yeah and it's not just the delay, it's also the fact that you may read
+the stats *after* an event (e.g. proactive reclaim or memory usage
+spike), and get the stats from *before* the event. This leads to wrong
+decisions being made by userspace.
 
-KMSAN report:
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- _inline_copy_to_user include/linux/uaccess.h:180 [inline]
- _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:209 [inline]
- iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
- vfs_read+0x2a1/0xf60 fs/read_write.c:474
- ksys_read+0x20f/0x4c0 fs/read_write.c:619
- __do_sys_read fs/read_write.c:629 [inline]
- __se_sys_read fs/read_write.c:627 [inline]
- __x64_sys_read+0x93/0xe0 fs/read_write.c:627
- x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+>
+> I'm coding V11 that will "wait_for_flush" in the userspace call paths.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- __do_kmalloc_node mm/slub.c:4161 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
- kmalloc_noprof include/linux/slab.h:685 [inline]
- kmalloc_array_noprof include/linux/slab.h:726 [inline]
- iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
- usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
- usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+I'd rather we keep the flushers consistent to avoid complexity if
+possible (i.e. if Shakeel's patch works for you). But if that's the
+only way going forward maybe that's what we need for now.. I will wait
+to see the code.
 
-Bytes 0-72 of 73 are uninitialized
-Memory access of size 73 starts at ffff88811bbc6000
-Data copied to user address 0000000020000000
+[..]
+>
+>
+> I like the idea of eliminate all in-kernel flushers.
+> Until someone works on that I will use my patch in production as I need
+> to fix the production issues ASAP.
 
-CPU: 0 UID: 0 PID: 5938 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g77f587896757 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
+I took a brief look at the ones in the reclaim path and I don't think
+they are easy to remove tbh. Maybe MGLRU will become the default soon
+and they naturally go away (MGLRU does not have these flushes).
 
-Reported-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
-Tested-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
-Fixes: 23feefda2239 ("usb: iowarrior: replace kmalloc with kmalloc_array")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/usb/misc/iowarrior.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[..]
+>
+> >
+> > If it takes one kswapd thread 24 ms to flush the stats, then that's
+> > the raw flush time. If all 12 kswapd threads started at different
+> > times they would all spend 24 ms flushing anyway, so waiting for the
+> > ongoing flusher is not a regression or a newly introduced delay. The
+> > ongoing flusher mechanism rather tries to optimize this by avoiding
+> > the lock contention and waiting for the ongoing flusher rather than
+> > competing on the lock and redoing some of the work.
+> >
+>
+> We are observing kswapd isn't running "fast-enough" in production (e.g.
+> when packet process using GFP_ATOMIC alloc are starting to fail).  Thus,
+> I really don't want to delay 11 other kswapd threads, by waiting on a
+> flush, I really prefer to skip the flush, such that they can do the much
+> needed memory reclaim work.
 
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index 6d28467ce352..5240e05c094e 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -831,9 +831,9 @@ static int iowarrior_probe(struct usb_interface *interface,
- 			 dev->int_in_buffer, dev->report_size,
- 			 iowarrior_callback, dev,
- 			 dev->int_in_endpoint->bInterval);
--	/* create an internal buffer for interrupt data from the device */
-+	/* create an internal buffer for interrupt data from the device and initialize it */
- 	dev->read_queue =
--	    kmalloc_array(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
-+	    kcalloc(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
- 			  GFP_KERNEL);
- 	if (!dev->read_queue)
- 		goto error;
---
+That's one more reason I think maybe this needs to be handled in the
+reclaim path. I do not think other flushers relate to this situation.
+It would be nice if we can just skip the flush in the reclaim path
+under these circumstances.
+
+>
+> >>
+> >>
+> >> I need remind people that "completely skipping the flush" due to ongoing
+> >> flusher have worked well for us before kernel v6.8 (before commit
+> >> 7d7ef0a4686a). So, I really don't see skipping the flush, when there is
+> >> an ongoing flusher is that controversial.
+> >
+> >
+> > Skipping the flush was introduced in v5.15 as part of aa48e47e3906
+> > ("memcg: infrastructure to flush memcg stats"). Before then, reading
+> > the stats from userspace was as accurate as possible. When we moved to
+> > a kernel with that commit we noticed the regression. So it wasn't
+> > always the case that userspace reads were inaccurate or did not flush.
+> >>
+> >> I think it is controversial to *wait* for the ongoing flusher as that
+> >> IMHO defeats the whole purpose of having an ongoing flusher...
+> >
+> >
+> > The point of having an ongoing flusher is to avoid reacquiring the
+> > lock after they are done, and checking all the percpu trees again for
+> > updates, which would be a waste of work and unnecessary contention on
+> > the lock. It's definitely an improvement over directly competing over
+> > the lock, yet it doesn't sacrifice accuracy.
+> >
+> >>
+> >> then we could just have a normal mutex lock if we want to wait.
+> >
+> >
+> > I am not against using a mutex as I mentioned before. If there are
+> > concerns about priority inversions we can add a timeout as we
+> > discussed. The ongoing flusher mechanism is similar in principle to a
+> > mutex, the advantage is that whoever holds the lock does not sleep, so
+> > it gets the flush done faster and waiters wake up faster.
+> >
+>
+> My plan is to lower contention on this rstat lock "enough" (e.g. with
+> this patch), which should make it safer to switch to a mutex.
+
+Do we know that switching to a mutex in the current state is
+problematic? If the only concern is priority inversion then a timeout
+should work.
+
+Also, I don't think a mutex will help your case of kswapd not running
+fast enough, right?
+
+[..]
+>
+>
+> >>
+> >> It is not only the flush in the kswapd path that concerns me.
+> >> My other concern is userspace cadvisor that periodically reads ALL the
+> >> .stat files on the system and creates flush spikes (every minute).  When
+> >> advisor collides with root-cgroup flush (either 2 sec periodic or
+> >> kswapd) then bad interactions happens in prod.
+> >
+> >
+> > I believe the problem here is the kswapd flushers competing with
+> > cadvisor userspace read. I don't think the periodic flusher that runs
+> > every 2s colliding with the cadvisor reader that runs every minute
+> > would really cause a problem. Also both of these paths should not be
+> > latency sensitive anyway. So again, Shakeel's patch should help here.
+> >
+> > Did you check if Shakeel's patch fixes your problem?
+> >
+>
+> I will also try out Shakeel's patch. This will hide the specific
+> contention issue until something starves the kthread that does the
+> periodic 2 second flush (for 2 periods). In production we are seeing
+> kthreads getting starved longer than 20 seconds.  This often happens in
+> connection with OOM killer. This recreates the kswapd lock contention
+> situation at a very unfortunate point in time.  Thus, it makes sense to
+> have this ongoing flusher lock contention protection in place.
+
+Yeah we may need to completely skip the flush under dire circumstances
+in the reclaim path, as I mentioned above. This feels more like a
+reclaim problem than an rstat problem at this point.
+
+>
+>
+> BTW, there is still a mem_cgroup_flush_stats() remaining in
+> zswap_shrinker_count(), that we might still hit, after Shakeel's patch.
+> And a direct call to do_flush_stats() in obj_cgroup_may_zswap().
+
+Yeah there is a plan to remove these.
+
+Nhat, are you currently working on this? If not I can try to find a
+few cycles to address this.
+
+[..]
+>
+> >>>
+> >>> I thought we agreed to wait for the ongoing flusher to complete, but
+> >>> only allow root cgroups to become the ongoing flusher (at least
+> >>> initially). Not sure what changed.
+> >>>
+> >>
+> >> Practical implementation (with completions) and production experiments
+> >> is what changed my mind. Thus, I no-longer agree that waiting for the
+> >> ongoing flusher to complete is the right solution.
+> >
+> >
+> > My understanding based on [1] was that the ongoing flusher mechanism
+> > with only root flushers fixed the problem, but maybe you got more data
+> > afterward.
+> >
+>
+> [1] is V8 (that allowed ongoing flusher below level 2) which production
+> experience from that shows that we need to confine ongoing flusher to
+> being the root cgroup only.  (This already worked in V2).  The V9
+> production experience shows that using 'completions' caused issues and
+> implementing this race free is very hard.
+
+
+So you observed production problems with completions even when only
+root cgroups are allowed to be the ongoing flusher, after you thought
+it fixed the problem initially. Did I get that right?
 
