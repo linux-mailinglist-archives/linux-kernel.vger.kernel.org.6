@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-326009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAC6976126
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:16:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77383976147
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEA01C20D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EAFB1F220A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAD41898FF;
-	Thu, 12 Sep 2024 06:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dnMeLjWH"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89D18BB82;
+	Thu, 12 Sep 2024 06:17:16 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839342D7B8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3212D7B8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121772; cv=none; b=S/4nIDwaUzYOQr/2r9ItYz5iS2zU95r6nmHVhFmTYWiZxyICjKMZhR5TfWK4eQtLyXEbL2QhdpNizXQ1vlfD4i6RvPAOOOhz36j3+NBlCMgln+DHOmwerVIXtpbO9VUVT+a0OMv0ncQYoTWfDHXymqHx5fONBLNhljAdq/H4uEI=
+	t=1726121836; cv=none; b=A1QcV6T7tAXQrZ0GiW/EbB3CQIwEtbYIM9h5a+CfsMJn69kozcsLr0Rz2K9K/PnqW+QowFaQSIQEFtJE1TaoQylX8eGRdvYEBpPNgn/RoQAeZcuThoFjuYDdqqBXfBCQRycNTC5o/zcNsdLogkrFR2O8heD5dm79hRKOnCwpKf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121772; c=relaxed/simple;
-	bh=NSZ0gFhmnSAWkPLIvkThE/jj2vyRHEZgjI1vgLBE5JU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TU2gbSnc3pkzduUpdaZqwtQMCXcl3IqS2u7Vf1oeYQJzqPB5OJOG2aita3E4aV2VcV515J2uIty9lozqJTMKA+vl6VOA6g16L7WXgB5+zLyqEILL/GHXUfWjf6vxqC/cT4Y3ADMixpSsr8AGxmg2XAcMAFPF5wAtn1XBM+Opx18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dnMeLjWH; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-50108a42fa9so168792e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:16:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726121768; x=1726726568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PG7etX+XMtB4JyEWMR7RO6+kiYe96BaV75NlxGPDwcI=;
-        b=dnMeLjWHB1PWVH5MnvG22gtT90VS84LNutCPgw/3pOhTrJ8pzPvfqwHo7JscGujKa/
-         cPfgq2hgUgCxSpdfBEwGKLtIrNae/zsutKu7zZ6Lp+XrakYY/Nfk8ouColFjDQ5/qGAI
-         HI9yLKGKyJA5R9W/NaDdg7f9jejIeWc7QS6TgwkHH67I8NE6mOrCOJz5QCbX0KooazIT
-         CZCIurT8LE5KuP2r9mdBuvy9sbEukboyJl6AfWuuOCg+s/MJbYX3WWxOeIWYGsanA3to
-         Gu2MxcSapFUYq9ZF6s8DeRUFjLI7wmqZnJhf9eAi1ZGq9CUpPbUN/EAcTuePK6H6k/ZM
-         pFrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726121768; x=1726726568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PG7etX+XMtB4JyEWMR7RO6+kiYe96BaV75NlxGPDwcI=;
-        b=TI/iKNIZaf5F8oSzdyORPz3/TUEdtmbKTAfZwd5pX2OkcdRcMgj0/7ywrbozoGVWYc
-         7MYsXCPHD2NOMDcmGO+aMXdkYlXEf8bkuC5X2KowwDfHsjtLG8vLJb+aZ6XmqzaQCj83
-         emTul/g+6Gr6cnUjWvtL/KW30FCjEfPCusATWtNCYlIzy6KzXBmJpKTEg3kzRqFllSsp
-         1pngwIGqnZSO7BplZdMCH292XQAK8Zwb+NZr72b+4s1u/O5fHkflh8m/B1isMr0TxyIt
-         QH7QCsQj8O6nCFqH34bBhU1vZGwG74sIBMGghpCWsYzzHH+oYu9bpzi11c2k1unR8J7X
-         LVtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlYeJz+lVsfqBNu81xVPVCfsHQRaGu6CHby/pgFn13Q1Z/J3Rns27f5uh6xzSw+woPLQivzl7O2NoeM4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxaTYgnjWv3W1hnhn6BOXlVRxkQJ3fkmnySt77HrtPj/uk/uul
-	LIIK4tDUlSlCcVcuKLTHUSfmvwQ7WxZbni0PVjkE5mTdik4EDP270Nh9ZG/ZGEr7bKmiYCeXfJa
-	YWo6MIMyW8MqBIoqlLoL3yuVReExTaIBOT9gpig==
-X-Google-Smtp-Source: AGHT+IFnKBv5XJbS0vNasn1Vw2sANTpPRzyj0SqebB77rWvDXnyuPcbBolA73RD6RJwTdHu7xtKHHJGmKaO/CemalcU=
-X-Received: by 2002:a05:6122:1306:b0:4f5:254e:e111 with SMTP id
- 71dfb90a1353d-5032d40e6a1mr1568236e0c.7.1726121768215; Wed, 11 Sep 2024
- 23:16:08 -0700 (PDT)
+	s=arc-20240116; t=1726121836; c=relaxed/simple;
+	bh=duHnK5RYV1yUWqZgAW97ya6hTIbY6obaSDBWx/IwYJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SQf1CGrFRgkI4PBN5eSHG3cv2DKzJYdsBS5qc51JC9qI0Z9IH5qJVgzcq4gPmDqPXOiRGG0DnKgoJVdE8iUoZ3LwuOWKoRViJwcmXagebwCpReplngcZT9yCJCsHgUKL8RQKHPet3F+Wn6qr1USFMYIfFB9/P1ilq1bGhI/qLi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a0402ee870ce11efa216b1d71e6e1362-20240912
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:c8ceb9bd-ac5c-4bfc-8809-01bfcc939b2d,IP:20,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:40
+X-CID-INFO: VERSION:1.1.38,REQID:c8ceb9bd-ac5c-4bfc-8809-01bfcc939b2d,IP:20,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:40
+X-CID-META: VersionHash:82c5f88,CLOUDID:4941cee16439ebb511a0d559275aaef4,BulkI
+	D:240912141052OPBA8B50,BulkQuantity:1,Recheck:0,SF:66|38|25|17|19|43|74|20
+	0|102,TC:nil,Content:0,EDM:5,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil
+	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN,TF_CID_SPAM_SNR,
+	TF_CID_SPAM_FAS
+X-UUID: a0402ee870ce11efa216b1d71e6e1362-20240912
+X-User: zhaomengmeng@kylinos.cn
+Received: from localhost.localdomain [(123.149.251.227)] by mailgw.kylinos.cn
+	(envelope-from <zhaomengmeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 133137105; Thu, 12 Sep 2024 14:17:02 +0800
+From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+To: jack@suse.com,
+	zhaomzhao@126.com
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v1] udf: return EIO when ftrunctate access beyond end of device
+Date: Thu, 12 Sep 2024 14:16:52 +0800
+Message-ID: <20240912061652.980443-1-zhaomengmeng@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911130536.697107864@linuxfoundation.org>
-In-Reply-To: <20240911130536.697107864@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 12 Sep 2024 11:45:56 +0530
-Message-ID: <CA+G9fYvzUeEMf98sCDqwWDYksYgvRfpgTABEcWUvmjwE-aGa1w@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/186] 6.1.110-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Sept 2024 at 18:37, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.1.110 release.
-> There are 186 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 13 Sep 2024 13:05:08 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.1.110-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+syzbot reports a udf slab-out-of-bounds as blow:
 
+loop0: rw=0, sector=117, nr_sectors = 1 limit=0
+syz-executor135: attempt to access beyond end of device
+loop0: rw=0, sector=117, nr_sectors = 1 limit=0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in udf_get_filelongad+0x167/0x1b0 fs/udf/directory.c:526
+Read of size 4 at addr ffff888012113f30 by task syz-executor135/5106
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+CPU: 0 UID: 0 PID: 5106 Comm: syz-executor135 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ udf_get_filelongad+0x167/0x1b0 fs/udf/directory.c:526
+ udf_current_aext+0x435/0x9e0 fs/udf/inode.c:2235
+ udf_next_aext+0x8c/0x4a0 fs/udf/inode.c:2171
+ udf_extend_file fs/udf/inode.c:677 [inline]
+ udf_setsize+0xa8a/0x1280 fs/udf/inode.c:1265
+ udf_setattr+0x3c7/0x5d0 fs/udf/file.c:236
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ do_truncate fs/open.c:65 [inline]
+ do_ftruncate+0x46b/0x590 fs/open.c:181
+ do_sys_ftruncate fs/open.c:199 [inline]
+ __do_sys_ftruncate fs/open.c:207 [inline]
+ __se_sys_ftruncate fs/open.c:205 [inline]
+ __x64_sys_ftruncate+0x95/0xf0 fs/open.c:205
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f13639ac249
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff0302d508 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f13639ac249
+RDX: 00007f13639ac249 RSI: 0000008002007ffb RDI: 0000000000000005
+RBP: 00000000000013f1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff0302d550
+R13: 00007fff0302d630 R14: 431bde82d7b634db R15: 00007f13639f501d
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+The root cause is:
+  udf_extend_file
+    ->inode_bmap       --> etype == -1 and epos.bh == NULL
+     -> udf_next_aext  --> return -1 because reading block failed
+       -> sb_read --> return NULL because access beyond end of device
 
-## Build
-* kernel: 6.1.110-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: b844a80a36a118a1da8965067142b0246fc2a88c
-* git describe: v6.1.109-187-gb844a80a36a1
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
-09-187-gb844a80a36a1
+Under this, etype == -1, epos.bh == NULL, epos.offset is 24, which is
+less than sizeof(struct extentedFileEntry), aka 216. As a result,
+it skipped the epos.bh check and goes into udf_next_aext(). Since the
+epos.offset is illegal, udf_get_filelongad's first argument ptr,
+	ptr = iinfo->i_data + epos->offset -
+		udf_file_entry_alloc_offset(inode) +
+		iinfo->i_lenEAttr;
+points to some buffer before iinfo->i_data, which triggeres KASAN's
+warnning.
 
-## Test Regressions (compared to v6.1.108-102-gbe9ed790219a)
+The fix is to add addition check on etype, epos.bh and epos.offset,
+when ftruncate accesses beyound end of device, just return EIO and failed.
 
-## Metric Regressions (compared to v6.1.108-102-gbe9ed790219a)
+Reported-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
+Tested-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
+Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+---
+ fs/udf/inode.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-## Test Fixes (compared to v6.1.108-102-gbe9ed790219a)
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 4726a4d014b6..66f73f728dae 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -660,6 +660,16 @@ static int udf_extend_file(struct inode *inode, loff_t newsize)
+ 	udf_discard_prealloc(inode);
+ 
+ 	etype = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset);
++
++	/*
++	 * when ftruncate attempt to access beyond end of device, sb_read will
++	 * fail with epos.bh be null and return etype be -1, just return EIO.
++	 */
++	if (etype == -1 && !epos.bh && epos.offset == sizeof(struct allocExtDesc)) {
++		err = -EIO;
++		goto out;
++	}
++
+ 	within_last_ext = (etype != -1);
+ 	/* We don't expect extents past EOF... */
+ 	WARN_ON_ONCE(within_last_ext &&
+-- 
+2.43.0
 
-## Metric Fixes (compared to v6.1.108-102-gbe9ed790219a)
-
-## Test result summary
-total: 208365, pass: 180115, fail: 2479, skip: 25484, xfail: 287
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 135 total, 135 passed, 0 failed
-* arm64: 41 total, 41 passed, 0 failed
-* i386: 28 total, 26 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 7 total, 7 passed, 0 failed
-* s390: 14 total, 14 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ip[
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
