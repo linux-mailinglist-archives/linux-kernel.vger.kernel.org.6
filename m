@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-326558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B26B9769EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:04:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F429769EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E78B216A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:04:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F35C4282234
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF3A1AD245;
-	Thu, 12 Sep 2024 13:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="gM6wwWaj"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0921AB6DC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D621E1AB6DD;
 	Thu, 12 Sep 2024 13:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26AA1AAE1D;
+	Thu, 12 Sep 2024 13:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146219; cv=none; b=YN9/mZfbeMee5cJSDtncg0l7w6TmHA1ma63ySwfyHAMN3/nMY7FhKcUV6CJJqAAi9zStQ9fI14LTWN+J89NDtkmRDgsPAG3W+hhQuVZDVUeAw1yDWA46BitQQPvg7K9BOSLaN0ExI8xqKcMJA0uoGgR/jY9YL0et/ZKq/fxVYZI=
+	t=1726146216; cv=none; b=hs9dDIJtD++cKDDYzv6V/AzN14FrlRwNd2KuNTBBZEOzTw7+YUAy58a+w6HI8WPj2dsRfA/ThlV/tzsuch3J4c3u4a+Lv71DK9VXurFUJgHsKX8ljgRJEHVb6KBRrFq6AW9FDb/c+AELBI5Hv5HvSVKl5U7Lf5YTzA6kEiej5p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146219; c=relaxed/simple;
-	bh=0wVaLAj1LkuDQ1eAUwHk5RJUlLtMjsDvq/kB7dZwzs8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=OuriFwKxA0mtuQa5157pY2l6zInkDCZVOj8m9aEDk+jaB5PRTg11r6EeiPiXAvFg7QDUmah5rczDRnKksgw71snBPJVqyumZAg2RV0OCclCwXikNX/078MCWzrMjvSKjmLNifU9R4egsld3bT8dKmQD5M3Y325sRE2iYdP/FCuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=gM6wwWaj; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Cc:To:
-	Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9gMPRE3dusYnLgHmnQkJgE3ee3DErva04V0juSuoAfU=; t=1726146216; x=1726578216;
-	 b=gM6wwWajJstePQ4WW50eNJEGeNTQBczw8cxXT0eMUygTuOKCVkXZ7kiFWMylJm7bzOpz3X+eyz
-	jMF0mstyY5WhIjwGsQ9OY+udahZtwHSeTTtCj1ywoLfflBFE77J0CoAgNACeCK0qgX4LbSgOTUXx6
-	ubW+tkWjk+C0uGA6wykJN5b5ju8jBFroCaAbEnoxAD2um8iv7fDdp1Hlfys5qm1FfhEnWYH4BFNAG
-	S9s2O03qltReWaLHzeC42lmg+5WhCC+sv7NIv4S8eypPiH/h1GZVqOIn9SdfQC7Wfe9oqn8lh280E
-	nJmyvSbBEdiuavjJ2JA1IasoBsYy2mXzWt77g==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sojTt-0003y2-Ac; Thu, 12 Sep 2024 15:03:29 +0200
-Message-ID: <97802bf0-d090-4063-91e8-74724c3b096c@leemhuis.info>
-Date: Thu, 12 Sep 2024 15:03:26 +0200
+	s=arc-20240116; t=1726146216; c=relaxed/simple;
+	bh=/wD1KPTzQDpIQtFX4qhbxAiy+8aMq7IxhqW8VdszRzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bKPRNQB0exrVGgPJkAXvB1o6r9M/i0iRvuU/Qo5XSWG6Clx+x6moO3p8BUyGIrQXkuaG3iA+1l8ihoTnKR6W4aJDBWyvGSAo+sD7GFcbVBA/LWDSOwQtsCHVVPRwohdmCYZBnpOu0dJVVG9eBPuKSJ3y+dmv5N6AYDDgn4qKQkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9018103214so133660266b.3;
+        Thu, 12 Sep 2024 06:03:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726146213; x=1726751013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wD1KPTzQDpIQtFX4qhbxAiy+8aMq7IxhqW8VdszRzc=;
+        b=pmUI7Fj966AsQ593t3QRbV8w82SxQL259x+hN816MuZCv2GEIkAYRWWRRH3wBE+Tjz
+         hTAz5xn+AvlzhskKLnJAbOkxtPTTm6DjCZpc4y/ZNyusPa3sVbcYmwjXNaxZvkX000qW
+         QCWmmOCyPGIR5knLewX6c7S/ihINULJhKWAF1Exws52qdQmDYqApnMVJgSEsmE1ZQuS1
+         FeJWler7qztCqwabHVOBBwGrlcJSpni0reUnUpWrR0xfd2IQWkLjWXTC3EqSCbRZEI6a
+         IAITdTO4DmFWdLeYzME+3cDH0Z66GlBVb3koYm68wySBACFj5tXf0aviA360ksOq5AfT
+         8J+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVOrBpsovsSz4vZ8ICvTmNPSXn7V+tML5gAd9ZnSnuXY0MVtbOu9tX4V+a/o731HgXofqmykMt86bc=@vger.kernel.org, AJvYcCWm48tB9wET5xcEYHJjkRfIK8lhjrP9GRmhBqAm3Vs9IgafCu4zJcOFNCXb0J6EadHNuC4UYMPOjVJBEVif@vger.kernel.org
+X-Gm-Message-State: AOJu0YylnVsaxrB6BwahbBRPjOFAzJc0qzXKYBu0+r86Lxj0/Pb4QCsa
+	s0d5lDHKgnSqPyXSO72DkdoxnlAYTmnX3j2MocsutsnYGq9VEqTi
+X-Google-Smtp-Source: AGHT+IEAJDQ4WL7SOl5bsfConzrkXcuMXNQUB3PfItXJ+RTcTlmgoNbZImDHp5Lnh51sPpOpj21bcQ==
+X-Received: by 2002:a17:907:7ea1:b0:a86:ae95:eba3 with SMTP id a640c23a62f3a-a9029690d69mr238676866b.62.1726146212358;
+        Thu, 12 Sep 2024 06:03:32 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835a76sm746424466b.39.2024.09.12.06.03.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 06:03:31 -0700 (PDT)
+Date: Thu, 12 Sep 2024 06:03:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org,
+	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com,
+	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com,
+	gourry@gourry.net
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+Message-ID: <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+ <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Subject: Linux regressions report for mainline [2024-09-12]
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1726146216;8d5671d4;
-X-HE-SMSGID: 1sojTt-0003y2-Ac
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
 
-Hi Linus! Due to the pending 6.11 release a quick and brief extra
-report about regressions from this cycle. For more details and a
-few regressions I did not find noteworthy, see:
-https://linux-regtracking.leemhuis.info/regzbot/mainline/
+Hello Ard,
 
-Ciao, Thorsten
+On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> I don't see how this could be an EFI bug, given that it does not deal
+> with E820 tables at all.
 
+I want to back up a little bit and make sure I am following the
+discussion.
 
-6.11-rc regressions with available fixes in -next that will likely make it to you 
-=================================================================================
+From what I understand from previous discussion, we have an EFI bug as
+the root cause of this issue.
 
-* reported 7 weeks ago: mm: swap stress test now runs into OOM
-https://lore.kernel.org/lkml/CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com/
+This happens because the EFI does NOT mark the EFI TPM event log memory
+region as reserved (EFI_RESERVED_TYPE). Not having an entry for the
+event table memory in EFI memory mapped, then libstub will ignore it
+completely (the TPM event log memory range) and not populate e820 table
+with it.
 
-Fix: 0885ef47056079 ("mm: vmscan.c: fix OOM on swap stress test")
-[next-20240912 (pending-fixes)]
+Once the e820 table does not have the memory range for TPM event log,
+then the kernel is free to overwrite that memory region, causing
+corruptions all across the board.
 
-* reported 27 days ago: block: hang when when setting echo noop > /sys/
-block/sda/queue/scheduler
-https://bugzilla.kernel.org/show_bug.cgi?id=219166 and   
-  https://lore.kernel.org/all/0a43155c-b56d-4f85-bb46-dce2a4e5af59@kernel.org/
+From what I understand from the thread discussion, there are three ways
+to "solve" it:
 
-Fix: https://lore.kernel.org/all/20240908000704.414538-1-dlemoal@kernel.org/
-[the fix was in -next but is gone now, but I'm pretty sure Jens will
-sent it straight to you before Sunday]
+1) Fix the EFI to pass the TPM event log memory as reserved.
 
-* reported 24 days ago: drm: amdgpu: certain operations are much slower
-https://gitlab.freedesktop.org/drm/amd/-/issues/3569
+2) Workaround it in libstub, and considering the TPM event log memory
+range when populating the e820 table. (As proposed in
+https://lore.kernel.org/all/2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com/)
 
-Fix: 578aab4ecc7347 ("drm/amd/display: Do not reset planes based on crtc zpos_changed") [next-20240911]
+3) Workaround in later in the kernel, as proposed in
+https://lore.kernel.org/all/20240911104109.1831501-1-usamaarif642@gmail.com/
 
-* reported 9 days ago [affects stable, too]: soundwire: audio broken for
-Meteor Lake-P HD Audio Controllers
-https://lore.kernel.org/lkml/b6c75eee-761d-44c8-8413-2a5b34ee2f98@linux.intel.com/
+Please let me know if my understanding is flawed here.
 
-Fix: 233a95fd574fde ("soundwire: stream: Revert "soundwire: stream: fix
-programming slave ports for non-continous port maps"") [next-20240912 (pending-fixes)]
-
-
-6.11-rc regressions with available fixes in -next 
-=================================================
-
-* reported 7 days ago: arm64: dts: qcom: msm8939: boot broken on msm8939
-platforms 
-https://lore.kernel.org/lkml/2a15105f-67e2-42f6-b624-562485b0bee2@kernel.org/
-
-Fix: d92e9ea2f0f918 ("arm64: dts: qcom: msm8939: revert use of APCS mbox
-for RPM") [next-20240912]
-
-
-6.11-rc regressions with available fixes up for review:
-=====================================================
-
-* reported 18 days ago: firmware: qcom: scm: smc: msm8960 SoC fails to
-boot
-https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
-
-Fix: https://lore.kernel.org/all/20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org/
-
-* reported 4 days ago: power: supply: sysfs: permissions wrong
-https://lore.kernel.org/linux-pm/20240908144414.82887-1-hdegoede@redhat.com/
-
-Fix: https://lore.kernel.org/all/20240908185337.103696-1-hdegoede@redhat.com/
-
-
-6.11-rc regressions without any fixes I'm aware of
-==================================================
-
-* reported 5 weeks ago: amdgpu: launching some RenPy games causes hangs 
-https://lore.kernel.org/lkml/CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com/
-
-* reported 23 days ago: btusb: driver fails to initialize MT7921AUN on
-v6.11-rc4
-https://lore.kernel.org/lkml/ZsTh7Jyug7MbZsLE@mdpsys.co.uk/
-
-* reported 13 days ago: KVM: VMX: wayland starting and failing right away
-https://lore.kernel.org/lkml/877cbyuzdn.fsf@redhat.com/
-
-* reported 11 days ago [affects stable, too]:video/aperture: suddenly
-two displays appear as connected, but only one display is connected
-https://bugzilla.kernel.org/show_bug.cgi?id=219217
-https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12160
-
-* reported 6 days ago: net: booting from nfs root on an arm64 fvp model
-broke
-https://lore.kernel.org/netdev/ZtsTGp9FounnxZaN@arm.com/
-
-* reported 5 days ago: iwlwifi: resume error
-https://lore.kernel.org/linux-wireless/CAP-bSRbMbZe9LCE15SCbYNTGZjE_xiAm29qzO_WNVjHsJ6oyyg@mail.gmail.com/
+Thank you!
+--breno
 
