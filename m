@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-325874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C176C975F55
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:56:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30887975F58
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A0028743A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B7B1C2074F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46433126BF3;
-	Thu, 12 Sep 2024 02:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4013131E2D;
+	Thu, 12 Sep 2024 02:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="IPSSpRXK"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QSS2BlBm"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76583A268;
-	Thu, 12 Sep 2024 02:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F113126C0E;
+	Thu, 12 Sep 2024 02:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726109765; cv=none; b=Zry+3k6nRLemBQ9UjjXsH/WV5DWWR9RoBPCl3/bt/p+04r4cYZ51mBICgLzk0MoIeF5EfaGFMce+Sh8fHH7fRMr65DskytheI7uUCqOxmZOdhgokWqAg9X+6bxYub0H3UlcAENR/VwHSd7473j63E6W9gN685+2UjUReVcJWU4M=
+	t=1726109773; cv=none; b=nm2Qc9Ump45cvJ/TMTe9cy7E/3kPnVcMcDTnMUx/Va/zTwuhYxB3/5k/53lRnRwHZTV6LaXNLeo+FqDFgpQM70AauM0IZPdj3O06qI0dJsnGZAJ3XIzLeKJMCIheqoggEX5cP0nmrBXTYWEwlB86CxhDfmfRjKp0LQ2/3rFkBRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726109765; c=relaxed/simple;
-	bh=utyDe5eZCMdGV6R5hhAx0NCl89O3xZZBOa2ynVuR1cE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bSZuvU1Fs0PwBJubk5YzxGQVRGxYXReNIopjccp0+F9s3Cm9TR1nwLhH59eSxj42WKlPITX+y8WgvDl9H0/WPPkav+AWlun4L6f8NwWzrq2S+SCFlKLZgD6La2E8LgB1G4LTaA+3q0ZDciXGHtbVAyd1VPeotTCGcHq6c/ERFlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=IPSSpRXK; arc=none smtp.client-ip=54.204.34.129
+	s=arc-20240116; t=1726109773; c=relaxed/simple;
+	bh=xm7LbTv/MUcZzmyc0Yj1Cl/PvgH0OuuIJwbz1W9+4+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HxYu36Nunq557R7hmLoa5q0VawLsWCfdXV2Gye/tE5fxPQQ70TYkJqI6QAhtqtnt07VCabOfL6Dm/APtu/wNSBFUyysZNO80opeS1f6TKOmmZHhfln46P6rNVh/fGA1ec9/4dMImqKNR4PhkmqlyvZbaIIUrqq2TDi4DP24W42Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QSS2BlBm; arc=none smtp.client-ip=18.169.211.239
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726109751;
-	bh=ItiN5nFTSra7Vr5po2FBwHrIsvZx+V/Mwk2BLpZP71Q=;
+	s=onoh2408; t=1726109757;
+	bh=Q+f7Y6NaDNcklTT7is2kRztTuiX4oAl/H2qYe+la9kk=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=IPSSpRXKpXuUP0u5I9OBP5qiysimWY/wdjY1N4oRebsFUMoiDvPE+c1Lr+EzOFGS4
-	 +RziF8RuB9n+oNEr5EezsC6hldM6HcCnOUNE9fwg7sC13DUfXRqlyN2kpzQog7za6J
-	 9W89W1lHP8sHtDoDZ+hRQH9eR7el0MA0Kmr3G/7M=
-X-QQ-mid: bizesmtp81t1726109745ti5gwwm0
-X-QQ-Originating-IP: Q9VlWd8TNoXtY9lblvywY1Ehy7N3aYevzbIayxgrJRM=
+	b=QSS2BlBm94Zctf4Q9AnnDCYXHA49VU4uuNe7heSSSzPdTssAAZ5zPEvbuccIR7ndY
+	 J7cu3iJ2mXHHbTm9f4uh6UXjRf5Gy/ur6e3UB/xPadaR9Kvl2AKhaiZ1TbI2hpOTwp
+	 zaBeNkFu7voPWzb3se63r9EKve/gQFXFSb7VRecI=
+X-QQ-mid: bizesmtp81t1726109752tgd9zc2a
+X-QQ-Originating-IP: FwNYInude3/6pcUIZW5jorMw7+H52eujKyRqd6Fcx+8=
 Received: from localhost.localdomain ( [113.57.152.160])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 12 Sep 2024 10:55:42 +0800 (CST)
+	id ; Thu, 12 Sep 2024 10:55:48 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7041621352797983170
+X-BIZMAIL-ID: 4074563589889725486
 From: WangYuli <wangyuli@uniontech.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org,
@@ -68,10 +69,12 @@ Cc: kernel@esmil.dk,
 	linux-kernel@vger.kernel.org,
 	richardcochran@gmail.com,
 	netdev@vger.kernel.org
-Subject: [PATCH 6.6 v2 1/4] riscv: dts: starfive: add assigned-clock* to limit frquency
-Date: Thu, 12 Sep 2024 10:55:05 +0800
-Message-ID: <3A31C289BC240955+20240912025539.1928223-1-wangyuli@uniontech.com>
+Subject: [PATCH 6.6 v2 2/4] riscv: dts: starfive: pinfunc: Fix the pins name of I2STX1
+Date: Thu, 12 Sep 2024 10:55:06 +0800
+Message-ID: <3D0F65E42817C96F+20240912025539.1928223-2-wangyuli@uniontech.com>
 X-Mailer: git-send-email 2.43.4
+In-Reply-To: <20240912025539.1928223-1-wangyuli@uniontech.com>
+References: <20240912025539.1928223-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,43 +85,37 @@ Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-From: William Qiu <william.qiu@starfivetech.com>
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
 
-[ Upstream commit af571133f7ae028ec9b5fdab78f483af13bf28d3 ]
+[ Upstream commit 4e1abae5688aae9dd8345dbd4ea92a4b9adf340d ]
 
-In JH7110 SoC, we need to go by-pass mode, so we need add the
-assigned-clock* properties to limit clock frquency.
+These pins are actually I2STX1 clock input, not I2STX0,
+so their names should be changed.
 
-Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+Reviewed-by: Walker Chen <walker.chen@starfivetech.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- .../riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/riscv/boot/dts/starfive/jh7110-pinfunc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-index 062b97c6e7df..4874e3bb42ab 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-@@ -204,6 +204,8 @@ &i2c6 {
- 
- &mmc0 {
- 	max-frequency = <100000000>;
-+	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO0_SDCARD>;
-+	assigned-clock-rates = <50000000>;
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
- 	mmc-ddr-1_8v;
-@@ -220,6 +222,8 @@ &mmc0 {
- 
- &mmc1 {
- 	max-frequency = <100000000>;
-+	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO1_SDCARD>;
-+	assigned-clock-rates = <50000000>;
- 	bus-width = <4>;
- 	no-sdio;
- 	no-mmc;
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+index fb0139b56723..256de17f5261 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
++++ b/arch/riscv/boot/dts/starfive/jh7110-pinfunc.h
+@@ -240,8 +240,8 @@
+ #define GPI_SYS_MCLK_EXT			30
+ #define GPI_SYS_I2SRX_BCLK			31
+ #define GPI_SYS_I2SRX_LRCK			32
+-#define GPI_SYS_I2STX0_BCLK			33
+-#define GPI_SYS_I2STX0_LRCK			34
++#define GPI_SYS_I2STX1_BCLK			33
++#define GPI_SYS_I2STX1_LRCK			34
+ #define GPI_SYS_TDM_CLK				35
+ #define GPI_SYS_TDM_RXD				36
+ #define GPI_SYS_TDM_SYNC			37
 -- 
 2.43.4
 
