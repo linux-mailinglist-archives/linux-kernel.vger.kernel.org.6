@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-327240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2EC9772B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831D29772BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BDF2B23BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:31:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66651C23E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C721BF81C;
-	Thu, 12 Sep 2024 20:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E5B1BF81C;
+	Thu, 12 Sep 2024 20:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IuUxudrt"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOiDMmpI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DE813CFB7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091013CFB7;
+	Thu, 12 Sep 2024 20:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173063; cv=none; b=ijG313qLF79TZaZ9BoVcAkePzMrRkwGtDnGWyjXkwt+xqHi+rPbcxGRiDK257HciQnajcgTRTZ/ywJIfgzMgVdldCNut50NeArBVvQjMhHUhdTZi5pHaqcM4k10seChzNsNhd6mkMiW+VxM/mDic2RqFKuClkjQ02G00yGAprmM=
+	t=1726173094; cv=none; b=Dcx7tw7bUKAjcLsghpqypgv+ErysInJco+JNkQkYPywkKmEuv7CAPGU9LTy4b9rINaVRux8H2Qf2YiRgdEqYCaAVYaOBUeunO/c7AdBJAgVkZsEUnXJRRjngi9k/PkOKXkW23SbgsD3yb73+J40YC8s5tDIih1eLPq5P5pyuEto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173063; c=relaxed/simple;
-	bh=u3+xTKiDZ6CgDyqF+o7xgUFgxz+T2D6SLtwRNZRyVS8=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=gV7v83lO56FIlGwY3bIVJ93IH9e1txpVyisUscwkW7PV1CBy22cS85q8s8C8r8wQuPAfxKoKgIVAsxsvJxoBqSXfRzX7N6mOrAymSqXCCtoX4drWj/AGLCATZ/1H7iuNgmg5dinYksxVZUR3/79I0W6N9fa2P/CxeNGbHc6/Aco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IuUxudrt; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-82cf28c74efso214836739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726173061; x=1726777861; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yLPhhW7Y6mbWdZPPRUIkvARITfuZTEZkDii7oKKU+Ek=;
-        b=IuUxudrtlEScnPVJtdJIZL653Kzmq2KrkAJZPlos0BCzQ/d8bWSAWJkoHNmSMMvpzX
-         baaUwY3pLIG5Q8FPiRzMLdlaTS1hNSet+8xvdak+omyblP51OedpMqboDXfBWT0v/rVB
-         8tE537sMMR+gUfLWoUy5+xEH3z5fAzERmA5v7Bnw//1jsFw9/0TOahkCJLsXQUMYBNCF
-         Z7SN5Rf/20K6pfJRiIHgQgYVJWfu587IeXQtEjx6LZFw64K0kp+5b+DQsRaFTes86bRV
-         JGLk+EEFNQwUgbXyYligdHmcQnfPazUUNlbGOws4Mz15dOUCrjTI4NOM0+BbnvSbHhZB
-         lcPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726173061; x=1726777861;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLPhhW7Y6mbWdZPPRUIkvARITfuZTEZkDii7oKKU+Ek=;
-        b=uVE9n31t4Z3vLwgyiTYOj+oRKVIY5FFC+c4v1rJSz4MT86cVn2royW/IYF9slDS6c7
-         1D4qGanuOPAR52Ak5+ean0Cl9UH2c71snImpEpBcM0HgqbuLvfK3XdB+u2jJKVzMNksK
-         Xr4JSs4wNal8BnxGm1ZcaO2tBwaDHG9c0PvO+u2stYp4wEUxNgxmELzSUDMevI6RP+z3
-         XHPgqAXZjTvdlZ2tUjdsXdtqi4eNLXKkR70fighRuo3fCKqw5hbsOr1A8PN7bk7Nj3gC
-         QbafTacoZDB5J9yklPqHhY4Ub8mIMZVWbkPJ1LP1koHPQFGXky9EUXHDAgYdd9e8Z5hl
-         iD8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUX/M5b7IMOTlA+yG6b9N0vPf0WCf8FgF4tumdPUcLrI+myh1ajWcqOuUgBhnwJ4QaccK88fXqT2HrXCyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4rKVLlx7mPHoic8Z9AujwJPb9b4Dy/fwcVqDmwHL/x2g3csq2
-	49wU3k8TVBEHnY1k0Vz4IxA90tJvXaNhP72IuNjX+qQCvEwgCUtFIUvrgR3IHjBAtdaBtJtdyTn
-	37fC7o13F3RHz4vxTwx8y7A==
-X-Google-Smtp-Source: AGHT+IEvNBP56SW+DzYGXpGSQjGH7l5m6WCB475tagf/GqT0PVTompxQRWYnVlmUdK8417EDaVC+g6P+CB3gV00+3Q==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
- (user=coltonlewis job=sendgmr) by 2002:a05:6638:1412:b0:4c0:8165:c391 with
- SMTP id 8926c6da1cb9f-4d36136b75dmr162015173.4.1726173061371; Thu, 12 Sep
- 2024 13:31:01 -0700 (PDT)
-Date: Thu, 12 Sep 2024 20:31:00 +0000
-In-Reply-To: <ZuIgE2-GElzSGztH@google.com> (message from Sean Christopherson
- on Wed, 11 Sep 2024 15:56:19 -0700)
+	s=arc-20240116; t=1726173094; c=relaxed/simple;
+	bh=T8U1b6wp7ibIw+njMfMHoCAqw5G8qqefpz2hppJxRUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNzCurUdSwp+thqo1NdN2Rgbh3B5m3JYQzSPWZGk4RXIs6fKGk1OYjeOad0zKgXsee8i0rtF5Mq0rBIpMmtlqbZylPc4q0omexbyrGEaIC+72r29+cHjmMgyxDZrrvy7uuo0hQ4Zfr/Bvh/Bf8iaLCUmar5gBuCwiNtR2EWbipg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOiDMmpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2B3C4CEC3;
+	Thu, 12 Sep 2024 20:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726173094;
+	bh=T8U1b6wp7ibIw+njMfMHoCAqw5G8qqefpz2hppJxRUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kOiDMmpINwcXPW7ctic3yrgfkP+q6JH3vrPATY9CW5RefBK+soiEQrZ4Vd+aSmUzp
+	 QiafSnqo0RF8HWEua4j+AOXHEYs4oQ299wU1ekXduP8xlyWNAYn6B8WdTkSV+35MtQ
+	 uOc2eK+vs6ohAw1912wpw/NQUzCUASwL1nyu2q8lLqGBhr6VRNxa61dBHqFCrmvj/C
+	 vcEiXeU6Mde9PU9gGXwIITxght+cKiELqyGn1yKUKM5sUDA5UoZq9zwzWi2H+vrsnb
+	 YLkub8mMsQK2+GWxCTrzDCot4roQOjoYjXpYyuS0WpDSuWKt+mmGKInh4k2PTaZji1
+	 3N4rNUn6ZMPig==
+Date: Thu, 12 Sep 2024 15:31:32 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Saravana Kannan <saravanak@google.com>, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Benson Leung <bleung@chromium.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v7 02/10] of: base: Add
+ for_each_child_of_node_with_prefix()
+Message-ID: <172617309153.737512.5462269215203973657.robh@kernel.org>
+References: <20240911072751.365361-1-wenst@chromium.org>
+ <20240911072751.365361-3-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntldzwd37f.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v2 5/5] perf: Correct perf sampling with guest VMs
-From: Colton Lewis <coltonlewis@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, oliver.upton@linux.dev, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, will@kernel.org, 
-	linux@armlinux.org.uk, catalin.marinas@arm.com, mpe@ellerman.id.au, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, 
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, tglx@linutronix.de, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911072751.365361-3-wenst@chromium.org>
 
-Sean Christopherson <seanjc@google.com> writes:
 
-> On Wed, Sep 11, 2024, Colton Lewis wrote:
->> Previously any PMU overflow interrupt that fired while a VCPU was
->> loaded was recorded as a guest event whether it truly was or not. This
->> resulted in nonsense perf recordings that did not honor
->> perf_event_attr.exclude_guest and recorded guest IPs where it should
->> have recorded host IPs.
+On Wed, 11 Sep 2024 15:27:40 +0800, Chen-Yu Tsai wrote:
+> There are cases where drivers would go through child device nodes and
+> operate on only the ones whose node name starts with a given prefix.
+> 
+> Provide a helper for these users. This will mainly be used in a
+> subsequent patch that implements a hardware component prober for I2C
+> busses.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Changes since v6:
+> - Changed helper name to "for_each_child_of_node_with_prefix()"
+> Changes since v5:
+> - New patch
+> ---
+>  drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
+>  include/linux/of.h |  9 +++++++++
+>  2 files changed, 44 insertions(+)
+> 
 
->> Rework the sampling logic to only record guest samples for events with
->> exclude_guest clear. This way any host-only events with exclude_guest
->> set will never see unexpected guest samples. The behaviour of events
->> with exclude_guest clear is unchanged.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> Nit, "with exclude_guest clear" is easy to misread as simply "with  
-> exclude_guest"
-> (I did so at least three times).  Maybe
-
->    The behavior of exclude_guest=0 events is unchanged.
-
-> or
-
->    The behavior of events without exclude_guest is unchanged.
-
-> I think it's also worth explicitly calling out that events that are  
-> configured
-> to sample both host and guest may still be prone to misattributing a PMI  
-> that
-> arrived in the host as a guest event, depending on the KVM arch and/or  
-> vendor
-> behavior.
-
-Done
 
