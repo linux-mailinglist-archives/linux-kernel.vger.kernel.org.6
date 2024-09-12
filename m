@@ -1,55 +1,83 @@
-Return-Path: <linux-kernel+bounces-327250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5839772DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF389772DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EFD1F215CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3ED2860AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687ED1C1738;
-	Thu, 12 Sep 2024 20:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8227D1C1738;
+	Thu, 12 Sep 2024 20:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EbiQcff7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="W8nJKsdp"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C205218BBA6;
-	Thu, 12 Sep 2024 20:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDA126C17
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173995; cv=none; b=n8beNuRhUiCCuz+lTZz8dAYvBDsBMsWkPpaF7tjWhV42qLQPdIsxLo5ZMi9C/KBNNAqBIMTJSMlaOi7xJN52HxsjB32v9Z/zoVhEo7GO/AkrTyb+QtdpBro2bJA8JU9VDPmANsa3TKv8CzTWpsyydzf03bmwUXvyfi1p1Bn9NVc=
+	t=1726174045; cv=none; b=B5DcV8+dq5lmqwhjLuiUFL21k0lGG9JO1afr172UhMq2+dzTe6QPzyEMyw02S6cNedu32Z6LCy1KE/aukL7KYrMT5MKNKv7WmwdaeMFIDdE5PFvZ24cYOHIhDpJIilIucLAhh9e7N5NevQsNaezqJYFHSnoBTcNxKjm5mfXWXMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173995; c=relaxed/simple;
-	bh=/8mYsICaaHJ87VmANn82Ajaf8S9WX3W34K2q93jvVw4=;
+	s=arc-20240116; t=1726174045; c=relaxed/simple;
+	bh=UeKDIfl46B0MjAeHHAOJysv7+DcyldeuRzbyODT/6Vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6YW2GRElRudss2oMgtiAz/Ug/vkCxA+vc7bEY2dBbOnws19QWq+9W+5fz0nXuekMC8c2HGm3CY3ocpolIHPITSzbMLHI4B8r0WgwV08RuWXsyViSeO1xyMRCtqbYKgZ07wuPhiNz5EiqgY50OyvdfqTwWgEJedPYmx3Ytpmk0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EbiQcff7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E77C4CEC3;
-	Thu, 12 Sep 2024 20:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726173995;
-	bh=/8mYsICaaHJ87VmANn82Ajaf8S9WX3W34K2q93jvVw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EbiQcff77jrTb4JWVWXjWyCEEgNsTfCsrK9K4IKf6IrqVrevVJ4PAK9MtLsFgXgVg
-	 Xt1IXQl7DFG1UIwwLuBinZN8ypLCdfGPJBapkmfpvv3MQs6Y3FpqrvrpbAYBDjDcr5
-	 wm9amAxwftwJlrPUb9zA1jVwUNaulIHdEAbreGgIDN6htXymIc3WnrzwskpbX+GQBD
-	 j5MjFBpNPU8ZaOmmaDT+bdv+wmAkK6Sgch5GwD9Ko+ysoDXxnoPEx5UsiFGpfuTTHe
-	 HWKO3kRu9AqcqiABfpLhEpk4YFqpXxciqculD7Ypa21BMCLHNo5qza7l3MvfYfMQ22
-	 4YGERTSwMaHHw==
-Date: Thu, 12 Sep 2024 15:46:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
-	rafael@kernel.org, yoshihiro.toyama@sony.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] driver: core: add probe control driver
-Message-ID: <20240912204634.GA738361-robh@kernel.org>
-References: <20240911142319.3435746-1-nayeemahmed.badebade@sony.com>
- <20240911142319.3435746-3-nayeemahmed.badebade@sony.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6lvFHiIukKimiKyoExQNATBd18hbGQTbk/cz7B5/DEMyq/JO+T736SyZvxZIrzwtp/Ax3RW2qK8icxBKwvccPrcbWksd+qPI6LegpQnvlIIWiJ87G5SD6U31Lc0e9FNE0ksbLSR37+rfiQPYtS4Zp9klwySsn1gFS50McX615Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=W8nJKsdp; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d7a9200947so75776a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726174043; x=1726778843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QkYEDgSUi+q4cC1mKbyRLPDEigMYGApwN1eBhMPthC4=;
+        b=W8nJKsdpI8iv3NLyLAEaFtnhAZlR/I8zVU7hEdlE9lWIbzTWLQRhrwW9P03gQKm7ol
+         yNNbwmpfuZlHuV4ZvnxHGCXu1cy4v+IqK6qsaoIF0sSVQepg4A9tO+byMrA9IURBAceb
+         nIsDGJbJuLHeJpJ0p98izj6ts6NL4dQBGYmN4+e4/IvLbAgaQQZOz0yZ9F3wnyNzEnRW
+         tA7HfYHwwitRTHdq4ABm+gzfZTMYPhUt94phP9Hn7hzZXOf3rSaO2hKZFsZWeqiXNmg+
+         Ea1nUO1MFIiVWR5uyRGGv19KjGcNOcCc8KKRgyHqsTUXkUGLFUVAuqVNtxcAmGtoSFC2
+         8L4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174043; x=1726778843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QkYEDgSUi+q4cC1mKbyRLPDEigMYGApwN1eBhMPthC4=;
+        b=iPB/0wxlqUoavWMWgftEWKVqzrV4mnkPllomd+X2x+3+yF6qMzp8dJWgjY4fvTtbg5
+         RydyOIxXRLHfSKRvkgmkJEvFwt6hH7TuZ/7ACE4cDkjaGDrucQCzub+FZ6DXfWCltsXc
+         rv82pdJ5K0ot+jziBf8kT61A7vT4YJHRpC4uRF3Jp+rDyzi0E+khSDguP9hvUHQ66hcR
+         XYTJZjoPFyX/b16lBm5T0MNG+ahxZc2oMqXAI/gu0O4qDNBaqlByHNPAJPQ2VpAjnRsV
+         /afyoJbmuBN8TNw296u5PfYUMyaGOreu/QgOl+LUGBtY5YWH219Saql3ok8JPHiztB/T
+         8REg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKw/VWjOzGk/WK2/kHGShBBnIWb+91psCLcS+rqnWsw/KtcHCOagsHCflUXHd/XcSBMo5l39kQ0/WYEv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEtP+I4+AhEeY6KgS6QS+2G5TLsOSk+xCwpkE5V3vCMjFszmr/
+	UT9Z4RnCKQ7NEqoGnFg1Hha3/Zi2AKz+h3nVWgcOBGGig2H/zqpeWfQU9aR6Wgo=
+X-Google-Smtp-Source: AGHT+IHY1ulWf8xIoYCgymvFfMz7AvIjbgg3u2pIVYFSwdjBxA8LW0bzDtVMfKaopkm+QTibJTkj8w==
+X-Received: by 2002:a05:6a21:e90:b0:1cf:6d67:fe5a with SMTP id adf61e73a8af0-1d112edc9b4mr484866637.50.1726174043300;
+        Thu, 12 Sep 2024 13:47:23 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fddd1c4sm2128722a12.63.2024.09.12.13.47.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 13:47:22 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:47:20 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: Re: [PATCH] selftest/mm: Do not use hint for riscv mmap
+Message-ID: <ZuNTWCsPPLTm1zdX@ghost>
+References: <20240912100018.736447-1-zhangchunyan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,86 +86,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911142319.3435746-3-nayeemahmed.badebade@sony.com>
+In-Reply-To: <20240912100018.736447-1-zhangchunyan@iscas.ac.cn>
 
-On Wed, Sep 11, 2024 at 07:53:19PM +0530, Nayeemahmed Badebade wrote:
-> Probe control driver framework allows deferring the probes of a group of
-> devices to an arbitrary time, giving the user control to trigger the probes
-> after boot. This is useful for deferring probes from builtin drivers that
-> are not required during boot and probe when user wants after boot.
+On Thu, Sep 12, 2024 at 06:00:18PM +0800, Chunyan Zhang wrote:
+> When the virtual address range selftest is run on RISC-V platforms,
+> it is observed that using the hint address when calling mmap cannot
+> get the address in the range of that validate_addr() checks, also
+> that will cause '/proc/self/maps' have gaps larger than MAP_CHUNK_SIZE.
+> 
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> ---
+>  tools/testing/selftests/mm/virtual_address_range.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
+> index 4e4c1e311247..25f3eb304999 100644
+> --- a/tools/testing/selftests/mm/virtual_address_range.c
+> +++ b/tools/testing/selftests/mm/virtual_address_range.c
+> @@ -64,6 +64,14 @@
+>  #define NR_CHUNKS_HIGH  NR_CHUNKS_384TB
+>  #endif
+>  
+> +#if defined(__riscv) && (__riscv_xlen == 64)
+> +static char *hind_addr(void)
 
-This seems like the wrong way around to me. Why not define what you want 
-to probe first or some priority order? I could see use for kernel to 
-probe whatever is the console device first. Or the rootfs device... You 
-don't need anything added to DT for those.
+This is not a typo by you since this is the name of the original
+function but this should be "hint_addr" right?
 
-Of course, there's the issue that Linux probes are triggered bottom-up 
-rather than top-down.
+> +{
+> +	return NULL;
+> +}
+> +
+> +static void validate_addr(char *ptr, int high_addr) { }
+> +#else
 
+This is something that I am trying to solve over at
+https://lore.kernel.org/lkml/20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com/
+(the solution is still in flux). Since riscv doesn't currently have this
+behavior of restricting the virtual address space, I think it is more
+reasonable to disable this test entirely. After we have a longer-term
+solution with the patch I have up we can adjust the test and re-enable
+it. What do you think?
 
-> This is achieved by adding a dummy device aka probe control device node
-> as provider to a group of devices(consumer nodes) in platform's device
-> tree. Consumers are the devices we want to probe after boot.
+- Charlie
 
-There's the obvious question of then why not make those devices modules 
-instead of built-in?
-
+>  static char *hind_addr(void)
+>  {
+>  	int bits = HIGH_ADDR_SHIFT + rand() % (63 - HIGH_ADDR_SHIFT);
+> @@ -81,6 +89,7 @@ static void validate_addr(char *ptr, int high_addr)
+>  	if (addr > HIGH_ADDR_MARK)
+>  		ksft_exit_fail_msg("Bad address %lx\n", addr);
+>  }
+> +#endif
+>  
+>  static int validate_lower_address_hint(void)
+>  {
+> -- 
+> 2.34.1
 > 
-> To establish control over consumer device probes, each consumer device node
-> need to refer the probe control provider node by the phandle.
-> 'probe-control-supply' property is used for this.
 > 
-> Example:
->     // The node below defines a probe control device/provider node
->     prb_ctrl_dev_0: prb_ctrl_dev_0 {
->         compatible = "linux,probe-control";
->     };
-> 
->     // The node below is the consumer device node that refers to provider
->     // node by its phandle and a result will not be probed until provider
->     // node is probed.
->     pcie@1ffc000 {
->         reg = <0x01ffc000 0x04000>, <0x01f00000 0x80000>;
->         #address-cells = <3>;
->         #size-cells = <2>;
->         device_type = "pci";
->         ranges = <0x81000000 0 0          0x01f80000 0 0x00010000>,
->                  <0x82000000 0 0x01000000 0x01000000 0 0x00f00000>;
-> 
->         probe-control-supply = <&prb_ctrl_dev_0>;
->     };
-
-Sorry, but this isn't going to happen in DT.
-
-> 
-> fw_devlink ensures consumers are not probed until provider is probed
-> successfully. The provider probe during boot returns -ENXIO and is not
-> re-probed again.
-> 
-> The driver provides debug interface /sys/kernel/debug/probe_control_status
-> for checking probe control status of registered probe control devices.
->  # cat /sys/kernel/debug/probe_control_status
->  prb_ctrl_dev_0: [not triggered]
->   Consumers: 1ffc000.pcie
-> 
-> Interface /sys/kernel/probe_control/trigger is provided for triggering
-> probes of the probe control devices. User can write to this interface to
-> trigger specific or all device probes managed by this driver.
-> Once the probe is triggered by user, provider probe control device is added
-> to deferred_probe_pending_list and driver_deferred_probe_trigger() is
-> triggered. This time the probe of probe control device will be
-> successful and its consumers will then be probed.
-> 
-> To trigger specific provider probe:
->   # echo prb_ctrl_dev_0 > /sys/kernel/probe_control/trigger
-> 
-> To trigger all registered provider probes
->   # echo all > /sys/kernel/probe_control/trigger
-> 
-> Signed-off-by: Toyama Yoshihiro <yoshihiro.toyama@sony.com>
-> Signed-off-by: Nayeemahmed Badebade <nayeemahmed.badebade@sony.com>
-
-This is wrong. Either Toyama is the author and you need to fix the git 
-author, or you both are authors and you need a Co-developed-by tag for 
-Toyama.
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
