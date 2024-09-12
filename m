@@ -1,162 +1,229 @@
-Return-Path: <linux-kernel+bounces-326018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77383976147
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53800976152
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EAFB1F220A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AC0285DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89D18BB82;
-	Thu, 12 Sep 2024 06:17:16 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237918BBB4;
+	Thu, 12 Sep 2024 06:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="IBwzBVm+"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3212D7B8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5618BB9F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121836; cv=none; b=A1QcV6T7tAXQrZ0GiW/EbB3CQIwEtbYIM9h5a+CfsMJn69kozcsLr0Rz2K9K/PnqW+QowFaQSIQEFtJE1TaoQylX8eGRdvYEBpPNgn/RoQAeZcuThoFjuYDdqqBXfBCQRycNTC5o/zcNsdLogkrFR2O8heD5dm79hRKOnCwpKf8=
+	t=1726121901; cv=none; b=iD1tpY4qu6rOVdCc/m2ucR/YJ6+pfmZUqN94kfVm5PUO2Nflw/I7L+mDlnN3YKGwkFcrTtSwW71pRSq8M9ZkFIPOZSiQewqgQyRYxFgSldMvZpNQjRQ9ERZP/sAgw/iRNFqmGRYCi/hyiDOsayg3etnHTaqURApc2yMXzv4AQW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121836; c=relaxed/simple;
-	bh=duHnK5RYV1yUWqZgAW97ya6hTIbY6obaSDBWx/IwYJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SQf1CGrFRgkI4PBN5eSHG3cv2DKzJYdsBS5qc51JC9qI0Z9IH5qJVgzcq4gPmDqPXOiRGG0DnKgoJVdE8iUoZ3LwuOWKoRViJwcmXagebwCpReplngcZT9yCJCsHgUKL8RQKHPet3F+Wn6qr1USFMYIfFB9/P1ilq1bGhI/qLi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a0402ee870ce11efa216b1d71e6e1362-20240912
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:c8ceb9bd-ac5c-4bfc-8809-01bfcc939b2d,IP:20,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:40
-X-CID-INFO: VERSION:1.1.38,REQID:c8ceb9bd-ac5c-4bfc-8809-01bfcc939b2d,IP:20,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:40
-X-CID-META: VersionHash:82c5f88,CLOUDID:4941cee16439ebb511a0d559275aaef4,BulkI
-	D:240912141052OPBA8B50,BulkQuantity:1,Recheck:0,SF:66|38|25|17|19|43|74|20
-	0|102,TC:nil,Content:0,EDM:5,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN,TF_CID_SPAM_SNR,
-	TF_CID_SPAM_FAS
-X-UUID: a0402ee870ce11efa216b1d71e6e1362-20240912
-X-User: zhaomengmeng@kylinos.cn
-Received: from localhost.localdomain [(123.149.251.227)] by mailgw.kylinos.cn
-	(envelope-from <zhaomengmeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 133137105; Thu, 12 Sep 2024 14:17:02 +0800
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-To: jack@suse.com,
-	zhaomzhao@126.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v1] udf: return EIO when ftrunctate access beyond end of device
-Date: Thu, 12 Sep 2024 14:16:52 +0800
-Message-ID: <20240912061652.980443-1-zhaomengmeng@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726121901; c=relaxed/simple;
+	bh=JXQ5stJy2yGFyhQM8tYpvYIBlea3Ge+wa2GDoDqdiSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYp/8l7r5WLkUMxll2bzyBqsudiwufZ8Rvee4MUZ5gSA7FnAHDCnj1tlFLgUGhWB77de6itOeVy9piX3uqj9t4uJG2DzTFqAgcD2zs3QsIE60F78iWFxD0SIKdy3JAZgybkJ1YV2OSFCVOPsJeFgLLAoqTuEBVC2Wumy313jVww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=IBwzBVm+; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e1c65eb5bbso337695eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726121898; x=1726726698; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MAcwRzdYBVGpQvvsotib//4T0Ptv25mGEFNsz8/kzr4=;
+        b=IBwzBVm+Dy9DemXiT+1joiWwNQ4MpJ6HiprnZBhfp+qlwYCm1SZOS8UFwa0Ob/wPCW
+         vdT0GLddrfPUul+3HWiREsrr1BVDND1R7IS3vT802MVi0qC8GIU4yHQ7GO4xm81KEdx9
+         TjHA9HiBsqv3ofAFpygNDj+gVBPINMdydaIlxa7xXengpnJtRkikrnl6a/Eeb/ABae/w
+         ks3IT3BnNHYp4r19IbvLouGn3n1x1WKFgjdl3Thz3Yk4xPuVmDxPGtMs1TmPEX/TLFcE
+         VGAPF+76PBRlColfrY2Ua355B6uk/L1vuIEzKCB0wC54ruMA9wW79peGN+bPCNqw8pEJ
+         omLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726121898; x=1726726698;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAcwRzdYBVGpQvvsotib//4T0Ptv25mGEFNsz8/kzr4=;
+        b=DFK+BE/pYUJwg6/a2xclTfEnd4Ofmg39Z00yHdXqAjVa0RUSewRXrmemD6OIoQmqVF
+         cKhQKFDZ/m8MwJCUUOko4ISstvGY/IWxd81ICpI5Y4l4zgDGKAT9dlEcDh5aT35VCqnX
+         gJksSvAls8HNHSY+R45ZHE4z5FgAJdSy+uVc525SZKXaiBWeKdQuUp2Irqrdy5XA5awV
+         aXkQ4zCdqKq74C5lpwi+1EStbynnzav7SJjB7QcEsc+dGBamnnTLCdk3TDsfZGcvxF+H
+         lJ/htu7uS4JeeEzYnQgkYzpSj1U7/rOIH+XGj14gF83YEnM08FJQBJsBZLi+m77Y5Dx1
+         KDiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9P4vN9R+eurzi5kBxJu1yUtBLpDfRodO6pvUmF/C2r2CptvpXLdwumhQDRKEk3oKU4C2wmvrXXmqMnoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdH6Nt4E69d36dp6BBxvGIl42Fnt0J5th/Q9xfJnnbOu3cHOjX
+	eFsfahM5tJimW1tfbWrsX3+OEWRDOaeY1/qtOjUlBro8pI9h33GY0pxIrlyKLm4=
+X-Google-Smtp-Source: AGHT+IH1u/BITj52DSA2KLJ5czFa7HaODYxdqRl9mmjp1F3evKXCtYQOfdJUyouLtu9doLCVCxJHIA==
+X-Received: by 2002:a05:6870:910f:b0:277:eb68:2878 with SMTP id 586e51a60fabf-27c3f6a6e6emr1295326fac.44.1726121898162;
+        Wed, 11 Sep 2024 23:18:18 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:7acc:9910:2c1d:4e65])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190f888a78sm3692711b3a.140.2024.09.11.23.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 23:18:17 -0700 (PDT)
+Date: Wed, 11 Sep 2024 23:18:12 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuKHpFB+uWuJe2xm@ghost>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+ <ZuDoExckq21fePoe@ghost>
+ <ZuHfp0_tAQhaymdy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuHfp0_tAQhaymdy@arm.com>
 
-syzbot reports a udf slab-out-of-bounds as blow:
+On Wed, Sep 11, 2024 at 07:21:27PM +0100, Catalin Marinas wrote:
+> On Tue, Sep 10, 2024 at 05:45:07PM -0700, Charlie Jenkins wrote:
+> > On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
+> > > * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
+> > > > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
+> > > > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
+> > > > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > >> It's also unclear to me how we want this flag to interact with
+> > > > > >> the existing logic in arch_get_mmap_end(), which attempts to
+> > > > > >> limit the default mapping to a 47-bit address space already.
+> > > > > >
+> > > > > > To optimize RISC-V progress, I recommend:
+> > > > > >
+> > > > > > Step 1: Approve the patch.
+> > > > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
+> > > > > > Step 3: Wait approximately several iterations for Go & OpenJDK
+> > > > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
+> 
+> Point 4 is an ABI change. What guarantees that there isn't still
+> software out there that relies on the old behaviour?
 
-loop0: rw=0, sector=117, nr_sectors = 1 limit=0
-syz-executor135: attempt to access beyond end of device
-loop0: rw=0, sector=117, nr_sectors = 1 limit=0
-==================================================================
-BUG: KASAN: slab-out-of-bounds in udf_get_filelongad+0x167/0x1b0 fs/udf/directory.c:526
-Read of size 4 at addr ffff888012113f30 by task syz-executor135/5106
+Yeah I don't think it would be desirable to remove the 47 bit
+constraint in architectures that already have it.
 
-CPU: 0 UID: 0 PID: 5106 Comm: syz-executor135 Not tainted 6.11.0-rc6-syzkaller-00019-g67784a74e258 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- udf_get_filelongad+0x167/0x1b0 fs/udf/directory.c:526
- udf_current_aext+0x435/0x9e0 fs/udf/inode.c:2235
- udf_next_aext+0x8c/0x4a0 fs/udf/inode.c:2171
- udf_extend_file fs/udf/inode.c:677 [inline]
- udf_setsize+0xa8a/0x1280 fs/udf/inode.c:1265
- udf_setattr+0x3c7/0x5d0 fs/udf/file.c:236
- notify_change+0xbca/0xe90 fs/attr.c:503
- do_truncate fs/open.c:65 [inline]
- do_ftruncate+0x46b/0x590 fs/open.c:181
- do_sys_ftruncate fs/open.c:199 [inline]
- __do_sys_ftruncate fs/open.c:207 [inline]
- __se_sys_ftruncate fs/open.c:205 [inline]
- __x64_sys_ftruncate+0x95/0xf0 fs/open.c:205
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f13639ac249
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff0302d508 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f13639ac249
-RDX: 00007f13639ac249 RSI: 0000008002007ffb RDI: 0000000000000005
-RBP: 00000000000013f1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff0302d550
-R13: 00007fff0302d630 R14: 431bde82d7b634db R15: 00007f13639f501d
+> 
+> > > > > I really want to first see a plausible explanation about why
+> > > > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
+> > > > > like all the other major architectures (x86, arm64, powerpc64),
+> > > > 
+> > > > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
+> > > > configuration. We end up with a 47-bit with 16K pages but for a
+> > > > different reason that has to do with LPA2 support (I doubt we need this
+> > > > for the user mapping but we need to untangle some of the macros there;
+> > > > that's for a separate discussion).
+> > > > 
+> > > > That said, we haven't encountered any user space problems with a 48-bit
+> > > > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
+> > > > approach (47 or 48 bit default limit). Better to have some ABI
+> > > > consistency between architectures. One can still ask for addresses above
+> > > > this default limit via mmap().
+> > > 
+> > > I think that is best as well.
+> > > 
+> > > Can we please just do what x86 and arm64 does?
+> > 
+> > I responded to Arnd in the other thread, but I am still not convinced
+> > that the solution that x86 and arm64 have selected is the best solution.
+> > The solution of defaulting to 47 bits does allow applications the
+> > ability to get addresses that are below 47 bits. However, due to
+> > differences across architectures it doesn't seem possible to have all
+> > architectures default to the same value. Additionally, this flag will be
+> > able to help users avoid potential bugs where a hint address is passed
+> > that causes upper bits of a VA to be used.
+> 
+> The reason we added this limit on arm64 is that we noticed programs
+> using the top 8 bits of a 64-bit pointer for additional information.
+> IIRC, it wasn't even openJDK but some JavaScript JIT. We could have
+> taught those programs of a new flag but since we couldn't tell how many
+> are out there, it was the safest to default to a smaller limit and opt
+> in to the higher one. Such opt-in is via mmap() but if you prefer a
+> prctl() flag, that's fine by me as well (though I think this should be
+> opt-in to higher addresses rather than opt-out of the higher addresses).
 
-The root cause is:
-  udf_extend_file
-    ->inode_bmap       --> etype == -1 and epos.bh == NULL
-     -> udf_next_aext  --> return -1 because reading block failed
-       -> sb_read --> return NULL because access beyond end of device
+The mmap() flag was used in previous versions but was decided against
+because this feature is more useful if it is process-wide. A
+personality() flag was chosen instead of a prctl() flag because there
+existed other flags in personality() that were similar. I am tempted to
+use prctl() however because then we could have an additional arg to
+select the exact number of bits that should be reserved (rather than
+being fixed at 47 bits).
 
-Under this, etype == -1, epos.bh == NULL, epos.offset is 24, which is
-less than sizeof(struct extentedFileEntry), aka 216. As a result,
-it skipped the epos.bh check and goes into udf_next_aext(). Since the
-epos.offset is illegal, udf_get_filelongad's first argument ptr,
-	ptr = iinfo->i_data + epos->offset -
-		udf_file_entry_alloc_offset(inode) +
-		iinfo->i_lenEAttr;
-points to some buffer before iinfo->i_data, which triggeres KASAN's
-warnning.
+Opting-in to the higher address space is reasonable. However, it is not
+my preference, because the purpose of this flag is to ensure that
+allocations do not exceed 47-bits, so it is a clearer ABI to have the
+applications that want this guarantee to be the ones setting the flag,
+rather than the applications that want the higher bits setting the flag.
 
-The fix is to add addition check on etype, epos.bh and epos.offset,
-when ftruncate accesses beyound end of device, just return EIO and failed.
+- Charlie
 
-Reported-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7a4842f0b1801230a989
-Tested-by: syzbot+7a4842f0b1801230a989@syzkaller.appspotmail.com
-Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
----
- fs/udf/inode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> -- 
+> Catalin
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 4726a4d014b6..66f73f728dae 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -660,6 +660,16 @@ static int udf_extend_file(struct inode *inode, loff_t newsize)
- 	udf_discard_prealloc(inode);
- 
- 	etype = inode_bmap(inode, first_block, &epos, &eloc, &elen, &offset);
-+
-+	/*
-+	 * when ftruncate attempt to access beyond end of device, sb_read will
-+	 * fail with epos.bh be null and return etype be -1, just return EIO.
-+	 */
-+	if (etype == -1 && !epos.bh && epos.offset == sizeof(struct allocExtDesc)) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
- 	within_last_ext = (etype != -1);
- 	/* We don't expect extents past EOF... */
- 	WARN_ON_ONCE(within_last_ext &&
--- 
-2.43.0
+
 
 
