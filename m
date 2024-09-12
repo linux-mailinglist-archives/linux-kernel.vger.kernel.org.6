@@ -1,230 +1,180 @@
-Return-Path: <linux-kernel+bounces-326342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824359766CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F079F9766D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAFC283B7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C21E1F202CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7131818E349;
-	Thu, 12 Sep 2024 10:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5FA1A0B1B;
+	Thu, 12 Sep 2024 10:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="V3xb6Xed"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="IAdEHiUR"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9000719F40D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDEE1E51D;
+	Thu, 12 Sep 2024 10:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726137554; cv=none; b=WSObujAAl/FfAUCm9nusjGkP3yKMhZTkS43JBNCXjhHxf+nFXwtnzy6sSTid46z2ymoXCP7CZE95MrblJtsQ6zuexKTSEcWNjjzRGTI+lh3WGw9LP3+TtFwgNorFOs4kWtqrkRc8P7wNe+qPZEEf+LdpsshC9TxDcNP8odanCbw=
+	t=1726137680; cv=none; b=l/R8QPsKfwpEwlGb0SiPT4/AMru6RdWiGh0ulEBtvgQpal7jntKmBn8+L+Ac8sqPmOCFBocIX+8Hgsfa8oiiOi1T8zhoZA9V3Js73V9s2OVqW3nzbeDQM7xNvh+1cBp9rfMIknZGdhkco4epYCKJUnlGSPbhDmnRyp6L5DasZY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726137554; c=relaxed/simple;
-	bh=WRqjubW+I7cN3Hd71LqTLIqW6XSd4ucEaJXbUbMu5Ro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=eGOHNNriZ4Agbm4nQIISKyVHO+erkHLNw5SODQzqY1F/YmVjkAVH1ckkV2K2rrz1YId6WsrjzUJ7lf8Asxg7filBJGp3LgH1a8J5zwl39bzlSaxSpgnx30kUyXdGc1VCigxiG0eRCuP9iyLgmADovsk3tq3aX4ndn1aMBuletFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=V3xb6Xed; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240912103905epoutp029e730d7d31d165359efaf622a26af58b~0ePOknFZj1053710537epoutp02U
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:39:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240912103905epoutp029e730d7d31d165359efaf622a26af58b~0ePOknFZj1053710537epoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726137545;
-	bh=ssRExWKD5A07LgoUhNw/tWVunYPb56F3kIxoBfoq3pA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V3xb6Xed1HfphxdLWvHDLMTduz8Y+E9s9xqVEbEuYEgWiG9k/D70jJev8+kWevHYX
-	 oMvHl+GTj0wxYSLvYyvuRNKtTvb1C2PfdW/nLzx0OGbfoh15OTvu6UkoB8W0B0pehW
-	 E/KWVCAQyEmtXg+Z6zWOGOPWCouCGJYqp41AFiS4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240912103904epcas2p1a914b7015e53933a7cdd39e73aa5fa05~0ePOPpIEQ0836508365epcas2p1m;
-	Thu, 12 Sep 2024 10:39:04 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.99]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4X4DSm0xf8z4x9Py; Thu, 12 Sep
-	2024 10:39:04 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	52.ED.19039.7C4C2E66; Thu, 12 Sep 2024 19:39:03 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240912103903epcas2p1ad72b43cca455c810d15a2c5ff5c5986~0ePNFP3Uc0836408364epcas2p10;
-	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240912103903epsmtrp19746757a5a0ea17d62ef51f043103b4f~0ePNEOyH70661906619epsmtrp1S;
-	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
-X-AuditID: b6c32a4d-305ff70000004a5f-2a-66e2c4c71c06
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	66.AE.08456.7C4C2E66; Thu, 12 Sep 2024 19:39:03 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.60]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240912103903epsmtip18be9d75594ce37d295394647d3681498~0ePM1fFhS3132831328epsmtip17;
-	Thu, 12 Sep 2024 10:39:03 +0000 (GMT)
-From: Sunyeal Hong <sunyeal.hong@samsung.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add peric1, misc and hsi0/1
- clock DT nodes
-Date: Thu, 12 Sep 2024 19:38:56 +0900
-Message-ID: <20240912103856.3330631-4-sunyeal.hong@samsung.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
+	s=arc-20240116; t=1726137680; c=relaxed/simple;
+	bh=jpfMi5Rm1Hk8MtZMwmhmcakH/o80RIYQBe//R+tRjcE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oX1ec99sQZ0Z7YPc4+wPTAXaSQHAsHX+FPzL+jnvPY5VJVLTtKvJEC+OGgFhuY72gBwB47VgRFQsNKqQLplRS+zlu7G1PYg0ix73HpGWkeOboLK8pdwjYbsEBDm/FioD8W5dd2BRw3/MfMSp10qWCGS6stPDG/2KZeq8tALgAUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=IAdEHiUR; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726137679; x=1757673679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jpfMi5Rm1Hk8MtZMwmhmcakH/o80RIYQBe//R+tRjcE=;
+  b=IAdEHiUR54VISxAhMHt0omH2HAdL9pNts0HN45cvEA22zXD9PAptiQnu
+   uAMMFR5MPsWr+ZBXHXals2sVcaWrCxd67Fd+nkNXILSlC8/7N/zSdsJy+
+   PKu1vuNu+gH06ZUndUkqbHNu8EWnaSBFbaNR5s5cY3XEwP4hL3O70qdXb
+   IbzOgTEbE8gVwDd2RsKxpuNAb4N4prhY/tVgYBpWKCxDgJxAT5QyzFpQM
+   MR+y6MtDCPUOLZdelKSwGbyPTDU6LnFwbde9bWcrxKABV9zJESUCXnsz7
+   FGFxBLfPEEUaoaXJuDbqF1sKR/eyyzj+ZYvaoFquPjH4CDTeR7VGyZjw5
+   g==;
+X-CSE-ConnectionGUID: tqbkiD8eSzma3pF+wzscBA==
+X-CSE-MsgGUID: Xax4C/E3Tu2vJ2YmG1yi8w==
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="asc'?scan'208";a="31694078"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 03:41:17 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 12 Sep 2024 03:40:48 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 12 Sep 2024 03:40:44 -0700
+Date: Thu, 12 Sep 2024 11:40:11 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Hal Feng <hal.feng@starfivetech.com>
+CC: WangYuli <wangyuli@uniontech.com>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "sashal@kernel.org" <sashal@kernel.org>,
+	William Qiu <william.qiu@starfivetech.com>,
+	"emil.renner.berthing@canonical.com" <emil.renner.berthing@canonical.com>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>, Walker Chen
+	<walker.chen@starfivetech.com>, "robh@kernel.org" <robh@kernel.org>,
+	"kernel@esmil.dk" <kernel@esmil.dk>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
+	<aou@eecs.berkeley.edu>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "richardcochran@gmail.com"
+	<richardcochran@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 6.6 v2 3/4] riscv: dts: starfive: Add the nodes and pins
+ of I2Srx/I2Stx0/I2Stx1
+Message-ID: <20240912-lividly-remover-6d71b985a803@wendy>
+References: <20240912025539.1928223-1-wangyuli@uniontech.com>
+ <D2DCF9E2F70EDC93+20240912025539.1928223-3-wangyuli@uniontech.com>
+ <ZQ2PR01MB13070BA638E892A5516DEA8CE6642@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmue7xI4/SDPZft7J4MG8bm8WaveeY
-	LK5/ec5qMf/IOVaLl7PusVlsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi/97drBbHH7Tzmrx
-	79pGFoumZeuZHPg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3KtslITUxJLVJIzUvOT8nM
-	S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBulNJoSwxpxQoFJBYXKykb2dTlF9a
-	kqqQkV9cYquUWpCSU2BeoFecmFtcmpeul5daYmVoYGBkClSYkJ0x5eNzxoKzohVzDt1haWB8
-	JdDFyMkhIWAiMXP6DJYuRi4OIYE9jBKL/61gAUkICXxilJjxvQgi8Y1R4szMNUAJDrCOA9v0
-	IOJ7GSV+v9wD1f2RUWLpkclgRWwCuhJ//jmAxEUE9jNJ3FowkxXEYRY4yyix6vAesBXCArES
-	lx88ZQSxWQRUJaZd38kOYvMK2EtsnTCHHeI+eYnrj48ygdicAg4Sa+7NYIGoEZQ4OfMJmM0M
-	VNO8dTYzyAIJgZkcEp2X7kE1u0i8XzKTCcIWlnh1fAtUXEriZX8blJ0vMfn6WyaI5gZGiWv/
-	upkhEvYSi878ZAd5h1lAU2L9Ln2I95UljtyC2ssn0XH4LztEmFeio00IolFN4tOVy1BDZCSO
-	nXgGZXtIPL/3kQkSWJMZJT5s280ygVFhFpJ3ZiF5ZxbC4gWMzKsYpVILinPTU5ONCgx181LL
-	4bGcnJ+7iRGcdrV8dzC+Xv9X7xAjEwfjIUYJDmYlEd5JbI/ShHhTEiurUovy44tKc1KLDzGa
-	AgN8IrOUaHI+MPHnlcQbmlgamJiZGZobmRqYK4nz3mudmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
-	pME654XKBOva6zOvf6w499B8lsyPH0IfbCSLgqely8jdV/nVpyHbV/Eyaw+X5qPeuICXH40P
-	c/f6TfHef++SPvtR1t0XteRVhPxPO9++tf/rn4sl7KyeVaUnfI4cZOpZ9GJRIk/49L1xhR9y
-	EgKyIgUNlk+O/3F4a7H+a/UbZdcna/ffZ/tw7Mq1nxEhR2q/+Udx2t90edRdunvTVH7//ZL3
-	nuQYlognHNsSuyttslXULc00jkiFLUcWnTy1tjzHivGwE6eQ8uQI49Svxx9kPjlpIXFYZF3k
-	ljv9ExtbGJb3bZl/d1Hc6V/zmYUOv/7Js267wZ/9D3Y/KhY77vWidVtyy84Fjp4qRfPVlyt6
-	cyqxFGckGmoxFxUnAgB6ceZXRAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSnO7xI4/SDJ6fFbZ4MG8bm8WaveeY
-	LK5/ec5qMf/IOVaLl7PusVlsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi/97drBbHH7Tzmrx
-	79pGFoumZeuZHPg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgypjy
-	8TljwVnRijmH7rA0ML4S6GLk4JAQMJE4sE2vi5GLQ0hgN6PEnLZ/rF2MnEBxGYmNDf/ZIWxh
-	ifstR1ghit4zSpye8ZAFpJlNQFfizz8HkLiIwFEmiU0LnjGDOMwClxklzu6C6BYWiJY4+mEi
-	mM0ioCox7fpOMJtXwF5i64Q5UBvkJa4/PsoEYnMKOEisuTeDBcQWAqrZvesLC0S9oMTJmU/A
-	bGag+uats5knMArMQpKahSS1gJFpFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcGRo
-	ae1g3LPqg94hRiYOxkOMEhzMSiK8k9gepQnxpiRWVqUW5ccXleakFh9ilOZgURLn/fa6N0VI
-	ID2xJDU7NbUgtQgmy8TBKdXAtCBQuTLv/oqoWGXNSwUvt95p5dXYVa2dxV8efW+uwKyH2noB
-	sSeqJv9oi7Z+M2dxw/G/SRcC/x4z1/1qn7fWa65m2b9vWdoxi/j+KFW23TIuPqfmpMP0S/Zr
-	dzS/VnVA6oW8rwHy9jv0UhpuXTHyU7r4v+ICg7PdPnvVpo2rmZ+GvKts3L14S8YN80MKWXPc
-	HZp5JHltPNd418pvZbC1Ft5nb1tyOm+v/vapL2dOddjS9k3wis+r9M9X7i6RYAlYaj17+qZJ
-	AQd0mJ7oi/8LnXORy0TD4sC067s3fHTWXJ//03n+c0Xle5f6BepX1vktlp3pfMJ04UPjfRm3
-	b8xfcmXByjtK9ief+n2M006rUWIpzkg01GIuKk4EAPE8/VP7AgAA
-X-CMS-MailID: 20240912103903epcas2p1ad72b43cca455c810d15a2c5ff5c5986
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240912103903epcas2p1ad72b43cca455c810d15a2c5ff5c5986
-References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
-	<CGME20240912103903epcas2p1ad72b43cca455c810d15a2c5ff5c5986@epcas2p1.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jXCjevABJ3fUeyuz"
+Content-Disposition: inline
+In-Reply-To: <ZQ2PR01MB13070BA638E892A5516DEA8CE6642@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 
-Add cmu_peric1 for USI, I2C and I3C clocks respectively.
-Add cmu_misc for MISC, GIC and OTP clocks respectively.
-Add cmu_hsi0 for PCIE clocks respectively.
-Add cmu_hsi1 for USB and MMC clocks respectively.
+--jXCjevABJ3fUeyuz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
+On Thu, Sep 12, 2024 at 10:23:09AM +0000, Hal Feng wrote:
+> > On 12.09.24 10:55, WangYuli wrote:
+> > +	i2srx_pins: i2srx-0 {
+> > +		clk-sd-pins {
+> > +			pinmux =3D <GPIOMUX(38, GPOUT_LOW,
+> > +					      GPOEN_DISABLE,
+> > +					      GPI_SYS_I2SRX_BCLK)>,
+> > +				 <GPIOMUX(63, GPOUT_LOW,
+> > +					      GPOEN_DISABLE,
+> > +					      GPI_SYS_I2SRX_LRCK)>,
+> > +				 <GPIOMUX(38, GPOUT_LOW,
+> > +					      GPOEN_DISABLE,
+> > +					      GPI_SYS_I2STX1_BCLK)>,
+> > +				 <GPIOMUX(63, GPOUT_LOW,
+> > +					      GPOEN_DISABLE,
+> > +					      GPI_SYS_I2STX1_LRCK)>,
+> > +				 <GPIOMUX(61, GPOUT_LOW,
+> > +					      GPOEN_DISABLE,
+> > +					      GPI_SYS_I2SRX_SDIN0)>;
+> > +			input-enable;
+> > +		};
+> > +	};
+> > +
+> > +	i2stx1_pins: i2stx1-0 {
+> > +		sd-pins {
+> > +			pinmux =3D <GPIOMUX(44, GPOUT_SYS_I2STX1_SDO0,
+> > +					      GPOEN_ENABLE,
+> > +					      GPI_NONE)>;
+> > +			bias-disable;
+> > +			input-disable;
+> > +		};
+> > +	};
+> > +
+> > +	mclk_ext_pins: mclk-ext-0 {
+> > +		mclk-ext-pins {
+> > +			pinmux =3D <GPIOMUX(4, GPOUT_LOW,
+> > +					     GPOEN_DISABLE,
+> > +					     GPI_SYS_MCLK_EXT)>;
+> > +			input-enable;
+> > +		};
+> > +	};
+> > +
+> >  	mmc0_pins: mmc0-0 {
+> >  		 rst-pins {
+> >  			pinmux =3D <GPIOMUX(62, GPOUT_SYS_SDIO0_RST,
+>=20
+> The above changes had been reverted in commit e0503d47e93d in the mainlin=
+e.
+> Is it appropriate to merge this patch into the stable branch?
+>=20
+> https://lore.kernel.org/all/20240415125033.86909-1-hannah.peuckmann@canon=
+ical.com/
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 91882b37fdb3..c759134c909e 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -172,6 +172,17 @@ chipid@10000000 {
- 			reg = <0x10000000 0x24>;
- 		};
- 
-+		cmu_misc: clock-controller@10020000 {
-+			compatible = "samsung,exynosautov920-cmu-misc";
-+			reg = <0x10020000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_MISC_NOC>;
-+			clock-names = "oscclk",
-+				      "noc";
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
-@@ -247,6 +258,19 @@ pwm: pwm@109b0000 {
- 			status = "disabled";
- 		};
- 
-+		cmu_peric1: clock-controller@10c00000 {
-+			compatible = "samsung,exynosautov920-cmu-peric1";
-+			reg = <0x10c00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_PERIC1_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_PERIC1_IP>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "ip";
-+		};
-+
- 		syscon_peric1: syscon@10c20000 {
- 			compatible = "samsung,exynosautov920-peric1-sysreg",
- 				     "syscon";
-@@ -283,12 +307,38 @@ pmu_system_controller: system-controller@11860000 {
- 			reg = <0x11860000 0x10000>;
- 		};
- 
-+		cmu_hsi0: clock-controller@16000000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi0";
-+			reg = <0x16000000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI0_NOC>;
-+			clock-names = "oscclk",
-+				      "noc";
-+		};
-+
- 		pinctrl_hsi0: pinctrl@16040000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16040000 0x10000>;
- 			interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_hsi1: clock-controller@16400000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi1";
-+			reg = <0x16400000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI1_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_HSI1_USBDRD>,
-+				 <&cmu_top DOUT_CLKCMU_HSI1_MMC_CARD>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "usbdrd",
-+				      "mmc_card";
-+		};
-+
- 		pinctrl_hsi1: pinctrl@16450000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16450000 0x10000>;
--- 
-2.46.0
+Hah, I had gone looking this morning because I had a hunch that there
+was some missing fix this series didn't, but couldn't remember what it
+was. I completely forgot that some of this was non-present overlay
+related stuff that had had to be reverted.
 
+So yes, if it had to be reverted in mainline, it shouldn't get
+backported. Thanks for spotting that Hal.
+
+Cheers,
+Conor.
+
+--jXCjevABJ3fUeyuz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuLFCwAKCRB4tDGHoIJi
+0kLkAQDZzYyDnfaVx1KPdhfL5iMpjCffndWbDiKFnYhExyDQbAD/b8scbjJYHqJK
+OHORY7atNwZsEw8jTLQpkmAFLu/VRAc=
+=3sWz
+-----END PGP SIGNATURE-----
+
+--jXCjevABJ3fUeyuz--
 
