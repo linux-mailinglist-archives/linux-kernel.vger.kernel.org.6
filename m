@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-326834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA27976D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E9F976D89
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104E628DBE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6121F24B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1491BBBCB;
-	Thu, 12 Sep 2024 15:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905981BCA02;
+	Thu, 12 Sep 2024 15:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gl9HjWgx"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+c5MCJb"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA951BA299
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6862C1B9849
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154136; cv=none; b=tKVMdBF5C1+qqhfPCYjVDTuE/iBCXpK0iqYlD/wH2tgo01xJpDA+xpTQ7T5NnN4kWAhct9GQjHuhD+RnCCOmS3eP+L/ghYWCd/kizIFGD3dkyU5YKW8zaYemsFyWyXc5A3bzcB8n3wdrfJ6VXr8gtjCair47xeH9I7GpWtMa6zk=
+	t=1726154147; cv=none; b=O5VQvmc6hnISEi0FwtXPzWJ82MGqiARE6bzckCoWt5lg/WXDKhP9llAVJW4zt4/+M35mWOEsIxs9HAdIKnTqQYy16WRUCRwDZNpDVaW91tGef5qiuHZvDv7F/Q4ABkGebI/LUlvkeFHGGF7KK0RFzM2YlV3XWYkpOiLtQdz11LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154136; c=relaxed/simple;
-	bh=ZPx4h96mRwkldOlgceAEmagWmM1V8EKIPeCKc7K0/Wg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U9sIn4M70JNoC5KcQ3v6ENsYkmeyky36kMOP8aIwbVh0w+GfMU+YHBEBSwevGyVQiOxfCCUI5Xf0l6bRNqoeP4XfVT28JGHqke0RLeZW1/chd+P82BwTXd4z91fNbuUJO/nR5pgqwOuo/o8fm0WvYbHu7aJbqLhghpdob0P1aQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gl9HjWgx; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-82a626d73efso41412939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:15:34 -0700 (PDT)
+	s=arc-20240116; t=1726154147; c=relaxed/simple;
+	bh=6DeNJKisdHYMTlnWCPVFWo+z9XDLlOGPOF91RO/mKyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=goCMcjnl8eOjrtpjaFzOGsTKyuYr0AoSOiwYAqx1lLWf+41M3q4VETUukoHaZj9LEJrT+652OVOhR1flZElQBJ55WeACFTCvTcgtY3K/PakBPksJZvdG7TPIecM4gFlwSGAK4djWtR51KPIO9I69rMEqjZE/MxVAAVvPhsT69kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+c5MCJb; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so12679731fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:15:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726154133; x=1726758933; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qsd4xIZ2+CjD4Q1wOFyd3+yQAtEqnkaWLKPfVRRwPdk=;
-        b=Gl9HjWgxMVzvH1ehkCUaa0kBrXD4Nr8q/tgGprNZhoBRRjuPUHOaU6ESDQjh1W4wZj
-         KV5Ytsti4BapSYH92+m0if7uOsMzYNq4gfveUKaYvfvf53AKm93bI5027xOf3MK3pjon
-         csX9U8rp4rcUH6APk+0cEF5u8dXnh9MV4MNO4=
+        d=linaro.org; s=google; t=1726154144; x=1726758944; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
+        b=m+c5MCJb9kVsj82Xu37so6GB9Pbjz8WlGaNo6yPhg1+bWxxUPOGdc/CEjCE5hPL0xQ
+         HhIaFsA15nzQWQheb/qMjDTCv7i0tVhFwoHHPF/lp7vcyIoWEYyl0Om4K5Th24PcPhOY
+         jmEdq9sfaOnUDCj++5eOgTu4PJAPm5O949KnxjyuRMTe2zMUj9kWSVwSdDgkJxXrL4DK
+         qgRsRbw0PlQlruhnbCRSmMV2MxW6f2iWzSGfHFdwFW+U2tmd2FLrubt3E8Ztz7kDI+7d
+         nkVwjgp4BlOpAfRf6zrItqnb+nPhMl5dXfB+3tca84xzMu5f4iSkaTNsGpcwvFuEHDaC
+         UYsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154133; x=1726758933;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsd4xIZ2+CjD4Q1wOFyd3+yQAtEqnkaWLKPfVRRwPdk=;
-        b=U9bv1Fyg2U1XfhIai90E9qCfcMRINcjnRdoaOl4sWTeUy4KgHt/GlsJ1uUINIYgMAG
-         Jecnl+/68sprx4Fj6ymBy23AmTLrFUFenMK79YNUznoEpzra4oNFR72l950TMhlh/gn+
-         oHsG7HpqL7Qlt6ASkppEC/ppGIp0Ru/1Rbo2QVjiT7MkLbqaV0JjNbsnmYc87HirsSoP
-         MXy4c5sMDEirsT0VNWjsSH4kLonzEf8POoTlTGUUXGaiz266X4MBgJwep0SiSoAN0u07
-         YvKybzFaWgs+Doix7xo7oaBQBcanu8dP3k3IJonaVVsOyzLBGxna2mBIj59wzETKBb+6
-         TDhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWShAq9932FpkPFtRPDU2DUwuvxwNnF7ko0df7jPFU8oxKQ1m0aEpoxYdLjsO832BDkszk6rhHbnVrZ3X0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx02xBfaDuTDTxW8S5NhGKr0TQVEMPnxhZu983cpW2AaNCuNMXI
-	d57eBWYaCmnizHqCSCU9AVgTbOtyBk5ueGw9XsCeNFa7h0uyKWMFP0mKlCR9z1Y=
-X-Google-Smtp-Source: AGHT+IGFR+J+i/XR3KgbXvrHYqHt6yJiEXDvvVlLm27Uhq8xsIv+4DM5IjAe0bIdrqg/kJJSPOQBiA==
-X-Received: by 2002:a05:6e02:1708:b0:376:410b:ae69 with SMTP id e9e14a558f8ab-3a0848ff007mr31017695ab.15.1726154133134;
-        Thu, 12 Sep 2024 08:15:33 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a0882aae74sm2171745ab.30.2024.09.12.08.15.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 08:15:32 -0700 (PDT)
-Message-ID: <e4d79b9f-3a8e-4e54-9033-cfb8998d06de@linuxfoundation.org>
-Date: Thu, 12 Sep 2024 09:15:31 -0600
+        d=1e100.net; s=20230601; t=1726154144; x=1726758944;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
+        b=Qx/DU1kwTJokkCZ4fw9bbJ+229PqaYwIXOMjeResBFZEOWRw0zPdDh7xchojUEHqO2
+         jWYLT/X1348FFRDXJN4cONO22p3TfwWj9iFw4FYQuKOSwBD96znRFptLsmh9ptMp+Y2Y
+         IrcEHcgTav+iKeQ+Ur7j0rhZHntN98OvQfZhQ+O3C/BSgBbubYTy9eP3SVRKF3ujlSKB
+         giQhx6dFtPKZmz3nfLlcMuM2/7KxrxHZ2tV0CcHNOWL9z9E86PiiS0u/nqCyFrQL4S9A
+         HU6MJv2Y8MHgknHKPPtI+idBWiFegpw5qqyezrGGNoanCY82UBRaxD+M0X+Hx7P9Xbqp
+         SuoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKtEb98aGk9ZmaA/WroGnX5GcDPP7Wsrw+frIDf4/E1CDgRCqQQap0MOHrG1eutvmrsBA2lmivEfFDhz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfSDIdgWiZ3BcabvAhgRZ011WNp6KsdLzcDUQwPHjRUjI1/Iph
+	u/rSZj0TtUQd9WfiZiR+9kNtkP2WglEBBoNhvl4GbtGaQE96Y0maW58DScXdTrI=
+X-Google-Smtp-Source: AGHT+IEq3+0QP1kTu16Ee8cKa/6tDbQAbGkULUNu0YLqrcV48CRN+wczhR73Rl5UaQW8a6CDxJLzNg==
+X-Received: by 2002:a05:651c:b0c:b0:2f3:f193:d2d0 with SMTP id 38308e7fff4ca-2f787f2dacfmr18360581fa.33.1726154142906;
+        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c0b2138sm18952261fa.137.2024.09.12.08.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
+Date: Thu, 12 Sep 2024 18:15:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/msm8998: make const arrays ratio_list and
+ band_list static
+Message-ID: <fbgqvfhansee6zklmziht7igpebsbwt7xdfzqdq4qwkjbff2p3@cb43iqi4oxxx>
+References: <20240912151037.592477-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] pm: cpupower: bench: print path fopen failed
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Renninger
- <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
- "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>,
- Peng Fan <peng.fan@nxp.com>,
- "open list:CPU POWER MONITORING SUBSYSTEM" <linux-pm@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240912013846.3058728-1-peng.fan@oss.nxp.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240912013846.3058728-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912151037.592477-1-colin.i.king@gmail.com>
 
-On 9/11/24 19:38, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Thu, Sep 12, 2024 at 04:10:37PM GMT, Colin Ian King wrote:
+> Don't populate the const read-only arrays ratio_list and band_list on the
+> stack at run time, instead make them static.
 > 
-> Print out the config file path when fopen failed. It will be easy
-> for users to know where to create the file.
-
-Send these two patches as a series with a cover letter.
-
-Also what is changing - you can include what change: use the
-same subject line in here.
-
-The subject line can be improved to say more than fopen() failed.
-Which file open failed?
-
-The message can be informative about which file:
-  about which file.
-
-e.g: pm: cpupower: bench: print config file path when open fails
-
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   tools/power/cpupower/bench/parse.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
-> index e63dc11fa3a5..366b20f9ddf1 100644
-> --- a/tools/power/cpupower/bench/parse.c
-> +++ b/tools/power/cpupower/bench/parse.c
-> @@ -166,7 +166,7 @@ int prepare_config(const char *path, struct config *config)
->   	configfile = fopen(path, "r");
->   	if (configfile == NULL) {
->   		perror("fopen");
-> -		fprintf(stderr, "error: unable to read configfile\n");
-> +		fprintf(stderr, "error: unable to read configfile: %s\n", path);
 
-While you are at it, fix it to use strerror() instead of calling perror()
-followed by fprintf().
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-
->   		free(config);
->   		return 1;
->   	}
-
-thanks,
--- Shuah
+-- 
+With best wishes
+Dmitry
 
