@@ -1,196 +1,110 @@
-Return-Path: <linux-kernel+bounces-326005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43828976117
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0E7976113
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061B22870CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A761F29465
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F318BB8B;
-	Thu, 12 Sep 2024 06:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976418950A;
+	Thu, 12 Sep 2024 06:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="j8+LAdJ/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UmIliIJr"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hRCNg49e"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A136189F2A;
-	Thu, 12 Sep 2024 06:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2184D5028C;
+	Thu, 12 Sep 2024 06:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121627; cv=none; b=TIDfz1stG1okIjY//MUuKKEAh74rP5HoRKl12MngCL/TyS9bVhtwV0tLU+l8kC4NXlOustKg4jdc0I5zN3JGVaX+adGqvmPe6c6HrGn72NOKMjyHwR6a9pO71ZjiUOu6CBl/faZuXowpskXtDNEGg2gApmz3pjzu0snzhV2VtQM=
+	t=1726121622; cv=none; b=uBjruxzDb9J/4IbhO0QjELxUvYEvJz9UR7kG2LrHuQIPhPhgOSb7bpMZm5DbI3uqh5Le1J0sGd9dI0NyhIf/viCFpTWC0qEWbEU5N6fpX5vxF4+ThYAwplUCZnsbRC0wn+jvJVnBHPtJYft2dlanoyLzegyz8RU4+J+bSu/lBmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121627; c=relaxed/simple;
-	bh=BoQDVRthtqE+Gqlz8Lz2NTTlPMmQIBRBNASIepQ2WFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFwQpSQg8Bu28IJ8y1TNLhTJktIxS4KyRwHiqpIusexjk2CBVFI48yVmRYz+HgHRwUpv+i+ulj2iVBd2COyp37/dRcDvSpCXlkhbiOtrTXXzb5h96SnlKP250P5LjGY8Z4n/9/3A5itWibl9BaZ1zh6C1SqIBfBTH0Ikl6GkSQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=j8+LAdJ/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UmIliIJr; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id A604F13800E0;
-	Thu, 12 Sep 2024 02:13:44 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 12 Sep 2024 02:13:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1726121624; x=1726208024; bh=isC2Kp1hIU
-	WEayfUMBsVtTA7t2dFaQ1PBjNe7RjZtw8=; b=j8+LAdJ/WBluH5v7RLVgv7AQz1
-	mswF4YRFa1Ysw9rbOyWunN/53aEf4jpuBL8FmJh93Dk4nk1zpFKVawyiQo3j4dPD
-	dZGG7QuZOg3JFTj5mWpfA2R2p1YJAqkvMDaHevCk1KQRb2YC6d9L76g2Gtv249Yq
-	hJ95mXzgj6Wp4yTeocWvrS7ctQFij0ttoqcuzl1QdRjilnsk65GybnmmPKj0TKcr
-	4yEBKrXkhERldOecOZp/Z3cFjYDmDkEvYsa/DILQ2jOe+Ilx6YqhnElpnCoUPwOz
-	pn0dut1sxwOalxqVgh9OZ85E8VPL+KI9BpdA8xKJ00gwLgy2X3zMfBuomIng==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1726121624; x=1726208024; bh=isC2Kp1hIUWEayfUMBsVtTA7t2dF
-	aQ1PBjNe7RjZtw8=; b=UmIliIJrLL4BJhNgVUzndBtRDUkjlQQo200RPvaTyATe
-	aQdR0ENWVZXJcjn0WPAxNObdagJE/csVn2LL9nB5O7iOS2/8IY///XDvNHYD+fuP
-	/Hi45pJ2MAOXU82LGQG/qr2OP5xBauZ3DygOWARHdlmYBOUQOxoKYXjEOZTHhROp
-	84Skad/2L8YZx6NOuYNsww+GJoR/pvkEzgymSyYm/wo2yKpjyevWAsGdTfMulbBe
-	HnTbtYrnQN32eQHAcSmAMOyfpEQd0XniUluqaxVGn8LoAgBnukAQ/udSu4ZIEKWT
-	qIUjkh88y3eHW5RmL8txkV+XV1OLIu0P90ZnjUIoFA==
-X-ME-Sender: <xms:mIbiZu6tAquVzh7oZ6gw5wXUF_3PCIotOOLCFI49MNQ9QAAbjeXNbw>
-    <xme:mIbiZn7-xTswAPZ44NJkaRnY0bgsKxEtErh4Sck-G2jDgzUI6N4thlF739ECdJPfU
-    sQTYPiI5Glpwak0FqM>
-X-ME-Received: <xmr:mIbiZtfnei3U-eLNH0m7UrT9BnbiCwu8_0-NqkQ0xerpqQEJBpOoFRuMzT7Q5fKxW6AwKS5qZt3iUxGYkfNq-2scKM2EY1L2SGJo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejvddguddthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrh
-    gvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepkedvkeegheefjefgvddu
-    fffhveehjeffvefgiefgkefhudeifedugfetudfgtefgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseif
-    hhhoqdhtrdhnvghtpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhk
-    ohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihesvghnughrihhfthdrtghomh
-    dprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhhsvghlfhhtvghsthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:mIbiZrJMtzqMuIXIwG0yKxOZ6xidZx075Z1IEhPNX6ND7vufzLmgUQ>
-    <xmx:mIbiZiJYT_tLTFUQcgNpA4R4SUPkY_4lbzPDBSlcdF9s6uwU3zoi2w>
-    <xmx:mIbiZsyuNYY74NjyhlHVVrYTXHD3IEHywLMRxvTuQxSZpkGHguFRDA>
-    <xmx:mIbiZmJGlN5iJNY8d4HsXHBfdlfweyMNDhE5PdM2Eqa8vxUumJ_aXQ>
-    <xmx:mIbiZh90H2d8cipr2GmQ0DnDr1uL9zPSSaHbrDp0ebLqWobcYJhcS-up>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Sep 2024 02:13:41 -0400 (EDT)
-Date: Thu, 12 Sep 2024 16:13:25 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Vicki Pfau <vi@endrift.com>,
-	Shuah Khan <shuah@kernel.org>, linux-input@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH HID v2 08/11] HID: add per device quirk to force bind to
- hid-generic
-Message-ID: <20240912061325.GA558003@quokka>
-References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
- <20240910-hid-bpf-hid-generic-v2-8-083dfc189e97@kernel.org>
+	s=arc-20240116; t=1726121622; c=relaxed/simple;
+	bh=V/Dz3yg2n/zb1jcXRN7taJ2ZZ2iEOm5kHDzoOrcd5eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cyuioMo493Zgs/siGsCUeC56PFKfoE6ryeF6Kd6cgNWGzbOaPKFcDpQuRIrpwp+cKwN71/y5Qr04xS2/9uSRByxUd23eWHG1Q8Ky+sdcQ7UoHcPQmREXN9ZjC0LH6PjP5t8iw6Z1tDaTWyhLQP3G6MyIhoDLbce5xUcbKfS2dwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hRCNg49e; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726121615;
+	bh=TB3+OuQrMEL6lwfslY3+79QTMJPjCDrIbhGGNU2vMfg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hRCNg49eX5Nns6R9QZDXZpWXYdXQNoHhyCuMbdXcDszPPTD7e/GZtpOHiexdMlBor
+	 d15IeeoR+wcFlM3+H1wtJkHnTorG/rlG1x/uTfhYDSIbTNfhLXlOSY1jsAPi5dlzkw
+	 Dq75i2K4y38e0QNH8eC8Pvi8E4BIJclaXfNRNLLEG8oP5/d45aghF0mnPhiz8kVMnt
+	 4uOslD2TAlP2+f4Oea8KV8haS6RUrh2xholRlcDHi4cUDuTJBMsPR2UIO/lXLQDIjV
+	 vuCqtxdbbrB4k5PdEISMB41vpIn4tj+p3F4FGHdENqCAD9OpsxJwjuUyjbGFyWP9rb
+	 qsVdnPyk0ABCQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X46ZQ6Vf8z4x0K;
+	Thu, 12 Sep 2024 16:13:34 +1000 (AEST)
+Date: Thu, 12 Sep 2024 16:13:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk
+ <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel
+ <xen-devel@lists.xenproject.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the xen-tip tree
+Message-ID: <20240912161333.1e65a06a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-hid-bpf-hid-generic-v2-8-083dfc189e97@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/PnVukLxuawTL4o2NvivCaRM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 10, 2024 at 11:43:44PM +0900, Benjamin Tissoires wrote:
-> We already have the possibility to force not binding to hid-generic and
-> rely on a dedicated driver, but we couldn't do the other way around.
-> 
-> This is useful for BPF programs where we are fixing the report descriptor
-> and the events, but want to avoid a specialized driver to come after BPF
-> which would unwind everything that is done there.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> 
-> ---
-> 
-> changes in v2:
-> - rely on hdev->quirks for that instead of a new struct for hid_driver
+--Sig_/PnVukLxuawTL4o2NvivCaRM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I like this one a lot more than the previous approach, series is 
+Hi all,
 
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+After merging the xen-tip tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-although for 01 and 06 this should be taken with a grain of salt :)
+ERROR: modpost: "acpi_os_ioremap" [drivers/gpu/drm/gma500/gma500_gfx.ko] un=
+defined!
 
+Caused by commit
+
+  de4237fd5174 ("xen: allow mapping ACPI data using a different physical ad=
+dress")
+
+acpi_os_ioremap is not exported to modules.
+
+I have used the xen-tip tree from next-20240910 (as the next-20240911
+version had a different build failure).
+
+--=20
 Cheers,
-  Peter
+Stephen Rothwell
 
-> ---
->  drivers/hid/hid-core.c    | 5 +++--
->  drivers/hid/hid-generic.c | 3 +++
->  include/linux/hid.h       | 2 ++
->  3 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 37e52759a931..bf63e2819baf 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -2665,9 +2665,10 @@ static bool hid_check_device_match(struct hid_device *hdev,
->  	/*
->  	 * hid-generic implements .match(), so we must be dealing with a
->  	 * different HID driver here, and can simply check if
-> -	 * hid_ignore_special_drivers is set or not.
-> +	 * hid_ignore_special_drivers or HID_QUIRK_IGNORE_SPECIAL_DRIVER
-> +	 * are set or not.
->  	 */
-> -	return !hid_ignore_special_drivers;
-> +	return !hid_ignore_special_drivers && !(hdev->quirks & HID_QUIRK_IGNORE_SPECIAL_DRIVER);
->  }
->  
->  static int __hid_device_probe(struct hid_device *hdev, struct hid_driver *hdrv)
-> diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
-> index f9db991d3c5a..88882c1bfffe 100644
-> --- a/drivers/hid/hid-generic.c
-> +++ b/drivers/hid/hid-generic.c
-> @@ -40,6 +40,9 @@ static bool hid_generic_match(struct hid_device *hdev,
->  	if (ignore_special_driver)
->  		return true;
->  
-> +	if (hdev->quirks & HID_QUIRK_IGNORE_SPECIAL_DRIVER)
-> +		return true;
-> +
->  	if (hdev->quirks & HID_QUIRK_HAVE_SPECIAL_DRIVER)
->  		return false;
->  
-> diff --git a/include/linux/hid.h b/include/linux/hid.h
-> index d41fa18f1e03..b3a9586363c9 100644
-> --- a/include/linux/hid.h
-> +++ b/include/linux/hid.h
-> @@ -359,6 +359,7 @@ struct hid_item {
->   * | @HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP:
->   * | @HID_QUIRK_HAVE_SPECIAL_DRIVER:
->   * | @HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE:
-> + * | @HID_QUIRK_IGNORE_SPECIAL_DRIVER
->   * | @HID_QUIRK_FULLSPEED_INTERVAL:
->   * | @HID_QUIRK_NO_INIT_REPORTS:
->   * | @HID_QUIRK_NO_IGNORE:
-> @@ -384,6 +385,7 @@ struct hid_item {
->  #define HID_QUIRK_HAVE_SPECIAL_DRIVER		BIT(19)
->  #define HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE	BIT(20)
->  #define HID_QUIRK_NOINVERT			BIT(21)
-> +#define HID_QUIRK_IGNORE_SPECIAL_DRIVER		BIT(22)
->  #define HID_QUIRK_FULLSPEED_INTERVAL		BIT(28)
->  #define HID_QUIRK_NO_INIT_REPORTS		BIT(29)
->  #define HID_QUIRK_NO_IGNORE			BIT(30)
-> 
-> -- 
-> 2.46.0
-> 
+--Sig_/PnVukLxuawTL4o2NvivCaRM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiho4ACgkQAVBC80lX
+0GzdXAf/dMV45FVDLzwh1p1FCLsoY+g+bl1mjxTGFDD6lo4+W2yb6c7Z+R91pJCA
+fJHgBkYOYAK0Q4pLZa/k7bSgBF5mGN4VwDQi+nwa6PQbcIhjo2fRshAiguKy7vi3
+UDppoP3OOadX9alUNN9q+bd/mG68AmO21KUIieTzHhJGEFAc8gwc+bNG5mDWfU3K
+Y+dPPa3Wcf6QkRzZDEbkHhqdEFE5ZK7ubv1HlzwaDuiM5LGsKa49WnLzCesxz+gj
+9tN8N1l7tHIXZ9KfwOcaug+x9KWiZg+yMYOLqx22Sld+k9DajQ1cCacN5svLncDZ
+uk/LhwVwfmZi/JqITMdrCzdaOW0suQ==
+=d7UP
+-----END PGP SIGNATURE-----
+
+--Sig_/PnVukLxuawTL4o2NvivCaRM--
 
