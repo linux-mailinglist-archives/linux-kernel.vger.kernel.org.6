@@ -1,169 +1,245 @@
-Return-Path: <linux-kernel+bounces-327254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4549772E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A574D9772E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55F1286189
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96CF1C23F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122341C0DF2;
-	Thu, 12 Sep 2024 20:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E161C1738;
+	Thu, 12 Sep 2024 20:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d03exMrO"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzHu3glk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDF61BFDE5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FC1BF80E;
+	Thu, 12 Sep 2024 20:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174083; cv=none; b=OUItbAJafXydcQOYKngvwWtoYhl0PZP1TnWYeuTNoK7DolU2ozmZNzzHVi133L9LJfLgrc05up6s/N6+5KCP+vWusUCGWlO2rt9ux5ShR6YbblvBSbr96OAMKW8Mi9MY85iw/63E6rLZb/GyQ5/BV/G6SVNM8V4FFo1wuw39owc=
+	t=1726174121; cv=none; b=A6zXSxGclI7RHUx3pnHeQ5MvuDwgYmUtRKUOVxuEJAFQdHol1WgWs05F+1ve9DqoQmuwYxUuJ/2Pfpr35QPw3TfUUJDwqsEpXPr6qJo96gyY+k27jfLmuVQ1214G6lcmvaZzUFx21HxDhOTx/w2odigtKSNiazRx/yscLrpbGD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174083; c=relaxed/simple;
-	bh=fFGd0nbcu1F8PntbunsMOTAoXiViOoBV+7xVFt/6B/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ooW9RDA0TW8M0ZAGznOcmcohgWb/cI3Oxnms/R41QJvn53+3OgILem8UfLX+iaHogg3XelPA3ZsLU8DLBtTd/OrBcQYdUtuW7BdGSrKu7mUJSDlp8UpU0X5EEK2mni9L76QIb56XJ5T8z6tu29n8e+azgI8kWXg7rwTtdhALWug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d03exMrO; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53653ff0251so323705e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726174079; x=1726778879; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YkjthmIF2fQCuoFWxdVNQGVlLGFryPfHPsH+MeuiVys=;
-        b=d03exMrOLgEbvBk+OcX/q32Qpde+WxGPyanEVkn59z9bRg9HWMdmPnlNZPEL0rjFhf
-         CqvFbSrnl7B1qpYbZ3OCPKyraAiyqalvVFQVofFAbssJ03hZ3L4IfksBzTvlOZobQPnH
-         B0x0BdllSCSw2LO0X0USaTAHQoPiRHz35y1KVGYjYxeB3mA8imk/P/qMKbPTOFTJD3+R
-         mhhFUu7ZFldxpqqK3eu6rAFBsm85n/1bNr6Q790D4LbTBFyFmTeVGNWAtKqD9cDGRpaR
-         1l8ztLOCHUidzuNgV8FC889vBC8r4JlfZTyXxHkHbTYJQ8MFqtwqrl9Lx8BBWTDsCb9F
-         6G/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174079; x=1726778879;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YkjthmIF2fQCuoFWxdVNQGVlLGFryPfHPsH+MeuiVys=;
-        b=Ix9qxZWRdthuN2KNt6oLaPVJb4aZ25665AXgjbvUNTyCbMRFq6088FSk17B86T1klx
-         sAE0D/jxJiHhetYqSiKT86ND/VmA0YgrskA07iEj7jhvbqESJWmUd5+THnU33u3vsKYh
-         /YdlTdlCBcBbKAPtbZXH+2oA1TpmVkEVjmpq1nwRAT1TeWjrjTaZG66EHXHG2S/KDpep
-         UFmBMKuRlGdqH4P4IDwk8NLjvnRnxwHUuGmQ7Tviz3FFVrW8gmak4l/y2M+AczFF1fDe
-         KAAsXIBmon9PPrml3r2iUy84IyMJ8qvGZ40Yp3iQNAq4AJNYh5HuyE+lGOXLmt8LRClK
-         0qbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPmt8iIY45ahliEKXBzbXwI8NPScuygb9CBuBxgOhC9BtptzO+NPGfJv9jXZ5NUPjdxF1fXNRlXyXHXvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3FaekbvRa/2C5sLoIxZS7qd6bFxxKgy3RK5SnDi1ZY8OmRg77
-	ijG+5yIi2dxuAgeYEsKNdxyjd7Wkf1d5EypFmxyuExnaj9Ha0BhS
-X-Google-Smtp-Source: AGHT+IEJ3divZG1giZLk4zL0xR+Zgkb9nKkzNvfUXc9d1wNJItRtam0P+33/fr0+sYxqjutD2DBQFw==
-X-Received: by 2002:a05:6512:a91:b0:535:3d08:5844 with SMTP id 2adb3069b0e04-5367feb964fmr331262e87.6.1726174078682;
-        Thu, 12 Sep 2024 13:47:58 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8557:476b:8cfa:99ee:514e? (p200300c78f2a8557476b8cfa99ee514e.dip0.t-ipconnect.de. [2003:c7:8f2a:8557:476b:8cfa:99ee:514e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ced20csm795531666b.172.2024.09.12.13.47.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 13:47:58 -0700 (PDT)
-Message-ID: <6180dbde-16a7-48e2-8926-b17a13dc0c57@gmail.com>
-Date: Thu, 12 Sep 2024 22:47:57 +0200
+	s=arc-20240116; t=1726174121; c=relaxed/simple;
+	bh=R/mVvNFOdOYD8D8y+JEFVCiceUGOSPFhBS6gK7/oOAM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kyv3+cgPMs0FvWWo6pD32Zm4zP3nPbeyW60n5TLhsLgPFqAaq1NXwJnbqVS+j59dVMgis4rXuXkAUKLWhMvKY0izIj5vtqJqEJTOrMCFOkaEGf2ZOHL7U2jVgLIBVlxHHZ1CI9JeJJb2xANl8dpEZix/FLMDrxyFDR+DeyVJ/eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzHu3glk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 55F2BC4CEC3;
+	Thu, 12 Sep 2024 20:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726174121;
+	bh=R/mVvNFOdOYD8D8y+JEFVCiceUGOSPFhBS6gK7/oOAM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=OzHu3glkrJpJVOHtVXMA8Iq0oxK1hpNYHZfrkQTn6zy/zYoGuF0ZCd2ajxCpnRSej
+	 NIgkaqPSggNcBZzLDSvfkcASM9WQb35hgGV0q93KWFcBfMOHy3dsyNtUKLBVlPSu1m
+	 OQqYLv389duqDCNyNwz4Dzy0zG6qN9ySdjwRf99OgS7UAwbgye9xiI2SVgjR5nmu8R
+	 XzW34rYhuXLp44hE0pGDKsElGQE8vgclA5dyToVUCgmk31lT6Ze4Lmzy8lUsORjKF5
+	 VVq8IGKPeAPWNxk0Z4SnDOugXuPk6aOVX59BYtrxTdhcSrAAiC1qRO3YRl7o7/2b+g
+	 exQuALWHVCoAQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4396BEEE262;
+	Thu, 12 Sep 2024 20:48:41 +0000 (UTC)
+From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
+Date: Thu, 12 Sep 2024 22:48:25 +0200
+Subject: [PATCH RFC] block: trace: add block alignment information
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vt6655: mac.h: Fix possible precedence issue in
- macros
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240911180149.14474-1-dominik.karol.piatkowski@protonmail.com>
- <f4e58090-0229-4a72-9bb6-d57757eb708c@gmail.com>
- <ILhrP61gFh-bKmnqG1DTIWCjW8yXNVEI1mGa2Fm-y_yhZ4kV-WCxXoid_Yuy7w4-kyH4QVT7B3h-OUUBH0rAtjCM8P5tMQxG_zLjKrq4NEM=@protonmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <ILhrP61gFh-bKmnqG1DTIWCjW8yXNVEI1mGa2Fm-y_yhZ4kV-WCxXoid_Yuy7w4-kyH4QVT7B3h-OUUBH0rAtjCM8P5tMQxG_zLjKrq4NEM=@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240912-add-blkalgn-block-trace-v1-1-335dd6eea557@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAJhT42YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Mj3cSUFN2knOzEnPQ8IJ2fnK1bUpSYnKprbphqkZhkZm5gkWaoBNR
+ dUJSallkBNjlaKcjNWSm2thYARBs1Xm4AAAA=
+To: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, gost.dev@samsung.com, 
+ Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, 
+ Dave Chinner <dchinner@redhat.com>, Daniel Gomez <d@kruces.com>, 
+ Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726174120; l=5497;
+ i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
+ bh=Xp2veQI3BVlkm/PCtIw15ECNVnq9Y9+55YojkuAz500=;
+ b=WLQrGUNLHbUJXHbRFP46QEFOMS2Z4ImTorAHY25WhiZ/YcxWGReFb0rF/wFcdAaf669bjnBPg
+ +alJp4JfHq8C+XOudogz3NEl7jLrIqQbTM6Pz9czYmlP/FNnAUiBo59
+X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
+ pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
+X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
+ auth_id=175
+X-Original-From: Daniel Gomez <da.gomez@samsung.com>
+Reply-To: da.gomez@samsung.com
 
-On 9/12/24 22:18, Dominik Karol Piątkowski wrote:
-> On Thursday, September 12th, 2024 at 21:29, Philipp Hortmann <philipp.g.hortmann@gmail.com> wrote:
-> 
->>
->>
->> On 9/11/24 20:02, Dominik Karol Piątkowski wrote:
->>
->>> It is safer to put macro arguments in parentheses. This way, accidental
->>> operator precedence issues can be avoided.
->>>
->>> Signed-off-by: Dominik Karol Piątkowski dominik.karol.piatkowski@protonmail.com
->>> ---
->>> drivers/staging/vt6655/mac.h | 4 ++--
->>> 1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/staging/vt6655/mac.h b/drivers/staging/vt6655/mac.h
->>> index acf931c3f5fd..a33af2852227 100644
->>> --- a/drivers/staging/vt6655/mac.h
->>> +++ b/drivers/staging/vt6655/mac.h
->>> @@ -537,9 +537,9 @@
->>>
->>> /--------------------- Export Macros ------------------------------/
->>>
->>> -#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, iobase + MAC_REG_PAGE1SEL)
->>> +#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, (iobase) + MAC_REG_PAGE1SEL)
->>>
->>> -#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, iobase + MAC_REG_PAGE1SEL)
->>> +#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, (iobase) + MAC_REG_PAGE1SEL)
->>>
->>> #define MAKEWORD(lb, hb) \
->>> ((unsigned short)(((unsigned char)(lb)) | (((unsigned short)((unsigned char)(hb))) << 8)))
->>
->>
->>
->> Hi Dominik,
->>
->> git shows your name with the following characters:
->>
->> Author: Dominik Karol Pi^Etkowski dominik.karol.piatkowski@protonmail.com
->>
->>
->> I think it is better to change your name to only english letters.
->>
->> If you send in a second version of this patch please use a change
->> history. Description from Dan under:
->> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
->>
->> Thanks for your support.
->>
->> Bye Philipp
-> 
-> Hi Philipp,
-> 
-> Thanks for testing my patch.
-> 
-> About the mangled author field - it was sent as
-> "From: =?UTF-8?q?Dominik=20Karol=20Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>"
-> and =C4=85 in UTF-8 is indeed 'ą' character. When looking at linux-next tree,
-> previously accepted patches also seem to have 'ą' as intended. I am not sure
-> why you are seeing "^E" instead.
-> 
-> Thanks,
-> Dominik Karol
+From: Daniel Gomez <da.gomez@samsung.com>
 
+Report block alignment in terms of LBA and size during block tracing for
+block_rq. Calculate alignment only for read/writes where the length is
+greater than 0. Otherwise, report 0 to indicate no alignment calculated.
 
-Hi Dominik Karol,
+Suggested-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+---
+This patch introduces LBA and size alignment information for
+the block_rq tracepoints (block_rq{insert, issue, merge} and
+block_{io_start, io_done}).
 
-you are right. On the from Greg accepted patches the 'ą' is as intended.
+The idea of reporting alignment in a tracepoint was first suggested in
+this thread [1] by Dave Chinner. Additionally, an eBPF-based equivalent
+tracing tool [2] was developed and used during LBS development, as
+mentioned in the patch series [3] and in [1].
 
-Then everything is all right. Sorry for the noise.
+With this addition, users can check block alignment directly through the
+block layer tracepoints without needing any additional tools.
 
-Thanks for your support.
+In case we have a use case, this can be extended to other tracepoints,
+such as complete and error.
 
-Bye Philipp
+Another potential enhancement could be the integration of this
+information into blktrace. Would that be a feasible option to consider?
+
+[1] https://lore.kernel.org/all/ZdvXAn1Q%2F+QX5sPQ@dread.disaster.area/
+[2] blkalgn tool written in eBPF/bcc:
+https://github.com/dkruces/bcc/tree/lbs
+[3] https://lore.kernel.org/all/20240822135018.1931258-1-kernel@pankajraghav.com/
+---
+ block/blk-mq.c               | 29 +++++++++++++++++++++++++++++
+ include/linux/blk-mq.h       | 11 +++++++++++
+ include/linux/blkdev.h       |  6 ++++++
+ include/trace/events/block.h |  7 +++++--
+ 4 files changed, 51 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 831c5cf5d874..714452bc236b 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -4920,6 +4920,35 @@ int blk_rq_poll(struct request *rq, struct io_comp_batch *iob,
+ }
+ EXPORT_SYMBOL_GPL(blk_rq_poll);
+ 
++u32 __blk_rq_lba_algn(struct request *req)
++{
++	u32 lbs = queue_logical_block_size(req->q);
++	u32 lba_shift = ilog2(lbs);
++	u32 lba = req->__sector >> (lba_shift - SECTOR_SHIFT);
++	u32 len = req->__data_len;
++	u32 algn_len = len;
++	u32 algn_lba = len / lbs;
++	u32 alignment = lbs;
++
++	if (is_power_of_2(len) &&
++	    blk_rq_lba_aligned(len, algn_len, lba, algn_lba))
++		return len;
++
++	algn_len = lbs << 1U;
++	algn_lba = algn_len / lbs;
++
++	while (algn_len < len) {
++		if (!blk_rq_lba_aligned(len, algn_len, lba, algn_lba))
++			break;
++
++		alignment = algn_len;
++		algn_len = algn_len << 1U;
++		algn_lba = algn_len / lbs;
++	}
++
++	return alignment;
++}
++
+ unsigned int blk_mq_rq_cpu(struct request *rq)
+ {
+ 	return rq->mq_ctx->cpu;
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 8d304b1d16b1..02959fbd5e28 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -740,6 +740,17 @@ void blk_mq_free_request(struct request *rq);
+ int blk_rq_poll(struct request *rq, struct io_comp_batch *iob,
+ 		unsigned int poll_flags);
+ 
++/* The alignment of the block in terms of LBA and size */
++u32 __blk_rq_lba_algn(struct request *req);
++static inline u32 blk_rq_lba_algn(struct request *req)
++{
++	if ((req_op(req) != REQ_OP_WRITE) && (req_op(req) != REQ_OP_READ) &&
++	    !(req->__data_len))
++		return 0;
++
++	return __blk_rq_lba_algn(req);
++}
++
+ bool blk_mq_queue_inflight(struct request_queue *q);
+ 
+ enum {
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bf1aa951fda2..28557987daa8 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1433,6 +1433,12 @@ static inline int blk_rq_aligned(struct request_queue *q, unsigned long addr,
+ 	return !(addr & alignment) && !(len & alignment);
+ }
+ 
++static inline bool blk_rq_lba_aligned(u32 len, u32 algn_len, u32 lba,
++				      u32 algn_lba)
++{
++	return !(len % algn_len) && !(lba % algn_lba);
++}
++
+ /* assumes size > 256 */
+ static inline unsigned int blksize_bits(unsigned int size)
+ {
+diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+index 1527d5d45e01..ba3764214dc7 100644
+--- a/include/trace/events/block.h
++++ b/include/trace/events/block.h
+@@ -202,6 +202,7 @@ DECLARE_EVENT_CLASS(block_rq,
+ 		__array(  char,		rwbs,	RWBS_LEN	)
+ 		__array(  char,         comm,   TASK_COMM_LEN   )
+ 		__dynamic_array( char,	cmd,	1		)
++		__field(  unsigned int,	algn			)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -210,20 +211,22 @@ DECLARE_EVENT_CLASS(block_rq,
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 		__entry->bytes     = blk_rq_bytes(rq);
+ 		__entry->ioprio	   = rq->ioprio;
++		__entry->algn      = blk_rq_lba_algn(rq);
+ 
+ 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
+ 		__get_str(cmd)[0] = '\0';
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
+ 	),
+ 
+-	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u [%s]",
++	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u |%u| [%s]",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		  __entry->rwbs, __entry->bytes, __get_str(cmd),
+ 		  (unsigned long long)__entry->sector, __entry->nr_sector,
+ 		  __print_symbolic(IOPRIO_PRIO_CLASS(__entry->ioprio),
+ 				   IOPRIO_CLASS_STRINGS),
+ 		  IOPRIO_PRIO_HINT(__entry->ioprio),
+-		  IOPRIO_PRIO_LEVEL(__entry->ioprio), __entry->comm)
++		  IOPRIO_PRIO_LEVEL(__entry->ioprio), __entry->algn,
++		  __entry->comm)
+ );
+ 
+ /**
+
+---
+base-commit: 57f962b956f1d116cd64d5c406776c4975de549d
+change-id: 20240912-add-blkalgn-block-trace-71e8ab6708f1
+
+Best regards,
+-- 
+Daniel Gomez <da.gomez@samsung.com>
 
 
 
