@@ -1,141 +1,274 @@
-Return-Path: <linux-kernel+bounces-326675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2F6976B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:07:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56501976B96
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA841C23761
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:07:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2891F21EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E041A705F;
-	Thu, 12 Sep 2024 14:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9635D1AED46;
+	Thu, 12 Sep 2024 14:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlUugUgj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EJ6uH1qe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0711A0BDC;
-	Thu, 12 Sep 2024 14:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150024; cv=none; b=d7wfXt9CZ4Udfc2syfwCyaq+VHdH6lUM6xwslUQEyQf2SRz34HAZ9TYU9xWVCt7WXcjS3XaLmeizA2NrLYSzHdkkffvt0h4KeV6KC+YAkJm7Fr2MHgWtQWdeutX3JyAmKL6GoHtCZssYBfNCFbOukmCS+K7iJ8EqGPc3WBgdt6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150024; c=relaxed/simple;
-	bh=1wuhFnjzHjnZXKk+8BsD7jkJlXjXQN3CjqkG66ioOCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ekyHGF4QkYlralL1h5TkO8M3vHoOVBjFzusV80ofl+T0RvGEgUBaUw2pNF0Hh9AjcgGdccGjUVo4/mKY7pdeJuk9X9v1SWCzaYCcp1kOg2YNR2aH+P/3VEt4qpTnWOURG8HqUlYRUVOEjAEoX1rkAE0BBaA6xHFYzPKvrCc+kZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlUugUgj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso181826866b.1;
-        Thu, 12 Sep 2024 07:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726150020; x=1726754820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4LvXyh+IczEwXXfGWtotAZdHB+yCvx0c4gFfil8tlo=;
-        b=BlUugUgj8wRDdffiUG1gzW3w8mmC65Qarkbxmf9vLbiA4O2FahdUCkOy9OEErp5n5O
-         tL+fWmFrGD0y9jc4w+TsNYLioaRoJ73O/WU7VYYlXXEl30rkk4aYpDD6I9IkOuzXtpR/
-         YgvhE1rZPz4hNgyfjOae1lnfWmTr+NYQe67UMG9NWwav01TaEr9yuXoomi5eOV6hx0nW
-         OlofL6zgv/kkZaTW0+No8EVPDOkqA5xciG2kwZq+sI1yegMUoW2TUI+NH3H7BsXRtzSa
-         goxkGYTrw7DDlcfVyEwsGoQ6fOU/P1lVsuR0KNMWZsvktLRzPiqssp/f8cqgdopGl5UQ
-         5mIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726150020; x=1726754820;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X4LvXyh+IczEwXXfGWtotAZdHB+yCvx0c4gFfil8tlo=;
-        b=nq8xoJYzet9Xy2jK114jyiVMDuRTToC963RR5qRD4L7jlxPpsR6FC1h0PXqEb2fV3M
-         /mH4r214uP3kA9SEOClF8smpWaFYG8qLT8RXamKCmiT/zm+tkMS6Rr6HyI4E8EVA6Kiy
-         QrPBRmSPxg4EV+hFaiBfSNAOZsp6JdZ6kH3ho4SGYUMQFEn7oXuo+VJQJJvP6zjQv19I
-         XRMRpvD77BjIBGgWyYWptd8anIQPSRO4Gu2HxJ6vT9RIyDeneRQ21lFssFhfquKQmdbU
-         AzUdxeGR60xPcpcVbuUaE+ssEz00Jbnz3Sh2E9pzuhZxhxM0I+Qrw4kMSaePXaOncKlE
-         YUEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0dw7Q1C+DtC64/zpWBVl//+j+A0Ju/dU2eEi06yHbEfuw23+U90O/oBw6Bj+yv+jVFiP/5rQOpgXtg7g=@vger.kernel.org, AJvYcCUKy6qa7trFCc1ZP3+TsjZKHoQJnE+ygiSrhRaRSwzITTGN3V+4+REz28XgRpeKmFjERQhDK2KYyPBZwfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU4bxgbIclDjCkyrml/9chKR5AYe1bJzJ+89NIv1+KzYwhiWLx
-	oj6WZ1jiTr6R46C31a/gEIkYvC7RESFH8m4C9eVodME8stRXicRZ
-X-Google-Smtp-Source: AGHT+IEA+7GluesvwN92M9aCzHXP7NLD/idrPe1nsWoZYe5oH+GxsJlMZ7k2ToSRMo6b10uJhIb2AA==
-X-Received: by 2002:a17:907:2ce1:b0:a8d:41d8:14ad with SMTP id a640c23a62f3a-a8ffae3fd9fmr974362866b.29.1726150019198;
-        Thu, 12 Sep 2024 07:06:59 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation.station (net-188-217-48-58.cust.vodafonedsl.it. [188.217.48.58])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a258a3sm748268466b.89.2024.09.12.07.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:06:56 -0700 (PDT)
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: 
-Cc: linuxfancy@googlegroups.com,
-	sakari.ailus@linux.intel.com,
-	laurent.pinchart@ideasonboard.com,
-	tomm.merciai@gmail.com,
-	julien.massot@collabora.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] media: i2c: max96717: add HAS_EVENTS support
-Date: Thu, 12 Sep 2024 16:06:49 +0200
-Message-Id: <20240912140649.1243602-3-tomm.merciai@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240912140649.1243602-1-tomm.merciai@gmail.com>
-References: <20240912140649.1243602-1-tomm.merciai@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA99219F43E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726150110; cv=fail; b=PYBT9HRem5xm+FNPCR9mcmdr4YYX4AUS3dcjMoH5E2juLUZk9aVU8iUZYrIQqj16WlCzfN3T3l7du+LYjs+zTpEzEKafiUIs2wTMP3D6zVlIb03eaKluvcMm+Fsb7+YDglr/RFoxT1uk8TugJ0QiymhjF7/DRbggrlFbAHp93jY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726150110; c=relaxed/simple;
+	bh=1wnyDhtjfvrEoVma9z0MrARd7uywNVCTZKbEtK1KX+8=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=A4fB65I++CBav/NqAZrE88usVeenQJOYgpfzLM4OzqX6MRU80dN7iIlo/7sjHF8ywdDGcuTxaCQDZLFChLcIzn234/pJIT6wtL640K1lKIdqf7x0IyBpYo+afko8UOJUoHGSDGla1OfP3FAtmZxt3jHkSrY++GdjTaAlhydYr6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EJ6uH1qe; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726150109; x=1757686109;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1wnyDhtjfvrEoVma9z0MrARd7uywNVCTZKbEtK1KX+8=;
+  b=EJ6uH1qeUZy+JFAYj+8aAakdxhI8zQ5JUYK2TdwgH41mmDaXMhie/ZD7
+   QIB+E2wKrtnFKenqPGQxAGA8s59183a+YiDrtreZub1ehfkKF7TsEqBxc
+   WA0k6bJNMCRRKn30BmkwxEyyIkYTLiiQstBhUsG/DdjOAqwvq1EYQOXN/
+   cOJSr+OtwVc61LPjYFExZH4RSS00Wnmy8ZE4V59wBGNdDdAUFO9xv8Vds
+   +zLUSbQgjxUxtX5lRYyl2UC3n9EsMLO+PDHm/8Dt9U5vksUV3mjy+qixJ
+   l3OWNxzqCAgP2+VwSNZ+xyIjcIGLrs7DEq2DbjwEkmCj+kEbmrMIVdeVg
+   w==;
+X-CSE-ConnectionGUID: FDIM0U5YQkSU2HrA1MGwyA==
+X-CSE-MsgGUID: yhNM+SyURy+dV3gicg0Z1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24941760"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="24941760"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 07:08:29 -0700
+X-CSE-ConnectionGUID: 53pA5d8uTzywMNnaGgmYtg==
+X-CSE-MsgGUID: ZKCWB43FShKLwYVorlS47A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="67708832"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 07:08:28 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 12 Sep 2024 07:08:27 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 07:08:27 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.176)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Sep 2024 07:08:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cgTxla4U5A7ujNATo/bvepQJseHan858Qew7hKUU3HlGusG+TVyyoqQuinIPUCZCQukyieQLNQk3xJ9LN630v3NIkN6rD+YBDqGVAFTWSGEryfHTAMFrbggoqaRAEVmb9/c17dMgxVS4Dyef3Gy9pTJDqYQe8ecchcYHZc3un8jPBNaSaDxXAs7Qw6rCqT3eziD1cOL88SP1ITcrO/+9WIt1tpAQjvoV6cphNzgNcY5ECO5eXzECsuXzOGYBWdyLelZ93nwFkOu9cyiw+Z718ZrPnMU4zzScfJT712zoo+OgSh8mv7rdXlwDA48MMJqZGBMgcpITkn+5iWGZRH2nGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WC6Eq6eHUvsY7sjzj2hJAj+TwEoTlaa3F4gMrokadgY=;
+ b=bKYXjNc1CXLesDASWqCs/BditjNxRVg9HAzTlLvbtH/d00AAOC2octkPWXxsQPE7H9EZF2kYD9m5rciT2KfCxAYLmO83Yi6pw/ADQjCfboV+1Wz+NI08iECG/260l3ZblmX4ooJVEct+3o7WLoFyAJDYNN7ar+EGZkmnUSwmP2SKItRKIocwBfNbkj4j4h/M5XLo0mxIKfOZVNpKTojR84WICcnP3HIB/UTKDdWeBBrw9dhoNQ7F4fUJeoD+Yd8ru0Mmph8ZA8UhuH+FtNRNNxtCXVBa7JKfgT4033aB0MYB2pp26rX3GAA9UM3X/jsx2I0lEw8YmfeiIIiUKtC5bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH7PR11MB7004.namprd11.prod.outlook.com (2603:10b6:510:20b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Thu, 12 Sep
+ 2024 14:08:24 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7962.017; Thu, 12 Sep 2024
+ 14:08:10 +0000
+Date: Thu, 12 Sep 2024 22:08:00 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Chao Yu <chao@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<ltp@lists.linux.it>, <oliver.sang@intel.com>
+Subject: [linus:master] [f2fs]  9f0f6bf427:  ltp.ADSP069.fail
+Message-ID: <202409122103.e45aa13b-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR04CA0181.apcprd04.prod.outlook.com
+ (2603:1096:4:14::19) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH7PR11MB7004:EE_
+X-MS-Office365-Filtering-Correlation-Id: de26d436-f0f5-4c5c-b958-08dcd33454d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EqZo1kJ+weEpZ3oBvrWAZLr57yn3IgceYbXpfpDZW+K3r1aQ2MKPBQuXQrgK?=
+ =?us-ascii?Q?4L7h31xQ8Vp1MP2vR6PW9sT6N6hxBv98poQIByrdawAVYS0Weul9Nn/PsKlT?=
+ =?us-ascii?Q?H0YH31BH4vzHgULcMrhafGIrp2KKp23xcJQ9eBsPoXQwbST0c48reUYGZMDq?=
+ =?us-ascii?Q?97n0nwVN38C0fQdzq/tfdBX3PeohHjCZ5fkLiPxPhdSkLlTR1ekdCrP9ALsi?=
+ =?us-ascii?Q?Guw6zorxT9XN2vnSR76p+j0aqL92zbNOz34M/g41sRpVmooK5E77WyG6u9/c?=
+ =?us-ascii?Q?jLUDuF+mvVcsVMgbOz8f1PyDgGTZUQPy5656mTt0E/LZUkG411pjQEeEpWpR?=
+ =?us-ascii?Q?TXQ3X2ZLQ3Ye3PDlse7KaprSVvBZB+BMaR89X/rOEiYzUqpj68yFN7BFJDUw?=
+ =?us-ascii?Q?Z7NAW5ugOt1/z7jKjCdqFpbmsHXGXHidbxq4U24/TqJP4oeSEP1NJ8nJkqrM?=
+ =?us-ascii?Q?zVg/fvTdDfwWbXwnak1RuqC6ToV0kadyrDQtJg9JgwFN2Umopep0sVvuXta1?=
+ =?us-ascii?Q?STNhRqn5zlWa/niDu3DhQmBflVMQ2CzYahdlja7d8oVsjnpbB+dj1+GJ4ULv?=
+ =?us-ascii?Q?fXuCTOyTFMvBTO/uNbuA7R0G3IryOC/JUJLRxlrxtCN04Ls9rW/NWXfneeTf?=
+ =?us-ascii?Q?CBNhxUvMV2qol16rmQKJt9asUrXOB+7lmVRlwUagalOMi3htSeDErF5GZvyz?=
+ =?us-ascii?Q?FBb+CrQuyrtZeK0yRrgu+dgh2JgOr9pbM8eyMAa7eiPC0tUurrq8YW5JFtpy?=
+ =?us-ascii?Q?h63iwb+wdBwC8k4taJmUXjKATFQ+MMJD9SpUNUiLBPaHcQvTj/HcflE+DWA5?=
+ =?us-ascii?Q?kwqOoylIFFA5+Uy486UnyBaScZIMmUg0ksazaSF1APE20VryP1ujXTvIkaH9?=
+ =?us-ascii?Q?R5ewcdL+/E/hGcO39rGMMhQ4IbULUJNQC+VligutG6JTnHpLxM97mAiQm7Ns?=
+ =?us-ascii?Q?SGv4SZ9yDvpitawao09poa7iU28g9vmQjglopGbAQzbhvsywELCLNOQh5O/D?=
+ =?us-ascii?Q?zYEjMDCxNj7+TAYT1ZnbW8hWGmmkknk1RBBs3jJy+mcIs6RmNoU8O+aPxVwZ?=
+ =?us-ascii?Q?hWD55SnZoAAJKrFB7RBCHzHiL/XLAfH8CM898uy2mJsw8OGdJV2rfwzdozDD?=
+ =?us-ascii?Q?jyGDVnrq70irgryY7Cs2qNNlsaQvnyiyIS59+qbKohPU44rRHvwnZIHaE9u2?=
+ =?us-ascii?Q?PVvgjYPEPQvjGL+0rtuYZy+xYvOJ9REORc6AMMTX9odpAVw3NzV9ypUNShon?=
+ =?us-ascii?Q?parnqO64xudUA8BfLudxc+SqDb38QtS1oKn9Q1E8kS1Wj/LUzlCYsn2+KqRV?=
+ =?us-ascii?Q?AQiy3CkpVBw5K09go1AprQWL3rY8DWjSctLro9c+DVFadkEGlogLcChAPT+0?=
+ =?us-ascii?Q?EiZpLFA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9+K/rkYCQ/3eeOf/QMB30wCkYYTiQVi/i49O9w/F53nHpRaKASwV2EEIhK3t?=
+ =?us-ascii?Q?/LtOOdVzAX5+B549ItKKt+uJqkUz1KkUmE7iuAtj9XsdZVtYLe7KmLxeRiCr?=
+ =?us-ascii?Q?qKTz8w7IVee/Jj66MxGkEeMzU0eQI+KF1BO61r/1E95hd7g0n60cBsfdmdJ3?=
+ =?us-ascii?Q?Ov1y33jvyvoo9PgoSfoF0GrfTrB8JGBL9bqrO+0ePJNtbXgeY5FFkn8Lzd9C?=
+ =?us-ascii?Q?yorAuOWtza3zqX/Ox8yFdwnF0agTWs23bSislx2GLE/KghdpLAslRXGR1N/Z?=
+ =?us-ascii?Q?atLUFq0PFzRHHxKn5FuI4a4mE/lunFaMLtRroQDU0nhLrUeYsuLpzRr4j+Xn?=
+ =?us-ascii?Q?QSmnryaKuLHsDR6QZjmXW2JCoBC9lMk6aIOWau0k5HdwNDGIcf8XSitVlGDV?=
+ =?us-ascii?Q?gJF0nnJgjUmCwZBbX7Lu5lRzBPBipmGoBJCAejN/THNAZl1gGcisDX4wlh8x?=
+ =?us-ascii?Q?UTFygumcWO2nf5XehtcZ2XShanzDHz4sRoMPw/amMd1icHZ2G8E0AYsQUqRH?=
+ =?us-ascii?Q?UEiY8VtFxOy/jS+ZmaJ2sCE5XzYVSqfeLuZbSlVL6KVMssjAG+VYfHOjJ8JY?=
+ =?us-ascii?Q?APQ5/ZqM7hhN2wsw7bTb3LT1eeewwwBHDkpLCKIo3+FFigsD+yrSQyvWPvDg?=
+ =?us-ascii?Q?IbHx+YRxj9P/W856ujVpJbJlreS0ZVvV9/9bL8XkLRq5WI+Id1Q0JjKwN1ie?=
+ =?us-ascii?Q?MB3xynQBUD5bA9uQnc1pfkmiNZvzQ4O0iRCM1hzK9ySZPTk+MvkCpVJL63/M?=
+ =?us-ascii?Q?kAIGFgZ562JtTZpQAAJikJlIdpJ7I7XL0CgIViuI5M0sAg2/HVf6E6h1ITR3?=
+ =?us-ascii?Q?0/eP/B7KORjtf6298Wen1iSYm8ExwVtTSE8/YKzNxe3kGOhpSHnF7virzvfN?=
+ =?us-ascii?Q?y6iDaJ8ZAiO1kb3qBGvp2D1OAZEbJq7sLT0F6EmBFMcAj9SSAGGIiZp8KKTy?=
+ =?us-ascii?Q?LKOwmHnWZAorH75yw35SqJpqqzYBzQgMkAcLk8il+K3M7/Ok1dLOgTUubsfe?=
+ =?us-ascii?Q?tILp12IsQ6KD41/HhIABknoAGbIyIqXSGRI6aS0xNLs37TA45Qr8lstMxh42?=
+ =?us-ascii?Q?ybfdnS6RRVFdTOK9HXYZc96BG9wFIwUXqlE+L4ZEeJknLrOi5vBXXdOPTbrV?=
+ =?us-ascii?Q?juVMGpmrs3O/Obgfl1p1092hMxDNjOH5Q4+8rFpENG8PAMFOExsi/MpiPFM4?=
+ =?us-ascii?Q?Dhn4oTS3mMjXM78DcE9YBPVqnrOg+Ey+/TJzlIa/Iex1EAU4rHxeC/iKpo8T?=
+ =?us-ascii?Q?NVqZvbZ7Sul+mKUgtge+nIkCct9fCmL+0TuQSWqu+amkO7FJNutj+g2cYhJi?=
+ =?us-ascii?Q?eFe1V/YjpFtDYM2m2kOafE33pZ8xiphTPM9WjFFJRuIlBtFDYCNG4wDbEd8s?=
+ =?us-ascii?Q?WiNRsfpIRcbm8Oa2j82N8puCFaGRLo8BZTSHO+TyXVIoz2sYzXlhJEkytz9j?=
+ =?us-ascii?Q?VuJHmXOmKrUsOl3mtUoyZiBIHxul1o0Q/fb0+Q/t9jwWnWJ5Gw7cjfxcX/03?=
+ =?us-ascii?Q?li/6drUCO97JSmvpmoRW+q+2tFpX26Z0cepfvoc7uRXS2rUGFm2yFJS1qVDS?=
+ =?us-ascii?Q?U1ECvsaYeoX+9FyiF31m9RYaC2ufrXog910xdGCMZDx1a0zSm2c8nIEaLmKv?=
+ =?us-ascii?Q?Tg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: de26d436-f0f5-4c5c-b958-08dcd33454d1
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 14:08:09.7025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0K7J2mLpHiDhB+zLbfNQtIatN3ZBZNTOkqUs/o9pikRlTR2moa3l1G3qZPYkdlgMM0vKBMPdNuO7oYAbs5stkg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7004
+X-OriginatorOrg: intel.com
 
-Controls can be exposed to userspace via a v4l-subdevX device, and
-userspace has to be able to subscribe to control events so that it is
-notified when the control changes value.
-Add missing HAS_EVENTS support: flag and .(un)subscribe_event().
 
-Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
----
-Changes Since v1:
- - Add missing .(un)subscribe_event() as suggested by LPinchart
- - Fix commit body and commit msg
 
- drivers/media/i2c/max96717.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Hello,
 
-diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
-index 4e85b8eb1e77..755e27271b1b 100644
---- a/drivers/media/i2c/max96717.c
-+++ b/drivers/media/i2c/max96717.c
-@@ -17,6 +17,7 @@
- 
- #include <media/v4l2-cci.h>
- #include <media/v4l2-ctrls.h>
-+#include <media/v4l2-event.h>
- #include <media/v4l2-fwnode.h>
- #include <media/v4l2-subdev.h>
- 
-@@ -576,6 +577,8 @@ static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
- 
- static const struct v4l2_subdev_core_ops max96717_subdev_core_ops = {
- 	.log_status = max96717_log_status,
-+	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-+	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
- };
- 
- static const struct v4l2_subdev_internal_ops max96717_internal_ops = {
-@@ -689,7 +692,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
- 		goto err_free_ctrl;
- 	}
- 
--	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
-+	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
-+			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
- 	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
- 	priv->sd.entity.ops = &max96717_entity_ops;
- 
+kernel test robot noticed "ltp.ADSP069.fail" on:
+
+commit: 9f0f6bf4271488b3d3a290ba119a0e0a08df2cc6 ("f2fs: support to map continuous holes or preallocated address")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master      8d8d276ba2fb5f9ac4984f5c10ae60858090babc]
+[test failed on linux-next/master 32ffa5373540a8d1c06619f52d019c6cdc948bb4]
+
+in testcase: ltp
+version: ltp-x86_64-14c1f76-1_20240907
+with following parameters:
+
+	disk: 1HDD
+	fs: f2fs
+	test: ltp-aiodio.part2-01/ADSP069
+
+
+
+compiler: gcc-12
+test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-3770K CPU @ 3.50GHz (Ivy Bridge) with 16G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202409122103.e45aa13b-oliver.sang@intel.com
+
+
+Running tests.......
+<<<test_start>>>
+tag=ADSP069 stime=1726063753
+cmdline="dio_sparse -w 1024k -s 2048k -n 6"
+contacts=""
+analysis=exit
+<<<test_output>>>
+tst_tmpdir.c:316: TINFO: Using /fs/sda1/tmpdir/ltp-9n1cQWozoa/LTP_dioEeK1iL as tmpdir (f2fs filesystem)
+tst_test.c:1809: TINFO: LTP version: 20240524-225-g0ac1e70cb
+tst_test.c:1813: TINFO: Tested kernel: 6.9.0-rc1-00011-g9f0f6bf42714 #1 SMP PREEMPT_DYNAMIC Wed Sep 11 21:23:04 CST 2024 x86_64
+tst_test.c:1652: TINFO: Timeout per run is 1h 00m 30s
+tst_test.c:1406: TINFO: f2fs is supported by the test
+dio_sparse.c:84: TINFO: Dirtying free blocks
+common.h:72: TINFO: child 3874 reading file
+common.h:72: TINFO: child 3875 reading file
+common.h:72: TINFO: child 3876 reading file
+common.h:72: TINFO: child 3877 reading file
+common.h:72: TINFO: child 3878 reading file
+common.h:72: TINFO: child 3879 reading file
+common.h:20: TINFO: non zero buffer at buf[0] => 0xffffffaa,ffffffaa,ffffffaa,ffffffaa
+common.h:26: TINFO: buf 0x7ffdbd3882c0, p 0x7ffdbd3882c0
+common.h:85: TFAIL: non-zero read at offset 1732608
+dio_sparse.c:117: TFAIL: Child 3879: exited with 1
+
+Summary:
+passed   0
+failed   2
+broken   0
+skipped  0
+warnings 0
+incrementing stop
+<<<execution_status>>>
+initiation_status="ok"
+duration=2 termination_type=exited termination_id=1 corefile=no
+cutime=11 cstime=56
+<<<test_end>>>
+INFO: ltp-pan reported some tests FAIL
+LTP Version: 20240524-225-g0ac1e70cb
+
+       ###############################################################
+
+            Done executing testcases.
+            LTP Version:  20240524-225-g0ac1e70cb
+       ###############################################################
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240912/202409122103.e45aa13b-oliver.sang@intel.com
+
+
+
 -- 
-2.34.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
