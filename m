@@ -1,200 +1,177 @@
-Return-Path: <linux-kernel+bounces-327341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B36977463
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:36:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2F997746A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6717F283305
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2791F25447
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5931C172E;
-	Thu, 12 Sep 2024 22:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035681C2322;
+	Thu, 12 Sep 2024 22:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="X85expuw"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F9Hz1K1Q"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BE517DFF5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9551C2332
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726180570; cv=none; b=iykKwvfxf8DnG2LJJ9w/GeJqZsz+cQDFNbjnfrgCi13sr+b6jp4lNHilkUVPCYgW0EGAuY/JicJWyqLRJeNTEt7ujkabnZwzG6ZA+GjBmh5tnAsHZXu+jWB/Elvfc+CMeki6LGAinQ9+TaNj5GMyrZaoCuPyiJ9d6ff86tbreCc=
+	t=1726180707; cv=none; b=rQmCDEZOFPzlano93XNNvOIQvyP+/RGoRGbg6WcCIzBcR6ynzinZg1+Q/EQbBKat4+WkPuxKls1fXlP6gu4cvaBAAE6KHBsTc/tMCqtHnR1lZGc4Z+rNOs59PMTFl3HpV7MPLZDgTwy7DgBJoOkzD2k8DM3gL8YErd+5HLSDkIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726180570; c=relaxed/simple;
-	bh=HESB9tj7zMNiDW/ln+TD7ixuKlRE2u/tZMAMSZTRNMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q0WkXFYCW8Ks0pG4YODbFBxjwmUGrBr2rfjAlMDu6TlylTCiKFealRMfg+YtW7uQ4N//PBOZCYLmulqBIFhIZI9HgKYFXHlKj53ALUFAGYqMsPLxsEYOBgN8eKY6wDkusc9ryBivCIjjqfDSy18ewyUnjoM04u2OV2AiZcyEEgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=X85expuw; arc=none smtp.client-ip=207.246.76.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1726180531;
- bh=rns+bPTPYHjFxU/x4Zy7sEWc0Gr6ktnAqcJoJdO8VEg=;
- b=X85expuw4ZbdZykYAWLCoZxLKhdwvB7CYGRjVrLz6WUG0t1UBJELJfqGtX8SclAdVWj/1ln3S
- Wm4wvh4r+u0/UaTASkHgNWMzc0uJgFXTPDzGWJrO7BI+y3eoitdwFQELOnLlFYbupj8PnxDiKwA
- UytRVvISzj9WuWXknNKYtpy9YclWSAhGxDGSDZNSQZ+IKLHyXiaHnLENRZyMznW93UqlTAOBfS5
- +ONW9Q7xEWD+GSAY2dO7OnBn3Z6o6UH48kqBQxp2YiXQVk6KE29jgK66DPIaf5L451PJKI0ximo
- zI18lHZ2O1/2Mnmw+XAGNevxGyK5kPF+aBBaqFETrUeA==
-Message-ID: <8c0b8145-3e90-42e6-8e1a-5be6424d1055@kwiboo.se>
-Date: Fri, 13 Sep 2024 00:35:23 +0200
+	s=arc-20240116; t=1726180707; c=relaxed/simple;
+	bh=9mj6BM6fizLwX9nwJwjHGY4UPMEYPOw8jxKpidVNMZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=chvVahn4qPNnbD/NV4V1esZiE0B/K69TIH7c3U/UG6LD990hcs/dou+Hr1OXkdUaaiFdM+K4h9msOKkr4upYInMmiDtgxfcutlhsMJqxBd8dJUxjsQ6YxLsv+94whdszijIf7VI1uzZ7X9tXw5zt4rt2smyHEhWr7CKcNgjIZ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F9Hz1K1Q; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4581cec6079so104161cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726180705; x=1726785505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zAcTkMgtXgcEEPNABEcxJ+4/CfIqLdprERFyE6aHb/Q=;
+        b=F9Hz1K1QHawzkXFRhsx/kLe8o97yIk5qrK0oOeNQ15NDLfIUPDpxLxQQrHb0ls4XUR
+         /lKeO5Fp+wHj1sMV43yFDIZNbq1ktKctr7yhQmwHA2E24ZWRaw7oKNYyX+iIghHtQXdU
+         AfFw6AKXFS9qbYgNbO7BtH1kpPwI9h3S3ipMpe7XeJYPBsCVZ9F+o0qxDVCeYQy9zZx9
+         kejVXJo1ju144JRa2YJodUj70w7w1YovhTaxEVKzyLoi/20vvqM1MF2P3HO/deZnQFd/
+         Sf8WNOGlXmEH2TxW0p1K5zqvZ5fE6EYfoCGtmZdBt7zMJ0/TtvuchHCx9oeu7EvlFnYY
+         5C0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726180705; x=1726785505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zAcTkMgtXgcEEPNABEcxJ+4/CfIqLdprERFyE6aHb/Q=;
+        b=P8AzyYYYEALd5br4ADLLvxOKi406QhQpaouaJdGegrI/X84z218eopc352Ds+O6bQX
+         a1g/ZqxVpKjHlTBQnUEv5CyiI0WQKEu8rlEz55NVxZ/C4aiFdPq1ZA8IUU2sxCQX1QzS
+         tfRkV7+YY5wZgoXuSC22pVRi2ZXorDrn6u7kG2wOg/dO8TqMbprIwEACYZZcViO9GZXm
+         TpiWFPax/BHho0fDKrxyQakq9cCev8SEDpKP1As82xpJu8BIXFlruTQTXkpC3ouOJ3q+
+         k8DPpikI84axhEEv8VpJWrVLfg/m+LsjUfNj+ztz/nRPXm4l7UghGtgxoSCH65/Jv27H
+         3qmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Jxq31L2629BYq26UiTDMcJfE9Umq90s9l1FQJA7nQnAiMd4njfrWAufFbmLrKTJ5AUgx0QQrVY2RbwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSD2fzxeZFovqih2q49zGRdk3hNsTKr2MQX4GHMDnN4/8I/IdX
+	gsUz0zgCbE3QVopRzbZwRPaD8tLhlUaNLY9btS711mW3JQXmtsJyBwDvruN4iyfk8CjH7hyL/mL
+	jGJhNlpxfo3akUsWGShOKiFBScl+wavoat+dR
+X-Google-Smtp-Source: AGHT+IFxU92LC/Yu17Eq7ByosE5bKTLoyHWcepiXM7BWM5Jn7DeLhwnV0QV3X6fDS1XGaHWOKCVgA6sgQltQP3wrtgc=
+X-Received: by 2002:a05:622a:24f:b0:456:7d9f:2af8 with SMTP id
+ d75a77b69052e-458645121e9mr4595011cf.7.1726180704399; Thu, 12 Sep 2024
+ 15:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: rockchip: Enable all 3 USBs on Turing RK1
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ondrej Jirman <megi@xff.cz>,
- Chris Morgan <macromorgan@hotmail.com>, Alex Zhao <zzc@rock-chips.com>,
- Dragan Simic <dsimic@manjaro.org>, FUKAUMI Naoki <naoki@radxa.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Jing Luo <jing@jing.rocks>, Kever Yang <kever.yang@rock-chips.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Daniel_Kukie=C5=82a?= <daniel@kukiela.pl>,
- Joshua Riek <jjriek@verizon.net>
-References: <20240912025034.180233-1-CFSworks@gmail.com>
- <20240912025034.180233-5-CFSworks@gmail.com>
- <ed4b6913-f19b-4280-b3b2-f5bb1e7f47eb@kwiboo.se>
- <CAH5Ym4jEMvBVQNNS6U49RWTAVPX4GmOVC-VjgXsFCR=X68QWgA@mail.gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <CAH5Ym4jEMvBVQNNS6U49RWTAVPX4GmOVC-VjgXsFCR=X68QWgA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 207.246.76.47
-X-ForwardEmail-ID: 66e36cb3fcb6c7d83e7bbd3c
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+ <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
+ <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com> <CABCJKuer=O3FnLJNGMg2+-HxFJFUrccTuuHt5OiMpRsAJBvBsg@mail.gmail.com>
+ <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me> <CABCJKue-YtCQWinad2GW7uJuVN-ZSUmRYttK_PUurJOR51Urgg@mail.gmail.com>
+ <66694e9a-16d1-4d4e-b825-b90707f2b42e@proton.me>
+In-Reply-To: <66694e9a-16d1-4d4e-b825-b90707f2b42e@proton.me>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 12 Sep 2024 15:37:45 -0700
+Message-ID: <CABCJKufJD6Zea7P_aPHNQQgCMgqkw98-XcvW8hRaTx6kcg4vUw@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-09-12 23:06, Sam Edwards wrote:
-> On Thu, Sep 12, 2024 at 12:53 PM Jonas Karlman <jonas@kwiboo.se> wrote:
->>
->> Hi Sam,
->>
->> Sounds like this may be missing
->>
->>         rockchip,dp-lane-mux = <0 1 2 3>;
->>
->> or
->>
->>         rockchip,dp-lane-mux = <3 2 1 0>;
+Hi,
 
-Small correction, the second 4-lane mode would be described as:
+On Thu, Sep 12, 2024 at 2:58=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On 12.09.24 22:58, Sami Tolvanen wrote:
+> > That's an interesting point. Is the problem that you cannot assign
+> > arbitrary values to the Rust enum that bindgen generates, or is using
+> > a #define the problem? We could probably just make the hidden enum
+> > values visible to bindgen only if needed.
+>
+> So if I take your example from above add it to our bindgen input, then I
+> get the following output:
+>
+>     pub const e_A: my_own_test_enum =3D 0;
+>     pub const e_B: my_own_test_enum =3D 1;
+>     pub type e_enum =3D core::ffi::c_uint;
+>
+> So it doesn't pick up the other constants at all. That is probably
+> because we haven't enabled the bindgen flag that adds support for
+> function-like macros. If I enable that flag (`--clang-macro-fallback`,
+> then the output becomes:
+>
+>     pub const C: u32 =3D 2;
+>     pub const D: u32 =3D 3;
+>     pub const e_A: e =3D 0;
+>     pub const e_B: e =3D 1;
+>     pub type e =3D ::std::os::raw::c_uint;
+>
+> So it doesn't really work as we would like it to (ie missing e_ prefix).
 
-	rockchip,dp-lane-mux = <2 3 0 1>;
+If defines are a problem, we can always use a const int instead. It
+doesn't have to be defined inside the enum either, and probably we can
+add a prefix too.
 
->>
->> if all lanes are used for DP and none are used for USB.
->>
->> It should help describe the hw and also help the driver set mode to
->> UDPHY_MODE_DP and that should disable the u3 port, or there may be an
->> issue to fix in the phy driver.
-> 
-> Thanks for your insights Jonas!
-> 
-> I haven't yet gotten to DP enablement so I don't know the correct DP
-> layout. Ultimately I do want the USBDP0 node to have the necessary
-> properties for DP, but alas that's a patch for another day.
-> 
-> Nonetheless, I briefly tried it and I don't think UDPHY_MODE_DP
-> affects the PHY's "backend" (ctrl<->phy iface) at all, only the
-> availability of frontend lanes to the USB-specific backend: So port u3
-> is still enabled, there's just no way to reach it electrically.
-> 
-> With that in mind, would you recommend that I add a placeholder
-> dp-lane-mux of 0 1 2 3 for now, just to keep the PHY from attempting
-> to speak USB to a DP device? I don't foresee any harm in leaving it
-> as-is but you may know something that I don't.
+> But even if bindgen were to start supporting `#define` inside of the
+> enum. It might still have a problem with the `#define`: there is the
+> `--rustified-enum <REGEX>` option for bindgen that would change the
+> output to this:
+>
+>     #[repr(u32)]
+>     #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+>     pub enum e {
+>         A =3D 0,
+>         B =3D 1,
+>     }
+>
+> Which makes using the values on the Rust side a lot easier, since you
+> get exhaustiveness checks when using `match`. Adding the
+> `--clang-macro-fallback` flag, I get:
+>
+>     pub const C: u32 =3D 2;
+>     pub const D: u32 =3D 3;
+>     #[repr(u32)]
+>     #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+>     pub enum e {
+>         A =3D 0,
+>         B =3D 1,
+>     }
+>
+> Which is a big problem, because the enum `e` won't have 2 or 3 as valid
+> values (it will be UB to write them to a variable of type `e`).
 
-The rk_udphy_u3_port_disable() call in usbdp phy driver should help set
-the usb3otg0_host_num_u3_port=0 you mentioned:
+Yes, I sort of thought that this might be an issue. I don't see this
+in bindgen flags right now, are you planning on switching the kernel
+bindgen to use --rustified-enum?
 
-  .usb3otg0_cfg = RK_UDPHY_GEN_GRF_REG(0x001c, 15, 0, 0x1100, 0x0188),
-  .usb3otg1_cfg = RK_UDPHY_GEN_GRF_REG(0x0034, 15, 0, 0x1100, 0x0188),
+If you do plan to use --rustified-enum, we could just use #ifdef
+__BINDGEN__ to hide the fields from everyone else, but I think we
+might actually need a more generic solution after all. I'll think
+about it a bit more.
 
-Here the disable/enable values is little bit inverted in macro, i.e.
-enable=0x0188 is the value set when u3_port_disable(disable=true) is
-called.
+> Would you add conditions to the `#define`? For example checking for the
+> version of kABI? (or how would it work?)
 
-Guessing that because the phy is not referenced its init() ops never
-gets called and u3 never gets disabled unless a usb3-phy is referenced.
+Perhaps the folks maintaining distros can chime in, but I suspect
+there's typically one kABI version per branch, so there should be no
+need to maintain multiple kABI versions in the same source file.
 
-> 
->>
->>> +     status = "okay";
->>> +};
->>> +
->>> +&usb_host0_xhci {
->>> +     extcon = <&u2phy0>;
->>> +     maximum-speed = "high-speed";
->>
->> If this only use the USB2 phy, this should probably also override the
->> default phys and phy-names props with:
->>
->>         phys = <&u2phy0_otg>;
->>         phy-names = "usb2-phy";
-> 
-> I agree completely: if the controller doesn't need the USB3 PHY, then
-> it should not (implicitly) be specified in the DT. Being able to add
-> these overrides is a big goal of mine as well. :)
-> 
-> Sadly, `phys` is what initializes USBDP's USB-side backend, so without
-> it the RX_STATUS line goes floating, and because the controller still
-> expects a port there, it misbehaves:
-> [   30.981076] usb usb2-port1: connect-debounce failed
-> 
-> I can tell the controller that there is no u3 port by doing this in U-Boot:
-> => mw.l 0xfd5ac01c 0xf0000000 # usb3otg0_host_num_u3_port=0
-> => boot
-> ...and that makes single-PHY operation work perfectly! But unless
-> Linux itself effects that change, this patch can't rely on that GRF
-> being set correctly.
-> 
-> Do you have a recommendation on how I might go about disabling this
-> port? I sent a patchset last year [1] that had the DWC3/xHCI driver
-> ignore enumerated u3 ports when the maximum-speed was set to
-> high-speed, but the consensus seems to be that this shouldn't be
-> addressed at the xHCI driver level, so somehow zeroing the necessary
-> GRF bits sounds like the way to go here. What do you think?
-
-Not sure if it would help but could be that part of init() ops should be
-moved to probe(). Would still require the phy driver to probe before usb
-controller for that to help/work.
-
-Adding a rockchip,dp-lane-mux prop and keeping the phys prop as-is is
-probably easiest way for now.
-
-One option for future could possible be to have grf driver disable u3
-and modify usbdp phy driver to enable u3 instead of disable u3, not
-sure this will fully work, init of the usbdp phy seem very sensitive
-and possible a one-time op. Trying to "usb start" in U-Boot will only
-work one time, using "usb reset" or a "usb stop/start" cycle will cause
-usbdp phy init to fail and a full board reset is needed to get port
-working again.
-
-Regards,
-Jonas
-
-> 
-> Kind regards,
-> Sam
-> 
-> [1]: https://lore.kernel.org/all/20231208210458.912776-1-CFSworks@gmail.com/
-
+Sami
 
