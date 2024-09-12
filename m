@@ -1,108 +1,168 @@
-Return-Path: <linux-kernel+bounces-326929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05868976EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0CF976EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2E228679D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98AA286767
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE0D14C5AF;
-	Thu, 12 Sep 2024 16:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4261448DC;
+	Thu, 12 Sep 2024 16:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xhwaB4d/"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="vbwz4wDl"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F72126C0E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADFA13D296
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158348; cv=none; b=NAsIXsObobUmT/005r1AdYxauDGmxGVmVA7zaWjzp0Ezda6rT1B0U0hnPpXPfwjfgNzN14KfZsKaT3I5Dzfxp2yDlZwKkTU5IYuqCwp7IHZ2eH4xfyIDjyZCVvaWZaf+/Nm5o/SiT0niirQCEs48GXZlsCz2oueBaHL7cyC286I=
+	t=1726158384; cv=none; b=pYCecBwAsCNA9dSTur1GpN8vfD/4ih9QnnN4dWV7cN8yigYlzTKVHqj2rn5m5z2f+P0Xo5WAu5p+lSV4/xPGaNjNtCzV+aNoFgqbfqKs+iGsq7QQ6cLK65VgOQGZNw03cgUWAw7cWfCRzIrdsx9KNE2COKU1M5HwkN/t95ewRYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158348; c=relaxed/simple;
-	bh=elQpcKGYpob27gMaQ5smQ9bcEmPe2L9QQJC6Li0fA2Y=;
-	h=Date:Subject:CC:From:To:Message-ID; b=gB4CVO2GSIprsWixuX0Rf8a/WLvYe7yeDu7OwNy57D7/F7GMWgIjooe5I5A4cTIJepBBw9bhkvjGBp/12b4wU3xq13Cm+5dNzWb23NTc8MP3Ui52vLQyUz4xW6ABkJoaDFCb6Ndhl03VQ8CoSOpxd/KF7wPIaBkDkOdeqA3Yvls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xhwaB4d/; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e7b121be30so918087a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726158345; x=1726763145; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4QILesIw2jO/jv8xws5YIjHNnjamw3bXH4diaHqXW30=;
-        b=xhwaB4d/8ReD7tI+iKSUmxmc31xCrqMQD8+yC6gtrMw6brHOW4nvBgYRUhVY5pnS+S
-         Lm4cjlC8XaDif+VbV74qhKqAXbeA3LmxIPJ7ypscNCu0iQ+YjBD5nSQqkdVT8IL4uMCT
-         ch180NL9p5P8pf2/vYjnDI6UZT66rUJjLDWtsipycZd0RHgzlNMLPBXCZdwyVjCPBVU9
-         ee0wXZfNHIxzWPFErU1+ex8maVPZrtytNnCyMcj/kd1+tLne/ej8YQywo86ZxbfMVz8P
-         XnekbvjSYMoUX086KfSmFLr6ovzTjsmvwnyWbh72XrlcKLWHBqjrokAqidTunRFJrXI0
-         rsFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726158345; x=1726763145;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4QILesIw2jO/jv8xws5YIjHNnjamw3bXH4diaHqXW30=;
-        b=MJGOHzCgkMUhnDUqOP3VkPexaB7+qeSsAw9nF0xHuip8vfBEnvxke6ba0V6AltnFy2
-         fgHUSaUbCd6VW80RXRIKrXFo1H44WLBB7krSnwK/Bmlqzr7jGjF3V7/oMbSSKmRuHN2l
-         BYZkP4kxlt05JGpw3oGeIqDuA0kOduXbaFyiyDbKM6jZxgSMBbqydK8T0VDeZUqEoSyH
-         YZatOOHX2HB9MeAfvzD6yGU5mVD1+hsgyIxeucGL7/WyJePX7Ybgurl9tvOLZKhv3j2w
-         P/DCEud+Dm4saYmcP3X/d7H0l7FW21JKupqA3qW91YFnowTqkxjfNtb8lMNywORyuUKI
-         5jSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVliquHGLWUXNZdrIecXirGsH4cu3+TenrSC5vaB75BIhkFxQgXnz5FLyTnn8A+4IZyVja4z5rCdsqW00U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9wiT2nYsulgMcFbSrIxAI1LMsHUlK9HnH/sctReX9frQLDSIk
-	JZ+FRSpuTMPkYZDWtEiWzuZTL9UsmK6baBMnizTS3PF56cPt1E+KdWqkk9H8qNxBDRM+uIyMDUT
-	a
-X-Google-Smtp-Source: AGHT+IEEf6iT3JV53GFjFR8pXoISHJUM3Kt/EUI8UQxiP6hXee0eeD1F6ANvQcR2UhfoNqUnoEFChQ==
-X-Received: by 2002:a17:902:e804:b0:205:88bf:bfe9 with SMTP id d9443c01a7336-2076e348076mr42857005ad.15.1726158344810;
-        Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b0096e9sm16037235ad.254.2024.09.12.09.25.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
-Date: Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
-X-Google-Original-Date: Thu, 12 Sep 2024 09:25:42 PDT (-0700)
-Subject: [GIT PULL] RISC-V Fixes for 6.11-rc8
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-61f22aea-eea4-4ed5-a803-92fa9df853cd@palmer-ri-x1c9>
+	s=arc-20240116; t=1726158384; c=relaxed/simple;
+	bh=gQVz2lI5WMHGuLw5HkQoGa8pXRyV7Vian3kdH9ARwkQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mZsiOVv5UMPMOHRd+dMArwON02X7Zv/8uBG0zoZp+g91t5WF++F0+rNMnrQ4spjpyCFLRwG9F7RzVJpEtY7k0cIKNUDYwIaikbskrsse3HedkQN1gPefPOkoSQm5MjaEds+KA+wdgMqZgZHBbbirtHX9fAcwqmT1ucAFS1xbdko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=vbwz4wDl; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
+	t=1726158378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fghksxzNrUPGPqs5rA/Bfobaz2wdg7ayaalvyHFzNCA=;
+	b=vbwz4wDlhLXXpVY4cHW4zVS2v68RabvOEk2abbmCux6eRU/cPJwd1Iqd8nqumCpV/+isof
+	yw7fVC1u8+IDLDf4Y+BcJx2W6/Sw23GcCRy+QXz1/KLHYBAv6of5xm1MwIcFT5Tj+4acg7
+	kDvhma4uWiBG2B/ALEsgyCJDjLTLKE5Dj6bXqsn8hFzBJejAkB4hB75tInK5XTd3Mos7iJ
+	AmCPeL/aJ1ceDpCivqzmc4L3rR8Yp9To9dZbWem6rHpIENDN56qSwZOu2J0//N1oNCm5TZ
+	ras63BSDkmL0r6CnCmK9qXVwvZMP2PLO7F7vqAikwEERmB+Z4AFAHsw5Aw6EZg==
+From: Xingquan Liu <b1n@b1n.io>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Xingquan Liu <b1n@b1n.io>
+Subject: [PATCH v2 1/2] staging: vt6655: Rename variable apTD0Rings
+Date: Fri, 13 Sep 2024 00:26:08 +0800
+Message-Id: <20240912162609.21517-1-b1n@b1n.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The following changes since commit 1ff95eb2bebda50c4c5406caaf201e0fcb24cc8f:
+Rename variable apTD0Rings to ap_td0_rings
+to fix checkpatch warning Avoid CamelCase.
 
-  riscv: Fix RISCV_ALTERNATIVE_EARLY (2024-09-03 07:57:55 -0700)
+Signed-off-by: Xingquan Liu <b1n@b1n.io>
+---
+ drivers/staging/vt6655/card.c        |  6 +++---
+ drivers/staging/vt6655/device.h      |  2 +-
+ drivers/staging/vt6655/device_main.c | 14 +++++++-------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
+index 688c870d89bc..36bf8cde2e08 100644
+--- a/drivers/staging/vt6655/card.c
++++ b/drivers/staging/vt6655/card.c
+@@ -388,8 +388,8 @@ void card_safe_reset_tx(struct vnt_private *priv)
+ 	struct vnt_tx_desc *curr_td;
+ 
+ 	/* initialize TD index */
+-	priv->tail_td[0] = &priv->apTD0Rings[0];
+-	priv->apCurrTD[0] = &priv->apTD0Rings[0];
++	priv->tail_td[0] = &priv->ap_td0_rings[0];
++	priv->apCurrTD[0] = &priv->ap_td0_rings[0];
+ 
+ 	priv->tail_td[1] = &priv->apTD1Rings[0];
+ 	priv->apCurrTD[1] = &priv->apTD1Rings[0];
+@@ -398,7 +398,7 @@ void card_safe_reset_tx(struct vnt_private *priv)
+ 		priv->iTDUsed[uu] = 0;
+ 
+ 	for (uu = 0; uu < priv->opts.tx_descs[0]; uu++) {
+-		curr_td = &priv->apTD0Rings[uu];
++		curr_td = &priv->ap_td0_rings[uu];
+ 		curr_td->td0.owner = OWNED_BY_HOST;
+ 		/* init all Tx Packet pointer to NULL */
+ 	}
+diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
+index 32d9cbd55222..32c51d794264 100644
+--- a/drivers/staging/vt6655/device.h
++++ b/drivers/staging/vt6655/device.h
+@@ -135,7 +135,7 @@ struct vnt_private {
+ 	struct vnt_tx_desc *apCurrTD[TYPE_MAXTD];
+ 	struct vnt_tx_desc *tail_td[TYPE_MAXTD];
+ 
+-	struct vnt_tx_desc *apTD0Rings;
++	struct vnt_tx_desc *ap_td0_rings;
+ 	struct vnt_tx_desc *apTD1Rings;
+ 
+ 	struct vnt_rx_desc *aRD0Ring;
+diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
+index 9ea647aefd60..a8dcd8ad3945 100644
+--- a/drivers/staging/vt6655/device_main.c
++++ b/drivers/staging/vt6655/device_main.c
+@@ -550,7 +550,7 @@ static bool device_init_rings(struct vnt_private *priv)
+ 		priv->opts.tx_descs[0] * sizeof(struct vnt_tx_desc);
+ 
+ 	/* vir_pool: pvoid type */
+-	priv->apTD0Rings = vir_pool
++	priv->ap_td0_rings = vir_pool
+ 		+ priv->opts.rx_descs0 * sizeof(struct vnt_rx_desc)
+ 		+ priv->opts.rx_descs1 * sizeof(struct vnt_rx_desc);
+ 
+@@ -720,7 +720,7 @@ static int device_init_td0_ring(struct vnt_private *priv)
+ 	curr = priv->td0_pool_dma;
+ 	for (i = 0; i < priv->opts.tx_descs[0];
+ 	     i++, curr += sizeof(struct vnt_tx_desc)) {
+-		desc = &priv->apTD0Rings[i];
++		desc = &priv->ap_td0_rings[i];
+ 		desc->td_info = kzalloc(sizeof(*desc->td_info), GFP_KERNEL);
+ 		if (!desc->td_info) {
+ 			ret = -ENOMEM;
+@@ -730,20 +730,20 @@ static int device_init_td0_ring(struct vnt_private *priv)
+ 		desc->td_info->buf = priv->tx0_bufs + i * PKT_BUF_SZ;
+ 		desc->td_info->buf_dma = priv->tx_bufs_dma0 + i * PKT_BUF_SZ;
+ 
+-		desc->next = &(priv->apTD0Rings[(i + 1) % priv->opts.tx_descs[0]]);
++		desc->next = &(priv->ap_td0_rings[(i + 1) % priv->opts.tx_descs[0]]);
+ 		desc->next_desc = cpu_to_le32(curr +
+ 					      sizeof(struct vnt_tx_desc));
+ 	}
+ 
+ 	if (i > 0)
+-		priv->apTD0Rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
+-	priv->tail_td[0] = priv->apCurrTD[0] = &priv->apTD0Rings[0];
++		priv->ap_td0_rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
++	priv->tail_td[0] = priv->apCurrTD[0] = &priv->ap_td0_rings[0];
+ 
+ 	return 0;
+ 
+ err_free_desc:
+ 	while (i--) {
+-		desc = &priv->apTD0Rings[i];
++		desc = &priv->ap_td0_rings[i];
+ 		kfree(desc->td_info);
+ 	}
+ 
+@@ -795,7 +795,7 @@ static void device_free_td0_ring(struct vnt_private *priv)
+ 	int i;
+ 
+ 	for (i = 0; i < priv->opts.tx_descs[0]; i++) {
+-		struct vnt_tx_desc *desc = &priv->apTD0Rings[i];
++		struct vnt_tx_desc *desc = &priv->ap_td0_rings[i];
+ 		struct vnt_td_info *td_info = desc->td_info;
+ 
+ 		dev_kfree_skb(td_info->skb);
+-- 
+Xingquan Liu
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-rc8
-
-for you to fetch changes up to 7c1e5b9690b0e14acead4ff98d8a6c40f2dff54b:
-
-  riscv: Disable preemption while handling PR_RISCV_CTX_SW_FENCEI_OFF (2024-09-10 20:38:46 -0700)
-
-----------------------------------------------------------------
-RISC-V Fixes for 6.11-rc8
-
-* Two fixes for smp_processor_id() calls in preemptible sections: one if
-  the perf driver, and one in the fence.i prctl.
-
-----------------------------------------------------------------
-Alexandre Ghiti (1):
-      drivers: perf: Fix smp_processor_id() use in preemptible code
-
-Charlie Jenkins (1):
-      riscv: Disable preemption while handling PR_RISCV_CTX_SW_FENCEI_OFF
-
- arch/riscv/mm/cacheflush.c   | 12 ++++++------
- drivers/perf/riscv_pmu_sbi.c |  7 ++++++-
- 2 files changed, 12 insertions(+), 7 deletions(-)
 
