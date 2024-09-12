@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-325794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6A4975E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE36975E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5649B240B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9DFC1F2332F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCEB1A28D;
-	Thu, 12 Sep 2024 00:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA168C1E;
+	Thu, 12 Sep 2024 01:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXNxUO15"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/ChItzf"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D85851C3E;
-	Thu, 12 Sep 2024 00:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E22A20;
+	Thu, 12 Sep 2024 01:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726102761; cv=none; b=J9HFbkfY8O9M6J8Tyg0bnCX+ccTaHUhqqfIbEBTVfExEWDhXLZ5tgGBGekNkKaIOHbI0x6ud8ytDK5EnI5SW9RLwnEhLYVmfYyPXcNxp9hkJypCDNmdMLhV4qtIkH1c6gAbwjx1i/NEoGfdoOFt99nmhH7vEmBMvFj5UkGJ+yl0=
+	t=1726102966; cv=none; b=OIuZaCtfC2q6J/wkLBTljQKRa1gSdYMCVutvm2Ngb8eMyfz3+Rzl9YGhoKwKsHrLaJi1HZOOc/wRxA6Mf3rqUvkiGo2ZCQWe3FHbc8SnFUw1EON0UKuk8GviAeUFDQVaA43Kj7HUBQP9pP48HcfGYlki+fb2ZIVVuoEgmb4IagM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726102761; c=relaxed/simple;
-	bh=Wtk+NZ17eG6o/WTYLkvBZ/8lcqFKouTKLchh8GISpBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUEt7c758nN6AP+/m1gNK77eGuoP/F3t2TBRakTjZ05SUN7QjHsMpNz3eAeg5boTwAJu5m2gety8ZhnFPHI8X42hvlsyW57hqSJyx2reupkolhEhrxPMPsfOACgiFWkKQ4dm/V7Wr6ui3xh5CcrBUH7Bg4i0cHDtn2KpsDrr3Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXNxUO15; arc=none smtp.client-ip=209.85.217.49
+	s=arc-20240116; t=1726102966; c=relaxed/simple;
+	bh=kgMUrb5VnJZXzPjSyoe8z0O898rpVpTzDFbnhUI3e9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JbFpoNuil2kktvE6VUYrBqwb++G7GIeDbhoswkSc4eSxAlYK4LKtlAK76bt56kIGQccfo6FgLKjW8ZtrbXCw24QGU/3aQKD6gXWNHa+8aQe6tBFoTKJX3gsSrBzqOpfaoH6yEsoD27EtB2ocQTA2rrMJnf59WnaO+BjmnIduhKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/ChItzf; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49bd40d77e5so159932137.0;
-        Wed, 11 Sep 2024 17:59:19 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6c34c02ff1cso2509736d6.2;
+        Wed, 11 Sep 2024 18:02:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726102758; x=1726707558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgX4sccRi8NJbo5dbrCJ26d2m0ZxHHlk5FqkNXTA4qQ=;
-        b=iXNxUO15uZuz2ApcOLm3O2oSVKNtO9GB5+P/il8PuQph+Hq8nG0/xG42UcuGOSUDVE
-         UHm7Yw5bPzxI9ELRwwz2AJppfBfP4/VHJ1a0GePPfUTrOKC1Lzg7NrTAucA1gp5AdbRD
-         v5tNogv7H/DJlxTM5mxsiaItF0WRv/rIp2gIZOVSyVq2mv/3TRdtaQAHhAH2Xd6clg6H
-         11627ScwMoZkgzS+BAtKDErRQLOthTUXD723+Tcxi7FIPob4K42hCEBuy9Y5S6cM/DIn
-         uvJRJaGnQvGxnsN5xdvAXaWRGVtLh9ijgEQUKAtyvYlY0FD9FQhs9okOMBdqV6ruwx8a
-         a73w==
+        d=gmail.com; s=20230601; t=1726102964; x=1726707764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FhBfg/KfXuh3WRghq6RzRSBD+oKsI1VasMMAHjkTsb4=;
+        b=Z/ChItzf+9lKPix48wJL76sxJIe0IJkQbXf08NwMfx8j7E8JwAzwcgjtWG8qP2Uh3U
+         2ePyM1zuKGuCYKFvixapEELpRLJ5uhf7fIXgVlN0uJrw7Dq13onsnmG7eR2Icdp1CVx6
+         tE9EFzG3Gi1wEFGHGNKVy6LnAuKpmnQDtGCwrIzVC7xi00jnGtx7K37+DLGum0lW/lz0
+         zthVTwxqxjGnefSTco5UydAzUVQx05yxfFPczkRm2ZS937T3zi4lDm17wls7sx3GNFML
+         L8lDRQ/WT9pb5TgK3ywY9qn0xY7eSSgK76bvlW9+jMe0R/P4EqaCHJQv4ziTAzFm4q4e
+         aIdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726102758; x=1726707558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgX4sccRi8NJbo5dbrCJ26d2m0ZxHHlk5FqkNXTA4qQ=;
-        b=kNOrR6fl/ZG6NzR10JXaiCccsLekaRLe49CW1ZjK2g2AU5H1e3PiBdS3OmZvkU69Tr
-         7RzYSl3J7SGV0ROPwljwuvRIhSXCaI8UxDhJQfREESwCEOSK86PSu4d5O1D18R8SanjP
-         AJfG5QYlyVbnL8rGSC7eenvn9vOjD8WTdpJi5BLUcVMbEuN/Bx8f48FosuvwUHB2M6rx
-         malUhVMY62V5P/NBT38EOLgn+cHWbJ0FVkCFiyiAgRZCwktMw5Ehof1QitcxaiTMUnW+
-         dAS+mDM6uHKbnU/azl2GNjN96Wgf373gW376e9W7e3plKoK2WloCukTkozGE/2p7uqhn
-         ZjRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWATaXE8xKBjeHnE0bN+zrXeG4hty6r+JbEj185O7JPoTr/jmJeIRLKPpAtzQu0yZMgh2TwzA0WNlQb65I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPKKdm8WS+mJY5596KXWFnsQeetBhUG7FA0vOOJLxjOmbCXc9p
-	eQFxz9dtdQRhxk0oepmm1dqp//OLINnzUbIqsgQLgtwswAFsH6G2Mk6gLr7QO1QHQsGqmz+e4f1
-	6hwt6XsJCl3diXJWX6fV6AKIoW/EIVw==
-X-Google-Smtp-Source: AGHT+IEmqE1+LHxlcQWdn5sh6AQNRcr4az7NeDC//sBs8XprlYeT/G3iNb84SLPYkUdpvkA+29zR7DDGaTqjbNjk1jo=
-X-Received: by 2002:a05:6102:26c4:b0:492:a11f:a878 with SMTP id
- ada2fe7eead31-49d4156b1d4mr1234032137.23.1726102758504; Wed, 11 Sep 2024
- 17:59:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726102964; x=1726707764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FhBfg/KfXuh3WRghq6RzRSBD+oKsI1VasMMAHjkTsb4=;
+        b=WwI+7TbB0EFXYV0wIiatkcozyGCYvggspOtOR++zVbmbWGGhd9uT8kl+qatIneDTEG
+         WnDqKbPw+JjShdXgfpD362Z8ejRVGP5FuFrgS0uU75dKA03fkgr++mXFU9/l0vOq7FMA
+         R8eA0QdAY23MYbH7gDG2/QC0pK5MohWdodUj5/4NBbQZ0DqzjW8vCaZgyR30inWLu0p/
+         Lo+W9iUDvzqmHz6xftX5Yk3Gp6pmY0kXcPRmnaGh5luc9Bhl38DH7Q1bbNv4rwm8TQyL
+         OpRr11/Xi+zuYhFhd8N7YMZaC/uglalucnO03RvD41t+v3lwRIc2zt2bdqhj8bXQcODP
+         B04Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvCq1lnqWOWa7n2EG1VbNcyaq0h2bbUbF2aqRcWmjXLfbzWzmRKIe9RTcBqBJMV3woj9hgO2h7plIGh8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSeZILSSs7vI9LbmJnyUlvc7MTUIBnlR1frAR5MzZ6QSlGhKE7
+	zVfPhmiBQQe8qvkWpl+Y2ePFaM8QiKnl0BzchjD3zPdqRg2aSehMC3HpXqxj
+X-Google-Smtp-Source: AGHT+IEN+qyzpKLeBQ9+lSdnRag5IpVESYQ3EOhBj11USzogqadYnHderpROBr6cBYi89w0VF2RuyQ==
+X-Received: by 2002:a05:6214:4304:b0:6c5:caa:dd83 with SMTP id 6a1803df08f44-6c5736cc039mr18764546d6.41.1726102964337;
+        Wed, 11 Sep 2024 18:02:44 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6c53433b551sm48174816d6.55.2024.09.11.18.02.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 18:02:44 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] docs: filesystems: removed the :c:func usage in the journaling page
+Date: Wed, 11 Sep 2024 21:00:26 -0400
+Message-ID: <20240912010025.8181-2-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912004747.5417-2-dennis.lamerice@gmail.com>
-In-Reply-To: <20240912004747.5417-2-dennis.lamerice@gmail.com>
-From: Dennis Lam <dennis.lamerice@gmail.com>
-Date: Wed, 11 Sep 2024 20:59:07 -0400
-Message-ID: <CAGZfcdk9i7psbTxPah6banb7wCwXuE7tueTpWcpxZESSbZ-HZw@mail.gmail.com>
-Subject: Re: [PATCH 0/1]
-To: dennis.lamerice@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 8:48=E2=80=AFPM Dennis Lam <dennis.lamerice@gmail.c=
-om> wrote:
->
-> Removed the :c:func usage in the journaling filesystems page.
->
-> Dennis Lam (1):
->   docs: filesystems: removed the :c:func usage in the journaling page
->
->  Documentation/filesystems/journalling.rst | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> --
-> 2.46.0
->
+This commit removes the :c:func in the journaling filesystems page.
 
-Please ignore the post, this email was an accident.
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+---
+ Documentation/filesystems/journalling.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Dennis
+diff --git a/Documentation/filesystems/journalling.rst b/Documentation/filesystems/journalling.rst
+index e18f90ffc6fd..e079c048cf6b 100644
+--- a/Documentation/filesystems/journalling.rst
++++ b/Documentation/filesystems/journalling.rst
+@@ -147,16 +147,16 @@ blocks.
+ 
+ File system is free to perform fast commits as and when it wants as long as it
+ gets permission from JBD2 to do so by calling the function
+-:c:func:`jbd2_fc_begin_commit()`. Once a fast commit is done, the client
++`jbd2_fc_begin_commit()`. Once a fast commit is done, the client
+ file  system should tell JBD2 about it by calling
+-:c:func:`jbd2_fc_end_commit()`. If file system wants JBD2 to perform a full
++`jbd2_fc_end_commit()`. If file system wants JBD2 to perform a full
+ commit immediately after stopping the fast commit it can do so by calling
+-:c:func:`jbd2_fc_end_commit_fallback()`. This is useful if fast commit operation
++`jbd2_fc_end_commit_fallback()`. This is useful if fast commit operation
+ fails for some reason and the only way to guarantee consistency is for JBD2 to
+ perform the full traditional commit.
+ 
+ JBD2 helper functions to manage fast commit buffers. File system can use
+-:c:func:`jbd2_fc_get_buf()` and :c:func:`jbd2_fc_wait_bufs()` to allocate
++`jbd2_fc_get_buf()` and `jbd2_fc_wait_bufs()` to allocate
+ and wait on IO completion of fast commit buffers.
+ 
+ Currently, only Ext4 implements fast commits. For details of its implementation
+-- 
+2.46.0
+
 
