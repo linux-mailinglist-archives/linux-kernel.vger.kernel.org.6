@@ -1,161 +1,240 @@
-Return-Path: <linux-kernel+bounces-326560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FE99769FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:06:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4464D976A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F1FB23C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09957284DA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EFB19F42D;
-	Thu, 12 Sep 2024 13:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8051ABEA4;
+	Thu, 12 Sep 2024 13:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ux6Wj2Eq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vFY1xnLV"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D01A2639
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146363; cv=none; b=GR1vFYP6CNmTlfv9vtIdJZzMW4H52ubg7gJdox+0FTPxLntmOLOez6Sz66Ba1PBmdxsaxuvKGYj2nlBHdai2xeXxJ65lrEoq1EdjmtJrukHA6YoYSwOexJxiE2l1HWdyKApkEy5kCP5vgUSGFk/pr4poge+n361bkvrGWQNCVkY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146363; c=relaxed/simple;
-	bh=elqqLGSNxrq+uu0tXdg0E9WKcdzDciPN1q2YQNljUHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nO1jg1522uUIMY3BedWGyDhtp7AMOMu1W4G2i0vA5c1EHs6xaTBfrEpxcBYTcLwQtMgodqVwyDRzWwmLkrec99WC7PCa9fZGUd2rtMMbxjy2GICBpkZR1RlyKglgHOp6f1BMOqsyE5KWWGJYbukXU0hxRp4xTj89UQAKQdX/VNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ux6Wj2Eq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726146362; x=1757682362;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=elqqLGSNxrq+uu0tXdg0E9WKcdzDciPN1q2YQNljUHA=;
-  b=Ux6Wj2EqCYlw3BZT5Qph6IS6IVIFjzK5sB4p2H93l0TlgaqfURRocAHj
-   5i1vbrFml/nYjsrWEVmgzVozLx0J5GyGsukY3s88f6t7CI40ts1xUVifL
-   SdLLjdCe2uHEbPnEnv3X14F45DAourwH0372oNvc3SewPk04D2UH9ds6D
-   /XX4Y0ejlIvU/CLHDZiFqK68KR4GwOL1+cFM4UJ6I33fXTI5x3zBO76rz
-   nCmMkh/B6gqiH9aTGHl6maSCH7TcI246ttX0Z+s69WUfBGCY1ORjMHJMI
-   ZBnKDqzjwOZzDh3rnM1SxCe+l6zMf4eyltf5YAmVOHciOLANweiaFTjJd
-   A==;
-X-CSE-ConnectionGUID: +8DQK4M5TfW1XP0XfrtU/w==
-X-CSE-MsgGUID: 7pR/1UhKTs+olBPFRlzwgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24481253"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="24481253"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 06:06:02 -0700
-X-CSE-ConnectionGUID: fhQmcLv0SuW6o5ZBh+jwtA==
-X-CSE-MsgGUID: Vsno+zAATXKZRmx8xhx0/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="67696009"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Sep 2024 06:06:00 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sojWH-0005Bm-2M;
-	Thu, 12 Sep 2024 13:05:57 +0000
-Date: Thu, 12 Sep 2024 21:05:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter
- or member 'pm_suspend_backup.imr' not described in 'atmel_pioctrl'
-Message-ID: <202409122134.crk22zBA-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2E21AB52D;
+	Thu, 12 Sep 2024 13:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726146607; cv=fail; b=f3bw3cTTgwrMOdiunV7s9d7ehxa9S2u0XmD2mn9fuAMEh4hrLWPVLL5Sczs72MXS6XyF2fNTjCZce2E+KcbTrEjx/oKgCeCj3yxGiBO3C6Zo9MB89xpMHOgVm+h5SwyL5aFv0xkT7/xLFbRzPAIYAM7rgRhQ0vBnzLJvbChSIKM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726146607; c=relaxed/simple;
+	bh=4rZV+sXlWXl8tvj1vFLDUbUkbhP7PkkcSgT7g7lVttE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gZa/4/YpKCKB9RPTC7pz2Ct88NIBdhb7CM+wlYZDfn3OuzxnizatqdacWo+HFUDNmkNExGJGDhnmmFlfxOhLTab71IE/TSzAlwA5dxYPiCWOLRkinNM9eOjsplhWsZ1OiwvOdsR81WLG1TiZgkUhRTkhie06FX4S70+5gyO/VjU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vFY1xnLV; arc=fail smtp.client-ip=40.107.220.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x3HqkEXdXPytAxKFsq2F3NxYv+yg/ZYWpa8zhKcAeOmUBrWvJm1c4lIwPayGH6zcN/vPuu9hLuaW6K4x2Q6+kS4DdVwktm30sY+5RnaT7IDQxNDNwZkmQ+E3puMSjFfCsa+KbXew7JFCGg2Fa9iAxyU4Ete37EaGhnpMtiYbbt1Xkhg3b8fQNCeF4xe5eZE+T4HH8eay25sUlwZwSRjCVnjMrtdI1K+GpqL4e2RJLQILCKnDfYYNVZtMShG/dg/UJyfm8/20jIeGBH1CkXwLvdM8cD9TxPBu9fpnM7Qc1JQYOOOjSgyc1XjRJ7KXOz+Xe0nZ6Tc+wTxw3MiW7kQFEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bKJn7QqIZqsqFOjbpTCOylBkf7sTDUhgJ+mr8/Xb3FQ=;
+ b=CifKHIh+vMIhgigl8ZSPi4+YEN+S2yp9pm+yoL5t9OGHnZfhnLQVSJ/ASGCOaHFioQ1RgzEEymvcGtuW3SmqkxDndor7FQpmY8GPuNm/rRt6aSftpJ1NnXDoRsNAQg396TgZnTjcgWq+t+GdvG9oDhLfmKpAZexGqHUpRMjmL+cfjBzc2LuEySo2XBF94FfV1sclLlSjfnRhv3r3+lvhMDroLWh7lGViz5f6uyZJpsWPiPgv1DBUK7VS7YoB0BbJAR0QHpzoW2/8cHX7HerEEg/F0kPjA+aborzKYtaiE+OtGt2ZDU5Q88ir2g2WpaO2RLam/2bDOS5zlCIU+WyTRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bKJn7QqIZqsqFOjbpTCOylBkf7sTDUhgJ+mr8/Xb3FQ=;
+ b=vFY1xnLVWfe3Lbk5iR8t2+cm2HVLBTmeJnm8Z+yulCPKTvgaur/Q5QCdO7mqoVat/iC+crp+eor4BaEFUM1BQ4QMspmuSECdPq3qSo/oTWuqpnbEo/G19hYIroQDEDtb2eYeuZreeRU4Xz4BR98SaHJunethshUpud4w3E8idb0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH8PR12MB7181.namprd12.prod.outlook.com (2603:10b6:510:22a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Thu, 12 Sep
+ 2024 13:10:03 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
+ 13:10:03 +0000
+Message-ID: <08bea3c9-89bc-4483-bcf0-81c298fce80b@amd.com>
+Date: Thu, 12 Sep 2024 08:10:00 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com,
+ mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
+References: <20240911190516.GA644336@bhelgaas>
+ <319e5419-3b12-4672-9f51-f90c5e142e29@amd.com>
+ <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
+ <CAAd53p4ZpCF0GpGhzUx_7V8M2+YCsxgMz8CePPGG_fBTG0JzZA@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <CAAd53p4ZpCF0GpGhzUx_7V8M2+YCsxgMz8CePPGG_fBTG0JzZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0159.namprd11.prod.outlook.com
+ (2603:10b6:806:1bb::14) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH8PR12MB7181:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2b615d2-a1f7-4e45-5826-08dcd32c36c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZkdDSFN2OFFJY1NpNGRUdTBUWnpOSllpSTMvb0J0RzBHZDhGZzFHODI0K3pP?=
+ =?utf-8?B?TVQ4am96b1Z0cUtVYXBoTzZCeTZ2R05wWE9qcTJTZVdwdnBJT1ZTWVVEdGlw?=
+ =?utf-8?B?QmJLUkowTmY5anorZ1lBWnZkWlFFbUFmdkZOUituYnRINWRlQ0NRS2dSSmtM?=
+ =?utf-8?B?TXN0TlA3NFVkU294dVRFY0FPcmpaSXJ3STdwZ3dLYXFlNzVqZU9SY2lyek9r?=
+ =?utf-8?B?NlFPbHlVa1RMRUViSTZLSktyVGtoK1pDUjhVNGZ4TTRnZVlMY01oZnJEUnh2?=
+ =?utf-8?B?bnV3NGxBY3NNWk1icy9OeDNOYjcrMnZMTHJYVS9ESkVPNkZnVm5KdEdKcDdY?=
+ =?utf-8?B?R1Z3YythSDdpWStZbWhkcjlWSTFjdDRCUzFueU9reHdPa0haWWYzZE44QXBN?=
+ =?utf-8?B?NmFnVis4YnNkUEIzZnZYZ0VaS0hIL09hSFU0YWVndWlkdGxQU1dOUXpoT1Vy?=
+ =?utf-8?B?VGlBb3lxb3ZOY3J6RUFVR3IxSE9KeEdudDRzeVppRklzVzhyZWxiMVhJTmZN?=
+ =?utf-8?B?V2NkVGJPcWxPMmdBQkt3MEN0dlllMURnT1o3RmdtRGxYcnV6YzhnWm90UnFE?=
+ =?utf-8?B?dE9DSDNEV3B4WVM0KzY5WDlsZU52eFI1UmpnTGczRFBDbzVaQXdmSlppMDF2?=
+ =?utf-8?B?UXlkRkZjVFVPaDdnbVpweVh1MkJlVEZpYlJsS3A1SHVxRGt5Q3E4b3UwVUNk?=
+ =?utf-8?B?MzFTMHlZaXJQUzBhQTdqMHdjcExMdDV6WWtpWmNCTkxvbnJIcHpHdWJGQnJ1?=
+ =?utf-8?B?cVlmdmYycTA0V1hqYi80V2ZydHRLS25mc1BwN0FpSzQ2N3RCTDZCTnJqdW5S?=
+ =?utf-8?B?ajYrdTBodTcrblN1YkJEZWlUdGtmM2c4N0g3bUV3U01uaXVTUnVQU2VtN05a?=
+ =?utf-8?B?RFFtTWVxUkdhamJQVlhyR1BmalVoNEUvanpBdUxpVEt6eCt4WmxUY2E5L0FK?=
+ =?utf-8?B?WGNLZ1hpQXoyU0dCYmViZGw4dlZhT1grRU1JTENYbjhGbXluRlJmZ0ZLWWpr?=
+ =?utf-8?B?b28rVStuR1hNMitjV3N2ZzQ1L0ZUNXI3ZW80ZEFwaU5mdStjWU5LUHljbmhy?=
+ =?utf-8?B?ZjR0SXZEWU1qS3Y0bWpXaEZUbm5iRlJuREtKVU5mbXNxWEFNRm5MRVl2SjNk?=
+ =?utf-8?B?MnVCZkhvNUVWVEFjalNWMURtdWl4VFFrZVFtNzUrVHVvV0xaQ1Juc1RtSXdu?=
+ =?utf-8?B?Yjg3bG1yak5tbmR1NmNJN1laa2loK1BRc1hlaG9zL2x0Nkw3d3FRMWJhWGd3?=
+ =?utf-8?B?WU4wQyt2TFV0RmRWQ0N1YUF3T2dTVU85dENrblJoRzFjbWNJdU5TSm1Sa1ZW?=
+ =?utf-8?B?NGFFanB2TENqN2VIcWVUYmFsaWo3cXplNFFpdnM4WHp0VFVXTlFPR2ZWbnJa?=
+ =?utf-8?B?VlZxa2hxVTJQRFN1RkVGMVQ5SnpwcVFibWJoUTA2K2RMVlVFdW9uUm9WdGlF?=
+ =?utf-8?B?ZU9wY1gvSTArcjRqbllsNlk0UGRIb0NmSHhCb2lMcS9MUFpmY2dJVnAwaTVO?=
+ =?utf-8?B?ZEd4Y2I0V0JYc1pIYmtMYkl1NGRMSEFQRFFnSUNJOWVRTmx4cGJiVHJqZW1F?=
+ =?utf-8?B?ZHRMZ1ZlNUpJaXg1SmZXdlJEWkRCL3NocEZaTEUzYnArWWtuNjJTcUhtb0pK?=
+ =?utf-8?B?cGxBai9FYTNveW9NSG9iWGxzM0pFeGhOa0NTcTBjYUZlbnpDQXhXZ0k5TVdL?=
+ =?utf-8?B?OVB0amxhY0xwTXQ5MlJzY04wU2ZLNGFSSTBtVDVTUzVKenc0bmJ0czViMzBR?=
+ =?utf-8?Q?h5H2YvVOhgVHJRKJEs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0JncUtCRVRUWFRmSW9SL1NWZ0cxNUxJNXFoWFdyMmlFdW9RWWZyVXZsTllB?=
+ =?utf-8?B?b3RwN3FXZHhWa3k3dFlrQUxEVVZTdjdwYWZMT09VRE9kZjlvSzNtK1pmRHFQ?=
+ =?utf-8?B?TE1HNDlNYnJZMnc4M2ZpVkhreERkMkdoY3Zkc0Y5NmRacDFMSE1JM1NWRkk2?=
+ =?utf-8?B?K3IvNWYrOG5tamtRNXJIQ0VLdFU1U0VOaFdZajUrenY4Z2VJSUY2OFNJbEY3?=
+ =?utf-8?B?VG80UUpMMlZLaEhqeWxkbGsyVWJzN1VlNXRaeWpMQkRyWWxuTWdwNzJySW9C?=
+ =?utf-8?B?NEFIL2dKRUtLQ1lxN0Y3OVlMVGJhYnpwTWR6TXYzNHBpVDBYWWpiKzVmdDVp?=
+ =?utf-8?B?ZGxHbHpUeGdFZ2U4VzZvWUZsanFvNUNYQ1p5c3JNT1Ric0pWcXJnNG82V2ZU?=
+ =?utf-8?B?L2VzWnZSQ09oa3VXR0FkT2ZlTTZ5QldJdFQ3NEhORHdnaEVRb2dLdmRUVFpU?=
+ =?utf-8?B?YVZuTlNxeHJWaFdHc0Roa0xFbi9RakNzejNNWXVoeFFDTTJ6dDJ3eXc2VG4z?=
+ =?utf-8?B?MGhsR3Mrb2ZRQ3RhdmsyWTg5cjdkWlltTmo0cExSNFMvb3FWQjlTbmxKZmRM?=
+ =?utf-8?B?RUwrN0wvd2tEdi9nUHhZWmUrNTlDQVA2RE11QThxUmtvaTd2L2R6c01YY3lR?=
+ =?utf-8?B?NE1CSVJkeU9SbTgzTVZhY0l4L0RDbXBBR1NyKzN2RFpVRXpBVnU1SmxDZkEx?=
+ =?utf-8?B?UW5FQmtuMExJZm9SaFlrS0VkWFQ1eVBFaENaaXplT1I1eDV4R0hpM09FWklE?=
+ =?utf-8?B?aHo4eVJtRkVNRzBPclJJV1psU3dWL1J0c0lsZDZxR3NnRFNXM3ZsaWRGTTd2?=
+ =?utf-8?B?c2pIeWNrd2Y3K05qaFFGZFJBVGRvVld4ZXozMXZmVm5KK0tnYU4rNE0yS29S?=
+ =?utf-8?B?bnN0RXdJbWFhT1pkQ2Z6NkYwb1BJYkxRSG9NcXVUemRaaVVXOXlFRVVtSmYz?=
+ =?utf-8?B?RTdFM05CNStnTmJYTlRvYUdDeUpkZjdiaEhla25DQURSK0VBNENrOEh0cnpK?=
+ =?utf-8?B?ZEFVeG9yblphejFvbEhSZkhZamNXOUlybnBrMmhsbm5LRGRBbkZRYnZ1WHdl?=
+ =?utf-8?B?K1pFeTA1UkF6MmxVZDh0NndSYVNWc0REaTJ4eldQTGQvYmlYSkNkaklYM3Zv?=
+ =?utf-8?B?bjBwTmg5RmF4cENsTW9KN0pLSk40V3Q5aTRMOVRlZnU5cThTQnQ0Y3VFQ1Vm?=
+ =?utf-8?B?c01tTktQem5PcExMa2NMcGpuNjhlQ3Rrc1daUjRtMTZrTHdxWjdnQVpMNC8y?=
+ =?utf-8?B?bmtSOTVrcVZhVUFwdjlsZjRVZXp2VkxVQkNMSzdDUjRBREh5a3ZkSFZudkR5?=
+ =?utf-8?B?clB4bWZxS3Z1Y3U4UmZaUFJiTThlZyt4L3dOV1cwcHVmK2NxVWttQ01ONkdT?=
+ =?utf-8?B?VUxONTluOExwcE85Vk9nRmxsZHh5cnY3M0Y4QW9Cd1JRTXMxa3ZwLzR5bjJI?=
+ =?utf-8?B?aXgwZEZMRlRvbExSSStOUEZSZ3BiTEVsSFVsZC9YRjZiMUpkS0QzV0lPL3Qz?=
+ =?utf-8?B?TXBpSDl6YVNkVG1ObTBQK3BnZ2dvSXlrS2tlSGdsR3VOckUzVTJJdHpTNEp6?=
+ =?utf-8?B?WlRxS2xNOTIwM3lBRzM5aEcvSjVaekUxVnFTdlVMbG50aFRsWGd5ZHNUeU9p?=
+ =?utf-8?B?WkNQTm5aUGxLRGJ5T1E2Z2VOMlVLSXE0MG44eUFHL2NVaFhma1JLR0hxWkdJ?=
+ =?utf-8?B?Rm1LUmNuNHgyR0VzanJaUjA2QXJ2ditvdFpBc0N3dEFhZWlkSWNSeVRydGRR?=
+ =?utf-8?B?UXlCNElMcEhpbUtsTHg2OWRVczZ0WlhBMTVZYVQyS3l5UlpmR0hoS1FTU3BW?=
+ =?utf-8?B?R3hmV2Zvc0VNTzVkUHlOQmN1ck0yNXIxc3FuRkNzNlkzM1NRVzNCVVpiSXZj?=
+ =?utf-8?B?VFR4RmpvbHZEMldYNDhNZWlKNVB3Sm84Z1M1MFlQWG9FQXpjTzJsNXhlTit0?=
+ =?utf-8?B?UnZxcmFmcU5OVlVrZDl1M2hxamVRczhEdjZkbXoxUjFvY1ZjZEdnME9NY0py?=
+ =?utf-8?B?N0dESkRUSWlsQzdLU3cwREMveHFhVkJzTnFzR3E2QmU5WU1lVll0VlhOdi9N?=
+ =?utf-8?B?VzdmbjRUWXVKN0NIL2M4Y1R4Vy9zQWVHZTE2aU82UlFFaWJ1NWVibHVVcXlJ?=
+ =?utf-8?Q?1yVonT6XrTR+x9KeXb+DkUnCE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2b615d2-a1f7-4e45-5826-08dcd32c36c4
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 13:10:03.2303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DmwoKrsc9yIFlxzSqIjN51/OpOKmQ+SUHl0xkntllR1uDUK4pFlpXxJ4dfC+yhraQnIAcgHSVc7mptEyIM6G5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7181
 
-Hi Matthew,
+On 9/12/2024 02:02, Kai-Heng Feng wrote:
+> On Thu, Sep 12, 2024 at 3:38 AM Mario Limonciello
+> <mario.limonciello@amd.com> wrote:
+>>
+>> On 9/11/2024 14:16, Mario Limonciello wrote:
+>>> On 9/11/2024 14:05, Bjorn Helgaas wrote:
+>>>> On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
+>>>>> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+>>>>> connected.
+>>>>>
+>>>>> The following error message can be found during shutdown:
+>>>>> pcieport 0000:00:1d.0: AER: Correctable error message received from
+>>>>> 0000:09:04.0
+>>>>> pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable,
+>>>>> type=Data Link Layer, (Receiver ID)
+>>>>> pcieport 0000:09:04.0:   device [8086:0b26] error
+>>>>> status/mask=00000080/00002000
+>>>>> pcieport 0000:09:04.0:    [ 7] BadDLLP
+>>>>>
+>>>>> Calling aer_remove() during shutdown can quiesce the error message,
+>>>>> however the spurious wakeup still happens.
+>>>>>
+>>>>> The issue won't happen if the device is in D3 before system shutdown, so
+>>>>> putting device to low power state before shutdown to solve the issue.
+>>>>>
+>>>>> I don't have a sniffer so this is purely guesswork, however I believe
+>>>>> putting device to low power state it's the right thing to do.
+>>>>
+>>>> My objection here is that we don't have an explanation of why this
+>>>> should matter or a pointer to any spec language about this situation,
+>>>> so it feels a little bit random.
+>>>>
+>>>> I suppose the problem wouldn't happen if AER interrupts were disabled?
+>>>> We already do disable them in aer_suspend(), but maybe that's not used
+>>>> in the shutdown path?
+>>>>
+>>>> My understanding is that .shutdown() should turn off device interrupts
+>>>> and stop DMA.  So maybe we need an aer_shutdown() that disables
+>>>> interrupts?
+>>>>
+>>>
+>>> IMO I see this commit as two problems with the same solution.
+>>>
+>>> I don't doubt that cleaning up AER interrupts in the shutdown path would
+>>> help AER messages, but you really don't "want" devices to be in D0 when
+>>> the system is "off" because even if the system is off some rails are
+>>> still active and the device might still be powered.
+>>>
+>>> A powered device could cause interrupts (IE a spurious wakeup).
+>>
+>> It's a bit of a stretch, but ACPI 7.4.2.5 and 7.4.2.6 are the closest
+>> corollary to a spec I can find.
+>>
+>> "Devices states are compatible with the current Power Resource states.
+>> In other words, all devices are in the D3 state when the system state is
+>> S4."
+> 
+> In addition to that, vendor collected the wave form from the device,
+> Windows put the device to D3 while Linux kept the device in D0, and
+> that asserted one of the PCIe interrupt line to cause system wakeup.
+> 
 
-FYI, the error/warning still remains.
+I did the same collection and confirmed the state as well of many PCI 
+devices on the system, elsewhere in this thread.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   77f587896757708780a7e8792efe62939f25a5ab
-commit: 3a025e1d1c2ea42fa497c9c6b21c284e0f69e28b Add optional check for bad kernel-doc comments
-date:   7 years ago
-config: arm-randconfig-002-20240912 (https://download.01.org/0day-ci/archive/20240912/202409122134.crk22zBA-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122134.crk22zBA-lkp@intel.com/reproduce)
+https://gist.github.com/superm1/f8f81e52f5b1d55b64493fdaec38e31c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409122134.crk22zBA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter or member 'pm_wakeup_sources' not described in 'atmel_pioctrl'
-   drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter or member 'pm_suspend_backup' not described in 'atmel_pioctrl'
->> drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter or member 'pm_suspend_backup.imr' not described in 'atmel_pioctrl'
->> drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter or member 'pm_suspend_backup.odsr' not described in 'atmel_pioctrl'
->> drivers/pinctrl/pinctrl-at91-pio4.c:136: warning: Function parameter or member 'pm_suspend_backup.cfgr' not described in 'atmel_pioctrl'
-
-
-vim +136 drivers/pinctrl/pinctrl-at91-pio4.c
-
-776180848b574c Ludovic Desroches 2015-09-16   95  
-776180848b574c Ludovic Desroches 2015-09-16   96  /**
-776180848b574c Ludovic Desroches 2015-09-16   97   * struct atmel_pioctrl - Atmel PIO controller (pinmux + gpio)
-776180848b574c Ludovic Desroches 2015-09-16   98   * @reg_base: base address of the controller.
-776180848b574c Ludovic Desroches 2015-09-16   99   * @clk: clock of the controller.
-776180848b574c Ludovic Desroches 2015-09-16  100   * @nbanks: number of PIO groups, it can vary depending on the SoC.
-776180848b574c Ludovic Desroches 2015-09-16  101   * @pinctrl_dev: pinctrl device registered.
-776180848b574c Ludovic Desroches 2015-09-16  102   * @groups: groups table to provide group name and pin in the group to pinctrl.
-776180848b574c Ludovic Desroches 2015-09-16  103   * @group_names: group names table to provide all the group/pin names to
-776180848b574c Ludovic Desroches 2015-09-16  104   *     pinctrl or gpio.
-776180848b574c Ludovic Desroches 2015-09-16  105   * @pins: pins table used for both pinctrl and gpio. pin_id, bank and line
-776180848b574c Ludovic Desroches 2015-09-16  106   *     fields are set at probe time. Other ones are set when parsing dt
-776180848b574c Ludovic Desroches 2015-09-16  107   *     pinctrl.
-776180848b574c Ludovic Desroches 2015-09-16  108   * @npins: number of pins.
-776180848b574c Ludovic Desroches 2015-09-16  109   * @gpio_chip: gpio chip registered.
-776180848b574c Ludovic Desroches 2015-09-16  110   * @irq_domain: irq domain for the gpio controller.
-776180848b574c Ludovic Desroches 2015-09-16  111   * @irqs: table containing the hw irq number of the bank. The index of the
-776180848b574c Ludovic Desroches 2015-09-16  112   *     table is the bank id.
-776180848b574c Ludovic Desroches 2015-09-16  113   * @dev: device entry for the Atmel PIO controller.
-776180848b574c Ludovic Desroches 2015-09-16  114   * @node: node of the Atmel PIO controller.
-776180848b574c Ludovic Desroches 2015-09-16  115   */
-776180848b574c Ludovic Desroches 2015-09-16  116  struct atmel_pioctrl {
-776180848b574c Ludovic Desroches 2015-09-16  117  	void __iomem		*reg_base;
-776180848b574c Ludovic Desroches 2015-09-16  118  	struct clk		*clk;
-776180848b574c Ludovic Desroches 2015-09-16  119  	unsigned		nbanks;
-776180848b574c Ludovic Desroches 2015-09-16  120  	struct pinctrl_dev	*pinctrl_dev;
-776180848b574c Ludovic Desroches 2015-09-16  121  	struct atmel_group	*groups;
-776180848b574c Ludovic Desroches 2015-09-16  122  	const char * const	*group_names;
-776180848b574c Ludovic Desroches 2015-09-16  123  	struct atmel_pin	**pins;
-776180848b574c Ludovic Desroches 2015-09-16  124  	unsigned		npins;
-776180848b574c Ludovic Desroches 2015-09-16  125  	struct gpio_chip	*gpio_chip;
-776180848b574c Ludovic Desroches 2015-09-16  126  	struct irq_domain	*irq_domain;
-776180848b574c Ludovic Desroches 2015-09-16  127  	int			*irqs;
-de4e882f3fbef5 Ludovic Desroches 2015-09-25  128  	unsigned		*pm_wakeup_sources;
-ba9e7f2794d815 Alexandre Belloni 2017-04-06  129  	struct {
-ba9e7f2794d815 Alexandre Belloni 2017-04-06  130  		u32		imr;
-ba9e7f2794d815 Alexandre Belloni 2017-04-06  131  		u32		odsr;
-ba9e7f2794d815 Alexandre Belloni 2017-04-06  132  		u32		cfgr[ATMEL_PIO_NPINS_PER_BANK];
-ba9e7f2794d815 Alexandre Belloni 2017-04-06  133  	} *pm_suspend_backup;
-776180848b574c Ludovic Desroches 2015-09-16  134  	struct device		*dev;
-776180848b574c Ludovic Desroches 2015-09-16  135  	struct device_node	*node;
-776180848b574c Ludovic Desroches 2015-09-16 @136  };
-776180848b574c Ludovic Desroches 2015-09-16  137  
-
-:::::: The code at line 136 was first introduced by commit
-:::::: 776180848b574c9c01217fa958f10843ffce584f pinctrl: introduce driver for Atmel PIO4 controller
-
-:::::: TO: Ludovic Desroches <ludovic.desroches@atmel.com>
-:::::: CC: Linus Walleij <linus.walleij@linaro.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
