@@ -1,232 +1,86 @@
-Return-Path: <linux-kernel+bounces-326696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98525976BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69695976BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A16B1F262A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:23:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156BD1F26874
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25551AE038;
-	Thu, 12 Sep 2024 14:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0B21B2ECD;
+	Thu, 12 Sep 2024 14:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEb75SEV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dmzhz82m"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0862BB09;
-	Thu, 12 Sep 2024 14:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484312BB09
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150988; cv=none; b=Fl3I5yt27LAkMHLWfm6fKZ7ZS8Tr2PT0LXriGSB5w5t4kzmwE97BPUl+uzmt1CnB70Pn7l2DCzimJ7t053B+L3QFeluH9sx4VpgqY3dScsvHGGV5XVp6EJwBzBzq8xPVZ9j6nBgazfDb34eY4ndGDDkXeKWiTdgxTETIYsloH7c=
+	t=1726150995; cv=none; b=YO4qasVBTBKgMf00nz3fOqAWMCVG8xHPxBL1FSp4Lh4NtiEj0XBPyi+lAZmEq7EnkNHMSwhB5LrtEa9SyhrosCM6OScEPAnCqAh7YlLqtNz50WOOtGOSVQLuQ20hfowL8HNbRbLjvZwNtt/OBNYrer2kgJ+iSAp78lWZFCihoSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150988; c=relaxed/simple;
-	bh=jJcTh5nuJ5D7uttcH6Y/4WauSKzkve6TgMPWd0TWE4c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Yd9Innzkwx2rZsahal2i6dxDgYDPTAacjqZ7t/S5bGK90t2JUZOaE+iIkF2vmrsZZaybc22Dvb+Bb8ZpIRuJgg4H95XSIFIVE/dBhRKgVDQlY8Lz/iuC7vITbIT6cTkWdm4LC2VxRnHGKLXLB53YXJ3T8DUSnVNUSxDzTu6pHOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEb75SEV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC014C4CEC3;
-	Thu, 12 Sep 2024 14:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726150987;
-	bh=jJcTh5nuJ5D7uttcH6Y/4WauSKzkve6TgMPWd0TWE4c=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=uEb75SEV1I6iz142ZSa/gtM33bEJr03brAE9Y98I+8pnhVgJRbyc10teHgRKu93Q9
-	 6EppxtWnPDWQrgYJbWbr5eAH36ydIkI2Dps4GmWtTtzB0nx0TER5DUqMsr67vmlJk0
-	 mwTYJkdPYrc1UA9xN19q7BGGqaGOhHxmCYriJ0dTQXioa+K9pnuiRoPQjPds5E4cUr
-	 XqR3euVYAo+IDDtEWeU43+ANHw/dxcWWcsOTMLY65/r5FhbQg7yjC3Gbs0kX/6nSh2
-	 RhsuUnHirw79HbuE6tgbfAurEiqwReMCBXPZ8q2TrKKIo9YSp2ZgLRgqpoTp+q1yj2
-	 ym03KgDGxg2zQ==
+	s=arc-20240116; t=1726150995; c=relaxed/simple;
+	bh=oWzSbl9SOryhrEfvgC31aG2vf60JanCUGc273K6cBVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOZmdcRhCN0vWznUBmwYXYz2XrDX6RDXwONkeqSDLlUNiMfviFTMpXlHgv7sFcC4gduPTWmmag5w6fY8v2Xe2pzqglVcBlbv3p+yHqf4bO2yhHFYuLv4d+Ef+kgX6nqe8WIMUwrQRMk+ftCuoJesnQy9dCkJkUdTRexqO/QX+dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dmzhz82m; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f63bf0ad-2846-4108-9a3f-9ea113959af0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726150991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQcj2YDJcPOkha5AjFb9sgabfqS/mkYXHsp1WXdSRE0=;
+	b=Dmzhz82mKpoK7vDeWNHJ8FrrSmRqWeE4p4A2Gg7IU4qsDs5hfY+ZYc7GEvOoOQOfqMkUMX
+	kncnb80/XNvOBRgi8lkmllfzNjB7cho4BWysXMLUfH7qP1RXO8+3J8wi6763V7vo77VvX7
+	l+qodB+IidCdHyBcI9NN0+g9d/sni84=
+Date: Thu, 12 Sep 2024 10:23:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH net] net: xilinx: axienet: Schedule NAPI in two steps
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, Robert Hancock <robert.hancock@calian.com>,
+ linux-kernel@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
+ linux-arm-kernel@lists.infradead.org
+References: <20240909231904.1322387-1-sean.anderson@linux.dev>
+ <20240910185801.42b7c17f@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240910185801.42b7c17f@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Sep 2024 17:23:03 +0300
-Message-Id: <D44DGENMPU9S.C2ZOA3EA5LEW@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
- <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
-In-Reply-To: <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu Sep 12, 2024 at 11:13 AM EEST, Roberto Sassu wrote:
-> On Wed, 2024-09-11 at 18:14 +0300, Jarkko Sakkinen wrote:
-> > On Wed Sep 11, 2024 at 11:53 AM EEST, Roberto Sassu wrote:
-> > > I made few measurements. I have a Fedora 38 VM with TPM passthrough.
-> >=20
-> > I was thinking more like
-> >=20
-> > sudo bpftrace -e 'k:tpm_transmit { @start[tid] =3D nsecs; } kr:tpm_tran=
-smit { @[kstack, ustack, comm] =3D sum(nsecs - @start[tid]); delete(@start[=
-tid]); } END { clear(@start); }'
-> >=20
-> > For example when running "tpm2_createprimary --hierarchy o -G rsa2048 -=
-c owner.txt", I get:
->
-> Sure:
->
-> Without HMAC:
->
-> @[
->     tpm_transmit_cmd+50
->     tpm2_pcr_extend+295
->     tpm_pcr_extend+221
->     ima_add_template_entry+437
->     ima_store_template+114
->     ima_store_measurement+209
->     process_measurement+2473
->     ima_file_check+82
->     security_file_post_open+92
->     path_openat+550
->     do_filp_open+171
->     do_sys_openat2+186
->     do_sys_open+76
->     __x64_sys_openat+35
->     x64_sys_call+9589
->     do_syscall_64+96
->     entry_SYSCALL_64_after_hwframe+118
-> ,=20
->     0x7f338ee7be55
->     0x55bf24459ac2
->     0x7f338eda2b8a
->     0x7f338eda2c4b
->     0x55bf2445a9b5
-> , cat]: 5273648
->
->
-> With HMAC:
->
-> @[
->     tpm_transmit_cmd+50
->     tpm2_flush_context+95
->     tpm2_start_auth_session+676
->     tpm2_pcr_extend+39
->     tpm_pcr_extend+221
->     ima_add_template_entry+437
->     ima_store_template+114
->     ima_store_measurement+209
->     process_measurement+2473
->     ima_file_check+82
->     security_file_post_open+92
->     path_openat+550
->     do_filp_open+171
->     do_sys_openat2+186
->     do_sys_open+76
->     __x64_sys_openat+35
->     x64_sys_call+9589
->     do_syscall_64+96
->     entry_SYSCALL_64_after_hwframe+118
-> ,=20
->     0x7f03ea0ade55
->     0x55f929b7dac2
->     0x7f03e9fd4b8a
->     0x7f03e9fd4c4b
->     0x55f929b7e9b5
-> , cat]: 3128177
-> @[
->     tpm_transmit_cmd+50
->     tpm2_pcr_extend+338
->     tpm_pcr_extend+221
->     ima_add_template_entry+437
->     ima_store_template+114
->     ima_store_measurement+209
->     process_measurement+2473
->     ima_file_check+82
->     security_file_post_open+92
->     path_openat+550
->     do_filp_open+171
->     do_sys_openat2+186
->     do_sys_open+76
->     __x64_sys_openat+35
->     x64_sys_call+9589
->     do_syscall_64+96
->     entry_SYSCALL_64_after_hwframe+118
-> ,=20
->     0x7f03ea0ade55
->     0x55f929b7dac2
->     0x7f03e9fd4b8a
->     0x7f03e9fd4c4b
->     0x55f929b7e9b5
-> , cat]: 25851638
-> @[
->     tpm_transmit_cmd+50
->     tpm2_load_context+161
->     tpm2_start_auth_session+98
->     tpm2_pcr_extend+39
->     tpm_pcr_extend+221
->     ima_add_template_entry+437
->     ima_store_template+114
->     ima_store_measurement+209
->     process_measurement+2473
->     ima_file_check+82
->     security_file_post_open+92
->     path_openat+550
->     do_filp_open+171
->     do_sys_openat2+186
->     do_sys_open+76
->     __x64_sys_openat+35
->     x64_sys_call+9589
->     do_syscall_64+96
->     entry_SYSCALL_64_after_hwframe+118
-> ,=20
->     0x7f03ea0ade55
->     0x55f929b7dac2
->     0x7f03e9fd4b8a
->     0x7f03e9fd4c4b
->     0x55f929b7e9b5
-> , cat]: 35928108
-> @[
->     tpm_transmit_cmd+50
->     tpm2_start_auth_session+650
->     tpm2_pcr_extend+39
->     tpm_pcr_extend+221
->     ima_add_template_entry+437
->     ima_store_template+114
->     ima_store_measurement+209
->     process_measurement+2473
->     ima_file_check+82
->     security_file_post_open+92
->     path_openat+550
->     do_filp_open+171
->     do_sys_openat2+186
->     do_sys_open+76
->     __x64_sys_openat+35
->     x64_sys_call+9589
->     do_syscall_64+96
->     entry_SYSCALL_64_after_hwframe+118
-> ,=20
->     0x7f03ea0ade55
->     0x55f929b7dac2
->     0x7f03e9fd4b8a
->     0x7f03e9fd4c4b
->     0x55f929b7e9b5
-> , cat]: 84616611
->
-> Roberto
+On 9/10/24 21:58, Jakub Kicinski wrote:
+> On Mon,  9 Sep 2024 19:19:04 -0400 Sean Anderson wrote:
+>> Additionally, since we are running
+>> in an IRQ context we can use the irqoff variant as well.
+> 
+> The _irqoff variant is a bit of a minefield. It causes issues if kernel
+> is built with forced IRQ threading. With datacenter NICs forced
+> threading is never used so we look the other way. Since this is a fix
+> and driver is embedded I reckon we should stick to __napi_schedule().
 
-Looking into tomorrow thank you.
+Does it?
 
-BR, Jarkko
+__napi_schedule_irqoff selects between __napi_schedule and
+____napi_schedule based on whether PREEMPT_RT is enabled. Is there some
+other way to force IRQ threading?
+
+--Sean
 
